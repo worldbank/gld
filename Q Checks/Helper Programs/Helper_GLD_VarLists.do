@@ -16,19 +16,19 @@ Output:
               1: All vars
 ==================================================*/
 
-global all_vars countrycode survname survey icls_v year vermast veralt harmonization int_year int_month hhid pid weight strata wave psu urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_ever migrated_years migrated_from_cat migrated_from_code migrated_reason school literacy educy educat7 educat5 educat4 educat_isced educat_isced_v minlaborage lstatus nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industry_orig_v industrycat_isic industrycat_isic_v industrycat10 industrycat4 occup_orig occup_orig_v occup_isco occup_isco_v occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industry_orig_v_2 industrycat_isic_2 industrycat_isic_v_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_orig_v_2 occup_isco_2 occup_isco_v_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industry_orig_v_year industrycat_isic_year industrycat_isic_v_year industrycat10_year industrycat4_year occup_orig_year occup_orig_v_year occup_isco_year occup_isco_v_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industry_orig_v_2_year industrycat_isic_2_year industrycat_isic_v_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_orig_v_2_year occup_isco_2_year occup_isco_v_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
+global all_vars countrycode survname survey icls_v year vermast veralt harmonization int_year int_month hhid pid weight psu strata wave urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_yearwage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
 
 /*==================================================
               2: All numeric vars
 ==================================================*/
 
-global numeric_vars year int_year int_month weight strata psu urban subnatid1 subnatid2 subnatid3 subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_ever migrated_years migrated_from_cat migrated_from_code migrated_reason school literacy educy educat7 educat5 educat4 educat_isced minlaborage lstatus nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat10 industrycat4 occup_orig occup_isco occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
+global numeric_vars year int_year int_month weight strata psu urban subnatid1 subnatid2 subnatid3 subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field vocational_financed minlaborage lstatus nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat10 industrycat4 occup_orig occup_isco occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
 
 /*==================================================
               3: All string vars
 ==================================================*/
 
-global string_vars countrycode survname survey icls_v vermast veralt harmonization hhid pid subnatidsurvey industry_orig_v occup_orig_v industry_orig_v_2 occup_orig_v_2 industrycat_isic industrycat_isic_v occup_isco_v industrycat_isic_2 industrycat_isic_v_2 occup_isco_v_2 industry_orig_v_year occup_orig_v_year industry_orig_v_2_year occup_orig_v_2_year industrycat_isic_year industrycat_isic_v_year occup_isco_v_year industrycat_isic_2_year industrycat_isic_v_2_year occup_isco_v_2_year
+global string_vars countrycode survname survey icls_v vermast veralt harmonization hhid pid subnatidsurvey migrated_from_country industrycat_isic industrycat_isic_2 industrycat_isic_year  industrycat_isic_2_year
    
 /*==================================================
               4: Vars that do not change
@@ -40,7 +40,7 @@ global invariant_vars countrycode survname survey icls_v year vermast veralt har
               5: Vars that should change
 ==================================================*/
 
-global change_should_vars weight strata wave psu urban subnatid1 subnatid2 subnatid3 subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_ever migrated_years migrated_from_cat migrated_from_code migrated_reason school literacy educy educat7 educat5 educat4 minlaborage lstatus nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isic occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isic_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isic_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isic_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
+global change_should_vars weight strata wave psu urban subnatid1 subnatid2 subnatid3 subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason school literacy educy educat7 educat5 educat4 vocational vocational_type vocational_length_l vocational_length_u vocational_field vocational_financed minlaborage lstatus nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isic occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isic_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isic_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isic_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
 
 /*==================================================
               6: Vars that do not change within HH
@@ -55,7 +55,7 @@ global hh_level_vars int_year int_month hhid weight strata wave psu urban subnat
 ==================================================*/
 
 *----------7.1: Categorical - 0 / 1
-global cat_0_1 urban male migrated_ever school literacy contract healthins socialsec union contract_year healthins_year socialsec_year union_year
+global cat_0_1 urban male migrated_binary school literacy vocational contract healthins socialsec union contract_year healthins_year socialsec_year union_year
 
 *----------7.2: Categorical - 1 / 3
 global cat_1_3 lstatus lstatus_year
@@ -64,7 +64,7 @@ global cat_1_3 lstatus lstatus_year
 global cat_1_4 eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_from_cat educat4 ocusec industrycat4 ocusec_2 industrycat4_2 ocusec_year industrycat4_year ocusec_2_year industrycat4_2_year
 
 *----------7.4: Categorical - 1 / 5
-global cat_1_5 marital migrated_reason educat5 nlfreason empstat empstat_2 nlfreason_year empstat_year empstat_2_year
+global cat_1_5 marital migrated_from_cat migrated_reason educat5 vocational_financed nlfreason empstat empstat_2 nlfreason_year empstat_year empstat_2_year
 
 *----------7.5: Categorical - 1 / 6
 global cat_1_6 relationharm
@@ -109,30 +109,44 @@ global subnat_hierarchy ""subnatid1 subnatid2 subnatid3" "subnatid1_prev subnati
 ==================================================*/
 
 /*==================================================
-              11: Consistency Education Module
+              11: Consistency Migration Module
+==================================================*/
+
+*----------11.1: Questions not posed if migrated_binary is No
+global never_migrated migrated_years migrated_from migrated_from_cat migrated_from_code migrated_from_country migrated_reason
+ 
+/*==================================================
+              12: Consistency Education Module
 ==================================================*/
 
 /*==================================================
-              12: Consistency Labour Module
+              13: Consistency Training Module
 ==================================================*/
 
-*----------12.1: Questions not posed to unemployed 7 day ref
+*----------13.1: Questions not posed if migrated_binary is No
+global never_trained vocational_type vocational_length_l vocational_length_u vocational_field vocational_financed
+
+/*==================================================
+              14: Consistency Labour Module
+==================================================*/
+
+*----------14.1: Questions not posed to unemployed 7 day ref
 global not_posed_unemployed_week nlfreason empstat ocusec industry_orig industry_orig_v industrycat_isic industrycat_isic_v industrycat10 industrycat4 occup_orig occup_orig_v occup_isco occup_isco_v occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industry_orig_v_2 industrycat_isic_2 industrycat_isic_v_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_orig_v_2 occup_isco_2 occup_isco_v_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total
 
-*----------12.2: Questions not posed to unemployed 12 month ref
+*----------14.2: Questions not posed to unemployed 12 month ref
 global not_posed_unemployed_year nlfreason_year empstat_year ocusec_year industry_orig_year industry_orig_v_year industrycat_isic_year industrycat_isic_v_year industrycat10_year industrycat4_year occup_orig_year occup_orig_v_year occup_isco_year occup_isco_v_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industry_orig_v_2_year industrycat_isic_2_year industrycat_isic_v_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_orig_v_2_year occup_isco_2_year occup_isco_v_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year
 
-*----------12.3: Questions not posed to NLF individuals 7 day ref
+*----------14.3: Questions not posed to NLF individuals 7 day ref
 global not_posed_nlf_week unempldur_l unempldur_u empstat ocusec industry_orig industry_orig_v industrycat_isic industrycat_isic_v industrycat10 industrycat4 occup_orig occup_orig_v occup_isco occup_isco_v occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industry_orig_v_2 industrycat_isic_2 industrycat_isic_v_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_orig_v_2 occup_isco_2 occup_isco_v_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total
 
-*----------12.4: Questions not posed to NLF individuals 12 month ref
+*----------14.4: Questions not posed to NLF individuals 12 month ref
 global not_posed_nlf_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industry_orig_v_year industrycat_isic_year industrycat_isic_v_year industrycat10_year industrycat4_year occup_orig_year occup_orig_v_year occup_isco_year occup_isco_v_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industry_orig_v_2_year industrycat_isic_2_year industrycat_isic_v_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_orig_v_2_year occup_isco_2_year occup_isco_v_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year
 
-*----------12.5: Industry 10 and 4 catgories concordance
+*----------14.5: Industry 10 and 4 catgories concordance
 global industry_cat_concordance ""industrycat10 industrycat4" "industrycat10_2 industrycat4_2" "industrycat10_year industrycat4_year" "industrycat10_2_year industrycat4_2_year""
 
-*----------12.6: ISIC codes check
+*----------14.6: ISIC codes check
 global isic_check industrycat_isic industrycat_isic_2 industrycat_isic_year industrycat_isic_2_year
 
-*----------12.7: ISCO codes check
+*----------14.7: ISCO codes check
 global isco_check occup_isco occup_isco_2 occup_isco_year occup_isco_2_year

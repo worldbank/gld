@@ -1,12 +1,12 @@
 /*==================================================
-project:       Perform Statis Quality Checks for GLD
+project:       Perform Static Quality Checks for GLD
 Author:        Mario Gronert 
 E-email:       mgronert@worldbank.org
 url:           
 Dependencies:  distinct, mdesc
 ----------------------------------------------------
 Creation Date:    	18 Jan 2021
-Modification Date:	28 Jan 2021   
+Modification Date:	31 Mar 2021   
 Do-file version:    01
 References:          
 Output: Static Overview Postfile
@@ -65,7 +65,7 @@ foreach var of global all_vars {
 	}
 }
 
-*----------1.3: Variable in data that are not in dictionary
+*----------1.3: Variable in data that is not in dictionary
 preserve
 * First, drop vars from dictionary
 foreach var of global all_vars {
@@ -311,7 +311,29 @@ if _rc == 0 { // if var exists since if not captured in 1.1
               5: Migration
 ==================================================*/
 
-* To be filled
+
+*----------5.1: Check that no answers if never migrated
+cap confirm migrated_binary 
+if _rc == 0 { // if var exists, else captured in 1.1
+	foreach var of global never_migrated {
+		cap confirm variable var'
+		if _rc == 0 { // if var exists count if answers when migrated_binary is 0
+			qui : count if !missing(`var') & migrated_binary == 0
+			if `r(N)' >0 { // there are cases with answers
+				post `memhold' ("Training") ("`var'") ("Variable `var' has answers although migrated_binary says neve trained (# of cases ->)") (`r(N)') (1)
+		
+			} // end cases with answers
+		} // end var exists
+	} // end vars loop
+} // end migrated_binary exists
+else {
+	foreach var of global never_migrated {
+		cap confirm variable var'
+		if _rc == 0 { // if var exists but migrated_binary not, error
+			post `memhold' ("Training") ("`var'") ("Variable `var' has migration answers although the initial migrated_binary is missing") (.) (1)
+		} // end var exists
+	} // end vars loop
+} // end migrated_binary does not exist
 
 
 /*==================================================
@@ -370,12 +392,39 @@ if _rc == 0 { // if vars exist, else captured in 1.1
 	}
 }
 
-
 /*==================================================
-              7: Consistency Labour Module
+              7: Consistency Training Module
 ==================================================*/
 
-*----------7.1: 7 day ref unemployed are only asked unemployment set questions
+*----------7.1: Check that no answers if never trained
+cap confirm vocational 
+if _rc == 0 { // if var exists, else captured in 1.1
+	foreach var of global never_trained {
+		cap confirm variable var'
+		if _rc == 0 { // if var exists count if answers when vocational is 0
+			qui : count if !missing(`var') & vocational == 0
+			if `r(N)' >0 { // there are cases with answers
+				post `memhold' ("Training") ("`var'") ("Variable `var' has answers although vocational says neve trained (# of cases ->)") (`r(N)') (1)
+		
+			} // end cases with answers
+		} // end var exists
+	} // end vars loop
+} // end vocational exists
+else {
+	foreach var of global never_trained {
+		cap confirm variable var'
+		if _rc == 0 { // if var exists but vocational not, error
+			post `memhold' ("Training") ("`var'") ("Variable `var' has vocational answers although the initial vocational is missing") (.) (1)
+		} // end var exists
+	} // end vars loop
+} // end vocational does not exist
+
+
+/*==================================================
+              8: Consistency Labour Module
+==================================================*/
+
+*----------8.1: 7 day ref unemployed are only asked unemployment set questions
 foreach var of global not_posed_unemployed_week {
 	cap confirm variable lstatus `var'
 	if _rc == 0 { // if var exists since if not captured in 1.1
@@ -389,7 +438,7 @@ foreach var of global not_posed_unemployed_week {
 	} // end var exists
 } // end
 
-*----------7.2: 12 month ref unemployed are only asked unemployment set questions
+*----------8.2: 12 month ref unemployed are only asked unemployment set questions
 foreach var of global not_posed_unemployed_year {
 	cap confirm variable lstatus_year `var'
 	if _rc == 0 { // if var exists since if not captured in 1.1
@@ -403,7 +452,7 @@ foreach var of global not_posed_unemployed_year {
 	} // end var exists
 } // end
 
-*----------7.3: NLF asks for NLF reason 7 day recall
+*----------8.3: NLF asks for NLF reason 7 day recall
 cap confirm variable lstatus nlfreason
 if _rc == 0 { // if var exists since if not captured in 1.1
 	
@@ -416,7 +465,7 @@ if _rc == 0 { // if var exists since if not captured in 1.1
 		} // end odd cases
 }
 
-*----------7.4: NLF asks for NLF reason 12 month recall
+*----------8.4: NLF asks for NLF reason 12 month recall
 cap confirm variable lstatus_year nlfreason_year
 if _rc == 0 { // if var exists since if not captured in 1.1
 	
@@ -429,7 +478,7 @@ if _rc == 0 { // if var exists since if not captured in 1.1
 		} // end odd cases
 }
 
-*----------7.5: 7 day ref NLF are only asked NLF set questions
+*----------8.5: 7 day ref NLF are only asked NLF set questions
 foreach var of global not_posed_nlf_week {
 	cap confirm variable lstatus `var'
 	if _rc == 0 { // if var exists since if not captured in 1.1
@@ -443,7 +492,7 @@ foreach var of global not_posed_nlf_week {
 	} // end var exists
 } // end
 
-*----------7.6: 12 month ref NLF are only asked NLF set questions
+*----------8.6: 12 month ref NLF are only asked NLF set questions
 foreach var of global not_posed_nlf_year {
 	cap confirm variable lstatus_year `var'
 	if _rc == 0 { // if var exists since if not captured in 1.1
@@ -458,7 +507,7 @@ foreach var of global not_posed_nlf_year {
 } // end
 
 
-*----------7.7: Industry10 and industry4 correspondance
+*----------8.7: Industry10 and industry4 correspondance
 foreach pair of global industry_cat_concordance {
 	cap confirm variable `pair' 
 	if _rc == 0 { // if pair of vars exists, else captured in 1.1
@@ -474,7 +523,7 @@ foreach pair of global industry_cat_concordance {
 
 
 
-*----------7.8: Wage logic primary, secondary, other - 7 day reference
+*----------8.8: Wage logic primary, secondary, other - 7 day reference
 * Logic would be (not necessarily wrong, just odd, want to check, that you make more money on
 * your primary than on your secondary job; secondary makes more than other odd jobs)
 * Step 1 - Establish which vars are in the data
@@ -504,7 +553,7 @@ if `counting' > 1{ // if just one var no point in checking
 
 
 
-*----------7.9: Wage logic primary, secondary, other - 12 month reference
+*----------8.9: Wage logic primary, secondary, other - 12 month reference
 * Step 1 - Establish which vars are in the data
 foreach var in  wage_total_year wage_total_2_year t_wage_others_year {
 	cap confirm variable `var'
@@ -532,7 +581,7 @@ if `counting' > 1{ // if just one var no point in checking
 
 
 
-*----------7.10: Wage logic total w/ vs w/o compensation - 7 day reference
+*----------8.10: Wage logic total w/ vs w/o compensation - 7 day reference
 cap confirm variable t_wage_nocompen_total t_wage_total
 if _rc == 0 { // if pair of vars exists, else captured in 1.1
 	qui count if t_wage_total < t_wage_nocompen_total & ( !missing(t_wage_total) | !missing(t_wage_nocompen_total) )
@@ -543,7 +592,7 @@ if _rc == 0 { // if pair of vars exists, else captured in 1.1
 
 
 
-*----------7.11: Wage logic total w/ vs w/o compensation - 12 month reference
+*----------8.11: Wage logic total w/ vs w/o compensation - 12 month reference
 cap confirm variable t_wage_nocompen_total_year t_wage_total_year
 if _rc == 0 { // if pair of vars exists, else captured in 1.1
 	qui count if t_wage_total_year < t_wage_nocompen_total_year & ( !missing(t_wage_total_year) | !missing(t_wage_nocompen_total_year) )
@@ -553,7 +602,7 @@ if _rc == 0 { // if pair of vars exists, else captured in 1.1
 }
 
 
-*----------7.12: Wage logic total w/ vs w/o compensation - Total on all 
+*----------8.12: Wage logic total w/ vs w/o compensation - Total on all 
 cap confirm variable linc_nc laborincome
 if _rc == 0 { // if pair of vars exists, else captured in 1.1
 	qui count if laborincome < linc_nc & ( !missing(laborincome) | !missing(linc_nc) )
@@ -566,7 +615,7 @@ if _rc == 0 { // if pair of vars exists, else captured in 1.1
 
 
 
-*----------7.13: Hours of work in total across jobs - 7 day ref
+*----------8.13: Hours of work in total across jobs - 7 day ref
 cap confirm variable whours whours_2
 if _rc == 0 { // if pair of vars exists, else captured in 1.1
 	egen whours_check = rowtotal(whours whours_2)
@@ -579,7 +628,7 @@ if _rc == 0 { // if pair of vars exists, else captured in 1.1
 
 
 
-*----------7.14: Hours of work in total across jobs - 12 month ref
+*----------8.14: Hours of work in total across jobs - 12 month ref
 cap confirm variable whours_year whours_2_year
 if _rc == 0 { // if pair of vars exists, else captured in 1.1
 	egen whours_check = rowtotal(whours_year whours_2_year)
@@ -591,7 +640,7 @@ if _rc == 0 { // if pair of vars exists, else captured in 1.1
 } // end vars exist
 
 
-*----------7.15: Overall income w/o comp cannot be smaller than either 7 day or 12 month w/o comp income
+*----------8.15: Overall income w/o comp cannot be smaller than either 7 day or 12 month w/o comp income
 * 7 day
 cap confirm variable t_wage_nocompen_total // if this exists then laborincome needs to exist, so no checking
 if _rc == 0 {
@@ -612,7 +661,7 @@ if _rc == 0 {
 
 
 
-*----------7.16: Overall income w/ comp cannot be smaller than either 7 day or 12 month w/ comp income
+*----------8.16: Overall income w/ comp cannot be smaller than either 7 day or 12 month w/ comp income
 * 7 day
 cap confirm variable t_wage_total // if this exists then laborincome needs to exist, so no checking
 if _rc == 0 {
@@ -632,7 +681,7 @@ if _rc == 0 {
 }
 
 
-*----------7.17: Check ISIC code is length 1 (Letter) or length 4 (4 digit code)
+*----------8.17: Check ISIC code is length 1 (Letter) or length 4 (4 digit code)
 foreach var of global isic_check {
 	cap confirm string variable `var'
 	if _rc == 0 { // if vars exist, is string (if not , captured in section 1)
@@ -648,7 +697,7 @@ foreach var of global isic_check {
 } // end loop over isic code vars
 
 
-*----------7.18: Check ISCO codes
+*----------8.18: Check ISCO codes
 foreach var of global isco_check {
 	cap confirm numeric variable `var'
 	if _rc == 0 { // if vars exist, else captured in 1.1
@@ -663,9 +712,102 @@ foreach var of global isco_check {
 } // end loop over isco code vars
 
 
+/*==================================================
+              9: Consistency fo specific numbers
+==================================================*/
+
+*----------9.1: Create comparison, merge it in
+levelsof countrycode, local(ccode)
+levelsof year, local(survey_year)
+
+tempfile static_check_file
+save `static_check_file'
+
+wbopendata, country(`ccode') clear
+cap confirm variable yr`survey_year'
+if _rc == 0 { // if data for that year exists
+	gen value = yr`survey_year'
+}
+
+gen keeper = regexm(indicatorcode, "^SP.URB.TOTL.IN.ZS$|^SL.TLF.ACTI.ZS$|^SP.POP.TOTL$")
+keep if keeper == 1
+keep countrycode indicatorcode value
+replace indicatorcode =  "urbanization_wdi" if indicatorcode == "SP.URB.TOTL.IN.ZS"
+replace indicatorcode =  "lf_particip_wdi" if indicatorcode == "SL.TLF.ACTI.ZS"
+replace indicatorcode =  "population_wdi" if indicatorcode == "SP.POP.TOTL"
+
+reshape wide value, i(countrycode) j(indicatorcode) string
+rename value* *
+
+merge 1:m countrycode using `static_check_file', assert(match) nogen
+
+*----------9.2: Compare total population
+cap confirm variable weight
+if _rc == 0 { // if vars exist, else captured above
+	summarize weight [aw = weight]
+	local survey_pop `r(sum_w)'
+	summarize population_wdi
+	local wdi_pop `r(mean)'
+
+	local pop_diff = abs((`survey_pop' - `wdi_pop')/`survey_pop')
+	post `memhold' ("WDI Comparison") ("Population") ("Survey population and WDI population for the year differ by ->") (`pop_diff') (1)
+}
+
+
+*----------9.3: Compare urbanization rate
+cap confirm variable urban weight
+if _rc == 0 { // if vars exist, else captured above
+	summarize urban [aw = weight]
+	local survey_urb = round(r(mean)*100,0.1)
+	summarize urbanization_wdi
+	local wdi_urb  = round(r(mean),0.1)
+
+	local urb_diff = abs((`survey_urb' - `wdi_urb')/`survey_urb')
+	post `memhold' ("WDI Comparison") ("Urbanization") ("Survey urbanization rate is `survey_urb'% and WDI urb rate for the year is `wdi_urb'%. Difference ->") (`urb_diff') (1)
+}
+
+
+*----------9.4: Compare 7 day labour force participation rate
+cap confirm variable lstatus age weight
+if _rc == 0 { // if vars exist, else captured above
+	gen helper = .
+	replace helper = 0 if lstatus == 3 & inrange(age, 15,64)
+	replace helper = 1 if (lstatus == 1 | lstatus == 2) & inrange(age, 15,64)
+	summarize helper [aw = weight]
+	local survey_lfp = round(r(mean)*100,0.1)
+	drop helper
+	summarize lf_particip_wdi
+	local wdi_lfp = round(r(mean),0.1)
+
+	local lfp_diff = abs((`survey_lfp' - `wdi_lfp')/`survey_lfp')
+	post `memhold' ("WDI Comparison") ("LFP 7 day") ("Survey 7 day LFP is `survey_lfp'% and WDI LFP for the year is `wdi_lfp'%. Difference ->") (`lfp_diff') (1)
+}
+
+
+*----------9.5: Compare 12 month labour force participation rate
+cap confirm variable lstatus_year age weight
+if _rc == 0 { // if vars exist, else captured above
+	gen helper = .
+	replace helper = 0 if lstatus_year == 3 & inrange(age, 15,64)
+	replace helper = 1 if (lstatus_year == 1 | lstatus_year == 2) & inrange(age, 15,64)
+	summarize helper [aw = weight]
+	local survey_lfp = round(r(mean)*100,0.1)
+	drop helper
+	summarize lf_particip_wdi
+	local wdi_lfp = round(r(mean),0.1)
+
+	local lfp_diff = abs((`survey_lfp' - `wdi_lfp')/`survey_lfp')
+	post `memhold' ("WDI Comparison") ("LFP 12 month") ("Survey 12 month LFP is `survey_lfp'% and WDI LFP for the year is `wdi_lfp'%. Difference ->") (`lfp_diff') (1)
+}
+
+
+*----------9.6: Clean up vars from comparison
+drop lf_particip_wdi population_wdi urbanization_wdi
+
+
 
 /*==================================================
-              8: End
+              10: End
 ==================================================*/
 
 * Close postfile
