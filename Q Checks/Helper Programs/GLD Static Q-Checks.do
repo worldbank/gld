@@ -713,7 +713,7 @@ foreach var of global isco_check {
 
 
 /*==================================================
-              9: Consistency fo specific numbers
+              9: Consistency compared to WDI
 ==================================================*/
 
 *----------9.1: Create comparison, merge it in

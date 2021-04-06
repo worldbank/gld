@@ -114,11 +114,12 @@ do "`path_to_static'"
 ==================================================*/
 
 *----------5.1: Store .dta postfiles in local, store excel output file name
-local output_files : dir "${path_to_output_folder}" files "*.dta" // only the .dta files
+local output_dta_files : dir "${path_to_output_folder}" files "*.dta" // only the .dta files
+local output_png_files : dir "${path_to_output_folder}" files "*.png" // only the .png files
 local output_excel_filename = "${path_to_output_folder}" + "\" + "${survey_id}" + "_Q-Checks.xlsx"
 
-*----------5.2: Loop, store each in a different sheet
-foreach filename of local output_files {
+*----------5.2: Loop, store each dta in a different sheet
+foreach filename of local output_dta_files {
 	local filename_full_path = "${path_to_output_folder}" + "\" + "`filename'"
 	
 	* Extract static, dynamic, ... based on the assumption of how postfiles were named
@@ -128,4 +129,17 @@ foreach filename of local output_files {
 	use "`filename_full_path'", clear
 	export excel using "`output_excel_filename'", sheet("`sheet_name'") replace
 }
+
+*----------5.3: Loop, store the density plots in a sheet
+local counter = 0
+foreach filename of local output_png_files {
+	local filename_full_path = "${path_to_output_folder}" + "\" + "`filename'"
+	local row_number = `counter'*7 + 1
+	
+	putexcel set "`output_excel_filename'", sheet("Density") modify
+	putexcel A`row_number' = picture(`filename_full_path')
+	
+	local ++counter
+}
+
 
