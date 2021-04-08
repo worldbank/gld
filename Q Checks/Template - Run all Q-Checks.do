@@ -30,6 +30,12 @@ set varabbrev off, permanently
 * Path to harmonized .dta file
 global path_to_harmonization "[YOUR PATHFILE TO HARMONIZED DATA FILE]"
 
+* Path to other harmonized files for dynamic comparison
+* Leave as `" "' to skip this (no others or to be done later)
+* Write as a set of paths like 
+* global path_to_other_harmonization `" "Path 1" "Path 2" ... "' Note the space between `" and "Path 1"
+global path_to_other_harmonization `" "' 
+
 * Survey ID as per CCC_YYYY_[Survey-Name]_v##_M_v##_A_GLD convention
 global survey_id "CCC_YYYY_Survey-Name_V0X_M_V0Z_A_GLD"
 
@@ -71,8 +77,8 @@ if _rc ssc install wbopendata
 
 *----------2.2: Check files and folders exists
 
-confirm file "${path_to_harmonization}"
-if `r(confirmdir)' != 0 {
+capture confirm file "${path_to_harmonization}"
+if _rc != 0 {
 	display as error "path_to_harmonization file cannot be found"
 	exit
 }
@@ -89,7 +95,6 @@ if `r(confirmdir)' != 0 {
 	exit
 }
 
-use "${path_to_harmonization}", clear
 
 /*==================================================
 	2: Run static q checks
@@ -99,9 +104,12 @@ local path_to_static = "${path_to_helpers}" + "\GLD Static Q-Checks.do"
 do "`path_to_static'"
 
 /*==================================================
-	3: Run [] q checks
+	3: Run Dynamic q checks
 ==================================================*/
 
+local path_to_dynamic = "${path_to_helpers}" + "\GLD Dynamic Q-Checks.do"
+
+do "`path_to_dynamic'"
 
 /*==================================================
 	4: Run missing cases overview
@@ -131,15 +139,15 @@ foreach filename of local output_dta_files {
 }
 
 *----------5.3: Loop, store the density plots in a sheet
-local counter = 0
 foreach filename of local output_png_files {
+
 	local filename_full_path = "${path_to_output_folder}" + "\" + "`filename'"
-	local row_number = `counter'*7 + 1
-	
-	putexcel set "`output_excel_filename'", sheet("Density") modify
-	putexcel A`row_number' = picture(`filename_full_path')
-	
-	local ++counter
+	local sheet_name = substr("`filename'", 1, strpos("`filename'", ".") - 1) 
+
+	putexcel set "`output_excel_filename'", sheet("`sheet_name'") modify
+	putexcel A1 = picture(`filename_full_path')
+
 }
+
 
 

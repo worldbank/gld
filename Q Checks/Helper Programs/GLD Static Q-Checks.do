@@ -17,7 +17,6 @@ Output: Static Overview Postfile
 ==================================================*/
 
 version 16
-set varabbrev off, permanently
 
 *----------0.1: Set necessary paths
 
@@ -37,9 +36,12 @@ foreach helper_file in `helper_files' {
 *----------0.3: Define postfile
 
 tempname memhold
-postfile `memhold' str20 Block str45 Var_Name str120 Test_Type Result Flag using `postfile_path', replace
+postfile `memhold' str20 Block str45 Var_Name str120 Test_Type Result Flag using "`postfile_path'", replace
 
-*----------0.4: Define global of total obs
+*----------0.4: Read in file
+use "${path_to_harmonization}", clear
+
+*----------0.5: Define global of total obs
 
 qui : count
 global overall_count = `r(N)'
@@ -116,7 +118,7 @@ foreach var of global string_vars {
 foreach var of global invariant_vars {
 	cap confirm variable `var'
 	if _rc == 0 { // if var exists since if not captured in 1.1
-		qui: distinct `x'
+		qui: distinct `var'
 		if `r(ndistinct)' > 1 { // var takes more than one value
 			post `memhold' ("Overall") ("`var'") ("Invariant variable takes 2+ values") (.) (1)
 		}
@@ -127,7 +129,7 @@ foreach var of global invariant_vars {
 foreach var of global change_should_vars {
 	cap confirm variable `var'
 	if _rc == 0 { // if var exists since if not captured in 1.1
-		qui: distinct `x'
+		qui: distinct `var'
 		if `r(ndistinct)' == 1 { // var takes just one value (r(ndistinct) == 1). All missing (r(ndistinct) == 0) is accepted
 			post `memhold' ("Overall") ("`var'") ("Variable is unique in dataset") (.) (99)
 		}
@@ -141,15 +143,12 @@ foreach var of global change_should_vars {
 foreach var of global hh_level_vars {
 	cap confirm variable `var'
 	if _rc == 0 { // if var exists since if not captured in 1.1
-		local evaluate_unique = 0
-		qui : levelsof hhid, local(hhid_levels)
-		foreach hh of local levels { // evaluate if there is more than one answer in each HH
-			qui : distinct `var' if hhid == "`hh'"
-			if `r(ndistinct)' > 1 local ++evaluate_unique
+		by hhid (`var'), sort: gen diff = `var'[1] != `var'[_N] // if equal, in group first == last
+		qui : count if diff == 1
+		if `r(N)' > 0 { // there are cases where diff is 1 (condition is true)
+			post `memhold' ("Overall") ("`var'") ("Variable is not unique within HH") (.) (99)
 		}
-		if `evaluate_unique' > 0 { // if at least one change, local has ticked upwards
-			post `memhold' ("Overall") ("`var'") ("Variable is unique in dataset") (.) (99)
-		}
+		drop diff
 	}
 }
 
