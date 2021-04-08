@@ -97,14 +97,14 @@ if `r(confirmdir)' != 0 {
 
 
 /*==================================================
-	2: Run static q checks
+	3: Run static q checks
 ==================================================*/
 
 local path_to_static = "${path_to_helpers}" + "\GLD Static Q-Checks.do"
 do "`path_to_static'"
 
 /*==================================================
-	3: Run Dynamic q checks
+	4: Run Dynamic q checks
 ==================================================*/
 
 local path_to_dynamic = "${path_to_helpers}" + "\GLD Dynamic Q-Checks.do"
@@ -112,13 +112,13 @@ local path_to_dynamic = "${path_to_helpers}" + "\GLD Dynamic Q-Checks.do"
 do "`path_to_dynamic'"
 
 /*==================================================
-	4: Run missing cases overview
+	5: Run missing cases overview
 ==================================================*/
 
 
 
 /*==================================================
-	5: Unite all postfiles, export to Excel
+	6: Unite all postfiles, export to Excel
 ==================================================*/
 
 *----------5.1: Store .dta postfiles in local, store excel output file name
