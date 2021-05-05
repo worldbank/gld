@@ -16,7 +16,6 @@
 <_Country_>						[Country_Name (CCC)] </_Country_> 
 <_Survey Title_>				[SurveyName] </_Survey Title_> 
 <_Survey Year_>					[Year of start of the survey] </_Survey Year_> 
-<_ICLS Version_>				[Version of ICLS for Labor Questions] </_ICLS Version_> 
 <_Study ID_>					[Microdata Library ID if present] </_Study ID_> 
 <_Data collection from (M/Y)_>	[MM/YYYY] </_Data collection from (M/Y)_> 
 <_Data collection to (M/Y)_>	[MM/YYYY] </_Data collection to (M/Y)_> 
@@ -25,8 +24,18 @@
 <_Sample size (IND)_> 			[#] </_Sample size (IND)_> 
 <_Sampling method_> 			[Brief description] </_Sampling method_> 
 <_Geographic coverage_> 		[To what level is data significant] </_Geographic coverage_> 
-<_Currency_> 					[Currency used for wages] </_Currency_> ----------------------------------------------------------------------- 
+<_Currency_> 					[Currency used for wages] </_Currency_> 
 
+----------------------------------------------------------------------- 
+
+<_ICLS Version_>				[Version of ICLS for Labor Questions] </_ICLS Version_> 
+<_ISCED Version_>				[Version of ICLS for Labor Questions] </_ISCED Version_> 
+<_ISCO Version_>				[Version of ICLS for Labor Questions] </_ISCO Version_> 
+<_OCCUP National_>				[Version of ICLS for Labor Questions] </_OCCUP National_> 
+<_ISIC Version_>				[Version of ICLS for Labor Questions] </_ISIC Version_> 
+<_INDUS National_>				[Version of ICLS for Labor Questions] </_INDUS National_> 
+
+----------------------------------------------------------------------- 
 <_Version Control_> 
 
 * Date: [YYYY-MM-DD] File: [As in Program name above] - [Description of changes]
