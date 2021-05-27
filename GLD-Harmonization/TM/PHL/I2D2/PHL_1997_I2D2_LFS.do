@@ -515,8 +515,14 @@
 
 
 ** OCCUPATION CLASSIFICATION
-	/*This info seems missing from raw survey, up thru wages second job*/
-	gen byte occup=.
+	
+	* Convert primary occupation to numeric
+	/*This converts all alpha codes to numeric, ok since no indication as to what they are*/
+	destring procc, generate(procc_num) force
+
+	* generate occupation variable 
+	gen byte occup=floor(procc_num/10)
+	recode occup 0 = 10					// incoming 0's recoded to "armed forces"	
 	replace occup=. if lstatus!=1 		// restrict universe to employed only
 	replace occup=. if age < lb_mod_age	// restrict universe to working age
 	label var occup "1 digit occupational classification"
@@ -525,7 +531,7 @@
 
 
 ** SURVEY SPECIFIC OCCUPATION CLASSIFICATION
-	gen occup_orig=.
+	gen occup_orig=procc
 	replace occup_orig=. if lstatus!=1 			// restrict universe to employed only
 	replace occup_orig=. if age < lb_mod_age	// restrict universe to working age
 	label var occup_orig "Original Occupational Codes"
