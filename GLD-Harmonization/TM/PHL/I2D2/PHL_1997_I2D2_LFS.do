@@ -532,8 +532,8 @@
 
 ** SURVEY SPECIFIC OCCUPATION CLASSIFICATION
 	gen occup_orig=procc
-	replace occup_orig=. if lstatus!=1 			// restrict universe to employed only
-	replace occup_orig=. if age < lb_mod_age	// restrict universe to working age
+	replace occup_orig="" if lstatus!=1 			// restrict universe to employed only
+	replace occup_orig="" if age < lb_mod_age	// restrict universe to working age
 	label var occup_orig "Original Occupational Codes"
 
 
@@ -781,7 +781,7 @@
 
 ** ORDER VARIABLES
 	order sample ccode year intv_year month idh idp wgt strata psu urb	///
-				reg01 reg02 reg03 reg04 ownhouse water electricity toilet landphone      ///
+				reg01 reg02 reg03 reg04 ownhouse water electricity toilet landphone ///
 				cellphone computer internet hhsize head gender age soc marital ///
 				ed_mod_age everattend atschool literacy educy edulevel1 edulevel2 ///
 				edulevel3 lb_mod_age lstatus lstatus_year empstat empstat_year ///
