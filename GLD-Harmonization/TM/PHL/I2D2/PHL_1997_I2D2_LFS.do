@@ -661,13 +661,6 @@
 	replace contract=. if lstatus!=1 				// restrict universe to employed only
 	replace contract=. if age < lb_mod_age			// restrict universe to working age
 	
-/*	gen byte contract=. 
-	recode contract 2=0 	// what is this line for if there's no 2 option?
-	label var contract "Contract"
-	la de lblcontract 0 "Without contract" 1 "With contract"
-	label values contract lblcontract
-	replace contract=. if lstatus!=1
-*/
 
 ** HEALTH INSURANCE
 	gen byte healthins=.
