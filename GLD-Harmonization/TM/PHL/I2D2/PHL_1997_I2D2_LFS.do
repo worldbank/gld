@@ -35,12 +35,15 @@
 	set more off
 	set mem 800m
 
-
 ** DIRECTORY
 	local 	drive 	`"Y"'		// set this to where you mapped the GLD drive on your work computer
 	local 	cty3 	"PHL" 	// set this to the three letter country/economy abbreviation
 	local 	usr		`"551206_TM"' // set this to whatever Mario named your folder
 	local 	surv_yr `"1997"'	// set this to the survey year 
+	
+** RUN SETTINGS
+	local 	cb_pause = 1	// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
+	
 	
 	
 	local 	year 		"`drive':\GLD-Harmonization\\`usr'\\`cty3'\\`cty3'_`surv_yr'_LFS" // top data folder
@@ -87,6 +90,12 @@
 		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template.xlsx"' /// output excel command makes
 		, clear replace surveys(JAN1997 APR1997 JUL1997 OCT1997) /// survey names
 		match // atuo match the same-named variables 
+	
+	if (`cb_pause' == 1) {
+		pause on  
+		pause pausing while you edit your codebook. Save aligned codebook with suffix "-IN.xlsx" in the same directory as the output. press 'q' to continue.
+	} 
+	
 	
 *** append the dataset 
 	iecodebook append ///
