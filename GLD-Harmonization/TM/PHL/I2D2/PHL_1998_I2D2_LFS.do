@@ -57,7 +57,7 @@
 
 
 ** LOG FILE
-	log using "`id_data'\`cty3'_`surv_yr'_I2D2_LFS.log", replace
+	log using `"`id_data'\\`cty3'_`surv_yr'_I2D2_LFS.log"', replace
 	
 	
 ** FILES
@@ -836,7 +836,7 @@ if (`append' == 1) {
 	}
 
 
-	save "`id_data'\`cty3'_`surv_yr'_I2D2_LFS.dta", replace 
+	save `"`id_data'\\`cty3'_`surv_yr'_I2D2_LFS.dta"', replace 
 
 	log close
 
