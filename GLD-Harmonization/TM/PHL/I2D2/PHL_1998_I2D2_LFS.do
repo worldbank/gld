@@ -100,8 +100,7 @@ if (`append' == 1) {
 		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template-IN.xlsx"' /// output just created above
 		, clear surveys(JAN1998) // survey names
 	}
-else {
-	
+	else {	
 *** use the single file 
 	use `"`round1'"', clear
 	
@@ -391,13 +390,7 @@ else {
 	label var everattend "Ever attended school"
 	la de lbleverattend 0 "No" 1 "Yes"
 	label values everattend lbleverattend
-	/*gen byte everattend=.
-	replace everatten=1 if edulevel3==2 | edulevel3==3 | edulevel3==4
-	replace everatten=0 if edulevel3==1
-	label var everattend "Ever attended school"
-	la de lbleverattend 0 "No" 1 "Yes"
-	label values everattend lbleverattend
-	*/
+
 
 
 /*****************************************************************************************************
