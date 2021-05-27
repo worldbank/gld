@@ -43,7 +43,7 @@
 	
 ** RUN SETTINGS
 	local 	cb_pause = 1	// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
-	
+	local 	append 	 = 0 	// 1 to run iecodebook append, 0 if file is already appended.  
 	
 	
 	local 	year 		"`drive':\GLD-Harmonization\\`usr'\\`cty3'\\`cty3'_`surv_yr'_LFS" // top data folder
@@ -82,8 +82,8 @@
 ** DATABASE ASSEMBLENT
 
 ** HARMONIZE VARIABLE NAMES, LABELS 
-/*Note: using iecodebook to harmonize with a previously constructed excel template*/
 
+if (`append' == 1) {
 *** set up the codebook template
 	iecodebook template ///
 		`"`round1'"' `"`round2'"' `"`round3'"' `"`round4'"' /// survey files
@@ -102,6 +102,13 @@
 		`"`round1'"' `"`round2'"' `"`round3'"' `"`round4'"' /// survey files
 		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template-IN.xlsx"' /// output just created above
 		, clear surveys(JAN1997 APR1997 JUL1997 OCT1997) // survey names
+	}
+	else {	
+*** use the single file 
+	use `"`round1'"', clear
+	
+	}
+	
 	
 ** SAMPLE
 	gen str7 sample = `"`cty3'"' + `"`surv_yr'"'
