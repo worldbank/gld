@@ -821,7 +821,7 @@
 	}
 
 
-	save "`id_data'\`cty3'_`surv_yr'_I2D2_LFS.dta", replace // replace with macro
+	save "`id_data'\`cty3'_`surv_yr'_I2D2_LFS.dta", replace 
 	*saveold "D:\__CURRENT\\`cty3'_`surv_yr'_I2D2_LFS.dta", replace // What is this??
 
 	log close
