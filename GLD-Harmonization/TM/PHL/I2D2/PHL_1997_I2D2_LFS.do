@@ -35,12 +35,15 @@
 	set more off
 	set mem 800m
 
-
 ** DIRECTORY
 	local 	drive 	`"Y"'		// set this to where you mapped the GLD drive on your work computer
 	local 	cty3 	"PHL" 	// set this to the three letter country/economy abbreviation
 	local 	usr		`"551206_TM"' // set this to whatever Mario named your folder
 	local 	surv_yr `"1997"'	// set this to the survey year 
+	
+** RUN SETTINGS
+	local 	cb_pause = 1	// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
+	
 	
 	
 	local 	year 		"`drive':\GLD-Harmonization\\`usr'\\`cty3'\\`cty3'_`surv_yr'_LFS" // top data folder
@@ -87,6 +90,12 @@
 		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template.xlsx"' /// output excel command makes
 		, clear replace surveys(JAN1997 APR1997 JUL1997 OCT1997) /// survey names
 		match // atuo match the same-named variables 
+	
+	if (`cb_pause' == 1) {
+		pause on  
+		pause pausing while you edit your codebook. Save aligned codebook with suffix "-IN.xlsx" in the same directory as the output. press 'q' to continue.
+	} 
+	
 	
 *** append the dataset 
 	iecodebook append ///
@@ -515,8 +524,14 @@
 
 
 ** OCCUPATION CLASSIFICATION
-	/*This info seems missing from raw survey, up thru wages second job*/
-	gen byte occup=.
+	
+	* Convert primary occupation to numeric
+	/*This converts all alpha codes to numeric, ok since no indication as to what they are*/
+	destring procc, generate(procc_num) force
+
+	* generate occupation variable 
+	gen byte occup=floor(procc_num/10)
+	recode occup 0 = 10					// incoming 0's recoded to "armed forces"	
 	replace occup=. if lstatus!=1 		// restrict universe to employed only
 	replace occup=. if age < lb_mod_age	// restrict universe to working age
 	label var occup "1 digit occupational classification"
@@ -525,9 +540,9 @@
 
 
 ** SURVEY SPECIFIC OCCUPATION CLASSIFICATION
-	gen occup_orig=.
-	replace occup_orig=. if lstatus!=1 			// restrict universe to employed only
-	replace occup_orig=. if age < lb_mod_age	// restrict universe to working age
+	gen occup_orig=procc
+	replace occup_orig="" if lstatus!=1 			// restrict universe to employed only
+	replace occup_orig="" if age < lb_mod_age	// restrict universe to working age
 	label var occup_orig "Original Occupational Codes"
 
 
@@ -655,13 +670,6 @@
 	replace contract=. if lstatus!=1 				// restrict universe to employed only
 	replace contract=. if age < lb_mod_age			// restrict universe to working age
 	
-/*	gen byte contract=. 
-	recode contract 2=0 	// what is this line for if there's no 2 option?
-	label var contract "Contract"
-	la de lblcontract 0 "Without contract" 1 "With contract"
-	label values contract lblcontract
-	replace contract=. if lstatus!=1
-*/
 
 ** HEALTH INSURANCE
 	gen byte healthins=.
@@ -768,21 +776,30 @@
 
 
 ** KEEP VARIABLES - ALL
-	keep sample ccode year intv_year month idh idp wgt strata psu urb reg01 reg02 reg03 reg04 ownhouse water electricity toilet landphone      ///
-	     cellphone computer internet hhsize head gender age soc marital ed_mod_age everattend atschool  ///
-	     literacy educy edulevel1 edulevel2 edulevel3 lb_mod_age lstatus lstatus_year empstat empstat_year njobs njobs_year ocusec nlfreason                         ///
-	     unempldur_l unempldur_u industry industry1 industry_orig occup occup_orig firmsize_l firmsize_u whours wage unitwage contract      ///
-	empstat_2 empstat_2_year industry_2 industry1_2 industry_orig_2 occup_2 wage_2 unitwage_2 ///
-	     healthins socialsec union rbirth_juris rbirth rprevious_juris rprevious yrmove rprevious_time_ref pci pci_d pcc pcc_d
+	keep sample ccode year intv_year month idh idp wgt strata psu urb ///
+				reg01 reg02 reg03 reg04 ownhouse water electricity toilet landphone      ///
+				cellphone computer internet hhsize head gender age soc marital ed_mod_age ///
+				everattend atschool literacy educy edulevel1 edulevel2 edulevel3 lb_mod_age ///
+				lstatus lstatus_year empstat empstat_year njobs njobs_year ocusec nlfreason ///
+				unempldur_l unempldur_u industry industry1 industry_orig occup occup_orig ///
+				firmsize_l firmsize_u whours wage unitwage contract  empstat_2 ///
+				empstat_2_year industry_2 industry1_2 industry_orig_2 occup_2 wage_2 unitwage_2 ///
+				healthins socialsec union rbirth_juris rbirth rprevious_juris rprevious ///
+				yrmove rprevious_time_ref pci pci_d pcc pcc_d
 
 
 ** ORDER VARIABLES
-	order sample ccode year intv_year month idh idp wgt strata psu urb reg01 reg02 reg03 reg04 ownhouse water electricity toilet landphone      ///
-	     cellphone computer internet hhsize head gender age soc marital ed_mod_age everattend atschool  ///
-	     literacy educy edulevel1 edulevel2 edulevel3 lb_mod_age lstatus lstatus_year empstat empstat_year njobs njobs_year ocusec nlfreason                         ///
-	     unempldur_l unempldur_u industry industry1 industry_orig occup occup_orig firmsize_l firmsize_u whours wage unitwage contract      ///
-	empstat_2 empstat_2_year industry_2 industry1_2 industry_orig_2 occup_2 wage_2 unitwage_2 ///
-	     healthins socialsec union rbirth_juris rbirth rprevious_juris rprevious yrmove rprevious_time_ref pci pci_d pcc pcc_d
+	order sample ccode year intv_year month idh idp wgt strata psu urb	///
+				reg01 reg02 reg03 reg04 ownhouse water electricity toilet landphone ///
+				cellphone computer internet hhsize head gender age soc marital ///
+				ed_mod_age everattend atschool literacy educy edulevel1 edulevel2 ///
+				edulevel3 lb_mod_age lstatus lstatus_year empstat empstat_year ///
+				njobs njobs_year ocusec nlfreason unempldur_l unempldur_u industry ///
+				industry1 industry_orig occup occup_orig firmsize_l firmsize_u ///
+				whours wage unitwage contract empstat_2 empstat_2_year ///
+				industry_2 industry1_2 industry_orig_2 occup_2 wage_2 unitwage_2 ///
+				healthins socialsec union rbirth_juris rbirth rprevious_juris ///
+				rprevious yrmove rprevious_time_ref pci pci_d pcc pcc_d
 
 	compress
 
@@ -805,7 +822,7 @@
 
 
 ** MISSING VALUES
-***Declare varlist which cannot contain missings
+	*Declare varlist which cannot contain missings
 	loc	nomissvars sample ccode year intv_year month idh idp wgt strata psu hhsize ed_mod_age lb_mod_age
 	
 	foreach var of local nomissvars {
@@ -821,8 +838,7 @@
 	}
 
 
-	save "`id_data'\`cty3'_`surv_yr'_I2D2_LFS.dta", replace // replace with macro
-	*saveold "D:\__CURRENT\\`cty3'_`surv_yr'_I2D2_LFS.dta", replace // What is this??
+	save "`id_data'\`cty3'_`surv_yr'_I2D2_LFS.dta", replace 
 
 	log close
 
