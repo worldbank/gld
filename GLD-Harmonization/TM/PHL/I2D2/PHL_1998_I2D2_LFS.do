@@ -258,21 +258,20 @@ if (`append' == 1) {
 
 
 ** HOUSEHOLD SIZE 
-	/*%% changed to include non-relatives*/
 	sort idh
-	by idh: egen hhsize= count(lno) if rel>=0 & rel<8
+	by idh: egen hhsize= count(lno < 8) // includes non-family members.
 	label var hhsize "Household size"
 	
-***CHECK: HHsize is greater than zero
-	sum hhsize 
-	assert r(min) > 0
+	* check 
+	mdesc hhsize 
+	assert r(miss) == 0
 
 
 ** RELATIONSHIP TO THE HEAD OF HOUSEHOLD
 	gen byte head=rel
 	recode head (0 8 9=6)(6=4) (4 5 7=5)
 	replace ownhouse=. if head==6
-	replace hhsize=. if head==6
+	replace hhsize=. if head==6		// is this correct?
 	label var head "Relationship to the head of household"
 	la de lblhead  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values head  lblhead
