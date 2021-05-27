@@ -48,10 +48,10 @@
 	
 	local 	year 		"`drive':\GLD-Harmonization\\`usr'\\`cty3'\\`cty3'_`surv_yr'_LFS" // top data folder
 	
-	local 	main		"`year'\\`cty3'_1997_LFS_v01_M"
+	local 	main		"`year'\\`cty3'_`surv_yr'_LFS_v01_M"
 	local 	 stata		"`main'\data\stata"
-	local 	gld 		"`year'\\`cty3'_1997_LFS_v01_M_v01_A_GLD"
-	local 	i2d2		"`year'\\`cty3'_1997_LFS_v01_M_v01_A_I2D2"
+	local 	gld 		"`year'\\`cty3'_`surv_yr'_LFS_v01_M_v01_A_GLD"
+	local 	i2d2		"`year'\\`cty3'_`surv_yr'_LFS_v01_M_v01_A_I2D2"
 	local 	 code 		"`i2d2'\Programs"
 	local 	 id_data 	"`i2d2'\Data\Harmonized"
 
