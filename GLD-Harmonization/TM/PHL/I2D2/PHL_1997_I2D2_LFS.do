@@ -253,14 +253,14 @@
 
 
 ** HOUSEHOLD SIZE 
-	/*%% changed to include non-relatives*/
 	sort idh
-	by idh: egen hhsize= count(lno) if rel>=0 & rel<8
+	by idh: egen hhsize= count(lno < 8) // includes non-family members.
 	label var hhsize "Household size"
 	
-***CHECK: HHsize is greater than zero
-	sum hhsize 
-	assert r(min) > 0
+	* check 
+	mdesc hhsize 
+	assert r(miss) == 0
+
 
 
 ** RELATIONSHIP TO THE HEAD OF HOUSEHOLD
