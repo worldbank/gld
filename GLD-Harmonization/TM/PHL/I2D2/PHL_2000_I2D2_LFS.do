@@ -147,7 +147,7 @@ if (`cb_pause' == 1) {
 ** HOUSEHOLD WEIGHTS
 	/* The weight variable will be divided by the number of rounds per year to ensure the 
 	   weighting factor does not over-mutliply*/	 
-	gen double wgt= rfadj/(10000 *6 `n_round')
+	gen double wgt= rfadj/(10000 * `n_round')
 	label var wgt "Household sampling weight"
 
 
@@ -459,8 +459,6 @@ if (`cb_pause' == 1) {
 
 ** SECTOR OF ACTIVITY: PUBLIC - PRIVATE
 	gen byte ocusec=.
-	replace ocusec=1 if  class==2 
-	replace ocusec=2 if lstatus==1 &  class~=2
 	label var ocusec "Sector of activity"
 	la de lblocusec 1 "Public, state owned, government, army, NGO" 2 "Private"
 	label values ocusec lblocusec
