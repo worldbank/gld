@@ -65,7 +65,7 @@
 	local round1 `"`stata'\LFS JAN1999.dta"'
 	
 ** VALUES
-	local n_round 	4			// numer of survey rounds
+	local n_round 	1			// numer of survey rounds
 	
 
 
