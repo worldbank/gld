@@ -62,7 +62,7 @@
 	
 ** FILES
 /*Note: for 1998, there is only 1 data file..*/
-	local round1 `"`stata'\LFS JAN1999.dta"'
+	local round1 `"`stata'\LFS JAN2000.dta"'
 	
 ** VALUES
 	local n_round 	4			// numer of survey rounds
