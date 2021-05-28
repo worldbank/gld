@@ -294,7 +294,7 @@ if (`cb_pause' == 1) {
 
 ** AGE
 	label var age "Individual age"
-	recode age 99=.  
+	replace age=98 if age>=98 & age!=.  
 
 
 ** SOCIAL GROUP
