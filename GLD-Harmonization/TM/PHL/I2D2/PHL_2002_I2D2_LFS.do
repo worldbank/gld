@@ -42,7 +42,7 @@
 	local 	surv_yr `"2002"'	// set this to the survey year
 
 ** RUN SETTINGS
-	local 	cb_pause = 1	// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
+	local 	cb_pause = 0	// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
 	local 	append 	 = 1	// 1 to run iecodebook append, 0 if file is already appended.
 
 
@@ -61,7 +61,6 @@
 
 
 ** FILES
-/*Note: for 1998, there is only 1 data file..*/
 	local round1 `"`stata'\LFS JAN2002.dta"'
 	local round2 `"`stata'\LFS APR2002.dta"'
 	local round3 `"`stata'\LFS JUL2002.dta"'
@@ -88,7 +87,7 @@ if (`append' == 1) {
 	iecodebook template ///
 		`"`round1'"' `"`round2'"' `"`round3'"' `"`round4'"' /// survey files
 		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template.xlsx"' /// output excel command makes
-		, clear replace surveys(JAN2002) /// survey names
+		, clear replace surveys(JAN2002 APR2002 JUL2002 OCT2002) /// survey names
 		match // atuo match the same-named variables
 
 if (`cb_pause' == 1) {
@@ -101,7 +100,7 @@ if (`cb_pause' == 1) {
 	iecodebook append ///
 		`"`round1'"' `"`round2'"' `"`round3'"' `"`round4'"' /// survey files
 		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template-IN.xlsx"' /// output just created above
-		, clear surveys(JAN2002) // survey names
+		, clear surveys(JAN2002 APR2002 JUL2002 OCT2002) // survey names
 	}
 	else {
 *** use the single file
