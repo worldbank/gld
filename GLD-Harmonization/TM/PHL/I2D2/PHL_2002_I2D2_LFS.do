@@ -540,9 +540,9 @@ if (`cb_pause' == 1) {
 	* in 2002, raw variable is numeric
 
 	* generate occupation variable
-	gen byte occup=floor(c14_procc/10)		// this handles most of recoding automatically.
-	recode occup 0 = 10	if 	c14_procc==1 	// recode "armed forces" to appropriate label
-	recode occup 0 = 99	if 	c14_procc==9 	// recode "Not classifiable occupations" to appropriate label
+	gen byte occup=floor(c14a_procc/10)		// this handles most of recoding automatically.
+	recode occup 0 = 10	if 	c14a_procc==1 	// recode "armed forces" to appropriate label
+	recode occup 0 = 99	if 	c14a_procc==9 	// recode "Not classifiable occupations" to appropriate label
 	replace occup=. if lstatus!=1 		// restrict universe to employed only
 	replace occup=. if age < lb_mod_age	// restrict universe to working age
 	label var occup "1 digit occupational classification"
@@ -551,7 +551,7 @@ if (`cb_pause' == 1) {
 
 
 ** SURVEY SPECIFIC OCCUPATION CLASSIFICATION
-	gen occup_orig=c14_procc
+	gen occup_orig=c14a_procc
 	replace occup_orig=. if lstatus!=1 			// restrict universe to employed only
 	replace occup_orig=. if age < lb_mod_age	// restrict universe to working age
 	label var occup_orig "Original Occupational Codes"
