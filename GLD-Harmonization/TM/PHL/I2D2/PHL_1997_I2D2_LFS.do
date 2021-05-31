@@ -143,13 +143,15 @@ if (`append' == 1) {
 
 
 ** INDIVIDUAL IDENTIFICATION NUMBER
-	egen idp=concat( idh lno)
+	bys idh: gen n_fam = _n		// generate family member number
+	
+	egen idp=concat( idh n_fam)
 	label var idp "Individual id"
 
 ** ID CHECKS
-	isid idp 		// individual id should uniquely identify
-	isid idh lno 	// household and line number should uniquely identify 
+	isid idh idp 	// household and individual id should uniquely identify
 
+	
 ** HOUSEHOLD WEIGHTS
 	/* The weight variable will be divided by the number of rounds per year to ensure the
 	   weighting factor does not over-mutliply*/
