@@ -1,4 +1,4 @@
-/*****************************************************************************************************
+c28a_otocc/*****************************************************************************************************
 ******************************************************************************************************
 **                                                                                                  **
 **                       INTERNATIONAL INCOME DISTRIBUTION DATABASE (I2D2)                          **
@@ -584,7 +584,7 @@ if (`cb_pause' == 1) {
 
 
 ** WAGES TIME UNIT
-	gen byte unitwage=1 					// but no way to verify this?
+	gen byte unitwage=1
 	replace unitwage=. if lstatus!=1 			// restrict universe to employed only
 	replace unitwage=. if age < lb_mod_age		// restrict universe to working age
 	replace unitwage=. if empstat==1			// restrict universe to wage earners
@@ -635,15 +635,19 @@ if (`cb_pause' == 1) {
 
 **SURVEY SPECIFIC INDUSTRY CLASSIFICATION - SECOND JOB
 	gen industry_orig_2=.
-	replace industry_orig_2=. if njobs==0 | njobs==.
 	replace industry_orig_2=. if lstatus!=1 				// restrict universe to employed only
 	replace industry_orig_2=. if age < lb_mod_age			// restrict universe to working age
 	label var industry_orig_2 "Original Industry Codes - Second job"
 
 
 ** OCCUPATION CLASSIFICATION - SECOND JOB
-	gen byte occup_2=.
-	replace occup_2=. if njobs==0 | njobs==.
+	gen byte occup_2=floor(c28a_otocc/10)		// this handles most of recoding automatically.
+	recode occup 0 = 10	if 	c28a_otocc==1 	// recode "armed forces" to appropriate label
+	recode occup 0 = 99	if 	c28a_otocc==9 	// recode "Not classifiable occupations" to appropriate label
+
+	replace occup=. if lstatus!=1 		// restrict universe to employed only
+	replace occup=. if age < lb_mod_age	// restrict universe to working age
+
 	replace occup_2=. if lstatus!=1 				// restrict universe to employed only
 	replace occup_2=. if age < lb_mod_age			// restrict universe to working age
 	label var occup_2 "1 digit occupational classification - second job"
