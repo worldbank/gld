@@ -595,7 +595,7 @@ if (`cb_pause' == 1) {
 
 ** EMPLOYMENT STATUS - SECOND JOB
 	gen byte empstat_2=.
-	replace empstat_2=. if njobs==0 | njobs==.
+
 	replace empstat_2=. if lstatus!=1 			// restrict universe to employed only
 	replace empstat_2=. if age < lb_mod_age		// restrict universe to working age
 	label var empstat_2 "Employment status - second job"
@@ -605,7 +605,7 @@ if (`cb_pause' == 1) {
 
 ** EMPLOYMENT STATUS - SECOND JOB LAST YEAR
 	gen byte empstat_2_year=.
-	replace empstat_2_year=. if njobs_year==0 | njobs_year==.
+
 	replace empstat_2_year=. if lstatus!=1 				// restrict universe to employed only
 	replace empstat_2_year=. if age < lb_mod_age		// restrict universe to working age
 	label var empstat_2_year "Employment status - second job"
@@ -615,7 +615,7 @@ if (`cb_pause' == 1) {
 
 ** INDUSTRY CLASSIFICATION - SECOND JOB
 	gen byte industry_2=.
-	replace industry_2=. if njobs==0 | njobs==.
+
 	replace industry_2=. if lstatus!=1 				// restrict universe to employed only
 	replace industry_2=. if age < lb_mod_age		// restrict universe to working age
 	label var industry_2 "1 digit industry classification - second job"
@@ -625,7 +625,7 @@ if (`cb_pause' == 1) {
 
 ** INDUSTRY 1 - SECOND JOB
 	gen byte industry1_2=.
-	replace industry1_2=. if njobs==0 | njobs==.
+
 	replace industry1_2=. if lstatus!=1 				// restrict universe to employed only
 	replace industry1_2=. if age < lb_mod_age			// restrict universe to working age
 	label var industry1_2 "1 digit industry classification (Broad Economic Activities) - Second job"
