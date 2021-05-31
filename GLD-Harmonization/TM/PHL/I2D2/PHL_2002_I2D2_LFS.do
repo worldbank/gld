@@ -615,7 +615,17 @@ if (`cb_pause' == 1) {
 
 ** INDUSTRY CLASSIFICATION - SECOND JOB
 	gen byte industry_2=.
-
+	gen byte industry=floor(c30a_okb/10)
+	replace industry=1 if c30a_okb >= 1 & c30a_okb <= 9
+	replace industry=2 if c30a_okb==10 | c30a_okb==11
+	replace industry=3 if c30a_okb>14 & c30a_okb<40
+	replace industry=4 if c30a_okb==40 | c30a_okb==41
+	replace industry=5 if c30a_okb==45
+	replace industry=6 if c30a_okb>49 & c30a_okb<56
+	replace industry=7 if c30a_okb>59 & c30a_okb<65
+	replace industry=8 if c30a_okb>64 & c30a_okb<75
+	replace industry=9 if c30a_okb == 75
+	replace industry=10 if c30a_okb>=76 & c30a_okb<100 	// this includes education for now.
 	replace industry_2=. if lstatus!=1 				// restrict universe to employed only
 	replace industry_2=. if age < lb_mod_age		// restrict universe to working age
 	label var industry_2 "1 digit industry classification - second job"
@@ -625,7 +635,7 @@ if (`cb_pause' == 1) {
 
 ** INDUSTRY 1 - SECOND JOB
 	gen byte industry1_2=.
-
+	recode industry1_2 (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
 	replace industry1_2=. if lstatus!=1 				// restrict universe to employed only
 	replace industry1_2=. if age < lb_mod_age			// restrict universe to working age
 	label var industry1_2 "1 digit industry classification (Broad Economic Activities) - Second job"
