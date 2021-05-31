@@ -666,8 +666,7 @@ if (`cb_pause' == 1) {
 
 
 ** WAGES - SECOND JOB
-	gen double wage_2=.
-	replace wage_2=. if njobs==0 | njobs==.
+	gen double wage_2=c34_obasic
 	replace wage_2=. if lstatus!=1 			// restrict universe to employed only
 	replace wage_2=. if age < lb_mod_age		// restrict universe to working age
 	replace wage_2=. if empstat==1			// restrict universe to wage earners
@@ -675,8 +674,7 @@ if (`cb_pause' == 1) {
 
 
 ** WAGES TIME UNIT - SECOND JOB
-	gen byte unitwage_2=.
-	replace unitwage_2=. if njobs==0 | njobs==.
+	gen byte unitwage_2=1
 	replace unitwage_2=. if lstatus!=1 			// restrict universe to employed only
 	replace unitwage_2=. if age < lb_mod_age		// restrict universe to working age
 	replace unitwage_2=. if empstat==1			// restrict universe to wage earners
