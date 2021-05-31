@@ -644,7 +644,7 @@ if (`cb_pause' == 1) {
 
 
 **SURVEY SPECIFIC INDUSTRY CLASSIFICATION - SECOND JOB
-	gen industry_orig_2=.
+	gen industry_orig_2=c30a_okb
 	replace industry_orig_2=. if lstatus!=1 				// restrict universe to employed only
 	replace industry_orig_2=. if age < lb_mod_age			// restrict universe to working age
 	label var industry_orig_2 "Original Industry Codes - Second job"
