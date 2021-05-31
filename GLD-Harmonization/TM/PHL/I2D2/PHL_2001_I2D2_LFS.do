@@ -30,7 +30,7 @@
 
 
 ** INITIAL COMMANDS
-	cap log close 
+	cap log close
 	clear
 	set more off
 	set mem 800m
@@ -39,15 +39,15 @@
 	local 	drive 	`"Y"'		// set this to where you mapped the GLD drive on your work computer
 	local 	cty3 	"PHL" 	// set this to the three letter country/economy abbreviation
 	local 	usr		`"551206_TM"' // set this to whatever Mario named your folder
-	local 	surv_yr `"2001"'	// set this to the survey year 
-	
+	local 	surv_yr `"2001"'	// set this to the survey year
+
 ** RUN SETTINGS
 	local 	cb_pause = 0	// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
-	local 	append 	 = 0 	// 1 to run iecodebook append, 0 if file is already appended. 
-	
-	
+	local 	append 	 = 0 	// 1 to run iecodebook append, 0 if file is already appended.
+
+
 	local 	year 		"`drive':\GLD-Harmonization\\`usr'\\`cty3'\\`cty3'_`surv_yr'_LFS" // top data folder
-	
+
 	local 	main		"`year'\\`cty3'_`surv_yr'_LFS_v01_M"
 	local 	 stata		"`main'\data\stata"
 	local 	gld 		"`year'\\`cty3'_`surv_yr'_LFS_v01_M_v01_A_GLD"
@@ -58,15 +58,15 @@
 
 ** LOG FILE
 	log using `"`id_data'\\`cty3'_`surv_yr'_I2D2_LFS.log"', replace
-	
-	
+
+
 ** FILES
 /*Note: for 1998, there is only 1 data file..*/
 	local round1 `"`stata'\LFS JAN2001.dta"'
-	
+
 ** VALUES
 	local n_round 	1			// numer of survey rounds
-	
+
 
 
 /*****************************************************************************************************
@@ -78,7 +78,7 @@
 
 ** DATABASE ASSEMBLENT
 
-** HARMONIZE VARIABLE NAMES, LABELS 
+** HARMONIZE VARIABLE NAMES, LABELS
 
 if (`append' == 1) {
 *** set up the codebook template
@@ -86,31 +86,31 @@ if (`append' == 1) {
 		`"`round1'"' `"`round2'"' `"`round3'"' `"`round4'"' /// survey files
 		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template.xlsx"' /// output excel command makes
 		, clear replace surveys(JAN2001) /// survey names
-		match // atuo match the same-named variables 
-	
+		match // atuo match the same-named variables
+
 if (`cb_pause' == 1) {
-		pause on  
+		pause on
 		pause pausing while you edit your codebook. Save aligned codebook with suffix "-IN.xlsx" in the same directory as the output. press 'q' to continue.
-	} 
-	
-	
-*** append the dataset 
+	}
+
+
+*** append the dataset
 	iecodebook append ///
 		`"`round1'"' `"`round2'"' `"`round3'"' `"`round4'"' /// survey files
 		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template-IN.xlsx"' /// output just created above
 		, clear surveys(JAN2001) // survey names
 	}
-	else {	
-*** use the single file 
+	else {
+*** use the single file
 	use `"`round1'"', clear
-	
+
 	}
-	
-	
-	
+
+
+
 ** SAMPLE
 	gen str7 sample = `"`cty3'"' + `"`surv_yr'"'
-	
+
 ** COUNTRY
 	gen str4 ccode=`"cty3"'
 	label var ccode "Country code"
@@ -140,13 +140,19 @@ if (`cb_pause' == 1) {
 
 
 ** INDIVIDUAL IDENTIFICATION NUMBER
-	egen idp=concat( idh c101_lno)
+	bys idh: gen n_fam = _n		// generate family member number
+
+	egen idp=concat( idh n_fam)
 	label var idp "Individual id"
+
+** ID CHECKS
+	isid idh idp 	// household and individual id should uniquely identify
+
 
 
 ** HOUSEHOLD WEIGHTS
-	/* The weight variable will be divided by the number of rounds per year to ensure the 
-	   weighting factor does not over-mutliply*/	 
+	/* The weight variable will be divided by the number of rounds per year to ensure the
+	   weighting factor does not over-mutliply*/
 	gen double wgt= rfadj/(10000 * `n_round')
 	label var wgt "Household sampling weight"
 
@@ -192,7 +198,7 @@ if (`cb_pause' == 1) {
 ** REGIONAL AREA 3 DIGITS ADM LEVEL (ADMN3)
 	gen reg04=.
 	label var reg04 "Region at 3 digits (ADMN3)"
-	
+
 
 ** HOUSE OWNERSHIP
 	gen byte ownhouse=.
@@ -257,13 +263,13 @@ if (`cb_pause' == 1) {
 *****************************************************************************************************/
 
 
-** HOUSEHOLD SIZE 
+** HOUSEHOLD SIZE
 	sort idh
 	by idh: egen hhsize= count(c101_lno < 8) // includes non-family members.
 	label var hhsize "Household size"
-	
-	* check 
-	mdesc hhsize 
+
+	* check
+	mdesc hhsize
 	assert r(miss) == 0
 
 
@@ -275,13 +281,13 @@ if (`cb_pause' == 1) {
 	label var head "Relationship to the head of household"
 	la de lblhead  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values head  lblhead
-	gen jh=(head==1)	
+	gen jh=(head==1)
 	bys idh: egen hh=sum(jh) // hh is the count of hh heads per family
-	
+
 	/*Note: if number of Household Heads is >1, all relevant HH head info is set to missing.
 			In this case the only relevant variable is head*/
 	replace head=. if hh>1
-	
+
 	*drop if hh==0
 
 
@@ -354,7 +360,7 @@ if (`cb_pause' == 1) {
 	replace edulevel1=4 if c07_grade==5
 	replace edulevel1=5 if c07_grade==6
 	replace edulevel1=7 if c07_grade==7 | ( c07_grade>=40 & c07_grade<=98)
-	replace edulevel1=9 if c07_grade==99 	// where 99 == 'not reported' 
+	replace edulevel1=9 if c07_grade==99 	// where 99 == 'not reported'
 	label var edulevel1 "Level of education 1"
 	la de lbledulevel1 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete" 8 "Other" 9 "Unstated"
 	label values edulevel1 lbledulevel1
@@ -365,7 +371,7 @@ if (`cb_pause' == 1) {
 	gen byte edulevel2=edulevel1
 	recode edulevel2 (4=3) (5=4)  (6/7=5) (8=.) (9=.) // add recode of 9
 	label var edulevel2 "Level of education 2"
-	la de lbledulevel2 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary" 
+	la de lbledulevel2 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
 	label values edulevel2 lbledulevel2
 	replace edulevel2=. if age < ed_mod_age // restrict universe to students at or above primary school age
 
@@ -383,7 +389,7 @@ if (`cb_pause' == 1) {
 ** EVER ATTENDED SCHOOL
 	/*Note, ever attend will be true=1 if student if of school age and has completed at least grade 1 or is
 		currently attending*/
-		
+
 	gen byte everattend=.
 	replace everatten=1 if age >= ed_mod_age & (atschool==1 | (2 <= edulevel1 <= 8 ))
 	replace everatten=0 if age >= ed_mod_age & atschool==0 & edulevel1==0
@@ -409,8 +415,8 @@ if (`cb_pause' == 1) {
 	Note: creating own label, not using label from empst1_nso	*/
 	gen byte lstatus=.
 	replace lstatus=1 if empst1_nso==1
-	replace lstatus=2 if empst1_nso==2 
-	replace lstatus=3 if empst1_nso==3 
+	replace lstatus=2 if empst1_nso==2
+	replace lstatus=3 if empst1_nso==3
 	replace lstatus=. if age < lb_mod_age // restrict universe to only those of working age
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -440,7 +446,7 @@ if (`cb_pause' == 1) {
 
 ** EMPLOYMENT STATUS LAST YEAR
 	gen byte empstat_year=.
-	replace empstat_year=. if lstatus_year!=1 // includes universe restriction 
+	replace empstat_year=. if lstatus_year!=1 // includes universe restriction
 	label var empstat_year "Employment status during last year"
 	la de lblempstat_year 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat_year lblempstat_year
@@ -473,8 +479,8 @@ if (`cb_pause' == 1) {
 	replace nlfreason=1 if c39_wynot==8
 	replace nlfreason=2 if c39_wynot==7
 	replace nlfreason=3 if c39_wynot==6 // & age>10 // why was only this restricted and not all (esp cuz of replace)
-	replace nlfreason=4 if c39_wynot==3 
-	replace nlfreason=5 if c39_wynot==1 | c39_wynot==2 | c39_wynot==4 | c39_wynot==5 | c39_wynot==9 
+	replace nlfreason=4 if c39_wynot==3
+	replace nlfreason=5 if c39_wynot==1 | c39_wynot==2 | c39_wynot==4 | c39_wynot==5 | c39_wynot==9
 	replace nlfreason=. if lstatus!=3 	// restricts universe to non-labor force
 	replace nlfreason=. if age < lb_mod_age // restrict universe to working age
 	label var nlfreason "Reason not in the labor force"
@@ -482,7 +488,7 @@ if (`cb_pause' == 1) {
 	label values nlfreason lblnlfreason
 
 
-** UNEMPLOYMENT DURATION: MONTHS LOOKING FOR A JOB 
+** UNEMPLOYMENT DURATION: MONTHS LOOKING FOR A JOB
 	gen byte unempldur_l= c37_weeks/4.2
 	label var unempldur_l "Unemployment duration (months) lower bracket"
 	replace unempldur_l=. if age < lb_mod_age // restrict universe to working age
@@ -508,7 +514,7 @@ if (`cb_pause' == 1) {
 	label var industry "1 digit industry classification"
 	la de lblindustry 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public Utility Services" 5 "Construction"  6 "Commerce" 7 "Transport and Communication" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industry lblindustry
-	replace industry=. if age < lb_mod_age // restrict universe to working age 
+	replace industry=. if age < lb_mod_age // restrict universe to working age
 	replace industry=. if lstatus!=1 		// restrict universe to employed only
 
 ** INDUSTRY 1
@@ -518,10 +524,10 @@ if (`cb_pause' == 1) {
 	label var industry1 "1 digit industry classification (Broad Economic Activities)"
 	la de lblindustry1 1 "Agriculture" 2 "Industry" 3 "Services" 4 "Other"
 	label values industry1 lblindustry1
-	replace industry1=. if age < lb_mod_age // restrict universe to working age 
+	replace industry1=. if age < lb_mod_age // restrict universe to working age
 	replace industry1=. if lstatus!=1 		// restrict universe to employed only
 
-**SURVEY SPECIFIC INDUSTRY CLASSIFICATION 
+**SURVEY SPECIFIC INDUSTRY CLASSIFICATION
 	gen industry_orig=c16_pkb
 	replace industry_orig=. if lstatus!=1 		// restrict universe to employed only
 	replace industry_orig=. if age < lb_mod_age // restrict universe to working age
@@ -530,8 +536,8 @@ if (`cb_pause' == 1) {
 
 ** OCCUPATION CLASSIFICATION
 	* in 2001, raw variable is numeric
-	
-	* generate occupation variable 
+
+	* generate occupation variable
 	gen byte occup=floor(c14_procc/10)		// this handles most of recoding automatically.
 	recode occup 0 = 10	if 	c14_procc==1 	// recode "armed forces" to appropriate label
 	recode occup 0 = 99	if 	c14_procc==9 	// recode "Not classifiable occupations" to appropriate label
@@ -576,7 +582,7 @@ if (`cb_pause' == 1) {
 
 
 ** WAGES TIME UNIT
-	gen byte unitwage=1 					// but no way to verify this?						
+	gen byte unitwage=1 					// but no way to verify this?
 	replace unitwage=. if lstatus!=1 			// restrict universe to employed only
 	replace unitwage=. if age < lb_mod_age		// restrict universe to working age
 	replace unitwage=. if empstat==1			// restrict universe to wage earners
@@ -664,15 +670,15 @@ if (`cb_pause' == 1) {
 
 
 ** CONTRACT
-	gen byte contract=. 
-	replace contract=0 if c08_conwr==2 | c08_conwr==8 
+	gen byte contract=.
+	replace contract=0 if c08_conwr==2 | c08_conwr==8
 	replace contract=1 if c08_conwr==1
 	label var contract "Contract"
 	la de lblcontract 0 "Without contract" 1 "With contract"
 	label values contract lblcontract
 	replace contract=. if lstatus!=1 				// restrict universe to employed only
 	replace contract=. if age < lb_mod_age			// restrict universe to working age
-	
+
 
 ** HEALTH INSURANCE
 	gen byte healthins=.
@@ -827,7 +833,7 @@ if (`cb_pause' == 1) {
 ** MISSING VALUES
 	*Declare varlist which cannot contain missings
 	loc	nomissvars sample ccode year intv_year month idh idp wgt strata psu hhsize ed_mod_age lb_mod_age
-	
+
 	foreach var of local nomissvars {
 		qui mdesc `var'
 		loc nmiss = r(miss)
@@ -841,7 +847,7 @@ if (`cb_pause' == 1) {
 	}
 
 
-	save `"`id_data'\\`cty3'_`surv_yr'_I2D2_LFS.dta"', replace 
+	save `"`id_data'\\`cty3'_`surv_yr'_I2D2_LFS.dta"', replace
 
 	log close
 
