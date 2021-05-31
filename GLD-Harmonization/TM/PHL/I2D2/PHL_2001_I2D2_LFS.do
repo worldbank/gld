@@ -509,8 +509,8 @@ if (`cb_pause' == 1) {
 	replace industry=6 if c16_pkb>49 & c16_pkb<56
 	replace industry=7 if c16_pkb>59 & c16_pkb<65
 	replace industry=8 if c16_pkb>64 & c16_pkb<75
-	replace industry=9 if c16_pkb>74 & c16_pkb<94
-	replace industry=10 if c16_pkb>94 & c16_pkb<100 // leave for now.
+	replace industry=9 if c16_pkb == 75
+	replace industry=10 if c16_pkb>=76 & c16_pkb<100 // this includes education for now.
 	label var industry "1 digit industry classification"
 	la de lblindustry 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public Utility Services" 5 "Construction"  6 "Commerce" 7 "Transport and Communication" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industry lblindustry
