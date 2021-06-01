@@ -136,22 +136,72 @@ if (`append' == 1) {
 
 
 ** HOUSEHOLD IDENTIFICATION NUMBER
-	egen idh=concat( regn  prov  domain urb panel hcn )
-	destring idh, float 
-	sort idh
+	* make each variable string, if not already 
+	loc idhvars regn  prov  domain urb panel hcn		// store idh vars in local
+	
+	ds `idhvars', has(type numeric)						// extract numeric vars
+	loc returnlist = r(varlist)
+	
+	foreach var of local returnlist {					// convert numeric vars to string
+		tostring `var', replace force
+	}							
+	
+	* make new values with desired length of each variable
+	* from: https://stackoverflow.com/questions/30545193/trailing-zeros-in-string-format-in-stata
+	loc len  = 4
+	foreach var of local idhvars {
+		gen xdif_`var' = 10 ^ (`len' - length(`var'))	// gen a legnth scalar for each var
+		gen real_`var' = real(`var') * xdif_`var'			// make a numeric version with scalar
+	}
+		
+	* concatenate, then destring
+	egen idh=concat( real_regn  real_prov  real_domain real_urb real_panel real_hcn )
+	*destring idh, generate(idh_float) float 
+	
+	*format idh %30.0f
 	label var idh "Household id"
+	
 
 
 
 ** INDIVIDUAL IDENTIFICATION NUMBER
 	bys idh: gen n_fam = _n		// generate family member number
+	
+	* repeat same process from above, but only with n_fam 
+	** make string 
+	loc idpvars 	n_fam 
+	
+	ds `idpvars', has(type numeric)						// extract numeric vars
+	loc returnlist = r(varlist)
+	
+	foreach var of local returnlist {					// convert numeric vars to string
+		tostring `var', replace force
+	}							
+	
+	* make new values with desired length of each variable
+	* from: https://stackoverflow.com/questions/30545193/trailing-zeros-in-string-format-in-stata
+	loc len  = 2
+	foreach var of local idpvars {
+		gen xdif_`var' = 10 ^ (`len' - length(`var'))	// gen a legnth scalar for each var
+		gen real_`var' = real(`var') * xdif_`var'			// make a numeric version with scalar
+	}
+	
+	egen idp=concat( idh real_n_fam)
 
-	egen idp=concat( idh n_fam)
+	sort idh idp
 	label var idp "Individual id"
 
 ** ID CHECKS
 	isid idh idp 	// household and individual id should uniquely identify
+	
+		/*The problem here is that this fails theid check because idp is actually 
+			the product of a failed algorithm, where number "01" becomes "10" and 10 
+			becomes "10" the only way to potentially get around this is to have 
+			1 more digit than you need or leave this as numeric. but what this 
+			actually means is that there may be situations in idh where we are 
+			"erasing" levels of unique nmumbers.*/
 
+	
 
 ** HOUSEHOLD WEIGHTS
 	/* The weight variable will be divided by the number of rounds per year to ensure the
