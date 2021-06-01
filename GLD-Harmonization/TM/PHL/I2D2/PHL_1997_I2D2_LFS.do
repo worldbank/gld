@@ -144,14 +144,14 @@ if (`append' == 1) {
 
 ** INDIVIDUAL IDENTIFICATION NUMBER
 	bys idh: gen n_fam = _n		// generate family member number
-	
+
 	egen idp=concat( idh n_fam)
 	label var idp "Individual id"
 
 ** ID CHECKS
 	isid idh idp 	// household and individual id should uniquely identify
 
-	
+
 ** HOUSEHOLD WEIGHTS
 	/* The weight variable will be divided by the number of rounds per year to ensure the
 	   weighting factor does not over-mutliply*/
@@ -280,7 +280,6 @@ if (`append' == 1) {
 	gen byte head=rel
 	recode head (0 8 9=6)(6=4) (4 5 7=5)
 	replace ownhouse=. if head==6
-	replace hhsize=. if head==6
 	label var head "Relationship to the head of household"
 	la de lblhead  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values head  lblhead
