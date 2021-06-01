@@ -278,7 +278,6 @@ if (`cb_pause' == 1) {
 	gen byte head=rel
 	recode head (0 8 9=6)(6=4) (4 5 7=5)
 	replace ownhouse=. if head==6
-	replace hhsize=. if head==6		// is this correct?
 	label var head "Relationship to the head of household"
 	la de lblhead  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values head  lblhead
