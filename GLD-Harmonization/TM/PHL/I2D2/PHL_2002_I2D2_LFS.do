@@ -407,7 +407,7 @@ if (`cb_pause' == 1) {
 *****************************************************************************************************/
 
 ** LABOR MODULE AGE
-	gen byte lb_mod_age=15
+	gen byte lb_mod_age=10
 	label var lb_mod_age "Labor module application age"
 
 
