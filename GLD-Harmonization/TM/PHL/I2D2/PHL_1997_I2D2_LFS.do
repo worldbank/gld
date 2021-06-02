@@ -136,17 +136,19 @@ if (`append' == 1) {
 
 
 ** HOUSEHOLD IDENTIFICATION NUMBER
-	loc idhvars 	regn  prov  domain urb panel hcn	// store idh vars in local
+	loc idhvars 	regn  prov  domain urb panel hcn 	// store idh vars in local
+	ds `idhvars',  	has(type numeric)			// filter out numeric variables in local
+	loc rlist 		= r(varlist)				// store numeric vars in local
 
-	* starting locals 
+	* starting locals
 	loc len = 4											// declare the length of each element in digits
 	loc idh_els ""										// start with empty local list
 
 	* make each variable string, including leading zeros
-	foreach var of local idhvars {
-		tostring `var'	///
-			, generate(idh_`var') ///
-			force format(`"%0`len'.0f"')
+	foreach var of local rlist {
+		tostring `var'	///								// make the numeric vars strings
+			, generate(idh_`var') ///					// gen a variable with this prefix
+			force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
 
 		loc idh_els 	`idh_els' idh_`var'				// add each variable to the local list
 
@@ -165,15 +167,17 @@ if (`append' == 1) {
 
 	* repeat same process from above, but only with n_fam
 	loc idpvars 	n_fam 								// store relevant idp vars in local
+	ds `idpvars',  	has(type numeric)			// filter out numeric variables in local
+	loc rlist 		= r(varlist)				// store numeric vars in local
 
 	* make new values with desired length of each variable
 	loc len = 2											// declare the length of each element in digits
 	loc idp_els ""										// start with empty local list
 
 	foreach var of local idpvars {
-		tostring `var'	///
-			, generate(idp_`var') ///
-			force format(`"%0`len'.0f"')
+		tostring `var'	///								// make numeric variables strings
+			, generate(idp_`var') ///					// generate a variable with this prefix
+			force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
 
 		loc idp_els 	`idp_els' idp_`var'				// add each variable to the local list
 
@@ -187,6 +191,7 @@ if (`append' == 1) {
 
 ** ID CHECKS
 	isid idh idp 										// household and individual id uniquely identify
+
 
 
 
