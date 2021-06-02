@@ -89,9 +89,7 @@ description: calls all PHL scripts for I2D2, edited from iecodebook script
    * Internal project folder paths. Same no matter user
    * ---------------------
 
-/Volumes/OWLS/gld-pre/gld/GLD-Harmonization/TM/PHL/I2D2
-
-	global  PHL 	`"${clone}/gld/GLD-Harmonization/TM/PHL"'
+	global  PHL 	`"${clone}/gld/GLD-Harmonization/TM/PHL/I2D2"'
 
 
 
@@ -108,7 +106,7 @@ loc 	phl00 	1
 loc 	phl01 	1
 loc 	phl02	1
 loc 	phl03	0
-loc 	phl04	1
+loc 	phl04	0
 
 
 * Run
