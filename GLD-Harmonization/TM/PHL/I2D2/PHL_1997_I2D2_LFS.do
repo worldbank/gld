@@ -137,7 +137,7 @@ if (`append' == 1) {
 
 ** HOUSEHOLD IDENTIFICATION NUMBER
 	egen idh=concat( regn  prov  domain urb panel hcn )
-	destring idh, float 
+	destring idh, replace float 
 	sort idh
 	label var idh "Household id"
 
