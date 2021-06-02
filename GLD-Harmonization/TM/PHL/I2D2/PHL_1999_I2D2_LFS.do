@@ -134,19 +134,59 @@ if (`cb_pause' == 1) {
 
 
 ** HOUSEHOLD IDENTIFICATION NUMBER
-	egen idh=concat( regn  prov  domain urb panel hcn )
-	sort idh
+	loc idhvars 	regn  prov  domain urb panel hcn	// store idh vars in local
+
+	* starting locals
+	loc len = 4											// declare the length of each element in digits
+	loc idh_els ""										// start with empty local list
+
+	* make each variable string, including leading zeros
+	foreach var of local idhvars {
+		tostring `var'	///
+			, generate(idh_`var') ///
+			force format(`"%0`len'.0f"')
+
+		loc idh_els 	`idh_els' idh_`var'				// add each variable to the local list
+
+	}
+
+	* concatenate to form idh: hosehold id
+	egen idh=concat( `idh_els' )						// concatenate vars we just made. code drops vars @ end
+
 	label var idh "Household id"
 
 
-** INDIVIDUAL IDENTIFICATION NUMBER
-	bys idh: gen n_fam = _n		// generate family member number
 
-	egen idp=concat( idh n_fam)
+
+** INDIVIDUAL IDENTIFICATION NUMBER
+	bys idh: gen n_fam = _n								// generate family member number
+
+	* repeat same process from above, but only with n_fam
+	loc idpvars 	n_fam 								// store relevant idp vars in local
+
+	* make new values with desired length of each variable
+	loc len = 2											// declare the length of each element in digits
+	loc idp_els ""										// start with empty local list
+
+	foreach var of local idpvars {
+		tostring `var'	///
+			, generate(idp_`var') ///
+			force format(`"%0`len'.0f"')
+
+		loc idp_els 	`idp_els' idp_`var'				// add each variable to the local list
+
+	}
+
+	* concatenate to form idp: individual id
+	egen idp=concat( `idp_els' )						// concatenate vars we just made. code drops vars @ end
+
+	sort idh idp
 	label var idp "Individual id"
 
 ** ID CHECKS
-	isid idh idp 	// household and individual id should uniquely identify
+	isid idh idp 										// household and individual id uniquely identify
+
+
 
 
 
