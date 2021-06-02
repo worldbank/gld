@@ -99,40 +99,35 @@ description: calls all PHL scripts for I2D2, edited from iecodebook script
 * 	Set to 1 to run, 0 otherwise
 * ---------------------
 
-loc 	phl97	1
-loc 	phl98 	1
-loc 	phl99 	1
-loc 	phl00 	1
-loc 	phl01 	1
-loc 	phl02	1
-loc 	phl03	0
-loc 	phl04	0
-
+loc 	phl1997		0
+loc 	phl1998 	1
+loc 	phl1999 	0
+loc 	phl2000 	1
+loc 	phl2001 	0
+loc 	phl2002		1
+loc 	phl2003		0
+loc 	phl2004		0
+loc 	phl2005 	0
+loc 	phl2006  	0
+loc 	phl2007 	0
+loc 	phl2008		0
+loc 	phl2009 	0
+loc 	phl2011 	0
+loc 	phl2012		0
+loc 	phl2013		0
+loc 	phl2014		0
+loc 	phl2015 	0
+loc 	phl2016  	0
+loc 	phl2017 	0
+loc 	phl2018		0
+loc 	phl2019 	0
+loc 	phl2020 	0
 
 * Run
 * ---------------------
 
-if (`phl97'==1) {
-	do `"${PHL}/PHL_1997_I2D2_LFS.do"'
-}
-if (`phl98'==1) {
-	do `"${PHL}/PHL_1998_I2D2_LFS.do"'
-}
-if (`phl99'==1) {
-	do `"${PHL}/PHL_1999_I2D2_LFS.do"'
-}
-if (`phl00'==1) {
-	do `"${PHL}/PHL_2000_I2D2_LFS.do"'
-}
-if (`phl01'==1) {
-	do `"${PHL}/PHL_2001_I2D2_LFS.do"'
-}
-if (`phl02'==1) {
-	do `"${PHL}/PHL_2002_I2D2_LFS.do"'
-}
-if (`phl03'==1) {
-	do `"${PHL}/PHL_2003_I2D2_LFS.do"'
-}
-if (`phl04'==1) {
-	do `"${PHL}/PHL_2004_I2D2_LFS.do"'
+forvalues year = 1997/2020 {
+    if (`phl`year''==1) {
+		do `"${PHL}/PHL_`year'_I2D2_LFS.do"'
+	}
 }
