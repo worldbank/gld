@@ -441,13 +441,7 @@ if (`append' == 1) {
 	label var everattend "Ever attended school"
 	la de lbleverattend 0 "No" 1 "Yes"
 	label values everattend lbleverattend
-	/*gen byte everattend=.
-	replace everatten=1 if edulevel3==2 | edulevel3==3 | edulevel3==4
-	replace everatten=0 if edulevel3==1
-	label var everattend "Ever attended school"
-	la de lbleverattend 0 "No" 1 "Yes"
-	label values everattend lbleverattend
-	*/
+
 
 
 /*****************************************************************************************************

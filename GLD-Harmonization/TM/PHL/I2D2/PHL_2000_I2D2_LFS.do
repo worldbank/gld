@@ -434,8 +434,8 @@ if (`cb_pause' == 1) {
 		currently attending*/
 
 	gen byte everattend=.
-	replace everatten=1 if age >= ed_mod_age & (atschool==1 | (2 <= edulevel1 <= 8 ))
-	replace everatten=0 if age >= ed_mod_age & atschool==0 & edulevel1==0
+	replace everattend=1 if age >= ed_mod_age & (atschool==1 | (2 <= edulevel1 <= 8 ))
+	replace everattend=0 if age >= ed_mod_age & atschool==0 & edulevel1==0
 	label var everattend "Ever attended school"
 	la de lbleverattend 0 "No" 1 "Yes"
 	label values everattend lbleverattend
