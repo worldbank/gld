@@ -73,13 +73,15 @@ description: calls all PHL scripts for I2D2, edited from iecodebook script
 
     if $user == 1 {
         global data		""					// data folder
-        global clone		    "C:/Users/WB551206/local/GitHub" // github/code top folder
+		global GLD 		"Y"					// set this to the letter the GLD drive is on your computer
+        global clone	"C:/Users/WB551206/local/GitHub" // github/code top folder
     }
 
 
 	if $user == 2 {
 	global data		"" 			// replace with folder above data repo
-	global clone		    "" // replace with folder above github folder
+	global GLD 		""			// set this to the letter the GLD drive is on your computer
+	global clone	"" // replace with folder above github folder
     }
 
 
