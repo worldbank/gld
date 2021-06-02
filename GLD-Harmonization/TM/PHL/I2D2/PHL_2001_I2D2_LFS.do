@@ -135,7 +135,7 @@ if (`cb_pause' == 1) {
 
 ** HOUSEHOLD IDENTIFICATION NUMBER
 	loc idhvars 	regn  prov cprrcd urb hcn 	// store idh vars in local
-	ds `idhvars',  	has(type numeric)			// filter out numeric variables in local 
+	ds `idhvars',  	has(type numeric)			// filter out numeric variables in local
 	loc rlist 		= r(varlist)				// store numeric vars in local
 
 	* starting locals
@@ -165,7 +165,7 @@ if (`cb_pause' == 1) {
 
 	* repeat same process from above, but only with n_fam
 	loc idpvars 	n_fam 								// store relevant idp vars in local
-	ds `idpvars',  	has(type numeric)			// filter out numeric variables in local 
+	ds `idpvars',  	has(type numeric)			// filter out numeric variables in local
 	loc rlist 		= r(varlist)				// store numeric vars in local
 
 	* make new values with desired length of each variable
@@ -175,7 +175,7 @@ if (`cb_pause' == 1) {
 	foreach var of local idpvars {
 		tostring `var'	///								// make numeric variables strings
 			, generate(idp_`var') ///					// generate a variable with this prefix
-			force format(`"%0`len'.0f"')				// ...and the specified number of digits in local 
+			force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
 
 		loc idp_els 	`idp_els' idp_`var'				// add each variable to the local list
 
