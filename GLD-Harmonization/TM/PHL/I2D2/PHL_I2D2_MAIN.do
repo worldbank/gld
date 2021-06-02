@@ -25,7 +25,7 @@ description: calls all PHL scripts for I2D2, edited from iecodebook script
 	macro drop _all
    *Install all packages that this project requires:
    *(Note that this never updates outdated versions of already installed commands, to update commands use adoupdate)
-   local user_commands ietoolkit scores // labutil      //Fill this list will all user-written commands this project requires
+   local user_commands ietoolkit scores  //Fill this list will all user-written commands this project requires
    foreach command of local user_commands {
        cap which `command'
        if _rc == 111 {
@@ -109,10 +109,10 @@ loc 	phl2001 	0
 loc 	phl2002		0
 loc 	phl2003		0
 loc 	phl2004		0
-loc 	phl2005 	1
+loc 	phl2005 	0
 loc 	phl2006  	0
 loc 	phl2007 	0
-loc 	phl2008		0
+loc 	phl2008		1
 loc 	phl2009 	0
 loc 	phl2011 	0
 loc 	phl2012		0
