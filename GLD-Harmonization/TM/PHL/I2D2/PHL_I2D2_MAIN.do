@@ -100,14 +100,14 @@ description: calls all PHL scripts for I2D2, edited from iecodebook script
 * ---------------------
 
 loc 	phl1997		0
-loc 	phl1998 	1
+loc 	phl1998 	0
 loc 	phl1999 	0
-loc 	phl2000 	1
+loc 	phl2000 	0
 loc 	phl2001 	0
-loc 	phl2002		1
+loc 	phl2002		0
 loc 	phl2003		0
 loc 	phl2004		0
-loc 	phl2005 	0
+loc 	phl2005 	1
 loc 	phl2006  	0
 loc 	phl2007 	0
 loc 	phl2008		0
