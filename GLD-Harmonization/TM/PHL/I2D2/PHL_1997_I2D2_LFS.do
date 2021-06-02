@@ -139,26 +139,28 @@ if (`append' == 1) {
 	* make each variable string, if not already 
 	loc idhvars regn  prov  domain urb panel hcn		// store idh vars in local
 	
-	ds `idhvars', has(type numeric)						// extract numeric vars
+	ds `idhvars', has(type string)						// extract numeric vars
 	loc returnlist = r(varlist)
 	
-	foreach var of local returnlist {					// convert numeric vars to string
+	/*)foreach var of local returnlist {				// convert numeric vars to string
 		tostring `var', replace force
 	}							
-	
+	*/
 	* make new values with desired length of each variable
 	* from: https://stackoverflow.com/questions/30545193/trailing-zeros-in-string-format-in-stata
 	loc len  = 4
+	loc idh_els ""		// start with empty local list
 	foreach var of local idhvars {
-		gen xdif_`var' = 10 ^ (`len' - length(`var'))	// gen a legnth scalar for each var
-		gen real_`var' = real(`var') * xdif_`var'			// make a numeric version with scalar
+		*gen str`len' idh_`var'  = string(`var', `"%0`len'.0f"')
+		tostring `var', generate(idh_`var') force format(`"%0`len'.0f"')
+		loc idh_els `idh_els' idh_`var'					// add each variable to the local list
+		
 	}
 		
-	* concatenate, then destring
-	egen idh=concat( real_regn  real_prov  real_domain real_urb real_panel real_hcn )
-	*destring idh, generate(idh_float) float 
+	* concatenate
+	egen idh=concat( `idh_els' )						// concatenate all variables we just made
 	
-	*format idh %30.0f
+	format idh %30.0f
 	label var idh "Household id"
 	
 
@@ -175,7 +177,7 @@ if (`append' == 1) {
 	loc returnlist = r(varlist)
 	
 	foreach var of local returnlist {					// convert numeric vars to string
-		tostring `var', replace force
+		tostring `var', replace force 
 	}							
 	
 	* make new values with desired length of each variable
