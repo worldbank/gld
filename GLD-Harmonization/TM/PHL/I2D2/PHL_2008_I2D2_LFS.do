@@ -390,7 +390,7 @@ if (`cb_pause' == 1) {
 
 
 ** EDUCATION MODULE AGE
-	gen byte ed_mod_age=10
+	gen byte ed_mod_age=5 					// minimum incluse attending school age is 5
 	label var ed_mod_age "Education module application age"
 
 
@@ -419,13 +419,12 @@ if (`cb_pause' == 1) {
 
 ** EDUCATIONAL LEVEL 1
 	gen byte edulevel1=.
-	replace edulevel1=1 if c07_grade==0
-	replace edulevel1=2 if c07_grade==1 | c07_grade==2 | c07_grade==3
-	replace edulevel1=3 if c07_grade==4
-	replace edulevel1=4 if c07_grade==5
-	replace edulevel1=5 if c07_grade==6
-	replace edulevel1=7 if c07_grade==7 | ( c07_grade>=40 & c07_grade<=98)
-	replace edulevel1=9 if c07_grade==99 	// where 99 == 'not reported'
+	replace edulevel1=1 if c09_grd==0
+	replace edulevel1=2 if c09_grd==1
+	replace edulevel1=3 if c09_grd==2
+	replace edulevel1=4 if c09_grd==3
+	replace edulevel1=5 if c09_grd==4
+	replace edulevel1=7 if c09_grd==5 | ( c09>=60 & c09<=78)
 	label var edulevel1 "Level of education 1"
 	la de lbledulevel1 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete" 8 "Other" 9 "Unstated"
 	label values edulevel1 lbledulevel1
@@ -434,7 +433,7 @@ if (`cb_pause' == 1) {
 
 ** EDUCATION LEVEL 2
 	gen byte edulevel2=edulevel1
-	recode edulevel2 (4=3) (5=4)  (6/7=5) (8=.) (9=.) // add recode of 9
+	recode edulevel2 (4=3) (5=4)  (6/7=5) (8=.) (9=.)
 	label var edulevel2 "Level of education 2"
 	la de lbledulevel2 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
 	label values edulevel2 lbledulevel2
@@ -443,7 +442,7 @@ if (`cb_pause' == 1) {
 
 ** EDUCATION LEVEL 3
 	gen byte edulevel3=edulevel1
-	recode edulevel3 (2 3 =2) (4 5 =3) (6/7 =4) (8=.) (9=.) // add recode of 9
+	recode edulevel3 (2 3 =2) (4 5 =3) (6/7 =4) (9=.)
 	label var edulevel3 "Level of education 3"
 	la de lbledulevel3 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values edulevel3 lbledulevel3
