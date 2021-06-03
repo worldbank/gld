@@ -478,12 +478,12 @@ if (`cb_pause' == 1) {
 
 
 ** LABOR STATUS
-	/*Changing by using empst1_nso to determine lstatus, not work
-	Note: creating own label, not using label from empst1_nso	*/
+	/*Changing by using newempst to determine lstatus, not work
+	Note: creating own label, not using label from newempst	*/
 	gen byte lstatus=.
-	replace lstatus=1 if empst1_nso==1
-	replace lstatus=2 if empst1_nso==2
-	replace lstatus=3 if empst1_nso==3
+	replace lstatus=1 if newempst==1
+	replace lstatus=2 if newempst==2
+	replace lstatus=3 if newempst==3
 	replace lstatus=. if age < lb_mod_age // restrict universe to only those of working age
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -501,10 +501,10 @@ if (`cb_pause' == 1) {
 
 ** EMPLOYMENT STATUS
 	gen byte empstat=.
-	replace empstat=1 if c17_pclass==0 | c17_pclass==1 | c17_pclass==2 | c17_pclass==5
-	replace empstat=2 if c17_pclass==6
-	replace empstat=3 if c17_pclass==4
-	replace empstat=4 if c17_pclass==3
+	replace empstat=1 if c19pclas==0 | c19pclas==1 | c19pclas==2 | c19pclas==5
+	replace empstat=2 if c19pclas==6
+	replace empstat=3 if c19pclas==4
+	replace empstat=4 if c19pclas==3
 	replace empstat=. if lstatus!=1 	// includes universe restriction
 	label var empstat "Employment status"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed"
