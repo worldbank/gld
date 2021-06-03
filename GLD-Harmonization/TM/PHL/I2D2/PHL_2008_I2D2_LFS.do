@@ -717,9 +717,9 @@ if (`cb_pause' == 1) {
 
 
 ** OCCUPATION CLASSIFICATION - SECOND JOB
-	gen byte occup_2=floor(c28a_otocc/10)		// this handles most of recoding automatically.
-	recode occup_2 0 = 10	if 	c28a_otocc==1 	// recode "armed forces" to appropriate label
-	recode occup_2 0 = 99	if 	c28a_otocc==9 	// recode "Not classifiable occupations" to appropriate label
+	gen byte occup_2=floor(j02_otoc/10)		// this handles most of recoding automatically.
+	recode occup_2 0 = 10	if 	j02_otoc==1 	// recode "armed forces" to appropriate label
+	recode occup_2 0 = 99	if 	j02_otoc==9 	// recode "Not classifiable occupations" to appropriate label
 
 	replace occup_2=. if lstatus!=1 		// restrict universe to employed only
 	replace occup_2=. if age < lb_mod_age	// restrict universe to working age
