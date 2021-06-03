@@ -136,7 +136,7 @@ if (`cb_pause' == 1) {
 
 
 ** HOUSEHOLD IDENTIFICATION NUMBER
-	loc idhvars 	regn  prov stratum urb hcn 	// store idh vars in local
+	loc idhvars 	reg  prov stratum urb2k70  hhnum 	// store idh vars in local
 
 
 	ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
@@ -218,7 +218,7 @@ if (`cb_pause' == 1) {
 ** HOUSEHOLD WEIGHTS
 	/* The weight variable will be divided by the number of rounds per year to ensure the
 	   weighting factor does not over-mutliply*/
-	gen double wgt= rfadj/(10000 * `n_round')
+	gen double wgt= fwgt/(10000 * `n_round')
 	label var wgt "Household sampling weight"
 
 

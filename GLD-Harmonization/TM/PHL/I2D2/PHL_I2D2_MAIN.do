@@ -101,7 +101,7 @@ description: calls all PHL scripts for I2D2, edited from iecodebook script
 * 	Set to 1 to run, 0 otherwise
 * ---------------------
 
-loc 	phl1997		1
+loc 	phl1997		0
 loc 	phl1998 	0
 loc 	phl1999 	0
 loc 	phl2000 	0
@@ -112,7 +112,7 @@ loc 	phl2004		0
 loc 	phl2005 	0
 loc 	phl2006  	0
 loc 	phl2007 	0
-loc 	phl2008		0
+loc 	phl2008		1
 loc 	phl2009 	0
 loc 	phl2011 	0
 loc 	phl2012		0
