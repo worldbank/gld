@@ -338,8 +338,10 @@ if (`cb_pause' == 1) {
 
 
 ** RELATIONSHIP TO THE HEAD OF HOUSEHOLD
-	gen byte head=c03_rel
-	recode head (0 8 9=6)(6=4) (4 5 7=5)
+	gen byte head=c05_rel				//  "head", "spouse", and children not recoded
+	recode head 	(4 5 6 8  	= 5)	/// siblings, children in law, grandchildren, other rel of hh head="other relatives"
+					(7 			= 4)	/// parents of hh head become "parents"
+					(9 10 11 	= 6) 	// boarders and domestic workers become "other/non-relatives"
 	replace ownhouse=. if head==6
 	label var head "Relationship to the head of household"
 	la de lblhead  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
