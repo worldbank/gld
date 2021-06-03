@@ -518,14 +518,14 @@ if (`cb_pause' == 1) {
 
 ** NUMBER OF ADDITIONAL JOBS
 	gen byte njobs=.
-	label var njobs "Number of additional jobs"
+	label var njobs "Number of total jobs"
 	replace njobs=. if age < lb_mod_age // restrict universe to working age
 
 
 ** NUMBER OF ADDITIONAL JOBS LAST YEAR
 	gen byte njobs_year=.
 	replace njobs_year=. if lstatus_year!=1 // restricts universe
-	label var njobs_year "Number of additional jobs during last year"
+	label var njobs_year "Number of total jobs during last year"
 
 
 ** SECTOR OF ACTIVITY: PUBLIC - PRIVATE
