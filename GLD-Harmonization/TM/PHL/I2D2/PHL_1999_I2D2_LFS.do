@@ -185,8 +185,8 @@ if (`cb_pause' == 1) {
 	*	so, not following processing for sorting numeric/non-numeric variables.
 
 	loc idpvars 	n_fam 								// store relevant idp vars in local
-	ds `idpvars',  	has(type numeric)			// filter out numeric variables in local
-	loc rlist 		= r(varlist)				// store numeric vars in local
+	ds `idpvars',  	has(type numeric)					// filter out numeric variables in local
+	loc rlist 		= r(varlist)						// store numeric vars in local
 
 	* make new values with desired length of each variable
 	loc len = 2											// declare the length of each element in digits

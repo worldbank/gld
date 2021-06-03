@@ -36,7 +36,7 @@
 	set mem 800m
 
 ** DIRECTORY
-	
+
 	local 	cty3 	"PHL" 	// set this to the three letter country/economy abbreviation
 	local 	usr		`"551206_TM"' // set this to whatever Mario named your folder
 	local 	surv_yr `"2003"'	// set this to the survey year
@@ -136,19 +136,82 @@ if (`cb_pause' == 1) {
 
 
 ** HOUSEHOLD IDENTIFICATION NUMBER
-	egen idh=concat( regn  prov stratum urb hcn ) // panel domain not in survey
-	sort idh
+	loc idhvars 	regn  prov stratum urb hcn 	// store idh vars in local
+
+	ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
+	loc numlist 	= r(varlist)						// store numeric vars in local
+	loc stringlist 	: list idhvars - numlist			// non-numeric vars in stringlist
+
+	* starting locals
+	loc len = 4											// declare the length of each element in digits
+	loc idh_els ""										// start with empty local list
+
+	* make each numeric var string, including leading zeros
+	foreach var of local numlist {
+		tostring `var'	///								// make the numeric vars strings
+			, generate(idh_`var') ///					// gen a variable with this prefix
+			force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
+
+		loc idh_els 	`idh_els' idh_`var'				// add each variable to the local list
+
+	}
+
+	* make each string variable numeric (as it should be), then string again with correct format
+	foreach var of local stringlist {
+		destring `var' /// 								// destring variable, make numeric version
+			, gen(num_`var') ///						//
+			force 										// force obs to num that are non numeric, ie to missing
+
+		tostring num_`var'	///							// make the numeric vars strings
+			, generate(idh_`var') ///					// gen a variable with this prefix
+			force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
+
+		loc idh_els 	`idh_els' idh_`var'				// add each variable to the local list
+
+	}
+
+
+	* concatenate all elements to form idh: hosehold id
+	egen idh=concat( `idh_els' )						// concatenate vars we just made. code drops vars @ end
+
 	label var idh "Household id"
 
 
-** INDIVIDUAL IDENTIFICATION NUMBER
-	bys idh: gen n_fam = _n		// generate family member number
 
-	egen idp=concat( idh n_fam)
+
+** INDIVIDUAL IDENTIFICATION NUMBER
+	bys idh: gen n_fam = _n								// generate family member number
+
+	* repeat same process from above, but only with n_fam.
+	* 	note, assuming that the only necessary individaul identifier is family member, which is numeric
+	*	so, not following processing for sorting numeric/non-numeric variables.
+
+	loc idpvars 	n_fam 								// store relevant idp vars in local
+	ds `idpvars',  	has(type numeric)					// filter out numeric variables in local
+	loc rlist 		= r(varlist)						// store numeric vars in local
+
+	* make new values with desired length of each variable
+	loc len = 2											// declare the length of each element in digits
+	loc idp_els ""										// start with empty local list
+
+	foreach var of local idpvars {
+		tostring `var'	///								// make numeric variables strings
+			, generate(idp_`var') ///					// generate a variable with this prefix
+			force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
+
+		loc idp_els 	`idp_els' idp_`var'				// add each variable to the local list
+
+	}
+
+	* concatenate to form idp: individual id
+	egen idp=concat( `idp_els' )						// concatenate vars we just made. code drops vars @ end
+
+	sort idh idp
 	label var idp "Individual id"
 
 ** ID CHECKS
-	isid idh idp 	// household and individual id should uniquely identify
+	isid idh idp 										// household and individual id uniquely identify
+
 
 
 
