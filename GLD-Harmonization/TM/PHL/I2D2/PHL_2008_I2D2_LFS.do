@@ -240,13 +240,13 @@ if (`cb_pause' == 1) {
 
 
 ** LOCATION (URBAN/RURAL)
-	label var urb "Urban/Rural"
+	label var urb2k70 "Urban/Rural"
 	la de lblurb 1 "Urban" 2 "Rural"
-	label values urb lblurb
+	label values urb2k70 lblurb
 
 
 **REGIONAL AREAS
-	rename regn reg01
+	rename reg reg01
 	label var reg01 "Macro regional areas"
 
 
@@ -339,7 +339,7 @@ if (`cb_pause' == 1) {
 
 
 ** RELATIONSHIP TO THE HEAD OF HOUSEHOLD
-	gen byte head=c03_rel
+	gen byte head=c05_rel
 	recode head (0 8 9=6)(6=4) (4 5 7=5)
 	replace ownhouse=. if head==6
 	label var head "Relationship to the head of household"
@@ -356,14 +356,14 @@ if (`cb_pause' == 1) {
 
 
 ** GENDER
-	gen byte gender=c04_sex
+	gen byte gender=c06_sex
 	label var gender "Gender"
 	la de lblgender 1 "Male" 2 "Female"
 	label values gender lblgender
 
 
 ** AGE
-	gen byte age = c05_age
+	gen byte age = c07_age
 	label var age "Individual age"
 	replace age=98 if age>=98 & age!=.
 
@@ -375,7 +375,7 @@ if (`cb_pause' == 1) {
 
 
 ** MARITAL STATUS
-	gen byte marital=c06_mstat
+	gen byte marital=c08_ms
 	recode marital (1=2) (2=1) (3=5)(5=.)
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
@@ -395,8 +395,9 @@ if (`cb_pause' == 1) {
 
 
 ** CURRENTLY AT SCHOOL
-	*no related variable in survey
 	gen byte atschool=.
+	replace atschool=1 if a02_csch == 1
+	replace atschool=0 if a02_csch == 2
 	label var atschool "Attending school"
 	la de lblatschool 0 "No" 1 "Yes"
 	label values atschool  lblatschool
@@ -860,7 +861,7 @@ if (`cb_pause' == 1) {
 
 
 ** KEEP VARIABLES - ALL
-	keep sample ccode year intv_year month idh idp wgt strata psu urb ///
+	keep sample ccode year intv_year month idh idp wgt strata psu urb2k70 ///
 				reg01 reg02 reg03 reg04 ownhouse water electricity toilet landphone      ///
 				cellphone computer internet hhsize head gender age soc marital ed_mod_age ///
 				everattend atschool literacy educy edulevel1 edulevel2 edulevel3 lb_mod_age ///
@@ -873,7 +874,7 @@ if (`cb_pause' == 1) {
 
 
 ** ORDER VARIABLES
-	order sample ccode year intv_year month idh idp wgt strata psu urb	///
+	order sample ccode year intv_year month idh idp wgt strata psu urb2k70	///
 				reg01 reg02 reg03 reg04 ownhouse water electricity toilet landphone ///
 				cellphone computer internet hhsize head gender age soc marital ///
 				ed_mod_age everattend atschool literacy educy edulevel1 edulevel2 ///
@@ -891,7 +892,7 @@ if (`cb_pause' == 1) {
 ** DELETE MISSING VARIABLES // why would we not use missings here?
 	local keep ""
 	qui levelsof ccode, local(cty)
-	foreach var of varlist urb - pcc_d {
+	foreach var of varlist urb2k70 - pcc_d {
 	qui sum `var'
 	scalar sclrc = r(mean)
 	if sclrc==. {
