@@ -112,7 +112,7 @@ if (`append' == 1) {
 	gen str7 sample = `"`cty3'"' + `"`surv_yr'"'
 
 ** COUNTRY
-	gen str4 ccode=`"cty3"'
+	gen str4 ccode=`"`cty3'"'
 	label var ccode "Country code"
 
 
