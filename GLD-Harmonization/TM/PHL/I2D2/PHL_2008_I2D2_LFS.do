@@ -520,7 +520,7 @@ if (`cb_pause' == 1) {
 
 
 ** NUMBER OF ADDITIONAL JOBS
-	gen byte njobs=.
+	gen byte njobs=a03_jobs
 	label var njobs "Number of total jobs"
 	replace njobs=. if age < lb_mod_age // restrict universe to working age
 
@@ -533,6 +533,8 @@ if (`cb_pause' == 1) {
 
 ** SECTOR OF ACTIVITY: PUBLIC - PRIVATE
 	gen byte ocusec=.
+	replace ocusec=1 if c19pclas==2 // can these two lines be copied to all years?
+	replace ocusec=2 if c19pclas!=2
 	label var ocusec "Sector of activity"
 	la de lblocusec 1 "Public, state owned, government, army, NGO" 2 "Private"
 	label values ocusec lblocusec

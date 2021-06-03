@@ -529,6 +529,8 @@ if (`cb_pause' == 1) {
 
 ** SECTOR OF ACTIVITY: PUBLIC - PRIVATE
 	gen byte ocusec=.
+	replace ocusec=1 if c17_pclass==2
+	replace ocusec=2 if c17_pclass!=2
 	label var ocusec "Sector of activity"
 	la de lblocusec 1 "Public, state owned, government, army, NGO" 2 "Private"
 	label values ocusec lblocusec
