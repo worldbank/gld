@@ -491,7 +491,6 @@ if (`cb_pause' == 1) {
 
 
 ** LABOR STATUS LAST YEAR
-	/*Can this be adjusted to reflect new _nso labor status variable? */
 	gen byte lstatus_year=.
 	replace lstatus_year=. if age<lb_mod_age & age!=.
 	label var lstatus_year "Labor status during last year"
