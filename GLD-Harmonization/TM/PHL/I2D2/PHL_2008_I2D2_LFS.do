@@ -427,7 +427,7 @@ if (`cb_pause' == 1) {
 	replace edulevel1=3 if c09_grd==2
 	replace edulevel1=4 if c09_grd==3
 	replace edulevel1=5 if c09_grd==4
-	replace edulevel1=7 if c09_grd==5 | ( c09>=60 & c09<=78)
+	replace edulevel1=7 if c09_grd==5 | ( c09_grd>=60 & c09_grd<=78)
 	label var edulevel1 "Level of education 1"
 	la de lbledulevel1 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete" 8 "Other" 9 "Unstated"
 	label values edulevel1 lbledulevel1
