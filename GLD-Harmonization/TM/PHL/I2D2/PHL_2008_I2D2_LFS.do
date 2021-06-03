@@ -533,7 +533,7 @@ if (`cb_pause' == 1) {
 
 ** SECTOR OF ACTIVITY: PUBLIC - PRIVATE
 	gen byte ocusec=.
-	replace ocusec=1 if c19pclas==2 // can these two lines be copied to all years?
+	replace ocusec=1 if c19pclas==2
 	replace ocusec=2 if c19pclas!=2
 	label var ocusec "Sector of activity"
 	la de lblocusec 1 "Public, state owned, government, army, NGO" 2 "Private"
@@ -545,11 +545,11 @@ if (`cb_pause' == 1) {
 
 ** REASONS NOT IN THE LABOR FORCE
 	gen byte nlfreason=.
-	replace nlfreason=1 if c40_wynot==8
-	replace nlfreason=2 if c40_wynot==7
-	replace nlfreason=3 if c40_wynot==6 // & age>10 // why was only this restricted and not all (esp cuz of replace)
-	replace nlfreason=4 if c40_wynot==3
-	replace nlfreason=5 if c40_wynot==1 | c40_wynot==2 | c40_wynot==4 | c40_wynot==5 | c40_wynot==9
+	replace nlfreason=1 if c42_wynt==8
+	replace nlfreason=2 if c42_wynt==7
+	replace nlfreason=3 if c42_wynt==6
+	replace nlfreason=4 if c42_wynt==3
+	replace nlfreason=5 if c42_wynt==1 | c42_wynt==2 | c42_wynt==4 | c42_wynt==5 | c42_wynt==9
 	replace nlfreason=. if lstatus!=3 	// restricts universe to non-labor force
 	replace nlfreason=. if age < lb_mod_age // restrict universe to working age
 	label var nlfreason "Reason not in the labor force"
@@ -558,28 +558,28 @@ if (`cb_pause' == 1) {
 
 
 ** UNEMPLOYMENT DURATION: MONTHS LOOKING FOR A JOB
-	gen byte unempldur_l= c38_weeks/4.2
+	gen byte unempldur_l= c40_wks/4.2
 	label var unempldur_l "Unemployment duration (months) lower bracket"
 	replace unempldur_l=. if age < lb_mod_age // restrict universe to working age
 	replace unempldur_l=. if lstatus!=2 	  // restrict universe to unemployed only
 
-	gen byte unempldur_u= c38_weeks/4.2
+	gen byte unempldur_u= c40_wks/4.2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
 	replace unempldur_l=. if age < lb_mod_age // restrict universe to working age
 	replace unempldur_l=. if lstatus!=2 	  // restrict universe to unemployed only
 
 ** INDUSTRY CLASSIFICATION
-	gen byte industry=floor(c16a_pkb/10)
-	replace industry=1 if c16a_pkb >= 1 & c16a_pkb <= 9
-	replace industry=2 if c16a_pkb==10 | c16a_pkb==11
-	replace industry=3 if c16a_pkb>14 & c16a_pkb<40
-	replace industry=4 if c16a_pkb==40 | c16a_pkb==41
-	replace industry=5 if c16a_pkb==45
-	replace industry=6 if c16a_pkb>49 & c16a_pkb<56
-	replace industry=7 if c16a_pkb>59 & c16a_pkb<65
-	replace industry=8 if c16a_pkb>64 & c16a_pkb<75
-	replace industry=9 if c16a_pkb == 75
-	replace industry=10 if c16a_pkb>=76 & c16a_pkb<100 // this includes education for now.
+	gen byte industry=floor(c18_pkb/10)
+	replace industry=1 if c18_pkb >= 1 & c18_pkb <= 9
+	replace industry=2 if c18_pkb==10 | c18_pkb==11
+	replace industry=3 if c18_pkb>14 & c18_pkb<40
+	replace industry=4 if c18_pkb==40 | c18_pkb==41
+	replace industry=5 if c18_pkb==45
+	replace industry=6 if c18_pkb>49 & c18_pkb<56
+	replace industry=7 if c18_pkb>59 & c18_pkb<65
+	replace industry=8 if c18_pkb>64 & c18_pkb<75
+	replace industry=9 if c18_pkb == 75
+	replace industry=10 if c18_pkb>=76 & c18_pkb<100 // this includes education for now.
 	label var industry "1 digit industry classification"
 	la de lblindustry 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public Utility Services" 5 "Construction"  6 "Commerce" 7 "Transport and Communication" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industry lblindustry
@@ -597,7 +597,7 @@ if (`cb_pause' == 1) {
 	replace industry1=. if lstatus!=1 		// restrict universe to employed only
 
 **SURVEY SPECIFIC INDUSTRY CLASSIFICATION
-	gen industry_orig=c16a_pkb
+	gen industry_orig=c18_pkb
 	replace industry_orig=. if lstatus!=1 		// restrict universe to employed only
 	replace industry_orig=. if age < lb_mod_age // restrict universe to working age
 	label var industry_orig "Original Industry Codes"
@@ -607,9 +607,9 @@ if (`cb_pause' == 1) {
 	* in 2008, raw variable is numeric
 
 	* generate occupation variable
-	gen byte occup=floor(c14a_procc/10)		// this handles most of recoding automatically.
-	recode occup 0 = 10	if 	c14a_procc==1 	// recode "armed forces" to appropriate label
-	recode occup 0 = 99	if 	c14a_procc==9 	// recode "Not classifiable occupations" to appropriate label
+	gen byte occup=floor(c16_proc/10)		// this handles most of recoding automatically.
+	recode occup 0 = 10	if 	c16_proc==1 	// recode "armed forces" to appropriate label
+	recode occup 0 = 99	if 	c16_proc==9 	// recode "Not classifiable occupations" to appropriate label
 	replace occup=. if lstatus!=1 		// restrict universe to employed only
 	replace occup=. if age < lb_mod_age	// restrict universe to working age
 	label var occup "1 digit occupational classification"
@@ -618,7 +618,7 @@ if (`cb_pause' == 1) {
 
 
 ** SURVEY SPECIFIC OCCUPATION CLASSIFICATION
-	gen occup_orig=c14a_procc
+	gen occup_orig=c16_proc
 	replace occup_orig=. if lstatus!=1 			// restrict universe to employed only
 	replace occup_orig=. if age < lb_mod_age	// restrict universe to working age
 	label var occup_orig "Original Occupational Codes"
@@ -635,7 +635,7 @@ if (`cb_pause' == 1) {
 
 
 ** HOURS WORKED LAST WEEK
-	gen whours= c20_phours
+	gen whours= c22_phrs
 	replace whours=. if lstatus!=1 			// restrict universe to employed only
 	replace whours=. if age < lb_mod_age	// restrict universe to working age
 	label var whours "Hours of work in last week"
@@ -643,7 +643,7 @@ if (`cb_pause' == 1) {
 
 
 ** WAGES
-	gen double wage= c25_pbasic
+	gen double wage= c27_pbsc
 	replace wage=. if lstatus!=1 			// restrict universe to employed only
 	replace wage=. if age < lb_mod_age		// restrict universe to working age
 	replace wage=. if empstat==1			// restrict universe to wage earners
@@ -681,17 +681,17 @@ if (`cb_pause' == 1) {
 
 
 ** INDUSTRY CLASSIFICATION - SECOND JOB
-	gen byte industry_2=floor(c30a_okb/10)
-	replace industry_2=1 if c30a_okb >= 1 & c30a_okb <= 9
-	replace industry_2=2 if c30a_okb==10 | c30a_okb==11
-	replace industry_2=3 if c30a_okb>14 & c30a_okb<40
-	replace industry_2=4 if c30a_okb==40 | c30a_okb==41
-	replace industry_2=5 if c30a_okb==45
-	replace industry_2=6 if c30a_okb>49 & c30a_okb<56
-	replace industry_2=7 if c30a_okb>59 & c30a_okb<65
-	replace industry_2=8 if c30a_okb>64 & c30a_okb<75
-	replace industry_2=9 if c30a_okb == 75
-	replace industry_2=10 if c30a_okb>=76 & c30a_okb<100 	// this includes education for now.
+	gen byte industry_2=floor(j03_okb/10)
+	replace industry_2=1 if j03_okb >= 1 & j03_okb <= 9
+	replace industry_2=2 if j03_okb==10 | j03_okb==11
+	replace industry_2=3 if j03_okb>14 & j03_okb<40
+	replace industry_2=4 if j03_okb==40 | j03_okb==41
+	replace industry_2=5 if j03_okb==45
+	replace industry_2=6 if j03_okb>49 & j03_okb<56
+	replace industry_2=7 if j03_okb>59 & j03_okb<65
+	replace industry_2=8 if j03_okb>64 & j03_okb<75
+	replace industry_2=9 if j03_okb == 75
+	replace industry_2=10 if j03_okb>=76 & j03_okb<100 	// this includes education for now.
 	replace industry_2=. if lstatus!=1 				// restrict universe to employed only
 	replace industry_2=. if age < lb_mod_age		// restrict universe to working age
 	label var industry_2 "1 digit industry classification - second job"
@@ -700,7 +700,7 @@ if (`cb_pause' == 1) {
 
 
 ** INDUSTRY 1 - SECOND JOB
-	gen byte industry1_2=.
+	gen byte industry1_2=industry_2
 	recode industry1_2 (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
 	replace industry1_2=. if lstatus!=1 				// restrict universe to employed only
 	replace industry1_2=. if age < lb_mod_age			// restrict universe to working age
@@ -710,7 +710,7 @@ if (`cb_pause' == 1) {
 
 
 **SURVEY SPECIFIC INDUSTRY CLASSIFICATION - SECOND JOB
-	gen industry_orig_2=c30a_okb
+	gen industry_orig_2=j03_okb
 	replace industry_orig_2=. if lstatus!=1 				// restrict universe to employed only
 	replace industry_orig_2=. if age < lb_mod_age			// restrict universe to working age
 	label var industry_orig_2 "Original Industry Codes - Second job"
@@ -732,7 +732,7 @@ if (`cb_pause' == 1) {
 
 
 ** WAGES - SECOND JOB
-	gen double wage_2=c34_obasic
+	gen double wage_2=c36_obic
 	replace wage_2=. if lstatus!=1 			// restrict universe to employed only
 	replace wage_2=. if age < lb_mod_age		// restrict universe to working age
 	replace wage_2=. if empstat==1			// restrict universe to wage earners
@@ -751,8 +751,6 @@ if (`cb_pause' == 1) {
 
 ** CONTRACT
 	gen byte contract=.
-	replace contract=0 if c08_conwr==2 | c08_conwr==8
-	replace contract=1 if c08_conwr==1
 	label var contract "Contract"
 	la de lblcontract 0 "Without contract" 1 "With contract"
 	label values contract lblcontract
