@@ -5,7 +5,7 @@
 **                                                                                                  **
 ** COUNTRY	PHILIPPINES
 ** COUNTRY ISO CODE	PHL
-** YEAR	2011 
+** YEAR	2011
 ** SURVEY NAME	Labor Force Survey
 ** SURVEY AGENCY	National Statistical Office
 ** SURVEY SOURCE	EAP Manilla Team
@@ -871,7 +871,7 @@ if (`cb_pause' == 1) {
 
 
 ** KEEP VARIABLES - ALL
-	keep sample ccode year intv_year month idh idp wgt strata psu urb2k70 ///
+	keep sample ccode year intv_year month idh idp wgt strata psu urb ///
 				reg01 reg02 reg03 reg04 ownhouse water electricity toilet landphone      ///
 				cellphone computer internet hhsize head gender age soc marital ed_mod_age ///
 				everattend atschool literacy educy edulevel1 edulevel2 edulevel3 lb_mod_age ///
@@ -884,7 +884,7 @@ if (`cb_pause' == 1) {
 
 
 ** ORDER VARIABLES
-	order sample ccode year intv_year month idh idp wgt strata psu urb2k70	///
+	order sample ccode year intv_year month idh idp wgt strata psu urb	///
 				reg01 reg02 reg03 reg04 ownhouse water electricity toilet landphone ///
 				cellphone computer internet hhsize head gender age soc marital ///
 				ed_mod_age everattend atschool literacy educy edulevel1 edulevel2 ///
@@ -902,7 +902,7 @@ if (`cb_pause' == 1) {
 ** DELETE MISSING VARIABLES // why would we not use missings here?
 	local keep ""
 	qui levelsof ccode, local(cty)
-	foreach var of varlist urb2k70 - pcc_d {
+	foreach var of varlist urb - pcc_d {
 	qui sum `var'
 	scalar sclrc = r(mean)
 	if sclrc==. {
