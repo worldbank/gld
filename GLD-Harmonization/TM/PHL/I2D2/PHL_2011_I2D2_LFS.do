@@ -270,7 +270,7 @@ if (`cb_pause' == 1) {
 
 
 ** REGIONAL AREA 3 DIGITS ADM LEVEL (ADMN3)
-	gen reg04=mun
+	gen reg04=bgy
 	label var reg04 "Region at 3 digits (ADMN3)"
 
 
