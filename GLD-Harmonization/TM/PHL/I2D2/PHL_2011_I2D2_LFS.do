@@ -5,7 +5,7 @@
 **                                                                                                  **
 ** COUNTRY	PHILIPPINES
 ** COUNTRY ISO CODE	PHL
-** YEAR	2011
+** YEAR	2011 
 ** SURVEY NAME	Labor Force Survey
 ** SURVEY AGENCY	National Statistical Office
 ** SURVEY SOURCE	EAP Manilla Team
@@ -139,7 +139,7 @@ if (`cb_pause' == 1) {
 
 
 ** HOUSEHOLD IDENTIFICATION NUMBER
-	loc idhvars 	reg  prov stratum urb2k70  hhnum 	// store idh vars in local
+	loc idhvars 	reg  prov hhnum 	// store idh vars in local
 
 
 	ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
@@ -147,7 +147,7 @@ if (`cb_pause' == 1) {
 	loc stringlist 	: list idhvars - numlist			// non-numeric vars in stringlist
 
 	* starting locals
-	loc len = 4											// declare the length of each element in digits
+	loc len = 6											// declare the length of each element in digits
 	loc idh_els ""										// start with empty local list
 
 	* make each numeric var string, including leading zeros
@@ -243,28 +243,34 @@ if (`cb_pause' == 1) {
 
 
 ** LOCATION (URBAN/RURAL)
-	label var urb2k70 "Urban/Rural"
+    gen byte urb=urb2k70
+    label var urb "Urban/Rural"
 	la de lblurb 1 "Urban" 2 "Rural"
-	label values urb2k70 lblurb
+	label values urb lblurb
 
 
 **REGIONAL AREAS
 	rename reg reg01
-	label var reg01 "Macro regional areas"
+    la de lblreg01  1 "Ilocos" 2 "Cagayan Valley" 3 "Central Luzon" 5 "Bicol" 6 "Western Visayas" 7 "Central Visayas" ///
+                    8 "Eastern Visayas" 9 "Zamboanga Peninsula" 10 "Northern Mindanao" 11 "Davao" 12 "Soccsksargen" ///
+                    13 "National Capital Region" 14 "Cordillera Administrative Region" ///
+                    15 "Autonomous Region in Muslim Mindana" 16 "Caraga" 41 "Calabarzon" 42 "Mimaropa"
+    label var reg01 "Macro regional areas"
+    label values reg01 lblreg01
 
 
 ** REGIONAL AREA 1 DIGIT ADMN LEVEL
-	rename prov reg02
+	gen byte reg02=prov
 	label var reg02 "Region at 1 digit (ADMN1)"
 
 
 ** REGIONAL AREA 2 DIGITS ADM LEVEL (ADMN2)
-	gen reg03=.
+	gen reg03=mun
 	label var reg03 "Region at 2 digits (ADMN2)"
 
 
 ** REGIONAL AREA 3 DIGITS ADM LEVEL (ADMN3)
-	gen reg04=.
+	gen reg04=mun
 	label var reg04 "Region at 3 digits (ADMN3)"
 
 
@@ -333,7 +339,7 @@ if (`cb_pause' == 1) {
 
 ** HOUSEHOLD SIZE
 	sort idh
-	by idh: egen hhsize= count(c101_lno < 8) // includes non-family members.
+	by idh: egen hhsize= count(c101_lno <= 8) // restrict by family role var, include all non-family members but not boarders/workers
 	label var hhsize "Household size"
 
 	* check
@@ -382,7 +388,7 @@ if (`cb_pause' == 1) {
 
 ** MARITAL STATUS
 	gen byte marital=c08_ms
-	recode marital (1=2) (2=1) (3=5)(5=.)
+	recode marital (1=2) (2=1) (3=5)(5 6=.)
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
 	label values marital lblmarital
