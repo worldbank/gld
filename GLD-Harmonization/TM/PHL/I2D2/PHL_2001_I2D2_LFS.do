@@ -55,6 +55,8 @@
 	local 	 code 		"`i2d2'\Programs"
 	local 	 id_data 	"`i2d2'\Data\Harmonized"
 
+	local 	lb_mod_age	10	// labor module minimun age (inclusive)
+	local 	ed_mod_age	5	// labor module minimun age (inclusive)
 
 ** LOG FILE
 	log using `"`id_data'\\`cty3'_`surv_yr'_I2D2_LFS.log"', replace
@@ -329,7 +331,7 @@ if (`cb_pause' == 1) {
 
 ** HOUSEHOLD SIZE
 	sort idh
-	by idh: egen hhsize= count(c101_lno < 8) // includes non-family members.
+	by idh: egen hhsize= count(c03_rel <= 8) // includes non-family members.
 	label var hhsize "Household size"
 
 	* check
@@ -391,7 +393,7 @@ if (`cb_pause' == 1) {
 
 
 ** EDUCATION MODULE AGE
-	gen byte ed_mod_age=10
+	gen byte ed_mod_age=`ed_mod_age'
 	label var ed_mod_age "Education module application age"
 
 
@@ -420,11 +422,11 @@ if (`cb_pause' == 1) {
 ** EDUCATIONAL LEVEL 1
 	gen byte edulevel1=.
 	replace edulevel1=1 if c07_grade==0
-	replace edulevel1=2 if c07_grade==1 | c07_grade==2 | c07_grade==3
-	replace edulevel1=3 if c07_grade==4
-	replace edulevel1=4 if c07_grade==5
-	replace edulevel1=5 if c07_grade==6
-	replace edulevel1=7 if c07_grade==7 | ( c07_grade>=40 & c07_grade<=98)
+	replace edulevel1=2 if c07_grade==1
+	replace edulevel1=3 if c07_grade==2
+	replace edulevel1=4 if c07_grade==3
+	replace edulevel1=5 if c07_grade==4
+	replace edulevel1=7 if c07_grade==5 | ( c07_grade>=60 & c07_grade<=98)
 	replace edulevel1=9 if c07_grade==99 	// where 99 == 'not reported'
 	label var edulevel1 "Level of education 1"
 	la de lbledulevel1 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete" 8 "Other" 9 "Unstated"
@@ -471,7 +473,7 @@ if (`cb_pause' == 1) {
 *****************************************************************************************************/
 
 ** LABOR MODULE AGE
-	gen byte lb_mod_age=10
+	gen byte lb_mod_age=`lb_mod_age'
 	label var lb_mod_age "Labor module application age"
 
 
@@ -545,7 +547,7 @@ if (`cb_pause' == 1) {
 	gen byte nlfreason=.
 	replace nlfreason=1 if c39_wynot==8
 	replace nlfreason=2 if c39_wynot==7
-	replace nlfreason=3 if c39_wynot==6 // & age>10 // why was only this restricted and not all (esp cuz of replace)
+	replace nlfreason=3 if c39_wynot==6
 	replace nlfreason=4 if c39_wynot==3
 	replace nlfreason=5 if c39_wynot==1 | c39_wynot==2 | c39_wynot==4 | c39_wynot==5 | c39_wynot==9
 	replace nlfreason=. if lstatus!=3 	// restricts universe to non-labor force
