@@ -868,7 +868,7 @@ if (`cb_pause' == 1) {
 
 
 ** KEEP VARIABLES - ALL
-	keep sample ccode year intv_year month idh idp wgt strata psu urb2k70 ///
+	keep sample ccode year intv_year month idh idp wgt strata psu urb ///
 				reg01 reg02 reg03 reg04 ownhouse water electricity toilet landphone      ///
 				cellphone computer internet hhsize head gender age soc marital ed_mod_age ///
 				everattend atschool literacy educy edulevel1 edulevel2 edulevel3 lb_mod_age ///
