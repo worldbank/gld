@@ -896,7 +896,7 @@ if (`cb_pause' == 1) {
 ** DELETE MISSING VARIABLES // why would we not use missings here?
 	local keep ""
 	qui levelsof ccode, local(cty)
-	foreach var of varlist urb2k70 - pcc_d {
+	foreach var of varlist urb - pcc_d {
 	qui sum `var'
 	scalar sclrc = r(mean)
 	if sclrc==. {
