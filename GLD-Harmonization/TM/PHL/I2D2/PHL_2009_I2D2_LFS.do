@@ -886,7 +886,7 @@ if (`cb_pause' == 1) {
 
 
 ** ORDER VARIABLES
-	order sample ccode year intv_year month idh idp wgt strata psu urb2k70	///
+	order sample ccode year intv_year month idh idp wgt strata psu urb2	///
 				reg01 reg02 reg03 reg04 ownhouse water electricity toilet landphone ///
 				cellphone computer internet hhsize head gender age soc marital ///
 				ed_mod_age everattend atschool literacy educy edulevel1 edulevel2 ///
