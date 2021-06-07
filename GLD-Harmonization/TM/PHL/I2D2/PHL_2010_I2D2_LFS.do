@@ -243,19 +243,22 @@ if (`cb_pause' == 1) {
 
 
 ** LOCATION (URBAN/RURAL)
-	label var urb2k70 "Urban/Rural"
+	gen byte urb=urb2k70
+	label var urb "Urban/Rural"
 	la de lblurb 1 "Urban" 2 "Rural"
-	label values urb2k70 lblurb
 
 
 **REGIONAL AREAS
-	rename reg reg01
+	gen byte reg01=reg
+	la de lblreg01 1 "Ilocos" 2 "Cagayan Valley" 3 "Central Luzon" 5 "Bicol" 6 "Western Visayas" 7 "Central Visayas" 8 "Eastern Visayas" 9 "Zamboanga Peninsula" 10 "Northern Mindanao" 11 "Davao" 12 "Soccsksargen" 13 "National Capital Region" 14 "Cordillera Administrative Region" 15 "Autonomous Region in Muslim Mindana" 16 "Caraga" 41 "Calabarzon" 42 "Mimaropa"
 	label var reg01 "Macro regional areas"
+	label values reg01 lblreg01
 
 
 ** REGIONAL AREA 1 DIGIT ADMN LEVEL
-	rename prov reg02
+	gen byte reg02=.
 	label var reg02 "Region at 1 digit (ADMN1)"
+	label values reg02 lblreg02
 
 
 ** REGIONAL AREA 2 DIGITS ADM LEVEL (ADMN2)
