@@ -243,20 +243,27 @@ if (`cb_pause' == 1) {
 
 
 ** LOCATION (URBAN/RURAL)
-	label var urb2k70 "Urban/Rural"
+	gen byte urb=urb2k70
+	label var urb "Urban/Rural"
 	la de lblurb 1 "Urban" 2 "Rural"
-	label values urb2k70 lblurb
+	label values urb lblurb
 
 
 **REGIONAL AREAS
-	rename reg reg01
+	gen byte reg01=reg
+	la de lblreg01 	1 "Ilocos" 2 "Cagayan Valley" 3 "Central Luzon" 5 "Bicol" 6 "Western Visayas"	///
+	 				7 "Central Visayas" 8 "Eastern Visayas" 9 "Zamboanga Peninsula" ///
+					10 "Northern Mindanao" 11 "Davao" 12 "Soccsksargen" 13 "National Capital Region" ///
+					14 "Cordillera Administrative Region" 15 "Autonomous Region in Muslim Mindana" ///
+					16 "Caraga" 41 "Calabarzon" 42 "Mimaropa"
 	label var reg01 "Macro regional areas"
+	label values reg01 lblreg01
 
 
 ** REGIONAL AREA 1 DIGIT ADMN LEVEL
-	rename prov reg02
+	gen byte reg02=.
 	label var reg02 "Region at 1 digit (ADMN1)"
-
+	label values reg02 lblreg02
 
 ** REGIONAL AREA 2 DIGITS ADM LEVEL (ADMN2)
 	gen reg03=.
@@ -333,7 +340,7 @@ if (`cb_pause' == 1) {
 
 ** HOUSEHOLD SIZE
 	sort idh
-	by idh: egen hhsize= count(c101_lno < 8) // includes non-family members.
+	by idh: egen hhsize= count(c05_rel <= 8) // includes non-family members.
 	label var hhsize "Household size"
 
 	* check
@@ -349,7 +356,8 @@ if (`cb_pause' == 1) {
 
 	replace ownhouse=. if head==6
 	label var head "Relationship to the head of household"
-	la de lblhead  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
+	la de lblhead  	1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" ///
+					5 "Other relatives" 6 "Other and non-relatives"
 	label values head  lblhead
 	gen jh=(head==1)
 	bys idh: egen hh=sum(jh) // hh is the count of hh heads per family
@@ -382,7 +390,7 @@ if (`cb_pause' == 1) {
 
 ** MARITAL STATUS
 	gen byte marital=c08_ms
-	recode marital (1=2) (2=1) (3=5)(5=.)
+	recode marital (1=2) (2=1) (3=5)(5 6=.)
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
 	label values marital lblmarital
@@ -448,7 +456,7 @@ if (`cb_pause' == 1) {
 
 ** EDUCATION LEVEL 3
 	gen byte edulevel3=edulevel1
-	recode edulevel3 (2 3 =2) (4 5 =3) (6/7 =4) (9=.)
+	recode edulevel3 (2 3 =2) (4 5 =3) (6/7 =4) (8=.) (9=.)
 	label var edulevel3 "Level of education 3"
 	la de lbledulevel3 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values edulevel3 lbledulevel3
@@ -896,7 +904,7 @@ if (`cb_pause' == 1) {
 ** DELETE MISSING VARIABLES // why would we not use missings here?
 	local keep ""
 	qui levelsof ccode, local(cty)
-	foreach var of varlist urb2k70 - pcc_d {
+	foreach var of varlist urb - pcc_d {
 	qui sum `var'
 	scalar sclrc = r(mean)
 	if sclrc==. {
