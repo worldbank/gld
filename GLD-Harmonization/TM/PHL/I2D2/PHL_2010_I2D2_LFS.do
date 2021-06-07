@@ -385,7 +385,7 @@ if (`cb_pause' == 1) {
 
 ** MARITAL STATUS
 	gen byte marital=c08_ms
-	recode marital (1=2) (2=1) (3=5)(5=.)
+	recode marital (1=2) (2=1) (3=5)(5 6=.)
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
 	label values marital lblmarital
@@ -451,7 +451,7 @@ if (`cb_pause' == 1) {
 
 ** EDUCATION LEVEL 3
 	gen byte edulevel3=edulevel1
-	recode edulevel3 (2 3 =2) (4 5 =3) (6/7 =4) (9=.)
+	recode edulevel3 (2 3 =2) (4 5 =3) (6/7 =4) (8=.) (9=.)
 	label var edulevel3 "Level of education 3"
 	la de lbledulevel3 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values edulevel3 lbledulevel3
