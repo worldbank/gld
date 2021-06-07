@@ -329,7 +329,7 @@ if (`cb_pause' == 1) {
 
 ** HOUSEHOLD SIZE
 	sort idh
-	by idh: egen hhsize= count(c101_lno < 8) // includes non-family members.
+	by idh: egen hhsize= count(c03_rel <= 8) // includes non-family members.
 	label var hhsize "Household size"
 
 	* check
@@ -545,7 +545,7 @@ if (`cb_pause' == 1) {
 	gen byte nlfreason=.
 	replace nlfreason=1 if c40_wynot==8
 	replace nlfreason=2 if c40_wynot==7
-	replace nlfreason=3 if c40_wynot==6 // & age>10 // why was only this restricted and not all (esp cuz of replace)
+	replace nlfreason=3 if c40_wynot==6
 	replace nlfreason=4 if c40_wynot==3
 	replace nlfreason=5 if c40_wynot==1 | c40_wynot==2 | c40_wynot==4 | c40_wynot==5 | c40_wynot==9
 	replace nlfreason=. if lstatus!=3 	// restricts universe to non-labor force
@@ -749,7 +749,7 @@ if (`cb_pause' == 1) {
 
 ** CONTRACT
 	gen byte contract=.
-	replace contract=0 if c08_conwr==2 | c08_conwr==8
+	replace contract=0 if c08_conwr==3
 	replace contract=1 if c08_conwr==1
 	label var contract "Contract"
 	la de lblcontract 0 "Without contract" 1 "With contract"
