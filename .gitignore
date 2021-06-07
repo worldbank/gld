@@ -104,4 +104,5 @@
 
 #######################
 # Within the Support folder actually allow for xlsx and docx
-!Support//**/*.xlsx
+!Support/**/*.xlsx
+!Support/**/*.docx
