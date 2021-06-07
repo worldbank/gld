@@ -99,3 +99,9 @@
 # format you are using. Additionally, all content in any folder called
 # password or passwords are also ignored. NOTE that your project might be
 # using different names and then you must edit the lines below accordingly.
+
+
+
+#######################
+# Within the Support folder actually allow for xlsx and docx
+!Support//**/*.xlsx
