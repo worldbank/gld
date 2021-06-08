@@ -619,7 +619,14 @@ if (`cb_pause' == 1) {
 	* generate occupation variable
 	gen byte occup=floor(c16_proc/10)		// this handles most of recoding automatically.
 	recode occup 0 = 10	if 	c16_proc==1 	// recode "armed forces" to appropriate label
-	recode occup 0 = 99	if 	c16_proc==9 	// recode "Not classifiable occupations" to appropriate label
+	recode occup 0 = 99	if 	(c16_proc>=2 & c16_proc <=9) ///
+							| (c16_proc >=94 & c16_proc <= 99) // recode "Not classifiable occupations"
+
+	/* Note that the raw variable, procc lists values, 94-99 for which there are no associated occupation
+	   codes. Given that the raw data indicate that these individauls do have valid, non-missing occupations,
+	   and that these occupations cannot be matched to our classificaitons with certainty, I have coded them as "other" */
+
+
 	replace occup=. if lstatus!=1 		// restrict universe to employed only
 	replace occup=. if age < lb_mod_age	// restrict universe to working age
 	label var occup "1 digit occupational classification"
