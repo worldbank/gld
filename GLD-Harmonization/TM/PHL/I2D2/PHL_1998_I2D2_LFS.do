@@ -600,7 +600,9 @@ if (`append' == 1) {
 
 	* generate occupation variable
 	gen byte occup=floor(procc_num/10)
-	recode occup 0 = 10					// incoming 0's recoded to "armed forces"
+	recode occup 0 = 10	if 	procc_num==01 	// recode "armed forces" to appropriate label
+	recode occup 0 = 99	if 	(procc_num>=02 & procc_num <=09)	// recode "Not classifiable occupations" to appropriate label
+
 	replace occup=. if lstatus!=1 		// restrict universe to employed only
 	replace occup=. if age < lb_mod_age	// restrict universe to working age
 	label var occup "1 digit occupational classification"
