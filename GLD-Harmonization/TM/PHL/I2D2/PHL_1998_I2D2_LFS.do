@@ -55,6 +55,8 @@
 	local 	 code 		"`i2d2'\Programs"
 	local 	 id_data 	"`i2d2'\Data\Harmonized"
 
+	local 	lb_mod_age	10	// labor module minimun age (inclusive)
+	local 	ed_mod_age	10	// labor module minimun age (inclusive)
 
 ** LOG FILE
 	log using `"`id_data'\\`cty3'_`surv_yr'_I2D2_LFS.log"', replace
@@ -327,7 +329,7 @@ if (`append' == 1) {
 
 ** HOUSEHOLD SIZE
 	sort idh
-	by idh: egen hhsize= count(lno < 8) // includes non-family members.
+	by idh: egen hhsize= count(rel <= 7) // includes non-family members.
 	label var hhsize "Household size"
 
 	* check
@@ -386,7 +388,7 @@ if (`append' == 1) {
 
 
 ** EDUCATION MODULE AGE
-	gen byte ed_mod_age=10
+	gen byte ed_mod_age=`ed_mod_age'
 	label var ed_mod_age "Education module application age"
 
 
@@ -466,7 +468,7 @@ if (`append' == 1) {
 *****************************************************************************************************/
 
 ** LABOR MODULE AGE
-	gen byte lb_mod_age=10
+	gen byte lb_mod_age=`lb_mod_age'
 	label var lb_mod_age "Labor module application age"
 
 
@@ -527,7 +529,7 @@ if (`append' == 1) {
 ** SECTOR OF ACTIVITY: PUBLIC - PRIVATE
 	gen byte ocusec=.
 	replace ocusec=1 if class==2
-	replace ocusec=2 if class!=2	
+	replace ocusec=2 if class!=2
 	label var ocusec "Sector of activity"
 	la de lblocusec 1 "Public, state owned, government, army, NGO" 2 "Private"
 	label values ocusec lblocusec
@@ -540,7 +542,7 @@ if (`append' == 1) {
 	gen byte nlfreason=.
 	replace nlfreason=1 if wnot==8
 	replace nlfreason=2 if wnot==7
-	replace nlfreason=3 if wnot==6 // & age>10 // why was only this restricted and not all (esp cuz of replace)
+	replace nlfreason=3 if wnot==6
 	replace nlfreason=4 if wnot==3
 	replace nlfreason=5 if wnot==1 | wnot==2 | wnot==4 | wnot==5 | wnot==9
 	replace nlfreason=. if lstatus!=3 	// restricts universe to non-labor force
