@@ -55,6 +55,8 @@
 	local 	 code 		"`i2d2'\Programs"
 	local 	 id_data 	"`i2d2'\Data\Harmonized"
 
+	local 	lb_mod_age	10	// labor module minimun age (inclusive)
+	local 	ed_mod_age	10	// labor module minimun age (inclusive)
 
 ** LOG FILE
 	log using `"`id_data'\\`cty3'_`surv_yr'_I2D2_LFS.log"', replace
@@ -329,7 +331,7 @@ if (`cb_pause' == 1) {
 
 ** HOUSEHOLD SIZE
 	sort idh
-	by idh: egen hhsize= count(lno < 8) // includes non-family members.
+	by idh: egen hhsize= count(rel <= 7 ) // includes non-family members.
 	label var hhsize "Household size"
 
 	* check
@@ -342,7 +344,8 @@ if (`cb_pause' == 1) {
 	recode head (0 8 9=6)(6=4) (4 5 7=5)
 	replace ownhouse=. if head==6
 	label var head "Relationship to the head of household"
-	la de lblhead  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
+	la de lblhead  	1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" ///
+	 				5 "Other relatives" 6 "Other and non-relatives"
 	label values head  lblhead
 	gen jh=(head==1)
 	bys idh: egen hh=sum(jh) // hh is the count of hh heads per family
@@ -351,7 +354,6 @@ if (`cb_pause' == 1) {
 			In this case the only relevant variable is head*/
 	replace head=. if hh>1
 
-	*drop if hh==0
 
 
 ** GENDER
@@ -388,7 +390,7 @@ if (`cb_pause' == 1) {
 
 
 ** EDUCATION MODULE AGE
-	gen byte ed_mod_age=10
+	gen byte ed_mod_age=`ed_mod_age'
 	label var ed_mod_age "Education module application age"
 
 
@@ -468,7 +470,7 @@ if (`cb_pause' == 1) {
 *****************************************************************************************************/
 
 ** LABOR MODULE AGE
-	gen byte lb_mod_age=10
+	gen byte lb_mod_age=`lb_mod_age'
 	label var lb_mod_age "Labor module application age"
 
 
@@ -529,7 +531,7 @@ if (`cb_pause' == 1) {
 ** SECTOR OF ACTIVITY: PUBLIC - PRIVATE
 	gen byte ocusec=.
 	replace ocusec=1 if class==2
-	replace ocusec=2 if class!=2	
+	replace ocusec=2 if class!=2
 	label var ocusec "Sector of activity"
 	la de lblocusec 1 "Public, state owned, government, army, NGO" 2 "Private"
 	label values ocusec lblocusec
