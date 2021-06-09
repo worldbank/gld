@@ -139,7 +139,7 @@ if (`cb_pause' == 1) {
 
 
 ** HOUSEHOLD IDENTIFICATION NUMBER
-	loc idhvars 	reg  prov hhnum 	// store idh vars in local
+	loc idhvars 	creg  prov hhnum 	// store idh vars in local
 
 
 	ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
@@ -243,14 +243,14 @@ if (`cb_pause' == 1) {
 
 
 ** LOCATION (URBAN/RURAL)
-    gen byte urb=urb2k70
+	gen byte urb=urb2k1970
     label var urb "Urban/Rural"
 	la de lblurb 1 "Urban" 2 "Rural"
 	label values urb lblurb
 
 
 **REGIONAL AREAS
-	rename reg reg01
+	gen byte reg01=creg
     la de lblreg01  1 "Ilocos" 2 "Cagayan Valley" 3 "Central Luzon" 5 "Bicol" 6 "Western Visayas" 7 "Central Visayas" ///
                     8 "Eastern Visayas" 9 "Zamboanga Peninsula" 10 "Northern Mindanao" 11 "Davao" 12 "Soccsksargen" ///
                     13 "National Capital Region" 14 "Cordillera Administrative Region" ///
@@ -265,12 +265,12 @@ if (`cb_pause' == 1) {
 
 
 ** REGIONAL AREA 2 DIGITS ADM LEVEL (ADMN2)
-	gen reg03=mun
+	gen reg03=.
 	label var reg03 "Region at 2 digits (ADMN2)"
 
 
 ** REGIONAL AREA 3 DIGITS ADM LEVEL (ADMN3)
-	gen reg04=bgy
+	gen reg04=.
 	label var reg04 "Region at 3 digits (ADMN3)"
 
 
@@ -339,7 +339,8 @@ if (`cb_pause' == 1) {
 
 ** HOUSEHOLD SIZE
 	sort idh
-	by idh: egen hhsize= count(c05_rel <= 8) // restrict by family role var, include all non-family members but not boarders/workers
+	by idh: egen hhsize= count(c05_rel <= 8 | c05_rel == 11)
+	*  hh count restricts by family role var, includes all non-family members except boarders/workers
 	label var hhsize "Household size"
 
 	* check
@@ -348,12 +349,8 @@ if (`cb_pause' == 1) {
 
 
 ** RELATIONSHIP TO THE HEAD OF HOUSEHOLD
-	gen byte head=c05_rel				//  "head", "spouse", and children not recoded
-	recode head 	(4 5 6 8  	= 5)	/// siblings, children in law, grandchildren, other relatives of hh head = "other relatives"
-					(7 			= 4)	/// parents of hh head become "parents"
-					(9 10 11 	= 6) 	// boarders and domestic workers become "other/non-relatives"
-
-	replace ownhouse=. if head==6
+	gen byte head=c05_rel
+	recode head (9 10 11=6)(7=4) (4 5 6 8=5)
 	label var head "Relationship to the head of household"
 	la de lblhead  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values head  lblhead
@@ -387,7 +384,7 @@ if (`cb_pause' == 1) {
 
 
 ** MARITAL STATUS
-	gen byte marital=c08_ms
+	gen byte marital=c08_mstat
 	recode marital (1=2) (2=1) (3=5)(5 6=.)
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
@@ -408,8 +405,8 @@ if (`cb_pause' == 1) {
 
 ** CURRENTLY AT SCHOOL
 	gen byte atschool=.
-	replace atschool=1 if a02_csch == 1
-	replace atschool=0 if a02_csch == 2
+	replace atschool=1 if a02_cursch == 1
+	replace atschool=0 if a02_cursch == 2
 	label var atschool "Attending school"
 	la de lblatschool 0 "No" 1 "Yes"
 	label values atschool  lblatschool
@@ -431,14 +428,24 @@ if (`cb_pause' == 1) {
 
 ** EDUCATIONAL LEVEL 1
 	gen byte edulevel1=.
-	replace edulevel1=1 if c09_grd==0
-	replace edulevel1=2 if c09_grd==1
-	replace edulevel1=3 if c09_grd==2
-	replace edulevel1=4 if c09_grd==3
-	replace edulevel1=5 if c09_grd==4
-	replace edulevel1=7 if c09_grd==5 | ( c09_grd>=60 & c09_grd<=78)
+	replace edulevel1=1 if j12c09_grade==0
+	replace edulevel1=2 if j12c09_grade>=200 &  j12c09_grade<=260
+	replace edulevel1=3 if j12c09_grade==280
+	replace edulevel1=4 if j12c09_grade>=310 &  j12c09_grade<=340
+	replace edulevel1=5 if j12c09_grade==350
+	replace edulevel1=6 if j12c09_grade>=410 &  j12c09_grade<=501 // post secondary thru basic programs
+	replace edulevel1=7 if j12c09_grade>= 810 & j12c09_grade <= . // all labelled uni levels
+
 	label var edulevel1 "Level of education 1"
-	la de lbledulevel1 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete" 8 "Other" 9 "Unstated"
+	la de lbledulevel1 	1 "No education" ///
+						2 "Primary incomplete" ///
+						3 "Primary complete" 	///
+						4 "Secondary incomplete" ///
+						5 "Secondary complete" ///
+						6 "Higher than secondary but not university" ///
+						7 "University incomplete or complete" ///
+						8 "Other" ///
+						9 "Unstated"
 	label values edulevel1 lbledulevel1
 	replace edulevel1=. if age < ed_mod_age // restrict universe to students at or above primary school age
 
@@ -454,7 +461,7 @@ if (`cb_pause' == 1) {
 
 ** EDUCATION LEVEL 3
 	gen byte edulevel3=edulevel1
-	recode edulevel3 (2 3 =2) (4 5 =3) (6/7 =4) (9=.)
+	recode edulevel3 (2 3 =2) (4 5 =3) (6/7 =4) (8=.) (9=.)
 	label var edulevel3 "Level of education 3"
 	la de lbledulevel3 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values edulevel3 lbledulevel3
@@ -509,10 +516,10 @@ if (`cb_pause' == 1) {
 
 ** EMPLOYMENT STATUS
 	gen byte empstat=.
-	replace empstat=1 if c19pclas==0 | c19pclas==1 | c19pclas==2 | c19pclas==5
-	replace empstat=2 if c19pclas==6
-	replace empstat=3 if c19pclas==4
-	replace empstat=4 if c19pclas==3
+	replace empstat=1 if c19_pclass==0 | c19_pclass==1 | c19_pclass==2 | c19_pclass==5
+	replace empstat=2 if c19_pclass==6
+	replace empstat=3 if c19_pclass==4
+	replace empstat=4 if c19_pclass==3
 	replace empstat=. if lstatus!=1 	// includes universe restriction
 	label var empstat "Employment status"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed"
@@ -541,8 +548,8 @@ if (`cb_pause' == 1) {
 
 ** SECTOR OF ACTIVITY: PUBLIC - PRIVATE
 	gen byte ocusec=.
-	replace ocusec=1 if c19pclas==2
-	replace ocusec=2 if c19pclas!=2
+	replace ocusec=1 if c19_pclass==2
+	replace ocusec=2 if c19_pclass!=2
 	label var ocusec "Sector of activity"
 	la de lblocusec 1 "Public, state owned, government, army, NGO" 2 "Private"
 	label values ocusec lblocusec
@@ -553,11 +560,11 @@ if (`cb_pause' == 1) {
 
 ** REASONS NOT IN THE LABOR FORCE
 	gen byte nlfreason=.
-	replace nlfreason=1 if c42_wynt==8
-	replace nlfreason=2 if c42_wynt==7
-	replace nlfreason=3 if c42_wynt==6
-	replace nlfreason=4 if c42_wynt==3
-	replace nlfreason=5 if c42_wynt==1 | c42_wynt==2 | c42_wynt==4 | c42_wynt==5 | c42_wynt==9
+	replace nlfreason=1 if c42_wynot==8
+	replace nlfreason=2 if c42_wynot==7
+	replace nlfreason=3 if c42_wynot==6
+	replace nlfreason=4 if c42_wynot==3
+	replace nlfreason=5 if c42_wynot==1 | c42_wynot==2 | c42_wynot==4 | c42_wynot==5 | c42_wynot==9
 	replace nlfreason=. if lstatus!=3 	// restricts universe to non-labor force
 	replace nlfreason=. if age < lb_mod_age // restrict universe to working age
 	label var nlfreason "Reason not in the labor force"
@@ -566,12 +573,12 @@ if (`cb_pause' == 1) {
 
 
 ** UNEMPLOYMENT DURATION: MONTHS LOOKING FOR A JOB
-	gen byte unempldur_l= c40_wks/4.2
+	gen byte unempldur_l= c40_weeks/4.2
 	label var unempldur_l "Unemployment duration (months) lower bracket"
 	replace unempldur_l=. if age < lb_mod_age // restrict universe to working age
 	replace unempldur_l=. if lstatus!=2 	  // restrict universe to unemployed only
 
-	gen byte unempldur_u= c40_wks/4.2
+	gen byte unempldur_u= c40_weeks/4.2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
 	replace unempldur_l=. if age < lb_mod_age // restrict universe to working age
 	replace unempldur_l=. if lstatus!=2 	  // restrict universe to unemployed only
@@ -625,13 +632,13 @@ if (`cb_pause' == 1) {
 	replace industry1=. if lstatus!=1 		// restrict universe to employed only
 
 **SURVEY SPECIFIC INDUSTRY CLASSIFICATION
-	gen industry_orig=industry_floor
+	gen industry_orig=c18_pkb
 	replace industry_orig=. if lstatus!=1 		// restrict universe to employed only
 	replace industry_orig=. if age < lb_mod_age // restrict universe to working age
 	label var industry_orig "Original Industry Codes"
 
 
-** OCCUPATION CLASSIFICATION
+** OCCUPATION CLASSIFICATION %%
 	* in 2012, raw variable is numeric
 
 	* generate occupation variable
@@ -670,7 +677,7 @@ if (`cb_pause' == 1) {
 
 
 ** HOURS WORKED LAST WEEK
-	gen whours= c22_phrs
+	gen whours= c22_phours
 	replace whours=. if lstatus!=1 			// restrict universe to employed only
 	replace whours=. if age < lb_mod_age	// restrict universe to working age
 	label var whours "Hours of work in last week"
@@ -678,7 +685,7 @@ if (`cb_pause' == 1) {
 
 
 ** WAGES
-	gen double wage= c27_pbsc
+	gen double wage= c27_pbasic
 	replace wage=. if lstatus!=1 			// restrict universe to employed only
 	replace wage=. if age < lb_mod_age		// restrict universe to working age
 	replace wage=. if empstat==1			// restrict universe to wage earners
@@ -767,7 +774,7 @@ if (`cb_pause' == 1) {
 
 
 ** WAGES - SECOND JOB
-	gen double wage_2=c36_obic
+	gen double wage_2=
 	replace wage_2=. if lstatus!=1 			// restrict universe to employed only
 	replace wage_2=. if age < lb_mod_age		// restrict universe to working age
 	replace wage_2=. if empstat==1			// restrict universe to wage earners
