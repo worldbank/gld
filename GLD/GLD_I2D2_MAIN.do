@@ -68,7 +68,7 @@ description: calls all scripts for I2D2 and GLD, edited from iecodebook script
    * Other					           				  6    //
 
    *Set this value to the user currently using this file
-   global user  1
+   global user  5
 
 
 
@@ -136,7 +136,7 @@ description: calls all scripts for I2D2 and GLD, edited from iecodebook script
 loc 	BRA		0
 loc 	IND 	0
 loc 	MEX 	0
-loc 	PHL 	0
+loc 	PHL 	1
 loc 	ZAF 	0
 
 
