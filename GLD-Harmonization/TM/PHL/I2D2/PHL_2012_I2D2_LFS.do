@@ -580,8 +580,8 @@ if (`cb_pause' == 1) {
 /*	We have to replace conditionally on the number of digits because if we floor() universally we will collapse the values between
 	[0-1999] into 1 when in fact they are different values. We will do this by creating an intermediate variable industry_floor */
 	gen byte industry_floor= .
-	replace  	industry_floor= floor(industry_floor/100) 	if industry_floor >= 1000
-	replace  	industry_floor= floor(industry_floor/10)  	if (industry_floor < 100 & industry_floor >=10)
+	replace  	industry_floor= floor(c18_pkb/100) 	if c18_pkb >= 1000
+	replace  	industry_floor= floor(c18_pkb/10)  	if (c18_pkb < 1000 & c18_pkb >=10)
 
 	replace industry=1 	if industry_floor >= 1 	& industry_floor <= 3	// "Agriculture, Forestry, Fishing" coded to "Agriculture"
 	replace industry=2 	if industry_floor >= 5 	& industry_floor <= 9	// "Mining and Quarrying" coded to "Mining"
@@ -589,13 +589,12 @@ if (`cb_pause' == 1) {
 	replace industry=4 	if industry_floor >= 35 & industry_floor <= 39	// "Water supply, sewerage, etc" coded to "Public Utiltiy"
 	replace industry=5 	if industry_floor >= 41 & industry_floor <= 43	// "Construction" coded to "Construction"
 	replace industry=6 	if industry_floor >= 45 & industry_floor <= 47	// "Wholesale/retail, repair of vehicles" to "Commerce"
-	replace industry=7 	if industry_floor >= 49 & industry_floor <= 53	// "Transport+storage" to "Transport". UN codes include storage %%
-
-
-	replace industry=7 	if industry_floor>59 & industry_floor<65
-	replace industry=8 	if industry_floor>64 & industry_floor<75
-	replace industry=9 	if industry_floor == 75
-	replace industry=10 if industry_floor>=76 & industry_floor<100 // this includes education for now.
+	replace industry=7 	if industry_floor >= 49 & industry_floor <= 53	// "Transport+storage" to "Transport". UN codes include storage
+	replace industry=6 	if industry_floor >= 55 & industry_floor <= 56	// "Accommodation+Food" to "Commerce"
+	replace industry=7 	if industry_floor >= 58 & industry_floor <= 63	// "Information+communication" to "Transport/Communication"
+	replace industry=8 	if industry_floor >= 64 & industry_floor <= 82	// "Misc Business Services" to "Business Services"
+	replace industry=9 	if industry_floor == 84							// "public administration/defense" to "public administration"
+	replace industry=10	if industry_floor >= 85 & industry_floor <= 99	// "Other services" including direct education to "other"
 
 	label var industry "1 digit industry classification"
 
