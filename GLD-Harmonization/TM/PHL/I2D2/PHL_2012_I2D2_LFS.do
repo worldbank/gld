@@ -638,14 +638,13 @@ if (`cb_pause' == 1) {
 	label var industry_orig "Original Industry Codes"
 
 
-** OCCUPATION CLASSIFICATION %%
+** OCCUPATION CLASSIFICATION
 	* in 2012, raw variable is numeric
 
 	* generate occupation variable
-	gen byte occup=floor(c16_proc/10)		// this handles most of recoding automatically.
-	recode occup 0 = 10	if 	c16_proc==1 	// recode "armed forces" to appropriate label
-	recode occup 0 = 99	if 	(c16_proc>=2 & c16_proc <=9) ///
-							| (c16_proc >=94 & c16_proc <= 99) // recode "Not classifiable occupations"
+	gen byte occup=floor(c16_proc/1000)		// this handles most of recoding automatically.
+	recode occup 0 = 10	if 	c16_proc<=129 	// recode "armed forces" to appropriate label
+	recode occup 0 = 99	if 	(c16_proc == 930) // recode "Not classifiable occupations"
 
 	/* Note that the raw variable, procc lists values, 94-99 for which there are no associated occupation
 	   codes. Given that the raw data indicate that these individauls do have valid, non-missing occupations,
@@ -759,17 +758,17 @@ if (`cb_pause' == 1) {
 
 
 ** OCCUPATION CLASSIFICATION - SECOND JOB
-	gen byte occup_2=floor(j02_otoc/10)		// this handles most of recoding automatically.
-	recode occup_2 0 = 10	if 	j02_otoc==1 	// recode "armed forces" to appropriate label
-	recode occup_2 0 = 99	if 	j02_otoc==9 	// recode "Not classifiable occupations" to appropriate label
+	gen byte occup_2=floor(j02_otoc/1000)		// this handles most of recoding automatically.
+	recode occup_2 0 = 10	if 	j02_otoc<=129 	// recode "armed forces" to appropriate label
+	recode occup_2 0 = 99	if 	(j02_otoc == 930) // recode "Not classifiable occupations"
+
 
 	replace occup_2=. if lstatus!=1 		// restrict universe to employed only
 	replace occup_2=. if age < lb_mod_age	// restrict universe to working age
+	label var occup_2 "1 digit occupational classification"
+	la de lbloccup 1 "Senior officials" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and sales workers" 6 "Skilled agricultural, forestry, and fishery workers" 7 "Craft and related trades workers" 8 "Plant and machine operators and assemblers" 9 "Elementary occupations" 10 "Armed forces occupations"  99 "Others"
+	label values occup_2 lbloccups
 
-	replace occup_2=. if lstatus!=1 				// restrict universe to employed only
-	replace occup_2=. if age < lb_mod_age			// restrict universe to working age
-	label var occup_2 "1 digit occupational classification - second job"
-	la de lbloccup_2 1 "Senior officials" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup_2 lbloccup_2
 
 
