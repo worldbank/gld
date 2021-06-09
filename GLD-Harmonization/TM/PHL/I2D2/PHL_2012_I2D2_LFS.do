@@ -42,7 +42,7 @@
 	local 	surv_yr `"2012"'	// set this to the survey year
 
 ** RUN SETTINGS
-	local 	cb_pause = 1	// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
+	local 	cb_pause = 0	// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
 	local 	append 	 = 1	// 1 to run iecodebook append, 0 if file is already appended.
 
 
@@ -221,7 +221,7 @@ if (`cb_pause' == 1) {
 ** HOUSEHOLD WEIGHTS
 	/* The weight variable will be divided by the number of rounds per year to ensure the
 	   weighting factor does not over-mutliply*/
-	gen double wgt= fwgt/(10000 * `n_round')
+	gen double wgt= pwgt/(10000 * `n_round')
 	label var wgt "Household sampling weight"
 
 
