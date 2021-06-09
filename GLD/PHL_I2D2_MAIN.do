@@ -1,6 +1,6 @@
 /* ------- -------- ------ ------- --------- ------ ------ ------ ---- --- --- --- --- -- -- --- -- -- --
-name: GLD_I2D2_MAIN.do
-description: calls all scripts for I2D2 and GLD, edited from iecodebook script
+name: PHL_I2D2_MAIN.do
+description: calls all PHL scripts for I2D2, edited from iecodebook script
 
 -- -- -- --- ---- ---- ---- ---- ------- -------- --------- --------- ------------- ---------------------*/
 
@@ -60,12 +60,8 @@ description: calls all scripts for I2D2 and GLD, edited from iecodebook script
    * -----------
 
    *User Number:
-   * Alexandra		             			      	  1    //
-   * Angelo					           				  2    //
-   * Junying					           				3    //
-   * Mario					           				  4    //
-   * Tom					           				  5    //
-   * Other					           				  6    //
+   * Tom (WB local)             			      	  1    //
+   * other users			           				  2    //
 
    *Set this value to the user currently using this file
    global user  1
@@ -75,55 +71,27 @@ description: calls all scripts for I2D2 and GLD, edited from iecodebook script
    * Root folder globals
    * ---------------------
 
-    if $user == 5 {
+    if $user == 1 {
         global data		""					// data folder
 		global GLD 		"Y"					// set this to the letter the GLD drive is on your computer
-		global i2d2 	"Z"					// set this to the letter the I2D2 drive is on your computer
         global clone	"C:/Users/WB551206/local/GitHub" // github/code top folder
     }
 
 
-	if $user == 1 {
-	global data		"" 			// replace with folder above data repo
-	global GLD 		""			// set this to the letter the GLD drive is on your computer
-	global i2d2 	""					// set this to the letter the I2D2 drive is on your computer
-	global clone	"" // replace with folder above github folder
-    }
-
 	if $user == 2 {
 	global data		"" 			// replace with folder above data repo
 	global GLD 		""			// set this to the letter the GLD drive is on your computer
-	global i2d2 	""					// set this to the letter the I2D2 drive is on your computer
 	global clone	"" // replace with folder above github folder
     }
 
-	if $user == 3 {
-	global data		"" 			// replace with folder above data repo
-	global GLD 		""			// set this to the letter the GLD drive is on your computer
-	global i2d2 	""					// set this to the letter the I2D2 drive is on your computer
-	global clone	"" // replace with folder above github folder
-    }
 
-	if $user == 4 {
-	global data		"" 			// replace with folder above data repo
-	global GLD 		""			// set this to the letter the GLD drive is on your computer
-	global i2d2 	""					// set this to the letter the I2D2 drive is on your computer
-	global clone	"" // replace with folder above github folder
-    }
-
-	if $user == 6 {
-	global data		"" 			// replace with folder above data repo
-	global GLD 		""			// set this to the letter the GLD drive is on your computer
-	global i2d2 	""					// set this to the letter the I2D2 drive is on your computer
-	global clone	"" // replace with folder above github folder
-    }
 
 
 
    * Internal project folder paths. Same no matter user
    * ---------------------
 
-	global  code 	`"${clone}/gld/GLD"'
+	global  PHL 	`"${clone}/gld/GLD-Harmonization/TM/PHL/I2D2"'
 
 
 
@@ -133,30 +101,36 @@ description: calls all scripts for I2D2 and GLD, edited from iecodebook script
 * 	Set to 1 to run, 0 otherwise
 * ---------------------
 
-loc 	BRA		0
-loc 	IND 	0
-loc 	MEX 	0
-loc 	PHL 	0
-loc 	ZAF 	0
-
-
+loc 	phl1997		0
+loc 	phl1998 	0
+loc 	phl1999 	0
+loc 	phl2000 	0
+loc 	phl2001 	0
+loc 	phl2002		0
+loc 	phl2003		0
+loc 	phl2004		0
+loc 	phl2005 	0
+loc 	phl2006  	0
+loc 	phl2007 	0
+loc 	phl2008		0
+loc 	phl2009 	0
+loc 	phl2010		0
+loc 	phl2011 	0
+loc 	phl2012		1
+loc 	phl2013		0
+loc 	phl2014		0
+loc 	phl2015 	0
+loc 	phl2016  	0
+loc 	phl2017 	0
+loc 	phl2018		0
+loc 	phl2019 	0
+loc 	phl2020 	0
 
 * Run
 * ---------------------
 
-
-if (`BRA'==1) {
-	do `"${code}/BRA/BRA_MAIN.do"'
-}
-if (`IND'==1) {
-	do `"${code}/IND/IND_MAIN.do"'
-}
-if (`MEX'==1) {
-	do `"${code}/MEX/MEX_MAIN.do"'
-}
-if (`PHL'==1) {
-	do `"${code}/PHL/PHL_MAIN.do"'
-}
-if (`ZAF'==1) {
-	do `"${code}/ZAF/ZAF_MAIN.do"'
+forvalues year = 1997/2020 {
+    if (`phl`year''==1) {
+		do `"${PHL}/PHL_`year'_I2D2_LFS.do"'
+	}
 }
