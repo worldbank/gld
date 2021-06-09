@@ -10,7 +10,6 @@ description: calls all PHL scripts for I2D2+GLD, edited from iecodebook script
    * Internal project folder paths. Same no matter user
    * ---------------------
 
-	global  PHL 	`"${code}/PHL"'
 	loc 	cty 	"PHL" 			// set to three letter country/economy code
 
 
