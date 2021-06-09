@@ -5,12 +5,12 @@
 **                                                                                                  **
 ** COUNTRY	PHILIPPINES
 ** COUNTRY ISO CODE	PHL
-** YEAR	1997
+** YEAR	2000
 ** SURVEY NAME	Labor Force Survey
 ** SURVEY AGENCY	National Statistical Office
 ** SURVEY SOURCE	EAP Manilla Team
 ** UNIT OF ANALYSIS	Household and Individual
-** INPUT DATABASES	LFS JAN1997.dta LFS APR1997, LFS JUL1997, LFS OCT1997
+** INPUT DATABASES	LFS JAN2000
 ** RESPONSIBLE	Cristian Jara + Tom Mosher
 ** Created	4/4/2012
 ** Modified	24/5/2021
@@ -39,7 +39,7 @@
 
 	local 	cty3 	"PHL" 	// set this to the three letter country/economy abbreviation
 	local 	usr		`"551206_TM"' // set this to whatever Mario named your folder
-	local 	surv_yr `"1997"'	// set this to the survey year
+	local 	surv_yr `"2000"'	// set this to the survey year
 
 ** RUN SETTINGS
 	local 	cb_pause = 0	// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
@@ -63,14 +63,11 @@
 
 
 ** FILES
-/*Note: for 1997, there are 4 rounds, each begginning in Janurary, April, July and October.*/
-	local round1 `"`stata'\LFS JAN1997.dta"'
-	local round2 `"`stata'\LFS APR1997.dta"'
-	local round3 `"`stata'\LFS JUL1997.dta"'
-	local round4 `"`stata'\LFS OCT1997.dta"'
+/*Note: for 1998, there is only 1 data file..*/
+	local round1 `"`stata'\LFS JAN2000.dta"'
 
 ** VALUES
-	local n_round 	4			// numer of survey rounds
+	local n_round 	1			// numer of survey rounds
 
 
 
@@ -90,10 +87,10 @@ if (`append' == 1) {
 	iecodebook template ///
 		`"`round1'"' `"`round2'"' `"`round3'"' `"`round4'"' /// survey files
 		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template.xlsx"' /// output excel command makes
-		, clear replace surveys(JAN1997 APR1997 JUL1997 OCT1997) /// survey names
+		, clear replace surveys(JAN1998) /// survey names
 		match // atuo match the same-named variables
 
-	if (`cb_pause' == 1) {
+if (`cb_pause' == 1) {
 		pause on
 		pause pausing while you edit your codebook. Save aligned codebook with suffix "-IN.xlsx" in the same directory as the output. press 'q' to continue.
 	}
@@ -103,13 +100,14 @@ if (`append' == 1) {
 	iecodebook append ///
 		`"`round1'"' `"`round2'"' `"`round3'"' `"`round4'"' /// survey files
 		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template-IN.xlsx"' /// output just created above
-		, clear surveys(JAN1997 APR1997 JUL1997 OCT1997) // survey names
+		, clear surveys(JAN1998) // survey names
 	}
 	else {
 *** use the single file
 	use `"`round1'"', clear
 
 	}
+
 
 
 ** SAMPLE
@@ -138,11 +136,11 @@ if (`append' == 1) {
 
 
 ** HOUSEHOLD IDENTIFICATION NUMBER
-	loc idhvars 	regn  prov  domain urb panel hcn 	// store idh vars in local
+	loc idhvars 	regn  prov  domain urb panel hcn	// store idh vars in local
 
-	ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
-	loc numlist 	= r(varlist)						// store numeric vars in local
-	loc stringlist 	: list idhvars - numlist			// non-numeric vars in stringlist
+	ds `idhvars',  	has(type numeric)			// filter out numeric variables in local
+	loc numlist 	= r(varlist)				// store numeric vars in local
+	loc stringlist 	: list idhvars - numlist	// non-numeric vars in stringlist
 
 	* starting locals
 	loc len = 4											// declare the length of each element in digits
@@ -259,7 +257,7 @@ if (`append' == 1) {
 
 
 ** REGIONAL AREA 2 DIGITS ADM LEVEL (ADMN2)
-	gen reg03=.
+	gen byte reg03=.
 	label var reg03 "Region at 2 digits (ADMN2)"
 
 
@@ -341,7 +339,6 @@ if (`append' == 1) {
 	assert r(miss) == 0
 
 
-
 ** RELATIONSHIP TO THE HEAD OF HOUSEHOLD
 	gen byte head=rel
 	recode head (0 8 9=6)(6=4) (4 5 7=5)
@@ -355,6 +352,8 @@ if (`append' == 1) {
 	/*Note: if number of Household Heads is >1, all relevant HH head info is set to missing.
 			In this case the only relevant variable is head*/
 	replace head=. if hh>1
+
+	*drop if hh==0
 
 
 ** GENDER
@@ -606,7 +605,7 @@ if (`append' == 1) {
 	recode occup 0 = 10	if 	procc_num==01 	// recode "armed forces" to appropriate label
 	recode occup 0 = 99	if 	(procc_num>=02 & procc_num <=09) ///
 							| (procc_num >=94 & procc_num <= 99) // recode "Not classifiable occupations"
-							
+
 	/* Note that the raw variable, procc lists values, 94-99 for which there are no associated occupation
 	   codes. Given that the raw data indicate that these individauls do have valid, non-missing occupations,
 	   and that these occupations cannot be matched to our classificaitons with certainty, I have coded them as "other" */
