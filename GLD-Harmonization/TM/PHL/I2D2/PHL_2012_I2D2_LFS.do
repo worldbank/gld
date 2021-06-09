@@ -494,12 +494,12 @@ if (`cb_pause' == 1) {
 
 
 ** LABOR STATUS
-	/*Changing by using newempst to determine lstatus, not work
-	Note: creating own label, not using label from newempst	*/
+	/*Changing by using newempstat to determine lstatus, not work
+	Note: creating own label, not using label from newempstat	*/
 	gen byte lstatus=.
-	replace lstatus=1 if newempst==1
-	replace lstatus=2 if newempst==2
-	replace lstatus=3 if newempst==3
+	replace lstatus=1 if newempstat==1
+	replace lstatus=2 if newempstat==2
+	replace lstatus=3 if newempstat==3
 	replace lstatus=. if age < lb_mod_age // restrict universe to only those of working age
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -589,7 +589,8 @@ if (`cb_pause' == 1) {
 	gen byte industry_floor= .
 	replace  	industry_floor= floor(c18_pkb/100) 	if c18_pkb >= 1000
 	replace  	industry_floor= floor(c18_pkb/10)  	if (c18_pkb < 1000 & c18_pkb >=10)
-
+	
+	gen industry = .
 	replace industry=1 	if industry_floor >= 1 	& industry_floor <= 3	// "Agriculture, Forestry, Fishing" coded to "Agriculture"
 	replace industry=2 	if industry_floor >= 5 	& industry_floor <= 9	// "Mining and Quarrying" coded to "Mining"
 	replace industry=3 	if industry_floor >= 10 & industry_floor <= 33 	// "Manufacturing" coded to "Manufacturing"
@@ -642,9 +643,9 @@ if (`cb_pause' == 1) {
 	* in 2012, raw variable is numeric
 
 	* generate occupation variable
-	gen byte occup=floor(c16_proc/1000)		// this handles most of recoding automatically.
-	recode occup 0 = 10	if 	c16_proc<=129 	// recode "armed forces" to appropriate label
-	recode occup 0 = 99	if 	(c16_proc == 930) // recode "Not classifiable occupations"
+	gen byte occup=floor(c16_procc/1000)		// this handles most of recoding automatically.
+	recode occup 0 = 10	if 	c16_procc<=129 	// recode "armed forces" to appropriate label
+	recode occup 0 = 99	if 	(c16_procc == 930) // recode "Not classifiable occupations"
 
 	/* Note that the raw variable, procc lists values, 94-99 for which there are no associated occupation
 	   codes. Given that the raw data indicate that these individauls do have valid, non-missing occupations,
@@ -659,7 +660,7 @@ if (`cb_pause' == 1) {
 
 
 ** SURVEY SPECIFIC OCCUPATION CLASSIFICATION
-	gen occup_orig=c16_proc
+	gen occup_orig=c16_procc
 	replace occup_orig=. if lstatus!=1 			// restrict universe to employed only
 	replace occup_orig=. if age < lb_mod_age	// restrict universe to working age
 	label var occup_orig "Original Occupational Codes"
@@ -758,22 +759,20 @@ if (`cb_pause' == 1) {
 
 
 ** OCCUPATION CLASSIFICATION - SECOND JOB
-	gen byte occup_2=floor(j02_otoc/1000)		// this handles most of recoding automatically.
-	recode occup_2 0 = 10	if 	j02_otoc<=129 	// recode "armed forces" to appropriate label
-	recode occup_2 0 = 99	if 	(j02_otoc == 930) // recode "Not classifiable occupations"
+	gen byte occup_2=floor(j02_otocc/1000)		// this handles most of recoding automatically.
+	recode occup_2 0 = 10	if 	j02_otocc<=129 	// recode "armed forces" to appropriate label
+	recode occup_2 0 = 99	if 	(j02_otocc == 930) // recode "Not classifiable occupations"
 
 
 	replace occup_2=. if lstatus!=1 		// restrict universe to employed only
 	replace occup_2=. if age < lb_mod_age	// restrict universe to working age
 	label var occup_2 "1 digit occupational classification"
-	la de lbloccup 1 "Senior officials" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and sales workers" 6 "Skilled agricultural, forestry, and fishery workers" 7 "Craft and related trades workers" 8 "Plant and machine operators and assemblers" 9 "Elementary occupations" 10 "Armed forces occupations"  99 "Others"
-	label values occup_2 lbloccups
-
+	la de lbloccup_2 1 "Senior officials" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and sales workers" 6 "Skilled agricultural, forestry, and fishery workers" 7 "Craft and related trades workers" 8 "Plant and machine operators and assemblers" 9 "Elementary occupations" 10 "Armed forces occupations"  99 "Others"
 	label values occup_2 lbloccup_2
 
 
 ** WAGES - SECOND JOB
-	gen double wage_2=
+	gen double wage_2=. 
 	replace wage_2=. if lstatus!=1 			// restrict universe to employed only
 	replace wage_2=. if age < lb_mod_age		// restrict universe to working age
 	replace wage_2=. if empstat==1			// restrict universe to wage earners
@@ -781,7 +780,7 @@ if (`cb_pause' == 1) {
 
 
 ** WAGES TIME UNIT - SECOND JOB
-	gen byte unitwage_2=1
+	gen byte unitwage_2=.
 	replace unitwage_2=. if lstatus!=1 			// restrict universe to employed only
 	replace unitwage_2=. if age < lb_mod_age		// restrict universe to working age
 	replace unitwage_2=. if empstat==1			// restrict universe to wage earners
