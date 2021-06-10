@@ -31,8 +31,8 @@ local y="2018"
 
 *if db=="I2D2"{
 
-use "C:\Users\wb582018\OneDrive - WBG\Surveys\BRA\check_BRA\Current\BRA_2018_I2D2\\`ccode'_`y'_I2D2.dta",clear
-log using "C:\Users\wb582018\OneDrive - WBG\Surveys\BRA\check_BRA\Current\BRA_2018_I2D2\\`ccode'_`y'_I2D2.smcl", replace
+use "C:\Users\xxxx\OneDrive - WBG\Surveys\BRA\check_BRA\Current\BRA_2018_I2D2\\`ccode'_`y'_I2D2.dta",clear
+log using "C:\Users\xxxxx\OneDrive - WBG\Surveys\BRA\check_BRA\Current\BRA_2018_I2D2\\`ccode'_`y'_I2D2.smcl", replace
 
 log off
 
