@@ -42,7 +42,7 @@
 	local 	surv_yr `"2013"'	// set this to the survey year
 
 ** RUN SETTINGS
-	local 	cb_pause = 0	// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
+	local 	cb_pause = 1	// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
 	local 	append 	 = 1	// 1 to run iecodebook append, 0 if file is already appended.
 
 
@@ -122,7 +122,7 @@ if (`cb_pause' == 1) {
 
 
 ** YEAR
-	gen int year=`surv_yr'
+	gen int year=svyyr
 	label var year "Year of survey"
 
 
@@ -640,16 +640,11 @@ if (`cb_pause' == 1) {
 
 
 ** OCCUPATION CLASSIFICATION
-	* in 2013, raw variable is numeric
-
 	* generate occupation variable
 	gen byte occup=floor(c16_procc/1000)		// this handles most of recoding automatically.
 	recode occup 0 = 10	if 	c16_procc<=129 	// recode "armed forces" to appropriate label
 	recode occup 0 = 99	if 	(c16_procc == 930) // recode "Not classifiable occupations"
 
-	/* Note that the raw variable, procc lists values, 94-99 for which there are no associated occupation
-	   codes. Given that the raw data indicate that these individauls do have valid, non-missing occupations,
-	   and that these occupations cannot be matched to our classificaitons with certainty, I have coded them as "other" */
 
 
 	replace occup=. if lstatus!=1 		// restrict universe to employed only
@@ -723,22 +718,31 @@ if (`cb_pause' == 1) {
 
 
 ** INDUSTRY CLASSIFICATION - SECOND JOB
-	gen byte industry_2=floor(j03_okb/10)
-	replace industry_2=1 if j03_okb >= 1 & j03_okb <= 9
-	replace industry_2=2 if j03_okb==10 | j03_okb==11
-	replace industry_2=3 if j03_okb>14 & j03_okb<40
-	replace industry_2=4 if j03_okb==40 | j03_okb==41
-	replace industry_2=5 if j03_okb==45
-	replace industry_2=6 if j03_okb>49 & j03_okb<56
-	replace industry_2=7 if j03_okb>59 & j03_okb<65
-	replace industry_2=8 if j03_okb>64 & j03_okb<75
-	replace industry_2=9 if j03_okb == 75
-	replace industry_2=10 if j03_okb>=76 & j03_okb<100 	// this includes education for now.
-	replace industry_2=. if lstatus!=1 				// restrict universe to employed only
-	replace industry_2=. if age < lb_mod_age		// restrict universe to working age
-	label var industry_2 "1 digit industry classification - second job"
-	la de lblindustry_2 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
-	label values industry_2 lblindustry_2
+/*	We have to replace conditionally on the number of digits because if we floor() universally we will collapse the values between
+	[0-1999] into 1 when in fact they are different values. We will do this by creating an intermediate variable industry_2_floor */
+	gen byte industry_2_floor= .
+	replace  	industry_2_floor= floor(c18_pkb/100) 	if c18_pkb >= 1000
+	replace  	industry_2_floor= floor(c18_pkb/10)  	if (c18_pkb < 1000 & c18_pkb >=10)
+
+	gen industry_2 = .
+	replace industry_2=1 	if industry_2_floor >= 1 	& industry_2_floor <= 3	// "Agriculture, Forestry, Fishing" coded to "Agriculture"
+	replace industry_2=2 	if industry_2_floor >= 5 	& industry_2_floor <= 9	// "Mining and Quarrying" coded to "Mining"
+	replace industry_2=3 	if industry_2_floor >= 10 & industry_2_floor <= 33 	// "Manufacturing" coded to "Manufacturing"
+	replace industry_2=4 	if industry_2_floor >= 35 & industry_2_floor <= 39	// "Water supply, sewerage, etc" coded to "Public Utiltiy"
+	replace industry_2=5 	if industry_2_floor >= 41 & industry_2_floor <= 43	// "Construction" coded to "Construction"
+	replace industry_2=6 	if industry_2_floor >= 45 & industry_2_floor <= 47	// "Wholesale/retail, repair of vehicles" to "Commerce"
+	replace industry_2=7 	if industry_2_floor >= 49 & industry_2_floor <= 53	// "Transport+storage" to "Transport". UN codes include storage
+	replace industry_2=6 	if industry_2_floor >= 55 & industry_2_floor <= 56	// "Accommodation+Food" to "Commerce"
+	replace industry_2=7 	if industry_2_floor >= 58 & industry_2_floor <= 63	// "Information+communication" to "Transport/Communication"
+	replace industry_2=8 	if industry_2_floor >= 64 & industry_2_floor <= 82	// "Misc Business Services" to "Business Services"
+	replace industry_2=9 	if industry_2_floor == 84							// "public administration/defense" to "public admin"
+	replace industry_2=10	if industry_2_floor >= 85 & industry_2_floor <= 99	// "Other services" including direct education to "other"
+
+	label var industry_2 "1 digit industry_2 classification"
+	label values industry_2 lblindustry											// use same industry data value label created for first job
+
+	replace industry_2=. if age < lb_mod_age 									// restrict universe to working age
+	replace industry_2=. if lstatus!=1 											// restrict universe to employed only
 
 
 ** INDUSTRY 1 - SECOND JOB
