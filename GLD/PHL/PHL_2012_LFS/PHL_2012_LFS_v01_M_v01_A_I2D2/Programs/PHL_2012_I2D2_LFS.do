@@ -589,7 +589,7 @@ if (`cb_pause' == 1) {
 	gen byte industry_floor= .
 	replace  	industry_floor= floor(c18_pkb/100) 	if c18_pkb >= 1000
 	replace  	industry_floor= floor(c18_pkb/10)  	if (c18_pkb < 1000 & c18_pkb >=10)
-	
+
 	gen industry = .
 	replace industry=1 	if industry_floor >= 1 	& industry_floor <= 3	// "Agriculture, Forestry, Fishing" coded to "Agriculture"
 	replace industry=2 	if industry_floor >= 5 	& industry_floor <= 9	// "Mining and Quarrying" coded to "Mining"
@@ -723,22 +723,33 @@ if (`cb_pause' == 1) {
 
 
 ** INDUSTRY CLASSIFICATION - SECOND JOB
-	gen byte industry_2=floor(j03_okb/10)
-	replace industry_2=1 if j03_okb >= 1 & j03_okb <= 9
-	replace industry_2=2 if j03_okb==10 | j03_okb==11
-	replace industry_2=3 if j03_okb>14 & j03_okb<40
-	replace industry_2=4 if j03_okb==40 | j03_okb==41
-	replace industry_2=5 if j03_okb==45
-	replace industry_2=6 if j03_okb>49 & j03_okb<56
-	replace industry_2=7 if j03_okb>59 & j03_okb<65
-	replace industry_2=8 if j03_okb>64 & j03_okb<75
-	replace industry_2=9 if j03_okb == 75
-	replace industry_2=10 if j03_okb>=76 & j03_okb<100 	// this includes education for now.
-	replace industry_2=. if lstatus!=1 				// restrict universe to employed only
-	replace industry_2=. if age < lb_mod_age		// restrict universe to working age
-	label var industry_2 "1 digit industry classification - second job"
-	la de lblindustry_2 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
-	label values industry_2 lblindustry_2
+/*	We have to replace conditionally on the number of digits because if we floor() universally we will collapse the values between
+	[0-1999] into 1 when in fact they are different values. We will do this by creating an intermediate variable industry_2_floor */
+
+	gen byte industry_2_floor= .
+	replace  	industry_2_floor= floor(j03_okb/100) 	if j03_okb >= 1000
+	replace  	industry_2_floor= floor(j03_okb/10)  	if (j03_okb < 1000 & j03_okb >=10)
+
+	gen industry_2 = .
+	replace industry_2=1 	if industry_2_floor >= 1 	& industry_2_floor <= 3	// "Agriculture, Forestry, Fishing" coded to "Agriculture"
+	replace industry_2=2 	if industry_2_floor >= 5 	& industry_2_floor <= 9	// "Mining and Quarrying" coded to "Mining"
+	replace industry_2=3 	if industry_2_floor >= 10 & industry_2_floor <= 33 	// "Manufacturing" coded to "Manufacturing"
+	replace industry_2=4 	if industry_2_floor >= 35 & industry_2_floor <= 39	// "Water supply, sewerage, etc" coded to "Public Utiltiy"
+	replace industry_2=5 	if industry_2_floor >= 41 & industry_2_floor <= 43	// "Construction" coded to "Construction"
+	replace industry_2=6 	if industry_2_floor >= 45 & industry_2_floor <= 47	// "Wholesale/retail, repair of vehicles" to "Commerce"
+	replace industry_2=7 	if industry_2_floor >= 49 & industry_2_floor <= 53	// "Transport+storage" to "Transport". UN codes include storage
+	replace industry_2=6 	if industry_2_floor >= 55 & industry_2_floor <= 56	// "Accommodation+Food" to "Commerce"
+	replace industry_2=7 	if industry_2_floor >= 58 & industry_2_floor <= 63	// "Information+communication" to "Transport/Communication"
+	replace industry_2=8 	if industry_2_floor >= 64 & industry_2_floor <= 82	// "Misc Business Services" to "Business Services"
+	replace industry_2=9 	if industry_2_floor == 84							// "public administration/defense" to "public admin"
+	replace industry_2=10	if industry_2_floor >= 85 & industry_2_floor <= 99	// "Other services" including direct education to "other"
+
+	label var industry_2 "1 digit industry_2 classification"
+	label values industry_2 lblindustry											// use same industry data value label created for first job
+
+	replace industry_2=. if age < lb_mod_age 									// restrict universe to working age
+	replace industry_2=. if lstatus!=1 											// restrict universe to employed only
+
 
 
 ** INDUSTRY 1 - SECOND JOB
@@ -772,7 +783,7 @@ if (`cb_pause' == 1) {
 
 
 ** WAGES - SECOND JOB
-	gen double wage_2=. 
+	gen double wage_2=.
 	replace wage_2=. if lstatus!=1 			// restrict universe to employed only
 	replace wage_2=. if age < lb_mod_age		// restrict universe to working age
 	replace wage_2=. if empstat==1			// restrict universe to wage earners

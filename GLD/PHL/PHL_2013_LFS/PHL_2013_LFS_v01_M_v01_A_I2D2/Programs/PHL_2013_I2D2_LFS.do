@@ -721,8 +721,8 @@ if (`cb_pause' == 1) {
 /*	We have to replace conditionally on the number of digits because if we floor() universally we will collapse the values between
 	[0-1999] into 1 when in fact they are different values. We will do this by creating an intermediate variable industry_2_floor */
 	gen byte industry_2_floor= .
-	replace  	industry_2_floor= floor(c18_pkb/100) 	if c18_pkb >= 1000
-	replace  	industry_2_floor= floor(c18_pkb/10)  	if (c18_pkb < 1000 & c18_pkb >=10)
+	replace  	industry_2_floor= floor(j03_okb/100) 	if j03_okb >= 1000
+	replace  	industry_2_floor= floor(j03_okb/10)  	if (j03_okb < 1000 & j03_okb >=10)
 
 	gen industry_2 = .
 	replace industry_2=1 	if industry_2_floor >= 1 	& industry_2_floor <= 3	// "Agriculture, Forestry, Fishing" coded to "Agriculture"
