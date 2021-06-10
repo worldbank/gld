@@ -377,7 +377,7 @@ local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
 
 *<_migrated_ref_time_>
 	gen migrated_ref_time = .
-	label var migrated_ref_time "Reference time applied to migration questions"
+	label var migrated_ref_time "Reference time applied to migration questions (in years)"
 *</_migrated_ref_time_>
 
 

@@ -1,2 +1,4 @@
 # GLD
- Support and Documentation Files for the Global Labor Database
+ Code as well as support and documentation files for the Global Labor Database.
+ 
+ 
