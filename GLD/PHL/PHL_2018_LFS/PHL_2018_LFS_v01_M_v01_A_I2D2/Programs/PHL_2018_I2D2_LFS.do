@@ -454,7 +454,7 @@ if (`cb_pause' == 1) {
 
 	replace edulevel1=8 if ( pufc07_grade>=1 & pufc07_grade<=10)		/// these are either unlabelled or "preschool", go to "other"
 							| ( pufc07_grade>=191 & pufc07_grade<=192)	// There's no documentation on where to classify SPED, include here for now
-	
+
 	label var edulevel1 "Level of education 1"
 	la de lbledulevel1 	1 "No education" 	///
 						2 "Primary incomplete" 	///
@@ -514,12 +514,12 @@ if (`cb_pause' == 1) {
 
 
 ** LABOR STATUS
-	/*Changing by using newempst to determine lstatus, not work
-	Note: creating own label, not using label from newempst	*/
+	/*Changing by using pufnewempstat to determine lstatus, not work
+	Note: creating own label, not using label from pufnewempstat	*/
 	gen byte lstatus=.
-	replace lstatus=1 if newempst==1
-	replace lstatus=2 if newempst==2
-	replace lstatus=3 if newempst==3
+	replace lstatus=1 if pufnewempstat==1
+	replace lstatus=2 if pufnewempstat==2
+	replace lstatus=3 if pufnewempstat==3
 	replace lstatus=. if age < lb_mod_age // restrict universe to only those of working age
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -536,10 +536,10 @@ if (`cb_pause' == 1) {
 
 ** EMPLOYMENT STATUS
 	gen byte empstat=.
-	replace empstat=1 if c19pclas==0 | c19pclas==1 | c19pclas==2 | c19pclas==5
-	replace empstat=2 if c19pclas==6
-	replace empstat=3 if c19pclas==4
-	replace empstat=4 if c19pclas==3
+	replace empstat=1 if pufc23_pclass==0 | pufc23_pclass==1 | pufc23_pclass==2 | pufc23_pclass==5
+	replace empstat=2 if pufc23_pclass==6
+	replace empstat=3 if pufc23_pclass==4
+	replace empstat=4 if pufc23_pclass==3
 	replace empstat=. if lstatus!=1 	// includes universe restriction
 	label var empstat "Employment status"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed"
@@ -555,7 +555,7 @@ if (`cb_pause' == 1) {
 
 
 ** NUMBER OF ADDITIONAL JOBS
-	gen byte njobs=a03_jobs
+	gen byte njobs=pufc27_njobs
 	label var njobs "Number of total jobs"
 	replace njobs=. if age < lb_mod_age // restrict universe to working age
 
@@ -568,8 +568,8 @@ if (`cb_pause' == 1) {
 
 ** SECTOR OF ACTIVITY: PUBLIC - PRIVATE
 	gen byte ocusec=.
-	replace ocusec=1 if c19pclas==2
-	replace ocusec=2 if c19pclas!=2
+	replace ocusec=1 if pufc23_pclass==2
+	replace ocusec=2 if pufc23_pclass!=2
 	label var ocusec "Sector of activity"
 	la de lblocusec 1 "Public, state owned, government, army, NGO" 2 "Private"
 	label values ocusec lblocusec
@@ -580,11 +580,11 @@ if (`cb_pause' == 1) {
 
 ** REASONS NOT IN THE LABOR FORCE
 	gen byte nlfreason=.
-	replace nlfreason=1 if c42_wynt==8
-	replace nlfreason=2 if c42_wynt==7
-	replace nlfreason=3 if c42_wynt==6
-	replace nlfreason=4 if c42_wynt==3
-	replace nlfreason=5 if c42_wynt==1 | c42_wynt==2 | c42_wynt==4 | c42_wynt==5 | c42_wynt==9
+	replace nlfreason=1 if pufc34_wynot==8
+	replace nlfreason=2 if pufc34_wynot==7
+	replace nlfreason=3 if pufc34_wynot==6
+	replace nlfreason=4 if pufc34_wynot==3
+	replace nlfreason=5 if pufc34_wynot==1 | pufc34_wynot==2 | pufc34_wynot==4 | pufc34_wynot==5 | pufc34_wynot==9
 	replace nlfreason=. if lstatus!=3 	// restricts universe to non-labor force
 	replace nlfreason=. if age < lb_mod_age // restrict universe to working age
 	label var nlfreason "Reason not in the labor force"
@@ -593,29 +593,29 @@ if (`cb_pause' == 1) {
 
 
 ** UNEMPLOYMENT DURATION: MONTHS LOOKING FOR A JOB
-	gen byte unempldur_l= c40_wks/4.2
+	gen byte unempldur_l= pufc33_weeks/4.2
 	label var unempldur_l "Unemployment duration (months) lower bracket"
 	replace unempldur_l=. if age < lb_mod_age // restrict universe to working age
 	replace unempldur_l=. if lstatus!=2 	  // restrict universe to unemployed only
 
-	gen byte unempldur_u= c40_wks/4.2
+	gen byte unempldur_u= pufc33_weeks/4.2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
 	replace unempldur_l=. if age < lb_mod_age // restrict universe to working age
 	replace unempldur_l=. if lstatus!=2 	  // restrict universe to unemployed only
 
 ** INDUSTRY CLASSIFICATION
 	gen byte industry=.
-	replace industry=1 if (c18_pkb>=1& c18_pkb<=4)		// to Agriculture
-	replace industry=2 if (c18_pkb>=5 & c18_pkb<=9)		// to Mining
-	replace industry=3 if (c18_pkb>=10 & c18_pkb<=32)	// to Manufacturing
-	replace industry=4 if (c18_pkb>=33 & c18_pkb<=39)	// to Public utility
-	replace industry=5 if (c18_pkb>=41 &  c18_pkb<=43)	// to Construction
-	replace industry=6 if (c18_pkb>=45 & c18_pkb<=47) | c18_pkb==56	// to Commerce
-	replace industry=7 if (c18_pkb>=49 & c18_pkb<=55)| (c18_pkb>=58 & c18_pkb<=63) // to Transport/coms
-	replace industry=8 if (c18_pkb>=64 & c18_pkb<=82) 	// to financial/business services
-	replace industry=9 if (c18_pkb==84) 				// to public administration
-	replace industry=10 if  (c18_pkb>=91 & c18_pkb<=99) // to other
-	replace industry=10 if industry==. & c18_pkb!=.
+	replace industry=1 if (pufc16_pkb>=1& pufc16_pkb<=4)		// to Agriculture
+	replace industry=2 if (pufc16_pkb>=5 & pufc16_pkb<=9)		// to Mining
+	replace industry=3 if (pufc16_pkb>=10 & pufc16_pkb<=32)	// to Manufacturing
+	replace industry=4 if (pufc16_pkb>=33 & pufc16_pkb<=39)	// to Public utility
+	replace industry=5 if (pufc16_pkb>=41 &  pufc16_pkb<=43)	// to Construction
+	replace industry=6 if (pufc16_pkb>=45 & pufc16_pkb<=47) | (pufc16_pkb>=55 & pufc16_pkb<=56)	// to Commerce
+	replace industry=7 if (pufc16_pkb>=49 & pufc16_pkb<=53)| (pufc16_pkb>=58 & pufc16_pkb<=63) // to Transport/coms
+	replace industry=8 if (pufc16_pkb>=64 & pufc16_pkb<=82) 	// to financial/business services
+	replace industry=9 if (pufc16_pkb==84) 				// to public administration
+	replace industry=10 if  (pufc16_pkb>=91 & pufc16_pkb<=99) // to other
+	replace industry=10 if industry==. & pufc16_pkb!=.
 	replace industry=. if lstatus~=1
 
 * Comments include UN International Standard Industrial Classification associated categories (version 3.1)
@@ -645,20 +645,23 @@ if (`cb_pause' == 1) {
 	replace industry1=. if lstatus!=1 		// restrict universe to employed only
 
 **SURVEY SPECIFIC INDUSTRY CLASSIFICATION
-	gen industry_orig=c18_pkb
+	gen industry_orig=pufc16_pkb
 	replace industry_orig=. if lstatus!=1 		// restrict universe to employed only
 	replace industry_orig=. if age < lb_mod_age // restrict universe to working age
 	label var industry_orig "Original Industry Codes"
 
 
 ** OCCUPATION CLASSIFICATION
-	* in 2018, raw variable is numeric
+	/* in 2018, raw variable is numeric
+	Since there are sparse factor labels,
+	that I will have to recode these when issue #18 is resolved https://github.com/worldbank/gld/issues/18
+	I am making many temporary assumptions when I'm recoding here.*/
 
 	* generate occupation variable
-	gen byte occup=floor(c16_proc/10)		// this handles most of recoding automatically.
-	recode occup 0 = 10	if 	c16_proc==1 	// recode "armed forces" to appropriate label
-	recode occup 0 = 99	if 	(c16_proc>=2 & c16_proc <=9) ///
-							| (c16_proc >=94 & c16_proc <= 99) // recode "Not classifiable occupations"
+	gen byte occup=floor(pufc14_procc/10)		// this handles most of recoding automatically.
+	recode occup 0 = 10	if 	pufc14_procc==1 	// recode "armed forces" to appropriate label
+	recode occup 0 = 99	if 	(pufc14_procc>=2 & pufc14_procc <=9) /// for now,
+							| (pufc14_procc >=94 & pufc14_procc <= 99) // recode "Not classifiable occupations"
 
 
 	replace occup=. if lstatus!=1 		// restrict universe to employed only
@@ -669,7 +672,7 @@ if (`cb_pause' == 1) {
 
 
 ** SURVEY SPECIFIC OCCUPATION CLASSIFICATION
-	gen occup_orig=c16_proc
+	gen occup_orig=pufc14_procc
 	replace occup_orig=. if lstatus!=1 			// restrict universe to employed only
 	replace occup_orig=. if age < lb_mod_age	// restrict universe to working age
 	label var occup_orig "Original Occupational Codes"
@@ -686,7 +689,7 @@ if (`cb_pause' == 1) {
 
 
 ** HOURS WORKED LAST WEEK
-	gen whours= c22_phrs
+	gen whours= pufc19_phours
 	replace whours=. if lstatus!=1 			// restrict universe to employed only
 	replace whours=. if age < lb_mod_age	// restrict universe to working age
 	label var whours "Hours of work in last week"
@@ -694,7 +697,7 @@ if (`cb_pause' == 1) {
 
 
 ** WAGES
-	gen double wage= c27_pbsc
+	gen double wage= pufc25_pbasic
 	replace wage=. if lstatus!=1 			// restrict universe to employed only
 	replace wage=. if age < lb_mod_age		// restrict universe to working age
 	replace wage=. if empstat==1			// restrict universe to wage earners
@@ -732,20 +735,8 @@ if (`cb_pause' == 1) {
 
 
 ** INDUSTRY CLASSIFICATION - SECOND JOB
+	* no second job industry classifcation
 	gen byte industry_2=.
-	replace industry_2=1 if (j03_okb>=1& j03_okb<=4)		// to Agriculture
-	replace industry_2=2 if (j03_okb>=5 & j03_okb<=9)		// to Mining
-	replace industry_2=3 if (j03_okb>=10 & j03_okb<=32)	// to Manufacturing
-	replace industry_2=4 if (j03_okb>=33 & j03_okb<=39)	// to Public utility
-	replace industry_2=5 if (j03_okb>=41 &  j03_okb<=43)	// to Construction
-	replace industry_2=6 if (j03_okb>=45 & j03_okb<=47) | j03_okb==56	// to Commerce
-	replace industry_2=7 if (j03_okb>=49 & j03_okb<=55)| (j03_okb>=58 & j03_okb<=63) // to Transport/coms
-	replace industry_2=8 if (j03_okb>=64 & j03_okb<=82) 	// to financial/business services
-	replace industry_2=9 if (j03_okb==84) 				// to public administration
-	replace industry_2=10 if  (j03_okb>=91 & j03_okb<=99) // to other
-	replace industry_2=10 if industry_2==. & j03_okb!=.
-	replace industry_2=. if lstatus~=1
-
 	label var industry_2 "1 digit industry_2 classification"
 	label values industry_2 lblindustry 		// use same value/factor label as industry
 	replace industry_2=. if age < lb_mod_age // restrict universe to working age
@@ -763,29 +754,22 @@ if (`cb_pause' == 1) {
 
 
 **SURVEY SPECIFIC INDUSTRY CLASSIFICATION - SECOND JOB
-	gen industry_orig_2=j03_okb
+	gen industry_orig_2=.
 	replace industry_orig_2=. if lstatus!=1 				// restrict universe to employed only
 	replace industry_orig_2=. if age < lb_mod_age			// restrict universe to working age
 	label var industry_orig_2 "Original Industry Codes - Second job"
 
 
 ** OCCUPATION CLASSIFICATION - SECOND JOB
-	gen byte occup_2=floor(j02_otoc/10)		// this handles most of recoding automatically.
-	recode occup_2 0 = 10	if 	j02_otoc==1 	// recode "armed forces" to appropriate label
-	recode occup_2 0 = 99	if 	j02_otoc==9 	// recode "Not classifiable occupations" to appropriate label
-
-	replace occup_2=. if lstatus!=1 		// restrict universe to employed only
-	replace occup_2=. if age < lb_mod_age	// restrict universe to working age
-
-	replace occup_2=. if lstatus!=1 				// restrict universe to employed only
-	replace occup_2=. if age < lb_mod_age			// restrict universe to working age
+	* no second job occupation classifcation
 	label var occup_2 "1 digit occupational classification - second job"
 	la de lbloccup_2 1 "Senior officials" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup_2 lbloccup_2
 
 
 ** WAGES - SECOND JOB
-	gen double wage_2=c36_obic
+	* no second job wage info
+	gen double wage_2= .
 	replace wage_2=. if lstatus!=1 			// restrict universe to employed only
 	replace wage_2=. if age < lb_mod_age		// restrict universe to working age
 	replace wage_2=. if empstat==1			// restrict universe to wage earners
@@ -793,7 +777,8 @@ if (`cb_pause' == 1) {
 
 
 ** WAGES TIME UNIT - SECOND JOB
-	gen byte unitwage_2=1
+	* no second job wage unit info
+	gen byte unitwage_2= . 
 	replace unitwage_2=. if lstatus!=1 			// restrict universe to employed only
 	replace unitwage_2=. if age < lb_mod_age		// restrict universe to working age
 	replace unitwage_2=. if empstat==1			// restrict universe to wage earners
