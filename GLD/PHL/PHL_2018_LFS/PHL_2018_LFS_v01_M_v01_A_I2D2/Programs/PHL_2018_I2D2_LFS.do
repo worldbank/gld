@@ -139,7 +139,7 @@ if (`cb_pause' == 1) {
 
 
 ** HOUSEHOLD IDENTIFICATION NUMBER
-	loc idhvars 	reg  prov hhnum 	// store idh vars in local
+	loc idhvars 	reg  prov pufhhnum 	// store idh vars in local
 
 
 	ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
@@ -221,17 +221,17 @@ if (`cb_pause' == 1) {
 ** HOUSEHOLD WEIGHTS
 	/* The weight variable will be divided by the number of rounds per year to ensure the
 	   weighting factor does not over-mutliply*/
-	gen double wgt= pwgt/(10000 * `n_round')
+	gen double wgt= pufpwgtprv/(10000 * `n_round')
 	label var wgt "Household sampling weight"
 
 
 ** STRATA
-	gen strata=stratum
+	gen strata=.
 	label var strata "Strata"
 
 
 ** PSU
-	/*Survey includes psu variable*/
+	rename pufpsu psu
 	label var psu "Primary sampling units"
 
 
@@ -243,14 +243,14 @@ if (`cb_pause' == 1) {
 
 
 ** LOCATION (URBAN/RURAL)
-    gen byte urb=urb2k70
+	gen byte urb=pufurb2k10
     label var urb "Urban/Rural"
 	la de lblurb 1 "Urban" 2 "Rural"
 	label values urb lblurb
 
 
 **REGIONAL AREAS
-	gen byte reg01=reg		// not recoding region for now, but needs to be addressed in #12
+	gen byte reg01=pufreg		// not recoding region for now, but needs to be addressed in #12
     la de lblreg01  1 "Ilocos" 2 "Cagayan Valley" 3 "Central Luzon" 5 "Bicol" 6 "Western Visayas" 7 "Central Visayas" ///
                     8 "Eastern Visayas" 9 "Zamboanga Peninsula" 10 "Northern Mindanao" 11 "Davao" 12 "Soccsksargen" ///
                     13 "National Capital Region" 14 "Cordillera Administrative Region" ///
@@ -339,7 +339,7 @@ if (`cb_pause' == 1) {
 
 ** HOUSEHOLD SIZE
 	sort idh
-	by idh: egen hhsize= count(c05_rel <= 8 | c05_rel == 11)
+	by idh: egen hhsize= count(pufc03_rel <= 8 | pufc03_rel == 11)
 	* restrict by family role var, include all non-family members but not boarders/workers
 	label var hhsize "Household size"
 
@@ -349,7 +349,7 @@ if (`cb_pause' == 1) {
 
 
 ** RELATIONSHIP TO THE HEAD OF HOUSEHOLD
-	gen byte head=c05_rel				//  "head", "spouse", and children not recoded
+	gen byte head=pufc03_rel				//  "head", "spouse", and children not recoded
 	recode head 	(4 5 6 8  	= 5)	/// siblings, children in law, grandchildren, other relatives of hh head = "other relatives"
 					(7 			= 4)	/// parents of hh head become "parents"
 					(9 10 11 	= 6) 	// boarders and domestic workers become "other/non-relatives"
@@ -369,14 +369,14 @@ if (`cb_pause' == 1) {
 
 
 ** GENDER
-	gen byte gender=c06_sex
+	gen byte gender= pufc04_sex
 	label var gender "Gender"
 	la de lblgender 1 "Male" 2 "Female"
 	label values gender lblgender
 
 
 ** AGE
-	gen byte age = c07_age
+	gen byte age = pufc05_age
 	label var age "Individual age"
 	replace age=98 if age>=98 & age!=.
 
@@ -388,7 +388,7 @@ if (`cb_pause' == 1) {
 
 
 ** MARITAL STATUS
-	gen byte marital=c08_ms
+	gen byte marital=pufc06_mstat
 	recode marital (1=2) (2=1) (3=5)(5 6=.)
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
@@ -408,9 +408,9 @@ if (`cb_pause' == 1) {
 
 
 ** CURRENTLY AT SCHOOL
-	gen byte atschool=.
-	replace atschool=1 if a02_csch == 1
-	replace atschool=0 if a02_csch == 2
+	gen byte atschool=pufc08_cursch
+	replace atschool=1 if pufc08_cursch == 1
+	replace atschool=0 if pufc08_cursch == 2
 	label var atschool "Attending school"
 	la de lblatschool 0 "No" 1 "Yes"
 	label values atschool  lblatschool
@@ -431,18 +431,42 @@ if (`cb_pause' == 1) {
 
 
 ** EDUCATIONAL LEVEL 1
+	/*	note this coding falls under issue #18 https://github.com/worldbank/gld/issues/18, using
+		.dta-loaded factor /data labels for now just to continue with project. */
 	gen byte edulevel1=.
-	replace edulevel1=1 if c09_grd==0
-	replace edulevel1=2 if c09_grd==1
-	replace edulevel1=3 if c09_grd==2
-	replace edulevel1=4 if c09_grd==3
-	replace edulevel1=5 if c09_grd==4
-	replace edulevel1=7 if c09_grd==5 | ( c09_grd>=60 & c09_grd<=78)
-	* note, according to the PSA, codes 60-78 refer to bachelors degrees, (for 2009, assuming same)
+	replace edulevel1=1 if pufc07_grade <= 110 	// less than primary to "no education"
+	replace edulevel1=2 if (pufc07_grade >= 110 & pufc07_grade <= 160) /// grade 6 (not marked as complete) or less in primary or
+							| (pufc07_grade >=410 & pufc07_grade <= 450) // ...grade 5 in K-12 program	to "Primary incomplete"
+	replace edulevel1=3 if pufc07_grade == 160 		/// grade 6 graduate
+							| pufc07_grade == 170 	/// grade 7 graduate
+							| pufc07_grade == 460  // grade 6 in k-12 school to "Primary Complete"
+	replace edulevel1=4 if (pufc07_grade >= 210 & pufc07_grade <= 240) /// 1-4th year in secondary school
+							| (pufc07_grade >=410 & pufc07_grade <= 510) // ...or grade 7-11 in k-12 program to "secondary incomplete"
+	replace edulevel1=5 if pufc07_grade == 250		/// high school complete
+							| pufc07_grade == 520 	// ... or "grade 12" in K-12 to to "Secondary Complete"
+	replace edulevel1=6 if (pufc07_grade >= 601 & pufc07_grade <= 699) 	// the 600s are for post-secondary/non-uni track courses
 
+	/* 	It appears that if you have a university degree, you provide that degree program and your answer is listed in the 800s. Otherwise,
+		if you are still incomplete with uni, you list your year and your reponse is in teh 700s.
+		Masters, doctorate degrees are listed in 900s
+		*/
+	replace edulevel1=7 if ( pufc07_grade>=701 & pufc07_grade<=950)
+
+	replace edulevel1=8 if ( pufc07_grade>=1 & pufc07_grade<=10)		/// these are either unlabelled or "preschool", go to "other"
+							| ( pufc07_grade>=191 & pufc07_grade<=192)	// There's no documentation on where to classify SPED, include here for now
+	
 	label var edulevel1 "Level of education 1"
-	la de lbledulevel1 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete" 8 "Other" 9 "Unstated"
+	la de lbledulevel1 	1 "No education" 	///
+						2 "Primary incomplete" 	///
+						3 "Primary complete" 	///
+						4 "Secondary incomplete" 	///
+						5 "Secondary complete" 	///
+						6 "Higher than secondary but not university" ///
+						7 "University incomplete or complete" 	///
+						8 "Other" 	///
+						9 "Unstated"
 	label values edulevel1 lbledulevel1
+
 	replace edulevel1=. if age < ed_mod_age // restrict universe to students at or above primary school age
 
 
