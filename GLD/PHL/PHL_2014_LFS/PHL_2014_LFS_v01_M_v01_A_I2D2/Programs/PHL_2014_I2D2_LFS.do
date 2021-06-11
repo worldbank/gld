@@ -586,8 +586,8 @@ if (`cb_pause' == 1) {
 	replace industry=3 if (c18_pkb>=10 & c18_pkb<=32)	// to Manufacturing
 	replace industry=4 if (c18_pkb>=33 & c18_pkb<=39)	// to Public utility
 	replace industry=5 if (c18_pkb>=41 &  c18_pkb<=43)	// to Construction
-	replace industry=6 if (c18_pkb>=45 & c18_pkb<=47) | c18_pkb==56	// to Commerce
-	replace industry=7 if (c18_pkb>=49 & c18_pkb<=55)| (c18_pkb>=58 & c18_pkb<=63) // to Transport/coms
+	replace industry=6 if (c18_pkb>=45 & c18_pkb<=47) | (c18_pkb >= 55 & c18_pkb <= 56)	// to Commerce
+	replace industry=7 if (c18_pkb>=49 & c18_pkb<=53)| (c18_pkb>=58 & c18_pkb<=63) // to Transport/coms
 	replace industry=8 if (c18_pkb>=64 & c18_pkb<=82) 	// to financial/business services
 	replace industry=9 if (c18_pkb==84) 				// to public administration
 	replace industry=10 if  (c18_pkb>=91 & c18_pkb<=99) // to other
@@ -718,8 +718,8 @@ if (`cb_pause' == 1) {
 	replace industry_2=3 if (j03_okb>=10 & j03_okb<=32)	// to Manufacturing
 	replace industry_2=4 if (j03_okb>=33 & j03_okb<=39)	// to Public utility
 	replace industry_2=5 if (j03_okb>=41 &  j03_okb<=43)	// to Construction
-	replace industry_2=6 if (j03_okb>=45 & j03_okb<=47) | j03_okb==56	// to Commerce
-	replace industry_2=7 if (j03_okb>=49 & j03_okb<=55)| (j03_okb>=58 & j03_okb<=63) // to Transport/coms
+	replace industry_2=6 if (j03_okb>=45 & j03_okb<=47) | (j03_okb>= 55 & j03_okb <= 56)	// to Commerce
+	replace industry_2=7 if (j03_okb>=49 & j03_okb<=53)| (j03_okb>=58 & j03_okb<=63) // to Transport/coms
 	replace industry_2=8 if (j03_okb>=64 & j03_okb<=82) 	// to financial/business services
 	replace industry_2=9 if (j03_okb==84) 				// to public administration
 	replace industry_2=10 if  (j03_okb>=91 & j03_okb<=99) // to other
