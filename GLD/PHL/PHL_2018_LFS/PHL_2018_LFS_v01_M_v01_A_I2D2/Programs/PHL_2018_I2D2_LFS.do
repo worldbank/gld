@@ -42,7 +42,7 @@
 	local 	surv_yr `"2018"'	// set this to the survey year
 
 ** RUN SETTINGS
-	local 	cb_pause = 1	// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
+	local 	cb_pause = 0	// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
 	local 	append 	 = 1	// 1 to run iecodebook append, 0 if file is already appended.
 
 
@@ -122,7 +122,7 @@ if (`cb_pause' == 1) {
 
 
 ** YEAR
-	gen int year=svyyr
+	gen int year= pufsvyyr
 	label var year "Year of survey"
 
 
@@ -132,14 +132,18 @@ if (`cb_pause' == 1) {
 
 
 ** MONTH OF INTERVIEW
-	gen byte month=svymo
+	gen byte month=pufsvymo
 	la de lblmonth 1 "January" 2 "February" 3 "March" 4 "April" 5 "May" 6 "June" 7 "July" 8 "August" 9 "September" 10 "October" 11 "November" 12 "December"
 	label value month lblmonth
 	label var month "Month of the interview"
 
 
 ** HOUSEHOLD IDENTIFICATION NUMBER
-	loc idhvars 	reg  prov pufhhnum 	// store idh vars in local
+/* 	Note that only the first round has a household id number, but with the following list of 
+	variables that ends up not mattering because they, along with family member number, do 
+	uniquely identify observations. */
+	
+	loc idhvars 	pufreg pufurb2k10 pufsvymo pufpsu   // store idh vars in local
 
 
 	ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
@@ -217,7 +221,7 @@ if (`cb_pause' == 1) {
 	isid idh idp 										// household and individual id uniquely identify
 
 
-
+ 
 ** HOUSEHOLD WEIGHTS
 	/* The weight variable will be divided by the number of rounds per year to ensure the
 	   weighting factor does not over-mutliply*/
@@ -762,6 +766,7 @@ if (`cb_pause' == 1) {
 
 ** OCCUPATION CLASSIFICATION - SECOND JOB
 	* no second job occupation classifcation
+	gen occup_2 = .
 	label var occup_2 "1 digit occupational classification - second job"
 	la de lbloccup_2 1 "Senior officials" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup_2 lbloccup_2
