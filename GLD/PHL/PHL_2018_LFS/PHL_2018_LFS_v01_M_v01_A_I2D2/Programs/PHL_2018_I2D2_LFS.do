@@ -611,8 +611,8 @@ if (`cb_pause' == 1) {
 	gen byte industry=.
 	replace industry=1 if (pufc16_pkb>=1& pufc16_pkb<=4)		// to Agriculture
 	replace industry=2 if (pufc16_pkb>=5 & pufc16_pkb<=9)		// to Mining
-	replace industry=3 if (pufc16_pkb>=10 & pufc16_pkb<=32)	// to Manufacturing
-	replace industry=4 if (pufc16_pkb>=33 & pufc16_pkb<=39)	// to Public utility
+	replace industry=3 if (pufc16_pkb>=10 & pufc16_pkb<=33)	// to Manufacturing
+	replace industry=4 if (pufc16_pkb>=35 & pufc16_pkb<=39)	// to Public utility
 	replace industry=5 if (pufc16_pkb>=41 &  pufc16_pkb<=43)	// to Construction
 	replace industry=6 if (pufc16_pkb>=45 & pufc16_pkb<=47) | (pufc16_pkb>=55 & pufc16_pkb<=56)	// to Commerce
 	replace industry=7 if (pufc16_pkb>=49 & pufc16_pkb<=53)| (pufc16_pkb>=58 & pufc16_pkb<=63) // to Transport/coms
