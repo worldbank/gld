@@ -583,8 +583,8 @@ if (`cb_pause' == 1) {
 	gen byte industry=.
 	replace industry=1 if (c18_pkb>=1& c18_pkb<=4)		// to Agriculture
 	replace industry=2 if (c18_pkb>=5 & c18_pkb<=9)		// to Mining
-	replace industry=3 if (c18_pkb>=10 & c18_pkb<=32)	// to Manufacturing
-	replace industry=4 if (c18_pkb>=33 & c18_pkb<=39)	// to Public utility
+	replace industry=3 if (c18_pkb>=10 & c18_pkb<=33)	// to Manufacturing
+	replace industry=4 if (c18_pkb>=35 & c18_pkb<=39)	// to Public utility
 	replace industry=5 if (c18_pkb>=41 &  c18_pkb<=43)	// to Construction
 	replace industry=6 if (c18_pkb>=45 & c18_pkb<=47) | (c18_pkb >= 55 & c18_pkb <= 56)	// to Commerce
 	replace industry=7 if (c18_pkb>=49 & c18_pkb<=53)| (c18_pkb>=58 & c18_pkb<=63) // to Transport/coms
@@ -711,8 +711,8 @@ if (`cb_pause' == 1) {
 	gen byte industry_2=.
 	replace industry_2=1 if (j03_okb>=1& j03_okb<=4)		// to Agriculture
 	replace industry_2=2 if (j03_okb>=5 & j03_okb<=9)		// to Mining
-	replace industry_2=3 if (j03_okb>=10 & j03_okb<=32)	// to Manufacturing
-	replace industry_2=4 if (j03_okb>=33 & j03_okb<=39)	// to Public utility
+	replace industry_2=3 if (j03_okb>=10 & j03_okb<=33)	// to Manufacturing
+	replace industry_2=4 if (j03_okb>=35 & j03_okb<=39)	// to Public utility
 	replace industry_2=5 if (j03_okb>=41 &  j03_okb<=43)	// to Construction
 	replace industry_2=6 if (j03_okb>=45 & j03_okb<=47) | (j03_okb >= 55 & j03_okb <= 56)	// to Commerce
 	replace industry_2=7 if (j03_okb>=49 & j03_okb<=53)| (j03_okb>=58 & j03_okb<=63) // to Transport/coms

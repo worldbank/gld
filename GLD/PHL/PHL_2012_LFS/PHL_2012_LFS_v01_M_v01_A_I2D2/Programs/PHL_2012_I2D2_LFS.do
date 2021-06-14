@@ -717,7 +717,7 @@ if (`cb_pause' == 1) {
 	label values empstat_2_year  lblempstat_2_year
 
 
-** INDUSTRY CLASSIFICATION - SECOND JOB j03_okb
+** INDUSTRY CLASSIFICATION - SECOND JOB 
 
 	gen industry_2 = .
 
