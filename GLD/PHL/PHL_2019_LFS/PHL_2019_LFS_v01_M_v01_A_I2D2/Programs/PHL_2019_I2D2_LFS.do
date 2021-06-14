@@ -143,7 +143,7 @@ if (`cb_pause' == 1) {
 	variables that ends up not mattering because they, along with family member number, do
 	uniquely identify observations. */
 
-	loc idhvars 	pufreg pufurb2k10 pufsvymo pufpsu   // store idh vars in local
+	loc idhvars 	pufreg pufhhnum pufurb2k10 pufsvymo pufpsu   // store idh vars in local
 
 
 	ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
@@ -264,7 +264,7 @@ if (`cb_pause' == 1) {
 
 
 ** REGIONAL AREA 1 DIGIT ADMN LEVEL
-	gen byte reg02=prov
+	gen byte reg02= .
 	label var reg02 "Region at 1 digit (ADMN1)"
 
 
@@ -438,26 +438,23 @@ if (`cb_pause' == 1) {
 	/*	note this coding falls under issue #18 https://github.com/worldbank/gld/issues/18, using
 		.dta-loaded factor /data labels for now just to continue with project. */
 	gen byte edulevel1=.
-	replace edulevel1=1 if pufc07_grade <= 110 	// less than primary to "no education"
-	replace edulevel1=2 if (pufc07_grade >= 110 & pufc07_grade <= 160) /// grade 6 (not marked as complete) or less in primary or
-							| (pufc07_grade >=410 & pufc07_grade <= 450) // ...grade 5 in K-12 program	to "Primary incomplete"
-	replace edulevel1=3 if pufc07_grade == 160 		/// grade 6 graduate
-							| pufc07_grade == 170 	/// grade 7 graduate
-							| pufc07_grade == 460  // grade 6 in k-12 school to "Primary Complete"
-	replace edulevel1=4 if (pufc07_grade >= 210 & pufc07_grade <= 240) /// 1-4th year in secondary school
-							| (pufc07_grade >=410 & pufc07_grade <= 510) // ...or grade 7-11 in k-12 program to "secondary incomplete"
-	replace edulevel1=5 if pufc07_grade == 250		/// high school complete
-							| pufc07_grade == 520 	// ... or "grade 12" in K-12 to to "Secondary Complete"
-	replace edulevel1=6 if (pufc07_grade >= 601 & pufc07_grade <= 699) 	// the 600s are for post-secondary/non-uni track courses
+	replace edulevel1=1 if pufc07_grade <= 2000 	// less than primary to "no education"
+
+	replace edulevel1=2 if pufc07_grade == 10010	// Grade 1-5 to "primary incomplete"
+	replace edulevel1=3 if pufc07_grade == 10020 		// grade 6/7 graduate to "primary complete"
+	replace edulevel1=4 if pufc07_grade == 24010 	// grade 7-9 to "secondary incomplete"
+	replace edulevel1=5 if pufc07_grade == 24020		// high school complete to "secondary complete"
+	replace edulevel1=6 if (pufc07_grade >= 34011 & pufc07_grade <= 59999) 	// these areas are for post-secondary but not uni
 
 	/* 	It appears that if you have a university degree, you provide that degree program and your answer is listed in the 800s. Otherwise,
 		if you are still incomplete with uni, you list your year and your reponse is in teh 700s.
 		Masters, doctorate degrees are listed in 900s
 		*/
-	replace edulevel1=7 if ( pufc07_grade>=701 & pufc07_grade<=950)
+	replace edulevel1=7 if (pufc07_grade >= 60010 & pufc07_grade <= 80922) // all current university and advanced degree students + grads
 
-	replace edulevel1=8 if ( pufc07_grade>=1 & pufc07_grade<=10)		/// these are either unlabelled or "preschool", go to "other"
-							| ( pufc07_grade>=191 & pufc07_grade<=192)	// There's no documentation on where to classify SPED, include here for now
+	replace edulevel1=8 if ( pufc07_grade>=1000 & pufc07_grade<=2000)		/// these are either unlabelled or "preschool", go to "other"
+							|  pufc07_grade==10002 | pufc07_grade == 24002 	/// There's no documentation on where to classify SPED
+							| pufc07_grade == 81013 | pufc07_grade==81031  // "hotels" and "military" are outliers after all education. why?
 
 	label var edulevel1 "Level of education 1"
 	la de lbledulevel1 	1 "No education" 	///
@@ -611,8 +608,8 @@ if (`cb_pause' == 1) {
 	gen byte industry=.
 	replace industry=1 if (pufc16_pkb>=1& pufc16_pkb<=4)		// to Agriculture
 	replace industry=2 if (pufc16_pkb>=5 & pufc16_pkb<=9)		// to Mining
-	replace industry=3 if (pufc16_pkb>=10 & pufc16_pkb<=32)	// to Manufacturing
-	replace industry=4 if (pufc16_pkb>=33 & pufc16_pkb<=39)	// to Public utility
+	replace industry=3 if (pufc16_pkb>=10 & pufc16_pkb<=33)	// to Manufacturing
+	replace industry=4 if (pufc16_pkb>=35 & pufc16_pkb<=39)	// to Public utility
 	replace industry=5 if (pufc16_pkb>=41 &  pufc16_pkb<=43)	// to Construction
 	replace industry=6 if (pufc16_pkb>=45 & pufc16_pkb<=47) | (pufc16_pkb>=55 & pufc16_pkb<=56)	// to Commerce
 	replace industry=7 if (pufc16_pkb>=49 & pufc16_pkb<=53)| (pufc16_pkb>=58 & pufc16_pkb<=63) // to Transport/coms
