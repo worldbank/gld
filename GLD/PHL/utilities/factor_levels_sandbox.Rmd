@@ -50,6 +50,7 @@ library(haven)
     yr2012        <- file.path(GLD, "GLD-Harmonization/551206_TM/PHL/PHL_2012_LFS") #  our directory
       yr2012data  <- file.path(yr2012, "PHL_2012_LFS_v01_M/Data/Stata")          # data directory 
         vSPSS     <- file.path(yr2012data, "SPSS")
+        vRDS      <- file.path(yr2012data, "rds")
       yr2012doc   <- file.path(yr2012, "PHL_2012_LFS_v01_M_v01_A_I2D2/Doc")      # documents 
       
     
@@ -238,7 +239,7 @@ document_waves(i2d2_waves2)
 ```
 
 
-### maybe it has to be SPSS?
+### maybe it has to be SPSS/Rds?
 
 Ok so maybe since the package was specifically designed(?) for SPSS files the metadata stuff only works with SPSS. 
 
@@ -249,6 +250,16 @@ write_sav(jan2012dta, file.path(yr2012data, "SPSS/LFSjan12.sav"))
 write_sav(apr2012dta, file.path(yr2012data, "SPSS/LFSapr12.sav"))
 write_sav(jul2012dta, file.path(yr2012data, "SPSS/LFSjul12.sav"))
 write_sav(oct2012dta, file.path(yr2012data, "SPSS/LFSoct12.sav"))
+
+```
+
+And to Rda
+
+```{r}
+saveRDS(jan2012dta, file.path(yr2012data, "rds/LFSjan12.Rds"))
+saveRDS(apr2012dta, file.path(yr2012data, "rds/LFSapr12.Rds"))
+saveRDS(jul2012dta, file.path(yr2012data, "rds/LFSjul12.Rds"))
+saveRDS(oct2012dta, file.path(yr2012data, "rds/LFSoct12.Rds"))
 
 ```
 
@@ -263,10 +274,30 @@ rounds_spss <- file.path(vSPSS, i2d2_spss) # store 2012 i2d2 directory
 i2d2_waves3 <- read_surveys(rounds_spss, .f="read_spss", save_to_rds = FALSE) # example has "read_spss"
 ```
 
+
+Will it also work with RDS?
+
+```{r}
+# adjust the directory first
+i2d2_rds <- dir(vRDS)
+rounds_rds <- file.path(vRDS, i2d2_rds) # store 2012 i2d2 directory 
+
+i2d2_waves4 <- read_surveys(rounds_rds, .f="read_rds", save_to_rds = FALSE) # example has "read_spss"
+```
+
+
+
 And is our SPSS-imported object a `survey_list()`? Apparently yes??
 ```{r}
 documented_i2d2_waves <- document_waves(i2d2_waves3)
 documented_i2d2_waves
+```
+
+
+And is our RDS-imported object a `survey_list()`? Apparently yes??
+```{r}
+documented_i2d2_waves_rds <- document_waves(i2d2_waves4)
+documented_i2d2_waves_rds
 ```
 
 ## working with metadata 
@@ -314,4 +345,4 @@ document_waves(merged_i2d2)
 
 ## pausing here.
 
-this is where I'm pausing for now. Basically I've concluded that this package has a lot of potential. The biggest advantage for us so far is the `metadata` object which lists all varnames, labels and value labels for each round in a tibble. It seems that from here is where the package originates a lot of its operations. Downside is having stepping into SPSS from Stata. (Can it be done with Rds?)
+this is where I'm pausing for now. Basically I've concluded that this package has a lot of potential. The biggest advantage for us so far is the `metadata` object which lists all varnames, labels and value labels for each round in a tibble. It seems that from here is where the package originates a lot of its operations. Downside is having stepping into RDS/SPSS from Stata. 
