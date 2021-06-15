@@ -125,6 +125,30 @@ write.xlsx(
 ```
 
 
+Trying again.
+```{r}
+# load workbook
+PHL_2012_template <- loadWorkbook(file = file.path(yr2012doc, "PHL_2012_append_template-IN - Copy.xlsx"))
+
+# write data
+writeData(
+  wb = PHL_2012_template, 
+  sheet = "choices",
+  x = labs_2012, 
+  xy= c(1,1),
+  colNames = TRUE, # the names need to be there for iecodebook to work.
+  keepNA = FALSE
+  )
+
+
+saveWorkbook(PHL_2012_template, file = file.path(yr2012doc, "PHL_2012_append_template-IN - Copy.xlsx"), overwrite = TRUE)
+
+
+```
+
+The writing works, but the problem is that it's only writing one sheet at a time and not "writing" the rest, it seems. In other words, we are overwriting the whole file and including the one we "edit" by specifiying the object `labs_2012` -- the other sheets are also overwritten by the program and in these sheets we cannot, it seems, specify to keep NA values as empty cells, which means we have to live with overwritten, sloppy, output in the rest of the sheet if we are to go with this approach. 
+
+
 ## Method 2: retroharmonize
 
 I found this package designed to harmonize things about complex surveys. Let's try it! 

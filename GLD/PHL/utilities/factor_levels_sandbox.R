@@ -104,4 +104,45 @@ labs_2012 <-
 # method 2: retroharmonize --------------------------------------------------------------------
 # retroharmonize provides a package to read directly from the .dta files. it may work?    
     
+# read in raw dta files 
+jan2012dta <- read_dta(file = file.path(yr2012data, "LFSjan12.dta"))
+apr2012dta <- read_dta(file = file.path(yr2012data, "LFSapr12.dta"))
+jul2012dta <- read_dta(file = file.path(yr2012data, "LFSjul12.dta"))
+oct2012dta <- read_dta(file = file.path(yr2012data, "LFS OCT2012.dta"))
+
+
+
+# directories
+i2d2   <- dir(yr2012data)
+rounds <- file.path(yr2012data, i2d2) # store 2012 i2d2 directory 
+
+# use function to read in all surves into list object
+i2d2_waves <- read_surveys(rounds, .f="read_dta", save_to_rds = FALSE) # example has "read_spss"
+
+# give more id info to each object 
+attr(i2d2_waves[[1]], "id") <- "PHL_2012_LFS_JAN"
+attr(i2d2_waves[[2]], "id") <- "PHL_2012_LFS_APR"
+attr(i2d2_waves[[3]], "id") <- "PHL_2012_LFS_JUL"
+attr(i2d2_waves[[4]], "id") <- "PHL_2012_LFS_OCT"
+
+
+# test if imported file is "survey_list"
+is.survey(i2d2_waves[[1]]) 
+is.survey(i2d2_waves)  # both false 
+
+
+# try to import using this sister function 
+test <- survey(
+  df = jan2012dta,
+  id = "JanLFS"
+)
+
+is.survey(test) # true. 
+
+
+
+# documentation for metatdata 
+documented_i2d2_waves <- document_waves(i2d2_waves)
+
+print(documented_i2d2_waves)
     
