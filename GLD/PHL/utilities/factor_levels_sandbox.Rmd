@@ -49,7 +49,9 @@ library(haven)
     code 	        <- file.path(clone, "gld/GLD")
     yr2012        <- file.path(GLD, "GLD-Harmonization/551206_TM/PHL/PHL_2012_LFS") #  our directory
       yr2012data  <- file.path(yr2012, "PHL_2012_LFS_v01_M/Data/Stata")          # data directory 
+        vSPSS     <- file.path(yr2012data, "SPSS")
       yr2012doc   <- file.path(yr2012, "PHL_2012_LFS_v01_M_v01_A_I2D2/Doc")      # documents 
+      
     
     
   
@@ -152,7 +154,7 @@ The writing works, but the problem is that it's only writing one sheet at a time
 
 ## Method 2: retroharmonize
 
-I found this package designed to harmonize things about complex surveys. Let's try it! 
+I found this package designed to harmonize things about complex surveys. Let's try it! Note that If I could actually get the final step in part 1 to work -- ie, the writing to the `iecodebook` codebook xlsx -- then I wouldn't be spending so much time in part 2. But for now we have **no** solution so I'll keep on keeping on until then.
 
 ### import 
 
@@ -167,9 +169,9 @@ oct2012dta <- read_dta(file = file.path(yr2012data, "LFS OCT2012.dta"))
 
 Actually nevermind it looks like you have to create a metadata file first, also with `retroharmonize`
 
-### Import via creating metadata file 
+### Trying to import via creating metadata file, with errors
 
-Note, folowing along first vignette.
+Note, folowing along first vignette. I don't actually import this successfully with metadata and I don't know why.
 
 ```{r}
 i2d2   <- dir(yr2012data)
@@ -234,3 +236,82 @@ But still, this second list object doens't read as a `survey_list()` object, eve
 ```{r,}
 document_waves(i2d2_waves2)
 ```
+
+
+### maybe it has to be SPSS?
+
+Ok so maybe since the package was specifically designed(?) for SPSS files the metadata stuff only works with SPSS. 
+
+Let's export to SPSS with `haven`. Low key this takes like 10 minutes...
+
+```{r}
+write_sav(jan2012dta, file.path(yr2012data, "SPSS/LFSjan12.sav"))
+write_sav(apr2012dta, file.path(yr2012data, "SPSS/LFSapr12.sav"))
+write_sav(jul2012dta, file.path(yr2012data, "SPSS/LFSjul12.sav"))
+write_sav(oct2012dta, file.path(yr2012data, "SPSS/LFSoct12.sav"))
+
+```
+
+
+And now import the SPSS files with the function like good vignette readers.
+
+```{r}
+# adjust the directory first
+i2d2_spss <- dir(vSPSS)
+rounds_spss <- file.path(vSPSS, i2d2_spss) # store 2012 i2d2 directory 
+
+i2d2_waves3 <- read_surveys(rounds_spss, .f="read_spss", save_to_rds = FALSE) # example has "read_spss"
+```
+
+And is our SPSS-imported object a `survey_list()`? Apparently yes??
+```{r}
+documented_i2d2_waves <- document_waves(i2d2_waves3)
+documented_i2d2_waves
+```
+
+## working with metadata 
+
+Extract metadata and save in obeject
+```{r}
+i2d2_metadata <- lapply( X = i2d2_waves3, FUN = metadata_create)
+i2d2_metadata <- do.call(rbind, i2d2_metadata)
+head(i2d2_metadata)
+```
+
+Ok now the vingette wants us to select a subset of variables to work with so we can harmonize the whole set of rounds based on these variables. Sure, why not.
+```{r}
+# declare a vector of key variables we don't want
+vars <- c("creg", "stratum", "psu", "prov", "hhid", "svymo", 
+         "svyyr", "c04_lno", "c05_rel", "c06_sex", "c07_age", "c08_mstat", "a02_cursch",
+        "c10_conwr", "j01_usocc", "c13_work", "c14_job", "c16_procc", 
+        "c18_pkb", "c19_pclass", "c20_natem", "c21_pnwhrs",
+        "c22_phours", "c23_pwmore", "c24_pladdw", "c25_pfwrk", "c26_pbasis", 
+        "c27_pbasic", "c28_ojob", "j02_otocc",
+        "j03_okb", "j04_oclass", "j05_ohours", "j06_obasis", 
+        "j07_obasic", "a03_jobs", "a04_thours", "a05_rwm48h",
+        "c37_avail", "c38_lookw", "c39_jobsm", "c40_weeks", 
+        "c41_flwrk", "c42_wynot", "a06_ltlookw", "a07_willing",
+        "c43_lbef", "c45_pocc", "a08_wpqtr", "a09_pqkb", "cempst1", "newempstat", "hhnum", "urb2k1970",
+        "j12intvw", "j12c09_grade", "j12c11_gradtech", "j12c11course", "pwgt", "weight"
+)
+
+to_harmonize <- i2d2_metadata %>%
+  filter(var_name_orig %in% vars ) %>%
+  mutate( var_label = var_label_normalize(label_orig)) %>% # removes spaces, special characters and typos
+  mutate( var_name  = val_label_normalize(var_label))
+  
+```
+
+
+## Harmonizing/Merging 
+
+Merge the surveys. Apparently this function harmonizes variable names, variable labels, and survey identifiers -- but what about value labels??
+```{r}
+merged_i2d2 <- merge_waves(waves = i2d2_waves3, var_harmonization = to_harmonize)
+document_waves(merged_i2d2)
+```
+
+
+## pausing here.
+
+this is where I'm pausing for now. Basically I've concluded that this package has a lot of potential. The biggest advantage for us so far is the `metadata` object which lists all varnames, labels and value labels for each round in a tibble. It seems that from here is where the package originates a lot of its operations. Downside is having stepping into SPSS from Stata. (Can it be done with Rds?)
