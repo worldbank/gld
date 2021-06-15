@@ -2,6 +2,8 @@
 # A totally alpha script to try to harmonize factor labels across rounds within a survey year
 
 library(tidyverse)
+library(retroharmonize)
+library(readxl)
 
 # paths ----
 
@@ -16,7 +18,7 @@ library(tidyverse)
   if (user == 5) {
     
     data		<- ""					# data folder
-    GLD 		<- "Y"					# set this to the letter the GLD drive is on your computer
+    GLD 		<- "Y:"					# set this to the letter the GLD drive is on your computer
     i2d2 	  <- "Z"					# set this to the letter the I2D2 drive is on your computer
     clone	  <- "C:/Users/WB551206/local/GitHub" # github/code top folder
 
@@ -34,12 +36,72 @@ library(tidyverse)
   
   
   # Same no matter the user 
-    code 	 <- file.path(clone, "gld/GLD")
-  
+    code 	        <- file.path(clone, "gld/GLD")
+    yr2012        <- file.path(GLD, "GLD-Harmonization/551206_TM/PHL/PHL_2012_LFS") #  our directory
+      yr2012data  <- file.path(yr2012, "PHL_2012_LFS_v01_M/Data/Stata")          # data directory 
+      yr2012doc   <- file.path(yr2012, "PHL_2012_LFS_v01_M_v01_A_I2D2/Doc")      # documents 
     
     
 
 # method 1: iecodebook  -----------------------------------------------------------------------
 # using output from iecodebook xlsx.  
 
+# I have already generated an output xlsx of all the data labels of all rounds from iecodebook. So
+# The strategy here is to simply read in these four tabs (one for each round) directly and use 
+# dplyr to find distinct/unique vectors. Then write an output xlsx of this object.
+
+
+## import labels -------            
+jan2012 <- read_xlsx(
+  path = file.path(yr2012doc, "PHL_2012_append_template.xlsx"),
+  sheet = "choices_JAN2012",
+  col_names = TRUE
+)      
+   
+apr2012 <- read_xlsx(
+  path = file.path(yr2012doc, "PHL_2012_append_template.xlsx"),
+  sheet = "choices_APR2012",
+  col_names = TRUE
+)  
+
+jul2012 <- read_xlsx(
+  path = file.path(yr2012doc, "PHL_2012_append_template.xlsx"),
+  sheet = "choices_JUL2012",
+  col_names = TRUE
+) 
+
+oct2012 <- read_xlsx(
+  path = file.path(yr2012doc, "PHL_2012_append_template.xlsx"),
+  sheet = "choices_OCT2012",
+  col_names = TRUE
+) 
+
+
+
+
+## append ----
+# simply, slowly, make a long version, obvs with dups first
+long_2012 <- bind_rows(jan2012, apr2012, jul2012, oct2012)
+
+
+
+
+## clean dups, find unique vector ---- 
+# we want to determine the unqiue-ness across "list_name" and "value" only 
+labs_2012 <- 
+  long_2012 %>% 
+  distinct(list_name, value, .keep_all = TRUE)
+
+
+
+
+## anti-joins ---
+## Let's anti-join with each of the original survey rounds to see
+
+
+    
+    
+# method 2: retroharmonize --------------------------------------------------------------------
+# retroharmonize provides a package to read directly from the .dta files. it may work?    
+    
     
