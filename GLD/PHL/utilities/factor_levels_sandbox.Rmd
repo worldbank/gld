@@ -1,0 +1,147 @@
+---
+title: "factor_levels_sandbox"
+author: "Tom"
+date: "June 14, 2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(retroharmonize)
+library(readxl)
+library(openxlsx)
+library(haven)
+
+# paths ----
+
+  # user 
+  
+  user <- 5   # 1 
+  
+
+  
+  # top folders 
+  
+  if (user == 5) {
+    
+    data		<- ""					# data folder
+    GLD 		<- "Y:"					# set this to the letter the GLD drive is on your computer
+    i2d2 	  <- "Z"					# set this to the letter the I2D2 drive is on your computer
+    clone	  <- "C:/Users/WB551206/local/GitHub" # github/code top folder
+
+  }
+  
+  
+  if (user == 1) {
+    
+    data		<- ""					# data folder
+    GLD 		<- ""					# set this to the letter the GLD drive is on your computer
+    i2d2 	  <- ""					# set this to the letter the I2D2 drive is on your computer
+    clone	  <- "C:/Users/..." # github/code top folder
+    
+  }
+  
+  
+  # Same no matter the user 
+    code 	        <- file.path(clone, "gld/GLD")
+    yr2012        <- file.path(GLD, "GLD-Harmonization/551206_TM/PHL/PHL_2012_LFS") #  our directory
+      yr2012data  <- file.path(yr2012, "PHL_2012_LFS_v01_M/Data/Stata")          # data directory 
+      yr2012doc   <- file.path(yr2012, "PHL_2012_LFS_v01_M_v01_A_I2D2/Doc")      # documents 
+    
+    
+  
+```
+
+
+# Exploration of how to harmonize factor labels across same-year survey rounds
+
+
+## Method 1: iecodebook 
+
+I have already generated an output xlsx of all the data labels of all rounds from iecodebook. So The strategy here is to simply read in these four tabs (one for each round) directly and use `dplyr` to find distinct/unique vectors. Then write an output `.xlsx` of this object.
+```{r}
+
+## import labels -------            
+jan2012 <- read_xlsx(
+  path = file.path(yr2012doc, "PHL_2012_append_template.xlsx"),
+  sheet = "choices_JAN2012",
+  col_names = TRUE
+)      
+   
+apr2012 <- read_xlsx(
+  path = file.path(yr2012doc, "PHL_2012_append_template.xlsx"),
+  sheet = "choices_APR2012",
+  col_names = TRUE
+)  
+
+jul2012 <- read_xlsx(
+  path = file.path(yr2012doc, "PHL_2012_append_template.xlsx"),
+  sheet = "choices_JUL2012",
+  col_names = TRUE
+) 
+
+oct2012 <- read_xlsx(
+  path = file.path(yr2012doc, "PHL_2012_append_template.xlsx"),
+  sheet = "choices_OCT2012",
+  col_names = TRUE
+) 
+
+```
+
+After importing we can append and then use `distinct()` to determine uniqueness. But we only want to determine uniqueness by the first two variables, `list_name` and `value`. The final one, `label` is the actual string label and for now I don't really care if that's different if the value is the same. This is up for debate: it is possible that the difference could be trivial (a space) or it could be a significant difference, such as a mislabeled factor. For now, I will only use the first two variables to determine uniqueness.
+
+```{r}
+
+## append ----
+# simply, slowly, make a long version, obvs with dups first
+long_2012 <- bind_rows(jan2012, apr2012, jul2012, oct2012)
+
+```
+
+`dplyr` does a pretty good job. The final object is only a few rows longer than each of the others, meaning that `dplyr` thinks the overlaps is almost perfect. Becuase I know this year manually I know this is true.
+```{r}
+
+
+## clean dups, find unique vector ---- 
+# we want to determine the unqiue-ness across "list_name" and "value" only 
+labs_2012 <- 
+  long_2012 %>% 
+  distinct(list_name, value, .keep_all = TRUE)
+
+nrow(labs_2012)
+```
+
+For now, It would be easiest to just write this object into `iecodebook` template file, although in the long run I think there are better workflow options. But I can't figure out how to overwrite data in a sheet that already exists, so I'll just make a new one.
+
+```{r}
+write.xlsx(
+  labs_2012,
+  file = file.path(yr2012doc, "PHL_2012_append_template-IN - values.xlsx"),
+  xy = c(1, 7), # vector of startCol, StartRow
+  colNames = FALSE
+  )
+```
+
+
+## Method 2: retroharmonize
+
+I found this package designed to harmonize things about complex surveys. Let's try it! 
+
+### import 
+
+First you have to import the raw `.dta` files. So here we go, `haven` in hand.
+
+```{r, echo=FALSE}
+jan2012dta <- read_dta(file = file.path(yr2012data, "LFSjan12.dta"))
+apr2012dta <- read_dta(file = file.path(yr2012data, "LFSapr12.dta"))
+jul2012dta <- read_dta(file = file.path(yr2012data, "LFSjul12.dta"))
+oct2012dta <- read_dta(file = file.path(yr2012data, "LFS OCT2012.dta"))
+```
+
+
+```{r}
+
+```
+
