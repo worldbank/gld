@@ -140,8 +140,61 @@ jul2012dta <- read_dta(file = file.path(yr2012data, "LFSjul12.dta"))
 oct2012dta <- read_dta(file = file.path(yr2012data, "LFS OCT2012.dta"))
 ```
 
+Actually nevermind it looks like you have to create a metadata file first, also with `retroharmonize`
+
+### Import via creating metadata file 
+
+Note, folowing along first vignette.
 
 ```{r}
+i2d2   <- dir(yr2012data)
+rounds <- file.path(yr2012data, i2d2) # store 2012 i2d2 directory 
 
+i2d2_waves <- read_surveys(rounds, .f="read_dta", save_to_rds = FALSE) # example has "read_spss"
+```
+
+
+Giving more detailed description to each round,
+```{r}
+attr(i2d2_waves[[1]], "id") <- "PHL_2012_LFS_JAN"
+attr(i2d2_waves[[2]], "id") <- "PHL_2012_LFS_APR"
+attr(i2d2_waves[[3]], "id") <- "PHL_2012_LFS_JUL"
+attr(i2d2_waves[[4]], "id") <- "PHL_2012_LFS_OCT"
+```
+
+Review Descriptive metadata. Looks like the package doesn't detect that the object is a `survey_list()` type, which prevents us from extracting metadata. However, we do see that the haven labeled attribute did make it's way through the function. I think something funky is happening with reading the stata files that is causing the function to not pick up on some of the metadata, ie, that makes it a survey_list.
+
+```{r}
+documented_i2d2_waves <- document_waves(i2d2_waves)
+
+print(documented_i2d2_waves)
+```
+
+```{r}
+print(attributes(i2d2_waves[[1]]$prov))
+```
+
+
+Let's try this `survey()`/`is.survey()` function they give us. Using the `.dta` file we already imported
+```{r}
+survey <- survey(
+  df = jan2012, 
+  id = "example"
+)
+
+is.survey(survey)
+```
+
+Are all of the individual rounds we imported via group import "surveys"?
+```{r}
+is.survey(i2d2_waves)
+```
+
+
+Create metadata table
+
+```{r}
+i2d2_metadata <- lapply(X = i2d2_waves, FUN = metadata_create)
+i2d2_metadata <- do.call(rbind, i2d2_metadata)
 ```
 
