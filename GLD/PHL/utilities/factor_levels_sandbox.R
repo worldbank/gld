@@ -114,7 +114,7 @@ oct2012dta <- read_dta(file = file.path(yr2012data, "LFS OCT2012.dta"))
 
 # directories
 i2d2   <- dir(yr2012data)
-rounds <- file.path(yr2012data, i2d2) # store 2012 i2d2 directory 
+rounds <- file.path(yr2012data, i2d2) # this stores all survey found file paths
 
 # use function to read in all surves into list object
 i2d2_waves <- read_surveys(rounds, .f="read_dta", save_to_rds = FALSE) # example has "read_spss"
@@ -132,17 +132,23 @@ is.survey(i2d2_waves)  # both false
 
 
 # try to import using this sister function 
-test <- survey(
-  df = jan2012dta,
-  id = "JanLFS"
-)
+jan <- survey(df = jan2012dta, id = "JanLFS")
+apr <- survey(df = apr2012dta, id = "AprLFS")
+jul <- survey(df = jul2012dta, id = "JulLFS")
+oct <- survey(df = oct2012dta, id = "OctLFS")
 
-is.survey(test) # true. 
+is.survey(jan) # true
+
+# Ok, so this is odd, if I use the function to import all 4 files at once, it tells me it's not a survey. but
+# if I import the file beforehand using haven, then just tell the package about it, it "is" a survey suddenly.
 
 
+# so can we just squish 4 rounds imported manually ina "survey_list"?
+class(i2d2_waves)
+class(test)
 
-# documentation for metatdata 
-documented_i2d2_waves <- document_waves(i2d2_waves)
+class(jan)
 
-print(documented_i2d2_waves)
-    
+i2d2_waves2 <- list(jan, apr, jul, oct)
+is.survey(i2d2_waves2) # still not. maybe an issue with the function?
+

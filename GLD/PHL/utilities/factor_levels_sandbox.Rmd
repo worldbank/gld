@@ -7,6 +7,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(error = TRUE)
 
 library(tidyverse)
 library(retroharmonize)
@@ -209,16 +210,27 @@ survey <- survey(
 is.survey(survey)
 ```
 
-Are all of the individual rounds we imported via group import "surveys"?
-```{r}
-is.survey(i2d2_waves)
+This is odd. Let's try to import all files manually via haven and then make into a list
+```{r, echo=TRUE}
+# take the dta objects we alredy imported earlier, giving them a string ID
+jan <- survey(df = jan2012dta, id = "JanLFS")
+apr <- survey(df = apr2012dta, id = "AprLFS")
+jul <- survey(df = jul2012dta, id = "JulLFS")
+oct <- survey(df = oct2012dta, id = "OctLFS")
+
+is.survey(jan)
+is.survey(apr)
+is.survey(jul)
+is.survey(oct)
+
+# make 4 rounds into a list
+i2d2_waves2 <- list(jan, apr, jul, oct)
+
 ```
 
 
-Create metadata table
+But still, this second list object doens't read as a `survey_list()` object, even though it is a list of surveys...
 
-```{r}
-i2d2_metadata <- lapply(X = i2d2_waves, FUN = metadata_create)
-i2d2_metadata <- do.call(rbind, i2d2_metadata)
+```{r,}
+document_waves(i2d2_waves2)
 ```
-
