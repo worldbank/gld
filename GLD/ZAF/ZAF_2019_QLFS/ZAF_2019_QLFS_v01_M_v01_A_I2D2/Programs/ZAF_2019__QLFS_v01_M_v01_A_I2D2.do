@@ -141,7 +141,7 @@ the final code list should be
 3=farms/mining areas(rural)
 */
 	gen byte urb=Geo_type_code
-	recode urb 1=1 2/3=0
+	recode urb 1=1 3=2
 	label var urb "Urban/Rural"
 	la de lblurb 1 "Urban" 2 "Rural"
 	label values urb lblurb
