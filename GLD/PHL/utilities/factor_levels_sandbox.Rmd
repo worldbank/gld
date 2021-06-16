@@ -48,7 +48,8 @@ library(haven)
   # Same no matter the user 
     code 	        <- file.path(clone, "gld/GLD")
     yr2012        <- file.path(GLD, "GLD-Harmonization/551206_TM/PHL/PHL_2012_LFS") #  our directory
-      yr2012data  <- file.path(yr2012, "PHL_2012_LFS_v01_M/Data/Stata")          # data directory 
+      yr2012data  <- file.path(yr2012, "PHL_2012_LFS_v01_M/Data")          # data directory 
+        vStata    <- file.path(yr2012data, "Stata")
         vSPSS     <- file.path(yr2012data, "SPSS")
         vRDS      <- file.path(yr2012data, "rds")
       yr2012doc   <- file.path(yr2012, "PHL_2012_LFS_v01_M_v01_A_I2D2/Doc")      # documents 
@@ -164,33 +165,25 @@ I found this package designed to harmonize things about complex surveys. Let's t
 First you have to import the raw `.dta` files. So here we go, `haven` in hand.
 
 ```{r, echo=FALSE}
-jan2012dta <- read_dta(file = file.path(yr2012data, "LFSjan12.dta"))
-apr2012dta <- read_dta(file = file.path(yr2012data, "LFSapr12.dta"))
-jul2012dta <- read_dta(file = file.path(yr2012data, "LFSjul12.dta"))
-oct2012dta <- read_dta(file = file.path(yr2012data, "LFS OCT2012.dta"))
+jan2012dta <- read_dta(file = file.path(vStata, "LFSjan12.dta"))
+apr2012dta <- read_dta(file = file.path(vStata, "LFSapr12.dta"))
+jul2012dta <- read_dta(file = file.path(vStata, "LFSjul12.dta"))
+oct2012dta <- read_dta(file = file.path(vStata, "LFS OCT2012.dta"))
 ```
 
 Actually nevermind it looks like you have to create a metadata file first, also with `retroharmonize`
 
 ### Trying to import via creating metadata file, with errors
 
-Note, folowing along first vignette. I don't actually import this successfully with metadata and I don't know why.
+Note, following along first vignette. I don't actually import this successfully with metadata and I don't know why.
 
 ```{r}
-i2d2   <- dir(yr2012data)
-rounds <- file.path(yr2012data, i2d2) # store 2012 i2d2 directory 
+i2d2   <- dir(vStata)
+rounds <- file.path(vStata, i2d2) # store 2012 i2d2 directory 
 
 i2d2_waves <- read_surveys(rounds, .f="read_dta", save_to_rds = FALSE) # example has "read_spss"
 ```
 
-
-Giving more detailed description to each round,
-```{r}
-attr(i2d2_waves[[1]], "id") <- "PHL_2012_LFS_JAN"
-attr(i2d2_waves[[2]], "id") <- "PHL_2012_LFS_APR"
-attr(i2d2_waves[[3]], "id") <- "PHL_2012_LFS_JUL"
-attr(i2d2_waves[[4]], "id") <- "PHL_2012_LFS_OCT"
-```
 
 Review Descriptive metadata. Looks like the package doesn't detect that the object is a `survey_list()` type, which prevents us from extracting metadata. However, we do see that the haven labeled attribute did make it's way through the function. I think something funky is happening with reading the stata files that is causing the function to not pick up on some of the metadata, ie, that makes it a survey_list.
 
@@ -243,28 +236,7 @@ document_waves(i2d2_waves2)
 
 ### maybe it has to be SPSS/Rds?
 
-Ok so maybe since the package was specifically designed(?) for SPSS files the metadata stuff only works with SPSS. 
-
-Let's export to SPSS with `haven`. Low key this takes like 10 minutes...
-
-```{r}
-write_sav(jan2012dta, file.path(yr2012data, "SPSS/LFSjan12.sav"))
-write_sav(apr2012dta, file.path(yr2012data, "SPSS/LFSapr12.sav"))
-write_sav(jul2012dta, file.path(yr2012data, "SPSS/LFSjul12.sav"))
-write_sav(oct2012dta, file.path(yr2012data, "SPSS/LFSoct12.sav"))
-
-```
-
-And to Rda
-
-```{r}
-saveRDS(jan2012dta, file.path(yr2012data, "rds/LFSjan12.Rds"))
-saveRDS(apr2012dta, file.path(yr2012data, "rds/LFSapr12.Rds"))
-saveRDS(jul2012dta, file.path(yr2012data, "rds/LFSjul12.Rds"))
-saveRDS(oct2012dta, file.path(yr2012data, "rds/LFSoct12.Rds"))
-
-```
-
+Ok so maybe since the package was specifically designed(?) for SPSS files the metadata stuff only works with SPSS. Note that I have previously exported a copy of the dta files as SPSS and RDS in the same directory. Skipping here for time. Simply re-importing.
 
 And now import the SPSS files with the function like good vignette readers.
 
@@ -304,7 +276,7 @@ documented_i2d2_waves_rds
 
 ## working with metadata 
 
-Extract metadata and save in obeject
+Extract metadata and save in object. The preview of the object that the output gives us here doesn't do justice, but it is really cool and it alone is worth the time investment in this package. 
 ```{r}
 i2d2_metadata <- lapply( X = i2d2_waves4, FUN = metadata_create)
 i2d2_metadata <- do.call(rbind, i2d2_metadata)
