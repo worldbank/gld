@@ -93,16 +93,17 @@ if (`append' == 1) {
 		, clear replace surveys(JAN2017 APR2017 JUL2017 OCT2017) /// survey names
 		match // atuo match the same-named variables
 
+
 if (`cb_pause' == 1) {
 		pause on
-		pause pausing while you edit your codebook. 1. Align variable names and save aligned codebook with suffix "-IN.xlsx" in the same directory as the output. 2. Run R script in same directory as code; re-save xlsx file. 3. press 'q' to continue.
+		pause pausing while you edit your codebook. 1. Align variable names and save aligned codebook with suffix "-IN-R.xlsx" in the same directory as the output. 2. Run R script in same directory as code; re-save xlsx file. 3. press 'q' to continue.
 	}
 
 
 *** append the dataset
 	iecodebook append ///
 		`"`round1'"' `"`round2'"' `"`round3'"' `"`round4'"' /// survey files
-		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template-IN.xlsx"' /// output just created above
+		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template-IN-S.xlsx"' /// output just created above
 		, clear surveys(JAN2017 APR2017 JUL2017 OCT2017) // survey names
 	}
 	else {
