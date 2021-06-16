@@ -42,8 +42,8 @@
 	local 	surv_yr `"2017"'	// set this to the survey year
 
 ** RUN SETTINGS
-	local 	cb_pause = 1	// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
-	local 	append 	 = 1	// 1 to run iecodebook append, 0 if file is already appended.
+	local 	cb_gen	 = 1	/* 	1 to generate codebook for harmonizing varnames and labels, will not run rest of code.
+							 	0 to import edited codebook and run rest of code. */
 
 
 	local 	year 		"${GLD}:\GLD-Harmonization\\`usr'\\`cty3'\\`cty3'_`surv_yr'_LFS" // top data folder
@@ -95,7 +95,7 @@ if (`append' == 1) {
 
 if (`cb_pause' == 1) {
 		pause on
-		pause pausing while you edit your codebook. Save aligned codebook with suffix "-IN.xlsx" in the same directory as the output. press 'q' to continue.
+		pause pausing while you edit your codebook. 1. Align variable names and save aligned codebook with suffix "-IN.xlsx" in the same directory as the output. 2. Run R script in same directory as code; re-save xlsx file. 3. press 'q' to continue.
 	}
 
 
@@ -122,7 +122,7 @@ if (`cb_pause' == 1) {
 
 
 ** YEAR
-	gen int year=svyyr
+	gen int year= pufsvyyr
 	label var year "Year of survey"
 
 
@@ -132,14 +132,14 @@ if (`cb_pause' == 1) {
 
 
 ** MONTH OF INTERVIEW
-	gen byte month=svymo
+	gen byte month=pufsvymo
 	la de lblmonth 1 "January" 2 "February" 3 "March" 4 "April" 5 "May" 6 "June" 7 "July" 8 "August" 9 "September" 10 "October" 11 "November" 12 "December"
 	label value month lblmonth
 	label var month "Month of the interview"
 
 
 ** HOUSEHOLD IDENTIFICATION NUMBER
-	loc idhvars 	reg  prov hhnum 	// store idh vars in local
+	loc idhvars 	pufreg pufprv pufprrcd	// store idh vars in local
 
 
 	ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
@@ -221,17 +221,17 @@ if (`cb_pause' == 1) {
 ** HOUSEHOLD WEIGHTS
 	/* The weight variable will be divided by the number of rounds per year to ensure the
 	   weighting factor does not over-mutliply*/
-	gen double wgt= pwgt/(10000 * `n_round')
+	gen double wgt= weight/(10000 * `n_round')
 	label var wgt "Household sampling weight"
 
 
 ** STRATA
-	gen strata=stratum
+	gen strata=.
 	label var strata "Strata"
 
 
 ** PSU
-	/*Survey includes psu variable*/
+	rename pufpsu psu
 	label var psu "Primary sampling units"
 
 
@@ -243,14 +243,14 @@ if (`cb_pause' == 1) {
 
 
 ** LOCATION (URBAN/RURAL)
-    gen byte urb=urb2k70
+	gen byte urb=pufurb2k10
     label var urb "Urban/Rural"
 	la de lblurb 1 "Urban" 2 "Rural"
 	label values urb lblurb
 
 
 **REGIONAL AREAS
-	gen byte reg01=reg		// not recoding region for now, but needs to be addressed in #12
+	gen byte reg01=pufreg		// not recoding region for now, but needs to be addressed in #12
     la de lblreg01  1 "Ilocos" 2 "Cagayan Valley" 3 "Central Luzon" 5 "Bicol" 6 "Western Visayas" 7 "Central Visayas" ///
                     8 "Eastern Visayas" 9 "Zamboanga Peninsula" 10 "Northern Mindanao" 11 "Davao" 12 "Soccsksargen" ///
                     13 "National Capital Region" 14 "Cordillera Administrative Region" ///
@@ -339,7 +339,7 @@ if (`cb_pause' == 1) {
 
 ** HOUSEHOLD SIZE
 	sort idh
-	by idh: egen hhsize= count(c05_rel <= 8 | c05_rel == 11)
+	by idh: egen hhsize= count(pufc03_rel <= 8 | pufc03_rel == 11)
 	* restrict by family role var, include all non-family members but not boarders/workers
 	label var hhsize "Household size"
 
@@ -349,7 +349,7 @@ if (`cb_pause' == 1) {
 
 
 ** RELATIONSHIP TO THE HEAD OF HOUSEHOLD
-	gen byte head=c05_rel				//  "head", "spouse", and children not recoded
+	gen byte head=pufc03_rel				//  "head", "spouse", and children not recoded
 	recode head 	(4 5 6 8  	= 5)	/// siblings, children in law, grandchildren, other relatives of hh head = "other relatives"
 					(7 			= 4)	/// parents of hh head become "parents"
 					(9 10 11 	= 6) 	// boarders and domestic workers become "other/non-relatives"
@@ -369,14 +369,14 @@ if (`cb_pause' == 1) {
 
 
 ** GENDER
-	gen byte gender=c06_sex
+	gen byte gender= pufc04_sex
 	label var gender "Gender"
 	la de lblgender 1 "Male" 2 "Female"
 	label values gender lblgender
 
 
 ** AGE
-	gen byte age = c07_age
+	gen byte age = pufc05_age
 	label var age "Individual age"
 	replace age=98 if age>=98 & age!=.
 
@@ -388,7 +388,7 @@ if (`cb_pause' == 1) {
 
 
 ** MARITAL STATUS
-	gen byte marital=c08_ms
+	gen byte marital=pufc06_mstat
 	recode marital (1=2) (2=1) (3=5)(5 6=.)
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
