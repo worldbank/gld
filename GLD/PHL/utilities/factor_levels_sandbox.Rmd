@@ -287,14 +287,14 @@ i2d2_waves4 <- read_surveys(rounds_rds, .f="read_rds", save_to_rds = FALSE) # ex
 
 
 
-And is our SPSS-imported object a `survey_list()`? Apparently yes??
+And is our SPSS-imported object a `survey_list()`? Apparently yes.
 ```{r}
 documented_i2d2_waves <- document_waves(i2d2_waves3)
 documented_i2d2_waves
 ```
 
 
-And is our RDS-imported object a `survey_list()`? Apparently yes??
+And is our RDS-imported object a `survey_list()`? Apparently yes.
 ```{r}
 documented_i2d2_waves_rds <- document_waves(i2d2_waves4)
 documented_i2d2_waves_rds
@@ -304,7 +304,7 @@ documented_i2d2_waves_rds
 
 Extract metadata and save in obeject
 ```{r}
-i2d2_metadata <- lapply( X = i2d2_waves3, FUN = metadata_create)
+i2d2_metadata <- lapply( X = i2d2_waves4, FUN = metadata_create)
 i2d2_metadata <- do.call(rbind, i2d2_metadata)
 head(i2d2_metadata)
 ```
@@ -338,11 +338,50 @@ to_harmonize <- i2d2_metadata %>%
 
 Merge the surveys. Apparently this function harmonizes variable names, variable labels, and survey identifiers -- but what about value labels??
 ```{r}
-merged_i2d2 <- merge_waves(waves = i2d2_waves3, var_harmonization = to_harmonize)
-document_waves(merged_i2d2)
+merged_i2d2 <- merge_waves(waves = i2d2_waves4, var_harmonization = to_harmonize)
+documented_merged_i2d2 <- document_waves(merged_i2d2)
+documented_merged_i2d2
 ```
+
+
+Collect all value labels that match the filter parameters. This finds unique values across all survey rounds. 
+```{r}
+val_creg <- collect_val_labels(to_harmonize %>% 
+                     filter(var_name_orig == "creg"))
+val_creg
+```
+
+Now let's query across a variable that we know has different values across rounds. `j01_usocc` has 436 labels in two rounds and 442 in two others, accorinding to `i2d2_metadata$n_labels`.
+```{r}
+val_j01_usocc <- collect_val_labels(to_harmonize %>% 
+                     filter(var_name_orig == "j01_usocc"))
+length(val_j01_usocc)
+```
+
+Ok so if this command worked properly this means that there was not a lot of overlap between the four survey rounds -- meanings there were 855 total unique value labels/factor levels. Let's see if we can verify this by 
+```{r}
+# make a list of vectors of value labels for j01_usocc in each round
+labs <- i2d2_metadata %>% 
+  filter(var_name_orig == "j01_usocc", id %in% c("LFSjan12", "LFSapr12", "LFSjul12", "LFSoct12")) %>% 
+  select(labels) %>%
+  unnest_longer(labels)
+
+# find unique vector among them, count
+labs_uq <- labs %>% distinct()
+nrow(labs_uq)
+
+assertthat::assert_that(nrow(labs_uq) == length(val_j01_usocc))
+```
+
+Yep, `collect_val_labels()` is pretty good. (But it would be nice to have an option to include the actual values in a tibble like format too, but hey still amazing.)
+
 
 
 ## pausing here.
 
 this is where I'm pausing for now. Basically I've concluded that this package has a lot of potential. The biggest advantage for us so far is the `metadata` object which lists all varnames, labels and value labels for each round in a tibble. It seems that from here is where the package originates a lot of its operations. Downside is having stepping into RDS/SPSS from Stata. 
+
+
+## moving on. 
+Now let's try to see if I can produce a vector of unique labels. The first thing that we have to do is tell `retroharmonize` which variables are the same between rounds. This is where `iecodebook` excels because all of this is done via UI, wheras `retroharmonize` requires this to be done by "hand"/code still. This is a pain since some years have very mis-matched rounds and labels. 
+
