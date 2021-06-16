@@ -399,12 +399,37 @@ Oh, apparently this is only for one round. Whatever. I want to run this on all r
 
 That's called `harmonize_waves()` which sort of assumes you've messed with `harmonize_values()` somewhat and created your own function, although let's see if you can just run it on the basic `harmonize_values()`. Note that this only is run on the variables that are the same in all rounds.
 
-```{r}
-# createa subsect of test variables 
+```{r, error=TRUE}
+# create a subset of test variables 
 i2d2_waves_selected <- lapply(i2d2_waves4, function(x) x %>% select(
   any_of(c("creg", "c05_rel", "c16_procc", "c18_pkb", "c22_phours", "c26_pbasis", "j01_usocc"))
 ) )
 
 harmonized <- harmonize_waves(i2d2_waves_selected, .f = harmonize_values, status_message = TRUE)
+```
+
+Ok so will this not work with `haven_labelled` type? That seems odd. Maybe this is why there's a $class_orig column in the metadata -- like they want us to change the class somehow. Let's backtrack and try with making our own function. 
+
+```{r}
+# create a function where x = the name of the variable, I think. Or maybe it's the survey round. 
+harmonize_i2d2_fam <- function(x) {
+  val_x <- collect_val_labels(i2d2_metadata %>% 
+                     filter(var_name_orig == "x"))
+  
+   
+   # numeric_values = c() # do I care what the numeric values are?, I guess it doesn't matter because I'll be coding from the label anyway
+  
+  
+  harmonize_values(x,
+                   harmonize_labels = val_x, # straight from collect_val_labels()
+  )
+}
+
+```
+
+
+Now rerun harmonize waves, but still doesn't like the haven labeled type. 
+```{r}
+harmonized <- harmonize_waves(i2d2_waves_selected, .f = harmonize_i2d2_fam, status_message = TRUE)
 ```
 
