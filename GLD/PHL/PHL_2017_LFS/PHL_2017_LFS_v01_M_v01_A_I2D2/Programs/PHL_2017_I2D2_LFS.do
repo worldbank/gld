@@ -42,7 +42,8 @@
 	local 	surv_yr `"2017"'	// set this to the survey year
 
 ** RUN SETTINGS
-	local 	cb_gen	 = 1	/* 	1 to generate codebook for harmonizing varnames and labels, will not run rest of code.
+	local 	append 	 = 1
+	local 	cb_pause = 1	/* 	1 to generate codebook for harmonizing varnames and labels, will not run rest of code.
 							 	0 to import edited codebook and run rest of code. */
 
 
