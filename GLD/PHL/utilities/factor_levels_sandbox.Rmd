@@ -132,7 +132,7 @@ write.xlsx(
 Trying again.
 ```{r}
 # load workbook
-PHL_2012_template <- loadWorkbook(file = file.path(yr2012doc, "PHL_2012_append_template-IN - Copy.xlsx"))
+PHL_2012_template <- loadWorkbook(file = file.path(yr2012doc, "PHL_2012_append_template-IN.xlsx"))
 
 # write data
 writeData(
@@ -140,8 +140,8 @@ writeData(
   sheet = "choices",
   x = labs_2012, 
   xy= c(1,1),
-  colNames = TRUE, # the names need to be there for iecodebook to work.
-  keepNA = FALSE
+  colNames = TRUE # the names need to be there for iecodebook to work.
+  
   )
 
 
@@ -151,6 +151,8 @@ saveWorkbook(PHL_2012_template, file = file.path(yr2012doc, "PHL_2012_append_tem
 ```
 
 The writing works, but the problem is that it's only writing one sheet at a time and not "writing" the rest, it seems. In other words, we are overwriting the whole file and including the one we "edit" by specifiying the object `labs_2012` -- the other sheets are also overwritten by the program and in these sheets we cannot, it seems, specify to keep NA values as empty cells, which means we have to live with overwritten, sloppy, output in the rest of the sheet if we are to go with this approach. 
+
+An idea -- it may be a function of the interaction with `iecodebook` and the formatting. `iecodebook` may be spitting out "empty" cells that are not in fact empty but have some sort of formatting that `openxlsx` doesn't like and converts to NA, and then writes back in as NA instead of just empty. The easiest way to make this work is just find and replace for NA in all cells and it works, but it's not really reproducible and certainly not elegant. 
 
 
 ## Method 2: retroharmonize
@@ -384,4 +386,25 @@ this is where I'm pausing for now. Basically I've concluded that this package ha
 
 ## moving on. 
 Now let's try to see if I can produce a vector of unique labels. The first thing that we have to do is tell `retroharmonize` which variables are the same between rounds. This is where `iecodebook` excels because all of this is done via UI, wheras `retroharmonize` requires this to be done by "hand"/code still. This is a pain since some years have very mis-matched rounds and labels. 
+
+### trying to harmonize labels 
+
+The path gets muddier from here but whatever. The vignette uses `harmonize_values()` nested within a custom function that changes the to/from values, but I'm not sure I need to do that. Let's see what happens when I just run the raw function on a variable.
+
+Oh, apparently this is only for one round. Whatever. I want to run this on all rounds.
+```{r}
+#harmonize_values()
+```
+
+
+That's called `harmonize_waves()` which sort of assumes you've messed with `harmonize_values()` somewhat and created your own function, although let's see if you can just run it on the basic `harmonize_values()`. Note that this only is run on the variables that are the same in all rounds.
+
+```{r}
+# createa subsect of test variables 
+i2d2_waves_selected <- lapply(i2d2_waves4, function(x) x %>% select(
+  any_of(c("creg", "c05_rel", "c16_procc", "c18_pkb", "c22_phours", "c26_pbasis", "j01_usocc"))
+) )
+
+harmonized <- harmonize_waves(i2d2_waves_selected, .f = harmonize_values, status_message = TRUE)
+```
 
