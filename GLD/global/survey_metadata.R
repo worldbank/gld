@@ -84,12 +84,47 @@ code 	        <- file.path(clone, "gld/GLD")
 
 
 # Network Data -------
-PHL           <- file.path(GLD, "GLD-Harmonization\551206_TM\PHL")
+PHL           <- file.path(GLD, "GLD-Harmonization/551206_TM/PHL")
 
 
 
 
 
-# 
+          ##########>
+          ##### > DATA WORK < ########
+                                #####>
+                              
 
+
+
+# Find all the survey rounds. --------------------------------------------------------
+
+## we know things about the raw data files, so we can use that to help us locate them
+
+## we know they are all .dta files
+files <- list.files(PHL,    # replace with directory from above 
+                    pattern = "\\.dta$", # "\\.dta$"
+                    recursive = TRUE,   # search all sub folders
+                    include.dirs = TRUE) # include the full file path
+
+
+## we also know they are all in the "v01_M/Data/Stata" directory, 
+## which allows us to separate them out from harmonized .dta files
+## in files_tib
+
+files_tib <- as_tibble(files)
+files_tib <- 
+  files_tib %>%
+  filter( str_detect(files_tib$value, pattern = "v01_M/Data/Stata") == TRUE )
+
+
+
+## the next set of commands work better if the files are in list not tibble
+files_list <- as.character(files_tib)
+
+
+
+
+# Import/Export an RDS file ----------------------------------------------------------
+# Write a function that takes each survey round and writes a .RDS file in the same directory
 
