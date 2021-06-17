@@ -262,7 +262,7 @@ if (`cb_pause' == 1) {
 
 
 ** REGIONAL AREA 1 DIGIT ADMN LEVEL
-	gen byte reg02=prov
+	gen byte reg02=pufprv
 	label var reg02 "Region at 1 digit (ADMN1)"
 
 
