@@ -158,7 +158,8 @@ assert miss<=.05
 restore*/
 
 di "Gender coding"
-assert gender==1|gender==0|gender==.
+assert gender==1|gender==2|gender==.
+* Gender is coded 1/0 in GLD but is 1/2 in I2D2.
 
 * Confirm that fewer than 5% of obs are missing gender
 *arbitrary assumption kept to check missing values
