@@ -21,6 +21,7 @@ user <- 5   # tom
 
 
 
+
 ## top folders --------------------------
 ## This has to be different for each user based on where you have your Github and network
 ## drive on your computer/VDI. 
@@ -91,6 +92,31 @@ PHL           <- file.path(GLD, "GLD-Harmonization/551206_TM/PHL")
 
 
 
+
+
+
+# Country/Economy Settings -------------------------------------------------
+# This code is designed to only be run for one country/economy directory at a 
+# time, so please chose one and the appropriate output folder where the .Rdata 
+# file containing the metadata will go
+
+# note: the "eval_directory" should be an object in the "network data" above
+eval_directory          <- PHL
+metadata_output_folder  <- file.path(PHL, "PHL_data/I2D2/Rdata")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
           ##########>
           ##### > DATA WORK < ########
                                 #####>
@@ -101,13 +127,13 @@ PHL           <- file.path(GLD, "GLD-Harmonization/551206_TM/PHL")
 # Find all the survey rounds. --------------------------------------------------------
 
 ## we know things about the raw data files, so we can use that to help us locate them
-dirs <- list.dirs(PHL, 
+dirs <- list.dirs(eval_directory, 
                   recursive = TRUE
   
 )
 
 ## we know they are all .dta files
-files <- list.files(PHL,    # replace with directory from above 
+files <- list.files(eval_directory,     
                     pattern = "\\.dta$", # "\\.dta$"
                     recursive = TRUE,   # search all sub folders
                     full.names = TRUE,  # list full file names
@@ -171,7 +197,54 @@ map2(.x = s_test,  # loop through the Stata col to import the file
      .f = make_rds)
 
 
-#first <- readRDS("Y:/GLD-Harmonization/551206_TM/PHL/PHL_1997_LFS/PHL_1997_LFS_v01_M/Data/R/LFS JUL1997.Rds")
+
+# Import all RDS files ------------------------------------------
+
+## retroharmonize will take a list of file names/paths and import them all along with the
+# metadata
+
+## pull the list of surveys
+surveys <- files_tib %>%
+  pull(rpath)
+
+surveys_test <- surveys[1:3]
+
+
+
+## read in the surveys
+waves <- read_surveys(surveys_test,
+                      .f = "read_rds",
+                      save_to_rds = FALSE)
+
+
+
+
+# Extract Metadata ----------------------------------------------
+
+## create wave documentation
+documented_waves <- document_waves(waves)
+
+
+
+
+## extract metadata 
+metadata <- lapply(X = waves, FUN = metadata_create)
+metadata <- do.call(rbind, metadata)
+
+
+
+
+
+# save ------
+# I'm not going to save the `waves` object because that's too big and we already have
+# that data 
+
+
+save(
+  metadata, documented_waves, files_tib,
+  file = file.path(metadata_output_folder, "metadata.Rdata")
+)
+
 
 # thanks!
 # https://stackoverflow.com/questions/21618423/extract-a-dplyr-tbl-column-as-a-vector
