@@ -7,6 +7,7 @@
 # Please know this.
 
 library(tidyverse)
+library(haven)
 library(retroharmonize)
 
 
@@ -100,11 +101,16 @@ PHL           <- file.path(GLD, "GLD-Harmonization/551206_TM/PHL")
 # Find all the survey rounds. --------------------------------------------------------
 
 ## we know things about the raw data files, so we can use that to help us locate them
+dirs <- list.dirs(PHL, 
+                  recursive = TRUE
+  
+)
 
 ## we know they are all .dta files
 files <- list.files(PHL,    # replace with directory from above 
                     pattern = "\\.dta$", # "\\.dta$"
                     recursive = TRUE,   # search all sub folders
+                    full.names = TRUE,  # list full file names
                     include.dirs = TRUE) # include the full file path
 
 
@@ -118,13 +124,55 @@ files_tib <-
   filter( str_detect(files_tib$value, pattern = "v01_M/Data/Stata") == TRUE )
 
 
+# make a directory for future RDS files 
+files_tib <- 
+  files_tib %>%
+  separate(value, into = c("front", "back"), sep = "Stata", fill = "right", remove = FALSE) %>%
+  separate(back, into = c("filename", "extension"), sep = "\\.") %>%
+  mutate(r    = "R",
+         rpath = paste0(front, r, filename, ".Rds")) %>%
+  select(value, front, r, filename, rpath) %>%
+  rename(dtapath = value)
 
-## the next set of commands work better if the files are in list not tibble
-files_list <- as.character(files_tib)
 
 
+## combine top and bottom to make single file path list object 
+files_list <- 
+  files_tib %>%
+  pull(dtapath)
+
+p <- file.path(files_list)
+View(p)
 
 
 # Import/Export an RDS file ----------------------------------------------------------
 # Write a function that takes each survey round and writes a .RDS file in the same directory
 
+# With an eye on memory, let's write a function that takes each file in the list above 
+# and imports it, then exports it again
+
+make_rds <- function(s, r) {
+  
+  # import
+  new_dta <- haven::read_dta(s)
+  
+  # save
+  saveRDS(new_dta, file = r) # 
+  
+  # remove object for next cycle/memory?
+  rm(new_dta)
+}
+
+s_test <- files_tib$dtapath[1:3]
+r_test <- files_tib$rpath[1:3]
+
+map2(.x = s_test,  # loop through the Stata col to import the file
+     .y = r_test,  # loop through the R path col in parallel to write the file
+     .f = make_rds)
+
+
+#first <- readRDS("Y:/GLD-Harmonization/551206_TM/PHL/PHL_1997_LFS/PHL_1997_LFS_v01_M/Data/R/LFS JUL1997.Rds")
+
+# thanks!
+# https://stackoverflow.com/questions/21618423/extract-a-dplyr-tbl-column-as-a-vector
+# https://stats.idre.ucla.edu/r/codefragments/read_multiple/
