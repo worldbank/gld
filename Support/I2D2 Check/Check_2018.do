@@ -228,7 +228,7 @@ restore
 
 *this var is missing in this type of survey
 di "Marital"
-assert marital==1 | marital==2 | marital==3 | marital==3 | marital==4 | marital==.
+assert marital==1 | marital==2 | marital==3 | marital==4 | marital==5 | marital==.
 
 *check female head <50%
 
