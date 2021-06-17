@@ -37,10 +37,6 @@
 
 ** DIRECTORY
 
-	local 	year 		"${GLD}:\GLD-Harmonization\\`usr'\\`cty3'\\`cty3'_`surv_yr'_LFS" // <- replace ${GLD} with Y/Z if running directly
-
-
-
 	local 	cty3 	"PHL" 	// set this to the three letter country/economy abbreviation
 	local 	usr		`"551206_TM"' // set this to whatever Mario named your folder
 	local 	surv_yr `"2017"'	// set this to the survey year
@@ -49,6 +45,8 @@
 	local 	append 	 = 1
 	local 	cb_pause = 1	/* 	1 to generate codebook for harmonizing varnames and labels, will not run rest of code.
 							 	0 to import edited codebook and run rest of code. */
+
+	local 	year 		"${GLD}:\GLD-Harmonization\\`usr'\\`cty3'\\`cty3'_`surv_yr'_LFS" // <- replace ${GLD} with Y/Z if running directly
 
 
 	local 	main		"`year'\\`cty3'_`surv_yr'_LFS_v01_M"
@@ -504,7 +502,7 @@ if (`cb_pause' == 1) {
 	la de lbleverattend 0 "No" 1 "Yes"
 	label values everattend lbleverattend
 
-/* %%% 
+/* %%%
 
 /*****************************************************************************************************
 *                                                                                                    *
