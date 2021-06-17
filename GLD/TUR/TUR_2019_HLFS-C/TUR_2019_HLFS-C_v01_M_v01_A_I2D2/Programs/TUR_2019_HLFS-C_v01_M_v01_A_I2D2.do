@@ -335,10 +335,14 @@
 
 ** CURRENTLY AT SCHOOL
 	gen atschool=egitim_devam_k == 1
+	* There are three people who are atschool but never attended.
+	count if everattend == 0 & atschool == 1
+	* They claimed to have never graduated, but are in primary education at ages 16, 20, 22
+	* Set them to missing for atschool
+	replace atschool = . if everattend == 0 & atschool == 1
 	label var atschool "Attending school"
 	la de lblatschool 0 "No" 1 "Yes"
 	label values atschool  lblatschool
-
 
 
 ** CAN READ AND WRITE
@@ -493,7 +497,7 @@
 	gen industry_orig = string(nace2_esas_k,"%02.0f")
 	replace industry_orig = "" if industry_orig == "."	
 	replace industry_orig = industry_orig + "00" if !missing(industry_orig)
-	replace industry_orig=. if lstatus!=1
+	replace industry_orig="" if lstatus!=1
 	label var industry_orig "Original Industry Codes (NACE/ISIC code at Division Level)"
 
 
@@ -521,39 +525,65 @@
 	recode firmsize_u (1=10) (2=19) (3=49) (4=.) (5=.)
 	replace firmsize_u=. if lstatus!=1
 	label var firmsize_u "Firm size (upper bracket)"
-
-	
-********************************************************************************************	
-********************************************************************************************	
-********************************************************************************************	
-********************************************************************************************	
-	
-	
-	
 	
 	
 ** HOURS WORKED LAST WEEK
-	gen whours=s56a_top
+	* Survey has two concepts - work usually in a week (esas_hafsaat_genel) and work the last
+	* week (esas_fiili). There are 64 cases where the usual work hours are 0, 190 were the acutal
+	* last week work hours are 0. In addition, 57 have usual hours 0 hours, but actual are peopl
+	* who have business they were absent from with reason but will return (calisma_sahip_is == 1). 
+	* For them set to missing. That leaves 7 individuals, all self employed market oriented skilled
+	* Agriculture workers (ISCO 61). All seven claim to have a second job. Their first job usual and
+	* last week hours are zero, but the second job hours are in there (and look like normal hours
+	* bar one with 10 hours). Assume this is a transcription error and use those hours.
+	gen whours = esas_hafsaat_genel
+	replace whours = . if calisma_sahip_is == 1 & whours == 0
+	* expect 57 replacements
+	replace whours = ekis_fiili if whours == 0
+	* expect 7 replacements
 	label var whours "Hours of work in last week"
 
 ** WAGES
+/*
+	Question (gelir_gecenay_k) is defined as
+	How much did you earn from your main job activity during the last month? (including extra income
+	like bonus pay, premiums etc. on addition to salary, monthly or quarterly paid)
+	The questions is only asked to paid employees only. Looking at the below crosstab
+	
+                  |               test
+Employment status | Wage Miss   Wage = 0   Wage > 0 |     Total
+------------------+---------------------------------+----------
+    Paid employee |         0      7,161     94,811 |   101,972 
+Non-paid employee |    21,009          0          0 |    21,009 
+         Employer |     6,552          0          0 |     6,552 
+    Self-employed |    31,767          0          0 |    31,767 
+                . |   205,251          0          0 |   205,251 
+------------------+---------------------------------+----------
+            Total |   264,579      7,161     94,811 |   366,551 
 
-	gen wage=s69
+	The odd case are 7K individuals that are paid employees (not non-paid) but wage is 0. These are
+	set to missing
+			
+*/
+	gen wage=gelir_gecenay_k
 	replace wage=. if lstatus!=1
+	replace wage=. if wage == 0 
+	* Expect 7161 replacements
 	label var wage "Last wage payment"
 
 ** WAGES TIME UNIT
 
 	gen unitwage=5
-	replace unitwage=. if lstatus!=1
+	replace unitwage=. if wage==.
 	label var unitwage "Last wages time unit"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly"
 	label values unitwage lblunitwage
 
 
 ** EMPLOYMENT STATUS - SECOND JOB
-	gen byte empstat_2=.
+	gen byte empstat_2=isteki_durum_ekis
 	replace empstat_2=. if njobs==0 | njobs==.
+	recode empstat_2 (2=3) (4=2) (3=4)
 	label var empstat_2 "Employment status - second job"
 	la de lblempstat_2 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat_2 lblempstat_2
@@ -566,7 +596,6 @@
 	la de lblempstat_2_year 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat_2_year lblempstat_2_year
 
-
 ** INDUSTRY CLASSIFICATION - SECOND JOB
 	gen byte industry_2=.
 	replace industry_2=. if njobs==0 | njobs==.
@@ -576,7 +605,8 @@
 
 
 ** INDUSTRY 1 - SECOND JOB
-	gen byte industry1_2=.
+	gen byte industry1_2 = nace2_ekis_k
+	recode industry1_2 (3=4) (4=3)
 	replace industry1_2=. if njobs==0 | njobs==.
 	label var industry1_2 "1 digit industry classification (Broad Economic Activities) - Second job"
 	la de lblindustry1_2 1 "Agriculture" 2 "Industry" 3 "Services" 4 "Other"
@@ -584,7 +614,7 @@
 
 
 **SURVEY SPECIFIC INDUSTRY CLASSIFICATION - SECOND JOB
-	gen industry_orig_2=s53kod
+	gen industry_orig_2=.
 	replace industry_orig_2=. if njobs==0 | njobs==.
 	label var industry_orig_2 "Original Industry Codes - Second job"
 
@@ -627,8 +657,8 @@
 ** SOCIAL SECURITY
 
 	gen socialsec=.
-	replace socialsec=1 if s42==1
-	replace socialsec=0 if s42==2
+	replace socialsec=1 if kayitlilik == 1
+	replace socialsec=0 if kayitlilik == 2
 	label var socialsec "Social security"
 	la de lblsocialsec 1 "With" 0 "Without"
 	label values socialsec lblsocialsec
@@ -649,8 +679,7 @@
 
 
 **REGION OF BIRTH JURISDICTION
-	gen byte rbirth_juris=s7
-	recode rbirth_juris 1=2 2=5
+	gen byte rbirth_juris=.
 	label var rbirth_juris "Region of birth jurisdiction"
 	la de lblrbirth_juris 1 "reg01" 2 "reg02" 3 "reg03" 5 "Other country"  9 "Other code"
 	label values rbirth_juris lblrbirth_juris
@@ -662,8 +691,7 @@
 
 
 ** REGION OF PREVIOUS RESIDENCE JURISDICTION
-	gen byte rprevious_juris=s10a
-	recode rprevious_juris 1=2 2=5
+	gen byte rprevious_juris=.
 	label var rprevious_juris "Region of previous residence jurisdiction"
 	la de lblrprevious_juris 1 "reg01" 2 "reg02" 3 "reg03" 5 "Other country"  9 "Other code"
 	label values rprevious_juris lblrprevious_juris
@@ -675,7 +703,7 @@
 
 
 ** YEAR OF MOST RECENT MOVE
-	gen int yrmove=s9b
+	gen int yrmove=.
 	label var yrmove "Year of most recent move"
 
 
@@ -744,40 +772,19 @@
 	local keep ""
 	qui levelsof ccode, local(cty)
 	foreach var of varlist urb - pcc_d {
-	qui sum `var'
-	scalar sclrc = r(mean)
-	if sclrc==. {
-	     display as txt "Variable " as result "`var'" as txt " for ccode " as result `cty' as txt " contains all missing values -" as error " Variable Deleted"
-	}
-	else {
-	     local keep `keep' `var'
-	}
+		qui sum `var'
+		scalar sclrc = r(mean)
+		if sclrc==. {
+			display as txt "Variable " as result "`var'" as txt " for ccode " as result `cty' as txt " contains all missing values -" as error " Variable Deleted"
+		}
+		else {
+			local keep `keep' `var'
+		}
 	}
 	keep ccode year intv_year month  idh idp wgt strata psu `keep'
 
 
-	save "`path'\Processed\TUR_2015_I2D2_HLFS.dta", replace
-	save "D:\__CURRENT\TUR_2015_I2D2_HLFS.dta", replace
-	log close
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	save "`id_data'\TUR_2019_HLFS-C_v01_M_v01_A_I2D2.dta", replace
+	
 
 ******************************  END OF DO-FILE  *****************************************************/
