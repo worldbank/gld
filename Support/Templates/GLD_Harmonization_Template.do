@@ -73,7 +73,7 @@ local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
 {
 
 *<_countrycode_>
-	gen str4 countrycode=""
+	gen str4 countrycode = ""
 	label var countrycode "Country code"
 *</_countrycode_>
 
