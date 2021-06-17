@@ -42,11 +42,12 @@
 	local 	surv_yr `"2017"'	// set this to the survey year
 
 ** RUN SETTINGS
-	local 	cb_pause = 1	// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
-	local 	append 	 = 1	// 1 to run iecodebook append, 0 if file is already appended.
+	local 	append 	 = 1
+	local 	cb_pause = 1	/* 	1 to generate codebook for harmonizing varnames and labels, will not run rest of code.
+							 	0 to import edited codebook and run rest of code. */
 
+	local 	year 		"${GLD}:\GLD-Harmonization\\`usr'\\`cty3'\\`cty3'_`surv_yr'_LFS" // <- replace ${GLD} with Y/Z if running directly
 
-	local 	year 		"${GLD}:\GLD-Harmonization\\`usr'\\`cty3'\\`cty3'_`surv_yr'_LFS" // top data folder
 
 	local 	main		"`year'\\`cty3'_`surv_yr'_LFS_v01_M"
 	local 	 stata		"`main'\data\stata"
@@ -93,16 +94,17 @@ if (`append' == 1) {
 		, clear replace surveys(JAN2017 APR2017 JUL2017 OCT2017) /// survey names
 		match // atuo match the same-named variables
 
+
 if (`cb_pause' == 1) {
 		pause on
-		pause pausing while you edit your codebook. Save aligned codebook with suffix "-IN.xlsx" in the same directory as the output. press 'q' to continue.
+		pause pausing while you edit your codebook. 1. Align variable names and save aligned codebook with suffix "-IN-R.xlsx" in the same directory as the output. 2. Run R script in same directory as code; re-save xlsx file. 3. press 'q' to continue.
 	}
 
 
 *** append the dataset
 	iecodebook append ///
 		`"`round1'"' `"`round2'"' `"`round3'"' `"`round4'"' /// survey files
-		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template-IN.xlsx"' /// output just created above
+		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template-IN-S.xlsx"' /// output just created above
 		, clear surveys(JAN2017 APR2017 JUL2017 OCT2017) // survey names
 	}
 	else {
@@ -122,7 +124,7 @@ if (`cb_pause' == 1) {
 
 
 ** YEAR
-	gen int year=svyyr
+	gen int year= pufsvyyr
 	label var year "Year of survey"
 
 
@@ -132,14 +134,14 @@ if (`cb_pause' == 1) {
 
 
 ** MONTH OF INTERVIEW
-	gen byte month=svymo
+	gen byte month=pufsvymo
 	la de lblmonth 1 "January" 2 "February" 3 "March" 4 "April" 5 "May" 6 "June" 7 "July" 8 "August" 9 "September" 10 "October" 11 "November" 12 "December"
 	label value month lblmonth
 	label var month "Month of the interview"
 
 
 ** HOUSEHOLD IDENTIFICATION NUMBER
-	loc idhvars 	reg  prov hhnum 	// store idh vars in local
+	loc idhvars 	pufreg pufprv pufprrcd	// store idh vars in local
 
 
 	ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
@@ -221,17 +223,17 @@ if (`cb_pause' == 1) {
 ** HOUSEHOLD WEIGHTS
 	/* The weight variable will be divided by the number of rounds per year to ensure the
 	   weighting factor does not over-mutliply*/
-	gen double wgt= pwgt/(10000 * `n_round')
+	gen double wgt= pufpwgtprv/(10000 * `n_round')
 	label var wgt "Household sampling weight"
 
 
 ** STRATA
-	gen strata=stratum
+	gen strata=.
 	label var strata "Strata"
 
 
 ** PSU
-	/*Survey includes psu variable*/
+	rename pufpsu psu
 	label var psu "Primary sampling units"
 
 
@@ -243,14 +245,14 @@ if (`cb_pause' == 1) {
 
 
 ** LOCATION (URBAN/RURAL)
-    gen byte urb=urb2k70
+	gen byte urb=pufurb2k10
     label var urb "Urban/Rural"
 	la de lblurb 1 "Urban" 2 "Rural"
 	label values urb lblurb
 
 
 **REGIONAL AREAS
-	gen byte reg01=reg		// not recoding region for now, but needs to be addressed in #12
+	gen byte reg01=pufreg		// not recoding region for now, but needs to be addressed in #12
     la de lblreg01  1 "Ilocos" 2 "Cagayan Valley" 3 "Central Luzon" 5 "Bicol" 6 "Western Visayas" 7 "Central Visayas" ///
                     8 "Eastern Visayas" 9 "Zamboanga Peninsula" 10 "Northern Mindanao" 11 "Davao" 12 "Soccsksargen" ///
                     13 "National Capital Region" 14 "Cordillera Administrative Region" ///
@@ -260,7 +262,7 @@ if (`cb_pause' == 1) {
 
 
 ** REGIONAL AREA 1 DIGIT ADMN LEVEL
-	gen byte reg02=prov
+	gen byte reg02=pufprv
 	label var reg02 "Region at 1 digit (ADMN1)"
 
 
@@ -339,7 +341,7 @@ if (`cb_pause' == 1) {
 
 ** HOUSEHOLD SIZE
 	sort idh
-	by idh: egen hhsize= count(c05_rel <= 8 | c05_rel == 11)
+	by idh: egen hhsize= count(pufc03_rel <= 8 | pufc03_rel == 11)
 	* restrict by family role var, include all non-family members but not boarders/workers
 	label var hhsize "Household size"
 
@@ -349,7 +351,7 @@ if (`cb_pause' == 1) {
 
 
 ** RELATIONSHIP TO THE HEAD OF HOUSEHOLD
-	gen byte head=c05_rel				//  "head", "spouse", and children not recoded
+	gen byte head=pufc03_rel				//  "head", "spouse", and children not recoded
 	recode head 	(4 5 6 8  	= 5)	/// siblings, children in law, grandchildren, other relatives of hh head = "other relatives"
 					(7 			= 4)	/// parents of hh head become "parents"
 					(9 10 11 	= 6) 	// boarders and domestic workers become "other/non-relatives"
@@ -369,14 +371,14 @@ if (`cb_pause' == 1) {
 
 
 ** GENDER
-	gen byte gender=c06_sex
+	gen byte gender= pufc04_sex
 	label var gender "Gender"
 	la de lblgender 1 "Male" 2 "Female"
 	label values gender lblgender
 
 
 ** AGE
-	gen byte age = c07_age
+	gen byte age = pufc05_age
 	label var age "Individual age"
 	replace age=98 if age>=98 & age!=.
 
@@ -388,7 +390,7 @@ if (`cb_pause' == 1) {
 
 
 ** MARITAL STATUS
-	gen byte marital=c08_ms
+	gen byte marital=pufc06_mstat
 	recode marital (1=2) (2=1) (3=5)(5 6=.)
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
@@ -408,9 +410,9 @@ if (`cb_pause' == 1) {
 
 
 ** CURRENTLY AT SCHOOL
-	gen byte atschool=.
-	replace atschool=1 if a02_csch == 1
-	replace atschool=0 if a02_csch == 2
+	gen byte atschool=pufc08_cursch
+	replace atschool=1 if pufc08_cursch == 1
+	replace atschool=0 if pufc08_cursch == 2
 	label var atschool "Attending school"
 	la de lblatschool 0 "No" 1 "Yes"
 	label values atschool  lblatschool
@@ -431,18 +433,42 @@ if (`cb_pause' == 1) {
 
 
 ** EDUCATIONAL LEVEL 1
+	/*	note this coding falls under issue #18 https://github.com/worldbank/gld/issues/18, using
+		.dta-loaded factor /data labels for now just to continue with project. */
 	gen byte edulevel1=.
-	replace edulevel1=1 if c09_grd==0
-	replace edulevel1=2 if c09_grd==1
-	replace edulevel1=3 if c09_grd==2
-	replace edulevel1=4 if c09_grd==3
-	replace edulevel1=5 if c09_grd==4
-	replace edulevel1=7 if c09_grd==5 | ( c09_grd>=60 & c09_grd<=78)
-	* note, according to the PSA, codes 60-78 refer to bachelors degrees, (for 2009, assuming same)
+	replace edulevel1=1 if pufc07_grade <= 110 	// less than primary to "no education"
+	replace edulevel1=2 if (pufc07_grade >= 110 & pufc07_grade <= 160) /// grade 6 (not marked as complete) or less in primary or
+							| (pufc07_grade >=410 & pufc07_grade <= 450) // ...grade 5 in K-12 program	to "Primary incomplete"
+	replace edulevel1=3 if pufc07_grade == 160 		/// grade 6 graduate
+							| pufc07_grade == 170 	/// grade 7 graduate
+							| pufc07_grade == 460  // grade 6 in k-12 school to "Primary Complete"
+	replace edulevel1=4 if (pufc07_grade >= 210 & pufc07_grade <= 240) /// 1-4th year in secondary school
+							| (pufc07_grade >=410 & pufc07_grade <= 510) // ...or grade 7-11 in k-12 program to "secondary incomplete"
+	replace edulevel1=5 if pufc07_grade == 250		/// high school complete
+							| pufc07_grade == 520 	// ... or "grade 12" in K-12 to to "Secondary Complete"
+	replace edulevel1=6 if (pufc07_grade >= 601 & pufc07_grade <= 699) 	// the 600s are for post-secondary/non-uni track courses
+
+	/* 	It appears that if you have a university degree, you provide that degree program and your answer is listed in the 800s. Otherwise,
+		if you are still incomplete with uni, you list your year and your reponse is in teh 700s.
+		Masters, doctorate degrees are listed in 900s
+		*/
+	replace edulevel1=7 if ( pufc07_grade>=701 & pufc07_grade<=950)
+
+	replace edulevel1=8 if ( pufc07_grade>=1 & pufc07_grade<=10)		/// these are either unlabelled or "preschool", go to "other"
+							| ( pufc07_grade>=191 & pufc07_grade<=192)	// There's no documentation on where to classify SPED, include here for now
 
 	label var edulevel1 "Level of education 1"
-	la de lbledulevel1 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete" 8 "Other" 9 "Unstated"
+	la de lbledulevel1 	1 "No education" 	///
+						2 "Primary incomplete" 	///
+						3 "Primary complete" 	///
+						4 "Secondary incomplete" 	///
+						5 "Secondary complete" 	///
+						6 "Higher than secondary but not university" ///
+						7 "University incomplete or complete" 	///
+						8 "Other" 	///
+						9 "Unstated"
 	label values edulevel1 lbledulevel1
+
 	replace edulevel1=. if age < ed_mod_age // restrict universe to students at or above primary school age
 
 
@@ -476,7 +502,7 @@ if (`cb_pause' == 1) {
 	la de lbleverattend 0 "No" 1 "Yes"
 	label values everattend lbleverattend
 
-
+/* %%%
 
 /*****************************************************************************************************
 *                                                                                                    *
@@ -490,12 +516,12 @@ if (`cb_pause' == 1) {
 
 
 ** LABOR STATUS
-	/*Changing by using newempst to determine lstatus, not work
-	Note: creating own label, not using label from newempst	*/
+	/*Changing by using pufnewempstat to determine lstatus, not work
+	Note: creating own label, not using label from pufnewempstat	*/
 	gen byte lstatus=.
-	replace lstatus=1 if newempst==1
-	replace lstatus=2 if newempst==2
-	replace lstatus=3 if newempst==3
+	replace lstatus=1 if pufnewempstat==1
+	replace lstatus=2 if pufnewempstat==2
+	replace lstatus=3 if pufnewempstat==3
 	replace lstatus=. if age < lb_mod_age // restrict universe to only those of working age
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -512,10 +538,10 @@ if (`cb_pause' == 1) {
 
 ** EMPLOYMENT STATUS
 	gen byte empstat=.
-	replace empstat=1 if c19pclas==0 | c19pclas==1 | c19pclas==2 | c19pclas==5
-	replace empstat=2 if c19pclas==6
-	replace empstat=3 if c19pclas==4
-	replace empstat=4 if c19pclas==3
+	replace empstat=1 if pufc23_pclass==0 | pufc23_pclass==1 | pufc23_pclass==2 | pufc23_pclass==5
+	replace empstat=2 if pufc23_pclass==6
+	replace empstat=3 if pufc23_pclass==4
+	replace empstat=4 if pufc23_pclass==3
 	replace empstat=. if lstatus!=1 	// includes universe restriction
 	label var empstat "Employment status"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed"
@@ -531,7 +557,7 @@ if (`cb_pause' == 1) {
 
 
 ** NUMBER OF ADDITIONAL JOBS
-	gen byte njobs=a03_jobs
+	gen byte njobs=pufc27_njobs
 	label var njobs "Number of total jobs"
 	replace njobs=. if age < lb_mod_age // restrict universe to working age
 
@@ -544,8 +570,8 @@ if (`cb_pause' == 1) {
 
 ** SECTOR OF ACTIVITY: PUBLIC - PRIVATE
 	gen byte ocusec=.
-	replace ocusec=1 if c19pclas==2
-	replace ocusec=2 if c19pclas!=2
+	replace ocusec=1 if pufc23_pclass==2
+	replace ocusec=2 if pufc23_pclass!=2
 	label var ocusec "Sector of activity"
 	la de lblocusec 1 "Public, state owned, government, army, NGO" 2 "Private"
 	label values ocusec lblocusec
@@ -556,11 +582,11 @@ if (`cb_pause' == 1) {
 
 ** REASONS NOT IN THE LABOR FORCE
 	gen byte nlfreason=.
-	replace nlfreason=1 if c42_wynt==8
-	replace nlfreason=2 if c42_wynt==7
-	replace nlfreason=3 if c42_wynt==6
-	replace nlfreason=4 if c42_wynt==3
-	replace nlfreason=5 if c42_wynt==1 | c42_wynt==2 | c42_wynt==4 | c42_wynt==5 | c42_wynt==9
+	replace nlfreason=1 if pufc34_wynot==8
+	replace nlfreason=2 if pufc34_wynot==7
+	replace nlfreason=3 if pufc34_wynot==6
+	replace nlfreason=4 if pufc34_wynot==3
+	replace nlfreason=5 if pufc34_wynot==1 | pufc34_wynot==2 | pufc34_wynot==4 | pufc34_wynot==5 | pufc34_wynot==9
 	replace nlfreason=. if lstatus!=3 	// restricts universe to non-labor force
 	replace nlfreason=. if age < lb_mod_age // restrict universe to working age
 	label var nlfreason "Reason not in the labor force"
@@ -569,17 +595,17 @@ if (`cb_pause' == 1) {
 
 
 ** UNEMPLOYMENT DURATION: MONTHS LOOKING FOR A JOB
-	gen byte unempldur_l= c40_wks/4.2
+	gen byte unempldur_l= pufc33_weeks/4.2
 	label var unempldur_l "Unemployment duration (months) lower bracket"
 	replace unempldur_l=. if age < lb_mod_age // restrict universe to working age
 	replace unempldur_l=. if lstatus!=2 	  // restrict universe to unemployed only
 
-	gen byte unempldur_u= c40_wks/4.2
+	gen byte unempldur_u= pufc33_weeks/4.2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
 	replace unempldur_l=. if age < lb_mod_age // restrict universe to working age
 	replace unempldur_l=. if lstatus!=2 	  // restrict universe to unemployed only
 
-** INDUSTRY CLASSIFICATION
+** INDUSTRY CLASSIFICATION %% continue here. change industry code schema to 4 digit.
 	gen byte industry=.
 	replace industry=1 if (c18_pkb>=1& c18_pkb<=4)		// to Agriculture
 	replace industry=2 if (c18_pkb>=5 & c18_pkb<=9)		// to Mining
