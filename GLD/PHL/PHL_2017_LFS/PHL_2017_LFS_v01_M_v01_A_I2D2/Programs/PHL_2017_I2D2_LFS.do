@@ -225,7 +225,7 @@ if (`cb_pause' == 1) {
 ** HOUSEHOLD WEIGHTS
 	/* The weight variable will be divided by the number of rounds per year to ensure the
 	   weighting factor does not over-mutliply*/
-	gen double wgt= weight/(10000 * `n_round')
+	gen double wgt= pufpwgtprv/(10000 * `n_round')
 	label var wgt "Household sampling weight"
 
 
@@ -412,9 +412,9 @@ if (`cb_pause' == 1) {
 
 
 ** CURRENTLY AT SCHOOL
-	gen byte atschool=.
-	replace atschool=1 if a02_csch == 1
-	replace atschool=0 if a02_csch == 2
+	gen byte atschool=pufc08_cursch
+	replace atschool=1 if pufc08_cursch == 1
+	replace atschool=0 if pufc08_cursch == 2
 	label var atschool "Attending school"
 	la de lblatschool 0 "No" 1 "Yes"
 	label values atschool  lblatschool
@@ -435,18 +435,42 @@ if (`cb_pause' == 1) {
 
 
 ** EDUCATIONAL LEVEL 1
+	/*	note this coding falls under issue #18 https://github.com/worldbank/gld/issues/18, using
+		.dta-loaded factor /data labels for now just to continue with project. */
 	gen byte edulevel1=.
-	replace edulevel1=1 if c09_grd==0
-	replace edulevel1=2 if c09_grd==1
-	replace edulevel1=3 if c09_grd==2
-	replace edulevel1=4 if c09_grd==3
-	replace edulevel1=5 if c09_grd==4
-	replace edulevel1=7 if c09_grd==5 | ( c09_grd>=60 & c09_grd<=78)
-	* note, according to the PSA, codes 60-78 refer to bachelors degrees, (for 2009, assuming same)
+	replace edulevel1=1 if pufc07_grade <= 110 	// less than primary to "no education"
+	replace edulevel1=2 if (pufc07_grade >= 110 & pufc07_grade <= 160) /// grade 6 (not marked as complete) or less in primary or
+							| (pufc07_grade >=410 & pufc07_grade <= 450) // ...grade 5 in K-12 program	to "Primary incomplete"
+	replace edulevel1=3 if pufc07_grade == 160 		/// grade 6 graduate
+							| pufc07_grade == 170 	/// grade 7 graduate
+							| pufc07_grade == 460  // grade 6 in k-12 school to "Primary Complete"
+	replace edulevel1=4 if (pufc07_grade >= 210 & pufc07_grade <= 240) /// 1-4th year in secondary school
+							| (pufc07_grade >=410 & pufc07_grade <= 510) // ...or grade 7-11 in k-12 program to "secondary incomplete"
+	replace edulevel1=5 if pufc07_grade == 250		/// high school complete
+							| pufc07_grade == 520 	// ... or "grade 12" in K-12 to to "Secondary Complete"
+	replace edulevel1=6 if (pufc07_grade >= 601 & pufc07_grade <= 699) 	// the 600s are for post-secondary/non-uni track courses
+
+	/* 	It appears that if you have a university degree, you provide that degree program and your answer is listed in the 800s. Otherwise,
+		if you are still incomplete with uni, you list your year and your reponse is in teh 700s.
+		Masters, doctorate degrees are listed in 900s
+		*/
+	replace edulevel1=7 if ( pufc07_grade>=701 & pufc07_grade<=950)
+
+	replace edulevel1=8 if ( pufc07_grade>=1 & pufc07_grade<=10)		/// these are either unlabelled or "preschool", go to "other"
+							| ( pufc07_grade>=191 & pufc07_grade<=192)	// There's no documentation on where to classify SPED, include here for now
 
 	label var edulevel1 "Level of education 1"
-	la de lbledulevel1 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete" 8 "Other" 9 "Unstated"
+	la de lbledulevel1 	1 "No education" 	///
+						2 "Primary incomplete" 	///
+						3 "Primary complete" 	///
+						4 "Secondary incomplete" 	///
+						5 "Secondary complete" 	///
+						6 "Higher than secondary but not university" ///
+						7 "University incomplete or complete" 	///
+						8 "Other" 	///
+						9 "Unstated"
 	label values edulevel1 lbledulevel1
+
 	replace edulevel1=. if age < ed_mod_age // restrict universe to students at or above primary school age
 
 
