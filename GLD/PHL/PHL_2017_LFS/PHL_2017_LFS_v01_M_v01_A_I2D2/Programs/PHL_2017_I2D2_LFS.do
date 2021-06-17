@@ -504,7 +504,7 @@ if (`cb_pause' == 1) {
 	la de lbleverattend 0 "No" 1 "Yes"
 	label values everattend lbleverattend
 
-
+/* %%% 
 
 /*****************************************************************************************************
 *                                                                                                    *
@@ -518,12 +518,12 @@ if (`cb_pause' == 1) {
 
 
 ** LABOR STATUS
-	/*Changing by using newempst to determine lstatus, not work
-	Note: creating own label, not using label from newempst	*/
+	/*Changing by using pufnewempstat to determine lstatus, not work
+	Note: creating own label, not using label from pufnewempstat	*/
 	gen byte lstatus=.
-	replace lstatus=1 if newempst==1
-	replace lstatus=2 if newempst==2
-	replace lstatus=3 if newempst==3
+	replace lstatus=1 if pufnewempstat==1
+	replace lstatus=2 if pufnewempstat==2
+	replace lstatus=3 if pufnewempstat==3
 	replace lstatus=. if age < lb_mod_age // restrict universe to only those of working age
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -540,10 +540,10 @@ if (`cb_pause' == 1) {
 
 ** EMPLOYMENT STATUS
 	gen byte empstat=.
-	replace empstat=1 if c19pclas==0 | c19pclas==1 | c19pclas==2 | c19pclas==5
-	replace empstat=2 if c19pclas==6
-	replace empstat=3 if c19pclas==4
-	replace empstat=4 if c19pclas==3
+	replace empstat=1 if pufc23_pclass==0 | pufc23_pclass==1 | pufc23_pclass==2 | pufc23_pclass==5
+	replace empstat=2 if pufc23_pclass==6
+	replace empstat=3 if pufc23_pclass==4
+	replace empstat=4 if pufc23_pclass==3
 	replace empstat=. if lstatus!=1 	// includes universe restriction
 	label var empstat "Employment status"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed"
@@ -559,7 +559,7 @@ if (`cb_pause' == 1) {
 
 
 ** NUMBER OF ADDITIONAL JOBS
-	gen byte njobs=a03_jobs
+	gen byte njobs=pufc27_njobs
 	label var njobs "Number of total jobs"
 	replace njobs=. if age < lb_mod_age // restrict universe to working age
 
@@ -572,8 +572,8 @@ if (`cb_pause' == 1) {
 
 ** SECTOR OF ACTIVITY: PUBLIC - PRIVATE
 	gen byte ocusec=.
-	replace ocusec=1 if c19pclas==2
-	replace ocusec=2 if c19pclas!=2
+	replace ocusec=1 if pufc23_pclass==2
+	replace ocusec=2 if pufc23_pclass!=2
 	label var ocusec "Sector of activity"
 	la de lblocusec 1 "Public, state owned, government, army, NGO" 2 "Private"
 	label values ocusec lblocusec
@@ -584,11 +584,11 @@ if (`cb_pause' == 1) {
 
 ** REASONS NOT IN THE LABOR FORCE
 	gen byte nlfreason=.
-	replace nlfreason=1 if c42_wynt==8
-	replace nlfreason=2 if c42_wynt==7
-	replace nlfreason=3 if c42_wynt==6
-	replace nlfreason=4 if c42_wynt==3
-	replace nlfreason=5 if c42_wynt==1 | c42_wynt==2 | c42_wynt==4 | c42_wynt==5 | c42_wynt==9
+	replace nlfreason=1 if pufc34_wynot==8
+	replace nlfreason=2 if pufc34_wynot==7
+	replace nlfreason=3 if pufc34_wynot==6
+	replace nlfreason=4 if pufc34_wynot==3
+	replace nlfreason=5 if pufc34_wynot==1 | pufc34_wynot==2 | pufc34_wynot==4 | pufc34_wynot==5 | pufc34_wynot==9
 	replace nlfreason=. if lstatus!=3 	// restricts universe to non-labor force
 	replace nlfreason=. if age < lb_mod_age // restrict universe to working age
 	label var nlfreason "Reason not in the labor force"
@@ -597,17 +597,17 @@ if (`cb_pause' == 1) {
 
 
 ** UNEMPLOYMENT DURATION: MONTHS LOOKING FOR A JOB
-	gen byte unempldur_l= c40_wks/4.2
+	gen byte unempldur_l= pufc33_weeks/4.2
 	label var unempldur_l "Unemployment duration (months) lower bracket"
 	replace unempldur_l=. if age < lb_mod_age // restrict universe to working age
 	replace unempldur_l=. if lstatus!=2 	  // restrict universe to unemployed only
 
-	gen byte unempldur_u= c40_wks/4.2
+	gen byte unempldur_u= pufc33_weeks/4.2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
 	replace unempldur_l=. if age < lb_mod_age // restrict universe to working age
 	replace unempldur_l=. if lstatus!=2 	  // restrict universe to unemployed only
 
-** INDUSTRY CLASSIFICATION
+** INDUSTRY CLASSIFICATION %% continue here. change industry code schema to 4 digit.
 	gen byte industry=.
 	replace industry=1 if (c18_pkb>=1& c18_pkb<=4)		// to Agriculture
 	replace industry=2 if (c18_pkb>=5 & c18_pkb<=9)		// to Mining
