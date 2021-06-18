@@ -1,0 +1,407 @@
+---
+title: "factor_levels_sandbox"
+author: "Tom"
+date: "June 14, 2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(error = TRUE)
+
+library(tidyverse)
+library(retroharmonize)
+library(readxl)
+library(openxlsx)
+library(haven)
+
+# paths ----
+
+  # user 
+  
+  user <- 5   # 1 
+  
+
+  
+  # top folders 
+  
+  if (user == 5) {
+    
+    data		<- ""					# data folder
+    GLD 		<- "Y:"					# set this to the letter the GLD drive is on your computer
+    i2d2 	  <- "Z"					# set this to the letter the I2D2 drive is on your computer
+    clone	  <- "C:/Users/WB551206/local/GitHub" # github/code top folder
+
+  }
+  
+  
+  if (user == 1) {
+    
+    data		<- ""					# data folder
+    GLD 		<- ""					# set this to the letter the GLD drive is on your computer
+    i2d2 	  <- ""					# set this to the letter the I2D2 drive is on your computer
+    clone	  <- "C:/Users/..." # github/code top folder
+    
+  }
+  
+  
+  # Same no matter the user 
+    code 	        <- file.path(clone, "gld/GLD")
+    yr2012        <- file.path(GLD, "GLD-Harmonization/551206_TM/PHL/PHL_2012_LFS") #  our directory
+      yr2012data  <- file.path(yr2012, "PHL_2012_LFS_v01_M/Data")          # data directory 
+        vStata    <- file.path(yr2012data, "Stata")
+        vSPSS     <- file.path(yr2012data, "SPSS")
+        vRDS      <- file.path(yr2012data, "rds")
+      yr2012doc   <- file.path(yr2012, "PHL_2012_LFS_v01_M_v01_A_I2D2/Doc")      # documents 
+      
+    
+    
+  
+```
+
+
+# Exploration of how to harmonize factor labels across same-year survey rounds
+
+
+## Method 1: iecodebook 
+
+I have already generated an output xlsx of all the data labels of all rounds from iecodebook. So The strategy here is to simply read in these four tabs (one for each round) directly and use `dplyr` to find distinct/unique vectors. Then write an output `.xlsx` of this object.
+```{r}
+
+## import labels -------            
+jan2012 <- read_xlsx(
+  path = file.path(yr2012doc, "PHL_2012_append_template.xlsx"),
+  sheet = "choices_JAN2012",
+  col_names = TRUE
+)      
+   
+apr2012 <- read_xlsx(
+  path = file.path(yr2012doc, "PHL_2012_append_template.xlsx"),
+  sheet = "choices_APR2012",
+  col_names = TRUE
+)  
+
+jul2012 <- read_xlsx(
+  path = file.path(yr2012doc, "PHL_2012_append_template.xlsx"),
+  sheet = "choices_JUL2012",
+  col_names = TRUE
+) 
+
+oct2012 <- read_xlsx(
+  path = file.path(yr2012doc, "PHL_2012_append_template.xlsx"),
+  sheet = "choices_OCT2012",
+  col_names = TRUE
+) 
+
+```
+
+After importing we can append and then use `distinct()` to determine uniqueness. But we only want to determine uniqueness by the first two variables, `list_name` and `value`. The final one, `label` is the actual string label and for now I don't really care if that's different if the value is the same. This is up for debate: it is possible that the difference could be trivial (a space) or it could be a significant difference, such as a mislabeled factor. For now, I will only use the first two variables to determine uniqueness.
+
+```{r}
+
+## append ----
+# simply, slowly, make a long version, obvs with dups first
+long_2012 <- bind_rows(jan2012, apr2012, jul2012, oct2012)
+
+```
+
+`dplyr` does a pretty good job. The final object is only a few rows longer than each of the others, meaning that `dplyr` thinks the overlaps is almost perfect. Becuase I know this year manually I know this is true.
+```{r}
+
+
+## clean dups, find unique vector ---- 
+# we want to determine the unqiue-ness across "list_name" and "value" only 
+labs_2012 <- 
+  long_2012 %>% 
+  distinct(list_name, value, .keep_all = TRUE)
+
+nrow(labs_2012)
+```
+
+For now, It would be easiest to just write this object into `iecodebook` template file, although in the long run I think there are better workflow options. But I can't figure out how to overwrite data in a sheet that already exists, so I'll just make a new one.
+
+```{r}
+write.xlsx(
+  labs_2012,
+  file = file.path(yr2012doc, "PHL_2012_append_template-IN - values.xlsx"),
+  xy = c(1, 7), # vector of startCol, StartRow
+  colNames = FALSE
+  )
+```
+
+
+Trying again.
+```{r}
+# load workbook
+PHL_2012_template <- loadWorkbook(file = file.path(yr2012doc, "PHL_2012_append_template-IN.xlsx"))
+
+# write data
+writeData(
+  wb = PHL_2012_template, 
+  sheet = "choices",
+  x = labs_2012, 
+  xy= c(1,1),
+  colNames = TRUE # the names need to be there for iecodebook to work.
+  
+  )
+
+
+saveWorkbook(PHL_2012_template, file = file.path(yr2012doc, "PHL_2012_append_template-IN - Copy.xlsx"), overwrite = TRUE)
+
+
+```
+
+The writing works, but the problem is that it's only writing one sheet at a time and not "writing" the rest, it seems. In other words, we are overwriting the whole file and including the one we "edit" by specifiying the object `labs_2012` -- the other sheets are also overwritten by the program and in these sheets we cannot, it seems, specify to keep NA values as empty cells, which means we have to live with overwritten, sloppy, output in the rest of the sheet if we are to go with this approach. 
+
+An idea -- it may be a function of the interaction with `iecodebook` and the formatting. `iecodebook` may be spitting out "empty" cells that are not in fact empty but have some sort of formatting that `openxlsx` doesn't like and converts to NA, and then writes back in as NA instead of just empty. The easiest way to make this work is just find and replace for NA in all cells and it works, but it's not really reproducible and certainly not elegant. 
+
+
+## Method 2: retroharmonize
+
+I found this package designed to harmonize things about complex surveys. Let's try it! Note that If I could actually get the final step in part 1 to work -- ie, the writing to the `iecodebook` codebook xlsx -- then I wouldn't be spending so much time in part 2. But for now we have **no** solution so I'll keep on keeping on until then.
+
+### import 
+
+First you have to import the raw `.dta` files. So here we go, `haven` in hand.
+
+```{r, echo=FALSE}
+jan2012dta <- read_dta(file = file.path(vStata, "LFSjan12.dta"))
+apr2012dta <- read_dta(file = file.path(vStata, "LFSapr12.dta"))
+jul2012dta <- read_dta(file = file.path(vStata, "LFSjul12.dta"))
+oct2012dta <- read_dta(file = file.path(vStata, "LFS OCT2012.dta"))
+```
+
+Actually nevermind it looks like you have to create a metadata file first, also with `retroharmonize`
+
+### Trying to import via creating metadata file, with errors
+
+Note, following along first vignette. I don't actually import this successfully with metadata and I don't know why.
+
+```{r}
+i2d2   <- dir(vStata)
+rounds <- file.path(vStata, i2d2) # store 2012 i2d2 directory 
+
+i2d2_waves <- read_surveys(rounds, .f="read_dta", save_to_rds = FALSE) # example has "read_spss"
+```
+
+
+Review Descriptive metadata. Looks like the package doesn't detect that the object is a `survey_list()` type, which prevents us from extracting metadata. However, we do see that the haven labeled attribute did make it's way through the function. I think something funky is happening with reading the stata files that is causing the function to not pick up on some of the metadata, ie, that makes it a survey_list.
+
+```{r}
+documented_i2d2_waves <- document_waves(i2d2_waves)
+
+print(documented_i2d2_waves)
+```
+
+```{r}
+print(attributes(i2d2_waves[[1]]$prov))
+```
+
+
+Let's try this `survey()`/`is.survey()` function they give us. Using the `.dta` file we already imported
+```{r}
+survey <- survey(
+  df = jan2012, 
+  id = "example"
+)
+
+is.survey(survey)
+```
+
+This is odd. Let's try to import all files manually via haven and then make into a list
+```{r, echo=TRUE}
+# take the dta objects we alredy imported earlier, giving them a string ID
+jan <- survey(df = jan2012dta, id = "JanLFS")
+apr <- survey(df = apr2012dta, id = "AprLFS")
+jul <- survey(df = jul2012dta, id = "JulLFS")
+oct <- survey(df = oct2012dta, id = "OctLFS")
+
+is.survey(jan)
+is.survey(apr)
+is.survey(jul)
+is.survey(oct)
+
+# make 4 rounds into a list
+i2d2_waves2 <- list(jan, apr, jul, oct)
+
+```
+
+
+But still, this second list object doens't read as a `survey_list()` object, even though it is a list of surveys...
+
+```{r,}
+document_waves(i2d2_waves2)
+```
+
+
+### maybe it has to be SPSS/Rds?
+
+Ok so maybe since the package was specifically designed(?) for SPSS files the metadata stuff only works with SPSS. Note that I have previously exported a copy of the dta files as SPSS and RDS in the same directory. Skipping here for time. Simply re-importing.
+
+And now import the SPSS files with the function like good vignette readers.
+
+```{r}
+# adjust the directory first
+i2d2_spss <- dir(vSPSS)
+rounds_spss <- file.path(vSPSS, i2d2_spss) # store 2012 i2d2 directory 
+
+i2d2_waves3 <- read_surveys(rounds_spss, .f="read_spss", save_to_rds = FALSE) # example has "read_spss"
+```
+
+
+Will it also work with RDS?
+
+```{r}
+# adjust the directory first
+i2d2_rds <- dir(vRDS)
+rounds_rds <- file.path(vRDS, i2d2_rds) # store 2012 i2d2 directory 
+
+i2d2_waves4 <- read_surveys(rounds_rds, .f="read_rds", save_to_rds = FALSE) # example has "read_spss"
+```
+
+
+
+And is our SPSS-imported object a `survey_list()`? Apparently yes.
+```{r}
+documented_i2d2_waves <- document_waves(i2d2_waves3)
+documented_i2d2_waves
+```
+
+
+And is our RDS-imported object a `survey_list()`? Apparently yes.
+```{r}
+documented_i2d2_waves_rds <- document_waves(i2d2_waves4)
+documented_i2d2_waves_rds
+```
+
+## working with metadata 
+
+Extract metadata and save in object. The preview of the object that the output gives us here doesn't do justice, but it is really cool and it alone is worth the time investment in this package. 
+```{r}
+i2d2_metadata <- lapply( X = i2d2_waves4, FUN = metadata_create)
+i2d2_metadata <- do.call(rbind, i2d2_metadata)
+head(i2d2_metadata)
+```
+
+Ok now the vingette wants us to select a subset of variables to work with so we can harmonize the whole set of rounds based on these variables. Sure, why not.
+```{r}
+# declare a vector of key variables we don't want
+vars <- c("creg", "stratum", "psu", "prov", "hhid", "svymo", 
+         "svyyr", "c04_lno", "c05_rel", "c06_sex", "c07_age", "c08_mstat", "a02_cursch",
+        "c10_conwr", "j01_usocc", "c13_work", "c14_job", "c16_procc", 
+        "c18_pkb", "c19_pclass", "c20_natem", "c21_pnwhrs",
+        "c22_phours", "c23_pwmore", "c24_pladdw", "c25_pfwrk", "c26_pbasis", 
+        "c27_pbasic", "c28_ojob", "j02_otocc",
+        "j03_okb", "j04_oclass", "j05_ohours", "j06_obasis", 
+        "j07_obasic", "a03_jobs", "a04_thours", "a05_rwm48h",
+        "c37_avail", "c38_lookw", "c39_jobsm", "c40_weeks", 
+        "c41_flwrk", "c42_wynot", "a06_ltlookw", "a07_willing",
+        "c43_lbef", "c45_pocc", "a08_wpqtr", "a09_pqkb", "cempst1", "newempstat", "hhnum", "urb2k1970",
+        "j12intvw", "j12c09_grade", "j12c11_gradtech", "j12c11course", "pwgt", "weight"
+)
+
+to_harmonize <- i2d2_metadata %>%
+  filter(var_name_orig %in% vars ) %>%
+  mutate( var_label = var_label_normalize(label_orig)) %>% # removes spaces, special characters and typos
+  mutate( var_name  = val_label_normalize(var_label))
+  
+```
+
+
+## Harmonizing/Merging 
+
+Merge the surveys. Apparently this function harmonizes variable names, variable labels, and survey identifiers -- but what about value labels??
+```{r}
+merged_i2d2 <- merge_waves(waves = i2d2_waves4, var_harmonization = to_harmonize)
+documented_merged_i2d2 <- document_waves(merged_i2d2)
+documented_merged_i2d2
+```
+
+
+Collect all value labels that match the filter parameters. This finds unique values across all survey rounds. 
+```{r}
+val_creg <- collect_val_labels(to_harmonize %>% 
+                     filter(var_name_orig == "creg"))
+val_creg
+```
+
+Now let's query across a variable that we know has different values across rounds. `j01_usocc` has 436 labels in two rounds and 442 in two others, accorinding to `i2d2_metadata$n_labels`.
+```{r}
+val_j01_usocc <- collect_val_labels(to_harmonize %>% 
+                     filter(var_name_orig == "j01_usocc"))
+length(val_j01_usocc)
+```
+
+Ok so if this command worked properly this means that there was not a lot of overlap between the four survey rounds -- meanings there were 855 total unique value labels/factor levels. Let's see if we can verify this by 
+```{r}
+# make a list of vectors of value labels for j01_usocc in each round
+labs <- i2d2_metadata %>% 
+  filter(var_name_orig == "j01_usocc", id %in% c("LFSjan12", "LFSapr12", "LFSjul12", "LFSoct12")) %>% 
+  select(labels) %>%
+  unnest_longer(labels)
+
+# find unique vector among them, count
+labs_uq <- labs %>% distinct()
+nrow(labs_uq)
+
+assertthat::assert_that(nrow(labs_uq) == length(val_j01_usocc))
+```
+
+Yep, `collect_val_labels()` is pretty good. (But it would be nice to have an option to include the actual values in a tibble like format too, but hey still amazing.)
+
+
+
+## pausing here.
+
+this is where I'm pausing for now. Basically I've concluded that this package has a lot of potential. The biggest advantage for us so far is the `metadata` object which lists all varnames, labels and value labels for each round in a tibble. It seems that from here is where the package originates a lot of its operations. Downside is having stepping into RDS/SPSS from Stata. 
+
+
+## moving on. 
+Now let's try to see if I can produce a vector of unique labels. The first thing that we have to do is tell `retroharmonize` which variables are the same between rounds. This is where `iecodebook` excels because all of this is done via UI, wheras `retroharmonize` requires this to be done by "hand"/code still. This is a pain since some years have very mis-matched rounds and labels. 
+
+### trying to harmonize labels 
+
+The path gets muddier from here but whatever. The vignette uses `harmonize_values()` nested within a custom function that changes the to/from values, but I'm not sure I need to do that. Let's see what happens when I just run the raw function on a variable.
+
+Oh, apparently this is only for one round. Whatever. I want to run this on all rounds.
+```{r}
+#harmonize_values()
+```
+
+
+That's called `harmonize_waves()` which sort of assumes you've messed with `harmonize_values()` somewhat and created your own function, although let's see if you can just run it on the basic `harmonize_values()`. Note that this only is run on the variables that are the same in all rounds.
+
+```{r, error=TRUE}
+# create a subset of test variables 
+i2d2_waves_selected <- lapply(i2d2_waves4, function(x) x %>% select(
+  any_of(c("creg", "c05_rel", "c16_procc", "c18_pkb", "c22_phours", "c26_pbasis", "j01_usocc"))
+) )
+
+harmonized <- harmonize_waves(i2d2_waves_selected, .f = harmonize_values, status_message = TRUE)
+```
+
+Ok so will this not work with `haven_labelled` type? That seems odd. Maybe this is why there's a $class_orig column in the metadata -- like they want us to change the class somehow. Let's backtrack and try with making our own function. 
+
+```{r}
+# create a function where x = the name of the variable, I think. Or maybe it's the survey round. 
+harmonize_i2d2_fam <- function(x) {
+  val_x <- collect_val_labels(i2d2_metadata %>% 
+                     filter(var_name_orig == "x"))
+  
+   
+   # numeric_values = c() # do I care what the numeric values are?, I guess it doesn't matter because I'll be coding from the label anyway
+  
+  
+  harmonize_values(x,
+                   harmonize_labels = val_x, # straight from collect_val_labels()
+  )
+}
+
+```
+
+
+Now rerun harmonize waves, but still doesn't like the haven labeled type. 
+```{r}
+harmonized <- harmonize_waves(i2d2_waves_selected, .f = harmonize_i2d2_fam, status_message = TRUE)
+```
+
