@@ -167,8 +167,6 @@ files_list <-
   files_tib %>%
   pull(dtapath)
 
-p <- file.path(files_list)
-View(p)
 
 
 # Import/Export an RDS file ----------------------------------------------------------
@@ -189,12 +187,14 @@ make_rds <- function(s, r) {
   rm(new_dta)
 }
 
-s_test <- files_tib$dtapath[1:3]
-r_test <- files_tib$rpath[1:3]
+s_read  <- files_tib$dtapath
+r_write <- files_tib$rpath
 
-map2(.x = s_test,  # loop through the Stata col to import the file
-     .y = r_test,  # loop through the R path col in parallel to write the file
+map2(.x = s_read,  # loop through the Stata col to import the file
+     .y = r_write,  # loop through the R path col in parallel to write the file
      .f = make_rds)
+
+
 
 
 
@@ -203,16 +203,14 @@ map2(.x = s_test,  # loop through the Stata col to import the file
 ## retroharmonize will take a list of file names/paths and import them all along with the
 # metadata
 
-## pull the list of surveys
+## pull the list of surveys (.Rds files we just generated)
 surveys <- files_tib %>%
   pull(rpath)
-
-surveys_test <- surveys[1:3]
 
 
 
 ## read in the surveys
-waves <- read_surveys(surveys_test,
+waves <- read_surveys(surveys,
                       .f = "read_rds",
                       save_to_rds = FALSE)
 
@@ -244,6 +242,7 @@ save(
   metadata, documented_waves, files_tib,
   file = file.path(metadata_output_folder, "metadata.Rdata")
 )
+
 
 
 # thanks!
