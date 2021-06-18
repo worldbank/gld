@@ -14,7 +14,7 @@
 ** RESPONSIBLE	 Tom Mosher
 ** Created	4/4/2012
 ** Modified	24/5/2021
-** NUMBER OF HOUSEHOLDS	
+** NUMBER OF HOUSEHOLDS	(~200,000 est PSA website)
 ** NUMBER OF INDIVIDUALS
 ** EXPANDED POPULATION
 ** NUMBER OF SURVEY ROUNDS: 4
@@ -68,6 +68,7 @@
 
 ** VALUES
 	local n_round 	4			// numer of survey rounds
+	local cases  	798840		// 198627 (Jan) + 202256 (APR) + 196085 (Jul) + 201872 (Oct)
 
 
 
