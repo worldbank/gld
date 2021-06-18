@@ -8,10 +8,9 @@
 ** YEAR	2006
 ** SURVEY NAME	Labor Force Survey
 ** SURVEY AGENCY	National Statistical Office
-** SURVEY SOURCE	Juan Feng
 ** UNIT OF ANALYSIS	Household and Individual
 ** INPUT DATABASES	LFS JAN2006.dta
-** RESPONSIBLE	Cristian Jara
+** RESPONSIBLE
 ** Created	2/27/2012
 ** Modified	2/22/2017
 ** NUMBER OF HOUSEHOLDS	42273
@@ -26,21 +25,6 @@
                                    INITIAL COMMANDS
 *                                                                                                    *
 *****************************************************************************************************/
-
-
-** INITIAL COMMANDS
-	cap log close 
-	clear
-	set more off
-	set mem 800m
-
-
-** DIRECTORY
-	local path "D:\__I2D2\Philippines\2006\LFS"
-
-
-** LOG FILE
-	log using "`path'\Processed\PHL_2006_I2D2_LFS.log", replace
 
 
 /*****************************************************************************************************
@@ -123,7 +107,7 @@ no urb/rur variable
 
 **REGIONAL AREAS
 	gen byte reg01=reg
-	la de lblreg01 1 "Ilocos" 2 "Cagayan Valley" 3 "Central Luzon" 5 "Bicol" 6 "Western Visayas" 7 "Central Visayas" 8 "Eastern Visayas" 9 "Zamboanga Peninsula" 10 "Northern Mindanao" 11 "Davao" 12 "Soccsksargen" 13 "National Capital Region" 14 "Cordillera Administrative Region" 15 "Autonomous Region in Muslim Mindana" 16 "Caraga" 41 "Calabarzon" 42 "Mimaropa" 
+	la de lblreg01 1 "Ilocos" 2 "Cagayan Valley" 3 "Central Luzon" 5 "Bicol" 6 "Western Visayas" 7 "Central Visayas" 8 "Eastern Visayas" 9 "Zamboanga Peninsula" 10 "Northern Mindanao" 11 "Davao" 12 "Soccsksargen" 13 "National Capital Region" 14 "Cordillera Administrative Region" 15 "Autonomous Region in Muslim Mindana" 16 "Caraga" 41 "Calabarzon" 42 "Mimaropa"
 	label var reg01 "Macro regional areas"
 	label values reg01 lblreg01
 
@@ -291,11 +275,11 @@ no urb/rur variable
 
 ** EDUCATIONAL LEVEL 1
 	gen byte edulevel1=.
-	replace edulevel1=1 if c09_grade==0 
+	replace edulevel1=1 if c09_grade==0
 	replace edulevel1=2 if c09_grade==1
 	replace edulevel1=3 if c09_grade==2
 	replace edulevel1=4 if c09_grade==3
-	replace edulevel1=5 if c09_grade==4 
+	replace edulevel1=5 if c09_grade==4
 	replace edulevel1=7 if c09_grade==5 | (c09>=60 & c09<=78)
 	label var edulevel1 "Level of education 1"
 	la de lbledulevel1 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete" 8 "Other" 9 "Unstated"
@@ -391,7 +375,7 @@ no urb/rur variable
 
 ** SECTOR OF ACTIVITY: PUBLIC - PRIVATE
 	gen byte ocusec=.
-	replace ocusec=1 if  c24_pclas==2 
+	replace ocusec=1 if  c24_pclas==2
 	replace ocusec=2 if lstatus==1 &  c24_pclas~=2
 	replace ocusec=. if lstatus!=1
 	label var ocusec "Sector of activity"
@@ -425,14 +409,14 @@ no urb/rur variable
 ** INDUSTRY CLASSIFICATION
 	gen byte industry=.
 	replace industry=1 if (c17f2_pkb>=1&c17f2_pkb<=6)
-	replace industry=2 if (c17f2_pkb>=10&c17f2_pkb<=11) 
-	replace industry=3 if (c17f2_pkb>=15&c17f2_pkb<=39) 
-	replace industry=4 if (c17f2_pkb>=40&c17f2_pkb<=41) 
-	replace industry=5 if (c17f2_pkb==45) 
-	replace industry=6 if (c17f2_pkb>=50&c17f2_pkb<=55) 
-	replace industry=7 if (c17f2_pkb>=60&c17f2_pkb<=64) 
-	replace industry=8 if (c17f2_pkb>=65&c17f2_pkb<=74) 
-	replace industry=9 if (c17f2_pkb==75) | (c17f2_pkb>=80&c17f2_pkb<=85) 
+	replace industry=2 if (c17f2_pkb>=10&c17f2_pkb<=11)
+	replace industry=3 if (c17f2_pkb>=15&c17f2_pkb<=39)
+	replace industry=4 if (c17f2_pkb>=40&c17f2_pkb<=41)
+	replace industry=5 if (c17f2_pkb==45)
+	replace industry=6 if (c17f2_pkb>=50&c17f2_pkb<=55)
+	replace industry=7 if (c17f2_pkb>=60&c17f2_pkb<=64)
+	replace industry=8 if (c17f2_pkb>=65&c17f2_pkb<=74)
+	replace industry=9 if (c17f2_pkb==75) | (c17f2_pkb>=80&c17f2_pkb<=85)
 	replace industry=10 if  (c17f2_pkb>=90&c17f2_pkb<=99)
 	replace industry=10 if industry==. & c17f2_pkb!=.
 	replace industry=. if lstatus~=1

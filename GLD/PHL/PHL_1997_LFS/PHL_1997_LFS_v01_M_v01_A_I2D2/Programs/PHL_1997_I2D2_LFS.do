@@ -11,11 +11,11 @@
 ** SURVEY SOURCE	EAP Manilla Team
 ** UNIT OF ANALYSIS	Household and Individual
 ** INPUT DATABASES	LFS JAN1997.dta LFS APR1997, LFS JUL1997, LFS OCT1997
-** RESPONSIBLE	Cristian Jara + Tom Mosher
+** RESPONSIBLE Tom Mosher
 ** Created	4/4/2012
 ** Modified	24/5/2021
-** NUMBER OF HOUSEHOLDS	39273
-** NUMBER OF INDIVIDUALS	202738
+** NUMBER OF HOUSEHOLDS	39274
+** NUMBER OF INDIVIDUALS	202742
 ** EXPANDED POPULATION	70741993
 ** NUMBER OF SURVEY ROUNDS: 4
 **                                                                                                  **

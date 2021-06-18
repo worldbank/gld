@@ -11,12 +11,12 @@
 ** SURVEY SOURCE	EAP Manilla Team
 ** UNIT OF ANALYSIS	Household and Individual
 ** INPUT DATABASES	LFS JAN2019
-** RESPONSIBLE	Arianna Zapanta + Tom Mosher
+** RESPONSIBLE	Tom Mosher
 ** Created	4/4/2012
 ** Modified	24/5/2021
-** NUMBER OF HOUSEHOLDS	39273
-** NUMBER OF INDIVIDUALS	202738
-** EXPANDED POPULATION	70741993
+** NUMBER OF HOUSEHOLDS	160,309
+** NUMBER OF INDIVIDUALS 707,022
+** EXPANDED POPULATION
 ** NUMBER OF SURVEY ROUNDS: 4
 **                                                                                                  **
 ******************************************************************************************************

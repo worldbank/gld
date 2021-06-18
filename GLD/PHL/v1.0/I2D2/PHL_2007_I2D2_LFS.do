@@ -8,10 +8,10 @@
 ** YEAR	2007
 ** SURVEY NAME	LFS
 ** SURVEY AGENCY	National Statistical Office
-** SURVEY SOURCE	Data received from EAP Manila Team to Truman Packard
+** SURVEY SOURCE	Data received from EAP Manila Team
 ** UNIT OF ANALYSIS	Household and Individual
-** INPUT DATABASES	Z:\_I2D2\_I2D2\Philippines\2007\Original\LFS_JAN2007.dta
-** RESPONSIBLE	Cristian Jara 
+** INPUT DATABASES	LFS_JAN2007.dta
+** RESPONSIBLE
 ** Created	3/1/2012
 ** Modified	2/22/2017
 ** NUMBER OF HOUSEHOLDS	40695
@@ -28,19 +28,6 @@
 *****************************************************************************************************/
 
 
-** INITIAL COMMANDS
-	cap log close 
-	clear
-	set more off
-	set mem 800m
-
-
-** DIRECTORY
-	local path "D:\__I2D2\Philippines\2007\LFS"
-
-
-** LOG FILE
-	log using "`path'\Processed\PHL_2007_I2D2_LFS.log", replace
 
 
 /*****************************************************************************************************
@@ -105,7 +92,7 @@
 
 
 ** PSU
-	gen psu=lpsu 
+	gen psu=lpsu
 	label var psu "Primary sampling units"
 
 
@@ -125,7 +112,7 @@
 
 **REGIONAL AREAS
 	gen byte reg01= w_regn
-	la de lblreg01 1 "Ilocos" 2 "Cagayan Valley" 3 "Central Luzon" 5 "Bicol" 6 "Western Visayas" 7 "Central Visayas" 8 "Eastern Visayas" 9 "Zamboanga Peninsula" 10 "Northern Mindanao" 11 "Davao" 12 "Soccsksargen" 13 "National Capital Region" 14 "Cordillera Administrative Region" 15 "Autonomous Region in Muslim Mindana" 16 "Caraga" 41 "Calabarzon" 42 "Mimaropa" 
+	la de lblreg01 1 "Ilocos" 2 "Cagayan Valley" 3 "Central Luzon" 5 "Bicol" 6 "Western Visayas" 7 "Central Visayas" 8 "Eastern Visayas" 9 "Zamboanga Peninsula" 10 "Northern Mindanao" 11 "Davao" 12 "Soccsksargen" 13 "National Capital Region" 14 "Cordillera Administrative Region" 15 "Autonomous Region in Muslim Mindana" 16 "Caraga" 41 "Calabarzon" 42 "Mimaropa"
 	label var reg01 "Macro regional areas"
 	label values reg01 lblreg01
 
@@ -295,11 +282,11 @@
 
 ** EDUCATIONAL LEVEL 1
 	gen byte edulevel1=.
-	replace edulevel1=1 if lc09_grade==0 
+	replace edulevel1=1 if lc09_grade==0
 	replace edulevel1=2 if lc09_grade==1
 	replace edulevel1=3 if lc09_grade==2
 	replace edulevel1=4 if lc09_grade==3
-	replace edulevel1=5 if lc09_grade==4 
+	replace edulevel1=5 if lc09_grade==4
 	replace edulevel1=7 if lc09_grade==5 | (lc09>=60 & lc09<=78)
 	label var edulevel1 "Level of education 1"
 	la de lbledulevel1 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete" 8 "Other" 9 "Unstated"
@@ -367,7 +354,7 @@
 
 ** EMPLOYMENT STATUS
 	gen byte empstat=.
-	replace empstat=1 if lc24_pclass==0 | lc24_pclass==1 | lc24_pclass==2 
+	replace empstat=1 if lc24_pclass==0 | lc24_pclass==1 | lc24_pclass==2
 	replace empstat=2 if lc24_pclass==6
 	replace empstat=3 if lc24_pclass==4
 	replace empstat=4 if lc24_pclass==3 | lc24_pclass==5
@@ -397,7 +384,7 @@
 
 ** SECTOR OF ACTIVITY: PUBLIC - PRIVATE
 	gen byte ocusec=.
-	replace ocusec=1 if  lc24_pclass==2 
+	replace ocusec=1 if  lc24_pclass==2
 	replace ocusec=2 if lstatus==1 &  lc24_pclass~=2
 	label var ocusec "Sector of activity"
 	la de lblocusec 1 "Public, state owned, government, army, NGO" 2 "Private"

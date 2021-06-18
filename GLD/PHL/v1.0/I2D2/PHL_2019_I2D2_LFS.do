@@ -8,12 +8,11 @@
 ** YEAR	2019
 ** SURVEY NAME	Labour Force Survey
 ** SURVEY AGENCY	National Statistics Office
-** SURVEY SOURCE	
+** SURVEY SOURCE
 ** UNIT OF ANALYSIS	Household and Individual
-** INPUT DATABASES	/Users/ariannazapanta/Documents/LFS/LFS JAN2019.dta
-** RESPONSIBLE	Arianna Zapanta
+** INPUT DATABASES	LFS JAN2019.dta
 ** Created	1/17/2021
-** Modified	
+** Modified
 ** NUMBER OF HOUSEHOLDS	39876
 ** NUMBER OF INDIVIDUALS	181233
 ** EXPANDED POPULATION	107443368
@@ -26,18 +25,6 @@
                                    INITIAL COMMANDS
 *                                                                                                    *
 *****************************************************************************************************/
-
-
-** INITIAL COMMANDS
-	cap log close 
-	clear
-	set more off
-	set mem 800m
-
-
-** DIRECTORY
-	use "C:\Users\wb529063\WBG\Arianna Ma Francesca S Zapanta - LFS\2019\LFS JAN2019.dta" 
-
 
 /*****************************************************************************************************
 *                                                                                                    *
@@ -268,8 +255,8 @@
 	replace c09_grd=2 if pufc07_grade==10020
 	replace c09_grd=3 if inrange(pufc07_grade,24002,24010) | pufc07_grade==34011  | pufc07_grade==34021  | pufc07_grade==34031| pufc07_grade==35001
 	replace c09_grd=4 if pufc07_grade==24020 | pufc07_grade==34012 |pufc07_grade==34022 | pufc07_grade==34032 | pufc07_grade==35002 | inrange(pufc07_grade,40010,59999)
-	replace c09_grd=5 if pufc07_grade==60010  
-	replace c09_grd=60 if  pufc07_grade==60000  | inrange(pufc07_grade,60011,89999) 
+	replace c09_grd=5 if pufc07_grade==60010
+	replace c09_grd=60 if  pufc07_grade==60000  | inrange(pufc07_grade,60011,89999)
 
 	gen byte educy=.
 	replace educy=0 if  c09_grd==0 | c09_grd==1
@@ -281,11 +268,11 @@
 
 ** EDUCATIONAL LEVEL 1
 	gen byte edulevel1=.
-	replace edulevel1=1 if c09_grd==0 
+	replace edulevel1=1 if c09_grd==0
 	replace edulevel1=2 if c09_grd==1
 	replace edulevel1=3 if c09_grd==2
 	replace edulevel1=4 if c09_grd==3
-	replace edulevel1=5 if c09_grd==4 
+	replace edulevel1=5 if c09_grd==4
 	replace edulevel1=7 if c09_grd==5 | (c09>=60 & c09<=78)
 	label var edulevel1 "Level of education 1"
 	la de lbledulevel1 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete" 8 "Other" 9 "Unstated"
@@ -380,7 +367,7 @@
 
 ** SECTOR OF ACTIVITY: PUBLIC - PRIVATE
 	gen byte ocusec=.
-	replace ocusec=1 if pufc23_pclass==2 
+	replace ocusec=1 if pufc23_pclass==2
 	replace ocusec=2 if lstatus==1 & pufc23_pclass!=2
 	label var ocusec "Sector of activity"
 	la de lblocusec 1 "Public, state owned, government, army, NGO" 2 "Private"
@@ -410,14 +397,14 @@
 ** INDUSTRY CLASSIFICATION
 	gen byte industry=.
 	replace industry=1 if (pufc16_pkb>=1 & pufc16_pkb<=4)
-	replace industry=2 if (pufc16_pkb>=5 & pufc16_pkb<=9) 
-	replace industry=3 if (pufc16_pkb>=10 & pufc16_pkb<=33) 
-	replace industry=4 if (pufc16_pkb>=35 & pufc16_pkb<=39) 
+	replace industry=2 if (pufc16_pkb>=5 & pufc16_pkb<=9)
+	replace industry=3 if (pufc16_pkb>=10 & pufc16_pkb<=33)
+	replace industry=4 if (pufc16_pkb>=35 & pufc16_pkb<=39)
 	replace industry=5 if (pufc16_pkb>=41 & pufc16_pkb<=43)
 	replace industry=6 if (pufc16_pkb>=45 & pufc16_pkb<=47) |  (pufc16_pkb>=55 & pufc16_pkb<=56)
 	replace industry=7 if (pufc16_pkb>=49 & pufc16_pkb<=53)| (pufc16_pkb>=58 & pufc16_pkb<=63)
-	replace industry=8 if (pufc16_pkb>=64 & pufc16_pkb<=82) 
-	replace industry=9 if (pufc16_pkb>=84 & pufc16_pkb<=93) 
+	replace industry=8 if (pufc16_pkb>=64 & pufc16_pkb<=82)
+	replace industry=9 if (pufc16_pkb>=84 & pufc16_pkb<=93)
 	replace industry=10 if  (pufc16_pkb>=94 & pufc16_pkb<=99)
 	replace industry=10 if industry==. & pufc16_pkb!=.
 	replace industry=. if lstatus~=1
@@ -471,7 +458,7 @@
 
 
 ** WAGES
-	gen double wage=pufc25_pbasic 
+	gen double wage=pufc25_pbasic
 	replace wage=0 if empstat==2
 	replace wage=. if lstatus!=1
 	label var wage "Last wage payment"
@@ -675,9 +662,9 @@
 	}
 	keep ccode year intv_year month  idh idp wgt strata psu `keep'
 
-	save "C:\Users\wb529063\OneDrive - WBG\Philipines\I2D2\PHL_2019_I2D2_LFS.dta", replace
+	* save
 
-	
+
 
 
 

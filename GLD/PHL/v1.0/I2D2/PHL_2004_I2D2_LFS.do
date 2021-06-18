@@ -10,8 +10,8 @@
 ** SURVEY AGENCY	National Statistical Office
 ** SURVEY SOURCE	EAP Manilla Team
 ** UNIT OF ANALYSIS	Household and Individual
-** INPUT DATABASES	D:\__I2D2\Philippines\2004\Original\LFS_JAN2004.dta
-** RESPONSIBLE	Cristian Jara
+** INPUT DATABASES	LFS_JAN2004.dta
+** RESPONSIBLE
 ** Created	3/28/2012
 ** Modified	2/6/2017
 ** NUMBER OF HOUSEHOLDS	44861
@@ -27,20 +27,6 @@
 *                                                                                                    *
 *****************************************************************************************************/
 
-
-** INITIAL COMMANDS
-	cap log close 
-	clear
-	set more off
-	set mem 800m
-
-
-** DIRECTORY
-	local path "D:\__I2D2\Philippines\2004\LFS"
-
-
-** LOG FILE
-	log using "`path'\Processed\PHL_2004_I2D2_LFS.log", replace
 
 
 /*****************************************************************************************************
@@ -120,7 +106,7 @@
 
 **REGIONAL AREAS
 	gen byte reg01=reg
-	la de lblreg01 1 "Ilocos" 2 "Cagayan Valley" 3 "Central Luzon" 5 "Bicol" 6 "Western Visayas" 7 "Central Visayas" 8 "Eastern Visayas" 9 "Zamboanga Peninsula" 10 "Northern Mindanao" 11 "Davao" 12 "Soccsksargen" 13 "National Capital Region" 14 "Cordillera Administrative Region" 15 "Autonomous Region in Muslim Mindana" 16 "Caraga" 41 "Calabarzon" 42 "Mimaropa" 
+	la de lblreg01 1 "Ilocos" 2 "Cagayan Valley" 3 "Central Luzon" 5 "Bicol" 6 "Western Visayas" 7 "Central Visayas" 8 "Eastern Visayas" 9 "Zamboanga Peninsula" 10 "Northern Mindanao" 11 "Davao" 12 "Soccsksargen" 13 "National Capital Region" 14 "Cordillera Administrative Region" 15 "Autonomous Region in Muslim Mindana" 16 "Caraga" 41 "Calabarzon" 42 "Mimaropa"
 	label var reg01 "Macro regional areas"
 	label values reg01 lblreg01
 
@@ -284,7 +270,7 @@
 
 ** EDUCATIONAL LEVEL 1
 	gen byte edulevel1=.
-	replace edulevel1=1 if c09_grd==0 
+	replace edulevel1=1 if c09_grd==0
 	replace edulevel1=2 if c09_grd==1
 	replace edulevel1=3 if c09_grd==2
 	replace edulevel1=4 if c09_grd==3
@@ -384,7 +370,7 @@
 
 ** SECTOR OF ACTIVITY: PUBLIC - PRIVATE
 	gen byte ocusec=.
-	replace ocusec=1 if  c19pclas==2 
+	replace ocusec=1 if  c19pclas==2
 	replace ocusec=2 if lstatus==1 &  c19pclas~=2
 	label var ocusec "Sector of activity"
 	la de lblocusec 1 "Public, state owned, government, army, NGO" 2 "Private"
@@ -417,14 +403,14 @@
 ** INDUSTRY CLASSIFICATION
 	gen byte industry=.
 	replace industry=1 if (c18_pkb>=1&c18_pkb<=6)
-	replace industry=2 if (c18_pkb>=10&c18_pkb<=11) 
-	replace industry=3 if (c18_pkb>=15&c18_pkb<=39) 
-	replace industry=4 if (c18_pkb>=40&c18_pkb<=41) 
-	replace industry=5 if (c18_pkb==45) 
-	replace industry=6 if (c18_pkb>=50&c18_pkb<=55) 
-	replace industry=7 if (c18_pkb>=60&c18_pkb<=64) 
-	replace industry=8 if (c18_pkb>=65&c18_pkb<=74) 
-	replace industry=9 if (c18_pkb==75) | (c18_pkb>=80&c18_pkb<=85) 
+	replace industry=2 if (c18_pkb>=10&c18_pkb<=11)
+	replace industry=3 if (c18_pkb>=15&c18_pkb<=39)
+	replace industry=4 if (c18_pkb>=40&c18_pkb<=41)
+	replace industry=5 if (c18_pkb==45)
+	replace industry=6 if (c18_pkb>=50&c18_pkb<=55)
+	replace industry=7 if (c18_pkb>=60&c18_pkb<=64)
+	replace industry=8 if (c18_pkb>=65&c18_pkb<=74)
+	replace industry=9 if (c18_pkb==75) | (c18_pkb>=80&c18_pkb<=85)
 	replace industry=10 if  (c18_pkb>=90&c18_pkb<=99)
 	replace industry=10 if industry==. & c18_pkb!=.
 	replace industry=. if lstatus~=1

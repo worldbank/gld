@@ -10,8 +10,7 @@
 ** SURVEY AGENCY	National Statistical Office
 ** SURVEY SOURCE	EAP Manilla Team
 ** UNIT OF ANALYSIS	Household and Individual
-** INPUT DATABASES	Z:\_I2D2\_I2D2\Philippines\2002\Original\LFS JAN2002.dta
-** RESPONSIBLE	Cristián Jara 
+** INPUT DATABASES	LFS JAN2002.dta
 ** Created	3/29/2012
 ** Modified	2/6/2017
 ** NUMBER OF HOUSEHOLDS	38935
@@ -26,21 +25,6 @@
                                    INITIAL COMMANDS
 *                                                                                                    *
 *****************************************************************************************************/
-
-
-** INITIAL COMMANDS
-	cap log close 
-	clear
-	set more off
-	set mem 800m
-
-
-** DIRECTORY
-	local path "D:\__I2D2\Philippines\2003\LFS"
-
-
-** LOG FILE
-	log using "`path'\Processed\PHL_2003_I2D2_LFS.log", replace
 
 
 /*****************************************************************************************************
@@ -348,7 +332,7 @@
 
 ** EMPLOYMENT STATUS
 	gen byte empstat=.
-	replace empstat=1 if c17_pclass==0 | c17_pclass==1 | c17_pclass==2 
+	replace empstat=1 if c17_pclass==0 | c17_pclass==1 | c17_pclass==2
 	replace empstat=2 if c17_pclass==6
 	replace empstat=3 if c17_pclass==4
 	replace empstat=4 if c17_pclass==3| c17_pclass==5
@@ -379,7 +363,7 @@
 
 ** SECTOR OF ACTIVITY: PUBLIC - PRIVATE
 	gen byte ocusec=.
-	replace ocusec=1 if  c17_pclass==2 
+	replace ocusec=1 if  c17_pclass==2
 	replace ocusec=2 if lstatus==1 &  c17_pclass~=2
 	replace ocusec=. if lstatus!=1
 	label var ocusec "Sector of activity"

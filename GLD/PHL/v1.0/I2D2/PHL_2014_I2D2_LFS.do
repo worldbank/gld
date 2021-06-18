@@ -8,10 +8,9 @@
 ** YEAR	2014
 ** SURVEY NAME	Labour Force Survey
 ** SURVEY AGENCY	National Statistics Office
-** SURVEY SOURCE	
+** SURVEY SOURCE
 ** UNIT OF ANALYSIS	Household and Individual
-** INPUT DATABASES	D:\__I2D2\Philippines\2011\Original\LFS_JAN2011.dta
-** RESPONSIBLE	Cristan Jara 
+** INPUT DATABASES	LFS_JAN2011.dta
 ** Created	6/21/2013
 ** Modified	2/23/2017
 ** NUMBER OF HOUSEHOLDS	42662
@@ -26,21 +25,6 @@
                                    INITIAL COMMANDS
 *                                                                                                    *
 *****************************************************************************************************/
-
-
-** INITIAL COMMANDS
-	cap log close 
-	clear
-	set more off
-	set mem 800m
-
-
-** DIRECTORY
-	local path "D:\__I2D2\Philippines\2014\LFS"
-
-
-** LOG FILE
-	log using "`path'\Processed\PHL_2014_I2D2_LFS.log", replace
 
 
 /*****************************************************************************************************
@@ -119,7 +103,7 @@
 
 **REGIONAL AREAS
 	gen byte reg01=reg
-	la de lblreg01 1 "Ilocos" 2 "Cagayan Valley" 3 "Central Luzon" 5 "Bicol" 6 "Western Visayas" 7 "Central Visayas" 8 "Eastern Visayas" 9 "Zamboanga Peninsula" 10 "Northern Mindanao" 11 "Davao" 12 "Soccsksargen" 13 "National Capital Region" 14 "Cordillera Administrative Region" 15 "Autonomous Region in Muslim Mindana" 16 "Caraga" 41 "Calabarzon" 42 "Mimaropa" 
+	la de lblreg01 1 "Ilocos" 2 "Cagayan Valley" 3 "Central Luzon" 5 "Bicol" 6 "Western Visayas" 7 "Central Visayas" 8 "Eastern Visayas" 9 "Zamboanga Peninsula" 10 "Northern Mindanao" 11 "Davao" 12 "Soccsksargen" 13 "National Capital Region" 14 "Cordillera Administrative Region" 15 "Autonomous Region in Muslim Mindana" 16 "Caraga" 41 "Calabarzon" 42 "Mimaropa"
 	label var reg01 "Macro regional areas"
 	label values reg01 lblreg01
 
@@ -282,11 +266,11 @@
 
 ** EDUCATIONAL LEVEL 1
 	gen byte edulevel1=.
-	replace edulevel1=1 if c09_grd==0 
+	replace edulevel1=1 if c09_grd==0
 	replace edulevel1=2 if c09_grd==1
 	replace edulevel1=3 if c09_grd==2
 	replace edulevel1=4 if c09_grd==3
-	replace edulevel1=5 if c09_grd==4 
+	replace edulevel1=5 if c09_grd==4
 	replace edulevel1=7 if c09_grd==5 | (c09>=60 & c09<=78)
 	label var edulevel1 "Level of education 1"
 	la de lbledulevel1 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete" 8 "Other" 9 "Unstated"
@@ -382,7 +366,7 @@
 
 ** SECTOR OF ACTIVITY: PUBLIC - PRIVATE
 	gen byte ocusec=.
-	replace ocusec=1 if c19pclas==2 
+	replace ocusec=1 if c19pclas==2
 	replace ocusec=2 if lstatus==1 & c19pclas!=2
 	label var ocusec "Sector of activity"
 	la de lblocusec 1 "Public, state owned, government, army, NGO" 2 "Private"
@@ -412,14 +396,14 @@
 ** INDUSTRY CLASSIFICATION
 	gen byte industry=.
 	replace industry=1 if (c18_pkb>=1&c18_pkb<=4)
-	replace industry=2 if (c18_pkb>=5 & c18_pkb<=9) 
-	replace industry=3 if (c18_pkb>=10 & c18_pkb<=32) 
-	replace industry=4 if (c18_pkb>=33 & c18_pkb<=39) 
+	replace industry=2 if (c18_pkb>=5 & c18_pkb<=9)
+	replace industry=3 if (c18_pkb>=10 & c18_pkb<=32)
+	replace industry=4 if (c18_pkb>=33 & c18_pkb<=39)
 	replace industry=5 if (c18_pkb>=41 &  c18_pkb<=43)
 	replace industry=6 if (c18_pkb>=45 & c18_pkb<=47) | c18_pkb==56
 	replace industry=7 if (c18_pkb>=49 & c18_pkb<=55)| (c18_pkb>=58 & c18_pkb<=63)
-	replace industry=8 if (c18_pkb>=64 & c18_pkb<=82) 
-	replace industry=9 if (c18_pkb>=84 & c18_pkb<=91) 
+	replace industry=8 if (c18_pkb>=64 & c18_pkb<=82)
+	replace industry=9 if (c18_pkb>=84 & c18_pkb<=91)
 	replace industry=10 if  (c18_pkb>=92 & c18_pkb<=99)
 	replace industry=10 if industry==. & c18_pkb!=.
 	replace industry=. if lstatus~=1
@@ -506,13 +490,13 @@
 ** INDUSTRY CLASSIFICATION - SECOND JOB
 	gen byte industry_2=.
 	replace industry_2=1 if (j03_okb>=100 &j03_okb<=400)
-	replace industry_2=2 if (j03_okb>=500&j03_okb<=1000) 
-	replace industry_2=3 if (j03_okb>=1011 & j03_okb<=3299) 
-	replace industry_2=4 if (j03_okb>=3311 & j03_okb<=3830) 
+	replace industry_2=2 if (j03_okb>=500&j03_okb<=1000)
+	replace industry_2=3 if (j03_okb>=1011 & j03_okb<=3299)
+	replace industry_2=4 if (j03_okb>=3311 & j03_okb<=3830)
 	replace industry_2=5 if j03_okb>= 4100 & j03_okb<=4390
 	replace industry_2=6 if (j03_okb>=4510 & j03_okb<=4799)| (j03_okb>=5610 & j03_okb<=5630)
-	replace industry_2=7 if (j03_okb>=4911 & j03_okb<=5590)| (j03_okb>=5811 & j03_okb<=6399) 
-	replace industry_2=8 if (j03_okb>=6411 & j03_okb<=8299) 
+	replace industry_2=7 if (j03_okb>=4911 & j03_okb<=5590)| (j03_okb>=5811 & j03_okb<=6399)
+	replace industry_2=8 if (j03_okb>=6411 & j03_okb<=8299)
 	replace industry_2=9 if (j03_okb>=8411)  & j03_okb<=9103
 	replace industry_2=10 if  (j03_okb>=9200& j03_okb<=9909)
 	replace industry_2=10 if industry_2==. & j03_okb!=.
