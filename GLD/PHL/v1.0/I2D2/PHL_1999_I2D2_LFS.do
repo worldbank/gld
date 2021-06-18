@@ -10,8 +10,7 @@
 ** SURVEY AGENCY	National Statistical Office
 ** SURVEY SOURCE	EAP Manilla Team
 ** UNIT OF ANALYSIS	Household and Individual
-** INPUT DATABASES	Z:\_I2D2\_I2D2\Philippines\1999\Original\LFS JAN1999.dta
-** RESPONSIBLE	Cristián Jara
+** INPUT DATABASES	LFS JAN1999.dta
 ** Created	4/4/2012
 ** Modified	2/6/2017
 ** NUMBER OF HOUSEHOLDS	38830
@@ -27,20 +26,6 @@
 *                                                                                                    *
 *****************************************************************************************************/
 
-
-** INITIAL COMMANDS
-	cap log close 
-	clear
-	set more off
-	set mem 800m
-
-
-** DIRECTORY
-	local path "D:\__I2D2\Philippines\1999\LFS"
-
-
-** LOG FILE
-	log using "`path'\Processed\PHL_1999_I2D2_LFS.log", replace
 
 
 /*****************************************************************************************************
@@ -228,7 +213,7 @@
 
 ** AGE
 	label var age "Individual age"
-	recode age 99=.  
+	recode age 99=.
 
 
 ** SOCIAL GROUP

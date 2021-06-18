@@ -11,7 +11,7 @@
 ** SURVEY SOURCE	EAP Manilla Team
 ** UNIT OF ANALYSIS	Household and Individual
 ** INPUT DATABASES	LFS JAN1997.dta
-** RESPONSIBLE	Cristian Jara
+** RESPONSIBLE
 ** Created	4/4/2012
 ** Modified	2/6/2017
 ** NUMBER OF HOUSEHOLDS	39273
@@ -26,21 +26,6 @@
                                    INITIAL COMMANDS
 *                                                                                                    *
 *****************************************************************************************************/
-
-
-** INITIAL COMMANDS
-	cap log close 
-	clear
-	set more off
-	set mem 800m
-
-
-** DIRECTORY
-	local path "D:\__I2D2\Philippines\1997\LFS"
-
-
-** LOG FILE
-	log using "`path'\Processed\PHL_1997_I2D2_LFS.log", replace
 
 
 /*****************************************************************************************************
@@ -235,7 +220,7 @@
 
 ** AGE
 	label var age "Individual age"
-	recode age 99=.  
+	recode age 99=.
 
 
 ** SOCIAL GROUP

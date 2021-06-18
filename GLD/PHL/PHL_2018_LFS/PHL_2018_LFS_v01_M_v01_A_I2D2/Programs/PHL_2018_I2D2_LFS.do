@@ -11,12 +11,12 @@
 ** SURVEY SOURCE	EAP Manilla Team
 ** UNIT OF ANALYSIS	Household and Individual
 ** INPUT DATABASES	LFS JAN2018
-** RESPONSIBLE	Arianna Zapanta + Tom Mosher
+** RESPONSIBLE	Tom Mosher
 ** Created	4/4/2012
 ** Modified	24/5/2021
-** NUMBER OF HOUSEHOLDS	39273
-** NUMBER OF INDIVIDUALS	202738
-** EXPANDED POPULATION	70741993
+** NUMBER OF HOUSEHOLDS	10,632
+** NUMBER OF INDIVIDUALS	722,237
+** EXPANDED POPULATION
 ** NUMBER OF SURVEY ROUNDS: 4
 **                                                                                                  **
 ******************************************************************************************************
@@ -139,10 +139,10 @@ if (`cb_pause' == 1) {
 
 
 ** HOUSEHOLD IDENTIFICATION NUMBER
-/* 	Note that only the first round has a household id number, but with the following list of 
-	variables that ends up not mattering because they, along with family member number, do 
+/* 	Note that only the first round has a household id number, but with the following list of
+	variables that ends up not mattering because they, along with family member number, do
 	uniquely identify observations. */
-	
+
 	loc idhvars 	pufreg pufurb2k10 pufsvymo pufpsu   // store idh vars in local
 
 
@@ -221,7 +221,7 @@ if (`cb_pause' == 1) {
 	isid idh idp 										// household and individual id uniquely identify
 
 
- 
+
 ** HOUSEHOLD WEIGHTS
 	/* The weight variable will be divided by the number of rounds per year to ensure the
 	   weighting factor does not over-mutliply*/
@@ -783,7 +783,7 @@ if (`cb_pause' == 1) {
 
 ** WAGES TIME UNIT - SECOND JOB
 	* no second job wage unit info
-	gen byte unitwage_2= . 
+	gen byte unitwage_2= .
 	replace unitwage_2=. if lstatus!=1 			// restrict universe to employed only
 	replace unitwage_2=. if age < lb_mod_age		// restrict universe to working age
 	replace unitwage_2=. if empstat==1			// restrict universe to wage earners
