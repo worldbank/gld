@@ -16,7 +16,7 @@
 ** Modified	24/5/2021
 ** NUMBER OF HOUSEHOLDS
 ** NUMBER OF INDIVIDUALS
-** EXPANDED POPULATION	
+** EXPANDED POPULATION
 ** NUMBER OF SURVEY ROUNDS: 4
 **                                                                                                  **
 ******************************************************************************************************
@@ -68,7 +68,7 @@
 
 ** VALUES
 	local n_round 	4			// numer of survey rounds
-
+	local cases  	812019		// 203795 (Jan) + 206373 (APR) + 200717 (Jul) + 201134 (Oct) (Source: ILO from PSA)
 
 
 /*****************************************************************************************************

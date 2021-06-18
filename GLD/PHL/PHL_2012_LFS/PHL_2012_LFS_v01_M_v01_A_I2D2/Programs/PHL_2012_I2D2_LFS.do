@@ -71,7 +71,7 @@
 
 ** VALUES
 	local n_round 	4			// numer of survey rounds
-
+	local cases  	765988		// 191930 (Jan) + 190028 (APR) + 190886 (Jul) + 193144 (Oct) (Source: ILO from PSA)
 
 
 /*****************************************************************************************************
