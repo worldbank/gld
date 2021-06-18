@@ -95,14 +95,22 @@ PHL           <- file.path(GLD, "GLD-Harmonization/551206_TM/PHL")
 
 
 
-# Country/Economy Settings -------------------------------------------------
-# This code is designed to only be run for one country/economy directory at a 
-# time, so please chose one and the appropriate output folder where the .Rdata 
-# file containing the metadata will go
+# Script Settings -------------------------------------------------
 
-# note: the "eval_directory" should be an object in the "network data" above
+# eval_directory:         the corresponding object defined above that goes to a directory
+#                         path of a country/economy within GLD shared drive
+# 
+# metadata_output_folder: the folder where you want the resulting metadata Rdata file
+#                         to be saved. The file name itself you can edit at the end
+#                       
+# dta_to_rds: TRUE        if you need to import and convert all .dta files to Rds. This needs 
+#                         to be done at least once. Once you run it set to TRUE once, you can set
+#                         to FALSE to skip this stop and pull striaght from the Rds copies. Note that 
+#                         the copying to Rds can take a long time.               
+
 eval_directory          <- PHL
 metadata_output_folder  <- file.path(PHL, "PHL_data/I2D2/Rdata")
+dta_to_rds              <- FALSE 
 
 
 
@@ -115,22 +123,15 @@ metadata_output_folder  <- file.path(PHL, "PHL_data/I2D2/Rdata")
 
 
 
-
-
-          ##########>
-          ##### > DATA WORK < ########
-                                #####>
+                ##########>
+                ##### > DATA WORK < ########
+                                      #####>
                               
 
 
 
 # Find all the survey rounds. --------------------------------------------------------
-
 ## we know things about the raw data files, so we can use that to help us locate them
-dirs <- list.dirs(eval_directory, 
-                  recursive = TRUE
-  
-)
 
 ## we know they are all .dta files
 files <- list.files(eval_directory,     
@@ -172,9 +173,10 @@ files_list <-
 # Import/Export an RDS file ----------------------------------------------------------
 # Write a function that takes each survey round and writes a .RDS file in the same directory
 
-# With an eye on memory, let's write a function that takes each file in the list above 
+# With an eye on memory, write a function that takes each file in the list above 
 # and imports it, then exports it again
 
+## function ----
 make_rds <- function(s, r) {
   
   # import
@@ -187,20 +189,38 @@ make_rds <- function(s, r) {
   rm(new_dta)
 }
 
-s_read  <- files_tib$dtapath
+
+## run function loop ----
+# this loop will run through the function we defined 
+
+# helper objects to simplify function call
+## s_read   is a vector of .dta read paths 
+## s_write  is a vector of cognate .Rds write paths matched to each read path
+
+s_read  <- files_tib$dtapath  # 
 r_write <- files_tib$rpath
 
-map2(.x = s_read,  # loop through the Stata col to import the file
-     .y = r_write,  # loop through the R path col in parallel to write the file
-     .f = make_rds)
+
+
+
+## purrr function call ----
+## we only need to run this if we need to write the .Rda files/if 
+## dta_to_rds == TRUE 
+
+if (dta_to_rds == TRUE) {
+  
+  map2(.x = s_read,   # loop through the Stata col to import the file
+       .y = r_write,  # loop through the R path col in parallel to write the file
+       .f = make_rds)
+  
+}
 
 
 
 
 
 # Import all RDS files ------------------------------------------
-
-## retroharmonize will take a list of file names/paths and import them all along with the
+# retroharmonize will take a list of file names/paths and import them all along with the
 # metadata
 
 ## pull the list of surveys (.Rds files we just generated)
@@ -235,7 +255,8 @@ metadata <- do.call(rbind, metadata)
 
 # save ------
 # I'm not going to save the `waves` object because that's too big and we already have
-# that data 
+# that data. However, in theory, from here we could do a lot of data manipulation from 
+# here so it's sort of a waste to throw this away
 
 
 save(
