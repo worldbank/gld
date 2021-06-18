@@ -158,7 +158,7 @@ assert miss<=.05
 restore*/
 
 di "Gender coding"
-assert gender==1|gender==0|gender==.
+assert gender==1|gender==2|gender==.
 
 * Confirm that fewer than 5% of obs are missing gender
 *arbitrary assumption kept to check missing values
@@ -227,7 +227,7 @@ restore
 
 *this var is missing in this type of survey
 di "Marital"
-assert marital==1 | marital==2 | marital==3 | marital==3 | marital==4 | marital==.
+assert marital==1 | marital==2 | marital==3 | marital==4 | marital==5 | marital==.
 
 *check female head <50%
 

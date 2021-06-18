@@ -5,7 +5,7 @@
 
 /* ----------------------------------------------------------------------- 
 
-<_Program name_>				[MEX_2005_LFS_v01_M_v01_A_GLD.do] </_Program name_> 
+<_Program name_>				[MEX_2010_ENOE_V01_M_v01_A_GLD.do] </_Program name_> 
 <_Application_>					[STATA] <_Application_> 
 <_Author(s)_>					[] </_Author(s)_> 
 <_Date created_>				2021-04-01 </_Date created_> 
@@ -14,16 +14,14 @@
 
 <_Country_>						[Mexico (MEX)] </_Country_> 
 <_Survey Title_>				[Encuesta Nacional de Ocupación y Empleo] </_Survey Title_> 
-<_Survey Year_>					[2005] </_Survey Year_> 
+<_Survey Year_>					[2010] </_Survey Year_> 
 <_Study ID_>					[Microdata Library ID if present] </_Study ID_> 
-<_Data collection from_>		[01/2005] </_Data collection from_> 
-<_Data collection to_>			[MM/YYYY] </_Data collection to_> 
-<_Source of dataset_> 			[Source of data, e.g. NSO] </_Source of dataset_> 
-<_Sample size (HH)_> 			[#] </_Sample size (HH)_> 
-<_Sample size (IND)_> 			[#] </_Sample size (IND)_> 
-<_Sampling method_> 			[
-
-Tamaño de la muestra: Calculado desde el punto de vista del indicador de mayor exigencia en términos de tamaño muestral. Lo anterior garantiza que las estimaciones del resto de las variables de interés queden cubiertas con este tamaño. Trimestralmente el tamaño de la muestra es de 120 mil 260 viviendas.
+<_Data collection from_>		[01/2010] </_Data collection from_> 
+<_Data collection to_>			[05/2010] </_Data collection to_> 
+<_Source of dataset_> 			[Mexico NSO] </_Source of dataset_> 
+<_Sample size (HH)_> 			[] </_Sample size (HH)_> 
+<_Sample size (IND)_> 			[] </_Sample size (IND)_> 
+<_Sampling method_> 			[Tamaño de la muestra: Calculado desde el punto de vista del indicador de mayor exigencia en términos de tamaño muestral. Lo anterior garantiza que las estimaciones del resto de las variables de interés queden cubiertas con este tamaño. Trimestralmente el tamaño de la muestra es de 120 mil 260 viviendas.
 Unidad de observación: La vivienda.
 Unidad de muestreo: La vivienda particular.
 Unidad de análisis: El hogar y los residentes de la vivienda.
@@ -31,7 +29,8 @@ Marco muestral: El marco muestral utilizado para la ENOE es el Marco Nacional de
 Esquema de muestreo: El tipo de muestreo utilizado es probabilístico, bietápico, estratificado y por conglomerados.
 
 ] </_Sampling method_> 
-<_Geographic coverage_> 		[individual level] </_Geographic coverage_> 
+
+<_Geographic coverage_> 		[All Mexico-Los niveles geograficos usados en la encuesta de México comienzan en estados siguen con ciudades autorrepresentadas y terminan con municipios de las ciudades autorrepresentadas. En la data de la encuesta solo hay números para las municipalidades pero si hay nombres para los primeros dos niveles. https://www.inegi.org.mx/contenidos/productos/prod_serv/contenidos/espanol/bvinegi/productos/metodologias/est/cobertura.pdf] </_Geographic coverage_> 
 <_Currency_> 					[Pesos] </_Currency_> 
 
 ----------------------------------------------------------------------- 
@@ -66,29 +65,33 @@ set mem 800m
 
 *----------1.2: Set directories------------------------------*
 
-local path_in "C:\Users\..\Data\Original"
-local path_output "C:\Users\...\Data\Harmonized"
+local path_in "C:\Users\xx\OneDrive - WBG\Surveys\MEX\MEX_2010_LFS\MEX_2010_LFS_v01_M\Data\Original"
+local path_output "C:\Users\xxx\OneDrive - WBG\Surveys\MEX\MEX_2010_LFS\MEX_2010_LFS_v01_M_v01_A_GLD\Data\Harmonized"
 
 *----------1.3: Database assembly------------------------------*
 
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file	
-	use "`path_in'\VIVT105.dta",clear
+	use "`path_in'\VIVT110.dta",clear
 	drop p1-p3
 	destring loc mun est ageb t_loc cd_a upm d_sem n_pro_viv ent con v_sel n_ent per, replace
-	local path_in "C:\Users\...\Data\Original"
-	merge 1:m ent con v_sel using "`path_in'\HOGT105.dta", nogen
-	local path_in "C:\Users\...\Data\Original"
-	merge 1:m ent con v_sel n_hog using "`path_in'\SDEMT105.dta"
-	drop if _m==1
-	drop _m
-	merge 1:1 ent con v_sel n_hog n_ren using "`path_in'\COE1T105.dta", nogen
-	merge 1:1 ent con v_sel n_hog n_ren using "`path_in'\COE2T105.dta", nogen
+	local path_in "C:\Users\xxx\OneDrive - WBG\Surveys\MEX\MEX_2010_LFS\MEX_2010_LFS_v01_M\Data\Original"
+	merge 1:m ent con v_sel using "`path_in'\HOGT110.dta", nogen
+	local path_in "C:\Users\xxx\OneDrive - WBG\Surveys\MEX\MEX_2010_LFS\MEX_2010_LFS_v01_M\Data\Original"
+	merge 1:m ent con v_sel n_hog using "`path_in'\SDEMT110.dta"
+	drop if _merge==1
+	drop _merge
+	merge 1:1 ent con v_sel n_hog n_ren using "`path_in'\COE1T110.dta", nogen
+	merge 1:1 ent con v_sel n_hog n_ren using "`path_in'\COE2T110.dta", nogen
 	keep if r_pre==0 & inlist(c_res,1,3)
 	tostring (ent v_sel n_hog n_ren h_mud), gen(ent_str v_sel_str n_hog_str n_ren_str h_mud_str) format(%02.0f)
 	tostring con, replace
 	*the variable con is a consecutive number, thus it needs to be uniform in lenght by adding leading zeros
 	gen con_str=substr("000",1,4 - length(con))+ con
+	*the harmonization is for the first three months of the year , any other month will be put to missing.
+	tab d_mes
+	replace d_mes=. if d_mes == 4 | d_mes == 5 | d_mes == 12
+	tab d_mes, missing
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -121,7 +124,7 @@ local path_output "C:\Users\...\Data\Harmonized"
 
 
 *<_year_>
-	gen int year = 2005
+	gen int year = 2010
 	label var year "Year of survey"
 *</_year_>
 
@@ -145,7 +148,7 @@ local path_output "C:\Users\...\Data\Harmonized"
 
 
 *<_int_year_>
-	gen int_year=2005
+	gen int_year=2010
 	label var int_year "Year of the interview"
 *</_int_year_>
 
@@ -230,31 +233,31 @@ local path_output "C:\Users\...\Data\Harmonized"
 
 *</_urban_>
 
-
 *<_subnatid1_>
+
 /* <_subnatid1>
 
 	Labels are to be defined as # - Name like 1 "1 - Alaska" 2 "2 - Arkansas".
 
 </_subnatid1> */
-	decode ent, gen(subnatid1)
-	*gen byte subnatid1 = ent
-	*label de lblsubnatid1 1 "1 - Name" 
-	*label values subnatid1 lblsubnatid1
+	gen byte subnatid1 =ent
+	label de lblsubnatid1 1 "1 - Aguas Calientes" 2 "2 - Baja California" 3 "3 - Baja California Sur" 4 " 4 - Campeche" 5 " 5 - Chiapas" 6 "6 - Chihuahua" 7 "7 - Coahuila de Zaragoza" 8 "8 - Colima" 9 "9 - Distrito Federal" 10 " 10 - Durango " 11 " 11- Guanajuato " 12 " 12 - Guerrero" 13 "13 - Hidalgo " 14 " 14 -Jalisco " 15 " 15 - Michoacan de Ocampo " 16 " 16 - Morelos " 17 " 17 - Mexico " 18 " 18 - Nayarit " 19 " 19 - Nuevo León " 20 " 20 - Oaxaca " 21 " 21 - Puebla" 22 " 22 - Queretaro" 23 " 23 - Quintana Roo " 24 " 24 - San Luis Potosi" 25 " 25- Sinaloa " 26 " 26 - Sonora " 27 " 27 - Tabasco " 28 " 28 - Tamaulipas" 29 " 29 - Tlaxcala " 30 " 30 - Veracruz de Ignacio de la Llave " 31 " 31 - Yucatán " 32 " 32 - Zacatecas "
+	label values subnatid1 lblsubnatid1
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 
 
 *<_subnatid2_>
-	gen byte subnatid2 = .
-	*label de lblsubnatid2 1 "1 - Name" 
-	*label values subnatid2 lblsubnatid2
+	gen byte subnatid2 = cd_a
+	label de lblsubnatid2 1 "1 - Mexico" 2 " 2- Guadalajara" 3 " 3 - Monterrey" 4 " 4- Puebla" 5 " 5 - Leon" 7 " 6 - San Luis Potosi" 8 " 7 - Merida" 9 " 8 - Chihuahua" 10 " 9- Tampico" 12 " 10 - Veracruz" 13 " 11 - Acapulco" 14 " 12 - Aguacalientes" 15 " 13 - Morelia " 16 " 14 - Toluca" 17 " 15 - Saltillo" 18 " 16 - Villahermosa" 19 " 17 - Tuxtla Gutierrez" 21 " 18 - Tijuana" 24 " 19 - Culiacan" 25 " 20 - Hermosillo" 26 " 21 - Durango" 27 " 22 - Tepic" 28 " 23 - Campeche" 29 " 24 - Cuernavaca" 31 " 25 - Oaxaca" 32 " 26 - Zacatecas " 33 " 27 - Colima" 36 " 28 - Queretaro" 39 " 29 - Tlaxcala" 40 " 30 - La Paz " 41 " 31 - Cancun" 43 " 32 - Pachuca" 81 "  33 - Complemento Urbano Rural"
+	recode subnatid2 82/86=81
+	label values subnatid2 lblsubnatid2
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
 
 
 *<_subnatid3_>
-	gen byte subnatid3 = .
+	gen byte subnatid3 = loc
 	*label de lblsubnatid3 1 "1 - Name" 
 	*label values subnatid3 lblsubnatid3
 	label var subnatid3 "Subnational ID at Third Administrative Level"
@@ -799,9 +802,9 @@ foreach v of local ed_var {
 *</_occup_skill_>
 
 *<_wage_no_compen_>
-	gen double wage_no_compen_year = p6b2 if lstatus==1 & empstat==1
-	replace wage_no_compen_year=0 if empstat==2
-	label var wage_no_compen_year "Last wage payment primary job 7 day recall"
+	gen double wage_no_compen = p6b2 if lstatus==1 & empstat==1
+	replace wage_no_compen=0 if empstat==2
+	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
 
@@ -822,7 +825,16 @@ foreach v of local ed_var {
 
 
 *<_wmonths_>
-	gen wmonths = .
+	foreach i in 1 2 3 4 5 6 7 8 9 10 11 12{
+	 gen double new_p5g_`i'=1 if p5g`i'== `i'
+	}	
+	local months "new_p5g_1 new_p5g_2 new_p5g_3 new_p5g_4 new_p5g_5 new_p5g_6 new_p5g_7 new_p5g_8 new_p5g_9 new_p5g_10 new_p5g_11 new_p5g_12"
+	foreach m in `months' {
+		recode `m' .=0	
+	}
+	gen wmonths = new_p5g_1 + new_p5g_2 + new_p5g_3 + new_p5g_4 + new_p5g_5 + new_p5g_6 + new_p5g_7 + new_p5g_8+ new_p5g_9 + new_p5g_10 + new_p5g_11 + new_p5g_12
+	replace wmonths=12 if p5g14==14
+	replace wmonths=. if lstatus!=1
 	label var wmonths "Months of work in past 12 months primary job 7 day recall"
 *</_wmonths_>
 
@@ -834,8 +846,20 @@ foreach v of local ed_var {
 	This is done to make it easy to compare earnings in formal and informal sectors.
 
 </_wage_total> */
-	gen wage_total = p9mcan*12
-	replace wage_total=. if lstatus==1 & empstat==1
+	gen double wage_total=.
+replace wage_total=(wage_no_compen*5*4.3)*wmonths	if unitwage==1
+//Wage in daily unit 
+replace wage_total=(wage_no_compen*4.3)*wmonths if unitwage==2 //Wage in weekly unit
+replace wage_total=(wage_no_compen*2.15)*wmonths	if unitwage==3
+//Wage in every two weeks unit 
+replace wage_total=(wage_no_compen)/2*wmonths	if unitwage==4 //Wage in every two months unit 
+replace wage_total=( wage_no_compen)*wmonths	if unitwage==5 //Wage in monthly unit
+replace wage_total=( wage_no_compen)/3*wmonths	if unitwage==6
+//Wage in every quarterly unit 
+replace wage_total=(wage_no_compen)/6*wmonths	if unitwage==7 //Wage in every six months unit 
+replace wage_total= wage_no_compen/12*wmonths	if unitwage==8 //Wage in annual unit
+replace wage_total=(wage_no_compen*whours*4.3)*wmonths if unitwage==9 //Wage in hourly unit
+	replace wage_total=. if lstatus!=1 & empstat!=1
 	label var wage_total "Annualized total wage primary job 7 day recall"
 *</_wage_total_>
 
@@ -995,8 +1019,8 @@ foreach v of local ed_var {
 *</_occup_skill_2_>
 
 *<_wage_no_compen_2_>
-	gen double wage_no_compen_year_2 = .
-	label var wage_no_compen_year_2 "Last wage payment secondary job 7 day recall"
+	gen double wage_no_compen_2 = .
+	label var wage_no_compen_2 "Last wage payment secondary job 7 day recall"
 *</_wage_no_compen_2_>
 
 
@@ -1062,13 +1086,14 @@ foreach v of local ed_var {
 
 
 *<_t_hours_total_>
-	gen t_hours_total = hrsocup*48
+/* approximate hours worked in a year 48 ILO standard */
+	gen t_hours_total =whours*48
 	label var t_hours_total "Annualized hours worked in all jobs 7 day recall"
 *</_t_hours_total_>
 
 
 *<_t_wage_nocompen_total_>
-	gen t_wage_nocompen_total = ingocup*12
+	gen t_wage_nocompen_total = wage_total
 	label var t_wage_nocompen_total "Annualized wage in all jobs excl. bonuses, etc. 7 day recall"
 *</_t_wage_nocompen_total_>
 
@@ -1170,11 +1195,11 @@ foreach v of local ed_var {
 
 
 *<_industrycat4_year_>
-	*gen byte industrycat4_year=industrycat10_year
-	*recode industrycat4_year (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
-	*label var industrycat4_year "1 digit industry classification (Broad Economic Activities), primary job 12 month recall"
-	*la de lblindustrycat4_year 1 "Agriculture" 2 "Industry" 3 "Services" 4 "Other"
-	*label values industrycat4_year lblindustrycat4_year	
+	gen byte industrycat4_year=industrycat10_year
+	recode industrycat4_year (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
+	label var industrycat4_year "1 digit industry classification (Broad Economic Activities), primary job 12 month recall"
+	la de lblindustrycat4_year 1 "Agriculture" 2 "Industry" 3 "Services" 4 "Other"
+	label values industrycat4_year lblindustrycat4_year	
 *</_industrycat4_year_>
 
 
@@ -1205,8 +1230,8 @@ foreach v of local ed_var {
 
 
 *<_wage_no_compen_year_>
-	gen double wage_no_compen_year_12 = .
-	label var wage_no_compen_year_12 "Last wage payment primary job 12 month recall"
+	gen double wage_no_compen_year = .
+	label var wage_no_compen_year "Last wage payment primary job 12 month recall"
 *</_wage_no_compen_year_>
 
 
@@ -1231,7 +1256,7 @@ foreach v of local ed_var {
 
 
 *<_wage_total_year_>
-	gen wage_total_year = .
+	gen wage_total_year = wage_total
 	label var wage_total_year "Annualized total wage primary job 12 month recall"
 *</_wage_total_year_>
 
@@ -1323,10 +1348,10 @@ foreach v of local ed_var {
 
 
 *<_industrycat4_2_year_>
-	/*gen byte industrycat4_2_year=industrycat10_2_year
+	gen byte industrycat4_2_year=industrycat10_2_year
 	recode industrycat4_2_year (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
 	label var industrycat4_2_year "1 digit industry classification (Broad Economic Activities), secondary job 12 month recall"
-	label values industrycat4_2_year lblindustrycat4_year	*/
+	label values industrycat4_2_year lblindustrycat4_year
 *</_industrycat4_2_year_>
 
 
@@ -1428,13 +1453,13 @@ foreach v of local ed_var {
 
 
 *<_t_wage_nocompen_total_year_>
-	gen t_wage_nocompen_total_year = .
+	gen t_wage_nocompen_total_year = wage_total
 	label var t_wage_nocompen_total_year "Annualized wage in all jobs excl. bonuses, etc. 12 month recall"
 *</_t_wage_nocompen_total_year_>
 
 
 *<_t_wage_total_year_>
-	gen t_wage_total_year = .
+	gen t_wage_total_year = wage_total
 	label var t_wage_total_year "Annualized total wage for all jobs 12 month recall"
 *</_t_wage_total_year_>
 
@@ -1449,19 +1474,19 @@ foreach v of local ed_var {
 
 
 *<_t_hours_annual_>
-	gen t_hours_annual = hrsocup*48
+	gen t_hours_annual = whours*48
 	label var t_hours_annual "Total hours worked in all jobs in the previous 12 months"
 *</_t_hours_annual_>
 
 
 *<_linc_nc_>
-	gen linc_nc = ingocup*12
+	gen linc_nc = wage_total
 	label var linc_nc "Total annual wage income in all jobs, excl. bonuses, etc."
 *</_linc_nc_>
 
 
 *<_laborincome_>
-	gen laborincome = t_wage_total_year
+	gen laborincome = wage_total
 	label var laborincome "Total annual individual labor income in all jobs, incl. bonuses, etc."
 *</_laborincome_>
 
@@ -1472,7 +1497,7 @@ foreach v of local ed_var {
 *<_% Correction min age_>
 
 ** Drop info for cases under the age for which questions to be asked (do not need a variable for this)
-local lab_var "minlaborage lstatus nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen_year unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others_total t_hours_total t_wage_nocompen_total t_wage_total lstatus_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year  occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_total_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome" /*industrycat4_year*/ /*industrycat4_2_year */
+local lab_var "minlaborage lstatus nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others_total t_hours_total t_wage_nocompen_total t_wage_total lstatus_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year  occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_total_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome industrycat4_year industrycat4_2_year"
 *I change in the code is not in but of 
 foreach v of local lab_var {
 	replace `v'=. if ( age < minlaborage & !missing(age) )
@@ -1490,13 +1515,13 @@ quietly{
 
 *<_% KEEP VARIABLES - ALL_>
 
-keep countrycode survname survey icls_v year vermast veralt harmonization int_year int_month hhid pid weight psu strata wave urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen_year unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others_total t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year  occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year_12 unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year  occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_total_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome /*industrycat4_year*//*industrycat4_2_year*/ 
+keep countrycode survname survey icls_v year vermast veralt harmonization int_year int_month hhid pid weight psu strata wave urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others_total t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year  occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year  occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_total_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome industrycat4_year industrycat4_2_year
 
 *</_% KEEP VARIABLES - ALL_>
 
 *<_% ORDER VARIABLES_>
 
-order countrycode survname survey icls_v year vermast veralt harmonization int_year int_month hhid pid weight psu strata wave urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen_year unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others_total t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year  occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year_12 unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year  occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_total_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome /*industrycat4_year*//*industrycat4_2_year*/ 
+order countrycode survname survey icls_v year vermast veralt harmonization int_year int_month hhid pid weight psu strata wave urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others_total t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year  occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year  occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_total_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome industrycat4_year industrycat4_2_year
 
 *</_% ORDER VARIABLES_>
 
@@ -1525,6 +1550,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`path_output'\MEX_2005_LFS_v01_M_V01_A_GLD.dta", replace
+save "`path_output'\MEX_2010_ENOE_V01_M_V01_A_GLD.dta", replace
 
 *</_% SAVE_>
