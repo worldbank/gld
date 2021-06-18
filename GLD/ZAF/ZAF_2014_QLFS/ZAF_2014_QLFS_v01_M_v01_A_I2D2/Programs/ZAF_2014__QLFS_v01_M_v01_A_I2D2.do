@@ -14,9 +14,9 @@
 ** RESPONSIBLE				Junying Tong
 ** Created					5/31/2021
 ** Modified					6/2/2021
-** NUMBER OF HOUSEHOLDS		45,385
-** NUMBER OF INDIVIDUALS	163,909
-** EXPANDED POPULATION	
+** NUMBER OF HOUSEHOLDS		45,371
+** NUMBER OF INDIVIDUALS	163,872
+** EXPANDED POPULATION		53,626,539
 **                                                                                                  **
 ******************************************************************************************************
 *****************************************************************************************************/
@@ -65,7 +65,6 @@
 
 
 ** DATABASE ASSEMBLENT
-
 	use "`input'\lmdsa-2014-v1-stata", clear
 
 ** COUNTRY
@@ -112,6 +111,14 @@
 
 
 ** PSU
+
+/*
+Total psu: 3,571
+Q1: 3,024
+Q2: 3,003
+Q3:	3,013
+Q4: 2,994
+*/
 	gen psu=substr(UQNO, 1, 8)
 	label var psu "Primary sampling units"
 
@@ -124,7 +131,7 @@
 
 ** LOCATION (URBAN/RURAL)
 	gen byte urb=GEO_TYPE
-	recode urb 1/2=1 4/5=0
+	recode urb 1/2=1 4/5=2
 	label var urb "Urban/Rural"
 	la de lblurb 1 "Urban" 2 "Rural"
 	label values urb lblurb
@@ -225,7 +232,7 @@
 
 /*
 Not asked, all we know is that the person with personal number equal to 1 is the head, the problem is that in some cases that person is not present, probably because he/she didn't spend four nights or more in this household. In those cases I assigned the eldest male present as the household head.
-531 observations were dropped due to no male memeber or multiple same old male members.
+549 observations were dropped due to no male memeber or multiple same old male members.
 */
 	gen byte head=1 if PERSONNO==1
 	bys idh: egen hh=sum(head==1)
@@ -774,7 +781,7 @@ Var "HRSWRK" in the raw dataset was derived from vars Q418HRSWRK and Q420FIRSTHR
 	keep ccode year intv_year month  idh idp wgt strata psu `keep'
 
 
-	save "`output'\ZAF_2014_LFS_v01_M_v01_A_I2D2.dta", replace
+	save "`output'\ZAF_2014_QLFS_v01_M_v01_A_I2D2.dta", replace
 
 	log close
 

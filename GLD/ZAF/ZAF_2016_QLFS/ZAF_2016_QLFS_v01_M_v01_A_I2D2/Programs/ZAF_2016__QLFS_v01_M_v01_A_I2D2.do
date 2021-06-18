@@ -5,18 +5,18 @@
 **                                                                                                  **
 ** COUNTRY					South Africa 
 ** COUNTRY ISO CODE			ZAF
-** YEAR						2019
+** YEAR						2016
 ** SURVEY NAME				Labour Market Dynamics
 ** SURVEY AGENCY			Statistics South Africa (Stats SA)
-** SURVEY SOURCE			DataFirst, https://www.datafirst.uct.ac.za/dataportal/index.php/catalog/846
+** SURVEY SOURCE			DataFirst, https://www.datafirst.uct.ac.za/dataportal/index.php/catalog/699
 ** UNIT OF ANALYSIS			Household and individual
-** INPUT DATABASES			Z:\_GLD-Harmonization\573465_JT\ZAF\ZAF_2019_LFS\ZAF_2019_LFS_v01_M\data\stata\lmdsa-2019-v1.1.dta
+** INPUT DATABASES			Z:\_GLD-Harmonization\573465_JT\ZAF\ZAF_2016_LFS\ZAF_2016_LFS_v01_M\data\stata\lmdsa-2016-1.0-stata11.dta
 ** RESPONSIBLE				Junying Tong
-** Created					6/2/2021
-** Modified					6/10/2021
-** NUMBER OF HOUSEHOLDS		38,606  
-** NUMBER OF INDIVIDUALS	129,149
-** EXPANDED POPULATION		57,274,170
+** Created					6/11/2021
+** Modified					6/13/2021
+** NUMBER OF HOUSEHOLDS		39,843 
+** NUMBER OF INDIVIDUALS	133,295
+** EXPANDED POPULATION	 	55,098,982
 **                                                                                                  **
 ******************************************************************************************************
 *****************************************************************************************************/
@@ -39,7 +39,7 @@
 	local 	drive 	`"Z"'		
 	local 	cty 	`"ZAF"' 	
 	local 	usr		`"573465_JT"' 
-	local 	surv_yr `"2019"'	
+	local 	surv_yr `"2016"'	
 	local 	year 	"`drive':\GLD-Harmonization\\`usr'\\`cty'\\`cty'_`surv_yr'_LFS" 
 	local 	main	"`year'\\`cty'_`surv_yr'_LFS_v01_M"
 	local 	stata	"`main'\data\stata"
@@ -53,7 +53,7 @@
 
 
 ** LOG FILE
-	log using "`id_data'\ZAF_2019__QLFS_V01_M_v01_A_I2D2", replace
+	log using "`id_data'\ZAF_2016__QLFS_V01_M_v01_A_I2D2", replace
 
 	
 /*****************************************************************************************************
@@ -64,8 +64,20 @@
 
 
 ** DATABASE ASSEMBLENT
-
-	use "`input'\lmdsa-2019-v1.1.dta", clear
+	use "`input'\QLFS 2016_01 Worker 1.0 Stata11.dta", clear
+	append using "`input'\QLFS 2016_2 Worker 1.0 Stata11.dta", gen(Qtr)
+	recode Qtr 1=2 0=1
+	append using "`input'\QLFS 2016_3 Worker 1.0 Stata11.dta"
+	recode Qtr .=3
+	append using "`input'\QLFS 2016_4 Worker 1.0 Stata11.dta"
+	recode Qtr .=4
+	gen weight=Weight/4
+	keep UQNO PERSONNO Geo_type Qtr weight
+	rename Geo_type geo
+	la de lblgeo 1 "Urban" 2 "Traditional" 3 "Farms" 4 "Mining"
+	la values geo lblgeo
+	save "`i2d2'\Work\ZAF_2016_QLFS_v01_M_v01_A_I2D2_append_GEO.dta", replace
+	use "`input'\lmdsa-2016-1.0-stata11.dta", clear
 
 ** COUNTRY
 	gen str4 ccode="ZAF"
@@ -73,7 +85,7 @@
 
 
 ** YEAR
-	gen int year=2019
+	gen int year=2016
 	label var year "Year of survey"
 
 
@@ -111,13 +123,12 @@
 
 
 ** PSU
-
 /*
-Total psu: 3,381
-Q1:3,261
-Q2:3,247
-Q3:3,245
-Q4:3,245
+Total psu: 3,980
+Q1: 3,211
+Q2: 3,246
+Q3: 3,244
+Q4: 3,236
 */
 	gen psu=substr(UQNO, 1, 8)
 	label var psu "Primary sampling units"
@@ -131,17 +142,18 @@ Q4:3,245
 
 ** LOCATION (URBAN/RURAL)
 
-/* It is not clear how the three categories are defined because the code list in the 
-documentation does not match the raw dataset. According to QLFS documentation and 
-urbanization stats from:
- https://data.worldbank.org/indicator/SP.URB.TOTL.IN.ZS?locations=ZA,
-the final code list should be
+/* Variable "Geo_type" is all missing in the raw dataset. I used "Geo_type" in 
+qaurterly survey datasets to fill this part of information.
+Code list:
 1=urban
 2=traditional(rural)
-3=farms/mining areas(rural)
+3=farms(rural)
+4=mining areas(rural)
 */
-	gen byte urb=Geo_type_code
-	recode urb 1=1 3=2
+	merge m:m PERSONNO UQNO Qtr using "`i2d2'\Work\ZAF_2016_QLFS_v01_M_v01_A_I2D2_append_GEO.dta"
+	drop _merge
+	gen byte urb=geo
+	recode urb 1=1 2/4=2
 	label var urb "Urban/Rural"
 	la de lblurb 1 "Urban" 2 "Rural"
 	label values urb lblurb
@@ -160,7 +172,7 @@ the final code list should be
 
 
 ** REGIONAL AREA 2 DIGITS ADM LEVEL (ADMN2)
-	gen reg03=Metro_code
+	gen reg03=metro_code
 	label var reg03 "Region at 2 digits (ADMN2)"
 	label values reg03 Metro_code
 
@@ -242,7 +254,7 @@ the final code list should be
 
 /*
 Not asked, all we know is that the person with personal number equal to 1 is the head, the problem is that in some cases that person is not present, probably because he/she didn't spend four nights or more in this household. In those cases I assigned the eldest male present as the household head.
-354 observations were dropped due to no male memeber or multiple same old male members.
+382 observations were dropped due to no male memeber or multiple same old male members.
 */
 
 	gen byte head=1 if PERSONNO==1
@@ -473,7 +485,7 @@ whose answers to this question are "Yes" were coded as missing values.
 
 ** SECTOR OF ACTIVITY: PUBLIC - PRIVATE
 	gen byte ocusec=Q415TYPEBUSNS
-	recode ocusec 4=1 3 5=2 2=3 6=.
+	recode ocusec 4=1 3 5=2 2=3 6 9=.
 	replace ocusec=. if lstatus!=1
 	label var ocusec "Sector of activity"
 	la de lblocusec 1 "Public Sector, Central Government, Army, NGO" 2 "Private" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
@@ -527,7 +539,7 @@ whose answers to this question are "Yes" were coded as missing values.
 
 
 ** OCCUPATION CLASSIFICATION
-	recode occup 10=9 11=99
+	recode occup 10=9 
 	replace occup=. if lstatus!=1
 	label var occup "1 digit occupational classification"
 	la de lbloccup 1 "Senior officials" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
@@ -556,6 +568,7 @@ whose answers to this question are "Yes" were coded as missing values.
 /*
 Var "Hrswrk" in the raw dataset was derived from vars Q418HRSWRK and Q420FIRSTHRSWRK.
 */
+
 	gen whours=Hrswrk
 	replace whours=. if lstatus!=1
 	label var whours "Hours of work in last week"
@@ -790,7 +803,7 @@ Var "Hrswrk" in the raw dataset was derived from vars Q418HRSWRK and Q420FIRSTHR
 	keep ccode year intv_year month idh idp wgt strata psu `keep'
 
 
-	save "`output'\ZAF_2019_QLFS_v01_M_v01_A_I2D2.dta", replace
+	save "`output'\ZAF_2016_QLFS_v01_M_v01_A_I2D2.dta", replace
 
 	log close
 

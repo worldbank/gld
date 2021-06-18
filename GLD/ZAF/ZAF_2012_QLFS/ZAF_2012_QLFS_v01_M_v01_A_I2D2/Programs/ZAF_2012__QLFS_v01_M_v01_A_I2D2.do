@@ -5,18 +5,18 @@
 **                                                                                                  **
 ** COUNTRY					South Africa 
 ** COUNTRY ISO CODE			ZAF
-** YEAR						2019
+** YEAR						2012
 ** SURVEY NAME				Labour Market Dynamics
 ** SURVEY AGENCY			Statistics South Africa (Stats SA)
-** SURVEY SOURCE			DataFirst, https://www.datafirst.uct.ac.za/dataportal/index.php/catalog/846
+** SURVEY SOURCE			DataFirst, https://www.datafirst.uct.ac.za/dataportal/index.php/catalog/459/related_materials
 ** UNIT OF ANALYSIS			Household and individual
-** INPUT DATABASES			Z:\_GLD-Harmonization\573465_JT\ZAF\ZAF_2019_LFS\ZAF_2019_LFS_v01_M\data\stata\lmdsa-2019-v1.1.dta
+** INPUT DATABASES			Z:\_GLD-Harmonization\573465_JT\ZAF\ZAF_2012_LFS\ZAF_2012_LFS_v01_M\data\stata\lmdsa-2012-v1-stata.dta
 ** RESPONSIBLE				Junying Tong
-** Created					6/2/2021
-** Modified					6/10/2021
-** NUMBER OF HOUSEHOLDS		38,606  
-** NUMBER OF INDIVIDUALS	129,149
-** EXPANDED POPULATION		57,274,170
+** Created					6/14/2021
+** Modified					6/17/2021
+** NUMBER OF HOUSEHOLDS		45,972
+** NUMBER OF INDIVIDUALS	161,252
+** EXPANDED POPULATION		52,220,437
 **                                                                                                  **
 ******************************************************************************************************
 *****************************************************************************************************/
@@ -26,6 +26,7 @@
                                    INITIAL COMMANDS
 *                                                                                                    *
 *****************************************************************************************************/
+
 
 
 ** INITIAL COMMANDS
@@ -39,7 +40,7 @@
 	local 	drive 	`"Z"'		
 	local 	cty 	`"ZAF"' 	
 	local 	usr		`"573465_JT"' 
-	local 	surv_yr `"2019"'	
+	local 	surv_yr `"2012"'	
 	local 	year 	"`drive':\GLD-Harmonization\\`usr'\\`cty'\\`cty'_`surv_yr'_LFS" 
 	local 	main	"`year'\\`cty'_`surv_yr'_LFS_v01_M"
 	local 	stata	"`main'\data\stata"
@@ -51,11 +52,11 @@
 	local input "`stata'"
 	local output "`id_data'"
 
-
-** LOG FILE
-	log using "`id_data'\ZAF_2019__QLFS_V01_M_v01_A_I2D2", replace
-
 	
+** LOG FILE
+	log using "`id_data'\ZAF_2012__QLFS_V01_M_v01_A_I2D2", replace
+
+
 /*****************************************************************************************************
 *                                                                                                    *
                                    * ASSEMBLE DATABASE
@@ -64,8 +65,17 @@
 
 
 ** DATABASE ASSEMBLENT
-
-	use "`input'\lmdsa-2019-v1.1.dta", clear
+	use "`stata'\qlfs-2012-01-worker-rwt2013-v1.1-20140602.dta", clear
+	append using "`stata'\qlfs-2012-02-worker-rwt2013-v1.1-20140602.dta", gen(Qtr)
+	recode Qtr 1=2 0=1
+	append using "`stata'\qlfs-2012-03-worker-rwt2013-v1.1-20140602.dta"
+	recode Qtr .=3
+	append using "`stata'\qlfs-2012-04-worker-rwt2013-v1.1-20140602.dta"
+	recode Qtr .=4
+	gen WEIGHT=Weight/4
+	keep UQNO PERSONNO Q19ATTE WEIGHT Qtr
+	save "`i2d2'\Work\ZAF_2012_QLFS_v01_M_v01_A_I2D2_append_Q19ATTE.dta", replace
+	use "`input'\lmdsa_2012_v1.1_20150407.dta", clear
 
 ** COUNTRY
 	gen str4 ccode="ZAF"
@@ -73,7 +83,7 @@
 
 
 ** YEAR
-	gen int year=2019
+	gen int year=2012
 	label var year "Year of survey"
 
 
@@ -106,18 +116,18 @@
 
 
 ** STRATA
-	gen strata=STRATUM
+	gen strata=stratum
 	label var strata "Strata"
 
 
 ** PSU
 
 /*
-Total psu: 3,381
-Q1:3,261
-Q2:3,247
-Q3:3,245
-Q4:3,245
+Total psu: 3,499
+Q1:3,018
+Q2:3,013
+Q3:3,024
+Q4:3,021
 */
 	gen psu=substr(UQNO, 1, 8)
 	label var psu "Primary sampling units"
@@ -130,18 +140,8 @@ Q4:3,245
 
 
 ** LOCATION (URBAN/RURAL)
-
-/* It is not clear how the three categories are defined because the code list in the 
-documentation does not match the raw dataset. According to QLFS documentation and 
-urbanization stats from:
- https://data.worldbank.org/indicator/SP.URB.TOTL.IN.ZS?locations=ZA,
-the final code list should be
-1=urban
-2=traditional(rural)
-3=farms/mining areas(rural)
-*/
-	gen byte urb=Geo_type_code
-	recode urb 1=1 3=2
+	gen byte urb=Geo_type
+	recode urb 1/2=1 4/5=2
 	label var urb "Urban/Rural"
 	la de lblurb 1 "Urban" 2 "Rural"
 	label values urb lblurb
@@ -160,12 +160,12 @@ the final code list should be
 
 
 ** REGIONAL AREA 2 DIGITS ADM LEVEL (ADMN2)
-	gen reg03=Metro_code
+	gen reg03= Metro_code
 	label var reg03 "Region at 2 digits (ADMN2)"
 	label values reg03 Metro_code
 
 
-** REGIONAL AREA 3 DIGITS ADM LEVEL (ADMN2) (???)
+** REGIONAL AREA 3 DIGITS ADM LEVEL (ADMN2)
 	gen reg04=.
 	label var reg04 "Region at 3 digits (ADMN3)"
 
@@ -242,9 +242,8 @@ the final code list should be
 
 /*
 Not asked, all we know is that the person with personal number equal to 1 is the head, the problem is that in some cases that person is not present, probably because he/she didn't spend four nights or more in this household. In those cases I assigned the eldest male present as the household head.
-354 observations were dropped due to no male memeber or multiple same old male members.
+357 observations were dropped due to no male memeber or multiple same old male members.
 */
-
 	gen byte head=1 if PERSONNO==1
 	bys idh: egen hh=sum(head==1)
 	bys idh: egen maxage=max(Q14)
@@ -319,6 +318,16 @@ Not asked, all we know is that the person with personal number equal to 1 is the
 
 
 ** CURRENTLY AT SCHOOL
+
+/*
+Variable "Q19ATTE" is not included in LMDSA 2012 and QLFS01&02. So I merged LMDSA 
+with the 4 QLFS on which this LMDSA was built. 342 observations unmatched was dropped.
+Observations in Q1 and Q2 are missing for var "Q19ATTE", leaving 170780 (50.3%) observations
+nonmissing.
+*/
+	merge m:m UQNO PERSONNO Qtr using "`i2d2'\Work\ZAF_2012_QLFS_v01_M_v01_A_I2D2_append_Q19ATTE.dta"
+	drop if _merge==2
+	drop _merge WEIGHT
 	gen byte atschool=Q19ATTE
 	recode atschool 2=0
 	replace atschool=. if age<ed_mod_age & age!=.
@@ -387,8 +396,8 @@ or grade 9 and enter a technical education program at N1, proceeding to N2.
 
 /*
 For those who are currently attending educational institution or variable "atschool" equals 1,
-and have no education (no schooling) or "edulevel1" equals "edulevel2" equals "edulevel3" equals 1,
-they are probably in creche or day care. Note that "Educational institution" covers a wide range of places
+and have no education(no schooling) or "edulevel1" equals "edulevel2" equals "edulevel3" equals 1,
+they probably are in creche or day care. "Educational institution" covers a wide range of places
 and ways of education. 
 */ 
 
@@ -417,7 +426,7 @@ and ways of education.
 
 
 ** LABOR STATUS
-	gen byte lstatus=Status
+	gen byte lstatus=Status	
 	recode lstatus 4=3
 	replace lstatus=. if age<lb_mod_age & age!=.
 	label var lstatus "Labor status"
@@ -473,7 +482,7 @@ whose answers to this question are "Yes" were coded as missing values.
 
 ** SECTOR OF ACTIVITY: PUBLIC - PRIVATE
 	gen byte ocusec=Q415TYPEBUSNS
-	recode ocusec 4=1 3 5=2 2=3 6=.
+	recode ocusec 4=1 3 5=2 2=3 6/9=.
 	replace ocusec=. if lstatus!=1
 	label var ocusec "Sector of activity"
 	la de lblocusec 1 "Public Sector, Central Government, Army, NGO" 2 "Private" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
@@ -527,7 +536,7 @@ whose answers to this question are "Yes" were coded as missing values.
 
 
 ** OCCUPATION CLASSIFICATION
-	recode occup 10=9 11=99
+	recode occup 10=9 
 	replace occup=. if lstatus!=1
 	label var occup "1 digit occupational classification"
 	la de lbloccup 1 "Senior officials" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
@@ -542,20 +551,21 @@ whose answers to this question are "Yes" were coded as missing values.
 
 ** FIRM SIZE
 	gen byte firmsize_l=Q416NRWORKERS
-	recode firmsize_l 1=0 2=1 3=2 4=5 5=10 6=20 7=50 8 99=.
+	recode firmsize_l 1=0 2=1 3=2 4=5 5=10 6=20 7=50 8=.
 	replace firmsize_l=. if lstatus!=1
 	label var firmsize_l "Firm size (lower bracket)"
 
 	gen byte firmsize_u=Q416NRWORKERS
-	recode firmsize_u 1=0 2=1 3=4 4=9 5=19 6=49 7 8 99=.
+	recode firmsize_u 1=0 2=1 3=4 4=9 5=19 6=49 7 8=.
 	replace firmsize_u=. if lstatus!=1
 	label var firmsize_u "Firm size (upper bracket)"
 
 
-** HOURS WORKED LAST WEEK 
+** HOURS WORKED LAST WEEK
 /*
-Var "Hrswrk" in the raw dataset was derived from vars Q418HRSWRK and Q420FIRSTHRSWRK.
+Var "HRSWRK" in the raw dataset was derived from vars Q418HRSWRK and Q420FIRSTHRSWRK.
 */
+
 	gen whours=Hrswrk
 	replace whours=. if lstatus!=1
 	label var whours "Hours of work in last week"
@@ -563,7 +573,7 @@ Var "Hrswrk" in the raw dataset was derived from vars Q418HRSWRK and Q420FIRSTHR
 
 ** WAGES
 	gen double wage=Q54a_monthly
-	replace wage=Q57a_monthly if wage==.
+	replace wage=Q54a_monthly if wage==.
 	replace wage=. if lstatus!=1 
 	replace wage=0 if empstat==2
 	label var wage "Last wage payment"
@@ -781,16 +791,16 @@ Var "Hrswrk" in the raw dataset was derived from vars Q418HRSWRK and Q420FIRSTHR
 	qui sum `var'
 	scalar sclrc = r(mean)
 	if sclrc==. {
-	     display as txt "Variable " as result "`var'" as txt " for ccode " as result `cty' as txt " contains all missing values -" as error " Variable Deleted"
+	     display as txt "Variable" as result "`var'" as txt " for ccode " as result `cty' as txt " contains all missing values -" as error " Variable Deleted"
 	}
 	else {
 	     local keep `keep' `var'
 	}
 	}
-	keep ccode year intv_year month idh idp wgt strata psu `keep'
+	keep ccode year intv_year month  idh idp wgt strata psu `keep'
 
 
-	save "`output'\ZAF_2019_QLFS_v01_M_v01_A_I2D2.dta", replace
+	save "`output'\ZAF_2012_QLFS_v01_M_v01_A_I2D2.dta", replace
 
 	log close
 

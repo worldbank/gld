@@ -8,7 +8,7 @@
 ** YEAR						2020
 ** SURVEY NAME				Labour Market Dynamics
 ** SURVEY AGENCY			Statistics South Africa (Stats SA)
-** SURVEY SOURCE			DataFirst
+** SURVEY SOURCE			DataFirst, https://www.datafirst.uct.ac.za/dataportal/index.php/catalog/823 (Quarter 1)
 ** UNIT OF ANALYSIS			Household and individual
 ** INPUT DATABASES			Z:\_GLD-Harmonization\573465_JT\ZAF\ZAF_2020_LFS\ZAF_2020_LFS_v01_M\data\stata\qlfs-2020-q1-worker-v1.dta
 							Z:\_GLD-Harmonization\573465_JT\ZAF\ZAF_2020_LFS\ZAF_2020_LFS_v01_M\data\stata\qlfs-2020-q2-worker-v2.dta
@@ -19,7 +19,7 @@
 ** Modified					6/13/2021
 ** NUMBER OF HOUSEHOLDS		34,022  
 ** NUMBER OF INDIVIDUALS	118,173
-** EXPANDED POPULATION	
+** EXPANDED POPULATION		58,013,653
 **                                                                                                  **
 ******************************************************************************************************
 *****************************************************************************************************/
@@ -125,11 +125,11 @@
 ** PSU
 
 /*
-Quarter 1: 3,239 PSUs
-Quarter 2: 2,862 PSUs
-Quarter 3: 2,857 PSUs
-Quarter 4: 3,057 PSUs
-Note that var "Qtr" which indicates quarter is only included since 2017.
+Total psu: 3,242
+Q1:3,239
+Q2:2,862
+Q3:2,857
+Q4:3,057
 */
 	gen psu=substr(UQNO, 1, 8)
 	label var psu "Primary sampling units"

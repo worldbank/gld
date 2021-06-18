@@ -8,7 +8,7 @@
 ** YEAR						2017
 ** SURVEY NAME				Labour Market Dynamics
 ** SURVEY AGENCY			Statistics South Africa (Stats SA)
-** SURVEY SOURCE			DataFirst
+** SURVEY SOURCE			DataFirst, https://www.datafirst.uct.ac.za/dataportal/index.php/catalog/727
 ** UNIT OF ANALYSIS			Household and individual
 ** INPUT DATABASES			Z:\_GLD-Harmonization\573465_JT\ZAF\ZAF_2017_LFS\ZAF_2017_LFS_v01_M\data\stata\lmdsa-2017-1.0-stata11.dta
 ** RESPONSIBLE				Junying Tong
@@ -16,7 +16,7 @@
 ** Modified					6/10/2021
 ** NUMBER OF HOUSEHOLDS		39,366 
 ** NUMBER OF INDIVIDUALS	132,497
-** EXPANDED POPULATION	
+** EXPANDED POPULATION	 	55,775,599
 **                                                                                                  **
 ******************************************************************************************************
 *****************************************************************************************************/
@@ -111,6 +111,14 @@
 
 
 ** PSU
+
+/*
+Total psu: 3,556
+Q1:3,249
+Q2:3,254
+Q3:3,244
+Q4:3,224
+*/
 	gen psu=substr(UQNO, 1, 8)
 	label var psu "Primary sampling units"
 
