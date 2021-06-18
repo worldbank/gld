@@ -42,35 +42,13 @@
 
 ** DIRECTORY
 	*	local path "~/Desktop/MEX/MEX_2006_LFS"
-	local path "C:\Users\wb582018\OneDrive - WBG\Surveys\MEX\MEX_2006_LFS"
+	local path "C:\Users\xxx\OneDrive - WBG\Surveys\MEX\MEX_2006_LFS"
 
 ** LOG FILE
 	*	log using "`path'/MEX_2006_LFS_v01_M_v01_A_I2D2/Programs/MEX_2006_I2D2_ENOE.log", replace
 	log using "`path'\MEX_2006_LFS_v01_M_v01_A_I2D2\Programs\MEX_2006_I2D2_ENOE.log", replace
 
 
-
-
-/*****************************************************************************************************
-*                                                                                                    *
-                                   INITIAL COMMANDS
-*                                                                                                    *
-*****************************************************************************************************/
-
-
-** INITIAL COMMANDS
-	cap log close 
-	clear
-	set more off
-	set mem 800m
-
-** DIRECTORY
-	*	local path "~/Desktop/MEX/MEX_2005_LFS"
-	local path "C:\Users\wb582018\OneDrive - WBG\Surveys\MEX\MEX_2006_LFS"
-
-** LOG FILE
-	*	log using "`path'/MEX_2005_LFS_v01_M_v01_A_I2D2/Programs/MEX_2005_I2D2_ENOE.log", replace
-	log using "`path'\MEX_2006_LFS_v01_M_v01_A_I2D2\Programs\MEX_2006_I2D2_ENOE.log", replace
 
 
 /*****************************************************************************************************
