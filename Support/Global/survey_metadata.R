@@ -82,7 +82,7 @@ if (user == 1) {
 
 
 # Code ------------------------
-code 	        <- file.path(clone, "gld/GLD")
+code 	        <- file.path(clone, "gld/Support")
 
 
 # Network Data -------
