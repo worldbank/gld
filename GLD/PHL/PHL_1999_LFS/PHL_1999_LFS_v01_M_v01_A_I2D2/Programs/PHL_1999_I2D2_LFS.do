@@ -8,7 +8,6 @@
 ** YEAR	1999
 ** SURVEY NAME	Labor Force Survey
 ** SURVEY AGENCY	National Statistical Office
-** SURVEY SOURCE	EAP Manilla Team
 ** UNIT OF ANALYSIS	Household and Individual
 ** INPUT DATABASES	LFS JAN1999
 ** RESPONSIBLE	 Tom Mosher
@@ -16,7 +15,7 @@
 ** Modified	24/5/2021
 ** NUMBER OF HOUSEHOLDS	38,830
 ** NUMBER OF INDIVIDUALS	200,902
-** EXPANDED POPULATION	
+** EXPANDED POPULATION
 ** NUMBER OF SURVEY ROUNDS: 4
 **                                                                                                  **
 ******************************************************************************************************

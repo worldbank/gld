@@ -8,7 +8,6 @@
 ** YEAR	2003
 ** SURVEY NAME	Labor Force Survey
 ** SURVEY AGENCY	National Statistical Office
-** SURVEY SOURCE	EAP Manilla Team
 ** UNIT OF ANALYSIS	Household and Individual
 ** INPUT DATABASES	LFS JAN2003
 ** RESPONSIBLE	 Tom Mosher

@@ -8,7 +8,6 @@
 ** YEAR	2019
 ** SURVEY NAME	Labor Force Survey
 ** SURVEY AGENCY	National Statistical Office
-** SURVEY SOURCE	EAP Manilla Team
 ** UNIT OF ANALYSIS	Household and Individual
 ** INPUT DATABASES	LFS JAN2019
 ** RESPONSIBLE	Tom Mosher

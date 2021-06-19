@@ -8,7 +8,6 @@
 ** YEAR	1997
 ** SURVEY NAME	Labor Force Survey
 ** SURVEY AGENCY	National Statistical Office
-** SURVEY SOURCE	EAP Manilla Team
 ** UNIT OF ANALYSIS	Household and Individual
 ** INPUT DATABASES	LFS JAN1997.dta LFS APR1997, LFS JUL1997, LFS OCT1997
 ** RESPONSIBLE Tom Mosher
