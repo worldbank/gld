@@ -948,7 +948,7 @@ if (`cb_pause' == 1) {
 	log close
 
 
-
+	clear
 
 
 

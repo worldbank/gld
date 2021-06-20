@@ -930,7 +930,7 @@ if (`append' == 1) {
 
 	log close
 
-
+	clear
 
 
 

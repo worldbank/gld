@@ -985,7 +985,7 @@ if (`cb_pause' == 1) {
 
 
 
-
+	clear
 
 
 
