@@ -19,7 +19,7 @@ rm(list=ls())
 # Define list of paths directly (template below, commented out)
 # paths <- list("First file" = "C:/Folder/File_1.dta", "Second file" = "C:/Folder/File_2.dta")
 # paths <- list("1993" = "C:/Users/wb529026/OneDrive - WBG/Documents/Country Work/IND/IND_1993_NSS50-SCH10/IND_1993_NSS50-SCH10_v01_M_v01_A_GLD/Data/Harmonized/IND_1993_NSS50-SCH10_V01_M_V01_A_GLD.dta", 
-#               "1999" = "C:/Users/wb529026/OneDrive - WBG/Documents/Country Work/IND/IND_1999_NSS55-SCH10/IND_1999_NSS55-SCH10_v01_M_v01_A_GLD/Data/Harmonized/IND_1999_NSS55-SCH10_V01_M_V01_A_GLD.dta")
+#              "1999" = "C:/Users/wb529026/OneDrive - WBG/Documents/Country Work/IND/IND_1999_NSS55-SCH10/IND_1999_NSS55-SCH10_v01_M_v01_A_GLD/Data/Harmonized/IND_1999_NSS55-SCH10_V01_M_V01_A_GLD.dta")
 
 
   ### ============================================ ###
@@ -62,7 +62,7 @@ df <- bind_rows(file_list)
 #=========================================================================#
 
 # Define variables to be inspected
-variables <- c("educat7", "educat5", "educat4", "educat_isced", 
+variables <- c("educat7", "educat5", "educat4", "educat_isced", "hsize",
                "industrycat10", "industrycat4", "industrycat10_2", "industrycat4_2",
                "industrycat10_year", "industrycat4_year", "industrycat10_2_year", "industrycat4_2_year")
 
