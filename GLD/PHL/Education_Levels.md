@@ -2,6 +2,19 @@
 
 The following label classification explain the codification from raw survey label levels to I2D2 categories. Note that, according to the 2017 Philippine Standard Classification of Education document, the education system was adjusted in 2018 in accordance with new legislation, linked [here](http://www.unesco.org/education/edurights/media/docs/e119986abbd26ebda9c3d8c18929b4487205d4d6.pdf). It appears both in the 2017 PSCED and the data labels that this change did not occur until the 2018 year, meaning that data for 2017 is still classified under the old system.
 
+## Survey Years 1997 - 2011 (PSCED 1997)
+Luckily the education levels are fairly self explanatory for the first few years. In 2008 PSCED, we see that there is no level in 1997 schema for post-secondary or "secondary but not university" level.
+
+ PSA Labels  / Ranges of Labels                 |   I2D2 Level | Notes |
+|----------------------------------------|----------------------------|-------------------------|
+|  No Grade Completed       |     No Education                        |
+|   Grade 1 - 3, Grade 4, Grade 5 |  Primary Incomplete        |  
+|   Elementary Graduate           |   Primary Complete                    |
+|   First - Third Year High School      |    Secondary Incomplete       |
+| High School Graduate  | Secondary Complete | 
+| College Undergraduate | University Complete or Incomplete |
+
+
 ## Survey Years 2012 - 2018 (PSCED 2008)
 These survey years appear to be coded according to the 2008 Philippine Statistical Classification of Education Document, accessible [here](https://psa.gov.ph/content/philippine-standard-classification-education-psced).
 
