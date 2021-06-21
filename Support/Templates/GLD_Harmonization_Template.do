@@ -865,8 +865,8 @@ foreach v of local ed_var {
 
 
 *<_wage_no_compen_2_>
-	gen double wage_no_compen_year_2 = 
-	label var wage_no_compen_year_2 "Last wage payment secondary job 7 day recall"
+	gen double wage_no_compen_2 = 
+	label var wage_no_compen_2 "Last wage payment secondary job 7 day recall"
 *</_wage_no_compen_2_>
 
 
