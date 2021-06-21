@@ -8,15 +8,14 @@
 ** YEAR	1999
 ** SURVEY NAME	Labor Force Survey
 ** SURVEY AGENCY	National Statistical Office
-** SURVEY SOURCE	EAP Manilla Team
 ** UNIT OF ANALYSIS	Household and Individual
 ** INPUT DATABASES	LFS JAN1999
-** RESPONSIBLE	Cristian Jara + Tom Mosher
+** RESPONSIBLE	 Tom Mosher
 ** Created	4/4/2012
 ** Modified	24/5/2021
-** NUMBER OF HOUSEHOLDS	39273
-** NUMBER OF INDIVIDUALS	202738
-** EXPANDED POPULATION	70741993
+** NUMBER OF HOUSEHOLDS	38,830
+** NUMBER OF INDIVIDUALS	200,902
+** EXPANDED POPULATION
 ** NUMBER OF SURVEY ROUNDS: 4
 **                                                                                                  **
 ******************************************************************************************************
@@ -566,13 +565,26 @@ if (`cb_pause' == 1) {
 	replace unempldur_l=. if lstatus!=2 	  // restrict universe to unemployed only
 
 ** INDUSTRY CLASSIFICATION
+	* the first digit of the raw variable corresponds to the correct final digits in most cases. use floor() and recode
 	gen byte industry=floor(qkb/10)
 	recode industry 0=10 	// change to 10, "unspecified" from "missing" /.
 	replace industry=10 if qkb>=92 & qkb<=99
 	replace industry=6 if qkb==98
 	replace industry=. if lstatus!=1
 	label var industry "1 digit industry classification"
-	la de lblindustry 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public Utility Services" 5 "Construction"  6 "Commerce" 7 "Transport and Communication" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
+
+	* Comments include UN International Standard Industrial Classification associated categories (version 3.1)
+	la de lblindustry 	1 "Agriculture" 	/// (01-05)
+						2 "Mining" 			/// (10-14)
+						3 "Manufacturing" 	/// (15-37)
+						4 "Public Utility Services" /// (40-41)
+						5 "Construction"  	/// (45)
+						6 "Commerce" 	/// (50-55)
+						7 "Transport and Communication" /// (60-64)
+						8 "Financial and Business Services" /// (65-74)
+						9 "Public Administration" /// (75)
+						10 "Other Services, Unspecified" // (80-99)
+
 	label values industry lblindustry
 	replace industry=. if age < lb_mod_age // restrict universe to working age
 	replace industry=. if lstatus!=1 		// restrict universe to employed only
@@ -681,13 +693,13 @@ if (`cb_pause' == 1) {
 
 
 ** INDUSTRY CLASSIFICATION - SECOND JOB
+	* no raw variable included
 	gen byte industry_2=.
 	replace industry_2=. if njobs==0 | njobs==.
 	replace industry_2=. if lstatus!=1 				// restrict universe to employed only
 	replace industry_2=. if age < lb_mod_age		// restrict universe to working age
 	label var industry_2 "1 digit industry classification - second job"
-	la de lblindustry_2 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
-	label values industry_2 lblindustry_2
+	label values industry_2 lblindustry				// use same data labels as industry
 
 
 ** INDUSTRY 1 - SECOND JOB
@@ -920,7 +932,7 @@ if (`cb_pause' == 1) {
 
 	log close
 
-
+	clear
 
 
 

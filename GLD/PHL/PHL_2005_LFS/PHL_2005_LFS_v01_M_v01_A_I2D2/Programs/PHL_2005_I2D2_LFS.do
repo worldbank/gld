@@ -8,15 +8,14 @@
 ** YEAR	2005
 ** SURVEY NAME	Labor Force Survey
 ** SURVEY AGENCY	National Statistical Office
-** SURVEY SOURCE	EAP Manilla Team
 ** UNIT OF ANALYSIS	Household and Individual
 ** INPUT DATABASES	LFS JAN2005
-** RESPONSIBLE	Cristian Jara + Tom Mosher
+** RESPONSIBLE	 Tom Mosher
 ** Created	4/4/2012
 ** Modified	24/5/2021
-** NUMBER OF HOUSEHOLDS	39273
-** NUMBER OF INDIVIDUALS	202738
-** EXPANDED POPULATION	70741993
+** NUMBER OF HOUSEHOLDS
+** NUMBER OF INDIVIDUALS
+** EXPANDED POPULATION
 ** NUMBER OF SURVEY ROUNDS: 4
 **                                                                                                  **
 ******************************************************************************************************
@@ -68,7 +67,7 @@
 
 ** VALUES
 	local n_round 	4			// numer of survey rounds
-
+	local cases  	836289		// 211888 (Jan) + 213475 (APR) + 206467 (Jul) + 204459 (Oct) (Source: ILO from PSA)
 
 
 /*****************************************************************************************************
@@ -565,19 +564,32 @@ if (`cb_pause' == 1) {
 	replace unempldur_l=. if lstatus!=2 	  // restrict universe to unemployed only
 
 ** INDUSTRY CLASSIFICATION
-	gen byte industry=floor(c16a_pkb/10)
-	replace industry=1 if c16a_pkb >= 1 & c16a_pkb <= 9
-	replace industry=2 if c16a_pkb==10 | c16a_pkb==11
-	replace industry=3 if c16a_pkb>14 & c16a_pkb<40
-	replace industry=4 if c16a_pkb==40 | c16a_pkb==41
-	replace industry=5 if c16a_pkb==45
-	replace industry=6 if c16a_pkb>49 & c16a_pkb<56
-	replace industry=7 if c16a_pkb>59 & c16a_pkb<65
-	replace industry=8 if c16a_pkb>64 & c16a_pkb<75
-	replace industry=9 if c16a_pkb == 75
-	replace industry=10 if c16a_pkb>=76 & c16a_pkb<100 // this includes education for now.
+
+	gen byte industry=.
+	replace industry=1 if c18_pkb >= 1 & c18_pkb <= 9		// Agriculture
+	replace industry=2 if c18_pkb == 10 | c18_pkb == 11		// Mining
+	replace industry=3 if c18_pkb>=15 & c18_pkb <= 39		// Manufacturing
+	replace industry=4 if c18_pkb==40 | c18_pkb==41			// Public Utility Services
+	replace industry=5 if c18_pkb==45						// Construction
+	replace industry=6 if c18_pkb >= 50 & c18_pkb <= 55		// Commerce
+	replace industry=7 if c18_pkb >= 60 & c18_pkb <= 64		// Transport + Communication
+	replace industry=8 if c18_pkb >= 65 & c18_pkb <= 74		// Financial + Business Services
+	replace industry=9 if c18_pkb == 75						// Public Administration
+	replace industry=10 if c18_pkb>=76 & c18_pkb <= 99 		// this includes education for now.
 	label var industry "1 digit industry classification"
-	la de lblindustry 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public Utility Services" 5 "Construction"  6 "Commerce" 7 "Transport and Communication" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
+
+	* Comments include UN International Standard Industrial Classification associated categories (version 3.1)
+	la de lblindustry 	1 "Agriculture" 	/// (01-05)
+						2 "Mining" 			/// (10-14)
+						3 "Manufacturing" 	/// (15-37)
+						4 "Public Utility Services" /// (40-41)
+						5 "Construction"  	/// (45)
+						6 "Commerce" 	/// (50-55)
+						7 "Transport and Communication" /// (60-64)
+						8 "Financial and Business Services" /// (65-74)
+						9 "Public Administration" /// (75)
+						10 "Other Services, Unspecified" // (80-99)
+
 	label values industry lblindustry
 	replace industry=. if age < lb_mod_age // restrict universe to working age
 	replace industry=. if lstatus!=1 		// restrict universe to employed only
@@ -684,22 +696,23 @@ if (`cb_pause' == 1) {
 
 
 ** INDUSTRY CLASSIFICATION - SECOND JOB
-	gen byte industry_2=floor(c30a_okb/10)
-	replace industry_2=1 if c30a_okb >= 1 & c30a_okb <= 9
-	replace industry_2=2 if c30a_okb==10 | c30a_okb==11
-	replace industry_2=3 if c30a_okb>14 & c30a_okb<40
-	replace industry_2=4 if c30a_okb==40 | c30a_okb==41
-	replace industry_2=5 if c30a_okb==45
-	replace industry_2=6 if c30a_okb>49 & c30a_okb<56
-	replace industry_2=7 if c30a_okb>59 & c30a_okb<65
-	replace industry_2=8 if c30a_okb>64 & c30a_okb<75
-	replace industry_2=9 if c30a_okb == 75
-	replace industry_2=10 if c30a_okb>=76 & c30a_okb<100 	// this includes education for now.
+	gen byte industry_2=.
+
+	replace industry_2=1 if j03_okb >= 1 & j03_okb <= 9		// Agriculture
+	replace industry_2=2 if j03_okb == 10 | j03_okb == 11		// Mining
+	replace industry_2=3 if j03_okb>=15 & j03_okb <= 39		// Manufacturing
+	replace industry_2=4 if j03_okb==40 | j03_okb==41			// Public Utility Services
+	replace industry_2=5 if j03_okb==45						// Construction
+	replace industry_2=6 if j03_okb >= 50 & j03_okb <= 55		// Commerce
+	replace industry_2=7 if j03_okb >= 60 & j03_okb <= 64		// Transport + Communication
+	replace industry_2=8 if j03_okb >= 65 & j03_okb <= 74		// Financial + Business Services
+	replace industry_2=9 if j03_okb == 75						// Public Administration
+	replace industry_2=10 if j03_okb>=76 & j03_okb <= 99 		// this includes education for now.
+
 	replace industry_2=. if lstatus!=1 				// restrict universe to employed only
 	replace industry_2=. if age < lb_mod_age		// restrict universe to working age
 	label var industry_2 "1 digit industry classification - second job"
-	la de lblindustry_2 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
-	label values industry_2 lblindustry_2
+	label values industry_2 lblindustry				// use same data labels as industry
 
 
 ** INDUSTRY 1 - SECOND JOB
@@ -935,7 +948,7 @@ if (`cb_pause' == 1) {
 	log close
 
 
-
+	clear
 
 
 
