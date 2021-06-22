@@ -445,16 +445,20 @@ if (`append' == 1) {
 
 ** EDUCATION LEVEL 2
 	gen byte edulevel2=edulevel1
-	recode edulevel2 (4=3) (5=4)  (6/7=5) (8=.) (9=.) // add recode of 9
+	recode edulevel2 (4=3) (5=4)  (6/7=5) (8=.) (9=.)
 	label var edulevel2 "Level of education 2"
-	la de lbledulevel2 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
+	la de lbledulevel2 	1 "No education" 	///
+						2 "Primary incomplete"  	///
+						3 "Primary complete but secondary incomplete" 	///
+						4 "Secondary complete" 		///
+						5 "Some tertiary/post-secondary"
 	label values edulevel2 lbledulevel2
 	replace edulevel2=. if age < ed_mod_age // restrict universe to students at or above primary school age
 
 
 ** EDUCATION LEVEL 3
 	gen byte edulevel3=edulevel1
-	recode edulevel3 (2 3 =2) (4 5 =3) (6/7 =4) (8=.) (9=.) // add recode of 9
+	recode edulevel3 (2 3 =2) (4 5 =3) (6/7 =4) (8=.) (9=.)
 	label var edulevel3 "Level of education 3"
 	la de lbledulevel3 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values edulevel3 lbledulevel3
