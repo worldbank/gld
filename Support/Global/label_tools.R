@@ -35,3 +35,13 @@ vallab_table_edu <- metadata %>%
   pivot_wider(names_from = id, values_from = value_label)
   
 
+
+# identify "intvw" variable across years 
+intv <- metadata %>%
+  filter( grepl("intvw", var_name_orig)) %>%
+  filter(!is.na(labels)) %>%
+  select(id, labels, label_orig) %>%
+  unnest_longer(labels, 
+                values_to = "value",
+                indices_to = "value_label") 
+
