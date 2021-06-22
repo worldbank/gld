@@ -7,7 +7,11 @@
 
 <_Program name_>				[MEX_2019_ENOE_V01_M_v01_A_GLD.do] </_Program name_> 
 <_Application_>					[STATA] <_Application_> 
+<<<<<<< Updated upstream
 <_Author(s)_>					[aquinonesnunura@worldbank.org] </_Author(s)_> 
+=======
+<_Author(s)_>					[Alexandra Quiñones Nunura] </_Author(s)_> 
+>>>>>>> Stashed changes
 <_Date created_>				2021-04-01 </_Date created_> 
 
 ------------------------------------------------------------------------- 
@@ -65,8 +69,13 @@ set mem 800m
 
 *----------1.2: Set directories------------------------------*
 
+<<<<<<< Updated upstream
 local path_in "C:\Users\Data\Original"
 local path_output "C:\UsersData\Harmonized"
+=======
+local path_in "C:\Users\wb582018\OneDrive - WBG\Surveys\MEX\MEX_2019_LFS\MEX_2019_LFS_v01_M\Data\Original"
+local path_output "C:\Users\wb582018\OneDrive - WBG\Surveys\MEX\MEX_2019_LFS\MEX_2019_LFS_v01_M_v01_A_GLD\Data\Harmonized"
+>>>>>>> Stashed changes
 
 *----------1.3: Database assembly------------------------------*
 
