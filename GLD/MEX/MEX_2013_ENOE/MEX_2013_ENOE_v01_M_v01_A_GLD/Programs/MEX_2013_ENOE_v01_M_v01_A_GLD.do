@@ -7,11 +7,7 @@
 
 <_Program name_>				[MEX_2013_ENOE_V01_M_v01_A_GLD.do] </_Program name_> 
 <_Application_>					[STATA] <_Application_> 
-<<<<<<< Updated upstream
 <_Author(s)_>					[aquinonesnunura@worldbank.org] </_Author(s)_> 
-=======
-<_Author(s)_>					[Alexandra Quiñones Nunura] </_Author(s)_> 
->>>>>>> Stashed changes
 <_Date created_>				2021-04-01 </_Date created_> 
 
 ------------------------------------------------------------------------- 
@@ -23,13 +19,8 @@
 <_Data collection from_>		[01/2013] </_Data collection from_> 
 <_Data collection to_>			[05/2013] </_Data collection to_> 
 <_Source of dataset_> 			[Mexico NSO] </_Source of dataset_> 
-<<<<<<< Updated upstream
 <_Sample size (HH)_> 			[101382] </_Sample size (HH)_> 
 <_Sample size (IND)_> 			[379010] </_Sample size (IND)_> 
-=======
-<_Sample size (HH)_> 			[100,776] </_Sample size (HH)_> 
-<_Sample size (IND)_> 			[402,186] </_Sample size (IND)_> 
->>>>>>> Stashed changes
 <_Sampling method_> 			[Tamaño de la muestra: Calculado desde el punto de vista del indicador de mayor exigencia en términos de tamaño muestral. Lo anterior garantiza que las estimaciones del resto de las variables de interés queden cubiertas con este tamaño. Trimestralmente el tamaño de la muestra es de 120 mil 260 viviendas.
 Unidad de observación: La vivienda.
 Unidad de muestreo: La vivienda particular.
@@ -77,10 +68,6 @@ set mem 800m
 <<<<<<< Updated upstream
 local path_in "C:\Users\Data\Original"
 local path_output "C:\Users\Data\Harmonized"
-=======
-local path_in "C:\Users\wb582018\OneDrive - WBG\Surveys\MEX\MEX_2013_LFS\MEX_2013_LFS_v01_M\Data\Original"
-local path_output "C:\Users\wb582018\OneDrive - WBG\Surveys\MEX\MEX_2013_LFS\MEX_2013_LFS_v01_M_v01_A_GLD\Data\Harmonized"
->>>>>>> Stashed changes
 
 *----------1.3: Database assembly------------------------------*
 
@@ -89,15 +76,9 @@ local path_output "C:\Users\wb582018\OneDrive - WBG\Surveys\MEX\MEX_2013_LFS\MEX
 	use "`path_in'\VIVT113.dta",clear
 	drop p1-p3
 	destring loc mun est ageb t_loc cd_a upm d_sem n_pro_viv ent con v_sel n_ent per, replace
-<<<<<<< Updated upstream
 	local path_in "C:\Users\Data\Original"
 	merge 1:m ent con v_sel using "`path_in'\HOGT113.dta", nogen
 	local path_in "C:\Users\Data\Original"
-=======
-	local path_in "C:\Users\wb582018\OneDrive - WBG\Surveys\MEX\MEX_2013_LFS\MEX_2013_LFS_v01_M\Data\Original"
-	merge 1:m ent con v_sel using "`path_in'\HOGT113.dta", nogen
-	local path_in "C:\Users\wb582018\OneDrive - WBG\Surveys\MEX\MEX_2013_LFS\MEX_2013_LFS_v01_M\Data\Original"
->>>>>>> Stashed changes
 	merge 1:m ent con v_sel n_hog using "`path_in'\SDEMT113.dta"
 	drop if _merge==1
 	drop _merge
