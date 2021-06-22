@@ -15,13 +15,12 @@
 *							SDEMT118.dta
 *							COE1T118.dta
 *							COE2T118.dta
-** RESPONSIBLE				Cristobal Bennett
-** Modified by				aquinonesnunura@worldbank.org
+** Modified by				aquinonesnunura@worldbank.org				
 ** Created					03-16-2020
 ** Modified					06-04-2020
-** NUMBER OF HOUSEHOLDS		105458
-** NUMBER OF INDIVIDUALS	377881
-** EXPANDED POPULATION		123382584
+** NUMBER OF HOUSEHOLDS		104348
+** NUMBER OF INDIVIDUALS	375481
+** EXPANDED POPULATION		126190788
 **                                                                                                  **
 ******************************************************************************************************
 *****************************************************************************************************/
@@ -41,11 +40,9 @@
 
 
 ** DIRECTORY
-	*	local path "~/Desktop/MEX/MEX_2018_LFS"
-	local path "C:\Users\wb582018\OneDrive - WBG\Surveys\MEX\MEX_2018_LFS"
+	local path "C:\Users\MEX\MEX_2018_ENOE"
 
 ** LOG FILE
-	*	log using "`path'/MEX_2018_LFS_v01_M_v01_A_I2D2/Programs/MEX_2018_I2D2_ENOE.log", replace
 	log using "`path'\MEX_2018_LFS_v01_M_v01_A_I2D2\Programs\MEX_2018_I2D2_ENOE.log", replace
 
 
@@ -63,8 +60,8 @@
 	destring loc mun est ageb t_loc cd_a upm d_sem n_pro_viv ent con v_sel n_ent per, replace
 	merge 1:m ent con v_sel using "`path'/MEX_2018_LFS_v01_M/Data/Original/HOGT118.dta", nogen
 	merge 1:m ent con v_sel n_hog using "`path'/MEX_2018_LFS_v01_M/Data/Original/SDEMT118.dta"
-	drop if _m==1
-	drop _m
+	drop if _merge==1
+	drop _merge
 	merge 1:1 ent con v_sel n_hog n_ren using "`path'/MEX_2018_LFS_v01_M/Data/Original/COE1T118.dta", nogen
 	merge 1:1 ent con v_sel n_hog n_ren using "`path'/MEX_2018_LFS_v01_M/Data/Original/COE2T118.dta", nogen
 	keep if r_pre==0 & inlist(c_res,1,3)
@@ -74,7 +71,7 @@
 	gen con_str=substr("000",1,4 - length(con))+ con
 	*the harmonization is for the first three months of the year , any other month will be put to missing.
 	tab d_mes
-	replace d_mes=. if d_mes == 4 | d_mes == 5
+	replace d_mes=. if d_mes == 4 | d_mes == 5 | d_mes == 12
 	tab d_mes, missing
 
 
@@ -256,8 +253,7 @@
 ** GENDER
 	gen byte gender=sex
 	label var gender "Gender"
-	recode gender 2=0
-	la de lblgender 1 "Male" 0 "Female"
+	la de lblgender 1 "Male" 2 "Female"
 	label values gender lblgender
 
 
@@ -805,9 +801,6 @@
 	keep ccode year intv_year month  idh idp wgt strata psu `keep'
 
 
-
-
-	*save "`path'/MEX_2018_LFS_v01_M_v01_A_I2D2/Data/Harmonized/MEX_2018_I2D2_ENOE.dta", replace
 	save "`path'\MEX_2018_LFS_v01_M_v01_A_I2D2\Data\Harmonized\MEX_2018_I2D2_ENOE.dta", replace
 	
 	log close

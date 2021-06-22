@@ -15,13 +15,12 @@
 *							SDEMT109.dta
 *							COE1T109.dta
 *							COE2T109.dta
-** RESPONSIBLE				Cristobal Bennett
 ** MODIFIED BY				aquinonesnunura@worldbank.org
 ** Created					03-25-2020
 ** Modified					05-29-2021
-** NUMBER OF HOUSEHOLDS		101534
-** NUMBER OF INDIVIDUALS	389747
-** EXPANDED POPULATION		110401866
+** NUMBER OF HOUSEHOLDS		102068
+** NUMBER OF INDIVIDUALS	392497
+** EXPANDED POPULATION		112463887
 **                                                                                                  **
 ******************************************************************************************************
 *****************************************************************************************************/
@@ -42,7 +41,7 @@
 
 ** DIRECTORY
 
-	local path "C:\Users\xxx\OneDrive - WBG\Surveys\MEX\MEX_2009_LFS"
+	local path "C:\Users\MEX\MEX_2009_LFS"
 
 ** LOG FILE
 

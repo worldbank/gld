@@ -15,13 +15,12 @@
 *							SDEMT119.dta
 *							COE1T119.dta
 *							COE2T119.dta
-** RESPONSIBLE				Cristobal Bennett
 ** Modified by				aquinonesnunura@worldbank.org
 ** Created					03-16-2020
 ** Modified					06-04-2020
-** NUMBER OF HOUSEHOLDS		105458
-** NUMBER OF INDIVIDUALS	377881
-** EXPANDED POPULATION		123382584
+** NUMBER OF HOUSEHOLDS		109335
+** NUMBER OF INDIVIDUALS	390018
+** EXPANDED POPULATION		127575529
 **                                                                                                  **
 ******************************************************************************************************
 *****************************************************************************************************/
@@ -41,11 +40,9 @@
 
 
 ** DIRECTORY
-	*	local path "~/Desktop/MEX/MEX_2018_LFS"
-	local path "C:\Users\wb582018\OneDrive - WBG\Surveys\MEX\MEX_2019_LFS"
+	local path "C:\Users\MEX\MEX_2019_LFS"
 
 ** LOG FILE
-	*	log using "`path'/MEX_2018_LFS_v01_M_v01_A_I2D2/Programs/MEX_2018_I2D2_ENOE.log", replace
 	log using "`path'\MEX_2019_LFS_v01_M_v01_A_I2D2\Programs\MEX_2019_I2D2_ENOE.log", replace
 
 
@@ -62,8 +59,8 @@
 	destring loc mun est ageb t_loc cd_a upm d_sem n_pro_viv ent con v_sel n_ent per, replace
 	merge 1:m ent con v_sel using "`path'/MEX_2019_LFS_v01_M/Data/Original/HOGT119.dta", nogen
 	merge 1:m ent con v_sel n_hog using "`path'/MEX_2019_LFS_v01_M/Data/Original/SDEMT119.dta"
-	drop if _m==1
-	drop _m
+	drop if _merge==1
+	drop _merge
 	merge 1:1 ent con v_sel n_hog n_ren using "`path'/MEX_2019_LFS_v01_M/Data/Original/COE1T119.dta", nogen
 	merge 1:1 ent con v_sel n_hog n_ren using "`path'/MEX_2019_LFS_v01_M/Data/Original/COE2T119.dta", nogen
 	keep if r_pre==0 & inlist(c_res,1,3)
@@ -255,8 +252,7 @@
 ** GENDER
 	gen byte gender=sex
 	label var gender "Gender"
-	recode gender 2=0
-	la de lblgender 1 "Male" 0 "Female"
+	la de lblgender 1 "Male" 2 "Female"
 	label values gender lblgender
 
 
@@ -803,7 +799,6 @@
 	}
 	keep ccode year intv_year month  idh idp wgt strata psu `keep'
 
-	*save "`path'/MEX_2019_LFS_v01_M_v01_A_I2D2/Data/Harmonized/MEX_2019_I2D2_ENOE.dta", replace
 	save "`path'\MEX_2019_LFS_v01_M_v01_A_I2D2\Data\Harmonized\MEX_2019_I2D2_ENOE.dta", replace
 
 	log close

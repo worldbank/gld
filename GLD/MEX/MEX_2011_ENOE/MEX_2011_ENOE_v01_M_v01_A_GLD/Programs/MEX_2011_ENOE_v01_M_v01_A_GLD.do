@@ -5,7 +5,7 @@
 
 /* ----------------------------------------------------------------------- 
 
-<_Program name_>				[MEX_2005_ENOE_V01_M_V01_A_GLD.do] </_Program name_> 
+<_Program name_>				[MEX_2011_ENOE_V01_M_v01_A_GLD.do] </_Program name_> 
 <_Application_>					[STATA] <_Application_> 
 <_Author(s)_>					[aquinonesnunura@worldbank.org] </_Author(s)_> 
 <_Date created_>				2021-04-01 </_Date created_> 
@@ -14,13 +14,13 @@
 
 <_Country_>						[Mexico (MEX)] </_Country_> 
 <_Survey Title_>				[Encuesta Nacional de Ocupación y Empleo] </_Survey Title_> 
-<_Survey Year_>					[2005] </_Survey Year_> 
+<_Survey Year_>					[2011] </_Survey Year_> 
 <_Study ID_>					[Microdata Library ID if present] </_Study ID_> 
-<_Data collection from_>		[01/2005] </_Data collection from_> 
-<_Data collection to_>			[05/2005] </_Data collection to_> 
+<_Data collection from_>		[01/2011] </_Data collection from_> 
+<_Data collection to_>			[05/2011] </_Data collection to_> 
 <_Source of dataset_> 			[Mexico NSO] </_Source of dataset_> 
-<_Sample size (HH)_> 			[100776] </_Sample size (HH)_> 
-<_Sample size (IND)_> 			[402186] </_Sample size (IND)_> 
+<_Sample size (HH)_> 			[102588] </_Sample size (HH)_> 
+<_Sample size (IND)_> 			[389038] </_Sample size (IND)_> 
 <_Sampling method_> 			[Tamaño de la muestra: Calculado desde el punto de vista del indicador de mayor exigencia en términos de tamaño muestral. Lo anterior garantiza que las estimaciones del resto de las variables de interés queden cubiertas con este tamaño. Trimestralmente el tamaño de la muestra es de 120 mil 260 viviendas.
 Unidad de observación: La vivienda.
 Unidad de muestreo: La vivienda particular.
@@ -72,17 +72,17 @@ local path_output "C:\Users\Data\Harmonized"
 
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file	
-	use "`path_in'\VIVT105.dta",clear
+	use "`path_in'\VIVT111.dta",clear
 	drop p1-p3
 	destring loc mun est ageb t_loc cd_a upm d_sem n_pro_viv ent con v_sel n_ent per, replace
 	local path_in "C:\Users\Data\Original"
-	merge 1:m ent con v_sel using "`path_in'\HOGT105.dta", nogen
+	merge 1:m ent con v_sel using "`path_in'\HOGT111.dta", nogen
 	local path_in "C:\Users\Data\Original"
-	merge 1:m ent con v_sel n_hog using "`path_in'\SDEMT105.dta"
+	merge 1:m ent con v_sel n_hog using "`path_in'\SDEMT111.dta"
 	drop if _merge==1
 	drop _merge
-	merge 1:1 ent con v_sel n_hog n_ren using "`path_in'\COE1T105.dta", nogen
-	merge 1:1 ent con v_sel n_hog n_ren using "`path_in'\COE2T105.dta", nogen
+	merge 1:1 ent con v_sel n_hog n_ren using "`path_in'\COE1T111.dta", nogen
+	merge 1:1 ent con v_sel n_hog n_ren using "`path_in'\COE2T111.dta", nogen
 	keep if r_pre==0 & inlist(c_res,1,3)
 	tostring (ent v_sel n_hog n_ren h_mud), gen(ent_str v_sel_str n_hog_str n_ren_str h_mud_str) format(%02.0f)
 	tostring con, replace
@@ -124,7 +124,7 @@ local path_output "C:\Users\Data\Harmonized"
 
 
 *<_year_>
-	gen int year = 2005
+	gen int year = 2011
 	label var year "Year of survey"
 *</_year_>
 
@@ -148,7 +148,7 @@ local path_output "C:\Users\Data\Harmonized"
 
 
 *<_int_year_>
-	gen int_year=2005
+	gen int_year=2011
 	label var int_year "Year of the interview"
 *</_int_year_>
 
@@ -1550,6 +1550,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`path_output'\MEX_2005_ENOE_V01_M_V01_A_GLD.dta", replace
+save "`path_output'\MEX_2011_ENOE_V01_M_V01_A_GLD.dta", replace
 
 *</_% SAVE_>

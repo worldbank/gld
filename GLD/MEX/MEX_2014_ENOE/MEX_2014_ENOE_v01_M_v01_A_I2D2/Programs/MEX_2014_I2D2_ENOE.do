@@ -15,13 +15,12 @@
 *							SDEMT114.dta
 *							COE1T114.dta
 *							COE2T114.dta
-** RESPONSIBLE				Cristobal Bennett
 ** MODIFIED BY				aquinonensunura@worldbank.org
 ** Created					03-21-2020
 ** Modified					05-29-2021
-** NUMBER OF HOUSEHOLDS		103053
-** NUMBER OF INDIVIDUALS	392120
-** EXPANDED POPULATION		117663990
+** NUMBER OF HOUSEHOLDS		103998
+** NUMBER OF INDIVIDUALS	389926
+** EXPANDED POPULATION		120355128
 **                                                                                                  **
 ******************************************************************************************************
 *****************************************************************************************************/
@@ -41,11 +40,9 @@
 
 
 ** DIRECTORY
-	*	local path "~/Desktop/MEX/MEX_2014_LFS"
-	local path "C:\Users\wb582018\OneDrive - WBG\Surveys\MEX\MEX_2014_LFS"
+	local path "C:\Users\MEX\MEX_2014_ENOE"
 
 ** LOG FILE
-	*	log using "`path'/MEX_2014_LFS_v01_M_v01_A_I2D2/Programs/MEX_2014_I2D2_ENOE.log", replace
 	log using "`path'\MEX_2014_LFS_v01_M_v01_A_I2D2\Programs\MEX_2014_I2D2_ENOE.log", replace
 
 
@@ -62,8 +59,8 @@
 	destring loc mun est ageb t_loc cd_a upm d_sem n_pro_viv ent con v_sel n_ent per, replace
 	merge 1:m ent con v_sel using "`path'/MEX_2014_LFS_v01_M/Data/Original/HOGT114.dta", nogen
 	merge 1:m ent con v_sel n_hog using "`path'/MEX_2014_LFS_v01_M/Data/Original/SDEMT114.dta"
-	drop if _m==1
-	drop _m
+	drop if _merge==1
+	drop _merge
 	merge 1:1 ent con v_sel n_hog n_ren using "`path'/MEX_2014_LFS_v01_M/Data/Original/COE1T114.dta", nogen
 	merge 1:1 ent con v_sel n_hog n_ren using "`path'/MEX_2014_LFS_v01_M/Data/Original/COE2T114.dta", nogen
 	keep if r_pre==0 & inlist(c_res,1,3)
@@ -255,8 +252,7 @@
 ** GENDER
 	gen byte gender=sex
 	label var gender "Gender"
-	recode gender 2=0
-	la de lblgender 1 "Male" 0 "Female"
+	la de lblgender 1 "Male" 2 "Female"
 	label values gender lblgender
 
 

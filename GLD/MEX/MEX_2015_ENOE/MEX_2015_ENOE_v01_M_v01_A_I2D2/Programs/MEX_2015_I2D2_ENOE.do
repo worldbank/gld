@@ -15,13 +15,12 @@
 *							SDEMT115.dta
 *							COE1T115.dta
 *							COE2T115.dta
-** RESPONSIBLE				Cristobal Bennett
 ** MODIFIED BY				aquinonensunura@worldbank.org
 ** Created					03-20-2020
 ** Modified					05-29-2021
-** NUMBER OF HOUSEHOLDS		105959
-** NUMBER OF INDIVIDUALS	390817
-** EXPANDED POPULATION		119308471
+** NUMBER OF HOUSEHOLDS		105628
+** NUMBER OF INDIVIDUALS	390565
+** EXPANDED POPULATION		121858258
 **                                                                                                  **
 ******************************************************************************************************
 *****************************************************************************************************/
@@ -41,11 +40,9 @@
 
 
 ** DIRECTORY
-	*	local path "~/Desktop/MEX/MEX_2015_LFS"
-	local path "C:\Users\wb582018\OneDrive - WBG\Surveys\MEX\MEX_2015_LFS"
+	local path "C:\Users\MEX\MEX_2015_ENOE"
 
 ** LOG FILE
-	*	log using "`path'/MEX_2015_LFS_v01_M_v01_A_I2D2/Programs/MEX_2015_I2D2_ENOE.log", replace
 	log using "`path'\MEX_2015_LFS_v01_M_v01_A_I2D2\Programs\MEX_2015_I2D2_ENOE.log", replace
 
 /*****************************************************************************************************
@@ -60,8 +57,8 @@
 	destring loc mun est ageb t_loc cd_a upm d_sem n_pro_viv ent con v_sel n_ent per, replace
 	merge 1:m ent con v_sel using "`path'/MEX_2015_LFS_v01_M/Data/Original/HOGT115.dta", nogen
 	merge 1:m ent con v_sel n_hog using "`path'/MEX_2015_LFS_v01_M/Data/Original/SDEMT115.dta"
-	drop if _m==1
-	drop _m
+	drop if _merge==1
+	drop _merge
 	merge 1:1 ent con v_sel n_hog n_ren using "`path'/MEX_2015_LFS_v01_M/Data/Original/COE1T115.dta", nogen
 	merge 1:1 ent con v_sel n_hog n_ren using "`path'/MEX_2015_LFS_v01_M/Data/Original/COE2T115.dta", nogen
 	keep if r_pre==0 & inlist(c_res,1,3)
@@ -253,8 +250,7 @@
 ** GENDER
 	gen byte gender=sex
 	label var gender "Gender"
-	recode gender 2=0
-	la de lblgender 1 "Male" 0 "Female"
+	la de lblgender 1 "Male" 2 "Female"
 	label values gender lblgender
 
 

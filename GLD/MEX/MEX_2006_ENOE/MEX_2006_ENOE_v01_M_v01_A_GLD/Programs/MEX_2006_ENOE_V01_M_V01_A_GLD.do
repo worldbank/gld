@@ -7,7 +7,7 @@
 
 <_Program name_>				[MEX_2006_ENOE_V01_M_v01_A_GLD.do] </_Program name_> 
 <_Application_>					[STATA] <_Application_> 
-<_Author(s)_>					[] </_Author(s)_> 
+<_Author(s)_>					[aquinonesnunura@worldbank.org] </_Author(s)_> 
 <_Date created_>				2021-04-01 </_Date created_> 
 
 ------------------------------------------------------------------------- 
@@ -19,7 +19,7 @@
 <_Data collection from_>		[01/2006] </_Data collection from_> 
 <_Data collection to_>			[05/2006] </_Data collection to_> 
 <_Source of dataset_> 			[Mexico NSO] </_Source of dataset_> 
-<_Sample size (HH)_> 			[104,857] </_Sample size (HH)_> 
+<_Sample size (HH)_> 			[104857] </_Sample size (HH)_> 
 <_Sample size (IND)_> 			[411,737] </_Sample size (IND)_> 
 <_Sampling method_> 			[Tamaño de la muestra: Calculado desde el punto de vista del indicador de mayor exigencia en términos de tamaño muestral. Lo anterior garantiza que las estimaciones del resto de las variables de interés queden cubiertas con este tamaño. Trimestralmente el tamaño de la muestra es de 120 mil 260 viviendas.
 Unidad de observación: La vivienda.
@@ -65,8 +65,8 @@ set mem 800m
 
 *----------1.2: Set directories------------------------------*
 
-local path_in "C:\Users\xxxx\OneDrive - WBG\Surveys\MEX\MEX_2006_LFS\MEX_2006_LFS_v01_M\Data\Original"
-local path_output "C:\Users\xxxx\OneDrive - WBG\Surveys\MEX\MEX_2006_LFS\MEX_2006_LFS_v01_M_v01_A_GLD\Data\Harmonized"
+local path_in "C:\Users\Data\Original"
+local path_output "C:\Users\Data\Harmonized"
 
 *----------1.3: Database assembly------------------------------*
 
@@ -75,9 +75,9 @@ local path_output "C:\Users\xxxx\OneDrive - WBG\Surveys\MEX\MEX_2006_LFS\MEX_200
 	use "`path_in'\VIVT106.dta",clear
 	drop p1-p3
 	destring loc mun est ageb t_loc cd_a upm d_sem n_pro_viv ent con v_sel n_ent per, replace
-	local path_in "C:\Users\xxx\OneDrive - WBG\Surveys\MEX\MEX_2006_LFS\MEX_2006_LFS_v01_M\Data\Original"
+	local path_in "C:\Users\Data\Original"
 	merge 1:m ent con v_sel using "`path_in'\HOGT106.dta", nogen
-	local path_in "C:\Users\xxxx\OneDrive - WBG\Surveys\MEX\MEX_2006_LFS\MEX_2006_LFS_v01_M\Data\Original"
+	local path_in "C:\Users\Data\Original"
 	merge 1:m ent con v_sel n_hog using "`path_in'\SDEMT106.dta"
 	drop if _merge==1
 	drop _merge
