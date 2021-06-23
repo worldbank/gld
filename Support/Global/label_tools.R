@@ -23,6 +23,16 @@ vallabs_region <- metadata %>%
                 indices_to = "value_label") %>%
   distinct()
 
+vallabs_edu14 <- metadata %>%
+  filter(grepl("14", id), grepl("grade", var_name_orig)) %>%
+  select(labels, id) %>%
+  unnest_longer(labels, 
+           values_to = "value",
+           indices_to = "value_label") %>%
+  arrange(value) %>%
+  pivot_wider(names_from = id, 
+              values_from = "value_label") %>%
+  distinct() 
 
 # make a table to labels across time: edu 
 vallab_table_edu <- metadata %>%
