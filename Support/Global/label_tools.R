@@ -23,6 +23,7 @@ vallabs_region <- metadata %>%
                 indices_to = "value_label") %>%
   distinct()
 
+
 vallabs_edu14 <- metadata %>%
   filter(grepl("14", id), grepl("grade", var_name_orig)) %>%
   select(labels, id) %>%
@@ -34,6 +35,32 @@ vallabs_edu14 <- metadata %>%
               values_from = "value_label") %>%
   distinct() 
 
+
+vallabs_edu18 <- metadata %>%
+  filter(grepl("18", id), grepl("pufc07", var_name_orig)) %>%
+  select(labels, id) %>%
+  unnest_longer(labels, 
+                values_to = "value",
+                indices_to = "value_label") %>%
+  arrange(value) %>%
+  pivot_wider(names_from = id, 
+              values_from = "value_label") %>%
+  distinct() 
+
+
+vallabs_edu19 <- metadata %>%
+  filter(grepl("19", id), grepl("pufc07", var_name_orig)) %>%
+  select(labels, id) %>%
+  filter(!is.na(labels)) %>%
+  unnest_longer(labels, 
+                values_to = "value",
+                indices_to = "value_label") %>%
+  arrange(value) %>%
+  pivot_wider(names_from = id, 
+              values_from = "value_label") %>%
+  distinct() 
+
+
 # make a table to labels across time: edu 
 vallab_table_edu <- metadata %>%
   filter( grepl("grade", label_orig) ) %>%
@@ -44,4 +71,15 @@ vallab_table_edu <- metadata %>%
                 indices_to = "value_label") %>%
   pivot_wider(names_from = id, values_from = value_label)
   
+
+vallab_table_edu_nolab <- metadata %>%
+  filter( grepl("grade", label_orig) ) %>%
+  filter(!is.na(labels)) %>%
+  select(id, labels) %>%
+  unnest_longer(labels, 
+                values_to = "value",
+                indices_to = "value_label") %>%
+  pivot_wider(names_from = id, values_from = value_label) %>%
+  arrange(value)
+
 
