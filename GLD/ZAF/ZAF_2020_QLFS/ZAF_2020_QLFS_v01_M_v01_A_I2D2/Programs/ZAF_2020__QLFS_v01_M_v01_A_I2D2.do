@@ -82,6 +82,7 @@
 person number, even though some of them seem to be different respondents. 
 These observations account for 0.32% of total sample size. 356 were dropped.  
 */	
+	bysort UQNO PERSONNO Qtr: gen dup=cond(_N==1, 0, _n)
 	drop if dup>1
 	drop dup
 	
