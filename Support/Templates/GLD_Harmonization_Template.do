@@ -235,11 +235,11 @@ local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
 
 
 *<_subnatid1_prev_>
-/* <_subnatid1_prev>
+/* <_subnatid1_prev_note>
 
 	subnatid1_prev is coded as missing unless the classification used for subnatid1 has changed since the previous survey.
 
-</_subnatid1_prev> */
+</_subnatid1_prev_note> */
 	gen subnatid1_prev = .
 	label var subnatid1_prev "Classification used for subnatid1 from previous survey"
 *</_subnatid1_prev_>
