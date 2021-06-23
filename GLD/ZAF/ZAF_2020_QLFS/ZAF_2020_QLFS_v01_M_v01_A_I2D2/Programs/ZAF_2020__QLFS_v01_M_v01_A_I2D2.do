@@ -16,10 +16,10 @@
 							Z:\_GLD-Harmonization\573465_JT\ZAF\ZAF_2020_LFS\ZAF_2020_LFS_v01_M\data\stata\qlfs-2020-q4-worker-v1.dta
 ** RESPONSIBLE				Junying Tong
 ** Created					6/3/2021
-** Modified					6/13/2021
-** NUMBER OF HOUSEHOLDS		34,022  
-** NUMBER OF INDIVIDUALS	118,173
-** EXPANDED POPULATION		58,013,653
+** Modified					6/21/2021
+** NUMBER OF HOUSEHOLDS		34,029
+** NUMBER OF INDIVIDUALS	209,549
+** EXPANDED POPULATION		57,956,552
 **                                                                                                  **
 ******************************************************************************************************
 *****************************************************************************************************/
@@ -77,8 +77,15 @@
 	append using "`input'\qlfs-2020-q4-worker-v1.dta"
 	recode Qtr .=4
 	replace Weight=Weight/4
-
+/*
+668 observations in Quarter 2 are not uniquely defined by household number and
+person number, even though some of them seem to be different respondents. 
+These observations account for 0.32% of total sample size. 356 were dropped.  
+*/	
+	drop if dup>1
+	drop dup
 	
+
 ** COUNTRY
 	gen str4 ccode="ZAF"
 	label var ccode "Country code"
@@ -106,9 +113,10 @@
 	label var idh "Household id"
 
 	tostring PERSONNO, gen(idp) format(%02.0f)
+	tostring Qtr, gen(quarter) format(%02.0f)
 
 ** INDIVIDUAL IDENTIFICATION NUMBER
-	replace idp=idh+idp
+	replace idp=idh+idp+quarter
 	label var idp "Individual id"
 
 
@@ -243,46 +251,47 @@ urbanization stats from:
 ** HOUSEHOLD SIZE
 	bys idh: egen byte hhsize=count(idp)
 	label var hhsize "Household size"
-
+	gen idp2=substr(idp,1,20)
+	label var idp2 "Person number without quarter number added"
 
 ** RELATIONSHIP TO THE HEAD OF HOUSEHOLD
 
 /*
 Not asked, all we know is that the person with personal number equal to 1 is the head, the problem is that in some cases that person is not present, probably because he/she didn't spend four nights or more in this household. In those cases I assigned the eldest male present as the household head.
-155 observations were dropped due to no male memeber or multiple same old male members.
+12 observations were dropped due to no male memeber or multiple same old male (or female) members.
 */
 
 	gen byte head=1 if PERSONNO==1
 	bys idh: egen hh=sum(head==1)
 	bys idh: egen maxage=max(Q14)
 	replace head=1 if hh==0 & Q14==maxage
+	bys idh: egen hh2=sum(head==1)
 	drop hh
-	bys idh: egen hh=sum(head==1)
 	preserve
-	collapse (first) head, by(idp idh hh)
-	bys idh: egen hh2=sum(head)
-	drop hh
+	collapse (max) head, by(idp2 idh hh2)
+	bys idh: egen hh3=sum(head)
+	drop hh2
 	tempfile head_collapse
 	save `head_collapse'
 	restore
-	merge m:1 idh idp using `head_collapse' 
-	drop _merge hh 
-	rename hh2 hh
-	replace head=. if hh==2 & Q13==2 & head==1
-	drop hh
-	bys idh: egen hh=sum(head==1)
+	merge m:1 idh idp2 using `head_collapse' 
+	drop _merge
+	replace head=. if hh3==2 & Q13==2 & head==1
+	bys idh: egen hh4=sum(head==1)
 	preserve
-	collapse (first) head, by(idp idh hh)
-	bys idh: egen hh2=sum(head)
-	drop hh
+	collapse (max) head, by(idp2 idh hh4)
+	bys idh: egen hh5=sum(head)
 	save `head_collapse', replace
 	restore
-	merge m:1 idh idp using `head_collapse' 
-	drop if hh2!=1
-	drop _merge hh2 hh
+	merge m:1 idh idp2 using `head_collapse' 
+	drop if hh5!=1
+	bys idp2: egen head_max=max(!missing(head))
+	bys idp2: egen head_min=min(!missing(head))
+	replace head=1 if head_max==1&head_min==0
+	drop _merge hh2 hh3 hh4 hh5 idp2 quarter head_*
 	label var head "Relationship to the head of household"
 	la de lblhead  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
-	label values head  lblhead
+	label values head lblhead
 
 
 ** GENDER
@@ -480,7 +489,7 @@ whose answers to this question are "Yes" were coded as missing values.
 
 ** SECTOR OF ACTIVITY: PUBLIC - PRIVATE
 	gen byte ocusec=Q415TYPEBUSNS
-	recode ocusec 4=1 3 5=2 2=3 6=.
+	recode ocusec 4=1 3 5=2 2=3 6=. 9=.
 	replace ocusec=. if lstatus!=1
 	label var ocusec "Sector of activity"
 	la de lblocusec 1 "Public Sector, Central Government, Army, NGO" 2 "Private" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
