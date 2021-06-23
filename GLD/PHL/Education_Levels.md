@@ -42,9 +42,11 @@ These survey years appear to be coded according to the 2008 Philippine Statistic
 | K-12 Grade 1 - Grade 5 | Primary Incomplete |
 |   Elementary Graduate           |   Primary Complete                    |
 |   K-12 Grade 6 |                        Primary Complete |
+| SPED Undergraduate | Primary Complete |
 |   First - Fourth Year High School      |    Secondary Incomplete       |
 | K-12 Grade 7 - Grade 9 | Secondary Incomplete |
 |   High School Graduate      |    Secondary Complete       |
+| SPED Graduate | Secondary Complete |
 | K-12 Secondary Grade 10 | Secondary Complete |
 | K-12 Secondary Grade 11-12| Post-Secondary, not University|
 |   First - Third Year Post-Secondary        |  Post-Secondary, not University                           |
@@ -74,7 +76,9 @@ Once the variable names for 2016 have been harmonized, the values themselves dif
 The numeric values for Janurary and April coincide; values for July and October coincide, but these two groups of values differ from each other. The January/April group most closely aligns with the 2016 survey published by the PSA. Since the July/October values have no value labels and there's no reasonable inference to classify the values, I'm only going to categorize education for the first two rounds and leave the observations for July and October as missing for the time being.
 
 #### Additional Notes for 2017
-All rounds for 2017 seems to follow the same numeric schema set in the July/October grouping of 2016. However, the siutation is slightly different from that of 2016: all rounds/months have the same numeric values and the values labels do not contain key levels such as those that indicate secondary completion. Therefore, for 2017, I will leave `edulevel1` as missing for the time being until more complete information can be gathered. 
+All rounds for 2017 seems to follow the same numeric schema set in the July/October grouping of 2016. However, the siutation is slightly different from that of 2016: all rounds/months have the same numeric values and the values labels do not contain key levels such as those that indicate secondary completion. Therefore, for 2017, I will leave `edulevel1` as missing for the time being until more complete information can be gathered.
+
+The most promising possibility is to assume that the values in 2017 are the same "meaning" as the values in 2018, Janurary, which are labelled and follow about the same distribution and value pattern. If we make this assumption, the meaning of 2017 can be inferred from 2018.
 
 
 ## Survey Years 2019 +
