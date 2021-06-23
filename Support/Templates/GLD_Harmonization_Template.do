@@ -103,7 +103,7 @@ local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
 
 
 *<_vermast_>
-	gen vermast = 
+	gen vermast = ""
 	label var vermast "Version of master data"
 *</_vermast_>
 
