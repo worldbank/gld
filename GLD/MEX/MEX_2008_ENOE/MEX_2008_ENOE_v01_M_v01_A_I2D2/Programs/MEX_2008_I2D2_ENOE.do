@@ -15,13 +15,12 @@
 *							SDEMT108.dta
 *							COE1T108.dta
 *							COE2T108.dta
-** RESPONSIBLE				Cristobal Bennett
 ** MODIFIED BY				aquinonesnunura@worldbank.org
 ** Created					03-26-2020
 ** Modified					05-29-2021
-** NUMBER OF HOUSEHOLDS		103955
-** NUMBER OF INDIVIDUALS	401325
-** EXPANDED POPULATION		109290633
+** NUMBER OF HOUSEHOLDS		104113
+** NUMBER OF INDIVIDUALS	402253
+** EXPANDED POPULATION		110815271
 **                                                                                                  **
 ******************************************************************************************************
 *****************************************************************************************************/
@@ -41,7 +40,7 @@
 
 
 ** DIRECTORY
-	local path "C:\Users\xxx\OneDrive - WBG\Surveys\MEX\MEX_2008_LFS"
+	local path "C:\Users\MEX\MEX_2008_LFS"
 
 ** LOG FILE
 	log using "`path'\MEX_2008_LFS_v01_M_v01_A_I2D2\Programs\MEX_2008_I2D2_ENOE.log", replace

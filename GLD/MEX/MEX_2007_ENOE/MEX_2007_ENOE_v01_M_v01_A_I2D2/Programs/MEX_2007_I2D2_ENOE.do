@@ -15,13 +15,12 @@
 *							SDEMT107.dta
 *							COE1T107.dta
 *							COE2T107.dta
-** RESPONSIBLE				Cristobal Bennett
 ** MODIFIED BY				aquinonesnunura@worldbank.org
 ** Created					03-27-2020
 ** Modified					05-29-2021
-** NUMBER OF HOUSEHOLDS		105151
-** NUMBER OF INDIVIDUALS 	407673
-** EXPANDED POPULATION		108032070
+** NUMBER OF HOUSEHOLDS		105567
+** NUMBER OF INDIVIDUALS 	410185
+** EXPANDED POPULATION		109170502
 **                                                                                                  **
 ******************************************************************************************************
 *****************************************************************************************************/
@@ -41,11 +40,9 @@
 
 
 ** DIRECTORY
-	*	local path "~/Desktop/MEX/MEX_2007_LFS"
-	local path "C:\Users\xxx\OneDrive - WBG\Surveys\MEX\MEX_2007_LFS"
+	local path "C:\Users\Surveys\MEX\MEX_2007_LFS"
 
 ** LOG FILE
-	*	log using "`path'/MEX_2007_LFS_v01_M_v01_A_I2D2/Programs/MEX_2007_I2D2_ENOE.log", replace
 	log using "`path'\MEX_2007_LFS_v01_M_v01_A_I2D2\Programs\MEX_2007_I2D2_ENOE.log", replace
 
 
@@ -804,12 +801,7 @@
 	}
 	keep ccode year intv_year month  idh idp wgt strata psu `keep'
 
-	
-	
-	
-	
 
-	*save "`path'/MEX_2007_LFS_v01_M_v01_A_I2D2/Data/Harmonized/MEX_2007_I2D2_ENOE.dta", replace
 	save "`path'\MEX_2007_LFS_v01_M_v01_A_I2D2\Data\Harmonized\MEX_2007_I2D2_ENOE.dta", replace
 
 	log close
