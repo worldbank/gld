@@ -430,17 +430,29 @@ if (`cb_pause' == 1) {
 
 
 ** EDUCATIONAL LEVEL 1
+	/*Please refer to the "Education_Levels.md" for a detailed discussion on classificition of how each level is classified and why,
+		available in github repository. */
 	gen byte edulevel1=.
-	replace edulevel1=1 if c09_grd==0
-	replace edulevel1=2 if c09_grd==1
-	replace edulevel1=3 if c09_grd==2
-	replace edulevel1=4 if c09_grd==3
-	replace edulevel1=5 if c09_grd==4
-	replace edulevel1=7 if c09_grd==5 | ( c09_grd>=60 & c09_grd<=78)
-	* note, according to the PSA, codes 60-78 refer to bachelors degrees, (for 2009, assuming same)
+	replace edulevel1=1 if j12c09_grade==0 | j12c09_grade == 10 	// "No education" and "Preschool" -> "No Education"
+	replace edulevel1=2 if j12c09_grade>=210 &  j12c09_grade<=260	// Grades 1-7 to "Primary Incomplete"
+	replace edulevel1=3 if j12c09_grade==280						// "Elementary Graduate" to "Primary Complete"
+	replace edulevel1=4 if j12c09_grade>=310 &  j12c09_grade<=340 	// First-Fourth year in High school -> "secondary incomplete"
+	replace edulevel1=5 if j12c09_grade==350						// "High school graduate" -> "secondary complete"
+	replace edulevel1=6 if j12c09_grade>=410 &  j12c09_grade<=501 	// Post secondary + Basic Programs -> "Higher secondary not uni"
+	replace edulevel1=6 if j12c09_grade>=502 & 	j12c09_grade<=699	// Basic Program degrees to "Higher secondary not uni"
+	replace edulevel1=7 if j12c09_grade>= 810 & j12c09_grade <= . // all labelled uni levels
 
 	label var edulevel1 "Level of education 1"
-	la de lbledulevel1 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete" 8 "Other" 9 "Unstated"
+	la de lbledulevel1 	1 "No education" ///
+						2 "Primary incomplete" ///
+						3 "Primary complete" 	///
+						4 "Secondary incomplete" ///
+						5 "Secondary complete" ///
+						6 "Higher than secondary but not university" ///
+						7 "University incomplete or complete" ///
+						8 "Other" ///
+						9 "Unstated"
+
 	label values edulevel1 lbledulevel1
 	replace edulevel1=. if age < ed_mod_age // restrict universe to students at or above primary school age
 
@@ -449,7 +461,11 @@ if (`cb_pause' == 1) {
 	gen byte edulevel2=edulevel1
 	recode edulevel2 (4=3) (5=4)  (6/7=5) (8=.) (9=.)
 	label var edulevel2 "Level of education 2"
-	la de lbledulevel2 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
+	la de lbledulevel2 	1 "No education" 	///
+						2 "Primary incomplete"  	///
+						3 "Primary complete but secondary incomplete" 	///
+						4 "Secondary complete" 	///
+						5 "Some tertiary/post-secondary"
 	label values edulevel2 lbledulevel2
 	replace edulevel2=. if age < ed_mod_age // restrict universe to students at or above primary school age
 
@@ -475,7 +491,8 @@ if (`cb_pause' == 1) {
 	la de lbleverattend 0 "No" 1 "Yes"
 	label values everattend lbleverattend
 
-
+pause on
+pause
 
 /*****************************************************************************************************
 *                                                                                                    *
