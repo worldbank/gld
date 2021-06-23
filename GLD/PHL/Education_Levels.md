@@ -73,6 +73,9 @@ Once the variable names for 2016 have been harmonized, the values themselves dif
 
 The numeric values for Janurary and April coincide; values for July and October coincide, but these two groups of values differ from each other. The January/April group most closely aligns with the 2016 survey published by the PSA. Since the July/October values have no value labels and there's no reasonable inference to classify the values, I'm only going to categorize education for the first two rounds and leave the observations for July and October as missing for the time being.
 
+#### Additional Notes for 2017
+All rounds for 2017 seems to follow the same numeric schema set in the July/October grouping of 2016. However, the siutation is slightly different from that of 2016: all rounds/months have the same numeric values and the values labels do not contain key levels such as those that indicate secondary completion. Therefore, for 2017, I will leave `edulevel1` as missing for the time being until more complete information can be gathered. 
+
 
 ## Survey Years 2019 +
 These survey years follow the newest PSA classification for [2017](https://psa.gov.ph/content/philippine-standard-classification-education-psced). The biggest difference in these years is the inclusion of two additional years in secondary school.
