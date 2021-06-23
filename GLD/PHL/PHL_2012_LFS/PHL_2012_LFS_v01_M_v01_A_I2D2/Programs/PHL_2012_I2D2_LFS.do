@@ -487,8 +487,7 @@ if (`cb_pause' == 1) {
 	la de lbleverattend 0 "No" 1 "Yes"
 	label values everattend lbleverattend
 
-pause on
-pause
+
 
 /*****************************************************************************************************
 *                                                                                                    *
