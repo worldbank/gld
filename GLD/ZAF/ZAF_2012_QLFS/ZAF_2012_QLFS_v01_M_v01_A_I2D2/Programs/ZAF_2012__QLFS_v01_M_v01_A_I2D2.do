@@ -13,10 +13,11 @@
 ** INPUT DATABASES			Z:\_GLD-Harmonization\573465_JT\ZAF\ZAF_2012_LFS\ZAF_2012_LFS_v01_M\data\stata\lmdsa-2012-v1-stata.dta
 ** RESPONSIBLE				Junying Tong
 ** Created					6/14/2021
-** Modified					6/17/2021
-** NUMBER OF HOUSEHOLDS		45,972
-** NUMBER OF INDIVIDUALS	161,252
-** EXPANDED POPULATION		52,220,437
+** Modified					6/22/2021
+** NUMBER OF HOUSEHOLDS		46,021
+** NUMBER OF INDIVIDUALS	339,826
+** EXPANDED POPULATION		52,265,329
+
 **                                                                                                  **
 ******************************************************************************************************
 *****************************************************************************************************/
@@ -77,6 +78,7 @@
 	save "`i2d2'\Work\ZAF_2012_QLFS_v01_M_v01_A_I2D2_append_Q19ATTE.dta", replace
 	use "`input'\lmdsa_2012_v1.1_20150407.dta", clear
 
+	
 ** COUNTRY
 	gen str4 ccode="ZAF"
 	label var ccode "Country code"
@@ -104,9 +106,11 @@
 	label var idh "Household id"
 
 	tostring PERSONNO, gen(idp) format(%02.0f)
+	tostring Qtr, gen(quarter) format(%02.0f)
 
+	
 ** INDIVIDUAL IDENTIFICATION NUMBER
-	replace idp=idh+idp
+	replace idp=idh+idp+quarter
 	label var idp "Individual id"
 
 
@@ -236,45 +240,47 @@ Q4:3,021
 ** HOUSEHOLD SIZE
 	bys idh: egen byte hhsize=count(idp)
 	label var hhsize "Household size"
+	gen idp2=substr(idp,1,20)
+	label var idp2 "Person number without quarter number added"
 
 
 ** RELATIONSHIP TO THE HEAD OF HOUSEHOLD
 
 /*
 Not asked, all we know is that the person with personal number equal to 1 is the head, the problem is that in some cases that person is not present, probably because he/she didn't spend four nights or more in this household. In those cases I assigned the eldest male present as the household head.
-357 observations were dropped due to no male memeber or multiple same old male members.
+32 observations were dropped due to no male memeber or multiple same old male members.
 */
 	gen byte head=1 if PERSONNO==1
 	bys idh: egen hh=sum(head==1)
 	bys idh: egen maxage=max(Q14)
 	replace head=1 if hh==0 & Q14==maxage
+	bys idh: egen hh2=sum(head==1)
 	drop hh
-	bys idh: egen hh=sum(head==1)
 	preserve
-	collapse (first) head, by(idp idh hh)
-	bys idh: egen hh2=sum(head)
-	drop hh
+	collapse (max) head, by(idp2 idh hh2)
+	bys idh: egen hh3=sum(head)
+	drop hh2
 	tempfile head_collapse
 	save `head_collapse'
 	restore
-	merge m:1 idh idp using `head_collapse' 
-	drop _merge hh 
-	rename hh2 hh
-	replace head=. if hh==2 & Q13==2 & head==1
-	drop hh
-	bys idh: egen hh=sum(head==1)
+	merge m:1 idh idp2 using `head_collapse' 
+	drop _merge
+	replace head=. if hh3==2 & Q13==2 & head==1
+	bys idh: egen hh4=sum(head==1)
 	preserve
-	collapse (first) head, by(idp idh hh)
-	bys idh: egen hh2=sum(head)
-	drop hh
+	collapse (max) head, by(idp2 idh hh4)
+	bys idh: egen hh5=sum(head)
 	save `head_collapse', replace
 	restore
-	merge m:1 idh idp using `head_collapse' 
-	drop if hh2!=1
-	drop _merge hh2 hh
+	merge m:1 idh idp2 using `head_collapse' 
+	drop if hh5!=1
+	bys idp2: egen head_max=max(!missing(head))
+	bys idp2: egen head_min=min(!missing(head))
+	replace head=1 if head_max==1&head_min==0
+	drop _merge hh2 hh3 hh4 hh5 idp2 quarter
 	label var head "Relationship to the head of household"
 	la de lblhead  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
-	label values head  lblhead
+	label values head lblhead
 
 
 ** GENDER
