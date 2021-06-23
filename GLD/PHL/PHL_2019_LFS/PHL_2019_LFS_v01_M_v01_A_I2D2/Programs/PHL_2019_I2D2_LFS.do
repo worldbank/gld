@@ -434,8 +434,9 @@ if (`cb_pause' == 1) {
 
 
 ** EDUCATIONAL LEVEL 1
-	/*	note this coding falls under issue #18 https://github.com/worldbank/gld/issues/18, using
-		.dta-loaded factor /data labels for now just to continue with project. */
+	/*Please refer to the "Education_Levels.md" for a detailed discussion on classificition of how each level is classified and why,
+		available in github repository. */
+
 	gen byte edulevel1=.
 	replace edulevel1=1 if pufc07_grade <= 2000 	// less than primary to "no education"
 
