@@ -60,7 +60,8 @@ These survey years appear to be coded according to the 2008 Philippine Statistic
 |   Masters, Doctorate             | University Incomplete or Complete          |
 |                             |                   |
 
-
+### Values specific to the 2008 PSCED
+Note that PSA docuementation for [other years in the same schema](http://psada.psa.gov.ph/index.php/catalog/175/datafile/F1) lists values between `502` and `689` as various completed degrees for associate-level, pre-professional programs. I will assume these values refer to these same programs, and code them as `Post-Secondary, not University`. 
 
 ## Survey Years 2019 +
 These survey years follow the newest PSA classification for [2017](https://psa.gov.ph/content/philippine-standard-classification-education-psced). The biggest difference in these years is the inclusion of two additional years in secondary school.
