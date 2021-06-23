@@ -442,6 +442,10 @@ if (`cb_pause' == 1) {
 	replace edulevel1=6 if j12c09_grade>=502 & 	j12c09_grade<=699	// Basic Program degrees to "Higher secondary not uni"
 	replace edulevel1=7 if j12c09_grade>= 810 & j12c09_grade <= . // all labelled uni levels
 
+	* for 2016, replace edulevel1 == missing if the rounds/month is July or October.
+	* this is because there is not enough information for these rounds, which differ from the first two.
+	replace edulevel1 = . 	if pufsvymo == 7 | pufsvymo == 10 		// if july or october
+
 	label var edulevel1 "Level of education 1"
 	la de lbledulevel1 	1 "No education" ///
 						2 "Primary incomplete" ///
@@ -491,8 +495,6 @@ if (`cb_pause' == 1) {
 	la de lbleverattend 0 "No" 1 "Yes"
 	label values everattend lbleverattend
 
-pause on
-pause
 
 /*****************************************************************************************************
 *                                                                                                    *

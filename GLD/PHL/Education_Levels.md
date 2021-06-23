@@ -64,7 +64,15 @@ These survey years appear to be coded according to the 2008 Philippine Statistic
 Note that PSA docuementation for [other years in the same schema](http://psada.psa.gov.ph/index.php/catalog/175/datafile/F1) lists values between `502` and `689` as various completed degrees for associate-level, pre-professional programs. I will assume these values refer to these same programs, and code them as `Post-Secondary, not University`.
 
 ### Notes specific to 2008 PSCED
-Some years contain two education grade variables that appear to correspond to the grade level under the 1997 and 2008 classification schemas. While it may be convenient to use the 1997-schema variable, I decided to use the 2008-year one because it wasn't clear that all years contained the 1997 year cognate variable and because, in theory, these years should be classified under the new schema anyway.
+Some years contain two education grade variables that appear to correspond to the grade level under the 1997 and 2008 classification schemas -- ie, two variable in the same survey round or data file. Sometimes this varible is called `c09_grd` for the old schema and usually the variable for the new schema is called `j12c09_grade`. While it may be convenient to use the 1997-schema variable, I decided to use the 2008-year one (usually the `j12c09_grade`) because it wasn't clear that all years contained the 1997 year cognate variable and because, in theory, these years should be classified under the new schema anyway.
+
+Furthermore, some years, such as 2016, have various names for the "highest grade completed" variable for within-year rounds, but *usually* only one variable in each file, but not always. We have to be very mindful of the variable names that refer to the new, 2008 coding schema and the old coding schema. An easy way to distinguish is the new coding schema variable has far more numeric or factor levels. In 2016, we want to use `j12c09_grade` in the Janurary round, (not `c09_grd`), `pufc07_grade` in April, July, and October rounds.
+
+#### Additional Notes for 2016
+Once the variable names for 2016 have been harmonized, the values themselves differ across rounds/months within 2016. (A small caveat is that the Janurary values are labelled factors whereas the following three rounds are unlabelled integers, but the Janurary values have integer values behind the labels, and these numeric values are the values to which I'm referring.)
+
+The numeric values for Janurary and April coincide; values for July and October coincide, but these two groups of values differ from each other. The January/April group most closely aligns with the 2016 survey published by the PSA. Since the July/October values have no value labels and there's no reasonable inference to classify the values, I'm only going to categorize education for the first two rounds and leave the observations for July and October as missing for the time being.
+
 
 ## Survey Years 2019 +
 These survey years follow the newest PSA classification for [2017](https://psa.gov.ph/content/philippine-standard-classification-education-psced). The biggest difference in these years is the inclusion of two additional years in secondary school.
