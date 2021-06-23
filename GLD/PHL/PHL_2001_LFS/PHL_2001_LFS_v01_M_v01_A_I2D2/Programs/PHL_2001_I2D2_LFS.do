@@ -422,13 +422,13 @@ if (`cb_pause' == 1) {
 	/*Please refer to the "Education_Levels.md" for a detailed discussion on classificition of how each level is classified and why,
 		available in github repository. */
 	gen byte edulevel1=.
-	replace edulevel1=1 if grade==0			// "No Grade Completed" -> "No education"
-	replace edulevel1=2 if grade==1 // "Elementary Undergraduate" -> " Primary Incomplete"
-	replace edulevel1=3 if grade==2 	// "Elementary Graduate" -> "Primary Complete"
-	replace edulevel1=4 if grade==3		// "High School Undergraduate" -> "Secondary Incomplete"
-	replace edulevel1=5 if grade==4		// "High school graduate" -> "Secondary Complete"
-	replace edulevel1=7 if grade==5 | ( grade>=60 & grade<=98) // "College Graduate" and "[x] Bachelors/Advanced Degree" -> "University"
-	replace edulevel1=9 if grade==99 	// where 99 == 'not reported'
+	replace edulevel1=1 if c07_grade==0			// "No Grade Completed" -> "No education"
+	replace edulevel1=2 if c07_grade==1 // "Elementary Undergraduate" -> " Primary Incomplete"
+	replace edulevel1=3 if c07_grade==2 	// "Elementary Graduate" -> "Primary Complete"
+	replace edulevel1=4 if c07_grade==3		// "High School Undergraduate" -> "Secondary Incomplete"
+	replace edulevel1=5 if c07_grade==4		// "High school graduate" -> "Secondary Complete"
+	replace edulevel1=7 if c07_grade==5 | ( c07_grade>=60 & c07_grade<=98) // "College Graduate" and "[x] Bachelors/Advanced Degree" -> "University"
+	replace edulevel1=9 if c07_grade==99 	// where 99 == 'not reported'
 
 	label var edulevel1 "Level of education 1"
 	la de lbledulevel1 	1 "No education"	///
@@ -479,8 +479,6 @@ if (`cb_pause' == 1) {
 	la de lbleverattend 0 "No" 1 "Yes"
 	label values everattend lbleverattend
 
-pause on
-pause
 
 
 /*****************************************************************************************************
