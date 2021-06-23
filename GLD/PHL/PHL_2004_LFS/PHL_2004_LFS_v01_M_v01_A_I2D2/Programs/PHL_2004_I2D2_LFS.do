@@ -54,6 +54,8 @@
 	local 	 code 		"`i2d2'\Programs"
 	local 	 id_data 	"`i2d2'\Data\Harmonized"
 
+	local 	lb_mod_age	10	// labor module minimun age (inclusive)
+	local 	ed_mod_age	10	// labor module minimun age (inclusive)
 
 ** LOG FILE
 	log using `"`id_data'\\`cty3'_`surv_yr'_I2D2_LFS.log"', replace
@@ -390,7 +392,7 @@ if (`cb_pause' == 1) {
 
 
 ** EDUCATION MODULE AGE
-	gen byte ed_mod_age=10
+	gen byte ed_mod_age=`ed_mod_age'
 	label var ed_mod_age "Education module application age"
 
 
@@ -417,32 +419,48 @@ if (`cb_pause' == 1) {
 
 
 ** EDUCATIONAL LEVEL 1
+	/*Please refer to the "Education_Levels.md" for a detailed discussion on classificition of how each level is classified and why,
+		available in github repository. */
 	gen byte edulevel1=.
-	replace edulevel1=1 if c07_grade==0
-	replace edulevel1=2 if c07_grade==1 | c07_grade==2 | c07_grade==3
-	replace edulevel1=3 if c07_grade==4
-	replace edulevel1=4 if c07_grade==5
-	replace edulevel1=5 if c07_grade==6
-	replace edulevel1=7 if c07_grade==7 | ( c07_grade>=40 & c07_grade<=98)
-	replace edulevel1=9 if c07_grade==99 	// where 99 == 'not reported'
+	replace edulevel1=1 if c09_grd==0			// "No Grade Completed" -> "No education"
+	replace edulevel1=2 if c09_grd==1 // "Elementary Undergraduate" -> " Primary Incomplete"
+	replace edulevel1=3 if c09_grd==2 	// "Elementary Graduate" -> "Primary Complete"
+	replace edulevel1=4 if c09_grd==3		// "High School Undergraduate" -> "Secondary Incomplete"
+	replace edulevel1=5 if c09_grd==4		// "High school graduate" -> "Secondary Complete"
+	replace edulevel1=7 if c09_grd==5 | ( c09_grd>=60 & c09_grd<=98) // "College Graduate" and "[x] Bachelors/Advanced Degree" -> "University"
+	replace edulevel1=9 if c09_grd==99 	// where 99 == 'not reported'
+
 	label var edulevel1 "Level of education 1"
-	la de lbledulevel1 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete" 8 "Other" 9 "Unstated"
+	la de lbledulevel1 	1 "No education"	///
+						2 "Primary incomplete" 	///
+						3 "Primary complete" 	///
+						4 "Secondary incomplete" ///
+						5 "Secondary complete" 	///
+						6 "Higher than secondary but not university" 	///
+						7 "University incomplete or complete" 	///
+						8 "Other" 			///
+						9 "Unstated"
+
 	label values edulevel1 lbledulevel1
 	replace edulevel1=. if age < ed_mod_age // restrict universe to students at or above primary school age
 
 
 ** EDUCATION LEVEL 2
 	gen byte edulevel2=edulevel1
-	recode edulevel2 (4=3) (5=4)  (6/7=5) (8=.) (9=.) // add recode of 9
+	recode edulevel2 (4=3) (5=4)  (6/7=5) (8=.) (9=.)
 	label var edulevel2 "Level of education 2"
-	la de lbledulevel2 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
+	la de lbledulevel2 	1 "No education" 	///
+						2 "Primary incomplete"  	///
+						3 "Primary complete but secondary incomplete" 	///
+						4 "Secondary complete" 		///
+						5 "Some tertiary/post-secondary"
 	label values edulevel2 lbledulevel2
 	replace edulevel2=. if age < ed_mod_age // restrict universe to students at or above primary school age
 
 
 ** EDUCATION LEVEL 3
 	gen byte edulevel3=edulevel1
-	recode edulevel3 (2 3 =2) (4 5 =3) (6/7 =4) (8=.) (9=.) // add recode of 9
+	recode edulevel3 (2 3 =2) (4 5 =3) (6/7 =4) (8=.) (9=.)
 	label var edulevel3 "Level of education 3"
 	la de lbledulevel3 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values edulevel3 lbledulevel3
@@ -470,7 +488,7 @@ if (`cb_pause' == 1) {
 *****************************************************************************************************/
 
 ** LABOR MODULE AGE
-	gen byte lb_mod_age=10
+	gen byte lb_mod_age=`lb_mod_age'
 	label var lb_mod_age "Labor module application age"
 
 
