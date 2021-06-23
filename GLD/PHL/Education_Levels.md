@@ -17,7 +17,7 @@ Luckily the education levels are fairly self explanatory for the first few years
 ### Values Specifc to PSCED 1997
 Note that in PSA documentation for [previus years](http://psada.psa.gov.ph/index.php/catalog/11/datafile/F5), values `40` - `98` refer to what appear  to be completed bachelors or other advanced degrees. I code these values as `University Complete or Incomplete`.
 
-### Notes Sepcific to  PSCED 1997
+### Notes Sepcific to PSCED 1997
 It seems that "College" usually refers to Post-secondary/Tertiary University in the labelling since [the most recent/similar documentation](http://psada.psa.gov.ph/index.php/catalog/11/datafile/F5) makes no reference to post-secondary, non-university education.
 
 
