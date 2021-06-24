@@ -434,26 +434,39 @@ if (`cb_pause' == 1) {
 
 
 ** EDUCATIONAL LEVEL 1
-	/*	note this coding falls under issue #18 https://github.com/worldbank/gld/issues/18, using
-		.dta-loaded factor /data labels for now just to continue with project. */
+	/*Please refer to the "Education_Levels.md" for a detailed discussion on classificition of how each level is classified and why,
+		available in github repository. */
+
 	gen byte edulevel1=.
-	replace edulevel1=1 if pufc07_grade <= 2000 	// less than primary to "no education"
+	replace edulevel1=1 if pufc07_grade <= 2000 		// less than primary to "no education"
 
-	replace edulevel1=2 if pufc07_grade == 10010	// Grade 1-5 to "primary incomplete"
+	replace edulevel1=2 if pufc07_grade == 10010 		/// Grade 1-5 -> "primary incomplete" (april)
+							| pufc07_grade == 10002 	/// also include SPED + continuing education as codebook specifies
+							| pufc07_grade == 10003
+
 	replace edulevel1=3 if pufc07_grade == 10020 		// grade 6/7 graduate to "primary complete"
-	replace edulevel1=4 if pufc07_grade == 24010 	// grade 7-9 to "secondary incomplete"
-	replace edulevel1=5 if pufc07_grade == 24020		// high school complete to "secondary complete"
-	replace edulevel1=6 if (pufc07_grade >= 34011 & pufc07_grade <= 59999) 	// these areas are for post-secondary but not uni
 
-	/* 	It appears that if you have a university degree, you provide that degree program and your answer is listed in the 800s. Otherwise,
-		if you are still incomplete with uni, you list your year and your reponse is in teh 700s.
-		Masters, doctorate degrees are listed in 900s
-		*/
-	replace edulevel1=7 if (pufc07_grade >= 60010 & pufc07_grade <= 80922) // all current university and advanced degree students + grads
+	replace edulevel1=4 if pufc07_grade == 24010 		/// grade 7-9
+							| pufc07_grade == 24020 	/// and grade 10 -> "secondary incomplete "
+							| pufc07_grade == 34011 	/// and grades 11 -> "secondary incomplete"
+							| pufc07_grade == 34021 	///
+							| pufc07_grade == 35001  	/// also include SPEC and continuing education as codebook specifies
+							| pufc07_grade == 24002 	///
+							| pufc07_grade == 24003
 
-	replace edulevel1=8 if ( pufc07_grade>=1000 & pufc07_grade<=2000)		/// these are either unlabelled or "preschool", go to "other"
-							|  pufc07_grade==10002 | pufc07_grade == 24002 	/// There's no documentation on where to classify SPED
-							| pufc07_grade == 81013 | pufc07_grade==81031  // "hotels" and "military" are outliers after all education. why?
+	replace edulevel1=5 if pufc07_grade == 34012 		/// all grade 12 courses -> to "secondary complete"
+							| pufc07_grade == 34022 	///
+							| pufc07_grade == 34032 	///
+							| pufc07_grade == 35002
+
+ 	replace edulevel1=6 if (pufc07_grade >= 40000 & pufc07_grade <= 59999) 	// post-secondary but not uni
+	replace edulevel1=7 if (pufc07_grade >= 60000 & pufc07_grade <= 89999) // all current university and advanced degree students + grads
+	replace edulevel1=8 if    pufc07_grade == 24002 	// There's no documentation on where to classify SPED
+
+
+	* for 2019, replace edulevel1 == missing if the rounds/month is July or October.
+	* this is because there is not enough information for these rounds, which differ from the first two.
+	replace edulevel1=.	if pufsvymo == 7 | pufsvymo == 10 		// if july or october
 
 	label var edulevel1 "Level of education 1"
 	la de lbledulevel1 	1 "No education" 	///
@@ -500,7 +513,8 @@ if (`cb_pause' == 1) {
 	la de lbleverattend 0 "No" 1 "Yes"
 	label values everattend lbleverattend
 
-
+pause on
+pause
 
 /*****************************************************************************************************
 *                                                                                                    *
