@@ -12,7 +12,7 @@ GLD <- "Y:/GLD-Harmonization/551206_TM/PHL"
 
 ```
 
-A document to quickly review the distribution of labelled vs non-labelled region data for various years 
+A document to quickly review the distribution of labeled vs non-labeled region data for various years 
 
 # 2016 
 
@@ -77,7 +77,9 @@ After recoding to the same levels, there seems to be pretty good visual evidence
 hist <- ggplot(lfs2016_reg, aes(reg)) +
   geom_histogram(binwidth = 1) + 
   scale_x_continuous(n.breaks = 10) +
-  facet_grid(rows = vars(svymo))
+  facet_grid(rows = vars(svymo)) + 
+  theme_minimal() +
+  labs(x = "Region Numeric Value", y = "Count")
 
 hist
 ```
