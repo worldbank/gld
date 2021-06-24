@@ -697,6 +697,8 @@ foreach v of local ed_var {
 
 *<_occup_skill_>
 	gen occup_skill = .
+	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill" 
+	label values occup_skill lblskill
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
 *</_occup_skill_>
 
@@ -853,6 +855,8 @@ foreach v of local ed_var {
 
 *<_occup_skill_2_>
 	gen occup_skill_2 = .
+	la de lblskill2 1 "Low skill" 2 "Medium skill" 3 "High skill" 
+	label values occup_skill_2 lblskill2
 	label var occup_skill_2 "Skill based on ISCO standard secondary job 7 day recall"
 *</_occup_skill_2_>
 
@@ -1062,6 +1066,8 @@ foreach v of local ed_var {
 
 *<_occup_skill_year_>
 	gen occup_skill_year = .
+	la de lblskillyear 1 "Low skill" 2 "Medium skill" 3 "High skill" 
+	label values occup_skill_year lblskillyear
 	label var occup_skill_year "Skill based on ISCO standard primary job 12 month recall"
 *</_occup_skill_year_>
 
@@ -1214,6 +1220,8 @@ foreach v of local ed_var {
 
 *<_occup_skill_2_year_>
 	gen occup_skill_2_year = .
+	la de lblskilly2 1 "Low skill" 2 "Medium skill" 3 "High skill" 
+	label values occup_skill_2_year lblskilly2
 	label var occup_skill_2_year "Skill based on ISCO standard secondary job 12 month recall"
 *</_occup_skill_2_year_>
 
