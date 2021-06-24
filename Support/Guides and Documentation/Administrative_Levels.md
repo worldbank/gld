@@ -60,3 +60,30 @@ All recoding will be done openly and in-script, which is available in this respo
 
 ### Recoding 2016 - 2020
 Since the [July 2003 PSA ISH document](https://psa.gov.ph/sites/default/files/ISHB_series%20no.%20117_Labor%20Force_July%202003%20.pdf) describes the Region schema as 17 Regions with an additional region (being produced by Region IV's split into two), I will ensure that all years after 2003 follow this labelling schema. This means that the recoding schedule for 2016 will be replicated for years 2017 and onward: all factor **and** numeric values that refer to `4` or `Region IV-A` will be recoded to `41`/`Region IV-A`; values of `17`/`Region IV-B` will be recoded to `42`/`Region IV-B` to be aligned with previous years.
+
+The resulting coding and labeling schema looks like this: 
+
+| Value    |   Before July 2003 | Starting July 2003 |
+|---------|----------------------------|------------------------------|
+| 1  | Ilocos	| Ilocos	|
+| 2	 | Cagayan Valley	| Cagayan Valley	|
+| 3  | Central Luzon	| Central Luzon	|
+| 4	 | Southern Tagalog 	| .	|
+| 5  | Bicol	| Bicol	|
+| 6	 | Western Visayas	| Western Visayas	|
+| 7  | Central Visayas	| Central Visayas	|
+| 8	 | Eastern Visayas	| Eastern Visayas	|
+| 9  | Western Mindanao	| Zamboanga Peninsula	|
+| 10 | Northern Mindanao	| Northern Mindanao	|
+| 11 | Southern Mindanao	| Davao	|
+| 12 | Central Mindanao	| Soccsksargen	|
+| 13 | National Capital Region	| National Capital Region	|
+| 14 | Cordillera Administrative Regio	| Cordillera Administrative Region	|
+| 15 | Autonomous Region of Muslim Mindanao	| Autonomous Region in Muslim Mindanao	|
+| 16 | Caraga	| Caraga	|
+| 17 |  .	| .|
+| 18 |  .	| 	Negros Island Region|
+| 41 | .|  Calabarzon	|
+| 42 | .	|  Mimaropa	|
+
+### What to do for 2003?
