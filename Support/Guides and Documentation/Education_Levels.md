@@ -1,4 +1,4 @@
-# Education Levels Codification
+# Education Levels Codification: Philippines I2D2
 
 The following label classification explain the codification from raw survey label levels to I2D2 categories. Note that, according to the 2017 Philippine Standard Classification of Education document, the education system was adjusted in 2018 in accordance with new legislation, linked [here](http://www.unesco.org/education/edurights/media/docs/e119986abbd26ebda9c3d8c18929b4487205d4d6.pdf). It appears both in the 2017 PSCED and the data labels that this change did not occur until the 2018 year, meaning that data for 2017 is still classified under the old system.
 
@@ -142,4 +142,4 @@ Furthermore, there are key non-grouped levels that, similarly, do not appear in 
 - Grade 11, and whose value *does* appear in the integer data for other rounds
 - Grade 12, and whose value *does* appear in the integer data for other rounds
 
-All of this probably calls for a by-round coding of the educational levels
+Additionally, for the integer-labelled data (July and October rounds), there are a number of numeric values that do not appear in the PSCED 2017 Codebook, similarly to the 2008 Schema situation. While many of these values could be inferred based on patterns and counts from previous years, for the time being, I am simply going to leave the education levels missing for the final two rounds until more information can be gathered, which seems the safest choice for now. Thus, I will only code based on the labelled factor/January and April rounds initially.
