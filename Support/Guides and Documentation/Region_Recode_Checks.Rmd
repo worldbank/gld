@@ -1,0 +1,84 @@
+---
+title: "Region Label Checks"
+author: "Tom"
+date: "6/24/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+GLD <- "Y:/GLD-Harmonization/551206_TM/PHL"
+
+```
+
+A document to quickly review the distribution of labelled vs non-labelled region data for various years 
+
+# 2016 
+
+I'll read the RDS files since they're already created.
+```{r, echo=FALSE}
+lfs2016jan <- readRDS(file.path(GLD, "PHL_2016_LFS/PHL_2016_LFS_v01_M/Data/R/LFS JAN2016.Rds"))
+lfs2016apr <- readRDS(file.path(GLD, "PHL_2016_LFS/PHL_2016_LFS_v01_M/Data/R/LFS APR2016.Rds"))
+lfs2016jul <- readRDS(file.path(GLD, "PHL_2016_LFS/PHL_2016_LFS_v01_M/Data/R/LFS JUL2016.Rds"))
+lfs2016oct <- readRDS(file.path(GLD, "PHL_2016_LFS/PHL_2016_LFS_v01_M/Data/R/LFS OCT2016.Rds"))
+
+```
+
+The running theory for 2016 is that:
+- all rounds are numeric except for April
+- In January, value `41` corresponds to value `4` for April/July/October and 
+- In January, value `42` corresponds to value `17` for April/July/October 
+
+Let's create a mini dataset and test this.
+
+```{r}
+# append and trim 
+jan <- lfs2016jan %>%
+  select(reg, svymo) %>%
+  mutate(reg = case_when(reg == 4  ~ 41,
+                         reg == 17 ~ 42, 
+                         TRUE      ~ reg))
+
+apr <- lfs2016apr %>%
+  mutate(reg = as.numeric(pufreg)) %>%
+  select(reg, pufreg, pufsvymo) %>%
+  mutate(reg = case_when(reg == 4  ~ 41,
+                         reg == 17 ~ 42, 
+                         TRUE      ~ reg)) %>%
+  rename(svymo = pufsvymo)
+
+jul <- lfs2016jul %>%
+  select(pufreg, pufsvymo) %>%
+  mutate(reg = case_when(pufreg == 4  ~ 41,
+                         pufreg == 17 ~ 42, 
+                         TRUE      ~ pufreg)) %>%
+  rename(svymo = pufsvymo)
+
+oct <- lfs2016oct %>%
+  select(pufreg, pufsvymo) %>%
+  mutate(reg = case_when(pufreg == 4  ~ 41,
+                         pufreg == 17 ~ 42, 
+                         TRUE      ~ pufreg)) %>%
+  rename(svymo = pufsvymo)
+  
+
+lfs2016_reg <- bind_rows(jan, apr, jul, oct)
+
+```
+
+
+## Plot by round
+
+After recoding to the same levels, there seems to be pretty good visual evidence to support the recoding schema above, as the distribution is almost the same across all rounds. The only visual exception is the final round, which has a value of 18, which wasn't touched during the recode, which includes a new region not mentioned in the previous rounds.
+
+```{r}
+
+hist <- ggplot(lfs2016_reg, aes(reg)) +
+  geom_histogram(binwidth = 1) + 
+  scale_x_continuous(n.breaks = 10) +
+  facet_grid(rows = vars(svymo))
+
+hist
+```
+
