@@ -87,9 +87,12 @@ The resulting coding and labeling schema looks like this:
 | 42 | .	|  Mimaropa	|
 
 ### What to do for 2003?
-The data for 2003 are provided in the two-system labeled scheme for January+April and July+October as described above. However, the [Janurary and April months](https://psa.gov.ph/node/33231/33231/33231/33231/33231?combine=2003) of the ISH list the *new* post-July/labeling scheme as the scheme they utilized. I will simply consider the data as it was provided to me with the "pre" July 2003 scheme.
+The data for 2003 are provided in the two-system labeled scheme for January+April and July+October as described above. However, the [Janurary and April months](https://psa.gov.ph/node/33231/33231/33231/33231/33231?combine=2003) of the ISH list the *new* post-July/labeling scheme as the scheme they utilized.
+
+Furthermore, there is a methematical reason why we cannot just use the given January+April and July+October values and labels as-is: the weight variable provided in each survey file round takes the region into account. If we suddendly change the region variable, the weight variable would be out of sync with the data and incorrect.
 
 #### Coding 2003
+ After discussion with the team, the reccommended solution is to recreate the regions by constructing them from grouping the provinces into their associated regional clusters. However, the July round does not contain the province data, so this solution will have to be put on pause for the time being. 
 
 
 ## Province
