@@ -20,7 +20,7 @@ Beginning in the 2016 year, value codes for Region IV-A changes from `41` to `4`
 
 ### Differences between factor and numeric
 
-Some region variables are numeric and some are factor labelled, but their underlying values are not always the same. Wheras the value and labelling schema is stable across survey rounds and years, minus the small change for Region IV-A and -B above, the numeric variable cognate appears to change sometimes, so we should be mindful of this.
+Some region variables are numeric and some are factor labelled, but their underlying values are not always the same. Wheras the value and labeling schema is stable across survey rounds and years, minus the small change for Region IV-A and -B above, the numeric variable cognate appears to change sometimes, so we should be mindful of this.
 
 For example, the numeric variable for region in October 2002 matches the values for the factor labelled variables in the same year; so does the July 2006 numeric one. However, the factor and numeric values for the year 2016 differ. What is more, the conflicting values for `41`/`42` and `4`/`17` in theory refer to the same region that was made into two separate regions in 2003 (see above). However, the numeric values will have to be inferred based on clues such as previous quarter's codes and distributions of counts.
 
@@ -59,9 +59,9 @@ Supporting documentation `Region_Recode_Checks.Rmd` provides provisional stylize
 All recoding will be done openly and in-script, which is available in this respository. Furthermore, given the complexities outlined, the original region variable provided by the PSA will be left in with the survey data -- labelled or not -- as it arrived to us.
 
 ### Recoding 2016 - 2020
-Since the [July 2003 PSA ISH document](https://psa.gov.ph/sites/default/files/ISHB_series%20no.%20117_Labor%20Force_July%202003%20.pdf) describes the Region schema as 17 Regions with an additional region (being produced by Region IV's split into two), I will ensure that all years after 2003 follow this labelling schema. This means that the recoding schedule for 2016 will be replicated for years 2017 and onward: all factor **and** numeric values that refer to `4` or `Region IV-A` will be recoded to `41`/`Region IV-A`; values of `17`/`Region IV-B` will be recoded to `42`/`Region IV-B` to be aligned with previous years.
+Since the [July 2003 PSA ISH document](https://psa.gov.ph/sites/default/files/ISHB_series%20no.%20117_Labor%20Force_July%202003%20.pdf) describes the Region schema as 17 Regions with an additional region (being produced by Region IV's split into two), I will ensure that all years after 2003 follow this labeling schema. This means that the recoding schedule for 2016 will be replicated for years 2017 and onward: all factor **and** numeric values that refer to `4` or `Region IV-A` will be recoded to `41`/`Region IV-A`; values of `17`/`Region IV-B` will be recoded to `42`/`Region IV-B` to be aligned with previous years.
 
-The resulting coding and labeling schema looks like this: 
+The resulting coding and labeling schema looks like this:
 
 | Value    |   Before July 2003 | Starting July 2003 |
 |---------|----------------------------|------------------------------|
@@ -87,3 +87,7 @@ The resulting coding and labeling schema looks like this:
 | 42 | .	|  Mimaropa	|
 
 ### What to do for 2003?
+
+
+## Province
+The 2nd Administrative Level is Province. The value labels appear to be stable across rounds and years, with no mention of changes in the 2003 adminstrative revisions above. Furthermore, the some rounds are numeric while others are labeled. In later years, beginning in 2014, the variable only appears as a numeric data type accompanied, in some months, with a secondary variable `_name` that stores the province name in string format.
