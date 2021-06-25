@@ -345,7 +345,7 @@ if _rc == 0 { // if var exists since if not captured in 1.1
 	local check_educy = 0 
 	qui : count if educy < 0 & educy != . 
 	if `r(N)' > 0 local check_educy = `r(N)'
-	qui : count if age < educy & (age != . | educy != .)
+	qui : count if age < educy & (age != . & educy != .)
 	if `r(N)' > 0 local check_educy = `check_educy' + `r(N)'
 	if `check_educy' > 0 {
 		post `memhold' ("Survey & ID") ("educy") ("Years in education shows unexpected values (# of cases ->)") (`check_educy') (1)
