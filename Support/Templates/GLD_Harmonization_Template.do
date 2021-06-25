@@ -738,12 +738,12 @@ foreach v of local ed_var {
 
 
 *<_wage_total_>
-/* <_wage_total>
+/* <_wage_total_note>
 
 	Use gross wages when available and net wages only when gross wages are not available. 
 	This is done to make it easy to compare earnings in formal and informal sectors.
 
-</_wage_total> */
+</_wage_total_note> */
 	gen wage_total = 
 	label var wage_total "Annualized total wage primary job 7 day recall"
 *</_wage_total_>
