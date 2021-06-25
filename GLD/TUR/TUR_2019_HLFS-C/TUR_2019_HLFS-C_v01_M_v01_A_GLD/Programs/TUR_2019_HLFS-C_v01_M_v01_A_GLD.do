@@ -174,7 +174,7 @@ use "`path_in'\LFS2019_raw.dta"
 
 *<_wave_>
 	gen wave = .
-	label var wave = "Survey wave"
+	label var wave "Survey wave"
 *</_wave_>
 
 }
@@ -400,11 +400,6 @@ use "`path_in'\LFS2019_raw.dta"
 
 }
 
-************************************************
-************************************************
-* Up to here
-************************************************
-************************************************
 
 /*%%=============================================================================================
 	5: Migration
@@ -420,13 +415,14 @@ use "`path_in'\LFS2019_raw.dta"
 
 
 *<_migrated_ref_time_>
-	gen migrated_ref_time = .
+	gen migrated_ref_time = 99
 	label var migrated_ref_time "Reference time applied to migration questions (in years)"
 *</_migrated_ref_time_>
 
 
 *<_migrated_binary_>
-	gen migrated_binary = .
+	gen migrated_binary = buil_yasama
+	recode migrated_binary (1=0) (2=1)
 	label de lblmigrated_binary 0 "No" 1 "Yes"
 	label values migrated_binary lblmigrated_binary
 	label var migrated_binary "Individual has migrated"
@@ -490,16 +486,21 @@ use "`path_in'\LFS2019_raw.dta"
 *<_ed_mod_age_>
 
 /* <_ed_mod_age_note>
-Education module is only asked to those XX and older.
+Note the data release we have has only 15 year old and older actual survey cut off is 5. A tad irrelevant but for completeness sake.
 </_ed_mod_age_note> */
 
-gen byte ed_mod_age = 
+gen byte ed_mod_age = 5
 label var ed_mod_age "Education module application age"
 
 *</_ed_mod_age_>
 
 *<_school_>
-	gen byte school=
+	gen byte school = egitim_devam_k == 1
+	* There are three people who are atschool but never attended.
+	count if okul_biten_k == 0 & school == 1
+	* They claimed to have never graduated, but are in primary education at ages 16, 20, 22
+	* Set them to missing for school
+	replace school = . if okul_biten_k == 0 & school == 1
 	label var school "Attending school"
 	la de lblschool 0 "No" 1 "Yes"
 	label values school  lblschool
@@ -507,7 +508,8 @@ label var ed_mod_age "Education module application age"
 
 
 *<_literacy_>
-	gen byte literacy = 
+	gen byte literacy = okur_yazar != 2
+	recode literacy (2=0)
 	label var literacy "Individual can read & write"
 	la de lblliteracy 0 "No" 1 "Yes"
 	label values literacy lblliteracy
@@ -515,13 +517,13 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educy_>
-	gen byte educy =
+	gen byte educy = .
 	label var educy "Years of education"
 *</_educy_>
 
 
 *<_educat7_>
-	gen byte educat7 =
+	gen byte educat7 = .
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete" 
 	label values educat7 lbleducat7
@@ -529,8 +531,12 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat5_>
-	gen byte educat5 = educat7
-	recode educat5 4=3 5=4 6 7=5 
+	gen educat5=.
+	replace educat5 = 1 if okul_biten_k  == 0
+	replace educat5 = 2 if okul_biten_k  == 1
+	replace educat5 = 3 if okul_biten_k  == 2
+	replace educat5 = 4 if okul_biten_k  == 31 | okul_biten_k  == 32
+	replace educat5 = 5 if okul_biten_k  == 4 | okul_biten_k  == 5
 	label var educat5 "Level of education 2"
 	la de lbleducat5 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
 	label values educat5 lbleducat5
@@ -538,8 +544,8 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat4_>
-	gen byte educat4 = educat7
-	recode educat4 2 3=2 4 5=3 6 7=4 
+	gen byte educat4 = educat5
+	recode educat4 (4=3) (5=4)
 	label var educat4 "Level of education 3"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values educat4 lbleducat4
@@ -547,7 +553,7 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat_isced_>
-	gen educat_isced = 
+	gen educat_isced = .
 	label var educat_isced "ISCED standardised level of education"
 *</_educat_isced_>
 
@@ -618,7 +624,7 @@ foreach v of local ed_var {
 
 
 *<_minlaborage_>
-	gen byte minlaborage =
+	gen byte minlaborage = 15
 	label var minlaborage "Labor module application age"
 *</_minlaborage_>
 
@@ -627,7 +633,7 @@ foreach v of local ed_var {
 
 {
 *<_lstatus_>
-	gen byte lstatus = .
+	gen byte lstatus = durum
 	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -656,7 +662,8 @@ foreach v of local ed_var {
 
 
 *<_nlfreason_>
-	gen byte nlfreason=.
+	gen byte nlfreason = ido_neden
+	recode nlfreason (35=1) (34=2) (36=3) (37=4) (31 32 33 38 39 =5)
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
 	label values nlfreason lblnlfreason
@@ -665,12 +672,14 @@ foreach v of local ed_var {
 
 *<_unempldur_l_>
 	gen byte unempldur_l=.
+	replace unempldur_l = isara_sure if lstatus==2
 	label var unempldur_l "Unemployment duration (months) lower bracket"
 *</_unempldur_l_>
 
 
 *<_unempldur_u_>
 	gen byte unempldur_u=.
+	replace unempldur_u = isara_sure if lstatus==2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
 *</_unempldur_u_>
 }
@@ -681,7 +690,8 @@ foreach v of local ed_var {
 
 {
 *<_empstat_>
-	gen byte empstat=.
+	gen byte empstat = isteki_durum_k
+	recode empstat 2=3 3=4 4=2
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat lblempstat
@@ -689,7 +699,8 @@ foreach v of local ed_var {
 
 
 *<_ocusec_>
-	gen byte ocusec = 
+	gen byte ocusec = ozel_kamu
+	recode ocusec (2=1) (1=2) (98=.)
 	label var ocusec "Sector of activity primary job 7 day recall"
 	la de lblocusec 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec lblocusec
@@ -697,19 +708,33 @@ foreach v of local ed_var {
 
 
 *<_industry_orig_>
-	gen industry_orig = 
+	gen industry_orig = nace2_esas_k
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
 
 *<_industrycat_isic_>
-	gen industrycat_isic = .
+	gen helper_1 = string(nace2_esas_k,"%02.0f")
+	gen helper_2 = "00"
+	egen industrycat_isic = concat(helper_1 helper_2)
+	replace industrycat_isic = "" if industrycat_isic == ".00"
+	drop helper_1 helper_2
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
 
 *<_industrycat10_>
-	gen byte industrycat10 = 
+	gen industrycat10=.
+	replace industrycat10 = 1 if inrange(nace2_esas_k,1,3)
+	replace industrycat10 = 2 if inrange(nace2_esas_k,5,9)
+	replace industrycat10 = 3 if inrange(nace2_esas_k,10,33)
+	replace industrycat10 = 4 if inrange(nace2_esas_k,35,39)
+	replace industrycat10 = 5 if inrange(nace2_esas_k,41,43)
+	replace industrycat10 = 6 if inrange(nace2_esas_k,45,47) | inrange(nace2_esas_k,55,56)
+	replace industrycat10 = 7 if inrange(nace2_esas_k,49,53) | inrange(nace2_esas_k,58,63)
+	replace industrycat10 = 8 if inrange(nace2_esas_k,64,82)
+	replace industrycat10 = 9 if inrange(nace2_esas_k,84,84)
+	replace industrycat10 = 10 if inrange(nace2_esas_k,85,99)
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
@@ -726,25 +751,37 @@ foreach v of local ed_var {
 
 
 *<_occup_orig_>
-	gen occup_orig = 
+	gen occup_orig = isco08_esas_k 
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
 
 *<_occup_isco_>
-	gen occup_isco = .
+	gen helper_1 = string(isco08_esas_k,"%02.0f")
+	gen helper_2 = "00"
+	egen occup_isco = concat(helper_1 helper_2)
+	replace occup_isco = "" if occup_isco == ".00"
+	drop helper_1 helper_2
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
 
 *<_occup_skill_>
+	gen helper = substr(occup_isco,1,1)
+	destring helper, replace
 	gen occup_skill = .
+	replace occup_skill = 1 if inrange(helper,9,9)
+	replace occup_skill = 2 if inrange(helper,4,8)
+	replace occup_skill = 3 if inrange(helper,1,3)
+	drop helper
+	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill" 
+	label values occup_skill lblskill
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
 *</_occup_skill_>
 
 
 *<_occup_>
-	gen byte occup = 
+	gen byte occup = floor(isco08_esas_k/10)
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup
@@ -752,13 +789,41 @@ foreach v of local ed_var {
 
 
 *<_wage_no_compen_>
-	gen double wage_no_compen_year = 
-	label var wage_no_compen_year "Last wage payment primary job 7 day recall"
+/* <_wage_no_compen_note>
+	
+	Question (gelir_gecenay_k) is defined as
+	How much did you earn from your main job activity during the last month? (including extra income
+	like bonus pay, premiums etc. on addition to salary, monthly or quarterly paid).
+	
+	No way to take out compensation.
+	
+	The questions is only asked to paid employees only. Looking at the below crosstab
+	
+                  |               test
+Employment status | Wage Miss   Wage = 0   Wage > 0 |     Total
+------------------+---------------------------------+----------
+    Paid employee |         0      7,161     94,811 |   101,972 
+Non-paid employee |    21,009          0          0 |    21,009 
+         Employer |     6,552          0          0 |     6,552 
+    Self-employed |    31,767          0          0 |    31,767 
+                . |   205,251          0          0 |   205,251 
+------------------+---------------------------------+----------
+            Total |   264,579      7,161     94,811 |   366,551 
+
+	The odd case are 7K individuals that are paid employees (not non-paid) but wage is 0. These are
+	set to missing
+	
+</_wage_no_compen_note> */
+	gen double wage_no_compen = gelir_gecenay_k
+	replace wage_no_compen=. if lstatus!=1
+	replace wage_no_compen=. if wage_no_compen == 0 
+	* Expect 7161 replacements
+	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
 
 *<_unitwage_>
-	gen byte unitwage = 
+	gen byte unitwage = 5
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
 	label values unitwage lblunitwage
@@ -766,23 +831,39 @@ foreach v of local ed_var {
 
 
 *<_whours_>
-	gen whours = 
+/* <_whours_note>
+	
+	Survey has two concepts - work usually in a week (esas_hafsaat_genel) and work the last week (esas_fiili).
+	There are 64 cases where the usual work hours are 0. 57 of 64 are people who have business they were absent
+	from with reason but will return (calisma_sahip_is == 1). Assume usual hours is a mistake and we cannot use
+	actual hours since they were not there. For them set whours to missing. 
+	
+	That leaves 7 individuals, all self employed market oriented skilled Agriculture workers (ISCO 61). All
+	seven claim to have a second job. Their first job usual and last week hours are zero, but the second job
+	hours are in there (and look like normal hours bar one with 10 hours). Assume this is a transcription error
+	and use those hours as first job.
+	
+</_whours_note> */
+	gen whours = esas_hafsaat_genel
+	replace whours = . if calisma_sahip_is == 1 & whours == 0
+	* expect 57 replacements
+	replace whours = ekis_fiili if whours == 0
+	* expect 7 replacements
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
 
 *<_wmonths_>
-	gen wmonths = 
+	gen wmonths = .
 	label var wmonths "Months of work in past 12 months primary job 7 day recall"
 *</_wmonths_>
 
 
 *<_wage_total_>
 /* <_wage_total>
-	Use gross wages when available and net wages only when gross wages are not available. 
-	This is done to make it easy to compare earnings in formal and informal sectors.
+	Since months unknown, set to missing
 </_wage_total> */
-	gen wage_total = 
+	gen wage_total = .
 	label var wage_total "Annualized total wage primary job 7 day recall"
 *</_wage_total_>
 
@@ -804,7 +885,8 @@ foreach v of local ed_var {
 
 
 *<_socialsec_>
-	gen byte socialsec = 
+	gen byte socialsec = kayitlilik
+	recode socialsec (2=0)
 	label var socialsec "Employment has social security insurance primary job 7 day recall"
 	la de lblsocialsec 1 "With social security" 0 "Without social secturity"
 	label values socialsec lblsocialsec
@@ -812,7 +894,7 @@ foreach v of local ed_var {
 
 
 *<_union_>
-	gen byte union = 
+	gen byte union = .
 	label var union "Union membership at primary job 7 day recall"
 	la de lblunion 0 "Not union member" 1 "Union member"
 	label values union lblunion
@@ -820,13 +902,17 @@ foreach v of local ed_var {
 
 
 *<_firmsize_l_>
-	gen byte firmsize_l = 
+	gen firmsize_l=calisan_sayi_hh
+	recode firmsize_l (1=.) (2=11) (3=20) (4=50) (5=11)
+	replace firmsize_l=. if lstatus!=1
 	label var firmsize_l "Firm size (lower bracket) primary job 7 day recall"
 *</_firmsize_l_>
 
 
 *<_firmsize_u_>
-	gen byte firmsize_u=.
+	gen firmsize_u=calisan_sayi_hh
+	recode firmsize_u (1=10) (2=19) (3=49) (4=.) (5=.)
+	replace firmsize_u=. if lstatus!=1
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>
 
@@ -839,21 +925,22 @@ foreach v of local ed_var {
 
 {
 *<_empstat_2_>
-	gen byte empstat_2=.
+	gen byte empstat_2 = isteki_durum_ekis
+	recode empstat_2 (2=3) (4=2) (3=4)
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
 	label values empstat_2 lblempstat
 *</_empstat_2_>
 
 
 *<_ocusec_2_>
-	gen byte ocusec_2 = 
+	gen byte ocusec_2 = .
 	label var ocusec_2 "Sector of activity secondary job 7 day recall"
 	label values ocusec_2 lblocusec
 *</_ocusec_2_>
 
 
 *<_industry_orig_2_>
-	gen industry_orig_2 = 
+	gen industry_orig_2 = .
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 
@@ -865,22 +952,22 @@ foreach v of local ed_var {
 
 
 *<_industrycat10_2_>
-	gen byte industrycat10_2 = 
+	gen byte industrycat10_2 = .
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
 *</_industrycat10_2_>
 
 
 *<_industrycat4_2_>
-	gen byte industrycat4_2 = industrycat10_2
-	recode industrycat4_2 (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
+	gen byte industrycat4_2 = nace2_ekis_k
+	recode industrycat4_2 (3=4) (4=3)
 	label var industrycat4_2 "1 digit industry classification (Broad Economic Activities), secondary job 7 day recall"
 	label values industrycat4_2 lblindustrycat4
 *</_industrycat4_2_>
 
 
 *<_occup_orig_2_>
-	gen occup_orig_2 = 
+	gen occup_orig_2 = .
 	label var occup_orig_2 "Original occupation record secondary job 7 day recall"
 *</_occup_orig_2_>
 
@@ -898,51 +985,51 @@ foreach v of local ed_var {
 
 
 *<_occup_2_>
-	gen byte occup_2 = 
+	gen byte occup_2 = .
 	label var occup_2 "1 digit occupational classification secondary job 7 day recall"
 	label values occup_2 lbloccup
 *</_occup_2_>
 
 
 *<_wage_no_compen_2_>
-	gen double wage_no_compen_2 = 
+	gen double wage_no_compen_2 = .
 	label var wage_no_compen_2 "Last wage payment secondary job 7 day recall"
 *</_wage_no_compen_2_>
 
 
 *<_unitwage_2_>
-	gen byte unitwage_2 = 
+	gen byte unitwage_2 = .
 	label var unitwage_2 "Last wages' time unit secondary job 7 day recall"
 	label values unitwage_2 lblunitwage
 *</_unitwage_2_>
 
 
 *<_whours_2_>
-	gen whours_2 = 
+	gen whours_2 = ekis_fiili
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 
 
 *<_wmonths_2_>
-	gen wmonths_2 = 
+	gen wmonths_2 = .
 	label var wmonths_2 "Months of work in past 12 months secondary job 7 day recall"
 *</_wmonths_2_>
 
 
 *<_wage_total_2_>
-	gen wage_total_2 = 
+	gen wage_total_2 = .
 	label var wage_total_2 "Annualized total wage secondary job 7 day recall"
 *</_wage_total_2_>
 
 
 *<_firmsize_l_2_>
-	gen byte firmsize_l_2 = 
+	gen byte firmsize_l_2 = .
 	label var firmsize_l_2 "Firm size (lower bracket) secondary job 7 day recall"
 *</_firmsize_l_2_>
 
 
 *<_firmsize_u_2_>
-	gen byte firmsize_u_2 = 
+	gen byte firmsize_u_2 = .
 	label var firmsize_u_2 "Firm size (upper bracket) secondary job 7 day recall"
 *</_firmsize_u_2_>
 
@@ -951,20 +1038,20 @@ foreach v of local ed_var {
 *----------8.4: 7 day reference additional jobs------------------------------*
 
 *<_t_hours_others_>
-	gen t_hours_others = 
+	gen t_hours_others = .
 	label var t_hours_others "Annualized hours worked in all but primary and secondary jobs 7 day recall"
 *</_t_hours_others_>
 
 
 *<_t_wage_nocompen_others_>
-	gen t_wage_nocompen_others = 
+	gen t_wage_nocompen_others = .
 	label var t_wage_nocompen_others "Annualized wage in all but primary & secondary jobs excl. bonuses, etc. 7 day recall"
 *</_t_wage_nocompen_others_>
 
 
 *<_t_wage_others_>
-	gen t_wage_others_total = 
-	label var t_wage_others_total "Annualized wage in all but primary and secondary jobs (12-mon ref period)"
+	gen t_wage_others = .
+	label var t_wage_others "Annualized wage in all but primary and secondary jobs (12-mon ref period)"
 *</_t_wage_others_>
 
 
@@ -972,19 +1059,19 @@ foreach v of local ed_var {
 
 
 *<_t_hours_total_>
-	gen t_hours_total = 
+	gen t_hours_total = .
 	label var t_hours_total "Annualized hours worked in all jobs 7 day recall"
 *</_t_hours_total_>
 
 
 *<_t_wage_nocompen_total_>
-	gen t_wage_nocompen_total = 
+	gen t_wage_nocompen_total = .
 	label var t_wage_nocompen_total "Annualized wage in all jobs excl. bonuses, etc. 7 day recall"
 *</_t_wage_nocompen_total_>
 
 
 *<_t_wage_total_>
-	gen t_wage_total = 
+	gen t_wage_total = .
 	label var t_wage_total "Annualized total wage for all jobs 7 day recall"
 *</_t_wage_total_>
 
@@ -1047,21 +1134,21 @@ foreach v of local ed_var {
 {
 
 *<_empstat_year_>
-	gen byte empstat_year = 
+	gen byte empstat_year = .
 	label var empstat_year "Employment status during past week primary job 12 month recall"
 	la de lblempstat_year 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat_year lblempstat_year
 *</_empstat_year_>
 
 *<_ocusec_year_>
-	gen byte ocusec_year = 
+	gen byte ocusec_year = .
 	label var ocusec_year "Sector of activity primary job 12 day recall"
 	la de lblocusec_year 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec_year lblocusec_year
 *</_ocusec_year_>
 
 *<_industry_orig_year_>
-	gen industry_orig_year = 
+	gen industry_orig_year = .
 	label var industry_orig_year "Original industry record main job 12 month recall"
 *</_industry_orig_year_>
 
@@ -1072,7 +1159,7 @@ foreach v of local ed_var {
 *</_industrycat_isic_year_>
 
 *<_industrycat10_year_>
-	gen byte industrycat10_year = 
+	gen byte industrycat10_year = .
 	label var industrycat10_year "1 digit industry classification, primary job 12 month recall"
 	la de lblindustrycat10_year 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10_year lblindustrycat10_year
@@ -1089,7 +1176,7 @@ foreach v of local ed_var {
 
 
 *<_occup_orig_year_>
-	gen occup_orig_year = 
+	gen occup_orig_year = .
 	label var occup_orig_year "Original occupation record primary job 12 month recall"
 *</_occup_orig_year_>
 
@@ -1107,7 +1194,7 @@ foreach v of local ed_var {
 
 
 *<_occup_year_>
-	gen byte occup_year = 
+	gen byte occup_year = .
 	label var occup_year "1 digit occupational classification, primary job 12 month recall"
 	la de lbloccup_year 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup_year lbloccup_year
@@ -1115,13 +1202,13 @@ foreach v of local ed_var {
 
 
 *<_wage_no_compen_year_> --- this var has the same name as other and when quoted in the keep and order codes is repeated.
-	gen double wage_no_compen_year = 
+	gen double wage_no_compen_year = .
 	label var wage_no_compen_year "Last wage payment primary job 12 month recall"
 *</_wage_no_compen_year_>
 
 
 *<_unitwage_year_>
-	gen byte unitwage_year = 
+	gen byte unitwage_year = .
 	label var unitwage_year "Last wages' time unit primary job 12 month recall"
 	la de lblunitwage_year 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
 	label values unitwage_year lblunitwage_year
@@ -1129,19 +1216,19 @@ foreach v of local ed_var {
 
 
 *<_whours_year_>
-	gen whours_year =
+	gen whours_year =.
 	label var whours_year "Hours of work in last week primary job 12 month recall"
 *</_whours_year_>
 
 
 *<_wmonths_year_>
-	gen wmonths_year = 
+	gen wmonths_year = .
 	label var wmonths_year "Months of work in past 12 months primary job 12 month recall"
 *</_wmonths_year_>
 
 
 *<_wage_total_year_>
-	gen wage_total_year = 
+	gen wage_total_year = .
 	label var wage_total_year "Annualized total wage primary job 12 month recall"
 *</_wage_total_year_>
 
@@ -1163,7 +1250,7 @@ foreach v of local ed_var {
 
 
 *<_socialsec_year_>
-	gen byte socialsec_year = 
+	gen byte socialsec_year = .
 	label var socialsec_year "Employment has social security insurance primary job 7 day recall"
 	la de lblsocialsec_year 1 "With social security" 0 "Without social secturity"
 	label values socialsec_year lblsocialsec_year
@@ -1171,7 +1258,7 @@ foreach v of local ed_var {
 
 
 *<_union_year_>
-	gen byte union_year = 
+	gen byte union_year = .
 	label var union_year "Union membership at primary job 12 month recall"
 	la de lblunion_year 0 "Not union member" 1 "Union member"
 	label values union_year lblunion_year
@@ -1179,7 +1266,7 @@ foreach v of local ed_var {
 
 
 *<_firmsize_l_year_>
-	gen byte firmsize_l_year = 
+	gen byte firmsize_l_year = .
 	label var firmsize_l_year "Firm size (lower bracket) primary job 12 month recall"
 *</_firmsize_l_year_>
 
@@ -1197,14 +1284,14 @@ foreach v of local ed_var {
 {
 
 *<_empstat_2_year_>
-	gen byte empstat_2_year = 
+	gen byte empstat_2_year = .
 	label var empstat_2_year "Employment status during past week secondary job 12 month recall"
 	label values empstat_2_year lblempstat_year
 *</_empstat_2_year_>
 
 
 *<_ocusec_2_year_>
-	gen byte ocusec_2_year = 
+	gen byte ocusec_2_year = .
 	label var ocusec_2_year "Sector of activity secondary job 12 day recall"
 	la de lblocusec_2_year 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec_2_year lblocusec_2_year
@@ -1213,7 +1300,7 @@ foreach v of local ed_var {
 
 
 *<_industry_orig_2_year_>
-	gen industry_orig_2_year = 
+	gen industry_orig_2_year = .
 	label var industry_orig_2_year "Original survey industry code, secondary job 12 month recall"
 *</_industry_orig_2_year_>
 
@@ -1226,7 +1313,7 @@ foreach v of local ed_var {
 
 
 *<_industrycat10_2_year_>
-	gen byte industrycat10_2_year = 
+	gen byte industrycat10_2_year = .
 	label var industrycat10_2_year "1 digit industry classification, secondary job 12 month recall"
 	label values industrycat10_2_year lblindustrycat10_year
 *</_industrycat10_2_year_>
@@ -1241,7 +1328,7 @@ foreach v of local ed_var {
 
 
 *<_occup_orig_2_year_>
-	gen occup_orig_2_year = 
+	gen occup_orig_2_year = .
 	label var occup_orig_2_year "Original occupation record secondary job 12 month recall"
 *</_occup_orig_2_year_>
 
@@ -1259,44 +1346,44 @@ foreach v of local ed_var {
 
 
 *<_occup_2_year_>
-	gen byte occup_2_year = 
+	gen byte occup_2_year = .
 	label var occup_2_year "1 digit occupational classification, secondary job 12 month recall"
 	label values occup_2_year lbloccup_year
 *</_occup_2_year_>
 
 
 *<_wage_no_compen_2_year_>
-	gen double wage_no_compen_2_year = 
+	gen double wage_no_compen_2_year = .
 	label var wage_no_compen_2_year "Last wage payment secondary job 12 month recall"
 *</_wage_no_compen_2_year_>
 
 
 *<_unitwage_2_year_>
-	gen byte unitwage_2_year = 
+	gen byte unitwage_2_year = .
 	label var unitwage_2_year "Last wages' time unit secondary job 12 month recall"
 	label values unitwage_2_year lblunitwage_year
 *</_unitwage_2_year_>
 
 
 *<_whours_2_year_>
-	gen whours_2_year =
+	gen whours_2_year =.
 	label var whours_2_year "Hours of work in last week secondary job 12 month recall"
 *</_whours_2_year_>
 
 
 *<_wmonths_2_year_>
-	gen wmonths_2_year = 
+	gen wmonths_2_year = .
 	label var wmonths_2_year "Months of work in past 12 months secondary job 12 month recall"
 *</_wmonths_2_year_>
 
 
 *<_wage_total_2_year_>
-	gen wage_total_2_year = 
+	gen wage_total_2_year = .
 	label var wage_total_2_year "Annualized total wage secondary job 12 month recall"
 *</_wage_total_2_year_>
 
 *<_firmsize_l_2_year_>
-	gen byte firmsize_l_2_year = 
+	gen byte firmsize_l_2_year = .
 	label var firmsize_l_2_year "Firm size (lower bracket) secondary job 12 month recall"
 *</_firmsize_l_2_year_>
 
@@ -1313,7 +1400,7 @@ foreach v of local ed_var {
 
 
 *<_t_hours_others_year_>
-	gen t_hours_others_year = 
+	gen t_hours_others_year = .
 	label var t_hours_others_year "Annualized hours worked in all but primary and secondary jobs 12 month recall"
 *</_t_hours_others_year_>
 
@@ -1323,8 +1410,8 @@ foreach v of local ed_var {
 *</_t_wage_nocompen_others_year_>
 
 *<_t_wage_others_year_>
-	gen t_wage_others_total_year = .
-	label var t_wage_others_total_year "Annualized wage in all but primary and secondary jobs 12 month recall"
+	gen t_wage_others_year = .
+	label var t_wage_others_year "Annualized wage in all but primary and secondary jobs 12 month recall"
 *</_t_wage_others_year_>
 
 
@@ -1332,19 +1419,19 @@ foreach v of local ed_var {
 
 
 *<_t_hours_total_year_>
-	gen t_hours_total_year = 
+	gen t_hours_total_year = .
 	label var t_hours_total_year "Annualized hours worked in all jobs 12 month month recall"
 *</_t_hours_total_year_>
 
 
 *<_t_wage_nocompen_total_year_>
-	gen t_wage_nocompen_total_year = 
+	gen t_wage_nocompen_total_year = .
 	label var t_wage_nocompen_total_year "Annualized wage in all jobs excl. bonuses, etc. 12 month recall"
 *</_t_wage_nocompen_total_year_>
 
 
 *<_t_wage_total_year_>
-	gen t_wage_total_year = 
+	gen t_wage_total_year = .
 	label var t_wage_total_year "Annualized total wage for all jobs 12 month recall"
 *</_t_wage_total_year_>
 
@@ -1359,13 +1446,13 @@ foreach v of local ed_var {
 
 
 *<_t_hours_annual_>
-	gen t_hours_annual = 
+	gen t_hours_annual = .
 	label var t_hours_annual "Total hours worked in all jobs in the previous 12 months"
 *</_t_hours_annual_>
 
 
 *<_linc_nc_>
-	gen linc_nc = 
+	gen linc_nc = .
 	label var linc_nc "Total annual wage income in all jobs, excl. bonuses, etc."
 *</_linc_nc_>
 
@@ -1382,11 +1469,17 @@ foreach v of local ed_var {
 *<_% Correction min age_>
 
 ** Drop info for cases under the age for which questions to be asked (do not need a variable for this)
-local lab_var "minlaborage lstatus nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year 
-unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome"
+local lab_var "minlaborage lstatus nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome"
 
 foreach v of local lab_var {
-	replace `v'=. if ( age < minlaborage & !missing(age) )
+	cap confirm numeric variable `v'
+	if _rc == 0 { // is indeed numeric
+		replace `v'=. if ( age < minlaborage & !missing(age) )
+	}
+	else { // is not
+		replace `v'= "" if ( age < minlaborage & !missing(age) )
+	}
+	
 }
 
 *</_% Correction min age_>
@@ -1401,13 +1494,13 @@ quietly{
 
 *<_% KEEP VARIABLES - ALL_>
 
-keep countrycode survname survey icls_v year vermast veralt harmonization int_year int_month hhid pid weight psu strata wave urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_yearwage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
+keep countrycode survname survey icls_v year vermast veralt harmonization int_year int_month hhid pid weight psu strata wave urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
 
 *</_% KEEP VARIABLES - ALL_>
 
 *<_% ORDER VARIABLES_>
 
-order countrycode survname survey icls_v year vermast veralt harmonization int_year int_month hhid pid weight psu strata wave urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_yearwage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
+order countrycode survname survey icls_v year vermast veralt harmonization int_year int_month hhid pid weight psu strata wave urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
 
 *</_% ORDER VARIABLES_>
 
@@ -1436,6 +1529,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`path_output'\[Name of file].dta", replace
+save "`path_output'\TUR_2019_HLFS-C_v01_M_v01_A_GLD.dta", replace
 
 *</_% SAVE_>
