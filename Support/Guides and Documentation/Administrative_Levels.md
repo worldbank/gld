@@ -49,11 +49,14 @@ For example, the numeric variable for region in October 2002 matches the values 
 | 42 | *x*	|  	|  	|  	|
 
 
-### The need to recode
-The I2D2 doesn't require region recoding for variable construction, but we do have a responsibility to ensure cross-round harmonization. That is, we need to make sure that the resulting data produces values that mean the same thing in all survey rounds for that year. In some cases, this requires recoding if we append multiple survey rounds.
+The following years have mixed numeric and factor data for their region variable equivalents across all survey rounds for that year; all others are factor labeled for all rounds within that year:
+	- mixed numeric-factor 2002, 2003, 2004, 2006, 2016, 2017
 
-### Evidence for recoding
-Supporting documentation `Region_Recode_Checks.Rmd` provides provisional stylized evidence to support recoding as suggested above for 2016. In short, the markdown document shows that recoding in the way described above produces very similar distributions of observations in all four rounds.
+### Descriptive Checks and Evidence for Recoding
+	`Region_Recode_Checks.Rmd` checks that the numeric variable descriptively aligns with the factor-coded variables within the same year. The code simply appends, recodes, and produces historgrams by round for comparison. This visual check provides intitial support to the idea that the numeric and factor values may likely refer to the same region, and therefore that the numeric and factor data may be appended safely.
+
+### The need to recode
+The I2D2 doesn't require region recoding for variable construction, but in most cases the survey sampling is stratified at the region level, which has implications for other variables such as weights, etc. Furthermore, we do have a responsibility to ensure cross-round harmonization. That is, we need to make sure that the resulting data produces values that mean the same thing in all survey rounds for that year. In some cases, this requires recoding if we append multiple survey rounds.
 
 ### Responsible and Reproducible Recoding
 All recoding will be done openly and in-script, which is available in this respository. Furthermore, given the complexities outlined, the original region variable provided by the PSA will be left in with the survey data -- labelled or not -- as it arrived to us.
