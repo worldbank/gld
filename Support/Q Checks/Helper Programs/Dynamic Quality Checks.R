@@ -31,7 +31,7 @@ rm(list=ls())
 # Step 2 - Load necessary libraries ---------------------------------------
 #=========================================================================#
 
-packages = c("haven", "ggplot2", "dplyr", "shiny")
+packages = c("haven", "ggplot2", "dplyr", "shiny", "scales")
 
 for (package in packages){
   if (!require(package, character.only = TRUE)){ # If package not known, install and load

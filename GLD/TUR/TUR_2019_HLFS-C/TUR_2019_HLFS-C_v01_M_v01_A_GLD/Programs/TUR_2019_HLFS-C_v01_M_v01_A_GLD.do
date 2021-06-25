@@ -4,44 +4,38 @@
 ==============================================================================================%%*/
 
 /* ----------------------------------------------------------------------- 
-
-<_Program name_>				[Name of your do file] </_Program name_> 
-<_Application_>					[Name of your software (STATA) and version] <_Application_> 
-<_Author(s)_>					[Name(s) of author(s)] </_Author(s)_> 
-<_Date created_>				YYYY-MM-DD </_Date created_> 
-
+<_Program name_>				TUR_2019_HLFS-C_v01_M_v01_A_GLD.do </_Program name_> 
+<_Application_>					Stata 16 <_Application_> 
+<_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_> 
+<_Date created_>				2021-06-23 </_Date created_> 
 ------------------------------------------------------------------------- 
-
-<_Country_>						[Country_Name (CCC)] </_Country_> 
-<_Survey Title_>				[SurveyName] </_Survey Title_> 
-<_Survey Year_>					[Year of start of the survey] </_Survey Year_> 
-<_Study ID_>					[Microdata Library ID if present] </_Study ID_> 
+<_Country_>						TUR </_Country_> 
+<_Survey Title_>				Household Labour Force Survey[SurveyName] </_Survey Title_> 
+<_Survey Year_>					2019 </_Survey Year_> 
+<_Study ID_>					Not on MicroData Library </_Study ID_> 
 <_Data collection from_>		[MM/YYYY] </_Data collection from_> 
 <_Data collection to_>			[MM/YYYY] </_Data collection to_> 
-<_Source of dataset_> 			[Source of data, e.g. NSO] </_Source of dataset_> 
-<_Sample size (HH)_> 			[#] </_Sample size (HH)_> 
-<_Sample size (IND)_> 			[#] </_Sample size (IND)_> 
-<_Sampling method_> 			[Brief description] </_Sampling method_> 
-<_Geographic coverage_> 		[To what level is data significant] </_Geographic coverage_> 
-<_Currency_> 					[Currency used for wages] </_Currency_> 
-
+<_Source of dataset_> 			Shared by Turkey COuntry Office, shareable within World Bank, not to
+								be shared outside. </_Source of dataset_> 
+<_Sample size (HH)_> 			147,072 </_Sample size (HH)_> 
+<_Sample size (IND)_> 			366,551 </_Sample size (IND)_> 
+<_Sampling method_> 			Two-stage stratified cluster sampling method </_Sampling method_> 
+<_Geographic coverage_> 		NUTS-2 </_Geographic coverage_> 
+<_Currency_> 					Turkish Lira </_Currency_> 
 ----------------------------------------------------------------------- 
-
-<_ICLS Version_>				[Version of ICLS for Labor Questions] </_ICLS Version_> 
-<_ISCED Version_>				[Version of ICLS for Labor Questions] </_ISCED Version_> 
-<_ISCO Version_>				[Version of ICLS for Labor Questions] </_ISCO Version_> 
-<_OCCUP National_>				[Version of ICLS for Labor Questions] </_OCCUP National_> 
-<_ISIC Version_>				[Version of ICLS for Labor Questions] </_ISIC Version_> 
-<_INDUS National_>				[Version of ICLS for Labor Questions] </_INDUS National_> 
-
+<_ICLS Version_>				ICLS 13
+								See (opens a download, explains ICLS from 1st Jan 2021): https://data.tuik.gov.tr/Bulten/DownloadFile?p=KWx/ZsAk3TypTRJIEcpUEtTStWGLhpnLGyTbaUSWvh2j3VKcvghQBAUEdXdBNaCselwemJkYsbg56bWA1qEsoRRNKEIzK2rRGmP9VLn9fRM=
+								</_ICLS Version_> 
+<_ISCED Version_>				ISCED-2011 </_ISCED Version_> 
+<_ISCO Version_>				ISCO-08 </_ISCO Version_> 
+<_OCCUP National_>				ISCO-08 </_OCCUP National_> 
+<_ISIC Version_>				ISIC 4 (NACE-R2 and ISIC 4 are equal to Division (2 digit) level) </_ISIC Version_> 
+<_INDUS National_>				NACE-Rev2 </_INDUS National_> 
 ----------------------------------------------------------------------- 
 <_Version Control_> 
-
 * Date: [YYYY-MM-DD] - [Description of changes]
 * Date: [YYYY-MM-DD] - [Description of changes]
-
 </_Version Control_> 
-
 -------------------------------------------------------------------------*/
 
 
@@ -57,14 +51,14 @@ set mem 800m
 
 *----------1.2: Set directories------------------------------*
 
-local path_in "[Path to CCC_YYYY_SVY_v01_M / Data / Stata]"
-local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
+local path_in "Y:\GLD-Harmonization\529026_MG\TUR\TUR_2019_HLFS-C\TUR_2019_HLFS-C_v01_M\Data\Stata"
+local path_output "Y:\GLD-Harmonization\529026_MG\TUR\TUR_2019_HLFS-C\TUR_2019_HLFS-C_v01_M_v01_A_GLD\Data\Harmonized"
 
 *----------1.3: Database assembly------------------------------*
 
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
-
+use "`path_in'\LFS2019_raw.dta"
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -73,43 +67,43 @@ local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
 {
 
 *<_countrycode_>
-	gen str4 countrycode = ""
+	gen str4 countrycode = "TUR"
 	label var countrycode "Country code"
 *</_countrycode_>
 
 
 *<_survname_>
-	gen survname = ""
+	gen survname = "HLFS"
 	label var survname "Survey acronym"
 *</_survname_>
 
 
 *<_survey_>
-	gen survey = ""
+	gen survey = "LFS"
 	label var survey "Survey type"
 *</_survey_>
 
 
 *<_icls_v_>
-	gen icls_v = "ICLS-[##]"
+	gen icls_v = "ICLS-13"
 	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
 
 
 *<_year_>
-	gen int year = 
+	gen int year = 2019
 	label var year "Year of survey"
 *</_year_>
 
 
 *<_vermast_>
-	gen vermast = ""
+	gen vermast = "01"
 	label var vermast "Version of master data"
 *</_vermast_>
 
 
 *<_veralt_>
-	gen veralt = ""
+	gen veralt = "01"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
@@ -121,13 +115,13 @@ local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
 
 
 *<_int_year_>
-	gen int_year=.
+	gen int_year= 2019
 	label var int_year "Year of the interview"
 *</_int_year_>
 
 
 *<_int_month_>
-	gen  int_month = 
+	gen  int_month = .
 	label de lblint_month 1 "January" 2 "February" 3 "March" 4 "April" 5 "May" 6 "June" 7 "July" 8 "August" 9 "September" 10 "October" 11 "November" 12 "December"
 	label value int_month lblint_month
 	label var int_month "Month of the interview"
@@ -135,51 +129,51 @@ local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
 
 
 *<_hhid_>
-/* <_hhid_note>
-
-	The variable should be a string made up of the elements to define it, that is psu code, ssu, ...
-	Each element should always be as long as needed for the longest element. That is, if there are
-	60 psu coded 1 through 60, codes should be 01, 02, ..., 60. If there are 160 it should be 001,
-	002, ..., 160.
-
-</_hhid_note> */
-	egen hhid = concat( [Elements] )
+	tostring birimno, gen(hhid)
 	label var hhid "Household ID"
 *</_hhid_>
 
 
 *<_pid_>
-	gen  pid = 
+	egen pid = concat(hhid fertno)
 	label var pid "Individual ID"
 *</_pid_>
 
 
 *<_weight_>
-	gen weight = 
+/* <_weight_note>
+	Weight as given in raw data gives value in the thousands (so 61 million appears as 61 000),
+	need to multiply by thousand to have actual number.
+</_weight_note> */
+	gen weight = agirlik_katsayisi*1000 
 	label var weight "Household sampling weight"
 *</_weight_>
 
 
 *<_psu_>
-	gen psu = 
+/* <_psu_note>
+	PSU info not given. Turkish stats institute contacted who confirmed, PSU not published and cannot be
+	reconstructed from other variables.
+</_psu_note> */
+	gen psu = .
 	label var psu "Primary sampling units"
 *</_psu_>
 
 
 *<_ssu_>
-	gen ssu = 
+	gen ssu = .
 	label var ssu "Secondary sampling units"
 *</_ssu_>
 
 
 *<_strata_>
-	gen strata = 
+	gen strata = .
 	label var strata "Strata"
 *</_strata_>
 
 
 *<_wave_>
-	gen wave = 
+	gen wave = .
 	label var wave = "Survey wave"
 *</_wave_>
 
@@ -192,7 +186,7 @@ local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
 {
 
 *<_urban_>
-	gen byte urban
+	gen byte urban = .
 	label var urban "Location is urban"
 	la de lblurban 1 "Urban" 0 "Rural"
 	label values urban lblurban
@@ -201,27 +195,65 @@ local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
 
 *<_subnatid1_>
 /* <_subnatid1>
-
-	Labels are to be defined as # - Name like 1 "1 - Alaska" 2 "2 - Arkansas".
-
+	First breakdown is NUTS-1 (https://en.wikipedia.org/wiki/NUTS_statistical_regions_of_Turkey), not actual
+	administrative divisions. Same for subnatid2.
 </_subnatid1> */
-	gen byte subnatid1 = 
-	label de lblsubnatid1 1 "1 - Name" 
+	gen subnatid1= .
+	replace subnatid1 = 1 if ibbs_1 == "TR1"
+	replace subnatid1 = 2 if ibbs_1 == "TR2"
+	replace subnatid1 = 3 if ibbs_1 == "TR3"
+	replace subnatid1 = 4 if ibbs_1 == "TR4"
+	replace subnatid1 = 5 if ibbs_1 == "TR5"
+	replace subnatid1 = 6 if ibbs_1 == "TR6"
+	replace subnatid1 = 7 if ibbs_1 == "TR7"
+	replace subnatid1 = 8 if ibbs_1 == "TR8"
+	replace subnatid1 = 9 if ibbs_1 == "TR9"
+	replace subnatid1 = 10 if ibbs_1 == "TRA"
+	replace subnatid1 = 11 if ibbs_1 == "TRB"
+	replace subnatid1 = 12 if ibbs_1 == "TRC"
+	label define lblsubnatid1  1 "1 - Istanbul" 2 "2 - West Marmara" 3 "3 - Aegean" 4 "4 - East Marmara" 5 "5 - West Anatolia" 6 "6 - Mediterranean" 7 "7 - Central Anatolia" 8 "8 - West Black Sea" 9 "9 - East Black Sea" 10 "10 - Northeast Anatolia" 11 "11- Middle East Anatolia" 12 "12 - Southeast Anatolia"
 	label values subnatid1 lblsubnatid1
-	label var subnatid1 "Subnational ID at First Administrative Level"
+	label var subnatid1 "Subnational ID at NUTS 1 Level"
 *</_subnatid1_>
 
 
 *<_subnatid2_>
-	gen byte subnatid2 = 
-	label de lblsubnatid2 1 "1 - Name" 
+	gen subnatid2=.
+	replace subnatid2 = 1 if ibbs_2 == "TR10"
+	replace subnatid2 = 2 if ibbs_2 == "TR21"
+	replace subnatid2 = 3 if ibbs_2 == "TR22"
+	replace subnatid2 = 4 if ibbs_2 == "TR31"
+	replace subnatid2 = 5 if ibbs_2 == "TR32"
+	replace subnatid2 = 6 if ibbs_2 == "TR33"
+	replace subnatid2 = 7 if ibbs_2 == "TR41"
+	replace subnatid2 = 8 if ibbs_2 == "TR42"
+	replace subnatid2 = 9 if ibbs_2 == "TR51"
+	replace subnatid2 = 10 if ibbs_2 == "TR52"
+	replace subnatid2 = 11 if ibbs_2 == "TR61"
+	replace subnatid2 = 12 if ibbs_2 == "TR62"
+	replace subnatid2 = 13 if ibbs_2 == "TR63"
+	replace subnatid2 = 14 if ibbs_2 == "TR71"
+	replace subnatid2 = 15 if ibbs_2 == "TR72"
+	replace subnatid2 = 16 if ibbs_2 == "TR81"
+	replace subnatid2 = 17 if ibbs_2 == "TR82"
+	replace subnatid2 = 18 if ibbs_2 == "TR83"
+	replace subnatid2 = 19 if ibbs_2 == "TR90"
+	replace subnatid2 = 20 if ibbs_2 == "TRA1"
+	replace subnatid2 = 21 if ibbs_2 == "TRA2"
+	replace subnatid2 = 22 if ibbs_2 == "TRB1"
+	replace subnatid2 = 23 if ibbs_2 == "TRB2"
+	replace subnatid2 = 24 if ibbs_2 == "TRC1"
+	replace subnatid2 = 25 if ibbs_2 == "TRC2"
+	replace subnatid2 = 26 if ibbs_2 == "TRC3"
+	label var subnatid2 "NUTS-2 Region"
+	label define lblsubnatid2  1 "1 - Istanbul" 2 "2 - Edirne, Tekirdağ, Kırklareli" 3 "3 - Balıkesir, Çanakkale" 4 "4 - İzmir" 5 "5 - Denizli, Aydın, Muğla" 6 "6 - Manisa, Afyonkarahisar, Kütahya, Uşak" 7 "7 - Bursa, Eskişehir, Bilecik" 8 "8 - Kocaeli, Sakarya, Düzce, Bolu, Yalova" 9 "9 - Ankara" 10 "10 - Konya, Karaman" 11 "11 - Antalya, Isparta, Burdur" 12 "12 - Adana, Mersin" 13 "13 - Hatay, Kahramanmaraş, Osmaniye" 14 "14 - Nevşehir, Aksaray, Niğde, Kırıkkale, Kırşehir" 15 "15 - Kayseri, Sivas, Yozgat" 16 "16 - Zonguldak, Karabük, Bartın" 17 "17 - Kastamonu, Çankırı, Sinop" 18 "18 - Samsun, Tokat, Çorum, Amasya" 19 "19 - Trabzon, Ordu, Giresun, Rize, Artvin, Gümüşhane" 20 "20 - Erzurum, Erzincan, Bayburt" 21 "21 - Kars, Ağrı, Iğdır, Ardahan" 22 "22 - Malatya, Elazığ, Bingöl, Tunceli" 23 "23 - Van, Muş, Bitlis, Hakkari" 24 "24 - Gaziantep, Adıyaman, Kilis" 25 "25 - Diyarbakır, Şanlıurfa" 26 "26 - Siirt, Mardin, Batman, Şırnak" 
 	label values subnatid2 lblsubnatid2
-	label var subnatid2 "Subnational ID at Second Administrative Level"
+	label var subnatid2 "Subnational ID at NUTS 2 Level"
 *</_subnatid2_>
 
 
 *<_subnatid3_>
-	gen byte subnatid3 = 
+	gen byte subnatid3 = .
 	label de lblsubnatid3 1 "1 - Name" 
 	label values subnatid3 lblsubnatid3
 	label var subnatid3 "Subnational ID at Third Administrative Level"
@@ -229,16 +261,14 @@ local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = .
+	gen subnatidsurvey = "subnatid2"
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
 
 *<_subnatid1_prev_>
 /* <_subnatid1_prev_note>
-
 	subnatid1_prev is coded as missing unless the classification used for subnatid1 has changed since the previous survey.
-
 </_subnatid1_prev_note> */
 	gen subnatid1_prev = .
 	label var subnatid1_prev "Classification used for subnatid1 from previous survey"
@@ -283,19 +313,26 @@ local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
 {
 
 *<_hsize_>
-	gen hsize
+/* <_hsize_note>
+	Released data does not contain those under 15 so it is difficult to estimate HH size. However, looking at 
+	the data, it is clear that HH size (hane_buyukluk) does count all in the household including those with
+	relationship 11 to the HH head (yakinlik), meaning "Housekeepers staying at home", they are taken out.
+</_hsize_note> */
+	gen helper_housekeepers = yakinlik == 11
+	gen hsize = hane_buyukluk - helper_housekeepers // take out housekeepers staying at home
 	label var hsize "Household size"
 *</_hsize_>
 
 
 *<_age_>
-	gen age = 
+	gen age = yas
 	label var age "Individual age"
 *</_age_>
 
 
 *<_male_>
-	gen male = 
+	gen male = cinsiyet
+	recode male (2=0)
 	label var male "Sex - Ind is male"
 	la de lblmale 1 "Male" 0 "Female"
 	label values male lblmale
@@ -303,7 +340,8 @@ local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
 
 
 *<_relationharm_>
-	gen relationharm = 
+	gen relationharm = yakinlik
+	recode relationharm 6/9=5 10 11=6
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm  lblrelationharm
@@ -311,13 +349,14 @@ local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
 
 
 *<_relationcs_>
-	gen relationcs = 
+	gen relationcs = yakinlik
 	label var relationcs "Relationship to the head of household - Country original"
 *</_relationcs_>
 
 
 *<_marital_>
-	gen byte marital = 
+	gen byte marital = medeni_durum
+	recode marital 1=2 2=1 3=4 4=5
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
 	label values marital lblmarital
@@ -361,6 +400,11 @@ local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
 
 }
 
+************************************************
+************************************************
+* Up to here
+************************************************
+************************************************
 
 /*%%=============================================================================================
 	5: Migration
@@ -446,9 +490,7 @@ local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
 *<_ed_mod_age_>
 
 /* <_ed_mod_age_note>
-
 Education module is only asked to those XX and older.
-
 </_ed_mod_age_note> */
 
 gen byte ed_mod_age = 
@@ -697,8 +739,6 @@ foreach v of local ed_var {
 
 *<_occup_skill_>
 	gen occup_skill = .
-	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill" 
-	label values occup_skill lblskill
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
 *</_occup_skill_>
 
@@ -739,10 +779,8 @@ foreach v of local ed_var {
 
 *<_wage_total_>
 /* <_wage_total>
-
 	Use gross wages when available and net wages only when gross wages are not available. 
 	This is done to make it easy to compare earnings in formal and informal sectors.
-
 </_wage_total> */
 	gen wage_total = 
 	label var wage_total "Annualized total wage primary job 7 day recall"
@@ -855,8 +893,6 @@ foreach v of local ed_var {
 
 *<_occup_skill_2_>
 	gen occup_skill_2 = .
-	la de lblskill2 1 "Low skill" 2 "Medium skill" 3 "High skill" 
-	label values occup_skill_2 lblskill2
 	label var occup_skill_2 "Skill based on ISCO standard secondary job 7 day recall"
 *</_occup_skill_2_>
 
@@ -1066,8 +1102,6 @@ foreach v of local ed_var {
 
 *<_occup_skill_year_>
 	gen occup_skill_year = .
-	la de lblskillyear 1 "Low skill" 2 "Medium skill" 3 "High skill" 
-	label values occup_skill_year lblskillyear
 	label var occup_skill_year "Skill based on ISCO standard primary job 12 month recall"
 *</_occup_skill_year_>
 
@@ -1220,8 +1254,6 @@ foreach v of local ed_var {
 
 *<_occup_skill_2_year_>
 	gen occup_skill_2_year = .
-	la de lblskilly2 1 "Low skill" 2 "Medium skill" 3 "High skill" 
-	label values occup_skill_2_year lblskilly2
 	label var occup_skill_2_year "Skill based on ISCO standard secondary job 12 month recall"
 *</_occup_skill_2_year_>
 
@@ -1351,7 +1383,6 @@ foreach v of local ed_var {
 
 ** Drop info for cases under the age for which questions to be asked (do not need a variable for this)
 local lab_var "minlaborage lstatus nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year 
-
 unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome"
 
 foreach v of local lab_var {

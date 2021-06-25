@@ -5,22 +5,22 @@
 **                                                                                                  **
 ** COUNTRY					Mexico
 ** COUNTRY ISO CODE			MEX
-** YEAR						2008
+** YEAR						2020
 ** SURVEY NAME				Encuesta Nacional de Ocupación y Empleo
 ** SURVEY AGENCY			Instituto Nacional de Estadística y Geografía (INEGI)
 ** SURVEY SOURCE			INEGI
 ** UNIT OF ANALYSIS			Households and Individuals
-** INPUT DATABASES			VIVT108.dta
-*							HOGT108.dta
-*							SDEMT108.dta
-*							COE1T108.dta
-*							COE2T108.dta
-** MODIFIED BY				aquinonesnunura@worldbank.org
-** Created					03-26-2020
-** Modified					05-29-2021
-** NUMBER OF HOUSEHOLDS		104113
-** NUMBER OF INDIVIDUALS	402253
-** EXPANDED POPULATION		110815271
+** INPUT DATABASES			VIVT120.dta
+*							HOGT120.dta
+*							SDEMT120.dta
+*							COE1T120.dta
+*							COE2T120.dta
+** Modified by				aquinonesnunura@worldbank.org
+** Created					03-16-2020
+** Modified					06-04-2021
+** NUMBER OF HOUSEHOLDS		113634
+** NUMBER OF INDIVIDUALS	400971
+** EXPANDED POPULATION		n/a
 **                                                                                                  **
 ******************************************************************************************************
 *****************************************************************************************************/
@@ -40,11 +40,10 @@
 
 
 ** DIRECTORY
-	local path "C:\Users\MEX\MEX_2008_LFS"
+	local path "C:\UsersMEX\MEX_2020_LFS"
 
 ** LOG FILE
-	log using "`path'\MEX_2008_LFS_v01_M_v01_A_I2D2\Programs\MEX_2008_I2D2_ENOE.log", replace
-
+	log using "`path'\MEX_2020_LFS_v01_M_v01_A_I2D2\Programs\MEX_2020_I2D2_ENOE.log", replace
 
 
 /*****************************************************************************************************
@@ -55,15 +54,15 @@
 
 
 ** DATABASE ASSEMBLENT
-	use "`path'/MEX_2008_LFS_v01_M/Data/Original/VIVT108.dta",clear
+	use "`path'/MEX_2020_LFS_v01_M/Data/Original/VIVT120.dta",clear
 	drop p1-p3
 	destring loc mun est ageb t_loc cd_a upm d_sem n_pro_viv ent con v_sel n_ent per, replace
-	merge 1:m ent con v_sel using "`path'/MEX_2008_LFS_v01_M/Data/Original/HOGT108.dta", nogen
-	merge 1:m ent con v_sel n_hog using "`path'/MEX_2008_LFS_v01_M/Data/Original/SDEMT108.dta"
+	merge 1:m ent con v_sel using "`path'/MEX_2020_LFS_v01_M/Data/Original/HOGT120.dta", nogen
+	merge 1:m ent con v_sel n_hog using "`path'/MEX_2020_LFS_v01_M/Data/Original/SDEMT120.dta"
 	drop if _merge==1
 	drop _merge
-	merge 1:1 ent con v_sel n_hog n_ren using "`path'/MEX_2008_LFS_v01_M/Data/Original/COE1T108.dta", nogen
-	merge 1:1 ent con v_sel n_hog n_ren using "`path'/MEX_2008_LFS_v01_M/Data/Original/COE2T108.dta", nogen
+	merge 1:1 ent con v_sel n_hog n_ren using "`path'/MEX_2020_LFS_v01_M/Data/Original/COE1T120.dta", nogen
+	merge 1:1 ent con v_sel n_hog n_ren using "`path'/MEX_2020_LFS_v01_M/Data/Original/COE2T120.dta", nogen
 	keep if r_pre==0 & inlist(c_res,1,3)
 	tostring (ent v_sel n_hog n_ren h_mud), gen(ent_str v_sel_str n_hog_str n_ren_str h_mud_str) format(%02.0f)
 	tostring con, replace
@@ -73,20 +72,20 @@
 	tab d_mes
 	replace d_mes=. if d_mes == 4 | d_mes == 5 | d_mes == 12
 	tab d_mes, missing
-	
-	
+
+
 ** COUNTRY
 	gen str4 ccode="MEX"
 	label var ccode "Country code"
 
 
 ** YEAR
-	gen int year=2008
+	gen int year=2020
 	label var year "Year of survey"
 
 
 ** YEAR OF INTERVIEW
-	gen int intv_year=2008
+	gen int intv_year=2020
 	label var intv_year "Year of the interview"
 
 
@@ -248,8 +247,7 @@
 155 obs deleted
 */
 	drop if hh>1
-	*one observation of hhsize was one for one person.
-	recode hhsize 1=. if head==4
+
 
 ** GENDER
 	gen byte gender=sex
@@ -446,7 +444,7 @@
 
 	replace p2b_mes=. if p2b_mes==99
 	replace p2a_mes=. if p2a_mes==99
-	gen unempldur=(2005- p2a_anio)*12 + p2b_mes- p2a_mes if p2b_anio==2005
+	gen unempldur=(2020- p2a_anio)*12 + p2b_mes- p2a_mes if p2b_anio==2020
 
 ** UNEMPLOYMENT DURATION: MONTHS LOOKING FOR A JOB
 	gen byte unempldur_l=unempldur
@@ -514,33 +512,33 @@
 
 ** FIRM SIZE
 	gen byte firmsize_l=.
-	replace firmsize_l=1 if p3l==01
-	replace firmsize_l=2 if p3l==02
-	replace firmsize_l=6 if p3l==03
-	replace firmsize_l=11 if p3l==04
-	replace firmsize_l=16 if p3l==05
-	replace firmsize_l=21 if p3l==06
-	replace firmsize_l=31 if p3l==07
-	replace firmsize_l=51 if p3l==08
-	replace firmsize_l=100 if inrange(p3l,09,12)
+	replace firmsize_l=1 if p3q==01
+	replace firmsize_l=2 if p3q==02
+	replace firmsize_l=6 if p3q==03
+	replace firmsize_l=11 if p3q==04
+	replace firmsize_l=16 if p3q==05
+	replace firmsize_l=21 if p3q==06
+	replace firmsize_l=31 if p3q==07
+	replace firmsize_l=51 if p3q==08
+	replace firmsize_l=100 if inrange(p3q,09,12)
 	replace firmsize_l=. if lstatus!=1
 	label var firmsize_l "Firm size (lower bracket)"
 
 	gen byte firmsize_u=.
-	replace firmsize_u=1 if p3l==01
-	replace firmsize_u=5 if p3l==02
-	replace firmsize_u=10 if p3l==03
-	replace firmsize_u=15 if p3l==04
-	replace firmsize_u=20 if p3l==05
-	replace firmsize_u=30 if p3l==06
-	replace firmsize_u=50 if p3l==07
-	replace firmsize_u=100 if inrange(p3l,8,12)
+	replace firmsize_u=1 if p3q==01
+	replace firmsize_u=5 if p3q==02
+	replace firmsize_u=10 if p3q==03
+	replace firmsize_u=15 if p3q==04
+	replace firmsize_u=20 if p3q==05
+	replace firmsize_u=30 if p3q==06
+	replace firmsize_u=50 if p3q==07
+	replace firmsize_u=100 if inrange(p3q,8,12)
 	replace firmsize_u=. if lstatus!=1
 	label var firmsize_u "Firm size (upper bracket)"
 
 
 ** HOURS WORKED LAST WEEK
-	gen whours=p5b_thrs if p5b_thrs<=126
+	gen whours=p5c_thrs if p5c_thrs<=126
 	replace whours=. if lstatus!=1
 	label var whours "Hours of work in last week"
 
@@ -652,7 +650,7 @@
 
 
 ** CONTRACT
-	gen byte contract=p3i
+	gen byte contract=p3j
 	recode contract 2=0 9=.
 	replace contract=. if lstatus!=1
 	label var contract "Contract"
@@ -801,10 +799,8 @@
 	}
 	keep ccode year intv_year month  idh idp wgt strata psu `keep'
 
-	save "`path'\MEX_2008_LFS_v01_M_v01_A_I2D2\Data\Harmonized\MEX_2008_I2D2_ENOE.dta", replace
-	
+	save "`path'\MEX_2020_LFS_v01_M_v01_A_I2D2\Data\Harmonized\MEX_2020_I2D2_ENOE.dta", replace
+
 	log close
-
-
 
 ******************************  END OF DO-FILE  *****************************************************/
