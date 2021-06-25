@@ -12,6 +12,17 @@ GLD <- "Y:/GLD-Harmonization/551206_TM/PHL"
 
 ```
 
+
+```{css, echo=FALSE}
+pre {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+pre[class] {
+  max-height: 300px;
+}
+```
 A document to quickly review the distribution of labeled vs non-labeled region data for various years 
 
 # 2016 
