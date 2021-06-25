@@ -277,12 +277,13 @@ if (`cb_pause' == 1) {
 	* reg01 is the geo/admin var of interest, reg02 is the first/highest/largest admin variable
 
 	* RECODE REGION
-
 	recode 	reg01 reg02 	/// recode both of thes variables
 			(4 = 41) 		/// sometimes Calabarzon appears as value 4, recode to always be 41 for consistency
 			(17= 42)		//  sometimes Mimaropa appears as value 17, recode to always be 42 for consistency
 
-	* define region value label: b=after july 2003 change
+
+	* CREATE VALUE LABEL
+	** define region value label: b=after july 2003 change
 	la de lblreg02b			///
 	 1   "Ilocos"			///
 	 2	 "Cagayan Valley"	///
@@ -306,7 +307,7 @@ if (`cb_pause' == 1) {
 	 41	 "Calabarzon"	/// formerly part of Southern Tagalog
 	 42  "Mimaropa"		// formerly part of Southern Tagalog
 
-	* label appropriate variable values
+	** label appropriate variable values
 	label values 	reg01 reg02 	lblreg02b
 
 ** RENAME ORIGINAL ADMIN VARIABLES
