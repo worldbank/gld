@@ -293,8 +293,9 @@ if (`append' == 1) {
 	label values 	reg01 reg02 	lblreg02a
 
 ** RENAME ORIGINAL ADMIN VARIABLES
-	gen reg02_orig = regn
-	gen reg03_orig = prov
+	* clonevar keeps value labels along with values; gen does not.
+	clonevar reg02_orig = regn
+	clonevar reg03_orig = prov
 
 	la var reg02_orig "Original 1st Level Admin Variable"
 	la var reg03_orig "Original 2nd Level Admin Variable"
