@@ -927,8 +927,8 @@ foreach v of local ed_var {
 
 
 *<_t_wage_others_>
-	gen t_wage_others_total = .
-	label var t_wage_others_total "Annualized wage in all but primary and secondary jobs (12-mon ref period)"
+	gen t_wage_others = .
+	label var t_wage_others "Annualized wage in all but primary and secondary jobs (12-mon ref period)"
 *</_t_wage_others_>
 
 
@@ -1291,8 +1291,8 @@ foreach v of local ed_var {
 *</_t_wage_nocompen_others_year_>
 
 *<_t_wage_others_year_>
-	gen t_wage_others_total_year = .
-	label var t_wage_others_total_year "Annualized wage in all but primary and secondary jobs 12 month recall"
+	gen t_wage_others_year = .
+	label var t_wage_others_year "Annualized wage in all but primary and secondary jobs 12 month recall"
 *</_t_wage_others_year_>
 
 
@@ -1355,7 +1355,14 @@ local lab_var "minlaborage lstatus nlfreason unempldur_l unempldur_u empstat ocu
 unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome"
 
 foreach v of local lab_var {
-	replace `v'=. if ( age < minlaborage & !missing(age) )
+	cap confirm numeric variable `v'
+	if _rc == 0 { // is indeed numeric
+		replace `v'=. if ( age < minlaborage & !missing(age) )
+	}
+	else { // is not
+		replace `v'= "" if ( age < minlaborage & !missing(age) )
+	}
+	
 }
 
 *</_% Correction min age_>
