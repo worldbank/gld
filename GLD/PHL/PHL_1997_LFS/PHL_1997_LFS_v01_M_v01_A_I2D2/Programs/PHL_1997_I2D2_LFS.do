@@ -253,7 +253,7 @@ if (`append' == 1) {
 
 
 ** REGIONAL AREA 1 DIGIT ADMN LEVEL
-	gen reg02 = regn 
+	gen reg02 = regn
 	label var reg02 "1st Level Administrative Division"
 
 
