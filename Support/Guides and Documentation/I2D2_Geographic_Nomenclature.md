@@ -7,7 +7,7 @@ The I2D2 dataset contains four geographic or adminstrative level variables, whic
 
 The naming nomenclature is as follows:
 - `reg01`: is the preferred geographic area of analysis. This could refer to: 
-  - one of the 1st- or 2nd-level admin variables below
+  - one of the 1st-, or 2nd-, or 3rd-level admin variables below
   - an ambiguous, large conceptual area (such as the "northeast")
   - or a granular classification such as the urban/rural divide
 - `reg02`: the first level of geographic administrative disaggregation. Typically the largest unit in area, on average.
