@@ -117,3 +117,17 @@ vallabs_reg16 <- metadata %>%
               values_from = "value_label") %>%
   distinct()
 
+
+
+# create province object
+vallab_tab_prov <- metadata %>%
+  filter( grepl("prov", var_name_orig) | grepl("prv", var_name_orig) ) %>%
+  filter(!is.na(labels)) %>%
+  select(id, labels) %>%
+  unnest_longer(labels, 
+                values_to = "value",
+                indices_to = "value_label") %>%
+  pivot_wider(names_from = id, values_from = value_label) %>%
+  arrange(value)
+
+
