@@ -78,7 +78,7 @@ The resulting coding and labeling schema looks like this:
 | 11 | Southern Mindanao	| Davao	|
 | 12 | Central Mindanao	| Soccsksargen	|
 | 13 | National Capital Region	| National Capital Region	|
-| 14 | Cordillera Administrative Regio	| Cordillera Administrative Region	|
+| 14 | Cordillera Administrative Region	| Cordillera Administrative Region	|
 | 15 | Autonomous Region of Muslim Mindanao	| Autonomous Region in Muslim Mindanao	|
 | 16 | Caraga	| Caraga	|
 | 17 |  .	| .|
@@ -87,6 +87,9 @@ The resulting coding and labeling schema looks like this:
 | 42 | .	|  Mimaropa	|
 
 ### What to do for 2003?
+The data for 2003 are provided in the two-system labeled scheme for January+April and July+October as described above. However, the [Janurary and April months](https://psa.gov.ph/node/33231/33231/33231/33231/33231?combine=2003) of the ISH list the *new* post-July/labeling scheme as the scheme they utilized. I will simply consider the data as it was provided to me with the "pre" July 2003 scheme.
+
+#### Coding 2003
 
 
 ## Province
