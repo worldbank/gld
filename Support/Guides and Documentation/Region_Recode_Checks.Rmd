@@ -46,29 +46,29 @@ Let's create a mini dataset and test this.
 ```{r}
 # append and trim 
 jan <- lfs2016jan %>%
-  select(reg, svymo) %>%
-  mutate(reg = case_when(reg == 4  ~ 41,
-                         reg == 17 ~ 42, 
-                         TRUE      ~ reg))
+  select(pufreg, svymo) %>%
+  mutate(pufreg = case_when(pufreg == 4  ~ 41,
+                         pufreg == 17 ~ 42, 
+                         TRUE      ~ pufreg))
 
 apr <- lfs2016apr %>%
-  mutate(reg = as.numeric(pufreg)) %>%
-  select(reg, pufreg, pufsvymo) %>%
-  mutate(reg = case_when(reg == 4  ~ 41,
-                         reg == 17 ~ 42, 
-                         TRUE      ~ reg)) %>%
+  mutate(pufreg = as.numeric(pufreg)) %>%
+  select(pufreg, pufreg, pufsvymo) %>%
+  mutate(pufreg = case_when(pufreg == 4  ~ 41,
+                         pufreg == 17 ~ 42, 
+                         TRUE      ~ pufreg)) %>%
   rename(svymo = pufsvymo)
 
 jul <- lfs2016jul %>%
   select(pufreg, pufsvymo) %>%
-  mutate(reg = case_when(pufreg == 4  ~ 41,
+  mutate(pufreg = case_when(pufreg == 4  ~ 41,
                          pufreg == 17 ~ 42, 
                          TRUE      ~ pufreg)) %>%
   rename(svymo = pufsvymo)
 
 oct <- lfs2016oct %>%
   select(pufreg, pufsvymo) %>%
-  mutate(reg = case_when(pufreg == 4  ~ 41,
+  mutate(pufreg = case_when(pufreg == 4  ~ 41,
                          pufreg == 17 ~ 42, 
                          TRUE      ~ pufreg)) %>%
   rename(svymo = pufsvymo)
@@ -85,7 +85,7 @@ After recoding to the same levels, there seems to be pretty good visual evidence
 
 ```{r}
 
-hist <- ggplot(lfs2016_reg, aes(reg)) +
+hist <- ggplot(lfs2016_reg, aes(pufreg)) +
   geom_histogram(binwidth = 1) + 
   scale_x_continuous(n.breaks = 10) +
   facet_grid(rows = vars(svymo), labeller = label_both) + 
@@ -102,9 +102,9 @@ Repeating the same steps for 2006 to verify that the numeric values are likely t
 
 ```{r, echo=FALSE}
 lfs2006jan <- readRDS(file.path(GLD, "PHL_2006_LFS/PHL_2006_LFS_v01_M/Data/R/LFS JAN2006.Rds")) %>%
-  select(reg, svymo)
+  select(pufreg, svymo)
 lfs2006apr <- readRDS(file.path(GLD, "PHL_2006_LFS/PHL_2006_LFS_v01_M/Data/R/LFS APR2006.Rds")) %>%
-  select(reg, svymo)
+  select(pufreg, svymo)
 lfs2006jul <- readRDS(file.path(GLD, "PHL_2006_LFS/PHL_2006_LFS_v01_M/Data/R/LFS JUL2006.Rds")) %>%
   select(creg, svymo)
 lfs2006oct <- readRDS(file.path(GLD, "PHL_2006_LFS/PHL_2006_LFS_v01_M/Data/R/LFS OCT2006.Rds")) %>%
@@ -118,14 +118,14 @@ Resulting comparison histogram looks good. Provisional stylized support for 2006
 # append and trim 
 lfs2006jan <- lfs2006jan %>%
   mutate(
-    reg_num = as.numeric(reg),
+    reg_num = as.numeric(pufreg),
     reg_num = case_when(reg_num == 4  ~ 41,
                          reg_num == 17 ~ 42, 
                          TRUE      ~ reg_num))
 
 lfs2006apr <- lfs2006apr %>%
   mutate(
-    reg_num = as.numeric(reg),
+    reg_num = as.numeric(pufreg),
     reg_num = case_when(reg_num == 4  ~ 41,
                          reg_num == 17 ~ 42, 
                          TRUE      ~ reg_num))
@@ -157,5 +157,72 @@ hist2006 <- ggplot(lfs2006_reg, aes(reg_num)) +
   labs(x = "Region Numeric Value", y = "Count")
 
 hist2006
+```
+
+# 2017 
+
+
+```{r, echo=FALSE}
+lfs2017jan <- readRDS(file.path(GLD, "PHL_2017_LFS/PHL_2017_LFS_v01_M/Data/R/LFS JAN2017.Rds")) %>%
+  select(pufreg, pufsvymo)
+lfs2017apr <- readRDS(file.path(GLD, "PHL_2017_LFS/PHL_2017_LFS_v01_M/Data/R/LFS APR2017.Rds")) %>%
+  select(lreg, lmonth)
+  n_miss_apr17_mo <- sum(is.na(lfs2017apr$lmonth)) # the raw data has a few missing obs for month
+
+lfs2017jul <- readRDS(file.path(GLD, "PHL_2017_LFS/PHL_2017_LFS_v01_M/Data/R/LFS JUL2017.Rds")) %>%
+  select(pufreg, pufsvymo)
+lfs2017oct <- readRDS(file.path(GLD, "PHL_2017_LFS/PHL_2017_LFS_v01_M/Data/R/LFS OCT2017.Rds")) %>%
+  select(pufreg, pufsvymo)
+
+```
+
+Resulting comparison histogram looks good. Provisional stylized support for 2017.
+
+```{r}
+# append and trim 
+lfs2017jan <- lfs2017jan %>%
+  mutate(
+    reg_num = as.numeric(pufreg),
+    reg_num = case_when(reg_num == 4  ~ 41,
+                         reg_num == 17 ~ 42, 
+                         TRUE      ~ reg_num))
+
+lfs2017apr <- lfs2017apr %>%
+  mutate(
+    reg_num = as.numeric(lreg),
+    reg_num = case_when(reg_num == 4  ~ 41,
+                         reg_num == 17 ~ 42, 
+                         TRUE      ~ reg_num)) %>%
+  rename(pufsvymo = lmonth)
+
+lfs2017jul <- lfs2017jul %>%
+  mutate(
+    reg_num = as.numeric(pufreg),
+    reg_num = case_when(pufreg == 4  ~ 41,
+                         pufreg == 17 ~ 42, 
+                         TRUE      ~ pufreg)) 
+
+lfs2017oct <- lfs2017oct %>%
+  mutate(
+    reg_num = as.numeric(pufreg),
+    reg_num = case_when(reg_num == 4  ~ 41,
+                         reg_num == 17 ~ 42, 
+                         TRUE      ~ reg_num))
+  
+
+lfs2017_reg <- bind_rows(lfs2017jan, lfs2017apr, lfs2017jul, lfs2017oct) %>%
+  filter(!is.na(pufsvymo))
+assertthat::assert_that(sum(is.na(lfs2017_reg$reg_num )) == 0 ) # ensure we have no missing values in the new numeric var
+
+
+# ggplot 
+hist2017 <- ggplot(lfs2017_reg, aes(reg_num)) +
+  geom_histogram(binwidth = 1) + 
+  scale_x_continuous(n.breaks = 10) +
+  facet_grid(rows = vars(pufsvymo), labeller = label_both) + 
+  theme_minimal() +
+  labs(x = "Region Numeric Value", y = "Count")
+
+hist2017
 ```
 
