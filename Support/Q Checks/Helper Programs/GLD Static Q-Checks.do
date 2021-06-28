@@ -564,12 +564,12 @@ if `counting' > 1{ // if just one var no point in checking
 
 	local var1 : word 1 of `wage_present_vars'
 	local var2  : word 2 of `wage_present_vars'
-	qui count if `var1' < `var2' & ( !missing(`var1') | !missing(`var2') )
+	qui count if `var1' < `var2' & ( !missing(`var1') & !missing(`var2') )
 	local odd_wage_week = `r(N)'
 	if `counting' == 3 { // do one more check if present
 	
 		local var3  : word 3 of `wage_present_vars'
-		qui count if `var2' < `var3' & ( !missing(`var2') | !missing(`var3') )
+		qui count if `var2' < `var3' & ( !missing(`var2') & !missing(`var3') )
 		local odd_wage_week = `odd_wage_week' + `r(N)'
 	} // end case three vars exist
 	
