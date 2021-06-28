@@ -652,7 +652,7 @@ if (`cb_pause' == 1) {
 	replace industry=6 	if c18_pkb >= 5500 	& c18_pkb <= 5699	// "Accommodation+Food" to "Commerce"
 	replace industry=7 	if c18_pkb >= 5800 	& c18_pkb <= 6399	// "Information+communication" to "Transport/Communication"
 	replace industry=8 	if c18_pkb >= 6400 	& c18_pkb <= 8299	// "Misc Business Services" to "Business Services"
-	replace industry=9 	if c18_pkb == 84							// "public administration/defense" to "public administration"
+	replace industry=9 	if c18_pkb >= 8400 	& c18_pkb <= 8499	// "public administration/defense" to "public administration"
 	replace industry=10	if c18_pkb >= 8500 	& c18_pkb <= 9950	// "Other services" including direct education to "other"
 
 	label var industry "1 digit industry classification"
@@ -782,7 +782,7 @@ if (`cb_pause' == 1) {
 	replace industry_2=6 	if j03_okb >= 5500 	& j03_okb <= 5699	// "Accommodation+Food" to "Commerce"
 	replace industry_2=7 	if j03_okb >= 5800 	& j03_okb <= 6399	// "Information+communication" to "Transport/Communication"
 	replace industry_2=8 	if j03_okb >= 6400 	& j03_okb <= 8299	// "Misc Business Services" to "Business Services"
-	replace industry_2=9 	if j03_okb == 84							// "public administration/defense" to "public administration"
+	replace industry_2=9 	if j03_okb >= 8400 	& j03_okb <= 8499	// "public administration/defense" to "public administration"
 	replace industry_2=10	if j03_okb >= 8500 	& j03_okb <= 9950	// "Other services" including direct education to "other"
 
 
