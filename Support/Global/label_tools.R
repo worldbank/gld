@@ -2,6 +2,8 @@
 # a working exploratory script to see what we can do with the metadata file
 # using "region" as a working example.
 
+renv::activate()
+
 library(tidyverse)
 library(retroharmonize)
 
