@@ -133,3 +133,15 @@ vallab_tab_prov <- metadata %>%
   arrange(value)
 
 
+
+
+# create industry object
+vallab_tab_industry <- metadata %>%
+  filter( grepl("qkb", var_name_orig) | grepl("pkb", var_name_orig) ) %>%
+  filter(!is.na(labels)) %>%
+  select(id, labels) %>%
+  unnest_longer(labels, 
+                values_to = "value",
+                indices_to = "value_label") %>%
+  pivot_wider(names_from = id, values_from = value_label) %>%
+  arrange(value)
