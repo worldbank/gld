@@ -375,7 +375,7 @@ if _rc == 0 { // if vars exist since if not captured in 1.1
 *----------6.4: education concordance 5 / 4
 cap confirm variable educat5 educat4 
 if _rc == 0 { // if vars exist since if not captured in 1.1
-	qui : count if (educat5 == 1 & educat4 != 1) | (educat5 == 2 & educat4 != 2) | (educat5 == 3 & educat4 != 3) | (educat5 == 4 & educat4 != 3) | (educat5 == 5 & educat4 != 4)
+	qui : count if (educat5 == 1 & educat4 != 1) | (educat5 == 2 & educat4 != 2) | (educat5 == 3 & educat4 != 2) | (educat5 == 4 & educat4 != 3) | (educat5 == 5 & educat4 != 4)
 	if `r(N)' > 0 { // Correspondance not kept
 		post `memhold' ("Education") ("educat5 vs 4") ("Educat 4 <-> 5 correspondance not holding (number of cases ->)") (`r(N)') (1)
 	}
