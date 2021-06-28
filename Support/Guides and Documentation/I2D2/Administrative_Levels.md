@@ -89,11 +89,28 @@ The resulting coding and labeling schema looks like this:
 | 41 | .|  Calabarzon	|
 | 42 | .	|  Mimaropa	|
 
-### What to do for 2003?
+### Coding 2003
+
 The data for 2003 are provided in the two-system labeled scheme for January+April and July+October as described above. However, the [Janurary and April months](https://psa.gov.ph/node/33231/33231/33231/33231/33231?combine=2003) of the ISH list the *new* post-July/labeling scheme as the scheme they utilized. I will simply consider the data as it was provided to me with the "pre" July 2003 scheme.
 
-#### Coding 2003
+Two key decisions were made in regards to harmonizing the 2003 region data: the first was to recode the first two rounds, January and April, to match the values and labels used in the final two rounds and in the documentation. In practicality, we did this by recoding the region based on the underlying province -- since all provinces exist underneath a region. However, this recoding based on province has us arrive at a second key decision.
 
+| Province   Name | New Region | New Region Value |
+|--------------------|---------------------|
+| Batangas 	| Calabarzon	| 41 |
+| Cavite	| Calabarzon 	| 41 |
+| Laguna	| Calabarzon	| 41 |
+| Quezon | Calabarzon	| 41 |
+| Rizal	| Calabarzon	| 41 |
+| Marinduque | Mimaropa	| 42 |
+| Occidental Mindoro	| Mimaropa	| 42|
+| Oriental Mindoro |Mimaropa	| 42|
+| Palawan	| Mimaropa	| 42|
+| Romblon	| Mimaropa	| 42|
+
+Secondly, for Janurary and April, we reassigned the province `Aurora` to the Region in which the documentation for [Janurary](https://psa.gov.ph/sites/default/files/ISHB_series%20no.115_Labor%20Force_Jan.%202003.pdf) and [April](https://psa.gov.ph/sites/default/files/ISHB_series%20no.%20116_Labor%20Force_April%202003%20.pdf) says it belongs: `Central Luzon`.
+
+After these two recoding deciscions were completed in the code, all four rounds share the same values and value labels -- the same as those found in 2004 and subsequent years.
 
 ## Province
 The 2nd Administrative Level is Province. The value labels appear to be stable across rounds and years, with no mention of changes in the 2003 adminstrative revisions above. Furthermore, the some rounds are numeric while others are labeled. Starting in July 2003, the province variables are only encoded as numeric -- some years afterwards have miscellaneous rounds also encoded with a secondary variable `_name` that stores the province name in string format. From the label data that exists, the labeled variabled are stable across rounds within the same year, but reflect small changes as provinces are added.
