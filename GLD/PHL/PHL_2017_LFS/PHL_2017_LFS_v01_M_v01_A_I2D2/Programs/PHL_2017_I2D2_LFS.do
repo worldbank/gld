@@ -533,7 +533,7 @@ if (`cb_pause' == 1) {
 	la de lbleverattend 0 "No" 1 "Yes"
 	label values everattend lbleverattend
 
-/* %%%
+
 
 /*****************************************************************************************************
 *                                                                                                    *
@@ -636,19 +636,44 @@ if (`cb_pause' == 1) {
 	replace unempldur_l=. if age < lb_mod_age // restrict universe to working age
 	replace unempldur_l=. if lstatus!=2 	  // restrict universe to unemployed only
 
-** INDUSTRY CLASSIFICATION %% continue here. change industry code schema to 4 digit.
+** INDUSTRY CLASSIFICATION
+	/*The industry variables in 2017 are coded under multiple schemas, so each round/month will have to be coded accordingly.*/
+
 	gen byte industry=.
-	replace industry=1 if (c18_pkb>=1& c18_pkb<=4)		// to Agriculture
-	replace industry=2 if (c18_pkb>=5 & c18_pkb<=9)		// to Mining
-	replace industry=3 if (c18_pkb>=10 & c18_pkb<=33)	// to Manufacturing
-	replace industry=4 if (c18_pkb>=35 & c18_pkb<=39)	// to Public utility
-	replace industry=5 if (c18_pkb>=41 &  c18_pkb<=43)	// to Construction
-	replace industry=6 if (c18_pkb>=45 & c18_pkb<=47) | (c18_pkb >= 55 & c18_pkb <= 56)	// to Commerce
-	replace industry=7 if (c18_pkb>=49 & c18_pkb<=53)| (c18_pkb>=58 & c18_pkb<=63) // to Transport/coms
-	replace industry=8 if (c18_pkb>=64 & c18_pkb<=82) 	// to financial/business services
-	replace industry=9 if (c18_pkb==84) 				// to public administration
-	replace industry=10 if  (c18_pkb>=91 & c18_pkb<=99) // to other
-	replace industry=10 if industry==. & c18_pkb!=.
+
+	* for months January, July, October
+	if (pufsvymo != 4) {
+		replace industry=1 	if (pufc16_pkb>=1 	& pufc16_pkb<=4) 	// to Agriculture
+		replace industry=2 	if (pufc16_pkb>=5 	& pufc16_pkb<=9)	// to Mining
+		replace industry=3 	if (pufc16_pkb>=10 & pufc16_pkb<=33)	// to Manufacturing
+		replace industry=4 	if (pufc16_pkb>=35 & pufc16_pkb<=39)	// to Public utility
+		replace industry=5 	if (pufc16_pkb>=41 & pufc16_pkb<=43)	// to Construction
+		replace industry=6 	if (pufc16_pkb>=45 & pufc16_pkb<=47) | (pufc16_pkb >= 55 & pufc16_pkb <= 56)	// to Commerce
+		replace industry=7 	if (pufc16_pkb>=49 & pufc16_pkb<=53) | (pufc16_pkb >= 58 & pufc16_pkb <= 63) // to Transport/coms
+		replace industry=8 	if (pufc16_pkb>=64 & pufc16_pkb<=82) 	// to financial/business services
+		replace industry=9 	if (pufc16_pkb==84) 				// to public administration
+		replace industry=10 if (pufc16_pkb>=91 & pufc16_pkb<=99) // to other
+		replace industry=10 if industry==. & pufc16_pkb!=.
+	}
+	else {
+		* For April, code according to the april Schema
+
+		replace industry=1 	if pufc16_pkb >= 100 	& pufc16_pkb <= 399	 	// "Agriculture, Forestry, Fishing" coded to "Agriculture"
+		replace industry=2 	if pufc16_pkb >= 500 	& pufc16_pkb <= 999		// "Mining and Quarrying" coded to "Mining"
+		replace industry=3 	if pufc16_pkb >= 1000 	& pufc16_pkb <= 3399 	// "Manufacturing" coded to "Manufacturing"
+		replace industry=4 	if pufc16_pkb >= 3500 	& pufc16_pkb <= 3900	// "Water supply, sewerage, etc" coded to "Public Utiltiy"
+		replace industry=5 	if pufc16_pkb >= 4100 	& pufc16_pkb <= 4399	// "Construction" coded to "Construction"
+		replace industry=6 	if pufc16_pkb >= 4500 	& pufc16_pkb <= 4799	// "Wholesale/retail, repair of vehicles" to "Commerce"
+		replace industry=7 	if pufc16_pkb >= 4900 	& pufc16_pkb <= 5399	// "Transport+storage" to "Transport". UN codes include storage
+		replace industry=6 	if pufc16_pkb >= 5500 	& pufc16_pkb <= 5699	// "Accommodation+Food" to "Commerce"
+		replace industry=7 	if pufc16_pkb >= 5800 	& pufc16_pkb <= 6399	// "Information+communication" to "Transport/Communication"
+		replace industry=8 	if pufc16_pkb >= 6400 	& pufc16_pkb <= 8299	// "Misc Business Services" to "Business Services"
+		replace industry=9 	if pufc16_pkb >= 8400 	& pufc16_pkb <= 8499	// "public administration/defense" to "public administration"
+		replace industry=10	if pufc16_pkb >= 8500 	& pufc16_pkb <= 9950	// "Other services" including direct education to "other"
+
+	}
+
+	* valid operations no matter the year
 	replace industry=. if lstatus~=1
 
 * Comments include UN International Standard Industrial Classification associated categories (version 3.1)
@@ -766,19 +791,40 @@ if (`cb_pause' == 1) {
 
 ** INDUSTRY CLASSIFICATION - SECOND JOB
 	gen byte industry_2=.
-	replace industry_2=1 if (j03_okb>=1& j03_okb<=4)		// to Agriculture
-	replace industry_2=2 if (j03_okb>=5 & j03_okb<=9)		// to Mining
-	replace industry_2=3 if (j03_okb>=10 & j03_okb<=33)	// to Manufacturing
-	replace industry_2=4 if (j03_okb>=35 & j03_okb<=39)	// to Public utility
-	replace industry_2=5 if (j03_okb>=41 &  j03_okb<=43)	// to Construction
-	replace industry_2=6 if (j03_okb>=45 & j03_okb<=47) | (j03_okb >= 55 & j03_okb <= 56)	// to Commerce
-	replace industry_2=7 if (j03_okb>=49 & j03_okb<=53)| (j03_okb>=58 & j03_okb<=63) // to Transport/coms
-	replace industry_2=8 if (j03_okb>=64 & j03_okb<=82) 	// to financial/business services
-	replace industry_2=9 if (j03_okb==84) 				// to public administration
-	replace industry_2=10 if  (j03_okb>=91 & j03_okb<=99) // to other
-	replace industry_2=10 if industry_2==. & j03_okb!=.
-	replace industry_2=. if lstatus~=1
 
+	* for months January, July, October
+	if (pufsvymo != 4) {
+		replace inudstry_2=1 	if (pufc43_qkb>=1 	& pufc43_qkb<=4) 	// to Agriculture
+		replace inudstry_2=2 	if (pufc43_qkb>=5 	& pufc43_qkb<=9)	// to Mining
+		replace inudstry_2=3 	if (pufc43_qkb>=10 & pufc43_qkb<=33)	// to Manufacturing
+		replace inudstry_2=4 	if (pufc43_qkb>=35 & pufc43_qkb<=39)	// to Public utility
+		replace inudstry_2=5 	if (pufc43_qkb>=41 & pufc43_qkb<=43)	// to Construction
+		replace inudstry_2=6 	if (pufc43_qkb>=45 & pufc43_qkb<=47) | (pufc43_qkb >= 55 & pufc43_qkb <= 56)	// to Commerce
+		replace inudstry_2=7 	if (pufc43_qkb>=49 & pufc43_qkb<=53) | (pufc43_qkb >= 58 & pufc43_qkb <= 63) // to Transport/coms
+		replace inudstry_2=8 	if (pufc43_qkb>=64 & pufc43_qkb<=82) 	// to financial/business services
+		replace inudstry_2=9 	if (pufc43_qkb==84) 				// to public administration
+		replace inudstry_2=10 if (pufc43_qkb>=91 & pufc43_qkb<=99) // to other
+		replace inudstry_2=10 if inudstry_2==. & pufc43_qkb!=.
+	}
+	else {
+		* For April, code according to the april Schema
+
+		replace inudstry_2=1 	if pufc43_qkb >= 100 	& pufc43_qkb <= 399	 	// "Agriculture, Forestry, Fishing" coded to "Agriculture"
+		replace inudstry_2=2 	if pufc43_qkb >= 500 	& pufc43_qkb <= 999		// "Mining and Quarrying" coded to "Mining"
+		replace inudstry_2=3 	if pufc43_qkb >= 1000 	& pufc43_qkb <= 3399 	// "Manufacturing" coded to "Manufacturing"
+		replace inudstry_2=4 	if pufc43_qkb >= 3500 	& pufc43_qkb <= 3900	// "Water supply, sewerage, etc" coded to "Public Utiltiy"
+		replace inudstry_2=5 	if pufc43_qkb >= 4100 	& pufc43_qkb <= 4399	// "Construction" coded to "Construction"
+		replace inudstry_2=6 	if pufc43_qkb >= 4500 	& pufc43_qkb <= 4799	// "Wholesale/retail, repair of vehicles" to "Commerce"
+		replace inudstry_2=7 	if pufc43_qkb >= 4900 	& pufc43_qkb <= 5399	// "Transport+storage" to "Transport". UN codes include storage
+		replace inudstry_2=6 	if pufc43_qkb >= 5500 	& pufc43_qkb <= 5699	// "Accommodation+Food" to "Commerce"
+		replace inudstry_2=7 	if pufc43_qkb >= 5800 	& pufc43_qkb <= 6399	// "Information+communication" to "Transport/Communication"
+		replace inudstry_2=8 	if pufc43_qkb >= 6400 	& pufc43_qkb <= 8299	// "Misc Business Services" to "Business Services"
+		replace inudstry_2=9 	if pufc43_qkb >= 8400 	& pufc43_qkb <= 8499	// "public administration/defense" to "public administration"
+		replace inudstry_2=10	if pufc43_qkb >= 8500 	& pufc43_qkb <= 9950	// "Other services" including direct education to "other"
+
+	}
+
+	* valid operations no matter the year
 	label var industry_2 "1 digit industry_2 classification"
 	label values industry_2 lblindustry 		// use same value/factor label as industry
 	replace industry_2=. if age < lb_mod_age // restrict universe to working age
