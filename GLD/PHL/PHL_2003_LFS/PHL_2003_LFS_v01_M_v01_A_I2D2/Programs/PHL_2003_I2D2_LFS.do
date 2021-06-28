@@ -41,7 +41,7 @@
 	local 	surv_yr `"2003"'	// set this to the survey year
 
 ** RUN SETTINGS
-	local 	cb_pause = 1	// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
+	local 	cb_pause = 0	// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
 	local 	append 	 = 1	// 1 to run iecodebook append, 0 if file is already appended.
 
 
@@ -247,23 +247,94 @@ if (`cb_pause' == 1) {
 
 
 **REGIONAL AREAS
-	rename regn reg01
+	gen reg01 = regn
 	label var reg01 "Macro regional areas"
 
 
 ** REGIONAL AREA 1 DIGIT ADMN LEVEL
-	rename prov reg02
-	label var reg02 "Region at 1 digit (ADMN1)"
+	gen reg02 = regn
+	label var reg02 "1st Level Administrative Division"
 
 
 ** REGIONAL AREA 2 DIGITS ADM LEVEL (ADMN2)
-	gen reg03=.
-	label var reg03 "Region at 2 digits (ADMN2)"
+	gen reg03= prov
+	label var reg03 "2nd Level Administrative Division"
 
 
 ** REGIONAL AREA 3 DIGITS ADM LEVEL (ADMN3)
 	gen reg04=.
-	label var reg04 "Region at 3 digits (ADMN3)"
+	label var reg04 "3rd Level Administrative Division"
+
+
+** GEOGRAPHIC VARIABLE VALUE LABELS
+	/*  Please see "Administrative_Levels.md" for a detailed explanation of the region and province
+		recodings, available on the repository in the Guides and Documentation Folder.
+		https://github.com/worldbank/gld
+
+		Similarly, in the same location, "I2D2_Geographic_Nomenclature.md" describes the administrative
+		divisions used in I2D2
+ 	*/
+
+	* reg01 is the geo/admin var of interest, reg02 is the first/highest/largest admin variable
+
+	* RECODE REGION
+	*			(17= 42)		///  sometimes Mimaropa appears as value 17, recode to always be 42 for consistency
+
+	* recode to Calabarzon
+	recode 	reg01 reg02 	/// recode both of these variables
+			(4 = 41) 		///
+			if (svymo == 1 | svymo == 4)  	/// restrict only to first two rounds
+			& inlist(prov, 10, 21, 34, 56, 58) 	// restricted to relevant provinces
+
+	* recode to Mimaropa
+	recode 	reg01 reg02 	/// recode both of these variables
+			(4 = 42) 		///
+			if (svymo == 1 | svymo == 4)  	/// restrict only to first two rounds
+			& inlist(prov, 51, 52, 40, 53, 59) 	// restricted to relevant provinces
+
+	* recode Aurora to Central Luzon
+		* Aurora belongs in this region
+	recode 	reg01 reg02 	///
+			(4 = 3) 		///
+			if (svymo == 1 | svymo == 4)  	/// restrict only to first two rounds
+			& prov == 77
+
+	* CREATE VALUE LABEL
+	** define region value label: b=after july 2003 change
+	la de lblreg02b			///
+	 1   "Ilocos"			///
+	 2	 "Cagayan Valley"	///
+	 3   "Central Luzon"	///
+	 						/// Southern Tagalog has been split into Calabarzon and Mimaropa
+	 5   "Bicol"			///
+	 6	 "Western Visayas"	///
+	 7   "Central Visayas"	///
+	 8	 "Eastern Visayas"	///
+	 9   "Zamboanga Peninsula"	///
+	 10  "Northern Mindanao"	///
+	 11  "Davao"			///
+	 12  "Soccsksargen"		///
+	 13  "National Capital Region"				///
+	 14  "Cordillera Administrative Region"		///
+	 15  "Autonomous Region of Muslim Mindanao"	///
+	 16  "Caraga" 	///
+	 				/// value 17 exists only in raw data, not in recoded version
+	 18  "Negros Island Region" /// this region appears occasionally in data
+	 							///
+	 41	 "Calabarzon"	/// formerly part of Southern Tagalog
+	 42  "Mimaropa"		// formerly part of Southern Tagalog
+
+	** label appropriate variable values
+	label values 	reg01 reg02 	lblreg02b
+pause on
+pause
+** RENAME ORIGINAL ADMIN VARIABLES
+	* clonevar keeps value labels along with values; gen does not.
+	clonevar reg02_orig = regn
+	clonevar reg03_orig = prov
+
+	la var reg02_orig "Original 1st Level Admin Variable"
+	la var reg03_orig "Original 2nd Level Admin Variable"
 
 
 ** HOUSE OWNERSHIP
@@ -909,12 +980,13 @@ if (`cb_pause' == 1) {
 				firmsize_l firmsize_u whours wage unitwage contract  empstat_2 ///
 				empstat_2_year industry_2 industry1_2 industry_orig_2 occup_2 wage_2 unitwage_2 ///
 				healthins socialsec union rbirth_juris rbirth rprevious_juris rprevious ///
-				yrmove rprevious_time_ref pci pci_d pcc pcc_d
+				yrmove rprevious_time_ref pci pci_d pcc pcc_d reg02_orig reg03_orig
 
 
 ** ORDER VARIABLES
 	order sample ccode year intv_year month idh idp wgt strata psu urb	///
-				reg01 reg02 reg03 reg04 ownhouse water electricity toilet landphone ///
+				reg01 reg02 reg03 reg04 reg02_orig reg03_orig  ///
+				ownhouse water electricity toilet landphone ///
 				cellphone computer internet hhsize head gender age soc marital ///
 				ed_mod_age everattend atschool literacy educy edulevel1 edulevel2 ///
 				edulevel3 lb_mod_age lstatus lstatus_year empstat empstat_year ///
@@ -928,7 +1000,7 @@ if (`cb_pause' == 1) {
 	compress
 
 
-** DELETE MISSING VARIABLES // why would we not use missings here?
+** DELETE MISSING VARIABLES
 	local keep ""
 	qui levelsof ccode, local(cty)
 	foreach var of varlist urb - pcc_d {
