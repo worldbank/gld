@@ -142,7 +142,7 @@ if (`cb_pause' == 1) {
 	variables that ends up not mattering because they, along with family member number, do
 	uniquely identify observations. */
 
-	loc idhvars 	pufreg pufurb2k10 pufsvymo pufpsu   // store idh vars in local %% include prov and new hh var
+	loc idhvars 	pufreg pufurb2k10 pufsvymo pufpsu   // store idh vars in local %% include pufprv and new hh var
 
 
 	ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
@@ -263,7 +263,7 @@ if (`cb_pause' == 1) {
 
 
 ** REGIONAL AREA 2 DIGITS ADM LEVEL (ADMN2)
-	gen reg03= prov
+	gen reg03= pufprv
 	label var reg03 "2nd Level Administrative Division"
 
 
@@ -320,7 +320,7 @@ if (`cb_pause' == 1) {
 ** RENAME ORIGINAL ADMIN VARIABLES
 	* clonevar keeps value labels along with values; gen does not.
 	clonevar reg02_orig = pufreg
-	clonevar reg03_orig = prov
+	clonevar reg03_orig = pufprv
 
 	la var reg02_orig "Original 1st Level Admin Variable"
 	la var reg03_orig "Original 2nd Level Admin Variable"

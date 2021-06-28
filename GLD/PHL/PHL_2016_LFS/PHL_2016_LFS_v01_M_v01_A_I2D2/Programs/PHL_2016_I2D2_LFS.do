@@ -138,7 +138,7 @@ if (`cb_pause' == 1) {
 
 
 ** HOUSEHOLD IDENTIFICATION NUMBER
-	loc idhvars 	reg  prov hhnum 	// store idh vars in local
+	loc idhvars 	reg  pufprv hhnum 	// store idh vars in local
 
 
 	ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
@@ -259,7 +259,7 @@ if (`cb_pause' == 1) {
 
 
 ** REGIONAL AREA 1 DIGIT ADMN LEVEL
-	gen byte reg02=prov
+	gen byte reg02=pufprv
 	label var reg02 "Region at 1 digit (ADMN1)"
 
 

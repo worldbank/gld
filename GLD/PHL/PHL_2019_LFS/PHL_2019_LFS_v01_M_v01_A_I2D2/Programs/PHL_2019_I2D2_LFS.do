@@ -320,7 +320,7 @@ if (`cb_pause' == 1) {
 ** RENAME ORIGINAL ADMIN VARIABLES
 	* clonevar keeps value labels along with values; gen does not.
 	clonevar reg02_orig = pufreg
-	clonevar reg03_orig = prov
+	clonevar reg03_orig = .
 
 	la var reg02_orig "Original 1st Level Admin Variable"
 	la var reg03_orig "Original 2nd Level Admin Variable"

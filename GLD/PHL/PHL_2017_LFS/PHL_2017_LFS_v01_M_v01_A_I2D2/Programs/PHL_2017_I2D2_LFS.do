@@ -261,7 +261,7 @@ if (`cb_pause' == 1) {
 
 
 ** REGIONAL AREA 2 DIGITS ADM LEVEL (ADMN2)
-	gen reg03= prov
+	gen reg03= pufprv
 	label var reg03 "2nd Level Administrative Division"
 
 
@@ -319,7 +319,7 @@ if (`cb_pause' == 1) {
 ** RENAME ORIGINAL ADMIN VARIABLES
 	* clonevar keeps value labels along with values; gen does not.
 	clonevar reg02_orig = pufreg
-	clonevar reg03_orig = prov
+	clonevar reg03_orig = pufprv
 
 	la var reg02_orig "Original 1st Level Admin Variable"
 	la var reg03_orig "Original 2nd Level Admin Variable"
