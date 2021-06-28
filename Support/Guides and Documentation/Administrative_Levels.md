@@ -50,7 +50,7 @@ For example, the numeric variable for region in October 2002 matches the values 
 
 
 The following years have mixed numeric and factor data for their region variable equivalents across all survey rounds for that year; all others are factor labeled for all rounds within that year:
-	- mixed numeric-factor 2002, 2003, 2004, 2006, 2016, 2017
+	- mixed numeric-factor 2006, 2016, 2017
 
 ### Descriptive Checks and Evidence for Recoding
 	`Region_Recode_Checks.Rmd` checks that the numeric variable descriptively aligns with the factor-coded variables within the same year. The code simply appends, recodes, and produces historgrams by round for comparison. This visual check provides intitial support to the idea that the numeric and factor values may likely refer to the same region, and therefore that the numeric and factor data may be appended safely.
