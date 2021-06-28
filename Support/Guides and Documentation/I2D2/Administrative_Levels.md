@@ -96,4 +96,10 @@ The data for 2003 are provided in the two-system labeled scheme for January+Apri
 
 
 ## Province
-The 2nd Administrative Level is Province. The value labels appear to be stable across rounds and years, with no mention of changes in the 2003 adminstrative revisions above. Furthermore, the some rounds are numeric while others are labeled. In later years, beginning in 2014, the variable only appears as a numeric data type accompanied, in some months, with a secondary variable `_name` that stores the province name in string format.
+The 2nd Administrative Level is Province. The value labels appear to be stable across rounds and years, with no mention of changes in the 2003 adminstrative revisions above. Furthermore, the some rounds are numeric while others are labeled. Starting in July 2003, the province variables are only encoded as numeric -- some years afterwards have miscellaneous rounds also encoded with a secondary variable `_name` that stores the province name in string format. From the label data that exists, the labeled variabled are stable across rounds within the same year, but reflect small changes as provinces are added.
+
+### Province encoding methodology
+
+For consistency across years, except for the case of 2003, I will simply append the data within-year and not assign the labels. For cases where the user wants to access the value label data where they do exist, a `label dir` or `label list PROV` will find or often directly retreive the label info as it was provided to us. However, for data at this secondary geographic/administrative level, the labels are often not necessary, as the primary unit of analysis is the region level. The province variable in the 2019 data appears to be missing.
+
+No value recoding will occur from the original values for any round in any year.

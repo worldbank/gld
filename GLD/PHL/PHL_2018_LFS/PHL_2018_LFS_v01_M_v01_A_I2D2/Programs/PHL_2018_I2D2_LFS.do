@@ -142,7 +142,7 @@ if (`cb_pause' == 1) {
 	variables that ends up not mattering because they, along with family member number, do
 	uniquely identify observations. */
 
-	loc idhvars 	pufreg pufurb2k10 pufsvymo pufpsu   // store idh vars in local
+	loc idhvars 	pufreg pufurb2k10 pufsvymo pufpsu   // store idh vars in local %% include prov and new hh var
 
 
 	ds `idhvars',  	has(type numeric)					// filter out numeric variables in local

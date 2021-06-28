@@ -263,7 +263,7 @@ if (`cb_pause' == 1) {
 
 
 ** REGIONAL AREA 2 DIGITS ADM LEVEL (ADMN2)
-	gen reg03= prov
+	gen reg03= .
 	label var reg03 "2nd Level Administrative Division"
 
 
