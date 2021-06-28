@@ -41,7 +41,7 @@
 	local 	surv_yr `"2003"'	// set this to the survey year
 
 ** RUN SETTINGS
-	local 	cb_pause = 1	// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
+	local 	cb_pause = 0	// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
 	local 	append 	 = 1	// 1 to run iecodebook append, 0 if file is already appended.
 
 
@@ -281,13 +281,13 @@ if (`cb_pause' == 1) {
 	*			(17= 42)		///  sometimes Mimaropa appears as value 17, recode to always be 42 for consistency
 
 	* recode to Calabarzon
-	recode 	reg01 reg02 	/// recode both of thes variables
+	recode 	reg01 reg02 	/// recode both of these variables
 			(4 = 41) 		///
 			if (svymo == 1 | svymo == 4)  	/// restrict only to first two rounds
 			& inlist(prov, 10, 21, 34, 56, 58) 	// restricted to relevant provinces
 
 	* recode to Mimaropa
-	recode 	reg01 reg02 	/// recode both of thes variables
+	recode 	reg01 reg02 	/// recode both of these variables
 			(4 = 42) 		///
 			if (svymo == 1 | svymo == 4)  	/// restrict only to first two rounds
 			& inlist(prov, 51, 52, 40, 53, 59) 	// restricted to relevant provinces
@@ -297,7 +297,7 @@ if (`cb_pause' == 1) {
 	recode 	reg01 reg02 	///
 			(4 = 3) 		///
 			if (svymo == 1 | svymo == 4)  	/// restrict only to first two rounds
-			if prov == 77
+			& prov == 77
 
 	* CREATE VALUE LABEL
 	** define region value label: b=after july 2003 change
@@ -326,7 +326,8 @@ if (`cb_pause' == 1) {
 
 	** label appropriate variable values
 	label values 	reg01 reg02 	lblreg02b
-
+pause on
+pause
 ** RENAME ORIGINAL ADMIN VARIABLES
 	* clonevar keeps value labels along with values; gen does not.
 	clonevar reg02_orig = regn
