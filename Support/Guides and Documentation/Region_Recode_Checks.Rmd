@@ -95,7 +95,6 @@ hist <- ggplot(lfs2016_reg, aes(pufreg)) +
 hist
 ```
 
-
 # 2006 
 
 Repeating the same steps for 2006 to verify that the numeric values are likely the same as the labeled ones. 
