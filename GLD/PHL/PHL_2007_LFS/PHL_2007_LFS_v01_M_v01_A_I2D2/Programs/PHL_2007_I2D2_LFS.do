@@ -102,7 +102,8 @@ if (`cb_pause' == 1) {
 	iecodebook append ///
 		`"`round1'"' `"`round2'"' `"`round3'"' `"`round4'"' /// survey files
 		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template-IN.xlsx"' /// output just created above
-		, clear surveys(JAN2007 APR2007 JUL2007 OCT2007) // survey names
+		, clear surveys(JAN2007 APR2007 JUL2007 OCT2007) /// survey names
+		gen(round)										// create a factor var called "round" to identify data source
 	}
 	else {
 *** use the single file
@@ -686,17 +687,28 @@ if (`cb_pause' == 1) {
 
 
 ** OCCUPATION CLASSIFICATION
-	* in 2007, raw variable is numeric
+	* in 2017, raw variable is numeric, but the april round is 4 digits; the rest are 2-digits. c14a_procc
 
-	* generate occupation variable
-	gen byte occup=floor(c14a_procc/10)		// this handles most of recoding automatically.
-	recode occup 0 = 10	if 	c14a_procc==1 	// recode "armed forces" to appropriate label
-	recode occup 0 = 99	if 	(c14a_procc>=2 & c14a_procc <=9) ///
-							| (c14a_procc >=94 & c14a_procc <= 99) // recode "Not classifiable occupations"
+	* generate empty variable
+	gen byte occup = .
 
-	/* Note that the raw variable, procc lists values, 94-99 for which there are no associated occupation
-	   codes. Given that the raw data indicate that these individauls do have valid, non-missing occupations,
-	   and that these occupations cannot be matched to our classificaitons with certainty, I have coded them as "other" */
+	* replace conditionally based on April, July, October (2-digit rounds)
+	replace 	occup 	=floor(c14a_procc/10)		if  (round == 2 | round == 3 | round == 4)
+	recode 		occup 0 = 10	if 	c14a_procc==1 	///  recode "armed forces" to appropriate label
+	 							& (round == 2 | round == 3 | round == 4)
+	recode 		occup 0 = 99	if 	(c14a_procc>=2 & c14a_procc <=9) ///  recode "Not classifiable occupations"
+							| (c14a_procc >=94 & c14a_procc <= 99) ///
+							& (round == 2 | round == 3 | round == 4)
+
+
+	* replace conditionally based on Janurary (4-digit round)
+	replace 	occup 	=floor(c14a_procc/1000)		if (round == 1)
+	recode 		occup 	0 = 10 	///	recode military
+						if (c14a_procc >=111 & c14a_procc <= 129) ///
+						&  (round == 1)
+	recode 		occup 	0 = 99 	///	recode "other"
+						if (c14a_procc == 930) ///
+						&  (round == 1)
 
 
 	replace occup=. if lstatus!=1 		// restrict universe to employed only
@@ -806,10 +818,29 @@ if (`cb_pause' == 1) {
 	label var industry_orig_2 "Original Industry Codes - Second job"
 
 
-** OCCUPATION CLASSIFICATION - SECOND JOB
-	gen byte occup_2=floor(c28a_otocc/10)		// this handles most of recoding automatically.
-	recode occup_2 0 = 10	if 	c28a_otocc==1 	// recode "armed forces" to appropriate label
-	recode occup_2 0 = 99	if 	c28a_otocc==9 	// recode "Not classifiable occupations" to appropriate label
+** OCCUPATION CLASSIFICATION - SECOND JOB c28a_otocc
+
+	* generate empty variable
+	gen byte occup_2 = .
+
+	* replace conditionally based on April, July, October (2-digit rounds)
+	replace 	occup_2 	=floor(c28a_otocc/10)		if  (round == 2 | round == 3 | round == 4)
+	recode 		occup_2 0 = 10	if 	c28a_otocc==1 	///  recode "armed forces" to appropriate label
+	 							& (round == 2 | round == 3 | round == 4)
+	recode 		occup_2 0 = 99	if 	(c28a_otocc>=2 & c28a_otocc <=9) ///  recode "Not classifiable occupations"
+							| (c28a_otocc >=94 & c28a_otocc <= 99) ///
+							& (round == 2 | round == 3 | round == 4)
+
+
+	* replace conditionally based on Janurary (4-digit round)
+	replace 	occup_2 	=floor(c28a_otocc/1000)		if (round == 1)
+	recode 		occup_2 	0 = 10 	///	recode military
+						if (c28a_otocc >=111 & c28a_otocc <= 129) ///
+						&  (round == 1)
+	recode 		occup_2 	0 = 99 	///	recode "other"
+						if (c28a_otocc == 930) ///
+						&  (round == 1)
+
 
 	replace occup_2=. if lstatus!=1 		// restrict universe to employed only
 	replace occup_2=. if age < lb_mod_age	// restrict universe to working age
