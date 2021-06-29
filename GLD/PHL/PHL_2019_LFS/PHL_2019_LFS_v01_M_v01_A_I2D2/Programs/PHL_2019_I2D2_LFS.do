@@ -729,7 +729,7 @@ pause
 	replace occup=. if age < lb_mod_age	// restrict universe to working age
 	label var occup "1 digit occupational classification"
 	la de lbloccup 1 "Senior officials" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and sales workers" 6 "Skilled agricultural, forestry, and fishery workers" 7 "Craft and related trades workers" 8 "Plant and machine operators and assemblers" 9 "Elementary occupations" 10 "Armed forces occupations"  99 "Others"
-	label values occup lbloccups
+	label values occup lbloccup
 
 
 ** SURVEY SPECIFIC OCCUPATION CLASSIFICATION
