@@ -105,7 +105,7 @@ if (`cb_pause' == 1) {
 		`"`round1'"' `"`round2'"' `"`round3'"' `"`round4'"' /// survey files
 		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template-IN-S.xlsx"' /// output just created above
 		, clear surveys(JAN2017 APR2017 JUL2017 OCT2017) /// survey names
-		gen(round)										// create a string var called "round" to identify data source
+		gen(round)										// create a factor var called "round" to identify data source
 	}
 	else {
 *** use the single file
@@ -667,31 +667,31 @@ undergraduates in "primary" and "graduates" in "secondary" */
 
 	* for months January, July, October
 		replace industry=1 	if (pufc16_pkb>=1 	& pufc16_pkb<=4) ///
-								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)	// to Agriculture
+								& (round == 1 | round == 3 | round == 4)	// to Agriculture
 		replace industry=2 	if (pufc16_pkb>=5 	& pufc16_pkb<=9) ///
-								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)	// to Mining
+								& (round == 1 | round == 3 | round == 4)	// to Mining
 		replace industry=3 	if (pufc16_pkb>=10 & pufc16_pkb<=33)	///
-								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10) // to Manufacturing
+								& (round == 1 | round == 3 | round == 4) // to Manufacturing
 		replace industry=4 	if (pufc16_pkb>=35 & pufc16_pkb<=39)  ///
-								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)	// to Public utility
+								& (round == 1 | round == 3 | round == 4)	// to Public utility
 		replace industry=5 	if (pufc16_pkb>=41 & pufc16_pkb<=43)  ///
-								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)	// to Construction
+								& (round == 1 | round == 3 | round == 4)	// to Construction
 		replace industry=6 	if (pufc16_pkb>=45 & pufc16_pkb<=47) | (pufc16_pkb >= 55 & pufc16_pkb <= 56)  ///
-								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)	// to Commerce
+								& (round == 1 | round == 3 | round == 4)	// to Commerce
 		replace industry=7 	if (pufc16_pkb>=49 & pufc16_pkb<=53) | (pufc16_pkb >= 58 & pufc16_pkb <= 63)  ///
-								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10) // to Transport/coms
+								& (round == 1 | round == 3 | round == 4) // to Transport/coms
 		replace industry=8 	if (pufc16_pkb>=64 & pufc16_pkb<=82)   ///
-								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)	// to financial/business services
+								& (round == 1 | round == 3 | round == 4)	// to financial/business services
 		replace industry=9 	if (pufc16_pkb==84) 		  ///
-								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)		// to public administration
+								& (round == 1 | round == 3 | round == 4)		// to public administration
 		replace industry=10 if (pufc16_pkb>=91 & pufc16_pkb<=99)   ///
-								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10) // to other
+								& (round == 1 | round == 3 | round == 4) // to other
 		replace industry=10 if industry==. & pufc16_pkb!=.  ///
-								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)
+								& (round == 1 | round == 3 | round == 4)
 
 
 
-	if (pufsvymo == 4) {
+	if (round == 2) {
 		* For April, code according to the april Schema
 
 		replace industry=1 	if pufc16_pkb >= 100 	& pufc16_pkb <= 399	 	// "Agriculture, Forestry, Fishing" coded to "Agriculture"
@@ -751,16 +751,16 @@ undergraduates in "primary" and "graduates" in "secondary" */
 	gen byte occup = .
 
 	* replace conditionally based on January, July, October (2-digit rounds)
-	replace 	occup	=floor(pufc14_procc/10)		if  (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)
+	replace 	occup	=floor(pufc14_procc/10)		if  (round == 1 | round == 3 | round == 4)
 	recode 		occup 	0 = 10	if 	(pufc14_procc >=1 & pufc14_procc <=3)	/// recode "armed forces" to appropriate label
-						& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)
+						& (round == 1 | round == 3 | round == 4)
 
 
 	* replace conditionally based on April (4-digit round)
-	replace 	occup	=floor(pufc14_procc/1000)	if 	pufsvymo == 4	// this handles most of recoding automatically.
+	replace 	occup	=floor(pufc14_procc/1000)	if 	round == 2	// this handles most of recoding automatically.
 	recode 		occup 	0 = 10	///
 						if 	(pufc14_procc == 110 | pufc14_procc == 210 | pufc14_procc == 310) /// recode "armed forces" to appropriate label
-						& 	(pufsvymo == 4)
+						& 	(round == 2)
 
 
 	replace occup=. if lstatus!=1 		// restrict universe to employed only
@@ -838,30 +838,30 @@ undergraduates in "primary" and "graduates" in "secondary" */
 
 	* for months January, July, October
 		replace industry_2=1 	if (pufc43_qkb>=1 	& pufc43_qkb<=4) ///
-								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)	// to Agriculture
+								& (round == 1 | round == 3 | round == 4)	// to Agriculture
 		replace industry_2=2 	if (pufc43_qkb>=5 	& pufc43_qkb<=9) ///
-								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)	// to Mining
+								& (round == 1 | round == 3 | round == 4)	// to Mining
 		replace industry_2=3 	if (pufc43_qkb>=10 & pufc43_qkb<=33)	///
-								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10) // to Manufacturing
+								& (round == 1 | round == 3 | round == 4) // to Manufacturing
 		replace industry_2=4 	if (pufc43_qkb>=35 & pufc43_qkb<=39)  ///
-								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)	// to Public utility
+								& (round == 1 | round == 3 | round == 4)	// to Public utility
 		replace industry_2=5 	if (pufc43_qkb>=41 & pufc43_qkb<=43)  ///
-								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)	// to Construction
+								& (round == 1 | round == 3 | round == 4)	// to Construction
 		replace industry_2=6 	if (pufc43_qkb>=45 & pufc43_qkb<=47) | (pufc43_qkb >= 55 & pufc43_qkb <= 56)  ///
-								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)	// to Commerce
+								& (round == 1 | round == 3 | round == 4)	// to Commerce
 		replace industry_2=7 	if (pufc43_qkb>=49 & pufc43_qkb<=53) | (pufc43_qkb >= 58 & pufc43_qkb <= 63)  ///
-								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10) // to Transport/coms
+								& (round == 1 | round == 3 | round == 4) // to Transport/coms
 		replace industry_2=8 	if (pufc43_qkb>=64 & pufc43_qkb<=82)   ///
-								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)	// to financial/business services
+								& (round == 1 | round == 3 | round == 4)	// to financial/business services
 		replace industry_2=9 	if (pufc43_qkb==84) 		  ///
-								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)		// to public administration
+								& (round == 1 | round == 3 | round == 4)		// to public administration
 		replace industry_2=10 if (pufc43_qkb>=91 & pufc43_qkb<=99)   ///
-								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10) // to other
+								& (round == 1 | round == 3 | round == 4) // to other
 		replace industry_2=10 if industry_2==. & pufc43_qkb!=.  ///
-								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)
+								& (round == 1 | round == 3 | round == 4)
 
 
-	if (pufsvymo == 4) {
+	if (round == 2) {
 		* For April, code according to the april Schema
 
 		replace inudstry_2=1 	if pufc43_qkb >= 100 	& pufc43_qkb <= 399	 	// "Agriculture, Forestry, Fishing" coded to "Agriculture"
@@ -909,16 +909,16 @@ undergraduates in "primary" and "graduates" in "secondary" */
 	gen byte occup_2 = .
 
 	* replace conditionally based on January, July, October (2-digit rounds)
-	replace 	occup_2	=floor(pufc40_pocc/10)		if  (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)
+	replace 	occup_2	=floor(pufc40_pocc/10)		if  (round == 1 | round == 3 | round == 4)
 	recode 		occup_2 0 = 10	if 	(pufc40_pocc >=1 & pufc40_pocc <=3)	/// recode "armed forces" to appropriate label
-						& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)
+						& (round == 1 | round == 3 | round == 4)
 
 
 	* replace conditionally based on April (4-digit round)
-	replace 	occup_2	=floor(pufc40_pocc/1000)	if 	pufsvymo == 4
+	replace 	occup_2	=floor(pufc40_pocc/1000)	if 	round == 2
 	recode 		occup_2 0 = 10	///
 						if 	(pufc40_pocc == 110 | pufc40_pocc == 210 | pufc40_pocc == 310) /// recode "armed forces" to appropriate label
-						& 	(pufsvymo == 4)
+						& 	(round == 2)
 
 
 
