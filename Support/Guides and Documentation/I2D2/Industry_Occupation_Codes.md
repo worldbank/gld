@@ -66,4 +66,4 @@ The occupation codes in 1997 are encoded as string. Most values are actually num
 Also, there are some numeric values that appear in the data that do not correspond to codes in the 1992 PSOC codebook. These values have been coded as "Other" in our data.
 
 #### 2007, 2017
-In 2017, the April round has data values under a 4-digit classification scheme, but all other rounds/months are under a 2-digit classifcation scheme. For this year, the coding will occur conditionally based on the month. This also occurs for the January 2007 round. 
+In 2017, the April round has data values under a 4-digit classification scheme, but all other rounds/months are under a 2-digit classifcation scheme. For this year, the coding will occur conditionally based on the round. This also occurs for the January 2007 round. 
