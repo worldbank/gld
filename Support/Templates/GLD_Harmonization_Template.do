@@ -497,7 +497,7 @@ label var ed_mod_age "Education module application age"
 
 *<_educat4_>
 	gen byte educat4 = educat7
-	recode educat4 2 3=2 4 5=3 6 7=4 
+	recode educat4 (2 3 4 = 2) (5=3) (6 7=4)
 	label var educat4 "Level of education 3"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values educat4 lbleducat4
