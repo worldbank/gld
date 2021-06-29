@@ -744,13 +744,22 @@ undergraduates in "primary" and "graduates" in "secondary" */
 
 
 ** OCCUPATION CLASSIFICATION
-	* in 2017, raw variable is numeric
+	* in 2017, raw variable is numeric, but the april round is 4 digits; the rest are 2-digits.
 
-	* generate occupation variable
-	gen byte occup=floor(c16_proc/10)		// this handles most of recoding automatically.
-	recode occup 0 = 10	if 	c16_proc==1 	// recode "armed forces" to appropriate label
-	recode occup 0 = 99	if 	(c16_proc>=2 & c16_proc <=9) ///
-							| (c16_proc >=94 & c16_proc <= 99) // recode "Not classifiable occupations"
+	* generate empty variable
+	gen byte occup = .
+
+	* replace conditionally based on January, July, October (2-digit rounds)
+	replace 	occup	=floor(c16_proc/10)		if  (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)
+	recode 		occup 	0 = 10	if 	(c16_proc >=1 & c16_proc <=3)	/// recode "armed forces" to appropriate label
+						& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)
+
+
+	* replace conditionally based on April (4-digit round)
+	replace 	occup	=floor(c16_procc/1000)	if 	pufsvymo == 4	// this handles most of recoding automatically.
+	recode 		occup 	0 = 10	///
+						if 	(c16_procc == 110 | c16_procc == 210 | c16_procc == 310) /// recode "armed forces" to appropriate label
+						& 	(pufsvymo == 4)
 
 
 	replace occup=. if lstatus!=1 		// restrict universe to employed only
@@ -894,12 +903,24 @@ undergraduates in "primary" and "graduates" in "secondary" */
 
 
 ** OCCUPATION CLASSIFICATION - SECOND JOB
-	gen byte occup_2=floor(j02_otoc/10)		// this handles most of recoding automatically.
-	recode occup_2 0 = 10	if 	j02_otoc==1 	// recode "armed forces" to appropriate label
-	recode occup_2 0 = 99	if 	j02_otoc==9 	// recode "Not classifiable occupations" to appropriate label
 
-	replace occup_2=. if lstatus!=1 		// restrict universe to employed only
-	replace occup_2=. if age < lb_mod_age	// restrict universe to working age
+	* generate empty variable
+	gen byte occup_2 = .
+
+	* replace conditionally based on January, July, October (2-digit rounds)
+	replace 	occup_2	=floor(j02_otoc/10)		if  (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)
+	recode 		occup_2 0 = 10	if 	(j02_otoc >=1 & j02_otoc <=3)	/// recode "armed forces" to appropriate label
+						& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)
+
+
+	* replace conditionally based on April (4-digit round)
+	replace 	occup_2	=floor(j02_otocc/1000)	if 	pufsvymo == 4
+	recode 		occup_2 0 = 10	///
+						if 	(j02_otocc == 110 | j02_otocc == 210 | j02_otocc == 310) /// recode "armed forces" to appropriate label
+						& 	(pufsvymo == 4)
+
+
+
 
 	replace occup_2=. if lstatus!=1 				// restrict universe to employed only
 	replace occup_2=. if age < lb_mod_age			// restrict universe to working age

@@ -721,10 +721,8 @@ pause
 	I am making many temporary assumptions when I'm recoding here.*/
 
 	* generate occupation variable
-	gen byte occup=floor(pufc14_procc/10)		// this handles most of recoding automatically.
-	recode occup 0 = 10	if 	pufc14_procc==1 	// recode "armed forces" to appropriate label
-	recode occup 0 = 99	if 	(pufc14_procc>=2 & pufc14_procc <=9) /// for now,
-							| (pufc14_procc >=94 & pufc14_procc <= 99) // recode "Not classifiable occupations"
+	gen byte occup=floor(pufc14_procc/10)							// this handles most of recoding automatically.
+	recode occup 0 = 10	if 	(pufc14_procc >=1 & pufc14_procc <=3)	// recode "armed forces" to appropriate label
 
 
 	replace occup=. if lstatus!=1 		// restrict universe to employed only
