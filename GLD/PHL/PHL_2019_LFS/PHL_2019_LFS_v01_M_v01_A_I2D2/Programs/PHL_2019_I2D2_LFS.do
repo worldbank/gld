@@ -668,7 +668,7 @@ pause
 
 ** INDUSTRY CLASSIFICATION
 	gen byte industry=.
-	replace industry=1 if (pufc16_pkb>=1& pufc16_pkb<=4)		// to Agriculture
+	replace industry=1 if (pufc16_pkb>=1 & pufc16_pkb<=4)		// to Agriculture
 	replace industry=2 if (pufc16_pkb>=5 & pufc16_pkb<=9)		// to Mining
 	replace industry=3 if (pufc16_pkb>=10 & pufc16_pkb<=33)	// to Manufacturing
 	replace industry=4 if (pufc16_pkb>=35 & pufc16_pkb<=39)	// to Public utility

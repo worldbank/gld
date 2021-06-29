@@ -26,3 +26,4 @@ The raw data naturally spans different categtorization schemes over time. Princi
 |3| 2009 |12,13 | Values range from 100 - 9999, first 2 digits usually correspond to key level | code manually by ranges |
 |4| 2009 |14,15,16 | Values range from 1-99 but first two digits corrospond to same first two in scheme#3  | `gen industry1 = .` then manually replace |
 |5| 2009 | 2017| Mix of schemas 3 and 4 depending on month/round  | code with block conditionals on survey month/round |
+|6| 2009 | 2018, 2019| ~5% Labeled, values range from 1-99, like schema 2;4. first two digits corrospond to same first two in scheme#3   | `gen industry1 = .` then manually replace |
