@@ -482,11 +482,34 @@ if (`cb_pause' == 1) {
 
 
 ** EDUCATIONAL LEVEL 1
-	/*	note this coding falls under issue #18 https://github.com/worldbank/gld/issues/18, using
-		.dta-loaded factor /data labels for now just to continue with project.
+	/*Please refer to the "Education_Levels.md" for a detailed discussion on classificition of how each level is classified and why,
+		available in github repository.
 
-		For the time being, I am leaving edulevel1 missing for 2017 until more information can be gathered.*/
+		Since the labels are incomplete for 2017, "Education_2017_Checks.Rmd" provides descritpive
+		evidence to show that the distributions for the education variables for 2017 and 2018 are similar,
+		so the value labels and coding for 2018 can be used
+		*/
 	gen byte edulevel1=.
+	replace edulevel1=1 if pufc07_grade <= 110 		// less than primary to "no education"
+	replace edulevel1=2 if (pufc07_grade >= 110 & pufc07_grade <= 160) /// Grades 1-6 -> "primary incomplete"
+							| (pufc07_grade >=410 & pufc07_grade <= 450) // grade 1-5 in K-12 program->"Primary incomplete"
+	replace edulevel1=3 if pufc07_grade == 170 		/// grade 6 graduate -> "primary complete"
+							| pufc07_grade == 180 	/// grade 7 graduate -> "primary complete"
+							| pufc07_grade == 460  	// grade 6 in k-12 school to "Primary Complete"
+	replace edulevel1=4 if (pufc07_grade >= 210 & pufc07_grade <= 240) /// 1-4th year in secondary school
+							| (pufc07_grade >=410 & pufc07_grade <= 490) // ...or grade 7-9 in k-12 program -> "secondary incomplete"
+	replace edulevel1=5 if pufc07_grade == 250		/// high school complete
+							| pufc07_grade == 500 	// ... or "grade 10" in K-12 to to "Secondary Complete"
+	replace edulevel1=6 if (pufc07_grade >= 601 & pufc07_grade <= 699) 	/// the 600s are for post-secondary/non-uni track courses
+							| (pufc07_grade >= 510 & pufc07_grade <= 520) // and grade 11 and 12 in K-12 -> "post second./non uni"
+
+	replace edulevel1=7 if ( pufc07_grade>=701 & pufc07_grade<=950) 	// 1st-6th yr college, Tertiary degrees and above to "Uni"
+
+/*There's no documentation on where to classify SPED, but for now I will include
+undergraduates in "primary" and "graduates" in "secondary" */
+	replace edulevel1=3 if  pufc07_grade == 191
+	replace edulevel1=5 if 	pufc07_grade == 192
+
 
 	label var edulevel1 "Level of education 1"
 	la de lbledulevel1 	1 "No education" 	///
@@ -665,8 +688,8 @@ if (`cb_pause' == 1) {
 		replace industry=10 if industry==. & pufc16_pkb!=.  ///
 								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)
 
-								
-								
+
+
 	if (pufsvymo == 4) {
 		* For April, code according to the april Schema
 
@@ -827,7 +850,7 @@ if (`cb_pause' == 1) {
 		replace industry_2=10 if industry_2==. & pufc43_qkb!=.  ///
 								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)
 
-	
+
 	if (pufsvymo == 4) {
 		* For April, code according to the april Schema
 
