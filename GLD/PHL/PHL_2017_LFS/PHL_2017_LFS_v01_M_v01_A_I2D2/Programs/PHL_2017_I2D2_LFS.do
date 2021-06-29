@@ -104,7 +104,8 @@ if (`cb_pause' == 1) {
 	iecodebook append ///
 		`"`round1'"' `"`round2'"' `"`round3'"' `"`round4'"' /// survey files
 		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template-IN-S.xlsx"' /// output just created above
-		, clear surveys(JAN2017 APR2017 JUL2017 OCT2017) // survey names
+		, clear surveys(JAN2017 APR2017 JUL2017 OCT2017) /// survey names
+		gen(round)										// create a string var called "round" to identify data source
 	}
 	else {
 *** use the single file
@@ -750,15 +751,15 @@ undergraduates in "primary" and "graduates" in "secondary" */
 	gen byte occup = .
 
 	* replace conditionally based on January, July, October (2-digit rounds)
-	replace 	occup	=floor(c16_proc/10)		if  (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)
-	recode 		occup 	0 = 10	if 	(c16_proc >=1 & c16_proc <=3)	/// recode "armed forces" to appropriate label
+	replace 	occup	=floor(pufc14_procc/10)		if  (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)
+	recode 		occup 	0 = 10	if 	(pufc14_procc >=1 & pufc14_procc <=3)	/// recode "armed forces" to appropriate label
 						& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)
 
 
 	* replace conditionally based on April (4-digit round)
-	replace 	occup	=floor(c16_procc/1000)	if 	pufsvymo == 4	// this handles most of recoding automatically.
+	replace 	occup	=floor(pufc14_procc/1000)	if 	pufsvymo == 4	// this handles most of recoding automatically.
 	recode 		occup 	0 = 10	///
-						if 	(c16_procc == 110 | c16_procc == 210 | c16_procc == 310) /// recode "armed forces" to appropriate label
+						if 	(pufc14_procc == 110 | pufc14_procc == 210 | pufc14_procc == 310) /// recode "armed forces" to appropriate label
 						& 	(pufsvymo == 4)
 
 
@@ -770,7 +771,7 @@ undergraduates in "primary" and "graduates" in "secondary" */
 
 
 ** SURVEY SPECIFIC OCCUPATION CLASSIFICATION
-	gen occup_orig=c16_proc
+	gen occup_orig=pufc14_procc
 	replace occup_orig=. if lstatus!=1 			// restrict universe to employed only
 	replace occup_orig=. if age < lb_mod_age	// restrict universe to working age
 	label var occup_orig "Original Occupational Codes"
@@ -908,15 +909,15 @@ undergraduates in "primary" and "graduates" in "secondary" */
 	gen byte occup_2 = .
 
 	* replace conditionally based on January, July, October (2-digit rounds)
-	replace 	occup_2	=floor(j02_otoc/10)		if  (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)
-	recode 		occup_2 0 = 10	if 	(j02_otoc >=1 & j02_otoc <=3)	/// recode "armed forces" to appropriate label
+	replace 	occup_2	=floor(pufc40_pocc/10)		if  (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)
+	recode 		occup_2 0 = 10	if 	(pufc40_pocc >=1 & pufc40_pocc <=3)	/// recode "armed forces" to appropriate label
 						& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)
 
 
 	* replace conditionally based on April (4-digit round)
-	replace 	occup_2	=floor(j02_otocc/1000)	if 	pufsvymo == 4
+	replace 	occup_2	=floor(pufc40_pocc/1000)	if 	pufsvymo == 4
 	recode 		occup_2 0 = 10	///
-						if 	(j02_otocc == 110 | j02_otocc == 210 | j02_otocc == 310) /// recode "armed forces" to appropriate label
+						if 	(pufc40_pocc == 110 | pufc40_pocc == 210 | pufc40_pocc == 310) /// recode "armed forces" to appropriate label
 						& 	(pufsvymo == 4)
 
 
