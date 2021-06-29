@@ -102,7 +102,8 @@ if (`cb_pause' == 1) {
 	iecodebook append ///
 		`"`round1'"' `"`round2'"' `"`round3'"' `"`round4'"' /// survey files
 		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template-IN.xlsx"' /// output just created above
-		, clear surveys(JAN2016 APR2016 JUL2016 OCT2016) // survey names
+		, clear surveys(JAN2016 APR2016 JUL2016 OCT2016) /// survey names
+		gen(round)										// create a factor var called "round" to identify data source
 	}
 	else {
 *** use the single file
@@ -698,11 +699,30 @@ if (`cb_pause' == 1) {
 ** OCCUPATION CLASSIFICATION
 	* in 2016, raw variable is numeric
 
-	* generate occupation variable
-	gen byte occup=floor(c16_proc/10)		// this handles most of recoding automatically.
-	recode occup 0 = 10	if 	c16_proc==1 	// recode "armed forces" to appropriate label
-	recode occup 0 = 99	if 	(c16_proc>=2 & c16_proc <=9) ///
-							| (c16_proc >=94 & c16_proc <= 99) // recode "Not classifiable occupations"
+	* generate empty variable
+	gen byte occup = .
+
+	* replace conditionally based on January round (1992 PSOC)
+	replace 	occup=floor(c16_proc/10)		///
+				if 	round == 1
+
+	recode 		occup 0 = 10		///
+				if 	c16_proc==1 	/// recode "armed forces" to appropriate label
+				& 	round == 1
+
+	recode 		occup 0 = 99		///
+				if 	(c16_proc>=2 & c16_proc <=9) ///
+				| (c16_proc >=94 & c16_proc <= 99) /// recode "Not classifiable occupations"
+				& round == 1
+
+
+	* replace conditionally based on April, July, October rounds (2012 PSOC)
+	replace		occup=floor(c16_proc/10)							///
+				if (round == 4 | round == 7 | round == 10)
+
+	recode 		occup 0 = 10									///
+				if 	(c16_proc >=1 & c16_proc <=3)				/// recode "armed forces" to appropriate label
+				& 	(round == 4 | round == 7 | round == 10)
 
 
 	replace occup=. if lstatus!=1 		// restrict universe to employed only
@@ -813,10 +833,34 @@ if (`cb_pause' == 1) {
 	label var industry_orig_2 "Original Industry Codes - Second job"
 
 
-** OCCUPATION CLASSIFICATION - SECOND JOB
-	gen byte occup_2=floor(j02_otoc/10)		// this handles most of recoding automatically.
-	recode occup_2 0 = 10	if 	j02_otoc==1 	// recode "armed forces" to appropriate label
-	recode occup_2 0 = 99	if 	j02_otoc==9 	// recode "Not classifiable occupations" to appropriate label
+** OCCUPATION CLASSIFICATION - SECOND JOB j02_otoc
+
+	* generate empty variable
+	gen byte occup_2 = .
+
+	* replace conditionally based on January round (1992 PSOC)
+	replace 	occup_2=floor(j02_otoc/10)		///
+				if 	round == 1
+
+	recode 		occup_2 0 = 10		///
+				if 	j02_otoc==1 	/// recode "armed forces" to appropriate label
+				& 	round == 1
+
+	recode 		occup_2 0 = 99		///
+				if 	(j02_otoc>=2 & j02_otoc <=9) ///
+				| (j02_otoc >=94 & j02_otoc <= 99) /// recode "Not classifiable occupations"
+				& round == 1
+
+
+	* replace conditionally based on April, July, October rounds (2012 PSOC)
+	replace		occup_2=floor(j02_otoc/10)							///
+				if (round == 4 | round == 7 | round == 10)
+
+	recode 		occup_2 0 = 10									///
+				if 	(j02_otoc >=1 & j02_otoc <=3)				/// recode "armed forces" to appropriate label
+				& 	(round == 4 | round == 7 | round == 10)
+
+
 
 	replace occup_2=. if lstatus!=1 		// restrict universe to employed only
 	replace occup_2=. if age < lb_mod_age	// restrict universe to working age

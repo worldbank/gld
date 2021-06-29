@@ -67,3 +67,6 @@ Also, there are some numeric values that appear in the data that do not correspo
 
 #### 2007, 2017
 In 2017, the April round has data values under a 4-digit classification scheme, but all other rounds/months are under a 2-digit classifcation scheme. For this year, the coding will occur conditionally based on the round. This also occurs for the January 2007 round.
+
+#### 2016
+Similarly to the cases above, the occupation variable will be coded conditionally based on the round: January will receive one coding based on the 1992 PSOC and the rest of the rounds will be coded based on the 2012 PSOC.
