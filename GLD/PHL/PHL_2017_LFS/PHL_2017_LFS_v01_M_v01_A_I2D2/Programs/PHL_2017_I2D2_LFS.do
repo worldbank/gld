@@ -642,20 +642,32 @@ if (`cb_pause' == 1) {
 	gen byte industry=.
 
 	* for months January, July, October
-	if (pufsvymo != 4) {
-		replace industry=1 	if (pufc16_pkb>=1 	& pufc16_pkb<=4) 	// to Agriculture
-		replace industry=2 	if (pufc16_pkb>=5 	& pufc16_pkb<=9)	// to Mining
-		replace industry=3 	if (pufc16_pkb>=10 & pufc16_pkb<=33)	// to Manufacturing
-		replace industry=4 	if (pufc16_pkb>=35 & pufc16_pkb<=39)	// to Public utility
-		replace industry=5 	if (pufc16_pkb>=41 & pufc16_pkb<=43)	// to Construction
-		replace industry=6 	if (pufc16_pkb>=45 & pufc16_pkb<=47) | (pufc16_pkb >= 55 & pufc16_pkb <= 56)	// to Commerce
-		replace industry=7 	if (pufc16_pkb>=49 & pufc16_pkb<=53) | (pufc16_pkb >= 58 & pufc16_pkb <= 63) // to Transport/coms
-		replace industry=8 	if (pufc16_pkb>=64 & pufc16_pkb<=82) 	// to financial/business services
-		replace industry=9 	if (pufc16_pkb==84) 				// to public administration
-		replace industry=10 if (pufc16_pkb>=91 & pufc16_pkb<=99) // to other
-		replace industry=10 if industry==. & pufc16_pkb!=.
-	}
-	else {
+		replace industry=1 	if (pufc16_pkb>=1 	& pufc16_pkb<=4) ///
+								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)	// to Agriculture
+		replace industry=2 	if (pufc16_pkb>=5 	& pufc16_pkb<=9) ///
+								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)	// to Mining
+		replace industry=3 	if (pufc16_pkb>=10 & pufc16_pkb<=33)	///
+								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10) // to Manufacturing
+		replace industry=4 	if (pufc16_pkb>=35 & pufc16_pkb<=39)  ///
+								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)	// to Public utility
+		replace industry=5 	if (pufc16_pkb>=41 & pufc16_pkb<=43)  ///
+								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)	// to Construction
+		replace industry=6 	if (pufc16_pkb>=45 & pufc16_pkb<=47) | (pufc16_pkb >= 55 & pufc16_pkb <= 56)  ///
+								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)	// to Commerce
+		replace industry=7 	if (pufc16_pkb>=49 & pufc16_pkb<=53) | (pufc16_pkb >= 58 & pufc16_pkb <= 63)  ///
+								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10) // to Transport/coms
+		replace industry=8 	if (pufc16_pkb>=64 & pufc16_pkb<=82)   ///
+								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)	// to financial/business services
+		replace industry=9 	if (pufc16_pkb==84) 		  ///
+								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)		// to public administration
+		replace industry=10 if (pufc16_pkb>=91 & pufc16_pkb<=99)   ///
+								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10) // to other
+		replace industry=10 if industry==. & pufc16_pkb!=.  ///
+								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)
+
+								
+								
+	if (pufsvymo == 4) {
 		* For April, code according to the april Schema
 
 		replace industry=1 	if pufc16_pkb >= 100 	& pufc16_pkb <= 399	 	// "Agriculture, Forestry, Fishing" coded to "Agriculture"
@@ -674,9 +686,8 @@ if (`cb_pause' == 1) {
 	}
 
 	* valid operations no matter the year
-	replace industry=. if lstatus~=1
 
-* Comments include UN International Standard Industrial Classification associated categories (version 3.1)
+		* Comments include UN International Standard Industrial Classification associated categories (version 3.1)
 	label var industry "1 digit industry classification"
 	la de lblindustry 	1 "Agriculture" 	/// (01-05)
 						2 "Mining" 			/// (10-14)
@@ -703,7 +714,7 @@ if (`cb_pause' == 1) {
 	replace industry1=. if lstatus!=1 		// restrict universe to employed only
 
 **SURVEY SPECIFIC INDUSTRY CLASSIFICATION
-	gen industry_orig=c18_pkb
+	gen industry_orig=pufc43_qkb
 	replace industry_orig=. if lstatus!=1 		// restrict universe to employed only
 	replace industry_orig=. if age < lb_mod_age // restrict universe to working age
 	label var industry_orig "Original Industry Codes"
@@ -793,20 +804,31 @@ if (`cb_pause' == 1) {
 	gen byte industry_2=.
 
 	* for months January, July, October
-	if (pufsvymo != 4) {
-		replace inudstry_2=1 	if (pufc43_qkb>=1 	& pufc43_qkb<=4) 	// to Agriculture
-		replace inudstry_2=2 	if (pufc43_qkb>=5 	& pufc43_qkb<=9)	// to Mining
-		replace inudstry_2=3 	if (pufc43_qkb>=10 & pufc43_qkb<=33)	// to Manufacturing
-		replace inudstry_2=4 	if (pufc43_qkb>=35 & pufc43_qkb<=39)	// to Public utility
-		replace inudstry_2=5 	if (pufc43_qkb>=41 & pufc43_qkb<=43)	// to Construction
-		replace inudstry_2=6 	if (pufc43_qkb>=45 & pufc43_qkb<=47) | (pufc43_qkb >= 55 & pufc43_qkb <= 56)	// to Commerce
-		replace inudstry_2=7 	if (pufc43_qkb>=49 & pufc43_qkb<=53) | (pufc43_qkb >= 58 & pufc43_qkb <= 63) // to Transport/coms
-		replace inudstry_2=8 	if (pufc43_qkb>=64 & pufc43_qkb<=82) 	// to financial/business services
-		replace inudstry_2=9 	if (pufc43_qkb==84) 				// to public administration
-		replace inudstry_2=10 if (pufc43_qkb>=91 & pufc43_qkb<=99) // to other
-		replace inudstry_2=10 if inudstry_2==. & pufc43_qkb!=.
-	}
-	else {
+		replace industry_2=1 	if (pufc43_qkb>=1 	& pufc43_qkb<=4) ///
+								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)	// to Agriculture
+		replace industry_2=2 	if (pufc43_qkb>=5 	& pufc43_qkb<=9) ///
+								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)	// to Mining
+		replace industry_2=3 	if (pufc43_qkb>=10 & pufc43_qkb<=33)	///
+								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10) // to Manufacturing
+		replace industry_2=4 	if (pufc43_qkb>=35 & pufc43_qkb<=39)  ///
+								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)	// to Public utility
+		replace industry_2=5 	if (pufc43_qkb>=41 & pufc43_qkb<=43)  ///
+								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)	// to Construction
+		replace industry_2=6 	if (pufc43_qkb>=45 & pufc43_qkb<=47) | (pufc43_qkb >= 55 & pufc43_qkb <= 56)  ///
+								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)	// to Commerce
+		replace industry_2=7 	if (pufc43_qkb>=49 & pufc43_qkb<=53) | (pufc43_qkb >= 58 & pufc43_qkb <= 63)  ///
+								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10) // to Transport/coms
+		replace industry_2=8 	if (pufc43_qkb>=64 & pufc43_qkb<=82)   ///
+								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)	// to financial/business services
+		replace industry_2=9 	if (pufc43_qkb==84) 		  ///
+								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)		// to public administration
+		replace industry_2=10 if (pufc43_qkb>=91 & pufc43_qkb<=99)   ///
+								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10) // to other
+		replace industry_2=10 if industry_2==. & pufc43_qkb!=.  ///
+								& (pufsvymo == 1 | pufsvymo == 7 | pufsvymo == 10)
+
+	
+	if (pufsvymo == 4) {
 		* For April, code according to the april Schema
 
 		replace inudstry_2=1 	if pufc43_qkb >= 100 	& pufc43_qkb <= 399	 	// "Agriculture, Forestry, Fishing" coded to "Agriculture"
