@@ -364,7 +364,7 @@ if (`cb_pause' == 1) {
 
 ** HOUSEHOLD SIZE
 	sort idh
-	by idh: egen hhsize= count(c03_rel <= 8) // includes non-family members.
+	by idh: egen hhsize= count(c03_rel <= 8 | c03_rel == 11) // includes non-family members.
 	label var hhsize "Household size"
 
 	* check

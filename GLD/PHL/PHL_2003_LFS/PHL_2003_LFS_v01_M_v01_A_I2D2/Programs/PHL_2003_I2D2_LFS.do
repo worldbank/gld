@@ -402,7 +402,8 @@ pause
 
 ** HOUSEHOLD SIZE
 	sort idh
-	by idh: egen hhsize= count(c101_lno < 8) // includes non-family members.
+	by idh: egen hhsize= count(c03_rel <= 8 | c03_rel == 11)
+	* restrict by family role var, include all non-family members but not boarders/workers
 	label var hhsize "Household size"
 
 	* check

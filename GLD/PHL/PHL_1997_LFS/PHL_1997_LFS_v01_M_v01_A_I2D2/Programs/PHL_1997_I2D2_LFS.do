@@ -366,7 +366,7 @@ if (`append' == 1) {
 
 ** HOUSEHOLD SIZE
 	sort idh
-	by idh: egen hhsize= count(rel <= 7) // includes non-family members.
+	by idh: egen hhsize= count(rel <= 7) // includes non-family members, not boarders or domestic workers.
 	label var hhsize "Household size"
 
 	* check
