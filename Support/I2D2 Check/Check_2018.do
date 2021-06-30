@@ -251,6 +251,7 @@ di "Checks for head==4"
 di "Household Size"
 assert hhsize==. | (hhsize>hhsize13  & hhsize!=1 & hhsize!=.) if head==4
 
+
 di "Ownhouse"
 assert ownhouse==. if head==6
 
