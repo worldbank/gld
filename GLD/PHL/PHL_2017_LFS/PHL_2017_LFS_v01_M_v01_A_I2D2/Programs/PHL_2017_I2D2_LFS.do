@@ -223,7 +223,7 @@ if (`cb_pause' == 1) {
 ** HOUSEHOLD WEIGHTS
 	/* The weight variable will be divided by the number of rounds per year to ensure the
 	   weighting factor does not over-mutliply*/
-	gen double wgt= pufpwgtprv/(10000 * `n_round')
+	gen double wgt= pufpwgtprv/(`n_round')
 	label var wgt "Household sampling weight"
 
 
