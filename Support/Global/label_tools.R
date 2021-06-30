@@ -171,3 +171,16 @@ vallabs_industry18 <- metadata %>%
   pivot_wider(names_from = id, 
               values_from = "value_label") %>%
   distinct() 
+
+
+
+# create family relationship variable tables 
+vallab_tab_rel <- metadata %>%
+  filter( grepl("rel", var_name_orig) ) %>%
+  filter(!is.na(labels)) %>%
+  select(id, labels) %>%
+  unnest_longer(labels, 
+                values_to = "value",
+                indices_to = "value_label") %>%
+  pivot_wider(names_from = id, values_from = value_label) %>%
+  arrange(value)
