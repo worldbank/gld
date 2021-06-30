@@ -5,6 +5,7 @@
 library(tidyverse)
 library(tsibble)
 
+load(file.path(PHL, "PHL_data/I2D2/Rdata/metadata.Rdata"))
 
 # define function ----  
 # from https://community.rstudio.com/t/passing-df-column-name-to-function/37293
@@ -194,3 +195,5 @@ gg_age <- ggplot(age_ts) +
 gg_age
 
 
+save(gg_age, age_ts, tibs,
+     file = file.path(PHL, "PHL_data/I2D2/Rdata/min_age.Rdata"))
