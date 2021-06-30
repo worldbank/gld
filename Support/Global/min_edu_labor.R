@@ -180,15 +180,17 @@ age_ts <- age_min %>%
 # edit and graph ----
 
 a = 0.3
-gg <- ggplot(age_ts) +
+gg_age <- ggplot(age_ts) +
   geom_point(aes(yearmo, min_edu), color = 'blue', alpha = a, size = 2) +
   geom_point(aes(yearmo, min_labor), color = 'red', alpha = a, size = 2) +
   scale_y_continuous(limits = c(0,20)) +
-  scale_x_yearmonth() + 
+  scale_x_yearmonth(breaks = "1 year") + 
   guides(colour = "legend") +
   labs(x = "Year - Month", y = "Min. Age for Edu/Labor Module",
     title="Age minimums in data across rounds and years", 
-    subtitle="Education data in blue, labor data in red") +
-  theme_minimal() 
-gg
+    subtitle="Education data in blue, labor data in orange, overlap in purple") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, vjust=0.5, hjust=1))
+gg_age
+
 
