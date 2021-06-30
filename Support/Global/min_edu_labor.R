@@ -1,20 +1,12 @@
 # min_edu_labor.R
 # A file to systematically identify the minimum labor and education data 
 # note, this file assumes you have the metadata files preloaded
-
+ 
 library(tidyverse)
+library(tsibble)
 
 
-jan97 <- readRDS(files_tib$rpath[1])
-
-min(jan97$age[!is.na(jan97$grade)])
-min(jan97$age[!is.na(jan97$class)])
-
-jan97 %>%
-  select(age, grade) %>%
-  filter(!is.na(age) & !is.na(grade)) %>%
-  summarise(min_edu   = min(age))
-  
+# define function ----  
 # from https://community.rstudio.com/t/passing-df-column-name-to-function/37293
 min_age <- function(file, age, edu, labor) {
   # file = file path
@@ -50,6 +42,8 @@ min_age <- function(file, age, edu, labor) {
 
   
 }
+
+# function call for each year ----
 
 files_tib <- arrange(files_tib, row_number()) # ensure same order
 
@@ -161,6 +155,8 @@ min20apr <- min_age(file = files_tib$rpath[81], age = pufc05_age, edu = pufc07_g
 min20jul <- min_age(file = files_tib$rpath[83], age = pufc05_age, edu = pufc07_grade, labor = pufc23_pclass)  %>% mutate(year=2020, month=7)
 
 
+
+
 # append ----
 
 ## make list of objects to append
@@ -171,4 +167,28 @@ assertthat::assert_that(length(tibs) == nrow(documented_waves))
 
 ## call function to append
 age_min <- do.call(rbind, tibs) %>%
+  rownames_to_column("id") %>%
   arrange(year, month)
+
+## make into tsibble 
+age_ts <- age_min %>%
+  mutate(ym = paste(year, month),
+         yearmo = yearmonth(ym)) %>%
+  as_tsibble(index = yearmo)
+
+
+# edit and graph ----
+
+a = 0.3
+gg <- ggplot(age_ts) +
+  geom_point(aes(yearmo, min_edu), color = 'blue', alpha = a, size = 2) +
+  geom_point(aes(yearmo, min_labor), color = 'red', alpha = a, size = 2) +
+  scale_y_continuous(limits = c(0,20)) +
+  scale_x_yearmonth() + 
+  guides(colour = "legend") +
+  labs(x = "Year - Month", y = "Min. Age for Edu/Labor Module",
+    title="Age minimums in data across rounds and years", 
+    subtitle="Education data in blue, labor data in red") +
+  theme_minimal() 
+gg
+
