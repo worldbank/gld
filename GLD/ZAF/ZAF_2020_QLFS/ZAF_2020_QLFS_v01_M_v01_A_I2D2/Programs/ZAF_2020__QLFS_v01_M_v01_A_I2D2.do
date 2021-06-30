@@ -16,10 +16,10 @@
 							Z:\_GLD-Harmonization\573465_JT\ZAF\ZAF_2020_LFS\ZAF_2020_LFS_v01_M\data\stata\qlfs-2020-q4-worker-v1.dta
 ** RESPONSIBLE				Junying Tong
 ** Created					6/3/2021
-** Modified					6/23/2021
-** NUMBER OF HOUSEHOLDS		34,009
-** NUMBER OF INDIVIDUALS	118,165
-** EXPANDED POPULATION		57,951,052
+** Modified					6/28/2021
+** NUMBER OF HOUSEHOLDS		33,913
+** NUMBER OF INDIVIDUALS	117,759
+** EXPANDED POPULATION		57,830,298
 **                                                                                                  **
 ******************************************************************************************************
 *****************************************************************************************************/
@@ -78,12 +78,31 @@
 	recode Qtr .=4
 	replace Weight=Weight/4
 /*
-668 observations in Quarter 2 are not uniquely defined by household number and
-person number, even though some of them seem to be different respondents. 
-These observations account for 0.32% of total sample size. 356 were dropped.  
+668 observations or 169 households in Quarter 2 are not uniquely defined by 
+household number and person number, even though some of them seem to be 
+different respondents. These observations account for 0.32% of total sample size. 
+663 were dropped. 
+
+Two intermediate work files created:
+1)ZAF_2020_QLFS_v01_M_v01_A_I2D2_DUP.dta: 
+  shows basic individual information like gender, age, and population group for 
+  duplicated observations
+
+2)ZAF_2020__QLFS_v01_M_v01_A_I2D2_DUP.xls:
+  a full list of all variables of 668 duplicated observations
 */	
+	duplicates drop   
 	bysort UQNO PERSONNO Qtr: gen dup=cond(_N==1, 0, _n)
-	drop if dup>1
+	*preserve
+	*keep UQNO PERSONNO Q13GENDER Q15POPULATION Q14AGE Qtr dup
+	*keep if dup>0
+	*save "`i2d2'\work\ZAF_2020_QLFS_v01_M_v01_A_I2D2_DUP.dta", replace
+	*restore 
+	*preserve
+	*keep if dup>0
+	*export excel using "`i2d2'\Work\ZAF_2020__QLFS_v01_M_v01_A_I2D2_DUP.xls", sheetreplace firstrow(variables)
+	*restore
+	drop if dup>0
 	drop dup
 	
 
@@ -259,8 +278,9 @@ urbanization stats from:
 ** RELATIONSHIP TO THE HEAD OF HOUSEHOLD
 
 /*
+1.77% of 33,91 HHs start with PERSONNO #2.
 Not asked, all we know is that the person with personal number equal to 1 is the head, the problem is that in some cases that person is not present, probably because he/she didn't spend four nights or more in this household. In those cases I assigned the eldest adult male (or female absent male) present as the household head.
-43 observations were dropped due to no male memeber or multiple same old male (or female) members.
+144 observations (78 HHs) were dropped due to no male memeber or multiple same old male (or female) members.
 Age of majority is 18 in South Africa.  
 */
 
