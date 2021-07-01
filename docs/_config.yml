@@ -2,8 +2,13 @@ title: GLD Documentation
 remote_theme:  pmarsceill/just-the-docs
 author: Yo mismo
 email: Correo@domain.com
-description: 
+description:
   Write an awesome description for your new site here. You can edit this
   line in _config.yml. It will appear in your document head meta (for
   Google search results) and in your feed.xml site description.
 
+# Back to top link
+back_to_top: true
+back_to_top_text: "Back to top"
+
+footer_content: "Created by the World Bank Jobs Group. Distributed by an <a href=\"https://github.com/worldbank/gld/docs/tree/documentation_page/LICENSE.txt\">MIT license.</a>"
