@@ -12,3 +12,9 @@ back_to_top: true
 back_to_top_text: "Back to top"
 
 footer_content: "Created by the World Bank Jobs Group. Distributed by an <a href=\"https://github.com/worldbank/gld/blob/main/LICENSE\">MIT license.</a>"
+
+collections:
+  # Define a collection named "docs", its documents reside in the "_docs" directory
+  docs:
+    permalink: "/docs/docs/:path/"
+    output: true
