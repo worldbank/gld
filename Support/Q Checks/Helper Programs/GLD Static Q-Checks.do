@@ -345,7 +345,7 @@ if _rc == 0 { // if var exists since if not captured in 1.1
 	local check_educy = 0 
 	qui : count if educy < 0 & educy != . 
 	if `r(N)' > 0 local check_educy = `r(N)'
-	qui : count if age < educy & (age != . | educy != .)
+	qui : count if age < educy & (age != . & educy != .)
 	if `r(N)' > 0 local check_educy = `check_educy' + `r(N)'
 	if `check_educy' > 0 {
 		post `memhold' ("Survey & ID") ("educy") ("Years in education shows unexpected values (# of cases ->)") (`check_educy') (1)
@@ -375,7 +375,7 @@ if _rc == 0 { // if vars exist since if not captured in 1.1
 *----------6.4: education concordance 5 / 4
 cap confirm variable educat5 educat4 
 if _rc == 0 { // if vars exist since if not captured in 1.1
-	qui : count if (educat5 == 1 & educat4 != 1) | (educat5 == 2 & educat4 != 2) | (educat5 == 3 & educat4 != 3) | (educat5 == 4 & educat4 != 3) | (educat5 == 5 & educat4 != 4)
+	qui : count if (educat5 == 1 & educat4 != 1) | (educat5 == 2 & educat4 != 2) | (educat5 == 3 & educat4 != 2) | (educat5 == 4 & educat4 != 3) | (educat5 == 5 & educat4 != 4)
 	if `r(N)' > 0 { // Correspondance not kept
 		post `memhold' ("Education") ("educat5 vs 4") ("Educat 4 <-> 5 correspondance not holding (number of cases ->)") (`r(N)') (1)
 	}
@@ -564,12 +564,12 @@ if `counting' > 1{ // if just one var no point in checking
 
 	local var1 : word 1 of `wage_present_vars'
 	local var2  : word 2 of `wage_present_vars'
-	qui count if `var1' < `var2' & ( !missing(`var1') | !missing(`var2') )
+	qui count if `var1' < `var2' & ( !missing(`var1') & !missing(`var2') )
 	local odd_wage_week = `r(N)'
 	if `counting' == 3 { // do one more check if present
 	
 		local var3  : word 3 of `wage_present_vars'
-		qui count if `var2' < `var3' & ( !missing(`var2') | !missing(`var3') )
+		qui count if `var2' < `var3' & ( !missing(`var2') & !missing(`var3') )
 		local odd_wage_week = `odd_wage_week' + `r(N)'
 	} // end case three vars exist
 	
@@ -714,6 +714,12 @@ foreach var of global isco_check {
 /*==================================================
               9: Consistency compared to WDI
 ==================================================*/
+* NOTE: There are two issues with comparins WDI. First, WDI may not have data for that year,
+* that is, the years column is missing altogether. Second, WDI may have a column, but all cases
+* we are interested in are missing. To this end, we create a local called "wdiworks" that is set
+* per default to 1, which represents it works. Through the code, checks are performed to see if
+* the assumption is true. If it does not, "wdiworks" is set to 0 and the checks on WDI are skipped.
+local wdiworks 1
 
 *----------9.1: Create comparison, merge it in
 levelsof countrycode, local(ccode)
@@ -728,81 +734,131 @@ if _rc == 0 { // if data for that year exists
 	gen value = yr`survey_year'
 }
 
-gen keeper = regexm(indicatorcode, "^SP.URB.TOTL.IN.ZS$|^SL.TLF.ACTI.ZS$|^SP.POP.TOTL$")
-keep if keeper == 1
-keep countrycode indicatorcode value
-replace indicatorcode =  "urbanization_wdi" if indicatorcode == "SP.URB.TOTL.IN.ZS"
-replace indicatorcode =  "lf_particip_wdi" if indicatorcode == "SL.TLF.ACTI.ZS"
-replace indicatorcode =  "population_wdi" if indicatorcode == "SP.POP.TOTL"
+* If the year column is not present, the variable "value" has not been created and thus
+* WDI checks do not work. In that case, change the value of "wdiworks"
+cap confirm variable value
+if _rc != 0 { // if value not created
+	local wdiworks 0
+}
 
-reshape wide value, i(countrycode) j(indicatorcode) string
-rename value* *
+* Only if value exists perform info reduction and reshaping
+if `wdiworks' == 1{
+	gen keeper = regexm(indicatorcode, "^SP.URB.TOTL.IN.ZS$|^SL.TLF.ACTI.ZS$|^SP.POP.TOTL$")
+	keep if keeper == 1
+	keep countrycode indicatorcode value
+	replace indicatorcode =  "urbanization_wdi" if indicatorcode == "SP.URB.TOTL.IN.ZS"
+	replace indicatorcode =  "lf_particip_wdi" if indicatorcode == "SL.TLF.ACTI.ZS"
+	replace indicatorcode =  "population_wdi" if indicatorcode == "SP.POP.TOTL"
+	
+	* At this point, we may check the second scenario outlined at the start of section 9 - That 
+	* we have that years data, but for what we are interested in, all answers are missing. If so
+	* change the value of "wdiworks"
+	count
+	local all_count_wdi `r(N)'
+	count if missing(value)
+	if `r(N)' == `all_count_wdi'{
+		local wdiworks 0
+	}
+	
+	reshape wide value, i(countrycode) j(indicatorcode) string
+	rename value* *
+
+}
+
+* If there is no info, reduce dataset to mere countrycode so merge is essentially not doing anything
+if `wdiworks' == 0{
+	keep countrycode
+	keep in 1
+}
 
 merge 1:m countrycode using `static_check_file', assert(match) nogen
 
 *----------9.2: Compare total population
-cap confirm variable weight
-if _rc == 0 { // if vars exist, else captured above
-	summarize weight [aw = weight]
-	local survey_pop `r(sum_w)'
-	summarize population_wdi
-	local wdi_pop `r(mean)'
+* Make comparison if "wdiworks" is set to 1, else inform no data for comparison
+if `wdiworks' == 1{
+	cap confirm variable weight
+	if _rc == 0 { // if vars exist, else captured above
+		summarize weight [aw = weight]
+		local survey_pop `r(sum_w)'
+		summarize population_wdi
+		local wdi_pop `r(mean)'
 
-	local pop_diff = abs((`survey_pop' - `wdi_pop')/`survey_pop')
-	post `memhold' ("WDI Comparison") ("Population") ("Survey population and WDI population for the year differ by ->") (`pop_diff') (1)
+		local pop_diff = abs((`survey_pop' - `wdi_pop')/`survey_pop')
+		post `memhold' ("WDI Comparison") ("Population") ("Survey population and WDI population for the year differ by ->") (`pop_diff') (1)
+	}
 }
+else {
+	post `memhold' ("WDI Comparison") ("Population") ("No WDI Data available") (.) (1)
+}
+
 
 
 *----------9.3: Compare urbanization rate
-cap confirm variable urban weight
-if _rc == 0 { // if vars exist, else captured above
-	summarize urban [aw = weight]
-	local survey_urb = round(r(mean)*100,0.1)
-	summarize urbanization_wdi
-	local wdi_urb  = round(r(mean),0.1)
+* Make comparison if "wdiworks" is set to 1, else inform no data for comparison
+if `wdiworks' == 1{
+	cap confirm variable urban weight
+	if _rc == 0 { // if vars exist, else captured above
+		summarize urban [aw = weight]
+		local survey_urb = round(r(mean)*100,0.1)
+		summarize urbanization_wdi
+		local wdi_urb  = round(r(mean),0.1)
 
-	local urb_diff = abs((`survey_urb' - `wdi_urb')/`survey_urb')
-	post `memhold' ("WDI Comparison") ("Urbanization") ("Survey urbanization rate is `survey_urb'% and WDI urb rate for the year is `wdi_urb'%. Difference ->") (`urb_diff') (1)
+		local urb_diff = abs((`survey_urb' - `wdi_urb')/`survey_urb')
+		post `memhold' ("WDI Comparison") ("Urbanization") ("Survey urbanization rate is `survey_urb'% and WDI urb rate for the year is `wdi_urb'%. Difference ->") (`urb_diff') (1)
+	}
 }
-
+else {
+	post `memhold' ("WDI Comparison") ("Urbanization") ("No WDI Data available") (.) (1)
+}
 
 *----------9.4: Compare 7 day labour force participation rate
-cap confirm variable lstatus age weight
-if _rc == 0 { // if vars exist, else captured above
-	gen helper = .
-	replace helper = 0 if lstatus == 3 & inrange(age, 15,64)
-	replace helper = 1 if (lstatus == 1 | lstatus == 2) & inrange(age, 15,64)
-	summarize helper [aw = weight]
-	local survey_lfp = round(r(mean)*100,0.1)
-	drop helper
-	summarize lf_particip_wdi
-	local wdi_lfp = round(r(mean),0.1)
+* Make comparison if "wdiworks" is set to 1, else inform no data for comparison
+if `wdiworks' == 1{
+	cap confirm variable lstatus age weight
+	if _rc == 0 { // if vars exist, else captured above
+		gen helper = .
+		replace helper = 0 if lstatus == 3 & inrange(age, 15,64)
+		replace helper = 1 if (lstatus == 1 | lstatus == 2) & inrange(age, 15,64)
+		summarize helper [aw = weight]
+		local survey_lfp = round(r(mean)*100,0.1)
+		drop helper
+		summarize lf_particip_wdi
+		local wdi_lfp = round(r(mean),0.1)
 
-	local lfp_diff = abs((`survey_lfp' - `wdi_lfp')/`survey_lfp')
-	post `memhold' ("WDI Comparison") ("LFP 7 day") ("Survey 7 day LFP is `survey_lfp'% and WDI LFP for the year is `wdi_lfp'%. Difference ->") (`lfp_diff') (1)
+		local lfp_diff = abs((`survey_lfp' - `wdi_lfp')/`survey_lfp')
+		post `memhold' ("WDI Comparison") ("LFP 7 day") ("Survey 7 day LFP is `survey_lfp'% and WDI LFP for the year is `wdi_lfp'%. Difference ->") (`lfp_diff') (1)
+	}
 }
-
+else {
+	post `memhold' ("WDI Comparison") ("LFP 7 day") ("No WDI Data available") (.) (1)
+}
 
 *----------9.5: Compare 12 month labour force participation rate
-cap confirm variable lstatus_year age weight
-if _rc == 0 { // if vars exist, else captured above
-	gen helper = .
-	replace helper = 0 if lstatus_year == 3 & inrange(age, 15,64)
-	replace helper = 1 if (lstatus_year == 1 | lstatus_year == 2) & inrange(age, 15,64)
-	summarize helper [aw = weight]
-	local survey_lfp = round(r(mean)*100,0.1)
-	drop helper
-	summarize lf_particip_wdi
-	local wdi_lfp = round(r(mean),0.1)
+* Make comparison if "wdiworks" is set to 1, else inform no data for comparison
+if `wdiworks' == 1{
+	cap confirm variable lstatus_year age weight
+	if _rc == 0 { // if vars exist, else captured above
+		gen helper = .
+		replace helper = 0 if lstatus_year == 3 & inrange(age, 15,64)
+		replace helper = 1 if (lstatus_year == 1 | lstatus_year == 2) & inrange(age, 15,64)
+		summarize helper [aw = weight]
+		local survey_lfp = round(r(mean)*100,0.1)
+		drop helper
+		summarize lf_particip_wdi
+		local wdi_lfp = round(r(mean),0.1)
 
-	local lfp_diff = abs((`survey_lfp' - `wdi_lfp')/`survey_lfp')
-	post `memhold' ("WDI Comparison") ("LFP 12 month") ("Survey 12 month LFP is `survey_lfp'% and WDI LFP for the year is `wdi_lfp'%. Difference ->") (`lfp_diff') (1)
+		local lfp_diff = abs((`survey_lfp' - `wdi_lfp')/`survey_lfp')
+		post `memhold' ("WDI Comparison") ("LFP 12 month") ("Survey 12 month LFP is `survey_lfp'% and WDI LFP for the year is `wdi_lfp'%. Difference ->") (`lfp_diff') (1)
+	}
+}
+else {
+	post `memhold' ("WDI Comparison") ("LFP 12 month") ("No WDI Data available") (.) (1)
 }
 
-
 *----------9.6: Clean up vars from comparison
-drop lf_particip_wdi population_wdi urbanization_wdi
-
+if `wdiworks' == 1{
+	drop lf_particip_wdi population_wdi urbanization_wdi
+}
 
 
 /*==================================================
