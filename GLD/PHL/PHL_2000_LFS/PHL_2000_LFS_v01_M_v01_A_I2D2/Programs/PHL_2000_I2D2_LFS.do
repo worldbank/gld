@@ -724,7 +724,6 @@ if (`cb_pause' == 1) {
 
 ** EMPLOYMENT STATUS - SECOND JOB
 	gen byte empstat_2=.
-	replace empstat_2=. if njobs==0 | njobs==.
 	replace empstat_2=. if lstatus!=1 			// restrict universe to employed only
 	replace empstat_2=. if age < lb_mod_age		// restrict universe to working age
 	label var empstat_2 "Employment status - second job"
@@ -734,7 +733,6 @@ if (`cb_pause' == 1) {
 
 ** EMPLOYMENT STATUS - SECOND JOB LAST YEAR
 	gen byte empstat_2_year=.
-	replace empstat_2_year=. if njobs_year==0 | njobs_year==.
 	replace empstat_2_year=. if lstatus!=1 				// restrict universe to employed only
 	replace empstat_2_year=. if age < lb_mod_age		// restrict universe to working age
 	label var empstat_2_year "Employment status - second job"
@@ -749,7 +747,6 @@ if (`cb_pause' == 1) {
 	replace industry_2=6 if c29_okb==98
 
 
-	replace industry_2=. if njobs==0 | njobs==.
 	replace industry_2=. if lstatus!=1 				// restrict universe to employed only
 	replace industry_2=. if age < lb_mod_age		// restrict universe to working age
 	label var industry_2 "1 digit industry classification - second job"
@@ -760,7 +757,6 @@ if (`cb_pause' == 1) {
 	* the first digit of the raw variable corresponds to the correct final digits in most cases. use floor() and recode
 
 	gen byte industry1_2=.
-	replace industry1_2=. if njobs==0 | njobs==.
 	replace industry1_2=. if lstatus!=1 				// restrict universe to employed only
 	replace industry1_2=. if age < lb_mod_age			// restrict universe to working age
 	label var industry1_2 "1 digit industry classification (Broad Economic Activities) - Second job"
@@ -770,7 +766,6 @@ if (`cb_pause' == 1) {
 
 **SURVEY SPECIFIC INDUSTRY CLASSIFICATION - SECOND JOB
 	gen industry_orig_2=.
-	replace industry_orig_2=. if njobs==0 | njobs==.
 	replace industry_orig_2=. if lstatus!=1 				// restrict universe to employed only
 	replace industry_orig_2=. if age < lb_mod_age			// restrict universe to working age
 	label var industry_orig_2 "Original Industry Codes - Second job"
@@ -778,7 +773,6 @@ if (`cb_pause' == 1) {
 
 ** OCCUPATION CLASSIFICATION - SECOND JOB
 	gen byte occup_2=.
-	replace occup_2=. if njobs==0 | njobs==.
 
 	replace occup_2=. if lstatus!=1 				// restrict universe to employed only
 	replace occup_2=. if age < lb_mod_age			// restrict universe to working age
@@ -789,7 +783,6 @@ if (`cb_pause' == 1) {
 
 ** WAGES - SECOND JOB
 	gen double wage_2=.
-	replace wage_2=. if njobs==0 | njobs==.
 	replace wage_2=. if lstatus!=1 			// restrict universe to employed only
 	replace wage_2=. if age < lb_mod_age		// restrict universe to working age
 	replace wage_2=. if empstat==1			// restrict universe to wage earners
@@ -798,7 +791,6 @@ if (`cb_pause' == 1) {
 
 ** WAGES TIME UNIT - SECOND JOB
 	gen byte unitwage_2=.
-	replace unitwage_2=. if njobs==0 | njobs==.
 	replace unitwage_2=. if lstatus!=1 			// restrict universe to employed only
 	replace unitwage_2=. if age < lb_mod_age		// restrict universe to working age
 	replace unitwage_2=. if empstat==1			// restrict universe to wage earners
