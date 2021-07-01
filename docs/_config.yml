@@ -16,5 +16,5 @@ footer_content: "Created by the World Bank Jobs Group. Distributed by an <a href
 collections:
   # Define a collection named "docs", its documents reside in the "_docs" directory
   docs:
-    permalink: "/docs/docs/:path/"
+    permalink: "/docs/:path/"
     output: true
