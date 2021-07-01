@@ -12,14 +12,3 @@ back_to_top: true
 back_to_top_text: "Back to top"
 
 footer_content: "Created by the World Bank Jobs Group. Distributed by an <a href=\"https://github.com/worldbank/gld/blob/main/LICENSE\">MIT license.</a>"
-
-
-collections:
-  docs:
-    permalink: "/:collection/:path/"
-    output: true
-
-just_the_docs:
-  collections:
-    docs:
-      name: Documentation
