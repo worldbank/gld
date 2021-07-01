@@ -54,7 +54,7 @@
 	local 	 code 		"`i2d2'\Programs"
 	local 	 id_data 	"`i2d2'\Data\Harmonized"
 
-	local 	lb_mod_age	10	// labor module minimun age (inclusive)
+	local 	lb_mod_age	15	// labor module minimun age (inclusive)
 	local 	ed_mod_age	5	// labor module minimun age (inclusive)
 
 ** LOG FILE
