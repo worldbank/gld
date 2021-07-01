@@ -592,15 +592,15 @@ if (`cb_pause' == 1) {
 	label values empstat_year lblempstat_year
 
 
-** NUMBER OF ADDITIONAL JOBS
+** NUMBER OF TOTAL JOBS
 	gen byte njobs=a03_jobs
 	label var njobs "Number of total jobs"
-	replace njobs=. if age < lb_mod_age // restrict universe to working age
+	replace njobs=. 	if 	age < lb_mod_age | lstatus != 1		// restrict universe to working age + workers
 
 
-** NUMBER OF ADDITIONAL JOBS LAST YEAR
+** NUMBER OF TOTAL JOBS LAST YEAR
 	gen byte njobs_year=.
-	replace njobs_year=. if lstatus_year!=1 // restricts universe
+	replace njobs_year=. if age < lb_mod_age | lstatus_year!=1 	// restrict universe to working age + workers
 	label var njobs_year "Number of total jobs during last year"
 
 
