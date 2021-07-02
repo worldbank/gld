@@ -3,54 +3,54 @@
 	0: GLD Harmonization Preamble
 ================================================================================================*/
 
-/* ----------------------------------------------------------------------- 
+/* -----------------------------------------------------------------------
 
-<_Program name_>				IND_2005_NSS62-SCH10_V01_M_V01_A_GLD.do </_Program name_> 
-<_Application_>					STATA 15 <_Application_> 
-<_Author(s)_>					Angelo Santos </_Author(s)_> 
-<_Date created_>				2021-06-13 </_Date created_> 
+<_Program name_>				IND_2005_NSS62-SCH10_V01_M_V01_A_GLD.do </_Program name_>
+<_Application_>					STATA 15 <_Application_>
+<_Author(s)_>					World Bank Jobs Group </_Author(s)_> 
+<_Date created_>				2021-06-13 </_Date created_>
 <_Date modified>				2021-06-13 </_Date modified_>
 
-------------------------------------------------------------------------- 
+-------------------------------------------------------------------------
 
-<_Country_>						India </_Country_> 
-<_Survey Title_>				Employment and Unemployment Survey: NSS 62th Round : July 2005 - June 2006 </_Survey Title_> 
-<_Survey Year_>					2005 </_Survey Year_> 
-<_ICLS Version_>				Unknown (does not seem to follow ICLS-13 </_ICLS Version_> 
-<_Study ID_>					DDI-IND-NSSO-EUMS-2005-v1 </_Study ID_> 
-<_Data collection from (M/Y)_>	07/2005 </_Data collection from (M/Y)_> 
-<_Data collection to (M/Y)_>	06/2006 </_Data collection to (M/Y)_> 
-<_Source of dataset_> 			http://microdata.gov.in/nada43/index.php/catalog/90 </_Source of dataset_> 
-<_Sample size (HH)_> 			78,879 </_Sample size (HH)_> 
-<_Sample size (IND)_> 			377,377 </_Sample size (IND)_> 
-<_Sampling method_> 			
+<_Country_>						India </_Country_>
+<_Survey Title_>				Employment and Unemployment Survey: NSS 62th Round : July 2005 - June 2006 </_Survey Title_>
+<_Survey Year_>					2005 </_Survey Year_>
+<_ICLS Version_>				Unknown (does not seem to follow ICLS-13 </_ICLS Version_>
+<_Study ID_>					DDI-IND-NSSO-EUMS-2005-v1 </_Study ID_>
+<_Data collection from (M/Y)_>	07/2005 </_Data collection from (M/Y)_>
+<_Data collection to (M/Y)_>	06/2006 </_Data collection to (M/Y)_>
+<_Source of dataset_> 			http://microdata.gov.in/nada43/index.php/catalog/90 </_Source of dataset_>
+<_Sample size (HH)_> 			78,879 </_Sample size (HH)_>
+<_Sample size (IND)_> 			377,377 </_Sample size (IND)_>
+<_Sampling method_>
 
-"The 62nd round (July 2005 - June 2006) of NSS was earmarked for survey on unorganised manufacturing enterprises, 
-annual survey of consumer expenditure and survey on employment – unemployment. 
-The sampling design adopted for the survey was essentially a stratified multi-stage one 
-for both rural and urban areas. Two frames were used for this survey viz. List frame and Area frame. 
-List frame was used only for urban sector and that too for selection of manufacturing 
-enterprises only and thus is not relevant for discussion. Area frame was adopted for 
-both rural and urban sectors for selection of First Stage Units (FSU) . 
-For the area frame, the list of villages as per census 2001 (for Manipur, 1991 census 
-was used since 2001 census list was not available) was used as frame for the rural sector 
-and the latest available list of UFS blocks was used as frame in the urban sector. 
-However, EC-98 was used as frame for the 27 towns with population 10 lakhs or more (as per Census 2001). 
-The ultimate stage units (USU) were households, in both the sectors. In the case of large 
-villages/ blocks requiring hamlet-group (hg)/ sub-block (sb) formation, one intermediate 
+"The 62nd round (July 2005 - June 2006) of NSS was earmarked for survey on unorganised manufacturing enterprises,
+annual survey of consumer expenditure and survey on employment – unemployment.
+The sampling design adopted for the survey was essentially a stratified multi-stage one
+for both rural and urban areas. Two frames were used for this survey viz. List frame and Area frame.
+List frame was used only for urban sector and that too for selection of manufacturing
+enterprises only and thus is not relevant for discussion. Area frame was adopted for
+both rural and urban sectors for selection of First Stage Units (FSU) .
+For the area frame, the list of villages as per census 2001 (for Manipur, 1991 census
+was used since 2001 census list was not available) was used as frame for the rural sector
+and the latest available list of UFS blocks was used as frame in the urban sector.
+However, EC-98 was used as frame for the 27 towns with population 10 lakhs or more (as per Census 2001).
+The ultimate stage units (USU) were households, in both the sectors. In the case of large
+villages/ blocks requiring hamlet-group (hg)/ sub-block (sb) formation, one intermediate
 stage was the selection of two hgs/ sbs from each FSU." (from MOSPI)
 
 
-											</_Sampling method_> 
-<_Geographic coverage_> 		State Level </_Geographic coverage_> 
-<_Currency_> 					Indian Rupee </_Currency_> ----------------------------------------------------------------------- 
+											</_Sampling method_>
+<_Geographic coverage_> 		State Level </_Geographic coverage_>
+<_Currency_> 					Indian Rupee </_Currency_> -----------------------------------------------------------------------
 
-<_Version Control_> 
+<_Version Control_>
 
 * Date: [YYYY-MM-DD] File: [As in Program name above] - [Description of changes]
 * Date: [YYYY-MM-DD] File: [As in Program name above] - [Description of changes]
 
-</_Version Control_> 
+</_Version Control_>
 
 -------------------------------------------------------------------------*/
 
@@ -76,7 +76,7 @@ global path_output "C:\Users\Angelo Santos\OneDrive - George Mason University\Su
 use "$path_in/Block-6-Persons-daily-activity-time-disposition-reecords.dta", clear
 
 
-/* Need to order activity status such that the order of priority is as follows: 
+/* Need to order activity status such that the order of priority is as follows:
 
 	a. Working status
 	b. Non-working status but seeking employment
@@ -94,17 +94,17 @@ gen neg_days = -(B6_q14)
 
 * Order the records such that priority 1 comes first
 
-/*============================================================================== 
+/*==============================================================================
 The following is the hierarchy of rules for selecting the current weekly activity
-	1. Priority tag 
+	1. Priority tag
 	2. Number of days worked in a week
-	3. If number of days are equal between two employment activities, the status 
-	code that is smaller in value is taken as the CWA (e.g., activites 11 and 51 
+	3. If number of days are equal between two employment activities, the status
+	code that is smaller in value is taken as the CWA (e.g., activites 11 and 51
 	are worked for 3.5 days each; activity 11 will be the CWA because it is smaller
 	in value than 51.
 ==============================================================================*/
 
-sort Person_key priority_tag neg_days num_status 
+sort Person_key priority_tag neg_days num_status
 bys Person_key: gen runner = _n
 
 * Extract original serial number
@@ -115,14 +115,14 @@ destring original_serial, replace
 count if B6_q4 ! = B6_q18 & runner==1 //0
 	* majority of the cases is due to equal number of hours worked
 
-/*============================================================================== 
+/*==============================================================================
 What are the implications?
 
-1. Individual's employment status can be determined on the basis of status 1 or the 
+1. Individual's employment status can be determined on the basis of status 1 or the
 	current weekly activity status. No need to recode everything as both variables
 	are the same!
 
-2. The NSO under the CWA is the same as activity 1 
+2. The NSO under the CWA is the same as activity 1
 
 3. These is no overlap between activity 2 and activity 1!
 
@@ -131,11 +131,11 @@ What are the implications?
 destring B6_q3, replace
 keep B6_q4 B6_q5 B6_q14 B6_q15 - B6_q20 Hhold_key  B6_q1 runner
 
-/*============================================================================== 
+/*==============================================================================
 Issue: Current weekly activity is constant across Person id, but there are cases
 		wherein the industry and occupation for each activity vary! Ideally, there
 		should be 1:1 correspondence between NIC/NCO and CWA
-		
+
 Resolve: Include the NIC/NCO in the reshaping to wide, then keep only the first instance
 But first, make sure that the first instance for employed is nonmissing
 ==============================================================================*/
@@ -144,21 +144,21 @@ reshape wide B6_q4 B6_q5 B6_q14 - B6_q17 B6_q19 B6_q20, i(Hhold_key B6_q1) j(run
 
 destring B6_q18, gen(cwa_e)
 
-*============================================================================== 
+*==============================================================================
 * Need to count how many non-zero responses for industry/occupation variables
 
 count if B6_q191 == "" & inrange(cwa_e, 11, 72) //zero!
-count if B6_q201 == "" & inrange(cwa_e, 11, 72) 
+count if B6_q201 == "" & inrange(cwa_e, 11, 72)
 
 * there are 913 employed people with no occupation code
 
-count if missing(B6_q201) & (!missing(B6_q202) | !missing(B6_q203) | !missing(B6_q204)) & inrange(cwa_e, 11, 72) 
+count if missing(B6_q201) & (!missing(B6_q202) | !missing(B6_q203) | !missing(B6_q204)) & inrange(cwa_e, 11, 72)
 * 2 cases wherein occupation code is recorded under the second instance
 * Move this to first instance; ignore second instance
 
 replace B6_q201 = B6_q202 if missing(B6_q201)& !missing(B6_q202) & inrange(cwa_e, 11, 72)
 
-count if B6_q201 == "" & inrange(cwa_e, 11, 72) 
+count if B6_q201 == "" & inrange(cwa_e, 11, 72)
 * Still 911 employed people with no occupation code. Nothing we can do!
 * 911/137,450 employed people = 0.6%
 
@@ -196,19 +196,19 @@ merge m:1 Hhold_key using "$path_in/Block-1-2-Household-ID-records.dta" , keep(m
 merge 1:1 Person_key using "$path_in/Block-5-Persons-usual-activity-records.dta" , keep(master match) nogen
 
 
-******************************************************************************	
+******************************************************************************
 * TO DELETE THIS ONCE DONE
 *save "/Users/angelogabriellesantos/OneDrive - George Mason University/Summer 2021/510859_AS/IND/IND_2005_NSS62-SCH10/IND_2005_NSS62-SCH10_v01_M_v01_A_GLD/Work/merge_2005.dta", replace
-******************************************************************************	
+******************************************************************************
 
 
 /*%%=============================================================================================
 	2: Survey & ID
 ================================================================================================*/
-******************************************************************************	
+******************************************************************************
 * TO DELETE THIS ONCE DONE
 *use "/Users/angelogabriellesantos/OneDrive - George Mason University/Summer 2021/510859_AS/IND/IND_2005_NSS62-SCH10/IND_2005_NSS62-SCH10_v01_M_v01_A_GLD/Work/merge_2005.dta", clear
-******************************************************************************	
+******************************************************************************
 
 {
 
@@ -237,7 +237,7 @@ merge 1:1 Person_key using "$path_in/Block-5-Persons-usual-activity-records.dta"
 
 
 *<_vermast_>
-	gen vermast = "01" 
+	gen vermast = "01"
 	label var vermast "Version of master data"
 *</_vermast_>
 
@@ -257,7 +257,7 @@ merge 1:1 Person_key using "$path_in/Block-5-Persons-usual-activity-records.dta"
 *<_int_year_>
 	gen int_year=.
 	replace int_year = 2005 if inlist(SubRound,"1","2")
-	replace int_year = 2006 if inlist(SubRound,"3","4") 
+	replace int_year = 2006 if inlist(SubRound,"3","4")
 	label var int_year "Year of the interview"
 *</_int_year_>
 
@@ -287,9 +287,9 @@ merge 1:1 Person_key using "$path_in/Block-5-Persons-usual-activity-records.dta"
 
 	Because there are so many variables for the same sample individual id, I drop
 	them and keep only the data from block 5
-	
+
 </_pid_note> */
-	egen  str11 pid = concat(hhid B6_q1) 
+	egen  str11 pid = concat(hhid B6_q1)
 	label var pid "Individual ID"
 	isid pid
 *</_pid_>
@@ -299,7 +299,7 @@ merge 1:1 Person_key using "$path_in/Block-5-Persons-usual-activity-records.dta"
 /* <_weight_note>
 
 	From the Use of Multiplier for Sch-10 and Sch-10.1 document
-	
+
 </_weight_note> */
 	gen weight = WGT
 
@@ -335,9 +335,9 @@ merge 1:1 Person_key using "$path_in/Block-5-Persons-usual-activity-records.dta"
 *</_urban_>
 
 *<_subnatid1_>
-	destring State, gen(subnatid1) 
+	destring State, gen(subnatid1)
 	label define lblsubnatid1  28 "Andhra Pradesh"  18 "Assam"  10 "Bihar" 24 "Gujarat" 06 "Haryana"  02 "HimachalPradesh" ///
-	01 "Jammu & Kashmir" 29"Karnataka" 32 "Kerala" 23 "Madhya Pradesh" 27  "Maharashtra" ///  
+	01 "Jammu & Kashmir" 29"Karnataka" 32 "Kerala" 23 "Madhya Pradesh" 27  "Maharashtra" ///
 	14 "Manipur"   17 "Meghalaya"  13 "Nagaland"  21 "Orissa"  03 "Punjab" 08 "Rajasthan" 11 "Sikkim" ///
 	33 "Tamil Nadu"  16 "Tripura"  09 "Uttar Pradesh"  19 "West Bengal" 35 "A & N Islands" ///
 	12 "Arunachal Pradesh"  4 "Chandigarh" 26 "Dadra & Nagar Haveli" 7 "Delhi"  30 "Goa" ///
@@ -355,7 +355,7 @@ merge 1:1 Person_key using "$path_in/Block-5-Persons-usual-activity-records.dta"
 
 *<_subnatid3_>
 	gen byte subnatid3 = .
-	label de lblsubnatid3 1 "1 - Name" 
+	label de lblsubnatid3 1 "1 - Name"
 	label values subnatid3 lblsubnatid3
 	label var subnatid3 "Subnational ID at Third Administrative Level"
 *</_subnatid3_>
@@ -373,7 +373,7 @@ merge 1:1 Person_key using "$path_in/Block-5-Persons-usual-activity-records.dta"
 	subnatid1_prev is coded as missing unless the classification used for subnatid1 has changed since the previous survey.
 
 </_subnatid1_prev> */
-	destring State, gen(subnatid1_prev) 
+	destring State, gen(subnatid1_prev)
 	label de lblsubnatid1_prev 2 "2 - Andhra Pradesh" 3 "3 - Arunachal Pradesh" 4 "4 - Assam" 5 "5 - Bihar" 6 "6 - Goa" 7 "7 - Gujarat" 8 "8 - Haryana" 9 "9 - Himachal Pradesh" 10 "10 - Jammu & Kashmir" 11 "11 - Karnataka" 12 "12 - Kerala" 13 "13 - Madhya Pradesh" 14 "14 - Maharashtra" 15 "15 - Manipur" 16 "16 - Meghalaya" 17 "17 - Mizoram" 18 "18 - Nagaland" 19 "19 - Orissa" 20 "20 - Punjab" 21 "21 - Rajasthan" 22 "22 - Sikkim" 23 "23 - Tamil Nadu" 24 "24 - Tripura" 25 "25 - Uttar Pradesh" 26 "26 - West Bengal" 27 "27 - A & N Islands" 28 "28 - Chandigarh" 29 "29 - Dadra & Nagar Haveli" 30 "30 - Daman & Diu" 31 "31 - Delhi" 32 "32 - Lakshdweep" 33 "33 - Pondicherry"
 	label values subnatid1_prev lblsubnatid1_prev
 	label var subnatid1_prev "Classification used for subnatid1 from previous survey"
@@ -598,7 +598,7 @@ label var ed_mod_age "Education module application age"
 
 /* <_school>
 
-This variable is not available in the 2007 dataset. 
+This variable is not available in the 2007 dataset.
 However, it is available in other years
 
 </_school> */
@@ -624,7 +624,7 @@ However, it is available in other years
 *<_educy_>
 	gen educy=.
 	/* no education */
-	replace educy=0 if B4_q7=="01" | B4_q7=="02" | B4_q7=="03" | B4_q7=="04" 
+	replace educy=0 if B4_q7=="01" | B4_q7=="02" | B4_q7=="03" | B4_q7=="04"
 	/* below primary */
 	replace educy=1 if B4_q7=="05"
 	/* primary */
@@ -634,21 +634,21 @@ However, it is available in other years
 	/* secondary */
 	replace educy=10 if B4_q7=="08"
 	/* higher secondary */
-	replace educy=12 if B4_q7=="10" 
+	replace educy=12 if B4_q7=="10"
 	/* diploma - as per ISCID 2011, diploma is longer by 1 year to finish viz senior secondary */
-	replace educy= 13 if B4_q7=="11" 
+	replace educy= 13 if B4_q7=="11"
 	/* College graduate */
-	replace educy=16 if  B4_q7=="12" 
+	replace educy=16 if  B4_q7=="12"
 	/* Finished graduate school */
-	replace educy=18 if B4_q7=="13" 
+	replace educy=18 if B4_q7=="13"
 
 	* Use age to get in between categories using the ISCED mapping
 	* (http://uis.unesco.org/en/isced-mappings)
-	* Entry into primary is 6, entry into middle is at 11, 
+	* Entry into primary is 6, entry into middle is at 11,
 	* entry into secondar7 is 14, entry into higher sec is at 16
 	* Use age to adapt profile. For example a 17 year old with higher secondary
 	* has 11 years of education, not 12
-	
+
 	* Primary kids, allow entry from 5
 	replace educy = educy - (5 - (age - 5)) if B4_q7 == "06" & inrange(age,5,11)
 	* Middle kids
@@ -657,11 +657,11 @@ However, it is available in other years
 	replace educy = educy - (2 - (age - 14)) if B4_q7 == "08" & inrange(age,14,16)
 	* Higher secondary
 	replace educy = educy - (2 - (age - 16)) if B4_q7 == "10" & inrange(age,16,18)
-	
+
 	* Correct if B4_q7 incorrect (e.g., a five year old high schooler)
-	replace educy = educy - 4 if (educy > age) & (educy > 0) & !missing(educy) 
-	replace educy = 0 if (educy > age) & (age < 4) & (educy > 0) & !missing(educy) 
-	replace educy = educy - (8 - age) if (educy > age) & (age >= 4 & age <=8) & (educy > 0) & !missing(educy) 
+	replace educy = educy - 4 if (educy > age) & (educy > 0) & !missing(educy)
+	replace educy = 0 if (educy > age) & (age < 4) & (educy > 0) & !missing(educy)
+	replace educy = educy - (8 - age) if (educy > age) & (age >= 4 & age <=8) & (educy > 0) & !missing(educy)
 	replace educy = 0 if educy < 0
 	label var educy "Years of education"
 *</_educy_>
@@ -671,16 +671,16 @@ However, it is available in other years
 *<_educat7_>
 	destring B4_q7, gen(genedulev)
 	gen byte educat7 = .
-	replace educat7= 1 if genedulev<=4 
+	replace educat7= 1 if genedulev<=4
 	replace educat7 = 2 if genedulev == 5 & educy < 5 // Primary incomplete
 	replace educat7 = 3 if genedulev == 6 & educy >= 5  // Primary complete
 	replace educat7 = 4 if genedulev == 7 & educy < 12  // Secondary incomplete
 	replace educat7 = 5 if genedulev == 8 & educy >= 12  // Secondary complete
-	replace educat7 = 6 if genedulev == 10| genedulev ==11 
+	replace educat7 = 6 if genedulev == 10| genedulev ==11
 	replace educat7= 7 if genedulev==12 | genedulev==13
 	replace educat7=. if  genedulev==02 | genedulev==03 | genedulev==04
 	label var educat7 "Level of education 1"
-	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete" 
+	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
 	drop genedulev
 *</_educat7_>
@@ -688,7 +688,7 @@ However, it is available in other years
 
 *<_educat5_>
 	gen byte educat5 = educat7
-	recode educat5 4=3 5=4 6 7=5 
+	recode educat5 4=3 5=4 6 7=5
 	label var educat5 "Level of education 2"
 	la de lbleducat5 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
 	label values educat5 lbleducat5
@@ -697,7 +697,7 @@ However, it is available in other years
 
 *<_educat4_>
 	gen byte educat4 = educat7
-	recode educat4 2 3=2 4 5=3 6 7=4 
+	recode educat4 2 3=2 4 5=3 6 7=4
 	label var educat4 "Level of education 3"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values educat4 lbleducat4
@@ -784,7 +784,7 @@ foreach v of local ed_var {
 ================================================================================================*/
 
 
-*<_minlaborage_> 
+*<_minlaborage_>
 	gen byte minlaborage = 5
 	label var minlaborage "Labor module application age"
 *</_minlaborage_>
@@ -839,7 +839,7 @@ foreach v of local ed_var {
 	* No duration of unemployment variable -- only for migration module
 *</_unempldur_l_>
 
-	
+
 *<_unempldur_u_>
 	gen unempldur_u=.
 	label var unempldur_u "Unemployment duration (months) upper bracket"
@@ -885,21 +885,21 @@ foreach v of local ed_var {
 
 *<_industrycat10_>
 	gen red_indus =substr(B6_q51,1,2)
-	destring red_indus, replace 
-	
+	destring red_indus, replace
+
 	gen industrycat10 = .
-	
-	replace industrycat10=1 if red_indus>=00 & red_indus<=09 
+
+	replace industrycat10=1 if red_indus>=00 & red_indus<=09
 	replace industrycat10=2 if red_indus>=10 & red_indus<=14
 	replace industrycat10=3 if red_indus>=15 & red_indus<=39
-	replace industrycat10=4 if red_indus>=40 & red_indus<=41 
-	replace industrycat10=5 if red_indus>=45 & red_indus<=45 
+	replace industrycat10=4 if red_indus>=40 & red_indus<=41
+	replace industrycat10=5 if red_indus>=45 & red_indus<=45
 	replace industrycat10=6 if red_indus>=50 & red_indus<=59
 	replace industrycat10=7 if red_indus>=60 & red_indus<=64
 	replace industrycat10=8 if red_indus>=65 & red_indus<=74
 	replace industrycat10=9 if  red_indus==75
 	replace industrycat10=10 if red_indus>=80 & red_indus<=99
-	
+
 	replace industrycat10=. if lstatus != 1 | (age < minlaborage & age != .)
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
@@ -913,7 +913,7 @@ foreach v of local ed_var {
 	recode industrycat4 (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
 	label var industrycat4 "1 digit industry classification (Broad Economic Activities), primary job 7 day recall"
 	la de lblindustrycat4 1 "Agriculture" 2 "Industry" 3 "Services" 4 "Other"
-	label values industrycat4 lblindustrycat4	
+	label values industrycat4 lblindustrycat4
 *</_industrycat4_>
 
 
@@ -937,7 +937,7 @@ foreach v of local ed_var {
 
 *<_occup_>
 	gen code_04 = substr(B6_q20,1,1)
-	
+
 	destring code_04, replace
 	recode code_04 (0 = 99)
 	gen occup = .
@@ -1059,7 +1059,7 @@ foreach v of local ed_var {
 *</_empstat_2_>
 
 
-*<_ocusec_2_> 
+*<_ocusec_2_>
 	gen byte ocusec_2 = .
 	label var ocusec_2 "Sector of activity secondary job 7 day recall"
 	label values ocusec_2 lblocusec
@@ -1080,19 +1080,19 @@ foreach v of local ed_var {
 
 *<_industrycat10_2_>
 	destring B6_q52, gen(red_indus)
-	
+
 	gen industrycat10_2 = .
-	replace industrycat10_2=1 if red_indus>=00 & red_indus<=09 
+	replace industrycat10_2=1 if red_indus>=00 & red_indus<=09
 	replace industrycat10_2=2 if red_indus>=10 & red_indus<=14
 	replace industrycat10_2=3 if red_indus>=15 & red_indus<=39
-	replace industrycat10_2=4 if red_indus>=40 & red_indus<=41 
-	replace industrycat10_2=5 if red_indus>=45 & red_indus<=45 
+	replace industrycat10_2=4 if red_indus>=40 & red_indus<=41
+	replace industrycat10_2=5 if red_indus>=45 & red_indus<=45
 	replace industrycat10_2=6 if red_indus>=50 & red_indus<=59
 	replace industrycat10_2=7 if red_indus>=60 & red_indus<=64
 	replace industrycat10_2=8 if red_indus>=65 & red_indus<=74
 	replace industrycat10_2=9 if  red_indus==75
 	replace industrycat10_2=10 if red_indus>=80 & red_indus<=99
-	
+
 	replace industrycat10_2 = . if lstatus != 1 | (age < minlaborage & age != .)
 	replace industrycat10_2 = . if missing(empstat_2)
 	label var industrycat10_2 "1 digit industry classification, primary job 7 day recall"
@@ -1278,7 +1278,7 @@ foreach v of local ed_var {
 	replace nlfreason_year = . if lstatus != 3 | (age < minlaborage & age != .)
 	label var nlfreason_year "Reason not in the labor force - 12 month recall"
 	la de lblnlfreason_year 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
-	label values nlfreason_year lblnlfreason_year	
+	label values nlfreason_year lblnlfreason_year
 	drop secondary_help
 *</_nlfreason_year_>
 
@@ -1314,7 +1314,7 @@ foreach v of local ed_var {
 *<_ocusec_year_>
 /* <_ocusec_year_note>
 
-	Ocusec question is only to those with who are not in agriculture. Since this is 52% of employment 
+	Ocusec question is only to those with who are not in agriculture. Since this is 52% of employment
 	it is left blank as cannot be answered for the majority of workers.
 </_ocusec_year_note> */
 
@@ -1339,19 +1339,19 @@ foreach v of local ed_var {
 
 *<_industrycat10_year_>
 	gen red_indus =substr(B5_q5,1,2)
-	destring red_indus, replace 
-	
+	destring red_indus, replace
+
 	gen red_indus_s =substr(B5_q10,1,2)
-	destring red_indus_s, replace 
-	
+	destring red_indus_s, replace
+
 	replace red_indus = red_indus_s if missing(red_indus) & lstatus_year == 1
-	
+
 	gen byte industrycat10_year = .
-	replace industrycat10_year=1 if red_indus>=0 & red_indus<=9 
+	replace industrycat10_year=1 if red_indus>=0 & red_indus<=9
 	replace industrycat10_year=2 if red_indus>=10 & red_indus<=19
 	replace industrycat10_year=3 if red_indus>=20 & red_indus<=39
-	replace industrycat10_year=4 if red_indus>=40 & red_indus<=47 
-	replace industrycat10_year=5 if red_indus>=50 & red_indus<=59 
+	replace industrycat10_year=4 if red_indus>=40 & red_indus<=47
+	replace industrycat10_year=5 if red_indus>=50 & red_indus<=59
 	replace industrycat10_year=6 if red_indus>=60 & red_indus<=69
 	replace industrycat10_year=7 if red_indus>=70 & red_indus<=79
 	replace industrycat10_year=8 if red_indus>=80 & red_indus<=89
@@ -1360,7 +1360,7 @@ foreach v of local ed_var {
 	replace industrycat10_year= . if lstatus_year != 1 | (age < minlaborage & age != .)
 	label var industrycat10_year "1 digit industry classification, primary job 12 month recall"
 	la de lblindustrycat10_year 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
-	label values industrycat10_year lblindustrycat10_year	
+	label values industrycat10_year lblindustrycat10_year
 	drop red_indus
 *</_industrycat10_year_>
 
@@ -1370,7 +1370,7 @@ foreach v of local ed_var {
 	recode industrycat4_year (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
 	label var industrycat4_year "1 digit industry classification (Broad Economic Activities), primary job 12 month recall"
 	la de lblindustrycat4_year 1 "Agriculture" 2 "Industry" 3 "Services" 4 "Other"
-	label values industrycat4_year lblindustrycat4_year	
+	label values industrycat4_year lblindustrycat4_year
 *</_industrycat4_year_>
 
 
@@ -1398,22 +1398,22 @@ foreach v of local ed_var {
 	replace code_04 = substr(code_04,1,1)
 	replace code_04 = "99" if code_04 == "X"
 	destring code_04, replace
-	
+
 	gen code_04_s = B5_q11
 	replace code_04_s = substr(code_04_s,1,1)
 	replace code_04_s = "99" if code_04_s == "X"
 	destring code_04_s, replace
-	
+
 	replace code_04 = code_04_s if missing(code_04) & lstatus_year == 1
-	
+
 	gen occup_year = .
 	replace occup_year = code_04 if lstatus_year == 1 & !missing(empstat_year)
 	recode occup_year (0 = 99)
 	label var occup_year "1 digit occupational classification, secondary job 12 month recall"
 	la de lbloccup_year 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup_year lbloccup_year
-	
-	
+
+
 	drop code_04 code_04_s
 *</_occup_year_>
 
@@ -1443,7 +1443,7 @@ foreach v of local ed_var {
 
 	Survey asks individuals whether they worked regularly. If not, how many months out of work.
 	Hence assume if worked regularly 12 months of work, if not 12 minus the number mentioned.
-	
+
 	For this survey, there is no variable that identifies whether individual worked regularly
 </_wmonths_year_note> */
 	gen wmonths_year = .
@@ -1516,7 +1516,7 @@ foreach v of local ed_var {
 	destring B5_q8, gen(empstat_2_year)
 	recode empstat_2_year  11=4 12=3 21=2 31 41 51 61 62 71 72=1 81/99=.
 	replace empstat_2_year = . if lstatus_year != 1
-	
+
 	destring B5_q3, gen(helper)
 	destring B5_q8, gen(secondary_helper)
 	replace empstat_2_year = . if inrange(helper, 81, 99) & inrange(secondary_helper, 11, 72)
@@ -1538,7 +1538,7 @@ foreach v of local ed_var {
 *<_industry_orig_2_year_>
 	gen industry_orig_2_year = B5_q10
 	replace industry_orig_2_year = "" if missing(empstat_2_year)
-	label var industry_orig_2_year "Original survey industry code, secondary job 12 month recall"	
+	label var industry_orig_2_year "Original survey industry code, secondary job 12 month recall"
 *</_industry_orig_2_year_>
 
 
@@ -1551,17 +1551,17 @@ foreach v of local ed_var {
 *<_industrycat10_2_year_>
 	gen red_indus =substr(B5_q11,1,2)
 	replace red_indus = "99" if red_indus == "X1" | red_indus == "X9"
-	
-	
-	
-	destring red_indus, replace 
-	
+
+
+
+	destring red_indus, replace
+
 	gen byte industrycat10_2_year = .
-	replace industrycat10_2_year=1 if red_indus>=0 & red_indus<=9 
+	replace industrycat10_2_year=1 if red_indus>=0 & red_indus<=9
 	replace industrycat10_2_year=2 if red_indus>=10 & red_indus<=19
 	replace industrycat10_2_year=3 if red_indus>=20 & red_indus<=39
-	replace industrycat10_2_year=4 if red_indus>=40 & red_indus<=47 
-	replace industrycat10_2_year=5 if red_indus>=50 & red_indus<=59 
+	replace industrycat10_2_year=4 if red_indus>=40 & red_indus<=47
+	replace industrycat10_2_year=5 if red_indus>=50 & red_indus<=59
 	replace industrycat10_2_year=6 if red_indus>=60 & red_indus<=69
 	replace industrycat10_2_year=7 if red_indus>=70 & red_indus<=79
 	replace industrycat10_2_year=8 if red_indus>=80 & red_indus<=89
@@ -1571,7 +1571,7 @@ foreach v of local ed_var {
 	replace industrycat10_2_year= . if missing(empstat_2_year)
 	label var industrycat10_2_year "1 digit industry classification, secondary job 12 month recall"
 	la de lblindustrycat10_2_year 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
-	label values industrycat10_2_year lblindustrycat10_2_year	
+	label values industrycat10_2_year lblindustrycat10_2_year
 	drop red_indus
 *</_industrycat10_2_year_>
 
@@ -1580,7 +1580,7 @@ foreach v of local ed_var {
 	gen byte industrycat4_2_year=industrycat10_2_year
 	recode industrycat4_2_year (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
 	label var industrycat4_2_year "1 digit industry classification (Broad Economic Activities), secondary job 12 month recall"
-	label values industrycat4_2_year lblindustrycat4_year	
+	label values industrycat4_2_year lblindustrycat4_year
 *</_industrycat4_2_year_>
 
 
@@ -1610,9 +1610,9 @@ foreach v of local ed_var {
 	replace code_04 = "0" + code_04 if length(code_04) == 2
 	replace code_04 = "00" + code_04 if length(code_04) == 1
 	replace code_04 = substr(code_04,1,1) if code_04!= "099"
-	
+
 	destring code_04, replace
-	
+
 	gen occup_2_year = .
 	replace occup_2_year = code_04 if lstatus_year == 1 & !missing(empstat_2_year)
 	recode occup_2_year (0 = 99)
@@ -1621,10 +1621,10 @@ foreach v of local ed_var {
 	label values occup_2_year lbloccup_2_year
 
 	drop code_04
-	
-	
+
+
 *</_occup_2_year_>
-	
+
 
 *<_wage_no_compen_2_year_>
 	gen double wage_no_compen_2_year = .
@@ -1709,7 +1709,7 @@ foreach v of local ed_var {
 	label var t_wage_total_year "Annualized total wage for all jobs 12 month recall"
 *</_t_wage_total_year_>
 
-	
+
 *----------8.11: Overall across reference periods------------------------------*
 
 
@@ -1755,7 +1755,7 @@ foreach v of local lab_var {
 	else {
 		replace `v'=. if ( age < minlaborage & !missing(age) )
 	}
-	
+
 }
 
 *</_% Correction min age_>
@@ -1800,7 +1800,7 @@ foreach var of local kept_vars {
    if _rc == 0 {
 	drop `var'
 	dis as error "Drop variable: `var' since all missing"
-   }	
+   }
 }
 
 *</_% DELETE MISSING VARIABLES_>
