@@ -134,15 +134,39 @@ if (`cb_pause' == 1) {
 	label var month "Month of the interview"
 
 
+** DUPLICATES
+	/*There are 4 pairs of duplicate observations (8 total), all in the same household. 3 of these pairs (6 total) are
+		entirely duplicated across all variables. 1 pair, (2 total obs) have 1 variable different: education attainment.
+		I will keep the observation that lists the higher education attainment of the two*/
+
+	** remove duplicated observations on all variables, sort and drop by reproducible seed
+	set 				seed 47
+	gen 				r = runiform()
+
+	sort 				r
+	duplicates drop
+
+	* remove duplicated pair that differs on education only, keep obs with highest edu level
+	duplicates tag 		regn hcn c101_lno	///				tag dups in terms of hhid and will-be pid (c101_lno)
+						, generate(dup1)
+
+	gsort 				regn hcn c101_lno -c07_grade 		// sort descending, keeping highest grade up top, wont' be dropped
+	duplicates drop 	regn hcn c101_lno	///
+						, force
+
+
+
 ** HOUSEHOLD IDENTIFICATION NUMBER
-	loc idhvars 	regn  prov cprrcd urb hcn 	// store idh vars in local
+	* in 01, it appears that regn and hcn uniquely identify the HH
+
+	loc idhvars 	 regn   hcn							// store idh vars in local
 
 	ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
 	loc numlist 	= r(varlist)						// store numeric vars in local
 	loc stringlist 	: list idhvars - numlist			// non-numeric vars in stringlist
 
 	* starting locals
-	loc len = 4											// declare the length of each element in digits
+	loc len = 6											// declare the length of each element in digits
 	loc idh_els ""										// start with empty local list
 
 	* make each numeric var string, including leading zeros
@@ -179,13 +203,13 @@ if (`cb_pause' == 1) {
 
 
 ** INDIVIDUAL IDENTIFICATION NUMBER
-	bys idh: gen n_fam = _n								// generate family member number
+	* in 01, region, hh control and line number variables uniquely identify observations. use line number as pid
 
 	* repeat same process from above, but only with n_fam.
 	* 	note, assuming that the only necessary individaul identifier is family member, which is numeric
 	*	so, not following processing for sorting numeric/non-numeric variables.
 
-	loc idpvars 	n_fam 								// store relevant idp vars in local
+	loc idpvars 	c101_lno 								// store relevant idp vars in local
 	ds `idpvars',  	has(type numeric)					// filter out numeric variables in local
 	loc rlist 		= r(varlist)						// store numeric vars in local
 
