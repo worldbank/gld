@@ -83,8 +83,18 @@
 # .yml and .yaml files
 # These files sometimes have credentials, so only unignore these lines by removing
 # the "#" below after you checked your .yml/.yaml files for sensitive content
-#!/**/*.yml
-#!/**/*.yaml
+!/**/*.yml
+!/**/*.yaml
+
+# Other files for github pages
+!*.gem
+!.bundle
+!.ruby-version
+!.jekyll-cache
+!.sass-cache
+!_site
+!Gemfile.lock
+!node_modules
 
 #######################
 # Include some additional file formats in any output folder. You might have
