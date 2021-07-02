@@ -10,7 +10,7 @@
 ** SURVEY AGENCY	National Statistical Office
 ** UNIT OF ANALYSIS	Household and Individual
 ** INPUT DATABASES	LFS JAN1997.dta LFS APR1997, LFS JUL1997, LFS OCT1997
-** RESPONSIBLE Tom Mosher
+** RESPONSIBLE World Bank Jobs Group
 ** Created	4/4/2012
 ** Modified	24/5/2021
 ** NUMBER OF HOUSEHOLDS	39274
