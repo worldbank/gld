@@ -87,7 +87,7 @@
 !/**/*.yaml
 
 # Other files for github pages
-!*.gem
+!/**/*.gem
 !.bundle
 !.ruby-version
 !.jekyll-cache
