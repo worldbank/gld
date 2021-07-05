@@ -138,11 +138,9 @@ if (`cb_pause' == 1) {
 
 
 ** HOUSEHOLD IDENTIFICATION NUMBER
-/* 	Note that only the first round has a household id number, but with the following list of
-	variables that ends up not mattering because they, along with family member number, do
-	uniquely identify observations. */
 
-	loc idhvars 	pufreg pufhhnum pufurb2k10 pufsvymo pufpsu   // store idh vars in local
+
+	loc idhvars 	pufhhnum   							// store idh vars in local
 
 
 	ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
@@ -150,7 +148,7 @@ if (`cb_pause' == 1) {
 	loc stringlist 	: list idhvars - numlist			// non-numeric vars in stringlist
 
 	* starting locals
-	loc len = 6											// declare the length of each element in digits
+	loc len = 14											// declare the length of each element in digits
 	loc idh_els ""										// start with empty local list
 
 	* make each numeric var string, including leading zeros
@@ -187,13 +185,16 @@ if (`cb_pause' == 1) {
 
 
 ** INDIVIDUAL IDENTIFICATION NUMBER
-	bys idh: gen n_fam = _n								// generate family member number
+
+	bys idh: gen n_fam = _n	 							// generate family member number
 
 	* repeat same process from above, but only with n_fam.
 	* 	note, assuming that the only necessary individaul identifier is family member, which is numeric
 	*	so, not following processing for sorting numeric/non-numeric variables.
+	*
+	* Also using the given line number variable as the individual family member number
 
-	loc idpvars 	n_fam 								// store relevant idp vars in local
+	loc idpvars 	pufc01_lno 							// store relevant idp vars in local
 	ds `idpvars',  	has(type numeric)					// filter out numeric variables in local
 	loc rlist 		= r(varlist)						// store numeric vars in local
 
