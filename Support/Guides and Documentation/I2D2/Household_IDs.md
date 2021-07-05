@@ -19,11 +19,11 @@ The first two rounds of 2003 differ from the final two: while the first two roun
 
 | Year       |   Household ID Combination | Unique Household Number |
 |---------|-----------------------|----------------------|
-| 1997  |    regn   hcn  |	 |
-| 1998 |   regn   hcn | |
-| 1999 | regn   hcn	 |  |
-| 2000 | regn   hcn |  |
-| 2001 | regn hcn |  |
+| 1997  |    regn prov  hcn  |	 |
+| 1998 |   regn prov  hcn | |
+| 1999 | regn prov  hcn	 |  |
+| 2000 | regn prov  hcn |  |
+| 2001 | regn prov hcn |  |
 | 2002 | regn prov hcn | |
 | 2003 Jan+Apr | regn prov hcn  |  |
 | 2003 Jul+Oct | creg stratum psu ea_unique shsn hcn | |

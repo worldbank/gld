@@ -138,7 +138,7 @@ if (`append' == 1) {
 ** HOUSEHOLD IDENTIFICATION NUMBER
 	* in 98, it appears that regn and hcn uniquely identify the HH
 
-	loc idhvars 	 regn   hcn							// store idh vars in local
+	loc idhvars 	 regn prov  hcn							// store idh vars in local
 
 	ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
 	loc numlist 	= r(varlist)						// store numeric vars in local
