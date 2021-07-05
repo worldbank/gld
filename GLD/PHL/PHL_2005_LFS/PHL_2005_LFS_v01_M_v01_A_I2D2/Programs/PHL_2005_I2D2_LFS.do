@@ -137,7 +137,7 @@ if (`cb_pause' == 1) {
 
 
 ** HOUSEHOLD IDENTIFICATION NUMBER
-	loc idhvars 	regn  prov stratum urb hcn 	// store idh vars in local
+	loc idhvars 	hhnum 	// store idh vars in local
 
 
 	ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
@@ -145,7 +145,7 @@ if (`cb_pause' == 1) {
 	loc stringlist 	: list idhvars - numlist			// non-numeric vars in stringlist
 
 	* starting locals
-	loc len = 4											// declare the length of each element in digits
+	loc len = 16											// declare the length of each element in digits
 	loc idh_els ""										// start with empty local list
 
 	* make each numeric var string, including leading zeros
@@ -188,7 +188,7 @@ if (`cb_pause' == 1) {
 	* 	note, assuming that the only necessary individaul identifier is family member, which is numeric
 	*	so, not following processing for sorting numeric/non-numeric variables.
 
-	loc idpvars 	n_fam 								// store relevant idp vars in local
+	loc idpvars 	c101_lno 								// store relevant idp vars in local
 	ds `idpvars',  	has(type numeric)					// filter out numeric variables in local
 	loc rlist 		= r(varlist)						// store numeric vars in local
 
