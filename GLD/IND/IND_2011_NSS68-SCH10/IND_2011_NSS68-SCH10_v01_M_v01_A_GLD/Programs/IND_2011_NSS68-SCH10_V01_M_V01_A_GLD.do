@@ -7,7 +7,7 @@
 
 <_Program name_>				IND_2011_NSS68-SCH10_V01_M_V01_A_GLD.do </_Program name_>
 <_Application_>					STATA 15 <_Application_>
-<_Author(s)_>					World Bank Jobs Group </_Author(s)_> 
+<_Author(s)_>					World Bank Jobs Group </_Author(s)_>
 <_Date created_>				2021-05-28 </_Date created_>
 <_Date modified>				2021-05-8 </_Date modified_>
 
@@ -73,8 +73,19 @@ use "$path_in/Block_5_3_Time disposition during the week ended on .dta", clear
 
 
 ** Sorting procedure
+/*==============================================================================
+Current weekly activity is selected based on this order:
+	1. Activity status classification (see below)
+	2. Number of days worked in a week
+	3. If number of days are equal between two employment activities, the status
+	code that is smaller in value is taken as the CWA (e.g., activites 11 and 51
+	are worked for 3.5 days each; activity 11 will be the CWA because it is smaller
+	in value than 51.
 
-/* Need to order activity status such that the order of priority is as follows:
+	Following this order, CWA = activity status 1
+==============================================================================*/
+
+/* Need to classify activity status into the following:
 
 	a. Working status
 	b. Non-working status but seeking employment
@@ -88,19 +99,6 @@ recode priority_tag 11/72=1 81 82=2 91/98=3 99=.
 
 * Decreasingorder of number of days worked
 gen neg_days = -(Total_no_days_in_each_activity)
-
-
-* Order the records such that priority 1 comes first
-
-/*==============================================================================
-The following is the hierarchy of rules for selecting the current weekly activity
-	1. Priority tag
-	2. Number of days worked in a week
-	3. If number of days are equal between two employment activities, the status
-	code that is smaller in value is taken as the CWA (e.g., activites 11 and 51
-	are worked for 3.5 days each; activity 11 will be the CWA because it is smaller
-	in value than 51.
-==============================================================================*/
 
 egen PID = concat(HHID Person_Serial_No)
 

@@ -7,7 +7,7 @@
 
 <_Program name_>				IND_2004_NSS61-SCH10_V01_M_V01_A_GLD.do </_Program name_>
 <_Application_>					STATA 13 <_Application_>
-<_Author(s)_>					World Bank Jobs Group </_Author(s)_> 
+<_Author(s)_>					World Bank Jobs Group </_Author(s)_>
 <_Date created_>				2021-06-18 </_Date created_>
 <_Date modified>				2021-06-18 </_Date modified_>
 
@@ -71,8 +71,19 @@ global path_output "C:\Users\Angelo Santos\OneDrive - George Mason University\Su
 * Start with Block 5.3 as this has several lines per individual
 use "$path_in\Block_5pt3_level_06", clear
 
+/*==============================================================================
+Current weekly activity is selected based on this order:
+	1. Activity status classification (see below)
+	2. Number of days worked in a week
+	3. If number of days are equal between two employment activities, the status
+	code that is smaller in value is taken as the CWA (e.g., activites 11 and 51
+	are worked for 3.5 days each; activity 11 will be the CWA because it is smaller
+	in value than 51.
 
-/* Need to order activity status such that the order of priority is as follows:
+	Following this order, CWA = activity status 1
+==============================================================================*/
+
+/* Need to classify activity status into the following:
 
 	a. Working status
 	b. Non-working status but seeking employment
@@ -90,15 +101,6 @@ gen neg_days = -(Total_no_of_days_in_current_acti)
 
 * Order the records such that priority 1 comes first
 
-/*==============================================================================
-The following is the hierarchy of rules for selecting the current weekly activity
-	1. Priority tag
-	2. Number of days worked in a week
-	3. If number of days are equal between two employment activities, the status
-	code that is smaller in value is taken as the CWA (e.g., activites 11 and 51
-	are worked for 3.5 days each; activity 11 will be the CWA because it is smaller
-	in value than 51.
-==============================================================================*/
 
 sort PID priority_tag neg_days num_status
 bys PID: gen runner = _n
