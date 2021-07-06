@@ -7,7 +7,7 @@
 
 <_Program name_>				IND_1993_NSS50-SCH10_V01_M_V01_A_GLD.do </_Program name_>
 <_Application_>					STATA 16 <_Application_>
-<_Author(s)_>					World Bank Jobs Group </_Author(s)_> 
+<_Author(s)_>					World Bank Jobs Group </_Author(s)_>
 <_Date created_>				2021-03-12 </_Date created_>
 <_Date modified>				2021-03-15 </_Date modified_>
 
@@ -64,7 +64,21 @@ tab serial
 
 * Sorting procedure
 
-/* Need to order activity status such that the order of priority is as follows:
+/*==============================================================================
+Current weekly activity is selected based on this order:
+	1. Equal to current weekly activity variable
+	2. Activity status classification (see below)
+	3. Number of days worked in a week
+	4. If number of days are equal between two employment activities, the status
+	code that is smaller in value is taken as the CWA (e.g., activites 11 and 51
+	are worked for 3.5 days each; activity 11 will be the CWA because it is smaller
+	in value than 51.
+
+	Rule #1 is added because otherwise, CWA will not be entirely equal to activity status 1
+==============================================================================*/
+
+
+/* Need to classify activity status following this:
 
 	a. Working status
 	b. Non-working status but seeking employment
@@ -88,15 +102,6 @@ gen neg_days = -(B5_q14)
 
 * Order the records such that priority 1 comes first
 
-/*==============================================================================
-The following is the hierarchy of rules for selecting the current weekly activity
-	1. Priority tag
-	2. Number of days worked in a week
-	3. If number of days are equal between two employment activities, the status
-	code that is smaller in value is taken as the CWA (e.g., activites 11 and 51
-	are worked for 3.5 days each; activity 11 will be the CWA because it is smaller
-	in value than 51.
-==============================================================================*/
 
 * Generate PID
 egen PID = concat(Hhold_Key Prsn_slno)

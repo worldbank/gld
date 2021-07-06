@@ -7,7 +7,7 @@
 
 <_Program name_>				IND_2009_NSS66-SCH10_V01_M_V01_A_GLD.do </_Program name_>
 <_Application_>					STATA 15 <_Application_>
-<_Author(s)_>					World Bank Jobs Group </_Author(s)_> 
+<_Author(s)_>					World Bank Jobs Group </_Author(s)_>
 <_Date created_>				2021-06-8 </_Date created_>
 <_Date modified>				2021-06-8 </_Date modified_>
 
@@ -76,10 +76,20 @@ save `sa' //34,689 obs
 *** Note the awkward file name with space in the end before .dta
 use "$path_in/Block_5_3_Time disposition during the week ended on .dta", clear
 
-
 ** Sorting procedure
+/*==============================================================================
+Current weekly activity is selected based on this order:
+	1. Activity status classification (see below)
+	2. Number of days worked in a week
+	3. If number of days are equal between two employment activities, the status
+	code that is smaller in value is taken as the CWA (e.g., activites 11 and 51
+	are worked for 3.5 days each; activity 11 will be the CWA because it is smaller
+	in value than 51.
 
-/* Need to order activity status such that the order of priority is as follows:
+	Following this order, CWA = activity status 1
+==============================================================================*/
+
+/* Need to classify activity status into the following:
 
 	a. Working status
 	b. Non-working status but seeking employment
