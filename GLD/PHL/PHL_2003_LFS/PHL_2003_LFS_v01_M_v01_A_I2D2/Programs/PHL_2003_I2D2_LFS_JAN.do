@@ -106,7 +106,7 @@
 
 
 ** HOUSEHOLD IDENTIFICATION NUMBER
-	loc idhvars 	regn  prov stratum urb hcn 	// store idh vars in local
+	loc idhvars 	regn prov hcn 	// store idh vars in local
 
 	ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
 	loc numlist 	= r(varlist)						// store numeric vars in local
@@ -156,7 +156,7 @@
 	* 	note, assuming that the only necessary individaul identifier is family member, which is numeric
 	*	so, not following processing for sorting numeric/non-numeric variables.
 
-	loc idpvars 	n_fam 								// store relevant idp vars in local
+	loc idpvars 	c101_lno								// store relevant idp vars in local
 	ds `idpvars',  	has(type numeric)					// filter out numeric variables in local
 	loc rlist 		= r(varlist)						// store numeric vars in local
 
@@ -269,7 +269,7 @@
 			& prov == 77
 
 	* CREATE VALUE LABEL
-	** define region value label: b=after july 2003 change
+	** define region value label: b= 2003 change
 	la de lblreg02b			///
 	 1   "Ilocos"			///
 	 2	 "Cagayan Valley"	///
@@ -381,7 +381,7 @@ pause
 
 
 ** RELATIONSHIP TO THE HEAD OF HOUSEHOLD
-	gen byte head=c05_rel				//  "head", "spouse", and children not recoded
+	gen byte head=c03_rel				//  "head", "spouse", and children not recoded
 	recode head 	(4 5 6 8  	= 5)	/// siblings, children in law, grandchildren, other rel of hh head="other relatives"
 					(7 			= 4)	/// parents of hh head become "parents"
 					(9 10 11 	= 6) 	// boarders and domestic workers become "other/non-relatives"
@@ -419,7 +419,7 @@ pause
 
 
 ** MARITAL STATUS
-	gen byte marital=c06_ms
+	gen byte marital=c06_mstat
 	recode marital (1=2) (2=1) (3=5)(5=.)
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
@@ -465,7 +465,7 @@ pause
 		available in github repository. */
 	gen byte edulevel1=.
 	replace edulevel1=1 if c07_grade==0			// "No Grade Completed" -> "No education"
-	replace edulevel1=2 if c07_grade==1 // "Elementary Undergraduate" -> " Primary Incomplete"
+	replace edulevel1=2 if c07_grade==1 	// "Elementary Undergraduate" -> " Primary Incomplete"
 	replace edulevel1=3 if c07_grade==2 	// "Elementary Graduate" -> "Primary Complete"
 	replace edulevel1=4 if c07_grade==3		// "High School Undergraduate" -> "Secondary Incomplete"
 	replace edulevel1=5 if c07_grade==4		// "High school graduate" -> "Secondary Complete"
@@ -602,7 +602,7 @@ pause
 	gen byte nlfreason=.
 	replace nlfreason=1 if c40_wynot==8
 	replace nlfreason=2 if c40_wynot==7
-	replace nlfreason=3 if c40_wynot==6 // & age>10 // why was only this restricted and not all (esp cuz of replace)
+	replace nlfreason=3 if c40_wynot==6
 	replace nlfreason=4 if c40_wynot==3
 	replace nlfreason=5 if c40_wynot==1 | c40_wynot==2 | c40_wynot==4 | c40_wynot==5 | c40_wynot==9
 	replace nlfreason=. if lstatus!=3 	// restricts universe to non-labor force
