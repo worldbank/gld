@@ -15,8 +15,8 @@
 # in the templates via {{ site.myvariable }}.
 title: Global Labor Database
 description: A Jekyll theme for documentation
-baseurl: /blog # the subpath of your site, e.g. /blog
-url: "http://127.0.0.1:4000" # the base hostname & protocol for your site, e.g. http://example.com
+baseurl: /gld/ # the subpath of your site, e.g. /blog
+url: "https://worldbank.github.io/" # the base hostname & protocol for your site, e.g. http://example.com
 theme: "just-the-docs"
 
 permalink: pretty
