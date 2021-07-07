@@ -936,8 +936,16 @@ if (`append' == 1) {
 
 ** DELETE MISSING VARIABLES
 	* if variables are missing on all values, drop them, unless they are listed as "key" variable
+
+	* declare list of key variables that should never have missing observations
+	loc	nomissvars sample ccode year intv_year month idh idp wgt strata psu hhsize ed_mod_age lb_mod_age
+
+
+	local missvars : 	list order - nomissvars
+
+
 	if (1) {
-		missings dropvars 	`order', force
+		missings dropvars 	`missvars', force
 	}
 
 
@@ -945,8 +953,6 @@ if (`append' == 1) {
 	/*we know that some variables should not have missing values. Keep track of how many obs are missing
 	for these variables only*/
 
-	** declare list of key variables that should never have missing observations
-	loc	nomissvars sample ccode year intv_year month idh idp wgt strata psu hhsize ed_mod_age lb_mod_age
 
 	foreach var of local nomissvars {
 		qui mdesc `var'
