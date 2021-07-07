@@ -6,7 +6,7 @@ description: "Introduction to the GLobal Labor Database."
 permalink: /
 ---
 
-# Harmonizing labor data globally 1
+# Harmonizing labor data globally
 {: .fs-9 }
 
 The Global Labor Datase (GLD) aims to create an open-source harmonization project for all labor force survey. Here you may find a descrption of the project as well as all information to help you start harmonizing yourself - we would love to have you join!
