@@ -18,7 +18,9 @@ The Global Labor Datase (GLD) aims to create an open-source harmonization projec
 
 ## What is the GLD?
 
-the [LINC documentation guidelines](docs/contact)
+The [link to contact](docs/contact)
+
+The [link to 7 day labor](docs/data_dictionary/labour/labour-7day)
 
 ## What does the GLD do?
 
