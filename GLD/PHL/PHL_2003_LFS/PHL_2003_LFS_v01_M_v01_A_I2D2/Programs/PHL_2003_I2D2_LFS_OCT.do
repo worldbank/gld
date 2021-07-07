@@ -926,22 +926,11 @@
 *****************************************************************************************************/
 
 
-** KEEP VARIABLES - ALL
-	keep sample ccode year intv_year month idh idp wgt strata psu  ///
-				reg01 reg02 reg03 reg04 ownhouse water electricity toilet landphone      ///
-				cellphone computer internet hhsize head gender age soc marital ed_mod_age ///
-				everattend atschool literacy educy edulevel1 edulevel2 edulevel3 lb_mod_age ///
-				lstatus lstatus_year empstat empstat_year njobs njobs_year ocusec nlfreason ///
-				unempldur_l unempldur_u industry industry1 industry_orig occup occup_orig ///
-				firmsize_l firmsize_u whours wage unitwage contract  empstat_2 ///
-				empstat_2_year industry_2 industry1_2 industry_orig_2 occup_2 wage_2 unitwage_2 ///
-				healthins socialsec union rbirth_juris rbirth rprevious_juris rprevious ///
-				yrmove rprevious_time_ref pci pci_d pcc pcc_d reg02_orig reg03_orig round
 
-
-** ORDER VARIABLES
-	order sample ccode year intv_year month idh idp wgt strata psu 	///
-				reg01 reg02 reg03 reg04 reg02_orig reg03_orig   ///
+** ORDER KEEP VARIABLES
+	local 		order 														///
+				sample ccode year intv_year month idh idp wgt strata psu 	///
+				reg01 reg02 reg03 reg04 reg02_orig reg03_orig  ///
 				ownhouse water electricity toilet landphone ///
 				cellphone computer internet hhsize head gender age soc marital ///
 				ed_mod_age everattend atschool literacy educy edulevel1 edulevel2 ///
@@ -953,29 +942,31 @@
 				healthins socialsec union rbirth_juris rbirth rprevious_juris ///
 				rprevious yrmove rprevious_time_ref pci pci_d pcc pcc_d round
 
+	keep 		`order'
+	order 		`order'
+
 	compress
 
 
 ** DELETE MISSING VARIABLES
-	local keep ""
-	qui levelsof ccode, local(cty)
-	foreach var of varlist psu - round {
-	qui sum `var'
-	scalar sclrc = r(mean)
-	if sclrc==. {
-	     display as txt "Variable " as result "`var'" as txt " for ccode " as result `cty' as txt " contains all missing values -" as error " Variable Deleted"
-	}
-	else {
-	     local keep `keep' `var'
-	}
-	}
-	keep sample ccode year intv_year month  idh idp wgt strata psu `keep'
+	* if variables are missing on all values, drop them, unless they are listed as "key" variable
+
+	* declare list of key variables that should never have missing observations
+	loc	nomissvars sample ccode year intv_year month idh idp wgt strata psu hhsize ed_mod_age lb_mod_age round
 
 
+	local missvars : 	list order - nomissvars
 
-** MISSING VALUES
-	*Declare varlist which cannot contain missings
-	loc	nomissvars sample ccode year intv_year month idh idp wgt strata psu hhsize ed_mod_age lb_mod_age
+
+	if (1) {
+		missings dropvars 	`missvars', force
+	}
+
+
+** OBSERVATION MISSING VALUES
+	/*we know that some variables should not have missing values. Keep track of how many obs are missing
+	for these variables only*/
+
 
 	foreach var of local nomissvars {
 		qui mdesc `var'
