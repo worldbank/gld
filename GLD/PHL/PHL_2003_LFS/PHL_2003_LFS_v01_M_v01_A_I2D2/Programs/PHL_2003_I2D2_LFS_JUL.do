@@ -954,7 +954,7 @@
 ** DELETE MISSING VARIABLES
 	local keep ""
 	qui levelsof ccode, local(cty)
-	foreach var of varlist psu - pcc_d {
+	foreach var of varlist psu - round {
 	qui sum `var'
 	scalar sclrc = r(mean)
 	if sclrc==. {
