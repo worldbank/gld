@@ -80,6 +80,9 @@
 #Bash scripts
 !/**/*.sh
 
+# HTML files
+!/**/*.html
+
 # .yml and .yaml files
 # These files sometimes have credentials, so only unignore these lines by removing
 # the "#" below after you checked your .yml/.yaml files for sensitive content
