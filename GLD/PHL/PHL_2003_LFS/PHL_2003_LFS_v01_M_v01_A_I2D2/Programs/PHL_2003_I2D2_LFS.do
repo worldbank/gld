@@ -86,7 +86,7 @@
 	Each round will produce a .dta file that will be appended later in this code. This script assumes you are
 	running from the GLD_I2D2_MAIN.do, which has the relevant globals stored for the file paths. Otherwise, you
 	will need to change them to the full local file path */
-if (1) {
+if (0) {
 do `"${code}/PHL/PHL_2003_LFS/PHL_2003_LFS_v01_M_v01_A_I2D2/Programs/PHL_2003_I2D2_LFS_JAN.do"'
 do `"${code}/PHL/PHL_2003_LFS/PHL_2003_LFS_v01_M_v01_A_I2D2/Programs/PHL_2003_I2D2_LFS_APR.do"'
 do `"${code}/PHL/PHL_2003_LFS/PHL_2003_LFS_v01_M_v01_A_I2D2/Programs/PHL_2003_I2D2_LFS_JUL.do"'
@@ -118,18 +118,15 @@ replace wgt = wgt / `n_round'
 			force format(`"%01.0f"')					// ...we know that round will only be 1 digit, fixed format
 
 
-		replace idh 	= concat(round_str idh)			// idh now becomes the concatenation of round_str and idh
+		egen idh_yr 	= concat(round_str idh)			// idh now becomes the concatenation of round_str and idh
+		
+		rename 			idh 	idh_round				// change the "old" idh var 
+		rename 			idh_yr 	idh 					// the new concatenated variable beomces idh
 
 	 ** Final ID Check
 	 isid 	idh idp
 
 
-
-
-
-
-pause on
-pause
 
 
 
@@ -147,7 +144,7 @@ pause
 ** ORDER KEEP VARIABLES
 	local 		order 														///
 				sample ccode year intv_year month idh idp wgt strata psu urb	///
-				reg01 reg02 reg03 reg04 reg02_orig reg03_orig  ///
+				reg01 reg02 reg03  reg02_orig reg03_orig  /// 
 				ownhouse water electricity toilet landphone ///
 				cellphone computer internet hhsize head gender age soc marital ///
 				ed_mod_age everattend atschool literacy educy edulevel1 edulevel2 ///
