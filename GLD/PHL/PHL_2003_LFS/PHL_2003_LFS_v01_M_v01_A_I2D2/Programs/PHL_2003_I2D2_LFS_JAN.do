@@ -59,7 +59,7 @@
 	local 	ed_mod_age	5	// labor module minimun age (inclusive)
 
 ** LOG FILE
-	log using `"`id_data'\\`cty3'_`surv_yr'_I2D2_LFS_JAN.log"', replace
+	log using `"`id_data'\\rounds\\`cty3'_`surv_yr'_I2D2_LFS_JAN.log"', replace
 
 
 ** FILES
@@ -295,8 +295,7 @@
 
 	** label appropriate variable values
 	label values 	reg01 reg02 	lblreg02b
-pause on
-pause
+
 ** RENAME ORIGINAL ADMIN VARIABLES
 	* clonevar keeps value labels along with values; gen does not.
 	clonevar reg02_orig = regn
@@ -1005,7 +1004,7 @@ pause
 	}
 
 
-	save `"`id_data'\\`cty3'_`surv_yr'_I2D2_LFS_JAN.dta"', replace
+	save `"`id_data'\\rounds\\`cty3'_`surv_yr'_I2D2_LFS_JAN.dta"', replace
 
 	log close
 
