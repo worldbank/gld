@@ -107,7 +107,7 @@ append 		using 	`i2d2_2' ///
 replace wgt = wgt / `n_round'
 
 ** ID CHECK
-isid idh idp
+isid idh idp round
 
 
 

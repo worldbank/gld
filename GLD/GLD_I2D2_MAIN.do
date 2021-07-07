@@ -126,6 +126,12 @@ description: calls all scripts for I2D2 and GLD, edited from iecodebook script
 	global  code 	`"${clone}/gld/GLD"'
 
 
+   * Internal project files. Same no matter user
+   * ---------------------
+	global id2d_dicitonary  `""'
+	global gld_dicitonary  	`"${clone}/gld/Support/Guides and Documentation/GLD_Dictionary_2021_04.xlsx"'
+
+
 
 
 

@@ -609,7 +609,7 @@
 ** INDUSTRY CLASSIFICATION
 	*rename original industry variable (which is actually an industry grouping)
 	rename industry industry_group_orig
-	
+
 	gen byte industry=.
 	replace industry=1 if cc18_pkb >= 1 & cc18_pkb <= 9		// Agriculture
 	replace industry=2 if cc18_pkb == 10 | cc18_pkb == 11		// Mining
@@ -936,7 +936,7 @@
 				firmsize_l firmsize_u whours wage unitwage contract  empstat_2 ///
 				empstat_2_year industry_2 industry1_2 industry_orig_2 occup_2 wage_2 unitwage_2 ///
 				healthins socialsec union rbirth_juris rbirth rprevious_juris rprevious ///
-				yrmove rprevious_time_ref pci pci_d pcc pcc_d reg02_orig reg03_orig
+				yrmove rprevious_time_ref pci pci_d pcc pcc_d reg02_orig reg03_orig round
 
 
 ** ORDER VARIABLES
@@ -951,7 +951,7 @@
 				whours wage unitwage contract empstat_2 empstat_2_year ///
 				industry_2 industry1_2 industry_orig_2 occup_2 wage_2 unitwage_2 ///
 				healthins socialsec union rbirth_juris rbirth rprevious_juris ///
-				rprevious yrmove rprevious_time_ref pci pci_d pcc pcc_d
+				rprevious yrmove rprevious_time_ref pci pci_d pcc pcc_d round
 
 	compress
 

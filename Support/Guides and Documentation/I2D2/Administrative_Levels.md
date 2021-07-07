@@ -221,7 +221,7 @@ reflect small changes as provinces are added.
 For consistency across years, except for the case of 2003, I will simply
 append the data within-year and not assign the labels. For cases where
 the user wants to access the value label data where they do exist, a
-`label dir` or `label list PROV` will find or often directly retreive
+`label dir` or `label list PROV` will find or often directly retrieve
 the label info as it was provided to us. However, for data at this
 secondary geographic/administrative level, the labels are often not
 necessary, as the primary unit of analysis is the region level. The
