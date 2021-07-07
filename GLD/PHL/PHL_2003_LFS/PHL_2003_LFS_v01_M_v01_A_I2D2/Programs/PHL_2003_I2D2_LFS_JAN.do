@@ -1005,7 +1005,7 @@ pause
 	}
 
 
-	save `"`id_data'\\`cty3'_`surv_yr'_I2D2_LFS.dta"', replace
+	save `"`id_data'\\`cty3'_`surv_yr'_I2D2_LFS_JAN.dta"', replace
 
 	log close
 
