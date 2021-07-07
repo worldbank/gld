@@ -6,7 +6,6 @@
 ** COUNTRY	PHILIPPINES
 ** COUNTRY ISO CODE	PHL
 ** YEAR	2003
-** Round/wave: 1 (completed in month of Janurary)
 ** SURVEY NAME	Labor Force Survey
 ** SURVEY AGENCY	National Statistical Office
 ** UNIT OF ANALYSIS	Household and Individual
@@ -59,15 +58,18 @@
 	local 	ed_mod_age	5	// labor module minimun age (inclusive)
 
 ** LOG FILE
-	log using `"`id_data'\\`cty3'_`surv_yr'_I2D2_LFS_JAN.log"', replace
+	log using `"`id_data'\\`cty3'_`surv_yr'_I2D2_LFS.log"', replace
 
 
 ** FILES
 	local round1 `"`stata'\LFS JAN2003.dta"'
+	local round2 `"`stata'\LFS APR2003.dta"'
+	local round3 `"`stata'\LFS JUL2003.dta"'
+	local round4 `"`stata'\LFS OCT2003.dta"'
 
 ** VALUES
-	local n_round 	1			// numer of survey rounds
-	local cases  	184228		// 184228 (Jan) + 183926 (APR) + 207974 (Jul) + 208716 (Oct) (Source: ILO from PSA)
+	local n_round 	4			// numer of survey rounds
+	local cases  	784844		// 184228 (Jan) + 183926 (APR) + 207974 (Jul) + 208716 (Oct) (Source: ILO from PSA)
 
 
 /*****************************************************************************************************
@@ -77,8 +79,37 @@
 *****************************************************************************************************/
 
 
-*** use the appropriate round file
+** DATABASE ASSEMBLENT
+
+** HARMONIZE VARIABLE NAMES, LABELS
+
+if (`append' == 1) {
+*** set up the codebook template
+	iecodebook template ///
+		`"`round1'"' `"`round2'"' `"`round3'"' `"`round4'"' /// survey files
+		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template.xlsx"' /// output excel command makes
+		, clear replace surveys(JAN2003 APR2003 JUL2003 OCT2003) /// survey names
+		match // atuo match the same-named variables
+
+if (`cb_pause' == 1) {
+		pause on
+		pause pausing while you edit your codebook. Save aligned codebook with suffix "-IN.xlsx" in the same directory as the output. press 'q' to continue.
+	}
+
+
+*** append the dataset
+	iecodebook append ///
+		`"`round1'"' `"`round2'"' `"`round3'"' `"`round4'"' /// survey files
+		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template-IN.xlsx"' /// output just created above
+		, clear surveys(JAN2003 APR2003 JUL2003 OCT2003) // survey names
+	}
+	else {
+*** use the single file
 	use `"`round1'"', clear
+
+	}
+
+
 
 ** SAMPLE
 	gen str7 sample = `"`cty3'"' + `"`surv_yr'"'
@@ -106,7 +137,7 @@
 
 
 ** HOUSEHOLD IDENTIFICATION NUMBER
-	loc idhvars 	regn prov hcn 	// store idh vars in local
+	loc idhvars 	regn  prov stratum urb hcn 	// store idh vars in local
 
 	ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
 	loc numlist 	= r(varlist)						// store numeric vars in local
@@ -156,7 +187,7 @@
 	* 	note, assuming that the only necessary individaul identifier is family member, which is numeric
 	*	so, not following processing for sorting numeric/non-numeric variables.
 
-	loc idpvars 	c101_lno								// store relevant idp vars in local
+	loc idpvars 	n_fam 								// store relevant idp vars in local
 	ds `idpvars',  	has(type numeric)					// filter out numeric variables in local
 	loc rlist 		= r(varlist)						// store numeric vars in local
 
@@ -269,7 +300,7 @@
 			& prov == 77
 
 	* CREATE VALUE LABEL
-	** define region value label: b= 2003 change
+	** define region value label: b=after july 2003 change
 	la de lblreg02b			///
 	 1   "Ilocos"			///
 	 2	 "Cagayan Valley"	///
@@ -381,7 +412,7 @@ pause
 
 
 ** RELATIONSHIP TO THE HEAD OF HOUSEHOLD
-	gen byte head=c03_rel				//  "head", "spouse", and children not recoded
+	gen byte head=c05_rel				//  "head", "spouse", and children not recoded
 	recode head 	(4 5 6 8  	= 5)	/// siblings, children in law, grandchildren, other rel of hh head="other relatives"
 					(7 			= 4)	/// parents of hh head become "parents"
 					(9 10 11 	= 6) 	// boarders and domestic workers become "other/non-relatives"
@@ -419,7 +450,7 @@ pause
 
 
 ** MARITAL STATUS
-	gen byte marital=c06_mstat
+	gen byte marital=c06_ms
 	recode marital (1=2) (2=1) (3=5)(5=.)
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
@@ -465,7 +496,7 @@ pause
 		available in github repository. */
 	gen byte edulevel1=.
 	replace edulevel1=1 if c07_grade==0			// "No Grade Completed" -> "No education"
-	replace edulevel1=2 if c07_grade==1 	// "Elementary Undergraduate" -> " Primary Incomplete"
+	replace edulevel1=2 if c07_grade==1 // "Elementary Undergraduate" -> " Primary Incomplete"
 	replace edulevel1=3 if c07_grade==2 	// "Elementary Graduate" -> "Primary Complete"
 	replace edulevel1=4 if c07_grade==3		// "High School Undergraduate" -> "Secondary Incomplete"
 	replace edulevel1=5 if c07_grade==4		// "High school graduate" -> "Secondary Complete"
@@ -602,7 +633,7 @@ pause
 	gen byte nlfreason=.
 	replace nlfreason=1 if c40_wynot==8
 	replace nlfreason=2 if c40_wynot==7
-	replace nlfreason=3 if c40_wynot==6
+	replace nlfreason=3 if c40_wynot==6 // & age>10 // why was only this restricted and not all (esp cuz of replace)
 	replace nlfreason=4 if c40_wynot==3
 	replace nlfreason=5 if c40_wynot==1 | c40_wynot==2 | c40_wynot==4 | c40_wynot==5 | c40_wynot==9
 	replace nlfreason=. if lstatus!=3 	// restricts universe to non-labor force
@@ -1005,7 +1036,7 @@ pause
 	}
 
 
-	save `"`id_data'\\`cty3'_`surv_yr'_I2D2_LFS_JAN.dta"', replace
+	save `"`id_data'\\`cty3'_`surv_yr'_I2D2_LFS.dta"', replace
 
 	log close
 
