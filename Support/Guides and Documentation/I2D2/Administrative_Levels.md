@@ -95,7 +95,7 @@ rounds.
 ### Responsible and Reproducible Recoding
 
 All recoding will be done openly and in-script, which is available in
-this respository. Furthermore, given the complexities outlined, the
+this repository. Furthermore, given the complexities outlined, the
 original region variable provided by the PSA will be left in with the
 survey data -- labelled or not -- as it arrived to us.
 
