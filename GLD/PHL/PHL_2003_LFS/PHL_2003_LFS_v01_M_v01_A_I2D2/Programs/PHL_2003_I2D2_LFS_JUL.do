@@ -191,7 +191,7 @@
 ** HOUSEHOLD WEIGHTS
 	/* The weight variable will be divided by the number of rounds per year to ensure the
 	   weighting factor does not over-mutliply*/
-	gen double wgt= rfadj/(`n_round')
+	gen double wgt= cfwgt/(`n_round')
 	label var wgt "Household sampling weight"
 
 
@@ -213,9 +213,8 @@
 
 
 ** LOCATION (URBAN/RURAL)
-	label var urb "Urban/Rural"
-	la de lblurb 1 "Urban" 2 "Rural"
-	label values urb lblurb
+	* no urban variable
+
 
 
 **REGIONAL AREAS
@@ -250,26 +249,7 @@
 	* reg01 is the geo/admin var of interest, reg02 is the first/highest/largest admin variable
 
 	* RECODE REGION
-	*			(17= 42)		///  sometimes Mimaropa appears as value 17, recode to always be 42 for consistency
-
-	* recode to Calabarzon
-	recode 	reg01 reg02 	/// recode both of these variables
-			(4 = 41) 		///
-			if (round == 1 | round == 2)  	/// restrict only to first two rounds
-			& inlist(prov, 10, 21, 34, 56, 58) 	// restricted to relevant provinces
-
-	* recode to Mimaropa
-	recode 	reg01 reg02 	/// recode both of these variables
-			(4 = 42) 		///
-			if (round == 1 | round == 2)  	/// restrict only to first two rounds
-			& inlist(prov, 51, 52, 40, 53, 59) 	// restricted to relevant provinces
-
-	* recode Aurora to Central Luzon
-		* Aurora belongs in this region
-	recode 	reg01 reg02 	///
-			(4 = 3) 		///
-			if (round == 1 | round == 2)  	/// restrict only to first two rounds
-			& prov == 77
+	*	no recoding of region will occur for rounds 3 and 4
 
 	* CREATE VALUE LABEL
 	** define region value label: b= 2003 change
@@ -301,11 +281,9 @@
 
 ** RENAME ORIGINAL ADMIN VARIABLES
 	* clonevar keeps value labels along with values; gen does not.
-	clonevar reg02_orig = regn
-	clonevar reg03_orig = .
+	clonevar reg02_orig = creg
 
 	la var reg02_orig "Original 1st Level Admin Variable"
-	la var reg03_orig "Original 2nd Level Admin Variable"
 
 
 ** HOUSE OWNERSHIP
@@ -944,7 +922,7 @@
 
 
 ** KEEP VARIABLES - ALL
-	keep sample ccode year intv_year month idh idp wgt strata psu urb ///
+	keep sample ccode year intv_year month idh idp wgt strata psu  ///
 				reg01 reg02 reg03 reg04 ownhouse water electricity toilet landphone      ///
 				cellphone computer internet hhsize head gender age soc marital ed_mod_age ///
 				everattend atschool literacy educy edulevel1 edulevel2 edulevel3 lb_mod_age ///
@@ -953,12 +931,12 @@
 				firmsize_l firmsize_u whours wage unitwage contract  empstat_2 ///
 				empstat_2_year industry_2 industry1_2 industry_orig_2 occup_2 wage_2 unitwage_2 ///
 				healthins socialsec union rbirth_juris rbirth rprevious_juris rprevious ///
-				yrmove rprevious_time_ref pci pci_d pcc pcc_d reg02_orig reg03_orig
+				yrmove rprevious_time_ref pci pci_d pcc pcc_d reg02_orig 
 
 
 ** ORDER VARIABLES
-	order sample ccode year intv_year month idh idp wgt strata psu urb	///
-				reg01 reg02 reg03 reg04 reg02_orig reg03_orig  ///
+	order sample ccode year intv_year month idh idp wgt strata psu 	///
+				reg01 reg02 reg03 reg04 reg02_orig   ///
 				ownhouse water electricity toilet landphone ///
 				cellphone computer internet hhsize head gender age soc marital ///
 				ed_mod_age everattend atschool literacy educy edulevel1 edulevel2 ///
@@ -976,7 +954,7 @@
 ** DELETE MISSING VARIABLES
 	local keep ""
 	qui levelsof ccode, local(cty)
-	foreach var of varlist urb - pcc_d {
+	foreach var of varlist psu - pcc_d {
 	qui sum `var'
 	scalar sclrc = r(mean)
 	if sclrc==. {
