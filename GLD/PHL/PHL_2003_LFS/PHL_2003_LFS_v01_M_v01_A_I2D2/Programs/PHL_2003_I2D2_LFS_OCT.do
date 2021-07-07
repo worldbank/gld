@@ -607,7 +607,9 @@
 	replace unempldur_l=. if lstatus!=2 	  // restrict universe to unemployed only
 
 ** INDUSTRY CLASSIFICATION
-
+	*rename original industry variable (which is actually an industry grouping)
+	rename industry industry_group_orig
+	
 	gen byte industry=.
 	replace industry=1 if cc18_pkb >= 1 & cc18_pkb <= 9		// Agriculture
 	replace industry=2 if cc18_pkb == 10 | cc18_pkb == 11		// Mining
