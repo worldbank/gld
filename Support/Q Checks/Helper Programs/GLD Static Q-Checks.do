@@ -271,6 +271,7 @@ foreach three_vars of global subnat_hierarchy {
 cap confirm variable hsize
 if _rc == 0 { // if var exists since if not captured in 1.1
 	bysort hhid: gen hh_size_verify = _N
+	replace hh_size_verify=. if hsize==. /* I think this fixes the issue with red flag in the check output*/
 	qui : count if hh_size_verify != hsize
 	if `r(N)' >0 { // there are cases when it differs
 		local hh_size_error_ratio = `r(N)' / $overall_count
