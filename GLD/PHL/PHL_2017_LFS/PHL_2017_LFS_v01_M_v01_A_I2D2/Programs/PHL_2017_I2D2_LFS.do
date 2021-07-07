@@ -557,7 +557,7 @@ undergraduates in "primary" and "graduates" in "secondary" */
 		currently attending*/
 
 	gen byte everattend=.
-	replace everattend=1 if age >= ed_mod_age & (atschool==1 | (2 <= edulevel1 <= 8 ))
+	replace everattend=1 if age >= ed_mod_age & (edulevel1 >= 2 & edulevel1 <= 8 )
 	replace everattend=0 if age >= ed_mod_age & atschool==0 & edulevel1==0
 	label var everattend "Ever attended school"
 	la de lbleverattend 0 "No" 1 "Yes"
