@@ -6,7 +6,7 @@
 ** COUNTRY	PHILIPPINES
 ** COUNTRY ISO CODE	PHL
 ** YEAR	2003
-** Round/wave: 1 (completed in month of Janurary)
+** Round/wave: 2 (completed in month of April)
 ** SURVEY NAME	Labor Force Survey
 ** SURVEY AGENCY	National Statistical Office
 ** UNIT OF ANALYSIS	Household and Individual
@@ -63,11 +63,11 @@
 
 
 ** FILES
-	local round1 `"`stata'\LFS JAN2003.dta"'
+	local round2 `"`stata'\LFS APR2003.dta"'
 
 ** VALUES
 	local n_round 	1			// numer of survey rounds
-	local cases  	184228		// 184228 (Jan) + 183926 (APR) + 207974 (Jul) + 208716 (Oct) (Source: ILO from PSA)
+	local cases  	183926		// 184228 (Jan) + 183926 (APR) + 207974 (Jul) + 208716 (Oct) (Source: ILO from PSA)
 
 
 /*****************************************************************************************************
@@ -78,7 +78,7 @@
 
 
 *** use the appropriate round file
-	use `"`round1'"', clear
+	use `"`round2'"', clear
 
 ** SAMPLE
 	gen str7 sample = `"`cty3'"' + `"`surv_yr'"'
@@ -98,7 +98,7 @@
 	label var intv_year "Year of the interview"
 
 ** ROUND
-	gen round = 1
+	gen round = 2
 
 
 ** MONTH OF INTERVIEW
