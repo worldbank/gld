@@ -62,10 +62,16 @@
 
 
 ** FILES
-	local round1 `"`stata'\LFS JAN2003.dta"'
-	local round2 `"`stata'\LFS APR2003.dta"'
-	local round3 `"`stata'\LFS JUL2003.dta"'
-	local round4 `"`stata'\LFS OCT2003.dta"'
+	* raw
+	local round1 	`"`stata'\LFS JAN2003.dta"'
+	local round2 	`"`stata'\LFS APR2003.dta"'
+	local round3 	`"`stata'\LFS JUL2003.dta"'
+	local round4 	`"`stata'\LFS OCT2003.dta"'
+	* processed
+	local i2d2_1	`"`stata'/rounds/PHL_2003_I2D2_LFS_JAN.dta"'
+	local i2d2_2	`"`stata'/rounds/PHL_2003_I2D2_LFS_APR.dta"'
+	local i2d2_3	`"`stata'/rounds/PHL_2003_I2D2_LFS_JUL.dta"'
+	local i2d2_4	`"`stata'/rounds/PHL_2003_I2D2_LFS_OCT.dta"'
 
 ** VALUES
 	local n_round 	4			// numer of survey rounds
@@ -90,7 +96,15 @@ do `"${code}/PHL/PHL_2003_LFS/PHL_2003_LFS_v01_M_v01_A_I2D2/Programs/PHL_2003_I2
 do `"${code}/PHL/PHL_2003_LFS/PHL_2003_LFS_v01_M_v01_A_I2D2/Programs/PHL_2003_I2D2_LFS_JUL.do"'
 do `"${code}/PHL/PHL_2003_LFS/PHL_2003_LFS_v01_M_v01_A_I2D2/Programs/PHL_2003_I2D2_LFS_OCT.do"'
 
-** HARMONIZE VARIABLE NAMES, LABELS
+** APPEND
+use 				`i2d2_1'	///
+					, clear
+
+append 		using 	`i2d2_2' ///
+					`i2d2_3' ///
+					`i2d2_4'
+
+
 
 ** replace weight by 1/4 of weight variable (account for appending of 4 rounds )
 replace wgt = wgt / `n_round'
@@ -100,12 +114,13 @@ replace wgt = wgt / `n_round'
 
 
 
+pause on
+pause
 
 
 
 
 
-/*
 
 /*****************************************************************************************************
 *                                                                                                    *
