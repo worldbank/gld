@@ -106,8 +106,22 @@ append 		using 	`i2d2_2' ///
 ** replace weight by 1/4 of weight variable (account for appending of 4 rounds )
 replace wgt = wgt / `n_round'
 
-** ID CHECK
-isid idh idp round
+** ID OPERATIONS
+	/*At this point in the data flow, we've proven that the household id (idh) and individual id (idp)
+	 uniquely identify observations within rounds. But the formula that generates uniform length string
+	 IDs means that this won't be unique across all 4 rounds when appended. We simply need to add the
+	 round variable in string form to the idh string variable. Then idh idp will be unique */
+
+	 ** Add round as a prefix to Household ID string variable
+		tostring round	///								// make numeric variables strings
+			, generate(round_str) ///					// generate a string version of round called round_str
+			force format(`"%01.0f"')					// ...we know that round will only be 1 digit, fixed format
+
+
+		replace idh 	= concat(round_str idh)			// idh now becomes the concatenation of round_str and idh
+
+	 ** Final ID Check
+	 isid 	idh idp
 
 
 
