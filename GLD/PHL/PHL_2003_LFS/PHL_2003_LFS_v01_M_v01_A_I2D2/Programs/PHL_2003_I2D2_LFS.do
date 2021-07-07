@@ -92,6 +92,9 @@ do `"${code}/PHL/PHL_2003_LFS/PHL_2003_LFS_v01_M_v01_A_I2D2/Programs/PHL_2003_I2
 
 ** HARMONIZE VARIABLE NAMES, LABELS
 
+** replace weight by 1/4 of weight variable (account for appending of 4 rounds )
+replace wgt = wgt / `n_round'
+
 
 
 

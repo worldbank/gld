@@ -191,7 +191,7 @@
 ** HOUSEHOLD WEIGHTS
 	/* The weight variable will be divided by the number of rounds per year to ensure the
 	   weighting factor does not over-mutliply*/
-	gen double wgt= cfwgt/(`n_round')
+	gen double wgt= cfwgt
 	label var wgt "Household sampling weight"
 
 
@@ -931,7 +931,7 @@
 				firmsize_l firmsize_u whours wage unitwage contract  empstat_2 ///
 				empstat_2_year industry_2 industry1_2 industry_orig_2 occup_2 wage_2 unitwage_2 ///
 				healthins socialsec union rbirth_juris rbirth rprevious_juris rprevious ///
-				yrmove rprevious_time_ref pci pci_d pcc pcc_d reg02_orig 
+				yrmove rprevious_time_ref pci pci_d pcc pcc_d reg02_orig
 
 
 ** ORDER VARIABLES
