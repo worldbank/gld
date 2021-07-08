@@ -43,6 +43,7 @@
 ** RUN SETTINGS
 	local 	cb_pause = 0	// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
 	local 	append 	 = 1	// 1 to run iecodebook append, 0 if file is already appended.
+	local 	drop 	 = 0 	// 1 to drop variables with all missing values, 0 otherwise
 
 
 	local 	year 		"${GLD}:\GLD-Harmonization\\`usr'\\`cty3'\\`cty3'_`surv_yr'_LFS" // top data folder
@@ -86,7 +87,7 @@
 	Each round will produce a .dta file that will be appended later in this code. This script assumes you are
 	running from the GLD_I2D2_MAIN.do, which has the relevant globals stored for the file paths. Otherwise, you
 	will need to change them to the full local file path */
-if (1) {
+if (drop == 1) {
 do `"${code}/PHL/PHL_2003_LFS/PHL_2003_LFS_v01_M_v01_A_I2D2/Programs/PHL_2003_I2D2_LFS_JAN.do"'
 do `"${code}/PHL/PHL_2003_LFS/PHL_2003_LFS_v01_M_v01_A_I2D2/Programs/PHL_2003_I2D2_LFS_APR.do"'
 do `"${code}/PHL/PHL_2003_LFS/PHL_2003_LFS_v01_M_v01_A_I2D2/Programs/PHL_2003_I2D2_LFS_JUL.do"'
@@ -106,16 +107,27 @@ append 		using 	`i2d2_2' ///
 ** replace weight by 1/4 of weight variable (account for appending of 4 rounds )
 replace wgt = wgt / `n_round'
 
-** ID CHECK
-isid idh idp round
+** ID OPERATIONS
+	/*At this point in the data flow, we've proven that the household id (idh) and individual id (idp)
+	 uniquely identify observations within rounds. But the formula that generates uniform length string
+	 IDs means that this won't be unique across all 4 rounds when appended. We simply need to add the
+	 round variable in string form to the idh string variable. Then idh idp will be unique */
+
+	 ** Add round as a prefix to Household ID string variable
+		tostring round	///								// make numeric variables strings
+			, generate(round_str) ///					// generate a string version of round called round_str
+			force format(`"%01.0f"')					// ...we know that round will only be 1 digit, fixed format
 
 
+		egen idh_yr 	= concat(round_str idh)			// idh now becomes the concatenation of round_str and idh
+
+		rename 			idh 	idh_round				// change the "old" idh var
+		rename 			idh_yr 	idh 					// the new concatenated variable beomces idh
+
+	 ** Final ID Check
+	 isid 	idh idp
 
 
-
-
-pause on
-pause
 
 
 
@@ -129,22 +141,11 @@ pause
 *****************************************************************************************************/
 
 
-** KEEP VARIABLES - ALL
-	keep sample ccode year intv_year month idh idp wgt strata psu urb ///
-				reg01 reg02 reg03 reg04 ownhouse water electricity toilet landphone      ///
-				cellphone computer internet hhsize head gender age soc marital ed_mod_age ///
-				everattend atschool literacy educy edulevel1 edulevel2 edulevel3 lb_mod_age ///
-				lstatus lstatus_year empstat empstat_year njobs njobs_year ocusec nlfreason ///
-				unempldur_l unempldur_u industry industry1 industry_orig occup occup_orig ///
-				firmsize_l firmsize_u whours wage unitwage contract  empstat_2 ///
-				empstat_2_year industry_2 industry1_2 industry_orig_2 occup_2 wage_2 unitwage_2 ///
-				healthins socialsec union rbirth_juris rbirth rprevious_juris rprevious ///
-				yrmove rprevious_time_ref pci pci_d pcc pcc_d reg02_orig reg03_orig
 
-
-** ORDER VARIABLES
-	order sample ccode year intv_year month idh idp wgt strata psu urb	///
-				reg01 reg02 reg03 reg04 reg02_orig reg03_orig  ///
+** ORDER KEEP VARIABLES
+	local 		order 														///
+				sample ccode year intv_year month idh idp wgt strata psu urb	///
+				reg01 reg02 reg03  reg02_orig reg03_orig  ///
 				ownhouse water electricity toilet landphone ///
 				cellphone computer internet hhsize head gender age soc marital ///
 				ed_mod_age everattend atschool literacy educy edulevel1 edulevel2 ///
@@ -154,31 +155,33 @@ pause
 				whours wage unitwage contract empstat_2 empstat_2_year ///
 				industry_2 industry1_2 industry_orig_2 occup_2 wage_2 unitwage_2 ///
 				healthins socialsec union rbirth_juris rbirth rprevious_juris ///
-				rprevious yrmove rprevious_time_ref pci pci_d pcc pcc_d
+				rprevious yrmove rprevious_time_ref pci pci_d pcc pcc_d round
+
+	keep 		`order'
+	order 		`order'
 
 	compress
 
 
 ** DELETE MISSING VARIABLES
-	local keep ""
-	qui levelsof ccode, local(cty)
-	foreach var of varlist urb - pcc_d {
-	qui sum `var'
-	scalar sclrc = r(mean)
-	if sclrc==. {
-	     display as txt "Variable " as result "`var'" as txt " for ccode " as result `cty' as txt " contains all missing values -" as error " Variable Deleted"
-	}
-	else {
-	     local keep `keep' `var'
-	}
-	}
-	keep sample ccode year intv_year month  idh idp wgt strata psu `keep'
+	* if variables are missing on all values, drop them, unless they are listed as "key" variable
+
+	* declare list of key variables that should never have missing observations
+	loc	nomissvars sample ccode year intv_year month idh idp wgt strata psu hhsize ed_mod_age lb_mod_age round
 
 
+	local missvars : 	list order - nomissvars
 
-** MISSING VALUES
-	*Declare varlist which cannot contain missings
-	loc	nomissvars sample ccode year intv_year month idh idp wgt strata psu hhsize ed_mod_age lb_mod_age
+
+	if (drop == 1) {
+		missings dropvars 	`missvars', force
+	}
+
+
+** OBSERVATION MISSING VALUES
+	/*we know that some variables should not have missing values. Keep track of how many obs are missing
+	for these variables only*/
+
 
 	foreach var of local nomissvars {
 		qui mdesc `var'
@@ -193,7 +196,7 @@ pause
 	}
 
 
-	save `"`id_data'\\`cty3'_`surv_yr'_I2D2_LFS.dta"', replace
+	save `"`id_data'\\PHL_2003_I2D2_LFS.dta"', replace
 
 	log close
 
