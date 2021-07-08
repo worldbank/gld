@@ -176,8 +176,16 @@ if (`cb_pause' == 1) {
 
 		}
 
+		* add the round variable
+		tostring round	///							// make the numeric vars strings
+			, generate(idh_round) ///					// gen a variable with this prefix
+			force format(`"%02.0f"')				// ...and the specified number of digits in local
+
+		loc idh_els 	`idh_els' idh_round				// add each variable to the local list
+
 
 		* concatenate all elements to form idh: hosehold id
+
 		egen idh=concat( `idh_els' )						// concatenate vars we just made. code drops vars @ end
 
 		label var idh "Household id"
@@ -208,6 +216,15 @@ if (`cb_pause' == 1) {
 			loc idp_els 	`idp_els' idp_`var'				// add each variable to the local list
 
 		}
+
+		* add the round variable
+		tostring round	///							// make the numeric vars strings
+			, generate(idh_round) ///					// gen a variable with this prefix
+			force format(`"%02.0f"')				// ...and the specified number of digits in local
+
+		loc idh_els 	`idh_els' idh_round				// add each variable to the local list
+
+
 
 		* concatenate to form idp: individual id
 		egen idp=concat( `idp_els' )						// concatenate vars we just made. code drops vars @ end
