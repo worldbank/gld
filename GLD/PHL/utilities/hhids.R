@@ -87,9 +87,9 @@ HHjan03_n <- n_hh_reg_prov_hcn(jan03)
 
 # 2004  ----
   hh04 <- oct04 %>% 
-      group_by(creg, prov, stratum, psu, ea_unique, shsn, hcn) %>%
+      group_by(creg, prov, stratum, psu, shsn, hcn) %>%
       mutate(hhid = cur_group_id()) %>%
-      select(cc101_lno, hhid,creg, prov, stratum, psu, ea_unique, shsn, hcn, everything()) %>%
+      select(cc101_lno, hhid,creg, prov, stratum, psu, shsn, hcn, everything()) %>%
       arrange(hhid, cc101_lno)    
     
   dupsOct04 <- get_dupes(hh04, hhid, cc101_lno) # no dups found

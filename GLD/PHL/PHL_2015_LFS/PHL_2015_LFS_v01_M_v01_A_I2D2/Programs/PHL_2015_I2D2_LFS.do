@@ -993,7 +993,7 @@ if (`cb_pause' == 1) {
 	local missvars : 	list order - nomissvars
 
 
-	if (drop == 1) {
+	if (`drop' == 1) {
 		missings dropvars 	`missvars', force
 	}
 
