@@ -34,7 +34,7 @@ exclude: ["node_modules/", "*.gemspec", "*.gem", "Gemfile", "Gemfile.lock", "pac
 # include: ["docs/tests/"]
 
 # Set a path/url to a logo that will be displayed instead of the title
-#logo: "/assets/images/just-the-docs.png"
+logo: "/assets/images/wb_jobs_logo.png"
 
 # Enable or disable the site search
 # Supports true (default) or false
@@ -43,6 +43,9 @@ search_enabled: false
 # Enable or disable heading anchors
 heading_anchors: true
 
+aux_links:
+  "Global Labor Database":
+    - "//https://github.com/worldbank/gld"
 
 # Sort order for navigation links
 # nav_sort: case_insensitive # default, equivalent to nil
