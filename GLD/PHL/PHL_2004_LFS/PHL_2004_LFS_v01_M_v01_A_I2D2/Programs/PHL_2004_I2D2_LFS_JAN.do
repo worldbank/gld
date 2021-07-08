@@ -106,14 +106,14 @@
 
 
 ** HOUSEHOLD IDENTIFICATION NUMBER
-	loc idhvars 	regn prov hcn 	// store idh vars in local
+	loc idhvars 	hhnum 	// store idh vars in local
 
 	ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
 	loc numlist 	= r(varlist)						// store numeric vars in local
 	loc stringlist 	: list idhvars - numlist			// non-numeric vars in stringlist
 
 	* starting locals
-	loc len = 6											// declare the length of each element in digits
+	loc len = 12										// declare the length of each element in digits
 	loc idh_els ""										// start with empty local list
 
 	* make each numeric var string, including leading zeros
@@ -188,7 +188,7 @@
 ** HOUSEHOLD WEIGHTS
 	/* The weight variable will be divided by the number of rounds per year to ensure the
 	   weighting factor does not over-mutliply*/
-	gen double wgt= rfadj
+	gen double wgt= fwgt
 	label var wgt "Household sampling weight"
 
 
@@ -216,17 +216,17 @@
 
 
 **REGIONAL AREAS
-	gen reg01 = regn
+	gen reg01 = reg
 	label var reg01 "Macro regional areas"
 
 
 ** REGIONAL AREA 1 DIGIT ADMN LEVEL
-	gen reg02 = regn
+	gen reg02 = reg
 	label var reg02 "1st Level Administrative Division"
 
 
 ** REGIONAL AREA 2 DIGITS ADM LEVEL (ADMN2)
-	gen reg03= prov
+	gen reg03= .
 	label var reg03 "2nd Level Administrative Division"
 
 
@@ -246,27 +246,6 @@
 
 	* reg01 is the geo/admin var of interest, reg02 is the first/highest/largest admin variable
 
-	* RECODE REGION
-	*			(17= 42)		///  sometimes Mimaropa appears as value 17, recode to always be 42 for consistency
-
-	* recode to Calabarzon
-	recode 	reg01 reg02 	/// recode both of these variables
-			(4 = 41) 		///
-			if (round == 1 | round == 2)  	/// restrict only to first two rounds
-			& inlist(prov, 10, 21, 34, 56, 58) 	// restricted to relevant provinces
-
-	* recode to Mimaropa
-	recode 	reg01 reg02 	/// recode both of these variables
-			(4 = 42) 		///
-			if (round == 1 | round == 2)  	/// restrict only to first two rounds
-			& inlist(prov, 51, 52, 40, 53, 59) 	// restricted to relevant provinces
-
-	* recode Aurora to Central Luzon
-		* Aurora belongs in this region
-	recode 	reg01 reg02 	///
-			(4 = 3) 		///
-			if (round == 1 | round == 2)  	/// restrict only to first two rounds
-			& prov == 77
 
 	* CREATE VALUE LABEL
 	** define region value label: b= 2003 change
@@ -299,7 +278,7 @@
 ** RENAME ORIGINAL ADMIN VARIABLES
 	* clonevar keeps value labels along with values; gen does not.
 	clonevar reg02_orig = regn
-	clonevar reg03_orig = prov
+	clonevar reg03_orig = .
 
 	la var reg02_orig "Original 1st Level Admin Variable"
 	la var reg03_orig "Original 2nd Level Admin Variable"
@@ -370,7 +349,7 @@
 
 ** HOUSEHOLD SIZE
 	sort idh
-	by idh: egen hhsize= count(c03_rel <= 8 | c03_rel == 11)
+	by idh: egen hhsize= count(c05_rel <= 8 | c05_rel == 11)
 	* restrict by family role var, include all non-family members but not boarders/workers
 	label var hhsize "Household size"
 
@@ -380,7 +359,7 @@
 
 
 ** RELATIONSHIP TO THE HEAD OF HOUSEHOLD
-	gen byte head=c03_rel				//  "head", "spouse", and children not recoded
+	gen byte head=c05_rel				//  "head", "spouse", and children not recoded
 	recode head 	(4 5 6 8  	= 5)	/// siblings, children in law, grandchildren, other rel of hh head="other relatives"
 					(7 			= 4)	/// parents of hh head become "parents"
 					(9 10 11 	= 6) 	// boarders and domestic workers become "other/non-relatives"
@@ -399,14 +378,14 @@
 
 
 ** GENDER
-	gen byte gender=c04_sex
+	gen byte gender=c06_sex
 	label var gender "Gender"
 	la de lblgender 1 "Male" 2 "Female"
 	label values gender lblgender
 
 
 ** AGE
-	gen byte age = c05_age
+	gen byte age = c07_age
 	label var age "Individual age"
 	replace age=98 if age>=98 & age!=.
 
@@ -418,7 +397,7 @@
 
 
 ** MARITAL STATUS
-	gen byte marital=c06_mstat
+	gen byte marital=c08_ms
 	recode marital (1=2) (2=1) (3=5)(5=.)
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
@@ -463,13 +442,13 @@
 	/*Please refer to the "Education_Levels.md" for a detailed discussion on classificition of how each level is classified and why,
 		available in github repository. */
 	gen byte edulevel1=.
-	replace edulevel1=1 if c07_grade==0			// "No Grade Completed" -> "No education"
-	replace edulevel1=2 if c07_grade==1 	// "Elementary Undergraduate" -> " Primary Incomplete"
-	replace edulevel1=3 if c07_grade==2 	// "Elementary Graduate" -> "Primary Complete"
-	replace edulevel1=4 if c07_grade==3		// "High School Undergraduate" -> "Secondary Incomplete"
-	replace edulevel1=5 if c07_grade==4		// "High school graduate" -> "Secondary Complete"
-	replace edulevel1=7 if c07_grade==5 | ( c07_grade>=60 & c07_grade<=98) // "College Graduate" and "[x] Bachelors/Advanced Degree" -> "University"
-	replace edulevel1=9 if c07_grade==99 	// where 99 == 'not reported'
+	replace edulevel1=1 if c09_grd==0			// "No Grade Completed" -> "No education"
+	replace edulevel1=2 if c09_grd==1 	// "Elementary Undergraduate" -> " Primary Incomplete"
+	replace edulevel1=3 if c09_grd==2 	// "Elementary Graduate" -> "Primary Complete"
+	replace edulevel1=4 if c09_grd==3		// "High School Undergraduate" -> "Secondary Incomplete"
+	replace edulevel1=5 if c09_grd==4		// "High school graduate" -> "Secondary Complete"
+	replace edulevel1=7 if c09_grd==5 | ( c09_grd>=60 & c09_grd<=98) // "College Graduate" and "[x] Bachelors/Advanced Degree" -> "University"
+	replace edulevel1=9 if c09_grd==99 	// where 99 == 'not reported'
 
 	label var edulevel1 "Level of education 1"
 	la de lbledulevel1 	1 "No education"	///
@@ -534,12 +513,12 @@
 
 
 ** LABOR STATUS
-	/*Changing by using empst1_nso to determine lstatus, not work
-	Note: creating own label, not using label from empst1_nso	*/
+	/*Changing by using newempst to determine lstatus, not work
+	Note: creating own label, not using label from newempst	*/
 	gen byte lstatus=.
-	replace lstatus=1 if empst1_nso==1
-	replace lstatus=2 if empst1_nso==2
-	replace lstatus=3 if empst1_nso==3
+	replace lstatus=1 if newempst==1
+	replace lstatus=2 if newempst==2
+	replace lstatus=3 if newempst==3
 	replace lstatus=. if age < lb_mod_age // restrict universe to only those of working age
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -557,10 +536,10 @@
 
 ** EMPLOYMENT STATUS
 	gen byte empstat=.
-	replace empstat=1 if c17_pclass==0 | c17_pclass==1 | c17_pclass==2 | c17_pclass==5
-	replace empstat=2 if c17_pclass==6
-	replace empstat=3 if c17_pclass==4
-	replace empstat=4 if c17_pclass==3
+	replace empstat=1 if c19pclas==0 | c19pclas==1 | c19pclas==2 | c19pclas==5
+	replace empstat=2 if c19pclas==6
+	replace empstat=3 if c19pclas==4
+	replace empstat=4 if c19pclas==3
 	replace empstat=. if lstatus!=1 	// includes universe restriction
 	label var empstat "Employment status"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed"
@@ -597,13 +576,13 @@
 
 
 
-** REASONS NOT IN THE LABOR FORCE
+** REASONS NOT IN THE LABOR FORCE %%
 	gen byte nlfreason=.
-	replace nlfreason=1 if c40_wynot==8
-	replace nlfreason=2 if c40_wynot==7
-	replace nlfreason=3 if c40_wynot==6
-	replace nlfreason=4 if c40_wynot==3
-	replace nlfreason=5 if c40_wynot==1 | c40_wynot==2 | c40_wynot==4 | c40_wynot==5 | c40_wynot==9
+	replace nlfreason=1 if c42_wynt==8
+	replace nlfreason=2 if c42_wynt==7
+	replace nlfreason=3 if c42_wynt==6
+	replace nlfreason=4 if c42_wynt==3
+	replace nlfreason=5 if c42_wynt==1 | c42_wynt==2 | c42_wynt==4 | c42_wynt==5 | c42_wynt==9
 	replace nlfreason=. if lstatus!=3 	// restricts universe to non-labor force
 	replace nlfreason=. if age < lb_mod_age // restrict universe to working age
 	label var nlfreason "Reason not in the labor force"
