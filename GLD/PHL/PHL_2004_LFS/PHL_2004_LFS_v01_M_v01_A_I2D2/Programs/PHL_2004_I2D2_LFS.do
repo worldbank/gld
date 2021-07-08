@@ -30,6 +30,7 @@
 
 
 ** INITIAL COMMANDS
+	cap log close 
 	clear
 	set more off
 	set mem 800m
@@ -64,6 +65,10 @@
 	local round2 `"`stata'\LFS APR2004.dta"'
 	local round3 `"`stata'\LFS JUL2004.dta"'
 	local round4 `"`stata'\LFS OCT2004.dta"'
+
+** LOG FILE
+	log using `"`id_data'\\`cty3'_`surv_yr'_I2D2_LFS.log"', replace
+
 
 
 ** VALUES
@@ -1125,7 +1130,9 @@ if (`cb_pause' == 1) {
 	}
 
 
-	save `"`id_data'\\rounds\\`cty3'_`surv_yr'_I2D2_LFS_JAN.dta"', replace
+	save `"`id_data'\\`cty3'_`surv_yr'_I2D2_LFS.dta"', replace
+	
+	log close 
 
 
 
