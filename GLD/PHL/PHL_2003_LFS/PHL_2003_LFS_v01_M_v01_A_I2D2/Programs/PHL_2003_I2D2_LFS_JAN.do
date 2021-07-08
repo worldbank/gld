@@ -30,7 +30,6 @@
 
 
 ** INITIAL COMMANDS
-	cap log close
 	clear
 	set more off
 	set mem 800m
@@ -57,9 +56,6 @@
 
 	local 	lb_mod_age	15	// labor module minimun age (inclusive)
 	local 	ed_mod_age	5	// labor module minimun age (inclusive)
-
-** LOG FILE
-	log using `"`id_data'\\rounds\\`cty3'_`surv_yr'_I2D2_LFS_JAN.log"', replace
 
 
 ** FILES
@@ -1000,7 +996,6 @@
 
 	save `"`id_data'\\rounds\\`cty3'_`surv_yr'_I2D2_LFS_JAN.dta"', replace
 
-	log close
 
 
 	clear
