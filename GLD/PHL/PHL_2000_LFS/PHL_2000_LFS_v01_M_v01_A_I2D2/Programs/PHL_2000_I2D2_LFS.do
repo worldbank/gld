@@ -43,6 +43,7 @@
 ** RUN SETTINGS
 	local 	cb_pause = 0	// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
 	local 	append 	 = 0 	// 1 to run iecodebook append, 0 if file is already appended.
+	local 	drop 	 = 0 	// 1 to drop variables with all missing values, 0 otherwise
 
 
 	local 	year 		"${GLD}:\GLD-Harmonization\\`usr'\\`cty3'\\`cty3'_`surv_yr'_LFS" // top data folder
@@ -944,7 +945,7 @@ if (`cb_pause' == 1) {
 	local missvars : 	list order - nomissvars
 
 
-	if (1) {
+	if (drop == 1) {
 		missings dropvars 	`missvars', force
 	}
 

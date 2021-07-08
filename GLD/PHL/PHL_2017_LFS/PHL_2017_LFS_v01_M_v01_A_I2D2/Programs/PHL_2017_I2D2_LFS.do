@@ -44,6 +44,7 @@
 	local 	append 	 = 1
 	local 	cb_pause = 1	/* 	1 to generate codebook for harmonizing varnames and labels, will not run rest of code.
 							 	0 to import edited codebook and run rest of code. */
+	local 	drop 	 = 0 	// 1 to drop variables with all missing values, 0 otherwise
 
 	local 	year 		"${GLD}:\GLD-Harmonization\\`usr'\\`cty3'\\`cty3'_`surv_yr'_LFS" // <- replace ${GLD} with Y/Z if running directly
 
@@ -1099,7 +1100,7 @@ undergraduates in "primary" and "graduates" in "secondary" */
 	local missvars : 	list order - nomissvars
 
 
-	if (1) {
+	if (drop == 1) {
 		missings dropvars 	`missvars', force
 	}
 

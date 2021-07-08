@@ -43,6 +43,7 @@
 ** RUN SETTINGS
 	local 	cb_pause = 0	// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
 	local 	append 	 = 1	// 1 to run iecodebook append, 0 if file is already appended.
+	local 	drop 	 = 0 	// 1 to drop variables with all missing values, 0 otherwise
 
 
 	local 	year 		"${GLD}:\GLD-Harmonization\\`usr'\\`cty3'\\`cty3'_`surv_yr'_LFS" // top data folder
@@ -86,7 +87,7 @@
 	Each round will produce a .dta file that will be appended later in this code. This script assumes you are
 	running from the GLD_I2D2_MAIN.do, which has the relevant globals stored for the file paths. Otherwise, you
 	will need to change them to the full local file path */
-if (0) {
+if (drop == 1) {
 do `"${code}/PHL/PHL_2003_LFS/PHL_2003_LFS_v01_M_v01_A_I2D2/Programs/PHL_2003_I2D2_LFS_JAN.do"'
 do `"${code}/PHL/PHL_2003_LFS/PHL_2003_LFS_v01_M_v01_A_I2D2/Programs/PHL_2003_I2D2_LFS_APR.do"'
 do `"${code}/PHL/PHL_2003_LFS/PHL_2003_LFS_v01_M_v01_A_I2D2/Programs/PHL_2003_I2D2_LFS_JUL.do"'
@@ -172,7 +173,7 @@ replace wgt = wgt / `n_round'
 	local missvars : 	list order - nomissvars
 
 
-	if (0) {
+	if (drop == 1) {
 		missings dropvars 	`missvars', force
 	}
 
@@ -195,7 +196,7 @@ replace wgt = wgt / `n_round'
 	}
 
 
-	save `"`id_data'\\rounds\\PHL_2003_I2D2_LFS.dta"', replace
+	save `"`id_data'\\PHL_2003_I2D2_LFS.dta"', replace
 
 	log close
 
