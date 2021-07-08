@@ -3,23 +3,20 @@
 **                                                                                                  **
 **                       INTERNATIONAL INCOME DISTRIBUTION DATABASE (I2D2)                          **
 **                                                                                                  **
-** COUNTRY					South Africa 
-** COUNTRY ISO CODE			ZAF
-** YEAR						2020
-** SURVEY NAME				Labour Market Dynamics
-** SURVEY AGENCY			Statistics South Africa (Stats SA)
-** SURVEY SOURCE			DataFirst, https://www.datafirst.uct.ac.za/dataportal/index.php/catalog/823 (Quarter 1)
-** UNIT OF ANALYSIS			Household and individual
-** INPUT DATABASES			Z:\_GLD-Harmonization\573465_JT\ZAF\ZAF_2020_LFS\ZAF_2020_LFS_v01_M\data\stata\qlfs-2020-q1-worker-v1.dta
-							Z:\_GLD-Harmonization\573465_JT\ZAF\ZAF_2020_LFS\ZAF_2020_LFS_v01_M\data\stata\qlfs-2020-q2-worker-v2.dta
-							Z:\_GLD-Harmonization\573465_JT\ZAF\ZAF_2020_LFS\ZAF_2020_LFS_v01_M\data\stata\qlfs-2020-q3-worker-v2.dta
-							Z:\_GLD-Harmonization\573465_JT\ZAF\ZAF_2020_LFS\ZAF_2020_LFS_v01_M\data\stata\qlfs-2020-q4-worker-v1.dta
-** RESPONSIBLE				Junying Tong
-** Created					6/3/2021
-** Modified					6/28/2021
-** NUMBER OF HOUSEHOLDS		33,913
-** NUMBER OF INDIVIDUALS	117,759
-** EXPANDED POPULATION		57,830,298
+** COUNTRY	INDIA
+** COUNTRY ISO CODE	IND
+** YEAR	2011
+** SURVEY NAME	NATIONAL SAMPLE SURVEY 68TH ROUND SCHEDULE 10
+** SURVEY AGENCY	GOVERNMENT OF INDIA NATIONAL SAMPLE SURVEY ORGANISATION
+** SURVEY SOURCE	
+** UNIT OF ANALYSIS	Individuals
+** INPUT DATABASES	C:\_I2D2\Dan\Beckup Data\SA\India\2009\Original\Data\India_NSS_2009_10_DataOrig.dta 
+** RESPONSIBLE	Triana Yentzen
+** Created	7/31/2013
+** Modified	41880
+** NUMBER OF HOUSEHOLDS	101724
+** NUMBER OF INDIVIDUALS	456999
+** EXPANDED POPULATION	1088300000
 **                                                                                                  **
 ******************************************************************************************************
 *****************************************************************************************************/
@@ -32,33 +29,20 @@
 
 
 ** INITIAL COMMANDS
-	cap log close 
+	cap log close
 	clear
 	set more off
-	set mem 800m
+	set mem 700m
 
 
 ** DIRECTORY
-	local 	drive 	`"Z"'		
-	local 	cty 	`"ZAF"' 	
-	local 	usr		`"573465_JT"' 
-	local 	surv_yr `"2020"'	
-	local 	year 	"`drive':\GLD-Harmonization\\`usr'\\`cty'\\`cty'_`surv_yr'_LFS" 
-	local 	main	"`year'\\`cty'_`surv_yr'_LFS_v01_M"
-	local 	stata	"`main'\data\stata"
-	local 	gld 	"`year'\\`cty'_`surv_yr'_LFS_v01_M_v01_A_GLD"
-	local 	i2d2	"`year'\\`cty'_`surv_yr'_LFS_v01_M_v01_A_I2D2"
-	local 	code 	"`i2d2'\Programs"
-	local 	id_data "`i2d2'\Data\Harmonized"
-	
-	local input "`stata'"
-	local output "`id_data'"
+	local path "Y:\__I2D2\India\2011\NSS_SCH10"
 
 
 ** LOG FILE
-	log using "`id_data'\ZAF_2020__QLFS_V01_M_v01_A_I2D2", replace
+	log using "`path'\Processed\IND_2011_I2D2_NSS_SCH10.log",replace
 
-	
+
 /*****************************************************************************************************
 *                                                                                                    *
                                    * ASSEMBLE DATABASE
@@ -68,101 +52,107 @@
 
 ** DATABASE ASSEMBLENT
 
-	use "`input'\qlfs-2020-q2-worker-v2.dta", clear
-	tostring UQNO, replace format(%018.0f)
-	append using "`input'\qlfs-2020-q1-worker-v1.dta", gen (Qtr) force
-	recode Qtr 0=2 
-	append using "`input'\qlfs-2020-q3-worker-v2.dta"
-	recode Qtr .=3
-	append using "`input'\qlfs-2020-q4-worker-v1.dta"
-	recode Qtr .=4
-	replace Weight=Weight/4
-/*
-668 observations or 169 households in Quarter 2 are not uniquely defined by 
-household number and person number, even though some of them seem to be 
-different respondents. These observations account for 0.32% of total sample size. 
-663 were dropped. 
 
-Two intermediate work files created:
-1)ZAF_2020_QLFS_v01_M_v01_A_I2D2_DUP.dta: 
-  shows basic individual information like gender, age, and population group for 
-  duplicated observations
+	use "`path'\Original\IND_2011_NSS68-SCH10_v01_M_Stata8_Copy\IND_2011_NSS68-SCH10_v01_M_Stata8\NSS68_Sch10_bk_4.dta"
 
-2)ZAF_2020__QLFS_v01_M_v01_A_I2D2_DUP.xls:
-  a full list of all variables of 668 duplicated observations
-*/	
-	duplicates drop   
-	bysort UQNO PERSONNO Qtr: gen dup=cond(_N==1, 0, _n)
-	*preserve
-	*keep UQNO PERSONNO Q13GENDER Q15POPULATION Q14AGE Qtr dup
-	*keep if dup>0
-	*save "`i2d2'\work\ZAF_2020_QLFS_v01_M_v01_A_I2D2_DUP.dta", replace
-	*restore 
-	*preserve
-	*keep if dup>0
-	*export excel using "`i2d2'\Work\ZAF_2020__QLFS_v01_M_v01_A_I2D2_DUP.xls", sheetreplace firstrow(variables)
-	*restore
-	drop if dup>0
-	drop dup
-	
+	sort ID B4_v01
+	merge ID B4_v01 using "`path'\Original\IND_2011_NSS68-SCH10_v01_M_Stata8_Copy\IND_2011_NSS68-SCH10_v01_M_Stata8\NSS68_Sch10_bk_5-1.dta"
+	drop _merge
+
+	sort ID B4_v01
+	merge ID B4_v01 using "`path'\Original\IND_2011_NSS68-SCH10_v01_M_Stata8_Copy\IND_2011_NSS68-SCH10_v01_M_Stata8\NSS68_Sch10_bk_5-2.dta"
+	drop _merge
+
+	sort ID B4_v01
+	merge ID B4_v01 using "`path'\Original\IND_2011_NSS68-SCH10_v01_M_Stata8_Copy\IND_2011_NSS68-SCH10_v01_M_Stata8\NSS68_Sch10_bk_5-3.dta"
+	drop _merge
+	sort ID B4_v01
+
+	merge ID B4_v01 using "`path'\Original\IND_2011_NSS68-SCH10_v01_M_Stata8_Copy\IND_2011_NSS68-SCH10_v01_M_Stata8\NSS68_Sch10_bk_6.dta"
+	drop _merge
+	sort ID B4_v01
+
+	merge ID B4_v01 using "`path'\Original\IND_2011_NSS68-SCH10_v01_M_Stata8_Copy\IND_2011_NSS68-SCH10_v01_M_Stata8\NSS68_Sch10_bk_7.dta"
+	drop _merge
+	sort ID B4_v01
+
+	merge ID using "`path'\Original\IND_2011_NSS68-SCH10_v01_M_Stata8_Copy\IND_2011_NSS68-SCH10_v01_M_Stata8\NSS68_Sch10_bk_1_2.dta"
+	drop _merge
+	sort ID B4_v01
+
+	merge ID using "`path'\Original\IND_2011_NSS68-SCH10_v01_M_Stata8_Copy\IND_2011_NSS68-SCH10_v01_M_Stata8\NSS68_Sch10_bk_3.dta"
+	drop _merge
+	sort ID B4_v01
+
+	drop if B53_v03>1 & B53_v03!=.
+	* drop if B4_v01==.
+
+	* duplicates drop ID B4_v01,force
+
+	merge ID using "`path'\Other\cons68.dta"
+
+	sort ID
+	format ID %9.0f
+
+	tostring B2_v02a, gen(date)
+
 
 ** COUNTRY
-	gen str4 ccode="ZAF"
+	gen ccode="IND"
 	label var ccode "Country code"
 
 
-** YEAR
-	gen int year=2020
-	label var year "Year of survey"
-
-
-** YEAR OF INTERVIEW
-	gen int intv_year=.
-	label var intv_year "Year of the interview"
-
-
-** MONTH OF INTERVIEW
-	gen byte month=.
+** MONTH
+	gen  month=substr(date,-4,2)
+	destring month, replace
 	la de lblmonth 1 "January" 2 "February" 3 "March" 4 "April" 5 "May" 6 "June" 7 "July" 8 "August" 9 "September" 10 "October" 11 "November" 12 "December"
 	label value month lblmonth
 	label var month "Month of the interview"
 
 
+** YEAR
+	gen year=2011
+	label var year "Year of survey"
+
+
+** YEAR OF INTERVIEW
+	gen intv_year=substr(date,-2,2)
+	destring intv_year, replace
+	recode intv_year 11=2011 12=2012
+	label var intv_year "Year of the interview"
+
+	tostring ID, gen(idh)
+
+
 ** HOUSEHOLD IDENTIFICATION NUMBER
-	gen idh=UQNO
 	label var idh "Household id"
+	drop if B4_v01==.
 
-	tostring PERSONNO, gen(idp) format(%02.0f)
-	tostring Qtr, gen(wave) format(%02.0f)
-	replace wave="Q"+substr(wave, 2, 1)
 
-	
 ** INDIVIDUAL IDENTIFICATION NUMBER
-	replace idp=idh+idp
+	egen str idp =concat(idh B4_v01)
 	label var idp "Individual id"
 
 
+	isid idp
+
+
 ** HOUSEHOLD WEIGHTS
-	gen double wgt=Weight
+	gen wgt=hhwt
+
 	label var wgt "Household sampling weight"
 
 
 ** STRATA
-	gen strata=STRATUM
+	gen strata=B1_v08
 	label var strata "Strata"
 
 
 ** PSU
-
-/*
-Total psu: 3,242
-Q1:3,239
-Q2:2,862
-Q3:2,857
-Q4:3,057
-*/
-	gen psu=substr(UQNO, 1, 8)
+	gen psu=B1_v01 
+	destring psu , replace
 	label var psu "Primary sampling units"
+
 
 /*****************************************************************************************************
 *                                                                                                    *
@@ -172,185 +162,138 @@ Q4:3,057
 
 
 ** LOCATION (URBAN/RURAL)
+	gen urb=B1_v05
+	recode urb (2=1) (1=2)
 
-/* Traditional areas are defined as rural areas according to and 
-urbanization stats from:
- https://data.worldbank.org/indicator/SP.URB.TOTL.IN.ZS?locations=ZA,
-*/
-	gen byte urb=Geo_type_code
-	recode urb 1=1 3=2
 	label var urb "Urban/Rural"
 	la de lblurb 1 "Urban" 2 "Rural"
 	label values urb lblurb
 
 
 **REGIONAL AREAS
-	gen byte reg01=Province
+	gen reg01=.
 	label var reg01 "Macro regional areas"
-	label values reg01 Province
 
-
-** REGIONAL AREA 1 DIGIT ADMN LEVEL
-	gen byte reg02=Province
-	label var reg02 "Region at 1 digit (ADMN1)"
-	label values reg02 Province
+	gen REG=state
+	label define REG  28 "Andhra Pradesh"  18 "Assam"  10 "Bihar" 24 "Gujarat" 06 "Haryana"  02 "HimachalPradesh" ///
+	01 "Jammu & Kashmir" 29"Karnataka" 32 "Kerala" 23 "Madhya Pradesh" 27  "Maharashtra" ///  
+	14 "Manipur"   17 "Meghalaya"  13 "Nagaland"  21 "Orissa"  03 "Punjab" 08 "Rajasthan" 11 "Sikkim" ///
+	33 "Tamil Nadu"  16 "Tripura"  09 "Uttar Pradesh"  19 "West Bengal" 35 "A & N Islands" ///
+	12 "Arunachal Pradesh"  4 "Chandigarh" 26 "Dadra & Nagar Haveli" 7 "Delhi"  30 "Goa" ///
+	31"Lakshdweep" 15 "Mizoram"  34 "Pondicherry"  25 "Daman & Diu" 22"Chhattisgarh" 20"Jharkhand" 5"Uttaranchal"
+	gen reg02=REG
+	label values reg02 REG
+	label var reg02 "Region at 1 digit(ADMN1)"
 
 
 ** REGIONAL AREA 2 DIGITS ADM LEVEL (ADMN2)
-	gen reg03=Metro_code
+	gen reg03=.
 	label var reg03 "Region at 2 digits (ADMN2)"
-	label values reg03 Metro_code
 
 
-** REGIONAL AREA 3 DIGITS ADM LEVEL (ADMN2) (???)
+** REGIONAL AREA 3 DIGITS ADM LEVEL (ADMN2)
 	gen reg04=.
 	label var reg04 "Region at 3 digits (ADMN3)"
 
 
 ** HOUSE OWNERSHIP
-	gen byte ownhouse=.
+	gen ownhouse=.
 	label var ownhouse "House ownership"
 	la de lblownhouse 0 "No" 1 "Yes"
 	label values ownhouse lblownhouse
 
 
 ** WATER PUBLIC CONNECTION
-	gen byte water=.
+	gen water=. /* B7_v18 bringing water from outside premises */
 	label var water "Water main source"
 	la de lblwater 0 "No" 1 "Yes"
 	label values water lblwater
 
 
 ** ELECTRICITY PUBLIC CONNECTION
-	gen byte electricity=.
+	gen electricity=.
 	label var electricity "Electricity main source"
 	la de lblelectricity 0 "No" 1 "Yes"
 	label values electricity lblelectricity
 
 
 ** TOILET PUBLIC CONNECTION
-	gen byte toilet=.
+	gen toilet=.
 	label var toilet "Toilet facility"
 	la de lbltoilet 0 "No" 1 "Yes"
 	label values toilet lbltoilet
 
 
 ** LAND PHONE
-	gen byte landphone=.
+	gen landphone=.
 	label var landphone "Phone availability"
 	la de lbllandphone 0 "No" 1 "Yes"
 	label values landphone lbllandphone
 
 
 ** CEL PHONE
-	gen byte cellphone=.
+	gen cellphone=.
 	label var cellphone "Cell phone"
 	la de lblcellphone 0 "No" 1 "Yes"
 	label values cellphone lblcellphone
 
 
 ** COMPUTER
-	gen byte computer=.
+	gen computer=.
 	label var computer "Computer availability"
 	la de lblcomputer 0 "No" 1 "Yes"
 	label values computer lblcomputer
 
 
 ** INTERNET
-	gen byte internet=.
+	gen internet=.
 	label var internet "Internet connection"
 	la de lblinternet 0 "No" 1 "Yes"
 	label values internet lblinternet
 
+	ren hhsize HHSIZE
 
-/*****************************************************************************************************
-*                                                                                                    *
-                                   DEMOGRAPHIC MODULE
-*                                                                                                    *
-*****************************************************************************************************/
-
-
-** HOUSEHOLD SIZE
-	bys idh: egen byte hhsize=count(idp)
+**HOUSEHOLD SIZE
+	bys idh: egen hhsize=count(B4_v01) if B4_v03>=1 & B4_v03<=8
 	label var hhsize "Household size"
-	
-	
+
+
 ** RELATIONSHIP TO THE HEAD OF HOUSEHOLD
-
-/*
-1.77% of 33,91 HHs start with PERSONNO #2.
-Not asked, all we know is that the person with personal number equal to 1 is the head, the problem is that in some cases that person is not present, probably because he/she didn't spend four nights or more in this household. In those cases I assigned the eldest adult male (or female absent male) present as the household head.
-144 observations (78 HHs) were dropped due to no male memeber or multiple same old male (or female) members.
-Age of majority is 18 in South Africa.  
-*/
-
-	gen byte head=1 if PERSONNO==1
-	bys idh: egen hh=sum(head==1)
-	bys idh: egen maxage=max(Q14)
-	replace maxage=. if maxage<18
-	replace head=1 if hh==0 & Q14==maxage
-	bys idh: egen hh2=sum(head==1)
-	drop hh
-	preserve
-	collapse (max) head, by(idp idh hh2)
-	bys idh: egen hh3=sum(head)
-	drop hh2
-	tempfile head_collapse
-	save `head_collapse'
-	restore
-	merge m:1 idh idp using `head_collapse' 
-	drop _merge
-	replace head=. if hh3==2 & Q13==2 & head==1
-	bys idh: egen hh4=sum(head==1)
-	preserve
-	collapse (max) head, by(idp idh hh4)
-	bys idh: egen hh5=sum(head)
-	save `head_collapse', replace
-	restore
-	merge m:1 idh idp using `head_collapse'
-	drop _merge
-	bys idh: egen male_present=max(Q13)
-	replace male_present=0 if male_present==2
-	replace head=1 if hh5==0 & maxage>=18 & maxage<. & male_present==0
-	preserve
-	collapse (max) head, by(idp idh hh5)
-	bys idh: egen hh6=sum(head)
-	save `head_collapse', replace
-	restore 
-	merge m:1 idh idp using `head_collapse'
-	drop if hh6!=1
-	bys idp: egen head_max=max(!missing(head))
-	bys idp: egen head_min=min(!missing(head))
-	replace head=1 if head_max==1&head_min==0
-	drop _merge hh2 hh3 hh4 hh5 hh6 head_* _merge
+	gen head=B4_v03 
+	recode head (3 5 = 3) (7=4) (4 6 8 = 5) (9=6)
 	label var head "Relationship to the head of household"
 	la de lblhead  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
-	label values head lblhead
+	label values head  lblhead
 
 
 ** GENDER
-	gen byte gender=Q13GENDER
+	gen gender=B4_v04
 	label var gender "Gender"
 	la de lblgender 1 "Male" 2 "Female"
 	label values gender lblgender
+	gen age=B4_v05
 
 
 ** AGE
-	gen byte age=Q14AGE
-	replace age=98 if age>98 & age!=.
 	label var age "Individual age"
+	replace age=98 if age>=98
 
 
 ** SOCIAL GROUP
-	gen byte soc=Q15POPULATION
+
+/*
+The variable caste exist too, named "B3_v06"
+*/
+	gen soc=B3_v05 
+* B3_v06
 	label var soc "Social group"
-	la de lblsoc 1 ""
-	label values soc Q15POPULATION
+	label define soc 1 "Hinduism" 2 "Islam" 3 "Christianity" 4 "Sikhism" 5 "Jainism" 6 "Buddhism" 7 "Zoroastrianism" 9 "Others"
+	label values soc soc
 
 
 ** MARITAL STATUS
-	gen byte marital=Q16MARITALSTATUS
-	recode marital 5=2 2=3 3=5
+	gen marital=B4_v06 
+	recode marital (1=2) (2=1) (3=5)
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
 	label values marital lblmarital
@@ -363,61 +306,51 @@ Age of majority is 18 in South Africa.
 *****************************************************************************************************/
 
 
-** EDUCATION MODULE AGE 
-	gen byte ed_mod_age=0
+** EDUCATION MODULE AGE
+	gen ed_mod_age=0
 	label var ed_mod_age "Education module application age"
 
 
 ** CURRENTLY AT SCHOOL
-	gen byte atschool=Q19ATTE
-	recode atschool 2=0
-	replace atschool=. if age<ed_mod_age & age!=.
+	gen atschool=.
+	replace atschool=1 if B4_v09>=24 & B4_v09<=32
+	replace atschool=0 if (B4_v09>=1 & B4_v09<24)  | (B4_v09>=33 & B4_v09<44)
 	label var atschool "Attending school"
 	la de lblatschool 0 "No" 1 "Yes"
 	label values atschool  lblatschool
 
 
 ** CAN READ AND WRITE
-	gen byte literacy=.
-	replace literacy=. if age<ed_mod_age & age!=.
+	gen literacy=.
 	label var literacy "Can read & write"
 	la de lblliteracy 0 "No" 1 "Yes"
 	label values literacy lblliteracy
 
-
-** YEARS OF EDUCATION COMPLETED 
-
-/*
-The National Technical Certificate level 1, 2, and 3 are mapped to grade 10, 11, and 12
-respectively. In South Africa, one option for students is to exit school with GETC
-or grade 9 and enter a technical education program at N1, proceeding to N2.
-*/ 
-
-	gen byte educy=Q17EDUCATION if inrange(Q17EDUCATION,0,12)
-	replace educy=Q17EDUCATION-3 if inrange(Q17EDUCATION,13,18)
-	replace educy=11 if inrange(Q17EDUCATION,19,20)
-	replace educy=12 if inrange(Q17EDUCATION,21,22)
-	replace educy=16 if inlist(Q17EDUCATION,23,25, 26)
-	replace educy=19 if inlist(Q17EDUCATION,24,27,28)
-	replace educy=. if inlist(Q17EDUCATION,29,30)
-	replace educy=0 if Q17EDUCATION==98
-	replace educy=. if age<ed_mod_age & age!=.
+** YEARS OF EDUCATION COMPLETED
+	gen educy=.
+	replace educy=0 if B4_v07==1
+	replace educy=1 if B4_v07==5
+	replace educy=5 if B4_v07==6
+	replace educy=8 if B4_v07==7
+	replace educy=10 if B4_v07==8
+	replace educy=12 if B4_v07==10
+	replace educy=13 if B4_v07>=2 & B4_v07<=4
+	replace educy=15 if B4_v07==11
+	replace educy=17 if B4_v07==12
+	replace educy=18 if B4_v07==13
 	label var educy "Years of education"
 
-
 ** EDUCATIONAL LEVEL 1
-	gen byte edulevel1=Education_Status
-	recode edulevel1 7=8
-	replace edulevel1=7 if inrange(Q17EDUCATION,21,28)
-	replace edulevel1=. if age<ed_mod_age & age!=.
+	gen edulevel1=B4_v07
+	recode edulevel1 (2 3 4=7) (5=2) (6=3) (7 8 =4) (10=5) (11 12 13=7)
 	label var edulevel1 "Level of education 1"
 	la de lbledulevel1 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete" 8 "Other" 9 "Unstated"
 	label values edulevel1 lbledulevel1
 
-
+	
 **EDUCATION LEVEL 2
 	gen byte edulevel2=edulevel1
-	recode edulevel2 4=3 5=4 6 7=5 8=.
+	recode edulevel2 4=3 5=4 6 7=5 8 9=.
 	replace edulevel2=. if age<ed_mod_age & age!=.
 	label var edulevel2 "Level of education 2"
 	la de lbledulevel2 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
@@ -426,32 +359,25 @@ or grade 9 and enter a technical education program at N1, proceeding to N2.
 
 ** EDUCATION LEVEL 3
 	gen byte edulevel3=edulevel1
-	recode edulevel3 3=2 4 5=3 6 7=4 8=.
-	replace edulevel3=. if age<ed_mod_age & age!=.
+	recode edulevel3 2 3=2 4 5=3 6 7=4 8 9=.
 	label var edulevel3 "Level of education 3"
 	la de lbledulevel3 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values edulevel3 lbledulevel3
 
 
 ** EVER ATTENDED SCHOOL
-
-/*
-For those who are currently attending educational institution or variable "atschool" equals 1,
-and have no education (no schooling) or "edulevel1" equals "edulevel2" equals "edulevel3" equals 1,
-they are probably in creche or day care. Note that "Educational institution" covers a wide range of places
-and ways of education. 
-*/ 
-
-	gen byte everattend=Education_Status
-	recode everattend 1=0 2/7=1
+	gen byte everattend=.
+	replace everattend=1 if edulevel3>=2 & edulevel3<=4
+	replace everattend=0 if edulevel3==1
 	replace everattend=1 if atschool==1
-	replace everattend=. if age<ed_mod_age & age!=.
 	label var everattend "Ever attended school"
 	la de lbleverattend 0 "No" 1 "Yes"
 	label values everattend lbleverattend
-	replace edulevel1=1 if everattend==0
-	replace edulevel2=1 if everattend==0
-	replace edulevel3=1 if everattend==0
+
+	replace educy=0 if everattend==0 
+	replace edulevel1=1 if everattend==0 
+	replace edulevel2=1 if everattend==0 
+	replace edulevel3=1 if everattend==0 
 
 
 /*****************************************************************************************************
@@ -462,33 +388,38 @@ and ways of education.
 
 
 ** LABOR MODULE AGE
-	gen byte lb_mod_age=15
+	gen lb_mod_age=5
 	label var lb_mod_age "Labor module application age"
 
 
 ** LABOR STATUS
-	gen byte lstatus=Status
-	recode lstatus 4=3
-	replace lstatus=. if age<lb_mod_age & age!=.
+	gen lstatus=.
+	replace lstatus=1 if B51_v03>=11 & B51_v03<=51
+	replace lstatus=2 if B51_v03==81
+	replace lstatus=3 if B51_v03>=91 & B51_v03<=97
 	label var lstatus "Labor status"
-	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-in-labor force"
+	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
+	replace lstatus=. if  age<lb_mod_age
 
 
 ** LABOR STATUS LAST YEAR
 	gen byte lstatus_year=.
 	replace lstatus_year=. if age<lb_mod_age & age!=.
 	label var lstatus_year "Labor status during last year"
-	la de lbllstatus_year 1 "Employed" 0 "Not employed"
+	la de lbllstatus_year 1 "Employed" 2 "Not employed" 
 	label values lstatus_year lbllstatus_year
 
 
 ** EMPLOYMENT STATUS
-	gen byte empstat=Q45WRK4WHOM
-	recode empstat 4=2 2=3 3=4
-	replace empstat=. if lstatus!=1
+	gen empstat=.
+	replace empstat=1  if B51_v03>=31 & B51_v03<=51
+	replace empstat=3 if B51_v03==12
+	replace empstat=4 if B51_v03==11
+	replace empstat=2 if B51_v03==21 
+	replace empstat=. if lstatus!=1 | age<lb_mod_age
 	label var empstat "Employment status"
-	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
+	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed"
 	label values empstat lblempstat
 
 
@@ -500,70 +431,74 @@ and ways of education.
 	label values empstat_year lblempstat_year
 
 
-** NUMBER OF TOTAL JOBS
-
-/*
-We do not know the number of total jobs a person has from the question 
-"In the last week did you have more than one job/business?". Hence observations 
-whose answers to this question are "Yes" were coded as missing values.
-*/
-
-	gen byte njobs=Q41MULTIPLEJOBS
-	recode njobs 2=1 3=.
-	recode njobs 1=.
-	replace njobs=. if lstatus!=1
-	label var njobs "Number of total jobs"
+** NUMBER OF ADDITIONAL JOBS
+	gen njobs=0 if lstatus==1
+	replace njobs=1 if B52_v03!=. & lstatus==1
+	label var njobs "Number of additional jobs"
 
 
-** NUMBER OF TOTAL JOBS LAST YEAR
+** NUMBER OF ADDITIONAL JOBS LAST YEAR
 	gen byte njobs_year=.
 	replace njobs_year=. if lstatus_year!=1
-	label var njobs_year "Number of total jobs during last year"
+	label var njobs_year "Number of additional jobs during last year"
 
 
 ** SECTOR OF ACTIVITY: PUBLIC - PRIVATE
-	gen byte ocusec=Q415TYPEBUSNS
-	recode ocusec 4=1 3 5=2 2=3 6=. 9=.
-	replace ocusec=. if lstatus!=1
+	gen ocusec=.
+	replace ocusec=1 if B51_v09==5 |  B51_v09==7
+	replace ocusec=2 if  B51_v09>=1 & B51_v09<=4
+	replace ocusec=2 if B51_v09==8
+	replace ocusec=3 if B51_v09==6
+	replace ocusec=. if  B51_v09==9 
 	label var ocusec "Sector of activity"
 	la de lblocusec 1 "Public Sector, Central Government, Army, NGO" 2 "Private" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec lblocusec
+	replace ocusec=. if lstatus!=1
 
 
 ** REASONS NOT IN THE LABOR FORCE
-	gen byte nlfreason=Q35YNOTWRK
-	recode nlfreason 4=3 8=4 3 5/7 9=5
-	replace nlfreason=. if lstatus!=3
+	gen nlfreason=.
+	replace nlfreason=1 if B51_v03==91
+	replace nlfreason=2 if B51_v03==92|B51_v03==93
+	replace nlfreason=3 if B51_v03==94
+	replace nlfreason=4 if B51_v03==95
+	replace nlfreason=5 if B51_v03==97 
+	replace nlfreason=. if lstatus~=3
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housewife" 3 "Retired" 4 "Disable" 5 "Other"
 	label values nlfreason lblnlfreason
 
 
 ** UNEMPLOYMENT DURATION: MONTHS LOOKING FOR A JOB
-	gen byte unempldur_l=Q36TIMESEEK
-	recode unempldur_l 1=0 2=3 3=6 4=9 5=12 6=36 7=61 8=.
+	gen byte unempldur_l=B51_v16
+	recode unempldur_l 1=0 2=1 4=7 5=10 6=.
 	replace unempldur_l=. if lstatus!=2
 	label var unempldur_l "Unemployment duration (months) lower bracket"
 
-	gen byte unempldur_u=Q36TIMESEEK
-	recode unempldur_u 1=2 2=5 3=8 4=11 5=35 6=60 7 8=.
+	gen byte unempldur_u=B51_v16
+	recode unempldur_u 2=3 3=7 4=10 5=12 6=.
 	replace unempldur_u=. if lstatus!=2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
 
 
+	tostring B51_v05,gen(x1)
+	gen x2="0"+x1 if B51_v05<10000
+	replace x2=x1 if B51_v05>=10000
+	gen x3=real(substr(x2,1,2))
+
+
 ** INDUSTRY CLASSIFICATION
-	gen byte industry=Indus
-	recode industry 9 11=10
-	replace industry=9 if inrange(Q43INDUSTRY,911,917)
-	replace industry=. if lstatus!=1
+	gen industry=x3
+	recode industry (1/9 = 1) (10/14= 2) (15/39=3) (40/44=4) (45=5) (46/59=6) (60/64=7) (65/74=8) (75/98=9) (99= 10)
+	replace industry = . if lstatus!=1
 	label var industry "1 digit industry classification"
-	la de lblindustry 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
+	la de lblindustry 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transports and comnunications" 8 "Financial and business-oriented services" 9 "Community and family oriented services" 10 "Others"
 	label values industry lblindustry
 
 
 ** INDUSTRY 1
 	gen byte industry1=industry
-	recode industry1 2/5=2 6/9=3 10=4
+	recode industry1 (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
 	replace industry1=. if lstatus!=1
 	label var industry1 "1 digit industry classification (Broad Economic Activities)"
 	la de lblindustry1 1 "Agriculture" 2 "Industry" 3 "Services" 4 "Other"
@@ -571,66 +506,72 @@ whose answers to this question are "Yes" were coded as missing values.
 
 
 **SURVEY SPECIFIC INDUSTRY CLASSIFICATION
-	gen industry_orig=Q43INDUSTRY
+	gen industry_orig=B51_v05
 	replace industry_orig=. if lstatus!=1
 	label var industry_orig "Original Industry Codes"
 
 
 ** OCCUPATION CLASSIFICATION
-	gen occup=Occup
-	recode occup 10=9 11=99
-	replace occup=. if lstatus!=1
+	destring B51_v06, ignore(x X) gen(occ_main)
+	gen occup= int(occ_main/100) 
+	recode occup(0 = 99)
+	replace occup = . if lstatus!=1
 	label var occup "1 digit occupational classification"
-	la de lbloccup 1 "Senior officials" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
-	label values occup lbloccup
+	label define occup 1 "Senior officials" 2 "Professionals" 3 "Technicians" 4 "Clerks" ///
+	5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" ///
+	8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
+	label values occup occup
 
 
 ** SURVEY SPECIFIC OCCUPATION CLASSIFICATION
-	gen occup_orig=Q42OCCUPATION
+	destring B51_v06, gen(occup_orig) force
 	replace occup_orig=. if lstatus!=1
 	label var occup_orig "Original Occupational Codes"
 
 
 ** FIRM SIZE
-	gen byte firmsize_l=Q416NRWORKERS
-	recode firmsize_l 1=0 2=1 3=2 4=5 5=10 6=20 7=50 8 99=.
-	replace firmsize_l=. if lstatus!=1
+	gen firmsize_l=.
+	replace firmsize_l=1 if B51_v11==1
+	replace firmsize_l=6 if B51_v11==2
+	replace firmsize_l=10 if B51_v11==3
+	replace firmsize_l=20 if B51_v11==4
+	replace firmsize_l=. if B51_v11==9
 	label var firmsize_l "Firm size (lower bracket)"
 
-	gen byte firmsize_u=Q416NRWORKERS
-	recode firmsize_u 1=0 2=1 3=4 4=9 5=19 6=49 7 8 99=.
-	replace firmsize_u=. if lstatus!=1
+	gen firmsize_u=.
+	replace firmsize_u=6 if B51_v11==1
+	replace firmsize_u=9 if B51_v11==2
+	replace firmsize_u=20 if B51_v11==3
+	replace firmsize_u=. if B51_v11==4 |B51_v11==9
 	label var firmsize_u "Firm size (upper bracket)"
 
 
-** HOURS WORKED LAST WEEK 
-/*
-Var "Hrswrk" in the raw dataset was derived from vars Q418HRSWRK and Q420FIRSTHRSWRK.
-*/
-	gen whours=Hrswrk
-	replace whours=. if lstatus!=1
-	label var whours "Hours of work in last week"
+** HOURS WORKED LAST WEEK
+	gen whours=.
 
 
 ** WAGES
-	gen double wage=.
-	replace wage=. if wage==.
-	replace wage=. if lstatus!=1 
-	*replace wage=0 if empstat==2
+	gen wage= B53_v15
+	replace wage=. if lstatus!=1
+	replace wage=0 if empstat==2
 	label var wage "Last wage payment"
 
 
 ** WAGES TIME UNIT
-	gen byte unitwage=.
-	replace unitwage=. if lstatus!=1
-	replace unitwage=. if empstat==2
+	gen unitwage=.
+	replace unitwage=1 if  B53_v18==1| B53_v18==16
+	replace unitwage=2 if  B53_v18==2| B53_v18==17
+	replace unitwage=3 if  B53_v18==3| B53_v18==18
+	replace unitwage=5 if  B53_v18==4| B53_v18==19
+	replace unitwage=. if lstatus!=1 |empstat!=1
 	label var unitwage "Last wages time unit"
-	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Every two months"  5 "Monthly" 6 "Quarterly" 7 "Every six months" 8 "Annually" 9 "Hourly" 10 "Other"
+	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 
 	label values unitwage lblunitwage
 
 
 ** EMPLOYMENT STATUS - SECOND JOB
-	gen byte empstat_2=.
+	gen byte empstat_2=B52_v03
+	recode empstat_2 11=4 12=3 21=2 31 41 51 61 62 71 72=1
 	replace empstat_2=. if njobs==0 | njobs==.
 	label var empstat_2 "Employment status - second job"
 	la de lblempstat_2 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
@@ -642,19 +583,26 @@ Var "Hrswrk" in the raw dataset was derived from vars Q418HRSWRK and Q420FIRSTHR
 	replace empstat_2_year=. if njobs_year==0 | njobs_year==.
 	label var empstat_2_year "Employment status - second job"
 	la de lblempstat_2_year 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
-	label values empstat_2_year lblempstat_2_year
+	label values empstat_2 lblempstat_2
 
 
 ** INDUSTRY CLASSIFICATION - SECOND JOB
-	gen byte industry_2=.
+	tostring B52_v05,gen(X1)
+	gen X2="0"+X1 if B52_v05<10000
+	replace X2=X1 if B52_v05>=10000
+	gen X3=real(substr(X2,1,2))
+
+	gen industry_2=X3
+	recode industry_2 (1/9 = 1) (10/14= 2) (15/39=3) (40/44=4) (45=5) (46/59=6) (60/64=7) (65/74=8) (75/98=9) (99= 10)
 	replace industry_2=. if njobs==0 | njobs==.
 	label var industry_2 "1 digit industry classification - second job"
 	la de lblindustry_2 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
-	label values industry_2 lblindustry_2
+	label values industry_2  lblindustry_2
 
 
 ** INDUSTRY 1 - SECOND JOB
-	gen byte industry1_2=.
+	gen byte industry1_2=industry_2
+	recode industry1_2 (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
 	replace industry1_2=. if njobs==0 | njobs==.
 	label var industry1_2 "1 digit industry classification (Broad Economic Activities) - Second job"
 	la de lblindustry1_2 1 "Agriculture" 2 "Industry" 3 "Services" 4 "Other"
@@ -662,13 +610,17 @@ Var "Hrswrk" in the raw dataset was derived from vars Q418HRSWRK and Q420FIRSTHR
 
 
 **SURVEY SPECIFIC INDUSTRY CLASSIFICATION - SECOND JOB
-	gen industry_orig_2=.
+	gen industry_orig_2=B52_v05
 	replace industry_orig_2=. if njobs==0 | njobs==.
 	label var industry_orig_2 "Original Industry Codes - Second job"
+	la de lblindustry_orig_2 1""
+	label values industry_orig_2 lblindustry_orig_2
 
 
 ** OCCUPATION CLASSIFICATION - SECOND JOB
-	gen byte occup_2=.
+	destring B52_v06, ignore(x X) gen(occ_main_2)
+	gen occup_2= int(occ_main_2/100) 
+	recode occup_2 (0 = 99)
 	replace occup_2=. if njobs==0 | njobs==.
 	label var occup_2 "1 digit occupational classification - second job"
 	la de lbloccup_2 1 "Senior officials" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
@@ -690,38 +642,33 @@ Var "Hrswrk" in the raw dataset was derived from vars Q418HRSWRK and Q420FIRSTHR
 
 
 ** CONTRACT
-	gen byte contract=Q411CONTRACTTYPE
-	recode contract 2=0
-	replace contract=. if lstatus!=1
+	gen contract=B51_v12
+	recode contract (1=0) (2 3 4=1)
 	label var contract "Contract"
 	la de lblcontract 0 "Without contract" 1 "With contract"
 	label values contract lblcontract
 
 
 ** HEALTH INSURANCE
-	gen byte healthins=Q49MEDICAL
-	recode healthins 2=0 3=.
-	replace healthins=. if lstatus!=1
+	gen healthins=.
 	label var healthins "Health insurance"
 	la de lblhealthins 0 "Without health insurance" 1 "With health insurance"
 	label values healthins lblhealthins
 
 
 ** SOCIAL SECURITY
-	gen byte socialsec=Q46PENSION
-	recode socialsec 2=0 3=.
-	replace socialsec=. if lstatus!=1
+	gen socialsec=.
 	label var socialsec "Social security"
 	la de lblsocialsec 1 "With" 0 "Without"
 	label values socialsec lblsocialsec
 
 
 ** UNION MEMBERSHIP
-	gen byte union= Q412BMEMUNION
-	recode union 2=0 3=.
+	gen union= B6_v15
+	recode union (2=0)
 	replace union=. if lstatus!=1
-	label var union "Union membership"
 	la de lblunion 0 "No member" 1 "Member"
+	label var union "Union membership"
 	label values union lblunion
 
 
@@ -740,7 +687,7 @@ Var "Hrswrk" in the raw dataset was derived from vars Q418HRSWRK and Q420FIRSTHR
 
 
 **REGION OF BIRTH
-	gen rbirth=.
+	gen  rbirth=.
 	label var rbirth "Region of Birth"
 
 
@@ -752,7 +699,7 @@ Var "Hrswrk" in the raw dataset was derived from vars Q418HRSWRK and Q420FIRSTHR
 
 
 **REGION OF PREVIOUS RESIDENCE
-	gen rprevious=.
+	gen  rprevious=.
 	label var rprevious "Region of Previous residence"
 
 
@@ -775,29 +722,35 @@ Var "Hrswrk" in the raw dataset was derived from vars Q418HRSWRK and Q420FIRSTHR
 *****************************************************************************************************/
 
 
+
 ** INCOME PER CAPITA
-	gen double pci=.
-	*bys idh: egen hh_income=sum(wage)
-	*replace pci=hh_income/hhsize	
+	gen pci=.
 	label var pci "Monthly income per capita"
 
-	
+
 ** DECILES OF PER CAPITA INCOME
 	gen pci_d=.
-	*xtile pci_d=pci [w=wgt], nq(10) 
-	label var pci_d "Income per capita deciles"
 
 
 ** CONSUMPTION PER CAPITA
-	gen double pcc=.
+	gen pcc=mpce_mrp_real
 	label var pcc "Monthly consumption per capita"
 
-	gen pcc_d=.
-	
+
 ** DECILES OF PER CAPITA CONSUMPTION
-	*xtile pcc_d=pcc [w=wgt], nq(10) 
+	xtile pcc_d=pcc [w=wgt], nq(10) 
 	label var pcc_d "Consumption per capita deciles"
 
+
+/*****************************************************************************************************
+*                                                                                                    *
+                                   FINAL FIXES
+*                                                                                                    *
+*****************************************************************************************************/
+
+	qui su wage
+	replace wage=0 if empstat==2 & r(N)!=0
+	replace ownhouse=. if head==6
 
 /*****************************************************************************************************
 *                                                                                                    *
@@ -807,21 +760,21 @@ Var "Hrswrk" in the raw dataset was derived from vars Q418HRSWRK and Q420FIRSTHR
 
 
 ** KEEP VARIABLES - ALL
-	keep ccode year intv_year month idh idp wave wgt strata psu urb reg01 reg02 reg03 reg04 ownhouse water electricity toilet landphone      ///
+	keep ccode year intv_year month idh idp wgt strata psu urb reg01 reg02 reg03 reg04 ownhouse water electricity toilet landphone      ///
 	     cellphone computer internet hhsize head gender age soc marital ed_mod_age everattend atschool  ///
 	     literacy educy edulevel1 edulevel2 edulevel3 lb_mod_age lstatus lstatus_year empstat empstat_year njobs njobs_year ocusec nlfreason                         ///
-	     unempldur_l unempldur_u industry industry1 industry_orig occup occup_orig firmsize_l firmsize_u whours wage unitwage contract      ///
-	empstat_2 empstat_2_year industry_2 industry1_2 industry_orig_2 occup_2 wage_2 unitwage_2 ///
-	     healthins socialsec union rbirth_juris rbirth rprevious_juris rprevious yrmove rprevious_time_ref pci pci_d pcc pcc_d
+	     unempldur_l unempldur_u industry industry1 industry_orig occup occup_orig firmsize_l firmsize_u whours wage unitwage       ///
+	empstat_2 empstat_2_year industry_2 industry1_2 industry_orig_2  occup_2 wage_2 unitwage_2 ///
+	     contract healthins socialsec union rbirth_juris rbirth rprevious_juris rprevious yrmove rprevious_time_ref pci pci_d pcc pcc_d
 
 
 ** ORDER VARIABLES
-	order ccode year intv_year month idh idp wave wgt strata psu urb reg01 reg02 reg03 reg04 ownhouse water electricity toilet landphone      ///
+	order ccode year intv_year month idh idp wgt strata psu urb reg01 reg02 reg03 reg04 ownhouse water electricity toilet landphone      ///
 	     cellphone computer internet hhsize head gender age soc marital ed_mod_age everattend atschool  ///
 	     literacy educy edulevel1 edulevel2 edulevel3 lb_mod_age lstatus lstatus_year empstat empstat_year njobs njobs_year ocusec nlfreason                         ///
-	     unempldur_l unempldur_u industry industry1 industry_orig occup occup_orig firmsize_l firmsize_u whours wage unitwage contract      ///
+	     unempldur_l unempldur_u industry industry1 industry_orig occup occup_orig firmsize_l firmsize_u whours wage unitwage       ///
 	empstat_2 empstat_2_year industry_2 industry1_2 industry_orig_2 occup_2 wage_2 unitwage_2 ///
-	     healthins socialsec union rbirth_juris rbirth rprevious_juris rprevious yrmove rprevious_time_ref pci pci_d pcc pcc_d
+	     contract healthins socialsec union rbirth_juris rbirth rprevious_juris rprevious yrmove rprevious_time_ref pci pci_d pcc pcc_d
 
 	compress
 
@@ -839,25 +792,12 @@ Var "Hrswrk" in the raw dataset was derived from vars Q418HRSWRK and Q420FIRSTHR
 	     local keep `keep' `var'
 	}
 	}
-	keep ccode year intv_year month idh idp wave wgt strata psu `keep'
+	keep ccode year month intv_year idh idp wgt strata psu `keep'
 
 
-	save "`output'\ZAF_2020_QLFS_v01_M_v01_A_I2D2.dta", replace
-
+	save "`path'\Processed\IND_2011_I2D2_NSS_SCH10.dta", replace
+	save "Y:\__CURRENT\IND_2011_I2D2_NSS_SCH10.dta",replace
 	log close
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
