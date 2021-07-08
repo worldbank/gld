@@ -216,6 +216,7 @@ if (`cb_pause' == 1) {
 		label var idp "Individual id"
 
 	** ID CHECKS
+		duplicates report idh idp
 		isid idh idp 										// household and individual id uniquely identify
 
 
