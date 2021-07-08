@@ -119,8 +119,8 @@ replace wgt = wgt / `n_round'
 
 
 		egen idh_yr 	= concat(round_str idh)			// idh now becomes the concatenation of round_str and idh
-		
-		rename 			idh 	idh_round				// change the "old" idh var 
+
+		rename 			idh 	idh_round				// change the "old" idh var
 		rename 			idh_yr 	idh 					// the new concatenated variable beomces idh
 
 	 ** Final ID Check
@@ -144,7 +144,7 @@ replace wgt = wgt / `n_round'
 ** ORDER KEEP VARIABLES
 	local 		order 														///
 				sample ccode year intv_year month idh idp wgt strata psu urb	///
-				reg01 reg02 reg03  reg02_orig reg03_orig  /// 
+				reg01 reg02 reg03  reg02_orig reg03_orig  ///
 				ownhouse water electricity toilet landphone ///
 				cellphone computer internet hhsize head gender age soc marital ///
 				ed_mod_age everattend atschool literacy educy edulevel1 edulevel2 ///
@@ -172,7 +172,7 @@ replace wgt = wgt / `n_round'
 	local missvars : 	list order - nomissvars
 
 
-	if (1) {
+	if (0) {
 		missings dropvars 	`missvars', force
 	}
 

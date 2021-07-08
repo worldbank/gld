@@ -958,7 +958,7 @@
 	local missvars : 	list order - nomissvars
 
 
-	if (1) {
+	if (0) {
 		missings dropvars 	`missvars', force
 	}
 
