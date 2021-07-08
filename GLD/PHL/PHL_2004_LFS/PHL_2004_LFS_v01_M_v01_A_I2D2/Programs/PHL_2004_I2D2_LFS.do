@@ -30,7 +30,7 @@
 
 
 ** INITIAL COMMANDS
-	cap log close 
+	cap log close
 	clear
 	set more off
 	set mem 800m
@@ -343,7 +343,7 @@ if (`cb_pause' == 1) {
 ** HOUSEHOLD WEIGHTS
 	/* The weight variable will be divided by the number of rounds per year to ensure the
 	   weighting factor does not over-mutliply*/
-	gen double wgt= fwgt
+	gen double wgt= fwgt/(`n_round')
 	label var wgt "Household sampling weight"
 
 
@@ -1131,8 +1131,8 @@ if (`cb_pause' == 1) {
 
 
 	save `"`id_data'\\`cty3'_`surv_yr'_I2D2_LFS.dta"', replace
-	
-	log close 
+
+	log close
 
 
 
