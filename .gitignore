@@ -101,7 +101,7 @@
 !node_modules
 
 # Allow .png for logos
-!/**/*.yaml
+!/**/*.png
 
 #######################
 # Include some additional file formats in any output folder. You might have
