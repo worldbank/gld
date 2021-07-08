@@ -360,9 +360,10 @@ if (`cb_pause' == 1) {
 
 
 ** LOCATION (URBAN/RURAL)
-	label var urb2k70 "Urban/Rural"
+	gen byte urb = urb2k70
+	label var urb "Urban/Rural"
 	la de lblurb 1 "Urban" 2 "Rural"
-	label values urb2k70 lblurb
+	label values urb lblurb
 
 
 **REGIONAL AREAS
