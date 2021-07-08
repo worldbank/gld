@@ -45,7 +45,7 @@ heading_anchors: true
 
 aux_links:
   "Global Labor Database":
-    - "//https://github.com/worldbank/gld"
+    - "//github.com/worldbank/gld"
 
 # Sort order for navigation links
 # nav_sort: case_insensitive # default, equivalent to nil
