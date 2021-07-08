@@ -179,7 +179,7 @@ if (`cb_pause' == 1) {
 		* add the round variable
 		tostring round	///							// make the numeric vars strings
 			, generate(idh_round) ///					// gen a variable with this prefix
-			force format(`"%02.0f"')				// ...and the specified number of digits in local
+			force format(`"%01.0f"')				// ...and the specified number of digits in local
 
 		loc idh_els 	`idh_els' idh_round				// add each variable to the local list
 
@@ -217,13 +217,6 @@ if (`cb_pause' == 1) {
 
 		}
 
-		* add the round variable
-		tostring round	///							// make the numeric vars strings
-			, generate(idh_round) ///					// gen a variable with this prefix
-			force format(`"%02.0f"')				// ...and the specified number of digits in local
-
-		loc idh_els 	`idh_els' idh_round				// add each variable to the local list
-
 
 
 		* concatenate to form idp: individual id
@@ -242,12 +235,12 @@ if (`cb_pause' == 1) {
 	restore													// restore to original 4-round dataset
 
 	preserve   												// preserve the original appended dataset
-	keep if 		round 4 								// keep round 4/october only
+	keep if 		round == 4 								// keep round 4/october only
 
 
 
 		* IDH construction for round 4
-		loc idhvars 	creg prov stratum psu shsn hcn 	// store idh vars in local
+		loc idhvars 	reg prov stratum psu shsn hcn 	// store idh vars in local
 
 		ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
 		loc numlist 	= r(varlist)						// store numeric vars in local
@@ -280,6 +273,14 @@ if (`cb_pause' == 1) {
 			loc idh_els 	`idh_els' idh_`var'				// add each variable to the local list
 
 		}
+		
+		* add the round variable
+		tostring round	///							// make the numeric vars strings
+			, generate(idh_round) ///					// gen a variable with this prefix
+			force format(`"%01.0f"')				// ...and the specified number of digits in local
+
+		loc idh_els 	`idh_els' idh_round				// add each variable to the local list
+
 
 
 		* concatenate all elements to form idh: hosehold id
@@ -297,7 +298,7 @@ if (`cb_pause' == 1) {
 		* 	note, assuming that the only necessary individaul identifier is family member, which is numeric
 		*	so, not following processing for sorting numeric/non-numeric variables.
 
-		loc idpvars 	cc101_lno								// store relevant idp vars in local
+		loc idpvars 	c101_lno								// store relevant idp vars in local
 		ds `idpvars',  	has(type numeric)					// filter out numeric variables in local
 		loc rlist 		= r(varlist)						// store numeric vars in local
 
@@ -329,7 +330,7 @@ if (`cb_pause' == 1) {
 	restore 												// restore to old dataset
 	clear
 
-	append using 		`partA', `partB'
+	append using 		`partA' `partB'
 
 
 
