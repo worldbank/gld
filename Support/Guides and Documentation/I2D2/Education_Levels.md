@@ -37,33 +37,59 @@ These survey years appear to be coded according to the 2008 Philippine Statistic
 | Tertiary/Baccalaureate   | 16-20       | 4               |
 | Tertiary/Post-Grad       | 21-22       | 2+              |
 
++------------------------------------------------------------+-----------------------------------+--------------------------------------------------------------------------------------------------------+
 | PSA Labels / Ranges of Labels                              | I2D2 Level                        | Notes                                                                                                  |
-|------------------------------------------------------------|-----------------------------------|--------------------------------------------------------------------------------------------------------|
++============================================================+===================================+========================================================================================================+
 | No Grade Completed                                         | No Education                      |                                                                                                        |
++------------------------------------------------------------+-----------------------------------+--------------------------------------------------------------------------------------------------------+
 | Preschool                                                  | No Education                      |                                                                                                        |
++------------------------------------------------------------+-----------------------------------+--------------------------------------------------------------------------------------------------------+
 | Grade 1 - Grade 7                                          | Primary Incomplete                | PSCED permits a 7th primary school year                                                                |
++------------------------------------------------------------+-----------------------------------+--------------------------------------------------------------------------------------------------------+
 | K-12 Grade 1 - Grade 5                                     | Primary Incomplete                |                                                                                                        |
++------------------------------------------------------------+-----------------------------------+--------------------------------------------------------------------------------------------------------+
 | Elementary Graduate                                        | Primary Complete                  |                                                                                                        |
++------------------------------------------------------------+-----------------------------------+--------------------------------------------------------------------------------------------------------+
 | K-12 Grade 6                                               | Primary Complete                  |                                                                                                        |
++------------------------------------------------------------+-----------------------------------+--------------------------------------------------------------------------------------------------------+
 | SPED Undergraduate                                         | Primary Complete                  |                                                                                                        |
++------------------------------------------------------------+-----------------------------------+--------------------------------------------------------------------------------------------------------+
 | First - Fourth Year High School                            | Secondary Incomplete              |                                                                                                        |
++------------------------------------------------------------+-----------------------------------+--------------------------------------------------------------------------------------------------------+
 | K-12 Grade 7 - Grade 9                                     | Secondary Incomplete              |                                                                                                        |
++------------------------------------------------------------+-----------------------------------+--------------------------------------------------------------------------------------------------------+
 | High School Graduate                                       | Secondary Complete                |                                                                                                        |
++------------------------------------------------------------+-----------------------------------+--------------------------------------------------------------------------------------------------------+
 | SPED Graduate                                              | Secondary Complete                |                                                                                                        |
++------------------------------------------------------------+-----------------------------------+--------------------------------------------------------------------------------------------------------+
 | K-12 Secondary Grade 10                                    | Secondary Complete                |                                                                                                        |
++------------------------------------------------------------+-----------------------------------+--------------------------------------------------------------------------------------------------------+
 | K-12 Secondary Grade 11-12                                 | Post-Secondary, not University    |                                                                                                        |
++------------------------------------------------------------+-----------------------------------+--------------------------------------------------------------------------------------------------------+
 | First - Third Year Post-Secondary                          | Post-Secondary, not University    |                                                                                                        |
++------------------------------------------------------------+-----------------------------------+--------------------------------------------------------------------------------------------------------+
 | Basic Programs                                             | Post-Secondary, not University    | These appear to refer to various classes of Associate degree programs                                  |
++------------------------------------------------------------+-----------------------------------+--------------------------------------------------------------------------------------------------------+
 | [x] Program                                                | Post-Secondary, not University    | PSCED lists Associate Programs in the inter-secondary-University range as they appear in the data here |
++------------------------------------------------------------+-----------------------------------+--------------------------------------------------------------------------------------------------------+
 | First - Second Year Post-Secondary                         | Post-Secondary, not University    | PSCED says usually are terminal, job-preparation programs                                              |
++------------------------------------------------------------+-----------------------------------+--------------------------------------------------------------------------------------------------------+
 | Post-Secondary Courses - [x] Course                        | Post-Secondary, not University    |                                                                                                        |
++------------------------------------------------------------+-----------------------------------+--------------------------------------------------------------------------------------------------------+
 | First - Sixth Year of College                              | University Incomplete or Complete |                                                                                                        |
++------------------------------------------------------------+-----------------------------------+--------------------------------------------------------------------------------------------------------+
 | College Undergraduate                                      | University Incomplete or Complete |                                                                                                        |
++------------------------------------------------------------+-----------------------------------+--------------------------------------------------------------------------------------------------------+
 | Post-Baccalaureate                                         | University Incomplete or Complete |                                                                                                        |
++------------------------------------------------------------+-----------------------------------+--------------------------------------------------------------------------------------------------------+
 | First - Sixth Year of College                              | University Incomplete or Complete |                                                                                                        |
++------------------------------------------------------------+-----------------------------------+--------------------------------------------------------------------------------------------------------+
 | Academic Degrees of First-Stage/Baccalaureate - [x] Degree | University Incomplete or Complete |                                                                                                        |
++------------------------------------------------------------+-----------------------------------+--------------------------------------------------------------------------------------------------------+
 | Masters, Doctorate                                         | University Incomplete or Complete |                                                                                                        |
++------------------------------------------------------------+-----------------------------------+--------------------------------------------------------------------------------------------------------+
 |                                                            |                                   |                                                                                                        |
++------------------------------------------------------------+-----------------------------------+--------------------------------------------------------------------------------------------------------+
 
 ### Values specific to the 2008 PSCED
 
@@ -75,17 +101,17 @@ Some years contain two education grade variables that appear to correspond to th
 
 Furthermore, some years, such as 2016, have various names for the "highest grade completed" variable for within-year rounds, but *usually* only one variable in each file, but not always. We have to be very mindful of the variable names that refer to the new, 2008 coding schema and the old coding schema. An easy way to distinguish is the new coding schema variable has far more numeric or factor levels. In 2016, we want to use `j12c09_grade` in the January round, (not `c09_grd`), `pufc07_grade` in April, July, and October rounds.
 
-#### Additional Notes for 2016
+#### Additional Notes for survey year 2016
 
 Once the variable names for 2016 have been harmonized, the values themselves differ across rounds/months within 2016. (A small caveat is that the January values are labelled factors whereas the following three rounds are unlabeled integers, but the January values have integer values behind the labels, and these numeric values are the values to which I'm referring.)
 
 The numeric values for January and April coincide; values for July and October coincide, but these two groups of values differ from each other. The January/April group most closely aligns with the 2016 survey published by the PSA. Since the July/October values have no value labels and there's no reasonable inference to classify the values, I'm only going to categorize education for the first two rounds and leave the observations for July and October as missing for the time being.
 
-#### Additional Notes for 2017
+#### Additional Notes for survey year 2017
 
 All rounds for 2017 seems to follow the same numeric schema set in the July/October grouping of 2016. However, the situation is slightly different from that of 2016: all rounds/months have the same numeric values and the values labels do not contain key levels such as those that indicate secondary completion. Furthermore, there is descriptive evidence to assume that the values in 2017 are the same "meaning" as the values in 2018, which are labelled and follow about the same distribution and value pattern. `Education_2017_Checks.Rmd` produces this evidence by comparing the distribution of values for education attainment in 2017 and 2018. For the time being, I will assume that, without complete value labels in 2017, that the similarly-distributed values in 2018 will suffice.
 
-#### Additional Notes for 2018
+#### Additional Notes for survey year 2018
 
 All relevant raw "grade" variables are in labelled factor form, so no cross-checking of numeric/factor data types is needed as in 2016.
 
@@ -110,30 +136,47 @@ The big unknown is K-12 Programs. The 2017 PSCED doesn't have any explicit infor
 | Masters                     |             |                 |
 | Doctorate                   |             |                 |
 
++--------------------------------------------------------------+-----------------------------------+-----------------------------------------+
 | PSA Labels / Ranges of Labels                                | I2D2 Level                        | Notes                                   |
-|--------------------------------------------------------------|-----------------------------------|-----------------------------------------|
++==============================================================+===================================+=========================================+
 | No Grade Completed                                           | No Education                      |                                         |
++--------------------------------------------------------------+-----------------------------------+-----------------------------------------+
 | Preschool                                                    | No Education                      |                                         |
++--------------------------------------------------------------+-----------------------------------+-----------------------------------------+
 | Kindergarten                                                 | No Education                      | PSCED says Primary begins at grade 1    |
++--------------------------------------------------------------+-----------------------------------+-----------------------------------------+
 | IPed / SPED (lower value)                                    | Primary Incomplete                | No info on completion                   |
++--------------------------------------------------------------+-----------------------------------+-----------------------------------------+
 | Grade 1 - Grade 7                                            | Primary Incomplete                | PSCED permits a 7th primary school year |
++--------------------------------------------------------------+-----------------------------------+-----------------------------------------+
 | Grade 6 or Grade 7 Graduate                                  | Primary Complete                  |                                         |
++--------------------------------------------------------------+-----------------------------------+-----------------------------------------+
 | IPed / SPED (higher value)                                   | Primary Incomplete                | No info on completion                   |
++--------------------------------------------------------------+-----------------------------------+-----------------------------------------+
 | Elementary Graduate                                          | Primary Complete                  |                                         |
++--------------------------------------------------------------+-----------------------------------+-----------------------------------------+
 | Grade 7 - 9 / First - Third Year High School                 | Secondary Incomplete              |                                         |
++--------------------------------------------------------------+-----------------------------------+-----------------------------------------+
 | Grade 10 / High School Graduate                              | Secondary Incomplete              |                                         |
++--------------------------------------------------------------+-----------------------------------+-----------------------------------------+
 | Grade 11, [x] Track                                          | Secondary Incomplete              |                                         |
++--------------------------------------------------------------+-----------------------------------+-----------------------------------------+
 | Grade 12, [x] Track                                          | Secondary Complete                | In new schema, Secondary is 6 years     |
++--------------------------------------------------------------+-----------------------------------+-----------------------------------------+
 | Basic Programs, Certificates, 40000- and 50000-level degrees | Post-Secondary, Non-University    |                                         |
++--------------------------------------------------------------+-----------------------------------+-----------------------------------------+
 | Undergraduate, Basic Programs or Equivalent                  | University Incomplete or Complete |                                         |
++--------------------------------------------------------------+-----------------------------------+-----------------------------------------+
 | Masters, 70000 level                                         | University Incomplete or Complete |                                         |
++--------------------------------------------------------------+-----------------------------------+-----------------------------------------+
 | Doctorate, 80000 level                                       | University Incomplete or Complete |                                         |
++--------------------------------------------------------------+-----------------------------------+-----------------------------------------+
 
 ### Notes specific to the 2017 PSCED Classification
 
 Similar to some of the years in the 2008 PSCED Classification above, some survey years have values within the same year, between different-month rounds that do not correspond. Also similarly, some of these "mismatched" values are labelled, and some are not.
 
-#### Additional Notes for 2019
+#### Additional Notes for survey year 2019
 
 The first two rounds of 2019, January and April, are factor labelled data types and the second two, July and October, are integer, without labels. The underlying value labels for all may, in theory, be the same. However, the underlying values for the first two rounds are slightly different than those of the second two. The PSCED 2017 codebooks is quite extensive and clear that the values and labels for the first two rounds are *almost* exactly correct, expect for a few exception in early school year groupings: it appears that the some education categories have been grouped and the resulting grouping has been formed into a numeric value that does not appear in the codebook.
 
