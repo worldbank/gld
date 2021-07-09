@@ -26,9 +26,9 @@ contained in the cells.
 
 | Value | LFS 2003: April | LFS 2003: July |
 |-------|-----------------|----------------|
-| 4     | Region IV       | \-             |
-| 41    | \-              | Region IV-A    |
-| 42    | \-              | Region IV-B    |
+| 4     | Region IV       | -             |
+| 41    | -              | Region IV-A    |
+| 42    | -              | Region IV-B    |
 
 ### Small changes in the values for Region IV-A and -B
 
@@ -54,17 +54,28 @@ have to be inferred based on clues such as previous quarter's codes and
 distributions of counts.
 
 
-| Value \| Jan (1) \| Apr (2) \| Jul (3) \| Oct (4) \|
-
-\|---------\|------------\|-----------\|-----------\|-----------\| \| 1
-\| x \| x \| x \| x \| \| 2 \| x \| x \| x \| x \| \| 3 \| x \| x \| x
-\| x \| \| 4 \| \| **x** \| **x** \| **x** \| \| 5 \| x \| x \| x \| x
-\| \| 6 \| x \| x \| x \| x \| \| 7 \| x \| x \| x \| x \| \| 8 \| x \|
-x \| x \| x \| \| 9 \| x \| x \| x \| x \| \| 10 \| x \| x \| x \| x \|
-\| 11 \| x \| x \| x \| x \| \| 12 \| x \| x \| x \| x \| \| 13 \| x \|
-x \| x \| x \| \| 14 \| x \| x \| x \| x \| \| 15 \| x \| x \| x \| x \|
-\| 16 \| x \| x \| x \| x \| \| 17 \| \| *x*\| *x*\| *x* \| \| 18 \| \|
-\| \| x \| \| 41 \| **x** \| \| \| \| \| 42 \| *x* \| \| \| \|
+| Value | Jan (1) | Apr (2) | Jul (3) | Oct (4) |
+|---------|------------|-----------|-----------|-----------|
+| 1 | x | x | x | x |
+| 2 | x | x | x | x |
+| 3 | x | x | x | x |
+| 4 | | **x** | **x** | **x** |
+| 5 | x | x | x | x |
+| 6 | x | x | x | x |
+| 7 | x | x | x | x |
+| 8 | x | x | x | x |
+| 9 | x | x | x | x |
+| 10 | x | x | x | x |
+| 11 | x | x | x | x |
+| 12 | x | x | x | x |
+| 13 | x | x | x | x |
+| 14 | x | x | x | x |
+| 15 | x | x | x | x |
+| 16 | x | x | x | x |
+| 17 | . | *x*| *x*| *x* |
+| 18 | .| .|. | x |
+| 41 | **x** |. |. | .|
+| 42 | *x* |.  | .| .|
 
 The following years have mixed numeric and factor data for their region
 variable equivalents across all survey rounds for that year; all others
