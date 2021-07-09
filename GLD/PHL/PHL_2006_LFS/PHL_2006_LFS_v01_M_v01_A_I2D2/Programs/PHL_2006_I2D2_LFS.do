@@ -384,7 +384,11 @@ if (`cb_pause' == 1) {
 
 
 ** REGIONAL AREA 2 DIGITS ADM LEVEL (ADMN2)
-	gen reg03= prov
+	/* There is no common province variable across all 4 rounds. Some rounds contain a 4 digits
+	 	province variable with ~115 distinct values and others contain  a numeric variable with 
+		~85 distinct values. No obvious way to harmonize, will leave as missing since the
+		primary unit of analysis is Region (ADM1)*/
+	gen reg03= .
 	label var reg03 "2nd Level Administrative Division"
 
 
@@ -672,12 +676,12 @@ if (`cb_pause' == 1) {
 
 
 ** LABOR STATUS
-	/*Changing by using empst1_nso to determine lstatus, not work
-	Note: creating own label, not using label from empst1_nso	*/
+	/*Changing by using newempst to determine lstatus, not work
+	Note: creating own label, not using label from newempst	*/
 	gen byte lstatus=.
-	replace lstatus=1 if empst1_nso==1
-	replace lstatus=2 if empst1_nso==2
-	replace lstatus=3 if empst1_nso==3
+	replace lstatus=1 if newempst==1
+	replace lstatus=2 if newempst==2
+	replace lstatus=3 if newempst==3
 	replace lstatus=. if age < lb_mod_age // restrict universe to only those of working age
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -695,10 +699,10 @@ if (`cb_pause' == 1) {
 
 ** EMPLOYMENT STATUS
 	gen byte empstat=.
-	replace empstat=1 if c17_pclass==0 | c17_pclass==1 | c17_pclass==2 | c17_pclass==5
-	replace empstat=2 if c17_pclass==6
-	replace empstat=3 if c17_pclass==4
-	replace empstat=4 if c17_pclass==3
+	replace empstat=1 if c24_pclass==0 | c24_pclass==1 | c24_pclass==2 | c24_pclass==5
+	replace empstat=2 if c24_pclass==6
+	replace empstat=3 if c24_pclass==4
+	replace empstat=4 if c24_pclass==3
 	replace empstat=. if lstatus!=1 	// includes universe restriction
 	label var empstat "Employment status"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed"
@@ -737,11 +741,11 @@ if (`cb_pause' == 1) {
 
 ** REASONS NOT IN THE LABOR FORCE
 	gen byte nlfreason=.
-	replace nlfreason=1 if c40_wynot==8
-	replace nlfreason=2 if c40_wynot==7
-	replace nlfreason=3 if c40_wynot==6 // & age>10 // why was only this restricted and not all (esp cuz of replace)
-	replace nlfreason=4 if c40_wynot==3
-	replace nlfreason=5 if c40_wynot==1 | c40_wynot==2 | c40_wynot==4 | c40_wynot==5 | c40_wynot==9
+	replace nlfreason=1 if c35_wynot==8
+	replace nlfreason=2 if c35_wynot==7
+	replace nlfreason=3 if c35_wynot==6
+	replace nlfreason=4 if c35_wynot==3
+	replace nlfreason=5 if c35_wynot==1 | c35_wynot==2 | c35_wynot==4 | c35_wynot==5 | c35_wynot==9
 	replace nlfreason=. if lstatus!=3 	// restricts universe to non-labor force
 	replace nlfreason=. if age < lb_mod_age // restrict universe to working age
 	label var nlfreason "Reason not in the labor force"
@@ -750,12 +754,12 @@ if (`cb_pause' == 1) {
 
 
 ** UNEMPLOYMENT DURATION: MONTHS LOOKING FOR A JOB
-	gen byte unempldur_l= c38_weeks/4.2
+	gen byte unempldur_l= c34_weeks/4.2
 	label var unempldur_l "Unemployment duration (months) lower bracket"
 	replace unempldur_l=. if age < lb_mod_age // restrict universe to working age
 	replace unempldur_l=. if lstatus!=2 	  // restrict universe to unemployed only
 
-	gen byte unempldur_u= c38_weeks/4.2
+	gen byte unempldur_u= c34_weeks/4.2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
 	replace unempldur_l=. if age < lb_mod_age // restrict universe to working age
 	replace unempldur_l=. if lstatus!=2 	  // restrict universe to unemployed only
@@ -802,20 +806,20 @@ if (`cb_pause' == 1) {
 	replace industry1=. if lstatus!=1 		// restrict universe to employed only
 
 **SURVEY SPECIFIC INDUSTRY CLASSIFICATION
-	gen industry_orig=c16a_pkb
+	gen industry_orig=c17f2_pkb
 	replace industry_orig=. if lstatus!=1 		// restrict universe to employed only
 	replace industry_orig=. if age < lb_mod_age // restrict universe to working age
 	label var industry_orig "Original Industry Codes"
 
 
 ** OCCUPATION CLASSIFICATION
-	* in 2006, raw variable is numeric
+	* in 2004, raw variable is numeric
 
 	* generate occupation variable
-	gen byte occup=floor(c14a_procc/10)		// this handles most of recoding automatically.
-	recode occup 0 = 10	if 	c14a_procc==1 	// recode "armed forces" to appropriate label
-	recode occup 0 = 99	if 	(c14a_procc>=2 & c14a_procc <=9) ///
-							| (c14a_procc >=94 & c14a_procc <= 99) // recode "Not classifiable occupations"
+	gen byte occup=floor(c16_proc/10)		// this handles most of recoding automatically.
+	recode occup 0 = 10	if 	c16_proc==1 	// recode "armed forces" to appropriate label
+	recode occup 0 = 99	if 	(c16_proc>=2 & c16_proc <=9) ///
+							| (c16_proc >=94 & c16_proc <= 99) // recode "Not classifiable occupations"
 
 	/* Note that the raw variable, procc lists values, 94-99 for which there are no associated occupation
 	   codes. Given that the raw data indicate that these individauls do have valid, non-missing occupations,
@@ -911,17 +915,16 @@ if (`cb_pause' == 1) {
 
 
 **SURVEY SPECIFIC INDUSTRY CLASSIFICATION - SECOND JOB
-	gen industry_orig_2=c30a_okb
+	* no second job industry classifcation data
+	gen industry_orig_2=.
 	replace industry_orig_2=. if lstatus!=1 				// restrict universe to employed only
 	replace industry_orig_2=. if age < lb_mod_age			// restrict universe to working age
 	label var industry_orig_2 "Original Industry Codes - Second job"
 
 
 ** OCCUPATION CLASSIFICATION - SECOND JOB
-	gen byte occup_2=floor(c28a_otocc/10)		// this handles most of recoding automatically.
-	recode occup_2 0 = 10	if 	c28a_otocc==1 	// recode "armed forces" to appropriate label
-	recode occup_2 0 = 99	if 	(c28a_otocc>=2 & c28a_otocc <=9) ///
-							| (c28a_otocc >=94 & c28a_otocc <= 99) // recode "Not classifiable occupations"
+	* no second job occupation data
+	gen occup_2 = .
 
 	replace occup_2=. if lstatus!=1 		// restrict universe to employed only
 	replace occup_2=. if age < lb_mod_age	// restrict universe to working age
@@ -934,7 +937,8 @@ if (`cb_pause' == 1) {
 
 
 ** WAGES - SECOND JOB
-	gen double wage_2=c34_obasic
+	* second job wages are available for some rounds
+	gen double wage_2=cc36_obasic
 	replace wage_2=. if lstatus!=1 			// restrict universe to employed only
 	replace wage_2=. if age < lb_mod_age		// restrict universe to working age
 	replace wage_2=. if empstat==1			// restrict universe to wage earners
@@ -953,8 +957,8 @@ if (`cb_pause' == 1) {
 
 ** CONTRACT
 	gen byte contract=.
-	replace contract=0 if c08_conwr==2 | c08_conwr==8
-	replace contract=1 if c08_conwr==1
+	replace contract=0 if c11_conwr==2 | c11_conwr==8
+	replace contract=1 if c11_conwr==1
 	label var contract "Contract"
 	la de lblcontract 0 "Without contract" 1 "With contract"
 	label values contract lblcontract
@@ -1066,21 +1070,10 @@ if (`cb_pause' == 1) {
 *****************************************************************************************************/
 
 
-** KEEP VARIABLES - ALL
-	keep sample ccode year intv_year month idh idp wgt strata psu urb ///
-				reg01 reg02 reg03 reg04 ownhouse water electricity toilet landphone      ///
-				cellphone computer internet hhsize head gender age soc marital ed_mod_age ///
-				everattend atschool literacy educy edulevel1 edulevel2 edulevel3 lb_mod_age ///
-				lstatus lstatus_year empstat empstat_year njobs njobs_year ocusec nlfreason ///
-				unempldur_l unempldur_u industry industry1 industry_orig occup occup_orig ///
-				firmsize_l firmsize_u whours wage unitwage contract  empstat_2 ///
-				empstat_2_year industry_2 industry1_2 industry_orig_2 occup_2 wage_2 unitwage_2 ///
-				healthins socialsec union rbirth_juris rbirth rprevious_juris rprevious ///
-				yrmove rprevious_time_ref pci pci_d pcc pcc_d reg02_orig reg03_orig
 
-
-** ORDER VARIABLES
-	order sample ccode year intv_year month idh idp wgt strata psu urb	///
+** ORDER KEEP VARIABLES
+	local 		order 														///
+				sample ccode year intv_year month idh idp wgt strata psu urb	///
 				reg01 reg02 reg03 reg04 reg02_orig reg03_orig  ///
 				ownhouse water electricity toilet landphone ///
 				cellphone computer internet hhsize head gender age soc marital ///
@@ -1091,31 +1084,30 @@ if (`cb_pause' == 1) {
 				whours wage unitwage contract empstat_2 empstat_2_year ///
 				industry_2 industry1_2 industry_orig_2 occup_2 wage_2 unitwage_2 ///
 				healthins socialsec union rbirth_juris rbirth rprevious_juris ///
-				rprevious yrmove rprevious_time_ref pci pci_d pcc pcc_d
+				rprevious yrmove rprevious_time_ref pci pci_d pcc pcc_d round
 
 	compress
 
 
 ** DELETE MISSING VARIABLES
-	local keep ""
-	qui levelsof ccode, local(cty)
-	foreach var of varlist urb - pcc_d {
-	qui sum `var'
-	scalar sclrc = r(mean)
-	if sclrc==. {
-	     display as txt "Variable " as result "`var'" as txt " for ccode " as result `cty' as txt " contains all missing values -" as error " Variable Deleted"
-	}
-	else {
-	     local keep `keep' `var'
-	}
-	}
-	keep sample ccode year intv_year month  idh idp wgt strata psu `keep'
+	* if variables are missing on all values, drop them, unless they are listed as "key" variable
+
+	* declare list of key variables that should never have missing observations
+	loc	nomissvars sample ccode year intv_year month idh idp wgt strata psu hhsize ed_mod_age lb_mod_age round
 
 
+	local missvars : 	list order - nomissvars
 
-** MISSING VALUES
-	*Declare varlist which cannot contain missings
-	loc	nomissvars sample ccode year intv_year month idh idp wgt strata psu hhsize ed_mod_age lb_mod_age
+
+	if (`drop' == 1) {
+		missings dropvars 	`missvars', force
+	}
+
+
+** OBSERVATION MISSING VALUES
+	/*we know that some variables should not have missing values. Keep track of how many obs are missing
+	for these variables only*/
+
 
 	foreach var of local nomissvars {
 		qui mdesc `var'
