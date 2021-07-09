@@ -163,47 +163,16 @@ if (`cb_pause' == 1) {
 
 
 	** continue with id generation
-	loc idhvars 	hhnum 	// store idh vars in local
 
-
-	ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
-	loc numlist 	= r(varlist)						// store numeric vars in local
-	loc stringlist 	: list idhvars - numlist			// non-numeric vars in stringlist
-
-	* starting locals
-	loc len = 23											// declare the length of each element in digits
-	loc idh_els ""										// start with empty local list
-
-	* make each numeric var string, including leading zeros
-	foreach var of local numlist {
-		tostring `var'	///								// make the numeric vars strings
-			, generate(idh_`var') ///					// gen a variable with this prefix
-			force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
-
-		loc idh_els 	`idh_els' idh_`var'				// add each variable to the local list
-
-	}
-
-	* make each string variable numeric (as it should be), then string again with correct format
-	foreach var of local stringlist {
-		destring `var' /// 								// destring variable, make numeric version
-			, gen(num_`var') ///						//
-			force 										// force obs to num that are non numeric, ie to missing
-
-		tostring num_`var'	///							// make the numeric vars strings
-			, generate(idh_`var') ///					// gen a variable with this prefix
-			force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
-
-		loc idh_els 	`idh_els' idh_`var'				// add each variable to the local list
-
-	}
-
+	* unlike most other rounds, we know that the HHID variable is string, so no need
+	* to go through and check
+	
 	* add the round variable
 	tostring round	///							// make the numeric vars strings
 		, generate(idh_round) ///					// gen a variable with this prefix
 		force format(`"%01.0f"')				// ...and the specified number of digits in local
 
-	loc idh_els 	`idh_els' idh_round				// add each variable to the local list
+	loc idh_els 	hhnum idh_round				// add each variable to the local list
 
 
 
