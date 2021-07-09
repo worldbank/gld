@@ -1,9 +1,3 @@
----
-editor_options: 
-  markdown: 
-    wrap: 72
----
-
 # Geographic Administrative Levels: Philippines I2D2
 
 This document describes how first and second level adminsitrative
@@ -59,7 +53,7 @@ separate regions in 2003 (see above). However, the numeric values will
 have to be inferred based on clues such as previous quarter's codes and
 distributions of counts.
 
-|          \| *numeric* \| *labelled*\| *numeric* \| *numeric*\|
+
 | Value \| Jan (1) \| Apr (2) \| Jul (3) \| Oct (4) \|
 
 \|---------\|------------\|-----------\|-----------\|-----------\| \| 1
