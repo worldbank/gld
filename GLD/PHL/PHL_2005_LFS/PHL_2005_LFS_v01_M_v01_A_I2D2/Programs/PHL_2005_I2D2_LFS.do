@@ -139,29 +139,29 @@ if (`cb_pause' == 1) {
 
 
 ** HOUSEHOLD IDENTIFICATION NUMBER
-	** align hhnum 
+	** align hhnum
 	/*rounds 1-3 (january, april, july) have a numeric household id called hhnum whereas round 4 (october)
 	  has a string numeric variable encoded as str23. Since the ids will all be the same legth anyway, I will
-	  change rounds 1-3 to be a str23 to match round 4 so I can replace and "align" the hhnum as a string 
+	  change rounds 1-3 to be a str23 to match round 4 so I can replace and "align" the hhnum as a string
 	  variable for all 4 rounds*/
-	  
+
 	*** encode hhnum as string
 	rename 		hhnum 	hhnum_num					// rename to numeric indicator name
-	
+
 	tostring 	hhnum_num	///						// make the numeric vars strings
 				, generate(hhnum_str23) ///			// generate new variable as a string
 				force format(`"%023.0f"')				// ...and the specified number of digits in local
-  
+
 	gen 		hhnum = ""								// generate household ID variable
-	replace 	hhnum = hhnum_str23 	if round == 1 /// replace conditionally on round, 
+	replace 	hhnum = hhnum_str23 	if round == 1 /// replace conditionally on round,
 										| round == 2  ///
 										| round == 3
 	replace 	hhnum = hhid 			if round == 4
-	
+
 	mdesc 		hhnum 								// ensure that hhid has no missings
 	assert	 	r(miss) == 0
-	
-	  
+
+
 	** continue with id generation
 	loc idhvars 	hhnum 	// store idh vars in local
 
@@ -197,6 +197,14 @@ if (`cb_pause' == 1) {
 		loc idh_els 	`idh_els' idh_`var'				// add each variable to the local list
 
 	}
+
+	* add the round variable
+	tostring round	///							// make the numeric vars strings
+		, generate(idh_round) ///					// gen a variable with this prefix
+		force format(`"%01.0f"')				// ...and the specified number of digits in local
+
+	loc idh_els 	`idh_els' idh_round				// add each variable to the local list
+
 
 
 	* concatenate all elements to form idh: hosehold id
