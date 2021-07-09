@@ -470,7 +470,8 @@ if (`cb_pause' == 1) {
 	gen byte atschool=pufc08_cursch
 	replace atschool=1 if pufc08_cursch == 1
 	replace atschool=0 if pufc08_cursch == 2
-	label var atschool "Attending school"
+	recode atschool (2 = 0)		// 2 was "no", recode to 0. Keep 1=Yes same.
+    label var atschool "Attending school"
 	la de lblatschool 0 "No" 1 "Yes"
 	label values atschool  lblatschool
 
@@ -558,7 +559,7 @@ undergraduates in "primary" and "graduates" in "secondary" */
 		currently attending*/
 
 	gen byte everattend=.
-	replace everattend=1 if age >= ed_mod_age & (edulevel1 >= 2 & edulevel1 <= 8 )
+	replace everattend=1 if age >= ed_mod_age & ((edulevel1 >= 2 & edulevel1 <= 8 ) | atschool == 1)
 	replace everattend=0 if age >= ed_mod_age & atschool==0 & edulevel1==0
 	label var everattend "Ever attended school"
 	la de lbleverattend 0 "No" 1 "Yes"
