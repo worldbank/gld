@@ -145,17 +145,17 @@ if (`cb_pause' == 1) {
 	tempfile 		partA	partB						// declare tempfiles, Part A is first 3 rounds, Part B is round 4/october
 
 	preserve   											// preserve the original appended dataset
-	keep if 		round == 1 | round == 2 | round == 3 // keep first 3 rounds
+	keep if 		round == 1 | round == 2  // keep first 3 rounds
 
-		* IDH construction for rounds 1-3
-		loc idhvars 	hhnum 	// store idh vars in local
+		* IDH construction for rounds 1-2
+		loc idhvars 	hhid 	// store idh vars in local
 
 	ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
 	loc numlist 	= r(varlist)						// store numeric vars in local
 	loc stringlist 	: list idhvars - numlist			// non-numeric vars in stringlist
 
 	* starting locals
-		loc len = 12										// declare the length of each element in digits
+		loc len = 23										// declare the length of each element in digits
 	loc idh_els ""										// start with empty local list
 
 	* make each numeric var string, including leading zeros
@@ -206,7 +206,7 @@ if (`cb_pause' == 1) {
 	* 	note, assuming that the only necessary individaul identifier is family member, which is numeric
 	*	so, not following processing for sorting numeric/non-numeric variables.
 
-		loc idpvars 	c101_lno								// store relevant idp vars in local
+	loc idpvars 	c101_lno								// store relevant idp vars in local
 	ds `idpvars',  	has(type numeric)					// filter out numeric variables in local
 	loc rlist 		= r(varlist)						// store numeric vars in local
 
@@ -241,12 +241,11 @@ if (`cb_pause' == 1) {
 	restore													// restore to original 4-round dataset
 
 	preserve   												// preserve the original appended dataset
-	keep if 		round == 4 								// keep round 4/october only
+	keep if 			round == 3 | round == 4 			// keep round 4/october only
 
 
-
-		* IDH construction for round 4
-		loc idhvars 	reg prov stratum psu shsn hcn 	// store idh vars in local
+		* IDH construction for round 3- 4
+		loc idhvars 	creg prov stratum psu shsn hcn	// store idh vars in local
 
 		ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
 		loc numlist 	= r(varlist)						// store numeric vars in local
@@ -265,6 +264,14 @@ if (`cb_pause' == 1) {
 			loc idh_els 	`idh_els' idh_`var'				// add each variable to the local list
 
 		}
+
+		* make each numeric var string, including leading zeros
+			tostring eaunique_round_3_4	///								// make the numeric vars strings
+				, generate(idh_eaunique_round_3_4) ///					// gen a variable with this prefix
+				force format(`"%020.0f"')				// ...and the specified number of digits in local
+
+			loc idh_els 	`idh_els' idh_eaunique_round_3_4				// add each variable to the local list
+
 
 		* make each string variable numeric (as it should be), then string again with correct format
 		foreach var of local stringlist {
@@ -327,8 +334,37 @@ if (`cb_pause' == 1) {
 		sort idh idp
 		label var idp "Individual id"
 
+	** Manage duplicates
+		/*There are 8 duplicated observations across creg, prov, stratum, psu, shsn, hcn, round, c101_lno,
+	 	or 4 total pairs of duplicates. These all occur in c101_lno (line number). What appears to be
+		this combination of variables determines households except for these 8 observations, which occur
+		all in the same constructed household id. For now, I will
+		simply drop all observations that pertain to this household id
+		until/if coming up with a more objective way to distinguish between
+		households. */
+
+	duplicates report	idh idp							// for record keeping
+	duplicates tag 		idh idp	 						/// create a 1/0 var that tags the duplicate observations
+	 					, generate(hhid_dup_obs)		// (note this does not tage all obs in the household)
+
+	by hid: 	egen 	hhid_dup_hh	= max(hhid_dup_obs)	// this var will tell us if any obs in the hh is duplicated
+
+	/* you can't actually do this...preserve within preserve
+	preserve
+
+		collapse 		(mean)	hhid_dup_hh	, by(hid)	// summarise hhid_dup_hh by hid
+		count if 		hhid_dup_hh == 1				// get the number of hids that have duplicated observations in them
+		assert 			r(N) == 1						// make sure there's only 1 hh with duplicated hids
+
+	restore
+	*/
+
+	drop if 			hhid_dup_hh == 1				// drop all obs in household if household has duplicated hhid obs
+	assert 				r(N-drop) 	== 13				// we know that 13 obs should be dropped under these conditions.
+
+
 	** ID CHECKS
-		isid idh idp 										// household and individual id uniquely identify
+	isid idh idp 										// household and individual id uniquely identify
 
 
 	save 	`partB', 	replace 							// save the final round to a tempfile.
@@ -337,6 +373,8 @@ if (`cb_pause' == 1) {
 	clear
 
 	append using 		`partA' `partB'
+
+	isid 	idh idp 									// check after appending as well.
 
 
 
@@ -385,7 +423,7 @@ if (`cb_pause' == 1) {
 
 ** REGIONAL AREA 2 DIGITS ADM LEVEL (ADMN2)
 	/* There is no common province variable across all 4 rounds. Some rounds contain a 4 digits
-	 	province variable with ~115 distinct values and others contain  a numeric variable with 
+	 	province variable with ~115 distinct values and others contain  a numeric variable with
 		~85 distinct values. No obvious way to harmonize, will leave as missing since the
 		primary unit of analysis is Region (ADM1)*/
 	gen reg03= .
