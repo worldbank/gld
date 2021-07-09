@@ -158,51 +158,28 @@ in 2004 and subsequent years.
 The resulting coding and labeling schema looks like this, after the
 above recoding takes place:
 
-+--------+-----------------------------+-------------------------------+
-| Value  | Before 2003                 | Starting January 2003         |
-+========+=============================+===============================+
-| 1      | Ilocos                      | Ilocos                        |
-+--------+-----------------------------+-------------------------------+
-| 2      | Cagayan Valley              | Cagayan Valley                |
-+--------+-----------------------------+-------------------------------+
-| 3      | Central Luzon               | Central Luzon                 |
-+--------+-----------------------------+-------------------------------+
-| 4      | Southern Tagalog            | .                             |
-+--------+-----------------------------+-------------------------------+
-| 5      | Bicol                       | Bicol                         |
-+--------+-----------------------------+-------------------------------+
-| 6      | Western Visayas             | Western Visayas               |
-+--------+-----------------------------+-------------------------------+
-| 7      | Central Visayas             | Central Visayas               |
-+--------+-----------------------------+-------------------------------+
-| 8      | Eastern Visayas             | Eastern Visayas               |
-+--------+-----------------------------+-------------------------------+
-| 9      | Western Mindanao            | Zamboanga Peninsula           |
-+--------+-----------------------------+-------------------------------+
-| 10     | Northern Mindanao           | Northern Mindanao             |
-+--------+-----------------------------+-------------------------------+
-| 11     | Southern Mindanao           | Davao                         |
-+--------+-----------------------------+-------------------------------+
-| 12     | Central Mindanao            | Soccsksargen                  |
-+--------+-----------------------------+-------------------------------+
-| 13     | National Capital Region     | National Capital Region       |
-+--------+-----------------------------+-------------------------------+
-| 14     | Cordillera Administrative   | Cordillera Administrative     |
-|        | Region                      | Region                        |
-+--------+-----------------------------+-------------------------------+
-| 15     | Autonomous Region of Muslim | Autonomous Region in Muslim   |
-|        | Mindanao                    | Mindanao                      |
-+--------+-----------------------------+-------------------------------+
-| 16     | Caraga                      | Caraga                        |
-+--------+-----------------------------+-------------------------------+
-| 17     | .                           | .                             |
-+--------+-----------------------------+-------------------------------+
-| 18     | .                           | Negros Island Region          |
-+--------+-----------------------------+-------------------------------+
-| 41     | .                           | Calabarzon                    |
-+--------+-----------------------------+-------------------------------+
-| 42     | .                           | Mimaropa                      |
-+--------+-----------------------------+-------------------------------+
+| Value | Before 2003                          | Starting January 2003                |
+|-------|--------------------------------------|--------------------------------------|
+| 1     | Ilocos                               | Ilocos                               |
+| 2     | Cagayan Valley                       | Cagayan Valley                       |
+| 3     | Central Luzon                        | Central Luzon                        |
+| 4     | Southern Tagalog                     | .                                    |
+| 5     | Bicol                                | Bicol                                |
+| 6     | Western Visayas                      | Western Visayas                      |
+| 7     | Central Visayas                      | Central Visayas                      |
+| 8     | Eastern Visayas                      | Eastern Visayas                      |
+| 9     | Western Mindanao                     | Zamboanga Peninsula                  |
+| 10    | Northern Mindanao                    | Northern Mindanao                    |
+| 11    | Southern Mindanao                    | Davao                                |
+| 12    | Central Mindanao                     | Soccsksargen                         |
+| 13    | National Capital Region              | National Capital Region              |
+| 14    | Cordillera Administrative Region     | Cordillera Administrative Region     |
+| 15    | Autonomous Region of Muslim Mindanao | Autonomous Region in Muslim Mindanao |
+| 16    | Caraga                               | Caraga                               |
+| 17    | .                                    | .                                    |
+| 18    | .                                    | Negros Island Region                 |
+| 41    | .                                    | Calabarzon                           |
+| 42    | .                                    | Mimaropa                             |
 
 ## Province
 
