@@ -841,7 +841,7 @@ foreach v of local ed_var {
 	gen occup_isco = .
 	gen occup2=floor(occup_orig/100)
 	replace occup_isco=2000 if occup2==21
-	replace occup_isco=1000 if occup2==11 |  occup2==12 | occup2==14
+	replace occup_isco=1000 if occup2==11 |  occup2==12 | occup2==14 | occup2==13
 	replace occup_isco=3000 if occup2==61	| occup2==62
 	replace occup_isco=4000 if occup2==71 | occup2==72
 	replace occup_isco=5000 if occup2==82| occup2==83 | occup2==81
@@ -1116,7 +1116,7 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 	gen occup_isco_2 = .
 	gen occup2=floor(occup_orig_2/100)
 	replace occup_isco_2=2000 if occup2==21
-	replace occup_isco_2=1000 if occup2==11 |  occup2==12 | occup2==14
+	replace occup_isco_2=1000 if occup2==11 |  occup2==12 | occup2==14 | occup2==13
 	replace occup_isco_2=3000 if occup2==61	| occup2==62
 	replace occup_isco_2=4000 if occup2==71 | occup2==72
 	replace occup_isco_2=5000 if occup2==82| occup2==83 | occup2==81
