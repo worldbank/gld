@@ -110,7 +110,7 @@ local path_output "C:\Users\wb582018\OneDrive - WBG\Surveys\MEX\MEX_2007_LFS\MEX
 
 
 *<_icls_v_>
-	gen icls_v = "ICLS-[15]"
+	gen icls_v = "ICLS-[13]"
 	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
 
