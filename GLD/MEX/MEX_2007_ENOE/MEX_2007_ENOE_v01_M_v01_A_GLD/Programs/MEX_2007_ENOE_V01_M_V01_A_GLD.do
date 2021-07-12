@@ -794,7 +794,7 @@ foreach v of local ed_var {
 	replace industrycat_isic="P" if indus1==61
 	replace industrycat_isic="Q" if indus1==62
 	replace industrycat_isic="R" if indus1==71
-	replace industrycat_isic="S" if p4a==8111 | p4a==8112 | p4a==8113 | p4a==8114
+	replace industrycat_isic="S" if p4a==8111 | p4a==8112 | p4a==8113 | p4a==8114 | indus1==97 | indus1==98 | indus1==99
 	replace industrycat_isic="T" if p4a==8121 | p4a==8122 | p4a==8123 | p4a==8124 | p4a==8129
 	replace industrycat_isic="U" if p4a==9321
 	encode industrycat_isic, gen (industry_i)
@@ -807,7 +807,7 @@ foreach v of local ed_var {
 
 *<_industrycat10_>
 	gen byte industrycat10=floor(p4a/100)
-	recode industrycat10 (11=1) (21=2) (22=4) (23=5) (31/33=3) (43 46=6) (48 49 51=7) (52=8) (93=9) (71 72 53 54 55 61 62 81=10)
+	recode industrycat10 (11=1) (21=2) (22=4) (23=5) (31/33=3) (43 46=6) (48 49 51=7) (52=8) (93=9) (71 72 53 54 55 56 61 62 81 97 98 99=10)
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
@@ -1080,7 +1080,7 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 	replace industrycat_isic_2="P" if indus1==61
 	replace industrycat_isic_2="Q" if indus1==62
 	replace industrycat_isic_2="R" if indus1==71
-	replace industrycat_isic_2="S" if p7c==8111 | p7c==8112 | p7c==8113 | p7c==8114
+	replace industrycat_isic_2="S" if p7c==8111 | p7c==8112 | p7c==8113 | p7c==8114 | indus1==97 | indus1==98 | indus1==99
 	replace industrycat_isic_2="T" if p7c==8121 | p7c==8122 | p7c==8123 | p7c==8124 | p7c==8129
 	replace industrycat_isic_2="U" if p7c==9321
 	encode industrycat_isic_2, gen (industry_i)
@@ -1093,7 +1093,7 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 
 *<_industrycat10_2_>
 	gen byte industrycat10_2 = floor(p7c/100)
-	recode industrycat10_2 (11=1) (21=2) (22=4) (23=5) (31/33=3) (43 46=6) (48 49 51=7) (52=8) (93=9) (71 72 53 54 55 61 62 81=10)
+	recode industrycat10_2 (11=1) (21=2) (22=4) (23=5) (31/33=3) (43 46=6) (48 49 51=7) (52=8) (93=9) (71 72 53 54 55 56 61 62 81 97 98 99=10)
 	replace industrycat10_2=. if lstatus!=1
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
