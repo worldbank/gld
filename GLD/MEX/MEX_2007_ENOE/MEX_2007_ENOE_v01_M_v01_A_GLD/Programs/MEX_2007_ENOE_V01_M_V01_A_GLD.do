@@ -1064,7 +1064,7 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 	gen indus1=floor(p7c/100)
 	replace industrycat_isic_2="A" if indus1==11
 	replace industrycat_isic_2="B" if indus1==21
-	replace industrycat_isic_2_2="C" if indus1==31 | indus1==32 | indus1==33
+	replace industrycat_isic_2="C" if indus1==31 | indus1==32 | indus1==33
 	replace industrycat_isic_2="D" if p7c==2211
 	replace industrycat_isic_2="E" if p7c==2221 | p7c==2222
 	replace industrycat_isic_2="F" if indus1==23
@@ -1074,7 +1074,7 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 	replace industrycat_isic_2="J" if indus1==51
 	replace industrycat_isic_2="K" if indus1==52
 	replace industrycat_isic_2="L" if indus1==53
-	replace industrycat_isi_2c="M" if indus1==54 | indus1==55
+	replace industrycat_isic_2="M" if indus1==54 | indus1==55
 	replace industrycat_isic_2="N" if indus1==56
 	replace industrycat_isic_2="O" if p7c==9311 | p7c==9311 | p7c==9312 | p7c==9313 | p7c==9314 | p7c==9315 | p7c==9316 | p7c==9317 | p7c==9318
 	replace industrycat_isic_2="P" if indus1==61
