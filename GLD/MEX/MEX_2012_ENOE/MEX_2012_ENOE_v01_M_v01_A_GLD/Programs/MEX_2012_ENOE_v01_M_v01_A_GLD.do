@@ -1120,9 +1120,15 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 *</_occup_orig_2_>
 
 
+*<_occup_2_>
+	gen byte occup_2 = floor(p7a/1000)
+	label var occup_2 "1 digit occupational classification secondary job 7 day recall"
+	label values occup_2 lbloccup
+*</_occup_2_>
+
 *<_occup_isco_2_>
 	gen occup_isco_2 =.
-	gen occup2=floor(occup_orig/100)
+	gen occup2=floor(occup_orig_2/100)
 	replace occup_isco_2=2000 if occup2==11 |  occup2==13 
 	replace occup_isco_2=1000 if occup2==61 |  occup2==21
 	replace occup_isco_2=3000 if occup2==14	| occup2==12 
@@ -1135,15 +1141,10 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
-*<_occup_2_>
-	gen byte occup_2 = floor(p7a/1000)
-	label var occup_2 "1 digit occupational classification secondary job 7 day recall"
-	label values occup_2 lbloccup
-*</_occup_2_>
 
 *<_occup_skill_2_>
 	gen occup_skill_2 = .
-	replace occup_skill_2 = 1 if occup_isco_2 == 1000 | occup_isco == 2000
+	replace occup_skill_2 = 1 if occup_isco_2 == 1000 | occup_isco_2 == 2000
 	replace occup_skill_2 = 2 if inrange(occup_isco_2,3000,7000) 
 	replace occup_skill_2 = 3 if occup_isco_2 == 8000
 	replace occup_skill_2 = 4 if occup2 == 54
