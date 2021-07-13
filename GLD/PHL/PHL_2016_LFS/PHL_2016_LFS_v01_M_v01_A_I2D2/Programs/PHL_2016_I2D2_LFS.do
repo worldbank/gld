@@ -385,7 +385,7 @@ if (`cb_pause' == 1) {
 
 ** HOUSEHOLD SIZE
 	sort idh
-	by idh: egen hhsize= count(c05_rel <= 8 | c05_rel == 11)
+	by idh: egen hhsize= count(pufc03_rel <= 8 | pufc03_rel == 11)
 	* restrict by family role var, include all non-family members but not boarders/workers
 	label var hhsize "Household size"
 
@@ -395,7 +395,7 @@ if (`cb_pause' == 1) {
 
 
 ** RELATIONSHIP TO THE HEAD OF HOUSEHOLD
-	gen byte head=c05_rel				//  "head", "spouse", and children not recoded
+	gen byte head=pufc03_rel				//  "head", "spouse", and children not recoded
 	recode head 	(4 5 6 8  	= 5)	/// siblings, children in law, grandchildren, other relatives of hh head = "other relatives"
 					(7 			= 4)	/// parents of hh head become "parents"
 					(9 10 11 	= 6) 	// boarders and domestic workers become "other/non-relatives"
@@ -415,14 +415,14 @@ if (`cb_pause' == 1) {
 
 
 ** GENDER
-	gen byte gender=c06_sex
+	gen byte gender=pufc04_sex
 	label var gender "Gender"
 	la de lblgender 1 "Male" 2 "Female"
 	label values gender lblgender
 
 
 ** AGE
-	gen byte age = c07_age
+	gen byte age = pufc05_age
 	label var age "Individual age"
 	replace age=98 if age>=98 & age!=.
 
@@ -434,7 +434,7 @@ if (`cb_pause' == 1) {
 
 
 ** MARITAL STATUS
-	gen byte marital=c08_ms
+	gen byte marital=pufc06_mstat
 	recode marital (1=2) (2=1) (3=5)(5 6=.)
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
@@ -455,8 +455,8 @@ if (`cb_pause' == 1) {
 
 ** CURRENTLY AT SCHOOL
 	gen byte atschool=.
-	replace atschool=1 if a02_csch == 1
-	replace atschool=0 if a02_csch == 2
+	replace atschool=1 if pufc08_cursch == 1
+	replace atschool=0 if pufc08_cursch == 2
 	recode atschool (2 = 0)		// 2 was "no", recode to 0. Keep 1=Yes same.
     label var atschool "Attending school"
 	la de lblatschool 0 "No" 1 "Yes"
@@ -481,14 +481,14 @@ if (`cb_pause' == 1) {
 	/*Please refer to the "Education_Levels.md" for a detailed discussion on classificition of how each level is classified and why,
 		available in github repository. */
 	gen byte edulevel1=.
-	replace edulevel1=1 if j12c09_grade==0 | j12c09_grade == 10 	// "No education" and "Preschool" -> "No Education"
-	replace edulevel1=2 if j12c09_grade>=210 &  j12c09_grade<=260	// Grades 1-7 to "Primary Incomplete"
-	replace edulevel1=3 if j12c09_grade==280						// "Elementary Graduate" to "Primary Complete"
-	replace edulevel1=4 if j12c09_grade>=310 &  j12c09_grade<=340 	// First-Fourth year in High school -> "secondary incomplete"
-	replace edulevel1=5 if j12c09_grade==350						// "High school graduate" -> "secondary complete"
-	replace edulevel1=6 if j12c09_grade>=410 &  j12c09_grade<=501 	// Post secondary + Basic Programs -> "Higher secondary not uni"
-	replace edulevel1=6 if j12c09_grade>=502 & 	j12c09_grade<=699	// Basic Program degrees to "Higher secondary not uni"
-	replace edulevel1=7 if j12c09_grade>= 810 & j12c09_grade <= . // all labelled uni levels
+	replace edulevel1=1 if pufc07_grade==0 | pufc07_grade == 10 	// "No education" and "Preschool" -> "No Education"
+	replace edulevel1=2 if pufc07_grade>=210 &  pufc07_grade<=260	// Grades 1-7 to "Primary Incomplete"
+	replace edulevel1=3 if pufc07_grade==280						// "Elementary Graduate" to "Primary Complete"
+	replace edulevel1=4 if pufc07_grade>=310 &  pufc07_grade<=340 	// First-Fourth year in High school -> "secondary incomplete"
+	replace edulevel1=5 if pufc07_grade==350						// "High school graduate" -> "secondary complete"
+	replace edulevel1=6 if pufc07_grade>=410 &  pufc07_grade<=501 	// Post secondary + Basic Programs -> "Higher secondary not uni"
+	replace edulevel1=6 if pufc07_grade>=502 & 	pufc07_grade<=699	// Basic Program degrees to "Higher secondary not uni"
+	replace edulevel1=7 if pufc07_grade>= 810 & pufc07_grade <= . // all labelled uni levels
 
 	* for 2016, replace edulevel1 == missing if the rounds/month is July or October.
 	* this is because there is not enough information for these rounds, which differ from the first two.
@@ -578,10 +578,10 @@ if (`cb_pause' == 1) {
 
 ** EMPLOYMENT STATUS
 	gen byte empstat=.
-	replace empstat=1 if c19pclas==0 | c19pclas==1 | c19pclas==2 | c19pclas==5
-	replace empstat=2 if c19pclas==6
-	replace empstat=3 if c19pclas==4
-	replace empstat=4 if c19pclas==3
+	replace empstat=1 if pufc23_pclass==0 | pufc23_pclass==1 | pufc23_pclass==2 | pufc23_pclass==5
+	replace empstat=2 if pufc23_pclass==6
+	replace empstat=3 if pufc23_pclass==4
+	replace empstat=4 if pufc23_pclass==3
 	replace empstat=. if lstatus!=1 	// includes universe restriction
 	label var empstat "Employment status"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed"
@@ -610,8 +610,8 @@ if (`cb_pause' == 1) {
 
 ** SECTOR OF ACTIVITY: PUBLIC - PRIVATE
 	gen byte ocusec=.
-	replace ocusec=1 if c19pclas==2
-	replace ocusec=2 if c19pclas!=2
+	replace ocusec=1 if pufc23_pclass==2
+	replace ocusec=2 if pufc23_pclass!=2
 	label var ocusec "Sector of activity"
 	la de lblocusec 1 "Public, state owned, government, army, NGO" 2 "Private"
 	label values ocusec lblocusec
@@ -622,11 +622,11 @@ if (`cb_pause' == 1) {
 
 ** REASONS NOT IN THE LABOR FORCE
 	gen byte nlfreason=.
-	replace nlfreason=1 if c42_wynt==8
-	replace nlfreason=2 if c42_wynt==7
-	replace nlfreason=3 if c42_wynt==6
-	replace nlfreason=4 if c42_wynt==3
-	replace nlfreason=5 if c42_wynt==1 | c42_wynt==2 | c42_wynt==4 | c42_wynt==5 | c42_wynt==9
+	replace nlfreason=1 if pufc34_wynot==8
+	replace nlfreason=2 if pufc34_wynot==7
+	replace nlfreason=3 if pufc34_wynot==6
+	replace nlfreason=4 if pufc34_wynot==3
+	replace nlfreason=5 if pufc34_wynot==1 | pufc34_wynot==2 | pufc34_wynot==4 | pufc34_wynot==5 | pufc34_wynot==9
 	replace nlfreason=. if lstatus!=3 	// restricts universe to non-labor force
 	replace nlfreason=. if age < lb_mod_age // restrict universe to working age
 	label var nlfreason "Reason not in the labor force"
@@ -635,29 +635,29 @@ if (`cb_pause' == 1) {
 
 
 ** UNEMPLOYMENT DURATION: MONTHS LOOKING FOR A JOB
-	gen byte unempldur_l= c40_wks/4.2
+	gen byte unempldur_l= pufc33_weeks/4.2
 	label var unempldur_l "Unemployment duration (months) lower bracket"
 	replace unempldur_l=. if age < lb_mod_age // restrict universe to working age
 	replace unempldur_l=. if lstatus!=2 	  // restrict universe to unemployed only
 
-	gen byte unempldur_u= c40_wks/4.2
+	gen byte unempldur_u= pufc33_weeks/4.2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
 	replace unempldur_l=. if age < lb_mod_age // restrict universe to working age
 	replace unempldur_l=. if lstatus!=2 	  // restrict universe to unemployed only
 
 ** INDUSTRY CLASSIFICATION
 	gen byte industry=.
-	replace industry=1 if (c18_pkb>=1& c18_pkb<=4)		// to Agriculture
-	replace industry=2 if (c18_pkb>=5 & c18_pkb<=9)		// to Mining
-	replace industry=3 if (c18_pkb>=10 & c18_pkb<=33)	// to Manufacturing
-	replace industry=4 if (c18_pkb>=35 & c18_pkb<=39)	// to Public utility
-	replace industry=5 if (c18_pkb>=41 &  c18_pkb<=43)	// to Construction
-	replace industry=6 if (c18_pkb>=45 & c18_pkb<=47) | (c18_pkb >= 55 & c18_pkb <= 56)	// to Commerce
-	replace industry=7 if (c18_pkb>=49 & c18_pkb<=53)| (c18_pkb>=58 & c18_pkb<=63) // to Transport/coms
-	replace industry=8 if (c18_pkb>=64 & c18_pkb<=82) 	// to financial/business services
-	replace industry=9 if (c18_pkb==84) 				// to public administration
-	replace industry=10 if  (c18_pkb>=91 & c18_pkb<=99) // to other
-	replace industry=10 if industry==. & c18_pkb!=.
+	replace industry=1 if (pufc16_pkb>=1& pufc16_pkb<=4)		// to Agriculture
+	replace industry=2 if (pufc16_pkb>=5 & pufc16_pkb<=9)		// to Mining
+	replace industry=3 if (pufc16_pkb>=10 & pufc16_pkb<=33)	// to Manufacturing
+	replace industry=4 if (pufc16_pkb>=35 & pufc16_pkb<=39)	// to Public utility
+	replace industry=5 if (pufc16_pkb>=41 &  pufc16_pkb<=43)	// to Construction
+	replace industry=6 if (pufc16_pkb>=45 & pufc16_pkb<=47) | (pufc16_pkb >= 55 & pufc16_pkb <= 56)	// to Commerce
+	replace industry=7 if (pufc16_pkb>=49 & pufc16_pkb<=53)| (pufc16_pkb>=58 & pufc16_pkb<=63) // to Transport/coms
+	replace industry=8 if (pufc16_pkb>=64 & pufc16_pkb<=82) 	// to financial/business services
+	replace industry=9 if (pufc16_pkb==84) 				// to public administration
+	replace industry=10 if  (pufc16_pkb>=91 & pufc16_pkb<=99) // to other
+	replace industry=10 if industry==. & pufc16_pkb!=.
 	replace industry=. if lstatus~=1
 
 * Comments include UN International Standard Industrial Classification associated categories (version 3.1)
@@ -687,7 +687,7 @@ if (`cb_pause' == 1) {
 	replace industry1=. if lstatus!=1 		// restrict universe to employed only
 
 **SURVEY SPECIFIC INDUSTRY CLASSIFICATION
-	gen industry_orig=c18_pkb
+	gen industry_orig=pufc16_pkb
 	replace industry_orig=. if lstatus!=1 		// restrict universe to employed only
 	replace industry_orig=. if age < lb_mod_age // restrict universe to working age
 	label var industry_orig "Original Industry Codes"
@@ -700,25 +700,25 @@ if (`cb_pause' == 1) {
 	gen byte occup = .
 
 	* replace conditionally based on January round (1992 PSOC)
-	replace 	occup=floor(c16_proc/10)		///
+	replace 	occup=floor(pufc14_procc/10)		///
 				if 	round == 1
 
 	recode 		occup 0 = 10		///
-				if 	c16_proc==1 	/// recode "armed forces" to appropriate label
+				if 	pufc14_procc==1 	/// recode "armed forces" to appropriate label
 				& 	round == 1
 
 	recode 		occup 0 = 99		///
-				if 	(c16_proc>=2 & c16_proc <=9) ///
-				| (c16_proc >=94 & c16_proc <= 99) /// recode "Not classifiable occupations"
+				if 	(pufc14_procc>=2 & pufc14_procc <=9) ///
+				| (pufc14_procc >=94 & pufc14_procc <= 99) /// recode "Not classifiable occupations"
 				& round == 1
 
 
 	* replace conditionally based on April, July, October rounds (2012 PSOC)
-	replace		occup=floor(c16_proc/10)							///
+	replace		occup=floor(pufc14_procc/10)							///
 				if (round == 4 | round == 7 | round == 10)
 
 	recode 		occup 0 = 10									///
-				if 	(c16_proc >=1 & c16_proc <=3)				/// recode "armed forces" to appropriate label
+				if 	(pufc14_procc >=1 & pufc14_procc <=3)				/// recode "armed forces" to appropriate label
 				& 	(round == 4 | round == 7 | round == 10)
 
 
@@ -730,7 +730,7 @@ if (`cb_pause' == 1) {
 
 
 ** SURVEY SPECIFIC OCCUPATION CLASSIFICATION
-	gen occup_orig=c16_proc
+	gen occup_orig=pufc14_procc
 	replace occup_orig=. if lstatus!=1 			// restrict universe to employed only
 	replace occup_orig=. if age < lb_mod_age	// restrict universe to working age
 	label var occup_orig "Original Occupational Codes"
@@ -747,7 +747,7 @@ if (`cb_pause' == 1) {
 
 
 ** HOURS WORKED LAST WEEK
-	gen whours= c22_phrs
+	gen whours= pufc19_phours
 	replace whours=. if lstatus!=1 			// restrict universe to employed only
 	replace whours=. if age < lb_mod_age	// restrict universe to working age
 	label var whours "Hours of work in last week"
@@ -755,7 +755,7 @@ if (`cb_pause' == 1) {
 
 
 ** WAGES
-	gen double wage= c27_pbsc
+	gen double wage= pufc25_pbasic
 	replace wage=. if lstatus!=1 			// restrict universe to employed only
 	replace wage=. if age < lb_mod_age		// restrict universe to working age
 	replace wage=. if empstat==1			// restrict universe to wage earners
