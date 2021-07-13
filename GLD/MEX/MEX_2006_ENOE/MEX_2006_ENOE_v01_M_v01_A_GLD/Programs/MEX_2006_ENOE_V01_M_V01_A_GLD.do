@@ -844,7 +844,7 @@ foreach v of local ed_var {
 	replace occup_isco=7000 if occup2==72 |occup2==81 | occup2==82
 	replace occup_isco=8000 if occup2==51 | occup2==52 | occup2==53 | occup2==55
 	replace occup_isco=9000 if occup2==54| occup2==99
-	replace occup_isco=10000 if occup2==83
+	replace occup_isco=0000 if occup2==83
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
@@ -861,7 +861,7 @@ foreach v of local ed_var {
 	replace occup_skill = 1 if occup_isco == 1000 | occup_isco == 2000
 	replace occup_skill = 2 if inrange(occup_isco,3000,7000) 
 	replace occup_skill = 3 if occup_isco == 8000
-	replace occup_skill = 4 if occup_isco == 10000
+	replace occup_skill = 4 if occup_isco == 83
 	replace occup_skill = 5 if occup_isco == 9000
 	replace occup_skill=. if lstatus!=1
 	drop occup2
@@ -1123,7 +1123,7 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 	replace occup_isco_2=7000 if occup2==72 | occup2==81 | occup2==82
 	replace occup_isco_2=8000 if occup2==51 | occup2==52 | occup2==53 | occup2==55
 	replace occup_isco_2=9000 if occup2==54| occup2==99
-	replace occup_isco_2=10000 if occup2==83
+	replace occup_isco_2=0000 if occup2==83
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
@@ -1138,7 +1138,7 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 	replace occup_skill = 1 if occup_isco == 1000 | occup_isco == 2000
 	replace occup_skill = 2 if inrange(occup_isco,3000,7000) 
 	replace occup_skill = 3 if occup_isco == 8000
-	replace occup_skill = 4 if occup_isco == 10000
+	replace occup_skill = 4 if occup_isco == 83
 	replace occup_skill = 5 if occup_isco == 9000
 	replace occup_skill=. if lstatus!=1
 	drop occup2
