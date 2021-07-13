@@ -150,7 +150,7 @@ if (`cb_pause' == 1) {
 	loc stringlist 	: list idhvars - numlist			// non-numeric vars in stringlist
 
 	* starting locals
-	loc len = 4											// declare the length of each element in digits
+	loc len = 14											// declare the length of each element in digits
 	loc idh_els ""										// start with empty local list
 
 	* make each numeric var string, including leading zeros
@@ -170,7 +170,7 @@ if (`cb_pause' == 1) {
 
 		loc idh_els 	`idh_els' idh_round				// add each variable to the local list
 
-		
+
 	* concatenate all elements to form idh: hosehold id
 	egen idh=concat( `idh_els' )						// concatenate vars we just made. code drops vars @ end
 
@@ -435,7 +435,7 @@ if (`cb_pause' == 1) {
 
 ** MARITAL STATUS
 	gen byte marital=c08_ms
-	recode marital (1=2) (2=1) (3=5)(5=.)
+	recode marital (1=2) (2=1) (3=5)(5 6=.)
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
 	label values marital lblmarital
