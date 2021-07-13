@@ -41,7 +41,7 @@
 	local 	surv_yr `"2014"'	// set this to the survey year
 
 ** RUN SETTINGS
-	local 	cb_pause = 1	// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
+	local 	cb_pause = 0	// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
 	local 	append 	 = 1	// 1 to run iecodebook append, 0 if file is already appended.
 	local 	drop 	 = 1 	// 1 to drop variables with all missing values, 0 otherwise
 
@@ -64,10 +64,10 @@
 
 
 ** FILES
-	local round1 `"`stata'\LFSjan12.dta"'
-	local round2 `"`stata'\LFSapr12.dta"'
-	local round3 `"`stata'\LFSjul12.dta"'
-	local round4 `"`stata'\LFS OCT2012.dta"'
+	local round1 `"`stata'\LFS JAN2014.dta"'
+	local round2 `"`stata'\LFS APR2014.dta"'
+	local round3 `"`stata'\LFS JUL2014.dta"'
+	local round4 `"`stata'\LFS OCT2014.dta"'
 
 ** VALUES
 	local n_round 	4			// numer of survey rounds

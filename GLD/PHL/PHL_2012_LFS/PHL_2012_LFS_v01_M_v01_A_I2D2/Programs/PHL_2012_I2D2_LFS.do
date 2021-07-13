@@ -1,4 +1,4 @@
-creg/*****************************************************************************************************
+/*****************************************************************************************************
 ******************************************************************************************************
 **                                                                                                  **
 **                       INTERNATIONAL INCOME DISTRIBUTION DATABASE (I2D2)                          **
@@ -179,10 +179,11 @@ if (`cb_pause' == 1) {
 	bys idh: gen n_fam = _n								// generate family member number
 
 	* repeat same process from above, but only with n_fam.
-	* 	note, assuming that the only necessary individaul identifier is family member, which is numeric
-	*	so, not following processing for sorting numeric/non-numeric variables.
+	* 	note, 2012 does not have a valid, non-missing line number variable that is present on all 
+	* observations across all years, so in this year I will generate a "line number" variable myself 
+	* by using the row number within each household grouping.
 
-	loc idpvars 	c101_lno 							// store relevant idp vars in local
+	loc idpvars 	n_fam	 							// store relevant idp vars in local
 	ds `idpvars',  	has(type numeric)					// filter out numeric variables in local
 	loc rlist 		= r(varlist)						// store numeric vars in local
 

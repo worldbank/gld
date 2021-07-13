@@ -41,7 +41,7 @@
 	local 	surv_yr `"2013"'	// set this to the survey year
 
 ** RUN SETTINGS
-	local 	cb_pause = 1	// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
+	local 	cb_pause = 0	// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
 	local 	append 	 = 1	// 1 to run iecodebook append, 0 if file is already appended.
 	local 	drop 	 = 1 	// 1 to drop variables with all missing values, 0 otherwise
 
@@ -184,7 +184,7 @@ if (`cb_pause' == 1) {
 	* 	note, assuming that the only necessary individaul identifier is family member, which is numeric
 	*	so, not following processing for sorting numeric/non-numeric variables.
 
-	loc idpvars 	c101_lno 							// store relevant idp vars in local
+	loc idpvars 	cc101_lno 							// store relevant idp vars in local
 	ds `idpvars',  	has(type numeric)					// filter out numeric variables in local
 	loc rlist 		= r(varlist)						// store numeric vars in local
 
