@@ -413,7 +413,7 @@ if (`cb_pause' == 1) {
 
 ** MARITAL STATUS
 	gen byte marital=c06_mstat
-	recode marital (1=2) (2=1) (3=5)(5=.)
+	recode marital (1=2) (2=1) (3=5)(5 6=.)
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
 	label values marital lblmarital
