@@ -52,6 +52,9 @@ The following table gives a list of the variable combinations used to determine 
 
 The first two rounds of 2003 differ from the final two: while the first two rounds' household ID can be identified similarly to those in previous years, the final two rounds of 2003 do not have the typical geographic variables and need to use a different determining set. The case is similar for 2004: the final round does not have a single, unique household ID variable and so one must be constructed for the entire four-round year. Years 2006 and 2007 present similar situations.
 
+## Notes on 2012.
+2012 does not have a valid, non-missing line number variable that is present on all observations across all years, so in this year I will generate a "line number" variable myself by using the row number within each household grouping.
+
 +--------------------+------------------------------------------------------------+----------------------------+-------------------------+
 | Year               | Household ID Combination                                   | Manage Duplicates          | Unique Household Number |
 +====================+============================================================+============================+=========================+
@@ -85,4 +88,3 @@ The first two rounds of 2003 differ from the final two: while the first two roun
 +--------------------+------------------------------------------------------------+----------------------------+-------------------------+
 | 2007 Apr + Jul + Oct | *unique hhid provided* |              						|                         |
 +--------------------+------------------------------------------------------------+----------------------------+-------------------------+
-##
