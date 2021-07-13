@@ -339,9 +339,7 @@ if (`cb_pause' == 1) {
 	 					, generate(hhid_dup_obs)		// (note this does not tage all obs in the household)
 	sort idh
 	by idh: 	egen 	hhid_dup_hh	= max(hhid_dup_obs)	// this var will tell us if any obs in the hh is duplicated
-	br idh idp  hhid_dup_hh hhid_dup_obs
-	pause on 
-	pause
+
 	/* you can't actually do this...preserve within preserve
 	preserve
 
@@ -352,7 +350,7 @@ if (`cb_pause' == 1) {
 	restore
 	*/
 
-	drop if 			hhid_dup_hh > 	1				// drop all obs in household if household has duplicated hhid obs
+	drop if 			hhid_dup_hh == 	1				// drop all obs in household if household has duplicated hhid obs
 	assert 				r(N_drop) 	== 13				// we know that 13 obs should be dropped under these conditions.
 
 
@@ -590,7 +588,7 @@ if (`cb_pause' == 1) {
 
 
 ** MARITAL STATUS
-	gen byte marital=c08_ms
+	gen byte marital=c08_mstat
 	recode marital (1=2) (2=1) (3=5)(5=.)
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
