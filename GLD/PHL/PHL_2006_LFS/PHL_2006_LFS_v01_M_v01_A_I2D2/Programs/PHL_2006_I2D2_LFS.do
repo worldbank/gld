@@ -155,19 +155,10 @@ if (`cb_pause' == 1) {
 	loc stringlist 	: list idhvars - numlist			// non-numeric vars in stringlist
 
 	* starting locals
-		loc len = 23										// declare the length of each element in digits
+	loc len = 23										// declare the length of each element in digits
 	loc idh_els ""										// start with empty local list
 
-	* make each numeric var string, including leading zeros
-	foreach var of local numlist {
-		tostring `var'	///								// make the numeric vars strings
-			, generate(idh_`var') ///					// gen a variable with this prefix
-			force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
-
-		loc idh_els 	`idh_els' idh_`var'				// add each variable to the local list
-
-	}
-
+	
 	* make each string variable numeric (as it should be), then string again with correct format
 	foreach var of local stringlist {
 		destring `var' /// 								// destring variable, make numeric version
@@ -192,7 +183,7 @@ if (`cb_pause' == 1) {
 
 	* concatenate all elements to form idh: hosehold id
 
-	egen idh=concat( `idh_els' )						// concatenate vars we just made. code drops vars @ end
+	egen idh=concat( hhid idh_round )						// concatenate vars we just made. code drops vars @ end
 
 	label var idh "Household id"
 
@@ -245,7 +236,7 @@ if (`cb_pause' == 1) {
 
 
 		* IDH construction for round 3- 4
-		loc idhvars 	creg prov stratum psu shsn hcn	// store idh vars in local
+		loc idhvars 	reg prov stratum psu shsn hcn	// store idh vars in local
 
 		ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
 		loc numlist 	= r(varlist)						// store numeric vars in local
@@ -346,9 +337,11 @@ if (`cb_pause' == 1) {
 	duplicates report	idh idp							// for record keeping
 	duplicates tag 		idh idp	 						/// create a 1/0 var that tags the duplicate observations
 	 					, generate(hhid_dup_obs)		// (note this does not tage all obs in the household)
-
-	by hid: 	egen 	hhid_dup_hh	= max(hhid_dup_obs)	// this var will tell us if any obs in the hh is duplicated
-
+	sort hhid
+	by hhid: 	egen 	hhid_dup_hh	= max(hhid_dup_obs)	// this var will tell us if any obs in the hh is duplicated
+	br idh idp  hhid_dup_hh hhid_dup_obs
+	pause on 
+	pause 
 	/* you can't actually do this...preserve within preserve
 	preserve
 
@@ -359,8 +352,8 @@ if (`cb_pause' == 1) {
 	restore
 	*/
 
-	drop if 			hhid_dup_hh == 1				// drop all obs in household if household has duplicated hhid obs
-	assert 				r(N-drop) 	== 13				// we know that 13 obs should be dropped under these conditions.
+	drop if 			hhid_dup_hh > 	1				// drop all obs in household if household has duplicated hhid obs
+	assert 				r(N_drop) 	== 13				// we know that 13 obs should be dropped under these conditions.
 
 
 	** ID CHECKS
