@@ -194,3 +194,16 @@ vallab_tab_hhid <- metadata %>%
                 indices_to = "value_label") %>%
   pivot_wider(names_from = id, values_from = value_label) %>%
   arrange(value)
+
+
+# create household id variable tables 
+vallab_tab_curschool <- metadata %>%
+  filter( grepl("currently attending", label_orig) ) %>%
+  filter(!is.na(labels)) %>%
+  select(id, labels) %>%
+  unnest_longer(labels, 
+                values_to = "value",
+                indices_to = "value_label") %>%
+  pivot_wider(names_from = id, values_from = value_label) %>%
+  arrange(value)
+

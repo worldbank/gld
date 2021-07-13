@@ -116,6 +116,7 @@ HHjan03_n <- n_hh_reg_prov_hcn(jan03)
   
 
   dups06jul <- get_dupes(hh06jul, hhid, cc101_lno) # no dups found
+  dups06oct <- get_dupes(hh06oct, hhid, cc101_lno) # no dups found
   n_distinct(dups06oct$hhid) # only 1 household that has duplicates
   
   assertthat::assert_that(nrow(dups06jul) == 0) # ensure that there are no dups
