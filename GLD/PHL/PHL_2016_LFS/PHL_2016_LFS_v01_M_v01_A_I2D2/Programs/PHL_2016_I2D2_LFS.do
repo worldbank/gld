@@ -123,7 +123,7 @@ if (`cb_pause' == 1) {
 
 
 ** YEAR
-	gen int year=svyyr
+	gen int year=pufsvyyr
 	label var year "Year of survey"
 
 
@@ -133,7 +133,7 @@ if (`cb_pause' == 1) {
 
 
 ** MONTH OF INTERVIEW
-	gen byte month=svymo
+	gen byte month=pufsvymo
 	la de lblmonth 1 "January" 2 "February" 3 "March" 4 "April" 5 "May" 6 "June" 7 "July" 8 "August" 9 "September" 10 "October" 11 "November" 12 "December"
 	label value month lblmonth
 	label var month "Month of the interview"
@@ -142,7 +142,7 @@ if (`cb_pause' == 1) {
 ** HOUSEHOLD IDENTIFICATION NUMBER
 
 
-	loc idhvars 	hhnum   							// store idh vars in local
+	loc idhvars 	pufhhnum   							// store idh vars in local
 
 
 	ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
@@ -186,7 +186,7 @@ if (`cb_pause' == 1) {
 	* 	note, assuming that the only necessary individaul identifier is family member, which is numeric
 	*	so, not following processing for sorting numeric/non-numeric variables.
 
-	loc idpvars 	c101_lno 							// store relevant idp vars in local
+	loc idpvars 	pufc01_lno 							// store relevant idp vars in local
 	ds `idpvars',  	has(type numeric)					// filter out numeric variables in local
 	loc rlist 		= r(varlist)						// store numeric vars in local
 
@@ -217,7 +217,7 @@ if (`cb_pause' == 1) {
 ** HOUSEHOLD WEIGHTS
 	/* The weight variable will be divided by the number of rounds per year to ensure the
 	   weighting factor does not over-mutliply*/
-	gen double wgt= pwgt/(`n_round')
+	gen double wgt= weight/(`n_round')
 	label var wgt "Household sampling weight"
 
 
@@ -227,7 +227,7 @@ if (`cb_pause' == 1) {
 
 
 ** PSU
-	/*Survey includes psu variable*/
+	gen psu = pufpsu
 	label var psu "Primary sampling units"
 
 
@@ -239,7 +239,7 @@ if (`cb_pause' == 1) {
 
 
 ** LOCATION (URBAN/RURAL)
-    gen byte urb=urb2k70
+    gen byte urb=pufurb2k10
     label var urb "Urban/Rural"
 	la de lblurb 1 "Urban" 2 "Rural"
 	label values urb lblurb
@@ -256,7 +256,7 @@ if (`cb_pause' == 1) {
 
 
 ** REGIONAL AREA 2 DIGITS ADM LEVEL (ADMN2)
-	gen reg03= pufprv
+	gen reg03= prov
 	label var reg03 "2nd Level Administrative Division"
 
 
