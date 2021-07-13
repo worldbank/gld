@@ -103,7 +103,7 @@ if (`cb_pause' == 1) {
 	iecodebook append ///
 		`"`round1'"' `"`round2'"' `"`round3'"' `"`round4'"' /// survey files
 		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template-IN.xlsx"' /// output just created above
-		, clear surveys(JAN2014 APR2014 JUL2014 OCT2014) // survey names
+		, clear surveys(JAN2014 APR2014 JUL2014 OCT2014) generate(round) // survey names
 	}
 	else {
 *** use the single file
@@ -162,19 +162,12 @@ if (`cb_pause' == 1) {
 
 	}
 
-	* make each string variable numeric (as it should be), then string again with correct format
-	foreach var of local stringlist {
-		destring `var' /// 								// destring variable, make numeric version
-			, gen(num_`var') ///						//
-			force 										// force obs to num that are non numeric, ie to missing
+		* add the round variable
+		tostring round	///							// make the numeric vars strings
+			, generate(idh_round) ///					// gen a variable with this prefix
+			force format(`"%01.0f"')				// ...and the specified number of digits in local
 
-		tostring num_`var'	///							// make the numeric vars strings
-			, generate(idh_`var') ///					// gen a variable with this prefix
-			force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
-
-		loc idh_els 	`idh_els' idh_`var'				// add each variable to the local list
-
-	}
+		loc idh_els 	`idh_els' idh_round				// add each variable to the local list
 
 
 	* concatenate all elements to form idh: hosehold id
@@ -186,14 +179,11 @@ if (`cb_pause' == 1) {
 
 
 ** INDIVIDUAL IDENTIFICATION NUMBER
-
-	bys idh: gen n_fam = _n	 							// generate family member number
+	bys idh: gen n_fam = _n								// generate family member number
 
 	* repeat same process from above, but only with n_fam.
 	* 	note, assuming that the only necessary individaul identifier is family member, which is numeric
 	*	so, not following processing for sorting numeric/non-numeric variables.
-	*
-	* Also using the given line number variable as the individual family member number
 
 	loc idpvars 	c101_lno 							// store relevant idp vars in local
 	ds `idpvars',  	has(type numeric)					// filter out numeric variables in local
