@@ -158,7 +158,7 @@ if (`cb_pause' == 1) {
 	loc len = 23										// declare the length of each element in digits
 	loc idh_els ""										// start with empty local list
 
-	
+
 	* make each string variable numeric (as it should be), then string again with correct format
 	foreach var of local stringlist {
 		destring `var' /// 								// destring variable, make numeric version
@@ -337,11 +337,11 @@ if (`cb_pause' == 1) {
 	duplicates report	idh idp							// for record keeping
 	duplicates tag 		idh idp	 						/// create a 1/0 var that tags the duplicate observations
 	 					, generate(hhid_dup_obs)		// (note this does not tage all obs in the household)
-	sort hhid
-	by hhid: 	egen 	hhid_dup_hh	= max(hhid_dup_obs)	// this var will tell us if any obs in the hh is duplicated
+	sort idh
+	by idh: 	egen 	hhid_dup_hh	= max(hhid_dup_obs)	// this var will tell us if any obs in the hh is duplicated
 	br idh idp  hhid_dup_hh hhid_dup_obs
 	pause on 
-	pause 
+	pause
 	/* you can't actually do this...preserve within preserve
 	preserve
 
