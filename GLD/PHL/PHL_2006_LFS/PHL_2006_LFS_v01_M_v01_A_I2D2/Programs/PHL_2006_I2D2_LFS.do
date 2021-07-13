@@ -634,13 +634,13 @@ if (`cb_pause' == 1) {
 	/*Please refer to the "Education_Levels.md" for a detailed discussion on classificition of how each level is classified and why,
 		available in github repository. */
 	gen byte edulevel1=.
-	replace edulevel1=1 if c09_grd==0			// "No Grade Completed" -> "No education"
-	replace edulevel1=2 if c09_grd==1 	// "Elementary Undergraduate" -> " Primary Incomplete"
-	replace edulevel1=3 if c09_grd==2 	// "Elementary Graduate" -> "Primary Complete"
-	replace edulevel1=4 if c09_grd==3		// "High School Undergraduate" -> "Secondary Incomplete"
-	replace edulevel1=5 if c09_grd==4		// "High school graduate" -> "Secondary Complete"
-	replace edulevel1=7 if c09_grd==5 | ( c09_grd>=60 & c09_grd<=98) // "College Graduate" and "[x] Bachelors/Advanced Degree" -> "University"
-	replace edulevel1=9 if c09_grd==99 	// where 99 == 'not reported'
+	replace edulevel1=1 if c09_grade==0			// "No Grade Completed" -> "No education"
+	replace edulevel1=2 if c09_grade==1 	// "Elementary Undergraduate" -> " Primary Incomplete"
+	replace edulevel1=3 if c09_grade==2 	// "Elementary Graduate" -> "Primary Complete"
+	replace edulevel1=4 if c09_grade==3		// "High School Undergraduate" -> "Secondary Incomplete"
+	replace edulevel1=5 if c09_grade==4		// "High school graduate" -> "Secondary Complete"
+	replace edulevel1=7 if c09_grade==5 | ( c09_grade>=60 & c09_grade<=98) // "College Graduate" and "[x] Bachelors/Advanced Degree" -> "University"
+	replace edulevel1=9 if c09_grade==99 	// where 99 == 'not reported'
 
 	label var edulevel1 "Level of education 1"
 	la de lbledulevel1 	1 "No education"	///
@@ -863,7 +863,7 @@ if (`cb_pause' == 1) {
 
 
 ** SURVEY SPECIFIC OCCUPATION CLASSIFICATION
-	gen occup_orig=c14a_procc
+	gen occup_orig=c16_proc
 	replace occup_orig=. if lstatus!=1 			// restrict universe to employed only
 	replace occup_orig=. if age < lb_mod_age	// restrict universe to working age
 	label var occup_orig "Original Occupational Codes"
@@ -888,7 +888,7 @@ if (`cb_pause' == 1) {
 
 
 ** WAGES
-	gen double wage= c25_pbasic
+	gen double wage= c26_pbasic
 	replace wage=. if lstatus!=1 			// restrict universe to employed only
 	replace wage=. if age < lb_mod_age		// restrict universe to working age
 	replace wage=. if empstat==1			// restrict universe to wage earners
