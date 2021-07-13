@@ -41,7 +41,7 @@
 	local 	surv_yr `"2015"'	// set this to the survey year
 
 ** RUN SETTINGS
-	local 	cb_pause = 1	// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
+	local 	cb_pause = 0	// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
 	local 	append 	 = 1	// 1 to run iecodebook append, 0 if file is already appended.
 	local 	drop 	 = 1 	// 1 to drop variables with all missing values, 0 otherwise
 

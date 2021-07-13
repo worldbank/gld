@@ -42,7 +42,7 @@
 
 ** RUN SETTINGS
 	local 	append 	 = 1
-	local 	cb_pause = 1	/* 	1 to generate codebook for harmonizing varnames and labels, will not run rest of code.
+	local 	cb_pause = 0	/* 	1 to generate codebook for harmonizing varnames and labels, will not run rest of code.
 							 	0 to import edited codebook and run rest of code. */
 	local 	drop 	 = 1 	// 1 to drop variables with all missing values, 0 otherwise
 
