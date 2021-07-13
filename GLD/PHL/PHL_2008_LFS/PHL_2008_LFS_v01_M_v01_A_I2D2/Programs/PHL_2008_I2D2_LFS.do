@@ -105,7 +105,8 @@ if (`cb_pause' == 1) {
 	iecodebook append ///
 		`"`round1'"' `"`round2'"' `"`round3'"' `"`round4'"' /// survey files
 		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template-IN.xlsx"' /// output just created above
-		, clear surveys(JAN2008 APR2008 JUL2008 OCT2008) // survey names
+		, clear surveys(JAN2008 APR2008 JUL2008 OCT2008) 	/// survey names
+		generate(round)										// make a round variable
 	}
 	else {
 *** use the single file
@@ -162,7 +163,14 @@ if (`cb_pause' == 1) {
 
 	}
 
+		* add the round variable
+		tostring round	///							// make the numeric vars strings
+			, generate(idh_round) ///					// gen a variable with this prefix
+			force format(`"%01.0f"')				// ...and the specified number of digits in local
 
+		loc idh_els 	`idh_els' idh_round				// add each variable to the local list
+
+		
 	* concatenate all elements to form idh: hosehold id
 	egen idh=concat( `idh_els' )						// concatenate vars we just made. code drops vars @ end
 

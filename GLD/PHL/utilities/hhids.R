@@ -124,7 +124,7 @@ HHjan03_n <- n_hh_reg_prov_hcn(jan03)
   
 # 2007 ---- 
   hh07jan <- jan07 %>% 
-    group_by( w_regn, w_prv, w_ea, w_shsn, lestrata, eaunique_psu, w_hcn) %>%
+    group_by( w_regn, w_prv, w_ea, w_shsn, lstr, eaunique_psu, w_hcn) %>%
     mutate(hhid = cur_group_id()) %>%
     select(hhid, lc101_lno, w_regn, w_prv, w_ea, w_shsn, lestrata, eaunique_psu, w_hcn, everything()) %>%
     arrange(hhid, lc101_lno)
