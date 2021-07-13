@@ -27,12 +27,12 @@
 
 ----------------------------------------------------------------------- 
 
-<_ICLS Version_>				[Version of ICLS for Labor Questions] </_ICLS Version_> 
-<_ISCED Version_>				[ISCED 2011 however, the data does not provide coding for education level only for careers, thus we are using the national CMPE 2016 format] </_ISCED Version_>  
-<_ISCO Version_>				[ISCO 2008, however the occupation list does not follow exactly the list from ILO] </_ISCO Version_> 
-<_OCCUP National_>				[Sistema Nacional de Clasificación de Ocupaciones 2012 (SINCO) https://www.snieg.mx/DocumentacionPortal/Normatividad/historica/sinco-2012.pdf] </_OCCUP National_>  
-<_ISIC Version_>				[Rev. 4] </_ISIC Version_> 
-<_INDUS National_>				[SCIAN 2007] </_INDUS National_> 
+<_ICLS Version_>				[ICLS-18] </_ICLS Version_> 
+<_ISCED Version_>				[ISCED 2011] </_ISCED Version_>  
+<_ISCO Version_>				[ISCO 08] </_ISCO Version_> 
+<_OCCUP National_>				[Sinco 2011] </_OCCUP National_>  
+<_ISIC Version_>				[Rev.4] </_ISIC Version_> 
+<_INDUS National_>				[SCIAN 2013] </_INDUS National_> 
 
 ----------------------------------------------------------------------- 
 <_Version Control_> 
@@ -110,7 +110,7 @@ local path_output "C:\Users\wb582018\OneDrive - WBG\Surveys\MEX\MEX_2017_LFS\MEX
 
 
 *<_icls_v_>
-	gen icls_v = "ICLS-[13,14,15,16]"
+	gen icls_v = "ICLS-[18]"
 	label var icls_v "ICLS version(s) underlying questionnaire questions"
 *</_icls_v_>
 
@@ -782,27 +782,27 @@ foreach v of local ed_var {
 	replace industrycat_isic="A" if indus1==11
 	replace industrycat_isic="B" if indus1==21
 	replace industrycat_isic="C" if indus1==31 | indus1==32 | indus1==33
-	replace industrycat_isic="D" if p4a==2210 | p4a==2222
-	replace industrycat_isic="E" if p4a==2221
+	replace industrycat_isic="D" if p4a==2211
+	replace industrycat_isic="E" if p4a==2221 | p4a==2222
 	replace industrycat_isic="F" if indus1==23
 	replace industrycat_isic="G" if indus1==43| indus1==46
 	replace industrycat_isic="H" if indus1==48| indus1==49
 	replace industrycat_isic="I" if indus1==72
 	replace industrycat_isic="J" if indus1==51
-	replace industrycat_isic="K" if indus1==52
-	replace industrycat_isic="L" if p4a==5310
+	replace industrycat_isic="K" if indus1==52 | indus1==55
+	replace industrycat_isic="L" if indus1==53
 	replace industrycat_isic="M" if indus1==54
-	replace industrycat_isic="N" if p4a==5322 | p4a==5321 | p4a==5330| indus1==56
-	replace industrycat_isic="O" if indus1==93
+	replace industrycat_isic="N" if indus1==56
+	replace industrycat_isic="O" if p4a==9311 | p4a==9311 | p4a==9312 | p4a==9313 | p4a==9314 | p4a==9315 | p4a==9316 | p4a==9317 | p4a==9318
 	replace industrycat_isic="P" if indus1==61
 	replace industrycat_isic="Q" if indus1==62
 	replace industrycat_isic="R" if indus1==71
-	replace industrycat_isic="S" if p4a==8130 | p4a==8112 | p4a==8121 | p4a==8122
-	replace industrycat_isic="T" if p4a==8140
-	replace industrycat_isic="U" if indus1==99
+	replace industrycat_isic="S" if p4a==8111 | p4a==8112 | p4a==8113 | p4a==8114 | p4a==8131 | p4a==8132 | p4a==8141 |indus1==97 | indus1==98 | indus1==99
+	replace industrycat_isic="T" if p4a==8121 | p4a==8122 | p4a==8123 | p4a==8124 | p4a==8129
+	replace industrycat_isic="U" if p4a==9321
 	encode industrycat_isic, gen (industry_i)
 	replace industry_i=. if lstatus!=1
-	drop industrycat_isic
+	drop industrycat_isic indus1
 	rename industry_i industrycat_isic
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
@@ -810,7 +810,7 @@ foreach v of local ed_var {
 
 *<_industrycat10_>
 	gen byte industrycat10=floor(p4a/100)
-	recode industrycat10 (11=1) (21=2) (22 51=4) (23=5) (31/33=3) (43 46=6) (48/49=7) (52=8) (53/56=10) (61/62=9) (71 81 93 99 98 72 97=10)
+	recode industrycat10 (11=1) (21=2) (22=4) (23=5) (31/33=3) (43 46=6) (51 48 49=7) (52 55=8) (93=9) (53 54 56 61 62 71 72 97 98 99 81=10)
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
@@ -852,13 +852,13 @@ foreach v of local ed_var {
 	
 	*SINCO data to ISCO
 	*2
-	replace occup_isco=2000 if occup2==22	| occup2==23 | occup2==24 | occup2==27  | occup2==29
+	replace occup_isco=2000 if occup2==22	| occup2==23 | occup2==24 | occup2==28
 	*3
-	replace occup_isco=3000 if occup2==25	| occup2==26 | occup2==28  
+	replace occup_isco=3000 if occup2==25	| occup2==26 | occup2==29 | occup2==27 
 	*4
 	replace occup_isco=4000 if occup2==31	| occup2==32 | occup2==39
 	*5
-	replace occup_isco=5000 if occup2==41	| occup2==42 | occup2==43 | occup2==49 | occup2==51 | occup2==52 | occup2==53| occup2==59
+	replace occup_isco=5000 if occup2==41	| occup2==42 | occup2==43 | occup2==49
 	*6
 	replace occup_isco=6000 if occup2==61 | occup2==62 | occup2==63 | occup2==69
 	*7
@@ -866,7 +866,8 @@ foreach v of local ed_var {
 	*8
 	replace occup_isco=8000 if occup2==81	| occup2==82 | occup2==83 | occup2==89
 	*9
-	replace occup_isco=9000 if occup2==91	| occup2==92 | occup2==93 | occup2==94 | occup2==95 | occup2==96 | occup2==97 | occup2==98 | occup2==99
+	replace occup_isco=9000 if occup2==91	| occup2==92 | occup2==93 | occup2==94 | occup2==95 | occup2==96 | occup2==97 | occup2==98 | occup2==99 | occup2==51 |  occup2==52 | occup2==53 |  occup2==59
+	replace occup_isco=0000 if occup2==54
 	label var occup_isco "ISCO code of primary job 7 day recall"
 	
 *</_occup_isco_>
@@ -1076,13 +1077,40 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 
 *<_industrycat_isic_2_>
 	gen industrycat_isic_2 = .
+	tostring industrycat_isic_2, replace
+	gen indus1=floor(p7c/100)
+	replace industrycat_isic_2="A" if indus1==11
+	replace industrycat_isic_2="B" if indus1==21
+	replace industrycat_isic_2="C" if indus1==31 | indus1==32 | indus1==33
+	replace industrycat_isic_2="D" if p7c==2211
+	replace industrycat_isic_2="E" if p7c==2221 | p7c==2222
+	replace industrycat_isic_2="F" if indus1==23
+	replace industrycat_isic_2="G" if indus1==43| indus1==46
+	replace industrycat_isic_2="H" if indus1==48| indus1==49
+	replace industrycat_isic_2="I" if indus1==72
+	replace industrycat_isic_2="J" if indus1==51
+	replace industrycat_isic_2="K" if indus1==52
+	replace industrycat_isic_2="L" if indus1==53
+	replace industrycat_isic_2="M" if indus1==54 | indus1==55
+	replace industrycat_isic_2="N" if indus1==56
+	replace industrycat_isic_2="O" if p7c==9311 | p7c==9311 | p7c==9312 | p7c==9313 | p7c==9314 | p7c==9315 | p7c==9316 | p7c==9317 | p7c==9318
+	replace industrycat_isic_2="P" if indus1==61
+	replace industrycat_isic_2="Q" if indus1==62
+	replace industrycat_isic_2="R" if indus1==71
+	replace industrycat_isic_2="S" if p7c==8111 | p7c==8112 | p7c==8113 | p7c==8114 | p7c==8131 | p7c==8132 | p7c==8141 |indus1==97 | indus1==98 | indus1==99
+	replace industrycat_isic_2="T" if p7c==8121 | p7c==8122 | p7c==8123 | p7c==8124 | p7c==8129
+	replace industrycat_isic_2="U" if p7c==9321
+	encode industrycat_isic_2, gen (industry_i)
+	replace industry_i=. if lstatus!=1
+	drop industrycat_isic_2 indus1
+	rename industry_i industrycat_isic_2
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
 
 *<_industrycat10_2_>
 	gen byte industrycat10_2 = floor(p7c/100)
-	recode industrycat10_2 11=1 21=2 22=4 23=5 31/33=3 43 46 72=6 48/49 51=7 52/55=8 93=9 56/71 81 97/99=10 
+	recode industrycat10_2 (11=1) (21=2) (22 51=4) (23=5) (31/33=3) (43 46=6) (48/49=7) (52=8) (53/56=10) (61/62=9) (71 81 93 99 98 72 97=10)
 	replace industrycat10_2=. if lstatus!=1
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
@@ -1105,6 +1133,29 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 
 *<_occup_isco_2_>
 	gen occup_isco_2 = .
+	gen occup2=floor(occup_orig_2/100)
+	*CMO data to ISCO
+	replace occup_isco_2=2000 if occup2==11 |  occup2==12 | occup2==13 
+	replace occup_isco_2=1000 if occup2==14 |  occup2==21
+	
+	*SINCO data to ISCO
+	*2
+	replace occup_isco_2=2000 if occup2==22	| occup2==23 | occup2==24 | occup2==28
+	*3
+	replace occup_isco_2=3000 if occup2==25	| occup2==26 | occup2==29 | occup2==27 
+	*4
+	replace occup_isco_2=4000 if occup2==31	| occup2==32 | occup2==39
+	*5
+	replace occup_isco_2=5000 if occup2==41	| occup2==42 | occup2==43 | occup2==49
+	*6
+	replace occup_isco_2=6000 if occup2==61 | occup2==62 | occup2==63 | occup2==69
+	*7
+	replace occup_isco_2=7000 if occup2==71	| occup2==72 | occup2==73 | occup2==74 | occup2==75 | occup2==76 | occup2==79
+	*8
+	replace occup_isco_2=8000 if occup2==81	| occup2==82 | occup2==83 | occup2==89
+	*9
+	replace occup_isco_2=9000 if occup2==91	| occup2==92 | occup2==93 | occup2==94 | occup2==95 | occup2==96 | occup2==97 | occup2==98 | occup2==99 | occup2==51 |  occup2==52 | occup2==53 |  occup2==59
+	replace occup_isco_2=0000 if occup2==54
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
@@ -1116,10 +1167,13 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 
 *<_occup_skill_2_>
 	gen occup_skill_2 = .
-	replace occup_skill_2 = 1 if inrange(occup_2,1,2) 
-	replace occup_skill_2 = 2 if inrange(occup_2,3,7) 
-	replace occup_skill_2 = 3 if occup_2 == 8
+	replace occup_skill_2 = 1 if occup_isco_2 == 1000 | occup_isco_2 == 2000
+	replace occup_skill_2 = 2 if inrange(occup_isco_2,3000,7000) 
+	replace occup_skill_2 = 3 if occup_isco_2 == 8000
+	replace occup_skill_2 = 4 if occup2 == 54
+	replace occup_skill_2 = 5 if occup_isco_2 == 9000
 	replace occup_skill_2=. if lstatus!=1
+	drop occup2
 	label var occup_skill_2 "Skill based on ISCO standard secondary job 7 day recall"
 	label values occup_skill_2 lbloccupskill
 *</_occup_skill_2_>
