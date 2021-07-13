@@ -132,4 +132,8 @@ HHjan03_n <- n_hh_reg_prov_hcn(jan03)
   dups07jan <- get_dupes(hh07jan, hhid, lc101_lno)
   n_distinct(dups07jan$hhid) # only 4 households that have duplicates
   
+  dups07jan_ids <- unique(dups07jan$hhid)
+  n_dups_in_fam_07jan <- 
+    hh07jan %>% filter(hhid %in% dups07jan_ids) %>% nrow() # there are 48 observations that belong to households with dups
+  
   

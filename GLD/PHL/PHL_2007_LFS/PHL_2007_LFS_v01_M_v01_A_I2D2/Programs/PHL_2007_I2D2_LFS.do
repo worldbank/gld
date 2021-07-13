@@ -41,7 +41,7 @@
 	local 	surv_yr `"2007"'	// set this to the survey year
 
 ** RUN SETTINGS
-	local 	cb_pause = 1	// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
+	local 	cb_pause = 0	// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
 	local 	append 	 = 1	// 1 to run iecodebook append, 0 if file is already appended.
 	local 	drop 	 = 0 	// 1 to drop variables with all missing values, 0 otherwise
 
@@ -232,7 +232,7 @@ if (`cb_pause' == 1) {
 
 
 		* IDH construction for round 3- 4
-		loc idhvars 	w_regn w_prv w_ea w_shsn lestrata eaunique_psu w_hcn	// store idh vars in local
+		loc idhvars 	reg w_prv w_ea w_shsn stratum eaunique_psu w_hcn	// store idh vars in local
 
 		ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
 		loc numlist 	= r(varlist)						// store numeric vars in local
@@ -326,11 +326,9 @@ if (`cb_pause' == 1) {
 	duplicates report	idh idp							// for record keeping
 	duplicates tag 		idh idp	 						/// create a 1/0 var that tags the duplicate observations
 	 					, generate(hhid_dup_obs)		// (note this does not tage all obs in the household)
-	sort hhid
-	by hhid: 	egen 	hhid_dup_hh	= max(hhid_dup_obs)	// this var will tell us if any obs in the hh is duplicated
-	br idh idp  hhid_dup_hh hhid_dup_obs
-	pause on
-	pause
+	sort idh
+	by idh: 	egen 	hhid_dup_hh	= max(hhid_dup_obs)	// this var will tell us if any obs in the hh is duplicated
+
 	/* you can't actually do this...preserve within preserve
 	preserve
 
@@ -341,7 +339,7 @@ if (`cb_pause' == 1) {
 	restore
 	*/
 
-	drop if 			hhid_dup_hh > 	1				// drop all obs in household if household has duplicated hhid obs
+	drop if 			hhid_dup_hh == 	1				// drop all obs in household if household has duplicated hhid obs
 	assert 				r(N_drop) 	== 48				// we know that 13 obs should be dropped under these conditions.
 
 
@@ -823,7 +821,7 @@ if (`cb_pause' == 1) {
 	replace industry1=. if lstatus!=1 		// restrict universe to employed only
 
 **SURVEY SPECIFIC INDUSTRY CLASSIFICATION
-	gen industry_orig=c16a_pkb
+	gen industry_orig=c18_pkb
 	replace industry_orig=. if lstatus!=1 		// restrict universe to employed only
 	replace industry_orig=. if age < lb_mod_age // restrict universe to working age
 	label var industry_orig "Original Industry Codes"
@@ -879,7 +877,7 @@ if (`cb_pause' == 1) {
 
 
 ** HOURS WORKED LAST WEEK
-	gen whours= c20_phours
+	gen whours= c22_phrs
 	replace whours=. if lstatus!=1 			// restrict universe to employed only
 	replace whours=. if age < lb_mod_age	// restrict universe to working age
 	label var whours "Hours of work in last week"
@@ -887,7 +885,7 @@ if (`cb_pause' == 1) {
 
 
 ** WAGES
-	gen double wage= c25_pbasic
+	gen double wage= c27_pbsc
 	replace wage=. if lstatus!=1 			// restrict universe to employed only
 	replace wage=. if age < lb_mod_age		// restrict universe to working age
 	replace wage=. if empstat==1			// restrict universe to wage earners
@@ -955,7 +953,7 @@ if (`cb_pause' == 1) {
 
 
 **SURVEY SPECIFIC INDUSTRY CLASSIFICATION - SECOND JOB
-	gen industry_orig_2=c30a_okb
+	gen industry_orig_2=j03_okb
 	replace industry_orig_2=. if lstatus!=1 				// restrict universe to employed only
 	replace industry_orig_2=. if age < lb_mod_age			// restrict universe to working age
 	label var industry_orig_2 "Original Industry Codes - Second job"
