@@ -152,7 +152,7 @@ if (`cb_pause' == 1) {
 	keep if 		round == 1 | round == 3 | round == 3
 
 		* IDH construction for rounds 1-3
-		loc idhvars 	hhnum 	// store idh vars in local
+		loc idhvars 	pufhhnum 	// store idh vars in local
 
 	ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
 	loc numlist 	= r(varlist)						// store numeric vars in local
@@ -232,6 +232,28 @@ if (`cb_pause' == 1) {
 	sort idh idp
 	label var idp "Individual id"
 
+	** Manage duplicates
+		/*There are 1 duplicated observations across pufhhnum, round, c101_lno,
+	 	or 2 total pairs of duplicates. These all occur in c101_lno (line number). What appears to be
+		this combination of variables determines households except for these 8 observations, which occur
+		all in the same constructed household id. For now, I will
+		simply drop all observations that pertain to this household id
+		until/if coming up with a more objective way to distinguish between
+		households. */
+
+	duplicates report	idh idp							// for record keeping
+	duplicates tag 		idh idp	 						/// create a 1/0 var that tags the duplicate observations
+	 					, generate(hhid_dup_obs)		// (note this does not tage all obs in the household)
+	sort idh
+	by idh: 	egen 	hhid_dup_hh	= max(hhid_dup_obs)	// this var will tell us if any obs in the hh is duplicated
+
+
+	drop if 			hhid_dup_hh == 1				// drop all obs in household if household has duplicated hhid obs
+	assert 				r(N_drop) 	== 4				// we know that 4 obs should be dropped under these conditions.
+	
+	
+	
+	
 ** ID CHECKS
 	duplicates report idh idp
 	isid idh idp 										// household and individual id uniquely identify
@@ -305,7 +327,7 @@ if (`cb_pause' == 1) {
 		* 	note, assuming that the only necessary individaul identifier is family member, which is numeric
 		*	so, not following processing for sorting numeric/non-numeric variables.
 
-		loc idpvars 	c101_lno								// store relevant idp vars in local
+		loc idpvars 	pufc01_lno								// store relevant idp vars in local
 		ds `idpvars',  	has(type numeric)					// filter out numeric variables in local
 		loc rlist 		= r(varlist)						// store numeric vars in local
 
@@ -911,7 +933,7 @@ undergraduates in "primary" and "graduates" in "secondary" */
 
 
 ** HOURS WORKED LAST WEEK
-	gen whours= c22_phrs
+	gen whours= pufc28_thours
 	replace whours=. if lstatus!=1 			// restrict universe to employed only
 	replace whours=. if age < lb_mod_age	// restrict universe to working age
 	label var whours "Hours of work in last week"
@@ -919,7 +941,7 @@ undergraduates in "primary" and "graduates" in "secondary" */
 
 
 ** WAGES
-	gen double wage= c27_pbsc
+	gen double wage= pufc25_pbasic
 	replace wage=. if lstatus!=1 			// restrict universe to employed only
 	replace wage=. if age < lb_mod_age		// restrict universe to working age
 	replace wage=. if empstat==1			// restrict universe to wage earners
@@ -1020,7 +1042,7 @@ undergraduates in "primary" and "graduates" in "secondary" */
 
 
 **SURVEY SPECIFIC INDUSTRY CLASSIFICATION - SECOND JOB
-	gen industry_orig_2=j03_okb
+	gen industry_orig_2=pufc43_qkb
 	replace industry_orig_2=. if lstatus!=1 				// restrict universe to employed only
 	replace industry_orig_2=. if age < lb_mod_age			// restrict universe to working age
 	label var industry_orig_2 "Original Industry Codes - Second job"
@@ -1054,7 +1076,7 @@ undergraduates in "primary" and "graduates" in "secondary" */
 
 
 ** WAGES - SECOND JOB
-	gen double wage_2=c36_obic
+	gen double wage_2=.
 	replace wage_2=. if lstatus!=1 			// restrict universe to employed only
 	replace wage_2=. if age < lb_mod_age		// restrict universe to working age
 	replace wage_2=. if empstat==1			// restrict universe to wage earners

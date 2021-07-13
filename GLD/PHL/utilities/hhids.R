@@ -162,7 +162,7 @@ HHjan03_n <- n_hh_reg_prov_hcn(jan03)
   dups17jan_ids <- unique(dups17jan$pufhhnum)
   
   n_dups_in_fam_17jan <- 
-    hh07jan %>% filter(hhid %in% dups17jan_ids) %>% nrow() # there are 9 observations that belong to households with dups
+    jan17 %>% filter(pufhhnum %in% dups17jan_ids) %>% nrow() # there are 4 observations that belong to households with dups
   
   
   
