@@ -32,7 +32,7 @@
 <_ISCO Version_>				[ISCO 08] </_ISCO Version_> 
 <_OCCUP National_>				[Sinco 2011] </_OCCUP National_>  
 <_ISIC Version_>				[Rev.4] </_ISIC Version_> 
-<_INDUS National_>				[SCIAN 2014] </_INDUS National_> 
+<_INDUS National_>				[SCIAN 2013] </_INDUS National_> 
 
 ----------------------------------------------------------------------- 
 <_Version Control_> 
