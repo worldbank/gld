@@ -195,6 +195,25 @@ replace wgt = wgt / `n_round'
 		}
 	}
 
+** Drop Unused Value labels 
+
+	* Store all labels in data
+	label dir
+	local all_lab `r(names)'
+
+	* Store all variables with a label, extract value label names
+	local used_lab = ""
+	ds, has(vallabel)
+	local labelled_vars `r(varlist)'
+	foreach varName of local labelled_vars {
+		local y : value label `varName'
+		local used_lab `"`used_lab' `y'"'
+	}
+
+	* Compare lists, if not
+	local notused : list all_lab - used_lab 		// local `notused' defines value labs not in remaining vars
+	label drop `notused'
+
 
 	save `"`id_data'\\PHL_2003_I2D2_LFS.dta"', replace
 
