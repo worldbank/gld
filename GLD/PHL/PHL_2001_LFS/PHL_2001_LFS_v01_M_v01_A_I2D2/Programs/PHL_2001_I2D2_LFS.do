@@ -43,6 +43,7 @@
 ** RUN SETTINGS
 	local 	cb_pause = 0	// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
 	local 	append 	 = 0 	// 1 to run iecodebook append, 0 if file is already appended.
+	local 	drop 	 = 1 	// 1 to drop variables with all missing values, 0 otherwise
 
 
 	local 	year 		"${GLD}:\GLD-Harmonization\\`usr'\\`cty3'\\`cty3'_`surv_yr'_LFS" // top data folder
@@ -134,15 +135,39 @@ if (`cb_pause' == 1) {
 	label var month "Month of the interview"
 
 
+** DUPLICATES
+	/*There are 4 pairs of duplicate observations (8 total), all in the same household. 3 of these pairs (6 total) are
+		entirely duplicated across all variables. 1 pair, (2 total obs) have 1 variable different: education attainment.
+		I will keep the observation that lists the higher education attainment of the two*/
+
+	** remove duplicated observations on all variables, sort and drop by reproducible seed
+	set 				seed 47
+	gen 				r = runiform()
+
+	sort 				r
+	duplicates drop
+
+	* remove duplicated pair that differs on education only, keep obs with highest edu level
+	duplicates tag 		regn hcn c101_lno	///				tag dups in terms of hhid and will-be pid (c101_lno)
+						, generate(dup1)
+
+	gsort 				regn hcn c101_lno -c07_grade 		// sort descending, keeping highest grade up top, wont' be dropped
+	duplicates drop 	regn hcn c101_lno	///
+						, force
+
+
+
 ** HOUSEHOLD IDENTIFICATION NUMBER
-	loc idhvars 	regn  prov cprrcd urb hcn 	// store idh vars in local
+	* in 01, it appears that regn and hcn uniquely identify the HH
+
+	loc idhvars 	 regn prov  hcn						// store idh vars in local
 
 	ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
 	loc numlist 	= r(varlist)						// store numeric vars in local
 	loc stringlist 	: list idhvars - numlist			// non-numeric vars in stringlist
 
 	* starting locals
-	loc len = 4											// declare the length of each element in digits
+	loc len = 6											// declare the length of each element in digits
 	loc idh_els ""										// start with empty local list
 
 	* make each numeric var string, including leading zeros
@@ -179,13 +204,13 @@ if (`cb_pause' == 1) {
 
 
 ** INDIVIDUAL IDENTIFICATION NUMBER
-	bys idh: gen n_fam = _n								// generate family member number
+	* in 01, region, hh control and line number variables uniquely identify observations. use line number as pid
 
 	* repeat same process from above, but only with n_fam.
 	* 	note, assuming that the only necessary individaul identifier is family member, which is numeric
 	*	so, not following processing for sorting numeric/non-numeric variables.
 
-	loc idpvars 	n_fam 								// store relevant idp vars in local
+	loc idpvars 	c101_lno 								// store relevant idp vars in local
 	ds `idpvars',  	has(type numeric)					// filter out numeric variables in local
 	loc rlist 		= r(varlist)						// store numeric vars in local
 
@@ -413,7 +438,7 @@ if (`cb_pause' == 1) {
 
 ** MARITAL STATUS
 	gen byte marital=c06_mstat
-	recode marital (1=2) (2=1) (3=5)(5=.)
+	recode marital (1=2) (2=1) (3=5)(5 6=.)
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
 	label values marital lblmarital
@@ -434,7 +459,8 @@ if (`cb_pause' == 1) {
 ** CURRENTLY AT SCHOOL
 	*no related variable in survey
 	gen byte atschool=.
-	label var atschool "Attending school"
+	recode atschool (2 = 0)		// 2 was "no", recode to 0. Keep 1=Yes same.
+    label var atschool "Attending school"
 	la de lblatschool 0 "No" 1 "Yes"
 	label values atschool  lblatschool
 
@@ -508,7 +534,7 @@ if (`cb_pause' == 1) {
 		currently attending*/
 
 	gen byte everattend=.
-	replace everattend=1 if age >= ed_mod_age & (atschool==1 | (2 <= edulevel1 <= 8 ))
+	replace everattend=1 if age >= ed_mod_age & ((edulevel1 >= 2 & edulevel1 <= 8 ) | atschool == 1)
 	replace everattend=0 if age >= ed_mod_age & atschool==0 & edulevel1==0
 	label var everattend "Ever attended school"
 	la de lbleverattend 0 "No" 1 "Yes"
@@ -926,21 +952,10 @@ if (`cb_pause' == 1) {
 *****************************************************************************************************/
 
 
-** KEEP VARIABLES - ALL
-	keep sample ccode year intv_year month idh idp wgt strata psu urb ///
-				reg01 reg02 reg03 reg04 ownhouse water electricity toilet landphone      ///
-				cellphone computer internet hhsize head gender age soc marital ed_mod_age ///
-				everattend atschool literacy educy edulevel1 edulevel2 edulevel3 lb_mod_age ///
-				lstatus lstatus_year empstat empstat_year njobs njobs_year ocusec nlfreason ///
-				unempldur_l unempldur_u industry industry1 industry_orig occup occup_orig ///
-				firmsize_l firmsize_u whours wage unitwage contract  empstat_2 ///
-				empstat_2_year industry_2 industry1_2 industry_orig_2 occup_2 wage_2 unitwage_2 ///
-				healthins socialsec union rbirth_juris rbirth rprevious_juris rprevious ///
-				yrmove rprevious_time_ref pci pci_d pcc pcc_d reg02_orig reg03_orig
 
-
-** ORDER VARIABLES
-	order sample ccode year intv_year month idh idp wgt strata psu urb	///
+** ORDER KEEP VARIABLES
+	local 		order 														///
+				sample ccode year intv_year month idh idp wgt strata psu urb	///
 				reg01 reg02 reg03 reg04 reg02_orig reg03_orig  ///
 				ownhouse water electricity toilet landphone ///
 				cellphone computer internet hhsize head gender age soc marital ///
@@ -953,29 +968,31 @@ if (`cb_pause' == 1) {
 				healthins socialsec union rbirth_juris rbirth rprevious_juris ///
 				rprevious yrmove rprevious_time_ref pci pci_d pcc pcc_d
 
+	keep 		`order'
+	order 		`order'
+
 	compress
 
 
 ** DELETE MISSING VARIABLES
-	local keep ""
-	qui levelsof ccode, local(cty)
-	foreach var of varlist urb - pcc_d {
-	qui sum `var'
-	scalar sclrc = r(mean)
-	if sclrc==. {
-	     display as txt "Variable " as result "`var'" as txt " for ccode " as result `cty' as txt " contains all missing values -" as error " Variable Deleted"
-	}
-	else {
-	     local keep `keep' `var'
-	}
-	}
-	keep sample ccode year intv_year month  idh idp wgt strata psu `keep'
+	* if variables are missing on all values, drop them, unless they are listed as "key" variable
 
-
-
-** MISSING VALUES
-	*Declare varlist which cannot contain missings
+	* declare list of key variables that should never have missing observations
 	loc	nomissvars sample ccode year intv_year month idh idp wgt strata psu hhsize ed_mod_age lb_mod_age
+
+
+	local missvars : 	list order - nomissvars
+
+
+	if (`drop' == 1) {
+		missings dropvars 	`missvars', force
+	}
+
+
+** OBSERVATION MISSING VALUES
+	/*we know that some variables should not have missing values. Keep track of how many obs are missing
+	for these variables only*/
+
 
 	foreach var of local nomissvars {
 		qui mdesc `var'

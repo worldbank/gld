@@ -76,6 +76,7 @@ code 	        <- file.path(clone, "gld/Support")
 
 # Network Data -------
 PHL           <- file.path(GLD, "GLD-Harmonization/551206_TM/PHL")
+  PHL_meta    <- file.path(PHL, "PHL_data/I2D2/Rdata/metadata.Rdata")
 
 
 

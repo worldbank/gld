@@ -41,8 +41,9 @@
 	local 	surv_yr `"2006"'	// set this to the survey year
 
 ** RUN SETTINGS
-	local 	cb_pause = 1	// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
+	local 	cb_pause = 0	// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
 	local 	append 	 = 1	// 1 to run iecodebook append, 0 if file is already appended.
+	local 	drop 	 = 1 	// 1 to drop variables with all missing values, 0 otherwise
 
 
 	local 	year 		"${GLD}:\GLD-Harmonization\\`usr'\\`cty3'\\`cty3'_`surv_yr'_LFS" // top data folder
@@ -101,7 +102,8 @@ if (`cb_pause' == 1) {
 	iecodebook append ///
 		`"`round1'"' `"`round2'"' `"`round3'"' `"`round4'"' /// survey files
 		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template-IN.xlsx"' /// output just created above
-		, clear surveys(JAN2006 APR2006 JUL2006 OCT2006) // survey names
+		, clear surveys(JAN2006 APR2006 JUL2006 OCT2006) /// 	survey names
+		generate(round)									// 		generate a factor var for survey round
 	}
 	else {
 *** use the single file
@@ -137,25 +139,25 @@ if (`cb_pause' == 1) {
 
 
 ** HOUSEHOLD IDENTIFICATION NUMBER
-	loc idhvars 	regn  prov stratum urb hcn 	// store idh vars in local
+/*This part is the only variable that has to be coded conditional by round. This means that we'll have to split the dataset up by round
+ 	and create tempfiles before appending back together. Not ideal but it avoids having separate scripts for each round. */
+
+	tempfile 		partA	partB						// declare tempfiles, Part A is first 3 rounds, Part B is round 4/october
+
+	preserve   											// preserve the original appended dataset
+	keep if 		round == 1 | round == 2  // keep first 3 rounds
+
+		* IDH construction for rounds 1-2
+		loc idhvars 	hhid 	// store idh vars in local
 
 	ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
 	loc numlist 	= r(varlist)						// store numeric vars in local
 	loc stringlist 	: list idhvars - numlist			// non-numeric vars in stringlist
 
 	* starting locals
-	loc len = 4											// declare the length of each element in digits
+	loc len = 23										// declare the length of each element in digits
 	loc idh_els ""										// start with empty local list
 
-	* make each numeric var string, including leading zeros
-	foreach var of local numlist {
-		tostring `var'	///								// make the numeric vars strings
-			, generate(idh_`var') ///					// gen a variable with this prefix
-			force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
-
-		loc idh_els 	`idh_els' idh_`var'				// add each variable to the local list
-
-	}
 
 	* make each string variable numeric (as it should be), then string again with correct format
 	foreach var of local stringlist {
@@ -171,9 +173,17 @@ if (`cb_pause' == 1) {
 
 	}
 
+		* add the round variable
+		tostring round	///							// make the numeric vars strings
+			, generate(idh_round) ///					// gen a variable with this prefix
+			force format(`"%01.0f"')				// ...and the specified number of digits in local
+
+		loc idh_els 	`idh_els' idh_round				// add each variable to the local list
+
 
 	* concatenate all elements to form idh: hosehold id
-	egen idh=concat( `idh_els' )						// concatenate vars we just made. code drops vars @ end
+
+	egen idh=concat( hhid idh_round )						// concatenate vars we just made. code drops vars @ end
 
 	label var idh "Household id"
 
@@ -187,7 +197,7 @@ if (`cb_pause' == 1) {
 	* 	note, assuming that the only necessary individaul identifier is family member, which is numeric
 	*	so, not following processing for sorting numeric/non-numeric variables.
 
-	loc idpvars 	n_fam 								// store relevant idp vars in local
+	loc idpvars 	c101_lno								// store relevant idp vars in local
 	ds `idpvars',  	has(type numeric)					// filter out numeric variables in local
 	loc rlist 		= r(varlist)						// store numeric vars in local
 
@@ -204,6 +214,8 @@ if (`cb_pause' == 1) {
 
 	}
 
+
+
 	* concatenate to form idp: individual id
 	egen idp=concat( `idp_els' )						// concatenate vars we just made. code drops vars @ end
 
@@ -211,13 +223,157 @@ if (`cb_pause' == 1) {
 	label var idp "Individual id"
 
 ** ID CHECKS
+	duplicates report idh idp
 	isid idh idp 										// household and individual id uniquely identify
+
+
+
+	save 	`partA', 	replace 							// save tempfile for partA
+	restore													// restore to original 4-round dataset
+
+	preserve   												// preserve the original appended dataset
+	keep if 			round == 3 | round == 4 			// keep round 4/october only
+
+
+		* IDH construction for round 3- 4
+		loc idhvars 	reg prov stratum psu shsn hcn	// store idh vars in local
+
+		ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
+		loc numlist 	= r(varlist)						// store numeric vars in local
+		loc stringlist 	: list idhvars - numlist			// non-numeric vars in stringlist
+
+		* starting locals
+		loc len = 5										// declare the length of each element in digits
+		loc idh_els ""										// start with empty local list
+
+		* make each numeric var string, including leading zeros
+		foreach var of local numlist {
+			tostring `var'	///								// make the numeric vars strings
+				, generate(idh_`var') ///					// gen a variable with this prefix
+				force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
+
+			loc idh_els 	`idh_els' idh_`var'				// add each variable to the local list
+
+		}
+
+		* make each numeric var string, including leading zeros
+			tostring eaunique_round_3_4	///								// make the numeric vars strings
+				, generate(idh_eaunique_round_3_4) ///					// gen a variable with this prefix
+				force format(`"%020.0f"')				// ...and the specified number of digits in local
+
+			loc idh_els 	`idh_els' idh_eaunique_round_3_4				// add each variable to the local list
+
+
+		* make each string variable numeric (as it should be), then string again with correct format
+		foreach var of local stringlist {
+			destring `var' /// 								// destring variable, make numeric version
+				, gen(num_`var') ///						//
+				force 										// force obs to num that are non numeric, ie to missing
+
+			tostring num_`var'	///							// make the numeric vars strings
+				, generate(idh_`var') ///					// gen a variable with this prefix
+				force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
+
+			loc idh_els 	`idh_els' idh_`var'				// add each variable to the local list
+
+		}
+
+		* add the round variable
+		tostring round	///							// make the numeric vars strings
+			, generate(idh_round) ///					// gen a variable with this prefix
+			force format(`"%01.0f"')				// ...and the specified number of digits in local
+
+		loc idh_els 	`idh_els' idh_round				// add each variable to the local list
+
+
+
+		* concatenate all elements to form idh: hosehold id
+		egen idh=concat( `idh_els' )						// concatenate vars we just made. code drops vars @ end
+
+		label var idh "Household id"
+
+
+
+
+		** INDIVIDUAL IDENTIFICATION NUMBER
+		bys idh: gen n_fam = _n								// generate family member number
+
+		* repeat same process from above, but only with n_fam.
+		* 	note, assuming that the only necessary individaul identifier is family member, which is numeric
+		*	so, not following processing for sorting numeric/non-numeric variables.
+
+		loc idpvars 	c101_lno								// store relevant idp vars in local
+		ds `idpvars',  	has(type numeric)					// filter out numeric variables in local
+		loc rlist 		= r(varlist)						// store numeric vars in local
+
+		* make new values with desired length of each variable
+		loc len = 2											// declare the length of each element in digits
+		loc idp_els ""										// start with empty local list
+
+		foreach var of local idpvars {
+			tostring `var'	///								// make numeric variables strings
+				, generate(idp_`var') ///					// generate a variable with this prefix
+				force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
+
+			loc idp_els 	`idp_els' idp_`var'				// add each variable to the local list
+
+		}
+
+		* concatenate to form idp: individual id
+		egen idp=concat( `idp_els' )						// concatenate vars we just made. code drops vars @ end
+
+		sort idh idp
+		label var idp "Individual id"
+
+	** Manage duplicates
+		/*There are 8 duplicated observations across creg, prov, stratum, psu, shsn, hcn, round, c101_lno,
+	 	or 4 total pairs of duplicates. These all occur in c101_lno (line number). What appears to be
+		this combination of variables determines households except for these 8 observations, which occur
+		all in the same constructed household id. For now, I will
+		simply drop all observations that pertain to this household id
+		until/if coming up with a more objective way to distinguish between
+		households. */
+
+	duplicates report	idh idp							// for record keeping
+	duplicates tag 		idh idp	 						/// create a 1/0 var that tags the duplicate observations
+	 					, generate(hhid_dup_obs)		// (note this does not tage all obs in the household)
+	sort idh
+	by idh: 	egen 	hhid_dup_hh	= max(hhid_dup_obs)	// this var will tell us if any obs in the hh is duplicated
+
+	/* you can't actually do this...preserve within preserve
+	preserve
+
+		collapse 		(mean)	hhid_dup_hh	, by(hid)	// summarise hhid_dup_hh by hid
+		count if 		hhid_dup_hh == 1				// get the number of hids that have duplicated observations in them
+		assert 			r(N) == 1						// make sure there's only 1 hh with duplicated hids
+
+	restore
+	*/
+
+	drop if 			hhid_dup_hh == 	1				// drop all obs in household if household has duplicated hhid obs
+	assert 				r(N_drop) 	== 13				// we know that 13 obs should be dropped under these conditions.
+
+
+	** ID CHECKS
+	isid idh idp 										// household and individual id uniquely identify
+
+
+	save 	`partB', 	replace 							// save the final round to a tempfile.
+
+	restore 												// restore to old dataset
+	clear
+
+	append using 		`partA' `partB'
+
+	isid 	idh idp 									// check after appending as well.
+
+
 
 
 ** HOUSEHOLD WEIGHTS
 	/* The weight variable will be divided by the number of rounds per year to ensure the
 	   weighting factor does not over-mutliply*/
-	gen double wgt= rfadj/(`n_round')
+	gen double wgt= fwgt/(`n_round')
 	label var wgt "Household sampling weight"
 
 
@@ -239,6 +395,8 @@ if (`cb_pause' == 1) {
 
 
 ** LOCATION (URBAN/RURAL)
+	* no urban variable for 2006
+	gen byte urb = .
 	label var urb "Urban/Rural"
 	la de lblurb 1 "Urban" 2 "Rural"
 	label values urb lblurb
@@ -255,7 +413,11 @@ if (`cb_pause' == 1) {
 
 
 ** REGIONAL AREA 2 DIGITS ADM LEVEL (ADMN2)
-	gen reg03= prov
+	/* There is no common province variable across all 4 rounds. Some rounds contain a 4 digits
+	 	province variable with ~115 distinct values and others contain  a numeric variable with
+		~85 distinct values. No obvious way to harmonize, will leave as missing since the
+		primary unit of analysis is Region (ADM1)*/
+	gen reg03= .
 	label var reg03 "2nd Level Administrative Division"
 
 
@@ -275,14 +437,9 @@ if (`cb_pause' == 1) {
 
 	* reg01 is the geo/admin var of interest, reg02 is the first/highest/largest admin variable
 
-	* RECODE REGION
-	recode 	reg01 reg02 	/// recode both of thes variables
-			(4 = 41) 		/// sometimes Calabarzon appears as value 4, recode to always be 41 for consistency
-			(17= 42)		//  sometimes Mimaropa appears as value 17, recode to always be 42 for consistency
-
 
 	* CREATE VALUE LABEL
-	** define region value label: b=after july 2003 change
+	** define region value label: b= 2003 change
 	la de lblreg02b			///
 	 1   "Ilocos"			///
 	 2	 "Cagayan Valley"	///
@@ -412,14 +569,14 @@ if (`cb_pause' == 1) {
 
 
 ** GENDER
-	gen byte gender=c04_sex
+	gen byte gender=c06_sex
 	label var gender "Gender"
 	la de lblgender 1 "Male" 2 "Female"
 	label values gender lblgender
 
 
 ** AGE
-	gen byte age = c05_age
+	gen byte age = c07_age
 	label var age "Individual age"
 	replace age=98 if age>=98 & age!=.
 
@@ -431,8 +588,8 @@ if (`cb_pause' == 1) {
 
 
 ** MARITAL STATUS
-	gen byte marital=c06_mstat
-	recode marital (1=2) (2=1) (3=5)(5=.)
+	gen byte marital=c08_mstat
+	recode marital (1=2) (2=1) (3=5)(5 6=.)
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
 	label values marital lblmarital
@@ -452,8 +609,9 @@ if (`cb_pause' == 1) {
 
 ** CURRENTLY AT SCHOOL
 	*no related variable in survey
-	gen byte atschool=.
-	label var atschool "Attending school"
+	gen byte atschool= c10_cursch
+	recode atschool (2 = 0)		// 2 was "no", recode to 0. Keep 1=Yes same.
+    label var atschool "Attending school"
 	la de lblatschool 0 "No" 1 "Yes"
 	label values atschool  lblatschool
 
@@ -476,13 +634,13 @@ if (`cb_pause' == 1) {
 	/*Please refer to the "Education_Levels.md" for a detailed discussion on classificition of how each level is classified and why,
 		available in github repository. */
 	gen byte edulevel1=.
-	replace edulevel1=1 if c07_grade==0			// "No Grade Completed" -> "No education"
-	replace edulevel1=2 if c07_grade==1 // "Elementary Undergraduate" -> " Primary Incomplete"
-	replace edulevel1=3 if c07_grade==2 	// "Elementary Graduate" -> "Primary Complete"
-	replace edulevel1=4 if c07_grade==3		// "High School Undergraduate" -> "Secondary Incomplete"
-	replace edulevel1=5 if c07_grade==4		// "High school graduate" -> "Secondary Complete"
-	replace edulevel1=7 if c07_grade==5 | ( c07_grade>=60 & c07_grade<=98) // "College Graduate" and "[x] Bachelors/Advanced Degree" -> "University"
-	replace edulevel1=9 if c07_grade==99 	// where 99 == 'not reported'
+	replace edulevel1=1 if c09_grade==0			// "No Grade Completed" -> "No education"
+	replace edulevel1=2 if c09_grade==1 	// "Elementary Undergraduate" -> " Primary Incomplete"
+	replace edulevel1=3 if c09_grade==2 	// "Elementary Graduate" -> "Primary Complete"
+	replace edulevel1=4 if c09_grade==3		// "High School Undergraduate" -> "Secondary Incomplete"
+	replace edulevel1=5 if c09_grade==4		// "High school graduate" -> "Secondary Complete"
+	replace edulevel1=7 if c09_grade==5 | ( c09_grade>=60 & c09_grade<=98) // "College Graduate" and "[x] Bachelors/Advanced Degree" -> "University"
+	replace edulevel1=9 if c09_grade==99 	// where 99 == 'not reported'
 
 	label var edulevel1 "Level of education 1"
 	la de lbledulevel1 	1 "No education"	///
@@ -527,7 +685,7 @@ if (`cb_pause' == 1) {
 		currently attending*/
 
 	gen byte everattend=.
-	replace everattend=1 if age >= ed_mod_age & (atschool==1 | (2 <= edulevel1 <= 8 ))
+	replace everattend=1 if age >= ed_mod_age & ((edulevel1 >= 2 & edulevel1 <= 8 ) | atschool == 1)
 	replace everattend=0 if age >= ed_mod_age & atschool==0 & edulevel1==0
 	label var everattend "Ever attended school"
 	la de lbleverattend 0 "No" 1 "Yes"
@@ -547,12 +705,12 @@ if (`cb_pause' == 1) {
 
 
 ** LABOR STATUS
-	/*Changing by using empst1_nso to determine lstatus, not work
-	Note: creating own label, not using label from empst1_nso	*/
+	/*Changing by using newempst to determine lstatus, not work
+	Note: creating own label, not using label from newempst	*/
 	gen byte lstatus=.
-	replace lstatus=1 if empst1_nso==1
-	replace lstatus=2 if empst1_nso==2
-	replace lstatus=3 if empst1_nso==3
+	replace lstatus=1 if newempst==1
+	replace lstatus=2 if newempst==2
+	replace lstatus=3 if newempst==3
 	replace lstatus=. if age < lb_mod_age // restrict universe to only those of working age
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -570,10 +728,10 @@ if (`cb_pause' == 1) {
 
 ** EMPLOYMENT STATUS
 	gen byte empstat=.
-	replace empstat=1 if c17_pclass==0 | c17_pclass==1 | c17_pclass==2 | c17_pclass==5
-	replace empstat=2 if c17_pclass==6
-	replace empstat=3 if c17_pclass==4
-	replace empstat=4 if c17_pclass==3
+	replace empstat=1 if c24_pclass==0 | c24_pclass==1 | c24_pclass==2 | c24_pclass==5
+	replace empstat=2 if c24_pclass==6
+	replace empstat=3 if c24_pclass==4
+	replace empstat=4 if c24_pclass==3
 	replace empstat=. if lstatus!=1 	// includes universe restriction
 	label var empstat "Employment status"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed"
@@ -612,11 +770,11 @@ if (`cb_pause' == 1) {
 
 ** REASONS NOT IN THE LABOR FORCE
 	gen byte nlfreason=.
-	replace nlfreason=1 if c40_wynot==8
-	replace nlfreason=2 if c40_wynot==7
-	replace nlfreason=3 if c40_wynot==6 // & age>10 // why was only this restricted and not all (esp cuz of replace)
-	replace nlfreason=4 if c40_wynot==3
-	replace nlfreason=5 if c40_wynot==1 | c40_wynot==2 | c40_wynot==4 | c40_wynot==5 | c40_wynot==9
+	replace nlfreason=1 if c35_wynot==8
+	replace nlfreason=2 if c35_wynot==7
+	replace nlfreason=3 if c35_wynot==6
+	replace nlfreason=4 if c35_wynot==3
+	replace nlfreason=5 if c35_wynot==1 | c35_wynot==2 | c35_wynot==4 | c35_wynot==5 | c35_wynot==9
 	replace nlfreason=. if lstatus!=3 	// restricts universe to non-labor force
 	replace nlfreason=. if age < lb_mod_age // restrict universe to working age
 	label var nlfreason "Reason not in the labor force"
@@ -625,12 +783,12 @@ if (`cb_pause' == 1) {
 
 
 ** UNEMPLOYMENT DURATION: MONTHS LOOKING FOR A JOB
-	gen byte unempldur_l= c38_weeks/4.2
+	gen byte unempldur_l= c34_weeks/4.2
 	label var unempldur_l "Unemployment duration (months) lower bracket"
 	replace unempldur_l=. if age < lb_mod_age // restrict universe to working age
 	replace unempldur_l=. if lstatus!=2 	  // restrict universe to unemployed only
 
-	gen byte unempldur_u= c38_weeks/4.2
+	gen byte unempldur_u= c34_weeks/4.2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
 	replace unempldur_l=. if age < lb_mod_age // restrict universe to working age
 	replace unempldur_l=. if lstatus!=2 	  // restrict universe to unemployed only
@@ -677,20 +835,20 @@ if (`cb_pause' == 1) {
 	replace industry1=. if lstatus!=1 		// restrict universe to employed only
 
 **SURVEY SPECIFIC INDUSTRY CLASSIFICATION
-	gen industry_orig=c16a_pkb
+	gen industry_orig=c17f2_pkb
 	replace industry_orig=. if lstatus!=1 		// restrict universe to employed only
 	replace industry_orig=. if age < lb_mod_age // restrict universe to working age
 	label var industry_orig "Original Industry Codes"
 
 
 ** OCCUPATION CLASSIFICATION
-	* in 2006, raw variable is numeric
+	* in 2004, raw variable is numeric
 
 	* generate occupation variable
-	gen byte occup=floor(c14a_procc/10)		// this handles most of recoding automatically.
-	recode occup 0 = 10	if 	c14a_procc==1 	// recode "armed forces" to appropriate label
-	recode occup 0 = 99	if 	(c14a_procc>=2 & c14a_procc <=9) ///
-							| (c14a_procc >=94 & c14a_procc <= 99) // recode "Not classifiable occupations"
+	gen byte occup=floor(c16_proc/10)		// this handles most of recoding automatically.
+	recode occup 0 = 10	if 	c16_proc==1 	// recode "armed forces" to appropriate label
+	recode occup 0 = 99	if 	(c16_proc>=2 & c16_proc <=9) ///
+							| (c16_proc >=94 & c16_proc <= 99) // recode "Not classifiable occupations"
 
 	/* Note that the raw variable, procc lists values, 94-99 for which there are no associated occupation
 	   codes. Given that the raw data indicate that these individauls do have valid, non-missing occupations,
@@ -705,7 +863,7 @@ if (`cb_pause' == 1) {
 
 
 ** SURVEY SPECIFIC OCCUPATION CLASSIFICATION
-	gen occup_orig=c14a_procc
+	gen occup_orig=c16_proc
 	replace occup_orig=. if lstatus!=1 			// restrict universe to employed only
 	replace occup_orig=. if age < lb_mod_age	// restrict universe to working age
 	label var occup_orig "Original Occupational Codes"
@@ -730,7 +888,7 @@ if (`cb_pause' == 1) {
 
 
 ** WAGES
-	gen double wage= c25_pbasic
+	gen double wage= c26_pbasic
 	replace wage=. if lstatus!=1 			// restrict universe to employed only
 	replace wage=. if age < lb_mod_age		// restrict universe to working age
 	replace wage=. if empstat==1			// restrict universe to wage earners
@@ -786,17 +944,16 @@ if (`cb_pause' == 1) {
 
 
 **SURVEY SPECIFIC INDUSTRY CLASSIFICATION - SECOND JOB
-	gen industry_orig_2=c30a_okb
+	* no second job industry classifcation data
+	gen industry_orig_2=.
 	replace industry_orig_2=. if lstatus!=1 				// restrict universe to employed only
 	replace industry_orig_2=. if age < lb_mod_age			// restrict universe to working age
 	label var industry_orig_2 "Original Industry Codes - Second job"
 
 
 ** OCCUPATION CLASSIFICATION - SECOND JOB
-	gen byte occup_2=floor(c28a_otocc/10)		// this handles most of recoding automatically.
-	recode occup_2 0 = 10	if 	c28a_otocc==1 	// recode "armed forces" to appropriate label
-	recode occup_2 0 = 99	if 	(c28a_otocc>=2 & c28a_otocc <=9) ///
-							| (c28a_otocc >=94 & c28a_otocc <= 99) // recode "Not classifiable occupations"
+	* no second job occupation data
+	gen occup_2 = .
 
 	replace occup_2=. if lstatus!=1 		// restrict universe to employed only
 	replace occup_2=. if age < lb_mod_age	// restrict universe to working age
@@ -809,7 +966,8 @@ if (`cb_pause' == 1) {
 
 
 ** WAGES - SECOND JOB
-	gen double wage_2=c34_obasic
+	* second job wages are available for some rounds
+	gen double wage_2=cc36_obasic
 	replace wage_2=. if lstatus!=1 			// restrict universe to employed only
 	replace wage_2=. if age < lb_mod_age		// restrict universe to working age
 	replace wage_2=. if empstat==1			// restrict universe to wage earners
@@ -828,8 +986,8 @@ if (`cb_pause' == 1) {
 
 ** CONTRACT
 	gen byte contract=.
-	replace contract=0 if c08_conwr==2 | c08_conwr==8
-	replace contract=1 if c08_conwr==1
+	replace contract=0 if c11_conwr==2 | c11_conwr==8
+	replace contract=1 if c11_conwr==1
 	label var contract "Contract"
 	la de lblcontract 0 "Without contract" 1 "With contract"
 	label values contract lblcontract
@@ -941,21 +1099,10 @@ if (`cb_pause' == 1) {
 *****************************************************************************************************/
 
 
-** KEEP VARIABLES - ALL
-	keep sample ccode year intv_year month idh idp wgt strata psu urb ///
-				reg01 reg02 reg03 reg04 ownhouse water electricity toilet landphone      ///
-				cellphone computer internet hhsize head gender age soc marital ed_mod_age ///
-				everattend atschool literacy educy edulevel1 edulevel2 edulevel3 lb_mod_age ///
-				lstatus lstatus_year empstat empstat_year njobs njobs_year ocusec nlfreason ///
-				unempldur_l unempldur_u industry industry1 industry_orig occup occup_orig ///
-				firmsize_l firmsize_u whours wage unitwage contract  empstat_2 ///
-				empstat_2_year industry_2 industry1_2 industry_orig_2 occup_2 wage_2 unitwage_2 ///
-				healthins socialsec union rbirth_juris rbirth rprevious_juris rprevious ///
-				yrmove rprevious_time_ref pci pci_d pcc pcc_d reg02_orig reg03_orig
 
-
-** ORDER VARIABLES
-	order sample ccode year intv_year month idh idp wgt strata psu urb	///
+** ORDER KEEP VARIABLES
+	local 		order 														///
+				sample ccode year intv_year month idh idp wgt strata psu urb	///
 				reg01 reg02 reg03 reg04 reg02_orig reg03_orig  ///
 				ownhouse water electricity toilet landphone ///
 				cellphone computer internet hhsize head gender age soc marital ///
@@ -966,31 +1113,30 @@ if (`cb_pause' == 1) {
 				whours wage unitwage contract empstat_2 empstat_2_year ///
 				industry_2 industry1_2 industry_orig_2 occup_2 wage_2 unitwage_2 ///
 				healthins socialsec union rbirth_juris rbirth rprevious_juris ///
-				rprevious yrmove rprevious_time_ref pci pci_d pcc pcc_d
+				rprevious yrmove rprevious_time_ref pci pci_d pcc pcc_d round
 
 	compress
 
 
 ** DELETE MISSING VARIABLES
-	local keep ""
-	qui levelsof ccode, local(cty)
-	foreach var of varlist urb - pcc_d {
-	qui sum `var'
-	scalar sclrc = r(mean)
-	if sclrc==. {
-	     display as txt "Variable " as result "`var'" as txt " for ccode " as result `cty' as txt " contains all missing values -" as error " Variable Deleted"
-	}
-	else {
-	     local keep `keep' `var'
-	}
-	}
-	keep sample ccode year intv_year month  idh idp wgt strata psu `keep'
+	* if variables are missing on all values, drop them, unless they are listed as "key" variable
+
+	* declare list of key variables that should never have missing observations
+	loc	nomissvars sample ccode year intv_year month idh idp wgt strata psu hhsize ed_mod_age lb_mod_age round
 
 
+	local missvars : 	list order - nomissvars
 
-** MISSING VALUES
-	*Declare varlist which cannot contain missings
-	loc	nomissvars sample ccode year intv_year month idh idp wgt strata psu hhsize ed_mod_age lb_mod_age
+
+	if (`drop' == 1) {
+		missings dropvars 	`missvars', force
+	}
+
+
+** OBSERVATION MISSING VALUES
+	/*we know that some variables should not have missing values. Keep track of how many obs are missing
+	for these variables only*/
+
 
 	foreach var of local nomissvars {
 		qui mdesc `var'
