@@ -112,6 +112,31 @@ if (`cb_pause' == 1) {
 	}
 
 
+	
+** Align HHID variables 
+	** align hhnum
+	/*rounds 1,3,4 (january,, july, october) have a numeric household id called hhnum whereas round 2 (april)
+	  has a string numeric variable encoded as str23. Since the ids will all be the same legth anyway, I will
+	  change rounds 1-3 to be a str23 to match round 4 so I can replace and "align" the hhnum as a string
+	  variable for all 4 rounds*/
+
+	*** encode hhnum as string
+	rename 		pufhhnum 	hhnum_num					// rename to numeric indicator name
+
+	tostring 	hhnum_num	///						// make the numeric vars strings
+				, generate(hhnum_str11) ///			// generate new variable as a string
+				force format(`"%011.0f"')				// ...and the specified number of digits in local
+
+	gen 		hhnum = ""								// generate household ID variable
+	replace 	hhnum = hhnum_str11 	if round == 1 /// replace conditionally on round,
+										| round == 3  ///
+										| round == 4
+	replace 	hhnum = pufhhnum_2			if round == 2
+
+	mdesc 		hhnum 								// ensure that hhid has no missings
+	assert	 	r(miss) == 0
+
+	
 
 ** SAMPLE
 	gen str7 sample = `"`cty3'"' + `"`surv_yr'"'
@@ -141,33 +166,16 @@ if (`cb_pause' == 1) {
 ** HOUSEHOLD IDENTIFICATION NUMBER
 
 
-	loc idhvars 	pufhhnum   							// store idh vars in local
+	loc idhvars 	hhnum   							// store idh vars in local
 
 
-	ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
-	loc numlist 	= r(varlist)						// store numeric vars in local
-	loc stringlist 	: list idhvars - numlist			// non-numeric vars in stringlist
-
-	* starting locals
-	loc len = 14											// declare the length of each element in digits
-	loc idh_els ""										// start with empty local list
-
-	* make each numeric var string, including leading zeros
-	foreach var of local numlist {
-		tostring `var'	///								// make the numeric vars strings
-			, generate(idh_`var') ///					// gen a variable with this prefix
-			force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
-
-		loc idh_els 	`idh_els' idh_`var'				// add each variable to the local list
-
-	}
 
 		* add the round variable
 		tostring round	///							// make the numeric vars strings
 			, generate(idh_round) ///					// gen a variable with this prefix
 			force format(`"%01.0f"')				// ...and the specified number of digits in local
 
-		loc idh_els 	`idh_els' idh_round				// add each variable to the local list
+		loc idh_els 	hhnum idh_round				// add each variable to the local list
 
 
 	* concatenate all elements to form idh: hosehold id
