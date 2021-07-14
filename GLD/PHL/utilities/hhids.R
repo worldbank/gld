@@ -23,6 +23,11 @@ jul06 <- readRDS(files_tib$rpath[27])
 oct06 <- readRDS(files_tib$rpath[28])
 jan07 <- readRDS(files_tib$rpath[30])
 
+jan17 <- readRDS(files_tib$rpath[70])
+apr17 <- readRDS(files_tib$rpath[69])
+jul17 <- readRDS(files_tib$rpath[71])
+oct17 <- readRDS(files_tib$rpath[72])
+
 # initial explorations----
 fam <- jan97 %>%
   group_by(regn, hcn) %>%
@@ -136,4 +141,29 @@ HHjan03_n <- n_hh_reg_prov_hcn(jan03)
   n_dups_in_fam_07jan <- 
     hh07jan %>% filter(hhid %in% dups07jan_ids) %>% nrow() # there are 48 observations that belong to households with dups
   
+
+# 2017 ----
+# what are the duplicates like for each round
+  get_dupes(jan17, pufhhnum, pufc01_lno)  # only 2 dups
+  get_dupes(apr17, lreg, l1prrcd, l1mun, l1ea, lhusn, l1bgy, lhsn, lpsu, lc101_lno) # 0 dups
+  get_dupes(jul17, pufhhnum, pufc01_lno) # 0 dups 
+  get_dupes(oct17, pufhhnum, pufc01_lno) # 0 dups
   
+  ## check construction of apr17 hhid 
+  hh17apr <- apr17 %>% 
+    group_by( lreg, l1prrcd, l1mun, l1ea, lhusn, l1bgy, lhsn, lpsu) %>%
+    mutate(hhid = cur_group_id()) %>%
+    select(hhid, lc101_lno, lreg, l1prrcd, l1mun, l1ea, lhusn, l1bgy, lhsn, lpsu, everything()) %>%
+    arrange(hhid, lc101_lno)
+  
+  dups17apr <- get_dupes(hh17apr, hhid, lc101_lno) # 0 dups
+  
+  dups17jan <- get_dupes(jan17, pufhhnum, pufc01_lno)
+  dups17jan_ids <- unique(dups17jan$pufhhnum)
+  
+  n_dups_in_fam_17jan <- 
+    jan17 %>% filter(pufhhnum %in% dups17jan_ids) %>% nrow() # there are 4 observations that belong to households with dups
+  
+  
+  
+    

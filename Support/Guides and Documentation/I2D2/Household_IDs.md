@@ -55,6 +55,9 @@ The first two rounds of 2003 differ from the final two: while the first two roun
 ## Notes on 2012.
 2012 does not have a valid, non-missing line number variable that is present on all observations across all years, so in this year I will generate a "line number" variable myself by using the row number within each household grouping.
 
+## Notes on 2017
+Even though 2017 does have a household ID variable provided in all 4 rounds, this varible does not uniquely identify observations along with the line number and round variables. Instead it produces many duplicates, so a HHID will be constructed.
+
 +--------------------+------------------------------------------------------------+----------------------------+-------------------------+
 | Year               | Household ID Combination                                   | Manage Duplicates          | Unique Household Number |
 +====================+============================================================+============================+=========================+
@@ -87,4 +90,8 @@ The first two rounds of 2003 differ from the final two: while the first two roun
 | 2007 Jan           | w_regn, w_prv, w_ea, w_shsn, lstr, eaunique_psu, w_hcn | 4 Households               |                         |
 +--------------------+------------------------------------------------------------+----------------------------+-------------------------+
 | 2007 Apr + Jul + Oct | *unique hhid provided* |              						|                         |
++--------------------+------------------------------------------------------------+----------------------------+-------------------------+
+| 2017 Apr				 |  lreg, l1prrcd, l1mun, l1ea, lhusn, l1bgy, lhsn, lpsu |              			|                         |
++--------------------+------------------------------------------------------------+----------------------------+-------------------------+
+| 2017 Jan+Jul+Oct	 |  unique HHID provided, but not unique in January | 1 houshold (Jan only)                |                         |
 +--------------------+------------------------------------------------------------+----------------------------+-------------------------+
