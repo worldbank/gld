@@ -180,6 +180,14 @@ if (`append' == 1) {
 		loc idh_els 	`idh_els' idh_`var'				// add each variable to the local list
 
 	}
+	
+		* add the round variable
+		tostring round	///							// make the numeric vars strings
+			, generate(idh_round) ///					// gen a variable with this prefix
+			force format(`"%01.0f"')				// ...and the specified number of digits in local
+
+		loc idh_els 	`idh_els' idh_round				// add each variable to the local list
+
 
 
 	* concatenate all elements to form idh: hosehold id
