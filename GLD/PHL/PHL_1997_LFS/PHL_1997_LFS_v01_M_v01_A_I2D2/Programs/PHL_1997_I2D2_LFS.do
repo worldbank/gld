@@ -103,7 +103,7 @@ if (`append' == 1) {
 	iecodebook append ///
 		`"`round1'"' `"`round2'"' `"`round3'"' `"`round4'"' /// survey files
 		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template-IN.xlsx"' /// output just created above
-		, clear surveys(JAN1997 APR1997 JUL1997 OCT1997) geneerate(round) // survey names
+		, clear surveys(JAN1997 APR1997 JUL1997 OCT1997) generate(round) // survey names
 	}
 	else {
 *** use the single file
