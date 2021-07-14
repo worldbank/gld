@@ -103,7 +103,7 @@ if (`append' == 1) {
 	iecodebook append ///
 		`"`round1'"' `"`round2'"' `"`round3'"' `"`round4'"' /// survey files
 		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template-IN.xlsx"' /// output just created above
-		, clear surveys(JAN1997 APR1997 JUL1997 OCT1997) // survey names
+		, clear surveys(JAN1997 APR1997 JUL1997 OCT1997) geneerate(round) // survey names
 	}
 	else {
 *** use the single file
@@ -135,6 +135,13 @@ if (`append' == 1) {
 	la de lblmonth 1 "January" 2 "February" 3 "March" 4 "April" 5 "May" 6 "June" 7 "July" 8 "August" 9 "September" 10 "October" 11 "November" 12 "December"
 	label value month lblmonth
 	label var month "Month of the interview"
+
+
+	* ensure that months reflec the round. See issue #52
+	replace month = 1 	if round == 1
+	replace month = 4 	if round == 2
+	replace month = 7 	if round == 3
+	replace month = 10 	if round == 4
 
 
 ** HOUSEHOLD IDENTIFICATION NUMBER
@@ -969,7 +976,7 @@ if (`append' == 1) {
 	}
 
 
-** Drop Unused Value labels 
+** Drop Unused Value labels
 
 	* Store all labels in data
 	label dir
@@ -984,11 +991,11 @@ if (`append' == 1) {
 		local used_lab `"`used_lab' `y'"'
 	}
 
-	* Compare lists, if not 
-	local notused : list all_lab - used_lab 		// local `notused' defines value labs not in remaining vars 
+	* Compare lists, if not
+	local notused : list all_lab - used_lab 		// local `notused' defines value labs not in remaining vars
 	label drop `notused'
-	
-	
+
+
 	save `"`id_data'\\`cty3'_`surv_yr'_I2D2_LFS.dta"', replace
 
 	log close

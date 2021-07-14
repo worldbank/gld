@@ -138,6 +138,13 @@ if (`cb_pause' == 1) {
 	label value month lblmonth
 	label var month "Month of the interview"
 
+* ensure that months reflec the round. See issue #52
+replace month = 1 	if round == 1
+replace month = 4 	if round == 2
+replace month = 7 	if round == 3
+replace month = 10 	if round == 4
+
+
 
 ** HOUSEHOLD IDENTIFICATION NUMBER
 /*This part is the only variable that has to be coded conditional by round. This means that we'll have to split the dataset up by round
