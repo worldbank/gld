@@ -136,7 +136,7 @@ if (`cb_pause' == 1) {
 
 ** MONTH OF INTERVIEW
 	gen byte month=pufsvymo
-	replace  month=4 	if round == 2	// ensure that all obs in April round are labeled as April
+	replace  month=4 	if round == 2	// ensure that all obs in April round are labeled as April, see issue #52 on github 
 	la de lblmonth 1 "January" 2 "February" 3 "March" 4 "April" 5 "May" 6 "June" 7 "July" 8 "August" 9 "September" 10 "October" 11 "November" 12 "December"
 	label value month lblmonth
 	label var month "Month of the interview"
@@ -250,10 +250,10 @@ if (`cb_pause' == 1) {
 
 	drop if 			hhid_dup_hh == 1				// drop all obs in household if household has duplicated hhid obs
 	assert 				r(N_drop) 	== 4				// we know that 4 obs should be dropped under these conditions.
-	
-	
-	
-	
+
+
+
+
 ** ID CHECKS
 	duplicates report idh idp
 	isid idh idp 										// household and individual id uniquely identify
@@ -1261,7 +1261,7 @@ undergraduates in "primary" and "graduates" in "secondary" */
 	}
 
 
-** Drop Unused Value labels 
+** Drop Unused Value labels
 
 	* Store all labels in data
 	label dir
@@ -1276,11 +1276,11 @@ undergraduates in "primary" and "graduates" in "secondary" */
 		local used_lab `"`used_lab' `y'"'
 	}
 
-	* Compare lists, if not 
-	local notused : list all_lab - used_lab 		// local `notused' defines value labs not in remaining vars 
+	* Compare lists, if not
+	local notused : list all_lab - used_lab 		// local `notused' defines value labs not in remaining vars
 	label drop `notused'
-	
-	
+
+
 	save `"`id_data'\\`cty3'_`surv_yr'_I2D2_LFS.dta"', replace
 
 	log close
