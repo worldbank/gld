@@ -312,10 +312,8 @@ if (`cb_pause' == 1) {
 ** RENAME ORIGINAL ADMIN VARIABLES
 	* clonevar keeps value labels along with values; gen does not.
 	clonevar reg02_orig = pufreg
-	clonevar reg03_orig = .
 
 	la var reg02_orig "Original 1st Level Admin Variable"
-	la var reg03_orig "Original 2nd Level Admin Variable"
 
 
 ** HOUSE OWNERSHIP
@@ -555,8 +553,7 @@ if (`cb_pause' == 1) {
 	la de lbleverattend 0 "No" 1 "Yes"
 	label values everattend lbleverattend
 
-pause on
-pause
+
 
 /*****************************************************************************************************
 *                                                                                                    *
@@ -959,7 +956,7 @@ pause
 ** ORDER KEEP VARIABLES
 	local 		order 														///
 				sample ccode year intv_year month idh idp wgt strata psu urb	///
-				reg01 reg02 reg03 reg04 reg02_orig reg03_orig  ///
+				reg01 reg02 reg03 reg04 reg02_orig   ///
 				ownhouse water electricity toilet landphone ///
 				cellphone computer internet hhsize head gender age soc marital ///
 				ed_mod_age everattend atschool literacy educy edulevel1 edulevel2 ///
