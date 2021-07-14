@@ -166,7 +166,7 @@ if (`cb_pause' == 1) {
 
 	* unlike most other rounds, we know that the HHID variable is string, so no need
 	* to go through and check
-	
+
 	* add the round variable
 	tostring round	///							// make the numeric vars strings
 		, generate(idh_round) ///					// gen a variable with this prefix
@@ -452,7 +452,7 @@ if (`cb_pause' == 1) {
 
 ** CURRENTLY AT SCHOOL
 	*no related variable in survey
-	gen byte atschool=.
+	gen byte atschool=a02_csch
 	recode atschool (2 = 0)		// 2 was "no", recode to 0. Keep 1=Yes same.
     label var atschool "Attending school"
 	la de lblatschool 0 "No" 1 "Yes"
@@ -1009,7 +1009,7 @@ if (`cb_pause' == 1) {
 	}
 
 
-** Drop Unused Value labels 
+** Drop Unused Value labels
 
 	* Store all labels in data
 	label dir
@@ -1024,11 +1024,11 @@ if (`cb_pause' == 1) {
 		local used_lab `"`used_lab' `y'"'
 	}
 
-	* Compare lists, if not 
-	local notused : list all_lab - used_lab 		// local `notused' defines value labs not in remaining vars 
+	* Compare lists, if not
+	local notused : list all_lab - used_lab 		// local `notused' defines value labs not in remaining vars
 	label drop `notused'
-	
-	
+
+
 	save `"`id_data'\\`cty3'_`surv_yr'_I2D2_LFS.dta"', replace
 
 	log close

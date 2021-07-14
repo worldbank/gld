@@ -179,8 +179,8 @@ if (`cb_pause' == 1) {
 	bys idh: gen n_fam = _n								// generate family member number
 
 	* repeat same process from above, but only with n_fam.
-	* 	note, 2012 does not have a valid, non-missing line number variable that is present on all 
-	* observations across all years, so in this year I will generate a "line number" variable myself 
+	* 	note, 2012 does not have a valid, non-missing line number variable that is present on all
+	* observations across all years, so in this year I will generate a "line number" variable myself
 	* by using the row number within each household grouping.
 
 	loc idpvars 	n_fam	 							// store relevant idp vars in local
@@ -450,9 +450,7 @@ if (`cb_pause' == 1) {
 
 
 ** CURRENTLY AT SCHOOL
-	gen byte atschool=.
-	replace atschool=1 if a02_cursch == 1
-	replace atschool=0 if a02_cursch == 2
+	gen byte atschool=a02_csch
 	recode atschool (2 = 0)		// 2 was "no", recode to 0. Keep 1=Yes same.
     label var atschool "Attending school"
 	la de lblatschool 0 "No" 1 "Yes"
@@ -1014,7 +1012,7 @@ if (`cb_pause' == 1) {
 	}
 
 
-** Drop Unused Value labels 
+** Drop Unused Value labels
 
 	* Store all labels in data
 	label dir
@@ -1029,11 +1027,11 @@ if (`cb_pause' == 1) {
 		local used_lab `"`used_lab' `y'"'
 	}
 
-	* Compare lists, if not 
-	local notused : list all_lab - used_lab 		// local `notused' defines value labs not in remaining vars 
+	* Compare lists, if not
+	local notused : list all_lab - used_lab 		// local `notused' defines value labs not in remaining vars
 	label drop `notused'
-	
-	
+
+
 	save `"`id_data'\\`cty3'_`surv_yr'_I2D2_LFS.dta"', replace
 
 	log close

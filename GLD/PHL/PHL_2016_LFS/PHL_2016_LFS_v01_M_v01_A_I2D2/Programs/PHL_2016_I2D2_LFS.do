@@ -454,7 +454,7 @@ if (`cb_pause' == 1) {
 
 
 ** CURRENTLY AT SCHOOL
-	gen byte atschool=.
+	gen byte atschool=pufc08_cursch
 	replace atschool=1 if pufc08_cursch == 1
 	replace atschool=0 if pufc08_cursch == 2
 	recode atschool (2 = 0)		// 2 was "no", recode to 0. Keep 1=Yes same.
@@ -1055,7 +1055,7 @@ if (`cb_pause' == 1) {
 	}
 
 
-** Drop Unused Value labels 
+** Drop Unused Value labels
 
 	* Store all labels in data
 	label dir
@@ -1070,11 +1070,11 @@ if (`cb_pause' == 1) {
 		local used_lab `"`used_lab' `y'"'
 	}
 
-	* Compare lists, if not 
-	local notused : list all_lab - used_lab 		// local `notused' defines value labs not in remaining vars 
+	* Compare lists, if not
+	local notused : list all_lab - used_lab 		// local `notused' defines value labs not in remaining vars
 	label drop `notused'
-	
-	
+
+
 	save `"`id_data'\\`cty3'_`surv_yr'_I2D2_LFS.dta"', replace
 
 	log close
