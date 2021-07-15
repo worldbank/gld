@@ -25,7 +25,7 @@ description: calls all scripts for I2D2 and GLD, edited from iecodebook script
 	macro drop _all
    *Install all packages that this project requires:
    *(Note that this never updates outdated versions of already installed commands, to update commands use adoupdate)
-   local user_commands ietoolkit scores  //Fill this list will all user-written commands this project requires
+   local user_commands ietoolkit scores missings mdesc  //Fill this list will all user-written commands this project requires
    foreach command of local user_commands {
        cap which `command'
        if _rc == 111 {
@@ -124,6 +124,12 @@ description: calls all scripts for I2D2 and GLD, edited from iecodebook script
    * ---------------------
 
 	global  code 	`"${clone}/gld/GLD"'
+
+
+   * Internal project files. Same no matter user
+   * ---------------------
+	global id2d_dicitonary  `""'
+	global gld_dicitonary  	`"${clone}/gld/Support/Guides and Documentation/GLD_Dictionary_2021_04.xlsx"'
 
 
 

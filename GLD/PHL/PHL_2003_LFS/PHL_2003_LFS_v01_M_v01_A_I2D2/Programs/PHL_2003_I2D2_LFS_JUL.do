@@ -5,16 +5,17 @@
 **                                                                                                  **
 ** COUNTRY	PHILIPPINES
 ** COUNTRY ISO CODE	PHL
-** YEAR	2014
+** YEAR	2003
+** Round/wave: 3 (completed in month of July)
 ** SURVEY NAME	Labor Force Survey
 ** SURVEY AGENCY	National Statistical Office
 ** UNIT OF ANALYSIS	Household and Individual
-** INPUT DATABASES	LFS JAN2014
+** INPUT DATABASES	LFS JAN2003
 ** RESPONSIBLE	 World Bank Jobs Group
 ** Created	4/4/2012
 ** Modified	24/5/2021
-** NUMBER OF HOUSEHOLDS	84,485
-** NUMBER OF INDIVIDUALS	805,307
+** NUMBER OF HOUSEHOLDS
+** NUMBER OF INDIVIDUALS
 ** EXPANDED POPULATION
 ** NUMBER OF SURVEY ROUNDS: 4
 **                                                                                                  **
@@ -29,7 +30,6 @@
 
 
 ** INITIAL COMMANDS
-	cap log close
 	clear
 	set more off
 	set mem 800m
@@ -38,7 +38,7 @@
 
 	local 	cty3 	"PHL" 	// set this to the three letter country/economy abbreviation
 	local 	usr		`"551206_TM"' // set this to whatever Mario named your folder
-	local 	surv_yr `"2014"'	// set this to the survey year
+	local 	surv_yr `"2003"'	// set this to the survey year
 
 ** RUN SETTINGS
 	local 	cb_pause = 0	// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
@@ -59,19 +59,12 @@
 	local 	ed_mod_age	5	// labor module minimun age (inclusive)
 
 
-** LOG FILE
-	log using `"`id_data'\\`cty3'_`surv_yr'_I2D2_LFS.log"', replace
-
-
 ** FILES
-	local round1 `"`stata'\LFS JAN2014.dta"'
-	local round2 `"`stata'\LFS APR2014.dta"'
-	local round3 `"`stata'\LFS JUL2014.dta"'
-	local round4 `"`stata'\LFS OCT2014.dta"'
+	local round3 `"`stata'\LFS JUL2003.dta"'
 
 ** VALUES
-	local n_round 	4			// numer of survey rounds
-	local cases  	805306		// 201551 (Jan) + 201374 (APR) + 200334 (Jul) + 202047 (Oct) (Source: ILO from PSA)
+	local n_round 	1			// numer of survey rounds
+	local cases  	207974		// 184228 (Jan) + 183926 (APR) + 207974 (Jul) + 208716 (Oct) (Source: ILO from PSA)
 
 
 /*****************************************************************************************************
@@ -81,37 +74,8 @@
 *****************************************************************************************************/
 
 
-** DATABASE ASSEMBLENT
-
-** HARMONIZE VARIABLE NAMES, LABELS
-
-if (`append' == 1) {
-*** set up the codebook template
-	iecodebook template ///
-		`"`round1'"' `"`round2'"' `"`round3'"' `"`round4'"' /// survey files
-		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template.xlsx"' /// output excel command makes
-		, clear replace surveys(JAN2014 APR2014 JUL2014 OCT2014) /// survey names
-		match // atuo match the same-named variables
-
-if (`cb_pause' == 1) {
-		pause on
-		pause pausing while you edit your codebook. Save aligned codebook with suffix "-IN.xlsx" in the same directory as the output. press 'q' to continue.
-	}
-
-
-*** append the dataset
-	iecodebook append ///
-		`"`round1'"' `"`round2'"' `"`round3'"' `"`round4'"' /// survey files
-		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template-IN.xlsx"' /// output just created above
-		, clear surveys(JAN2014 APR2014 JUL2014 OCT2014) generate(round) // survey names
-	}
-	else {
-*** use the single file
-	use `"`round1'"', clear
-
-	}
-
-
+*** use the appropriate round file
+	use `"`round3'"', clear
 
 ** SAMPLE
 	gen str7 sample = `"`cty3'"' + `"`surv_yr'"'
@@ -130,6 +94,9 @@ if (`cb_pause' == 1) {
 	gen int intv_year=`surv_yr'
 	label var intv_year "Year of the interview"
 
+** ROUND
+	gen round = 3
+
 
 ** MONTH OF INTERVIEW
 	gen byte month=svymo
@@ -146,17 +113,14 @@ replace month = 10 	if round == 4
 
 
 ** HOUSEHOLD IDENTIFICATION NUMBER
-
-
-	loc idhvars 	hhnum   							// store idh vars in local
-
+	loc idhvars 	creg stratum psu ea_unique shsn hcn 	// store idh vars in local
 
 	ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
 	loc numlist 	= r(varlist)						// store numeric vars in local
 	loc stringlist 	: list idhvars - numlist			// non-numeric vars in stringlist
 
 	* starting locals
-	loc len = 14											// declare the length of each element in digits
+	loc len = 6											// declare the length of each element in digits
 	loc idh_els ""										// start with empty local list
 
 	* make each numeric var string, including leading zeros
@@ -169,12 +133,19 @@ replace month = 10 	if round == 4
 
 	}
 
-		* add the round variable
-		tostring round	///							// make the numeric vars strings
-			, generate(idh_round) ///					// gen a variable with this prefix
-			force format(`"%01.0f"')				// ...and the specified number of digits in local
+	* make each string variable numeric (as it should be), then string again with correct format
+	foreach var of local stringlist {
+		destring `var' /// 								// destring variable, make numeric version
+			, gen(num_`var') ///						//
+			force 										// force obs to num that are non numeric, ie to missing
 
-		loc idh_els 	`idh_els' idh_round				// add each variable to the local list
+		tostring num_`var'	///							// make the numeric vars strings
+			, generate(idh_`var') ///					// gen a variable with this prefix
+			force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
+
+		loc idh_els 	`idh_els' idh_`var'				// add each variable to the local list
+
+	}
 
 
 	* concatenate all elements to form idh: hosehold id
@@ -192,7 +163,7 @@ replace month = 10 	if round == 4
 	* 	note, assuming that the only necessary individaul identifier is family member, which is numeric
 	*	so, not following processing for sorting numeric/non-numeric variables.
 
-	loc idpvars 	c101_lno 							// store relevant idp vars in local
+	loc idpvars 	cc101_lno								// store relevant idp vars in local
 	ds `idpvars',  	has(type numeric)					// filter out numeric variables in local
 	loc rlist 		= r(varlist)						// store numeric vars in local
 
@@ -220,10 +191,11 @@ replace month = 10 	if round == 4
 
 
 
+
 ** HOUSEHOLD WEIGHTS
 	/* The weight variable will be divided by the number of rounds per year to ensure the
 	   weighting factor does not over-mutliply*/
-	gen double wgt= fwgt/(`n_round')
+	gen double wgt= cfwgt
 	label var wgt "Household sampling weight"
 
 
@@ -245,24 +217,22 @@ replace month = 10 	if round == 4
 
 
 ** LOCATION (URBAN/RURAL)
-    gen byte urb=urb2k70
-    label var urb "Urban/Rural"
-	la de lblurb 1 "Urban" 2 "Rural"
-	label values urb lblurb
+	* no urban variable
+
 
 
 **REGIONAL AREAS
-	gen reg01 = reg
-    label var reg01 "Macro regional areas"
+	gen reg01 = creg
+	label var reg01 "Macro regional areas"
 
 
 ** REGIONAL AREA 1 DIGIT ADMN LEVEL
-	gen reg02 = reg
+	gen reg02 = creg
 	label var reg02 "1st Level Administrative Division"
 
 
 ** REGIONAL AREA 2 DIGITS ADM LEVEL (ADMN2)
-	gen reg03= prov
+	gen reg03= .
 	label var reg03 "2nd Level Administrative Division"
 
 
@@ -283,13 +253,10 @@ replace month = 10 	if round == 4
 	* reg01 is the geo/admin var of interest, reg02 is the first/highest/largest admin variable
 
 	* RECODE REGION
-	recode 	reg01 reg02 	/// recode both of thes variables
-			(4 = 41) 		/// sometimes Calabarzon appears as value 4, recode to always be 41 for consistency
-			(17= 42)		//  sometimes Mimaropa appears as value 17, recode to always be 42 for consistency
-
+	*	no recoding of region will occur for rounds 3 and 4
 
 	* CREATE VALUE LABEL
-	** define region value label: b=after july 2003 change
+	** define region value label: b= 2003 change
 	la de lblreg02b			///
 	 1   "Ilocos"			///
 	 2	 "Cagayan Valley"	///
@@ -318,11 +285,9 @@ replace month = 10 	if round == 4
 
 ** RENAME ORIGINAL ADMIN VARIABLES
 	* clonevar keeps value labels along with values; gen does not.
-	clonevar reg02_orig = reg
-	clonevar reg03_orig = prov
+	clonevar reg02_orig = creg
 
 	la var reg02_orig "Original 1st Level Admin Variable"
-	la var reg03_orig "Original 2nd Level Admin Variable"
 
 
 ** HOUSE OWNERSHIP
@@ -390,7 +355,7 @@ replace month = 10 	if round == 4
 
 ** HOUSEHOLD SIZE
 	sort idh
-	by idh: egen hhsize= count(c05_rel <= 8 | c05_rel == 11)
+	by idh: egen hhsize= count(cc05_rel <= 8 | cc05_rel == 11)
 	* restrict by family role var, include all non-family members but not boarders/workers
 	label var hhsize "Household size"
 
@@ -400,11 +365,10 @@ replace month = 10 	if round == 4
 
 
 ** RELATIONSHIP TO THE HEAD OF HOUSEHOLD
-	gen byte head=c05_rel				//  "head", "spouse", and children not recoded
-	recode head 	(4 5 6 8  	= 5)	/// siblings, children in law, grandchildren, other relatives of hh head = "other relatives"
+	gen byte head=cc05_rel				//  "head", "spouse", and children not recoded
+	recode head 	(4 5 6 8  	= 5)	/// siblings, children in law, grandchildren, other rel of hh head="other relatives"
 					(7 			= 4)	/// parents of hh head become "parents"
 					(9 10 11 	= 6) 	// boarders and domestic workers become "other/non-relatives"
-
 	replace ownhouse=. if head==6
 	label var head "Relationship to the head of household"
 	la de lblhead  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
@@ -420,14 +384,14 @@ replace month = 10 	if round == 4
 
 
 ** GENDER
-	gen byte gender=c06_sex
+	gen byte gender=cc06_sex
 	label var gender "Gender"
 	la de lblgender 1 "Male" 2 "Female"
 	label values gender lblgender
 
 
 ** AGE
-	gen byte age = c07_age
+	gen byte age = cc07_age
 	label var age "Individual age"
 	replace age=98 if age>=98 & age!=.
 
@@ -439,7 +403,7 @@ replace month = 10 	if round == 4
 
 
 ** MARITAL STATUS
-	gen byte marital=c08_ms
+	gen byte marital=cc08_mstat
 	recode marital (1=2) (2=1) (3=5)(5 6=.)
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
@@ -454,14 +418,13 @@ replace month = 10 	if round == 4
 
 
 ** EDUCATION MODULE AGE
-	gen byte ed_mod_age= `ed_mod_age'				// minimum incluse attending school age is 5
+	gen byte ed_mod_age=`ed_mod_age'
 	label var ed_mod_age "Education module application age"
 
 
 ** CURRENTLY AT SCHOOL
-	gen byte atschool=a02_csch
-	replace atschool=1 if a02_csch == 1
-	replace atschool=0 if a02_csch == 2
+	*no related variable in survey
+	gen byte atschool=.
 	recode atschool (2 = 0)		// 2 was "no", recode to 0. Keep 1=Yes same.
     label var atschool "Attending school"
 	la de lblatschool 0 "No" 1 "Yes"
@@ -486,24 +449,23 @@ replace month = 10 	if round == 4
 	/*Please refer to the "Education_Levels.md" for a detailed discussion on classificition of how each level is classified and why,
 		available in github repository. */
 	gen byte edulevel1=.
-	replace edulevel1=1 if j12c09_grade==0 | j12c09_grade == 10 	// "No education" and "Preschool" -> "No Education"
-	replace edulevel1=2 if j12c09_grade>=210 &  j12c09_grade<=260	// Grades 1-7 to "Primary Incomplete"
-	replace edulevel1=3 if j12c09_grade==280						// "Elementary Graduate" to "Primary Complete"
-	replace edulevel1=4 if j12c09_grade>=310 &  j12c09_grade<=340 	// First-Fourth year in High school -> "secondary incomplete"
-	replace edulevel1=5 if j12c09_grade==350						// "High school graduate" -> "secondary complete"
-	replace edulevel1=6 if j12c09_grade>=410 &  j12c09_grade<=501 	// Post secondary + Basic Programs -> "Higher secondary not uni"
-	replace edulevel1=6 if j12c09_grade>=502 & 	j12c09_grade<=699	// Basic Program degrees to "Higher secondary not uni"
-	replace edulevel1=7 if j12c09_grade>= 810 & j12c09_grade <= . // all labelled uni levels
+	replace edulevel1=1 if cc09_grade==0			// "No Grade Completed" -> "No education"
+	replace edulevel1=2 if cc09_grade==1 	// "Elementary Undergraduate" -> " Primary Incomplete"
+	replace edulevel1=3 if cc09_grade==2 	// "Elementary Graduate" -> "Primary Complete"
+	replace edulevel1=4 if cc09_grade==3		// "High School Undergraduate" -> "Secondary Incomplete"
+	replace edulevel1=5 if cc09_grade==4		// "High school graduate" -> "Secondary Complete"
+	replace edulevel1=7 if cc09_grade==5 | ( cc09_grade>=60 & cc09_grade<=98) // "College Graduate" and "[x] Bachelors/Advanced Degree" -> "University"
+	replace edulevel1=9 if cc09_grade==99 	// where 99 == 'not reported'
 
 	label var edulevel1 "Level of education 1"
-	la de lbledulevel1 	1 "No education" ///
-						2 "Primary incomplete" ///
+	la de lbledulevel1 	1 "No education"	///
+						2 "Primary incomplete" 	///
 						3 "Primary complete" 	///
 						4 "Secondary incomplete" ///
-						5 "Secondary complete" ///
-						6 "Higher than secondary but not university" ///
-						7 "University incomplete or complete" ///
-						8 "Other" ///
+						5 "Secondary complete" 	///
+						6 "Higher than secondary but not university" 	///
+						7 "University incomplete or complete" 	///
+						8 "Other" 			///
 						9 "Unstated"
 
 	label values edulevel1 lbledulevel1
@@ -517,7 +479,7 @@ replace month = 10 	if round == 4
 	la de lbledulevel2 	1 "No education" 	///
 						2 "Primary incomplete"  	///
 						3 "Primary complete but secondary incomplete" 	///
-						4 "Secondary complete" 	///
+						4 "Secondary complete" 		///
 						5 "Some tertiary/post-secondary"
 	label values edulevel2 lbledulevel2
 	replace edulevel2=. if age < ed_mod_age // restrict universe to students at or above primary school age
@@ -558,12 +520,12 @@ replace month = 10 	if round == 4
 
 
 ** LABOR STATUS
-	/*Changing by using newempst to determine lstatus, not work
-	Note: creating own label, not using label from newempst	*/
+	/*Changing by using cempst1 to determine lstatus, not work
+	Note: creating own label, not using label from cempst1	*/
 	gen byte lstatus=.
-	replace lstatus=1 if newempst==1
-	replace lstatus=2 if newempst==2
-	replace lstatus=3 if newempst==3
+	replace lstatus=1 if cempst1==1
+	replace lstatus=2 if cempst1==2
+	replace lstatus=3 if cempst1==3
 	replace lstatus=. if age < lb_mod_age // restrict universe to only those of working age
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -571,6 +533,7 @@ replace month = 10 	if round == 4
 
 
 ** LABOR STATUS LAST YEAR
+	/*Can this be adjusted to reflect new _nso labor status variable? */
 	gen byte lstatus_year=.
 	replace lstatus_year=. if age<lb_mod_age & age!=.
 	label var lstatus_year "Labor status during last year"
@@ -580,10 +543,10 @@ replace month = 10 	if round == 4
 
 ** EMPLOYMENT STATUS
 	gen byte empstat=.
-	replace empstat=1 if c19pclas==0 | c19pclas==1 | c19pclas==2 | c19pclas==5
-	replace empstat=2 if c19pclas==6
-	replace empstat=3 if c19pclas==4
-	replace empstat=4 if c19pclas==3
+	replace empstat=1 if cc19_pclass==0 | cc19_pclass==1 | cc19_pclass==2 | cc19_pclass==5
+	replace empstat=2 if cc19_pclass==6
+	replace empstat=3 if cc19_pclass==4
+	replace empstat=4 if cc19_pclass==3
 	replace empstat=. if lstatus!=1 	// includes universe restriction
 	label var empstat "Employment status"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed"
@@ -599,7 +562,7 @@ replace month = 10 	if round == 4
 
 
 ** NUMBER OF TOTAL JOBS
-	gen byte njobs=a03_jobs
+	gen byte njobs=.
 	label var njobs "Number of total jobs"
 	replace njobs=. 	if 	age < lb_mod_age | lstatus != 1		// restrict universe to working age + workers
 
@@ -612,8 +575,6 @@ replace month = 10 	if round == 4
 
 ** SECTOR OF ACTIVITY: PUBLIC - PRIVATE
 	gen byte ocusec=.
-	replace ocusec=1 if c19pclas==2
-	replace ocusec=2 if c19pclas!=2
 	label var ocusec "Sector of activity"
 	la de lblocusec 1 "Public, state owned, government, army, NGO" 2 "Private"
 	label values ocusec lblocusec
@@ -624,11 +585,11 @@ replace month = 10 	if round == 4
 
 ** REASONS NOT IN THE LABOR FORCE
 	gen byte nlfreason=.
-	replace nlfreason=1 if c42_wynt==8
-	replace nlfreason=2 if c42_wynt==7
-	replace nlfreason=3 if c42_wynt==6
-	replace nlfreason=4 if c42_wynt==3
-	replace nlfreason=5 if c42_wynt==1 | c42_wynt==2 | c42_wynt==4 | c42_wynt==5 | c42_wynt==9
+	replace nlfreason=1 if cc42_wynot==8
+	replace nlfreason=2 if cc42_wynot==7
+	replace nlfreason=3 if cc42_wynot==6
+	replace nlfreason=4 if cc42_wynot==3
+	replace nlfreason=5 if cc42_wynot==1 | cc42_wynot==2 | cc42_wynot==4 | cc42_wynot==5 | cc42_wynot==9
 	replace nlfreason=. if lstatus!=3 	// restricts universe to non-labor force
 	replace nlfreason=. if age < lb_mod_age // restrict universe to working age
 	label var nlfreason "Reason not in the labor force"
@@ -637,33 +598,32 @@ replace month = 10 	if round == 4
 
 
 ** UNEMPLOYMENT DURATION: MONTHS LOOKING FOR A JOB
-	gen byte unempldur_l= c40_wks/4.2
+	gen byte unempldur_l= cc40_weeks/4.2
 	label var unempldur_l "Unemployment duration (months) lower bracket"
 	replace unempldur_l=. if age < lb_mod_age // restrict universe to working age
 	replace unempldur_l=. if lstatus!=2 	  // restrict universe to unemployed only
 
-	gen byte unempldur_u= c40_wks/4.2
+	gen byte unempldur_u= cc40_weeks/4.2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
 	replace unempldur_l=. if age < lb_mod_age // restrict universe to working age
 	replace unempldur_l=. if lstatus!=2 	  // restrict universe to unemployed only
 
 ** INDUSTRY CLASSIFICATION
-	gen byte industry=.
-	replace industry=1 if (c18_pkb>=1& c18_pkb<=4)		// to Agriculture
-	replace industry=2 if (c18_pkb>=5 & c18_pkb<=9)		// to Mining
-	replace industry=3 if (c18_pkb>=10 & c18_pkb<=33)	// to Manufacturing
-	replace industry=4 if (c18_pkb>=35 & c18_pkb<=39)	// to Public utility
-	replace industry=5 if (c18_pkb>=41 &  c18_pkb<=43)	// to Construction
-	replace industry=6 if (c18_pkb>=45 & c18_pkb<=47) | (c18_pkb >= 55 & c18_pkb <= 56)	// to Commerce
-	replace industry=7 if (c18_pkb>=49 & c18_pkb<=53)| (c18_pkb>=58 & c18_pkb<=63) // to Transport/coms
-	replace industry=8 if (c18_pkb>=64 & c18_pkb<=82) 	// to financial/business services
-	replace industry=9 if (c18_pkb==84) 				// to public administration
-	replace industry=10 if  (c18_pkb>=91 & c18_pkb<=99) // to other
-	replace industry=10 if industry==. & c18_pkb!=.
-	replace industry=. if lstatus~=1
 
-* Comments include UN International Standard Industrial Classification associated categories (version 3.1)
+	gen byte industry=.
+	replace industry=1 if cc18_pkb >= 1 & cc18_pkb <= 9		// Agriculture
+	replace industry=2 if cc18_pkb == 10 | cc18_pkb == 11		// Mining
+	replace industry=3 if cc18_pkb>=15 & cc18_pkb <= 39		// Manufacturing
+	replace industry=4 if cc18_pkb==40 | cc18_pkb==41			// Public Utility Services
+	replace industry=5 if cc18_pkb==45						// Construction
+	replace industry=6 if cc18_pkb >= 50 & cc18_pkb <= 55		// Commerce
+	replace industry=7 if cc18_pkb >= 60 & cc18_pkb <= 64		// Transport + Communication
+	replace industry=8 if cc18_pkb >= 65 & cc18_pkb <= 74		// Financial + Business Services
+	replace industry=9 if cc18_pkb == 75						// Public Administration
+	replace industry=10 if cc18_pkb>=76 & cc18_pkb <= 99 		// this includes education for now.
 	label var industry "1 digit industry classification"
+
+	* Comments include UN International Standard Industrial Classification associated categories (version 3.1)
 	la de lblindustry 	1 "Agriculture" 	/// (01-05)
 						2 "Mining" 			/// (10-14)
 						3 "Manufacturing" 	/// (15-37)
@@ -674,6 +634,7 @@ replace month = 10 	if round == 4
 						8 "Financial and Business Services" /// (65-74)
 						9 "Public Administration" /// (75)
 						10 "Other Services, Unspecified" // (80-99)
+
 	label values industry lblindustry
 	replace industry=. if age < lb_mod_age // restrict universe to working age
 	replace industry=. if lstatus!=1 		// restrict universe to employed only
@@ -689,20 +650,20 @@ replace month = 10 	if round == 4
 	replace industry1=. if lstatus!=1 		// restrict universe to employed only
 
 **SURVEY SPECIFIC INDUSTRY CLASSIFICATION
-	gen industry_orig=c18_pkb
+	gen industry_orig=cc18_pkb
 	replace industry_orig=. if lstatus!=1 		// restrict universe to employed only
 	replace industry_orig=. if age < lb_mod_age // restrict universe to working age
 	label var industry_orig "Original Industry Codes"
 
 
 ** OCCUPATION CLASSIFICATION
-	* in 2014, raw variable is numeric
+	* in 2003, raw variable is numeric
 
 	* generate occupation variable
-	gen byte occup=floor(c16_proc/10)		// this handles most of recoding automatically.
-	recode occup 0 = 10	if 	c16_proc==1 	// recode "armed forces" to appropriate label
-	recode occup 0 = 99	if 	(c16_proc>=2 & c16_proc <=9) ///
-							| (c16_proc >=94 & c16_proc <= 99) // recode "Not classifiable occupations"
+	gen byte occup=floor(cc16_procc/10)		// this handles most of recoding automatically.
+	recode occup 0 = 10	if 	cc16_procc==1 	// recode "armed forces" to appropriate label
+	recode occup 0 = 99	if 	(cc16_procc>=2 & cc16_procc <=9) ///
+							| (cc16_procc >=94 & cc16_procc <= 99) // recode "Not classifiable occupations"
 
 	/* Note that the raw variable, procc lists values, 94-99 for which there are no associated occupation
 	   codes. Given that the raw data indicate that these individauls do have valid, non-missing occupations,
@@ -717,7 +678,7 @@ replace month = 10 	if round == 4
 
 
 ** SURVEY SPECIFIC OCCUPATION CLASSIFICATION
-	gen occup_orig=c16_proc
+	gen occup_orig=cc16_procc
 	replace occup_orig=. if lstatus!=1 			// restrict universe to employed only
 	replace occup_orig=. if age < lb_mod_age	// restrict universe to working age
 	label var occup_orig "Original Occupational Codes"
@@ -734,7 +695,7 @@ replace month = 10 	if round == 4
 
 
 ** HOURS WORKED LAST WEEK
-	gen whours= c22_phrs
+	gen whours= cc22_phours
 	replace whours=. if lstatus!=1 			// restrict universe to employed only
 	replace whours=. if age < lb_mod_age	// restrict universe to working age
 	label var whours "Hours of work in last week"
@@ -742,7 +703,7 @@ replace month = 10 	if round == 4
 
 
 ** WAGES
-	gen double wage= c27_pbsc
+	gen double wage= cc27_pbasic
 	replace wage=. if lstatus!=1 			// restrict universe to employed only
 	replace wage=. if age < lb_mod_age		// restrict universe to working age
 	replace wage=. if empstat==1			// restrict universe to wage earners
@@ -781,27 +742,26 @@ replace month = 10 	if round == 4
 
 ** INDUSTRY CLASSIFICATION - SECOND JOB
 	gen byte industry_2=.
-	replace industry_2=1 if (j03_okb>=1& j03_okb<=4)		// to Agriculture
-	replace industry_2=2 if (j03_okb>=5 & j03_okb<=9)		// to Mining
-	replace industry_2=3 if (j03_okb>=10 & j03_okb<=33)	// to Manufacturing
-	replace industry_2=4 if (j03_okb>=35 & j03_okb<=39)	// to Public utility
-	replace industry_2=5 if (j03_okb>=41 &  j03_okb<=43)	// to Construction
-	replace industry_2=6 if (j03_okb>=45 & j03_okb<=47) | (j03_okb>= 55 & j03_okb <= 56)	// to Commerce
-	replace industry_2=7 if (j03_okb>=49 & j03_okb<=53)| (j03_okb>=58 & j03_okb<=63) // to Transport/coms
-	replace industry_2=8 if (j03_okb>=64 & j03_okb<=82) 	// to financial/business services
-	replace industry_2=9 if (j03_okb==84) 				// to public administration
-	replace industry_2=10 if  (j03_okb>=91 & j03_okb<=99) // to other
-	replace industry_2=10 if industry_2==. & j03_okb!=.
-	replace industry_2=. if lstatus~=1
 
-	label var industry_2 "1 digit industry_2 classification"
-	label values industry_2 lblindustry 		// use same value/factor label as industry
-	replace industry_2=. if age < lb_mod_age // restrict universe to working age
-	replace industry_2=. if lstatus!=1 		// restrict universe to employed only
+	replace industry_2=1 if cc32_okb >= 1 & cc32_okb <= 9		// Agriculture
+	replace industry_2=2 if cc32_okb == 10 | cc32_okb == 11		// Mining
+	replace industry_2=3 if cc32_okb>=15 & cc32_okb <= 39		// Manufacturing
+	replace industry_2=4 if cc32_okb==40 | cc32_okb==41			// Public Utility Services
+	replace industry_2=5 if cc32_okb==45						// Construction
+	replace industry_2=6 if cc32_okb >= 50 & cc32_okb <= 55		// Commerce
+	replace industry_2=7 if cc32_okb >= 60 & cc32_okb <= 64		// Transport + Communication
+	replace industry_2=8 if cc32_okb >= 65 & cc32_okb <= 74		// Financial + Business Services
+	replace industry_2=9 if cc32_okb == 75						// Public Administration
+	replace industry_2=10 if cc32_okb>=76 & cc32_okb <= 99 		// this includes education for now.
+
+	replace industry_2=. if lstatus!=1 				// restrict universe to employed only
+	replace industry_2=. if age < lb_mod_age		// restrict universe to working age
+	label var industry_2 "1 digit industry classification - second job"
+	label values industry_2 lblindustry				// use same data labels as industry
 
 
 ** INDUSTRY 1 - SECOND JOB
-	gen byte industry1_2=industry_2
+	gen byte industry1_2=.
 	recode industry1_2 (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
 	replace industry1_2=. if lstatus!=1 				// restrict universe to employed only
 	replace industry1_2=. if age < lb_mod_age			// restrict universe to working age
@@ -811,17 +771,17 @@ replace month = 10 	if round == 4
 
 
 **SURVEY SPECIFIC INDUSTRY CLASSIFICATION - SECOND JOB
-	gen industry_orig_2=j03_okb
+	gen industry_orig_2=cc32_okb
 	replace industry_orig_2=. if lstatus!=1 				// restrict universe to employed only
 	replace industry_orig_2=. if age < lb_mod_age			// restrict universe to working age
 	label var industry_orig_2 "Original Industry Codes - Second job"
 
 
 ** OCCUPATION CLASSIFICATION - SECOND JOB
-	gen byte occup_2=floor(j02_otoc/10)		// this handles most of recoding automatically.
-	recode occup_2 0 = 10	if 	j02_otoc==1 	// recode "armed forces" to appropriate label
-	recode occup_2 0 = 99	if 	(j02_otoc>=2 & j02_otoc <=9) ///
-							| (j02_otoc >=94 & j02_otoc <= 99) // recode "Not classifiable occupations"
+	gen byte occup_2=floor(cc30_otocc/10)		// this handles most of recoding automatically.
+	recode occup_2 0 = 10	if 	cc30_otocc==1 	// recode "armed forces" to appropriate label
+	recode occup_2 0 = 99	if 	(cc30_otocc>=2 & cc30_otocc <=9) ///
+							| (cc30_otocc >=94 & cc30_otocc <= 99) // recode "Not classifiable occupations"
 
 	replace occup_2=. if lstatus!=1 		// restrict universe to employed only
 	replace occup_2=. if age < lb_mod_age	// restrict universe to working age
@@ -834,7 +794,7 @@ replace month = 10 	if round == 4
 
 
 ** WAGES - SECOND JOB
-	gen double wage_2=c36_obic
+	gen double wage_2=cc36_obasic
 	replace wage_2=. if lstatus!=1 			// restrict universe to employed only
 	replace wage_2=. if age < lb_mod_age		// restrict universe to working age
 	replace wage_2=. if empstat==1			// restrict universe to wage earners
@@ -853,6 +813,8 @@ replace month = 10 	if round == 4
 
 ** CONTRACT
 	gen byte contract=.
+	replace contract=0 if cc10_conwr==2 | cc10_conwr==8
+	replace contract=1 if cc10_conwr==1
 	label var contract "Contract"
 	la de lblcontract 0 "Without contract" 1 "With contract"
 	label values contract lblcontract
@@ -967,8 +929,8 @@ replace month = 10 	if round == 4
 
 ** ORDER KEEP VARIABLES
 	local 		order 														///
-				sample ccode year intv_year month idh idp wgt strata psu urb	///
-				reg01 reg02 reg03 reg04 reg02_orig reg03_orig  ///
+				sample ccode year intv_year month idh idp wgt strata psu 	///
+				reg01 reg02 reg03 reg04 reg02_orig   ///
 				ownhouse water electricity toilet landphone ///
 				cellphone computer internet hhsize head gender age soc marital ///
 				ed_mod_age everattend atschool literacy educy edulevel1 edulevel2 ///
@@ -978,7 +940,7 @@ replace month = 10 	if round == 4
 				whours wage unitwage contract empstat_2 empstat_2_year ///
 				industry_2 industry1_2 industry_orig_2 occup_2 wage_2 unitwage_2 ///
 				healthins socialsec union rbirth_juris rbirth rprevious_juris ///
-				rprevious yrmove rprevious_time_ref pci pci_d pcc pcc_d
+				rprevious yrmove rprevious_time_ref pci pci_d pcc pcc_d round
 
 	keep 		`order'
 	order 		`order'
@@ -990,7 +952,7 @@ replace month = 10 	if round == 4
 	* if variables are missing on all values, drop them, unless they are listed as "key" variable
 
 	* declare list of key variables that should never have missing observations
-	loc	nomissvars sample ccode year intv_year month idh idp wgt strata psu hhsize ed_mod_age lb_mod_age
+	loc	nomissvars sample ccode year intv_year month idh idp wgt strata psu hhsize ed_mod_age lb_mod_age round
 
 
 	local missvars : 	list order - nomissvars
@@ -1019,29 +981,8 @@ replace month = 10 	if round == 4
 	}
 
 
-** Drop Unused Value labels
+	save `"`id_data'\\rounds\\`cty3'_`surv_yr'_I2D2_LFS_JUL.dta"', replace
 
-	* Store all labels in data
-	label dir
-	local all_lab `r(names)'
-
-	* Store all variables with a label, extract value label names
-	local used_lab = ""
-	ds, has(vallabel)
-	local labelled_vars `r(varlist)'
-	foreach varName of local labelled_vars {
-		local y : value label `varName'
-		local used_lab `"`used_lab' `y'"'
-	}
-
-	* Compare lists, if not
-	local notused : list all_lab - used_lab 		// local `notused' defines value labs not in remaining vars
-	label drop `notused'
-
-
-	save `"`id_data'\\`cty3'_`surv_yr'_I2D2_LFS.dta"', replace
-
-	log close
 
 
 	clear

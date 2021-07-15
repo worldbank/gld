@@ -2,8 +2,6 @@
 # a working exploratory script to see what we can do with the metadata file
 # using "region" as a working example.
 
-renv::activate()
-
 library(tidyverse)
 library(retroharmonize)
 
@@ -124,6 +122,95 @@ vallabs_reg16 <- metadata %>%
 # create province object
 vallab_tab_prov <- metadata %>%
   filter( grepl("prov", var_name_orig) | grepl("prv", var_name_orig) ) %>%
+  filter(!is.na(labels)) %>%
+  select(id, labels) %>%
+  unnest_longer(labels, 
+                values_to = "value",
+                indices_to = "value_label") %>%
+  pivot_wider(names_from = id, values_from = value_label) %>%
+  arrange(value)
+
+
+
+
+# create industry object
+vallab_tab_industry <- metadata %>%
+  filter( grepl("qkb", var_name_orig) | grepl("pkb", var_name_orig) ) %>%
+  filter(!is.na(labels)) %>%
+  select(id, labels) %>%
+  unnest_longer(labels, 
+                values_to = "value",
+                indices_to = "value_label") %>%
+  pivot_wider(names_from = id, values_from = value_label) %>%
+  arrange(value)
+
+
+vallabs_industry12 <- metadata %>%
+  filter(grepl("12", id), grepl("qkb", var_name_orig) | grepl("pkb", var_name_orig) ) %>%
+  select(labels, id) %>%
+  filter(!is.na(labels)) %>%
+  unnest_longer(labels, 
+                values_to = "value",
+                indices_to = "value_label") %>%
+  arrange(value) %>%
+  pivot_wider(names_from = id, 
+              values_from = "value_label") %>%
+  distinct() 
+
+
+vallabs_industry18 <- metadata %>%
+  filter(grepl("18", id), grepl("qkb", var_name_orig) | grepl("pkb", var_name_orig) ) %>%
+  select(labels, id) %>%
+  filter(!is.na(labels)) %>%
+  unnest_longer(labels, 
+                values_to = "value",
+                indices_to = "value_label") %>%
+  arrange(value) %>%
+  pivot_wider(names_from = id, 
+              values_from = "value_label") %>%
+  distinct() 
+
+
+
+# create family relationship variable tables 
+vallab_tab_rel <- metadata %>%
+  filter( grepl("rel", var_name_orig) ) %>%
+  filter(!is.na(labels)) %>%
+  select(id, labels) %>%
+  unnest_longer(labels, 
+                values_to = "value",
+                indices_to = "value_label") %>%
+  pivot_wider(names_from = id, values_from = value_label) %>%
+  arrange(value)
+
+
+# create household id variable tables 
+vallab_tab_hhid <- metadata %>%
+  filter( grepl("rel", var_name_orig) ) %>%
+  filter(!is.na(labels)) %>%
+  select(id, labels) %>%
+  unnest_longer(labels, 
+                values_to = "value",
+                indices_to = "value_label") %>%
+  pivot_wider(names_from = id, values_from = value_label) %>%
+  arrange(value)
+
+
+# create household id variable tables 
+vallab_tab_curschool <- metadata %>%
+  filter( grepl("currently attending", label_orig) ) %>%
+  filter(!is.na(labels)) %>%
+  select(id, labels) %>%
+  unnest_longer(labels, 
+                values_to = "value",
+                indices_to = "value_label") %>%
+  pivot_wider(names_from = id, values_from = value_label) %>%
+  arrange(value)
+
+
+# create marital status variable tables 
+vallab_tab_marital <- metadata %>%
+  filter( grepl("marital", label_orig) ) %>%
   filter(!is.na(labels)) %>%
   select(id, labels) %>%
   unnest_longer(labels, 
