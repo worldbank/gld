@@ -30,11 +30,11 @@ loc 	gld 		0 	// 1 will allow GLD code to run, 0 otherwise
 ** Survey Year settings.
 * you can run a specific year by setting to 1
 
-loc 	phl1997		1
-loc 	phl1998 	1
-loc 	phl1999 	1
-loc 	phl2000 	1
-loc 	phl2001 	1
+loc 	phl1997		0
+loc 	phl1998 	0
+loc 	phl1999 	0
+loc 	phl2000 	0
+loc 	phl2001 	0
 loc 	phl2002		0
 loc 	phl2003		0
 loc 	phl2004		0
@@ -50,7 +50,7 @@ loc 	phl2013		0
 loc 	phl2014		0
 loc 	phl2015 	0
 loc 	phl2016  	0
-loc 	phl2017 	0
+loc 	phl2017 	1
 loc 	phl2018		0
 loc 	phl2019 	0
 loc 	phl2020 	0

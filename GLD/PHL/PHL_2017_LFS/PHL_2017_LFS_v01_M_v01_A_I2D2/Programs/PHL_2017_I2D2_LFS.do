@@ -156,7 +156,7 @@ replace month = 10 	if round == 4
 	tempfile 		partA	partB						// declare tempfiles, Part A is first 3 rounds, Part B is round 4/october
 
 	preserve   											// preserve the original appended dataset
-	keep if 		round == 1 | round == 3 | round == 3
+	keep if 		round == 1 | round == 3 | round == 4
 
 		* IDH construction for rounds 1-3
 		loc idhvars 	pufhhnum 	// store idh vars in local
