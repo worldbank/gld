@@ -379,7 +379,7 @@
 
 ** EDUCATION LEVEL 3
 	gen edulevel3= okul_biten_k if age>=ed_mod_age
-	recode edulevel3 0=1 1=2 2 31/32=3 4/5=4
+	recode edulevel3 (0=1) (1=2) (31/32=3) (4/5=4)
 	label var edulevel3 "Level of education 3"
 	la de lbledulevel3 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values edulevel3 lbledulevel3
