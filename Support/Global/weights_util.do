@@ -28,6 +28,13 @@ sum 	count [aw=wgt_rnd] 	if month == `month'
 svyset 	_n [pw=wgt_rnd] 
 svy: 	total count 		if month == `month'	
 
+* Working age Population 
+sum 	count [aw=wgt_rnd] 	if month == `month' ///
+							& age >= lb_mod_age
+svyset 	_n [pw=wgt_rnd] 
+svy: 	total count 		if month == `month'	///
+							& age >= lb_mod_age
+
 }
 
 
