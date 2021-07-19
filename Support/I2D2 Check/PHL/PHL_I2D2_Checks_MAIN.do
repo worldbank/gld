@@ -11,6 +11,6 @@ description: calls all PHL I2D2 scripts for I2D2+GLD
 * ---------------------
 
 
-forvalues year = 1997/2019 {
+forvalues year = 1998/2019 {
     do 	`"${clone}/gld/Support/I2D2 Check/PHL/PHL_`year'_I2D2_Check.do"'
 }
