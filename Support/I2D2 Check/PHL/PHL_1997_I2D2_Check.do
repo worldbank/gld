@@ -16,7 +16,7 @@ set obs 500
 *----------------------------------------------------------------------------------
 
 local 	drive 	`"Y"'
-local 	ccode 	`"ZAF"'
+local 	ccode 	`"PHL"'
 local 	usr		`"551206_TM"'
 local 	y       `"1997"'
 local 	year 	"`drive':\GLD-Harmonization\\`usr'\\`ccode'\\`ccode'_`y'_LFS"
@@ -135,6 +135,7 @@ bys IDH: egen n=total(headhh)
 
 di "Head variable has 1 obs with head==1"
 assert n==1
+
 restore
 
 * Confirm that fewer than 3% of obs are missing head
