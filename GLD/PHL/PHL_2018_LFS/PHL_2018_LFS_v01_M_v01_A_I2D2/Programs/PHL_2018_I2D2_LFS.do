@@ -112,8 +112,8 @@ if (`cb_pause' == 1) {
 	}
 
 
-	
-** Align HHID variables 
+
+** Align HHID variables
 	** align hhnum
 	/*rounds 1,3,4 (january,, july, october) have a numeric household id called hhnum whereas round 2 (april)
 	  has a string numeric variable encoded as str23. Since the ids will all be the same legth anyway, I will
@@ -136,7 +136,7 @@ if (`cb_pause' == 1) {
 	mdesc 		hhnum 								// ensure that hhid has no missings
 	assert	 	r(miss) == 0
 
-	
+
 
 ** SAMPLE
 	gen str7 sample = `"`cty3'"' + `"`surv_yr'"'
@@ -660,8 +660,8 @@ undergraduates in "primary" and "graduates" in "secondary" */
 
 	gen byte unempldur_u= pufc33_weeks/4.2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
-	replace unempldur_l=. if age < lb_mod_age // restrict universe to working age
-	replace unempldur_l=. if lstatus!=2 	  // restrict universe to unemployed only
+	replace unempldur_u=. if age < lb_mod_age // restrict universe to working age
+	replace unempldur_u=. if lstatus!=2 	  // restrict universe to unemployed only
 
 ** INDUSTRY CLASSIFICATION
 	gen byte industry=.
@@ -1013,7 +1013,7 @@ undergraduates in "primary" and "graduates" in "secondary" */
 	}
 
 
-** Drop Unused Value labels 
+** Drop Unused Value labels
 
 	* Store all labels in data
 	label dir
@@ -1028,11 +1028,11 @@ undergraduates in "primary" and "graduates" in "secondary" */
 		local used_lab `"`used_lab' `y'"'
 	}
 
-	* Compare lists, if not 
-	local notused : list all_lab - used_lab 		// local `notused' defines value labs not in remaining vars 
+	* Compare lists, if not
+	local notused : list all_lab - used_lab 		// local `notused' defines value labs not in remaining vars
 	label drop `notused'
-	
-	
+
+
 	save `"`id_data'\\`cty3'_`surv_yr'_I2D2_LFS.dta"', replace
 
 	log close
