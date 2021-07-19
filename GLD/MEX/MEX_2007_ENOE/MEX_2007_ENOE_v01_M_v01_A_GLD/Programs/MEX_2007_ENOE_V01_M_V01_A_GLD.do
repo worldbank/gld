@@ -31,7 +31,7 @@
 <_ISCED Version_>				[ISCED 1997] </_ISCED Version_> 
 <_ISCO Version_>				[ISCO-88] </_ISCO Version_> 
 <_OCCUP National_>				[CMO I & II 1998] </_OCCUP National_> 
-<_ISIC Version_>				[Rev.4] </_ISIC Version_> 
+<_ISIC Version_>				[Rev.3.1] </_ISIC Version_> 
 <_INDUS National_>				[SCIAN 2002] </_INDUS National_> 
 
 ----------------------------------------------------------------------- 
