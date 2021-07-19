@@ -312,8 +312,14 @@ restore
 *----------------------------------------------------------------------------------
 
 * Check missing obs in labor variables when age<lb_mod_age
+	/*the original code assumes that all varialbes here are numeric in the original form, but that's not the case for
+		occup_orig, so adding numeric filter*/
 
 local lb_var "lstatus lstatus_year empstat empstat_year njobs njobs_year ocusec nlfreason industry industry1 industry_orig occup occup_orig whours unitwage empstat_2 empstat_2_year industry_2 industry1_2 industry_orig_2 occup_2 wage_2 unitwage_2 contract healthins socialsec union  firmsize_l firmsize_u  unempldur_l unempldur_u  wage"
+
+ds `lb_var', has(type numeric)
+loc lb_var = r(varlist)
+
 
 foreach v in `lb_var'{
 
