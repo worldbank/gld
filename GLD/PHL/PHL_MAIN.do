@@ -25,8 +25,8 @@ description: calls all PHL scripts for I2D2+GLD, edited from iecodebook script
 * you can allow either or I2D2/GLD code to run
 
 loc 	i2d2 		0	// 1 will allow i2d2 code to run, 0 otherwise
-loc 	gld 		0 	// 1 will allow GLD code to run, 0 otherwise
-loc 	checks_i2 	1	// 1 to run i2d2 check main script
+loc 	gld 		1 	// 1 will allow GLD code to run, 0 otherwise
+loc 	checks_i2 	0	// 1 to run i2d2 check main script
 
 
 ** Survey Year settings.
@@ -62,7 +62,7 @@ loc 	phl2020 	1
 
 * Run I2D2 code
 if (`i2d2' == 1) {
-forvalues year = 1997/2019s {
+forvalues year = 1997/2019 {
     if (`phl`year''==1) {
 		do `"${code}/`cty'/`cty'_`year'_LFS/`cty'_`year'_LFS_v01_M_v01_A_I2D2/Programs/`cty'_`year'_I2D2_LFS.do"'
 	}
