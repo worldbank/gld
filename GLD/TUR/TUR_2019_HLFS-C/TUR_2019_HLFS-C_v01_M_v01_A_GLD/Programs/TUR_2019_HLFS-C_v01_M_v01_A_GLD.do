@@ -20,7 +20,7 @@
 <_Sample size (HH)_> 			147,072 </_Sample size (HH)_> 
 <_Sample size (IND)_> 			366,551 </_Sample size (IND)_> 
 <_Sampling method_> 			Two-stage stratified cluster sampling method </_Sampling method_> 
-<_Geographic coverage_> 		NUTS-2 (https://en.wikipedia.org/wiki/NUTS_statistical_regions_of_Turkey) </_Geographic coverage_> 
+<_Geographic coverage_> 		NUTS-2 </_Geographic coverage_> 
 <_Currency_> 					Turkish Lira </_Currency_> 
 ----------------------------------------------------------------------- 
 <_ICLS Version_>				ICLS 13
