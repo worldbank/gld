@@ -15,7 +15,7 @@
 *							SDEMT106.dta
 *							COE1T106.dta
 *							COE2T106.dta
-** MODIFIED					aquinonesnunura@worldbank.org
+** MODIFIED					World Bank Jobs Group
 ** Created					03-28-2020
 ** Modified					06-03-2021
 ** NUMBER OF HOUSEHOLDS		104857

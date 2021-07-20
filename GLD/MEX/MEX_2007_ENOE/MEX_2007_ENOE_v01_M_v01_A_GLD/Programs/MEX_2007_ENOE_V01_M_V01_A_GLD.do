@@ -7,7 +7,7 @@
 
 <_Program name_>				[MEX_2007_ENOE_V01_M_v01_A_GLD.do] </_Program name_> 
 <_Application_>					[STATA] <_Application_> 
-<_Author(s)_>					[aquinonesnunura@worldbank.org] </_Author(s)_> 
+<_Author(s)_>					[The World Bank Jobs Group] </_Author(s)_> 
 <_Date created_>				2021-04-01 </_Date created_> 
 
 ------------------------------------------------------------------------- 
@@ -21,26 +21,18 @@
 <_Source of dataset_> 			[Mexico NSO] </_Source of dataset_> 
 <_Sample size (HH)_> 			[105567] </_Sample size (HH)_> 
 <_Sample size (IND)_> 			[410185] </_Sample size (IND)_> 
-<_Sampling method_> 			[Tamaño de la muestra: Calculado desde el punto de vista del indicador de mayor exigencia en términos de tamaño muestral. Lo anterior garantiza que las estimaciones del resto de las variables de interés queden cubiertas con este tamaño. Trimestralmente el tamaño de la muestra es de 120 mil 260 viviendas.
-Unidad de observación: La vivienda.
-Unidad de muestreo: La vivienda particular.
-Unidad de análisis: El hogar y los residentes de la vivienda.
-Marco muestral: El marco muestral utilizado para la ENOE es el Marco Nacional de Viviendas 2002 del INEGI, construido a partir de la información cartográfica y demográfica obtenida durante el XII Censo General de Población y Vivienda 2000.
-Esquema de muestreo: El tipo de muestreo utilizado es probabilístico, bietápico, estratificado y por conglomerados.
-
-] </_Sampling method_> 
-
-<_Geographic coverage_> 		[All Mexico-Los niveles geograficos usados en la encuesta de México comienzan en estados siguen con ciudades autorrepresentadas y terminan con municipios de las ciudades autorrepresentadas. En la data de la encuesta solo hay números para las municipalidades pero si hay nombres para los primeros dos niveles. https://www.inegi.org.mx/contenidos/productos/prod_serv/contenidos/espanol/bvinegi/productos/metodologias/est/cobertura.pdf] </_Geographic coverage_> 
+<_Sampling method_> 			[ El tipo de muestreo utilizado es probabilístico, bietápico, estratificado y por conglomerados.] </_Sampling method_> 
+<_Geographic coverage_> 		[Los niveles geograficos usados en la encuesta de México comienzan en estados siguen con ciudades autorrepresentadas y terminan con municipios de las ciudades autorrepresentadas. https://www.inegi.org.mx/contenidos/productos/prod_serv/contenidos/espanol/bvinegi/productos/metodologias/est/cobertura.pdf] </_Geographic coverage_> 
 <_Currency_> 					[Pesos] </_Currency_> 
 
 ----------------------------------------------------------------------- 
 
-<_ICLS Version_>				[Version of ICLS for Labor Questions] </_ICLS Version_> 
-<_ISCED Version_>				[Version of ICLS for Labor Questions] </_ISCED Version_> 
-<_ISCO Version_>				[Version of ICLS for Labor Questions] </_ISCO Version_> 
-<_OCCUP National_>				[Version of ICLS for Labor Questions] </_OCCUP National_> 
-<_ISIC Version_>				[Version of ICLS for Labor Questions] </_ISIC Version_> 
-<_INDUS National_>				[Version of ICLS for Labor Questions] </_INDUS National_> 
+<_ICLS Version_>				[ICLS 13] </_ICLS Version_> 
+<_ISCED Version_>				[ISCED 1997] </_ISCED Version_> 
+<_ISCO Version_>				[ISCO-88] </_ISCO Version_> 
+<_OCCUP National_>				[CMO I & II 1998] </_OCCUP National_> 
+<_ISIC Version_>				[Rev.3.1] </_ISIC Version_> 
+<_INDUS National_>				[SCIAN 2002] </_INDUS National_> 
 
 ----------------------------------------------------------------------- 
 <_Version Control_> 
@@ -65,8 +57,8 @@ set mem 800m
 
 *----------1.2: Set directories------------------------------*
 
-local path_in "C:\Users\Data\Original"
-local path_output "C:\Users\Data\Harmonized"
+local path_in "C:\Users\wb582018\OneDrive - WBG\Surveys\MEX\MEX_2007_LFS\MEX_2007_LFS_v01_M\Data\Original"
+local path_output "C:\Users\wb582018\OneDrive - WBG\Surveys\MEX\MEX_2007_LFS\MEX_2007_LFS_v01_M_v01_A_GLD\Data\Harmonized"
 
 *----------1.3: Database assembly------------------------------*
 
@@ -75,9 +67,9 @@ local path_output "C:\Users\Data\Harmonized"
 	use "`path_in'\VIVT107.dta",clear
 	drop p1-p3
 	destring loc mun est ageb t_loc cd_a upm d_sem n_pro_viv ent con v_sel n_ent per, replace
-	local path_in "C:\Users\Data\Original"
+	local path_in "C:\Users\wb582018\OneDrive - WBG\Surveys\MEX\MEX_2007_LFS\MEX_2007_LFS_v01_M\Data\Original"
 	merge 1:m ent con v_sel using "`path_in'\HOGT107.dta", nogen
-	local path_in "C:\Users\Data\Original"
+	local path_in "C:\Users\wb582018\OneDrive - WBG\Surveys\MEX\MEX_2007_LFS\MEX_2007_LFS_v01_M\Data\Original"
 	merge 1:m ent con v_sel n_hog using "`path_in'\SDEMT107.dta"
 	drop if _merge==1
 	drop _merge
@@ -118,7 +110,7 @@ local path_output "C:\Users\Data\Harmonized"
 
 
 *<_icls_v_>
-	gen icls_v = "ICLS-[15]"
+	gen icls_v = "ICLS-[13]"
 	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
 
@@ -130,7 +122,7 @@ local path_output "C:\Users\Data\Harmonized"
 
 
 *<_vermast_>
-	gen vermast = 01
+	gen str3 vermast = "001"
 	label var vermast "Version of master data"
 *</_vermast_>
 
@@ -225,8 +217,11 @@ local path_output "C:\Users\Data\Harmonized"
 {
 
 *<_urban_>
-	gen byte urban =ur
-	recode urban 2=0
+	gen byte urban=. 
+	replace urban=1 if t_loc==1
+	replace urban=1 if t_loc==2
+	replace urban=0 if t_loc==3
+	replace urban=0 if t_loc==4
 	label var urban "Location is urban"
 	la de lblurban 1 "Urban" 0 "Rural"
 	label values urban lblurban
@@ -265,7 +260,8 @@ local path_output "C:\Users\Data\Harmonized"
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = subnatid1
+	gen subnatidsurvey = subnatid3
+	tostring subnatidsurvey, replace
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -319,7 +315,7 @@ local path_output "C:\Users\Data\Harmonized"
 {
 
 *<_hsize_>
-	bys hhid: egen hsize=count(year) if par_c<400 | inrange(par_c,600,699)
+	bysort hhid: gen hsize=_N if par_c<400 | inrange(par_c,600,699)
 	label var hsize "Household size"
 *</_hsize_>
 
@@ -346,6 +342,15 @@ local path_output "C:\Users\Data\Harmonized"
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm  lblrelationharm
+	by hhid, sort: egen head_count=total(relationharm==1)
+	replace relationharm=1 if head_count!=1 & relationharm==2
+	replace head_count=1 if relationharm==1
+	bysort hhid (age): egen max_age=max(age) if head_count==0
+	*as per the survey min age for labour being 15
+	replace relationharm=1 if age==max_age & head_count!=1 & relationharm!=1 & relationharm!=3 & age>15
+	replace head_count=1 if relationharm==1
+	*there is a problem with hh being children under 15 in Q1 (the number of households affected is rather small)
+	drop head_count max_age
 *</_relationharm_>
 
 
@@ -515,29 +520,50 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educy_>
-	*gen byte educy =
-	gen byte educy=0 if inlist(cs_p13_1,1,4) | inlist(cs_p13_1,0,1)
-	replace educy=cs_p13_2 if cs_p13_1==2
-	replace educy=6+cs_p13_2 if inlist(cs_p13_1,3)
-	replace educy=9+cs_p13_2 if inlist(cs_p13_1,4,5)
-	replace educy=12+cs_p13_2 if inlist(cs_p13_1,6,7)
-	replace educy=17+cs_p13_2 if cs_p13_1==8
-	replace educy=19+cs_p13_2 if cs_p13_1==9
+	
+		gen byte educy =0 if (cs_p13_1==0 | cs_p13_1==1) | (cs_p13_1==2 & cs_p13_2==0)
+	replace educy=1 if cs_p13_1==2 & cs_p13_2==1
+	replace educy=2 if cs_p13_1==2 & cs_p13_2==2
+	replace educy=3 if cs_p13_1==2 & cs_p13_2==3
+	replace educy=4 if cs_p13_1==2 & cs_p13_2==4
+	replace educy=5 if cs_p13_1==2 & cs_p13_2==5
+	replace educy=6 if cs_p13_1==2 & cs_p13_2==6
+	replace educy=7 if ((cs_p13_1==6 & cs_p15==1) | cs_p13_1==3) & cs_p13_2==1
+	replace educy=8 if ((cs_p13_1==6 & cs_p15==1) | cs_p13_1==3) & cs_p13_2==2
+	replace educy=9 if ((cs_p13_1==6 & cs_p15==1) | cs_p13_1==3) & inlist(cs_p13_2,3,6)
+	replace educy=10 if (cs_p13_1==4 | (cs_p13_1==6 & cs_p15==2) | (cs_p13_1==5 & cs_p15==1) | (cs_p13_1==5 & cs_p15==2)) & cs_p13_2==1
+	replace educy=11 if (cs_p13_1==4 | (cs_p13_1==6 & cs_p15==2) | (cs_p13_1==5 & cs_p15==1) | (cs_p13_1==5 & cs_p15==2)) & cs_p13_2==2
+	replace educy=12 if ((cs_p13_1==4 | (cs_p13_1==6 & cs_p15==2) | (cs_p13_1==5 & cs_p15==1) | (cs_p13_1==5 & cs_p15==2)) & cs_p13_2==3) | ((cs_p13_1==7 & cs_p13_2==0))
+	replace educy=13 if ((cs_p13_1==4 | (cs_p13_1==6 & cs_p15==2) | (cs_p13_1==5 & cs_p15==1) | (cs_p13_1==5 & cs_p15==2)) & cs_p13_2==4) | ((cs_p13_1==6 & cs_p15==2 & cs_p13_2==7)) | (((cs_p13_1==7 & cs_p15==3) | (cs_p13_1==5 & cs_p15==3) | (cs_p13_1==6 & cs_p15==3)) & cs_p13_2==1)
+	replace educy=14 if ((cs_p13_1==4 | (cs_p13_1==6 & cs_p15==2) | (cs_p13_1==5 & cs_p15==1) | (cs_p13_1==5 & cs_p15==2)) & cs_p13_2==5) | (((cs_p13_1==7 & cs_p15==3) | (cs_p13_1==5 & cs_p15==3) | (cs_p13_1==6 & cs_p15==3)) & cs_p13_2==2)
+	replace educy=15 if ((cs_p13_1==4 | (cs_p13_1==6 & cs_p15==2) | (cs_p13_1==5 & cs_p15==1) | (cs_p13_1==5 & cs_p15==2)) & cs_p13_2==6) | (((cs_p13_1==7 & cs_p15==3) | (cs_p13_1==5 & cs_p15==3) | (cs_p13_1==6 & cs_p15==3)) & cs_p13_2==3) | (((cs_p13_1==6 & cs_p15==3) & inlist(cs_p13_2,4,6)))
+	replace educy=16 if ((cs_p13_1==7 & cs_p15==3) | (cs_p13_1==5 & cs_p15==3)) & cs_p13_2==4
+	replace educy=17 if (((cs_p13_1==7 & cs_p15==3) | (cs_p13_1==5 & cs_p15==3)) & cs_p13_2==5) | (cs_p13_1==8 & cs_p13_2==1)
+	replace educy=18 if (((cs_p13_1==7 & cs_p15==3) | (cs_p13_1==5 & cs_p15==3)) & cs_p13_2==6) | (cs_p13_1==8 & cs_p13_2==2)
+	replace educy=19 if (((cs_p13_1==7 & cs_p15==3) | (cs_p13_1==5 & cs_p15==3)) & cs_p13_2==7) | (cs_p13_1==8 & inlist(cs_p13_2,3,8)) | (cs_p13_1==9 & cs_p13_2==1)
+	replace educy=20 if (((cs_p13_1==7 & cs_p15==3) | (cs_p13_1==5 & cs_p15==3)) & cs_p13_2==8) | (cs_p13_1==9 & cs_p13_2==2)
+	replace educy=21 if (cs_p13_1==9 & cs_p13_2==3) | ((cs_p13_1==9 & (cs_p13_2==7 & cs_p13_2==8)))
+	replace educy=22 if cs_p13_1==9 & cs_p13_2==4
+	replace educy=23 if cs_p13_1==9 & cs_p13_2==5
+	replace educy=24 if cs_p13_1==9 & cs_p13_2==6
+	replace educy=0 if (cs_p13_1==0 | cs_p13_1==1) |(cs_p13_1==2 & cs_p13_2==0)
+	replace educy=. if (cs_p13_1==99 | cs_p13_2==9 | cs_p15==9) 
 	replace educy=. if age<ed_mod_age & age!=.
+	replace educy=. if age < educy & (age != . & educy != .) & anios_esc==0
 	label var educy "Years of education"
 *</_educy_>
 
 
 *<_educat7_>
 	*gen byte educat7 =
-	gen byte educat7=1 if cs_p13_1==1
+	gen byte educat7=1 if educy==0
 	replace educat7=2 if cs_p13_1==2
 	replace educat7=3 if educy==6
 	replace educat7=4 if inrange(cs_p13_1,3,5)
 	replace educat7=5 if educy==12
 	replace educat7=6 if cs_p13_1==6 
 	replace educat7=7 if inrange(cs_p13_1,7,9)
-	replace educat7=. if age<ed_mod_age & age!=.
+	replace educat7=. if age<ed_mod_age & age!=.	
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete" 
 	label values educat7 lbleducat7
@@ -555,7 +581,7 @@ label var ed_mod_age "Education module application age"
 
 *<_educat4_>
 	gen byte educat4 = educat7
-	recode educat4 2 3=2 4 5=3 6 7=4 
+	recode educat4 (2 3 4=2) (5=3) (6 7=4 )
 	label var educat4 "Level of education 3"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values educat4 lbleducat4
@@ -634,7 +660,7 @@ foreach v of local ed_var {
 
 
 *<_minlaborage_>
-	gen byte minlaborage = 14
+	gen byte minlaborage = 15
 	label var minlaborage "Labor module application age"
 *</_minlaborage_>
 
@@ -748,17 +774,45 @@ foreach v of local ed_var {
 
 *<_industrycat_isic_>
 	gen industrycat_isic = .
+	tostring industrycat_isic, replace
+	gen indus1=floor(p4a/100)
+	replace industrycat_isic="A" if indus1==11
+	replace industrycat_isic="B" if indus1==21
+	replace industrycat_isic="C" if indus1==31 | indus1==32 | indus1==33
+	replace industrycat_isic="D" if p4a==2211
+	replace industrycat_isic="E" if p4a==2221 | p4a==2222
+	replace industrycat_isic="F" if indus1==23
+	replace industrycat_isic="G" if indus1==43| indus1==46
+	replace industrycat_isic="H" if indus1==48| indus1==49
+	replace industrycat_isic="I" if indus1==72
+	replace industrycat_isic="J" if indus1==51
+	replace industrycat_isic="K" if indus1==52
+	replace industrycat_isic="L" if indus1==53
+	replace industrycat_isic="M" if indus1==54 | indus1==55
+	replace industrycat_isic="N" if indus1==56
+	replace industrycat_isic="O" if p4a==9311 | p4a==9311 | p4a==9312 | p4a==9313 | p4a==9314 | p4a==9315 | p4a==9316 | p4a==9317 | p4a==9318
+	replace industrycat_isic="P" if indus1==61
+	replace industrycat_isic="Q" if indus1==62
+	replace industrycat_isic="R" if indus1==71
+	replace industrycat_isic="S" if p4a==8111 | p4a==8112 | p4a==8113 | p4a==8114 | indus1==97 | indus1==98 | indus1==99
+	replace industrycat_isic="T" if p4a==8121 | p4a==8122 | p4a==8123 | p4a==8124 | p4a==8129
+	replace industrycat_isic="U" if p4a==9321
+	encode industrycat_isic, gen (industry_i)
+	replace industry_i=. if lstatus!=1
+	drop industrycat_isic indus1
+	rename industry_i industrycat_isic
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
 
 *<_industrycat10_>
 	gen byte industrycat10=floor(p4a/100)
-	recode industrycat10 11=1 21=2 22=4 23=5 31/33=3 43 46 72=6 48/49 51=7 52/55=8 93=9 56/71 81 97/99=10 
+	recode industrycat10 (11=1) (21=2) (22=4) (23=5) (31/33=3) (43 46=6) (48 49 51=7) (52=8) (93=9) (71 72 53 54 55 56 61 62 81 97 98 99=10)
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
+	replace industrycat10=. if lstatus!=1
 *</_industrycat10_>
 
 
@@ -768,8 +822,8 @@ foreach v of local ed_var {
 	label var industrycat4 "1 digit industry classification (Broad Economic Activities), primary job 7 day recall"
 	la de lblindustrycat4 1 "Agriculture" 2 "Industry" 3 "Services" 4 "Other"
 	label values industrycat4 lblindustrycat4	
+	replace industrycat4=. if lstatus!=1
 *</_industrycat4_>
-
 
 *<_occup_orig_>
 	gen occup_orig = p3
@@ -779,6 +833,17 @@ foreach v of local ed_var {
 
 *<_occup_isco_>
 	gen occup_isco = .
+	gen occup2=floor(occup_orig/100)
+	
+	replace occup_isco=2000 if occup2==11 |  occup2==13 
+	replace occup_isco=1000 if occup2==61 |  occup2==21
+	replace occup_isco=3000 if occup2==14	| occup2==12 
+	replace occup_isco=4000 if occup2==62
+	replace occup_isco=5000 if occup2==83| occup2==71
+	replace occup_isco=6000 if occup2==41
+	replace occup_isco=7000 if occup2==51
+	replace occup_isco=8000 if occup2==52	| occup2==53 | occup2==54 | occup2==55
+	replace occup_isco=9000 if occup2==72	| occup2==81 | occup2==82| occup2==99
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
@@ -792,18 +857,23 @@ foreach v of local ed_var {
 
 *<_occup_skill_>
 	gen occup_skill = .
-	replace occup_skill = 1 if occup == 1 | occup == 2 
-	replace occup_skill = 2 if inrange(occup,3,7) 
-	replace occup_skill = 3 if occup == 8
+	replace occup_skill = 1 if occup_isco == 1000 | occup_isco == 2000
+	replace occup_skill = 2 if inrange(occup_isco,3000,7000) 
+	replace occup_skill = 3 if occup_isco == 8000
+	replace occup_skill = 4 if occup2 == 54
+	replace occup_skill = 5 if occup_isco == 9000
 	replace occup_skill=. if lstatus!=1
+	drop occup2
 	la de lbloccupskill 1 "High" 2 "Medium" 3 "Low" 4 "Armed Forces" 5 "Not elsewhere classified"
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
 	label values occup_skill lbloccupskill
 *</_occup_skill_>
 
 *<_wage_no_compen_>
-	gen double wage_no_compen = p6b2 if lstatus==1 & empstat==1
+	gen double wage_no_compen =.
+	replace wage_no_compen=p6b2 if lstatus==1 & empstat==1
 	replace wage_no_compen=0 if empstat==2
+	replace wage_no_compen=. if lstatus!=1
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
@@ -811,15 +881,32 @@ foreach v of local ed_var {
 *<_unitwage_>
 	gen byte unitwage = p6b1
 	label var unitwage "Last wages' time unit primary job 7 day recall"
-	recode unitwage 1=5 2=3 3=2 4=1 5=10 6=10 7=. 8=.
+	/* 
+	LFS 				GLD
+	(1) Cada mes  -  	(1) Daily 
+	(2) every 15 days - (2) Weekly
+	(3) every week - 	(3) every two weeks
+	(4) daily  - 		(4) bimonthly
+	(5) other		  	(5) monthly
+	(6) paid by product (6) trimester
+	(7) don't know		(7) biannual
+	(8) no reply		(8) annualy 
+	(9) 				(9) hourly
+	(10)				(10) other
+	
+	*/
+	recode unitwage 1=5 2=3 3=2 4=1 6 5=10 7 8=.
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
+	replace unitwage=. if wage_no_compen==.
 	label values unitwage lblunitwage
 *</_unitwage_>
 
 
 *<_whours_>
-	gen whours = p5b_thrs
+gen whours = p5b_thrs
 	replace whours=. if lstatus!=1
+	replace whours=. if p4==4
+	replace whours=. if whours==999
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -835,6 +922,10 @@ foreach v of local ed_var {
 	gen wmonths = new_p5f_1 + new_p5f_2 + new_p5f_3 + new_p5f_4 + new_p5f_5 + new_p5f_6 + new_p5f_7 + new_p5f_8+ new_p5f_9 + new_p5f_10 + new_p5f_11 + new_p5f_12
 	replace wmonths=12 if p5f14==14
 	replace wmonths=. if lstatus!=1
+	replace wage_no_compen=. if wmonths==0
+	replace wmonths=. if wmonths==0
+	replace wmonths=. if wage_no_compen==.
+	replace unitwage=. if wmonths==.
 	label var wmonths "Months of work in past 12 months primary job 7 day recall"
 *</_wmonths_>
 
@@ -847,19 +938,14 @@ foreach v of local ed_var {
 
 </_wage_total> */
 	gen double wage_total=.
-replace wage_total=(wage_no_compen*5*4.3)*wmonths	if unitwage==1
+replace wage_total=(wage_no_compen*5*4.3)*wmonths if unitwage==1
 //Wage in daily unit 
 replace wage_total=(wage_no_compen*4.3)*wmonths if unitwage==2 //Wage in weekly unit
-replace wage_total=(wage_no_compen*2.15)*wmonths	if unitwage==3
-//Wage in every two weeks unit 
-replace wage_total=(wage_no_compen)/2*wmonths	if unitwage==4 //Wage in every two months unit 
-replace wage_total=( wage_no_compen)*wmonths	if unitwage==5 //Wage in monthly unit
-replace wage_total=( wage_no_compen)/3*wmonths	if unitwage==6
-//Wage in every quarterly unit 
-replace wage_total=(wage_no_compen)/6*wmonths	if unitwage==7 //Wage in every six months unit 
-replace wage_total= wage_no_compen/12*wmonths	if unitwage==8 //Wage in annual unit
-replace wage_total=(wage_no_compen*whours*4.3)*wmonths if unitwage==9 //Wage in hourly unit
+replace wage_total=(wage_no_compen*2.15)*wmonths if unitwage==3 
+replace wage_total=( wage_no_compen)*wmonths if unitwage==5 //Wage in monthly unit
+replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 	replace wage_total=. if lstatus!=1 & empstat!=1
+	replace wage_total=round(wage_total)
 	label var wage_total "Annualized total wage primary job 7 day recall"
 *</_wage_total_>
 
@@ -879,6 +965,8 @@ replace wage_total=(wage_no_compen*whours*4.3)*wmonths if unitwage==9 //Wage in 
 	gen byte healthins =.
 	recode healthins .=0 if p6d==6
 	recode healthins .=1 if inrange(p6d,1,5)
+	recode healthins .=0
+	replace healthins=. if lstatus!=1
 	label var healthins "Employment has health insurance primary job 7 day recall"
 	la de lblhealthins 0 "Without health insurance" 1 "With health insurance"
 	label values healthins lblhealthins
@@ -897,6 +985,7 @@ replace wage_total=(wage_no_compen*whours*4.3)*wmonths if unitwage==9 //Wage in 
 	gen byte union = 1 if p3i == 1
 	replace union = 0 if p3i == 2
 	replace union =. if p3i == 3
+	replace union=. if lstatus!=1
 	label var union "Union membership at primary job 7 day recall"
 	la de lblunion 0 "Not union member" 1 "Union member"
 	label values union lblunion
@@ -971,13 +1060,40 @@ replace wage_total=(wage_no_compen*whours*4.3)*wmonths if unitwage==9 //Wage in 
 
 *<_industrycat_isic_2_>
 	gen industrycat_isic_2 = .
+	tostring industrycat_isic_2, replace
+	gen indus1=floor(p7c/100)
+	replace industrycat_isic_2="A" if indus1==11
+	replace industrycat_isic_2="B" if indus1==21
+	replace industrycat_isic_2="C" if indus1==31 | indus1==32 | indus1==33
+	replace industrycat_isic_2="D" if p7c==2211
+	replace industrycat_isic_2="E" if p7c==2221 | p7c==2222
+	replace industrycat_isic_2="F" if indus1==23
+	replace industrycat_isic_2="G" if indus1==43| indus1==46
+	replace industrycat_isic_2="H" if indus1==48| indus1==49
+	replace industrycat_isic_2="I" if indus1==72
+	replace industrycat_isic_2="J" if indus1==51
+	replace industrycat_isic_2="K" if indus1==52
+	replace industrycat_isic_2="L" if indus1==53
+	replace industrycat_isic_2="M" if indus1==54 | indus1==55
+	replace industrycat_isic_2="N" if indus1==56
+	replace industrycat_isic_2="O" if p7c==9311 | p7c==9311 | p7c==9312 | p7c==9313 | p7c==9314 | p7c==9315 | p7c==9316 | p7c==9317 | p7c==9318
+	replace industrycat_isic_2="P" if indus1==61
+	replace industrycat_isic_2="Q" if indus1==62
+	replace industrycat_isic_2="R" if indus1==71
+	replace industrycat_isic_2="S" if p7c==8111 | p7c==8112 | p7c==8113 | p7c==8114 | indus1==97 | indus1==98 | indus1==99
+	replace industrycat_isic_2="T" if p7c==8121 | p7c==8122 | p7c==8123 | p7c==8124 | p7c==8129
+	replace industrycat_isic_2="U" if p7c==9321
+	encode industrycat_isic_2, gen (industry_i)
+	replace industry_i=. if lstatus!=1
+	drop industrycat_isic_2 indus1
+	rename industry_i industrycat_isic_2
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
 
 *<_industrycat10_2_>
 	gen byte industrycat10_2 = floor(p7c/100)
-	recode industrycat10_2 11=1 21=2 22=4 23=5 31/33=3 43 46 72=6 48/49 51=7 52/55=8 93=9 56/71 81 97/99=10 
+	recode industrycat10_2 (11=1) (21=2) (22=4) (23=5) (31/33=3) (43 46=6) (48 49 51=7) (52=8) (93=9) (71 72 53 54 55 56 61 62 81 97 98 99=10)
 	replace industrycat10_2=. if lstatus!=1
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
@@ -1000,6 +1116,16 @@ replace wage_total=(wage_no_compen*whours*4.3)*wmonths if unitwage==9 //Wage in 
 
 *<_occup_isco_2_>
 	gen occup_isco_2 = .
+	gen occup2=floor(occup_orig_2/100)
+	replace occup_isco_2=2000 if occup2==11 |  occup2==13 
+	replace occup_isco_2=1000 if occup2==61 |  occup2==21
+	replace occup_isco_2=3000 if occup2==14	| occup2==12 
+	replace occup_isco_2=4000 if occup2==62
+	replace occup_isco_2=5000 if occup2==83| occup2==71
+	replace occup_isco_2=6000 if occup2==41
+	replace occup_isco_2=7000 if occup2==51
+	replace occup_isco_2=8000 if occup2==52	| occup2==53 | occup2==54 | occup2==55
+	replace occup_isco_2=9000 if occup2==72	| occup2==81 | occup2==82| occup2==99
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
@@ -1011,10 +1137,13 @@ replace wage_total=(wage_no_compen*whours*4.3)*wmonths if unitwage==9 //Wage in 
 
 *<_occup_skill_2_>
 	gen occup_skill_2 = .
-	replace occup_skill_2 = 1 if inrange(occup_2,1,2) 
-	replace occup_skill_2 = 2 if inrange(occup_2,3,7) 
-	replace occup_skill_2 = 3 if occup_2 == 8
+	replace occup_skill_2 = 1 if occup_isco_2 == 1000 | occup_isco_2 == 2000
+	replace occup_skill_2 = 2 if inrange(occup_isco_2,3000,7000) 
+	replace occup_skill_2 = 3 if occup_isco_2 == 8000
+	replace occup_skill_2 = 4 if occup2 == 54
+	replace occup_skill_2 = 5 if occup_isco_2 == 9000
 	replace occup_skill_2=. if lstatus!=1
+	drop occup2
 	label var occup_skill_2 "Skill based on ISCO standard secondary job 7 day recall"
 	label values occup_skill_2 lbloccupskill
 *</_occup_skill_2_>

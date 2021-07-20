@@ -685,8 +685,8 @@ foreach var of global isic_check {
 	cap confirm string variable `var'
 	if _rc == 0 { // if vars exist, is string (if not , captured in section 1)
 	
-		gen check_isic_length = length(`var')
-		qui : count if !inlist(test2,1,4,.)
+		gen check_isic_length = length(`var') if !missing(`var')
+		qui : count if !inlist(check_isic_length,1,4,.)
 		if `r(N)' > 0 { // Non missing values other than 1 or 4 exist
 		
 		post `memhold' ("Labour") ("`var'") ("ISIC code is not of length 1 (Letter) or 4 (digits) (number of cases ->)") (`r(N)') (1)

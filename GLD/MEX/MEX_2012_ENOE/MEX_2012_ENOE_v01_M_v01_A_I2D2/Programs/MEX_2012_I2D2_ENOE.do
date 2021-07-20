@@ -15,7 +15,7 @@
 *							SDEMT112.dta
 *							COE1T112.dta
 *							COE2T112.dta
-** MODIFIED BY				aquinonensunura@worldbank.org
+** MODIFIED BY				The World Bank Jobs Group
 ** Created					03-23-2020
 ** Modified					05-29-2021
 ** NUMBER OF HOUSEHOLDS		102963

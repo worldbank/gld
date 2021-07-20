@@ -19,7 +19,7 @@
 <_ICLS Version_>				Unknown (does not seem to follow ICLS-13 </_ICLS Version_>
 <_Study ID_>					DDI-IND-MOSPI-NSSO-55Rnd-Sch10-and-10dot1-1999-2000 </_Study ID_>
 <_Data collection from (M/Y)_>	07/1999 </_Data collection from (M/Y)_>
-<_Data collection to (M/Y)_>	06/1999 </_Data collection to (M/Y)_> 
+<_Data collection to (M/Y)_>	06/1999 </_Data collection to (M/Y)_>
 <_Source of dataset_> 			http://microdata.gov.in/nada43/index.php/catalog/90 </_Source of dataset_>
 <_Sample size (HH)_> 			120,578 </_Sample size (HH)_>
 <_Sample size (IND)_> 			596,686 </_Sample size (IND)_>
@@ -86,13 +86,26 @@ use "$path_in\Block53-sch10-Persons-daily-activity-time-disposition-Records.dta"
 ********************************************************************************
 * Sorting procedure
 
-/* Need to order activity status such that the order of priority is as follows:
+/*==============================================================================
+Current weekly activity is selected based on this order:
+	1. Equal to current weekly activity variable
+	2. Activity status classification (see below)
+	3. Number of days worked in a week
+	4. If number of days are equal between two employment activities, the status
+	code that is smaller in value is taken as the CWA (e.g., activites 11 and 51
+	are worked for 3.5 days each; activity 11 will be the CWA because it is smaller
+	in value than 51.
+
+	Rule #1 is added because otherwise, CWA will not be entirely equal to activity status 1
+==============================================================================*/
+
+
+/* Need to classify activity status into the following:
 
 	a. Working status
 	b. Non-working status but seeking employment
 	c. Neither working nor available for work
 
-	In this special case, we add the first rule that B5_q4 should be equal to B5_q19
 */
 
 drop if missing(B53_q4)
@@ -113,17 +126,6 @@ assert `max' == 7
 
 gen neg_days = -(B53_q14)
 
-* Order the records such that priority 1 comes first
-
-/*==============================================================================
-The following is the hierarchy of rules for selecting the current weekly activity
-	1. Priority tag
-	2. Number of days worked in a week
-	3. If number of days are equal between two employment activities, the status
-	code that is smaller in value is taken as the CWA (e.g., activites 11 and 51
-	are worked for 3.5 days each; activity 11 will be the CWA because it is smaller
-	in value than 51.
-==============================================================================*/
 
 * Generate PID
 gen PID = Key_PRSN

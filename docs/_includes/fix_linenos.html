@@ -1,0 +1,87 @@
+{%- comment -%}
+This file can be used to fix the HTML produced by Jekyll for highlighted
+code with line numbers.
+
+It works with `{% highlight some_language linenos %}...{% endhighlight %}`
+and with the Kramdown option to add line numbers to fenced code.
+
+The implementation was derived from the workaround provided by 
+Dmitry Hrabrov (DeXP) at
+https://github.com/penibelst/jekyll-compress-html/issues/71#issuecomment-188144901
+
+EXPLANATION
+
+The HTML produced by Rouge highlighting with lie numbers is of the form
+`code table`. Jekyll (<= 4.1.1) always wraps the highlighted HTML
+with `pre`. This wrapping is not only unnecessary, but also transforms
+the conforming HTML produced by Rouge to non-conforming HTML, which
+results in HTML validation error reports. 
+
+The fix removes the outer `pre` tags whenever they contain the pattern
+`<table class="rouge-table">`.
+  
+Apart from avoiding HTML validation errors, the fix allows the use of
+the [Jekyll layout for compressing HTML](http://jch.penibelst.de),
+which relies on `pre` tags not being nested, according to
+https://github.com/penibelst/jekyll-compress-html/issues/71#issuecomment-172069842 
+
+USAGE
+
+(Any names can be used for `some_var` and `some_language`.)
+
+{% capture some_var %}
+{% highlight some_language linenos %}
+Some code
+{% endhighlight %}
+{% endcapture %}
+{% include fix_linenos.html code=some_var %}
+
+For code fences:
+
+{% capture some_var %}
+```some_language
+Some code
+```
+{% endcapture %}
+{% assign some_var = some_var | markdownify %}
+{% include fix_linenos.html code=some_var %}
+
+CAVEATS
+
+The above does not work when `Some code` happens to contain the matched string 
+`<table class="rouge-table">`.
+
+The use of this file overwrites the variable `fix_linenos_code` with `nil`.
+
+{%- endcomment -%}
+
+{% assign fix_linenos_code = include.code %}
+{% if fix_linenos_code contains '<table class="rouge-table">' %}
+  {% assign fix_linenos_code = fix_linenos_code | replace: '<pre class="highlight">', '<pre>' %}
+  {% assign fix_linenos_code = fix_linenos_code | replace: "<pre><code", "<code" %}
+  {% assign fix_linenos_code = fix_linenos_code | replace: "</code></pre>", "</code>" %}
+{% endif %}
+{{ fix_linenos_code }}
+{% assign fix_linenos_code = nil %}
+<html xmlns:mso="urn:schemas-microsoft-com:office:office" xmlns:msdt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882"><head>
+<!--[if gte mso 9]><xml>
+<mso:CustomDocumentProperties>
+<mso:WBDocs_Local_Document_Type msdt:dt="string"></mso:WBDocs_Local_Document_Type>
+<mso:TaxKeywordTaxHTField msdt:dt="string"></mso:TaxKeywordTaxHTField>
+<mso:o1cb080a3dca4eb8a0fd03c7cc8bf8f7 msdt:dt="string"></mso:o1cb080a3dca4eb8a0fd03c7cc8bf8f7>
+<mso:TaxKeyword msdt:dt="string"></mso:TaxKeyword>
+<mso:pf1bc08d06b541998378c6b8090400d8 msdt:dt="string"></mso:pf1bc08d06b541998378c6b8090400d8>
+<mso:hbe71f8dfd024405860d37e862f27a82 msdt:dt="string"></mso:hbe71f8dfd024405860d37e862f27a82>
+<mso:m23003d518f743f49dcbc82909afe93a msdt:dt="string"></mso:m23003d518f743f49dcbc82909afe93a>
+<mso:WBDocs_Category msdt:dt="string"></mso:WBDocs_Category>
+<mso:WBDocs_Language msdt:dt="string"></mso:WBDocs_Language>
+<mso:d744a75525f04a8c9e54f4ed11bfe7c0 msdt:dt="string"></mso:d744a75525f04a8c9e54f4ed11bfe7c0>
+<mso:WBDocs_Topic msdt:dt="string"></mso:WBDocs_Topic>
+<mso:n51c50147e554be9a5479ee6e2785bf7 msdt:dt="string"></mso:n51c50147e554be9a5479ee6e2785bf7>
+<mso:WBDocs_Country msdt:dt="string"></mso:WBDocs_Country>
+<mso:Organization msdt:dt="string">3;#World Bank|bc205cc9-8a56-48a3-9f30-b099e7707c1b</mso:Organization>
+<mso:WBDocs_Business_Function msdt:dt="string"></mso:WBDocs_Business_Function>
+<mso:TaxCatchAll msdt:dt="string">5;#HSJDR|b82b4e50-8b87-486b-adae-4a5ffb2d1593;#3;#World Bank|bc205cc9-8a56-48a3-9f30-b099e7707c1b</mso:TaxCatchAll>
+</mso:CustomDocumentProperties>
+</xml><![endif]-->
+</head>

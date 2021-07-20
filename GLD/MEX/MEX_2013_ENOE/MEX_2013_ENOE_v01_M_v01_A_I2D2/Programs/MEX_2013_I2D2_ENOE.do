@@ -15,7 +15,7 @@
 *							SDEMT113.dta
 *							COE1T113.dta
 *							COE2T113.dta
-** MODIFIED BY				Alexandra Quiñones (aquinonensunura@worldbank.org)
+** MODIFIED BY				The World Bank Jobs Group
 ** Created					03-22-2020
 ** Modified					05-29-2021
 ** NUMBER OF HOUSEHOLDS		101382
