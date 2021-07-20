@@ -19,13 +19,13 @@ The GLD, as stated above, aims to present a straight line from raw data to harmo
 
 The International Standard Industrial Classification of All Economic Activities ([ISIC](https://unstats.un.org/unsd/classifications/Econ/isic)) is an international standard for classifying the industry of a particular activity. It is published by the United Nations and is the international standard GLD harmonizes to. However, most countries have a national system to classify economic activity. Most often it will be based on ISIC, but this is not assured.
 
-For example, Mexico uses the [North American Industry Classification System](http://en.www.inegi.org.mx/app/scian/) which has not direct correspondance with ISIC although official correspondance tables do exists that show how to match values. These correspondances are often imperfect (see image below of a Mexican example where one NAICS code matches five different ISIC codes) but can still be used to create an approximation to best map values from a national classification to the international standard.
+For example, Mexico uses the [North American Industry Classification System](http://en.www.inegi.org.mx/app/scian/) which has not direct correspondence with ISIC although official correspondence tables do exists that show how to match values. These correspondences are often imperfect (see image below of a Mexican example where one NAICS code matches five different ISIC codes) but can still be used to create an approximation to best map values from a national classification to the international standard.
 
 <br></br>
 ![SCIAN Imperfect Matching](/Support/Country%20Survey%20Details/MEX/ENOE/images/scian_imperfect_match.PNG)
 <br></br>
 
-In order to provide users an understanding of how the correspondance was created, i.e., the additional file that is used for the harmonization, this country and survey specific information is stored here.
+In order to provide users an understanding of how the correspondence was created, i.e., the additional file that is used for the harmonization, this country and survey specific information is stored here.
 
 ## Structure of the folder
 
