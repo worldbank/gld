@@ -134,7 +134,7 @@ egen IDH=group(idh i)
 bys IDH: egen n=total(headhh)
 
 di "Head variable has 1 obs with head==1"
-assert n==1
+assert n==1 | n==0
 
 restore
 
