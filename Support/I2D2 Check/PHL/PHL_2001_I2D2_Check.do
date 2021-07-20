@@ -374,13 +374,12 @@ assert `v'==. if( lstatus_year!=1)
 preserve
 gen 	jobs_var = .
 
-capture 	ds njobs
-
-	if _rc {
-		replace jobs_var = 0	// if error, there's no njobs var
+mdesc 	njobs 
+if _N == r(miss) {
+	replace jobs_var = 0		// the variable is entirely missing, indicate so
 	}
-	else {
-		replace jobs_var = 1	// if no error, there's a jobv var
+else {
+	replace jobs_var = 1		// otherwise, tell us that there are non missing values
 	}
 
 
