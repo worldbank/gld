@@ -21,7 +21,7 @@ The International Standard Industrial Classification of All Economic Activities 
 
 For example, Mexico uses the [North American Industry Classification System](http://en.www.inegi.org.mx/app/scian/) which has not direct correspondance with ISIC although official correspondance tables do exists that show how to match values. These correspondances are often imperfect (see image below of a Mexican example where one NAICS code matches five different ISIC codes) but can still be used to create an approximation to best map values from a national classification to the international standard.
 
-![SCIAN Imperfect Matching](/Support/Country Survey Details/MEX/ENOE/images/scian_imperfect_match.)
+![SCIAN Imperfect Matching](/Support/Country Survey Details/MEX/ENOE/images/scian_imperfect_match.PNG)
 
 In order to provide users an understanding of how the correspondance was created, i.e., the additional file that is used for the harmonization, this country and survey specific information is stored here.
 
