@@ -1043,7 +1043,17 @@ replace month = 10 	if round == 4
 
 	* Compare lists, if not
 	local notused : list all_lab - used_lab 		// local `notused' defines value labs not in remaining vars
-	label drop `notused'
+	local notused_len : list sizeof notused 		// store size of local
+	
+	* drop labels if the length of the notused vector is 1 or greater 
+	
+	if `notused_len' >= 1 {
+		label drop `notused'
+	}
+	else {
+		di "There are no unused labels to drop"
+	}
+
 
 
 	save `"`id_data'\\`cty3'_`surv_yr'_I2D2_LFS.dta"', replace
