@@ -3,44 +3,44 @@
 	0: GLD Harmonization Preamble
 ==============================================================================================%%*/
 
-/* ----------------------------------------------------------------------- 
+/* -----------------------------------------------------------------------
 
-<_Program name_>				[Name of your do file] </_Program name_> 
-<_Application_>					[Name of your software (STATA) and version] <_Application_> 
-<_Author(s)_>					[Name(s) of author(s)] </_Author(s)_> 
-<_Date created_>				YYYY-MM-DD </_Date created_> 
+<_Program name_>				[Name of your do file] </_Program name_>
+<_Application_>					[Name of your software (STATA) and version] <_Application_>
+<_Author(s)_>					[Name(s) of author(s)] </_Author(s)_>
+<_Date created_>				YYYY-MM-DD </_Date created_>
 
-------------------------------------------------------------------------- 
+-------------------------------------------------------------------------
 
-<_Country_>						[Country_Name (CCC)] </_Country_> 
-<_Survey Title_>				[SurveyName] </_Survey Title_> 
-<_Survey Year_>					[Year of start of the survey] </_Survey Year_> 
-<_Study ID_>					[Microdata Library ID if present] </_Study ID_> 
-<_Data collection from_>		[MM/YYYY] </_Data collection from_> 
-<_Data collection to_>			[MM/YYYY] </_Data collection to_> 
-<_Source of dataset_> 			[Source of data, e.g. NSO] </_Source of dataset_> 
-<_Sample size (HH)_> 			[#] </_Sample size (HH)_> 
-<_Sample size (IND)_> 			[#] </_Sample size (IND)_> 
-<_Sampling method_> 			[Brief description] </_Sampling method_> 
-<_Geographic coverage_> 		[To what level is data significant] </_Geographic coverage_> 
-<_Currency_> 					[Currency used for wages] </_Currency_> 
+<_Country_>						[Country_Name (CCC)] </_Country_>
+<_Survey Title_>				[SurveyName] </_Survey Title_>
+<_Survey Year_>					[Year of start of the survey] </_Survey Year_>
+<_Study ID_>					[Microdata Library ID if present] </_Study ID_>
+<_Data collection from_>		[MM/YYYY] </_Data collection from_>
+<_Data collection to_>			[MM/YYYY] </_Data collection to_>
+<_Source of dataset_> 			[Source of data, e.g. NSO] </_Source of dataset_>
+<_Sample size (HH)_> 			[#] </_Sample size (HH)_>
+<_Sample size (IND)_> 			[#] </_Sample size (IND)_>
+<_Sampling method_> 			[Brief description] </_Sampling method_>
+<_Geographic coverage_> 		[To what level is data significant] </_Geographic coverage_>
+<_Currency_> 					[Currency used for wages] </_Currency_>
 
------------------------------------------------------------------------ 
+-----------------------------------------------------------------------
 
-<_ICLS Version_>				[Version of ICLS for Labor Questions] </_ICLS Version_> 
-<_ISCED Version_>				[Version of ICLS for Labor Questions] </_ISCED Version_> 
-<_ISCO Version_>				[Version of ICLS for Labor Questions] </_ISCO Version_> 
-<_OCCUP National_>				[Version of ICLS for Labor Questions] </_OCCUP National_> 
-<_ISIC Version_>				[Version of ICLS for Labor Questions] </_ISIC Version_> 
-<_INDUS National_>				[Version of ICLS for Labor Questions] </_INDUS National_> 
+<_ICLS Version_>				[Version of ICLS for Labor Questions] </_ICLS Version_>
+<_ISCED Version_>				[Version of ICLS for Labor Questions] </_ISCED Version_>
+<_ISCO Version_>				[Version of ICLS for Labor Questions] </_ISCO Version_>
+<_OCCUP National_>				[Version of ICLS for Labor Questions] </_OCCUP National_>
+<_ISIC Version_>				[Version of ICLS for Labor Questions] </_ISIC Version_>
+<_INDUS National_>				[Version of ICLS for Labor Questions] </_INDUS National_>
 
------------------------------------------------------------------------ 
-<_Version Control_> 
+-----------------------------------------------------------------------
+<_Version Control_>
 
 * Date: [YYYY-MM-DD] - [Description of changes]
 * Date: [YYYY-MM-DD] - [Description of changes]
 
-</_Version Control_> 
+</_Version Control_>
 
 -------------------------------------------------------------------------*/
 
@@ -97,7 +97,7 @@ local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
 
 
 *<_year_>
-	gen int year = 
+	gen int year =
 	label var year "Year of survey"
 *</_year_>
 
@@ -206,7 +206,7 @@ local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
 
 </_subnatid1> */
 	gen byte subnatid1 = .
-	label de lblsubnatid1 1 "1 - Name" 
+	label de lblsubnatid1 1 "1 - Name"
 	label values subnatid1 lblsubnatid1
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
@@ -214,7 +214,7 @@ local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
 
 *<_subnatid2_>
 	gen byte subnatid2 = .
-	label de lblsubnatid2 1 "1 - Name" 
+	label de lblsubnatid2 1 "1 - Name"
 	label values subnatid2 lblsubnatid2
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
@@ -222,7 +222,7 @@ local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
 
 *<_subnatid3_>
 	gen byte subnatid3 = .
-	label de lblsubnatid3 1 "1 - Name" 
+	label de lblsubnatid3 1 "1 - Name"
 	label values subnatid3 lblsubnatid3
 	label var subnatid3 "Subnational ID at Third Administrative Level"
 *</_subnatid3_>
@@ -481,14 +481,14 @@ label var ed_mod_age "Education module application age"
 *<_educat7_>
 	gen byte educat7 =.
 	label var educat7 "Level of education 1"
-	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete" 
+	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
 *</_educat7_>
 
 
 *<_educat5_>
 	gen byte educat5 = educat7
-	recode educat5 4=3 5=4 6 7=5 
+	recode educat5 4=3 5=4 6 7=5
 	label var educat5 "Level of education 2"
 	la de lbleducat5 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
 	label values educat5 lbleducat5
@@ -679,7 +679,7 @@ foreach v of local ed_var {
 	recode industrycat4 (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
 	label var industrycat4 "1 digit industry classification (Broad Economic Activities), primary job 7 day recall"
 	la de lblindustrycat4 1 "Agriculture" 2 "Industry" 3 "Services" 4 "Other"
-	label values industrycat4 lblindustrycat4	
+	label values industrycat4 lblindustrycat4
 *</_industrycat4_>
 
 
@@ -697,7 +697,7 @@ foreach v of local ed_var {
 
 *<_occup_skill_>
 	gen occup_skill = .
-	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill" 
+	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
 	label values occup_skill lblskill
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
 *</_occup_skill_>
@@ -740,7 +740,7 @@ foreach v of local ed_var {
 *<_wage_total_>
 /* <_wage_total_note>
 
-	Use gross wages when available and net wages only when gross wages are not available. 
+	Use gross wages when available and net wages only when gross wages are not available.
 	This is done to make it easy to compare earnings in formal and informal sectors.
 
 </_wage_total_note> */
@@ -855,7 +855,7 @@ foreach v of local ed_var {
 
 *<_occup_skill_2_>
 	gen occup_skill_2 = .
-	la de lblskill2 1 "Low skill" 2 "Medium skill" 3 "High skill" 
+	la de lblskill2 1 "Low skill" 2 "Medium skill" 3 "High skill"
 	label values occup_skill_2 lblskill2
 	label var occup_skill_2 "Skill based on ISCO standard secondary job 7 day recall"
 *</_occup_skill_2_>
@@ -1048,7 +1048,7 @@ foreach v of local ed_var {
 	recode industrycat4_year (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
 	label var industrycat4_year "1 digit industry classification (Broad Economic Activities), primary job 12 month recall"
 	la de lblindustrycat4_year 1 "Agriculture" 2 "Industry" 3 "Services" 4 "Other"
-	label values industrycat4_year lblindustrycat4_year	
+	label values industrycat4_year lblindustrycat4_year
 *</_industrycat4_year_>
 
 
@@ -1066,7 +1066,7 @@ foreach v of local ed_var {
 
 *<_occup_skill_year_>
 	gen occup_skill_year = .
-	la de lblskillyear 1 "Low skill" 2 "Medium skill" 3 "High skill" 
+	la de lblskillyear 1 "Low skill" 2 "Medium skill" 3 "High skill"
 	label values occup_skill_year lblskillyear
 	label var occup_skill_year "Skill based on ISCO standard primary job 12 month recall"
 *</_occup_skill_year_>
@@ -1081,7 +1081,7 @@ foreach v of local ed_var {
 
 
 *<_wage_no_compen_year_> --- this var has the same name as other and when quoted in the keep and order codes is repeated.
-	gen double wage_no_compen_year = 
+	gen double wage_no_compen_year =
 	label var wage_no_compen_year "Last wage payment primary job 12 month recall"
 *</_wage_no_compen_year_>
 
@@ -1202,7 +1202,7 @@ foreach v of local ed_var {
 	gen byte industrycat4_2_year=industrycat10_2_year
 	recode industrycat4_2_year (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
 	label var industrycat4_2_year "1 digit industry classification (Broad Economic Activities), secondary job 12 month recall"
-	label values industrycat4_2_year lblindustrycat4_year	
+	label values industrycat4_2_year lblindustrycat4_year
 *</_industrycat4_2_year_>
 
 
@@ -1220,7 +1220,7 @@ foreach v of local ed_var {
 
 *<_occup_skill_2_year_>
 	gen occup_skill_2_year = .
-	la de lblskilly2 1 "Low skill" 2 "Medium skill" 3 "High skill" 
+	la de lblskilly2 1 "Low skill" 2 "Medium skill" 3 "High skill"
 	label values occup_skill_2_year lblskilly2
 	label var occup_skill_2_year "Skill based on ISCO standard secondary job 12 month recall"
 *</_occup_skill_2_year_>
@@ -1316,7 +1316,7 @@ foreach v of local ed_var {
 	label var t_wage_total_year "Annualized total wage for all jobs 12 month recall"
 *</_t_wage_total_year_>
 
-	
+
 *----------8.11: Overall across reference periods------------------------------*
 
 
@@ -1391,24 +1391,29 @@ quietly{
 	label dir
 	local all_lab `r(names)'
 
-	* Store all variables with a label
+	* Store all variables with a label, extract value label names
 	local used_lab = ""
 	ds, has(vallabel)
+
 	local labelled_vars `r(varlist)'
+
 	foreach varName of local labelled_vars {
 		local y : value label `varName'
 		local used_lab `"`used_lab' `y'"'
 	}
 
-	* Compare lists, if not 
-	foreach l of local all_lab {
-		if `: list l in used_lab' {
-			* Do nothing, I just don't know how to do an "if not" in Stata, not willing to learn.
-		}
-		else {
-			label drop `l' 
-		}
+	* Compare lists, `notused' is list of labels in directory but not used in final variables
+	local notused 		: list all_lab - used_lab 		// local `notused' defines value labs not in remaining vars
+	local notused_len 	: list sizeof notused 			// store size of local
+
+	* drop labels if the length of the notused vector is 1 or greater, otherwise nothing to drop
+	if `notused_len' >= 1 {
+		label drop `notused'
 	}
+	else {
+		di "There are no unused labels to drop. No value labels dropped."
+	}
+
 
 *</_% DROP UNUSED LABELS_>
 
