@@ -85,6 +85,20 @@ local path_output "C:\Users\wb582018\OneDrive - WBG\Surveys\MEX\MEX_2005_LFS\MEX
 	replace d_mes=. if d_mes == 4 | d_mes == 5 | d_mes == 12
 	tab d_mes, missing
 
+*ISIC	
+***first job
+	gen scian_1=p4a
+	tostring scian_1, replace
+	merge m:1 scian_1 using "C:\Users\wb582018\OneDrive - WBG\Documents\Industry Classification\SCIAN_02_ISIC_3.1\SCIAN_02_ISIC_3.1.dta", keep(master match)
+	rename scian_1 scian_11
+	drop _merge
+***second job
+	gen scian_1=p7c
+	tostring scian_1, replace
+	merge m:1 scian_1 using "C:\Users\wb582018\OneDrive - WBG\Documents\Industry Classification\SCIAN_02_ISIC_3.1\SCIAN_02_ISIC_3.1.dta", keep(master match)
+	rename scian_1 scian_2
+	drop _merge	
+	
 /*%%=============================================================================================
 	2: Survey & ID
 ==============================================================================================%%*/
@@ -776,9 +790,10 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_>
-	gen industrycat_isic =.
-	tostring industrycat_isic, replace
-	gen indus1=floor(p4a/100)
+	gen industrycat_isic =scian_11
+	destring industrycat_isic, replace
+	*tostring industrycat_isic, replace
+	/*gen indus1=floor(p4a/100)
 	replace industrycat_isic="A" if indus1==11
 	replace industrycat_isic="B" if p4a==1141
 	replace industrycat_isic="C" if indus1==21
@@ -796,10 +811,11 @@ foreach v of local ed_var {
 	replace industrycat_isic="O" if indus1==54
 	replace industrycat_isic="P" if indus1==81
 	replace industrycat_isic="Q" if indus1==93
-	encode industrycat_isic, gen (industry_i)
-	replace industry_i=. if lstatus!=1
-	drop industrycat_isic indus1
-	rename industry_i industrycat_isic
+	encode industrycat_isic, gen (industry_i)*/
+	replace industrycat_isic=. if lstatus!=1
+	*replace industry_i=. if lstatus!=1
+	*drop industrycat_isic indus1
+	*rename industry_i industrycat_isic
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
@@ -1056,10 +1072,11 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 
 
 *<_industrycat_isic_2_>
-	gen industrycat_isic_2 = .
-	tostring industrycat_isic_2, replace
-	gen indus1=floor(p7c/100)
-	replace industrycat_isic_2="A" if indus1==11
+	gen industrycat_isic_2 = scian_2
+	destring industrycat_isic_2, replace
+	*tostring industrycat_isic_2, replace
+	*gen indus1=floor(p7c/100)
+	/*replace industrycat_isic_2="A" if indus1==11
 	replace industrycat_isic_2="B" if p7c==1141
 	replace industrycat_isic_2="C" if indus1==21
 	replace industrycat_isic_2="D" if indus1==31 | indus1==32 | indus1==33
@@ -1079,7 +1096,8 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 	encode industrycat_isic_2, gen (industry_i)
 	replace industry_i=. if lstatus!=1
 	drop industrycat_isic_2 indus1
-	rename industry_i industrycat_isic_2
+	rename industry_i industrycat_isic_2*/
+	replace industrycat_isic_2=. if lstatus!=1
 	label var industrycat_isic_2 "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_2_>
 
