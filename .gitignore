@@ -47,6 +47,7 @@
 !/**/*.R
 !/**/*.Rmd
 !/**/*.Rproj
+!renv.lock
 # Still ignore user file for R projects
 .Rproj.user
 
