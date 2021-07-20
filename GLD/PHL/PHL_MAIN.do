@@ -24,8 +24,10 @@ description: calls all PHL scripts for I2D2+GLD, edited from iecodebook script
 ** survey type settings.
 * you can allow either or I2D2/GLD code to run
 
-loc 	i2d2 		1 	// 1 will allow i2d2 code to run, 0 otherwise
+loc 	i2d2 		0	// 1 will allow i2d2 code to run, 0 otherwise
 loc 	gld 		0 	// 1 will allow GLD code to run, 0 otherwise
+loc 	checks_i2 	1	// 1 to run i2d2 check main script
+
 
 ** Survey Year settings.
 * you can run a specific year by setting to 1
@@ -48,19 +50,19 @@ loc 	phl2011 	0
 loc 	phl2012		0
 loc 	phl2013		0
 loc 	phl2014		0
-loc 	phl2015 	0
-loc 	phl2016  	0
+loc 	phl2015 	1
+loc 	phl2016  	1
 loc 	phl2017 	1
-loc 	phl2018		0
-loc 	phl2019 	0
-loc 	phl2020 	0
+loc 	phl2018		1
+loc 	phl2019 	1
+loc 	phl2020 	1
 
 * Run
 * ---------------------
 
 * Run I2D2 code
 if (`i2d2' == 1) {
-forvalues year = 1997/2020 {
+forvalues year = 1997/2019s {
     if (`phl`year''==1) {
 		do `"${code}/`cty'/`cty'_`year'_LFS/`cty'_`year'_LFS_v01_M_v01_A_I2D2/Programs/`cty'_`year'_I2D2_LFS.do"'
 	}
@@ -69,9 +71,16 @@ forvalues year = 1997/2020 {
 
 * Run GLD code
 if (`gld' == 1) {
-forvalues year = 1997/2020 {
+forvalues year = 1997/2019 {
     if (`phl`year''==1) {
 		do `"${code}/`cty'/`cty'_`year'_LFS/`cty'_`year'_LFS_v01_M_v01_A_GLD/Programs/`cty'_`year'_GLD_LFS.do"'
 	}
 }
+}
+
+* Run I2D2 Checks
+if (`checks_i2' == 1) {
+	forvalues year = 1997/2019 {
+		do 	`"${clone}/gld/Support/I2D2 Check/PHL/PHL_`year'_I2D2_Check.do"'
+	}
 }

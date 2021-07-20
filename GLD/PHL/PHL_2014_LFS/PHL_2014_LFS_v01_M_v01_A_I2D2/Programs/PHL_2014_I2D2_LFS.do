@@ -599,7 +599,7 @@ replace month = 10 	if round == 4
 
 
 ** NUMBER OF TOTAL JOBS
-	gen byte njobs=a03_jobs
+	gen byte njobs= . 
 	label var njobs "Number of total jobs"
 	replace njobs=. 	if 	age < lb_mod_age | lstatus != 1		// restrict universe to working age + workers
 
@@ -644,8 +644,8 @@ replace month = 10 	if round == 4
 
 	gen byte unempldur_u= c40_wks/4.2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
-	replace unempldur_l=. if age < lb_mod_age // restrict universe to working age
-	replace unempldur_l=. if lstatus!=2 	  // restrict universe to unemployed only
+	replace unempldur_u=. if age < lb_mod_age // restrict universe to working age
+	replace unempldur_u=. if lstatus!=2 	  // restrict universe to unemployed only
 
 ** INDUSTRY CLASSIFICATION
 	gen byte industry=.
@@ -1018,6 +1018,15 @@ replace month = 10 	if round == 4
 		}
 	}
 
+** Drop observations based on missing values 
+	/*there's one observation that essentially has no useful information -- only ~ 3 education level variables 
+		with no other information, including region or weight info. Drop and ensure only this observation is 
+		dropped. */
+	drop 	if 	idp 	== "." ///
+				& reg01 == . 	///
+				& wgt 	== .
+	
+	assert 	r(N_drop) == 1	
 
 ** Drop Unused Value labels
 

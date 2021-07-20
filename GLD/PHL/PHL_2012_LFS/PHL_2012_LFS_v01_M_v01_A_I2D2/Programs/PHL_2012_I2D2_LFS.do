@@ -457,7 +457,7 @@ replace month = 10 	if round == 4
 
 
 ** CURRENTLY AT SCHOOL
-	gen byte atschool=a02_csch
+	gen byte atschool=a02_cursch
 	recode atschool (2 = 0)		// 2 was "no", recode to 0. Keep 1=Yes same.
     label var atschool "Attending school"
 	la de lblatschool 0 "No" 1 "Yes"
@@ -595,7 +595,7 @@ replace month = 10 	if round == 4
 
 
 ** NUMBER OF TOTAL JOBS
-	gen byte njobs=a03_jobs
+	gen byte njobs= . 
 	label var njobs "Number of total jobs"
 	replace njobs=. 	if 	age < lb_mod_age | lstatus != 1		// restrict universe to working age + workers
 
@@ -640,8 +640,8 @@ replace month = 10 	if round == 4
 
 	gen byte unempldur_u= c40_weeks/4.2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
-	replace unempldur_l=. if age < lb_mod_age // restrict universe to working age
-	replace unempldur_l=. if lstatus!=2 	  // restrict universe to unemployed only
+	replace unempldur_u=. if age < lb_mod_age // restrict universe to working age
+	replace unempldur_u=. if lstatus!=2 	  // restrict universe to unemployed only
 
 ** INDUSTRY CLASSIFICATION
 
