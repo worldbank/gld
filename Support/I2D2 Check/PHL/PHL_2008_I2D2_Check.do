@@ -383,7 +383,7 @@ else {
 	}
 
 
-local lb_var "empstat_2 industry_2 industry1_2 industry_orig_2 occup_2 wage_2 unitwage_2"
+local lb_var "empstat_2 industry_2 industry1_2 industry_orig_2 occup_2 wage_2" // unitwage_2
 
 foreach v in `lb_var'{
 
