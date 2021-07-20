@@ -457,7 +457,7 @@ replace month = 10 	if round == 4
 
 
 ** CURRENTLY AT SCHOOL
-	gen byte atschool=a02_csch
+	gen byte atschool=a02_cursch
 	recode atschool (2 = 0)		// 2 was "no", recode to 0. Keep 1=Yes same.
     label var atschool "Attending school"
 	la de lblatschool 0 "No" 1 "Yes"
