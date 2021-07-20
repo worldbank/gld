@@ -140,9 +140,13 @@ replace wgt = wgt / `n_round'
 *                                                                                                    *
 *****************************************************************************************************/
 
-
+	
+	
 
 ** ORDER KEEP VARIABLES
+	ds 		
+	loc 		vars = r(varlist)
+	
 	local 		order 														///
 				sample ccode year intv_year month idh idp wgt strata psu urb	///
 				reg01 reg02 reg03  reg02_orig reg03_orig  ///
@@ -156,9 +160,11 @@ replace wgt = wgt / `n_round'
 				industry_2 industry1_2 industry_orig_2 occup_2 wage_2 unitwage_2 ///
 				healthins socialsec union rbirth_juris rbirth rprevious_juris ///
 				rprevious yrmove rprevious_time_ref pci pci_d pcc pcc_d round
+				
+	loc 		overlap : list order & vars
 
-	keep 		`order'
-	order 		`order'
+	keep 		`overlap'
+	order 		`overlap'
 
 	compress
 
@@ -170,7 +176,7 @@ replace wgt = wgt / `n_round'
 	loc	nomissvars sample ccode year intv_year month idh idp wgt strata psu hhsize ed_mod_age lb_mod_age round
 
 
-	local missvars : 	list order - nomissvars
+	local missvars : 	list overlap - nomissvars
 
 
 	if (`drop' == 1) {
