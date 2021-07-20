@@ -195,7 +195,7 @@ replace wgt = wgt / `n_round'
 		}
 	}
 
-** Drop Unused Value labels 
+** Drop Unused Value labels
 
 	* Store all labels in data
 	label dir
@@ -212,9 +212,17 @@ replace wgt = wgt / `n_round'
 
 	* Compare lists, if not
 	local notused : list all_lab - used_lab 		// local `notused' defines value labs not in remaining vars
-	label drop `notused'
+	local notused_len : list sizeof notused 		// store size of local
 
+	* drop labels if the length of the notused vector is 1 or greater
 
+	if `notused_len' >= 1 {
+		label drop `notused'
+	}
+	else {
+		di "There are no unused labels to drop"
+	}
+	
 	save `"`id_data'\\PHL_2003_I2D2_LFS.dta"', replace
 
 	log close

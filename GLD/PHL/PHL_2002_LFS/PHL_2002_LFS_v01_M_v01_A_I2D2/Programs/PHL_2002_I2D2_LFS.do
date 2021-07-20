@@ -1006,25 +1006,6 @@ replace month = 10 	if round == 4
 	}
 
 
-** Drop Unused Value labels
-
-	* Store all labels in data
-	label dir
-	local all_lab `r(names)'
-
-	* Store all variables with a label, extract value label names
-	local used_lab = ""
-	ds, has(vallabel)
-	local labelled_vars `r(varlist)'
-	foreach varName of local labelled_vars {
-		local y : value label `varName'
-		local used_lab `"`used_lab' `y'"'
-	}
-
-	* Compare lists, if not
-	local notused : list all_lab - used_lab 		// local `notused' defines value labs not in remaining vars
-	label drop `notused'
-
 
 ** Drop Unused Value labels
 
@@ -1044,9 +1025,9 @@ replace month = 10 	if round == 4
 	* Compare lists, if not
 	local notused : list all_lab - used_lab 		// local `notused' defines value labs not in remaining vars
 	local notused_len : list sizeof notused 		// store size of local
-	
-	* drop labels if the length of the notused vector is 1 or greater 
-	
+
+	* drop labels if the length of the notused vector is 1 or greater
+
 	if `notused_len' >= 1 {
 		label drop `notused'
 	}
