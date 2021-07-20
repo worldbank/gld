@@ -1018,6 +1018,15 @@ replace month = 10 	if round == 4
 		}
 	}
 
+** Drop observations based on missing values 
+	/*there's one observation that essentially has no useful information -- only ~ 3 education level variables 
+		with no other information, including region or weight info. Drop and ensure only this observation is 
+		dropped. */
+	drop 	if 	idp 	== "." ///
+				& reg01 == . 	///
+				& wgt 	== .
+	
+	assert 	r(N_drop) == 1	
 
 ** Drop Unused Value labels
 
