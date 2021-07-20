@@ -615,7 +615,7 @@ undergraduates in "primary" and "graduates" in "secondary" */
 
 
 ** NUMBER OF TOTAL JOBS
-	gen byte njobs=pufc27_njobs
+	gen byte njobs= . 
 	label var njobs "Number of total jobs"
 	replace njobs=. 	if 	age < lb_mod_age | lstatus != 1		// restrict universe to working age + workers
 

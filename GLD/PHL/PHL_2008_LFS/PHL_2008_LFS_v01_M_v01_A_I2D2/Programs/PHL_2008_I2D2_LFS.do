@@ -600,7 +600,7 @@ replace month = 10 	if round == 4
 
 
 ** NUMBER OF TOTAL JOBS
-	gen byte njobs=a03_jobs
+	gen byte njobs= . 
 	label var njobs "Number of total jobs"
 	replace njobs=. 	if 	age < lb_mod_age | lstatus != 1		// restrict universe to working age + workers
 
