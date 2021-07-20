@@ -368,21 +368,37 @@ assert `v'==. if( lstatus_year!=1)
 }
 
 * CHECK missing obs in variables that require njobs>0
+	/* In most years, this variable is not provided even while employment status data are provided,
+		so njobs will always be missing. We have to add a
+	  	upper-level conditional that takes into account if the variable is always missing. */
+preserve
+gen 	jobs_var = .
+
+mdesc 	njobs
+if _N == r(miss) {
+	replace jobs_var = 0		// the variable is entirely missing, indicate so
+	}
+else {
+	replace jobs_var = 1		// otherwise, tell us that there are non missing values
+	}
+
 
 local lb_var "empstat_2 industry_2 industry1_2 industry_orig_2 occup_2 wage_2 unitwage_2"
 
 foreach v in `lb_var'{
 
 di "check `v' only for njobs>0"
-assert `v'==. if( njobs==0 | njobs==.)
+assert `v'==. if( njobs==0 | njobs==.)	& jobs_var == 1		// only perform if njobs exists
 }
 
 *CHECK missing obs for empstat_2_year
 
 di "check empstat_2_year only for njobs_year>0"
 
-assert empstat_2_year==. if ( njobs_year==0 | njobs_year==.)
+assert empstat_2_year==. if ( njobs_year==0 | njobs_year==.) & jobs_var == 1		// only perform if njobs exists
 
+
+restore
 * Check coding in labor variables
 
 di "Lstatus"

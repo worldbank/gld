@@ -398,7 +398,7 @@ di "check empstat_2_year only for njobs_year>0"
 assert empstat_2_year==. if ( njobs_year==0 | njobs_year==.) & jobs_var == 1		// only perform if njobs exists
 
 
-restore 
+restore
 * Check coding in labor variables
 
 di "Lstatus"
