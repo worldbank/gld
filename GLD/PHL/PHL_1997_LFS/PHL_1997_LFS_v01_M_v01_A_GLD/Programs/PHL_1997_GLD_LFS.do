@@ -5,24 +5,24 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				[Name of your do file] </_Program name_>
-<_Application_>					[Name of your software (STATA) and version] <_Application_>
-<_Author(s)_>					[Name(s) of author(s)] </_Author(s)_>
-<_Date created_>				YYYY-MM-DD </_Date created_>
+<_Program name_>				PHL_1997_GLD_LFS.do </_Program name_>
+<_Application_>					Stata 15 <_Application_>
+<_Author(s)_>					World Bank Jobs Group </_Author(s)_>
+<_Date created_>				2021-07-20 </_Date created_>
 
 -------------------------------------------------------------------------
 
-<_Country_>						[Country_Name (CCC)] </_Country_>
-<_Survey Title_>				[SurveyName] </_Survey Title_>
-<_Survey Year_>					[Year of start of the survey] </_Survey Year_>
+<_Country_>						Philippines (PHL) </_Country_>
+<_Survey Title_>				Labor Force Survey </_Survey Title_>
+<_Survey Year_>					1997 </_Survey Year_>
 <_Study ID_>					[Microdata Library ID if present] </_Study ID_>
-<_Data collection from_>		[MM/YYYY] </_Data collection from_>
-<_Data collection to_>			[MM/YYYY] </_Data collection to_>
+<_Data collection from_>		[01/1997] </_Data collection from_>
+<_Data collection to_>			[10/1997] </_Data collection to_>
 <_Source of dataset_> 			[Source of data, e.g. NSO] </_Source of dataset_>
-<_Sample size (HH)_> 			[#] </_Sample size (HH)_>
-<_Sample size (IND)_> 			[#] </_Sample size (IND)_>
-<_Sampling method_> 			[Brief description] </_Sampling method_>
-<_Geographic coverage_> 		[To what level is data significant] </_Geographic coverage_>
+<_Sample size (HH)_> 			39274 </_Sample size (HH)_>
+<_Sample size (IND)_> 			202742 </_Sample size (IND)_>
+<_Sampling method_> 			Geographic regions divided into PSUs of ~100-400 Households for further processing </_Sampling method_>
+<_Geographic coverage_> 		1st-level Subdivision (Region) </_Geographic coverage_>
 <_Currency_> 					[Currency used for wages] </_Currency_>
 
 -----------------------------------------------------------------------
@@ -57,8 +57,49 @@ set mem 800m
 
 *----------1.2: Set directories------------------------------*
 
-local path_in "[Path to CCC_YYYY_SVY_v01_M / Data / Stata]"
-local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
+** DIRECTORY
+
+	local 	cty3 	"PHL" 			// set this to the three letter country/economy abbreviation
+	local 	usr		`"551206_TM"' 	// set this to whatever Mario named your folder
+	local 	surv_yr `"1997"'		// set this to the survey year
+
+** RUN SETTINGS
+	local 	cb_pause = 0		// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
+	local 	append 	 = 1 		// 1 to run iecodebook append, 0 if file is already appended.
+	local 	drop 	 = 1 		// 1 to drop variables with all missing values, 0 otherwise
+
+
+	local 	year 		"${GLD}:\GLD-Harmonization\\`usr'\\`cty3'\\`cty3'_`surv_yr'_LFS" // top data folder
+
+	local 	main		"`year'\\`cty3'_`surv_yr'_LFS_v01_M"
+	local 	 stata		"`main'\data\stata"
+	local 	i2d2		"`year'\\`cty3'_`surv_yr'_LFS_v01_M_v01_A_I2D2"
+	local 	gld 		"`year'\\`cty3'_`surv_yr'_LFS_v01_M_v01_A_GLD"
+	local 	 code 		"`gld'\Programs"
+	local 	 gld_data 	"`gld'\Data\Harmonized"
+
+	local 	lb_mod_age	15	// labor module minimun age (inclusive)
+	local 	ed_mod_age	5	// labor module minimun age (inclusive)
+
+** LOG FILE
+	log using `"`gld_data'\\`cty3'_`surv_yr'_I2D2_LFS.log"', replace
+
+
+** FILES
+	* input
+	local round1 `"`stata'\LFS JAN1997.dta"'
+	local round2 `"`stata'\LFS APR1997.dta"'
+	local round3 `"`stata'\LFS JUL1997.dta"'
+	local round4 `"`stata'\LFS OCT1997.dta"'
+
+	* ouput
+	local path_output `"`gld_data'\\`cty3'_`surv_yr'_LFS_v01_M_v01_A_GLD"'
+
+** VALUES
+	local n_round 	4			// numer of survey rounds
+
+
+
 
 *----------1.3: Database assembly------------------------------*
 
@@ -1442,6 +1483,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`path_output'\[Name of file].dta", replace
+save `"`path_output'"', replace
 
 *</_% SAVE_>
