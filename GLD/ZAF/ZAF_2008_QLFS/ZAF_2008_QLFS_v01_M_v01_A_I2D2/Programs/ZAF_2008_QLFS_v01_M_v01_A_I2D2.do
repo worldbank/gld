@@ -1,25 +1,23 @@
 /*****************************************************************************************************
 ******************************************************************************************************
 **                                                                                                  **
-**                       INTERNATIONAL INCOME DISTRIBUTION DATABASE (I2D2)                          **
+**                      INTERNATIONAL INCOME DISTRIBUTION DATABASE (I2D2)                          **
 **                                                                                                  **
 ** COUNTRY					South Africa 
 ** COUNTRY ISO CODE			ZAF
-** YEAR						2020
+** YEAR						2008
 ** SURVEY NAME				Labour Market Dynamics
 ** SURVEY AGENCY			Statistics South Africa (Stats SA)
-** SURVEY SOURCE			DataFirst, https://www.datafirst.uct.ac.za/dataportal/index.php/catalog/823 (Quarter 1)
+** SURVEY SOURCE			DataFirst, https://www.datafirst.uct.ac.za/dataportal/index.php/catalog/236
 ** UNIT OF ANALYSIS			Household and individual
-** INPUT DATABASES			Z:\_GLD-Harmonization\573465_JT\ZAF\ZAF_2020_LFS\ZAF_2020_LFS_v01_M\data\stata\qlfs-2020-q1-worker-v1.dta
-							Z:\_GLD-Harmonization\573465_JT\ZAF\ZAF_2020_LFS\ZAF_2020_LFS_v01_M\data\stata\qlfs-2020-q2-worker-v2.dta
-							Z:\_GLD-Harmonization\573465_JT\ZAF\ZAF_2020_LFS\ZAF_2020_LFS_v01_M\data\stata\qlfs-2020-q3-worker-v2.dta
-							Z:\_GLD-Harmonization\573465_JT\ZAF\ZAF_2020_LFS\ZAF_2020_LFS_v01_M\data\stata\qlfs-2020-q4-worker-v1.dta
-** RESPONSIBLE				Junying Tong
-** Created					6/3/2021
-** Modified					6/28/2021
-** NUMBER OF HOUSEHOLDS		33,913
-** NUMBER OF INDIVIDUALS	117,759
-** EXPANDED POPULATION		57,830,298
+** INPUT DATABASES			Z:\_GLD-Harmonization\573465_JT\ZAF\ZAF_2008_LFS\ZAF_2008_LFS_v01_M\data\stata\lmdsa_2008_v1.1_20150407.dta
+** RESPONSIBLE				Wolrd Bank Job's Group
+** Created					6/15/2021
+** Modified					7/14/2021
+** NUMBER OF HOUSEHOLDS		49,221
+** NUMBER OF INDIVIDUALS	183,384
+** EXPANDED POPULATION		49,365,385
+
 **                                                                                                  **
 ******************************************************************************************************
 *****************************************************************************************************/
@@ -29,6 +27,7 @@
                                    INITIAL COMMANDS
 *                                                                                                    *
 *****************************************************************************************************/
+
 
 
 ** INITIAL COMMANDS
@@ -42,7 +41,7 @@
 	local 	drive 	`"Z"'		
 	local 	cty 	`"ZAF"' 	
 	local 	usr		`"573465_JT"' 
-	local 	surv_yr `"2020"'	
+	local 	surv_yr `"2008"'	
 	local 	year 	"`drive':\GLD-Harmonization\\`usr'\\`cty'\\`cty'_`surv_yr'_LFS" 
 	local 	main	"`year'\\`cty'_`surv_yr'_LFS_v01_M"
 	local 	stata	"`main'\data\stata"
@@ -54,11 +53,11 @@
 	local input "`stata'"
 	local output "`id_data'"
 
-
-** LOG FILE
-	log using "`id_data'\ZAF_2020__QLFS_V01_M_v01_A_I2D2", replace
-
 	
+** LOG FILE
+	log using "`id_data'\ZAF_2008_QLFS_V01_M_v01_A_I2D2", replace
+
+
 /*****************************************************************************************************
 *                                                                                                    *
                                    * ASSEMBLE DATABASE
@@ -67,52 +66,16 @@
 
 
 ** DATABASE ASSEMBLENT
+	use "`input'\lmdsa_2008_v1.1_20150407.dta", clear
 
-	use "`input'\qlfs-2020-q2-worker-v2.dta", clear
-	tostring UQNO, replace format(%018.0f)
-	append using "`input'\qlfs-2020-q1-worker-v1.dta", gen (Qtr) force
-	recode Qtr 0=2 
-	append using "`input'\qlfs-2020-q3-worker-v2.dta"
-	recode Qtr .=3
-	append using "`input'\qlfs-2020-q4-worker-v1.dta"
-	recode Qtr .=4
-	replace Weight=Weight/4
-/*
-668 observations or 169 households in Quarter 2 are not uniquely defined by 
-household number and person number, even though some of them seem to be 
-different respondents. These observations account for 0.32% of total sample size. 
-663 were dropped. 
-
-Two intermediate work files created:
-1)ZAF_2020_QLFS_v01_M_v01_A_I2D2_DUP.dta: 
-  shows basic individual information like gender, age, and population group for 
-  duplicated observations
-
-2)ZAF_2020__QLFS_v01_M_v01_A_I2D2_DUP.xls:
-  a full list of all variables of 668 duplicated observations
-*/	
-	duplicates drop   
-	bysort UQNO PERSONNO Qtr: gen dup=cond(_N==1, 0, _n)
-	*preserve
-	*keep UQNO PERSONNO Q13GENDER Q15POPULATION Q14AGE Qtr dup
-	*keep if dup>0
-	*save "`i2d2'\work\ZAF_2020_QLFS_v01_M_v01_A_I2D2_DUP.dta", replace
-	*restore 
-	*preserve
-	*keep if dup>0
-	*export excel using "`i2d2'\Work\ZAF_2020__QLFS_v01_M_v01_A_I2D2_DUP.xls", sheetreplace firstrow(variables)
-	*restore
-	drop if dup>0
-	drop dup
 	
-
 ** COUNTRY
 	gen str4 ccode="ZAF"
 	label var ccode "Country code"
 
 
 ** YEAR
-	gen int year=2020
+	gen int year=2008
 	label var year "Year of survey"
 
 
@@ -148,18 +111,18 @@ Two intermediate work files created:
 
 
 ** STRATA
-	gen strata=STRATUM
+	gen strata=stratum
 	label var strata "Strata"
 
 
 ** PSU
 
 /*
-Total psu: 3,242
-Q1:3,239
-Q2:2,862
-Q3:2,857
-Q4:3,057
+Total psu: 3,072
+Q1: 3,045
+Q2: 3,048
+Q3:	3,047
+Q4: 3,058
 */
 	gen psu=substr(UQNO, 1, 8)
 	label var psu "Primary sampling units"
@@ -172,13 +135,8 @@ Q4:3,057
 
 
 ** LOCATION (URBAN/RURAL)
-
-/* Traditional areas are defined as rural areas according to and 
-urbanization stats from:
- https://data.worldbank.org/indicator/SP.URB.TOTL.IN.ZS?locations=ZA,
-*/
-	gen byte urb=Geo_type_code
-	recode urb 1=1 3=2
+	gen byte urb=Geo_type
+	recode urb 1/2=1 4/5=2
 	label var urb "Urban/Rural"
 	la de lblurb 1 "Urban" 2 "Rural"
 	label values urb lblurb
@@ -186,23 +144,24 @@ urbanization stats from:
 
 **REGIONAL AREAS
 	gen byte reg01=Province
+	label de lblprovince 1 "Western Cape" 2 "Eastern Cape" 3 "Northern Cape" 4 "Free State" 5 "KwaZulu-Natal" 6 "North West" 7 "Gauteng" 8 "Mpumalanga" 9 "Limpopo"
 	label var reg01 "Macro regional areas"
-	label values reg01 Province
+	label values reg01 lblprovince
 
 
 ** REGIONAL AREA 1 DIGIT ADMN LEVEL
 	gen byte reg02=Province
 	label var reg02 "Region at 1 digit (ADMN1)"
-	label values reg02 Province
+	label values reg02 lblprovince
 
 
 ** REGIONAL AREA 2 DIGITS ADM LEVEL (ADMN2)
-	gen reg03=Metro_code
+	gen reg03= Metro_code
 	label var reg03 "Region at 2 digits (ADMN2)"
 	label values reg03 Metro_code
 
 
-** REGIONAL AREA 3 DIGITS ADM LEVEL (ADMN2) (???)
+** REGIONAL AREA 3 DIGITS ADM LEVEL (ADMN2)
 	gen reg04=.
 	label var reg04 "Region at 3 digits (ADMN3)"
 
@@ -278,10 +237,29 @@ urbanization stats from:
 ** RELATIONSHIP TO THE HEAD OF HOUSEHOLD
 
 /*
-1.77% of 33,91 HHs start with PERSONNO #2.
 Not asked, all we know is that the person with personal number equal to 1 is the head, the problem is that in some cases that person is not present, probably because he/she didn't spend four nights or more in this household. In those cases I assigned the eldest adult male (or female absent male) present as the household head.
-144 observations (78 HHs) were dropped due to no male memeber or multiple same old male (or female) members.
-Age of majority is 18 in South Africa.  
+62 observations were dropped due to no male memeber or multiple same old male (or female) members.
+Age of majority is 18 in South Africa.
+
+DROPS:
+OBS: 62
+HH: 33
+REGIONAL DISTRIBUTION: 
+Subnational ID at |
+            First |
+   Administrative |
+            Level |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+ 1 - Western Cape |         22       35.48       35.48
+ 2 - Eastern Cape |          5        8.06       43.55
+   4 - Free State |          5        8.06       51.61
+5 - KwaZulu-Natal |          9       14.52       66.13
+      7 - Gauteng |          5        8.06       74.19
+   8 - Mpumalanga |          4        6.45       80.65
+      9 - Limpopo |         12       19.35      100.00
+------------------+-----------------------------------
+            Total |         62      100.00
+
 */
 
 	gen byte head=1 if PERSONNO==1
@@ -300,7 +278,7 @@ Age of majority is 18 in South Africa.
 	restore
 	merge m:1 idh idp using `head_collapse' 
 	drop _merge
-	replace head=. if hh3==2 & Q13==2 & head==1
+	replace head=. if hh3==2 & q13==2 & head==1
 	bys idh: egen hh4=sum(head==1)
 	preserve
 	collapse (max) head, by(idp idh hh4)
@@ -309,7 +287,7 @@ Age of majority is 18 in South Africa.
 	restore
 	merge m:1 idh idp using `head_collapse'
 	drop _merge
-	bys idh: egen male_present=max(Q13)
+	bys idh: egen male_present=max(q13)
 	replace male_present=0 if male_present==2
 	replace head=1 if hh5==0 & maxage>=18 & maxage<. & male_present==0
 	preserve
@@ -329,7 +307,7 @@ Age of majority is 18 in South Africa.
 
 
 ** GENDER
-	gen byte gender=Q13GENDER
+	gen byte gender=q13gender
 	label var gender "Gender"
 	la de lblgender 1 "Male" 2 "Female"
 	label values gender lblgender
@@ -342,10 +320,10 @@ Age of majority is 18 in South Africa.
 
 
 ** SOCIAL GROUP
-	gen byte soc=Q15POPULATION
+	gen byte soc=q15population
 	label var soc "Social group"
 	la de lblsoc 1 ""
-	label values soc Q15POPULATION
+	label values soc q15population
 
 
 ** MARITAL STATUS
@@ -369,12 +347,10 @@ Age of majority is 18 in South Africa.
 
 
 ** CURRENTLY AT SCHOOL
-	gen byte atschool=Q19ATTE
-	recode atschool 2=0
-	replace atschool=. if age<ed_mod_age & age!=.
+	gen byte atschool=.
 	label var atschool "Attending school"
 	la de lblatschool 0 "No" 1 "Yes"
-	label values atschool  lblatschool
+	label values atschool lblatschool
 
 
 ** CAN READ AND WRITE
@@ -436,9 +412,8 @@ or grade 9 and enter a technical education program at N1, proceeding to N2.
 ** EVER ATTENDED SCHOOL
 
 /*
-For those who are currently attending educational institution or variable "atschool" equals 1,
-and have no education (no schooling) or "edulevel1" equals "edulevel2" equals "edulevel3" equals 1,
-they are probably in creche or day care. Note that "Educational institution" covers a wide range of places
+For those who are currently attending educational institution or variable "atschool" equals 1
+(but in 2008 there is no such variable as "Q19ATTE" as in other years), and have no education(no schooling) or "edulevel1" equals "edulevel2" equals "edulevel3" equals 1, they probably are in creche or day care. "Educational institution" covers a wide range of places
 and ways of education. 
 */ 
 
@@ -467,7 +442,8 @@ and ways of education.
 
 
 ** LABOR STATUS
-	gen byte lstatus=Status
+	la de Status 2 "Unemployed" 3 "Discouraged job seeker" 4 "Other not economically active", modify
+	gen byte lstatus=Status	
 	recode lstatus 4=3
 	replace lstatus=. if age<lb_mod_age & age!=.
 	label var lstatus "Labor status"
@@ -509,7 +485,7 @@ whose answers to this question are "Yes" were coded as missing values.
 */
 
 	gen byte njobs=Q41MULTIPLEJOBS
-	recode njobs 2=1 3=.
+	recode njobs 2=1
 	recode njobs 1=.
 	replace njobs=. if lstatus!=1
 	label var njobs "Number of total jobs"
@@ -523,7 +499,7 @@ whose answers to this question are "Yes" were coded as missing values.
 
 ** SECTOR OF ACTIVITY: PUBLIC - PRIVATE
 	gen byte ocusec=Q415TYPEBUSNS
-	recode ocusec 4=1 3 5=2 2=3 6=. 9=.
+	recode ocusec 4=1 3 5=2 2=3 6=.
 	replace ocusec=. if lstatus!=1
 	label var ocusec "Sector of activity"
 	la de lblocusec 1 "Public Sector, Central Government, Army, NGO" 2 "Private" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
@@ -532,7 +508,7 @@ whose answers to this question are "Yes" were coded as missing values.
 
 ** REASONS NOT IN THE LABOR FORCE
 	gen byte nlfreason=Q35YNOTWRK
-	recode nlfreason 4=3 8=4 3 5/7 9=5
+	recode nlfreason 4=3 3 5/7=5
 	replace nlfreason=. if lstatus!=3
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housewife" 3 "Retired" 4 "Disable" 5 "Other"
@@ -552,7 +528,7 @@ whose answers to this question are "Yes" were coded as missing values.
 
 
 ** INDUSTRY CLASSIFICATION
-	gen byte industry=Indus
+	gen byte industry=indus
 	recode industry 9 11=10
 	replace industry=9 if inrange(Q43INDUSTRY,911,917)
 	replace industry=. if lstatus!=1
@@ -577,8 +553,9 @@ whose answers to this question are "Yes" were coded as missing values.
 
 
 ** OCCUPATION CLASSIFICATION
-	gen occup=Occup
-	recode occup 10=9 11=99
+	recode occup 10=9 11=.
+	replace occup=. if Q42OCCUPATION==9999
+	replace occup=10 if Q42OCCUPATION==5164
 	replace occup=. if lstatus!=1
 	label var occup "1 digit occupational classification"
 	la de lbloccup 1 "Senior officials" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
@@ -603,20 +580,41 @@ whose answers to this question are "Yes" were coded as missing values.
 	label var firmsize_u "Firm size (upper bracket)"
 
 
-** HOURS WORKED LAST WEEK 
+** HOURS WORKED LAST WEEK
 /*
-Var "Hrswrk" in the raw dataset was derived from vars Q418HRSWRK and Q420FIRSTHRSWRK.
+Variable "Q418HRSWRK" is working hours for people who only have one job and it is missing for people who have more than one job.
+
+Variable "Hrswrk" is equal to "Q418HRSWRK" for people who have one job and it is equal to variable "Q420TOTALHRSWRK" for thoes who have more than one job.
+
+	egen primary=rowmax(Q420FIRSTHRSWRK Q420SECONDHRSWRK)
+	replace primary=Q418HRSWRK if primary==. & Q418HRSWRK!=.
+	gen first=1 if (primary==Q420FIRSTHRSWRK & primary !=.) | (primary==Q418HRSWRK & primary !=.)
+	replace first=0 if primary!=. & primary==Q420SECONDHRSWRK
+
+The main job was decided based on time spent. 
+0.18% of people who have jobs spend more time on their second job.  
+
+      first |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        177        0.18        0.18
+          1 |     99,529       99.82      100.00
+------------+-----------------------------------
+      Total |     99,706      100.00
+
 */
-	gen whours=Hrswrk
+
+	gen whours=Q418HRSWRK
+	egen primary=rowmax(Q420FIRSTHRSWRK Q420SECONDHRSWRK)
+	replace whours=primary if Q418HRSWRK==.
 	replace whours=. if lstatus!=1
-	label var whours "Hours of work in last week"
+	drop primary
+	label var whours "Hours of work in last week primary job 7 day recall"
 
 
 ** WAGES
 	gen double wage=.
-	replace wage=. if wage==.
 	replace wage=. if lstatus!=1 
-	*replace wage=0 if empstat==2
+	replace wage=0 if empstat==2
 	label var wage "Last wage payment"
 
 
@@ -717,8 +715,7 @@ Var "Hrswrk" in the raw dataset was derived from vars Q418HRSWRK and Q420FIRSTHR
 
 
 ** UNION MEMBERSHIP
-	gen byte union= Q412BMEMUNION
-	recode union 2=0 3=.
+	gen byte union=.
 	replace union=. if lstatus!=1
 	label var union "Union membership"
 	la de lblunion 0 "No member" 1 "Member"
@@ -777,14 +774,13 @@ Var "Hrswrk" in the raw dataset was derived from vars Q418HRSWRK and Q420FIRSTHR
 
 ** INCOME PER CAPITA
 	gen double pci=.
-	*bys idh: egen hh_income=sum(wage)
-	*replace pci=hh_income/hhsize	
+	bys idh: egen hh_income=sum(wage)
+	replace pci=hh_income/hhsize	
 	label var pci "Monthly income per capita"
 
 	
 ** DECILES OF PER CAPITA INCOME
-	gen pci_d=.
-	*xtile pci_d=pci [w=wgt], nq(10) 
+	xtile pci_d=pci [w=wgt], nq(10) 
 	label var pci_d "Income per capita deciles"
 
 
@@ -833,7 +829,7 @@ Var "Hrswrk" in the raw dataset was derived from vars Q418HRSWRK and Q420FIRSTHR
 	qui sum `var'
 	scalar sclrc = r(mean)
 	if sclrc==. {
-	     display as txt "Variable " as result "`var'" as txt " for ccode " as result `cty' as txt " contains all missing values -" as error " Variable Deleted"
+	     display as txt "Variable" as result "`var'" as txt " for ccode " as result `cty' as txt " contains all missing values -" as error " Variable Deleted"
 	}
 	else {
 	     local keep `keep' `var'
@@ -842,7 +838,7 @@ Var "Hrswrk" in the raw dataset was derived from vars Q418HRSWRK and Q420FIRSTHR
 	keep ccode year intv_year month idh idp wave wgt strata psu `keep'
 
 
-	save "`output'\ZAF_2020_QLFS_v01_M_v01_A_I2D2.dta", replace
+	save "`output'\ZAF_2008_QLFS_v01_M_v01_A_I2D2.dta", replace
 
 	log close
 

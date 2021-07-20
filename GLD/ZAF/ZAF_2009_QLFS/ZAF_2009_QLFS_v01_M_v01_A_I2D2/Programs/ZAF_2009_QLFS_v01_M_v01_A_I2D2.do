@@ -1,23 +1,22 @@
 /*****************************************************************************************************
 ******************************************************************************************************
 **                                                                                                  **
-**                       INTERNATIONAL INCOME DISTRIBUTION DATABASE (I2D2)                          **
+**                      INTERNATIONAL INCOME DISTRIBUTION DATABASE (I2D2)                          **
 **                                                                                                  **
 ** COUNTRY					South Africa 
 ** COUNTRY ISO CODE			ZAF
-** YEAR						2012
+** YEAR						2009
 ** SURVEY NAME				Labour Market Dynamics
 ** SURVEY AGENCY			Statistics South Africa (Stats SA)
-** SURVEY SOURCE			DataFirst, https://www.datafirst.uct.ac.za/dataportal/index.php/catalog/459/related_materials
+** SURVEY SOURCE			DataFirst, https://www.datafirst.uct.ac.za/dataportal/index.php/catalog/237
 ** UNIT OF ANALYSIS			Household and individual
-** INPUT DATABASES			Z:\_GLD-Harmonization\573465_JT\ZAF\ZAF_2012_LFS\ZAF_2012_LFS_v01_M\data\stata\lmdsa-2012-v1-stata.dta
-** RESPONSIBLE				Junying Tong
-** Created					6/14/2021
-** Modified					6/23/2021
-** NUMBER OF HOUSEHOLDS		45,978
-** NUMBER OF INDIVIDUALS	161,299
-** EXPANDED POPULATION		52,249,700
-
+** INPUT DATABASES			Z:\_GLD-Harmonization\573465_JT\ZAF\ZAF_2009_LFS\ZAF_2009_LFS_v01_M\data\stata\lmdsa-2009-v1-stata.dta
+** RESPONSIBLE				Wolrd Bank Job's Group
+** Created					6/15/2021
+** Modified					7/14/2021
+** NUMBER OF HOUSEHOLDS		47,334
+** NUMBER OF INDIVIDUALS	173,412
+** EXPANDED POPULATION		50,040,072
 **                                                                                                  **
 ******************************************************************************************************
 *****************************************************************************************************/
@@ -41,7 +40,7 @@
 	local 	drive 	`"Z"'		
 	local 	cty 	`"ZAF"' 	
 	local 	usr		`"573465_JT"' 
-	local 	surv_yr `"2012"'	
+	local 	surv_yr `"2009"'	
 	local 	year 	"`drive':\GLD-Harmonization\\`usr'\\`cty'\\`cty'_`surv_yr'_LFS" 
 	local 	main	"`year'\\`cty'_`surv_yr'_LFS_v01_M"
 	local 	stata	"`main'\data\stata"
@@ -55,7 +54,7 @@
 
 	
 ** LOG FILE
-	log using "`id_data'\ZAF_2012__QLFS_V01_M_v01_A_I2D2", replace
+	log using "`id_data'\ZAF_2009_QLFS_V01_M_v01_A_I2D2", replace
 
 
 /*****************************************************************************************************
@@ -66,26 +65,16 @@
 
 
 ** DATABASE ASSEMBLENT
-	use "`stata'\qlfs-2012-01-worker-rwt2013-v1.1-20140602.dta", clear
-	append using "`stata'\qlfs-2012-02-worker-rwt2013-v1.1-20140602.dta", gen(Qtr)
-	recode Qtr 1=2 0=1
-	append using "`stata'\qlfs-2012-03-worker-rwt2013-v1.1-20140602.dta"
-	recode Qtr .=3
-	append using "`stata'\qlfs-2012-04-worker-rwt2013-v1.1-20140602.dta"
-	recode Qtr .=4
-	gen WEIGHT=Weight/4
-	keep UQNO PERSONNO Q19ATTE WEIGHT Qtr
-	save "`i2d2'\Work\ZAF_2012_QLFS_v01_M_v01_A_I2D2_append_Q19ATTE.dta", replace
-	use "`input'\lmdsa_2012_v1.1_20150407.dta", clear
+	use "`input'\lmdsa_2009_v1.1_20150407.dta", clear
+	 
 
-	
 ** COUNTRY
 	gen str4 ccode="ZAF"
 	label var ccode "Country code"
 
 
 ** YEAR
-	gen int year=2012
+	gen int year=2009
 	label var year "Year of survey"
 
 
@@ -128,11 +117,11 @@
 ** PSU
 
 /*
-Total psu: 3,499
-Q1:3,018
-Q2:3,013
-Q3:3,024
-Q4:3,021
+Total psu: 3,958
+Q1: 3,055
+Q2: 3,051
+Q3:	3,037
+Q4: 3,019
 */
 	gen psu=substr(UQNO, 1, 8)
 	label var psu "Primary sampling units"
@@ -247,8 +236,28 @@ Q4:3,021
 
 /*
 Not asked, all we know is that the person with personal number equal to 1 is the head, the problem is that in some cases that person is not present, probably because he/she didn't spend four nights or more in this household. In those cases I assigned the eldest adult male (or female absent male) present as the household head.
-161 observations were dropped due to no male memeber or multiple same old male (or female) members.
+42 observations were dropped due to no male memeber or multiple same old male (or female) members.
 Age of majority is 18 in South Africa.  
+
+DROPS:
+OBS: 42
+HH: 16
+
+Subnational ID at |
+            First |
+   Administrative |
+            Level |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+ 1 - Western Cape |         19       45.24       45.24
+ 2 - Eastern Cape |          7       16.67       61.90
+3 - Northern Cape |          3        7.14       69.05
+   4 - Free State |          2        4.76       73.81
+5 - KwaZulu-Natal |          2        4.76       78.57
+   6 - North West |          2        4.76       83.33
+      7 - Gauteng |          1        2.38       85.71
+      9 - Limpopo |          6       14.29      100.00
+------------------+-----------------------------------
+            Total |         42      100.00
 */
 
 	gen byte head=1 if PERSONNO==1
@@ -336,22 +345,10 @@ Age of majority is 18 in South Africa.
 
 
 ** CURRENTLY AT SCHOOL
-
-/*
-Variable "Q19ATTE" is not included in LMDSA 2012 and QLFS01&02. So I merged LMDSA 
-with the 4 QLFS on which this LMDSA was built. 342 observations unmatched was dropped.
-Observations in Q1 and Q2 are missing for var "Q19ATTE", leaving 170780 (50.3%) observations
-nonmissing.
-*/
-	merge m:m UQNO PERSONNO Qtr using "`i2d2'\Work\ZAF_2012_QLFS_v01_M_v01_A_I2D2_append_Q19ATTE.dta"
-	drop if _merge==2
-	drop _merge WEIGHT
-	gen byte atschool=Q19ATTE
-	recode atschool 2=0
-	replace atschool=. if age<ed_mod_age & age!=.
+	gen byte atschool=.
 	label var atschool "Attending school"
 	la de lblatschool 0 "No" 1 "Yes"
-	label values atschool  lblatschool
+	label values atschool lblatschool
 
 
 ** CAN READ AND WRITE
@@ -413,9 +410,8 @@ or grade 9 and enter a technical education program at N1, proceeding to N2.
 ** EVER ATTENDED SCHOOL
 
 /*
-For those who are currently attending educational institution or variable "atschool" equals 1,
-and have no education(no schooling) or "edulevel1" equals "edulevel2" equals "edulevel3" equals 1,
-they probably are in creche or day care. "Educational institution" covers a wide range of places
+For those who are currently attending educational institution or variable "atschool" equals 1
+(but in 2009 there is no such variable as "Q19ATTE" as in other years), and have no education(no schooling) or "edulevel1" equals "edulevel2" equals "edulevel3" equals 1, they probably are in creche or day care. "Educational institution" covers a wide range of places
 and ways of education. 
 */ 
 
@@ -444,6 +440,7 @@ and ways of education.
 
 
 ** LABOR STATUS
+	la de Status 2 "Unemployed" 3 "Discouraged job seeker" 4 "Other not economically active", modify
 	gen byte lstatus=Status	
 	recode lstatus 4=3
 	replace lstatus=. if age<lb_mod_age & age!=.
@@ -500,7 +497,7 @@ whose answers to this question are "Yes" were coded as missing values.
 
 ** SECTOR OF ACTIVITY: PUBLIC - PRIVATE
 	gen byte ocusec=Q415TYPEBUSNS
-	recode ocusec 4=1 3 5=2 2=3 6/9=.
+	recode ocusec 4=1 3 5=2 2=3 6=.
 	replace ocusec=. if lstatus!=1
 	label var ocusec "Sector of activity"
 	la de lblocusec 1 "Public Sector, Central Government, Army, NGO" 2 "Private" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
@@ -509,7 +506,7 @@ whose answers to this question are "Yes" were coded as missing values.
 
 ** REASONS NOT IN THE LABOR FORCE
 	gen byte nlfreason=Q35YNOTWRK
-	recode nlfreason 4=3 8=4 3 5/7 9=5
+	recode nlfreason 4=3 3 5/7=5
 	replace nlfreason=. if lstatus!=3
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housewife" 3 "Retired" 4 "Disable" 5 "Other"
@@ -554,7 +551,7 @@ whose answers to this question are "Yes" were coded as missing values.
 
 
 ** OCCUPATION CLASSIFICATION
-	recode occup 10=9 
+	recode occup 10=9 11=.
 	replace occup=. if lstatus!=1
 	label var occup "1 digit occupational classification"
 	la de lbloccup 1 "Senior officials" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
@@ -569,36 +566,56 @@ whose answers to this question are "Yes" were coded as missing values.
 
 ** FIRM SIZE
 	gen byte firmsize_l=Q416NRWORKERS
-	recode firmsize_l 1=0 2=1 3=2 4=5 5=10 6=20 7=50 8=.
+	recode firmsize_l 1=0 2=1 3=2 4=5 5=10 6=20 7=50 8 99=.
 	replace firmsize_l=. if lstatus!=1
 	label var firmsize_l "Firm size (lower bracket)"
 
 	gen byte firmsize_u=Q416NRWORKERS
-	recode firmsize_u 1=0 2=1 3=4 4=9 5=19 6=49 7 8=.
+	recode firmsize_u 1=0 2=1 3=4 4=9 5=19 6=49 7 8 99=.
 	replace firmsize_u=. if lstatus!=1
 	label var firmsize_u "Firm size (upper bracket)"
 
 
 ** HOURS WORKED LAST WEEK
 /*
-Var "HRSWRK" in the raw dataset was derived from vars Q418HRSWRK and Q420FIRSTHRSWRK.
+Variable "Q418HRSWRK" is working hours for people who only have one job and it is missing for people who have more than one job.
+
+Variable "Hrswrk" is equal to "Q418HRSWRK" for people who have one job and it is equal to variable "Q420TOTALHRSWRK" for thoes who have more than one job.
+
+	egen primary=rowmax(Q420FIRSTHRSWRK Q420SECONDHRSWRK)
+	replace primary=Q418HRSWRK if primary==. & Q418HRSWRK!=.
+	gen first=1 if (primary==Q420FIRSTHRSWRK & primary !=.) | (primary==Q418HRSWRK & primary !=.)
+	replace first=0 if primary!=. & primary==Q420SECONDHRSWRK
+
+The main job was decided based on time spent. 
+0.14% of people who have jobs spend more time on their second job.  
+
+   first |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        123        0.14        0.14
+          1 |     90,657       99.86      100.00
+------------+-----------------------------------
+      Total |     90,780      100.00
+
 */
 
-	gen whours=Hrswrk
+	gen whours=Q418HRSWRK
+	egen primary=rowmax(Q420FIRSTHRSWRK Q420SECONDHRSWRK)
+	replace whours=primary if Q418HRSWRK==.
 	replace whours=. if lstatus!=1
+	drop primary
 	label var whours "Hours of work in last week"
 
 
 ** WAGES
-	gen double wage=Q54a_monthly
-	replace wage=Q54a_monthly if wage==.
+	gen double wage=.
 	replace wage=. if lstatus!=1 
 	replace wage=0 if empstat==2
 	label var wage "Last wage payment"
 
 
 ** WAGES TIME UNIT
-	gen byte unitwage=5
+	gen byte unitwage=.
 	replace unitwage=. if lstatus!=1
 	replace unitwage=. if empstat==2
 	label var unitwage "Last wages time unit"
@@ -694,8 +711,7 @@ Var "HRSWRK" in the raw dataset was derived from vars Q418HRSWRK and Q420FIRSTHR
 
 
 ** UNION MEMBERSHIP
-	gen byte union= Q412BMEMUNION
-	recode union 2=0 3=.
+	gen byte union=.
 	replace union=. if lstatus!=1
 	label var union "Union membership"
 	la de lblunion 0 "No member" 1 "Member"
@@ -818,7 +834,7 @@ Var "HRSWRK" in the raw dataset was derived from vars Q418HRSWRK and Q420FIRSTHR
 	keep ccode year intv_year month idh idp wave wgt strata psu `keep'
 
 
-	save "`output'\ZAF_2012_QLFS_v01_M_v01_A_I2D2.dta", replace
+	save "`output'\ZAF_2009_QLFS_v01_M_v01_A_I2D2.dta", replace
 
 	log close
 

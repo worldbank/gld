@@ -11,9 +11,9 @@
 ** SURVEY SOURCE			DataFirst, https://www.datafirst.uct.ac.za/dataportal/index.php/catalog/598
 ** UNIT OF ANALYSIS			Household and individual
 ** INPUT DATABASES			Z:\_GLD-Harmonization\573465_JT\ZAF\ZAF_2015_LFS\ZAF_2015_LFS_v01_M\data\stata\lmdsa-2015-1.0-stata11.dta
-** RESPONSIBLE				Junying Tong
+** RESPONSIBLE				Wolrd Bank Job's Group
 ** Created					6/11/2021
-** Modified					6/23/2021
+** Modified					7/14/2021
 ** NUMBER OF HOUSEHOLDS		40,778
 ** NUMBER OF INDIVIDUALS	139,961
 ** EXPANDED POPULATION	 	54,420,645
@@ -53,7 +53,7 @@
 
 
 ** LOG FILE
-	log using "`id_data'\ZAF_2015__QLFS_V01_M_v01_A_I2D2", replace
+	log using "`id_data'\ZAF_2015_QLFS_V01_M_v01_A_I2D2", replace
 
 	
 /*****************************************************************************************************
@@ -246,6 +246,27 @@ urban population stats, https://data.worldbank.org/indicator/SP.URB.TOTL.IN.ZS?l
 Not asked, all we know is that the person with personal number equal to 1 is the head, the problem is that in some cases that person is not present, probably because he/she didn't spend four nights or more in this household. In those cases I assigned the eldest adult male (or female absent male) present as the household head.
 73 observations were dropped due to no male memeber or multiple same old male (or female) members.
 Age of majority is 18 in South Africa.  
+
+DROPS:
+OBS: 73
+HH: 31
+REGIONAL DISTRIBUTION: 
+Subnational ID at |
+            First |
+   Administrative |
+            Level |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+ 1 - Western Cape |          4        5.48        5.48
+ 2 - Eastern Cape |          9       12.33       17.81
+3 - Northern Cape |          8       10.96       28.77
+   4 - Free State |          3        4.11       32.88
+5 - KwaZulu-Natal |         30       41.10       73.97
+   6 - North West |         10       13.70       87.67
+      7 - Gauteng |          4        5.48       93.15
+      9 - Limpopo |          5        6.85      100.00
+------------------+-----------------------------------
+            Total |         73      100.00
+
 */
 
 	gen byte head=1 if PERSONNO==1
@@ -568,10 +589,29 @@ whose answers to this question are "Yes" were coded as missing values.
 
 ** HOURS WORKED LAST WEEK 
 /*
-Var "Hrswrk" in the raw dataset was derived from vars Q418HRSWRK and Q420FIRSTHRSWRK.
+Variable "Q418HRSWRK" is working hours for people who only have one job and it is missing for people who have more than one job.
+
+Variable "Hrswrk" is equal to "Q418HRSWRK" for people who have one job and it is equal to variable "Q420TOTALHRSWRK" for thoes who have more than one job.
+
+	egen primary=rowmax(Q420FIRSTHRSWRK Q420SECONDHRSWRK)
+	replace primary=Q418HRSWRK if primary==. & Q418HRSWRK!=.
+	gen first=1 if (primary==Q420FIRSTHRSWRK & primary !=.) | (primary==Q418HRSWRK & primary !=.)
+	replace first=0 if primary!=. & primary==Q420SECONDHRSWRK
+
+The main job was decided based on time spent. 
+0.12% of people who have jobs spend more time on their second job.
+
+      first |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         94        0.12        0.12
+          1 |     76,394       99.88      100.00
+------------+-----------------------------------
+      Total |     76,488      100.00
 */
 
-	gen whours=Hrswrk
+	gen whours=Q418HRSWRK
+	egen primary=rowmax(Q420FIRSTHRSWRK Q420SECONDHRSWRK)
+	replace whours=primary if Q418HRSWRK==.
 	replace whours=. if lstatus!=1
 	label var whours "Hours of work in last week"
 
