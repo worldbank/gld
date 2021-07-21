@@ -96,7 +96,7 @@ The final stage is to put together all different matches into a single data fram
 ![SCIAN Reducation Logic](/Support/Country%20Survey%20Details/MEX/ENOE/images/example_concordance_output.PNG)
 <br></br>
 
-### Merging in the information
+### Merging the correspondence with the survey data
 
 The data is merged in the harmonization at the first stage of database assembly (see individual harmonization codes). In the case of the 2010 ENOE there are 166,283 individuals for which the survey has an industry NAICS code. The correspondence process is able to match to 160,698 of those (96.6%). The image below shows the quality of the matches made:
 
@@ -121,9 +121,9 @@ Overall, the quality of the mapping seems to be very good. However, the metric u
 | 312142        | Distilled agave drinks            | 1101      |
 
 
-The way the correspondence has proceeded, it treats every entry equally. However, given that tequila, probably the economically most important drink in Mexico is made from agave, NAICS code 312142 should have stronger weight in this context. If we think of Cuba, code 312141 should probably be more important. This information, however, is not avaialable to us. Furthermore, note that the process of matching less than perfectly at only the lowest level of ISIC solves the issue here. All these NAICS codes starting with `3121` don't match to ISIC at four digits but do so perfectly to `110`. 
+The way the correspondence has proceeded, it treats every entry equally. However, given that tequila, probably the economically most important drink in Mexico is made from agave, NAICS code `312142` should be weighted more strongly in this context. If we think of Cuba, code `312141` should probably be more important. This information, however, is not avaialable to us. Furthermore, note that the process of matching less than perfectly at only the lowest level of ISIC solves the issue here. All these NAICS codes starting with `3121` don't match to ISIC at four digits but do so perfectly to `110`. 
 
-In this case no problem has arisen and as small niches grow, they can be expected to obtain more codes (as clothing grows, groups are created for shirts, trousers, ...) so it can be assumed that a single category is not significantly larger than any other category in the economy, but it still should be kept in mind that the evaluation of the mapping is based on the number of categories, regardless of the economic relevance.
+In this case no problem has arisen and as small niches grow, they can be expected to obtain more codes (as clothing grows, groups are created for shirts, trousers, ...) so it can be assumed that a single category is not significantly larger than any other category in the economy, but it still should be kept in mind that the evaluation of the mapping is based only on the number of categories, regardless of the economic relevance.
 
 ### Extension - What you may add if you would be available
 
