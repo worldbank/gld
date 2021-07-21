@@ -90,7 +90,7 @@ Of the not perfect matches (as was the case for `111`) these are mapped to ISIC 
 
 NAICS codes starting with `111` do not map perfectly but nearly all of the codes that start by it map to ISIC `01`. In this case, chosing the most common class is a good choice. For codes starting with `222`, however, this is more difficult. Here, again, the choice is made at random.
 
-The final stage is to put together all different matches into a single data frame and export it as a `.dta` file (into `MEX_[YYYY]_ENOE\MEX_[YYYY]_ENOE_v01_M\Data\Stata`) to be merged. The final `.dta` file looks like this:
+The final stage is to put together all different matches into a single data frame, pad zeroes to make sure both NAICS and ISIC codes are of lenght four, and export it as a `.dta` file (into `MEX_[YYYY]_ENOE\MEX_[YYYY]_ENOE_v01_M\Data\Stata`) to be merged. The final `.dta` file looks like this:
 
 <br></br>
 ![SCIAN Reducation Logic](/Support/Country%20Survey%20Details/MEX/ENOE/images/example_concordance_output.PNG)
@@ -104,11 +104,22 @@ The data is merged in the harmonization at the first stage of database assembly 
 ![SCIAN Reducation Logic](/Support/Country%20Survey%20Details/MEX/ENOE/images/matching_outcome.png)
 <br></br>
 
+The histogram on the left hand side shows that about three quarters of the observations are to perfect or nearly perfect matches (recall the match of `111` to `01` earlier) and nearly all are above 60%. However, there are a few worse matches. The right hand side shows the tabulation result in Stata. Recall that Stata will order observations alphanumerically (i.e., it starts with 25, the worst match, here and goes down to 100). That means that only 6.09% of observations have a match of 60% or worse. Nearly two thirds have a perfect match, while 85% of observations have a match of 66.7%.
 
-Previously, codes 
 ## Caveats and extensions
 
 ### Caveat - What the mapping does and does not do
+
+Overall, the quality of the mapping seems to be very good. However, the metric used to evaluate matching quality, while sensible, contains potential pitfalls. The most obvious one is that it is evaluating importance of a map by number of existing codes and not relevance of the codes. As an example, suppose that code 
+
+| NAICS Code    | NAICS Description                 | ISIC Code |
+| :------------ | :-------------------------------: | --------: |
+| 312131        | Grape alcoholic drinks            | 1101      |
+| 312132        | Pulque (fermented agave)          | 1102      |
+| 312139        | Cider & other fermented drinks    | 1102      |
+| 312141        | Rum & sugar cane drinks           | 1101      |
+| 312142        | Distilled agave drinks            | 1101      |
+
 
 ### Extension - What you may add if you would be available
 
