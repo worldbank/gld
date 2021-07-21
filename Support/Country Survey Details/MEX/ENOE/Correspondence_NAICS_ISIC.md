@@ -117,7 +117,7 @@ Overall, the quality of the mapping seems to be very good. However, the metric u
 | 312131        | Grape alcoholic drinks            | 1101      |
 | 312132        | Pulque (fermented agave)          | 1102      |
 | 312139        | Cider & other fermented drinks    | 1102      |
-| 312141        | Rhum & sugar cane drinks          | 1101      |
+| 312141        | Rum & sugar cane drinks           | 1101      |
 | 312142        | Distilled agave drinks            | 1101      |
 
 
