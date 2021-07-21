@@ -48,7 +48,7 @@ The second step is to use the `.dta` created in the first step in the harmonizat
 
 The mapping of NAICS to ISIC codes is performed by a user written `R` code. It reads from the relevant NSO correpsondence Excel file (NAICS 2002, 2007, 2013, and 2018) stored under `MEX_[YYYY]_ENOE\MEX_[YYYY]_ENOE_v01_M\Doc` and writes the comparison `.dta` file merged in the harmonization under `MEX_[YYYY]_ENOE\MEX_[YYYY]_ENOE_v01_M\Data\Stata`. The corresponding `R` itself is stored under `MEX_[YYYY]_ENOE\MEX_[YYYY]_ENOE_v01_M\Programs`. Note that the actual files are stored on a World Bank server - this repository only tracks code files.
 
-The first step in the process is to reduce the NSO correspondece six-digit system to the four digits covered in the ENOE. This creates duplicates as there are 17 codes between `111110` and `111199` for NAICS-02 that are reduced to `1111`.
+The first step in the process is to reduce the NSO correspondece six-digit system to the four digits covered in the ENOE. This creates duplicates as there are 17 codes between `111110` and `111199` for NAICS-07 that are reduced to `1111`. (The examples in this explainer are based on the NAICS-07 to ISIC 4 conversion as well as the ENOE 2010 data, the logic however holds for all correspondences).
 
 The second step is to compare the correspondence of NAICS four-digit codes to ISIC four-digit codes, and count the number of total cases and the number of matches to each code. The image below shows this process for some of the first codes:
 
@@ -63,6 +63,15 @@ The third step matches each four-digit NAICS code at the three-digit level to th
 <br></br>
 ![SCIAN Reducation Logic](/Support/Country%20Survey%20Details/MEX/ENOE/images/scian_match_2_df_example.PNG)
 <br></br>
+
+At this level, all 17 NAICS codes starting with `1111` map to an ISIC code starting with `011` (i.e., `pct` value is 100). Now we have a perfect match for it as well. For NAICS codes starting with `1112` there is no such perfect match. 8 out of 9 map to ISIC codes starting with `011` but one maps to `0112`. Again we only keep perfect matches. Also, the next step may seem already clear, that is, to map the four-digit NAICS code to ISIC two-digit codes. It is clear from the above image that this will yield a perfect match for `1112` as both start with `01`.
+
+Hence, the fourth step comparres NAICS four-digit to ISIC two-digit. 
+
+<br></br>
+![SCIAN Reducation Logic](/Support/Country%20Survey%20Details/MEX/ENOE/images/scian_match_3_df_example.PNG)
+<br></br>
+
 ### Merging in the information
 
 Previously, codes 
