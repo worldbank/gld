@@ -50,13 +50,13 @@ The mapping of NAICS to ISIC codes is performed by a user written `R` code. It r
 
 The first step in the process is to reduce the NSO correspondece six-digit system to the four digits covered in the ENOE. This creates duplicates as there are 17 codes between `111110` and `111199` for NAICS-02 that are reduced to `1111`.
 
-The second step is to compare the correspondence of NAICS four-digit codes to ISIC four-digit codes, and count the number of total cases and the number of matches to each code. The image below shows this process for the first codes:
+The second step is to compare the correspondence of NAICS four-digit codes to ISIC four-digit codes, and count the number of total cases and the number of matches to each code. The image below shows this process for some of the first codes:
 
 <br></br>
 ![SCIAN Reducation Logic](/Support/Country%20Survey%20Details/MEX/ENOE/images/scian_07_2010_match_1.PNG)
 <br></br>
 
-The table shows  that of the 17 codes that start with `1111` all of them match to ISIC code `0111` - a perfect match. However, for the nine NAICS codes that start with `1112`, two of them map to ISIC code `0111` and seven of them map to `0112`. At this stage, only perfect matches are kept. All other matches (i.e., those like `1112`) are sent to the third step.
+The table shows  that of the 16 codes that start with `1111` all of them match to ISIC code `0111`, while one matches to `0112`. The 9 NAICS codes that start with `1112` match to three different ISIC four digit codes. However, further down, codes starting with `1121` and `1122` all match to one specific four-digit ISIC code - perfect matches.At this stage, only perfect matches are kept. All other matches (i.e., those like `1111` and `1112`) are sent to the third step.
 
 The third step matches each four-digit NAICS code at the three-digit level to the three digit ISIC equivalent. This is exemplified in the snapshot below:
 
