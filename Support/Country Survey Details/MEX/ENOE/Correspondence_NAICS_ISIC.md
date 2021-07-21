@@ -110,25 +110,21 @@ The histogram on the left hand side shows that about three quarters of the obser
 
 ### Caveat - What the mapping does and does not do
 
-Overall, the quality of the mapping seems to be very good. However, the metric used to evaluate matching quality, while sensible, contains potential pitfalls. The most obvious one is that it is evaluating importance of a map by number of existing codes and not relevance of the codes. As an example, suppose that code 
+Overall, the quality of the mapping seems to be very good. However, the metric used to evaluate matching quality, while sensible, contains potential pitfalls. The most obvious one is that it is evaluating importance of a map by number of existing codes and not relevance of the codes. As an example, see the following excerpt from NAICS:
 
 | NAICS Code    | NAICS Description                 | ISIC Code |
 | :------------ | :-------------------------------: | --------: |
 | 312131        | Grape alcoholic drinks            | 1101      |
 | 312132        | Pulque (fermented agave)          | 1102      |
 | 312139        | Cider & other fermented drinks    | 1102      |
-| 312141        | Rum & sugar cane drinks           | 1101      |
+| 312141        | Rhum & sugar cane drinks          | 1101      |
 | 312142        | Distilled agave drinks            | 1101      |
 
 
+The way the correspondence has proceeded, it treats every entry equally. However, given that tequila, probably the economically most important drink in Mexico is made from agave, NAICS code 312142 should have stronger weight in this context. If we think of Cuba, code 312141 should probably be more important. This information, however, is not avaialable to us. Furthermore, note that the process of matching less than perfectly at only the lowest level of ISIC solves the issue here. All these NAICS codes starting with `3121` don't match to ISIC at four digits but do so perfectly to `110`. 
+
+In this case no problem has arisen and as small niches grow, they can be expected to obtain more codes (as clothing grows, groups are created for shirts, trousers, ...) so it can be assumed that a single category is not significantly larger than any other category in the economy, but it still should be kept in mind that the evaluation of the mapping is based on the number of categories, regardless of the economic relevance.
+
 ### Extension - What you may add if you would be available
 
-
-
-
-
-
-
-<br></br>
-![SCIAN Matching Output](/Support/Country%20Survey%20Details/MEX/ENOE/images/example_concordance_output.PNG)
-<br></br>
+A further extension, which may help in creating better matches is to use the text descriptions, provided in the NSO correspondence document, which define in more detail what the NAICS and ISIC codes cover. This is beyond our current capacity, though. If you, dear Reader, think you may be able to support this, please contact the team here on GitHub. We really would appreciate any help!
