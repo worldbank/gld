@@ -46,6 +46,23 @@ The second step is to use the `.dta` created in the first step in the harmonizat
 
 ### Generating the `R` code and resulting `.dta` file
 
+The mapping of NAICS to ISIC codes is performed by a user written `R` code. It reads from the relevant NSO correpsondence Excel file (NAICS 2002, 2007, 2013, and 2018) stored under `MEX_[YYYY]_ENOE\MEX_[YYYY]_ENOE_v01_M\Doc` and writes the comparison `.dta` file merged in the harmonization under `MEX_[YYYY]_ENOE\MEX_[YYYY]_ENOE_v01_M\Data\Stata`. The corresponding `R` itself is stored under `MEX_[YYYY]_ENOE\MEX_[YYYY]_ENOE_v01_M\Programs`. Note that the actual files are stored on a World Bank server - this repository only tracks code files.
+
+The first step in the process is to reduce the NSO correspondece six-digit system to the four digits covered in the ENOE. This creates duplicates as there are 17 codes between `111110` and `111199` for NAICS-02 that are reduced to `1111`.
+
+The second step is to compare the correspondence of NAICS four-digit codes to ISIC four-digit codes, and count the number of total cases and the number of matches to each code. The image below shows this process for the first codes:
+
+<br></br>
+![SCIAN Reducation Logic](/Support/Country%20Survey%20Details/MEX/ENOE/images/reduced_scian_matching.PNG)
+<br></br>
+
+The table shows  that of the 17 codes that start with `1111` all of them match to ISIC code `0111` - a perfect match. However, for the nine NAICS codes that start with `1112`, two of them map to ISIC code `0111` and seven of them map to `0112`. At this stage, only perfect matches are kept. All other matches (i.e., those like `1112`) are sent to the third step.
+
+The third step matches each four-digit NAICS code at the three-digit level to the three digit ISIC equivalent. This is exemplified in the snapshot below:
+
+<br></br>
+![SCIAN Reducation Logic](/Support/Country%20Survey%20Details/MEX/ENOE/images/scian_match_2_df_example.PNG)
+<br></br>
 ### Merging in the information
 
 
@@ -54,13 +71,12 @@ The second step is to use the `.dta` created in the first step in the harmonizat
 ### Caveat - What the mapping does and does not do
 
 ### Extension - What you may add if you would be available
-https://microdatalib.worldbank.org/api-documentation/catalog
 
 
 
-<br></br>
-![SCIAN Reducation Logic](/Support/Country%20Survey%20Details/MEX/ENOE/images/reduced_scian_matching.PNG)
-<br></br>
+
+
+
 
 <br></br>
 ![SCIAN Matching Output](/Support/Country%20Survey%20Details/MEX/ENOE/images/example_concordance_output.PNG)
