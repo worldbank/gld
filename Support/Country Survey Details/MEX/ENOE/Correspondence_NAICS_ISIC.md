@@ -66,12 +66,27 @@ The third step matches each four-digit NAICS code at the three-digit level to th
 
 At this level, all 17 NAICS codes starting with `1111` map to an ISIC code starting with `011` (i.e., `pct` value is 100). Now we have a perfect match for it as well. For NAICS codes starting with `1112` there is no such perfect match. 8 out of 9 map to ISIC codes starting with `011` but one maps to `0112`. Again we only keep perfect matches. Also, the next step may seem already clear, that is, to map the four-digit NAICS code to ISIC two-digit codes. It is clear from the above image that this will yield a perfect match for `1112` as both start with `01`.
 
-Hence, the fourth step comparres NAICS four-digit to ISIC two-digit. 
+Hence, the fourth step comparres NAICS four-digit to ISIC two-digit. The image below shows what was said, codes starting with `1112` can be mapped perfectly to ISIC `01`. 
 
 <br></br>
 ![SCIAN Reducation Logic](/Support/Country%20Survey%20Details/MEX/ENOE/images/scian_match_3_df_example.PNG)
 <br></br>
 
+The difference at this point is that two digits is the lowest classification we can do for ISIC. Hence we cannot just keep perfect matches. At this stage, the most common match is kept. Looking at the image above this means that for NAICS codes starting with `1114` these will be mapped to ISIC code `01`. The most difficult cases are when there are ties, as is the case for NAICS codes starting with `1133` or `2221`. In these cases one two digit ISIC code is chosen at random. A seed is set in the code to ensure that the randomisation always picks the same code.
+
+Recalling the tabulation shown at the top of this explainer, even though the ENOE information is always of length four, it is not always a four-digit code (e.g., the most common code is `1110`.) Since none of the four-digit codes end on `0`, this means we additionally need to create a classification for the NAICS three-digit codes. This is done in much the same ways as was done for the four digit codes.
+
+After reducing all six-digit codes to three-digit codes, the comparison is made to the ISIC three-digit codes. 
+
+<br></br>
+![SCIAN Reducation Logic](/Support/Country%20Survey%20Details/MEX/ENOE/images/scian_match_d_df_example.PNG)
+<br></br>
+
+Same
+
+<br></br>
+![SCIAN Reducation Logic](/Support/Country%20Survey%20Details/MEX/ENOE/images/scian_match_d2_df_example.PNG)
+<br></br>
 ### Merging in the information
 
 Previously, codes 
