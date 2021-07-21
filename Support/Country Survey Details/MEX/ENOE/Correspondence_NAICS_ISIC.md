@@ -76,18 +76,34 @@ The difference at this point is that two digits is the lowest classification we 
 
 Recalling the tabulation shown at the top of this explainer, even though the ENOE information is always of length four, it is not always a four-digit code (e.g., the most common code is `1110`.) Since none of the four-digit codes end on `0`, this means we additionally need to create a classification for the NAICS three-digit codes. This is done in much the same ways as was done for the four digit codes.
 
-After reducing all six-digit codes to three-digit codes, the comparison is made to the ISIC three-digit codes. 
+After reducing all six-digit codes to three-digit codes, the comparison is made to the ISIC three-digit codes.  The image below shows the comparison where we see that codes starting with `111` map mostly to `011` and `012` but not to one uniquely. As previously only perfect matches are kept.
 
 <br></br>
 ![SCIAN Reducation Logic](/Support/Country%20Survey%20Details/MEX/ENOE/images/scian_match_d_df_example.PNG)
 <br></br>
 
-Same
+Of the not perfect matches (as was the case for `111`) these are mapped to ISIC two-digit codes. As this is the smallest unit, as with NAICS four-digit codes now we map to the most common group. The image below shows this process:
 
 <br></br>
 ![SCIAN Reducation Logic](/Support/Country%20Survey%20Details/MEX/ENOE/images/scian_match_d2_df_example.PNG)
 <br></br>
+
+NAICS codes starting with `111` do not map perfectly but nearly all of the codes that start by it map to ISIC `01`. In this case, chosing the most common class is a good choice. For codes starting with `222`, however, this is more difficult. Here, again, the choice is made at random.
+
+The final stage is to put together all different matches into a single data frame and export it as a `.dta` file (into `MEX_[YYYY]_ENOE\MEX_[YYYY]_ENOE_v01_M\Data\Stata`) to be merged. The final `.dta` file looks like this:
+
+<br></br>
+![SCIAN Reducation Logic](/Support/Country%20Survey%20Details/MEX/ENOE/images/example_concordance_output.PNG)
+<br></br>
+
 ### Merging in the information
+
+The data is merged in the harmonization at the first stage of database assembly (see individual harmonization codes). In the case of the 2010 ENOE there are 166,283 individuals for which the survey has an industry NAICS code. The correspondence process is able to match to 160,698 of those (96.6%). The image below shows the quality of the matches made:
+
+<br></br>
+![SCIAN Reducation Logic](/Support/Country%20Survey%20Details/MEX/ENOE/images/matching_outcome.png)
+<br></br>
+
 
 Previously, codes 
 ## Caveats and extensions
