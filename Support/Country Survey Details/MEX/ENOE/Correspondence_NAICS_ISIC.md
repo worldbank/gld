@@ -53,7 +53,7 @@ The first step in the process is to reduce the NSO correspondece six-digit syste
 The second step is to compare the correspondence of NAICS four-digit codes to ISIC four-digit codes, and count the number of total cases and the number of matches to each code. The image below shows this process for the first codes:
 
 <br></br>
-![SCIAN Reducation Logic](/Support/Country%20Survey%20Details/MEX/ENOE/images/reduced_scian_matching.PNG)
+![SCIAN Reducation Logic](/Support/Country%20Survey%20Details/MEX/ENOE/images/scian_07_2010_match_1.PNG)
 <br></br>
 
 The table shows  that of the 17 codes that start with `1111` all of them match to ISIC code `0111` - a perfect match. However, for the nine NAICS codes that start with `1112`, two of them map to ISIC code `0111` and seven of them map to `0112`. At this stage, only perfect matches are kept. All other matches (i.e., those like `1112`) are sent to the third step.
@@ -65,7 +65,7 @@ The third step matches each four-digit NAICS code at the three-digit level to th
 <br></br>
 ### Merging in the information
 
-
+Previously, codes 
 ## Caveats and extensions
 
 ### Caveat - What the mapping does and does not do
