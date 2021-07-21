@@ -57,8 +57,8 @@ set mem 800m
 
 *----------1.2: Set directories------------------------------*
 
-local path_in "C:\Users\wb582018\OneDrive - WBG\Surveys\MEX\MEX_2005_LFS\MEX_2005_LFS_v01_M\Data\Original"
-local path_output "C:\Users\wb582018\OneDrive - WBG\Surveys\MEX\MEX_2005_LFS\MEX_2005_LFS_v01_M_v01_A_GLD\Data\Harmonized"
+local path_in "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_LFS\MEX_2005_LFS_v01_M\Data\Stata"
+local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_LFS\MEX_2005_LFS_v01_M_v01_A_GLD\Data\Harmonized"
 
 *----------1.3: Database assembly------------------------------*
 
@@ -67,9 +67,7 @@ local path_output "C:\Users\wb582018\OneDrive - WBG\Surveys\MEX\MEX_2005_LFS\MEX
 	use "`path_in'\VIVT105.dta",clear
 	drop p1-p3
 	destring loc mun est ageb t_loc cd_a upm d_sem n_pro_viv ent con v_sel n_ent per, replace
-	local path_in "C:\Users\wb582018\OneDrive - WBG\Surveys\MEX\MEX_2005_LFS\MEX_2005_LFS_v01_M\Data\Original"
 	merge 1:m ent con v_sel using "`path_in'\HOGT105.dta", nogen
-	local path_in "C:\Users\wb582018\OneDrive - WBG\Surveys\MEX\MEX_2005_LFS\MEX_2005_LFS_v01_M\Data\Original"
 	merge 1:m ent con v_sel n_hog using "`path_in'\SDEMT105.dta"
 	drop if _merge==1
 	drop _merge
@@ -87,17 +85,14 @@ local path_output "C:\Users\wb582018\OneDrive - WBG\Surveys\MEX\MEX_2005_LFS\MEX
 
 *ISIC	
 ***first job
-	gen scian_1=p4a
-	tostring scian_1, replace
-	merge m:1 scian_1 using "C:\Users\wb582018\OneDrive - WBG\Documents\Industry Classification\SCIAN_02_ISIC_3.1\SCIAN_02_ISIC_3.1.dta", keep(master match)
-	rename scian_1 scian_11
-	drop _merge
+	rename scian scian_orig
+	tostring p4a, gen(scian)
+	merge m:1 scian using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_LFS\MEX_2005_LFS_v01_M\Data\Stata\SCIAN_02_ISIC_3.1.dta", keep(master match) nogen
+	rename scian scian_1
 ***second job
-	gen scian_1=p7c
-	tostring scian_1, replace
-	merge m:1 scian_1 using "C:\Users\wb582018\OneDrive - WBG\Documents\Industry Classification\SCIAN_02_ISIC_3.1\SCIAN_02_ISIC_3.1.dta", keep(master match)
-	rename scian_1 scian_2
-	drop _merge	
+	tostring p7c, gen(scian)
+	merge m:1 scian using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_LFS\MEX_2005_LFS_v01_M\Data\Stata\SCIAN_02_ISIC_3.1.dta", keep(master match) nogen
+	rename scian scian_2
 	
 /*%%=============================================================================================
 	2: Survey & ID
@@ -790,7 +785,7 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_>
-	gen industrycat_isic =scian_11
+	gen industrycat_isic =scian_1
 	destring industrycat_isic, replace
 	*tostring industrycat_isic, replace
 	/*gen indus1=floor(p4a/100)
