@@ -57,8 +57,8 @@ set mem 800m
 
 *----------1.2: Set directories------------------------------*
 
-local path_in "C:\Users\wb582018\OneDrive - WBG\Surveys\MEX\MEX_2009_LFS\MEX_2009_LFS_v01_M\Data\Original"
-local path_output "C:\Users\wb582018\OneDrive - WBG\Surveys\MEX\MEX_2009_LFS\MEX_2009_LFS_v01_M_v01_A_GLD\Data\Harmonized"
+local path_in "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2009_LFS\MEX_2009_LFS_v01_M\Data\Stata"
+local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2009_LFS\MEX_2009_LFS_v01_M_v01_A_GLD\Data\Harmonized"
 
 *----------1.3: Database assembly------------------------------*
 
@@ -67,9 +67,7 @@ local path_output "C:\Users\wb582018\OneDrive - WBG\Surveys\MEX\MEX_2009_LFS\MEX
 	use "`path_in'\VIVT109.dta",clear
 	drop p1-p3
 	destring loc mun est ageb t_loc cd_a upm d_sem n_pro_viv ent con v_sel n_ent per, replace
-	local path_in "C:\Users\wb582018\OneDrive - WBG\Surveys\MEX\MEX_2009_LFS\MEX_2009_LFS_v01_M\Data\Original"
 	merge 1:m ent con v_sel using "`path_in'\HOGT109.dta", nogen
-	local path_in "C:\Users\wb582018\OneDrive - WBG\Surveys\MEX\MEX_2009_LFS\MEX_2009_LFS_v01_M\Data\Original"
 	merge 1:m ent con v_sel n_hog using "`path_in'\SDEMT109.dta"
 	drop if _merge==1
 	drop _merge
@@ -84,6 +82,17 @@ local path_output "C:\Users\wb582018\OneDrive - WBG\Surveys\MEX\MEX_2009_LFS\MEX
 	tab d_mes
 	replace d_mes=. if d_mes == 4 | d_mes == 5 | d_mes == 12
 	tab d_mes, missing
+
+*ISIC	
+***first job
+	rename scian scian_orig
+	tostring p4a, gen(scian)
+	merge m:1 scian using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2009_LFS\MEX_2009_LFS_v01_M\Data\Stata\SCIAN_07_ISIC_4.dta", keep(master match) nogen
+	rename scian scian_1
+***second job
+	tostring p7c, gen(scian)
+	merge m:1 scian using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2009_LFS\MEX_2009_LFS_v01_M\Data\Stata\SCIAN_07_ISIC_4.dta", keep(master match) nogen
+	rename scian scian_2
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -778,7 +787,9 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_>
-	gen industrycat_isic = .
+	gen industrycat_isic =scian_1
+	destring industrycat_isic, replace
+	/*gen industrycat_isic = .
 	tostring industrycat_isic, replace
 	gen indus1=floor(p4a/100)
 	replace industrycat_isic="A" if indus1==11
@@ -805,7 +816,8 @@ foreach v of local ed_var {
 	encode industrycat_isic, gen (industry_i)
 	replace industry_i=. if lstatus!=1
 	drop industrycat_isic indus1
-	rename industry_i industrycat_isic
+	rename industry_i industrycat_isic*/
+	replace industrycat_isic=. if lstatus!=1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
@@ -1065,7 +1077,9 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 
 
 *<_industrycat_isic_2_>
-	gen industrycat_isic_2 = .
+	gen industrycat_isic_2 = scian_2
+	destring industrycat_isic_2, replace
+	/*gen industrycat_isic_2 = .
 	tostring industrycat_isic_2, replace
 	gen indus1=floor(p7c/100)
 	replace industrycat_isic_2="A" if indus1==11
@@ -1092,7 +1106,8 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 	encode industrycat_isic_2, gen (industry_i)
 	replace industry_i=. if lstatus!=1
 	drop industrycat_isic_2 indus1
-	rename industry_i industrycat_isic_2
+	rename industry_i industrycat_isic_2*/
+	replace industrycat_isic_2=. if lstatus!=1
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
