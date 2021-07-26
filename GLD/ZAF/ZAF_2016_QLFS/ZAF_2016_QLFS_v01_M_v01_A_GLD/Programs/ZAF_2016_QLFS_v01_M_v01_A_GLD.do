@@ -87,7 +87,7 @@ local output "`id_data'"
 	rename Geo_type geo
 	la de lblgeo 1 "Urban" 2 "Traditional" 3 "Farms" 4 "Mining"
 	la values geo lblgeo
-	save "`gld'\Work\ZAF_2016_QLFS_v01_M_v01_A_I2D2_append_GEO.dta", replace
+	save "`gld'\Work\ZAF_2016_QLFS_v01_M_v01_A_GLD_append_GEO.dta", replace
 	use "`input'\lmdsa-2016-1.0-stata11.dta", clear
 
 /*%%=============================================================================================
@@ -219,7 +219,7 @@ Code list:
 </_urban_>*/
 
 *<_urban_>	
-	merge m:m PERSONNO UQNO Qtr using "`gld'\Work\ZAF_2016_QLFS_v01_M_v01_A_I2D2_append_GEO.dta"
+	merge m:m PERSONNO UQNO Qtr using "`gld'\Work\ZAF_2016_QLFS_v01_M_v01_A_GLD_append_GEO.dta"
 	drop _merge
 	gen byte urban=geo
 	recode urban 1=1 2/4=0
@@ -375,9 +375,9 @@ Subnational ID at |
 *<_relationharm_>
 	gen byte relationharm=1 if PERSONNO==1
 	bys hhid: egen hh=sum(relationharm==1)
-	bys hhid: egen maxage=max(Q14)
+	bys hhid: egen maxage=max(Q14AGE)
 	replace maxage=. if maxage<18
-	replace relationharm=1 if hh==0 & Q14==maxage
+	replace relationharm=1 if hh==0 & Q14AGE==maxage
 	bys hhid: egen hh2=sum(relationharm==1)
 	drop hh
 	preserve
@@ -389,7 +389,7 @@ Subnational ID at |
 	restore
 	merge m:1 pid hhid using `head_collapse' 
 	drop _merge
-	replace relationharm=. if hh3==2 & Q13==2 & relationharm==1
+	replace relationharm=. if hh3==2 & Q13GENDER==2 & relationharm==1
 	bys hhid: egen hh4=sum(relationharm==1)
 	preserve
 	collapse (max) relationharm, by(pid hhid hh4)
@@ -398,7 +398,7 @@ Subnational ID at |
 	restore
 	merge m:1 pid hhid using `head_collapse'
 	drop _merge
-	bys hhid: egen male_present=max(Q13)
+	bys hhid: egen male_present=max(Q13GENDER)
 	replace male_present=0 if male_present==2
 	replace relationharm=1 if hh5==0 & maxage>=18 & maxage<. & male_present==0
 	preserve
@@ -566,7 +566,9 @@ Education module is only asked to those 0 and older.
 *</_ed_mod_age_>
 
 *<_school_>
-	gen byte school = .
+	gen byte school = Q19ATTE
+	recode school 2=0
+	replace school=. if age<ed_mod_age & age!=.
 	label var school "Attending school"
 	la de lblschool 0 "No" 1 "Yes"
 	label values school  lblschool
@@ -1087,8 +1089,8 @@ The main job was decided based on time spent.
 
 
 *<_wage_no_compen_2_>
-	gen double wage_no_compen_year_2=.
-	label var wage_no_compen_year_2 "Last wage payment secondary job 7 day recall"
+	gen double wage_no_compen_2=.
+	label var wage_no_compen_2 "Last wage payment secondary job 7 day recall"
 *</_wage_no_compen_2_>
 
 

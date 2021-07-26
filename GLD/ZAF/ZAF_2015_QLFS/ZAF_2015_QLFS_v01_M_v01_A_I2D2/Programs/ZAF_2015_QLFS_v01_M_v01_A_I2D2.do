@@ -271,9 +271,9 @@ Subnational ID at |
 
 	gen byte head=1 if PERSONNO==1
 	bys idh: egen hh=sum(head==1)
-	bys idh: egen maxage=max(Q14)
+	bys idh: egen maxage=max(Q14AGE)
 	replace maxage=. if maxage<18
-	replace head=1 if hh==0 & Q14==maxage
+	replace head=1 if hh==0 & Q14AGE==maxage
 	bys idh: egen hh2=sum(head==1)
 	drop hh
 	preserve
@@ -285,7 +285,7 @@ Subnational ID at |
 	restore
 	merge m:1 idh idp using `head_collapse' 
 	drop _merge
-	replace head=. if hh3==2 & Q13==2 & head==1
+	replace head=. if hh3==2 & Q13GENDER==2 & head==1
 	bys idh: egen hh4=sum(head==1)
 	preserve
 	collapse (max) head, by(idp idh hh4)
@@ -294,7 +294,7 @@ Subnational ID at |
 	restore
 	merge m:1 idh idp using `head_collapse'
 	drop _merge
-	bys idh: egen male_present=max(Q13)
+	bys idh: egen male_present=max(Q13GENDER)
 	replace male_present=0 if male_present==2
 	replace head=1 if hh5==0 & maxage>=18 & maxage<. & male_present==0
 	preserve
