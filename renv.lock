@@ -95,10 +95,10 @@
     },
     "broom": {
       "Package": "broom",
-      "Version": "0.7.7",
+      "Version": "0.7.8",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "2368dde18d8ef1ca933e7e2eea3ece57"
+      "Hash": "c6dddf90a1e38665c211932696ddbfde"
     },
     "callr": {
       "Package": "callr",
