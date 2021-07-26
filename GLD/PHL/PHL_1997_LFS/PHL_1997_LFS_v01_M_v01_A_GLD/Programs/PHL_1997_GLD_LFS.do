@@ -106,6 +106,13 @@ set mem 800m
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
+*** append the dataset using iecodebook and the i2d2 template
+	iecodebook append ///
+		`"`round1'"' `"`round2'"' `"`round3'"' `"`round4'"' /// survey files
+		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template-IN.xlsx"' /// previously edited harmonization file
+		, clear surveys(JAN1997 APR1997 JUL1997 OCT1997) generate(round) // survey names
+	}
+
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -114,19 +121,19 @@ set mem 800m
 {
 
 *<_countrycode_>
-	gen str4 countrycode = ""
+	gen str4 countrycode = "PHL"
 	label var countrycode "Country code"
 *</_countrycode_>
 
 
 *<_survname_>
-	gen survname = ""
+	gen survname = "LFS"
 	label var survname "Survey acronym"
 *</_survname_>
 
 
 *<_survey_>
-	gen survey = ""
+	gen survey = "LFS"
 	label var survey "Survey type"
 *</_survey_>
 
@@ -144,13 +151,13 @@ set mem 800m
 
 
 *<_vermast_>
-	gen vermast = ""
+	gen vermast = "v01"
 	label var vermast "Version of master data"
 *</_vermast_>
 
 
 *<_veralt_>
-	gen veralt = ""
+	gen veralt = "v01"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
@@ -183,14 +190,99 @@ set mem 800m
 	60 psu coded 1 through 60, codes should be 01, 02, ..., 60. If there are 160 it should be 001,
 	002, ..., 160.
 
+	Since individual Household ID variables were not always provided for the Philippines, yet the household
+	line number variables were provided, it was possible to approximate the household groupings by other variables.
+	However, this process was not perfectly clean, so checks for duplicates were needed. Please refer to the
+	"Household_IDs.md" in Guides and Documentation for additional explanation. The two variables, hhid and pid
+	will be produced in conjunction, the labelled in the html brackets.
+
 </_hhid_note> */
-	egen hhid = concat( [Elements] )
+
+	* in 97, it appears that regn and hcn uniquely identify the HH
+
+	loc idhvars 	 regn prov  hcn						// store idh vars in local
+
+	ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
+	loc numlist 	= r(varlist)						// store numeric vars in local
+	loc stringlist 	: list idhvars - numlist			// non-numeric vars in stringlist
+
+	* starting locals
+	loc len = 6											// declare the length of each element in digits
+	loc idh_els ""										// start with empty local list
+
+	* make each numeric var string, including leading zeros
+	foreach var of local numlist {
+		tostring `var'	///								// make the numeric vars strings
+			, generate(idh_`var') ///					// gen a variable with this prefix
+			force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
+
+		loc idh_els 	`idh_els' idh_`var'				// add each variable to the local list
+
+	}
+
+	* make each string variable numeric (as it should be), then string again with correct format
+	foreach var of local stringlist {
+		destring `var' /// 								// destring variable, make numeric version
+			, gen(num_`var') ///						//
+			force 										// force obs to num that are non numeric, ie to missing
+
+		tostring num_`var'	///							// make the numeric vars strings
+			, generate(idh_`var') ///					// gen a variable with this prefix
+			force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
+
+		loc idh_els 	`idh_els' idh_`var'				// add each variable to the local list
+
+	}
+
+		* add the round variable
+		tostring round	///							// make the numeric vars strings
+			, generate(idh_round) ///					// gen a variable with this prefix
+			force format(`"%01.0f"')				// ...and the specified number of digits in local
+
+		loc idh_els 	`idh_els' idh_round				// add each variable to the local list
+
+
+
+	* concatenate all elements to form idh: hosehold id
+	egen idh=concat( `idh_els' )						// concatenate vars we just made. code drops vars @ end
+
 	label var hhid "Household ID"
 *</_hhid_>
 
 
 *<_pid_>
-	gen  pid = .
+** INDIVIDUAL IDENTIFICATION NUMBER
+	* in 97, region, hh control and line number variables uniquely identify observations. use line number as pid
+
+	* repeat same process from above, but only with n_fam.
+	* 	note, assuming that the only necessary individaul identifier is family member, which is numeric
+	*	so, not following processing for sorting numeric/non-numeric variables.
+
+	loc idpvars 	lno 								// store relevant idp vars in local
+	ds `idpvars',  	has(type numeric)					// filter out numeric variables in local
+	loc rlist 		= r(varlist)						// store numeric vars in local
+
+	* make new values with desired length of each variable
+	loc len = 2											// declare the length of each element in digits
+	loc idp_els ""										// start with empty local list
+
+	foreach var of local idpvars {
+		tostring `var'	///								// make numeric variables strings
+			, generate(idp_`var') ///					// generate a variable with this prefix
+			force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
+
+		loc idp_els 	`idp_els' idp_`var'				// add each variable to the local list
+
+	}
+
+	* concatenate to form idp: individual id
+	egen idp=concat( `idp_els' )						// concatenate vars we just made. code drops vars @ end
+
+	sort idh idp
+
+** ID CHECKS
+	isid idh idp 										// household and individual id uniquely identify
+
 	label var pid "Individual ID"
 *</_pid_>
 
