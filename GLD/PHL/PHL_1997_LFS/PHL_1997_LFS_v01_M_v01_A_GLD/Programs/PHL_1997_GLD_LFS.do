@@ -288,7 +288,7 @@ set mem 800m
 
 
 *<_weight_>
-	gen weight = .
+	gen weight = rfadj/(`n_round')
 	label var weight "Household sampling weight"
 *</_weight_>
 
@@ -313,7 +313,13 @@ set mem 800m
 
 *<_wave_>
 	gen wave = .
-	label var wave = "Survey wave"
+
+	replace 		wave = 	"Q1"	if round == 1
+	replace 		wave = 	"Q2"	if round == 2
+	replace 		wave = 	"Q3"	if round == 3
+	replace 		wave = 	"Q4"	if round == 4
+
+	label var 		wave = "Survey wave"
 *</_wave_>
 
 }
@@ -325,10 +331,12 @@ set mem 800m
 {
 
 *<_urban_>
-	gen byte urban
-	label var urban "Location is urban"
-	la de lblurban 1 "Urban" 0 "Rural"
-	label values urban lblurban
+	gen byte 		urban = .
+	replace 		urban = urb
+	recode 			urban (2 0) 		// change rural=2 to rural=0
+	label var 		urban "Location is urban"
+	la de 			lblurban 1 "Urban" 0 "Rural"
+	label values 	urban lblurban
 *</_urban_>
 
 
@@ -338,31 +346,48 @@ set mem 800m
 	Labels are to be defined as # - Name like 1 "1 - Alaska" 2 "2 - Arkansas".
 
 </_subnatid1> */
-	gen byte subnatid1 = .
-	label de lblsubnatid1 1 "1 - Name"
-	label values subnatid1 lblsubnatid1
-	label var subnatid1 "Subnational ID at First Administrative Level"
+	gen byte 		subnatid1 = regn
+	label de 		lblsubnatid1 	///
+					 1   "1 - Ilocos"			///
+					 2	 "2 - Cagayan Valley"	///
+					 3   "3 - Central Luzon"	///
+					 4	 "4 - Southern Tagalog"	///
+					 5   "5 - Bicol"			///
+					 6	 "6 - Western Visayas"	///
+					 7   "7 - Central Visayas"	///
+					 8	 "8 - Eastern Visayas"	///
+					 9   "9 - Western Mindanao"	///
+					 10  "10 - Northern Mindanao"	///
+					 11  "11 - Southern Mindanao"	///
+					 12  "12 - Central Mindanao"		///
+					 13  "13 - National Capital Region"				///
+					 14  "14 - Cordillera Administrative Region"		///
+					 15  "15 - Autonomous Region of Muslim Mindanao"	///
+					 16  "16 - Caraga"
+
+	label values 	subnatid1 lblsubnatid1
+	label var 		subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 
 
 *<_subnatid2_>
-	gen byte subnatid2 = .
-	label de lblsubnatid2 1 "1 - Name"
-	label values subnatid2 lblsubnatid2
-	label var subnatid2 "Subnational ID at Second Administrative Level"
+	gen byte 		subnatid2 = prov
+	*label de 		lblsubnatid2
+	*label values 	subnatid2 lblsubnatid2
+	label var 		subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
 
 
 *<_subnatid3_>
 	gen byte subnatid3 = .
-	label de lblsubnatid3 1 "1 - Name"
-	label values subnatid3 lblsubnatid3
+	*label de lblsubnatid3 1 "1 - Name"
+	*label values subnatid3 lblsubnatid3
 	label var subnatid3 "Subnational ID at Third Administrative Level"
 *</_subnatid3_>
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = .
+	gen subnatidsurvey = "subnatid1"
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
