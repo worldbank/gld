@@ -15,6 +15,9 @@ path_in <- "C:/Users/wb529026/OneDrive - WBG/Documents/Country Work/MEX/Occupati
 path_out <- NA # Leave NA if same as path in
 nso_excel_file <- "sinco_tablas_comparativas.xlsx"
 
+sinco_version <- "SINCO_11"
+isco_version <- "ISCO_08"
+
 ## From here on the code should run on its own, no further input needed.
 
 #=========================================================================#
@@ -29,9 +32,6 @@ for (package in packages){
     library(package, character.only = TRUE)
   }
 }
-
-sinco_version <- "SINCO_11"
-isco_version <- "ISCO_08"
 
 if (is.na(path_out)){
   path_out <- paste0(path_in, "/", sinco_version, "_", isco_version, ".dta")  
