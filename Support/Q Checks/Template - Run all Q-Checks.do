@@ -27,22 +27,8 @@ set varabbrev off, permanently
 
 *----------0.1: Set necessary paths
 
-local 	drive 	`"Z"'		
-local 	cty 	`"ZAF"' 	
-local 	usr		`"573465_JT"' 
-local 	surv_yr `"2008"'	
-local 	year 	"`drive':\GLD-Harmonization\\`usr'\\`cty'\\`cty'_`surv_yr'_LFS" 
-local 	main	"`year'\\`cty'_`surv_yr'_LFS_v01_M"
-local 	stata	"`main'\data\stata"
-local 	gld 	"`year'\\`cty'_`surv_yr'_LFS_v01_M_v01_A_GLD"
-local 	code 	"`gld'\Programs"
-local 	id_data "`gld'\Data\Harmonized"
-	
-local input "`stata'"
-local output "`id_data'"
-
 * Path to harmonized .dta file
-global path_to_harmonization "Z:\GLD-Harmonization\\573465_JT\\ZAF\\ZAF_2008_LFS\\ZAF_2008_LFS_v01_M_v01_A_GLD\Data\Harmonized"
+global path_to_harmonization "[YOUR PATHFILE TO HARMONIZED DATA FILE]"
 
 * Path to other harmonized files for dynamic comparison
 * Leave as `" "' to skip this (no others or to be done later)
@@ -51,24 +37,22 @@ global path_to_harmonization "Z:\GLD-Harmonization\\573465_JT\\ZAF\\ZAF_2008_LFS
 global path_to_other_harmonization `" "' 
 
 * Survey ID as per CCC_YYYY_[Survey-Name]_v##_M_v##_A_GLD convention
-global survey_id "`cty'_`surv_yr'_QLFS_V01_M_V01_A_GLD"
+global survey_id "CCC_YYYY_Survey-Name_V0X_M_V0Z_A_GLD"
 
 * Path to folder to hold output
-global path_to_output_folder "`code'\Work"
+global path_to_output_folder "[YOUR PATHFILE TO FOLDER THAT SHOULD HOLD Q-CHECK OUTPUT]"
 
 * Path to folder containing helper files
 * Should be "[*]:\Support and Documentation\Q Checks\Helper Programs"
 * where * is the letter of your mapping to GLD network
-global path_to_helpers "[Z]:\Suport and Documentation\Q Checks\Helper Programs]"
+global path_to_helpers "[YOUR PATH TO FOLDER HOLDING HELPER PROGRAMS]"
 
 
 /*========================    NOTE    ==================================
-
 From here on, the program should run alone, no more input is needed from
 you. If some necessary input is not present, the program should warn you.
 If it breaks down, please inform an admin (currently : mgronert@worldbank.org)
 to look into the error and amend the bug(s).
-
 ========================================================================*/
 
 /*==================================================
@@ -162,6 +146,7 @@ foreach filename of local output_png_files {
 	putexcel A1 = picture(`filename_full_path')
 
 }
+
 
 
 
