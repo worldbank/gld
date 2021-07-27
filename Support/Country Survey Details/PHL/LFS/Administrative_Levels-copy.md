@@ -1,14 +1,21 @@
----
-title: "Geographic Administrative Levels"
-output: 
-  github_document:
-    html_preview: false
-    toc: true
-    toc_depth: 3
-editor_options: 
-  markdown: 
-    wrap: 72
----
+Geographic Administrative Levels
+================
+
+-   [Region](#region)
+    -   [Small changes in the values for Region IV-A and
+        -B](#small-changes-in-the-values-for-region-iv-a-and--b)
+    -   [Differences between factor and
+        numeric](#differences-between-factor-and-numeric)
+    -   [Descriptive Checks and Evidence for
+        Recoding](#descriptive-checks-and-evidence-for-recoding)
+    -   [The need to recode](#the-need-to-recode)
+    -   [Responsible and Reproducible
+        Recoding](#responsible-and-reproducible-recoding)
+    -   [Recoding 2016 - 2020](#recoding-2016---2020)
+    -   [Coding 2003](#coding-2003)
+-   [Final Region Labels](#final-region-labels)
+-   [Province](#province)
+    -   [Province encoding methodology](#province-encoding-methodology)
 
 This document describes how first and second level adminsitrative
 divisions in the Philippines are coded over time in the LFS survey in
@@ -17,8 +24,8 @@ the I2D2 context.
 ## Region
 
 The Philippines has 16 regions as the first level administrative
-division in 1997, according to the PSA's [Integrated Survey of
-Household's
+division in 1997, according to the PSA’s [Integrated Survey of
+Household’s
 Bulletin](https://psa.gov.ph/sites/default/files/ISHB_series%20no.%2089_Labor%20Force_January%201997.pdf).
 This classification schema also appears in the labelled data through the
 April round of 2003. Thereafter, in the July round of 2003, Region IV is
@@ -60,7 +67,7 @@ July 2006 numeric one. However, the factor and numeric values for the
 year 2016 differ. What is more, the conflicting values for `41`/`42` and
 `4`/`17` in theory refer to the same region that was made into two
 separate regions in 2003 (see above). However, the numeric values will
-have to be inferred based on clues such as previous quarter's codes and
+have to be inferred based on clues such as previous quarter’s codes and
 distributions of counts.
 
 | Value | Jan (1) | Apr (2) | Jul (3) | Oct (4) |
@@ -97,7 +104,7 @@ numeric-factor 2006, 2016, 2017
 
 ### The need to recode
 
-The I2D2 doesn't require region recoding for variable construction, but
+The I2D2 doesn’t require region recoding for variable construction, but
 in most cases the survey sampling is stratified at the region level,
 which has implications for other variables such as weights, etc.
 Furthermore, we do have a responsibility to ensure cross-round
@@ -111,14 +118,14 @@ rounds.
 All recoding will be done openly and in-script, which is available in
 this repository. Furthermore, given the complexities outlined, the
 original region variable provided by the PSA will be left in with the
-survey data -- labelled or not -- as it arrived to us.
+survey data – labelled or not – as it arrived to us.
 
 ### Recoding 2016 - 2020
 
 Since the [July 2003 PSA ISH
 document](https://psa.gov.ph/sites/default/files/ISHB_series%20no.%20117_Labor%20Force_July%202003%20.pdf)
 describes the Region schema as 17 Regions with an additional region
-(being produced by Region IV's split into two), I will ensure that all
+(being produced by Region IV’s split into two), I will ensure that all
 years after 2003 follow this labeling schema. This means that the
 recoding schedule for 2016 will be replicated for years 2017 and onward:
 all factor **and** numeric values that refer to `4` or `Region IV-A`
@@ -132,14 +139,14 @@ January+April and July+October as described above. However, the
 [Janurary and April
 months](https://psa.gov.ph/node/33231/33231/33231/33231/33231?combine=2003)
 of the ISH list the *new* post-July/labeling scheme as the scheme they
-utilized. I will simply code the data to match the "post" July 2003
+utilized. I will simply code the data to match the “post” July 2003
 scheme so that it matches the published data by the PSA.
 
 Two key decisions were made in regards to harmonizing the 2003 region
 data: the first was to recode the first two rounds, January and April,
 to match the values and labels used in the final two rounds and in the
 documentation. In practicality, we did this by recoding the region based
-on the underlying province -- since all provinces exist underneath a
+on the underlying province – since all provinces exist underneath a
 region. However, this recoding based on province has us arrive at a
 second key decision.
 
@@ -164,7 +171,7 @@ and
 says it belongs: `Central Luzon`.
 
 After these two recoding decisions were completed in the code, all four
-rounds share the same values and value labels -- the same as those found
+rounds share the same values and value labels – the same as those found
 in 2004 and subsequent years.
 
 ## Final Region Labels
@@ -201,7 +208,7 @@ The 2nd Administrative Level is Province. The value labels appear to be
 stable across rounds and years, with no mention of changes in the 2003
 adminstrative revisions above. Furthermore, the some rounds are numeric
 while others are labeled. Starting in July 2003, the province variables
-are only encoded as numeric -- some years afterwards have miscellaneous
+are only encoded as numeric – some years afterwards have miscellaneous
 rounds also encoded with a secondary variable `_name` that stores the
 province name in string format. From the label data that exists, the
 labeled variabled are stable across rounds within the same year, but
