@@ -1,4 +1,10 @@
-
+---
+title: "Geographic Administrative Levels"
+editor_options:
+    markdown:
+      mode: gfm
+      wrap: 72
+---
 
 This document describes how first and second level adminsitrative
 divisions in the Philippines are coded over time in the LFS survey in
