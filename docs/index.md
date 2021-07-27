@@ -8,9 +8,7 @@ permalink: /
 
 # Harmonizing labor data globally
 
-The Global Labor Database (GLD) aims to create an open-source harmonization project for all labor force survey. 
-
-Here you may find a description of the project as well as all information to help you start harmonizing yourself - we would love to have you join!
+The Global Labor Database (GLD) aims to create an open-source harmonization project for all labor force survey. Here you may find a description of the project as well as all information to help you start harmonizing yourself - we would love to have you join!2
 
 
 [View it on GitHub](https://github.com/worldbank/gld/tree/main){: .btn .fs-5 .mb-4 .mb-md-0 }
