@@ -11,10 +11,8 @@
 #=========================================================================#
 
 rm(list=ls())
-sinco_version <- "SINCO_11"
-isco_version <- "ISCO_8"
-
-path <- "C:/Users/wb582018/OneDrive - WBG/Documents/ISCO Classification"
+path_in <- "C:/Users/wb529026/OneDrive - WBG/Documents/Country Work/MEX/Occupation Classification"
+path_out <- NA # Leave NA if same as path in
 nso_excel_file <- "sinco_tablas_comparativas.xlsx"
 
 ## From here on the code should run on its own, no further input needed.
@@ -32,31 +30,38 @@ for (package in packages){
   }
 }
 
-path_in <- paste0(path, "/", nso_excel_file)
-path_out <- paste0(path, "/", sinco_version, "_", isco_version, ".dta")
+sinco_version <- "SINCO_11"
+isco_version <- "ISCO_08"
 
-df <- read_excel(path = path_in, sheet = 1, skip = 2)
+if (is.na(path_out)){
+  path_out <- paste0(path_in, "/", sinco_version, "_", isco_version, ".dta")  
+} else {
+  path_out <- paste0(path_out, "/", sinco_version, "_", isco_version, ".dta")
+}
+path_in <- paste0(path_in, "/", nso_excel_file)
+
+
+df <- read_excel(path = path_in, sheet = 1, skip = 11, col_names = FALSE)
+
+# Drop when entire row is NA
+df <- df[!(rowSums(is.na(df)) == 4),]
+
+# Drop when SINCO is not four digit
+df <- df[!(df$...1 < 1000 & !is.na(df$...1)),]
+
+# Fill ISCO description down, Drop when SINCO has no correspondence with ISCO
+df <- df %>% fill(...4, .direction = "down") 
+df <- df[!(df$...4 %in% c("No tiene correspondencia", 
+                          "Nota: clasifica a los supervisores junto a los trabajadores que supervisa")),]
 
 # Drop columns we are not interest in, 
-df <- df[,c(3,5)]
+df <- df[,c(1,3)]
 names(df) <- c("SINCO", "ISCO")
 
-# Drop rows where ISCO is missing
-indx <- is.na(df$ISCO)
-df <- df[!indx,]
+# For rows where SINCO, ISCO is NA, this is because they have the last code listed previously, fill down
+df <- df %>% fill(SINCO, .direction = "down") %>% fill(ISCO, .direction = "down") 
 
-# Drop one row where SCIAN is XXXXX, drop 2 cases where ISIC is XXXX 
-#isic_txt <- grepl("[A-Za-z]", df$ISIC)
-#scian_txt <- grepl("[A-Za-z]", df$SCIAN)
-#df <- df[!(scian_txt | isic_txt) ,]
-
-# For rows where SINCO is NA, this is because they have the last code listed previously, fill down
-df <- df %>% fill(SINCO, .direction = "down")
-
-# Reduce SCIAN to four digits as this is the level we have in ENOE
-#df$SCIAN <- substr(df$SCIAN,1,4)
-
-# There are 396 distinct 4 digit codes
+# There are 430 distinct 4 digit codes
 #there is actually smth wrong here bc some 3 digits appear in the list...
 n_distinct(df$SINCO)
 
@@ -85,7 +90,7 @@ message(paste0("Step 2 has matched ", done, " codes, hence ", rest, " are left t
 
 # Reduce df to cases not yet matched
 df_2 <- df[!(df$SINCO %in% match_1$SINCO),]
-n_distinct(df_2$SCIAN)
+n_distinct(df_2$SINCO)
 
 # Reduce ISIC codes to three digits
 df_2$ISCO <- substr(df_2$ISCO,1,3)
@@ -125,9 +130,7 @@ match_3 <- df_3 %>%
   mutate(sum = sum(instance)) %>%
   ungroup() %>%
   mutate(pct = round((instance/sum)*100,1)) %>%
-  group_by(SINCO) %>%
-  slice_max(pct) %>%
-  sample_n(1)
+  filter(pct > 50)
 
 # Review
 done <- n_distinct(match_3$SINCO)
@@ -135,54 +138,42 @@ rest <- n_distinct(df$SINCO) - n_distinct(match_1$SINCO) - n_distinct(match_2$SI
 message(paste0("Step 4 has matched ", done, " codes, hence ", rest, " are left to match"))
 
 #=========================================================================#
-# Step 5 - Concordance straight from SINCO3 to ISCO2 ---------------------
-#=========================================================================#
-
-# Even if we may map SINCO4 to ISCO (eg. map codes 1111, 1112, and 1113 to something)
-# ENOE contains codes 1110 that are not in the mapping by the stats institute. Hence make it.
-
-#direct <- df %>% mutate(SCIAN = substr(SCIAN,1,3),
-#                        ISIC = substr(ISIC,1,3))
-
-#match_d <- direct %>% 
-#  count(SCIAN, ISIC) %>% 
- # rename(instance = n) %>%
-#  group_by(SCIAN) %>%
-#  mutate(sum = sum(instance)) %>%
-#  ungroup() %>%
-#  mutate(pct = round((instance/sum)*100,1)) %>%
-#  filter(pct == 100)
-
-#=========================================================================#
-# Step 6 - Concordance straight from SCIAN3 to ISIC2 ---------------------
+# Step 5 - Concordance SINCO4 to ISCO1 ------------------------------------
 #=========================================================================#
 
 # Reduce df to cases not yet matched
-#direct_2 <- direct[!(direct$SINCO %in% match_d$SINCO),]
-#n_distinct(direct_2$SINCO)
+df_4 <- df_3[!(df_3$SINCO %in% match_3$SINCO),]
+n_distinct(df_4$SINCO)
 
-# Reduce ISCO code to two digits
-#direct_2$ISCO <- substr(direct_2$ISCO,1,2)
+# Reduce ISIC code to two digits
+df_4$ISCO <- substr(df_4$ISCO,1,1)
 
-#match_d2 <- direct_2 %>% 
-#  count(SINCO, ISCO) %>% 
-#  rename(instance = n) %>%
-# group_by(SINCO) %>%
-# mutate(sum = sum(instance)) %>%
-#  ungroup() %>%
-#  mutate(pct = round((instance/sum)*100,1)) %>%
-#  group_by(SINCO) %>%
-#  slice_max(pct) %>%
-#  sample_n(1)
+# Match by maximum
+set.seed(61035)
+match_4 <- df_4 %>% 
+  count(SINCO, ISCO) %>% 
+  rename(instance = n) %>%
+  group_by(SINCO) %>%
+  mutate(sum = sum(instance)) %>%
+  ungroup() %>%
+  mutate(pct = round((instance/sum)*100,1)) %>%
+  group_by(SINCO) %>%
+  slice_max(pct) %>%
+  sample_n(1)
+
+# Review
+done <- n_distinct(match_4$SINCO)
+rest <- n_distinct(df$SINCO) - n_distinct(match_1$SINCO) - n_distinct(match_2$SINCO) - n_distinct(match_3$SINCO) - n_distinct(match_4$SINCO)
+message(paste0("Step 5 has matched ", done, " codes, hence ", rest, " are left to match"))
 
 #=========================================================================#
-# Step 7 - Unite all matches ----------------------------------------------
+# Step 6 - Unite all matches ----------------------------------------------
 #=========================================================================#
-#match_d,match_d2
-concord <- bind_rows(match_1, match_2, match_3) %>%
+
+concord <- bind_rows(match_1, match_2, match_3, match_4) %>%
   select(sinco = SINCO, isco = ISCO, match = pct) %>%
   mutate(sinco = str_pad(sinco, 4, pad = "0", side = "right"),
          isco  = str_pad(isco, 4, pad = "0", side = "right"))
 
 
-write_dta(concord, path_out)
+write_dta(concord, path_out) 
