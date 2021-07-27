@@ -1,4 +1,4 @@
-
+relationharm
 /*%%=============================================================================================
 	0: GLD Harmonization Preamble
 ==============================================================================================%%*/
@@ -139,7 +139,7 @@ set mem 800m
 
 
 *<_icls_v_>
-	gen icls_v = "ICLS-[##]"
+	gen icls_v = "ICLS-13"
 	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
 
@@ -333,7 +333,7 @@ set mem 800m
 *<_urban_>
 	gen byte 		urban = .
 	replace 		urban = urb
-	recode 			urban (2 0) 		// change rural=2 to rural=0
+	recode 			urban (2 = 0) 		// change rural=2 to rural=0
 	label var 		urban "Location is urban"
 	la de 			lblurban 1 "Urban" 0 "Rural"
 	label values 	urban lblurban
@@ -372,8 +372,8 @@ set mem 800m
 
 *<_subnatid2_>
 	gen byte 		subnatid2 = prov
-	*label de 		lblsubnatid2
-	*label values 	subnatid2 lblsubnatid2
+	label de 		lblsubnatid2
+	label values 	subnatid2 lblsubnatid2
 	label var 		subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
 
@@ -441,44 +441,77 @@ set mem 800m
 {
 
 *<_hsize_>
-	gen hsize = .
-	label var hsize "Household size"
+	sort idh
+	by idh: 	egen hhsize= count(rel <= 7) // includes non-family members, not boarders or domestic workers.
+	label var 	hsize "Household size"
+
+	* check
+	mdesc 		hhsize
+	assert 		r(miss) == 0
+
 *</_hsize_>
 
 
 *<_age_>
-	gen age = .
-	label var age "Individual age"
+	gen 		age = age
+	replace 	age	= 98 	if age>=98 & age!=.
+	label var 	age "Individual age"
 *</_age_>
 
 
 *<_male_>
-	gen male = .
-	label var male "Sex - Ind is male"
-	la de lblmale 1 "Male" 0 "Female"
+	gen 		male = sex
+	recode 		male (2 = 0)						// female=2 recoded to female=0
+	label var 	male "Sex - Ind is male"
+	la de 		lblmale 	1 "Male" 0 "Female"
 	label values male lblmale
 *</_male_>
 
 
 *<_relationharm_>
-	gen relationharm = .
-	label var relationharm "Relationship to the head of household - Harmonized"
-	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
+	gen 		relationharm = .
+	replace 	relationharm = rel
+	recode 		relationharm (0 8 9=6) /// non-relative, boarder, domestic helper to "other and non-relative"
+							(6=4) 	/// "father/mother" to "parents"
+							(4 5 7=5) // "son/daugher-in-law", "grandson/granddaughter", "other relative" to "Other rel"
+
+	label var 	relationharm "Relationship to the head of household - Harmonized"
+	la de 		lblrelationharm  ///
+				1 "Head of household" ///
+				2 "Spouse" ///
+				3 "Children" ///
+				4 "Parents" ///
+				5 "Other relatives" ///
+				6 "Other and non-relatives"
 	label values relationharm  lblrelationharm
+
+	* other relationharm operations
+	gen 		jh=(relationharm==1)
+	bys idh: 	egen hh=sum(jh) // hh is the count of hh heads per family
+
+	/*Note: if number of Household Heads is >1, all relevant HH head info is set to missing.
+			In this case the only relevant variable is head*/
+	replace 	relationharm=. if hh>1
+
 *</_relationharm_>
 
 
 *<_relationcs_>
-	gen relationcs = .
+	gen relationcs = rel
 	label var relationcs "Relationship to the head of household - Country original"
 *</_relationcs_>
 
 
 *<_marital_>
-	gen byte marital = .
-	label var marital "Marital status"
+	gen byte 		marital = mstat
+	recode 			marital 	///
+					(1=2) 	///	"single" -> "never married"
+					(2=1) /// "married" -> "married"
+					(3=5)	/// "divorced/separated" -> "divorced/separated"
+					(5 6=.) // "unknown" and "annulled" -> missing
+	label var 		marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
-	label values marital lblmarital
+	label values 	marital lblmarital
 *</_marital_>
 
 
@@ -605,11 +638,11 @@ set mem 800m
 
 /* <_ed_mod_age_note>
 
-Education module is only asked to those XX and older.
+Education module is only asked to those 5 and older.
 
 </_ed_mod_age_note> */
 
-gen byte ed_mod_age = .
+gen byte ed_mod_age = `ed_mod_age'
 label var ed_mod_age "Education module application age"
 
 *</_ed_mod_age_>
@@ -637,19 +670,45 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat7_>
+	/*Please refer to the "Education_Levels.md" for a detailed discussion on
+	classificition of how each level is classified and why,
+	available in github repository. */
+
 	gen byte educat7 =.
+
+	gen byte edulevel7=.
+	replace edulevel7=1 if grade==0			// "No Grade Completed" -> "No education"
+	replace edulevel7=2 if grade==1 | grade==2 | grade==3 // "Grades 1-5" -> " Primary Incomplete"
+	replace edulevel7=3 if grade==4 	// "Elementary Graduate" -> "Primary Complete"
+	replace edulevel7=4 if grade==5		// "1st-3rd Year in High School" -> "Secondary Incomplete"
+	replace edulevel7=5 if grade==6		// "High school graduate" -> "Secondary Complete"
+	replace edulevel7=7 if grade==7 | ( grade>=40 & grade<=98) // "College Graduate" and "[x] Bachelors/Advanced Degree" -> "University"
+
 	label var educat7 "Level of education 1"
-	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
+	la de lbleducat7 	1 "No education" ///
+						2 "Primary incomplete" ///
+						3 "Primary complete" ///
+						4 "Secondary incomplete" ///
+						5 "Secondary complete" ///
+						6 "Higher than secondary but not university" ///
+						7 "University incomplete or complete"
 	label values educat7 lbleducat7
+	replace educat7=. if age < ed_mod_age // restrict universe to students at or above primary school age
+
 *</_educat7_>
 
 
 *<_educat5_>
 	gen byte educat5 = educat7
-	recode educat5 4=3 5=4 6 7=5
+	recode educat5 (4=3) (5=4) (6 7=5)
 	label var educat5 "Level of education 2"
-	la de lbleducat5 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
+	la de lbleducat5 	1 "No education" ///
+						2 "Primary incomplete"  ///
+						3 "Primary complete but secondary incomplete" ///
+						4 "Secondary complete" ///
+						5 "Some tertiary/post-secondary"
 	label values educat5 lbleducat5
+	replace educat5=. if age < ed_mod_age // restrict universe to students at or above primary school age
 *</_educat5_>
 
 
@@ -659,6 +718,7 @@ label var ed_mod_age "Education module application age"
 	label var educat4 "Level of education 3"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values educat4 lbleducat4
+	replace educat4=. if age < ed_mod_age // restrict universe to students at or above primary school age
 *</_educat4_>
 
 
