@@ -56,9 +56,8 @@ set more off
 set mem 800m
 
 *----------1.2: Set directories------------------------------*
-
-local path_in "C:\Users\wb582018\OneDrive - WBG\Surveys\MEX\MEX_2017_LFS\MEX_2017_LFS_v01_M\Data\Original"
-local path_output "C:\Users\wb582018\OneDrive - WBG\Surveys\MEX\MEX_2017_LFS\MEX_2017_LFS_v01_M_v01_A_GLD\Data\Harmonized"
+local path_in "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2017_LFS\MEX_2017_LFS_v01_M\Data\Stata"
+local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2017_LFS\MEX_2017_LFS_v01_M_v01_A_GLD\Data\Harmonized"
 
 *----------1.3: Database assembly------------------------------*
 
@@ -67,9 +66,7 @@ local path_output "C:\Users\wb582018\OneDrive - WBG\Surveys\MEX\MEX_2017_LFS\MEX
 	use "`path_in'\VIVT117.dta",clear
 	drop p1-p3
 	destring loc mun est ageb t_loc cd_a upm d_sem n_pro_viv ent con v_sel n_ent per, replace
-	local path_in "C:\Users\wb582018\OneDrive - WBG\Surveys\MEX\MEX_2017_LFS\MEX_2017_LFS_v01_M\Data\Original"
 	merge 1:m ent con v_sel using "`path_in'\HOGT117.dta", nogen
-	local path_in "C:\Users\wb582018\OneDrive - WBG\Surveys\MEX\MEX_2017_LFS\MEX_2017_LFS_v01_M\Data\Original"
 	merge 1:m ent con v_sel n_hog using "`path_in'\SDEMT117.dta"
 	drop if _merge==1
 	drop _merge
@@ -84,6 +81,31 @@ local path_output "C:\Users\wb582018\OneDrive - WBG\Surveys\MEX\MEX_2017_LFS\MEX
 	tab d_mes
 	replace d_mes=. if d_mes == 4 | d_mes == 5 | d_mes == 12
 	tab d_mes, missing
+
+*ISIC	
+***first job
+	rename scian scian_orig
+	tostring p4a, gen(scian)
+	merge m:1 scian using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2017_LFS\MEX_2017_LFS_v01_M\Data\Stata\SCIAN_13_ISIC_4.dta", keep(master match) nogen
+	rename scian scian_1
+***second job
+	tostring p7c, gen(scian)
+	merge m:1 scian using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2017_LFS\MEX_2017_LFS_v01_M\Data\Stata\SCIAN_13_ISIC_4.dta", keep(master match) nogen
+	rename scian scian_2
+
+*ISCO	
+
+*Note: the dta. 2013- onwards have in var p3 observations already converted to Sinco from CMO, no  need of conversion.
+
+***then first job
+	tostring p3, gen(sinco)
+	merge m:1 sinco using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2017_LFS\MEX_2017_LFS_v01_M\Data\Stata\SINCO_11_ISCO_08.dta", keep(master match) nogen
+	rename sinco sinco_1
+	
+***then second job
+	tostring p7a, gen(sinco)
+	merge m:1 sinco using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2017_LFS\MEX_2017_LFS_v01_M\Data\Stata\SINCO_11_ISCO_08.dta", keep(master match) nogen
+	rename sinco sinco_2
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -776,34 +798,9 @@ foreach v of local ed_var {
 *</_industry_orig_>
 
 *<_industrycat_isic_>
-	gen industrycat_isic =.
-	tostring industrycat_isic, replace
-	gen indus1=floor(p4a/100)
-	replace industrycat_isic="A" if indus1==11
-	replace industrycat_isic="B" if indus1==21
-	replace industrycat_isic="C" if indus1==31 | indus1==32 | indus1==33
-	replace industrycat_isic="D" if p4a==2211
-	replace industrycat_isic="E" if p4a==2221 | p4a==2222
-	replace industrycat_isic="F" if indus1==23
-	replace industrycat_isic="G" if indus1==43| indus1==46
-	replace industrycat_isic="H" if indus1==48| indus1==49
-	replace industrycat_isic="I" if indus1==72
-	replace industrycat_isic="J" if indus1==51
-	replace industrycat_isic="K" if indus1==52 | indus1==55
-	replace industrycat_isic="L" if indus1==53
-	replace industrycat_isic="M" if indus1==54
-	replace industrycat_isic="N" if indus1==56
-	replace industrycat_isic="O" if p4a==9311 | p4a==9311 | p4a==9312 | p4a==9313 | p4a==9314 | p4a==9315 | p4a==9316 | p4a==9317 | p4a==9318
-	replace industrycat_isic="P" if indus1==61
-	replace industrycat_isic="Q" if indus1==62
-	replace industrycat_isic="R" if indus1==71
-	replace industrycat_isic="S" if p4a==8111 | p4a==8112 | p4a==8113 | p4a==8114 | p4a==8131 | p4a==8132 | p4a==8141 |indus1==97 | indus1==98 | indus1==99
-	replace industrycat_isic="T" if p4a==8121 | p4a==8122 | p4a==8123 | p4a==8124 | p4a==8129
-	replace industrycat_isic="U" if p4a==9321
-	encode industrycat_isic, gen (industry_i)
-	replace industry_i=. if lstatus!=1
-	drop industrycat_isic indus1
-	rename industry_i industrycat_isic
+	gen industrycat_isic =scian_1
+	destring industrycat_isic, replace
+	replace industrycat_isic=. if lstatus!=1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
@@ -843,47 +840,23 @@ foreach v of local ed_var {
 *</_occup_>
 
 *<_occup_isco_>
-		gen occup_isco = .
-	gen occup2=floor(occup_orig/100)
-	
-	*CMO data to ISCO
-	replace occup_isco=2000 if occup2==11 |  occup2==12 | occup2==13 
-	replace occup_isco=1000 if occup2==14 |  occup2==21
-	
-	*SINCO data to ISCO
-	*2
-	replace occup_isco=2000 if occup2==22	| occup2==23 | occup2==24 | occup2==28
-	*3
-	replace occup_isco=3000 if occup2==25	| occup2==26 | occup2==29 | occup2==27 
-	*4
-	replace occup_isco=4000 if occup2==31	| occup2==32 | occup2==39
-	*5
-	replace occup_isco=5000 if occup2==41	| occup2==42 | occup2==43 | occup2==49
-	*6
-	replace occup_isco=6000 if occup2==61 | occup2==62 | occup2==63 | occup2==69
-	*7
-	replace occup_isco=7000 if occup2==71	| occup2==72 | occup2==73 | occup2==74 | occup2==75 | occup2==76 | occup2==79
-	*8
-	replace occup_isco=8000 if occup2==81	| occup2==82 | occup2==83 | occup2==89
-	*9
-	replace occup_isco=9000 if occup2==91	| occup2==92 | occup2==93 | occup2==94 | occup2==95 | occup2==96 | occup2==97 | occup2==98 | occup2==99 | occup2==51 |  occup2==52 | occup2==53 |  occup2==59
-	replace occup_isco=0000 if occup2==54
+	gen occup_isco = sinco_1
 	label var occup_isco "ISCO code of primary job 7 day recall"
 	
 *</_occup_isco_>
 
 *<_occup_skill_>
 	gen occup_skill = .
-	replace occup_skill = 1 if occup_isco == 1000 | occup_isco == 2000
-	replace occup_skill = 2 if inrange(occup_isco,3000,7000) 
-	replace occup_skill = 3 if occup_isco == 8000
-	replace occup_skill = 4 if occup2 == 54
-	replace occup_skill = 5 if occup_isco == 9000
+	destring occup_isco, replace
+	replace occup_skill = 1 if inrange(occup_isco,1000,2999)
+	replace occup_skill = 2 if inrange(occup_isco,3000,7999) 
+	replace occup_skill = 3 if inrange(occup_isco,8000,8999) 
+	replace occup_skill = 4 if inrange(occup_isco,5400,5499) 
+	replace occup_skill = 5 if inrange(occup_isco,9000,9999) 
 	replace occup_skill=. if lstatus!=1
-	drop occup2
 	la de lbloccupskill 1 "High" 2 "Medium" 3 "Low" 4 "Armed Forces" 5 "Not elsewhere classified"
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
-	label values occup_skill lbloccupskill
+	label values occup_skill lbloccupskilll
 *</_occup_skill_>
 
 *<_wage_no_compen_>
@@ -1076,34 +1049,9 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 
 
 *<_industrycat_isic_2_>
-	gen industrycat_isic_2 = .
-	tostring industrycat_isic_2, replace
-	gen indus1=floor(p7c/100)
-	replace industrycat_isic_2="A" if indus1==11
-	replace industrycat_isic_2="B" if indus1==21
-	replace industrycat_isic_2="C" if indus1==31 | indus1==32 | indus1==33
-	replace industrycat_isic_2="D" if p7c==2211
-	replace industrycat_isic_2="E" if p7c==2221 | p7c==2222
-	replace industrycat_isic_2="F" if indus1==23
-	replace industrycat_isic_2="G" if indus1==43| indus1==46
-	replace industrycat_isic_2="H" if indus1==48| indus1==49
-	replace industrycat_isic_2="I" if indus1==72
-	replace industrycat_isic_2="J" if indus1==51
-	replace industrycat_isic_2="K" if indus1==52
-	replace industrycat_isic_2="L" if indus1==53
-	replace industrycat_isic_2="M" if indus1==54 | indus1==55
-	replace industrycat_isic_2="N" if indus1==56
-	replace industrycat_isic_2="O" if p7c==9311 | p7c==9311 | p7c==9312 | p7c==9313 | p7c==9314 | p7c==9315 | p7c==9316 | p7c==9317 | p7c==9318
-	replace industrycat_isic_2="P" if indus1==61
-	replace industrycat_isic_2="Q" if indus1==62
-	replace industrycat_isic_2="R" if indus1==71
-	replace industrycat_isic_2="S" if p7c==8111 | p7c==8112 | p7c==8113 | p7c==8114 | p7c==8131 | p7c==8132 | p7c==8141 |indus1==97 | indus1==98 | indus1==99
-	replace industrycat_isic_2="T" if p7c==8121 | p7c==8122 | p7c==8123 | p7c==8124 | p7c==8129
-	replace industrycat_isic_2="U" if p7c==9321
-	encode industrycat_isic_2, gen (industry_i)
-	replace industry_i=. if lstatus!=1
-	drop industrycat_isic_2 indus1
-	rename industry_i industrycat_isic_2
+	gen industrycat_isic_2 =scian_2
+	destring industrycat_isic_2, replace
+	replace industrycat_isic_2=. if lstatus!=1
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
@@ -1132,30 +1080,7 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 
 
 *<_occup_isco_2_>
-	gen occup_isco_2 = .
-	gen occup2=floor(occup_orig_2/100)
-	*CMO data to ISCO
-	replace occup_isco_2=2000 if occup2==11 |  occup2==12 | occup2==13 
-	replace occup_isco_2=1000 if occup2==14 |  occup2==21
-	
-	*SINCO data to ISCO
-	*2
-	replace occup_isco_2=2000 if occup2==22	| occup2==23 | occup2==24 | occup2==28
-	*3
-	replace occup_isco_2=3000 if occup2==25	| occup2==26 | occup2==29 | occup2==27 
-	*4
-	replace occup_isco_2=4000 if occup2==31	| occup2==32 | occup2==39
-	*5
-	replace occup_isco_2=5000 if occup2==41	| occup2==42 | occup2==43 | occup2==49
-	*6
-	replace occup_isco_2=6000 if occup2==61 | occup2==62 | occup2==63 | occup2==69
-	*7
-	replace occup_isco_2=7000 if occup2==71	| occup2==72 | occup2==73 | occup2==74 | occup2==75 | occup2==76 | occup2==79
-	*8
-	replace occup_isco_2=8000 if occup2==81	| occup2==82 | occup2==83 | occup2==89
-	*9
-	replace occup_isco_2=9000 if occup2==91	| occup2==92 | occup2==93 | occup2==94 | occup2==95 | occup2==96 | occup2==97 | occup2==98 | occup2==99 | occup2==51 |  occup2==52 | occup2==53 |  occup2==59
-	replace occup_isco_2=0000 if occup2==54
+	gen occup_isco_2 = sinco_2
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
@@ -1167,13 +1092,13 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 
 *<_occup_skill_2_>
 	gen occup_skill_2 = .
-	replace occup_skill_2 = 1 if occup_isco_2 == 1000 | occup_isco_2 == 2000
-	replace occup_skill_2 = 2 if inrange(occup_isco_2,3000,7000) 
-	replace occup_skill_2 = 3 if occup_isco_2 == 8000
-	replace occup_skill_2 = 4 if occup2 == 54
-	replace occup_skill_2 = 5 if occup_isco_2 == 9000
+	destring occup_isco_2, replace
+	replace occup_skill_2 = 1 if inrange(occup_isco_2,1000,2999)
+	replace occup_skill_2 = 2 if inrange(occup_isco_2,3000,7999) 
+	replace occup_skill_2 = 3 if inrange(occup_isco_2,8000,8999) 
+	replace occup_skill_2 = 4 if inrange(occup_isco_2,5400,5499) 
+	replace occup_skill_2 = 5 if inrange(occup_isco_2,9000,9999) 
 	replace occup_skill_2=. if lstatus!=1
-	drop occup2
 	label var occup_skill_2 "Skill based on ISCO standard secondary job 7 day recall"
 	label values occup_skill_2 lbloccupskill
 *</_occup_skill_2_>
