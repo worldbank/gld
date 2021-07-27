@@ -10,7 +10,7 @@
 ** SURVEY AGENCY	National Statistical Office
 ** UNIT OF ANALYSIS	Household and Individual
 ** INPUT DATABASES	LFS JAN2016
-** RESPONSIBLE	Tom Mosher
+** RESPONSIBLE	World Bank Jobs Group
 ** Created	4/4/2012
 ** Modified	24/5/2021
 ** NUMBER OF HOUSEHOLDS	107,658
@@ -41,7 +41,7 @@
 	local 	surv_yr `"2016"'	// set this to the survey year
 
 ** RUN SETTINGS
-	local 	cb_pause = 1	// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
+	local 	cb_pause = 0	// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
 	local 	append 	 = 1	// 1 to run iecodebook append, 0 if file is already appended.
 
 
@@ -136,6 +136,13 @@ if (`cb_pause' == 1) {
 	label value month lblmonth
 	label var month "Month of the interview"
 
+* ensure that months reflec the round. See issue #52
+replace month = 1 	if round == 1
+replace month = 4 	if round == 2
+replace month = 7 	if round == 3
+replace month = 10 	if round == 4
+
+
 
 ** HOUSEHOLD IDENTIFICATION NUMBER
 	loc idhvars 	reg  prov hhnum 	// store idh vars in local
@@ -220,7 +227,7 @@ if (`cb_pause' == 1) {
 ** HOUSEHOLD WEIGHTS
 	/* The weight variable will be divided by the number of rounds per year to ensure the
 	   weighting factor does not over-mutliply*/
-	gen double wgt= pwgt/(10000 * `n_round')
+	gen double wgt= pwgt/(`n_round')
 	label var wgt "Household sampling weight"
 
 
@@ -410,7 +417,8 @@ if (`cb_pause' == 1) {
 	gen byte atschool=.
 	replace atschool=1 if a02_csch == 1
 	replace atschool=0 if a02_csch == 2
-	label var atschool "Attending school"
+	recode atschool (2 = 0)		// 2 was "no", recode to 0. Keep 1=Yes same.
+    label var atschool "Attending school"
 	la de lblatschool 0 "No" 1 "Yes"
 	label values atschool  lblatschool
 
@@ -430,17 +438,29 @@ if (`cb_pause' == 1) {
 
 
 ** EDUCATIONAL LEVEL 1
+	/*Please refer to the "Education_Levels.md" for a detailed discussion on classificition of how each level is classified and why,
+		available in github repository. */
 	gen byte edulevel1=.
-	replace edulevel1=1 if c09_grd==0
-	replace edulevel1=2 if c09_grd==1
-	replace edulevel1=3 if c09_grd==2
-	replace edulevel1=4 if c09_grd==3
-	replace edulevel1=5 if c09_grd==4
-	replace edulevel1=7 if c09_grd==5 | ( c09_grd>=60 & c09_grd<=78)
-	* note, according to the PSA, codes 60-78 refer to bachelors degrees, (for 2009, assuming same)
+	replace edulevel1=1 if j12c09_grade==0 | j12c09_grade == 10 	// "No education" and "Preschool" -> "No Education"
+	replace edulevel1=2 if j12c09_grade>=210 &  j12c09_grade<=260	// Grades 1-7 to "Primary Incomplete"
+	replace edulevel1=3 if j12c09_grade==280						// "Elementary Graduate" to "Primary Complete"
+	replace edulevel1=4 if j12c09_grade>=310 &  j12c09_grade<=340 	// First-Fourth year in High school -> "secondary incomplete"
+	replace edulevel1=5 if j12c09_grade==350						// "High school graduate" -> "secondary complete"
+	replace edulevel1=6 if j12c09_grade>=410 &  j12c09_grade<=501 	// Post secondary + Basic Programs -> "Higher secondary not uni"
+	replace edulevel1=6 if j12c09_grade>=502 & 	j12c09_grade<=699	// Basic Program degrees to "Higher secondary not uni"
+	replace edulevel1=7 if j12c09_grade>= 810 & j12c09_grade <= . // all labelled uni levels
 
 	label var edulevel1 "Level of education 1"
-	la de lbledulevel1 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete" 8 "Other" 9 "Unstated"
+	la de lbledulevel1 	1 "No education" ///
+						2 "Primary incomplete" ///
+						3 "Primary complete" 	///
+						4 "Secondary incomplete" ///
+						5 "Secondary complete" ///
+						6 "Higher than secondary but not university" ///
+						7 "University incomplete or complete" ///
+						8 "Other" ///
+						9 "Unstated"
+
 	label values edulevel1 lbledulevel1
 	replace edulevel1=. if age < ed_mod_age // restrict universe to students at or above primary school age
 
@@ -449,7 +469,11 @@ if (`cb_pause' == 1) {
 	gen byte edulevel2=edulevel1
 	recode edulevel2 (4=3) (5=4)  (6/7=5) (8=.) (9=.)
 	label var edulevel2 "Level of education 2"
-	la de lbledulevel2 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
+	la de lbledulevel2 	1 "No education" 	///
+						2 "Primary incomplete"  	///
+						3 "Primary complete but secondary incomplete" 	///
+						4 "Secondary complete" 	///
+						5 "Some tertiary/post-secondary"
 	label values edulevel2 lbledulevel2
 	replace edulevel2=. if age < ed_mod_age // restrict universe to students at or above primary school age
 
@@ -469,13 +493,14 @@ if (`cb_pause' == 1) {
 		currently attending*/
 
 	gen byte everattend=.
-	replace everattend=1 if age >= ed_mod_age & (atschool==1 | (2 <= edulevel1 <= 8 ))
+	replace everattend=1 if age >= ed_mod_age & ((edulevel1 >= 2 & edulevel1 <= 8 ) | atschool == 1)
 	replace everattend=0 if age >= ed_mod_age & atschool==0 & edulevel1==0
 	label var everattend "Ever attended school"
 	la de lbleverattend 0 "No" 1 "Yes"
 	label values everattend lbleverattend
 
-
+pause on
+pause
 
 /*****************************************************************************************************
 *                                                                                                    *
@@ -529,15 +554,15 @@ if (`cb_pause' == 1) {
 	label values empstat_year lblempstat_year
 
 
-** NUMBER OF ADDITIONAL JOBS
-	gen byte njobs=a03_jobs
+** NUMBER OF TOTAL JOBS
+	gen byte njobs= . 
 	label var njobs "Number of total jobs"
-	replace njobs=. if age < lb_mod_age // restrict universe to working age
+	replace njobs=. 	if 	age < lb_mod_age | lstatus != 1		// restrict universe to working age + workers
 
 
-** NUMBER OF ADDITIONAL JOBS LAST YEAR
+** NUMBER OF TOTAL JOBS LAST YEAR
 	gen byte njobs_year=.
-	replace njobs_year=. if lstatus_year!=1 // restricts universe
+	replace njobs_year=. if age < lb_mod_age | lstatus_year!=1 	// restrict universe to working age + workers
 	label var njobs_year "Number of total jobs during last year"
 
 
@@ -575,8 +600,8 @@ if (`cb_pause' == 1) {
 
 	gen byte unempldur_u= c40_wks/4.2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
-	replace unempldur_l=. if age < lb_mod_age // restrict universe to working age
-	replace unempldur_l=. if lstatus!=2 	  // restrict universe to unemployed only
+	replace unempldur_u=. if age < lb_mod_age // restrict universe to working age
+	replace unempldur_u=. if lstatus!=2 	  // restrict universe to unemployed only
 
 ** INDUSTRY CLASSIFICATION
 	gen byte industry=.
@@ -640,7 +665,7 @@ if (`cb_pause' == 1) {
 	replace occup=. if age < lb_mod_age	// restrict universe to working age
 	label var occup "1 digit occupational classification"
 	la de lbloccup 1 "Senior officials" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and sales workers" 6 "Skilled agricultural, forestry, and fishery workers" 7 "Craft and related trades workers" 8 "Plant and machine operators and assemblers" 9 "Elementary occupations" 10 "Armed forces occupations"  99 "Others"
-	label values occup lbloccups
+	label values occup lbloccup
 
 
 ** SURVEY SPECIFIC OCCUPATION CLASSIFICATION
@@ -951,6 +976,26 @@ if (`cb_pause' == 1) {
 			display as txt "Variable " as result "`var'" as txt " has no missing observations."
 		}
 	}
+
+
+** Drop Unused Value labels
+
+	* Store all labels in data
+	label dir
+	local all_lab `r(names)'
+
+	* Store all variables with a label, extract value label names
+	local used_lab = ""
+	ds, has(vallabel)
+	local labelled_vars `r(varlist)'
+	foreach varName of local labelled_vars {
+		local y : value label `varName'
+		local used_lab `"`used_lab' `y'"'
+	}
+
+	* Compare lists, if not
+	local notused : list all_lab - used_lab 		// local `notused' defines value labs not in remaining vars
+	label drop `notused'
 
 
 	save `"`id_data'\\`cty3'_`surv_yr'_I2D2_LFS.dta"', replace

@@ -1,0 +1,102 @@
+---
+title: "HHID Exploration.Rmd"
+date: "6/22/2021"
+output: html_document
+---
+
+
+```{r setup, include=FALSE}
+library(rmarkdown)
+library(tidyverse)
+library(retroharmonize)
+
+
+knitr::opts_chunk$set(echo = TRUE)
+
+
+```
+
+```{css, echo=FALSE}
+pre {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+pre[class] {
+  max-height: 300px;
+}
+```
+# An exploration of Household IDs across years in PHL LFS data 
+
+First, load the metadata files
+```{r, echo=FALSE}
+# load metadata
+load("Y:/GLD-Harmonization/551206_TM/PHL/PHL_data/I2D2/Rdata/metadata.Rdata")
+
+```
+
+## Seeing if HHIDs are truly panel or unique across rounds
+
+First I want to know if our initial assumption -- that we should append all four quarters -- is valid. Are HHIDs consistent within a year, between rounds/quarters? Let's see.
+
+### Which years have the `intvw` variable?
+
+Some years, but not all, have a factor variable that tells us if the household was in the previous quarter. Let's use the metadata file to take a look.
+
+```{r}
+# identify "intvw" variable across years 
+intv <- metadata %>%
+  filter( grepl("intvw", var_name_orig)) %>%
+  filter(!is.na(labels)) %>%
+  select(id, labels, label_orig) %>%
+  unnest_longer(labels, 
+                values_to = "value",
+                indices_to = "value_label") 
+
+intv
+```
+
+It looks like years 01-04, 06, 07, 12, and 13 have this variable -- but not all rounds in those years. It looks like the only years that actually count for replacement or repeat vists are years 01-03. However, another *potential* renamed value for this variable is `panel`, which appears in years 97-00 with values 1-4. This doesn't present a perfect match though, since if you go into the actual `.dta` files you find out that you have values for each of the 1-4 values in each of the rounds, which doesn't make sense if the variable is a "placeholder" for the round/panel indicator.
+
+```{r}
+metadata %>%
+  filter( grepl("panel", var_name_orig)) %>%
+  select(id, labels, label_orig, class_orig) %>%
+  unnest_longer(labels, 
+                values_to = "value",
+                indices_to = "value_label") 
+
+```
+
+
+
+## What are the actual counts of unique HH as I have them coded now?
+
+Taken from the `.do` file info
+
+| year | count of Unique HH | observations |
+| ------| ----------------| ------------------|
+| 1997 | 39,274| 202,742|
+| 1998 | 39,837| 207,663|
+| 1999 | 38,830| 200,902|
+| 2000 | 39,273| 202,738|
+| 2001 | 39,716| 207,457|
+| 2002 | 41,947| 793,795|
+| 2003 | .| .|
+| 2004 | .| .|
+| 2005 | .| .|
+| 2006 | .| .|
+| 2007 | .| .|
+| 2008 | 159,161| 797,746|
+| 2009 | 159,740| 804,166|
+| 2010 | 163,744| 795,851|
+| 2011 | 165,473| 807,631|
+| 2012 | 92,031| 817,049|
+| 2013 | 93,981| 818,118|
+| 2014 | 84,485| 805,307|
+| 2015 | 107,658| 820,811|
+| 2016 | 107,658| 820,811|
+| 2017 | .| .|
+| 2018 | 10,632| 722,237|
+| 2019 | 160,309| 707,022|
+
