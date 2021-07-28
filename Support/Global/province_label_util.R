@@ -47,6 +47,12 @@ prov_labs_fct <- metadata %>%
   unnest_longer(labels, 
                 values_to = "value",
                 indices_to = "value_label") %>%
+  group_by(value) %>%
+  mutate(n_vals_fct = (n_distinct(value_label)), # generates the number of unique values for each value label
+         same_fct = (n_vals_fct == 1), # TRUE if all string values are the same (for fact labelled variables)
+         ) %>%  
+  ungroup() %>%
+  mutate(id = str_replace(id, " ", "_")) %>%
   pivot_wider(names_from = id, values_from = value_label) %>%
   arrange(value)
 
@@ -62,6 +68,12 @@ files_chr <- metadata %>%
   filter( grepl("prov_name", var_name_orig), 
           class_orig == "character" ) %>%
   pull(id) 
+
+# filter the files tibble
+files_tib_import <- files_tib %>%
+  mutate(name = str_sub(filename, 2),
+         obname = str_replace(name, " ", "_")) %>%
+  filter(name %in% files_chr )
 
 
 # import all of them 
@@ -97,10 +109,9 @@ chr_survey_list <- map2(
 
 prov_labs_chr <- bind_rows(chr_survey_list) %>%
   group_by(value) %>%
-  mutate(
-    n_vals_str = (n_distinct(value)), # generates the number of unique values for each value label
-    same_str = (n_vals_str == 1) # TRUE if all string values are the same (for string labelled variables)
-    ) %>%
+  mutate(n_vals_str = (n_distinct(label)), # generates the number of unique values for each value label
+          same_str = (n_vals_str == 1) # TRUE if all string values are the same (for string labelled variables)
+          ) %>%
   ungroup() %>%
   pivot_wider(names_from = survey,
               values_from= label)
@@ -108,3 +119,30 @@ prov_labs_chr <- bind_rows(chr_survey_list) %>%
 
 
 ## Join String and Factor Data
+## The goal here is to join the two haven labelled and string labelled objects by value to see if we can
+## harmonize the province labels
+
+# pivot
+prov_labs_chr_long <- prov_labs_chr %>%
+  pivot_longer(cols = starts_with("LFS"), names_to = "survey", values_to = "label")
+
+prov_labs_fct_long <- prov_labs_fct %>%
+  pivot_longer(cols = starts_with("LFS"), names_to = "survey", values_to = "label")
+
+
+# append 
+prov_labs_long <- bind_rows(prov_labs_chr_long, prov_labs_fct_long)
+
+prov_labs <- prov_labs_long %>%
+  mutate(label_norm = val_label_normalize(label)) %>% # normalize the label
+  group_by(value) %>%
+  mutate(n_vals = (n_distinct(label_norm)), # generates the number of unique values for each value label
+         same = (n_vals == 1) # TRUE if all string values are the same (for labelled variables)
+        ) %>%
+  ungroup() 
+
+# what do to from here?
+  filter(!is.na(label_norm)) %>%
+  distinct(value, label_norm) %>%
+  pivot_wider(names_from = survey,
+              values_from= label_norm)
