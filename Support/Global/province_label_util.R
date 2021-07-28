@@ -37,18 +37,66 @@ load(PHL_meta)
 ## Identify data files for each type ----
 ## we need to know which data files have data that fall under each variable type
 
-### Factor ----
-names <- metadata %>% 
-  filter( grepl("prov", var_name_orig) | grepl("prv", var_name_orig), 
-          class_orig == "haven_labelled" ) %>%
-  pull(filename) 
+
+## Factor ---- 
+## retroharmonize has a function for doing most of the work for us, using the metadata 
+prov_labs_fct <- metadata %>%
+  filter( grepl("prov", var_name_orig) | grepl("prv", var_name_orig), class_orig == "haven_labelled" ) %>%
+  filter(!is.na(labels)) %>%
+  select(id, labels) %>%
+  unnest_longer(labels, 
+                values_to = "value",
+                indices_to = "value_label") %>%
+  pivot_wider(names_from = id, values_from = value_label) %>%
+  arrange(value)
 
 
 
+## numeric with string ----
+## these variables are not in the metadata, so we have import the files and extract this for
+## each file 
 
 
-import_prov_fct <- function(x) {
+# make a list of file names that have character data
+files_chr <- metadata %>% 
+  filter( grepl("prov_name", var_name_orig), 
+          class_orig == "character" ) %>%
+  pull(id) 
+
+
+# import one 
+
+file <- files_tib %>% filter(grepl(files_chr[1], rpath)) %>% pull()
+
+oct2002 <- readRDS(file) %>%
+  select(any_of(c(contains("prov"), contains("prv"), contains("_name")))) %>%
+  distinct()
+
+files_tib_import <- files_tib %>%
+  mutate(name = str_sub(filename, 2),
+         obname = str_replace(name, " ", "_")) %>%
+  filter(name %in% files_chr )
+
+
+import_labs_str <- function(x, y) {
   
+  file <- readRDS(x) %>%
+    select(any_of(c(contains("prov"), contains("prv"), contains("_name")))) %>%
+    distinct() %>%
+    mutate( survey = as.character(y) )
   
+  if (y == "LFS_JAN2007" | y == "LFS_JAN2017") {
+    file <- file %>%
+      distinct(prov, prov_name, .keep_all = TRUE)
+  }
+  
+  return(file)
   
 }
+
+
+chr_survey_list <- map2(
+  .x = files_tib_import$rpath,
+  .y = files_tib_import$obname,
+  .f = import_labs_str
+)
