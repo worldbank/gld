@@ -785,34 +785,6 @@ foreach v of local ed_var {
 	
 	gen industrycat_isic =scian_1
 	destring industrycat_isic, replace
-	/*gen industrycat_isic = .
-	tostring industrycat_isic, replace
-	gen indus1=floor(p4a/100)
-	replace industrycat_isic="A" if indus1==11
-	replace industrycat_isic="B" if indus1==21
-	replace industrycat_isic="C" if indus1==31 | indus1==32 | indus1==33
-	replace industrycat_isic="D" if p4a==2211
-	replace industrycat_isic="E" if p4a==2221 | p4a==2222
-	replace industrycat_isic="F" if indus1==23
-	replace industrycat_isic="G" if indus1==43| indus1==46
-	replace industrycat_isic="H" if indus1==48| indus1==49
-	replace industrycat_isic="I" if indus1==72
-	replace industrycat_isic="J" if indus1==51
-	replace industrycat_isic="K" if indus1==52
-	replace industrycat_isic="L" if indus1==53
-	replace industrycat_isic="M" if indus1==54 | indus1==55
-	replace industrycat_isic="N" if indus1==56
-	replace industrycat_isic="O" if p4a==9311 | p4a==9311 | p4a==9312 | p4a==9313 | p4a==9314 | p4a==9315 | p4a==9316 | p4a==9317 | p4a==9318
-	replace industrycat_isic="P" if indus1==61
-	replace industrycat_isic="Q" if indus1==62
-	replace industrycat_isic="R" if indus1==71
-	replace industrycat_isic="S" if p4a==8111 | p4a==8112 | p4a==8113 | p4a==8114 | indus1==97 | indus1==98 | indus1==99
-	replace industrycat_isic="T" if p4a==8121 | p4a==8122 | p4a==8123 | p4a==8124 | p4a==8129
-	replace industrycat_isic="U" if p4a==9321
-	encode industrycat_isic, gen (industry_i)
-	replace industry_i=. if lstatus!=1
-	drop industrycat_isic indus1
-	rename industry_i industrycat_isic*/
 	replace industrycat_isic=. if lstatus!=1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
@@ -1074,34 +1046,6 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 *<_industrycat_isic_2_>
 	gen industrycat_isic_2 = scian_2
 	destring industrycat_isic_2, replace
-	/*gen industrycat_isic_2 = .
-	tostring industrycat_isic_2, replace
-	gen indus1=floor(p7c/100)
-	replace industrycat_isic_2="A" if indus1==11
-	replace industrycat_isic_2="B" if indus1==21
-	replace industrycat_isic_2="C" if indus1==31 | indus1==32 | indus1==33
-	replace industrycat_isic_2="D" if p7c==2211
-	replace industrycat_isic_2="E" if p7c==2221 | p7c==2222
-	replace industrycat_isic_2="F" if indus1==23
-	replace industrycat_isic_2="G" if indus1==43| indus1==46
-	replace industrycat_isic_2="H" if indus1==48| indus1==49
-	replace industrycat_isic_2="I" if indus1==72
-	replace industrycat_isic_2="J" if indus1==51
-	replace industrycat_isic_2="K" if indus1==52
-	replace industrycat_isic_2="L" if indus1==53
-	replace industrycat_isic_2="M" if indus1==54 | indus1==55
-	replace industrycat_isic_2="N" if indus1==56
-	replace industrycat_isic_2="O" if p7c==9311 | p7c==9311 | p7c==9312 | p7c==9313 | p7c==9314 | p7c==9315 | p7c==9316 | p7c==9317 | p7c==9318
-	replace industrycat_isic_2="P" if indus1==61
-	replace industrycat_isic_2="Q" if indus1==62
-	replace industrycat_isic_2="R" if indus1==71
-	replace industrycat_isic_2="S" if p7c==8111 | p7c==8112 | p7c==8113 | p7c==8114 | indus1==97 | indus1==98 | indus1==99
-	replace industrycat_isic_2="T" if p7c==8121 | p7c==8122 | p7c==8123 | p7c==8124 | p7c==8129
-	replace industrycat_isic_2="U" if p7c==9321
-	encode industrycat_isic_2, gen (industry_i)
-	replace industry_i=. if lstatus!=1
-	drop industrycat_isic_2 indus1
-	rename industry_i industrycat_isic_2*/
 	replace industrycat_isic_2=. if lstatus!=1
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
