@@ -57,7 +57,7 @@ set mem 800m
 
 *----------1.2: Set directories------------------------------*
 local path_in "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2019_LFS\MEX_2019_LFS_v01_M\Data\Stata"
-local path_output "Z:\GLD-Harmonization\582019_AQ\MEX\MEX_2019_LFS\MEX_2019_LFS_v01_M_v01_A_GLD\Data\Harmonized"
+local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2019_LFS\MEX_2019_LFS_v01_M_v01_A_GLD\Data\Harmonized"
 *----------1.3: Database assembly------------------------------*
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file	
@@ -1629,6 +1629,7 @@ foreach var of local kept_vars {
 }
 
 *</_% DELETE MISSING VARIABLES_>
+
 
 *<_% SAVE_>
 
