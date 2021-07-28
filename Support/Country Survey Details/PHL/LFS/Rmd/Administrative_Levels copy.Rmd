@@ -8,6 +8,14 @@ output:
 editor_options: 
   markdown: 
     wrap: 72
+knit: (function(input, ...) {
+    rmarkdown::render(
+      input,
+      output_dir = "/Volumes/OWLS/gld/Support/Country Survey Details/PHL/LFS",
+      envir = globalenv()
+    )
+  })
+
 ---
 
 This document describes how first and second level adminsitrative
