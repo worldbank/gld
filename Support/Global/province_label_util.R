@@ -64,31 +64,25 @@ files_chr <- metadata %>%
   pull(id) 
 
 
-# import one 
-
-file <- files_tib %>% filter(grepl(files_chr[1], rpath)) %>% pull()
-
-oct2002 <- readRDS(file) %>%
-  select(any_of(c(contains("prov"), contains("prv"), contains("_name")))) %>%
-  distinct()
-
-files_tib_import <- files_tib %>%
-  mutate(name = str_sub(filename, 2),
-         obname = str_replace(name, " ", "_")) %>%
-  filter(name %in% files_chr )
-
+# import all of them 
 
 import_labs_str <- function(x, y) {
   
   file <- readRDS(x) %>%
     select(any_of(c(contains("prov"), contains("prv"), contains("_name")))) %>%
     distinct() %>%
-    mutate( survey = as.character(y) )
+    mutate( survey = as.character(y),
+            label  = snakecase::to_title_case(prov_name),
+            value  = prov)
   
   if (y == "LFS_JAN2007" | y == "LFS_JAN2017") {
     file <- file %>%
       distinct(prov, prov_name, .keep_all = TRUE)
   }
+  
+  file <- file %>%
+    select(survey, label, value) %>%
+    distinct()
   
   return(file)
   
@@ -100,3 +94,17 @@ chr_survey_list <- map2(
   .y = files_tib_import$obname,
   .f = import_labs_str
 )
+
+prov_labs_chr <- bind_rows(chr_survey_list) %>%
+  group_by(value) %>%
+  mutate(
+    n_vals_str = (n_distinct(value)), # generates the number of unique values for each value label
+    same_str = (n_vals_str == 1) # TRUE if all string values are the same (for string labelled variables)
+    ) %>%
+  ungroup() %>%
+  pivot_wider(names_from = survey,
+              values_from= label)
+
+
+
+## Join String and Factor Data
