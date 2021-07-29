@@ -311,14 +311,14 @@ set mem 800m
 
 
 *<_wave_>
-	gen wave = .
+	gen wave = ""
 
 	replace 		wave = 	"Q1"	if round == 1
 	replace 		wave = 	"Q2"	if round == 2
 	replace 		wave = 	"Q3"	if round == 3
 	replace 		wave = 	"Q4"	if round == 4
 
-	label var 		wave = "Survey wave"
+	label var 		wave "Survey wave"
 *</_wave_>
 
 }
@@ -381,7 +381,7 @@ set mem 800m
 		merge 		m:1 ///		multiple matches in main, unique in using
 					value ///	match on province (value)
 					using ${adm2_labs} /// use file named in PHL_MAIN.do
-					keepusing(label_gld) assert(match) // options
+					, keepusing(label_gld) assert(match using) // options
 
 		encode 		label_gld	///	make string into numeric with label
 					, generate(subnatid2) /// with this var name
