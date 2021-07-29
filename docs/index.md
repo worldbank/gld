@@ -20,9 +20,7 @@ Here you may find a description of the project as well as all information to hel
 
 ## A bit of history to get up to speed
 
-The GLD is the DB heir to I2D2 along with the GMD. That’s clear enough, off to the next topic.
-
-Now in earnest. The World Bank has for a long time aimed to standardise survey information to allow comparisons across space and time. The [World Development Indicators DataBank]( https://databank.worldbank.org/source/world-development-indicators) is an example of such efforts.
+The World Bank has for a long time aimed to standardise survey information to allow comparisons across space and time. The [World Development Indicators DataBank]( https://databank.worldbank.org/source/world-development-indicators) is an example of such efforts.
 
 This effort, however, presents information aggregated at national level, leaving the rich micro data behind. One of the first efforts to make a database of harmonized individual level micro data files with a common dictionary was the *International Income Distribution Database* (I2D2). It harmonized all kinds of household surveys (e.g., income and expenditure surveys, labour force surveys, …).
 
