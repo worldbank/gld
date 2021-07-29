@@ -26,7 +26,7 @@ This effort, however, presents information aggregated at national level, leaving
 
 Since 2020 the I2D2 has been discontinued, although the World Bank Jobs Group keeps updating certain surveys to service some legacy tools. Two different databases have taken its place: The *Global Monitoring Database* (GMD), managed by the Poverty General Practice (GP) and the *Global Labor Database*. The GMD harmonizes all surveys that allow the Poverty GP to calculate poverty estimates (most often this means harmonising surveys with income and consumption modules like household income and expenditure surveys). The GLD harmonizes any other survey containing a rich labour market module (most often this means harmonising labour force surveys).
 
-Both the GMD and GLD use a common data dictionary, although there are some variables that only exists in one of the databases. You may find a detailed description of [the GLD data dictionary on this site](docs/data_dictionary) or [download the dictionary in Excel format from GitHub]( Support/Guides%20and%20Documentation/GLD_Dictionary_2021_04.xlsx).
+Both the GMD and GLD use a common data dictionary, although there are some variables that only exists in one of the databases. You may find a detailed description of [the GLD data dictionary on this site](docs/data-dictionary) or [download the dictionary in Excel format from GitHub]( Support/Guides%20and%20Documentation/GLD_Dictionary_2021_04.xlsx).
 
 ## What is the GLD?
 
