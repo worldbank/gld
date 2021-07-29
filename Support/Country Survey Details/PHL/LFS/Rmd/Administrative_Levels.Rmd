@@ -11,7 +11,7 @@ editor_options:
 knit: (function(input, ...) {
     rmarkdown::render(
       input,
-      output_dir = "/Volumes/OWLS/gld/Support/Country Survey Details/PHL/LFS",
+      output_dir = here::here("Support/Country Survey Details/PHL/LFS"),
       envir = globalenv()
     )
   })
