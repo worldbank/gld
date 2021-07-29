@@ -7,10 +7,6 @@ Geographic Administrative Levels
         Year](#expanded-population--labor-force-participation-by-year)
     -   [Labor Force Participation](#labor-force-participation)
 
-``` r
-knitr::opts_chunk$set(eval = FALSE)
-```
-
 # Weights and PSA Checks
 
 Lightweight manual checks to ensure that final appended weight variables
