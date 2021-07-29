@@ -25,6 +25,7 @@ vignette](https://rstudio.github.io/renv/articles/renv.html) for more.
 A detailed explanation of `renv` can be [found
 here](https://rstudio.github.io/renv/articles/renv.html) but, in short,
 it is a way to standardize and keep track of R packages across users.
+
 This standardization and transparency is important in the context of
 reproducibility: internally, all GLD harmonizers are using the same
 versions of R packages and new users can run the code with exactly the
