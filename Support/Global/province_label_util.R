@@ -244,9 +244,16 @@ assertthat::assert_that( nrow(prov_lab_final) == n_distinct(prov_lab_final$value
 assertthat::assert_that( nrow(prov_lab_final) == n_distinct(prov_lab_final$label_norm) )
 
 
-# create a .dta friendly object 
+# create a .dta friendly object and save .Rdata
 prov_lab_final_export <- select(prov_lab_final, -labels_raw, -change )
 
 haven::write_dta(prov_lab_final_export, 
                  file.path(PHL, "PHL_data/GLD/GLD_PHL_admin2_labels.dta"),
                  version = 14)
+
+save(prov_labs,
+     prov_labs_chr, 
+     prov_labs_fct,
+     prov_lab_final,
+     prov_lab_final_export,
+     file = file.path(PHL, "PHL_data/GLD/GLD_PHL_admin2_labels.Rdata"))
