@@ -118,7 +118,7 @@ prov_labs_chr <- bind_rows(chr_survey_list) %>%
 
 
 
-## Join String and Factor Data
+## Join String and Factor Data -----
 ## The goal here is to join the two haven labelled and string labelled objects by value to see if we can
 ## harmonize the province labels
 
@@ -135,14 +135,79 @@ prov_labs_long <- bind_rows(prov_labs_chr_long, prov_labs_fct_long)
 
 prov_labs <- prov_labs_long %>%
   mutate(label_norm = val_label_normalize(label)) %>% # normalize the label
-  group_by(value) %>%
-  mutate(n_vals = (n_distinct(label_norm)), # generates the number of unique values for each value label
+  # generate the number of distinct labels per value (number), use the normalized label.
+  group_by(value) %>% 
+  mutate(n_vals = (n_distinct(label_norm, na.rm = TRUE)), 
          same = (n_vals == 1) # TRUE if all string values are the same (for labelled variables)
-        ) %>%
-  ungroup() 
-
-# what do to from here?
+         ) %>%
+  ungroup() %>%
+  mutate(
+    source = case_when( !is.na(n_vals_str) ~ "string",
+                        !is.na(n_vals_fct) ~ "factor")
+  ) %>%
   filter(!is.na(label_norm)) %>%
-  distinct(value, label_norm) %>%
-  pivot_wider(names_from = survey,
-              values_from= label_norm)
+  arrange(label_norm) 
+
+# filter workflow: ----
+# goal here is to present different labels to come to concensus manually, so we'll 
+# separate out into labels that are unique vs labels that have multiple labels per value
+
+# create the label replace function 
+discrep_lab_replace <- function(value) {
+  case_when(
+    as.numeric(value) == 2       ~ "agusan_del_norte",
+    as.numeric(value) == 23      ~ "davao_del_norte",
+    as.numeric(value) == 24      ~ "davao_del_sur",
+    as.numeric(value) == 39      ~ "ncr_national_capital_region",
+    as.numeric(value) == 44      ~ "mountain_province",
+    as.numeric(value) == 47      ~ "north_cotabato",
+    as.numeric(value) == 50      ~ "nueva_vizcaya",
+    as.numeric(value) == 51      ~ "occidental_mindoro",
+    as.numeric(value) == 52      ~ "oriental_mindoro",
+    as.numeric(value) == 60      ~ "western_samar",
+    as.numeric(value) == 70      ~ "tawi_tawi",
+    as.numeric(value) == 74      ~ "national_captial_region_2nd_district",
+    as.numeric(value) == 75      ~ "national_captial_region_3rd_district",
+    as.numeric(value) == 76      ~ "national_captial_region_4th_district",
+    as.numeric(value) == 80      ~ "sarangani",
+    as.numeric(value) == 98      ~ "marawi_city_and_cotabato_city",
+    TRUE             ~ NA_character_
+  )
+}
+
+# create the "discrepancy" tibble
+prov_lab_discrep <- prov_labs %>%
+  filter(n_vals > 1, !is.na(label_norm)) %>%
+  distinct(value, label_norm, .keep_all = TRUE) %>%
+  pivot_wider(values_from = label_norm,
+              names_from = survey,
+              id_cols = value) %>%
+  arrange(value) %>%
+  # replace labels manually 
+  mutate(label_replace = discrep_lab_replace(value = value))
+
+
+# create the "same" table where labels are same within each value 
+prov_labs_same <- prov_labs %>%
+  filter(n_vals == 1) %>%
+  distinct(value, label_norm, .keep_all = TRUE) %>%
+  pivot_wider(values_from = label_norm,
+              names_from = survey,
+              id_cols = value) %>%
+  arrange(value) %>%
+  mutate(label = coalesce(LFS_OCT2002, LFS_JAN2007, LFS_OCT2016))
+
+
+
+## create the final label table
+
+### Assemble the pieces 
+
+# determine nest vars 
+nest_vars <- as.character(unique(prov_labs$survey))
+prov_lab_discrep_assemble
+
+prov_lab_discrep %>%
+  nest(data = any_of(nest_vars)) %>%
+  View()
+
