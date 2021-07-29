@@ -15,12 +15,11 @@ knit: (function(input, ...) {
       envir = globalenv()
     )
   })
-
 ---
 
-This document describes how first and second level adminsitrative
+This document describes how first and second level administrative
 divisions in the Philippines are coded over time in the LFS survey in
-the I2D2 context.
+the GLD context.
 
 ## Region
 
@@ -30,14 +29,14 @@ Household's
 Bulletin](https://psa.gov.ph/sites/default/files/ISHB_series%20no.%2089_Labor%20Force_January%201997.pdf).
 This classification schema also appears in the labelled data through the
 April round of 2003. Thereafter, in the July round of 2003, Region IV is
-split into two seperate regions A and B, creating a 17th region. This
-adminsitrative change is documented in the [July 2003 PSA ISH
+split into two separate regions A and B, creating a 17th region. This
+administrative change is documented in the [July 2003 PSA ISH
 document](https://psa.gov.ph/sites/default/files/ISHB_series%20no.%20117_Labor%20Force_July%202003%20.pdf).
 
-The Region varibles, although named differently across years, usually
+The Region variables, although named differently across years, usually
 arrive in factor labelled data types. Occasionally they arrive as
 integer, usually with the same underlying numeric values. The way the
-apparance of the Region IV split/17th Region shows in the data is
+appearance of the Region IV split/17th Region shows in the data is
 through the introduction of two new values that do not appear prior to
 July of 2003. A shortened example is given below, with the Region Labels
 contained in the cells.
@@ -57,7 +56,7 @@ continues through the year 2020.
 ### Differences between factor and numeric
 
 Some region variables are numeric and some are factor labelled, but
-their underlying values are not always the same. Wheras the value and
+their underlying values are not always the same. Whereas the value and
 labeling schema is stable across survey rounds and years, minus the
 small change for Region IV-A and -B above, the numeric variable cognate
 appears to change sometimes, so we should be mindful of this.
@@ -101,7 +100,13 @@ numeric-factor 2006, 2016, 2017
 
 ### Descriptive Checks and Evidence for Recoding
 
-    The markdown file `Region_Recode_Checks.Rmd` checks that the numeric variable descriptively aligns with the factor-coded variables within the same year. The code simply appends, recodes, and produces historgrams by round for comparison. This visual check provides intitial support to the idea that the numeric and factor values may likely refer to the same region, and therefore that the numeric and factor data may be appended safely.
+The markdown file `Region_Recode_Checks.Rmd` checks that the numeric
+variable descriptively aligns with the factor-coded variables within the
+same year. The code simply appends, recodes, and produces histograms by
+round for comparison. This visual check provides initial support to the
+idea that the numeric and factor values may likely refer to the same
+region, and therefore that the numeric and factor data may be appended
+safely.
 
 ### The need to recode
 
@@ -206,25 +211,33 @@ above recoding takes place:
 ## Province
 
 The 2nd Administrative Level is Province. The value labels appear to be
-stable across rounds and years, with no mention of changes in the 2003
-adminstrative revisions above. Furthermore, the some rounds are numeric
-while others are labeled. Starting in July 2003, the province variables
-are only encoded as numeric -- some years afterwards have miscellaneous
-rounds also encoded with a secondary variable `_name` that stores the
-province name in string format. From the label data that exists, the
-labeled variabled are stable across rounds within the same year, but
-reflect small changes as provinces are added.
+mostly stable across rounds and years, with no mention of changes in the
+2003 administrative revisions above. Furthermore, the some rounds are
+numeric while others are labeled. Starting in July 2003, the province
+variables are only encoded as numeric -- some years afterwards have
+miscellaneous rounds also encoded with a secondary variable `_name` that
+stores the province name in string format. From the label data that
+exists, the labeled variables are stable across rounds within the same
+year, but appear to reflect small changes as provinces are added.
+
+Without a main data source for the labels, a few assumptions will need
+to be made.
+
+1.  **Transitive Property of Labels**: Adopting from the [mathematical
+    transitive
+    property](https://en.wikipedia.org/wiki/Transitive_relation), we
+    have to assume that if value `1 = "Province 1"` in Year 1, Round 1,
+    and `1 = "Province 1"` in Year 2, Year 3, and all other years
+    available, then value `1 = "Province 1"` also in Years where we *do
+    not* have label information.
+
+2.  **Identity Property of Labels**: Similarly, we should also assume
+    that each label's value, when equivalent or virtually similar,
+    actually refers to the same region. In other words, `"Province 1"`
+    is actually the same `"Province 1"` every year. This may seem
+    obvious, but sometimes regions and provinces go through political or
+    geographic changes — such as divisions, combining, or changing of
+    boundaries, etc — that may render them practically different, but
+    named the same.
 
 ### Province encoding methodology
-
-For consistency across years, except for the case of 2003, I will simply
-append the data within-year and not assign the labels. For cases where
-the user wants to access the value label data where they do exist, a
-`label dir` or `label list PROV` will find or often directly retrieve
-the label info as it was provided to us. However, for data at this
-secondary geographic/administrative level, the labels are often not
-necessary, as the primary unit of analysis is the region level. The
-province variable in the 2019 data appears to be missing.
-
-No value recoding will occur from the original values for any round in
-any year.
