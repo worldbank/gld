@@ -10,7 +10,10 @@ description: calls all PHL scripts for I2D2+GLD, edited from iecodebook script
    * Internal project folder paths. Same no matter user
    * ---------------------
 
-	loc 	cty 	"PHL" 			// set to three letter country/economy code
+	loc 	cty 		"PHL" 			// set to three letter country/economy code
+
+	gl 		PHL_data 	`"${GLD}/GLD-Harmonization/551206_TM/PHL/PHL_data"' // PHL global data folder
+	gl 		  adm2_labs	`"${PHL_data}/GLD/GLD_PHL_admin2_labels.dta"'
 
 
 

@@ -371,6 +371,26 @@ set mem 800m
 
 
 *<_subnatid2_>
+
+	* import the labels
+	loc 			n_obs = _n 	// store no. obs before merge
+
+	preserve
+
+		clonevar 	value = prov // copy prov as value in order for merge to work
+
+		merge 		m:1 ///		multiple matches in main, unique in using
+					value ///	match on province (value)
+					using ${adm2_labs} /// use file named in PHL_MAIN.do
+					keepusing(label_gld) assert(match) // options
+
+		encode 		label_gld	///	make string into numeric with label
+					, generate(subnatid2) /// with this var name
+					label(lblsubnatid2) // and this value label name
+		pause		// check to see what the underlying values are...
+
+	restore
+
 	gen byte 		subnatid2 = prov
 	label de 		lblsubnatid2
 	label values 	subnatid2 lblsubnatid2
