@@ -1,4 +1,3 @@
-relationharm
 /*%%=============================================================================================
 	0: GLD Harmonization Preamble
 ==============================================================================================%%*/
@@ -50,7 +49,7 @@ relationharm
 ==============================================================================================%%*/
 
 *----------1.1: Initial commands------------------------------*
-
+cap log close
 clear
 set more off
 set mem 800m
@@ -111,7 +110,7 @@ set mem 800m
 		`"`round1'"' `"`round2'"' `"`round3'"' `"`round4'"' /// survey files
 		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template-IN.xlsx"' /// previously edited harmonization file
 		, clear surveys(JAN1997 APR1997 JUL1997 OCT1997) generate(round) // survey names
-	}
+	
 
 
 /*%%=============================================================================================
@@ -200,7 +199,7 @@ set mem 800m
 
 	* in 97, it appears that regn and hcn uniquely identify the HH
 
-	loc idhvars 	 regn prov  hcn						// store idh vars in local
+	loc idhvars 	 regn prov  hcn						// store hhid vars in local
 
 	ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
 	loc numlist 	= r(varlist)						// store numeric vars in local
@@ -243,8 +242,8 @@ set mem 800m
 
 
 
-	* concatenate all elements to form idh: hosehold id
-	egen idh=concat( `idh_els' )						// concatenate vars we just made. code drops vars @ end
+	* concatenate all elements to form hhid: hosehold id
+	egen hhid=concat( `idh_els' )						// concatenate vars we just made. code drops vars @ end
 
 	label var hhid "Household ID"
 *</_hhid_>
@@ -258,7 +257,7 @@ set mem 800m
 	* 	note, assuming that the only necessary individaul identifier is family member, which is numeric
 	*	so, not following processing for sorting numeric/non-numeric variables.
 
-	loc idpvars 	lno 								// store relevant idp vars in local
+	loc idpvars 	lno 								// store relevant pid vars in local
 	ds `idpvars',  	has(type numeric)					// filter out numeric variables in local
 	loc rlist 		= r(varlist)						// store numeric vars in local
 
@@ -275,13 +274,13 @@ set mem 800m
 
 	}
 
-	* concatenate to form idp: individual id
-	egen idp=concat( `idp_els' )						// concatenate vars we just made. code drops vars @ end
+	* concatenate to form pid: individual id
+	egen pid=concat( `idp_els' )						// concatenate vars we just made. code drops vars @ end
 
-	sort idh idp
+	sort hhid pid
 
 ** ID CHECKS
-	isid idh idp 										// household and individual id uniquely identify
+	isid hhid pid 										// household and individual id uniquely identify
 
 	label var pid "Individual ID"
 *</_pid_>
@@ -461,8 +460,8 @@ set mem 800m
 {
 
 *<_hsize_>
-	sort idh
-	by idh: 	egen hhsize= count(rel <= 7) // includes non-family members, not boarders or domestic workers.
+	sort hhid
+	by hhid: 	egen hhsize= count(rel <= 7) // includes non-family members, not boarders or domestic workers.
 	label var 	hsize "Household size"
 
 	* check
@@ -507,7 +506,7 @@ set mem 800m
 
 	* other relationharm operations
 	gen 		jh=(relationharm==1)
-	bys idh: 	egen hh=sum(jh) // hh is the count of hh heads per family
+	bys hhid: 	egen hh=sum(jh) // hh is the count of hh heads per family
 
 	/*Note: if number of Household Heads is >1, all relevant HH head info is set to missing.
 			In this case the only relevant variable is head*/
