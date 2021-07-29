@@ -15,6 +15,7 @@
 
 library(tidyverse)
 library(retroharmonize)
+library(haven)
 
 
 # load metadata and files tibble 
@@ -158,7 +159,7 @@ discrep_lab_replace <- function(value) {
     as.numeric(value) == 2       ~ "agusan_del_norte",
     as.numeric(value) == 23      ~ "davao_del_norte",
     as.numeric(value) == 24      ~ "davao_del_sur",
-    as.numeric(value) == 39      ~ "ncr_national_capital_region",
+    as.numeric(value) == 39      ~ "national_capital_region_1st_district",
     as.numeric(value) == 44      ~ "mountain_province",
     as.numeric(value) == 47      ~ "north_cotabato",
     as.numeric(value) == 50      ~ "nueva_vizcaya",
@@ -188,6 +189,10 @@ prov_lab_discrep <- prov_labs %>%
 
 
 # create the "same" table where labels are same within each value 
+
+# determine list of LFS variables 
+lfs_vars <- as.character(unique(prov_labs$survey))
+
 prov_labs_same <- prov_labs %>%
   filter(n_vals == 1) %>%
   distinct(value, label_norm, .keep_all = TRUE) %>%
@@ -203,11 +208,45 @@ prov_labs_same <- prov_labs %>%
 
 ### Assemble the pieces 
 
-# determine nest vars 
-nest_vars <- as.character(unique(prov_labs$survey))
-prov_lab_discrep_assemble
+prov_lab_discrep_assemble <- prov_lab_discrep %>%
+  nest(labels_raw = any_of(lfs_vars)) %>%
+  mutate(value = as.numeric(value),
+         change = TRUE) %>%
+  rename(label_norm = label_replace)
 
-prov_lab_discrep %>%
-  nest(data = any_of(nest_vars)) %>%
-  View()
+prov_lab_same_assemble <- prov_labs_same %>%
+  nest(labels_raw = any_of(lfs_vars)) %>%
+  mutate(value = as.numeric(value),
+         change = FALSE) %>%
+  rename(label_norm = label)
 
+prov_lab_final <- bind_rows(
+  prov_lab_discrep_assemble, 
+  prov_lab_same_assemble
+  ) %>%
+  arrange(value) %>%
+  # a few manual adjustments to to_title_case()
+  mutate(label = snakecase::to_title_case(label_norm),
+         label = case_when(
+           as.numeric(value) == 39      ~ "National Capital Region: 1st District",
+           as.numeric(value) == 74      ~ "National Capital Region: 2nd District",
+           as.numeric(value) == 75      ~ "National Capital Region: 3rd District",
+           as.numeric(value) == 76      ~ "National Capital Region: 4th District",
+           TRUE ~ label
+           ),
+         label_gld = paste0(as.character(value), " - ", label)
+         ) %>%
+  select(value, change, label, label_gld, label_norm, everything())
+
+
+# checks
+assertthat::assert_that( nrow(prov_lab_final) == n_distinct(prov_lab_final$value) )
+assertthat::assert_that( nrow(prov_lab_final) == n_distinct(prov_lab_final$label_norm) )
+
+
+# create a .dta friendly object 
+prov_lab_final_export <- select(prov_lab_final, -labels_raw, -change )
+
+haven::write_dta(prov_lab_final_export, 
+                 file.path(PHL, "PHL_data/GLD/GLD_PHL_admin2_labels.dta"),
+                 version = 14)
