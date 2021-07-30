@@ -57,17 +57,28 @@ up with the following tools assumed:
 Since this `renv` project is already initialized, first-time users will
 need to only
 
-```{r, eval=FALSE}
-renv::restore()
-```
+1.  Open Rstudio with the `gld.Rproj` file
+
+2.  Install the `renv` package
+
+    ```{r}
+    install.packages("renv")
+    ```
+
+3.  Finally, tell `renv` about the `renv.lock` file, which will install
+    all packages. This may take a while for the first time.
+
+    ```{r, eval=FALSE}
+    renv::restore()
+    ```
 
 If loaded correctly, the console will tell you that the project `gld` is
 loaded with renv.
 
 ## Using `renv` daily
 
-Once, you've installed and loaded the renv project, whenever Rstudio
-loads the `gld.Rproject` file it will automatically load `renv` .
+1.  Open Rstudio with the `gld` project file — it will automatically
+    load `renv`.
 
 ### When I update or install a package
 
@@ -119,6 +130,8 @@ Try ensuring that it's capturing all types of snapshots.
 renv::settings$snapshot.type("all")
 renv::snapshot()
 ```
+
+#### 
 
 ```{r}
 citation("renv")
