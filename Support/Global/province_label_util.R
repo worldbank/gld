@@ -244,6 +244,7 @@ assertthat::assert_that( nrow(prov_lab_final) == n_distinct(prov_lab_final$value
 assertthat::assert_that( nrow(prov_lab_final) == n_distinct(prov_lab_final$label_norm) )
 
 
+
 # create a .dta friendly object and save .Rdata
 prov_lab_final_export <- select(prov_lab_final, -labels_raw, -change )
 

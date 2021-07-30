@@ -376,24 +376,34 @@ set mem 800m
 
 	preserve
 
-		clonevar 	value = prov // copy prov as value in order for merge to work
-
-		merge 		m:1 ///		multiple matches in main, unique in using
-					value ///	match on province (value)
-					using ${adm2_labs} /// use file named in PHL_MAIN.do
-					, keepusing(label_gld) assert(match using) // options
-
-		encode 		label_gld	///	make string into numeric with label
-					, generate(subnatid2) /// with this var name
-					label(lblsubnatid2) // and this value label name
-		pause		// check to see what the underlying values are...
+		use  ${adm2_labs} , clear 
+		
+		* Many thanks to DIME who have figured this out
+		* https://github.com/worldbank/iefieldkit/blob/master/src/ado_files/iecodebook.ado
+		count 
+		local 		n_labs = `r(N)' 	// store the number of total labels 
+		forvalues 	v = 1 / `n_labs' {	// store each value/label pair in a value label local 
+			
+			local theNextValue  = value[`v']
+			local theNextLabel  = label_gld[`v']
+			local theValueLabel = "lblsubnatid2"
+			
+			local L`theValueLabel'	`" `L`theValueLabel'' `theNextValue' "`theNextLabel'" "'	
+		}
 
 	restore
-
+	
+	* now hop over to the main dataset our local and apply the label
+	// define the value label
+	foreach label in `theValueLabel' {
+		label def 	`label' `L`label'', replace
+	}
+	
+	// generate the variable and apply the labels.
 	gen byte 		subnatid2 = prov
-	label de 		lblsubnatid2
 	label values 	subnatid2 lblsubnatid2
 	label var 		subnatid2 "Subnational ID at Second Administrative Level"
+	
 *</_subnatid2_>
 
 
