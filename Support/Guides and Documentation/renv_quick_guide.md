@@ -51,6 +51,12 @@ up with the following tools assumed:
 Since this `renv` project is already initialized, first-time users will
 need to only
 
+1. install renv: 
+```
+install.packages("renv")
+```
+3. Open R studio with the associated `gld.Rproj` file and then type
+
 ``` r
 renv::restore()
 ```
