@@ -110,7 +110,7 @@ set mem 800m
 		`"`round1'"' `"`round2'"' `"`round3'"' `"`round4'"' /// survey files
 		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template-IN.xlsx"' /// previously edited harmonization file
 		, clear surveys(JAN1997 APR1997 JUL1997 OCT1997) generate(round) // survey names
-	
+
 
 
 /*%%=============================================================================================
@@ -376,34 +376,34 @@ set mem 800m
 
 	preserve
 
-		use  ${adm2_labs} , clear 
-		
+		use  ${adm2_labs} , clear
+
 		* Many thanks to DIME who have figured this out
 		* https://github.com/worldbank/iefieldkit/blob/master/src/ado_files/iecodebook.ado
-		count 
-		local 		n_labs = `r(N)' 	// store the number of total labels 
-		forvalues 	v = 1 / `n_labs' {	// store each value/label pair in a value label local 
-			
+		count
+		local 		n_labs = `r(N)' 	// store the number of total labels
+		forvalues 	v = 1 / `n_labs' {	// store each value/label pair in a value label local
+
 			local theNextValue  = value[`v']
 			local theNextLabel  = label_gld[`v']
 			local theValueLabel = "lblsubnatid2"
-			
-			local L`theValueLabel'	`" `L`theValueLabel'' `theNextValue' "`theNextLabel'" "'	
+
+			local L`theValueLabel'	`" `L`theValueLabel'' `theNextValue' "`theNextLabel'" "'
 		}
 
 	restore
-	
+
 	* now hop over to the main dataset our local and apply the label
 	// define the value label
 	foreach label in `theValueLabel' {
 		label def 	`label' `L`label'', replace
 	}
-	
+
 	// generate the variable and apply the labels.
 	gen byte 		subnatid2 = prov
 	label values 	subnatid2 lblsubnatid2
 	label var 		subnatid2 "Subnational ID at Second Administrative Level"
-	
+
 *</_subnatid2_>
 
 
@@ -823,7 +823,7 @@ foreach v of local ed_var {
 
 
 *<_minlaborage_>
-	gen byte minlaborage =.
+	gen byte minlaborage = `lb_mod_age'
 	label var minlaborage "Labor module application age"
 *</_minlaborage_>
 
