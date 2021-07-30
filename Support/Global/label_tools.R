@@ -207,6 +207,17 @@ vallab_tab_curschool <- metadata %>%
   pivot_wider(names_from = id, values_from = value_label) %>%
   arrange(value)
 
+# create employment status variable 
+vallab_tab_employstat <- metadata %>%
+  filter( grepl("empst", var_name_orig) ) %>%
+  filter(!is.na(labels)) %>%
+  select(id, labels) %>%
+  unnest_longer(labels, 
+                values_to = "value",
+                indices_to = "value_label") %>%
+  pivot_wider(names_from = id, values_from = value_label) %>%
+  arrange(value)
+
 
 # create marital status variable tables 
 vallab_tab_marital <- metadata %>%
@@ -219,4 +230,5 @@ vallab_tab_marital <- metadata %>%
   pivot_wider(names_from = id, values_from = value_label) %>%
   arrange(value)
 
+save.image(file = file.path(PHL, "PHL_data/variable_label_tables.Rdata"))
 
