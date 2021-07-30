@@ -1,4 +1,3 @@
-
 /*%%=============================================================================================
 	0: GLD Harmonization Preamble
 ==============================================================================================%%*/
@@ -50,7 +49,7 @@
 ==============================================================================================%%*/
 
 *----------1.1: Initial commands------------------------------*
-
+cap log close
 clear
 set more off
 set mem 800m
@@ -106,6 +105,13 @@ set mem 800m
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
+*** append the dataset using iecodebook and the i2d2 template
+	iecodebook append ///
+		`"`round1'"' `"`round2'"' `"`round3'"' `"`round4'"' /// survey files
+		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template-IN.xlsx"' /// previously edited harmonization file
+		, clear surveys(JAN1997 APR1997 JUL1997 OCT1997) generate(round) // survey names
+
+
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -114,25 +120,25 @@ set mem 800m
 {
 
 *<_countrycode_>
-	gen str4 countrycode = ""
+	gen str4 countrycode = "PHL"
 	label var countrycode "Country code"
 *</_countrycode_>
 
 
 *<_survname_>
-	gen survname = ""
+	gen survname = "LFS"
 	label var survname "Survey acronym"
 *</_survname_>
 
 
 *<_survey_>
-	gen survey = ""
+	gen survey = "LFS"
 	label var survey "Survey type"
 *</_survey_>
 
 
 *<_icls_v_>
-	gen icls_v = "ICLS-[##]"
+	gen icls_v = "ICLS-13"
 	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
 
@@ -144,13 +150,13 @@ set mem 800m
 
 
 *<_vermast_>
-	gen vermast = ""
+	gen vermast = "v01"
 	label var vermast "Version of master data"
 *</_vermast_>
 
 
 *<_veralt_>
-	gen veralt = ""
+	gen veralt = "v01"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
@@ -183,20 +189,105 @@ set mem 800m
 	60 psu coded 1 through 60, codes should be 01, 02, ..., 60. If there are 160 it should be 001,
 	002, ..., 160.
 
+	Since individual Household ID variables were not always provided for the Philippines, yet the household
+	line number variables were provided, it was possible to approximate the household groupings by other variables.
+	However, this process was not perfectly clean, so checks for duplicates were needed. Please refer to the
+	"Household_IDs.md" in Guides and Documentation for additional explanation. The two variables, hhid and pid
+	will be produced in conjunction, the labelled in the html brackets.
+
 </_hhid_note> */
-	egen hhid = concat( [Elements] )
+
+	* in 97, it appears that regn and hcn uniquely identify the HH
+
+	loc idhvars 	 regn prov  hcn						// store hhid vars in local
+
+	ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
+	loc numlist 	= r(varlist)						// store numeric vars in local
+	loc stringlist 	: list idhvars - numlist			// non-numeric vars in stringlist
+
+	* starting locals
+	loc len = 6											// declare the length of each element in digits
+	loc idh_els ""										// start with empty local list
+
+	* make each numeric var string, including leading zeros
+	foreach var of local numlist {
+		tostring `var'	///								// make the numeric vars strings
+			, generate(idh_`var') ///					// gen a variable with this prefix
+			force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
+
+		loc idh_els 	`idh_els' idh_`var'				// add each variable to the local list
+
+	}
+
+	* make each string variable numeric (as it should be), then string again with correct format
+	foreach var of local stringlist {
+		destring `var' /// 								// destring variable, make numeric version
+			, gen(num_`var') ///						//
+			force 										// force obs to num that are non numeric, ie to missing
+
+		tostring num_`var'	///							// make the numeric vars strings
+			, generate(idh_`var') ///					// gen a variable with this prefix
+			force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
+
+		loc idh_els 	`idh_els' idh_`var'				// add each variable to the local list
+
+	}
+
+		* add the round variable
+		tostring round	///							// make the numeric vars strings
+			, generate(idh_round) ///					// gen a variable with this prefix
+			force format(`"%01.0f"')				// ...and the specified number of digits in local
+
+		loc idh_els 	`idh_els' idh_round				// add each variable to the local list
+
+
+
+	* concatenate all elements to form hhid: hosehold id
+	egen hhid=concat( `idh_els' )						// concatenate vars we just made. code drops vars @ end
+
 	label var hhid "Household ID"
 *</_hhid_>
 
 
 *<_pid_>
-	gen  pid = .
+** INDIVIDUAL IDENTIFICATION NUMBER
+	* in 97, region, hh control and line number variables uniquely identify observations. use line number as pid
+
+	* repeat same process from above, but only with n_fam.
+	* 	note, assuming that the only necessary individaul identifier is family member, which is numeric
+	*	so, not following processing for sorting numeric/non-numeric variables.
+
+	loc idpvars 	lno 								// store relevant pid vars in local
+	ds `idpvars',  	has(type numeric)					// filter out numeric variables in local
+	loc rlist 		= r(varlist)						// store numeric vars in local
+
+	* make new values with desired length of each variable
+	loc len = 2											// declare the length of each element in digits
+	loc idp_els ""										// start with empty local list
+
+	foreach var of local idpvars {
+		tostring `var'	///								// make numeric variables strings
+			, generate(idp_`var') ///					// generate a variable with this prefix
+			force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
+
+		loc idp_els 	`idp_els' idp_`var'				// add each variable to the local list
+
+	}
+
+	* concatenate to form pid: individual id
+	egen pid=concat( `idp_els' )						// concatenate vars we just made. code drops vars @ end
+
+	sort hhid pid
+
+** ID CHECKS
+	isid hhid pid 										// household and individual id uniquely identify
+
 	label var pid "Individual ID"
 *</_pid_>
 
 
 *<_weight_>
-	gen weight = .
+	gen weight = rfadj/(`n_round')
 	label var weight "Household sampling weight"
 *</_weight_>
 
@@ -220,8 +311,14 @@ set mem 800m
 
 
 *<_wave_>
-	gen wave = .
-	label var wave = "Survey wave"
+	gen wave = ""
+
+	replace 		wave = 	"Q1"	if round == 1
+	replace 		wave = 	"Q2"	if round == 2
+	replace 		wave = 	"Q3"	if round == 3
+	replace 		wave = 	"Q4"	if round == 4
+
+	label var 		wave "Survey wave"
 *</_wave_>
 
 }
@@ -233,10 +330,12 @@ set mem 800m
 {
 
 *<_urban_>
-	gen byte urban
-	label var urban "Location is urban"
-	la de lblurban 1 "Urban" 0 "Rural"
-	label values urban lblurban
+	gen byte 		urban = .
+	replace 		urban = urb
+	recode 			urban (2 = 0) 		// change rural=2 to rural=0
+	label var 		urban "Location is urban"
+	la de 			lblurban 1 "Urban" 0 "Rural"
+	label values 	urban lblurban
 *</_urban_>
 
 
@@ -246,31 +345,78 @@ set mem 800m
 	Labels are to be defined as # - Name like 1 "1 - Alaska" 2 "2 - Arkansas".
 
 </_subnatid1> */
-	gen byte subnatid1 = .
-	label de lblsubnatid1 1 "1 - Name"
-	label values subnatid1 lblsubnatid1
-	label var subnatid1 "Subnational ID at First Administrative Level"
+	gen byte 		subnatid1 = regn
+	label de 		lblsubnatid1 	///
+					 1   "1 - Ilocos"			///
+					 2	 "2 - Cagayan Valley"	///
+					 3   "3 - Central Luzon"	///
+					 4	 "4 - Southern Tagalog"	///
+					 5   "5 - Bicol"			///
+					 6	 "6 - Western Visayas"	///
+					 7   "7 - Central Visayas"	///
+					 8	 "8 - Eastern Visayas"	///
+					 9   "9 - Western Mindanao"	///
+					 10  "10 - Northern Mindanao"	///
+					 11  "11 - Southern Mindanao"	///
+					 12  "12 - Central Mindanao"		///
+					 13  "13 - National Capital Region"				///
+					 14  "14 - Cordillera Administrative Region"		///
+					 15  "15 - Autonomous Region of Muslim Mindanao"	///
+					 16  "16 - Caraga"
+
+	label values 	subnatid1 lblsubnatid1
+	label var 		subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 
 
 *<_subnatid2_>
-	gen byte subnatid2 = .
-	label de lblsubnatid2 1 "1 - Name"
-	label values subnatid2 lblsubnatid2
-	label var subnatid2 "Subnational ID at Second Administrative Level"
+
+	* import the labels
+	loc 			n_obs = _n 	// store no. obs before merge
+
+	preserve
+
+		use  ${adm2_labs} , clear
+
+		* Many thanks to DIME who have figured this out
+		* https://github.com/worldbank/iefieldkit/blob/master/src/ado_files/iecodebook.ado
+		count
+		local 		n_labs = `r(N)' 	// store the number of total labels
+		forvalues 	v = 1 / `n_labs' {	// store each value/label pair in a value label local
+
+			local theNextValue  = value[`v']
+			local theNextLabel  = label_gld[`v']
+			local theValueLabel = "lblsubnatid2"
+
+			local L`theValueLabel'	`" `L`theValueLabel'' `theNextValue' "`theNextLabel'" "'
+		}
+
+	restore
+
+	* now hop over to the main dataset our local and apply the label
+	// define the value label
+	foreach label in `theValueLabel' {
+		label def 	`label' `L`label'', replace
+	}
+
+	// generate the variable and apply the labels.
+	gen byte 		subnatid2 = prov
+	label values 	subnatid2 lblsubnatid2
+	label var 		subnatid2 "Subnational ID at Second Administrative Level"
+
 *</_subnatid2_>
 
 
 *<_subnatid3_>
 	gen byte subnatid3 = .
-	label de lblsubnatid3 1 "1 - Name"
-	label values subnatid3 lblsubnatid3
+	*label de lblsubnatid3 1 "1 - Name"
+	*label values subnatid3 lblsubnatid3
 	label var subnatid3 "Subnational ID at Third Administrative Level"
 *</_subnatid3_>
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = .
+	gen subnatidsurvey = "subnatid1"
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -324,44 +470,77 @@ set mem 800m
 {
 
 *<_hsize_>
-	gen hsize = .
-	label var hsize "Household size"
+	sort hhid
+	by hhid: 	egen hhsize= count(rel <= 7) // includes non-family members, not boarders or domestic workers.
+	label var 	hsize "Household size"
+
+	* check
+	mdesc 		hhsize
+	assert 		r(miss) == 0
+
 *</_hsize_>
 
 
 *<_age_>
-	gen age = .
-	label var age "Individual age"
+	gen 		age = age
+	replace 	age	= 98 	if age>=98 & age!=.
+	label var 	age "Individual age"
 *</_age_>
 
 
 *<_male_>
-	gen male = .
-	label var male "Sex - Ind is male"
-	la de lblmale 1 "Male" 0 "Female"
+	gen 		male = sex
+	recode 		male (2 = 0)						// female=2 recoded to female=0
+	label var 	male "Sex - Ind is male"
+	la de 		lblmale 	1 "Male" 0 "Female"
 	label values male lblmale
 *</_male_>
 
 
 *<_relationharm_>
-	gen relationharm = .
-	label var relationharm "Relationship to the head of household - Harmonized"
-	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
+	gen 		relationharm = .
+	replace 	relationharm = rel
+	recode 		relationharm (0 8 9=6) /// non-relative, boarder, domestic helper to "other and non-relative"
+							(6=4) 	/// "father/mother" to "parents"
+							(4 5 7=5) // "son/daugher-in-law", "grandson/granddaughter", "other relative" to "Other rel"
+
+	label var 	relationharm "Relationship to the head of household - Harmonized"
+	la de 		lblrelationharm  ///
+				1 "Head of household" ///
+				2 "Spouse" ///
+				3 "Children" ///
+				4 "Parents" ///
+				5 "Other relatives" ///
+				6 "Other and non-relatives"
 	label values relationharm  lblrelationharm
+
+	* other relationharm operations
+	gen 		jh=(relationharm==1)
+	bys hhid: 	egen hh=sum(jh) // hh is the count of hh heads per family
+
+	/*Note: if number of Household Heads is >1, all relevant HH head info is set to missing.
+			In this case the only relevant variable is head*/
+	replace 	relationharm=. if hh>1
+
 *</_relationharm_>
 
 
 *<_relationcs_>
-	gen relationcs = .
+	gen relationcs = rel
 	label var relationcs "Relationship to the head of household - Country original"
 *</_relationcs_>
 
 
 *<_marital_>
-	gen byte marital = .
-	label var marital "Marital status"
+	gen byte 		marital = mstat
+	recode 			marital 	///
+					(1=2) 	///	"single" -> "never married"
+					(2=1) /// "married" -> "married"
+					(3=5)	/// "divorced/separated" -> "divorced/separated"
+					(5 6=.) // "unknown" and "annulled" -> missing
+	label var 		marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
-	label values marital lblmarital
+	label values 	marital lblmarital
 *</_marital_>
 
 
@@ -488,11 +667,11 @@ set mem 800m
 
 /* <_ed_mod_age_note>
 
-Education module is only asked to those XX and older.
+Education module is only asked to those 5 and older.
 
 </_ed_mod_age_note> */
 
-gen byte ed_mod_age = .
+gen byte ed_mod_age = `ed_mod_age'
 label var ed_mod_age "Education module application age"
 
 *</_ed_mod_age_>
@@ -520,19 +699,45 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat7_>
+	/*Please refer to the "Education_Levels.md" for a detailed discussion on
+	classificition of how each level is classified and why,
+	available in github repository. */
+
 	gen byte educat7 =.
+
+	gen byte edulevel7=.
+	replace edulevel7=1 if grade==0			// "No Grade Completed" -> "No education"
+	replace edulevel7=2 if grade==1 | grade==2 | grade==3 // "Grades 1-5" -> " Primary Incomplete"
+	replace edulevel7=3 if grade==4 	// "Elementary Graduate" -> "Primary Complete"
+	replace edulevel7=4 if grade==5		// "1st-3rd Year in High School" -> "Secondary Incomplete"
+	replace edulevel7=5 if grade==6		// "High school graduate" -> "Secondary Complete"
+	replace edulevel7=7 if grade==7 | ( grade>=40 & grade<=98) // "College Graduate" and "[x] Bachelors/Advanced Degree" -> "University"
+
 	label var educat7 "Level of education 1"
-	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
+	la de lbleducat7 	1 "No education" ///
+						2 "Primary incomplete" ///
+						3 "Primary complete" ///
+						4 "Secondary incomplete" ///
+						5 "Secondary complete" ///
+						6 "Higher than secondary but not university" ///
+						7 "University incomplete or complete"
 	label values educat7 lbleducat7
+	replace educat7=. if age < ed_mod_age // restrict universe to students at or above primary school age
+
 *</_educat7_>
 
 
 *<_educat5_>
 	gen byte educat5 = educat7
-	recode educat5 4=3 5=4 6 7=5
+	recode educat5 (4=3) (5=4) (6 7=5)
 	label var educat5 "Level of education 2"
-	la de lbleducat5 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
+	la de lbleducat5 	1 "No education" ///
+						2 "Primary incomplete"  ///
+						3 "Primary complete but secondary incomplete" ///
+						4 "Secondary complete" ///
+						5 "Some tertiary/post-secondary"
 	label values educat5 lbleducat5
+	replace educat5=. if age < ed_mod_age // restrict universe to students at or above primary school age
 *</_educat5_>
 
 
@@ -542,6 +747,7 @@ label var ed_mod_age "Education module application age"
 	label var educat4 "Level of education 3"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values educat4 lbleducat4
+	replace educat4=. if age < ed_mod_age // restrict universe to students at or above primary school age
 *</_educat4_>
 
 
@@ -617,7 +823,7 @@ foreach v of local ed_var {
 
 
 *<_minlaborage_>
-	gen byte minlaborage =.
+	gen byte minlaborage = `lb_mod_age'
 	label var minlaborage "Labor module application age"
 *</_minlaborage_>
 
