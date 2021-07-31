@@ -832,51 +832,66 @@ foreach v of local ed_var {
 
 {
 *<_lstatus_>
-	gen byte lstatus = .
-	replace lstatus = . if age < minlaborage
-	label var lstatus "Labor status"
-	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
-	label values lstatus lbllstatus
+	gen byte 		lstatus = empst1_nso
+	replace 		lstatus = . if age < minlaborage
+	label var 		lstatus "Labor status"
+	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF" // raw values always same as new
+	label values 	lstatus lbllstatus
 *</_lstatus_>
 
 
 *<_potential_lf_>
-	gen byte potential_lf = .
-	replace potential_lf = . if age < minlaborage & age != .
-	replace potential_lf = . if lstatus != 3
-	label var potential_lf "Potential labour force status"
-	la de lblpotential_lf 0 "No" 1 "Yes"
-	label values potential_lf lblpotential_lf
+	gen byte 		potential_lf = .
+	replace 		potential_lf = . if age < minlaborage & age != .
+	replace 		potential_lf = . if lstatus != 3
+	label var 		potential_lf "Potential labour force status"
+	la de 			lblpotential_lf 0 "No" 1 "Yes"
+	label values 	potential_lf lblpotential_lf
 *</_potential_lf_>
 
 
 *<_underemployment_>
-	gen byte underemployment = .
-	replace underemployment = . if age < minlaborage & age != .
-	replace underemployment = . if lstatus == 1
-	label var underemployment "Underemployment status"
-	la de lblunderemployment 0 "No" 1 "Yes"
-	label values underemployment lblunderemployment
+	gen byte 		underemployment = .
+	replace 		underemployment = . if age < minlaborage & age != .
+	replace 		underemployment = . if lstatus == 1
+	label var 		underemployment "Underemployment status"
+	la de 			lblunderemployment 0 "No" 1 "Yes"
+	label values 	underemployment lblunderemployment
 *</_underemployment_>
 
 
 *<_nlfreason_>
-	gen byte nlfreason=.
-	label var nlfreason "Reason not in the labor force"
-	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
-	label values nlfreason lblnlfreason
+	gen byte 		nlfreason= .
+
+	replace 		nlfreason=1 	if wnot==8
+	replace 		nlfreason=2 	if wnot==7
+	replace 		nlfreason=3 	if wnot==6
+	replace 		nlfreason=4 	if wnot==3
+	replace 		nlfreason=5 	if wnot==1 | wnot==2 | wnot==4 | wnot==5 | wnot==9
+	replace 		nlfreason=. 	if lstatus!=3 		// restricts universe to non-labor force
+	replace 		nlfreason=. 	if age < lb_mod_age // restrict universe to working age
+
+	label var 		nlfreason "Reason not in the labor force"
+	la de 			lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
+	label values 	nlfreason lblnlfreason
 *</_nlfreason_>
 
 
 *<_unempldur_l_>
-	gen byte unempldur_l=.
-	label var unempldur_l "Unemployment duration (months) lower bracket"
+	gen byte 		unempldur_l=weeks/4.2
+	label var 		unempldur_l "Unemployment duration (months) lower bracket"
+	replace 		unempldur_l=. if age < lb_mod_age // restrict universe to working age
+	replace 		unempldur_l=. if lstatus!=2 	  // restrict universe to unemployed only
+
 *</_unempldur_l_>
 
 
 *<_unempldur_u_>
-	gen byte unempldur_u=.
-	label var unempldur_u "Unemployment duration (months) upper bracket"
+	gen byte 		unempldur_u=weeks/4.2
+	label var 		unempldur_u "Unemployment duration (months) upper bracket"
+	replace 		unempldur_u=. if age < lb_mod_age // restrict universe to working age
+	replace 		unempldur_u=. if lstatus!=2 	  // restrict universe to unemployed only
+
 *</_unempldur_u_>
 }
 
@@ -886,38 +901,60 @@ foreach v of local ed_var {
 
 {
 *<_empstat_>
-	gen byte empstat=.
-	label var empstat "Employment status during past week primary job 7 day recall"
-	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
-	label values empstat lblempstat
+	gen byte 		empstat=.
+	replace 		empstat=1 	if class==0 | class==1 | class==2 | class==5
+	replace 		empstat=2 	if class==6
+	replace 		empstat=3	if class==4
+	replace 		empstat=4 	if class==3
+	replace 		empstat=. 	if lstatus!=1 	// includes universe restriction
+	label var 		empstat 	"Employment status during past week primary job 7 day recall"
+	la de 			lblempstat 	1 "Paid employee" ///
+								2 "Non-paid employee" ///
+								3 "Employer" ///
+								4 "Self-employed" ///
+								5 "Other, workers not classifiable by status"
+	label values 	empstat lblempstat
 *</_empstat_>
 
 
 *<_ocusec_>
-	gen byte ocusec = .
-	label var ocusec "Sector of activity primary job 7 day recall"
-	la de lblocusec 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
+	gen byte 		ocusec = .
+	replace 		ocusec = 1 	if class == 1
+	replace 		ocusec = 2 	if inlist(class, 0, 1, 3, 4, 5, 6)
+
+	label var 		ocusec 		"Sector of activity primary job 7 day recall"
+	la de 			lblocusec 	1 "Public Sector, Central Government, Army" ///
+								2 "Private, NGO" ///
+								3 "State owned" ///
+								4 "Public or State-owned, but cannot distinguish"
 	label values ocusec lblocusec
 *</_ocusec_>
 
 
 *<_industry_orig_>
-	gen industry_orig = .
-	label var industry_orig "Original survey industry code, main job 7 day recall"
+	gen 			industry_orig = qkb
+	label var 		industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
 
 *<_industrycat_isic_>
-	gen industrycat_isic = .
-	label var industrycat_isic "ISIC code of primary job 7 day recall"
+	gen 			industrycat_isic = .
+	label var 		industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
 
 *<_industrycat10_>
-	gen byte industrycat10 = .
-	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
-	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
-	label values industrycat10 lblindustrycat10
+	gen byte 		industrycat10 = .
+	label var 		industrycat10 "1 digit industry classification, primary job 7 day recall"
+	la de 			lblindustrycat10 	///
+					1 "Agriculture" 	2 "Mining" ///
+					3 "Manufacturing"	4 "Public utilities" ///
+					5 "Construction"  	6 "Commerce" ///
+					7 "Transport and Comnunications" ///
+					8 "Financial and Business Services" ///
+					9 "Public Administration" ///
+					10 "Other Services, Unspecified"
+	label values 	industrycat10 lblindustrycat10
 *</_industrycat10_>
 
 
