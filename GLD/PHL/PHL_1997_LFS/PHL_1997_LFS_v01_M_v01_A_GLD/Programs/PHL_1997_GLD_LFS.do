@@ -1549,115 +1549,119 @@ foreach var in local laborvars8_3	{
 {
 
 *<_empstat_2_year_>
-	gen byte empstat_2_year = .
-	label var empstat_2_year "Employment status during past week secondary job 12 month recall"
-	label values empstat_2_year lblempstat_year
+	gen byte 		empstat_2_year = .
+	label var 		empstat_2_year "Employment status during past week secondary job 12 month recall"
+	label values 	empstat_2_year lblempstat_year
 *</_empstat_2_year_>
 
 
 *<_ocusec_2_year_>
-	gen byte ocusec_2_year = .
-	label var ocusec_2_year "Sector of activity secondary job 12 day recall"
-	la de lblocusec_2_year 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
-	label values ocusec_2_year lblocusec_2_year
+	gen byte 		ocusec_2_year = .
+	label var 		ocusec_2_year "Sector of activity secondary job 12 day recall"
+	la de 			lblocusec_2_year ///
+					1 "Public Sector, Central Government, Army" ///
+					2 "Private, NGO" ///
+					3 "State owned" ///
+					4 "Public or State-owned, but cannot distinguish"
+	label values 	ocusec_2_year lblocusec_2_year
 *</_ocusec_2_year_>
 
 
 
 *<_industry_orig_2_year_>
-	gen industry_orig_2_year = .
-	label var industry_orig_2_year "Original survey industry code, secondary job 12 month recall"
+	gen 			industry_orig_2_year = .
+	label var 		industry_orig_2_year "Original survey industry code, secondary job 12 month recall"
 *</_industry_orig_2_year_>
 
 
 
 *<_industrycat_isic_2_year_>
-	gen industrycat_isic_2_year = .
-	label var industrycat_isic_2_year "ISIC code of secondary job 12 month recall"
+	gen 			industrycat_isic_2_year = .
+	label var 		industrycat_isic_2_year "ISIC code of secondary job 12 month recall"
 *</_industrycat_isic_2_year_>
 
 
 *<_industrycat10_2_year_>
-	gen byte industrycat10_2_year = .
-	label var industrycat10_2_year "1 digit industry classification, secondary job 12 month recall"
-	label values industrycat10_2_year lblindustrycat10_year
+	gen byte 		industrycat10_2_year = .
+	label var 		industrycat10_2_year "1 digit industry classification, secondary job 12 month recall"
+	label values 	industrycat10_2_year lblindustrycat10_year
 *</_industrycat10_2_year_>
 
 
 *<_industrycat4_2_year_>
-	gen byte industrycat4_2_year=industrycat10_2_year
-	recode industrycat4_2_year (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
-	label var industrycat4_2_year "Broad Economic Activities classification, secondary job 12 month recall"
-	label values industrycat4_2_year lblindustrycat4_year
+	gen byte 		industrycat4_2_year=industrycat10_2_year
+	recode 			industrycat4_2_year (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
+	label var 		industrycat4_2_year "Broad Economic Activities classification, secondary job 12 month recall"
+	label values 	industrycat4_2_year lblindustrycat4_year
 *</_industrycat4_2_year_>
 
 
 *<_occup_orig_2_year_>
-	gen occup_orig_2_year = .
-	label var occup_orig_2_year "Original occupation record secondary job 12 month recall"
+	gen 			occup_orig_2_year = .
+	label var 		occup_orig_2_year "Original occupation record secondary job 12 month recall"
 *</_occup_orig_2_year_>
 
 
 *<_occup_isco_2_year_>
-	gen occup_isco_2_year = .
-	label var occup_isco_2_year "ISCO code of secondary job 12 month recall"
+	gen 			occup_isco_2_year = .
+	label var 		occup_isco_2_year "ISCO code of secondary job 12 month recall"
 *</_occup_isco_2_year_>
 
 
 *<_occup_skill_2_year_>
-	gen occup_skill_2_year = .
-	la de lblskilly2 1 "Low skill" 2 "Medium skill" 3 "High skill"
-	label values occup_skill_2_year lblskilly2
-	label var occup_skill_2_year "Skill based on ISCO standard secondary job 12 month recall"
+	gen 			occup_skill_2_year = .
+	la de 			lblskilly2 1 "Low skill" 2 "Medium skill" 3 "High skill"
+	label values 	occup_skill_2_year lblskilly2
+	label var 		occup_skill_2_year "Skill based on ISCO standard secondary job 12 month recall"
 *</_occup_skill_2_year_>
 
 
 *<_occup_2_year_>
-	gen byte occup_2_year = .
-	label var occup_2_year "1 digit occupational classification, secondary job 12 month recall"
-	label values occup_2_year lbloccup_year
+	gen 			byte occup_2_year = .
+	label var 		occup_2_year "1 digit occupational classification, secondary job 12 month recall"
+	label values 	occup_2_year lbloccup_year
 *</_occup_2_year_>
 
 
 *<_wage_no_compen_2_year_>
-	gen double wage_no_compen_2_year = .
-	label var wage_no_compen_2_year "Last wage payment secondary job 12 month recall"
+	gen double 		wage_no_compen_2_year = .
+	label var 		wage_no_compen_2_year "Last wage payment secondary job 12 month recall"
 *</_wage_no_compen_2_year_>
 
 
 *<_unitwage_2_year_>
-	gen byte unitwage_2_year = .
-	label var unitwage_2_year "Last wages' time unit secondary job 12 month recall"
-	label values unitwage_2_year lblunitwage_year
+	gen byte 		unitwage_2_year = .
+	label var 		unitwage_2_year "Last wages' time unit secondary job 12 month recall"
+	label values 	unitwage_2_year lblunitwage_year
 *</_unitwage_2_year_>
 
 
 *<_whours_2_year_>
-	gen whours_2_year = .
-	label var whours_2_year "Hours of work in last week secondary job 12 month recall"
+	gen 			whours_2_year = .
+	label var 		whours_2_year "Hours of work in last week secondary job 12 month recall"
 *</_whours_2_year_>
 
 
 *<_wmonths_2_year_>
-	gen wmonths_2_year = .
-	label var wmonths_2_year "Months of work in past 12 months secondary job 12 month recall"
+	gen 			wmonths_2_year = .
+	label var 		wmonths_2_year "Months of work in past 12 months secondary job 12 month recall"
 *</_wmonths_2_year_>
 
 
 *<_wage_total_2_year_>
-	gen wage_total_2_year = .
-	label var wage_total_2_year "Annualized total wage secondary job 12 month recall"
+	gen 			wage_total_2_year = .
+	label var 		wage_total_2_year "Annualized total wage secondary job 12 month recall"
 *</_wage_total_2_year_>
 
 *<_firmsize_l_2_year_>
-	gen byte firmsize_l_2_year = .
-	label var firmsize_l_2_year "Firm size (lower bracket) secondary job 12 month recall"
+	gen byte 		firmsize_l_2_year = .
+	label var 		firmsize_l_2_year "Firm size (lower bracket) secondary job 12 month recall"
 *</_firmsize_l_2_year_>
 
 
 *<_firmsize_u_2_year_>
-	gen byte firmsize_u_2_year = .
-	label var firmsize_u_2_year "Firm size (upper bracket) secondary job 12 month recall"
+	gen byte 		firmsize_u_2_year = .
+	label var 		firmsize_u_2_year "Firm size (upper bracket) secondary job 12 month recall"
 *</_firmsize_u_2_year_>
 
 }
