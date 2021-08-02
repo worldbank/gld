@@ -1263,20 +1263,23 @@ foreach var in local laborvars8_3	{
 *----------8.4: 7 day reference additional jobs------------------------------*
 
 *<_t_hours_others_>
-	gen t_hours_others = .
-	label var t_hours_others "Annualized hours worked in all but primary and secondary jobs 7 day recall"
+	gen 			t_hours_others = .
+	label var 		t_hours_others ///
+					"Annualized hours worked in all but primary and secondary jobs 7 day recall"
 *</_t_hours_others_>
 
 
 *<_t_wage_nocompen_others_>
-	gen t_wage_nocompen_others = .
-	label var t_wage_nocompen_others "Annualized wage in all but 1st & 2nd jobs excl. bonuses, etc. 7 day recall"
+	gen 			t_wage_nocompen_others = .
+	label var 		t_wage_nocompen_others ///
+					"Annualized wage in all but 1st & 2nd jobs excl. bonuses, etc. 7 day recall"
 *</_t_wage_nocompen_others_>
 
 
 *<_t_wage_others_>
-	gen t_wage_others = .
-	label var t_wage_others "Annualized wage in all but primary and secondary jobs (12-mon ref period)"
+	gen 			t_wage_others = .
+	label var 		t_wage_others ///
+					"Annualized wage in all but primary and secondary jobs (12-mon ref period)"
 *</_t_wage_others_>
 
 
