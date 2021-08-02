@@ -862,7 +862,6 @@ foreach v of local ed_var {
 
 *<_nlfreason_>
 	gen byte 		nlfreason= .
-
 	replace 		nlfreason=1 	if wnot==8
 	replace 		nlfreason=2 	if wnot==7
 	replace 		nlfreason=3 	if wnot==6
@@ -870,7 +869,6 @@ foreach v of local ed_var {
 	replace 		nlfreason=5 	if wnot==1 | wnot==2 | wnot==4 | wnot==5 | wnot==9
 	replace 		nlfreason=. 	if lstatus!=3 		// restricts universe to non-labor force
 	replace 		nlfreason=. 	if age < lb_mod_age // restrict universe to working age
-
 	label var 		nlfreason "Reason not in the labor force"
 	la de 			lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
 	label values 	nlfreason lblnlfreason
@@ -938,7 +936,7 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_>
-	gen 			industrycat_isic = .
+	gen 			industrycat_isic = . // to return
 	label var 		industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
@@ -959,65 +957,109 @@ foreach v of local ed_var {
 
 
 *<_industrycat4_>
-	gen byte industrycat4 = industrycat10
-	recode industrycat4 (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
-	label var industrycat4 "Broad Economic Activities classification, primary job 7 day recall"
-	la de lblindustrycat4 1 "Agriculture" 2 "Industry" 3 "Services" 4 "Other"
-	label values industrycat4 lblindustrycat4
+	gen 			byte industrycat4 = industrycat10
+	recode 			industrycat4 (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
+	label var 		industrycat4 "Broad Economic Activities classification, primary job 7 day recall"
+	la de 			lblindustrycat4 1 "Agriculture" 2 "Industry" 3 "Services" 4 "Other"
+	label values 	industrycat4 lblindustrycat4
 *</_industrycat4_>
 
 
 *<_occup_orig_>
-	gen occup_orig = .
-	label var occup_orig "Original occupation record primary job 7 day recall"
+	gen 			occup_orig = procc
+	label var 		occup_orig "Original occupation record primary job 7 day recall"
+	replace 		occup_orig="" if lstatus!=1 			// restrict universe to employed only
+	replace 		occup_orig="" if age < lb_mod_age	// restrict universe to working age
 *</_occup_orig_>
 
 
 *<_occup_isco_>
 	gen occup_isco = .
 	label var occup_isco "ISCO code of primary job 7 day recall"
+	replace 		occup=. if lstatus!=1 		// restrict universe to employed only
+	replace 		occup=. if age < lb_mod_age	// restrict universe to working age
+
 *</_occup_isco_>
 
 
-*<_occup_skill_>
-	gen occup_skill = .
-	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
-	label values occup_skill lblskill
-	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
-*</_occup_skill_>
-
-
 *<_occup_>
-	gen byte occup = .
-	label var occup "1 digit occupational classification, primary job 7 day recall"
-	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
-	label values occup lbloccup
+	* Convert primary occupation to numeric
+	/*This converts all alpha codes to numeric, ok since no indication as to what they are*/
+	destring 		procc, generate(procc_num) force
+
+	* generate occupation variable
+	gen 			byte occup=floor(procc_num/10)
+	recode 			occup 0 = 10	if 	procc_num==01 	// recode "armed forces" to appropriate label
+	recode 			occup 0 = 99	if 	(procc_num>=02 & procc_num <=09) ///
+							| 		(procc_num >=94 & procc_num <= 99) // recode "Not classifiable occupations"
+
+	/* Note that the raw variable, procc lists values, 94-99 for which there are no associated occupation
+	   codes. Given that the raw data indicate that these individauls do have valid, non-missing occupations,
+	   and that these occupations cannot be matched to our classificaitons with certainty, I have coded them as "other" */
+
+	label var 		occup "1 digit occupational classification, primary job 7 day recall"
+	la de 			lbloccup 	///
+					1 "Managers" 	2 "Professionals" ///
+					3 "Technicians" 4 "Clerks" ///
+					5 "Service and market sales workers" ///
+					6 "Skilled agricultural" ///
+					7 "Craft workers" ///
+					8 "Machine operators" ///
+					9 "Elementary occupations" ///
+					10 "Armed forces"  ///
+					99 "Others"
+	label values 	occup lbloccup
+	replace 		occup=. if lstatus!=1 		// restrict universe to employed only
+	replace 		occup=. if age < lb_mod_age	// restrict universe to working age
 *</_occup_>
 
 
+*<_occup_skill_>
+	gen 			occup_skill = .
+	replace 		occup_skill = 1 	if occup == 9
+	replace 		occup_skill = 2 	if occup >=4 & occup <= 8
+	replace 		occup_skill = 3 	if occup >=1 & occup <= 3
+	replace 		occup_skill = 4 	if occup == 10
+	replace 		occup_skill = 5 	if occup == 99
+	la de 			lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill" 4 "Armed Forces" 5 "Not Classified"
+	label values 	occup_skill lblskill
+	label var 		occup_skill "Skill based on ISCO standard primary job 7 day recall"
+*</_occup_skill_>
+
+
 *<_wage_no_compen_>
-	gen double wage_no_compen = .
-	label var wage_no_compen "Last wage payment primary job 7 day recall"
+	gen 			double wage_no_compen = .
+	label var 		wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
 
 *<_unitwage_>
-	gen byte unitwage = .
-	label var unitwage "Last wages' time unit primary job 7 day recall"
-	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
-	label values unitwage lblunitwage
+	gen byte 		unitwage = .
+	label var 		unitwage "Last wages' time unit primary job 7 day recall"
+	la de 			lblunitwage ///
+					1 "Daily" ///
+					2 "Weekly" ///
+					3 "Every two weeks" ///
+					4 "Bimonthly"  ///
+					5 "Monthly" ///
+					6 "Trimester" ///
+					7 "Biannual" ///
+					8 "Annually" ///
+					9 "Hourly" ///
+					10 "Other"
+	label values 	unitwage lblunitwage
 *</_unitwage_>
 
 
 *<_whours_>
-	gen whours = .
+	gen whours 		= hours
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
 
 *<_wmonths_>
-	gen wmonths = .
-	label var wmonths "Months of work in past 12 months primary job 7 day recall"
+	gen wmonths 	= .
+	label var 		wmonths "Months of work in past 12 months primary job 7 day recall"
 *</_wmonths_>
 
 
@@ -1028,56 +1070,66 @@ foreach v of local ed_var {
 	This is done to make it easy to compare earnings in formal and informal sectors.
 
 </_wage_total_note> */
-	gen wage_total = .
+	gen wage_total 	= .
 	label var wage_total "Annualized total wage primary job 7 day recall"
 *</_wage_total_>
 
 
 *<_contract_>
-	gen byte contract = .
-	label var contract "Employment has contract primary job 7 day recall"
-	la de lblcontract 0 "Without contract" 1 "With contract"
-	label values contract lblcontract
+	gen byte 		contract = .
+	label var 		contract "Employment has contract primary job 7 day recall"
+	la de 			lblcontract 0 "Without contract" 1 "With contract"
+	label values 	contract lblcontract
 *</_contract_>
 
 
 *<_healthins_>
-	gen byte healthins = .
-	label var healthins "Employment has health insurance primary job 7 day recall"
-	la de lblhealthins 0 "Without health insurance" 1 "With health insurance"
-	label values healthins lblhealthins
+	gen byte 		healthins = .
+	label var 		healthins "Employment has health insurance primary job 7 day recall"
+	la de 			lblhealthins 0 "Without health insurance" 1 "With health insurance"
+	label values 	healthins lblhealthins
 *</_healthins_>
 
 
 *<_socialsec_>
-	gen byte socialsec = .
-	label var socialsec "Employment has social security insurance primary job 7 day recall"
-	la de lblsocialsec 1 "With social security" 0 "Without social secturity"
-	label values socialsec lblsocialsec
+	gen byte 		socialsec = .
+	label var 		socialsec "Employment has social security insurance primary job 7 day recall"
+	la de 			lblsocialsec 1 "With social security" 0 "Without social secturity"
+	label values 	socialsec lblsocialsec
 *</_socialsec_>
 
 
 *<_union_>
-	gen byte union = .
-	label var union "Union membership at primary job 7 day recall"
-	la de lblunion 0 "Not union member" 1 "Union member"
-	label values union lblunion
+	gen byte 		union = .
+	label var 		union "Union membership at primary job 7 day recall"
+	la de 			lblunion 0 "Not union member" 1 "Union member"
+	label values 	union lblunion
 *</_union_>
 
 
 *<_firmsize_l_>
-	gen byte firmsize_l = .
-	label var firmsize_l "Firm size (lower bracket) primary job 7 day recall"
+	gen byte 		firmsize_l = .
+	label var 		firmsize_l "Firm size (lower bracket) primary job 7 day recall"
 *</_firmsize_l_>
 
 
 *<_firmsize_u_>
-	gen byte firmsize_u= .
-	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
+	gen byte 		firmsize_u= .
+	label var 		firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>
 
 }
 
+* restrict variables for age and labor status in 8.2
+local laborvars8_2 	empstat ocusec industry_orig industrycat_isic industrycat10 ///
+					industrycat4 occup_orig occup_isco occup occup_skill ///
+					wage_no_compen unitwage whours wmonths wage_total ///
+					contract healthins socialsec union firmsize_l firmsize_u
+
+foreach var in local laborvars8_2	{
+	replace 		`var'=. if lstatus!=1 		// restrict universe to employed only
+	replace 		`var'=. if age < lb_mod_age	// restrict universe to working age
+}
 
 *----------8.3: 7 day reference secondary job------------------------------*
 * Since labels are the same as main job, values are labelled using main job labels
