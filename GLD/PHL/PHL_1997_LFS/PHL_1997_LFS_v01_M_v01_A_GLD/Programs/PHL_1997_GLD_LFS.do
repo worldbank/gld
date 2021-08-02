@@ -1287,20 +1287,20 @@ foreach var in local laborvars8_3	{
 
 
 *<_t_hours_total_>
-	gen t_hours_total = .
-	label var t_hours_total "Annualized hours worked in all jobs 7 day recall"
+	gen 			t_hours_total = .
+	label var 		t_hours_total "Annualized hours worked in all jobs 7 day recall"
 *</_t_hours_total_>
 
 
 *<_t_wage_nocompen_total_>
-	gen t_wage_nocompen_total = .
-	label var t_wage_nocompen_total "Annualized wage in all jobs excl. bonuses, etc. 7 day recall"
+	gen 			t_wage_nocompen_total = .
+	label var 		t_wage_nocompen_total "Annualized wage in all jobs excl. bonuses, etc. 7 day recall"
 *</_t_wage_nocompen_total_>
 
 
 *<_t_wage_total_>
-	gen t_wage_total = .
-	label var t_wage_total "Annualized total wage for all jobs 7 day recall"
+	gen 			t_wage_total = .
+	label var 		t_wage_total "Annualized total wage for all jobs 7 day recall"
 *</_t_wage_total_>
 
 
