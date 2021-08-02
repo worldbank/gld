@@ -1363,148 +1363,182 @@ foreach var in local laborvars8_3	{
 {
 
 *<_empstat_year_>
-	gen byte empstat_year = .
-	label var empstat_year "Employment status during past week primary job 12 month recall"
-	la de lblempstat_year 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
-	label values empstat_year lblempstat_year
+	gen byte 		empstat_year = .
+	label var 		empstat_year "Employment status during past week primary job 12 month recall"
+	la de 			lblempstat_year
+					1 "Paid employee" 	2 "Non-paid employee" ///
+					3 "Employer" 		4 "Self-employed" ///
+					5 "Other, workers not classifiable by status"
+	label values 	empstat_year lblempstat_year
 *</_empstat_year_>
 
 *<_ocusec_year_>
-	gen byte ocusec_year = .
-	label var ocusec_year "Sector of activity primary job 12 day recall"
-	la de lblocusec_year 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
-	label values ocusec_year lblocusec_year
+	gen byte 		ocusec_year = .
+	label var 		ocusec_year "Sector of activity primary job 12 day recall"
+	la de 			lblocusec_year ///
+					1 "Public Sector, Central Government, Army" ///
+					2 "Private, NGO" ///
+					3 "State owned" ///
+					4 "Public or State-owned, but cannot distinguish"
+	label values 	ocusec_year lblocusec_year
 *</_ocusec_year_>
 
 *<_industry_orig_year_>
-	gen industry_orig_year = .
-	label var industry_orig_year "Original industry record main job 12 month recall"
+	gen 			industry_orig_year = .
+	label var 		industry_orig_year "Original industry record main job 12 month recall"
 *</_industry_orig_year_>
 
 
 *<_industrycat_isic_year_>
-	gen industrycat_isic_year = .
-	label var industrycat_isic_year "ISIC code of primary job 12 month recall"
+	gen 			industrycat_isic_year = .
+	label var 		industrycat_isic_year "ISIC code of primary job 12 month recall"
 *</_industrycat_isic_year_>
 
 *<_industrycat10_year_>
-	gen byte industrycat10_year = .
-	label var industrycat10_year "1 digit industry classification, primary job 12 month recall"
-	la de lblindustrycat10_year 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
-	label values industrycat10_year lblindustrycat10_year
+	gen byte 		industrycat10_year = .
+	label var 		industrycat10_year "1 digit industry classification, primary job 12 month recall"
+	la de 			lblindustrycat10_year ///
+					1 "Agriculture" ///
+					2 "Mining" ///
+					3 "Manufacturing" ///
+					4 "Public utilities" ///
+					5 "Construction"  ///
+					6 "Commerce" ///
+					7 "Transport and Comnunications" ///
+					8 "Financial and Business Services" ///
+					9 "Public Administration" ///
+					10 "Other Services, Unspecified"
+	label values 	industrycat10_year lblindustrycat10_year
 *</_industrycat10_year_>
 
 
 *<_industrycat4_year_>
-	gen byte industrycat4_year=industrycat10_year
-	recode industrycat4_year (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
-	label var industrycat4_year "Broad Economic Activities classification, primary job 12 month recall"
-	la de lblindustrycat4_year 1 "Agriculture" 2 "Industry" 3 "Services" 4 "Other"
-	label values industrycat4_year lblindustrycat4_year
+	gen byte 		industrycat4_year=industrycat10_year
+	recode 			industrycat4_year (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
+	label var 		industrycat4_year ///
+					"Broad Economic Activities classification, primary job 12 month recall"
+	la de 			lblindustrycat4_year 1 "Agriculture" 2 "Industry" 3 "Services" 4 "Other"
+	label values 	industrycat4_year lblindustrycat4_year
 *</_industrycat4_year_>
 
 
 *<_occup_orig_year_>
-	gen occup_orig_year = .
-	label var occup_orig_year "Original occupation record primary job 12 month recall"
+	gen 			occup_orig_year = .
+	label var 		occup_orig_year "Original occupation record primary job 12 month recall"
 *</_occup_orig_year_>
 
 
 *<_occup_isco_year_>
-	gen occup_isco_year = .
-	label var occup_isco_year "ISCO code of primary job 12 month recall"
+	gen 			occup_isco_year = .
+	label var 		occup_isco_year "ISCO code of primary job 12 month recall"
 *</_occup_isco_year_>
 
 
 *<_occup_skill_year_>
-	gen occup_skill_year = .
-	la de lblskillyear 1 "Low skill" 2 "Medium skill" 3 "High skill"
-	label values occup_skill_year lblskillyear
-	label var occup_skill_year "Skill based on ISCO standard primary job 12 month recall"
+	gen 			occup_skill_year = .
+	la de 			lblskillyear 1 "Low skill" 2 "Medium skill" 3 "High skill"
+	label values 	occup_skill_year lblskillyear
+	label var 		occup_skill_year "Skill based on ISCO standard primary job 12 month recall"
 *</_occup_skill_year_>
 
 
 *<_occup_year_>
-	gen byte occup_year = .
-	label var occup_year "1 digit occupational classification, primary job 12 month recall"
-	la de lbloccup_year 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
-	label values occup_year lbloccup_year
+	gen 			byte occup_year = .
+	label var 		occup_year "1 digit occupational classification, primary job 12 month recall"
+	la de 			lbloccup_year ///
+					1 "Managers" ///
+					2 "Professionals" ///
+					3 "Technicians" ///
+					4 "Clerks" ///
+					5 "Service and market sales workers" ///
+					6 "Skilled agricultural" ///
+					7 "Craft workers" ///
+					8 "Machine operators" ///
+					9 "Elementary occupations" ///
+					10 "Armed forces"  ///
+					99 "Others"
+	label values 	occup_year lbloccup_year
 *</_occup_year_>
 
 
 *<_wage_no_compen_year_> --- this var has the same name as other and when quoted in the keep and order codes is repeated.
-	gen double wage_no_compen_year =
-	label var wage_no_compen_year "Last wage payment primary job 12 month recall"
+	gen 			double wage_no_compen_year =
+	label var 		wage_no_compen_year "Last wage payment primary job 12 month recall"
 *</_wage_no_compen_year_>
 
 
 *<_unitwage_year_>
-	gen byte unitwage_year = .
-	label var unitwage_year "Last wages' time unit primary job 12 month recall"
-	la de lblunitwage_year 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
-	label values unitwage_year lblunitwage_year
+	gen byte 		unitwage_year = .
+	label var 		unitwage_year "Last wages' time unit primary job 12 month recall"
+	la de 			lblunitwage_year ///
+					1 "Daily" 			2 "Weekly" ///
+					3 "Every two weeks" 4 "Bimonthly"  ///
+					5 "Monthly" 		6 "Trimester" ///
+					7 "Biannual" 		8 "Annually" ///
+					9 "Hourly" 			10 "Other"
+	label values 	unitwage_year lblunitwage_year
 *</_unitwage_year_>
 
 
 *<_whours_year_>
-	gen whours_year = .
-	label var whours_year "Hours of work in last week primary job 12 month recall"
+	gen 			whours_year = .
+	label var 		whours_year "Hours of work in last week primary job 12 month recall"
 *</_whours_year_>
 
 
 *<_wmonths_year_>
-	gen wmonths_year = .
-	label var wmonths_year "Months of work in past 12 months primary job 12 month recall"
+	gen 			wmonths_year = .
+	label var 		wmonths_year "Months of work in past 12 months primary job 12 month recall"
 *</_wmonths_year_>
 
 
 *<_wage_total_year_>
-	gen wage_total_year = .
-	label var wage_total_year "Annualized total wage primary job 12 month recall"
+	gen 			wage_total_year = .
+	label var 		wage_total_year "Annualized total wage primary job 12 month recall"
 *</_wage_total_year_>
 
 
 *<_contract_year_>
-	gen byte contract_year = .
-	label var contract_year "Employment has contract primary job 12 month recall"
-	la de lblcontract_year 0 "Without contract" 1 "With contract"
-	label values contract_year lblcontract_year
+	gen byte 		contract_year = .
+	label var 		contract_year "Employment has contract primary job 12 month recall"
+	la de 			lblcontract_year 0 "Without contract" 1 "With contract"
+	label values 	contract_year lblcontract_year
 *</_contract_year_>
 
 
 *<_healthins_year_>
-	gen byte healthins_year = .
-	label var healthins_year "Employment has health insurance primary job 12 month recall"
-	la de lblhealthins_year 0 "Without health insurance" 1 "With health insurance"
-	label values healthins_year lblhealthins_year
+	gen byte 		healthins_year = .
+	label var 		healthins_year "Employment has health insurance primary job 12 month recall"
+	la de 			lblhealthins_year 0 "Without health insurance" 1 "With health insurance"
+	label values 	healthins_year lblhealthins_year
 *</_healthins_year_>
 
 
 *<_socialsec_year_>
-	gen byte socialsec_year = .
-	label var socialsec_year "Employment has social security insurance primary job 7 day recall"
-	la de lblsocialsec_year 1 "With social security" 0 "Without social secturity"
-	label values socialsec_year lblsocialsec_year
+	gen byte 		socialsec_year = .
+	label var 		socialsec_year "Employment has social security insurance primary job 7 day recall"
+	la de 			lblsocialsec_year 1 "With social security" 0 "Without social secturity"
+	label values 	socialsec_year lblsocialsec_year
 *</_socialsec_year_>
 
 
 *<_union_year_>
-	gen byte union_year = .
-	label var union_year "Union membership at primary job 12 month recall"
-	la de lblunion_year 0 "Not union member" 1 "Union member"
-	label values union_year lblunion_year
+	gen byte 		union_year = .
+	label var 		union_year "Union membership at primary job 12 month recall"
+	la de 			lblunion_year 0 "Not union member" 1 "Union member"
+	label values 	union_year lblunion_year
 *</_union_year_>
 
 
 *<_firmsize_l_year_>
-	gen byte firmsize_l_year = .
-	label var firmsize_l_year "Firm size (lower bracket) primary job 12 month recall"
+	gen byte 		firmsize_l_year = .
+	label var 		firmsize_l_year "Firm size (lower bracket) primary job 12 month recall"
 *</_firmsize_l_year_>
 
 
 *<_firmsize_u_year_>
-	gen byte firmsize_u_year = .
-	label var firmsize_u_year "Firm size (upper bracket) primary job 12 month recall"
+	gen byte 		firmsize_u_year = .
+	label var 		firmsize_u_year "Firm size (upper bracket) primary job 12 month recall"
 *</_firmsize_u_year_>
 
 }
