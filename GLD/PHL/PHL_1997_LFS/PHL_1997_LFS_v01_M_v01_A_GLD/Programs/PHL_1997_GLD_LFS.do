@@ -1283,6 +1283,15 @@ foreach var in local laborvars8_3	{
 *</_t_wage_others_>
 
 
+* restrict variables for age and labor status in 8.4
+local laborvars8_4 	t_hours_others t_wage_nocompen_others t_wage_others
+
+foreach var in local laborvars8_4	{
+	replace 		`var'=. if lstatus!=1 		// restrict universe to employed only
+	replace 		`var'=. if age < lb_mod_age	// restrict universe to working age
+}
+
+
 *----------8.5: 7 day reference total summary------------------------------*
 
 
@@ -1302,6 +1311,15 @@ foreach var in local laborvars8_3	{
 	gen 			t_wage_total = .
 	label var 		t_wage_total "Annualized total wage for all jobs 7 day recall"
 *</_t_wage_total_>
+
+* restrict variables for age and labor status in 8.5
+local laborvars8_5 	t_hours_total t_wage_nocompen_total t_wage_total
+
+foreach var in local laborvars8_5	{
+	replace 		`var'=. if lstatus!=1 		// restrict universe to employed only
+	replace 		`var'=. if age < lb_mod_age	// restrict universe to working age
+}
+
 
 
 *----------8.6: 12 month reference overall------------------------------*
@@ -1355,6 +1373,16 @@ foreach var in local laborvars8_3	{
 	gen byte 		unempldur_u_year=.
 	label var 		unempldur_u_year 		"Unemployment duration (months) upper bracket"
 *</_unempldur_u_year_>
+
+* restrict variables for age and labor status in 8.6
+local laborvars8_6 	lstatus_year potential_lf_year underemployment_year ///
+					nlfreason_year unempldur_l_year unempldur_u_year
+
+foreach var in local laborvars8_6	{
+	replace 		`var'=. if lstatus!=1 		// restrict universe to employed only
+	replace 		`var'=. if age < lb_mod_age	// restrict universe to working age
+}
+
 
 }
 
@@ -1541,6 +1569,20 @@ foreach var in local laborvars8_3	{
 	label var 		firmsize_u_year "Firm size (upper bracket) primary job 12 month recall"
 *</_firmsize_u_year_>
 
+* restrict variables for age and labor status in 8.7
+local laborvars8_7 	empstat_year ocusec_year industry_orig_year industrycat_isic_year ///
+ 					industrycat10_year industrycat4_year occup_isco_year occup_skill_year ///
+					occup_year wage_no_compen_year unitwage_year whours_year ///
+					wmonths_year wage_total_year contract_year healthins_year ///
+					socialsec_year union_year firmsize_l_year firmsize_u_year
+
+foreach var in local laborvars8_7	{
+	replace 		`var'=. if lstatus!=1 		// restrict universe to employed only
+	replace 		`var'=. if age < lb_mod_age	// restrict universe to working age
+}
+
+
+
 }
 
 
@@ -1664,6 +1706,21 @@ foreach var in local laborvars8_3	{
 	label var 		firmsize_u_2_year "Firm size (upper bracket) secondary job 12 month recall"
 *</_firmsize_u_2_year_>
 
+* restrict variables for age and labor status in 8.8
+local laborvars8_8 	empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year ///
+ 					industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year ///
+					occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year ///
+					whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year ///
+					firmsize_u_2_year
+
+foreach var in local laborvars8_8	{
+	replace 		`var'=. if lstatus!=1 		// restrict universe to employed only
+	replace 		`var'=. if age < lb_mod_age	// restrict universe to working age
+}
+
+
+
+
 }
 
 
@@ -1671,19 +1728,30 @@ foreach var in local laborvars8_3	{
 
 
 *<_t_hours_others_year_>
-	gen t_hours_others_year = .
-	label var t_hours_others_year "Annualized hours worked in all but primary and secondary jobs 12 month recall"
+	gen 			t_hours_others_year = .
+	label var 		t_hours_others_year ///
+					"Annualized hours worked in all but primary and secondary jobs 12 month recall"
 *</_t_hours_others_year_>
 
 *<_t_wage_nocompen_others_year_>
-	gen t_wage_nocompen_others_year = .
-	label var t_wage_nocompen_others_year "Annualized wage in all but 1st & 2nd jobs excl. bonuses, etc. 12 month recall"
+	gen 			t_wage_nocompen_others_year = .
+	label var 		t_wage_nocompen_others_year ///
+					"Annualized wage in all but 1st & 2nd jobs excl. bonuses, etc. 12 month recall"
 *</_t_wage_nocompen_others_year_>
 
 *<_t_wage_others_year_>
-	gen t_wage_others_year = .
-	label var t_wage_others_year "Annualized wage in all but primary and secondary jobs 12 month recall"
+	gen 			t_wage_others_year = .
+	label var 		t_wage_others_year ///
+					"Annualized wage in all but primary and secondary jobs 12 month recall"
 *</_t_wage_others_year_>
+
+* restrict variables for age and labor status in 8.9
+local laborvars8_9 	t_hours_others_year t_wage_nocompen_others_year t_wage_others_year
+
+foreach var in local laborvars8_9	{
+	replace 		`var'=. if lstatus!=1 		// restrict universe to employed only
+	replace 		`var'=. if age < lb_mod_age	// restrict universe to working age
+}
 
 
 *----------8.10: 12 month total summary------------------------------*
