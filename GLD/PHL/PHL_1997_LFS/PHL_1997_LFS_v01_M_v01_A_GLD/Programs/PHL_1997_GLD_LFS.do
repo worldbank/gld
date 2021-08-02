@@ -1309,50 +1309,51 @@ foreach var in local laborvars8_3	{
 {
 
 *<_lstatus_year_>
-	gen byte lstatus_year = .
-	replace lstatus_year=. if age < minlaborage & age != .
-	label var lstatus_year "Labor status during last year"
-	la de lbllstatus_year 1 "Employed" 2 "Unemployed" 3 "Non-LF"
-	label values lstatus_year lbllstatus_year
+	gen byte 		lstatus_year = .
+	replace 		lstatus_year=. 			if age < minlaborage & age != .
+	label var 		lstatus_year 			"Labor status during last year"
+	la de 			lbllstatus_year 		1 "Employed" 2 "Unemployed" 3 "Non-LF"
+	label values 	lstatus_year 			lbllstatus_year
 *</_lstatus_year_>
 
 *<_potential_lf_year_>
-	gen byte potential_lf_year = .
-	replace potential_lf_year=. if age < minlaborage & age != .
-	replace potential_lf_year = . if lstatus_year != 3
-	label var potential_lf_year "Potential labour force status"
-	la de lblpotential_lf_year 0 "No" 1 "Yes"
-	label values potential_lf_year lblpotential_lf_year
+	gen byte 		potential_lf_year = .
+	replace 		potential_lf_year=. 	if age < minlaborage & age != .
+	replace 		potential_lf_year = . 	if lstatus_year != 3
+	label var 		potential_lf_year 		"Potential labour force status"
+	la de 			lblpotential_lf_year 	0 "No" 1 "Yes"
+	label values 	potential_lf_year 		lblpotential_lf_year
 *</_potential_lf_year_>
 
 
 *<_underemployment_year_>
-	gen byte underemployment_year = .
-	replace underemployment_year = . if age < minlaborage & age != .
-	replace underemployment_year = . if lstatus_year == 1
-	label var underemployment_year "Underemployment status"
-	la de lblunderemployment_year 0 "No" 1 "Yes"
-	label values underemployment_year lblunderemployment_year
+	gen byte 		underemployment_year = .
+	replace 		underemployment_year = . if age < minlaborage & age != .
+	replace 		underemployment_year = . if lstatus_year == 1
+	label var 		underemployment_year 	"Underemployment status"
+	la de 			lblunderemployment_year 0 "No" 1 "Yes"
+	label values 	underemployment_year 	lblunderemployment_year
 *</_underemployment_year_>
 
 
 *<_nlfreason_year_>
-	gen byte nlfreason_year=.
-	label var nlfreason_year "Reason not in the labor force"
-	la de lblnlfreason_year 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disable" 5 "Other"
-	label values nlfreason_year lblnlfreason_year
+	gen byte 		nlfreason_year=.
+	label var 		nlfreason_year 			"Reason not in the labor force"
+	la de 			lblnlfreason_year 		1 "Student" 2 "Housekeeper" ///
+											3 "Retired" 4 "Disable" 5 "Other"
+	label values 	nlfreason_year 			lblnlfreason_year
 *</_nlfreason_year_>
 
 
 *<_unempldur_l_year_>
-	gen byte unempldur_l_year=.
-	label var unempldur_l_year "Unemployment duration (months) lower bracket"
+	gen byte 		unempldur_l_year=.
+	label var 		unempldur_l_year 		"Unemployment duration (months) lower bracket"
 *</_unempldur_l_year_>
 
 
 *<_unempldur_u_year_>
-	gen byte unempldur_u_year=.
-	label var unempldur_u_year "Unemployment duration (months) upper bracket"
+	gen byte 		unempldur_u_year=.
+	label var 		unempldur_u_year 		"Unemployment duration (months) upper bracket"
 *</_unempldur_u_year_>
 
 }
