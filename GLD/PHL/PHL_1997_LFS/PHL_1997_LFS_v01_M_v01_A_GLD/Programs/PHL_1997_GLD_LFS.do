@@ -1137,116 +1137,128 @@ foreach var in local laborvars8_2	{
 
 {
 *<_empstat_2_>
-	gen byte empstat_2 = .
-	label var empstat_2 "Employment status during past week secondary job 7 day recall"
-	label values empstat_2 lblempstat
+	gen byte 		empstat_2 = .
+	label var 		empstat_2 "Employment status during past week secondary job 7 day recall"
+	label values 	empstat_2 lblempstat
 *</_empstat_2_>
 
 
 *<_ocusec_2_>
-	gen byte ocusec_2 = .
-	label var ocusec_2 "Sector of activity secondary job 7 day recall"
-	label values ocusec_2 lblocusec
+	gen byte	 	ocusec_2 = .
+	label var 		ocusec_2 "Sector of activity secondary job 7 day recall"
+	label values 	ocusec_2 lblocusec
 *</_ocusec_2_>
 
 
 *<_industry_orig_2_>
-	gen industry_orig_2 = .
-	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
+	gen 			industry_orig_2 = .
+	label var 		industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 
 
 *<_industrycat_isic_2_>
-	gen industrycat_isic_2 = .
-	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
+	gen 			industrycat_isic_2 = .
+	label var 		industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
 
 *<_industrycat10_2_>
-	gen byte industrycat10_2 = .
-	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
-	label values industrycat10_2 lblindustrycat10
+	gen byte 		industrycat10_2 = .
+	label var 		industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
+	label values 	industrycat10_2 lblindustrycat10
 *</_industrycat10_2_>
 
 
 *<_industrycat4_2_>
-	gen byte industrycat4_2 = industrycat10_2
-	recode industrycat4_2 (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
-	label var industrycat4_2 "Broad Economic Activities classification, secondary job 7 day recall"
-	label values industrycat4_2 lblindustrycat4
+	gen byte 		industrycat4_2 = industrycat10_2
+	recode 			industrycat4_2 (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
+	label var 		industrycat4_2 "Broad Economic Activities classification, secondary job 7 day recall"
+	label values 	industrycat4_2 lblindustrycat4
 *</_industrycat4_2_>
 
 
 *<_occup_orig_2_>
-	gen occup_orig_2 = .
-	label var occup_orig_2 "Original occupation record secondary job 7 day recall"
+	gen 			occup_orig_2 = .
+	label var 		occup_orig_2 "Original occupation record secondary job 7 day recall"
 *</_occup_orig_2_>
 
 
 *<_occup_isco_2_>
-	gen occup_isco_2 = .
-	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
+	gen 			occup_isco_2 = .
+	label var 		occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
 
 *<_occup_skill_2_>
-	gen occup_skill_2 = .
-	la de lblskill2 1 "Low skill" 2 "Medium skill" 3 "High skill"
-	label values occup_skill_2 lblskill2
-	label var occup_skill_2 "Skill based on ISCO standard secondary job 7 day recall"
+	gen 			occup_skill_2 = .
+	la de 			lblskill2 1 "Low skill" 2 "Medium skill" 3 "High skill"
+	label values 	occup_skill_2 lblskill2
+	label var 		occup_skill_2 "Skill based on ISCO standard secondary job 7 day recall"
 *</_occup_skill_2_>
 
 
 *<_occup_2_>
-	gen byte occup_2 = .
-	label var occup_2 "1 digit occupational classification secondary job 7 day recall"
-	label values occup_2 lbloccup
+	gen 			byte occup_2 = .
+	label var 		occup_2 "1 digit occupational classification secondary job 7 day recall"
+	label values 	occup_2 lbloccup
 *</_occup_2_>
 
 
 *<_wage_no_compen_2_>
-	gen double wage_no_compen_2 = .
-	label var wage_no_compen_2 "Last wage payment secondary job 7 day recall"
+	gen 			double wage_no_compen_2 = .
+	label var 		wage_no_compen_2 "Last wage payment secondary job 7 day recall"
 *</_wage_no_compen_2_>
 
 
 *<_unitwage_2_>
-	gen byte unitwage_2 = .
-	label var unitwage_2 "Last wages' time unit secondary job 7 day recall"
-	label values unitwage_2 lblunitwage
+	gen byte 		unitwage_2 = .
+	label var 		unitwage_2 "Last wages' time unit secondary job 7 day recall"
+	label values 	unitwage_2 lblunitwage
 *</_unitwage_2_>
 
 
 *<_whours_2_>
-	gen whours_2 = .
-	label var whours_2 "Hours of work in last week secondary job 7 day recall"
+	gen 			whours_2 = .
+	label var 		whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 
 
 *<_wmonths_2_>
-	gen wmonths_2 = .
-	label var wmonths_2 "Months of work in past 12 months secondary job 7 day recall"
+	gen 			wmonths_2 = .
+	label var 		wmonths_2 "Months of work in past 12 months secondary job 7 day recall"
 *</_wmonths_2_>
 
 
 *<_wage_total_2_>
-	gen wage_total_2 = .
-	label var wage_total_2 "Annualized total wage secondary job 7 day recall"
+	gen 			wage_total_2 = .
+	label var 		wage_total_2 "Annualized total wage secondary job 7 day recall"
 *</_wage_total_2_>
 
 
 *<_firmsize_l_2_>
-	gen byte firmsize_l_2 = .
-	label var firmsize_l_2 "Firm size (lower bracket) secondary job 7 day recall"
+	gen byte 		firmsize_l_2 = .
+	label var 		firmsize_l_2 "Firm size (lower bracket) secondary job 7 day recall"
 *</_firmsize_l_2_>
 
 
 *<_firmsize_u_2_>
-	gen byte firmsize_u_2 = .
-	label var firmsize_u_2 "Firm size (upper bracket) secondary job 7 day recall"
+	gen byte 		firmsize_u_2 = .
+	label var 		firmsize_u_2 "Firm size (upper bracket) secondary job 7 day recall"
 *</_firmsize_u_2_>
 
 }
+
+* restrict variables for age and labor status in 8.3
+local laborvars8_3 	empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 ///
+					industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 ///
+					wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 ///
+					firmsize_l_2 firmsize_u_2
+
+foreach var in local laborvars8_3	{
+	replace 		`var'=. if lstatus!=1 		// restrict universe to employed only
+	replace 		`var'=. if age < lb_mod_age	// restrict universe to working age
+}
+
 
 *----------8.4: 7 day reference additional jobs------------------------------*
 
