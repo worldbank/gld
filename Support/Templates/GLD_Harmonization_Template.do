@@ -677,7 +677,7 @@ foreach v of local ed_var {
 *<_industrycat4_>
 	gen byte industrycat4 = industrycat10
 	recode industrycat4 (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
-	label var industrycat4 "1 digit industry classification (Broad Economic Activities), primary job 7 day recall"
+	label var industrycat4 "Broad Economic Activities classification, primary job 7 day recall"
 	la de lblindustrycat4 1 "Agriculture" 2 "Industry" 3 "Services" 4 "Other"
 	label values industrycat4 lblindustrycat4
 *</_industrycat4_>
@@ -836,7 +836,7 @@ foreach v of local ed_var {
 *<_industrycat4_2_>
 	gen byte industrycat4_2 = industrycat10_2
 	recode industrycat4_2 (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
-	label var industrycat4_2 "1 digit industry classification (Broad Economic Activities), secondary job 7 day recall"
+	label var industrycat4_2 "Broad Economic Activities classification, secondary job 7 day recall"
 	label values industrycat4_2 lblindustrycat4
 *</_industrycat4_2_>
 
@@ -922,7 +922,7 @@ foreach v of local ed_var {
 
 *<_t_wage_nocompen_others_>
 	gen t_wage_nocompen_others = .
-	label var t_wage_nocompen_others "Annualized wage in all but primary & secondary jobs excl. bonuses, etc. 7 day recall"
+	label var t_wage_nocompen_others "Annualized wage in all but 1st & 2nd jobs excl. bonuses, etc. 7 day recall"
 *</_t_wage_nocompen_others_>
 
 
@@ -1046,7 +1046,7 @@ foreach v of local ed_var {
 *<_industrycat4_year_>
 	gen byte industrycat4_year=industrycat10_year
 	recode industrycat4_year (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
-	label var industrycat4_year "1 digit industry classification (Broad Economic Activities), primary job 12 month recall"
+	label var industrycat4_year "Broad Economic Activities classification, primary job 12 month recall"
 	la de lblindustrycat4_year 1 "Agriculture" 2 "Industry" 3 "Services" 4 "Other"
 	label values industrycat4_year lblindustrycat4_year
 *</_industrycat4_year_>
@@ -1201,7 +1201,7 @@ foreach v of local ed_var {
 *<_industrycat4_2_year_>
 	gen byte industrycat4_2_year=industrycat10_2_year
 	recode industrycat4_2_year (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
-	label var industrycat4_2_year "1 digit industry classification (Broad Economic Activities), secondary job 12 month recall"
+	label var industrycat4_2_year "Broad Economic Activities classification, secondary job 12 month recall"
 	label values industrycat4_2_year lblindustrycat4_year
 *</_industrycat4_2_year_>
 
@@ -1287,7 +1287,7 @@ foreach v of local ed_var {
 
 *<_t_wage_nocompen_others_year_>
 	gen t_wage_nocompen_others_year = .
-	label var t_wage_nocompen_others_year "Annualized wage in all but primary & secondary jobs excl. bonuses, etc. 12 month recall)"
+	label var t_wage_nocompen_others_year "Annualized wage in all but 1st & 2nd jobs excl. bonuses, etc. 12 month recall"
 *</_t_wage_nocompen_others_year_>
 
 *<_t_wage_others_year_>
