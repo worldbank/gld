@@ -471,18 +471,19 @@ set mem 800m
 
 *<_hsize_>
 	sort hhid
-	by hhid: 	egen hhsize= count(rel <= 7) // includes non-family members, not boarders or domestic workers.
+	by hhid: 	egen hsize= count(rel <= 7) // includes non-family members, not boarders or domestic workers.
 	label var 	hsize "Household size"
 
 	* check
-	mdesc 		hhsize
+	mdesc 		hsize
 	assert 		r(miss) == 0
 
 *</_hsize_>
 
 
 *<_age_>
-	gen 		age = age
+	rename 		age age_orig
+	gen 		age = age_orig
 	replace 	age	= 98 	if age>=98 & age!=.
 	label var 	age "Individual age"
 *</_age_>
