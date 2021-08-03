@@ -1828,20 +1828,62 @@ foreach var in local laborvars8_11	{
 *<_% Correction min age_>
 
 ** Drop info for cases under the age for which questions to be asked (do not need a variable for this)
-	local lab_var "minlaborage lstatus nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome"
+	local lab_var 	minlaborage lstatus nlfreason unempldur_l unempldur_u empstat ocusec industry_orig ///
+					industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup ///
+					wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union ///
+					firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 ///
+					industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 ///
+					whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others ///
+					t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year nlfreason_year ///
+					unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year ///
+					industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year ///
+					unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year ///
+					union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year ///
+					industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year ///
+					occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year ///
+					wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year ///
+					t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs ///
+					t_hours_annual linc_nc laborincome
 
 	foreach v of local lab_var {
 		cap confirm numeric variable `v'
-		if _rc == 0 { // is indeed numeric
+		if _rc == 0 { 	// is indeed numeric
 			replace `v'=. if ( age < minlaborage & !missing(age) )
 		}
-		else { // is not
+		else { 			// is not
 			replace `v'= "" if ( age < minlaborage & !missing(age) )
 		}
 
 	}
 
 *</_% Correction min age_>
+
+
+*<_% Correction lstatus_>
+
+/* <_correction_lstatus_note>
+
+	The labor module information should only be applicable to those who are "employed"
+	or classified as lstatus == 1
+
+</_correction_lstatus_note> */
+
+	foreach v of local lab_var {
+		cap confirm numeric variable `v'
+		if _rc == 0 { 	// is indeed numeric
+			replace `v'=. if ( lstatus !=1 & !missing(lstatus) )
+		}
+		else { 			// is not
+			replace `v'= "" if ( lstatus !=1 & !missing(lstatus) )
+		}
+
+	}
+
+*</_% Correction min age_>
+
+
+
+
 }
 
 
