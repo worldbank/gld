@@ -1321,18 +1321,21 @@ foreach v of local ed_var {
 	la de 			lblnlfreason_year 		1 "Student" 2 "Housekeeper" ///
 											3 "Retired" 4 "Disable" 5 "Other"
 	label values 	nlfreason_year 			lblnlfreason_year
+	replace 		nlfreason=. 	if lstatus!=3 		// restricts universe to non-labor force
 *</_nlfreason_year_>
 
 
 *<_unempldur_l_year_>
 	gen byte 		unempldur_l_year=.
 	label var 		unempldur_l_year 		"Unemployment duration (months) lower bracket"
+	replace 		unempldur_l=. if lstatus!=2 	  // restrict universe to unemployed only
 *</_unempldur_l_year_>
 
 
 *<_unempldur_u_year_>
 	gen byte 		unempldur_u_year=.
 	label var 		unempldur_u_year 		"Unemployment duration (months) upper bracket"
+	replace 		unempldur_u=. if lstatus!=2 	  // restrict universe to unemployed only
 *</_unempldur_u_year_>
 
 
