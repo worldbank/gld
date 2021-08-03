@@ -1758,48 +1758,68 @@ foreach var in local laborvars8_9	{
 
 
 *<_t_hours_total_year_>
-	gen t_hours_total_year = .
-	label var t_hours_total_year "Annualized hours worked in all jobs 12 month month recall"
+	gen 			t_hours_total_year = .
+	label var 		t_hours_total_year "Annualized hours worked in all jobs 12 month month recall"
 *</_t_hours_total_year_>
 
 
-*<_t_wage_nocompen_total_year_>
-	gen t_wage_nocompen_total_year = .
-	label var t_wage_nocompen_total_year "Annualized wage in all jobs excl. bonuses, etc. 12 month recall"
+*<_t_wage_nocompen_total_year_> %% to annualize? conditionally on unit wage in future surveys?
+	gen 			t_wage_nocompen_total_year = wage_total
+	label var 		t_wage_nocompen_total_year ///
+					"Annualized wage in all jobs excl. bonuses, etc. 12 month recall"
 *</_t_wage_nocompen_total_year_>
 
 
 *<_t_wage_total_year_>
-	gen t_wage_total_year = .
-	label var t_wage_total_year "Annualized total wage for all jobs 12 month recall"
+	gen 			t_wage_total_year = wage_total
+	label var 		t_wage_total_year "Annualized total wage for all jobs 12 month recall"
 *</_t_wage_total_year_>
 
+
+* restrict variables for age and labor status in 8.10
+local laborvars8_10 t_hours_total_year t_wage_nocompen_total_year t_wage_total_year
+
+foreach var in local laborvars8_10	{
+	replace 		`var'=. if lstatus!=1 		// restrict universe to employed only
+	replace 		`var'=. if age < lb_mod_age	// restrict universe to working age
+}
 
 *----------8.11: Overall across reference periods------------------------------*
 
 
 *<_njobs_>
-	gen njobs = .
-	label var njobs "Total number of jobs"
+	gen 			njobs = .
+	label var 		njobs "Total number of jobs"
 *</_njobs_>
 
 
 *<_t_hours_annual_>
-	gen t_hours_annual = .
-	label var t_hours_annual "Total hours worked in all jobs in the previous 12 months"
+	/*ILO defines approximate annual working hours as weekly total * 48 */
+	gen 			t_hours_annual = whours * 48
+	label var 		t_hours_annual "Total hours worked in all jobs in the previous 12 months"
 *</_t_hours_annual_>
 
 
 *<_linc_nc_>
-	gen linc_nc = .
-	label var linc_nc "Total annual wage income in all jobs, excl. bonuses, etc."
+	gen 			linc_nc = wage_total // = annualized total wage
+	label var 		linc_nc "Total annual wage income in all jobs, excl. bonuses, etc."
 *</_linc_nc_>
 
 
 *<_laborincome_>
-	gen laborincome = t_wage_total_year
-	label var laborincome "Total annual individual labor income in all jobs, incl. bonuses, etc."
+	gen 			laborincome = t_wage_total_year
+	label var 		laborincome ///
+					"Total annual individual labor income in all jobs, incl. bonuses, etc."
 *</_laborincome_>
+
+
+* restrict variables for age and labor status in 8.11
+local laborvars8_11 	njobs t_hours_annual linc_nc laborincome
+
+foreach var in local laborvars8_11	{
+	replace 		`var'=. if lstatus!=1 		// restrict universe to employed only
+	replace 		`var'=. if age < lb_mod_age	// restrict universe to working age
+}
 
 
 *----------8.13: Labour cleanup------------------------------*
