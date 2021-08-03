@@ -639,6 +639,13 @@
       "Repository": "CRAN",
       "Hash": "0eae8a954e0c51bd356f8c6f0e00e805"
     },
+    "pdftools": {
+      "Package": "pdftools",
+      "Version": "3.0.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "b7a8772f77a852ec8fe678644fd5ba6e"
+    },
     "pillar": {
       "Package": "pillar",
       "Version": "1.6.2",
@@ -715,6 +722,13 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "97def703420c8ab10d8f0e6c72101e02"
+    },
+    "qpdf": {
+      "Package": "qpdf",
+      "Version": "1.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "5a2907cd44279b5861ac5f813465b5c9"
     },
     "rapidjsonr": {
       "Package": "rapidjsonr",
