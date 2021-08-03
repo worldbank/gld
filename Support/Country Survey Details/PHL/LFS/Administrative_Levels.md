@@ -241,3 +241,49 @@ to be made.
     named the same.
 
 ### Province encoding methodology
+
+The `province_label_util.R` script harmonizes all province labels
+internal to the survey data and produces a set of key outputs, mainly:
+
+1.  A `GLD_PHL_admin2_labels.Rdata` file, which contains
+
+    -   `prov_labs_chr`: or the tabular object of province labels by
+        numeric value over time which have been stored in string form in
+        the original data
+
+    -   `prov_labs_fct`: or the tabular object of province labels by
+        numeric value which have been stored in factor form in the
+        original data
+
+    -   `prov_labs_final` : or the key product. It is the final tabular
+        object that contains all province numeric values, harmonized
+        value label, and character vector of original value labels. This
+        object harmonizes the data from `prov_labs_chr` and
+        `prov_labs_fct`.
+
+2.  A .dta compatible version of `prov_labs_final` object.
+
+#### How are the Labels Harmonized?
+
+Conceptually, the harmonizer gave priority to internal data validity
+(e.g. internal to the survey data) and then proceeded to validate
+through secondary documents provided by the PSA. The code is guided by
+the following principles:
+
+1.  First, collect all of the province labels for each numeric value —
+    including both factor and string data
+
+2.  Then, see if these labels are the same for each numeric value, or if
+    they are different.
+
+    1.  If they are the sall same, great! Then we have ourselves a
+        label. Use that one!
+
+    2.  If the labels are different, then have a human look and manually
+        decide what the label should be.
+
+In many cases, the labels for the same value were virtually the same —
+so the same label could be used. In the \~15 or so cases where manual
+labels had to be decided, most of these were due to re-ordering of words
+that a simple computer matching algorithm can’t see through, but a human
+can tell with confidence that the Provinces are in fact, the same one.
