@@ -869,7 +869,6 @@ foreach v of local ed_var {
 	replace 		nlfreason=4 	if wnot==3
 	replace 		nlfreason=5 	if wnot==1 | wnot==2 | wnot==4 | wnot==5 | wnot==9
 	replace 		nlfreason=. 	if lstatus!=3 		// restricts universe to non-labor force
-	replace 		nlfreason=. 	if age < lb_mod_age // restrict universe to working age
 	label var 		nlfreason "Reason not in the labor force"
 	la de 			lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
 	label values 	nlfreason lblnlfreason
@@ -879,7 +878,6 @@ foreach v of local ed_var {
 *<_unempldur_l_>
 	gen byte 		unempldur_l=weeks/4.2
 	label var 		unempldur_l "Unemployment duration (months) lower bracket"
-	replace 		unempldur_l=. if age < lb_mod_age // restrict universe to working age
 	replace 		unempldur_l=. if lstatus!=2 	  // restrict universe to unemployed only
 
 *</_unempldur_l_>
@@ -888,7 +886,6 @@ foreach v of local ed_var {
 *<_unempldur_u_>
 	gen byte 		unempldur_u=weeks/4.2
 	label var 		unempldur_u "Unemployment duration (months) upper bracket"
-	replace 		unempldur_u=. if age < lb_mod_age // restrict universe to working age
 	replace 		unempldur_u=. if lstatus!=2 	  // restrict universe to unemployed only
 
 *</_unempldur_u_>
@@ -970,15 +967,15 @@ foreach v of local ed_var {
 	gen 			occup_orig = procc
 	label var 		occup_orig "Original occupation record primary job 7 day recall"
 	replace 		occup_orig="" if lstatus!=1 			// restrict universe to employed only
-	replace 		occup_orig="" if age < lb_mod_age	// restrict universe to working age
+	replace 		occup_orig="" if age < minlaborage	// restrict universe to working age
 *</_occup_orig_>
 
 
 *<_occup_isco_>
-	gen occup_isco = .
-	label var occup_isco "ISCO code of primary job 7 day recall"
-	replace 		occup=. if lstatus!=1 		// restrict universe to employed only
-	replace 		occup=. if age < lb_mod_age	// restrict universe to working age
+	gen 			occup_isco = .
+	label 			var occup_isco "ISCO code of primary job 7 day recall"
+	replace 		occup_isco=. if lstatus!=1 		// restrict universe to employed only
+	replace 		occup_isco=. if age < minlaborage	// restrict universe to working age
 
 *</_occup_isco_>
 
@@ -1011,7 +1008,7 @@ foreach v of local ed_var {
 					99 "Others"
 	label values 	occup lbloccup
 	replace 		occup=. if lstatus!=1 		// restrict universe to employed only
-	replace 		occup=. if age < lb_mod_age	// restrict universe to working age
+	replace 		occup=. if age < minlaborage	// restrict universe to working age
 *</_occup_>
 
 
@@ -1348,7 +1345,7 @@ foreach v of local ed_var {
 *<_empstat_year_>
 	gen byte 		empstat_year = .
 	label var 		empstat_year "Employment status during past week primary job 12 month recall"
-	la de 			lblempstat_year
+	la de 			lblempstat_year ///
 					1 "Paid employee" 	2 "Non-paid employee" ///
 					3 "Employer" 		4 "Self-employed" ///
 					5 "Other, workers not classifiable by status"
@@ -1445,7 +1442,7 @@ foreach v of local ed_var {
 
 
 *<_wage_no_compen_year_> --- this var has the same name as other and when quoted in the keep and order codes is repeated.
-	gen 			double wage_no_compen_year =
+	gen double 		wage_no_compen_year = .
 	label var 		wage_no_compen_year "Last wage payment primary job 12 month recall"
 *</_wage_no_compen_year_>
 
