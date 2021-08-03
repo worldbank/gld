@@ -1121,16 +1121,6 @@ foreach v of local ed_var {
 
 }
 
-* restrict variables for age and labor status in 8.2
-local laborvars8_2 	empstat ocusec industry_orig industrycat_isic industrycat10 ///
-					industrycat4 occup_orig occup_isco occup occup_skill ///
-					wage_no_compen unitwage whours wmonths wage_total ///
-					contract healthins socialsec union firmsize_l firmsize_u
-
-foreach var in local laborvars8_2	{
-	replace 		`var'=. if lstatus!=1 		// restrict universe to employed only
-	replace 		`var'=. if age < lb_mod_age	// restrict universe to working age
-}
 
 *----------8.3: 7 day reference secondary job------------------------------*
 * Since labels are the same as main job, values are labelled using main job labels
@@ -1249,17 +1239,6 @@ foreach var in local laborvars8_2	{
 
 }
 
-* restrict variables for age and labor status in 8.3
-local laborvars8_3 	empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 ///
-					industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 ///
-					wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 ///
-					firmsize_l_2 firmsize_u_2
-
-foreach var in local laborvars8_3	{
-	replace 		`var'=. if lstatus!=1 		// restrict universe to employed only
-	replace 		`var'=. if age < lb_mod_age	// restrict universe to working age
-}
-
 
 *----------8.4: 7 day reference additional jobs------------------------------*
 
@@ -1284,14 +1263,6 @@ foreach var in local laborvars8_3	{
 *</_t_wage_others_>
 
 
-* restrict variables for age and labor status in 8.4
-local laborvars8_4 	t_hours_others t_wage_nocompen_others t_wage_others
-
-foreach var in local laborvars8_4	{
-	replace 		`var'=. if lstatus!=1 		// restrict universe to employed only
-	replace 		`var'=. if age < lb_mod_age	// restrict universe to working age
-}
-
 
 *----------8.5: 7 day reference total summary------------------------------*
 
@@ -1312,14 +1283,6 @@ foreach var in local laborvars8_4	{
 	gen 			t_wage_total = .
 	label var 		t_wage_total "Annualized total wage for all jobs 7 day recall"
 *</_t_wage_total_>
-
-* restrict variables for age and labor status in 8.5
-local laborvars8_5 	t_hours_total t_wage_nocompen_total t_wage_total
-
-foreach var in local laborvars8_5	{
-	replace 		`var'=. if lstatus!=1 		// restrict universe to employed only
-	replace 		`var'=. if age < lb_mod_age	// restrict universe to working age
-}
 
 
 
@@ -1374,15 +1337,6 @@ foreach var in local laborvars8_5	{
 	gen byte 		unempldur_u_year=.
 	label var 		unempldur_u_year 		"Unemployment duration (months) upper bracket"
 *</_unempldur_u_year_>
-
-* restrict variables for age and labor status in 8.6
-local laborvars8_6 	lstatus_year potential_lf_year underemployment_year ///
-					nlfreason_year unempldur_l_year unempldur_u_year
-
-foreach var in local laborvars8_6	{
-	replace 		`var'=. if lstatus!=1 		// restrict universe to employed only
-	replace 		`var'=. if age < lb_mod_age	// restrict universe to working age
-}
 
 
 }
@@ -1570,17 +1524,6 @@ foreach var in local laborvars8_6	{
 	label var 		firmsize_u_year "Firm size (upper bracket) primary job 12 month recall"
 *</_firmsize_u_year_>
 
-* restrict variables for age and labor status in 8.7
-local laborvars8_7 	empstat_year ocusec_year industry_orig_year industrycat_isic_year ///
- 					industrycat10_year industrycat4_year occup_isco_year occup_skill_year ///
-					occup_year wage_no_compen_year unitwage_year whours_year ///
-					wmonths_year wage_total_year contract_year healthins_year ///
-					socialsec_year union_year firmsize_l_year firmsize_u_year
-
-foreach var in local laborvars8_7	{
-	replace 		`var'=. if lstatus!=1 		// restrict universe to employed only
-	replace 		`var'=. if age < lb_mod_age	// restrict universe to working age
-}
 
 
 
@@ -1707,18 +1650,6 @@ foreach var in local laborvars8_7	{
 	label var 		firmsize_u_2_year "Firm size (upper bracket) secondary job 12 month recall"
 *</_firmsize_u_2_year_>
 
-* restrict variables for age and labor status in 8.8
-local laborvars8_8 	empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year ///
- 					industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year ///
-					occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year ///
-					whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year ///
-					firmsize_u_2_year
-
-foreach var in local laborvars8_8	{
-	replace 		`var'=. if lstatus!=1 		// restrict universe to employed only
-	replace 		`var'=. if age < lb_mod_age	// restrict universe to working age
-}
-
 
 
 
@@ -1746,13 +1677,6 @@ foreach var in local laborvars8_8	{
 					"Annualized wage in all but primary and secondary jobs 12 month recall"
 *</_t_wage_others_year_>
 
-* restrict variables for age and labor status in 8.9
-local laborvars8_9 	t_hours_others_year t_wage_nocompen_others_year t_wage_others_year
-
-foreach var in local laborvars8_9	{
-	replace 		`var'=. if lstatus!=1 		// restrict universe to employed only
-	replace 		`var'=. if age < lb_mod_age	// restrict universe to working age
-}
 
 
 *----------8.10: 12 month total summary------------------------------*
@@ -1776,14 +1700,6 @@ foreach var in local laborvars8_9	{
 	label var 		t_wage_total_year "Annualized total wage for all jobs 12 month recall"
 *</_t_wage_total_year_>
 
-
-* restrict variables for age and labor status in 8.10
-local laborvars8_10 t_hours_total_year t_wage_nocompen_total_year t_wage_total_year
-
-foreach var in local laborvars8_10	{
-	replace 		`var'=. if lstatus!=1 		// restrict universe to employed only
-	replace 		`var'=. if age < lb_mod_age	// restrict universe to working age
-}
 
 *----------8.11: Overall across reference periods------------------------------*
 
@@ -1813,14 +1729,6 @@ foreach var in local laborvars8_10	{
 					"Total annual individual labor income in all jobs, incl. bonuses, etc."
 *</_laborincome_>
 
-
-* restrict variables for age and labor status in 8.11
-local laborvars8_11 	njobs t_hours_annual linc_nc laborincome
-
-foreach var in local laborvars8_11	{
-	replace 		`var'=. if lstatus!=1 		// restrict universe to employed only
-	replace 		`var'=. if age < lb_mod_age	// restrict universe to working age
-}
 
 
 *----------8.13: Labour cleanup------------------------------*
