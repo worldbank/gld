@@ -44,7 +44,7 @@ psic09_toc  <- pdf_toc(psic_path)
 psic09_text <- pdf_text(psic_path)
 
 # use page 47 as an example page 
-data <- psic09_data[[47]] %>%
+data <- psic09_data[[48]] %>%
   arrange()
 
 
@@ -77,10 +77,23 @@ n_distinct(data_nolabs$x) # 17 distinct "columns" or x positions.
 data_tib <- data_nolabs %>%
   filter(y > 100) %>% # remove page titles
   select(x, y, text) %>%
-  group_by(x) %>%
+  # manually generate group by range of x position,
+  # assuming x is fixed 
+  mutate(
+    group = case_when(
+      x < 90             ~ 1,
+      x >=91  & x < 130  ~ 2,
+      x >=131 & x < 175  ~ 3,
+      x >=415 & x < 445  ~ 4,
+      x >=446 & x < 500  ~ 5,
+      x >=501            ~ 6
+    )
+  ) %>%
+  group_by(group) %>%
   mutate(count = n(),
-         x_grp = cur_group_id(),
+         #x_grp = cur_group_id(),
          group = cur_group_id()) %>%
+  arrange(group) %>%
   pivot_wider(names_from = "group",
               names_prefix= "var",
               values_from = "text") %>%
@@ -90,7 +103,7 @@ data_tib <- data_nolabs %>%
          "psic1994" = "var4",
          "isic4" = "var5",
          "acic" = "var6") %>%
-  select(x, y, x_grp,
+  select(x, y,
          group, class, subclass, psic1994, isic4, acic) %>%
   arrange(y)
 
