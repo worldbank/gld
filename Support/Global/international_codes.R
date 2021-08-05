@@ -133,9 +133,9 @@ data_tib3 <- add_column(data_tib2, !!!cols[setdiff(final_vars, names(data_tib2))
 
 sum <- data_tib3 %>% 
   ungroup() %>%
-  group_by(y) 
+  group_by(y) %>%
   summarize(
-    group = if_else(is.na(data_tib3$group), NA_character_, group[which(!is.na(group))[1]]),
+    group = group[which(!is.na(group))[1]],
     class = class[which(!is.na(class))[1]],
     subclass = subclass[which(!is.na(subclass))[1]],
     psic1994 = psic1994[which(!is.na(psic1994))[1]],
