@@ -44,7 +44,7 @@ psic09_toc  <- pdf_toc(psic_path)
 psic09_text <- pdf_text(psic_path)
 
 # use page 47 as an example page 
-data <- psic09_data[[23]] %>%
+data <- psic09_data[[32]] %>%
   arrange()
 
 
@@ -62,12 +62,11 @@ data <- psic09_data[[23]] %>%
 #           or "group" but should pull from the previous non-missing value
 #     3. 
 
-# how many distinct values of x are there 
-n_distinct(data$x) # 127. makes sense, counts each word in text field
-
 # what if we exclude the label field?
 # I guess we have to filter by manually figuring out the 
 # x position where the labels are?
+final_vars <- c("y", "group", "class", "subclass", "psic1994", "isic4", "acic")
+
 data_nolabs <- data %>%
   filter(x < 155 | x > 420) %>%
   mutate(str = str_detect(text, "[:alpha:]+$")) %>%
@@ -100,43 +99,43 @@ data_tib <- data_nolabs %>%
               values_from = "text") 
 # if x_min < 90, then there will only be 5 variables, 
 # so generate an empty variable for "group". This means there
-# was no "group" data on the page.
+# was no "group" data on the page and every variable number is
+# shifted down 1/
 
 if (x_min > 89) {
   data_tib2 <- data_tib %>%
     mutate(var0 = NA_character_) %>%
-    rename("group" = "var0",
-           "class" = "var1",
-           "subclass" = "var2",
-           "psic1994" = "var3",
-           "isic4" = "var4",
-           "acic" = "var5") %>%
-    select(x, y,
-           group, class, subclass, psic1994, isic4, acic) %>%
+    rename_with(matches("var0"), .fn = ~paste0("group")) %>%
+    rename_with(matches("var1"), .fn = ~tolower("class")) %>%
+    rename_with(matches("var2"), .fn = ~paste0("subclass")) %>%
+    rename_with(matches("var3"), .fn = ~paste0("psic1994")) %>%
+    rename_with(matches("var4"), .fn = ~paste0("isic4")) %>%
+    rename_with(matches("var5"), .fn = ~paste0("acic")) %>%
+    select(x, y, any_of(final_vars)) %>%
     arrange(y)
 } else {
   data_tib2 <- data_tib %>%
-    rename("group" = "var1",
-         "class" = "var2",
-         "subclass" = "var3",
-         "psic1994" = "var4",
-         "isic4" = "var5",
-         "acic" = "var6") %>%
-    select(x, y,
-           group, class, subclass, psic1994, isic4, acic) %>%
+    rename_with(matches("var1"), .fn = ~paste0("group")) %>%
+    rename_with(matches("var2"), .fn = ~tolower("class")) %>%
+    rename_with(matches("var3"), .fn = ~paste0("subclass")) %>%
+    rename_with(matches("var4"), .fn = ~paste0("psic1994")) %>%
+    rename_with(matches("var5"), .fn = ~paste0("isic4")) %>%
+    rename_with(matches("var6"), .fn = ~paste0("acic")) %>%
+    select(x, y, any_of(final_vars)) %>%
     arrange(y)
-  
+    
 }
   
+# generate empty variables if NA
+names_data_tib2 <- names(data_tib2)
 
-# almost there, but we need to vertically collapse. there are different
-# x groups that have the same y value that should all be in the same row
+data_tib3 <- add_column(data_tib2, !!!cols[setdiff(final_vars, names(data_tib2))])
 
-sum <- data_tib2 %>% 
+sum <- data_tib3 %>% 
   ungroup() %>%
-  group_by(y) %>%
+  group_by(y) 
   summarize(
-    group = group[which(!is.na(group))[1]],
+    group = if_else(is.na(data_tib3$group), NA_character_, group[which(!is.na(group))[1]]),
     class = class[which(!is.na(class))[1]],
     subclass = subclass[which(!is.na(subclass))[1]],
     psic1994 = psic1994[which(!is.na(psic1994))[1]],
@@ -255,4 +254,4 @@ read_pdf <- function(page) {
 
 test <- lapply(psic09_data[22:316], read_pdf)
 
-read_pdf(psic09_data[[23]])
+read_pdf(psic09_data[[31]])
