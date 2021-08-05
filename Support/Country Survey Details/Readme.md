@@ -1,31 +1,31 @@
 # Country and Survey Specific Details
 
-The files in this folder cover further explanations and background information to better comprehend the harmonization of individual surveys, like the Mexican Encuesta Nacional de Ocupación y Empleo (ENOE) or the Philippines Labour Force Survey.  
+The files in this folder cover explanations and background information of the harmonization process of individual country surveys, such as the Mexican Encuesta Nacional de Ocupación y Empleo (ENOE) or the Philippines Labour Force Survey.  
 
-The aim of GLD is that any harmonization code should be sufficient to understand the process of converting the raw data into the harmonized output. However, there are generally two cases where more information may be either helpful or necessary:
+The aim of the GLD Project is that one harmonized code suffices to guide the user through the translation process from raw data to harmonized output. However, there are two cases where more information may be either helpful or necessary:
 
-1. Background details unearthed during the harmonization and
-2. Creation and use of additional data files in addition to raw data.
+1. Unknown background details unearthed during the harmonization and,
+2. The creation and use of additional data files in addition to raw data.
 
 ## Background details
 
-As users (Jobs Group Team Members, consultants, or users of this repository) work on the harmonization, they unearth a lot of information about the survey and its context. This information is cast into the harmonization but further details may be helpful for users who wish to go deeper. 
+As users (Jobs Group Team Members, consultants, or users of this repository) work on the harmonization, they unearth survey details and additional information about its context. The project aimed at including all relevant pieces of information in the final outputs. Yet, users who wish to go deeper into country-specific survey details may find this section a good starting point. 
 
-An example of this would be the education information. As education policies in different countries are updated and curriculums are renewed, the structure and lenght of say primary and secondary education may change. The new class structure will be reflected in the answer codes of the questionnaires. Harmonizers who have studied the changes of the curriculum over time may be able to provide background information on how to better understand what primary and secondary education may mean over time, for example by pointing out that, in country X, prior to 2010 primary education was 5 years, secondary 7 and since then primary takes 6 years to complete, as does secondary. This kind of information is presented here, whenever relevant and possible.
+An example of this would be the education section. Governments update education policies and renew curriculums often. For instance, the changes may include shifts in the structure and length of primary and secondary education schemes. As a result, the national statistics officers will develop new codes with the new class structure, which will impact the national survey questionnaires. 
+
+The harmonization team has studied the changes in the curriculum over time. Thus, they can provide background information to understand the characteristics of the education system structure. For example, before 2010, country "X"'s primary education lasted five years, while secondary education lasted seven. Ever since, primary education now takes up to six years to complete, as does secondary school. 
 
 ## Additional files
 
-The GLD, as stated above, aims to present a straight line from raw data to harmonization. However, in order to provide valuable information and complete the harmonization, it is sometimes necessary to add - and even create - supplementary data. The most common case for this is the conrrespondance between national and international classifications. 
+The GLD project wishes to harmonize industries across years using the ISIC classifications. The International Standard Industrial Classification of All Economic Activities ([ISIC](https://unstats.un.org/unsd/classifications/Econ/isic)) is an international standard for economic activities within industries published by the United Nations. However, most countries have a national system to classify economic activities, which often emulates ISIC. 
 
-The International Standard Industrial Classification of All Economic Activities ([ISIC](https://unstats.un.org/unsd/classifications/Econ/isic)) is an international standard for classifying the industry of a particular activity. It is published by the United Nations and is the international standard GLD harmonizes to. However, most countries have a national system to classify economic activity. Most often it will be based on ISIC, but this is not assured.
-
-For example, Mexico uses the [North American Industry Classification System](http://en.www.inegi.org.mx/app/scian/) which has not direct correspondence with ISIC although official correspondence tables do exists that show how to match values. These correspondences are often imperfect (see image below of a Mexican example where one NAICS code matches five different ISIC codes) but can still be used to create an approximation to best map values from a national classification to the international standard.
+For example, Mexico uses the [North American Industry Classification System](http://en.www.inegi.org.mx/app/scian/) which has no direct link to ISIC. Although, the NSO built official comparison tables to match values. These tables are imperfect (see the image below about the mapping of NAICS to five different ISIC codes) but help map the values on the national classifications to the international standards.
 
 <br></br>
 ![SCIAN Imperfect Matching](/Support/Country%20Survey%20Details/MEX/ENOE/images/scian_imperfect_match.PNG)
 <br></br>
 
-In order to provide users an understanding of how the correspondence was created, i.e., the additional file that is used for the harmonization, this country and survey specific information is stored here.
+In this section, the team developed notes on the additional files, country, and survey-specific information used for the harmonization. The mentioned notes are stored here.
 
 ## Structure of the folder
 
