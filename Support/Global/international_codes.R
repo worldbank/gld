@@ -106,7 +106,7 @@ if (x_min > 89) {
   data_tib2 <- data_tib %>%
     mutate(var0 = NA_character_) %>%
     rename_with(matches("var0"), .fn = ~paste0("group")) %>%
-    rename_with(matches("var1"), .fn = ~tolower("class")) %>%
+    rename_with(matches("var1"), .fn = ~paste0("class")) %>%
     rename_with(matches("var2"), .fn = ~paste0("subclass")) %>%
     rename_with(matches("var3"), .fn = ~paste0("psic1994")) %>%
     rename_with(matches("var4"), .fn = ~paste0("isic4")) %>%
@@ -116,7 +116,7 @@ if (x_min > 89) {
 } else {
   data_tib2 <- data_tib %>%
     rename_with(matches("var1"), .fn = ~paste0("group")) %>%
-    rename_with(matches("var2"), .fn = ~tolower("class")) %>%
+    rename_with(matches("var2"), .fn = ~paste0("class")) %>%
     rename_with(matches("var3"), .fn = ~paste0("subclass")) %>%
     rename_with(matches("var4"), .fn = ~paste0("psic1994")) %>%
     rename_with(matches("var5"), .fn = ~paste0("isic4")) %>%
@@ -155,11 +155,12 @@ sum <- data_tib3 %>%
 # function ----
 read_pdf <- function(page) {
   
-  data_nolabs <- page %>%
+  final_vars <- c("y", "group", "class", "subclass", "psic1994", "isic4", "acic")
+  
+  data_nolabs <- data %>%
     filter(x < 155 | x > 420) %>%
     mutate(str = str_detect(text, "[:alpha:]+$")) %>%
     filter(str == FALSE)
-  
   
   x_min <- min(data_nolabs$x)
   
@@ -201,48 +202,51 @@ read_pdf <- function(page) {
       if (x_min > 89) {
         data_tib2 <- data_tib %>%
           mutate(var0 = NA_character_) %>%
-          rename("group" = "var0",
-                 "class" = "var1",
-                 "subclass" = "var2",
-                 "psic1994" = "var3",
-                 "isic4" = "var4",
-                 "acic" = "var5") %>%
-          select(x, y,
-                 group, class, subclass, psic1994, isic4, acic) %>%
+          rename_with(matches("var0"), .fn = ~paste0("group")) %>%
+          rename_with(matches("var1"), .fn = ~paste0("class")) %>%
+          rename_with(matches("var2"), .fn = ~paste0("subclass")) %>%
+          rename_with(matches("var3"), .fn = ~paste0("psic1994")) %>%
+          rename_with(matches("var4"), .fn = ~paste0("isic4")) %>%
+          rename_with(matches("var5"), .fn = ~paste0("acic")) %>%
+          select(x, y, any_of(final_vars)) %>%
           arrange(y)
       } else {
         data_tib2 <- data_tib %>%
-          rename("group" = "var1",
-                 "class" = "var2",
-                 "subclass" = "var3",
-                 "psic1994" = "var4",
-                 "isic4" = "var5",
-                 "acic" = "var6") %>%
-          select(x, y,
-                 group, class, subclass, psic1994, isic4, acic) %>%
+          rename_with(matches("var1"), .fn = ~paste0("group")) %>%
+          rename_with(matches("var2"), .fn = ~paste0("class")) %>%
+          rename_with(matches("var3"), .fn = ~paste0("subclass")) %>%
+          rename_with(matches("var4"), .fn = ~paste0("psic1994")) %>%
+          rename_with(matches("var5"), .fn = ~paste0("isic4")) %>%
+          rename_with(matches("var6"), .fn = ~paste0("acic")) %>%
+          select(x, y, any_of(final_vars)) %>%
           arrange(y)
         
       }
     
     # almost there, but we need to vertically collapse. there are different
     # x groups that have the same y value that should all be in the same row
-    
-    sum <- data_tib2 %>% 
-      ungroup() %>%
-      group_by(y) %>%
-      summarize(
-        group = group[which(!is.na(group))[1]],
-        class = class[which(!is.na(class))[1]],
-        subclass = subclass[which(!is.na(subclass))[1]],
-        psic1994 = psic1994[which(!is.na(psic1994))[1]],
-        isic4 = isic4[which(!is.na(isic4))[1]],
-        acic = acic[which(!is.na(acic))[1]]
-      ) %>%
-      mutate(
-        class = case_when(is.na(class) ~ replace_na(stringr::str_sub(subclass, 1,3)),
-                          TRUE ~ class),
-        group = case_when(is.na(group) ~ replace_na(stringr::str_sub(class, 1,3)),
-                          TRUE ~ group))
+      # generate empty variables if NA
+      
+      names_data_tib2 <- names(data_tib2)
+      
+      data_tib3 <- add_column(data_tib2, !!!cols[setdiff(final_vars, names(data_tib2))])
+      
+      sum <- data_tib3 %>% 
+        ungroup() %>%
+        group_by(y) %>%
+        summarize(
+          group = group[which(!is.na(group))[1]],
+          class = class[which(!is.na(class))[1]],
+          subclass = subclass[which(!is.na(subclass))[1]],
+          psic1994 = psic1994[which(!is.na(psic1994))[1]],
+          isic4 = isic4[which(!is.na(isic4))[1]],
+          acic = acic[which(!is.na(acic))[1]]
+        ) %>%
+        mutate(
+          class = case_when(is.na(class) ~ replace_na(stringr::str_sub(subclass, 1,3)),
+                            TRUE ~ class),
+          group = case_when(is.na(group) ~ replace_na(stringr::str_sub(class, 1,3)),
+                            TRUE ~ group))
     
     
     return(sum)
