@@ -1,11 +1,6 @@
 ENOE Survey Questionnaires
 ================
 
-  - [The different versions of the
-    ENOE](#the-different-versions-of-the-enoe)
-      - [Absent Topics](#absent-topics)
-      - [Type of survey questionnaires](#type-of-survey-questionnaires)
-
 # The different versions of the ENOE
 
 In the past fifteen years, the Mexican national statistics institute

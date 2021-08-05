@@ -3,7 +3,7 @@ title: "ENOE Survey Questionnaires"
 output:
   github_document:
     html_preview: no
-    toc: yes
+    toc: no
     toc_depth: 3
 editor_options:
   markdown:
