@@ -44,7 +44,7 @@ psic09_toc  <- pdf_toc(psic_path)
 psic09_text <- pdf_text(psic_path)
 
 # use page 47 as an example page 
-data <- psic09_data[[48]] %>%
+data <- psic09_data[[49]] %>%
   arrange()
 
 
@@ -121,7 +121,10 @@ sum <- data_tib %>%
     isic4 = isic4[which(!is.na(isic4))[1]],
     acic = acic[which(!is.na(acic))[1]]
   ) %>%
-  mutate(group = case_when(is.na(group) ~ replace_na(stringr::str_sub(class, 1,3)),
+  mutate(
+    class = case_when(is.na(class) ~ replace_na(stringr::str_sub(subclass, 1,3)),
+                      TRUE ~ class),
+    group = case_when(is.na(group) ~ replace_na(stringr::str_sub(class, 1,3)),
                            TRUE ~ group))
 
 # here group is missing, but we know that group is just 
