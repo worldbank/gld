@@ -44,7 +44,7 @@ psic09_toc  <- pdf_toc(psic_path)
 psic09_text <- pdf_text(psic_path)
 
 # use page 47 as an example page 
-data <- psic09_data[[49]] %>%
+data <- psic09_data[[311]] %>%
   arrange()
 
 
@@ -69,13 +69,14 @@ n_distinct(data$x) # 127. makes sense, counts each word in text field
 # I guess we have to filter by manually figuring out the 
 # x position where the labels are?
 data_nolabs <- data %>%
-  filter(x < 155 | x > 430)
+  filter(x < 155 | x > 420) %>%
+  mutate(str = str_detect(text, "[:alpha:]+$")) %>%
+  filter(str == FALSE)
 
 n_distinct(data_nolabs$x) # 17 distinct "columns" or x positions.
 
-
 data_tib <- data_nolabs %>%
-  filter(y > 100) %>% # remove page titles
+  filter(y >= 98) %>% # remove page titles, if no data, no obs.
   select(x, y, text) %>%
   # manually generate group by range of x position,
   # assuming x is fixed 
@@ -129,3 +130,83 @@ sum <- data_tib %>%
 
 # here group is missing, but we know that group is just 
 # the first three digits of class
+
+
+# function ----
+read_pdf <- function(page) {
+  
+  data_nolabs <- page %>%
+    filter(x < 155 | x > 420) %>%
+    mutate(str = str_detect(text, "[:alpha:]+$")) %>%
+    filter(str == FALSE)
+  
+  
+  # if the page is "blank" in terms of table data, return nothing
+  if (nrow(data_nolabs) == 0) {
+    return(NULL)
+  } 
+  else {
+    
+    data_tib <- data_nolabs %>%
+      select(x, y, text) %>%
+      # manually generate group by range of x position,
+      # assuming x is fixed 
+      mutate(
+        group = case_when(
+          x < 90             ~ 1,
+          x >=91  & x < 130  ~ 2,
+          x >=131 & x < 175  ~ 3,
+          x >=415 & x < 445  ~ 4,
+          x >=446 & x < 500  ~ 5,
+          x >=501            ~ 6
+        )
+      ) %>%
+      group_by(group) %>%
+      mutate(count = n(),
+             #x_grp = cur_group_id(),
+             group = cur_group_id()) %>%
+      arrange(group) %>%
+      pivot_wider(names_from = "group",
+                  names_prefix= "var",
+                  values_from = "text") %>%
+      rename("group" = "var1",
+             "class" = "var2",
+             "subclass" = "var3",
+             "psic1994" = "var4",
+             "isic4" = "var5",
+             "acic" = "var6") %>%
+      select(x, y,
+             group, class, subclass, psic1994, isic4, acic) %>%
+      arrange(y)
+    
+    # almost there, but we need to vertically collapse. there are different
+    # x groups that have the same y value that should all be in the same row
+    
+    sum <- data_tib %>% 
+      ungroup() %>%
+      group_by(y) %>%
+      summarize(
+        group = group[which(!is.na(group))[1]],
+        class = class[which(!is.na(class))[1]],
+        subclass = subclass[which(!is.na(subclass))[1]],
+        psic1994 = psic1994[which(!is.na(psic1994))[1]],
+        isic4 = isic4[which(!is.na(isic4))[1]],
+        acic = acic[which(!is.na(acic))[1]]
+      ) %>%
+      mutate(
+        class = case_when(is.na(class) ~ replace_na(stringr::str_sub(subclass, 1,3)),
+                          TRUE ~ class),
+        group = case_when(is.na(group) ~ replace_na(stringr::str_sub(class, 1,3)),
+                          TRUE ~ group))
+    
+    
+    return(sum)
+    
+  }  
+  
+}
+
+
+test <- lapply(psic09_data[22:316], read_pdf)
+
+read_pdf(psic09_data[[311]])
