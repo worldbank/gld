@@ -107,4 +107,9 @@ sum <- data_tib %>%
     psic1994 = psic1994[which(!is.na(psic1994))[1]],
     isic4 = isic4[which(!is.na(isic4))[1]],
     acic = acic[which(!is.na(acic))[1]]
-  ) 
+  ) %>%
+  mutate(group = case_when(is.na(group) ~ replace_na(stringr::str_sub(class, 1,3)),
+                           TRUE ~ group))
+
+# here group is missing, but we know that group is just 
+# the first three digits of class
