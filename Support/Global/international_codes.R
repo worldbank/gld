@@ -44,7 +44,7 @@ psic09_toc  <- pdf_toc(psic_path)
 psic09_text <- pdf_text(psic_path)
 
 # use page 47 as an example page 
-data <- psic09_data[[311]] %>%
+data <- psic09_data[[23]] %>%
   arrange()
 
 
@@ -73,7 +73,7 @@ data_nolabs <- data %>%
   mutate(str = str_detect(text, "[:alpha:]+$")) %>%
   filter(str == FALSE)
 
-n_distinct(data_nolabs$x) # 17 distinct "columns" or x positions.
+x_min <- min(data_nolabs$x)
 
 data_tib <- data_nolabs %>%
   filter(y >= 98) %>% # remove page titles, if no data, no obs.
@@ -82,12 +82,12 @@ data_tib <- data_nolabs %>%
   # assuming x is fixed 
   mutate(
     group = case_when(
-      x < 90             ~ 1,
-      x >=91  & x < 130  ~ 2,
-      x >=131 & x < 175  ~ 3,
-      x >=415 & x < 445  ~ 4,
-      x >=446 & x < 500  ~ 5,
-      x >=501            ~ 6
+      x < 90             ~ 1, # group
+      x >=91  & x < 130  ~ 2, # class
+      x >=131 & x < 175  ~ 3, # subclass
+      x >=415 & x < 445  ~ 4, # psic1994
+      x >=446 & x < 500  ~ 5, # isic4
+      x >=501            ~ 6  # acic
     )
   ) %>%
   group_by(group) %>%
@@ -97,21 +97,42 @@ data_tib <- data_nolabs %>%
   arrange(group) %>%
   pivot_wider(names_from = "group",
               names_prefix= "var",
-              values_from = "text") %>%
-  rename("group" = "var1",
+              values_from = "text") 
+# if x_min < 90, then there will only be 5 variables, 
+# so generate an empty variable for "group". This means there
+# was no "group" data on the page.
+
+if (x_min > 89) {
+  data_tib2 <- data_tib %>%
+    mutate(var0 = NA_character_) %>%
+    rename("group" = "var0",
+           "class" = "var1",
+           "subclass" = "var2",
+           "psic1994" = "var3",
+           "isic4" = "var4",
+           "acic" = "var5") %>%
+    select(x, y,
+           group, class, subclass, psic1994, isic4, acic) %>%
+    arrange(y)
+} else {
+  data_tib2 <- data_tib %>%
+    rename("group" = "var1",
          "class" = "var2",
          "subclass" = "var3",
          "psic1994" = "var4",
          "isic4" = "var5",
          "acic" = "var6") %>%
-  select(x, y,
-         group, class, subclass, psic1994, isic4, acic) %>%
-  arrange(y)
+    select(x, y,
+           group, class, subclass, psic1994, isic4, acic) %>%
+    arrange(y)
+  
+}
+  
 
 # almost there, but we need to vertically collapse. there are different
 # x groups that have the same y value that should all be in the same row
 
-sum <- data_tib %>% 
+sum <- data_tib2 %>% 
   ungroup() %>%
   group_by(y) %>%
   summarize(
@@ -141,48 +162,73 @@ read_pdf <- function(page) {
     filter(str == FALSE)
   
   
+  x_min <- min(data_nolabs$x)
+  
+  
+  
   # if the page is "blank" in terms of table data, return nothing
   if (nrow(data_nolabs) == 0) {
     return(NULL)
-  } 
-  else {
+  
+    } else {
     
-    data_tib <- data_nolabs %>%
-      select(x, y, text) %>%
-      # manually generate group by range of x position,
-      # assuming x is fixed 
-      mutate(
-        group = case_when(
-          x < 90             ~ 1,
-          x >=91  & x < 130  ~ 2,
-          x >=131 & x < 175  ~ 3,
-          x >=415 & x < 445  ~ 4,
-          x >=446 & x < 500  ~ 5,
-          x >=501            ~ 6
-        )
-      ) %>%
-      group_by(group) %>%
-      mutate(count = n(),
-             #x_grp = cur_group_id(),
-             group = cur_group_id()) %>%
-      arrange(group) %>%
-      pivot_wider(names_from = "group",
-                  names_prefix= "var",
-                  values_from = "text") %>%
-      rename("group" = "var1",
-             "class" = "var2",
-             "subclass" = "var3",
-             "psic1994" = "var4",
-             "isic4" = "var5",
-             "acic" = "var6") %>%
-      select(x, y,
-             group, class, subclass, psic1994, isic4, acic) %>%
-      arrange(y)
+      data_tib <- data_nolabs %>%
+        filter(y >= 98) %>% # remove page titles, if no data, no obs.
+        select(x, y, text) %>%
+        # manually generate group by range of x position,
+        # assuming x is fixed 
+        mutate(
+          group = case_when(
+            x < 90             ~ 1, # group
+            x >=91  & x < 130  ~ 2, # class
+            x >=131 & x < 175  ~ 3, # subclass
+            x >=415 & x < 445  ~ 4, # psic1994
+            x >=446 & x < 500  ~ 5, # isic4
+            x >=501            ~ 6  # acic
+          )
+        ) %>%
+        group_by(group) %>%
+        mutate(count = n(),
+               #x_grp = cur_group_id(),
+               group = cur_group_id()) %>%
+        arrange(group) %>%
+        pivot_wider(names_from = "group",
+                    names_prefix= "var",
+                    values_from = "text") 
+      # if x_min < 90, then there will only be 5 variables, 
+      # so generate an empty variable for "group". This means there
+      # was no "group" data on the page.
+      
+      if (x_min > 89) {
+        data_tib2 <- data_tib %>%
+          mutate(var0 = NA_character_) %>%
+          rename("group" = "var0",
+                 "class" = "var1",
+                 "subclass" = "var2",
+                 "psic1994" = "var3",
+                 "isic4" = "var4",
+                 "acic" = "var5") %>%
+          select(x, y,
+                 group, class, subclass, psic1994, isic4, acic) %>%
+          arrange(y)
+      } else {
+        data_tib2 <- data_tib %>%
+          rename("group" = "var1",
+                 "class" = "var2",
+                 "subclass" = "var3",
+                 "psic1994" = "var4",
+                 "isic4" = "var5",
+                 "acic" = "var6") %>%
+          select(x, y,
+                 group, class, subclass, psic1994, isic4, acic) %>%
+          arrange(y)
+        
+      }
     
     # almost there, but we need to vertically collapse. there are different
     # x groups that have the same y value that should all be in the same row
     
-    sum <- data_tib %>% 
+    sum <- data_tib2 %>% 
       ungroup() %>%
       group_by(y) %>%
       summarize(
@@ -209,4 +255,4 @@ read_pdf <- function(page) {
 
 test <- lapply(psic09_data[22:316], read_pdf)
 
-read_pdf(psic09_data[[311]])
+read_pdf(psic09_data[[23]])
