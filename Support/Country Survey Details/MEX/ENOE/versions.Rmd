@@ -52,13 +52,13 @@ Table 2. ENOE questionnaire revision by year
 
 | Year         | Version Q1              |
 |--------------|-------------------------|
-| 2005 to 2006 | First Extended Version  |
-| 2007         | First Short Version     |
-| 2008         | Second Short Version    |
-| 2009         | Second Extended Version |
-| 2010 to 2012 | Third Extended Version  |
-| 2013 to 2015 | Fourth Extended Version |
-| 2016 to 2020 | Fifth Extended Version  |
+| 2005 to 2006 | [First Extended Version](https://www.inegi.org.mx/contenidos/programas/enoe/15ymas/doc/c_amp_v1.pdf)  |
+| 2007         | [First Short Version](https://www.inegi.org.mx/contenidos/programas/enoe/15ymas/doc/c_bas_v1.pdf)     |
+| 2008         | [Second Short Version](https://www.inegi.org.mx/contenidos/programas/enoe/15ymas/doc/c_bas_v2.pdf)    |
+| 2009         | [Second Extended Version](https://www.inegi.org.mx/contenidos/programas/enoe/15ymas/doc/c_amp_v2.pdf) |
+| 2010 to 2012 | [Third Extended Version](https://www.inegi.org.mx/contenidos/programas/enoe/15ymas/doc/c_amp_v3.pdf) |
+| 2013 to 2015 |[Fourth Extended Version](https://www.inegi.org.mx/contenidos/programas/enoe/15ymas/doc/c_bas_v4.pdf) |
+| 2016 to 2020 | [Fifth Extended Version](https://www.inegi.org.mx/contenidos/programas/enoe/15ymas/doc/c_bas_v5.pdf)  |
 
 --- [Author made. based on ENOE
 Questionnaires](https://www.inegi.org.mx/programas/enoe/15ymas/)
