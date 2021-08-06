@@ -162,8 +162,7 @@ read_pdf <- function(page) {
   
   final_vars <- c("y", "group", "class", "subclass", "psic1994", "isic4", "acic")
   
-  data <- psic09_data[[page]] %>%
-    arrange()
+  data <- psic09_data[[page]] 
   
   data_nolabs <- data %>%
     filter(x < 155 | x > 420) %>%
@@ -267,7 +266,11 @@ read_pdf <- function(page) {
   
 }
 
+# function call ----
+isic_codes <- lapply(22:316, read_pdf)
+isic_codes <- do.call(rbind, isic_codes)
 
-test <- lapply(psic09_data[22:316], read_pdf)
 
-read_pdf(40)
+
+# single page call
+read_pdf(316)
