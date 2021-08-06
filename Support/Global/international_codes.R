@@ -162,6 +162,9 @@ read_pdf <- function(page) {
   
   final_vars <- c("y", "group", "class", "subclass", "psic1994", "isic4", "acic")
   
+  data <- psic09_data[[page]] %>%
+    arrange()
+  
   data_nolabs <- data %>%
     filter(x < 155 | x > 420) %>%
     mutate(str = str_detect(text, "[:alpha:]+$")) %>%
@@ -267,4 +270,4 @@ read_pdf <- function(page) {
 
 test <- lapply(psic09_data[22:316], read_pdf)
 
-read_pdf(psic09_data[[47]])
+read_pdf(40)
