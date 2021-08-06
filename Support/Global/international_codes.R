@@ -21,7 +21,7 @@ library(pdftools)
 
 # load network data
 load(PHL_meta)
-load(PHL_labels)
+if (FALSE) {load(PHL_labels)}
 
 # pdf file path
 psic_path <- file.path(PHL, "PHL_docs/International Codes/PSA_PSIC_2009.pdf")
@@ -127,12 +127,17 @@ if (x_min > 89) {
 }
   
 # generate empty variables if NA
-names_data_tib2 <- names(data_tib2)
+final_cols <- c(group = NA_character_,
+                class = NA_character_,
+                subclass = NA_character_,
+                psic1994 = NA_character_,
+                isic4 = NA_character_,
+                acic = NA_character_)
 
-data_tib3 <- add_column(data_tib2, !!!cols[setdiff(final_vars, names(data_tib2))])
 
-sum <- data_tib3 %>% 
+sum <- data_tib2 %>%
   ungroup() %>%
+  add_column(!!!final_cols[!names(final_cols) %in% names(.)]) %>%
   group_by(y) %>%
   summarize(
     group = group[which(!is.na(group))[1]],
@@ -227,12 +232,16 @@ read_pdf <- function(page) {
     # x groups that have the same y value that should all be in the same row
       # generate empty variables if NA
       
-      names_data_tib2 <- names(data_tib2)
+      final_cols <- c(group = NA_character_,
+                      class = NA_character_,
+                      subclass = NA_character_,
+                      psic1994 = NA_character_,
+                      isic4 = NA_character_,
+                      acic = NA_character_)
       
-      data_tib3 <- add_column(data_tib2, !!!cols[setdiff(final_vars, names(data_tib2))])
-      
-      sum <- data_tib3 %>% 
+      sum <- data_tib2 %>% 
         ungroup() %>%
+        add_column(!!!final_cols[!names(final_cols) %in% names(.)]) %>%
         group_by(y) %>%
         summarize(
           group = group[which(!is.na(group))[1]],
@@ -258,4 +267,4 @@ read_pdf <- function(page) {
 
 test <- lapply(psic09_data[22:316], read_pdf)
 
-read_pdf(psic09_data[[31]])
+read_pdf(psic09_data[[47]])
