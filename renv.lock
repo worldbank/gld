@@ -797,8 +797,7 @@
       "Package": "renv",
       "Version": "0.14.0",
       "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "30e5eba91b67f7f4d75d31de14bbfbdc"
+      "Repository": "CRAN"
     },
     "reprex": {
       "Package": "reprex",
@@ -1054,7 +1053,7 @@
     },
     "vroom": {
       "Package": "vroom",
-      "Version": "1.5.3",
+      "Version": "1.5.4",
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "aac6012f34348b3ca6bf373fe7172b06"
@@ -1103,3 +1102,4 @@
     }
   }
 }
+
