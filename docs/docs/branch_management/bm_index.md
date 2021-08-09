@@ -33,7 +33,7 @@ We then develop new content by:
 
 The three-tier branching system is based on the GitFlow Workflow. The image below explains the general idea (find more information in the source for this image: [Part 2 of this DIME presentation on Git]( https://github.com/worldbank/DIME-Resources/blob/master/git-3-flow.pdf)).
 
-<img src="/docs/assets/images/gitflow_dime_image.png" alt="hi" class="inline"/>
+<img src="../docs/assets/images/gitflow_dime_image.png" alt="hi" class="inline"/>
 
 ### GLD implementation
 
