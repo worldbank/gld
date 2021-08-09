@@ -12,7 +12,7 @@ This document sets the guidelines on how to create, name, and manage branches on
 
 ## What are branches and why do we need them?
 
-A Git is a bifurcation of the state of code that creates a new path for the evolution of it. It can be parallel to other Git branches that you can generate ([Here is tutorial on Git branches, from where this explanation is from]( https://www.hostinger.com/tutorials/how-to-use-git-branches/)). Two of the main advantages are:
+A Git is a bifurcation of the state of code that creates a new path for the evolution of it. It can be parallel to other Git branches that you can generate (Here is a [tutorial on Git branches]( https://www.hostinger.com/tutorials/how-to-use-git-branches/), from where this explanation is from]). Two of the main advantages are:
 
 - It is possible to develop new features for our application without hindering the development in the main branch.
 - With Git branches it is possible to create different development branches that can converge in the same repository. For example, a stable branch, a test branch, and an unstable branch.
