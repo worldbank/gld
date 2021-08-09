@@ -37,11 +37,11 @@ The three-tier branching system is based on the GitFlow Workflow. The image belo
 
 ### GLD implementation
 
-In the GLD context, the *main* (or master) *branch contains all the code for validated harmonizations* as well as the latest stable version of any support information (e.g., coding templates, quality checks, and data dictionary). It represents the public record of the project.
+In the GLD context, the **main** (or master) **branch contains all the code for validated harmonizations** as well as the latest stable version of any support information (e.g., coding templates, quality checks, and data dictionary). It represents the public record of the project.
 
-The *develop branch represents the work done on a standalone code expansion* (e.g., by adding a new survey). It is created at the start of the project and will only be merged once it is completed and validated (e.g., after all quality checks have passed).
+The **develop branch represents the work done on a standalone code expansion** (e.g., by adding a new survey). It is created at the start of the project and will only be merged once it is completed and validated (e.g., after all quality checks have passed).
 
-Inside each develop branch *a feature branch progresses a substantial piece of project work* (e.g. the creation or revision of unique household identifiers). This reduces the number of commits to the develop branch and allows developers to try approaches without compromising the project’s develop branch.
+Inside each develop branch **a feature branch progresses a substantial piece of project work** (e.g. the creation or revision of unique household identifiers). This reduces the number of commits to the develop branch and allows developers to try approaches without compromising the project’s develop branch.
 
 ### When to create a feature branch versus committing to the develop branch directly
 
