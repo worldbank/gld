@@ -158,6 +158,13 @@ sum <- data_tib2 %>%
 # the first three digits of class
 
 
+
+
+
+
+
+
+
 # function ----
 read_pdf <- function(page) {
   
