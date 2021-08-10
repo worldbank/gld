@@ -321,7 +321,12 @@ isic_clean <- isic_codes %>%
 assertthat::assert_that( (nrow(isic_clean) + nrow(isic_leftover)) == nrow(isic_codes)   )
 
 # clean duplicates
-isic_clean %>% janitor::get_dupes()
+isic_clean %>% janitor::get_dupes() # there is 1 pair of dups
 
 isic_clean <- isic_clean %>%
   distinct()
+
+
+# save data checkpoint 1 ----
+save(isic_codes, isic_leftover, isic_clean, read_pdf, psic_path,
+     file = file.path(PHL, "PHL_data/isic_codes1.Rdata") )
