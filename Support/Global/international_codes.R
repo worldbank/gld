@@ -45,7 +45,7 @@ psic09_toc  <- pdf_toc(psic_path)
 psic09_text <- pdf_text(psic_path)
 
 # use page 47 as an example page 
-data <- psic09_data[[47]] %>%
+data <- psic09_data[[314]] %>%
   arrange()
 
 
@@ -109,7 +109,6 @@ col_info <- function(data, xmin, xmax, varname) {
   return(tib)
 }
   
-el_group <- col_info(data = data_tib, xmin = 0, xmax = 90, varname = "group")
 el_class <- col_info(data = data_tib, xmin = 91, xmax = 130, varname = "class")
 el_subclass <- col_info(data = data_tib, xmin = 131, xmax = 175, varname = "subclass")
 
@@ -117,8 +116,7 @@ el_psic1994 <- col_info(data = data_tib, xmin = 415, xmax = 445, varname = "psic
 el_isic4 <- col_info(data = data_tib, xmin = 446, xmax = 500, varname = "isic4")
 el_acic <- col_info(data = data_tib, xmin = 501, xmax = 9999, varname = "acic")
 
-tib <- bind_rows(el_group, el_class, el_subclass, el_psic1994, el_isic4, el_acic) %>%
-  filter(varname != "group") %>%
+tib <- bind_rows(el_class, el_subclass, el_psic1994, el_isic4, el_acic) %>%
   group_by(y) %>%
   mutate(pg_grp = cur_group_id()) %>%
   pivot_wider(names_from = "varname",
