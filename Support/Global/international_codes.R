@@ -45,7 +45,7 @@ psic09_toc  <- pdf_toc(psic_path)
 psic09_text <- pdf_text(psic_path)
 
 # use page 47 as an example page 
-data <- psic09_data[[32]] %>%
+data <- psic09_data[[47]] %>%
   arrange()
 
 
@@ -79,7 +79,8 @@ data_tib <- data_nolabs %>%
   filter(y >= 98) %>% # remove page titles, if no data, no obs.
   select(x, y, text) %>%
   # manually generate group by range of x position,
-  # assuming x is fixed 
+  # assuming x is fixed.
+  # should data already be tabular at this point?
   mutate(
     group = case_when(
       x < 90             ~ 1, # group
@@ -89,7 +90,41 @@ data_tib <- data_nolabs %>%
       x >=446 & x < 500  ~ 5, # isic4
       x >=501            ~ 6  # acic
     )
-  ) %>%
+  )
+
+group <- data_tib %>%
+  filter(x < 90 ) %>%
+  select(text) %>%
+  mutate(var = "group") %>%
+  as_tibble()
+
+
+col_info <- function(data, xmin, xmax, varname) {
+  
+  tib <- data %>%
+    filter(x >= xmin & x < xmax) %>%
+    select(text, y) %>%
+    mutate(varname = as.character(varname))
+  
+  return(tib)
+}
+  
+el_group <- col_info(data = data_tib, xmin = 0, xmax = 90, varname = "group")
+el_class <- col_info(data = data_tib, xmin = 91, xmax = 130, varname = "class")
+el_subclass <- col_info(data = data_tib, xmin = 131, xmax = 175, varname = "subclass")
+
+el_psic1994 <- col_info(data = data_tib, xmin = 415, xmax = 445, varname = "psic1994")
+el_isic4 <- col_info(data = data_tib, xmin = 446, xmax = 500, varname = "isic4")
+el_acic <- col_info(data = data_tib, xmin = 501, xmax = 9999, varname = "acic")
+
+tib <- bind_rows(el_group, el_class, el_subclass, el_psic1994, el_isic4, el_acic) %>%
+  filter(varname != "group") %>%
+  group_by(y) %>%
+  mutate(pg_grp = cur_group_id()) %>%
+  pivot_wider(names_from = "varname",
+              values_from= "text")
+
+
   group_by(group) %>%
   mutate(count = n(),
          #x_grp = cur_group_id(),
