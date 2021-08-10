@@ -195,8 +195,8 @@ read_pdf <- function(page) {
         mutate(
           group = case_when(
             x < 90             ~ 1, # group
-            x >=91  & x < 120  ~ 2, # class
-            x >=121 & x < 175  ~ 3, # subclass
+            x >=91  & x < 110  ~ 2, # class
+            x >=111 & x < 175  ~ 3, # subclass
             x >=415 & x < 445  ~ 4, # psic1994
             x >=446 & x < 500  ~ 5, # isic4
             x >=501            ~ 6  # acic
