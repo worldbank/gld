@@ -44,7 +44,6 @@ read_pdf <- function(page) {
   
   
   # define sub-function that extracts column info from partially-processed data
-  
   col_info <- function(data_in, xmin, xmax, varname) {
     
     tib <- data_in %>%
@@ -60,11 +59,11 @@ read_pdf <- function(page) {
   #final_vars <- c("y", "group", "class", "subclass", "psic1994", "isic4", "acic")
   
   #load data from PDF tools
-  psic_data <- pdftools::pdf_data(psic_path)
+  #psic_data <- pdftools::pdf_data(psic_path)
   
   
   # subset data loaded by pdftools
-  data <- psic_data[[page]] 
+  data <- psic09[[page]] # make this the second argument
   
   data_nolabs <- data %>%
     filter(x < 155 | x > 420) %>%
@@ -117,6 +116,9 @@ read_pdf <- function(page) {
 }
 
 # function call ----
+## first load psic data from pdftools 
+psic09 <- pdftools::pdf_data(psic_path)
+
 isic_codes <- lapply(22:316, read_pdf)
 isic_codes <- do.call(rbind, isic_codes)
 
