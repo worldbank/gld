@@ -16,6 +16,7 @@
 library(tidyverse)
 library(stringr)
 library(pdftools)
+library(janitor)
 
 
 
@@ -274,3 +275,46 @@ isic_codes <- do.call(rbind, isic_codes)
 
 # single page call
 read_pdf(316)
+
+
+
+# clean up result ----
+table_vars_gc <- c("group", "class")
+table_vars_spia<- c("psic1994", "isic4", "acic")
+rowAny <- function(x) rowSums(x) > 0 
+
+
+# this object has "leftotver stubs" that do not list any useful information.
+# it only lists the structure of the group and class, which can be extracted 
+
+
+# create a leftover object to verify that we filtered correctly
+# object 1 is what we want removed where both group and class are missing.
+# object 2 is where all of psic1994, isic4, acic vars are missing
+
+isic_leftover1 <-  isic_codes %>% 
+  filter(across(all_of(table_vars_gc), ~ is.na(.x))) 
+
+isic_leftover2 <- isic_codes %>%
+  filter(across(all_of(table_vars_spia), ~is.na(.x)))
+
+isic_leftover <- bind_rows(isic_leftover1, isic_leftover2)
+
+
+isic_clean <- isic_codes %>%
+  ## eliminate the "("
+  mutate(psic1994 = str_replace(psic1994, "\\(", "")) %>%
+  mutate(psic1994 = str_replace(psic1994, "\\)", "")) %>%
+  ## eliminate group and class-only rows
+  filter(rowAny(across(table_vars_gc, ~ !is.na(.x)))) %>% # at least 1 col must be non-NA
+  filter(rowAny(across(table_vars_spia, ~ !is.na(.x)))) %>% # at least 1 col must be non-NA
+  select(-y)
+  
+# check
+assertthat::assert_that( (nrow(isic_clean) + nrow(isic_leftover)) == nrow(isic_codes)   )
+
+# clean duplicates
+isic_clean %>% janitor::get_dupes()
+
+isic_clean <- isic_clean %>%
+  distinct()
