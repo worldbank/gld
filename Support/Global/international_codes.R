@@ -195,8 +195,8 @@ read_pdf <- function(page) {
         mutate(
           group = case_when(
             x < 90             ~ 1, # group
-            x >=91  & x < 125  ~ 2, # class
-            x >=126 & x < 175  ~ 3, # subclass
+            x >=91  & x < 120  ~ 2, # class
+            x >=121 & x < 175  ~ 3, # subclass
             x >=415 & x < 445  ~ 4, # psic1994
             x >=446 & x < 500  ~ 5, # isic4
             x >=501            ~ 6  # acic
@@ -326,6 +326,9 @@ isic_clean %>% janitor::get_dupes() # there is 1 pair of dups
 isic_clean <- isic_clean %>%
   distinct()
 
+
+sum(str_length(isic_clean$class) <= 3) # should be 0 or close to
+sum(str_length(isic_clean$group) != 3) # should be 0 or close to
 
 # save data checkpoint 1 ----
 save(isic_codes, isic_leftover, isic_clean, read_pdf, psic_path,
