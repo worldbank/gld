@@ -42,109 +42,77 @@ UNisic3 <- read_delim(file = file.path(PHL, "PHL_data/GLD/international_codes/IS
 # function ----
 read_pdf <- function(page) {
   
-  final_vars <- c("y", "group", "class", "subclass", "psic1994", "isic4", "acic")
   
-  data <- psic09_data[[page]] 
+  # define sub-function that extracts column info from partially-processed data
+  
+  col_info <- function(data_in, xmin, xmax, varname) {
+    
+    tib <- data_in %>%
+      filter(x >= xmin & x < xmax) %>%
+      select(text, y) %>%
+      mutate(varname = as.character(varname))
+    
+    return(tib)
+  }
+    
+    
+  
+  #final_vars <- c("y", "group", "class", "subclass", "psic1994", "isic4", "acic")
+  
+  #load data from PDF tools
+  psic_data <- pdftools::pdf_data(psic_path)
+  
+  
+  # subset data loaded by pdftools
+  data <- psic_data[[page]] 
   
   data_nolabs <- data %>%
     filter(x < 155 | x > 420) %>%
     mutate(str = str_detect(text, "[:alpha:]+$")) %>%
     filter(str == FALSE)
   
-  x_min <- min(data_nolabs$x)
+  #x_min <- min(data_nolabs$x)
+  
+  
+  data_tib <- data_nolabs %>%
+    filter(y >= 98) %>% # remove page titles, if no data, no obs.
+    select(x, y, text) %>%
+    # manually generate group by range of x position,
+    # assuming x is fixed.
+    # should data already be tabular at this point?
+    mutate(
+      group = case_when(
+        x < 90             ~ 1, # group
+        x >=91  & x < 130  ~ 2, # class
+        x >=131 & x < 175  ~ 3, # subclass
+        x >=415 & x < 445  ~ 4, # psic1994
+        x >=446 & x < 500  ~ 5, # isic4
+        x >=501            ~ 6  # acic
+      )
+    )
+  
+  
+  # columns: return sub-function individually and bind
+  el_class <- col_info(data_tib, xmin = 91, xmax = 130, varname = "class")
+  el_subclass <- col_info(data_tib, xmin = 131, xmax = 175, varname = "subclass")
+  
+  el_psic1994 <- col_info(data_tib, xmin = 415, xmax = 445, varname = "psic1994")
+  el_isic4 <- col_info(data_tib, xmin = 446, xmax = 500, varname = "isic4")
+  el_acic <- col_info(data_tib, xmin = 501, xmax = 9999, varname = "acic")
+  
+  
+  tib <- bind_rows(el_class, el_subclass, el_psic1994, el_isic4, el_acic) %>%
+    group_by(y) %>%
+    mutate(page_grp = cur_group_id()) %>%
+    pivot_wider(names_from = "varname",
+                values_from= "text")
   
   
   
-  # if the page is "blank" in terms of table data, return nothing
-  if (nrow(data_nolabs) == 0) {
-    return(NULL)
+  return(tib)
   
-    } else {
-    
-      data_tib <- data_nolabs %>%
-        filter(y >= 98) %>% # remove page titles, if no data, no obs.
-        select(x, y, text) %>%
-        # manually generate group by range of x position,
-        # assuming x is fixed 
-        mutate(
-          group = case_when(
-            x < 90             ~ 1, # group
-            x >=91  & x < 130  ~ 2, # class
-            x >=131 & x < 175  ~ 3, # subclass
-            x >=415 & x < 445  ~ 4, # psic1994
-            x >=446 & x < 500  ~ 5, # isic4
-            x >=501            ~ 6  # acic
-          )
-        ) %>%
-        group_by(group) %>%
-        mutate(count = n(),
-               #x_grp = cur_group_id(),
-               group = cur_group_id()) %>%
-        arrange(group) %>%
-        pivot_wider(names_from = "group",
-                    names_prefix= "var",
-                    values_from = "text") 
-      # if x_min < 90, then there will only be 5 variables, 
-      # so generate an empty variable for "group". This means there
-      # was no "group" data on the page.
-      
-      if (x_min > 89) {
-        data_tib2 <- data_tib %>%
-          mutate(var0 = NA_character_) %>%
-          rename_with(matches("var0"), .fn = ~paste0("group")) %>%
-          rename_with(matches("var1"), .fn = ~paste0("class")) %>%
-          rename_with(matches("var2"), .fn = ~paste0("subclass")) %>%
-          rename_with(matches("var3"), .fn = ~paste0("psic1994")) %>%
-          rename_with(matches("var4"), .fn = ~paste0("isic4")) %>%
-          rename_with(matches("var5"), .fn = ~paste0("acic")) %>%
-          select(x, y, any_of(final_vars)) %>%
-          arrange(y)
-      } else {
-        data_tib2 <- data_tib %>%
-          rename_with(matches("var1"), .fn = ~paste0("group")) %>%
-          rename_with(matches("var2"), .fn = ~paste0("class")) %>%
-          rename_with(matches("var3"), .fn = ~paste0("subclass")) %>%
-          rename_with(matches("var4"), .fn = ~paste0("psic1994")) %>%
-          rename_with(matches("var5"), .fn = ~paste0("isic4")) %>%
-          rename_with(matches("var6"), .fn = ~paste0("acic")) %>%
-          select(x, y, any_of(final_vars)) %>%
-          arrange(y)
-        
-      }
-    
-    # almost there, but we need to vertically collapse. there are different
-    # x groups that have the same y value that should all be in the same row
-      # generate empty variables if NA
-      
-      final_cols <- c(group = NA_character_,
-                      class = NA_character_,
-                      subclass = NA_character_,
-                      psic1994 = NA_character_,
-                      isic4 = NA_character_,
-                      acic = NA_character_)
-      
-      sum <- data_tib2 %>% 
-        ungroup() %>%
-        add_column(!!!final_cols[!names(final_cols) %in% names(.)]) %>%
-        group_by(y) %>%
-        summarize(
-          group = group[which(!is.na(group))[1]],
-          class = class[which(!is.na(class))[1]],
-          subclass = subclass[which(!is.na(subclass))[1]],
-          psic1994 = psic1994[which(!is.na(psic1994))[1]],
-          isic4 = isic4[which(!is.na(isic4))[1]],
-          acic = acic[which(!is.na(acic))[1]]
-        ) %>%
-        mutate(
-          class = case_when(is.na(class) ~ replace_na(stringr::str_sub(subclass, 1,3)),
-                            TRUE ~ class),
-          group = case_when(is.na(group) ~ replace_na(stringr::str_sub(class, 1,3)),
-                            TRUE ~ group))
-    
-    
-    return(sum)
-    
-  }  
+  
+  
   
 }
 
