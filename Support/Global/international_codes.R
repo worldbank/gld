@@ -26,6 +26,7 @@ if (FALSE) {load(PHL_labels)}
 
 # pdf file path
 psic_path <- file.path(PHL, "PHL_docs/International Codes/PSA_PSIC_2009.pdf")
+psoc_path <- file.path(PHL, "PHL_docs/International Codes/PSA_PSOC_2012.pdf")
 
 
 
@@ -40,7 +41,7 @@ UNisic3 <- read_delim(file = file.path(PHL, "PHL_data/GLD/international_codes/IS
 
 
 # function ----
-read_pdf <- function(page) {
+read_isic_pdf <- function(page) {
   
   
   # define sub-function that extracts column info from partially-processed data
@@ -110,13 +111,13 @@ read_pdf <- function(page) {
 ## first load psic data from pdftools 
 psic09 <- pdftools::pdf_data(psic_path)
 
-isic_codes_raw <- lapply(22:316, read_pdf)
+isic_codes_raw <- lapply(22:316, read_isic_pdf)
 isic_codes_raw <- do.call(rbind, isic_codes_raw)
 
 
 
 # single page call
-read_pdf(76)
+read_isic_pdf(76)
 
 
 
@@ -185,7 +186,7 @@ assertthat::assert_that( sum(str_length(isic_clean$group) != 3) == 0 ) # should 
 
 
 # save data checkpoint 1 ----
-save(isic_codes, isic_leftover, isic_clean, read_pdf, psic_path,
+save(isic_codes, isic_leftover, isic_clean, read_isic_pdf, psic_path,
      file = file.path(PHL, "PHL_data/isic_codes2.Rdata") )
 
 
@@ -193,3 +194,97 @@ save(isic_codes, isic_leftover, isic_clean, read_pdf, psic_path,
 haven::write_dta(isic_clean,
                 path = file.path(PHL, "PHL_data/GLD/PHL_PSIC_ISIC_key.dta"),
                 version = 14)
+
+
+
+
+
+
+
+
+
+
+
+                  ##### ISCO ####
+
+# Import ISCO data --------------------------------- 
+read_isco_pdf <- function(page) {
+  
+  
+  # define sub-function that extracts column info from partially-processed data
+  col_info <- function(data_in, xmin, xmax, varname) {
+    
+    tib <- data_in %>%
+      filter(x >= xmin & x < xmax) %>%
+      select(text, y) %>%
+      mutate(varname = as.character(varname))
+    
+    return(tib)
+  }
+  
+  
+  # subset data loaded by pdftools
+  data <- psoc12[[page]] # make this the second argument
+  
+  data_nolabs <- data %>%
+    filter(x < 155 | x > 420) %>%
+    mutate(str = str_detect(text, "[:alpha:]+$")) %>%
+    filter(str == FALSE)
+  
+  data_tib <- data_nolabs %>%
+    filter(y >= 90) %>% # remove page titles, if no data, no obs.
+    select(x, y, text) %>%
+    # manually generate group by range of x position,
+    # assuming x is fixed.
+    # should data already be tabular at this point?
+    mutate(
+      group = case_when(
+        x < 90             ~ 1, # submajor
+        x >=91  & x < 130  ~ 2, # minor
+        x >=131 & x < 175  ~ 3, # unit
+        x >=450 & x < 500  ~ 4, # psoc92
+        x >=501            ~ 5  # isco08
+      )
+    )
+  
+  
+  # columns: return sub-function individually and bind
+  el_minor <- col_info(data_tib, xmin = 91, xmax = 130, varname = "minor")
+  el_unit <- col_info(data_tib, xmin = 130, xmax = 175, varname = "unit")
+  
+  el_psoc92 <- col_info(data_tib, xmin = 450, xmax = 500, varname = "psoc92")
+  el_isco08 <- col_info(data_tib, xmin = 500, xmax = 9999, varname = "isco08")
+
+  
+  tib <- bind_rows(el_minor, el_unit, el_psoc92, el_isco08) %>%
+    group_by(y) %>%
+    mutate(page_grp = cur_group_id(),
+           page = page) %>%
+    pivot_wider(names_from = "varname",
+                values_from= "text")
+  
+  
+  
+  return(tib)
+  
+  
+  
+  
+}
+
+
+
+# function call ----
+## first load psic data from pdftools 
+psoc12 <- pdftools::pdf_data(psoc_path)
+
+psoc_codes_raw <- lapply(:, read_isco_pdf)
+psoc_codes_raw <- do.call(rbind, psoc_codes_raw)
+
+
+
+# single page call
+read_isco_pdf(76)
+
+psoc12[[249]] %>% View()
+
