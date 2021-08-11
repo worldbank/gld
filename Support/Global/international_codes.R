@@ -40,7 +40,7 @@ UNisic3 <- read_delim(file = file.path(PHL, "PHL_data/GLD/international_codes/IS
 
 
 # function ----
-read_pdf <- function(page, ymin) {
+read_pdf <- function(page) {
   
   
   # define sub-function that extracts column info from partially-processed data
