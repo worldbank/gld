@@ -175,7 +175,8 @@ isic_clean <- isic_codes %>%
   ## eliminate group and class-only rows
   filter(rowAny(across(table_vars_gc, ~ !is.na(.x)))) %>% # at least 1 col must be non-NA
   filter(rowAny(across(table_vars_spia, ~ !is.na(.x)))) %>% # at least 1 col must be non-NA
-  select(-y)
+  ungroup() %>%
+  select(-y, -text, -page_grp)
   
 # check
 assertthat::assert_that( (nrow(isic_clean) + nrow(isic_leftover)) == nrow(isic_codes)   )
