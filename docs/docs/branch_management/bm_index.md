@@ -12,7 +12,7 @@ This document sets the guidelines on how to create, name, and manage branches on
 
 ## What are branches and why do we need them?
 
-A Git is a bifurcation of the state of code that creates a new path for the evolution of it. It can be parallel to other Git branches that you can generate ([Here is tutorial on Git branches, from where this explanation is from]( https://www.hostinger.com/tutorials/how-to-use-git-branches/)). Two of the main advantages are:
+A Git is a bifurcation of the state of code that creates a new path for the evolution of it. It can be parallel to other Git branches that you can generate (see [here a tutorial on Git branches]( https://www.hostinger.com/tutorials/how-to-use-git-branches/), from where this explanation is from). Two of the main advantages are:
 
 - It is possible to develop new features for our application without hindering the development in the main branch.
 - With Git branches it is possible to create different development branches that can converge in the same repository. For example, a stable branch, a test branch, and an unstable branch.
@@ -33,15 +33,15 @@ We then develop new content by:
 
 The three-tier branching system is based on the GitFlow Workflow. The image below explains the general idea (find more information in the source for this image: [Part 2 of this DIME presentation on Git]( https://github.com/worldbank/DIME-Resources/blob/master/git-3-flow.pdf)).
 
-<img src="/docs/assets/images/gitflow_dime_image.png" alt="hi" class="inline"/>
+![image]({{site.baseurl}}/assets/images/gitflow_dime_image.png)
 
 ### GLD implementation
 
-In the GLD context, the *main* (or master) *branch contains all the code for validated harmonizations* as well as the latest stable version of any support information (e.g., coding templates, quality checks, and data dictionary). It represents the public record of the project.
+In the GLD context, the **main** (or master) **branch contains all the code for validated harmonizations** as well as the latest stable version of any support information (e.g., coding templates, quality checks, and data dictionary). It represents the public record of the project.
 
-The *develop branch represents the work done on a standalone code expansion* (e.g., by adding a new survey). It is created at the start of the project and will only be merged once it is completed and validated (e.g., after all quality checks have passed).
+The **develop branch represents the work done on a standalone code expansion** (e.g., by adding a new survey). It is created at the start of the project and will only be merged once it is completed and validated (e.g., after all quality checks have passed).
 
-Inside each develop branch *a feature branch progresses a substantial piece of project work* (e.g. the creation or revision of unique household identifiers). This reduces the number of commits to the develop branch and allows developers to try approaches without compromising the project’s develop branch.
+Inside each develop branch **a feature branch progresses a substantial piece of project work** (e.g. the creation or revision of unique household identifiers). This reduces the number of commits to the develop branch and allows developers to try approaches without compromising the project’s develop branch.
 
 ### When to create a feature branch versus committing to the develop branch directly
 
