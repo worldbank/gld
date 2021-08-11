@@ -67,8 +67,7 @@ read_pdf <- function(page) {
   
   data_nolabs <- data %>%
     filter(x < 155 | x > 420) %>%
-    mutate(str = str_detect(text, "[:alpha:]+$"),
-           page= page) %>%
+    mutate(str = str_detect(text, "[:alpha:]+$")) %>%
     filter(str == FALSE)
   
   #x_min <- min(data_nolabs$x)
@@ -103,7 +102,8 @@ read_pdf <- function(page) {
   
   tib <- bind_rows(el_class, el_subclass, el_psic1994, el_isic4, el_acic) %>%
     group_by(y) %>%
-    mutate(page_grp = cur_group_id()) %>%
+    mutate(page_grp = cur_group_id(),
+           page = page) %>%
     pivot_wider(names_from = "varname",
                 values_from= "text")
   
