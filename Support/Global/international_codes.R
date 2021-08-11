@@ -40,7 +40,7 @@ UNisic3 <- read_delim(file = file.path(PHL, "PHL_data/GLD/international_codes/IS
 
 
 # function ----
-read_pdf <- function(page) {
+read_pdf <- function(page, ymin) {
   
   
   # define sub-function that extracts column info from partially-processed data
@@ -55,13 +55,6 @@ read_pdf <- function(page) {
   }
     
     
-  
-  #final_vars <- c("y", "group", "class", "subclass", "psic1994", "isic4", "acic")
-  
-  #load data from PDF tools
-  #psic_data <- pdftools::pdf_data(psic_path)
-  
-  
   # subset data loaded by pdftools
   data <- psic09[[page]] # make this the second argument
   
@@ -70,12 +63,9 @@ read_pdf <- function(page) {
     mutate(str = str_detect(text, "[:alpha:]+$")) %>%
     filter(str == FALSE)
   
-  #x_min <- min(data_nolabs$x)
-  
-  
   data_tib <- data_nolabs %>%
-    filter(y >= 98) %>% # remove page titles, if no data, no obs.
-    select(x, y, text, page) %>%
+    filter(y >= 90) %>% # remove page titles, if no data, no obs.
+    select(x, y, text) %>%
     # manually generate group by range of x position,
     # assuming x is fixed.
     # should data already be tabular at this point?
@@ -126,7 +116,7 @@ isic_codes_raw <- do.call(rbind, isic_codes_raw)
 
 
 # single page call
-read_pdf(316)
+read_pdf(76)
 
 
 
