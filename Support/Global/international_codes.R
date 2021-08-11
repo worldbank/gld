@@ -257,6 +257,8 @@ read_isco_pdf <- function(page) {
 
   
   tib <- bind_rows(el_minor, el_unit, el_psoc92, el_isco08) %>%
+    # filter out "partial" indicated by "p;"
+    filter(!grepl("^p;", text)) %>% 
     group_by(y) %>%
     mutate(page_grp = cur_group_id(),
            page = page) %>%
@@ -278,13 +280,14 @@ read_isco_pdf <- function(page) {
 ## first load psic data from pdftools 
 psoc12 <- pdftools::pdf_data(psoc_path)
 
-psoc_codes_raw <- lapply(:, read_isco_pdf)
+psoc_codes_raw <- lapply(102:540, read_isco_pdf)
 psoc_codes_raw <- do.call(rbind, psoc_codes_raw)
 
 
 
 # single page call
-read_isco_pdf(76)
+read_isco_pdf(149) %>% View() # example of two vector answer
+
 
 psoc12[[249]] %>% View()
 
