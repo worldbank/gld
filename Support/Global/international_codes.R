@@ -226,34 +226,21 @@ read_isco_pdf <- function(page) {
   # subset data loaded by pdftools
   data <- psoc12[[page]] # make this the second argument
   
-  data_nolabs <- data %>%
+  data_tib <- data %>%
     filter(x < 155 | x > 420) %>%
     mutate(str = str_detect(text, "[:alpha:]+$")) %>%
-    filter(str == FALSE)
-  
-  data_tib <- data_nolabs %>%
+    filter(str == FALSE) %>%
     filter(y >= 90) %>% # remove page titles, if no data, no obs.
     select(x, y, text)
-    # manually generate group by range of x position,
-    # assuming x is fixed.
-    # data is not tabulaar. this last part is not necesary....
-    # mutate(
-    #   group = case_when(
-    #     x < 90             ~ 1, # submajor
-    #     x >=91  & x < 130  ~ 2, # minor
-    #     x >=131 & x < 175  ~ 3, # unit
-    #     x >=450 & x < 500  ~ 4, # psoc92
-    #     x >=501            ~ 5  # isco08
-    #   )
-    # )
+  
   
   
   # columns: return sub-function individually and bind
   el_minor <- col_info(data_tib, xmin = 91, xmax = 130, varname = "minor")
   el_unit <- col_info(data_tib, xmin = 130, xmax = 175, varname = "unit")
   
-  el_psoc92 <- col_info(data_tib, xmin = 450, xmax = 515, varname = "psoc92")
-  el_isco08 <- col_info(data_tib, xmin = 515, xmax = 9999, varname = "isco08")
+  el_psoc92 <- col_info(data_tib, xmin = 450, xmax = 495, varname = "psoc92")
+  el_isco08 <- col_info(data_tib, xmin = 495, xmax = 9999, varname = "isco08")
 
   
   tib <- bind_rows(el_minor, el_unit, el_psoc92, el_isco08) %>%
