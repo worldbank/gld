@@ -67,7 +67,8 @@ read_pdf <- function(page) {
   
   data_nolabs <- data %>%
     filter(x < 155 | x > 420) %>%
-    mutate(str = str_detect(text, "[:alpha:]+$")) %>%
+    mutate(str = str_detect(text, "[:alpha:]+$"),
+           page= page) %>%
     filter(str == FALSE)
   
   #x_min <- min(data_nolabs$x)
@@ -75,7 +76,7 @@ read_pdf <- function(page) {
   
   data_tib <- data_nolabs %>%
     filter(y >= 98) %>% # remove page titles, if no data, no obs.
-    select(x, y, text) %>%
+    select(x, y, text, page) %>%
     # manually generate group by range of x position,
     # assuming x is fixed.
     # should data already be tabular at this point?
