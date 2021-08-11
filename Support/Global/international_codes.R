@@ -120,8 +120,8 @@ read_pdf <- function(page) {
 ## first load psic data from pdftools 
 psic09 <- pdftools::pdf_data(psic_path)
 
-isic_codes <- lapply(22:316, read_pdf)
-isic_codes <- do.call(rbind, isic_codes)
+isic_codes_raw <- lapply(22:316, read_pdf)
+isic_codes_raw <- do.call(rbind, isic_codes_raw)
 
 
 
@@ -131,15 +131,30 @@ read_pdf(316)
 
 
 # clean up result ----
+
+## setup 
 table_vars_gc <- c("group", "class")
 table_vars_spia<- c("psic1994", "isic4", "acic")
 rowAny <- function(x) rowSums(x) > 0 
 
 
+## createn "class" from subclass and "group" variable from class
+## we know that class is always the first four digits of subclass 
+## and group is always the first 3 digits of class. But for some 
+## obs, class is provided, so do not overwrite this info. Treat 
+## given info as authoritative.
+
+isic_codes <- isic_codes_raw %>%
+  mutate(
+    class = case_when(is.na(class)  ~ str_sub(subclass, 1,4),
+                      TRUE          ~ class),
+    group = str_sub(class, 1,3)) %>%
+  select(y, page_grp, page, group, class, everything())
+
+
+
 # this object has "leftotver stubs" that do not list any useful information.
-# it only lists the structure of the group and class, which can be extracted 
-
-
+# it only lists the structure of the group and class, which can be extracted so
 # create a leftover object to verify that we filtered correctly
 # object 1 is what we want removed where both group and class are missing.
 # object 2 is where all of psic1994, isic4, acic vars are missing
@@ -172,9 +187,9 @@ isic_clean <- isic_clean %>%
   distinct()
 
 
-sum(str_length(isic_clean$class) <= 3) # should be 0 or close to
-sum(str_length(isic_clean$group) != 3) # should be 0 or close to
+assertthat::assert_that( sum(str_length(isic_clean$class) <= 3) ==0 ) # should be 0 or close to
+assertthat::assert_that( sum(str_length(isic_clean$group) != 3) == 0 ) # should be 0 or close to
 
 # save data checkpoint 1 ----
 save(isic_codes, isic_leftover, isic_clean, read_pdf, psic_path,
-     file = file.path(PHL, "PHL_data/isic_codes1.Rdata") )
+     file = file.path(PHL, "PHL_data/isic_codes2.Rdata") )
