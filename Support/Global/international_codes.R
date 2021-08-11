@@ -128,7 +128,7 @@ table_vars_spia<- c("psic1994", "isic4", "acic")
 rowAny <- function(x) rowSums(x) > 0 
 
 
-## createn "class" from subclass and "group" variable from class
+## create "class" from subclass and "group" variable from class
 ## we know that class is always the first four digits of subclass 
 ## and group is always the first 3 digits of class. But for some 
 ## obs, class is provided, so do not overwrite this info. Treat 
@@ -181,6 +181,15 @@ isic_clean <- isic_clean %>%
 assertthat::assert_that( sum(str_length(isic_clean$class) <= 3) ==0 ) # should be 0 or close to
 assertthat::assert_that( sum(str_length(isic_clean$group) != 3) == 0 ) # should be 0 or close to
 
+
+
+
 # save data checkpoint 1 ----
 save(isic_codes, isic_leftover, isic_clean, read_pdf, psic_path,
      file = file.path(PHL, "PHL_data/isic_codes2.Rdata") )
+
+
+# export dta 
+haven::write_dta(isic_clean,
+                path = file.path(PHL, "PHL_data/GLD/PHL_PSIC_ISIC_key.dta"),
+                version = 14)
