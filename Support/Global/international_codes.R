@@ -283,6 +283,7 @@ read_isco_pdf(425) %>% View() # example of two vector answer
 ## setup 
 table_vars_sm <- c("submajor", "minor")
 table_vars_pi<- c("psoc92", "isco08")
+isco_order <- c("submajor", "minor", "unit", "psoc92", "isco08")
 
 
 ## create "submajor" from minor and "minor" variable from unit
@@ -314,38 +315,38 @@ isco_leftover <- bind_rows(isco_leftover1, isco_leftover2)
 ## note that for now in order to sidestep issue #96, will not filter yet
 isco_clean <- isco_codes %>%
   ## eliminate the "("
-  mutate(psic1994 = str_replace(psic1994, "\\(", "")) %>%
-  mutate(psic1994 = str_replace(psic1994, "\\)", "")) %>%
+  mutate(psoc92 = str_replace(psoc92, "[:punct:]", "")) %>%
+  mutate(psoc92 = str_replace(psoc92, "p", "")) %>% 
+  #mutate(psoc92 = str_replace(psoc92, "\\`", "")) %>% 
   ## eliminate group and class-only rows
   #filter(rowAny(across(table_vars_sm, ~ !is.na(.x)))) %>% # at least 1 col must be non-NA
   #filter(rowAny(across(table_vars_pi, ~ !is.na(.x)))) %>% # at least 1 col must be non-NA
   ungroup() %>%
-  select(-y, -text, -page_grp)
+  select(-y, -page_grp) 
 
 # check
-#assertthat::assert_that( (nrow(isic_clean) + nrow(isic_leftover)) == nrow(isic_codes)   )
+#assertthat::assert_that( (nrow(isco_clean) + nrow(isco_leftover)) == nrow(isco_codes)   )
 
 # clean duplicates
-isic_clean %>% janitor::get_dupes() # there is 1 pair of dups
+isco_clean %>% janitor::get_dupes() # there is 1 pair of dups
 
-isic_clean <- isic_clean %>%
+isco_clean <- isco_clean %>%
   distinct()
 
 
-assertthat::assert_that( sum(str_length(isic_clean$class) <= 3) ==0 ) # should be 0 or close to
-assertthat::assert_that( sum(str_length(isic_clean$group) != 3) == 0 ) # should be 0 or close to
+assertthat::assert_that( sum(str_length(isco_clean$submajor) != 3, na.rm=TRUE) == 0 ) # should be 0 or close to
 
 
 
 
 # save data checkpoint 1 ----
-save(isic_codes, isic_leftover, isic_clean, read_isic_pdf, psic_path,
-     file = file.path(PHL, "PHL_data/isic_codes2.Rdata") )
+save(isco_codes, isco_leftover, isco_clean, read_isco_pdf, psoc_path,
+     file = file.path(PHL, "PHL_data/isco_codes.Rdata") )
 
 
 # export dta 
-haven::write_dta(isic_clean,
-                 path = file.path(PHL, "PHL_data/GLD/PHL_PSIC_ISIC_key.dta"),
+haven::write_dta(isco_clean,
+                 path = file.path(PHL, "PHL_data/GLD/PHL_PSOC_ISCO_key.dta"),
                  version = 14)
 
 
