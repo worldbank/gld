@@ -233,27 +233,27 @@ read_isco_pdf <- function(page) {
   
   data_tib <- data_nolabs %>%
     filter(y >= 90) %>% # remove page titles, if no data, no obs.
-    select(x, y, text) %>%
+    select(x, y, text)
     # manually generate group by range of x position,
     # assuming x is fixed.
-    # should data already be tabular at this point?
-    mutate(
-      group = case_when(
-        x < 90             ~ 1, # submajor
-        x >=91  & x < 130  ~ 2, # minor
-        x >=131 & x < 175  ~ 3, # unit
-        x >=450 & x < 500  ~ 4, # psoc92
-        x >=501            ~ 5  # isco08
-      )
-    )
+    # data is not tabulaar. this last part is not necesary....
+    # mutate(
+    #   group = case_when(
+    #     x < 90             ~ 1, # submajor
+    #     x >=91  & x < 130  ~ 2, # minor
+    #     x >=131 & x < 175  ~ 3, # unit
+    #     x >=450 & x < 500  ~ 4, # psoc92
+    #     x >=501            ~ 5  # isco08
+    #   )
+    # )
   
   
   # columns: return sub-function individually and bind
   el_minor <- col_info(data_tib, xmin = 91, xmax = 130, varname = "minor")
   el_unit <- col_info(data_tib, xmin = 130, xmax = 175, varname = "unit")
   
-  el_psoc92 <- col_info(data_tib, xmin = 450, xmax = 500, varname = "psoc92")
-  el_isco08 <- col_info(data_tib, xmin = 500, xmax = 9999, varname = "isco08")
+  el_psoc92 <- col_info(data_tib, xmin = 450, xmax = 515, varname = "psoc92")
+  el_isco08 <- col_info(data_tib, xmin = 515, xmax = 9999, varname = "isco08")
 
   
   tib <- bind_rows(el_minor, el_unit, el_psoc92, el_isco08) %>%
@@ -286,7 +286,7 @@ psoc_codes_raw <- do.call(rbind, psoc_codes_raw)
 
 
 # single page call
-read_isco_pdf(149) %>% View() # example of two vector answer
+read_isco_pdf(425) %>% View() # example of two vector answer
 
 
 psoc12[[249]] %>% View()
