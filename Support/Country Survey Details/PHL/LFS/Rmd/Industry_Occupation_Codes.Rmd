@@ -63,7 +63,7 @@ labels, can be found by running `label_tools.R`.
 
 | scheme | PSCIC | Years Applicable | Characteristics                                                                                                   | Coding methodology                                 |
 |--------|-------|------------------|-------------------------------------------------------------------------------------------------------------------|----------------------------------------------------|
-| 1      | 1994  | 97-00            | First digit nearly always aligns with I2D2 desired code                                                           | `floor([var]/10)` then adjust by case              |
+| 1      | 1994  | 97-00            | First digit nearly always aligns with GLD desired code                                                            | `floor([var]/10)` then adjust by case              |
 | 2      | 1994  | 01-11            | Departure from first-digit pattern, vals range from 1-99                                                          | `gen industry1 = .` then manually replace          |
 | 3      | 2009  | 12,13            | Values range from 100 - 9999, first 2 digits usually correspond to key level                                      | code manually by ranges                            |
 | 4      | 2009  | 14,15,16         | Values range from 1-99 but first two digits correspond to same first two in scheme\#3                             | `gen industry1 = .` then manually replace          |
