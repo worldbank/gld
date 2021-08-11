@@ -276,5 +276,76 @@ psoc_codes_raw <- do.call(rbind, psoc_codes_raw)
 read_isco_pdf(425) %>% View() # example of two vector answer
 
 
-psoc12[[249]] %>% View()
+
+
+# clean up result ----
+
+## setup 
+table_vars_sm <- c("submajor", "minor")
+table_vars_pi<- c("psoc92", "isco08")
+
+
+## create "submajor" from minor and "minor" variable from unit
+## we know that minor is always the first four digits of unit 
+## and submajor is always the first 3 digits of minor. But for some 
+## obs, this info is provided, so do not overwrite this info. Treat 
+## given info as authoritative.
+
+isco_codes <- psoc_codes_raw %>%
+  mutate(
+    minor    = case_when(is.na(minor)  ~ str_sub(unit, 1,4),
+                      TRUE          ~ minor),
+    submajor = str_sub(minor, 1,3)) %>%
+  select(y, page_grp, page, submajor, minor, unit, psoc92, isco08)
+
+
+
+# filter out leftoverstubs 
+isco_leftover1 <-  isco_codes %>% 
+  filter(across(all_of(table_vars_sm), ~ is.na(.x))) 
+
+isco_leftover2 <- isco_codes %>%
+  filter(across(all_of(table_vars_pi), ~is.na(.x)))
+
+isco_leftover <- bind_rows(isco_leftover1, isco_leftover2)
+
+
+# clean version ----
+## note that for now in order to sidestep issue #96, will not filter yet
+isco_clean <- isco_codes %>%
+  ## eliminate the "("
+  mutate(psic1994 = str_replace(psic1994, "\\(", "")) %>%
+  mutate(psic1994 = str_replace(psic1994, "\\)", "")) %>%
+  ## eliminate group and class-only rows
+  #filter(rowAny(across(table_vars_sm, ~ !is.na(.x)))) %>% # at least 1 col must be non-NA
+  #filter(rowAny(across(table_vars_pi, ~ !is.na(.x)))) %>% # at least 1 col must be non-NA
+  ungroup() %>%
+  select(-y, -text, -page_grp)
+
+# check
+#assertthat::assert_that( (nrow(isic_clean) + nrow(isic_leftover)) == nrow(isic_codes)   )
+
+# clean duplicates
+isic_clean %>% janitor::get_dupes() # there is 1 pair of dups
+
+isic_clean <- isic_clean %>%
+  distinct()
+
+
+assertthat::assert_that( sum(str_length(isic_clean$class) <= 3) ==0 ) # should be 0 or close to
+assertthat::assert_that( sum(str_length(isic_clean$group) != 3) == 0 ) # should be 0 or close to
+
+
+
+
+# save data checkpoint 1 ----
+save(isic_codes, isic_leftover, isic_clean, read_isic_pdf, psic_path,
+     file = file.path(PHL, "PHL_data/isic_codes2.Rdata") )
+
+
+# export dta 
+haven::write_dta(isic_clean,
+                 path = file.path(PHL, "PHL_data/GLD/PHL_PSIC_ISIC_key.dta"),
+                 version = 14)
+
 
