@@ -35,6 +35,7 @@ read_pdf <- function(page,
   
   # subset data loaded by pdftools
   data <- pdf_page_list[[page]] # old
+  
 
   data_tib <- data %>%
     filter(x < xlabel[1] | x > xlabel[2]) %>%
@@ -98,8 +99,9 @@ read_pdf <- function(page,
 
 pdf_sub <- pdf_page_list[22:30]
 
-raw <- lapply(22:30, read_pdf) # returns list vector same length as x after apply function
-purrr <- pmap(list(22:30), read_pdf, varnames = c("class", "subclass", "psic1994", "isic4", "acic"))
+purrr <- pmap(list(22:30),
+              read_pdf,
+              varnames = c("class", "subclass", "psic1994", "isic4", "acic"))
 final <- do.call(rbind, purrr)
 
 ## 4. Clean the output data.
