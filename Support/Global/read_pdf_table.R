@@ -11,7 +11,7 @@ read_pdf <- function(page, pdfPath,
                      
                      varnames = c("var1", "var2", "var3", "var4", "var5"),
                      ymin = 90,
-                     x_label = c(155, 420),
+                     xlabel = c(155, 420),
                      xmin = c(91, 131, 415, 446, 501),
                      xmax = c(130, 175, 445, 500, 9999)
                      ) {
@@ -33,26 +33,26 @@ read_pdf <- function(page, pdfPath,
   data <- psic09[[page]] # make this the second argument
   
   data_nolabs <- data %>%
-    filter(x < 155 | x > 420) %>%
+    filter(x < xlabel[1] | x > xlabel[2]) %>%
     mutate(str = str_detect(text, "[:alpha:]+$")) %>%
     filter(str == FALSE)
   
   data_tib <- data_nolabs %>%
-    filter(y >= 90) %>% # remove page titles, if no data, no obs.
+    filter(y >= ymin) %>% # remove page titles, if no data, no obs.
     select(x, y, text) %>%
     
     
     
     # columns: return sub-function individually and bind
-    el_class <- col_info(data_tib, xmin = 91, xmax = 130, varname = "class")
-  el_subclass <- col_info(data_tib, xmin = 131, xmax = 175, varname = "subclass")
+    el_1 <- col_info(data_tib, xmin = xmin[1], xmax = xmax[1], varname = as.character(varnames[1]))
+  el_2 <- col_info(data_tib, xmin = xmin[2], xmax = xmax[2], varname = as.character(varnames[2]))
   
-  el_psic1994 <- col_info(data_tib, xmin = 415, xmax = 445, varname = "psic1994")
-  el_isic4 <- col_info(data_tib, xmin = 446, xmax = 500, varname = "isic4")
-  el_acic <- col_info(data_tib, xmin = 501, xmax = 9999, varname = "acic")
+  el_3 <- col_info(data_tib, xmin = xmin[3], xmax = xmax[3], varname = as.character(varnames[3]))
+  el_4 <- col_info(data_tib, xmin = xmin[4], xmax = xmax[4], varname = as.character(varnames[4]))
+  el_5 <- col_info(data_tib, xmin = xmin[5], xmax = xmax[5], varname = as.character(varnames[5]))
   
   
-  tib <- bind_rows(el_class, el_subclass, el_psic1994, el_isic4, el_acic) %>%
+  tib <- bind_rows(el_1, el_2, el_3, el_4, el_5) %>%
     group_by(y) %>%
     mutate(page_grp = cur_group_id(),
            page = page) %>%
