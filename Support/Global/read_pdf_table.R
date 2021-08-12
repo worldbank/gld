@@ -7,7 +7,14 @@
 
 
 
-read_pdf <- function(page) {
+read_pdf <- function(page, pdfPath,
+                     
+                     varnames = c("var1", "var2", "var3", "var4", "var5"),
+                     ymin = 90,
+                     x_label = c(155, 420),
+                     xmin = c(91, 131, 415, 446, 501),
+                     xmax = c(130, 175, 445, 500, 9999)
+                     ) {
   
   
   # define sub-function that extracts column info from partially-processed data
