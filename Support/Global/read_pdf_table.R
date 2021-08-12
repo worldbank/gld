@@ -14,17 +14,13 @@ read_pdf <- function(pdf_path, page_min, page_max,
                      xmax = c(130, 175, 445, 500, 9999)
                      
                      ) {
+ 
   
+  
+  
+   
   # define 1st sub-function to import the table
-  import_table_pdf <- function(page,
-                           
-                           varnames = varnames,
-                           ymin = ymin,
-                           xlabel = xlabel,
-                           xmin = xmin,
-                           xmax = xmax
-                           
-  ) {
+  import_table_pdf <- function( page, ... ) {
     
     
     # define 2nd sub-function that extracts column info from partially-processed data
@@ -138,7 +134,10 @@ read_pdf <- function(pdf_path, page_min, page_max,
   
 }
  
-test <- read_pdf(pdf_path = psic_path,
-         page_min = 22,
-         page_max = 30)
+test <- read_pdf(
+            pdf_path = psic_path,
+            page_min = 22,
+            page_max = 30,
+            varnames = c("class", "subclass", "psic1994", "isic4", "acic")
+            )
      
