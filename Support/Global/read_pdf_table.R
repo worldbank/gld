@@ -7,7 +7,7 @@
 
 
 
-read_pdf <- function(page, pdfPath,
+read_pdf <- function(page,
                      
                      varnames = c("var1", "var2", "var3", "var4", "var5"),
                      ymin = 90,
@@ -18,7 +18,7 @@ read_pdf <- function(page, pdfPath,
   
   
   # define sub-function that extracts column info from partially-processed data
-  col_info <- function(data_in, xmin, xmax, varname) {
+  col_info <- function(data_in, x_min, x_max, var_name) {
     
     tib <- data_in %>%
       filter(x >= xmin & x < xmax) %>%
@@ -29,39 +29,42 @@ read_pdf <- function(page, pdfPath,
   }
   
   
-  # subset data loaded by pdftools
-  data <- psic09[[page]] # make this the second argument
+  # note: we could read the data directly from pdftools each time but that's computationally
+  # expensive. It's better to read in the whole pdf as one object outside the function and 
+  # call the object from outside the function -- until I can figure out a more elegant way 
+  # to do this in the function itself.
   
-  data_nolabs <- data %>%
+  # subset data loaded by pdftools
+  data <- pdf_page_list[[page]] # make this the second argument
+  
+  data_tib <- data %>%
     filter(x < xlabel[1] | x > xlabel[2]) %>%
     mutate(str = str_detect(text, "[:alpha:]+$")) %>%
-    filter(str == FALSE)
-  
-  data_tib <- data_nolabs %>%
+    filter(str == FALSE) %>%
     filter(y >= ymin) %>% # remove page titles, if no data, no obs.
-    select(x, y, text) %>%
+    select(x, y, text)
     
     
     
     # columns: return sub-function individually and bind
-    el_1 <- col_info(data_tib, xmin = xmin[1], xmax = xmax[1], varname = as.character(varnames[1]))
-  el_2 <- col_info(data_tib, xmin = xmin[2], xmax = xmax[2], varname = as.character(varnames[2]))
+  # el_1 <- col_info(data_tib, x_min = xmin[1], x_max = xmax[1], var_name = as.character(varnames[1]))
+  # el_2 <- col_info(data_tib, x_min = xmin[2], x_max = xmax[2], var_name = as.character(varnames[2]))
+  # 
+  # el_3 <- col_info(data_tib, x_min = xmin[3], x_max = xmax[3], var_name = as.character(varnames[3]))
+  # el_4 <- col_info(data_tib, x_min = xmin[4], x_max = xmax[4], var_name = as.character(varnames[4]))
+  # el_5 <- col_info(data_tib, x_min = xmin[5], x_max = xmax[5], var_name = as.character(varnames[5]))
+  # 
+  # 
+  # tib <- bind_rows(el_1, el_2, el_3, el_4, el_5) %>%
+  #   group_by(y) %>%
+  #   mutate(page_grp = cur_group_id(),
+  #          page = page) %>%
+  #   pivot_wider(names_from = "varname",
+  #               values_from= "text")
+  # 
   
-  el_3 <- col_info(data_tib, xmin = xmin[3], xmax = xmax[3], varname = as.character(varnames[3]))
-  el_4 <- col_info(data_tib, xmin = xmin[4], xmax = xmax[4], varname = as.character(varnames[4]))
-  el_5 <- col_info(data_tib, xmin = xmin[5], xmax = xmax[5], varname = as.character(varnames[5]))
   
-  
-  tib <- bind_rows(el_1, el_2, el_3, el_4, el_5) %>%
-    group_by(y) %>%
-    mutate(page_grp = cur_group_id(),
-           page = page) %>%
-    pivot_wider(names_from = "varname",
-                values_from= "text")
-  
-  
-  
-  return(tib)
+  return(data)
   
   
   
@@ -70,12 +73,16 @@ read_pdf <- function(page, pdfPath,
 
 # function call ----
 ## test on industry first 
-psic09 <- pdftools::pdf_data(psic_path)
+
+# single page call
+read_pdf(page = 47)
+
+## note, you must load the pdf list as this named object
+pdf_page_list <- pdftools::pdf_data(psic_path) 
 
 raw <- lapply(22:316, read_pdf) # returns list vector same length as x after apply function
 raw <- do.call(rbind, raw)
 
 
 
-# single page call
-read_isic_pdf(76)
+
