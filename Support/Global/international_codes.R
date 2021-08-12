@@ -67,19 +67,7 @@ read_isic_pdf <- function(page) {
   data_tib <- data_nolabs %>%
     filter(y >= 90) %>% # remove page titles, if no data, no obs.
     select(x, y, text) %>%
-    # manually generate group by range of x position,
-    # assuming x is fixed.
-    # should data already be tabular at this point?
-    mutate(
-      group = case_when(
-        x < 90             ~ 1, # group
-        x >=91  & x < 130  ~ 2, # class
-        x >=131 & x < 175  ~ 3, # subclass
-        x >=415 & x < 445  ~ 4, # psic1994
-        x >=446 & x < 500  ~ 5, # isic4
-        x >=501            ~ 6  # acic
-      )
-    )
+    
   
   
   # columns: return sub-function individually and bind
@@ -273,7 +261,7 @@ psoc_codes_raw <- do.call(rbind, psoc_codes_raw)
 
 
 # single page call
-read_isco_pdf(425) %>% View() # example of two vector answer
+read_isco_pdf(259) %>% View() # example of two vector answer
 
 
 
@@ -348,5 +336,3 @@ save(isco_codes, isco_leftover, isco_clean, read_isco_pdf, psoc_path,
 haven::write_dta(isco_clean,
                  path = file.path(PHL, "PHL_data/GLD/PHL_PSOC_ISCO_key.dta"),
                  version = 14)
-
-
