@@ -152,13 +152,13 @@ isic_clean <- isic_codes %>%
   mutate(psic1994 = str_replace(psic1994, "\\(", "")) %>%
   mutate(psic1994 = str_replace(psic1994, "\\)", "")) %>%
   ## eliminate group and class-only rows
-  filter(rowAny(across(table_vars_gc, ~ !is.na(.x)))) %>% # at least 1 col must be non-NA
+  #filter(rowAny(across(table_vars_gc, ~ !is.na(.x)))) %>% # at least 1 col must be non-NA
   filter(rowAny(across(table_vars_spia, ~ !is.na(.x)))) %>% # at least 1 col must be non-NA
   ungroup() %>%
   select(-y, -text, -page_grp)
   
 # check
-assertthat::assert_that( (nrow(isic_clean) + nrow(isic_leftover)) == nrow(isic_codes)   )
+assertthat::assert_that( (nrow(isic_clean) + nrow(isic_leftover2)) == nrow(isic_codes)   )
 
 # clean duplicates
 isic_clean %>% janitor::get_dupes() # there is 1 pair of dups
@@ -167,8 +167,8 @@ isic_clean <- isic_clean %>%
   distinct()
 
 
-assertthat::assert_that( sum(str_length(isic_clean$class) <= 3) ==0 ) # should be 0 or close to
-assertthat::assert_that( sum(str_length(isic_clean$group) != 3) == 0 ) # should be 0 or close to
+assertthat::assert_that( sum(str_length(isic_clean$class) <= 3, na.rm = TRUE) ==0 ) # should be 0 or close to
+assertthat::assert_that( sum(str_length(isic_clean$group) != 3, na.rm = TRUE) == 0 ) # should be 0 or close to
 
 
 
