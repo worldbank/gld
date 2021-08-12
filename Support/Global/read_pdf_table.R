@@ -34,8 +34,8 @@ read_pdf <- function(page,
   # to do this in the function itself.
   
   # subset data loaded by pdftools
-  data <- pdf_page_list[[page]] # make this the second argument
-  
+  data <- pdf_page_list[[page]] # old
+
   data_tib <- data %>%
     filter(x < xlabel[1] | x > xlabel[2]) %>%
     mutate(str = str_detect(text, "[:alpha:]+$")) %>%
@@ -96,8 +96,11 @@ read_pdf <- function(page,
 ## 3. Perform the Function Call for all pages. Careful. if there's an error on any single
 ## page the function won't run. Warnings are ok.
 
-#raw <- lapply(22:316, read_pdf) # returns list vector same length as x after apply function
-#raw <- do.call(rbind, raw)
+pdf_sub <- pdf_page_list[22:30]
+
+raw <- lapply(22:30, read_pdf) # returns list vector same length as x after apply function
+purrr <- pmap(list(22:30), read_pdf, varnames = c("class", "subclass", "psic1994", "isic4", "acic"))
+final <- do.call(rbind, purrr)
 
 ## 4. Clean the output data.
 ##  The output is designed to be not clean at all becuase it will vary. Things to be 
