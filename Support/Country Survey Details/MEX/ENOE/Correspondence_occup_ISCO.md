@@ -28,13 +28,13 @@ The logic of the mapping is the same as the one used for converting the national
 ![](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/sinco_isco_overview_difficult.PNG)
 <br></br>
  
-The easiest match is the one in the green box. SINCO code 1526 matches a single code in ISCO, namely 1439. This match we can make in the first iteration. SINCO code 1521, in the orange box, is a bit trickier. It matches two different ISCO codes (1342 and 1343) so there is no direct match. If we, however, reduce the match to a three digit ISCO codes, both instances start with 134 so we can match SINCO 1521 perfectly to a code 1340, where the last zero is just padding to make sure all codes are of four digits.
+The easiest match is the one in the green box. SINCO code `1526` matches a single code in ISCO, namely `1439`. This match we can make in the first iteration. SINCO code `1521`, in the orange box, is a bit trickier. It matches two different ISCO codes (`1342` and `1343`) so there is no direct match. If we, however, reduce the match to a three digit ISCO codes, both instances start with `134` so we can match SINCO `1521` perfectly to a code `1340`, where the last zero is just padding to make sure all codes are of four digits.
 
-The most difficult case is the case in the red box. Here SINCO code 1524 describes an occupation classification that ISCO essentially views as two completely different occupations. Even if we try to reduce to a single digit we cannot map with certainty: with two categories the algorithm chooses at random between 2000 and 1000. For a more detailed explanation of the process see [the document on NAICS to ISIC correspondence]( https://github.com/worldbank/gld/blob/develop-merge/Support/Country%20Survey%20Details/MEX/ENOE/Correspondence_NAICS_ISIC.md), the distribution of the quality of matches is shown below in the [section on merging in the correspondence info]( #merging-the-correspondence-with-the-survey-data).
+The most difficult case is the case in the red box. Here SINCO code `1524` describes an occupation classification that ISCO essentially views as two completely different occupations. Even if we try to reduce to a single digit we cannot map with certainty: with two categories the algorithm chooses at random between `2000` and `1000`. For a more detailed explanation of the process see [the document on NAICS to ISIC correspondence]( https://github.com/worldbank/gld/blob/develop-merge/Support/Country%20Survey%20Details/MEX/ENOE/Correspondence_NAICS_ISIC.md), the distribution of the quality of matches is shown below in the [section on merging in the correspondence info]( #merging-the-correspondence-with-the-survey-data).
 
 ### Direct SINCO to ISCO mapping
 
-In the easiest case, we use the SINCO to ISIC correspondence and create a map for every four-digit SINCO code, following the logic outlined above. Note that not all SINCO codes appear to have a correspondence. The case of SINCO code 2421 of biomedical engineers (red box in the image below) is described by INEGI as having no correspondence in ISCO. This code is therefore not mapped.
+In the easiest case, we use the SINCO to ISIC correspondence and create a map for every four-digit SINCO code, following the logic outlined above. Note that not all SINCO codes appear to have a correspondence. The case of SINCO code `2421` of biomedical engineers (red box in the image below) is described by INEGI as having no correspondence in ISCO. This code is therefore not mapped.
 
 <br></br>
 ![](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/sinco_isco_ing_biomed.png)
@@ -42,27 +42,27 @@ In the easiest case, we use the SINCO to ISIC correspondence and create a map fo
 
 ### Indirect CMO to ISCO mapping
 
-The more difficult case is for surveys between 2005 and 2012. Here we first use the mapping logic to map CMO codes to SINCO codes. This includes reducing the SINCO accuracy to achieve more certain matches. For example, in the image below, CMO code 6160 cannot be matched unique to a four-digit SINCO code so the mapping occurs to code 1710.
+The more difficult case is for surveys between 2005 and 2012. Here we first use the mapping logic to map CMO codes to SINCO codes. This includes reducing the SINCO accuracy to achieve more certain matches. For example, in the image below, CMO code `6160` cannot be matched unique to a four-digit SINCO code so the mapping occurs to code `1710`.
 
 <br></br>
 ![](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/cmo_sinco_171.png)
 <br></br>
 
-The second step is to map from SINCO to ISIC. For four-digit matchings we can use the process used above, but for less accurate ones, new SINCO to ISIC mappings need to be made: in the example above, CMO code 6160 is mapped to SINCO 1710, but there is no SINCO to ISIC mapping to 1710.
+The second step is to map from SINCO to ISIC. For four-digit matchings we can use the process used above, but for less accurate ones, new SINCO to ISIC mappings need to be made: in the example above, CMO code 6160 is mapped to SINCO `1710`, but there is no SINCO to ISIC mapping to `1710`.
 
-Applying the mapping logic explained above to codes that start with 171 gives us five potential matches (see image below). The iterative process would reduce to two digits, 12 and 14, with 40% of cases starting with 12 and 60% starting with 14. Since at the two-digit stage a match is made if there is a single maximum over 50%, SINCO code 1710 would be mapped to ISCO-08 code 1400.
+Applying the mapping logic explained above to codes that start with `171` gives us five potential matches (see image below). The iterative process would reduce to two digits, `12` and `14`, with 40% of cases starting with `12` and 60% starting with `14`. Since at the two-digit stage a match is made if there is a single maximum over 50%, SINCO code `1710` would be mapped to ISCO-08 code `1400`.
 
 <br></br>
 ![](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/sinco_isco_171.png)
 <br></br>
 
-In turn this means that CMO code 6160 (department heads, coordinators, and supervisors in restaurant, hospitality, and commerce services) would be mapped to ISCO-08 sub-major 14 (coded as 1400) (hospitality, Retail and Other Services Managers), which may not be accurate for those under CMO 6160 in commerce activities, but a good match to provide more information than `occup`.
+In turn this means that CMO code `6160` (department heads, coordinators, and supervisors in restaurant, hospitality, and commerce services) would be mapped to ISCO-08 sub-major 14 (coded as `1400`) (hospitality, Retail and Other Services Managers), which may not be accurate for those under CMO `6160` in commerce activities, but a good match to provide more information than `occup`.
 
 ## Merging the correspondence with the survey data
 
 ### Merging directly
 
-Merging directly is possible for the years 2013 onwards. As an example here we use the data from 2014. In that year, of the more than 160,000 individuals with SINCO occupation codes we can map 98.94% to an ISCO code. Of the mapped cases 84 percent are perfect matches (that is, categories agree) and in 9 out of 10 cases the match agrees with two thirds of possible categories (see image below). A percentage of 80 would mean, if SINCO code #### maps to 10 different ISCO four-digit codes but eight of them start with 24 and the other two to 31, then the map to 24 would have an 80 percent match.
+Merging directly is possible for the years 2013 onwards. As an example here we use the data from 2014. In that year, of the more than 160,000 individuals with SINCO occupation codes we can map 98.94% to an ISCO code. Of the mapped cases 84 percent are perfect matches (that is, categories agree) and in 9 out of 10 cases the match agrees with two thirds of possible categories (see image below). A percentage of 80 would mean, if SINCO code `####` maps to 10 different ISCO four-digit codes but eight of them start with `24` and the other two to `31`, then the map to `24` would have an 80 percent match.
 
 <br></br>
 ![](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/matching_outcome_sinco_isco.png)
@@ -94,4 +94,4 @@ There are also fewer matches at more detail. Only a quarter of matches are at fo
 
 The limitations of the match quality are explained in the caveats section of the [document on matching industrial codes]( https://github.com/worldbank/gld/blob/develop-merge/Support/Country%20Survey%20Details/MEX/ENOE/Correspondence_NAICS_ISIC.md). Additionally, users should consider that, while the series contains ISCO-08 data throughout, there is an underlying break in the occupation codes between 2012 and 2013. Not only is the matching more difficult but also the underlying classification may have caused changes. An individual working in the same occupation in 2012 and 2013 will be coded with different CMO and SINCO codes. This alone can change the outcome as definitions of categories do not overlap. In addition, a different code may be treated differently in the matching algorithm, thus leading to two different ISCO codes even if the person is doing the same job.
 
-The likelihood of this happening is low. For example, the most common CMO code, 7111 (shop assistants) has its own SINCO category (4211) and a perfect ISCO-08 match (5223 – shop sales assistant) but should be kept in mind, especially if looking into certain sectors where matching is more difficult.
+The likelihood of this happening is low. For example, the most common CMO code, `7111` (shop assistants) has its own SINCO category (`4211`) and a perfect ISCO-08 match (`5223` – shop sales assistant) but should be kept in mind, especially if looking into certain sectors where matching is more difficult.
