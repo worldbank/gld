@@ -215,7 +215,7 @@ read_isco_pdf <- function(page) {
   data <- psoc12[[page]] # make this the second argument
   
   data_tib <- data %>%
-    filter(x < 155 | x > 420) %>%
+    filter(x < 160 | x > 420) %>%
     mutate(str = str_detect(text, "[:alpha:]+$")) %>%
     filter(str == FALSE) %>%
     filter(y >= 90) %>% # remove page titles, if no data, no obs.
@@ -302,24 +302,27 @@ isco_leftover <- bind_rows(isco_leftover1, isco_leftover2)
 # clean version ----
 ## note that for now in order to sidestep issue #96, will not filter yet
 isco_clean <- isco_codes %>%
-  ## eliminate the "("
-  mutate(psoc92 = str_replace(psoc92, "[:punct:]", "")) %>%
-  mutate(psoc92 = str_replace(psoc92, "p", "")) %>% 
-  #mutate(psoc92 = str_replace(psoc92, "\\`", "")) %>% 
   ## eliminate group and class-only rows
   #filter(rowAny(across(table_vars_sm, ~ !is.na(.x)))) %>% # at least 1 col must be non-NA
-  #filter(rowAny(across(table_vars_pi, ~ !is.na(.x)))) %>% # at least 1 col must be non-NA
-  ungroup() %>%
-  select(-y, -page_grp) 
+  filter(rowAny(across(table_vars_pi, ~ !is.na(.x)))) # at least 1 col must be non-NA
+  
+  # check
+  assertthat::assert_that( (nrow(isco_clean) + nrow(isco_leftover2)) == nrow(isco_codes)   )
 
-# check
-#assertthat::assert_that( (nrow(isco_clean) + nrow(isco_leftover)) == nrow(isco_codes)   )
+  ## eliminate strange puncutation marks
+  isco_clean <- isco_clean %>%
+    mutate(psoc92 = str_replace(psoc92, "[:punct:]", "")) %>%
+    mutate(psoc92 = str_replace(psoc92, "p", "")) %>% 
+    mutate(psoc92 = str_replace(psoc92, "\\`", NA_character_)) %>% 
+    mutate(psoc92 = str_replace(psoc92, " ", NA_character_)) %>% 
+    ungroup() %>%
+    select(-y, -page_grp) 
 
 # clean duplicates
-isco_clean %>% janitor::get_dupes() # there is 1 pair of dups
-
-isco_clean <- isco_clean %>%
-  distinct()
+  isco_clean %>% janitor::get_dupes() # there is 1 pair of dups
+  
+  isco_clean <- isco_clean %>%
+    distinct()
 
 
 assertthat::assert_that( sum(str_length(isco_clean$submajor) != 3, na.rm=TRUE) == 0 ) # should be 0 or close to
