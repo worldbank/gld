@@ -1,8 +1,6 @@
 # read_pdf.R
 
 
-
-
 #### General Function #####
 
 read_pdf <- function(pdf_path, page_min, page_max, 
@@ -86,58 +84,19 @@ read_pdf <- function(pdf_path, page_min, page_max,
   pdf <- pdftools::pdf_data(pdf_path) 
   
   
-  raw <- pmap(list(page_min:page_max), 
-              import_table_pdf)
+  ## perform the function call with purrr 
+  raw <- pmap(list(page_min:page_max), import_table_pdf)
   raw <- do.call(rbind, raw)
   
   
   return(raw)
-  # function call ----
-  
-  # single page call
-  # read_pdf(page = 47,
-  #          varnames = c("class", "subclass", "psic1994", "isic4", "acic")
-  #          )
-  
-  
-  ## sample use flow
-  ## 1. load the pdf file as a list object using pdftools. 
-  ##     note, you must load the pdf list as this named object since 
-  ##     the function depends on the object from the global envrionment (until
-  ##     I can think of a better way to do this)
-  
-  #pdf_page_list <- pdftools::pdf_data(psic_path) 
-  
-  ## 2. Test the function on a single page with some parameters. You will need to define  
-  ##    variable names, the xmin/xmax for each column, and the y cutoff (or where the 
-  ##    table header ends on the top of each page.) You will also need to define the 
-  ##    block of text in the middle of the table where the labels are stored. Test this with 
-  
-  #read_pdf(47) # or another page number
-  
-  
-  ## 3. Perform the Function Call for all pages. Careful. if there's an error on any single
-  ## page the function won't run. Warnings are ok.
-  
-  #pdf_sub <- pdf_page_list[22:30]
-  
-  #purrr <- pmap(list(22:30),
-               # import_table_pdf,
-                #varnames = c("class", "subclass", "psic1994", "isic4", "acic"))
-  #final <- do.call(rbind, purrr)
-  
-  ## 4. Clean the output data.
-  ##  The output is designed to be not clean at all becuase it will vary. Things to be 
-  ##  mindful of are stray punctuation marks or alpha characters that you will want to
-  ##  filter out, duplicates, or empty/meaningless rows. You may also want to add or remove
-  ##  variables accordingly.
   
 }
  
-test <- read_pdf(
-            pdf_path = psic_path,
-            page_min = 22,
-            page_max = 30,
-            varnames = c("class", "subclass", "psic1994", "isic4", "acic")
-            )
+#  read_pdf(
+#             pdf_path = psic_path,
+#             page_min = 22,
+#             page_max = 316,
+#             varnames = c("class", "subclass", "psic1994", "isic4", "acic")
+#             )
      
