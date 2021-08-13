@@ -73,6 +73,7 @@ read_pdf <- function(pdf_path, page_min, page_max,
     els <- do.call(rbind, els)
     
     table <- els %>%
+      filter(!grepl("^p;", text)) %>% 
       group_by(y) %>%
       mutate(page_grp = cur_group_id(),
              page = page) %>%
