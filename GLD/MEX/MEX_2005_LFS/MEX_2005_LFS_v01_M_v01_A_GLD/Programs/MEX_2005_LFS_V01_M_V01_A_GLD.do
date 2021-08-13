@@ -93,6 +93,18 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_LFS\MEX_2005_LFS_
 	tostring p7c, gen(scian)
 	merge m:1 scian using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_LFS\MEX_2005_LFS_v01_M\Data\Stata\SCIAN_02_ISIC_3.1.dta", keep(master match) nogen
 	rename scian scian_2
+
+*ISCO	
+***then first job
+	tostring p3, gen(cmo)
+	merge m:1 cmo using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_LFS\MEX_2005_LFS_v01_M\Data\Stata\CMO_09_ISCO_08.dta", keep(master match) nogen
+	rename cmo cmo_1
+	
+***then second job
+	tostring p7a, gen(cmo)
+	merge m:1 cmo using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_LFS\MEX_2005_LFS_v01_M\Data\Stata\CMO_09_ISCO_08.dta", keep(master match) nogen
+	rename cmo cmo_2
+
 	
 /*%%=============================================================================================
 	2: Survey & ID
@@ -826,29 +838,25 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_>
-	gen occup_isco = .
-	gen occup2=floor(occup_orig/100)
-	replace occup_isco=2000 if occup2==21
-	replace occup_isco=1000 if occup2==11 |  occup2==12 | occup2==14 | occup2==13
-	replace occup_isco=3000 if occup2==61	| occup2==62
-	replace occup_isco=4000 if occup2==71 | occup2==72
-	replace occup_isco=5000 if occup2==82| occup2==83 | occup2==81
-	replace occup_isco=6000 if occup2==41 | occup2==51
-	*replace occup_isco=7000 if occup2==51
-	replace occup_isco=8000 if occup2==52
-	replace occup_isco=9000 if occup2==53| occup2==55 | occup2==54| occup2==99
+	gen occup_isco = cmo_1
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
 *<_occup_skill_>
 	gen occup_skill = .
-	replace occup_skill = 1 if occup_isco == 1000 | occup_isco == 2000
-	replace occup_skill = 2 if inrange(occup_isco,3000,6000) 
-	replace occup_skill = 3 if occup_isco == 8000
-	replace occup_skill = 4 if occup2 == 54
-	replace occup_skill = 5 if occup_isco == 9000
+	destring occup_isco, replace
+	replace occup_skill = 1 if inrange(occup_isco,1000,1399)
+	replace occup_skill = 1 if inrange(occup_isco,2100,2199)
+	replace occup_skill = 2 if inrange(occup_isco,1400,1499)
+	replace occup_skill = 2 if inrange(occup_isco,5100,5199)
+	replace occup_skill = 3 if inrange(occup_isco,4100,4199)
+	replace occup_skill = 3 if inrange(occup_isco,5200,5400)
+	replace occup_skill = 3 if inrange(occup_isco,6100,6200)
+	replace occup_skill = 3 if inrange(occup_isco,7100,7200) 
+	replace occup_skill = 3 if inrange(occup_isco,8100,8309)
+	replace occup_skill = 4 if inrange(occup_isco,8310,8318) 
+	replace occup_skill = 5 if inrange(occup_isco,9000,9999) 
 	replace occup_skill=. if lstatus!=1
-	drop occup2
 	la de lbloccupskill 1 "High" 2 "Medium" 3 "Low" 4 "Armed Forces" 5 "Not elsewhere classified"
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
 	label values occup_skill lbloccupskill
@@ -1080,8 +1088,8 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 *</_occup_2_>
 
 *<_occup_isco_2_>
-	gen occup_isco_2 = .
-	gen occup2=floor(occup_orig_2/100)
+	gen occup_isco_2 = cmo_2
+	/*gen occup2=floor(occup_orig_2/100)
 	replace occup_isco_2=2000 if occup2==21
 	replace occup_isco_2=1000 if occup2==11 |  occup2==12 | occup2==14 | occup2==13
 	replace occup_isco_2=3000 if occup2==61	| occup2==62
@@ -1090,19 +1098,25 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 	replace occup_isco_2=6000 if occup2==41 | occup2==51
 	*replace occup_isco_2=7000 if occup2==51
 	replace occup_isco_2=8000 if occup2==52
-	replace occup_isco_2=9000 if occup2==53| occup2==55 | occup2==54| occup2==99
+	replace occup_isco_2=9000 if occup2==53| occup2==55 | occup2==54| occup2==99*/
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
 *<_occup_skill_2_>
 	gen occup_skill_2 = .
-	replace occup_skill_2 = 1 if occup_isco_2 == 1000 | occup_isco_2 == 2000
-	replace occup_skill_2 = 2 if inrange(occup_isco_2,3000,6000) 
-	replace occup_skill_2 = 3 if occup_isco_2 == 8000
-	replace occup_skill_2 = 4 if occup2 == 54
-	replace occup_skill_2 = 5 if occup_isco_2 == 9000
+	destring occup_isco_2, replace
+	replace occup_skill_2 = 1 if inrange(occup_isco_2,1000,1399)
+	replace occup_skill_2 = 1 if inrange(occup_isco_2,2100,2199)
+	replace occup_skill_2 = 2 if inrange(occup_isco_2,1400,1499)
+	replace occup_skill_2 = 2 if inrange(occup_isco_2,5100,5199)
+	replace occup_skill_2 = 3 if inrange(occup_isco_2,4100,4199)
+	replace occup_skill_2 = 3 if inrange(occup_isco_2,5200,5400)
+	replace occup_skill_2 = 3 if inrange(occup_isco_2,6100,6200)
+	replace occup_skill_2 = 3 if inrange(occup_isco_2,7100,7200) 
+	replace occup_skill_2 = 3 if inrange(occup_isco_2,8100,8309)
+	replace occup_skill_2 = 4 if inrange(occup_isco_2,8310,8318) 
+	replace occup_skill_2 = 5 if inrange(occup_isco_2,9000,9999) 
 	replace occup_skill_2=. if lstatus!=1
-	drop occup2
 	label var occup_skill_2 "Skill based on ISCO standard secondary job 7 day recall"
 	label values occup_skill_2 lbloccupskill
 *</_occup_skill_2_>
