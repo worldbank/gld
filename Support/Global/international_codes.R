@@ -8,9 +8,9 @@
 # isco (occupation) and isced (education) codes to produce 
 # either 
 #   - tables, or 
-#   - easily-writable in-script code that covnerts the raw data to ISIC/ISCO etc 
+#   - easily-writable in-script code that coverts the raw data to ISIC/ISCO etc 
 # 
-# Most of the findings here will be docuements in "Industry_Occupation Codes.md" in 
+# Most of the findings here will be documents in "Industry_Occupation Codes.md" in 
 # the "Country Survey Details" Folder for the Philippines
 
 library(tidyverse)
@@ -41,85 +41,7 @@ psoc_path <- file.path(PHL, "PHL_docs/International Codes/PSA_PSOC_2012.pdf")
 # we know that only years 1997 - 2011 use this
 UNisic3 <- read_delim(file = file.path(PHL, "PHL_data/GLD/international_codes/ISIC_Rev_3_english_structure.txt"))
 
-
-
-# function ----
-read_isic_pdf <- function(page) {
-  
-  
-  # define sub-function that extracts column info from partially-processed data
-  col_info <- function(data_in, xmin, xmax, varname) {
-    
-    tib <- data_in %>%
-      filter(x >= xmin & x < xmax) %>%
-      select(text, y) %>%
-      mutate(varname = as.character(varname))
-    
-    return(tib)
-  }
-    
-    
-  # subset data loaded by pdftools
-  data <- psic09[[page]] # make this the second argument
-  
-  data_nolabs <- data %>%
-    filter(x < 155 | x > 420) %>%
-    mutate(str = str_detect(text, "[:alpha:]+$")) %>%
-    filter(str == FALSE)
-  
-  data_tib <- data_nolabs %>%
-    filter(y >= 90) %>% # remove page titles, if no data, no obs.
-    select(x, y, text) %>%
-    
-  
-  
-  # columns: return sub-function individually and bind
-  el_class <- col_info(data_tib, xmin = 91, xmax = 130, varname = "class")
-  el_subclass <- col_info(data_tib, xmin = 131, xmax = 175, varname = "subclass")
-  
-  el_psic1994 <- col_info(data_tib, xmin = 415, xmax = 445, varname = "psic1994")
-  el_isic4 <- col_info(data_tib, xmin = 446, xmax = 500, varname = "isic4")
-  el_acic <- col_info(data_tib, xmin = 501, xmax = 9999, varname = "acic")
-  
-  
-  tib <- bind_rows(el_class, el_subclass, el_psic1994, el_isic4, el_acic) %>%
-    group_by(y) %>%
-    mutate(page_grp = cur_group_id(),
-           page = page) %>%
-    pivot_wider(names_from = "varname",
-                values_from= "text")
-  
-  
-  
-  return(tib)
-  
-  
-  
-  
-}
-
-# function call ----
-## first load psic data from pdftools 
-psic09 <- pdftools::pdf_data(psic_path)
-
-isic_codes_raw <- lapply(22:316, read_isic_pdf)
-isic_codes_raw <- do.call(rbind, isic_codes_raw)
-
-
-
-# single page call
-read_isic_pdf(76)
-
-
-
-# clean up result ----
-
-
-
-
-
-
-# raw isic ----
+## ISIC Raw ----
 isic_codes_raw <- read_pdf(
                       
     pdf_path = psic_path,
@@ -131,6 +53,8 @@ isic_codes_raw <- read_pdf(
     xmin = c(91, 131, 415, 446, 501),
     xmax = c(130, 175, 445, 500, 9999)
     )
+
+
 
 
 # cleaning ----
@@ -170,6 +94,8 @@ isic_leftover2 <- isic_codes %>%
 isic_leftover <- bind_rows(isic_leftover1, isic_leftover2)
 
 
+
+## ISIC clean ----
 isic_clean <- isic_codes %>%
   ## eliminate the "("
   mutate(psic1994 = str_replace(psic1994, "\\(", "")) %>%
@@ -183,7 +109,7 @@ isic_clean <- isic_codes %>%
 # check
 assertthat::assert_that( (nrow(isic_clean) + nrow(isic_leftover2)) == nrow(isic_codes)   )
 
-# clean duplicates
+
 isic_clean %>% janitor::get_dupes() # there is 1 pair of dups
 
 isic_clean <- isic_clean %>%
@@ -193,18 +119,6 @@ isic_clean <- isic_clean %>%
 assertthat::assert_that( sum(str_length(isic_clean$class) <= 3, na.rm = TRUE) ==0 ) # should be 0 or close to
 assertthat::assert_that( sum(str_length(isic_clean$group) != 3, na.rm = TRUE) == 0 ) # should be 0 or close to
 
-
-
-
-# save data checkpoint 1 ----
-save(isic_codes, isic_leftover, isic_clean, read_isic_pdf, psic_path,
-     file = file.path(PHL, "PHL_data/isic_codes_fn.Rdata") )
-
-
-# export dta 
-haven::write_dta(isic_clean,
-                path = file.path(PHL, "PHL_data/GLD/PHL_PSIC_ISIC_key.dta"),
-                version = 14)
 
 
 
@@ -218,75 +132,10 @@ haven::write_dta(isic_clean,
 
                   ##### ISCO ####
 
-# Import ISCO data --------------------------------- 
-read_isco_pdf <- function(page) {
-  
-  
-  # define sub-function that extracts column info from partially-processed data
-  col_info <- function(data_in, xmin, xmax, varname) {
-    
-    tib <- data_in %>%
-      filter(x >= xmin & x < xmax) %>%
-      select(text, y) %>%
-      mutate(varname = as.character(varname))
-    
-    return(tib)
-  }
-  
-  
-  # subset data loaded by pdftools
-  data <- psoc12[[page]] # make this the second argument
-  
-  data_tib <- data %>%
-    filter(x < 160 | x > 420) %>%
-    mutate(str = str_detect(text, "[:alpha:]+$")) %>%
-    filter(str == FALSE) %>%
-    filter(y >= 90) %>% # remove page titles, if no data, no obs.
-    select(x, y, text)
-  
-  
-  
-  # columns: return sub-function individually and bind
-  el_minor <- col_info(data_tib, xmin = 91, xmax = 130, varname = "minor")
-  el_unit <- col_info(data_tib, xmin = 130, xmax = 175, varname = "unit")
-  
-  el_psoc92 <- col_info(data_tib, xmin = 450, xmax = 495, varname = "psoc92")
-  el_isco08 <- col_info(data_tib, xmin = 495, xmax = 9999, varname = "isco08")
-
-  
-  tib <- bind_rows(el_minor, el_unit, el_psoc92, el_isco08) %>%
-    # filter out "partial" indicated by "p;"
-    filter(!grepl("^p;", text)) %>% 
-    group_by(y) %>%
-    mutate(page_grp = cur_group_id(),
-           page = page) %>%
-    pivot_wider(names_from = "varname",
-                values_from= "text")
-  
-  
-  
-  return(tib)
-  
-  
-  
-  
-}
-
-
-
-# function call ----
-## first load psic data from pdftools 
-psoc12 <- pdftools::pdf_data(psoc_path)
-
-psoc_codes_raw <- lapply(102:540, read_isco_pdf)
-psoc_codes_raw <- do.call(rbind, psoc_codes_raw)
-
-
-
 
 
 # Use Function to import raw data 
-# raw isco ----
+# ISCO raw ----
 
 psoc_codes_raw <- read_pdf(
   
@@ -336,7 +185,8 @@ isco_leftover2 <- isco_codes %>%
 isco_leftover <- bind_rows(isco_leftover1, isco_leftover2)
 
 
-# clean version ----
+
+# ISCO clean ----
 ## note that for now in order to sidestep issue #96, will not filter yet
 isco_clean <- isco_codes %>%
   ## eliminate group and class-only rows
@@ -367,16 +217,21 @@ assertthat::assert_that( sum(str_length(isco_clean$submajor) != 3, na.rm=TRUE) =
 
 
 
-# save data checkpoint 1 ----
-save(isco_codes, isco_leftover, isco_clean, read_isco_pdf, psoc_path,
-     file = file.path(PHL, "PHL_data/isco_codes_fn.Rdata") )
+
+# save data ----
+
+# Rdata 
+save(isic_codes_raw, isic_codes, isic_leftover, isic_clean, psic_path, 
+     psoc_codes_raw, isco_codes, isco_leftover, isco_clean, psoc_path,
+     read_pdf, UNisic3,
+     file = file.path(PHL, "PHL_data/international_codes.Rdata") )
 
 
 # export dta 
+haven::write_dta(isic_clean,
+                 path = file.path(PHL, "PHL_data/GLD/PHL_PSIC_ISIC_key.dta"),
+                 version = 14)
+
 haven::write_dta(isco_clean,
                  path = file.path(PHL, "PHL_data/GLD/PHL_PSOC_ISCO_key.dta"),
                  version = 14)
-
-
-
-
