@@ -283,17 +283,23 @@ psoc_codes_raw <- do.call(rbind, psoc_codes_raw)
 
 
 
-# single page call
-read_isco_pdf(259) %>% View() # example of two vector answer
-
-
 
 
 # Use Function to import raw data 
+# raw isco ----
 
 psoc_codes_raw <- read_pdf(
   
-)
+      pdf_path = psoc_path,
+      page_min = 102,
+      page_max = 540,
+      varnames = c("minor", "unit", "psoc92", "isco08"),
+      ymin = 90,
+      xlabel = c(160, 420),
+      xmin = c(91, 130, 450, 495),
+      xmax = c(130, 175, 495, 9999)
+  
+      )
 
 
 

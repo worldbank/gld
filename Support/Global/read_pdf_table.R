@@ -25,7 +25,7 @@ read_pdf <- function(pdf_path, page_min, page_max,
     col_info <- function(data_in, ...) { # x_min, x_max, var_name
       
        col <- data_in %>%
-        filter(x >= ..1 & x < ..2) %>%
+        filter(x >= ..1 & x < ..2) %>% # 1 = xmin, 2 = xmax
         select(text, y) %>%
         mutate(varname = as.character(..3))
       
