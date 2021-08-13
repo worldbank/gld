@@ -61,14 +61,14 @@ overview here is a short table that summarizes the changes in the
 metadata. A detailed version of this table, along with individual
 labels, can be found by running `label_tools.R`.
 
-| scheme | PSCIC | Years Applicable | Characteristics                                                                                                   | Coding methodology                                 |
-|--------|-------|------------------|-------------------------------------------------------------------------------------------------------------------|----------------------------------------------------|
-| 1      | 1994  | 97-00            | First digit nearly always aligns with GLD desired code                                                            | `floor([var]/10)` then adjust by case              |
-| 2      | 1994  | 01-11            | Departure from first-digit pattern, vals range from 1-99                                                          | `gen industry1 = .` then manually replace          |
-| 3      | 2009  | 12,13            | Values range from 100 - 9999, first 2 digits usually correspond to key level                                      | code manually by ranges                            |
-| 4      | 2009  | 14,15,16         | Values range from 1-99 but first two digits correspond to same first two in scheme\#3                             | `gen industry1 = .` then manually replace          |
-| 5      | 2009  | 2017             | Mix of schemas 3 and 4 depending on month/round                                                                   | code with block conditionals on survey month/round |
-| 6      | 2009  | 2018, 2019       | \~5% Labeled, values range from 1-99, like schema 2;4. first two digits correspond to same first two in scheme\#3 | `gen industry1 = .` then manually replace          |
+| scheme | PSCIC | ISIC Version | Years Applicable | Characteristics                                                                                                   | Coding methodology                                 |
+|--------|-------|--------------|------------------|-------------------------------------------------------------------------------------------------------------------|----------------------------------------------------|
+| 1      | 1994  | 3            | 97-00            | First digit nearly always aligns with GLD desired code                                                            | `floor([var]/10)` then adjust by case              |
+| 2      | 1994  | 3            | 01-11            | Departure from first-digit pattern, vals range from 1-99                                                          | `gen industry1 = .` then manually replace          |
+| 3      | 2009  | 4            | 12,13            | Values range from 100 - 9999, first 2 digits usually correspond to key level                                      | code manually by ranges                            |
+| 4      | 2009  | 4            | 14,15,16         | Values range from 1-99 but first two digits correspond to same first two in scheme\#3                             | `gen industry1 = .` then manually replace          |
+| 5      | 2009  | 4            | 2017             | Mix of schemas 3 and 4 depending on month/round                                                                   | code with block conditionals on survey month/round |
+| 6      | 2009  | 4            | 2018, 2019       | \~5% Labeled, values range from 1-99, like schema 2;4. first two digits correspond to same first two in scheme\#3 | `gen industry1 = .` then manually replace          |
 
 ## Occupation Codes
 
@@ -111,12 +111,12 @@ upper numeric limits between the two rounds. The data under the 1992
 schema usually ends at `93` while the data under the 2012 schema ends at
 `96`, which is reflected in the 2012 PSOC codebook as well.
 
-| scheme | PSCIC | Years Applicable       | Characteristics                                                                                                                                                                                           | Coding methodology                                         |
-|--------|-------|------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------|
-| 1      | 1992  | 97,99,00               | String encoded, mostly numeric data. 2-digit. First digit generally corresponds to major category of ISCO-88.                                                                                             | `floor([numeric variable version]/10)` then adjust by case |
-| 2      | 1992  | 98, 01-11, 14,15,Jan16 | same as scheme1, but encoded as numeric directly. 2-digit, upper limit of `93`. First digit generally corresponds to major category of ISCO-88.                                                           | `floor([var]/10)` then adjust by case                      |
-| 3      | 1992  | 12,13                  | same as scheme2, but 4-digit. First digit generally corresponds to major category of ISCO-88. The 4-digit codes are simply the lowest-level specificity for each profession in the same 1992 PSOC schema. | `floor([var]/1000)` then adjust by case                    |
-| 4      | 2012  | April16-2019           | 2-digit, upper limit of `96`. First digit generally corresponds to to major category of ISCO-88.                                                                                                          | `floor([var]/10)` then adjust by case                      |
+| scheme | PSCIC | ISCO Version | Years Applicable       | Characteristics                                                                                                                                                                                           | Coding methodology                                         |
+|--------|-------|--------------|------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------|
+| 1      | 1992  | ISCO-88      | 97,99,00               | String encoded, mostly numeric data. 2-digit. First digit generally corresponds to major category of ISCO-88.                                                                                             | `floor([numeric variable version]/10)` then adjust by case |
+| 2      | 1992  | ISCO-88      | 98, 01-11, 14,15,Jan16 | same as scheme1, but encoded as numeric directly. 2-digit, upper limit of `93`. First digit generally corresponds to major category of ISCO-88.                                                           | `floor([var]/10)` then adjust by case                      |
+| 3      | 1992  | ISCO-88      | 12,13                  | same as scheme2, but 4-digit. First digit generally corresponds to major category of ISCO-88. The 4-digit codes are simply the lowest-level specificity for each profession in the same 1992 PSOC schema. | `floor([var]/1000)` then adjust by case                    |
+| 4      | 2012  | ISCO-08      | April16-2019           | 2-digit, upper limit of `96`. First digit generally corresponds to to major category of ISCO-88.                                                                                                          | `floor([var]/10)` then adjust by cas                       |
 
 ### Occupation Codes: Special Cases
 
