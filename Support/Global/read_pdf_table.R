@@ -22,7 +22,7 @@ read_pdf <- function(pdf_path, page_min, page_max,
     
     
     # define 2nd sub-function that extracts column info from partially-processed data
-    col_info <- function(data_in, x_min, x_max, var_name) {
+    col_info <- function(data_in, x_min, x_max, var_name, ...) {
       
       tib <- data_in %>%
         filter(x >= x_min & x < x_max) %>%
@@ -35,6 +35,9 @@ read_pdf <- function(pdf_path, page_min, page_max,
     
     
     ##### Data work #####
+    
+    
+    nvars <- length(varnames)
    
     
     # note: we could read the data directly from pdftools each time but that's computationally

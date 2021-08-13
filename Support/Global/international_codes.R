@@ -24,6 +24,9 @@ library(janitor)
 load(PHL_meta)
 if (FALSE) {load(PHL_labels)}
 
+# get function
+source(file.path(code, "Global/read_pdf_table.R"))
+
 # pdf file path
 psic_path <- file.path(PHL, "PHL_docs/International Codes/PSA_PSIC_2009.pdf")
 psoc_path <- file.path(PHL, "PHL_docs/International Codes/PSA_PSOC_2012.pdf")
@@ -111,6 +114,26 @@ read_isic_pdf(76)
 
 # clean up result ----
 
+
+
+
+
+
+# raw isic ----
+isic_codes_raw <- read_pdf(
+                      
+    pdf_path = psic_path,
+    page_min = 22,
+    page_max = 316,
+    varnames = c("class", "subclass", "psic1994", "isic4", "acic"),
+    ymin = 90,
+    xlabel = c(155, 420),
+    xmin = c(91, 131, 415, 446, 501),
+    xmax = c(130, 175, 445, 500, 9999)
+    )
+
+
+# cleaning ----
 ## setup 
 table_vars_gc <- c("group", "class")
 table_vars_spia<- c("psic1994", "isic4", "acic")
@@ -175,7 +198,7 @@ assertthat::assert_that( sum(str_length(isic_clean$group) != 3, na.rm = TRUE) ==
 
 # save data checkpoint 1 ----
 save(isic_codes, isic_leftover, isic_clean, read_isic_pdf, psic_path,
-     file = file.path(PHL, "PHL_data/isic_codes2.Rdata") )
+     file = file.path(PHL, "PHL_data/isic_codes_fn.Rdata") )
 
 
 # export dta 
@@ -266,6 +289,14 @@ read_isco_pdf(259) %>% View() # example of two vector answer
 
 
 
+# Use Function to import raw data 
+
+psoc_codes_raw <- read_pdf(
+  
+)
+
+
+
 # clean up result ----
 
 ## setup 
@@ -332,10 +363,14 @@ assertthat::assert_that( sum(str_length(isco_clean$submajor) != 3, na.rm=TRUE) =
 
 # save data checkpoint 1 ----
 save(isco_codes, isco_leftover, isco_clean, read_isco_pdf, psoc_path,
-     file = file.path(PHL, "PHL_data/isco_codes.Rdata") )
+     file = file.path(PHL, "PHL_data/isco_codes_fn.Rdata") )
 
 
 # export dta 
 haven::write_dta(isco_clean,
                  path = file.path(PHL, "PHL_data/GLD/PHL_PSOC_ISCO_key.dta"),
                  version = 14)
+
+
+
+
