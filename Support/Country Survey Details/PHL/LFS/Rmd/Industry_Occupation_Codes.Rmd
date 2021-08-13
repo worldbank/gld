@@ -30,8 +30,8 @@ included in the labor module.
 
 The codes for the industry classification of the main job,
 `industrycat10`, are given here based on the UN International Standard
-Industrial Classification (revision 3.1). The main categories subsume
-the following codes:
+Industrial Classification (revision 3). The main categories subsume the
+following codes:
 
 | Value | Category Description                      | UN ISCIC Category Values |
 |-------|-------------------------------------------|--------------------------|
@@ -146,3 +146,17 @@ Similarly to the cases above, the occupation variable will be coded
 conditionally based on the round: January will receive one coding based
 on the 1992 PSOC and the rest of the rounds will be coded based on the
 2012 PSOC.
+
+## New Features in GLD Database
+
+The harmonizers working with GLD have made a great effort to reconcile
+each country's unique Industry and Occupation codes with an
+international code equivalent. This allows for easier cross-country
+analysis and for tracking the same indicator within-country over time,
+among other benefits.
+
+However, the mechanics to achieve this -- which required a combination
+of automation and human oversight -- varied depending on country
+context. In the case of the Philippines, the PSA provides publicly their
+version of ISIC (PSIC) and ISCO (PSOC) which list that schema's code and
+ISIC or ISCO equivalent.
