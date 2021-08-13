@@ -24,12 +24,12 @@ read_pdf <- function(pdf_path, page_min, page_max,
     # define 2nd sub-function that extracts column info from partially-processed data
     col_info <- function(data_in, x_min, x_max, var_name, ...) {
       
-      tib <- data_in %>%
+       col <- data_in %>%
         filter(x >= x_min & x < x_max) %>%
         select(text, y) %>%
         mutate(varname = as.character(var_name))
       
-      return(tib)
+      return(col)
     }
     
     
@@ -56,29 +56,45 @@ read_pdf <- function(pdf_path, page_min, page_max,
       filter(y >= ymin) %>% # remove page titles, if no data, no obs.
       select(x, y, text)
     
+    purrr.list <- list(num = seq(1,nvars),
+                       x_min = xmin, 
+                       x_max = xmax, 
+                       var_name = varnames)
     
+    els <<- pmap( purrr.list, # these args get passed/walked along but need to be properly named/pased
+                 col_info,
+                  data_in = data_tib # this arg does not.
+                 )
     
-    # columns: return sub-function individually and bind
-    el_1 <- col_info(data_tib, x_min = xmin[1], x_max = xmax[1], var_name = as.character(varnames[1]))
-    el_2 <- col_info(data_tib, x_min = xmin[2], x_max = xmax[2], var_name = as.character(varnames[2]))
+    els2 <- do.call(rbind, els)
     
-    el_3 <- col_info(data_tib, x_min = xmin[3], x_max = xmax[3], var_name = as.character(varnames[3]))
-    el_4 <- col_info(data_tib, x_min = xmin[4], x_max = xmax[4], var_name = as.character(varnames[4]))
-    el_5 <- col_info(data_tib, x_min = xmin[5], x_max = xmax[5], var_name = as.character(varnames[5]))
-    
-    
-    
-    table <- bind_rows(el_1, el_2, el_3, el_4, el_5) %>%
+    table <- els2 %>%
       group_by(y) %>%
       mutate(page_grp = cur_group_id(),
              page = page) %>%
       pivot_wider(names_from = "varname",
                   values_from= "text")
+    # # columns: return sub-function individually and bind
+    # el_1 <- col_info(data_tib, x_min = xmin[1], x_max = xmax[1], var_name = as.character(varnames[1]))
+    # el_2 <- col_info(data_tib, x_min = xmin[2], x_max = xmax[2], var_name = as.character(varnames[2]))
+    # 
+    # el_3 <- col_info(data_tib, x_min = xmin[3], x_max = xmax[3], var_name = as.character(varnames[3]))
+    # el_4 <- col_info(data_tib, x_min = xmin[4], x_max = xmax[4], var_name = as.character(varnames[4]))
+    # el_5 <- col_info(data_tib, x_min = xmin[5], x_max = xmax[5], var_name = as.character(varnames[5]))
+    # 
+    # 
+    # 
+    # table <- bind_rows(el_1, el_2, el_3, el_4, el_5) %>%
+    #   group_by(y) %>%
+    #   mutate(page_grp = cur_group_id(),
+    #          page = page) %>%
+    #   pivot_wider(names_from = "varname",
+    #               values_from= "text")
     
     
     
     return(table)
-    
+    return(els)
     
   }
   
@@ -92,14 +108,15 @@ read_pdf <- function(pdf_path, page_min, page_max,
   raw <- do.call(rbind, raw)
   
   
-  return(raw)
+  return(els)
   
 }
  
-#  read_pdf(
-#             pdf_path = psic_path,
-#             page_min = 22,
-#             page_max = 316,
-#             varnames = c("class", "subclass", "psic1994", "isic4", "acic")
-#             )
+ read_pdf(
+            pdf_path = psic_path,
+            page_min = 22,
+            page_max = 24,
+            varnames = c("class", "subclass", "psic1994", "isic4", "acic")
+            ) %>%
+   View()
      
