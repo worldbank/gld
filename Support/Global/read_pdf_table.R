@@ -10,7 +10,8 @@ read_pdf <- function(pdf_path, page_min, page_max,
                      ymin = 90,
                      xlabel = c(155, 420),
                      xmin = c(91, 131, 415, 446, 501),
-                     xmax = c(130, 175, 445, 500, 9999)
+                     xmax = c(130, 175, 445, 500, 9999),
+                     numlist = NULL
                      
                      ) {
  
@@ -61,6 +62,15 @@ read_pdf <- function(pdf_path, page_min, page_max,
     if (header == TRUE) {
       data_tib <- data_tib %>%
         filter(y >= ymin)
+    }
+    
+    # if header==FALSE, keep only numbers, and remove specified number args
+    if (header == FALSE) {
+      data_tib <- data_tib %>%
+        mutate(str = str_detect(text, "^[:alpha:]+")) %>%
+        filter(str == FALSE) %>%
+        select(-str) %>%
+        filter(((text %in% numlist) & y < ymin) == FALSE) # y >= ymin
     }
     
       
