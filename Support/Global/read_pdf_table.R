@@ -1,7 +1,15 @@
-# read_pdf.R
-
-
-#### General Function #####
+#' Read information from a table in PDF format
+#' 
+#' @param pdf_path The file path to the pdf to read
+#' @param page_min The starting page number (inclusive) to begin reading the file.
+#' @param page_max The ending page number (inclusive) to end reading the file.
+#' @param header A boolean statement indicating if the document always has a constant page header on all pages 
+#' @param varnames A list of variable names of the output columns
+#' @param ymin The minimum y coordinate on the page where the function will read information
+#' @param xlabel a 2-element list that indicates start and ending x-coordinates of omitted columns
+#' @param xmin a list of x-coordinate column minimums. Same length as varnames.
+#' @param xmax a list of x-coordinate column maximums. Same length as varnames.
+#' @param numlist an optional vector of omitted numbers to filter. 
 
 read_pdf <- function(pdf_path, page_min, page_max, 
                      
@@ -122,10 +130,3 @@ read_pdf <- function(pdf_path, page_min, page_max,
   
 }
  
- # read_pdf(
- #            pdf_path = psic_path,
- #            page_min = 22,
- #            page_max = 30,
- #            varnames = c("class", "subclass", "psic1994", "isic4", "acic")
- #            )
-     
