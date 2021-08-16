@@ -50,13 +50,15 @@ pdf[[122]] %>% View()
 isic94_codes_raw <- read_pdf(
   
   pdf_path = psic94_path,
-  page_min = 22,
-  page_max = 316,
-  varnames = c("class", "subclass", "psic1994", "isic4", "acic"),
+  page_min = 2,
+  page_max = 16,
+  varnames = c("subclass", "psic1994", "psic77", "isic3.1"),
   ymin = 90,
-  xlabel = c(155, 420),
-  xmin = c(91, 131, 415, 446, 501),
-  xmax = c(130, 175, 445, 500, 9999)
+  xlabel = c(136, 440),
+  xmin = c(95, 441, 477,510),
+  xmax = c(134, 476, 509, 9999),
+  header = FALSE,
+  numlist = c(1994, 1977, 3.1)
 )
 
 

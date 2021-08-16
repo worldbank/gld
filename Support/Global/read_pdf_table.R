@@ -92,7 +92,9 @@ read_pdf <- function(pdf_path, page_min, page_max,
     els <- do.call(rbind, els)
     
     table <- els %>%
-      filter(!grepl("^p;", text)) %>% 
+      filter(!grepl("^p;", text)) %>% # these characters mess up the columns, must 
+      filter(!grepl("\\(", text)) %>% # remove here 
+      filter(!grepl("\\)", text)) %>% 
       group_by(y) %>%
       mutate(page_grp = cur_group_id(),
              page = page) %>%
@@ -113,7 +115,6 @@ read_pdf <- function(pdf_path, page_min, page_max,
   ## perform the function call with purrr 
   raw <- pmap(list(page_min:page_max), import_table_pdf)
   raw <- do.call(rbind, raw)
-  
   
   return(raw)
   
