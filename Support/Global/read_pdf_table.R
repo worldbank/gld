@@ -5,11 +5,13 @@
 
 read_pdf <- function(pdf_path, page_min, page_max, 
                      
+                     header = TRUE,
                      varnames = c("var1", "var2", "var3", "var4", "var5"),
                      ymin = 90,
                      xlabel = c(155, 420),
                      xmin = c(91, 131, 415, 446, 501),
-                     xmax = c(130, 175, 445, 500, 9999)
+                     xmax = c(130, 175, 445, 500, 9999),
+                     numlist = NULL
                      
                      ) {
  
@@ -53,8 +55,25 @@ read_pdf <- function(pdf_path, page_min, page_max,
       filter(x < xlabel[1] | x > xlabel[2]) %>%
       mutate(str = str_detect(text, "[:alpha:]+$")) %>%
       filter(str == FALSE) %>%
-      filter(y >= ymin) %>% # remove page titles, if no data, no obs.
-      select(x, y, text)
+      select(x, y, text) 
+    
+    
+    # if header==TRUE, remove page titles; if no data, no obs.
+    if (header == TRUE) {
+      data_tib <- data_tib %>%
+        filter(y >= ymin)
+    }
+    
+    # if header==FALSE, keep only numbers, and remove specified number args
+    if (header == FALSE) {
+      data_tib <- data_tib %>%
+        mutate(str = str_detect(text, "^[:alpha:]+")) %>%
+        filter(str == FALSE) %>%
+        select(-str) %>%
+        filter(((text %in% numlist) & y < ymin) == FALSE) # y >= ymin
+    }
+    
+      
     
     
     # create a tibble as a shorthand for the pmap function
@@ -73,7 +92,11 @@ read_pdf <- function(pdf_path, page_min, page_max,
     els <- do.call(rbind, els)
     
     table <- els %>%
-      filter(!grepl("^p;", text)) %>% 
+      filter(!grepl("^p;", text)) %>% # these characters mess up the columns, must 
+      filter(!grepl("\\(", text)) %>% # remove here 
+      filter(!grepl("\\)", text)) %>% 
+      mutate(text = case_when(is.null(text) ~ NA_character_,
+                              TRUE ~ text)) %>%
       group_by(y) %>%
       mutate(page_grp = cur_group_id(),
              page = page) %>%
@@ -94,7 +117,6 @@ read_pdf <- function(pdf_path, page_min, page_max,
   ## perform the function call with purrr 
   raw <- pmap(list(page_min:page_max), import_table_pdf)
   raw <- do.call(rbind, raw)
-  
   
   return(raw)
   
