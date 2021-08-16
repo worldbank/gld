@@ -44,30 +44,49 @@ UNisic3 <- read_delim(file = file.path(PHL, "PHL_data/GLD/international_codes/IS
 
 
 pdf <- pdftools::pdf_data(psic94_path)
-pdf[[122]] %>% View()
+pdf[[2]] %>% View()
 
 ## ISIC 94 Raw ----
-isic94_codes_raw <- read_pdf(
+## Note that there are two "halves" with varying page specifications.
+## Solution is import by each half and then append.
+
+isic94_codes_raw_A <- read_pdf(
   
   pdf_path = psic94_path,
   page_min = 2,
-  page_max = 16,
-  varnames = c("subclass", "psic1994", "psic77", "isic3.1"),
+  page_max = 11, 
+  varnames = c("class", "subclass", "psic1994", "psic77", "isic3.1"),
   ymin = 90,
-  xlabel = c(136, 440),
-  xmin = c(95, 441, 477,510),
-  xmax = c(134, 476, 509, 9999),
+  xlabel = c(130, 390),
+  xmin = c(55, 90, 391, 430, 470),
+  xmax = c(89, 129, 429, 469, 9999),
+  header = FALSE,
+  numlist = c(1994, 1977, 3.1)
+)
+
+isic94_codes_raw_B <- read_pdf(
+  
+  pdf_path = psic94_path,
+  page_min = 12,
+  page_max = 185,
+  varnames = c("class", "subclass", "psic1994", "psic77", "isic3.1"),
+  ymin = 90,
+  xlabel = c(130, 439),
+  xmin = c(55, 90, 440, 470, 505),
+  xmax = c(89, 129, 469, 504, 9999),
   header = FALSE,
   numlist = c(1994, 1977, 3.1)
 )
 
 
+isic94_codes_raw <- bind_rows(isic94_codes_raw_A, 
+                              isic94_codes_raw_B)
 
 
 # cleaning ----
 ## setup 
 table_vars_gc <- c("group", "class")
-table_vars_spia<- c("psic1994", "isic4", "acic")
+table_vars_ppi<- c("psic94", "psic77", "isic3.1")
 rowAny <- function(x) rowSums(x) > 0 
 
 
@@ -142,7 +161,8 @@ isic09_codes_raw <- read_pdf(
     ymin = 90,
     xlabel = c(155, 420),
     xmin = c(91, 131, 415, 446, 501),
-    xmax = c(130, 175, 445, 500, 9999)
+    xmax = c(130, 175, 445, 500, 9999),
+    header = TRUE
     )
 
 
