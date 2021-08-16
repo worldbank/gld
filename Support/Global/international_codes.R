@@ -44,7 +44,7 @@ UNisic3 <- read_delim(file = file.path(PHL, "PHL_data/GLD/international_codes/IS
 
 
 pdf <- pdftools::pdf_data(psic94_path)
-pdf[[2]] %>% View()
+pdf[[22]] %>% View()
 
 ## ISIC 94 Raw ----
 ## Note that there are two "halves" with varying page specifications.
@@ -71,8 +71,8 @@ isic94_codes_raw_B <- read_pdf(
   page_max = 185,
   varnames = c("class", "subclass", "psic1994", "psic77", "isic3.1"),
   ymin = 90,
-  xlabel = c(130, 439),
-  xmin = c(55, 90, 440, 470, 505),
+  xlabel = c(130, 434),
+  xmin = c(55, 90, 435, 470, 505),
   xmax = c(89, 129, 469, 504, 9999),
   header = FALSE,
   numlist = c(1994, 1977, 3.1)
@@ -86,7 +86,7 @@ isic94_codes_raw <- bind_rows(isic94_codes_raw_A,
 # cleaning ----
 ## setup 
 table_vars_gc <- c("group", "class")
-table_vars_ppi<- c("psic94", "psic77", "isic3.1")
+table_vars_ppi<- c("psic1994", "psic77", "isic3.1")
 rowAny <- function(x) rowSums(x) > 0 
 
 
@@ -115,7 +115,7 @@ isic94_leftover1 <-  isic94_codes %>%
   filter(across(all_of(table_vars_gc), ~ is.na(.x))) 
 
 isic94_leftover2 <- isic94_codes %>%
-  filter(across(all_of(table_vars_spia), ~is.na(.x)))
+  filter(across(all_of(table_vars_ppi), ~is.na(.x)))
 
 isic94_leftover <- bind_rows(isic94_leftover1, isic94_leftover2)
 
@@ -128,7 +128,7 @@ isic94_clean <- isic94_codes %>%
   mutate(psic1994 = str_replace(psic1994, "\\)", "")) %>%
   ## eliminate group and class-only rows
   #filter(rowAny(across(table_vars_gc, ~ !is.na(.x)))) %>% # at least 1 col must be non-NA
-  filter(rowAny(across(table_vars_spia, ~ !is.na(.x)))) %>% # at least 1 col must be non-NA
+  filter(rowAny(across(all_of(table_vars_ppi), ~ !is.na(.x)))) %>% # at least 1 col must be non-NA
   ungroup() %>%
   select(-y, -text, -page_grp)
 
@@ -213,7 +213,7 @@ isic09_clean <- isic09_codes %>%
   mutate(psic1994 = str_replace(psic1994, "\\)", "")) %>%
   ## eliminate group and class-only rows
   #filter(rowAny(across(table_vars_gc, ~ !is.na(.x)))) %>% # at least 1 col must be non-NA
-  filter(rowAny(across(table_vars_spia, ~ !is.na(.x)))) %>% # at least 1 col must be non-NA
+  filter(rowAny(across(all_of(table_vars_spia), ~ !is.na(.x)))) %>% # at least 1 col must be non-NA
   ungroup() %>%
   select(-y, -text, -page_grp)
   
@@ -302,7 +302,7 @@ isco09_leftover <- bind_rows(isco09_leftover1, isco09_leftover2)
 isco09_clean <- psoc09_codes %>%
   ## eliminate group and class-only rows
   #filter(rowAny(across(table_vars_sm, ~ !is.na(.x)))) %>% # at least 1 col must be non-NA
-  filter(rowAny(across(table_vars_pi, ~ !is.na(.x)))) # at least 1 col must be non-NA
+  filter(rowAny(across(all_of(table_vars_pi), ~ !is.na(.x)))) # at least 1 col must be non-NA
   
   # check
   assertthat::assert_that( (nrow(isco09_clean) + nrow(isco09_leftover2)) == nrow(psoc09_codes)   )
@@ -332,17 +332,24 @@ assertthat::assert_that( sum(str_length(isco09_clean$submajor) != 3, na.rm=TRUE)
 # save data ----
 
 # Rdata 
-save(isic09_codes_raw, isic09_codes, isic09_leftover, isic09_clean, psic09_path, 
+save(isic94_codes_raw, isic94_codes, isic94_leftover, isic94_clean, psic94_path,
+     isic09_codes_raw, isic09_codes, isic09_leftover, isic09_clean, psic09_path, 
      psoc09_codes_raw, psoc09_codes, isco09_leftover, isco09_clean, psoc_path,
      read_pdf, UNisic3,
      file = file.path(PHL, "PHL_data/international_codes.Rdata") )
 
 
 # export dta 
+isic94_clean %>% 
+  rename("isic3_1" = "isic3.1") %>%
+  haven::write_dta(.,
+                 path = file.path(PHL, "PHL_data/GLD/PHL_PSIC_ISIC_94_key.dta"),
+                 version = 14)
+
 haven::write_dta(isic09_clean,
-                 path = file.path(PHL, "PHL_data/GLD/PHL_PSIC_ISIC_key.dta"),
+                 path = file.path(PHL, "PHL_data/GLD/PHL_PSIC_ISIC_09_key.dta"),
                  version = 14)
 
 haven::write_dta(isco09_clean,
-                 path = file.path(PHL, "PHL_data/GLD/PHL_PSOC_ISCO_key.dta"),
+                 path = file.path(PHL, "PHL_data/GLD/PHL_PSOC_ISCO_09_key.dta"),
                  version = 14)
