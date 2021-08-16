@@ -5,6 +5,7 @@
 
 read_pdf <- function(pdf_path, page_min, page_max, 
                      
+                     header = TRUE,
                      varnames = c("var1", "var2", "var3", "var4", "var5"),
                      ymin = 90,
                      xlabel = c(155, 420),
@@ -53,8 +54,16 @@ read_pdf <- function(pdf_path, page_min, page_max,
       filter(x < xlabel[1] | x > xlabel[2]) %>%
       mutate(str = str_detect(text, "[:alpha:]+$")) %>%
       filter(str == FALSE) %>%
-      filter(y >= ymin) %>% # remove page titles, if no data, no obs.
       select(x, y, text)
+    
+    
+    # if header==TRUE, remove page titles; if no data, no obs.
+    if (header == TRUE) {
+      data_tib <- data_tib %>%
+        filter(y >= ymin)
+    }
+    
+      
     
     
     # create a tibble as a shorthand for the pmap function
