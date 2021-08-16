@@ -55,7 +55,7 @@ read_pdf <- function(pdf_path, page_min, page_max,
       filter(x < xlabel[1] | x > xlabel[2]) %>%
       mutate(str = str_detect(text, "[:alpha:]+$")) %>%
       filter(str == FALSE) %>%
-      select(x, y, text)
+      select(x, y, text) 
     
     
     # if header==TRUE, remove page titles; if no data, no obs.
@@ -95,6 +95,8 @@ read_pdf <- function(pdf_path, page_min, page_max,
       filter(!grepl("^p;", text)) %>% # these characters mess up the columns, must 
       filter(!grepl("\\(", text)) %>% # remove here 
       filter(!grepl("\\)", text)) %>% 
+      mutate(text = case_when(is.null(text) ~ NA_character_,
+                              TRUE ~ text)) %>%
       group_by(y) %>%
       mutate(page_grp = cur_group_id(),
              page = page) %>%
