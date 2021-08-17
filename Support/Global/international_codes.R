@@ -30,7 +30,7 @@ source(file.path(code, "Global/read_pdf_table.R"))
 # pdf file path
 psic94_path <- file.path(PHL, "PHL_docs/International Codes/PSA_PSIC_1994.pdf")
 psic09_path <- file.path(PHL, "PHL_docs/International Codes/PSA_PSIC_2009.pdf")
-psoc_path <- file.path(PHL, "PHL_docs/International Codes/PSA_PSOC_2012.pdf")
+psoc12_path <- file.path(PHL, "PHL_docs/International Codes/PSA_PSOC_2012.pdf")
 
 
 
@@ -121,11 +121,14 @@ isic94_leftover <- bind_rows(isic94_leftover1, isic94_leftover2)
 
 
 
-## ISIC clean ----
+## ISIC 94 clean ----
+fin_vrs <- c("group", "class", "subclass", "psic1994", "psic77", "isic3.1")
+
 isic94_clean <- isic94_codes %>%
   ## eliminate the "("
   mutate(psic1994 = str_replace(psic1994, "\\(", "")) %>%
   mutate(psic1994 = str_replace(psic1994, "\\)", "")) %>%
+  #mutate(across(fin_vrs), .fns = list( fc = ~ str_replace(, ":", "")))
   ## eliminate group and class-only rows
   #filter(rowAny(across(table_vars_gc, ~ !is.na(.x)))) %>% # at least 1 col must be non-NA
   filter(rowAny(across(all_of(table_vars_ppi), ~ !is.na(.x)))) %>% # at least 1 col must be non-NA
@@ -139,7 +142,8 @@ assertthat::assert_that( (nrow(isic94_clean) + nrow(isic94_leftover2)) == nrow(i
 isic94_clean %>% janitor::get_dupes() # there is 1 pair of dups
 
 isic94_clean <- isic94_clean %>%
-  distinct()
+  rename("isic3_1" = "isic3.1") %>%
+  distinct() 
 
 
 assertthat::assert_that( sum(str_length(isic94_clean$class) <= 3, na.rm = TRUE) ==0 ) # should be 0 or close to
@@ -248,9 +252,9 @@ assertthat::assert_that( sum(str_length(isic09_clean$group) != 3, na.rm = TRUE) 
 # Use Function to import raw data 
 # ISCO raw ----
 
-psoc09_codes_raw <- read_pdf(
+psoc12_codes_raw <- read_pdf(
   
-      pdf_path = psoc_path,
+      pdf_path = psoc12_path,
       page_min = 102,
       page_max = 540,
       varnames = c("minor", "unit", "psoc92", "isco08"),
@@ -277,7 +281,7 @@ isco_order <- c("submajor", "minor", "unit", "psoc92", "isco08")
 ## obs, this info is provided, so do not overwrite this info. Treat 
 ## given info as authoritative.
 
-psoc09_codes <- psoc09_codes_raw %>%
+psoc12_codes <- psoc12_codes_raw %>%
   mutate(
     minor    = case_when(is.na(minor)  ~ str_sub(unit, 1,4),
                       TRUE          ~ minor),
@@ -287,28 +291,28 @@ psoc09_codes <- psoc09_codes_raw %>%
 
 
 # filter out leftoverstubs 
-isco09_leftover1 <-  psoc09_codes %>% 
+isco12_leftover1 <-  psoc12_codes %>% 
   filter(across(all_of(table_vars_sm), ~ is.na(.x))) 
 
-isco09_leftover2 <- psoc09_codes %>%
+isco12_leftover2 <- psoc12_codes %>%
   filter(across(all_of(table_vars_pi), ~is.na(.x)))
 
-isco09_leftover <- bind_rows(isco09_leftover1, isco09_leftover2)
+isco12_leftover <- bind_rows(isco12_leftover1, isco12_leftover2)
 
 
 
 # ISCO clean ----
 ## note that for now in order to sidestep issue #96, will not filter yet
-isco09_clean <- psoc09_codes %>%
+isco12_clean <- psoc12_codes %>%
   ## eliminate group and class-only rows
   #filter(rowAny(across(table_vars_sm, ~ !is.na(.x)))) %>% # at least 1 col must be non-NA
   filter(rowAny(across(all_of(table_vars_pi), ~ !is.na(.x)))) # at least 1 col must be non-NA
   
   # check
-  assertthat::assert_that( (nrow(isco09_clean) + nrow(isco09_leftover2)) == nrow(psoc09_codes)   )
+  assertthat::assert_that( (nrow(isco12_clean) + nrow(isco12_leftover2)) == nrow(psoc12_codes)   )
 
   ## eliminate strange puncutation marks
-  isco09_clean <- isco09_clean %>%
+  isco12_clean <- isco12_clean %>%
     mutate(psoc92 = str_replace(psoc92, "[:punct:]", "")) %>%
     mutate(psoc92 = str_replace(psoc92, "p", "")) %>% 
     mutate(psoc92 = str_replace(psoc92, "\\`", NA_character_)) %>% 
@@ -317,13 +321,13 @@ isco09_clean <- psoc09_codes %>%
     select(-y, -page_grp) 
 
 # clean duplicates
-  isco09_clean %>% janitor::get_dupes() # there is 1 pair of dups
+  isco12_clean %>% janitor::get_dupes() # there is 1 pair of dups
   
-  isco09_clean <- isco09_clean %>%
+  isco12_clean <- isco12_clean %>%
     distinct()
 
 
-assertthat::assert_that( sum(str_length(isco09_clean$submajor) != 3, na.rm=TRUE) == 0 ) # should be 0 or close to
+assertthat::assert_that( sum(str_length(isco12_clean$submajor) != 3, na.rm=TRUE) == 0 ) # should be 0 or close to
 
 
 
@@ -334,15 +338,41 @@ assertthat::assert_that( sum(str_length(isco09_clean$submajor) != 3, na.rm=TRUE)
 # Rdata 
 save(isic94_codes_raw, isic94_codes, isic94_leftover, isic94_clean, psic94_path,
      isic09_codes_raw, isic09_codes, isic09_leftover, isic09_clean, psic09_path, 
-     psoc09_codes_raw, psoc09_codes, isco09_leftover, isco09_clean, psoc_path,
+     psoc12_codes_raw, psoc12_codes, isco12_leftover, isco12_clean, psoc12_path,
      read_pdf, UNisic3,
      file = file.path(PHL, "PHL_data/international_codes.Rdata") )
 
 
 # export dta 
-isic94_clean %>% 
-  rename("isic3_1" = "isic3.1") %>%
-  haven::write_dta(.,
+
+for (i in seq(from=1997,to=2011)) {
+  haven::write_dta(isic94_clean,
+                   path = file.path(PHL, 
+                                    paste0("PHL_",as.character(i),"_LFS"), 
+                                    paste0("PHL_",as.character(i),"_LFS",
+                                           "_v01_M_v01_A_GLD/Work/PHL_PSIC_ISIC_94_key.dta")),
+                   version = 14)
+}
+
+for (i in seq(from=2012,to=2019)) {
+  haven::write_dta(isic09_clean,
+                   path = file.path(PHL, 
+                                    paste0("PHL_",as.character(i),"_LFS"), 
+                                    paste0("PHL_",as.character(i),"_LFS",
+                                           "_v01_M_v01_A_GLD/Work/PHL_PSIC_ISIC_09_key.dta")),
+                   version = 14)
+}
+
+for (i in seq(from=2016,to=2019)) {
+  haven::write_dta(isco12_clean,
+                   path = file.path(PHL, 
+                                    paste0("PHL_",as.character(i),"_LFS"), 
+                                    paste0("PHL_",as.character(i),"_LFS",
+                                           "_v01_M_v01_A_GLD/Work/PHL_PSOC_ISCO_12_key.dta")),
+                   version = 14)
+}
+
+haven::write_dta(isic94_clean,
                  path = file.path(PHL, "PHL_data/GLD/PHL_PSIC_ISIC_94_key.dta"),
                  version = 14)
 
@@ -350,6 +380,6 @@ haven::write_dta(isic09_clean,
                  path = file.path(PHL, "PHL_data/GLD/PHL_PSIC_ISIC_09_key.dta"),
                  version = 14)
 
-haven::write_dta(isco09_clean,
-                 path = file.path(PHL, "PHL_data/GLD/PHL_PSOC_ISCO_09_key.dta"),
+haven::write_dta(isco12_clean,
+                 path = file.path(PHL, "PHL_data/GLD/PHL_PSOC_ISCO_12_key.dta"),
                  version = 14)
