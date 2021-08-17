@@ -91,6 +91,8 @@ set mem 800m
 	local round3 `"`stata'\LFS JUL1997.dta"'
 	local round4 `"`stata'\LFS OCT1997.dta"'
 
+	local isic_key 	 `"`gld'\Work\PHL_PSIC_ISIC_94_key.dta"'
+
 	* ouput
 	local path_output `"`gld_data'\\`cty3'_`surv_yr'_LFS_v01_M_v01_A_GLD"'
 
@@ -934,13 +936,38 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_>
-	gen 			industrycat_isic = . // to return
+	/* The key that matches industry codes is in string format to maintain leading/trailing
+		zeros, so we will change the format here to string if necessary */
+
+	qui ds 			industry_orig, has(type numeric) 	// capture numeric var if is numeric
+	loc isicvar 	= r(varlist)						// store this in a local
+	loc len 		: list sizeof isicvar 				// store the length of this local (1 or 0)
+
+		if (`len' == 1) {
+															// run this if == 1 (ie, if industry_orig is numeric)
+			tostring industry_orig	///						// make the numeric vars strings
+				, generate(industry_orig_str) ///			// gen a variable with this prefix
+				force //
+				*format(`"%0`len'.0f"')
+
+		}
+
+* here, think, if data only have 2 digits, will you merge the data with the key? Probably should not automate the merge
+* and just decide manually each time. Will a 2-digit code have an isic/isco code? Probably not...only 4-5 digit ones.
+
+
+	gen 			industrycat_isic = .
 	label var 		industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
 
 *<_industrycat10_>
-	gen byte 		industrycat10 = .
+* if mapped to industrycat_isic, will be recoded, if not, start here.
+	gen byte 		industrycat10		= floor(qkb/10)
+	recode  		industrycat10 		0 = 10 				// change to 10, "unspecified" from "missing"
+	replace 		industrycat10		= 10 	if qkb>=92 & qkb<=99
+	replace 		industrycat10		= 6 	if qkb==98
+
 	label var 		industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de 			lblindustrycat10 	///
 					1 "Agriculture" 	2 "Mining" ///
@@ -972,6 +999,7 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_>
+* incoming data only has 2-digit, so cannot be mapped to isco
 	gen 			occup_isco = .
 	label 			var occup_isco "ISCO code of primary job 7 day recall"
 	replace 		occup_isco=. if lstatus!=1 		// restrict universe to employed only
