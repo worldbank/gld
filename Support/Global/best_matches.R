@@ -5,7 +5,9 @@ best_matches <- function(df,
   
   # 1. Load and Reduce df
   # determine colnames 
-  vars <- c(country_code, international_code)
+  cc <- as.symbol(country_code )
+  ic <- as.symbol(international_code)
+  vars <- c(as.character(country_code), as.character(international_code))
   
   # Drop columns we are not interest in, drop rows where int code is missing
   df <- df %>% 
@@ -17,6 +19,24 @@ best_matches <- function(df,
   # For rows where SCIAN is NA, this is because they have the last code listed previously, fill down
   df <- df %>% fill(all_of(country_code), .direction = "down")
   
-  return(df)
   
+  
+  # Step 2 - Concordence Country_code to International Code ----------
+  # Match if concordance is 100%
+  match_1 <- df %>%
+    count({{cc}}, {{ic}}) %>%
+    rename(instance = n) %>%
+    group_by({{cc}}) %>%
+    mutate(sum = sum(instance)) %>%
+    ungroup() %>%
+    mutate(pct = round((instance/sum)*100,1)) %>%
+    filter(pct == 100)
+
+  # Review
+ done_1 <- n_distinct(match_1[[country_code]])
+ rest_1 <- n_distinct(df[[country_code]]) - n_distinct(match_1[[country_code]])
+
+  return(rest_1)
 }
+
+
