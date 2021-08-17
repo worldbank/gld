@@ -199,35 +199,20 @@ set mem 800m
 
 </_hhid_note> */
 
-	* in 13, it appears that regn and hcn uniquely identify the HH
+	loc idhvars 	hhnum   							// store idh vars in local
 
-	loc idhvars 	 regn prov  hcn						// store hhid vars in local
 
 	ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
 	loc numlist 	= r(varlist)						// store numeric vars in local
 	loc stringlist 	: list idhvars - numlist			// non-numeric vars in stringlist
 
 	* starting locals
-	loc len = 6											// declare the length of each element in digits
+	loc len = 14											// declare the length of each element in digits
 	loc idh_els ""										// start with empty local list
 
 	* make each numeric var string, including leading zeros
 	foreach var of local numlist {
 		tostring `var'	///								// make the numeric vars strings
-			, generate(idh_`var') ///					// gen a variable with this prefix
-			force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
-
-		loc idh_els 	`idh_els' idh_`var'				// add each variable to the local list
-
-	}
-
-	* make each string variable numeric (as it should be), then string again with correct format
-	foreach var of local stringlist {
-		destring `var' /// 								// destring variable, make numeric version
-			, gen(num_`var') ///						//
-			force 										// force obs to num that are non numeric, ie to missing
-
-		tostring num_`var'	///							// make the numeric vars strings
 			, generate(idh_`var') ///					// gen a variable with this prefix
 			force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
 
@@ -253,13 +238,7 @@ set mem 800m
 
 *<_pid_>
 ** INDIVIDUAL IDENTIFICATION NUMBER
-	* in 13, region, hh control and line number variables uniquely identify observations. use line number as pid
-
-	* repeat same process from above, but only with n_fam.
-	* 	note, assuming that the only necessary individaul identifier is family member, which is numeric
-	*	so, not following processing for sorting numeric/non-numeric variables.
-
-	loc idpvars 	lno 								// store relevant pid vars in local
+	loc idpvars 	cc101_lno 							// store relevant idp vars in local
 	ds `idpvars',  	has(type numeric)					// filter out numeric variables in local
 	loc rlist 		= r(varlist)						// store numeric vars in local
 
