@@ -80,7 +80,7 @@ set mem 800m
 	local 	lb_mod_age	15	// labor module minimun age (inclusive)
 	local 	ed_mod_age	5	// labor module minimun age (inclusive)
 
-	local 	weightvar 	pwgt // final weight variable 
+	local 	weightvar 	pwgt // final weight variable
 
 ** LOG FILE
 	log using `"`gld_data'\\`cty3'_`surv_yr'_I2D2_LFS.log"', replace
@@ -276,7 +276,7 @@ set mem 800m
 
 
 *<_psu_>
-	gen psu = .
+	gen psu = psu
 	label var psu "Primary sampling units"
 *</_psu_>
 
@@ -288,7 +288,7 @@ set mem 800m
 
 
 *<_strata_>
-	gen strata = .
+	gen strata = stratum
 	label var strata "Strata"
 *</_strata_>
 
@@ -314,7 +314,7 @@ set mem 800m
 
 *<_urban_>
 	gen byte 		urban = .
-	replace 		urban = urb
+	replace 		urban = urb2k1970
 	recode 			urban (2 = 0) 		// change rural=2 to rural=0
 	label var 		urban "Location is urban"
 	la de 			lblurban 1 "Urban" 0 "Rural"
@@ -328,26 +328,45 @@ set mem 800m
 	Labels are to be defined as # - Name like 1 "1 - Alaska" 2 "2 - Arkansas".
 
 </_subnatid1> */
-	gen byte 		subnatid1 = regn
-	label de 		lblsubnatid1 	///
+
+	/*  Please see "Administrative_Levels.md" for a detailed explanation of the region and province
+		recodings, available on the repository in the Guides and Documentation Folder.
+		https://github.com/worldbank/gld
+
+		Similarly, in the same location, "Geographic_Nomenclature.md" describes the administrative
+		divisions used in GLD
+ 	*/
+
+	gen byte 		subnatid1 = creg
+	recode 			reg01 reg02 	/// recode both of thes variables
+					(4 = 41) 		/// sometimes Calabarzon appears as value 4, recode to always be 41
+					(17= 42)		//  sometimes Mimaropa appears as value 17, recode to always be 42
+
+
+	label de 		lblsubnatid1_b 	/// where "b" indicates "post" administrative change
 					 1   "1 - Ilocos"			///
 					 2	 "2 - Cagayan Valley"	///
 					 3   "3 - Central Luzon"	///
-					 4	 "4 - Southern Tagalog"	///
+					 						/// Southern Tagalog has been split into Calabarzon and Mimaropa
 					 5   "5 - Bicol"			///
 					 6	 "6 - Western Visayas"	///
 					 7   "7 - Central Visayas"	///
 					 8	 "8 - Eastern Visayas"	///
-					 9   "9 - Western Mindanao"	///
+					 9   "9 - Zamboanga Peninsula"	///
 					 10  "10 - Northern Mindanao"	///
-					 11  "11 - Southern Mindanao"	///
-					 12  "12 - Central Mindanao"		///
+					 11  "11 - Davao"			///
+					 12  "12 - Soccsksargen"		///
 					 13  "13 - National Capital Region"				///
 					 14  "14 - Cordillera Administrative Region"		///
 					 15  "15 - Autonomous Region of Muslim Mindanao"	///
-					 16  "16 - Caraga"
+					 16  "16 - Caraga" 	///
+					 				/// value 17 exists only in raw data, not in recoded version
+					 18  "18 - Negros Island Region" /// this region appears occasionally in data
+					 							///
+					 41	 "41 - Calabarzon"	/// formerly part of Southern Tagalog
+					 42  "42 - Mimaropa"		// formerly part of Southern Tagalog
 
-	label values 	subnatid1 lblsubnatid1
+	label values 	subnatid1 lblsubnatid1_b
 	label var 		subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 
@@ -911,7 +930,7 @@ foreach v of local ed_var {
 
 
 *<_industry_orig_>
-	gen 			industry_orig = qkb
+	gen 			industry_orig = c18_pkb
 	label var 		industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
@@ -929,25 +948,40 @@ foreach v of local ed_var {
 			tostring industry_orig	///						// make the numeric vars strings
 				, generate(industry_orig_str) ///			// gen a variable with this prefix
 				force //
-				*format(`"%0`len'.0f"')
+
 
 		}
 
-* here, think, if data only have 2 digits, will you merge the data with the key? Probably should not automate the merge
-* and just decide manually each time. Will a 2-digit code have an isic/isco code? Probably not...only 4-5 digit ones.
+
+	// merge sub-module with isic key
+
+	preserve
+
+		clonevar subclass = c18_pkb
+
+		merge 		1:1 ///
+					subclass ///
+					using `isic_key' ///
+					generate(isic_key_merge)
+
+					* the string variable in isic4 will is industrycat_isic
+		destring 	isic4 ///
+					, generate(industrycat_isic)
+
+		pause on
+		pause
+
+	restore 
 
 
-	gen 			industrycat_isic = .
+	*gen 			industrycat_isic = .
 	label var 		industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
 
 *<_industrycat10_>
 * if mapped to industrycat_isic, will be recoded, if not, start here.
-	gen byte 		industrycat10		= floor(qkb/10)
-	recode  		industrycat10 		0 = 10 				// change to 10, "unspecified" from "missing"
-	replace 		industrycat10		= 10 	if qkb>=92 & qkb<=99
-	replace 		industrycat10		= 6 	if qkb==98
+
 
 	label var 		industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de 			lblindustrycat10 	///
@@ -1919,6 +1953,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save `"`path_output'"', replace
+*save `"`path_output'"', replace
 
 *</_% SAVE_>
