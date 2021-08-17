@@ -80,6 +80,8 @@ set mem 800m
 	local 	lb_mod_age	15	// labor module minimun age (inclusive)
 	local 	ed_mod_age	5	// labor module minimun age (inclusive)
 
+	local 	weightvar 	pwgt // final weight variable 
+
 ** LOG FILE
 	log using `"`gld_data'\\`cty3'_`surv_yr'_I2D2_LFS.log"', replace
 
@@ -268,7 +270,7 @@ set mem 800m
 
 
 *<_weight_>
-	gen weight = rfadj/(`n_round')
+	gen weight = `weightvar'/(`n_round')
 	label var weight "Household sampling weight"
 *</_weight_>
 
