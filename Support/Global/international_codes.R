@@ -370,13 +370,12 @@ save(isic94_codes_raw, isic94_codes, isic94_leftover, isic94_clean, psic94_path,
 
 
 # export dta 
-
 for (i in seq(from=1997,to=2011)) {
   haven::write_dta(match_isic94_table,
                    path = file.path(PHL, 
                                     paste0("PHL_",as.character(i),"_LFS"), 
                                     paste0("PHL_",as.character(i),"_LFS",
-                                           "_v01_M_v01_A_GLD/Work/PHL_PSIC_ISIC_94_key.dta")),
+                                           "_v01_M/Data/Stata/PHL_PSIC_ISIC_94_key.dta")),
                    version = 14)
 }
 
@@ -385,7 +384,7 @@ for (i in seq(from=2012,to=2019)) {
                    path = file.path(PHL, 
                                     paste0("PHL_",as.character(i),"_LFS"), 
                                     paste0("PHL_",as.character(i),"_LFS",
-                                           "_v01_M_v01_A_GLD/Work/PHL_PSIC_ISIC_09_key.dta")),
+                                           "_v01_M/Data/Stata/PHL_PSIC_ISIC_09_key.dta")),
                    version = 14)
 }
 
@@ -394,7 +393,7 @@ for (i in seq(from=2016,to=2019)) {
                    path = file.path(PHL, 
                                     paste0("PHL_",as.character(i),"_LFS"), 
                                     paste0("PHL_",as.character(i),"_LFS",
-                                           "_v01_M_v01_A_GLD/Work/PHL_PSOC_ISCO_12_key.dta")),
+                                           "_v01_M/Data/Stata/PHL_PSOC_ISCO_12_key.dta")),
                    version = 14)
 }
 
