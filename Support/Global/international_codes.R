@@ -45,7 +45,7 @@ UNisic3 <- read_delim(file = file.path(PHL, "PHL_data/GLD/international_codes/IS
 
 
 pdf <- pdftools::pdf_data(psic94_path)
-pdf[[22]] %>% View()
+#pdf[[22]] %>% View()
 
 ## ISIC 94 Raw ----
 ## Note that there are two "halves" with varying page specifications.
@@ -352,7 +352,7 @@ match_isco12_list <- best_match(df = isco12_clean,
                                 country_code = "minor",
                                 international_code = "isco08")
 
-match_isco12_table <- match_isco12_list[1]
+match_isco12_table <- match_isco12_list[[1]]
 
 
 
