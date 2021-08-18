@@ -95,10 +95,36 @@ rest_3 <- n_distinct(df[[country_code]]) -
   n_distinct(match_3[[country_code]])
 
 
-return(rest_3)
+# Step 5 - append + ggplot ----------------------------------------------
+
+concord <- bind_rows(match_1, match_2, match_3) %>%
+  select( {{cc}}, {{ic}}, pct) %>%
+  rename(match = pct) 
+   mutate( cc = str_pad({{cc}}, 4, pad = "0", side = "right"),
+           ic = str_pad({{ic}}, 4, pad = "0", side = "right"))
+
+results <- tibble(
+  match_no = c(1,2,3),
+  obs_matched = c(done_1, done_2, done_3),
+  obs_remaining = c(rest_1, rest_2, rest_3)
+)
+
+gg <- ggplot(concord, aes(match)) +
+  geom_density() +
+  scale_x_continuous(n.breaks = 10) +
+  theme_minimal() +
+  labs(x = "Match Score", y = "Density", title = "Distribution of Match Scores")
+
+list <- list(concord, results, gg)
+return(list)
+
+
+
+
 }
                          
 
-best_matches(isic09_clean)
+best_matches(isic09_clean)[[3]] 
+
 
 
