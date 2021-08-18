@@ -1,3 +1,9 @@
+#' Determines most likely matches between two vectors of numeric classification codes.
+#' @param df The tibble or data.frame object containing the two columns of data to match
+#' @param country_code The name of the column that contains the country-specific code
+#' @param international_code The name of the column that contains the international code
+#' @return a 3-element list object that contains the final match tibble, a results tibble, and a ggplot.
+
 best_matches <- function(df, 
                          country_code = "class",
                          international_code = "isic4"
@@ -99,9 +105,9 @@ rest_3 <- n_distinct(df[[country_code]]) -
 
 concord <- bind_rows(match_1, match_2, match_3) %>%
   select( {{cc}}, {{ic}}, pct) %>%
-  rename(match = pct) 
-   mutate( cc = str_pad({{cc}}, 4, pad = "0", side = "right"),
-           ic = str_pad({{ic}}, 4, pad = "0", side = "right"))
+  rename(match = pct) %>%
+   mutate( "{{cc}}" := str_pad({{cc}}, 4, pad = "0", side = "right"),
+           "{{ic}}" := str_pad({{ic}}, 4, pad = "0", side = "right")) 
 
 results <- tibble(
   match_no = c(1,2,3),
@@ -111,7 +117,7 @@ results <- tibble(
 
 gg <- ggplot(concord, aes(match)) +
   geom_density() +
-  scale_x_continuous(n.breaks = 10) +
+  scale_x_continuous(n.breaks = 10, limits = c(0,100)) +
   theme_minimal() +
   labs(x = "Match Score", y = "Density", title = "Distribution of Match Scores")
 
@@ -124,7 +130,7 @@ return(list)
 }
                          
 
-best_matches(isic09_clean)[[3]] 
+test <- best_matches(isic09_clean)
 
 
-
+isic_match <- test[[1]]
