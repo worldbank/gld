@@ -4,10 +4,10 @@
 #' @param international_code The name of the column that contains the international code
 #' @return a 3-element list object that contains the final match tibble, a results tibble, and a ggplot.
 
-best_matches <- function(df, 
-                         country_code = "class",
-                         international_code = "isic4"
-                         ) {
+best_match <- function(df, 
+                       country_code = "class",
+                       international_code = "isic4"
+                       ) {
   
   # 1. Load and Reduce df
   # determine colnames + symbols
@@ -128,9 +128,4 @@ return(list)
 
 
 }
-                         
-
-test <- best_matches(isic09_clean)
-
-
-isic_match <- test[[1]]
+      
