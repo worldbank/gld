@@ -5,7 +5,7 @@
 
 /* ----------------------------------------------------------------------- 
 
-<_Program name_>				[MEX_2005_ENOE_V01_M_v01_A_GLD.do] </_Program name_> 
+<_Program name_>				[MEX_2008_ENOE_V01_M_v01_A_GLD.do] </_Program name_> 
 <_Application_>					[STATA] <_Application_> 
 <_Author(s)_>					[The World Bank Jobs Group] </_Author(s)_> 
 <_Date created_>				2021-04-01 </_Date created_> 
@@ -14,25 +14,25 @@
 
 <_Country_>						[Mexico (MEX)] </_Country_> 
 <_Survey Title_>				[Encuesta Nacional de Ocupación y Empleo] </_Survey Title_> 
-<_Survey Year_>					[2005] </_Survey Year_> 
+<_Survey Year_>					[2008] </_Survey Year_> 
 <_Study ID_>					[Microdata Library ID if present] </_Study ID_> 
-<_Data collection from_>		[01/2005] </_Data collection from_> 
-<_Data collection to_>			[05/2005] </_Data collection to_> 
+<_Data collection from_>		[01/2008] </_Data collection from_> 
+<_Data collection to_>			[05/2008] </_Data collection to_> 
 <_Source of dataset_> 			[Mexico NSO] </_Source of dataset_> 
-<_Sample size (HH)_> 			[100,776] </_Sample size (HH)_> 
-<_Sample size (IND)_> 			[402,186] </_Sample size (IND)_> 
-<_Sampling method_> 			[El tipo de muestreo utilizado es probabilístico, bietápico, estratificado y por conglomerados.] </_Sampling method_> 
+<_Sample size (HH)_> 			[104113] </_Sample size (HH)_> 
+<_Sample size (IND)_> 			[402253] </_Sample size (IND)_> 
+<_Sampling method_> 			[ El tipo de muestreo utilizado es probabilístico, bietápico, estratificado y por conglomerados.] </_Sampling method_> 
 <_Geographic coverage_> 		[Los niveles geograficos usados en la encuesta de México comienzan en estados siguen con ciudades autorrepresentadas y terminan con municipios de las ciudades autorrepresentadas. https://www.inegi.org.mx/contenidos/productos/prod_serv/contenidos/espanol/bvinegi/productos/metodologias/est/cobertura.pdf] </_Geographic coverage_>  
 <_Currency_> 					[Pesos] </_Currency_> 
 
 ----------------------------------------------------------------------- 
 
-<_ICLS Version_>				[ICLS 13] </_ICLS Version_> 
-<_ISCED Version_>				[ISCED 1997] </_ISCED Version_> 
-<_ISCO Version_>				[ISCO-68] </_ISCO Version_> 
-<_OCCUP National_>				[CMO I & II 1998 ] </_OCCUP National_> 
-<_ISIC Version_>				[Rev 3.1] </_ISIC Version_> 
-<_INDUS National_>				[SCIAN 2002] </_INDUS National_> 
+<_ICLS Version_>				[icls-13] </_ICLS Version_> 
+<_ISCED Version_>				[isced 1997] </_ISCED Version_> 
+<_ISCO Version_>				[ISCO-08] </_ISCO Version_> 
+<_OCCUP National_>				[CMO I & II 1998] </_OCCUP National_> 
+<_ISIC Version_>				[Rev.4] </_ISIC Version_> 
+<_INDUS National_>				[SCIAN 2007] </_INDUS National_> 
 
 ----------------------------------------------------------------------- 
 <_Version Control_> 
@@ -57,22 +57,22 @@ set mem 800m
 
 *----------1.2: Set directories------------------------------*
 
-local path_in "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_ENOE\MEX_2005_ENOE_v01_M\Data\Stata"
-local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_ENOE\MEX_2005_ENOE_v01_M_v01_A_GLD\Data\Harmonized"
+local path_in "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2008_ENOE\MEX_2008_ENOE_v01_M\Data\Stata"
+local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2008_ENOE\MEX_2008_ENOE_v01_M_v01_A_GLD\Data\Harmonized"
 
 *----------1.3: Database assembly------------------------------*
 
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file	
-	use "`path_in'\VIVT105.dta",clear
+	use "`path_in'\VIVT108.dta",clear
 	drop p1-p3
 	destring loc mun est ageb t_loc cd_a upm d_sem n_pro_viv ent con v_sel n_ent per, replace
-	merge 1:m ent con v_sel using "`path_in'\HOGT105.dta", nogen
-	merge 1:m ent con v_sel n_hog using "`path_in'\SDEMT105.dta"
+	merge 1:m ent con v_sel using "`path_in'\HOGT108.dta", nogen
+	merge 1:m ent con v_sel n_hog using "`path_in'\SDEMT108.dta"
 	drop if _merge==1
 	drop _merge
-	merge 1:1 ent con v_sel n_hog n_ren using "`path_in'\COE1T105.dta", nogen
-	merge 1:1 ent con v_sel n_hog n_ren using "`path_in'\COE2T105.dta", nogen
+	merge 1:1 ent con v_sel n_hog n_ren using "`path_in'\COE1T108.dta", nogen
+	merge 1:1 ent con v_sel n_hog n_ren using "`path_in'\COE2T108.dta", nogen
 	keep if r_pre==0 & inlist(c_res,1,3)
 	tostring (ent v_sel n_hog n_ren h_mud), gen(ent_str v_sel_str n_hog_str n_ren_str h_mud_str) format(%02.0f)
 	tostring con, replace
@@ -87,13 +87,13 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_ENOE\MEX_2005_ENO
 ***first job
 	rename scian scian_orig
 	tostring p4a, gen(scian)
-	merge m:1 scian using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_ENOE\MEX_2005_ENOE_v01_M\Data\Stata\SCIAN_02_ISIC_3.1.dta", keep(master match) nogen
+	merge m:1 scian using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2008_ENOE\MEX_2008_ENOE_v01_M\Data\Stata\SCIAN_07_ISIC_4.dta", keep(master match) nogen
 *Note: rename necessary to allow for the second job code to generate a new cmo for the merge
 	rename scian scian_1
 	rename isic isic_1
 ***second job
 	tostring p7c, gen(scian)
-	merge m:1 scian using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_ENOE\MEX_2005_ENOE_v01_M\Data\Stata\SCIAN_02_ISIC_3.1.dta", keep(master match) nogen
+	merge m:1 scian using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2008_ENOE\MEX_2008_ENOE_v01_M\Data\Stata\SCIAN_07_ISIC_4.dta", keep(master match) nogen
 *Note: rename necessary to misinterpret scian
 	rename scian scian_2
 	rename isic isic_2
@@ -101,19 +101,18 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_ENOE\MEX_2005_ENO
 *ISCO	
 ***then first job
 	tostring p3, gen(cmo)
-	merge m:1 cmo using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_ENOE\MEX_2005_ENOE_v01_M\Data\Stata\CMO_09_ISCO_08.dta", keep(master match) nogen
+	merge m:1 cmo using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2008_ENOE\MEX_2008_ENOE_v01_M\Data\Stata\CMO_09_ISCO_08.dta", keep(master match) nogen
 *Note: rename necessary to allow for the second job code to generate a new cmo for the merge
 	rename cmo cmo_1
 	rename isco isco_1
 	
 ***then second job
 	tostring p7a, gen(cmo)
-	merge m:1 cmo using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_ENOE\MEX_2005_ENOE_v01_M\Data\Stata\CMO_09_ISCO_08.dta", keep(master match) nogen
+	merge m:1 cmo using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2008_ENOE\MEX_2008_ENOE_v01_M\Data\Stata\CMO_09_ISCO_08.dta", keep(master match) nogen
 *Note: rename necessary to misinterpret cmo
 	rename cmo cmo_2
 	rename isco isco_2
 
-	
 /*%%=============================================================================================
 	2: Survey & ID
 ==============================================================================================%%*/
@@ -140,12 +139,12 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_ENOE\MEX_2005_ENO
 
 *<_icls_v_>
 	gen icls_v = "ICLS-[13]"
-	label var icls_v "ICLS version(s) underlying questionnaire questions"
+	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
 
 
 *<_year_>
-	gen int year = 2005
+	gen int year = 2008
 	label var year "Year of survey"
 *</_year_>
 
@@ -169,7 +168,7 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_ENOE\MEX_2005_ENO
 
 
 *<_int_year_>
-	gen int_year=2005
+	gen int_year=2008
 	label var int_year "Year of the interview"
 *</_int_year_>
 
@@ -254,6 +253,7 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_ENOE\MEX_2005_ENO
 	label var urban "Location is urban"
 	la de lblurban 1 "Urban" 0 "Rural"
 	label values urban lblurban
+
 *</_urban_>
 
 *<_subnatid1_>
@@ -263,7 +263,6 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_ENOE\MEX_2005_ENO
 	Labels are to be defined as # - Name like 1 "1 - Alaska" 2 "2 - Arkansas".
 
 </_subnatid1> */
-*states
 	gen byte subnatid1 =ent
 	label de lblsubnatid1 1 "1 - Aguas Calientes" 2 "2 - Baja California" 3 "3 - Baja California Sur" 4 " 4 - Campeche" 5 " 5 - Chiapas" 6 "6 - Chihuahua" 7 "7 - Coahuila de Zaragoza" 8 "8 - Colima" 9 "9 - Distrito Federal" 10 " 10 - Durango " 11 " 11- Guanajuato " 12 " 12 - Guerrero" 13 "13 - Hidalgo " 14 " 14 -Jalisco " 15 " 15 - Michoacan de Ocampo " 16 " 16 - Morelos " 17 " 17 - Mexico " 18 " 18 - Nayarit " 19 " 19 - Nuevo León " 20 " 20 - Oaxaca " 21 " 21 - Puebla" 22 " 22 - Queretaro" 23 " 23 - Quintana Roo " 24 " 24 - San Luis Potosi" 25 " 25- Sinaloa " 26 " 26 - Sonora " 27 " 27 - Tabasco " 28 " 28 - Tamaulipas" 29 " 29 - Tlaxcala " 30 " 30 - Veracruz de Ignacio de la Llave " 31 " 31 - Yucatán " 32 " 32 - Zacatecas "
 	label values subnatid1 lblsubnatid1
@@ -272,7 +271,6 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_ENOE\MEX_2005_ENO
 
 
 *<_subnatid2_>
-*selected main cities from states 
 	gen byte subnatid2 = cd_a
 	label de lblsubnatid2 1 "1 - Mexico" 2 " 2- Guadalajara" 3 " 3 - Monterrey" 4 " 4- Puebla" 5 " 5 - Leon" 7 " 6 - San Luis Potosi" 8 " 7 - Merida" 9 " 8 - Chihuahua" 10 " 9- Tampico" 12 " 10 - Veracruz" 13 " 11 - Acapulco" 14 " 12 - Aguacalientes" 15 " 13 - Morelia " 16 " 14 - Toluca" 17 " 15 - Saltillo" 18 " 16 - Villahermosa" 19 " 17 - Tuxtla Gutierrez" 21 " 18 - Tijuana" 24 " 19 - Culiacan" 25 " 20 - Hermosillo" 26 " 21 - Durango" 27 " 22 - Tepic" 28 " 23 - Campeche" 29 " 24 - Cuernavaca" 31 " 25 - Oaxaca" 32 " 26 - Zacatecas " 33 " 27 - Colima" 36 " 28 - Queretaro" 39 " 29 - Tlaxcala" 40 " 30 - La Paz " 41 " 31 - Cancun" 43 " 32 - Pachuca" 81 "  33 - Complemento Urbano Rural"
 	recode subnatid2 82/86=81
@@ -282,7 +280,6 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_ENOE\MEX_2005_ENO
 
 
 *<_subnatid3_>
-*selected towns within selected cities from states
 	gen byte subnatid3 = loc
 	*label de lblsubnatid3 1 "1 - Name" 
 	*label values subnatid3 lblsubnatid3
@@ -382,8 +379,6 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_ENOE\MEX_2005_ENO
 	replace head_count=1 if relationharm==1
 	*there is a problem with hh being children under 15 in Q1 (the number of households affected is rather small)
 	drop head_count max_age
-	
-	
 *</_relationharm_>
 
 
@@ -553,8 +548,8 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educy_>
-*note that this variable is not built based on lstatus
-	gen byte educy =0 if (cs_p13_1==0 | cs_p13_1==1) | (cs_p13_1==2 & cs_p13_2==0)
+	
+		gen byte educy =0 if (cs_p13_1==0 | cs_p13_1==1) | (cs_p13_1==2 & cs_p13_2==0)
 	replace educy=1 if cs_p13_1==2 & cs_p13_2==1
 	replace educy=2 if cs_p13_1==2 & cs_p13_2==2
 	replace educy=3 if cs_p13_1==2 & cs_p13_2==3
@@ -582,6 +577,7 @@ label var ed_mod_age "Education module application age"
 	replace educy=0 if (cs_p13_1==0 | cs_p13_1==1) |(cs_p13_1==2 & cs_p13_2==0)
 	replace educy=. if (cs_p13_1==99 | cs_p13_2==9 | cs_p15==9) 
 	replace educy=. if age<ed_mod_age & age!=.
+	replace educy=. if age < educy & (age != . & educy != .) & anios_esc==0
 	label var educy "Years of education"
 *</_educy_>
 
@@ -595,7 +591,7 @@ label var ed_mod_age "Education module application age"
 	replace educat7=5 if educy==12
 	replace educat7=6 if cs_p13_1==6 
 	replace educat7=7 if inrange(cs_p13_1,7,9)
-	replace educat7=. if age<ed_mod_age & age!=.
+	replace educat7=. if age<ed_mod_age & age!=.	
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete" 
 	label values educat7 lbleducat7
@@ -813,7 +809,7 @@ foreach v of local ed_var {
 
 *<_industrycat10_>
 	gen byte industrycat10=floor(p4a/100)
-	recode industrycat10 (11=1) (21=2) (22 56=4) (23=5) (31/33=3) (43 46=6) (48 49 51=7) (52=8) (93=9) (71 72 53 55 61 62 54 81 97 98 99=10)
+	recode industrycat10  (11=1) (21=2) (22=4) (23=5) (31/33=3) (43 46=6) (51 48 49=7) (52 55=8) (93=9) (53 54 56 61 62 71 72 97 98 99 81=10)
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
@@ -849,6 +845,7 @@ foreach v of local ed_var {
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
+
 *<_occup_skill_>
 	gen occup_skill = .
 	destring occup_isco, replace
@@ -859,7 +856,6 @@ foreach v of local ed_var {
 	la de lbloccupskill 1 "High" 2 "Medium" 3 "Low" 4 "Armed Forces" 5 "Not elsewhere classified"
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
 	label values occup_skill lbloccupskill
-*</_occup_skill_>
 
 *<_wage_no_compen_>
 	gen double wage_no_compen =.
@@ -895,8 +891,7 @@ foreach v of local ed_var {
 
 
 *<_whours_>
-*this variable has outliers starting in 85 to 168 hours of work 
-	gen whours = p5c_thrs
+gen whours = p5b_thrs
 	replace whours=. if lstatus!=1
 	replace whours=. if p4==4
 	replace whours=. if whours==999
@@ -906,14 +901,14 @@ foreach v of local ed_var {
 
 *<_wmonths_>
 	foreach i in 1 2 3 4 5 6 7 8 9 10 11 12{
-	 gen double new_p5g_`i'=1 if p5g`i'== `i'
+	 gen double new_p5f_`i'=1 if p5f`i'== `i'
 	}	
-	local months "new_p5g_1 new_p5g_2 new_p5g_3 new_p5g_4 new_p5g_5 new_p5g_6 new_p5g_7 new_p5g_8 new_p5g_9 new_p5g_10 new_p5g_11 new_p5g_12"
+	local months "new_p5f_1 new_p5f_2 new_p5f_3 new_p5f_4 new_p5f_5 new_p5f_6 new_p5f_7 new_p5f_8 new_p5f_9 new_p5f_10 new_p5f_11 new_p5f_12"
 	foreach m in `months' {
 		recode `m' .=0	
 	}
-	gen wmonths = new_p5g_1 + new_p5g_2 + new_p5g_3 + new_p5g_4 + new_p5g_5 + new_p5g_6 + new_p5g_7 + new_p5g_8+ new_p5g_9 + new_p5g_10 + new_p5g_11 + new_p5g_12
-	replace wmonths=12 if p5g14==14
+	gen wmonths = new_p5f_1 + new_p5f_2 + new_p5f_3 + new_p5f_4 + new_p5f_5 + new_p5f_6 + new_p5f_7 + new_p5f_8+ new_p5f_9 + new_p5f_10 + new_p5f_11 + new_p5f_12
+	replace wmonths=12 if p5f14==14
 	replace wmonths=. if lstatus!=1
 	replace wage_no_compen=. if wmonths==0
 	replace wmonths=. if wmonths==0
@@ -944,7 +939,7 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 
 
 *<_contract_>
-	gen byte contract=p3j
+	gen byte contract=p3i
 	recode contract 2=0 9=.
 	replace contract=. if lstatus!=1
 	label var contract "Employment has contract primary job 7 day recall"
@@ -954,7 +949,10 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 
 
 *<_healthins_>
-	gen byte healthins = 1 if p3m5 == 5
+
+	gen byte healthins =.
+	recode healthins .=0 if p6d==6
+	recode healthins .=1 if inrange(p6d,1,5)
 	recode healthins .=0
 	replace healthins=. if lstatus!=1
 	label var healthins "Employment has health insurance primary job 7 day recall"
@@ -964,9 +962,7 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 
 
 *<_socialsec_>
-	gen byte socialsec = 1 if p3m4 ==4 
-	recode socialsec .=0
-	replace socialsec=. if lstatus!=1
+	gen byte socialsec =.
 	label var socialsec "Employment has social security insurance primary job 7 day recall"
 	la de lblsocialsec 1 "With social security" 0 "Without social secturity"
 	label values socialsec lblsocialsec
@@ -986,15 +982,15 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 
 *<_firmsize_l_>
 	gen byte firmsize_l = .
-	replace firmsize_l=1 if p3q==01
-	replace firmsize_l=2 if p3q==02
-	replace firmsize_l=6 if p3q==03
-	replace firmsize_l=11 if p3q==04
-	replace firmsize_l=16 if p3q==05
-	replace firmsize_l=21 if p3q==06
-	replace firmsize_l=31 if p3q==07
-	replace firmsize_l=51 if p3q==08
-	replace firmsize_l=100 if inrange(p3q,09,12)
+	replace firmsize_l=1 if p3l==01
+	replace firmsize_l=2 if p3l==02
+	replace firmsize_l=6 if p3l==03
+	replace firmsize_l=11 if p3l==04
+	replace firmsize_l=16 if p3l==05
+	replace firmsize_l=21 if p3l==06
+	replace firmsize_l=31 if p3l==07
+	replace firmsize_l=51 if p3l==08
+	replace firmsize_l=100 if inrange(p3l,09,12)
 	replace firmsize_l=. if lstatus!=1
 	label var firmsize_l "Firm size (lower bracket) primary job 7 day recall"
 *</_firmsize_l_>
@@ -1002,14 +998,14 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 
 *<_firmsize_u_>
 	gen byte firmsize_u=.
-	replace firmsize_u=1 if p3q==01
-	replace firmsize_u=5 if p3q==02
-	replace firmsize_u=10 if p3q==03
-	replace firmsize_u=15 if p3q==04
-	replace firmsize_u=20 if p3q==05
-	replace firmsize_u=30 if p3q==06
-	replace firmsize_u=50 if p3q==07
-	replace firmsize_u=100 if inrange(p3q,8,12)
+	replace firmsize_u=1 if p3l==01
+	replace firmsize_u=5 if p3l==02
+	replace firmsize_u=10 if p3l==03
+	replace firmsize_u=15 if p3l==04
+	replace firmsize_u=20 if p3l==05
+	replace firmsize_u=30 if p3l==06
+	replace firmsize_u=50 if p3l==07
+	replace firmsize_u=100 if inrange(p3l,8,12)
 	replace firmsize_u=. if lstatus!=1
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>
@@ -1059,7 +1055,7 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 
 *<_industrycat10_2_>
 	gen byte industrycat10_2 = floor(p7c/100)
-	recode industrycat10_2 (11=1) (21=2) (22 56=4) (23=5) (31/33=3) (43 46=6) (48 49 51=7) (52=8) (93=9) (71 72 53 55 61 62 54 81 97 98 99=10)
+	recode industrycat10_2 (11=1) (21=2) (22=4) (23=5) (31/33=3) (43 46=6) ( 51 48 49=7) (52 55=8) (93=9) (53 54 56 61 62 71 72 81 97 98 99=10)
 	replace industrycat10_2=. if lstatus!=1
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
@@ -1079,16 +1075,17 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 	label var occup_orig_2 "Original occupation record secondary job 7 day recall"
 *</_occup_orig_2_>
 
-*<_occup_2_>
-	gen byte occup_2 = floor(p7a/1000)
-	label var occup_2 "1 digit occupational classification secondary job 7 day recall"
-	label values occup_2 lbloccup
-*</_occup_2_>
 
 *<_occup_isco_2_>
 	gen occup_isco_2 = isco_2
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
+
+*<_occup_2_>
+	gen byte occup_2 = floor(p7a/1000)
+	label var occup_2 "1 digit occupational classification secondary job 7 day recall"
+	label values occup_2 lbloccup
+*</_occup_2_>
 
 *<_occup_skill_2_>
 	gen occup_skill_2 = .
@@ -1133,13 +1130,13 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 
 
 *<_firmsize_l_2_>
-	gen byte firmsize_l_2 = p7e
+	gen byte firmsize_l_2 = .
 	label var firmsize_l_2 "Firm size (lower bracket) secondary job 7 day recall"
 *</_firmsize_l_2_>
 
 
 *<_firmsize_u_2_>
-	gen byte firmsize_u_2 = p7e
+	gen byte firmsize_u_2 = .
 	label var firmsize_u_2 "Firm size (upper bracket) secondary job 7 day recall"
 *</_firmsize_u_2_>
 
@@ -1633,6 +1630,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`path_output'\MEX_2005_ENOE_V01_M_V01_A_GLD.dta", replace
+save "`path_output'\MEX_2008_ENOE_V01_M_V01_A_GLD.dta", replace
 
 *</_% SAVE_>

@@ -5,7 +5,7 @@
 
 /* ----------------------------------------------------------------------- 
 
-<_Program name_>				[MEX_2005_ENOE_V01_M_v01_A_GLD.do] </_Program name_> 
+<_Program name_>				[MEX_2013_ENOE_V01_M_v01_A_GLD.do] </_Program name_> 
 <_Application_>					[STATA] <_Application_> 
 <_Author(s)_>					[The World Bank Jobs Group] </_Author(s)_> 
 <_Date created_>				2021-04-01 </_Date created_> 
@@ -14,25 +14,25 @@
 
 <_Country_>						[Mexico (MEX)] </_Country_> 
 <_Survey Title_>				[Encuesta Nacional de Ocupación y Empleo] </_Survey Title_> 
-<_Survey Year_>					[2005] </_Survey Year_> 
+<_Survey Year_>					[2013] </_Survey Year_> 
 <_Study ID_>					[Microdata Library ID if present] </_Study ID_> 
-<_Data collection from_>		[01/2005] </_Data collection from_> 
-<_Data collection to_>			[05/2005] </_Data collection to_> 
+<_Data collection from_>		[01/2013] </_Data collection from_> 
+<_Data collection to_>			[05/2013] </_Data collection to_> 
 <_Source of dataset_> 			[Mexico NSO] </_Source of dataset_> 
-<_Sample size (HH)_> 			[100,776] </_Sample size (HH)_> 
-<_Sample size (IND)_> 			[402,186] </_Sample size (IND)_> 
-<_Sampling method_> 			[El tipo de muestreo utilizado es probabilístico, bietápico, estratificado y por conglomerados.] </_Sampling method_> 
-<_Geographic coverage_> 		[Los niveles geograficos usados en la encuesta de México comienzan en estados siguen con ciudades autorrepresentadas y terminan con municipios de las ciudades autorrepresentadas. https://www.inegi.org.mx/contenidos/productos/prod_serv/contenidos/espanol/bvinegi/productos/metodologias/est/cobertura.pdf] </_Geographic coverage_>  
+<_Sample size (HH)_> 			[101,382] </_Sample size (HH)_> 
+<_Sample size (IND)_> 			[379,010] </_Sample size (IND)_> 
+<_Sampling method_> 			[ El tipo de muestreo utilizado es probabilístico, bietápico, estratificado y por conglomerados.] </_Sampling method_> 
+<_Geographic coverage_> 		[Los niveles geograficos usados en la encuesta de México comienzan en estados siguen con ciudades autorrepresentadas y terminan con municipios de las ciudades autorrepresentadas. https://www.inegi.org.mx/contenidos/productos/prod_serv/contenidos/espanol/bvinegi/productos/metodologias/est/cobertura.pdf] </_Geographic coverage_> 
 <_Currency_> 					[Pesos] </_Currency_> 
 
 ----------------------------------------------------------------------- 
 
-<_ICLS Version_>				[ICLS 13] </_ICLS Version_> 
-<_ISCED Version_>				[ISCED 1997] </_ISCED Version_> 
-<_ISCO Version_>				[ISCO-68] </_ISCO Version_> 
-<_OCCUP National_>				[CMO I & II 1998 ] </_OCCUP National_> 
-<_ISIC Version_>				[Rev 3.1] </_ISIC Version_> 
-<_INDUS National_>				[SCIAN 2002] </_INDUS National_> 
+<_ICLS Version_>				[ICLS-18] </_ICLS Version_> 
+<_ISCED Version_>				[ISCED 2011] </_ISCED Version_>  
+<_ISCO Version_>				[ISCO 2008] </_ISCO Version_> 
+<_OCCUP National_>				[Sinco 11] </_OCCUP National_>  
+<_ISIC Version_>				[Rev.4 ] </_ISIC Version_> 
+<_INDUS National_>				[SCIAN 2007] </_INDUS National_> 
 
 ----------------------------------------------------------------------- 
 <_Version Control_> 
@@ -57,22 +57,21 @@ set mem 800m
 
 *----------1.2: Set directories------------------------------*
 
-local path_in "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_ENOE\MEX_2005_ENOE_v01_M\Data\Stata"
-local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_ENOE\MEX_2005_ENOE_v01_M_v01_A_GLD\Data\Harmonized"
+* All steps necessary to merge dataset
+local path_in "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2013_ENOE\MEX_2013_ENOE_v01_M\Data\Stata"
+local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2013_ENOE\MEX_2013_ENOE_v01_M_v01_A_GLD\Data\Harmonized"
 
-*----------1.3: Database assembly------------------------------*
-
-* All steps necessary to merge datasets (if several) to have all elements needed to produce
+*----------1.3: Database assembly-------------------s (if several) to have all elements needed to produce
 * harmonized output in a single file	
-	use "`path_in'\VIVT105.dta",clear
+	use "`path_in'\VIVT113.dta",clear
 	drop p1-p3
 	destring loc mun est ageb t_loc cd_a upm d_sem n_pro_viv ent con v_sel n_ent per, replace
-	merge 1:m ent con v_sel using "`path_in'\HOGT105.dta", nogen
-	merge 1:m ent con v_sel n_hog using "`path_in'\SDEMT105.dta"
+	merge 1:m ent con v_sel using "`path_in'\HOGT113.dta", nogen
+	merge 1:m ent con v_sel n_hog using "`path_in'\SDEMT113.dta"
 	drop if _merge==1
 	drop _merge
-	merge 1:1 ent con v_sel n_hog n_ren using "`path_in'\COE1T105.dta", nogen
-	merge 1:1 ent con v_sel n_hog n_ren using "`path_in'\COE2T105.dta", nogen
+	merge 1:1 ent con v_sel n_hog n_ren using "`path_in'\COE1T113.dta", nogen
+	merge 1:1 ent con v_sel n_hog n_ren using "`path_in'\COE2T113.dta", nogen
 	keep if r_pre==0 & inlist(c_res,1,3)
 	tostring (ent v_sel n_hog n_ren h_mud), gen(ent_str v_sel_str n_hog_str n_ren_str h_mud_str) format(%02.0f)
 	tostring con, replace
@@ -87,32 +86,36 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_ENOE\MEX_2005_ENO
 ***first job
 	rename scian scian_orig
 	tostring p4a, gen(scian)
-	merge m:1 scian using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_ENOE\MEX_2005_ENOE_v01_M\Data\Stata\SCIAN_02_ISIC_3.1.dta", keep(master match) nogen
+	merge m:1 scian using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2013_ENOE\MEX_2013_ENOE_v01_M\Data\Stata\SCIAN_07_ISIC_4.dta", keep(master match) nogen
 *Note: rename necessary to allow for the second job code to generate a new cmo for the merge
 	rename scian scian_1
 	rename isic isic_1
 ***second job
 	tostring p7c, gen(scian)
-	merge m:1 scian using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_ENOE\MEX_2005_ENOE_v01_M\Data\Stata\SCIAN_02_ISIC_3.1.dta", keep(master match) nogen
+	merge m:1 scian using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2013_ENOE\MEX_2013_ENOE_v01_M\Data\Stata\SCIAN_07_ISIC_4.dta", keep(master match) nogen
 *Note: rename necessary to misinterpret scian
 	rename scian scian_2
 	rename isic isic_2
 
 *ISCO	
+
+*Note: the dta. 2013- onwards have in var p3 observations already converted to Sinco from CMO, no  need of conversion.
+	
 ***then first job
 	tostring p3, gen(cmo)
-	merge m:1 cmo using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_ENOE\MEX_2005_ENOE_v01_M\Data\Stata\CMO_09_ISCO_08.dta", keep(master match) nogen
+	merge m:1 cmo using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2013_ENOE\MEX_2013_ENOE_v01_M\Data\Stata\CMO_09_ISCO_08.dta", keep(master match) nogen
 *Note: rename necessary to allow for the second job code to generate a new cmo for the merge
 	rename cmo cmo_1
 	rename isco isco_1
 	
 ***then second job
 	tostring p7a, gen(cmo)
-	merge m:1 cmo using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_ENOE\MEX_2005_ENOE_v01_M\Data\Stata\CMO_09_ISCO_08.dta", keep(master match) nogen
+	merge m:1 cmo using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2013_ENOE\MEX_2013_ENOE_v01_M\Data\Stata\CMO_09_ISCO_08.dta", keep(master match) nogen
 *Note: rename necessary to misinterpret cmo
 	rename cmo cmo_2
 	rename isco isco_2
-
+	
+	
 	
 /*%%=============================================================================================
 	2: Survey & ID
@@ -139,13 +142,13 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_ENOE\MEX_2005_ENO
 
 
 *<_icls_v_>
-	gen icls_v = "ICLS-[13]"
+	gen icls_v = "ICLS-[18]"
 	label var icls_v "ICLS version(s) underlying questionnaire questions"
 *</_icls_v_>
 
 
 *<_year_>
-	gen int year = 2005
+	gen int year = 2013
 	label var year "Year of survey"
 *</_year_>
 
@@ -169,7 +172,7 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_ENOE\MEX_2005_ENO
 
 
 *<_int_year_>
-	gen int_year=2005
+	gen int_year=2013
 	label var int_year "Year of the interview"
 *</_int_year_>
 
@@ -254,6 +257,7 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_ENOE\MEX_2005_ENO
 	label var urban "Location is urban"
 	la de lblurban 1 "Urban" 0 "Rural"
 	label values urban lblurban
+
 *</_urban_>
 
 *<_subnatid1_>
@@ -804,6 +808,7 @@ foreach v of local ed_var {
 *</_industry_orig_>
 
 
+
 *<_industrycat_isic_>
 	encode isic_1, gen(industrycat_isic)
 	replace industrycat_isic=. if lstatus!=1
@@ -813,7 +818,7 @@ foreach v of local ed_var {
 
 *<_industrycat10_>
 	gen byte industrycat10=floor(p4a/100)
-	recode industrycat10 (11=1) (21=2) (22 56=4) (23=5) (31/33=3) (43 46=6) (48 49 51=7) (52=8) (93=9) (71 72 53 55 61 62 54 81 97 98 99=10)
+	recode industrycat10 (11=1) (21=2) (22=4) (23=5) (31/33=3) (43 46=6) (51 48 49=7) (52 55=8) (93=9) (53 54 56 61 62 71 72 97 98 99 81=10)
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
@@ -831,6 +836,7 @@ foreach v of local ed_var {
 	replace industrycat4=. if lstatus!=1
 *</_industrycat4_>
 
+
 *<_occup_orig_>
 	gen occup_orig = p3
 	label var occup_orig "Original occupation record primary job 7 day recall"
@@ -843,10 +849,10 @@ foreach v of local ed_var {
 	label values occup lbloccup
 *</_occup_>
 
-
 *<_occup_isco_>
 	gen occup_isco = isco_1
 	label var occup_isco "ISCO code of primary job 7 day recall"
+	
 *</_occup_isco_>
 
 *<_occup_skill_>
@@ -860,6 +866,7 @@ foreach v of local ed_var {
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
 	label values occup_skill lbloccupskill
 *</_occup_skill_>
+
 
 *<_wage_no_compen_>
 	gen double wage_no_compen =.
@@ -1059,7 +1066,7 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 
 *<_industrycat10_2_>
 	gen byte industrycat10_2 = floor(p7c/100)
-	recode industrycat10_2 (11=1) (21=2) (22 56=4) (23=5) (31/33=3) (43 46=6) (48 49 51=7) (52=8) (93=9) (71 72 53 55 61 62 54 81 97 98 99=10)
+	recode industrycat10_2 (11=1) (21=2) (22 51=4) (23=5) (31/33=3) (43 46=6) (48/49=7) (52=8) (53/56=10) (61/62=9) (71 81 93 99 98 72 97=10)
 	replace industrycat10_2=. if lstatus!=1
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
@@ -1079,16 +1086,17 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 	label var occup_orig_2 "Original occupation record secondary job 7 day recall"
 *</_occup_orig_2_>
 
-*<_occup_2_>
-	gen byte occup_2 = floor(p7a/1000)
-	label var occup_2 "1 digit occupational classification secondary job 7 day recall"
-	label values occup_2 lbloccup
-*</_occup_2_>
 
 *<_occup_isco_2_>
 	gen occup_isco_2 = isco_2
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
+
+*<_occup_2_>
+	gen byte occup_2 = floor(p7a/1000)
+	label var occup_2 "1 digit occupational classification secondary job 7 day recall"
+	label values occup_2 lbloccup
+*</_occup_2_>
 
 *<_occup_skill_2_>
 	gen occup_skill_2 = .
@@ -1633,6 +1641,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`path_output'\MEX_2005_ENOE_V01_M_V01_A_GLD.dta", replace
+save "`path_output'\MEX_2013_ENOE_V01_M_V01_A_GLD.dta", replace
 
 *</_% SAVE_>
