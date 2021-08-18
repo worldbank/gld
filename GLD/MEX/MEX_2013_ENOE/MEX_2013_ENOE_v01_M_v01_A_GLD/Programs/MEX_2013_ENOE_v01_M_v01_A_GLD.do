@@ -102,17 +102,17 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2013_ENOE\MEX_2013_ENO
 *Note: the dta. 2013- onwards have in var p3 observations already converted to Sinco from CMO, no  need of conversion.
 	
 ***then first job
-	tostring p3, gen(cmo)
-	merge m:1 cmo using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2013_ENOE\MEX_2013_ENOE_v01_M\Data\Stata\CMO_09_ISCO_08.dta", keep(master match) nogen
+	tostring p3, gen(sinco)
+	merge m:1 sinco using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2013_ENOE\MEX_2013_ENOE_v01_M\Data\Stata\SINCO_11_ISCO_08.dta", keep(master match) nogen
 *Note: rename necessary to allow for the second job code to generate a new cmo for the merge
-	rename cmo cmo_1
+	rename sinco sinco_1
 	rename isco isco_1
 	
 ***then second job
-	tostring p7a, gen(cmo)
-	merge m:1 cmo using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2013_ENOE\MEX_2013_ENOE_v01_M\Data\Stata\CMO_09_ISCO_08.dta", keep(master match) nogen
+	tostring p7a, gen(sinco)
+	merge m:1 sinco using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2013_ENOE\MEX_2013_ENOE_v01_M\Data\Stata\SINCO_11_ISCO_08.dta", keep(master match) nogen
 *Note: rename necessary to misinterpret cmo
-	rename cmo cmo_2
+	rename sinco sinco_2
 	rename isco isco_2
 	
 	

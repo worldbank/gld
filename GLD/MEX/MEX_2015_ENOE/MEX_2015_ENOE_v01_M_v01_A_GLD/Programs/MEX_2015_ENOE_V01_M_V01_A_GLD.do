@@ -57,8 +57,8 @@ set mem 800m
 
 *----------1.2: Set directories------------------------------*
 
-local path_in "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2015_LFS\MEX_2015_LFS_v01_M\Data\Stata"
-local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2015_LFS\MEX_2015_LFS_v01_M_v01_A_GLD\Data\Harmonized"
+local path_in "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2015_ENOE\MEX_2015_ENOE_v01_M\Data\Stata"
+local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2015_ENOE\MEX_2015_ENOE_v01_M_v01_A_GLD\Data\Harmonized"
 
 *----------1.3: Database assembly------------------------------*
 
@@ -87,26 +87,35 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2015_LFS\MEX_2015_LFS_
 ***first job
 	rename scian scian_orig
 	tostring p4a, gen(scian)
-	merge m:1 scian using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2015_LFS\MEX_2015_LFS_v01_M\Data\Stata\SCIAN_13_ISIC_4.dta", keep(master match) nogen
+	merge m:1 scian using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2015_ENOE\MEX_2015_ENOE_v01_M\Data\Stata\SCIAN_13_ISIC_4.dta", keep(master match) nogen
+*Note: rename necessary to allow for the second job code to generate a new cmo for the merge
 	rename scian scian_1
+	rename isic isic_1
 ***second job
 	tostring p7c, gen(scian)
-	merge m:1 scian using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2015_LFS\MEX_2015_LFS_v01_M\Data\Stata\SCIAN_13_ISIC_4.dta", keep(master match) nogen
+	merge m:1 scian using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2015_ENOE\MEX_2015_ENOE_v01_M\Data\Stata\SCIAN_13_ISIC_4.dta", keep(master match) nogen
+*Note: rename necessary to misinterpret scian
 	rename scian scian_2
+	rename isic isic_2
 
 *ISCO	
 
-*Note: the dta. 2013- onwards have in var p3 observations already converted to Sinco from CMO, no  need of conversion.
-
+*Note: the dta. 2015- onwards have in var p3 observations already converted to Sinco from CMO, no  need of conversion.
+	
 ***then first job
 	tostring p3, gen(sinco)
-	merge m:1 sinco using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2015_LFS\MEX_2015_LFS_v01_M\Data\Stata\SINCO_11_ISCO_08.dta", keep(master match) nogen
+	merge m:1 sinco using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2015_ENOE\MEX_2015_ENOE_v01_M\Data\Stata\SINCO_11_ISCO_08.dta", keep(master match) nogen
+*Note: rename necessary to allow for the second job code to generate a new cmo for the merge
 	rename sinco sinco_1
+	rename isco isco_1
 	
 ***then second job
 	tostring p7a, gen(sinco)
-	merge m:1 sinco using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2015_LFS\MEX_2015_LFS_v01_M\Data\Stata\SINCO_11_ISCO_08.dta", keep(master match) nogen
+	merge m:1 sinco using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2015_ENOE\MEX_2015_ENOE_v01_M\Data\Stata\SINCO_11_ISCO_08.dta", keep(master match) nogen
+*Note: rename necessary to misinterpret cmo
 	rename sinco sinco_2
+	rename isco isco_2	
+
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -801,8 +810,7 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_>
-	gen industrycat_isic =scian_1
-	destring industrycat_isic, replace
+	encode isic_1, gen(industrycat_isic)
 	replace industrycat_isic=. if lstatus!=1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
@@ -842,7 +850,7 @@ foreach v of local ed_var {
 *</_occup_>
 
 *<_occup_isco_>
-	gen occup_isco = sinco_1
+	gen occup_isco = isco_1
 	label var occup_isco "ISCO code of primary job 7 day recall"
 	
 *</_occup_isco_>
@@ -850,11 +858,9 @@ foreach v of local ed_var {
 *<_occup_skill_>
 	gen occup_skill = .
 	destring occup_isco, replace
-	replace occup_skill = 1 if inrange(occup_isco,1000,2999)
-	replace occup_skill = 2 if inrange(occup_isco,3000,7999) 
-	replace occup_skill = 3 if inrange(occup_isco,8000,8999) 
-	replace occup_skill = 4 if inrange(occup_isco,5400,5499) 
-	replace occup_skill = 5 if inrange(occup_isco,9000,9999) 
+	replace occup_skill = 1 if inrange(occup_isco,1000,3599)
+	replace occup_skill = 2 if inrange(occup_isco,4000,8999) 
+	replace occup_skill = 3 if inrange(occup_isco,9000,9999) 
 	replace occup_skill=. if lstatus!=1
 	la de lbloccupskill 1 "High" 2 "Medium" 3 "Low" 4 "Armed Forces" 5 "Not elsewhere classified"
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
@@ -1051,10 +1057,9 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 
 
 *<_industrycat_isic_2_>
-	gen industrycat_isic_2 =scian_2
-	destring industrycat_isic_2, replace
+	encode isic_2, gen(industrycat_isic_2)
 	replace industrycat_isic_2=. if lstatus!=1
-	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
+	label var industrycat_isic_2 "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_2_>
 
 
@@ -1082,7 +1087,7 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 
 
 *<_occup_isco_2_>
-	gen occup_isco_2 = sinco_2
+	gen occup_isco_2 = isco_2
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
@@ -1095,11 +1100,9 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 *<_occup_skill_2_>
 	gen occup_skill_2 = .
 	destring occup_isco_2, replace
-	replace occup_skill_2 = 1 if inrange(occup_isco_2,1000,2999)
-	replace occup_skill_2 = 2 if inrange(occup_isco_2,3000,7999) 
-	replace occup_skill_2 = 3 if inrange(occup_isco_2,8000,8999) 
-	replace occup_skill_2 = 4 if inrange(occup_isco_2,5400,5499) 
-	replace occup_skill_2 = 5 if inrange(occup_isco_2,9000,9999) 
+	replace occup_skill_2 = 1 if inrange(occup_isco_2,1000,3599)
+	replace occup_skill_2 = 2 if inrange(occup_isco_2,4000,8999) 
+	replace occup_skill_2 = 3 if inrange(occup_isco_2,9000,9999)  
 	replace occup_skill_2=. if lstatus!=1
 	label var occup_skill_2 "Skill based on ISCO standard secondary job 7 day recall"
 	label values occup_skill_2 lbloccupskill
