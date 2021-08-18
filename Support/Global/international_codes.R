@@ -24,8 +24,9 @@ library(janitor)
 load(PHL_meta)
 if (FALSE) {load(PHL_labels)}
 
-# get function
+# get functions
 source(file.path(code, "Global/read_pdf_table.R"))
+source(file.path(code, "Global/best_matches.R"))
 
 # pdf file path
 psic94_path <- file.path(PHL, "PHL_docs/International Codes/PSA_PSIC_1994.pdf")
@@ -148,7 +149,6 @@ isic94_clean <- isic94_clean %>%
 
 assertthat::assert_that( sum(str_length(isic94_clean$class) <= 3, na.rm = TRUE) ==0 ) # should be 0 or close to
 assertthat::assert_that( sum(str_length(isic94_clean$group) != 3, na.rm = TRUE) == 0 ) # should be 0 or close to
-
 
 
 
@@ -331,6 +331,29 @@ assertthat::assert_that( sum(str_length(isco12_clean$submajor) != 3, na.rm=TRUE)
 
 
 
+## Determine Best Matches ----
+match_isic94_list <- best_match(df = isic94_clean, 
+                                country_code = "class", 
+                                international_code = "isic3_1")
+
+match_isic94_table <- match_isic94_list[[1]]
+
+
+
+match_isic09_list <- best_match(df = isic09_clean,
+                                country_code = "class",
+                                international_code = "isic4")
+
+match_isic09_table <- match_isic09_list[[1]]
+
+
+
+match_isco12_list <- best_match(df = isco12_clean,
+                                country_code = "minor",
+                                international_code = "isco08")
+
+match_isco12_table <- match_isco12_list[1]
+
 
 
 # save data ----
@@ -340,13 +363,16 @@ save(isic94_codes_raw, isic94_codes, isic94_leftover, isic94_clean, psic94_path,
      isic09_codes_raw, isic09_codes, isic09_leftover, isic09_clean, psic09_path, 
      psoc12_codes_raw, psoc12_codes, isco12_leftover, isco12_clean, psoc12_path,
      read_pdf, UNisic3,
+     match_isic94_list, match_isic94_table,
+     match_isic09_list, match_isic09_table, 
+     match_isco12_list, match_isco12_table,
      file = file.path(PHL, "PHL_data/international_codes.Rdata") )
 
 
 # export dta 
 
 for (i in seq(from=1997,to=2011)) {
-  haven::write_dta(isic94_clean,
+  haven::write_dta(match_isic94_table,
                    path = file.path(PHL, 
                                     paste0("PHL_",as.character(i),"_LFS"), 
                                     paste0("PHL_",as.character(i),"_LFS",
@@ -355,7 +381,7 @@ for (i in seq(from=1997,to=2011)) {
 }
 
 for (i in seq(from=2012,to=2019)) {
-  haven::write_dta(isic09_clean,
+  haven::write_dta(match_isic09_table,
                    path = file.path(PHL, 
                                     paste0("PHL_",as.character(i),"_LFS"), 
                                     paste0("PHL_",as.character(i),"_LFS",
@@ -364,7 +390,7 @@ for (i in seq(from=2012,to=2019)) {
 }
 
 for (i in seq(from=2016,to=2019)) {
-  haven::write_dta(isco12_clean,
+  haven::write_dta(match_isco12_table,
                    path = file.path(PHL, 
                                     paste0("PHL_",as.character(i),"_LFS"), 
                                     paste0("PHL_",as.character(i),"_LFS",
@@ -372,14 +398,14 @@ for (i in seq(from=2016,to=2019)) {
                    version = 14)
 }
 
-haven::write_dta(isic94_clean,
+haven::write_dta(match_isic94_table,
                  path = file.path(PHL, "PHL_data/GLD/PHL_PSIC_ISIC_94_key.dta"),
                  version = 14)
 
-haven::write_dta(isic09_clean,
+haven::write_dta(match_isic09_table,
                  path = file.path(PHL, "PHL_data/GLD/PHL_PSIC_ISIC_09_key.dta"),
                  version = 14)
 
-haven::write_dta(isco12_clean,
+haven::write_dta(match_isco12_table,
                  path = file.path(PHL, "PHL_data/GLD/PHL_PSOC_ISCO_12_key.dta"),
                  version = 14)
