@@ -10,6 +10,7 @@
 #' @param xmin a list of x-coordinate column minimums. Same length as varnames.
 #' @param xmax a list of x-coordinate column maximums. Same length as varnames.
 #' @param numlist an optional vector of omitted numbers to filter. 
+#' @param match_tol the nearest-neighbor y match tolerance for misaligned rows
 
 read_pdf <- function(pdf_path, page_min, page_max, 
                      
@@ -19,7 +20,8 @@ read_pdf <- function(pdf_path, page_min, page_max,
                      xlabel = c(155, 420),
                      xmin = c(91, 131, 415, 446, 501),
                      xmax = c(130, 175, 445, 500, 9999),
-                     numlist = NULL
+                     numlist = NULL,
+                     match_tol = 2
                      
                      ) {
  
@@ -29,6 +31,7 @@ read_pdf <- function(pdf_path, page_min, page_max,
    
   # define 1st sub-function to import the table
   import_table_pdf <- function( page, ... ) {
+    
     
     
     # define 2nd sub-function that extracts column info from partially-processed data
@@ -41,6 +44,44 @@ read_pdf <- function(pdf_path, page_min, page_max,
       
       return(col)
     }
+    
+    
+    
+    # define 3rd sub-function that matches close y-value rows
+    #     # finds closes number to itself other than itself within tolerance, if exists
+    nearest_neighbor <- function(x, # input row's y (single value)
+                                 y, # whole y column (whole col)
+                                 ...) {
+      
+      
+      
+      # make x distinct
+      query <- unique({{x}})
+      
+      # make tibble
+      matches <- tibble(
+        ys = {{y}},
+        match = near(query, ys, {{match_tol}})) # tell me if i element in col is near x value
+      
+      
+      # return match value 
+      closest_y <- matches %>%
+        filter(match == TRUE) %>% # keep only vals within tolerance
+        filter(ys != query) %>% # value should not be itself
+        distinct(ys)
+      
+      return_vector <- as.vector(closest_y$ys)
+      
+      
+      # if length of return rector is 0, replace with NA
+      if (length(return_vector) == 0) {
+        return_vector <- NA_integer_
+      }
+      
+      return(return_vector)
+    
+    }
+    
     
     
     
@@ -104,12 +145,26 @@ read_pdf <- function(pdf_path, page_min, page_max,
       filter(!grepl("\\(", text)) %>% # remove here 
       filter(!grepl("\\)", text)) %>% 
       mutate(text = case_when(is.null(text) ~ NA_character_,
-                              TRUE ~ text)) %>%
+                              TRUE ~ text)) 
+    
+    table %<>% 
       group_by(y) %>%
       mutate(page_grp = cur_group_id(),
-             page = page) %>%
+             page = page,
+             n_in_row = n(),
+             nearest_y = nearest_neighbor(y, table[["y"]], tol = 12)) %>% # data pronoun
+      arrange(page_grp, nearest_y) %>%
+      ungroup() %>%
+      mutate(y2 = case_when(is.na(nearest_y) ~ y,
+                            nearest_y >  y  ~ nearest_y,
+                            nearest_y <  y  ~ y)) %>%
+      group_by(y2) %>%
+      mutate(page_grp2 = cur_group_id(),
+             n_in_row2 = n()) %>%
+      arrange(page_grp2) %>%
       pivot_wider(names_from = "varname",
-                  values_from= "text")
+                  values_from = "text",
+                  id_cols = all_of(c("y2", "page_grp2", "page")))
 
     
     
