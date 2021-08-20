@@ -35,7 +35,7 @@ loc 	checks_i2 	0	// 1 to run i2d2 check main script
 ** Survey Year settings.
 * you can run a specific year by setting to 1
 
-loc 	phl1997		1
+loc 	phl1997		0
 loc 	phl1998 	0
 loc 	phl1999 	0
 loc 	phl2000 	0

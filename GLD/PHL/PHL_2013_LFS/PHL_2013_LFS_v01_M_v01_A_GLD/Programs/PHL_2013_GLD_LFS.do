@@ -93,7 +93,7 @@ set mem 800m
 	local round3 `"`stata'\LFSjul13.dta"'
 	local round4 `"`stata'\LFS OCT2013.dta"'
 
-	local isic_key 	 `"`gld'\Work\PHL_PSIC_ISIC_09_key.dta"'
+	gl isic_key 	 `"`gld'\Work\PHL_PSIC_ISIC_09_key.dta"'
 
 	* ouput
 	local path_output `"`gld_data'\\`cty3'_`surv_yr'_LFS_v01_M_v01_A_GLD"'
@@ -114,6 +114,28 @@ set mem 800m
 		`"`round1'"' `"`round2'"' `"`round3'"' `"`round4'"' /// survey files
 		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template-IN.xlsx"' /// previously edited harmonization file
 		, clear surveys(JAN2013 APR2013 JUL2013 OCT2013) generate(round) // survey names
+
+* Generate Survey Original Variables.
+	/*Some variables will be generated that are the same name of variables that appear in
+		the original survey. For neatness, consistency, and to avoid errors, I will create a
+		sub-routine that will automatically rename the varible in the survey with a suffix
+		"_orig" to distinguish it from the GLD variable.*/
+
+	loc conflictvars 	hhid weight psu
+
+
+	* Begin sub-routine:
+		//rename survey original hhid variable if already exists
+	foreach var of local conflictvars {
+
+		ds 	`var'
+		loc var_orig	= r(varlist)
+		loc var_orig_l : list sizeof var_orig
+
+			if (`var_orig_l' >= 1) {
+				rename 	`var' `var'_orig
+			}
+		}
 
 
 
@@ -201,6 +223,8 @@ set mem 800m
 
 </_hhid_note> */
 
+
+
 	loc idhvars 	hhnum   							// store idh vars in local
 
 
@@ -276,7 +300,7 @@ set mem 800m
 
 
 *<_psu_>
-	gen psu = psu
+	gen psu = psu_orig
 	label var psu "Primary sampling units"
 *</_psu_>
 
@@ -338,7 +362,7 @@ set mem 800m
  	*/
 
 	gen byte 		subnatid1 = creg
-	recode 			reg01 reg02 	/// recode both of thes variables
+	recode 			subnatid1 	/// recode both of thes variables
 					(4 = 41) 		/// sometimes Calabarzon appears as value 4, recode to always be 41
 					(17= 42)		//  sometimes Mimaropa appears as value 17, recode to always be 42
 
@@ -897,7 +921,7 @@ foreach v of local ed_var {
 *----------8.2: 7 day reference main job------------------------------*
 
 
-{
+
 *<_empstat_>
 	gen byte 		empstat=.
 	replace 		empstat=1 	if class==0 | class==1 | class==2 | class==5
@@ -957,21 +981,23 @@ foreach v of local ed_var {
 
 	preserve
 
-		clonevar subclass = c18_pkb
+		gen class = c18_pkb
+		tostring 	class ///
+					, format(`"%04.0f"') replace
 
-		merge 		1:1 ///
-					subclass ///
-					using `isic_key' ///
-					generate(isic_key_merge)
 
+		merge 		m:1 ///
+					class ///
+					using "path to key" ///
+					, generate(isic_merge)
 					* the string variable in isic4 will is industrycat_isic
-		destring 	isic4 ///
-					, generate(industrycat_isic)
+		*destring 	isic4 ///
+		*			, generate(industrycat_isic)
 
 		pause on
 		pause
 
-	restore 
+	restore
 
 
 	*gen 			industrycat_isic = .

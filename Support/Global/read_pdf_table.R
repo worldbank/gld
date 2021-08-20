@@ -10,6 +10,8 @@
 #' @param xmin a list of x-coordinate column minimums. Same length as varnames.
 #' @param xmax a list of x-coordinate column maximums. Same length as varnames.
 #' @param numlist an optional vector of omitted numbers to filter. 
+#' @param fuzzy_rows an optional boolean parameter that toggles slightly misaligned rows in pdf
+#' @param match_tol the nearest-neighbor y match tolerance for misaligned rows
 
 read_pdf <- function(pdf_path, page_min, page_max, 
                      
@@ -19,16 +21,19 @@ read_pdf <- function(pdf_path, page_min, page_max,
                      xlabel = c(155, 420),
                      xmin = c(91, 131, 415, 446, 501),
                      xmax = c(130, 175, 445, 500, 9999),
-                     numlist = NULL
-                     
+                     numlist = NULL,
+                     fuzzy_rows = FALSE,
+                     match_tol = 2
+
                      ) {
  
   
   
-  
+  ##### Define Functions #####
    
   # define 1st sub-function to import the table
   import_table_pdf <- function( page, ... ) {
+    
     
     
     # define 2nd sub-function that extracts column info from partially-processed data
@@ -41,6 +46,49 @@ read_pdf <- function(pdf_path, page_min, page_max,
       
       return(col)
     }
+    
+    
+    
+    # define 3rd sub-function that matches close y-value rows
+    #     # finds closes number to itself other than itself within tolerance, if exists
+    nearest_neighbor <- function(ref_col, match_tol = 3, ...) {
+      
+      
+      purrr::map_dbl(.x = {{ref_col}}, function(x, ...) {
+        
+        
+        # # make tibble of matches
+        matches <- tibble(
+          ys = {{ref_col}},
+          match = near(x, {{ref_col}}, {{match_tol}}))
+        
+        # return closest match value
+        closest_y <- matches %>%
+          filter(match == TRUE) %>% # keep only vals within tolerance
+          filter(ys != x) %>% # value should not be itself
+          distinct(ys) %>%
+          mutate(dif = abs(x - ys)) %>%
+          arrange(dif)
+        
+        # return number where dif is smallest only
+        return_val <- as.integer(closest_y$ys)[1] 
+        
+        
+        # if length of return rector is 0, replace with NA
+        if (length(return_val) == 0) {
+          return_val <- NA_integer_
+        }
+        
+        
+        return(return_val)
+        
+        
+      })
+      
+      
+      
+    }
+    
     
     
     
@@ -104,14 +152,53 @@ read_pdf <- function(pdf_path, page_min, page_max,
       filter(!grepl("\\(", text)) %>% # remove here 
       filter(!grepl("\\)", text)) %>% 
       mutate(text = case_when(is.null(text) ~ NA_character_,
-                              TRUE ~ text)) %>%
+                              TRUE ~ text)) 
+    
+    table %<>% 
       group_by(y) %>%
       mutate(page_grp = cur_group_id(),
-             page = page) %>%
-      pivot_wider(names_from = "varname",
-                  values_from= "text")
+             page = page,
+             n_in_row = n()) 
 
     
+    keys <- c("page", "page_grp", "y")
+    
+    if (fuzzy_rows == TRUE) {
+      
+      keys <- c("page", "page_grp", "y")
+      
+      table %<>%
+        ungroup() %>%
+        mutate(nearest_y = nearest_neighbor(ref_col = y,
+                                            match_tol = 3)) %>%
+        arrange(page_grp, nearest_y) %>%
+        mutate(y2 = case_when(is.na(nearest_y) ~ as.integer(y),
+                              nearest_y >  y  ~ as.integer(nearest_y),
+                              nearest_y <  y  ~ as.integer(y))) %>%
+        group_by(y2) %>%
+        mutate(page_grp2 = cur_group_id(),
+               n_in_row2 = n()) %>%
+        arrange(page_grp2) %>%
+        select(-y, -page_grp, -n_in_row) %>%
+        rename(y = y2, page_grp = page_grp2) 
+      
+      
+      
+    }
+    
+    
+      
+    table %<>%
+      ungroup() %>%
+      group_by(page, page_grp) %>%
+      pivot_wider(names_from = "varname",
+                  values_from = "text",
+                  id_cols = keys) 
+                  #id_cols = all_of(keys)) # this should leave all cols as ids?
+                # will this id_cols work for both situations where fuzzy_rows is both 
+                # true and false since in FALSE situation only page will exist? should
+                # with any_of
+
     
     return(table)
 

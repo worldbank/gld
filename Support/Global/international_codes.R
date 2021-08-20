@@ -17,6 +17,7 @@ library(tidyverse)
 library(stringr)
 library(pdftools)
 library(janitor)
+library(magrittr)
 
 
 
@@ -24,8 +25,9 @@ library(janitor)
 load(PHL_meta)
 if (FALSE) {load(PHL_labels)}
 
-# get function
+# get functions
 source(file.path(code, "Global/read_pdf_table.R"))
+source(file.path(code, "Global/best_matches.R"))
 
 # pdf file path
 psic94_path <- file.path(PHL, "PHL_docs/International Codes/PSA_PSIC_1994.pdf")
@@ -44,7 +46,6 @@ UNisic3 <- read_delim(file = file.path(PHL, "PHL_data/GLD/international_codes/IS
 
 
 pdf <- pdftools::pdf_data(psic94_path)
-pdf[[22]] %>% View()
 
 ## ISIC 94 Raw ----
 ## Note that there are two "halves" with varying page specifications.
@@ -75,7 +76,8 @@ isic94_codes_raw_B <- read_pdf(
   xmin = c(55, 90, 435, 470, 505),
   xmax = c(89, 129, 469, 504, 9999),
   header = FALSE,
-  numlist = c(1994, 1977, 3.1)
+  numlist = c(1994, 1977, 3.1),
+  fuzzy_rows = FALSE
 )
 
 
@@ -133,7 +135,7 @@ isic94_clean <- isic94_codes %>%
   #filter(rowAny(across(table_vars_gc, ~ !is.na(.x)))) %>% # at least 1 col must be non-NA
   filter(rowAny(across(all_of(table_vars_ppi), ~ !is.na(.x)))) %>% # at least 1 col must be non-NA
   ungroup() %>%
-  select(-y, -text, -page_grp)
+  select(-page_grp)
 
 # check
 assertthat::assert_that( (nrow(isic94_clean) + nrow(isic94_leftover2)) == nrow(isic94_codes)   )
@@ -154,7 +156,6 @@ assertthat::assert_that( sum(str_length(isic94_clean$group) != 3, na.rm = TRUE) 
 
 
 
-
 ## ISIC 09 Raw ----
 isic09_codes_raw <- read_pdf(
                       
@@ -166,7 +167,9 @@ isic09_codes_raw <- read_pdf(
     xlabel = c(155, 420),
     xmin = c(91, 131, 415, 446, 501),
     xmax = c(130, 175, 445, 500, 9999),
-    header = TRUE
+    header = TRUE,
+    fuzzy_rows = TRUE,
+    match_tol = 2
     )
 
 
@@ -190,7 +193,7 @@ isic09_codes <- isic09_codes_raw %>%
     class = case_when(is.na(class)  ~ str_sub(subclass, 1,4),
                       TRUE          ~ class),
     group = str_sub(class, 1,3)) %>%
-  select(y, page_grp, page, group, class, everything())
+  select( page_grp, page, group, class, everything())
 
 
 
@@ -219,7 +222,8 @@ isic09_clean <- isic09_codes %>%
   #filter(rowAny(across(table_vars_gc, ~ !is.na(.x)))) %>% # at least 1 col must be non-NA
   filter(rowAny(across(all_of(table_vars_spia), ~ !is.na(.x)))) %>% # at least 1 col must be non-NA
   ungroup() %>%
-  select(-y, -text, -page_grp)
+  select(-page_grp) %>%
+  select(page, y, group, class, subclass, psic1994, isic4, acic)
   
 # check
 assertthat::assert_that( (nrow(isic09_clean) + nrow(isic09_leftover2)) == nrow(isic09_codes)   )
@@ -261,8 +265,9 @@ psoc12_codes_raw <- read_pdf(
       ymin = 90,
       xlabel = c(160, 420),
       xmin = c(91, 130, 450, 495),
-      xmax = c(130, 175, 495, 9999)
-  
+      xmax = c(130, 175, 495, 9999), 
+      fuzzy_rows = FALSE
+
       )
 
 
@@ -303,6 +308,7 @@ isco12_leftover <- bind_rows(isco12_leftover1, isco12_leftover2)
 
 # ISCO clean ----
 ## note that for now in order to sidestep issue #96, will not filter yet
+
 isco12_clean <- psoc12_codes %>%
   ## eliminate group and class-only rows
   #filter(rowAny(across(table_vars_sm, ~ !is.na(.x)))) %>% # at least 1 col must be non-NA
@@ -318,7 +324,7 @@ isco12_clean <- psoc12_codes %>%
     mutate(psoc92 = str_replace(psoc92, "\\`", NA_character_)) %>% 
     mutate(psoc92 = str_replace(psoc92, " ", NA_character_)) %>% 
     ungroup() %>%
-    select(-y, -page_grp) 
+    select(-page_grp) 
 
 # clean duplicates
   isco12_clean %>% janitor::get_dupes() # there is 1 pair of dups
@@ -331,55 +337,82 @@ assertthat::assert_that( sum(str_length(isco12_clean$submajor) != 3, na.rm=TRUE)
 
 
 
+## Determine Best Matches ----
+match_isic94_list <- best_match(df = isic94_clean, 
+                                country_code = "class", 
+                                international_code = "isic3_1")
+
+match_isic94_table <- match_isic94_list[[1]]
+
+
+
+match_isic09_list <- best_match(df = isic09_clean,
+                                country_code = "class",
+                                international_code = "isic4")
+
+match_isic09_table <- match_isic09_list[[1]]
+
+
+
+match_isco12_list <- best_match(df = isco12_clean,
+                                country_code = "minor",
+                                international_code = "isco08")
+
+match_isco12_table <- match_isco12_list[[1]]
+
 
 
 # save data ----
-
+if (TRUE) {
+  
 # Rdata 
 save(isic94_codes_raw, isic94_codes, isic94_leftover, isic94_clean, psic94_path,
      isic09_codes_raw, isic09_codes, isic09_leftover, isic09_clean, psic09_path, 
      psoc12_codes_raw, psoc12_codes, isco12_leftover, isco12_clean, psoc12_path,
      read_pdf, UNisic3,
+     match_isic94_list, match_isic94_table,
+     match_isic09_list, match_isic09_table, 
+     match_isco12_list, match_isco12_table,
      file = file.path(PHL, "PHL_data/international_codes.Rdata") )
 
 
 # export dta 
-
 for (i in seq(from=1997,to=2011)) {
-  haven::write_dta(isic94_clean,
+  haven::write_dta(match_isic94_table,
                    path = file.path(PHL, 
                                     paste0("PHL_",as.character(i),"_LFS"), 
                                     paste0("PHL_",as.character(i),"_LFS",
-                                           "_v01_M_v01_A_GLD/Work/PHL_PSIC_ISIC_94_key.dta")),
+                                           "_v01_M/Data/Stata/PHL_PSIC_ISIC_94_key.dta")),
                    version = 14)
 }
 
 for (i in seq(from=2012,to=2019)) {
-  haven::write_dta(isic09_clean,
+  haven::write_dta(match_isic09_table,
                    path = file.path(PHL, 
                                     paste0("PHL_",as.character(i),"_LFS"), 
                                     paste0("PHL_",as.character(i),"_LFS",
-                                           "_v01_M_v01_A_GLD/Work/PHL_PSIC_ISIC_09_key.dta")),
+                                           "_v01_M/Data/Stata/PHL_PSIC_ISIC_09_key.dta")),
                    version = 14)
 }
 
 for (i in seq(from=2016,to=2019)) {
-  haven::write_dta(isco12_clean,
+  haven::write_dta(match_isco12_table,
                    path = file.path(PHL, 
                                     paste0("PHL_",as.character(i),"_LFS"), 
                                     paste0("PHL_",as.character(i),"_LFS",
-                                           "_v01_M_v01_A_GLD/Work/PHL_PSOC_ISCO_12_key.dta")),
+                                           "_v01_M/Data/Stata/PHL_PSOC_ISCO_12_key.dta")),
                    version = 14)
 }
 
-haven::write_dta(isic94_clean,
+haven::write_dta(match_isic94_table,
                  path = file.path(PHL, "PHL_data/GLD/PHL_PSIC_ISIC_94_key.dta"),
                  version = 14)
 
-haven::write_dta(isic09_clean,
+haven::write_dta(match_isic09_table,
                  path = file.path(PHL, "PHL_data/GLD/PHL_PSIC_ISIC_09_key.dta"),
                  version = 14)
 
-haven::write_dta(isco12_clean,
+haven::write_dta(match_isco12_table,
                  path = file.path(PHL, "PHL_data/GLD/PHL_PSOC_ISCO_12_key.dta"),
                  version = 14)
+}
