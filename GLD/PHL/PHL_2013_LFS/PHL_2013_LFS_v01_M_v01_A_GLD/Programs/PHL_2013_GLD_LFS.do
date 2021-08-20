@@ -988,13 +988,18 @@ foreach v of local ed_var {
 
 		merge 		m:1 ///
 					class ///
-					using "path to key" ///
+					using ${isic_key} ///
 					, generate(isic_merge)
 					* the string variable in isic4 will is industrycat_isic
-		*destring 	isic4 ///
-		*			, generate(industrycat_isic)
+
 
 		pause on
+		pause
+
+
+		destring 	isic4 ///
+					, generate(industrycat_isic)
+
 		pause
 
 	restore
