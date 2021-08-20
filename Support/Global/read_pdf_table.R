@@ -49,19 +49,22 @@ read_pdf <- function(pdf_path, page_min, page_max,
     
     # define 3rd sub-function that matches close y-value rows
     #     # finds closes number to itself other than itself within tolerance, if exists
-    nearest_neighbor <- function(x, # input row's y (single value)
-                                 y, # whole y column (whole col)
+    nearest_neighbor <- function(data, # usually passed from %>%
+                                 row, # input row's y (single value)
+                                 col, # whole y column (whole col)
                                  ...) {
       
       
       
-      # make x distinct
-      query <- unique({{x}})
+      # make row distinct
+      query <- unique({{row}})
       
       # make tibble
+      col <- data %>% select({{col}})
+      
       matches <- tibble(
-        ys = {{y}},
-        match = near(query, ys, {{match_tol}})) # tell me if i element in col is near x value
+        ys = col,
+        match = near(query, ys, {{match_tol}})) # tell me if i element in col is near row value
       
       
       # return match value 
@@ -152,7 +155,10 @@ read_pdf <- function(pdf_path, page_min, page_max,
       mutate(page_grp = cur_group_id(),
              page = page,
              n_in_row = n(),
-             nearest_y = nearest_neighbor(y, table[["y"]], tol = 12)) %>% # data pronoun
+             nearest_y = nearest_neighbor(data = ., 
+                                          row = y,
+                                          col = y,
+                                          match_tol = 3)) %>%
       arrange(page_grp, nearest_y) %>%
       ungroup() %>%
       mutate(y2 = case_when(is.na(nearest_y) ~ y,
@@ -166,7 +172,6 @@ read_pdf <- function(pdf_path, page_min, page_max,
                   values_from = "text",
                   id_cols = all_of(c("y2", "page_grp2", "page")))
 
-    
     
     return(table)
 

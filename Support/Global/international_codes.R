@@ -17,6 +17,7 @@ library(tidyverse)
 library(stringr)
 library(pdftools)
 library(janitor)
+library(magrittr)
 
 
 
