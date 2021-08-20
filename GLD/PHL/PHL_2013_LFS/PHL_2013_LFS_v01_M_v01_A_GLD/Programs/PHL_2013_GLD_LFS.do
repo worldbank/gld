@@ -991,12 +991,13 @@ foreach v of local ed_var {
 					using ${isic_key} ///
 					, generate(isic_merge)
 					* the string variable in isic4 will is industrycat_isic
+		
+		// replace one code that I know doesn't match 
+		replace 	isic4 = "6810" 	if c18_pkb == 6819
 
-		tab isic_merge if c18_pkb != .
-		br c18_pkb class isic4 match isic_merge  if c18_pkb != . & isic_merge == 1
-		pause on
-		pause
-
+		tab 		isic_merge 		if c18_pkb != .
+		br 			c18_pkb class isic4 match isic_merge  if c18_pkb != . & isic_merge == 1
+					
 
 		destring 	isic4 ///
 					, generate(industrycat_isic)
