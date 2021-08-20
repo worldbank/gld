@@ -156,14 +156,14 @@ read_pdf <- function(pdf_path, page_min, page_max,
       group_by(y) %>%
       mutate(page_grp = cur_group_id(),
              page = page,
-             n_in_row = n(),
-             nearest_y = nearest_neighbor(ref_col = y,
+             n_in_row = n()) %>%
+      ungroup() %>%
+      mutate(nearest_y = nearest_neighbor(ref_col = y,
                                           match_tol = 3)) %>%
       arrange(page_grp, nearest_y) %>%
-      ungroup() %>%
-      mutate(y2 = case_when(is.na(nearest_y) ~ y,
-                            nearest_y >  y  ~ nearest_y,
-                            nearest_y <  y  ~ y)) %>%
+      mutate(y2 = case_when(is.na(nearest_y) ~ as.integer(y),
+                            nearest_y >  y  ~ as.integer(nearest_y),
+                            nearest_y <  y  ~ as.integer(y))) %>%
       group_by(y2) %>%
       mutate(page_grp2 = cur_group_id(),
              n_in_row2 = n()) %>%

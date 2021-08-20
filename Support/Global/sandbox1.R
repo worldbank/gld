@@ -298,7 +298,7 @@ pg34 %>%
          ) 
   
 
-
+####
 
 nn <- function(ref_col, match_tol=3, ...) {
   
@@ -343,3 +343,22 @@ nn(tib$a)
 tib %>%
   mutate(test = nn(a, 100))
 
+
+
+
+# read_pdf with above nn function 
+
+pg34 <- read_pdf(
+  
+  pdf_path = psic09_path,
+  page_min = 34,
+  page_max = 34,
+  varnames = c("class", "subclass", "psic1994", "isic4", "acic"),
+  ymin = 90,
+  xlabel = c(155, 420),
+  xmin = c(91, 131, 415, 446, 501),
+  xmax = c(130, 175, 445, 500, 9999),
+  header = TRUE
+) 
+
+View(pg34)
