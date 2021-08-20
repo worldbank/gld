@@ -78,8 +78,7 @@ isic94_codes_raw_B <- read_pdf(
   xmax = c(89, 129, 469, 504, 9999),
   header = FALSE,
   numlist = c(1994, 1977, 3.1),
-  fuzzy_rows = TRUE,
-  match_tol = 1
+  fuzzy_rows = FALSE
 )
 
 

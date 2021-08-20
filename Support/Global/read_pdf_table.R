@@ -161,7 +161,7 @@ read_pdf <- function(pdf_path, page_min, page_max,
              n_in_row = n()) %>%
       ungroup() 
     
-    keys <- c("page_grp", "page", "n_in_row", "y")
+    keys <- c("y")
     
     if (fuzzy_rows == TRUE) {
       
@@ -175,9 +175,10 @@ read_pdf <- function(pdf_path, page_min, page_max,
         group_by(y2) %>%
         mutate(page_grp2 = cur_group_id(),
                n_in_row2 = n()) %>%
-        arrange(page_grp2)
+        arrange(page_grp2) %>%
+        select(-y, -page_grp, -n_in_row)
       
-      keys <- c("y2", "page_grp2", "page", "y")
+      keys <- c("y2")
       
     }
     
@@ -185,7 +186,8 @@ read_pdf <- function(pdf_path, page_min, page_max,
       
     table %<>%
       pivot_wider(names_from = "varname",
-                  values_from = "text")
+                  values_from = "text",
+                  id_cols = keys)
                   #id_cols = all_of(keys)) # this should leave all cols as ids?
                 # will this id_cols work for both situations where fuzzy_rows is both 
                 # true and false since in FALSE situation only page will exist? should
