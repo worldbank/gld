@@ -46,7 +46,6 @@ UNisic3 <- read_delim(file = file.path(PHL, "PHL_data/GLD/international_codes/IS
 
 
 pdf <- pdftools::pdf_data(psic94_path)
-#pdf[[22]] %>% View()
 
 ## ISIC 94 Raw ----
 ## Note that there are two "halves" with varying page specifications.
@@ -136,7 +135,7 @@ isic94_clean <- isic94_codes %>%
   #filter(rowAny(across(table_vars_gc, ~ !is.na(.x)))) %>% # at least 1 col must be non-NA
   filter(rowAny(across(all_of(table_vars_ppi), ~ !is.na(.x)))) %>% # at least 1 col must be non-NA
   ungroup() %>%
-  select(-y, -text, -page_grp)
+  select(-y, -page_grp)
 
 # check
 assertthat::assert_that( (nrow(isic94_clean) + nrow(isic94_leftover2)) == nrow(isic94_codes)   )
@@ -190,13 +189,11 @@ rowAny <- function(x) rowSums(x) > 0
 ## given info as authoritative.
 
 isic09_codes <- isic09_codes_raw %>%
-  select(-page_grp) %>%
-  rename(page_grp = page_grp2) %>%
   mutate(
     class = case_when(is.na(class)  ~ str_sub(subclass, 1,4),
                       TRUE          ~ class),
     group = str_sub(class, 1,3)) %>%
-  select(y, page_grp, page, group, class, everything())
+  select( page_grp, page, group, class, everything())
 
 
 
@@ -225,7 +222,8 @@ isic09_clean <- isic09_codes %>%
   #filter(rowAny(across(table_vars_gc, ~ !is.na(.x)))) %>% # at least 1 col must be non-NA
   filter(rowAny(across(all_of(table_vars_spia), ~ !is.na(.x)))) %>% # at least 1 col must be non-NA
   ungroup() %>%
-  select(-y, -page_grp)
+  select(-page_grp) %>%
+  select(page, y, group, class, subclass, psic1994, isic4, acic)
   
 # check
 assertthat::assert_that( (nrow(isic09_clean) + nrow(isic09_leftover2)) == nrow(isic09_codes)   )
@@ -268,9 +266,8 @@ psoc12_codes_raw <- read_pdf(
       xlabel = c(160, 420),
       xmin = c(91, 130, 450, 495),
       xmax = c(130, 175, 495, 9999), 
-      fuzzy_rows = TRUE,
-      match_tol = 1
-  
+      fuzzy_rows = FALSE
+
       )
 
 

@@ -29,7 +29,7 @@ read_pdf <- function(pdf_path, page_min, page_max,
  
   
   
-  
+  ##### Define Functions #####
    
   # define 1st sub-function to import the table
   import_table_pdf <- function( page, ... ) {
@@ -158,14 +158,17 @@ read_pdf <- function(pdf_path, page_min, page_max,
       group_by(y) %>%
       mutate(page_grp = cur_group_id(),
              page = page,
-             n_in_row = n()) %>%
-      ungroup() 
+             n_in_row = n()) 
+
     
-    keys <- c("y")
+    keys <- c("page", "page_grp", "y")
     
     if (fuzzy_rows == TRUE) {
       
+      keys <- c("page", "page_grp", "y")
+      
       table %<>%
+        ungroup() %>%
         mutate(nearest_y = nearest_neighbor(ref_col = y,
                                             match_tol = 3)) %>%
         arrange(page_grp, nearest_y) %>%
@@ -176,18 +179,21 @@ read_pdf <- function(pdf_path, page_min, page_max,
         mutate(page_grp2 = cur_group_id(),
                n_in_row2 = n()) %>%
         arrange(page_grp2) %>%
-        select(-y, -page_grp, -n_in_row)
+        select(-y, -page_grp, -n_in_row) %>%
+        rename(y = y2, page_grp = page_grp2) 
       
-      keys <- c("y2")
+      
       
     }
     
     
       
     table %<>%
+      ungroup() %>%
+      group_by(page, page_grp) %>%
       pivot_wider(names_from = "varname",
                   values_from = "text",
-                  id_cols = keys)
+                  id_cols = keys) 
                   #id_cols = all_of(keys)) # this should leave all cols as ids?
                 # will this id_cols work for both situations where fuzzy_rows is both 
                 # true and false since in FALSE situation only page will exist? should
