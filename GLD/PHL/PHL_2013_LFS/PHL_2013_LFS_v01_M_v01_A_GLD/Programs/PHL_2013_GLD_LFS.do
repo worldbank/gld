@@ -4,7 +4,7 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				PHL_1997_GLD_LFS.do </_Program name_>
+<_Program name_>				PHL_2013_GLD_LFS.do </_Program name_>
 <_Application_>					Stata 15 <_Application_>
 <_Author(s)_>					World Bank Jobs Group </_Author(s)_>
 <_Date created_>				2021-07-20 </_Date created_>
@@ -13,10 +13,10 @@
 
 <_Country_>						Philippines (PHL) </_Country_>
 <_Survey Title_>				Labor Force Survey </_Survey Title_>
-<_Survey Year_>					1997 </_Survey Year_>
+<_Survey Year_>					2013 </_Survey Year_>
 <_Study ID_>					[Microdata Library ID if present] </_Study ID_>
-<_Data collection from_>		[01/1997] </_Data collection from_>
-<_Data collection to_>			[10/1997] </_Data collection to_>
+<_Data collection from_>		[01/2013] </_Data collection from_>
+<_Data collection to_>			[10/2013] </_Data collection to_>
 <_Source of dataset_> 			[Source of data, e.g. NSO] </_Source of dataset_>
 <_Sample size (HH)_> 			39274 </_Sample size (HH)_>
 <_Sample size (IND)_> 			202742 </_Sample size (IND)_>
@@ -60,7 +60,7 @@ set mem 800m
 
 	local 	cty3 	"PHL" 			// set this to the three letter country/economy abbreviation
 	local 	usr		`"551206_TM"' 	// set this to whatever Mario named your folder
-	local 	surv_yr  = 1997			// set this to the survey year
+	local 	surv_yr  = 2013			// set this to the survey year
 
 ** RUN SETTINGS
 	local 	cb_pause = 0		// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
@@ -80,7 +80,7 @@ set mem 800m
 	local 	lb_mod_age	15	// labor module minimun age (inclusive)
 	local 	ed_mod_age	5	// labor module minimun age (inclusive)
 
-	local 	weightvar 	rfadj // final weightvar 
+	local 	weightvar 	pwgt // final weight variable
 
 ** LOG FILE
 	log using `"`gld_data'\\`cty3'_`surv_yr'_I2D2_LFS.log"', replace
@@ -88,12 +88,12 @@ set mem 800m
 
 ** FILES
 	* input
-	local round1 `"`stata'\LFS JAN1997.dta"'
-	local round2 `"`stata'\LFS APR1997.dta"'
-	local round3 `"`stata'\LFS JUL1997.dta"'
-	local round4 `"`stata'\LFS OCT1997.dta"'
+	local round1 `"`stata'\LFSjan13.dta"'
+	local round2 `"`stata'\LFSapr13.dta"'
+	local round3 `"`stata'\LFSjul13.dta"'
+	local round4 `"`stata'\LFS OCT2013.dta"'
 
-	local isic_key 	 `"`gld'\Work\PHL_PSIC_ISIC_94_key.dta"'
+	gl isic_key 	 `"`stata'\PHL_PSIC_ISIC_09_key.dta"'
 
 	* ouput
 	local path_output `"`gld_data'\\`cty3'_`surv_yr'_LFS_v01_M_v01_A_GLD"'
@@ -113,7 +113,29 @@ set mem 800m
 	iecodebook append ///
 		`"`round1'"' `"`round2'"' `"`round3'"' `"`round4'"' /// survey files
 		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template-IN.xlsx"' /// previously edited harmonization file
-		, clear surveys(JAN1997 APR1997 JUL1997 OCT1997) generate(round) // survey names
+		, clear surveys(JAN2013 APR2013 JUL2013 OCT2013) generate(round) // survey names
+
+* Generate Survey Original Variables.
+	/*Some variables will be generated that are the same name of variables that appear in
+		the original survey. For neatness, consistency, and to avoid errors, I will create a
+		sub-routine that will automatically rename the varible in the survey with a suffix
+		"_orig" to distinguish it from the GLD variable.*/
+
+	loc conflictvars 	hhid weight psu
+
+
+	* Begin sub-routine:
+		//rename survey original hhid variable if already exists
+	foreach var of local conflictvars {
+
+		ds 	`var'
+		loc var_orig	= r(varlist)
+		loc var_orig_l : list sizeof var_orig
+
+			if (`var_orig_l' >= 1) {
+				rename 	`var' `var'_orig
+			}
+		}
 
 
 
@@ -201,35 +223,22 @@ set mem 800m
 
 </_hhid_note> */
 
-	* in 97, it appears that regn and hcn uniquely identify the HH
 
-	loc idhvars 	 regn prov  hcn						// store hhid vars in local
+
+	loc idhvars 	hhnum   							// store idh vars in local
+
 
 	ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
 	loc numlist 	= r(varlist)						// store numeric vars in local
 	loc stringlist 	: list idhvars - numlist			// non-numeric vars in stringlist
 
 	* starting locals
-	loc len = 6											// declare the length of each element in digits
+	loc len = 14											// declare the length of each element in digits
 	loc idh_els ""										// start with empty local list
 
 	* make each numeric var string, including leading zeros
 	foreach var of local numlist {
 		tostring `var'	///								// make the numeric vars strings
-			, generate(idh_`var') ///					// gen a variable with this prefix
-			force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
-
-		loc idh_els 	`idh_els' idh_`var'				// add each variable to the local list
-
-	}
-
-	* make each string variable numeric (as it should be), then string again with correct format
-	foreach var of local stringlist {
-		destring `var' /// 								// destring variable, make numeric version
-			, gen(num_`var') ///						//
-			force 										// force obs to num that are non numeric, ie to missing
-
-		tostring num_`var'	///							// make the numeric vars strings
 			, generate(idh_`var') ///					// gen a variable with this prefix
 			force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
 
@@ -255,13 +264,7 @@ set mem 800m
 
 *<_pid_>
 ** INDIVIDUAL IDENTIFICATION NUMBER
-	* in 97, region, hh control and line number variables uniquely identify observations. use line number as pid
-
-	* repeat same process from above, but only with n_fam.
-	* 	note, assuming that the only necessary individaul identifier is family member, which is numeric
-	*	so, not following processing for sorting numeric/non-numeric variables.
-
-	loc idpvars 	lno 								// store relevant pid vars in local
+	loc idpvars 	cc101_lno 							// store relevant idp vars in local
 	ds `idpvars',  	has(type numeric)					// filter out numeric variables in local
 	loc rlist 		= r(varlist)						// store numeric vars in local
 
@@ -297,7 +300,7 @@ set mem 800m
 
 
 *<_psu_>
-	gen psu = .
+	gen psu = psu_orig
 	label var psu "Primary sampling units"
 *</_psu_>
 
@@ -309,7 +312,7 @@ set mem 800m
 
 
 *<_strata_>
-	gen strata = .
+	gen strata = stratum
 	label var strata "Strata"
 *</_strata_>
 
@@ -335,7 +338,7 @@ set mem 800m
 
 *<_urban_>
 	gen byte 		urban = .
-	replace 		urban = urb
+	replace 		urban = urb2k1970
 	recode 			urban (2 = 0) 		// change rural=2 to rural=0
 	label var 		urban "Location is urban"
 	la de 			lblurban 1 "Urban" 0 "Rural"
@@ -349,26 +352,45 @@ set mem 800m
 	Labels are to be defined as # - Name like 1 "1 - Alaska" 2 "2 - Arkansas".
 
 </_subnatid1> */
-	gen byte 		subnatid1 = regn
-	label de 		lblsubnatid1 	///
+
+	/*  Please see "Administrative_Levels.md" for a detailed explanation of the region and province
+		recodings, available on the repository in the Guides and Documentation Folder.
+		https://github.com/worldbank/gld
+
+		Similarly, in the same location, "Geographic_Nomenclature.md" describes the administrative
+		divisions used in GLD
+ 	*/
+
+	gen byte 		subnatid1 = creg
+	recode 			subnatid1 	/// recode both of thes variables
+					(4 = 41) 		/// sometimes Calabarzon appears as value 4, recode to always be 41
+					(17= 42)		//  sometimes Mimaropa appears as value 17, recode to always be 42
+
+
+	label de 		lblsubnatid1_b 	/// where "b" indicates "post" administrative change
 					 1   "1 - Ilocos"			///
 					 2	 "2 - Cagayan Valley"	///
 					 3   "3 - Central Luzon"	///
-					 4	 "4 - Southern Tagalog"	///
+					 						/// Southern Tagalog has been split into Calabarzon and Mimaropa
 					 5   "5 - Bicol"			///
 					 6	 "6 - Western Visayas"	///
 					 7   "7 - Central Visayas"	///
 					 8	 "8 - Eastern Visayas"	///
-					 9   "9 - Western Mindanao"	///
+					 9   "9 - Zamboanga Peninsula"	///
 					 10  "10 - Northern Mindanao"	///
-					 11  "11 - Southern Mindanao"	///
-					 12  "12 - Central Mindanao"		///
+					 11  "11 - Davao"			///
+					 12  "12 - Soccsksargen"		///
 					 13  "13 - National Capital Region"				///
 					 14  "14 - Cordillera Administrative Region"		///
 					 15  "15 - Autonomous Region of Muslim Mindanao"	///
-					 16  "16 - Caraga"
+					 16  "16 - Caraga" 	///
+					 				/// value 17 exists only in raw data, not in recoded version
+					 18  "18 - Negros Island Region" /// this region appears occasionally in data
+					 							///
+					 41	 "41 - Calabarzon"	/// formerly part of Southern Tagalog
+					 42  "42 - Mimaropa"		// formerly part of Southern Tagalog
 
-	label values 	subnatid1 lblsubnatid1
+	label values 	subnatid1 lblsubnatid1_b
 	label var 		subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 
@@ -466,7 +488,7 @@ set mem 800m
 *</_gaul_adm3_code_>
 
 }
-
+/*
 /*%%=============================================================================================
 	4: Demography
 ==============================================================================================%%*/
@@ -899,7 +921,7 @@ foreach v of local ed_var {
 *----------8.2: 7 day reference main job------------------------------*
 
 
-{
+
 *<_empstat_>
 	gen byte 		empstat=.
 	replace 		empstat=1 	if class==0 | class==1 | class==2 | class==5
@@ -930,9 +952,9 @@ foreach v of local ed_var {
 	label values ocusec lblocusec
 *</_ocusec_>
 
-
+*/
 *<_industry_orig_>
-	gen 			industry_orig = qkb
+	gen 			industry_orig = c18_pkb
 	label var 		industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
@@ -950,25 +972,49 @@ foreach v of local ed_var {
 			tostring industry_orig	///						// make the numeric vars strings
 				, generate(industry_orig_str) ///			// gen a variable with this prefix
 				force //
-				*format(`"%0`len'.0f"')
+
 
 		}
 
-* here, think, if data only have 2 digits, will you merge the data with the key? Probably should not automate the merge
-* and just decide manually each time. Will a 2-digit code have an isic/isco code? Probably not...only 4-5 digit ones.
+
+	// merge sub-module with isic key
+
+	preserve
+
+		gen class = c18_pkb
+		tostring 	class ///
+					, format(`"%04.0f"') replace
 
 
-	gen 			industrycat_isic = .
+		merge 		m:1 ///
+					class ///
+					using ${isic_key} ///
+					, generate(isic_merge)
+					* the string variable in isic4 will is industrycat_isic
+		
+		// replace one code that I know doesn't match 
+		replace 	isic4 = "6810" 	if c18_pkb == 6819
+
+		tab 		isic_merge 		if c18_pkb != .
+		br 			c18_pkb class isic4 match isic_merge  if c18_pkb != . & isic_merge == 1
+					
+
+		destring 	isic4 ///
+					, generate(industrycat_isic)
+
+		pause
+
+	restore
+
+
+	*gen 			industrycat_isic = .
 	label var 		industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
 
 *<_industrycat10_>
 * if mapped to industrycat_isic, will be recoded, if not, start here.
-	gen byte 		industrycat10		= floor(qkb/10)
-	recode  		industrycat10 		0 = 10 				// change to 10, "unspecified" from "missing"
-	replace 		industrycat10		= 10 	if qkb>=92 & qkb<=99
-	replace 		industrycat10		= 6 	if qkb==98
+
 
 	label var 		industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de 			lblindustrycat10 	///
@@ -1940,6 +1986,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save `"`path_output'"', replace
+*save `"`path_output'"', replace
 
 *</_% SAVE_>
