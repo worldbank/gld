@@ -300,49 +300,46 @@ pg34 %>%
 
 
 
-nn <- function(col, # column to iterate over
-               match_col,
-               match_tol=5,
-               data = NULL) {
+nn <- function(ref_col, match_tol=3, ...) {
   
   
-  match_col <- eval(substitute(match_col, data), parent.frame())
-  col  <- eval(substitute(col, data), parent.frame())
-  
-    # purrr::map_dbl(.x = {{col_to_loop}}, function(x, ...) {
-    #     
-    #     
-    #     # col = match_col 
-    #     # element = x
-    #     # make tibble of matches
-    #     matches <- tibble(
-    #       ys = col_to_match,
-    #       match = near(x, col_to_match, match_tol))
-    #     
-    #     # return match value 
-    #     closest_y <- matches %>%
-    #       filter(match == TRUE) %>% # keep only vals within tolerance
-    #       filter(ys != x) %>% # value should not be itself
-    #       distinct(ys)
-    #     
-    #     return_vector <- as.vector(closest_y$ys)
-    #     
-    #     
-    #     # if length of return rector is 0, replace with NA
-    #     if (length(return_vector) == 0) {
-    #       return_vector <- NA_integer_
-    #     }
-    #     
-    #     return(return_vector)
-    #     
-    #     
-    #     
-    #     
-    #   })
+  purrr::map_dbl(.x = {{ref_col}}, function(x, ...) {
     
+
+    # # make tibble of matches
+    matches <- tibble(
+      ys = {{ref_col}},
+      match = near(x, {{ref_col}}, {{match_tol}}))
+
+    # return closest match value
+    closest_y <- matches %>%
+      filter(match == TRUE) %>% # keep only vals within tolerance
+      filter(ys != x) %>% # value should not be itself
+      distinct(ys) %>%
+      mutate(dif = abs(x - ys)) %>%
+      arrange(dif)
+    
+    return_val <- as.vector(closest_y$ys)[1] # take number where dif is smallest
+    
+    
+    # if length of return rector is 0, replace with NA
+    if (length(return_val) == 0) {
+      return_val <- NA_integer_
+    }
+    
+    return(return_val)
+    
+    
+    
+    
+  })
+
   
-  max(match_col)
   
 }
 
-nn(data = mtcars, col = mpg, match_col = mpg)
+nn(tib$a)
+
+tib %>%
+  mutate(test = nn(a, 10))
+
