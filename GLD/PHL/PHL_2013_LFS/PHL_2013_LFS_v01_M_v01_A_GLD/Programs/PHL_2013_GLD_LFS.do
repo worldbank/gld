@@ -93,7 +93,7 @@ set mem 800m
 	local round3 `"`stata'\LFSjul13.dta"'
 	local round4 `"`stata'\LFS OCT2013.dta"'
 
-	gl isic_key 	 `"`gld'\Work\PHL_PSIC_ISIC_09_key.dta"'
+	gl isic_key 	 `"`stata'\PHL_PSIC_ISIC_09_key.dta"'
 
 	* ouput
 	local path_output `"`gld_data'\\`cty3'_`surv_yr'_LFS_v01_M_v01_A_GLD"'
@@ -488,7 +488,7 @@ set mem 800m
 *</_gaul_adm3_code_>
 
 }
-
+/*
 /*%%=============================================================================================
 	4: Demography
 ==============================================================================================%%*/
@@ -952,7 +952,7 @@ foreach v of local ed_var {
 	label values ocusec lblocusec
 *</_ocusec_>
 
-
+*/
 *<_industry_orig_>
 	gen 			industry_orig = c18_pkb
 	label var 		industry_orig "Original survey industry code, main job 7 day recall"
@@ -992,7 +992,8 @@ foreach v of local ed_var {
 					, generate(isic_merge)
 					* the string variable in isic4 will is industrycat_isic
 
-
+		tab isic_merge if c18_pkb != .
+		br c18_pkb class isic4 match isic_merge  if c18_pkb != . & isic_merge == 1
 		pause on
 		pause
 

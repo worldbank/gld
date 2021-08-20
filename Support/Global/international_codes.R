@@ -163,7 +163,7 @@ isic09_codes_raw <- read_pdf(
     page_min = 22,
     page_max = 316,
     varnames = c("class", "subclass", "psic1994", "isic4", "acic"),
-    ymin = 90,
+    ymin = 82,
     xlabel = c(155, 420),
     xmin = c(91, 131, 415, 446, 501),
     xmax = c(130, 175, 445, 500, 9999),
