@@ -10,6 +10,7 @@
 #' @param xmin a list of x-coordinate column minimums. Same length as varnames.
 #' @param xmax a list of x-coordinate column maximums. Same length as varnames.
 #' @param numlist an optional vector of omitted numbers to filter. 
+#' @param fuzzy_rows an optional boolean parameter that toggles slightly misaligned rows in pdf
 #' @param match_tol the nearest-neighbor y match tolerance for misaligned rows
 
 read_pdf <- function(pdf_path, page_min, page_max, 
@@ -21,8 +22,9 @@ read_pdf <- function(pdf_path, page_min, page_max,
                      xmin = c(91, 131, 415, 446, 501),
                      xmax = c(130, 175, 445, 500, 9999),
                      numlist = NULL,
+                     fuzzy_rows = FALSE,
                      match_tol = 2
-                     
+
                      ) {
  
   
@@ -157,20 +159,37 @@ read_pdf <- function(pdf_path, page_min, page_max,
       mutate(page_grp = cur_group_id(),
              page = page,
              n_in_row = n()) %>%
-      ungroup() %>%
-      mutate(nearest_y = nearest_neighbor(ref_col = y,
-                                          match_tol = 3)) %>%
-      arrange(page_grp, nearest_y) %>%
-      mutate(y2 = case_when(is.na(nearest_y) ~ as.integer(y),
-                            nearest_y >  y  ~ as.integer(nearest_y),
-                            nearest_y <  y  ~ as.integer(y))) %>%
-      group_by(y2) %>%
-      mutate(page_grp2 = cur_group_id(),
-             n_in_row2 = n()) %>%
-      arrange(page_grp2) %>%
+      ungroup() 
+    
+    keys <- c("page_grp", "page", "n_in_row")
+    
+    if (fuzzy_rows == TRUE) {
+      
+      table %<>%
+        mutate(nearest_y = nearest_neighbor(ref_col = y,
+                                            match_tol = 3)) %>%
+        arrange(page_grp, nearest_y) %>%
+        mutate(y2 = case_when(is.na(nearest_y) ~ as.integer(y),
+                              nearest_y >  y  ~ as.integer(nearest_y),
+                              nearest_y <  y  ~ as.integer(y))) %>%
+        group_by(y2) %>%
+        mutate(page_grp2 = cur_group_id(),
+               n_in_row2 = n()) %>%
+        arrange(page_grp2)
+      
+      keys <- c("y2", "page_grp2", "page")
+      
+    }
+    
+    
+      
+    table %<>%
       pivot_wider(names_from = "varname",
                   values_from = "text",
-                  id_cols = all_of(c("y2", "page_grp2", "page")))
+                  id_cols = all_of(keys)) 
+                # will this id_cols work for both situations where fuzzy_rows is both 
+                # true and false since in FALSE situation only page will exist? should
+                # with any_of
 
     
     return(table)

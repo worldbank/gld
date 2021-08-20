@@ -358,7 +358,9 @@ pg34 <- read_pdf(
   xlabel = c(155, 420),
   xmin = c(91, 131, 415, 446, 501),
   xmax = c(130, 175, 445, 500, 9999),
-  header = TRUE
+  header = TRUE,
+  fuzzy_rows = TRUE,
+  match_tol = 2
 ) 
 
 View(pg34)
