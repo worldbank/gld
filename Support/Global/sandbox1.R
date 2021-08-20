@@ -319,7 +319,8 @@ nn <- function(ref_col, match_tol=3, ...) {
       mutate(dif = abs(x - ys)) %>%
       arrange(dif)
     
-    return_val <- as.vector(closest_y$ys)[1] # take number where dif is smallest
+    # return number where dif is smallest only
+    return_val <- as.numeric(closest_y$ys)[1] 
     
     
     # if length of return rector is 0, replace with NA
@@ -327,9 +328,8 @@ nn <- function(ref_col, match_tol=3, ...) {
       return_val <- NA_integer_
     }
     
+    
     return(return_val)
-    
-    
     
     
   })
@@ -341,5 +341,5 @@ nn <- function(ref_col, match_tol=3, ...) {
 nn(tib$a)
 
 tib %>%
-  mutate(test = nn(a, 10))
+  mutate(test = nn(a, 100))
 

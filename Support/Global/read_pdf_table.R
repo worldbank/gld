@@ -49,40 +49,42 @@ read_pdf <- function(pdf_path, page_min, page_max,
     
     # define 3rd sub-function that matches close y-value rows
     #     # finds closes number to itself other than itself within tolerance, if exists
-    nearest_neighbor <- function(data, # usually passed from %>%
-                                 row, # input row's y (single value)
-                                 col, # whole y column (whole col)
-                                 ...) {
+    nearest_neighbor <- function(ref_col, match_tol = 3, ...) {
+      
+      
+      purrr::map_dbl(.x = {{ref_col}}, function(x, ...) {
+        
+        
+        # # make tibble of matches
+        matches <- tibble(
+          ys = {{ref_col}},
+          match = near(x, {{ref_col}}, {{match_tol}}))
+        
+        # return closest match value
+        closest_y <- matches %>%
+          filter(match == TRUE) %>% # keep only vals within tolerance
+          filter(ys != x) %>% # value should not be itself
+          distinct(ys) %>%
+          mutate(dif = abs(x - ys)) %>%
+          arrange(dif)
+        
+        # return number where dif is smallest only
+        return_val <- as.integer(closest_y$ys)[1] 
+        
+        
+        # if length of return rector is 0, replace with NA
+        if (length(return_val) == 0) {
+          return_val <- NA_integer_
+        }
+        
+        
+        return(return_val)
+        
+        
+      })
       
       
       
-      # make row distinct
-      query <- unique({{row}})
-      
-      # make tibble
-      col <- data %>% select({{col}})
-      
-      matches <- tibble(
-        ys = col,
-        match = near(query, ys, {{match_tol}})) # tell me if i element in col is near row value
-      
-      
-      # return match value 
-      closest_y <- matches %>%
-        filter(match == TRUE) %>% # keep only vals within tolerance
-        filter(ys != query) %>% # value should not be itself
-        distinct(ys)
-      
-      return_vector <- as.vector(closest_y$ys)
-      
-      
-      # if length of return rector is 0, replace with NA
-      if (length(return_vector) == 0) {
-        return_vector <- NA_integer_
-      }
-      
-      return(return_vector)
-    
     }
     
     
@@ -155,9 +157,7 @@ read_pdf <- function(pdf_path, page_min, page_max,
       mutate(page_grp = cur_group_id(),
              page = page,
              n_in_row = n(),
-             nearest_y = nearest_neighbor(data = ., 
-                                          row = y,
-                                          col = y,
+             nearest_y = nearest_neighbor(ref_col = y,
                                           match_tol = 3)) %>%
       arrange(page_grp, nearest_y) %>%
       ungroup() %>%
