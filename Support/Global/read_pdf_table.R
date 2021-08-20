@@ -10,6 +10,7 @@
 #' @param xmin a list of x-coordinate column minimums. Same length as varnames.
 #' @param xmax a list of x-coordinate column maximums. Same length as varnames.
 #' @param numlist an optional vector of omitted numbers to filter. 
+#' @param fuzzy_rows an optional boolean parameter that toggles slightly misaligned rows in pdf
 #' @param match_tol the nearest-neighbor y match tolerance for misaligned rows
 
 read_pdf <- function(pdf_path, page_min, page_max, 
@@ -21,8 +22,9 @@ read_pdf <- function(pdf_path, page_min, page_max,
                      xmin = c(91, 131, 415, 446, 501),
                      xmax = c(130, 175, 445, 500, 9999),
                      numlist = NULL,
+                     fuzzy_rows = FALSE,
                      match_tol = 2
-                     
+
                      ) {
  
   
@@ -49,37 +51,42 @@ read_pdf <- function(pdf_path, page_min, page_max,
     
     # define 3rd sub-function that matches close y-value rows
     #     # finds closes number to itself other than itself within tolerance, if exists
-    nearest_neighbor <- function(x, # input row's y (single value)
-                                 y, # whole y column (whole col)
-                                 ...) {
+    nearest_neighbor <- function(ref_col, match_tol = 3, ...) {
+      
+      
+      purrr::map_dbl(.x = {{ref_col}}, function(x, ...) {
+        
+        
+        # # make tibble of matches
+        matches <- tibble(
+          ys = {{ref_col}},
+          match = near(x, {{ref_col}}, {{match_tol}}))
+        
+        # return closest match value
+        closest_y <- matches %>%
+          filter(match == TRUE) %>% # keep only vals within tolerance
+          filter(ys != x) %>% # value should not be itself
+          distinct(ys) %>%
+          mutate(dif = abs(x - ys)) %>%
+          arrange(dif)
+        
+        # return number where dif is smallest only
+        return_val <- as.integer(closest_y$ys)[1] 
+        
+        
+        # if length of return rector is 0, replace with NA
+        if (length(return_val) == 0) {
+          return_val <- NA_integer_
+        }
+        
+        
+        return(return_val)
+        
+        
+      })
       
       
       
-      # make x distinct
-      query <- unique({{x}})
-      
-      # make tibble
-      matches <- tibble(
-        ys = {{y}},
-        match = near(query, ys, {{match_tol}})) # tell me if i element in col is near x value
-      
-      
-      # return match value 
-      closest_y <- matches %>%
-        filter(match == TRUE) %>% # keep only vals within tolerance
-        filter(ys != query) %>% # value should not be itself
-        distinct(ys)
-      
-      return_vector <- as.vector(closest_y$ys)
-      
-      
-      # if length of return rector is 0, replace with NA
-      if (length(return_vector) == 0) {
-        return_vector <- NA_integer_
-      }
-      
-      return(return_vector)
-    
     }
     
     
@@ -151,22 +158,39 @@ read_pdf <- function(pdf_path, page_min, page_max,
       group_by(y) %>%
       mutate(page_grp = cur_group_id(),
              page = page,
-             n_in_row = n(),
-             nearest_y = nearest_neighbor(y, table[["y"]], tol = 12)) %>% # data pronoun
-      arrange(page_grp, nearest_y) %>%
-      ungroup() %>%
-      mutate(y2 = case_when(is.na(nearest_y) ~ y,
-                            nearest_y >  y  ~ nearest_y,
-                            nearest_y <  y  ~ y)) %>%
-      group_by(y2) %>%
-      mutate(page_grp2 = cur_group_id(),
-             n_in_row2 = n()) %>%
-      arrange(page_grp2) %>%
+             n_in_row = n()) %>%
+      ungroup() 
+    
+    keys <- c("page_grp", "page", "n_in_row", "y")
+    
+    if (fuzzy_rows == TRUE) {
+      
+      table %<>%
+        mutate(nearest_y = nearest_neighbor(ref_col = y,
+                                            match_tol = 3)) %>%
+        arrange(page_grp, nearest_y) %>%
+        mutate(y2 = case_when(is.na(nearest_y) ~ as.integer(y),
+                              nearest_y >  y  ~ as.integer(nearest_y),
+                              nearest_y <  y  ~ as.integer(y))) %>%
+        group_by(y2) %>%
+        mutate(page_grp2 = cur_group_id(),
+               n_in_row2 = n()) %>%
+        arrange(page_grp2)
+      
+      keys <- c("y2", "page_grp2", "page", "y")
+      
+    }
+    
+    
+      
+    table %<>%
       pivot_wider(names_from = "varname",
                   values_from = "text",
-                  id_cols = all_of(c("y2", "page_grp2", "page")))
+                  id_cols = all_of(keys)) 
+                # will this id_cols work for both situations where fuzzy_rows is both 
+                # true and false since in FALSE situation only page will exist? should
+                # with any_of
 
-    
     
     return(table)
 
