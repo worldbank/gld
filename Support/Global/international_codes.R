@@ -77,7 +77,9 @@ isic94_codes_raw_B <- read_pdf(
   xmin = c(55, 90, 435, 470, 505),
   xmax = c(89, 129, 469, 504, 9999),
   header = FALSE,
-  numlist = c(1994, 1977, 3.1)
+  numlist = c(1994, 1977, 3.1),
+  fuzzy_rows = TRUE,
+  match_tol = 1
 )
 
 
@@ -189,6 +191,7 @@ rowAny <- function(x) rowSums(x) > 0
 ## given info as authoritative.
 
 isic09_codes <- isic09_codes_raw %>%
+  select(-page_grp) %>%
   rename(page_grp = page_grp2) %>%
   mutate(
     class = case_when(is.na(class)  ~ str_sub(subclass, 1,4),
@@ -265,7 +268,9 @@ psoc12_codes_raw <- read_pdf(
       ymin = 90,
       xlabel = c(160, 420),
       xmin = c(91, 130, 450, 495),
-      xmax = c(130, 175, 495, 9999)
+      xmax = c(130, 175, 495, 9999), 
+      fuzzy_rows = TRUE,
+      match_tol = 1
   
       )
 
@@ -361,7 +366,8 @@ match_isco12_table <- match_isco12_list[[1]]
 
 
 # save data ----
-
+if (FALSE) {
+  
 # Rdata 
 save(isic94_codes_raw, isic94_codes, isic94_leftover, isic94_clean, psic94_path,
      isic09_codes_raw, isic09_codes, isic09_leftover, isic09_clean, psic09_path, 
@@ -412,3 +418,4 @@ haven::write_dta(match_isic09_table,
 haven::write_dta(match_isco12_table,
                  path = file.path(PHL, "PHL_data/GLD/PHL_PSOC_ISCO_12_key.dta"),
                  version = 14)
+}

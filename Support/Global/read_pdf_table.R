@@ -185,8 +185,8 @@ read_pdf <- function(pdf_path, page_min, page_max,
       
     table %<>%
       pivot_wider(names_from = "varname",
-                  values_from = "text",
-                  id_cols = all_of(keys)) 
+                  values_from = "text")
+                  #id_cols = all_of(keys)) # this should leave all cols as ids?
                 # will this id_cols work for both situations where fuzzy_rows is both 
                 # true and false since in FALSE situation only page will exist? should
                 # with any_of
