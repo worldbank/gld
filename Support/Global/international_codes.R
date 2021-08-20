@@ -135,7 +135,7 @@ isic94_clean <- isic94_codes %>%
   #filter(rowAny(across(table_vars_gc, ~ !is.na(.x)))) %>% # at least 1 col must be non-NA
   filter(rowAny(across(all_of(table_vars_ppi), ~ !is.na(.x)))) %>% # at least 1 col must be non-NA
   ungroup() %>%
-  select(-y, -page_grp)
+  select(-page_grp)
 
 # check
 assertthat::assert_that( (nrow(isic94_clean) + nrow(isic94_leftover2)) == nrow(isic94_codes)   )
@@ -308,6 +308,7 @@ isco12_leftover <- bind_rows(isco12_leftover1, isco12_leftover2)
 
 # ISCO clean ----
 ## note that for now in order to sidestep issue #96, will not filter yet
+
 isco12_clean <- psoc12_codes %>%
   ## eliminate group and class-only rows
   #filter(rowAny(across(table_vars_sm, ~ !is.na(.x)))) %>% # at least 1 col must be non-NA
@@ -323,7 +324,7 @@ isco12_clean <- psoc12_codes %>%
     mutate(psoc92 = str_replace(psoc92, "\\`", NA_character_)) %>% 
     mutate(psoc92 = str_replace(psoc92, " ", NA_character_)) %>% 
     ungroup() %>%
-    select(-y, -page_grp) 
+    select(-page_grp) 
 
 # clean duplicates
   isco12_clean %>% janitor::get_dupes() # there is 1 pair of dups
@@ -362,7 +363,7 @@ match_isco12_table <- match_isco12_list[[1]]
 
 
 # save data ----
-if (FALSE) {
+if (TRUE) {
   
 # Rdata 
 save(isic94_codes_raw, isic94_codes, isic94_leftover, isic94_clean, psic94_path,
