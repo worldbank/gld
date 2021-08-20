@@ -161,7 +161,7 @@ read_pdf <- function(pdf_path, page_min, page_max,
              n_in_row = n()) %>%
       ungroup() 
     
-    keys <- c("page_grp", "page", "n_in_row")
+    keys <- c("page_grp", "page", "n_in_row", "y")
     
     if (fuzzy_rows == TRUE) {
       
@@ -177,7 +177,7 @@ read_pdf <- function(pdf_path, page_min, page_max,
                n_in_row2 = n()) %>%
         arrange(page_grp2)
       
-      keys <- c("y2", "page_grp2", "page")
+      keys <- c("y2", "page_grp2", "page", "y")
       
     }
     
