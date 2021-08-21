@@ -816,7 +816,7 @@ foreach v of local ed_var {
 	gen industrycat10_helper=.
 	replace industrycat10_helper=1 if industrycat10=="01" | industrycat10=="02" | industrycat10=="05"
 	replace industrycat10_helper=2 if industrycat10=="10" | industrycat10=="11" | industrycat10=="12"  | industrycat10=="13"  | industrycat10=="14" 
-	replace industrycat10_helper=3 if industrycat10=="15" | industrycat10=="16" | industrycat10=="17"  | industrycat10=="18"  | industrycat10=="19" | industrycat10=="20" | industrycat10=="21" | industrycat10=="22" | industrycat10=="23" | industrycat10=="24" | industrycat10=="25" | industrycat10=="26" | industrycat10=="27" | industrycat10=="28" | industrycat10=="29" | industrycat10=="3" | industrycat10=="31" | industrycat10=="32" | industrycat10=="33" | industrycat10=="34" | industrycat10=="35" | industrycat10=="36" | industrycat10=="37" 
+	replace industrycat10_helper=3 if industrycat10=="15" | industrycat10=="16" | industrycat10=="17"  | industrycat10=="18"  | industrycat10=="19" | industrycat10=="20" | industrycat10=="21" | industrycat10=="22" | industrycat10=="23" | industrycat10=="24" | industrycat10=="25" | industrycat10=="26" | industrycat10=="27" | industrycat10=="28" | industrycat10=="29" | industrycat10=="30" | industrycat10=="31" | industrycat10=="32" | industrycat10=="33" | industrycat10=="34" | industrycat10=="35" | industrycat10=="36" | industrycat10=="37" 
 	replace industrycat10_helper=4 if industrycat10=="40" | industrycat10=="41"
 	replace industrycat10_helper=5 if industrycat10=="45"
 	replace industrycat10_helper=6 if industrycat10=="50" | industrycat10=="51" | industrycat10=="52" | industrycat10=="55"
@@ -1079,7 +1079,7 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 	gen industrycat10_2_helper=.
 	replace industrycat10_2_helper=1 if industrycat10_2=="01" | industrycat10_2=="02" | industrycat10_2=="05"
 	replace industrycat10_2_helper=2 if industrycat10_2=="10" | industrycat10_2=="11" | industrycat10_2=="12"  | industrycat10_2=="13"  | industrycat10_2=="14" 
-	replace industrycat10_2_helper=3 if industrycat10_2=="15" | industrycat10_2=="16" | industrycat10_2=="17"  | industrycat10_2=="18"  | industrycat10_2=="19" | industrycat10_2=="20" | industrycat10_2=="21" | industrycat10_2=="22" | industrycat10_2=="23" | industrycat10_2=="24" | industrycat10_2=="25" | industrycat10_2=="26" | industrycat10_2=="27" | industrycat10_2=="28" | industrycat10_2=="29" | industrycat10_2=="3" | industrycat10_2=="31" | industrycat10_2=="32" | industrycat10_2=="33" | industrycat10_2=="34" | industrycat10_2=="35" | industrycat10_2=="36" | industrycat10_2=="37" 
+	replace industrycat10_2_helper=3 if industrycat10_2=="15" | industrycat10_2=="16" | industrycat10_2=="17"  | industrycat10_2=="18"  | industrycat10_2=="19" | industrycat10_2=="20" | industrycat10_2=="21" | industrycat10_2=="22" | industrycat10_2=="23" | industrycat10_2=="24" | industrycat10_2=="25" | industrycat10_2=="26" | industrycat10_2=="27" | industrycat10_2=="28" | industrycat10_2=="29" | industrycat10_2=="30" | industrycat10_2=="31" | industrycat10_2=="32" | industrycat10_2=="33" | industrycat10_2=="34" | industrycat10_2=="35" | industrycat10_2=="36" | industrycat10_2=="37" 
 	replace industrycat10_2_helper=4 if industrycat10_2=="40" | industrycat10_2=="41"
 	replace industrycat10_2_helper=5 if industrycat10_2=="45"
 	replace industrycat10_2_helper=6 if industrycat10_2=="50" | industrycat10_2=="51" | industrycat10_2=="52" | industrycat10_2=="55"
