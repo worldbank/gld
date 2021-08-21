@@ -808,20 +808,32 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_>
-	encode isic_1, gen(industrycat_isic)
-	replace industrycat_isic=. if lstatus!=1
+	gen industrycat_isic= isic_1
+	replace industrycat_isic="." if lstatus!=1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
 
 *<_industrycat10_>
-	gen byte industrycat10=floor(p4a/100)
-	recode industrycat10 (11=1) (21=2) (22=4) (23=5) (31/33=3) (43 46=6) (51 48 49=7) (52 55=8) (93=9) (53 54 56 61 62 71 72 97 98 99 81=10)
-	replace industrycat10=. if lstatus!=1
+	gen industrycat10= substr(industrycat_isic, 1,2)
+	gen industrycat10_helper=.
+	replace industrycat10_helper=1 if industrycat10=="01" | industrycat10=="02" | industrycat10=="03"
+	replace industrycat10_helper=2 if industrycat10=="05" | industrycat10=="06" | industrycat10=="07" | industrycat10=="08"  | industrycat10=="09"
+	replace industrycat10_helper=3 if industrycat10=="10" | industrycat10=="11" | industrycat10=="12"  |industrycat10=="13" | industrycat10=="14" | industrycat10=="15" | industrycat10=="16" | industrycat10=="17" | industrycat10=="18" | industrycat10=="19" | industrycat10=="20" | industrycat10=="21" | industrycat10=="22" | industrycat10=="23" | industrycat10=="24" | industrycat10=="25" | industrycat10=="26" | industrycat10=="27" | industrycat10=="28" | industrycat10=="29" | industrycat10=="30" | industrycat10=="31" | industrycat10=="32" | industrycat10=="33" 
+	replace industrycat10_helper=4 if industrycat10=="35" | industrycat10=="36" | industrycat10=="37" | industrycat10=="38" | industrycat10=="39"
+	replace industrycat10_helper=5 if industrycat10=="41" | industrycat10=="42" | industrycat10=="43"
+	replace industrycat10_helper=6 if industrycat10=="45" | industrycat10=="46" | industrycat10=="47" | industrycat10=="55"  | industrycat10=="56" 
+	replace industrycat10_helper=7 if industrycat10=="49" | industrycat10=="50" | industrycat10=="51" | industrycat10=="52" | industrycat10=="53"
+	replace industrycat10_helper=8 if industrycat10=="64" | industrycat10=="65" | industrycat10=="66" |industrycat10=="77" | industrycat10=="78" | industrycat10=="79" | industrycat10=="80" | industrycat10=="81" | industrycat10=="82"
+	replace industrycat10_helper=9 if industrycat10=="84" 
+	replace industrycat10_helper=10 if industrycat10=="58" | industrycat10=="59" | industrycat10=="60" |industrycat10=="61" | industrycat10=="62" | industrycat10=="63" | industrycat10=="68" | industrycat10=="69"| industrycat10=="70" | industrycat10=="71" | industrycat10=="72" | industrycat10=="73" | industrycat10=="74" | industrycat10=="75" | industrycat10=="85" | industrycat10=="86" | industrycat10=="87" | industrycat10=="88" | industrycat10=="90" | industrycat10=="91" | industrycat10=="92" | industrycat10=="93" | industrycat10=="94" | industrycat10=="95" | industrycat10=="96" | industrycat10=="97" | industrycat10=="98" | industrycat10=="99"
+	replace industrycat10_helper=. if lstatus!=1
+	drop industrycat10 
+	rename industrycat10_helper industrycat10
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
-	replace industrycat10=. if lstatus!=1
+
 *</_industrycat10_>
 
 
@@ -850,18 +862,21 @@ foreach v of local ed_var {
 *</_occup_>
 
 *<_occup_isco_>
-		gen occup_isco = isco_1
+	gen occup_isco = isco_1
+	replace occup_isco="." if lstatus!=1
 	label var occup_isco "ISCO code of primary job 7 day recall"
 	
 *</_occup_isco_>
 
 *<_occup_skill_>
-	gen occup_skill = .
-	destring occup_isco, replace
-	replace occup_skill = 1 if inrange(occup_isco,1000,3599)
-	replace occup_skill = 2 if inrange(occup_isco,4000,8999) 
-	replace occup_skill = 3 if inrange(occup_isco,9000,9999) 
-	replace occup_skill=. if lstatus!=1
+	gen  occup_skill= substr(isco_1, 1,2)
+	gen occup_skill_helper=.
+	replace occup_skill_helper=1 if occup_skill=="10" |  occup_skill=="11" |  occup_skill=="12" |  occup_skill=="13" |  occup_skill=="14" | occup_skill=="20" | occup_skill=="21" | occup_skill=="22" | occup_skill=="23" | occup_skill=="24" | occup_skill=="26"| occup_skill=="23" | occup_skill=="30" | occup_skill=="31" | occup_skill=="32" | occup_skill=="33" | occup_skill=="34" | occup_skill=="35"
+	replace occup_skill_helper=2 if occup_skill=="40" |  occup_skill=="41" |  occup_skill=="42" |  occup_skill=="43" |  occup_skill=="44" | occup_skill=="50" | occup_skill=="51" | occup_skill=="52" | occup_skill=="53" | occup_skill=="54" | occup_skill=="60"| occup_skill=="61" | occup_skill=="62" | occup_skill=="63" | occup_skill=="70" | occup_skill=="71" | occup_skill=="72" | occup_skill=="73" | occup_skill=="74" | occup_skill=="75" | occup_skill=="80" | occup_skill=="81" | occup_skill=="82" | occup_skill=="83" 
+	replace occup_skill_helper=3 if occup_skill=="90" | occup_skill=="91" | occup_skill=="93" | occup_skill=="95" | occup_skill=="96" | occup_skill=="99"
+	replace occup_skill_helper=. if lstatus!=1
+	drop occup_skill
+	rename occup_skill_helper occup_skill
 	la de lbloccupskill 1 "High" 2 "Medium" 3 "Low" 4 "Armed Forces" 5 "Not elsewhere classified"
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
 	label values occup_skill lbloccupskill
@@ -1058,18 +1073,31 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 
 
 *<_industrycat_isic_2_>
-	encode isic_2, gen(industrycat_isic_2)
-	replace industrycat_isic_2=. if lstatus!=1
+	gen industrycat_isic_2=isic_2
+	replace industrycat_isic_2="." if lstatus!=1
 	label var industrycat_isic_2 "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_2_>
 
 
 *<_industrycat10_2_>
-	gen byte industrycat10_2 = floor(p7c/100)
-	recode industrycat10_2 (11=1) (21=2) (22 51=4) (23=5) (31/33=3) (43 46=6) (48/49=7) (52=8) (53/56=10) (61/62=9) (71 81 93 99 98 72 97=10) 
-	replace industrycat10_2=. if lstatus!=1
-	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
-	label values industrycat10_2 lblindustrycat10
+	gen industrycat10_2= substr(industrycat_isic_2, 1,2)
+	gen industrycat10_2_helper=.
+	replace industrycat10_2_helper=1 if industrycat10_2=="01" | industrycat10_2=="02" | industrycat10_2=="03"
+	replace industrycat10_2_helper=2 if industrycat10_2=="05" | industrycat10_2=="06" | industrycat10_2=="07" | industrycat10_2=="08"  | industrycat10_2=="09"
+	replace industrycat10_2_helper=3 if industrycat10_2=="10" | industrycat10_2=="11" | industrycat10_2=="12"  |industrycat10_2=="13" | industrycat10_2=="14" | industrycat10_2=="15" | industrycat10_2=="16" | industrycat10_2=="17" | industrycat10_2=="18" | industrycat10_2=="19" | industrycat10_2=="20" | industrycat10_2=="21" | industrycat10_2=="22" | industrycat10_2=="23" | industrycat10_2=="24" | industrycat10_2=="25" | industrycat10_2=="26" | industrycat10_2=="27" | industrycat10_2=="28" | industrycat10_2=="29" | industrycat10_2=="30" | industrycat10_2=="31" | industrycat10_2=="32" | industrycat10_2=="33" 
+	replace industrycat10_2_helper=4 if industrycat10_2=="35" | industrycat10_2=="36" | industrycat10_2=="37" | industrycat10_2=="38" | industrycat10_2=="39"
+	replace industrycat10_2_helper=5 if industrycat10_2=="41" | industrycat10_2=="42" | industrycat10_2=="43"
+	replace industrycat10_2_helper=6 if industrycat10_2=="45" | industrycat10_2=="46" | industrycat10_2=="47" | industrycat10_2=="55"  | industrycat10_2=="56" 
+	replace industrycat10_2_helper=7 if industrycat10_2=="49" | industrycat10_2=="50" | industrycat10_2=="51" | industrycat10_2=="52" | industrycat10_2=="53"
+	replace industrycat10_2_helper=8 if industrycat10_2=="64" | industrycat10_2=="65" | industrycat10_2=="66" |industrycat10_2=="77" | industrycat10_2=="78" | industrycat10_2=="79" | industrycat10_2=="80" | industrycat10_2=="81" | industrycat10_2=="82"
+	replace industrycat10_2_helper=9 if industrycat10_2=="84" 
+	replace industrycat10_2_helper=10 if industrycat10_2=="58" | industrycat10_2=="59" | industrycat10_2=="60" |industrycat10_2=="61" | industrycat10_2=="62" | industrycat10_2=="63" | industrycat10_2=="68" | industrycat10_2=="69"| industrycat10_2=="70" | industrycat10_2=="71" | industrycat10_2=="72" | industrycat10_2=="73" | industrycat10_2=="74" | industrycat10_2=="75" | industrycat10_2=="85" | industrycat10_2=="86" | industrycat10_2=="87" | industrycat10_2=="88" | industrycat10_2=="90" | industrycat10_2=="91" | industrycat10_2=="92" | industrycat10_2=="93" | industrycat10_2=="94" | industrycat10_2=="95" | industrycat10_2=="96" | industrycat10_2=="97" | industrycat10_2=="98" | industrycat10_2=="99"
+	replace industrycat10_2_helper=. if lstatus!=1
+	drop industrycat10_2 
+	rename industrycat10_2_helper industrycat10_2
+	label var industrycat10_2 "1 digit industry classification, primary job 7 day recall"
+	la de lblindustrycat10_2 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
+	label values industrycat10_2 lblindustrycat10_2
 *</_industrycat10_2_>
 
 
@@ -1089,6 +1117,7 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 
 *<_occup_isco_2_>
 	gen occup_isco_2 = isco_2
+	replace occup_isco_2="." if lstatus!=1
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
@@ -1099,12 +1128,14 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 *</_occup_2_>
 
 *<_occup_skill_2_>
-	gen occup_skill_2 = .
-	destring occup_isco_2, replace
-	replace occup_skill_2 = 1 if inrange(occup_isco_2,1000,3599)
-	replace occup_skill_2 = 2 if inrange(occup_isco_2,4000,8999) 
-	replace occup_skill_2 = 3 if inrange(occup_isco_2,9000,9999)  
-	replace occup_skill_2=. if lstatus!=1
+	gen  occup_skill_2= substr(isco_2, 1,2)
+	gen occup_skill_2_helper=.
+	replace occup_skill_2_helper=1 if occup_skill_2=="10" |  occup_skill_2=="11" |  occup_skill_2=="12" |  occup_skill_2=="13" |  occup_skill_2=="14" | occup_skill_2=="20" | occup_skill_2=="21" | occup_skill_2=="22" | occup_skill_2=="23" | occup_skill_2=="24" | occup_skill_2=="26"| occup_skill_2=="23" | occup_skill_2=="30" | occup_skill_2=="31" | occup_skill_2=="32" | occup_skill_2=="33" | occup_skill_2=="34" | occup_skill_2=="35"
+	replace occup_skill_2_helper=2 if occup_skill_2=="40" |  occup_skill_2=="41" |  occup_skill_2=="42" |  occup_skill_2=="43" |  occup_skill_2=="44" | occup_skill_2=="50" | occup_skill_2=="51" | occup_skill_2=="52" | occup_skill_2=="53" | occup_skill_2=="54" | occup_skill_2=="60"| occup_skill_2=="61" | occup_skill_2=="62" | occup_skill_2=="63" | occup_skill_2=="70" | occup_skill_2=="71" | occup_skill_2=="72" | occup_skill_2=="73" | occup_skill_2=="74" | occup_skill_2=="75" | occup_skill_2=="80" | occup_skill_2=="81" | occup_skill_2=="82" | occup_skill_2=="83" 
+	replace occup_skill_2_helper=3 if occup_skill_2=="90" | occup_skill_2=="91" | occup_skill_2=="93" | occup_skill_2=="95" | occup_skill_2=="96" | occup_skill_2=="99"
+	replace occup_skill_2_helper=. if lstatus!=1
+	drop occup_skill_2
+	rename occup_skill_2_helper occup_skill_2
 	label var occup_skill_2 "Skill based on ISCO standard secondary job 7 day recall"
 	label values occup_skill_2 lbloccupskill
 *</_occup_skill_2_>
@@ -1168,8 +1199,8 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 
 
 *<_t_wage_others_>
-	gen t_wage_others_total = .
-	label var t_wage_others_total "Annualized wage in all but primary and secondary jobs (12-mon ref period)"
+	gen t_wage_others = .
+	label var t_wage_others "Annualized wage in all but primary and secondary jobs (12-mon ref period)"
 *</_t_wage_others_>
 
 
@@ -1529,8 +1560,8 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 *</_t_wage_nocompen_others_year_>
 
 *<_t_wage_others_year_>
-	gen t_wage_others_total_year = .
-	label var t_wage_others_total_year "Annualized wage in all but primary and secondary jobs 12 month recall"
+	gen t_wage_others_year = .
+	label var t_wage_others_year "Annualized wage in all but primary and secondary jobs 12 month recall"
 *</_t_wage_others_year_>
 
 
@@ -1588,11 +1619,18 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 *<_% Correction min age_>
 
 ** Drop info for cases under the age for which questions to be asked (do not need a variable for this)
-local lab_var "minlaborage lstatus nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others_total t_hours_total t_wage_nocompen_total t_wage_total lstatus_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year  occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_total_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome industrycat4_year industrycat4_2_year"
-*I change in the code is not in but of 
-foreach v of local lab_var {
-	replace `v'=. if ( age < minlaborage & !missing(age) )
-}
+	local lab_var "minlaborage lstatus nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome"
+
+	foreach v of local lab_var {
+		cap confirm numeric variable `v'
+		if _rc == 0 { // is indeed numeric
+			replace `v'=. if ( age < minlaborage & !missing(age) )
+		}
+		else { // is not
+			replace `v'= "" if ( age < minlaborage & !missing(age) )
+		}
+
+	}
 
 *</_% Correction min age_>
 }
@@ -1606,15 +1644,47 @@ quietly{
 
 *<_% KEEP VARIABLES - ALL_>
 
-keep countrycode survname survey icls_v year vermast veralt harmonization int_year int_month hhid pid weight psu strata wave urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others_total t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year  occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year  occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_total_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome industrycat4_year industrycat4_2_year
+	keep countrycode survname survey icls_v year vermast veralt harmonization int_year int_month hhid pid weight psu strata wave urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
 
 *</_% KEEP VARIABLES - ALL_>
 
 *<_% ORDER VARIABLES_>
 
-order countrycode survname survey icls_v year vermast veralt harmonization int_year int_month hhid pid weight psu strata wave urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others_total t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year  occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year  occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_total_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome industrycat4_year industrycat4_2_year
+	order countrycode survname survey icls_v year vermast veralt harmonization int_year int_month hhid pid weight psu strata wave urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
 
 *</_% ORDER VARIABLES_>
+
+*<_% DROP UNUSED LABELS_>
+
+	* Store all labels in data
+	label dir
+	local all_lab `r(names)'
+
+	* Store all variables with a label, extract value label names
+	local used_lab = ""
+	ds, has(vallabel)
+
+	local labelled_vars `r(varlist)'
+
+	foreach varName of local labelled_vars {
+		local y : value label `varName'
+		local used_lab `"`used_lab' `y'"'
+	}
+
+	* Compare lists, `notused' is list of labels in directory but not used in final variables
+	local notused 		: list all_lab - used_lab 		// local `notused' defines value labs not in remaining vars
+	local notused_len 	: list sizeof notused 			// store size of local
+
+	* drop labels if the length of the notused vector is 1 or greater, otherwise nothing to drop
+	if `notused_len' >= 1 {
+		label drop `notused'
+	}
+	else {
+		di "There are no unused labels to drop. No value labels dropped."
+	}
+
+
+*</_% DROP UNUSED LABELS_>
 
 }
 
@@ -1637,6 +1707,7 @@ foreach var of local kept_vars {
 }
 
 *</_% DELETE MISSING VARIABLES_>
+
 
 
 *<_% SAVE_>
