@@ -28,10 +28,10 @@
 
 <_ICLS Version_>				[Version of ICLS for Labor Questions] </_ICLS Version_>
 <_ISCED Version_>				[Version of ICLS for Labor Questions] </_ISCED Version_>
-<_ISCO Version_>				[Version of ICLS for Labor Questions] </_ISCO Version_>
-<_OCCUP National_>				[Version of ICLS for Labor Questions] </_OCCUP National_>
-<_ISIC Version_>				[Version of ICLS for Labor Questions] </_ISIC Version_>
-<_INDUS National_>				[Version of ICLS for Labor Questions] </_INDUS National_>
+<_ISCO Version_>				ISCO 88 </_ISCO Version_>
+<_OCCUP National_>				PSOC 92 </_OCCUP National_>
+<_ISIC Version_>				ISIC 3.1 </_ISIC Version_>
+<_INDUS National_>				PSIC 94 </_INDUS National_>
 
 -----------------------------------------------------------------------
 <_Version Control_>
