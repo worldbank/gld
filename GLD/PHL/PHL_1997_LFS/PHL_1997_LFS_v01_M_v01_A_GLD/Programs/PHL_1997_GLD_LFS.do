@@ -1282,7 +1282,7 @@ foreach v of local ed_var {
 	missing and left to the user to self-generate or make assumptions at
 	her or his will.
 
-	egen 			t_hours_total = rowtotal(whours whours_2 t_hours_others) // missing obs treated as 0
+	egen 			t_hours_total = rowtotal(whours whours_2 t_hours_others, missing) // missing obs treated as 0
 	label var 		t_hours_total "Annualized hours worked in all jobs 7 day recall"
 	replace 		t_hours_total = . 	if whours == . & whours_2 == . & t_hours_others == .
 	*/
@@ -1290,7 +1290,8 @@ foreach v of local ed_var {
 	*<_t_hours_total_note>
 	* ILO defines yearly working hours as 48 * weekly estimate.
 	*</_t_hours_total_note>
-	egen 			t_hours_total = rowtotal(whours whours_2 t_hours_others) * 48 // missing obs treated as 0
+	egen 			t_hours_total = rowtotal(whours whours_2 t_hours_others), missing // missing obs treated as 0
+	replace 		t_hours_total = t_hours_total * 48
 	label var 		t_hours_total "Annualized hours worked in all jobs 7 day recall"
 	replace 		t_hours_total = . 	if whours == . & whours_2 == . & t_hours_others == .
 *</_t_hours_total_>
@@ -1298,7 +1299,7 @@ foreach v of local ed_var {
 
 *<_t_wage_nocompen_total_>
 	*<_t_wage_nocompen_total_>
-	gen 			t_wage_nocompen_total = rowtotal(wage_total wage_total_2 t_wage_others)
+	egen 			t_wage_nocompen_total = rowtotal(wage_total wage_total_2 t_wage_others), missing
 	label var 		t_wage_nocompen_total "Annualized wage in all jobs excl. bonuses, etc. 7 day recall"
 	replace 		t_wage_nocompen_total = . 	if wage_total == . & wage_total_2 == . & t_wage_others == .
 *</_t_wage_nocompen_total_>
