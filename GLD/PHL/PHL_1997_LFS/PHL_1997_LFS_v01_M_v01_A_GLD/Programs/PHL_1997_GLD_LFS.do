@@ -26,7 +26,7 @@
 
 -----------------------------------------------------------------------
 
-<_ICLS Version_>				[Version of ICLS for Labor Questions] </_ICLS Version_>
+<_ICLS Version_>				ICLS-13 </_ICLS Version_>
 <_ISCED Version_>				[Version of ICLS for Labor Questions] </_ISCED Version_>
 <_ISCO Version_>				ISCO 88 </_ISCO Version_>
 <_OCCUP National_>				PSOC 92 </_OCCUP National_>
@@ -847,11 +847,16 @@ foreach v of local ed_var {
 
 
 *<_potential_lf_>
-	gen byte 		potential_lf = .
+	gen byte 		potential_lf = 0
+
+	replace 		potential_lf = 1 if (avail == 1 & qlook == 2) ///
+										| (avail == 2 & qlook == 1)
 	replace 		potential_lf = . if age < minlaborage & age != .
 	replace 		potential_lf = . if lstatus != 3
 	label var 		potential_lf "Potential labour force status"
 	la de 			lblpotential_lf 0 "No" 1 "Yes"
+	label values 	potential_lf lblpotential_lf
+
 	label values 	potential_lf lblpotential_lf
 *</_potential_lf_>
 
@@ -1044,7 +1049,7 @@ foreach v of local ed_var {
 
 
 *<_unitwage_>
-	gen byte 		unitwage = .
+	gen byte 		unitwage = 1
 	label var 		unitwage "Last wages' time unit primary job 7 day recall"
 	la de 			lblunitwage ///
 					1 "Daily" ///

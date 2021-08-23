@@ -847,7 +847,10 @@ foreach v of local ed_var {
 
 
 *<_potential_lf_>
-	gen byte 		potential_lf = .
+	gen byte 		potential_lf = 0
+
+	replace 		potential_lf = 1 if (avail == 1 & qlook == 2) ///
+										| (avail == 2 & qlook == 1)
 	replace 		potential_lf = . if age < minlaborage & age != .
 	replace 		potential_lf = . if lstatus != 3
 	label var 		potential_lf "Potential labour force status"
@@ -1044,7 +1047,7 @@ foreach v of local ed_var {
 
 
 *<_unitwage_>
-	gen byte 		unitwage = .
+	gen byte 		unitwage = 1
 	label var 		unitwage "Last wages' time unit primary job 7 day recall"
 	la de 			lblunitwage ///
 					1 "Daily" ///
