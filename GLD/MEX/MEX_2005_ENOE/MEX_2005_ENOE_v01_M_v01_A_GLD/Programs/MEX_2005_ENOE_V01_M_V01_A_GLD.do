@@ -806,7 +806,7 @@ foreach v of local ed_var {
 
 *<_industrycat_isic_>
 	gen industrycat_isic= isic_1
-	replace industrycat_isic="." if lstatus!=1
+	replace industrycat_isic="" if lstatus!=1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
@@ -858,7 +858,7 @@ foreach v of local ed_var {
 
 *<_occup_isco_>
 	gen occup_isco = isco_1
-	replace occup_isco="." if lstatus!=1
+	replace occup_isco="" if lstatus!=1
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
@@ -1067,7 +1067,7 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 
 *<_industrycat_isic_2_>
 	gen industrycat_isic_2=isic_2
-	replace industrycat_isic_2="." if lstatus!=1
+	replace industrycat_isic_2="" if lstatus!=1
 	label var industrycat_isic_2 "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_2_>
 
@@ -1114,7 +1114,7 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 
 *<_occup_isco_2_>
 	gen occup_isco_2 = isco_2
-	replace occup_isco_2="." if lstatus!=1
+	replace occup_isco_2="" if lstatus!=1
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 

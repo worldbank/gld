@@ -810,7 +810,7 @@ foreach v of local ed_var {
 
 *<_industrycat_isic_>
 gen industrycat_isic= isic_1
-	replace industrycat_isic="." if lstatus!=1
+	replace industrycat_isic="" if lstatus!=1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
@@ -822,12 +822,12 @@ gen industrycat_isic= isic_1
 	replace industrycat10_helper=2 if industrycat10=="05" | industrycat10=="06" | industrycat10=="07" | industrycat10=="08"  | industrycat10=="09"
 	replace industrycat10_helper=3 if industrycat10=="10" | industrycat10=="11" | industrycat10=="12"  |industrycat10=="13" | industrycat10=="14" | industrycat10=="15" | industrycat10=="16" | industrycat10=="17" | industrycat10=="18" | industrycat10=="19" | industrycat10=="20" | industrycat10=="21" | industrycat10=="22" | industrycat10=="23" | industrycat10=="24" | industrycat10=="25" | industrycat10=="26" | industrycat10=="27" | industrycat10=="28" | industrycat10=="29" | industrycat10=="30" | industrycat10=="31" | industrycat10=="32" | industrycat10=="33" 
 	replace industrycat10_helper=4 if industrycat10=="35" | industrycat10=="36" | industrycat10=="37" | industrycat10=="38" | industrycat10=="39"
-	replace industrycat10_helper=5 if industrycat10=="41" | industrycat10=="42" | industrycat10=="43"
+	replace industrycat10_helper=5 if industrycat10=="41" | industrycat10=="42" | industrycat10=="43" 
 	replace industrycat10_helper=6 if industrycat10=="45" | industrycat10=="46" | industrycat10=="47" | industrycat10=="55"  | industrycat10=="56" 
-	replace industrycat10_helper=7 if industrycat10=="49" | industrycat10=="50" | industrycat10=="51" | industrycat10=="52" | industrycat10=="53"
-	replace industrycat10_helper=8 if industrycat10=="64" | industrycat10=="65" | industrycat10=="66" |industrycat10=="77" | industrycat10=="78" | industrycat10=="79" | industrycat10=="80" | industrycat10=="81" | industrycat10=="82"
+	replace industrycat10_helper=7  if  industrycat10=="49" | industrycat10=="50" | industrycat10=="51" | industrycat10=="52" | industrycat10=="53" | industrycat10=="58" | industrycat10=="59" | industrycat10=="60" |industrycat10=="61" | industrycat10=="62" | industrycat10=="63"
+	replace industrycat10_helper=8 if industrycat10=="64" | industrycat10=="65" | industrycat10=="66" | industrycat10=="68" | industrycat10=="69"| industrycat10=="70" | industrycat10=="71" | industrycat10=="72" | industrycat10=="73" | industrycat10=="74" | industrycat10=="75" | industrycat10=="77" | industrycat10=="78" | industrycat10=="79" | industrycat10=="80" | industrycat10=="81" | industrycat10=="82"
 	replace industrycat10_helper=9 if industrycat10=="84" 
-	replace industrycat10_helper=10 if industrycat10=="58" | industrycat10=="59" | industrycat10=="60" |industrycat10=="61" | industrycat10=="62" | industrycat10=="63" | industrycat10=="68" | industrycat10=="69"| industrycat10=="70" | industrycat10=="71" | industrycat10=="72" | industrycat10=="73" | industrycat10=="74" | industrycat10=="75" | industrycat10=="85" | industrycat10=="86" | industrycat10=="87" | industrycat10=="88" | industrycat10=="90" | industrycat10=="91" | industrycat10=="92" | industrycat10=="93" | industrycat10=="94" | industrycat10=="95" | industrycat10=="96" | industrycat10=="97" | industrycat10=="98" | industrycat10=="99"
+	replace industrycat10_helper=10 if industrycat10=="85" | industrycat10=="86" | industrycat10=="87" | industrycat10=="88" | industrycat10=="90" | industrycat10=="91" | industrycat10=="92" | industrycat10=="93" | industrycat10=="94" | industrycat10=="95" | industrycat10=="96" | industrycat10=="97" | industrycat10=="98" | industrycat10=="99"
 	replace industrycat10_helper=. if lstatus!=1
 	drop industrycat10 
 	rename industrycat10_helper industrycat10
@@ -861,7 +861,7 @@ gen industrycat_isic= isic_1
 
 *<_occup_isco_>
 		gen occup_isco = isco_1
-	replace occup_isco="." if lstatus!=1
+	replace occup_isco="" if lstatus!=1
 	label var occup_isco "ISCO code of primary job 7 day recall"
 	
 *</_occup_isco_>
@@ -1071,7 +1071,7 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 
 *<_industrycat_isic_2_>
 	gen industrycat_isic_2=isic_2
-	replace industrycat_isic_2="." if lstatus!=1
+	replace industrycat_isic_2="" if lstatus!=1
 	label var industrycat_isic_2 "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_2_>
 
@@ -1083,12 +1083,12 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 	replace industrycat10_2_helper=2 if industrycat10_2=="05" | industrycat10_2=="06" | industrycat10_2=="07" | industrycat10_2=="08"  | industrycat10_2=="09"
 	replace industrycat10_2_helper=3 if industrycat10_2=="10" | industrycat10_2=="11" | industrycat10_2=="12"  |industrycat10_2=="13" | industrycat10_2=="14" | industrycat10_2=="15" | industrycat10_2=="16" | industrycat10_2=="17" | industrycat10_2=="18" | industrycat10_2=="19" | industrycat10_2=="20" | industrycat10_2=="21" | industrycat10_2=="22" | industrycat10_2=="23" | industrycat10_2=="24" | industrycat10_2=="25" | industrycat10_2=="26" | industrycat10_2=="27" | industrycat10_2=="28" | industrycat10_2=="29" | industrycat10_2=="30" | industrycat10_2=="31" | industrycat10_2=="32" | industrycat10_2=="33" 
 	replace industrycat10_2_helper=4 if industrycat10_2=="35" | industrycat10_2=="36" | industrycat10_2=="37" | industrycat10_2=="38" | industrycat10_2=="39"
-	replace industrycat10_2_helper=5 if industrycat10_2=="41" | industrycat10_2=="42" | industrycat10_2=="43"
+	replace industrycat10_2_helper=5 if industrycat10_2=="41" | industrycat10_2=="42" | industrycat10_2=="43" 
 	replace industrycat10_2_helper=6 if industrycat10_2=="45" | industrycat10_2=="46" | industrycat10_2=="47" | industrycat10_2=="55"  | industrycat10_2=="56" 
-	replace industrycat10_2_helper=7 if industrycat10_2=="49" | industrycat10_2=="50" | industrycat10_2=="51" | industrycat10_2=="52" | industrycat10_2=="53"
-	replace industrycat10_2_helper=8 if industrycat10_2=="64" | industrycat10_2=="65" | industrycat10_2=="66" |industrycat10_2=="77" | industrycat10_2=="78" | industrycat10_2=="79" | industrycat10_2=="80" | industrycat10_2=="81" | industrycat10_2=="82"
+	replace industrycat10_2_helper=7  if  industrycat10_2=="49" | industrycat10_2=="50" | industrycat10_2=="51" | industrycat10_2=="52" | industrycat10_2=="53" | industrycat10_2=="58" | industrycat10_2=="59" | industrycat10_2=="60" |industrycat10_2=="61" | industrycat10_2=="62" | industrycat10_2=="63"
+	replace industrycat10_2_helper=8 if industrycat10_2=="64" | industrycat10_2=="65" | industrycat10_2=="66" | industrycat10_2=="68" | industrycat10_2=="69"| industrycat10_2=="70" | industrycat10_2=="71" | industrycat10_2=="72" | industrycat10_2=="73" | industrycat10_2=="74" | industrycat10_2=="75" | industrycat10_2=="77" | industrycat10_2=="78" | industrycat10_2=="79" | industrycat10_2=="80" | industrycat10_2=="81" | industrycat10_2=="82"
 	replace industrycat10_2_helper=9 if industrycat10_2=="84" 
-	replace industrycat10_2_helper=10 if industrycat10_2=="58" | industrycat10_2=="59" | industrycat10_2=="60" |industrycat10_2=="61" | industrycat10_2=="62" | industrycat10_2=="63" | industrycat10_2=="68" | industrycat10_2=="69"| industrycat10_2=="70" | industrycat10_2=="71" | industrycat10_2=="72" | industrycat10_2=="73" | industrycat10_2=="74" | industrycat10_2=="75" | industrycat10_2=="85" | industrycat10_2=="86" | industrycat10_2=="87" | industrycat10_2=="88" | industrycat10_2=="90" | industrycat10_2=="91" | industrycat10_2=="92" | industrycat10_2=="93" | industrycat10_2=="94" | industrycat10_2=="95" | industrycat10_2=="96" | industrycat10_2=="97" | industrycat10_2=="98" | industrycat10_2=="99"
+	replace industrycat10_2_helper=10 if industrycat10_2=="85" | industrycat10_2=="86" | industrycat10_2=="87" | industrycat10_2=="88" | industrycat10_2=="90" | industrycat10_2=="91" | industrycat10_2=="92" | industrycat10_2=="93" | industrycat10_2=="94" | industrycat10_2=="95" | industrycat10_2=="96" | industrycat10_2=="97" | industrycat10_2=="98" | industrycat10_2=="99"
 	replace industrycat10_2_helper=. if lstatus!=1
 	drop industrycat10_2 
 	rename industrycat10_2_helper industrycat10_2
@@ -1114,7 +1114,7 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 
 *<_occup_isco_2_>
 	gen occup_isco_2 = isco_2
-	replace occup_isco_2="." if lstatus!=1
+	replace occup_isco_2="" if lstatus!=1
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
