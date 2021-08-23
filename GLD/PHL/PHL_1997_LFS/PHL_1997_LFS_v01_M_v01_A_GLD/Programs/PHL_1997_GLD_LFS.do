@@ -94,7 +94,7 @@ set mem 800m
 	local round4 `"`stata'\LFS OCT1997.dta"'
 
 	local isic_key 	 `"`stata'\PHL_PSIC_ISIC_94_key.dta"'
-
+	local isco_key 	 `"`stata'\"' // to be created
 
 	* ouput
 	local path_output `"`gld_data'\\`cty3'_`surv_yr'_LFS_v01_M_v01_A_GLD"'
@@ -1305,7 +1305,7 @@ foreach v of local ed_var {
 
 
 *<_t_wage_total_>
-	/*no bonusus or compensation listed in wage */
+	/*no bonusus or compensation listed in wage, so same as nocomp variagble */
 	gen 			t_wage_total = t_wage_nocompen_total
 	label var 		t_wage_total "Annualized total wage for all jobs 7 day recall"
 *</_t_wage_total_>
@@ -1313,6 +1313,8 @@ foreach v of local ed_var {
 
 
 *----------8.6: 12 month reference overall------------------------------*
+/*Note: sub-modules 8.6, 8.7, 8.8. 8.9, and 8.10 do not apply to PHL because there
+ are no questions related to the previous 12-month reference period in the survey.*/
 
 {
 
@@ -1717,15 +1719,15 @@ foreach v of local ed_var {
 *</_t_hours_total_year_>
 
 
-*<_t_wage_nocompen_total_year_> %% to annualize? conditionally on unit wage in future surveys?
-	gen 			t_wage_nocompen_total_year = wage_total
+*<_t_wage_nocompen_total_year_>
+	gen 			t_wage_nocompen_total_year = .
 	label var 		t_wage_nocompen_total_year ///
 					"Annualized wage in all jobs excl. bonuses, etc. 12 month recall"
 *</_t_wage_nocompen_total_year_>
 
 
 *<_t_wage_total_year_>
-	gen 			t_wage_total_year = wage_total
+	gen 			t_wage_total_year = .
 	label var 		t_wage_total_year "Annualized total wage for all jobs 12 month recall"
 *</_t_wage_total_year_>
 
@@ -1734,6 +1736,10 @@ foreach v of local ed_var {
 
 
 *<_njobs_>
+	*<_njobs_note>
+	* The provided njobs data appears to be inconsistent with data, so I dedicded not to include.
+	*</_njobs_note>
+
 	gen 			njobs = .
 	label var 		njobs "Total number of jobs"
 *</_njobs_>
@@ -1741,19 +1747,19 @@ foreach v of local ed_var {
 
 *<_t_hours_annual_>
 	/*ILO defines approximate annual working hours as weekly total * 48 */
-	gen 			t_hours_annual = whours * 48
+	gen 			t_hours_annual = t_hours_total
 	label var 		t_hours_annual "Total hours worked in all jobs in the previous 12 months"
 *</_t_hours_annual_>
 
 
 *<_linc_nc_>
-	gen 			linc_nc = wage_total // = annualized total wage
+	gen 			linc_nc = t_wage_nocompen_total
 	label var 		linc_nc "Total annual wage income in all jobs, excl. bonuses, etc."
 *</_linc_nc_>
 
 
 *<_laborincome_>
-	gen 			laborincome = t_wage_total_year
+	gen 			laborincome = t_wage_total
 	label var 		laborincome ///
 					"Total annual individual labor income in all jobs, incl. bonuses, etc."
 *</_laborincome_>
