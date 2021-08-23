@@ -1080,6 +1080,8 @@ foreach v of local ed_var {
 	This is done to make it easy to compare earnings in formal and informal sectors.
 
 </_wage_total_note> */
+
+	* No month data available for annualization
 	gen wage_total 	= .
 	label var wage_total "Annualized total wage primary job 7 day recall"
 *</_wage_total_>
@@ -1274,22 +1276,37 @@ foreach v of local ed_var {
 
 
 *----------8.5: 7 day reference total summary------------------------------*
+/*since no data exist on working months over the previous 12 month period,
+	no asumptions will be made to extrapolate the 7-day reference period
+	over the previous 12-month period. These data will simply be left as
+	missing and left to the user to self-generate or make assumptions at
+	her or his will.
 
-
-*<_t_hours_total_>
-	gen 			t_hours_total = .
+	egen 			t_hours_total = rowtotal(whours whours_2 t_hours_others) // missing obs treated as 0
 	label var 		t_hours_total "Annualized hours worked in all jobs 7 day recall"
+	replace 		t_hours_total = . 	if whours == . & whours_2 == . & t_hours_others == .
+	*/
+*<_t_hours_total_>
+	*<_t_hours_total_note>
+	* ILO defines yearly working hours as 48 * weekly estimate.
+	*</_t_hours_total_note>
+	egen 			t_hours_total = rowtotal(whours whours_2 t_hours_others) * 48 // missing obs treated as 0
+	label var 		t_hours_total "Annualized hours worked in all jobs 7 day recall"
+	replace 		t_hours_total = . 	if whours == . & whours_2 == . & t_hours_others == .
 *</_t_hours_total_>
 
 
 *<_t_wage_nocompen_total_>
-	gen 			t_wage_nocompen_total = .
+	*<_t_wage_nocompen_total_>
+	gen 			t_wage_nocompen_total = rowtotal(wage_total wage_total_2 t_wage_others)
 	label var 		t_wage_nocompen_total "Annualized wage in all jobs excl. bonuses, etc. 7 day recall"
+	replace 		t_wage_nocompen_total = . 	if wage_total == . & wage_total_2 == . & t_wage_others == .
 *</_t_wage_nocompen_total_>
 
 
 *<_t_wage_total_>
-	gen 			t_wage_total = .
+	/*no bonusus or compensation listed in wage */
+	gen 			t_wage_total = t_wage_nocompen_total
 	label var 		t_wage_total "Annualized total wage for all jobs 7 day recall"
 *</_t_wage_total_>
 
