@@ -80,7 +80,7 @@ set mem 800m
 	local 	lb_mod_age	15	// labor module minimun age (inclusive)
 	local 	ed_mod_age	5	// labor module minimun age (inclusive)
 
-	local 	weightvar 	rfadj // final weightvar 
+	local 	weightvar 	rfadj // final weightvar
 
 ** LOG FILE
 	log using `"`gld_data'\\`cty3'_`surv_yr'_I2D2_LFS.log"', replace
@@ -93,7 +93,8 @@ set mem 800m
 	local round3 `"`stata'\LFS JUL1997.dta"'
 	local round4 `"`stata'\LFS OCT1997.dta"'
 
-	local isic_key 	 `"`gld'\Work\PHL_PSIC_ISIC_94_key.dta"'
+	local isic_key 	 `"`stata'\PHL_PSIC_ISIC_94_key.dta"'
+
 
 	* ouput
 	local path_output `"`gld_data'\\`cty3'_`surv_yr'_LFS_v01_M_v01_A_GLD"'
@@ -938,26 +939,7 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_>
-	/* The key that matches industry codes is in string format to maintain leading/trailing
-		zeros, so we will change the format here to string if necessary */
-
-	qui ds 			industry_orig, has(type numeric) 	// capture numeric var if is numeric
-	loc isicvar 	= r(varlist)						// store this in a local
-	loc len 		: list sizeof isicvar 				// store the length of this local (1 or 0)
-
-		if (`len' == 1) {
-															// run this if == 1 (ie, if industry_orig is numeric)
-			tostring industry_orig	///						// make the numeric vars strings
-				, generate(industry_orig_str) ///			// gen a variable with this prefix
-				force //
-				*format(`"%0`len'.0f"')
-
-		}
-
-* here, think, if data only have 2 digits, will you merge the data with the key? Probably should not automate the merge
-* and just decide manually each time. Will a 2-digit code have an isic/isco code? Probably not...only 4-5 digit ones.
-
-
+	/*1997 only has 2-digit data for industry, so cannot be constructed*/
 	gen 			industrycat_isic = .
 	label var 		industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
