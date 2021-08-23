@@ -258,7 +258,7 @@ use `"`round1'"', clear
 	* 	note, assuming that the only necessary individaul identifier is family member, which is numeric
 	*	so, not following processing for sorting numeric/non-numeric variables.
 
-	loc idpvars 	lno 								// store relevant pid vars in local
+	loc idpvars 	c101_lno 								// store relevant pid vars in local
 	ds `idpvars',  	has(type numeric)					// filter out numeric variables in local
 	loc rlist 		= r(varlist)						// store numeric vars in local
 
@@ -288,14 +288,15 @@ use `"`round1'"', clear
 
 
 *<_weight_>
-	gen weight = `weightvar'/(`n_round')
-	label var weight "Household sampling weight"
+	gen 		weight = `weightvar'/(`n_round')
+	label 		var weight "Household sampling weight"
 *</_weight_>
 
 
 *<_psu_>
-	gen psu = .
-	label var psu "Primary sampling units"
+	rename 		psu = psu_orig
+	gen 		psu = psu_orig
+	label 		var psu "Primary sampling units"
 *</_psu_>
 
 
@@ -306,7 +307,7 @@ use `"`round1'"', clear
 
 
 *<_strata_>
-	gen strata = .
+	gen strata = stratum
 	label var strata "Strata"
 *</_strata_>
 
@@ -475,8 +476,8 @@ use `"`round1'"', clear
 {
 
 *<_hsize_>
-	sort hhid
-	by hhid: 	egen hsize= count(rel <= 7) // includes non-family members, not boarders or domestic workers.
+	sort idh
+	by idh: egen hsize= count(c03_rel <= 8 | c03_rel == 11) // includes non-family members, not boarders or domestic workers.
 	label var 	hsize "Household size"
 
 	* check
@@ -487,15 +488,14 @@ use `"`round1'"', clear
 
 
 *<_age_>
-	rename 		age age_orig
-	gen 		age = age_orig
+	gen 		age = c05_age
 	replace 	age	= 98 	if age>=98 & age!=.
 	label var 	age "Individual age"
 *</_age_>
 
 
 *<_male_>
-	gen 		male = sex
+	gen 		male = c04_sex
 	recode 		male (2 = 0)						// female=2 recoded to female=0
 	label var 	male "Sex - Ind is male"
 	la de 		lblmale 	1 "Male" 0 "Female"
@@ -505,10 +505,10 @@ use `"`round1'"', clear
 
 *<_relationharm_>
 	gen 		relationharm = .
-	replace 	relationharm = rel
-	recode 		relationharm (0 8 9=6) /// non-relative, boarder, domestic helper to "other and non-relative"
-							(6=4) 	/// "father/mother" to "parents"
-							(4 5 7=5) // "son/daugher-in-law", "grandson/granddaughter", "other relative" to "Other rel"
+	replace 	relationharm = c03_rel
+	recode 		relationharm (4 5 6 8  	= 5) /// siblings, children in law, grandchildren, other rel of hh head="other relatives"
+					(7 			= 4)	/// parents of hh head become "parents"
+					(9 10 11 	= 6) 	// boarders and domestic workers become "other/non-relatives"
 
 	label var 	relationharm "Relationship to the head of household - Harmonized"
 	la de 		lblrelationharm  ///
@@ -532,13 +532,13 @@ use `"`round1'"', clear
 
 
 *<_relationcs_>
-	gen relationcs = rel
+	gen relationcs = c03_rel
 	label var relationcs "Relationship to the head of household - Country original"
 *</_relationcs_>
 
 
 *<_marital_>
-	gen byte 		marital = mstat
+	gen byte 		marital = c06_mstat
 	recode 			marital 	///
 					(1=2) 	///	"single" -> "never married"
 					(2=1) /// "married" -> "married"
@@ -712,12 +712,12 @@ label var ed_mod_age "Education module application age"
 	gen byte educat7 =.
 
 	gen byte edulevel7=.
-	replace edulevel7=1 if grade==0			// "No Grade Completed" -> "No education"
-	replace edulevel7=2 if grade==1 | grade==2 | grade==3 // "Grades 1-5" -> " Primary Incomplete"
-	replace edulevel7=3 if grade==4 	// "Elementary Graduate" -> "Primary Complete"
-	replace edulevel7=4 if grade==5		// "1st-3rd Year in High School" -> "Secondary Incomplete"
-	replace edulevel7=5 if grade==6		// "High school graduate" -> "Secondary Complete"
-	replace edulevel7=7 if grade==7 | ( grade>=40 & grade<=98) // "College Graduate" and "[x] Bachelors/Advanced Degree" -> "University"
+	replace edulevel7=1 if c07_grade==0			// "No Grade Completed" -> "No education"
+	replace edulevel7=2 if c07_grade==1 // "Elementary Undergraduate" -> " Primary Incomplete"
+	replace edulevel7=3 if c07_grade==2 	// "Elementary Graduate" -> "Primary Complete"
+	replace edulevel7=4 if c07_grade==3		// "High School Undergraduate" -> "Secondary Incomplete"
+	replace edulevel7=5 if c07_grade==4		// "High school graduate" -> "Secondary Complete"
+	replace edulevel7=7 if c07_grade==5 | ( c07_grade>=60 & c07_grade<=98) // "College Graduate" and "[x] Bachelors/Advanced Degree" -> "University"
 
 	label var educat7 "Level of education 1"
 	la de lbleducat7 	1 "No education" ///
@@ -849,8 +849,8 @@ foreach v of local ed_var {
 *<_potential_lf_>
 	gen byte 		potential_lf = 0
 
-	replace 		potential_lf = 1 if (avail == 1 & qlook == 2) ///
-										| (avail == 2 & qlook == 1)
+	replace 		potential_lf = 1 if (c34_avail == 1 & c35_lookw == 2) ///
+										| (c34_avail == 2 & c35_lookw == 1)
 	replace 		potential_lf = . if age < minlaborage & age != .
 	replace 		potential_lf = . if lstatus != 3
 	label var 		potential_lf "Potential labour force status"
@@ -860,9 +860,11 @@ foreach v of local ed_var {
 
 
 *<_underemployment_>
-	gen byte 		underemployment = .
+	gen byte 		underemployment = 0
+
+	replace 		underemployment = 1 if c21_pwmore == 1
 	replace 		underemployment = . if age < minlaborage & age != .
-	replace 		underemployment = . if lstatus == 1
+	replace 		underemployment = . if lstatus != 1
 	label var 		underemployment "Underemployment status"
 	la de 			lblunderemployment 0 "No" 1 "Yes"
 	label values 	underemployment lblunderemployment
@@ -871,11 +873,11 @@ foreach v of local ed_var {
 
 *<_nlfreason_>
 	gen byte 		nlfreason= .
-	replace 		nlfreason=1 	if wnot==8
-	replace 		nlfreason=2 	if wnot==7
-	replace 		nlfreason=3 	if wnot==6
-	replace 		nlfreason=4 	if wnot==3
-	replace 		nlfreason=5 	if wnot==1 | wnot==2 | wnot==4 | wnot==5 | wnot==9
+	replace 		nlfreason=1 	if c39_wynot==8
+	replace 		nlfreason=2 	if c39_wynot==7
+	replace 		nlfreason=3 	if c39_wynot==6
+	replace 		nlfreason=4 	if c39_wynot==3
+	replace 		nlfreason=5 	if c39_wynot==1 | c39_wynot==2 | c39_wynot==4 | c39_wynot==5 | c39_wynot==9
 	replace 		nlfreason=. 	if lstatus!=3 		// restricts universe to non-labor force
 	label var 		nlfreason "Reason not in the labor force"
 	la de 			lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
@@ -906,10 +908,10 @@ foreach v of local ed_var {
 {
 *<_empstat_>
 	gen byte 		empstat=.
-	replace 		empstat=1 	if class==0 | class==1 | class==2 | class==5
-	replace 		empstat=2 	if class==6
-	replace 		empstat=3	if class==4
-	replace 		empstat=4 	if class==3
+	replace 		empstat=1 	if c17_pclass==0 | c17_pclass==1 | c17_pclass==2 | c17_pclass==5
+	replace 		empstat=2 	if c17_pclass==6
+	replace 		empstat=3	if c17_pclass==4
+	replace 		empstat=4 	if c17_pclass==3
 	replace 		empstat=. 	if lstatus!=1 	// includes universe restriction
 	label var 		empstat 	"Employment status during past week primary job 7 day recall"
 	la de 			lblempstat 	1 "Paid employee" ///
@@ -923,8 +925,8 @@ foreach v of local ed_var {
 
 *<_ocusec_>
 	gen byte 		ocusec = .
-	replace 		ocusec = 1 	if class == 1
-	replace 		ocusec = 2 	if inlist(class, 0, 1, 3, 4, 5, 6)
+	replace 		ocusec = 1 	if c17_pclass == 1
+	replace 		ocusec = 2 	if inlist(c17_pclass, 0, 1, 3, 4, 5, 6)
 
 	label var 		ocusec 		"Sector of activity primary job 7 day recall"
 	la de 			lblocusec 	1 "Public Sector, Central Government, Army" ///
