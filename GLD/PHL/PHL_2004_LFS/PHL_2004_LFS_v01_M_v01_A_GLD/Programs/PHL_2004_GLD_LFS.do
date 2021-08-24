@@ -80,7 +80,7 @@ set mem 800m
 	local 	lb_mod_age	15	// labor module minimun age (inclusive)
 	local 	ed_mod_age	5	// labor module minimun age (inclusive)
 
-	local 	weightvar 	rfadj // final weightvar
+	local 	weightvar 	fwgt // final weightvar
 
 ** LOG FILE
 	log using `"`gld_data'\\`cty3'_`surv_yr'_I2D2_LFS.log"', replace
@@ -460,7 +460,7 @@ set mem 800m
 
 *<_urban_>
 	gen byte 		urban = .
-	replace 		urban = urb
+	replace 		urban = urb2k70
 	recode 			urban (2 = 0) 		// change rural=2 to rural=0
 	label var 		urban "Location is urban"
 	la de 			lblurban 1 "Urban" 0 "Rural"
@@ -474,24 +474,29 @@ set mem 800m
 	Labels are to be defined as # - Name like 1 "1 - Alaska" 2 "2 - Arkansas".
 
 </_subnatid1> */
-	gen byte 		subnatid1 = regn
+	gen byte 		subnatid1 = reg
 	label de 		lblsubnatid1 	///
 					 1   "1 - Ilocos"			///
 					 2	 "2 - Cagayan Valley"	///
 					 3   "3 - Central Luzon"	///
-					 4	 "4 - Southern Tagalog"	///
+	 						/// Southern Tagalog has been split into Calabarzon and Mimaropa
 					 5   "5 - Bicol"			///
 					 6	 "6 - Western Visayas"	///
 					 7   "7 - Central Visayas"	///
 					 8	 "8 - Eastern Visayas"	///
-					 9   "9 - Western Mindanao"	///
+					 9   "9 - Zamboanga Peninsula"	///
 					 10  "10 - Northern Mindanao"	///
-					 11  "11 - Southern Mindanao"	///
-					 12  "12 - Central Mindanao"		///
+					 11  "11 - Davao"	///
+					 12  "12 - Soccsksargen"		///
 					 13  "13 - National Capital Region"				///
 					 14  "14 - Cordillera Administrative Region"		///
 					 15  "15 - Autonomous Region of Muslim Mindanao"	///
-					 16  "16 - Caraga"
+					 16  "16 - Caraga" ///
+					 /// value 17 exists only in raw data, not in recoded version
+					 18  "18 - Negros Island Region" /// this region appears occasionally in data
+				 	 							///
+				 	 41	 "41 - Calabarzon"	/// formerly part of Southern Tagalog
+				 	 42  "42 - Mimaropa"		// formerly part of Southern Tagalog
 
 	label values 	subnatid1 lblsubnatid1
 	label var 		subnatid1 "Subnational ID at First Administrative Level"
