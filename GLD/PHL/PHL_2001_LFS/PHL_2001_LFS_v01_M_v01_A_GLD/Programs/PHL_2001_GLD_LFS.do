@@ -1391,7 +1391,6 @@ foreach v of local ed_var {
 	la de 			lblnlfreason_year 		1 "Student" 2 "Housekeeper" ///
 											3 "Retired" 4 "Disable" 5 "Other"
 	label values 	nlfreason_year 			lblnlfreason_year
-	replace 		nlfreason=. 	if lstatus!=3 		// restricts universe to non-labor force
 *</_nlfreason_year_>
 
 
