@@ -1043,7 +1043,7 @@ foreach v of local ed_var {
 
 
 *<_unitwage_>
-	gen byte 		unitwage = 1
+	gen byte 		unitwage = .
 	label var 		unitwage "Last wages' time unit primary job 7 day recall"
 	la de 			lblunitwage ///
 					1 "Daily" ///
