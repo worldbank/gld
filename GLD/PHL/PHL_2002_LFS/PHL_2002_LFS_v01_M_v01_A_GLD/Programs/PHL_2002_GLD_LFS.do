@@ -100,7 +100,7 @@ set mem 800m
 	local path_output `"`gld_data'\\`cty3'_`surv_yr'_LFS_v01_M_v01_A_GLD"'
 
 ** VALUES
-	local n_round 	1			// numer of survey rounds
+	local n_round 	4			// numer of survey rounds
 
 
 
@@ -110,9 +110,10 @@ set mem 800m
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-use `"`round1'"', clear
-
-gen 	int round = 1
+	iecodebook append ///
+		`"`round1'"' `"`round2'"' `"`round3'"' `"`round4'"' /// survey files
+		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template-IN.xlsx"' /// output just created above
+		, clear surveys(JAN2002 APR2002 JUL2002 OCT2002) generate(round) // survey names
 
 
 /*%%=============================================================================================
@@ -200,26 +201,6 @@ gen 	int round = 1
 </_hhid_note> */
 
 
-
-** DUPLICATES
-	/*There are 4 pairs of duplicate observations (8 total), all in the same household. 3 of these pairs (6 total) are
-		entirely duplicated across all variables. 1 pair, (2 total obs) have 1 variable different: education attainment.
-		I will keep the observation that lists the higher education attainment of the two*/
-
-	** remove duplicated observations on all variables, sort and drop by reproducible seed
-	set 				seed 47
-	gen 				r = runiform()
-
-	sort 				r
-	duplicates drop
-
-	* remove duplicated pair that differs on education only, keep obs with highest edu level
-	duplicates tag 		regn hcn c101_lno	///				tag dups in terms of hhid and will-be pid (c101_lno)
-						, generate(dup1)
-
-	gsort 				regn hcn c101_lno -c07_grade 		// sort descending, keeping highest grade up top, wont' be dropped
-	duplicates drop 	regn hcn c101_lno	///
-						, force
 
 	* in 02, it appears that regn and hcn uniquely identify the HH
 
@@ -337,17 +318,14 @@ gen 	int round = 1
 
 *<_wave_>
 	gen wave = "Q1"
-/*
+
 	replace 		wave = 	"Q1"	if round == 1
 	replace 		wave = 	"Q2"	if round == 2
 	replace 		wave = 	"Q3"	if round == 3
 	replace 		wave = 	"Q4"	if round == 4
-	*/
 
 	label var 		wave "Survey wave"
-	*<_wave_note>
-	* for 2002 there is only 1 data file so I cannot distinguish difinitively between waves
-	*</_wave_note>
+
 *</_wave_>
 
 }
@@ -504,7 +482,7 @@ gen 	int round = 1
 	label var 	hsize "Household size"
 
 	* check
-	mdesc 		hsize
+	qui mdesc 	hsize
 	assert 		r(miss) == 0
 
 *</_hsize_>
@@ -736,7 +714,7 @@ label var ed_mod_age "Education module application age"
 
 	gen byte edulevel7=.
 	replace edulevel7=1 if c07_grade==0			// "No Grade Completed" -> "No education"
-	replace edulevel7=2 if c07_grade==1 // "Elementary Undergraduate" -> " Primary Incomplete"
+	replace edulevel7=2 if c07_grade==1 	// "Elementary Undergraduate" -> " Primary Incomplete"
 	replace edulevel7=3 if c07_grade==2 	// "Elementary Graduate" -> "Primary Complete"
 	replace edulevel7=4 if c07_grade==3		// "High School Undergraduate" -> "Secondary Incomplete"
 	replace edulevel7=5 if c07_grade==4		// "High school graduate" -> "Secondary Complete"
@@ -872,8 +850,8 @@ foreach v of local ed_var {
 *<_potential_lf_>
 	gen byte 		potential_lf = 0
 
-	replace 		potential_lf = 1 if (c34_avail == 1 & c35_lookw == 2) ///
-										| (c34_avail == 2 & c35_lookw == 1)
+	replace 		potential_lf = 1 if (c35_avail == 1 & c36_lookw == 2) ///
+										| (c35_avail == 2 & c36_lookw == 1)
 	replace 		potential_lf = . if age < minlaborage & age != .
 	replace 		potential_lf = . if lstatus != 3
 	label var 		potential_lf "Potential labour force status"
@@ -896,11 +874,11 @@ foreach v of local ed_var {
 
 *<_nlfreason_>
 	gen byte 		nlfreason= .
-	replace 		nlfreason=1 	if c39_wynot==8
-	replace 		nlfreason=2 	if c39_wynot==7
-	replace 		nlfreason=3 	if c39_wynot==6
-	replace 		nlfreason=4 	if c39_wynot==3
-	replace 		nlfreason=5 	if c39_wynot==1 | c39_wynot==2 | c39_wynot==4 | c39_wynot==5 | c39_wynot==9
+	replace 		nlfreason=1 	if c40_wynot==8
+	replace 		nlfreason=2 	if c40_wynot==7
+	replace 		nlfreason=3 	if c40_wynot==6
+	replace 		nlfreason=4 	if c40_wynot==3
+	replace 		nlfreason=5 	if c40_wynot==1 | c40_wynot==2 | c40_wynot==4 | c40_wynot==5 | c40_wynot==9
 	replace 		nlfreason=. 	if lstatus!=3 		// restricts universe to non-labor force
 	label var 		nlfreason "Reason not in the labor force"
 	la de 			lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
@@ -909,7 +887,7 @@ foreach v of local ed_var {
 
 
 *<_unempldur_l_>
-	gen byte 		unempldur_l=c37_weeks/4.2
+	gen byte 		unempldur_l=c38_weeks/4.2
 	label var 		unempldur_l "Unemployment duration (months) lower bracket"
 	replace 		unempldur_l=. if lstatus!=2 	  // restrict universe to unemployed only
 
@@ -917,7 +895,7 @@ foreach v of local ed_var {
 
 
 *<_unempldur_u_>
-	gen byte 		unempldur_u=c37_weeks/4.2
+	gen byte 		unempldur_u=c38_weeks/4.2
 	label var 		unempldur_u "Unemployment duration (months) upper bracket"
 	replace 		unempldur_u=. if lstatus!=2 	  // restrict universe to unemployed only
 
@@ -961,7 +939,7 @@ foreach v of local ed_var {
 
 
 *<_industry_orig_>
-	gen 			industry_orig = c16_pkb
+	gen 			industry_orig = c16a_pkb
 	label var 		industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
@@ -975,16 +953,16 @@ foreach v of local ed_var {
 
 *<_industrycat10_>
 	gen byte 		industrycat10=.
-	replace 		industrycat10=1 if c16_pkb >= 1 & c16_pkb <= 9		// Agriculture
-	replace 		industrycat10=2 if c16_pkb == 10 | c16_pkb == 11		// Mining
-	replace 		industrycat10=3 if c16_pkb>=15 & c16_pkb <= 39		// Manufacturing
-	replace 		industrycat10=4 if c16_pkb==40 | c16_pkb==41			// Public Utility Services
-	replace 		industrycat10=5 if c16_pkb==45						// Construction
-	replace 		industrycat10=6 if c16_pkb >= 50 & c16_pkb <= 55		// Commerce
-	replace 		industrycat10=7 if c16_pkb >= 60 & c16_pkb <= 64		// Transport + Communication
-	replace 		industrycat10=8 if c16_pkb >= 65 & c16_pkb <= 74		// Financial + Business Services
-	replace 		industrycat10=9 if c16_pkb == 75						// Public Administration
-	replace 		industrycat10=10 if c16_pkb>=76 & c16_pkb <= 99 		// this includes education/teaching.
+	replace 		industrycat10=1 if c16a_pkb >= 1 & c16a_pkb <= 9		// Agriculture
+	replace 		industrycat10=2 if c16a_pkb == 10 | c16a_pkb == 11		// Mining
+	replace 		industrycat10=3 if c16a_pkb>=15 & c16a_pkb <= 39		// Manufacturing
+	replace 		industrycat10=4 if c16a_pkb==40 | c16a_pkb==41			// Public Utility Services
+	replace 		industrycat10=5 if c16a_pkb==45						// Construction
+	replace 		industrycat10=6 if c16a_pkb >= 50 & c16a_pkb <= 55		// Commerce
+	replace 		industrycat10=7 if c16a_pkb >= 60 & c16a_pkb <= 64		// Transport + Communication
+	replace 		industrycat10=8 if c16a_pkb >= 65 & c16a_pkb <= 74		// Financial + Business Services
+	replace 		industrycat10=9 if c16a_pkb == 75						// Public Administration
+	replace 		industrycat10=10 if c16a_pkb>=76 & c16a_pkb <= 99 		// this includes education/teaching.
 
 	label var 		industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de 			lblindustrycat10 	///
@@ -1189,7 +1167,7 @@ foreach v of local ed_var {
 
 
 *<_industry_orig_2_>
-	gen 			industry_orig_2 = c29_okb
+	gen 			industry_orig_2 = c30a_okb
 	label var 		industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 
@@ -1203,16 +1181,16 @@ foreach v of local ed_var {
 *<_industrycat10_2_>
 	gen byte 		industrycat10_2 = .
 
-	replace 		industrycat10_2=1 if c29_okb >= 1 & c29_okb <= 9		// Agriculture
-	replace 		industrycat10_2=2 if c29_okb == 10 | c29_okb == 11		// Mining
-	replace 		industrycat10_2=3 if c29_okb>=15 & c29_okb <= 39		// Manufacturing
-	replace 		industrycat10_2=4 if c29_okb==40 | c29_okb==41			// Public Utility Services
-	replace 		industrycat10_2=5 if c29_okb==45						// Construction
-	replace 		industrycat10_2=6 if c29_okb >= 50 & c29_okb <= 55		// Commerce
-	replace 		industrycat10_2=7 if c29_okb >= 60 & c29_okb <= 64		// Transport + Communication
-	replace 		industrycat10_2=8 if c29_okb >= 65 & c29_okb <= 74		// Financial + Business Services
-	replace 		industrycat10_2=9 if c29_okb == 75						// Public Administration
-	replace 		industrycat10_2=10 if c29_okb>=76 & c29_okb <= 99 		// this includes education for now.
+	replace 		industrycat10_2=1 if c30a_okb >= 1 & c30a_okb <= 9		// Agriculture
+	replace 		industrycat10_2=2 if c30a_okb == 10 | c30a_okb == 11		// Mining
+	replace 		industrycat10_2=3 if c30a_okb>=15 & c30a_okb <= 39		// Manufacturing
+	replace 		industrycat10_2=4 if c30a_okb==40 | c30a_okb==41			// Public Utility Services
+	replace 		industrycat10_2=5 if c30a_okb==45						// Construction
+	replace 		industrycat10_2=6 if c30a_okb >= 50 & c30a_okb <= 55		// Commerce
+	replace 		industrycat10_2=7 if c30a_okb >= 60 & c30a_okb <= 64		// Transport + Communication
+	replace 		industrycat10_2=8 if c30a_okb >= 65 & c30a_okb <= 74		// Financial + Business Services
+	replace 		industrycat10_2=9 if c30a_okb == 75						// Public Administration
+	replace 		industrycat10_2=10 if c30a_okb>=76 & c30a_okb <= 99 		// this includes education for now.
 
 
 	label var 		industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
@@ -1229,7 +1207,7 @@ foreach v of local ed_var {
 
 
 *<_occup_orig_2_>
-	gen 			occup_orig_2 = c27_otocc
+	gen 			occup_orig_2 = c28a_otocc
 	label var 		occup_orig_2 "Original occupation record secondary job 7 day recall"
 *</_occup_orig_2_>
 
@@ -1249,10 +1227,10 @@ foreach v of local ed_var {
 
 
 *<_occup_2_>
-	gen byte 		occup_2 = floor(c27_otocc/10)		// this handles most of recoding automatically.
-	recode 			occup_2 0 = 10	if 	c27_otocc==1 	// recode "armed forces" to appropriate label
-	recode 			occup_2 0 = 99	if 	(c27_otocc>=2 & c27_otocc <=9) ///
-							| 		(c27_otocc >=94 & c27_otocc <= 99) // recode "Not classifiable occupations"
+	gen byte 		occup_2 = floor(c28a_otocc/10)		// this handles most of recoding automatically.
+	recode 			occup_2 0 = 10	if 	c28a_otocc==1 	// recode "armed forces" to appropriate label
+	recode 			occup_2 0 = 99	if 	(c28a_otocc>=2 & c28a_otocc <=9) ///
+							| 		(c28a_otocc >=94 & c28a_otocc <= 99) // recode "Not classifiable occupations"
 
 	label var 		occup_2 "1 digit occupational classification secondary job 7 day recall"
 	label values 	occup_2 lbloccup
@@ -1260,14 +1238,14 @@ foreach v of local ed_var {
 
 
 *<_wage_no_compen_2_>
-	gen 			double wage_no_compen_2 = c33_obasic
+	gen 			double wage_no_compen_2 = c34_obasic
 	replace 		wage_no_compen_2 = . if wage_no_compen_2 == 99999
 	label var 		wage_no_compen_2 "Last wage payment secondary job 7 day recall"
 *</_wage_no_compen_2_>
 
 
 *<_unitwage_2_>
-	gen byte 		unitwage_2 = c32_obasis
+	gen byte 		unitwage_2 = c33_obasis
 	recode 			unitwage (0 1 5 6 7 = 10) /// other
 								(2 = 9) /// hourly
 								(3 = 1) /// daily
