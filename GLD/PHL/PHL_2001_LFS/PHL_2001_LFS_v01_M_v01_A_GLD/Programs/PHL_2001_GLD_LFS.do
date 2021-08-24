@@ -938,7 +938,7 @@ foreach v of local ed_var {
 
 
 *<_industry_orig_>
-	gen 			industry_orig = qkb
+	gen 			industry_orig = c16_pkb
 	label var 		industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
@@ -951,11 +951,17 @@ foreach v of local ed_var {
 
 
 *<_industrycat10_>
-* if mapped to industrycat_isic, will be recoded, if not, start here.
-	gen byte 		industrycat10		= floor(qkb/10)
-	recode  		industrycat10 		0 = 10 				// change to 10, "unspecified" from "missing"
-	replace 		industrycat10		= 10 	if qkb>=92 & qkb<=99
-	replace 		industrycat10		= 6 	if qkb==98
+	gen byte 		industrycat10=.
+	replace 		industrycat10=1 if c16_pkb >= 1 & c16_pkb <= 9		// Agriculture
+	replace 		industrycat10=2 if c16_pkb == 10 | c16_pkb == 11		// Mining
+	replace 		industrycat10=3 if c16_pkb>=15 & c16_pkb <= 39		// Manufacturing
+	replace 		industrycat10=4 if c16_pkb==40 | c16_pkb==41			// Public Utility Services
+	replace 		industrycat10=5 if c16_pkb==45						// Construction
+	replace 		industrycat10=6 if c16_pkb >= 50 & c16_pkb <= 55		// Commerce
+	replace 		industrycat10=7 if c16_pkb >= 60 & c16_pkb <= 64		// Transport + Communication
+	replace 		industrycat10=8 if c16_pkb >= 65 & c16_pkb <= 74		// Financial + Business Services
+	replace 		industrycat10=9 if c16_pkb == 75						// Public Administration
+	replace 		industrycat10=10 if c16_pkb>=76 & c16_pkb <= 99 		// this includes education/teaching.
 
 	label var 		industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de 			lblindustrycat10 	///
@@ -980,7 +986,7 @@ foreach v of local ed_var {
 
 
 *<_occup_orig_>
-	gen 			occup_orig = procc
+	gen 			occup_orig = c14_procc
 	label var 		occup_orig "Original occupation record primary job 7 day recall"
 	replace 		occup_orig="" if lstatus!=1 			// restrict universe to employed only
 	replace 		occup_orig="" if age < minlaborage	// restrict universe to working age
@@ -998,15 +1004,11 @@ foreach v of local ed_var {
 
 
 *<_occup_>
-	* Convert primary occupation to numeric
-	/*This converts all alpha codes to numeric, ok since no indication as to what they are*/
-	destring 		procc, generate(procc_num) force
-
 	* generate occupation variable
-	gen 			byte occup=floor(procc_num/10)
-	recode 			occup 0 = 10	if 	procc_num==01 	// recode "armed forces" to appropriate label
-	recode 			occup 0 = 99	if 	(procc_num>=02 & procc_num <=09) ///
-							| 		(procc_num >=94 & procc_num <= 99) // recode "Not classifiable occupations"
+	gen byte 		occup = floor(c14_procc/10)		// this handles most of recoding automatically.
+	recode 			occup 0 = 10	if 	c14_procc==1 	// recode "armed forces" to appropriate label
+	recode 			occup 0 = 99	if 	(c14_procc>=2 & c14_procc <=9) ///
+							| 		(c14_procc >=94 & c14_procc <= 99) // recode "Not classifiable occupations"
 
 	/* Note that the raw variable, procc lists values, 94-99 for which there are no associated occupation
 	   codes. Given that the raw data indicate that these individauls do have valid, non-missing occupations,
@@ -1043,13 +1045,19 @@ foreach v of local ed_var {
 
 
 *<_wage_no_compen_>
-	gen 			double wage_no_compen = .
+	gen 			double wage_no_compen = c25_pbasic
+	replace 		wage_no_compen = . if 	wage_no_compen == 99999
 	label var 		wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
 
 *<_unitwage_>
-	gen byte 		unitwage = 1
+	gen byte 		unitwage = c24_pbasis
+	recode 			unitwage (0 1 5 6 7 = 10) /// other
+								(2 = 9) /// hourly
+								(3 = 1) /// daily
+								(4 = 5) // monthly
+
 	label var 		unitwage "Last wages' time unit primary job 7 day recall"
 	la de 			lblunitwage ///
 					1 "Daily" ///
@@ -1158,7 +1166,7 @@ foreach v of local ed_var {
 
 
 *<_industry_orig_2_>
-	gen 			industry_orig_2 = .
+	gen 			industry_orig_2 = c29_okb
 	label var 		industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 
@@ -1171,6 +1179,19 @@ foreach v of local ed_var {
 
 *<_industrycat10_2_>
 	gen byte 		industrycat10_2 = .
+
+	replace 		industry_2=1 if c29_okb >= 1 & c29_okb <= 9		// Agriculture
+	replace 		industry_2=2 if c29_okb == 10 | c29_okb == 11		// Mining
+	replace 		industry_2=3 if c29_okb>=15 & c29_okb <= 39		// Manufacturing
+	replace 		industry_2=4 if c29_okb==40 | c29_okb==41			// Public Utility Services
+	replace 		industry_2=5 if c29_okb==45						// Construction
+	replace 		industry_2=6 if c29_okb >= 50 & c29_okb <= 55		// Commerce
+	replace 		industry_2=7 if c29_okb >= 60 & c29_okb <= 64		// Transport + Communication
+	replace 		industry_2=8 if c29_okb >= 65 & c29_okb <= 74		// Financial + Business Services
+	replace 		industry_2=9 if c29_okb == 75						// Public Administration
+	replace 		industry_2=10 if c29_okb>=76 & c29_okb <= 99 		// this includes education for now.
+
+
 	label var 		industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values 	industrycat10_2 lblindustrycat10
 *</_industrycat10_2_>
@@ -1185,7 +1206,7 @@ foreach v of local ed_var {
 
 
 *<_occup_orig_2_>
-	gen 			occup_orig_2 = .
+	gen 			occup_orig_2 = c27_otocc
 	label var 		occup_orig_2 "Original occupation record secondary job 7 day recall"
 *</_occup_orig_2_>
 
@@ -1206,19 +1227,31 @@ foreach v of local ed_var {
 
 *<_occup_2_>
 	gen 			byte occup_2 = .
+
+	gen byte 		occup_2 = floor(c27_otocc/10)		// this handles most of recoding automatically.
+	recode 			occup_2 0 = 10	if 	c27_otocc==1 	// recode "armed forces" to appropriate label
+	recode 			occup_2 0 = 99	if 	(c27_otocc>=2 & c27_otocc <=9) ///
+							| 		(c27_otocc >=94 & c27_otocc <= 99) // recode "Not classifiable occupations"
+
 	label var 		occup_2 "1 digit occupational classification secondary job 7 day recall"
 	label values 	occup_2 lbloccup
 *</_occup_2_>
 
 
 *<_wage_no_compen_2_>
-	gen 			double wage_no_compen_2 = .
+	gen 			double wage_no_compen_2 = c33_obasic
+	replace 		wage_no_compen_2 = . if wage_no_compen_2 == 99999
 	label var 		wage_no_compen_2 "Last wage payment secondary job 7 day recall"
 *</_wage_no_compen_2_>
 
 
 *<_unitwage_2_>
-	gen byte 		unitwage_2 = .
+	gen byte 		unitwage_2 = c32_obasis
+	recode 			unitwage (0 1 5 6 7 = 10) /// other
+								(2 = 9) /// hourly
+								(3 = 1) /// daily
+								(4 = 5) // monthly
+
 	label var 		unitwage_2 "Last wages' time unit secondary job 7 day recall"
 	label values 	unitwage_2 lblunitwage
 *</_unitwage_2_>
