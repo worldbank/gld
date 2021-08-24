@@ -199,6 +199,28 @@ gen 	int round = 1
 
 </_hhid_note> */
 
+
+
+** DUPLICATES
+	/*There are 4 pairs of duplicate observations (8 total), all in the same household. 3 of these pairs (6 total) are
+		entirely duplicated across all variables. 1 pair, (2 total obs) have 1 variable different: education attainment.
+		I will keep the observation that lists the higher education attainment of the two*/
+
+	** remove duplicated observations on all variables, sort and drop by reproducible seed
+	set 				seed 47
+	gen 				r = runiform()
+
+	sort 				r
+	duplicates drop
+
+	* remove duplicated pair that differs on education only, keep obs with highest edu level
+	duplicates tag 		regn hcn c101_lno	///				tag dups in terms of hhid and will-be pid (c101_lno)
+						, generate(dup1)
+
+	gsort 				regn hcn c101_lno -c07_grade 		// sort descending, keeping highest grade up top, wont' be dropped
+	duplicates drop 	regn hcn c101_lno	///
+						, force
+
 	* in 01, it appears that regn and hcn uniquely identify the HH
 
 	loc idhvars 	 regn prov  hcn						// store hhid vars in local
@@ -295,7 +317,7 @@ gen 	int round = 1
 
 
 *<_psu_>
-	rename 		psu = psu_orig
+	rename 		psu psu_orig
 	gen 		psu = psu_orig
 	label 		var psu "Primary sampling units"
 *</_psu_>
@@ -477,8 +499,8 @@ gen 	int round = 1
 {
 
 *<_hsize_>
-	sort idh
-	by idh: egen hsize= count(c03_rel <= 8 | c03_rel == 11) // includes non-family members, not boarders or domestic workers.
+	sort hhid
+	by hhid: egen hsize= count(c03_rel <= 8 | c03_rel == 11) // includes non-family members, not boarders or domestic workers.
 	label var 	hsize "Household size"
 
 	* check
