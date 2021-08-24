@@ -605,7 +605,7 @@ set mem 800m
 
 *<_hsize_>
 	sort hhid
-	by hhid: egen hsize= count(c03_rel <= 8 | c03_rel == 11) // includes non-family members, not boarders or domestic workers.
+	by hhid: egen hsize= count(c05_rel <= 8 | c05_rel == 11) // includes non-family members, not boarders or domestic workers.
 	label var 	hsize "Household size"
 
 	* check
@@ -616,14 +616,14 @@ set mem 800m
 
 
 *<_age_>
-	gen 		age = c05_age
+	gen 		age = c07_age
 	replace 	age	= 98 	if age>=98 & age!=.
 	label var 	age "Individual age"
 *</_age_>
 
 
 *<_male_>
-	gen 		male = c04_sex
+	gen 		male = c06_sex
 	recode 		male (2 = 0)						// female=2 recoded to female=0
 	label var 	male "Sex - Ind is male"
 	la de 		lblmale 	1 "Male" 0 "Female"
@@ -633,7 +633,7 @@ set mem 800m
 
 *<_relationharm_>
 	gen 		relationharm = .
-	replace 	relationharm = c03_rel
+	replace 	relationharm = c05_rel
 	recode 		relationharm (4 5 6 8  	= 5) /// siblings, children in law, grandchildren, other rel of hh head="other relatives"
 					(7 			= 4)	/// parents of hh head become "parents"
 					(9 10 11 	= 6) 	// boarders and domestic workers become "other/non-relatives"
@@ -660,13 +660,13 @@ set mem 800m
 
 
 *<_relationcs_>
-	gen relationcs = c03_rel
+	gen relationcs = c05_rel
 	label var relationcs "Relationship to the head of household - Country original"
 *</_relationcs_>
 
 
 *<_marital_>
-	gen byte 		marital = c06_mstat
+	gen byte 		marital = c08_ms
 	recode 			marital 	///
 					(1=2) 	///	"single" -> "never married"
 					(2=1) /// "married" -> "married"
@@ -840,12 +840,12 @@ label var ed_mod_age "Education module application age"
 	gen byte educat7 =.
 
 	gen byte edulevel7=.
-	replace edulevel7=1 if c07_grade==0			// "No Grade Completed" -> "No education"
-	replace edulevel7=2 if c07_grade==1 	// "Elementary Undergraduate" -> " Primary Incomplete"
-	replace edulevel7=3 if c07_grade==2 	// "Elementary Graduate" -> "Primary Complete"
-	replace edulevel7=4 if c07_grade==3		// "High School Undergraduate" -> "Secondary Incomplete"
-	replace edulevel7=5 if c07_grade==4		// "High school graduate" -> "Secondary Complete"
-	replace edulevel7=7 if c07_grade==5 | ( c07_grade>=60 & c07_grade<=98) // "College Graduate" and "[x] Bachelors/Advanced Degree" -> "University"
+	replace edulevel7=1 if c09_grd==0			// "No Grade Completed" -> "No education"
+	replace edulevel7=2 if c09_grd==1 	// "Elementary Undergraduate" -> " Primary Incomplete"
+	replace edulevel7=3 if c09_grd==2 	// "Elementary Graduate" -> "Primary Complete"
+	replace edulevel7=4 if c09_grd==3		// "High School Undergraduate" -> "Secondary Incomplete"
+	replace edulevel7=5 if c09_grd==4		// "High school graduate" -> "Secondary Complete"
+	replace edulevel7=7 if c09_grd==5 | ( c09_grd>=60 & c09_grd<=98) // "College Graduate" and "[x] Bachelors/Advanced Degree" -> "University"
 
 	label var educat7 "Level of education 1"
 	la de lbleducat7 	1 "No education" ///
@@ -966,7 +966,7 @@ foreach v of local ed_var {
 
 {
 *<_lstatus_>
-	gen byte 		lstatus = empst1_nso
+	gen byte 		lstatus = newempst
 	replace 		lstatus = . if age < minlaborage
 	label var 		lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF" // raw values always same as new
@@ -977,8 +977,8 @@ foreach v of local ed_var {
 *<_potential_lf_>
 	gen byte 		potential_lf = 0
 
-	replace 		potential_lf = 1 if (c35_avail == 1 & c36_lookw == 2) ///
-										| (c35_avail == 2 & c36_lookw == 1)
+	replace 		potential_lf = 1 if (cc37_avail == 1 & cc38_lookw == 2) ///
+										| (cc37_avail == 2 & cc38_lookw == 1)
 	replace 		potential_lf = . if age < minlaborage & age != .
 	replace 		potential_lf = . if lstatus != 3
 	label var 		potential_lf "Potential labour force status"
@@ -990,7 +990,7 @@ foreach v of local ed_var {
 *<_underemployment_>
 	gen byte 		underemployment = 0
 
-	replace 		underemployment = 1 if c21_pwmore == 1
+	replace 		underemployment = 1 if cc23_pwmore == 1
 	replace 		underemployment = . if age < minlaborage & age != .
 	replace 		underemployment = . if lstatus != 1
 	label var 		underemployment "Underemployment status"
@@ -1001,11 +1001,11 @@ foreach v of local ed_var {
 
 *<_nlfreason_>
 	gen byte 		nlfreason= .
-	replace 		nlfreason=1 	if c40_wynot==8
-	replace 		nlfreason=2 	if c40_wynot==7
-	replace 		nlfreason=3 	if c40_wynot==6
-	replace 		nlfreason=4 	if c40_wynot==3
-	replace 		nlfreason=5 	if c40_wynot==1 | c40_wynot==2 | c40_wynot==4 | c40_wynot==5 | c40_wynot==9
+	replace 		nlfreason=1 	if c42_wynt==8
+	replace 		nlfreason=2 	if c42_wynt==7
+	replace 		nlfreason=3 	if c42_wynt==6
+	replace 		nlfreason=4 	if c42_wynt==3
+	replace 		nlfreason=5 	if c42_wynt==1 | c42_wynt==2 | c42_wynt==4 | c42_wynt==5 | c42_wynt==9
 	replace 		nlfreason=. 	if lstatus!=3 		// restricts universe to non-labor force
 	label var 		nlfreason "Reason not in the labor force"
 	la de 			lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
@@ -1014,7 +1014,7 @@ foreach v of local ed_var {
 
 
 *<_unempldur_l_>
-	gen byte 		unempldur_l=c38_weeks/4.2
+	gen byte 		unempldur_l=cc40_weeks/4.2
 	label var 		unempldur_l "Unemployment duration (months) lower bracket"
 	replace 		unempldur_l=. if lstatus!=2 	  // restrict universe to unemployed only
 
@@ -1022,7 +1022,7 @@ foreach v of local ed_var {
 
 
 *<_unempldur_u_>
-	gen byte 		unempldur_u=c38_weeks/4.2
+	gen byte 		unempldur_u=cc40_weeks/4.2
 	label var 		unempldur_u "Unemployment duration (months) upper bracket"
 	replace 		unempldur_u=. if lstatus!=2 	  // restrict universe to unemployed only
 
@@ -1036,10 +1036,10 @@ foreach v of local ed_var {
 {
 *<_empstat_>
 	gen byte 		empstat=.
-	replace 		empstat=1 	if c17_pclass==0 | c17_pclass==1 | c17_pclass==2 | c17_pclass==5
-	replace 		empstat=2 	if c17_pclass==6
-	replace 		empstat=3	if c17_pclass==4
-	replace 		empstat=4 	if c17_pclass==3
+	replace 		empstat=1 	if c19pclas==0 | c19pclas==1 | c19pclas==2 | c19pclas==5
+	replace 		empstat=2 	if c19pclas==6
+	replace 		empstat=3	if c19pclas==4
+	replace 		empstat=4 	if c19pclas==3
 	replace 		empstat=. 	if lstatus!=1 	// includes universe restriction
 	label var 		empstat 	"Employment status during past week primary job 7 day recall"
 	la de 			lblempstat 	1 "Paid employee" ///
@@ -1053,8 +1053,8 @@ foreach v of local ed_var {
 
 *<_ocusec_>
 	gen byte 		ocusec = .
-	replace 		ocusec = 1 	if c17_pclass == 1
-	replace 		ocusec = 2 	if inlist(c17_pclass, 0, 1, 3, 4, 5, 6)
+	replace 		ocusec = 1 	if c19pclas == 1
+	replace 		ocusec = 2 	if inlist(c19pclas, 0, 1, 3, 4, 5, 6)
 
 	label var 		ocusec 		"Sector of activity primary job 7 day recall"
 	la de 			lblocusec 	1 "Public Sector, Central Government, Army" ///
@@ -1066,7 +1066,7 @@ foreach v of local ed_var {
 
 
 *<_industry_orig_>
-	gen 			industry_orig = c16a_pkb
+	gen 			industry_orig = c18_pkb
 	label var 		industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
@@ -1080,16 +1080,16 @@ foreach v of local ed_var {
 
 *<_industrycat10_>
 	gen byte 		industrycat10=.
-	replace 		industrycat10=1 if c16a_pkb >= 1 & c16a_pkb <= 9		// Agriculture
-	replace 		industrycat10=2 if c16a_pkb == 10 | c16a_pkb == 11		// Mining
-	replace 		industrycat10=3 if c16a_pkb>=15 & c16a_pkb <= 39		// Manufacturing
-	replace 		industrycat10=4 if c16a_pkb==40 | c16a_pkb==41			// Public Utility Services
-	replace 		industrycat10=5 if c16a_pkb==45						// Construction
-	replace 		industrycat10=6 if c16a_pkb >= 50 & c16a_pkb <= 55		// Commerce
-	replace 		industrycat10=7 if c16a_pkb >= 60 & c16a_pkb <= 64		// Transport + Communication
-	replace 		industrycat10=8 if c16a_pkb >= 65 & c16a_pkb <= 74		// Financial + Business Services
-	replace 		industrycat10=9 if c16a_pkb == 75						// Public Administration
-	replace 		industrycat10=10 if c16a_pkb>=76 & c16a_pkb <= 99 		// this includes education/teaching.
+	replace 		industrycat10=1 if c18_pkb >= 1 & c18_pkb <= 9		// Agriculture
+	replace 		industrycat10=2 if c18_pkb == 10 | c18_pkb == 11		// Mining
+	replace 		industrycat10=3 if c18_pkb>=15 & c18_pkb <= 39		// Manufacturing
+	replace 		industrycat10=4 if c18_pkb==40 | c18_pkb==41			// Public Utility Services
+	replace 		industrycat10=5 if c18_pkb==45						// Construction
+	replace 		industrycat10=6 if c18_pkb >= 50 & c18_pkb <= 55		// Commerce
+	replace 		industrycat10=7 if c18_pkb >= 60 & c18_pkb <= 64		// Transport + Communication
+	replace 		industrycat10=8 if c18_pkb >= 65 & c18_pkb <= 74		// Financial + Business Services
+	replace 		industrycat10=9 if c18_pkb == 75						// Public Administration
+	replace 		industrycat10=10 if c18_pkb>=76 & c18_pkb <= 99 		// this includes education/teaching.
 
 	label var 		industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de 			lblindustrycat10 	///
@@ -1114,7 +1114,7 @@ foreach v of local ed_var {
 
 
 *<_occup_orig_>
-	gen 			occup_orig = c14_procc
+	gen 			occup_orig = c16_proc
 	label var 		occup_orig "Original occupation record primary job 7 day recall"
 	replace 		occup_orig=. if lstatus!=1 			// restrict universe to employed only
 	replace 		occup_orig=. if age < minlaborage	// restrict universe to working age
@@ -1133,10 +1133,10 @@ foreach v of local ed_var {
 
 *<_occup_>
 	* generate occupation variable
-	gen byte 		occup = floor(c14_procc/10)		// this handles most of recoding automatically.
-	recode 			occup 0 = 10	if 	c14_procc==1 	// recode "armed forces" to appropriate label
-	recode 			occup 0 = 99	if 	(c14_procc>=2 & c14_procc <=9) ///
-							| 		(c14_procc >=94 & c14_procc <= 99) // recode "Not classifiable occupations"
+	gen byte 		occup = floor(c16_proc/10)		// this handles most of recoding automatically.
+	recode 			occup 0 = 10	if 	c16_proc==1 	// recode "armed forces" to appropriate label
+	recode 			occup 0 = 99	if 	(c16_proc>=2 & c16_proc <=9) ///
+							| 		(c16_proc >=94 & c16_proc <= 99) // recode "Not classifiable occupations"
 
 	/* Note that the raw variable, procc lists values, 94-99 for which there are no associated occupation
 	   codes. Given that the raw data indicate that these individauls do have valid, non-missing occupations,
@@ -1173,14 +1173,14 @@ foreach v of local ed_var {
 
 
 *<_wage_no_compen_>
-	gen 			double wage_no_compen = c25_pbasic
+	gen 			double wage_no_compen = c27_pbsc
 	replace 		wage_no_compen = . if 	wage_no_compen == 99999
 	label var 		wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
 
 *<_unitwage_>
-	gen byte 		unitwage = c24_pbasis
+	gen byte 		unitwage = cc26_pbasis
 	recode 			unitwage (0 1 5 6 7 = 10) /// other
 								(2 = 9) /// hourly
 								(3 = 1) /// daily
@@ -1203,7 +1203,7 @@ foreach v of local ed_var {
 
 
 *<_whours_>
-	gen whours 		= c20_phours
+	gen whours 		= c22_phrs
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -1294,7 +1294,7 @@ foreach v of local ed_var {
 
 
 *<_industry_orig_2_>
-	gen 			industry_orig_2 = c30a_okb
+	gen 			industry_orig_2 = j03_okb
 	label var 		industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 
@@ -1308,16 +1308,16 @@ foreach v of local ed_var {
 *<_industrycat10_2_>
 	gen byte 		industrycat10_2 = .
 
-	replace 		industrycat10_2=1 if c30a_okb >= 1 & c30a_okb <= 9		// Agriculture
-	replace 		industrycat10_2=2 if c30a_okb == 10 | c30a_okb == 11		// Mining
-	replace 		industrycat10_2=3 if c30a_okb>=15 & c30a_okb <= 39		// Manufacturing
-	replace 		industrycat10_2=4 if c30a_okb==40 | c30a_okb==41			// Public Utility Services
-	replace 		industrycat10_2=5 if c30a_okb==45						// Construction
-	replace 		industrycat10_2=6 if c30a_okb >= 50 & c30a_okb <= 55		// Commerce
-	replace 		industrycat10_2=7 if c30a_okb >= 60 & c30a_okb <= 64		// Transport + Communication
-	replace 		industrycat10_2=8 if c30a_okb >= 65 & c30a_okb <= 74		// Financial + Business Services
-	replace 		industrycat10_2=9 if c30a_okb == 75						// Public Administration
-	replace 		industrycat10_2=10 if c30a_okb>=76 & c30a_okb <= 99 		// this includes education for now.
+	replace 		industrycat10_2=1 if j03_okb >= 1 & j03_okb <= 9		// Agriculture
+	replace 		industrycat10_2=2 if j03_okb == 10 | j03_okb == 11		// Mining
+	replace 		industrycat10_2=3 if j03_okb>=15 & j03_okb <= 39		// Manufacturing
+	replace 		industrycat10_2=4 if j03_okb==40 | j03_okb==41			// Public Utility Services
+	replace 		industrycat10_2=5 if j03_okb==45						// Construction
+	replace 		industrycat10_2=6 if j03_okb >= 50 & j03_okb <= 55		// Commerce
+	replace 		industrycat10_2=7 if j03_okb >= 60 & j03_okb <= 64		// Transport + Communication
+	replace 		industrycat10_2=8 if j03_okb >= 65 & j03_okb <= 74		// Financial + Business Services
+	replace 		industrycat10_2=9 if j03_okb == 75						// Public Administration
+	replace 		industrycat10_2=10 if j03_okb>=76 & j03_okb <= 99 		// this includes education for now.
 
 
 	label var 		industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
@@ -1334,7 +1334,7 @@ foreach v of local ed_var {
 
 
 *<_occup_orig_2_>
-	gen 			occup_orig_2 = c28a_otocc
+	gen 			occup_orig_2 = j02_otoc
 	label var 		occup_orig_2 "Original occupation record secondary job 7 day recall"
 *</_occup_orig_2_>
 
@@ -1354,10 +1354,10 @@ foreach v of local ed_var {
 
 
 *<_occup_2_>
-	gen byte 		occup_2 = floor(c28a_otocc/10)		// this handles most of recoding automatically.
-	recode 			occup_2 0 = 10	if 	c28a_otocc==1 	// recode "armed forces" to appropriate label
-	recode 			occup_2 0 = 99	if 	(c28a_otocc>=2 & c28a_otocc <=9) ///
-							| 		(c28a_otocc >=94 & c28a_otocc <= 99) // recode "Not classifiable occupations"
+	gen byte 		occup_2 = floor(j02_otoc/10)		// this handles most of recoding automatically.
+	recode 			occup_2 0 = 10	if 	j02_otoc==1 	// recode "armed forces" to appropriate label
+	recode 			occup_2 0 = 99	if 	(j02_otoc>=2 & j02_otoc <=9) ///
+							| 		(j02_otoc >=94 & j02_otoc <= 99) // recode "Not classifiable occupations"
 
 	label var 		occup_2 "1 digit occupational classification secondary job 7 day recall"
 	label values 	occup_2 lbloccup
@@ -1365,14 +1365,14 @@ foreach v of local ed_var {
 
 
 *<_wage_no_compen_2_>
-	gen 			double wage_no_compen_2 = c34_obasic
+	gen 			double wage_no_compen_2 = c36_obic
 	replace 		wage_no_compen_2 = . if wage_no_compen_2 == 99999
 	label var 		wage_no_compen_2 "Last wage payment secondary job 7 day recall"
 *</_wage_no_compen_2_>
 
 
 *<_unitwage_2_>
-	gen byte 		unitwage_2 = c33_obasis
+	gen byte 		unitwage_2 = cc35_obasis
 	recode 			unitwage (0 1 5 6 7 = 10) /// other
 								(2 = 9) /// hourly
 								(3 = 1) /// daily
