@@ -1011,8 +1011,8 @@ foreach v of local ed_var {
 *<_occup_orig_>
 	gen 			occup_orig = c14_procc
 	label var 		occup_orig "Original occupation record primary job 7 day recall"
-	replace 		occup_orig="" if lstatus!=1 			// restrict universe to employed only
-	replace 		occup_orig="" if age < minlaborage	// restrict universe to working age
+	replace 		occup_orig=. if lstatus!=1 			// restrict universe to employed only
+	replace 		occup_orig=. if age < minlaborage	// restrict universe to working age
 *</_occup_orig_>
 
 
@@ -1098,7 +1098,7 @@ foreach v of local ed_var {
 
 
 *<_whours_>
-	gen whours 		= hours
+	gen whours 		= c20_phours
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -1203,16 +1203,16 @@ foreach v of local ed_var {
 *<_industrycat10_2_>
 	gen byte 		industrycat10_2 = .
 
-	replace 		industry_2=1 if c29_okb >= 1 & c29_okb <= 9		// Agriculture
-	replace 		industry_2=2 if c29_okb == 10 | c29_okb == 11		// Mining
-	replace 		industry_2=3 if c29_okb>=15 & c29_okb <= 39		// Manufacturing
-	replace 		industry_2=4 if c29_okb==40 | c29_okb==41			// Public Utility Services
-	replace 		industry_2=5 if c29_okb==45						// Construction
-	replace 		industry_2=6 if c29_okb >= 50 & c29_okb <= 55		// Commerce
-	replace 		industry_2=7 if c29_okb >= 60 & c29_okb <= 64		// Transport + Communication
-	replace 		industry_2=8 if c29_okb >= 65 & c29_okb <= 74		// Financial + Business Services
-	replace 		industry_2=9 if c29_okb == 75						// Public Administration
-	replace 		industry_2=10 if c29_okb>=76 & c29_okb <= 99 		// this includes education for now.
+	replace 		industrycat10_2=1 if c29_okb >= 1 & c29_okb <= 9		// Agriculture
+	replace 		industrycat10_2=2 if c29_okb == 10 | c29_okb == 11		// Mining
+	replace 		industrycat10_2=3 if c29_okb>=15 & c29_okb <= 39		// Manufacturing
+	replace 		industrycat10_2=4 if c29_okb==40 | c29_okb==41			// Public Utility Services
+	replace 		industrycat10_2=5 if c29_okb==45						// Construction
+	replace 		industrycat10_2=6 if c29_okb >= 50 & c29_okb <= 55		// Commerce
+	replace 		industrycat10_2=7 if c29_okb >= 60 & c29_okb <= 64		// Transport + Communication
+	replace 		industrycat10_2=8 if c29_okb >= 65 & c29_okb <= 74		// Financial + Business Services
+	replace 		industrycat10_2=9 if c29_okb == 75						// Public Administration
+	replace 		industrycat10_2=10 if c29_okb>=76 & c29_okb <= 99 		// this includes education for now.
 
 
 	label var 		industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
@@ -1249,8 +1249,6 @@ foreach v of local ed_var {
 
 
 *<_occup_2_>
-	gen 			byte occup_2 = .
-
 	gen byte 		occup_2 = floor(c27_otocc/10)		// this handles most of recoding automatically.
 	recode 			occup_2 0 = 10	if 	c27_otocc==1 	// recode "armed forces" to appropriate label
 	recode 			occup_2 0 = 99	if 	(c27_otocc>=2 & c27_otocc <=9) ///
