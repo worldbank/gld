@@ -100,7 +100,7 @@ set mem 800m
 	local path_output `"`gld_data'\\`cty3'_`surv_yr'_LFS_v01_M_v01_A_GLD"'
 
 ** VALUES
-	local n_round 	4			// numer of survey rounds
+	local n_round 	1			// numer of survey rounds
 
 
 
@@ -111,6 +111,8 @@ set mem 800m
 * harmonized output in a single file
 
 use `"`round1'"', clear
+
+gen 	int round = 1
 
 
 

@@ -100,22 +100,16 @@ set mem 800m
 	local path_output `"`gld_data'\\`cty3'_`surv_yr'_LFS_v01_M_v01_A_GLD"'
 
 ** VALUES
-	local n_round 	4			// numer of survey rounds
+	local n_round 	1			// numer of survey rounds
 
 
 
 
 *----------1.3: Database assembly------------------------------*
 
-* All steps necessary to merge datasets (if several) to have all elements needed to produce
-* harmonized output in a single file
+use `"`round1'"', clear
 
-*** append the dataset using iecodebook and the i2d2 template
-	iecodebook append ///
-		`"`round1'"' `"`round2'"' `"`round3'"' `"`round4'"' /// survey files
-		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template-IN.xlsx"' /// previously edited harmonization file
-		, clear surveys(JAN1998 APR1998 JUL1998 OCT1998) generate(round) // survey names
-
+gen 	int round = 1
 
 
 /*%%=============================================================================================
