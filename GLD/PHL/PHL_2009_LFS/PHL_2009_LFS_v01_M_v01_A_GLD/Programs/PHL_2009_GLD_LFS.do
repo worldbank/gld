@@ -206,7 +206,10 @@ replace month = 10 	if round == 4
 	will be produced in conjunction, the labelled in the html brackets.
 
 </_hhid_note> */
-	loc idhvars 	hhnum 	// store idh vars in local
+** HOUSEHOLD IDENTIFICATION NUMBER
+
+
+	loc idhvars 	hhnum   							// store idh vars in local
 
 
 	ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
@@ -250,7 +253,7 @@ replace month = 10 	if round == 4
 	* 	note, assuming that the only necessary individaul identifier is family member, which is numeric
 	*	so, not following processing for sorting numeric/non-numeric variables.
 
-	loc idpvars 	c101_lno 							// store relevant idp vars in local
+	loc idpvars 	c101_lno 								// store relevant idp vars in local
 	ds `idpvars',  	has(type numeric)					// filter out numeric variables in local
 	loc rlist 		= r(varlist)						// store numeric vars in local
 
@@ -1234,27 +1237,10 @@ foreach v of local ed_var {
 
 
 *<_occup_2_>
-	* generate empty variable
-	gen byte occup_2 = .
-
-	* replace conditionally based on April, July, October (2-digit rounds)
-	replace 	occup_2 	=floor(j02_otoc/10)		if  (round == 2 | round == 3 | round == 4)
-	recode 		occup_2 0 = 10	if 	j02_otoc==1 	///  recode "armed forces" to appropriate label
-	 							& (round == 2 | round == 3 | round == 4)
-	recode 		occup_2 0 = 99	if 	(j02_otoc>=2 & j02_otoc <=9) ///  recode "Not classifiable occupations"
-							| (j02_otoc >=94 & j02_otoc <= 99) ///
-							& (round == 2 | round == 3 | round == 4)
-
-
-	* replace conditionally based on Janurary (4-digit round)
-	replace 	occup_2 	=floor(j02_otoc/1000)		if (round == 1)
-	recode 		occup_2 	0 = 10 	///	recode military
-						if (j02_otoc >=111 & j02_otoc <= 129) ///
-						&  (round == 1)
-	recode 		occup_2 	0 = 99 	///	recode "other"
-						if (j02_otoc == 930) ///
-						&  (round == 1)
-
+	gen byte occup_2=floor(j02_otoc/10)		// this handles most of recoding automatically.
+	recode occup_2 0 = 10	if 	j02_otoc==1 	// recode "armed forces" to appropriate label
+	recode occup_2 0 = 99	if 	(j02_otoc>=2 & j02_otoc <=9) ///
+							| (j02_otoc >=94 & j02_otoc <= 99) // recode "Not classifiable occupations"
 
 	label var 		occup_2 "1 digit occupational classification secondary job 7 day recall"
 	label values 	occup_2 lbloccup
