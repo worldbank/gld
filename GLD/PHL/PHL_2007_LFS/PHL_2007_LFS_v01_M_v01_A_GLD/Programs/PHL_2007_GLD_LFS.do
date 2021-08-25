@@ -1158,15 +1158,28 @@ foreach v of local ed_var {
 
 
 *<_occup_>
-	* generate occupation variable
-	gen byte 		occup = floor(c16_proc/10)		// this handles most of recoding automatically.
-	recode 			occup 0 = 10	if 	c16_proc==1 	// recode "armed forces" to appropriate label
-	recode 			occup 0 = 99	if 	(c16_proc>=2 & c16_proc <=9) ///
-							| 		(c16_proc >=94 & c16_proc <= 99) // recode "Not classifiable occupations"
+	* in 2017, raw variable is numeric, but the april round is 4 digits; the rest are 2-digits. c16_proc
 
-	/* Note that the raw variable, procc lists values, 94-99 for which there are no associated occupation
-	   codes. Given that the raw data indicate that these individauls do have valid, non-missing occupations,
-	   and that these occupations cannot be matched to our classificaitons with certainty, I have coded them as "other" */
+	* generate empty variable
+	gen byte occup = .
+
+	* replace conditionally based on April, July, October (2-digit rounds)
+	replace 	occup 	=floor(c16_proc/10)		if  (round == 2 | round == 3 | round == 4)
+	recode 		occup 0 = 10	if 	c16_proc==1 	///  recode "armed forces" to appropriate label
+	 							& (round == 2 | round == 3 | round == 4)
+	recode 		occup 0 = 99	if 	(c16_proc>=2 & c16_proc <=9) ///  recode "Not classifiable occupations"
+							| (c16_proc >=94 & c16_proc <= 99) ///
+							& (round == 2 | round == 3 | round == 4)
+
+
+	* replace conditionally based on Janurary (4-digit round)
+	replace 	occup 	=floor(c16_proc/1000)		if (round == 1)
+	recode 		occup 	0 = 10 	///	recode military
+						if (c16_proc >=111 & c16_proc <= 129) ///
+						&  (round == 1)
+	recode 		occup 	0 = 99 	///	recode "other"
+						if (c16_proc == 930) ///
+						&  (round == 1)
 
 	label var 		occup "1 digit occupational classification, primary job 7 day recall"
 	la de 			lbloccup 	///
