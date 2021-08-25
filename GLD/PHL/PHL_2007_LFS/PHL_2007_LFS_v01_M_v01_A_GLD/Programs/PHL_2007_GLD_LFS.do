@@ -559,7 +559,7 @@ replace month = 10 	if round == 4
 	}
 
 	// generate the variable and apply the labels.
-	gen byte 		subnatid2 = .
+	gen byte 		subnatid2 = prov
 	label values 	subnatid2 lblsubnatid2
 	label var 		subnatid2 "Subnational ID at Second Administrative Level"
 

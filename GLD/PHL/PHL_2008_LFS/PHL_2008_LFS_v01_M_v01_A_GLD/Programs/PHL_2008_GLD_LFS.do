@@ -206,108 +206,16 @@ replace month = 10 	if round == 4
 	will be produced in conjunction, the labelled in the html brackets.
 
 </_hhid_note> */
+	loc idhvars 	hhnum 	// store idh vars in local
 
-/*This part is the only variable that has to be coded conditional by round. This means that we'll have to split the dataset up by round
- 	and create tempfiles before appending back together. Not ideal but it avoids having separate scripts for each round. */
-
-	tempfile 		partA	partB						// declare tempfiles, Part A is first 3 rounds, Part B is round 4/october
-
-	preserve   											// preserve the original appended dataset
-	keep if 		round == 2 | round == 3 | round == 4  // keep last 3 rounds
-
-		* IDH construction for rounds 2-4
-		loc idhvars 	hhnum 	// store idh vars in local
 
 	ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
 	loc numlist 	= r(varlist)						// store numeric vars in local
 	loc stringlist 	: list idhvars - numlist			// non-numeric vars in stringlist
 
 	* starting locals
-	loc len = 23										// declare the length of each element in digits
+	loc len = 14											// declare the length of each element in digits
 	loc idh_els ""										// start with empty local list
-
-
-	* make each string variable numeric (as it should be), then string again with correct format
-		tostring hhnum	///							// make the numeric vars strings
-			, generate(idh_`var') ///					// gen a variable with this prefix
-			force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
-
-		loc idh_els 	`idh_els' idh_`var'				// add each variable to the local list
-
-
-
-		* add the round variable
-		tostring round	///							// make the numeric vars strings
-			, generate(idh_round) ///					// gen a variable with this prefix
-			force format(`"%01.0f"')				// ...and the specified number of digits in local
-
-		loc idh_els 	`idh_els' idh_round				// add each variable to the local list
-
-
-	* concatenate all elements to form idh: hosehold id
-
-	egen idh=concat( `idh_els' )						// concatenate vars we just made. code drops vars @ end
-
-	label var idh "Household id"
-
-
-
-
-** INDIVIDUAL IDENTIFICATION NUMBER
-	bys idh: gen n_fam = _n								// generate family member number
-
-	* repeat same process from above, but only with n_fam.
-	* 	note, assuming that the only necessary individaul identifier is family member, which is numeric
-	*	so, not following processing for sorting numeric/non-numeric variables.
-
-	loc idpvars 	c101_lno								// store relevant idp vars in local
-	ds `idpvars',  	has(type numeric)					// filter out numeric variables in local
-	loc rlist 		= r(varlist)						// store numeric vars in local
-
-	* make new values with desired length of each variable
-	loc len = 2											// declare the length of each element in digits
-	loc idp_els ""										// start with empty local list
-
-	foreach var of local idpvars {
-		tostring `var'	///								// make numeric variables strings
-			, generate(idp_`var') ///					// generate a variable with this prefix
-			force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
-
-		loc idp_els 	`idp_els' idp_`var'				// add each variable to the local list
-
-	}
-
-
-
-	* concatenate to form idp: individual id
-	egen idp=concat( `idp_els' )						// concatenate vars we just made. code drops vars @ end
-
-	sort idh idp
-	label var idp "Individual id"
-
-** ID CHECKS
-	duplicates report idh idp
-	isid idh idp 										// household and individual id uniquely identify
-
-
-
-	save 	`partA', 	replace 							// save tempfile for partA
-	restore													// restore to original 4-round dataset
-
-	preserve   												// preserve the original appended dataset
-	keep if 			round == 1 							// keep round 1/Janurary only
-
-
-		* IDH construction for round 3- 4
-		loc idhvars 	reg w_prv w_ea w_shsn stratum eaunique_psu w_hcn	// store idh vars in local
-
-		ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
-		loc numlist 	= r(varlist)						// store numeric vars in local
-		loc stringlist 	: list idhvars - numlist			// non-numeric vars in stringlist
-
-		* starting locals
-		loc len = 5										// declare the length of each element in digits
-		loc idh_els ""										// start with empty local list
 
 	* make each numeric var string, including leading zeros
 	foreach var of local numlist {
@@ -319,28 +227,12 @@ replace month = 10 	if round == 4
 
 	}
 
-
-	* make each string variable numeric (as it should be), then string again with correct format
-	foreach var of local stringlist {
-		destring `var' /// 								// destring variable, make numeric version
-			, gen(num_`var') ///						//
-			force 										// force obs to num that are non numeric, ie to missing
-
-		tostring num_`var'	///							// make the numeric vars strings
-			, generate(idh_`var') ///					// gen a variable with this prefix
-			force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
-
-		loc idh_els 	`idh_els' idh_`var'				// add each variable to the local list
-
-	}
-
 		* add the round variable
 		tostring round	///							// make the numeric vars strings
 			, generate(idh_round) ///					// gen a variable with this prefix
 			force format(`"%01.0f"')				// ...and the specified number of digits in local
 
 		loc idh_els 	`idh_els' idh_round				// add each variable to the local list
-
 
 
 	* concatenate all elements to form idh: hosehold id
@@ -358,7 +250,7 @@ replace month = 10 	if round == 4
 	* 	note, assuming that the only necessary individaul identifier is family member, which is numeric
 	*	so, not following processing for sorting numeric/non-numeric variables.
 
-		loc idpvars 	c101_lno								// store relevant idp vars in local
+	loc idpvars 	c101_lno 							// store relevant idp vars in local
 	ds `idpvars',  	has(type numeric)					// filter out numeric variables in local
 	loc rlist 		= r(varlist)						// store numeric vars in local
 
@@ -381,47 +273,8 @@ replace month = 10 	if round == 4
 	sort idh idp
 	label var idp "Individual id"
 
-	** Manage duplicates
-		/*There are 8 duplicated observations across creg, prov, stratum, psu, shsn, hcn, round, c101_lno,
-	 	or 4 total pairs of duplicates. These all occur in c101_lno (line number). What appears to be
-		this combination of variables determines households except for these 8 observations, which occur
-		all in the same constructed household id. For now, I will
-		simply drop all observations that pertain to this household id
-		until/if coming up with a more objective way to distinguish between
-		households. */
-
-	duplicates report	idh idp							// for record keeping
-	duplicates tag 		idh idp	 						/// create a 1/0 var that tags the duplicate observations
-	 					, generate(hhid_dup_obs)		// (note this does not tage all obs in the household)
-	sort idh
-	by idh: 	egen 	hhid_dup_hh	= max(hhid_dup_obs)	// this var will tell us if any obs in the hh is duplicated
-
-	/* you can't actually do this...preserve within preserve
-	preserve
-
-		collapse 		(mean)	hhid_dup_hh	, by(hid)	// summarise hhid_dup_hh by hid
-		count if 		hhid_dup_hh == 1				// get the number of hids that have duplicated observations in them
-		assert 			r(N) == 1						// make sure there's only 1 hh with duplicated hids
-
-	restore
-	*/
-
-	drop if 			hhid_dup_hh == 	1				// drop all obs in household if household has duplicated hhid obs
-	assert 				r(N_drop) 	== 48				// we know that 13 obs should be dropped under these conditions.
-
-
 ** ID CHECKS
 	isid idh idp 										// household and individual id uniquely identify
-
-
-	save 	`partB', 	replace 							// save the final round to a tempfile.
-
-	restore 												// restore to old dataset
-	clear
-
-	append using 		`partA' `partB'
-
-	isid 	idh idp 									// check after appending as well.
 
 
 	gen  hhid = idh  									// make hhid from idh in module
@@ -559,7 +412,7 @@ replace month = 10 	if round == 4
 	}
 
 	// generate the variable and apply the labels.
-	gen byte 		subnatid2 = .
+	gen byte 		subnatid2 = prov
 	label values 	subnatid2 lblsubnatid2
 	label var 		subnatid2 "Subnational ID at Second Administrative Level"
 
@@ -1003,8 +856,8 @@ foreach v of local ed_var {
 *<_potential_lf_>
 	gen byte 		potential_lf = 0
 
-	replace 		potential_lf = 1 if (lc37_avail == 1 & lc31_lookw == 2) ///
-										| (lc37_avail == 2 & lc31_lookw == 1)
+	replace 		potential_lf = 1 if (c37_avil == 1 & c38_lokw == 2) ///
+										| (c37_avil == 2 & lc31_lookw == 1)
 	replace 		potential_lf = . if age < minlaborage & age != .
 	replace 		potential_lf = . if lstatus != 3
 	label var 		potential_lf "Potential labour force status"
