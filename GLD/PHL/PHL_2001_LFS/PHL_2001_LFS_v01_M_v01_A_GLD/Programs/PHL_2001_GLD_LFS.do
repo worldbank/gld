@@ -182,10 +182,10 @@ gen 	int round = 1
 	label var int_month "Month of the interview"
 
 	* ensure that months reflec the round. See issue #52
-	replace month = 1 	if round == 1
-	replace month = 4 	if round == 2
-	replace month = 7 	if round == 3
-	replace month = 10 	if round == 4
+	replace int_month = 1 	if round == 1
+	replace int_month = 4 	if round == 2
+	replace int_month = 7 	if round == 3
+	replace int_month = 10 	if round == 4
 *</_int_month_>
 
 
