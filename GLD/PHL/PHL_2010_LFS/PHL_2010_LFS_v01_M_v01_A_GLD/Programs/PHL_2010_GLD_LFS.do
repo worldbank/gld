@@ -177,7 +177,7 @@ set mem 800m
 
 
 *<_int_month_>
-	gen  int_month = .
+	gen  int_month = svymo
 	label de lblint_month 1 "January" 2 "February" 3 "March" 4 "April" 5 "May" 6 "June" 7 "July" 8 "August" 9 "September" 10 "October" 11 "November" 12 "December"
 	label value int_month lblint_month
 	label var int_month "Month of the interview"
@@ -206,6 +206,8 @@ replace month = 10 	if round == 4
 	will be produced in conjunction, the labelled in the html brackets.
 
 </_hhid_note> */
+** HOUSEHOLD IDENTIFICATION NUMBER
+
 ** HOUSEHOLD IDENTIFICATION NUMBER
 
 
@@ -253,7 +255,7 @@ replace month = 10 	if round == 4
 	* 	note, assuming that the only necessary individaul identifier is family member, which is numeric
 	*	so, not following processing for sorting numeric/non-numeric variables.
 
-	loc idpvars 	c101_lno 								// store relevant idp vars in local
+	loc idpvars 	c101_lno 							// store relevant idp vars in local
 	ds `idpvars',  	has(type numeric)					// filter out numeric variables in local
 	loc rlist 		= r(varlist)						// store numeric vars in local
 
