@@ -1001,7 +1001,7 @@ replace month = 10 	if round == 4
 
 
 ** WAGES - SECOND JOB
-	gen double wage_2=j06_obis
+	gen double wage_2=c36_obic
 	replace wage_2=. if lstatus!=1 			// restrict universe to employed only
 	replace wage_2=. if age < lb_mod_age		// restrict universe to working age
 	replace wage_2=. if empstat==1			// restrict universe to wage earners
@@ -1009,7 +1009,7 @@ replace month = 10 	if round == 4
 
 
 ** WAGES TIME UNIT - SECOND JOB
-	gen byte unitwage_2=1
+	gen byte unitwage_2=j06_obis
 	replace unitwage_2=. if lstatus!=1 			// restrict universe to employed only
 	replace unitwage_2=. if age < lb_mod_age		// restrict universe to working age
 	replace unitwage_2=. if empstat==1			// restrict universe to wage earners
