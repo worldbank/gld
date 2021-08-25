@@ -181,6 +181,13 @@ set mem 800m
 	label de lblint_month 1 "January" 2 "February" 3 "March" 4 "April" 5 "May" 6 "June" 7 "July" 8 "August" 9 "September" 10 "October" 11 "November" 12 "December"
 	label value int_month lblint_month
 	label var int_month "Month of the interview"
+
+* ensure that months reflec the round. See issue #52
+replace month = 1 	if round == 1
+replace month = 4 	if round == 2
+replace month = 7 	if round == 3
+replace month = 10 	if round == 4
+
 *</_int_month_>
 
 
