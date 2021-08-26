@@ -435,7 +435,7 @@ replace int_month = 10 	if round == 4
 
 	isid 	idh idp 									// check after appending as well.
 
-
+	rename hhid hhid_survey_orig 						// rename survey original hhid 
 	gen  hhid = idh  									// make hhid from idh in module
 	label var hhid "Household ID"
 
@@ -853,7 +853,7 @@ label var ed_mod_age "Education module application age"
 
 *<_school_>
 	gen byte school= c10_cursch
-	recode atschool (2 = 0)		// 2 was "no", recode to 0. Keep 1=Yes same.
+	recode school (2 = 0)		// 2 was "no", recode to 0. Keep 1=Yes same.
 	label var school "Attending school"
 	la de lblschool 0 "No" 1 "Yes"
 	label values school  lblschool
