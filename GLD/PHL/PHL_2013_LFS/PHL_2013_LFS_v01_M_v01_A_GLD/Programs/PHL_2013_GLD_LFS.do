@@ -209,8 +209,8 @@ replace int_month = 10 	if round == 4
 ** HOUSEHOLD IDENTIFICATION NUMBER
 
 ** HOUSEHOLD IDENTIFICATION NUMBER
-** HOUSEHOLD IDENTIFICATION NUMBER
-	loc idhvars 	hhnum 	// store idh vars in local
+	loc idhvars 	hhnum   							// store idh vars in local
+
 
 	ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
 	loc numlist 	= r(varlist)						// store numeric vars in local
@@ -250,11 +250,10 @@ replace int_month = 10 	if round == 4
 	bys idh: gen n_fam = _n								// generate family member number
 
 	* repeat same process from above, but only with n_fam.
-	* 	note, 2013 does not have a valid, non-missing line number variable that is present on all
-	* observations across all years, so in this year I will generate a "line number" variable myself
-	* by using the row number within each household grouping.
+	* 	note, assuming that the only necessary individaul identifier is family member, which is numeric
+	*	so, not following processing for sorting numeric/non-numeric variables.
 
-	loc idpvars 	n_fam	 							// store relevant idp vars in local
+	loc idpvars 	cc101_lno 							// store relevant idp vars in local
 	ds `idpvars',  	has(type numeric)					// filter out numeric variables in local
 	loc rlist 		= r(varlist)						// store numeric vars in local
 
