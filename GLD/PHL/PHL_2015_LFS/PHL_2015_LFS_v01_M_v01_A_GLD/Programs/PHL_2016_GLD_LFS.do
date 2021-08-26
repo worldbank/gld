@@ -20,16 +20,16 @@
 <_Source of dataset_> 			[Source of data, e.g. NSO] </_Source of dataset_>
 <_Sample size (HH)_> 			39274 </_Sample size (HH)_>
 <_Sample size (IND)_> 			202742 </_Sample size (IND)_>
-<_Sampling method_> 			Geographic regions divided into PSUs of ~100-400 Households for further processing </_Sampling method_>
-<_Geographic coverage_> 		1st-level Subdivision (Region) </_Geographic coverage_>
+<_Sampling method_> 			Geographic pufregions divided into PSUs of ~100-400 Households for further processing </_Sampling method_>
+<_Geographic coverage_> 		1st-level Subdivision (pufregion) </_Geographic coverage_>
 <_Currency_> 					[Currency used for wages] </_Currency_>
 
 -----------------------------------------------------------------------
 
 <_ICLS Version_>				ICLS-13 </_ICLS Version_>
 <_ISCED Version_>				[Version of ICLS for Labor Questions] </_ISCED Version_>
-<_ISCO Version_>				ISCO 88 </_ISCO Version_>
-<_OCCUP National_>				PSOC 92 </_OCCUP National_>
+<_ISCO Version_>				ISCO 08 </_ISCO Version_>
+<_OCCUP National_>				PSOC 12 </_OCCUP National_>
 <_ISIC Version_>				ISIC 4 </_ISIC Version_>
 <_INDUS National_>				PSIC 2009 </_INDUS National_>
 
@@ -80,7 +80,7 @@ set mem 800m
 	local 	lb_mod_age	15	// labor module minimun age (inclusive)
 	local 	ed_mod_age	5	// labor module minimun age (inclusive)
 
-	local 	weightvar 	pwgt // final weightvar
+	local 	weightvar 	weight // final weightvar
 
 ** LOG FILE
 	log using `"`gld_data'\\`cty3'_`surv_yr'_I2D2_LFS.log"', replace
@@ -177,7 +177,7 @@ set mem 800m
 
 
 *<_int_month_>
-	gen  int_month = svymo
+	gen  int_month = pufsvymo
 	label de lblint_month 1 "January" 2 "February" 3 "March" 4 "April" 5 "May" 6 "June" 7 "July" 8 "August" 9 "September" 10 "October" 11 "November" 12 "December"
 	label value int_month lblint_month
 	label var int_month "Month of the interview"
@@ -207,8 +207,7 @@ replace int_month = 10 	if round == 4
 
 </_hhid_note> */
 ** HOUSEHOLD IDENTIFICATION NUMBER
-
-	loc idhvars 	hhnum   							// store idh vars in local
+	loc idhvars 	pufhhnum   							// store idh vars in local
 
 
 	ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
@@ -252,7 +251,7 @@ replace int_month = 10 	if round == 4
 	* 	note, assuming that the only necessary individaul identifier is family member, which is numeric
 	*	so, not following processing for sorting numeric/non-numeric variables.
 
-	loc idpvars 	c101_lno 							// store relevant idp vars in local
+	loc idpvars 	pufc01_lno 							// store relevant idp vars in local
 	ds `idpvars',  	has(type numeric)					// filter out numeric variables in local
 	loc rlist 		= r(varlist)						// store numeric vars in local
 
@@ -294,15 +293,14 @@ replace int_month = 10 	if round == 4
 
 
 *<_weight_>
-	*rename 		weight weight_orig
-	gen 		weight = `weightvar'/(`n_round')
+	rename 		`weightvar'	weight_orig
+	gen 		weight = weight_orig/(`n_round')
 	label 		var weight "Household sampling weight"
 *</_weight_>
 
 
 *<_psu_>
-	rename 		psu psu_orig
-	gen 		psu = psu_orig
+	gen 		psu = pufpsu
 	label 		var psu "Primary sampling units"
 *</_psu_>
 
@@ -341,7 +339,7 @@ replace int_month = 10 	if round == 4
 
 *<_urban_>
 	gen byte 		urban = .
-	replace 		urban = urb2k70
+	replace 		urban = pufurb2k10
 	recode 			urban (2 = 0) 		// change rural=2 to rural=0
 	label var 		urban "Location is urban"
 	la de 			lblurban 1 "Urban" 0 "Rural"
@@ -355,7 +353,7 @@ replace int_month = 10 	if round == 4
 	Labels are to be defined as # - Name like 1 "1 - Alaska" 2 "2 - Arkansas".
 
 </_subnatid1> */
-	gen byte 		subnatid1 = reg
+	gen byte 		subnatid1 = pufreg
 	label de 		lblsubnatid1 	///
 					 1   "1 - Ilocos"			///
 					 2	 "2 - Cagayan Valley"	///
@@ -369,12 +367,12 @@ replace int_month = 10 	if round == 4
 					 10  "10 - Northern Mindanao"	///
 					 11  "11 - Davao"	///
 					 12  "12 - Soccsksargen"		///
-					 13  "13 - National Capital Region"				///
-					 14  "14 - Cordillera Administrative Region"		///
-					 15  "15 - Autonomous Region of Muslim Mindanao"	///
+					 13  "13 - National Capital pufregion"				///
+					 14  "14 - Cordillera Administrative pufregion"		///
+					 15  "15 - Autonomous pufregion of Muslim Mindanao"	///
 					 16  "16 - Caraga" ///
 					 /// value 17 exists only in raw data, not in recoded version
-					 18  "18 - Negros Island Region" /// this region appears occasionally in data
+					 18  "18 - Negros Island pufregion" /// this pufregion appears occasionally in data
 				 	 							///
 				 	 41	 "41 - Calabarzon"	/// formerly part of Southern Tagalog
 				 	 42  "42 - Mimaropa"		// formerly part of Southern Tagalog
@@ -485,7 +483,7 @@ replace int_month = 10 	if round == 4
 
 *<_hsize_>
 	sort hhid
-	by hhid: egen hsize= count(c05_rel <= 8 | c05_rel == 11) // includes non-family members, not boarders or domestic workers.
+	by hhid: egen hsize= count(pufc03_rel <= 8 | pufc03_rel == 11) // includes non-family members, not boarders or domestic workers.
 	label var 	hsize "Household size"
 
 	* check
@@ -496,14 +494,14 @@ replace int_month = 10 	if round == 4
 
 
 *<_age_>
-	gen 		age = c07_age
+	gen 		age = pufc05_age
 	replace 	age	= 98 	if age>=98 & age!=.
 	label var 	age "Individual age"
 *</_age_>
 
 
 *<_male_>
-	gen 		male = c06_sex
+	gen 		male = pufc04_sex
 	recode 		male (2 = 0)						// female=2 recoded to female=0
 	label var 	male "Sex - Ind is male"
 	la de 		lblmale 	1 "Male" 0 "Female"
@@ -513,7 +511,7 @@ replace int_month = 10 	if round == 4
 
 *<_relationharm_>
 	gen 		relationharm = .
-	replace 	relationharm = c05_rel
+	replace 	relationharm = pufc03_rel
 	recode 		relationharm (4 5 6 8  	= 5) /// siblings, children in law, grandchildren, other rel of hh head="other relatives"
 					(7 			= 4)	/// parents of hh head become "parents"
 					(9 10 11 	= 6) 	// boarders and domestic workers become "other/non-relatives"
@@ -540,13 +538,13 @@ replace int_month = 10 	if round == 4
 
 
 *<_relationcs_>
-	gen relationcs = c05_rel
+	gen relationcs = pufc03_rel
 	label var relationcs "Relationship to the head of household - Country original"
 *</_relationcs_>
 
 
 *<_marital_>
-	gen byte 		marital = c08_ms
+	gen byte 		marital = pufc06_mstat
 	recode 			marital 	///
 					(1=2) 	///	"single" -> "never married"
 					(2=1) /// "married" -> "married"
@@ -691,7 +689,7 @@ label var ed_mod_age "Education module application age"
 *</_ed_mod_age_>
 
 *<_school_>
-	gen byte school= a02_csch
+	gen byte school= pufc08_cursch
 	recode school (2 = 0)		// 2 was "no", recode to 0. Keep 1=Yes same.
 	label var school "Attending school"
 	la de lblschool 0 "No" 1 "Yes"
@@ -720,15 +718,18 @@ label var ed_mod_age "Education module application age"
 
 	gen byte educat7=.
 
-	replace educat7=1 if j12c09_grade==0 | j12c09_grade == 10 	// "No education" and "Preschool" -> "No Education"
-	replace educat7=2 if j12c09_grade>=210 &  j12c09_grade<=260	// Grades 1-7 to "Primary Incomplete"
-	replace educat7=3 if j12c09_grade==280						// "Elementary Graduate" to "Primary Complete"
-	replace educat7=4 if j12c09_grade>=310 &  j12c09_grade<=340 	// First-Fourth year in High school -> "secondary incomplete"
-	replace educat7=5 if j12c09_grade==350						// "High school graduate" -> "secondary complete"
-	replace educat7=6 if j12c09_grade>=410 &  j12c09_grade<=501 	// Post secondary + Basic Programs -> "Higher secondary not uni"
-	replace educat7=6 if j12c09_grade>=502 & 	j12c09_grade<=699	// Basic Program degrees to "Higher secondary not uni"
-	replace educat7=7 if j12c09_grade>= 810 & j12c09_grade <= . // all labelled uni levels Advanced Degree" -> "University"
+	replace 	educat7=1 if pufc07_grade==0 | pufc07_grade == 10 	// "No education" and "Preschool" -> "No Education"
+	replace 	educat7=2 if pufc07_grade>=210 &  pufc07_grade<=260	// Grades 1-7 to "Primary Incomplete"
+	replace 	educat7=3 if pufc07_grade==280						// "Elementary Graduate" to "Primary Complete"
+	replace 	educat7=4 if pufc07_grade>=310 &  pufc07_grade<=340 	// First-Fourth year in High school -> "secondary incomplete"
+	replace 	educat7=5 if pufc07_grade==350						// "High school graduate" -> "secondary complete"
+	replace 	educat7=6 if pufc07_grade>=410 &  pufc07_grade<=501 	// Post secondary + Basic Programs -> "Higher secondary not uni"
+	replace 	educat7=6 if pufc07_grade>=502 & 	pufc07_grade<=699	// Basic Program degrees to "Higher secondary not uni"
+	replace 	educat7=7 if pufc07_grade>= 810 & pufc07_grade <= . // all labelled uni levels
 
+	* for 2016, replace educat7 == missing if the rounds/month is July or October.
+	* this is because there is not enough information for these rounds, which differ from the first two.
+	replace 	educat7 = . 	if pufsvymo == 7 | pufsvymo == 10 		// if july or october
 
 	label var educat7 "Level of education 1"
 	la de lbleducat7 	1 "No education" ///
@@ -860,8 +861,8 @@ foreach v of local ed_var {
 *<_potential_lf_>
 	gen byte 		potential_lf = 0
 
-	replace 		potential_lf = 1 if (c37_avil == 1 & c38_lokw == 2) ///
-										| (c37_avil == 2 & c38_lokw == 1)
+	replace 		potential_lf = 1 if (pufc36_avail == 1 & pufc30_lookw == 2) ///
+										| (pufc36_avail == 2 & pufc30_lookw == 1)
 	replace 		potential_lf = . if age < minlaborage & age != .
 	replace 		potential_lf = . if lstatus != 3
 	label var 		potential_lf "Potential labour force status"
@@ -873,7 +874,7 @@ foreach v of local ed_var {
 *<_underemployment_>
 	gen byte 		underemployment = 0
 
-	replace 		underemployment = 1 if c23_pwmr == 1
+	replace 		underemployment = 1 if pufc20_pwmore == 1
 	replace 		underemployment = . if age < minlaborage & age != .
 	replace 		underemployment = . if lstatus != 1
 	label var 		underemployment "Underemployment status"
@@ -884,11 +885,11 @@ foreach v of local ed_var {
 
 *<_nlfreason_>
 	gen byte 		nlfreason= .
-	replace 		nlfreason=1 	if c42_wynt==8
-	replace 		nlfreason=2 	if c42_wynt==7
-	replace 		nlfreason=3 	if c42_wynt==6
-	replace 		nlfreason=4 	if c42_wynt==3
-	replace 		nlfreason=5 	if c42_wynt==1 | c42_wynt==2 | c42_wynt==4 | c42_wynt==5 | c42_wynt==9
+	replace 		nlfreason=1 	if pufc34_wynot==8
+	replace 		nlfreason=2 	if pufc34_wynot==7
+	replace 		nlfreason=3 	if pufc34_wynot==6
+	replace 		nlfreason=4 	if pufc34_wynot==3
+	replace 		nlfreason=5 	if pufc34_wynot==1 | pufc34_wynot==2 | pufc34_wynot==4 | pufc34_wynot==5 | pufc34_wynot==9
 	replace 		nlfreason=. 	if lstatus!=3 		// restricts universe to non-labor force
 	label var 		nlfreason "Reason not in the labor force"
 	la de 			lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
@@ -897,7 +898,7 @@ foreach v of local ed_var {
 
 
 *<_unempldur_l_>
-	gen byte 		unempldur_l=c40_wks/4.2
+	gen byte 		unempldur_l=pufc33_weeks/4.2
 	label var 		unempldur_l "Unemployment duration (months) lower bracket"
 	replace 		unempldur_l=. if lstatus!=2 	  // restrict universe to unemployed only
 
@@ -905,7 +906,7 @@ foreach v of local ed_var {
 
 
 *<_unempldur_u_>
-	gen byte 		unempldur_u=c40_wks/4.2
+	gen byte 		unempldur_u=pufc33_weeks/4.2
 	label var 		unempldur_u "Unemployment duration (months) upper bracket"
 	replace 		unempldur_u=. if lstatus!=2 	  // restrict universe to unemployed only
 
@@ -919,10 +920,10 @@ foreach v of local ed_var {
 {
 *<_empstat_>
 	gen byte 		empstat=.
-	replace 		empstat=1 	if c19pclas==0 | c19pclas==1 | c19pclas==2 | c19pclas==5
-	replace 		empstat=2 	if c19pclas==6
-	replace 		empstat=3	if c19pclas==4
-	replace 		empstat=4 	if c19pclas==3
+	replace 		empstat=1 	if pufc23_pclass==0 | pufc23_pclass==1 | pufc23_pclass==2 | pufc23_pclass==5
+	replace 		empstat=2 	if pufc23_pclass==6
+	replace 		empstat=3	if pufc23_pclass==4
+	replace 		empstat=4 	if pufc23_pclass==3
 	replace 		empstat=. 	if lstatus!=1 	// includes universe restriction
 	label var 		empstat 	"Employment status during past week primary job 7 day recall"
 	la de 			lblempstat 	1 "Paid employee" ///
@@ -936,8 +937,8 @@ foreach v of local ed_var {
 
 *<_ocusec_>
 	gen byte 		ocusec = .
-	replace 		ocusec = 1 	if c19pclas == 1
-	replace 		ocusec = 2 	if inlist(c19pclas, 0, 1, 3, 4, 5, 6)
+	replace 		ocusec = 1 	if pufc23_pclass == 1
+	replace 		ocusec = 2 	if inlist(pufc23_pclass, 0, 1, 3, 4, 5, 6)
 
 	label var 		ocusec 		"Sector of activity primary job 7 day recall"
 	la de 			lblocusec 	1 "Public Sector, Central Government, Army" ///
@@ -949,7 +950,7 @@ foreach v of local ed_var {
 
 
 *<_industry_orig_>
-	gen 			industry_orig = c18_pkb
+	gen 			industry_orig = pufc16_pkb
 	label var 		industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
@@ -964,17 +965,17 @@ foreach v of local ed_var {
 
 *<_industrycat10_>
 	gen byte 		industrycat10=.
-	replace 		industrycat10=1 if (c18_pkb>=1& c18_pkb<=4)		// to Agriculture
-	replace 		industrycat10=2 if (c18_pkb>=5 & c18_pkb<=9)		// to Mining
-	replace 		industrycat10=3 if (c18_pkb>=10 & c18_pkb<=33)	// to Manufacturing
-	replace 		industrycat10=4 if (c18_pkb>=35 & c18_pkb<=39)	// to Public utility
-	replace 		industrycat10=5 if (c18_pkb>=41 &  c18_pkb<=43)	// to Construction
-	replace 		industrycat10=6 if (c18_pkb>=45 & c18_pkb<=47) | (c18_pkb >= 55 & c18_pkb <= 56)	// to Commerce
-	replace 		industrycat10=7 if (c18_pkb>=49 & c18_pkb<=53)| (c18_pkb>=58 & c18_pkb<=63) // to Transport/coms
-	replace 		industrycat10=8 if (c18_pkb>=64 & c18_pkb<=82) 	// to financial/business services
-	replace 		industrycat10=9 if (c18_pkb==84) 				// to public administration
-	replace 		industrycat10=10 if  (c18_pkb>=91 & c18_pkb<=99) // to other
-	replace 		industrycat10=10 if industrycat10==. & c18_pkb!=.
+	replace 		industrycat10=1 if (pufc16_pkb>=1& pufc16_pkb<=4)		// to Agriculture
+	replace 		industrycat10=2 if (pufc16_pkb>=5 & pufc16_pkb<=9)		// to Mining
+	replace 		industrycat10=3 if (pufc16_pkb>=10 & pufc16_pkb<=33)	// to Manufacturing
+	replace 		industrycat10=4 if (pufc16_pkb>=35 & pufc16_pkb<=39)	// to Public utility
+	replace 		industrycat10=5 if (pufc16_pkb>=41 &  pufc16_pkb<=43)	// to Construction
+	replace 		industrycat10=6 if (pufc16_pkb>=45 & pufc16_pkb<=47) | (pufc16_pkb >= 55 & pufc16_pkb <= 56)	// to Commerce
+	replace 		industrycat10=7 if (pufc16_pkb>=49 & pufc16_pkb<=53)| (pufc16_pkb>=58 & pufc16_pkb<=63) // to Transport/coms
+	replace 		industrycat10=8 if (pufc16_pkb>=64 & pufc16_pkb<=82) 	// to financial/business services
+	replace 		industrycat10=9 if (pufc16_pkb==84) 				// to public administration
+	replace 		industrycat10=10 if  (pufc16_pkb>=91 & pufc16_pkb<=99) // to other
+	replace 		industrycat10=10 if industrycat10==. & pufc16_pkb!=.
 
 
 	label var 		industrycat10 "1 digit industry classification, primary job 7 day recall"
@@ -1000,7 +1001,7 @@ foreach v of local ed_var {
 
 
 *<_occup_orig_>
-	gen 			occup_orig = c16_proc
+	gen 			occup_orig = pufc14_procc
 	label var 		occup_orig "Original occupation record primary job 7 day recall"
 	replace 		occup_orig=. if lstatus!=1 			// restrict universe to employed only
 	replace 		occup_orig=. if age < minlaborage	// restrict universe to working age
@@ -1008,8 +1009,7 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_>
-* in 2016, raw variable is numeric, 4-digits, but since there is no provided PSOC to ISCO
-* conversion, there is no occup_isco
+* in 2016, raw variable is numeric, 2-digits, so isco conversion not possible
 	gen 			occup_isco = .
 	label 			var occup_isco "ISCO code of primary job 7 day recall"
 	replace 		occup_isco=. if lstatus!=1 		// restrict universe to employed only
@@ -1020,12 +1020,31 @@ foreach v of local ed_var {
 
 *<_occup_>
 	* in 2016, raw variable is numeric 2 digits only
+	* generate empty variable
+	gen byte occup = .
 
-	* generate occupation variable
-	gen byte occup=floor(c16_proc/10)		// this handles most of recoding automatically.
-	recode occup 0 = 10	if 	c16_proc==1 	// recode "armed forces" to appropriate label
-	recode occup 0 = 99	if 	(c16_proc>=2 & c16_proc <=9) ///
-							| (c16_proc >=94 & c16_proc <= 99) // recode "Not classifiable occupations"
+	* replace conditionally based on January round (1992 PSOC)
+	replace 		occup=floor(pufc14_procc/10)		///
+					if 	round == 1
+
+	recode 			occup 0 = 10		///
+					if 	pufc14_procc==1 	/// recode "armed forces" to appropriate label
+					& 	round == 1
+
+	recode 			occup 0 = 99		///
+					if 	(pufc14_procc>=2 & pufc14_procc <=9) ///
+					| (pufc14_procc >=94 & pufc14_procc <= 99) /// recode "Not classifiable occupations"
+					& round == 1
+
+
+	* replace conditionally based on April, July, October rounds (2012 PSOC)
+	replace			occup=floor(pufc14_procc/10)							///
+					if (round == 4 | round == 7 | round == 10)
+
+	recode 			occup 0 = 10									///
+					if 	(pufc14_procc >=1 & pufc14_procc <=3)				/// recode "armed forces" to appropriate label
+					& 	(round == 4 | round == 7 | round == 10)
+
 
 
 	/* Note that the raw variable, procc lists values, 94-99 for which there are no associated occupation
@@ -1063,14 +1082,14 @@ foreach v of local ed_var {
 
 
 *<_wage_no_compen_>
-	gen 			double wage_no_compen = c27_pbsc
+	gen 			double wage_no_compen = pufc25_pbasic
 	replace 		wage_no_compen = . if 	wage_no_compen == 99999
 	label var 		wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
 
 *<_unitwage_>
-	gen byte 		unitwage = c26_pbis
+	gen byte 		unitwage = pufc24_pbasis
 	recode 			unitwage (0 1 5 6 7 = 10) /// other
 								(2 = 9) /// hourly
 								(3 = 1) /// daily
@@ -1093,7 +1112,7 @@ foreach v of local ed_var {
 
 
 *<_whours_>
-	gen whours 		= c22_phrs
+	gen whours 		= pufc19_phours
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -1253,10 +1272,30 @@ foreach v of local ed_var {
 
 
 *<_occup_2_>
-	gen byte		occup_2=floor(j02_otoc/10)		// this handles most of recoding automatically.
-	recode 			occup_2 0 = 10	if 	j02_otoc==1 	// recode "armed forces" to appropriate label
-	recode 			occup_2 0 = 99	if 	(j02_otoc>=2 & j02_otoc <=9) ///
-							| (j02_otoc >=94 & j02_otoc <= 99) // recode "Not classifiable occupations"
+	* generate empty variable
+	gen byte 		occup_2 = .
+
+	* replace conditionally based on January round (1992 PSOC)
+	replace 		occup_2=floor(j02_otoc/10)		///
+					if 	round == 1
+
+	recode 			occup_2 0 = 10		///
+					if 	j02_otoc==1 	/// recode "armed forces" to appropriate label
+					& 	round == 1
+
+	recode 			occup_2 0 = 99		///
+					if 	(j02_otoc>=2 & j02_otoc <=9) ///
+					| (j02_otoc >=94 & j02_otoc <= 99) /// recode "Not classifiable occupations"
+					& round == 1
+
+
+	* replace conditionally based on April, July, October rounds (2012 PSOC)
+	replace			occup_2=floor(j02_otoc/10)							///
+					if (round == 4 | round == 7 | round == 10)
+
+	recode 			occup_2 0 = 10									///
+					if 	(j02_otoc >=1 & j02_otoc <=3)				/// recode "armed forces" to appropriate label
+					& 	(round == 4 | round == 7 | round == 10)
 
 
 	label var 		occup_2 "1 digit occupational classification secondary job 7 day recall"
