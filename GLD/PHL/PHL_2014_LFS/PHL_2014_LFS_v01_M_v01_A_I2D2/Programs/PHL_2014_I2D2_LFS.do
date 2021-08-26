@@ -599,7 +599,7 @@ replace month = 10 	if round == 4
 
 
 ** NUMBER OF TOTAL JOBS
-	gen byte njobs= . 
+	gen byte njobs= .
 	label var njobs "Number of total jobs"
 	replace njobs=. 	if 	age < lb_mod_age | lstatus != 1		// restrict universe to working age + workers
 
@@ -750,7 +750,11 @@ replace month = 10 	if round == 4
 
 
 ** WAGES TIME UNIT
-	gen byte unitwage=1
+	gen byte unitwage=c26_pbis
+	recode 			unitwage (0 1 5 6 7 = 10) /// other
+								(2 = 9) /// hourly
+								(3 = 1) /// daily
+								(4 = 5) // monthly
 	replace unitwage=. if lstatus!=1 			// restrict universe to employed only
 	replace unitwage=. if age < lb_mod_age		// restrict universe to working age
 	replace unitwage=. if empstat==1			// restrict universe to wage earners
@@ -842,7 +846,11 @@ replace month = 10 	if round == 4
 
 
 ** WAGES TIME UNIT - SECOND JOB
-	gen byte unitwage_2=1
+	gen byte unitwage_2= j06_obis
+	recode 			unitwage (0 1 5 6 7 = 10) /// other
+								(2 = 9) /// hourly
+								(3 = 1) /// daily
+								(4 = 5) // monthly
 	replace unitwage_2=. if lstatus!=1 			// restrict universe to employed only
 	replace unitwage_2=. if age < lb_mod_age		// restrict universe to working age
 	replace unitwage_2=. if empstat==1			// restrict universe to wage earners
@@ -1018,15 +1026,15 @@ replace month = 10 	if round == 4
 		}
 	}
 
-** Drop observations based on missing values 
-	/*there's one observation that essentially has no useful information -- only ~ 3 education level variables 
-		with no other information, including region or weight info. Drop and ensure only this observation is 
+** Drop observations based on missing values
+	/*there's one observation that essentially has no useful information -- only ~ 3 education level variables
+		with no other information, including region or weight info. Drop and ensure only this observation is
 		dropped. */
 	drop 	if 	idp 	== "." ///
 				& reg01 == . 	///
 				& wgt 	== .
-	
-	assert 	r(N_drop) == 1	
+
+	assert 	r(N_drop) == 1
 
 ** Drop Unused Value labels
 

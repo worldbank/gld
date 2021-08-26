@@ -253,7 +253,7 @@ replace int_month = 10 	if round == 4
 	* 	note, assuming that the only necessary individaul identifier is family member, which is numeric
 	*	so, not following processing for sorting numeric/non-numeric variables.
 
-	loc idpvars 	cc101_lno 							// store relevant idp vars in local
+	loc idpvars 	c101_lno 							// store relevant idp vars in local
 	ds `idpvars',  	has(type numeric)					// filter out numeric variables in local
 	loc rlist 		= r(varlist)						// store numeric vars in local
 
@@ -279,7 +279,6 @@ replace int_month = 10 	if round == 4
 ** ID CHECKS
 	isid idh idp 										// household and individual id uniquely identify
 
-	rename hhid hhid_orig
 	gen  hhid = idh  									// make hhid from idh in module
 	label var hhid "Household ID"
 
@@ -343,7 +342,7 @@ replace int_month = 10 	if round == 4
 
 *<_urban_>
 	gen byte 		urban = .
-	replace 		urban = urb2k1970
+	replace 		urban = urb2k70
 	recode 			urban (2 = 0) 		// change rural=2 to rural=0
 	label var 		urban "Location is urban"
 	la de 			lblurban 1 "Urban" 0 "Rural"
@@ -357,7 +356,7 @@ replace int_month = 10 	if round == 4
 	Labels are to be defined as # - Name like 1 "1 - Alaska" 2 "2 - Arkansas".
 
 </_subnatid1> */
-	gen byte 		subnatid1 = creg
+	gen byte 		subnatid1 = reg
 	label de 		lblsubnatid1 	///
 					 1   "1 - Ilocos"			///
 					 2	 "2 - Cagayan Valley"	///
@@ -548,7 +547,7 @@ replace int_month = 10 	if round == 4
 
 
 *<_marital_>
-	gen byte 		marital = c08_mstat
+		gen byte 		marital = c08_ms
 	recode 			marital 	///
 					(1=2) 	///	"single" -> "never married"
 					(2=1) /// "married" -> "married"
@@ -693,7 +692,7 @@ label var ed_mod_age "Education module application age"
 *</_ed_mod_age_>
 
 *<_school_>
-	gen byte school= a02_cursch
+	gen byte school= a02_csch
 	recode school (2 = 0)		// 2 was "no", recode to 0. Keep 1=Yes same.
 	label var school "Attending school"
 	la de lblschool 0 "No" 1 "Yes"
@@ -851,7 +850,7 @@ foreach v of local ed_var {
 
 {
 *<_lstatus_>
-	gen byte 		lstatus = newempstat
+	gen byte 		lstatus = newempst
 	replace 		lstatus = . if age < minlaborage
 	label var 		lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF" // raw values always same as new
@@ -862,8 +861,8 @@ foreach v of local ed_var {
 *<_potential_lf_>
 	gen byte 		potential_lf = 0
 
-	replace 		potential_lf = 1 if (c37_avail == 1 & c38_lookw == 2) ///
-										| (c37_avail == 2 & c38_lookw == 1)
+	replace 		potential_lf = 1 if (c37_avil == 1 & c38_lokw == 2) ///
+										| (c37_avil == 2 & c38_lokw == 1)
 	replace 		potential_lf = . if age < minlaborage & age != .
 	replace 		potential_lf = . if lstatus != 3
 	label var 		potential_lf "Potential labour force status"
@@ -875,7 +874,7 @@ foreach v of local ed_var {
 *<_underemployment_>
 	gen byte 		underemployment = 0
 
-	replace 		underemployment = 1 if c23_pwmore == 1
+	replace 		underemployment = 1 if c23_pwmr == 1
 	replace 		underemployment = . if age < minlaborage & age != .
 	replace 		underemployment = . if lstatus != 1
 	label var 		underemployment "Underemployment status"
@@ -886,11 +885,11 @@ foreach v of local ed_var {
 
 *<_nlfreason_>
 	gen byte 		nlfreason= .
-	replace 		nlfreason=1 	if c42_wynot==8
-	replace 		nlfreason=2 	if c42_wynot==7
-	replace 		nlfreason=3 	if c42_wynot==6
-	replace 		nlfreason=4 	if c42_wynot==3
-	replace 		nlfreason=5 	if c42_wynot==1 | c42_wynot==2 | c42_wynot==4 | c42_wynot==5 | c42_wynot==9
+	replace 		nlfreason=1 	if c42_wynt==8
+	replace 		nlfreason=2 	if c42_wynt==7
+	replace 		nlfreason=3 	if c42_wynt==6
+	replace 		nlfreason=4 	if c42_wynt==3
+	replace 		nlfreason=5 	if c42_wynt==1 | c42_wynt==2 | c42_wynt==4 | c42_wynt==5 | c42_wynt==9
 	replace 		nlfreason=. 	if lstatus!=3 		// restricts universe to non-labor force
 	label var 		nlfreason "Reason not in the labor force"
 	la de 			lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
@@ -899,7 +898,7 @@ foreach v of local ed_var {
 
 
 *<_unempldur_l_>
-	gen byte 		unempldur_l=c40_weeks/4.2
+	gen byte 		unempldur_l=c40_wks/4.2
 	label var 		unempldur_l "Unemployment duration (months) lower bracket"
 	replace 		unempldur_l=. if lstatus!=2 	  // restrict universe to unemployed only
 
@@ -907,7 +906,7 @@ foreach v of local ed_var {
 
 
 *<_unempldur_u_>
-	gen byte 		unempldur_u=c40_weeks/4.2
+	gen byte 		unempldur_u=c40_wks/4.2
 	label var 		unempldur_u "Unemployment duration (months) upper bracket"
 	replace 		unempldur_u=. if lstatus!=2 	  // restrict universe to unemployed only
 
@@ -921,10 +920,10 @@ foreach v of local ed_var {
 {
 *<_empstat_>
 	gen byte 		empstat=.
-	replace 		empstat=1 	if c19_pclass==0 | c19_pclass==1 | c19_pclass==2 | c19_pclass==5
-	replace 		empstat=2 	if c19_pclass==6
-	replace 		empstat=3	if c19_pclass==4
-	replace 		empstat=4 	if c19_pclass==3
+	replace 		empstat=1 	if c19pclas==0 | c19pclas==1 | c19pclas==2 | c19pclas==5
+	replace 		empstat=2 	if c19pclas==6
+	replace 		empstat=3	if c19pclas==4
+	replace 		empstat=4 	if c19pclas==3
 	replace 		empstat=. 	if lstatus!=1 	// includes universe restriction
 	label var 		empstat 	"Employment status during past week primary job 7 day recall"
 	la de 			lblempstat 	1 "Paid employee" ///
@@ -938,8 +937,8 @@ foreach v of local ed_var {
 
 *<_ocusec_>
 	gen byte 		ocusec = .
-	replace 		ocusec = 1 	if c19_pclass == 1
-	replace 		ocusec = 2 	if inlist(c19_pclass, 0, 1, 3, 4, 5, 6)
+	replace 		ocusec = 1 	if c19pclas == 1
+	replace 		ocusec = 2 	if inlist(c19pclas, 0, 1, 3, 4, 5, 6)
 
 	label var 		ocusec 		"Sector of activity primary job 7 day recall"
 	la de 			lblocusec 	1 "Public Sector, Central Government, Army" ///
@@ -957,56 +956,8 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_>
-	/* The key that matches industry codes is in string format to maintain leading/trailing
-		zeros, so we will change the format here to string if necessary */
-	/* The key that matches industry codes is in string format to maintain leading/trailing
-		zeros, so we will change the format here to string if necessary */
-
-	loc matchvar   	c18_pkb
-	loc n 			1
-
-	qui ds 			industry_orig, has(type numeric) 	// capture numeric var if is numeric
-	loc isicvar 	= r(varlist)						// store this in a local
-	loc len 		: list sizeof isicvar 				// store the length of this local (1 or 0)
-
-		if (`len' == 1) {
-															// run this if == 1 (ie, if industry_orig is numeric)
-			tostring industry_orig	///						// make the numeric vars strings
-				, generate(industry_orig_2_str) ///			// gen a variable with this prefix
-				force //
-
-
-		}
-
-
-	// merge sub-module with isic key
-
-	gen class = `matchvar'
-	tostring 	class ///
-				, format(`"%04.0f"') replace
-
-
-	merge 		m:1 ///
-				class ///
-				using `isic_key' ///
-				, generate(isic_merge_`n') ///
-				keep(master match) // "left join"; remove obs that don't match from using
-				* the string variable in isic4 will is industrycat_isic
-
-	// replace one code that I know doesn't match
-	rename 		isic4	isic4_`n'
-	replace 	isic4_`n' = "6810" 	if `matchvar' == 6819
-
-	tab 		isic_merge_`n' 		if `matchvar' != .
-
-
-	destring 	isic4_`n' ///
-				, generate(industrycat_isic)
-
-	drop 		class 				// no longer needed, maintained in matchvar
-
-
-	*// industrycat_isic already generated above in submodule
+	* 2014 data only has 2 digits for industry so no ISIC can be generated
+	gen 			industrycat_isic = .
 	label var 		industrycat_isic "ISIC code of primary job 7 day recall"
 
 	*</_industrycat_isic_>
@@ -1014,18 +965,18 @@ foreach v of local ed_var {
 
 *<_industrycat10_>
 	gen byte 		industrycat10=.
-	replace 		industrycat10=1 	if c18_pkb >= 100 	& c18_pkb <= 399	// "Agriculture, Forestry, Fishing" coded to "Agriculture"
-	replace 		industrycat10=2 	if c18_pkb >= 500 	& c18_pkb <= 999	// "Mining and Quarrying" coded to "Mining"
-	replace 		industrycat10=3 	if c18_pkb >= 1000 	& c18_pkb <= 3399 	// "Manufacturing" coded to "Manufacturing"
-	replace 		industrycat10=4 	if c18_pkb >= 3500 	& c18_pkb <= 3900	// "Water supply, sewerage, etc" coded to "Public Utiltiy"
-	replace 		industrycat10=5 	if c18_pkb >= 4100 	& c18_pkb <= 4399	// "Construction" coded to "Construction"
-	replace 		industrycat10=6 	if c18_pkb >= 4500 	& c18_pkb <= 4799	// "Wholesale/retail, repair of vehicles" to "Commerce"
-	replace 		industrycat10=7 	if c18_pkb >= 4900 	& c18_pkb <= 5399	// "Transport+storage" to "Transport". UN codes include storage
-	replace 		industrycat10=6 	if c18_pkb >= 5500 	& c18_pkb <= 5699	// "Accommodation+Food" to "Commerce"
-	replace 		industrycat10=7 	if c18_pkb >= 5800 	& c18_pkb <= 6399	// "Information+communication" to "Transport/Communication"
-	replace 		industrycat10=8 	if c18_pkb >= 6400 	& c18_pkb <= 8299	// "Misc Business Services" to "Business Services"
-	replace 		industrycat10=9 	if c18_pkb >= 8400 	& c18_pkb <= 8499	// "public administration/defense" to "public administration"
-	replace 		industrycat10=10	if c18_pkb >= 8500 	& c18_pkb <= 9950	// "Other services" including direct education to "other"
+	replace 		industrycat10=1 if (c18_pkb>=1& c18_pkb<=4)		// to Agriculture
+	replace 		industrycat10=2 if (c18_pkb>=5 & c18_pkb<=9)		// to Mining
+	replace 		industrycat10=3 if (c18_pkb>=10 & c18_pkb<=33)	// to Manufacturing
+	replace 		industrycat10=4 if (c18_pkb>=35 & c18_pkb<=39)	// to Public utility
+	replace 		industrycat10=5 if (c18_pkb>=41 &  c18_pkb<=43)	// to Construction
+	replace 		industrycat10=6 if (c18_pkb>=45 & c18_pkb<=47) | (c18_pkb >= 55 & c18_pkb <= 56)	// to Commerce
+	replace 		industrycat10=7 if (c18_pkb>=49 & c18_pkb<=53)| (c18_pkb>=58 & c18_pkb<=63) // to Transport/coms
+	replace 		industrycat10=8 if (c18_pkb>=64 & c18_pkb<=82) 	// to financial/business services
+	replace 		industrycat10=9 if (c18_pkb==84) 				// to public administration
+	replace 		industrycat10=10 if  (c18_pkb>=91 & c18_pkb<=99) // to other
+	replace 		industrycat10=10 if industrycat10==. & c18_pkb!=.
+
 
 	label var 		industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de 			lblindustrycat10 	///
@@ -1050,7 +1001,7 @@ foreach v of local ed_var {
 
 
 *<_occup_orig_>
-	gen 			occup_orig = c16_procc
+	gen 			occup_orig = c16_proc
 	label var 		occup_orig "Original occupation record primary job 7 day recall"
 	replace 		occup_orig=. if lstatus!=1 			// restrict universe to employed only
 	replace 		occup_orig=. if age < minlaborage	// restrict universe to working age
@@ -1069,13 +1020,13 @@ foreach v of local ed_var {
 
 
 *<_occup_>
-	* in 2014, raw variable is numeric, 4-digits, but since there is no provided PSOC to ISCO
-	* conversion, there is no occup_isco
+	* in 2014, raw variable is numeric 2 digits only
 
 	* generate occupation variable
-	gen byte occup=floor(c16_procc/1000)		// this handles most of recoding automatically.
-	recode occup 0 = 10	if 	c16_procc<=129 	// recode "armed forces" to appropriate label
-	recode occup 0 = 99	if 	(c16_procc == 930) // recode "Not classifiable occupations"
+	gen byte occup=floor(c16_proc/10)		// this handles most of recoding automatically.
+	recode occup 0 = 10	if 	c16_proc==1 	// recode "armed forces" to appropriate label
+	recode occup 0 = 99	if 	(c16_proc>=2 & c16_proc <=9) ///
+							| (c16_proc >=94 & c16_proc <= 99) // recode "Not classifiable occupations"
 
 
 	/* Note that the raw variable, procc lists values, 94-99 for which there are no associated occupation
@@ -1113,14 +1064,14 @@ foreach v of local ed_var {
 
 
 *<_wage_no_compen_>
-	gen 			double wage_no_compen = c27_pbasic
+	gen 			double wage_no_compen = c27_pbsc
 	replace 		wage_no_compen = . if 	wage_no_compen == 99999
 	label var 		wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
 
 *<_unitwage_>
-	gen byte 		unitwage = c26_pbasis
+	gen byte 		unitwage = c26_pbis
 	recode 			unitwage (0 1 5 6 7 = 10) /// other
 								(2 = 9) /// hourly
 								(3 = 1) /// daily
@@ -1143,7 +1094,7 @@ foreach v of local ed_var {
 
 
 *<_whours_>
-	gen whours 		= c22_phours
+	gen whours 		= c22_phrs
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -1242,54 +1193,8 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_2_>
-	/* The key that matches industry codes is in string format to maintain leading/trailing
-		zeros, so we will change the format here to string if necessary */
-
-	loc matchvar   	j03_okb
-	loc n 			2
-
-	qui ds 			industry_orig_2, has(type numeric) 	// capture numeric var if is numeric
-	loc isicvar 	= r(varlist)						// store this in a local
-	loc len 		: list sizeof isicvar 				// store the length of this local (1 or 0)
-
-		if (`len' == 1) {
-															// run this if == 1 (ie, if industry_orig_2 is numeric)
-			tostring industry_orig_2	///						// make the numeric vars strings
-				, generate(industry_orig_str) ///			// gen a variable with this prefix
-				force //
-
-
-		}
-
-
-	// merge sub-module with isic key
-
-	gen class = `matchvar'
-	tostring 	class ///
-				, format(`"%04.0f"') replace
-
-
-	merge 		m:1 ///
-				class ///
-				using `isic_key' ///
-				, generate(isic_merge_`n') ///
-				keep(master match) // "left join"; remove obs that don't match from using
-				* the string variable in isic4 will is industrycat_isic
-
-	// replace one code that I know doesn't match
-	rename 		isic4	isic4_`n'
-	replace 	isic4_`n' = "6810" 	if `matchvar' == 6819
-
-	tab 		isic_merge_`n' 		if `matchvar' != .
-
-
-	destring 	isic4_`n' ///
-				, generate(industrycat_isic_2)
-
-	drop 		class 				// no longer needed, maintained in matchvar
-
-
-	*// industrycat_isic already generated above in submodule
+	* no 4-digit data, so cannot complete.
+	gen 			industrycat_isic_2 = .
 	label var 		industrycat_isic_2 "ISIC code of primary job 7 day recall"
 
 
@@ -1300,18 +1205,18 @@ foreach v of local ed_var {
 	gen byte 		industrycat10_2 = .
 
 
-	replace 		industrycat10_2=1 	if j03_okb >= 100 	& j03_okb <= 399	// "Agriculture, Forestry, Fishing" coded to "Agriculture"
-	replace 		industrycat10_2=2 	if j03_okb >= 500 	& j03_okb <= 999	// "Mining and Quarrying" coded to "Mining"
-	replace 		industrycat10_2=3 	if j03_okb >= 1000 	& j03_okb <= 3399 	// "Manufacturing" coded to "Manufacturing"
-	replace 		industrycat10_2=4 	if j03_okb >= 3500 	& j03_okb <= 3900	// "Water supply, sewerage, etc" coded to "Public Utiltiy"
-	replace 		industrycat10_2=5 	if j03_okb >= 4100 	& j03_okb <= 4399	// "Construction" coded to "Construction"
-	replace 		industrycat10_2=6 	if j03_okb >= 4500 	& j03_okb <= 4799	// "Wholesale/retail, repair of vehicles" to "Commerce"
-	replace 		industrycat10_2=7 	if j03_okb >= 4900 	& j03_okb <= 5399	// "Transport+storage" to "Transport". UN codes include storage
-	replace 		industrycat10_2=6 	if j03_okb >= 5500 	& j03_okb <= 5699	// "Accommodation+Food" to "Commerce"
-	replace 		industrycat10_2=7 	if j03_okb >= 5800 	& j03_okb <= 6399	// "Information+communication" to "Transport/Communication"
-	replace 		industrycat10_2=8 	if j03_okb >= 6400 	& j03_okb <= 8299	// "Misc Business Services" to "Business Services"
-	replace 		industrycat10_2=9 	if j03_okb >= 8400 	& j03_okb <= 8499	// "public administration/defense" to "public administration"
-	replace 		industrycat10_2=10	if j03_okb >= 8500 	& j03_okb <= 9950	// "Other services" including direct education to "other"
+	replace 		industrycat10_2=1 if (j03_okb>=1& j03_okb<=4)		// to Agriculture
+	replace 		industrycat10_2=2 if (j03_okb>=5 & j03_okb<=9)		// to Mining
+	replace 		industrycat10_2=3 if (j03_okb>=10 & j03_okb<=33)	// to Manufacturing
+	replace 		industrycat10_2=4 if (j03_okb>=35 & j03_okb<=39)	// to Public utility
+	replace 		industrycat10_2=5 if (j03_okb>=41 &  j03_okb<=43)	// to Construction
+	replace 		industrycat10_2=6 if (j03_okb>=45 & j03_okb<=47) | (j03_okb>= 55 & j03_okb <= 56)	// to Commerce
+	replace 		industrycat10_2=7 if (j03_okb>=49 & j03_okb<=53)| (j03_okb>=58 & j03_okb<=63) // to Transport/coms
+	replace 		industrycat10_2=8 if (j03_okb>=64 & j03_okb<=82) 	// to financial/business services
+	replace 		industrycat10_2=9 if (j03_okb==84) 				// to public administration
+	replace 		industrycat10_2=10 if  (j03_okb>=91 & j03_okb<=99) // to other
+	replace 		industrycat10_2=10 if industrycat10_2==. & j03_okb!=.
+
 
 
 	label var 		industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
@@ -1328,7 +1233,7 @@ foreach v of local ed_var {
 
 
 *<_occup_orig_2_>
-	gen 			occup_orig_2 = j02_otocc
+	gen 			occup_orig_2 = j02_otoc
 	label var 		occup_orig_2 "Original occupation record secondary job 7 day recall"
 *</_occup_orig_2_>
 
@@ -1349,9 +1254,10 @@ foreach v of local ed_var {
 
 
 *<_occup_2_>
-	gen byte 		occup_2=floor(j02_otocc/1000)		// this handles most of recoding automatically.
-	recode 			occup_2 0 = 10	if 	j02_otocc<=129 	// recode "armed forces" to appropriate label
-	recode 			occup_2 0 = 99	if 	(j02_otocc == 930) // recode "Not classifiable occupations"
+	gen byte		occup_2=floor(j02_otoc/10)		// this handles most of recoding automatically.
+	recode 			occup_2 0 = 10	if 	j02_otoc==1 	// recode "armed forces" to appropriate label
+	recode 			occup_2 0 = 99	if 	(j02_otoc>=2 & j02_otoc <=9) ///
+							| (j02_otoc >=94 & j02_otoc <= 99) // recode "Not classifiable occupations"
 
 
 	label var 		occup_2 "1 digit occupational classification secondary job 7 day recall"
@@ -1360,14 +1266,14 @@ foreach v of local ed_var {
 
 
 *<_wage_no_compen_2_>
-	gen 			double wage_no_compen_2 = j07_obasic
+	gen 			double wage_no_compen_2 = c36_obic
 	replace 		wage_no_compen_2 = . if wage_no_compen_2 == 99999
 	label var 		wage_no_compen_2 "Last wage payment secondary job 7 day recall"
 *</_wage_no_compen_2_>
 
 
 *<_unitwage_2_>
-	gen byte 		unitwage_2 = j06_obasis
+	gen byte 		unitwage_2 = j06_obis
 	recode 			unitwage (0 1 5 6 7 = 10) /// other
 								(2 = 9) /// hourly
 								(3 = 1) /// daily
@@ -1379,7 +1285,7 @@ foreach v of local ed_var {
 
 
 *<_whours_2_>
-	gen 			whours_2 = j05_ohours
+	gen 			whours_2 = j05_ohrs
 	label var 		whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 
