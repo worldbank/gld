@@ -88,12 +88,12 @@ set mem 800m
 
 ** FILES
 	* input
-	local round1 `"`stata'\LFS JAN2012.dta"'
-	local round2 `"`stata'\LFS APR2012.dta"'
-	local round3 `"`stata'\LFS JUL2012.dta"'
+	local round1 `"`stata'\LFSjan12.dta"'
+	local round2 `"`stata'\LFSapr12.dta"'
+	local round3 `"`stata'\LFSjul12.dta"'
 	local round4 `"`stata'\LFS OCT2012.dta"'
 
-	local isic_key 	 `"`stata'\PHL_PSIC_ISIC_94_key.dta"'
+	local isic_key 	 `"`stata'\PHL_PSIC_ISIC_09_key.dta"'
 	local isco_key 	 `"`stata'\"' // to be created
 
 	* ouput
@@ -694,7 +694,7 @@ label var ed_mod_age "Education module application age"
 *</_ed_mod_age_>
 
 *<_school_>
-	gen byte school= a02_csch
+	gen byte school= a02_cursch
 	recode school (2 = 0)		// 2 was "no", recode to 0. Keep 1=Yes same.
 	label var school "Attending school"
 	la de lblschool 0 "No" 1 "Yes"
@@ -721,9 +721,8 @@ label var ed_mod_age "Education module application age"
 	classificition of how each level is classified and why,
 	available in github repository. */
 
-	gen byte educat7 =.
-
 	gen byte educat7=.
+
 	replace educat7=1 if j12c09_grade==0 | j12c09_grade == 10 	// "No education" and "Preschool" -> "No Education"
 	replace educat7=2 if j12c09_grade>=210 &  j12c09_grade<=260	// Grades 1-7 to "Primary Incomplete"
 	replace educat7=3 if j12c09_grade==280						// "Elementary Graduate" to "Primary Complete"
@@ -731,8 +730,8 @@ label var ed_mod_age "Education module application age"
 	replace educat7=5 if j12c09_grade==350						// "High school graduate" -> "secondary complete"
 	replace educat7=6 if j12c09_grade>=410 &  j12c09_grade<=501 	// Post secondary + Basic Programs -> "Higher secondary not uni"
 	replace educat7=6 if j12c09_grade>=502 & 	j12c09_grade<=699	// Basic Program degrees to "Higher secondary not uni"
-	replace educat7=7 if j12c09_grade>= 810 & j12c09_grade <= . // all labelled uni levels
-Advanced Degree" -> "University"
+	replace educat7=7 if j12c09_grade>= 810 & j12c09_grade <= . // all labelled uni levels Advanced Degree" -> "University"
+
 
 	label var educat7 "Level of education 1"
 	la de lbleducat7 	1 "No education" ///
@@ -853,7 +852,7 @@ foreach v of local ed_var {
 
 {
 *<_lstatus_>
-	gen byte 		lstatus = newempst
+	gen byte 		lstatus = newempstat
 	replace 		lstatus = . if age < minlaborage
 	label var 		lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF" // raw values always same as new
@@ -974,7 +973,7 @@ foreach v of local ed_var {
 		if (`len' == 1) {
 															// run this if == 1 (ie, if industry_orig is numeric)
 			tostring industry_orig	///						// make the numeric vars strings
-				, generate(industry_orig_str) ///			// gen a variable with this prefix
+				, generate(industry_orig_2_str) ///			// gen a variable with this prefix
 				force //
 
 
@@ -992,10 +991,11 @@ foreach v of local ed_var {
 				class ///
 				using `isic_key' ///
 				, generate(isic_merge_`n') ///
-				keep(master merge) // "left join"; remove obs that don't match from using
+				keep(master match) // "left join"; remove obs that don't match from using
 				* the string variable in isic4 will is industrycat_isic
 
 	// replace one code that I know doesn't match
+	rename 		isic4	isic4_`n'
 	replace 	isic4_`n' = "6810" 	if `matchvar' == 6819
 
 	tab 		isic_merge_`n' 		if `matchvar' != .
@@ -1274,10 +1274,11 @@ foreach v of local ed_var {
 				class ///
 				using `isic_key' ///
 				, generate(isic_merge_`n') ///
-				keep(master merge) // "left join"; remove obs that don't match from using
+				keep(master match) // "left join"; remove obs that don't match from using
 				* the string variable in isic4 will is industrycat_isic
 
 	// replace one code that I know doesn't match
+	rename 		isic4	isic4_`n'
 	replace 	isic4_`n' = "6810" 	if `matchvar' == 6819
 
 	tab 		isic_merge_`n' 		if `matchvar' != .
