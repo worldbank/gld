@@ -695,7 +695,7 @@ label var ed_mod_age "Education module application age"
 
 *<_school_>
 	gen byte school= a02_csch
-	recode atschool (2 = 0)		// 2 was "no", recode to 0. Keep 1=Yes same.
+	recode school (2 = 0)		// 2 was "no", recode to 0. Keep 1=Yes same.
 	label var school "Attending school"
 	la de lblschool 0 "No" 1 "Yes"
 	label values school  lblschool
