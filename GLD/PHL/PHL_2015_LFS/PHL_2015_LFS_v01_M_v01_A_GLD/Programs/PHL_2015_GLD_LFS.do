@@ -80,7 +80,7 @@ set mem 800m
 	local 	lb_mod_age	15	// labor module minimun age (inclusive)
 	local 	ed_mod_age	5	// labor module minimun age (inclusive)
 
-	local 	weightvar 	fwgt // final weightvar
+	local 	weightvar 	pwgt // final weightvar
 
 ** LOG FILE
 	log using `"`gld_data'\\`cty3'_`surv_yr'_I2D2_LFS.log"', replace
@@ -208,7 +208,6 @@ replace int_month = 10 	if round == 4
 </_hhid_note> */
 ** HOUSEHOLD IDENTIFICATION NUMBER
 
-** HOUSEHOLD IDENTIFICATION NUMBER
 	loc idhvars 	hhnum   							// store idh vars in local
 
 
@@ -547,7 +546,7 @@ replace int_month = 10 	if round == 4
 
 
 *<_marital_>
-		gen byte 		marital = c08_ms
+	gen byte 		marital = c08_ms
 	recode 			marital 	///
 					(1=2) 	///	"single" -> "never married"
 					(2=1) /// "married" -> "married"
