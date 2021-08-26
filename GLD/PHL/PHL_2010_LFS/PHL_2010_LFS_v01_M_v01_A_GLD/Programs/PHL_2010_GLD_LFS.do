@@ -298,6 +298,7 @@ replace int_month = 10 	if round == 4
 
 
 *<_weight_>
+	rename 	weight weight_orig
 	gen 		weight = `weightvar'/(`n_round')
 	label 		var weight "Household sampling weight"
 *</_weight_>
@@ -862,7 +863,7 @@ foreach v of local ed_var {
 	gen byte 		potential_lf = 0
 
 	replace 		potential_lf = 1 if (c37_avil == 1 & c38_lokw == 2) ///
-										| (c37_avil == 2 & lc31_lookw == 1)
+										| (c37_avil == 2 & c38_lokw == 1)
 	replace 		potential_lf = . if age < minlaborage & age != .
 	replace 		potential_lf = . if lstatus != 3
 	label var 		potential_lf "Potential labour force status"
