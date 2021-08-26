@@ -409,6 +409,10 @@ set mem 800m
 
 	append using 		`partA' `partB'
 
+
+	gen  hhid = idh  									// make hhid from idh in module
+	label var hhid "Household ID"
+
 *</_hhid_>
 
 
@@ -983,8 +987,8 @@ foreach v of local ed_var {
 *<_potential_lf_>
 	gen byte 		potential_lf = 0
 
-	replace 		potential_lf = 1 if (cc37_avail == 1 & cc38_lookw == 2) ///
-										| (cc37_avail == 2 & cc38_lookw == 1)
+	replace 		potential_lf = 1 if (c37_avil == 1 & c38_lokw == 2) ///
+										| (c37_avil == 2 & c38_lokw == 1)
 	replace 		potential_lf = . if age < minlaborage & age != .
 	replace 		potential_lf = . if lstatus != 3
 	label var 		potential_lf "Potential labour force status"
@@ -996,7 +1000,7 @@ foreach v of local ed_var {
 *<_underemployment_>
 	gen byte 		underemployment = 0
 
-	replace 		underemployment = 1 if cc23_pwmore == 1
+	replace 		underemployment = 1 if c23_pwmr == 1
 	replace 		underemployment = . if age < minlaborage & age != .
 	replace 		underemployment = . if lstatus != 1
 	label var 		underemployment "Underemployment status"
@@ -1020,7 +1024,7 @@ foreach v of local ed_var {
 
 
 *<_unempldur_l_>
-	gen byte 		unempldur_l=cc40_weeks/4.2
+	gen byte 		unempldur_l=c40_wks/4.2
 	label var 		unempldur_l "Unemployment duration (months) lower bracket"
 	replace 		unempldur_l=. if lstatus!=2 	  // restrict universe to unemployed only
 
@@ -1028,7 +1032,7 @@ foreach v of local ed_var {
 
 
 *<_unempldur_u_>
-	gen byte 		unempldur_u=cc40_weeks/4.2
+	gen byte 		unempldur_u=c40_wks/4.2
 	label var 		unempldur_u "Unemployment duration (months) upper bracket"
 	replace 		unempldur_u=. if lstatus!=2 	  // restrict universe to unemployed only
 
@@ -1186,7 +1190,7 @@ foreach v of local ed_var {
 
 
 *<_unitwage_>
-	gen byte 		unitwage = cc26_pbasis
+	gen byte 		unitwage = c26_pbis
 	recode 			unitwage (0 1 5 6 7 = 10) /// other
 								(2 = 9) /// hourly
 								(3 = 1) /// daily
@@ -1378,7 +1382,7 @@ foreach v of local ed_var {
 
 
 *<_unitwage_2_>
-	gen byte 		unitwage_2 = cc35_obasis
+	gen byte 		unitwage_2 = j06_obis
 	recode 			unitwage (0 1 5 6 7 = 10) /// other
 								(2 = 9) /// hourly
 								(3 = 1) /// daily

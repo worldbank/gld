@@ -993,7 +993,7 @@ foreach v of local ed_var {
 
 
 *<_occup_orig_>
-	gen 			occup_orig = c14_procc
+	gen 			occup_orig = c14a_procc
 	label var 		occup_orig "Original occupation record primary job 7 day recall"
 	replace 		occup_orig=. if lstatus!=1 			// restrict universe to employed only
 	replace 		occup_orig=. if age < minlaborage	// restrict universe to working age
@@ -1012,10 +1012,10 @@ foreach v of local ed_var {
 
 *<_occup_>
 	* generate occupation variable
-	gen byte 		occup = floor(c14_procc/10)		// this handles most of recoding automatically.
-	recode 			occup 0 = 10	if 	c14_procc==1 	// recode "armed forces" to appropriate label
-	recode 			occup 0 = 99	if 	(c14_procc>=2 & c14_procc <=9) ///
-							| 		(c14_procc >=94 & c14_procc <= 99) // recode "Not classifiable occupations"
+	gen byte 		occup = floor(c14a_procc/10)		// this handles most of recoding automatically.
+	recode 			occup 0 = 10	if 	c14a_procc==1 	// recode "armed forces" to appropriate label
+	recode 			occup 0 = 99	if 	(c14a_procc>=2 & c14a_procc <=9) ///
+							| 		(c14a_procc >=94 & c14a_procc <= 99) // recode "Not classifiable occupations"
 
 	/* Note that the raw variable, procc lists values, 94-99 for which there are no associated occupation
 	   codes. Given that the raw data indicate that these individauls do have valid, non-missing occupations,
