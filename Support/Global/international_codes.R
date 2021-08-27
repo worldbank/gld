@@ -271,6 +271,20 @@ psoc12_codes_raw <- read_pdf(
       )
 
 
+test <- read_pdf(
+  
+  pdf_path = psoc12_path,
+  page_min = 102,
+  page_max = 540,
+  varnames = c("minor", "unit", "psoc92", "isco08"),
+  ymin = 90,
+  xlabel = c(160, 420),
+  xmin = c(91, 130, 420, 480),
+  xmax = c(130, 175, 480, 9999), 
+  fuzzy_rows = FALSE,
+  header = TRUE
+  
+)
 
 # clean up result ----
 
