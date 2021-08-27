@@ -18,7 +18,7 @@ best_match <- function(df,
   # Drop columns we are not interest in, drop rows where int code is missing
   df <- df %>% 
     select(all_of(vars)) %>%
-    filter(!is.na(international_code)) %>%
+    filter(!is.na({{international_code}})) %>%
     filter(across(all_of(vars), ~ !grepl("[A-Za-z]", .x)))
                       
   
@@ -77,37 +77,53 @@ best_match <- function(df,
 df_3 <- df_2 %>%
   filter(!({{cc}} %in% match_2[[country_code]]))
 
-# Reduce ISIC code to two digits
-df_3[[international_code]] <- substr(df_3[[international_code]],1,2)
 
-# Match by maximum
-set.seed(61035)
-match_3 <- df_3 %>% 
-  count({{cc}}, {{ic}}) %>% 
-  rename(instance = n) %>%
-  group_by({{cc}}) %>%
-  mutate(sum = sum(instance)) %>%
-  ungroup() %>%
-  mutate(pct = round((instance/sum)*100,1)) %>%
-  group_by({{cc}}) %>%
-  slice_max(pct) %>%
-  sample_n(1)
+  # Reduce ISIC code to two digits
+  df_3[[international_code]] <- substr(df_3[[international_code]],1,2)
+  
+  # Match by maximum, account for cases where df_3 may be null
+  if (dim(df_3)[1] > 0) {
+    set.seed(61035)
+    match_3 <- df_3 %>% 
+      count({{cc}}, {{ic}}) %>% 
+      rename(instance = n) %>%
+      group_by({{cc}}) %>%
+      mutate(sum = sum(instance)) %>%
+      ungroup() %>%
+      mutate(pct = round((instance/sum)*100,1))
+    group_by({{cc}}) %>%
+      slice_max(pct) %>%
+      sample_n(1)
+  } else {
+    set.seed(61035)
+    match_3 <- df_3 %>% 
+      count({{cc}}, {{ic}}) %>% 
+      rename(instance = n) %>%
+      group_by({{cc}}) %>%
+      mutate(sum = sum(instance)) %>%
+      ungroup() %>%
+      mutate(pct = round((instance/sum)*100,1))
+  }
+  
+  
+  # Review
+  done_3 <- n_distinct(match_3[[country_code]])
+  rest_3 <- n_distinct(df[[country_code]]) - 
+    n_distinct(match_1[[country_code]]) - 
+    n_distinct(match_2[[country_code]]) - 
+    n_distinct(match_3[[country_code]])
+  
 
-# Review
-done_3 <- n_distinct(match_3[[country_code]])
-rest_3 <- n_distinct(df[[country_code]]) - 
-  n_distinct(match_1[[country_code]]) - 
-  n_distinct(match_2[[country_code]]) - 
-  n_distinct(match_3[[country_code]])
 
 
 # Step 5 - append + ggplot ----------------------------------------------
+
 
 concord <- bind_rows(match_1, match_2, match_3) %>%
   select( {{cc}}, {{ic}}, pct) %>%
   rename(match = pct) %>%
    mutate( "{{cc}}" := str_pad({{cc}}, 4, pad = "0", side = "right"),
-           "{{ic}}" := str_pad({{ic}}, 4, pad = "0", side = "right")) 
+           "{{ic}}" := str_pad({{ic}}, 4, pad = "0", side = "right"))
 
 results <- tibble(
   match_no = c(1,2,3),
@@ -116,12 +132,12 @@ results <- tibble(
 )
 
 gg <- ggplot(concord, aes(match)) +
-  geom_density() +
+  geom_freqpoly() +
   scale_x_continuous(n.breaks = 10, limits = c(0,100)) +
   theme_minimal() +
   labs(x = "Match Score", y = "Density", title = "Distribution of Match Scores")
 
-list <- list(concord, results, gg)
+list <- list(concord, results, gg, match_1, match_2, match_3, df_2, df_3)
 return(list)
 
 
