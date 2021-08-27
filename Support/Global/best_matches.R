@@ -137,7 +137,7 @@ gg <- ggplot(concord, aes(match)) +
   theme_minimal() +
   labs(x = "Match Score", y = "Density", title = "Distribution of Match Scores")
 
-list <- list(concord, results, gg, match_1, match_2, match_3, df_2, df_3)
+list <- list(concord, results, gg) # match_1, match_2, match_3, df_2, df_3
 return(list)
 
 

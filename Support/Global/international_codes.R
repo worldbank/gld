@@ -264,8 +264,8 @@ psoc12_codes_raw <- read_pdf(
       varnames = c("minor", "unit", "psoc92", "isco08"),
       ymin = 90,
       xlabel = c(160, 420),
-      xmin = c(91, 130, 450, 495),
-      xmax = c(130, 175, 495, 9999), 
+      xmin = c(91, 130, 450, 492),
+      xmax = c(130, 175, 492, 9999), 
       fuzzy_rows = FALSE
 
       )
@@ -311,11 +311,12 @@ isco12_leftover <- bind_rows(isco12_leftover1, isco12_leftover2)
 
 isco12_clean <- psoc12_codes %>%
   ## eliminate group and class-only rows
-  #filter(rowAny(across(table_vars_sm, ~ !is.na(.x)))) %>% # at least 1 col must be non-NA
+  filter(rowAny(across(table_vars_sm, ~ !is.na(.x)))) %>% # at least 1 col must be non-NA
   filter(rowAny(across(all_of(table_vars_pi), ~ !is.na(.x)))) # at least 1 col must be non-NA
   
   # check
-  assertthat::assert_that( (nrow(isco12_clean) + nrow(isco12_leftover2)) == nrow(psoc12_codes)   )
+  assertthat::assert_that( (nrow(isco12_clean) + nrow(isco12_leftover))
+                           == nrow(psoc12_codes)   )
 
   ## eliminate strange puncutation marks
   isco12_clean <- isco12_clean %>%
