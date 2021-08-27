@@ -151,9 +151,9 @@ read_pdf <- function(pdf_path, page_min, page_max,
       mutate(text = stringr::str_replace(text, "^p;", "")) %>%
       mutate(text = stringr::str_replace(text, "\\(", "")) %>%
       mutate(text = stringr::str_replace(text, "\\)", "")) %>%
-      # filter(!grepl("^p;", text)) %>% # these characters mess up the columns, must %% subtr with "" not filter
-      # filter(!grepl("\\(", text)) %>% # remove here 
-      # filter(!grepl("\\)", text)) %>% 
+      filter(!grepl("^p;", text)) %>% # these characters mess up the columns, must %% subtr with "" not filter
+      filter(!grepl("\\(", text)) %>% # remove here
+      filter(!grepl("\\)", text)) %>%
       mutate(text = case_when(is.null(text) ~ NA_character_,
                               TRUE ~ text)) 
     
