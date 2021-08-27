@@ -342,7 +342,7 @@ match_isic94_list <- best_match(df = isic94_clean,
                                 country_code = "class", 
                                 international_code = "isic3_1")
 
-match_isic94_table <- match_isic94_list[[1]]
+match_isic94_table <- match_isic94_list[[1]] %>% distinct()
 
 
 
@@ -350,7 +350,7 @@ match_isic09_list <- best_match(df = isic09_clean,
                                 country_code = "class",
                                 international_code = "isic4")
 
-match_isic09_table <- match_isic09_list[[1]]
+match_isic09_table <- match_isic09_list[[1]] %>% distinct()
 
 
 
@@ -358,7 +358,8 @@ match_isco12_list <- best_match(df = isco12_clean,
                                 country_code = "minor",
                                 international_code = "isco08")
 
-match_isco12_table <- match_isco12_list[[1]]
+match_isco12_table <- match_isco12_list[[1]] %>% distinct()
+  
 
 
 
