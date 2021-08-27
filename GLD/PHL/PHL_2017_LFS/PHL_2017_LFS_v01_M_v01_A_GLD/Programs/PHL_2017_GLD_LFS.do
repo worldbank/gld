@@ -1,4 +1,4 @@
-/*%%=============================================================================================
+isco/*%%=============================================================================================
 	0: GLD Harmonization Preamble
 ==============================================================================================%%*/
 
@@ -80,7 +80,7 @@ set mem 800m
 	local 	lb_mod_age	15	// labor module minimun age (inclusive)
 	local 	ed_mod_age	5	// labor module minimun age (inclusive)
 
-	local 	weightvar 	weight // final weightvar
+	local 	weightvar 	pufpwgtprv // final weightvar
 
 ** LOG FILE
 	log using `"`gld_data'\\`cty3'_`surv_yr'_I2D2_LFS.log"', replace
@@ -199,16 +199,24 @@ replace int_month = 10 	if round == 4
 	60 psu coded 1 through 60, codes should be 01, 02, ..., 60. If there are 160 it should be 001,
 	002, ..., 160.
 
-	Since individual Household ID variables were not always provided for the Philippines, yet the household
-	line number variables were provided, it was possible to approximate the household groupings by other variables.
+	Since individual Household ID variables were not always pufprvided for the Philippines, yet the household
+	line number variables were pufprvided, it was possible to approximate the household groupings by other variables.
 	However, this process was not perfectly clean, so checks for duplicates were needed. Please refer to the
 	"Household_IDs.md" in Guides and Documentation for additional explanation. The two variables, hhid and pid
 	will be produced in conjunction, the labelled in the html brackets.
 
 </_hhid_note> */
 ** HOUSEHOLD IDENTIFICATION NUMBER
-	loc idhvars 	pufhhnum   							// store idh vars in local
+/*This part is the only variable that has to be coded conditional by round. This means that we'll have to split the dataset up by round
+ 	and create tempfiles before appending back together. Not ideal but it avoids having separate scripts for each round. */
 
+	tempfile 		partA	partB						// declare tempfiles, Part A is first 3 rounds, Part B is round 4/october
+
+	preserve   											// preserve the original appended dataset
+	keep if 		round == 1 | round == 3 | round == 4
+
+		* IDH construction for rounds 1-3
+		loc idhvars 	pufhhnum 	// store idh vars in local
 
 	ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
 	loc numlist 	= r(varlist)						// store numeric vars in local
@@ -227,6 +235,20 @@ replace int_month = 10 	if round == 4
 		loc idh_els 	`idh_els' idh_`var'				// add each variable to the local list
 
 	}
+
+		* make each string variable numeric (as it should be), then string again with correct format
+		foreach var of local stringlist {
+			destring `var' /// 								// destring variable, make numeric version
+				, gen(num_`var') ///						//
+				force 										// force obs to num that are non numeric, ie to missing
+
+			tostring num_`var'	///							// make the numeric vars strings
+				, generate(idh_`var') ///					// gen a variable with this prefix
+				force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
+
+			loc idh_els 	`idh_els' idh_`var'				// add each variable to the local list
+
+		}
 
 		* add the round variable
 		tostring round	///							// make the numeric vars strings
@@ -274,8 +296,135 @@ replace int_month = 10 	if round == 4
 	sort idh idp
 	label var idp "Individual id"
 
+	** Manage duplicates
+		/*There are 1 duplicated observations across pufhhnum, round, c101_lno,
+	 	or 2 total pairs of duplicates. These all occur in c101_lno (line number). What appears to be
+		this combination of variables determines households except for these 8 observations, which occur
+		all in the same constructed household id. For now, I will
+		simply drop all observations that pertain to this household id
+		until/if coming up with a more objective way to distinguish between
+		households. */
+
+	duplicates report	idh idp							// for record keeping
+	duplicates tag 		idh idp	 						/// create a 1/0 var that tags the duplicate observations
+	 					, generate(hhid_dup_obs)		// (note this does not tage all obs in the household)
+	sort idh
+	by idh: 	egen 	hhid_dup_hh	= max(hhid_dup_obs)	// this var will tell us if any obs in the hh is duplicated
+
+
+	drop if 			hhid_dup_hh == 1				// drop all obs in household if household has duplicated hhid obs
+	assert 				r(N_drop) 	== 4				// we know that 4 obs should be dropped under these conditions.
+
+
+
+
 ** ID CHECKS
+	duplicates report idh idp
 	isid idh idp 										// household and individual id uniquely identify
+
+
+
+	save 	`partA', 	replace 							// save tempfile for partA
+	restore													// restore to original 4-round dataset
+
+	preserve   												// preserve the original appended dataset
+	keep if 		round == 2 								// keep round 4/october only
+
+
+
+		* IDH construction for round 4
+		loc idhvars 	pufreg l1prrcd l1mun l1ea lhusn l1bgy lhsn pufpsu 	// store idh vars in local
+
+		ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
+		loc numlist 	= r(varlist)						// store numeric vars in local
+		loc stringlist 	: list idhvars - numlist			// non-numeric vars in stringlist
+
+		* starting locals
+		loc len = 4										// declare the length of each element in digits
+		loc idh_els ""										// start with empty local list
+
+		* make each numeric var string, including leading zeros
+		foreach var of local numlist {
+			tostring `var'	///								// make the numeric vars strings
+				, generate(idh_`var') ///					// gen a variable with this prefix
+				force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
+
+			loc idh_els 	`idh_els' idh_`var'				// add each variable to the local list
+
+		}
+
+		* make each string variable numeric (as it should be), then string again with correct format
+		foreach var of local stringlist {
+			destring `var' /// 								// destring variable, make numeric version
+				, gen(num_`var') ///						//
+				force 										// force obs to num that are non numeric, ie to missing
+
+			tostring num_`var'	///							// make the numeric vars strings
+				, generate(idh_`var') ///					// gen a variable with this prefix
+				force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
+
+			loc idh_els 	`idh_els' idh_`var'				// add each variable to the local list
+
+		}
+
+		* add the round variable
+		tostring round	///							// make the numeric vars strings
+			, generate(idh_round) ///					// gen a variable with this prefix
+			force format(`"%01.0f"')				// ...and the specified number of digits in local
+
+		loc idh_els 	`idh_els' idh_round				// add each variable to the local list
+
+
+
+		* concatenate all elements to form idh: hosehold id
+		egen idh=concat( `idh_els' )						// concatenate vars we just made. code drops vars @ end
+
+		label var idh "Household id"
+
+
+
+
+		** INDIVIDUAL IDENTIFICATION NUMBER
+		bys idh: gen n_fam = _n								// generate family member number
+
+		* repeat same process from above, but only with n_fam.
+		* 	note, assuming that the only necessary individaul identifier is family member, which is numeric
+		*	so, not following processing for sorting numeric/non-numeric variables.
+
+		loc idpvars 	pufc01_lno								// store relevant idp vars in local
+		ds `idpvars',  	has(type numeric)					// filter out numeric variables in local
+		loc rlist 		= r(varlist)						// store numeric vars in local
+
+		* make new values with desired length of each variable
+		loc len = 2											// declare the length of each element in digits
+		loc idp_els ""										// start with empty local list
+
+		foreach var of local idpvars {
+			tostring `var'	///								// make numeric variables strings
+				, generate(idp_`var') ///					// generate a variable with this prefix
+				force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
+
+			loc idp_els 	`idp_els' idp_`var'				// add each variable to the local list
+
+		}
+
+		* concatenate to form idp: individual id
+		egen idp=concat( `idp_els' )						// concatenate vars we just made. code drops vars @ end
+
+		sort idh idp
+		label var idp "Individual id"
+
+	** ID CHECKS
+		isid idh idp 										// household and individual id uniquely identify
+
+
+	save 	`partB', 	replace 							// save the final round to a tempfile.
+
+	restore 												// restore to old dataset
+	clear
+
+	append using 		`partA' `partB'
+
 
 	gen  hhid = idh  									// make hhid from idh in module
 	label var hhid "Household ID"
@@ -412,7 +561,7 @@ replace int_month = 10 	if round == 4
 	}
 
 	// generate the variable and apply the labels.
-	gen byte 		subnatid2 = prov
+	gen byte 		subnatid2 = pufprv
 	label values 	subnatid2 lblsubnatid2
 	label var 		subnatid2 "Subnational ID at Second Administrative Level"
 
@@ -716,20 +865,26 @@ label var ed_mod_age "Education module application age"
 	classificition of how each level is classified and why,
 	available in github repository. */
 
-	gen byte educat7=.
+	gen byte 	educat7=.
+	replace 	educat7=1 if pufc07_grade <= 110 		// less than primary to "no education"
+	replace 	educat7=2 if (pufc07_grade >= 110 & pufc07_grade <= 160) /// Grades 1-6 -> "primary incomplete"
+							| (pufc07_grade >=410 & pufc07_grade <= 450) // grade 1-5 in K-12 program->"Primary incomplete"
+	replace 	educat7=3 if pufc07_grade == 170 		/// grade 6 graduate -> "primary complete"
+							| pufc07_grade == 180 	/// grade 7 graduate -> "primary complete"
+							| pufc07_grade == 460  	// grade 6 in k-12 school to "Primary Complete"
+	replace 	educat7=4 if (pufc07_grade >= 210 & pufc07_grade <= 240) /// 1-4th year in secondary school
+							| (pufc07_grade >=410 & pufc07_grade <= 490) // ...or grade 7-9 in k-12 program -> "secondary incomplete"
+	replace 	educat7=5 if pufc07_grade == 250		/// high school complete
+							| pufc07_grade == 500 	// ... or "grade 10" in K-12 to to "Secondary Complete"
+	replace 	educat7=6 if (pufc07_grade >= 601 & pufc07_grade <= 699) 	/// the 600s are for post-secondary/non-uni track courses
+							| (pufc07_grade >= 510 & pufc07_grade <= 520) // and grade 11 and 12 in K-12 -> "post second./non uni"
 
-	replace 	educat7=1 if pufc07_grade==0 | pufc07_grade == 10 	// "No education" and "Preschool" -> "No Education"
-	replace 	educat7=2 if pufc07_grade>=210 &  pufc07_grade<=260	// Grades 1-7 to "Primary Incomplete"
-	replace 	educat7=3 if pufc07_grade==280						// "Elementary Graduate" to "Primary Complete"
-	replace 	educat7=4 if pufc07_grade>=310 &  pufc07_grade<=340 	// First-Fourth year in High school -> "secondary incomplete"
-	replace 	educat7=5 if pufc07_grade==350						// "High school graduate" -> "secondary complete"
-	replace 	educat7=6 if pufc07_grade>=410 &  pufc07_grade<=501 	// Post secondary + Basic Programs -> "Higher secondary not uni"
-	replace 	educat7=6 if pufc07_grade>=502 & 	pufc07_grade<=699	// Basic Program degrees to "Higher secondary not uni"
-	replace 	educat7=7 if pufc07_grade>= 810 & pufc07_grade <= . // all labelled uni levels
+	replace 	educat7=7 if ( pufc07_grade>=701 & pufc07_grade<=950) 	// 1st-6th yr college, Tertiary degrees and above to "Uni"
 
-	* for 2017, replace educat7 == missing if the rounds/month is July or October.
-	* this is because there is not enough information for these rounds, which differ from the first two.
-	replace 	educat7 = . 	if pufsvymo == 7 | pufsvymo == 10 		// if july or october
+/*There's no documentation on where to classify SPED, but for now I will include
+undergraduates in "primary" and "graduates" in "secondary" */
+	replace 	educat7=3 if  pufc07_grade == 191
+	replace 	educat7=5 if 	pufc07_grade == 192
 
 	label var educat7 "Level of education 1"
 	la de lbleducat7 	1 "No education" ///
@@ -850,7 +1005,7 @@ foreach v of local ed_var {
 
 {
 *<_lstatus_>
-	gen byte 		lstatus = newempst
+	gen byte 		lstatus = pufnewempstat
 	replace 		lstatus = . if age < minlaborage
 	label var 		lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF" // raw values always same as new
@@ -861,8 +1016,8 @@ foreach v of local ed_var {
 *<_potential_lf_>
 	gen byte 		potential_lf = 0
 
-	replace 		potential_lf = 1 if (pufc36_avail == 1 & pufc30_lookw == 2) ///
-										| (pufc36_avail == 2 & pufc30_lookw == 1)
+	replace 		potential_lf = 1 if (pufc36_avail == 1 & pufc35_ltlookw == 2) ///
+										| (pufc36_avail == 2 & pufc35_ltlookw == 1)
 	replace 		potential_lf = . if age < minlaborage & age != .
 	replace 		potential_lf = . if lstatus != 3
 	label var 		potential_lf "Potential labour force status"
@@ -956,26 +1111,107 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_>
-	* 2017 data only has 2 digits for industry so no ISIC can be generated
-	gen 			industrycat_isic = .
-	label var 		industrycat_isic "ISIC code of primary job 7 day recall"
+	/* The key that matches industry codes is in string format to maintain leading/trailing
+		zeros, so we will change the format here to string if necessary */
+
+	loc matchvar   	pufc16_pkb
+	loc n 			1
+
+	qui ds 			industry_orig, has(type numeric) 	// capture numeric var if is numeric
+	loc isicvar 	= r(varlist)						// store this in a local
+	loc len 		: list sizeof isicvar 				// store the length of this local (1 or 0)
+
+		if (`len' == 1) {
+															// run this if == 1 (ie, if industry_orig is numeric)
+			tostring industry_orig	///						// make the numeric vars strings
+				, generate(industry_orig_2_str) ///			// gen a variable with this prefix
+				force //
+
+
+		}
+
+
+	// merge sub-module with isic key
+
+	gen class = `matchvar'
+	tostring 	class ///
+				, format(`"%04.0f"') replace
+
+
+	merge 		m:1 ///
+				class ///
+				using `isic_key' ///
+				, generate(isic_merge_`n') ///
+				keep(master match) // "left join"; remove obs that don't match from using
+				* the string variable in isic4 will is industrycat_isic
+
+	// replace one code that I know doesn't match
+	rename 		isic4	isic4_`n'
+	replace 	isic4_`n' = "6810" 	if `matchvar' == 6819
+
+	tab 		isic_merge_`n' 		if `matchvar' != .
+
+
+	destring 	isic4_`n' ///
+				, generate(industrycat_isic)
+
+	drop 		class 				// no longer needed, maintained in matchvar
+
+
+	*// industrycat_isic already generated above in submodule
+	label var 	industrycat_isic "ISIC code of primary job 7 day recall"
+
+
 
 	*</_industrycat_isic_>
 
 
 *<_industrycat10_>
-	gen byte 		industrycat10=.
-	replace 		industrycat10=1 if (pufc16_pkb>=1& pufc16_pkb<=4)		// to Agriculture
-	replace 		industrycat10=2 if (pufc16_pkb>=5 & pufc16_pkb<=9)		// to Mining
-	replace 		industrycat10=3 if (pufc16_pkb>=10 & pufc16_pkb<=33)	// to Manufacturing
-	replace 		industrycat10=4 if (pufc16_pkb>=35 & pufc16_pkb<=39)	// to Public utility
-	replace 		industrycat10=5 if (pufc16_pkb>=41 &  pufc16_pkb<=43)	// to Construction
-	replace 		industrycat10=6 if (pufc16_pkb>=45 & pufc16_pkb<=47) | (pufc16_pkb >= 55 & pufc16_pkb <= 56)	// to Commerce
-	replace 		industrycat10=7 if (pufc16_pkb>=49 & pufc16_pkb<=53)| (pufc16_pkb>=58 & pufc16_pkb<=63) // to Transport/coms
-	replace 		industrycat10=8 if (pufc16_pkb>=64 & pufc16_pkb<=82) 	// to financial/business services
-	replace 		industrycat10=9 if (pufc16_pkb==84) 				// to public administration
-	replace 		industrycat10=10 if  (pufc16_pkb>=91 & pufc16_pkb<=99) // to other
-	replace 		industrycat10=10 if industrycat10==. & pufc16_pkb!=.
+	gen byte industrycat10=.
+
+	* for months January, July, October
+		replace industrycat10=1 	if (pufc16_pkb>=1 	& pufc16_pkb<=4) ///
+								& (round == 1 | round == 3 | round == 4)	// to Agriculture
+		replace industrycat10=2 	if (pufc16_pkb>=5 	& pufc16_pkb<=9) ///
+								& (round == 1 | round == 3 | round == 4)	// to Mining
+		replace industrycat10=3 	if (pufc16_pkb>=10 & pufc16_pkb<=33)	///
+								& (round == 1 | round == 3 | round == 4) // to Manufacturing
+		replace industrycat10=4 	if (pufc16_pkb>=35 & pufc16_pkb<=39)  ///
+								& (round == 1 | round == 3 | round == 4)	// to Public utility
+		replace industrycat10=5 	if (pufc16_pkb>=41 & pufc16_pkb<=43)  ///
+								& (round == 1 | round == 3 | round == 4)	// to Construction
+		replace industrycat10=6 	if (pufc16_pkb>=45 & pufc16_pkb<=47) | (pufc16_pkb >= 55 & pufc16_pkb <= 56)  ///
+								& (round == 1 | round == 3 | round == 4)	// to Commerce
+		replace industrycat10=7 	if (pufc16_pkb>=49 & pufc16_pkb<=53) | (pufc16_pkb >= 58 & pufc16_pkb <= 63)  ///
+								& (round == 1 | round == 3 | round == 4) // to Transport/coms
+		replace industrycat10=8 	if (pufc16_pkb>=64 & pufc16_pkb<=82)   ///
+								& (round == 1 | round == 3 | round == 4)	// to financial/business services
+		replace industrycat10=9 	if (pufc16_pkb==84) 		  ///
+								& (round == 1 | round == 3 | round == 4)		// to public administration
+		replace industrycat10=10 if (pufc16_pkb>=91 & pufc16_pkb<=99)   ///
+								& (round == 1 | round == 3 | round == 4) // to other
+		replace industrycat10=10 if industrycat10==. & pufc16_pkb!=.  ///
+								& (round == 1 | round == 3 | round == 4)
+
+
+
+	if (round == 2) {
+		* For April, code according to the april Schema
+
+		replace industrycat10=1 	if pufc16_pkb >= 100 	& pufc16_pkb <= 399	 	// "Agriculture, Forestry, Fishing" coded to "Agriculture"
+		replace industrycat10=2 	if pufc16_pkb >= 500 	& pufc16_pkb <= 999		// "Mining and Quarrying" coded to "Mining"
+		replace industrycat10=3 	if pufc16_pkb >= 1000 	& pufc16_pkb <= 3399 	// "Manufacturing" coded to "Manufacturing"
+		replace industrycat10=4 	if pufc16_pkb >= 3500 	& pufc16_pkb <= 3900	// "Water supply, sewerage, etc" coded to "Public Utiltiy"
+		replace industrycat10=5 	if pufc16_pkb >= 4100 	& pufc16_pkb <= 4399	// "Construction" coded to "Construction"
+		replace industrycat10=6 	if pufc16_pkb >= 4500 	& pufc16_pkb <= 4799	// "Wholesale/retail, repair of vehicles" to "Commerce"
+		replace industrycat10=7 	if pufc16_pkb >= 4900 	& pufc16_pkb <= 5399	// "Transport+storage" to "Transport". UN codes include storage
+		replace industrycat10=6 	if pufc16_pkb >= 5500 	& pufc16_pkb <= 5699	// "Accommodation+Food" to "Commerce"
+		replace industrycat10=7 	if pufc16_pkb >= 5800 	& pufc16_pkb <= 6399	// "Information+communication" to "Transport/Communication"
+		replace industrycat10=8 	if pufc16_pkb >= 6400 	& pufc16_pkb <= 8299	// "Misc Business Services" to "Business Services"
+		replace industrycat10=9 	if pufc16_pkb >= 8400 	& pufc16_pkb <= 8499	// "public administration/defense" to "public administration"
+		replace industrycat10=10	if pufc16_pkb >= 8500 	& pufc16_pkb <= 9950	// "Other services" including direct education to "other"
+
+	}
 
 
 	label var 		industrycat10 "1 digit industry classification, primary job 7 day recall"
@@ -1010,10 +1246,54 @@ foreach v of local ed_var {
 
 *<_occup_isco_>
 * in 2017, raw variable is numeric, 2-digits, so isco conversion not possible
-	gen 			occup_isco = .
-	label 			var occup_isco "ISCO code of primary job 7 day recall"
-	replace 		occup_isco=. if lstatus!=1 		// restrict universe to employed only
-	replace 		occup_isco=. if age < minlaborage	// restrict universe to working age
+	loc matchvar   	pufc14_procc
+	loc n 			1
+
+	qui ds 			occup_orig, has(type numeric) 	// capture numeric var if is numeric
+	loc iscovar 	= r(varlist)						// store this in a local
+	loc len 		: list sizeof iscovar 				// store the length of this local (1 or 0)
+
+		if (`len' == 1) {
+															// run this if == 1 (ie, if occup_orig is numeric)
+			tostring occup_orig	///						// make the numeric vars strings
+				, generate(occup_orig_str) ///			// gen a variable with this prefix
+				force //
+
+
+		}
+
+
+	// merge sub-module with isco key
+
+	gen minor = `matchvar'
+	tostring 	minor ///
+				, format(`"%04.0f"') replace
+
+
+	merge 		m:1 ///
+				minor ///
+				using `isco_key' ///
+				, generate(isco_merge_`n') ///
+				keep(master match) // "left join"; remove obs that don't match from using
+
+
+	// replace one code that I know doesn't match
+	rename 		isco08	isco08_`n'
+	replace 	isco08_`n' = "6810" 	if `matchvar' == 6819
+
+	tab 		isic_merge_`n' 		if `matchvar' != .
+
+
+	destring 	isco08_`n' ///
+				, generate(occup_isco)
+
+	drop 		minor 				// no longer needed, maintained in matchvar
+
+
+	*// occup_isco already generated above in submodule
+	label var 	occup_isco "ISIC code of primary job 7 day recall"
+
+
 
 *</_occup_isco_>
 
@@ -1023,28 +1303,17 @@ foreach v of local ed_var {
 	* generate empty variable
 	gen byte occup = .
 
-	* replace conditionally based on January round (1992 PSOC)
-	replace 		occup=floor(pufc14_procc/10)		///
-					if 	round == 1
-
-	recode 			occup 0 = 10		///
-					if 	pufc14_procc==1 	/// recode "armed forces" to appropriate label
-					& 	round == 1
-
-	recode 			occup 0 = 99		///
-					if 	(pufc14_procc>=2 & pufc14_procc <=9) ///
-					| (pufc14_procc >=94 & pufc14_procc <= 99) /// recode "Not classifiable occupations"
-					& round == 1
+	* replace conditionally based on January, July, October (2-digit rounds)
+	replace 	occup	=floor(pufc14_procc/10)		if  (round == 1 | round == 3 | round == 4)
+	recode 		occup 	0 = 10	if 	(pufc14_procc >=1 & pufc14_procc <=3)	/// recode "armed forces" to appropriate label
+						& (round == 1 | round == 3 | round == 4)
 
 
-	* replace conditionally based on April, July, October rounds (2012 PSOC)
-	replace			occup=floor(pufc14_procc/10)							///
-					if (round == 4 | round == 7 | round == 10)
-
-	recode 			occup 0 = 10									///
-					if 	(pufc14_procc >=1 & pufc14_procc <=3)				/// recode "armed forces" to appropriate label
-					& 	(round == 4 | round == 7 | round == 10)
-
+	* replace conditionally based on April (4-digit round)
+	replace 	occup	=floor(pufc14_procc/1000)	if 	round == 2	// this handles most of recoding automatically.
+	recode 		occup 	0 = 10	///
+						if 	(pufc14_procc == 110 | pufc14_procc == 210 | pufc14_procc == 310) /// recode "armed forces" to appropriate label
+						& 	(round == 2)
 
 
 	/* Note that the raw variable, procc lists values, 94-99 for which there are no associated occupation
@@ -1112,7 +1381,7 @@ foreach v of local ed_var {
 
 
 *<_whours_>
-	gen whours 		= pufc19_phours
+	gen whours 		= pufc28_thours
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -1211,8 +1480,52 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_2_>
-	* no 4-digit data, so cannot complete.
-	gen 			industrycat_isic_2 = .
+
+	loc matchvar   	pufc43_qkb
+	loc n 			2
+
+	qui ds 			industry_orig_2, has(type numeric) 	// capture numeric var if is numeric
+	loc isicvar 	= r(varlist)						// store this in a local
+	loc len 		: list sizeof isicvar 				// store the length of this local (1 or 0)
+
+		if (`len' == 1) {
+															// run this if == 1 (ie, if industry_orig_2 is numeric)
+			tostring industry_orig_2	///						// make the numeric vars strings
+				, generate(industry_orig_2_str) ///			// gen a variable with this prefix
+				force //
+
+
+		}
+
+
+	// merge sub-module with isic key
+
+	gen class = `matchvar'
+	tostring 	class ///
+				, format(`"%04.0f"') replace
+
+
+	merge 		m:1 ///
+				class ///
+				using `isic_key' ///
+				, generate(isic_merge_`n') ///
+				keep(master match) // "left join"; remove obs that don't match from using
+				* the string variable in isic4 will is industrycat_isic
+
+	// replace one code that I know doesn't match
+	rename 		isic4	isic4_`n'
+	replace 	isic4_`n' = "6810" 	if `matchvar' == 6819
+
+	tab 		isic_merge_`n' 		if `matchvar' != .
+
+
+	destring 	isic4_`n' ///
+				, generate(industrycat_isic_2)
+
+	drop 		class 				// no longer needed, maintained in matchvar
+
+
+	*// industrycat_isic already generated above in submodule
 	label var 		industrycat_isic_2 "ISIC code of primary job 7 day recall"
 
 
@@ -1220,21 +1533,50 @@ foreach v of local ed_var {
 
 
 *<_industrycat10_2_>
-	gen byte 		industrycat10_2 = .
+	gen byte industrycat10_2=.
+
+	* for months January, July, October
+		replace industrycat10_2=1 	if (pufc43_qkb>=1 	& pufc43_qkb<=4) ///
+								& (round == 1 | round == 3 | round == 4)	// to Agriculture
+		replace industrycat10_2=2 	if (pufc43_qkb>=5 	& pufc43_qkb<=9) ///
+								& (round == 1 | round == 3 | round == 4)	// to Mining
+		replace industrycat10_2=3 	if (pufc43_qkb>=10 & pufc43_qkb<=33)	///
+								& (round == 1 | round == 3 | round == 4) // to Manufacturing
+		replace industrycat10_2=4 	if (pufc43_qkb>=35 & pufc43_qkb<=39)  ///
+								& (round == 1 | round == 3 | round == 4)	// to Public utility
+		replace industrycat10_2=5 	if (pufc43_qkb>=41 & pufc43_qkb<=43)  ///
+								& (round == 1 | round == 3 | round == 4)	// to Construction
+		replace industrycat10_2=6 	if (pufc43_qkb>=45 & pufc43_qkb<=47) | (pufc43_qkb >= 55 & pufc43_qkb <= 56)  ///
+								& (round == 1 | round == 3 | round == 4)	// to Commerce
+		replace industrycat10_2=7 	if (pufc43_qkb>=49 & pufc43_qkb<=53) | (pufc43_qkb >= 58 & pufc43_qkb <= 63)  ///
+								& (round == 1 | round == 3 | round == 4) // to Transport/coms
+		replace industrycat10_2=8 	if (pufc43_qkb>=64 & pufc43_qkb<=82)   ///
+								& (round == 1 | round == 3 | round == 4)	// to financial/business services
+		replace industrycat10_2=9 	if (pufc43_qkb==84) 		  ///
+								& (round == 1 | round == 3 | round == 4)		// to public administration
+		replace industrycat10_2=10 if (pufc43_qkb>=91 & pufc43_qkb<=99)   ///
+								& (round == 1 | round == 3 | round == 4) // to other
+		replace industrycat10_2=10 if industrycat10_2==. & pufc43_qkb!=.  ///
+								& (round == 1 | round == 3 | round == 4)
 
 
-	replace 		industrycat10_2=1 if (j03_okb>=1& j03_okb<=4)		// to Agriculture
-	replace 		industrycat10_2=2 if (j03_okb>=5 & j03_okb<=9)		// to Mining
-	replace 		industrycat10_2=3 if (j03_okb>=10 & j03_okb<=33)	// to Manufacturing
-	replace 		industrycat10_2=4 if (j03_okb>=35 & j03_okb<=39)	// to Public utility
-	replace 		industrycat10_2=5 if (j03_okb>=41 &  j03_okb<=43)	// to Construction
-	replace 		industrycat10_2=6 if (j03_okb>=45 & j03_okb<=47) | (j03_okb>= 55 & j03_okb <= 56)	// to Commerce
-	replace 		industrycat10_2=7 if (j03_okb>=49 & j03_okb<=53)| (j03_okb>=58 & j03_okb<=63) // to Transport/coms
-	replace 		industrycat10_2=8 if (j03_okb>=64 & j03_okb<=82) 	// to financial/business services
-	replace 		industrycat10_2=9 if (j03_okb==84) 				// to public administration
-	replace 		industrycat10_2=10 if  (j03_okb>=91 & j03_okb<=99) // to other
-	replace 		industrycat10_2=10 if industrycat10_2==. & j03_okb!=.
+	if (round == 2) {
+		* For April, code according to the april Schema
 
+		replace industrycat10_2=1 	if pufc43_qkb >= 100 	& pufc43_qkb <= 399	 	// "Agriculture, Forestry, Fishing" coded to "Agriculture"
+		replace industrycat10_2=2 	if pufc43_qkb >= 500 	& pufc43_qkb <= 999		// "Mining and Quarrying" coded to "Mining"
+		replace industrycat10_2=3 	if pufc43_qkb >= 1000 	& pufc43_qkb <= 3399 	// "Manufacturing" coded to "Manufacturing"
+		replace industrycat10_2=4 	if pufc43_qkb >= 3500 	& pufc43_qkb <= 3900	// "Water supply, sewerage, etc" coded to "Public Utiltiy"
+		replace industrycat10_2=5 	if pufc43_qkb >= 4100 	& pufc43_qkb <= 4399	// "Construction" coded to "Construction"
+		replace industrycat10_2=6 	if pufc43_qkb >= 4500 	& pufc43_qkb <= 4799	// "Wholesale/retail, repair of vehicles" to "Commerce"
+		replace industrycat10_2=7 	if pufc43_qkb >= 4900 	& pufc43_qkb <= 5399	// "Transport+storage" to "Transport". UN codes include storage
+		replace industrycat10_2=6 	if pufc43_qkb >= 5500 	& pufc43_qkb <= 5699	// "Accommodation+Food" to "Commerce"
+		replace industrycat10_2=7 	if pufc43_qkb >= 5800 	& pufc43_qkb <= 6399	// "Information+communication" to "Transport/Communication"
+		replace industrycat10_2=8 	if pufc43_qkb >= 6400 	& pufc43_qkb <= 8299	// "Misc Business Services" to "Business Services"
+		replace industrycat10_2=9 	if pufc43_qkb >= 8400 	& pufc43_qkb <= 8499	// "public administration/defense" to "public administration"
+		replace industrycat10_2=10	if pufc43_qkb >= 8500 	& pufc43_qkb <= 9950	// "Other services" including direct education to "other"
+
+	}
 
 
 	label var 		industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
@@ -1257,9 +1599,55 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_2_>
-* even though the original data hve 4 digits, there is no conversion table for PSOC to ISCO
-	gen 			occup_isco_2 = .
-	label var 		occup_isco_2 "ISCO code of secondary job 7 day recall"
+* in 2017, raw variable is numeric, 2-digits, so isco conversion not possible
+	loc matchvar   	pufc40_pocc
+	loc n 			2
+
+	qui ds 			occup_orig_2, has(type numeric) 	// capture numeric var if is numeric
+	loc iscovar 	= r(varlist)						// store this in a local
+	loc len 		: list sizeof iscovar 				// store the length of this local (1 or 0)
+
+		if (`len' == 1) {
+															// run this if == 1 (ie, if occup_orig is numeric)
+			tostring occup_orig_2	///						// make the numeric vars strings
+				, generate(occup_orig_2_str) ///			// gen a variable with this prefix
+				force //
+
+
+		}
+
+
+	// merge sub-module with isco key
+
+	gen minor = `matchvar'
+	tostring 	minor ///
+				, format(`"%04.0f"') replace
+
+
+	merge 		m:1 ///
+				minor ///
+				using `isco_key' ///
+				, generate(isco_merge_`n') ///
+				keep(master match) // "left join"; remove obs that don't match from using
+
+
+	// replace one code that I know doesn't match
+	rename 		isco08	isco08_`n'
+	replace 	isco08_`n' = "6810" 	if `matchvar' == 6819
+
+	tab 		isic_merge_`n' 		if `matchvar' != .
+
+
+	destring 	isco08_`n' ///
+				, generate(occup_isco)
+
+	drop 		minor 				// no longer needed, maintained in matchvar
+
+
+	*// occup_isco already generated above in submodule
+	label var 	occup_isco_2 "ISIC code of primary job 7 day recall"
+
+
 *</_occup_isco_2_>
 
 
@@ -1273,30 +1661,19 @@ foreach v of local ed_var {
 
 *<_occup_2_>
 	* generate empty variable
-	gen byte 		occup_2 = .
+	gen byte occup_2 = .
 
-	* replace conditionally based on January round (1992 PSOC)
-	replace 		occup_2=floor(j02_otoc/10)		///
-					if 	round == 1
-
-	recode 			occup_2 0 = 10		///
-					if 	j02_otoc==1 	/// recode "armed forces" to appropriate label
-					& 	round == 1
-
-	recode 			occup_2 0 = 99		///
-					if 	(j02_otoc>=2 & j02_otoc <=9) ///
-					| (j02_otoc >=94 & j02_otoc <= 99) /// recode "Not classifiable occupations"
-					& round == 1
+	* replace conditionally based on January, July, October (2-digit rounds)
+	replace 	occup_2	=floor(pufc40_pocc/10)		if  (round == 1 | round == 3 | round == 4)
+	recode 		occup_2 0 = 10	if 	(pufc40_pocc >=1 & pufc40_pocc <=3)	/// recode "armed forces" to appropriate label
+						& (round == 1 | round == 3 | round == 4)
 
 
-	* replace conditionally based on April, July, October rounds (2012 PSOC)
-	replace			occup_2=floor(j02_otoc/10)							///
-					if (round == 4 | round == 7 | round == 10)
-
-	recode 			occup_2 0 = 10									///
-					if 	(j02_otoc >=1 & j02_otoc <=3)				/// recode "armed forces" to appropriate label
-					& 	(round == 4 | round == 7 | round == 10)
-
+	* replace conditionally based on April (4-digit round)
+	replace 	occup_2	=floor(pufc40_pocc/1000)	if 	round == 2
+	recode 		occup_2 0 = 10	///
+						if 	(pufc40_pocc == 110 | pufc40_pocc == 210 | pufc40_pocc == 310) /// recode "armed forces" to appropriate label
+						& 	(round == 2)
 
 	label var 		occup_2 "1 digit occupational classification secondary job 7 day recall"
 	label values 	occup_2 lbloccup
@@ -1304,14 +1681,14 @@ foreach v of local ed_var {
 
 
 *<_wage_no_compen_2_>
-	gen 			double wage_no_compen_2 = c36_obic
+	gen 			double wage_no_compen_2 = .
 	replace 		wage_no_compen_2 = . if wage_no_compen_2 == 99999
 	label var 		wage_no_compen_2 "Last wage payment secondary job 7 day recall"
 *</_wage_no_compen_2_>
 
 
 *<_unitwage_2_>
-	gen byte 		unitwage_2 = j06_obis
+	gen byte 		unitwage_2 = .
 	recode 			unitwage (0 1 5 6 7 = 10) /// other
 								(2 = 9) /// hourly
 								(3 = 1) /// daily
@@ -1323,7 +1700,7 @@ foreach v of local ed_var {
 
 
 *<_whours_2_>
-	gen 			whours_2 = j05_ohrs
+	gen 			whours_2 = .
 	label var 		whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 
@@ -1840,7 +2217,7 @@ foreach v of local ed_var {
 
 *<_njobs_>
 	*<_njobs_note>
-	* The provided njobs data appears to be inconsistent with data, so I dedicded not to include.
+	* The pufprvided njobs data appears to be inconsistent with data, so I dedicded not to include.
 	*</_njobs_note>
 
 	gen 			njobs = .

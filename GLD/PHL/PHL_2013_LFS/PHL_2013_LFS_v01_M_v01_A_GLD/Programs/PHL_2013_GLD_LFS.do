@@ -972,7 +972,7 @@ foreach v of local ed_var {
 		if (`len' == 1) {
 															// run this if == 1 (ie, if industry_orig is numeric)
 			tostring industry_orig	///						// make the numeric vars strings
-				, generate(industry_orig_2_str) ///			// gen a variable with this prefix
+				, generate(industry_orig_str) ///			// gen a variable with this prefix
 				force //
 
 
@@ -1255,7 +1255,7 @@ foreach v of local ed_var {
 		if (`len' == 1) {
 															// run this if == 1 (ie, if industry_orig_2 is numeric)
 			tostring industry_orig_2	///						// make the numeric vars strings
-				, generate(industry_orig_str) ///			// gen a variable with this prefix
+				, generate(industry_orig_2_str) ///			// gen a variable with this prefix
 				force //
 
 
