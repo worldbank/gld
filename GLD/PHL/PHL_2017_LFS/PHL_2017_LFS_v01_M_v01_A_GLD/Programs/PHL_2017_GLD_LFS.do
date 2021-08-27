@@ -1125,7 +1125,7 @@ foreach v of local ed_var {
 		if (`len' == 1) {
 															// run this if == 1 (ie, if industry_orig is numeric)
 			tostring industry_orig	///						// make the numeric vars strings
-				, generate(industry_orig_2_str) ///			// gen a variable with this prefix
+				, generate(industry_orig_str) ///			// gen a variable with this prefix
 				force //
 
 
@@ -1247,6 +1247,7 @@ foreach v of local ed_var {
 
 *<_occup_isco_>
 * in 2017, raw variable is numeric, 2-digits, so isco conversion not possible
+	/* **Working on isco key, leaving as misisng for now
 	loc matchvar   	pufc14_procc
 	loc n 			1
 
@@ -1291,7 +1292,8 @@ foreach v of local ed_var {
 	drop 		minor 				// no longer needed, maintained in matchvar
 
 
-	*// occup_isco already generated above in submodule
+	*/
+	gen occup_isco = . 	// occup_isco already generated above in submodule
 	label var 	occup_isco "ISIC code of primary job 7 day recall"
 
 
@@ -1475,7 +1477,7 @@ foreach v of local ed_var {
 
 
 *<_industry_orig_2_>
-	gen 			industry_orig_2 = j03_okb
+	gen 			industry_orig_2 = pufc43_qkb
 	label var 		industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 
@@ -1594,13 +1596,15 @@ foreach v of local ed_var {
 
 
 *<_occup_orig_2_>
-	gen 			occup_orig_2 = j02_otoc
+	gen 			occup_orig_2 = pufc40_pocc
 	label var 		occup_orig_2 "Original occupation record secondary job 7 day recall"
 *</_occup_orig_2_>
 
 
 *<_occup_isco_2_>
 * in 2017, raw variable is numeric, 2-digits, so isco conversion not possible
+	* skipping for now
+	/*
 	loc matchvar   	pufc40_pocc
 	loc n 			2
 
@@ -1645,7 +1649,8 @@ foreach v of local ed_var {
 	drop 		minor 				// no longer needed, maintained in matchvar
 
 
-	*// occup_isco already generated above in submodule
+	*/
+	gen occup_isco_2 = . // occup_isco already generated above in submodule
 	label var 	occup_isco_2 "ISIC code of primary job 7 day recall"
 
 
