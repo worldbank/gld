@@ -112,8 +112,35 @@ set mem 800m
 
 	iecodebook append ///
 		`"`round1'"' `"`round2'"' `"`round3'"' `"`round4'"' /// survey files
-		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template-IN-S.xlsx"' /// output just created above
+		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template-IN.xlsx"' /// output just created above
 		, clear surveys(JAN2018 APR2018 JUL2018 OCT2018) generate(round) // survey names
+
+
+
+** Align HHID variables
+	** align hhnum
+	/*rounds 1,3,4 (january,, july, october) have a numeric household id called hhnum whereas round 2 (april)
+	  has a string numeric variable encoded as str23. Since the ids will all be the same legth anyway, I will
+	  change rounds 1-3 to be a str23 to match round 4 so I can replace and "align" the hhnum as a string
+	  variable for all 4 rounds*/
+
+	*** encode hhnum as string
+	rename 		pufhhnum 	hhnum_num					// rename to numeric indicator name
+
+	tostring 	hhnum_num	///						// make the numeric vars strings
+				, generate(hhnum_str11) ///			// generate new variable as a string
+				force format(`"%011.0f"')				// ...and the specified number of digits in local
+
+	gen 		hhnum = ""								// generate household ID variable
+	replace 	hhnum = hhnum_str11 	if round == 1 /// replace conditionally on round,
+										| round == 3  ///
+										| round == 4
+	replace 	hhnum = pufhhnum_2			if round == 2
+
+	mdesc 		hhnum 								// ensure that hhid has no missings
+	assert	 	r(miss) == 0
+
+
 
 
 /*%%=============================================================================================
@@ -279,8 +306,7 @@ replace int_month = 10 	if round == 4
 
 
 *<_weight_>
-	rename 		weight	weight_orig
-	gen 		weight = weight_orig/(`n_round')
+	gen 		weight = `weightvar'/(`n_round')
 	label 		var weight "Household sampling weight"
 *</_weight_>
 
@@ -1198,6 +1224,7 @@ foreach v of local ed_var {
 
 *<_industrycat10_2_>
 /*no second industry variable given (the given one is for previous quarter not for second job)*/
+	gen byte 			industrycat10_2 = .
 	label var 		industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values 	industrycat10_2 lblindustrycat10
 *</_industrycat10_2_>

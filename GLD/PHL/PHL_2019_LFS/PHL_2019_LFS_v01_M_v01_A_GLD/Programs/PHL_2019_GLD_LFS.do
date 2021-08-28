@@ -4,7 +4,7 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				PHL_2018_GLD_LFS.do </_Program name_>
+<_Program name_>				PHL_2019_GLD_LFS.do </_Program name_>
 <_Application_>					Stata 15 <_Application_>
 <_Author(s)_>					World Bank Jobs Group </_Author(s)_>
 <_Date created_>				2021-07-20 </_Date created_>
@@ -88,10 +88,10 @@ set mem 800m
 
 ** FILES
 	* input
-	local round1 `"`stata'\LFS JAN2018.dta"'
-	local round2 `"`stata'\LFS APR2018.dta"'
-	local round3 `"`stata'\LFS JUL2018.dta"'
-	local round4 `"`stata'\LFS OCT2018.dta"'
+	local round1 `"`stata'\LFS JAN2019.dta"'
+	local round2 `"`stata'\LFS APR2019.dta"'
+	local round3 `"`stata'\LFS JUL2019.dta"'
+	local round4 `"`stata'\LFS OCT2019.dta"'
 
 	local isic_key 	 `"`stata'\PHL_PSIC_ISIC_09_key.dta"'
 	local isco_key 	 `"`stata'\PHL_PSOC_ISCO_12_key.dta"' // to be created
@@ -112,8 +112,8 @@ set mem 800m
 
 	iecodebook append ///
 		`"`round1'"' `"`round2'"' `"`round3'"' `"`round4'"' /// survey files
-		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template-IN-S.xlsx"' /// output just created above
-		, clear surveys(JAN2018 APR2018 JUL2018 OCT2018) generate(round) // survey names
+		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template-IN.xlsx"' /// output just created above
+		, clear surveys(JAN2019 APR2019 JUL2019 OCT2019) generate(round) // survey names
 
 
 /*%%=============================================================================================
@@ -297,7 +297,7 @@ replace int_month = 10 	if round == 4
 
 
 *<_weight_>
-	gen 		weight = weight_orig/(`n_round')
+	gen 		weight = `weightvar'/(`n_round')
 	label 		var weight "Household sampling weight"
 *</_weight_>
 
@@ -416,7 +416,8 @@ replace int_month = 10 	if round == 4
 	}
 
 	// generate the variable and apply the labels.
-	gen byte 		subnatid2 = pufprv
+	* for 2019, no province variable
+	gen byte 		subnatid2 = .
 	label values 	subnatid2 lblsubnatid2
 	label var 		subnatid2 "Subnational ID at Second Administrative Level"
 
@@ -1225,6 +1226,7 @@ foreach v of local ed_var {
 
 *<_industrycat10_2_>
 /*no second industry variable given (the given one is for previous quarter not for second job)*/
+	gen byte 			industrycat10_2 = .
 	label var 		industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values 	industrycat10_2 lblindustrycat10
 *</_industrycat10_2_>
