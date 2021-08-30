@@ -317,7 +317,7 @@ set mem 800m
 
 
 		* IDH construction for round 3-4
-		loc idhvars 	reg stratum psu ea_unique shsn hcn 	// store idh vars in local
+		loc idhvars 	regn stratum psu ea_unique shsn hcn 	// store idh vars in local
 
 		ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
 		loc numlist 	= r(varlist)						// store numeric vars in local
