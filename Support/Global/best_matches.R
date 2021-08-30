@@ -9,11 +9,9 @@ best_match <- function(df,
                        international_code
                        ) {
   
-  # 1. Load and Reduce df
-  # determine colnames + symbols
-   # country_code  <- as.symbol(country_code )
-   # international_code  <- as.symbol(international_code)
-  #vars <- c({{country_code}}, {{international_code}})
+  # make string versions for easy subsetting later
+  cc <- as.character(country_code)
+  ic <- as.character(international_code)
   
   # Drop columns we are not interest in, drop rows where int code is missing
   df <- df %>% 
@@ -39,8 +37,8 @@ best_match <- function(df,
     filter(pct == 100)
 
   # Review
- done_1 <- n_distinct(match_1[[{{ country_code }}]])
- rest_1 <- n_distinct(df[[{{ country_code }}]]) - n_distinct(match_1[[{{ country_code }}]])
+ done_1 <- n_distinct(match_1[[cc]])
+ rest_1 <- n_distinct(df[[cc]]) - n_distinct(match_1[[cc]])
 
 
 
@@ -48,7 +46,7 @@ best_match <- function(df,
 
  # Reduce df to cases not yet matched
  df_2 <- df %>%
-   filter(!({{ country_code }} %in% match_1[[{{ country_code }}]]))
+   filter(!({{ country_code }} %in% match_1[[cc]]))
 
  # Reduce IS international_code  codes to three digits
  df_2[[international_code]] <- substr(df_2[[international_code]],1,3)
@@ -64,10 +62,10 @@ best_match <- function(df,
    filter(pct == 100)
 
  # Review
- done_2 <- n_distinct(match_2[[{{ country_code }}]])
- rest_2 <- n_distinct(df[[{{ country_code }}]]) -
-   n_distinct(match_1[[{{ country_code }}]]) -
-   n_distinct(match_2[[{{ country_code }}]])
+ done_2 <- n_distinct(match_2[[cc]])
+ rest_2 <- n_distinct(df[[cc]]) -
+   n_distinct(match_1[[cc]]) -
+   n_distinct(match_2[[cc]])
 
 
 
@@ -107,11 +105,11 @@ df_3 <- df_2 %>%
 
 
   # Review
-  done_3 <- n_distinct(match_3[[{{ country_code }}]])
-  rest_3 <- n_distinct(df[[{{ country_code }}]]) -
-    n_distinct(match_1[[{{ country_code }}]]) -
-    n_distinct(match_2[[{{ country_code }}]]) -
-    n_distinct(match_3[[{{ country_code }}]])
+  done_3 <- n_distinct(match_3[[cc]])
+  rest_3 <- n_distinct(df[[cc]]) -
+    n_distinct(match_1[[cc]]) -
+    n_distinct(match_2[[cc]]) -
+    n_distinct(match_3[[cc]])
 
 
 
