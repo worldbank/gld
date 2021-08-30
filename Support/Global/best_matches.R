@@ -13,11 +13,11 @@ best_match <- function(df,
   # determine colnames + symbols
    # country_code  <- as.symbol(country_code )
    # international_code  <- as.symbol(international_code)
-  vars <- c(as.character({{country_code}}), as.character({{international_code}}))
+  vars <- c({{country_code}}, {{international_code}})
   
   # Drop columns we are not interest in, drop rows where int code is missing
   df <- df %>% 
-    select(all_of(vars)) %>%
+    select(vars) %>%
     filter(!is.na({{international_code}})) %>%
     filter(across(all_of(vars), ~ !grepl("[A-Za-z]", .x)))
                       
