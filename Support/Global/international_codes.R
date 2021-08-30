@@ -355,9 +355,7 @@ match_isic09_table <- match_isic09_list[[1]] %>% distinct()
 
 
 
-match_isco12_list <- best_match(df = isco12_clean,
-                                country_code = "minor",
-                                international_code = "isco08")
+match_isco12_list <- best_match(df = isco12_clean, minor, isco08)
 
 match_isco12_table <- match_isco12_list[[1]] %>% distinct()
   

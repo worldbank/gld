@@ -13,13 +13,13 @@ best_match <- function(df,
   # determine colnames + symbols
    # country_code  <- as.symbol(country_code )
    # international_code  <- as.symbol(international_code)
-  vars <- c({{country_code}}, {{international_code}})
+  #vars <- c({{country_code}}, {{international_code}})
   
   # Drop columns we are not interest in, drop rows where int code is missing
-  df <- df %>% 
+  df1 <- df %>% 
     select(c({{country_code}}, {{international_code}})) %>%
-    filter(!is.na({{international_code}})) %>%
-    filter(across(all_of(c({{country_code}}, {{international_code}})), ~ !grepl("[A-Za-z]", .x)))
+    filter(!is.na({{international_code}})) 
+    #filter(across(all_of(c({{country_code}}, {{international_code}})), ~ !grepl("[A-Za-z]", .x)))
                       
   
 #   # For rows where SCIAN is NA, this is because they have the last code listed previously, fill down
@@ -138,7 +138,7 @@ best_match <- function(df,
 #   labs(x = "Match Score", y = "Density", title = "Distribution of Match Scores")
 # 
 # list <- list(concord, results, gg) # match_1, match_2, match_3, df_2, df_3
-return(df)
+return(df1)
 
 
 
