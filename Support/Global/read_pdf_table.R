@@ -147,7 +147,7 @@ read_pdf <- function(pdf_path, page_min, page_max,
     
     els <- do.call(rbind, els)
     
-    table <- els %>%
+    table_long <- els %>%
       mutate(text = stringr::str_replace(text, "p", "")) %>%
       mutate(text = stringr::str_replace(text, "^p;", "")) %>%
       mutate(text = stringr::str_replace(text, "\\(", "")) %>%
@@ -162,7 +162,7 @@ read_pdf <- function(pdf_path, page_min, page_max,
       filter(!text == "")
       
     
-    table %<>%
+    table_wide <- table_long %>%
       group_by(y) %>%
       mutate(page_grp = cur_group_id(),
              page = page,
@@ -175,7 +175,7 @@ read_pdf <- function(pdf_path, page_min, page_max,
 
       keys <- c("page", "page_grp", "y")
 
-      table %<>%
+      table_wide %<>%
         ungroup() %>%
         mutate(nearest_y = nearest_neighbor(ref_col = y,
                                             match_tol = 3)) %>%
@@ -196,7 +196,7 @@ read_pdf <- function(pdf_path, page_min, page_max,
 
 
 
-    table %<>%
+    table_wide %<>%
       ungroup() %>%
       group_by(page, page_grp) %>%
       pivot_wider(names_from = "varname",
@@ -208,7 +208,7 @@ read_pdf <- function(pdf_path, page_min, page_max,
                 # with any_of
 
     
-    return(table)
+    return(table_long)
 
   }
   
