@@ -486,23 +486,59 @@ set mem 800m
 
 </_subnatid1> */
 	gen byte 		subnatid1 = regn
+
+	/*  Please see "Administrative_Levels.md" for a detailed explanation of the region and province
+		recodings, available on the repository in the Guides and Documentation Folder.
+		https://github.com/worldbank/gld
+
+		Similarly, in the same location, "I2D2_Geographic_Nomenclature.md" describes the administrative
+		divisions used in I2D2
+ 	*/
+
+	* RECODE REGION
+	*			(17= 42)		///  sometimes Mimaropa appears as value 17, recode to always be 42 for consistency
+
+	* recode to Calabarzon
+	recode 	subnatid1 	///
+			(4 = 41) 		///
+			if (round == 1 | round == 2)  	/// restrict only to first two rounds
+			& inlist(prov, 10, 21, 34, 56, 58) 	// restricted to relevant provinces
+
+	* recode to Mimaropa
+	recode 	subnatid1 	///
+			(4 = 42) 		///
+			if (round == 1 | round == 2)  	/// restrict only to first two rounds
+			& inlist(prov, 51, 52, 40, 53, 59) 	// restricted to relevant provinces
+
+	* recode Aurora to Central Luzon
+		* Aurora belongs in this region
+	recode 	subnatid1 	///
+			(4 = 3) 		///
+			if (round == 1 | round == 2)  	/// restrict only to first two rounds
+			& prov == 77
+
 	label de 		lblsubnatid1 	///
 					 1   "1 - Ilocos"			///
 					 2	 "2 - Cagayan Valley"	///
 					 3   "3 - Central Luzon"	///
-					 4	 "4 - Southern Tagalog"	///
+	 						/// Southern Tagalog has been split into Calabarzon and Mimaropa
 					 5   "5 - Bicol"			///
 					 6	 "6 - Western Visayas"	///
 					 7   "7 - Central Visayas"	///
 					 8	 "8 - Eastern Visayas"	///
-					 9   "9 - Western Mindanao"	///
+					 9   "9 - Zamboanga Peninsula"	///
 					 10  "10 - Northern Mindanao"	///
-					 11  "11 - Southern Mindanao"	///
-					 12  "12 - Central Mindanao"		///
+					 11  "11 - Davao"	///
+					 12  "12 - Soccsksargen"		///
 					 13  "13 - National Capital Region"				///
 					 14  "14 - Cordillera Administrative Region"		///
 					 15  "15 - Autonomous Region of Muslim Mindanao"	///
-					 16  "16 - Caraga"
+					 16  "16 - Caraga" ///
+					 /// value 17 exists only in raw data, not in recoded version
+					 18  "18 - Negros Island Region" /// this region appears occasionally in data
+				 	 							///
+				 	 41	 "41 - Calabarzon"	/// formerly part of Southern Tagalog
+				 	 42  "42 - Mimaropa"		// formerly part of Southern Tagalog
 
 	label values 	subnatid1 lblsubnatid1
 	label var 		subnatid1 "Subnational ID at First Administrative Level"
