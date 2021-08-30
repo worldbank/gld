@@ -207,8 +207,7 @@ read_pdf <- function(pdf_path, page_min, page_max,
                 # true and false since in FALSE situation only page will exist? should
                 # with any_of
 
-    
-    return(table_long)
+    return(table_wide)
 
   }
   
