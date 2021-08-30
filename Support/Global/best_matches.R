@@ -5,8 +5,8 @@
 #' @return a 3-element list object that contains the final match tibble, a results tibble, and a ggplot.
 
 best_match <- function(df, 
-                       country_code = "class",
-                       international_code = "isic4"
+                       country_code,
+                       international_code
                        ) {
   
   # 1. Load and Reduce df
