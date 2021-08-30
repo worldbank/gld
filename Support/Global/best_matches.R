@@ -13,7 +13,7 @@ best_match <- function(df,
   # determine colnames + symbols
    # country_code  <- as.symbol(country_code )
    # international_code  <- as.symbol(international_code)
-  vars <- c(as.character(country_code), as.character(international_code))
+  vars <- c(as.character({{country_code}}), as.character({{international_code}}))
   
   # Drop columns we are not interest in, drop rows where int code is missing
   df <- df %>% 
@@ -23,7 +23,7 @@ best_match <- function(df,
                       
   
   # For rows where SCIAN is NA, this is because they have the last code listed previously, fill down
-  df <- df %>% fill(all_of(country_code), .direction = "down")
+  df <- df %>% fill(all_of({{country_code}}), .direction = "down")
   
   
   
