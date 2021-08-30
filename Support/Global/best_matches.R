@@ -17,128 +17,128 @@ best_match <- function(df,
   
   # Drop columns we are not interest in, drop rows where int code is missing
   df <- df %>% 
-    select(vars) %>%
+    select(c({{country_code}}, {{international_code}})) %>%
     filter(!is.na({{international_code}})) %>%
-    filter(across(all_of(vars), ~ !grepl("[A-Za-z]", .x)))
+    filter(across(all_of(c({{country_code}}, {{international_code}})), ~ !grepl("[A-Za-z]", .x)))
                       
   
-  # For rows where SCIAN is NA, this is because they have the last code listed previously, fill down
-  df <- df %>% fill(all_of({{country_code}}), .direction = "down")
-  
-  
-  
-  # Step 2 - Match at 4 digits ----------
-  # Match if concordance is 100%
-  match_1 <- df %>%
-    count({{ country_code }}, {{ international_code }}) %>%
-    rename(instance = n) %>%
-    group_by({{ country_code }}) %>%
-    mutate(sum = sum(instance)) %>%
-    ungroup() %>%
-    mutate(pct = round((instance/sum)*100,1)) %>%
-    filter(pct == 100)
-
-  # Review
- done_1 <- n_distinct(match_1[[country_code]])
- rest_1 <- n_distinct(df[[country_code]]) - n_distinct(match_1[[country_code]])
-
-  
- 
- # Step 3 - Match at 3 digits ------------------------------------
-
- # Reduce df to cases not yet matched
- df_2 <- df %>%
-   filter(!({{ country_code }} %in% match_1[[country_code]]))
-
- # Reduce IS international_code  codes to three digits
- df_2[[international_code]] <- substr(df_2[[international_code]],1,3)
-
- # Match if perfect
- match_2 <- df_2 %>% 
-   count({{ country_code }}, {{ international_code }}) %>% 
-   rename(instance = n) %>%
-   group_by({{ country_code }}) %>%
-   mutate(sum = sum(instance)) %>%
-   ungroup() %>%
-   mutate(pct = round((instance/sum)*100,1)) %>%
-   filter(pct == 100)
- 
- # Review
- done_2 <- n_distinct(match_2[[country_code]])
- rest_2 <- n_distinct(df[[country_code]]) - 
-   n_distinct(match_1[[country_code]]) - 
-   n_distinct(match_2[[country_code]])
- 
-
-
-# Step 4 - match at 2 digits ------------------------------------
-
-# Reduce df to cases not yet matched
-df_3 <- df_2 %>%
-  filter(!({{ country_code }} %in% match_2[[country_code]]))
-
-
-  # Reduce IS international_code  code to two digits
-  df_3[[international_code]] <- substr(df_3[[international_code]],1,2)
-  
-  # Match by maximum, a country_code ount for cases where df_3 may be null
-  if (dim(df_3)[1] > 0) {
-    set.seed(61035)
-    match_3 <- df_3 %>% 
-      count({{ country_code }}, {{ international_code }}) %>% 
-      rename(instance = n) %>%
-      group_by({{ country_code }}) %>%
-      mutate(sum = sum(instance)) %>%
-      ungroup() %>%
-      mutate(pct = round((instance/sum)*100,1))
-    group_by({{ country_code }}) %>%
-      slice_max(pct) %>%
-      sample_n(1)
-  } else {
-    set.seed(61035)
-    match_3 <- df_3 %>% 
-      count({{ country_code }}, {{ international_code }}) %>% 
-      rename(instance = n) %>%
-      group_by({{ country_code }}) %>%
-      mutate(sum = sum(instance)) %>%
-      ungroup() %>%
-      mutate(pct = round((instance/sum)*100,1))
-  }
-  
-  
-  # Review
-  done_3 <- n_distinct(match_3[[country_code]])
-  rest_3 <- n_distinct(df[[country_code]]) - 
-    n_distinct(match_1[[country_code]]) - 
-    n_distinct(match_2[[country_code]]) - 
-    n_distinct(match_3[[country_code]])
-  
-
-
-
-# Step 5 - append + ggplot ----------------------------------------------
-
-
-concord <- bind_rows(match_1, match_2, match_3) %>%
-  select( {{ country_code }}, {{ international_code }}, pct) %>%
-  rename(match = pct) %>%
-   mutate( "{{ country_code }}" := str_pad({{ country_code }}, 4, pad = "0", side = "right"),
-           "{{ international_code }}" := str_pad({{ international_code }}, 4, pad = "0", side = "right"))
-
-results <- tibble(
-  match_no = c(1,2,3),
-  obs_matched = c(done_1, done_2, done_3),
-  obs_remaining = c(rest_1, rest_2, rest_3)
-)
-
-gg <- ggplot(concord, aes(match)) +
-  geom_freqpoly() +
-  scale_x_continuous(n.breaks = 10, limits = c(0,100)) +
-  theme_minimal() +
-  labs(x = "Match Score", y = "Density", title = "Distribution of Match Scores")
-
-list <- list(concord, results, gg) # match_1, match_2, match_3, df_2, df_3
-return(list)
+#   # For rows where SCIAN is NA, this is because they have the last code listed previously, fill down
+#   df <- df %>% fill(all_of({{country_code}}), .direction = "down")
+#   
+#   
+#   
+#   # Step 2 - Match at 4 digits ----------
+#   # Match if concordance is 100%
+#   match_1 <- df %>%
+#     count({{ country_code }}, {{ international_code }}) %>%
+#     rename(instance = n) %>%
+#     group_by({{ country_code }}) %>%
+#     mutate(sum = sum(instance)) %>%
+#     ungroup() %>%
+#     mutate(pct = round((instance/sum)*100,1)) %>%
+#     filter(pct == 100)
+# 
+#   # Review
+#  done_1 <- n_distinct(match_1[[country_code]])
+#  rest_1 <- n_distinct(df[[country_code]]) - n_distinct(match_1[[country_code]])
+# 
+#   
+#  
+#  # Step 3 - Match at 3 digits ------------------------------------
+# 
+#  # Reduce df to cases not yet matched
+#  df_2 <- df %>%
+#    filter(!({{ country_code }} %in% match_1[[country_code]]))
+# 
+#  # Reduce IS international_code  codes to three digits
+#  df_2[[international_code]] <- substr(df_2[[international_code]],1,3)
+# 
+#  # Match if perfect
+#  match_2 <- df_2 %>% 
+#    count({{ country_code }}, {{ international_code }}) %>% 
+#    rename(instance = n) %>%
+#    group_by({{ country_code }}) %>%
+#    mutate(sum = sum(instance)) %>%
+#    ungroup() %>%
+#    mutate(pct = round((instance/sum)*100,1)) %>%
+#    filter(pct == 100)
+#  
+#  # Review
+#  done_2 <- n_distinct(match_2[[country_code]])
+#  rest_2 <- n_distinct(df[[country_code]]) - 
+#    n_distinct(match_1[[country_code]]) - 
+#    n_distinct(match_2[[country_code]])
+#  
+# 
+# 
+# # Step 4 - match at 2 digits ------------------------------------
+# 
+# # Reduce df to cases not yet matched
+# df_3 <- df_2 %>%
+#   filter(!({{ country_code }} %in% match_2[[country_code]]))
+# 
+# 
+#   # Reduce IS international_code  code to two digits
+#   df_3[[international_code]] <- substr(df_3[[international_code]],1,2)
+#   
+#   # Match by maximum, a country_code ount for cases where df_3 may be null
+#   if (dim(df_3)[1] > 0) {
+#     set.seed(61035)
+#     match_3 <- df_3 %>% 
+#       count({{ country_code }}, {{ international_code }}) %>% 
+#       rename(instance = n) %>%
+#       group_by({{ country_code }}) %>%
+#       mutate(sum = sum(instance)) %>%
+#       ungroup() %>%
+#       mutate(pct = round((instance/sum)*100,1))
+#     group_by({{ country_code }}) %>%
+#       slice_max(pct) %>%
+#       sample_n(1)
+#   } else {
+#     set.seed(61035)
+#     match_3 <- df_3 %>% 
+#       count({{ country_code }}, {{ international_code }}) %>% 
+#       rename(instance = n) %>%
+#       group_by({{ country_code }}) %>%
+#       mutate(sum = sum(instance)) %>%
+#       ungroup() %>%
+#       mutate(pct = round((instance/sum)*100,1))
+#   }
+#   
+#   
+#   # Review
+#   done_3 <- n_distinct(match_3[[country_code]])
+#   rest_3 <- n_distinct(df[[country_code]]) - 
+#     n_distinct(match_1[[country_code]]) - 
+#     n_distinct(match_2[[country_code]]) - 
+#     n_distinct(match_3[[country_code]])
+#   
+# 
+# 
+# 
+# # Step 5 - append + ggplot ----------------------------------------------
+# 
+# 
+# concord <- bind_rows(match_1, match_2, match_3) %>%
+#   select( {{ country_code }}, {{ international_code }}, pct) %>%
+#   rename(match = pct) %>%
+#    mutate( "{{ country_code }}" := str_pad({{ country_code }}, 4, pad = "0", side = "right"),
+#            "{{ international_code }}" := str_pad({{ international_code }}, 4, pad = "0", side = "right"))
+# 
+# results <- tibble(
+#   match_no = c(1,2,3),
+#   obs_matched = c(done_1, done_2, done_3),
+#   obs_remaining = c(rest_1, rest_2, rest_3)
+# )
+# 
+# gg <- ggplot(concord, aes(match)) +
+#   geom_freqpoly() +
+#   scale_x_continuous(n.breaks = 10, limits = c(0,100)) +
+#   theme_minimal() +
+#   labs(x = "Match Score", y = "Density", title = "Distribution of Match Scores")
+# 
+# list <- list(concord, results, gg) # match_1, match_2, match_3, df_2, df_3
+return(df)
 
 
 
