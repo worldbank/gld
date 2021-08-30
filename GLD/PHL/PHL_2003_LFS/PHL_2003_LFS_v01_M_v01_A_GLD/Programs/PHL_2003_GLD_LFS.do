@@ -206,43 +206,150 @@ set mem 800m
 
 </_hhid_note> */
 
+/*This part is the only variable that has to be coded conditional by round. This means that we'll have to split the dataset up by round
+ 	and create tempfiles before appending back together. Not ideal but it avoids having separate scripts for each round. */
+
+	* in 04, it appears that regn and hcn uniquely identify the HH
+
+	////// Begin sub-module .
+
+	tempfile 		partA	partB						// declare tempfiles, Part A is first 2 rounds, Part B is final 2
+
+	preserve   											// preserve the original appended dataset
+	keep if 		round == 1 | round == 2 			// keep first 2 rounds
+
+		* IDH construction for rounds 1-2
+		loc idhvars 	regn prov hcn 	// store idh vars in local
+
+		ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
+		loc numlist 	= r(varlist)						// store numeric vars in local
+		loc stringlist 	: list idhvars - numlist			// non-numeric vars in stringlist
+
+		* starting locals
+		loc len = 12										// declare the length of each element in digits
+		loc idh_els ""										// start with empty local list
+
+		* make each numeric var string, including leading zeros
+		foreach var of local numlist {
+			tostring `var'	///								// make the numeric vars strings
+				, generate(idh_`var') ///					// gen a variable with this prefix
+				force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
+
+			loc idh_els 	`idh_els' idh_`var'				// add each variable to the local list
+
+		}
+
+		* make each string variable numeric (as it should be), then string again with correct format
+		foreach var of local stringlist {
+			destring `var' /// 								// destring variable, make numeric version
+				, gen(num_`var') ///						//
+				force 										// force obs to num that are non numeric, ie to missing
+
+			tostring num_`var'	///							// make the numeric vars strings
+				, generate(idh_`var') ///					// gen a variable with this prefix
+				force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
+
+			loc idh_els 	`idh_els' idh_`var'				// add each variable to the local list
+
+		}
+
+		* add the round variable
+		tostring round	///							// make the numeric vars strings
+			, generate(idh_round) ///					// gen a variable with this prefix
+			force format(`"%01.0f"')				// ...and the specified number of digits in local
+
+		loc idh_els 	`idh_els' idh_round				// add each variable to the local list
 
 
-	* in 02, it appears that regn and hcn uniquely identify the HH
+		* concatenate all elements to form idh: hosehold id
 
-	loc idhvars 	 regn prov  hcn						// store hhid vars in local
+		egen idh=concat( `idh_els' )						// concatenate vars we just made. code drops vars @ end
 
-	ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
-	loc numlist 	= r(varlist)						// store numeric vars in local
-	loc stringlist 	: list idhvars - numlist			// non-numeric vars in stringlist
+		label var idh "Household id"
 
-	* starting locals
-	loc len = 6											// declare the length of each element in digits
-	loc idh_els ""										// start with empty local list
 
-	* make each numeric var string, including leading zeros
-	foreach var of local numlist {
-		tostring `var'	///								// make the numeric vars strings
-			, generate(idh_`var') ///					// gen a variable with this prefix
-			force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
 
-		loc idh_els 	`idh_els' idh_`var'				// add each variable to the local list
 
-	}
+		** INDIVIDUAL IDENTIFICATION NUMBER
+		bys idh: gen n_fam = _n								// generate family member number
 
-	* make each string variable numeric (as it should be), then string again with correct format
-	foreach var of local stringlist {
-		destring `var' /// 								// destring variable, make numeric version
-			, gen(num_`var') ///						//
-			force 										// force obs to num that are non numeric, ie to missing
+		* repeat same process from above, but only with n_fam.
+		* 	note, assuming that the only necessary individaul identifier is family member, which is numeric
+		*	so, not following processing for sorting numeric/non-numeric variables.
 
-		tostring num_`var'	///							// make the numeric vars strings
-			, generate(idh_`var') ///					// gen a variable with this prefix
-			force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
+		loc idpvars 	c101_lno								// store relevant idp vars in local
+		ds `idpvars',  	has(type numeric)					// filter out numeric variables in local
+		loc rlist 		= r(varlist)						// store numeric vars in local
 
-		loc idh_els 	`idh_els' idh_`var'				// add each variable to the local list
+		* make new values with desired length of each variable
+		loc len = 2											// declare the length of each element in digits
+		loc idp_els ""										// start with empty local list
 
-	}
+		foreach var of local idpvars {
+			tostring `var'	///								// make numeric variables strings
+				, generate(idp_`var') ///					// generate a variable with this prefix
+				force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
+
+			loc idp_els 	`idp_els' idp_`var'				// add each variable to the local list
+
+		}
+
+
+
+		* concatenate to form idp: individual id
+		egen idp=concat( `idp_els' )						// concatenate vars we just made. code drops vars @ end
+
+		sort idh idp
+		label var idp "Individual id"
+
+	** ID CHECKS
+		duplicates report idh idp
+		isid idh idp 										// household and individual id uniquely identify
+
+
+
+	save 	`partA', 	replace 							// save tempfile for partA
+	restore													// restore to original 4-round dataset
+
+	preserve   												// preserve the original appended dataset
+	keep if 		round == 3 | round == 4					// keep round 3-4 only
+
+
+
+		* IDH construction for round 3-4
+		loc idhvars 	reg stratum psu ea_unique shsn hcn 	// store idh vars in local
+
+		ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
+		loc numlist 	= r(varlist)						// store numeric vars in local
+		loc stringlist 	: list idhvars - numlist			// non-numeric vars in stringlist
+
+		* starting locals
+		loc len = 5										// declare the length of each element in digits
+		loc idh_els ""										// start with empty local list
+
+		* make each numeric var string, including leading zeros
+		foreach var of local numlist {
+			tostring `var'	///								// make the numeric vars strings
+				, generate(idh_`var') ///					// gen a variable with this prefix
+				force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
+
+			loc idh_els 	`idh_els' idh_`var'				// add each variable to the local list
+
+		}
+
+		* make each string variable numeric (as it should be), then string again with correct format
+		foreach var of local stringlist {
+			destring `var' /// 								// destring variable, make numeric version
+				, gen(num_`var') ///						//
+				force 										// force obs to num that are non numeric, ie to missing
+
+			tostring num_`var'	///							// make the numeric vars strings
+				, generate(idh_`var') ///					// gen a variable with this prefix
+				force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
+
+			loc idh_els 	`idh_els' idh_`var'				// add each variable to the local list
+
+		}
 
 		* add the round variable
 		tostring round	///							// make the numeric vars strings
@@ -253,47 +360,67 @@ set mem 800m
 
 
 
-	* concatenate all elements to form hhid: hosehold id
-	egen hhid=concat( `idh_els' )						// concatenate vars we just made. code drops vars @ end
+		* concatenate all elements to form idh: hosehold id
+		egen idh=concat( `idh_els' )						// concatenate vars we just made. code drops vars @ end
 
+		label var idh "Household id"
+
+
+
+
+		** INDIVIDUAL IDENTIFICATION NUMBER
+		bys idh: gen n_fam = _n								// generate family member number
+
+		* repeat same process from above, but only with n_fam.
+		* 	note, assuming that the only necessary individaul identifier is family member, which is numeric
+		*	so, not following processing for sorting numeric/non-numeric variables.
+
+		loc idpvars 	c101_lno								// store relevant idp vars in local
+		ds `idpvars',  	has(type numeric)					// filter out numeric variables in local
+		loc rlist 		= r(varlist)						// store numeric vars in local
+
+		* make new values with desired length of each variable
+		loc len = 2											// declare the length of each element in digits
+		loc idp_els ""										// start with empty local list
+
+		foreach var of local idpvars {
+			tostring `var'	///								// make numeric variables strings
+				, generate(idp_`var') ///					// generate a variable with this prefix
+				force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
+
+			loc idp_els 	`idp_els' idp_`var'				// add each variable to the local list
+
+		}
+
+		* concatenate to form idp: individual id
+		egen idp=concat( `idp_els' )						// concatenate vars we just made. code drops vars @ end
+
+		sort idh idp
+		label var idp "Individual id"
+
+	** ID CHECKS
+		isid idh idp 										// household and individual id uniquely identify
+
+
+	save 	`partB', 	replace 							// save the final round to a tempfile.
+
+	restore 												// restore to old dataset
+	clear
+
+	append using 		`partA' `partB'
+
+
+	gen  hhid = idh  									// make hhid from idh in module
 	label var hhid "Household ID"
+
+
 *</_hhid_>
 
 
 *<_pid_>
 ** INDIVIDUAL IDENTIFICATION NUMBER
-	* in 02, region, hh control and line number variables uniquely identify observations. use line number as pid
-
-	* repeat same process from above, but only with n_fam.
-	* 	note, assuming that the only necessary individaul identifier is family member, which is numeric
-	*	so, not following processing for sorting numeric/non-numeric variables.
-
-	loc idpvars 	c101_lno 								// store relevant pid vars in local
-	ds `idpvars',  	has(type numeric)					// filter out numeric variables in local
-	loc rlist 		= r(varlist)						// store numeric vars in local
-
-	* make new values with desired length of each variable
-	loc len = 2											// declare the length of each element in digits
-	loc idp_els ""										// start with empty local list
-
-	foreach var of local idpvars {
-		tostring `var'	///								// make numeric variables strings
-			, generate(idp_`var') ///					// generate a variable with this prefix
-			force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
-
-		loc idp_els 	`idp_els' idp_`var'				// add each variable to the local list
-
-	}
-
-	* concatenate to form pid: individual id
-	egen pid=concat( `idp_els' )						// concatenate vars we just made. code drops vars @ end
-
-	sort hhid pid
-
-** ID CHECKS
-	isid hhid pid 										// household and individual id uniquely identify
-
-	label var pid "Individual ID"
+	gen 		pid = idp 		// generated from sub-module above.
+	label var 	pid "Individual ID"
 *</_pid_>
 
 
