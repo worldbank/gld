@@ -264,30 +264,14 @@ psoc12_codes_raw <- read_pdf(
       varnames = c("minor", "unit", "psoc92", "isco08"),
       ymin = 90,
       xlabel = c(160, 420),
-      xmin = c(91, 130, 450, 492),
+      xmin = c(91, 130, 450, 485),
       xmax = c(130, 175, 492, 9999), 
       fuzzy_rows = FALSE
 
       )
 
 
-test <- read_pdf(
-  
-  pdf_path = psoc12_path,
-  page_min = 392,
-  page_max = 392,
-  varnames = c("minor", "unit", "psoc92", "isco08"),
-  ymin = 90,
-  xlabel = c(160, 420),
-  xmin = c(91, 130, 450, 485),
-  xmax = c(130, 175, 485, 9999), 
-  fuzzy_rows = FALSE,
-  header = TRUE
-  
-)
 
-pg <- pdftools::pdf_data(psoc12_path)[[392]] 
-View(pg)
 # clean up result ----
 
 ## setup 
