@@ -18,8 +18,8 @@ best_match <- function(df,
   # Drop columns we are not interest in, drop rows where int code is missing
   df1 <- df %>% 
     select(c({{country_code}}, {{international_code}})) %>%
-    filter(!is.na({{international_code}})) 
-    #filter(across(all_of(c({{country_code}}, {{international_code}})), ~ !grepl("[A-Za-z]", .x)))
+    filter(!is.na({{international_code}})) %>%
+    filter(across(.cols = everything(), ~ !grepl("[A-Za-z]", .x)))
                       
   
 #   # For rows where SCIAN is NA, this is because they have the last code listed previously, fill down
