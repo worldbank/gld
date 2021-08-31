@@ -8,7 +8,8 @@
 best_match <- function(df, 
                        country_code,
                        international_code,
-                       str_pad = FALSE
+                       str_pad = FALSE,
+                       check_matches = FALSE
                        ) {
   
   # make string versions for easy subsetting later
@@ -144,11 +145,31 @@ concord <- bind_rows(match_1, match_2, match_3) %>%
     
   }
   
+  if (check_matches == TRUE) {
+    
+    # check that every unique value returned in country code is contained in input vector
+    input.vector <- df %>% 
+      select({{ country_code }}) %>%
+      pull()
+    
+    concord_check <- concord %>%
+      mutate(match_input = {{country_code}} %in% input.vector)
+    
+    assertthat::assert_that(sum(concord_check$match_input) == nrow(concord_check))
+    
+    # check that the number of unique values between innput and returned is the same
+    n_out <- concord %>% select({{ country_code }}) %>% n_distinct()
+    n_in  <- df %>% select({{ country_code }}) %>% n_distinct()
+    
+    assertthat::assert_that(n_in == n_out)
+    
+  }
+  
 results <- tibble(
   match_no = c(1,2,3),
   obs_matched = c(done_1, done_2, done_3),
   obs_remaining = c(rest_1, rest_2, rest_3),
-  orig_n_distinct = c(n_dist, NA, NA)
+  orig_n_distinct = c(n_dist, n_dist, n_dist)
 )
 
 gg <- ggplot(concord, aes(match)) +
