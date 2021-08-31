@@ -54,8 +54,7 @@ best_match <- function(df,
    filter(!({{ country_code }} %in% list))
 
  # Reduce IS international_code  codes to three digits
- subset(df_2, select=c({{international_code}})) <- 
-   substr(subset(df_2, select=c({{international_code}})),1,3)
+ df_2[,2] <- substr(df_2[,2],1,3)
 
  # Match if perfect
  match_2 <- df_2 %>%
