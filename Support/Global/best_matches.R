@@ -75,14 +75,15 @@ best_match <- function(df,
 
 
 # Step 4 - match at 2 digits ------------------------------------
-
+  list2 <- match_2 %>% select({{country_code}})
+ 
 # Reduce df to cases not yet matched
 df_3 <- df_2 %>%
-  filter(!({{ country_code }} %in% match_2[[country_code]]))
+  filter(!({{ country_code }} %in% list2))
 
 
   # Reduce IS international_code  code to two digits
-  df_3[[international_code]] <- substr(df_3[[international_code]],1,2)
+  df_3[,2] <- substr(df_3[,2],1,2)
 
   # Match by maximum, a country_code ount for cases where df_3 may be null
   if (dim(df_3)[1] > 0) {
