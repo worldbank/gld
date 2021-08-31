@@ -52,20 +52,24 @@ best_match <- function(df,
 
  # Reduce df to cases not yet matched, reduce international code to 3 digits
    df_2 <- df %>%
-     filter(({{ country_code }} %in% list)) %>%
-     mutate("{{international_code}}" := stringr::str_sub({{international_code}}, 1,3))
+     filter((!{{ country_code }} %in% list)) 
 
 
  # Match first 3 digits of country code correspond to first three of international code.
+ # here, determine the distance on original 4 digit and filter based on 3 digit. This way 
+ # we have a record of match to original isco code
  match_2 <- df_2 %>%
    count({{ country_code }}, {{ international_code }}) %>%
    rename(instance = n) %>%
    mutate(
+    "{{international_code}}" := stringr::str_sub({{international_code}}, 1,3), #overwrite?
      cc3 = stringr::str_sub({{ country_code }}, 1, 3),
-     dist = stringdist::stringsim(cc3, {{ international_code }}),
-     pct = round((dist)*100,1)) %>%
-   filter(pct == 100) %>%
-   select(-cc3)
+     dist_cc3 = stringdist::stringsim(cc3, {{ international_code }}),
+     dist = stringdist::stringsim({{ country_code }}, {{ international_code }}),
+     pct = round((dist)*100,1)
+     ) %>%
+   filter(dist_cc3 == 1) %>%
+   select(-cc3, -dist_cc3)
 
  # Review
  done_2 <- select(match_2, {{country_code}}) %>% n_distinct()
@@ -82,8 +86,7 @@ best_match <- function(df,
 
 # Reduce df to cases not yet matched, reduce international code to 2 digits
   df_3 <- df_2 %>%
-    filter(!({{ country_code }} %in% list2)) %>%
-    mutate("{{international_code}}" := stringr::str_sub({{international_code}}, 1,2))
+    filter(!({{ country_code }} %in% list2)) 
 
 
  # Match by maximum, a country_code ount for cases where df_3 may be null
@@ -93,6 +96,9 @@ best_match <- function(df,
       count({{ country_code }}, {{ international_code }}) %>%
       rename(instance = n) %>%
       mutate(
+        "{{international_code}}" := stringr::str_sub({{international_code}}, 1,2),
+        cc2 = stringr::str_sub({{ country_code }}, 1, 2),
+        dist_cc2 = stringdist::stringsim(cc2, {{ international_code }}),
         dist = stringdist::stringsim({{ country_code }}, {{ international_code }}),
         pct = round((dist)*100,1)) %>%
     group_by({{ country_code }}) %>%
@@ -104,6 +110,9 @@ best_match <- function(df,
       count({{ country_code }}, {{ international_code }}) %>%
       rename(instance = n) %>%
       mutate(
+        "{{international_code}}" := stringr::str_sub({{international_code}}, 1,2),
+        cc2 = stringr::str_sub({{ country_code }}, 1, 2),
+        dist_cc2 = stringdist::stringsim(cc2, {{ international_code }}),
         dist = stringdist::stringsim({{ country_code }}, {{ international_code }}),
         pct = round((dist)*100,1))
   }
