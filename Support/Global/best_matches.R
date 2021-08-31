@@ -21,7 +21,7 @@ best_match <- function(df,
                       
   
   # For rows where SCIAN is NA, this is because they have the last code listed previously, fill down
-  df <- df %>% fill({{ country_code }}, .direction = "down")
+  df <- df %>% tidyr::fill({{ country_code }}, .direction = "down")
 
 
 
