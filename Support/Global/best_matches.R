@@ -10,19 +10,20 @@ best_match <- function(df,
                        ) {
   
   # make string versions for easy subsetting later
-  cc <- as.character(country_code)
-  ic <- as.character(international_code)
+  # cc <- as.character(country_code)
+  # ic <- as.character(international_code)
+  # vars <- c(cc, ic)
   
   # Drop columns we are not interest in, drop rows where int code is missing
   df <- df %>%
-    select(c({{country_code}}, {{international_code}})) %>%
+    select(c({{international_code}}, {{country_code}})) %>%
     filter(!is.na({{international_code}})) %>%
     filter(across(.cols = everything(), ~ !grepl("[A-Za-z]", .x)))
                       
   
   # For rows where SCIAN is NA, this is because they have the last code listed previously, fill down
-  # df <- df %>% 
-  #   tidyr::fill(data = df, df$minor, .direction = "down")
+  df <- df %>%
+    tidyr::fill({{country_code}}, .direction = "down")
 
 
 
