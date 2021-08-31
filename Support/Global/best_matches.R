@@ -41,19 +41,21 @@ best_match <- function(df,
   # Review
  done_1 <- match_1 %>% select({{country_code}}) %>% n_distinct() 
  
- df_dst <- df %>% select({{cc}}) %>% n_distinct() # original no of distinct
+ df_dst <- df %>% select({{country_code}}) %>% n_distinct() # original no of distinct
  rest_1 <- df_dst - done_1
 
 
 
  # Step 3 - Match at 3 digits ------------------------------------
-
+  list <- match_1 %>% select({{country_code}})
+ 
  # Reduce df to cases not yet matched
  df_2 <- df %>%
-   filter(!({{ country_code }} %in% match_1[[cc]]))
+   filter(!({{ country_code }} %in% list))
 
  # Reduce IS international_code  codes to three digits
- df_2[[international_code]] <- substr(df_2[[international_code]],1,3)
+ subset(df_2, select=c({{international_code}})) <- 
+   substr(subset(df_2, select=c({{international_code}})),1,3)
 
  # Match if perfect
  match_2 <- df_2 %>%
