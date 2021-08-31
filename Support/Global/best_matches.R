@@ -46,22 +46,26 @@ best_match <- function(df,
 
 
  # Step 3 - Match at 3 digits ------------------------------------
-  list <- match_1 %>% select({{country_code}})
+  list <- match_1 %>% 
+   select({{country_code}}) %>% 
+   pull()
 
  # Reduce df to cases not yet matched, reduce international code to 3 digits
    df_2 <- df %>%
-     filter(!({{ country_code }} %in% list)) %>%
+     filter(({{ country_code }} %in% list)) %>%
      mutate("{{international_code}}" := stringr::str_sub({{international_code}}, 1,3))
 
 
- # Match if perfect
+ # Match first 3 digits of country code correspond to first three of international code.
  match_2 <- df_2 %>%
    count({{ country_code }}, {{ international_code }}) %>%
    rename(instance = n) %>%
    mutate(
-     dist = stringdist::stringsim({{ country_code }}, {{ international_code }}),
+     cc3 = stringr::str_sub({{ country_code }}, 1, 3),
+     dist = stringdist::stringsim(cc3, {{ international_code }}),
      pct = round((dist)*100,1)) %>%
-   filter(pct == 100)
+   filter(pct == 100) %>%
+   select(-cc3)
 
  # Review
  done_2 <- select(match_2, {{country_code}}) %>% n_distinct()
@@ -72,7 +76,9 @@ best_match <- function(df,
 
 
 # Step 4 - match at 2 digits ------------------------------------
-  list2 <- match_2 %>% select({{country_code}})
+  list2 <- match_2 %>% 
+   select({{country_code}}) %>%
+   pull()
 
 # Reduce df to cases not yet matched, reduce international code to 2 digits
   df_3 <- df_2 %>%
@@ -80,7 +86,7 @@ best_match <- function(df,
     mutate("{{international_code}}" := stringr::str_sub({{international_code}}, 1,2))
 
 
-  # Match by maximum, a country_code ount for cases where df_3 may be null
+  Match by maximum, a country_code ount for cases where df_3 may be null
   if (dim(df_3)[1] > 0) {
     set.seed(61035)
     match_3 <- df_3 %>%
@@ -99,7 +105,7 @@ best_match <- function(df,
       rename(instance = n) %>%
       mutate(
         dist = stringdist::stringsim({{ country_code }}, {{ international_code }}),
-        pct = round((dist)*100,1)) 
+        pct = round((dist)*100,1))
   }
 
 
@@ -132,7 +138,9 @@ gg <- ggplot(concord, aes(match)) +
   theme_minimal() +
   labs(x = "Match Score", y = "Density", title = "Distribution of Match Scores")
 
-list <- list(concord, results, gg) # match_1, match_2, match_3, df_2, df_3
+list <- list(concord, results, gg) 
+   
+
 return(list)
 
 
