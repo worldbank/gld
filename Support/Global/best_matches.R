@@ -86,7 +86,7 @@ best_match <- function(df,
     mutate("{{international_code}}" := stringr::str_sub({{international_code}}, 1,2))
 
 
-  Match by maximum, a country_code ount for cases where df_3 may be null
+ # Match by maximum, a country_code ount for cases where df_3 may be null
   if (dim(df_3)[1] > 0) {
     set.seed(61035)
     match_3 <- df_3 %>%
