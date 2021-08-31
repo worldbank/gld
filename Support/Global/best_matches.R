@@ -32,10 +32,9 @@ best_match <- function(df,
   match_1 <- df %>%
     count({{ country_code }}, {{ international_code }}) %>%
     rename(instance = n) %>%
-    group_by({{ country_code }}) %>%
-    mutate(sum = sum(instance)) %>%
-    ungroup() %>%
-    mutate(pct = round((instance/sum)*100,1)) %>%
+    mutate(
+      dist = stringdist::stringsim({{ country_code }}, {{ international_code }}),
+      pct = round((dist)*100,1)) %>%
     filter(pct == 100)
 
   # Review
@@ -47,39 +46,39 @@ best_match <- function(df,
 
 
  # Step 3 - Match at 3 digits ------------------------------------
-  list <- match_1 %>% select({{country_code}})
-
- # Reduce df to cases not yet matched, reduce international code to 3 digits
-   df_2 <- df %>%
-     filter(!({{ country_code }} %in% list)) %>%
-     mutate("{{international_code}}" := stringr::str_sub({{international_code}}, 1,3))
-
-
- # Match if perfect
- match_2 <- df_2 %>%
-   count({{ country_code }}, {{ international_code }}) %>%
-   rename(instance = n) %>%
-   group_by({{ country_code }}) %>%
-   mutate(sum = sum(instance)) %>%
-   ungroup() %>%
-   mutate(pct = round((instance/sum)*100,1)) %>%
-   filter(pct == 100)
-
- # Review
- done_2 <- select(match_2, {{country_code}}) %>% n_distinct()
-
- rest_2 <- df_dst - done_1 - done_2
-
-
-
-
-# Step 4 - match at 2 digits ------------------------------------
-  list2 <- match_2 %>% select({{country_code}})
-
-# Reduce df to cases not yet matched, reduce international code to 2 digits
-  df_3 <- df_2 %>%
-    filter(!({{ country_code }} %in% list2)) %>%
-    mutate("{{international_code}}" := stringr::str_sub({{international_code}}, 1,2))
+#   list <- match_1 %>% select({{country_code}})
+# 
+#  # Reduce df to cases not yet matched, reduce international code to 3 digits
+#    df_2 <- df %>%
+#      filter(!({{ country_code }} %in% list)) %>%
+#      mutate("{{international_code}}" := stringr::str_sub({{international_code}}, 1,3))
+# 
+# 
+#  # Match if perfect
+#  match_2 <- df_2 %>%
+#    count({{ country_code }}, {{ international_code }}) %>%
+#    rename(instance = n) %>%
+#    group_by({{ country_code }}) %>%
+#    mutate(sum = sum(instance)) %>%
+#    ungroup() %>%
+#    mutate(pct = round((instance/sum)*100,1)) %>%
+#    filter(pct == 100)
+# 
+#  # Review
+#  done_2 <- select(match_2, {{country_code}}) %>% n_distinct()
+# 
+#  rest_2 <- df_dst - done_1 - done_2
+# 
+# 
+# 
+# 
+# # Step 4 - match at 2 digits ------------------------------------
+#   list2 <- match_2 %>% select({{country_code}})
+# 
+# # Reduce df to cases not yet matched, reduce international code to 2 digits
+#   df_3 <- df_2 %>%
+#     filter(!({{ country_code }} %in% list2)) %>%
+#     mutate("{{international_code}}" := stringr::str_sub({{international_code}}, 1,2))
 
 
 #   # Match by maximum, a country_code ount for cases where df_3 may be null
@@ -105,16 +104,16 @@ best_match <- function(df,
 #       ungroup() %>%
 #       mutate(pct = round((instance/sum)*100,1))
 #   }
-#
-#
+# 
+# 
 #   # Review
 #   done_3 <- select(match_3, {{country_code}}) %>% n_distinct()
-#
+# 
 #   rest_3 <- df_dst - done_1 - done_2 - done_3
-#
-#
-#
-#
+# 
+# 
+# 
+# 
 # # Step 5 - append + ggplot ----------------------------------------------
 # 
 # 
@@ -139,8 +138,8 @@ best_match <- function(df,
 # list <- list(concord, results, gg) # match_1, match_2, match_3, df_2, df_3
 # return(list)
 
- # dim <- dim(df_3)
-  return(match_2)
+  l <- list(match_1, match_2, df_3)
+  return(l)
 
 }
       
