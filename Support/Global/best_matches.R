@@ -77,7 +77,7 @@ best_match <- function(df,
  rest_2 <- df_dst - done_1 - done_2
 
 
-
+  
 
 # Step 4 - match at 2 digits ------------------------------------
   list2 <- match_2 %>% 
@@ -123,8 +123,8 @@ best_match <- function(df,
 
   rest_3 <- df_dst - done_1 - done_2 - done_3
 
-
-
+  n_dist <- df %>% select({{ country_code }}) %>% n_distinct()
+  
 
 # Step 5 - append + ggplot ----------------------------------------------
 
@@ -138,7 +138,8 @@ concord <- bind_rows(match_1, match_2, match_3) %>%
 results <- tibble(
   match_no = c(1,2,3),
   obs_matched = c(done_1, done_2, done_3),
-  obs_remaining = c(rest_1, rest_2, rest_3)
+  obs_remaining = c(rest_1, rest_2, rest_3),
+  orig_n_distinct = c(n_dist, NA, NA)
 )
 
 gg <- ggplot(concord, aes(match)) +
