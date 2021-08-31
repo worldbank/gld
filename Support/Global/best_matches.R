@@ -2,11 +2,13 @@
 #' @param df The tibble or data.frame object containing the two columns of data to match
 #' @param country_code The name of the column that contains the country-specif international_code  code
 #' @param international_code The name of the column that contains the international code
+#' @param str_pad A boolean value to indicate if the resulting vectors should be padded to the right
 #' @return a 3-element list object that contains the final match tibble, a results tibble, and a ggplot.
 
 best_match <- function(df, 
                        country_code,
-                       international_code
+                       international_code,
+                       str_pad = FALSE
                        ) {
   
   # make string versions for easy subsetting later
@@ -131,10 +133,17 @@ best_match <- function(df,
 
 concord <- bind_rows(match_1, match_2, match_3) %>%
   select( {{ country_code }}, {{ international_code }}, pct) %>%
-  rename(match = pct) %>%
-   mutate( "{{ country_code }}" := str_pad({{ country_code }}, 4, pad = "0", side = "right"),
-           "{{ international_code }}" := str_pad({{ international_code }}, 4, pad = "0", side = "right"))
-
+  rename(match = pct)
+  
+  if (str_pad == TRUE) {
+    concord <- concord %>%
+      mutate( "{{ country_code }}" := str_pad({{ country_code }}, 
+                                              4, pad = "0", side = "right"),
+              "{{ international_code }}" := str_pad({{ international_code }}, 
+                                                    4, pad = "0", side = "right"))
+    
+  }
+  
 results <- tibble(
   match_no = c(1,2,3),
   obs_matched = c(done_1, done_2, done_3),
@@ -150,6 +159,7 @@ gg <- ggplot(concord, aes(match)) +
 
 list <- list(concord, results, gg) 
    
+
 
 return(list)
 
