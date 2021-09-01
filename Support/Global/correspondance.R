@@ -20,6 +20,9 @@ corresp <- function(df,
   # Drop columns we are not interest in, drop rows where int code is missing
   df <- df %>%
     select(c({{country_code}}, {{international_code}})) %>%
+    mutate(
+      "{{international_code}}_orig"  := {{ international_code }},
+      "{{country_code}}_orig"  := {{ country_code }}) %>%
     filter(!is.na({{international_code}})) %>%
     filter(across(.cols = everything(), ~ !grepl("[A-Za-z]", .x)))
                       
@@ -142,7 +145,7 @@ corresp <- function(df,
 
 
 concord <- bind_rows(match_1, match_2, match_3) %>%
-  select( {{ country_code }}, {{ international_code }}, corresp_pct, match_stage) %>%
+  select( {{ country_code }}, {{ international_code }}, corresp_pct, match_stage, contains("orig")) %>%
   rename(match = corresp_pct)
 
   if (str_pad == TRUE) {
@@ -187,11 +190,11 @@ gg_match <- ggplot(concord, aes(match)) +
   theme_minimal() +
   labs(x = "Match Score", y = "Relative Density", title = "Distribution of Match Scores")
 
-gg_stage <- ggplot(concord, aes(match)) +
-  geom_histogram(binwidth = 1) +
-  scale_x_continuous(n.breaks = 5, limits = c(0,4)) +
-  theme_minimal() +
-  labs(x = "Match Stage", y = "Number of Matches", title = "Distribution of Matches in Match Stages")
+gg_stage <- ggplot(concord, aes(match_stage)) +
+  geom_freqpoly()  
+  #scale_x_continuous(breaks = c(4,3,2), limits = c(4,1)) 
+  #theme_minimal() +
+  #labs(x = "Match Stage", y = "Number of Matches", title = "Distribution of Matches in Match Stages")
 
 list <- list(concord, results, gg_match, gg_stage)
 
