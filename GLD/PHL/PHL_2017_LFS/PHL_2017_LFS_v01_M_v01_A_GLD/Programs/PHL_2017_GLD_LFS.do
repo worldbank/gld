@@ -1247,7 +1247,7 @@ foreach v of local ed_var {
 
 *<_occup_isco_>
 * in 2017, raw variable is numeric, 2-digits, so isco conversion not possible
-	/* **Working on isco key, leaving as misisng for now
+	 **Working on isco key, leaving as misisng for now
 	loc matchvar   	pufc14_procc
 	loc n 			1
 
@@ -1292,7 +1292,7 @@ foreach v of local ed_var {
 	drop 		minor 				// no longer needed, maintained in matchvar
 
 
-	*/
+
 	gen occup_isco = . 	// occup_isco already generated above in submodule
 	label var 	occup_isco "ISIC code of primary job 7 day recall"
 
@@ -1604,7 +1604,7 @@ foreach v of local ed_var {
 *<_occup_isco_2_>
 * in 2017, raw variable is numeric, 2-digits, so isco conversion not possible
 	* skipping for now
-	/*
+
 	loc matchvar   	pufc40_pocc
 	loc n 			2
 
@@ -1649,7 +1649,7 @@ foreach v of local ed_var {
 	drop 		minor 				// no longer needed, maintained in matchvar
 
 
-	*/
+	
 	gen occup_isco_2 = . // occup_isco already generated above in submodule
 	label var 	occup_isco_2 "ISIC code of primary job 7 day recall"
 
