@@ -1293,7 +1293,6 @@ foreach v of local ed_var {
 
 
 
-	gen occup_isco = . 	// occup_isco already generated above in submodule
 	label var 	occup_isco "ISIC code of primary job 7 day recall"
 
 
@@ -1644,13 +1643,12 @@ foreach v of local ed_var {
 
 
 	destring 	isco08_`n' ///
-				, generate(occup_isco)
+				, generate(occup_isco_2)
 
 	drop 		minor 				// no longer needed, maintained in matchvar
 
 
 	
-	gen occup_isco_2 = . // occup_isco already generated above in submodule
 	label var 	occup_isco_2 "ISIC code of primary job 7 day recall"
 
 
