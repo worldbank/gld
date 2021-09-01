@@ -7,12 +7,14 @@ foreach y in 2012 2013 2017 {
 
   di "Year `y'"
 
-  ds
-  loc varlist = r(varlist)
+  qui {
+    ds
+    loc varlist = r(varlist)
 
-  loc touse : list varlist & vars
+    loc touse : list varlist & vars
+  }
 
-  mdesc `vars' 
+  mdesc `touse'
 
   di "------------------------------------------"
 }
