@@ -23,6 +23,20 @@
       "Repository": "CRAN",
       "Hash": "030aaec5bc6553f35347cbb1e70b1a17"
     },
+    "DescTools": {
+      "Package": "DescTools",
+      "Version": "0.99.42",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "b5c44acdea312f8710d5980e52ed21c8"
+    },
+    "Exact": {
+      "Package": "Exact",
+      "Version": "2.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "e84ceec03cceaea17050f58f0ed99923"
+    },
     "KernSmooth": {
       "Package": "KernSmooth",
       "Version": "2.23-17",
@@ -317,6 +331,13 @@
       "Repository": "CRAN",
       "Hash": "ec8ca05cffcc70569eaaad8469d2a3a7"
     },
+    "expm": {
+      "Package": "expm",
+      "Version": "0.999-6",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "1bb0f92b6125ea03dd7142f8eaf36bf5"
+    },
     "fansi": {
       "Package": "fansi",
       "Version": "0.5.0",
@@ -387,6 +408,13 @@
       "Repository": "CRAN",
       "Hash": "d7566c471c7b17e095dd023b9ef155ad"
     },
+    "gld": {
+      "Package": "gld",
+      "Version": "2.6.2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "9a0893656f34984dd1233e1a726c4d24"
+    },
     "glue": {
       "Package": "glue",
       "Version": "1.4.2",
@@ -421,6 +449,13 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "ac5c6baf7822ce8732b343f14c072c4d"
+    },
+    "hablar": {
+      "Package": "hablar",
+      "Version": "0.3.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "58ca0f8fff30f57b9ec11fecf673f8ac"
     },
     "haven": {
       "Package": "haven",
@@ -569,6 +604,13 @@
       "Repository": "CRAN",
       "Hash": "3471fb65971f1a7b2d4ae7848cf2db8d"
     },
+    "lmom": {
+      "Package": "lmom",
+      "Version": "2.8",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "c0bfaec475ad944110cf686397c3246d"
+    },
     "lubridate": {
       "Package": "lubridate",
       "Version": "1.7.10",
@@ -631,6 +673,13 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "6dfe8bf774944bd5595785e3229d8771"
+    },
+    "mvtnorm": {
+      "Package": "mvtnorm",
+      "Version": "1.1-2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "6f0133c3842aef0394dbd844a21d3f5f"
     },
     "nlme": {
       "Package": "nlme",
@@ -863,6 +912,13 @@
       "Repository": "CRAN",
       "Hash": "912c09266d5470516df4df7a303cde92"
     },
+    "rootSolve": {
+      "Package": "rootSolve",
+      "Version": "1.8.2.2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "04769b4916d6d20d7c37f992472c5c1b"
+    },
     "roxygen2": {
       "Package": "roxygen2",
       "Version": "7.1.1",
@@ -960,6 +1016,13 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "58a02ce0150652b96c044bc67a0df2e5"
+    },
+    "stringdist": {
+      "Package": "stringdist",
+      "Version": "0.9.7",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "724d1f5b3a1b01db2a0b6a5fe1320628"
     },
     "stringi": {
       "Package": "stringi",
