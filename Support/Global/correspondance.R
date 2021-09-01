@@ -181,13 +181,19 @@ results <- tibble(
   orig_n_distinct = c(n_dist, n_dist, n_dist)
 )
 
-gg <- ggplot(concord, aes(match)) +
+gg_match <- ggplot(concord, aes(match)) +
   geom_density() +
   scale_x_continuous(n.breaks = 10, limits = c(0,100)) +
   theme_minimal() +
   labs(x = "Match Score", y = "Relative Density", title = "Distribution of Match Scores")
 
-list <- list(concord, results, gg)
+gg_stage <- ggplot(concord, aes(match)) +
+  geom_histogram(binwidth = 1) +
+  scale_x_continuous(n.breaks = 5, limits = c(0,4)) +
+  theme_minimal() +
+  labs(x = "Match Stage", y = "Number of Matches", title = "Distribution of Matches in Match Stages")
+
+list <- list(concord, results, gg_match, gg_stage)
 
 
 
