@@ -4,7 +4,7 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				PHL_1997_GLD_LFS.do </_Program name_>
+<_Program name_>				PHL_2013_GLD_LFS.do </_Program name_>
 <_Application_>					Stata 15 <_Application_>
 <_Author(s)_>					World Bank Jobs Group </_Author(s)_>
 <_Date created_>				2021-07-20 </_Date created_>
@@ -13,10 +13,10 @@
 
 <_Country_>						Philippines (PHL) </_Country_>
 <_Survey Title_>				Labor Force Survey </_Survey Title_>
-<_Survey Year_>					1997 </_Survey Year_>
+<_Survey Year_>					2013 </_Survey Year_>
 <_Study ID_>					[Microdata Library ID if present] </_Study ID_>
-<_Data collection from_>		[01/1997] </_Data collection from_>
-<_Data collection to_>			[10/1997] </_Data collection to_>
+<_Data collection from_>		[01/2013] </_Data collection from_>
+<_Data collection to_>			[10/2013] </_Data collection to_>
 <_Source of dataset_> 			[Source of data, e.g. NSO] </_Source of dataset_>
 <_Sample size (HH)_> 			39274 </_Sample size (HH)_>
 <_Sample size (IND)_> 			202742 </_Sample size (IND)_>
@@ -26,12 +26,12 @@
 
 -----------------------------------------------------------------------
 
-<_ICLS Version_>				ICLS-13 </_ICLS Version_>
+<_ICLS Version_>				[Version of ICLS for Labor Questions] </_ICLS Version_>
 <_ISCED Version_>				[Version of ICLS for Labor Questions] </_ISCED Version_>
-<_ISCO Version_>				ISCO 88 </_ISCO Version_>
-<_OCCUP National_>				PSOC 92 </_OCCUP National_>
-<_ISIC Version_>				ISIC 3.1 </_ISIC Version_>
-<_INDUS National_>				PSIC 94 </_INDUS National_>
+<_ISCO Version_>				[Version of ICLS for Labor Questions] </_ISCO Version_>
+<_OCCUP National_>				[Version of ICLS for Labor Questions] </_OCCUP National_>
+<_ISIC Version_>				[Version of ICLS for Labor Questions] </_ISIC Version_>
+<_INDUS National_>				[Version of ICLS for Labor Questions] </_INDUS National_>
 
 -----------------------------------------------------------------------
 <_Version Control_>
@@ -60,7 +60,7 @@ set mem 800m
 
 	local 	cty3 	"PHL" 			// set this to the three letter country/economy abbreviation
 	local 	usr		`"551206_TM"' 	// set this to whatever Mario named your folder
-	local 	surv_yr  = 1997			// set this to the survey year
+	local 	surv_yr  = 2013			// set this to the survey year
 
 ** RUN SETTINGS
 	local 	cb_pause = 0		// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
@@ -80,7 +80,7 @@ set mem 800m
 	local 	lb_mod_age	15	// labor module minimun age (inclusive)
 	local 	ed_mod_age	5	// labor module minimun age (inclusive)
 
-	local 	weightvar 	rfadj // final weightvar
+	local 	weightvar 	pwgt // final weight variable
 
 ** LOG FILE
 	log using `"`gld_data'\\`cty3'_`surv_yr'_I2D2_LFS.log"', replace
@@ -88,13 +88,12 @@ set mem 800m
 
 ** FILES
 	* input
-	local round1 `"`stata'\LFS JAN1997.dta"'
-	local round2 `"`stata'\LFS APR1997.dta"'
-	local round3 `"`stata'\LFS JUL1997.dta"'
-	local round4 `"`stata'\LFS OCT1997.dta"'
+	local round1 `"`stata'\LFSjan13.dta"'
+	local round2 `"`stata'\LFSapr13.dta"'
+	local round3 `"`stata'\LFSjul13.dta"'
+	local round4 `"`stata'\LFS OCT2013.dta"'
 
-	local isic_key 	 `"`stata'\PHL_PSIC_ISIC_94_key.dta"'
-	local isco_key 	 `"`stata'\"' // to be created
+	gl isic_key 	 `"`stata'\PHL_PSIC_ISIC_09_key.dta"'
 
 	* ouput
 	local path_output `"`gld_data'\\`cty3'_`surv_yr'_LFS_v01_M_v01_A_GLD"'
@@ -114,7 +113,29 @@ set mem 800m
 	iecodebook append ///
 		`"`round1'"' `"`round2'"' `"`round3'"' `"`round4'"' /// survey files
 		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template-IN.xlsx"' /// previously edited harmonization file
-		, clear surveys(JAN1997 APR1997 JUL1997 OCT1997) generate(round) // survey names
+		, clear surveys(JAN2013 APR2013 JUL2013 OCT2013) generate(round) // survey names
+
+* Generate Survey Original Variables.
+	/*Some variables will be generated that are the same name of variables that appear in
+		the original survey. For neatness, consistency, and to avoid errors, I will create a
+		sub-routine that will automatically rename the varible in the survey with a suffix
+		"_orig" to distinguish it from the GLD variable.*/
+
+	loc conflictvars 	hhid weight psu
+
+
+	* Begin sub-routine:
+		//rename survey original hhid variable if already exists
+	foreach var of local conflictvars {
+
+		ds 	`var'
+		loc var_orig	= r(varlist)
+		loc var_orig_l : list sizeof var_orig
+
+			if (`var_orig_l' >= 1) {
+				rename 	`var' `var'_orig
+			}
+		}
 
 
 
@@ -179,16 +200,10 @@ set mem 800m
 
 
 *<_int_month_>
-	gen  int_month = smnth
+	gen  int_month = .
 	label de lblint_month 1 "January" 2 "February" 3 "March" 4 "April" 5 "May" 6 "June" 7 "July" 8 "August" 9 "September" 10 "October" 11 "November" 12 "December"
 	label value int_month lblint_month
 	label var int_month "Month of the interview"
-
-	* ensure that months reflec the round. See issue #52
-	replace int_month = 1 	if round == 1
-	replace int_month = 4 	if round == 2
-	replace int_month = 7 	if round == 3
-	replace int_month = 10 	if round == 4
 *</_int_month_>
 
 
@@ -208,35 +223,22 @@ set mem 800m
 
 </_hhid_note> */
 
-	* in 97, it appears that regn and hcn uniquely identify the HH
 
-	loc idhvars 	 regn prov  hcn						// store hhid vars in local
+
+	loc idhvars 	hhnum   							// store idh vars in local
+
 
 	ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
 	loc numlist 	= r(varlist)						// store numeric vars in local
 	loc stringlist 	: list idhvars - numlist			// non-numeric vars in stringlist
 
 	* starting locals
-	loc len = 6											// declare the length of each element in digits
+	loc len = 14											// declare the length of each element in digits
 	loc idh_els ""										// start with empty local list
 
 	* make each numeric var string, including leading zeros
 	foreach var of local numlist {
 		tostring `var'	///								// make the numeric vars strings
-			, generate(idh_`var') ///					// gen a variable with this prefix
-			force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
-
-		loc idh_els 	`idh_els' idh_`var'				// add each variable to the local list
-
-	}
-
-	* make each string variable numeric (as it should be), then string again with correct format
-	foreach var of local stringlist {
-		destring `var' /// 								// destring variable, make numeric version
-			, gen(num_`var') ///						//
-			force 										// force obs to num that are non numeric, ie to missing
-
-		tostring num_`var'	///							// make the numeric vars strings
 			, generate(idh_`var') ///					// gen a variable with this prefix
 			force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
 
@@ -262,13 +264,7 @@ set mem 800m
 
 *<_pid_>
 ** INDIVIDUAL IDENTIFICATION NUMBER
-	* in 97, region, hh control and line number variables uniquely identify observations. use line number as pid
-
-	* repeat same process from above, but only with n_fam.
-	* 	note, assuming that the only necessary individaul identifier is family member, which is numeric
-	*	so, not following processing for sorting numeric/non-numeric variables.
-
-	loc idpvars 	lno 								// store relevant pid vars in local
+	loc idpvars 	cc101_lno 							// store relevant idp vars in local
 	ds `idpvars',  	has(type numeric)					// filter out numeric variables in local
 	loc rlist 		= r(varlist)						// store numeric vars in local
 
@@ -304,7 +300,7 @@ set mem 800m
 
 
 *<_psu_>
-	gen psu = .
+	gen psu = psu_orig
 	label var psu "Primary sampling units"
 *</_psu_>
 
@@ -316,7 +312,7 @@ set mem 800m
 
 
 *<_strata_>
-	gen strata = .
+	gen strata = stratum
 	label var strata "Strata"
 *</_strata_>
 
@@ -342,7 +338,7 @@ set mem 800m
 
 *<_urban_>
 	gen byte 		urban = .
-	replace 		urban = urb
+	replace 		urban = urb2k1970
 	recode 			urban (2 = 0) 		// change rural=2 to rural=0
 	label var 		urban "Location is urban"
 	la de 			lblurban 1 "Urban" 0 "Rural"
@@ -356,26 +352,45 @@ set mem 800m
 	Labels are to be defined as # - Name like 1 "1 - Alaska" 2 "2 - Arkansas".
 
 </_subnatid1> */
-	gen byte 		subnatid1 = regn
-	label de 		lblsubnatid1 	///
+
+	/*  Please see "Administrative_Levels.md" for a detailed explanation of the region and province
+		recodings, available on the repository in the Guides and Documentation Folder.
+		https://github.com/worldbank/gld
+
+		Similarly, in the same location, "Geographic_Nomenclature.md" describes the administrative
+		divisions used in GLD
+ 	*/
+
+	gen byte 		subnatid1 = creg
+	recode 			subnatid1 	/// recode both of thes variables
+					(4 = 41) 		/// sometimes Calabarzon appears as value 4, recode to always be 41
+					(17= 42)		//  sometimes Mimaropa appears as value 17, recode to always be 42
+
+
+	label de 		lblsubnatid1_b 	/// where "b" indicates "post" administrative change
 					 1   "1 - Ilocos"			///
 					 2	 "2 - Cagayan Valley"	///
 					 3   "3 - Central Luzon"	///
-					 4	 "4 - Southern Tagalog"	///
+					 						/// Southern Tagalog has been split into Calabarzon and Mimaropa
 					 5   "5 - Bicol"			///
 					 6	 "6 - Western Visayas"	///
 					 7   "7 - Central Visayas"	///
 					 8	 "8 - Eastern Visayas"	///
-					 9   "9 - Western Mindanao"	///
+					 9   "9 - Zamboanga Peninsula"	///
 					 10  "10 - Northern Mindanao"	///
-					 11  "11 - Southern Mindanao"	///
-					 12  "12 - Central Mindanao"		///
+					 11  "11 - Davao"			///
+					 12  "12 - Soccsksargen"		///
 					 13  "13 - National Capital Region"				///
 					 14  "14 - Cordillera Administrative Region"		///
 					 15  "15 - Autonomous Region of Muslim Mindanao"	///
-					 16  "16 - Caraga"
+					 16  "16 - Caraga" 	///
+					 				/// value 17 exists only in raw data, not in recoded version
+					 18  "18 - Negros Island Region" /// this region appears occasionally in data
+					 							///
+					 41	 "41 - Calabarzon"	/// formerly part of Southern Tagalog
+					 42  "42 - Mimaropa"		// formerly part of Southern Tagalog
 
-	label values 	subnatid1 lblsubnatid1
+	label values 	subnatid1 lblsubnatid1_b
 	label var 		subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 
@@ -473,7 +488,7 @@ set mem 800m
 *</_gaul_adm3_code_>
 
 }
-
+/*
 /*%%=============================================================================================
 	4: Demography
 ==============================================================================================%%*/
@@ -853,26 +868,19 @@ foreach v of local ed_var {
 
 
 *<_potential_lf_>
-	gen byte 		potential_lf = 0
-
-	replace 		potential_lf = 1 if (avail == 1 & qlook == 2) ///
-										| (avail == 2 & qlook == 1)
+	gen byte 		potential_lf = .
 	replace 		potential_lf = . if age < minlaborage & age != .
 	replace 		potential_lf = . if lstatus != 3
 	label var 		potential_lf "Potential labour force status"
 	la de 			lblpotential_lf 0 "No" 1 "Yes"
 	label values 	potential_lf lblpotential_lf
-
-	label values 	potential_lf lblpotential_lf
 *</_potential_lf_>
 
 
 *<_underemployment_>
-	gen byte 		underemployment = 0
-
-	replace 		underemployment = 1 if wmor == 1
+	gen byte 		underemployment = .
 	replace 		underemployment = . if age < minlaborage & age != .
-	replace 		underemployment = . if lstatus != 1
+	replace 		underemployment = . if lstatus == 1
 	label var 		underemployment "Underemployment status"
 	la de 			lblunderemployment 0 "No" 1 "Yes"
 	label values 	underemployment lblunderemployment
@@ -913,7 +921,7 @@ foreach v of local ed_var {
 *----------8.2: 7 day reference main job------------------------------*
 
 
-{
+
 *<_empstat_>
 	gen byte 		empstat=.
 	replace 		empstat=1 	if class==0 | class==1 | class==2 | class==5
@@ -944,26 +952,70 @@ foreach v of local ed_var {
 	label values ocusec lblocusec
 *</_ocusec_>
 
-
+*/
 *<_industry_orig_>
-	gen 			industry_orig = qkb
+	gen 			industry_orig = c18_pkb
 	label var 		industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
 
 *<_industrycat_isic_>
-	/*1997 only has 2-digit data for industry, so cannot be constructed*/
-	gen 			industrycat_isic = .
+	/* The key that matches industry codes is in string format to maintain leading/trailing
+		zeros, so we will change the format here to string if necessary */
+
+	qui ds 			industry_orig, has(type numeric) 	// capture numeric var if is numeric
+	loc isicvar 	= r(varlist)						// store this in a local
+	loc len 		: list sizeof isicvar 				// store the length of this local (1 or 0)
+
+		if (`len' == 1) {
+															// run this if == 1 (ie, if industry_orig is numeric)
+			tostring industry_orig	///						// make the numeric vars strings
+				, generate(industry_orig_str) ///			// gen a variable with this prefix
+				force //
+
+
+		}
+
+
+	// merge sub-module with isic key
+
+	preserve
+
+		gen class = c18_pkb
+		tostring 	class ///
+					, format(`"%04.0f"') replace
+
+
+		merge 		m:1 ///
+					class ///
+					using ${isic_key} ///
+					, generate(isic_merge) ///
+					keep(master merge) // "left join"; remove obs that don't match from using
+					* the string variable in isic4 will is industrycat_isic
+
+		// replace one code that I know doesn't match
+		replace 	isic4 = "6810" 	if c18_pkb == 6819
+
+		tab 		isic_merge 		if c18_pkb != .
+		br 			c18_pkb class isic4 match isic_merge  if c18_pkb != . & isic_merge == 1
+
+
+		destring 	isic4 ///
+					, generate(industrycat_isic)
+
+		pause
+
+	restore
+
+
+	*gen 			industrycat_isic = .
 	label var 		industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
 
 *<_industrycat10_>
 * if mapped to industrycat_isic, will be recoded, if not, start here.
-	gen byte 		industrycat10		= floor(qkb/10)
-	recode  		industrycat10 		0 = 10 				// change to 10, "unspecified" from "missing"
-	replace 		industrycat10		= 10 	if qkb>=92 & qkb<=99
-	replace 		industrycat10		= 6 	if qkb==98
+
 
 	label var 		industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de 			lblindustrycat10 	///
@@ -1093,8 +1145,6 @@ foreach v of local ed_var {
 	This is done to make it easy to compare earnings in formal and informal sectors.
 
 </_wage_total_note> */
-
-	* No month data available for annualization
 	gen wage_total 	= .
 	label var wage_total "Annualized total wage primary job 7 day recall"
 *</_wage_total_>
@@ -1289,46 +1339,28 @@ foreach v of local ed_var {
 
 
 *----------8.5: 7 day reference total summary------------------------------*
-/*since no data exist on working months over the previous 12 month period,
-	no asumptions will be made to extrapolate the 7-day reference period
-	over the previous 12-month period. These data will simply be left as
-	missing and left to the user to self-generate or make assumptions at
-	her or his will.
 
-	egen 			t_hours_total = rowtotal(whours whours_2 t_hours_others, missing) // missing obs treated as 0
-	label var 		t_hours_total "Annualized hours worked in all jobs 7 day recall"
-	replace 		t_hours_total = . 	if whours == . & whours_2 == . & t_hours_others == .
-	*/
+
 *<_t_hours_total_>
-	*<_t_hours_total_note>
-	* ILO defines yearly working hours as 48 * weekly estimate.
-	*</_t_hours_total_note>
-	egen 			t_hours_total = rowtotal(whours whours_2 t_hours_others), missing // missing obs treated as 0
-	replace 		t_hours_total = t_hours_total * 48
+	gen 			t_hours_total = .
 	label var 		t_hours_total "Annualized hours worked in all jobs 7 day recall"
-	replace 		t_hours_total = . 	if whours == . & whours_2 == . & t_hours_others == .
 *</_t_hours_total_>
 
 
 *<_t_wage_nocompen_total_>
-	*<_t_wage_nocompen_total_>
-	egen 			t_wage_nocompen_total = rowtotal(wage_total wage_total_2 t_wage_others), missing
+	gen 			t_wage_nocompen_total = .
 	label var 		t_wage_nocompen_total "Annualized wage in all jobs excl. bonuses, etc. 7 day recall"
-	replace 		t_wage_nocompen_total = . 	if wage_total == . & wage_total_2 == . & t_wage_others == .
 *</_t_wage_nocompen_total_>
 
 
 *<_t_wage_total_>
-	/*no bonusus or compensation listed in wage, so same as nocomp variagble */
-	gen 			t_wage_total = t_wage_nocompen_total
+	gen 			t_wage_total = .
 	label var 		t_wage_total "Annualized total wage for all jobs 7 day recall"
 *</_t_wage_total_>
 
 
 
 *----------8.6: 12 month reference overall------------------------------*
-/*Note: sub-modules 8.6, 8.7, 8.8. 8.9, and 8.10 do not apply to PHL because there
- are no questions related to the previous 12-month reference period in the survey.*/
 
 {
 
@@ -1733,15 +1765,15 @@ foreach v of local ed_var {
 *</_t_hours_total_year_>
 
 
-*<_t_wage_nocompen_total_year_>
-	gen 			t_wage_nocompen_total_year = .
+*<_t_wage_nocompen_total_year_> %% to annualize? conditionally on unit wage in future surveys?
+	gen 			t_wage_nocompen_total_year = wage_total
 	label var 		t_wage_nocompen_total_year ///
 					"Annualized wage in all jobs excl. bonuses, etc. 12 month recall"
 *</_t_wage_nocompen_total_year_>
 
 
 *<_t_wage_total_year_>
-	gen 			t_wage_total_year = .
+	gen 			t_wage_total_year = wage_total
 	label var 		t_wage_total_year "Annualized total wage for all jobs 12 month recall"
 *</_t_wage_total_year_>
 
@@ -1750,10 +1782,6 @@ foreach v of local ed_var {
 
 
 *<_njobs_>
-	*<_njobs_note>
-	* The provided njobs data appears to be inconsistent with data, so I dedicded not to include.
-	*</_njobs_note>
-
 	gen 			njobs = .
 	label var 		njobs "Total number of jobs"
 *</_njobs_>
@@ -1761,19 +1789,19 @@ foreach v of local ed_var {
 
 *<_t_hours_annual_>
 	/*ILO defines approximate annual working hours as weekly total * 48 */
-	gen 			t_hours_annual = t_hours_total
+	gen 			t_hours_annual = whours * 48
 	label var 		t_hours_annual "Total hours worked in all jobs in the previous 12 months"
 *</_t_hours_annual_>
 
 
 *<_linc_nc_>
-	gen 			linc_nc = t_wage_nocompen_total
+	gen 			linc_nc = wage_total // = annualized total wage
 	label var 		linc_nc "Total annual wage income in all jobs, excl. bonuses, etc."
 *</_linc_nc_>
 
 
 *<_laborincome_>
-	gen 			laborincome = t_wage_total
+	gen 			laborincome = t_wage_total_year
 	label var 		laborincome ///
 					"Total annual individual labor income in all jobs, incl. bonuses, etc."
 *</_laborincome_>
@@ -1959,6 +1987,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save `"`path_output'"', replace
+*save `"`path_output'"', replace
 
 *</_% SAVE_>

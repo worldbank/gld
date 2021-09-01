@@ -4,7 +4,7 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				PHL_1997_GLD_LFS.do </_Program name_>
+<_Program name_>				PHL_2000_GLD_LFS.do </_Program name_>
 <_Application_>					Stata 15 <_Application_>
 <_Author(s)_>					World Bank Jobs Group </_Author(s)_>
 <_Date created_>				2021-07-20 </_Date created_>
@@ -13,10 +13,10 @@
 
 <_Country_>						Philippines (PHL) </_Country_>
 <_Survey Title_>				Labor Force Survey </_Survey Title_>
-<_Survey Year_>					1997 </_Survey Year_>
+<_Survey Year_>					2000 </_Survey Year_>
 <_Study ID_>					[Microdata Library ID if present] </_Study ID_>
-<_Data collection from_>		[01/1997] </_Data collection from_>
-<_Data collection to_>			[10/1997] </_Data collection to_>
+<_Data collection from_>		[01/2000] </_Data collection from_>
+<_Data collection to_>			[10/2000] </_Data collection to_>
 <_Source of dataset_> 			[Source of data, e.g. NSO] </_Source of dataset_>
 <_Sample size (HH)_> 			39274 </_Sample size (HH)_>
 <_Sample size (IND)_> 			202742 </_Sample size (IND)_>
@@ -60,7 +60,7 @@ set mem 800m
 
 	local 	cty3 	"PHL" 			// set this to the three letter country/economy abbreviation
 	local 	usr		`"551206_TM"' 	// set this to whatever Mario named your folder
-	local 	surv_yr  = 1997			// set this to the survey year
+	local 	surv_yr  = 2000			// set this to the survey year
 
 ** RUN SETTINGS
 	local 	cb_pause = 0		// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
@@ -88,10 +88,10 @@ set mem 800m
 
 ** FILES
 	* input
-	local round1 `"`stata'\LFS JAN1997.dta"'
-	local round2 `"`stata'\LFS APR1997.dta"'
-	local round3 `"`stata'\LFS JUL1997.dta"'
-	local round4 `"`stata'\LFS OCT1997.dta"'
+	local round1 `"`stata'\LFS JAN2000.dta"'
+	local round2 `"`stata'\LFS APR2000.dta"'
+	local round3 `"`stata'\LFS JUL2000.dta"'
+	local round4 `"`stata'\LFS OCT2000.dta"'
 
 	local isic_key 	 `"`stata'\PHL_PSIC_ISIC_94_key.dta"'
 	local isco_key 	 `"`stata'\"' // to be created
@@ -100,7 +100,7 @@ set mem 800m
 	local path_output `"`gld_data'\\`cty3'_`surv_yr'_LFS_v01_M_v01_A_GLD"'
 
 ** VALUES
-	local n_round 	4			// numer of survey rounds
+	local n_round 	1			// numer of survey rounds
 
 
 
@@ -110,11 +110,9 @@ set mem 800m
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-*** append the dataset using iecodebook and the i2d2 template
-	iecodebook append ///
-		`"`round1'"' `"`round2'"' `"`round3'"' `"`round4'"' /// survey files
-		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template-IN.xlsx"' /// previously edited harmonization file
-		, clear surveys(JAN1997 APR1997 JUL1997 OCT1997) generate(round) // survey names
+use `"`round1'"', clear
+
+gen 	int round = 1
 
 
 
@@ -208,7 +206,7 @@ set mem 800m
 
 </_hhid_note> */
 
-	* in 97, it appears that regn and hcn uniquely identify the HH
+	* in 00, it appears that regn and hcn uniquely identify the HH
 
 	loc idhvars 	 regn prov  hcn						// store hhid vars in local
 
@@ -262,7 +260,7 @@ set mem 800m
 
 *<_pid_>
 ** INDIVIDUAL IDENTIFICATION NUMBER
-	* in 97, region, hh control and line number variables uniquely identify observations. use line number as pid
+	* in 00, region, hh control and line number variables uniquely identify observations. use line number as pid
 
 	* repeat same process from above, but only with n_fam.
 	* 	note, assuming that the only necessary individaul identifier is family member, which is numeric
@@ -322,14 +320,18 @@ set mem 800m
 
 
 *<_wave_>
-	gen wave = ""
-
+	gen wave = "Q1"
+/*
 	replace 		wave = 	"Q1"	if round == 1
 	replace 		wave = 	"Q2"	if round == 2
 	replace 		wave = 	"Q3"	if round == 3
 	replace 		wave = 	"Q4"	if round == 4
+	*/
 
 	label var 		wave "Survey wave"
+	*<_wave_note>
+	* for 2000 there is only 1 data file so I cannot distinguish difinitively between waves
+	*</_wave_note>
 *</_wave_>
 
 }
@@ -862,8 +864,6 @@ foreach v of local ed_var {
 	label var 		potential_lf "Potential labour force status"
 	la de 			lblpotential_lf 0 "No" 1 "Yes"
 	label values 	potential_lf lblpotential_lf
-
-	label values 	potential_lf lblpotential_lf
 *</_potential_lf_>
 
 
@@ -952,7 +952,7 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_>
-	/*1997 only has 2-digit data for industry, so cannot be constructed*/
+	/*2000 only has 2-digit data for industry, so cannot be constructed*/
 	gen 			industrycat_isic = .
 	label var 		industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>

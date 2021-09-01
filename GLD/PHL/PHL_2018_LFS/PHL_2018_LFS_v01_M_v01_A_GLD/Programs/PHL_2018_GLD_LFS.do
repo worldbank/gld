@@ -4,7 +4,7 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				PHL_1997_GLD_LFS.do </_Program name_>
+<_Program name_>				PHL_2018_GLD_LFS.do </_Program name_>
 <_Application_>					Stata 15 <_Application_>
 <_Author(s)_>					World Bank Jobs Group </_Author(s)_>
 <_Date created_>				2021-07-20 </_Date created_>
@@ -13,25 +13,25 @@
 
 <_Country_>						Philippines (PHL) </_Country_>
 <_Survey Title_>				Labor Force Survey </_Survey Title_>
-<_Survey Year_>					1997 </_Survey Year_>
+<_Survey Year_>					2018 </_Survey Year_>
 <_Study ID_>					[Microdata Library ID if present] </_Study ID_>
-<_Data collection from_>		[01/1997] </_Data collection from_>
-<_Data collection to_>			[10/1997] </_Data collection to_>
+<_Data collection from_>		[01/2018] </_Data collection from_>
+<_Data collection to_>			[10/2018] </_Data collection to_>
 <_Source of dataset_> 			[Source of data, e.g. NSO] </_Source of dataset_>
 <_Sample size (HH)_> 			39274 </_Sample size (HH)_>
 <_Sample size (IND)_> 			202742 </_Sample size (IND)_>
-<_Sampling method_> 			Geographic regions divided into PSUs of ~100-400 Households for further processing </_Sampling method_>
-<_Geographic coverage_> 		1st-level Subdivision (Region) </_Geographic coverage_>
+<_Sampling method_> 			Geographic pufregions divided into PSUs of ~100-400 Households for further processing </_Sampling method_>
+<_Geographic coverage_> 		1st-level Subdivision (pufregion) </_Geographic coverage_>
 <_Currency_> 					[Currency used for wages] </_Currency_>
 
 -----------------------------------------------------------------------
 
 <_ICLS Version_>				ICLS-13 </_ICLS Version_>
 <_ISCED Version_>				[Version of ICLS for Labor Questions] </_ISCED Version_>
-<_ISCO Version_>				ISCO 88 </_ISCO Version_>
-<_OCCUP National_>				PSOC 92 </_OCCUP National_>
-<_ISIC Version_>				ISIC 3.1 </_ISIC Version_>
-<_INDUS National_>				PSIC 94 </_INDUS National_>
+<_ISCO Version_>				ISCO 08 </_ISCO Version_>
+<_OCCUP National_>				PSOC 12 </_OCCUP National_>
+<_ISIC Version_>				ISIC 4 </_ISIC Version_>
+<_INDUS National_>				PSIC 2009 </_INDUS National_>
 
 -----------------------------------------------------------------------
 <_Version Control_>
@@ -60,7 +60,7 @@ set mem 800m
 
 	local 	cty3 	"PHL" 			// set this to the three letter country/economy abbreviation
 	local 	usr		`"551206_TM"' 	// set this to whatever Mario named your folder
-	local 	surv_yr  = 1997			// set this to the survey year
+	local 	surv_yr  = 2018			// set this to the survey year
 
 ** RUN SETTINGS
 	local 	cb_pause = 0		// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
@@ -80,7 +80,7 @@ set mem 800m
 	local 	lb_mod_age	15	// labor module minimun age (inclusive)
 	local 	ed_mod_age	5	// labor module minimun age (inclusive)
 
-	local 	weightvar 	rfadj // final weightvar
+	local 	weightvar 	pufpwgtprv // final weightvar
 
 ** LOG FILE
 	log using `"`gld_data'\\`cty3'_`surv_yr'_I2D2_LFS.log"', replace
@@ -88,13 +88,13 @@ set mem 800m
 
 ** FILES
 	* input
-	local round1 `"`stata'\LFS JAN1997.dta"'
-	local round2 `"`stata'\LFS APR1997.dta"'
-	local round3 `"`stata'\LFS JUL1997.dta"'
-	local round4 `"`stata'\LFS OCT1997.dta"'
+	local round1 `"`stata'\LFS JAN2018.dta"'
+	local round2 `"`stata'\LFS APR2018.dta"'
+	local round3 `"`stata'\LFS JUL2018.dta"'
+	local round4 `"`stata'\LFS OCT2018.dta"'
 
-	local isic_key 	 `"`stata'\PHL_PSIC_ISIC_94_key.dta"'
-	local isco_key 	 `"`stata'\"' // to be created
+	local isic_key 	 `"`stata'\PHL_PSIC_ISIC_09_key.dta"'
+	local isco_key 	 `"`stata'\PHL_PSOC_ISCO_12_key.dta"' // to be created
 
 	* ouput
 	local path_output `"`gld_data'\\`cty3'_`surv_yr'_LFS_v01_M_v01_A_GLD"'
@@ -110,11 +110,36 @@ set mem 800m
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-*** append the dataset using iecodebook and the i2d2 template
 	iecodebook append ///
 		`"`round1'"' `"`round2'"' `"`round3'"' `"`round4'"' /// survey files
-		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template-IN.xlsx"' /// previously edited harmonization file
-		, clear surveys(JAN1997 APR1997 JUL1997 OCT1997) generate(round) // survey names
+		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template-IN.xlsx"' /// output just created above
+		, clear surveys(JAN2018 APR2018 JUL2018 OCT2018) generate(round) // survey names
+
+
+
+** Align HHID variables
+	** align hhnum
+	/*rounds 1,3,4 (january,, july, october) have a numeric household id called hhnum whereas round 2 (april)
+	  has a string numeric variable encoded as str23. Since the ids will all be the same legth anyway, I will
+	  change rounds 1-3 to be a str23 to match round 4 so I can replace and "align" the hhnum as a string
+	  variable for all 4 rounds*/
+
+	*** encode hhnum as string
+	rename 		pufhhnum 	hhnum_num					// rename to numeric indicator name
+
+	tostring 	hhnum_num	///						// make the numeric vars strings
+				, generate(hhnum_str11) ///			// generate new variable as a string
+				force format(`"%011.0f"')				// ...and the specified number of digits in local
+
+	gen 		hhnum = ""								// generate household ID variable
+	replace 	hhnum = hhnum_str11 	if round == 1 /// replace conditionally on round,
+										| round == 3  ///
+										| round == 4
+	replace 	hhnum = pufhhnum_2			if round == 2
+
+	mdesc 		hhnum 								// ensure that hhid has no missings
+	assert	 	r(miss) == 0
+
 
 
 
@@ -179,16 +204,17 @@ set mem 800m
 
 
 *<_int_month_>
-	gen  int_month = smnth
+	gen  int_month = pufsvymo
 	label de lblint_month 1 "January" 2 "February" 3 "March" 4 "April" 5 "May" 6 "June" 7 "July" 8 "August" 9 "September" 10 "October" 11 "November" 12 "December"
 	label value int_month lblint_month
 	label var int_month "Month of the interview"
 
-	* ensure that months reflec the round. See issue #52
-	replace int_month = 1 	if round == 1
-	replace int_month = 4 	if round == 2
-	replace int_month = 7 	if round == 3
-	replace int_month = 10 	if round == 4
+* ensure that months reflec the round. See issue #52
+replace int_month = 1 	if round == 1
+replace int_month = 4 	if round == 2
+replace int_month = 7 	if round == 3
+replace int_month = 10 	if round == 4
+
 *</_int_month_>
 
 
@@ -200,75 +226,44 @@ set mem 800m
 	60 psu coded 1 through 60, codes should be 01, 02, ..., 60. If there are 160 it should be 001,
 	002, ..., 160.
 
-	Since individual Household ID variables were not always provided for the Philippines, yet the household
-	line number variables were provided, it was possible to approximate the household groupings by other variables.
+	Since individual Household ID variables were not always pufprvided for the Philippines, yet the household
+	line number variables were pufprvided, it was possible to approximate the household groupings by other variables.
 	However, this process was not perfectly clean, so checks for duplicates were needed. Please refer to the
 	"Household_IDs.md" in Guides and Documentation for additional explanation. The two variables, hhid and pid
 	will be produced in conjunction, the labelled in the html brackets.
 
 </_hhid_note> */
+** HOUSEHOLD IDENTIFICATION NUMBER
 
-	* in 97, it appears that regn and hcn uniquely identify the HH
 
-	loc idhvars 	 regn prov  hcn						// store hhid vars in local
+	loc idhvars 	hhnum   							// store idh vars in local
 
-	ds `idhvars',  	has(type numeric)					// filter out numeric variables in local
-	loc numlist 	= r(varlist)						// store numeric vars in local
-	loc stringlist 	: list idhvars - numlist			// non-numeric vars in stringlist
 
-	* starting locals
-	loc len = 6											// declare the length of each element in digits
-	loc idh_els ""										// start with empty local list
-
-	* make each numeric var string, including leading zeros
-	foreach var of local numlist {
-		tostring `var'	///								// make the numeric vars strings
-			, generate(idh_`var') ///					// gen a variable with this prefix
-			force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
-
-		loc idh_els 	`idh_els' idh_`var'				// add each variable to the local list
-
-	}
-
-	* make each string variable numeric (as it should be), then string again with correct format
-	foreach var of local stringlist {
-		destring `var' /// 								// destring variable, make numeric version
-			, gen(num_`var') ///						//
-			force 										// force obs to num that are non numeric, ie to missing
-
-		tostring num_`var'	///							// make the numeric vars strings
-			, generate(idh_`var') ///					// gen a variable with this prefix
-			force format(`"%0`len'.0f"')				// ...and the specified number of digits in local
-
-		loc idh_els 	`idh_els' idh_`var'				// add each variable to the local list
-
-	}
 
 		* add the round variable
 		tostring round	///							// make the numeric vars strings
 			, generate(idh_round) ///					// gen a variable with this prefix
 			force format(`"%01.0f"')				// ...and the specified number of digits in local
 
-		loc idh_els 	`idh_els' idh_round				// add each variable to the local list
+		loc idh_els 	hhnum idh_round				// add each variable to the local list
+
+
+	* concatenate all elements to form idh: hosehold id
+	egen idh=concat( `idh_els' )						// concatenate vars we just made. code drops vars @ end
+
+	label var idh "Household id"
 
 
 
-	* concatenate all elements to form hhid: hosehold id
-	egen hhid=concat( `idh_els' )						// concatenate vars we just made. code drops vars @ end
 
-	label var hhid "Household ID"
-*</_hhid_>
-
-
-*<_pid_>
 ** INDIVIDUAL IDENTIFICATION NUMBER
-	* in 97, region, hh control and line number variables uniquely identify observations. use line number as pid
+	bys idh: gen n_fam = _n								// generate family member number
 
 	* repeat same process from above, but only with n_fam.
 	* 	note, assuming that the only necessary individaul identifier is family member, which is numeric
 	*	so, not following processing for sorting numeric/non-numeric variables.
 
-	loc idpvars 	lno 								// store relevant pid vars in local
+	loc idpvars 	pufc01_lno 							// store relevant idp vars in local
 	ds `idpvars',  	has(type numeric)					// filter out numeric variables in local
 	loc rlist 		= r(varlist)						// store numeric vars in local
 
@@ -285,27 +280,40 @@ set mem 800m
 
 	}
 
-	* concatenate to form pid: individual id
-	egen pid=concat( `idp_els' )						// concatenate vars we just made. code drops vars @ end
+	* concatenate to form idp: individual id
+	egen idp=concat( `idp_els' )						// concatenate vars we just made. code drops vars @ end
 
-	sort hhid pid
+	sort idh idp
+	label var idp "Individual id"
 
 ** ID CHECKS
-	isid hhid pid 										// household and individual id uniquely identify
+	isid idh idp 										// household and individual id uniquely identify
 
-	label var pid "Individual ID"
+
+	gen  hhid = idh  									// make hhid from idh in module
+	label var hhid "Household ID"
+
+*</_hhid_>
+
+
+*<_pid_>
+** INDIVIDUAL IDENTIFICATION NUMBER
+	gen 		pid = idp 		// generated from sub-module above.
+	label var 	pid "Individual ID"
+
+	isid 		hhid pid
 *</_pid_>
 
 
 *<_weight_>
-	gen weight = `weightvar'/(`n_round')
-	label var weight "Household sampling weight"
+	gen 		weight = `weightvar'/(`n_round')
+	label 		var weight "Household sampling weight"
 *</_weight_>
 
 
 *<_psu_>
-	gen psu = .
-	label var psu "Primary sampling units"
+	gen 		psu = pufpsu
+	label 		var psu "Primary sampling units"
 *</_psu_>
 
 
@@ -316,13 +324,14 @@ set mem 800m
 
 
 *<_strata_>
+	* no explicit strata variable given in 2018
 	gen strata = .
 	label var strata "Strata"
 *</_strata_>
 
 
 *<_wave_>
-	gen wave = ""
+	gen wave = "Q1"
 
 	replace 		wave = 	"Q1"	if round == 1
 	replace 		wave = 	"Q2"	if round == 2
@@ -330,6 +339,7 @@ set mem 800m
 	replace 		wave = 	"Q4"	if round == 4
 
 	label var 		wave "Survey wave"
+
 *</_wave_>
 
 }
@@ -342,7 +352,7 @@ set mem 800m
 
 *<_urban_>
 	gen byte 		urban = .
-	replace 		urban = urb
+	replace 		urban = pufurb2k10
 	recode 			urban (2 = 0) 		// change rural=2 to rural=0
 	label var 		urban "Location is urban"
 	la de 			lblurban 1 "Urban" 0 "Rural"
@@ -356,24 +366,29 @@ set mem 800m
 	Labels are to be defined as # - Name like 1 "1 - Alaska" 2 "2 - Arkansas".
 
 </_subnatid1> */
-	gen byte 		subnatid1 = regn
+	gen byte 		subnatid1 = pufreg
 	label de 		lblsubnatid1 	///
 					 1   "1 - Ilocos"			///
 					 2	 "2 - Cagayan Valley"	///
 					 3   "3 - Central Luzon"	///
-					 4	 "4 - Southern Tagalog"	///
+	 						/// Southern Tagalog has been split into Calabarzon and Mimaropa
 					 5   "5 - Bicol"			///
 					 6	 "6 - Western Visayas"	///
 					 7   "7 - Central Visayas"	///
 					 8	 "8 - Eastern Visayas"	///
-					 9   "9 - Western Mindanao"	///
+					 9   "9 - Zamboanga Peninsula"	///
 					 10  "10 - Northern Mindanao"	///
-					 11  "11 - Southern Mindanao"	///
-					 12  "12 - Central Mindanao"		///
-					 13  "13 - National Capital Region"				///
-					 14  "14 - Cordillera Administrative Region"		///
-					 15  "15 - Autonomous Region of Muslim Mindanao"	///
-					 16  "16 - Caraga"
+					 11  "11 - Davao"	///
+					 12  "12 - Soccsksargen"		///
+					 13  "13 - National Capital pufregion"				///
+					 14  "14 - Cordillera Administrative pufregion"		///
+					 15  "15 - Autonomous pufregion of Muslim Mindanao"	///
+					 16  "16 - Caraga" ///
+					 /// value 17 exists only in raw data, not in recoded version
+					 18  "18 - Negros Island pufregion" /// this pufregion appears occasionally in data
+				 	 							///
+				 	 41	 "41 - Calabarzon"	/// formerly part of Southern Tagalog
+				 	 42  "42 - Mimaropa"		// formerly part of Southern Tagalog
 
 	label values 	subnatid1 lblsubnatid1
 	label var 		subnatid1 "Subnational ID at First Administrative Level"
@@ -381,7 +396,6 @@ set mem 800m
 
 
 *<_subnatid2_>
-
 	* import the labels
 	loc 			n_obs = _n 	// store no. obs before merge
 
@@ -411,7 +425,7 @@ set mem 800m
 	}
 
 	// generate the variable and apply the labels.
-	gen byte 		subnatid2 = prov
+	gen byte 		subnatid2 = pufprv
 	label values 	subnatid2 lblsubnatid2
 	label var 		subnatid2 "Subnational ID at Second Administrative Level"
 
@@ -482,26 +496,25 @@ set mem 800m
 
 *<_hsize_>
 	sort hhid
-	by hhid: 	egen hsize= count(rel <= 7) // includes non-family members, not boarders or domestic workers.
+	by hhid: egen hsize= count(pufc03_rel <= 8 | pufc03_rel == 11) // includes non-family members, not boarders or domestic workers.
 	label var 	hsize "Household size"
 
 	* check
-	mdesc 		hsize
+	qui mdesc 	hsize
 	assert 		r(miss) == 0
 
 *</_hsize_>
 
 
 *<_age_>
-	rename 		age age_orig
-	gen 		age = age_orig
+	gen 		age = pufc05_age
 	replace 	age	= 98 	if age>=98 & age!=.
 	label var 	age "Individual age"
 *</_age_>
 
 
 *<_male_>
-	gen 		male = sex
+	gen 		male = pufc04_sex
 	recode 		male (2 = 0)						// female=2 recoded to female=0
 	label var 	male "Sex - Ind is male"
 	la de 		lblmale 	1 "Male" 0 "Female"
@@ -511,10 +524,10 @@ set mem 800m
 
 *<_relationharm_>
 	gen 		relationharm = .
-	replace 	relationharm = rel
-	recode 		relationharm (0 8 9=6) /// non-relative, boarder, domestic helper to "other and non-relative"
-							(6=4) 	/// "father/mother" to "parents"
-							(4 5 7=5) // "son/daugher-in-law", "grandson/granddaughter", "other relative" to "Other rel"
+	replace 	relationharm = pufc03_rel
+	recode 		relationharm (4 5 6 8  	= 5) /// siblings, children in law, grandchildren, other rel of hh head="other relatives"
+					(7 			= 4)	/// parents of hh head become "parents"
+					(9 10 11 	= 6) 	// boarders and domestic workers become "other/non-relatives"
 
 	label var 	relationharm "Relationship to the head of household - Harmonized"
 	la de 		lblrelationharm  ///
@@ -538,13 +551,13 @@ set mem 800m
 
 
 *<_relationcs_>
-	gen relationcs = rel
+	gen relationcs = pufc03_rel
 	label var relationcs "Relationship to the head of household - Country original"
 *</_relationcs_>
 
 
 *<_marital_>
-	gen byte 		marital = mstat
+	gen byte 		marital = pufc06_mstat
 	recode 			marital 	///
 					(1=2) 	///	"single" -> "never married"
 					(2=1) /// "married" -> "married"
@@ -689,7 +702,8 @@ label var ed_mod_age "Education module application age"
 *</_ed_mod_age_>
 
 *<_school_>
-	gen byte school=.
+	gen byte school= pufc08_cursch
+	recode school (2 = 0)		// 2 was "no", recode to 0. Keep 1=Yes same.
 	label var school "Attending school"
 	la de lblschool 0 "No" 1 "Yes"
 	label values school  lblschool
@@ -715,15 +729,26 @@ label var ed_mod_age "Education module application age"
 	classificition of how each level is classified and why,
 	available in github repository. */
 
-	gen byte educat7 =.
+	gen byte 	educat7=.
+	replace 	educat7=1 if pufc07_grade <= 110 		// less than primary to "no education"
+	replace 	educat7=2 if (pufc07_grade >= 110 & pufc07_grade <= 160) /// Grades 1-6 -> "primary incomplete"
+							| (pufc07_grade >=410 & pufc07_grade <= 450) // grade 1-5 in K-12 program->"Primary incomplete"
+	replace 	educat7=3 if pufc07_grade == 170 		/// grade 6 graduate -> "primary complete"
+							| pufc07_grade == 180 	/// grade 7 graduate -> "primary complete"
+							| pufc07_grade == 460  	// grade 6 in k-12 school to "Primary Complete"
+	replace 	educat7=4 if (pufc07_grade >= 210 & pufc07_grade <= 240) /// 1-4th year in secondary school
+							| (pufc07_grade >=410 & pufc07_grade <= 490) // ...or grade 7-9 in k-12 program -> "secondary incomplete"
+	replace 	educat7=5 if pufc07_grade == 250		/// high school complete
+							| pufc07_grade == 500 	// ... or "grade 10" in K-12 to to "Secondary Complete"
+	replace 	educat7=6 if (pufc07_grade >= 601 & pufc07_grade <= 699) 	/// the 600s are for post-secondary/non-uni track courses
+							| (pufc07_grade >= 510 & pufc07_grade <= 520) // and grade 11 and 12 in K-12 -> "post second./non uni"
 
-	gen byte edulevel7=.
-	replace edulevel7=1 if grade==0			// "No Grade Completed" -> "No education"
-	replace edulevel7=2 if grade==1 | grade==2 | grade==3 // "Grades 1-5" -> " Primary Incomplete"
-	replace edulevel7=3 if grade==4 	// "Elementary Graduate" -> "Primary Complete"
-	replace edulevel7=4 if grade==5		// "1st-3rd Year in High School" -> "Secondary Incomplete"
-	replace edulevel7=5 if grade==6		// "High school graduate" -> "Secondary Complete"
-	replace edulevel7=7 if grade==7 | ( grade>=40 & grade<=98) // "College Graduate" and "[x] Bachelors/Advanced Degree" -> "University"
+	replace 	educat7=7 if ( pufc07_grade>=701 & pufc07_grade<=950) 	// 1st-6th yr college, Tertiary degrees and above to "Uni"
+
+/*There's no documentation on where to classify SPED, but for now I will include
+undergraduates in "primary" and "graduates" in "secondary" */
+	replace 	educat7=3 if  pufc07_grade == 191
+	replace 	educat7=5 if 	pufc07_grade == 192
 
 	label var educat7 "Level of education 1"
 	la de lbleducat7 	1 "No education" ///
@@ -844,7 +869,7 @@ foreach v of local ed_var {
 
 {
 *<_lstatus_>
-	gen byte 		lstatus = empst1_nso
+	gen byte 		lstatus = pufnewempstat
 	replace 		lstatus = . if age < minlaborage
 	label var 		lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF" // raw values always same as new
@@ -855,14 +880,12 @@ foreach v of local ed_var {
 *<_potential_lf_>
 	gen byte 		potential_lf = 0
 
-	replace 		potential_lf = 1 if (avail == 1 & qlook == 2) ///
-										| (avail == 2 & qlook == 1)
+	replace 		potential_lf = 1 if (pufc36_avail == 1 & pufc30_lookw == 2) ///
+										| (pufc36_avail == 2 & pufc30_lookw == 1)
 	replace 		potential_lf = . if age < minlaborage & age != .
 	replace 		potential_lf = . if lstatus != 3
 	label var 		potential_lf "Potential labour force status"
 	la de 			lblpotential_lf 0 "No" 1 "Yes"
-	label values 	potential_lf lblpotential_lf
-
 	label values 	potential_lf lblpotential_lf
 *</_potential_lf_>
 
@@ -870,7 +893,7 @@ foreach v of local ed_var {
 *<_underemployment_>
 	gen byte 		underemployment = 0
 
-	replace 		underemployment = 1 if wmor == 1
+	replace 		underemployment = 1 if pufc20_pwmore == 1
 	replace 		underemployment = . if age < minlaborage & age != .
 	replace 		underemployment = . if lstatus != 1
 	label var 		underemployment "Underemployment status"
@@ -881,11 +904,11 @@ foreach v of local ed_var {
 
 *<_nlfreason_>
 	gen byte 		nlfreason= .
-	replace 		nlfreason=1 	if wnot==8
-	replace 		nlfreason=2 	if wnot==7
-	replace 		nlfreason=3 	if wnot==6
-	replace 		nlfreason=4 	if wnot==3
-	replace 		nlfreason=5 	if wnot==1 | wnot==2 | wnot==4 | wnot==5 | wnot==9
+	replace 		nlfreason=1 	if pufc34_wynot==8
+	replace 		nlfreason=2 	if pufc34_wynot==7
+	replace 		nlfreason=3 	if pufc34_wynot==6
+	replace 		nlfreason=4 	if pufc34_wynot==3
+	replace 		nlfreason=5 	if pufc34_wynot==1 | pufc34_wynot==2 | pufc34_wynot==4 | pufc34_wynot==5 | pufc34_wynot==9
 	replace 		nlfreason=. 	if lstatus!=3 		// restricts universe to non-labor force
 	label var 		nlfreason "Reason not in the labor force"
 	la de 			lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
@@ -894,7 +917,7 @@ foreach v of local ed_var {
 
 
 *<_unempldur_l_>
-	gen byte 		unempldur_l=weeks/4.2
+	gen byte 		unempldur_l=pufc33_weeks/4.2
 	label var 		unempldur_l "Unemployment duration (months) lower bracket"
 	replace 		unempldur_l=. if lstatus!=2 	  // restrict universe to unemployed only
 
@@ -902,7 +925,7 @@ foreach v of local ed_var {
 
 
 *<_unempldur_u_>
-	gen byte 		unempldur_u=weeks/4.2
+	gen byte 		unempldur_u=pufc33_weeks/4.2
 	label var 		unempldur_u "Unemployment duration (months) upper bracket"
 	replace 		unempldur_u=. if lstatus!=2 	  // restrict universe to unemployed only
 
@@ -916,10 +939,10 @@ foreach v of local ed_var {
 {
 *<_empstat_>
 	gen byte 		empstat=.
-	replace 		empstat=1 	if class==0 | class==1 | class==2 | class==5
-	replace 		empstat=2 	if class==6
-	replace 		empstat=3	if class==4
-	replace 		empstat=4 	if class==3
+	replace 		empstat=1 	if pufc23_pclass==0 | pufc23_pclass==1 | pufc23_pclass==2 | pufc23_pclass==5
+	replace 		empstat=2 	if pufc23_pclass==6
+	replace 		empstat=3	if pufc23_pclass==4
+	replace 		empstat=4 	if pufc23_pclass==3
 	replace 		empstat=. 	if lstatus!=1 	// includes universe restriction
 	label var 		empstat 	"Employment status during past week primary job 7 day recall"
 	la de 			lblempstat 	1 "Paid employee" ///
@@ -933,8 +956,8 @@ foreach v of local ed_var {
 
 *<_ocusec_>
 	gen byte 		ocusec = .
-	replace 		ocusec = 1 	if class == 1
-	replace 		ocusec = 2 	if inlist(class, 0, 1, 3, 4, 5, 6)
+	replace 		ocusec = 1 	if pufc23_pclass == 1
+	replace 		ocusec = 2 	if inlist(pufc23_pclass, 0, 1, 3, 4, 5, 6)
 
 	label var 		ocusec 		"Sector of activity primary job 7 day recall"
 	la de 			lblocusec 	1 "Public Sector, Central Government, Army" ///
@@ -946,24 +969,35 @@ foreach v of local ed_var {
 
 
 *<_industry_orig_>
-	gen 			industry_orig = qkb
+	gen 			industry_orig = pufc16_pkb
 	label var 		industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
 
 *<_industrycat_isic_>
-	/*1997 only has 2-digit data for industry, so cannot be constructed*/
-	gen 			industrycat_isic = .
-	label var 		industrycat_isic "ISIC code of primary job 7 day recall"
-*</_industrycat_isic_>
+	* data are only 2-digits, so cannot be matched to isic
+
+	gen 		industrycat_isic = .
+	label var 	industrycat_isic "ISIC code of primary job 7 day recall"
+
+	*</_industrycat_isic_>
 
 
 *<_industrycat10_>
-* if mapped to industrycat_isic, will be recoded, if not, start here.
-	gen byte 		industrycat10		= floor(qkb/10)
-	recode  		industrycat10 		0 = 10 				// change to 10, "unspecified" from "missing"
-	replace 		industrycat10		= 10 	if qkb>=92 & qkb<=99
-	replace 		industrycat10		= 6 	if qkb==98
+	gen byte industrycat10=.
+
+	replace 	industrycat10=1 if (pufc16_pkb>=1 & pufc16_pkb<=4)		// to Agriculture
+	replace 	industrycat10=2 if (pufc16_pkb>=5 & pufc16_pkb<=9)		// to Mining
+	replace 	industrycat10=3 if (pufc16_pkb>=10 & pufc16_pkb<=33)	// to Manufacturing
+	replace 	industrycat10=4 if (pufc16_pkb>=35 & pufc16_pkb<=39)	// to Public utility
+	replace 	industrycat10=5 if (pufc16_pkb>=41 &  pufc16_pkb<=43)	// to Construction
+	replace 	industrycat10=6 if (pufc16_pkb>=45 & pufc16_pkb<=47) | (pufc16_pkb>=55 & pufc16_pkb<=56)	// to Commerce
+	replace 	industrycat10=7 if (pufc16_pkb>=49 & pufc16_pkb<=53)| (pufc16_pkb>=58 & pufc16_pkb<=63) // to Transport/coms
+	replace 	industrycat10=8 if (pufc16_pkb>=64 & pufc16_pkb<=82) 	// to financial/business services
+	replace 	industrycat10=9 if (pufc16_pkb==84) 				// to public administration
+	replace 	industrycat10=10 if  (pufc16_pkb>=91 & pufc16_pkb<=99) // to other
+	replace 	industrycat10=10 if industrycat10==. & pufc16_pkb!=.
+
 
 	label var 		industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de 			lblindustrycat10 	///
@@ -988,37 +1022,35 @@ foreach v of local ed_var {
 
 
 *<_occup_orig_>
-	gen 			occup_orig = procc
+	gen 			occup_orig = pufc14_procc
 	label var 		occup_orig "Original occupation record primary job 7 day recall"
-	replace 		occup_orig="" if lstatus!=1 			// restrict universe to employed only
-	replace 		occup_orig="" if age < minlaborage	// restrict universe to working age
+	replace 		occup_orig=. if lstatus!=1 			// restrict universe to employed only
+	replace 		occup_orig=. if age < minlaborage	// restrict universe to working age
 *</_occup_orig_>
 
 
 *<_occup_isco_>
-* incoming data only has 2-digit, so cannot be mapped to isco
-	gen 			occup_isco = .
-	label 			var occup_isco "ISCO code of primary job 7 day recall"
-	replace 		occup_isco=. if lstatus!=1 		// restrict universe to employed only
-	replace 		occup_isco=. if age < minlaborage	// restrict universe to working age
+* in 2018, raw variable is numeric, 2-digits, so isco conversion not possible
+
+	gen occup_isco = . 	// occup_isco already generated above in submodule
+	label var 	occup_isco "ISIC code of primary job 7 day recall"
+
+
 
 *</_occup_isco_>
 
 
 *<_occup_>
-	* Convert primary occupation to numeric
-	/*This converts all alpha codes to numeric, ok since no indication as to what they are*/
-	destring 		procc, generate(procc_num) force
+	* in 2018, raw variable is numeric 2 digits only
+	/* in 2018, raw variable is numeric
+	Since there are sparse factor labels,
+	that I will have to recode these when issue #18 is resolved https://github.com/worldbank/gld/issues/18
+	I am making many temporary assumptions when I'm recoding here.*/
 
 	* generate occupation variable
-	gen 			byte occup=floor(procc_num/10)
-	recode 			occup 0 = 10	if 	procc_num==01 	// recode "armed forces" to appropriate label
-	recode 			occup 0 = 99	if 	(procc_num>=02 & procc_num <=09) ///
-							| 		(procc_num >=94 & procc_num <= 99) // recode "Not classifiable occupations"
+	gen byte occup=floor(pufc14_procc/10)							// this handles most of recoding automatically.
+	recode occup 0 = 10	if 	(pufc14_procc >=1 & pufc14_procc <=3)	// recode "armed forces" to appropriate label
 
-	/* Note that the raw variable, procc lists values, 94-99 for which there are no associated occupation
-	   codes. Given that the raw data indicate that these individauls do have valid, non-missing occupations,
-	   and that these occupations cannot be matched to our classificaitons with certainty, I have coded them as "other" */
 
 	label var 		occup "1 digit occupational classification, primary job 7 day recall"
 	la de 			lbloccup 	///
@@ -1031,6 +1063,7 @@ foreach v of local ed_var {
 					9 "Elementary occupations" ///
 					10 "Armed forces"  ///
 					99 "Others"
+
 	label values 	occup lbloccup
 	replace 		occup=. if lstatus!=1 		// restrict universe to employed only
 	replace 		occup=. if age < minlaborage	// restrict universe to working age
@@ -1051,13 +1084,19 @@ foreach v of local ed_var {
 
 
 *<_wage_no_compen_>
-	gen 			double wage_no_compen = .
+	gen 			double wage_no_compen = pufc25_pbasic
+	replace 		wage_no_compen = . if 	wage_no_compen == 99999
 	label var 		wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
 
 *<_unitwage_>
-	gen byte 		unitwage = .
+	gen byte 		unitwage = pufc24_pbasis
+	recode 			unitwage (0 1 5 6 7 = 10) /// other
+								(2 = 9) /// hourly
+								(3 = 1) /// daily
+								(4 = 5) // monthly
+
 	label var 		unitwage "Last wages' time unit primary job 7 day recall"
 	la de 			lblunitwage ///
 					1 "Daily" ///
@@ -1075,7 +1114,7 @@ foreach v of local ed_var {
 
 
 *<_whours_>
-	gen whours 		= hours
+	gen whours 		= pufc19_phours
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -1148,7 +1187,9 @@ foreach v of local ed_var {
 
 *----------8.3: 7 day reference secondary job------------------------------*
 * Since labels are the same as main job, values are labelled using main job labels
-
+/*
+2018 has no secondary job information.
+*/
 
 {
 *<_empstat_2_>
@@ -1166,6 +1207,8 @@ foreach v of local ed_var {
 
 
 *<_industry_orig_2_>
+/*no second industry variable given (the given one is for previous quarter not for second job)*/
+
 	gen 			industry_orig_2 = .
 	label var 		industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
@@ -1173,12 +1216,15 @@ foreach v of local ed_var {
 
 *<_industrycat_isic_2_>
 	gen 			industrycat_isic_2 = .
-	label var 		industrycat_isic_2 "ISIC code of secondary job 7 day recall"
+	label var 		industrycat_isic_2 "ISIC code of primary job 7 day recall"
+
+
 *</_industrycat_isic_2_>
 
 
 *<_industrycat10_2_>
-	gen byte 		industrycat10_2 = .
+/*no second industry variable given (the given one is for previous quarter not for second job)*/
+	gen byte 			industrycat10_2 = .
 	label var 		industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values 	industrycat10_2 lblindustrycat10
 *</_industrycat10_2_>
@@ -1193,14 +1239,18 @@ foreach v of local ed_var {
 
 
 *<_occup_orig_2_>
+/*no second occupation variable given (the given one is for previous quarter not for second job)*/
+
 	gen 			occup_orig_2 = .
 	label var 		occup_orig_2 "Original occupation record secondary job 7 day recall"
 *</_occup_orig_2_>
 
 
 *<_occup_isco_2_>
-	gen 			occup_isco_2 = .
-	label var 		occup_isco_2 "ISCO code of secondary job 7 day recall"
+	gen occup_isco_2 = . // occup_isco already generated above in submodule
+	label var 	occup_isco_2 "ISIC code of primary job 7 day recall"
+
+
 *</_occup_isco_2_>
 
 
@@ -1213,7 +1263,10 @@ foreach v of local ed_var {
 
 
 *<_occup_2_>
-	gen 			byte occup_2 = .
+/*no second occupation variable given (the given one is for previous quarter not for second job)*/
+
+	gen byte occup_2 = .
+
 	label var 		occup_2 "1 digit occupational classification secondary job 7 day recall"
 	label values 	occup_2 lbloccup
 *</_occup_2_>
@@ -1221,12 +1274,18 @@ foreach v of local ed_var {
 
 *<_wage_no_compen_2_>
 	gen 			double wage_no_compen_2 = .
+	replace 		wage_no_compen_2 = . if wage_no_compen_2 == 99999
 	label var 		wage_no_compen_2 "Last wage payment secondary job 7 day recall"
 *</_wage_no_compen_2_>
 
 
 *<_unitwage_2_>
 	gen byte 		unitwage_2 = .
+	recode 			unitwage (0 1 5 6 7 = 10) /// other
+								(2 = 9) /// hourly
+								(3 = 1) /// daily
+								(4 = 5) // monthly
+
 	label var 		unitwage_2 "Last wages' time unit secondary job 7 day recall"
 	label values 	unitwage_2 lblunitwage
 *</_unitwage_2_>
@@ -1366,7 +1425,6 @@ foreach v of local ed_var {
 	la de 			lblnlfreason_year 		1 "Student" 2 "Housekeeper" ///
 											3 "Retired" 4 "Disable" 5 "Other"
 	label values 	nlfreason_year 			lblnlfreason_year
-	replace 		nlfreason=. 	if lstatus!=3 		// restricts universe to non-labor force
 *</_nlfreason_year_>
 
 
@@ -1751,7 +1809,7 @@ foreach v of local ed_var {
 
 *<_njobs_>
 	*<_njobs_note>
-	* The provided njobs data appears to be inconsistent with data, so I dedicded not to include.
+	* The pufprvided njobs data appears to be inconsistent with data, so I dedicded not to include.
 	*</_njobs_note>
 
 	gen 			njobs = .

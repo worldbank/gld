@@ -147,27 +147,35 @@ read_pdf <- function(pdf_path, page_min, page_max,
     
     els <- do.call(rbind, els)
     
-    table <- els %>%
-      filter(!grepl("^p;", text)) %>% # these characters mess up the columns, must 
-      filter(!grepl("\\(", text)) %>% # remove here 
-      filter(!grepl("\\)", text)) %>% 
+    table_long <- els %>%
+      mutate(text = stringr::str_replace(text, "p", "")) %>%
+      mutate(text = stringr::str_replace(text, "^p;", "")) %>%
+      mutate(text = stringr::str_replace(text, "\\(", "")) %>%
+      mutate(text = stringr::str_replace(text, "\\)", "")) %>%
+      mutate(text = stringr::str_replace(text, "\\;", "")) %>%
+      # filter(!grepl("^p;", text)) %>% # these characters mess up the columns,
+      # filter(!grepl("\\(", text)) %>% # remove here
+      # filter(!grepl("\\)", text)) %>%
+      #filter(!grepl("\\;", text)) %>% 
       mutate(text = case_when(is.null(text) ~ NA_character_,
-                              TRUE ~ text)) 
+                              TRUE ~ text)) %>%
+      filter(!text == "")
+      
     
-    table %<>% 
+    table_wide <- table_long %>%
       group_by(y) %>%
       mutate(page_grp = cur_group_id(),
              page = page,
-             n_in_row = n()) 
+             n_in_row = n())
 
-    
+
     keys <- c("page", "page_grp", "y")
-    
+
     if (fuzzy_rows == TRUE) {
-      
+
       keys <- c("page", "page_grp", "y")
-      
-      table %<>%
+
+      table_wide %<>%
         ungroup() %>%
         mutate(nearest_y = nearest_neighbor(ref_col = y,
                                             match_tol = 3)) %>%
@@ -180,27 +188,26 @@ read_pdf <- function(pdf_path, page_min, page_max,
                n_in_row2 = n()) %>%
         arrange(page_grp2) %>%
         select(-y, -page_grp, -n_in_row) %>%
-        rename(y = y2, page_grp = page_grp2) 
-      
-      
-      
+        rename(y = y2, page_grp = page_grp2)
+
+
+
     }
-    
-    
-      
-    table %<>%
+
+
+
+    table_wide %<>%
       ungroup() %>%
       group_by(page, page_grp) %>%
       pivot_wider(names_from = "varname",
                   values_from = "text",
-                  id_cols = keys) 
+                  id_cols = keys)
                   #id_cols = all_of(keys)) # this should leave all cols as ids?
-                # will this id_cols work for both situations where fuzzy_rows is both 
+                # will this id_cols work for both situations where fuzzy_rows is both
                 # true and false since in FALSE situation only page will exist? should
                 # with any_of
 
-    
-    return(table)
+    return(table_wide)
 
   }
   
