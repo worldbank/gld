@@ -28,7 +28,7 @@ if (FALSE) {load(PHL_labels)}
 
 # get functions
 source(file.path(code, "Global/read_pdf_table.R"))
-source(file.path(code, "Global/best_matches.R"))
+source(file.path(code, "Global/correspondance.R"))
 
 # pdf file path
 psic94_path <- file.path(PHL, "PHL_docs/International Codes/PSA_PSIC_1994.pdf")
@@ -340,32 +340,32 @@ assertthat::assert_that( sum(str_length(isco12_clean$submajor) != 3, na.rm=TRUE)
 
 
 ## Determine Best Matches ----
-match_isic94_list <- best_match(df = isic94_clean, 
+match_isic94_list <- corresp(df = isic94_clean, 
                                 country_code = class, 
                                 international_code = isic3_1,
                                 str_pad = F,
                                 check_matches = F)
 
-match_isic94_table <- match_isic94_list[[1]] %>% distinct()
+match_isic94_table <- match_isic94_list[[1]] 
 
 
 
-match_isic09_list <- best_match(df = isic09_clean,
+match_isic09_list <- corresp(df = isic09_clean,
                                 country_code = class,
                                 international_code = isic4,
                                 str_pad = F, check_matches = F)
 
-match_isic09_table <- match_isic09_list[[1]] %>% distinct()
+match_isic09_table <- match_isic09_list[[1]] 
 
 
 
-match_isco12_list <- best_match(df = isco12_clean, 
+match_isco12_list <- corresp(df = isco12_clean, 
                                 minor, 
                                 isco08, 
                                 str_pad = F,
                                 check_matches = F)
 
-match_isco12_table <- match_isco12_list[[1]] %>% distinct()
+match_isco12_table <- match_isco12_list[[1]]
   
 
 
