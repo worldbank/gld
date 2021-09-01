@@ -173,10 +173,10 @@ results <- tibble(
 )
 
 gg <- ggplot(concord, aes(match)) +
-  geom_freqpoly(stat = "density") +
+  geom_density() +
   scale_x_continuous(n.breaks = 10, limits = c(0,100)) +
   theme_minimal() +
-  labs(x = "Match Score", y = "Density", title = "Distribution of Match Scores")
+  labs(x = "Match Score", y = "Relative Density", title = "Distribution of Match Scores")
 
 list <- list(concord, results, gg) 
    
