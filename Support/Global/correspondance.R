@@ -41,7 +41,8 @@ corresp <- function(df,
     mutate(
       corresp_pct = round((instance/sum)*100,1),
       dist = stringdist::stringsim({{ country_code }}, {{ international_code }}),
-      str_dist = round((dist)*100,1)) %>%
+      str_dist = round((dist)*100,1),
+      match_stage = 4) %>%
     filter(corresp_pct == 100)
 
   # Review
@@ -74,7 +75,8 @@ corresp <- function(df,
    mutate(sum = sum(instance)) %>%
    ungroup() %>%
    mutate(
-     corresp_pct = round((instance/sum)*100,1)) %>%
+     corresp_pct = round((instance/sum)*100,1),
+     match_stage = 3) %>%
    filter(corresp_pct == 100)
 
  # Review
@@ -107,7 +109,8 @@ corresp <- function(df,
       mutate(sum = sum(instance)) %>%
       ungroup() %>%
       mutate(
-        corresp_pct = round((instance/sum)*100,1)) %>%
+        corresp_pct = round((instance/sum)*100,1),
+        match_stage = 2) %>%
     group_by({{ country_code }}) %>%
       slice_max(corresp_pct) %>%
       sample_n(1)
@@ -121,7 +124,8 @@ corresp <- function(df,
       mutate(sum = sum(instance)) %>%
       ungroup() %>%
       mutate(
-        corresp_pct = round((instance/sum)*100,1)) 
+        corresp_pct = round((instance/sum)*100,1),
+        match_stage = 2) 
   }
 
 
@@ -136,8 +140,9 @@ corresp <- function(df,
 # Step 5 - append + ggplot ----------------------------------------------
 
 
+
 concord <- bind_rows(match_1, match_2, match_3) %>%
-  select( {{ country_code }}, {{ international_code }}, corresp_pct) %>%
+  select( {{ country_code }}, {{ international_code }}, corresp_pct, match_stage) %>%
   rename(match = corresp_pct)
 
   if (str_pad == TRUE) {
