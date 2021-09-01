@@ -1142,7 +1142,7 @@ foreach v of local ed_var {
 	merge 		m:1 ///
 				class ///
 				using `isic_key' ///
-				, generate(t_hours_annual linc_nc laborincome isic_mer* isco_mer*ge_`n') ///
+				, generate(isic_merge_`n') ///
 				keep(master match) // "left join"; remove obs that don't match from using
 				* the string variable in isic4 will is industrycat_isic
 
@@ -2342,7 +2342,7 @@ quietly{
 			industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year ///
 			wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year ///
 			firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year ///
-			t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
+			t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome isic_mer* isco_mer*
 
 *</_% KEEP VARIABLES - ALL_>
 
