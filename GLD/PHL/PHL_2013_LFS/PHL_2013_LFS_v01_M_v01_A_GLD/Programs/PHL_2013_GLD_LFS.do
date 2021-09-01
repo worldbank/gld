@@ -989,7 +989,7 @@ foreach v of local ed_var {
 	merge 		m:1 ///
 				class ///
 				using `isic_key' ///
-				, generate(isic_merge_`n') ///
+				, generate(t_hours_annual linc_nc laborincome isic_mer* isco_mer*ge_`n') ///
 				keep(master match) // "left join"; remove obs that don't match from using
 				* the string variable in isic4 will is industrycat_isic
 
