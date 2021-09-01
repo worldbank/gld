@@ -66,13 +66,14 @@ corresp <- function(df,
  # here, determine the distance on original 4 digit and filter based on 3 digit. This way
  # we have a record of match to original isco code
  match_2 <- df_2 %>%
+   mutate(
+     "{{international_code}}" := stringr::str_sub({{international_code}}, 1,3)) %>%
    count({{ country_code }}, {{ international_code }}) %>%
    rename(instance = n) %>%
    group_by({{ country_code }}) %>%
    mutate(sum = sum(instance)) %>%
    ungroup() %>%
    mutate(
-     "{{international_code}}" := stringr::str_sub({{international_code}}, 1,3), #overwrite?
      corresp_pct = round((instance/sum)*100,1)) %>%
    filter(corresp_pct == 100)
 
@@ -94,17 +95,18 @@ corresp <- function(df,
     filter(!({{ country_code }} %in% list2))
 
 
- # Match by maximum, a country_code ount for cases where df_3 may be null
+ # Match by maximum, a country_code count for cases where df_3 may be null
   if (dim(df_3)[1] > 0) {
     set.seed(61035)
     match_3 <- df_3 %>%
+      mutate(
+        "{{international_code}}" := stringr::str_sub({{international_code}}, 1,2)) %>%
       count({{ country_code }}, {{ international_code }}) %>%
       rename(instance = n) %>%
       group_by({{ country_code }}) %>%
       mutate(sum = sum(instance)) %>%
       ungroup() %>%
       mutate(
-        "{{international_code}}" := stringr::str_sub({{international_code}}, 1,2), #overwrite?
         corresp_pct = round((instance/sum)*100,1)) %>%
     group_by({{ country_code }}) %>%
       slice_max(corresp_pct) %>%
@@ -112,13 +114,13 @@ corresp <- function(df,
   } else {
     set.seed(61035)
     match_3 <- df_3 %>%
+      mutate("{{international_code}}" := stringr::str_sub({{international_code}}, 1,2)) %>%
       count({{ country_code }}, {{ international_code }}) %>%
       rename(instance = n) %>%
       group_by({{ country_code }}) %>%
       mutate(sum = sum(instance)) %>%
       ungroup() %>%
       mutate(
-        "{{international_code}}" := stringr::str_sub({{international_code}}, 1,2), #overwrite?
         corresp_pct = round((instance/sum)*100,1)) 
   }
 
