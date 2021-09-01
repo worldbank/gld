@@ -35,10 +35,14 @@ corresp <- function(df,
   match_1 <- df %>%
     count({{ country_code }}, {{ international_code }}) %>%
     rename(instance = n) %>%
+    group_by({{ country_code }}) %>%
+    mutate(sum = sum(instance)) %>%
+    ungroup() %>%
     mutate(
+      corresp_pct = round((instance/sum)*100,1),
       dist = stringdist::stringsim({{ country_code }}, {{ international_code }}),
-      pct = round((dist)*100,1)) %>%
-    filter(pct == 100)
+      str_dist = round((dist)*100,1)) %>%
+    filter(corresp_pct == 100)
 
   # Review
  done_1 <- match_1 %>% select({{country_code}}) %>% n_distinct() 
@@ -49,30 +53,28 @@ corresp <- function(df,
 
 
  # Step 3 - Match at 3 digits ------------------------------------
-  list <- match_1 %>% 
-   select({{country_code}}) %>% 
+  list <- match_1 %>%
+   select({{country_code}}) %>%
    pull()
 
  # Reduce df to cases not yet matched, reduce international code to 3 digits
    df_2 <- df %>%
-     filter((!{{ country_code }} %in% list)) 
+     filter((!{{ country_code }} %in% list))
 
 
  # Match first 3 digits of country code correspond to first three of international code.
- # here, determine the distance on original 4 digit and filter based on 3 digit. This way 
+ # here, determine the distance on original 4 digit and filter based on 3 digit. This way
  # we have a record of match to original isco code
  match_2 <- df_2 %>%
    count({{ country_code }}, {{ international_code }}) %>%
    rename(instance = n) %>%
+   group_by({{ country_code }}) %>%
+   mutate(sum = sum(instance)) %>%
+   ungroup() %>%
    mutate(
-    "{{international_code}}" := stringr::str_sub({{international_code}}, 1,3), #overwrite?
-     cc3 = stringr::str_sub({{ country_code }}, 1, 3),
-     dist_cc3 = stringdist::stringsim(cc3, {{ international_code }}),
-     dist = stringdist::stringsim({{ country_code }}, {{ international_code }}),
-     pct = round((dist)*100,1)
-     ) %>%
-   filter(dist_cc3 == 1) %>%
-   select(-cc3, -dist_cc3)
+     "{{international_code}}" := stringr::str_sub({{international_code}}, 1,3), #overwrite?
+     corresp_pct = round((instance/sum)*100,1)) %>%
+   filter(corresp_pct == 100)
 
  # Review
  done_2 <- select(match_2, {{country_code}}) %>% n_distinct()
@@ -80,16 +82,16 @@ corresp <- function(df,
  rest_2 <- df_dst - done_1 - done_2
 
 
-  
+
 
 # Step 4 - match at 2 digits ------------------------------------
-  list2 <- match_2 %>% 
+  list2 <- match_2 %>%
    select({{country_code}}) %>%
    pull()
 
 # Reduce df to cases not yet matched, reduce international code to 2 digits
   df_3 <- df_2 %>%
-    filter(!({{ country_code }} %in% list2)) 
+    filter(!({{ country_code }} %in% list2))
 
 
  # Match by maximum, a country_code ount for cases where df_3 may be null
@@ -98,26 +100,26 @@ corresp <- function(df,
     match_3 <- df_3 %>%
       count({{ country_code }}, {{ international_code }}) %>%
       rename(instance = n) %>%
+      group_by({{ country_code }}) %>%
+      mutate(sum = sum(instance)) %>%
+      ungroup() %>%
       mutate(
-        "{{international_code}}" := stringr::str_sub({{international_code}}, 1,2),
-        cc2 = stringr::str_sub({{ country_code }}, 1, 2),
-        dist_cc2 = stringdist::stringsim(cc2, {{ international_code }}),
-        dist = stringdist::stringsim({{ country_code }}, {{ international_code }}),
-        pct = round((dist)*100,1)) %>%
+        "{{international_code}}" := stringr::str_sub({{international_code}}, 1,2), #overwrite?
+        corresp_pct = round((instance/sum)*100,1)) %>%
     group_by({{ country_code }}) %>%
-      slice_max(pct) %>%
+      slice_max(corresp_pct) %>%
       sample_n(1)
   } else {
     set.seed(61035)
     match_3 <- df_3 %>%
       count({{ country_code }}, {{ international_code }}) %>%
       rename(instance = n) %>%
+      group_by({{ country_code }}) %>%
+      mutate(sum = sum(instance)) %>%
+      ungroup() %>%
       mutate(
-        "{{international_code}}" := stringr::str_sub({{international_code}}, 1,2),
-        cc2 = stringr::str_sub({{ country_code }}, 1, 2),
-        dist_cc2 = stringdist::stringsim(cc2, {{ international_code }}),
-        dist = stringdist::stringsim({{ country_code }}, {{ international_code }}),
-        pct = round((dist)*100,1))
+        "{{international_code}}" := stringr::str_sub({{international_code}}, 1,2), #overwrite?
+        corresp_pct = round((instance/sum)*100,1)) 
   }
 
 
@@ -127,44 +129,44 @@ corresp <- function(df,
   rest_3 <- df_dst - done_1 - done_2 - done_3
 
   n_dist <- df %>% select({{ country_code }}) %>% n_distinct()
-  
+
 
 # Step 5 - append + ggplot ----------------------------------------------
 
 
 concord <- bind_rows(match_1, match_2, match_3) %>%
-  select( {{ country_code }}, {{ international_code }}, pct) %>%
-  rename(match = pct)
-  
+  select( {{ country_code }}, {{ international_code }}, corresp_pct) %>%
+  rename(match = corresp_pct)
+
   if (str_pad == TRUE) {
     concord <- concord %>%
-      mutate( "{{ country_code }}" := str_pad({{ country_code }}, 
+      mutate( "{{ country_code }}" := str_pad({{ country_code }},
                                               4, pad = "0", side = "right"),
-              "{{ international_code }}" := str_pad({{ international_code }}, 
+              "{{ international_code }}" := str_pad({{ international_code }},
                                                     4, pad = "0", side = "right"))
-    
+
   }
-  
+
   if (check_matches == TRUE) {
-    
+
     # check that every unique value returned in country code is contained in input vector
-    input.vector <- df %>% 
+    input.vector <- df %>%
       select({{ country_code }}) %>%
       pull()
-    
+
     concord_check <- concord %>%
       mutate(match_input = {{country_code}} %in% input.vector)
-    
+
     assertthat::assert_that(sum(concord_check$match_input) == nrow(concord_check))
-    
+
     # check that the number of unique values between innput and returned is the same
     n_out <- concord %>% select({{ country_code }}) %>% n_distinct()
     n_in  <- df %>% select({{ country_code }}) %>% n_distinct()
-    
+
     assertthat::assert_that(n_in == n_out)
-    
+
   }
-  
+
 results <- tibble(
   match_no = c(1,2,3),
   obs_matched = c(done_1, done_2, done_3),
@@ -178,8 +180,8 @@ gg <- ggplot(concord, aes(match)) +
   theme_minimal() +
   labs(x = "Match Score", y = "Relative Density", title = "Distribution of Match Scores")
 
-list <- list(concord, results, gg) 
-   
+list <- list(concord, results, gg)
+
 
 
 return(list)
