@@ -40,10 +40,10 @@
 
 
 ** DIRECTORY
-	local path "Z:/GLD-Harmonization/5820208_AQ/MEX/MEX_20209_ENOE"
+	local path "Z:/GLD-Harmonization/582018_AQ/MEX/MEX_2020_ENOE"
 
 ** LOG FILE
-	log using "`path'/MEX_20209_ENOE_v01_M_v01_A_I2D2/Programs/MEX_20209_I2D2_ENOE.log", replace
+	log using "`path'/MEX_2020_ENOE_v01_M_v01_A_I2D2/Programs/MEX_2020_I2D2_ENOE.log", replace
 
 /*****************************************************************************************************
 *                                                                                                    *
