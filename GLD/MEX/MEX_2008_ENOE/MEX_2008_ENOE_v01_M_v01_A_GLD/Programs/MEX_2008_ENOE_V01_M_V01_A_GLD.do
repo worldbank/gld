@@ -245,15 +245,12 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2008_ENOE\MEX_2008_ENO
 {
 
 *<_urban_>
-	gen byte urban=. 
-	replace urban=1 if t_loc==1
-	replace urban=1 if t_loc==2
-	replace urban=0 if t_loc==3
-	replace urban=0 if t_loc==4
-	label var urban "Location is urban"
-	la de lblurban 1 "Urban" 0 "Rural"
-	label values urban lblurban
-
+	gen byte urban=.  
+ 	replace urban=1 if inrange(t_loc,1,3)
+ 	replace urban=0 if t_loc==4 
+ 	label var urban "Location is urban" 
+ 	la de lblurban 1 "Urban" 0 "Rural" 
+ 	label values urban lblurban 
 *</_urban_>
 
 *<_subnatid1_>
