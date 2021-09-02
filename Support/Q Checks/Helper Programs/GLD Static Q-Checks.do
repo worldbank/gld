@@ -54,7 +54,7 @@ global overall_count = `r(N)'
 local current_filename "`c(filename)'"
 local last_slash = strrpos("`current_filename'", "\")
 local current_filename = substr("`current_filename'", `last_slash' + 1, .)
-local check = regexm("`current_filename'", "^[a-zA-Z][a-zA-Z][a-zA-Z]_[0-9][0-9][0-9][0-9]_[a-zA-Z0-9-]+_[vV][0-9][0-9]_M_[vV][0-9][0-9]_A_[a-zA-Z]+\.dta")
+local check = regexm("`current_filename'", "^[a-zA-Z][a-zA-Z][a-zA-Z]_[0-9][0-9][0-9][0-9]_[a-zA-Z0-9-]+_[vV][0-9][0-9]_M_[vV][0-9][0-9]_A_[a-zA-Z][a-zA-Z][a-zA-Z]_[a-zA-Z]+\.dta")
 if `check' == 0 { // filename does not follow convention
 	post `memhold' ("Overall") ("FileName") ("Filename being checked does not follow naming convention") (.) (1)
 }
@@ -110,7 +110,7 @@ foreach var of global numeric_vars {
 foreach var of global string_vars {
 	cap confirm string variable `var'
 	if _rc != 0 & _rc != 111 { // If neither string nor absent in the dataset
-		post `memhold' ("Overall") ("`var'") ("A numeric var is not numeric") (.) (1)
+		post `memhold' ("Overall") ("`var'") ("A string var is not numeric") (.) (1)
 	}
 }
 
@@ -249,6 +249,17 @@ if _rc == 0 { // if var exists since if not captured in 1.1
 		post `memhold' ("Survey & ID") ("pid") ("pid is not unique. Distinct to total ratio ->") (`pid_unique_ratio') (1)
 	} // end if pid not unique
 } // end if _rc == 0
+
+*----------2.5: isic, isco, isced versions are strings w/o spaces
+foreach var of varlist isced_version isco_version isic_version {
+	cap confirm variable `var'
+	if _rc == 0 { // if var exists since if not captured in 1.1
+		qui : count if !ustrregexm(test, "^(isco_1988|isco_2008|isic_2|isic_3\.1|isic_4|isced_1997|isced_2011)$")
+		if `r(N)' > 0 { // not defined as in the possible options
+			post `memhold' ("Survey & ID") ("`var'") ("Variable `var' is not correctly defined") (.) (1)
+		} // end if not correctly defined
+	} // end if _rc == 0
+}
   
 /*==================================================
               3: Consistency Geography Module
