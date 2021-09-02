@@ -1113,7 +1113,9 @@ foreach v of local ed_var {
 
 *<_industrycat_isic_>
 	/* The key that matches industry codes is in string format to maintain leading/trailing
-		zeros, so we will change the format here to string if necessary */
+		zeros, so we will change the format here to string if necessary.
+
+		Note that the isic match will only be valid for wave 2 or April round */
 
 	loc matchvar   	pufc16_pkb
 	loc n 			1
@@ -1137,6 +1139,8 @@ foreach v of local ed_var {
 	gen class = `matchvar'
 	tostring 	class ///
 				, format(`"%04.0f"') replace
+
+	replace 	class = "" 	if wave != "Q2" 	// only match second wave
 
 
 	merge 		m:1 ///
@@ -1271,6 +1275,7 @@ foreach v of local ed_var {
 	tostring 	unit ///
 				, format(`"%04.0f"') replace
 
+	replace 	unit = "" 	if wave != "Q2" 	// only match second wave
 
 	merge 		m:1 ///
 				unit ///
@@ -1506,6 +1511,7 @@ foreach v of local ed_var {
 	tostring 	class ///
 				, format(`"%04.0f"') replace
 
+	replace 	class = "" 	if wave != "Q2" 	// only match second wave
 
 	merge 		m:1 ///
 				class ///
@@ -1627,6 +1633,7 @@ foreach v of local ed_var {
 	tostring 	unit ///
 				, format(`"%04.0f"') replace
 
+	replace 	unit = "" 	if wave != "Q2" 	// only match second wave
 
 	merge 		m:1 ///
 				unit ///
