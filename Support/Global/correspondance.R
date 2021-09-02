@@ -190,10 +190,9 @@ gg_match <- ggplot(concord, aes(match)) +
   labs(x = "Match Score", y = "Relative Density", title = "Distribution of Match Scores")
 
 gg_stage <- ggplot(concord, aes(match_stage)) +
-  geom_freqpoly()  
-  #scale_x_continuous(breaks = c(4,3,2), limits = c(4,1)) 
-  #theme_minimal() +
-  #labs(x = "Match Stage", y = "Number of Matches", title = "Distribution of Matches in Match Stages")
+  geom_freqpoly() + 
+  theme_minimal() +
+  labs(x = "Match Stage", y = "Number of Matches", title = "Distribution of Matches in Match Stages")
 
 list <- list(concord, results, gg_match, gg_stage)
 

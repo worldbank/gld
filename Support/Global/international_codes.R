@@ -335,7 +335,7 @@ isco12_clean <- psoc12_codes %>%
     distinct()
 
 
-assertthat::assert_that( sum(str_length(isco12_clean$submajor) != 3, na.rm=TRUE) == 0 ) # should be 0 or close to
+assertthat::assert_that( sum(str_length(isco12_clean$submajor) != 2, na.rm=TRUE) == 0 ) # should be 0 or close to
 
 
 
@@ -362,7 +362,7 @@ match_isic09_table <- match_isic09_list[[1]] %>%
 
 
 match_isco12_list <- corresp(df = isco12_clean, 
-                                minor, 
+                                unit, 
                                 isco08, 
                                 str_pad = FALSE,
                                 check_matches = F)
