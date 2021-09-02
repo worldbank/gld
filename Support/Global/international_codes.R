@@ -289,9 +289,9 @@ isco_order <- c("submajor", "minor", "unit", "psoc92", "isco08")
 
 psoc12_codes <- psoc12_codes_raw %>%
   mutate(
-    minor    = case_when(is.na(minor)  ~ str_sub(unit, 1,4),
+    minor    = case_when(is.na(minor)  ~ str_sub(unit, 1,3),
                       TRUE          ~ minor),
-    submajor = str_sub(minor, 1,3)) %>%
+    submajor = str_sub(minor, 1,2)) %>%
   select(y, page_grp, page, submajor, minor, unit, psoc92, isco08)
 
 
