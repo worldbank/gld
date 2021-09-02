@@ -379,7 +379,7 @@ if (TRUE) {
 save(isic94_codes_raw, isic94_codes, isic94_leftover, isic94_clean, psic94_path,
      isic09_codes_raw, isic09_codes, isic09_leftover, isic09_clean, psic09_path, 
      psoc12_codes_raw, psoc12_codes, isco12_leftover, isco12_clean, psoc12_path,
-     read_pdf, UNisic3,
+     read_pdf, UNisic3, corresp,
      match_isic94_list, match_isic94_table,
      match_isic09_list, match_isic09_table, 
      match_isco12_list, match_isco12_table,
