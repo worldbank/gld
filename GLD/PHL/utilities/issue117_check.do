@@ -25,7 +25,7 @@ foreach y in 2012 2013 2017 {
   }
 
   foreach var of local touse {
-    tab `var'
+    tab `var' // only provides global estimate, not exactly what we want, need to specify if "original var != ."
   }
 
   di "------------------------------------------"

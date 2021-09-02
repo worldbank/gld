@@ -1267,13 +1267,13 @@ foreach v of local ed_var {
 
 	// merge sub-module with isco key
 
-	gen minor = `matchvar'
-	tostring 	minor ///
+	gen unit = `matchvar'
+	tostring 	unit ///
 				, format(`"%04.0f"') replace
 
 
 	merge 		m:1 ///
-				minor ///
+				unit ///
 				using `isco_key' ///
 				, generate(isco_merge_`n') ///
 				keep(master match) // "left join"; remove obs that don't match from using
@@ -1289,7 +1289,7 @@ foreach v of local ed_var {
 	destring 	isco08_`n' ///
 				, generate(occup_isco)
 
-	drop 		minor 				// no longer needed, maintained in matchvar
+	drop 		unit 				// no longer needed, maintained in matchvar
 
 
 
@@ -1623,13 +1623,13 @@ foreach v of local ed_var {
 
 	// merge sub-module with isco key
 
-	gen minor = `matchvar'
-	tostring 	minor ///
+	gen unit = `matchvar'
+	tostring 	unit ///
 				, format(`"%04.0f"') replace
 
 
 	merge 		m:1 ///
-				minor ///
+				unit ///
 				using `isco_key' ///
 				, generate(isco_merge_`n') ///
 				keep(master match) // "left join"; remove obs that don't match from using
@@ -1645,7 +1645,7 @@ foreach v of local ed_var {
 	destring 	isco08_`n' ///
 				, generate(occup_isco_2)
 
-	drop 		minor 				// no longer needed, maintained in matchvar
+	drop 		unit 				// no longer needed, maintained in matchvar
 
 
 
