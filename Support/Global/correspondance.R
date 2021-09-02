@@ -8,7 +8,7 @@
 corresp <- function(df, 
                    country_code,
                    international_code,
-                   str_pad = FALSE,
+                   pad_vars = NULL,
                    check_matches = FALSE
                    ) {
   
@@ -147,13 +147,16 @@ concord <- bind_rows(match_1, match_2, match_3) %>%
   select( {{ country_code }}, {{ international_code }}, corresp_pct, match_stage, contains("orig")) %>%
   rename(match = corresp_pct)
 
-  if (str_pad == TRUE) {
-    concord <- concord %>%
-      mutate( "{{ country_code }}" := str_pad({{ country_code }},
-                                              4, pad = "0", side = "right"),
-              "{{ international_code }}" := str_pad({{ international_code }},
-                                                    4, pad = "0", side = "right"))
+  if (!is.null(pad_vars)) {
+    # concord <- concord %>%
+    #   mutate( "{{ country_code }}" := str_pad({{ country_code }},
+    #                                           4, pad = "0", side = "right"),
+    #           "{{ international_code }}" := str_pad({{ international_code }},
+    #                                                 4, pad = "0", side = "right"))
 
+    concord <- concord %>%
+      mutate(across({{ pad_vars }}), ~ str_pad( .x, 4, pad = "0", side = "right"))
+    
   }
 
   if (check_matches == TRUE) {
