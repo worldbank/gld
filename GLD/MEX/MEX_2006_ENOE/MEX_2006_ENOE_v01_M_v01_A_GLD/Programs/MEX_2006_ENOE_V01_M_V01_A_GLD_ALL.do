@@ -3,44 +3,44 @@
 	0: GLD Harmonization Preamble
 ==============================================================================================%%*/
 
-/* ----------------------------------------------------------------------- 
+/* -----------------------------------------------------------------------
 
-<_Program name_>				[MEX_2016_ENOE_V01_M_v01_A_GLD.do] </_Program name_> 
-<_Application_>					[STATA] <_Application_> 
-<_Author(s)_>					[The World Bank Jobs Group] </_Author(s)_> 
-<_Date created_>				2021-04-01 </_Date created_> 
+<_Program name_>				[MEX_2006_ENOE_V01_M_v01_A_GLD_ALL.do] </_Program name_>
+<_Application_>					[STATA] <_Application_>
+<_Author(s)_>					[The World Bank Jobs Group] </_Author(s)_>
+<_Date created_>				2021-04-01 </_Date created_>
 
-------------------------------------------------------------------------- 
+-------------------------------------------------------------------------
 
-<_Country_>						[Mexico (MEX)] </_Country_> 
-<_Survey Title_>				[Encuesta Nacional de Ocupación y Empleo] </_Survey Title_> 
-<_Survey Year_>					[2016] </_Survey Year_> 
-<_Study ID_>					[Microdata Library ID if present] </_Study ID_> 
-<_Data collection from_>		[01/2016] </_Data collection from_> 
-<_Data collection to_>			[05/2016] </_Data collection to_> 
-<_Source of dataset_> 			[Mexico NSO] </_Source of dataset_> 
-<_Sample size (HH)_> 			[104,809] </_Sample size (HH)_> 
-<_Sample size (IND)_> 			[383,381] </_Sample size (IND)_> 
-<_Sampling method_> 			[ El tipo de muestreo utilizado es probabilístico, bietápico, estratificado y por conglomerados.] </_Sampling method_> 
-<_Geographic coverage_> 		[Los niveles geograficos usados en la encuesta de México comienzan en estados siguen con ciudades autorrepresentadas y terminan con municipios de las ciudades autorrepresentadas. https://www.inegi.org.mx/contenidos/productos/prod_serv/contenidos/espanol/bvinegi/productos/metodologias/est/cobertura.pdf] </_Geographic coverage_> 
-<_Currency_> 					[Pesos] </_Currency_> 
+<_Country_>						[Mexico (MEX)] </_Country_>
+<_Survey Title_>				[Encuesta Nacional de Ocupación y Empleo] </_Survey Title_>
+<_Survey Year_>					[2006] </_Survey Year_>
+<_Study ID_>					[Microdata Library ID if present] </_Study ID_>
+<_Data collection from_>		[01/2006] </_Data collection from_>
+<_Data collection to_>			[05/2006] </_Data collection to_>
+<_Source of dataset_> 			[Mexico NSO] </_Source of dataset_>
+<_Sample size (HH)_> 			[104,857] </_Sample size (HH)_>
+<_Sample size (IND)_> 			[411,737] </_Sample size (IND)_>
+<_Sampling method_> 			[ El tipo de muestreo utilizado es probabilístico, bietápico, estratificado y por conglomerados.] </_Sampling method_>
+<_Geographic coverage_> 		[Los niveles geograficos usados en la encuesta de México comienzan en estados siguen con ciudades autorrepresentadas y terminan con municipios de las ciudades autorrepresentadas. https://www.inegi.org.mx/contenidos/productos/prod_serv/contenidos/espanol/bvinegi/productos/metodologias/est/cobertura.pdf] </_Geographic coverage_>
+<_Currency_> 					[Pesos] </_Currency_>
 
------------------------------------------------------------------------ 
+-----------------------------------------------------------------------
 
-<_ICLS Version_>				[ICLS-18] </_ICLS Version_> 
-<_ISCED Version_>				[ISCED 2011] </_ISCED Version_>  
-<_ISCO Version_>				[ISCO 08] </_ISCO Version_> 
-<_OCCUP National_>				[Sinco 2011] </_OCCUP National_>  
-<_ISIC Version_>				[Rev.4] </_ISIC Version_> 
-<_INDUS National_>				[SCIAN 2013] </_INDUS National_> 
+<_ICLS Version_>				[ICLS 13] </_ICLS Version_>
+<_ISCED Version_>				[ISCED 1997] </_ISCED Version_>
+<_ISCO Version_>				[ISCO-88] </_ISCO Version_>
+<_OCCUP National_>				[CMO I & II 1998] </_OCCUP National_>
+<_ISIC Version_>				[Rev. 3.1] </_ISIC Version_>
+<_INDUS National_>				[SCIAN 2002] </_INDUS National_>
 
------------------------------------------------------------------------ 
-<_Version Control_> 
+-----------------------------------------------------------------------
+<_Version Control_>
 
 * Date: [2021-04-D1] - [Check code and input variables]
 * Date: [YYYY-MM-DD] - [Description of changes]
 
-</_Version Control_> 
+</_Version Control_>
 
 -------------------------------------------------------------------------*/
 
@@ -56,22 +56,23 @@ set more off
 set mem 800m
 
 *----------1.2: Set directories------------------------------*
-local path_in "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2016_ENOE\MEX_2016_ENOE_v01_M\Data\Stata"
-local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2016_ENOE\MEX_2016_ENOE_v01_M_v01_A_GLD\Data\Harmonized"
+
+local path_in "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2006_ENOE\MEX_2006_ENOE_v01_M\Data\Stata"
+local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2006_ENOE\MEX_2006_ENOE_v01_M_v01_A_GLD\Data\Harmonized"
 
 *----------1.3: Database assembly------------------------------*
 
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
-* harmonized output in a single file	
-	use "`path_in'\VIVT116.dta",clear
+* harmonized output in a single file
+	use "`path_in'\VIVT106.dta",clear
 	drop p1-p3
 	destring loc mun est ageb t_loc cd_a upm d_sem n_pro_viv ent con v_sel n_ent per, replace
-	merge 1:m ent con v_sel using "`path_in'\HOGT116.dta", nogen
-	merge 1:m ent con v_sel n_hog using "`path_in'\SDEMT116.dta"
+	merge 1:m ent con v_sel using "`path_in'\HOGT106.dta", nogen
+	merge 1:m ent con v_sel n_hog using "`path_in'\SDEMT106.dta"
 	drop if _merge==1
 	drop _merge
-	merge 1:1 ent con v_sel n_hog n_ren using "`path_in'\COE1T116.dta", nogen
-	merge 1:1 ent con v_sel n_hog n_ren using "`path_in'\COE2T116.dta", nogen
+	merge 1:1 ent con v_sel n_hog n_ren using "`path_in'\COE1T106.dta", nogen
+	merge 1:1 ent con v_sel n_hog n_ren using "`path_in'\COE2T106.dta", nogen
 	keep if r_pre==0 & inlist(c_res,1,3)
 	tostring (ent v_sel n_hog n_ren h_mud), gen(ent_str v_sel_str n_hog_str n_ren_str h_mud_str) format(%02.0f)
 	tostring con, replace
@@ -82,38 +83,35 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2016_ENOE\MEX_2016_ENO
 	replace d_mes=. if d_mes == 4 | d_mes == 5 | d_mes == 12
 	tab d_mes, missing
 
-*ISIC	
+*ISIC
 ***first job
 	rename scian scian_orig
 	tostring p4a, gen(scian)
-	merge m:1 scian using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2016_ENOE\MEX_2016_ENOE_v01_M\Data\Stata\SCIAN_13_ISIC_4.dta", keep(master match) nogen
+	merge m:1 scian using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2006_ENOE\MEX_2006_ENOE_v01_M\Data\Stata\SCIAN_02_ISIC_3.1.dta", keep(master match) nogen
 *Note: rename necessary to allow for the second job code to generate a new cmo for the merge
 	rename scian scian_1
 	rename isic isic_1
 ***second job
 	tostring p7c, gen(scian)
-	merge m:1 scian using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2016_ENOE\MEX_2016_ENOE_v01_M\Data\Stata\SCIAN_13_ISIC_4.dta", keep(master match) nogen
+	merge m:1 scian using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2006_ENOE\MEX_2006_ENOE_v01_M\Data\Stata\SCIAN_02_ISIC_3.1.dta", keep(master match) nogen
 *Note: rename necessary to misinterpret scian
 	rename scian scian_2
 	rename isic isic_2
 
-*ISCO	
-
-*Note: the dta. 2016- onwards have in var p3 observations already converted to Sinco from CMO, no  need of conversion.
-	
+*ISCO
 ***then first job
-	tostring p3, gen(sinco)
-	merge m:1 sinco using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2016_ENOE\MEX_2016_ENOE_v01_M\Data\Stata\SINCO_11_ISCO_08.dta", keep(master match) nogen
+	tostring p3, gen(cmo)
+	merge m:1 cmo using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2006_ENOE\MEX_2006_ENOE_v01_M\Data\Stata\CMO_09_ISCO_08.dta", keep(master match) nogen
 *Note: rename necessary to allow for the second job code to generate a new cmo for the merge
-	rename sinco sinco_1
+	rename cmo cmo_1
 	rename isco isco_1
-	
+
 ***then second job
-	tostring p7a, gen(sinco)
-	merge m:1 sinco using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2016_ENOE\MEX_2016_ENOE_v01_M\Data\Stata\SINCO_11_ISCO_08.dta", keep(master match) nogen
+	tostring p7a, gen(cmo)
+	merge m:1 cmo using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2006_ENOE\MEX_2006_ENOE_v01_M\Data\Stata\CMO_09_ISCO_08.dta", keep(master match) nogen
 *Note: rename necessary to misinterpret cmo
-	rename sinco sinco_2
-	rename isco isco_2	
+	rename cmo cmo_2
+	rename isco isco_2
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -140,13 +138,13 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2016_ENOE\MEX_2016_ENO
 
 
 *<_icls_v_>
-	gen icls_v = "ICLS-[13,14,15,16]"
+	gen icls_v = "ICLS-[13]"
 	label var icls_v "ICLS version(s) underlying questionnaire questions"
 *</_icls_v_>
 
 
 *<_year_>
-	gen int year = 2016
+	gen int year = 2006
 	label var year "Year of survey"
 *</_year_>
 
@@ -170,7 +168,7 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2016_ENOE\MEX_2016_ENO
 
 
 *<_int_year_>
-	gen int_year=2016
+	gen int_year=2006
 	label var int_year "Year of the interview"
 *</_int_year_>
 
@@ -180,10 +178,10 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2016_ENOE\MEX_2016_ENO
 	label de lblint_month 1 "January" 2 "February" 3 "March" 4 "April" 5 "May" 6 "June" 7 "July" 8 "August" 9 "September" 10 "October" 11 "November" 12 "December"
 	label value int_month lblint_month
 	label var int_month "Month of the interview"
-	
+
 	*check int_Month out of the Q1
 	tab int_month
-	
+
 *</_int_month_>
 
 
@@ -247,13 +245,12 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2016_ENOE\MEX_2016_ENO
 {
 
 *<_urban_>
-	gen byte urban=.  
+	gen byte urban=.
  	replace urban=1 if inrange(t_loc,1,3)
- 	replace urban=0 if t_loc==4 
- 	label var urban "Location is urban" 
- 	la de lblurban 1 "Urban" 0 "Rural" 
- 	label values urban lblurban 
-
+ 	replace urban=0 if t_loc==4
+ 	label var urban "Location is urban"
+ 	la de lblurban 1 "Urban" 0 "Rural"
+ 	label values urban lblurban
 *</_urban_>
 
 *<_subnatid1_>
@@ -272,7 +269,7 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2016_ENOE\MEX_2016_ENO
 
 
 *<_subnatid2_>
-*selected main cities from states 
+*selected main cities from states
 	gen byte subnatid2 = cd_a
 	label de lblsubnatid2 1 "1 - Mexico" 2 " 2- Guadalajara" 3 " 3 - Monterrey" 4 " 4- Puebla" 5 " 5 - Leon" 7 " 6 - San Luis Potosi" 8 " 7 - Merida" 9 " 8 - Chihuahua" 10 " 9- Tampico" 12 " 10 - Veracruz" 13 " 11 - Acapulco" 14 " 12 - Aguacalientes" 15 " 13 - Morelia " 16 " 14 - Toluca" 17 " 15 - Saltillo" 18 " 16 - Villahermosa" 19 " 17 - Tuxtla Gutierrez" 21 " 18 - Tijuana" 24 " 19 - Culiacan" 25 " 20 - Hermosillo" 26 " 21 - Durango" 27 " 22 - Tepic" 28 " 23 - Campeche" 29 " 24 - Cuernavaca" 31 " 25 - Oaxaca" 32 " 26 - Zacatecas " 33 " 27 - Colima" 36 " 28 - Queretaro" 39 " 29 - Tlaxcala" 40 " 30 - La Paz " 41 " 31 - Cancun" 43 " 32 - Pachuca" 81 "  33 - Complemento Urbano Rural"
 	recode subnatid2 82/86=81
@@ -284,7 +281,7 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2016_ENOE\MEX_2016_ENO
 *<_subnatid3_>
 *selected towns within selected cities from states
 	gen byte subnatid3 = loc
-	*label de lblsubnatid3 1 "1 - Name" 
+	*label de lblsubnatid3 1 "1 - Name"
 	*label values subnatid3 lblsubnatid3
 	label var subnatid3 "Subnational ID at Third Administrative Level"
 *</_subnatid3_>
@@ -382,8 +379,8 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2016_ENOE\MEX_2016_ENO
 	replace head_count=1 if relationharm==1
 	*there is a problem with hh being children under 15 in Q1 (the number of households affected is rather small)
 	drop head_count max_age
-	
-	
+
+
 *</_relationharm_>
 
 
@@ -580,7 +577,7 @@ label var ed_mod_age "Education module application age"
 	replace educy=23 if cs_p13_1==9 & cs_p13_2==5
 	replace educy=24 if cs_p13_1==9 & cs_p13_2==6
 	replace educy=0 if (cs_p13_1==0 | cs_p13_1==1) |(cs_p13_1==2 & cs_p13_2==0)
-	replace educy=. if (cs_p13_1==99 | cs_p13_2==9 | cs_p15==9) 
+	replace educy=. if (cs_p13_1==99 | cs_p13_2==9 | cs_p15==9)
 	replace educy=. if age<ed_mod_age & age!=.
 	label var educy "Years of education"
 *</_educy_>
@@ -593,18 +590,18 @@ label var ed_mod_age "Education module application age"
 	replace educat7=3 if educy==6
 	replace educat7=4 if inrange(cs_p13_1,3,5)
 	replace educat7=5 if educy==12
-	replace educat7=6 if cs_p13_1==6 
+	replace educat7=6 if cs_p13_1==6
 	replace educat7=7 if inrange(cs_p13_1,7,9)
 	replace educat7=. if age<ed_mod_age & age!=.
 	label var educat7 "Level of education 1"
-	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete" 
+	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
 *</_educat7_>
 
 
 *<_educat5_>
 	gen byte educat5 = educat7
-	recode educat5 4=3 5=4 6 7=5 
+	recode educat5 4=3 5=4 6 7=5
 	label var educat5 "Level of education 2"
 	la de lbleducat5 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
 	label values educat5 lbleducat5
@@ -701,9 +698,9 @@ foreach v of local ed_var {
 
 {
 *<_lstatus_>
-	
+
 	gen byte lstatus=1 if inlist(p1,1,2) | p1a1==1 | p1a2==2 | p1b==1 | inrange(p1c,1,4) | p1d==1 | p1e==1
-	replace lstatus=2 if (p2_1==1 | p2_2==2 | p2_3==3) 
+	replace lstatus=2 if (p2_1==1 | p2_2==2 | p2_3==3)
 	replace lstatus=3 if p2_4==4
 	replace lstatus=. if age<minlaborage & age!=.
 	label var lstatus "Labor status"
@@ -746,9 +743,9 @@ foreach v of local ed_var {
 
 
 *<_unempldur_l_>
-	
+
 	gen byte unempldur_l=.
-	replace unempldur_l=1 if p2b==1 
+	replace unempldur_l=1 if p2b==1
 	replace unempldur_l=. if lstatus!=2
 	la de lblune 1 "Hasta 1 mes"
 	label var unempldur_l "Unemployment duration (months) lower bracket"
@@ -758,7 +755,7 @@ foreach v of local ed_var {
 
 *<_unempldur_u_>
 	gen byte unempldur_u=.
-	replace unempldur_u=1 if p2b==4 
+	replace unempldur_u=1 if p2b==4
 	replace unempldur_u=. if lstatus!=2
 	la de lblune_2 1 "Más de 3 meses"
 	label var unempldur_u "Unemployment duration (months) upper bracket"
@@ -804,7 +801,6 @@ foreach v of local ed_var {
 *</_industry_orig_>
 
 
-
 *<_industrycat_isic_>
 	gen industrycat_isic= isic_1
 	replace industrycat_isic="" if lstatus!=1
@@ -815,18 +811,18 @@ foreach v of local ed_var {
 *<_industrycat10_>
 	gen industrycat10= substr(industrycat_isic, 1,2)
 	gen industrycat10_helper=.
-	replace industrycat10_helper=1 if industrycat10=="01" | industrycat10=="02" | industrycat10=="03"
-	replace industrycat10_helper=2 if industrycat10=="05" | industrycat10=="06" | industrycat10=="07" | industrycat10=="08"  | industrycat10=="09"
-	replace industrycat10_helper=3 if industrycat10=="10" | industrycat10=="11" | industrycat10=="12"  |industrycat10=="13" | industrycat10=="14" | industrycat10=="15" | industrycat10=="16" | industrycat10=="17" | industrycat10=="18" | industrycat10=="19" | industrycat10=="20" | industrycat10=="21" | industrycat10=="22" | industrycat10=="23" | industrycat10=="24" | industrycat10=="25" | industrycat10=="26" | industrycat10=="27" | industrycat10=="28" | industrycat10=="29" | industrycat10=="30" | industrycat10=="31" | industrycat10=="32" | industrycat10=="33" 
-	replace industrycat10_helper=4 if industrycat10=="35" | industrycat10=="36" | industrycat10=="37" | industrycat10=="38" | industrycat10=="39"
-	replace industrycat10_helper=5 if industrycat10=="41" | industrycat10=="42" | industrycat10=="43" 
-	replace industrycat10_helper=6 if industrycat10=="45" | industrycat10=="46" | industrycat10=="47" | industrycat10=="55"  | industrycat10=="56" 
-	replace industrycat10_helper=7  if  industrycat10=="49" | industrycat10=="50" | industrycat10=="51" | industrycat10=="52" | industrycat10=="53" | industrycat10=="58" | industrycat10=="59" | industrycat10=="60" |industrycat10=="61" | industrycat10=="62" | industrycat10=="63"
-	replace industrycat10_helper=8 if industrycat10=="64" | industrycat10=="65" | industrycat10=="66" | industrycat10=="68" | industrycat10=="69"| industrycat10=="70" | industrycat10=="71" | industrycat10=="72" | industrycat10=="73" | industrycat10=="74" | industrycat10=="75" | industrycat10=="77" | industrycat10=="78" | industrycat10=="79" | industrycat10=="80" | industrycat10=="81" | industrycat10=="82"
-	replace industrycat10_helper=9 if industrycat10=="84" 
-	replace industrycat10_helper=10 if industrycat10=="85" | industrycat10=="86" | industrycat10=="87" | industrycat10=="88" | industrycat10=="90" | industrycat10=="91" | industrycat10=="92" | industrycat10=="93" | industrycat10=="94" | industrycat10=="95" | industrycat10=="96" | industrycat10=="97" | industrycat10=="98" | industrycat10=="99"
+	replace industrycat10_helper=1 if industrycat10=="01" | industrycat10=="02" | industrycat10=="05"
+	replace industrycat10_helper=2 if industrycat10=="10" | industrycat10=="11" | industrycat10=="12"  | industrycat10=="13"  | industrycat10=="14"
+	replace industrycat10_helper=3 if industrycat10=="15" | industrycat10=="16" | industrycat10=="17"  | industrycat10=="18"  | industrycat10=="19" | industrycat10=="20" | industrycat10=="21" | industrycat10=="22" | industrycat10=="23" | industrycat10=="24" | industrycat10=="25" | industrycat10=="26" | industrycat10=="27" | industrycat10=="28" | industrycat10=="29" | industrycat10=="30" | industrycat10=="31" | industrycat10=="32" | industrycat10=="33" | industrycat10=="34" | industrycat10=="35" | industrycat10=="36" | industrycat10=="37"
+	replace industrycat10_helper=4 if industrycat10=="40" | industrycat10=="41"
+	replace industrycat10_helper=5 if industrycat10=="45"
+	replace industrycat10_helper=6 if industrycat10=="50" | industrycat10=="51" | industrycat10=="52" | industrycat10=="55"
+	replace industrycat10_helper=7 if industrycat10=="60" | industrycat10=="61" | industrycat10=="62" | industrycat10=="63" | industrycat10=="64"
+	replace industrycat10_helper=8 if industrycat10=="65" | industrycat10=="66" | industrycat10=="67" |industrycat10=="70" | industrycat10=="71" | industrycat10=="72" | industrycat10=="73" | industrycat10=="74"
+	replace industrycat10_helper=9 if industrycat10=="75"
+	replace industrycat10_helper=10 if industrycat10=="80" | industrycat10=="90" | industrycat10=="91" |industrycat10=="92" | industrycat10=="93" | industrycat10=="95" | industrycat10=="96" | industrycat10=="97"| industrycat10=="99" | industrycat10=="85"
 	replace industrycat10_helper=. if lstatus!=1
-	drop industrycat10 
+	drop industrycat10
 	rename industrycat10_helper industrycat10
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
@@ -840,7 +836,7 @@ foreach v of local ed_var {
 	recode industrycat4 (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
 	label var industrycat4 "1 digit industry classification (Broad Economic Activities), primary job 7 day recall"
 	la de lblindustrycat4 1 "Agriculture" 2 "Industry" 3 "Services" 4 "Other"
-	label values industrycat4 lblindustrycat4	
+	label values industrycat4 lblindustrycat4
 	replace industrycat4=. if lstatus!=1
 *</_industrycat4_>
 
@@ -851,6 +847,12 @@ foreach v of local ed_var {
 *</_occup_orig_>
 
 
+*<_occup_isco_>
+	gen occup_isco = isco_1
+	replace occup_isco="" if lstatus!=1
+	label var occup_isco "ISCO code of primary job 7 day recall"
+*</_occup_isco_>
+
 
 *<_occup_>
 	gen byte occup = floor(p3/1000)
@@ -859,18 +861,11 @@ foreach v of local ed_var {
 	label values occup lbloccup
 *</_occup_>
 
-*<_occup_isco_>
-	gen occup_isco = isco_1
-	replace occup_isco="" if lstatus!=1
-	label var occup_isco "ISCO code of primary job 7 day recall"
-	
-*</_occup_isco_>
-
 *<_occup_skill_>
 	gen  occup_skill= substr(isco_1, 1,2)
 	gen occup_skill_helper=.
 	replace occup_skill_helper=1 if occup_skill=="10" |  occup_skill=="11" |  occup_skill=="12" |  occup_skill=="13" |  occup_skill=="14" | occup_skill=="20" | occup_skill=="21" | occup_skill=="22" | occup_skill=="23" | occup_skill=="24" | occup_skill=="26"| occup_skill=="23" | occup_skill=="30" | occup_skill=="31" | occup_skill=="32" | occup_skill=="33" | occup_skill=="34" | occup_skill=="35"
-	replace occup_skill_helper=2 if occup_skill=="40" |  occup_skill=="41" |  occup_skill=="42" |  occup_skill=="43" |  occup_skill=="44" | occup_skill=="50" | occup_skill=="51" | occup_skill=="52" | occup_skill=="53" | occup_skill=="54" | occup_skill=="60"| occup_skill=="61" | occup_skill=="62" | occup_skill=="63" | occup_skill=="70" | occup_skill=="71" | occup_skill=="72" | occup_skill=="73" | occup_skill=="74" | occup_skill=="75" | occup_skill=="80" | occup_skill=="81" | occup_skill=="82" | occup_skill=="83" 
+	replace occup_skill_helper=2 if occup_skill=="40" |  occup_skill=="41" |  occup_skill=="42" |  occup_skill=="43" |  occup_skill=="44" | occup_skill=="50" | occup_skill=="51" | occup_skill=="52" | occup_skill=="53" | occup_skill=="54" | occup_skill=="60"| occup_skill=="61" | occup_skill=="62" | occup_skill=="63" | occup_skill=="70" | occup_skill=="71" | occup_skill=="72" | occup_skill=="73" | occup_skill=="74" | occup_skill=="75" | occup_skill=="80" | occup_skill=="81" | occup_skill=="82" | occup_skill=="83"
 	replace occup_skill_helper=3 if occup_skill=="90" | occup_skill=="91" | occup_skill=="93" | occup_skill=="95" | occup_skill=="96" | occup_skill=="99"
 	replace occup_skill_helper=. if lstatus!=1
 	drop occup_skill
@@ -879,7 +874,6 @@ foreach v of local ed_var {
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
 	label values occup_skill lbloccupskill
 *</_occup_skill_>
-
 
 *<_wage_no_compen_>
 	gen double wage_no_compen =.
@@ -893,19 +887,19 @@ foreach v of local ed_var {
 *<_unitwage_>
 	gen byte unitwage = p6b1
 	label var unitwage "Last wages' time unit primary job 7 day recall"
-	/* 
+	/*
 	LFS 				GLD
-	(1) Cada mes  -  	(1) Daily 
+	(1) Cada mes  -  	(1) Daily
 	(2) every 15 days - (2) Weekly
 	(3) every week - 	(3) every two weeks
 	(4) daily  - 		(4) bimonthly
 	(5) other		  	(5) monthly
 	(6) paid by product (6) trimester
 	(7) don't know		(7) biannual
-	(8) no reply		(8) annualy 
+	(8) no reply		(8) annualy
 	(9) 				(9) hourly
 	(10)				(10) other
-	
+
 	*/
 	recode unitwage 1=5 2=3 3=2 4=1 6 5=10 7 8=.
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
@@ -915,7 +909,7 @@ foreach v of local ed_var {
 
 
 *<_whours_>
-*this variable has outliers starting in 85 to 168 hours of work 
+*this variable has outliers starting in 85 to 168 hours of work
 	gen whours = p5c_thrs
 	replace whours=. if lstatus!=1
 	replace whours=. if p4==4
@@ -927,10 +921,10 @@ foreach v of local ed_var {
 *<_wmonths_>
 	foreach i in 1 2 3 4 5 6 7 8 9 10 11 12{
 	 gen double new_p5g_`i'=1 if p5g`i'== `i'
-	}	
+	}
 	local months "new_p5g_1 new_p5g_2 new_p5g_3 new_p5g_4 new_p5g_5 new_p5g_6 new_p5g_7 new_p5g_8 new_p5g_9 new_p5g_10 new_p5g_11 new_p5g_12"
 	foreach m in `months' {
-		recode `m' .=0	
+		recode `m' .=0
 	}
 	gen wmonths = new_p5g_1 + new_p5g_2 + new_p5g_3 + new_p5g_4 + new_p5g_5 + new_p5g_6 + new_p5g_7 + new_p5g_8+ new_p5g_9 + new_p5g_10 + new_p5g_11 + new_p5g_12
 	replace wmonths=12 if p5g14==14
@@ -946,15 +940,15 @@ foreach v of local ed_var {
 *<_wage_total_>
 /* <_wage_total>
 
-	Use gross wages when available and net wages only when gross wages are not available. 
+	Use gross wages when available and net wages only when gross wages are not available.
 	This is done to make it easy to compare earnings in formal and informal sectors.
 
 </_wage_total> */
 	gen double wage_total=.
 replace wage_total=(wage_no_compen*5*4.3)*wmonths if unitwage==1
-//Wage in daily unit 
+//Wage in daily unit
 replace wage_total=(wage_no_compen*4.3)*wmonths if unitwage==2 //Wage in weekly unit
-replace wage_total=(wage_no_compen*2.15)*wmonths if unitwage==3 
+replace wage_total=(wage_no_compen*2.15)*wmonths if unitwage==3
 replace wage_total=( wage_no_compen)*wmonths if unitwage==5 //Wage in monthly unit
 replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 	replace wage_total=. if lstatus!=1 & empstat!=1
@@ -984,7 +978,7 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 
 
 *<_socialsec_>
-	gen byte socialsec = 1 if p3m4 ==4 
+	gen byte socialsec = 1 if p3m4 ==4
 	recode socialsec .=0
 	replace socialsec=. if lstatus!=1
 	label var socialsec "Employment has social security insurance primary job 7 day recall"
@@ -1044,7 +1038,7 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 {
 *<_empstat_2_>
 	gen byte empstat_2=.
-	replace empstat_2=1 if p7 == 4 
+	replace empstat_2=1 if p7 == 4
 	replace empstat_2=1 if p7 == 5
 	replace empstat_2=2 if p7 == 6
 	replace empstat_2=4 if p7 == 3
@@ -1080,22 +1074,21 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 *<_industrycat10_2_>
 	gen industrycat10_2= substr(industrycat_isic_2, 1,2)
 	gen industrycat10_2_helper=.
-	replace industrycat10_2_helper=1 if industrycat10_2=="01" | industrycat10_2=="02" | industrycat10_2=="03"
-	replace industrycat10_2_helper=2 if industrycat10_2=="05" | industrycat10_2=="06" | industrycat10_2=="07" | industrycat10_2=="08"  | industrycat10_2=="09"
-	replace industrycat10_2_helper=3 if industrycat10_2=="10" | industrycat10_2=="11" | industrycat10_2=="12"  |industrycat10_2=="13" | industrycat10_2=="14" | industrycat10_2=="15" | industrycat10_2=="16" | industrycat10_2=="17" | industrycat10_2=="18" | industrycat10_2=="19" | industrycat10_2=="20" | industrycat10_2=="21" | industrycat10_2=="22" | industrycat10_2=="23" | industrycat10_2=="24" | industrycat10_2=="25" | industrycat10_2=="26" | industrycat10_2=="27" | industrycat10_2=="28" | industrycat10_2=="29" | industrycat10_2=="30" | industrycat10_2=="31" | industrycat10_2=="32" | industrycat10_2=="33" 
-	replace industrycat10_2_helper=4 if industrycat10_2=="35" | industrycat10_2=="36" | industrycat10_2=="37" | industrycat10_2=="38" | industrycat10_2=="39"
-	replace industrycat10_2_helper=5 if industrycat10_2=="41" | industrycat10_2=="42" | industrycat10_2=="43" 
-	replace industrycat10_2_helper=6 if industrycat10_2=="45" | industrycat10_2=="46" | industrycat10_2=="47" | industrycat10_2=="55"  | industrycat10_2=="56" 
-	replace industrycat10_2_helper=7  if  industrycat10_2=="49" | industrycat10_2=="50" | industrycat10_2=="51" | industrycat10_2=="52" | industrycat10_2=="53" | industrycat10_2=="58" | industrycat10_2=="59" | industrycat10_2=="60" |industrycat10_2=="61" | industrycat10_2=="62" | industrycat10_2=="63"
-	replace industrycat10_2_helper=8 if industrycat10_2=="64" | industrycat10_2=="65" | industrycat10_2=="66" | industrycat10_2=="68" | industrycat10_2=="69"| industrycat10_2=="70" | industrycat10_2=="71" | industrycat10_2=="72" | industrycat10_2=="73" | industrycat10_2=="74" | industrycat10_2=="75" | industrycat10_2=="77" | industrycat10_2=="78" | industrycat10_2=="79" | industrycat10_2=="80" | industrycat10_2=="81" | industrycat10_2=="82"
-	replace industrycat10_2_helper=9 if industrycat10_2=="84" 
-	replace industrycat10_2_helper=10 if industrycat10_2=="85" | industrycat10_2=="86" | industrycat10_2=="87" | industrycat10_2=="88" | industrycat10_2=="90" | industrycat10_2=="91" | industrycat10_2=="92" | industrycat10_2=="93" | industrycat10_2=="94" | industrycat10_2=="95" | industrycat10_2=="96" | industrycat10_2=="97" | industrycat10_2=="98" | industrycat10_2=="99"
+	replace industrycat10_2_helper=1 if industrycat10_2=="01" | industrycat10_2=="02" | industrycat10_2=="05"
+	replace industrycat10_2_helper=2 if industrycat10_2=="10" | industrycat10_2=="11" | industrycat10_2=="12"  | industrycat10_2=="13"  | industrycat10_2=="14"
+	replace industrycat10_2_helper=3 if industrycat10_2=="15" | industrycat10_2=="16" | industrycat10_2=="17"  | industrycat10_2=="18"  | industrycat10_2=="19" | industrycat10_2=="20" | industrycat10_2=="21" | industrycat10_2=="22" | industrycat10_2=="23" | industrycat10_2=="24" | industrycat10_2=="25" | industrycat10_2=="26" | industrycat10_2=="27" | industrycat10_2=="28" | industrycat10_2=="29" | industrycat10_2=="30" | industrycat10_2=="31" | industrycat10_2=="32" | industrycat10_2=="33" | industrycat10_2=="34" | industrycat10_2=="35" | industrycat10_2=="36" | industrycat10_2=="37"
+	replace industrycat10_2_helper=4 if industrycat10_2=="40" | industrycat10_2=="41"
+	replace industrycat10_2_helper=5 if industrycat10_2=="45"
+	replace industrycat10_2_helper=6 if industrycat10_2=="50" | industrycat10_2=="51" | industrycat10_2=="52" | industrycat10_2=="55"
+	replace industrycat10_2_helper=7 if industrycat10_2=="60" | industrycat10_2=="61" | industrycat10_2=="62" | industrycat10_2=="63" | industrycat10_2=="64"
+	replace industrycat10_2_helper=8 if industrycat10_2=="65" | industrycat10_2=="66" | industrycat10_2=="67" |industrycat10_2=="70" | industrycat10_2=="71" | industrycat10_2=="72" | industrycat10_2=="73" | industrycat10_2=="74"
+	replace industrycat10_2_helper=9 if industrycat10_2=="75"
+	replace industrycat10_2_helper=10 if industrycat10_2=="80" | industrycat10_2=="90" | industrycat10_2=="91" |industrycat10_2=="92" | industrycat10_2=="93" | industrycat10_2=="95" | industrycat10_2=="96" | industrycat10_2=="97"| industrycat10_2=="99" | industrycat10_2=="85"
 	replace industrycat10_2_helper=. if lstatus!=1
-	drop industrycat10_2 
+	drop industrycat10_2
 	rename industrycat10_2_helper industrycat10_2
-	label var industrycat10_2 "1 digit industry classification, primary job 7 day recall"
-	la de lblindustrycat10_2 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
-	label values industrycat10_2 lblindustrycat10_2
+	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
+	label values industrycat10_2 lblindustrycat10
 *</_industrycat10_2_>
 
 
@@ -1129,7 +1122,7 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 	gen  occup_skill_2= substr(isco_2, 1,2)
 	gen occup_skill_2_helper=.
 	replace occup_skill_2_helper=1 if occup_skill_2=="10" |  occup_skill_2=="11" |  occup_skill_2=="12" |  occup_skill_2=="13" |  occup_skill_2=="14" | occup_skill_2=="20" | occup_skill_2=="21" | occup_skill_2=="22" | occup_skill_2=="23" | occup_skill_2=="24" | occup_skill_2=="26"| occup_skill_2=="23" | occup_skill_2=="30" | occup_skill_2=="31" | occup_skill_2=="32" | occup_skill_2=="33" | occup_skill_2=="34" | occup_skill_2=="35"
-	replace occup_skill_2_helper=2 if occup_skill_2=="40" |  occup_skill_2=="41" |  occup_skill_2=="42" |  occup_skill_2=="43" |  occup_skill_2=="44" | occup_skill_2=="50" | occup_skill_2=="51" | occup_skill_2=="52" | occup_skill_2=="53" | occup_skill_2=="54" | occup_skill_2=="60"| occup_skill_2=="61" | occup_skill_2=="62" | occup_skill_2=="63" | occup_skill_2=="70" | occup_skill_2=="71" | occup_skill_2=="72" | occup_skill_2=="73" | occup_skill_2=="74" | occup_skill_2=="75" | occup_skill_2=="80" | occup_skill_2=="81" | occup_skill_2=="82" | occup_skill_2=="83" 
+	replace occup_skill_2_helper=2 if occup_skill_2=="40" |  occup_skill_2=="41" |  occup_skill_2=="42" |  occup_skill_2=="43" |  occup_skill_2=="44" | occup_skill_2=="50" | occup_skill_2=="51" | occup_skill_2=="52" | occup_skill_2=="53" | occup_skill_2=="54" | occup_skill_2=="60"| occup_skill_2=="61" | occup_skill_2=="62" | occup_skill_2=="63" | occup_skill_2=="70" | occup_skill_2=="71" | occup_skill_2=="72" | occup_skill_2=="73" | occup_skill_2=="74" | occup_skill_2=="75" | occup_skill_2=="80" | occup_skill_2=="81" | occup_skill_2=="82" | occup_skill_2=="83"
 	replace occup_skill_2_helper=3 if occup_skill_2=="90" | occup_skill_2=="91" | occup_skill_2=="93" | occup_skill_2=="95" | occup_skill_2=="96" | occup_skill_2=="99"
 	replace occup_skill_2_helper=. if lstatus!=1
 	drop occup_skill_2
@@ -1319,7 +1312,7 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 	recode industrycat4_year (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
 	label var industrycat4_year "1 digit industry classification (Broad Economic Activities), primary job 12 month recall"
 	la de lblindustrycat4_year 1 "Agriculture" 2 "Industry" 3 "Services" 4 "Other"
-	label values industrycat4_year lblindustrycat4_year	
+	label values industrycat4_year lblindustrycat4_year
 *</_industrycat4_year_>
 
 
@@ -1583,7 +1576,7 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 	label var t_wage_total_year "Annualized total wage for all jobs 12 month recall"
 *</_t_wage_total_year_>
 
-	
+
 *----------8.11: Overall across reference periods------------------------------*
 
 
@@ -1609,6 +1602,7 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 	gen laborincome = wage_total
 	label var laborincome "Total annual individual labor income in all jobs, incl. bonuses, etc."
 *</_laborincome_>
+
 
 
 *----------8.13: Labour cleanup------------------------------*
@@ -1707,9 +1701,8 @@ foreach var of local kept_vars {
 *</_% DELETE MISSING VARIABLES_>
 
 
-
 *<_% SAVE_>
 
-save "`path_output'\MEX_2016_ENOE_V01_M_V01_A_GLD.dta", replace
+save "`path_output'\MEX_2006_ENOE_V01_M_V01_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>

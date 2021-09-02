@@ -5,7 +5,7 @@
 
 /* ----------------------------------------------------------------------- 
 
-<_Program name_>				[MEX_2006_ENOE_V01_M_v01_A_GLD.do] </_Program name_> 
+<_Program name_>				[MEX_2017_ENOE_V01_M_V01_A_GLD_ALL.do] </_Program name_> 
 <_Application_>					[STATA] <_Application_> 
 <_Author(s)_>					[The World Bank Jobs Group] </_Author(s)_> 
 <_Date created_>				2021-04-01 </_Date created_> 
@@ -14,25 +14,25 @@
 
 <_Country_>						[Mexico (MEX)] </_Country_> 
 <_Survey Title_>				[Encuesta Nacional de Ocupación y Empleo] </_Survey Title_> 
-<_Survey Year_>					[2006] </_Survey Year_> 
+<_Survey Year_>					[2017] </_Survey Year_> 
 <_Study ID_>					[Microdata Library ID if present] </_Study ID_> 
-<_Data collection from_>		[01/2006] </_Data collection from_> 
-<_Data collection to_>			[05/2006] </_Data collection to_> 
+<_Data collection from_>		[01/2017] </_Data collection from_> 
+<_Data collection to_>			[05/2017] </_Data collection to_> 
 <_Source of dataset_> 			[Mexico NSO] </_Source of dataset_> 
-<_Sample size (HH)_> 			[104,857] </_Sample size (HH)_> 
-<_Sample size (IND)_> 			[411,737] </_Sample size (IND)_> 
+<_Sample size (HH)_> 			[104,558] </_Sample size (HH)_> 
+<_Sample size (IND)_> 			[377,929] </_Sample size (IND)_> 
 <_Sampling method_> 			[ El tipo de muestreo utilizado es probabilístico, bietápico, estratificado y por conglomerados.] </_Sampling method_> 
 <_Geographic coverage_> 		[Los niveles geograficos usados en la encuesta de México comienzan en estados siguen con ciudades autorrepresentadas y terminan con municipios de las ciudades autorrepresentadas. https://www.inegi.org.mx/contenidos/productos/prod_serv/contenidos/espanol/bvinegi/productos/metodologias/est/cobertura.pdf] </_Geographic coverage_> 
 <_Currency_> 					[Pesos] </_Currency_> 
 
 ----------------------------------------------------------------------- 
 
-<_ICLS Version_>				[ICLS 13] </_ICLS Version_>  
-<_ISCED Version_>				[ISCED 1997] </_ISCED Version_> 
-<_ISCO Version_>				[ISCO-88] </_ISCO Version_> 
-<_OCCUP National_>				[CMO I & II 1998] </_OCCUP National_> 
-<_ISIC Version_>				[Rev. 3.1] </_ISIC Version_> 
-<_INDUS National_>				[SCIAN 2002] </_INDUS National_> 
+<_ICLS Version_>				[ICLS-18] </_ICLS Version_> 
+<_ISCED Version_>				[ISCED 2011] </_ISCED Version_>  
+<_ISCO Version_>				[ISCO 08] </_ISCO Version_> 
+<_OCCUP National_>				[Sinco 2011] </_OCCUP National_>  
+<_ISIC Version_>				[Rev.4] </_ISIC Version_> 
+<_INDUS National_>				[SCIAN 2013] </_INDUS National_> 
 
 ----------------------------------------------------------------------- 
 <_Version Control_> 
@@ -56,23 +56,22 @@ set more off
 set mem 800m
 
 *----------1.2: Set directories------------------------------*
-
-local path_in "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2006_ENOE\MEX_2006_ENOE_v01_M\Data\Stata"
-local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2006_ENOE\MEX_2006_ENOE_v01_M_v01_A_GLD\Data\Harmonized"
+local path_in "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2017_ENOE\MEX_2017_ENOE_v01_M\Data\Stata"
+local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2017_ENOE\MEX_2017_ENOE_v01_M_v01_A_GLD\Data\Harmonized"
 
 *----------1.3: Database assembly------------------------------*
 
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file	
-	use "`path_in'\VIVT106.dta",clear
+	use "`path_in'\VIVT117.dta",clear
 	drop p1-p3
 	destring loc mun est ageb t_loc cd_a upm d_sem n_pro_viv ent con v_sel n_ent per, replace
-	merge 1:m ent con v_sel using "`path_in'\HOGT106.dta", nogen
-	merge 1:m ent con v_sel n_hog using "`path_in'\SDEMT106.dta"
+	merge 1:m ent con v_sel using "`path_in'\HOGT117.dta", nogen
+	merge 1:m ent con v_sel n_hog using "`path_in'\SDEMT117.dta"
 	drop if _merge==1
 	drop _merge
-	merge 1:1 ent con v_sel n_hog n_ren using "`path_in'\COE1T106.dta", nogen
-	merge 1:1 ent con v_sel n_hog n_ren using "`path_in'\COE2T106.dta", nogen
+	merge 1:1 ent con v_sel n_hog n_ren using "`path_in'\COE1T117.dta", nogen
+	merge 1:1 ent con v_sel n_hog n_ren using "`path_in'\COE2T117.dta", nogen
 	keep if r_pre==0 & inlist(c_res,1,3)
 	tostring (ent v_sel n_hog n_ren h_mud), gen(ent_str v_sel_str n_hog_str n_ren_str h_mud_str) format(%02.0f)
 	tostring con, replace
@@ -87,31 +86,34 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2006_ENOE\MEX_2006_ENO
 ***first job
 	rename scian scian_orig
 	tostring p4a, gen(scian)
-	merge m:1 scian using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2006_ENOE\MEX_2006_ENOE_v01_M\Data\Stata\SCIAN_02_ISIC_3.1.dta", keep(master match) nogen
+	merge m:1 scian using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2017_ENOE\MEX_2017_ENOE_v01_M\Data\Stata\SCIAN_13_ISIC_4.dta", keep(master match) nogen
 *Note: rename necessary to allow for the second job code to generate a new cmo for the merge
 	rename scian scian_1
 	rename isic isic_1
 ***second job
 	tostring p7c, gen(scian)
-	merge m:1 scian using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2006_ENOE\MEX_2006_ENOE_v01_M\Data\Stata\SCIAN_02_ISIC_3.1.dta", keep(master match) nogen
+	merge m:1 scian using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2017_ENOE\MEX_2017_ENOE_v01_M\Data\Stata\SCIAN_13_ISIC_4.dta", keep(master match) nogen
 *Note: rename necessary to misinterpret scian
 	rename scian scian_2
 	rename isic isic_2
 
 *ISCO	
+
+*Note: the dta. 2017- onwards have in var p3 observations already converted to Sinco from CMO, no  need of conversion.
+	
 ***then first job
-	tostring p3, gen(cmo)
-	merge m:1 cmo using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2006_ENOE\MEX_2006_ENOE_v01_M\Data\Stata\CMO_09_ISCO_08.dta", keep(master match) nogen
+	tostring p3, gen(sinco)
+	merge m:1 sinco using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2017_ENOE\MEX_2017_ENOE_v01_M\Data\Stata\SINCO_11_ISCO_08.dta", keep(master match) nogen
 *Note: rename necessary to allow for the second job code to generate a new cmo for the merge
-	rename cmo cmo_1
+	rename sinco sinco_1
 	rename isco isco_1
 	
 ***then second job
-	tostring p7a, gen(cmo)
-	merge m:1 cmo using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2006_ENOE\MEX_2006_ENOE_v01_M\Data\Stata\CMO_09_ISCO_08.dta", keep(master match) nogen
+	tostring p7a, gen(sinco)
+	merge m:1 sinco using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2017_ENOE\MEX_2017_ENOE_v01_M\Data\Stata\SINCO_11_ISCO_08.dta", keep(master match) nogen
 *Note: rename necessary to misinterpret cmo
-	rename cmo cmo_2
-	rename isco isco_2
+	rename sinco sinco_2
+	rename isco isco_2	
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -138,13 +140,13 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2006_ENOE\MEX_2006_ENO
 
 
 *<_icls_v_>
-	gen icls_v = "ICLS-[13]"
+	gen icls_v = "ICLS-[18]"
 	label var icls_v "ICLS version(s) underlying questionnaire questions"
 *</_icls_v_>
 
 
 *<_year_>
-	gen int year = 2006
+	gen int year = 2017
 	label var year "Year of survey"
 *</_year_>
 
@@ -168,7 +170,7 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2006_ENOE\MEX_2006_ENO
 
 
 *<_int_year_>
-	gen int_year=2006
+	gen int_year=2017
 	label var int_year "Year of the interview"
 *</_int_year_>
 
@@ -251,6 +253,7 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2006_ENOE\MEX_2006_ENO
  	label var urban "Location is urban" 
  	la de lblurban 1 "Urban" 0 "Rural" 
  	label values urban lblurban 
+
 *</_urban_>
 
 *<_subnatid1_>
@@ -800,7 +803,6 @@ foreach v of local ed_var {
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
-
 *<_industrycat_isic_>
 	gen industrycat_isic= isic_1
 	replace industrycat_isic="" if lstatus!=1
@@ -811,23 +813,22 @@ foreach v of local ed_var {
 *<_industrycat10_>
 	gen industrycat10= substr(industrycat_isic, 1,2)
 	gen industrycat10_helper=.
-	replace industrycat10_helper=1 if industrycat10=="01" | industrycat10=="02" | industrycat10=="05"
-	replace industrycat10_helper=2 if industrycat10=="10" | industrycat10=="11" | industrycat10=="12"  | industrycat10=="13"  | industrycat10=="14" 
-	replace industrycat10_helper=3 if industrycat10=="15" | industrycat10=="16" | industrycat10=="17"  | industrycat10=="18"  | industrycat10=="19" | industrycat10=="20" | industrycat10=="21" | industrycat10=="22" | industrycat10=="23" | industrycat10=="24" | industrycat10=="25" | industrycat10=="26" | industrycat10=="27" | industrycat10=="28" | industrycat10=="29" | industrycat10=="30" | industrycat10=="31" | industrycat10=="32" | industrycat10=="33" | industrycat10=="34" | industrycat10=="35" | industrycat10=="36" | industrycat10=="37" 
-	replace industrycat10_helper=4 if industrycat10=="40" | industrycat10=="41"
-	replace industrycat10_helper=5 if industrycat10=="45"
-	replace industrycat10_helper=6 if industrycat10=="50" | industrycat10=="51" | industrycat10=="52" | industrycat10=="55"
-	replace industrycat10_helper=7 if industrycat10=="60" | industrycat10=="61" | industrycat10=="62" | industrycat10=="63" | industrycat10=="64"
-	replace industrycat10_helper=8 if industrycat10=="65" | industrycat10=="66" | industrycat10=="67" |industrycat10=="70" | industrycat10=="71" | industrycat10=="72" | industrycat10=="73" | industrycat10=="74"
-	replace industrycat10_helper=9 if industrycat10=="75" 
-	replace industrycat10_helper=10 if industrycat10=="80" | industrycat10=="90" | industrycat10=="91" |industrycat10=="92" | industrycat10=="93" | industrycat10=="95" | industrycat10=="96" | industrycat10=="97"| industrycat10=="99" | industrycat10=="85"
+	replace industrycat10_helper=1 if industrycat10=="01" | industrycat10=="02" | industrycat10=="03"
+	replace industrycat10_helper=2 if industrycat10=="05" | industrycat10=="06" | industrycat10=="07" | industrycat10=="08"  | industrycat10=="09"
+	replace industrycat10_helper=3 if industrycat10=="10" | industrycat10=="11" | industrycat10=="12"  |industrycat10=="13" | industrycat10=="14" | industrycat10=="15" | industrycat10=="16" | industrycat10=="17" | industrycat10=="18" | industrycat10=="19" | industrycat10=="20" | industrycat10=="21" | industrycat10=="22" | industrycat10=="23" | industrycat10=="24" | industrycat10=="25" | industrycat10=="26" | industrycat10=="27" | industrycat10=="28" | industrycat10=="29" | industrycat10=="30" | industrycat10=="31" | industrycat10=="32" | industrycat10=="33" 
+	replace industrycat10_helper=4 if industrycat10=="35" | industrycat10=="36" | industrycat10=="37" | industrycat10=="38" | industrycat10=="39"
+	replace industrycat10_helper=5 if industrycat10=="41" | industrycat10=="42" | industrycat10=="43" 
+	replace industrycat10_helper=6 if industrycat10=="45" | industrycat10=="46" | industrycat10=="47" | industrycat10=="55"  | industrycat10=="56" 
+	replace industrycat10_helper=7  if  industrycat10=="49" | industrycat10=="50" | industrycat10=="51" | industrycat10=="52" | industrycat10=="53" | industrycat10=="58" | industrycat10=="59" | industrycat10=="60" |industrycat10=="61" | industrycat10=="62" | industrycat10=="63"
+	replace industrycat10_helper=8 if industrycat10=="64" | industrycat10=="65" | industrycat10=="66" | industrycat10=="68" | industrycat10=="69"| industrycat10=="70" | industrycat10=="71" | industrycat10=="72" | industrycat10=="73" | industrycat10=="74" | industrycat10=="75" | industrycat10=="77" | industrycat10=="78" | industrycat10=="79" | industrycat10=="80" | industrycat10=="81" | industrycat10=="82"
+	replace industrycat10_helper=9 if industrycat10=="84" 
+	replace industrycat10_helper=10 if industrycat10=="85" | industrycat10=="86" | industrycat10=="87" | industrycat10=="88" | industrycat10=="90" | industrycat10=="91" | industrycat10=="92" | industrycat10=="93" | industrycat10=="94" | industrycat10=="95" | industrycat10=="96" | industrycat10=="97" | industrycat10=="98" | industrycat10=="99"
 	replace industrycat10_helper=. if lstatus!=1
 	drop industrycat10 
 	rename industrycat10_helper industrycat10
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
-
 *</_industrycat10_>
 
 
@@ -847,13 +848,6 @@ foreach v of local ed_var {
 *</_occup_orig_>
 
 
-*<_occup_isco_>
-	gen occup_isco = isco_1
-	replace occup_isco="" if lstatus!=1
-	label var occup_isco "ISCO code of primary job 7 day recall"
-*</_occup_isco_>
-
-
 *<_occup_>
 	gen byte occup = floor(p3/1000)
 	label var occup "1 digit occupational classification, primary job 7 day recall"
@@ -861,8 +855,15 @@ foreach v of local ed_var {
 	label values occup lbloccup
 *</_occup_>
 
+*<_occup_isco_>
+		gen occup_isco = isco_1
+	replace occup_isco="" if lstatus!=1
+	label var occup_isco "ISCO code of primary job 7 day recall"
+	
+*</_occup_isco_>
+
 *<_occup_skill_>
-	gen  occup_skill= substr(isco_1, 1,2)
+gen  occup_skill= substr(isco_1, 1,2)
 	gen occup_skill_helper=.
 	replace occup_skill_helper=1 if occup_skill=="10" |  occup_skill=="11" |  occup_skill=="12" |  occup_skill=="13" |  occup_skill=="14" | occup_skill=="20" | occup_skill=="21" | occup_skill=="22" | occup_skill=="23" | occup_skill=="24" | occup_skill=="26"| occup_skill=="23" | occup_skill=="30" | occup_skill=="31" | occup_skill=="32" | occup_skill=="33" | occup_skill=="34" | occup_skill=="35"
 	replace occup_skill_helper=2 if occup_skill=="40" |  occup_skill=="41" |  occup_skill=="42" |  occup_skill=="43" |  occup_skill=="44" | occup_skill=="50" | occup_skill=="51" | occup_skill=="52" | occup_skill=="53" | occup_skill=="54" | occup_skill=="60"| occup_skill=="61" | occup_skill=="62" | occup_skill=="63" | occup_skill=="70" | occup_skill=="71" | occup_skill=="72" | occup_skill=="73" | occup_skill=="74" | occup_skill=="75" | occup_skill=="80" | occup_skill=="81" | occup_skill=="82" | occup_skill=="83" 
@@ -1074,21 +1075,22 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 *<_industrycat10_2_>
 	gen industrycat10_2= substr(industrycat_isic_2, 1,2)
 	gen industrycat10_2_helper=.
-	replace industrycat10_2_helper=1 if industrycat10_2=="01" | industrycat10_2=="02" | industrycat10_2=="05"
-	replace industrycat10_2_helper=2 if industrycat10_2=="10" | industrycat10_2=="11" | industrycat10_2=="12"  | industrycat10_2=="13"  | industrycat10_2=="14" 
-	replace industrycat10_2_helper=3 if industrycat10_2=="15" | industrycat10_2=="16" | industrycat10_2=="17"  | industrycat10_2=="18"  | industrycat10_2=="19" | industrycat10_2=="20" | industrycat10_2=="21" | industrycat10_2=="22" | industrycat10_2=="23" | industrycat10_2=="24" | industrycat10_2=="25" | industrycat10_2=="26" | industrycat10_2=="27" | industrycat10_2=="28" | industrycat10_2=="29" | industrycat10_2=="30" | industrycat10_2=="31" | industrycat10_2=="32" | industrycat10_2=="33" | industrycat10_2=="34" | industrycat10_2=="35" | industrycat10_2=="36" | industrycat10_2=="37" 
-	replace industrycat10_2_helper=4 if industrycat10_2=="40" | industrycat10_2=="41"
-	replace industrycat10_2_helper=5 if industrycat10_2=="45"
-	replace industrycat10_2_helper=6 if industrycat10_2=="50" | industrycat10_2=="51" | industrycat10_2=="52" | industrycat10_2=="55"
-	replace industrycat10_2_helper=7 if industrycat10_2=="60" | industrycat10_2=="61" | industrycat10_2=="62" | industrycat10_2=="63" | industrycat10_2=="64"
-	replace industrycat10_2_helper=8 if industrycat10_2=="65" | industrycat10_2=="66" | industrycat10_2=="67" |industrycat10_2=="70" | industrycat10_2=="71" | industrycat10_2=="72" | industrycat10_2=="73" | industrycat10_2=="74"
-	replace industrycat10_2_helper=9 if industrycat10_2=="75" 
-	replace industrycat10_2_helper=10 if industrycat10_2=="80" | industrycat10_2=="90" | industrycat10_2=="91" |industrycat10_2=="92" | industrycat10_2=="93" | industrycat10_2=="95" | industrycat10_2=="96" | industrycat10_2=="97"| industrycat10_2=="99" | industrycat10_2=="85"
+	replace industrycat10_2_helper=1 if industrycat10_2=="01" | industrycat10_2=="02" | industrycat10_2=="03"
+	replace industrycat10_2_helper=2 if industrycat10_2=="05" | industrycat10_2=="06" | industrycat10_2=="07" | industrycat10_2=="08"  | industrycat10_2=="09"
+	replace industrycat10_2_helper=3 if industrycat10_2=="10" | industrycat10_2=="11" | industrycat10_2=="12"  |industrycat10_2=="13" | industrycat10_2=="14" | industrycat10_2=="15" | industrycat10_2=="16" | industrycat10_2=="17" | industrycat10_2=="18" | industrycat10_2=="19" | industrycat10_2=="20" | industrycat10_2=="21" | industrycat10_2=="22" | industrycat10_2=="23" | industrycat10_2=="24" | industrycat10_2=="25" | industrycat10_2=="26" | industrycat10_2=="27" | industrycat10_2=="28" | industrycat10_2=="29" | industrycat10_2=="30" | industrycat10_2=="31" | industrycat10_2=="32" | industrycat10_2=="33" 
+	replace industrycat10_2_helper=4 if industrycat10_2=="35" | industrycat10_2=="36" | industrycat10_2=="37" | industrycat10_2=="38" | industrycat10_2=="39"
+	replace industrycat10_2_helper=5 if industrycat10_2=="41" | industrycat10_2=="42" | industrycat10_2=="43" 
+	replace industrycat10_2_helper=6 if industrycat10_2=="45" | industrycat10_2=="46" | industrycat10_2=="47" | industrycat10_2=="55"  | industrycat10_2=="56" 
+	replace industrycat10_2_helper=7  if  industrycat10_2=="49" | industrycat10_2=="50" | industrycat10_2=="51" | industrycat10_2=="52" | industrycat10_2=="53" | industrycat10_2=="58" | industrycat10_2=="59" | industrycat10_2=="60" |industrycat10_2=="61" | industrycat10_2=="62" | industrycat10_2=="63"
+	replace industrycat10_2_helper=8 if industrycat10_2=="64" | industrycat10_2=="65" | industrycat10_2=="66" | industrycat10_2=="68" | industrycat10_2=="69"| industrycat10_2=="70" | industrycat10_2=="71" | industrycat10_2=="72" | industrycat10_2=="73" | industrycat10_2=="74" | industrycat10_2=="75" | industrycat10_2=="77" | industrycat10_2=="78" | industrycat10_2=="79" | industrycat10_2=="80" | industrycat10_2=="81" | industrycat10_2=="82"
+	replace industrycat10_2_helper=9 if industrycat10_2=="84" 
+	replace industrycat10_2_helper=10 if industrycat10_2=="85" | industrycat10_2=="86" | industrycat10_2=="87" | industrycat10_2=="88" | industrycat10_2=="90" | industrycat10_2=="91" | industrycat10_2=="92" | industrycat10_2=="93" | industrycat10_2=="94" | industrycat10_2=="95" | industrycat10_2=="96" | industrycat10_2=="97" | industrycat10_2=="98" | industrycat10_2=="99"
 	replace industrycat10_2_helper=. if lstatus!=1
 	drop industrycat10_2 
 	rename industrycat10_2_helper industrycat10_2
-	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
-	label values industrycat10_2 lblindustrycat10
+	label var industrycat10_2 "1 digit industry classification, primary job 7 day recall"
+	la de lblindustrycat10_2 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
+	label values industrycat10_2 lblindustrycat10_2
 *</_industrycat10_2_>
 
 
@@ -1107,7 +1109,7 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 
 
 *<_occup_isco_2_>
-	gen occup_isco_2 = isco_2
+gen occup_isco_2 = isco_2
 	replace occup_isco_2="" if lstatus!=1
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
@@ -1604,7 +1606,6 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 *</_laborincome_>
 
 
-
 *----------8.13: Labour cleanup------------------------------*
 
 {
@@ -1703,6 +1704,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`path_output'\MEX_2006_ENOE_V01_M_V01_A_GLD.dta", replace
+save "`path_output'\MEX_2017_ENOE_V01_M_V01_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>
