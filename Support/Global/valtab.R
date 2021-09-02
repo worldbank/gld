@@ -3,7 +3,7 @@
 #' @param y an optional second character vector of length 1 to match in the parameter column
 #' @param param the unquoted name of the variable to perform the matching in the metadata file
 
-valtab <- function(x, y, param = var_name_orig) {
+valtab <- function(metadata, x, y, param = var_name_orig) {
                       y = NULL
   if (is.null(y)) {
     table <- metadata %>%
@@ -28,6 +28,7 @@ valtab <- function(x, y, param = var_name_orig) {
                 values_from = value_label,
                 values_fn = list) %>%
     arrange(value) 
+  
   
   # determine unique values across each row 
   table %<>% 
