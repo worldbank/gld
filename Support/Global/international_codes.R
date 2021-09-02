@@ -265,7 +265,7 @@ psoc12_codes_raw <- read_pdf(
       varnames = c("minor", "unit", "psoc92", "isco08"),
       ymin = 85,
       xlabel = c(160, 420),
-      xmin = c(91, 130, 450, 485),
+      xmin = c(91, 130, 450, 475),
       xmax = c(130, 175, 492, 9999), 
       fuzzy_rows = FALSE
 
