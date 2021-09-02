@@ -20,9 +20,6 @@ corresp <- function(df,
   # Drop columns we are not interest in, drop rows where int code is missing
   df <- df %>%
     select(c({{country_code}}, {{international_code}})) %>%
-    mutate(
-      "{{international_code}}_orig"  := {{ international_code }},
-      "{{country_code}}_orig"  := {{ country_code }}) %>%
     filter(!is.na({{international_code}})) %>%
     filter(across(.cols = everything(), ~ !grepl("[A-Za-z]", .x)))
                       
@@ -42,6 +39,8 @@ corresp <- function(df,
     mutate(sum = sum(instance)) %>%
     ungroup() %>%
     mutate(
+      "{{international_code}}_orig"  := {{ international_code }},
+      "{{country_code}}_orig"  := {{ country_code }},
       corresp_pct = round((instance/sum)*100,1),
       dist = stringdist::stringsim({{ country_code }}, {{ international_code }}),
       str_dist = round((dist)*100,1),
