@@ -263,7 +263,7 @@ psoc12_codes_raw <- read_pdf(
       page_min = 102,
       page_max = 540,
       varnames = c("minor", "unit", "psoc92", "isco08"),
-      ymin = 90,
+      ymin = 85,
       xlabel = c(160, 420),
       xmin = c(91, 130, 450, 485),
       xmax = c(130, 175, 492, 9999), 
