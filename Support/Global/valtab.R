@@ -1,11 +1,16 @@
-valtab <- function(x, y, param = "var_name_orig") {
+#' extracts value labels from metadata and tabulates across survey waves
+#' @param x a character vector of length 1 to match in the parameter column
+#' @param y an optional second character vector of length 1 to match in the parameter column
+#' @param param the name of the variable to perform the matching in the metadata file
+
+valtab <- function(x, y, param = var_name_orig) {
                       y = NULL
   if (is.null(y)) {
     table <- metadata %>%
-      filter( grepl(as.character(x), var_name_orig) )
+      filter( grepl(as.character({{ x }}), {{ param }}) )
   } else {
     table <- metadata %>%
-      filter( grepl(as.character(x), var_name_orig) | grepl(as.character(y), label_orig) )
+      filter( grepl(as.character({{ x }}), {{ param }}) | grepl(as.character({{ y }}), {{ param }}) )
   }
   
   table <- table %>%
@@ -19,7 +24,9 @@ valtab <- function(x, y, param = "var_name_orig") {
            same = (n_labs == 1) # TRUE if all string values are the same (for labelled variables)
     ) %>%
     ungroup() %>%
-    pivot_wider(names_from = id, values_from = value_label) %>%
+    pivot_wider(names_from = id, 
+                values_from = value_label,
+                values_fn = list) %>%
     arrange(value)
   
   return(table)
