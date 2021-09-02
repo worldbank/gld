@@ -343,7 +343,7 @@ assertthat::assert_that( sum(str_length(isco12_clean$submajor) != 2, na.rm=TRUE)
 match_isic94_list <- corresp(df = isic94_clean, 
                                 country_code = class, 
                                 international_code = isic3_1,
-                                str_pad = FALSE,
+                                pad_vars = "isic3_1",
                                 check_matches = F)
 
 match_isic94_table <- match_isic94_list[[1]] %>%
@@ -352,9 +352,10 @@ match_isic94_table <- match_isic94_list[[1]] %>%
 
 
 match_isic09_list <- corresp(df = isic09_clean,
-                                country_code = class,
-                                international_code = isic4,
-                                str_pad = FALSE, check_matches = F)
+                             country_code = class,
+                             international_code = isic4,
+                             pad_vars = "isic4", 
+                             check_matches = F)
 
 match_isic09_table <- match_isic09_list[[1]] %>%
   distinct()
@@ -364,7 +365,7 @@ match_isic09_table <- match_isic09_list[[1]] %>%
 match_isco12_list <- corresp(df = isco12_clean, 
                                 unit, 
                                 isco08, 
-                                str_pad = FALSE,
+                                pad_vars = "isco08",
                                 check_matches = F)
 
 match_isco12_table <- match_isco12_list[[1]] 

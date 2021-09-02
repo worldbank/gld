@@ -2,7 +2,7 @@
 #' @param df The tibble or data.frame object containing the two columns of data to match
 #' @param country_code The name of the column that contains the country-specif international_code  code
 #' @param international_code The name of the column that contains the international code
-#' @param str_pad A boolean value to indicate if the resulting vectors should be padded to the right
+#' @param pad_vars A quoted character vector of variables to pad, otherwise NULL
 #' @return a 3-element list object that contains the final match tibble, a results tibble, and a ggplot.
 
 corresp <- function(df, 
@@ -12,10 +12,7 @@ corresp <- function(df,
                    check_matches = FALSE
                    ) {
   
-  # make string versions for easy subsetting later
-  # cc <- as.character(country_code)
-  # ic <- as.character(international_code)
-  # vars <- c(cc, ic)
+  vars_quo <- rlang::quos(pad_vars)
   
   # Drop columns we are not interest in, drop rows where int code is missing
   df <- df %>%
@@ -148,14 +145,9 @@ concord <- bind_rows(match_1, match_2, match_3) %>%
   rename(match = corresp_pct)
 
   if (!is.null(pad_vars)) {
-    # concord <- concord %>%
-    #   mutate( "{{ country_code }}" := str_pad({{ country_code }},
-    #                                           4, pad = "0", side = "right"),
-    #           "{{ international_code }}" := str_pad({{ international_code }},
-    #                                                 4, pad = "0", side = "right"))
-
+  
     concord <- concord %>%
-      mutate(across({{ pad_vars }}), ~ str_pad( .x, 4, pad = "0", side = "right"))
+      mutate(across(all_of(!!!vars_quo), ~ str_pad( .x, 4, pad = "0", side = "right")))
     
   }
 
