@@ -4,14 +4,14 @@ Introduction to the Mexican Labour Force Survey (ENOE)
 ### The ENOE
 
 ENOE or "Encuesta Nacional de Ocupación y Empleo" is a national
-survey that record labor information from the Mexican people. The
+survey that records labor information from the Mexican population. The
 Survey is conducted quarterly with two different questionnaires 
 i.e., extended and basic versions. 
 
 ### Evolution of the ENOE questionnaires
 
 In the past fifteen years, the Mexican national statistics institute
-(INEGI) published five versions of the labor force questionnaire or
+(INEGI) published five updates (Table 1) of the labor force questionnaire or
 ENOE. The ENOE has two versions: the extended version and the basic
 version. Every quarter, the INEGI conducts labor surveys using either
 version.
@@ -21,9 +21,6 @@ Figure 1. Type of questionnaire used in ENOE
 ![](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/ENOEversions.png)
 <br></br>
 Note.- Image taken from ["Conociendo la base de datos de la ENOE"](https://www.inegi.org.mx/contenidos/programas/enoe/15ymas/doc/con_basedatos_proy2010.pdf) by INEGI
-
-Over time ENOE was revised by the INEGI. the INEGI introduced five revisions of
-the extended version and two for the basic version of the questionnaire.
 
 Table 1. ENOE questionnaire revision by year
 
