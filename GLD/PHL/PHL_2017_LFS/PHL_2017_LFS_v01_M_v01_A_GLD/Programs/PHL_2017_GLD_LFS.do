@@ -1113,7 +1113,9 @@ foreach v of local ed_var {
 
 *<_industrycat_isic_>
 	/* The key that matches industry codes is in string format to maintain leading/trailing
-		zeros, so we will change the format here to string if necessary */
+		zeros, so we will change the format here to string if necessary.
+
+		Note that the isic match will only be valid for wave 2 or April round */
 
 	loc matchvar   	pufc16_pkb
 	loc n 			1
@@ -1137,6 +1139,8 @@ foreach v of local ed_var {
 	gen class = `matchvar'
 	tostring 	class ///
 				, format(`"%04.0f"') replace
+
+	replace 	class = "" 	if wave != "Q2" 	// only match second wave
 
 
 	merge 		m:1 ///
@@ -1267,13 +1271,14 @@ foreach v of local ed_var {
 
 	// merge sub-module with isco key
 
-	gen minor = `matchvar'
-	tostring 	minor ///
+	gen unit = `matchvar'
+	tostring 	unit ///
 				, format(`"%04.0f"') replace
 
+	replace 	unit = "" 	if wave != "Q2" 	// only match second wave
 
 	merge 		m:1 ///
-				minor ///
+				unit ///
 				using `isco_key' ///
 				, generate(isco_merge_`n') ///
 				keep(master match) // "left join"; remove obs that don't match from using
@@ -1289,7 +1294,7 @@ foreach v of local ed_var {
 	destring 	isco08_`n' ///
 				, generate(occup_isco)
 
-	drop 		minor 				// no longer needed, maintained in matchvar
+	drop 		unit 				// no longer needed, maintained in matchvar
 
 
 
@@ -1506,6 +1511,7 @@ foreach v of local ed_var {
 	tostring 	class ///
 				, format(`"%04.0f"') replace
 
+	replace 	class = "" 	if wave != "Q2" 	// only match second wave
 
 	merge 		m:1 ///
 				class ///
@@ -1623,13 +1629,14 @@ foreach v of local ed_var {
 
 	// merge sub-module with isco key
 
-	gen minor = `matchvar'
-	tostring 	minor ///
+	gen unit = `matchvar'
+	tostring 	unit ///
 				, format(`"%04.0f"') replace
 
+	replace 	unit = "" 	if wave != "Q2" 	// only match second wave
 
 	merge 		m:1 ///
-				minor ///
+				unit ///
 				using `isco_key' ///
 				, generate(isco_merge_`n') ///
 				keep(master match) // "left join"; remove obs that don't match from using
@@ -1645,10 +1652,10 @@ foreach v of local ed_var {
 	destring 	isco08_`n' ///
 				, generate(occup_isco_2)
 
-	drop 		minor 				// no longer needed, maintained in matchvar
+	drop 		unit 				// no longer needed, maintained in matchvar
 
 
-	
+
 	label var 	occup_isco_2 "ISIC code of primary job 7 day recall"
 
 
@@ -2342,7 +2349,8 @@ quietly{
 			industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year ///
 			wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year ///
 			firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year ///
-			t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
+			t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome ///
+			isic_merge_1 isic_merge_2  isco_merge_1 isco_merge_2
 
 *</_% KEEP VARIABLES - ALL_>
 

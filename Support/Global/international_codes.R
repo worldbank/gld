@@ -263,9 +263,9 @@ psoc12_codes_raw <- read_pdf(
       page_min = 102,
       page_max = 540,
       varnames = c("minor", "unit", "psoc92", "isco08"),
-      ymin = 90,
+      ymin = 85,
       xlabel = c(160, 420),
-      xmin = c(91, 130, 450, 485),
+      xmin = c(91, 130, 450, 475),
       xmax = c(130, 175, 492, 9999), 
       fuzzy_rows = FALSE
 
@@ -289,9 +289,9 @@ isco_order <- c("submajor", "minor", "unit", "psoc92", "isco08")
 
 psoc12_codes <- psoc12_codes_raw %>%
   mutate(
-    minor    = case_when(is.na(minor)  ~ str_sub(unit, 1,4),
+    minor    = case_when(is.na(minor)  ~ str_sub(unit, 1,3),
                       TRUE          ~ minor),
-    submajor = str_sub(minor, 1,3)) %>%
+    submajor = str_sub(minor, 1,2)) %>%
   select(y, page_grp, page, submajor, minor, unit, psoc92, isco08)
 
 
@@ -335,7 +335,7 @@ isco12_clean <- psoc12_codes %>%
     distinct()
 
 
-assertthat::assert_that( sum(str_length(isco12_clean$submajor) != 3, na.rm=TRUE) == 0 ) # should be 0 or close to
+assertthat::assert_that( sum(str_length(isco12_clean$submajor) != 2, na.rm=TRUE) == 0 ) # should be 0 or close to
 
 
 
@@ -343,29 +343,32 @@ assertthat::assert_that( sum(str_length(isco12_clean$submajor) != 3, na.rm=TRUE)
 match_isic94_list <- corresp(df = isic94_clean, 
                                 country_code = class, 
                                 international_code = isic3_1,
-                                str_pad = F,
+                                pad_vars = "isic3_1",
                                 check_matches = F)
 
-match_isic94_table <- match_isic94_list[[1]] 
+match_isic94_table <- match_isic94_list[[1]] %>%
+  distinct()
 
 
 
 match_isic09_list <- corresp(df = isic09_clean,
-                                country_code = class,
-                                international_code = isic4,
-                                str_pad = F, check_matches = F)
+                             country_code = class,
+                             international_code = isic4,
+                             pad_vars = "isic4", 
+                             check_matches = F)
 
-match_isic09_table <- match_isic09_list[[1]] 
+match_isic09_table <- match_isic09_list[[1]] %>%
+  distinct()
 
 
 
 match_isco12_list <- corresp(df = isco12_clean, 
-                                minor, 
+                                unit, 
                                 isco08, 
-                                str_pad = F,
+                                pad_vars = "isco08",
                                 check_matches = F)
 
-match_isco12_table <- match_isco12_list[[1]]
+match_isco12_table <- match_isco12_list[[1]] 
   
 
 
@@ -376,7 +379,7 @@ if (TRUE) {
 save(isic94_codes_raw, isic94_codes, isic94_leftover, isic94_clean, psic94_path,
      isic09_codes_raw, isic09_codes, isic09_leftover, isic09_clean, psic09_path, 
      psoc12_codes_raw, psoc12_codes, isco12_leftover, isco12_clean, psoc12_path,
-     read_pdf, UNisic3,
+     read_pdf, UNisic3, corresp,
      match_isic94_list, match_isic94_table,
      match_isic09_list, match_isic09_table, 
      match_isco12_list, match_isco12_table,

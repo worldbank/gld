@@ -2,20 +2,17 @@
 #' @param df The tibble or data.frame object containing the two columns of data to match
 #' @param country_code The name of the column that contains the country-specif international_code  code
 #' @param international_code The name of the column that contains the international code
-#' @param str_pad A boolean value to indicate if the resulting vectors should be padded to the right
+#' @param pad_vars A quoted character vector of variables to pad, otherwise NULL
 #' @return a 3-element list object that contains the final match tibble, a results tibble, and a ggplot.
 
 corresp <- function(df, 
                    country_code,
                    international_code,
-                   str_pad = FALSE,
+                   pad_vars = NULL,
                    check_matches = FALSE
                    ) {
   
-  # make string versions for easy subsetting later
-  # cc <- as.character(country_code)
-  # ic <- as.character(international_code)
-  # vars <- c(cc, ic)
+  vars_quo <- rlang::quos(pad_vars)
   
   # Drop columns we are not interest in, drop rows where int code is missing
   df <- df %>%
@@ -39,9 +36,12 @@ corresp <- function(df,
     mutate(sum = sum(instance)) %>%
     ungroup() %>%
     mutate(
+      "{{international_code}}_orig"  := {{ international_code }},
+      "{{country_code}}_orig"  := {{ country_code }},
       corresp_pct = round((instance/sum)*100,1),
       dist = stringdist::stringsim({{ country_code }}, {{ international_code }}),
-      str_dist = round((dist)*100,1)) %>%
+      str_dist = round((dist)*100,1),
+      match_stage = 4) %>%
     filter(corresp_pct == 100)
 
   # Review
@@ -66,14 +66,16 @@ corresp <- function(df,
  # here, determine the distance on original 4 digit and filter based on 3 digit. This way
  # we have a record of match to original isco code
  match_2 <- df_2 %>%
+   mutate(
+     "{{international_code}}" := stringr::str_sub({{international_code}}, 1,3)) %>%
    count({{ country_code }}, {{ international_code }}) %>%
    rename(instance = n) %>%
    group_by({{ country_code }}) %>%
    mutate(sum = sum(instance)) %>%
    ungroup() %>%
    mutate(
-     "{{international_code}}" := stringr::str_sub({{international_code}}, 1,3), #overwrite?
-     corresp_pct = round((instance/sum)*100,1)) %>%
+     corresp_pct = round((instance/sum)*100,1),
+     match_stage = 3) %>%
    filter(corresp_pct == 100)
 
  # Review
@@ -94,32 +96,35 @@ corresp <- function(df,
     filter(!({{ country_code }} %in% list2))
 
 
- # Match by maximum, a country_code ount for cases where df_3 may be null
+ # Match by maximum, a country_code count for cases where df_3 may be null
   if (dim(df_3)[1] > 0) {
     set.seed(61035)
     match_3 <- df_3 %>%
+      mutate(
+        "{{international_code}}" := stringr::str_sub({{international_code}}, 1,2)) %>%
       count({{ country_code }}, {{ international_code }}) %>%
       rename(instance = n) %>%
       group_by({{ country_code }}) %>%
       mutate(sum = sum(instance)) %>%
       ungroup() %>%
       mutate(
-        "{{international_code}}" := stringr::str_sub({{international_code}}, 1,2), #overwrite?
-        corresp_pct = round((instance/sum)*100,1)) %>%
+        corresp_pct = round((instance/sum)*100,1),
+        match_stage = 2) %>%
     group_by({{ country_code }}) %>%
       slice_max(corresp_pct) %>%
       sample_n(1)
   } else {
     set.seed(61035)
     match_3 <- df_3 %>%
+      mutate("{{international_code}}" := stringr::str_sub({{international_code}}, 1,2)) %>%
       count({{ country_code }}, {{ international_code }}) %>%
       rename(instance = n) %>%
       group_by({{ country_code }}) %>%
       mutate(sum = sum(instance)) %>%
       ungroup() %>%
       mutate(
-        "{{international_code}}" := stringr::str_sub({{international_code}}, 1,2), #overwrite?
-        corresp_pct = round((instance/sum)*100,1)) 
+        corresp_pct = round((instance/sum)*100,1),
+        match_stage = 2) 
   }
 
 
@@ -134,17 +139,16 @@ corresp <- function(df,
 # Step 5 - append + ggplot ----------------------------------------------
 
 
+
 concord <- bind_rows(match_1, match_2, match_3) %>%
-  select( {{ country_code }}, {{ international_code }}, corresp_pct) %>%
+  select( {{ country_code }}, {{ international_code }}, corresp_pct, match_stage, contains("orig")) %>%
   rename(match = corresp_pct)
 
-  if (str_pad == TRUE) {
+  if (!is.null(pad_vars)) {
+  
     concord <- concord %>%
-      mutate( "{{ country_code }}" := str_pad({{ country_code }},
-                                              4, pad = "0", side = "right"),
-              "{{ international_code }}" := str_pad({{ international_code }},
-                                                    4, pad = "0", side = "right"))
-
+      mutate(across(all_of(!!!vars_quo), ~ str_pad( .x, 4, pad = "0", side = "right")))
+    
   }
 
   if (check_matches == TRUE) {
@@ -174,13 +178,18 @@ results <- tibble(
   orig_n_distinct = c(n_dist, n_dist, n_dist)
 )
 
-gg <- ggplot(concord, aes(match)) +
+gg_match <- ggplot(concord, aes(match)) +
   geom_density() +
   scale_x_continuous(n.breaks = 10, limits = c(0,100)) +
   theme_minimal() +
   labs(x = "Match Score", y = "Relative Density", title = "Distribution of Match Scores")
 
-list <- list(concord, results, gg)
+gg_stage <- ggplot(concord, aes(match_stage)) +
+  geom_freqpoly() + 
+  theme_minimal() +
+  labs(x = "Match Stage", y = "Number of Matches", title = "Distribution of Matches in Match Stages")
+
+list <- list(concord, results, gg_match, gg_stage)
 
 
 
