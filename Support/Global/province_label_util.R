@@ -245,13 +245,25 @@ assertthat::assert_that( nrow(prov_lab_final) == n_distinct(prov_lab_final$label
 
 
 
-# create a .dta friendly object and save .Rdata
+# create a .dta friendly object and save .Rdata ----
 prov_lab_final_export <- select(prov_lab_final, -labels_raw, -change )
 
+## export to each year's directory
+for (i in seq(from=1997,to=2019)) {
+  haven::write_dta(prov_lab_final_export,
+                   path = file.path(PHL, 
+                                    paste0("PHL_",as.character(i),"_LFS"), 
+                                    paste0("PHL_",as.character(i),"_LFS",
+                                           "_v01_M/Data/Stata/GLD_PHL_admin2_labels.dta")),
+                   version = 14)
+}
+
+## export a main version
 haven::write_dta(prov_lab_final_export, 
                  file.path(PHL, "PHL_data/GLD/GLD_PHL_admin2_labels.dta"),
                  version = 14)
 
+## export Rdata
 save(prov_labs,
      prov_labs_chr, 
      prov_labs_fct,
