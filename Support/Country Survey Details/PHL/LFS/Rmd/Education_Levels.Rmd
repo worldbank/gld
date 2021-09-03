@@ -46,7 +46,22 @@ education and the primary possible categorical values that may fall into
 these stages. I have also recorded notes specific to rounds or years
 that are worth noting in the data.
 
-## Survey Years 1997 - 2011 (PSCED 1997)
+## Regarding ISCED Data
+
+After group discussion, it was determined that mapping the Philippines
+education values to the corresponding International Standard of
+Classification of Education [(ISCED) from
+UNESCO](http://uis.unesco.org/en/isced-mappings) would via a standard
+key-value approach would not yield high quality results. The main reason
+for this is the underlying difference in encoding of education data from
+the labor data (industry and occupation). The education data numeric
+values for the education levels they represent within each PSCED schema,
+meaning that a single key cannot be created for each PSCED revision.
+This is not the case with the labor data and a key can be made more
+reliably in these cases. As such, we have decided to leave the `isced_*`
+variables missing for the Philippines.
+
+# Survey Years 1997 - 2011 (PSCED 1997)
 
 Luckily the education levels are fairly self explanatory for the first
 few years. In 2008 PSCED, we see that there is no level in 1997 schema
@@ -76,7 +91,7 @@ University in the labeling since [the most recent/similar
 documentation](http://psada.psa.gov.ph/index.php/catalog/11/datafile/F5)
 makes no reference to post-secondary, non-university education.
 
-## Survey Years 2012 - 2018 (PSCED 2008)
+# Survey Years 2012 - 2018 (PSCED 2008)
 
 These survey years appear to be coded according to the 2008 Philippine
 Statistical Classification of Education Document, accessible
@@ -187,7 +202,7 @@ values in 2018 will suffice.
 All relevant raw "grade" variables are in labelled factor form, so no
 cross-checking of numeric/factor data types is needed as in 2016.
 
-## Survey Years 2019 +
+# Survey Years 2019 +
 
 These survey years follow the newest PSA classification for
 [2017](https://psa.gov.ph/content/philippine-standard-classification-education-psced).
