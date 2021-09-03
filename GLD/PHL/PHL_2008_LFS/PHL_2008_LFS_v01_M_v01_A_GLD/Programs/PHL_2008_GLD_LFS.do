@@ -71,7 +71,7 @@ set mem 800m
 	local 	year 		"${GLD}:\GLD-Harmonization\\`usr'\\`cty3'\\`cty3'_`surv_yr'_LFS" // top data folder
 
 	local 	main		"`year'\\`cty3'_`surv_yr'_LFS_v01_M"
-	local 	 stata		"`main'\data\stata"
+	local 	 stata		"`main'\Data\Stata"
 	local 	i2d2		"`year'\\`cty3'_`surv_yr'_LFS_v01_M_v01_A_I2D2"
 	local 	gld 		"`year'\\`cty3'_`surv_yr'_LFS_v01_M_v01_A_GLD"
 	local 	 code 		"`gld'\Programs"
