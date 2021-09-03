@@ -17,14 +17,34 @@ knit: (function(input, ...) {
   })
 ---
 
+# Background
+
 The following label classification explain the codification from raw
 survey label levels to GLD categories. Note that, according to the 2017
-Philippine Standard Classification of Education document, the education
-system was adjusted in 2018 in accordance with new legislation, linked
+Philippine Standard Classification of Education (PSCED) document, the
+education system was adjusted in 2018 in accordance with new
+legislation, linked
 [here](http://www.unesco.org/education/edurights/media/docs/e119986abbd26ebda9c3d8c18929b4487205d4d6.pdf).
 It appears both in the 2017 PSCED and the data labels that this change
 did not occur until the 2018 year, meaning that data for 2017 is still
 classified under the old system.
+
+## About
+
+Most years of education data are encoded as factor -- or numeric values
+with text labels to indicate what each value means. A few years are
+simply encoded as numeric data without value labels. In lieu of a yearly
+codebook or something of the like, the education data values were
+triangulated between the PSCED documents (linked below) and each survey
+file's labels. Since the underlying numeric data values varied
+considerably compared to the labelled data, the labelled information was
+prioritized over the numeric data when discrepancies occurred.
+
+Below, I have attempted to piece together two essential bits of
+information for each of the education schema: the elemental stages of
+education and the primary possible categorical values that may fall into
+these stages. I have also recorded notes specific to rounds or years
+that are worth noting in the data.
 
 ## Survey Years 1997 - 2011 (PSCED 1997)
 
@@ -200,7 +220,7 @@ expanded from 4 to 6 years, which would correspond to grade 12.
 | Masters                     |             |                 |
 | Doctorate                   |             |                 |
 
-| PSA Labels / Ranges of Labels                                | GLD Level \|                      | Notes                                   |
+| PSA Labels / Ranges of Labels                                | GLD Level                         | Notes                                   |
 |--------------------------------------------------------------|-----------------------------------|-----------------------------------------|
 | No Grade Completed                                           | No Education                      |                                         |
 | Preschool                                                    | No Education                      |                                         |
