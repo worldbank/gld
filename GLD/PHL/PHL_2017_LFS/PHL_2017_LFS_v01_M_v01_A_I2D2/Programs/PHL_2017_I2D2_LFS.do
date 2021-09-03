@@ -46,7 +46,7 @@
 							 	0 to import edited codebook and run rest of code. */
 	local 	drop 	 = 1 	// 1 to drop variables with all missing values, 0 otherwise
 
-	local 	year 		"${GLD}:\GLD-Harmonization\\`usr'\\`cty3'\\`cty3'_`surv_yr'_LFS" // <- replace ${GLD} with Y/Z if running directly
+	local 	year 		"Y:\GLD-Harmonization\\`usr'\\`cty3'\\`cty3'_`surv_yr'_LFS" // <- replace Y with Y/Z if running directly
 
 
 	local 	main		"`year'\\`cty3'_`surv_yr'_LFS_v01_M"

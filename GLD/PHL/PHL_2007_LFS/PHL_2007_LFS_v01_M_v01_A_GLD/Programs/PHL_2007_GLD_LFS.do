@@ -68,10 +68,10 @@ set mem 800m
 	local 	drop 	 = 1 		// 1 to drop variables with all missing values, 0 otherwise
 
 
-	local 	year 		"${GLD}:\GLD-Harmonization\\`usr'\\`cty3'\\`cty3'_`surv_yr'_LFS" // top data folder
+	local 	year 		"Y:\GLD-Harmonization\\`usr'\\`cty3'\\`cty3'_`surv_yr'_LFS" // top data folder
 
 	local 	main		"`year'\\`cty3'_`surv_yr'_LFS_v01_M"
-	local 	 stata		"`main'\data\stata"
+	local 	 stata		"`main'\Data\Stata"
 	local 	i2d2		"`year'\\`cty3'_`surv_yr'_LFS_v01_M_v01_A_I2D2"
 	local 	gld 		"`year'\\`cty3'_`surv_yr'_LFS_v01_M_v01_A_GLD"
 	local 	 code 		"`gld'\Programs"
@@ -96,7 +96,9 @@ set mem 800m
 	local isic_key 	 `"`stata'\PHL_PSIC_ISIC_94_key.dta"'
 	local isco_key 	 `"`stata'\"' // to be created
 
-	* ouput
+    local adm2_labs	 `"`stata'\GLD_PHL_admin2_labels.dta"'	
+
+* ouput
 	local path_output `"`gld_data'\\`cty3'_`surv_yr'_LFS_v01_M_v01_A_GLD"'
 
 ** VALUES
@@ -112,7 +114,7 @@ set mem 800m
 
 	iecodebook append ///
 		`"`round1'"' `"`round2'"' `"`round3'"' `"`round4'"' /// survey files
-		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template-IN.xlsx"' /// output just created above
+		using `"`gld'\Doc\\`cty3'_`surv_yr'_append_template-IN.xlsx"' /// output just created above
 		, clear surveys(JAN2007 APR2007 JUL2007 OCT2007) generate(round) // survey names
 
 
@@ -535,7 +537,7 @@ replace int_month = 10 	if round == 4
 
 	preserve
 
-		use  ${adm2_labs} , clear
+		use  `adm2_labs' , clear
 
 		* Many thanks to DIME who have figured this out
 		* https://github.com/worldbank/iefieldkit/blob/master/src/ado_files/iecodebook.ado
