@@ -95,7 +95,9 @@ set mem 800m
 
 	gl isic_key 	 `"`stata'\PHL_PSIC_ISIC_09_key.dta"'
 
-	* ouput
+    local adm2_labs	 `"`stata'\GLD_PHL_admin2_labels.dta"'	
+
+* ouput
 	local path_output `"`gld_data'\\`cty3'_`surv_yr'_LFS_v01_M_v01_A_GLD"'
 
 ** VALUES
@@ -402,7 +404,7 @@ set mem 800m
 
 	preserve
 
-		use  ${adm2_labs} , clear
+		use  `adm2_labs' , clear
 
 		* Many thanks to DIME who have figured this out
 		* https://github.com/worldbank/iefieldkit/blob/master/src/ado_files/iecodebook.ado
