@@ -112,7 +112,7 @@ set mem 800m
 
 	iecodebook append ///
 		`"`round1'"' `"`round2'"' `"`round3'"' `"`round4'"' /// survey files
-		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template-IN.xlsx"' /// output just created above
+		using `"`gld'\Doc\\`cty3'_`surv_yr'_append_template-IN.xlsx"' /// output just created above
 		, clear surveys(JAN2016 APR2016 JUL2016 OCT2016) generate(round) // survey names
 
 

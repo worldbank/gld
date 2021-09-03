@@ -113,7 +113,7 @@ set mem 800m
 *** append the dataset using iecodebook and the i2d2 template
 	iecodebook append ///
 		`"`round1'"' `"`round2'"' `"`round3'"' `"`round4'"' /// survey files
-		using `"`i2d2'\Doc\\`cty3'_`surv_yr'_append_template-IN.xlsx"' /// previously edited harmonization file
+		using `"`gld'\Doc\\`cty3'_`surv_yr'_append_template-IN.xlsx"' /// previously edited harmonization file
 		, clear surveys(JAN1997 APR1997 JUL1997 OCT1997) generate(round) // survey names
 
 
