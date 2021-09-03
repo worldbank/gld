@@ -72,7 +72,7 @@ Statistical Classification of Education Document, accessible
 | Tertiary/Baccalaureate   | 16-20       | 4               |
 | Tertiary/Post-Grad       | 21-22       | 2+              |
 
-| PSA Labels / Ranges of Labels                              | GLD Level \|                      | Notes                                                                                                  |
+| PSA Labels / Ranges of Labels                              | GLD Level                         | Notes                                                                                                  |
 |------------------------------------------------------------|-----------------------------------|--------------------------------------------------------------------------------------------------------|
 | No Grade Completed                                         | No Education                      |                                                                                                        |
 | Preschool                                                  | No Education                      |                                                                                                        |
