@@ -17,16 +17,51 @@ knit: (function(input, ...) {
   })
 ---
 
+# Background
+
 The following label classification explain the codification from raw
 survey label levels to GLD categories. Note that, according to the 2017
-Philippine Standard Classification of Education document, the education
-system was adjusted in 2018 in accordance with new legislation, linked
+Philippine Standard Classification of Education (PSCED) document, the
+education system was adjusted in 2018 in accordance with new
+legislation, linked
 [here](http://www.unesco.org/education/edurights/media/docs/e119986abbd26ebda9c3d8c18929b4487205d4d6.pdf).
 It appears both in the 2017 PSCED and the data labels that this change
 did not occur until the 2018 year, meaning that data for 2017 is still
 classified under the old system.
 
-## Survey Years 1997 - 2011 (PSCED 1997)
+## About
+
+Most years of education data are encoded as factor -- or numeric values
+with text labels to indicate what each value means. A few years are
+simply encoded as numeric data without value labels. In lieu of a yearly
+codebook or something of the like, the education data values were
+triangulated between the PSCED documents (linked below) and each survey
+file's labels. Since the underlying numeric data values varied
+considerably compared to the labelled data, the labelled information was
+prioritized over the numeric data when discrepancies occurred.
+
+Below, I have attempted to piece together two essential bits of
+information for each of the education schema: the elemental stages of
+education and the primary possible categorical values that may fall into
+these stages. I have also recorded notes specific to rounds or years
+that are worth noting in the data.
+
+## Regarding ISCED Data
+
+After group discussion, it was determined that mapping the Philippines
+education values to the corresponding International Standard of
+Classification of Education [(ISCED) from
+UNESCO](http://uis.unesco.org/en/isced-mappings) would via a standard
+key-value approach would not yield high quality results. The main reason
+for this is the underlying difference in encoding of education data from
+the labor data (industry and occupation). The education data numeric
+values for the education levels they represent within each PSCED schema,
+meaning that a single key cannot be created for each PSCED revision.
+This is not the case with the labor data and a key can be made more
+reliably in these cases. As such, we have decided to leave the `isced_*`
+variables missing for the Philippines.
+
+# Survey Years 1997 - 2011 (PSCED 1997)
 
 Luckily the education levels are fairly self explanatory for the first
 few years. In 2008 PSCED, we see that there is no level in 1997 schema
@@ -56,7 +91,7 @@ University in the labeling since [the most recent/similar
 documentation](http://psada.psa.gov.ph/index.php/catalog/11/datafile/F5)
 makes no reference to post-secondary, non-university education.
 
-## Survey Years 2012 - 2018 (PSCED 2008)
+# Survey Years 2012 - 2018 (PSCED 2008)
 
 These survey years appear to be coded according to the 2008 Philippine
 Statistical Classification of Education Document, accessible
@@ -72,7 +107,7 @@ Statistical Classification of Education Document, accessible
 | Tertiary/Baccalaureate   | 16-20       | 4               |
 | Tertiary/Post-Grad       | 21-22       | 2+              |
 
-| PSA Labels / Ranges of Labels                              | GLD Level \|                      | Notes                                                                                                  |
+| PSA Labels / Ranges of Labels                              | GLD Level                         | Notes                                                                                                  |
 |------------------------------------------------------------|-----------------------------------|--------------------------------------------------------------------------------------------------------|
 | No Grade Completed                                         | No Education                      |                                                                                                        |
 | Preschool                                                  | No Education                      |                                                                                                        |
@@ -167,7 +202,7 @@ values in 2018 will suffice.
 All relevant raw "grade" variables are in labelled factor form, so no
 cross-checking of numeric/factor data types is needed as in 2016.
 
-## Survey Years 2019 +
+# Survey Years 2019 +
 
 These survey years follow the newest PSA classification for
 [2017](https://psa.gov.ph/content/philippine-standard-classification-education-psced).
@@ -200,7 +235,7 @@ expanded from 4 to 6 years, which would correspond to grade 12.
 | Masters                     |             |                 |
 | Doctorate                   |             |                 |
 
-| PSA Labels / Ranges of Labels                                | GLD Level \|                      | Notes                                   |
+| PSA Labels / Ranges of Labels                                | GLD Level                         | Notes                                   |
 |--------------------------------------------------------------|-----------------------------------|-----------------------------------------|
 | No Grade Completed                                           | No Education                      |                                         |
 | Preschool                                                    | No Education                      |                                         |
