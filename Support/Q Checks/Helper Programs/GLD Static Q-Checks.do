@@ -251,7 +251,7 @@ if _rc == 0 { // if var exists since if not captured in 1.1
 } // end if _rc == 0
 
 *----------2.5: isic, isco, isced versions are strings w/o spaces
-foreach var of varlist isced_version isco_version isic_version {
+foreach var of global int_class_versions {
 	cap confirm variable `var'
 	if _rc == 0 { // if var exists since if not captured in 1.1
 		qui : count if !ustrregexm(`var', "^(isco_1988|isco_2008|isic_2|isic_3\.1|isic_4|isced_1997|isced_2011)$")
@@ -650,45 +650,71 @@ if _rc == 0 { // if pair of vars exists, else captured in 1.1
 } // end vars exist
 
 
+
 *----------8.15: Overall income w/o comp cannot be smaller than either 7 day or 12 month w/o comp income
 * 7 day
-cap confirm variable t_wage_nocompen_total // if this exists then laborincome needs to exist, so no checking
+cap confirm variable t_wage_nocompen_total // if this exists then laborincome needs to exist, both annualized data
 if _rc == 0 {
-	qui : count if linc_nc < t_wage_nocompen_total | (missing(linc_nc) & !missing(t_wage_nocompen_total)) // since if missing byt t_wage_total exists, that does not evaluate true for the first (missing is larger) but would be odd.
-	if `r(N)' > 0 { // Odd cases
-		post `memhold' ("Labour") ("linc_nc & t_wage_nocompen_total") ("7 day recall total income w/o comp is smaller than any total income w/o comp (number of cases ->)") (`r(N)') (1)
-	}
-}
+	cap confirm variable linc_nc
+	if _rc == 0 {
+		qui : count if linc_nc < t_wage_nocompen_total | (missing(linc_nc) & !missing(t_wage_nocompen_total)) // since if missing byt t_wage_total exists, that does not evaluate true for the first (missing is larger) but would be odd.
+		if `r(N)' > 0 { // Odd cases
+			post `memhold' ("Labour") ("linc_nc & t_wage_nocompen_total") ("7 day recall total income w/o comp is smaller than any total income w/o comp (number of cases ->)") (`r(N)') (1)
+		} // end odd case
+	} // end _rc == 0 on linc_nc
+	else {
+		post `memhold' ("Labour") ("linc_nc & t_wage_nocompen_total") ("Variable t_wage_nocompen_total is in data but not linc_nc") (.) (1)
+	} // end else (linc_nc not there)
+} // end _rc == 0 on t_wage_nocompen_total
 
 * 12 month
-cap confirm variable t_wage_nocompen_total_year // if this exists then laborincome needs to exist, so no checking
+cap confirm variable t_wage_nocompen_total_year // if this exists then laborincome needs to exist, both annualized data
 if _rc == 0 {
-	qui : count if linc_nc < t_wage_nocompen_total_year | (missing(linc_nc) & !missing(t_wage_nocompen_total_year)) // since if missing byt t_wage_total exists, that does not evaluate true for the first (missing is larger) but would be odd.
-	if `r(N)' > 0 { // Odd cases
-		post `memhold' ("Labour") ("linc_nc & t_wage_nocompen_total_year") ("12 month recall total income w/o comp is smaller than any total income w/o comp (number of cases ->)") (`r(N)') (1)
-	}
-}
+	cap confirm variable linc_nc
+	if _rc == 0 {
+		qui : count if linc_nc < t_wage_nocompen_total_year | (missing(linc_nc) & !missing(t_wage_nocompen_total_year)) // since if missing byt t_wage_total exists, that does not evaluate true for the first (missing is larger) but would be odd.
+		if `r(N)' > 0 { // Odd cases
+			post `memhold' ("Labour") ("linc_nc & t_wage_nocompen_total_year") ("12 month recall total income w/o comp is smaller than any total income w/o comp (number of cases ->)") (`r(N)') (1)
+		} // end odd case
+	} // end _rc == 0 on linc_nc
+	else {
+		post `memhold' ("Labour") ("linc_nc & t_wage_nocompen_total") ("Variable t_wage_nocompen_total_year is in data but not linc_nc") (.) (1)
+	} // end else (linc_nc not there)
+} // end _rc == 0 on t_wage_nocompen_total_year
 
 
 
 *----------8.16: Overall income w/ comp cannot be smaller than either 7 day or 12 month w/ comp income
 * 7 day
-cap confirm variable t_wage_total // if this exists then laborincome needs to exist, so no checking
+cap confirm variable t_wage_total // if this exists then laborincome needs to exist, both annualized data
 if _rc == 0 {
-	qui : count if laborincome < t_wage_total | (missing(laborincome) & !missing(t_wage_total)) // since if missing byt t_wage_total exists, that does not evaluate true for the first (missing is larger) but would be odd.
-	if `r(N)' > 0 { // Odd cases
-		post `memhold' ("Labour") ("laborincome & t_wage_total") ("7 day recall total income w/o comp is smaller than any total income w/o comp (number of cases ->)") (`r(N)') (1)
-	}
-}
+	cap confirm variable laborincome
+	if _rc == 0 {
+		qui : count if laborincome < t_wage_total | (missing(laborincome) & !missing(t_wage_total)) // since if missing byt t_wage_total exists, that does not evaluate true for the first (missing is larger) but would be odd.
+		if `r(N)' > 0 { // Odd cases
+			post `memhold' ("Labour") ("laborincome & t_wage_total") ("7 day recall total income w/ comp is smaller than any total income w/ comp (number of cases ->)") (`r(N)') (1)
+		} // end odd case
+	} // end _rc == 0 on laborincome
+	else {
+		post `memhold' ("Labour") ("laborincome & t_wage_total") ("Variable t_wage_total is in data but not laborincome") (.) (1)
+	} // end else (laborincome not there)
+} // end _rc == 0 on t_wage_total
 
 * 12 month
-cap confirm variable t_wage_total_year // if this exists then laborincome needs to exist, so no checking
+cap confirm variable t_wage_total_year // if this exists then laborincome needs to exist, both annualized data
 if _rc == 0 {
-	qui : count if laborincome < t_wage_total_year | (missing(laborincome) & !missing(t_wage_total_year)) // since if missing byt t_wage_total exists, that does not evaluate true for the first (missing is larger) but would be odd.
-	if `r(N)' > 0 { // Odd cases
-		post `memhold' ("Labour") ("laborincome & t_wage_total_year") ("12 month recall total income w/ comp is smaller than any total income w/ comp (number of cases ->)") (`r(N)') (1)
-	}
-}
+	cap confirm variable laborincome
+	if _rc == 0 {
+		qui : count if laborincome < t_wage_total_year | (missing(laborincome) & !missing(t_wage_total_year)) // since if missing byt t_wage_total exists, that does not evaluate true for the first (missing is larger) but would be odd.
+		if `r(N)' > 0 { // Odd cases
+			post `memhold' ("Labour") ("laborincome & t_wage_total_year") ("12 month recall total income w/ comp is smaller than any total income w/ comp (number of cases ->)") (`r(N)') (1)
+		} // end odd case
+	} // end _rc == 0 on laborincome
+	else {
+		post `memhold' ("Labour") ("laborincome & t_wage_total_year") ("Variable t_wage_total_year is in data but not laborincome") (.) (1)
+	} // end else (laborincome not there)
+} // end _rc == 0 on t_wage_total_year
+
 
 
 *----------8.17: Check ISIC code is length 1 (Letter) or length 4 (4 digit code)
