@@ -146,6 +146,23 @@ gen 	int round = 1
 	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
 
+*<_isced_version_>
+	gen isced_version = ""
+	label var isced_version "Version of ISCED used for educat_isced"
+*</_isced_version_>
+
+
+*<_isco_version_>
+	gen isco_version = "isco_88"
+	label var isco_version "Version of ISCO used"
+*</_isco_version_>
+
+
+*<_isic_version_>
+	gen isic_version = "isic_3.1"
+	label var isic_version "Version of ISIC used"
+*</_isic_version_>
+
 
 *<_year_>
 	gen int year = `surv_yr'
