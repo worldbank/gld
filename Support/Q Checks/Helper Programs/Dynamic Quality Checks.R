@@ -6,6 +6,9 @@
 # to select from.
 #=========================================================================#
 
+library(tidyverse)
+library(scales)
+library(shiny)
 
 #=========================================================================#
 # Step 1 - Define where .dta files stored ---------------------------------
@@ -15,32 +18,21 @@
 rm(list=ls())
 
 # User to define which dta files should be analysed.
-eval_directory <- PHL # replace this with top-level country directory path
-  
-files <- list.files(eval_directory,     
+eval_directory <- PHL     # replace this with top-level country directory path
+ 
+
+
+### ============================================ ###
+### From here on, the file should run on its own ###
+### ============================================ ###
+ 
+paths <- list.files(eval_directory,     
                     pattern = "\\GLD_ALL.dta$", # "\\.dta$"
                     recursive = TRUE,   # search all sub folders
                     full.names = TRUE,  # list full file names
                     include.dirs = TRUE) # include the full file path
 
 
-  ### ============================================ ###
-  ### From here on, the file should run on its own ###
-  ### ============================================ ###
-
-
-#=========================================================================#
-# Step 2 - Load necessary libraries ---------------------------------------
-#=========================================================================#
-
-packages = c("haven", "ggplot2", "dplyr", "shiny", "scales")
-
-for (package in packages){
-  if (!require(package, character.only = TRUE)){ # If package not known, install and load
-    install.packages(package, dependencies = TRUE)
-    library(package, character.only = TRUE)
-  }
-}
 
 #=========================================================================#
 # Step 3 - Load files defined in paths ------------------------------------
