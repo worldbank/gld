@@ -99,7 +99,7 @@ set mem 800m
     local adm2_labs	 `"`stata'\GLD_PHL_admin2_labels.dta"'
 
 * ouput
-	local path_output `"`gld_data'\\`cty3'_`surv_yr'_LFS_v01_M_v01_A_GLD"'
+	local path_output `"`gld_data'\\`cty3'_`surv_yr'_LFS_v01_M_v01_A_GLD_ALL.dta"'
 
 ** VALUES
 	local n_round 	1			// numer of survey rounds
