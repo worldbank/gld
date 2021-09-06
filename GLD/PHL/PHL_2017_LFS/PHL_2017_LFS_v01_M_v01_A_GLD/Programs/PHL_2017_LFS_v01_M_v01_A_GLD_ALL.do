@@ -2368,8 +2368,7 @@ quietly{
 			industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year ///
 			wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year ///
 			firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year ///
-			t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome ///
-			isic_merge_1 isic_merge_2  isco_merge_1 isco_merge_2
+			t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome 
 
 *</_% KEEP VARIABLES - ALL_>
 
