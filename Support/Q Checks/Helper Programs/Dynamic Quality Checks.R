@@ -15,11 +15,13 @@
 rm(list=ls())
 
 # User to define which dta files should be analysed.
-
-# Define list of paths directly (template below, commented out)
-# paths <- list("First file" = "C:/Folder/File_1.dta", "Second file" = "C:/Folder/File_2.dta")
-# paths <- list("1993" = "C:/Users/wb529026/OneDrive - WBG/Documents/Country Work/IND/IND_1993_NSS50-SCH10/IND_1993_NSS50-SCH10_v01_M_v01_A_GLD/Data/Harmonized/IND_1993_NSS50-SCH10_V01_M_V01_A_GLD.dta", 
-#              "1999" = "C:/Users/wb529026/OneDrive - WBG/Documents/Country Work/IND/IND_1999_NSS55-SCH10/IND_1999_NSS55-SCH10_v01_M_v01_A_GLD/Data/Harmonized/IND_1999_NSS55-SCH10_V01_M_V01_A_GLD.dta")
+eval_directory <- PHL # replace this with top-level country directory path
+  
+files <- list.files(eval_directory,     
+                    pattern = "\\GLD_ALL.dta$", # "\\.dta$"
+                    recursive = TRUE,   # search all sub folders
+                    full.names = TRUE,  # list full file names
+                    include.dirs = TRUE) # include the full file path
 
 
   ### ============================================ ###
