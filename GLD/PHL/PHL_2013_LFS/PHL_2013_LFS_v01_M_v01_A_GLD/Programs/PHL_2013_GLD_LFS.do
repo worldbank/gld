@@ -96,7 +96,7 @@ set mem 800m
 	local isic_key 	 `"`stata'\PHL_PSIC_ISIC_09_key.dta"'
 	local isco_key 	 `"`stata'\"' // to be created
 
-    local adm2_labs	 `"`stata'\GLD_PHL_admin2_labels.dta"'	
+    local adm2_labs	 `"`stata'\GLD_PHL_admin2_labels.dta"'
 
 * ouput
 	local path_output `"`gld_data'\\`cty3'_`surv_yr'_LFS_v01_M_v01_A_GLD"'
@@ -146,6 +146,23 @@ set mem 800m
 	gen icls_v = "ICLS-13"
 	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
+
+*<_isced_version_>
+	gen isced_version = ""
+	label var isced_version "Version of ISCED used for educat_isced"
+*</_isced_version_>
+
+
+*<_isco_version_>
+	gen isco_version = "isco_88"
+	label var isco_version "Version of ISCO used"
+*</_isco_version_>
+
+
+*<_isic_version_>
+	gen isic_version = "isic_4"
+	label var isic_version "Version of ISIC used"
+*</_isic_version_>
 
 
 *<_year_>
@@ -2020,7 +2037,7 @@ quietly{
 			wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year ///
 			firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year ///
 			t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome ///
-			isic_merge_1 isic_merge_2  
+			isic_merge_1 isic_merge_2
 
 *</_% KEEP VARIABLES - ALL_>
 
