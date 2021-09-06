@@ -1,6 +1,19 @@
 Introduction to the Mexican Labour Force Survey (ENOE)
 ================
 
+## What is the data?
+The codes under the GLD/MEX folder contain harmonized data from 2005 to 2020 harmonize for the Mexican Labour Force and Unemployment Survey (ENOE).
+
+## Where can the data be found?
+
+The microdata is free and publicly available on the National Institute of Statistics and Geography (INEGI). INEGI created a [dedicated website](https://www.inegi.org.mx/programas/enoe/15ymas/#Microdatos) that records ENOE and all previous versions, besides it contains complete information to understand the framework of the ENOE.
+
+## What is significance level?
+
+The results are reported by gender and geographic location (urban or rural). At the national level the information is reported for "localidades", federative unite and autorepresented cities. Furthere details can be found in the dedicated sample design of each survey year [report](https://www.inegi.org.mx/app/biblioteca/ficha.html?upc=702825190613).
+
+## Other Noteworthy Aspects
+
 ### The ENOE
 
 ENOE or "Encuesta Nacional de Ocupación y Empleo" is a national
@@ -63,16 +76,6 @@ quarterly questionnaires data reduces seasonality because INEGI collected quarte
 data across the years using the extended version. The only exception 
 is quarter one data for years 2007 and 2008.
 
+The INEGI compiled comprehensive information on the questionnaires. For instance, methodology of the process for the most [recent version](https://www.inegi.org.mx/app/biblioteca/ficha.html?upc=702825190613), and [previous versions](https://www.inegi.org.mx/app/biblioteca/ficha.html?upc=702825190613). Similarly, the user can use the [interviewer manuals](https://www.inegi.org.mx/app/biblioteca/ficha.html?upc=702825006555) to follow the perspective of the surveyors in [the basic](https://www.inegi.org.mx/app/biblioteca/ficha.html?upc=702825006554) and other versions. 
 
-The INEGI compiled comprehensive information on the questionnaires, it can be
-accessed through the following links:
-
-https://www.inegi.org.mx/programas/enoe/15ymas/
-
-https://www.inegi.org.mx/app/biblioteca/ficha.html?upc=702825190613
-
-https://www.inegi.org.mx/app/biblioteca/ficha.html?upc=702825006555
-
-https://www.inegi.org.mx/app/biblioteca/ficha.html?upc=702825006554
-
-Further information or questions can be directed to World Bank Jobs Group.
+Further information or questions about the microdata in this webpage can be directed to World Bank Jobs Group.
