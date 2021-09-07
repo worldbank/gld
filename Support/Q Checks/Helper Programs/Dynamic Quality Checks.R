@@ -24,7 +24,8 @@ eval_directory <- "Y:/GLD-Harmonization/551206_TM/PHL" # replace this with top-l
 
 
 ### ============================================ ###
-### From here on, the file should run on its own ###
+### Step 2: From here on, the file should run on its own ###
+###         Create file / name tibble
 ### ============================================ ###
  
 # finds full path of all .dta files that match "pattern"
@@ -35,15 +36,18 @@ files <- list.files(eval_directory,
                     include.dirs = TRUE) %>% # include the full file path
   as_tibble() %>%
   rename(paths = value) %>%
-  mutate(
+  mutate(  # assume the filename is the 4-digit numeric value after the final "/"
     names = stringr::str_extract(basename(paths), "[:digit:]{4}")
   )
 
 #=========================================================================#
 # Step 3 - Load files defined in paths ------------------------------------
 #=========================================================================#
+
+# start with empty list
 file_list <- list()
 
+# key variables
 variables <- c("educat7", "educat5", "educat4", "educat_isced", "hsize",
                "industrycat10", "industrycat4", "industrycat10_2", "industrycat4_2",
                "industrycat10_year", "industrycat4_year", "industrycat10_2_year", "industrycat4_2_year")
@@ -62,11 +66,6 @@ df <- bind_rows(df)
 #=========================================================================#
 # Step 4 - Define necessary objetcs and functions to run program ----------
 #=========================================================================#
-
-# Define variables to be inspected
-variables <- c("educat7", "educat5", "educat4", "educat_isced", "hsize",
-               "industrycat10", "industrycat4", "industrycat10_2", "industrycat4_2",
-               "industrycat10_year", "industrycat4_year", "industrycat10_2_year", "industrycat4_2_year")
 
 # Define years to be inspected
 years <- unique(df$year)
