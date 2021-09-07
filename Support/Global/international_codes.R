@@ -34,6 +34,7 @@ source(file.path(code, "Global/correspondance.R"))
 psic94_path <- file.path(PHL, "PHL_docs/International Codes/PSA_PSIC_1994.pdf")
 psic09_path <- file.path(PHL, "PHL_docs/International Codes/PSA_PSIC_2009.pdf")
 psoc12_path <- file.path(PHL, "PHL_docs/International Codes/PSA_PSOC_2012.pdf")
+isco88_08_path <- file.path(PHL, "PHL_docs/International Codes/wcms_172572.pdf")
 
 
 
@@ -336,6 +337,35 @@ isco12_clean <- psoc12_codes %>%
 
 
 assertthat::assert_that( sum(str_length(isco12_clean$submajor) != 2, na.rm=TRUE) == 0 ) # should be 0 or close to
+
+
+
+
+
+
+
+
+# Isco88-08 raw ----
+
+isco88_08_raw <- read_pdf(
+  
+  pdf_path = isco88_08_path,
+  page_min = 375,
+  page_max = 431,
+  varnames = c("isco08", "isco88"),
+  ymin = 200,
+  xlabel = c(260, 500),
+  xmin = c(180, 220),
+  xmax = c(195, 230), 
+  fuzzy_rows = FALSE
+  
+)
+
+
+
+
+
+pdftools::pdf_data(isco88_08_path)[[375]] %>% View()
 
 
 
