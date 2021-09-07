@@ -8,7 +8,9 @@
 
 library(tidyverse)
 library(scales)
+library(haven)
 library(shiny)
+library(retroharmonize)
 
 #=========================================================================#
 # Step 1 - Define where .dta files stored ---------------------------------
@@ -18,7 +20,7 @@ library(shiny)
 rm(list=ls())
 
 # User to define which dta files should be analysed.
-eval_directory <- PHL     # replace this with top-level country directory path
+eval_directory <- "Y:/GLD-Harmonization/551206_TM/PHL" # replace this with top-level country directory path
  
 
 
@@ -26,30 +28,49 @@ eval_directory <- PHL     # replace this with top-level country directory path
 ### From here on, the file should run on its own ###
 ### ============================================ ###
  
-paths <- list.files(eval_directory,     
+# finds full path of all .dta files that match "pattern"
+files <- list.files(eval_directory,     
                     pattern = "\\GLD_ALL.dta$", # "\\.dta$"
                     recursive = TRUE,   # search all sub folders
                     full.names = TRUE,  # list full file names
-                    include.dirs = TRUE) # include the full file path
-
+                    include.dirs = TRUE) %>% # include the full file path
+  as_tibble() %>%
+  rename(paths = value) %>%
+  mutate(
+    names = stringr::str_extract(basename(paths), "[:digit:]{4}")
+  )
 
 
 #=========================================================================#
 # Step 3 - Load files defined in paths ------------------------------------
 #=========================================================================#
 
-# Create an empty list to fill with files
 file_list <- list()
 
-for (i in seq_along(paths)){ 
-  
-  # For each path, add a list entry with the read data frame
-  file_list[[names(paths)[i]]] <- read_dta(paths[[i]])
-  
-}
+variables <- c("educat7", "educat5", "educat4", "educat_isced", "hsize",
+               "industrycat10", "industrycat4", "industrycat10_2", "industrycat4_2",
+               "industrycat10_year", "industrycat4_year", "industrycat10_2_year", "industrycat4_2_year")
+
+
+df <- map2(files$names, files$paths, 
+           function(x, y) file_list <- haven::read_dta(y) %>%
+             select(any_of(variables), year, weight)
+           )
+
+# # Create an empty list to fill with files
+# file_list <- list()
+# 
+# for (i in seq_along(paths)){
+# 
+#   # For each path, add a list entry with the read data frame
+#   file_list[[names(paths)[i]]] <- read_dta(paths[[i]])
+# 
+# }
 
 # Bind all data frames into a single object
-df <- bind_rows(file_list) 
+df <- bind_rows(df)
+
+
 
 #=========================================================================#
 # Step 4 - Define necessary objetcs and functions to run program ----------
