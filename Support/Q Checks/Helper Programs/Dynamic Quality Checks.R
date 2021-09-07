@@ -10,7 +10,6 @@ library(tidyverse)
 library(scales)
 library(haven)
 library(shiny)
-library(retroharmonize)
 
 #=========================================================================#
 # Step 1 - Define where .dta files stored ---------------------------------
@@ -40,11 +39,9 @@ files <- list.files(eval_directory,
     names = stringr::str_extract(basename(paths), "[:digit:]{4}")
   )
 
-
 #=========================================================================#
 # Step 3 - Load files defined in paths ------------------------------------
 #=========================================================================#
-
 file_list <- list()
 
 variables <- c("educat7", "educat5", "educat4", "educat_isced", "hsize",
@@ -53,21 +50,11 @@ variables <- c("educat7", "educat5", "educat4", "educat_isced", "hsize",
 
 
 df <- map2(files$names, files$paths, 
-           function(x, y) file_list <- haven::read_dta(y) %>%
+           function(x, y) file_list[[x]] <<- haven::read_dta(y) %>%
              select(any_of(variables), year, weight)
            )
 
-# # Create an empty list to fill with files
-# file_list <- list()
-# 
-# for (i in seq_along(paths)){
-# 
-#   # For each path, add a list entry with the read data frame
-#   file_list[[names(paths)[i]]] <- read_dta(paths[[i]])
-# 
-# }
 
-# Bind all data frames into a single object
 df <- bind_rows(df)
 
 
