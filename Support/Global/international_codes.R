@@ -361,11 +361,21 @@ isco88_08_raw <- read_pdf(
   
 )
 
+# what is isco88 vector?
+## is it utf8? 
+utf8::as_utf8(isco88_08_raw$isco88) %>% head(n=10)
+
+## no, what is it, (unknown)
+Encoding(isco88_08_raw$isco88) %>% head(n=10)
 
 
+## does the actual read function from pdftools have any answers?
+pg375 <- pdftools::pdf_data(isco88_08_path, font_info = TRUE)[[375]]
 
+#pdftools::pdf_fonts(isco88_08_path)
 
-pdftools::pdf_data(isco88_08_path)[[375]] %>% View()
+save(isco88_08_raw, 
+     file = file.path(PHL, "PHL_data/isco08-isco88.Rdata"))
 
 
 
