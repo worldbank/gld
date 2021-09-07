@@ -737,13 +737,13 @@ label var ed_mod_age "Education module application age"
 
 	gen byte educat7 =.
 
-	gen byte edulevel7=.
-	replace edulevel7=1 if c07_grade==0			// "No Grade Completed" -> "No education"
-	replace edulevel7=2 if c07_grade==1 	// "Elementary Undergraduate" -> " Primary Incomplete"
-	replace edulevel7=3 if c07_grade==2 	// "Elementary Graduate" -> "Primary Complete"
-	replace edulevel7=4 if c07_grade==3		// "High School Undergraduate" -> "Secondary Incomplete"
-	replace edulevel7=5 if c07_grade==4		// "High school graduate" -> "Secondary Complete"
-	replace edulevel7=7 if c07_grade==5 | ( c07_grade>=60 & c07_grade<=98) // "College Graduate" and "[x] Bachelors/Advanced Degree" -> "University"
+	
+	replace educat7=1 if c07_grade==0			// "No Grade Completed" -> "No education"
+	replace educat7=2 if c07_grade==1 	// "Elementary Undergraduate" -> " Primary Incomplete"
+	replace educat7=3 if c07_grade==2 	// "Elementary Graduate" -> "Primary Complete"
+	replace educat7=4 if c07_grade==3		// "High School Undergraduate" -> "Secondary Incomplete"
+	replace educat7=5 if c07_grade==4		// "High school graduate" -> "Secondary Complete"
+	replace educat7=7 if c07_grade==5 | ( c07_grade>=60 & c07_grade<=98) // "College Graduate" and "[x] Bachelors/Advanced Degree" -> "University"
 
 	label var educat7 "Level of education 1"
 	la de lbleducat7 	1 "No education" ///
