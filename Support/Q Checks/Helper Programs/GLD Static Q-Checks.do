@@ -254,7 +254,7 @@ if _rc == 0 { // if var exists since if not captured in 1.1
 foreach var of global int_class_versions {
 	cap confirm variable `var'
 	if _rc == 0 { // if var exists since if not captured in 1.1
-		qui : count if !ustrregexm(`var', "^(isco_1988|isco_2008|isic_2|isic_3\.1|isic_4|isced_1997|isced_2011)$")
+		qui : count if !ustrregexm(`var', "^(isco_1988|isco_2008|isic_2|isic_3\.1|isic_4|isced_1976|isced_1997|isced_2011)$")
 		if `r(N)' > 0 { // not defined as in the possible options
 			post `memhold' ("Survey & ID") ("`var'") ("Variable `var' is not correctly defined") (.) (1)
 		} // end if not correctly defined
