@@ -1,0 +1,48 @@
+---
+title: "Case converters"
+author: "Malte Grosser"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Caseconverters}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## Basic examples
+
+Default case is snake case
+
+```{r, collapse = TRUE}
+library(snakecase)
+to_any_case("veryComplicatedString")
+```
+
+Of course other cases are supported (`case`) and separators can be adjusted (`sep_out`)
+
+```{r, collapse = TRUE}
+to_any_case(names(iris), sep_in = "\\.", case = "upper_camel", sep_out = " ")
+```
+
+And you might want to remove special characters along the way
+
+```{r, collapse = TRUE}
+to_any_case("Doppelgänger is originally german", 
+            transliterations = "german", case = "upper_camel")
+```
+
+All of the cases like: snake, lower_camel, upper_camel, all_caps, lower_upper, upper_lower, mixed and sentence are based on parsed case
+
+```{r, collapse = TRUE}
+to_any_case("THISIsHOW IAmPARSED!", case = "parsed")
+```
+
+Shortcut wrappers like `to_snake_case`, `to_lower_camel_case` etc. are available.
+
+Be aware that automatic case conversion depends on the input string and it is recommended to verify the results. So you might want to pipe these into `dput()` and hardcode name changes instead of blindly trusting `to_any_case()`'s output:
+
+```{r, collapse = TRUE}
+dput(to_any_case(c("SomeBAdInput", "someGoodInput")))
+```
+
+If you are interested in the design of this package, you can find more information on its [github page](https://github.com/Tazinho/snakecase).

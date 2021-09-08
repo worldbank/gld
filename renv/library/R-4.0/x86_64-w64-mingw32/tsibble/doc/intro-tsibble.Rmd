@@ -1,0 +1,97 @@
+---
+title: "Introduction to tsibble"
+author: "Earo Wang"
+biblio-style: authoryear-comp
+link-citations: yes
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to tsibble}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r initial, echo = FALSE, cache = FALSE, results = 'hide'}
+knitr::opts_chunk$set(
+  warning = FALSE, message = FALSE, echo = TRUE,
+  fig.width = 7, fig.height = 6, fig.align = 'centre',
+  comment = "#>"
+)
+options(tibble.print_min = 5)
+```
+
+The **tsibble** package extends the [tidyverse](https://www.tidyverse.org) to temporal data. Built on top of the [tibble](https://tibble.tidyverse.org/), a tsibble (or `tbl_ts`) is a data- and model-oriented object. Compared to the conventional time series objects in R, for example `ts`, `zoo`, and `xts`, the tsibble preserves time indices as the essential data column and makes heterogeneous data structures possible. Beyond the tibble-like representation, **key** comprised of single or multiple variables is introduced to uniquely identify observational units over time (**index**). The tsibble package aims at managing temporal data and getting analysis done in a fluent workflow.
+
+## Contextual semantics: index and key
+
+`tsibble()` creates a tsibble object, and `as_tsibble()` is an S3 method to coerce other objects to a tsibble. An object that a vector/matrix underlies, such as `ts` and `mts`, can be automated to a tsibble using `as_tsibble()` without any specification. If it is a tibble or data frame, `as_tsibble()` requires a little more setup in order to declare the index and key variables.
+
+```{r weather}
+library(dplyr)
+library(lubridate)
+library(tsibble)
+weather <- nycflights13::weather %>% 
+  select(origin, time_hour, temp, humid, precip)
+weather
+```
+
+The `weather` data included in the package `nycflights13` contains the hourly meteorological records (such as temperature, humid and precipitation) over the year of 2013 at three stations (i.e. JFK, LGA and EWR) in New York City. Since the `time_hour` is the only column involving the timestamps, `as_tsibble()` defaults it to the index variable; alternatively, the index can be specified by the argument `index = time_hour` to disable the verbose message. 
+
+Except for index, a tsibble requires "key", which defines subjects or individuals measured over time. In this example, the `origin` variable is the identifier, which is passed to the argument `key` in `as_tsibble()`. **Each observation should be uniquely identified by index and key** in a valid tsibble. Others---`temp`, `humid` and `precip`---are referred to as measured variables. When creating a tsibble, the key will be sorted first, followed by arranging time from past to recent.
+
+```{r weather-ts, message = TRUE}
+weather_tsbl <- as_tsibble(weather, key = origin)
+weather_tsbl
+```
+
+An interval is automatically obtained based on the corresponding time representation:
+
+* `integer`/`numeric`/`ordered`: either "unit" or "year" (`Y`)
+* `yearquarter`/`yearqtr`: "quarter" (`Q`)
+* `yearmonth`/`yearmon`: "month" (`M`)
+* `yearweek`: "week" (`W`)
+* `Date`: "day" (`D`)
+* `difftime`: "week" (`W`), "day" (D), "hour" (`h`), "minute" (`m`), "second" (`s`)
+* `POSIXct`/`hms`: "hour" (`h`), "minute" (`m`), "second" (`s`), "millisecond" (`us`), "microsecond" (`ms`)
+* `nanotime`: "nanosecond" (`ns`)
+
+That is, a tsibble of monthly intervals expects the `yearmonth`/`yearmon` class in the index column. Neither `Date` nor `POSIXct` gives a monthly tsibble.
+
+The print display is data-centric and contextually informative, such as data dimension, time interval, and the number of time-based units. Above displays the `weather_tsbl` its one-hour interval (`[1h]`) and the `origin [3]` as the key along with three time series in the table.
+
+## Data pipeline
+
+This tidy data representation most naturally supports thinking of operations on the data as building blocks, forming part of a "data pipeline" in time-based context. Users who are familiar with tidyverse would find it easier to perform common temporal analysis tasks. For example, `index_by()` is the counterpart of `group_by()` in temporal context, but it only groups the time index. `index_by()` + `summarise()` is used to summarise daily highs and lows at each station. As a result, the index is updated to the `date` with one-day interval from the index `time_hour`; two new variables are created and computed for daily maximum and minimum temperatures.
+
+```{r weather-tsum}
+weather_tsbl %>%
+  group_by_key() %>%
+  index_by(date = ~ as_date(.)) %>% 
+  summarise(
+    temp_high = max(temp, na.rm = TRUE),
+    temp_low = min(temp, na.rm = TRUE)
+  )
+```
+
+## Irregular time interval
+
+Note that the tsibble handles regularly-spaced temporal data well, from seconds to years based on its time representation (see `?tsibble`). The option `regular`, by default, is set to `TRUE` in `as_tsibble()`. Specify `regular` to `FALSE` to create a tsibble for the data collected at irregular time interval. Below shows the scheduled date time of the flights in New York:
+
+```{r flights}
+flights <- nycflights13::flights %>%
+  mutate(sched_dep_datetime = 
+    make_datetime(year, month, day, hour, minute, tz = "America/New_York"))
+```
+
+The key contains columns `carrier` and `flight` to identify observational units over time, from a passenger's point of view. With `regular = FALSE`, it turns to an irregularly-spaced tsibble, where `[!]` highlights the irregularity.
+
+```{r flights-ts}
+flights_tsbl <- flights %>%
+  as_tsibble(
+    key = c(carrier, flight), 
+    index = sched_dep_datetime, 
+    regular = FALSE
+  )
+flights_tsbl
+```
+
+To regularise an irregular tsibble, it can be achieved with `index_by()` + `summarise()`.

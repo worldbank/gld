@@ -1,0 +1,232 @@
+---
+title: "Harmonize Value Labels"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Harmonize Value Labels}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(retroharmonize)
+```
+
+## Harmonize value codes and labels
+
+The function `harmonize_values()` solves problems in the following situations:
+
+1. When the data are read from an SPSS file, in one dataset the variable `survey1$trust` has no user-defined missing values, but in another dataset the variable `survey2$trust` does have missing values defined. The two variables cannot be combined. We add harmonized missing values to the missing value range, even if they are not present among the observations.   
+
+2. The labels are not matching in `survey1$trust` and `survey2$trust`. We harmonize the labels, and record their initial values for reproducibility.
+
+3. The missing value ranges in `survey1$trust` and `survey2$trust` do not match. We harmonize the missing values, and record their initial values for reproducibility.
+
+4. There are unexpected labels present in the range of substantive or missing values.  They are taken out from the value range with a special code and marked with a special label.
+
+
+### Scenario 1
+
+All values are present, and only the missing values are recoded. 
+
+```{r}
+v1 <- labelled_spss_survey (
+  c(1,0,1,9), 
+  labels = c("yes" =1,
+             "no" = 0,
+             "inap" = 9),
+  na_values = 9)
+
+h1 <- harmonize_values(
+  x = v1, 
+  harmonize_labels = list(
+    from = c("^yes", "^no", "^inap"), 
+    to = c("trust", "not_trust", "inap"), 
+    numeric_values = c(1,0,99999)), 
+  id = "survey1")
+
+str(h1)
+```
+* the attribute `survey1_values` may be used to restore the original coding.
+
+* the attribute `survey1_labels` may be used to restore the original labelling.
+
+* the attribute `na_values` can re-define if a category should be treated as missing.
+
+The `to_numeric()` method converts the missing value range to `NA_real_`.
+
+### Scenario 2
+
+The original variable is of class `haven::labelled_spss()`. It has an invalid missing value.
+
+```{r}
+v2 <- haven::labelled_spss (
+  c(1,1,0,8), 
+  labels = c("yes" = 1,
+             "no"  = 0,
+             "declined" = 8),
+  na_values = 8)
+
+h2 <- harmonize_values(
+  v2, 
+  harmonize_labels = list(
+    from = c("^yes", "^no", "^inap"), 
+    to = c("trust", "not_trust", "inap"), 
+    numeric_values = c(1,0,99999)), 
+  id = 'survey2' )
+str(h2)
+```
+
+We apply the code `99901` for this value and label it as `invalid_label`. 
+
+After modifying the user-defined missing value labels:
+
+```{r}
+h2b <- harmonize_values(
+  v2, 
+  harmonize_labels = list(
+    from = c("^yes", "^no", "^decline"), 
+    to = c("trust", "not_trust", "inap"), 
+    numeric_values = c(1,0,99999)), 
+  id = 'survey2' )
+
+str(h2b)
+```
+
+### Scenario 3
+
+The original vector is of class `haven_labelled`, therefore it has no defined missing value range. We want to remove `DK` from the value range to the missing range as `do_not_know`. The original vector also has an unlabelled value (9). Because we believe that in this vector all values should have a value label, we treat it as an invalid observation.
+
+```{r}
+var3 <- labelled::labelled(
+  x = c(1,6,2,9,1,1,2), 
+  labels = c("Tend to trust" = 1, 
+             "Tend not to trust" = 2, 
+             "DK" = 6))
+
+h3 <- harmonize_values(
+  x = var3, 
+  harmonize_labels = list ( 
+    from = c("^tend\\sto|^trust",
+             "^tend\\snot|not\\strust", "^dk",
+             "^inap"), 
+    to = c("trust", 
+           "not_trust", "do_not_know", 
+           "inap"),
+    numeric_values = c(1,0,99997, 99999)
+  ), 
+  id = "S3_")
+
+str(h3)
+```
+
+### Base Types & Summary
+
+* as factor:
+
+```{r}
+summary(as_factor(h3))
+levels(as_factor(h3)) 
+unique(as_factor(h3))
+```
+* as numeric:
+
+```{r}
+summary(as_numeric(h3))
+unique(as_numeric(h3))
+```
+
+* as character:
+
+```{r}
+summary(as_character(h3))
+unique(as_character(h3))
+```
+
+## Combination of harmonized values
+
+You can combine `labelled_spss_survey` vectors if the metadata describing their current state is an exact match. This means that the labels, missing values and missing range are defined the same way, and the base type of the vector is matching numeric or character --- though labelling character vectors makes little sense.
+
+The historic metadata, i.e. the earlier naming and coding of the variable do not have to match, they are added to all "inherited vectors".
+
+
+```{r}
+var1 <- labelled::labelled_spss(
+  x = c(1,0,1,1,0,8,9), 
+  labels = c("TRUST" = 1, 
+             "NOT TRUST" = 0, 
+             "DON'T KNOW" = 8, 
+             "INAP. HERE" = 9), 
+  na_values = c(8,9))
+
+var2 <- labelled::labelled_spss(
+  x = c(2,2,8,9,1,1 ), 
+  labels = c("Tend to trust" = 1, 
+             "Tend not to trust" = 2, 
+             "DK" = 8, 
+             "Inap" = 9), 
+  na_values = c(8,9)
+  )
+
+
+h1 <- harmonize_values (
+  x = var1, 
+  harmonize_label = "Do you trust the European Union?",
+  harmonize_labels = list ( 
+    from = c("^tend\\sto|^trust", "^tend\\snot|not\\strust", "^dk|^don", "^inap"), 
+    to = c("trust", "not_trust", "do_not_know", "inap"),
+    numeric_values = c(1,0,99997, 99999)), 
+  na_values = c("do_not_know" = 99997,
+                "inap" = 99999), 
+  id = "survey1"
+  )
+
+h2 <- harmonize_values (
+  x = var2, 
+  harmonize_label = "Do you trust the European Union?",
+  harmonize_labels = list ( 
+    from = c("^tend\\sto|^trust", "^tend\\snot|not\\strust", "^dk|^don", "^inap"), 
+    to = c("trust", "not_trust", "do_not_know", "inap"),
+    numeric_values = c(1,0,99997, 99999)), 
+  na_values = c("do_not_know" = 99997,
+                "inap" = 99999), 
+  id = "survey2"
+)
+
+```
+
+For a single vector, you can use the `concatenate()` function, which, under the hood, calls the `vctrs::vec_c` method with some additional validation.
+
+```{r}
+vctrs::vec_c(h1,h2)
+```
+## Binding surveys together
+
+As soon as you have only compatible variables with matching names in two data frames, you can bind them together in a way that their history is preserved.  You can do this with `vctrs::vec_rbind` or `dplyr::bind_rows()`. The generic `rbind()` will lose the labelling information.
+
+```{r}
+a <- tibble::tibble ( rowid = paste0("survey1", 1:length(h1)),
+                      hvar = h1, 
+                      w = runif(n = length(h1), 0,1))
+b <- tibble::tibble ( rowid = paste0("survey2", 1:length(h2)),
+                      hvar  = h2, 
+                      w = runif(n = length(h2), 0,1))
+
+c <- dplyr::bind_rows(a, b)
+```
+
+```{r}
+summary(c)
+```
+
+```{r}
+print(c)
+```
+
+While dplyr's join functions may result in correct values, the metadata get lost. A new join method will be developed.
