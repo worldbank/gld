@@ -1,4 +1,118 @@
 
+# renv 0.14.0
+
+* `renv` now uses `tools::R_user_dir()` to resolve the default path to the
+  global `renv` cache, for R installations 4.0.0 or greater. If the `renv`
+  cache still exists at the old location, that location will be used instead.
+  This change should only affect brand new installations of `renv` on newer
+  versions of `R`.
+  
+* Fixed an issue with `renv` tests failing with R (>= 4.2.0).
+
+* `renv` will no longer auto-activate itself within R processes launched via
+  `R CMD INSTALL`. This behavior can be controlled if necessary via the
+  `RENV_ACTIVATE_PROJECT` environment variable -- set this to `TRUE` to
+  force the project in the current working directory to be activated, and
+  `FALSE` to suppress the `renv` auto-loader altogether. (#804)
+  
+* Added dependency discovery support for R utility scripts identified by a
+  shebang line instead of a file extension. (#801; @klmr)
+
+* Fixed an issue where `renv::install("<package>", type = "both")` would attempt
+  to install the package from sources, even if the current system did not have
+  the requisite build tools available. (#800)
+  
+* `renv::scaffold()` gains the `settings` argument, used to create a project
+  scaffolding with some default project options set. (#791)
+  
+* `renv` now determines the default branch name for packages installed from
+  GitLab without an explicit reference supplied; for example, as in
+  `renv::install("gitlab::<user>/<repo>")`. (#795)
+  
+* `renv` now infers a dependency on the `bslib` package for R Markdown
+  documents using custom themes. (#790)
+
+* `renv` will now prompt users to activate the current project when calling
+  `renv::snapshot()` or `renv::restore()` from within a project that has not
+  yet been activated. (#777)
+  
+* `renv` now has improved handling for `git` remotes. (#776; @matthewstrasiotto)
+
+* `renv::restore()` gains the `exclude` argument, used to exclude a subset of
+  packages during restore. (#746)
+  
+* Fixed an issue where `renv::dependencies()` could fail to parse
+  dependencies in calls to `glue::glue()` that used custom open
+  and close delimiters. (#772)
+
+* Fixed an issue where `renv::init(bare = TRUE)` would unnecessarily
+  scour the project for R package dependencies. (#771)
+
+* Fixed an issue where `renv` could fail to install packages located
+  on GitHub within sub-subdirectories. (#759)
+  
+* `renv` gains the function `embed()`, used to embed a lockfile with an
+  R document (via a call to `renv::use()`).
+
+* `renv::use()` gains the lockfile argument. This can be useful for
+  R Markdown documents and scripts that you'd like to run with the
+  context for a particular lockfile applied.
+
+* `renv::rebuild()` gains the `type` parameter, for parity with
+  `renv::install()`.
+
+* Fixed an issue where `renv` could incorrectly copy an incompatible version
+  of an R package from a site library into the project library during install.
+  (#750)
+
+* `renv::dependencies()` can now parse (some) usages of `parsnip::set_engine()`.
+
+* `renv::dependencies()` now has improved handling for piped expressions.
+
+* Fixed crash during dependency discovery when encountering `box::use()`
+  declarations that use a trailing comma, and no longer treat `.` and `..` as
+  package names. (@klmr)
+
+* `renv::clean()` no longer attempts to clean the system library by default.
+  (#737)
+
+* Fixed an issue where `install.packages()` could fail when used within an
+  `renv` project to install a package from local sources. (#724)
+
+* The chunk `renv.ignore` parameter can now be set to `FALSE`. When set,
+  `renv` will explicitly parse dependencies from chunks even if other
+  chunk metadata would have told `renv` to ignore it (e.g. because it
+  was marked with `eval=F`). (#722)
+
+* Fixed an issue where chunks with the chunk option `eval=F` would
+  still be scanned for dependencies. (#421)
+  
+* In interactive sessions, `renv::use_python()` will now prompt for
+  the version of Python to be used. Python installations in a set
+  of common locations will be searched. See `?renv::use_python()`
+  for more details.
+
+* Fixed an issue where `renv` would fail to retrieve packages from the
+  archives if the lockfile entry was tagged with a `RemoteSha` field.
+
+* `renv::restore()` will now prefer restoring packages from the repository
+  named in the `Repository` field if available. The name is matched against
+  the repository names set in the R `repos` option, or as encoded in the
+  `renv` lockfile. (#701)
+  
+* `renv` now supports the discovery of dependencies within interpolated strings
+  as used by the `glue` package.
+
+* `RENV_CONFIG_EXTERNAL_LIBRARIES` can now be configured to use multiple
+  library paths, delimited by either `:`, `;`, or `,`. (#700)
+  
+* `renv` gains the configuration option, `exported.functions`, controlling
+  which functions and objects are placed on the R search path when `renv`
+  is attached (e.g. via `library(renv)`). Set this to `NULL` to instruct `renv`
+  not to place any functions on the search path. This helps avoid issues with,
+  for example, `renv::load()` masking `base::load()`. When set, all usages
+  of `renv` APIs must be explicitly qualified with the `renv::` prefix.
+  
 # renv 0.13.2
 
 * `renv::install("user/repo/subdir with spaces")` now works as expected. (#694)
@@ -166,7 +280,7 @@
   same R session. In particular, warnings related to a corrupted
   lazy-load database should no longer occur. (#600)
 
-* `renv` no longer re-installs packages that are already installed and
+* `renv` no longer reinstalls packages that are already installed and
   up-to-date in bare calls to `renv::install()`.
 
 * `renv` now uses the R temporary directory for staging, when performing

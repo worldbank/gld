@@ -16,3 +16,12 @@ knitr::opts_chunk$set(
 #  digest::digest(list(answer = 42))
 #  
 
+## ----eval=FALSE---------------------------------------------------------------
+#  
+#  # use a particular lockfile in the context of this script
+#  renv::use(lockfile = "/path/to/renv.lock")
+#  
+#  # the rest of this script will run with the packages as declared
+#  # in that lockfile installed into a temporary library path
+#  
+
