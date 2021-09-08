@@ -809,6 +809,14 @@ label var ed_mod_age "Education module application age"
 *</_educat4_>
 
 
+*<_educat_orig_>
+	gen educat_orig = .
+	label var educat_orig "Original survey education code"
+*</_educat_orig_>
+
+
+
+
 *<_educat_isced_>
 	gen educat_isced = .
 	label var educat_isced "ISCED standardised level of education"
