@@ -810,7 +810,7 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat_orig_>
-	gen educat_orig = .
+	gen educat_orig = pufc07_grade
 	label var educat_orig "Original survey education code"
 *</_educat_orig_>
 

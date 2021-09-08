@@ -96,7 +96,7 @@ set mem 800m
 	local isic_key 	 `"`stata'\PHL_PSIC_ISIC_94_key.dta"'
 	local isco_key 	 `"`stata'\"' // to be created
 
-    local adm2_labs	 `"`stata'\GLD_PHL_admin2_labels.dta"'	
+    local adm2_labs	 `"`stata'\GLD_PHL_admin2_labels.dta"'
 
 * ouput
 	local path_output `"`gld_data'\\`cty3'_`surv_yr'_LFS_v01_M_v01_A_GLD_ALL.dta"'
@@ -743,7 +743,7 @@ label var ed_mod_age "Education module application age"
 
 	gen byte educat7 =.
 
-	
+
 	replace educat7=1 if c09_grd==0			// "No Grade Completed" -> "No education"
 	replace educat7=2 if c09_grd==1 	// "Elementary Undergraduate" -> " Primary Incomplete"
 	replace educat7=3 if c09_grd==2 	// "Elementary Graduate" -> "Primary Complete"
@@ -790,7 +790,7 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat_orig_>
-	gen educat_orig = .
+	gen educat_orig = c09_grd
 	label var educat_orig "Original survey education code"
 *</_educat_orig_>
 

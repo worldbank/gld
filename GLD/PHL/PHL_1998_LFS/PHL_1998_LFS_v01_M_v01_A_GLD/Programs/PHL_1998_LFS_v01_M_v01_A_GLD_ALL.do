@@ -730,7 +730,7 @@ label var ed_mod_age "Education module application age"
 
 	gen byte educat7 =.
 
-	
+
 	replace educat7=1 if grade==0			// "No Grade Completed" -> "No education"
 	replace educat7=2 if grade==1 | grade==2 | grade==3 // "Grades 1-5" -> " Primary Incomplete"
 	replace educat7=3 if grade==4 	// "Elementary Graduate" -> "Primary Complete"
@@ -777,7 +777,7 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat_orig_>
-	gen educat_orig = .
+	gen educat_orig = grade
 	label var educat_orig "Original survey education code"
 *</_educat_orig_>
 
