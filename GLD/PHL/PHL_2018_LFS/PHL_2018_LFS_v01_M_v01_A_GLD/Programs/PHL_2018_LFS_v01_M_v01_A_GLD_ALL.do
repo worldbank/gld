@@ -756,7 +756,7 @@ label var ed_mod_age "Education module application age"
 							| pufc07_grade == 180 	/// grade 7 graduate -> "primary complete"
 							| pufc07_grade == 460  	// grade 6 in k-12 school to "Primary Complete"
 	replace 	educat7=4 if (pufc07_grade >= 210 & pufc07_grade <= 240) /// 1-4th year in secondary school
-							| (pufc07_grade >=410 & pufc07_grade <= 490) // ...or grade 7-9 in k-12 program -> "secondary incomplete"
+							| (pufc07_grade >=470 & pufc07_grade <= 490) // ...or grade 7-9 in k-12 program -> "secondary incomplete"
 	replace 	educat7=5 if pufc07_grade == 250		/// high school complete
 							| pufc07_grade == 500 	// ... or "grade 10" in K-12 to to "Secondary Complete"
 	replace 	educat7=6 if (pufc07_grade >= 601 & pufc07_grade <= 699) 	/// the 600s are for post-secondary/non-uni track courses

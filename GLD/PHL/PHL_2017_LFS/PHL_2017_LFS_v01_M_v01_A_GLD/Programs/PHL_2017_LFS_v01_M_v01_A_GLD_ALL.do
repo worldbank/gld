@@ -893,7 +893,7 @@ label var ed_mod_age "Education module application age"
 							| pufc07_grade == 180 	/// grade 7 graduate -> "primary complete"
 							| pufc07_grade == 460  	// grade 6 in k-12 school to "Primary Complete"
 	replace 	educat7=4 if (pufc07_grade >= 210 & pufc07_grade <= 240) /// 1-4th year in secondary school
-							| (pufc07_grade >=410 & pufc07_grade <= 490) // ...or grade 7-9 in k-12 program -> "secondary incomplete"
+							| (pufc07_grade >=470 & pufc07_grade <= 490) // ...or grade 7-9 in k-12 program -> "secondary incomplete"
 	replace 	educat7=5 if pufc07_grade == 250		/// high school complete
 							| pufc07_grade == 500 	// ... or "grade 10" in K-12 to to "Secondary Complete"
 	replace 	educat7=6 if (pufc07_grade >= 601 & pufc07_grade <= 699) 	/// the 600s are for post-secondary/non-uni track courses
@@ -2368,7 +2368,7 @@ quietly{
 			industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year ///
 			wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year ///
 			firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year ///
-			t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome 
+			t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
 
 *</_% KEEP VARIABLES - ALL_>
 
