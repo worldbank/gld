@@ -46,6 +46,17 @@ up with the following tools assumed:
     repository — but not the package files themselves. This file is also
     version-controlled on the repository.
 
+## If `renv` is not on your repository or branch
+If `renv` is not on the repository or branch, follow the instructions below. If it is intiatilized already, skip to the next section.
+1. install renv: 
+```
+install.packages("renv")
+```
+Then initialize the `renv` with 
+```
+renv::init()
+```
+
 ## Using `renv` for the first time
 
 Since this `renv` project is already initialized, first-time users will
