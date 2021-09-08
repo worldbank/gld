@@ -41,7 +41,6 @@ global path_to_other_harmonization `" "'
 
 * Survey ID as per CCC_YYYY_[Survey-Name]_v##_M_v##_A_GLD_[ALL] convention
 global survey_id "PHL_1997_LFS_V01_M_V01_A_GLD_ALL"
-	"CCC_YYYY_Survey-Name_V0X_M_V0Z_A_GLD_[ALL]"
 
 * Path to folder to hold output
 global path_to_output_folder `"${datadir}\PHL_1997_LFS\PHL_1997_LFS_v01_M_v01_A_GLD\Work"'
