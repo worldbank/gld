@@ -21,6 +21,15 @@ rm(list=ls())
 # User to define which dta files should be analysed.
 eval_directory <- "Y:/GLD-Harmonization/551206_TM/PHL" # replace this with top-level country directory path
  
+# You may also chose the version of the files you want to compare for dynamic checking.
+# That is, whether you want to look at all harmonized files, or only at those that are based
+# on, for example, V02_M (the second version of the master data). 
+version <- "v01_A"
+
+# The default filled out below will look at all files. Unless you have knowledge of regular expressions
+# it is recommended to leave this as is.
+file_pattern <-  paste0("\\", version, "_GLD_ALL.dta$") 
+
 
 
 ### ============================================ ###
@@ -30,7 +39,7 @@ eval_directory <- "Y:/GLD-Harmonization/551206_TM/PHL" # replace this with top-l
  
 # finds full path of all .dta files that match "pattern"
 files <- list.files(eval_directory,     
-                    pattern = "\\GLD_ALL.dta$", # "\\.dta$"
+                    pattern = file_pattern, 
                     recursive = TRUE,   # search all sub folders
                     full.names = TRUE,  # list full file names
                     include.dirs = TRUE) %>% # include the full file path
