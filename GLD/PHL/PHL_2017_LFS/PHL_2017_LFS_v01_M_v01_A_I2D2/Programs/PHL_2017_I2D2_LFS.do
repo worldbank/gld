@@ -46,7 +46,7 @@
 							 	0 to import edited codebook and run rest of code. */
 	local 	drop 	 = 1 	// 1 to drop variables with all missing values, 0 otherwise
 
-	local 	year 		"${GLD}:\GLD-Harmonization\\`usr'\\`cty3'\\`cty3'_`surv_yr'_LFS" // <- replace ${GLD} with Y/Z if running directly
+	local 	year 		"Y:\GLD-Harmonization\\`usr'\\`cty3'\\`cty3'_`surv_yr'_LFS" // <- replace Y with Y/Z if running directly
 
 
 	local 	main		"`year'\\`cty3'_`surv_yr'_LFS_v01_M"
@@ -764,7 +764,7 @@ undergraduates in "primary" and "graduates" in "secondary" */
 
 
 ** NUMBER OF TOTAL JOBS
-	gen byte njobs= . 
+	gen byte njobs= .
 	label var njobs "Number of total jobs"
 	replace njobs=. 	if 	age < lb_mod_age | lstatus != 1		// restrict universe to working age + workers
 
@@ -890,7 +890,7 @@ undergraduates in "primary" and "graduates" in "secondary" */
 	replace industry1=. if lstatus!=1 		// restrict universe to employed only
 
 **SURVEY SPECIFIC INDUSTRY CLASSIFICATION
-	gen industry_orig=pufc43_qkb
+	gen industry_orig=pufc16_pkb
 	replace industry_orig=. if lstatus!=1 		// restrict universe to employed only
 	replace industry_orig=. if age < lb_mod_age // restrict universe to working age
 	label var industry_orig "Original Industry Codes"
@@ -956,7 +956,11 @@ undergraduates in "primary" and "graduates" in "secondary" */
 
 
 ** WAGES TIME UNIT
-	gen byte unitwage=1
+	gen byte unitwage=pufc24_pbasis
+	recode 			unitwage (0 1 5 6 7 = 10) /// other
+								(2 = 9) /// hourly
+								(3 = 1) /// daily
+								(4 = 5) // monthly
 	replace unitwage=. if lstatus!=1 			// restrict universe to employed only
 	replace unitwage=. if age < lb_mod_age		// restrict universe to working age
 	replace unitwage=. if empstat==1			// restrict universe to wage earners
@@ -1016,18 +1020,18 @@ undergraduates in "primary" and "graduates" in "secondary" */
 	if (round == 2) {
 		* For April, code according to the april Schema
 
-		replace inudstry_2=1 	if pufc43_qkb >= 100 	& pufc43_qkb <= 399	 	// "Agriculture, Forestry, Fishing" coded to "Agriculture"
-		replace inudstry_2=2 	if pufc43_qkb >= 500 	& pufc43_qkb <= 999		// "Mining and Quarrying" coded to "Mining"
-		replace inudstry_2=3 	if pufc43_qkb >= 1000 	& pufc43_qkb <= 3399 	// "Manufacturing" coded to "Manufacturing"
-		replace inudstry_2=4 	if pufc43_qkb >= 3500 	& pufc43_qkb <= 3900	// "Water supply, sewerage, etc" coded to "Public Utiltiy"
-		replace inudstry_2=5 	if pufc43_qkb >= 4100 	& pufc43_qkb <= 4399	// "Construction" coded to "Construction"
-		replace inudstry_2=6 	if pufc43_qkb >= 4500 	& pufc43_qkb <= 4799	// "Wholesale/retail, repair of vehicles" to "Commerce"
-		replace inudstry_2=7 	if pufc43_qkb >= 4900 	& pufc43_qkb <= 5399	// "Transport+storage" to "Transport". UN codes include storage
-		replace inudstry_2=6 	if pufc43_qkb >= 5500 	& pufc43_qkb <= 5699	// "Accommodation+Food" to "Commerce"
-		replace inudstry_2=7 	if pufc43_qkb >= 5800 	& pufc43_qkb <= 6399	// "Information+communication" to "Transport/Communication"
-		replace inudstry_2=8 	if pufc43_qkb >= 6400 	& pufc43_qkb <= 8299	// "Misc Business Services" to "Business Services"
-		replace inudstry_2=9 	if pufc43_qkb >= 8400 	& pufc43_qkb <= 8499	// "public administration/defense" to "public administration"
-		replace inudstry_2=10	if pufc43_qkb >= 8500 	& pufc43_qkb <= 9950	// "Other services" including direct education to "other"
+		replace industry_2=1 	if pufc43_qkb >= 100 	& pufc43_qkb <= 399	 	// "Agriculture, Forestry, Fishing" coded to "Agriculture"
+		replace industry_2=2 	if pufc43_qkb >= 500 	& pufc43_qkb <= 999		// "Mining and Quarrying" coded to "Mining"
+		replace industry_2=3 	if pufc43_qkb >= 1000 	& pufc43_qkb <= 3399 	// "Manufacturing" coded to "Manufacturing"
+		replace industry_2=4 	if pufc43_qkb >= 3500 	& pufc43_qkb <= 3900	// "Water supply, sewerage, etc" coded to "Public Utiltiy"
+		replace industry_2=5 	if pufc43_qkb >= 4100 	& pufc43_qkb <= 4399	// "Construction" coded to "Construction"
+		replace industry_2=6 	if pufc43_qkb >= 4500 	& pufc43_qkb <= 4799	// "Wholesale/retail, repair of vehicles" to "Commerce"
+		replace industry_2=7 	if pufc43_qkb >= 4900 	& pufc43_qkb <= 5399	// "Transport+storage" to "Transport". UN codes include storage
+		replace industry_2=6 	if pufc43_qkb >= 5500 	& pufc43_qkb <= 5699	// "Accommodation+Food" to "Commerce"
+		replace industry_2=7 	if pufc43_qkb >= 5800 	& pufc43_qkb <= 6399	// "Information+communication" to "Transport/Communication"
+		replace industry_2=8 	if pufc43_qkb >= 6400 	& pufc43_qkb <= 8299	// "Misc Business Services" to "Business Services"
+		replace industry_2=9 	if pufc43_qkb >= 8400 	& pufc43_qkb <= 8499	// "public administration/defense" to "public administration"
+		replace industry_2=10	if pufc43_qkb >= 8500 	& pufc43_qkb <= 9950	// "Other services" including direct education to "other"
 
 	}
 
@@ -1091,7 +1095,11 @@ undergraduates in "primary" and "graduates" in "secondary" */
 
 
 ** WAGES TIME UNIT - SECOND JOB
-	gen byte unitwage_2=1
+	gen byte unitwage_2=.
+	recode 			unitwage (0 1 5 6 7 = 10) /// other
+								(2 = 9) /// hourly
+								(3 = 1) /// daily
+								(4 = 5) // monthly
 	replace unitwage_2=. if lstatus!=1 			// restrict universe to employed only
 	replace unitwage_2=. if age < lb_mod_age		// restrict universe to working age
 	replace unitwage_2=. if empstat==1			// restrict universe to wage earners

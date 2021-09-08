@@ -45,7 +45,7 @@
 	local 	append 	 = 0 	// 1 to run iecodebook append, 0 if file is already appended.
 	local 	drop 	 = 1 	// 1 to drop variables with all missing values, 0 otherwise
 
-	local 	year 		"${GLD}:\GLD-Harmonization\\`usr'\\`cty3'\\`cty3'_`surv_yr'_LFS" // top data folder
+	local 	year 		"Y:\GLD-Harmonization\\`usr'\\`cty3'\\`cty3'_`surv_yr'_LFS" // top data folder
 
 	local 	main		"`year'\\`cty3'_`surv_yr'_LFS_v01_M"
 	local 	 stata		"`main'\data\stata"
