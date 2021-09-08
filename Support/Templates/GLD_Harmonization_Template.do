@@ -539,7 +539,7 @@ label var ed_mod_age "Education module application age"
 *<_% Correction min age_>
 
 ** Drop info for cases under the age for which questions to be asked (do not need a variable for this)
-local ed_var "school literacy educy educat7 educat5 educat4 educat_isced"
+local ed_var "school literacy educy educat7 educat5 educat4 educat_orig educat_isced"
 
 foreach v of local ed_var {
 	cap confirm numeric variable `v'
