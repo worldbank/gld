@@ -1,0 +1,44 @@
+---
+title: "Introduction to PHL"
+output: 
+  github_document:
+    html_preview: false
+    toc: true
+    toc_depth: 3
+editor_options: 
+  markdown: 
+    wrap: 72
+knit: (function(input, ...) {
+    rmarkdown::render(
+      input,
+      output_dir = here::here("Support/Country Survey Details/PHL/LFS"),
+      envir = globalenv()
+    )
+  })
+---
+
+# Introduction to Philippines Labor Force Survey (PHL LFS)
+
+## What is the PHL LFS?
+
+## What does the PHL LFS cover?
+
+| Year | \# of Households | \# of Individuals |
+|:-----|:-----------------|:------------------|
+| 1987 | 129,060          | 667,804           |
+| ...  | ...              | ...               |
+| 2011 | 101,724          | 456,999           |
+
+## Where can the data be found?
+
+## What is the sampling procedure?
+
+    example
+
+## What is the significance level?
+
+## Other noteworthy aspects
+
+### List items as needed and be brief - if longer, refer to other, explicit documents
+
+### 
