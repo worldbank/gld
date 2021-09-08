@@ -76,8 +76,8 @@ forvalues year = 1997/2019 {
 if (`gld' == 1) {
 forvalues year = 1997/2019 {
     if (`phl`year''==1) {
-		do `"${code}/`cty'/`cty'_`year'_LFS/`cty'_`year'_LFS_v01_M_v01_A_GLD/Programs/`cty'_`year'_GLD_LFS.do"'
-	}
+		do `"${code}/`cty'/`cty'_`year'_LFS/`cty'_`year'_LFS_v01_M_v01_A_GLD/Programs/`cty'_`year'_LFS_v01_M_v01_A_GLD_ALL.do"'
+	} 
 }
 }
 

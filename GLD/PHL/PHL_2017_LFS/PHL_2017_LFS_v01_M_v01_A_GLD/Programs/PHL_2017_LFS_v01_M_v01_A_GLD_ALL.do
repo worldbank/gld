@@ -893,7 +893,7 @@ label var ed_mod_age "Education module application age"
 							| pufc07_grade == 180 	/// grade 7 graduate -> "primary complete"
 							| pufc07_grade == 460  	// grade 6 in k-12 school to "Primary Complete"
 	replace 	educat7=4 if (pufc07_grade >= 210 & pufc07_grade <= 240) /// 1-4th year in secondary school
-							| (pufc07_grade >=410 & pufc07_grade <= 490) // ...or grade 7-9 in k-12 program -> "secondary incomplete"
+							| (pufc07_grade >=470 & pufc07_grade <= 490) // ...or grade 7-9 in k-12 program -> "secondary incomplete"
 	replace 	educat7=5 if pufc07_grade == 250		/// high school complete
 							| pufc07_grade == 500 	// ... or "grade 10" in K-12 to to "Secondary Complete"
 	replace 	educat7=6 if (pufc07_grade >= 601 & pufc07_grade <= 699) 	/// the 600s are for post-secondary/non-uni track courses
@@ -942,6 +942,14 @@ undergraduates in "primary" and "graduates" in "secondary" */
 	label values educat4 lbleducat4
 	replace educat4=. if age < ed_mod_age // restrict universe to students at or above primary school age
 *</_educat4_>
+
+
+*<_educat_orig_>
+	gen educat_orig = pufc07_grade
+	label var educat_orig "Original survey education code"
+*</_educat_orig_>
+
+
 
 
 *<_educat_isced_>
@@ -2349,12 +2357,12 @@ quietly{
 
 *<_% KEEP VARIABLES - ALL_>
 
-	keep 	countrycode survname survey icls_v year vermast veralt harmonization int_year int_month hhid pid weight psu strata ///
+	keep 	countrycode survname survey icls_v isced_version isco_version isic_version year vermast veralt harmonization int_year int_month hhid pid weight psu strata ///
 			wave urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code ///
 			gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty ///
 			conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban ///
 			migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 ///
-			educat4 educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field vocational_financed ///
+			educat4 educat_orig educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field vocational_financed ///
 			minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig ///
 			industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours ///
 			wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 ///
@@ -2368,19 +2376,18 @@ quietly{
 			industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year ///
 			wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year ///
 			firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year ///
-			t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome ///
-			isic_merge_1 isic_merge_2  isco_merge_1 isco_merge_2
+			t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
 
 *</_% KEEP VARIABLES - ALL_>
 
 *<_% ORDER VARIABLES_>
 
-	order 	countrycode survname survey icls_v year vermast veralt harmonization int_year int_month hhid pid weight psu strata wave ///
+	order 	countrycode survname survey icls_v isced_version isco_version isic_version year vermast veralt harmonization int_year int_month hhid pid weight psu strata wave ///
 			urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code ///
 			gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty ///
 			conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years ///
 			migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy ///
-			educy educat7 educat5 educat4 educat_isced vocational vocational_type vocational_length_l vocational_length_u ///
+			educy educat7 educat5 educat4 educat_orig educat_isced vocational vocational_type vocational_length_l vocational_length_u ///
 			vocational_field vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u ///
 			empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup ///
 			wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ///

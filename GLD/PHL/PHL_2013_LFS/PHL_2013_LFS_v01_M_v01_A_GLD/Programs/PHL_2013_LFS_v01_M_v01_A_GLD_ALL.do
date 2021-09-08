@@ -789,6 +789,14 @@ label var ed_mod_age "Education module application age"
 *</_educat4_>
 
 
+*<_educat_orig_>
+	gen educat_orig = j12c09_grade
+	label var educat_orig "Original survey education code"
+*</_educat_orig_>
+
+
+
+
 *<_educat_isced_>
 	gen educat_isced = .
 	label var educat_isced "ISCED standardised level of education"
@@ -2017,12 +2025,12 @@ quietly{
 
 *<_% KEEP VARIABLES - ALL_>
 
-	keep 	countrycode survname survey icls_v year vermast veralt harmonization int_year int_month hhid pid weight psu strata ///
+	keep 	countrycode survname survey icls_v isced_version isco_version isic_version year vermast veralt harmonization int_year int_month hhid pid weight psu strata ///
 			wave urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code ///
 			gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty ///
 			conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban ///
 			migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 ///
-			educat4 educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field vocational_financed ///
+			educat4 educat_orig educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field vocational_financed ///
 			minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig ///
 			industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours ///
 			wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 ///
@@ -2036,19 +2044,18 @@ quietly{
 			industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year ///
 			wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year ///
 			firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year ///
-			t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome ///
-			isic_merge_1 isic_merge_2
+			t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
 
 *</_% KEEP VARIABLES - ALL_>
 
 *<_% ORDER VARIABLES_>
 
-	order 	countrycode survname survey icls_v year vermast veralt harmonization int_year int_month hhid pid weight psu strata wave ///
+	order 	countrycode survname survey icls_v isced_version isco_version isic_version year vermast veralt harmonization int_year int_month hhid pid weight psu strata wave ///
 			urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code ///
 			gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty ///
 			conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years ///
 			migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy ///
-			educy educat7 educat5 educat4 educat_isced vocational vocational_type vocational_length_l vocational_length_u ///
+			educy educat7 educat5 educat4 educat_orig educat_isced vocational vocational_type vocational_length_l vocational_length_u ///
 			vocational_field vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u ///
 			empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup ///
 			wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ///

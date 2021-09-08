@@ -6,6 +6,10 @@
 # to select from.
 #=========================================================================#
 
+library(tidyverse)
+library(scales)
+library(haven)
+library(shiny)
 
 #=========================================================================#
 # Step 1 - Define where .dta files stored ---------------------------------
@@ -15,56 +19,62 @@
 rm(list=ls())
 
 # User to define which dta files should be analysed.
+eval_directory <- "Y:/GLD-Harmonization/551206_TM/PHL" # replace this with top-level country directory path
+ 
+# You may also chose the version of the files you want to compare for dynamic checking.
+# That is, whether you want to look at all harmonized files, or only at those that are based
+# on, for example, V02_M (the second version of the master data). 
+version <- "v01_A"
 
-# Define list of paths directly (template below, commented out)
-# paths <- list("First file" = "C:/Folder/File_1.dta", "Second file" = "C:/Folder/File_2.dta")
-# paths <- list("1993" = "C:/Users/wb529026/OneDrive - WBG/Documents/Country Work/IND/IND_1993_NSS50-SCH10/IND_1993_NSS50-SCH10_v01_M_v01_A_GLD/Data/Harmonized/IND_1993_NSS50-SCH10_V01_M_V01_A_GLD.dta", 
-#              "1999" = "C:/Users/wb529026/OneDrive - WBG/Documents/Country Work/IND/IND_1999_NSS55-SCH10/IND_1999_NSS55-SCH10_v01_M_v01_A_GLD/Data/Harmonized/IND_1999_NSS55-SCH10_V01_M_V01_A_GLD.dta")
+# The default filled out below will look at all files. Unless you have knowledge of regular expressions
+# it is recommended to leave this as is.
+file_pattern <-  paste0("\\", version, "_GLD_ALL.dta$") 
 
 
-  ### ============================================ ###
-  ### From here on, the file should run on its own ###
-  ### ============================================ ###
 
-
-#=========================================================================#
-# Step 2 - Load necessary libraries ---------------------------------------
-#=========================================================================#
-
-packages = c("haven", "ggplot2", "dplyr", "shiny", "scales")
-
-for (package in packages){
-  if (!require(package, character.only = TRUE)){ # If package not known, install and load
-    install.packages(package, dependencies = TRUE)
-    library(package, character.only = TRUE)
-  }
-}
+### ============================================ ###
+### Step 2: From here on, the file should run on its own ###
+###         Create file / name tibble
+### ============================================ ###
+ 
+# finds full path of all .dta files that match "pattern"
+files <- list.files(eval_directory,     
+                    pattern = file_pattern, 
+                    recursive = TRUE,   # search all sub folders
+                    full.names = TRUE,  # list full file names
+                    include.dirs = TRUE) %>% # include the full file path
+  as_tibble() %>%
+  rename(paths = value) %>%
+  mutate(  # assume the filename is the 4-digit numeric value after the final "/"
+    names = stringr::str_extract(basename(paths), "[:digit:]{4}")
+  )
 
 #=========================================================================#
 # Step 3 - Load files defined in paths ------------------------------------
 #=========================================================================#
 
-# Create an empty list to fill with files
+# start with empty list
 file_list <- list()
 
-for (i in seq_along(paths)){ 
-  
-  # For each path, add a list entry with the read data frame
-  file_list[[names(paths)[i]]] <- read_dta(paths[[i]])
-  
-}
+# key variables
+variables <- c("educat7", "educat5", "educat4", "educat_isced", "hsize",
+               "industrycat10", "industrycat4", "industrycat10_2", "industrycat4_2",
+               "industrycat10_year", "industrycat4_year", "industrycat10_2_year", "industrycat4_2_year")
 
-# Bind all data frames into a single object
-df <- bind_rows(file_list) 
+
+df <- map2(files$names, files$paths, 
+           function(x, y) file_list[[x]] <<- haven::read_dta(y) %>%
+             select(any_of(variables), year, weight)
+           )
+
+
+df <- bind_rows(df)
+
+
 
 #=========================================================================#
 # Step 4 - Define necessary objetcs and functions to run program ----------
 #=========================================================================#
-
-# Define variables to be inspected
-variables <- c("educat7", "educat5", "educat4", "educat_isced", "hsize",
-               "industrycat10", "industrycat4", "industrycat10_2", "industrycat4_2",
-               "industrycat10_year", "industrycat4_year", "industrycat10_2_year", "industrycat4_2_year")
 
 # Define years to be inspected
 years <- unique(df$year)

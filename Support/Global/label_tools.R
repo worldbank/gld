@@ -8,6 +8,7 @@ library(summarytools)
 
 # load metadata
 load("Y:/GLD-Harmonization/551206_TM/PHL/PHL_data/I2D2/Rdata/metadata.Rdata")
+source(file.path(code, "Global/valtab.R"))
 
 # functions ----
 
@@ -318,6 +319,8 @@ save.image(file = file.path(PHL, "PHL_data/variable_label_tables.Rdata"))
 
 class <- valtab_name("clas")
 industry <- valtab_name("qkb", "pkb")
+
+edu <- valtab(metadata = metadata, x = "grade", param = label_orig)
 
 
 
