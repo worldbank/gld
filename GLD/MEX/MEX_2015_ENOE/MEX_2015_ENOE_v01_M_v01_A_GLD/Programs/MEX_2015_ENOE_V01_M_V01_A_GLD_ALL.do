@@ -605,10 +605,10 @@ label var ed_mod_age "Education module application age"
 	*gen byte educat7 =
 	gen byte educat7=1 if educy==0
 	replace educat7=2 if cs_p13_1==2
-	replace educat7=3 if educy==6
-	replace educat7=4 if inrange(cs_p13_1,3,5)
-	replace educat7=5 if educy==12
-	replace educat7=6 if cs_p13_1==6
+	replace educat7=3 if educy==6 & cs_p13_1==2
+	replace educat7=4 if inrange(cs_p13_1,3,4)
+	replace educat7=5 if educy==12 & cs_p13_1==4
+	replace educat7=6 if inrange(cs_p13_1,5,6)
 	replace educat7=7 if inrange(cs_p13_1,7,9)
 	replace educat7=. if age<ed_mod_age & age!=.
 	label var educat7 "Level of education 1"
@@ -634,6 +634,14 @@ label var ed_mod_age "Education module application age"
 	label values educat4 lbleducat4
 *</_educat4_>
 
+*<_educat_orig_>
+	gen educat_orig = .
+	label var educat_orig "Original survey education code"
+	*Note: The ENOE uses the national education classification which needs two variables
+	*cs_p13_1 (school level) & cs_p13_2(years  in school) to create one measurement of
+	*education level as a result there is no unique variable that
+	*translate to educat_orig. See documentation references for more details.
+*</_educat_orig_>
 
 *<_educat_isced_>
 	gen educat_isced = .
