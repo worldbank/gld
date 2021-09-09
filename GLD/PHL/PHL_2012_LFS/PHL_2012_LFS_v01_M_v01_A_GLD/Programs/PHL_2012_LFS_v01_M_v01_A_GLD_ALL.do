@@ -1173,6 +1173,7 @@ foreach v of local ed_var {
 *<_whours_>
 	gen whours 		= c22_phours
 	label var whours "Hours of work in last week primary job 7 day recall"
+    replace 		whours = 84 	if whours > 84 & whours != . 	// replace unrealistic work weeks
 *</_whours_>
 
 
