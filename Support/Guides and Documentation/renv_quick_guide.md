@@ -137,7 +137,7 @@ using
 renv::init()
 ```
 
-and select option 2 when it asks you about libraries.
+and select option 2 when it asks you about libraries if you want to use an existing library, or option 1 to start a new one.
 
 #### If `renv` doesn’t load
 
