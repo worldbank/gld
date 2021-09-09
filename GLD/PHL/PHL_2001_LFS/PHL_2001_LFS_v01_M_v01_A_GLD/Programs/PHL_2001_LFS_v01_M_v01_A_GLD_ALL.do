@@ -324,7 +324,7 @@ gen 	int round = 1
 	}
 
 	* concatenate to form pid: individual id
-	egen pid=concat( `idp_els' )						// concatenate vars we just made. code drops vars @ end
+	egen pid=concat(hhid `idp_els' )						// concatenate vars we just made. code drops vars @ end
 
 	sort hhid pid
 

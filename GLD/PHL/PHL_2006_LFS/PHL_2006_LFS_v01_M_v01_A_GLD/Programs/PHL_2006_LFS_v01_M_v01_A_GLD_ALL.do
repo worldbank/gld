@@ -463,7 +463,7 @@ replace int_month = 10 	if round == 4
 
 *<_pid_>
 ** INDIVIDUAL IDENTIFICATION NUMBER
-	gen 		pid = idp 		// generated from sub-module above.
+	egen 		pid = concat(hhid idp) 		// generated from sub-module above.
 	label var 	pid "Individual ID"
 
 	isid 		hhid pid

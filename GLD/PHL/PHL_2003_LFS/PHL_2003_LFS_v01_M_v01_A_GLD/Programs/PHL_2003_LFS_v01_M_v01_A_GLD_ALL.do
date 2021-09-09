@@ -438,7 +438,7 @@ set mem 800m
 
 *<_pid_>
 ** INDIVIDUAL IDENTIFICATION NUMBER
-	gen 		pid = idp 		// generated from sub-module above.
+	egen 		pid = concat(hhid idp) 		// generated from sub-module above.
 	label var 	pid "Individual ID"
 *</_pid_>
 
