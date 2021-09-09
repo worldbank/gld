@@ -154,7 +154,7 @@ gen 	int round = 1
 
 
 *<_isco_version_>
-	gen isco_version = "isco_88"
+	gen isco_version = "isco_1988"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 

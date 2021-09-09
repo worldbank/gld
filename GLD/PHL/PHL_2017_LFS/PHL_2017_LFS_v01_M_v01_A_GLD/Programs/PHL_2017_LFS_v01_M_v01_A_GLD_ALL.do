@@ -154,7 +154,7 @@ set mem 800m
 
 
 *<_isco_version_>
-	gen isco_version = "isco_08"
+	gen isco_version = "isco_2008"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
