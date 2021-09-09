@@ -960,7 +960,7 @@ foreach v of local ed_var {
 
 *<_ocusec_>
 	gen byte 		ocusec = .
-	replace 		ocusec = 1 	if class == 1
+	replace 		ocusec = 1 	if class == 2
 	replace 		ocusec = 2 	if inlist(class, 0, 1, 3, 4, 5, 6)
 
 	label var 		ocusec 		"Sector of activity primary job 7 day recall"
