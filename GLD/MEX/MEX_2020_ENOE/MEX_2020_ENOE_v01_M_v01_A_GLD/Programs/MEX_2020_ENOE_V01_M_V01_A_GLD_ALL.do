@@ -5,7 +5,7 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				[MEX_2020_ENOE_V01_M_v01_A_GLD_ALL.do] </_Program name_>
+<_Program name_>				[MEX_2020_ENOE_V01_M_V01_A_GLD_ALL.do] </_Program name_>
 <_Application_>					[STATA] <_Application_>
 <_Author(s)_>					[The World Bank Jobs Group] </_Author(s)_>
 <_Date created_>				2021-04-01 </_Date created_>
@@ -55,8 +55,8 @@ set more off
 set mem 800m
 
 *----------1.2: Set directories------------------------------*
-local path_in "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2020_ENOE\MEX_2020_ENOE_v01_M\Data\Stata"
-local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2020_ENOE\MEX_2020_ENOE_v01_M_v01_A_GLD\Data\Harmonized"
+local path_in "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2020_ENOE\MEX_2020_ENOE_V01_M\Data\Stata"
+local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2020_ENOE\MEX_2020_ENOE_V01_M_V01_A_GLD\Data\Harmonized"
 *----------1.3: Database assembly------------------------------*
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
@@ -82,13 +82,13 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2020_ENOE\MEX_2020_ENO
 ***first job
 	rename scian scian_orig
 	tostring p4a, gen(scian)
-	merge m:1 scian using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2020_ENOE\MEX_2020_ENOE_v01_M\Data\Stata\SCIAN_18_ISIC_4.dta", keep(master match) nogen
+	merge m:1 scian using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2020_ENOE\MEX_2020_ENOE_V01_M\Data\Stata\SCIAN_18_ISIC_4.dta", keep(master match) nogen
 *Note: rename necessary to allow for the second job code to generate a new cmo for the merge
 	rename scian scian_1
 	rename isic isic_1
 ***second job
 	tostring p7c, gen(scian)
-	merge m:1 scian using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2020_ENOE\MEX_2020_ENOE_v01_M\Data\Stata\SCIAN_18_ISIC_4.dta", keep(master match) nogen
+	merge m:1 scian using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2020_ENOE\MEX_2020_ENOE_V01_M\Data\Stata\SCIAN_18_ISIC_4.dta", keep(master match) nogen
 *Note: rename necessary to misinterpret scian
 	rename scian scian_2
 	rename isic isic_2
@@ -99,14 +99,14 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2020_ENOE\MEX_2020_ENO
 
 ***then first job
 	tostring p3, gen(sinco)
-	merge m:1 sinco using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2020_ENOE\MEX_2020_ENOE_v01_M\Data\Stata\SINCO_11_ISCO_08.dta", keep(master match) nogen
+	merge m:1 sinco using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2020_ENOE\MEX_2020_ENOE_V01_M\Data\Stata\SINCO_11_ISCO_08.dta", keep(master match) nogen
 *Note: rename necessary to allow for the second job code to generate a new cmo for the merge
 	rename sinco sinco_1
 	rename isco isco_1
 
 ***then second job
 	tostring p7a, gen(sinco)
-	merge m:1 sinco using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2020_ENOE\MEX_2020_ENOE_v01_M\Data\Stata\SINCO_11_ISCO_08.dta", keep(master match) nogen
+	merge m:1 sinco using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2020_ENOE\MEX_2020_ENOE_V01_M\Data\Stata\SINCO_11_ISCO_08.dta", keep(master match) nogen
 *Note: rename necessary to misinterpret cmo
 	rename sinco sinco_2
 	rename isco isco_2
@@ -167,7 +167,7 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2020_ENOE\MEX_2020_ENO
 
 
 *<_veralt_>
-	gen veralt = "v01"
+	gen veralt = "V01"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 

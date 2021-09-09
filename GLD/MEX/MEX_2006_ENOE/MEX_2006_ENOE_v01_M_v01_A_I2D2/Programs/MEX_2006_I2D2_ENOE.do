@@ -43,7 +43,7 @@
 	local path "Z:/GLD-Harmonization/582018_AQ/MEX/MEX_2006_ENOE"
 
 ** LOG FILE
-	log using "`path'/MEX_2006_ENOE_v01_M_v01_A_I2D2/Programs/MEX_2006_I2D2_ENOE.log", replace
+	log using "`path'/MEX_2006_ENOE_V01_M_V01_A_I2D2/Programs/MEX_2006_I2D2_ENOE.log", replace
 
 
 
@@ -56,15 +56,15 @@
 
 
 ** DATABASE ASSEMBLENT
-	use "`path'/MEX_2006_ENOE_v01_M/Data/Original/VIVT106.dta",clear
+	use "`path'/MEX_2006_ENOE_V01_M/Data/Original/VIVT106.dta",clear
 	drop p1-p3
 	destring loc mun est ageb t_loc cd_a upm d_sem n_pro_viv ent con v_sel n_ent per, replace
-	merge 1:m ent con v_sel using "`path'/MEX_2006_ENOE_v01_M/Data/Original/HOGT106.dta", nogen
-	merge 1:m ent con v_sel n_hog using "`path'/MEX_2006_ENOE_v01_M/Data/Original/SDEMT106.dta"
+	merge 1:m ent con v_sel using "`path'/MEX_2006_ENOE_V01_M/Data/Original/HOGT106.dta", nogen
+	merge 1:m ent con v_sel n_hog using "`path'/MEX_2006_ENOE_V01_M/Data/Original/SDEMT106.dta"
 	drop if _merge==1
 	drop _merge
-	merge 1:1 ent con v_sel n_hog n_ren using "`path'/MEX_2006_ENOE_v01_M/Data/Original/COE1T106.dta", nogen
-	merge 1:1 ent con v_sel n_hog n_ren using "`path'/MEX_2006_ENOE_v01_M/Data/Original/COE2T106.dta", nogen
+	merge 1:1 ent con v_sel n_hog n_ren using "`path'/MEX_2006_ENOE_V01_M/Data/Original/COE1T106.dta", nogen
+	merge 1:1 ent con v_sel n_hog n_ren using "`path'/MEX_2006_ENOE_V01_M/Data/Original/COE2T106.dta", nogen
 	keep if r_pre==0 & inlist(c_res,1,3)
 	tostring (ent v_sel n_hog n_ren h_mud), gen(ent_str v_sel_str n_hog_str n_ren_str h_mud_str) format(%02.0f)
 	tostring con, replace
@@ -804,7 +804,7 @@
 	}
 	keep ccode year intv_year month  idh idp wgt strata psu `keep'
 
-	save "`path'\MEX_2006_ENOE_v01_M_v01_A_I2D2\Data\Harmonized\MEX_2006_I2D2_ENOE.dta", replace
+	save "`path'\MEX_2006_ENOE_V01_M_V01_A_I2D2\Data\Harmonized\MEX_2006_I2D2_ENOE.dta", replace
 
 	log close
 
