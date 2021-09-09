@@ -1920,6 +1920,11 @@ foreach v of local ed_var {
 					t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs ///
 					t_hours_annual linc_nc laborincome
 
+* make a second iternation that excludes lstatus variables
+	local except 	lstatus lstatus_year
+	local lab_var2 	: list lab_var - except
+
+
 	foreach v of local lab_var {
 		cap confirm numeric variable `v'
 		if _rc == 0 { 	// is indeed numeric
@@ -1942,8 +1947,8 @@ foreach v of local ed_var {
 	or classified as lstatus == 1
 
 </_correction_lstatus_note> */
-
-	foreach v of local lab_var {
+	* use labvar2 because we don't want to replace lstatus, etc in this case
+	foreach v of local lab_var2 {
 		cap confirm numeric variable `v'
 		if _rc == 0 { 	// is indeed numeric
 			replace `v'=. if ( lstatus !=1 & !missing(lstatus) )
@@ -1954,9 +1959,7 @@ foreach v of local ed_var {
 
 	}
 
-*</_% Correction min age_>
-
-
+*</_% Correction lstatus_>
 
 
 }
