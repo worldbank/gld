@@ -10,6 +10,15 @@ renv: A Quick Guide
             package](#when-i-update-or-install-a-package)
         -   [Getting Updates](#getting-updates)
 -   [Help! (light)](#help-light)
+    -   [If you’re not sure if `renv` is initialized on the branch
+        you’re
+        using](#if-youre-not-sure-if-renv-is-initialized-on-the-branch-youre-using)
+    -   [If you need to initialize `renv` on your
+        branch](#if-you-need-to-initialize-renv-on-your-branch)
+    -   [If `renv` doesn’t load](#if-renv-doesnt-load)
+    -   [`renv::snapshot()` doesn’t detect new
+        packages/updates](#renvsnapshot-doesnt-detect-new-packagesupdates)
+    -   [](#section)
 
 A Quick guide for using `renv` . Please refer to the [getting started
 vignette](https://rstudio.github.io/renv/articles/renv.html) for more.
@@ -46,39 +55,33 @@ up with the following tools assumed:
     repository — but not the package files themselves. This file is also
     version-controlled on the repository.
 
-## If `renv` is not on your repository or branch
-If `renv` is not on the repository or branch, follow the instructions below. If it is intiatilized already, skip to the next section.
-1. install renv: 
-```
-install.packages("renv")
-```
-Then initialize the `renv` with 
-```
-renv::init()
-```
-
 ## Using `renv` for the first time
 
 Since this `renv` project is already initialized, first-time users will
 need to only
 
-1. install renv: 
-```
-install.packages("renv")
-```
-3. Open R studio with the associated `gld.Rproj` file and then type
+1.  Open Rstudio with the `gld.Rproj` file
 
-``` r
-renv::restore()
-```
+2.  Install the `renv` package
+
+    ``` r
+    install.packages("renv")
+    ```
+
+3.  Finally, tell `renv` about the `renv.lock` file, which will install
+    all packages. This may take a while for the first time.
+
+    ``` r
+    renv::restore()
+    ```
 
 If loaded correctly, the console will tell you that the project `gld` is
 loaded with renv.
 
 ## Using `renv` daily
 
-Once, you’ve installed and loaded the renv project, whenever Rstudio
-loads the `gld.Rproject` file it will automatically load `renv` .
+1.  Open Rstudio with the `gld` project file — it will automatically
+    load `renv`.
 
 ### When I update or install a package
 
@@ -114,6 +117,28 @@ This will install the packages that are missing or have been updated.
 
 # Help! (light)
 
+#### If you’re not sure if `renv` is initialized on the branch you’re using
+
+For most cases, users will be coming to a branch with `renv` already
+initialized. If you want aren’t sure if you have `renv` initialized,
+type
+
+``` r
+renv::status()
+```
+
+#### If you need to initialize `renv` on your branch
+
+If for some reason `renv` is not initialized on your branch, follow
+steps 1 and 2 above in “Using renv for the First Time”. Then initialize
+using
+
+``` r
+renv::init()
+```
+
+and select option 2 when it asks you about libraries.
+
 #### If `renv` doesn’t load
 
 Then try
@@ -130,6 +155,8 @@ Try ensuring that it’s capturing all types of snapshots.
 renv::settings$snapshot.type("all")
 renv::snapshot()
 ```
+
+#### 
 
 ``` r
 citation("renv")
