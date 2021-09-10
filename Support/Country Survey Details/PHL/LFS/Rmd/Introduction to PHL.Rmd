@@ -21,13 +21,39 @@ knit: (function(input, ...) {
 
 ## What is the PHL LFS?
 
+The Philippines Labor Force Survey (LFS) is a Labor Force Survey that is
+usually collected four times per year. Our analysis begins in 1997.
+
 ## What does the PHL LFS cover?
 
-| Year | \# of Households | \# of Individuals |
-|:-----|:-----------------|:------------------|
-| 1987 | 129,060          | 667,804           |
-| ...  | ...              | ...               |
-| 2011 | 101,724          | 456,999           |
+The following table presents unique Household and Individual
+observations in the final GLD dataset.
+
+| Year | No. of Households | No. of Individuals |
+|:-----|:------------------|:-------------------|
+| 1997 |                   |                    |
+| 1998 |                   |                    |
+| 1999 |                   |                    |
+| 2000 |                   |                    |
+| 2001 |                   |                    |
+| 2002 |                   |                    |
+| 2003 |                   |                    |
+| 2004 |                   |                    |
+| 2005 |                   |                    |
+| 2006 |                   |                    |
+| 2007 |                   |                    |
+| 2008 |                   |                    |
+| 2009 |                   |                    |
+| 2010 |                   |                    |
+| 2011 |                   |                    |
+| 2012 |                   |                    |
+| 2013 |                   |                    |
+| 2014 |                   |                    |
+| 2015 |                   |                    |
+| 2016 |                   |                    |
+| 2017 |                   |                    |
+| 2018 |                   |                    |
+| 2019 |                   |                    |
 
 ## Where can the data be found?
 
