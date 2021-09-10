@@ -1027,8 +1027,7 @@ foreach v of local ed_var {
 	tab 		isic_merge_`n' 		if `matchvar' != .
 
 
-	destring 	isic4_`n' ///
-				, generate(industrycat_isic)
+	gen 		industrycat_isic = isic4_`n'  	// the string variable becomes industrycat_isic
 
 	drop 		class 				// no longer needed, maintained in matchvar
 
@@ -1311,8 +1310,7 @@ foreach v of local ed_var {
 	tab 		isic_merge_`n' 		if `matchvar' != .
 
 
-	destring 	isic4_`n' ///
-				, generate(industrycat_isic_2)
+	gen 		industrycat_isic_2 = isic4_`n'  	// the string variable becomes industrycat_isic	
 
 	drop 		class 				// no longer needed, maintained in matchvar
 
