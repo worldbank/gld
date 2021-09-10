@@ -4,7 +4,7 @@ library(tidyverse)
 
 # 1. determine dir import files ----
 # User to define which dta files should be analysed.
-eval_directory <- "..../PHL" # replace this with top-level country directory path
+eval_directory <- ".../PHL" # replace this with top-level country directory path
 
 # You may also chose the version of the files you want to compare for dynamic checking.
 # That is, whether you want to look at all harmonized files, or only at those that are based
@@ -30,6 +30,9 @@ files <- list.files(eval_directory,
 # key variables
 variables <- c("countrycode", "year", "hhid", "pid")
 
+# start with empty list
+file_list <- list()
+
 
 df <- map2(files$names, files$paths, 
            function(x, y) file_list[[x]] <<- haven::read_dta(y) %>%
@@ -50,3 +53,6 @@ count <- df %>%
   )
   
 
+#3. save ----
+
+save(count, file = file.path(eval_directory, "PHL_data/unique_ids_per_yr.Rdata"))
