@@ -1015,6 +1015,10 @@ replace month = 10 	if round == 4
 
 ** WAGES TIME UNIT - SECOND JOB
 	gen byte unitwage_2=j06_obis
+	recode 	unitwage_2 (0 1 5 6 7 = 10)   		/// other
+	              (2 = 9) 		/// hourly
+	              (3 = 1) 		/// daily
+	              (4 = 5) 		// monthly
 	replace unitwage_2=. if lstatus!=1 			// restrict universe to employed only
 	replace unitwage_2=. if age < lb_mod_age		// restrict universe to working age
 	replace unitwage_2=. if empstat==1			// restrict universe to wage earners

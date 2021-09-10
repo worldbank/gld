@@ -1097,7 +1097,7 @@ undergraduates in "primary" and "graduates" in "secondary" */
 
 ** WAGES TIME UNIT - SECOND JOB
 	gen byte unitwage_2=.
-	recode 			unitwage (0 1 5 6 7 = 10) /// other
+	recode 			unitwage_2 (0 1 5 6 7 = 10) /// other
 								(2 = 9) /// hourly
 								(3 = 1) /// daily
 								(4 = 5) // monthly
