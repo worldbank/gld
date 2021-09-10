@@ -745,11 +745,16 @@ if (`cb_pause' == 1) {
 	replace wage=. if lstatus!=1 			// restrict universe to employed only
 	replace wage=. if age < lb_mod_age		// restrict universe to working age
 	replace wage=. if empstat==1			// restrict universe to wage earners
-	label var wage "Last wage payment"
+    replace wage=. if wage == 99999			// replace with numeric-encoded missing value
+    label var wage "Last wage payment"
 
 
 ** WAGES TIME UNIT
-	gen byte unitwage=1 					// but no way to verify this?
+	gen byte unitwage=c24_pbasis
+	recode 	unitwage (0 1 5 6 7 = 10)   		/// other
+								(2 = 9) 		/// hourly
+								(3 = 1) 		/// daily
+								(4 = 5) 		// monthly
 	replace unitwage=. if lstatus!=1 			// restrict universe to employed only
 	replace unitwage=. if age < lb_mod_age		// restrict universe to working age
 	replace unitwage=. if empstat==1			// restrict universe to wage earners
@@ -822,7 +827,7 @@ if (`cb_pause' == 1) {
 
 
 ** WAGES - SECOND JOB
-	gen double wage_2=.
+	gen double wage_2=c33_obasic
 	replace wage_2=. if lstatus!=1 			// restrict universe to employed only
 	replace wage_2=. if age < lb_mod_age		// restrict universe to working age
 	replace wage_2=. if empstat==1			// restrict universe to wage earners
@@ -830,7 +835,11 @@ if (`cb_pause' == 1) {
 
 
 ** WAGES TIME UNIT - SECOND JOB
-	gen byte unitwage_2=.
+	gen byte unitwage_2=c32_obasis
+	recode 	unitwage_2 (0 1 5 6 7 = 10)   		/// other
+	              (2 = 9) 		/// hourly
+	              (3 = 1) 		/// daily
+	              (4 = 5) 		// monthly
 	replace unitwage_2=. if lstatus!=1 			// restrict universe to employed only
 	replace unitwage_2=. if age < lb_mod_age		// restrict universe to working age
 	replace unitwage_2=. if empstat==1			// restrict universe to wage earners

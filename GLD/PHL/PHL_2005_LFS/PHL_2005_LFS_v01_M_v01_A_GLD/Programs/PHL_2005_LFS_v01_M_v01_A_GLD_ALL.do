@@ -154,7 +154,7 @@ set mem 800m
 
 
 *<_isco_version_>
-	gen isco_version = "isco_88"
+	gen isco_version = "isco_1988"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
@@ -309,7 +309,7 @@ replace int_month = 10 	if round == 4
 
 *<_pid_>
 ** INDIVIDUAL IDENTIFICATION NUMBER
-	gen 		pid = idp 		// generated from sub-module above.
+	egen 		pid = concat(hhid idp) 		// generated from sub-module above.
 	label var 	pid "Individual ID"
 
 	isid 		hhid pid
@@ -964,7 +964,7 @@ foreach v of local ed_var {
 
 *<_ocusec_>
 	gen byte 		ocusec = .
-	replace 		ocusec = 1 	if c19pclas == 1
+	replace 		ocusec = 1 	if c19pclas == 2
 	replace 		ocusec = 2 	if inlist(c19pclas, 0, 1, 3, 4, 5, 6)
 
 	label var 		ocusec 		"Sector of activity primary job 7 day recall"
@@ -1116,6 +1116,7 @@ foreach v of local ed_var {
 *<_whours_>
 	gen whours 		= c22_phrs
 	label var whours "Hours of work in last week primary job 7 day recall"
+    replace 		whours = 84 	if whours > 84 & whours != . 	// replace unrealistic work weeks
 *</_whours_>
 
 
@@ -1864,6 +1865,11 @@ foreach v of local ed_var {
 					t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs ///
 					t_hours_annual linc_nc laborincome
 
+* make a second iternation that excludes lstatus variables
+	local except 	lstatus lstatus_year
+	local lab_var2 	: list lab_var - except
+
+
 	foreach v of local lab_var {
 		cap confirm numeric variable `v'
 		if _rc == 0 { 	// is indeed numeric
@@ -1886,8 +1892,8 @@ foreach v of local ed_var {
 	or classified as lstatus == 1
 
 </_correction_lstatus_note> */
-
-	foreach v of local lab_var {
+	* use labvar2 because we don't want to replace lstatus, etc in this case
+	foreach v of local lab_var2 {
 		cap confirm numeric variable `v'
 		if _rc == 0 { 	// is indeed numeric
 			replace `v'=. if ( lstatus !=1 & !missing(lstatus) )
@@ -1898,9 +1904,7 @@ foreach v of local ed_var {
 
 	}
 
-*</_% Correction min age_>
-
-
+*</_% Correction lstatus_>
 
 
 }
