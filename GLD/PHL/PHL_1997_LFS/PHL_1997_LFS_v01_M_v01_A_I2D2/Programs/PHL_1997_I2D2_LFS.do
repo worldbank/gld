@@ -731,7 +731,8 @@ if (`append' == 1) {
 	replace wage=. if lstatus!=1 			// restrict universe to employed only
 	replace wage=. if age < lb_mod_age		// restrict universe to working age
 	replace wage=. if empstat==1			// restrict universe to wage earners
-	label var wage "Last wage payment"
+    replace wage=. if wage == 99999			// replace with numeric-encoded missing value
+    label var wage "Last wage payment"
 
 
 ** WAGES TIME UNIT
