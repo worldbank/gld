@@ -147,13 +147,23 @@ use "`path_in'\LFS2019_raw.dta"
 
 *<_hhid_>
 	tostring birimno, gen(hhid)
+	*label var hhid "Household ID"
+	*tostring birimno, replace
+	*gen birimno_str=substr("0000",1,5 - length(birimno))+birimno
+	*gen hhid=birimno_str
 	label var hhid "Household ID"
+
+
 *</_hhid_>
 
 
 *<_pid_>
 	egen pid = concat(hhid fertno)
+	*label var pid "Individual ID"
+	*tostring fertno, replace
+	*gen pid=hhid+fertno
 	label var pid "Individual ID"
+
 *</_pid_>
 
 
@@ -335,8 +345,17 @@ use "`path_in'\LFS2019_raw.dta"
 	the data, it is clear that HH size (hane_buyukluk) does count all in the household including those with
 	relationship 11 to the HH head (yakinlik), meaning "Housekeepers staying at home", they are taken out.
 </_hsize_note> */
-	gen helper_housekeepers = yakinlik == 11
-	gen hsize = hane_buyukluk - helper_housekeepers // take out housekeepers staying at home
+	*gen helper_housekeepers = yakinlik == 11
+	*gen hsize = (hane_buyukluk - helper_housekeepers) // take out housekeepers staying at home
+	bysort hhid: gen hsize=hane_buyukluk if yakinlik<11
+	bysort hhid: gen helper_hsize=_N 
+	count if helper_hsize<hsize
+	*we find that hane_buyukluk is incorrect for 164 , 000 observations
+	*how come hhid pid and helper coincide by hane_buyukluk not , NSO issue 
+	*when there is hhead (1) and children (3) they have recorded hsize 3 when is in fact 2
+	*decision to use helper as it resemples fertno and pid and hhid.
+	replace hsize=helper_hsize if  helper_hsize<hsize
+	replace hsize=. if yakinlik==11
 	label var hsize "Household size"
 *</_hsize_>
 
