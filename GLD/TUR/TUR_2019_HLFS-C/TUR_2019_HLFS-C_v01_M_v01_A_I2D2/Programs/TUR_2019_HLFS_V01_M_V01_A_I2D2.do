@@ -9,12 +9,12 @@
 ** SURVEY NAME	HOUSEHOLD LABOUR FORCE SURVEY
 ** SURVEY AGENCY	Turkish Statistical Institute (TUIK)
 ** SURVEY SOURCE	Turkish Statistical Institute (TUIK)
-** UNIT OF ANALYSIS	
+** UNIT OF ANALYSIS
 ** RESPONSIBLE	Mario Gronert
 ** Created	08/06/2021
 ** Modified	08/06/2021
-** NUMBER OF HOUSEHOLDS	
-** NUMBER OF INDIVIDUALS 
+** NUMBER OF HOUSEHOLDS
+** NUMBER OF INDIVIDUALS
 ** EXPANDED POPULATION 61469000 (of 15 and above ages)
 **                                                                                                  **
 ******************************************************************************************************
@@ -38,17 +38,17 @@
 	local 	drive 	`"Z"'		// set this to where you mapped the GLD drive on your work computer
 	local 	cty3 	"TUR" 	// set this to the three letter country/economy abbreviation
 	local 	usr		`"582018_AQ"' // set this to whatever Mario named your folder
-	local 	surv_yr `"2019"'	// set this to the survey year 
-	
+	local 	surv_yr `"2019"'	// set this to the survey year
+
 ** RUN SETTINGS
 	local 	cb_pause = 1	// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
-	
-	
-	local 	year 	"`drive':\GLD-Harmonization\\`usr'\\`cty3'\\`cty3'_`surv_yr'_HLFS-C" // top data folder
-	local 	main	"`year'\\`cty3'_2019_HLFS-C_v01_M"
+
+
+	local 	year 	"`drive':\GLD-Harmonization\\`usr'\\`cty3'\\`cty3'_`surv_yr'_HLFS" // top data folder
+	local 	main	"`year'\\`cty3'_2019_HLFS_V01_M"
 	local 	stata	"`main'\data\stata"
-	local 	gld 	"`year'\\`cty3'_2019_HLFS-C_v01_M_v01_A_GLD"
-	local 	i2d2	"`year'\\`cty3'_2019_HLFS-C_v01_M_v01_A_I2D2"
+	local 	gld 	"`year'\\`cty3'_2019_HLFS_V01_M_V01_A_GLD"
+	local 	i2d2	"`year'\\`cty3'_2019_HLFS_V01_M_V01_A_I2D2"
 	local 	code 	"`i2d2'\Programs"
 	local 	id_data	"`i2d2'\Data\Harmonized"
 
@@ -87,16 +87,26 @@
 
 
 ** HOUSEHOLD IDENTIFICATION NUMBER
-	tostring birimno, gen(idh)
+	*tostring birimno, gen(idh)
+	*label var idh "Household id"
+
+	tostring birimno, replace
+	gen birimno_str=substr("0000",1,5 - length(birimno))+birimno
+	gen idh=birimno_str
 	label var idh "Household id"
 
 
 
 ** INDIVIDUAL IDENTIFICATION NUMBER
-	egen idp = concat(idh fertno)
-	label var idp "Individual id"
+tostring fertno, replace
+gen idp=idh+fertno
+label var idp "Individual id"
 
-	isid idp
+
+	*egen idp = concat(idh fertno)
+	*label var idp "Individual id"
+
+	*isid idp
 
 ** HOUSEHOLD WEIGHTS
 	gen wgt=agirlik_katsayisi*1000 // Weight as done gives value in the thousands, need to multiply to have millions
@@ -195,7 +205,7 @@
 	replace reg03 = 25 if ibbs_2 == "TRC2"
 	replace reg03 = 26 if ibbs_2 == "TRC3"
 	label var reg03 "NUTS-2 Region"
-	label define reg03  1 "Istanbul" 2 "Edirne, Tekirdağ, Kırklareli" 3 "Balıkesir, Çanakkale" 4 "İzmir" 5 "Denizli, Aydın, Muğla" 6 "Manisa, Afyonkarahisar, Kütahya, Uşak" 7 "Bursa, Eskişehir, Bilecik" 8 "Kocaeli, Sakarya, Düzce, Bolu, Yalova" 9 "Ankara" 10 "Konya, Karaman" 11 "Antalya, Isparta, Burdur" 12 "Adana, Mersin" 13 "Hatay, Kahramanmaraş, Osmaniye" 14 "Nevşehir, Aksaray, Niğde, Kırıkkale, Kırşehir" 15 "Kayseri, Sivas, Yozgat" 16 "Zonguldak, Karabük, Bartın" 17 "Kastamonu, Çankırı, Sinop" 18 "Samsun, Tokat, Çorum, Amasya" 19 "Trabzon, Ordu, Giresun, Rize, Artvin, Gümüşhane" 20 "Erzurum, Erzincan, Bayburt" 21 "Kars, Ağrı, Iğdır, Ardahan" 22 "Malatya, Elazığ, Bingöl, Tunceli" 23 "Van, Muş, Bitlis, Hakkari" 24 "Gaziantep, Adıyaman, Kilis" 25 "Diyarbakır, Şanlıurfa" 26 "Siirt, Mardin, Batman, Şırnak" 
+	label define reg03  1 "Istanbul" 2 "Edirne, Tekirdağ, Kırklareli" 3 "Balıkesir, Çanakkale" 4 "İzmir" 5 "Denizli, Aydın, Muğla" 6 "Manisa, Afyonkarahisar, Kütahya, Uşak" 7 "Bursa, Eskişehir, Bilecik" 8 "Kocaeli, Sakarya, Düzce, Bolu, Yalova" 9 "Ankara" 10 "Konya, Karaman" 11 "Antalya, Isparta, Burdur" 12 "Adana, Mersin" 13 "Hatay, Kahramanmaraş, Osmaniye" 14 "Nevşehir, Aksaray, Niğde, Kırıkkale, Kırşehir" 15 "Kayseri, Sivas, Yozgat" 16 "Zonguldak, Karabük, Bartın" 17 "Kastamonu, Çankırı, Sinop" 18 "Samsun, Tokat, Çorum, Amasya" 19 "Trabzon, Ordu, Giresun, Rize, Artvin, Gümüşhane" 20 "Erzurum, Erzincan, Bayburt" 21 "Kars, Ağrı, Iğdır, Ardahan" 22 "Malatya, Elazığ, Bingöl, Tunceli" 23 "Van, Muş, Bitlis, Hakkari" 24 "Gaziantep, Adıyaman, Kilis" 25 "Diyarbakır, Şanlıurfa" 26 "Siirt, Mardin, Batman, Şırnak"
 	label values reg03 reg03
 
 
@@ -203,7 +213,7 @@
 	gen reg04=.
 	label var reg04 "Region at 3 digits (ADMN3)"
 
-	
+
 ** HOUSE OWNERSHIP
 	gen ownhouse=.
 	label var ownhouse "House ownership"
@@ -320,7 +330,7 @@
 
 
 ** EDUCATION MODULE AGE
-	gen ed_mod_age=5 
+	gen ed_mod_age=5
 	*Note the data release we have has only 15 year old and older actual survey cut off is 5. A tad irrelevant but for completeness sake.
 	label var ed_mod_age "Education module application age"
 
@@ -371,7 +381,7 @@
 	replace edulevel2 = 2 if okul_biten_k  == 1
 	replace edulevel2 = 3 if okul_biten_k  == 2
 	replace edulevel2 = 4 if okul_biten_k  == 31 | okul_biten_k  == 32
-	replace edulevel2 = 5 if okul_biten_k  == 4 | okul_biten_k  == 5	
+	replace edulevel2 = 5 if okul_biten_k  == 4 | okul_biten_k  == 5
 	label var edulevel2 "Level of education 2"
 	la de lbledulevel2 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
 	label values edulevel2 lbledulevel2
@@ -383,8 +393,8 @@
 	label var edulevel3 "Level of education 3"
 	la de lbledulevel3 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values edulevel3 lbledulevel3
-	 
-	 
+
+
 
 /*****************************************************************************************************
 *                                                                                                    *
@@ -451,7 +461,7 @@
 
 ** REASONS NOT IN THE LABOR FORCE
 	gen nlfreason = ido_neden
-	recode nlfreason (35=1) (34=2) (36=3) (37=4) (31 32 33 38 39 =5) 
+	recode nlfreason (35=1) (34=2) (36=3) (37=4) (31 32 33 38 39 =5)
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
 	label values nlfreason lblnlfreason
@@ -459,7 +469,7 @@
 
 
 ** UNEMPLOYMENT DURATION: MONTHS LOOKING FOR A JOB
-	gen unempldur_l=. 
+	gen unempldur_l=.
 	replace unempldur_l = isara_sure if lstatus==2
 	label var unempldur_l "Unemployment duration (month) lower bracket"
 
@@ -495,7 +505,7 @@
 
 **SURVEY SPECIFIC INDUSTRY CLASSIFICATION
 	gen industry_orig = string(nace2_esas_k,"%02.0f")
-	replace industry_orig = "" if industry_orig == "."	
+	replace industry_orig = "" if industry_orig == "."
 	replace industry_orig = industry_orig + "00" if !missing(industry_orig)
 	replace industry_orig="" if lstatus!=1
 	label var industry_orig "Original Industry Codes (NACE/ISIC code at Division Level)"
@@ -510,7 +520,7 @@
 
 ** SURVEY SPECIFIC OCCUPATION CLASSIFICATION
 	gen occup_orig = string(isco08_esas_k,"%02.0f")
-	replace occup_orig = "" if occup_orig == "."	
+	replace occup_orig = "" if occup_orig == "."
 	replace occup_orig = occup_orig + "00" if !missing(occup_orig)
 	replace occup_orig="" if lstatus!=1
 	label var occup_orig "Original Occupational Codes"
@@ -525,13 +535,13 @@
 	recode firmsize_u (1=10) (2=19) (3=49) (4=.) (5=.)
 	replace firmsize_u=. if lstatus!=1
 	label var firmsize_u "Firm size (upper bracket)"
-	
-	
+
+
 ** HOURS WORKED LAST WEEK
 	* Survey has two concepts - work usually in a week (esas_hafsaat_genel) and work the last
 	* week (esas_fiili). There are 64 cases where the usual work hours are 0, 190 were the acutal
 	* last week work hours are 0. In addition, 57 have usual hours 0 hours, but actual are peopl
-	* who have business they were absent from with reason but will return (calisma_sahip_is == 1). 
+	* who have business they were absent from with reason but will return (calisma_sahip_is == 1).
 	* For them set to missing. That leaves 7 individuals, all self employed market oriented skilled
 	* Agriculture workers (ISCO 61). All seven claim to have a second job. Their first job usual and
 	* last week hours are zero, but the second job hours are in there (and look like normal hours
@@ -549,25 +559,25 @@
 	How much did you earn from your main job activity during the last month? (including extra income
 	like bonus pay, premiums etc. on addition to salary, monthly or quarterly paid)
 	The questions is only asked to paid employees only. Looking at the below crosstab
-	
+
                   |               test
 Employment status | Wage Miss   Wage = 0   Wage > 0 |     Total
 ------------------+---------------------------------+----------
-    Paid employee |         0      7,161     94,811 |   101,972 
-Non-paid employee |    21,009          0          0 |    21,009 
-         Employer |     6,552          0          0 |     6,552 
-    Self-employed |    31,767          0          0 |    31,767 
-                . |   205,251          0          0 |   205,251 
+    Paid employee |         0      7,161     94,811 |   101,972
+Non-paid employee |    21,009          0          0 |    21,009
+         Employer |     6,552          0          0 |     6,552
+    Self-employed |    31,767          0          0 |    31,767
+                . |   205,251          0          0 |   205,251
 ------------------+---------------------------------+----------
-            Total |   264,579      7,161     94,811 |   366,551 
+            Total |   264,579      7,161     94,811 |   366,551
 
 	The odd case are 7K individuals that are paid employees (not non-paid) but wage is 0. These are
 	set to missing
-			
+
 */
 	gen wage=gelir_gecenay_k
 	replace wage=. if lstatus!=1
-	replace wage=. if wage == 0 
+	replace wage=. if wage == 0
 	* Expect 7161 replacements
 	label var wage "Last wage payment"
 
@@ -784,7 +794,7 @@ Non-paid employee |    21,009          0          0 |    21,009
 	keep ccode year intv_year month  idh idp wgt strata psu `keep'
 
 
-	save "`id_data'\TUR_2019_HLFS-C_v01_M_v01_A_I2D2.dta", replace
-	
+	save "`id_data'\TUR_2019_HLFS_V01_M_V01_A_I2D2.dta", replace
+
 
 ******************************  END OF DO-FILE  *****************************************************/
