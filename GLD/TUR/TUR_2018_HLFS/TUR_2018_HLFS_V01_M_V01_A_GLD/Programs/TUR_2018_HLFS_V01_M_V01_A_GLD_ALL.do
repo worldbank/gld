@@ -4,14 +4,14 @@
 ==============================================================================================%%*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				TUR_2019_HLFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
+<_Program name_>				TUR_2018_HLFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata 16 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
-<_Date created_>				2021-06-23 </_Date created_>
+<_Date created_>				2021-09-13 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						TUR </_Country_>
 <_Survey Title_>				Household Labour Force Survey[SurveyName] </_Survey Title_>
-<_Survey Year_>					2019 </_Survey Year_>
+<_Survey Year_>					2018 </_Survey Year_>
 <_Study ID_>					Not on MicroData Library </_Study ID_>
 <_Data collection from_>		[MM/YYYY] </_Data collection from_>
 <_Data collection to_>			[MM/YYYY] </_Data collection to_>
@@ -51,14 +51,14 @@ set mem 800m
 
 *----------1.2: Set directories------------------------------*
 
-local path_in "Z:\GLD-Harmonization\582018_AQ\TUR\TUR_2019_HLFS\TUR_2019_HLFS_V01_M\Data\Stata"
-local path_output "Z:\GLD-Harmonization\582018_AQ\TUR\TUR_2019_HLFS\TUR_2019_HLFS_V01_M_V01_A_GLD\Data\Harmonized"
+local path_in "Z:\GLD-Harmonization\582018_AQ\TUR\TUR_2018_HLFS\TUR_2018_HLFS_V01_M\Data\Stata"
+local path_output "Z:\GLD-Harmonization\582018_AQ\TUR\TUR_2018_HLFS\TUR_2018_HLFS_V01_M_V01_A_GLD\Data\Harmonized"
 
 *----------1.3: Database assembly------------------------------*
 
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
-use "`path_in'\LFS2019_raw.dta"
+use "`path_in'\LFS2018.dta"
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -108,7 +108,7 @@ use "`path_in'\LFS2019_raw.dta"
 
 
 *<_year_>
-	gen int year = 2019
+	*gen int year = 2018
 	label var year "Year of survey"
 *</_year_>
 
@@ -132,7 +132,7 @@ use "`path_in'\LFS2019_raw.dta"
 
 
 *<_int_year_>
-	gen int_year= 2019
+	gen int_year= 2018
 	label var int_year "Year of the interview"
 *</_int_year_>
 
@@ -146,22 +146,13 @@ use "`path_in'\LFS2019_raw.dta"
 
 
 *<_hhid_>
-	tostring birimno, gen(hhid)
-	*label var hhid "Household ID"
-	*tostring birimno, replace
-	*gen birimno_str=substr("0000",1,5 - length(birimno))+birimno
-	*gen hhid=birimno_str
+	tostring formno, gen(hhid)
 	label var hhid "Household ID"
-
-
 *</_hhid_>
 
 
 *<_pid_>
-	egen pid = concat(hhid fertno)
-	*label var pid "Individual ID"
-	*tostring fertno, replace
-	*gen pid=hhid+fertno
+	egen pid = concat(hhid s1)
 	label var pid "Individual ID"
 
 *</_pid_>
@@ -172,7 +163,7 @@ use "`path_in'\LFS2019_raw.dta"
 	Weight as given in raw data gives value in the thousands (so 61 million appears as 61 000),
 	need to multiply by thousand to have actual number.
 </_weight_note> */
-	gen weight = agirlik_katsayisi*1000
+	gen weight = faktor*1000
 	label var weight "Household sampling weight"
 *</_weight_>
 
@@ -226,18 +217,18 @@ use "`path_in'\LFS2019_raw.dta"
 	administrative divisions. Same for subnatid2.
 </_subnatid1> */
 	gen subnatid1= .
-	replace subnatid1 = 1 if ibbs_1 == "TR1"
-	replace subnatid1 = 2 if ibbs_1 == "TR2"
-	replace subnatid1 = 3 if ibbs_1 == "TR3"
-	replace subnatid1 = 4 if ibbs_1 == "TR4"
-	replace subnatid1 = 5 if ibbs_1 == "TR5"
-	replace subnatid1 = 6 if ibbs_1 == "TR6"
-	replace subnatid1 = 7 if ibbs_1 == "TR7"
-	replace subnatid1 = 8 if ibbs_1 == "TR8"
-	replace subnatid1 = 9 if ibbs_1 == "TR9"
-	replace subnatid1 = 10 if ibbs_1 == "TRA"
-	replace subnatid1 = 11 if ibbs_1 == "TRB"
-	replace subnatid1 = 12 if ibbs_1 == "TRC"
+	replace subnatid1 = 1 if nuts1 == "TR1"
+	replace subnatid1 = 2 if nuts1 == "TR2"
+	replace subnatid1 = 3 if nuts1 == "TR3"
+	replace subnatid1 = 4 if nuts1 == "TR4"
+	replace subnatid1 = 5 if nuts1 == "TR5"
+	replace subnatid1 = 6 if nuts1 == "TR6"
+	replace subnatid1 = 7 if nuts1 == "TR7"
+	replace subnatid1 = 8 if nuts1 == "TR8"
+	replace subnatid1 = 9 if nuts1 == "TR9"
+	replace subnatid1 = 10 if nuts1 == "TRA"
+	replace subnatid1 = 11 if nuts1 == "TRB"
+	replace subnatid1 = 12 if nuts1 == "TRC"
 	label define lblsubnatid1  1 "1 - Istanbul" 2 "2 - West Marmara" 3 "3 - Aegean" 4 "4 - East Marmara" 5 "5 - West Anatolia" 6 "6 - Mediterranean" 7 "7 - Central Anatolia" 8 "8 - West Black Sea" 9 "9 - East Black Sea" 10 "10 - Northeast Anatolia" 11 "11- Middle East Anatolia" 12 "12 - Southeast Anatolia"
 	label values subnatid1 lblsubnatid1
 	label var subnatid1 "Subnational ID at NUTS 1 Level"
@@ -246,32 +237,32 @@ use "`path_in'\LFS2019_raw.dta"
 
 *<_subnatid2_>
 	gen subnatid2=.
-	replace subnatid2 = 1 if ibbs_2 == "TR10"
-	replace subnatid2 = 2 if ibbs_2 == "TR21"
-	replace subnatid2 = 3 if ibbs_2 == "TR22"
-	replace subnatid2 = 4 if ibbs_2 == "TR31"
-	replace subnatid2 = 5 if ibbs_2 == "TR32"
-	replace subnatid2 = 6 if ibbs_2 == "TR33"
-	replace subnatid2 = 7 if ibbs_2 == "TR41"
-	replace subnatid2 = 8 if ibbs_2 == "TR42"
-	replace subnatid2 = 9 if ibbs_2 == "TR51"
-	replace subnatid2 = 10 if ibbs_2 == "TR52"
-	replace subnatid2 = 11 if ibbs_2 == "TR61"
-	replace subnatid2 = 12 if ibbs_2 == "TR62"
-	replace subnatid2 = 13 if ibbs_2 == "TR63"
-	replace subnatid2 = 14 if ibbs_2 == "TR71"
-	replace subnatid2 = 15 if ibbs_2 == "TR72"
-	replace subnatid2 = 16 if ibbs_2 == "TR81"
-	replace subnatid2 = 17 if ibbs_2 == "TR82"
-	replace subnatid2 = 18 if ibbs_2 == "TR83"
-	replace subnatid2 = 19 if ibbs_2 == "TR90"
-	replace subnatid2 = 20 if ibbs_2 == "TRA1"
-	replace subnatid2 = 21 if ibbs_2 == "TRA2"
-	replace subnatid2 = 22 if ibbs_2 == "TRB1"
-	replace subnatid2 = 23 if ibbs_2 == "TRB2"
-	replace subnatid2 = 24 if ibbs_2 == "TRC1"
-	replace subnatid2 = 25 if ibbs_2 == "TRC2"
-	replace subnatid2 = 26 if ibbs_2 == "TRC3"
+	replace subnatid2 = 1 if nuts2 == "TR10"
+	replace subnatid2 = 2 if nuts2 == "TR21"
+	replace subnatid2 = 3 if nuts2 == "TR22"
+	replace subnatid2 = 4 if nuts2 == "TR31"
+	replace subnatid2 = 5 if nuts2 == "TR32"
+	replace subnatid2 = 6 if nuts2 == "TR33"
+	replace subnatid2 = 7 if nuts2 == "TR41"
+	replace subnatid2 = 8 if nuts2 == "TR42"
+	replace subnatid2 = 9 if nuts2 == "TR51"
+	replace subnatid2 = 10 if nuts2 == "TR52"
+	replace subnatid2 = 11 if nuts2 == "TR61"
+	replace subnatid2 = 12 if nuts2 == "TR62"
+	replace subnatid2 = 13 if nuts2 == "TR63"
+	replace subnatid2 = 14 if nuts2 == "TR71"
+	replace subnatid2 = 15 if nuts2 == "TR72"
+	replace subnatid2 = 16 if nuts2 == "TR81"
+	replace subnatid2 = 17 if nuts2 == "TR82"
+	replace subnatid2 = 18 if nuts2 == "TR83"
+	replace subnatid2 = 19 if nuts2 == "TR90"
+	replace subnatid2 = 20 if nuts2 == "TRA1"
+	replace subnatid2 = 21 if nuts2 == "TRA2"
+	replace subnatid2 = 22 if nuts2 == "TRB1"
+	replace subnatid2 = 23 if nuts2 == "TRB2"
+	replace subnatid2 = 24 if nuts2 == "TRC1"
+	replace subnatid2 = 25 if nuts2 == "TRC2"
+	replace subnatid2 = 26 if nuts2 == "TRC3"
 	label var subnatid2 "NUTS-2 Region"
 	label define lblsubnatid2  1 "1 - Istanbul" 2 "2 - Edirne, Tekirdağ, Kırklareli" 3 "3 - Balıkesir, Çanakkale" 4 "4 - İzmir" 5 "5 - Denizli, Aydın, Muğla" 6 "6 - Manisa, Afyonkarahisar, Kütahya, Uşak" 7 "7 - Bursa, Eskişehir, Bilecik" 8 "8 - Kocaeli, Sakarya, Düzce, Bolu, Yalova" 9 "9 - Ankara" 10 "10 - Konya, Karaman" 11 "11 - Antalya, Isparta, Burdur" 12 "12 - Adana, Mersin" 13 "13 - Hatay, Kahramanmaraş, Osmaniye" 14 "14 - Nevşehir, Aksaray, Niğde, Kırıkkale, Kırşehir" 15 "15 - Kayseri, Sivas, Yozgat" 16 "16 - Zonguldak, Karabük, Bartın" 17 "17 - Kastamonu, Çankırı, Sinop" 18 "18 - Samsun, Tokat, Çorum, Amasya" 19 "19 - Trabzon, Ordu, Giresun, Rize, Artvin, Gümüşhane" 20 "20 - Erzurum, Erzincan, Bayburt" 21 "21 - Kars, Ağrı, Iğdır, Ardahan" 22 "22 - Malatya, Elazığ, Bingöl, Tunceli" 23 "23 - Van, Muş, Bitlis, Hakkari" 24 "24 - Gaziantep, Adıyaman, Kilis" 25 "25 - Diyarbakır, Şanlıurfa" 26 "26 - Siirt, Mardin, Batman, Şırnak"
 	label values subnatid2 lblsubnatid2
@@ -347,27 +338,28 @@ use "`path_in'\LFS2019_raw.dta"
 </_hsize_note> */
 	*gen helper_housekeepers = yakinlik == 11
 	*gen hsize = (hane_buyukluk - helper_housekeepers) // take out housekeepers staying at home
-	bysort hhid: gen hsize=hane_buyukluk if yakinlik<11
-	bysort hhid: gen helper_hsize=_N 
+	bysort hhid: gen hsize=HANE_BUYUKLUK if s11<11
+	bysort hhid: gen helper_hsize=_N
 	count if helper_hsize<hsize
 	*we find that hane_buyukluk is incorrect for 164 , 000 observations
-	*how come hhid pid and helper coincide by hane_buyukluk not , NSO issue 
+	*how come hhid pid and helper coincide by hane_buyukluk not , NSO issue
 	*when there is hhead (1) and children (3) they have recorded hsize 3 when is in fact 2
 	*decision to use helper as it resemples fertno and pid and hhid.
 	replace hsize=helper_hsize if  helper_hsize<hsize
-	replace hsize=. if yakinlik==11
+	replace hsize=. if s11==11
+	drop helper_hsize
 	label var hsize "Household size"
 *</_hsize_>
 
 
 *<_age_>
-	gen age = yas
+	gen age = s6
 	label var age "Individual age"
 *</_age_>
 
 
 *<_male_>
-	gen male = cinsiyet
+	gen male = s3
 	recode male (2=0)
 	label var male "Sex - Ind is male"
 	la de lblmale 1 "Male" 0 "Female"
@@ -376,7 +368,7 @@ use "`path_in'\LFS2019_raw.dta"
 
 
 *<_relationharm_>
-	gen relationharm = yakinlik
+	gen relationharm = s11
 	recode relationharm 6/9=5 10 11=6
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
@@ -385,13 +377,13 @@ use "`path_in'\LFS2019_raw.dta"
 
 
 *<_relationcs_>
-	gen relationcs = yakinlik
+	gen relationcs = s11
 	label var relationcs "Relationship to the head of household - Country original"
 *</_relationcs_>
 
 
 *<_marital_>
-	gen byte marital = medeni_durum
+	gen byte marital = s24
 	recode marital 1=2 2=1 3=4 4=5
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
@@ -457,7 +449,7 @@ use "`path_in'\LFS2019_raw.dta"
 
 
 *<_migrated_binary_>
-	gen migrated_binary = buil_yasama
+	gen migrated_binary = s9a
 	recode migrated_binary (1=0) (2=1)
 	label de lblmigrated_binary 0 "No" 1 "Yes"
 	label values migrated_binary lblmigrated_binary
@@ -531,12 +523,12 @@ label var ed_mod_age "Education module application age"
 *</_ed_mod_age_>
 
 *<_school_>
-	gen byte school = egitim_devam_k == 1
+	gen byte school = s17 == 1
 	* There are three people who are atschool but never attended.
-	count if okul_biten_k == 0 & school == 1
+	count if s13 == 0 & school == 1
 	* They claimed to have never graduated, but are in primary education at ages 16, 20, 22
 	* Set them to missing for school
-	replace school = . if okul_biten_k == 0 & school == 1
+	replace school = . if s13 == 0 & school == 1
 	label var school "Attending school"
 	la de lblschool 0 "No" 1 "Yes"
 	label values school  lblschool
@@ -544,7 +536,7 @@ label var ed_mod_age "Education module application age"
 
 
 *<_literacy_>
-	gen byte literacy = okur_yazar != 2
+	gen byte literacy = s14 != 2
 	recode literacy (2=0)
 	label var literacy "Individual can read & write"
 	la de lblliteracy 0 "No" 1 "Yes"
@@ -568,11 +560,11 @@ label var ed_mod_age "Education module application age"
 
 *<_educat5_>
 	gen educat5=.
-	replace educat5 = 1 if okul_biten_k  == 0
-	replace educat5 = 2 if okul_biten_k  == 1
-	replace educat5 = 3 if okul_biten_k  == 2
-	replace educat5 = 4 if okul_biten_k  == 31 | okul_biten_k  == 32
-	replace educat5 = 5 if okul_biten_k  == 4 | okul_biten_k  == 5
+	replace educat5 = 1 if s13  == 0
+	replace educat5 = 2 if s13  == 1
+	replace educat5 = 3 if s13  == 2
+	replace educat5 = 4 if s13  == 31 | s13  == 32
+	replace educat5 = 5 if s13  == 4 | s13  == 5
 	label var educat5 "Level of education 2"
 	la de lbleducat5 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
 	label values educat5 lbleducat5
@@ -673,7 +665,7 @@ foreach v of local ed_var {
 
 {
 *<_lstatus_>
-	gen byte lstatus = durum
+	gen byte lstatus = DURUM
 	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -702,7 +694,7 @@ foreach v of local ed_var {
 
 
 *<_nlfreason_>
-	gen byte nlfreason = ido_neden
+	gen byte nlfreason = IDO_NEDEN
 	recode nlfreason (35=1) (34=2) (36=3) (37=4) (31 32 33 38 39 =5)
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
@@ -712,14 +704,14 @@ foreach v of local ed_var {
 
 *<_unempldur_l_>
 	gen byte unempldur_l=.
-	replace unempldur_l = isara_sure if lstatus==2
+	replace unempldur_l = s81 if lstatus==2
 	label var unempldur_l "Unemployment duration (months) lower bracket"
 *</_unempldur_l_>
 
 
 *<_unempldur_u_>
 	gen byte unempldur_u=.
-	replace unempldur_u = isara_sure if lstatus==2
+	replace unempldur_u = s81 if lstatus==2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
 *</_unempldur_u_>
 }
@@ -730,7 +722,7 @@ foreach v of local ed_var {
 
 {
 *<_empstat_>
-	gen byte empstat = isteki_durum_k
+	gen byte empstat = s39
 	recode empstat 2=3 3=4 4=2
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
@@ -739,7 +731,7 @@ foreach v of local ed_var {
 
 
 *<_ocusec_>
-	gen byte ocusec = ozel_kamu
+	gen byte ocusec = s34
 	recode ocusec (2=1) (1=2) (98=.)
 	label var ocusec "Sector of activity primary job 7 day recall"
 	la de lblocusec 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
@@ -748,13 +740,13 @@ foreach v of local ed_var {
 
 
 *<_industry_orig_>
-	gen industry_orig = nace2_esas_k
+	gen industry_orig = s33kod
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
 
 *<_industrycat_isic_>
-	gen helper_1 = string(nace2_esas_k,"%02.0f")
+	gen helper_1 = string(s33kod,"%02.0f")
 	gen helper_2 = "00"
 	egen industrycat_isic = concat(helper_1 helper_2)
 	replace industrycat_isic = "" if industrycat_isic == ".00"
@@ -765,16 +757,16 @@ foreach v of local ed_var {
 
 *<_industrycat10_>
 	gen industrycat10=.
-	replace industrycat10 = 1 if inrange(nace2_esas_k,1,3)
-	replace industrycat10 = 2 if inrange(nace2_esas_k,5,9)
-	replace industrycat10 = 3 if inrange(nace2_esas_k,10,33)
-	replace industrycat10 = 4 if inrange(nace2_esas_k,35,39)
-	replace industrycat10 = 5 if inrange(nace2_esas_k,41,43)
-	replace industrycat10 = 6 if inrange(nace2_esas_k,45,47) | inrange(nace2_esas_k,55,56)
-	replace industrycat10 = 7 if inrange(nace2_esas_k,49,53) | inrange(nace2_esas_k,58,63)
-	replace industrycat10 = 8 if inrange(nace2_esas_k,64,82)
-	replace industrycat10 = 9 if inrange(nace2_esas_k,84,84)
-	replace industrycat10 = 10 if inrange(nace2_esas_k,85,99)
+	replace industrycat10 = 1 if inrange(s33kod,1,3)
+	replace industrycat10 = 2 if inrange(s33kod,5,9)
+	replace industrycat10 = 3 if inrange(s33kod,10,33)
+	replace industrycat10 = 4 if inrange(s33kod,35,39)
+	replace industrycat10 = 5 if inrange(s33kod,41,43)
+	replace industrycat10 = 6 if inrange(s33kod,45,47) | inrange(s33kod,55,56)
+	replace industrycat10 = 7 if inrange(s33kod,49,53) | inrange(s33kod,58,63)
+	replace industrycat10 = 8 if inrange(s33kod,64,82)
+	replace industrycat10 = 9 if inrange(s33kod,84,84)
+	replace industrycat10 = 10 if inrange(s33kod,85,99)
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
@@ -791,13 +783,13 @@ foreach v of local ed_var {
 
 
 *<_occup_orig_>
-	gen occup_orig = isco08_esas_k
+	gen occup_orig = s38kod
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
 
 *<_occup_isco_>
-	gen helper_1 = string(isco08_esas_k,"%02.0f")
+	gen helper_1 = string(s38kod,"%02.0f")
 	gen helper_2 = "00"
 	egen occup_isco = concat(helper_1 helper_2)
 	replace occup_isco = "" if occup_isco == ".00"
@@ -821,7 +813,7 @@ foreach v of local ed_var {
 
 
 *<_occup_>
-	gen byte occup = floor(isco08_esas_k/10)
+	gen byte occup = floor(s38kod/10)
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup
@@ -854,7 +846,7 @@ Non-paid employee |    21,009          0          0 |    21,009
 	set to missing
 
 </_wage_no_compen_note> */
-	gen double wage_no_compen = gelir_gecenay_k
+	gen double wage_no_compen = s69
 	replace wage_no_compen=. if lstatus!=1
 	replace wage_no_compen=. if wage_no_compen == 0
 	* Expect 7161 replacements
@@ -885,10 +877,10 @@ Non-paid employee |    21,009          0          0 |    21,009
 	and use those hours as first job.
 
 </_whours_note> */
-	gen whours = esas_hafsaat_genel
-	replace whours = . if calisma_sahip_is == 1 & whours == 0
+	gen whours = s55a
+	replace whours = . if s28 == 1 & whours == 0
 	* expect 57 replacements
-	replace whours = ekis_fiili if whours == 0
+	replace whours = s56b_top if whours == 0
 	* expect 7 replacements
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
@@ -926,7 +918,7 @@ Non-paid employee |    21,009          0          0 |    21,009
 
 
 *<_socialsec_>
-	gen byte socialsec = kayitlilik
+	gen byte socialsec = s42
 	recode socialsec (2=0)
 	label var socialsec "Employment has social security insurance primary job 7 day recall"
 	la de lblsocialsec 1 "With social security" 0 "Without social secturity"
@@ -943,7 +935,7 @@ Non-paid employee |    21,009          0          0 |    21,009
 
 
 *<_firmsize_l_>
-	gen firmsize_l=calisan_sayi_hh
+	gen firmsize_l=s37a
 	recode firmsize_l (1=.) (2=11) (3=20) (4=50) (5=11)
 	replace firmsize_l=. if lstatus!=1
 	label var firmsize_l "Firm size (lower bracket) primary job 7 day recall"
@@ -951,7 +943,7 @@ Non-paid employee |    21,009          0          0 |    21,009
 
 
 *<_firmsize_u_>
-	gen firmsize_u=calisan_sayi_hh
+	gen firmsize_u=s37a
 	recode firmsize_u (1=10) (2=19) (3=49) (4=.) (5=.)
 	replace firmsize_u=. if lstatus!=1
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
@@ -966,7 +958,7 @@ Non-paid employee |    21,009          0          0 |    21,009
 
 {
 *<_empstat_2_>
-	gen byte empstat_2 = isteki_durum_ekis
+	gen byte empstat_2 = s54
 	recode empstat_2 (2=3) (4=2) (3=4)
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
 	label values empstat_2 lblempstat
@@ -1000,7 +992,7 @@ Non-paid employee |    21,009          0          0 |    21,009
 
 
 *<_industrycat4_2_>
-	gen byte industrycat4_2 = nace2_ekis_k
+	gen byte industrycat4_2 = s53kod
 	recode industrycat4_2 (3=4) (4=3)
 	label var industrycat4_2 "1 digit industry classification (Broad Economic Activities), secondary job 7 day recall"
 	label values industrycat4_2 lblindustrycat4
@@ -1046,7 +1038,7 @@ Non-paid employee |    21,009          0          0 |    21,009
 
 
 *<_whours_2_>
-	gen whours_2 = ekis_fiili
+	gen whours_2 = s56b_top
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 
@@ -1600,6 +1592,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`path_output'\TUR_2019_HLFS_V01_M_V01_A_GLD.dta", replace
+save "`path_output'\TUR_2018_HLFS_V01_M_V01_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>

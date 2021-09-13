@@ -4,21 +4,21 @@
 ==============================================================================================%%*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				TUR_2018_HLFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
+<_Program name_>				TUR_2019_HLFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata 16 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
-<_Date created_>				2021-09-09 </_Date created_>
+<_Date created_>				2021-06-23 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						TUR </_Country_>
 <_Survey Title_>				Household Labour Force Survey[SurveyName] </_Survey Title_>
-<_Survey Year_>					2018 </_Survey Year_>
+<_Survey Year_>					2019 </_Survey Year_>
 <_Study ID_>					Not on MicroData Library </_Study ID_>
 <_Data collection from_>		[MM/YYYY] </_Data collection from_>
 <_Data collection to_>			[MM/YYYY] </_Data collection to_>
 <_Source of dataset_> 			Shared by Turkey Country Office, shareable within World Bank, not to
 								be shared outside. </_Source of dataset_>
-<_Sample size (HH)_> 			 </_Sample size (HH)_>
-<_Sample size (IND)_> 			 </_Sample size (IND)_>
+<_Sample size (HH)_> 			147,072 </_Sample size (HH)_>
+<_Sample size (IND)_> 			366,551 </_Sample size (IND)_>
 <_Sampling method_> 			Two-stage stratified cluster sampling method </_Sampling method_>
 <_Geographic coverage_> 		NUTS-2 (https://en.wikipedia.org/wiki/NUTS_statistical_regions_of_Turkey) </_Geographic coverage_>
 <_Currency_> 					Turkish Lira </_Currency_>
@@ -51,14 +51,14 @@ set mem 800m
 
 *----------1.2: Set directories------------------------------*
 
-local path_in "Z:\GLD-Harmonization\582018_AQ\TUR\TUR_2018_HLFS\TUR_2018_HLFS_V01_M\Data\Stata"
-local path_output "Z:\GLD-Harmonization\582018_AQ\TUR\TUR_2018_HLFS\TUR_2018_HLFS_V01_M_V01_A_GLD\Data\Harmonized"
+local path_in "Z:\GLD-Harmonization\582018_AQ\TUR\TUR_2019_HLFS\TUR_2019_HLFS_V01_M\Data\Stata"
+local path_output "Z:\GLD-Harmonization\582018_AQ\TUR\TUR_2019_HLFS\TUR_2019_HLFS_V01_M_V01_A_GLD\Data\Harmonized"
 
 *----------1.3: Database assembly------------------------------*
 
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
-use "`path_in'\LFS2018_raw.dta"
+use "`path_in'\LFS2019_raw.dta"
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -108,7 +108,7 @@ use "`path_in'\LFS2018_raw.dta"
 
 
 *<_year_>
-	gen int year = 2018
+	gen int year = 2019
 	label var year "Year of survey"
 *</_year_>
 
@@ -132,7 +132,7 @@ use "`path_in'\LFS2018_raw.dta"
 
 
 *<_int_year_>
-	gen int_year= 2018
+	gen int_year= 2019
 	label var int_year "Year of the interview"
 *</_int_year_>
 
@@ -147,13 +147,23 @@ use "`path_in'\LFS2018_raw.dta"
 
 *<_hhid_>
 	tostring birimno, gen(hhid)
+	*label var hhid "Household ID"
+	*tostring birimno, replace
+	*gen birimno_str=substr("0000",1,5 - length(birimno))+birimno
+	*gen hhid=birimno_str
 	label var hhid "Household ID"
+
+
 *</_hhid_>
 
 
 *<_pid_>
 	egen pid = concat(hhid fertno)
+	*label var pid "Individual ID"
+	*tostring fertno, replace
+	*gen pid=hhid+fertno
 	label var pid "Individual ID"
+
 *</_pid_>
 
 
@@ -335,8 +345,18 @@ use "`path_in'\LFS2018_raw.dta"
 	the data, it is clear that HH size (hane_buyukluk) does count all in the household including those with
 	relationship 11 to the HH head (yakinlik), meaning "Housekeepers staying at home", they are taken out.
 </_hsize_note> */
-	gen helper_housekeepers = yakinlik == 11
-	gen hsize = hane_buyukluk - helper_housekeepers // take out housekeepers staying at home
+	*gen helper_housekeepers = yakinlik == 11
+	*gen hsize = (hane_buyukluk - helper_housekeepers) // take out housekeepers staying at home
+	bysort hhid: gen hsize=hane_buyukluk if yakinlik<11
+	bysort hhid: gen helper_hsize=_N
+	count if helper_hsize<hsize
+	*we find that hane_buyukluk is incorrect for 164 , 000 observations
+	*how come hhid pid and helper coincide by hane_buyukluk not , NSO issue
+	*when there is hhead (1) and children (3) they have recorded hsize 3 when is in fact 2
+	*decision to use helper as it resemples fertno and pid and hhid.
+	replace hsize=helper_hsize if  helper_hsize<hsize
+	replace hsize=. if yakinlik==11
+	drop helper_hsize
 	label var hsize "Household size"
 *</_hsize_>
 
@@ -1581,6 +1601,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`path_output'\TUR_2018_HLFS_V01_M_V01_A_GLD.dta", replace
+save "`path_output'\TUR_2019_HLFS_V01_M_V01_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>
