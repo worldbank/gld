@@ -734,18 +734,20 @@ foreach var of global isic_check {
 
 
 *----------8.18: Check ISCO codes
-foreach var of global isco_check {
-	cap confirm numeric variable `var'
-	if _rc == 0 { // if vars exist, else captured in 1.1
+fforeach var of global isco_check {
+	cap confirm string variable `var'
+	if _rc == 0 { // if vars exist, is string (if not , captured in section 1)
 	
-		qui : count if (`var' < 1000 | `var' > 9999) & !missing(`var')
-		if `r(N)' > 0 { // Non missing value of fewer or more than three digits
+		gen check_isco_length = length(`var') if !missing(`var')
+		qui : count if check_isco_length != 4
+		if `r(N)' > 0 { // Non missing values other than 4 exist
 		
-			post `memhold' ("Labour") ("`var'") ("ISCO code is not four digits (number of cases ->)") (`r(N)') (1)
-		
-		} // end recording of odd cases
-	} // end var exists as numeric
+		post `memhold' ("Labour") ("`var'") ("ISC0 code is not of length 4 (digits) (number of cases ->)") (`r(N)') (1)
+		} // end recording odd cases
+	drop check_isco_length
+	} // end var exists as string
 } // end loop over isco code vars
+
 
 
 /*==================================================
