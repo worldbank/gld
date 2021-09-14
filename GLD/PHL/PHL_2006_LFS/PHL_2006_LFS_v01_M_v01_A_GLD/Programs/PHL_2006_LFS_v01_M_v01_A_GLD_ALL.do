@@ -1663,7 +1663,7 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_year_>
-	gen 			occup_isco_year = .
+	gen 			occup_isco_year = ""
 	label var 		occup_isco_year "ISCO code of primary job 12 month recall"
 *</_occup_isco_year_>
 
@@ -1840,7 +1840,7 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_2_year_>
-	gen 			occup_isco_2_year = .
+	gen 			occup_isco_2_year = ""
 	label var 		occup_isco_2_year "ISCO code of secondary job 12 month recall"
 *</_occup_isco_2_year_>
 
