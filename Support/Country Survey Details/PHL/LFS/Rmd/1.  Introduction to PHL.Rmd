@@ -77,7 +77,7 @@ can also be found at each of these two locations.
 A thorough explanation of the general sampling scheme is available from
 the [Philippine Statistics
 Authority](https://psa.gov.ph/content/technical-notes-labor-force-survey-lfs)
-and a abbreviated version is made available here from the PSA:
+and an abbreviated version is made available here from the PSA:
 
 -   The Provinces and High Density Urban Cities are used as the sampling
     domains. The 2013 revision has 117 domains, which consists of 81
