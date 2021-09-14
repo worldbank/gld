@@ -1086,7 +1086,7 @@ foreach v of local ed_var {
 *<_occup_isco_>
 * in 2013, raw variable is numeric, 4-digits, but since there is no provided PSOC to ISCO
 * conversion, there is no occup_isco
-	gen 			occup_isco = .
+	gen 			occup_isco = ""
 	label 			var occup_isco "ISCO code of primary job 7 day recall"
 	replace 		occup_isco=. if lstatus!=1 		// restrict universe to employed only
 	replace 		occup_isco=. if age < minlaborage	// restrict universe to working age

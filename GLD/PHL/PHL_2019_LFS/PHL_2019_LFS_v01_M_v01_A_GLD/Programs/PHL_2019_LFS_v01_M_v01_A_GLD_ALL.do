@@ -1061,7 +1061,7 @@ foreach v of local ed_var {
 *<_occup_isco_>
 * in 2019, raw variable is numeric, 2-digits, so isco conversion not possible
 
-	gen occup_isco = . 	// occup_isco already generated above in submodule
+	gen occup_isco = ""	// occup_isco already generated above in submodule
 	label var 	occup_isco "ISIC code of primary job 7 day recall"
 
 

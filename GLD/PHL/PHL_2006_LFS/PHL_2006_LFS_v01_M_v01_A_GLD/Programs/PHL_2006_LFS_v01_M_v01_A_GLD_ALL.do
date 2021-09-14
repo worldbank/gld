@@ -1192,7 +1192,7 @@ foreach v of local ed_var {
 
 *<_occup_isco_>
 * incoming data only has 2-digit, so cannot be mapped to isco
-	gen 			occup_isco = .
+	gen 			occup_isco = ""
 	label 			var occup_isco "ISCO code of primary job 7 day recall"
 	replace 		occup_isco=. if lstatus!=1 		// restrict universe to employed only
 	replace 		occup_isco=. if age < minlaborage	// restrict universe to working age
