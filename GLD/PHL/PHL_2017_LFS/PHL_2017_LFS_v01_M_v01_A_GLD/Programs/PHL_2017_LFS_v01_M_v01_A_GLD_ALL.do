@@ -1316,17 +1316,11 @@ foreach v of local ed_var {
 
 	tab 		isic_merge_`n' 		if `matchvar' != .
 
-
-	destring 	isco08_`n' ///
-				, generate(occup_isco)
-
 	drop 		unit 				// no longer needed, maintained in matchvar
 
 
-
+	gen 		occup_isco = isco08_`n'
 	label var 	occup_isco "ISIC code of primary job 7 day recall"
-
-
 
 *</_occup_isco_>
 
@@ -1554,7 +1548,7 @@ foreach v of local ed_var {
 	tab 		isic_merge_`n' 		if `matchvar' != .
 
 
-	gen 		industrycat_isic_2 = isic4_`n'  	// the string variable becomes industrycat_isic	
+	gen 		industrycat_isic_2 = isic4_`n'  	// the string variable becomes industrycat_isic
 
 	drop 		class 				// no longer needed, maintained in matchvar
 
@@ -1675,15 +1669,11 @@ foreach v of local ed_var {
 	tab 		isic_merge_`n' 		if `matchvar' != .
 
 
-	destring 	isco08_`n' ///
-				, generate(occup_isco_2)
-
 	drop 		unit 				// no longer needed, maintained in matchvar
 
 
-
+	gen 		occup_isco_2 = isco08_`n'
 	label var 	occup_isco_2 "ISIC code of primary job 7 day recall"
-
 
 *</_occup_isco_2_>
 
