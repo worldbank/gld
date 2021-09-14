@@ -1117,6 +1117,7 @@ foreach v of local ed_var {
 
 *<_unitwage_>
 	gen byte 		unitwage = pufc24_pbasis
+	replace 		unitwage = . if 	unitwage >= 11 // replace potential missing values
 	recode 			unitwage (0 1 5 6 7 = 10) /// other
 								(2 = 9) /// hourly
 								(3 = 1) /// daily
@@ -1340,7 +1341,8 @@ foreach v of local ed_var {
 
 *<_unitwage_2_>
 	gen byte 		unitwage_2 = j06_obis
-	recode 			unitwage (0 1 5 6 7 = 10) /// other
+	replace 		unitwage_2 = . if 	unitwage >= 11 // replace potential missing values
+	recode 			unitwage_2 (0 1 5 6 7 = 10) /// other
 								(2 = 9) /// hourly
 								(3 = 1) /// daily
 								(4 = 5) // monthly
