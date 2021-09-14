@@ -561,7 +561,7 @@ Original code list of variable "educa" in the dataset:
 6.Senior high school
 7.Vocational high school
 8.Diploma I/II
-9. Academy/Diploma III
+9.Academy/Diploma III
 0.University
 
 According to isced-2011 mappings, there are day care centre, playgroup, and 
@@ -605,6 +605,12 @@ and educat4.
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values educat4 lbleducat4
 *</_educat4_>
+
+
+*<_educat_orig_>
+	gen educat_orig = educa
+	label var educat_orig "Original survey education code"
+*</_educat_orig_>
 
 
 *<_educat_isced_>

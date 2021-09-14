@@ -3,40 +3,40 @@
 	0: GLD Harmonization Preamble
 ================================================================================================*/
 
-/* ----------------------------------------------------------------------- 
-<_Program name_>				IDN_1990_Sakernas_v01_M_v01_A_GLD.do </_Program name_> 
-<_Application_>					Stata MP 16.1 <_Application_> 
-<_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_> 
-<_Date created_>				2021-07-23 </_Date created_> 
-------------------------------------------------------------------------- 
-<_Country_>						Indonesia (IDN) </_Country_> 
-<_Survey Title_>				Survei Angkatan Kerja Nasional (The National Labor Force Survey) </_Survey Title_> 
-<_Survey Year_>					1990 </_Survey Year_> 
-<_Study ID_>					IDN_1990_Sakernas_v01_M </_Study ID_> 
-<_Data collection from (M/Y)_>	[MM/YYYY] </_Data collection from (M/Y)_> 
-<_Data collection to (M/Y)_>	[MM/YYYY] </_Data collection to (M/Y)_> 
+/* -----------------------------------------------------------------------
+<_Program name_>				IDN_1990_Sakernas_v01_M_v01_A_GLD.do </_Program name_>
+<_Application_>					Stata MP 16.1 <_Application_>
+<_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
+<_Date created_>				2021-07-23 </_Date created_>
+-------------------------------------------------------------------------
+<_Country_>						Indonesia (IDN) </_Country_>
+<_Survey Title_>				Survei Angkatan Kerja Nasional (The National Labor Force Survey) </_Survey Title_>
+<_Survey Year_>					1990 </_Survey Year_>
+<_Study ID_>					IDN_1990_Sakernas_v01_M </_Study ID_>
+<_Data collection from (M/Y)_>	[MM/YYYY] </_Data collection from (M/Y)_>
+<_Data collection to (M/Y)_>	[MM/YYYY] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			Shared with Job's Group by the World Bank Indonesia Team
 								data request form required to get the access</_Source of dataset_>
-<_Sample size (HH)_> 			81,814 </_Sample size (HH)_> 
-<_Sample size (IND)_> 			291,095 </_Sample size (IND)_> 
-<_Sampling method_> 			Two-stage cluster sampling method </_Sampling method_> 
-<_Geographic coverage_> 		Province </_Geographic coverage_> 
-<_Currency_> 					Indonesian Rupiah </_Currency_> 
------------------------------------------------------------------------ 
-<_ICLS Version_>				ICLS 13 </_ICLS Version_> 
-<_ISCED Version_>				ISCED-2011 </_ISCED Version_> 
-<_ISCO Version_>				N/A </_ISCO Ver UP National_> 
-<_ISIC Version_>				N/A </_ISIC Version_> 
-<_INDUS National_>				N/A </_INDUS National_> 
+<_Sample size (HH)_> 			81,814 </_Sample size (HH)_>
+<_Sample size (IND)_> 			291,095 </_Sample size (IND)_>
+<_Sampling method_> 			Two-stage cluster sampling method </_Sampling method_>
+<_Geographic coverage_> 		Province </_Geographic coverage_>
+<_Currency_> 					Indonesian Rupiah </_Currency_>
+-----------------------------------------------------------------------
+<_ICLS Version_>				ICLS 13 </_ICLS Version_>
+<_ISCED Version_>				ISCED-2011 </_ISCED Version_>
+<_ISCO Version_>				N/A </_ISCO Ver UP National_>
+<_ISIC Version_>				N/A </_ISIC Version_>
+<_INDUS National_>				N/A </_INDUS National_>
 
------------------------------------------------------------------------ 
+-----------------------------------------------------------------------
 
-<_Version Control_> 
+<_Version Control_>
 
 * Date: [YYYY-MM-DD] File: [As in Program name above] - [Description of changes]
 * Date: [YYYY-MM-DD] File: [As in Program name above] - [Description of changes]
 
-</_Version Control_> 
+</_Version Control_>
 
 -------------------------------------------------------------------------*/
 
@@ -53,18 +53,18 @@ set mem 800m
 
 *----------1.2: Set directories------------------------------*
 
-local 	drive 	`"Z"'		
-local 	cty 	`"IDN"' 	
-local 	usr		`"573465_JT"' 
-local 	surv_yr `"1990"'	
-local 	year 	"`drive':\GLD-Harmonization\\`usr'\\`cty'\\`cty'_`surv_yr'_Sakernas" 
+local 	drive 	`"Z"'
+local 	cty 	`"IDN"'
+local 	usr		`"573465_JT"'
+local 	surv_yr `"1990"'
+local 	year 	"`drive':\GLD-Harmonization\\`usr'\\`cty'\\`cty'_`surv_yr'_Sakernas"
 local 	main	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M"
 local 	stata	"`main'\data\stata"
 local 	gld 	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M_v01_A_GLD"
 local 	i2d2	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M_v01_A_I2D2"
 local 	code 	"`gld'\Programs"
 local 	id_data "`gld'\Data\Harmonized"
-	
+
 local input "`stata'"
 local output "`id_data'"
 
@@ -73,7 +73,7 @@ local output "`id_data'"
 
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
-	
+
 	use "`input'\sakernas90.dta", clear
 
 /*%%=============================================================================================
@@ -103,10 +103,10 @@ local output "`id_data'"
 *<_icls_v_>
 	gen icls_v = "ICLS-13"
 	label var icls_v "ICLS version underlying questionnaire questions"
-*</_icls_v_> 
+*</_icls_v_>
 
 
-*<_year_>	
+*<_year_>
 	gen int year = 1990
 	label var year "Year of survey"
 *</_year_>
@@ -146,8 +146,8 @@ local output "`id_data'"
 
 /*<_hhid_>
 
-Note that 174,753 observations' or 48,492 households' number of household member do 
-not match the original household size variable "b1r12".  
+Note that 174,753 observations' or 48,492 households' number of household member do
+not match the original household size variable "b1r12".
 
 	bys hhid: egen hhsize=count(pid)
 	gen gap=hhsize-jart
@@ -155,7 +155,7 @@ not match the original household size variable "b1r12".
 	codebook pid if gap!=0
 	gen unmatch=cond(gap!=0, 1, 0)
 	tab unmatch
-	
+
     unmatch |      Freq.     Percent        Cum.
 ------------+-----------------------------------
           0 |    116,342       39.97       39.97
@@ -167,7 +167,7 @@ not match the original household size variable "b1r12".
 
 
 *<_hhid_>
-	sort prop kab koped nks nous nour 
+	sort prop kab koped nks nous nour
 	egen hhid=group(prop kab koped nks nous nour)
 	label var hhid "Household id"
 *</_hhid_>
@@ -200,8 +200,8 @@ not match the original household size variable "b1r12".
 
 
 /*<_psu_>
-We do know that the primary sampling unit of Sakernas is census block and the 
-census block number is in the questionnaire. However this information is not 
+We do know that the primary sampling unit of Sakernas is census block and the
+census block number is in the questionnaire. However this information is not
 provided due to it is part of the confidential information withheld by the NSO.
 <_psu_>*/
 
@@ -240,7 +240,7 @@ provided due to it is part of the confidential information withheld by the NSO.
 
 *<_urban_>
 	gen byte urban=koped
-	recode urban 2=0 
+	recode urban 2=0
 	label var urban "Location is urban"
 	la de lblurban 1 "Urban" 0 "Rural"
 	label values urban lblurban
@@ -249,7 +249,7 @@ provided due to it is part of the confidential information withheld by the NSO.
 
 *<_subnatid1_>
 	gen byte subnatid1 = prop
-	label values subnatid1 province  
+	label values subnatid1 province
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 
@@ -271,7 +271,7 @@ The first two digits represent province whereas the last two digits mean distric
 
 *<_subnatid3_>
 	gen byte subnatid3 = .
-	label de lblsubnatid3 1 "1 - Name" 
+	label de lblsubnatid3 1 "1 - Name"
 	label values subnatid3 lblsubnatid3
 	label var subnatid3 "Subnational ID at Third Administrative Level"
 *</_subnatid3_>
@@ -341,9 +341,9 @@ The first two digits represent province whereas the last two digits mean distric
 
 /*<_age_>
 
-Note that because the variable of age is called "age" in the raw dataset, 
-here I did not create a new variable. 
- 
+Note that because the variable of age is called "age" in the raw dataset,
+here I did not create a new variable.
+
 <_age_>*/
 
 
@@ -376,7 +376,7 @@ here I did not create a new variable.
 
 
 *<_marital_>
-	gen byte marital = . 
+	gen byte marital = .
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
 	label values marital lblmarital
@@ -517,10 +517,10 @@ Education module is only asked to those 10 and older.
 
 /*<_school_>
 
-Note that variable "school" refers to be currently attending school; but the only 
-variable viable for "school" is "b4p4", which indicates the primary activity 
-during the previous week. Because we are not sure whether people have other primary 
-activities are attending school or not, there is no category zero. 
+Note that variable "school" refers to be currently attending school; but the only
+variable viable for "school" is "b4p4", which indicates the primary activity
+during the previous week. Because we are not sure whether people have other primary
+activities are attending school or not, there is no category zero.
 
 <_school_>*/
 
@@ -557,14 +557,14 @@ Original code list of variable "b4p3" in the dataset:
 6.Senior high school
 7.Vocational high school
 8.Diploma I/II
-9. Academy/Diploma III
-0.University
+9.Academy/Diploma III
+0.Diploma IV/Bachelor/Postgraduate
 
-According to isced-2011 mappings, there are day care centre, playgroup, and 
-kindergarten as pre-primary education before 7 years old. Whether to map 
-primary unfinished to those options depends on specific assumptions and research 
+According to isced-2011 mappings, there are day care centre, playgroup, and
+kindergarten as pre-primary education before 7 years old. Whether to map
+primary unfinished to those options depends on specific assumptions and research
 needs. Therefore, variable "educy" was left missing and so were educat7, educat5,
-and educat4.   
+and educat4.
 
 </_educy_>*/
 
@@ -580,7 +580,7 @@ and educat4.
 	gen byte educat7=.
 	replace educat7=. if age<ed_mod_age & age!=.
 	label var educat7 "Level of education 1"
-	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete" 
+	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
 *</_educat7_>
 
@@ -603,6 +603,12 @@ and educat4.
 *</_educat4_>
 
 
+*<_educat_orig_>
+	gen educat_orig = b4p3
+	label var educat_orig "Original survey education code"
+*</_educat_orig_>
+
+
 *<_educat_isced_>
 	gen educat_isced = b4p3
 	recode educat_isced (1=.) (2=020) (3=100) (4/5=244) (6/7=344) (8=454) (9=550) (0=660)
@@ -620,7 +626,7 @@ and educat4.
 *<_% Correction min age_>
 
 ** Drop info for cases under the age for which questions to be asked (do not need a variable for this)
-local ed_var school literacy educy educat7 educat5 educat4 educat_isced 
+local ed_var school literacy educy educat7 educat5 educat4 educat_isced
 foreach v of local ed_var {
 	replace `v'=. if ( age < ed_mod_age & !missing(age) )
 }
@@ -688,22 +694,22 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 *----------8.1: 7 day reference overall------------------------------*
 
 {
-	
+
 /*<_lstatus_>
 
-We define the employed as who "worked primarily (b4p4==1)" or 
+We define the employed as who "worked primarily (b4p4==1)" or
 							  "has a job/business but temporarily didn't work (b4p6==1)";
-unemployed: "who do not have a job/business (b4p6==2)" & seeking a job (b4p13==1); 
+unemployed: "who do not have a job/business (b4p6==2)" & seeking a job (b4p13==1);
 non-labor force: "who do not have a job/business (b4p6==2)" & not seeking a job (b4p13=!1).
 
 Note:
-1) that people whose primary activity is work are assigned missing values for 
+1) that people whose primary activity is work are assigned missing values for
 the absent variable and "worked at least 1 hour last week" variable;
 2) I understand answer "NO" to question b4p6 as "not having a job/business (and
 thus not working neither)";
 3) there are some people also seeking jobs despite that they are having jobs currently
 and these people are considered employed
- 	
+
 
  Worked at |
  least for |
@@ -711,11 +717,11 @@ and these people are considered employed
   the past |    Activity used the most time in the past one week
   one week |      Work  Attend sc  Housekeep  Unable to     Others |     Total
 -----------+-------------------------------------------------------+----------
-       Yes |         0      5,455     11,587          0      2,053 |    19,095 
-        No |         0     67,753     44,612      7,255     17,223 |   136,843 
-         . |   135,146          5          5          1          0 |   135,157 
+       Yes |         0      5,455     11,587          0      2,053 |    19,095
+        No |         0     67,753     44,612      7,255     17,223 |   136,843
+         . |   135,146          5          5          1          0 |   135,157
 -----------+-------------------------------------------------------+----------
-     Total |   135,146     73,213     56,204      7,256     19,276 |   291,095   
+     Total |   135,146     73,213     56,204      7,256     19,276 |   291,095
 
  Worked at |
  least for |      Has a job/business but
@@ -723,36 +729,36 @@ and these people are considered employed
   the past |        the past one week
   one week |       Yes         No          . |     Total
 -----------+---------------------------------+----------
-       Yes |         0          0     19,095 |    19,095 
-        No |     2,114    134,729          0 |   136,843 
-         . |         0          0    135,157 |   135,157 
+       Yes |         0          0     19,095 |    19,095
+        No |     2,114    134,729          0 |   136,843
+         . |         0          0    135,157 |   135,157
 -----------+---------------------------------+----------
-     Total |     2,114    134,729    154,252 |   291,095 
-	 
+     Total |     2,114    134,729    154,252 |   291,095
+
 
                       |      Has a job/business but
     Activity used the | temporarily did not work during
 most time in the past |        the past one week
              one week |       Yes         No          . |     Total
 ----------------------+---------------------------------+----------
-                 Work |         0          0    135,146 |   135,146 
-        Attend school |        73     67,680      5,460 |    73,213 
-         Housekeeping |       826     43,786     11,592 |    56,204 
-Unable to do activiti |         0      7,255          1 |     7,256 
-               Others |     1,215     16,008      2,053 |    19,276 
+                 Work |         0          0    135,146 |   135,146
+        Attend school |        73     67,680      5,460 |    73,213
+         Housekeeping |       826     43,786     11,592 |    56,204
+Unable to do activiti |         0      7,255          1 |     7,256
+               Others |     1,215     16,008      2,053 |    19,276
 ----------------------+---------------------------------+----------
-                Total |     2,114    134,729    154,252 |   291,095 
+                Total |     2,114    134,729    154,252 |   291,095
 
-Unemployment rate of 2.62 in 1991: https://data.worldbank.org/indicator/SL.UEM.TOTL.ZS?locations=ID		
-compared with 1.8 using this dataset. 	
+Unemployment rate of 2.62 in 1991: https://data.worldbank.org/indicator/SL.UEM.TOTL.ZS?locations=ID
+compared with 1.8 using this dataset.
 
 <_lstatus_>*/
 
 *<_lstatus_>
 	gen byte lstatus=.
-	replace lstatus=1 if b4p4==1 | b4p6==1 
+	replace lstatus=1 if b4p4==1 | b4p6==1
 	replace lstatus=2 if b4p6==2 & b4p13==1
-	replace lstatus=3 if b4p6==2 & b4p13!=1 
+	replace lstatus=3 if b4p6==2 & b4p13!=1
 	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -763,13 +769,13 @@ compared with 1.8 using this dataset.
 /*<_potential_lf_>
 Note: var "potential_lf" is missing if the respondent is in labor force or unemployed; it only takes value if the respondent is not in labor force. (Status==3)
 
-"potential_lf" = 1 if the person is 
+"potential_lf" = 1 if the person is
 1)available but not searching or (b4p14==1 & b4p13==2)
 2)searching but not immediately available to work (b4p13==1 & b4p14==2)
 
 Note that there are observations who want to accept a job (seen as being available)
-but not seeking for a job, which is different from year 1989. But no observation 
-satisfies the second requirement. 
+but not seeking for a job, which is different from year 1989. But no observation
+satisfies the second requirement.
 
 In this case, 55,680 observations fit the requirement and will be assigned any non-missing values.
 
@@ -777,19 +783,19 @@ In this case, 55,680 observations fit the requirement and will be assigned any n
   accept a |   Seeking for a job
        job |       Yes         No |     Total
 -----------+----------------------+----------
-       Yes |         0     55,680 |    55,680 
-        No |         0    227,464 |   227,464 
-         9 |         0          2 |         2 
-         . |     7,949          0 |     7,949 
+       Yes |         0     55,680 |    55,680
+        No |         0    227,464 |   227,464
+         9 |         0          2 |         2
+         . |     7,949          0 |     7,949
 -----------+----------------------+----------
-     Total |     7,949    283,146 |   291,095 
+     Total |     7,949    283,146 |   291,095
 
 </_potential_lf_>*/
 
 
 *<_potential_lf_>
 	gen byte potential_lf = .
-	replace potential_lf=1 if (b4p14==1 & b4p13==2) | (b4p13==1 & b4p14==2) 
+	replace potential_lf=1 if (b4p14==1 & b4p13==2) | (b4p13==1 & b4p14==2)
 	replace potential_lf = . if age < minlaborage & age != .
 	replace potential_lf = . if lstatus != 3
 	label var potential_lf "Potential labour force status"
@@ -807,16 +813,16 @@ In this case, 55,680 observations fit the requirement and will be assigned any n
 
 
 *<_nlfreason_>
-	gen byte nlfreason=.	
+	gen byte nlfreason=.
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
 	label values nlfreason lblnlfreason
-*</_nlfreason_>  
+*</_nlfreason_>
 
 
 /*<_unempldur_l_>
 
-Period of job seeking, or variable "b4p16" is not a range in the raw dataset. 
+Period of job seeking, or variable "b4p16" is not a range in the raw dataset.
 The unit is month but it is a specific value.
 
 <_unempldur_l_>*/
@@ -854,7 +860,7 @@ The unit is month but it is a specific value.
 *</_empstat_>
 
 
-*<_ocusec_>	
+*<_ocusec_>
 	gen byte ocusec=.
 	label var ocusec "Sector of activity primary job 7 day recall"
 	la de lblocusec 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
@@ -864,18 +870,18 @@ The unit is month but it is a specific value.
 
 /*<_industry_orig_>
 
-The original code list of industry has 18 categories from 00 to 17. But the 
-coding in the dataset is not correct. Some of the categories are named in the 
+The original code list of industry has 18 categories from 00 to 17. But the
+coding in the dataset is not correct. Some of the categories are named in the
 format of two digits, like 00 to 09 whereas the others are in one-digit format.
 
-So for the variable "industry_orig", I corrected the very original codes and 
+So for the variable "industry_orig", I corrected the very original codes and
 use the two-digit format.
 
 <_industry_orig_>*/
 
 
 *<_industry_orig_>
-	gen industry_orig=b4p9 
+	gen industry_orig=b4p9
 	replace industry_orig=. if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
@@ -901,7 +907,7 @@ use the two-digit format.
 	recode industrycat4 (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
 	label var industrycat4 "1 digit industry classification (Broad Economic Activities), primary job 7 day recall"
 	la de lblindustrycat4 1 "Agriculture" 2 "Industry" 3 "Services" 4 "Other"
-	label values industrycat4 lblindustrycat4	
+	label values industrycat4 lblindustrycat4
 *</_industrycat4_>
 
 
@@ -924,8 +930,8 @@ use the two-digit format.
 *</_occup_skill_>
 
 
-*<_occup_>                                
-	gen occup=.    
+*<_occup_>
+	gen occup=.
 	replace occup=. if lstatus!=1
 	label var occup "1 digit occupational classification, primary job 7 day recall"
   	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
@@ -973,10 +979,10 @@ Note that these two variables reflect AVERAGE wage instead of LAST payment.
 
 /*<_wage_total_>
 
-We know the average monthly wage, which is b4p11bl. But since we do not know how 
+We know the average monthly wage, which is b4p11bl. But since we do not know how
 many months each observation works for, we left the annualized total wage missing.
 
-<_wage_total_>*/ 
+<_wage_total_>*/
 
 
 *<_wage_total_>
@@ -1049,7 +1055,7 @@ many months each observation works for, we left the annualized total wage missin
 
 
 *<_ocusec_2_>
-	gen byte ocusec_2=. 
+	gen byte ocusec_2=.
 	label var ocusec_2 "Sector of activity secondary job 7 day recall"
 	label values ocusec_2 lblocusec
 *</_ocusec_2_>
@@ -1176,8 +1182,8 @@ many months each observation works for, we left the annualized total wage missin
 
 /*<_t_hours_total_>
 
-We only know the average weekly working hours of the main job; and we would not 
-use the average to calculate annualized working hours if we had average weekly 
+We only know the average weekly working hours of the main job; and we would not
+use the average to calculate annualized working hours if we had average weekly
 working hours of all jobs as we do not know how many weeks each observation works for.
 
 <_t_hours_total_>*/
@@ -1191,10 +1197,10 @@ working hours of all jobs as we do not know how many weeks each observation work
 
 /*<_t_wage_nocompen_total_>
 
-We do not have information on wage in all jobs. The raw dataset only has wage of 
+We do not have information on wage in all jobs. The raw dataset only has wage of
 the main job weekly and monthly on average.
 
-<_t_wage_nocompen_total_>*/ 
+<_t_wage_nocompen_total_>*/
 
 
 *<_t_wage_nocompen_total_>
@@ -1304,7 +1310,7 @@ the main job weekly and monthly on average.
 	recode industrycat4_year (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
 	label var industrycat4_year "1 digit industry classification (Broad Economic Activities), primary job 12 month recall"
 	la de lblindustrycat4_year 1 "Agriculture" 2 "Industry" 3 "Services" 4 "Other"
-	label values industrycat4_year lblindustrycat4_year	
+	label values industrycat4_year lblindustrycat4_year
 *</_industrycat4_year_>
 
 
@@ -1456,7 +1462,7 @@ the main job weekly and monthly on average.
 	gen byte industrycat4_2_year=industrycat10_2_year
 	recode industrycat4_2_year (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
 	label var industrycat4_2_year "1 digit industry classification (Broad Economic Activities), secondary job 12 month recall"
-	label values industrycat4_2_year lblindustrycat4_year	
+	label values industrycat4_2_year lblindustrycat4_year
 *</_industrycat4_2_year_>
 
 
@@ -1568,7 +1574,7 @@ the main job weekly and monthly on average.
 	label var t_wage_total_year "Annualized total wage for all jobs 12 month recall"
 *</_t_wage_total_year_>
 
-	
+
 *----------8.11: Overall across reference periods------------------------------*
 
 
