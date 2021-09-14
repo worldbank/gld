@@ -1378,7 +1378,7 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_2_>
-	gen 			occup_isco_2 = .
+	gen 			occup_isco_2 = ""
 	label var 		occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 

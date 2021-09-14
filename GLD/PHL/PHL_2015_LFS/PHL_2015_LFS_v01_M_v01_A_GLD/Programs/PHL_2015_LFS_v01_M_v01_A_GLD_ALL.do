@@ -1267,7 +1267,7 @@ foreach v of local ed_var {
 
 *<_occup_isco_2_>
 * even though the original data hve 4 digits, there is no conversion table for PSOC to ISCO
-	gen 			occup_isco_2 = .
+	gen 			occup_isco_2 = ""
 	label var 		occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
