@@ -1,10 +1,13 @@
-#import_surveys.R
-#  library(tidyverse)
+#' imports all surveys in a given directory; returns an appended dataframe of all years
+#' @param eval_directory the top level directory folder 
+#' @param vars additional quoted variables to be included beyond standard survey identifiers
+#' @param version a quoted expression that indicates the file version to import 
+#' @param file_pattern a quoted regex expression to match file patterns in the directory
 
 import_surveys <- function(eval_directory, 
                            vars = NULL,
                            version = "v01_A",
-                           file.pattern = paste0("\\", version, "_GLD_ALL.dta$")
+                           file_pattern = paste0("\\", version, "_GLD_ALL.dta$")
                            ) {
   
   
