@@ -28,3 +28,8 @@ weight_vars <- metadata %>%
 
 
 ##filtering within a list...
+##
+##to find manually all potential variables in this list by year
+metadata %>% filter(var_name_orig %in% weight_vars) %>%
+  filter(grepl("2006", id)) %>%
+  select(id, var_name_orig)
