@@ -138,24 +138,24 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2007_ENOE\MEX_2007_ENO
 
 
 *<_icls_v_>
-	gen icls_v = "ICLS-[13]"
+	gen icls_v = "ICLS-13"
 	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
 
 *<_isced_version_>
-	gen isced_version = "1997"
+	gen isced_version = "isced_1997"
 	label var isced_version "Version of ISCED used for educat_isced"
 *</_isced_version_>
 
 
 *<_isco_version_>
-	gen isco_version = "ISCO-88"
+	gen isco_version = "isco_1988"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
 
 *<_isic_version_>
-	gen isic_version = "Rev 4"
+	gen isic_version = "isic_4"
 	label var isic_version "Version of ISIC used"
 
 *<_year_>
@@ -165,13 +165,13 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2007_ENOE\MEX_2007_ENO
 
 
 *<_vermast_>
-	gen str3 vermast = "001"
+	gen str3 vermast = "v01"
 	label var vermast "Version of master data"
 *</_vermast_>
 
 
 *<_veralt_>
-	gen veralt = "V01"
+	gen veralt = "v01"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
