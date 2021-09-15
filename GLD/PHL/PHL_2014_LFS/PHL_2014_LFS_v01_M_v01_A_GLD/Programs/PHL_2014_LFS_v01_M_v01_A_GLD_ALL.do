@@ -154,7 +154,7 @@ set mem 800m
 
 
 *<_isco_version_>
-	gen isco_version = "isco_88"
+	gen isco_version = "isco_1988"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
@@ -225,8 +225,6 @@ replace int_month = 10 	if round == 4
 	will be produced in conjunction, the labelled in the html brackets.
 
 </_hhid_note> */
-** HOUSEHOLD IDENTIFICATION NUMBER
-
 ** HOUSEHOLD IDENTIFICATION NUMBER
 	loc idhvars 	hhnum   							// store idh vars in local
 
@@ -306,7 +304,7 @@ replace int_month = 10 	if round == 4
 
 *<_pid_>
 ** INDIVIDUAL IDENTIFICATION NUMBER
-	gen 		pid = idp 		// generated from sub-module above.
+	egen 		pid = concat(hhid idp) 		// generated from sub-module above.
 	label var 	pid "Individual ID"
 
 	isid 		hhid pid
@@ -317,6 +315,10 @@ replace int_month = 10 	if round == 4
 	rename 		weight weight_orig
 	gen 		weight = `weightvar'/(`n_round')
 	label 		var weight "Household sampling weight"
+
+	/*there is one household with an odd household ID and no weight (total 1 observation). Will drop*/
+	drop 		if weight == . 
+	assert 		r(N_drop) == 1  	// ensure only 1 obs was dropped
 *</_weight_>
 
 
@@ -964,7 +966,7 @@ foreach v of local ed_var {
 
 *<_ocusec_>
 	gen byte 		ocusec = .
-	replace 		ocusec = 1 	if c19pclas == 1
+	replace 		ocusec = 1 	if c19pclas == 2
 	replace 		ocusec = 2 	if inlist(c19pclas, 0, 1, 3, 4, 5, 6)
 
 	label var 		ocusec 		"Sector of activity primary job 7 day recall"
@@ -1038,7 +1040,7 @@ foreach v of local ed_var {
 *<_occup_isco_>
 * in 2014, raw variable is numeric, 4-digits, but since there is no provided PSOC to ISCO
 * conversion, there is no occup_isco
-	gen 			occup_isco = .
+	gen 			occup_isco = ""
 	label 			var occup_isco "ISCO code of primary job 7 day recall"
 	replace 		occup_isco=. if lstatus!=1 		// restrict universe to employed only
 	replace 		occup_isco=. if age < minlaborage	// restrict universe to working age
@@ -1099,6 +1101,7 @@ foreach v of local ed_var {
 
 *<_unitwage_>
 	gen byte 		unitwage = c26_pbis
+	replace 		unitwage = . if 	unitwage >= 11 // replace potential missing values
 	recode 			unitwage (0 1 5 6 7 = 10) /// other
 								(2 = 9) /// hourly
 								(3 = 1) /// daily
@@ -1123,6 +1126,7 @@ foreach v of local ed_var {
 *<_whours_>
 	gen whours 		= c22_phrs
 	label var whours "Hours of work in last week primary job 7 day recall"
+    replace 		whours = 84 	if whours > 84 & whours != . 	// replace unrealistic work weeks
 *</_whours_>
 
 
@@ -1267,7 +1271,7 @@ foreach v of local ed_var {
 
 *<_occup_isco_2_>
 * even though the original data hve 4 digits, there is no conversion table for PSOC to ISCO
-	gen 			occup_isco_2 = .
+	gen 			occup_isco_2 = ""
 	label var 		occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
@@ -1301,7 +1305,8 @@ foreach v of local ed_var {
 
 *<_unitwage_2_>
 	gen byte 		unitwage_2 = j06_obis
-	recode 			unitwage (0 1 5 6 7 = 10) /// other
+	replace 		unitwage_2 = . if 	unitwage >= 11 // replace potential missing values
+	recode 			unitwage_2 (0 1 5 6 7 = 10) /// other
 								(2 = 9) /// hourly
 								(3 = 1) /// daily
 								(4 = 5) // monthly
@@ -1535,7 +1540,7 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_year_>
-	gen 			occup_isco_year = .
+	gen 			occup_isco_year = ""
 	label var 		occup_isco_year "ISCO code of primary job 12 month recall"
 *</_occup_isco_year_>
 
@@ -1712,7 +1717,7 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_2_year_>
-	gen 			occup_isco_2_year = .
+	gen 			occup_isco_2_year = ""
 	label var 		occup_isco_2_year "ISCO code of secondary job 12 month recall"
 *</_occup_isco_2_year_>
 
@@ -1881,6 +1886,11 @@ foreach v of local ed_var {
 					t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs ///
 					t_hours_annual linc_nc laborincome
 
+* make a second iternation that excludes lstatus variables
+	local except 	lstatus lstatus_year
+	local lab_var2 	: list lab_var - except
+
+
 	foreach v of local lab_var {
 		cap confirm numeric variable `v'
 		if _rc == 0 { 	// is indeed numeric
@@ -1903,8 +1913,8 @@ foreach v of local ed_var {
 	or classified as lstatus == 1
 
 </_correction_lstatus_note> */
-
-	foreach v of local lab_var {
+	* use labvar2 because we don't want to replace lstatus, etc in this case
+	foreach v of local lab_var2 {
 		cap confirm numeric variable `v'
 		if _rc == 0 { 	// is indeed numeric
 			replace `v'=. if ( lstatus !=1 & !missing(lstatus) )
@@ -1915,9 +1925,7 @@ foreach v of local ed_var {
 
 	}
 
-*</_% Correction min age_>
-
-
+*</_% Correction lstatus_>
 
 
 }
