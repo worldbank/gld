@@ -226,8 +226,6 @@ replace int_month = 10 	if round == 4
 
 </_hhid_note> */
 ** HOUSEHOLD IDENTIFICATION NUMBER
-
-** HOUSEHOLD IDENTIFICATION NUMBER
 	loc idhvars 	hhnum   							// store idh vars in local
 
 
@@ -317,6 +315,10 @@ replace int_month = 10 	if round == 4
 	rename 		weight weight_orig
 	gen 		weight = `weightvar'/(`n_round')
 	label 		var weight "Household sampling weight"
+
+	/*there is one household with an odd household ID and no weight (total 1 observation). Will drop*/
+	drop 		if weight == . 
+	assert 		r(N_drop) == 1  	// ensure only 1 obs was dropped
 *</_weight_>
 
 
