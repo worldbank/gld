@@ -1086,7 +1086,7 @@ foreach v of local ed_var {
 *<_occup_isco_>
 * in 2013, raw variable is numeric, 4-digits, but since there is no provided PSOC to ISCO
 * conversion, there is no occup_isco
-	gen 			occup_isco = .
+	gen 			occup_isco = ""
 	label 			var occup_isco "ISCO code of primary job 7 day recall"
 	replace 		occup_isco=. if lstatus!=1 		// restrict universe to employed only
 	replace 		occup_isco=. if age < minlaborage	// restrict universe to working age
@@ -1147,6 +1147,7 @@ foreach v of local ed_var {
 
 *<_unitwage_>
 	gen byte 		unitwage = c26_pbasis
+	replace 		unitwage = . if 	unitwage >= 11 // replace potential missing values
 	recode 			unitwage (0 1 5 6 7 = 10) /// other
 								(2 = 9) /// hourly
 								(3 = 1) /// daily
@@ -1310,7 +1311,7 @@ foreach v of local ed_var {
 	tab 		isic_merge_`n' 		if `matchvar' != .
 
 
-	gen 		industrycat_isic_2 = isic4_`n'  	// the string variable becomes industrycat_isic	
+	gen 		industrycat_isic_2 = isic4_`n'  	// the string variable becomes industrycat_isic
 
 	drop 		class 				// no longer needed, maintained in matchvar
 
@@ -1361,7 +1362,7 @@ foreach v of local ed_var {
 
 *<_occup_isco_2_>
 * even though the original data hve 4 digits, there is no conversion table for PSOC to ISCO
-	gen 			occup_isco_2 = .
+	gen 			occup_isco_2 = ""
 	label var 		occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
@@ -1394,7 +1395,8 @@ foreach v of local ed_var {
 
 *<_unitwage_2_>
 	gen byte 		unitwage_2 = j06_obasis
-	recode 			unitwage (0 1 5 6 7 = 10) /// other
+	replace 		unitwage_2 = . if 	unitwage >= 11 // replace potential missing values
+	recode 			unitwage_2 (0 1 5 6 7 = 10) /// other
 								(2 = 9) /// hourly
 								(3 = 1) /// daily
 								(4 = 5) // monthly
@@ -1628,7 +1630,7 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_year_>
-	gen 			occup_isco_year = .
+	gen 			occup_isco_year = ""
 	label var 		occup_isco_year "ISCO code of primary job 12 month recall"
 *</_occup_isco_year_>
 
@@ -1805,7 +1807,7 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_2_year_>
-	gen 			occup_isco_2_year = .
+	gen 			occup_isco_2_year = ""
 	label var 		occup_isco_2_year "ISCO code of secondary job 12 month recall"
 *</_occup_isco_2_year_>
 

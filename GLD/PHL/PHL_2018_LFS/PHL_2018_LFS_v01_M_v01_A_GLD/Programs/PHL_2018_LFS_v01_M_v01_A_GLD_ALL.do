@@ -1059,7 +1059,7 @@ foreach v of local ed_var {
 *<_occup_isco_>
 * in 2018, raw variable is numeric, 2-digits, so isco conversion not possible
 
-	gen occup_isco = . 	// occup_isco already generated above in submodule
+	gen occup_isco = ""
 	label var 	occup_isco "ISIC code of primary job 7 day recall"
 
 
@@ -1119,6 +1119,7 @@ foreach v of local ed_var {
 
 *<_unitwage_>
 	gen byte 		unitwage = pufc24_pbasis
+	replace 		unitwage = . if 	unitwage >= 11 // replace potential missing values
 	recode 			unitwage (0 1 5 6 7 = 10) /// other
 								(2 = 9) /// hourly
 								(3 = 1) /// daily
@@ -1275,7 +1276,7 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_2_>
-	gen occup_isco_2 = . // occup_isco already generated above in submodule
+	gen occup_isco_2 = ""
 	label var 	occup_isco_2 "ISIC code of primary job 7 day recall"
 
 
@@ -1309,7 +1310,8 @@ foreach v of local ed_var {
 
 *<_unitwage_2_>
 	gen byte 		unitwage_2 = .
-	recode 			unitwage (0 1 5 6 7 = 10) /// other
+	replace 		unitwage_2 = . if 	unitwage >= 11 // replace potential missing values
+	recode 			unitwage_2 (0 1 5 6 7 = 10) /// other
 								(2 = 9) /// hourly
 								(3 = 1) /// daily
 								(4 = 5) // monthly
@@ -1543,7 +1545,7 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_year_>
-	gen 			occup_isco_year = .
+	gen 			occup_isco_year = ""
 	label var 		occup_isco_year "ISCO code of primary job 12 month recall"
 *</_occup_isco_year_>
 
@@ -1720,7 +1722,7 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_2_year_>
-	gen 			occup_isco_2_year = .
+	gen 			occup_isco_2_year = ""
 	label var 		occup_isco_2_year "ISCO code of secondary job 12 month recall"
 *</_occup_isco_2_year_>
 

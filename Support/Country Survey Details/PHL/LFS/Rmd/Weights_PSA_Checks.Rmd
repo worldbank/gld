@@ -16,6 +16,7 @@ knit: (function(input, ...) {
     )
   })
 ---
+
 ```{r, include=FALSE}
 knitr::opts_chunk$set(eval = FALSE)
 ```
@@ -40,16 +41,16 @@ variables are appended into `wgt` in the GLD final dataset.
 | 1999 | rfadj      | .          | .          | .          |
 | 2000 | rfadj      | .          | .          | .          |
 | 2001 | rfadj      | .          | .          | .          |
-| 2002 | rfadj      | rfadj      | rfadj      | rfadj      |
-| 2003 | rfadj      | rfadj      | cfwgt      | cfwgt      |
-| 2004 | fwgt       | fwgt       | fwgt       | cfwgt      |
+| 2002 | rfadj      | rfadj      | rfadj      | fwgt       |
+| 2003 | rfadj      | rfadj      | cfwgt      | fwgt       |
+| 2004 | fwgt       | fwgt       | fwgt       | fwgt       |
 | 2005 | fwgt       | fwgt       | fwgt       | fwgt       |
-| 2006 | fwgt       | fwgt       | cfwgt      | cfwgt      |
-| 2007 | fwgt       | fwgt       | fwgt       | fwgt       |
-| 2008 | fwgt       | fwgt       | fwgt       | fwgt       |
-| 2009 | fwgt       | fwgt       | fwgt       | fwgt       |
-| 2010 | fwgt       | fwgt       | fwgt       | fwgt       |
-| 2011 | fwgt       | fwgt       | fwgt       | fwgt       |
+| 2006 | fwgt       | fwgt       | fwgt       | fwgt       |
+| 2007 | (none)     | fwgt       | fwgt       | fwgt       |
+| 2008 | weight     | fwgt       | fwgt       | fwgt       |
+| 2009 | weight     | fwgt       | fwgt       | fwgt       |
+| 2010 | weight     | fwgt       | fwgt       | fwgt       |
+| 2011 | weight     | fwgt       | fwgt       | fwgt       |
 | 2012 | pwgt       | pwgt       | pwgt       | pwgt       |
 | 2013 | pwgt       | pwgt       | pwgt       | pwgt       |
 | 2014 | fwgt       | fwgt       | fwgt       | fwgt       |
