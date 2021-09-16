@@ -1278,7 +1278,7 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_2_>
-	gen occup_isco_2 = ""// occup_isco already generated above in submodule
+	gen occup_isco_2 = "" // occup_isco already generated above in submodule
 	label var 	occup_isco_2 "ISIC code of primary job 7 day recall"
 
 
