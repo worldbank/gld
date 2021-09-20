@@ -305,8 +305,25 @@ use "`path_in'\LFS2000-lab.dta"
 
 
 *<_age_>
-	gen age = s4
+	*gen age = s4
+	*label var age "Individual age"
+	
+	gen age=.
+	replace age=7 if s4==1
+	replace age=17 if s4==2
+	replace age=22 if s4==3
+	replace age=27 if s4==4
+	replace age=32 if s4==5
+	replace age=37 if s4==6
+	replace age=42 if s4==7
+	replace age=47 if s4==8
+	replace age=52 if s4==9
+	replace age=57 if s4==10
+	replace age=62 if s4==11
+	replace age=81 if s4==12
 	label var age "Individual age"
+	
+	
 *</_age_>
 
 
@@ -600,7 +617,8 @@ foreach v of local ed_var {
 
 
 *<_minlaborage_>
-	gen byte minlaborage = 15
+	gen byte minlaborage = 7
+	*here I used 7 instad of 15 because it is the threshold ofthe lower age group
 	label var minlaborage "Labor module application age"
 *</_minlaborage_>
 
@@ -610,7 +628,6 @@ foreach v of local ed_var {
 {
 *<_lstatus_>
 	gen byte lstatus = durum
-	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
@@ -648,14 +665,14 @@ foreach v of local ed_var {
 
 *<_unempldur_l_>
 	gen byte unempldur_l=.
-	replace unempldur_l = s81 if lstatus==2
+	*replace unempldur_l = s81 if lstatus==2
 	label var unempldur_l "Unemployment duration (months) lower bracket"
 *</_unempldur_l_>
 
 
 *<_unempldur_u_>
 	gen byte unempldur_u=.
-	replace unempldur_u = s81 if lstatus==2
+	*replace unempldur_u = s81 if lstatus==2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
 *</_unempldur_u_>
 }
@@ -683,33 +700,27 @@ foreach v of local ed_var {
 
 
 *<_industry_orig_>
-	gen industry_orig = .
+	gen industry_orig = s16kod
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
 
 *<_industrycat_isic_>
-	gen helper_1 = string(s33kod,"%02.0f")
-	gen helper_2 = "00"
-	egen industrycat_isic = concat(helper_1 helper_2)
-	replace industrycat_isic = "" if industrycat_isic == ".00"
-	drop helper_1 helper_2
+	gen industry_isic=.
+	*gen helper_1 = string(s33kod,"%02.0f")
+	*gen helper_2 = "00"
+	*egen industrycat_isic = concat(helper_1 helper_2)
+	*replace industrycat_isic = "" if industrycat_isic == ".00"
+	*drop helper_1 helper_2
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
 
 *<_industrycat10_>
 	gen industrycat10=.
-	replace industrycat10 = 1 if inrange(s33kod,1,3)
-	replace industrycat10 = 2 if inrange(s33kod,5,9)
-	replace industrycat10 = 3 if inrange(s33kod,10,33)
-	replace industrycat10 = 4 if inrange(s33kod,35,39)
-	replace industrycat10 = 5 if inrange(s33kod,41,43)
-	replace industrycat10 = 6 if inrange(s33kod,45,47) | inrange(s33kod,55,56)
-	replace industrycat10 = 7 if inrange(s33kod,49,53) | inrange(s33kod,58,63)
-	replace industrycat10 = 8 if inrange(s33kod,64,82)
-	replace industrycat10 = 9 if inrange(s33kod,84,84)
-	replace industrycat10 = 10 if inrange(s33kod,85,99)
+	replace industrycat10 = 8 if s16kod == 8
+	*how do we separate public adm???
+	replace industrycat10 = 10 if s16kod == 9
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
@@ -717,11 +728,11 @@ foreach v of local ed_var {
 
 
 *<_industrycat4_>
-	gen byte industrycat4 = industrycat10
+	/*gen byte industrycat4 = industrycat10
 	recode industrycat4 (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
 	label var industrycat4 "1 digit industry classification (Broad Economic Activities), primary job 7 day recall"
 	la de lblindustrycat4 1 "Agriculture" 2 "Industry" 3 "Services" 4 "Other"
-	label values industrycat4 lblindustrycat4
+	label values industrycat4 lblindustrycat4*/
 *</_industrycat4_>
 
 
@@ -732,22 +743,23 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_>
-	gen helper_1 = string(s38kod,"%02.0f")
-	gen helper_2 = "00"
-	egen occup_isco = concat(helper_1 helper_2)
-	replace occup_isco = "" if occup_isco == ".00"
-	drop helper_1 helper_2
+	gen occup_isco=s38kod
+	*gen helper_1 = string(s38kod,"%02.0f")
+	*gen helper_2 = "00"
+	*egen occup_isco = concat(helper_1 helper_2)
+	*replace occup_isco = "" if occup_isco == ".00"
+	*drop helper_1 helper_2
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
 
 *<_occup_skill_>
-	gen helper = substr(occup_isco,1,1)
-	destring helper, replace
+	*gen helper = substr(occup_isco,1,1)
+	*destring helper, replace
 	gen occup_skill = .
-	replace occup_skill = 1 if inrange(helper,9,9)
-	replace occup_skill = 2 if inrange(helper,4,8)
-	replace occup_skill = 3 if inrange(helper,1,3)
+	replace occup_skill = 1 if inrange(occup_isco,7,8)
+	replace occup_skill = 2 if inrange(occup_isco,3,6)
+	replace occup_skill = 3 if inrange(occup_isco,1,2)
 	drop helper
 	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
 	label values occup_skill lblskill
@@ -756,10 +768,12 @@ foreach v of local ed_var {
 
 
 *<_occup_>
-	gen byte occup = floor(s38kod/10)
+	/*gen byte occup = s38kod
+	*group 1 includes two sections as per the labels manager and professionals.
+
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
-	label values occup lbloccup
+	label values occup lbloccup*/
 *</_occup_>
 
 
@@ -789,10 +803,9 @@ Non-paid employee |    21,009          0          0 |    21,009
 	set to missing
 
 </_wage_no_compen_note> */
-	gen double wage_no_compen = s69
-	replace wage_no_compen=. if lstatus!=1
-	replace wage_no_compen=. if wage_no_compen == 0
-	* Expect 7161 replacements
+	gen double wage_no_compen =.
+	*replace wage_no_compen=. if lstatus!=1
+	*replace wage_no_compen=. if wage_no_compen == 0
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
@@ -820,12 +833,12 @@ Non-paid employee |    21,009          0          0 |    21,009
 	and use those hours as first job.
 
 </_whours_note> */
-	gen whours = s55a
-	replace whours = . if s28 == 1 & whours == 0
+	gen whours = s28a
+	*replace whours = . if s28 == 1 & whours == 0
 	* expect 57 replacements
-	replace whours = s56b_top if whours == 0
+	*replace whours = s56b_top if whours == 0
 	* expect 7 replacements
-	label var whours "Hours of work in last week primary job 7 day recall"
+	label var whours "Hours of work in last week primary job 7 day recall"*/
 *</_whours_>
 
 
@@ -861,7 +874,7 @@ Non-paid employee |    21,009          0          0 |    21,009
 
 
 *<_socialsec_>
-	gen byte socialsec = s42
+	gen byte socialsec = s25
 	recode socialsec (2=0)
 	label var socialsec "Employment has social security insurance primary job 7 day recall"
 	la de lblsocialsec 1 "With social security" 0 "Without social secturity"
@@ -878,16 +891,16 @@ Non-paid employee |    21,009          0          0 |    21,009
 
 
 *<_firmsize_l_>
-	gen firmsize_l=s37a
-	recode firmsize_l (1=.) (2=11) (3=20) (4=50) (5=11)
+	gen firmsize_l=s21
+	recode firmsize_l (3=.) (4=.)
 	replace firmsize_l=. if lstatus!=1
 	label var firmsize_l "Firm size (lower bracket) primary job 7 day recall"
 *</_firmsize_l_>
 
 
 *<_firmsize_u_>
-	gen firmsize_u=s37a
-	recode firmsize_u (1=10) (2=19) (3=49) (4=.) (5=.)
+	gen firmsize_u=s21
+	recode firmsize_u (1=.) (2=.)
 	replace firmsize_u=. if lstatus!=1
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>
