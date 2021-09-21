@@ -1057,17 +1057,19 @@ foreach v of local ed_var {
 				, generate(occup_orig_str) ///			// gen a variable with this prefix
 				force //
 
-
+			replace 	occup_orig_str = "" if occup_orig_str == "."
 		}
 
 
 		// merge sub-module with isco key
 		/* Here, we will substring the key and matchvar to match only at two digits. */
 
-		gen isco88_2dig = substr(`matchvar',1,2)
+		gen isco88_2dig = substr(occup_orig_str,1,2)
 
 		tostring 	isco88_2dig ///
 					, format(`"%02.0f"') replace
+					
+		replace 	isco88_2dig = "" if isco88_2dig == "."		// replace missing with numeric missing.
 
 		gen 			isco08_2dig = isco88_2dig 	if wave != "Q1" 	// for waves 2-4
 		replace 	isco88_2dig = "" 						if wave != "Q1" 	// will merge only first wave
@@ -1078,16 +1080,17 @@ foreach v of local ed_var {
 					, generate(isco_merge_`n') ///
 					keep(master match) // "left join"; remove obs that don't match from using
 
-
-		tab 		isic_merge_`n' 		if `matchvar' != .
-
-
+		tab 		isco_merge_`n'
+		tab         isco_merge_1 if occup_orig_str  != "" & wave == "Q1"
+					* all non-matched isco-88 don't exist in key
+		
 		gen 		occup_isco = isco08_2dig 			// catches values converted in Q1 merge
-		replace occup_isco = isco08_2dig			if wave != "Q1"	// replace rest of waves with values
+		replace 	occup_isco = isco08_2dig			if wave != "Q1"	// replace rest of waves with values
 
 		label var 	occup_isco "ISIC code of primary job 7 day recall"
 
-
+		pause on 
+		pause
 
 *</_occup_isco_>
 
