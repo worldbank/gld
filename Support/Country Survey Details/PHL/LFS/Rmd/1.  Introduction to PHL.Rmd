@@ -88,7 +88,7 @@ and an abbreviated version is made available here from the PSA:
     sets of geographic areas called Primary Sampling Units, which
     contain about 100-400 households.
 
-## What is the significance level?
+## What is the geographic significance level?
 
 The primary significance level is the Province or first administrative
 disaggregation,
