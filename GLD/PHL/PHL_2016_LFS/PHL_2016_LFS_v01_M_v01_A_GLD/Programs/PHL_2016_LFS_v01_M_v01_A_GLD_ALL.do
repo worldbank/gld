@@ -1,4 +1,4 @@
-isco88/*%%=============================================================================================
+/*%%=============================================================================================
 	0: GLD Harmonization Preamble
 ==============================================================================================%%*/
 
@@ -1064,15 +1064,13 @@ foreach v of local ed_var {
 		// merge sub-module with isco key
 		/* Here, we will substring the key and matchvar to match only at two digits. */
 
-		gen isco88 	= `matchvar'
-		gen isco88_2dig = substr(isco88,1,2)
-
-
+		gen isco88_2dig = substr(`matchvar',1,2)
 
 		tostring 	isco88_2dig ///
-					, format(`"%04.0f"') replace
+					, format(`"%02.0f"') replace
 
-		replace 	isco88_2dig = "" 	if wave != "Q1" 	// only first second wave
+		gen 			isco08_2dig = isco88_2dig 	if wave != "Q1" 	// for waves 2-4
+		replace 	isco88_2dig = "" 						if wave != "Q1" 	// will merge only first wave
 
 		merge 		m:1 ///
 					isco88_2dig ///
@@ -1083,10 +1081,10 @@ foreach v of local ed_var {
 
 		tab 		isic_merge_`n' 		if `matchvar' != .
 
-		drop 		isco88 				// no longer needed, maintained in matchvar
 
+		gen 		occup_isco = isco08_2dig 			// catches values converted in Q1 merge
+		replace occup_isco = isco08_2dig			if wave != "Q1"	// replace rest of waves with values
 
-		gen 		occup_isco = isco08_`n'
 		label var 	occup_isco "ISIC code of primary job 7 day recall"
 
 
