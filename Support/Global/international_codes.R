@@ -410,6 +410,7 @@ match_isco88_08_list <- corresp(df = isco88_08_clean,
   
 
 match_isco88_08_table <- match_isco88_08_list[[1]]
+  
 
 # save data ----
 if (TRUE) {
@@ -455,7 +456,7 @@ for (i in seq(from=2016,to=2019)) {
 }
 
 for (i in seq(from=2016,to=2016)) {
-haven::write_dta(match_isco12_table,
+haven::write_dta(match_isco88_08_table,
                  path = file.path(PHL, 
                                   paste0("PHL_",as.character(i),"_LFS"), 
                                     paste0("PHL_",as.character(i),"_LFS",
