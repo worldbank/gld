@@ -19,6 +19,7 @@ library(pdftools)
 library(janitor)
 library(stringdist)
 library(magrittr)
+library(readxl)
 
 
 
@@ -35,7 +36,7 @@ psic94_path <- file.path(PHL, "PHL_docs/International Codes/PSA_PSIC_1994.pdf")
 psic09_path <- file.path(PHL, "PHL_docs/International Codes/PSA_PSIC_2009.pdf")
 psoc12_path <- file.path(PHL, "PHL_docs/International Codes/PSA_PSOC_2012.pdf")
 isco88_08_path <- file.path(PHL, "PHL_docs/International Codes/wcms_172572.pdf")
-
+isco88_08_xls_path <- file.path(PHL, "PHL_docs/International Codes/corrtab88-08.xls")
 
 
 
@@ -345,37 +346,26 @@ assertthat::assert_that( sum(str_length(isco12_clean$submajor) != 2, na.rm=TRUE)
 
 
 
-# Isco88-08 raw ----
+# Isco88-08 ------------
+ 
+## raw ----
 
-isco88_08_raw <- read_pdf(
-  
-  pdf_path = isco88_08_path,
-  page_min = 375,
-  page_max = 431,
-  varnames = c("isco08", "isco88"),
-  ymin = 200,
-  xlabel = c(260, 500),
-  xmin = c(180, 220),
-  xmax = c(195, 230), 
-  fuzzy_rows = FALSE
-  
-)
+isco88_08_raw <- read_xls(path = isco88_08_xls_path,
+                          sheet= "Sheet1",
+                          col_types = "text",
+                          col_names = TRUE)
 
-# what is isco88 vector?
-## is it utf8? 
-utf8::as_utf8(isco88_08_raw$isco88) %>% head(n=10)
+## clean ----
 
-## no, what is it, (unknown)
-Encoding(isco88_08_raw$isco88) %>% head(n=10)
-
-
-## does the actual read function from pdftools have any answers?
-pg375 <- pdftools::pdf_data(isco88_08_path, font_info = TRUE)[[375]]
-
-#pdftools::pdf_fonts(isco88_08_path)
-
-save(isco88_08_raw, 
-     file = file.path(PHL, "PHL_data/isco08-isco88.Rdata"))
+isco88_08_clean <- isco88_08_raw %>%
+  rename("title88" = "ISCO-88 Title EN",
+         "title08" = "ISCO-08 Title EN",
+         "isco88"  = "ISCO-88 code",
+         "isco08"  = "ISCO 08 Code",
+         "part08"  = "ISCO-08 part",
+         "comments"= "Comments") %>%
+  select(isco88, isco08, part08, title08) %>%
+  mutate()
 
 
 
@@ -409,8 +399,17 @@ match_isco12_list <- corresp(df = isco12_clean,
                                 check_matches = F)
 
 match_isco12_table <- match_isco12_list[[1]] 
+
+
+
+match_isco88_08_list <- corresp(df = isco88_08_clean,
+                                country_code = isco88, 
+                                international_code = isco08,
+                                pad_vars = c("isco08", "isco88"),
+                                check_matches = F)
   
 
+match_isco88_08_table <- match_isco88_08_list[[1]]
 
 # save data ----
 if (TRUE) {
