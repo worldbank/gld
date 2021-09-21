@@ -1089,8 +1089,6 @@ foreach v of local ed_var {
 
 		label var 	occup_isco "ISIC code of primary job 7 day recall"
 
-		pause on 
-		pause
 
 *</_occup_isco_>
 
