@@ -422,6 +422,7 @@ save(isic94_codes_raw, isic94_codes, isic94_leftover, isic94_clean, psic94_path,
      match_isic94_list, match_isic94_table,
      match_isic09_list, match_isic09_table, 
      match_isco12_list, match_isco12_table,
+     match_isco88_08_list, match_isco88_08_table,
      file = file.path(PHL, "PHL_data/international_codes.Rdata") )
 
 
@@ -453,6 +454,16 @@ for (i in seq(from=2016,to=2019)) {
                    version = 14)
 }
 
+for (i in seq(from=2016,to=2016)) {
+haven::write_dta(match_isco12_table,
+                 path = file.path(PHL, 
+                                  paste0("PHL_",as.character(i),"_LFS"), 
+                                    paste0("PHL_",as.character(i),"_LFS",
+                                           "_v01_M/Data/Stata/PHL_PSOC_ISCO_88_08_key.dta")),
+                   version = 14)
+}  
+
+
 haven::write_dta(match_isic94_table,
                  path = file.path(PHL, "PHL_data/GLD/PHL_PSIC_ISIC_94_key.dta"),
                  version = 14)
@@ -465,3 +476,7 @@ haven::write_dta(match_isco12_table,
                  path = file.path(PHL, "PHL_data/GLD/PHL_PSOC_ISCO_12_key.dta"),
                  version = 14)
 }
+
+haven::write_dta(match_isco88_08_table,
+                 path = file.path(PHL, "PHL_data/GLD/PHL_PSOC_ISCO_88_08_key.dta"),
+                 version = 14)
