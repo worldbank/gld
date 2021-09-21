@@ -94,7 +94,7 @@ set mem 800m
 	local round4 `"`stata'\LFS OCT2016.dta"'
 
 	local isic_key 	 `"`stata'\PHL_PSIC_ISIC_09_key.dta"'
-	local isco_key 	 `"`stata'\"' // to be created
+	local isco_key 	 `"`stata'\PHL_PSOC_ISCO_88_08_key.dta"'
 
     local adm2_labs	 `"`stata'\GLD_PHL_admin2_labels.dta"'
 
@@ -1036,7 +1036,60 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_>
-* in 2016, raw variable is numeric, 2-digits, so isco conversion not possible
+/* in 2016, raw variable is numeric, 2-digits, so typically this variable would be left as missing.
+	However, The data span two ISCO classification systems this year: January 2016/wave1 is
+	PSOC92 (ISCO-88) and starting in April/wave2, data are coded in PSOC12 (ISCO08). For This
+	reason only, the harmonizer has considered it worth it to make an imperfect attempt at converting
+	the first wave of the two digit data to an estimated ISCO-08 equivalent. See documentation for a
+	more detailed discussion.
+*/
+
+	loc matchvar   	pufc14_procc
+	loc n 			1
+
+	qui ds 			occup_orig, has(type numeric) 	// capture numeric var if is numeric
+	loc iscovar 	= r(varlist)						// store this in a local
+	loc len 		: list sizeof iscovar 				// store the length of this local (1 or 0)
+
+		if (`len' == 1) {
+															// run this if == 1 (ie, if occup_orig is numeric)
+			tostring occup_orig	///						// make the numeric vars strings
+				, generate(occup_orig_str) ///			// gen a variable with this prefix
+				force //
+
+
+		}
+
+
+	// merge sub-module with isco key
+
+	gen unit = `matchvar'
+	tostring 	unit ///
+				, format(`"%04.0f"') replace
+
+	replace 	unit = "" 	if wave != "Q2" 	// only match second wave
+
+	merge 		m:1 ///
+				unit ///
+				using `isco_key' ///
+				, generate(isco_merge_`n') ///
+				keep(master match) // "left join"; remove obs that don't match from using
+
+
+	// replace one code that I know doesn't match
+	rename 		isco08	isco08_`n'
+	replace 	isco08_`n' = "6810" 	if `matchvar' == 6819
+
+	tab 		isic_merge_`n' 		if `matchvar' != .
+
+	drop 		unit 				// no longer needed, maintained in matchvar
+
+
+	gen 		occup_isco = isco08_`n'
+	label var 	occup_isco "ISIC code of primary job 7 day recall"
+
+
+
 	gen 			occup_isco = ""
 	label 			var occup_isco "ISCO code of primary job 7 day recall"
 	replace 		occup_isco="" if lstatus!=1 		// restrict universe to employed only
