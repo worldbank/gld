@@ -1,4 +1,4 @@
-/*%%=============================================================================================
+isco88/*%%=============================================================================================
 	0: GLD Harmonization Preamble
 ==============================================================================================%%*/
 
@@ -94,7 +94,7 @@ set mem 800m
 	local round4 `"`stata'\LFS OCT2016.dta"'
 
 	local isic_key 	 `"`stata'\PHL_PSIC_ISIC_09_key.dta"'
-	local isco_key 	 `"`stata'\PHL_PSOC_ISCO_88_08_key.dta"'
+	local isco_key 	 `"`stata'\PHL_PSOC_ISCO_88_08_key_2digits.dta"'
 
     local adm2_labs	 `"`stata'\GLD_PHL_admin2_labels.dta"'
 
@@ -1061,39 +1061,35 @@ foreach v of local ed_var {
 		}
 
 
-	// merge sub-module with isco key
+		// merge sub-module with isco key
+		/* Here, we will substring the key and matchvar to match only at two digits. */
 
-	gen unit = `matchvar'
-	tostring 	unit ///
-				, format(`"%04.0f"') replace
-
-	replace 	unit = "" 	if wave != "Q2" 	// only match second wave
-
-	merge 		m:1 ///
-				unit ///
-				using `isco_key' ///
-				, generate(isco_merge_`n') ///
-				keep(master match) // "left join"; remove obs that don't match from using
-
-
-	// replace one code that I know doesn't match
-	rename 		isco08	isco08_`n'
-	replace 	isco08_`n' = "6810" 	if `matchvar' == 6819
-
-	tab 		isic_merge_`n' 		if `matchvar' != .
-
-	drop 		unit 				// no longer needed, maintained in matchvar
-
-
-	gen 		occup_isco = isco08_`n'
-	label var 	occup_isco "ISIC code of primary job 7 day recall"
+		gen isco88 	= `matchvar'
+		gen isco88_2dig = substr(isco88,1,2)
 
 
 
-	gen 			occup_isco = ""
-	label 			var occup_isco "ISCO code of primary job 7 day recall"
-	replace 		occup_isco="" if lstatus!=1 		// restrict universe to employed only
-	replace 		occup_isco="" if age < minlaborage	// restrict universe to working age
+		tostring 	isco88_2dig ///
+					, format(`"%04.0f"') replace
+
+		replace 	isco88_2dig = "" 	if wave != "Q1" 	// only first second wave
+
+		merge 		m:1 ///
+					isco88_2dig ///
+					using `isco_key' ///
+					, generate(isco_merge_`n') ///
+					keep(master match) // "left join"; remove obs that don't match from using
+
+
+		tab 		isic_merge_`n' 		if `matchvar' != .
+
+		drop 		isco88 				// no longer needed, maintained in matchvar
+
+
+		gen 		occup_isco = isco08_`n'
+		label var 	occup_isco "ISIC code of primary job 7 day recall"
+
+
 
 *</_occup_isco_>
 
