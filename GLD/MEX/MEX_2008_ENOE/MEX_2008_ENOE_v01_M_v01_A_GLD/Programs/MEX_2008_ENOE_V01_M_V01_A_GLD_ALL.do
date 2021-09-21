@@ -301,8 +301,8 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2008_ENOE\MEX_2008_ENO
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = subnatid3
-	tostring subnatidsurvey, replace
+	gen subnatidsurvey = "subnatid3"
+	*tostring subnatidsurvey, replace
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 

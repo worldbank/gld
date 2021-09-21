@@ -304,8 +304,8 @@ gen isic_version = "isic_3.1"
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = subnatid3
-	tostring subnatidsurvey, replace
+	gen subnatidsurvey = "subnatid3"
+	**tostring subnatidsurvey, replace
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
