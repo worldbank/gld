@@ -70,6 +70,16 @@ been coded appropriately. All numbers are reported in millions
 (1,000,000) of people ages 15 and over (inclusive). The Annual PSA
 reports are only available starting in 2016.
 
+The weight variable provided appears to match published ratios from the
+PSA (table below) and has passed our internal quality checks, which
+include cross-comparison with the World Development Indicators' data for
+raw expanded population. However, it appears that while all survey
+years' weight variables are valid for determining ratio such as Labor
+Force Participation, etc, the weight variables prior to survey year 2008
+are not suitable for determining raw expanded population. With no
+obvious way to scale these earlier weight variables, and with
+corroborating LFP figures, we're providing the weight variables as-is.
+
 | Year       | GLD Expanded Population | PSA Stated Population | GLD LFP | PSA LFP |
 |------------|-------------------------|-----------------------|---------|---------|
 | 1997       |                         |                       |         |         |
