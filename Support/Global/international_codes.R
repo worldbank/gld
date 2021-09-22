@@ -409,7 +409,25 @@ match_isco88_08_list <- corresp(df = isco88_08_clean,
                                 check_matches = F)
   
 
-match_isco88_08_table <- match_isco88_08_list[[1]]
+match_isco88_08_table <- match_isco88_08_list[[1]] 
+
+
+# create a 2-digit match table for isco88-to-08
+isco88_08_2dig <- isco88_08_clean %>%
+  mutate(isco08_2dig = stringr::str_sub(isco08, 1,2),
+         isco88_2dig = stringr::str_sub(isco88, 1,2)) %>%
+  #distinct(across(contains("2dig")), .keep_all = TRUE) %>%
+  select(contains("2dig"), "title08")
+
+match_isco88_08_2dig_list <- corresp(df = isco88_08_2dig,
+                                     country_code = isco88_2dig, 
+                                     international_code = isco08_2dig,
+                                     pad_vars = NULL,
+                                     check_matches = F)
+  
+match_isco88_08_2dig_table <- match_isco88_08_2dig_list[[1]]  
+
+
 
 # save data ----
 if (TRUE) {
@@ -423,6 +441,7 @@ save(isic94_codes_raw, isic94_codes, isic94_leftover, isic94_clean, psic94_path,
      match_isic09_list, match_isic09_table, 
      match_isco12_list, match_isco12_table,
      match_isco88_08_list, match_isco88_08_table,
+     match_isco88_08_2dig_list, match_isco88_08_2dig_table,
      file = file.path(PHL, "PHL_data/international_codes.Rdata") )
 
 
@@ -455,11 +474,20 @@ for (i in seq(from=2016,to=2019)) {
 }
 
 for (i in seq(from=2016,to=2016)) {
-haven::write_dta(match_isco12_table,
+haven::write_dta(match_isco88_08_table,
                  path = file.path(PHL, 
                                   paste0("PHL_",as.character(i),"_LFS"), 
                                     paste0("PHL_",as.character(i),"_LFS",
                                            "_v01_M/Data/Stata/PHL_PSOC_ISCO_88_08_key.dta")),
+                   version = 14)
+}  
+  
+for (i in seq(from=2016,to=2016)) {
+  haven::write_dta(match_isco88_08_2dig_table,
+                   path = file.path(PHL, 
+                                    paste0("PHL_",as.character(i),"_LFS"), 
+                                    paste0("PHL_",as.character(i),"_LFS",
+                                           "_v01_M/Data/Stata/PHL_PSOC_ISCO_88_08_key_2digits.dta")),
                    version = 14)
 }  
 
@@ -479,4 +507,8 @@ haven::write_dta(match_isco12_table,
 
 haven::write_dta(match_isco88_08_table,
                  path = file.path(PHL, "PHL_data/GLD/PHL_PSOC_ISCO_88_08_key.dta"),
+                 version = 14)
+
+haven::write_dta(match_isco88_08_2dig_table,
+                 path = file.path(PHL, "PHL_data/GLD/PHL_PSOC_ISCO_88_08_key_2digits.dta"),
                  version = 14)

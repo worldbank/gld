@@ -94,7 +94,7 @@ set mem 800m
 	local round4 `"`stata'\LFS OCT2016.dta"'
 
 	local isic_key 	 `"`stata'\PHL_PSIC_ISIC_09_key.dta"'
-	local isco_key 	 `"`stata'\"' // to be created
+	local isco_key 	 `"`stata'\PHL_PSOC_ISCO_88_08_key_2digits.dta"'
 
     local adm2_labs	 `"`stata'\GLD_PHL_admin2_labels.dta"'
 
@@ -1036,11 +1036,59 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_>
-* in 2016, raw variable is numeric, 2-digits, so isco conversion not possible
-	gen 			occup_isco = ""
-	label 			var occup_isco "ISCO code of primary job 7 day recall"
-	replace 		occup_isco="" if lstatus!=1 		// restrict universe to employed only
-	replace 		occup_isco="" if age < minlaborage	// restrict universe to working age
+/* in 2016, raw variable is numeric, 2-digits, so typically this variable would be left as missing.
+	However, The data span two ISCO classification systems this year: January 2016/wave1 is
+	PSOC92 (ISCO-88) and starting in April/wave2, data are coded in PSOC12 (ISCO08). For This
+	reason only, the harmonizer has considered it worth it to make an imperfect attempt at converting
+	the first wave of the two digit data to an estimated ISCO-08 equivalent. See documentation for a
+	more detailed discussion.
+*/
+
+	loc matchvar   	pufc14_procc
+	loc n 			1
+
+	qui ds 			occup_orig, has(type numeric) 	// capture numeric var if is numeric
+	loc iscovar 	= r(varlist)						// store this in a local
+	loc len 		: list sizeof iscovar 				// store the length of this local (1 or 0)
+
+		if (`len' == 1) {
+															// run this if == 1 (ie, if occup_orig is numeric)
+			tostring occup_orig	///						// make the numeric vars strings
+				, generate(occup_orig_str) ///			// gen a variable with this prefix
+				force //
+
+			replace 	occup_orig_str = "" if occup_orig_str == "."
+		}
+
+
+		// merge sub-module with isco key
+		/* Here, we will substring the key and matchvar to match only at two digits. */
+
+		gen isco88_2dig = substr(occup_orig_str,1,2)
+
+		tostring 	isco88_2dig ///
+					, format(`"%02.0f"') replace
+					
+		replace 	isco88_2dig = "" if isco88_2dig == "."		// replace missing with numeric missing.
+
+		gen 			isco08_2dig = isco88_2dig 	if wave != "Q1" 	// for waves 2-4
+		replace 	isco88_2dig = "" 						if wave != "Q1" 	// will merge only first wave
+
+		merge 		m:1 ///
+					isco88_2dig ///
+					using `isco_key' ///
+					, generate(isco_merge_`n') ///
+					keep(master match) // "left join"; remove obs that don't match from using
+
+		tab 		isco_merge_`n'
+		tab         isco_merge_1 if occup_orig_str  != "" & wave == "Q1"
+					* all non-matched isco-88 don't exist in key
+		
+		gen 		occup_isco = isco08_2dig 			// catches values converted in Q1 merge
+		replace 	occup_isco = isco08_2dig			if wave != "Q1"	// replace rest of waves with values
+
+		label var 	occup_isco "ISIC code of primary job 7 day recall"
+
 
 *</_occup_isco_>
 
