@@ -97,7 +97,7 @@ use "`path_in'\LFS2000-lab.dta"
 
 
 *<_isco_version_>
-	gen isco_version = ""
+	gen isco_version = "isco_68"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
@@ -241,7 +241,7 @@ use "`path_in'\LFS2000-lab.dta"
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = "subnatid2"
+	gen subnatidsurvey = "urban"
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -305,11 +305,26 @@ use "`path_in'\LFS2000-lab.dta"
 
 
 *<_age_>
-	*gen age = s4
-	*label var age "Individual age"
 	
+	tab s4 s12, mi
+	*count the amount of people between 0-14 years
+	di 82902/15 
+	*multiply by 3 representing 12, 13, 14 years
+	di 5526.8 *3
+	*average between 12, 13,14
+	di (12+13+14)/3
+	*the labor age cutoff in this survey is 12 
+	*then we need to create age groups such that
+	*a min labor age can be applied
+	gen helper_age=.
+	replace helper_age=1 if s4==1 & s12==.
+	replace helper_age=2 if s4==1 & s12!=.
+	* since we have ranges of age 
+	*we need to create an indicator using 
+	*the media for that age groups
 	gen age=.
-	replace age=7 if s4==1
+	replace age=4 if helper_age==1
+	replace age=12 if helper_age==2
 	replace age=17 if s4==2
 	replace age=22 if s4==3
 	replace age=27 if s4==4
@@ -617,8 +632,7 @@ foreach v of local ed_var {
 
 
 *<_minlaborage_>
-	gen byte minlaborage = 7
-	*here I used 7 instad of 15 because it is the threshold ofthe lower age group
+	gen byte minlaborage = 12
 	label var minlaborage "Labor module application age"
 *</_minlaborage_>
 
@@ -706,21 +720,14 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_>
-	gen industry_isic=.
-	*gen helper_1 = string(s33kod,"%02.0f")
-	*gen helper_2 = "00"
-	*egen industrycat_isic = concat(helper_1 helper_2)
-	*replace industrycat_isic = "" if industrycat_isic == ".00"
-	*drop helper_1 helper_2
+*1 digit isic code
+	gen industry_isic=s16kod
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
 
 *<_industrycat10_>
 	gen industrycat10=.
-	replace industrycat10 = 8 if s16kod == 8
-	*how do we separate public adm???
-	replace industrycat10 = 10 if s16kod == 9
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
@@ -728,7 +735,7 @@ foreach v of local ed_var {
 
 
 *<_industrycat4_>
-	/*gen byte industrycat4 = industrycat10
+	gen byte industrycat4 = industrycat10
 	recode industrycat4 (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
 	label var industrycat4 "1 digit industry classification (Broad Economic Activities), primary job 7 day recall"
 	la de lblindustrycat4 1 "Agriculture" 2 "Industry" 3 "Services" 4 "Other"
@@ -737,40 +744,55 @@ foreach v of local ed_var {
 
 
 *<_occup_orig_>
-	gen occup_orig = s38kod
+	gen occup_orig = s22kod
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
 
 *<_occup_isco_>
-	gen occup_isco=s38kod
-	*gen helper_1 = string(s38kod,"%02.0f")
-	*gen helper_2 = "00"
-	*egen occup_isco = concat(helper_1 helper_2)
-	*replace occup_isco = "" if occup_isco == ".00"
-	*drop helper_1 helper_2
+	*isco 68 one digit code
+	gen occup_isco=s22kod
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
 
 *<_occup_skill_>
-	*gen helper = substr(occup_isco,1,1)
-	*destring helper, replace
+
+*occup_isco uses isco-68 yet it is possible to convert the values to 88 skill level 
+*https://www.researchgate.net/figure/Groupings-of-Occupations-based-on-the-harmonization-of-ISCO68-and-ISCO88_tbl1_269992852
+
+
+/* Group   ISCO 68        ISCO 88
+	1		0,1,2		   1,2,3
+	2		7,8,9			7,8
+	3		3,4,5			4,5
+	4		  6				6
+	5		  X				9,X */
+
+*https://www.oecd-ilibrary.org/docserver/304441717388.pdf?expires=1632246589&id=id&accname=guest&checksum=B091E49B8F27509291A4145872E3A9A6
+
+/* Group   ISCO 68        ISCO 88  	Skill level (isco 88)
+	1		0,1,2		   1,2,3     1 (-) 2(4) 3(3)
+	2		7,8,9			7,8      7 8(2)
+	3		3,4,5			4,5		 4 5(2)
+	4		  6				6		 6(2)
+	5		  X				9,X 	 9(1) */
+
+	
 	gen occup_skill = .
-	replace occup_skill = 1 if inrange(occup_isco,7,8)
-	replace occup_skill = 2 if inrange(occup_isco,3,6)
-	replace occup_skill = 3 if inrange(occup_isco,1,2)
+	replace occup_skill = 1 if occup_isco==9
+	replace occup_skill = 2 if inrange(occup_isco,4,8)
+	replace occup_skill = 3 if occup_isco==3
+	replace occup_skill = 4 if occup_isco==2
 	drop helper
-	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
+	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"  4 "Armed Forces"
 	label values occup_skill lblskill
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
 *</_occup_skill_>
 
 
 *<_occup_>
-	/*gen byte occup = s38kod
-	*group 1 includes two sections as per the labels manager and professionals.
-
+	gen byte occup = .
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup*/
