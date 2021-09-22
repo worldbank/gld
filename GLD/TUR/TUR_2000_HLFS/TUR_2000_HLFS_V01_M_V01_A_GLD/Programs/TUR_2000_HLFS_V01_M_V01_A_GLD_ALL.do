@@ -18,19 +18,19 @@
 <_Source of dataset_> 			Shared by Turkey Country Office, shareable within World Bank, not to
 								be shared outside. </_Source of dataset_>
 <_Sample size (HH)_> 			 </_Sample size (HH)_>
-<_Sample size (IND)_> 			 </_Sample size (IND)_>
+<_Sample size (IND)_> 			288735 </_Sample size (IND)_>
 <_Sampling method_> 			Two-stage stratified cluster sampling method </_Sampling method_>
-<_Geographic coverage_> 		NUTS-2 (https://en.wikipedia.org/wiki/NUTS_statistical_regions_of_Turkey) </_Geographic coverage_>
+<_Geographic coverage_> 		Urban/Rural , national level
 <_Currency_> 					Turkish Lira </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 13
 								See (opens a download, explains ICLS from 1st Jan 2021): https://data.tuik.gov.tr/Bulten/DownloadFile?p=KWx/ZsAk3TypTRJIEcpUEtTStWGLhpnLGyTbaUSWvh2j3VKcvghQBAUEdXdBNaCselwemJkYsbg56bWA1qEsoRRNKEIzK2rRGmP9VLn9fRM=
 								</_ICLS Version_>
-<_ISCED Version_>				 </_ISCED Version_>
-<_ISCO Version_>				</_ISCO Version_>
-<_OCCUP National_>				 </_OCCUP National_>
-<_ISIC Version_>				(NACE-R2 and ISIC 4 are equal to Division (2 digit) level) </_ISIC Version_>
-<_INDUS National_>				 </_INDUS National_>
+<_ISCED Version_>				ISCED 97 </_ISCED Version_>
+<_ISCO Version_>				ISCO 68 </_ISCO Version_>
+<_OCCUP National_>				ISCO 68  </_OCCUP National_>
+<_ISIC Version_>				ISIC Rev. 3 </_ISIC Version_>
+<_INDUS National_>				 ISIC Rev. 3 </_INDUS National_>
 -----------------------------------------------------------------------
 <_Version Control_>
 * Date: [YYYY-MM-DD] - [Description of changes]
@@ -91,19 +91,19 @@ use "`path_in'\LFS2000-lab.dta"
 *</_icls_v_>
 
 *<_isced_version_>
-	gen isced_version = ""
+	gen isced_version = "isced_1997"
 	label var isced_version "Version of ISCED used for educat_isced"
 *</_isced_version_>
 
 
 *<_isco_version_>
-	gen isco_version = "isco_68"
+	gen isco_version = "isco_1968"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
 
 *<_isic_version_>
-	gen isic_version = ""
+	gen isic_version = "isic_3"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
@@ -721,7 +721,7 @@ foreach v of local ed_var {
 
 *<_industrycat_isic_>
 *1 digit isic code
-	gen industry_isic=s16kod
+	gen industrycat_isic=s16kod
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
@@ -739,7 +739,7 @@ foreach v of local ed_var {
 	recode industrycat4 (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
 	label var industrycat4 "1 digit industry classification (Broad Economic Activities), primary job 7 day recall"
 	la de lblindustrycat4 1 "Agriculture" 2 "Industry" 3 "Services" 4 "Other"
-	label values industrycat4 lblindustrycat4*/
+	label values industrycat4 lblindustrycat4
 *</_industrycat4_>
 
 
@@ -751,40 +751,14 @@ foreach v of local ed_var {
 
 *<_occup_isco_>
 	*isco 68 one digit code
-	gen occup_isco=s22kod
+	gen occup_isco=.
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
 
 *<_occup_skill_>
-
-*occup_isco uses isco-68 yet it is possible to convert the values to 88 skill level 
-*https://www.researchgate.net/figure/Groupings-of-Occupations-based-on-the-harmonization-of-ISCO68-and-ISCO88_tbl1_269992852
-
-
-/* Group   ISCO 68        ISCO 88
-	1		0,1,2		   1,2,3
-	2		7,8,9			7,8
-	3		3,4,5			4,5
-	4		  6				6
-	5		  X				9,X */
-
-*https://www.oecd-ilibrary.org/docserver/304441717388.pdf?expires=1632246589&id=id&accname=guest&checksum=B091E49B8F27509291A4145872E3A9A6
-
-/* Group   ISCO 68        ISCO 88  	Skill level (isco 88)
-	1		0,1,2		   1,2,3     1 (-) 2(4) 3(3)
-	2		7,8,9			7,8      7 8(2)
-	3		3,4,5			4,5		 4 5(2)
-	4		  6				6		 6(2)
-	5		  X				9,X 	 9(1) */
-
 	
 	gen occup_skill = .
-	replace occup_skill = 1 if occup_isco==9
-	replace occup_skill = 2 if inrange(occup_isco,4,8)
-	replace occup_skill = 3 if occup_isco==3
-	replace occup_skill = 4 if occup_isco==2
-	drop helper
 	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"  4 "Armed Forces"
 	label values occup_skill lblskill
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
@@ -795,34 +769,12 @@ foreach v of local ed_var {
 	gen byte occup = .
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
-	label values occup lbloccup*/
+	label values occup lbloccup
 *</_occup_>
 
 
 *<_wage_no_compen_>
 /* <_wage_no_compen_note>
-
-	Question (gelir_gecenay_k) is defined as
-	How much did you earn from your main job activity during the last month? (including extra income
-	like bonus pay, premiums etc. on addition to salary, monthly or quarterly paid).
-
-	No way to take out compensation.
-
-	The questions is only asked to paid employees only. Looking at the below crosstab
-
-                  |               test
-Employment status | Wage Miss   Wage = 0   Wage > 0 |     Total
-------------------+---------------------------------+----------
-    Paid employee |         0      7,161     94,811 |   101,972
-Non-paid employee |    21,009          0          0 |    21,009
-         Employer |     6,552          0          0 |     6,552
-    Self-employed |    31,767          0          0 |    31,767
-                . |   205,251          0          0 |   205,251
-------------------+---------------------------------+----------
-            Total |   264,579      7,161     94,811 |   366,551
-
-	The odd case are 7K individuals that are paid employees (not non-paid) but wage is 0. These are
-	set to missing
 
 </_wage_no_compen_note> */
 	gen double wage_no_compen =.
@@ -844,23 +796,12 @@ Non-paid employee |    21,009          0          0 |    21,009
 *<_whours_>
 /* <_whours_note>
 
-	Survey has two concepts - work usually in a week (esas_hafsaat_genel) and work the last week (esas_fiili).
-	There are 64 cases where the usual work hours are 0. 57 of 64 are people who have business they were absent
-	from with reason but will return (calisma_sahip_is == 1). Assume usual hours is a mistake and we cannot use
-	actual hours since they were not there. For them set whours to missing.
-
-	That leaves 7 individuals, all self employed market oriented skilled Agriculture workers (ISCO 61). All
-	seven claim to have a second job. Their first job usual and last week hours are zero, but the second job
-	hours are in there (and look like normal hours bar one with 10 hours). Assume this is a transcription error
-	and use those hours as first job.
+	Survey has two concepts - work usually in a week (s27a) and work the last week (s28a).
+	
 
 </_whours_note> */
 	gen whours = s28a
-	*replace whours = . if s28 == 1 & whours == 0
-	* expect 57 replacements
-	*replace whours = s56b_top if whours == 0
-	* expect 7 replacements
-	label var whours "Hours of work in last week primary job 7 day recall"*/
+	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
 
@@ -936,8 +877,7 @@ Non-paid employee |    21,009          0          0 |    21,009
 
 {
 *<_empstat_2_>
-	gen byte empstat_2 = s54
-	recode empstat_2 (2=3) (4=2) (3=4)
+	gen byte empstat_2 = .
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
 	label values empstat_2 lblempstat
 *</_empstat_2_>
@@ -951,7 +891,7 @@ Non-paid employee |    21,009          0          0 |    21,009
 
 
 *<_industry_orig_2_>
-	gen industry_orig_2 = .
+	gen industry_orig_2 = s26kod
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 
@@ -970,8 +910,7 @@ Non-paid employee |    21,009          0          0 |    21,009
 
 
 *<_industrycat4_2_>
-	gen byte industrycat4_2 = s53kod
-	recode industrycat4_2 (3=4) (4=3)
+	gen byte industrycat4_2 = .
 	label var industrycat4_2 "1 digit industry classification (Broad Economic Activities), secondary job 7 day recall"
 	label values industrycat4_2 lblindustrycat4
 *</_industrycat4_2_>
@@ -1016,7 +955,7 @@ Non-paid employee |    21,009          0          0 |    21,009
 
 
 *<_whours_2_>
-	gen whours_2 = s56b_top
+	gen whours_2 = s28b
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 
@@ -1070,7 +1009,8 @@ Non-paid employee |    21,009          0          0 |    21,009
 
 
 *<_t_hours_total_>
-	gen t_hours_total = .
+	gen helper_totalh=(whours+whours_2)
+	gen t_hours_total = helper_totalh
 	label var t_hours_total "Annualized hours worked in all jobs 7 day recall"
 *</_t_hours_total_>
 
@@ -1430,7 +1370,7 @@ Non-paid employee |    21,009          0          0 |    21,009
 
 
 *<_t_hours_total_year_>
-	gen t_hours_total_year = .
+	gen t_hours_total_year = t_hours_total
 	label var t_hours_total_year "Annualized hours worked in all jobs 12 month month recall"
 *</_t_hours_total_year_>
 
@@ -1457,7 +1397,7 @@ Non-paid employee |    21,009          0          0 |    21,009
 
 
 *<_t_hours_annual_>
-	gen t_hours_annual = .
+	gen t_hours_annual = t_hours_total
 	label var t_hours_annual "Total hours worked in all jobs in the previous 12 months"
 *</_t_hours_annual_>
 
