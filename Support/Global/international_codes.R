@@ -530,6 +530,22 @@ match_isco12_2dig_table <- match_isco12_2dig_list[[1]]
 
 
 
+# create a 2-digit match table for isco88-to-08
+isco88_08_2dig <- isco88_08_clean %>%
+  mutate(isco08_2dig = stringr::str_sub(isco08, 1,2),
+         isco88_2dig = stringr::str_sub(isco88, 1,2)) %>%
+  #distinct(across(contains("2dig")), .keep_all = TRUE) %>%
+  select(contains("2dig"), "title08")
+
+match_isco88_08_2dig_list <- corresp(df = isco88_08_2dig,
+                                     country_code = isco88_2dig, 
+                                     international_code = isco08_2dig,
+                                     pad_vars = NULL,
+                                     check_matches = F)
+
+match_isco88_08_2dig_table <- match_isco88_08_2dig_list[[1]]  
+
+
 # save data ----
 if (TRUE) {
   
