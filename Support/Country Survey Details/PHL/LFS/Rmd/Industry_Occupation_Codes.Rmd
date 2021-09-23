@@ -152,6 +152,22 @@ conditionally based on the round: January will receive one coding based
 on the 1992 PSOC and the rest of the rounds will be coded based on the
 2012 PSOC.
 
+##### For the occup_isco variable 
+
+Normally, a 2-digit conversion would be provided like this:
+
+1.  convert each PSOC schema to the ISCO equivalent
+
+    > (Wave1)	 1992 PSOC -\> 1988 ISCO
+    >
+    > (Wave2-4) 2012 ISCO -\> 2008 ISCO
+
+2.  Conversion 2: convert all ISCO revisions to ISCO 2008
+
+However, wave1 conversion cannot be done because we do not have a
+PSOC-\> ISCO conversion table.Therefore, the data for wave 1 will be
+left as missing.
+
 ## New Features in GLD Database
 
 The harmonizers working with GLD have made a great effort to reconcile
