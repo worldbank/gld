@@ -39,6 +39,7 @@ psic09_path <- file.path(PHL, "PHL_docs/International Codes/PSA_PSIC_2009.pdf")
 psoc12_path <- file.path(PHL, "PHL_docs/International Codes/PSA_PSOC_2012.pdf")
 isco88_08_path <- file.path(PHL, "PHL_docs/International Codes/wcms_172572.pdf")
 isco88_08_xls_path <- file.path(PHL, "PHL_docs/International Codes/corrtab88-08.xls")
+isco88_08_2dig_xls_path <- file.path(PHL, "PHL_docs/International Codes/ISCO.xlsx")
 
 
 
@@ -371,61 +372,63 @@ isco88_08_clean <- isco88_08_raw %>%
 
 
 
-# # 2 digit versions ------
-# 
-# superceded by selecting 2 digits from matched versions? Check with team.
-# 
-# # Teh above versions are all for 4 digit versions from the pdf. But there are no 
-# # authoritiative 2-digit equivalent other than the raw data itself. Strategy is 
-# # to import and find unique values to gather the universe of possible values to 
-# # create a key 
-# 
-# ## Import Surveys 
-# industry_names <- metadata %>%
-#   filter(grepl("proc", var_name_orig)) %>%
-#   select(var_name_orig) %>%
-#   pull() %>%
-#   unique()
-# 
-# occupation_names <-  metadata %>%
-#   filter(grepl("pkb", var_name_orig)) %>%
-#   select(var_name_orig) %>%
-#   pull() %>%
-#   unique()
-# 
-# surveys <- import_surveys(PHL,
-#                           vars = industry_names,
-#                           version = NULL,
-#                           file_pattern =  "\\d{2,}\\.dta")
-# 
-# 
-# 
-# ## Create clean industry and occupation value lists 
-# ##    This involves vertically aligning the variable names
-# ##    and creating a vector of unique values for each of 
-# ##    occupation and industry codes. Here we don't really 
-# ##    care about or survey, so other variables are irrelevant,
-# ##    we simply need a universe of possible values for the key.
-# ##    
-# ##    However, the important step will be to remove all 3 and 4 
-# ##    digit values.
-# ##    
-# ##    This also must be done independently for each PSOC and 
-# ##    PSIC schema
-# ##  
-# 
-# test <- surveys %>%
-#   slice_sample(n=1000)
-# 
-# test %>% 
-#   hablar::convert(chr(contains("proc"),
-#                       contains("pkb"))) %>%
-#   mutate(
-#     industry   = coalesce(all_of(industry_names)),
-#     occupation = coalesce(all_of(occupation_names))) 
-# 
-# industry_codes <- unique(test$industry)
-# occupation_codes <- unique(test$occupation)
+# 2 digit versions ------
+
+## PSOC92-ISCO88 ----
+## There is no PDF version of a 4-digit PSOC92 to isco08, but a 2 digit
+## version can be created semi-manually with relative ease since there 
+## are only about 30 distinct codes at the 2 digit level. 
+## 
+## Furthermore, the ILO publish a 2-digit conversion scheme between 
+## ISCO88 - ISCO08. Start by importing all the codes from the ISCO88 
+## column of this document and, since most codes in PSOC are the same 
+## anyway, replace manually.
+## 
+## General note: I will assume that all farming and agricultural-related 
+## activities are market-based since it is not stated in PSOC, thus will 
+## code appropriately in ISCO below.
+
+psoc92_2dig_raw <- read_xlsx(path = isco88_08_2dig_xls_path,
+                        sheet = "ISCO_SKILLS",
+                        range = "I2:L46",
+                        col_names = TRUE,
+                        col_types = "text") 
+
+psoc92_2dig <- psoc92_2dig_raw %>%
+  rename_with(.cols = everything(), .fn = ~ paste0("isco88_", .x)) %>%
+  filter(!is.na(isco88_sub_major)) %>%
+    # start with PSOC as isco88 as default, then change as needed
+  mutate( psoc92 = isco88_sub_major)  %>%
+  select(psoc92, isco88_sub_major, everything()) %>%
+    # make manual changes
+  mutate(psoc92 = case_when(psoc92 == "61" ~ "62", # recode subsistence agriculture (62) to market-based (61)
+                            TRUE ~ as.character(psoc92)),
+         psoc92_description = NA_character_) %>%
+  # add PSOC data
+  add_row(psoc92 = "14", isco88_sub_major = "13",
+          psoc92_description = "Supervisors") %>% # Supervisors to general managers
+  add_row(psoc92 = "62", isco88_sub_major = "61",
+          psoc92_description = "Animal Producers") %>% # Animal produces to market agriculture
+  add_row(psoc92 = "63", isco88_sub_major = "61",
+          psoc92_description = "Forestry and Related Workers") %>% # forestry to market agriculture
+  add_row(psoc92 = "64", isco88_sub_major = "61",
+          psoc92_description = "Fisherman") %>% # fisherman to market agriculture
+  add_row(psoc92 = "65", isco88_sub_major = "61",
+          psoc92_description = "Hunters") %>% # hunters to market agriculture
+  add_row(psoc92 = "02", isco88_sub_major = "51", 
+          psoc92_description = "Housekeepers, Pensioners, Students") %>% # housekeepers etc to personal/protective services
+  add_row(psoc92 = "09", isco88_sub_major = NA_character_, 
+          psoc92_description = "Not Classifiable and Other Occupations")  # Not classifiable to missing
+  
+
+### map isco08 colums ----
+### The easiest way to introduce ISCO08 conversions is to include a isco08 column directly 
+### in the PSOC92-ISCO88 key. This way we can merge directly and gain the ISCO08 information.
+
+## Import ISCO88-ISCO08 Key
+## Clean Key
+## Join Key to PSOC92-ISCO88 Key
+
 
 
 
@@ -562,6 +565,7 @@ save(isic94_codes_raw, isic94_codes, isic94_leftover, isic94_clean, psic94_path,
      match_isic09_2dig_list, match_isic09_2dig_table,
      match_isic94_2dig_list, match_isic94_2dig_table,
      match_isco12_2dig_list, match_isco12_2dig_table,
+     psoc92_2dig,
      file = file.path(PHL, "PHL_data/international_codes.Rdata") )
 
 
@@ -610,6 +614,21 @@ for (i in seq(from=2016,to=2019)) {
                                            "_v01_M/Data/Stata/PHL_PSOC_ISCO_12_key_2dig.dta")),
                    version = 14)
 }
+  
+# for (i in seq(from=1997,to=2016)) {
+#   haven::write_dta(match_isco12_table,
+#                    path = file.path(PHL, 
+#                                     paste0("PHL_",as.character(i),"_LFS"), 
+#                                     paste0("PHL_",as.character(i),"_LFS",
+#                                            "_v01_M/Data/Stata/PHL_PSOC_ISCO_12_key.dta")),
+#                    version = 14)
+#   haven::write_dta(match_isco12_2dig_table,
+#                    path = file.path(PHL, 
+#                                     paste0("PHL_",as.character(i),"_LFS"), 
+#                                     paste0("PHL_",as.character(i),"_LFS",
+#                                            "_v01_M/Data/Stata/PHL_PSOC_ISCO_12_key_2dig.dta")),
+#                    version = 14)
+# }
 
 for (i in seq(from=2016,to=2016)) {
 haven::write_dta(match_isco88_08_table,
