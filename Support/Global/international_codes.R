@@ -426,8 +426,32 @@ psoc92_2dig <- psoc92_2dig_raw %>%
 ### in the PSOC92-ISCO88 key. This way we can merge directly and gain the ISCO08 information.
 
 ## Import ISCO88-ISCO08 Key
+isco88_08_2dig_raw <- read_xlsx(path = isco88_08_2dig_xls_path,
+                                sheet = "ISCO_SKILLS",
+                                range = "A1:L46",
+                                col_names = FALSE,
+                                col_types = "text") 
+
 ## Clean Key
+isco88_08_2dig <- isco88_08_2dig_raw %>%
+  janitor::row_to_names(2, remove_row = T, remove_rows_above = T) %>%
+  clean_names() %>%
+  rename_with(.cols = ends_with("_2"), .fn = ~ gsub("_2", "_isco88",.x)) %>%
+  rename_with(.cols = c("major", "sub_major", "major_label", "description"), .fn = ~ paste0(.x, "_isco08")) %>%
+  fill(skill) %>% 
+  fill(skill_label) %>%
+  fill(aggregate) %>%
+  fill(aggregate_label) %>%
+  mutate(across(c(major_isco08, major_isco88), ~ dplyr::na_if(.x, "X"))) # replace "X" with "NA"
+
+
+
 ## Join Key to PSOC92-ISCO88 Key
+psoc92_2dig_isco08_key <- psoc92_2dig %>%
+  left_join(isco88_08_2dig,
+            by = c("isco88_sub_major" = "sub_major_isco88"),
+            keep = FALSE,
+            na_matches = "never") 
 
 
 
@@ -565,7 +589,7 @@ save(isic94_codes_raw, isic94_codes, isic94_leftover, isic94_clean, psic94_path,
      match_isic09_2dig_list, match_isic09_2dig_table,
      match_isic94_2dig_list, match_isic94_2dig_table,
      match_isco12_2dig_list, match_isco12_2dig_table,
-     psoc92_2dig,
+     psoc92_2dig, psoc92_2dig_isco08_key, isco88_08_2dig,
      file = file.path(PHL, "PHL_data/international_codes.Rdata") )
 
 
@@ -615,20 +639,15 @@ for (i in seq(from=2016,to=2019)) {
                    version = 14)
 }
   
-# for (i in seq(from=1997,to=2016)) {
-#   haven::write_dta(match_isco12_table,
-#                    path = file.path(PHL, 
-#                                     paste0("PHL_",as.character(i),"_LFS"), 
-#                                     paste0("PHL_",as.character(i),"_LFS",
-#                                            "_v01_M/Data/Stata/PHL_PSOC_ISCO_12_key.dta")),
-#                    version = 14)
-#   haven::write_dta(match_isco12_2dig_table,
-#                    path = file.path(PHL, 
-#                                     paste0("PHL_",as.character(i),"_LFS"), 
-#                                     paste0("PHL_",as.character(i),"_LFS",
-#                                            "_v01_M/Data/Stata/PHL_PSOC_ISCO_12_key_2dig.dta")),
-#                    version = 14)
-# }
+for (i in seq(from=1997,to=2016)) {
+  haven::write_dta(psoc92_2dig_isco08_key,
+                   path = file.path(PHL,
+                                    paste0("PHL_",as.character(i),"_LFS"),
+                                    paste0("PHL_",as.character(i),"_LFS",
+                                           "_v01_M/Data/Stata/PHL_PSOC92_ISCO88_08_key.dta")),
+                   version = 14)
+
+}
 
 for (i in seq(from=2016,to=2016)) {
 haven::write_dta(match_isco88_08_table,
@@ -680,6 +699,10 @@ haven::write_dta(match_isic09_2dig_table,
 
 haven::write_dta(match_isco12_2dig_table,
                  path = file.path(PHL, "PHL_data/GLD/PHL_PSOC_ISCO_12_key_2dig.dta"),
+                 version = 14)
+
+haven::write_dta(psoc92_2dig_isco08_key,
+                 path = file.path(PHL, "PHL_data/GLD/PHL_PSOC92_ISCO88_08_key.dta"),
                  version = 14)
 
 }
