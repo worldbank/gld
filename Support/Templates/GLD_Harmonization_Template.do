@@ -7,7 +7,7 @@
 
 <_Program name_>				[Name of your do file] </_Program name_>
 <_Application_>					[Name of your software (STATA) and version] <_Application_>
-<_Author(s)_>					[Name(s) of author(s)] </_Author(s)_>
+<_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
 <_Date created_>				YYYY-MM-DD </_Date created_>
 
 -------------------------------------------------------------------------
