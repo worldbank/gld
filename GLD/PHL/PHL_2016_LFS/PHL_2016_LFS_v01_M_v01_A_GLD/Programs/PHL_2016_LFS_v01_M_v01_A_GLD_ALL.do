@@ -1075,7 +1075,8 @@ foreach v of local ed_var {
 				, format(`"%02.0f"') replace
 
 	replace 	psic_2dig = "" 	if wave == "Q1" 	// don't match first wave
-
+	replace 	psic_2dig = "" 	if psic_2dig == "." 	// fix missing
+	
 	merge 		m:1 ///
 				psic_2dig ///
 				using `isco_key' ///
@@ -1084,7 +1085,7 @@ foreach v of local ed_var {
 
 	rename 		isco08_2dig	isco08_`n'			// rename converted isco var
 
-	tab 		isic_merge_`n' 		if `matchvar' != .
+	tab 		isco_merge_`n' 			if occup_orig_str != "" & wave != "Q1"
 
 	drop 		psic_2dig 				// no longer needed, maintained in matchvar
 
