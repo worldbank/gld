@@ -152,13 +152,13 @@ conditionally based on the round: January will receive one coding based
 on the 1992 PSOC and the rest of the rounds will be coded based on the
 2012 PSOC.
 
-##### For the occup_isco variable 
+##### For the occup_isco variable
 
 Normally, a 2-digit conversion would be provided like this:
 
 1.  convert each PSOC schema to the ISCO equivalent
 
-    > (Wave1)	 1992 PSOC -\> 1988 ISCO
+    > (Wave1) 1992 PSOC -\> 1988 ISCO
     >
     > (Wave2-4) 2012 ISCO -\> 2008 ISCO
 
