@@ -1141,7 +1141,7 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_>
-	loc matchvar   	c16_pkb
+	loc matchvar   	c16a_pkb
 	loc n 			1
 
 	qui ds 			industry_orig, has(type numeric) 	// capture numeric var if is numeric
