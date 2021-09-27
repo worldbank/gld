@@ -1010,9 +1010,6 @@ foreach v of local ed_var {
 	// replace one code that I know doesn't match
 	rename 		isic3_1_2dig	isic3_1_2dig_`n'
 
-	tab 		isic_merge_`n' 		if `matchvar' != .
-
-
 	gen 		industrycat_isic = isic3_1_2dig_`n'  	// the string variable becomes industrycat_isic
 
 	drop 		psic_2dig 				// no longer needed, maintained in matchvar
@@ -1087,8 +1084,7 @@ foreach v of local ed_var {
 
 
 	rename 		isco88_sub_major	isco88_sub_major_`n'
-	tab 		isic_merge_`n' 		if `matchvar' != .
-
+	
 	drop 		psoc92 				// no longer needed, maintained in matchvar
 	gen 		occup_isco = isco88_sub_major_`n'
 	label var 	occup_isco "ISIC code of primary job 7 day recall"
