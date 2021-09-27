@@ -93,8 +93,8 @@ set mem 800m
 	local round3 `"`stata'\LFSjul13.dta"'
 	local round4 `"`stata'\LFS OCT2013.dta"'
 
-	local isic_key 	 `"`stata'\PHL_PSIC_ISIC_09_key.dta"'
-	local isco_key 	 `"`stata'\PHL_PSOC92_ISCO88_08_key.dta"'
+	local isic_key 	 `"`stata'\PHL_PSIC_ISIC_09_key.dta"' // 4 digit
+	local isco_key 	 `"`stata'\PHL_PSOC92_ISCO88_08_key.dta"' // 2 digit
 
     local adm2_labs	 `"`stata'\GLD_PHL_admin2_labels.dta"'
 
@@ -1274,9 +1274,6 @@ foreach v of local ed_var {
 
 *----------8.3: 7 day reference secondary job------------------------------*
 * Since labels are the same as main job, values are labelled using main job labels
-/*
-2013 has no secondary job information.
-*/
 
 {
 *<_empstat_2_>
@@ -1391,9 +1388,39 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_2_>
-* even though the original data hve 4 digits, there is no conversion table for PSOC to ISCO
-	gen 			occup_isco_2 = ""
-	label var 		occup_isco_2 "ISCO code of secondary job 7 day recall"
+	loc matchvar   	j02_otocc
+	loc n 			2
+
+	qui ds 			occup_orig_2, has(type numeric) 	// capture numeric var if is numeric
+	loc iscovar 	= r(varlist)						// store this in a local
+	loc len 		: list sizeof iscovar 				// store the length of this local (1 or 0)
+
+		if (`len' == 1) {
+															// run this if == 1 (ie, if occup_orig is numeric)
+			tostring occup_orig_2	///						// make the numeric vars strings
+				, generate(occup_orig_2_str) ///			// gen a variable with this prefix
+				force
+		}
+
+
+	// merge sub-module with isco key
+
+	gen psoc92 = `matchvar'
+	tostring 	psoc92 ///
+				, format(`"%02.0f"') replace
+
+	merge 		m:1 ///
+				psoc92 ///
+				using `isco_key' ///
+				, generate(isco_merge_`n') ///
+				keep(master match) // "left join"; remove obs that don't match from using
+
+
+	rename 		isco88_sub_major	isco88_sub_major_`n'
+
+	drop 		psoc92 				// no longer needed, maintained in matchvar
+	gen 		occup_isco_2 = isco88_sub_major_`n'
+	label var 	occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
 
@@ -1424,7 +1451,7 @@ foreach v of local ed_var {
 
 
 *<_unitwage_2_>
-	gen byte 		unitwage_2 = j06_obasis
+	gen byte 		unitwage_2 = c32_obasis
 	replace 		unitwage_2 = . if 	unitwage >= 11 // replace potential missing values
 	recode 			unitwage_2 (0 1 5 6 7 = 10) /// other
 								(2 = 9) /// hourly

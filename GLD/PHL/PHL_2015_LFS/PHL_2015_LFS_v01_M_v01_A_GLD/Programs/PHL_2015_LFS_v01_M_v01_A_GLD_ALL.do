@@ -1253,9 +1253,7 @@ foreach v of local ed_var {
 
 *----------8.3: 7 day reference secondary job------------------------------*
 * Since labels are the same as main job, values are labelled using main job labels
-/*
-2015 has no secondary job information.
-*/
+
 
 {
 *<_empstat_2_>
@@ -1279,11 +1277,41 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_2_>
-	* no 4-digit data, so cannot complete.
-	gen 			industrycat_isic_2 = .
-	label var 		industrycat_isic_2 "ISIC code of primary job 7 day recall"
+	loc matchvar   	j03_okb
+	loc n 			2
+
+	qui ds 			industry_orig_2, has(type numeric) 	// capture numeric var if is numeric
+	loc isicvar 	= r(varlist)						// store this in a local
+	loc len 		: list sizeof isicvar 				// store the length of this local (1 or 0)
+
+		if (`len' == 1) {
+															// run this if == 1 (ie, if industry_orig is numeric)
+			tostring industry_orig_2	///						// make the numeric vars strings
+				, generate(industry_orig_2_str) ///			// gen a variable with this prefix
+				force //
+		}
 
 
+	// merge sub-module with isic key
+
+	gen psic_2dig = `matchvar'
+	tostring 	psic_2dig ///
+				, format(`"%02.0f"') replace
+
+	merge 		m:1 ///
+				psic_2dig ///
+				using `isic_key' ///
+				, generate(isic_merge_`n') ///
+				keep(master match) // "left join"; remove obs that don't match from using
+				* the string variable in isic4 will is industrycat_isic
+
+	// replace one code that I know doesn't match
+	rename 		isic3_1_2dig	isic3_1_2dig_`n'
+
+	gen 		industrycat_isic_2 = isic3_1_2dig_`n'  	// the string variable becomes industrycat_isic
+
+	drop 		psic_2dig 				// no longer needed, maintained in matchvar
+	label var 	industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
 
@@ -1325,9 +1353,39 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_2_>
-* even though the original data hve 4 digits, there is no conversion table for PSOC to ISCO
-	gen 			occup_isco_2 = ""
-	label var 		occup_isco_2 "ISCO code of secondary job 7 day recall"
+	loc matchvar   	j02_otoc
+	loc n 			2
+
+	qui ds 			occup_orig_2, has(type numeric) 	// capture numeric var if is numeric
+	loc iscovar 	= r(varlist)						// store this in a local
+	loc len 		: list sizeof iscovar 				// store the length of this local (1 or 0)
+
+		if (`len' == 1) {
+															// run this if == 1 (ie, if occup_orig is numeric)
+			tostring occup_orig_2	///						// make the numeric vars strings
+				, generate(occup_orig_2_str) ///			// gen a variable with this prefix
+				force
+		}
+
+
+	// merge sub-module with isco key
+
+	gen psoc92 = `matchvar'
+	tostring 	psoc92 ///
+				, format(`"%02.0f"') replace
+
+	merge 		m:1 ///
+				psoc92 ///
+				using `isco_key' ///
+				, generate(isco_merge_`n') ///
+				keep(master match) // "left join"; remove obs that don't match from using
+
+
+	rename 		isco88_sub_major	isco88_sub_major_`n'
+
+	drop 		psoc92 				// no longer needed, maintained in matchvar
+	gen 		occup_isco_2 = isco88_sub_major_`n'
+	label var 	occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
 
