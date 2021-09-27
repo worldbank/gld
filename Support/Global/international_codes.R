@@ -401,7 +401,7 @@ psoc92_2dig <- psoc92_2dig_raw %>%
   mutate( psoc92 = isco88_sub_major)  %>%
   select(psoc92, isco88_sub_major, everything()) %>%
     # make manual changes
-  mutate(psoc92 = case_when(psoc92 == "61" ~ "62", # recode subsistence agriculture (62) to market-based (61)
+  mutate(psoc92 = case_when(psoc92 == "62" ~ "*removethis*", # substistence ag not listed in PSOC
                             TRUE ~ as.character(psoc92)),
          psoc92_description = NA_character_) %>%
   # add PSOC data
@@ -418,8 +418,8 @@ psoc92_2dig <- psoc92_2dig_raw %>%
   add_row(psoc92 = "02", isco88_sub_major = "51", 
           psoc92_description = "Housekeepers, Pensioners, Students") %>% # housekeepers etc to personal/protective services
   add_row(psoc92 = "09", isco88_sub_major = NA_character_, 
-          psoc92_description = "Not Classifiable and Other Occupations")  # Not classifiable to missing
-  
+          psoc92_description = "Not Classifiable and Other Occupations")  %>% # Not classifiable to missing
+  filter(psoc92 != "*removethis*")
 
 ### map isco08 colums ----
 ### The easiest way to introduce ISCO08 conversions is to include a isco08 column directly 
