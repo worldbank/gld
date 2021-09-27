@@ -94,7 +94,7 @@ set mem 800m
 	local round4 `"`stata'\LFS OCT1997.dta"'
 
 	local isic_key 	 `"`stata'\PHL_PSIC_ISIC_94_key_2dig.dta"'
-	local isco_key 	 `"`stata'\PHL_PSOC92_ISCO88_08_key.dta"' // to be created
+	local isco_key 	 `"`stata'\PHL_PSOC92_ISCO88_08_key.dta"'
 
     local adm2_labs	 `"`stata'\GLD_PHL_admin2_labels.dta"'
 
