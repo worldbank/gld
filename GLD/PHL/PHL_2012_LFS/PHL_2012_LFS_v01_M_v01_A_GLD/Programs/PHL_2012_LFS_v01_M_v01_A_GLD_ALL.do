@@ -93,7 +93,7 @@ set mem 800m
 	local round3 `"`stata'\LFSjul12.dta"'
 	local round4 `"`stata'\LFS OCT2012.dta"'
 
-	local isic_key 	 `"`stata'\PHL_PSIC_ISIC_94_key_2dig.dta"'  // 4 digits
+	local isic_key 	 `"`stata'\PHL_PSIC_ISIC_09_key.dta"'  // 4 digits
 	local isco_key 	 `"`stata'\PHL_PSOC92_ISCO88_08_key.dta"'  // 2 digits
 
     local adm2_labs	 `"`stata'\GLD_PHL_admin2_labels.dta"'
