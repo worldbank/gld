@@ -94,7 +94,7 @@ set mem 800m
 	local round4 `"`stata'\LFS OCT2013.dta"'
 
 	local isic_key 	 `"`stata'\PHL_PSIC_ISIC_09_key.dta"'
-	local isco_key 	 `"`stata'\"' // to be created
+	local isco_key 	 `"`stata'\PHL_PSOC92_ISCO88_08_key.dta"'
 
     local adm2_labs	 `"`stata'\GLD_PHL_admin2_labels.dta"'
 
@@ -1085,18 +1085,48 @@ foreach v of local ed_var {
 
 *<_occup_isco_>
 * in 2013, raw variable is numeric, 4-digits, but since there is no provided PSOC to ISCO
-* conversion, there is no occup_isco
-	gen 			occup_isco = ""
-	label 			var occup_isco "ISCO code of primary job 7 day recall"
-	replace 		occup_isco="" if lstatus!=1 		// restrict universe to employed only
-	replace 		occup_isco="" if age < minlaborage	// restrict universe to working age
+* conversion, at 4 digits, substring to 2 and match at 2
+	loc matchvar   	c16_procc
+	loc n 			1
+
+	qui ds 			occup_orig, has(type numeric) 	// capture numeric var if is numeric
+	loc iscovar 	= r(varlist)						// store this in a local
+	loc len 		: list sizeof iscovar 				// store the length of this local (1 or 0)
+
+		if (`len' == 1) {
+															// run this if == 1 (ie, if occup_orig is numeric)
+			tostring occup_orig	///						// make the numeric vars strings
+				, generate(occup_orig_str) ///			// gen a variable with this prefix
+				force
+		}
+
+
+	// merge sub-module with isco key
+
+	gen psoc92_4dig = `matchvar'
+	tostring 	psoc92 ///
+				, format(`"%04.0f"') replace
+
+	gen psoc92  = substr(psoc92_4dig, 1,2)
+
+	merge 		m:1 ///
+				psoc92 ///
+				using `isco_key' ///
+				, generate(isco_merge_`n') ///
+				keep(master match) // "left join"; remove obs that don't match from using
+
+
+	rename 		isco88_sub_major	isco88_sub_major_`n'
+
+	drop 		psoc92 				// no longer needed, maintained in matchvar
+	gen 		occup_isco = isco88_sub_major_`n'
+	label var 	occup_isco "ISIC code of primary job 7 day recall"
 
 *</_occup_isco_>
 
 
 *<_occup_>
-	* in 2013, raw variable is numeric, 4-digits, but since there is no provided PSOC to ISCO
-	* conversion, there is no occup_isco
+
 
 	* generate occupation variable
 	gen byte occup=floor(c16_procc/1000)		// this handles most of recoding automatically.
