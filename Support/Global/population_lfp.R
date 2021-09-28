@@ -1,5 +1,6 @@
 library(tidyverse)
 library(magrittr)
+
 source(file.path(code, "Global/import_surveys.R"))
 
 phl <- import_surveys(PHL,
@@ -15,25 +16,46 @@ if (TRUE) {
 }
 
 
+# determine when to scale weight 
+#   years 1997-2007(Q1) need to be scaled down by 10000, 
+#   excpet for 2005 Q3 and 2005 Q4
+sum.w.a <- phl %>%
+  group_by(year, wave) %>%
+  summarise(weight = median(weight, na.rm = TRUE))
 
 
+
+
+# create a weight-adjusted objected
 phl2 <- phl %>%
   mutate(
     partic = case_when( (lstatus == 1 | lstatus == 2) ~ TRUE,
                         (lstatus == 3) ~ FALSE ),
-    weight2= case_when( year <= 2007 ~ weight / 10000,
+    weight2= case_when( year <= 2004 ~ weight / 10000,
+                        year == 2005 & (wave == "Q1" | wave == "Q2") ~ weight / 10000,
+                        year == 2007 & (wave == "Q1") ~ weight / 10000,
                         TRUE         ~ weight
           )) 
 
+# update sum.w
+weight.adj <- phl2 %>%
+  group_by(year, wave) %>%
+  summarise(weight_corrected = median(weight2, na.rm = TRUE))
 
+sum.w <- sum.w.a %>%
+  left_join(weight.adj, by = c("year", "wave")) %>%
+  mutate(weight = round(weight), 
+         weight_corrected = round(weight_corrected))
+
+
+
+# for full population
 sum.y <- phl2 %>%
   group_by(year) %>%
-  summarize(pop = sum(weight2),
-            lfp = weighted.mean(partic, weight2, na.rm = TRUE))
-
-# sum.q <- phl2 %>%
-#   group_by(year, wave) %>%
-#   summarize(lfp = weighted.mean(partic, weight, na.rm = TRUE))
+  summarize(
+    pop = sum(weight2),
+    lfp = weighted.mean(partic, weight2, na.rm = TRUE) * 100 
+    )
 
 
 # for ages 15 and older 
@@ -42,11 +64,13 @@ sum.15.y <- phl2 %>%
   group_by(year) %>%
   summarize(
     pop_15up = sum(weight2),
-    lfp_15up = weighted.mean(partic, weight2, na.rm = TRUE)
+    lfp_15up = weighted.mean(partic, weight2, na.rm = TRUE) * 100 
     )
 
 # add PSA data 
 # Source: https://psa.gov.ph/statistics/survey/labor-and-employment/labor-force-survey
+# https://psa.gov.ph/sites/default/files/attachments/hsd/pressrelease/Table%2057%20Philipine%20Concept%20vs.%20ILO%20Concept.pdf
+# 
 # Methodology:
 #   In cases where PSA publishes singles figures for each year, those figures are used.
 #   In cases where PSA does not publish figures for each year (ie, for each wave only),
@@ -55,6 +79,8 @@ sum.15.y <- phl2 %>%
 #   year estimate for population. Note that LFP figures are recorded in descending order
 #   ~ mean(Q4, Q3, Q2, Q1)
 #   
+#   All data use the variables that use the "ILO concept"
+  
 sum.15.y <- sum.15.y %>%
   mutate(
     psa_lfp_15up = case_when(
@@ -73,14 +99,14 @@ sum.15.y <- sum.15.y %>%
       year == "2007" ~ mean(c(63.2, 63.6, 64.5, 64.8)),
       year == "2006" ~ mean(c(63.8, 64.6, 64.8, 63.6)),
       year == "2005" ~ mean(c(64.8, 64.6, 64.8, 63.2)),
-      year == "2004" ~ mean(c( , , , )),
-      year == "2003" ~ mean(c( , , , )),
-      year == "2002" ~ mean(c( , , , )),
-      year == "2001" ~ mean(c( , , , )),
-      year == "2000" ~ mean(c( , , , )),
-      year == "1999" ~ mean(c( , , , )),
-      year == "1998" ~ mean(c( , , , )),
-      year == "1997" ~ mean(c( , , , ))
+      year == "2004" ~ mean(c(63.8, 64.1, 65.4, 64.1)),
+      year == "2003" ~ mean(c(64.5, 63.5, 64.0, 63.3)),
+      year == "2002" ~ mean(c(63.9, 64.4, 66.3, 64.3)),
+      year == "2001" ~ mean(c(65.3, 64.2, 65.6, 62.6)),
+      year == "2000" ~ mean(c(61.7, 60.9, 62.2, 62.7)),
+      year == "1999" ~ mean(c(63.3, 63.3, 66.1, 63.1)),
+      year == "1998" ~ mean(c(63.3, 62.7, 64.4, 62.7)),
+      year == "1997" ~ mean(c(63.1, 63.2, 65.5, 63.3))
     ),
     psa_pop_15up = case_when(
       year == "2019" ~ 72931000,
@@ -98,28 +124,23 @@ sum.15.y <- sum.15.y %>%
       year == "2007" ~ 56864000,
       year == "2006" ~ 55638000,
       year == "2005" ~ 54797000,
-      year == "2004" ~ ,
-      year == "2003" ~ ,
-      year == "2002" ~ ,
-      year == "2001" ~ ,
-      year == "2000" ~ ,
-      year == "1999" ~ ,
-      year == "1998" ~ ,
-      year == "1997" ~ 
-    )
-  )
+      year == "2004" ~ 53562000,
+      year == "2003" ~ 52305000,
+      year == "2002" ~ 50841000,
+      year == "2001" ~ 49424000,
+      year == "2000" ~ 48076000,
+      year == "1999" ~ 46749000,
+      year == "1998" ~ 45425000,
+      year == "1997" ~ 44143000
+    ),
+    dif_pop_15up = pop_15up - psa_pop_15up,
+    dif_lfp_15up = lfp_15up - psa_lfp_15up,
+    flag_pop_5pct= ((dif_pop_15up/pop_15up) >= 0.05),
+    flag_lfp_2pct= ((dif_lfp_15up/lfp_15up) >= 0.02)
+  ) 
 
-# sum.15.q <- phl2 %>%
-#   filter(age >= 15) %>%
-#   group_by(year, wave) %>%
-#   summarize(lfp_up = weighted.mean(partic, weight, na.rm = TRUE))
-
-
-## merge 
-# sum.y %>% 
-#   left_join(sum.15.y, by = "year", na_matches = "never")
-# 
-# sum.q %>%
-#   left_join(sum.15.q, by = c("year", "wave"), na_matches = "never")
-
-
+# export summary objects only
+save(
+  sum.15.y, sum.y, sum.w,
+  file = file.path(PHL, "PHL_data/GLD/population_summary.Rdata")
+)
