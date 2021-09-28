@@ -15,14 +15,6 @@ if (TRUE) {
 }
 
 
-#check isic and isco
-sum(!is.na(phl$industrycat_isic))/nrow(phl) # 0.3520979 of cases are non missing
-sum(!is.na(phl$occup_isco))/nrow(phl) # 0.3465874 of cases are nonmissing
-
-sum.isic.isco <- phl %>%
-  group_by(year) %>%
-  summarize(industry_pct = sum(!is.na(industrycat_isic))/n(),
-            occup_pct    = sum(!is.na(occup_isco))/n())
 
 
 phl2 <- phl %>%
