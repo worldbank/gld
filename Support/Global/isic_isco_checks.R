@@ -15,3 +15,7 @@ sum.isic.isco <- phl %>%
             occup_pct    = sum(!is.na(occup_isco))/n()
             )
 
+save(
+  sum.isic.isco,
+  file = file.path(PHL, "PHL_data/GLD/isic_isco_summary.Rdata")
+)
