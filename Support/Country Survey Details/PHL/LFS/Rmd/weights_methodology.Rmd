@@ -1,0 +1,88 @@
+---
+title: "PHL: Weights, Population, Labor Force Participation Checks and Methodology"
+output: 
+  html_document:
+    html_preview: false
+    toc: true
+    toc_depth: 3
+editor_options: 
+  markdown: 
+    wrap: 72
+knit: (function(input, ...) {
+    rmarkdown::render(
+      input,
+      output_dir = here::here("Support/Country Survey Details/PHL/LFS"),
+      envir = globalenv()
+    )
+  })
+---
+
+```{r setup, include=FALSE}
+options(width = 60)
+knitr::opts_chunk$set(echo = TRUE)
+local({
+  hook_output <-knitr::knit_hooks$get('output')
+  knitr::knit_hooks$set(output = function(x, options) {
+    if (!is.null(options$max.height)) options$attr.output <- c(
+      options$attr.output,
+      sprintf('style="max-height: %s;"', options$max.height)
+    )
+    hook_output(x, options)
+  })
+})
+```
+
+## Introduction
+
+This document outlines the methods for calculating the final weights
+used the in GLD survey and reproduces steps -- along with outputs -- to
+check that GLD figures align with those published by the Philippine
+Statistics Authority (PSA).
+
+Survey weights, expanded population, and labor force participation are
+all fundamental concepts to the GLD that are inextricably linked:
+quality handling of the weight variable will help ensure that the final
+survey will generate accurate measurements of the country's population
+and labor force figures of that year. This document is indented to
+provide users with a step-by-step walkthrough of how we analyzed,
+calculated, and checked these three figures. Since we use a script-based
+approach instead of a notebook-based approach, this code is an adapted
+version of [population_lfp.R](/Support/Global/population_lfp.R).
+
+### External Sources
+
+All PSA figures have been referred to at either:
+
+-   the main Labor Force Survey page:
+    <https://psa.gov.ph/statistics/survey/labor-and-employment/labor-force-survey>
+
+-   or the ILO Comparison Annex file, (direct link):
+    <https://psa.gov.ph/sites/default/files/attachments/hsd/pressrelease/Table%2057%20Philipine%20Concept%20vs.%20ILO%20Concept.pdf>
+
+## Data Work
+
+### Weights
+
+#### Import the GLD Data
+
+We load the previously appended GLD output data for all survey years,
+1997 - 2019.
+
+```{r, echo=FALSE}
+library(tidyverse)
+load(file = file.path(PHL, "PHL_data/GLD/population.Rdata"))
+```
+
+#### Determine which years and rounds need adjustment 
+
+It turns out that not all of the weight variables are uniform in how
+they scale the data by year or wave, even though the correct weight
+variable was selected. This could throw off our results. So some scaling
+will need to be done. Let's take a look.'
+
+```{r}
+sum.w.a <- phl %>%
+  group_by(year, wave) %>%
+  summarise(weight = median(weight, na.rm = TRUE))
+sum.w.a
+```

@@ -1,5 +1,4 @@
 library(tidyverse)
-library(magrittr)
 
 source(file.path(code, "Global/import_surveys.R"))
 
