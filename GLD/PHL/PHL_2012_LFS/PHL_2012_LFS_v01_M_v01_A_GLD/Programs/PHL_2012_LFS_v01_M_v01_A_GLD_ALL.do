@@ -1105,7 +1105,7 @@ foreach v of local ed_var {
 	// merge sub-module with isco key
 
 	gen psoc92_4dig = `matchvar'
-	tostring 	psoc92 ///
+	tostring 	psoc92_4dig ///
 				, format(`"%04.0f"') replace
 
 	gen psoc92  = substr(psoc92_4dig, 1,2)
@@ -1453,7 +1453,7 @@ foreach v of local ed_var {
 
 
 *<_unitwage_2_>
-	gen byte 		unitwage_2 = c32_obasis
+	gen byte 		unitwage_2 = j06_obasis
 	replace 		unitwage_2 = . if 	unitwage >= 11 // replace potential missing values
 	recode 			unitwage_2 (0 1 5 6 7 = 10) /// other
 								(2 = 9) /// hourly
