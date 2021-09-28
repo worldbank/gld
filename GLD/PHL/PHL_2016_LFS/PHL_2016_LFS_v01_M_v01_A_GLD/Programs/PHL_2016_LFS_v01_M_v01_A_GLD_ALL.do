@@ -93,8 +93,9 @@ set mem 800m
 	local round3 `"`stata'\LFS JUL2016.dta"'
 	local round4 `"`stata'\LFS OCT2016.dta"'
 
-	local isic_key 	 `"`stata'\PHL_PSIC_ISIC_09_key.dta"'
-	local isco_key 	 `"`stata'\PHL_PSOC_ISCO_88_08_key_2digits.dta"'
+	local isic_key 	 `"`stata'\PHL_PSIC_ISIC_09_key_2dig.dta"'
+	local isco_key92 	 `"`stata'\PHL_PSOC92_ISCO88_08_key.dta"'
+	local isco_key12 	 `"`stata'\PHL_PSOC_ISCO_12_key_2dig.dta"'
 
     local adm2_labs	 `"`stata'\GLD_PHL_admin2_labels.dta"'
 
@@ -983,10 +984,41 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_>
-	* 2016 data only has 2 digits for industry so no ISIC can be generated
-	gen 			industrycat_isic = .
-	label var 		industrycat_isic "ISIC code of primary job 7 day recall"
+	loc matchvar   	pufc16_pkb
+	loc n 			1
 
+	qui ds 			industry_orig, has(type numeric) 	// capture numeric var if is numeric
+	loc isicvar 	= r(varlist)						// store this in a local
+	loc len 		: list sizeof isicvar 				// store the length of this local (1 or 0)
+
+		if (`len' == 1) {
+															// run this if == 1 (ie, if industry_orig is numeric)
+			tostring industry_orig	///						// make the numeric vars strings
+				, generate(industry_orig_str) ///			// gen a variable with this prefix
+				force //
+		}
+
+
+	// merge sub-module with isic key
+
+	gen psic_2dig = `matchvar'
+	tostring 	psic_2dig ///
+				, format(`"%02.0f"') replace
+
+	merge 		m:1 ///
+				psic_2dig ///
+				using `isic_key' ///
+				, generate(isic_merge_`n') ///
+				keep(master match) // "left join"; remove obs that don't match from using
+				* the string variable in isic4 will is industrycat_isic
+
+	// replace one code that I know doesn't match
+	rename 		isic4_2dig	isic4_2dig_`n'
+
+	gen 		industrycat_isic = isic4_2dig_`n'  	// the string variable becomes industrycat_isic
+
+	drop 		psic_2dig 				// no longer needed, maintained in matchvar
+	label var 	industrycat_isic "ISIC code of primary job 7 day recall"
 	*</_industrycat_isic_>
 
 
@@ -1038,10 +1070,19 @@ foreach v of local ed_var {
 *<_occup_isco_>
 /* in 2016, raw variable is numeric, 2-digits, so typically this variable would be left as missing.
 	However, The data span two ISCO classification systems this year: January 2016/wave1 is
-	PSOC92 (ISCO-88) and starting in April/wave2, data are coded in PSOC12 (ISCO08). For This
-	reason only, the harmonizer has considered it worth it to make an imperfect attempt at converting
-	the first wave of the two digit data to an estimated ISCO-08 equivalent. See documentation for a
-	more detailed discussion.
+	PSOC92 (ISCO-88) and starting in April/wave2, data are coded in PSOC12 (ISCO08).
+
+	Normally, a 2-digit conversion would be provided like this:
+
+	Conversion 1: convert each PSOC schema to the ISCO equivalent
+	(Wave1)	  1992 PSOC -> 1988 ISCO
+	(Wave2-4) 2012 ISCO -> 2008 ISCO
+
+	Conversion 2: convert all ISCO revisions to ISCO 2008
+
+
+	However, wave1 conversion cannot be done because we do not have a PSOC-> ISCO conversion table.
+	Therefore, the data for wave 1 will be left as missing.
 */
 
 	loc matchvar   	pufc14_procc
@@ -1056,38 +1097,41 @@ foreach v of local ed_var {
 			tostring occup_orig	///						// make the numeric vars strings
 				, generate(occup_orig_str) ///			// gen a variable with this prefix
 				force //
-
-			replace 	occup_orig_str = "" if occup_orig_str == "."
 		}
 
 
-		// merge sub-module with isco key
-		/* Here, we will substring the key and matchvar to match only at two digits. */
+	// merge sub-module with isco key
 
-		gen isco88_2dig = substr(occup_orig_str,1,2)
+	gen psic_2dig = `matchvar'
+	tostring 	psic_2dig ///
+				, format(`"%02.0f"') replace
 
-		tostring 	isco88_2dig ///
-					, format(`"%02.0f"') replace
-					
-		replace 	isco88_2dig = "" if isco88_2dig == "."		// replace missing with numeric missing.
+	replace 	psic_2dig = "" 	if psic_2dig == "." 	// fix missing
 
-		gen 			isco08_2dig = isco88_2dig 	if wave != "Q1" 	// for waves 2-4
-		replace 	isco88_2dig = "" 						if wave != "Q1" 	// will merge only first wave
+	// merge with isco12 key
+	merge 		m:1 ///
+				psic_2dig ///
+				using `isco_key12' ///
+				, generate(isco_merge12_`n') ///
+				keep(master match) // "left join"; remove obs that don't match from using
 
-		merge 		m:1 ///
-					isco88_2dig ///
-					using `isco_key' ///
-					, generate(isco_merge_`n') ///
-					keep(master match) // "left join"; remove obs that don't match from using
+	rename 		psic_2dig psoc92 				// rename for second merge
 
-		tab 		isco_merge_`n'
-		tab         isco_merge_1 if occup_orig_str  != "" & wave == "Q1"
-					* all non-matched isco-88 don't exist in key
-		
-		gen 		occup_isco = isco08_2dig 			// catches values converted in Q1 merge
-		replace 	occup_isco = isco08_2dig			if wave != "Q1"	// replace rest of waves with values
+	// merge with isco92 key
+	merge 		m:1 ///
+				psoc92 ///
+				using `isco_key92' ///
+				, generate(isco_merge92_`n') ///
+				keep(master match) // "left join"; remove obs that don't match from using
 
-		label var 	occup_isco "ISIC code of primary job 7 day recall"
+
+	// coalese 2 variables
+	egen 		str2 occup_isco_`n' = rowfirst(isco08_2dig sub_major_isco08)
+
+	drop 		psoc92 			// no longer needed, maintained in matchvar
+
+	gen 		occup_isco = occup_isco_`n'
+	label var 	occup_isco "ISIC code of primary job 7 day recall"
 
 
 *</_occup_isco_>
@@ -1262,9 +1306,7 @@ foreach v of local ed_var {
 
 *----------8.3: 7 day reference secondary job------------------------------*
 * Since labels are the same as main job, values are labelled using main job labels
-/*
-2016 has no secondary job information.
-*/
+
 
 {
 *<_empstat_2_>
@@ -1288,11 +1330,41 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_2_>
-	* no 4-digit data, so cannot complete.
-	gen 			industrycat_isic_2 = .
-	label var 		industrycat_isic_2 "ISIC code of primary job 7 day recall"
+	loc matchvar   	j03_okb
+	loc n 			2
+
+	qui ds 			industry_orig_2, has(type numeric) 	// capture numeric var if is numeric
+	loc isicvar 	= r(varlist)						// store this in a local
+	loc len 		: list sizeof isicvar 				// store the length of this local (1 or 0)
+
+		if (`len' == 1) {
+															// run this if == 1 (ie, if industry_orig is numeric)
+			tostring industry_orig_2	///						// make the numeric vars strings
+				, generate(industry_orig_2_str) ///			// gen a variable with this prefix
+				force //
+		}
 
 
+	// merge sub-module with isic key
+
+	gen psic_2dig = `matchvar'
+	tostring 	psic_2dig ///
+				, format(`"%02.0f"') replace
+
+	merge 		m:1 ///
+				psic_2dig ///
+				using `isic_key' ///
+				, generate(isic_merge_`n') ///
+				keep(master match) // "left join"; remove obs that don't match from using
+				* the string variable in isic4 will is industrycat_isic
+
+	// replace one code that I know doesn't match
+	rename 		isic4_2dig	isic4_2dig_`n'
+
+	gen 		industrycat_isic_2 = isic4_2dig_`n'  	// the string variable becomes industrycat_isic
+
+	drop 		psic_2dig 				// no longer needed, maintained in matchvar
+	label var 	industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
 
@@ -1334,9 +1406,52 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_2_>
-* even though the original data hve 4 digits, there is no conversion table for PSOC to ISCO
-	gen 			occup_isco_2 = ""
-	label var 		occup_isco_2 "ISCO code of secondary job 7 day recall"
+	loc matchvar   	j02_otoc
+	loc n 			2
+
+	qui ds 			occup_orig_2, has(type numeric) 	// capture numeric var if is numeric
+	loc iscovar 	= r(varlist)						// store this in a local
+	loc len 		: list sizeof iscovar 				// store the length of this local (1 or 0)
+
+		if (`len' == 1) {
+															// run this if == 1 (ie, if occup_orig_2 is numeric)
+			tostring occup_orig_2	///						// make the numeric vars strings
+				, generate(occup_orig_2_str) ///			// gen a variable with this prefix
+				force //
+		}
+
+
+	// merge sub-module with isco key
+
+	gen psic_2dig = `matchvar'
+	tostring 	psic_2dig ///
+				, format(`"%02.0f"') replace
+
+	replace 	psic_2dig = "" 	if psic_2dig == "." 	// fix missing
+
+	// merge with isco12 key
+	merge 		m:1 ///
+				psic_2dig ///
+				using `isco_key12' ///
+				, generate(isco_merge12_`n') ///
+				keep(master match) // "left join"; remove obs that don't match from using
+
+	rename 		psic_2dig psoc92 				// rename for second merge
+
+	// merge with isco92 key
+	merge 		m:1 ///
+				psoc92 ///
+				using `isco_key92' ///
+				, generate(isco_merge92_`n') ///
+				keep(master match) // "left join"; remove obs that don't match from using
+
+
+	// coalese 2 variables
+	egen 		str2 occup_isco_`n' = rowfirst(isco08_2dig sub_major_isco08)
+
+	drop 		psoc92 				// no longer needed, maintained in matchvar
+
+ label var 	occup_isco_2 "ISIC code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
 

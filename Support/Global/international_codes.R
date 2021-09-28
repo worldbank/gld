@@ -20,6 +20,7 @@ library(janitor)
 library(stringdist)
 library(magrittr)
 library(readxl)
+library(hablar)
 
 
 
@@ -30,6 +31,7 @@ if (FALSE) {load(PHL_labels)}
 # get functions
 source(file.path(code, "Global/read_pdf_table.R"))
 source(file.path(code, "Global/correspondance.R"))
+source(file.path(code, "Global/import_surveys.R"))
 
 # pdf file path
 psic94_path <- file.path(PHL, "PHL_docs/International Codes/PSA_PSIC_1994.pdf")
@@ -37,6 +39,7 @@ psic09_path <- file.path(PHL, "PHL_docs/International Codes/PSA_PSIC_2009.pdf")
 psoc12_path <- file.path(PHL, "PHL_docs/International Codes/PSA_PSOC_2012.pdf")
 isco88_08_path <- file.path(PHL, "PHL_docs/International Codes/wcms_172572.pdf")
 isco88_08_xls_path <- file.path(PHL, "PHL_docs/International Codes/corrtab88-08.xls")
+isco88_08_2dig_xls_path <- file.path(PHL, "PHL_docs/International Codes/ISCO.xlsx")
 
 
 
@@ -369,6 +372,91 @@ isco88_08_clean <- isco88_08_raw %>%
 
 
 
+# 2 digit versions ------
+
+## PSOC92-ISCO88 ----
+## There is no PDF version of a 4-digit PSOC92 to isco08, but a 2 digit
+## version can be created semi-manually with relative ease since there 
+## are only about 30 distinct codes at the 2 digit level. 
+## 
+## Furthermore, the ILO publish a 2-digit conversion scheme between 
+## ISCO88 - ISCO08. Start by importing all the codes from the ISCO88 
+## column of this document and, since most codes in PSOC are the same 
+## anyway, replace manually.
+## 
+## General note: I will assume that all farming and agricultural-related 
+## activities are market-based since it is not stated in PSOC, thus will 
+## code appropriately in ISCO below.
+
+psoc92_2dig_raw <- read_xlsx(path = isco88_08_2dig_xls_path,
+                        sheet = "ISCO_SKILLS",
+                        range = "I2:L46",
+                        col_names = TRUE,
+                        col_types = "text") 
+
+psoc92_2dig <- psoc92_2dig_raw %>%
+  rename_with(.cols = everything(), .fn = ~ paste0("isco88_", .x)) %>%
+  filter(!is.na(isco88_sub_major)) %>%
+    # start with PSOC as isco88 as default, then change as needed
+  mutate( psoc92 = isco88_sub_major)  %>%
+  select(psoc92, isco88_sub_major, everything()) %>%
+    # make manual changes
+  mutate(psoc92 = case_when(psoc92 == "62" ~ "*removethis*", # substistence ag not listed in PSOC
+                            TRUE ~ as.character(psoc92)),
+         psoc92_description = NA_character_) %>%
+  # add PSOC data
+  add_row(psoc92 = "14", isco88_sub_major = "13",
+          psoc92_description = "Supervisors") %>% # Supervisors to general managers
+  add_row(psoc92 = "62", isco88_sub_major = "61",
+          psoc92_description = "Animal Producers") %>% # Animal produces to market agriculture
+  add_row(psoc92 = "63", isco88_sub_major = "61",
+          psoc92_description = "Forestry and Related Workers") %>% # forestry to market agriculture
+  add_row(psoc92 = "64", isco88_sub_major = "61",
+          psoc92_description = "Fisherman") %>% # fisherman to market agriculture
+  add_row(psoc92 = "65", isco88_sub_major = "61",
+          psoc92_description = "Hunters") %>% # hunters to market agriculture
+  add_row(psoc92 = "02", isco88_sub_major = "51", 
+          psoc92_description = "Housekeepers, Pensioners, Students") %>% # housekeepers etc to personal/protective services
+  add_row(psoc92 = "09", isco88_sub_major = NA_character_, 
+          psoc92_description = "Not Classifiable and Other Occupations")  %>% # Not classifiable to missing
+  filter(psoc92 != "*removethis*")
+
+### map isco08 colums ----
+### The easiest way to introduce ISCO08 conversions is to include a isco08 column directly 
+### in the PSOC92-ISCO88 key. This way we can merge directly and gain the ISCO08 information.
+
+## Import ISCO88-ISCO08 Key
+isco88_08_2dig_raw <- read_xlsx(path = isco88_08_2dig_xls_path,
+                                sheet = "ISCO_SKILLS",
+                                range = "A1:L46",
+                                col_names = FALSE,
+                                col_types = "text") 
+
+## Clean Key
+isco88_08_2dig <- isco88_08_2dig_raw %>%
+  janitor::row_to_names(2, remove_row = T, remove_rows_above = T) %>%
+  clean_names() %>%
+  rename_with(.cols = ends_with("_2"), .fn = ~ gsub("_2", "_isco88",.x)) %>%
+  rename_with(.cols = c("major", "sub_major", "major_label", "description"), .fn = ~ paste0(.x, "_isco08")) %>%
+  fill(skill) %>% 
+  fill(skill_label) %>%
+  fill(aggregate) %>%
+  fill(aggregate_label) %>%
+  mutate(across(c(major_isco08, major_isco88), ~ dplyr::na_if(.x, "X"))) # replace "X" with "NA"
+
+
+
+## Join Key to PSOC92-ISCO88 Key
+psoc92_2dig_isco08_key <- psoc92_2dig %>%
+  left_join(isco88_08_2dig,
+            by = c("isco88_sub_major" = "sub_major_isco88"),
+            keep = FALSE,
+            na_matches = "never") 
+
+
+
+
+
 ## Determine Best Matches ----
 match_isic94_list <- corresp(df = isic94_clean, 
                                 country_code = class, 
@@ -412,6 +500,63 @@ match_isco88_08_list <- corresp(df = isco88_08_clean,
 match_isco88_08_table <- match_isco88_08_list[[1]] 
 
 
+# create a 2-digit match tables ----
+## for isco88-to-08
+isco88_08_2dig <- isco88_08_clean %>%
+  mutate(isco08_2dig = stringr::str_sub(isco08, 1,2),
+         isco88_2dig = stringr::str_sub(isco88, 1,2)) %>%
+  #distinct(across(contains("2dig")), .keep_all = TRUE) %>%
+  select(contains("2dig"), "title08")
+
+
+## for ISIC09 
+raw_2dig_isic09 <- match_isic09_table %>%
+  select(class, isic4) %>%
+  mutate(
+    psic_2dig = str_sub(class, 1,2),
+    isic4_2dig= str_sub(isic4, 1,2))
+  
+match_isic09_2dig_list <- corresp(df = raw_2dig_isic09,
+                                  psic_2dig,
+                                  isic4_2dig,
+                                  pad_vars = NULL,
+                                  check_matches = F)
+
+match_isic09_2dig_table <- match_isic09_2dig_list[[1]]
+
+
+## for ISIC94 
+raw_2dig_isic94 <- match_isic94_table %>%
+  select(class, isic3_1) %>%
+  mutate(
+    psic_2dig = str_sub(class, 1,2),
+    isic3_1_2dig= str_sub(isic3_1, 1,2))
+
+match_isic94_2dig_list <- corresp(df = raw_2dig_isic94,
+                                  psic_2dig,
+                                  isic3_1_2dig,
+                                  pad_vars = NULL,
+                                  check_matches = F)
+
+match_isic94_2dig_table <- match_isic94_2dig_list[[1]]
+
+## for ISCO12 
+raw_2dig_isco12 <- match_isco12_table %>%
+  select(unit, isco08) %>%
+  mutate(
+    psic_2dig = str_sub(unit, 1,2),
+    isco08_2dig= str_sub(isco08, 1,2))
+
+match_isco12_2dig_list <- corresp(df = raw_2dig_isco12,
+                                  psic_2dig,
+                                  isco08_2dig,
+                                  pad_vars = NULL,
+                                  check_matches = F)
+
+match_isco12_2dig_table <- match_isco12_2dig_list[[1]]
+
+
+
 # create a 2-digit match table for isco88-to-08
 isco88_08_2dig <- isco88_08_clean %>%
   mutate(isco08_2dig = stringr::str_sub(isco08, 1,2),
@@ -424,9 +569,8 @@ match_isco88_08_2dig_list <- corresp(df = isco88_08_2dig,
                                      international_code = isco08_2dig,
                                      pad_vars = NULL,
                                      check_matches = F)
-  
-match_isco88_08_2dig_table <- match_isco88_08_2dig_list[[1]]  
 
+match_isco88_08_2dig_table <- match_isco88_08_2dig_list[[1]]  
 
 
 # save data ----
@@ -442,6 +586,10 @@ save(isic94_codes_raw, isic94_codes, isic94_leftover, isic94_clean, psic94_path,
      match_isco12_list, match_isco12_table,
      match_isco88_08_list, match_isco88_08_table,
      match_isco88_08_2dig_list, match_isco88_08_2dig_table,
+     match_isic09_2dig_list, match_isic09_2dig_table,
+     match_isic94_2dig_list, match_isic94_2dig_table,
+     match_isco12_2dig_list, match_isco12_2dig_table,
+     psoc92_2dig, psoc92_2dig_isco08_key, isco88_08_2dig,
      file = file.path(PHL, "PHL_data/international_codes.Rdata") )
 
 
@@ -453,6 +601,12 @@ for (i in seq(from=1997,to=2011)) {
                                     paste0("PHL_",as.character(i),"_LFS",
                                            "_v01_M/Data/Stata/PHL_PSIC_ISIC_94_key.dta")),
                    version = 14)
+  haven::write_dta(match_isic94_2dig_table,
+                   path = file.path(PHL, 
+                                    paste0("PHL_",as.character(i),"_LFS"), 
+                                    paste0("PHL_",as.character(i),"_LFS",
+                                           "_v01_M/Data/Stata/PHL_PSIC_ISIC_94_key_2dig.dta")),
+                   version = 14)
 }
 
 for (i in seq(from=2012,to=2019)) {
@@ -461,6 +615,12 @@ for (i in seq(from=2012,to=2019)) {
                                     paste0("PHL_",as.character(i),"_LFS"), 
                                     paste0("PHL_",as.character(i),"_LFS",
                                            "_v01_M/Data/Stata/PHL_PSIC_ISIC_09_key.dta")),
+                   version = 14)
+  haven::write_dta(match_isic09_2dig_table,
+                   path = file.path(PHL, 
+                                    paste0("PHL_",as.character(i),"_LFS"), 
+                                    paste0("PHL_",as.character(i),"_LFS",
+                                           "_v01_M/Data/Stata/PHL_PSIC_ISIC_09_key_2dig.dta")),
                    version = 14)
 }
 
@@ -471,6 +631,22 @@ for (i in seq(from=2016,to=2019)) {
                                     paste0("PHL_",as.character(i),"_LFS",
                                            "_v01_M/Data/Stata/PHL_PSOC_ISCO_12_key.dta")),
                    version = 14)
+  haven::write_dta(match_isco12_2dig_table,
+                   path = file.path(PHL, 
+                                    paste0("PHL_",as.character(i),"_LFS"), 
+                                    paste0("PHL_",as.character(i),"_LFS",
+                                           "_v01_M/Data/Stata/PHL_PSOC_ISCO_12_key_2dig.dta")),
+                   version = 14)
+}
+  
+for (i in seq(from=1997,to=2016)) {
+  haven::write_dta(psoc92_2dig_isco08_key,
+                   path = file.path(PHL,
+                                    paste0("PHL_",as.character(i),"_LFS"),
+                                    paste0("PHL_",as.character(i),"_LFS",
+                                           "_v01_M/Data/Stata/PHL_PSOC92_ISCO88_08_key.dta")),
+                   version = 14)
+
 }
 
 for (i in seq(from=2016,to=2016)) {
@@ -503,7 +679,7 @@ haven::write_dta(match_isic09_table,
 haven::write_dta(match_isco12_table,
                  path = file.path(PHL, "PHL_data/GLD/PHL_PSOC_ISCO_12_key.dta"),
                  version = 14)
-}
+
 
 haven::write_dta(match_isco88_08_table,
                  path = file.path(PHL, "PHL_data/GLD/PHL_PSOC_ISCO_88_08_key.dta"),
@@ -512,3 +688,21 @@ haven::write_dta(match_isco88_08_table,
 haven::write_dta(match_isco88_08_2dig_table,
                  path = file.path(PHL, "PHL_data/GLD/PHL_PSOC_ISCO_88_08_key_2digits.dta"),
                  version = 14)
+
+haven::write_dta(match_isic94_2dig_table,
+                 path = file.path(PHL, "PHL_data/GLD/PHL_PSIC_ISIC_94_key_2dig.dta"),
+                 version = 14)
+
+haven::write_dta(match_isic09_2dig_table,
+                 path = file.path(PHL, "PHL_data/GLD/PHL_PSIC_ISIC_09_key_2dig.dta"),
+                 version = 14)
+
+haven::write_dta(match_isco12_2dig_table,
+                 path = file.path(PHL, "PHL_data/GLD/PHL_PSOC_ISCO_12_key_2dig.dta"),
+                 version = 14)
+
+haven::write_dta(psoc92_2dig_isco08_key,
+                 path = file.path(PHL, "PHL_data/GLD/PHL_PSOC92_ISCO88_08_key.dta"),
+                 version = 14)
+
+}
