@@ -1028,9 +1028,9 @@ foreach v of local ed_var {
 				* the string variable in isic4 will is industrycat_isic
 
 	// replace one code that I know doesn't match
-	rename 		isic3_1_2dig	isic3_1_2dig_`n'
+	rename 		isic4_2dig	isic4_2dig_`n'
 
-	gen 		industrycat_isic = isic3_1_2dig_`n'  	// the string variable becomes industrycat_isic
+	gen 		industrycat_isic = isic4_2dig_`n'  	// the string variable becomes industrycat_isic
 
 	drop 		psic_2dig 				// no longer needed, maintained in matchvar
 	label var 	industrycat_isic "ISIC code of primary job 7 day recall"
