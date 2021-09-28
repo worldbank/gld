@@ -1196,7 +1196,7 @@ foreach v of local ed_var {
 	rename 		isic4_2dig isic4_2dig_`n'
 
 	// coalesce 2 variables
-	egen str4 	industrycat_isic = rowfirst(isic4_`n' isic4_2dig)
+	egen str4 	industrycat_isic = rowfirst(isic4_`n' isic4_2dig_`n')
 
 	drop 		psic_2dig 				// no longer needed, maintained in matchvar
 
@@ -1688,7 +1688,7 @@ foreach v of local ed_var {
 				keep(master match) /// "left join"; remove obs that don't match from using
 				keepusing(unit isco08)
 
-	rename 		isic4_2dig isic4_2dig_`n'
+	rename 		isco08 isco08_`n'
 
 
 	// merge with 2 digit key
