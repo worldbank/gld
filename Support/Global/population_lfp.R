@@ -17,16 +17,37 @@ phl2 <- phl %>%
     partic = case_when( (lstatus == 1 | lstatus == 2) ~ TRUE,
                         (lstatus == 3) ~ FALSE )) 
 
-# population 15 and above
-sum.15 <- phl2 %>%
-  filter(age >= 15) %>%
-  group_by(year) %>%
-  summarize(pop = sum(weight))
 
-phl %>%
+sum.y <- phl2 %>%
   group_by(year) %>%
   summarize(pop = sum(weight),
             lfp = weighted.mean(partic, weight, na.rm = TRUE))
+
+sum.q <- phl2 %>%
+  group_by(year, wave) %>%
+  summarize(lfp = weighted.mean(partic, weight, na.rm = TRUE))
+
+
+# for ages 15 and older 
+sum.15.y <- phl2 %>%
+  filter(age >= 15) %>%
+  group_by(year) %>%
+  summarize(lfp_15up = weighted.mean(partic, weight, na.rm = TRUE))
+
+sum.15.q <- phl2 %>%
+  filter(age >= 15) %>%
+  group_by(year, wave) %>%
+  summarize(lfp_up = weighted.mean(partic, weight, na.rm = TRUE))
+
+
+## merge 
+sum.y %>% 
+  left_join(sum.15.y, by = "year", na_matches = "never")
+
+sum.q %>%
+  left_join(sum.15.q, by = c("year", "wave"), na_matches = "never")
+
+
 
 # expanded population 
 ## total
