@@ -32,6 +32,7 @@ phl2 <- phl %>%
                         (lstatus == 3) ~ FALSE ),
     weight2= case_when( year <= 2004 ~ weight / 10000,
                         year == 2005 & (wave == "Q1" | wave == "Q2") ~ weight / 10000,
+                        year == 2006 ~ weight / 10000,
                         year == 2007 & (wave == "Q1") ~ weight / 10000,
                         TRUE         ~ weight
           )) 
