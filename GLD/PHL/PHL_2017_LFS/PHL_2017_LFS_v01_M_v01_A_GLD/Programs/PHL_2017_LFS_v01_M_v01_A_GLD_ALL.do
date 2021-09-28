@@ -1346,7 +1346,7 @@ foreach v of local ed_var {
 	// coalesce 2 variables
 	egen str4	occup_isco = rowfirst(isco08_`n' isco08_2dig_`n')
 
-	drop 		psic_2dig unit				// no longer needed, maintained in matchvar
+	drop 		psic_2dig				// no longer needed, maintained in matchvar
 
 	label var 	occup_isco "ISIC code of primary job 7 day recall"
 
