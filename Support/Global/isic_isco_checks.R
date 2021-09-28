@@ -6,8 +6,8 @@ load(file = file.path(PHL, "PHL_data/GLD/population.Rdata"))
      
 
 #check isic and isco
-sum(!is.na(phl$industrycat_isic))/nrow(phl) # 0.3520979 of cases are non missing
-sum(!is.na(phl$occup_isco))/nrow(phl) # 0.3465874 of cases are nonmissing
+sum(!is.na(phl$industrycat_isic))/nrow(phl) # 0.3650861 of cases are non missing
+sum(!is.na(phl$occup_isco))/nrow(phl) # 0.3576665 of cases are nonmissing
 
 sum.isic.isco <- phl %>%
   group_by(year) %>%

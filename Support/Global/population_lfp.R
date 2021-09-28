@@ -47,6 +47,14 @@ sum.15.y <- phl2 %>%
 
 # add PSA data 
 # Source: https://psa.gov.ph/statistics/survey/labor-and-employment/labor-force-survey
+# Methodology:
+#   In cases where PSA publishes singles figures for each year, those figures are used.
+#   In cases where PSA does not publish figures for each year (ie, for each wave only),
+#   the simple mean is used to estimate the Labor FOrce Participation; the October figure 
+#   for population is used since the assumption is that it is most reflective of the final
+#   year estimate for population. Note that LFP figures are recorded in descending order
+#   ~ mean(Q4, Q3, Q2, Q1)
+#   
 sum.15.y <- sum.15.y %>%
   mutate(
     psa_lfp_15up = case_when(
@@ -54,7 +62,7 @@ sum.15.y <- sum.15.y %>%
       year == "2018" ~ 60.9,
       year == "2017" ~ 61.2,
       year == "2016" ~ 63.4,
-      year == "2015" ~ mean(),
+      year == "2015" ~ mean(c(63.3, 62.9, 64.6, 63.8)),
       year == "2014" ~ 64.4,
       year == "2013" ~ 63.9,
       year == "2012" ~ 64.2,
@@ -62,24 +70,24 @@ sum.15.y <- sum.15.y %>%
       year == "2010" ~ 64.1,
       year == "2009" ~ 64.0,
       year == "2008" ~ 63.6,
-      year == "2007" ~ ,
-      year == "2006" ~ ,
-      year == "2005" ~ ,
-      year == "2004" ~ ,
-      year == "2003" ~ ,
-      year == "2002" ~ ,
-      year == "2001" ~ ,
-      year == "2000" ~ ,
-      year == "1999" ~ ,
-      year == "1998" ~ ,
-      year == "1997" ~ 
+      year == "2007" ~ mean(c(63.2, 63.6, 64.5, 64.8)),
+      year == "2006" ~ mean(c(63.8, 64.6, 64.8, 63.6)),
+      year == "2005" ~ mean(c(64.8, 64.6, 64.8, 63.2)),
+      year == "2004" ~ mean(c( , , , )),
+      year == "2003" ~ mean(c( , , , )),
+      year == "2002" ~ mean(c( , , , )),
+      year == "2001" ~ mean(c( , , , )),
+      year == "2000" ~ mean(c( , , , )),
+      year == "1999" ~ mean(c( , , , )),
+      year == "1998" ~ mean(c( , , , )),
+      year == "1997" ~ mean(c( , , , ))
     ),
     psa_pop_15up = case_when(
       year == "2019" ~ 72931000,
       year == "2018" ~ 71339000,
       year == "2017" ~ 69896000,
       year == "2016" ~ 68125000,
-      year == "2015" ~ ,
+      year == "2015" ~ 66622000,
       year == "2014" ~ 62189000,
       year == "2013" ~ 61176000,
       year == "2012" ~ 62985000,
@@ -87,9 +95,9 @@ sum.15.y <- sum.15.y %>%
       year == "2010" ~ 60717000,
       year == "2009" ~ 59237000,
       year == "2008" ~ 57848000,
-      year == "2007" ~ ,
-      year == "2006" ~ ,
-      year == "2005" ~ ,
+      year == "2007" ~ 56864000,
+      year == "2006" ~ 55638000,
+      year == "2005" ~ 54797000,
       year == "2004" ~ ,
       year == "2003" ~ ,
       year == "2002" ~ ,
