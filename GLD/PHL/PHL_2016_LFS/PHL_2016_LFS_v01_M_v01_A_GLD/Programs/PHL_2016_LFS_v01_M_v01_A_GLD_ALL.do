@@ -1119,14 +1119,14 @@ foreach v of local ed_var {
 
 	// merge with isco92 key
 	merge 		m:1 ///
-				psic_2dig ///
+				psoc92 ///
 				using `isco_key92' ///
 				, generate(isco_merge92_`n') ///
 				keep(master match) // "left join"; remove obs that don't match from using
 
 
 	// coalese 2 variables
-	egen 		occup_isco_`n' = rowfirst(isco08_2dig sub_major_isco08)
+	egen 		str2 occup_isco_`n' = rowfirst(isco08_2dig sub_major_isco08)
 
 	drop 		psoc92 			// no longer needed, maintained in matchvar
 
@@ -1440,19 +1440,18 @@ foreach v of local ed_var {
 
 	// merge with isco92 key
 	merge 		m:1 ///
-				psic_2dig ///
+				psoc92 ///
 				using `isco_key92' ///
 				, generate(isco_merge92_`n') ///
 				keep(master match) // "left join"; remove obs that don't match from using
 
 
 	// coalese 2 variables
-	egen 		occup_isco_`n' = rowfirst(isco08_2dig sub_major_isco08)
+	egen 		str2 occup_isco_`n' = rowfirst(isco08_2dig sub_major_isco08)
 
 	drop 		psoc92 				// no longer needed, maintained in matchvar
 
-	gen 		occup_isco_2 = occup_isco_`n'
-	label var 	occup_isco_2 "ISIC code of secondary job 7 day recall"
+ label var 	occup_isco_2 "ISIC code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
 
