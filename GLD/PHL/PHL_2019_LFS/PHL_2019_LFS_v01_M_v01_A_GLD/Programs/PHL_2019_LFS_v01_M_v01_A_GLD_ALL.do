@@ -1103,21 +1103,21 @@ foreach v of local ed_var {
 
 	// merge sub-module with isco key
 
-	gen psoc92 = `matchvar'
-	tostring 	psoc92 ///
+	gen psic_2dig = `matchvar'
+	tostring 	psic_2dig ///
 				, format(`"%02.0f"') replace
 
 	merge 		m:1 ///
-				psoc92 ///
+				psic_2dig ///
 				using `isco_key' ///
 				, generate(isco_merge_`n') ///
 				keep(master match) // "left join"; remove obs that don't match from using
 
 
-	rename 		isco88_sub_major	isco88_sub_major_`n'
+	rename 		isco08_2dig	isco08_2dig_`n'
 
-	drop 		psoc92 				// no longer needed, maintained in matchvar
-	gen 		occup_isco = isco88_sub_major_`n'
+	drop 		psic_2dig 				// no longer needed, maintained in matchvar
+	gen 		occup_isco = isco08_2dig_`n'
 	label var 	occup_isco "ISIC code of primary job 7 day recall"
 
 *</_occup_isco_>
