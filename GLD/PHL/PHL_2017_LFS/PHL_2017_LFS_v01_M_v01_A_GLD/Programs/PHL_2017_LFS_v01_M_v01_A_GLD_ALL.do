@@ -94,7 +94,9 @@ set mem 800m
 	local round4 `"`stata'\LFS OCT2017.dta"'
 
 	local isic_key 	 `"`stata'\PHL_PSIC_ISIC_09_key.dta"'
-	local isco_key 	 `"`stata'\PHL_PSOC_ISCO_12_key.dta"' // to be created
+	local isco_key 	 `"`stata'\PHL_PSOC_ISCO_12_key.dta"'
+	local isic_key2dig 	 `"`stata'\PHL_PSIC_ISIC_09_key_2dig.dta"'
+	local isco_key2dig 	 `"`stata'\PHL_PSOC_ISCO_12_key_2dig.dta"'
 
     local adm2_labs	 `"`stata'\GLD_PHL_admin2_labels.dta"'
 
@@ -1161,7 +1163,7 @@ foreach v of local ed_var {
 		}
 
 
-	// merge sub-module with isic key
+	// merge sub-module with isic 4 dig key
 
 	gen class = `matchvar'
 	tostring 	class ///
@@ -1181,19 +1183,24 @@ foreach v of local ed_var {
 	rename 		isic4	isic4_`n'
 	replace 	isic4_`n' = "6810" 	if `matchvar' == 6819
 
-	tab 		isic_merge_`n' 		if `matchvar' != .
+	// merge with 2 digit key
+	rename  	class psic_2dig // rename for second merge
 
+	merge 		m:1 ///
+				psic_2dig ///
+				using `isic_key2dig' ///
+				, generate(isic_mergeb_`n') ///
+				keep(master match) /// "left join"; remove obs that don't match from using
+				keepusing(psic_2dig isic4_2dig)
 
-	gen 		industrycat_isic = isic4_`n'  	// the string variable becomes industrycat_isic
+	rename 		isic4_2dig isic4_2dig_`n'
 
-	drop 		class 				// no longer needed, maintained in matchvar
+	// coalesce 2 variables
+	egen str4 	industrycat_isic = rowfirst(isic4_`n' isic4_2dig)
 
+	drop 		psic_2dig 				// no longer needed, maintained in matchvar
 
-	*// industrycat_isic already generated above in submodule
 	label var 	industrycat_isic "ISIC code of primary job 7 day recall"
-
-
-
 	*</_industrycat_isic_>
 
 
@@ -1307,19 +1314,30 @@ foreach v of local ed_var {
 				unit ///
 				using `isco_key' ///
 				, generate(isco_merge_`n') ///
-				keep(master match) // "left join"; remove obs that don't match from using
-
+				keep(master match) /// "left join"; remove obs that don't match from using
+				keepusing(unit isco08)
 
 	// replace one code that I know doesn't match
 	rename 		isco08	isco08_`n'
 	replace 	isco08_`n' = "6810" 	if `matchvar' == 6819
 
-	tab 		isic_merge_`n' 		if `matchvar' != .
+	// merge with 2 digit key
+	rename 		unit psic_2dig
 
-	drop 		unit 				// no longer needed, maintained in matchvar
+	merge 		m:1 ///
+				psic_2dig ///
+				using `isco_key2dig' ///
+				, generate(isco_mergeb_`n') ///
+				keep(master match) /// "left join"; remove obs that don't match from using
+				keepusing(psic_2dig isco08_2dig)
 
+	rename 		isco08_2dig isco08_2dig_`n'
 
-	gen 		occup_isco = isco08_`n'
+	// coalesce 2 variables
+	egen str4	occup_isco = rowfirst(isco08_`n' isco08_2dig_`n')
+
+	drop 		psic_2dig 				// no longer needed, maintained in matchvar
+
 	label var 	occup_isco "ISIC code of primary job 7 day recall"
 
 *</_occup_isco_>
@@ -1546,17 +1564,24 @@ foreach v of local ed_var {
 	rename 		isic4	isic4_`n'
 	replace 	isic4_`n' = "6810" 	if `matchvar' == 6819
 
-	tab 		isic_merge_`n' 		if `matchvar' != .
+	// merge with 2 digit key
+	rename  	class psic_2dig // rename for second merge
 
+	merge 		m:1 ///
+				psic_2dig ///
+				using `isic_key2dig' ///
+				, generate(isic_mergeb_`n') ///
+				keep(master match) /// "left join"; remove obs that don't match from using
+				keepusing(psic_2dig isic4_2dig)
 
-	gen 		industrycat_isic_2 = isic4_`n'  	// the string variable becomes industrycat_isic
+	rename 		isic4_2dig isic4_2dig_`n'
 
-	drop 		class 				// no longer needed, maintained in matchvar
+	// coalesce 2 variables
+	egen str4 	industrycat_isic_2 = rowfirst(isic4_`n' isic4_2dig_`n')
 
+	drop 		psic_2dig 				// no longer needed, maintained in matchvar
 
-	*// industrycat_isic already generated above in submodule
-	label var 		industrycat_isic_2 "ISIC code of primary job 7 day recall"
-
+	label var 	industrycat_isic "ISIC code of primary job 7 day recall"
 
 *</_industrycat_isic_2_>
 
@@ -1660,20 +1685,29 @@ foreach v of local ed_var {
 				unit ///
 				using `isco_key' ///
 				, generate(isco_merge_`n') ///
-				keep(master match) // "left join"; remove obs that don't match from using
+				keep(master match) /// "left join"; remove obs that don't match from using
+				keepusing(unit isco08)
+
+	rename 		isic4_2dig isic4_2dig_`n'
 
 
-	// replace one code that I know doesn't match
-	rename 		isco08	isco08_`n'
-	replace 	isco08_`n' = "6810" 	if `matchvar' == 6819
+	// merge with 2 digit key
+	rename 		unit psic_2dig
 
-	tab 		isic_merge_`n' 		if `matchvar' != .
+	merge 		m:1 ///
+				psic_2dig ///
+				using `isco_key2dig' ///
+				, generate(isco_mergeb_`n') ///
+				keep(master match) /// "left join"; remove obs that don't match from using
+				keepusing(psic_2dig isco08_2dig)
 
+	rename 		isco08_2dig isco08_2dig_`n'
 
-	drop 		unit 				// no longer needed, maintained in matchvar
+	// coalesce 2 variables
+	egen str4	occup_isco_2 = rowfirst(isco08_`n' isco08_2dig_`n')
 
+	drop 		psic_2dig 				// no longer needed, maintained in matchvar
 
-	gen 		occup_isco_2 = isco08_`n'
 	label var 	occup_isco_2 "ISIC code of primary job 7 day recall"
 
 *</_occup_isco_2_>
