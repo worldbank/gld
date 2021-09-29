@@ -1,0 +1,308 @@
+---
+title: "PHL: Weights, Population, Labor Force Participation Checks and Methodology"
+output: 
+  html_document:
+    html_preview: false
+    toc: true
+    toc_depth: 3
+editor_options: 
+  markdown: 
+    wrap: 72
+knit: (function(input, ...) {
+    rmarkdown::render(
+      input,
+      output_dir = here::here("Support/Country Survey Details/PHL/LFS"),
+      envir = globalenv()
+    )
+  })
+---
+
+```{r setup, include=FALSE}
+# thanks to https://bookdown.org/yihui/rmarkdown-cookbook/hook-scroll.html, this will allow for output scrolling when
+# max.height is set.
+options(width = 60)
+options(dplyr.summarise.inform = FALSE)
+
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(warning = FALSE)
+local({
+  hook_output <-knitr::knit_hooks$get('output')
+  knitr::knit_hooks$set(output = function(x, options) {
+    if (!is.null(options$max.height)) options$attr.output <- c(
+      options$attr.output,
+      sprintf('style="max-height: %s;"', options$max.height)
+    )
+    hook_output(x, options)
+  })
+})
+
+# declare top-level project directory
+here::i_am("main.R")
+
+```
+
+```{r, include=FALSE}
+# source main script
+source(here::here("main.R"), local = knitr::knit_global())
+```
+
+## Introduction
+
+This document outlines the methods for calculating the final weights
+used the in GLD survey and reproduces steps -- along with outputs -- to
+check that GLD figures align with those published by the Philippine
+Statistics Authority (PSA).
+
+Survey weights, expanded population, and labor force participation are
+all fundamental concepts to the GLD that are inextricably linked:
+quality handling of the weight variable will help ensure that the final
+survey will generate accurate measurements of the country's population
+and labor force figures of that year. This document is indented to
+provide users with a step-by-step walkthrough of how we analyzed,
+calculated, and checked these three figures. Since we use a script-based
+approach instead of a notebook-based approach, this code is an adapted
+version of [population_lfp.R](/Support/Global/population_lfp.R).
+
+### External Sources
+
+All PSA figures have been referred to at either:
+
+-   the main Labor Force Survey page:
+    <https://psa.gov.ph/statistics/survey/labor-and-employment/labor-force-survey>
+
+-   or the ILO Comparison Annex file, (direct link):
+    <https://psa.gov.ph/sites/default/files/attachments/hsd/pressrelease/Table%2057%20Philipine%20Concept%20vs.%20ILO%20Concept.pdf>
+
+## Data Work
+
+### Weights
+
+#### Import the GLD Data
+
+We load tidyverse and the previously appended GLD output data for all survey years,
+1997 - 2019.
+
+```{r, echo=FALSE}
+library(tidyverse)
+load(file = file.path(PHL, "PHL_data/GLD/population.Rdata"))
+```
+
+#### Determine which years and rounds need adjustment 
+
+It turns out that not all of the weight variables are uniform in how
+they scale the data by year or wave, even though the correct weight
+variable was selected. This could throw off our results. So some scaling
+will need to be done. Let's take a look.
+
+```{r, max.height = '150px'}
+sum.w.a <- phl %>%
+  group_by(year, wave) %>%
+  summarise(weight = round(median(weight, na.rm = TRUE)))
+
+sum.w.a %>% print(n=Inf)
+```
+
+#### Adjust the weights accordingly
+
+Scaling these "high" waves by 10,000 should fix this.
+
+```{r, echo=FALSE}
+# create a weight-adjusted objected
+phl2 <- phl %>%
+  mutate(
+    partic = case_when( (lstatus == 1 | lstatus == 2) ~ TRUE,
+                        (lstatus == 3) ~ FALSE ),
+    weight2= case_when( year <= 2004 ~ weight / 10000,
+                        year == 2005 & (wave == "Q1" | wave == "Q2") ~ weight / 10000,
+                        year == 2006 ~ weight / 10000,
+                        year == 2007 & (wave == "Q1") ~ weight / 10000,
+                        TRUE         ~ weight))  
+```
+
+#### Update the weights summary object
+
+Now that we have `weight2` in our new `phl2` object that's adjusted,
+tentatively, let's add a by-quarter summary of this new weight variable
+and add it to the `sum.w.a`.
+
+```{r, max.height = '150px'}
+# create `weight_corrected` vector
+weight.adj <- phl2 %>%
+  group_by(year, wave) %>%
+  summarise(weight_corrected = round(median(weight2, na.rm = TRUE)))
+
+weight.adj %>% print(n=Inf)
+```
+
+```{r, max.height = '150px'}
+# join to original weight summary object
+sum.w <- sum.w.a %>%
+  left_join(weight.adj, by = c("year", "wave")) %>%
+  mutate(weight = round(weight), 
+         weight_corrected = round(weight_corrected))
+
+sum.w %>% print(n=Inf)
+```
+
+Looks good. The scaling by `10,000` seemed to bring the weight variables
+in line -- and we appeared to code the correct years and waves. Let's
+move on to check our Population and Labor Force Participation Figures
+with `weight2`
+
+### Checks: Population and LFP
+
+#### Total vs. age 15 and above
+
+We could use the total population, but the PSA provides their figures
+for ages 15 and above. So we'll make two versions, just in case.
+
+```{r, max.height = '150px'}
+# Whole population
+sum.y <- phl2 %>%
+  group_by(year) %>%
+  summarize(
+    pop = sum(weight2),
+    lfp = weighted.mean(partic, weight2, na.rm = TRUE) * 100)
+
+sum.y %>% print(n=Inf)
+```
+
+Note that we filter out all observations below the age of 15 for the
+second object.
+
+```{r, max.height = '150px'}
+# for those 15 and over (inclusive)
+sum.15.y <- phl2 %>%
+  filter(age >= 15) %>%
+  group_by(year) %>%
+  summarize(
+    pop_15up = sum(weight2),
+    lfp_15up = weighted.mean(partic, weight2, na.rm = TRUE) * 100)
+
+sum.15.y %>% print(n=Inf)
+```
+
+#### Adding PSA figures
+
+The PSA data, linked above, we'll add simply by input in R. It's not
+ideal, but it is reproducible should we find an error or point of
+contention later on. This will allow us to compare the GLD figures for
+population and labor force participation with those from the PSA.
+
+On the PSA figures themselves, the PSA appear to publish yearly
+summaries consistently after 2007, but only quarterly before. When the
+PSA do publish a yearly figure, that figure is used. However, when only
+quarterly figures are available, we aproximate the yearly figures via a
+simple mean, recognizing that this is a just an estimation exercise. For
+those following along with the PSA data, you'll notice the figures are
+in reverse chronological order: years are descending and likewise
+within-year figures read in reverse order. Visually the pattern follows
+
+```{r, eval=FALSE}
+# year == "2016" ~ [year],
+# year == "2015" ~ mean(c([Q4], [Q3], [Q2], [Q1])),
+```
+
+We'll add six new variables. The first two, `psa_lfp_15up` and
+`psa_pop_15up` give the PSA's figures for Labor Force Participation and
+Population for those over 15. The second set, `dif_pop_15up` and
+`dif_lfp_15up`, are difference variables that take the simple difference
+between GLD and PSA figures. Finally, `flag_pop_5pct` and
+`flag_lfp_2pct` are TRUE/FALSE or boolean variables that warn us if a
+certain year's population error is more than 5% or the labor force
+participation error is more than 2%.
+
+```{r}
+sum.15.y <- sum.15.y %>%
+  mutate(
+    psa_lfp_15up = case_when(
+      year == "2019" ~ 61.3,
+      year == "2018" ~ 60.9,
+      year == "2017" ~ 61.2,
+      year == "2016" ~ 63.4,
+      year == "2015" ~ mean(c(63.3, 62.9, 64.6, 63.8)),
+      year == "2014" ~ 64.4,
+      year == "2013" ~ 63.9,
+      year == "2012" ~ 64.2,
+      year == "2011" ~ 64.6,
+      year == "2010" ~ 64.1,
+      year == "2009" ~ 64.0,
+      year == "2008" ~ 63.6,
+      year == "2007" ~ mean(c(63.2, 63.6, 64.5, 64.8)),
+      year == "2006" ~ mean(c(63.8, 64.6, 64.8, 63.6)),
+      year == "2005" ~ mean(c(64.8, 64.6, 64.8, 63.2)),
+      year == "2004" ~ mean(c(63.8, 64.1, 65.4, 64.1)),
+      year == "2003" ~ mean(c(64.5, 63.5, 64.0, 63.3)),
+      year == "2002" ~ mean(c(63.9, 64.4, 66.3, 64.3)),
+      year == "2001" ~ mean(c(65.3, 64.2, 65.6, 62.6)),
+      year == "2000" ~ mean(c(61.7, 60.9, 62.2, 62.7)),
+      year == "1999" ~ mean(c(63.3, 63.3, 66.1, 63.1)),
+      year == "1998" ~ mean(c(63.3, 62.7, 64.4, 62.7)),
+      year == "1997" ~ mean(c(63.1, 63.2, 65.5, 63.3))
+    ),
+    psa_pop_15up = case_when(
+      year == "2019" ~ 72931000,
+      year == "2018" ~ 71339000,
+      year == "2017" ~ 69896000,
+      year == "2016" ~ 68125000,
+      year == "2015" ~ 66622000,
+      year == "2014" ~ 62189000,
+      year == "2013" ~ 61176000,
+      year == "2012" ~ 62985000,
+      year == "2011" ~ 61882000,
+      year == "2010" ~ 60717000,
+      year == "2009" ~ 59237000,
+      year == "2008" ~ 57848000,
+      year == "2007" ~ 56864000,
+      year == "2006" ~ 55638000,
+      year == "2005" ~ 54797000,
+      year == "2004" ~ 53562000,
+      year == "2003" ~ 52305000,
+      year == "2002" ~ 50841000,
+      year == "2001" ~ 49424000,
+      year == "2000" ~ 48076000,
+      year == "1999" ~ 46749000,
+      year == "1998" ~ 45425000,
+      year == "1997" ~ 44143000
+    ),
+    dif_pop_15up = pop_15up - psa_pop_15up,
+    dif_lfp_15up = lfp_15up - psa_lfp_15up,
+    flag_pop_5pct= ((dif_pop_15up/pop_15up) >= 0.05),
+    flag_lfp_2pct= ((dif_lfp_15up/lfp_15up) >= 0.02)
+  ) 
+
+```
+
+#### Final Notes
+
+We see that our scaling method has produced a weight variable, `weight2`
+that generates population and labor force figures that are very
+consistent with those published by the PSA. All but two, or 21 of 23 years, pass our self-imposed consistency tests. EVen so, the data for these two years that do not pass are still within reasonable margins of error. 
+
+### Graphs
+
+We can visualize our final results below
+
+```{r}
+gg.pop <- ggplot(sum.15.y, aes(year, dif_pop_15up)) +
+  geom_col(aes(fill = flag_pop_5pct)) +
+  scale_y_continuous(labels = scales::label_number(), limits = c(0,10000000)) +
+  labs(title = "Aboslute Error in GLD vs PSA Popupation 15yrs and Older",
+       y = "Absolute Error",
+       x = "Year") +
+  theme_minimal()
+
+gg.pop
+```
+```{r}
+gg.lfp <- ggplot(sum.15.y, aes(year, dif_lfp_15up)) +
+  geom_col(aes(fill = flag_lfp_2pct)) +
+  scale_y_continuous(labels = scales::label_number(), limits = c(-1, 10)) +
+  labs(title = "Aboslute Error in GLD vs PSA Labor Force Participation 15yrs and Older",
+       y = "Absolute Error in pct points",
+       x = "Year") +
+  theme_minimal()
+
+gg.lfp
+```
+
