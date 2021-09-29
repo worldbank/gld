@@ -18,8 +18,13 @@ knit: (function(input, ...) {
 ---
 
 ```{r setup, include=FALSE}
+# thanks to https://bookdown.org/yihui/rmarkdown-cookbook/hook-scroll.html, this will allow for output scrolling when
+# max.height is set.
 options(width = 60)
+options(dplyr.summarise.inform = FALSE)
+
 knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(warning = FALSE)
 local({
   hook_output <-knitr::knit_hooks$get('output')
   knitr::knit_hooks$set(output = function(x, options) {
@@ -30,6 +35,15 @@ local({
     hook_output(x, options)
   })
 })
+
+# declare top-level project directory
+here::i_am("main.R")
+
+```
+
+```{r, include=FALSE}
+# source main script
+source(here::here("main.R"), local = knitr::knit_global())
 ```
 
 ## Introduction
@@ -65,7 +79,7 @@ All PSA figures have been referred to at either:
 
 #### Import the GLD Data
 
-We load the previously appended GLD output data for all survey years,
+We load tidyverse and the previously appended GLD output data for all survey years,
 1997 - 2019.
 
 ```{r, echo=FALSE}
@@ -80,11 +94,12 @@ they scale the data by year or wave, even though the correct weight
 variable was selected. This could throw off our results. So some scaling
 will need to be done. Let's take a look.
 
-```{r}
+```{r, max.height = '150px'}
 sum.w.a <- phl %>%
   group_by(year, wave) %>%
   summarise(weight = round(median(weight, na.rm = TRUE)))
-sum.w.a
+
+sum.w.a %>% print(n=Inf)
 ```
 
 #### Adjust the weights accordingly
@@ -110,23 +125,23 @@ Now that we have `weight2` in our new `phl2` object that's adjusted,
 tentatively, let's add a by-quarter summary of this new weight variable
 and add it to the `sum.w.a`.
 
-```{r}
+```{r, max.height = '150px'}
 # create `weight_corrected` vector
 weight.adj <- phl2 %>%
   group_by(year, wave) %>%
   summarise(weight_corrected = round(median(weight2, na.rm = TRUE)))
 
-weight.adj
+weight.adj %>% print(n=Inf)
 ```
 
-```{r}
+```{r, max.height = '150px'}
 # join to original weight summary object
 sum.w <- sum.w.a %>%
   left_join(weight.adj, by = c("year", "wave")) %>%
   mutate(weight = round(weight), 
          weight_corrected = round(weight_corrected))
 
-sum.w
+sum.w %>% print(n=Inf)
 ```
 
 Looks good. The scaling by `10,000` seemed to bring the weight variables
@@ -141,7 +156,7 @@ with `weight2`
 We could use the total population, but the PSA provides their figures
 for ages 15 and above. So we'll make two versions, just in case.
 
-```{r}
+```{r, max.height = '150px'}
 # Whole population
 sum.y <- phl2 %>%
   group_by(year) %>%
@@ -149,13 +164,13 @@ sum.y <- phl2 %>%
     pop = sum(weight2),
     lfp = weighted.mean(partic, weight2, na.rm = TRUE) * 100)
 
-sum.y
+sum.y %>% print(n=Inf)
 ```
 
 Note that we filter out all observations below the age of 15 for the
 second object.
 
-```{r}
+```{r, max.height = '150px'}
 # for those 15 and over (inclusive)
 sum.15.y <- phl2 %>%
   filter(age >= 15) %>%
@@ -164,7 +179,7 @@ sum.15.y <- phl2 %>%
     pop_15up = sum(weight2),
     lfp_15up = weighted.mean(partic, weight2, na.rm = TRUE) * 100)
 
-sum.15.y
+sum.15.y %>% print(n=Inf)
 ```
 
 #### Adding PSA figures
@@ -262,7 +277,7 @@ sum.15.y <- sum.15.y %>%
 
 We see that our scaling method has produced a weight variable, `weight2`
 that generates population and labor force figures that are very
-consistent with those published by the PSA.
+consistent with those published by the PSA. All but two, or 21 of 23 years, pass our self-imposed consistency tests. EVen so, the data for these two years that do not pass are still within reasonable margins of error. 
 
 ### Graphs
 
@@ -271,7 +286,7 @@ We can visualize our final results below
 ```{r}
 gg.pop <- ggplot(sum.15.y, aes(year, dif_pop_15up)) +
   geom_col(aes(fill = flag_pop_5pct)) +
-  scale_y_continuous(labels = scales::label_number()) +
+  scale_y_continuous(labels = scales::label_number(), limits = c(0,10000000)) +
   labs(title = "Aboslute Error in GLD vs PSA Popupation 15yrs and Older",
        y = "Absolute Error",
        x = "Year") +
@@ -282,7 +297,7 @@ gg.pop
 ```{r}
 gg.lfp <- ggplot(sum.15.y, aes(year, dif_lfp_15up)) +
   geom_col(aes(fill = flag_lfp_2pct)) +
-  scale_y_continuous(labels = scales::label_number()) +
+  scale_y_continuous(labels = scales::label_number(), limits = c(-1, 10)) +
   labs(title = "Aboslute Error in GLD vs PSA Labor Force Participation 15yrs and Older",
        y = "Absolute Error in pct points",
        x = "Year") +
