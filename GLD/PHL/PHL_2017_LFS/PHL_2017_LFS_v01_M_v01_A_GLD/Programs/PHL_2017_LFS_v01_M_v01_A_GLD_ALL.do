@@ -54,6 +54,15 @@ clear
 set more off
 set mem 800m
 
+* install packages
+local user_commands ietoolkit scores missings mdesc iefieldkit  //Fill this list will all user-written commands this project requires
+ foreach command of local user_commands {
+     cap which `command'
+     if _rc == 111 {
+         ssc install `command'
+     }
+ }
+
 *----------1.2: Set directories------------------------------*
 
 ** DIRECTORY
@@ -464,7 +473,7 @@ replace int_month = 10 	if round == 4
 
 *<_weight_>
 	rename 		`weightvar'	weight_orig
-	gen 		weight = weight_orig/(`n_round')
+	gen 		weight = weight_orig / 4
 	label 		var weight "Household sampling weight"
 *</_weight_>
 
@@ -854,7 +863,7 @@ Education module is only asked to those 5 and older.
 
 </_ed_mod_age_note> */
 
-gen byte ed_mod_age = `ed_mod_age'
+gen byte ed_mod_age = 5
 label var ed_mod_age "Education module application age"
 
 *</_ed_mod_age_>
@@ -1026,7 +1035,7 @@ foreach v of local ed_var {
 
 
 *<_minlaborage_>
-	gen byte minlaborage = `lb_mod_age'
+	gen byte minlaborage = 15
 	label var minlaborage "Labor module application age"
 *</_minlaborage_>
 
@@ -1170,7 +1179,7 @@ foreach v of local ed_var {
 				, format(`"%04.0f"') replace
 
 	replace 	class = "" if wave != "Q2"
-	
+
 	merge 		m:1 ///
 				class ///
 				using `isic_key' ///
@@ -1186,7 +1195,7 @@ foreach v of local ed_var {
 	gen 		psic_2dig = `matchvar'
 	tostring 	psic_2dig ///
 				, format(`"%02.0f"') replace
-	
+
 	replace 	psic_2dig = "" if wave == "Q2" // merge only for q2
 
 	merge 		m:1 ///
@@ -1310,9 +1319,9 @@ foreach v of local ed_var {
 	gen unit = `matchvar'
 	tostring 	unit ///
 				, format(`"%04.0f"') replace
-	
+
 	replace 	unit = "" if wave != "Q2" // merge only for q2
-	
+
 	merge 		m:1 ///
 				unit ///
 				using `isco_key' ///
@@ -1325,14 +1334,14 @@ foreach v of local ed_var {
 	replace 	isco08_`n' = "6810" 	if `matchvar' == 6819
 
 	// merge with 2 digit key
-	drop 		unit 
-	
+	drop 		unit
+
 	gen psic_2dig = `matchvar'
 	tostring 	psic_2dig ///
 				, format(`"%02.0f"') replace
-	
-	replace 	psic_2dig = "" if wave == "Q2" // don't merge q2	
-				
+
+	replace 	psic_2dig = "" if wave == "Q2" // don't merge q2
+
 
 	merge 		m:1 ///
 				psic_2dig ///
@@ -1560,8 +1569,8 @@ foreach v of local ed_var {
 	gen class = `matchvar'
 	tostring 	class ///
 				, format(`"%04.0f"') replace
-				
-	replace 	class = "" if wave != "Q2" // only match second wave at 4 digits			
+
+	replace 	class = "" if wave != "Q2" // only match second wave at 4 digits
 
 	merge 		m:1 ///
 				class ///
@@ -1578,7 +1587,7 @@ foreach v of local ed_var {
 	gen 		psic_2dig = `matchvar'
 	tostring 	psic_2dig ///
 				, format(`"%02.0f"') replace
-	
+
 	replace 	psic_2dig = "" if wave == "Q2" // merge only for q2
 
 	merge 		m:1 ///
@@ -1692,7 +1701,7 @@ foreach v of local ed_var {
 	gen unit = `matchvar'
 	tostring 	unit ///
 				, format(`"%04.0f"') replace
-				
+
 	replace 	unit = "" if wave != "Q2"
 
 	merge 		m:1 ///
@@ -1709,7 +1718,7 @@ foreach v of local ed_var {
 	gen 		psic_2dig = `matchvar'
 	tostring 	psic_2dig ///
 				, format(`"%02.0f"') replace
-	
+
 	replace 	psic_2dig = "" if wave == "Q2" // merge only for q2
 
 	merge 		m:1 ///
