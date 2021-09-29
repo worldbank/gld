@@ -155,11 +155,24 @@ not match the original household size variable "b1r13".
 	codebook hhid if gap!=0
 	codebook pid if gap!=0
 	gen unmatch=cond(gap!=0, 1, 0)
+	
+	gen hhsize_larger=cond(gap>0, 1, 0)
+	replace hhsize_larger=. if gap==0
+	tab hhsize_larger, m
+
 
     unmatch |      Freq.     Percent        Cum.
 ------------+-----------------------------------
           0 |     74,853       35.73       35.73
           1 |    134,627       64.27      100.00
+------------+-----------------------------------
+      Total |    209,480      100.00
+
+hhsize_larg |
+         er |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |    134,627       64.27       64.27
+          . |     74,853       35.73      100.00
 ------------+-----------------------------------
       Total |    209,480      100.00
 

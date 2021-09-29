@@ -156,10 +156,23 @@ not match the original household size variable "b1r12".
 	gen unmatch=cond(gap!=0, 1, 0)
 	tab unmatch
 
-    unmatch |      Freq.     Percent        Cum.
+	gen hhsize_larger=cond(gap>0, 1, 0)
+	replace hhsize_larger=. if gap==0
+	tab hhsize_larger, m
+
+	unmatch |      Freq.     Percent        Cum.
 ------------+-----------------------------------
           0 |         73        0.03        0.03
           1 |    279,711       99.97      100.00
+------------+-----------------------------------
+      Total |    279,784      100.00
+
+hhsize_larg |
+         er |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |    251,130       89.76       89.76
+          1 |     28,581       10.22       99.97
+          . |         73        0.03      100.00
 ------------+-----------------------------------
       Total |    279,784      100.00
 
