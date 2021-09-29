@@ -378,7 +378,9 @@ replace month = 10 	if round == 4
 ** HOUSEHOLD WEIGHTS
 	/* The weight variable will be divided by the number of rounds per year to ensure the
 	   weighting factor does not over-mutliply*/
-	gen double wgt= fwgt/(`n_round')
+	gen double wgt= fwgt/ 4
+	* // inverse scaling by [no. rounds]*[10 000], only for first round. See "weights_methodology.Rmd"
+	replace 	wgt = wgt / 10000 	if round == 1
 	label var wgt "Household sampling weight"
 
 

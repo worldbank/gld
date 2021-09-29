@@ -114,7 +114,7 @@ append 		using 	`i2d2_2' ///
 
 ** WEIGHT
 ** replace weight by 1/4 of weight variable (account for appending of 4 rounds )
-replace wgt = wgt / `n_round'
+replace wgt = wgt / 4 // this has previously been inversely scaled by 10000 
 
 ** ID OPERATIONS
 	/*At this point in the data flow, we've proven that the household id (idh) and individual id (idp)
@@ -149,13 +149,13 @@ replace wgt = wgt / `n_round'
 *                                                                                                    *
 *****************************************************************************************************/
 
-	
-	
+
+
 
 ** ORDER KEEP VARIABLES
-	ds 		
+	ds
 	loc 		vars = r(varlist)
-	
+
 	local 		order 														///
 				sample ccode year intv_year month idh idp wgt strata psu urb	///
 				reg01 reg02 reg03  reg02_orig reg03_orig  ///
@@ -169,7 +169,7 @@ replace wgt = wgt / `n_round'
 				industry_2 industry1_2 industry_orig_2 occup_2 wage_2 unitwage_2 ///
 				healthins socialsec union rbirth_juris rbirth rprevious_juris ///
 				rprevious yrmove rprevious_time_ref pci pci_d pcc pcc_d round
-				
+
 	loc 		overlap : list order & vars
 
 	keep 		`overlap'
@@ -237,7 +237,7 @@ replace wgt = wgt / `n_round'
 	else {
 		di "There are no unused labels to drop"
 	}
-	
+
 	save `"`id_data'\\PHL_2003_I2D2_LFS.dta"', replace
 
 	log close
