@@ -345,7 +345,7 @@ gen 	int round = 1
 
 
 *<_weight_>
-	gen 		weight = rfadj
+	gen 		weight = rfadj / (1 * 10000)  // inverse scaling by [no. rounds]*[10 000]. See "weights_methodology.Rmd"
 	label 		var weight "Household sampling weight"
 *</_weight_>
 

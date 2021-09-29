@@ -327,6 +327,8 @@ replace int_month = 10 	if round == 4
 
 *<_weight_>
 	gen 		weight = fwgt / 4
+	* // for 2005, inverse scaling by [no. rounds]*[10 000], only for first two rounds. See "weights_methodology.Rmd"
+	replace 	weight = weight / 10000 	if round == 1 | round == 2
 	label 		var weight "Household sampling weight"
 *</_weight_>
 
