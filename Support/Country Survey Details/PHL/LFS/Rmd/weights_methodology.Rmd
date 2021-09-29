@@ -269,12 +269,25 @@ consistent with those published by the PSA.
 We can visualize our final results below
 
 ```{r}
-gg <- ggplot(sum.15.y, aes(year, dif_pop_15up)) +
-  geom_col() +
+gg.pop <- ggplot(sum.15.y, aes(year, dif_pop_15up)) +
+  geom_col(aes(fill = flag_pop_5pct)) +
+  scale_y_continuous(labels = scales::label_number()) +
   labs(title = "Aboslute Error in GLD vs PSA Popupation 15yrs and Older",
-       y = "Error %",
+       y = "Absolute Error",
        x = "Year") +
   theme_minimal()
 
-gg
+gg.pop
 ```
+```{r}
+gg.lfp <- ggplot(sum.15.y, aes(year, dif_lfp_15up)) +
+  geom_col(aes(fill = flag_lfp_2pct)) +
+  scale_y_continuous(labels = scales::label_number()) +
+  labs(title = "Aboslute Error in GLD vs PSA Labor Force Participation 15yrs and Older",
+       y = "Absolute Error in pct points",
+       x = "Year") +
+  theme_minimal()
+
+gg.lfp
+```
+
