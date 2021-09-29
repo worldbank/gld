@@ -464,7 +464,7 @@ replace month = 10 	if round == 4
 
 
 ** EDUCATION MODULE AGE
-	gen byte ed_mod_age= `ed_mod_age'				// minimum incluse attending school age is 5
+	gen byte ed_mod_age= 5				// minimum incluse attending school age is 5
 	label var ed_mod_age "Education module application age"
 
 
@@ -560,7 +560,7 @@ replace month = 10 	if round == 4
 *****************************************************************************************************/
 
 ** LABOR MODULE AGE
-	gen byte lb_mod_age=`lb_mod_age'
+	gen byte lb_mod_age=15
 	label var lb_mod_age "Labor module application age"
 
 

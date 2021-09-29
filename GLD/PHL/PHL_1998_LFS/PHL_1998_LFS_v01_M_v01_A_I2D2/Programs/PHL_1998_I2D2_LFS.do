@@ -434,7 +434,7 @@ if (`append' == 1) {
 
 
 ** EDUCATION MODULE AGE
-	gen byte ed_mod_age=`ed_mod_age'
+	gen byte ed_mod_age=5
 	label var ed_mod_age "Education module application age"
 
 
@@ -531,7 +531,7 @@ if (`append' == 1) {
 *****************************************************************************************************/
 
 ** LABOR MODULE AGE
-	gen byte lb_mod_age=`lb_mod_age'
+	gen byte lb_mod_age=15
 	label var lb_mod_age "Labor module application age"
 
 
