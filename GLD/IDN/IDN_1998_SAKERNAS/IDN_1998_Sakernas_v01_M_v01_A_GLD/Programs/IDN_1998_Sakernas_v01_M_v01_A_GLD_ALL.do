@@ -156,11 +156,24 @@ not match the original household size variable "b1p12".
 	codebook pid if gap!=0
 	gen unmatch=cond(gap!=0, 1, 0)
 	tab unmatch
+	
+	gen hhsize_larger=cond(gap>0, 1, 0)
+	replace hhsize_larger=. if gap==0
+	tab hhsize_larger, m
 
     unmatch |      Freq.     Percent        Cum.
 ------------+-----------------------------------
           0 |     74,198       45.38       45.38
           1 |     89,319       54.62      100.00
+------------+-----------------------------------
+      Total |    163,517      100.00
+	  
+hhsize_larg |
+         er |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     89,313       54.62       54.62
+          1 |          6        0.00       54.62
+          . |     74,198       45.38      100.00
 ------------+-----------------------------------
       Total |    163,517      100.00
 
@@ -207,7 +220,7 @@ Only individual weight available in the raw dataset -- "wgt96".
 <_weight_>*/
 
 *<_weight_>
-	gen weight=.
+	*gen weight=.
 	label var weight "Household sampling weight"
 *</_weight_>
 

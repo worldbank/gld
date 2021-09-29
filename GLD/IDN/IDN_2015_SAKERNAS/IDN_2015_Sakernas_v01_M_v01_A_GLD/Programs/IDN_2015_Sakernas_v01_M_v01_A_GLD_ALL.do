@@ -18,7 +18,7 @@
 <_Source of dataset_> 			Shared with Job's Group by the World Bank Indonesia Team
 								data request form required to get the access</_Source of dataset_>
 <_Sample size (HH)_> 			N/A </_Sample size (HH)_>
-<_Sample size (IND)_> 			495,110 </_Sample size (IND)_>
+<_Sample size (IND)_> 			522,131 </_Sample size (IND)_>
 <_Sampling method_> 			Two-stage cluster sampling method </_Sampling method_>
 <_Geographic coverage_> 		Province </_Geographic coverage_>
 <_Currency_> 					Indonesian Rupiah </_Currency_>
@@ -158,27 +158,19 @@ local output "`id_data'"
 
         dup |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          0 |    492,007       93.75       93.75
-          1 |     18,980        3.62       97.37
-          2 |      6,192        1.18       98.55
-          3 |      3,228        0.62       99.16
-          4 |      1,835        0.35       99.51
-          5 |      1,086        0.21       99.72
-          6 |        469        0.09       99.81
-          7 |        360        0.07       99.88
-          8 |        279        0.05       99.93
-          9 |        130        0.02       99.95
-         10 |         66        0.01       99.97
-         11 |         60        0.01       99.98
-         12 |         13        0.00       99.98
-         13 |         14        0.00       99.98
-         15 |         16        0.00       99.99
-         16 |         17        0.00       99.99
-         17 |         18        0.00       99.99
-         19 |         40        0.01      100.00
+          0 |    518,535       98.58       98.58
+          1 |      6,692        1.27       99.85
+          2 |        651        0.12       99.97
+          3 |         96        0.02       99.99
+          4 |         20        0.00       99.99
+          5 |          6        0.00       99.99
+          6 |         21        0.00      100.00
+          8 |          9        0.00      100.00
 ------------+-----------------------------------
-      Total |    524,810      100.00
+      Total |    526,030      100.00
 
+3,899 duplicates in total.
+ 
 <_pid_>*/
 
 

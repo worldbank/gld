@@ -153,6 +153,10 @@ Crosscheck hhid creation:
 	bys hhid: egen hhsize=count(pid)
 	gen gap=hhsize-b2p01
 	codebook hhid if gap!=0
+	
+	gen hhsize_larger=cond(gap>0, 1, 0)
+	replace hhsize_larger=. if gap==0
+	tab hhsize_larger, m
 
     unmatch |      Freq.     Percent        Cum.
 ------------+-----------------------------------
@@ -161,6 +165,14 @@ Crosscheck hhid creation:
 ------------+-----------------------------------
       Total |    931,890      100.00
 
+hhsize_larg |
+         er |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |    507,266       54.43       54.43
+          1 |        185        0.02       54.45
+          . |    424,439       45.55      100.00
+------------+-----------------------------------
+      Total |    931,890      100.00
 <_hhid_>*/
 
 
