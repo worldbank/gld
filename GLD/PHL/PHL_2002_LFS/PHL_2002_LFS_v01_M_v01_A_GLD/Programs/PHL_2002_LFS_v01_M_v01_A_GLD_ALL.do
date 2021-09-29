@@ -326,7 +326,7 @@ local user_commands ietoolkit scores missings mdesc iefieldkit  //Fill this list
 
 
 *<_weight_>
-	gen 		weight = `weightvar'/(`n_round')
+	gen 		weight = rfadj/4
 	label 		var weight "Household sampling weight"
 *</_weight_>
 

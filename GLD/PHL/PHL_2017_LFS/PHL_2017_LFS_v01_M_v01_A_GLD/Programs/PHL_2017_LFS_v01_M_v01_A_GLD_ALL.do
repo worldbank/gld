@@ -473,7 +473,7 @@ replace int_month = 10 	if round == 4
 
 *<_weight_>
 	rename 		`weightvar'	weight_orig
-	gen 		weight = weight_orig/(`n_round')
+	gen 		weight = weight_orig / 4
 	label 		var weight "Household sampling weight"
 *</_weight_>
 
@@ -1179,7 +1179,7 @@ foreach v of local ed_var {
 				, format(`"%04.0f"') replace
 
 	replace 	class = "" if wave != "Q2"
-	
+
 	merge 		m:1 ///
 				class ///
 				using `isic_key' ///
@@ -1195,7 +1195,7 @@ foreach v of local ed_var {
 	gen 		psic_2dig = `matchvar'
 	tostring 	psic_2dig ///
 				, format(`"%02.0f"') replace
-	
+
 	replace 	psic_2dig = "" if wave == "Q2" // merge only for q2
 
 	merge 		m:1 ///
@@ -1319,9 +1319,9 @@ foreach v of local ed_var {
 	gen unit = `matchvar'
 	tostring 	unit ///
 				, format(`"%04.0f"') replace
-	
+
 	replace 	unit = "" if wave != "Q2" // merge only for q2
-	
+
 	merge 		m:1 ///
 				unit ///
 				using `isco_key' ///
@@ -1334,14 +1334,14 @@ foreach v of local ed_var {
 	replace 	isco08_`n' = "6810" 	if `matchvar' == 6819
 
 	// merge with 2 digit key
-	drop 		unit 
-	
+	drop 		unit
+
 	gen psic_2dig = `matchvar'
 	tostring 	psic_2dig ///
 				, format(`"%02.0f"') replace
-	
-	replace 	psic_2dig = "" if wave == "Q2" // don't merge q2	
-				
+
+	replace 	psic_2dig = "" if wave == "Q2" // don't merge q2
+
 
 	merge 		m:1 ///
 				psic_2dig ///
@@ -1569,8 +1569,8 @@ foreach v of local ed_var {
 	gen class = `matchvar'
 	tostring 	class ///
 				, format(`"%04.0f"') replace
-				
-	replace 	class = "" if wave != "Q2" // only match second wave at 4 digits			
+
+	replace 	class = "" if wave != "Q2" // only match second wave at 4 digits
 
 	merge 		m:1 ///
 				class ///
@@ -1587,7 +1587,7 @@ foreach v of local ed_var {
 	gen 		psic_2dig = `matchvar'
 	tostring 	psic_2dig ///
 				, format(`"%02.0f"') replace
-	
+
 	replace 	psic_2dig = "" if wave == "Q2" // merge only for q2
 
 	merge 		m:1 ///
@@ -1701,7 +1701,7 @@ foreach v of local ed_var {
 	gen unit = `matchvar'
 	tostring 	unit ///
 				, format(`"%04.0f"') replace
-				
+
 	replace 	unit = "" if wave != "Q2"
 
 	merge 		m:1 ///
@@ -1718,7 +1718,7 @@ foreach v of local ed_var {
 	gen 		psic_2dig = `matchvar'
 	tostring 	psic_2dig ///
 				, format(`"%02.0f"') replace
-	
+
 	replace 	psic_2dig = "" if wave == "Q2" // merge only for q2
 
 	merge 		m:1 ///

@@ -322,7 +322,7 @@ replace int_month = 10 	if round == 4
 
 *<_weight_>
 	rename 		weight weight_orig
-	gen 		weight = `weightvar'/(`n_round')
+	gen 		weight = fwgt / 4
 	label 		var weight "Household sampling weight"
 
 	/*there is one household with an odd household ID and no weight (total 1 observation). Will drop*/

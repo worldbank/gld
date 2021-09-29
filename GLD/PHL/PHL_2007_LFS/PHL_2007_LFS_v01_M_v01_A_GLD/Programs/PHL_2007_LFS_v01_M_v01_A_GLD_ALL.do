@@ -468,7 +468,7 @@ replace int_month = 10 	if round == 4
 
 
 *<_weight_>
-	gen 		weight = `weightvar'/(`n_round')
+	gen 		weight = fwgt / 4
 	label 		var weight "Household sampling weight"
 *</_weight_>
 

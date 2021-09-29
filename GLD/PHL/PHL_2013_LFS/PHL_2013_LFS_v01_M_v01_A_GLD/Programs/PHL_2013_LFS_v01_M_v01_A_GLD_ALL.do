@@ -325,7 +325,7 @@ replace int_month = 10 	if round == 4
 
 *<_weight_>
 	rename 		weight weight_orig
-	gen 		weight = `weightvar'/(`n_round')
+	gen 		weight = pwgt / 4
 	label 		var weight "Household sampling weight"
 *</_weight_>
 

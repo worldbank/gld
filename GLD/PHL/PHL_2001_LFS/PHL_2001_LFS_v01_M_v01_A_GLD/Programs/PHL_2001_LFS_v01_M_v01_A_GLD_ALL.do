@@ -345,7 +345,7 @@ gen 	int round = 1
 
 
 *<_weight_>
-	gen 		weight = `weightvar'/(`n_round')
+	gen 		weight = rfadj
 	label 		var weight "Household sampling weight"
 *</_weight_>
 
