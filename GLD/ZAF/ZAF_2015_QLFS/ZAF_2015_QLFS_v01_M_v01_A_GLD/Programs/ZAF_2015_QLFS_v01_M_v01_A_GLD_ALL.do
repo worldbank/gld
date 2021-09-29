@@ -610,6 +610,12 @@ or grade 9 and enter a technical education program at N1, proceeding to N2.
 *</_educat4_>
 
 
+*<_educat_orig_>
+	gen educat_orig = Q17EDUCATION
+	label var educat_orig "Original survey education code"
+*</_educat_orig_>
+
+
 /*<_educat_isced_>
 
 Var "Q17EDUCATION": What is the highest level of education that... has sucessfully completed?
