@@ -35,6 +35,15 @@
 	set more off
 	set mem 800m
 
+* install packages
+local user_commands ietoolkit scores missings mdesc iefieldkit  //Fill this list will all user-written commands this project requires
+ foreach command of local user_commands {
+     cap which `command'
+     if _rc == 111 {
+         ssc install `command'
+     }
+ }
+
 ** DIRECTORY
 
 	local 	cty3 	"PHL" 	// set this to the three letter country/economy abbreviation
