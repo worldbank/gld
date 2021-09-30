@@ -6,7 +6,6 @@ has_children: true
 permalink: /docs/harmonization-process
 ---
 
-# Explanation of the process
+# Harmonization process
 
-Here the process to follow.
-{: .fs-6 .fw-300 }
+This section describes the common process of harmonizing data for the GLD. Individual experiences can differ but this guide should cover 90%+ of the cases.

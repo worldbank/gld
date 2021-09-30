@@ -9,14 +9,14 @@
 ** SURVEY NAME	HOUSEHOLD LABOUR FORCE SURVEY
 ** SURVEY AGENCY	Turkish Statistical Institute (TUIK)
 ** SURVEY SOURCE	Turkish Statistical Institute (TUIK)
-** UNIT OF ANALYSIS	
-** INPUT DATABASES	Z:\GLD-Harmonization\582018_AQ\TUR\TUR_2002_HLFS\TUR_2002_HLFS_v01_M\Data\Stata\LFS2002-lab.dta
+** UNIT OF ANALYSIS
+** INPUT DATABASES	Z:\GLD-Harmonization\582018_AQ\TUR\TUR_2002_HLFS\TUR_2002_HLFS_V01_M\Data\Stata\LFS2002-lab.dta
 ** RESPONSIBLE	Alexandra Quiñones
 ** Created	9/28/2011
 ** Modified	8/02/2021
-** NUMBER OF HOUSEHOLDS	78453
-** NUMBER OF INDIVIDUALS	300689
-** EXPANDED POPULATION	68393032
+** NUMBER OF HOUSEHOLDS	77386
+** NUMBER OF INDIVIDUALS	299695
+** EXPANDED POPULATION	67296031.2
 **                                                                                                  **
 ******************************************************************************************************
 *****************************************************************************************************/
@@ -40,20 +40,18 @@
 	local 	drive 	`"Z"'		// set this to where you mapped the GLD drive on your work computer
 	local 	cty3 	"TUR" 	// set this to the three letter country/economy abbreviation
 	local 	usr		`"582018_AQ"' // set this to whatever Mario named your folder
-	local 	surv_yr `"2002"'	// set this to the survey year 
-	
+	local 	surv_yr `"2002"'	// set this to the survey year
+
 
 ** RUN SETTINGS
 	local 	cb_pause = 1	// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
 	local 	year 	"`drive':\GLD-Harmonization\\`usr'\\`cty3'\\`cty3'_`surv_yr'_HLFS" // top data folder
-	local 	main	"`year'\\`cty3'_2002_HLFS_v01_M"
+	local 	main	"`year'\\`cty3'_2002_HLFS_V01_M"
 	local 	stata	"`main'\data\stata"
-	local 	gld 	"`year'\\`cty3'_2002_HLFS_v01_M_v01_A_GLD"
-	local 	i2d2	"`year'\\`cty3'_2002_HLFS_v01_M_v01_A_I2D2"
+	local 	gld 	"`year'\\`cty3'_2002_HLFS_V01_M_V01_A_GLD"
+	local 	i2d2	"`year'\\`cty3'_2002_HLFS_V01_M_V01_A_I2D2"
 	local 	code 	"`i2d2'\Programs"
 	local 	id_data	"`i2d2'\Data\Harmonized"
-
-
 
 /*****************************************************************************************************
 *                                                                                                    *
@@ -64,6 +62,7 @@
 
 ** DATABASE ASSEMBLENT
 use "`stata'\LFS2002-lab.dta"
+
 
 ** COUNTRY
 	gen ccode="TUR"
@@ -140,6 +139,7 @@ use "`stata'\LFS2002-lab.dta"
 	gen reg02=.
 	label var reg02 "Region at 1 digit (ADMN1)"
 
+
 ** REGIONAL AREA 2 DIGITS ADM LEVEL (ADMN2)
 	gen reg03=.
 	label var reg03 "Region at 2 digits (ADMN2)"
@@ -148,6 +148,8 @@ use "`stata'\LFS2002-lab.dta"
 ** REGIONAL AREA 3 DIGITS ADM LEVEL (ADMN2)
 	gen reg04=.
 	label var reg04 "Region at 3 digits (ADMN3)"
+
+
 
 
 ** HOUSE OWNERSHIP
@@ -306,8 +308,8 @@ use "`stata'\LFS2002-lab.dta"
 	label values literacy lblliteracy
 
 
-
 ** YEARS OF EDUCATION COMPLETED
+
 	gen educy=.
 	replace educy=0 if s9==0
 	replace educy=4 if s9==1
@@ -320,18 +322,15 @@ use "`stata'\LFS2002-lab.dta"
 
 
 ** EDUCATIONAL LEVEL 1
-	label var educy "Years of education"
-
-
-** EDUCATION LEVEL 2
 	gen edulevel1=.
 	label var edulevel1 "Level of education 1"
 	la de lbledulevel1 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete" 8 "Other" 9 "Unstated"
 	label values edulevel1 lbledulevel1
 
 
+** EDUCATION LEVEL 2
 	gen edulevel2=s9
-	recode edulevel2 (0=1) (1=2)(2=3) (3/5=4) (6=5) 
+	recode edulevel2 (0=1) (1=2)(2=3) (3/5=4) (6=5)
 	label var edulevel2 "Level of education 2"
 	la de lbledulevel2 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
 	label values edulevel2 lbledulevel2
@@ -343,8 +342,7 @@ use "`stata'\LFS2002-lab.dta"
 	label var edulevel3 "Level of education 3"
 	la de lbledulevel3 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values edulevel3 lbledulevel3
-	 
-	 
+
 
 /*****************************************************************************************************
 *                                                                                                    *
@@ -380,8 +378,7 @@ use "`stata'\LFS2002-lab.dta"
 	label var empstat "Employment status"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other"
 	label values empstat lblempstat
-	replace  empstat=. if lstatus!=1
-
+	replace empstat=. if lstatus!=1
 
 ** EMPLOYMENT STATUS LAST YEAR
 	gen byte empstat_year=.
@@ -389,6 +386,7 @@ use "`stata'\LFS2002-lab.dta"
 	label var empstat_year "Employment status during last year"
 	la de lblempstat_year 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat_year lblempstat_year
+
 
 
 ** NUMBER OF ADDITIONAL JOBS
@@ -423,7 +421,6 @@ use "`stata'\LFS2002-lab.dta"
 	label values nlfreason lblnlfreason
 	replace nlfreason=. if lstatus!=3
 
-
 ** UNEMPLOYMENT DURATION: MONTHS LOOKING FOR A JOB
 	gen unempldur_l=s40
 	replace unempldur_l=. if age<lb_mod_age & age!=. | lstatus!=2
@@ -445,7 +442,6 @@ Public Administration is not identified
 	la de lblindustry 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industry lblindustry
 	replace industry=. if age<lb_mod_age & age!=.
-	replace  industry=. if lstatus!=1
 
 
 ** INDUSTRY 1
@@ -468,13 +464,13 @@ Public Administration is not identified
 	label var occup "1 digit occupational classification"
 	label define occup 1 "Senior officials" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup occup
-	replace  occup=. if lstatus!=1
-
+	replace occup=. if lstatus!=1
 
 ** SURVEY SPECIFIC OCCUPATION CLASSIFICATION
 	gen occup_orig=s22kod
 	replace occup_orig=. if lstatus!=1
 	label var occup_orig "Original Occupational Codes"
+
 
 
 ** FIRM SIZE
@@ -483,36 +479,33 @@ Public Administration is not identified
 	replace firmsize_l=10 if s21==2
 	replace firmsize_l=25 if s21==3
 	replace firmsize_l=50 if s21==4
-	replace firmsize_l=. if age<lb_mod_age & age!=.
 	label var firmsize_l "Firm size (lower bracket)"
+	replace firmsize_l=. if lstatus!=1
 
 	gen firmsize_u=.
 	replace firmsize_u=9 if s21==1
 	replace firmsize_u=24 if s21==2
 	replace firmsize_u=49 if s21==3
 	replace firmsize_u=. if  s21==4
-	replace firmsize_u=. if age<lb_mod_age & age!=.
 	label var firmsize_u "Firm size (upper bracket)"
-
+	replace firmsize_u=. if lstatus!=1
 
 ** HOURS WORKED LAST WEEK
 	gen whours=s28a
 	label var whours "Hours of work in last week"
-	replace  whours=. if lstatus!=1
-
+	replace whours=. if lstatus!=1
 
 ** WAGES
-	gen wage=s32c
+	gen wage=.
 	label var wage "Last wage payment"
-	replace  wage=. if lstatus!=1
 
 
 ** WAGES TIME UNIT
-	gen unitwage=5
+	gen unitwage=.
 	label var unitwage "Last wages time unit"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly"
 	label values unitwage lblunitwage
-	replace  unitwage=. if lstatus!=1
+	replace unitwage=. if lstatus!=1
 
 
 ** EMPLOYMENT STATUS - SECOND JOB
@@ -578,7 +571,6 @@ Public Administration is not identified
 
 ** CONTRACT
 	gen contract=.
-	replace contract=. if age<lb_mod_age & age!=.
 	label var contract "Contract"
 	la de lblcontract 0 "Without contract" 1 "With contract"
 	label values contract lblcontract
@@ -721,9 +713,8 @@ Public Administration is not identified
 	keep ccode year intv_year month  idh idp wgt strata psu `keep'
 
 
- save "`id_data'\TUR_2002_LFS_v01_M_v01_A_I2D2.dta", replace
 
-
+ save "`id_data'\TUR_2002_LFS_V01_M_V01_A_I2D2.dta", replace
 
 
 

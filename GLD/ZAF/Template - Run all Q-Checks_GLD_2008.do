@@ -28,7 +28,7 @@ set varabbrev off, permanently
 *----------0.1: Set necessary paths
 
 * Path to harmonized .dta file
-global path_to_harmonization "Z:\GLD-Harmonization\573465_JT\ZAF\ZAF_2012_LFS\ZAF_2012_LFS_v01_M_v01_A_GLD\Data\Harmonized\ZAF_2012_QLFS_v01_M_v01_A_GLD.dta"
+global path_to_harmonization "Z:\GLD-Harmonization\573465_JT\ZAF\ZAF_2012_LFS\ZAF_2012_LFS_v01_M_v01_A_GLD\Data\Harmonized\ZAF_2012_QLFS_v01_M_v01_A_GLD_ALL.dta"
 
 * Path to other harmonized files for dynamic comparison
 * Leave as `" "' to skip this (no others or to be done later)

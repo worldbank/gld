@@ -54,7 +54,7 @@ global overall_count = `r(N)'
 local current_filename "`c(filename)'"
 local last_slash = strrpos("`current_filename'", "\")
 local current_filename = substr("`current_filename'", `last_slash' + 1, .)
-local check = regexm("`current_filename'", "^[a-zA-Z][a-zA-Z][a-zA-Z]_[0-9][0-9][0-9][0-9]_[a-zA-Z0-9-]+_[vV][0-9][0-9]_M_[vV][0-9][0-9]_A_[a-zA-Z]+\.dta")
+local check = regexm("`current_filename'", "^[a-zA-Z][a-zA-Z][a-zA-Z]_[0-9][0-9][0-9][0-9]_[a-zA-Z0-9-]+_[vV][0-9][0-9]_M_[vV][0-9][0-9]_A_[a-zA-Z][a-zA-Z][a-zA-Z]_[a-zA-Z]+\.dta")
 if `check' == 0 { // filename does not follow convention
 	post `memhold' ("Overall") ("FileName") ("Filename being checked does not follow naming convention") (.) (1)
 }
@@ -110,7 +110,7 @@ foreach var of global numeric_vars {
 foreach var of global string_vars {
 	cap confirm string variable `var'
 	if _rc != 0 & _rc != 111 { // If neither string nor absent in the dataset
-		post `memhold' ("Overall") ("`var'") ("A numeric var is not numeric") (.) (1)
+		post `memhold' ("Overall") ("`var'") ("A string var is not numeric") (.) (1)
 	}
 }
 
@@ -249,6 +249,17 @@ if _rc == 0 { // if var exists since if not captured in 1.1
 		post `memhold' ("Survey & ID") ("pid") ("pid is not unique. Distinct to total ratio ->") (`pid_unique_ratio') (1)
 	} // end if pid not unique
 } // end if _rc == 0
+
+*----------2.5: isic, isco, isced versions are strings w/o spaces
+foreach var of global int_class_versions {
+	cap confirm variable `var'
+	if _rc == 0 { // if var exists since if not captured in 1.1
+		qui : count if !ustrregexm(`var', "^(isco_1988|isco_2008|isic_2|isic_3|isic_3\.1|isic_4|isced_1976|isced_1997|isced_2011)$")
+		if `r(N)' > 0 { // not defined as in the possible options
+			post `memhold' ("Survey & ID") ("`var'") ("Variable `var' is not correctly defined") (.) (1)
+		} // end if not correctly defined
+	} // end if _rc == 0
+}
   
 /*==================================================
               3: Consistency Geography Module
@@ -639,45 +650,71 @@ if _rc == 0 { // if pair of vars exists, else captured in 1.1
 } // end vars exist
 
 
+
 *----------8.15: Overall income w/o comp cannot be smaller than either 7 day or 12 month w/o comp income
 * 7 day
-cap confirm variable t_wage_nocompen_total // if this exists then laborincome needs to exist, so no checking
+cap confirm variable t_wage_nocompen_total // if this exists then laborincome needs to exist, both annualized data
 if _rc == 0 {
-	qui : count if linc_nc < t_wage_nocompen_total | (missing(linc_nc) & !missing(t_wage_nocompen_total)) // since if missing byt t_wage_total exists, that does not evaluate true for the first (missing is larger) but would be odd.
-	if `r(N)' > 0 { // Odd cases
-		post `memhold' ("Labour") ("linc_nc & t_wage_nocompen_total") ("7 day recall total income w/o comp is smaller than any total income w/o comp (number of cases ->)") (`r(N)') (1)
-	}
-}
+	cap confirm variable linc_nc
+	if _rc == 0 {
+		qui : count if linc_nc < t_wage_nocompen_total | (missing(linc_nc) & !missing(t_wage_nocompen_total)) // since if missing byt t_wage_total exists, that does not evaluate true for the first (missing is larger) but would be odd.
+		if `r(N)' > 0 { // Odd cases
+			post `memhold' ("Labour") ("linc_nc & t_wage_nocompen_total") ("7 day recall total income w/o comp is smaller than any total income w/o comp (number of cases ->)") (`r(N)') (1)
+		} // end odd case
+	} // end _rc == 0 on linc_nc
+	else {
+		post `memhold' ("Labour") ("linc_nc & t_wage_nocompen_total") ("Variable t_wage_nocompen_total is in data but not linc_nc") (.) (1)
+	} // end else (linc_nc not there)
+} // end _rc == 0 on t_wage_nocompen_total
 
 * 12 month
-cap confirm variable t_wage_nocompen_total_year // if this exists then laborincome needs to exist, so no checking
+cap confirm variable t_wage_nocompen_total_year // if this exists then laborincome needs to exist, both annualized data
 if _rc == 0 {
-	qui : count if linc_nc < t_wage_nocompen_total_year | (missing(linc_nc) & !missing(t_wage_nocompen_total_year)) // since if missing byt t_wage_total exists, that does not evaluate true for the first (missing is larger) but would be odd.
-	if `r(N)' > 0 { // Odd cases
-		post `memhold' ("Labour") ("linc_nc & t_wage_nocompen_total_year") ("12 month recall total income w/o comp is smaller than any total income w/o comp (number of cases ->)") (`r(N)') (1)
-	}
-}
+	cap confirm variable linc_nc
+	if _rc == 0 {
+		qui : count if linc_nc < t_wage_nocompen_total_year | (missing(linc_nc) & !missing(t_wage_nocompen_total_year)) // since if missing byt t_wage_total exists, that does not evaluate true for the first (missing is larger) but would be odd.
+		if `r(N)' > 0 { // Odd cases
+			post `memhold' ("Labour") ("linc_nc & t_wage_nocompen_total_year") ("12 month recall total income w/o comp is smaller than any total income w/o comp (number of cases ->)") (`r(N)') (1)
+		} // end odd case
+	} // end _rc == 0 on linc_nc
+	else {
+		post `memhold' ("Labour") ("linc_nc & t_wage_nocompen_total") ("Variable t_wage_nocompen_total_year is in data but not linc_nc") (.) (1)
+	} // end else (linc_nc not there)
+} // end _rc == 0 on t_wage_nocompen_total_year
 
 
 
 *----------8.16: Overall income w/ comp cannot be smaller than either 7 day or 12 month w/ comp income
 * 7 day
-cap confirm variable t_wage_total // if this exists then laborincome needs to exist, so no checking
+cap confirm variable t_wage_total // if this exists then laborincome needs to exist, both annualized data
 if _rc == 0 {
-	qui : count if laborincome < t_wage_total | (missing(laborincome) & !missing(t_wage_total)) // since if missing byt t_wage_total exists, that does not evaluate true for the first (missing is larger) but would be odd.
-	if `r(N)' > 0 { // Odd cases
-		post `memhold' ("Labour") ("laborincome & t_wage_total") ("7 day recall total income w/o comp is smaller than any total income w/o comp (number of cases ->)") (`r(N)') (1)
-	}
-}
+	cap confirm variable laborincome
+	if _rc == 0 {
+		qui : count if laborincome < t_wage_total | (missing(laborincome) & !missing(t_wage_total)) // since if missing byt t_wage_total exists, that does not evaluate true for the first (missing is larger) but would be odd.
+		if `r(N)' > 0 { // Odd cases
+			post `memhold' ("Labour") ("laborincome & t_wage_total") ("7 day recall total income w/ comp is smaller than any total income w/ comp (number of cases ->)") (`r(N)') (1)
+		} // end odd case
+	} // end _rc == 0 on laborincome
+	else {
+		post `memhold' ("Labour") ("laborincome & t_wage_total") ("Variable t_wage_total is in data but not laborincome") (.) (1)
+	} // end else (laborincome not there)
+} // end _rc == 0 on t_wage_total
 
 * 12 month
-cap confirm variable t_wage_total_year // if this exists then laborincome needs to exist, so no checking
+cap confirm variable t_wage_total_year // if this exists then laborincome needs to exist, both annualized data
 if _rc == 0 {
-	qui : count if laborincome < t_wage_total_year | (missing(laborincome) & !missing(t_wage_total_year)) // since if missing byt t_wage_total exists, that does not evaluate true for the first (missing is larger) but would be odd.
-	if `r(N)' > 0 { // Odd cases
-		post `memhold' ("Labour") ("laborincome & t_wage_total_year") ("12 month recall total income w/ comp is smaller than any total income w/ comp (number of cases ->)") (`r(N)') (1)
-	}
-}
+	cap confirm variable laborincome
+	if _rc == 0 {
+		qui : count if laborincome < t_wage_total_year | (missing(laborincome) & !missing(t_wage_total_year)) // since if missing byt t_wage_total exists, that does not evaluate true for the first (missing is larger) but would be odd.
+		if `r(N)' > 0 { // Odd cases
+			post `memhold' ("Labour") ("laborincome & t_wage_total_year") ("12 month recall total income w/ comp is smaller than any total income w/ comp (number of cases ->)") (`r(N)') (1)
+		} // end odd case
+	} // end _rc == 0 on laborincome
+	else {
+		post `memhold' ("Labour") ("laborincome & t_wage_total_year") ("Variable t_wage_total_year is in data but not laborincome") (.) (1)
+	} // end else (laborincome not there)
+} // end _rc == 0 on t_wage_total_year
+
 
 
 *----------8.17: Check ISIC code is length 1 (Letter) or length 4 (4 digit code)
@@ -698,17 +735,20 @@ foreach var of global isic_check {
 
 *----------8.18: Check ISCO codes
 foreach var of global isco_check {
-	cap confirm numeric variable `var'
-	if _rc == 0 { // if vars exist, else captured in 1.1
+	cap confirm string variable `var'
+	if _rc == 0 { // if vars exist, is string (if not , captured in section 1)
 	
-		qui : count if (`var' < 1000 | `var' > 9999) & !missing(`var')
-		if `r(N)' > 0 { // Non missing value of fewer or more than three digits
+		gen check_isco_length = length(`var') 
+		replace check_isco_length = . if missing(`var')
+		qui : count if check_isco_length != 4 & !missing(check_isco_length)
+		if `r(N)' > 0 { // Non missing values other than 4 exist
 		
-			post `memhold' ("Labour") ("`var'") ("ISCO code is not four digits (number of cases ->)") (`r(N)') (1)
-		
-		} // end recording of odd cases
-	} // end var exists as numeric
+		post `memhold' ("Labour") ("`var'") ("ISC0 code is not of length 4 (digits) (number of cases ->)") (`r(N)') (1)
+		} // end recording odd cases
+	drop check_isco_length
+	} // end var exists as string
 } // end loop over isco code vars
+
 
 
 /*==================================================

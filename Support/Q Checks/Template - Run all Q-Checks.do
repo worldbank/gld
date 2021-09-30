@@ -1,7 +1,7 @@
 /*==================================================
 project:       Template to run Q checks for GLD
-Author:        Mario Gronert 
-E-email:       mgronert@worldbank.org
+Author:        World Bank Jobs Group 
+E-email:       gld@worldbank.org
 url:           
 Dependencies:  distinct, mdesc
 ----------------------------------------------------
@@ -36,8 +36,8 @@ global path_to_harmonization "[YOUR PATHFILE TO HARMONIZED DATA FILE]"
 * global path_to_other_harmonization `" "Path 1" "Path 2" ... "' Note the space between `" and "Path 1"
 global path_to_other_harmonization `" "' 
 
-* Survey ID as per CCC_YYYY_[Survey-Name]_v##_M_v##_A_GLD convention
-global survey_id "CCC_YYYY_Survey-Name_V0X_M_V0Z_A_GLD"
+* Survey ID as per CCC_YYYY_[Survey-Name]_v##_M_v##_A_GLD_[ALL] convention
+global survey_id "CCC_YYYY_Survey-Name_V0X_M_V0Z_A_GLD_[ALL]"
 
 * Path to folder to hold output
 global path_to_output_folder "[YOUR PATHFILE TO FOLDER THAT SHOULD HOLD Q-CHECK OUTPUT]"

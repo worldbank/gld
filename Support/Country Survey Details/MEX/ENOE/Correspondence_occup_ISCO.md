@@ -34,7 +34,7 @@ The most difficult case is the case in the red box. Here SINCO code `1524` descr
 
 ### Direct SINCO to ISCO mapping
 
-In the easiest case, we use the SINCO to ISIC correspondence and create a map for every four-digit SINCO code, following the logic outlined above. Note that not all SINCO codes appear to have a correspondence. The case of SINCO code `2421` of biomedical engineers (red box in the image below) is described by INEGI as having no correspondence in ISCO. This code is therefore not mapped.
+In the easiest case, we use the SINCO to ISCO correspondence and create a map for every four-digit SINCO code, following the logic outlined above. Note that not all SINCO codes appear to have a correspondence. The case of SINCO code `2421` of biomedical engineers (red box in the image below) is described by INEGI as having no correspondence in ISCO. This code is therefore not mapped.
 
 <br></br>
 ![](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/sinco_isco_ing_biomed.png)
@@ -48,7 +48,7 @@ The more difficult case is for surveys between 2005 and 2012. Here we first use 
 ![](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/cmo_sinco_171.png)
 <br></br>
 
-The second step is to map from SINCO to ISIC. For four-digit matchings we can use the process used above, but for less accurate ones, new SINCO to ISIC mappings need to be made: in the example above, CMO code 6160 is mapped to SINCO `1710`, but there is no SINCO to ISIC mapping to `1710`.
+The second step is to map from SINCO to ISCO. For four-digit matchings we can use the process used above, but for less accurate ones, new SINCO to ISCO mappings need to be made: in the example above, CMO code 6160 is mapped to SINCO `1710`, but there is no SINCO to ISCO mapping to `1710`.
 
 Applying the mapping logic explained above to codes that start with `171` gives us five potential matches (see image below). The iterative process would reduce to two digits, `12` and `14`, with 40% of cases starting with `12` and 60% starting with `14`. Since at the two-digit stage a match is made if there is a single maximum over 50%, SINCO code `1710` would be mapped to ISCO-08 code `1400`.
 
