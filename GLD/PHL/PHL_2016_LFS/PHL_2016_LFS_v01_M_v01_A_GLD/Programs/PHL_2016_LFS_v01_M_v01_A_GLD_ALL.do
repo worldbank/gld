@@ -1089,9 +1089,6 @@ foreach v of local ed_var {
 
 	Conversion 2: convert all ISCO revisions to ISCO 2008
 
-
-	However, wave1 conversion cannot be done because we do not have a PSOC-> ISCO conversion table.
-	Therefore, the data for wave 1 will be left as missing.
 */
 
 	loc matchvar   	pufc14_procc
@@ -1116,17 +1113,30 @@ foreach v of local ed_var {
 				, format(`"%02.0f"') replace
 
 	replace 	psic_2dig = "" 	if psic_2dig == "." 	// fix missing
+	replace 	psic_2dig = "" 	if wave == "Q1"			// ensure to only match waves 2-4
 
-	// merge with isco12 key
+	// merge with isco12 key (for waves2-4)
 	merge 		m:1 ///
 				psic_2dig ///
 				using `isco_key12' ///
 				, generate(isco_merge12_`n') ///
 				keep(master match) // "left join"; remove obs that don't match from using
 
-	rename 		psic_2dig psoc92 				// rename for second merge
 
-	// merge with isco92 key
+	// merge with isco92 key (for wave 1)
+	* now the missing obs in psic_2dig are those in waves 2-4 that didn't match isco12 and
+	* all obs in wave1
+
+	** create an identical variable that is only non-missing for wave1
+	gen psoc92 = `matchvar'
+
+	tostring 	psoc92 ///
+				, format(`"%02.0f"') replace
+
+	replace 	psoc92 = "" 	if psoc92 == "." 	// fix missing
+	replace 	psoc92 = "" 	if wave != "Q1"			// ensure to only match waves 2-4
+
+
 	merge 		m:1 ///
 				psoc92 ///
 				using `isco_key92' ///
@@ -1137,7 +1147,7 @@ foreach v of local ed_var {
 	// coalese 2 variables
 	egen 		str2 occup_isco_`n' = rowfirst(isco08_2dig sub_major_isco08)
 
-	drop 		psoc92 			// no longer needed, maintained in matchvar
+	drop 		psoc92 psic_2dig			// drop both; no longer needed, maintained in matchvar
 
 	gen 		occup_isco = occup_isco_`n'
 	label var 	occup_isco "ISIC code of primary job 7 day recall"
@@ -1437,17 +1447,29 @@ foreach v of local ed_var {
 				, format(`"%02.0f"') replace
 
 	replace 	psic_2dig = "" 	if psic_2dig == "." 	// fix missing
+	replace 	psic_2dig = ""	if wave == "Q1" 		// we only want to match Q1
 
-	// merge with isco12 key
+	// merge with isco12 key (for waves 2-4)
 	merge 		m:1 ///
 				psic_2dig ///
 				using `isco_key12' ///
 				, generate(isco_merge12_`n') ///
 				keep(master match) // "left join"; remove obs that don't match from using
 
-	rename 		psic_2dig psoc92 				// rename for second merge
+	// merge with isco92 key (for wave 1)
+	* now the missing obs in psic_2dig are those in waves 2-4 that didn't match isco12 and
+	* all obs in wave1
 
-	// merge with isco92 key
+	** create an identical variable that is only non-missing for wave1
+	gen psoc92 = `matchvar'
+
+	tostring 	psoc92 ///
+				, format(`"%02.0f"') replace
+
+	replace 	psoc92 = "" 	if psoc92 == "." 	// fix missing
+	replace 	psoc92 = "" 	if wave != "Q1"			// ensure to only match waves 2-4
+
+
 	merge 		m:1 ///
 				psoc92 ///
 				using `isco_key92' ///
@@ -1458,7 +1480,7 @@ foreach v of local ed_var {
 	// coalese 2 variables
 	egen 		str2 occup_isco_`n' = rowfirst(isco08_2dig sub_major_isco08)
 
-	drop 		psoc92 				// no longer needed, maintained in matchvar
+	drop 		psoc92 psic_2dig				// no longer needed, maintained in matchvar
 
  label var 	occup_isco_2 "ISIC code of secondary job 7 day recall"
 *</_occup_isco_2_>
