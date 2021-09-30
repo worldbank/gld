@@ -20,7 +20,8 @@ if (TRUE) {
 #   excpet for 2005 Q3 and 2005 Q4
 sum.w.a <- phl %>%
   group_by(year, wave) %>%
-  summarise(weight = median(weight, na.rm = TRUE))
+  summarise(weight_median = median(weight, na.rm = TRUE),
+            weight_mean   = mean(weight, na.rm = TRUE))
 
 
 
@@ -40,12 +41,14 @@ phl2 <- phl %>%
 # update sum.w
 weight.adj <- phl2 %>%
   group_by(year, wave) %>%
-  summarise(weight_corrected = median(weight2, na.rm = TRUE))
+  summarise(weight_median_corrected = round(median(weight2, na.rm = TRUE)),
+            weight_mean_corrected   = round(mean(weight2, na.rm = TRUE)))
 
 sum.w <- sum.w.a %>%
   left_join(weight.adj, by = c("year", "wave")) %>%
   mutate(weight = round(weight), 
-         weight_corrected = round(weight_corrected))
+         weight_median_corrected = weight_median_corrected,
+         weight_mean_corrected   = weight_mean_corrected)
 
 
 

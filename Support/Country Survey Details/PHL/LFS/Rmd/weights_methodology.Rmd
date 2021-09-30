@@ -79,15 +79,15 @@ All PSA figures have been referred to at either:
 
 #### Import the GLD Data
 
-We load tidyverse and the previously appended GLD output data for all survey years,
-1997 - 2019.
+We load tidyverse and the previously appended GLD output data for all
+survey years, 1997 - 2019.
 
 ```{r, echo=FALSE}
 library(tidyverse)
 load(file = file.path(PHL, "PHL_data/GLD/population.Rdata"))
 ```
 
-#### Determine which years and rounds need adjustment 
+#### Determine which years and rounds need adjustment
 
 It turns out that not all of the weight variables are uniform in how
 they scale the data by year or wave, even though the correct weight
@@ -97,7 +97,8 @@ will need to be done. Let's take a look.
 ```{r, max.height = '150px'}
 sum.w.a <- phl %>%
   group_by(year, wave) %>%
-  summarise(weight = round(median(weight, na.rm = TRUE)))
+  summarise(weight_median = median(weight, na.rm = TRUE),
+            weight_mean   = mean(weight, na.rm = TRUE))
 
 sum.w.a %>% print(n=Inf)
 ```
@@ -129,7 +130,8 @@ and add it to the `sum.w.a`.
 # create `weight_corrected` vector
 weight.adj <- phl2 %>%
   group_by(year, wave) %>%
-  summarise(weight_corrected = round(median(weight2, na.rm = TRUE)))
+  summarise(weight_median_corrected = round(median(weight2, na.rm = TRUE)),
+            weight_mean_corrected   = round(mean(weight2, na.rm = TRUE)))
 
 weight.adj %>% print(n=Inf)
 ```
@@ -139,7 +141,8 @@ weight.adj %>% print(n=Inf)
 sum.w <- sum.w.a %>%
   left_join(weight.adj, by = c("year", "wave")) %>%
   mutate(weight = round(weight), 
-         weight_corrected = round(weight_corrected))
+         weight_median_corrected = weight_median_corrected,
+         weight_mean_corrected   = weight_mean_corrected)
 
 sum.w %>% print(n=Inf)
 ```
@@ -277,7 +280,10 @@ sum.15.y <- sum.15.y %>%
 
 We see that our scaling method has produced a weight variable, `weight2`
 that generates population and labor force figures that are very
-consistent with those published by the PSA. All but two, or 21 of 23 years, pass our self-imposed consistency tests. EVen so, the data for these two years that do not pass are still within reasonable margins of error. 
+consistent with those published by the PSA. All but two, or 21 of 23
+years, pass our self-imposed consistency tests. EVen so, the data for
+these two years that do not pass are still within reasonable margins of
+error.
 
 ### Graphs
 
@@ -294,6 +300,7 @@ gg.pop <- ggplot(sum.15.y, aes(year, dif_pop_15up)) +
 
 gg.pop
 ```
+
 ```{r}
 gg.lfp <- ggplot(sum.15.y, aes(year, dif_lfp_15up)) +
   geom_col(aes(fill = flag_lfp_2pct)) +
@@ -305,4 +312,3 @@ gg.lfp <- ggplot(sum.15.y, aes(year, dif_lfp_15up)) +
 
 gg.lfp
 ```
-
