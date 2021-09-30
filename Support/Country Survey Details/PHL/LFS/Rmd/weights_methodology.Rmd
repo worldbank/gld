@@ -106,7 +106,7 @@ they scale the data by year or wave, even though the correct weight
 variable was selected. This could throw off our results. So some scaling
 will need to be done. Let's take a look.
 
-```{r, max.height = '150px'}
+```{r, max.height = '200px'}
 sum.w.a <- phl %>%
   group_by(year, wave) %>%
   summarise(weight_median = median(weight, na.rm = TRUE),
@@ -150,7 +150,7 @@ Now that we have `weight2` in our new `phl2` object that's adjusted,
 tentatively, let's add a by-quarter summary of this new weight variable
 and add it to the `sum.w.a`.
 
-```{r, max.height = '150px'}
+```{r, max.height = '200px'}
 # create `weight_corrected` vector
 weight.adj <- phl2 %>%
   group_by(year, wave) %>%
@@ -160,12 +160,11 @@ weight.adj <- phl2 %>%
 weight.adj %>% print(n=Inf)
 ```
 
-```{r, max.height = '150px'}
+```{r, max.height = '200px'}
 # join to original weight summary object
 sum.w <- sum.w.a %>%
   left_join(weight.adj, by = c("year", "wave")) %>%
-  mutate(weight = round(weight), 
-         weight_median_corrected = weight_median_corrected,
+  mutate(weight_median_corrected = weight_median_corrected,
          weight_mean_corrected   = weight_mean_corrected)
 
 sum.w %>% print(n=Inf)
@@ -183,7 +182,7 @@ with `weight2`
 We could use the total population, but the PSA provides their figures
 for ages 15 and above. So we'll make two versions, just in case.
 
-```{r, max.height = '150px'}
+```{r, max.height = '200px'}
 # Whole population
 sum.y <- phl2 %>%
   group_by(year) %>%
@@ -197,7 +196,7 @@ sum.y %>% print(n=Inf)
 Note that we filter out all observations below the age of 15 for the
 second object.
 
-```{r, max.height = '150px'}
+```{r, max.height = '200px'}
 # for those 15 and over (inclusive)
 sum.15.y <- phl2 %>%
   filter(age >= 15) %>%

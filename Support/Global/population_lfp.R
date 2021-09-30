@@ -46,8 +46,7 @@ weight.adj <- phl2 %>%
 
 sum.w <- sum.w.a %>%
   left_join(weight.adj, by = c("year", "wave")) %>%
-  mutate(weight = round(weight), 
-         weight_median_corrected = weight_median_corrected,
+  mutate(weight_median_corrected = weight_median_corrected,
          weight_mean_corrected   = weight_mean_corrected)
 
 
