@@ -1,18 +1,33 @@
 library(tidyverse)
+library(here)
 
+# directory
+here::i_am("main.R")
+
+source(here("main.R"))
 source(file.path(code, "Global/import_surveys.R"))
 
-phl <- import_surveys(PHL,
-                      vars = c("weight", "lstatus", "wave", "age",
-                               "industrycat_isic", "occup_isco"))
-
-# replace "" with NA
-phl <- phl %>% 
-  mutate(across(.cols = c("industrycat_isic", "occup_isco"), ~ na_if(., "")))
-
-if (TRUE) {
-  save(phl, file = file.path(PHL, "PHL_data/GLD/population.Rdata"))
+if (FALSE) {
+  # import all surveys
+  phl <- import_surveys(PHL,
+                        vars = c("weight", "lstatus", "wave", "age",
+                                 "industrycat_isic", "occup_isco"))
+  
+  # replace "" with NA
+  phl <- phl %>% 
+    mutate(across(.cols = c("industrycat_isic", "occup_isco"), ~ na_if(., "")))
+  
+  # save
+  if (TRUE) {
+    save(phl, file = file.path(PHL, "PHL_data/GLD/population.Rdata"))
+  }
 }
+
+# load data
+if (TRUE) {
+  load(file = file.path(PHL, "PHL_data/GLD/population.Rdata"))
+}
+
 
 
 # determine when to scale weight 
