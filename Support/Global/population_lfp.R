@@ -18,8 +18,9 @@ if (FALSE) {
     mutate(across(.cols = c("industrycat_isic", "occup_isco"), ~ na_if(., "")))
   
   # save
-  if (TRUE) {
-    save(phl, file = file.path(PHL, "PHL_data/GLD/population.Rdata"))
+  # warning! careful to not overwrite orignal weight file.
+  if (FALSE) {
+    save(phl, file = file.path(PHL, "PHL_data/GLD/population_.Rdata"))
   }
 }
 
