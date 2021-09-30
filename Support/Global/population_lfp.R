@@ -46,8 +46,7 @@ weight.adj <- phl2 %>%
 
 sum.w <- sum.w.a %>%
   left_join(weight.adj, by = c("year", "wave")) %>%
-  mutate(weight = round(weight), 
-         weight_median_corrected = weight_median_corrected,
+  mutate(weight_median_corrected = weight_median_corrected,
          weight_mean_corrected   = weight_mean_corrected)
 
 
@@ -141,7 +140,7 @@ sum.15.y <- sum.15.y %>%
     err_pop_15up = (dif_pop_15up/pop_15up),
     err_lfp_15up = (dif_lfp_15up/lfp_15up),
     flag_pop_5pct= (err_pop_15up >= 0.05),
-    flag_lfp_2pct= (err_lfp_15up >= 0.02)
+    flag_lfp_2pct= (err_lfp_15up >= 0.05)
   ) 
 
 # export summary objects only
