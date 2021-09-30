@@ -4,7 +4,7 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				Indonesia_1990_Sakernas_v01_M_v01_A_GLD.do </_Program name_>
+<_Program name_>				IDN_1990_Sakernas_v01_M_v01_A_GLD.do </_Program name_>
 <_Application_>					Stata MP 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
 <_Date created_>				2021-07-23 </_Date created_>
