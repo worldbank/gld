@@ -1172,14 +1172,16 @@ foreach v of local ed_var {
 		}
 
 
-	// merge sub-module with isic 4 dig key
+	// merge sub-module with isic 4 dig key (for waves 2)
 
 	gen class = `matchvar'
 	tostring 	class ///
 				, format(`"%04.0f"') replace
 
-	replace 	class = "" if wave != "Q2"
+	replace 	class = "" if class == "." // fix missing
+	replace 	class = "" if wave != "Q2" // only match second wave
 
+	// merge with isic
 	merge 		m:1 ///
 				class ///
 				using `isic_key' ///
@@ -1191,11 +1193,16 @@ foreach v of local ed_var {
 	rename 		isic4	isic4_`n'
 	replace 	isic4_`n' = "6810" 	if `matchvar' == 6819
 
-	// merge with 2 digit key
+	* now the missing obs in class are those in waves 2 that didn't match isco12 and
+	* all obs in wave1, 3,4
+
+
+	// merge with 2 digit key (for waves 1, 3,4)
 	gen 		psic_2dig = `matchvar'
 	tostring 	psic_2dig ///
 				, format(`"%02.0f"') replace
 
+	replace 	psic_2dig = "" if psic_2dig == "." // fix missing
 	replace 	psic_2dig = "" if wave == "Q2" // merge only for q2
 
 	merge 		m:1 ///
@@ -1314,12 +1321,13 @@ foreach v of local ed_var {
 		}
 
 
-	// merge sub-module with isco key
+	// merge sub-module with isco key (wave 2 only)
 
 	gen unit = `matchvar'
 	tostring 	unit ///
 				, format(`"%04.0f"') replace
 
+	replace 	unit = "" if unit == "." // fix missing
 	replace 	unit = "" if wave != "Q2" // merge only for q2
 
 	merge 		m:1 ///
@@ -1333,13 +1341,14 @@ foreach v of local ed_var {
 	rename 		isco08	isco08_`n'
 	replace 	isco08_`n' = "6810" 	if `matchvar' == 6819
 
-	// merge with 2 digit key
+	// merge with 2 digit key (waves 1, 3,4)
 	drop 		unit
 
 	gen psic_2dig = `matchvar'
 	tostring 	psic_2dig ///
 				, format(`"%02.0f"') replace
 
+	replace 	psic_2dig = "" if psic_2dig == "." // fix missing
 	replace 	psic_2dig = "" if wave == "Q2" // don't merge q2
 
 
@@ -1564,12 +1573,13 @@ foreach v of local ed_var {
 		}
 
 
-	// merge sub-module with isic key
+	// merge sub-module with isic key (for wave 2 only)
 
 	gen class = `matchvar'
 	tostring 	class ///
 				, format(`"%04.0f"') replace
 
+	replace 	class = "" if class == "." // fix missing
 	replace 	class = "" if wave != "Q2" // only match second wave at 4 digits
 
 	merge 		m:1 ///
@@ -1583,11 +1593,12 @@ foreach v of local ed_var {
 	rename 		isic4	isic4_`n'
 	replace 	isic4_`n' = "6810" 	if `matchvar' == 6819
 
-	// merge with 2 digit key
+	// merge with 2 digit key (for waves 1,3,4)
 	gen 		psic_2dig = `matchvar'
 	tostring 	psic_2dig ///
 				, format(`"%02.0f"') replace
 
+	replace 	psic_2dig = "" if psic_2dig == "." // fix missing
 	replace 	psic_2dig = "" if wave == "Q2" // merge only for q2
 
 	merge 		m:1 ///
