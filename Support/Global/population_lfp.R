@@ -18,15 +18,15 @@ if (FALSE) {
     mutate(across(.cols = c("industrycat_isic", "occup_isco"), ~ na_if(., "")))
   
   # save
-  # warning! careful to not overwrite orignal weight file.
+  # warning! careful to not overwrite original weight file.
   if (FALSE) {
-    save(phl, file = file.path(PHL, "PHL_data/GLD/population_.Rdata"))
+    save(phl, file = file.path(PHL, "PHL_data/GLD/population_unscaled_weights.Rdata"))
   }
 }
 
 # load data
 if (TRUE) {
-  load(file = file.path(PHL, "PHL_data/GLD/population.Rdata"))
+  load(file = file.path(PHL, "PHL_data/GLD/population_unscaled_weight.Rdata"))
 }
 
 
