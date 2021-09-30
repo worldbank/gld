@@ -105,7 +105,19 @@ sum.w.a %>% print(n=Inf)
 
 #### Adjust the weights accordingly
 
-Scaling these "high" waves by 10,000 should fix this.
+From working with the Philippines LFS data, we know that scaling down
+these "high" weights by 10,000 typically puts the higher-valued weights
+in line with the other weight values. Let's scale the appropriate years
+and waves, then check.
+
+Also, we'll create `partic` , a binary indicator for labor force
+participation. We'll create it from the GLD variable `lstatus`: a
+categorical variable that takes three non-missing values. In our case,
+any non-missing value but `3` / `"Non-Labor Force"` will be coded as
+`partic == TRUE` . Then, `3` / `"Non-Labor Force"` will be coded as
+`partic == FALSE` . In the case of the Philippines, `lstatus` is coded
+directly from variable data provided by the PSA; when available in the
+survey, we always use the ILO definition of employment status.
 
 ```{r, echo=FALSE}
 # create a weight-adjusted objected
@@ -281,9 +293,13 @@ sum.15.y <- sum.15.y %>%
 We see that our scaling method has produced a weight variable, `weight2`
 that generates population and labor force figures that are very
 consistent with those published by the PSA. All but two, or 21 of 23
-years, pass our self-imposed consistency tests. EVen so, the data for
+years, pass our self-imposed consistency tests. Even so, the data for
 these two years that do not pass are still within reasonable margins of
-error.
+error. What is more, labor force participation rate for these same years
+appears to be nearly identical with the PSA figures. The case of years
+2013-2014 and the summary data as a whole suggest that any issues with
+the weight variable are likely reflected in final measurements of
+magnitude and more than ratios.
 
 ### Graphs
 
