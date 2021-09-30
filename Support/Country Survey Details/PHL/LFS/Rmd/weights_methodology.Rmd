@@ -20,7 +20,7 @@ knit: (function(input, ...) {
 ```{r setup, include=FALSE}
 # thanks to https://bookdown.org/yihui/rmarkdown-cookbook/hook-scroll.html, this will allow for output scrolling when
 # max.height is set.
-options(width = 60)
+options(width = 80)
 options(dplyr.summarise.inform = FALSE)
 
 knitr::opts_chunk$set(echo = TRUE)
@@ -296,7 +296,7 @@ sum.15.y <- sum.15.y %>%
     err_pop_15up = (dif_pop_15up/pop_15up),
     err_lfp_15up = (dif_lfp_15up/lfp_15up),
     flag_pop_5pct= (err_pop_15up >= 0.05),
-    flag_lfp_2pct= (err_lfp_15up >= 0.02)
+    flag_lfp_2pct= (err_lfp_15up >= 0.05)
   ) 
 
 ```
@@ -321,10 +321,11 @@ We can visualize our final results below
 ```{r}
 gg.pop <- ggplot(sum.15.y, aes(year, err_pop_15up)) +
   geom_col(aes(fill = flag_pop_5pct)) +
-  scale_y_continuous(labels = scales::label_percent(), limits = c(0,1)) +
+  scale_y_continuous(labels = scales::label_percent(), limits = c(0,0.2)) +
   labs(title = "Relative Error in GLD vs PSA Popupation 15yrs and Older",
        y = "Relative Error",
-       x = "Year") +
+       x = "Year",
+       fill= "Error >= 5%") +
   theme_minimal()
 
 gg.pop
@@ -333,10 +334,11 @@ gg.pop
 ```{r}
 gg.lfp <- ggplot(sum.15.y, aes(year, err_lfp_15up)) +
   geom_col(aes(fill = flag_lfp_2pct)) +
-  scale_y_continuous(labels = scales::label_percent(), limits = c(-1, 1)) +
+  scale_y_continuous(labels = scales::label_percent(), limits = c(-0.1, 0.2)) +
   labs(title = "Relative Error in GLD vs PSA Labor Force Participation 15yrs and Older",
        y = "Relative Error",
-       x = "Year") +
+       x = "Year",
+       fill= "Error >= 5%") +
   theme_minimal()
 
 gg.lfp
