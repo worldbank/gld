@@ -232,7 +232,7 @@ if (`cb_pause' == 1) {
 ** HOUSEHOLD WEIGHTS
 	/* The weight variable will be divided by the number of rounds per year to ensure the
 	   weighting factor does not over-mutliply*/
-	gen double wgt= rfadj/(`n_round')
+	gen double wgt= rfadj/ (1 * 10000)  // inverse scaling by [no. rounds]*[10 000]. See "weights_methodology.Rmd"
 	label var wgt "Household sampling weight"
 
 

@@ -1,18 +1,34 @@
 library(tidyverse)
+library(here)
 
+# directory
+here::i_am("main.R")
+
+source(here("main.R"))
 source(file.path(code, "Global/import_surveys.R"))
 
-phl <- import_surveys(PHL,
-                      vars = c("weight", "lstatus", "wave", "age",
-                               "industrycat_isic", "occup_isco"))
-
-# replace "" with NA
-phl <- phl %>% 
-  mutate(across(.cols = c("industrycat_isic", "occup_isco"), ~ na_if(., "")))
-
-if (TRUE) {
-  save(phl, file = file.path(PHL, "PHL_data/GLD/population.Rdata"))
+if (FALSE) {
+  # import all surveys
+  phl <- import_surveys(PHL,
+                        vars = c("weight", "lstatus", "wave", "age",
+                                 "industrycat_isic", "occup_isco"))
+  
+  # replace "" with NA
+  phl <- phl %>% 
+    mutate(across(.cols = c("industrycat_isic", "occup_isco"), ~ na_if(., "")))
+  
+  # save
+  # warning! careful to not overwrite original weight file.
+  if (FALSE) {
+    save(phl, file = file.path(PHL, "PHL_data/GLD/population_unscaled_weights.Rdata"))
+  }
 }
+
+# load data
+if (TRUE) {
+  load(file = file.path(PHL, "PHL_data/GLD/population_unscaled_weight.Rdata"))
+}
+
 
 
 # determine when to scale weight 
@@ -20,7 +36,8 @@ if (TRUE) {
 #   excpet for 2005 Q3 and 2005 Q4
 sum.w.a <- phl %>%
   group_by(year, wave) %>%
-  summarise(weight = median(weight, na.rm = TRUE))
+  summarise(weight_median = median(weight, na.rm = TRUE),
+            weight_mean   = mean(weight, na.rm = TRUE))
 
 
 
@@ -40,12 +57,13 @@ phl2 <- phl %>%
 # update sum.w
 weight.adj <- phl2 %>%
   group_by(year, wave) %>%
-  summarise(weight_corrected = median(weight2, na.rm = TRUE))
+  summarise(weight_median_corrected = round(median(weight2, na.rm = TRUE)),
+            weight_mean_corrected   = round(mean(weight2, na.rm = TRUE)))
 
 sum.w <- sum.w.a %>%
   left_join(weight.adj, by = c("year", "wave")) %>%
-  mutate(weight = round(weight), 
-         weight_corrected = round(weight_corrected))
+  mutate(weight_median_corrected = weight_median_corrected,
+         weight_mean_corrected   = weight_mean_corrected)
 
 
 
@@ -102,10 +120,10 @@ sum.15.y <- sum.15.y %>%
       year == "2004" ~ mean(c(63.8, 64.1, 65.4, 64.1)),
       year == "2003" ~ mean(c(64.5, 63.5, 64.0, 63.3)),
       year == "2002" ~ mean(c(63.9, 64.4, 66.3, 64.3)),
-      year == "2001" ~ mean(c(65.3, 64.2, 65.6, 62.6)),
-      year == "2000" ~ mean(c(61.7, 60.9, 62.2, 62.7)),
-      year == "1999" ~ mean(c(63.3, 63.3, 66.1, 63.1)),
-      year == "1998" ~ mean(c(63.3, 62.7, 64.4, 62.7)),
+      year == "2001" ~ mean(c(62.6)), #only use Q1
+      year == "2000" ~ mean(c(62.7)), #only use Q1
+      year == "1999" ~ mean(c(63.1)), #only use Q1
+      year == "1998" ~ mean(c(62.7)), #only use Q1
       year == "1997" ~ mean(c(63.1, 63.2, 65.5, 63.3))
     ),
     psa_pop_15up = case_when(
@@ -127,16 +145,18 @@ sum.15.y <- sum.15.y %>%
       year == "2004" ~ 53562000,
       year == "2003" ~ 52305000,
       year == "2002" ~ 50841000,
-      year == "2001" ~ 49424000,
-      year == "2000" ~ 48076000,
-      year == "1999" ~ 46749000,
-      year == "1998" ~ 45425000,
+      year == "2001" ~ 48413000, #Q1 population data
+      year == "2000" ~ 47185000, #Q1 population data
+      year == "1999" ~ 45852000, #Q1 population data
+      year == "1998" ~ 44517000, #Q1 population data
       year == "1997" ~ 44143000
     ),
     dif_pop_15up = pop_15up - psa_pop_15up,
     dif_lfp_15up = lfp_15up - psa_lfp_15up,
-    flag_pop_5pct= ((dif_pop_15up/pop_15up) >= 0.05),
-    flag_lfp_2pct= ((dif_lfp_15up/lfp_15up) >= 0.02)
+    err_pop_15up = (dif_pop_15up/pop_15up),
+    err_lfp_15up = (dif_lfp_15up/lfp_15up),
+    flag_pop_5pct= (err_pop_15up >= 0.05),
+    flag_lfp_2pct= (err_lfp_15up >= 0.05)
   ) 
 
 # export summary objects only

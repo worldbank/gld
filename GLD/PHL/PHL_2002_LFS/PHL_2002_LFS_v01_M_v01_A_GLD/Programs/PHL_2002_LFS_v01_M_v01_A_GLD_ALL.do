@@ -326,7 +326,7 @@ local user_commands ietoolkit scores missings mdesc iefieldkit  //Fill this list
 
 
 *<_weight_>
-	gen 		weight = rfadj/4
+	gen 		weight = rfadj/ (4 * 10000)  // inverse scaling by [no. rounds]*[10 000]. See "weights_methodology.Rmd"
 	label 		var weight "Household sampling weight"
 *</_weight_>
 
