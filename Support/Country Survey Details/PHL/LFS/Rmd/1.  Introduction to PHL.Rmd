@@ -33,33 +33,36 @@ in 1997.
 The following table presents unique Household and Individual
 observations in the final GLD dataset after processing. Most raw survey
 files did not provide a unique household or individual ID, so these were
-constructed. More information below in "Other Noteworthy Aspects".
+constructed. The Philippines LFS is collected quarterly; the GLD dataset
+unites all four quarters, except for the years of 1998-2001 where only
+the January or first quarter was available (see table below). More
+information below in "Other Noteworthy Aspects".
 
-| Year | No. of Households | No. of Individuals |
-|:-----|:------------------|:-------------------|
-| 1997 | 158,582           | 823776             |
-| 1998 | 39,837            | 207,663            |
-| 1999 | 38,830            | 200,902            |
-| 2000 | 37,967            | 195,553            |
-| 2001 | 39,716            | 207,453            |
-| 2002 | 154,111           | 79,3975            |
-| 2003 | 168,621           | 837,164            |
-| 2004 | 175,462           | 853,049            |
-| 2005 | 172,619           | 836,289            |
-| 2006 | 167,118           | 812,006            |
-| 2007 | 164,680           | 798,835            |
-| 2008 | 166,006           | 797,746            |
-| 2009 | 166,974           | 804,166            |
-| 2010 | 166,432           | 795,851            |
-| 2011 | 170,426           | 807,631            |
-| 2012 | 172,586           | 817,049            |
-| 2013 | 174,048           | 818,118            |
-| 2014 | 172,077           | 805,307            |
-| 2015 | 175,901           | 820,811            |
-| 2016 | 167,738           | 752,232            |
-| 2017 | 164,198           | 720,935            |
-| 2018 | 163,507           | 722,237            |
-| 2019 | 160,309           | 707,022            |
+| Year | No. Waves in GLD | No. of Households | No. of Individuals |
+|:----:|:----------------:|:-----------------:|:------------------:|
+| 1997 |        4         |      158,582      |      823,776       |
+| 1998 |        1         |      39,837       |      207,663       |
+| 1999 |        1         |      38,830       |      200,902       |
+| 2000 |        1         |      37,967       |      195,553       |
+| 2001 |        1         |      39,716       |      207,453       |
+| 2002 |        4         |      154,111      |      79,3975       |
+| 2003 |        4         |      168,621      |      837,164       |
+| 2004 |        4         |      175,462      |      853,049       |
+| 2005 |        4         |      172,619      |      836,289       |
+| 2006 |        4         |      167,118      |      812,006       |
+| 2007 |        4         |      164,680      |      798,835       |
+| 2008 |        4         |      166,006      |      797,746       |
+| 2009 |        4         |      166,974      |      804,166       |
+| 2010 |        4         |      166,432      |      795,851       |
+| 2011 |        4         |      170,426      |      807,631       |
+| 2012 |        4         |      172,586      |      817,049       |
+| 2013 |        4         |      174,048      |      818,118       |
+| 2014 |        4         |      172,077      |      805,307       |
+| 2015 |        4         |      175,901      |      820,811       |
+| 2016 |        4         |      167,738      |      752,232       |
+| 2017 |        4         |      164,198      |      720,935       |
+| 2018 |        4         |      163,507      |      722,237       |
+| 2019 |        4         |      160,309      |      707,022       |
 
 ## Where can the data be found?
 
@@ -98,17 +101,12 @@ disaggregation,
 
 [Administrative Levels](Administrative_Levels.md)
 
-[Education and Labor Modules Minimum
-Ages](Edu_Labor_Ages.md)
+[Education and Labor Modules Minimum Ages](Edu_Labor_Ages.md)
 
-[Education
-Levels](Education_Levels.md)
+[Education Levels](Education_Levels.md)
 
-[Household
-IDs](Household_IDs.md)
+[Household IDs](Household_IDs.md)
 
-[Industry and Occupation
-Codes](Industry_Occupation_Codes.md)
+[Industry and Occupation Codes](Industry_Occupation_Codes.md)
 
-[Weights Variables
-Checks](Weights_PSA_Checks.md)
+[Weights Variables Checks](Weights_PSA_Checks.md)

@@ -316,7 +316,10 @@ magnitude and more than ratios.
 
 ### Graphs
 
-We can visualize our final results below
+We can visualize our final results below. The graphical results
+reiterate the finding that the differences between the population
+figures of GLD and those from the PSA do not reflect discrepancies in
+measurements of labor force participation.
 
 ```{r}
 gg.pop <- ggplot(sum.15.y, aes(year, err_pop_15up)) +
@@ -343,3 +346,5 @@ gg.lfp <- ggplot(sum.15.y, aes(year, err_lfp_15up)) +
 
 gg.lfp
 ```
+
+#### 
