@@ -96,7 +96,7 @@ survey years, 1997 - 2019.
 
 ```{r, echo=FALSE}
 library(tidyverse)
-load(file = file.path(PHL, "PHL_data/GLD/population.Rdata"))
+load(file = file.path(PHL, "PHL_data/GLD/population_unscaled_weights.Rdata"))
 ```
 
 #### Determine which years and rounds need adjustment
