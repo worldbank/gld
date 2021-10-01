@@ -6,4 +6,4 @@ nav_order: 99
 
 ## Any remaining questions?
 
-For anything else, contact the GLD Focal Point.
+For anything else, contact the [GLD Focal Point](mailto:gld@worldbank.org).
