@@ -1,16 +1,16 @@
 # international_codes.R
 # matches isic, isco, isced codes to PHL LFS survey data
-# 
-# 
-# This script assumes you've run main.R first 
-# 
-# The main purpose of this script is to match isic (industry), 
-# isco (occupation) and isced (education) codes to produce 
-# either 
-#   - tables, or 
-#   - easily-writable in-script code that coverts the raw data to ISIC/ISCO etc 
-# 
-# Most of the findings here will be documents in "Industry_Occupation Codes.md" in 
+#
+#
+# This script assumes you've run main.R first
+#
+# The main purpose of this script is to match isic (industry),
+# isco (occupation) and isced (education) codes to produce
+# either
+#   - tables, or
+#   - easily-writable in-script code that coverts the raw data to ISIC/ISCO etc
+#
+# Most of the findings here will be documents in "Industry_Occupation Codes.md" in
 # the "Country Survey Details" Folder for the Philippines
 
 library(tidyverse)
@@ -46,7 +46,7 @@ isco88_08_2dig_xls_path <- file.path(PHL, "PHL_docs/International Codes/ISCO.xls
 
               ##### ISIC ####
 
-# Import ISIC 3.0 data --------------------------------- 
+# Import ISIC 3.0 data ---------------------------------
 # we know that only years 1997 - 2011 use this
 UNisic3 <- read_delim(file = file.path(PHL, "PHL_data/GLD/international_codes/ISIC_Rev_3_english_structure.txt"))
 
@@ -58,10 +58,10 @@ pdf <- pdftools::pdf_data(psic94_path)
 ## Solution is import by each half and then append.
 
 isic94_codes_raw_A <- read_pdf(
-  
+
   pdf_path = psic94_path,
   page_min = 2,
-  page_max = 11, 
+  page_max = 11,
   varnames = c("class", "subclass", "psic1994", "psic77", "isic3.1"),
   ymin = 90,
   xlabel = c(130, 390),
@@ -72,7 +72,7 @@ isic94_codes_raw_A <- read_pdf(
 )
 
 isic94_codes_raw_B <- read_pdf(
-  
+
   pdf_path = psic94_path,
   page_min = 12,
   page_max = 185,
@@ -87,21 +87,21 @@ isic94_codes_raw_B <- read_pdf(
 )
 
 
-isic94_codes_raw <- bind_rows(isic94_codes_raw_A, 
+isic94_codes_raw <- bind_rows(isic94_codes_raw_A,
                               isic94_codes_raw_B)
 
 
 # cleaning ----
-## setup 
+## setup
 table_vars_gc <- c("group", "class")
 table_vars_ppi<- c("psic1994", "psic77", "isic3.1")
-rowAny <- function(x) rowSums(x) > 0 
+rowAny <- function(x) rowSums(x) > 0
 
 
 ## create "class" from subclass and "group" variable from class
-## we know that class is always the first four digits of subclass 
-## and group is always the first 3 digits of class. But for some 
-## obs, class is provided, so do not overwrite this info. Treat 
+## we know that class is always the first four digits of subclass
+## and group is always the first 3 digits of class. But for some
+## obs, class is provided, so do not overwrite this info. Treat
 ## given info as authoritative.
 
 isic94_codes <- isic94_codes_raw %>%
@@ -119,8 +119,8 @@ isic94_codes <- isic94_codes_raw %>%
 # object 1 is what we want removed where both group and class are missing.
 # object 2 is where all of psic1994, isic4, acic vars are missing
 
-isic94_leftover1 <-  isic94_codes %>% 
-  filter(across(all_of(table_vars_gc), ~ is.na(.x))) 
+isic94_leftover1 <-  isic94_codes %>%
+  filter(across(all_of(table_vars_gc), ~ is.na(.x)))
 
 isic94_leftover2 <- isic94_codes %>%
   filter(across(all_of(table_vars_ppi), ~is.na(.x)))
@@ -151,7 +151,7 @@ isic94_clean %>% janitor::get_dupes() # there is 1 pair of dups
 
 isic94_clean <- isic94_clean %>%
   rename("isic3_1" = "isic3.1") %>%
-  distinct() 
+  distinct()
 
 
 assertthat::assert_that( sum(str_length(isic94_clean$class) <= 3, na.rm = TRUE) ==0 ) # should be 0 or close to
@@ -164,7 +164,7 @@ assertthat::assert_that( sum(str_length(isic94_clean$group) != 3, na.rm = TRUE) 
 
 ## ISIC 09 Raw ----
 isic09_codes_raw <- read_pdf(
-                      
+
     pdf_path = psic09_path,
     page_min = 22,
     page_max = 316,
@@ -182,16 +182,16 @@ isic09_codes_raw <- read_pdf(
 
 
 # cleaning ----
-## setup 
+## setup
 table_vars_gc <- c("group", "class")
 table_vars_spia<- c("psic1994", "isic4", "acic")
-rowAny <- function(x) rowSums(x) > 0 
+rowAny <- function(x) rowSums(x) > 0
 
 
 ## create "class" from subclass and "group" variable from class
-## we know that class is always the first four digits of subclass 
-## and group is always the first 3 digits of class. But for some 
-## obs, class is provided, so do not overwrite this info. Treat 
+## we know that class is always the first four digits of subclass
+## and group is always the first 3 digits of class. But for some
+## obs, class is provided, so do not overwrite this info. Treat
 ## given info as authoritative.
 
 isic09_codes <- isic09_codes_raw %>%
@@ -209,8 +209,8 @@ isic09_codes <- isic09_codes_raw %>%
 # object 1 is what we want removed where both group and class are missing.
 # object 2 is where all of psic1994, isic4, acic vars are missing
 
-isic09_leftover1 <-  isic09_codes %>% 
-  filter(across(all_of(table_vars_gc), ~ is.na(.x))) 
+isic09_leftover1 <-  isic09_codes %>%
+  filter(across(all_of(table_vars_gc), ~ is.na(.x)))
 
 isic09_leftover2 <- isic09_codes %>%
   filter(across(all_of(table_vars_spia), ~is.na(.x)))
@@ -230,7 +230,7 @@ isic09_clean <- isic09_codes %>%
   ungroup() %>%
   select(-page_grp) %>%
   select(page, y, group, class, subclass, psic1994, isic4, acic)
-  
+
 # check
 assertthat::assert_that( (nrow(isic09_clean) + nrow(isic09_leftover2)) == nrow(isic09_codes)   )
 
@@ -259,11 +259,11 @@ assertthat::assert_that( sum(str_length(isic09_clean$group) != 3, na.rm = TRUE) 
 
 
 
-# Use Function to import raw data 
+# Use Function to import raw data
 # ISCO raw ----
 
 psoc12_codes_raw <- read_pdf(
-  
+
       pdf_path = psoc12_path,
       page_min = 102,
       page_max = 540,
@@ -271,7 +271,7 @@ psoc12_codes_raw <- read_pdf(
       ymin = 85,
       xlabel = c(160, 420),
       xmin = c(91, 130, 450, 475),
-      xmax = c(130, 175, 492, 9999), 
+      xmax = c(130, 175, 492, 9999),
       fuzzy_rows = FALSE
 
       )
@@ -280,16 +280,16 @@ psoc12_codes_raw <- read_pdf(
 
 # clean up result ----
 
-## setup 
+## setup
 table_vars_sm <- c("submajor", "minor")
 table_vars_pi<- c("psoc92", "isco08")
 isco_order <- c("submajor", "minor", "unit", "psoc92", "isco08")
 
 
 ## create "submajor" from minor and "minor" variable from unit
-## we know that minor is always the first four digits of unit 
-## and submajor is always the first 3 digits of minor. But for some 
-## obs, this info is provided, so do not overwrite this info. Treat 
+## we know that minor is always the first four digits of unit
+## and submajor is always the first 3 digits of minor. But for some
+## obs, this info is provided, so do not overwrite this info. Treat
 ## given info as authoritative.
 
 psoc12_codes <- psoc12_codes_raw %>%
@@ -301,9 +301,9 @@ psoc12_codes <- psoc12_codes_raw %>%
 
 
 
-# filter out leftoverstubs 
-isco12_leftover1 <-  psoc12_codes %>% 
-  filter(across(all_of(table_vars_sm), ~ is.na(.x))) 
+# filter out leftoverstubs
+isco12_leftover1 <-  psoc12_codes %>%
+  filter(across(all_of(table_vars_sm), ~ is.na(.x)))
 
 isco12_leftover2 <- psoc12_codes %>%
   filter(across(all_of(table_vars_pi), ~is.na(.x)))
@@ -319,7 +319,7 @@ isco12_clean <- psoc12_codes %>%
   ## eliminate group and class-only rows
   filter(rowAny(across(table_vars_sm, ~ !is.na(.x)))) %>% # at least 1 col must be non-NA
   filter(rowAny(across(all_of(table_vars_pi), ~ !is.na(.x)))) # at least 1 col must be non-NA
-  
+
   # check
   assertthat::assert_that( (nrow(isco12_clean) + nrow(isco12_leftover))
                            == nrow(psoc12_codes)   )
@@ -327,15 +327,15 @@ isco12_clean <- psoc12_codes %>%
   ## eliminate strange puncutation marks
   isco12_clean <- isco12_clean %>%
     mutate(psoc92 = str_replace(psoc92, "[:punct:]", "")) %>%
-    mutate(psoc92 = str_replace(psoc92, "p", "")) %>% 
-    mutate(psoc92 = str_replace(psoc92, "\\`", NA_character_)) %>% 
-    mutate(psoc92 = str_replace(psoc92, " ", NA_character_)) %>% 
+    mutate(psoc92 = str_replace(psoc92, "p", "")) %>%
+    mutate(psoc92 = str_replace(psoc92, "\\`", NA_character_)) %>%
+    mutate(psoc92 = str_replace(psoc92, " ", NA_character_)) %>%
     ungroup() %>%
-    select(-page_grp) 
+    select(-page_grp)
 
 # clean duplicates
   isco12_clean %>% janitor::get_dupes() # there is 1 pair of dups
-  
+
   isco12_clean <- isco12_clean %>%
     distinct()
 
@@ -350,7 +350,7 @@ assertthat::assert_that( sum(str_length(isco12_clean$submajor) != 2, na.rm=TRUE)
 
 
 # Isco88-08 ------------
- 
+
 ## raw ----
 
 isco88_08_raw <- read_xls(path = isco88_08_xls_path,
@@ -374,25 +374,28 @@ isco88_08_clean <- isco88_08_raw %>%
 
 # 2 digit versions ------
 
+# all "2-digit" versions will have numerals at the first two digits but will be padded to the
+# right with 0's such that they fill 4 digits worth of space 
+
 ## PSOC92-ISCO88 ----
 ## There is no PDF version of a 4-digit PSOC92 to isco08, but a 2 digit
-## version can be created semi-manually with relative ease since there 
-## are only about 30 distinct codes at the 2 digit level. 
-## 
-## Furthermore, the ILO publish a 2-digit conversion scheme between 
-## ISCO88 - ISCO08. Start by importing all the codes from the ISCO88 
-## column of this document and, since most codes in PSOC are the same 
+## version can be created semi-manually with relative ease since there
+## are only about 30 distinct codes at the 2 digit level.
+##
+## Furthermore, the ILO publish a 2-digit conversion scheme between
+## ISCO88 - ISCO08. Start by importing all the codes from the ISCO88
+## column of this document and, since most codes in PSOC are the same
 ## anyway, replace manually.
-## 
-## General note: I will assume that all farming and agricultural-related 
-## activities are market-based since it is not stated in PSOC, thus will 
+##
+## General note: I will assume that all farming and agricultural-related
+## activities are market-based since it is not stated in PSOC, thus will
 ## code appropriately in ISCO below.
 
 psoc92_2dig_raw <- read_xlsx(path = isco88_08_2dig_xls_path,
                         sheet = "ISCO_SKILLS",
                         range = "I2:L46",
                         col_names = TRUE,
-                        col_types = "text") 
+                        col_types = "text")
 
 psoc92_2dig <- psoc92_2dig_raw %>%
   rename_with(.cols = everything(), .fn = ~ paste0("isco88_", .x)) %>%
@@ -415,14 +418,14 @@ psoc92_2dig <- psoc92_2dig_raw %>%
           psoc92_description = "Fisherman") %>% # fisherman to market agriculture
   add_row(psoc92 = "65", isco88_sub_major = "61",
           psoc92_description = "Hunters") %>% # hunters to market agriculture
-  add_row(psoc92 = "02", isco88_sub_major = "51", 
+  add_row(psoc92 = "02", isco88_sub_major = "51",
           psoc92_description = "Housekeepers, Pensioners, Students") %>% # housekeepers etc to personal/protective services
-  add_row(psoc92 = "09", isco88_sub_major = NA_character_, 
+  add_row(psoc92 = "09", isco88_sub_major = NA_character_,
           psoc92_description = "Not Classifiable and Other Occupations")  %>% # Not classifiable to missing
   filter(psoc92 != "*removethis*")
 
 ### map isco08 colums ----
-### The easiest way to introduce ISCO08 conversions is to include a isco08 column directly 
+### The easiest way to introduce ISCO08 conversions is to include a isco08 column directly
 ### in the PSOC92-ISCO88 key. This way we can merge directly and gain the ISCO08 information.
 
 ## Import ISCO88-ISCO08 Key
@@ -430,7 +433,7 @@ isco88_08_2dig_raw <- read_xlsx(path = isco88_08_2dig_xls_path,
                                 sheet = "ISCO_SKILLS",
                                 range = "A1:L46",
                                 col_names = FALSE,
-                                col_types = "text") 
+                                col_types = "text")
 
 ## Clean Key
 isco88_08_2dig <- isco88_08_2dig_raw %>%
@@ -438,7 +441,7 @@ isco88_08_2dig <- isco88_08_2dig_raw %>%
   clean_names() %>%
   rename_with(.cols = ends_with("_2"), .fn = ~ gsub("_2", "_isco88",.x)) %>%
   rename_with(.cols = c("major", "sub_major", "major_label", "description"), .fn = ~ paste0(.x, "_isco08")) %>%
-  fill(skill) %>% 
+  fill(skill) %>%
   fill(skill_label) %>%
   fill(aggregate) %>%
   fill(aggregate_label) %>%
@@ -451,15 +454,15 @@ psoc92_2dig_isco08_key <- psoc92_2dig %>%
   left_join(isco88_08_2dig,
             by = c("isco88_sub_major" = "sub_major_isco88"),
             keep = FALSE,
-            na_matches = "never") 
+            na_matches = "never")
 
 
 
 
 
 ## Determine Best Matches ----
-match_isic94_list <- corresp(df = isic94_clean, 
-                                country_code = class, 
+match_isic94_list <- corresp(df = isic94_clean,
+                                country_code = class,
                                 international_code = isic3_1,
                                 pad_vars = "isic3_1",
                                 check_matches = F)
@@ -472,7 +475,7 @@ match_isic94_table <- match_isic94_list[[1]] %>%
 match_isic09_list <- corresp(df = isic09_clean,
                              country_code = class,
                              international_code = isic4,
-                             pad_vars = "isic4", 
+                             pad_vars = "isic4",
                              check_matches = F)
 
 match_isic09_table <- match_isic09_list[[1]] %>%
@@ -480,24 +483,24 @@ match_isic09_table <- match_isic09_list[[1]] %>%
 
 
 
-match_isco12_list <- corresp(df = isco12_clean, 
-                                unit, 
-                                isco08, 
+match_isco12_list <- corresp(df = isco12_clean,
+                                unit,
+                                isco08,
                                 pad_vars = "isco08",
                                 check_matches = F)
 
-match_isco12_table <- match_isco12_list[[1]] 
+match_isco12_table <- match_isco12_list[[1]]
 
 
 
 match_isco88_08_list <- corresp(df = isco88_08_clean,
-                                country_code = isco88, 
+                                country_code = isco88,
                                 international_code = isco08,
                                 pad_vars = c("isco08", "isco88"),
                                 check_matches = F)
-  
 
-match_isco88_08_table <- match_isco88_08_list[[1]] 
+
+match_isco88_08_table <- match_isco88_08_list[[1]]
 
 
 # create a 2-digit match tables ----
@@ -509,13 +512,13 @@ isco88_08_2dig <- isco88_08_clean %>%
   select(contains("2dig"), "title08")
 
 
-## for ISIC09 
+## for ISIC09
 raw_2dig_isic09 <- match_isic09_table %>%
   select(class, isic4) %>%
   mutate(
     psic_2dig = str_sub(class, 1,2),
     isic4_2dig= str_sub(isic4, 1,2))
-  
+
 match_isic09_2dig_list <- corresp(df = raw_2dig_isic09,
                                   psic_2dig,
                                   isic4_2dig,
@@ -525,7 +528,7 @@ match_isic09_2dig_list <- corresp(df = raw_2dig_isic09,
 match_isic09_2dig_table <- match_isic09_2dig_list[[1]]
 
 
-## for ISIC94 
+## for ISIC94
 raw_2dig_isic94 <- match_isic94_table %>%
   select(class, isic3_1) %>%
   mutate(
@@ -540,7 +543,7 @@ match_isic94_2dig_list <- corresp(df = raw_2dig_isic94,
 
 match_isic94_2dig_table <- match_isic94_2dig_list[[1]]
 
-## for ISCO12 
+## for ISCO12
 raw_2dig_isco12 <- match_isco12_table %>%
   select(unit, isco08) %>%
   mutate(
@@ -565,24 +568,24 @@ isco88_08_2dig <- isco88_08_clean %>%
   select(contains("2dig"), "title08")
 
 match_isco88_08_2dig_list <- corresp(df = isco88_08_2dig,
-                                     country_code = isco88_2dig, 
+                                     country_code = isco88_2dig,
                                      international_code = isco08_2dig,
                                      pad_vars = NULL,
                                      check_matches = F)
 
-match_isco88_08_2dig_table <- match_isco88_08_2dig_list[[1]]  
+match_isco88_08_2dig_table <- match_isco88_08_2dig_list[[1]]
 
 
 # save data ----
 if (TRUE) {
-  
-# Rdata 
+
+# Rdata
 save(isic94_codes_raw, isic94_codes, isic94_leftover, isic94_clean, psic94_path,
-     isic09_codes_raw, isic09_codes, isic09_leftover, isic09_clean, psic09_path, 
+     isic09_codes_raw, isic09_codes, isic09_leftover, isic09_clean, psic09_path,
      psoc12_codes_raw, psoc12_codes, isco12_leftover, isco12_clean, psoc12_path,
      read_pdf, UNisic3, corresp,
      match_isic94_list, match_isic94_table,
-     match_isic09_list, match_isic09_table, 
+     match_isic09_list, match_isic09_table,
      match_isco12_list, match_isco12_table,
      match_isco88_08_list, match_isco88_08_table,
      match_isco88_08_2dig_list, match_isco88_08_2dig_table,
@@ -593,17 +596,17 @@ save(isic94_codes_raw, isic94_codes, isic94_leftover, isic94_clean, psic94_path,
      file = file.path(PHL, "PHL_data/international_codes.Rdata") )
 
 
-# export dta 
+# export dta
 for (i in seq(from=1997,to=2011)) {
   haven::write_dta(match_isic94_table,
-                   path = file.path(PHL, 
-                                    paste0("PHL_",as.character(i),"_LFS"), 
+                   path = file.path(PHL,
+                                    paste0("PHL_",as.character(i),"_LFS"),
                                     paste0("PHL_",as.character(i),"_LFS",
                                            "_v01_M/Data/Stata/PHL_PSIC_ISIC_94_key.dta")),
                    version = 14)
   haven::write_dta(match_isic94_2dig_table,
-                   path = file.path(PHL, 
-                                    paste0("PHL_",as.character(i),"_LFS"), 
+                   path = file.path(PHL,
+                                    paste0("PHL_",as.character(i),"_LFS"),
                                     paste0("PHL_",as.character(i),"_LFS",
                                            "_v01_M/Data/Stata/PHL_PSIC_ISIC_94_key_2dig.dta")),
                    version = 14)
@@ -611,14 +614,14 @@ for (i in seq(from=1997,to=2011)) {
 
 for (i in seq(from=2012,to=2019)) {
   haven::write_dta(match_isic09_table,
-                   path = file.path(PHL, 
-                                    paste0("PHL_",as.character(i),"_LFS"), 
+                   path = file.path(PHL,
+                                    paste0("PHL_",as.character(i),"_LFS"),
                                     paste0("PHL_",as.character(i),"_LFS",
                                            "_v01_M/Data/Stata/PHL_PSIC_ISIC_09_key.dta")),
                    version = 14)
   haven::write_dta(match_isic09_2dig_table,
-                   path = file.path(PHL, 
-                                    paste0("PHL_",as.character(i),"_LFS"), 
+                   path = file.path(PHL,
+                                    paste0("PHL_",as.character(i),"_LFS"),
                                     paste0("PHL_",as.character(i),"_LFS",
                                            "_v01_M/Data/Stata/PHL_PSIC_ISIC_09_key_2dig.dta")),
                    version = 14)
@@ -626,19 +629,19 @@ for (i in seq(from=2012,to=2019)) {
 
 for (i in seq(from=2016,to=2019)) {
   haven::write_dta(match_isco12_table,
-                   path = file.path(PHL, 
-                                    paste0("PHL_",as.character(i),"_LFS"), 
+                   path = file.path(PHL,
+                                    paste0("PHL_",as.character(i),"_LFS"),
                                     paste0("PHL_",as.character(i),"_LFS",
                                            "_v01_M/Data/Stata/PHL_PSOC_ISCO_12_key.dta")),
                    version = 14)
   haven::write_dta(match_isco12_2dig_table,
-                   path = file.path(PHL, 
-                                    paste0("PHL_",as.character(i),"_LFS"), 
+                   path = file.path(PHL,
+                                    paste0("PHL_",as.character(i),"_LFS"),
                                     paste0("PHL_",as.character(i),"_LFS",
                                            "_v01_M/Data/Stata/PHL_PSOC_ISCO_12_key_2dig.dta")),
                    version = 14)
 }
-  
+
 for (i in seq(from=1997,to=2016)) {
   haven::write_dta(psoc92_2dig_isco08_key,
                    path = file.path(PHL,
@@ -651,21 +654,21 @@ for (i in seq(from=1997,to=2016)) {
 
 for (i in seq(from=2016,to=2016)) {
 haven::write_dta(match_isco88_08_table,
-                 path = file.path(PHL, 
-                                  paste0("PHL_",as.character(i),"_LFS"), 
+                 path = file.path(PHL,
+                                  paste0("PHL_",as.character(i),"_LFS"),
                                     paste0("PHL_",as.character(i),"_LFS",
                                            "_v01_M/Data/Stata/PHL_PSOC_ISCO_88_08_key.dta")),
                    version = 14)
-}  
-  
+}
+
 for (i in seq(from=2016,to=2016)) {
   haven::write_dta(match_isco88_08_2dig_table,
-                   path = file.path(PHL, 
-                                    paste0("PHL_",as.character(i),"_LFS"), 
+                   path = file.path(PHL,
+                                    paste0("PHL_",as.character(i),"_LFS"),
                                     paste0("PHL_",as.character(i),"_LFS",
                                            "_v01_M/Data/Stata/PHL_PSOC_ISCO_88_08_key_2digits.dta")),
                    version = 14)
-}  
+}
 
 
 haven::write_dta(match_isic94_table,
