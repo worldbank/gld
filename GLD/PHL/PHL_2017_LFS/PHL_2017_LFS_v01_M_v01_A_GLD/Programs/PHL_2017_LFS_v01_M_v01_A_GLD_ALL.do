@@ -1212,7 +1212,7 @@ foreach v of local ed_var {
 				keep(master match) /// "left join"; remove obs that don't match from using
 				keepusing(psic_2dig isic4_2dig)
 
-	rename 		isic4_2dig isic4_2dig_`n'
+	rename 		isic4_2dig_pad isic4_2dig_`n'
 
 	// coalesce 2 variables
 	egen str4 	industrycat_isic = rowfirst(isic4_`n' isic4_2dig_`n')
@@ -1359,7 +1359,7 @@ foreach v of local ed_var {
 				keep(master match) /// "left join"; remove obs that don't match from using
 				keepusing(psic_2dig isco08_2dig)
 
-	rename 		isco08_2dig isco08_2dig_`n'
+	rename 		isco08_2dig_pad isco08_2dig_`n'
 
 	// coalesce 2 variables
 	egen str4	occup_isco = rowfirst(isco08_`n' isco08_2dig_`n')
@@ -1608,7 +1608,7 @@ foreach v of local ed_var {
 				keep(master match) /// "left join"; remove obs that don't match from using
 				keepusing(psic_2dig isic4_2dig)
 
-	rename 		isic4_2dig isic4_2dig_`n'
+	rename 		isic4_2dig_pad isic4_2dig_`n'
 
 	// coalesce 2 variables
 	egen str4 	industrycat_isic_2 = rowfirst(isic4_`n' isic4_2dig_`n')
@@ -1739,7 +1739,7 @@ foreach v of local ed_var {
 				keep(master match) /// "left join"; remove obs that don't match from using
 				keepusing(psic_2dig isco08_2dig)
 
-	rename 		isco08_2dig isco08_2dig_`n'
+	rename 		isco08_2dig_pad isco08_2dig_`n'
 
 	// coalesce 2 variables
 	egen str4	occup_isco_2 = rowfirst(isco08_`n' isco08_2dig_`n')

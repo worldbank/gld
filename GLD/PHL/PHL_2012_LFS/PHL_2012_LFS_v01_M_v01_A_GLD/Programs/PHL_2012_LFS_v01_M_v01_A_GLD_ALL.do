@@ -1126,7 +1126,7 @@ foreach v of local ed_var {
 				keep(master match) // "left join"; remove obs that don't match from using
 
 
-	rename 		isco88_sub_major	isco88_sub_major_`n'
+	rename 		isco88_sub_major_pad	isco88_sub_major_`n'
 
 	drop 		psoc92 				// no longer needed, maintained in matchvar
 	gen 		occup_isco = isco88_sub_major_`n'
@@ -1427,7 +1427,7 @@ foreach v of local ed_var {
 				keep(master match) // "left join"; remove obs that don't match from using
 
 
-	rename 		isco88_sub_major	isco88_sub_major_`n'
+	rename 		isco88_sub_major_pad	isco88_sub_major_`n'
 
 	drop 		psoc92 				// no longer needed, maintained in matchvar
 	gen 		occup_isco_2 = isco88_sub_major_`n'

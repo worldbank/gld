@@ -1039,7 +1039,7 @@ foreach v of local ed_var {
 				* the string variable in isic4 will is industrycat_isic
 
 	// replace one code that I know doesn't match
-	rename 		isic4_2dig	isic4_2dig_`n'
+	rename 		isic4_2dig_pad	isic4_2dig_`n'
 
 	gen 		industrycat_isic = isic4_2dig_`n'  	// the string variable becomes industrycat_isic
 
@@ -1123,7 +1123,7 @@ foreach v of local ed_var {
 				keep(master match) // "left join"; remove obs that don't match from using
 
 
-	rename 		isco08_2dig	isco08_2dig_`n'
+	rename 		isco08_2dig_pad	isco08_2dig_`n'
 
 	drop 		psic_2dig 				// no longer needed, maintained in matchvar
 	gen 		occup_isco = isco08_2dig_`n'
