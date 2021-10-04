@@ -23,6 +23,10 @@ library(readxl)
 library(hablar)
 
 
+# source main 
+here::i_am("main.R")
+source("main.R")
+
 
 # load network data
 load(PHL_meta)
@@ -454,7 +458,9 @@ psoc92_2dig_isco08_key <- psoc92_2dig %>%
   left_join(isco88_08_2dig,
             by = c("isco88_sub_major" = "sub_major_isco88"),
             keep = FALSE,
-            na_matches = "never")
+            na_matches = "never") %>%
+  mutate(across(c("psoc92", "isco88_sub_major", "sub_major_isco08"), 
+                ~ stringr::str_pad(.x, 4, "right", "0"), .names = "{.col}_pad"))
 
 
 
@@ -500,7 +506,7 @@ match_isco88_08_list <- corresp(df = isco88_08_clean,
                                 check_matches = F)
 
 
-match_isco88_08_table <- match_isco88_08_list[[1]]
+match_isco88_08_table <- match_isco88_08_list[[1]] 
 
 
 # create a 2-digit match tables ----
@@ -509,7 +515,9 @@ isco88_08_2dig <- isco88_08_clean %>%
   mutate(isco08_2dig = stringr::str_sub(isco08, 1,2),
          isco88_2dig = stringr::str_sub(isco88, 1,2)) %>%
   #distinct(across(contains("2dig")), .keep_all = TRUE) %>%
-  select(contains("2dig"), "title08")
+  select(contains("2dig"), "title08") %>%
+  mutate(across(c("isco08_2dig", "isco88_2dig"), 
+                ~ stringr::str_pad(.x, 4, "right", "0"), .names = "{.col}_pad"))
 
 
 ## for ISIC09
@@ -525,7 +533,9 @@ match_isic09_2dig_list <- corresp(df = raw_2dig_isic09,
                                   pad_vars = NULL,
                                   check_matches = F)
 
-match_isic09_2dig_table <- match_isic09_2dig_list[[1]]
+match_isic09_2dig_table <- match_isic09_2dig_list[[1]] %>%
+  mutate(across(c("psic_2dig", "isic4_2dig"), 
+                ~ stringr::str_pad(.x, 4, "right", "0"), .names = "{.col}_pad"))
 
 
 ## for ISIC94
@@ -541,7 +551,9 @@ match_isic94_2dig_list <- corresp(df = raw_2dig_isic94,
                                   pad_vars = NULL,
                                   check_matches = F)
 
-match_isic94_2dig_table <- match_isic94_2dig_list[[1]]
+match_isic94_2dig_table <- match_isic94_2dig_list[[1]] %>%
+  mutate(across(c("psic_2dig", "isic3_1_2dig"), 
+                ~ stringr::str_pad(.x, 4, "right", "0"), .names = "{.col}_pad"))
 
 ## for ISCO12
 raw_2dig_isco12 <- match_isco12_table %>%
@@ -556,7 +568,9 @@ match_isco12_2dig_list <- corresp(df = raw_2dig_isco12,
                                   pad_vars = NULL,
                                   check_matches = F)
 
-match_isco12_2dig_table <- match_isco12_2dig_list[[1]]
+match_isco12_2dig_table <- match_isco12_2dig_list[[1]] %>%
+  mutate(across(c("psic_2dig", "isco08_2dig"), 
+                ~ stringr::str_pad(.x, 4, "right", "0"), .names = "{.col}_pad"))
 
 
 
@@ -573,7 +587,9 @@ match_isco88_08_2dig_list <- corresp(df = isco88_08_2dig,
                                      pad_vars = NULL,
                                      check_matches = F)
 
-match_isco88_08_2dig_table <- match_isco88_08_2dig_list[[1]]
+match_isco88_08_2dig_table <- match_isco88_08_2dig_list[[1]] %>%
+  mutate(across(c("isco88_2dig", "isco08_2dig"), 
+                ~ stringr::str_pad(.x, 4, "right", "0"), .names = "{.col}_pad"))
 
 
 # save data ----
