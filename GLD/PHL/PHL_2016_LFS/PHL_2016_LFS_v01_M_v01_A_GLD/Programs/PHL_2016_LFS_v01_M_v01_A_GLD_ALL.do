@@ -1145,7 +1145,7 @@ foreach v of local ed_var {
 
 
 	// coalese 2 variables
-	egen 		str2 occup_isco_`n' = rowfirst(isco08_2dig sub_major_isco08)
+	egen 		str2 occup_isco_`n' = rowfirst(isco08_2dig_pad sub_major_isco08)
 
 	drop 		psoc92 psic_2dig			// drop both; no longer needed, maintained in matchvar
 
