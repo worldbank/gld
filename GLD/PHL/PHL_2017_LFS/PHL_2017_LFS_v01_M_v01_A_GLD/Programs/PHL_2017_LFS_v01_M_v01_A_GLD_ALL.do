@@ -1210,7 +1210,7 @@ foreach v of local ed_var {
 				using `isic_key2dig' ///
 				, generate(isic_mergeb_`n') ///
 				keep(master match) /// "left join"; remove obs that don't match from using
-				keepusing(psic_2dig isic4_2dig)
+				keepusing(psic_2dig isic4_2dig_pad)
 
 	rename 		isic4_2dig_pad isic4_2dig_`n'
 
@@ -1357,7 +1357,7 @@ foreach v of local ed_var {
 				using `isco_key2dig' ///
 				, generate(isco_mergeb_`n') ///
 				keep(master match) /// "left join"; remove obs that don't match from using
-				keepusing(psic_2dig isco08_2dig)
+				keepusing(psic_2dig isco08_2dig_pad)
 
 	rename 		isco08_2dig_pad isco08_2dig_`n'
 
