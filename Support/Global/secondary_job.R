@@ -26,5 +26,5 @@ sum.nonmiss.qtr <- phl %>%
 
 save(
   sum.nonmiss, sum.nonmiss.qtr,
-  file = file.path(PHL, "PHL_data/GLD/secondary_job.R")
+  file = file.path(PHL, "PHL_data/GLD/secondary_job.Rdata")
 )
