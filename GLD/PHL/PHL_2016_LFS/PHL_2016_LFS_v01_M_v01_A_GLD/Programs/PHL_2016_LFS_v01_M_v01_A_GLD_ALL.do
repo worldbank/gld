@@ -1150,7 +1150,7 @@ foreach v of local ed_var {
 	drop 		psoc92 psic_2dig			// drop both; no longer needed, maintained in matchvar
 
 	gen 		occup_isco = occup_isco_`n'
-	label var 	occup_isco "ISIC code of primary job 7 day recall"
+	label var 	occup_isco "ISCO code of primary job 7 day recall"
 
 
 *</_occup_isco_>
@@ -1353,7 +1353,7 @@ foreach v of local ed_var {
 
 *<_industrycat_isic_2_>
 	gen 			industrycat_isic_2 = .
-	label var 		industrycat_isic_2 "ISIC code of primary job 7 day recall"
+	label var 		industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 
 
 *</_industrycat_isic_2_>
@@ -1385,7 +1385,7 @@ foreach v of local ed_var {
 
 *<_occup_isco_2_>
 	gen occup_isco_2 = ""
-	label var 	occup_isco_2 "ISIC code of primary job 7 day recall"
+	label var 	occup_isco_2 "ISCO code of secondary job 7 day recall"
 
 
 *</_occup_isco_2_>

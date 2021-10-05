@@ -1105,7 +1105,7 @@ foreach v of local ed_var {
 
 	drop 		psoc92 				// no longer needed, maintained in matchvar
 	gen 		occup_isco = isco88_sub_major_`n'
-	label var 	occup_isco "ISIC code of primary job 7 day recall"
+	label var 	occup_isco "ISCO code of primary job 7 day recall"
 
 *</_occup_isco_>
 
