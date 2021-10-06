@@ -13,7 +13,7 @@
 
 <_Country_>						Philippines (PHL) </_Country_>
 <_Survey Title_>				Labor Force Survey </_Survey Title_>
-<_Survey Year_>					2014 </_Survey Year_>
+<_Survey Year_>					2001 </_Survey Year_>
 <_Study ID_>					[Microdata Library ID if present] </_Study ID_>
 <_Data collection from_>		[01/2014] </_Data collection from_>
 <_Data collection to_>			[10/2014] </_Data collection to_>
@@ -54,6 +54,15 @@ clear
 set more off
 set mem 800m
 
+* install packages
+local user_commands ietoolkit scores missings mdesc iefieldkit  //Fill this list will all user-written commands this project requires
+ foreach command of local user_commands {
+     cap which `command'
+     if _rc == 111 {
+         ssc install `command'
+     }
+ }
+
 *----------1.2: Set directories------------------------------*
 
 ** DIRECTORY
@@ -93,8 +102,8 @@ set mem 800m
 	local round3 `"`stata'\LFS JUL2014.dta"'
 	local round4 `"`stata'\LFS OCT2014.dta"'
 
-	local isic_key 	 `"`stata'\PHL_PSIC_ISIC_09_key.dta"'
-	local isco_key 	 `"`stata'\"' // to be created
+	local isic_key 	 `"`stata'\PHL_PSIC_ISIC_09_key_2dig.dta"'
+	local isco_key 	 `"`stata'\PHL_PSOC92_ISCO88_08_key.dta"'
 
     local adm2_labs	 `"`stata'\GLD_PHL_admin2_labels.dta"'
 
@@ -313,11 +322,11 @@ replace int_month = 10 	if round == 4
 
 *<_weight_>
 	rename 		weight weight_orig
-	gen 		weight = `weightvar'/(`n_round')
+	gen 		weight = fwgt / 4
 	label 		var weight "Household sampling weight"
 
 	/*there is one household with an odd household ID and no weight (total 1 observation). Will drop*/
-	drop 		if weight == . 
+	drop 		if weight == .
 	assert 		r(N_drop) == 1  	// ensure only 1 obs was dropped
 *</_weight_>
 
@@ -707,7 +716,7 @@ Education module is only asked to those 5 and older.
 
 </_ed_mod_age_note> */
 
-gen byte ed_mod_age = `ed_mod_age'
+gen byte ed_mod_age = 5
 label var ed_mod_age "Education module application age"
 
 *</_ed_mod_age_>
@@ -870,7 +879,7 @@ foreach v of local ed_var {
 
 
 *<_minlaborage_>
-	gen byte minlaborage = `lb_mod_age'
+	gen byte minlaborage = 15
 	label var minlaborage "Labor module application age"
 *</_minlaborage_>
 
@@ -985,10 +994,41 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_>
-	* 2014 data only has 2 digits for industry so no ISIC can be generated
-	gen 			industrycat_isic = .
-	label var 		industrycat_isic "ISIC code of primary job 7 day recall"
+	loc matchvar   	c18_pkb
+	loc n 			1
 
+	qui ds 			industry_orig, has(type numeric) 	// capture numeric var if is numeric
+	loc isicvar 	= r(varlist)						// store this in a local
+	loc len 		: list sizeof isicvar 				// store the length of this local (1 or 0)
+
+		if (`len' == 1) {
+															// run this if == 1 (ie, if industry_orig is numeric)
+			tostring industry_orig	///						// make the numeric vars strings
+				, generate(industry_orig_str) ///			// gen a variable with this prefix
+				force //
+		}
+
+
+	// merge sub-module with isic key
+
+	gen psic_2dig = `matchvar'
+	tostring 	psic_2dig ///
+				, format(`"%02.0f"') replace
+
+	merge 		m:1 ///
+				psic_2dig ///
+				using `isic_key' ///
+				, generate(isic_merge_`n') ///
+				keep(master match) // "left join"; remove obs that don't match from using
+				* the string variable in isic4 will is industrycat_isic
+
+	// replace one code that I know doesn't match
+	rename 		isic4_2dig_pad	isic4_2dig_`n'
+
+	gen 		industrycat_isic = isic4_2dig_`n'  	// the string variable becomes industrycat_isic
+
+	drop 		psic_2dig 				// no longer needed, maintained in matchvar
+	label var 	industrycat_isic "ISIC code of primary job 7 day recall"
 	*</_industrycat_isic_>
 
 
@@ -1038,12 +1078,39 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_>
-* in 2014, raw variable is numeric, 4-digits, but since there is no provided PSOC to ISCO
-* conversion, there is no occup_isco
-	gen 			occup_isco = ""
-	label 			var occup_isco "ISCO code of primary job 7 day recall"
-	replace 		occup_isco=. if lstatus!=1 		// restrict universe to employed only
-	replace 		occup_isco=. if age < minlaborage	// restrict universe to working age
+	loc matchvar   	c16_proc
+	loc n 			1
+
+	qui ds 			occup_orig, has(type numeric) 	// capture numeric var if is numeric
+	loc iscovar 	= r(varlist)						// store this in a local
+	loc len 		: list sizeof iscovar 				// store the length of this local (1 or 0)
+
+		if (`len' == 1) {
+															// run this if == 1 (ie, if occup_orig is numeric)
+			tostring occup_orig	///						// make the numeric vars strings
+				, generate(occup_orig_str) ///			// gen a variable with this prefix
+				force
+		}
+
+
+	// merge sub-module with isco key
+
+	gen psoc92 = `matchvar'
+	tostring 	psoc92 ///
+				, format(`"%02.0f"') replace
+
+	merge 		m:1 ///
+				psoc92 ///
+				using `isco_key' ///
+				, generate(isco_merge_`n') ///
+				keep(master match) // "left join"; remove obs that don't match from using
+
+
+	rename 		isco88_sub_major_pad	isco88_sub_major_`n'
+
+	drop 		psoc92 				// no longer needed, maintained in matchvar
+	gen 		occup_isco = isco88_sub_major_`n'
+	label var 	occup_isco "ISCO code of primary job 7 day recall"
 
 *</_occup_isco_>
 
@@ -1198,9 +1265,7 @@ foreach v of local ed_var {
 
 *----------8.3: 7 day reference secondary job------------------------------*
 * Since labels are the same as main job, values are labelled using main job labels
-/*
-2014 has no secondary job information.
-*/
+
 
 {
 *<_empstat_2_>
@@ -1224,11 +1289,41 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_2_>
-	* no 4-digit data, so cannot complete.
-	gen 			industrycat_isic_2 = .
-	label var 		industrycat_isic_2 "ISIC code of primary job 7 day recall"
+	loc matchvar   	j03_okb
+	loc n 			2
+
+	qui ds 			industry_orig_2, has(type numeric) 	// capture numeric var if is numeric
+	loc isicvar 	= r(varlist)						// store this in a local
+	loc len 		: list sizeof isicvar 				// store the length of this local (1 or 0)
+
+		if (`len' == 1) {
+															// run this if == 1 (ie, if industry_orig is numeric)
+			tostring industry_orig_2	///						// make the numeric vars strings
+				, generate(industry_orig_2_str) ///			// gen a variable with this prefix
+				force //
+		}
 
 
+	// merge sub-module with isic key
+
+	gen psic_2dig = `matchvar'
+	tostring 	psic_2dig ///
+				, format(`"%02.0f"') replace
+
+	merge 		m:1 ///
+				psic_2dig ///
+				using `isic_key' ///
+				, generate(isic_merge_`n') ///
+				keep(master match) // "left join"; remove obs that don't match from using
+				* the string variable in isic4 will is industrycat_isic
+
+	// replace one code that I know doesn't match
+	rename 		isic4_2dig_pad	isic4_2dig_`n'
+
+	gen 		industrycat_isic_2 = isic4_2dig_`n'  	// the string variable becomes industrycat_isic
+
+	drop 		psic_2dig 				// no longer needed, maintained in matchvar
+	label var 	industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
 
@@ -1270,9 +1365,39 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_2_>
-* even though the original data hve 4 digits, there is no conversion table for PSOC to ISCO
-	gen 			occup_isco_2 = ""
-	label var 		occup_isco_2 "ISCO code of secondary job 7 day recall"
+	loc matchvar   	j02_otoc
+	loc n 			2
+
+	qui ds 			occup_orig_2, has(type numeric) 	// capture numeric var if is numeric
+	loc iscovar 	= r(varlist)						// store this in a local
+	loc len 		: list sizeof iscovar 				// store the length of this local (1 or 0)
+
+		if (`len' == 1) {
+															// run this if == 1 (ie, if occup_orig is numeric)
+			tostring occup_orig_2	///						// make the numeric vars strings
+				, generate(occup_orig_2_str) ///			// gen a variable with this prefix
+				force
+		}
+
+
+	// merge sub-module with isco key
+
+	gen psoc92 = `matchvar'
+	tostring 	psoc92 ///
+				, format(`"%02.0f"') replace
+
+	merge 		m:1 ///
+				psoc92 ///
+				using `isco_key' ///
+				, generate(isco_merge_`n') ///
+				keep(master match) // "left join"; remove obs that don't match from using
+
+
+	rename 		isco88_sub_major_pad	isco88_sub_major_`n'
+
+	drop 		psoc92 				// no longer needed, maintained in matchvar
+	gen 		occup_isco_2 = isco88_sub_major_`n'
+	label var 	occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
 

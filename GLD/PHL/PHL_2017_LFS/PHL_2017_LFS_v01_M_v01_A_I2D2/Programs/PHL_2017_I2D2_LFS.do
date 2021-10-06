@@ -34,6 +34,15 @@
 	set more off
 	set mem 800m
 
+* install packages
+local user_commands ietoolkit scores missings mdesc iefieldkit  //Fill this list will all user-written commands this project requires
+ foreach command of local user_commands {
+     cap which `command'
+     if _rc == 111 {
+         ssc install `command'
+     }
+ }
+
 ** DIRECTORY
 
 	local 	cty3 	"PHL" 	// set this to the three letter country/economy abbreviation
@@ -606,7 +615,7 @@ replace month = 10 	if round == 4
 
 
 ** EDUCATION MODULE AGE
-	gen byte ed_mod_age= `ed_mod_age'				// minimum incluse attending school age is 5
+	gen byte ed_mod_age= 5				// minimum incluse attending school age is 5
 	label var ed_mod_age "Education module application age"
 
 
@@ -718,7 +727,7 @@ undergraduates in "primary" and "graduates" in "secondary" */
 *****************************************************************************************************/
 
 ** LABOR MODULE AGE
-	gen byte lb_mod_age=`lb_mod_age'
+	gen byte lb_mod_age=15
 	label var lb_mod_age "Labor module application age"
 
 
@@ -991,52 +1000,8 @@ undergraduates in "primary" and "graduates" in "secondary" */
 
 
 ** INDUSTRY CLASSIFICATION - SECOND JOB
+	* no second job industry classifcation
 	gen byte industry_2=.
-
-	* for months January, July, October
-		replace industry_2=1 	if (pufc43_qkb>=1 	& pufc43_qkb<=4) ///
-								& (round == 1 | round == 3 | round == 4)	// to Agriculture
-		replace industry_2=2 	if (pufc43_qkb>=5 	& pufc43_qkb<=9) ///
-								& (round == 1 | round == 3 | round == 4)	// to Mining
-		replace industry_2=3 	if (pufc43_qkb>=10 & pufc43_qkb<=33)	///
-								& (round == 1 | round == 3 | round == 4) // to Manufacturing
-		replace industry_2=4 	if (pufc43_qkb>=35 & pufc43_qkb<=39)  ///
-								& (round == 1 | round == 3 | round == 4)	// to Public utility
-		replace industry_2=5 	if (pufc43_qkb>=41 & pufc43_qkb<=43)  ///
-								& (round == 1 | round == 3 | round == 4)	// to Construction
-		replace industry_2=6 	if (pufc43_qkb>=45 & pufc43_qkb<=47) | (pufc43_qkb >= 55 & pufc43_qkb <= 56)  ///
-								& (round == 1 | round == 3 | round == 4)	// to Commerce
-		replace industry_2=7 	if (pufc43_qkb>=49 & pufc43_qkb<=53) | (pufc43_qkb >= 58 & pufc43_qkb <= 63)  ///
-								& (round == 1 | round == 3 | round == 4) // to Transport/coms
-		replace industry_2=8 	if (pufc43_qkb>=64 & pufc43_qkb<=82)   ///
-								& (round == 1 | round == 3 | round == 4)	// to financial/business services
-		replace industry_2=9 	if (pufc43_qkb==84) 		  ///
-								& (round == 1 | round == 3 | round == 4)		// to public administration
-		replace industry_2=10 if (pufc43_qkb>=91 & pufc43_qkb<=99)   ///
-								& (round == 1 | round == 3 | round == 4) // to other
-		replace industry_2=10 if industry_2==. & pufc43_qkb!=.  ///
-								& (round == 1 | round == 3 | round == 4)
-
-
-	if (round == 2) {
-		* For April, code according to the april Schema
-
-		replace industry_2=1 	if pufc43_qkb >= 100 	& pufc43_qkb <= 399	 	// "Agriculture, Forestry, Fishing" coded to "Agriculture"
-		replace industry_2=2 	if pufc43_qkb >= 500 	& pufc43_qkb <= 999		// "Mining and Quarrying" coded to "Mining"
-		replace industry_2=3 	if pufc43_qkb >= 1000 	& pufc43_qkb <= 3399 	// "Manufacturing" coded to "Manufacturing"
-		replace industry_2=4 	if pufc43_qkb >= 3500 	& pufc43_qkb <= 3900	// "Water supply, sewerage, etc" coded to "Public Utiltiy"
-		replace industry_2=5 	if pufc43_qkb >= 4100 	& pufc43_qkb <= 4399	// "Construction" coded to "Construction"
-		replace industry_2=6 	if pufc43_qkb >= 4500 	& pufc43_qkb <= 4799	// "Wholesale/retail, repair of vehicles" to "Commerce"
-		replace industry_2=7 	if pufc43_qkb >= 4900 	& pufc43_qkb <= 5399	// "Transport+storage" to "Transport". UN codes include storage
-		replace industry_2=6 	if pufc43_qkb >= 5500 	& pufc43_qkb <= 5699	// "Accommodation+Food" to "Commerce"
-		replace industry_2=7 	if pufc43_qkb >= 5800 	& pufc43_qkb <= 6399	// "Information+communication" to "Transport/Communication"
-		replace industry_2=8 	if pufc43_qkb >= 6400 	& pufc43_qkb <= 8299	// "Misc Business Services" to "Business Services"
-		replace industry_2=9 	if pufc43_qkb >= 8400 	& pufc43_qkb <= 8499	// "public administration/defense" to "public administration"
-		replace industry_2=10	if pufc43_qkb >= 8500 	& pufc43_qkb <= 9950	// "Other services" including direct education to "other"
-
-	}
-
-	* valid operations no matter the year
 	label var industry_2 "1 digit industry_2 classification"
 	label values industry_2 lblindustry 		// use same value/factor label as industry
 	replace industry_2=. if age < lb_mod_age // restrict universe to working age
@@ -1054,34 +1019,15 @@ undergraduates in "primary" and "graduates" in "secondary" */
 
 
 **SURVEY SPECIFIC INDUSTRY CLASSIFICATION - SECOND JOB
-	gen industry_orig_2=pufc43_qkb
+	gen industry_orig_2=.
 	replace industry_orig_2=. if lstatus!=1 				// restrict universe to employed only
 	replace industry_orig_2=. if age < lb_mod_age			// restrict universe to working age
 	label var industry_orig_2 "Original Industry Codes - Second job"
 
 
 ** OCCUPATION CLASSIFICATION - SECOND JOB
-
-	* generate empty variable
-	gen byte occup_2 = .
-
-	* replace conditionally based on January, July, October (2-digit rounds)
-	replace 	occup_2	=floor(pufc40_pocc/10)		if  (round == 1 | round == 3 | round == 4)
-	recode 		occup_2 0 = 10	if 	(pufc40_pocc >=1 & pufc40_pocc <=3)	/// recode "armed forces" to appropriate label
-						& (round == 1 | round == 3 | round == 4)
-
-
-	* replace conditionally based on April (4-digit round)
-	replace 	occup_2	=floor(pufc40_pocc/1000)	if 	round == 2
-	recode 		occup_2 0 = 10	///
-						if 	(pufc40_pocc == 110 | pufc40_pocc == 210 | pufc40_pocc == 310) /// recode "armed forces" to appropriate label
-						& 	(round == 2)
-
-
-
-
-	replace occup_2=. if lstatus!=1 				// restrict universe to employed only
-	replace occup_2=. if age < lb_mod_age			// restrict universe to working age
+	* no second job occupation classifcation
+	gen occup_2 = .
 	label var occup_2 "1 digit occupational classification - second job"
 	la de lbloccup_2 1 "Senior officials" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup_2 lbloccup_2
