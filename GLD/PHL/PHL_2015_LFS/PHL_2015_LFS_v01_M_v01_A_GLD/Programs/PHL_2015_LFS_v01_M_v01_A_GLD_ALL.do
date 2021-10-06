@@ -1020,7 +1020,7 @@ foreach v of local ed_var {
 				* the string variable in isic4 will is industrycat_isic
 
 	// replace one code that I know doesn't match
-	rename 		isic4_2dig	isic4_2dig_`n'
+	rename 		isic4_2dig_pad	isic4_2dig_`n'
 
 	gen 		industrycat_isic = isic4_2dig_`n'  	// the string variable becomes industrycat_isic
 
@@ -1103,11 +1103,11 @@ foreach v of local ed_var {
 				keep(master match) // "left join"; remove obs that don't match from using
 
 
-	rename 		isco88_sub_major	isco88_sub_major_`n'
+	rename 		isco88_sub_major_pad	isco88_sub_major_`n'
 
 	drop 		psoc92 				// no longer needed, maintained in matchvar
 	gen 		occup_isco = isco88_sub_major_`n'
-	label var 	occup_isco "ISIC code of primary job 7 day recall"
+	label var 	occup_isco "ISCO code of primary job 7 day recall"
 
 *</_occup_isco_>
 
@@ -1315,7 +1315,7 @@ foreach v of local ed_var {
 				* the string variable in isic4 will is industrycat_isic
 
 	// replace one code that I know doesn't match
-	rename 		isic4_2dig	isic4_2dig_`n'
+	rename 		isic4_2dig_pad	isic4_2dig_`n'
 
 	gen 		industrycat_isic_2 = isic4_2dig_`n'  	// the string variable becomes industrycat_isic
 
@@ -1390,7 +1390,7 @@ foreach v of local ed_var {
 				keep(master match) // "left join"; remove obs that don't match from using
 
 
-	rename 		isco88_sub_major	isco88_sub_major_`n'
+	rename 		isco88_sub_major_pad	isco88_sub_major_`n'
 
 	drop 		psoc92 				// no longer needed, maintained in matchvar
 	gen 		occup_isco_2 = isco88_sub_major_`n'

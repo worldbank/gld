@@ -1022,7 +1022,7 @@ foreach v of local ed_var {
 				* the string variable in isic4 will is industrycat_isic
 
 	// replace one code that I know doesn't match
-	rename 		isic4_2dig	isic4_2dig_`n'
+	rename 		isic4_2dig_pad	isic4_2dig_`n'
 
 	gen 		industrycat_isic = isic4_2dig_`n'  	// the string variable becomes industrycat_isic
 
@@ -1122,6 +1122,7 @@ foreach v of local ed_var {
 				, generate(isco_merge12_`n') ///
 				keep(master match) // "left join"; remove obs that don't match from using
 
+				* use the 2 digit padded isco08 variable:  isco08_2dig_pad
 
 	// merge with isco92 key (for wave 1)
 	* now the missing obs in psic_2dig are those in waves 2-4 that didn't match isco12 and
@@ -1143,14 +1144,16 @@ foreach v of local ed_var {
 				, generate(isco_merge92_`n') ///
 				keep(master match) // "left join"; remove obs that don't match from using
 
+				* use the 2 digit padded isco08 variable:  sub_major_isco08_pad
+
 
 	// coalese 2 variables
-	egen 		str2 occup_isco_`n' = rowfirst(isco08_2dig sub_major_isco08)
+	egen 		str4 occup_isco_`n' = rowfirst(isco08_2dig_pad sub_major_isco08_pad)
 
 	drop 		psoc92 psic_2dig			// drop both; no longer needed, maintained in matchvar
 
 	gen 		occup_isco = occup_isco_`n'
-	label var 	occup_isco "ISIC code of primary job 7 day recall"
+	label var 	occup_isco "ISCO code of primary job 7 day recall"
 
 
 *</_occup_isco_>
@@ -1325,7 +1328,8 @@ foreach v of local ed_var {
 
 *----------8.3: 7 day reference secondary job------------------------------*
 * Since labels are the same as main job, values are labelled using main job labels
-
+* secondary job not available for all rounds; in some rounds the data are only encoded as "previous quarter" job.
+* Will simply leave secondary job as missing.
 
 {
 *<_empstat_2_>
@@ -1343,68 +1347,24 @@ foreach v of local ed_var {
 
 
 *<_industry_orig_2_>
-	gen 			industry_orig_2 = j03_okb
+/*no second industry variable given (the given one is for previous quarter not for second job)*/
+
+	gen 			industry_orig_2 = .
 	label var 		industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 
 
 *<_industrycat_isic_2_>
-	loc matchvar   	j03_okb
-	loc n 			2
-
-	qui ds 			industry_orig_2, has(type numeric) 	// capture numeric var if is numeric
-	loc isicvar 	= r(varlist)						// store this in a local
-	loc len 		: list sizeof isicvar 				// store the length of this local (1 or 0)
-
-		if (`len' == 1) {
-															// run this if == 1 (ie, if industry_orig is numeric)
-			tostring industry_orig_2	///						// make the numeric vars strings
-				, generate(industry_orig_2_str) ///			// gen a variable with this prefix
-				force //
-		}
+	gen 			industrycat_isic_2 = .
+	label var 		industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 
 
-	// merge sub-module with isic key
-
-	gen psic_2dig = `matchvar'
-	tostring 	psic_2dig ///
-				, format(`"%02.0f"') replace
-
-	merge 		m:1 ///
-				psic_2dig ///
-				using `isic_key' ///
-				, generate(isic_merge_`n') ///
-				keep(master match) // "left join"; remove obs that don't match from using
-				* the string variable in isic4 will is industrycat_isic
-
-	// replace one code that I know doesn't match
-	rename 		isic4_2dig	isic4_2dig_`n'
-
-	gen 		industrycat_isic_2 = isic4_2dig_`n'  	// the string variable becomes industrycat_isic
-
-	drop 		psic_2dig 				// no longer needed, maintained in matchvar
-	label var 	industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
 
 *<_industrycat10_2_>
-	gen byte 		industrycat10_2 = .
-
-
-	replace 		industrycat10_2=1 if (j03_okb>=1& j03_okb<=4)		// to Agriculture
-	replace 		industrycat10_2=2 if (j03_okb>=5 & j03_okb<=9)		// to Mining
-	replace 		industrycat10_2=3 if (j03_okb>=10 & j03_okb<=33)	// to Manufacturing
-	replace 		industrycat10_2=4 if (j03_okb>=35 & j03_okb<=39)	// to Public utility
-	replace 		industrycat10_2=5 if (j03_okb>=41 &  j03_okb<=43)	// to Construction
-	replace 		industrycat10_2=6 if (j03_okb>=45 & j03_okb<=47) | (j03_okb>= 55 & j03_okb <= 56)	// to Commerce
-	replace 		industrycat10_2=7 if (j03_okb>=49 & j03_okb<=53)| (j03_okb>=58 & j03_okb<=63) // to Transport/coms
-	replace 		industrycat10_2=8 if (j03_okb>=64 & j03_okb<=82) 	// to financial/business services
-	replace 		industrycat10_2=9 if (j03_okb==84) 				// to public administration
-	replace 		industrycat10_2=10 if  (j03_okb>=91 & j03_okb<=99) // to other
-	replace 		industrycat10_2=10 if industrycat10_2==. & j03_okb!=.
-
-
-
+/*no second industry variable given (the given one is for previous quarter not for second job)*/
+	gen byte 			industrycat10_2 = .
 	label var 		industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values 	industrycat10_2 lblindustrycat10
 *</_industrycat10_2_>
@@ -1419,70 +1379,18 @@ foreach v of local ed_var {
 
 
 *<_occup_orig_2_>
-	gen 			occup_orig_2 = j02_otoc
+/*no second occupation variable given (the given one is for previous quarter not for second job)*/
+
+	gen 			occup_orig_2 = .
 	label var 		occup_orig_2 "Original occupation record secondary job 7 day recall"
 *</_occup_orig_2_>
 
 
 *<_occup_isco_2_>
-	loc matchvar   	j02_otoc
-	loc n 			2
-
-	qui ds 			occup_orig_2, has(type numeric) 	// capture numeric var if is numeric
-	loc iscovar 	= r(varlist)						// store this in a local
-	loc len 		: list sizeof iscovar 				// store the length of this local (1 or 0)
-
-		if (`len' == 1) {
-															// run this if == 1 (ie, if occup_orig_2 is numeric)
-			tostring occup_orig_2	///						// make the numeric vars strings
-				, generate(occup_orig_2_str) ///			// gen a variable with this prefix
-				force //
-		}
+	gen occup_isco_2 = ""
+	label var 	occup_isco_2 "ISCO code of secondary job 7 day recall"
 
 
-	// merge sub-module with isco key
-
-	gen psic_2dig = `matchvar'
-	tostring 	psic_2dig ///
-				, format(`"%02.0f"') replace
-
-	replace 	psic_2dig = "" 	if psic_2dig == "." 	// fix missing
-	replace 	psic_2dig = ""	if wave == "Q1" 		// we only want to match Q1
-
-	// merge with isco12 key (for waves 2-4)
-	merge 		m:1 ///
-				psic_2dig ///
-				using `isco_key12' ///
-				, generate(isco_merge12_`n') ///
-				keep(master match) // "left join"; remove obs that don't match from using
-
-	// merge with isco92 key (for wave 1)
-	* now the missing obs in psic_2dig are those in waves 2-4 that didn't match isco12 and
-	* all obs in wave1
-
-	** create an identical variable that is only non-missing for wave1
-	gen psoc92 = `matchvar'
-
-	tostring 	psoc92 ///
-				, format(`"%02.0f"') replace
-
-	replace 	psoc92 = "" 	if psoc92 == "." 	// fix missing
-	replace 	psoc92 = "" 	if wave != "Q1"			// ensure to only match waves 2-4
-
-
-	merge 		m:1 ///
-				psoc92 ///
-				using `isco_key92' ///
-				, generate(isco_merge92_`n') ///
-				keep(master match) // "left join"; remove obs that don't match from using
-
-
-	// coalese 2 variables
-	egen 		str2 occup_isco_`n' = rowfirst(isco08_2dig sub_major_isco08)
-
-	drop 		psoc92 psic_2dig				// no longer needed, maintained in matchvar
-
- label var 	occup_isco_2 "ISIC code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
 
@@ -1495,31 +1403,9 @@ foreach v of local ed_var {
 
 
 *<_occup_2_>
-	* generate empty variable
-	gen byte 		occup_2 = .
+/*no second occupation variable given (the given one is for previous quarter not for second job)*/
 
-	* replace conditionally based on January round (1992 PSOC)
-	replace 		occup_2=floor(j02_otoc/10)		///
-					if 	round == 1
-
-	recode 			occup_2 0 = 10		///
-					if 	j02_otoc==1 	/// recode "armed forces" to appropriate label
-					& 	round == 1
-
-	recode 			occup_2 0 = 99		///
-					if 	(j02_otoc>=2 & j02_otoc <=9) ///
-					| (j02_otoc >=94 & j02_otoc <= 99) /// recode "Not classifiable occupations"
-					& round == 1
-
-
-	* replace conditionally based on April, July, October rounds (2012 PSOC)
-	replace			occup_2=floor(j02_otoc/10)							///
-					if (round == 4 | round == 7 | round == 10)
-
-	recode 			occup_2 0 = 10									///
-					if 	(j02_otoc >=1 & j02_otoc <=3)				/// recode "armed forces" to appropriate label
-					& 	(round == 4 | round == 7 | round == 10)
-
+	gen byte occup_2 = .
 
 	label var 		occup_2 "1 digit occupational classification secondary job 7 day recall"
 	label values 	occup_2 lbloccup
@@ -1527,14 +1413,14 @@ foreach v of local ed_var {
 
 
 *<_wage_no_compen_2_>
-	gen 			double wage_no_compen_2 = c36_obic
+	gen 			double wage_no_compen_2 = .
 	replace 		wage_no_compen_2 = . if wage_no_compen_2 == 99999
 	label var 		wage_no_compen_2 "Last wage payment secondary job 7 day recall"
 *</_wage_no_compen_2_>
 
 
 *<_unitwage_2_>
-	gen byte 		unitwage_2 = j06_obis
+	gen byte 		unitwage_2 = .
 	replace 		unitwage_2 = . if 	unitwage >= 11 // replace potential missing values
 	recode 			unitwage_2 (0 1 5 6 7 = 10) /// other
 								(2 = 9) /// hourly
@@ -1547,7 +1433,7 @@ foreach v of local ed_var {
 
 
 *<_whours_2_>
-	gen 			whours_2 = j05_ohrs
+	gen 			whours_2 = .
 	label var 		whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 

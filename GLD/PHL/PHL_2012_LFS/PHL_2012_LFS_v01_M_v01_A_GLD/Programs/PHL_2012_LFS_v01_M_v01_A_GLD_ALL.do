@@ -1126,11 +1126,11 @@ foreach v of local ed_var {
 				keep(master match) // "left join"; remove obs that don't match from using
 
 
-	rename 		isco88_sub_major	isco88_sub_major_`n'
+	rename 		isco88_sub_major_pad	isco88_sub_major_`n'
 
 	drop 		psoc92 				// no longer needed, maintained in matchvar
 	gen 		occup_isco = isco88_sub_major_`n'
-	label var 	occup_isco "ISIC code of primary job 7 day recall"
+	label var 	occup_isco "ISCO code of primary job 7 day recall"
 
 *</_occup_isco_>
 
@@ -1355,7 +1355,7 @@ foreach v of local ed_var {
 
 
 	*// industrycat_isic already generated above in submodule
-	label var 		industrycat_isic_2 "ISIC code of primary job 7 day recall"
+	label var 		industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 
 
 *</_industrycat_isic_2_>
@@ -1427,7 +1427,7 @@ foreach v of local ed_var {
 				keep(master match) // "left join"; remove obs that don't match from using
 
 
-	rename 		isco88_sub_major	isco88_sub_major_`n'
+	rename 		isco88_sub_major_pad	isco88_sub_major_`n'
 
 	drop 		psoc92 				// no longer needed, maintained in matchvar
 	gen 		occup_isco_2 = isco88_sub_major_`n'

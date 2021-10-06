@@ -1210,9 +1210,9 @@ foreach v of local ed_var {
 				using `isic_key2dig' ///
 				, generate(isic_mergeb_`n') ///
 				keep(master match) /// "left join"; remove obs that don't match from using
-				keepusing(psic_2dig isic4_2dig)
+				keepusing(psic_2dig isic4_2dig_pad)
 
-	rename 		isic4_2dig isic4_2dig_`n'
+	rename 		isic4_2dig_pad isic4_2dig_`n'
 
 	// coalesce 2 variables
 	egen str4 	industrycat_isic = rowfirst(isic4_`n' isic4_2dig_`n')
@@ -1357,16 +1357,16 @@ foreach v of local ed_var {
 				using `isco_key2dig' ///
 				, generate(isco_mergeb_`n') ///
 				keep(master match) /// "left join"; remove obs that don't match from using
-				keepusing(psic_2dig isco08_2dig)
+				keepusing(psic_2dig isco08_2dig_pad)
 
-	rename 		isco08_2dig isco08_2dig_`n'
+	rename 		isco08_2dig_pad isco08_2dig_`n'
 
 	// coalesce 2 variables
 	egen str4	occup_isco = rowfirst(isco08_`n' isco08_2dig_`n')
 
 	drop 		psic_2dig				// no longer needed, maintained in matchvar
 
-	label var 	occup_isco "ISIC code of primary job 7 day recall"
+	label var 	occup_isco "ISCO code of primary job 7 day recall"
 
 *</_occup_isco_>
 
@@ -1549,124 +1549,23 @@ foreach v of local ed_var {
 
 
 *<_industry_orig_2_>
-	gen 			industry_orig_2 = pufc43_qkb
+/*no second industry variable given (the given one is for previous quarter not for second job)*/
+
+	gen 			industry_orig_2 = .
 	label var 		industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 
 
 *<_industrycat_isic_2_>
-
-	loc matchvar   	pufc43_qkb
-	loc n 			2
-
-	qui ds 			industry_orig_2, has(type numeric) 	// capture numeric var if is numeric
-	loc isicvar 	= r(varlist)						// store this in a local
-	loc len 		: list sizeof isicvar 				// store the length of this local (1 or 0)
-
-		if (`len' == 1) {
-															// run this if == 1 (ie, if industry_orig_2 is numeric)
-			tostring industry_orig_2	///						// make the numeric vars strings
-				, generate(industry_orig_2_str) ///			// gen a variable with this prefix
-				force //
-
-
-		}
-
-
-	// merge sub-module with isic key (for wave 2 only)
-
-	gen class = `matchvar'
-	tostring 	class ///
-				, format(`"%04.0f"') replace
-
-	replace 	class = "" if class == "." // fix missing
-	replace 	class = "" if wave != "Q2" // only match second wave at 4 digits
-
-	merge 		m:1 ///
-				class ///
-				using `isic_key' ///
-				, generate(isic_merge_`n') ///
-				keep(master match) // "left join"; remove obs that don't match from using
-				* the string variable in isic4 will is industrycat_isic
-
-	// replace one code that I know doesn't match
-	rename 		isic4	isic4_`n'
-	replace 	isic4_`n' = "6810" 	if `matchvar' == 6819
-
-	// merge with 2 digit key (for waves 1,3,4)
-	gen 		psic_2dig = `matchvar'
-	tostring 	psic_2dig ///
-				, format(`"%02.0f"') replace
-
-	replace 	psic_2dig = "" if psic_2dig == "." // fix missing
-	replace 	psic_2dig = "" if wave == "Q2" // merge only for q2
-
-	merge 		m:1 ///
-				psic_2dig ///
-				using `isic_key2dig' ///
-				, generate(isic_mergeb_`n') ///
-				keep(master match) /// "left join"; remove obs that don't match from using
-				keepusing(psic_2dig isic4_2dig)
-
-	rename 		isic4_2dig isic4_2dig_`n'
-
-	// coalesce 2 variables
-	egen str4 	industrycat_isic_2 = rowfirst(isic4_`n' isic4_2dig_`n')
-
-	drop 		psic_2dig 				// no longer needed, maintained in matchvar
-
-	label var 	industrycat_isic "ISIC code of primary job 7 day recall"
+	gen 			industrycat_isic_2 = .
+	label var 		industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 
 *</_industrycat_isic_2_>
 
 
 *<_industrycat10_2_>
-	gen byte industrycat10_2=.
-
-	* for months January, July, October
-		replace industrycat10_2=1 	if (pufc43_qkb>=1 	& pufc43_qkb<=4) ///
-								& (round == 1 | round == 3 | round == 4)	// to Agriculture
-		replace industrycat10_2=2 	if (pufc43_qkb>=5 	& pufc43_qkb<=9) ///
-								& (round == 1 | round == 3 | round == 4)	// to Mining
-		replace industrycat10_2=3 	if (pufc43_qkb>=10 & pufc43_qkb<=33)	///
-								& (round == 1 | round == 3 | round == 4) // to Manufacturing
-		replace industrycat10_2=4 	if (pufc43_qkb>=35 & pufc43_qkb<=39)  ///
-								& (round == 1 | round == 3 | round == 4)	// to Public utility
-		replace industrycat10_2=5 	if (pufc43_qkb>=41 & pufc43_qkb<=43)  ///
-								& (round == 1 | round == 3 | round == 4)	// to Construction
-		replace industrycat10_2=6 	if (pufc43_qkb>=45 & pufc43_qkb<=47) | (pufc43_qkb >= 55 & pufc43_qkb <= 56)  ///
-								& (round == 1 | round == 3 | round == 4)	// to Commerce
-		replace industrycat10_2=7 	if (pufc43_qkb>=49 & pufc43_qkb<=53) | (pufc43_qkb >= 58 & pufc43_qkb <= 63)  ///
-								& (round == 1 | round == 3 | round == 4) // to Transport/coms
-		replace industrycat10_2=8 	if (pufc43_qkb>=64 & pufc43_qkb<=82)   ///
-								& (round == 1 | round == 3 | round == 4)	// to financial/business services
-		replace industrycat10_2=9 	if (pufc43_qkb==84) 		  ///
-								& (round == 1 | round == 3 | round == 4)		// to public administration
-		replace industrycat10_2=10 if (pufc43_qkb>=91 & pufc43_qkb<=99)   ///
-								& (round == 1 | round == 3 | round == 4) // to other
-		replace industrycat10_2=10 if industrycat10_2==. & pufc43_qkb!=.  ///
-								& (round == 1 | round == 3 | round == 4)
-
-
-	if (round == 2) {
-		* For April, code according to the april Schema
-
-		replace industrycat10_2=1 	if pufc43_qkb >= 100 	& pufc43_qkb <= 399	 	// "Agriculture, Forestry, Fishing" coded to "Agriculture"
-		replace industrycat10_2=2 	if pufc43_qkb >= 500 	& pufc43_qkb <= 999		// "Mining and Quarrying" coded to "Mining"
-		replace industrycat10_2=3 	if pufc43_qkb >= 1000 	& pufc43_qkb <= 3399 	// "Manufacturing" coded to "Manufacturing"
-		replace industrycat10_2=4 	if pufc43_qkb >= 3500 	& pufc43_qkb <= 3900	// "Water supply, sewerage, etc" coded to "Public Utiltiy"
-		replace industrycat10_2=5 	if pufc43_qkb >= 4100 	& pufc43_qkb <= 4399	// "Construction" coded to "Construction"
-		replace industrycat10_2=6 	if pufc43_qkb >= 4500 	& pufc43_qkb <= 4799	// "Wholesale/retail, repair of vehicles" to "Commerce"
-		replace industrycat10_2=7 	if pufc43_qkb >= 4900 	& pufc43_qkb <= 5399	// "Transport+storage" to "Transport". UN codes include storage
-		replace industrycat10_2=6 	if pufc43_qkb >= 5500 	& pufc43_qkb <= 5699	// "Accommodation+Food" to "Commerce"
-		replace industrycat10_2=7 	if pufc43_qkb >= 5800 	& pufc43_qkb <= 6399	// "Information+communication" to "Transport/Communication"
-		replace industrycat10_2=8 	if pufc43_qkb >= 6400 	& pufc43_qkb <= 8299	// "Misc Business Services" to "Business Services"
-		replace industrycat10_2=9 	if pufc43_qkb >= 8400 	& pufc43_qkb <= 8499	// "public administration/defense" to "public administration"
-		replace industrycat10_2=10	if pufc43_qkb >= 8500 	& pufc43_qkb <= 9950	// "Other services" including direct education to "other"
-
-	}
-
-
+/*no second industry variable given (the given one is for previous quarter not for second job)*/
+	gen byte 			industrycat10_2 = .
 	label var 		industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values 	industrycat10_2 lblindustrycat10
 *</_industrycat10_2_>
@@ -1681,72 +1580,17 @@ foreach v of local ed_var {
 
 
 *<_occup_orig_2_>
-	gen 			occup_orig_2 = pufc40_pocc
+/*no second occupation variable given (the given one is for previous quarter not for second job)*/
+
+	gen 			occup_orig_2 = .
 	label var 		occup_orig_2 "Original occupation record secondary job 7 day recall"
 *</_occup_orig_2_>
 
 
 *<_occup_isco_2_>
-* in 2017, raw variable is numeric, 2-digits, so isco conversion not possible
-	* skipping for now
+	gen occup_isco_2 = ""
+	label var 	occup_isco_2 "ISCO code of secondary job 7 day recall"
 
-	loc matchvar   	pufc40_pocc
-	loc n 			2
-
-	qui ds 			occup_orig_2, has(type numeric) 	// capture numeric var if is numeric
-	loc iscovar 	= r(varlist)						// store this in a local
-	loc len 		: list sizeof iscovar 				// store the length of this local (1 or 0)
-
-		if (`len' == 1) {
-															// run this if == 1 (ie, if occup_orig is numeric)
-			tostring occup_orig_2	///						// make the numeric vars strings
-				, generate(occup_orig_2_str) ///			// gen a variable with this prefix
-				force //
-
-
-		}
-
-
-	// merge sub-module with isco key
-
-	gen unit = `matchvar'
-	tostring 	unit ///
-				, format(`"%04.0f"') replace
-
-	replace 	unit = "" if wave != "Q2"
-
-	merge 		m:1 ///
-				unit ///
-				using `isco_key' ///
-				, generate(isco_merge_`n') ///
-				keep(master match) /// "left join"; remove obs that don't match from using
-				keepusing(unit isco08)
-
-	rename 		isco08 isco08_`n'
-
-
-	// merge with 2 digit key
-	gen 		psic_2dig = `matchvar'
-	tostring 	psic_2dig ///
-				, format(`"%02.0f"') replace
-
-	replace 	psic_2dig = "" if wave == "Q2" // merge only for q2
-
-	merge 		m:1 ///
-				psic_2dig ///
-				using `isco_key2dig' ///
-				, generate(isco_mergeb_`n') ///
-				keep(master match) /// "left join"; remove obs that don't match from using
-				keepusing(psic_2dig isco08_2dig)
-
-	rename 		isco08_2dig isco08_2dig_`n'
-
-	// coalesce 2 variables
-	egen str4	occup_isco_2 = rowfirst(isco08_`n' isco08_2dig_`n')
-
-	drop 		psic_2dig 				// no longer needed, maintained in matchvar
-
-	label var 	occup_isco_2 "ISIC code of primary job 7 day recall"
 
 *</_occup_isco_2_>
 
@@ -1760,20 +1604,9 @@ foreach v of local ed_var {
 
 
 *<_occup_2_>
-	* generate empty variable
+/*no second occupation variable given (the given one is for previous quarter not for second job)*/
+
 	gen byte occup_2 = .
-
-	* replace conditionally based on January, July, October (2-digit rounds)
-	replace 	occup_2	=floor(pufc40_pocc/10)		if  (round == 1 | round == 3 | round == 4)
-	recode 		occup_2 0 = 10	if 	(pufc40_pocc >=1 & pufc40_pocc <=3)	/// recode "armed forces" to appropriate label
-						& (round == 1 | round == 3 | round == 4)
-
-
-	* replace conditionally based on April (4-digit round)
-	replace 	occup_2	=floor(pufc40_pocc/1000)	if 	round == 2
-	recode 		occup_2 0 = 10	///
-						if 	(pufc40_pocc == 110 | pufc40_pocc == 210 | pufc40_pocc == 310) /// recode "armed forces" to appropriate label
-						& 	(round == 2)
 
 	label var 		occup_2 "1 digit occupational classification secondary job 7 day recall"
 	label values 	occup_2 lbloccup
