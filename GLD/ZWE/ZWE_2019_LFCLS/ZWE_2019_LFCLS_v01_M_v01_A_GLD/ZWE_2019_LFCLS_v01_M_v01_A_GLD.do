@@ -467,14 +467,14 @@ without the household level variables and code the individual level ones for now
 {
 
 *<_migrated_mod_age_>
-	gen migrated_mod_age = .
-	label var migrated_mod_age "Migration module application age"
+	gen            migrated_mod_age = 0    // asked of all persons
+	label var      migrated_mod_age "Migration module application age"
 *</_migrated_mod_age_>
 
 
 *<_migrated_ref_time_>
-	gen migrated_ref_time = .
-	label var migrated_ref_time "Reference time applied to migration questions (in years)"
+	gen            migrated_ref_time = 5   // in survey year 2019, asked if moved since 2014
+	label var      migrated_ref_time "Reference time applied to migration questions (in years)"
 *</_migrated_ref_time_>
 
 
