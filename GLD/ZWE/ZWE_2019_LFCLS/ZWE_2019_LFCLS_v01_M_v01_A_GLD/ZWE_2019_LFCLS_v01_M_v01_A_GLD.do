@@ -347,74 +347,113 @@ without the household level variables and code the individual level ones for now
 
 
 *<_age_>
-	gen age = .
-	label var age "Individual age"
+	gen            age = BC5               // variable looks clean as-is
+	label var      age "Individual age"
 *</_age_>
 
 
 *<_male_>
-	gen male = .
-	label var male "Sex - Ind is male"
-	la de lblmale 1 "Male" 0 "Female"
-	label values male lblmale
+	gen             male = BC4
+    recode          (2 = 0)                  // Female (=2) recoded to 0,; male (=1) OK as-is
+
+	label var       male "Sex - Ind is male"
+	la de           lblmale 1 "Male" 0 "Female"
+	label values    male lblmale
 *</_male_>
 
 
 *<_relationharm_>
-	gen relationharm = .
-	label var relationharm "Relationship to the head of household - Harmonized"
-	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
+	gen            relationharm = BC3
+    recode         relationharm     (6 = 4) /// "Parent" -> "Parents"
+                                (4 5 7 8 9 10 11 12 13= 5) ///
+                                (14 96 = 6) /// Domestic workers, other -> "Other and non-relatives"
+                                (98 = .) // "DK" -> missing
+    * In-laws, grandchildren, brother/sister, uncle/aunt, niece/nephew, other relative, adopted -> "Other relatives"
+
+	label var      relationharm    "Relationship to the head of household - Harmonized"
+	la de          lblrelationharm  1 "Head of household"   ///
+                                2 "Spouse" ///
+                                3 "Children" ///
+                                4 "Parents" ///
+                                5 "Other relatives" ///
+                                6 "Other and non-relatives"
 	label values relationharm  lblrelationharm
 *</_relationharm_>
 
 
 *<_relationcs_>
-	gen relationcs = .
-	label var relationcs "Relationship to the head of household - Country original"
+	gen            relationcs = BC3
+	label var      relationcs "Relationship to the head of household - Country original"
 *</_relationcs_>
 
 
 *<_marital_>
-	gen byte marital = .
-	label var marital "Marital status"
-	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
-	label values marital lblmarital
+	gen byte       marital = BC10
+    recode         marital  (1 = 2) /// "Never married"  -> "never married"
+                            (2 = 1) /// "Married" -> "married"
+                            (3 = 4) /// "Divorced/sep" -> Divorced/separated
+                            (4 = 5) //  Widowed
+	label var      marital "Marital status"
+	la de          lblmarital   1 "Married" 2 "Never Married"  ///
+                                3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
+	label values   marital lblmarital
 *</_marital_>
 
 
 *<_eye_dsablty_>
-	gen eye_dsablty = .
-	label var eye_dsablty "Disability related to eyesight"
+* define disability labels to be used for all related variables since value labels are same.
+    label define   dsablty      1 "No" 2 "Yes – some" 3 "Yes – a lot" 4 "Cannot at all"
+
+	gen            eye_dsablty = D1    // survey labels match GLD labels except for missing/do not know
+    recode         eye_dsablty (9 = .) // recode 9 to .
+
+    label values   eye_dsablty dsablty // apply value labels defined in <_eye_dsablty_>
+	label var      eye_dsablty "Disability related to eyesight"
 *</_eye_dsablty_>
 
 
 *<_hear_dsablty_>
-	gen hear_dsablty = .
-	label var eye_dsablty "Disability related to hearing"
+	gen            hear_dsablty = D2    // survey labels match GLD labels except for missing/do not know
+    recode         hear_dsablty (9 = .) // recode 9 to .
+
+    label values   hear_dsablty dsablty // apply value labels defined in <_eye_dsablty_>
+	label var      hear_dsablty "Disability related to hearing"
 *</_hear_dsablty_>
 
 
 *<_walk_dsablty_>
-	gen walk_dsablty = .
-	label var eye_dsablty "Disability related to walking or climbing stairs"
+	gen            walk_dsablty = D3    // survey labels match GLD labels except for missing/do not know
+    recode         walk_dsablty (9 = .) // recode 9 to .
+
+    label values   walk_dsablty dsablty // apply value labels defined in <_eye_dsablty_>
+	label var      walk_dsablty "Disability related to walking or climbing stairs"
 *</_walk_dsablty_>
 
 
 *<_conc_dsord_>
-	gen conc_dsord = .
-	label var eye_dsablty "Disability related to concentration or remembering"
+	gen            conc_dsord = D4     // survey labels match GLD labels except for missing/do not know
+    recode         conc_dsord (9 = .) // recode 9 to .
+
+    label values   conc_dsord dsablty // apply value labels defined in <_eye_dsablty_>
+	label var      conc_dsord "Disability related to concentration or remembering"
 *</_conc_dsord_>
 
 
 *<_slfcre_dsablty_>
-	gen slfcre_dsablty  = .
-	label var eye_dsablty "Disability related to selfcare"
+	gen            slfcre_dsablty  = D5   // survey labels match GLD labels except for missing/do not know
+    recode         slfcre_dsablty (9 = .) // recode 9 to .
+
+    label values   slfcre_dsablty dsablty // apply value labels defined in <_eye_dsablty_>
+	label var      slfcre_dsablty "Disability related to selfcare"
 *</_slfcre_dsablty_>
 
 
 *<_comm_dsablty_>
-	gen comm_dsablty = .
-	label var eye_dsablty "Disability related to communicating"
+	gen            comm_dsablty = D6    // survey labels match GLD labels except for missing/do not know
+    recode         comm_dsablty (9 = .) // recode 9 to .
+
+    label values   comm_dsablty dsablty // apply value labels defined in <_eye_dsablty_>
+	label var      comm_dsablty "Disability related to communicating"
 *</_comm_dsablty_>
 
 }
