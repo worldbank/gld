@@ -5,24 +5,24 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				[Name of your do file] </_Program name_>
-<_Application_>					[Name of your software (STATA) and version] <_Application_>
+<_Program name_>				ZWE_2019_LFCLS_v01_M_v01_A_GLD </_Program name_>
+<_Application_>					Stata 15 <_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
-<_Date created_>				YYYY-MM-DD </_Date created_>
+<_Date created_>				2021-10-06 </_Date created_>
 
 -------------------------------------------------------------------------
 
-<_Country_>						[Country_Name (CCC)] </_Country_>
-<_Survey Title_>				[SurveyName] </_Survey Title_>
-<_Survey Year_>					[Year of start of the survey] </_Survey Year_>
+<_Country_>						ZWE </_Country_>
+<_Survey Title_>				Labour Force and Child Labour Survey (LFCLS) </_Survey Title_>
+<_Survey Year_>					2019 </_Survey Year_>
 <_Study ID_>					[Microdata Library ID if present] </_Study ID_>
 <_Data collection from_>		[MM/YYYY] </_Data collection from_>
 <_Data collection to_>			[MM/YYYY] </_Data collection to_>
 <_Source of dataset_> 			[Source of data, e.g. NSO] </_Source of dataset_>
-<_Sample size (HH)_> 			[#] </_Sample size (HH)_>
+<_Sample size (HH)_> 			 10475 sampled, 9645 (interviewed) </_Sample size (HH)_>
 <_Sample size (IND)_> 			[#] </_Sample size (IND)_>
-<_Sampling method_> 			[Brief description] </_Sampling method_>
-<_Geographic coverage_> 		[To what level is data significant] </_Geographic coverage_>
+<_Sampling method_> 			2-stage stratification: enumeration area selection then selection of households </_Sampling method_>
+<_Geographic coverage_> 		Province or 1st Admin Division </_Geographic coverage_>
 <_Currency_> 					[Currency used for wages] </_Currency_>
 
 -----------------------------------------------------------------------
@@ -56,14 +56,54 @@ set more off
 set mem 800m
 
 *----------1.2: Set directories------------------------------*
+** DIRECTORY
 
-local path_in "[Path to CCC_YYYY_SVY_v01_M / Data / Stata]"
-local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
+	local 	cty3 	"ZWE" 			// set this to the three letter country/economy abbreviation
+	local 	usr		`"551206_TM"' 	// set this to the top folder
+	local 	surv_yr  = 2019			// set this to the survey year
+
+** RUN SETTINGS
+	local 	year 		"Y:\GLD-Harmonization\\`usr'\\`cty3'\\`cty3'_`surv_yr'_LFS" // top data folder
+
+	local 	main		"`year'\\`cty3'_`surv_yr'_LFS_v01_M"
+	local 	 stata		"`main'\Data\Stata"
+	local 	i2d2		"`year'\\`cty3'_`surv_yr'_LFS_v01_M_v01_A_I2D2"
+	local 	gld 		"`year'\\`cty3'_`surv_yr'_LFS_v01_M_v01_A_GLD"
+	local 	 code 		"`gld'\Programs"
+	local 	 gld_data 	"`gld'\Data\Harmonized"
+
+	local 	lb_mod_age	15	// labor module minimun age (inclusive)
+	local 	ed_mod_age	5	// labor module minimun age (inclusive)
+
+** LOG FILE
+	log using `"`gld_data'\\`cty3'_`surv_yr'_GLD_LFS.log"', replace
+
+
+** FILES
+	* input
+	local ind `"`stata'\Labour forrce 2019_HL.dta"'
+
+	local isic_key 	 `"`stata'\"'
+	local isco_key 	 `"`stata'\"' // to be created
+
+* ouput
+	local path_output `"`gld_data'\\`cty3'_`surv_yr'_LFS_v01_M_v01_A_GLD_ALL.dta"'
+
 
 *----------1.3: Database assembly------------------------------*
 
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
+
+/*
+Note on Database assembly:
+
+The data arrive in two .sav files: one for individual level observations and one for household level
+observations. But these files do not have all variable described in the questionnaire -- specifically
+the ID variables that would be necessary to merge them together. Thus, for now, I will simply operate
+without the household level variables and code the individual level ones for now.
+
+*/
 
 
 /*%%=============================================================================================
