@@ -1122,6 +1122,7 @@ foreach v of local ed_var {
 				, generate(isco_merge12_`n') ///
 				keep(master match) // "left join"; remove obs that don't match from using
 
+				* use the 2 digit padded isco08 variable:  isco08_2dig_pad
 
 	// merge with isco92 key (for wave 1)
 	* now the missing obs in psic_2dig are those in waves 2-4 that didn't match isco12 and
@@ -1143,9 +1144,11 @@ foreach v of local ed_var {
 				, generate(isco_merge92_`n') ///
 				keep(master match) // "left join"; remove obs that don't match from using
 
+				* use the 2 digit padded isco08 variable:  sub_major_isco08_pad
+
 
 	// coalese 2 variables
-	egen 		str2 occup_isco_`n' = rowfirst(isco08_2dig_pad sub_major_isco08)
+	egen 		str2 occup_isco_`n' = rowfirst(isco08_2dig_pad sub_major_isco08_pad)
 
 	drop 		psoc92 psic_2dig			// drop both; no longer needed, maintained in matchvar
 
