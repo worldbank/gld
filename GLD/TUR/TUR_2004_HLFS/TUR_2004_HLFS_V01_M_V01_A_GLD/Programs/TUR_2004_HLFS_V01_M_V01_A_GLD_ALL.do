@@ -29,8 +29,8 @@
 <_ISCED Version_>				ISCED 97 </_ISCED Version_>
 <_ISCO Version_>				ISCO 88 </_ISCO Version_>
 <_OCCUP National_>				ISCO 88  </_OCCUP National_>
-<_ISIC Version_>				ISIC Rev. 3 </_ISIC Version_>
-<_INDUS National_>				 ISIC Rev. 3 </_INDUS National_>
+<_ISIC Version_>				ISIC Rev. 3.1 </_ISIC Version_>
+<_INDUS National_>				 NACE 1.1 </_INDUS National_>
 -----------------------------------------------------------------------
 <_Version Control_>
 * Date: [YYYY-MM-DD] - [Description of changes]
@@ -104,7 +104,7 @@ rename*, lower
 
 
 *<_isic_version_>
-	gen isic_version = "isic_3"
+	gen isic_version = "isic_3.1"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
@@ -222,16 +222,19 @@ rename*, lower
 
 *<_subnatid1_>
 /* <_subnatid1>
-	First breakdown is NUTS-1 (https://en.wikipedia.org/wiki/NUTS_statistical_regions_of_Turkey), not actual
-	administrative divisions. Same for subnatid2.
+	First breakdown is NUTS-1 (https://en.wikipedia.org/wiki/NUTS_statistical_regions_of_Turkey), not actual administrative divisions. Same for subnatid2.
 </_subnatid1> */
-	gen subnatid1=.
+	gen subnatid1=nuts1
+	label define lblsubnatid1  1 "1 - Istanbul" 2 "2 - West Marmara" 3 "3 - Aegean" 4 "4 - East Marmara" 5 "5 - West Anatolia" 6 "6 - Mediterranean" 7 "7 - Central Anatolia" 8 "8 - West Black Sea" 9 "9 - East Black Sea" 10 "10 - Northeast Anatolia" 11 "11- Middle East Anatolia" 12 "12 - Southeast Anatolia"
+	label values subnatid1 lblsubnatid1
 	label var subnatid1 "Subnational ID at NUTS 1 Level"
 *</_subnatid1_>
 
 
 *<_subnatid2_>
-	gen subnatid2=.
+	gen subnatid2=nuts2
+	label define lblsubnatid2  1 "1 - Istanbul" 2 "2 - Edirne, Tekirdağ, Kırklareli" 3 "3 - Balıkesir, Çanakkale" 4 "4 - İzmir" 5 "5 - Denizli, Aydın, Muğla" 6 "6 - Manisa, Afyonkarahisar, Kütahya, Uşak" 7 "7 - Bursa, Eskişehir, Bilecik" 8 "8 - Kocaeli, Sakarya, Düzce, Bolu, Yalova" 9 "9 - Ankara" 10 "10 - Konya, Karaman" 11 "11 - Antalya, Isparta, Burdur" 12 "12 - Adana, Mersin" 13 "13 - Hatay, Kahramanmaraş, Osmaniye" 14 "14 - Nevşehir, Aksaray, Niğde, Kırıkkale, Kırşehir" 15 "15 - Kayseri, Sivas, Yozgat" 16 "16 - Zonguldak, Karabük, Bartın" 17 "17 - Kastamonu, Çankırı, Sinop" 18 "18 - Samsun, Tokat, Çorum, Amasya" 19 "19 - Trabzon, Ordu, Giresun, Rize, Artvin, Gümüşhane" 20 "20 - Erzurum, Erzincan, Bayburt" 21 "21 - Kars, Ağrı, Iğdır, Ardahan" 22 "22 - Malatya, Elazığ, Bingöl, Tunceli" 23 "23 - Van, Muş, Bitlis, Hakkari" 24 "24 - Gaziantep, Adıyaman, Kilis" 25 "25 - Diyarbakır, Şanlıurfa" 26 "26 - Siirt, Mardin, Batman, Şırnak"
+	label values subnatid2 lblsubnatid2
 	label var subnatid2 "Subnational ID at NUTS 2 Level"
 *</_subnatid2_>
 
@@ -245,7 +248,7 @@ rename*, lower
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = "urban"
+	gen subnatidsurvey = "subnatid2"
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -720,7 +723,7 @@ foreach v of local ed_var {
 
 *<_industrycat_isic_>
 *1 digit isic code
-	gen industrycat_isic=s28kod
+	gen industrycat_isic=industry_orig
 	tostring industrycat_isic, replace
 	replace industrycat_isic="" if industrycat_isic=="."
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
@@ -728,7 +731,22 @@ foreach v of local ed_var {
 
 
 *<_industrycat10_>
-	gen industrycat10=.
+	gen industrycat10=industry_orig
+	recode industrycat10 9=10 
+	
+	/* 
+	1	Agri
+2	Min
+3	mAN
+4	eLE
+5	Cons
+6	Whole
+7	Trans
+8	Finace
+9	Community
+	
+	*/
+	
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
@@ -778,22 +796,19 @@ Skill level 1 (low)
 Armed forces
 0. Armed forces
 Not elsewhere classified
-X. Not elsewhere classified
-
-*/
-
-	/**gen occup_skill = .
-	replace occup_skill=1 if s22kod==9
-	replace occup_skill=2 if inrange(s22kod,4,8)
-	replace occup_skill=3 if inrange(s22kod,1,3)
+X. Not elsewhere classified*/
+	gen occup_skill = .
+	replace occup_skill=1 if s33kod==9
+	replace occup_skill=2 if inrange(s33kod,4,8)
+	replace occup_skill=3 if inrange(s33kod,1,3)
 	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"  4 "Armed Forces"
 	label values occup_skill lblskill
-	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"*/
+	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
 *</_occup_skill_>
 
 
 *<_occup_>
-	gen byte occup = .
+	gen byte occup = s33kod
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup
@@ -918,20 +933,36 @@ X. Not elsewhere classified
 
 
 *<_industry_orig_2_>
-	gen industry_orig_2 = s26kod
+	gen industry_orig_2 = s52kod
 	replace industry_orig_2=. if lstatus!=1
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 
 
 *<_industrycat_isic_2_>
-	gen industrycat_isic_2 = .
+	gen industrycat_isic_2 = s52kod
+	tostring industrycat_isic_2, replace
+	replace industrycat_isic_2="" if industrycat_isic_2=="."
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
 
 *<_industrycat10_2_>
-	gen byte industrycat10_2 = .
+	gen byte industrycat10_2 = industry_orig_2
+	recode industrycat10_2 9=10 
+	
+	/* 
+	1	Agri
+2	Min
+3	mAN
+4	eLE
+5	Cons
+6	Whole
+7	Trans
+8	Finace
+9	Community
+	
+	*/
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
 *</_industrycat10_2_>
@@ -939,6 +970,7 @@ X. Not elsewhere classified
 
 *<_industrycat4_2_>
 	gen byte industrycat4_2 = .
+	recode industrycat4_2 (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
 	label var industrycat4_2 "1 digit industry classification (Broad Economic Activities), secondary job 7 day recall"
 	label values industrycat4_2 lblindustrycat4
 *</_industrycat4_2_>
@@ -983,7 +1015,7 @@ X. Not elsewhere classified
 
 
 *<_whours_2_>
-	gen whours_2 = s28b
+	gen whours_2 = s56b_top
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 
@@ -1121,7 +1153,7 @@ X. Not elsewhere classified
 
 *<_ocusec_year_>
 	gen byte ocusec_year = .
-	label var ocusec_year "Sector of activity primary job 12 day recall"
+	label var ocusec_year "Sector of activity primary job 12 month recall"
 	la de lblocusec_year 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec_year lblocusec_year
 *</_ocusec_year_>
@@ -1271,7 +1303,7 @@ X. Not elsewhere classified
 
 *<_ocusec_2_year_>
 	gen byte ocusec_2_year = .
-	label var ocusec_2_year "Sector of activity secondary job 12 day recall"
+	label var ocusec_2_year "Sector of activity secondary job 12 month recall"
 	la de lblocusec_2_year 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec_2_year lblocusec_2_year
 *</_ocusec_2_year_>
@@ -1385,7 +1417,7 @@ X. Not elsewhere classified
 
 *<_t_wage_nocompen_others_year_>
 	gen t_wage_nocompen_others_year = .
-	label var t_wage_nocompen_others_year "Annualized wage in all but primary & secondary jobs excl. bonuses, etc. 12 month recall)"
+	label var t_wage_nocompen_others_year "Annualized wage in all but primary & secondary jobs excl. bonuses, etc. 12 month recall"
 *</_t_wage_nocompen_others_year_>
 
 *<_t_wage_others_year_>
