@@ -570,72 +570,103 @@ without the household level variables and code the individual level ones for now
 
 /* <_ed_mod_age_note>
 
-Education module is only asked to those XX and older.
+Education module is only asked to those 3 and older.
 
 </_ed_mod_age_note> */
 
-gen byte ed_mod_age = .
-label var ed_mod_age "Education module application age"
+gen byte            ed_mod_age = 3
+label var           ed_mod_age "Education module application age"
 
 *</_ed_mod_age_>
 
 *<_school_>
-	gen byte school=.
-	label var school "Attending school"
-	la de lblschool 0 "No" 1 "Yes"
-	label values school  lblschool
+	gen byte       school = ED2
+    recode         school (1 = 0) /// "no" -> "no"
+                        (2 3 = 1) /// "Yes at school"' "yes left" -> yes
+                        (9 = .)  // reocde to missing
+
+	label var      school "Attending school"
+	la de          lblschool 0 "No" 1 "Yes"
+	label values   school  lblschool
 *</_school_>
 
 
 *<_literacy_>
-	gen byte literacy = .
-	label var literacy "Individual can read & write"
-	la de lblliteracy 0 "No" 1 "Yes"
-	label values literacy lblliteracy
+    * literacy not asked directly in survey, will leave as missing
+	gen byte       literacy = .
+	label var      literacy "Individual can read & write"
+	la de          lblliteracy 0 "No" 1 "Yes"
+	label values   literacy lblliteracy
 *</_literacy_>
 
 
 *<_educy_>
-	gen byte educy =.
-	label var educy "Years of education"
+    * number of years in school not asked directly in survey, will leave as missing.
+	gen byte       educy =.
+	label var      educy "Years of education"
 *</_educy_>
 
 
 *<_educat7_>
-	gen byte educat7 =.
-	label var educat7 "Level of education 1"
-	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
-	label values educat7 lbleducat7
+    /* the data are organized by educational level in ED4A and then by year within that level in ED4B. But the
+    data are recorded as higest level ever attended, not attained. The GLD essentially asks for attainment, not
+    attendance. A great way to get a visual of the "attendance" is
+        bysort ED4A: tab ED4B
+
+    To accurately record attainment for GLD, we need to determine what the highest level was completed. Question
+    ED5 asks for completion of the grade level attended in ED4A-B. We could assume that if the level was not
+    completed, that the previous grade level was. This would require a general sense of Zimbabwe's educational
+    heirarchy: we need to know the previous grade for every grade level. But this is likely impossible, since
+    almost no education system is perfectly linear, where every grade has only one possible previous course level.
+    In the very least, we should know what educat7 tcategory the previous grade corresponds to.
+
+    */
+	gen byte       educat7 =
+
+	label var      educat7 "Level of education 1"
+	la de          lbleducat7 1 "No education" ///
+                        2 "Primary incomplete" ///
+                        3 "Primary complete" ///
+                        4 "Secondary incomplete" ///
+                        5 "Secondary complete" ///
+                        6 "Higher than secondary but not university" ///
+                        7 "University incomplete or complete"
+	label values   educat7 lbleducat7
 *</_educat7_>
 
 
 *<_educat5_>
-	gen byte educat5 = educat7
-	recode educat5 4=3 5=4 6 7=5
-	label var educat5 "Level of education 2"
-	la de lbleducat5 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
-	label values educat5 lbleducat5
+	gen byte       educat5 = educat7
+	recode         educat5 (4=3) (5=4) (6 7=5)
+
+	label var      educat5 "Level of education 2"
+	la de          lbleducat5   1 "No education" ///
+                                2 "Primary incomplete"  ///
+                                3 "Primary complete but secondary incomplete" ///
+                                4 "Secondary complete" ///
+                                5 "Some tertiary/post-secondary"
+	label values   educat5 lbleducat5
 *</_educat5_>
 
 
 *<_educat4_>
-	gen byte educat4 = educat7
-	recode educat4 (2 3 4 = 2) (5=3) (6 7=4)
-	label var educat4 "Level of education 3"
-	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
-	label values educat4 lbleducat4
+	gen byte       educat4 = educat7
+	recode         educat4 (2 3 4 = 2) (5=3) (6 7=4)
+	label var      educat4 "Level of education 3"
+	la de          lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
+	label values   educat4 lbleducat4
 *</_educat4_>
 
 
 *<_educat_orig_>
-	gen educat_orig = .
-	label var educat_orig "Original survey education code"
+	gen            educat_orig = .
+	label var      educat_orig "Original survey education code"
 *</_educat_orig_>
 
 
 *<_educat_isced_>
-	gen educat_isced = .
-	label var educat_isced "ISCED standardised level of education"
+	gen            educat_isced = .
+	label var      educat_isced "ISCED standardised level of education"
 *</_educat_isced_>
 
 
