@@ -35,10 +35,9 @@ edu <- hl %>%
 
 # ahh, need to include ED5 for completion
 edu.lvls <- edu %>%
-  select("ED4A", "ED4B", "ED5") %>%
-  mutate(complete = (ED5 == 1)) %>% # make a boolean variable for completed grade level
-  group_by(ED4A, ED4B, complete) %>%
+  group_by(ED4A, ED4B, ED5) %>%
   summarise(count = n()) %>%
+  mutate(complete = (ED5 == 1)) %>% # make a boolean variable for completed grade level
   # note that these labels are taken directly from the .dta labels, they differ 
   # slightly from the codebook.
   mutate(
