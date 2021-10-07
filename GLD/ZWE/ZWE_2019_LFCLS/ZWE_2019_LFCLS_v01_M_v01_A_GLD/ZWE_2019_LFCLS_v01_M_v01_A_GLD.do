@@ -85,6 +85,7 @@ set mem 800m
 
 	local isic_key 	 `"`stata'\"'
 	local isco_key 	 `"`stata'\"' // to be created
+    local edu_key    `"`stata'\ZWE_key_educat7.dta"'
 
 * ouput
 	local path_output `"`gld_data'\\`cty3'_`surv_yr'_LFS_v01_M_v01_A_GLD_ALL.dta"'
@@ -620,8 +621,20 @@ label var           ed_mod_age "Education module application age"
     almost no education system is perfectly linear, where every grade has only one possible previous course level.
     In the very least, we should know what educat7 tcategory the previous grade corresponds to.
 
+    The R script `zwe_edu_attain.R` creates a key that converts combinations of ED4A, ED4B and ED5 into
+    educat7.
+
     */
-	gen byte       educat7 =
+
+    * step 1: merge in edu key
+    merge          m:1 ///
+                   ED4A ED4B ED5 ///
+                   using `edu_key' ///
+                   , keepusing(attain_educat7) ///
+                   keep(master match) // "left join"
+
+
+	gen byte       educat7 = attain_educat7
 
 	label var      educat7 "Level of education 1"
 	la de          lbleducat7 1 "No education" ///
