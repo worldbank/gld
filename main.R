@@ -80,6 +80,6 @@ PHL           <- file.path(GLD, "GLD-Harmonization/551206_TM/PHL")
   PHL_labels  <- file.path(PHL, "PHL_data/variable_label_tables.Rdata")
 
 ZWE           <- file.path(GLD, "GLD-Harmonization/551206_TM/ZWE")
-
+  ZWE_meta    <- file.path(ZWE, "ZWE_data/GLD/Rdata/metadata.Rdata")
 
 
