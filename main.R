@@ -81,5 +81,6 @@ PHL           <- file.path(GLD, "GLD-Harmonization/551206_TM/PHL")
 
 ZWE           <- file.path(GLD, "GLD-Harmonization/551206_TM/ZWE")
   ZWE_meta    <- file.path(ZWE, "ZWE_data/GLD/Rdata/metadata.Rdata")
+  ZWE_sum     <- file.path(ZWE, "ZWE_data/GLD/Rdata/ZWE_2019_summary.Rdata")
 
 
