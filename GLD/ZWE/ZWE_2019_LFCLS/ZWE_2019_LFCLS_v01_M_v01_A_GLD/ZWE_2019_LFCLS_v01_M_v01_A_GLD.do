@@ -52,6 +52,7 @@
 *----------1.1: Initial commands------------------------------*
 
 clear
+cap log close
 set more off
 set mem 800m
 
@@ -107,6 +108,8 @@ without the household level variables and code the individual level ones for now
 */
 
 
+	use `"`ind'"', clear
+
 /*%%=============================================================================================
 	2: Survey & ID
 ==============================================================================================%%*/
@@ -156,7 +159,7 @@ without the household level variables and code the individual level ones for now
 
 
 *<_year_>
-	gen int year =
+	gen int year = 2019
 	label var year "Year of survey"
 *</_year_>
 
@@ -202,7 +205,7 @@ without the household level variables and code the individual level ones for now
 	002, ..., 160.
 
 </_hhid_note> */
-	egen hhid = concat( [Elements] )
+	gen hhid = "" // concat( [Elements] )
 	label var hhid "Household ID"
 *</_hhid_>
 
@@ -239,7 +242,7 @@ without the household level variables and code the individual level ones for now
 
 *<_wave_>
 	gen wave = .
-	label var wave = "Survey wave"
+	label var wave "Survey wave"
 *</_wave_>
 
 }
@@ -251,7 +254,7 @@ without the household level variables and code the individual level ones for now
 {
 
 *<_urban_>
-	gen byte urban
+	gen byte urban = . 
 	label var urban "Location is urban"
 	la de lblurban 1 "Urban" 0 "Rural"
 	label values urban lblurban
@@ -355,7 +358,7 @@ without the household level variables and code the individual level ones for now
 
 *<_male_>
 	gen             male = BC4
-    recode          (2 = 0)                  // Female (=2) recoded to 0,; male (=1) OK as-is
+    recode          male (2 = 0)                  // Female (=2) recoded to 0,; male (=1) OK as-is
 
 	label var       male "Sex - Ind is male"
 	la de           lblmale 1 "Male" 0 "Female"
@@ -672,6 +675,8 @@ label var           ed_mod_age "Education module application age"
 
 
 *<_educat_orig_>
+* since the education variable in the original survey is really a combination of three variables 
+* I will leave as missing, but please discuss with team.
 	gen            educat_orig = .
 	label var      educat_orig "Original survey education code"
 *</_educat_orig_>
@@ -1262,7 +1267,7 @@ foreach v of local ed_var {
 
 
 *<_wage_no_compen_year_> --- this var has the same name as other and when quoted in the keep and order codes is repeated.
-	gen double wage_no_compen_year =
+	gen double wage_no_compen_year = .
 	label var wage_no_compen_year "Last wage payment primary job 12 month recall"
 *</_wage_no_compen_year_>
 
@@ -1623,6 +1628,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`path_output'\[Name of file].dta", replace
+save "`path_output'", replace
 
 *</_% SAVE_>
