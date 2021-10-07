@@ -52,6 +52,7 @@
 *----------1.1: Initial commands------------------------------*
 
 clear
+cap log close
 set more off
 set mem 800m
 
@@ -85,6 +86,7 @@ set mem 800m
 
 	local isic_key 	 `"`stata'\"'
 	local isco_key 	 `"`stata'\"' // to be created
+    local edu_key    `"`stata'\ZWE_key_educat7.dta"'
 
 * ouput
 	local path_output `"`gld_data'\\`cty3'_`surv_yr'_LFS_v01_M_v01_A_GLD_ALL.dta"'
@@ -105,6 +107,8 @@ without the household level variables and code the individual level ones for now
 
 */
 
+
+	use `"`ind'"', clear
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -155,7 +159,7 @@ without the household level variables and code the individual level ones for now
 
 
 *<_year_>
-	gen int year =
+	gen int year = 2019
 	label var year "Year of survey"
 *</_year_>
 
@@ -201,7 +205,7 @@ without the household level variables and code the individual level ones for now
 	002, ..., 160.
 
 </_hhid_note> */
-	egen hhid = concat( [Elements] )
+	gen hhid = "" // concat( [Elements] )
 	label var hhid "Household ID"
 *</_hhid_>
 
@@ -238,7 +242,7 @@ without the household level variables and code the individual level ones for now
 
 *<_wave_>
 	gen wave = .
-	label var wave = "Survey wave"
+	label var wave "Survey wave"
 *</_wave_>
 
 }
@@ -250,7 +254,7 @@ without the household level variables and code the individual level ones for now
 {
 
 *<_urban_>
-	gen byte urban
+	gen byte urban = . 
 	label var urban "Location is urban"
 	la de lblurban 1 "Urban" 0 "Rural"
 	label values urban lblurban
@@ -354,7 +358,7 @@ without the household level variables and code the individual level ones for now
 
 *<_male_>
 	gen             male = BC4
-    recode          (2 = 0)                  // Female (=2) recoded to 0,; male (=1) OK as-is
+    recode          male (2 = 0)                  // Female (=2) recoded to 0,; male (=1) OK as-is
 
 	label var       male "Sex - Ind is male"
 	la de           lblmale 1 "Male" 0 "Female"
@@ -467,66 +471,92 @@ without the household level variables and code the individual level ones for now
 {
 
 *<_migrated_mod_age_>
-	gen migrated_mod_age = .
-	label var migrated_mod_age "Migration module application age"
+	gen            migrated_mod_age = 0    // asked of all persons
+	label var      migrated_mod_age "Migration module application age"
 *</_migrated_mod_age_>
 
 
 *<_migrated_ref_time_>
-	gen migrated_ref_time = .
-	label var migrated_ref_time "Reference time applied to migration questions (in years)"
+	gen            migrated_ref_time = 5   // in survey year 2019, asked if moved since 2014
+	label var      migrated_ref_time "Reference time applied to migration questions (in years)"
 *</_migrated_ref_time_>
 
 
 *<_migrated_binary_>
-	gen migrated_binary = .
-	label de lblmigrated_binary 0 "No" 1 "Yes"
-	label values migrated_binary lblmigrated_binary
-	label var migrated_binary "Individual has migrated"
+	gen            migrated_binary = M3    // only valid values are 1 or 2
+    recode         migrated_binary (2 = 0) // "no" -> "no"
+
+	label de       lblmigrated_binary 0 "No" 1 "Yes"
+	label values   migrated_binary lblmigrated_binary
+	label var      migrated_binary "Individual has migrated"
 *</_migrated_binary_>
 
 
 *<_migrated_years_>
-	gen migrated_years = .
-	label var migrated_years "Years since latest migration"
+	gen            migrated_years = .      // info not asked in questionnaire
+	label var      migrated_years "Years since latest migration"
 *</_migrated_years_>
 
 
 *<_migrated_from_urban_>
-	gen migrated_from_urban = .
-	label de lblmigrated_from_urban 0 "Rural" 1 "Urban"
-	label values migrated_from_urban lblmigrated_from_urban
-	label var migrated_from_urban "Migrated from area"
+	gen            migrated_from_urban = . // info not asked in questionnaire
+
+	label de       lblmigrated_from_urban 0 "Rural" 1 "Urban"
+	label values   migrated_from_urban lblmigrated_from_urban
+	label var      migrated_from_urban "Migrated from area"
 *</_migrated_from_urban_>
 
 
 *<_migrated_from_cat_>
-	gen migrated_from_cat = .
-	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country"
-	label values migrated_from_cat lblmigrated_from_cat
-	label var migrated_from_cat "Category of migration area"
+/*Note: this data can be determined from a combination of HH6/HH8 and M4 but not unless it is possible
+        to join the two datasets. See #161. For now leaving as missing. */
+	gen            migrated_from_cat = .
+	label de       lblmigrated_from_cat    ///
+                        1 "From same admin3 area" ///
+                        2 "From same admin2 area" ///
+                        3 "From same admin1 area" ///
+                        4 "From other admin1 area" ///
+                        5 "From other country"
+	label values   migrated_from_cat lblmigrated_from_cat
+	label var      migrated_from_cat "Category of migration area"
 *</_migrated_from_cat_>
 
 
 *<_migrated_from_code_>
-	gen migrated_from_code = .
-	*label de lblmigrated_from_code
-	*label values migrated_from_code lblmigrated_from_code
-	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
+/*Note: this data can be determined from a combination of HH6/HH8 and M4 but not unless it is possible
+        to join the two datasets. See #161. For now leaving as missing. */
+	gen            migrated_from_code = .
+	*label de      lblmigrated_from_code
+	*label values  migrated_from_code lblmigrated_from_code
+	label var      migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
 *</_migrated_from_code_>
 
 
 *<_migrated_from_country_>
-	gen migrated_from_country = .
-	label var migrated_from_country "Code of migration country (ISO 3 Letter Code)"
+/*Note: this data can be determined from a combination of HH6/HH8 and M4 but not unless it is possible
+        to join the two datasets. See #161. For now leaving as missing. */
+	gen            migrated_from_country = .
+	label var      migrated_from_country "Code of migration country (ISO 3 Letter Code)"
 *</_migrated_from_country_>
 
 
 *<_migrated_reason_>
-	gen migrated_reason = .
-	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
-	label values migrated_reason lblmigrated_reason
-	label var migrated_reason "Reason for migrating"
+	gen            migrated_reason = M5
+    recode         migrated_reason ///
+                    (6 8 10 11 = 1) /// join spouse/marriage; divorce; death, illness -realted -> "Family reasons"
+                    (7 = 2) /// -> "education reasons"
+                    (1 2 3 4 5 = 3) /// -> "employment"
+                    (9 = 4) /// -> "forced"
+                    (96 = 5) // "other" -> "other"
+
+	label de       lblmigrated_reason  ///
+                    1 "Family reasons" ///
+                    2 "Educational reasons" ///
+                    3 "Employment" ///
+                    4 "Forced (political reasons, natural disaster, …)" ///
+                    5 "Other reasons"
+	label values   migrated_reason lblmigrated_reason
+	label var      migrated_reason "Reason for migrating"
 *</_migrated_reason_>
 
 
@@ -544,72 +574,117 @@ without the household level variables and code the individual level ones for now
 
 /* <_ed_mod_age_note>
 
-Education module is only asked to those XX and older.
+Education module is only asked to those 3 and older.
 
 </_ed_mod_age_note> */
 
-gen byte ed_mod_age = .
-label var ed_mod_age "Education module application age"
+gen byte            ed_mod_age = 3
+label var           ed_mod_age "Education module application age"
 
 *</_ed_mod_age_>
 
 *<_school_>
-	gen byte school=.
-	label var school "Attending school"
-	la de lblschool 0 "No" 1 "Yes"
-	label values school  lblschool
+	gen byte       school = ED2
+    recode         school (1 = 0) /// "no" -> "no"
+                        (2 3 = 1) /// "Yes at school"' "yes left" -> yes
+                        (9 = .)  // reocde to missing
+
+	label var      school "Attending school"
+	la de          lblschool 0 "No" 1 "Yes"
+	label values   school  lblschool
 *</_school_>
 
 
 *<_literacy_>
-	gen byte literacy = .
-	label var literacy "Individual can read & write"
-	la de lblliteracy 0 "No" 1 "Yes"
-	label values literacy lblliteracy
+    * literacy not asked directly in survey, will leave as missing
+	gen byte       literacy = .
+	label var      literacy "Individual can read & write"
+	la de          lblliteracy 0 "No" 1 "Yes"
+	label values   literacy lblliteracy
 *</_literacy_>
 
 
 *<_educy_>
-	gen byte educy =.
-	label var educy "Years of education"
+    * number of years in school not asked directly in survey, will leave as missing.
+	gen byte       educy =.
+	label var      educy "Years of education"
 *</_educy_>
 
 
 *<_educat7_>
-	gen byte educat7 =.
-	label var educat7 "Level of education 1"
-	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
-	label values educat7 lbleducat7
+    /* the data are organized by educational level in ED4A and then by year within that level in ED4B. But the
+    data are recorded as higest level ever attended, not attained. The GLD essentially asks for attainment, not
+    attendance. A great way to get a visual of the "attendance" is
+        bysort ED4A: tab ED4B
+
+    To accurately record attainment for GLD, we need to determine what the highest level was completed. Question
+    ED5 asks for completion of the grade level attended in ED4A-B. We could assume that if the level was not
+    completed, that the previous grade level was. This would require a general sense of Zimbabwe's educational
+    heirarchy: we need to know the previous grade for every grade level. But this is likely impossible, since
+    almost no education system is perfectly linear, where every grade has only one possible previous course level.
+    In the very least, we should know what educat7 tcategory the previous grade corresponds to.
+
+    The R script `zwe_edu_attain.R` creates a key that converts combinations of ED4A, ED4B and ED5 into
+    educat7.
+
+    */
+
+    * step 1: merge in edu key
+    merge          m:1 ///
+                   ED4A ED4B ED5 ///
+                   using `edu_key' ///
+                   , keepusing(attain_educat7) ///
+                   keep(master match) // "left join"
+
+
+	gen byte       educat7 = attain_educat7
+
+	label var      educat7 "Level of education 1"
+	la de          lbleducat7 1 "No education" ///
+                        2 "Primary incomplete" ///
+                        3 "Primary complete" ///
+                        4 "Secondary incomplete" ///
+                        5 "Secondary complete" ///
+                        6 "Higher than secondary but not university" ///
+                        7 "University incomplete or complete"
+	label values   educat7 lbleducat7
 *</_educat7_>
 
 
 *<_educat5_>
-	gen byte educat5 = educat7
-	recode educat5 4=3 5=4 6 7=5
-	label var educat5 "Level of education 2"
-	la de lbleducat5 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
-	label values educat5 lbleducat5
+	gen byte       educat5 = educat7
+	recode         educat5 (4=3) (5=4) (6 7=5)
+
+	label var      educat5 "Level of education 2"
+	la de          lbleducat5   1 "No education" ///
+                                2 "Primary incomplete"  ///
+                                3 "Primary complete but secondary incomplete" ///
+                                4 "Secondary complete" ///
+                                5 "Some tertiary/post-secondary"
+	label values   educat5 lbleducat5
 *</_educat5_>
 
 
 *<_educat4_>
-	gen byte educat4 = educat7
-	recode educat4 (2 3 4 = 2) (5=3) (6 7=4)
-	label var educat4 "Level of education 3"
-	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
-	label values educat4 lbleducat4
+	gen byte       educat4 = educat7
+	recode         educat4 (2 3 4 = 2) (5=3) (6 7=4)
+	label var      educat4 "Level of education 3"
+	la de          lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
+	label values   educat4 lbleducat4
 *</_educat4_>
 
 
 *<_educat_orig_>
-	gen educat_orig = .
-	label var educat_orig "Original survey education code"
+* since the education variable in the original survey is really a combination of three variables 
+* I will leave as missing, but please discuss with team.
+	gen            educat_orig = .
+	label var      educat_orig "Original survey education code"
 *</_educat_orig_>
 
 
 *<_educat_isced_>
-	gen educat_isced = .
-	label var educat_isced "ISCED standardised level of education"
+	gen            educat_isced = .
+	label var      educat_isced "ISCED standardised level of education"
 *</_educat_isced_>
 
 
@@ -1192,7 +1267,7 @@ foreach v of local ed_var {
 
 
 *<_wage_no_compen_year_> --- this var has the same name as other and when quoted in the keep and order codes is repeated.
-	gen double wage_no_compen_year =
+	gen double wage_no_compen_year = .
 	label var wage_no_compen_year "Last wage payment primary job 12 month recall"
 *</_wage_no_compen_year_>
 
@@ -1553,6 +1628,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`path_output'\[Name of file].dta", replace
+save "`path_output'", replace
 
 *</_% SAVE_>
