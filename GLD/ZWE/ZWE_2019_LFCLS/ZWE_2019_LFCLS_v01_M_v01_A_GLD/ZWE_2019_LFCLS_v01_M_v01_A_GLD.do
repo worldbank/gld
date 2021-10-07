@@ -479,54 +479,80 @@ without the household level variables and code the individual level ones for now
 
 
 *<_migrated_binary_>
-	gen migrated_binary = .
-	label de lblmigrated_binary 0 "No" 1 "Yes"
-	label values migrated_binary lblmigrated_binary
-	label var migrated_binary "Individual has migrated"
+	gen            migrated_binary = M3    // only valid values are 1 or 2
+    recode         migrated_binary (2 = 0) // "no" -> "no"
+
+	label de       lblmigrated_binary 0 "No" 1 "Yes"
+	label values   migrated_binary lblmigrated_binary
+	label var      migrated_binary "Individual has migrated"
 *</_migrated_binary_>
 
 
 *<_migrated_years_>
-	gen migrated_years = .
-	label var migrated_years "Years since latest migration"
+	gen            migrated_years = .      // info not asked in questionnaire
+	label var      migrated_years "Years since latest migration"
 *</_migrated_years_>
 
 
 *<_migrated_from_urban_>
-	gen migrated_from_urban = .
-	label de lblmigrated_from_urban 0 "Rural" 1 "Urban"
-	label values migrated_from_urban lblmigrated_from_urban
-	label var migrated_from_urban "Migrated from area"
+	gen            migrated_from_urban = . // info not asked in questionnaire
+
+	label de       lblmigrated_from_urban 0 "Rural" 1 "Urban"
+	label values   migrated_from_urban lblmigrated_from_urban
+	label var      migrated_from_urban "Migrated from area"
 *</_migrated_from_urban_>
 
 
 *<_migrated_from_cat_>
-	gen migrated_from_cat = .
-	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country"
-	label values migrated_from_cat lblmigrated_from_cat
-	label var migrated_from_cat "Category of migration area"
+/*Note: this data can be determined from a combination of HH6/HH8 and M4 but not unless it is possible
+        to join the two datasets. See #161. For now leaving as missing. */
+	gen            migrated_from_cat = .
+	label de       lblmigrated_from_cat    ///
+                        1 "From same admin3 area" ///
+                        2 "From same admin2 area" ///
+                        3 "From same admin1 area" ///
+                        4 "From other admin1 area" ///
+                        5 "From other country"
+	label values   migrated_from_cat lblmigrated_from_cat
+	label var      migrated_from_cat "Category of migration area"
 *</_migrated_from_cat_>
 
 
 *<_migrated_from_code_>
-	gen migrated_from_code = .
-	*label de lblmigrated_from_code
-	*label values migrated_from_code lblmigrated_from_code
-	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
+/*Note: this data can be determined from a combination of HH6/HH8 and M4 but not unless it is possible
+        to join the two datasets. See #161. For now leaving as missing. */
+	gen            migrated_from_code = .
+	*label de      lblmigrated_from_code
+	*label values  migrated_from_code lblmigrated_from_code
+	label var      migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
 *</_migrated_from_code_>
 
 
 *<_migrated_from_country_>
-	gen migrated_from_country = .
-	label var migrated_from_country "Code of migration country (ISO 3 Letter Code)"
+/*Note: this data can be determined from a combination of HH6/HH8 and M4 but not unless it is possible
+        to join the two datasets. See #161. For now leaving as missing. */
+	gen            migrated_from_country = .
+	label var      migrated_from_country "Code of migration country (ISO 3 Letter Code)"
 *</_migrated_from_country_>
 
 
 *<_migrated_reason_>
-	gen migrated_reason = .
-	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
-	label values migrated_reason lblmigrated_reason
-	label var migrated_reason "Reason for migrating"
+	gen            migrated_reason = M5
+    recode         migrated_reason ///
+                    (6 8 10 11 = 1) /// join spouse/marriage; divorce; death, illness -realted -> "Family reasons"
+                    (7 = 2) /// -> "education reasons"
+                    (1 2 3 4 5 = 3) /// -> "employment"
+                    (9 = 4) /// -> "forced"
+                    (96 = 5) // "other" -> "other"
+
+	label de       lblmigrated_reason  ///
+                    1 "Family reasons" ///
+                    2 "Educational reasons" ///
+                    3 "Employment" ///
+                    4 "Forced (political reasons, natural disaster, …)" ///
+                    5 "Other reasons"
+	label values   migrated_reason lblmigrated_reason
+	label var      migrated_reason "Reason for migrating"
 *</_migrated_reason_>
 
 
