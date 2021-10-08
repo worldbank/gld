@@ -1051,7 +1051,7 @@ foreach v of local ed_var {
 
 *<_ocusec_year_>
 	gen byte ocusec_year = .
-	label var ocusec_year "Sector of activity primary job 12 day recall"
+	label var ocusec_year "Sector of activity primary job 12 month recall"
 	la de lblocusec_year 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec_year lblocusec_year
 *</_ocusec_year_>
@@ -1203,7 +1203,7 @@ foreach v of local ed_var {
 
 *<_ocusec_2_year_>
 	gen byte ocusec_2_year = .
-	label var ocusec_2_year "Sector of activity secondary job 12 day recall"
+	label var ocusec_2_year "Sector of activity secondary job 12 month recall"
 	la de lblocusec_2_year 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec_2_year lblocusec_2_year
 *</_ocusec_2_year_>
