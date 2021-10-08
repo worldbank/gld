@@ -733,9 +733,7 @@ foreach v of local ed_var {
 *<_industrycat10_>
 	gen industrycat10=industry_orig
 	recode industrycat10 9=10 
-	
-	/* 
-	1	Agri
+	/* 1	Agri
 2	Min
 3	mAN
 4	eLE
@@ -743,10 +741,7 @@ foreach v of local ed_var {
 6	Whole
 7	Trans
 8	Finace
-9	Community
-	
-	*/
-	
+9	Community*/
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
@@ -837,9 +832,6 @@ X. Not elsewhere classified*/
 
 *<_whours_>
 /* <_whours_note>
-
-	Survey has two concepts - work usually in a week (s27a) and work the last week (s28a).
-
 
 </_whours_note> */
 	gen whours = s56a_top
@@ -950,19 +942,6 @@ X. Not elsewhere classified*/
 *<_industrycat10_2_>
 	gen byte industrycat10_2 = industry_orig_2
 	recode industrycat10_2 9=10 
-	
-	/* 
-	1	Agri
-2	Min
-3	mAN
-4	eLE
-5	Cons
-6	Whole
-7	Trans
-8	Finace
-9	Community
-	
-	*/
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
 *</_industrycat10_2_>
