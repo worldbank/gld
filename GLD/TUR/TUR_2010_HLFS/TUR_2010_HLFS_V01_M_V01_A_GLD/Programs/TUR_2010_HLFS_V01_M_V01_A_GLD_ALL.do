@@ -61,6 +61,10 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\TUR\TUR_2010_HLFS\TUR_2010_HLF
 use "`path_in'\2010yil.dta"
 rename*, lower
 
+	foreach x in  s1 s3 s8a-s10b  s12a-s12c s14-s67  s76-nuts2 {
+	destring `x', replace
+	}
+
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -420,13 +424,14 @@ rename*, lower
 
 
 *<_migrated_ref_time_>
-	gen migrated_ref_time = .
+	gen migrated_ref_time = 99
 	label var migrated_ref_time "Reference time applied to migration questions (in years)"
 *</_migrated_ref_time_>
 
 
 *<_migrated_binary_>
-	gen migrated_binary = .
+	gen migrated_binary = s8a
+	recode migrated_binary 2=0
 	label de lblmigrated_binary 0 "No" 1 "Yes"
 	label values migrated_binary lblmigrated_binary
 	label var migrated_binary "Individual has migrated"
@@ -434,17 +439,28 @@ rename*, lower
 
 
 *<_migrated_years_>
-	gen migrated_years = .
+	
+	gen helper_m=(2010-s8b)
+	recode helper_m 0=. 
+	gen migrated_years = helper_m
+	drop helper_m
 	label var migrated_years "Years since latest migration"
 *</_migrated_years_>
 
 
 *<_migrated_from_urban_>
-	gen migrated_from_urban = .
+	
+	gen helper_m2= 1  if urban==1 & s10b==1
+	replace helper_m2= 2  if urban==1 & s10b==2
+	replace helper_m2= 3  if urban==1 & s10b==3
+	replace helper_m2= 4  if urban==0 & s10b==1
+	replace helper_m2= 5  if urban==0 & s10b==2
+	replace helper_m2= 6  if urban==0 & s10b==3
+	gen migrated_from_urban = 1 if inrange(helper_m2,1,3)
+	replace migrated_from_urban = 0 if inrange(helper_m2,4,6)
 	label de lblmigrated_from_urban 0 "Rural" 1 "Urban"
 	label values migrated_from_urban lblmigrated_from_urban
 	label var migrated_from_urban "Migrated from area"
-*</_migrated_from_urban_>
 
 
 *<_migrated_from_cat_>

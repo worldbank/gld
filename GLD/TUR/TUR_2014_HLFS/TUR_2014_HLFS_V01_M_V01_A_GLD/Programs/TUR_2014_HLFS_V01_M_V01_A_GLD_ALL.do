@@ -4,14 +4,14 @@
 ==============================================================================================%%*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				TUR_2009_HLFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
+<_Program name_>				TUR_2014_HLFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata 16 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
 <_Date created_>				2021-10-08 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						TUR </_Country_>
 <_Survey Title_>				Household Labour Force Survey[SurveyName] </_Survey Title_>
-<_Survey Year_>					2009 </_Survey Year_>
+<_Survey Year_>					2014 </_Survey Year_>
 <_Study ID_>					Not on MicroData Library </_Study ID_>
 <_Data collection from_>		[MM/YYYY] </_Data collection from_>
 <_Data collection to_>			[MM/YYYY] </_Data collection to_>
@@ -51,15 +51,16 @@ set mem 800m
 
 *----------1.2: Set directories------------------------------*
 
-local path_in "Z:\GLD-Harmonization\582018_AQ\TUR\TUR_2009_HLFS\TUR_2009_HLFS_V01_M\Data\Stata"
-local path_output "Z:\GLD-Harmonization\582018_AQ\TUR\TUR_2009_HLFS\TUR_2009_HLFS_V01_M_V01_A_GLD\Data\Harmonized"
+local path_in "Z:\GLD-Harmonization\582018_AQ\TUR\TUR_2014_HLFS\TUR_2014_HLFS_V01_M\Data\Stata"
+local path_output "Z:\GLD-Harmonization\582018_AQ\TUR\TUR_2014_HLFS\TUR_2014_HLFS_V01_M_V01_A_GLD\Data\Harmonized"
 
 *----------1.3: Database assembly------------------------------*
 
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
-use "`path_in'\2009lfs.dta"
+use "`path_in'\TUR_2014_HLFS_raw_from_datalibweb.dta "
 rename*, lower
+
 
 
 /*%%=============================================================================================
@@ -110,7 +111,7 @@ rename*, lower
 
 
 *<_year_>
-	gen int year = 2009
+	*gen int year = 2014
 	label var year "Year of survey"
 *</_year_>
 
@@ -134,7 +135,7 @@ rename*, lower
 
 
 *<_int_year_>
-	gen int_year= 2009
+	gen int_year= 2014
 	label var int_year "Year of the interview"
 *</_int_year_>
 
@@ -206,12 +207,12 @@ rename*, lower
 {
 
 *<_urban_>
-	gen byte urban = kirkent
-	recode urban 1=0
-	recode urban 2=1
-	label var urban "Location is urban"
-	la de lblurban 1 "Urban" 0 "Rural"
-	label values urban lblurban
+	*gen byte urban = kirkent
+	*recode urban 1=0
+	*recode urban 2=1
+	*label var urban "Location is urban"
+	*la de lblurban 1 "Urban" 0 "Rural"
+	*label values urban lblurban
 
 *</_urban_>
 
@@ -436,7 +437,7 @@ rename*, lower
 
 *<_migrated_years_>
 	
-	gen helper_m=(2009-s8b)
+	gen helper_m=(2014-s8b)
 	recode helper_m 0=. 
 	gen migrated_years = helper_m
 	drop helper_m
@@ -457,8 +458,6 @@ rename*, lower
 	label de lblmigrated_from_urban 0 "Rural" 1 "Urban"
 	label values migrated_from_urban lblmigrated_from_urban
 	label var migrated_from_urban "Migrated from area"
-
-*</_migrated_from_urban_>
 
 
 *<_migrated_from_cat_>
@@ -725,7 +724,7 @@ foreach v of local ed_var {
 
 
 *<_industry_orig_>
-	gen industry_orig = s33kodr2
+	gen industry_orig = s33kod
 	replace industry_orig=. if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
@@ -773,7 +772,7 @@ foreach v of local ed_var {
 *<_occup_skill_>
 
 /* Broad skill level
-ISCO-88
+ISCO-08
 Skill levels 3 and 4 (high)
 1. Legislators, senior officials and managers
 2. Professionals
@@ -1550,6 +1549,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`path_output'\TUR_2009_HLFS_V01_M_V01_A_GLD_ALL.dta", replace
+save "`path_output'\TUR_2014_HLFS_V01_M_V01_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>
