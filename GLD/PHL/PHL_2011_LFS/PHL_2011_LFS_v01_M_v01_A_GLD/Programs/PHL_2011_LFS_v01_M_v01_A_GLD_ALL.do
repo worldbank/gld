@@ -54,6 +54,15 @@ clear
 set more off
 set mem 800m
 
+* install packages
+local user_commands ietoolkit scores missings mdesc iefieldkit  //Fill this list will all user-written commands this project requires
+ foreach command of local user_commands {
+     cap which `command'
+     if _rc == 111 {
+         ssc install `command'
+     }
+ }
+
 *----------1.2: Set directories------------------------------*
 
 ** DIRECTORY
@@ -93,8 +102,8 @@ set mem 800m
 	local round3 `"`stata'\LFS JUL2011.dta"'
 	local round4 `"`stata'\LFS OCT2011.dta"'
 
-	local isic_key 	 `"`stata'\PHL_PSIC_ISIC_94_key.dta"'
-	local isco_key 	 `"`stata'\"' // to be created
+	local isic_key 	 `"`stata'\PHL_PSIC_ISIC_94_key_2dig.dta"'
+	local isco_key 	 `"`stata'\PHL_PSOC92_ISCO88_08_key.dta"'
 
     local adm2_labs	 `"`stata'\GLD_PHL_admin2_labels.dta"'
 
@@ -154,7 +163,7 @@ set mem 800m
 
 
 *<_isco_version_>
-	gen isco_version = "isco_88"
+	gen isco_version = "isco_1988"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
@@ -309,7 +318,7 @@ replace int_month = 10 	if round == 4
 
 *<_pid_>
 ** INDIVIDUAL IDENTIFICATION NUMBER
-	gen 		pid = idp 		// generated from sub-module above.
+	egen 		pid = concat(hhid idp) 		// generated from sub-module above.
 	label var 	pid "Individual ID"
 
 	isid 		hhid pid
@@ -318,7 +327,7 @@ replace int_month = 10 	if round == 4
 
 *<_weight_>
 	rename 		weight weight_orig
-	gen 		weight = `weightvar'/(`n_round')
+	gen 		weight = fwgt / 4
 	label 		var weight "Household sampling weight"
 *</_weight_>
 
@@ -708,7 +717,7 @@ Education module is only asked to those 5 and older.
 
 </_ed_mod_age_note> */
 
-gen byte ed_mod_age = `ed_mod_age'
+gen byte ed_mod_age = 5
 label var ed_mod_age "Education module application age"
 
 *</_ed_mod_age_>
@@ -869,7 +878,7 @@ foreach v of local ed_var {
 
 
 *<_minlaborage_>
-	gen byte minlaborage = `lb_mod_age'
+	gen byte minlaborage = 15
 	label var minlaborage "Labor module application age"
 *</_minlaborage_>
 
@@ -965,7 +974,7 @@ foreach v of local ed_var {
 
 *<_ocusec_>
 	gen byte 		ocusec = .
-	replace 		ocusec = 1 	if c19pclas == 1
+	replace 		ocusec = 1 	if c19pclas == 2
 	replace 		ocusec = 2 	if inlist(c19pclas, 0, 1, 3, 4, 5, 6)
 
 	label var 		ocusec 		"Sector of activity primary job 7 day recall"
@@ -984,9 +993,41 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_>
-	/*2011 only has 2-digit data for industry, so cannot be constructed*/
-	gen 			industrycat_isic = .
-	label var 		industrycat_isic "ISIC code of primary job 7 day recall"
+	loc matchvar   	c18_pkb
+	loc n 			1
+
+	qui ds 			industry_orig, has(type numeric) 	// capture numeric var if is numeric
+	loc isicvar 	= r(varlist)						// store this in a local
+	loc len 		: list sizeof isicvar 				// store the length of this local (1 or 0)
+
+		if (`len' == 1) {
+															// run this if == 1 (ie, if industry_orig is numeric)
+			tostring industry_orig	///						// make the numeric vars strings
+				, generate(industry_orig_str) ///			// gen a variable with this prefix
+				force //
+		}
+
+
+	// merge sub-module with isic key
+
+	gen psic_2dig = `matchvar'
+	tostring 	psic_2dig ///
+				, format(`"%02.0f"') replace
+
+	merge 		m:1 ///
+				psic_2dig ///
+				using `isic_key' ///
+				, generate(isic_merge_`n') ///
+				keep(master match) // "left join"; remove obs that don't match from using
+				* the string variable in isic4 will is industrycat_isic
+
+	// replace one code that I know doesn't match
+	rename 		isic3_1_2dig_pad	isic3_1_2dig_`n'
+
+	gen 		industrycat_isic = isic3_1_2dig_`n'  	// the string variable becomes industrycat_isic
+
+	drop 		psic_2dig 				// no longer needed, maintained in matchvar
+	label var 	industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
 
@@ -1034,11 +1075,39 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_>
-* incoming data only has 2-digit, so cannot be mapped to isco
-	gen 			occup_isco = .
-	label 			var occup_isco "ISCO code of primary job 7 day recall"
-	replace 		occup_isco=. if lstatus!=1 		// restrict universe to employed only
-	replace 		occup_isco=. if age < minlaborage	// restrict universe to working age
+	loc matchvar   	c16_proc
+	loc n 			1
+
+	qui ds 			occup_orig, has(type numeric) 	// capture numeric var if is numeric
+	loc iscovar 	= r(varlist)						// store this in a local
+	loc len 		: list sizeof iscovar 				// store the length of this local (1 or 0)
+
+		if (`len' == 1) {
+															// run this if == 1 (ie, if occup_orig is numeric)
+			tostring occup_orig	///						// make the numeric vars strings
+				, generate(occup_orig_str) ///			// gen a variable with this prefix
+				force
+		}
+
+
+	// merge sub-module with isco key
+
+	gen psoc92 = `matchvar'
+	tostring 	psoc92 ///
+				, format(`"%02.0f"') replace
+
+	merge 		m:1 ///
+				psoc92 ///
+				using `isco_key' ///
+				, generate(isco_merge_`n') ///
+				keep(master match) // "left join"; remove obs that don't match from using
+
+
+	rename 		isco88_sub_major_pad	isco88_sub_major_`n'
+
+	drop 		psoc92 				// no longer needed, maintained in matchvar
+	gen 		occup_isco = isco88_sub_major_`n'
+	label var 	occup_isco "ISCO code of primary job 7 day recall"
 
 *</_occup_isco_>
 
@@ -1093,6 +1162,7 @@ foreach v of local ed_var {
 
 *<_unitwage_>
 	gen byte 		unitwage = c26_pbis
+	replace 		unitwage = . if 	unitwage >= 11 // replace potential missing values
 	recode 			unitwage (0 1 5 6 7 = 10) /// other
 								(2 = 9) /// hourly
 								(3 = 1) /// daily
@@ -1117,6 +1187,7 @@ foreach v of local ed_var {
 *<_whours_>
 	gen whours 		= c22_phrs
 	label var whours "Hours of work in last week primary job 7 day recall"
+    replace 		whours = 84 	if whours > 84 & whours != . 	// replace unrealistic work weeks
 *</_whours_>
 
 
@@ -1214,8 +1285,41 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_2_>
-	gen 			industrycat_isic_2 = .
-	label var 		industrycat_isic_2 "ISIC code of secondary job 7 day recall"
+	loc matchvar   	j03_okb
+	loc n 			2
+
+	qui ds 			industry_orig_2, has(type numeric) 	// capture numeric var if is numeric
+	loc isicvar 	= r(varlist)						// store this in a local
+	loc len 		: list sizeof isicvar 				// store the length of this local (1 or 0)
+
+		if (`len' == 1) {
+															// run this if == 1 (ie, if industry_orig is numeric)
+			tostring industry_orig_2	///						// make the numeric vars strings
+				, generate(industry_orig_2_str) ///			// gen a variable with this prefix
+				force //
+		}
+
+
+	// merge sub-module with isic key
+
+	gen psic_2dig = `matchvar'
+	tostring 	psic_2dig ///
+				, format(`"%02.0f"') replace
+
+	merge 		m:1 ///
+				psic_2dig ///
+				using `isic_key' ///
+				, generate(isic_merge_`n') ///
+				keep(master match) // "left join"; remove obs that don't match from using
+				* the string variable in isic4 will is industrycat_isic
+
+	// replace one code that I know doesn't match
+	rename 		isic3_1_2dig_pad	isic3_1_2dig_`n'
+
+	gen 		industrycat_isic_2 = isic3_1_2dig_`n'  	// the string variable becomes industrycat_isic
+
+	drop 		psic_2dig 				// no longer needed, maintained in matchvar
+	label var 	industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
 
@@ -1253,8 +1357,39 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_2_>
-	gen 			occup_isco_2 = .
-	label var 		occup_isco_2 "ISCO code of secondary job 7 day recall"
+	loc matchvar   	j02_otoc
+	loc n 			2
+
+	qui ds 			occup_orig_2, has(type numeric) 	// capture numeric var if is numeric
+	loc iscovar 	= r(varlist)						// store this in a local
+	loc len 		: list sizeof iscovar 				// store the length of this local (1 or 0)
+
+		if (`len' == 1) {
+															// run this if == 1 (ie, if occup_orig is numeric)
+			tostring occup_orig_2	///						// make the numeric vars strings
+				, generate(occup_orig_2_str) ///			// gen a variable with this prefix
+				force
+		}
+
+
+	// merge sub-module with isco key
+
+	gen psoc92 = `matchvar'
+	tostring 	psoc92 ///
+				, format(`"%02.0f"') replace
+
+	merge 		m:1 ///
+				psoc92 ///
+				using `isco_key' ///
+				, generate(isco_merge_`n') ///
+				keep(master match) // "left join"; remove obs that don't match from using
+
+
+	rename 		isco88_sub_major_pad	isco88_sub_major_`n'
+
+	drop 		psoc92 				// no longer needed, maintained in matchvar
+	gen 		occup_isco_2 = isco88_sub_major_`n'
+	label var 	occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
 
@@ -1286,7 +1421,8 @@ foreach v of local ed_var {
 
 *<_unitwage_2_>
 	gen byte 		unitwage_2 = j06_obis
-	recode 			unitwage (0 1 5 6 7 = 10) /// other
+	replace 		unitwage_2 = . if 	unitwage >= 11 // replace potential missing values
+	recode 			unitwage_2 (0 1 5 6 7 = 10) /// other
 								(2 = 9) /// hourly
 								(3 = 1) /// daily
 								(4 = 5) // monthly
@@ -1520,7 +1656,7 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_year_>
-	gen 			occup_isco_year = .
+	gen 			occup_isco_year = ""
 	label var 		occup_isco_year "ISCO code of primary job 12 month recall"
 *</_occup_isco_year_>
 
@@ -1697,7 +1833,7 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_2_year_>
-	gen 			occup_isco_2_year = .
+	gen 			occup_isco_2_year = ""
 	label var 		occup_isco_2_year "ISCO code of secondary job 12 month recall"
 *</_occup_isco_2_year_>
 
@@ -1866,6 +2002,11 @@ foreach v of local ed_var {
 					t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs ///
 					t_hours_annual linc_nc laborincome
 
+* make a second iternation that excludes lstatus variables
+	local except 	lstatus lstatus_year
+	local lab_var2 	: list lab_var - except
+
+
 	foreach v of local lab_var {
 		cap confirm numeric variable `v'
 		if _rc == 0 { 	// is indeed numeric
@@ -1888,8 +2029,8 @@ foreach v of local ed_var {
 	or classified as lstatus == 1
 
 </_correction_lstatus_note> */
-
-	foreach v of local lab_var {
+	* use labvar2 because we don't want to replace lstatus, etc in this case
+	foreach v of local lab_var2 {
 		cap confirm numeric variable `v'
 		if _rc == 0 { 	// is indeed numeric
 			replace `v'=. if ( lstatus !=1 & !missing(lstatus) )
@@ -1900,9 +2041,7 @@ foreach v of local ed_var {
 
 	}
 
-*</_% Correction min age_>
-
-
+*</_% Correction lstatus_>
 
 
 }

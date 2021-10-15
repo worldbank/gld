@@ -122,3 +122,21 @@ duplicates, so a HHID will be constructed.
 | 2007 Apr + Jul + Oct | *unique hhid provided* \|                                     |                            |                         |
 | 2017 Apr             | \| lreg, l1prrcd, l1mun, l1ea, lhusn, l1bgy, lhsn, lpsu \|    |                            |                         |
 | 2017 Jan+Jul+Oct     | unique HHID provided, but not unique in January \| 1 houshol  | d (Jan only)               |                         |
+
+## Household Heads
+
+Constructing the household IDs in this way produces virtually clean data
+on head-of-household. The few exceptions to this are below, where in
+every single case there is simply no household head declared. The
+harmonizer decided to leave the data as-is, given the extremely few
+cases where there is not exactly 1 household head per household and the
+inherent problems in declaring a head at random, which is quite
+difficult to "undo" from the user's perspective. The GLD user can always
+declare a household head in these few scenarios if desired.
+
+| Year | Observations | No. HH head | No. Distinct HH ID |
+|------|--------------|-------------|--------------------|
+| 1997 | 4            | 0           | 1                  |
+| 2004 | 4            | 0           | 1                  |
+| 2007 | 13           | 0           | 3                  |
+| 2017 | 11           | 0           | 2                  |

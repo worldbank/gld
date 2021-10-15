@@ -1,7 +1,7 @@
 /*==================================================
 project:       Template to run Q checks for GLD
-Author:        Mario Gronert 
-E-email:       mgronert@worldbank.org
+Author:        World Bank Jobs Group 
+E-email:       gld@worldbank.org
 url:           
 Dependencies:  distinct, mdesc
 ----------------------------------------------------

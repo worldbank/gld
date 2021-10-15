@@ -34,6 +34,15 @@
 	set more off
 	set mem 800m
 
+* install packages
+local user_commands ietoolkit scores missings mdesc iefieldkit  //Fill this list will all user-written commands this project requires
+ foreach command of local user_commands {
+     cap which `command'
+     if _rc == 111 {
+         ssc install `command'
+     }
+ }
+
 ** DIRECTORY
 
 	local 	cty3 	"PHL" 	// set this to the three letter country/economy abbreviation
@@ -380,7 +389,7 @@ replace month = 10 	if round == 4
 ** HOUSEHOLD WEIGHTS
 	/* The weight variable will be divided by the number of rounds per year to ensure the
 	   weighting factor does not over-mutliply*/
-	gen double wgt= fwgt/(`n_round')
+	gen double wgt= fwgt/ (4 * 10000)  // inverse scaling by [no. rounds]*[10 000]. See "weights_methodology.Rmd"
 	label var wgt "Household sampling weight"
 
 
@@ -610,7 +619,7 @@ replace month = 10 	if round == 4
 
 
 ** EDUCATION MODULE AGE
-	gen byte ed_mod_age=`ed_mod_age'
+	gen byte ed_mod_age=5
 	label var ed_mod_age "Education module application age"
 
 
@@ -707,7 +716,7 @@ replace month = 10 	if round == 4
 *****************************************************************************************************/
 
 ** LABOR MODULE AGE
-	gen byte lb_mod_age=`lb_mod_age'
+	gen byte lb_mod_age=15
 	label var lb_mod_age "Labor module application age"
 
 
@@ -899,7 +908,8 @@ replace month = 10 	if round == 4
 	replace wage=. if lstatus!=1 			// restrict universe to employed only
 	replace wage=. if age < lb_mod_age		// restrict universe to working age
 	replace wage=. if empstat==1			// restrict universe to wage earners
-	label var wage "Last wage payment"
+    replace wage=. if wage == 99999			// replace with numeric-encoded missing value
+    label var wage "Last wage payment"
 
 
 ** WAGES TIME UNIT
@@ -977,8 +987,8 @@ replace month = 10 	if round == 4
 
 
 ** WAGES - SECOND JOB
-	* second job wages are available for some rounds
-	gen double wage_2=cc36_obasic
+	* second job wages are available for some rounds, but no wage unit type indicator so will leave as missing.
+	gen double wage_2= .
 	replace wage_2=. if lstatus!=1 			// restrict universe to employed only
 	replace wage_2=. if age < lb_mod_age		// restrict universe to working age
 	replace wage_2=. if empstat==1			// restrict universe to wage earners
@@ -986,7 +996,7 @@ replace month = 10 	if round == 4
 
 
 ** WAGES TIME UNIT - SECOND JOB
-	gen byte unitwage_2=1
+	gen byte unitwage_2=.  						// no second job wage type indicator even though wage indicator
 	replace unitwage_2=. if lstatus!=1 			// restrict universe to employed only
 	replace unitwage_2=. if age < lb_mod_age		// restrict universe to working age
 	replace unitwage_2=. if empstat==1			// restrict universe to wage earners

@@ -101,8 +101,12 @@
 !Gemfile.lock
 !node_modules
 
-# Allow .png for logos
+# Allow .png, .svg for logos
 !/**/*.png
+!/**/*.svg
+
+# Allow PDFs for documentation under Country Survey Details
+!/Support/Country Survey Details/**/*.pdf
 
 #######################
 # Include some additional file formats in any output folder. You might have

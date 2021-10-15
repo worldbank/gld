@@ -7,7 +7,7 @@
 
 <_Program name_>				[Name of your do file] </_Program name_>
 <_Application_>					[Name of your software (STATA) and version] <_Application_>
-<_Author(s)_>					[Name(s) of author(s)] </_Author(s)_>
+<_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
 <_Date created_>				YYYY-MM-DD </_Date created_>
 
 -------------------------------------------------------------------------
@@ -722,7 +722,7 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_>
-	gen occup_isco = .
+	gen occup_isco = ""
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
@@ -880,7 +880,7 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_2_>
-	gen occup_isco_2 = .
+	gen occup_isco_2 = ""
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
@@ -1051,7 +1051,7 @@ foreach v of local ed_var {
 
 *<_ocusec_year_>
 	gen byte ocusec_year = .
-	label var ocusec_year "Sector of activity primary job 12 day recall"
+	label var ocusec_year "Sector of activity primary job 12 month recall"
 	la de lblocusec_year 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec_year lblocusec_year
 *</_ocusec_year_>
@@ -1091,7 +1091,7 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_year_>
-	gen occup_isco_year = .
+	gen occup_isco_year = ""
 	label var occup_isco_year "ISCO code of primary job 12 month recall"
 *</_occup_isco_year_>
 
@@ -1203,7 +1203,7 @@ foreach v of local ed_var {
 
 *<_ocusec_2_year_>
 	gen byte ocusec_2_year = .
-	label var ocusec_2_year "Sector of activity secondary job 12 day recall"
+	label var ocusec_2_year "Sector of activity secondary job 12 month recall"
 	la de lblocusec_2_year 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec_2_year lblocusec_2_year
 *</_ocusec_2_year_>
@@ -1245,7 +1245,7 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_2_year_>
-	gen occup_isco_2_year = .
+	gen occup_isco_2_year = ""
 	label var occup_isco_2_year "ISCO code of secondary job 12 month recall"
 *</_occup_isco_2_year_>
 

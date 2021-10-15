@@ -54,6 +54,15 @@ clear
 set more off
 set mem 800m
 
+* install packages
+local user_commands ietoolkit scores missings mdesc iefieldkit  //Fill this list will all user-written commands this project requires
+ foreach command of local user_commands {
+     cap which `command'
+     if _rc == 111 {
+         ssc install `command'
+     }
+ }
+
 *----------1.2: Set directories------------------------------*
 
 ** DIRECTORY
@@ -93,8 +102,9 @@ set mem 800m
 	local round3 `"`stata'\LFS JUL2016.dta"'
 	local round4 `"`stata'\LFS OCT2016.dta"'
 
-	local isic_key 	 `"`stata'\PHL_PSIC_ISIC_09_key.dta"'
-	local isco_key 	 `"`stata'\"' // to be created
+	local isic_key 	 `"`stata'\PHL_PSIC_ISIC_09_key_2dig.dta"'
+	local isco_key92 	 `"`stata'\PHL_PSOC92_ISCO88_08_key.dta"'
+	local isco_key12 	 `"`stata'\PHL_PSOC_ISCO_12_key_2dig.dta"'
 
     local adm2_labs	 `"`stata'\GLD_PHL_admin2_labels.dta"'
 
@@ -154,7 +164,7 @@ set mem 800m
 
 
 *<_isco_version_>
-	gen isco_version = "isco_08"
+	gen isco_version = "isco_2008"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
@@ -304,7 +314,7 @@ replace int_month = 10 	if round == 4
 
 *<_pid_>
 ** INDIVIDUAL IDENTIFICATION NUMBER
-	gen 		pid = idp 		// generated from sub-module above.
+	egen 		pid = concat(hhid idp) 		// generated from sub-module above.
 	label var 	pid "Individual ID"
 
 	isid 		hhid pid
@@ -313,7 +323,7 @@ replace int_month = 10 	if round == 4
 
 *<_weight_>
 	rename 		`weightvar'	weight_orig
-	gen 		weight = weight_orig/(`n_round')
+	gen 		weight = weight_orig/ 4
 	label 		var weight "Household sampling weight"
 *</_weight_>
 
@@ -702,7 +712,7 @@ Education module is only asked to those 5 and older.
 
 </_ed_mod_age_note> */
 
-gen byte ed_mod_age = `ed_mod_age'
+gen byte ed_mod_age = 5
 label var ed_mod_age "Education module application age"
 
 *</_ed_mod_age_>
@@ -868,7 +878,7 @@ foreach v of local ed_var {
 
 
 *<_minlaborage_>
-	gen byte minlaborage = `lb_mod_age'
+	gen byte minlaborage = 15
 	label var minlaborage "Labor module application age"
 *</_minlaborage_>
 
@@ -964,7 +974,7 @@ foreach v of local ed_var {
 
 *<_ocusec_>
 	gen byte 		ocusec = .
-	replace 		ocusec = 1 	if pufc23_pclass == 1
+	replace 		ocusec = 1 	if pufc23_pclass == 2
 	replace 		ocusec = 2 	if inlist(pufc23_pclass, 0, 1, 3, 4, 5, 6)
 
 	label var 		ocusec 		"Sector of activity primary job 7 day recall"
@@ -983,10 +993,41 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_>
-	* 2016 data only has 2 digits for industry so no ISIC can be generated
-	gen 			industrycat_isic = .
-	label var 		industrycat_isic "ISIC code of primary job 7 day recall"
+	loc matchvar   	pufc16_pkb
+	loc n 			1
 
+	qui ds 			industry_orig, has(type numeric) 	// capture numeric var if is numeric
+	loc isicvar 	= r(varlist)						// store this in a local
+	loc len 		: list sizeof isicvar 				// store the length of this local (1 or 0)
+
+		if (`len' == 1) {
+															// run this if == 1 (ie, if industry_orig is numeric)
+			tostring industry_orig	///						// make the numeric vars strings
+				, generate(industry_orig_str) ///			// gen a variable with this prefix
+				force //
+		}
+
+
+	// merge sub-module with isic key
+
+	gen psic_2dig = `matchvar'
+	tostring 	psic_2dig ///
+				, format(`"%02.0f"') replace
+
+	merge 		m:1 ///
+				psic_2dig ///
+				using `isic_key' ///
+				, generate(isic_merge_`n') ///
+				keep(master match) // "left join"; remove obs that don't match from using
+				* the string variable in isic4 will is industrycat_isic
+
+	// replace one code that I know doesn't match
+	rename 		isic4_2dig_pad	isic4_2dig_`n'
+
+	gen 		industrycat_isic = isic4_2dig_`n'  	// the string variable becomes industrycat_isic
+
+	drop 		psic_2dig 				// no longer needed, maintained in matchvar
+	label var 	industrycat_isic "ISIC code of primary job 7 day recall"
 	*</_industrycat_isic_>
 
 
@@ -1036,11 +1077,84 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_>
-* in 2016, raw variable is numeric, 2-digits, so isco conversion not possible
-	gen 			occup_isco = .
-	label 			var occup_isco "ISCO code of primary job 7 day recall"
-	replace 		occup_isco=. if lstatus!=1 		// restrict universe to employed only
-	replace 		occup_isco=. if age < minlaborage	// restrict universe to working age
+/* in 2016, raw variable is numeric, 2-digits, so typically this variable would be left as missing.
+	However, The data span two ISCO classification systems this year: January 2016/wave1 is
+	PSOC92 (ISCO-88) and starting in April/wave2, data are coded in PSOC12 (ISCO08).
+
+	Normally, a 2-digit conversion would be provided like this:
+
+	Conversion 1: convert each PSOC schema to the ISCO equivalent
+	(Wave1)	  1992 PSOC -> 1988 ISCO
+	(Wave2-4) 2012 ISCO -> 2008 ISCO
+
+	Conversion 2: convert all ISCO revisions to ISCO 2008
+
+*/
+
+	loc matchvar   	pufc14_procc
+	loc n 			1
+
+	qui ds 			occup_orig, has(type numeric) 	// capture numeric var if is numeric
+	loc iscovar 	= r(varlist)						// store this in a local
+	loc len 		: list sizeof iscovar 				// store the length of this local (1 or 0)
+
+		if (`len' == 1) {
+															// run this if == 1 (ie, if occup_orig is numeric)
+			tostring occup_orig	///						// make the numeric vars strings
+				, generate(occup_orig_str) ///			// gen a variable with this prefix
+				force //
+		}
+
+
+	// merge sub-module with isco key
+
+	gen psic_2dig = `matchvar'
+	tostring 	psic_2dig ///
+				, format(`"%02.0f"') replace
+
+	replace 	psic_2dig = "" 	if psic_2dig == "." 	// fix missing
+	replace 	psic_2dig = "" 	if wave == "Q1"			// ensure to only match waves 2-4
+
+	// merge with isco12 key (for waves2-4)
+	merge 		m:1 ///
+				psic_2dig ///
+				using `isco_key12' ///
+				, generate(isco_merge12_`n') ///
+				keep(master match) // "left join"; remove obs that don't match from using
+
+				* use the 2 digit padded isco08 variable:  isco08_2dig_pad
+
+	// merge with isco92 key (for wave 1)
+	* now the missing obs in psic_2dig are those in waves 2-4 that didn't match isco12 and
+	* all obs in wave1
+
+	** create an identical variable that is only non-missing for wave1
+	gen psoc92 = `matchvar'
+
+	tostring 	psoc92 ///
+				, format(`"%02.0f"') replace
+
+	replace 	psoc92 = "" 	if psoc92 == "." 	// fix missing
+	replace 	psoc92 = "" 	if wave != "Q1"			// ensure to only match waves 2-4
+
+
+	merge 		m:1 ///
+				psoc92 ///
+				using `isco_key92' ///
+				, generate(isco_merge92_`n') ///
+				keep(master match) // "left join"; remove obs that don't match from using
+
+				* use the 2 digit padded isco08 variable:  sub_major_isco08_pad
+
+
+	// coalese 2 variables
+	egen 		str4 occup_isco_`n' = rowfirst(isco08_2dig_pad sub_major_isco08_pad)
+
+	drop 		psoc92 psic_2dig			// drop both; no longer needed, maintained in matchvar
+
+	gen 		occup_isco = occup_isco_`n'
+	label var 	occup_isco "ISCO code of primary job 7 day recall"
+
 
 *</_occup_isco_>
 
@@ -1117,6 +1231,7 @@ foreach v of local ed_var {
 
 *<_unitwage_>
 	gen byte 		unitwage = pufc24_pbasis
+	replace 		unitwage = . if 	unitwage >= 11 // replace potential missing values
 	recode 			unitwage (0 1 5 6 7 = 10) /// other
 								(2 = 9) /// hourly
 								(3 = 1) /// daily
@@ -1141,6 +1256,7 @@ foreach v of local ed_var {
 *<_whours_>
 	gen whours 		= pufc19_phours
 	label var whours "Hours of work in last week primary job 7 day recall"
+    replace 		whours = 84 	if whours > 84 & whours != . 	// replace unrealistic work weeks
 *</_whours_>
 
 
@@ -1212,9 +1328,8 @@ foreach v of local ed_var {
 
 *----------8.3: 7 day reference secondary job------------------------------*
 * Since labels are the same as main job, values are labelled using main job labels
-/*
-2016 has no secondary job information.
-*/
+* secondary job not available for all rounds; in some rounds the data are only encoded as "previous quarter" job.
+* Will simply leave secondary job as missing.
 
 {
 *<_empstat_2_>
@@ -1232,38 +1347,24 @@ foreach v of local ed_var {
 
 
 *<_industry_orig_2_>
-	gen 			industry_orig_2 = j03_okb
+/*no second industry variable given (the given one is for previous quarter not for second job)*/
+
+	gen 			industry_orig_2 = .
 	label var 		industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 
 
 *<_industrycat_isic_2_>
-	* no 4-digit data, so cannot complete.
 	gen 			industrycat_isic_2 = .
-	label var 		industrycat_isic_2 "ISIC code of primary job 7 day recall"
+	label var 		industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 
 
 *</_industrycat_isic_2_>
 
 
 *<_industrycat10_2_>
-	gen byte 		industrycat10_2 = .
-
-
-	replace 		industrycat10_2=1 if (j03_okb>=1& j03_okb<=4)		// to Agriculture
-	replace 		industrycat10_2=2 if (j03_okb>=5 & j03_okb<=9)		// to Mining
-	replace 		industrycat10_2=3 if (j03_okb>=10 & j03_okb<=33)	// to Manufacturing
-	replace 		industrycat10_2=4 if (j03_okb>=35 & j03_okb<=39)	// to Public utility
-	replace 		industrycat10_2=5 if (j03_okb>=41 &  j03_okb<=43)	// to Construction
-	replace 		industrycat10_2=6 if (j03_okb>=45 & j03_okb<=47) | (j03_okb>= 55 & j03_okb <= 56)	// to Commerce
-	replace 		industrycat10_2=7 if (j03_okb>=49 & j03_okb<=53)| (j03_okb>=58 & j03_okb<=63) // to Transport/coms
-	replace 		industrycat10_2=8 if (j03_okb>=64 & j03_okb<=82) 	// to financial/business services
-	replace 		industrycat10_2=9 if (j03_okb==84) 				// to public administration
-	replace 		industrycat10_2=10 if  (j03_okb>=91 & j03_okb<=99) // to other
-	replace 		industrycat10_2=10 if industrycat10_2==. & j03_okb!=.
-
-
-
+/*no second industry variable given (the given one is for previous quarter not for second job)*/
+	gen byte 			industrycat10_2 = .
 	label var 		industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values 	industrycat10_2 lblindustrycat10
 *</_industrycat10_2_>
@@ -1278,15 +1379,18 @@ foreach v of local ed_var {
 
 
 *<_occup_orig_2_>
-	gen 			occup_orig_2 = j02_otoc
+/*no second occupation variable given (the given one is for previous quarter not for second job)*/
+
+	gen 			occup_orig_2 = .
 	label var 		occup_orig_2 "Original occupation record secondary job 7 day recall"
 *</_occup_orig_2_>
 
 
 *<_occup_isco_2_>
-* even though the original data hve 4 digits, there is no conversion table for PSOC to ISCO
-	gen 			occup_isco_2 = .
-	label var 		occup_isco_2 "ISCO code of secondary job 7 day recall"
+	gen occup_isco_2 = ""
+	label var 	occup_isco_2 "ISCO code of secondary job 7 day recall"
+
+
 *</_occup_isco_2_>
 
 
@@ -1299,31 +1403,9 @@ foreach v of local ed_var {
 
 
 *<_occup_2_>
-	* generate empty variable
-	gen byte 		occup_2 = .
+/*no second occupation variable given (the given one is for previous quarter not for second job)*/
 
-	* replace conditionally based on January round (1992 PSOC)
-	replace 		occup_2=floor(j02_otoc/10)		///
-					if 	round == 1
-
-	recode 			occup_2 0 = 10		///
-					if 	j02_otoc==1 	/// recode "armed forces" to appropriate label
-					& 	round == 1
-
-	recode 			occup_2 0 = 99		///
-					if 	(j02_otoc>=2 & j02_otoc <=9) ///
-					| (j02_otoc >=94 & j02_otoc <= 99) /// recode "Not classifiable occupations"
-					& round == 1
-
-
-	* replace conditionally based on April, July, October rounds (2012 PSOC)
-	replace			occup_2=floor(j02_otoc/10)							///
-					if (round == 4 | round == 7 | round == 10)
-
-	recode 			occup_2 0 = 10									///
-					if 	(j02_otoc >=1 & j02_otoc <=3)				/// recode "armed forces" to appropriate label
-					& 	(round == 4 | round == 7 | round == 10)
-
+	gen byte occup_2 = .
 
 	label var 		occup_2 "1 digit occupational classification secondary job 7 day recall"
 	label values 	occup_2 lbloccup
@@ -1331,15 +1413,16 @@ foreach v of local ed_var {
 
 
 *<_wage_no_compen_2_>
-	gen 			double wage_no_compen_2 = c36_obic
+	gen 			double wage_no_compen_2 = .
 	replace 		wage_no_compen_2 = . if wage_no_compen_2 == 99999
 	label var 		wage_no_compen_2 "Last wage payment secondary job 7 day recall"
 *</_wage_no_compen_2_>
 
 
 *<_unitwage_2_>
-	gen byte 		unitwage_2 = j06_obis
-	recode 			unitwage (0 1 5 6 7 = 10) /// other
+	gen byte 		unitwage_2 = .
+	replace 		unitwage_2 = . if 	unitwage >= 11 // replace potential missing values
+	recode 			unitwage_2 (0 1 5 6 7 = 10) /// other
 								(2 = 9) /// hourly
 								(3 = 1) /// daily
 								(4 = 5) // monthly
@@ -1350,7 +1433,7 @@ foreach v of local ed_var {
 
 
 *<_whours_2_>
-	gen 			whours_2 = j05_ohrs
+	gen 			whours_2 = .
 	label var 		whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 
@@ -1573,7 +1656,7 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_year_>
-	gen 			occup_isco_year = .
+	gen 			occup_isco_year = ""
 	label var 		occup_isco_year "ISCO code of primary job 12 month recall"
 *</_occup_isco_year_>
 
@@ -1750,7 +1833,7 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_2_year_>
-	gen 			occup_isco_2_year = .
+	gen 			occup_isco_2_year = ""
 	label var 		occup_isco_2_year "ISCO code of secondary job 12 month recall"
 *</_occup_isco_2_year_>
 
@@ -1919,6 +2002,11 @@ foreach v of local ed_var {
 					t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs ///
 					t_hours_annual linc_nc laborincome
 
+* make a second iternation that excludes lstatus variables
+	local except 	lstatus lstatus_year
+	local lab_var2 	: list lab_var - except
+
+
 	foreach v of local lab_var {
 		cap confirm numeric variable `v'
 		if _rc == 0 { 	// is indeed numeric
@@ -1941,8 +2029,8 @@ foreach v of local ed_var {
 	or classified as lstatus == 1
 
 </_correction_lstatus_note> */
-
-	foreach v of local lab_var {
+	* use labvar2 because we don't want to replace lstatus, etc in this case
+	foreach v of local lab_var2 {
 		cap confirm numeric variable `v'
 		if _rc == 0 { 	// is indeed numeric
 			replace `v'=. if ( lstatus !=1 & !missing(lstatus) )
@@ -1953,9 +2041,7 @@ foreach v of local ed_var {
 
 	}
 
-*</_% Correction min age_>
-
-
+*</_% Correction lstatus_>
 
 
 }
