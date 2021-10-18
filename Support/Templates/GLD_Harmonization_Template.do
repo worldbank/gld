@@ -198,7 +198,7 @@ local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
 
 *<_wave_>
 	gen wave = .
-	label var wave = "Survey wave"
+	label var wave "Survey wave"
 *</_wave_>
 
 }
