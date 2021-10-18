@@ -581,12 +581,12 @@ foreach v of local ed_var {
 
 *<_vocational_length_l_>
 	gen vocational_length_l = .
-	label var vocational_length_l "Length of training, lower limit"
+	label var vocational_length_l "Length of training in months, lower limit"
 *</_vocational_length_l_>
 
 *<_vocational_length_u_>
 	gen vocational_length_u = .
-	label var vocational_length_u "Length of training, upper limit"
+	label var vocational_length_u "Length of training in months, upper limit"
 *</_vocational_length_u_>
 
 *<_vocational_field_>
