@@ -28,7 +28,7 @@ set varabbrev off, permanently
 *----------0.1: Set necessary paths
 
 * Path to harmonized .dta file
-global path_to_harmonization "Z:\GLD-Harmonization\573465_JT\ZAF\ZAF_2012_LFS\ZAF_2012_LFS_v01_M_v01_A_GLD\Data\Harmonized\ZAF_2012_QLFS_v01_M_v01_A_GLD.dta"
+global path_to_harmonization "Z:\GLD-Harmonization\573465_JT\ZAF\ZAF_2008_LFS\ZAF_2008_LFS_v01_M_v01_A_GLD\Data\Harmonized\ZAF_2008_QLFS_v01_M_v01_A_GLD.dta"
 
 * Path to other harmonized files for dynamic comparison
 * Leave as `" "' to skip this (no others or to be done later)
@@ -37,10 +37,10 @@ global path_to_harmonization "Z:\GLD-Harmonization\573465_JT\ZAF\ZAF_2012_LFS\ZA
 global path_to_other_harmonization `" "' 
 
 * Survey ID as per CCC_YYYY_[Survey-Name]_v##_M_v##_A_GLD convention
-global survey_id "ZAF_2012_QLFS_V01_M_V01_A_GLD"
+global survey_id "ZAF_2008_QLFS_V01_M_V01_A_GLD"
 
 * Path to folder to hold output
-global path_to_output_folder "Z:\GLD-Harmonization\573465_JT\ZAF\ZAF_2012_LFS\ZAF_2012_LFS_v01_M_v01_A_GLD\Work"
+global path_to_output_folder "Z:\GLD-Harmonization\573465_JT\ZAF\ZAF_2008_LFS\ZAF_2008_LFS_v01_M_v01_A_GLD\Work"
 
 * Path to folder containing helper files
 * Should be "[*]:\Support and Documentation\Q Checks\Helper Programs"
