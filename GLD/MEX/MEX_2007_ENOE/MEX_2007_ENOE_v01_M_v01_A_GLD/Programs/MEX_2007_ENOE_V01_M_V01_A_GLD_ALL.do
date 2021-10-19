@@ -19,8 +19,8 @@
 <_Data collection from_>		[01/2007] </_Data collection from_>
 <_Data collection to_>			[05/2007] </_Data collection to_>
 <_Source of dataset_> 			[Mexico NSO] </_Source of dataset_>
-<_Sample size (HH)_> 			[105567] </_Sample size (HH)_>
-<_Sample size (IND)_> 			[410185] </_Sample size (IND)_>
+<_Sample size (HH)_> 			[107,583] </_Sample size (HH)_>
+<_Sample size (IND)_> 			[416,308] </_Sample size (IND)_>
 <_Sampling method_> 			[ El tipo de muestreo utilizado es probabilístico, bietápico, estratificado y por conglomerados.] </_Sampling method_>
 <_Geographic coverage_> 		[Los niveles geograficos usados en la encuesta de México comienzan en estados siguen con ciudades autorrepresentadas y terminan con municipios de las ciudades autorrepresentadas. https://www.inegi.org.mx/contenidos/productos/prod_serv/contenidos/espanol/bvinegi/productos/metodologias/est/cobertura.pdf] </_Geographic coverage_>
 <_Currency_> 					[Pesos] </_Currency_>
@@ -64,25 +64,90 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2007_ENOE\MEX_2007_ENO
 
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
+	use "`path_in'\COE1T107.dta", clear
+	tostring (ent v_sel n_ren), gen(ent_str v_sel_str n_ren_str) format("%02.0f")
+	tostring con, gen(con_str) format("%05.0f")
+	tostring (n_hog h_mud), gen(n_hog_str h_mud_str) format("%01.0f")
+	
+	egen person = concat(ent_str con_str v_sel_str n_hog_str h_mud_str n_ren_str)
+	tempfile mex_ind
+	save `mex_ind'
+	
+	use "`path_in'\COE2T107.dta", clear
+	tostring (ent v_sel n_ren), gen(ent_str v_sel_str n_ren_str) format("%02.0f")
+	tostring con, gen(con_str) format("%05.0f")
+	tostring (n_hog h_mud), gen(n_hog_str h_mud_str) format("%01.0f")
+	
+	
+	egen person = concat(ent_str con_str v_sel_str n_hog_str h_mud_str n_ren_str)
+
+	* Merge with COE1, make sure all match through assert
+	merge 1:1 person using `mex_ind', assert(match) nogen
+
+	* Drop non finished interviews
+	drop if r_def != 0
+
+
+	* Overwrtwrite temp file
+	tempfile mex_ind
+	save `mex_ind'
+	
+	
+	use "`path_in'\SDEMT107.dta", clear
+	tostring (ent v_sel n_ren), gen(ent_str v_sel_str n_ren_str) format("%02.0f")
+	tostring con, gen(con_str) format("%05.0f")
+	tostring (n_hog h_mud), gen(n_hog_str h_mud_str) format("%01.0f")
+	
+	egen person = concat(ent_str con_str v_sel_str n_hog_str h_mud_str n_ren_str)
+
+	drop if r_def != 0
+	drop if !missing(cs_ad_mot)
+
+	* Merge with COE1 & COE2 files, assert match (for 12 and over) or master (for younger)
+	merge 1:1 person using `mex_ind', assert(match master) nogen
+
+	* Create HH level for merging with that information
+	egen casa_long = concat(ent_str con_str v_sel_str n_hog_str h_mud_str)
+	egen casa_short = concat(ent_str con_str v_sel_str)
+
+	* Overwrtwrite temp file
+	tempfile mex_ind
+	save `mex_ind'
+	
+	
+	
 	use "`path_in'\VIVT107.dta",clear
 	drop p1-p3
-	destring loc mun est ageb t_loc cd_a upm d_sem n_pro_viv ent con v_sel n_ent per, replace
-	merge 1:m ent con v_sel using "`path_in'\HOGT107.dta", nogen
-	merge 1:m ent con v_sel n_hog using "`path_in'\SDEMT107.dta"
-	drop if _merge==1
-	drop _merge
-	merge 1:1 ent con v_sel n_hog n_ren using "`path_in'\COE1T107.dta", nogen
-	merge 1:1 ent con v_sel n_hog n_ren using "`path_in'\COE2T107.dta", nogen
-	keep if r_pre==0 & inlist(c_res,1,3)
-	tostring (ent v_sel n_hog n_ren h_mud), gen(ent_str v_sel_str n_hog_str n_ren_str h_mud_str) format(%02.0f)
-	tostring con, replace
-	*the variable con is a consecutive number, thus it needs to be uniform in lenght by adding leading zeros
-	gen con_str=substr("000",1,4 - length(con))+ con
+	
+	tostring (ent v_sel), gen(ent_str v_sel_str) format("%02.0f")
+	tostring con, gen(con_str) format("%05.0f")
+
+	egen casa_short = concat(ent_str con_str v_sel_str)
+
+	* Merge with Individual files, keep only what matches
+	merge 1:m casa_short using `mex_ind', keep(match) nogen 
+
+	* Overwrtwrite temp file
+	tempfile mex_ind
+	save `mex_ind'
+	
+	
+	use "`path_in'\HOGT107.dta", clear
+	
+	tostring (ent v_sel), gen(ent_str v_sel_str) format("%02.0f")
+	tostring con, gen(con_str) format("%05.0f")
+	tostring n_hog h_mud, gen(n_hog_str h_mud_str) format("%01.0f")
+
+	egen casa_long = concat(ent_str con_str v_sel_str n_hog_str h_mud_str)
+
+	* Merge with Individual files, keep only what matches
+	merge 1:m casa_long using `mex_ind', keep(match) nogen
+	
+	
 	*the harmonization is for the first three months of the year , any other month will be put to missing.
 	tab d_mes
 	replace d_mes=. if d_mes == 4 | d_mes == 5 | d_mes == 12
 	tab d_mes, missing
-
 *ISIC
 ***first job
 	rename scian scian_orig
