@@ -25,8 +25,8 @@
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
-<_ISCO Version_>				ISCO-08 </_ISCO Version_>
-<_OCCUP National_>				SASCO-2002 </_OCCUP National_>
+<_ISCO Version_>				ISCO-88 </_ISCO Version_>
+<_OCCUP National_>				SASCO-2003 </_OCCUP National_>
 <_ISIC Version_>				ISIC Rev 4  (SIC 7 and ISIC 4 are equal to Division (4 digit) level) </_ISIC Version_>
 <_INDUS National_>				SIC 6 </_INDUS National_>
 
@@ -877,7 +877,29 @@ Q310STARTBUSNS "Start a business if the circumstances have allowed?"
 
 
 *<_industrycat_isic_>
-	gen industrycat_isic=.
+	tostring Q43INDUSTRY, gen(indus_string)
+	gen industrycat_isic=substr(indus_string, 1, 2) if Q43INDUSTRY>100
+	replace industrycat_isic=indus_string if Q43INDUSTRY<100
+	destring industrycat_isic, replace
+	recode industrycat_isic (11=01) (12=02) (13=05) (21=10) (22=11) (23=12) (24=13) (25=14) (29=.) (30=15) (31=17) (32=20) (33=23) (34=26) (35=27) (36=31) (37=32) (38=34) (39=36) (41=40) (42=41) (50=45) (61=51) (62=52) (63=50) (64=55) (71=60) (72=61) (73=62) (74=63) (75=64) (81=65) (82=66) (83=67) (84=70) (85=71) (86=72) (87=73) (88=74) (91=75) (92=80) (93=85) (94=90) (95=91) (96=92) (99=93) (01=95) (02=99)
+	
+	replace industrycat_isic=16 if Q43INDUSTRY==306
+	replace industrycat_isic=18 if Q43INDUSTRY==314
+	replace industrycat_isic=19 if inrange(Q43INDUSTRY, 316, 317)
+	replace industrycat_isic=21 if Q43INDUSTRY==323
+	replace industrycat_isic=22 if inrange(Q43INDUSTRY, 324, 325)
+	replace industrycat_isic=24 if inrange(Q43INDUSTRY, 334, 335)
+	replace industrycat_isic=25 if inrange(Q43INDUSTRY, 337, 338)
+	replace industrycat_isic=28 if inrange(Q43INDUSTRY, 354, 355)
+	replace industrycat_isic=29 if inrange(Q43INDUSTRY, 356, 358)
+	replace industrycat_isic=30 if Q43INDUSTRY==359
+	replace industrycat_isic=33 if inrange(Q43INDUSTRY, 374, 375)	
+	replace industrycat_isic=35 if inrange(Q43INDUSTRY, 384, 387)
+	replace industrycat_isic=37 if Q43INDUSTRY==395
+	gen industrycat_isic2=industrycat_isic*100
+	drop industrycat_isic
+	tostring industrycat_isic2, gen(industrycat_isic) format(%04.0f)
+	drop industrycat_isic2
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
@@ -909,14 +931,29 @@ Q310STARTBUSNS "Start a business if the circumstances have allowed?"
 
 
 *<_occup_isco_>
-	recode Q42OCCUPATION 5164=0310
-	gen occup_isco=.
+	tostring Q42OCCUPATION, gen(occup_string)
+	gen occupcat_isco=substr(occup_string, 1, 3)
+	merge m:1 occupcat_isco using "C:\Users\wb573465\Desktop\ZAF_archive\GLD ISCO mapping files\ISCO\isco88_sasco03_mapping.dta"
+	drop if _merge==2
+	destring isco_88, replace
+	gen occup_isco=isco_88*10
+	replace occup_isco=9000 if Q42OCCUPATION==9999
+	tostring occup_isco, replace
+	drop _merge occup_string occupcat_isco sasco_occup isco_88 isco_occup
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
 
 *<_occup_skill_>
+	gen skill_level=substr(occup_isco, 1, 1)
+	destring skill_level, replace
 	gen occup_skill = .
+	replace occup_skill=1 if inrange(skill_level, 1, 3)
+	replace occup_skill=2 if inrange(skill_level, 4, 8)
+	replace occup_skill=3 if inrange(skill_level, 9, 9)	
+	drop skill_level
+	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
+	label values occup_skill lblskill
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
 *</_occup_skill_>
 
@@ -929,7 +966,7 @@ Q310STARTBUSNS "Start a business if the circumstances have allowed?"
 	replace occup=. if lstatus!=1
 	label var occup "1 digit occupational classification, primary job 7 day recall"
   	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
-	  label values occup lbloccup
+	label values occup lbloccup
 *</_occup_>
 
 
@@ -1604,11 +1641,20 @@ The main job was decided based on time spent.
 *<_% Correction min age_>
 
 ** Drop info for cases under the age for which questions to be asked (do not need a variable for this)
-local lab_var "minlaborage lstatus nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome"
+	local lab_var "minlaborage lstatus nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome"
 
-foreach v of local lab_var {
-	replace `v'=. if ( age < minlaborage & !missing(age) )
-}
+
+	foreach v of local lab_var {
+		cap confirm numeric variable `v'
+		if _rc == 0 { // is indeed numeric
+			replace `v'=. if ( age < minlaborage & !missing(age) )
+		}
+		else { // is not
+			replace `v'= "" if ( age < minlaborage & !missing(age) )
+		}
+
+
+	}
 
 *</_% Correction min age_>
 }
