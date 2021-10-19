@@ -46,7 +46,7 @@
 	local 	drop 	 = 1 	// 1 to drop variables with all missing values, 0 otherwise
 
 
-	local 	year 		"${GLD}:\GLD-Harmonization\\`usr'\\`cty3'\\`cty3'_`surv_yr'_LFS" // top data folder
+	local 	year 		"Y:\GLD-Harmonization\\`usr'\\`cty3'\\`cty3'_`surv_yr'_LFS" // top data folder
 
 	local 	main		"`year'\\`cty3'_`surv_yr'_LFS_v01_M"
 	local 	 stata		"`main'\data\stata"
@@ -899,11 +899,16 @@ replace month = 10 	if round == 4
 	replace wage=. if lstatus!=1 			// restrict universe to employed only
 	replace wage=. if age < lb_mod_age		// restrict universe to working age
 	replace wage=. if empstat==1			// restrict universe to wage earners
-	label var wage "Last wage payment"
+    replace wage=. if wage == 99999			// replace with numeric-encoded missing value
+    label var wage "Last wage payment"
 
 
 ** WAGES TIME UNIT
-	gen byte unitwage=1
+	gen byte unitwage=c25_pbasis
+	recode 			unitwage (0 1 5 6 7 = 10) /// other
+								(2 = 9) /// hourly
+								(3 = 1) /// daily
+								(4 = 5) // monthly
 	replace unitwage=. if lstatus!=1 			// restrict universe to employed only
 	replace unitwage=. if age < lb_mod_age		// restrict universe to working age
 	replace unitwage=. if empstat==1			// restrict universe to wage earners
@@ -973,8 +978,8 @@ replace month = 10 	if round == 4
 
 
 ** WAGES - SECOND JOB
-	* second job wages are available for some rounds
-	gen double wage_2=cc36_obasic
+	* second job wages are available for some rounds, but no wage unit type indicator so will leave as missing.
+	gen double wage_2= .
 	replace wage_2=. if lstatus!=1 			// restrict universe to employed only
 	replace wage_2=. if age < lb_mod_age		// restrict universe to working age
 	replace wage_2=. if empstat==1			// restrict universe to wage earners
@@ -982,7 +987,7 @@ replace month = 10 	if round == 4
 
 
 ** WAGES TIME UNIT - SECOND JOB
-	gen byte unitwage_2=1
+	gen byte unitwage_2=.  						// no second job wage type indicator even though wage indicator
 	replace unitwage_2=. if lstatus!=1 			// restrict universe to employed only
 	replace unitwage_2=. if age < lb_mod_age		// restrict universe to working age
 	replace unitwage_2=. if empstat==1			// restrict universe to wage earners

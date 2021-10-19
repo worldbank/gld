@@ -4,9 +4,89 @@
 
 library(tidyverse)
 library(retroharmonize)
+library(summarytools)
 
 # load metadata
 load("Y:/GLD-Harmonization/551206_TM/PHL/PHL_data/I2D2/Rdata/metadata.Rdata")
+source(file.path(code, "Global/valtab.R"))
+
+# functions ----
+
+# pulling a single filter parameter from the label
+valtab_label <- function(x, y) { 
+                        y = NULL
+  if (is.null(y)) {
+    table <- metadata %>%
+      filter( grepl(as.character(x), label_orig) )
+  } else {
+    table <- metadata %>%
+      filter( grepl(as.character(x), label_orig) | grepl(as.character(y), label_orig) )
+  }
+  
+  table <- table %>%
+    filter(!is.na(labels)) %>%
+    select(id, labels) %>%
+    unnest_longer(labels, 
+                  values_to = "value",
+                  indices_to = "value_label") %>%
+    group_by(value) %>% 
+    mutate(n_labs = (n_distinct(value_label, na.rm = TRUE)),  # number of distinct labels per value (number)
+           same = (n_labs == 1) # TRUE if all string values are the same (for labelled variables)
+    ) %>%
+    ungroup() %>%
+    pivot_wider(names_from = id, values_from = value_label) %>%
+    arrange(value)
+  
+  return(table)
+}
+    
+ 
+  
+#   metadata %>%
+#     filter( grepl(as.character(x), label_orig) ) %>%
+#     filter(!is.na(labels)) %>%
+#     select(id, labels) %>%
+#     unnest_longer(labels, 
+#                   values_to = "value",
+#                   indices_to = "value_label") %>%
+#     group_by(value) %>% 
+#     mutate(n_labs = (n_distinct(value_label, na.rm = TRUE)),  # number of distinct labels per value (number)
+#            same = (n_labs == 1) # TRUE if all string values are the same (for labelled variables)
+#     ) %>%
+#     ungroup() %>%
+#     pivot_wider(names_from = id, values_from = value_label) %>%
+#     arrange(value)
+# }
+
+# pulling a single filter parameter from the name
+valtab_name <- function(x, y) {
+                        y = NULL
+  if (is.null(y)) {
+    table <- metadata %>%
+      filter( grepl(as.character(x), var_name_orig) )
+  } else {
+    table <- metadata %>%
+      filter( grepl(as.character(x), var_name_orig) | grepl(as.character(y), label_orig) )
+  }
+  
+  table <- table %>%
+    filter(!is.na(labels)) %>%
+    select(id, labels) %>%
+    unnest_longer(labels, 
+                  values_to = "value",
+                  indices_to = "value_label") %>%
+    group_by(value) %>% 
+    mutate(n_labs = (n_distinct(value_label, na.rm = TRUE)),  # number of distinct labels per value (number)
+           same = (n_labs == 1) # TRUE if all string values are the same (for labelled variables)
+    ) %>%
+    ungroup() %>%
+    pivot_wider(names_from = id, values_from = value_label) %>%
+    arrange(value)
+  
+  return(table)
+}
+
+
 
 
 # find unique label vector
@@ -207,6 +287,17 @@ vallab_tab_curschool <- metadata %>%
   pivot_wider(names_from = id, values_from = value_label) %>%
   arrange(value)
 
+# create employment status variable 
+vallab_tab_employstat <- metadata %>%
+  filter( grepl("empst", var_name_orig) ) %>%
+  filter(!is.na(labels)) %>%
+  select(id, labels) %>%
+  unnest_longer(labels, 
+                values_to = "value",
+                indices_to = "value_label") %>%
+  pivot_wider(names_from = id, values_from = value_label) %>%
+  arrange(value)
+
 
 # create marital status variable tables 
 vallab_tab_marital <- metadata %>%
@@ -216,7 +307,39 @@ vallab_tab_marital <- metadata %>%
   unnest_longer(labels, 
                 values_to = "value",
                 indices_to = "value_label") %>%
+  group_by(value) %>% 
+  mutate(n_labs = (n_distinct(value_label, na.rm = TRUE)),  # number of distinct labels per value (number)
+         same = (n_labs == 1) # TRUE if all string values are the same (for labelled variables)
+  ) %>%
+  ungroup() %>%
   pivot_wider(names_from = id, values_from = value_label) %>%
   arrange(value)
+
+save.image(file = file.path(PHL, "PHL_data/variable_label_tables.Rdata"))
+
+class <- valtab_name("clas")
+industry <- valtab_name("qkb", "pkb")
+
+edu <- valtab(metadata = metadata, x = "grade", param = label_orig)
+
+
+
+
+# summaries  ----
+
+industry %>% 
+  pivot_longer(cols = contains("LFS"), values_to = "label") %>%
+  group_by("name") %>%
+  dfSummary(varnumbers = F,
+            labels.col = F, 
+            valid.col = F, 
+            na.col = F,
+            graph.col = T,
+            graph.magnif = 0.75,
+            style = "grid")
+
+
+# export ----
+save.image(file = file.path(PHL, "PHL_data/variable_label_tables.Rdata"))
 
 

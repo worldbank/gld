@@ -1663,6 +1663,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`output'\ZAF_2012_QLFS_v01_M_v01_A_GLD.dta", replace
+save "`output'\ZAF_2012_QLFS_v01_M_v01_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>

@@ -30,6 +30,7 @@ set varabbrev off, permanently
 * Path to harmonized .dta file
 global path_to_harmonization "Z:\GLD-Harmonization\573465_JT\ZAF\ZAF_2008_LFS\ZAF_2008_LFS_v01_M_v01_A_GLD\Data\Harmonized\ZAF_2008_QLFS_v01_M_v01_A_GLD.dta"
 
+
 * Path to other harmonized files for dynamic comparison
 * Leave as `" "' to skip this (no others or to be done later)
 * Write as a set of paths like 
