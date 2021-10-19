@@ -34,6 +34,15 @@
 	set more off
 	set mem 800m
 
+* install packages
+local user_commands ietoolkit scores missings mdesc iefieldkit  //Fill this list will all user-written commands this project requires
+ foreach command of local user_commands {
+     cap which `command'
+     if _rc == 111 {
+         ssc install `command'
+     }
+ }
+
 ** DIRECTORY
 
 	local 	cty3 	"PHL" 	// set this to the three letter country/economy abbreviation
@@ -456,7 +465,7 @@ replace month = 10 	if round == 4
 
 
 ** EDUCATION MODULE AGE
-	gen byte ed_mod_age= `ed_mod_age'				// minimum incluse attending school age is 5
+	gen byte ed_mod_age= 5				// minimum incluse attending school age is 5
 	label var ed_mod_age "Education module application age"
 
 
@@ -558,7 +567,7 @@ replace month = 10 	if round == 4
 *****************************************************************************************************/
 
 ** LABOR MODULE AGE
-	gen byte lb_mod_age=`lb_mod_age'
+	gen byte lb_mod_age=15
 	label var lb_mod_age "Labor module application age"
 
 
@@ -805,20 +814,8 @@ replace month = 10 	if round == 4
 
 
 ** INDUSTRY CLASSIFICATION - SECOND JOB
+	* no second job industry classifcation
 	gen byte industry_2=.
-	replace industry_2=1 if (j03_okb>=1& j03_okb<=4)		// to Agriculture
-	replace industry_2=2 if (j03_okb>=5 & j03_okb<=9)		// to Mining
-	replace industry_2=3 if (j03_okb>=10 & j03_okb<=33)	// to Manufacturing
-	replace industry_2=4 if (j03_okb>=35 & j03_okb<=39)	// to Public utility
-	replace industry_2=5 if (j03_okb>=41 &  j03_okb<=43)	// to Construction
-	replace industry_2=6 if (j03_okb>=45 & j03_okb<=47) | (j03_okb >= 55 & j03_okb <= 56)	// to Commerce
-	replace industry_2=7 if (j03_okb>=49 & j03_okb<=53)| (j03_okb>=58 & j03_okb<=63) // to Transport/coms
-	replace industry_2=8 if (j03_okb>=64 & j03_okb<=82) 	// to financial/business services
-	replace industry_2=9 if (j03_okb==84) 				// to public administration
-	replace industry_2=10 if  (j03_okb>=91 & j03_okb<=99) // to other
-	replace industry_2=10 if industry_2==. & j03_okb!=.
-	replace industry_2=. if lstatus~=1
-
 	label var industry_2 "1 digit industry_2 classification"
 	label values industry_2 lblindustry 		// use same value/factor label as industry
 	replace industry_2=. if age < lb_mod_age // restrict universe to working age
@@ -836,53 +833,23 @@ replace month = 10 	if round == 4
 
 
 **SURVEY SPECIFIC INDUSTRY CLASSIFICATION - SECOND JOB
-	gen industry_orig_2=j03_okb
+	gen industry_orig_2=.
 	replace industry_orig_2=. if lstatus!=1 				// restrict universe to employed only
 	replace industry_orig_2=. if age < lb_mod_age			// restrict universe to working age
 	label var industry_orig_2 "Original Industry Codes - Second job"
 
 
-** OCCUPATION CLASSIFICATION - SECOND JOB j02_otoc
-
-	* generate empty variable
-	gen byte occup_2 = .
-
-	* replace conditionally based on January round (1992 PSOC)
-	replace 	occup_2=floor(j02_otoc/10)		///
-				if 	round == 1
-
-	recode 		occup_2 0 = 10		///
-				if 	j02_otoc==1 	/// recode "armed forces" to appropriate label
-				& 	round == 1
-
-	recode 		occup_2 0 = 99		///
-				if 	(j02_otoc>=2 & j02_otoc <=9) ///
-				| (j02_otoc >=94 & j02_otoc <= 99) /// recode "Not classifiable occupations"
-				& round == 1
-
-
-	* replace conditionally based on April, July, October rounds (2012 PSOC)
-	replace		occup_2=floor(j02_otoc/10)							///
-				if (round == 4 | round == 7 | round == 10)
-
-	recode 		occup_2 0 = 10									///
-				if 	(j02_otoc >=1 & j02_otoc <=3)				/// recode "armed forces" to appropriate label
-				& 	(round == 4 | round == 7 | round == 10)
-
-
-
-	replace occup_2=. if lstatus!=1 		// restrict universe to employed only
-	replace occup_2=. if age < lb_mod_age	// restrict universe to working age
-
-	replace occup_2=. if lstatus!=1 				// restrict universe to employed only
-	replace occup_2=. if age < lb_mod_age			// restrict universe to working age
+** OCCUPATION CLASSIFICATION - SECOND JOB
+	* no second job occupation classifcation
+	gen occup_2 = .
 	label var occup_2 "1 digit occupational classification - second job"
 	la de lbloccup_2 1 "Senior officials" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup_2 lbloccup_2
 
 
 ** WAGES - SECOND JOB
-	gen double wage_2=c36_obic
+	* no second job wage info
+	gen double wage_2= .
 	replace wage_2=. if lstatus!=1 			// restrict universe to employed only
 	replace wage_2=. if age < lb_mod_age		// restrict universe to working age
 	replace wage_2=. if empstat==1			// restrict universe to wage earners
@@ -890,11 +857,8 @@ replace month = 10 	if round == 4
 
 
 ** WAGES TIME UNIT - SECOND JOB
-	gen byte unitwage_2=06_obis
-	recode 			unitwage_2 (0 1 5 6 7 = 10) /// other
-								(2 = 9) /// hourly
-								(3 = 1) /// daily
-								(4 = 5) // monthly
+	* no second job wage unit info
+	gen byte unitwage_2= .
 	replace unitwage_2=. if lstatus!=1 			// restrict universe to employed only
 	replace unitwage_2=. if age < lb_mod_age		// restrict universe to working age
 	replace unitwage_2=. if empstat==1			// restrict universe to wage earners

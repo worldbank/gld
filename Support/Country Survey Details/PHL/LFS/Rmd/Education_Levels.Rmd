@@ -207,7 +207,11 @@ cross-checking of numeric/factor data types is needed as in 2016.
 These survey years follow the newest PSA classification for
 [2017](https://psa.gov.ph/content/philippine-standard-classification-education-psced).
 The biggest difference in these years is the inclusion of two additional
-years in secondary school.
+years in secondary school. It is likely due to this redefinition of
+secondary in 2019 that causes an increase in observations to be coded as
+`educat7 == 4` or `"secondary incomplete"` compared to previous years
+where the standard for secondary completion was fewer years of
+schooling.
 
 ### Education Levels
 

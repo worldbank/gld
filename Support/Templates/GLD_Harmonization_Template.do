@@ -198,7 +198,7 @@ local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
 
 *<_wave_>
 	gen wave = .
-	label var wave = "Survey wave"
+	label var wave "Survey wave"
 *</_wave_>
 
 }
@@ -581,12 +581,12 @@ foreach v of local ed_var {
 
 *<_vocational_length_l_>
 	gen vocational_length_l = .
-	label var vocational_length_l "Length of training, lower limit"
+	label var vocational_length_l "Length of training in months, lower limit"
 *</_vocational_length_l_>
 
 *<_vocational_length_u_>
 	gen vocational_length_u = .
-	label var vocational_length_u "Length of training, upper limit"
+	label var vocational_length_u "Length of training in months, upper limit"
 *</_vocational_length_u_>
 
 *<_vocational_field_>
@@ -1051,7 +1051,7 @@ foreach v of local ed_var {
 
 *<_ocusec_year_>
 	gen byte ocusec_year = .
-	label var ocusec_year "Sector of activity primary job 12 day recall"
+	label var ocusec_year "Sector of activity primary job 12 month recall"
 	la de lblocusec_year 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec_year lblocusec_year
 *</_ocusec_year_>
@@ -1203,7 +1203,7 @@ foreach v of local ed_var {
 
 *<_ocusec_2_year_>
 	gen byte ocusec_2_year = .
-	label var ocusec_2_year "Sector of activity secondary job 12 day recall"
+	label var ocusec_2_year "Sector of activity secondary job 12 month recall"
 	la de lblocusec_2_year 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec_2_year lblocusec_2_year
 *</_ocusec_2_year_>

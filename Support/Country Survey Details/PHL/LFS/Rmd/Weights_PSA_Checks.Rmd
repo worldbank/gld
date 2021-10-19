@@ -70,31 +70,47 @@ been coded appropriately. All numbers are reported in millions
 (1,000,000) of people ages 15 and over (inclusive). The Annual PSA
 reports are only available starting in 2016.
 
-| Year | GLD Expanded Population | PSA Stated Population | GLD LFP | PSA LFP |
-|------|-------------------------|-----------------------|---------|---------|
-| 1997 |                         |                       |         |         |
-| 1998 |                         |                       |         |         |
-| 1999 |                         |                       |         |         |
-| 2000 |                         |                       |         |         |
-| 2001 |                         |                       |         |         |
-| 2002 |                         |                       |         |         |
-| 2003 |                         |                       |         |         |
-| 2004 |                         |                       |         |         |
-| 2005 |                         |                       |         |         |
-| 2006 |                         |                       |         |         |
-| 2007 |                         |                       |         |         |
-| 2008 |                         |                       |         |         |
-| 2009 |                         |                       |         |         |
-| 2010 |                         |                       |         |         |
-| 2011 |                         |                       |         |         |
-| 2012 |                         |                       |         |         |
-| 2013 |                         |                       |         |         |
-| 2014 | 65.7 M                  |                       | 64.41%  |         |
-| 2015 | 67.9 M                  | .                     | 63.61%  | .       |
-| 2016 | 70.4 M                  | 68.1 M                | 63.42%  | 63.4%   |
-| 2017 | 72.1 M                  | 69.9 M                | 61.20%  | 61.2%   |
-| 2018 | 73.6 M                  | 71.3 M                | 60.92%  | 60.9%   |
-| 2019 | 75.1 M                  | 72.9 M                | 61.28%  | 61.3%   |
+The weight variable provided appears to match published ratios from the
+PSA (table below) and has passed our internal quality checks, which
+include cross-comparison with the World Development Indicators' data for
+raw expanded population. However, it appears that while all survey
+years' weight variables are valid for determining ratio such as Labor
+Force Participation, etc, the weight variables prior to survey year 2008
+are not suitable for determining raw expanded population. With no
+obvious way to scale these earlier weight variables, and with
+corroborating LFP figures, we're providing the weight variables as-is.
+
+| Year       | GLD Expanded Population | PSA Stated Population | GLD LFP | PSA LFP |
+|------------|-------------------------|-----------------------|---------|---------|
+| 1997       |                         |                       |         |         |
+| 1998       |                         |                       |         |         |
+| 1999       |                         |                       |         |         |
+| 2000       |                         |                       |         |         |
+| 2001       |                         |                       |         |         |
+| 2001 (Jan) | \-                      | \-                    | 65.46%  | 65.5%   |
+| 2002       |                         |                       |         |         |
+| 2003       |                         |                       |         |         |
+| 2003 (Jul) | \-                      | \-                    | 67.03%  | 67.0%   |
+| 2004       |                         |                       |         |         |
+| 2004 (Jan) | \-                      | \-                    | 63.93%  | 67.3%   |
+| 2005       |                         |                       |         |         |
+| 2005 (Oct) | \-                      | \-                    | 64.77%  | 64.8%   |
+| 2006       |                         |                       |         |         |
+| 2006 (Apr) | \-                      | \-                    | 64.90%  | 64.8%   |
+| 2007       |                         |                       |         |         |
+| 2007 (Jan) | \-                      | \-                    | 64.82%  | 64.8%   |
+| 2008       |                         |                       |         |         |
+| 2009       |                         |                       |         |         |
+| 2010       |                         |                       |         |         |
+| 2011       |                         |                       |         |         |
+| 2012       |                         |                       |         |         |
+| 2013       |                         |                       |         |         |
+| 2014       | 65.7 M                  |                       | 64.41%  |         |
+| 2015       | 67.9 M                  | .                     | 63.61%  | .       |
+| 2016       | 70.4 M                  | 68.1 M                | 63.42%  | 63.4%   |
+| 2017       | 72.1 M                  | 69.9 M                | 61.20%  | 61.2%   |
+| 2018       | 73.6 M                  | 71.3 M                | 60.92%  | 60.9%   |
+| 2019       | 75.1 M                  | 72.9 M                | 61.28%  | 61.3%   |
 
 Source: [PSA Labor Force Survey
 Releases](https://psa.gov.ph/statistics/survey/labor-and-employment/labor-force-survey)

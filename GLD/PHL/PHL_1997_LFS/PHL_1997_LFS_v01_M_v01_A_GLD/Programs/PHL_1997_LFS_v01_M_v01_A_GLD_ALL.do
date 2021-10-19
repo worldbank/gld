@@ -54,6 +54,15 @@ clear
 set more off
 set mem 800m
 
+* install packages
+local user_commands ietoolkit scores missings mdesc iefieldkit  //Fill this list will all user-written commands this project requires
+ foreach command of local user_commands {
+     cap which `command'
+     if _rc == 111 {
+         ssc install `command'
+     }
+ }
+
 *----------1.2: Set directories------------------------------*
 
 ** DIRECTORY
@@ -93,8 +102,8 @@ set mem 800m
 	local round3 `"`stata'\LFS JUL1997.dta"'
 	local round4 `"`stata'\LFS OCT1997.dta"'
 
-	local isic_key 	 `"`stata'\PHL_PSIC_ISIC_94_key.dta"'
-	local isco_key 	 `"`stata'\"' // to be created
+	local isic_key 	 `"`stata'\PHL_PSIC_ISIC_94_key_2dig.dta"'
+	local isco_key 	 `"`stata'\PHL_PSOC92_ISCO88_08_key.dta"'
 
     local adm2_labs	 `"`stata'\GLD_PHL_admin2_labels.dta"'
 
@@ -317,7 +326,7 @@ set mem 800m
 
 
 *<_weight_>
-	gen weight = `weightvar'/(`n_round')
+	gen weight = rfadj / (4 * 10000)  // inverse scaling by [no. rounds]*[10 000]. See "weights_methodology.Rmd"
 	label var weight "Household sampling weight"
 *</_weight_>
 
@@ -702,7 +711,7 @@ Education module is only asked to those 5 and older.
 
 </_ed_mod_age_note> */
 
-gen byte ed_mod_age = `ed_mod_age'
+gen byte ed_mod_age = 5
 label var ed_mod_age "Education module application age"
 
 *</_ed_mod_age_>
@@ -862,7 +871,7 @@ foreach v of local ed_var {
 
 
 *<_minlaborage_>
-	gen byte minlaborage = `lb_mod_age'
+	gen byte minlaborage = 15
 	label var minlaborage "Labor module application age"
 *</_minlaborage_>
 
@@ -979,9 +988,41 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_>
-	/*1997 only has 2-digit data for industry, so cannot be constructed*/
-	gen 			industrycat_isic = .
-	label var 		industrycat_isic "ISIC code of primary job 7 day recall"
+	loc matchvar   	qkb
+	loc n 			1
+
+	qui ds 			industry_orig, has(type numeric) 	// capture numeric var if is numeric
+	loc isicvar 	= r(varlist)						// store this in a local
+	loc len 		: list sizeof isicvar 				// store the length of this local (1 or 0)
+
+		if (`len' == 1) {
+															// run this if == 1 (ie, if industry_orig is numeric)
+			tostring industry_orig	///						// make the numeric vars strings
+				, generate(industry_orig_str) ///			// gen a variable with this prefix
+				force //
+		}
+
+
+	// merge sub-module with isic key
+
+	gen psic_2dig = `matchvar'
+	tostring 	psic_2dig ///
+				, format(`"%02.0f"') replace
+
+	merge 		m:1 ///
+				psic_2dig ///
+				using `isic_key' ///
+				, generate(isic_merge_`n') ///
+				keep(master match) // "left join"; remove obs that don't match from using
+				* the string variable in isic4 will is industrycat_isic
+
+	// replace one code that I know doesn't match
+	rename 		isic3_1_2dig_pad	isic3_1_2dig_`n'
+
+	gen 		industrycat_isic = isic3_1_2dig_`n'  	// the string variable becomes industrycat_isic
+
+	drop 		psic_2dig 				// no longer needed, maintained in matchvar
+	label var 	industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
 
@@ -1023,11 +1064,39 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_>
-* incoming data only has 2-digit, so cannot be mapped to isco
-	gen 			occup_isco = ""
-	label 			var occup_isco "ISCO code of primary job 7 day recall"
-	replace 		occup_isco=. if lstatus!=1 		// restrict universe to employed only
-	replace 		occup_isco=. if age < minlaborage	// restrict universe to working age
+	loc matchvar   	procc
+	loc n 			1
+
+	qui ds 			occup_orig, has(type numeric) 	// capture numeric var if is numeric
+	loc iscovar 	= r(varlist)						// store this in a local
+	loc len 		: list sizeof iscovar 				// store the length of this local (1 or 0)
+
+		if (`len' == 1) {
+															// run this if == 1 (ie, if occup_orig is numeric)
+			tostring occup_orig	///						// make the numeric vars strings
+				, generate(occup_orig_str) ///			// gen a variable with this prefix
+				force
+		}
+
+
+	// merge sub-module with isco key
+
+	gen psoc92 = `matchvar'
+	tostring 	psoc92 ///
+				, format(`"%02.0f"') replace
+
+	merge 		m:1 ///
+				psoc92 ///
+				using `isco_key' ///
+				, generate(isco_merge_`n') ///
+				keep(master match) // "left join"; remove obs that don't match from using
+
+
+	rename 		isco88_sub_major_pad	isco88_sub_major_`n'
+
+	drop 		psoc92 				// no longer needed, maintained in matchvar
+	gen 		occup_isco = isco88_sub_major_`n'
+	label var 	occup_isco "ISCO code of primary job 7 day recall"
 
 *</_occup_isco_>
 
