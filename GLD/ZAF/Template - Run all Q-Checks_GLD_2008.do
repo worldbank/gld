@@ -1,7 +1,7 @@
 /*==================================================
 project:       Template to run Q checks for GLD
-Author:        World Bank Jobs Group 
-E-email:       gld@worldbank.org
+Author:        Mario Gronert 
+E-email:       mgronert@worldbank.org
 url:           
 Dependencies:  distinct, mdesc
 ----------------------------------------------------
@@ -30,16 +30,15 @@ set varabbrev off, permanently
 * Path to harmonized .dta file
 global path_to_harmonization "Z:\GLD-Harmonization\573465_JT\ZAF\ZAF_2008_LFS\ZAF_2008_LFS_v01_M_v01_A_GLD\Data\Harmonized\ZAF_2008_QLFS_v01_M_v01_A_GLD.dta"
 
+
 * Path to other harmonized files for dynamic comparison
 * Leave as `" "' to skip this (no others or to be done later)
 * Write as a set of paths like 
 * global path_to_other_harmonization `" "Path 1" "Path 2" ... "' Note the space between `" and "Path 1"
 global path_to_other_harmonization `" "' 
 
-
-* Survey ID as per CCC_YYYY_[Survey-Name]_v##_M_v##_A_GLD_[ALL] convention
-global survey_id "CCC_YYYY_Survey-Name_V0X_M_V0Z_A_GLD_[ALL]"
-
+* Survey ID as per CCC_YYYY_[Survey-Name]_v##_M_v##_A_GLD convention
+global survey_id "ZAF_2008_QLFS_V01_M_V01_A_GLD"
 
 * Path to folder to hold output
 global path_to_output_folder "Z:\GLD-Harmonization\573465_JT\ZAF\ZAF_2008_LFS\ZAF_2008_LFS_v01_M_v01_A_GLD\Work"
@@ -148,7 +147,4 @@ foreach filename of local output_png_files {
 	putexcel A1 = picture(`filename_full_path')
 
 }
-
-
-
 

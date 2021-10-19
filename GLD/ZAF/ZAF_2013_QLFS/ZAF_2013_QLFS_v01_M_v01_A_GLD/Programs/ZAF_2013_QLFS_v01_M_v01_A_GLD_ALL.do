@@ -4,31 +4,31 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				ZAF_2008_QLFS_v01_M_v01_A_GLD.do </_Program name_>
+<_Program name_>				ZAF_2013_QLFS_v01_M_v01_A_GLD.do </_Program name_>
 <_Application_>					Stata MP 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
-<_Date created_>				2021-06-20 </_Date created_>
+<_Date created_>				2021-06-22 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						South Africa(ZAF) </_Country_>
 <_Survey Title_>				Labor Market Dynamics in South Africa </_Survey Title_>
-<_Survey Year_>					2008 </_Survey Year_>
-<_Study ID_>					ZAF_2008_LMDSA_v01_M </_Study ID_>
+<_Survey Year_>					2013 </_Survey Year_>
+<_Study ID_>					ZAF_2013_LMDSA_v01_M </_Study ID_>
 <_Data collection from (M/Y)_>	[MM/YYYY] </_Data collection from (M/Y)_>
 <_Data collection to (M/Y)_>	[MM/YYYY] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			DataFirst </_Source of dataset_>
-								https://www.datafirst.uct.ac.za/dataportal/index.php/catalog/236
-<_Sample size (HH)_> 			49,221 </_Sample size (HH)_>
-<_Sample size (IND)_> 			183,384 </_Sample size (IND)_>
+								https://www.datafirst.uct.ac.za/dataportal/index.php/catalog/516
+<_Sample size (HH)_> 			46,440 </_Sample size (HH)_>
+<_Sample size (IND)_> 			166,387 </_Sample size (IND)_>
 <_Sampling method_> 			Stratified two-stage cluster sampling method </_Sampling method_>
 <_Geographic coverage_> 		Province </_Geographic coverage_>
 <_Currency_> 					South African Rand </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
-<_ISCO Version_>				ISCO-88 </_ISCO Version_>
-<_OCCUP National_>				SASCO-2003 </_OCCUP National_>
-<_ISIC Version_>				ISIC Rev 3   
-<_INDUS National_>				SIC 5 </_INDUS National_>
+<_ISCO Version_>				ISCO-08 </_ISCO Version_>
+<_OCCUP National_>				SASCO-2002 </_OCCUP National_>
+<_ISIC Version_>				ISIC Rev 4  (SIC 7 and ISIC 4 are equal to Division (4 digit) level) </_ISIC Version_>
+<_INDUS National_>				SIC 6 </_INDUS National_>
 
 -----------------------------------------------------------------------
 
@@ -57,7 +57,7 @@ set mem 800m
 local 	drive 	`"Z"'
 local 	cty 	`"ZAF"'
 local 	usr		`"573465_JT"'
-local 	surv_yr `"2008"'
+local 	surv_yr `"2013"'
 local 	year 	"`drive':\GLD-Harmonization\\`usr'\\`cty'\\`cty'_`surv_yr'_LFS"
 local 	main	"`year'\\`cty'_`surv_yr'_LFS_v01_M"
 local 	stata	"`main'\data\stata"
@@ -75,7 +75,7 @@ local output "`id_data'"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	use "`input'\lmdsa_2008_v1.1_20150407.dta", clear
+	use "`input'\lmdsa_2013_v1_20150407.dta", clear
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -108,7 +108,7 @@ local output "`id_data'"
 
 
 *<_year_>
-	gen int year = 2008
+	gen int year = 2013
 	label var year "Year of survey"
 *</_year_>
 
@@ -132,7 +132,7 @@ local output "`id_data'"
 
 
 *<_int_year_>
-	gen int_year= 2008
+	gen int_year= 2013
 	label var int_year "Year of the interview"
 *</_int_year_>
 
@@ -176,7 +176,7 @@ local output "`id_data'"
 
 
 *<_strata_>
-	gen strata=stratum
+	gen strata=STRATUM
 	label var strata "Strata"
 *</_strata_>
 
@@ -312,7 +312,7 @@ local output "`id_data'"
 
 
 *<_male_>
-	gen male = q13gender
+	gen male = Q13GENDER
 	recode male 2=0
 	label var male "Sex - Ind is male"
 	la de lblmale 1 "Male" 0 "Female"
@@ -322,28 +322,30 @@ local output "`id_data'"
 /*<_relationharm_>
 
 Not asked, all we know is that the person with personal number equal to 1 is the head, the problem is that in some cases that person is not present, probably because he/she didn't spend four nights or more in this household. In those cases I assigned the eldest adult male (or female absent male) present as the household head.
-62 observations were dropped due to no male memeber or multiple same old male (or female) members.
+176 observations were dropped due to no male memeber or multiple same old male (or female) members.
 Age of majority is 18 in South Africa.
 
 DROPS:
-OBS: 62
-HH: 33
+OBS: 176
+HH: 63
 REGIONAL DISTRIBUTION:
-
 Subnational ID at |
             First |
    Administrative |
             Level |      Freq.     Percent        Cum.
 ------------------+-----------------------------------
- 1 - Western Cape |         22       35.48       35.48
- 2 - Eastern Cape |          5        8.06       43.55
-   4 - Free State |          5        8.06       51.61
-5 - KwaZulu-Natal |          9       14.52       66.13
-      7 - Gauteng |          5        8.06       74.19
-   8 - Mpumalanga |          4        6.45       80.65
-      9 - Limpopo |         12       19.35      100.00
+ 1 - Western Cape |         18       10.23       10.23
+ 2 - Eastern Cape |         36       20.45       30.68
+3 - Northern Cape |          7        3.98       34.66
+   4 - Free State |         11        6.25       40.91
+5 - KwaZulu-Natal |         37       21.02       61.93
+   6 - North West |          3        1.70       63.64
+      7 - Gauteng |         20       11.36       75.00
+   8 - Mpumalanga |         17        9.66       84.66
+      9 - Limpopo |         27       15.34      100.00
 ------------------+-----------------------------------
-            Total |         62      100.00
+            Total |        176      100.00
+
 
 </_relationharm_>*/
 
@@ -360,11 +362,12 @@ Subnational ID at |
 	bys hhid: egen hh3=sum(relationharm)
 	drop hh2
 	tempfile head_collapse
+
 	save `head_collapse'
 	restore
 	merge m:1 pid hhid using `head_collapse'
 	drop _merge
-	replace relationharm=. if hh3==2 & q13gender==2 & relationharm==1
+	replace relationharm=. if hh3==2 & Q13GENDER==2 & relationharm==1
 	bys hhid: egen hh4=sum(relationharm==1)
 	preserve
 	collapse (max) relationharm, by(pid hhid hh4)
@@ -373,7 +376,7 @@ Subnational ID at |
 	restore
 	merge m:1 pid hhid using `head_collapse'
 	drop _merge
-	bys hhid: egen male_present=max(q13gender)
+	bys hhid: egen male_present=max(Q13GENDER)
 	replace male_present=0 if male_present==2
 	replace relationharm=1 if hh5==0 & maxage>=18 & maxage<. & male_present==0
 	preserve
@@ -541,7 +544,9 @@ label var ed_mod_age "Education module application age"
 *</_ed_mod_age_>
 
 *<_school_>
-	gen byte school = .
+	gen byte school = Q19ATTE
+	recode school 2=0
+	replace school=. if age<ed_mod_age & age!=.
 	label var school "Attending school"
 	la de lblschool 0 "No" 1 "Yes"
 	label values school  lblschool
@@ -622,7 +627,6 @@ No match for var "Q17EDUCATION" category 19-"Certificate with less than Grade 12
 and 20-"Diploma with less than Grade 12/Std 10". So category 19 and 20 are left missing.
 
 ISCED codes:http://uis.unesco.org/en/isced-mappings
-
 Category 24-"Post Higher Diploma (Masters; Doctoral Diploma)" is mapped to the lower
 bound -- "Master's'" in ISCED code.
 
@@ -715,7 +719,6 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 
 {
 *<_lstatus_>
-	la de Status 2 "Unemployed" 3 "Discouraged job seeker" 4 "Other not economically active", modify
 	gen byte lstatus = Status
 	recode lstatus 4=3
 	replace lstatus = . if age < minlaborage
@@ -726,10 +729,6 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 
 
 /*<_potential_lf_>
-
-Possible coding error with var Q310STARTBUSNS: category 2 might be "No" instead of "Do not know",
-which aligns with codification of var Q39JOBOFFER.
-
 Note: var "potential_lf" is missing if the respondent is in labor force or unemployed; it only takes value if the respondent is not in labor force. (Status==3)
 
 "potential_lf" = 1 if the person is
@@ -749,7 +748,6 @@ Q310STARTBUSNS "Start a business if the circumstances have allowed?"
 
 *<_potential_lf_>
 	gen byte potential_lf = .
-	la de Q310STARTBUSNS 2 "No" 3 "Do not know", modify
 	replace potential_lf=1 if ( Status==3 & Q39JOBOFFER==1 & Q31ALOOKWRK==2 ) | (Status==3 & Q31ALOOKWRK==1 & Q39JOBOFFER!=1) | (Status==3 & Q310STARTBUSNS==1 & Q31BSTARTBUSNS==2) | (Status==3 & Q31BSTARTBUSNS==1 & Q310STARTBUSNS==2)
 	replace potential_lf=0 if potential_lf!=1
 	replace potential_lf = . if age < minlaborage & age != .
@@ -773,7 +771,7 @@ Q310STARTBUSNS "Start a business if the circumstances have allowed?"
 
 *<_nlfreason_>
 	gen byte nlfreason=Q35YNOTWRK
-	recode nlfreason 4=3 3 5/7=5
+	recode nlfreason 4=3 8=4 3 5/7 9=5
 	replace nlfreason=. if lstatus!=3
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
@@ -911,13 +909,13 @@ Q310STARTBUSNS "Start a business if the circumstances have allowed?"
 
 
 *<_occup_>
-	recode occup 10=9 11=.
-	replace occup=. if Q42OCCUPATION==9999
-	replace occup=10 if Q42OCCUPATION==5164
-	replace occup=. if lstatus!=1
-	label var occup "1 digit occupational classification, primary job 7 day recall"
-	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
-	label values occup lbloccup
+	  recode occup 10=9 11=99
+	  replace occup=. if Q42OCCUPATION==9999
+	  replace occup=10 if Q42OCCUPATION==5164
+	  replace occup=. if lstatus!=1
+	  label var occup "1 digit occupational classification, primary job 7 day recall"
+  	  la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
+	  label values occup lbloccup
 *</_occup_>
 
 
@@ -946,14 +944,14 @@ Variable "Hrswrk" is equal to "Q418HRSWRK" for people who have one job and it is
 	replace first=0 if primary!=. & primary==Q420SECONDHRSWRK
 
 The main job was decided based on time spent.
-0.18% of people who have jobs spend more time on their second job.
+0.17% of people who have jobs spend more time on their second job.
 
       first |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          0 |        177        0.18        0.18
-          1 |     99,529       99.82      100.00
+          0 |        152        0.17        0.17
+          1 |     86,819       99.83      100.00
 ------------+-----------------------------------
-      Total |     99,706      100.00
+      Total |     86,971      100.00
 
 <_whours_>*/
 
@@ -962,7 +960,6 @@ The main job was decided based on time spent.
 	egen primary=rowmax(Q420FIRSTHRSWRK Q420SECONDHRSWRK)
 	replace whours=primary if Q418HRSWRK==.
 	replace whours=. if lstatus!=1
-	drop primary
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -1591,6 +1588,7 @@ The main job was decided based on time spent.
 
 {
 *<_% Correction min age_>
+
 ** Drop info for cases under the age for which questions to be asked (do not need a variable for this)
 	local lab_var "minlaborage lstatus nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome"
 
@@ -1609,6 +1607,7 @@ The main job was decided based on time spent.
 
 *</_% Correction min age_>
 }
+
 
 /*%%=============================================================================================
 	9: Final steps
@@ -1653,6 +1652,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`output'\ZAF_2008_QLFS_v01_M_v01_A_GLD_ALL.dta", replace
+save "`output'\ZAF_2013_QLFS_v01_M_v01_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>
