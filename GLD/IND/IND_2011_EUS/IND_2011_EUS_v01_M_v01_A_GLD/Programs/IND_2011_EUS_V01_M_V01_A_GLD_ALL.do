@@ -909,16 +909,16 @@ foreach v of local ed_var {
 
 	gen industrycat10 = .
 
-	replace industrycat10=1 if red_indus>=00 & red_indus<=09
-	replace industrycat10=2 if red_indus>=10 & red_indus<=14
-	replace industrycat10=3 if red_indus>=15 & red_indus<=37
-	replace industrycat10=4 if red_indus>=40 & red_indus<=41
-	replace industrycat10=5 if red_indus>=45 & red_indus<=45
-	replace industrycat10=6 if red_indus>=50 & red_indus<=59
-	replace industrycat10=7 if red_indus>=60 & red_indus<=64
-	replace industrycat10=8 if red_indus>=65 & red_indus<=74
-	replace industrycat10=9 if  red_indus==75
-	replace industrycat10=10 if red_indus>=80 & red_indus<=99
+	replace industrycat10 = 1 if inrange(red_indus,1,3)
+	replace industrycat10 = 2 if inrange(red_indus,5,9)
+	replace industrycat10 = 3 if inrange(red_indus,10,33)
+	replace industrycat10 = 4 if inrange(red_indus,35,39)
+	replace industrycat10 = 5 if inrange(red_indus,41,43)
+	replace industrycat10 = 6 if inrange(red_indus,45,47) | inrange(red_indus,55,56)
+	replace industrycat10 = 7 if inrange(red_indus,49,53) | inrange(red_indus,58,63)
+	replace industrycat10 = 8 if inrange(red_indus,64,82)
+	replace industrycat10 = 9 if inrange(red_indus,84,84)
+	replace industrycat10 = 10 if inrange(red_indus,85,99)
 
 	replace industrycat10=. if lstatus != 1 | (age < minlaborage & age != .)
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
@@ -1126,17 +1126,18 @@ foreach v of local ed_var {
 	destring industry_orig_2, gen(red_indus)
 
 	gen industrycat10_2 = .
-	replace industrycat10_2=1 if red_indus>=00 & red_indus<=09
-	replace industrycat10_2=2 if red_indus>=10 & red_indus<=14
-	replace industrycat10_2=3 if red_indus>=15 & red_indus<=39
-	replace industrycat10_2=4 if red_indus>=40 & red_indus<=41
-	replace industrycat10_2=5 if red_indus>=45 & red_indus<=45
-	replace industrycat10_2=6 if red_indus>=50 & red_indus<=59
-	replace industrycat10_2=7 if red_indus>=60 & red_indus<=64
-	replace industrycat10_2=8 if red_indus>=65 & red_indus<=74
-	replace industrycat10_2=9 if  red_indus==75
-	replace industrycat10_2=10 if red_indus>=80 & red_indus<=99
-
+	
+	replace industrycat10_2 = 1 if inrange(red_indus,1,3)
+	replace industrycat10_2 = 2 if inrange(red_indus,5,9)
+	replace industrycat10_2 = 3 if inrange(red_indus,10,33)
+	replace industrycat10_2 = 4 if inrange(red_indus,35,39)
+	replace industrycat10_2 = 5 if inrange(red_indus,41,43)
+	replace industrycat10_2 = 6 if inrange(red_indus,45,47) | inrange(red_indus,55,56)
+	replace industrycat10_2 = 7 if inrange(red_indus,49,53) | inrange(red_indus,58,63)
+	replace industrycat10_2 = 8 if inrange(red_indus,64,82)
+	replace industrycat10_2 = 9 if inrange(red_indus,84,84)
+	replace industrycat10_2 = 10 if inrange(red_indus,85,99)
+	
 	replace industrycat10_2 = . if lstatus != 1 | (age < minlaborage & age != .)
 	replace industrycat10_2 = . if missing(empstat_2)
 	label var industrycat10_2 "1 digit industry classification, primary job 7 day recall"
