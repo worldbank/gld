@@ -110,7 +110,7 @@ foreach var of global numeric_vars {
 foreach var of global string_vars {
 	cap confirm string variable `var'
 	if _rc != 0 & _rc != 111 { // If neither string nor absent in the dataset
-		post `memhold' ("Overall") ("`var'") ("A string var is not numeric") (.) (1)
+		post `memhold' ("Overall") ("`var'") ("A string var is not string") (.) (1)
 	}
 }
 
