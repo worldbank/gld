@@ -435,6 +435,7 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2013_ENOE\MEX_2013_ENO
 
 *<_age_>
 	gen age = eda
+replace age = . if eda == 99
 	label var age "Individual age"
 *</_age_>
 

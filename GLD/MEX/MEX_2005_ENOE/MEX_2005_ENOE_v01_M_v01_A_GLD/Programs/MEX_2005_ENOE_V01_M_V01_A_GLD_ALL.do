@@ -64,22 +64,22 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_ENOE\MEX_2005_ENO
 
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
-	
+
 	use "`path_in'\COE1T105.dta", clear
 	tostring (ent v_sel n_ren), gen(ent_str v_sel_str n_ren_str) format("%02.0f")
 	tostring con, gen(con_str) format("%05.0f")
 	tostring (n_hog h_mud), gen(n_hog_str h_mud_str) format("%01.0f")
-	
+
 	egen person = concat(ent_str con_str v_sel_str n_hog_str h_mud_str n_ren_str)
 	tempfile mex_ind
 	save `mex_ind'
-	
+
 	use "`path_in'\COE2T105.dta", clear
 	tostring (ent v_sel n_ren), gen(ent_str v_sel_str n_ren_str) format("%02.0f")
 	tostring con, gen(con_str) format("%05.0f")
 	tostring (n_hog h_mud), gen(n_hog_str h_mud_str) format("%01.0f")
-	
-	
+
+
 	egen person = concat(ent_str con_str v_sel_str n_hog_str h_mud_str n_ren_str)
 
 	* Merge with COE1, make sure all match through assert
@@ -92,13 +92,13 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_ENOE\MEX_2005_ENO
 	* Overwrtwrite temp file
 	tempfile mex_ind
 	save `mex_ind'
-	
-	
+
+
 	use "`path_in'\SDEMT105.dta", clear
 	tostring (ent v_sel n_ren), gen(ent_str v_sel_str n_ren_str) format("%02.0f")
 	tostring con, gen(con_str) format("%05.0f")
 	tostring (n_hog h_mud), gen(n_hog_str h_mud_str) format("%01.0f")
-	
+
 	egen person = concat(ent_str con_str v_sel_str n_hog_str h_mud_str n_ren_str)
 
 	drop if r_def != 0
@@ -114,27 +114,27 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_ENOE\MEX_2005_ENO
 	* Overwrtwrite temp file
 	tempfile mex_ind
 	save `mex_ind'
-	
-	
-	
+
+
+
 	use "`path_in'\VIVT105.dta",clear
 	drop p1-p3
-	
+
 	tostring (ent v_sel), gen(ent_str v_sel_str) format("%02.0f")
 	tostring con, gen(con_str) format("%05.0f")
 
 	egen casa_short = concat(ent_str con_str v_sel_str)
 
 	* Merge with Individual files, keep only what matches
-	merge 1:m casa_short using `mex_ind', keep(match) nogen 
+	merge 1:m casa_short using `mex_ind', keep(match) nogen
 
 	* Overwrtwrite temp file
 	tempfile mex_ind
 	save `mex_ind'
-	
-	
+
+
 	use "`path_in'\HOGT105.dta", clear
-	
+
 	tostring (ent v_sel), gen(ent_str v_sel_str) format("%02.0f")
 	tostring con, gen(con_str) format("%05.0f")
 	tostring n_hog h_mud, gen(n_hog_str h_mud_str) format("%01.0f")
@@ -143,8 +143,8 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_ENOE\MEX_2005_ENO
 
 	* Merge with Individual files, keep only what matches
 	merge 1:m casa_long using `mex_ind', keep(match) nogen
-	
-	
+
+
 	*the harmonization is for the first three months of the year , any other month will be put to missing.
 	tab d_mes
 	replace d_mes=. if d_mes == 4 | d_mes == 5 | d_mes == 12
@@ -435,6 +435,7 @@ gen isic_version = "isic_3.1"
 
 *<_age_>
 	gen age = eda
+replace age = . if eda == 99
 	label var age "Individual age"
 *</_age_>
 

@@ -432,6 +432,7 @@ gen isic_version = "isic_3.1"
 
 *<_age_>
 	gen age = eda
+replace age = . if eda == 99
 	label var age "Individual age"
 *</_age_>
 
