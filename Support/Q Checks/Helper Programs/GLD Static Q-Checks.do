@@ -507,7 +507,7 @@ foreach var of global not_posed_nlf_year {
 	cap confirm variable lstatus_year `var'
 	if _rc == 0 { // if var exists since if not captured in 1.1
 	
-		qui : count if lstatus_year == 2 & !missing(`var')
+		qui : count if lstatus_year == 3 & !missing(`var')
 		if `r(N)' >0 { // there are cases with answers
 			local nlf_12_wrong = `r(N)' / $overall_count
 			post `memhold' ("Labour") ("`var'") ("Variable `var' has labour answers for the 12 month NLF (ratio ->)") (`nlf_12_wrong') (1)
