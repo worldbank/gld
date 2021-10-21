@@ -698,8 +698,8 @@ label var ed_mod_age "Education module application age"
  	gen educat_orig = General_Education
  	label var educat_orig "Original survey education code"
  *</_educat_orig_>
- 
- 
+
+
 *<_educat_isced_>
 	destring General_Education, gen(genedulev)
 	gen educat_isced = .
@@ -793,7 +793,7 @@ foreach v of local ed_var {
 {
 *<_lstatus_>
 	destring Current_Weekly_Activity_Status, gen(lstatus)
-	recode lstatus  11/72=1 81 82=2 91/98=3 99=.
+	recode lstatus (11/72 98 = 1) (81=2) (82 91/97=3) (99=.)
 	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -803,8 +803,8 @@ foreach v of local ed_var {
 
 *<_potential_lf_>
 	gen byte potential_lf = .
-	replace potential_lf = . if age < minlaborage & age != .
-	replace potential_lf = . if lstatus != 3
+	replace potential_lf = 0 if lstatus == 3
+	replace potential_lf = 1 if Current_Weekly_Activity_Status == "82"
 	label var potential_lf "Potential labour force status"
 	la de lblpotential_lf 0 "No" 1 "Yes"
 	label values potential_lf lblpotential_lf
@@ -825,7 +825,7 @@ foreach v of local ed_var {
 
 *<_nlfreason_>
 	destring Current_Weekly_Activity_Status, gen(nlfreason)
-	recode nlfreason 11/82=. 91=1 92 93=2 94=3 95=4 96/98=5
+	recode nlfreason (11/81 98=.) (91=1) (92 93=2) (94=3) (95=4) (82 96 97=5)
 	replace nlfreason = . if lstatus != 3 | (age < minlaborage & age != .)
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
@@ -850,7 +850,7 @@ foreach v of local ed_var {
 
 
 *<_unempldur_u_>
-	gen unempldur_u=.	
+	gen unempldur_u=.
 	replace unempldur_u=0.25 if Spell_of_unemployment=="1"
 	replace unempldur_u=0.5 if Spell_of_unemployment=="2"
 	replace unempldur_u=1 if Spell_of_unemployment == "3"
@@ -873,7 +873,7 @@ foreach v of local ed_var {
 
 *<_empstat_>
 	destring Current_Weekly_Activity_Status, gen(empstat)
-	recode empstat (11=4) (12=3) (61 62 21=2) (31 41 42 51 52 71 72=1) (81/99=.)
+	recode empstat (11=4) (12=3) (61 62 21=2) (31 41 42 51 52 71 72 98 =1) (81/97 99=.)
 	replace empstat=. if lstatus != 1 | (age < minlaborage & age != .)
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
@@ -1093,7 +1093,7 @@ foreach v of local ed_var {
 {
 *<_empstat_2_>
 	destring Status2, gen(empstat_2)
-	recode empstat_2 (11=4) (12=3) (61 62 21=2) (31 41 42 51 52 71 72=1) (81/99=.)
+	recode empstat_2 (11=4) (12=3) (61 62 21=2) (31 41 42 51 52 71 72 98 =1) (81/97 99=.)
 	replace empstat_2=. if lstatus != 1 | (age < minlaborage & age != .)
 	label var empstat_2 "Employment status during past week primary job 7 day recall"
 	la de lblempstat_2 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
@@ -1118,6 +1118,7 @@ foreach v of local ed_var {
 *<_industrycat_isic_2_>
 	gen industrycat_isic_2 = industry_orig_2 + "00"
 	replace industrycat_isic_2 = "" if missing(empstat_2)
+	replace industrycat_isic_2 = "" if industrycat_isic_2 == "00"
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
@@ -1126,7 +1127,7 @@ foreach v of local ed_var {
 	destring industry_orig_2, gen(red_indus)
 
 	gen industrycat10_2 = .
-	
+
 	replace industrycat10_2 = 1 if inrange(red_indus,1,3)
 	replace industrycat10_2 = 2 if inrange(red_indus,5,9)
 	replace industrycat10_2 = 3 if inrange(red_indus,10,33)
@@ -1137,7 +1138,7 @@ foreach v of local ed_var {
 	replace industrycat10_2 = 8 if inrange(red_indus,64,82)
 	replace industrycat10_2 = 9 if inrange(red_indus,84,84)
 	replace industrycat10_2 = 10 if inrange(red_indus,85,99)
-	
+
 	replace industrycat10_2 = . if lstatus != 1 | (age < minlaborage & age != .)
 	replace industrycat10_2 = . if missing(empstat_2)
 	label var industrycat10_2 "1 digit industry classification, primary job 7 day recall"
@@ -1374,7 +1375,7 @@ foreach v of local ed_var {
 /* <_industry_orig_year_note>
 
 	Variable for subsidiary industry code misnamed by stats office as NIC2004, label says 2008 as does questionnaire and coding.
-	
+
 </_industry_orig_year_note> */
 	gen industry_orig_year = Usual_Principal_Activity_NIC2008
 	replace industry_orig_year = Usual_SubsidiaryActivity_NIC2004 if missing(Usual_Principal_Activity_NIC2008)
@@ -1394,7 +1395,7 @@ foreach v of local ed_var {
 	replace red_indus = "99" if x_indic == 1
 	drop x_indic
 	destring red_indus, replace
-		
+
 	gen industrycat10_year=.
 	replace industrycat10_year = 1 if inrange(red_indus,1,3)
 	replace industrycat10_year = 2 if inrange(red_indus,5,9)
@@ -1633,7 +1634,7 @@ foreach v of local ed_var {
 	gen red_indus = substr(industry_orig_2_year,1,2)
 	destring red_indus, replace
 
-	
+
 	gen industrycat10_2_year=.
 	replace industrycat10_2_year = 1 if inrange(red_indus,1,3)
 	replace industrycat10_2_year = 2 if inrange(red_indus,5,9)

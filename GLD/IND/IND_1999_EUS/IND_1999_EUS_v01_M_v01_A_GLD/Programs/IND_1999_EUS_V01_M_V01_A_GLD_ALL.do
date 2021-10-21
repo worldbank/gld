@@ -199,7 +199,7 @@ local path_output "C:\Users\wb529026\OneDrive - WBG\Documents\Country Work\IND\I
 	* Merging gives 2314 cases of non
 	* match, exactly 1157 on either. These should match but I cannot find the logic of the mistake that
 	* caused them to diverge.
-	
+
 	* Note that all these cases are from the same state - Lakshadweep (https://en.wikipedia.org/wiki/Lakshadweep). The full sample size is 2769, so we lose about 40% of the sample for this state for the weekly status information.
 	* Given that it is a far off archipelago state that has a small population and a very specific economy it is a problem we need to note but that should not be too problematic
 	gen ID = Key_prsn
@@ -207,12 +207,12 @@ local path_output "C:\Users\wb529026\OneDrive - WBG\Documents\Country Work\IND\I
 	* Merge block 4 with 7 day time spent info
 	merge 1:1 ID using `weekly_act', keep(match master) nogen
 
-	* Merge with Block 5.1 - 
+	* Merge with Block 5.1 -
 	* Same issue with merge errors in Lakshadweep.
 	merge 1:1 Key_prsn using "`path_in'\Block51-sch10-and-10dot1-Records-combined.dta", keep(match master) nogen
 
 	* Merge with Block 5.2 (which has more than one entry per
-	* individual, so treated earlier and saved as 
+	* individual, so treated earlier and saved as
 	* `subsidiary_act'
 	* Note that 52 don't match, all from Lakshadweep
 	merge 1:1 ID using `subsidiary_act', keep(master match) nogen
@@ -498,19 +498,19 @@ local path_output "C:\Users\wb529026\OneDrive - WBG\Documents\Country Work\IND\I
 
 	destring B4_q1, gen(pno)
 	destring B4_q3, gen(relation)
-	
+
 	bys hhid: egen minid = min(pno)
 	replace relation = . if temp >1 & B4_q3=="1" & minid<pno
-	
+
 	drop one temp
 	bys hhid: gen one=1 if relation==1
 	bys hhid: egen temp=count(one)
 	tab temp
-	
+
 	replace relation = 1 if temp==0 & minid==pno
-		
+
 	drop one temp
-	
+
 	bys hhid: gen one=1 if relation==1
 	bys hhid: egen temp=count(one)
 	tab temp
@@ -765,7 +765,7 @@ label var ed_mod_age "Education module application age"
 	replace educy = educy - (8 - age) if (educy > age) & (age >= 4 & age <=8) & (educy > 0) & !missing(educy)
 	replace educy = 0 if educy < 0
 	label var educy "Years of education"
-	
+
 	* 5 cases of kids, aged 5 to 11 who are coded as general education 13 (university), set to missing as information is incorrect
 	replace educy = . if B4_q7 == "13" & inrange(age,5,11)
 *</_educy_>
@@ -780,10 +780,10 @@ label var ed_mod_age "Education module application age"
 	replace educat7 = 4 if genedulev == 7  & educy < 12  // Secondary incomplete
 	replace educat7 = 5 if (genedulev == 8 | genedulev == 9) & educy >= 12  // Secondary complete
 	replace educat7= 7 if genedulev==10 | genedulev==11 | genedulev==12 | genedulev==13
-	
+
 	* 5 cases of kids, aged 5 to 11 who are coded as general education 13 (university), set to missing as information is incorrect
 	replace educat7 = . if B4_q7 == "13" & inrange(age,5,11)
-	
+
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -911,7 +911,7 @@ foreach v of local ed_var {
 {
 *<_lstatus_>
 	destring B53_q20, gen(lstatus)
-	recode lstatus  11/72=1 81 82=2 91/98=3 99=.
+	recode lstatus  (11/72 98 = 1) (81=2) (82 91/97=3) (99=.)
 	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -921,8 +921,8 @@ foreach v of local ed_var {
 
 *<_potential_lf_>
 	gen byte potential_lf = .
-	replace potential_lf = . if age < minlaborage & age != .
-	replace potential_lf = . if lstatus != 3
+	replace potential_lf = 0 if lstatus == 3
+	replace potential_lf = 1 if B53_q20 == "82"
 	label var potential_lf "Potential labour force status"
 	la de lblpotential_lf 0 "No" 1 "Yes"
 	label values potential_lf lblpotential_lf
@@ -941,7 +941,7 @@ foreach v of local ed_var {
 
 *<_nlfreason_>
 	destring B53_q20, gen(nlfreason)
-	recode nlfreason 11/82=. 91=1 92 93=2 94=3 95=4 96/98=5
+	recode nlfreason (11/81 98=.) (91=1) (92 93=2) (94=3) (95=4) (82 96 97=5)
 	replace nlfreason = . if lstatus != 3 | (age < minlaborage & age != .)
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
@@ -974,7 +974,7 @@ foreach v of local ed_var {
 	replace unempldur_u=3 if B6_q4=="5"
 	replace unempldur_u=6 if B6_q4=="6"
 	replace unempldur_u=12 if B6_q4=="7"
-	replace unempldur_u=. if B6_q4=="8" 
+	replace unempldur_u=. if B6_q4=="8"
 	replace unempldur_u=. if lstatus!=2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
 *</_unempldur_u_>
@@ -987,7 +987,7 @@ foreach v of local ed_var {
 {
 *<_empstat_>
 	destring B53_q20, gen(empstat)
-	recode empstat (11=4) (12=3) (61 62 21=2) (31 41 42 51 52 71 72=1) (81/99=.)
+	recode empstat (11=4) (12=3) (61 62 21=2) (31 41 42 51 52 71 72 98 =1) (81/97 99=.)
 	replace empstat=. if lstatus != 1 | (age < minlaborage & age != .)
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
@@ -1005,14 +1005,14 @@ foreach v of local ed_var {
 
 *<_industry_orig_>
 	gen industry_orig = B53_q21
-	replace industry_orig = "" if lstatus != 1 
+	replace industry_orig = "" if lstatus != 1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
 
 *<_industrycat_isic_>
 	gen industrycat_isic = substr(industry_orig,1,4)
-	replace industrycat_isic = "" if lstatus != 1 
+	replace industrycat_isic = "" if lstatus != 1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
@@ -1053,7 +1053,7 @@ foreach v of local ed_var {
 
 *<_occup_orig_>
 	gen occup_orig = B53_q22
-	replace occup_orig = "" if lstatus != 1 
+	replace occup_orig = "" if lstatus != 1
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
@@ -1066,7 +1066,7 @@ foreach v of local ed_var {
 	replace nco_68 = "00" + nco_68 if length(nco_68) == 1
 
 	merge m:1 nco_68 using "`path_in'/India_occup_correspondences.dta", nogen keep(match master)
-	
+
 	gen occup_isco = isco_88
 	replace occup_isco = "" if lstatus != 1
 	drop x_indic nco_68 nco_04 isco_88
@@ -1084,7 +1084,7 @@ foreach v of local ed_var {
 	merge m:1 nco_68 using "`path_in'/India_occup_correspondences.dta", nogen keep(match master)
 	gen code_04 = substr(nco_04,1,1)
 	destring code_04, replace
-	
+
 	gen occup = .
 	replace occup = code_04 if lstatus == 1 & (age >= minlaborage & age != .)
 	replace occup = 99 if x_indic == 1 & lstatus == 1 & (age >= minlaborage & age != .)
@@ -1105,7 +1105,7 @@ foreach v of local ed_var {
 
 
 *<_wage_no_compen_>
-	gen double wage_no_compen = B53_q171 // note that 5.3 combined does only contain total, not cash or kind 
+	gen double wage_no_compen = B53_q171 // note that 5.3 combined does only contain total, not cash or kind
 	replace wage_no_compen=. if lstatus != 1 | (age < minlaborage & age != .)
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
@@ -1202,9 +1202,9 @@ foreach v of local ed_var {
 
 {
 *<_empstat_2_>
-	gen has_job_primary = inlist(B53_q41,"11", "12", "21", "31", "41", "51") | inlist(B53_q41, "61", "62", "71", "72")
+	gen has_job_primary = inlist(B53_q41,"11", "12", "21", "31", "41", "51") | inlist(B53_q41, "61", "62", "71", "72", "98")
 	destring B53_q42, gen(empstat_2)
-	recode empstat_2 (11=4) (12=3) (61 62 21=2) (31 41 42 51 52 71 72=1) (81/99=.)
+	recode empstat_2 (11=4) (12=3) (61 62 21=2) (31 41 42 51 52 71 72 98 =1) (81/97 99=.)
 	replace empstat_2=. if lstatus != 1 | (age < minlaborage & age != .)
 	replace empstat_2 = . if has_job_primary == 0 & !missing(empstat_2)
 	label var empstat_2 "Employment status during past week primary job 7 day recall"
@@ -1231,6 +1231,7 @@ foreach v of local ed_var {
 *<_industrycat_isic_2_>
 	gen industrycat_isic_2 = B53_q52 + "00"
 	replace industrycat_isic_2 = "" if missing(empstat_2)
+	replace industrycat_isic_2 = "" if industrycat_isic_2 == "00"
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
@@ -1544,7 +1545,7 @@ foreach v of local ed_var {
 	replace nco_68 = "00" + nco_68 if length(nco_68) == 1
 
 	merge m:1 nco_68 using "`path_in'/India_occup_correspondences.dta", nogen keep(match master)
-	
+
 	gen occup_isco_year = isco_88
 	replace occup_isco_year = "" if lstatus_year != 1
 	drop x_indic nco_68 nco_04 isco_88
@@ -1562,7 +1563,7 @@ foreach v of local ed_var {
 	merge m:1 nco_68 using "`path_in'/India_occup_correspondences.dta", nogen keep(match master)
 	gen code_04 = substr(nco_04,1,1)
 	destring code_04, replace
-	
+
 	gen occup_year = .
 	replace occup_year = code_04 if lstatus_year == 1 & (age >= minlaborage & age != .)
 	replace occup_year = 99 if x_indic == 1 & lstatus_year == 1 & (age >= minlaborage & age != .)

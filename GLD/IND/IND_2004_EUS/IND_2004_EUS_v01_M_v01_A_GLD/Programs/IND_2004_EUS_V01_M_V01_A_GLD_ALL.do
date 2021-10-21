@@ -519,8 +519,11 @@ merge 1:1 PID using `block72', assert(match master) nogen
 {
 
 *<_hsize_>
+	bys hhid: gen help_1 = _N
 	gen hsize = HH_SIZE
+	replace hsize = help_1 if missing(hsize)
 	label var hsize "Household size"
+	drop help_1
 *</_hsize_>
 
 
@@ -902,7 +905,7 @@ foreach v of local ed_var {
 {
 *<_lstatus_>
 	destring Current_day_activity_Status1, gen(lstatus)
-	recode lstatus  11/72=1 81 82=2 91/98=3 99=.
+	recode lstatus  (11/72 98 = 1) (81=2) (82 91/97=3) (99=.)
 	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -912,8 +915,8 @@ foreach v of local ed_var {
 
 *<_potential_lf_>
 	gen byte potential_lf = .
-	replace potential_lf = . if age < minlaborage & age != .
-	replace potential_lf = . if lstatus != 3
+  replace potential_lf = 0 if lstatus == 3
+	replace potential_lf = 1 if Current_day_activity_Status1 == "82"
 	label var potential_lf "Potential labour force status"
 	la de lblpotential_lf 0 "No" 1 "Yes"
 	label values potential_lf lblpotential_lf
@@ -932,7 +935,7 @@ foreach v of local ed_var {
 
 *<_nlfreason_>
 	destring Current_day_activity_Status1, gen(nlfreason)
-	recode nlfreason 11/82=. 91=1 92 93=2 94=3 95=4 96/98=5
+	recode nlfreason (11/81 98=.) (91=1) (92 93=2) (94=3) (95=4) (82 96 97=5)
 	replace nlfreason = . if lstatus != 3 | (age < minlaborage & age != .)
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
@@ -980,7 +983,7 @@ foreach v of local ed_var {
 
 *<_empstat_>
 	destring Current_day_activity_Status1, gen(empstat)
-	recode empstat (11=4) (12=3) (61 62 21=2) (31 41 42 51 52 71 72=1) (81/99=.)
+	recode empstat (11=4) (12=3) (61 62 21=2) (31 41 42 51 52 71 72 98 =1) (81/97 99=.)
 	replace empstat=. if lstatus != 1 | (age < minlaborage & age != .)
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
@@ -1199,9 +1202,9 @@ foreach v of local ed_var {
 {
 *<_empstat_2_>
 	gen has_job_primary = inlist(Current_day_activity_Status1,"11", "12", "21", "31", "41", "51") ///
-							| inlist(Current_day_activity_Status1, "61", "62", "71", "72")
+							| inlist(Current_day_activity_Status1, "61", "62", "71", "72", "98")
 	destring Current_day_activity_Status2, gen(empstat_2)
-	recode empstat_2 (11=4) (12=3) (61 62 21=2) (31 41 42 51 52 71 72=1) (81/99=.)
+	recode empstat_2 (11=4) (12=3) (61 62 21=2) (31 41 42 51 52 71 72 98 =1) (81/97 99=.)
 	replace empstat_2=. if lstatus != 1 | (age < minlaborage & age != .)
 	replace empstat_2 = . if has_job_primary == 0 & !missing(empstat_2)
 	label var empstat_2 "Employment status during past week primary job 7 day recall"
@@ -1228,6 +1231,7 @@ foreach v of local ed_var {
 *<_industrycat_isic_2_>
   gen industrycat_isic_2 = industry_orig_2 + "00"
   replace industrycat_isic_2 = "" if missing(empstat_2)
+  replace industrycat_isic_2 = "" if industrycat_isic_2 == "00"
   label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
@@ -1310,7 +1314,8 @@ foreach v of local ed_var {
 *<_whours_2_>
 	gen whours_2 = 8*Total_no_days_activity_2
 	replace whours_2=. if lstatus != 1 | (age < minlaborage & age != .)
-	replace unitwage_2 = . if missing(empstat_2)
+	replace whours_2 = . if missing(empstat_2)
+	replace whours_2 = . if whours_2 == 0
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 

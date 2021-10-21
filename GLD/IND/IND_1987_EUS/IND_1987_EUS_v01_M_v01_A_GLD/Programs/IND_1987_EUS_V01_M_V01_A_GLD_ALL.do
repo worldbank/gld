@@ -3,15 +3,15 @@
 	0: GLD Harmonization Preamble
 ================================================================================================*/
 
-/* ----------------------------------------------------------------------- 
+/* -----------------------------------------------------------------------
 
-<_Program name_>				IND_1987_EUS_V01_M_V01_A_GLD.do </_Program name_> 
-<_Application_>					STATA 16 <_Application_> 
-<_Author(s)_>					World Bank Jobs Group </_Author(s)_> 
-<_Date created_>				2021-05-24 </_Date created_> 
+<_Program name_>				IND_1987_EUS_V01_M_V01_A_GLD.do </_Program name_>
+<_Application_>					STATA 16 <_Application_>
+<_Author(s)_>					World Bank Jobs Group </_Author(s)_>
+<_Date created_>				2021-05-24 </_Date created_>
 <_Date modified>				2021-09-01 </_Date modified_>
 
-------------------------------------------------------------------------- 
+-------------------------------------------------------------------------
 
 <_Country_>						India </_Country_>
 <_Survey Title_>				National Sample survey 1987 Schedule 10 - Round 43 </_Survey Title_>
@@ -689,7 +689,7 @@ merge 1:1 Person_key using `block7', keep(match master) nogen
 *<_migrated_ref_time_>
 /* <_migrated_ref_time_note>
 
-	 Records a change in the place of usual residence. 
+	 Records a change in the place of usual residence.
 	 The usual residence for the purpose of this survey being
 	 defined as a place (village or town) where the person has
 	 stayed continuously for a period of six months or more.
@@ -897,11 +897,11 @@ label var ed_mod_age "Education module application age"
 *</_educat4_>
 
 
-*<_educat_orig_> 
- 	gen educat_orig = B4_q7 
- 	label var educat_orig "Original survey education code" 
- *</_educat_orig_> 
- 
+*<_educat_orig_>
+ 	gen educat_orig = B4_q7
+ 	label var educat_orig "Original survey education code"
+ *</_educat_orig_>
+
 
 *<_educat_isced_>
 	destring B4_q7, gen(genedulev)
@@ -1000,7 +1000,7 @@ foreach v of local ed_var {
 
 *<_lstatus_>
 	destring B4_q11, gen(lstatus)
-	recode lstatus  11/72=1 81 82=2 91/98=3 99=.
+	recode lstatus  (11/72 98 = 1) (81=2) (82 91/97=3) (99=.)
 	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -1010,8 +1010,9 @@ foreach v of local ed_var {
 
 *<_potential_lf_>
 	gen byte potential_lf = .
+	replace potential_lf = 0 if lstatus == 3
+	replace potential_lf = 1 if B4_q11 == "82"
 	replace potential_lf = . if age < minlaborage & age != .
-	replace potential_lf = . if lstatus != 3
 	label var potential_lf "Potential labour force status"
 	la de lblpotential_lf 0 "No" 1 "Yes"
 	label values potential_lf lblpotential_lf
@@ -1030,7 +1031,7 @@ foreach v of local ed_var {
 
 *<_nlfreason_>
 	destring B4_q11, gen(nlfreason)
-	recode nlfreason 11/82=. 91=1 92 93=2 94=3 95=4 96/98=5
+	recode nlfreason (11/81 98=.) (91=1) (92 93=2) (94=3) (95=4) (82 96 97=5)
 	replace nlfreason = . if lstatus != 3 | (age < minlaborage & age != .)
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
@@ -1045,7 +1046,7 @@ foreach v of local ed_var {
 
 
 *<_unempldur_u_>
-	gen unempldur_u = . 
+	gen unempldur_u = .
 	label var unempldur_u "Unemployment duration (months) upper bracket"
 *</_unempldur_u_>
 
@@ -1059,7 +1060,7 @@ foreach v of local ed_var {
 
 *<_empstat_>
 	destring B4_q11, gen(empstat)
-	recode empstat (11=4) (12=3) (61 62 21=2) (31 41 42 51 52 71 72=1) (81/99=.)
+	recode empstat (11=4) (12=3) (61 62 21=2) (31 41 42 51 52 71 72 98 =1) (81/97 99=.)
 	replace empstat=. if lstatus != 1 | (age < minlaborage & age != .)
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
@@ -1109,13 +1110,13 @@ foreach v of local ed_var {
 *<_industrycat_isic_>
 
 	/* <_industrycat_isic_note>
-	
+
 	Have found no NIC70 to ISIC-68 (ISIC Rev2). NIC 70 and NIC 87 basically tha same, small amendments needed.
 	Process is:
 		1) Translate NIC70 to NIC87
 		2) Use NIC87 to ISIC Rev2 translator
 	</_industrycat_isic_note> */
-	
+
 	gen nic_87 = B4_q14
 	replace nic_87 = substr(nic_87,1,2)
 	replace nic_87 = nic_87 + "0" if length(nic_87) == 1
@@ -1133,12 +1134,12 @@ foreach v of local ed_var {
 	replace nic_87 = "82" if B4_q14 == "820"
 	replace nic_87 = "85" if B4_q14 == "827"
 	replace nic_87 = "89" if inlist(B4_q14, "822", "823", "824", "825", "826", "828", "829")
-	
+
 	replace nic_87 = nic_87 + "0"
 	replace nic_87 = "" if regexm(nic_87, "x|X")
-		
+
 	merge m:1 nic_87 using "`path_in'/nic87_to_isic2.dta", nogen keep(match master)
-	
+
 	gen industrycat_isic = isic_68
 	replace industrycat_isic = "" if lstatus != 1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
@@ -1157,6 +1158,7 @@ foreach v of local ed_var {
 
 *<_occup_orig_>
 	gen occup_orig = B4_q15
+	replace occup_orig = "" if lstatus != 1
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
@@ -1171,7 +1173,7 @@ foreach v of local ed_var {
 	merge m:1 nco_68 using "`path_in'/India_occup_correspondences.dta", nogen keep(match master)
 	gen code_04 = substr(nco_04,1,1)
 	destring code_04, replace
-	
+
 	gen occup = .
 	replace occup = code_04 if lstatus == 1 & (age >= minlaborage & age != .)
 	replace occup = 99 if x_indic == 1 & lstatus == 1 & (age >= minlaborage & age != .)
@@ -1190,7 +1192,7 @@ foreach v of local ed_var {
 	replace nco_68 = "00" + nco_68 if length(nco_68) == 1
 
 	merge m:1 nco_68 using "`path_in'/India_occup_correspondences.dta", nogen keep(match master)
-	
+
 	gen occup_isco = isco_88
 	replace occup_isco = "" if lstatus != 1
 	drop x_indic nco_68 nco_04 isco_88
@@ -1465,7 +1467,7 @@ foreach v of local ed_var {
 
 *<_lstatus_year_>
 	destring B6_q2, gen(lstatus_year)
-	recode lstatus_year 11/51=1 81 82=2 91/94=3
+	recode lstatus_year 11/51=1 81 82=2 91/99=3
 	destring B6_q8, gen(secondary_help)
 	recode secondary_help  11/51=1
 	replace lstatus_year = 1 if secondary_help == 1 & lstatus_year != 1
@@ -1496,7 +1498,7 @@ foreach v of local ed_var {
 
 *<_nlfreason_year_>
 	destring B6_q2, gen(nlfreason_year)
-	recode nlfreason_year 11/82=. 91=1 92 93=2 94=3
+	recode nlfreason_year 11/82=. 91=1 92 93=2 94=3 95=4 96/99=5
 	replace nlfreason_year = . if lstatus_year != 3 | (age < minlaborage & age != .)
 	label var nlfreason_year "Reason not in the labor force - 12 month recall"
 	la de lblnlfreason_year 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disable" 5 "Other"
@@ -1557,13 +1559,13 @@ foreach v of local ed_var {
 *<_industrycat_isic_year_>
 
 	/* <_industrycat_isic_year_note>
-	
+
 	Have found no NIC70 to ISIC-68 (ISIC Rev2). NIC 70 and NIC 87 basically tha same, small amendments needed.
 	Process is:
 		1) Translate NIC70 to NIC87
 		2) Use NIC87 to ISIC Rev2 translator
 	</_industrycat_isic_year_note> */
-	
+
 	gen nic_87 = industry_orig_year
 	replace nic_87 = substr(nic_87,1,2)
 	replace nic_87 = nic_87 + "0" if length(nic_87) == 1
@@ -1584,9 +1586,9 @@ foreach v of local ed_var {
 
 	replace nic_87 = nic_87 + "0"
 	replace nic_87 = "" if regexm(nic_87, "x|X")
-	
+
 	merge m:1 nic_87 using "`path_in'/nic87_to_isic2.dta", nogen keep(match master)
-	
+
 	gen industrycat_isic_year = isic_68
 	replace industrycat_isic_year = "" if lstatus_year != 1
 	label var industrycat_isic_year "ISIC code of primary job 12 month recall"
@@ -1596,7 +1598,7 @@ foreach v of local ed_var {
 
 *<_industrycat10_year_>
 	gen red_indus = substr(industry_orig_year,1,1)
-	
+
 	gen byte industrycat10_year = .
 	replace industrycat10_year=1 if red_indus == "0"
 	replace industrycat10_year=2 if red_indus == "1"
@@ -1640,7 +1642,7 @@ foreach v of local ed_var {
 	replace nco_68 = "00" + nco_68 if length(nco_68) == 1
 
 	merge m:1 nco_68 using "`path_in'/India_occup_correspondences.dta", nogen keep(match master)
-	
+
 	gen occup_isco_year = isco_88
 	replace occup_isco_year = "" if lstatus_year != 1
 	drop x_indic nco_68 nco_04 isco_88
@@ -1658,7 +1660,7 @@ foreach v of local ed_var {
 	merge m:1 nco_68 using "`path_in'/India_occup_correspondences.dta", nogen keep(match master)
 	gen code_04 = substr(nco_04,1,1)
 	destring code_04, replace
-	
+
 	gen occup_year = .
 	replace occup_year = code_04 if lstatus_year == 1 & (age >= minlaborage & age != .)
 	replace occup_year = 99 if x_indic == 1 & lstatus_year == 1 & (age >= minlaborage & age != .)
@@ -1697,7 +1699,7 @@ foreach v of local ed_var {
 /* <_wmonths_year_note>
 
 	Survey asks individuals whether they worked regularly. If not, how many months out of work.
-	Hence assume if worked regularly 12 months of work, if not 12 minus the number of weekes mentioned 
+	Hence assume if worked regularly 12 months of work, if not 12 minus the number of weekes mentioned
 	(by 4.33 to make months) mentioned.
 </_wmonths_year_note> */
 	gen wmonths_year = .
@@ -1821,9 +1823,9 @@ foreach v of local ed_var {
 
 	replace nic_87 = nic_87 + "0"
 	replace nic_87 = "" if regexm(nic_87, "x|X")
-	
+
 	merge m:1 nic_87 using "`path_in'/nic87_to_isic2.dta", nogen keep(match master)
-	
+
 	gen industrycat_isic_2_year = isic_68
 	replace industrycat_isic_2_year = "" if lstatus_year != 1
 	label var industrycat_isic_2_year "ISIC code of secondary job 12 month recall"
@@ -1833,7 +1835,7 @@ foreach v of local ed_var {
 
 *<_industrycat10_2_year_>
 	gen red_indus = substr(industry_orig_2_year,1,1)
-	
+
 	gen byte industrycat10_2_year = .
 	replace industrycat10_2_year=1 if red_indus == "0"
 	replace industrycat10_2_year=2 if red_indus == "1"
@@ -1878,7 +1880,7 @@ foreach v of local ed_var {
 	replace nco_68 = "00" + nco_68 if length(nco_68) == 1
 
 	merge m:1 nco_68 using "`path_in'/India_occup_correspondences.dta", nogen keep(match master)
-	
+
 	gen occup_isco_2_year = isco_88
 	gen has_job_primary = inlist(B7_q2,"11", "21", "31", "41", "51")
 	replace occup_isco_2_year = "" if has_job_primary == 0 & !missing(occup_isco_2_year)
@@ -1897,7 +1899,7 @@ foreach v of local ed_var {
 	merge m:1 nco_68 using "`path_in'/India_occup_correspondences.dta", nogen keep(match master)
 	gen code_04 = substr(nco_04,1,1)
 	destring code_04, replace
-	
+
 	gen occup_2_year = .
 	replace occup_2_year = code_04 if lstatus_year == 1 & (age >= minlaborage & age != .)
 	replace occup_2_year = 99 if x_indic == 1 & lstatus_year == 1 & (age >= minlaborage & age != .)
@@ -1999,7 +2001,7 @@ foreach v of local ed_var {
 	label var t_wage_total_year "Annualized total wage for all jobs 12 month recall"
 *</_t_wage_total_year_>
 
-	
+
 *----------8.11: Overall across reference periods------------------------------*
 
 
@@ -2101,4 +2103,3 @@ foreach var of local kept_vars {
 save "`path_output'\IND_1987_EUS_V01_M_V01_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>
-
