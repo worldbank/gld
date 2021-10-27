@@ -13,7 +13,7 @@
 ** INPUT DATABASES			Z:\_GLD-Harmonization\573465_JT\ZAF\ZAF_2013_LFS\ZAF_2013_LFS_v01_M\data\stata\lmdsa-2013-v1-stata.dta
 ** RESPONSIBLE				Wolrd Bank Job's Group
 ** Created					6/12/2021
-** Modified					7/14/2021
+** Modified					10/26/2021
 ** NUMBER OF HOUSEHOLDS		46,440
 ** NUMBER OF INDIVIDUALS	166,387
 ** EXPANDED POPULATION		52,956,174
@@ -228,10 +228,12 @@ Q4: 3,029
 
 
 ** HOUSEHOLD SIZE
-	bys idh: egen byte hhsize=count(idp)
+	egen tag=tag(idp idh)
+	egen hhsize=total(tag), by(idh)
+	drop tag
 	label var hhsize "Household size"
-	
-	
+
+
 ** RELATIONSHIP TO THE HEAD OF HOUSEHOLD
 
 /*
@@ -289,7 +291,7 @@ Subnational ID at |
 	drop _merge
 	bys idh: egen male_present=max(Q13GENDER)
 	replace male_present=0 if male_present==2
-	replace head=1 if hh5==0 & maxage>=18 & maxage<. & male_present==0
+	replace head=1 if hh5==0 & maxage>=18 & maxage<. & Q14AGE==maxage & male_present==0
 	preserve
 	collapse (max) head, by(idp idh hh5)
 	bys idh: egen hh6=sum(head)
@@ -300,7 +302,7 @@ Subnational ID at |
 	bys idp: egen head_max=max(!missing(head))
 	bys idp: egen head_min=min(!missing(head))
 	replace head=1 if head_max==1&head_min==0
-	drop _merge hh2 hh3 hh4 hh5 hh6 head_* _merge
+	drop _merge hh2 hh3 hh4 hh5 hh6 head_* _merge maxage male_present
 	label var head "Relationship to the head of household"
 	la de lblhead  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values head lblhead
@@ -369,6 +371,57 @@ Subnational ID at |
 The National Technical Certificate level 1, 2, and 3 are mapped to grade 10, 11, and 12
 respectively. In South Africa, one option for students is to exit school with GETC
 or grade 9 and enter a technical education program at N1, proceeding to N2.
+
+count if educy>age & !mi(educy) & !mi(age)
+
+81 observations' years of education exceed their age.
+
+Individual |                Highest education level
+       age | Grade 7/S  Grade 8/S  Grade 9/S  Grade 10/  Grade 11/ |     Total
+-----------+-------------------------------------------------------+----------
+         6 |         7          9          8          3          0 |        30 
+         7 |         0          9          8          3          4 |        25 
+         8 |         0          0          6          3          3 |        15 
+         9 |         0          0          0          3          0 |         5 
+        10 |         0          0          0          0          1 |         1 
+        11 |         0          0          0          0          0 |         2 
+        14 |         0          0          0          0          0 |         1 
+        15 |         0          0          0          0          0 |         1 
+        18 |         0          0          0          0          0 |         1 
+-----------+-------------------------------------------------------+----------
+     Total |         7         18         22         12          8 |        81 
+	 
+Individual |                Highest education level
+       age | Grade 12/  Diploma w  Post High  Bachelors  Bachelors |     Total
+-----------+-------------------------------------------------------+----------
+         6 |         3          0          0          0          0 |        30 
+         7 |         1          0          0          0          0 |        25 
+         8 |         1          0          0          0          1 |        15 
+         9 |         1          1          0          0          0 |         5 
+        10 |         0          0          0          0          0 |         1 
+        11 |         2          0          0          0          0 |         2 
+        14 |         0          0          0          1          0 |         1 
+        15 |         0          0          0          0          0 |         1 
+        18 |         0          0          1          0          0 |         1 
+-----------+-------------------------------------------------------+----------
+     Total |         8          1          1          1          1 |        81 
+
+	            |  Highest
+           | education
+Individual |   level
+       age | Higher De |     Total
+-----------+-----------+----------
+         6 |         0 |        30 
+         7 |         0 |        25 
+         8 |         1 |        15 
+         9 |         0 |         5 
+        10 |         0 |         1 
+        11 |         0 |         2 
+        14 |         0 |         1 
+        15 |         1 |         1 
+        18 |         0 |         1 
+-----------+-----------+----------
+     Total |         2 |        81 
 */ 
 
 	gen byte educy=Q17EDUCATION if inrange(Q17EDUCATION,0,12)
@@ -380,6 +433,7 @@ or grade 9 and enter a technical education program at N1, proceeding to N2.
 	replace educy=. if inlist(Q17EDUCATION,29,30)
 	replace educy=0 if Q17EDUCATION==98
 	replace educy=. if age<ed_mod_age & age!=.
+	replace educy=age if educy>age & !mi(educy) & !mi(age)
 	label var educy "Years of education"
 
 
@@ -404,7 +458,7 @@ or grade 9 and enter a technical education program at N1, proceeding to N2.
 
 ** EDUCATION LEVEL 3
 	gen byte edulevel3=edulevel1
-	recode edulevel3 3=2 4 5=3 6 7=4 8=.
+	recode edulevel3 3 4=2 5=3 6 7=4 8=.
 	replace edulevel3=. if age<ed_mod_age & age!=.
 	label var edulevel3 "Level of education 3"
 	la de lbledulevel3 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"

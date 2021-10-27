@@ -4,7 +4,7 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				ZAF_2018_QLFS_v01_M_v01_A_GLD.do </_Program name_>
+<_Program name_>				ZAF_2018_QLFS_v01_M_v01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata MP 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
 <_Date created_>				2021-06-30 </_Date created_>
@@ -27,9 +27,8 @@
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
 <_ISCO Version_>				ISCO-88 </_ISCO Version_>
 <_OCCUP National_>				SASCO-2003 </_OCCUP National_>
-<_ISIC Version_>				ISIC Rev 4  (SIC 7 and ISIC 4 are equal to Division (4 digit) level) </_ISIC Version_>
-<_INDUS National_>				SIC 6 </_INDUS National_>
-
+<_ISIC Version_>				ISIC Rev 3 </_ISIC Version_>
+<_INDUS National_>				SIC 5 </_INDUS National_>
 -----------------------------------------------------------------------
 
 <_Version Control_>
@@ -114,13 +113,13 @@ local output "`id_data'"
 
 
 *<_vermast_>
-	gen vermast = "01"
+	gen vermast = "V01"
 	label var vermast "Version of master data"
 *</_vermast_>
 
 
 *<_veralt_>
-	gen veralt = "01"
+	gen veralt = "V01"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
@@ -310,7 +309,9 @@ the final code list should be
 {
 
 *<_hsize_>
-	bys hhid: egen byte hsize=count(pid)
+	egen tag=tag(pid hhid)
+	egen hsize=total(tag), by(hhid)
+	drop tag
 	label var hsize "Household size"
 *</_hsize_>
 
@@ -356,6 +357,16 @@ Subnational ID at |
       9 - Limpopo |         37       27.41      100.00
 ------------------+-----------------------------------
             Total |        135      100.00
+
+Note: 193 observations are under 18 (or not adult) yet are household heads because
+they are originally asigned as the head --- their PERSONNO is 1.
+
+But there are 2 observations are assigned as household heads even though their PERSONNOs
+are not originally 1 or their ages reach 18. Their pids are:
+	
+97410802000000360206 "turning from 4 to 4 to 36"
+97410802000000360206 "turning from 4 to 4 to 36"	
+	
 </_relationharm_>*/
 
 *<_relationharm_>
@@ -386,7 +397,7 @@ Subnational ID at |
 	drop _merge
 	bys hhid: egen male_present=max(Q13GENDER)
 	replace male_present=0 if male_present==2
-	replace relationharm=1 if hh5==0 & maxage>=18 & maxage<. & male_present==0
+	replace relationharm=1 if hh5==0 & maxage>=18 & maxage<. & age==maxage & male_present==0
 	preserve
 	collapse (max) relationharm, by(pid hhid hh5)
 	bys hhid: egen hh6=sum(relationharm)
@@ -397,7 +408,7 @@ Subnational ID at |
 	bys pid: egen head_max=max(!missing(relationharm))
 	bys pid: egen head_min=min(!missing(relationharm))
 	replace relationharm=1 if head_max==1&head_min==0
-	drop _merge hh2 hh3 hh4 hh5 hh6 head_* _merge
+	drop _merge hh2 hh3 hh4 hh5 hh6 head_* _merge maxage male_present
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm lblrelationharm
@@ -575,6 +586,58 @@ The National Technical Certificate level 1, 2, and 3 are mapped to grade 10, 11,
 respectively. In South Africa, one option for students is to exit school with GETC
 or grade 9 and enter a technical education program at N1, proceeding to N2.
 
+77 observations' years of education exceed their age.
+
+Individual |                      Highest education level
+       age | Grade 7/S  Grade 8/S  Grade 9/S  Grade 10/  Grade 11/  Grade 12/ |     Total
+-----------+------------------------------------------------------------------+----------
+         6 |         5          6          2          2          0          0 |        15 
+         7 |         0          4          4          6          3          2 |        20 
+         8 |         0          0          8          2          3          2 |        15 
+         9 |         0          0          0          4          2          4 |        12 
+        10 |         0          0          0          0          5          0 |         6 
+        11 |         0          0          0          0          0          2 |         3 
+        13 |         0          0          0          0          0          0 |         1 
+        14 |         0          0          0          0          0          0 |         1 
+        15 |         0          0          0          0          0          0 |         1 
+        18 |         0          0          0          0          0          0 |         3 
+-----------+------------------------------------------------------------------+----------
+     Total |         5         10         14         14         13         10 |        77 
+
+Individual |                      Highest education level
+       age | NTC l/N1/  Certifica  Diploma w  Higher Di  Post High  Bachelors |     Total
+-----------+------------------------------------------------------------------+----------
+         6 |         0          0          0          0          0          0 |        15 
+         7 |         0          0          0          0          0          0 |        20 
+         8 |         0          0          0          0          0          0 |        15 
+         9 |         1          0          1          0          0          0 |        12 
+        10 |         0          1          0          0          0          0 |         6 
+        11 |         0          0          0          1          0          0 |         3 
+        13 |         0          0          0          0          0          1 |         1 
+        14 |         0          0          0          1          0          0 |         1 
+        15 |         0          0          0          0          0          0 |         1 
+        18 |         0          0          0          0          3          0 |         3 
+-----------+------------------------------------------------------------------+----------
+     Total |         1          1          1          2          3          1 |        77 
+		   
+		   |  Highest
+           | education
+Individual |   level
+       age | Higher De |     Total
+-----------+-----------+----------
+         6 |         0 |        15 
+         7 |         1 |        20 
+         8 |         0 |        15 
+         9 |         0 |        12 
+        10 |         0 |         6 
+        11 |         0 |         3 
+        13 |         0 |         1 
+        14 |         0 |         1 
+        15 |         1 |         1 
+        18 |         0 |         3 
+-----------+-----------+----------
+     Total |         2 |        77 
+
 </_educy_>*/
 
 
@@ -585,9 +648,10 @@ or grade 9 and enter a technical education program at N1, proceeding to N2.
 	replace educy=12 if inrange(Q17EDUCATION,21,22)
 	replace educy=16 if inlist(Q17EDUCATION,23,25, 26)
 	replace educy=19 if inlist(Q17EDUCATION,24,27,28)
-	replace educy=. if inlist(Q17EDUCATION,29,30)
+	replace educy=. if inlist(Q17EDUCATION,29,30,31)
 	replace educy=0 if Q17EDUCATION==98
 	replace educy=. if age<ed_mod_age & age!=.
+	replace educy=age if educy>age & !mi(educy) & !mi(age)  
 	label var educy "Years of education"
 *</_educy_>
 
@@ -605,7 +669,7 @@ or grade 9 and enter a technical education program at N1, proceeding to N2.
 
 *<_educat5_>
 	gen byte educat5 = educat7
-	recode educat5 4=3 5=4 6 7=5
+	recode educat5 (4=3) (5=4) (6 7=5)
 	label var educat5 "Level of education 2"
 	la de lbleducat5 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
 	label values educat5 lbleducat5
@@ -614,7 +678,7 @@ or grade 9 and enter a technical education program at N1, proceeding to N2.
 
 *<_educat4_>
 	gen byte educat4 = educat7
-	recode educat4 2 3=2 4 5=3 6 7=4
+	recode educat4 (2 3 4 = 2) (5=3) (6 7=4)
 	label var educat4 "Level of education 3"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values educat4 lbleducat4
@@ -1042,6 +1106,22 @@ The main job was decided based on time spent.
 	replace firmsize_u=. if lstatus!=1
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>
+
+
+/*<_Labor_status_&_ISIC/ISCO_>
+
+Recode ISIC and ISCO vars to missing if lstatus is not "1-employed". 
+Because ISIC and ISCO are string variables, their missing values should be "" 
+instead of ".". 
+
+<_Labor_status_&_ISIC/ISCO_>*/
+
+
+*<_Labor_status_&_ISIC/ISCO_>
+	replace industrycat_isic="" if lstatus!=1
+	replace occup_isco="" if lstatus!=1
+*</_Labor_status_&_ISIC/ISCO_>
+
 
 }
 
