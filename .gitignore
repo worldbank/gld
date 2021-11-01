@@ -4,7 +4,7 @@
 # below to set up this template in your own repository
 # https://github.com/worldbank/dime-github-trainings/tree/master/GitHub-resources/DIME-GitHub-Templates
 #
-# This is version 2.0
+# This is GLD GitIgnore version 2.0
 #
 ########################################################################
 
@@ -25,62 +25,68 @@
 !README.md
 !CONTRIBUTING.md
 !LICENSE*
+!CODE_OF_CONDUCT.md
+
 
 #######################
-# For performance reasons, if a folder is already ignored, then
-# GitHub does not check the content for that folder for matches
-# with additional rules. The line below includes folder in the
-# top folder (but not their content), so that anything matching
-# the rules below will still not be ignored.
-!*/
+# We only want to publish three kinds of things:
+# i) harmonization files in Stata or R (potentially others),
+# ii) context information and guides under Support, and
+# iii) information for the website under docs
 
 #######################
-# The following file types are code that should always be
-# included no matter where in the repository folder they are
-# located unless you explicitly ignore that folder
+###  Section i)     ###
+#######################
+
+# For the harmonization files, they should always be from the Programs file, that is under
+# CCC_YYYY_Survey/CCC_YYYY_Survey_Version_GLD/Programs. Hence we allow
 
 # Stata
-!/**/*.do
-!/**/*.ado
+!GLD/**/Programs/*.do
 
 # R
-!/**/*.R
-!/**/*.Rmd
-!/**/*.Rproj
+!GLD/**/Programs/*.R
 !renv.lock
-# Still ignore user file for R projects
-.Rproj.user
 
-# LaTeX
-!/**/*.tex
-!/**/*.bib
 
-# Python
-!/**/*.py
-!/**/*.ipynb
-!/**/requirements.txt
-!/**/Pipfile
-!/**/Pipfile.lock
-# Still ignore .ipynb files in checkpoint folders
-.ipynb_checkpoints
+#######################
+###  Section ii)    ###
+#######################
 
-# Matlab
-!/**/*.m
+# For Support context information, allow Markdown, xlsx, and docx, R and Stata functions
+!Support/**/*.md
+!Support/**/*.xlsx
+!Support/**/*.docx
+!Support/**/*.R
+!Support/**/*.do
 
-# Markdown
-!/**/*.md
+# Allow also PDF andimages if needed
+!/Support/**/*.pdf
+!Support/**/*.png
+!Support/**/*.svg
 
-# Julia
-!/**/*.jl
+
+#######################
+###  Section iii)    ###
+#######################
+
+# For the website, allow 
+
+# Markdown files
+!docs/**/*.md
 
 #Files to create custom layout and functionality
 # in dashboards, markdown notebooks, bookdown etc.
-!/**/*.css
-!/**/*.scss
-!/**/*.js
+!docs/**/*.css
+!docs/**/*.scss
+!docs/**/*.js
 
-#Bash scripts
-!/**/*.sh
+# Files for images
+!docs/**/*.png
+!docs/**/*.svg
+
+# HTML files
+!/**/*.html
 
 # HTML files
 !/**/*.html
@@ -88,11 +94,11 @@
 # .yml and .yaml files
 # These files sometimes have credentials, so only unignore these lines by removing
 # the "#" below after you checked your .yml/.yaml files for sensitive content
-!/**/*.yml
-!/**/*.yaml
+!docs/**/*.yml
+!docs/**/*.yaml
 
 # Other files for github pages
-!/**/*.gem
+!docs/**/*.gem
 !.bundle
 !.ruby-version
 !.jekyll-cache
@@ -102,25 +108,4 @@
 !node_modules
 
 # Allow .png for logos
-!/**/*.png
-
-#######################
-# Include some additional file formats in any output folder. You might have
-# to change the name of the Output folder to whatever it is called in your
-# project, but we strongly recommend that you only include these files in
-# a subset of the folders where you are certain no private data is ever stored.
-
-
-#######################
-# Include all the files with passwords or tokens here. All files named
-# password or passwords are with this template ignored no matter which
-# format you are using. Additionally, all content in any folder called
-# password or passwords are also ignored. NOTE that your project might be
-# using different names and then you must edit the lines below accordingly.
-
-
-
-#######################
-# Within the Support folder actually allow for xlsx and docx
-!Support/**/*.xlsx
-!Support/**/*.docx
+!docs/**/*.png

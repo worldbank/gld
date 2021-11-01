@@ -1,0 +1,1 @@
+Note: 2003 has many schema changes and HHID changes that actually make it easier to preprare the rounds independently and then append. Simply running the main 2003 do file will run call all _APR, _JAN, _JUL and _OCT do files
