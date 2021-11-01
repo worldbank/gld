@@ -73,6 +73,7 @@
 # For the website, allow 
 
 # Markdown files
+!docs/**/*.md
 
 #Files to create custom layout and functionality
 # in dashboards, markdown notebooks, bookdown etc.
@@ -87,14 +88,17 @@
 # HTML files
 !/**/*.html
 
+# HTML files
+!/**/*.html
+
 # .yml and .yaml files
 # These files sometimes have credentials, so only unignore these lines by removing
 # the "#" below after you checked your .yml/.yaml files for sensitive content
-!/**/*.yml
-!/**/*.yaml
+!docs/**/*.yml
+!docs/**/*.yaml
 
 # Other files for github pages
-!/**/*.gem
+!docs/**/*.gem
 !.bundle
 !.ruby-version
 !.jekyll-cache
@@ -103,7 +107,5 @@
 !Gemfile.lock
 !node_modules
 
-
-#######################
-# For now renv environment
-!renv/**/*
+# Allow .png for logos
+!docs/**/*.png
