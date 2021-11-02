@@ -916,7 +916,7 @@ Q310STARTBUSNS "Start a business if the circumstances have allowed?"
 	recode industrycat_isic (11=01) (12=02) (13=05) (21=10) (22=11) (23=12) (24=13) (25=14) (29=.) (30=15) (31=17) (32=20) (33=23) (34=26) (35=27) (36=31) (37=32) (38=34) (39=36) (41=40) (42=41) (50=45) (61=51) (62=52) (63=50) (64=55) (71=60) (72=61) (73=62) (74=63) (75=64) (81=65) (82=66) (83=67) (84=70) (85=71) (86=72) (87=73) (88=74) (91=75) (92=80) (93=85) (94=90) (95=91) (96=92) (99=93) (01=95) (02=99)
 
 	replace industrycat_isic=16 if Q43INDUSTRY==306
-	replace industrycat_isic=18 if Q43INDUSTRY==314
+	replace industrycat_isic=18 if inrange(Q43INDUSTRY, 314, 315)
 	replace industrycat_isic=19 if inrange(Q43INDUSTRY, 316, 317)
 	replace industrycat_isic=21 if Q43INDUSTRY==323
 	replace industrycat_isic=22 if inrange(Q43INDUSTRY, 324, 325)
