@@ -194,6 +194,18 @@ local output "`id_data'"
 ================================================================================================*/
 
 {
+/*<_urban_>
+It is not clear how the three categories are defined because the code list in the
+documentation does not match the raw dataset. According to QLFS documentation and
+urbanization stats from:
+https://data.worldbank.org/indicator/SP.URB.TOTL.IN.ZS?locations=ZA,
+the final code list should be
+1=urban formal(urban)
+2=urban informal(urban)
+4=tribal areas(rural)
+5=rural formal(rural)
+</_urban_>*/
+
 
 *<_urban_>
 	gen byte urban=Geo_type
@@ -245,7 +257,7 @@ local output "`id_data'"
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = "subnatid2"
+	gen subnatidsurvey = "subnatid1"
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
