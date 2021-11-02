@@ -16,7 +16,7 @@ At three-digit level, the difference of 37 groups consists of 11 groups contribu
 
 ![SASCO's 26 additional "NCE" categories.](utilities/Screen%20Shot%202021-11-02%20at%2005.58.25.png)
 
-The original variable `Q42OCCUPATION` in QLFS codes occupations at four-digit level. In order to conduct a minor-group-level mapping, only the first three digits of `Q42OCCUPATION` were kept. All groups except "NCE" groups in SASCO 2003 are mapped to their counterparts in ISCO-88 directly, as they are coded in the same way. Regarding the "N.C.E." groups, they are all mapped back to the higher two-digit level as demonstrated in the table above.
+The original variable `Q42OCCUPATION` in QLFS codes occupations at four-digit level. In order to conduct a minor-group-level mapping, only the first three digits of `Q42OCCUPATION` were kept. All groups except "N.C.E." groups in SASCO 2003 are mapped to their counterparts in ISCO-88 directly, as they are coded in the same way. Regarding the "N.C.E." groups, they are all mapped back to the higher two-digit level as demonstrated in the table above.
 
 Note that the only exception to the "N.C.E." grouping rule is category "*215 Physical sciences technologists*" in SASCO 2003, as no category 215 in ISCO-88 can be a perfect match for it. The solution is to map "*215 Physical sciences technologists*" to category *"210 Physical, mathematical and engineering science professionals"* in ISCO-88.
 
