@@ -216,7 +216,7 @@ urbanization stats from:
 	label values reg03 Metro_code
 
 
-** REGIONAL AREA 3 DIGITS ADM LEVEL (ADMN2) (???)
+** REGIONAL AREA 3 DIGITS ADM LEVEL (ADMN2) 
 	gen reg04=.
 	label var reg04 "Region at 3 digits (ADMN3)"
 

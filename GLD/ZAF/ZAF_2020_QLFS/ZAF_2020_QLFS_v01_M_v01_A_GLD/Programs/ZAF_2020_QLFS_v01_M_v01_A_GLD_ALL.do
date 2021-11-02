@@ -279,16 +279,27 @@ the final code list should be
 
 *<_subnatid2_>
 	gen byte subnatid2 = .
-	replace subnatid2 = 1 if Metro_code == 0
-	replace subnatid2 = 2 if Metro_code == 71
-	replace subnatid2 = 3 if Metro_code == 72
-	replace subnatid2 = 4 if Metro_code == 73
-	replace subnatid2 = 5 if Metro_code == 74
-	replace subnatid2 = 6 if Metro_code == 75
-	replace subnatid2 = 7 if Metro_code == 76
-	label de lblsubnatid2 1 "1 - Non-Metro" 2 "2 - Cape Town" 3 "3 - eThekweni" 4 "4 - eKhurhuleni" 5 "5 - Johannesburg" 6 "6 - Nelson Mandela Metro" 7 "7 - Tshwane"
- 	label values subnatid2 lblsubnatid2
+	replace subnatid2 = 1 if Metro_code == 1
+	replace subnatid2 = 2 if Metro_code == 2
+	replace subnatid2 = 3 if Metro_code == 3
+	replace subnatid2 = 4 if Metro_code == 4
+	replace subnatid2 = 5 if Metro_code == 5
+	replace subnatid2 = 6 if Metro_code == 6
+	replace subnatid2 = 7 if Metro_code == 7
+	replace subnatid2 = 6 if Metro_code == 8
+	replace subnatid2 = 6 if Metro_code == 9
+	replace subnatid2 = 6 if Metro_code == 10
+	replace subnatid2 = 6 if Metro_code == 11
+	replace subnatid2 = 6 if Metro_code == 12
+	replace subnatid2 = 6 if Metro_code == 13
+	replace subnatid2 = 6 if Metro_code == 14
+	replace subnatid2 = 6 if Metro_code == 15
+	replace subnatid2 = 6 if Metro_code == 16
+	replace subnatid2 = 6 if Metro_code == 17
+	label de lblsubnatid2 1 "WC - Non Metro" 2 "WC -  City of Cape Town" 3 "EC - Non Metro" 4 "EC - Buffalo City" 5 "EC - Nelson Mandela Bay" 6 "NC - Non Metro" 7 "FS - Non Metro" 8 "FS - Mangaung" 9 "KZN - Non Metro" 10 "KZN - eThekwini" 11 "NW - Non Metro" 12 "GP - Non Metro" 13 "GP - Ekurhuleni" 14 "GP - City of Johannesburg" 15 "GP - City of Tshwane" 16 "MP - Non Metro" 17 "LP - Non Metro" 	
+	label values subnatid2 lblsubnatid2
 	label var subnatid2 "Subnational ID at Second Administrative Level"
+
 *</_subnatid2_>
 
 
@@ -301,7 +312,7 @@ the final code list should be
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = "subnatid2"
+	gen subnatidsurvey = "subnatid1"
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
