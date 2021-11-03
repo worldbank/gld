@@ -4,7 +4,7 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				ZAF_2019_QLFS_v01_M_v01_A_GLD.do </_Program name_>
+<_Program name_>				ZAF_2019_QLFS_v01_M_v01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata MP 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
 <_Date created_>				2021-06-30 </_Date created_>
@@ -27,9 +27,8 @@
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
 <_ISCO Version_>				ISCO-88 </_ISCO Version_>
 <_OCCUP National_>				SASCO-2003 </_OCCUP National_>
-<_ISIC Version_>				ISIC Rev 4  (SIC 7 and ISIC 4 are equal to Division (4 digit) level) </_ISIC Version_>
-<_INDUS National_>				SIC 6 </_INDUS National_>
-
+<_ISIC Version_>				ISIC Rev 3 </_ISIC Version_>
+<_INDUS National_>				SIC 5 </_INDUS National_>
 -----------------------------------------------------------------------
 
 <_Version Control_>
@@ -114,13 +113,13 @@ local output "`id_data'"
 
 
 *<_vermast_>
-	gen vermast = "01"
+	gen vermast = "V01"
 	label var vermast "Version of master data"
 *</_vermast_>
 
 
 *<_veralt_>
-	gen veralt = "01"
+	gen veralt = "V01"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
@@ -234,15 +233,25 @@ the final code list should be
 
 *<_subnatid2_>
 	gen byte subnatid2 = .
-	replace subnatid2 = 1 if Metro_code == 0
-	replace subnatid2 = 2 if Metro_code == 71
-	replace subnatid2 = 3 if Metro_code == 72
-	replace subnatid2 = 4 if Metro_code == 73
-	replace subnatid2 = 5 if Metro_code == 74
-	replace subnatid2 = 6 if Metro_code == 75
-	replace subnatid2 = 7 if Metro_code == 76
-	label de lblsubnatid2 1 "1 - Non-Metro" 2 "2 - Cape Town" 3 "3 - eThekweni" 4 "4 - eKhurhuleni" 5 "5 - Johannesburg" 6 "6 - Nelson Mandela Metro" 7 "7 - Tshwane"
- 	label values subnatid2 lblsubnatid2
+	replace subnatid2 = 1 if Metro_code == 1
+	replace subnatid2 = 2 if Metro_code == 2
+	replace subnatid2 = 3 if Metro_code == 3
+	replace subnatid2 = 4 if Metro_code == 4
+	replace subnatid2 = 5 if Metro_code == 5
+	replace subnatid2 = 6 if Metro_code == 6
+	replace subnatid2 = 7 if Metro_code == 7
+	replace subnatid2 = 6 if Metro_code == 8
+	replace subnatid2 = 6 if Metro_code == 9
+	replace subnatid2 = 6 if Metro_code == 10
+	replace subnatid2 = 6 if Metro_code == 11
+	replace subnatid2 = 6 if Metro_code == 12
+	replace subnatid2 = 6 if Metro_code == 13
+	replace subnatid2 = 6 if Metro_code == 14
+	replace subnatid2 = 6 if Metro_code == 15
+	replace subnatid2 = 6 if Metro_code == 16
+	replace subnatid2 = 6 if Metro_code == 17
+	label de lblsubnatid2 1 "WC - Non Metro" 2 "WC -  City of Cape Town" 3 "EC - Non Metro" 4 "EC - Buffalo City" 5 "EC - Nelson Mandela Bay" 6 "NC - Non Metro" 7 "FS - Non Metro" 8 "FS - Mangaung" 9 "KZN - Non Metro" 10 "KZN - eThekwini" 11 "NW - Non Metro" 12 "GP - Non Metro" 13 "GP - Ekurhuleni" 14 "GP - City of Johannesburg" 15 "GP - City of Tshwane" 16 "MP - Non Metro" 17 "LP - Non Metro" 	
+	label values subnatid2 lblsubnatid2
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
 
@@ -256,7 +265,7 @@ the final code list should be
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = "subnatid2"
+	gen subnatidsurvey = "subnatid1"
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -310,7 +319,9 @@ the final code list should be
 {
 
 *<_hsize_>
-	bys hhid: egen byte hsize=count(pid)
+	egen tag=tag(pid hhid)
+	egen hsize=total(tag), by(hhid)
+	drop tag
 	label var hsize "Household size"
 *</_hsize_>
 
@@ -356,6 +367,10 @@ Subnational ID at |
       9 - Limpopo |         32       22.38      100.00
 ------------------+-----------------------------------
             Total |        143      100.00
+	
+Note: 142 observations are under 18 (or not adult) yet are household heads because
+they are originally asigned as the head --- their PERSONNO is 1.
+			
 </_relationharm_>*/
 
 *<_relationharm_>
@@ -386,7 +401,7 @@ Subnational ID at |
 	drop _merge
 	bys hhid: egen male_present=max(Q13GENDER)
 	replace male_present=0 if male_present==2
-	replace relationharm=1 if hh5==0 & maxage>=18 & maxage<. & male_present==0
+	replace relationharm=1 if hh5==0 & maxage>=18 & maxage<. & age==maxage & male_present==0
 	preserve
 	collapse (max) relationharm, by(pid hhid hh5)
 	bys hhid: egen hh6=sum(relationharm)
@@ -397,7 +412,7 @@ Subnational ID at |
 	bys pid: egen head_max=max(!missing(relationharm))
 	bys pid: egen head_min=min(!missing(relationharm))
 	replace relationharm=1 if head_max==1&head_min==0
-	drop _merge hh2 hh3 hh4 hh5 hh6 head_* _merge
+	drop _merge hh2 hh3 hh4 hh5 hh6 head_* _merge maxage male_present
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm lblrelationharm
@@ -574,6 +589,36 @@ The National Technical Certificate level 1, 2, and 3 are mapped to grade 10, 11,
 respectively. In South Africa, one option for students is to exit school with GETC
 or grade 9 and enter a technical education program at N1, proceeding to N2.
 
+43 observations' years of education exceed their age:
+
+Individual |                      Highest education level
+       age | Grade 7/S  Grade 8/S  Grade 9/S  Grade 10/  Grade 11/  Grade 12/ |     Total
+-----------+------------------------------------------------------------------+----------
+         6 |         3          4          5          1          0          0 |        13 
+         7 |         0          3          3          1          1          0 |         8 
+         8 |         0          0          2          1          0          2 |         5 
+         9 |         0          0          0          1          4          0 |         6 
+        10 |         0          0          0          0          1          3 |         4 
+        11 |         0          0          0          0          0          4 |         5 
+        15 |         0          0          0          0          0          0 |         1 
+        18 |         0          0          0          0          0          0 |         1 
+-----------+------------------------------------------------------------------+----------
+     Total |         3          7         10          4          6          9 |        43 
+
+Individual |           Highest education level
+       age | NTC l/N1/  Diploma w  Post High  Higher De |     Total
+-----------+--------------------------------------------+----------
+         6 |         0          0          0          0 |        13 
+         7 |         0          0          0          0 |         8 
+         8 |         0          0          0          0 |         5 
+         9 |         1          0          0          0 |         6 
+        10 |         0          0          0          0 |         4 
+        11 |         0          1          0          0 |         5 
+        15 |         0          0          0          1 |         1 
+        18 |         0          0          1          0 |         1 
+-----------+--------------------------------------------+----------
+     Total |         1          1          1          1 |        43 
+
 </_educy_>*/
 
 
@@ -584,9 +629,10 @@ or grade 9 and enter a technical education program at N1, proceeding to N2.
 	replace educy=12 if inrange(Q17EDUCATION,21,22)
 	replace educy=16 if inlist(Q17EDUCATION,23,25, 26)
 	replace educy=19 if inlist(Q17EDUCATION,24,27,28)
-	replace educy=. if inlist(Q17EDUCATION,29,30)
+	replace educy=. if inlist(Q17EDUCATION,29,30,31)
 	replace educy=0 if Q17EDUCATION==98
 	replace educy=. if age<ed_mod_age & age!=.
+	replace educy=age if educy>age & !mi(educy) & !mi(age)
 	label var educy "Years of education"
 *</_educy_>
 
@@ -604,7 +650,7 @@ or grade 9 and enter a technical education program at N1, proceeding to N2.
 
 *<_educat5_>
 	gen byte educat5 = educat7
-	recode educat5 4=3 5=4 6 7=5
+	recode educat5 (4=3) (5=4) (6 7=5)
 	label var educat5 "Level of education 2"
 	la de lbleducat5 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
 	label values educat5 lbleducat5
@@ -613,7 +659,7 @@ or grade 9 and enter a technical education program at N1, proceeding to N2.
 
 *<_educat4_>
 	gen byte educat4 = educat7
-	recode educat4 2 3=2 4 5=3 6 7=4
+	recode educat4 (2 3 4 = 2) (5=3) (6 7=4)
 	label var educat4 "Level of education 3"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values educat4 lbleducat4
@@ -819,7 +865,7 @@ Q310STARTBUSNS "Start a business if the circumstances have allowed?"
 
 *<_ocusec_>
 	gen byte ocusec=Q415TYPEBUSNS
-	recode ocusec 3/5=2 2=3 6=.
+	recode ocusec 3/5=2 2=3 6 9=.
 	label var ocusec "Sector of activity primary job 7 day recall"
 	la de lblocusec 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec lblocusec
@@ -841,7 +887,7 @@ Q310STARTBUSNS "Start a business if the circumstances have allowed?"
 	recode industrycat_isic (11=01) (12=02) (13=05) (21=10) (22=11) (23=12) (24=13) (25=14) (29=.) (30=15) (31=17) (32=20) (33=23) (34=26) (35=27) (36=31) (37=32) (38=34) (39=36) (41=40) (42=41) (50=45) (61=51) (62=52) (63=50) (64=55) (71=60) (72=61) (73=62) (74=63) (75=64) (81=65) (82=66) (83=67) (84=70) (85=71) (86=72) (87=73) (88=74) (91=75) (92=80) (93=85) (94=90) (95=91) (96=92) (99=93) (01=95) (02=99)
 	
 	replace industrycat_isic=16 if Q43INDUSTRY==306
-	replace industrycat_isic=18 if Q43INDUSTRY==314
+	replace industrycat_isic=18 if inrange(Q43INDUSTRY, 314, 315)
 	replace industrycat_isic=19 if inrange(Q43INDUSTRY, 316, 317)
 	replace industrycat_isic=21 if Q43INDUSTRY==323
 	replace industrycat_isic=22 if inrange(Q43INDUSTRY, 324, 325)
@@ -1041,6 +1087,21 @@ The main job was decided based on time spent.
 	replace firmsize_u=. if lstatus!=1
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>
+
+
+/*<_Labor_status_&_ISIC/ISCO_>
+
+Recode ISIC and ISCO vars to missing if lstatus is not "1-employed". 
+Because ISIC and ISCO are string variables, their missing values should be "" 
+instead of ".". 
+
+<_Labor_status_&_ISIC/ISCO_>*/
+
+
+*<_Labor_status_&_ISIC/ISCO_>
+	replace industrycat_isic="" if lstatus!=1
+	replace occup_isco="" if lstatus!=1
+*</_Labor_status_&_ISIC/ISCO_>
 
 }
 

@@ -16,7 +16,7 @@
 							Z:\_GLD-Harmonization\573465_JT\ZAF\ZAF_2020_LFS\ZAF_2020_LFS_v01_M\data\stata\qlfs-2020-q4-worker-v1.dta
 ** RESPONSIBLE				Wolrd Bank Job's Group
 ** Created					6/3/2021
-** Modified					7/15/2021
+** Modified					10/26/2021
 ** NUMBER OF HOUSEHOLDS		20,865
 ** NUMBER OF INDIVIDUALS	72,396
 ** EXPANDED POPULATION		58,060,431
@@ -216,7 +216,7 @@ urbanization stats from:
 	label values reg03 Metro_code
 
 
-** REGIONAL AREA 3 DIGITS ADM LEVEL (ADMN2) (???)
+** REGIONAL AREA 3 DIGITS ADM LEVEL (ADMN2) 
 	gen reg04=.
 	label var reg04 "Region at 3 digits (ADMN3)"
 
@@ -285,7 +285,9 @@ urbanization stats from:
 
 
 ** HOUSEHOLD SIZE
-	bys idh: egen byte hhsize=count(idp)
+	egen tag=tag(idp idh)
+	egen hhsize=total(tag), by(idh)
+	drop tag
 	label var hhsize "Household size"
 	
 	
@@ -296,6 +298,38 @@ urbanization stats from:
 Not asked, all we know is that the person with personal number equal to 1 is the head, the problem is that in some cases that person is not present, probably because he/she didn't spend four nights or more in this household. In those cases I assigned the eldest adult male (or female absent male) present as the household head.
 144 observations (78 HHs) were dropped due to no male memeber or multiple same old male (or female) members.
 Age of majority is 18 in South Africa.  
+
+DROPS:
+OBS: 27
+HH: 16
+
+REGIONAL DISTRIBUTION:
+Subnational ID at |
+            First |
+   Administrative |
+            Level |      Freq.     Percent        Cum.
+------------------+-----------------------------------
+ 2 - Eastern Cape |          9       33.33       33.33
+   4 - Free State |          2        7.41       40.74
+5 - KwaZulu-Natal |          1        3.70       44.44
+   6 - North West |          5       18.52       62.96
+      7 - Gauteng |          7       25.93       88.89
+      9 - Limpopo |          3       11.11      100.00
+------------------+-----------------------------------
+            Total |         27      100.00
+			
+Note: 126 observations are under 18 (or not adult) yet are household heads because
+they are originally asigned as the head --- their PERSONNO is 1.
+
+But there are 4 observations that are assigned as the head and they are under 18 
+because they have two different ages in different quarters, i.e., 51 in one Q and
+12 in the other. 
+
+59810025000000320102 "unlikely to be the same person: female -> male / 13->21"
+96910129000001830102 "unlikely to be the same person: female -> male / 20->15->16"
+96910129000001830102 "unlikely to be the same person: female -> male / 20->15->16"
+96910129000001830102 "unlikely to be the same person: female -> male / 20->15->16"
+
 */
 
 	gen byte head=1 if PERSONNO==1
@@ -325,7 +359,7 @@ Age of majority is 18 in South Africa.
 	drop _merge
 	bys idh: egen male_present=max(Q13GENDER)
 	replace male_present=0 if male_present==2
-	replace head=1 if hh5==0 & maxage>=18 & maxage<. & male_present==0
+	replace head=1 if hh5==0 & maxage>=18 & maxage<. & Q14AGE==maxage & male_present==0	
 	preserve
 	collapse (max) head, by(idp idh hh5)
 	bys idh: egen hh6=sum(head)
@@ -336,7 +370,7 @@ Age of majority is 18 in South Africa.
 	bys idp: egen head_max=max(!missing(head))
 	bys idp: egen head_min=min(!missing(head))
 	replace head=1 if head_max==1&head_min==0
-	drop _merge hh2 hh3 hh4 hh5 hh6 head_* _merge
+	drop _merge hh2 hh3 hh4 hh5 hh6 head_* _merge maxage male_present
 	label var head "Relationship to the head of household"
 	la de lblhead  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values head lblhead
@@ -405,6 +439,36 @@ Age of majority is 18 in South Africa.
 The National Technical Certificate level 1, 2, and 3 are mapped to grade 10, 11, and 12
 respectively. In South Africa, one option for students is to exit school with GETC
 or grade 9 and enter a technical education program at N1, proceeding to N2.
+
+46 observations' years of education exceed their age:
+
+Individual |                      Highest education level
+       age | Grade 7/S  Grade 8/S  Grade 9/S  Grade 10/  Grade 11/  Grade 12/ |     Total
+-----------+------------------------------------------------------------------+----------
+         6 |         4          4          2          3          3          0 |        16 
+         7 |         0          3          1          3          0          0 |         7 
+         8 |         0          0          3          1          3          1 |         8 
+         9 |         0          0          0          2          4          1 |         7 
+        10 |         0          0          0          0          4          0 |         5 
+        11 |         0          0          0          0          0          0 |         1 
+        13 |         0          0          0          0          0          0 |         1 
+        15 |         0          0          0          0          0          0 |         1 
+-----------+------------------------------------------------------------------+----------
+     Total |         4          7          6          9         14          2 |        46 
+
+Individual |     Highest education level
+       age | Certifica  Diploma w  Higher Di |     Total
+-----------+---------------------------------+----------
+         6 |         0          0          0 |        16 
+         7 |         0          0          0 |         7 
+         8 |         0          0          0 |         8 
+         9 |         0          0          0 |         7 
+        10 |         0          0          1 |         5 
+        11 |         1          0          0 |         1 
+        13 |         0          1          0 |         1 
+        15 |         0          1          0 |         1 
+-----------+---------------------------------+----------
+     Total |         1          2          1 |        46 
 */ 
 
 	gen byte educy=Q17EDUCATION if inrange(Q17EDUCATION,0,12)
@@ -413,9 +477,10 @@ or grade 9 and enter a technical education program at N1, proceeding to N2.
 	replace educy=12 if inrange(Q17EDUCATION,21,22)
 	replace educy=16 if inlist(Q17EDUCATION,23,25, 26)
 	replace educy=19 if inlist(Q17EDUCATION,24,27,28)
-	replace educy=. if inlist(Q17EDUCATION,29,30)
+	replace educy=. if inlist(Q17EDUCATION,29,30,31)
 	replace educy=0 if Q17EDUCATION==98
 	replace educy=. if age<ed_mod_age & age!=.
+	replace educy=age if educy>age & !mi(educy) & !mi(age) 
 	label var educy "Years of education"
 
 
@@ -440,7 +505,7 @@ or grade 9 and enter a technical education program at N1, proceeding to N2.
 
 ** EDUCATION LEVEL 3
 	gen byte edulevel3=edulevel1
-	recode edulevel3 3=2 4 5=3 6 7=4 8=.
+	recode edulevel3 3 4=2 5=3 6 7=4 8=.
 	replace edulevel3=. if age<ed_mod_age & age!=.
 	label var edulevel3 "Level of education 3"
 	la de lbledulevel3 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"

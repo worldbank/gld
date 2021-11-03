@@ -1,7 +1,7 @@
 /*****************************************************************************************************
 ******************************************************************************************************
 **                                                                                                  **
-**                      INTERNATIONAL INCOME DISTRIBUTION DATABASE (I2D2)                          **
+**                      INTERNATIONAL INCOME DISTRIBUTION DATABASE (I2D2)                           **
 **                                                                                                  **
 ** COUNTRY					South Africa 
 ** COUNTRY ISO CODE			ZAF
@@ -13,7 +13,7 @@
 ** INPUT DATABASES			Z:\_GLD-Harmonization\573465_JT\ZAF\ZAF_2008_LFS\ZAF_2008_LFS_v01_M\data\stata\lmdsa_2008_v1.1_20150407.dta
 ** RESPONSIBLE				Wolrd Bank Job's Group
 ** Created					6/15/2021
-** Modified					7/14/2021
+** Modified					10/26/2021
 ** NUMBER OF HOUSEHOLDS		49,221
 ** NUMBER OF INDIVIDUALS	183,384
 ** EXPANDED POPULATION		49,365,385
@@ -230,10 +230,11 @@ Q4: 3,058
 
 
 ** HOUSEHOLD SIZE
-	bys idh: egen byte hhsize=count(idp)
+	egen tag=tag(idp idh)
+	egen hhsize=total(tag), by(idh)
+	drop tag
 	label var hhsize "Household size"
-	
-	
+
 ** RELATIONSHIP TO THE HEAD OF HOUSEHOLD
 
 /*
@@ -289,7 +290,7 @@ Subnational ID at |
 	drop _merge
 	bys idh: egen male_present=max(q13gender)
 	replace male_present=0 if male_present==2
-	replace head=1 if hh5==0 & maxage>=18 & maxage<. & male_present==0
+	replace head=1 if hh5==0 & maxage>=18 & maxage<. & Q14AGE==maxage & male_present==0
 	preserve
 	collapse (max) head, by(idp idh hh5)
 	bys idh: egen hh6=sum(head)
@@ -300,7 +301,7 @@ Subnational ID at |
 	bys idp: egen head_max=max(!missing(head))
 	bys idp: egen head_min=min(!missing(head))
 	replace head=1 if head_max==1&head_min==0
-	drop _merge hh2 hh3 hh4 hh5 hh6 head_* _merge
+	drop _merge hh2 hh3 hh4 hh5 hh6 head_* _merge maxage male_present
 	label var head "Relationship to the head of household"
 	la de lblhead  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values head lblhead
@@ -367,6 +368,34 @@ Subnational ID at |
 The National Technical Certificate level 1, 2, and 3 are mapped to grade 10, 11, and 12
 respectively. In South Africa, one option for students is to exit school with GETC
 or grade 9 and enter a technical education program at N1, proceeding to N2.
+
+194 observations' years of education exceed their age:
+
+           |   Highest education
+Individual |         level
+       age | Bachelors  Bachelors 
+	       |  Degree     Degree & 
+		   |	            Post 
+		   |		    Graduate  |     Total
+-----------+----------------------+----------
+         0 |         1          1 |         2 
+         1 |         3          1 |         4 
+         2 |         2          1 |         3 
+         3 |         8          0 |         8 
+         4 |        23          0 |        23 
+         5 |        12          0 |        12 
+         6 |         5          0 |         5 
+         7 |         4          0 |         4 
+         8 |         9          1 |        10 
+         9 |         9          1 |        10 
+        10 |        16          4 |        20 
+        11 |         7          2 |         9 
+        12 |         8          5 |        13 
+        13 |        12          3 |        15 
+        14 |        22          5 |        27 
+        15 |        26          3 |        29 
+-----------+----------------------+----------
+     Total |       167         27 |       194 
 */ 
 
 	gen byte educy=Q17EDUCATION if inrange(Q17EDUCATION,0,12)
@@ -378,6 +407,7 @@ or grade 9 and enter a technical education program at N1, proceeding to N2.
 	replace educy=. if inlist(Q17EDUCATION,29,30)
 	replace educy=0 if Q17EDUCATION==98
 	replace educy=. if age<ed_mod_age & age!=.
+	replace educy=age if educy>age & !mi(educy) & !mi(age)  
 	label var educy "Years of education"
 
 
@@ -402,7 +432,7 @@ or grade 9 and enter a technical education program at N1, proceeding to N2.
 
 ** EDUCATION LEVEL 3
 	gen byte edulevel3=edulevel1
-	recode edulevel3 3=2 4 5=3 6 7=4 8=.
+	recode edulevel3 3 4=2 5=3 6 7=4 8=.
 	replace edulevel3=. if age<ed_mod_age & age!=.
 	label var edulevel3 "Level of education 3"
 	la de lbledulevel3 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"

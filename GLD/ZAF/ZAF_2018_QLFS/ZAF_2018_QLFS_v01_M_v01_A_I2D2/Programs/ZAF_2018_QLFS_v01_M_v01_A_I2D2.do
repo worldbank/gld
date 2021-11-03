@@ -13,7 +13,7 @@
 ** INPUT DATABASES			Z:\_GLD-Harmonization\573465_JT\ZAF\ZAF_2018_LFS\ZAF_2018_LFS_v01_M\data\stata\lmdsa-2018-v1.0.dta
 ** RESPONSIBLE				Wolrd Bank Job's Group
 ** Created					6/8/2021
-** Modified					7/14/2021
+** Modified					10/26/2021
 ** NUMBER OF HOUSEHOLDS		39,084  
 ** NUMBER OF INDIVIDUALS	131,374 
 ** EXPANDED POPULATION		56,600,492
@@ -169,7 +169,7 @@ the final code list should be
 	label values reg03 Metro_code
 
 
-** REGIONAL AREA 3 DIGITS ADM LEVEL (ADMN2) (???)
+** REGIONAL AREA 3 DIGITS ADM LEVEL (ADMN2) 
 	gen reg04=.
 	label var reg04 "Region at 3 digits (ADMN3)"
 
@@ -238,7 +238,9 @@ the final code list should be
 
 
 ** HOUSEHOLD SIZE
-	bys idh: egen byte hhsize=count(idp)
+	egen tag=tag(idp idh)
+	egen hhsize=total(tag), by(idh)
+	drop tag
 	label var hhsize "Household size"
 
 
@@ -298,7 +300,7 @@ Subnational ID at |
 	drop _merge
 	bys idh: egen male_present=max(Q13GENDER)
 	replace male_present=0 if male_present==2
-	replace head=1 if hh5==0 & maxage>=18 & maxage<. & male_present==0
+	replace head=1 if hh5==0 & maxage>=18 & maxage<. & Q14AGE==maxage & male_present==0
 	preserve
 	collapse (max) head, by(idp idh hh5)
 	bys idh: egen hh6=sum(head)
@@ -309,7 +311,7 @@ Subnational ID at |
 	bys idp: egen head_max=max(!missing(head))
 	bys idp: egen head_min=min(!missing(head))
 	replace head=1 if head_max==1&head_min==0
-	drop _merge hh2 hh3 hh4 hh5 hh6 head_* _merge
+	drop _merge hh2 hh3 hh4 hh5 hh6 head_* _merge maxage male_present
 	label var head "Relationship to the head of household"
 	la de lblhead  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values head lblhead
@@ -378,6 +380,58 @@ Subnational ID at |
 The National Technical Certificate level 1, 2, and 3 are mapped to grade 10, 11, and 12
 respectively. In South Africa, one option for students is to exit school with GETC
 or grade 9 and enter a technical education program at N1, proceeding to N2.
+
+77 observations' years of education exceed their age.
+
+Individual |                      Highest education level
+       age | Grade 7/S  Grade 8/S  Grade 9/S  Grade 10/  Grade 11/  Grade 12/ |     Total
+-----------+------------------------------------------------------------------+----------
+         6 |         5          6          2          2          0          0 |        15 
+         7 |         0          4          4          6          3          2 |        20 
+         8 |         0          0          8          2          3          2 |        15 
+         9 |         0          0          0          4          2          4 |        12 
+        10 |         0          0          0          0          5          0 |         6 
+        11 |         0          0          0          0          0          2 |         3 
+        13 |         0          0          0          0          0          0 |         1 
+        14 |         0          0          0          0          0          0 |         1 
+        15 |         0          0          0          0          0          0 |         1 
+        18 |         0          0          0          0          0          0 |         3 
+-----------+------------------------------------------------------------------+----------
+     Total |         5         10         14         14         13         10 |        77 
+
+Individual |                      Highest education level
+       age | NTC l/N1/  Certifica  Diploma w  Higher Di  Post High  Bachelors |     Total
+-----------+------------------------------------------------------------------+----------
+         6 |         0          0          0          0          0          0 |        15 
+         7 |         0          0          0          0          0          0 |        20 
+         8 |         0          0          0          0          0          0 |        15 
+         9 |         1          0          1          0          0          0 |        12 
+        10 |         0          1          0          0          0          0 |         6 
+        11 |         0          0          0          1          0          0 |         3 
+        13 |         0          0          0          0          0          1 |         1 
+        14 |         0          0          0          1          0          0 |         1 
+        15 |         0          0          0          0          0          0 |         1 
+        18 |         0          0          0          0          3          0 |         3 
+-----------+------------------------------------------------------------------+----------
+     Total |         1          1          1          2          3          1 |        77 
+		   
+		   |  Highest
+           | education
+Individual |   level
+       age | Higher De |     Total
+-----------+-----------+----------
+         6 |         0 |        15 
+         7 |         1 |        20 
+         8 |         0 |        15 
+         9 |         0 |        12 
+        10 |         0 |         6 
+        11 |         0 |         3 
+        13 |         0 |         1 
+        14 |         0 |         1 
+        15 |         1 |         1 
+        18 |         0 |         3 
+-----------+-----------+----------
+     Total |         2 |        77 
 */ 
 
 	gen byte educy=Q17EDUCATION if inrange(Q17EDUCATION,0,12)
@@ -386,9 +440,10 @@ or grade 9 and enter a technical education program at N1, proceeding to N2.
 	replace educy=12 if inrange(Q17EDUCATION,21,22)
 	replace educy=16 if inlist(Q17EDUCATION,23,25, 26)
 	replace educy=19 if inlist(Q17EDUCATION,24,27,28)
-	replace educy=. if inlist(Q17EDUCATION,29,30)
+	replace educy=. if inlist(Q17EDUCATION,29,30,31)
 	replace educy=0 if Q17EDUCATION==98
 	replace educy=. if age<ed_mod_age & age!=.
+	replace educy=age if educy>age & !mi(educy) & !mi(age)  
 	label var educy "Years of education"
 
 
@@ -413,7 +468,7 @@ or grade 9 and enter a technical education program at N1, proceeding to N2.
 
 ** EDUCATION LEVEL 3
 	gen byte edulevel3=edulevel1
-	recode edulevel3 3=2 4 5=3 6 7=4 8=.
+	recode edulevel3 3 4=2 5=3 6 7=4 8=.
 	replace edulevel3=. if age<ed_mod_age & age!=.
 	label var edulevel3 "Level of education 3"
 	la de lbledulevel3 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"

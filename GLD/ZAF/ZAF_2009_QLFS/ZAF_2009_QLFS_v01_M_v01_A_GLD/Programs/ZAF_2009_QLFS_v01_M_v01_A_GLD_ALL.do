@@ -4,7 +4,7 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				ZAF_2009_QLFS_v01_M_v01_A_GLD.do </_Program name_>
+<_Program name_>				ZAF_2009_QLFS_v01_M_v01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata MP 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
 <_Date created_>				2021-06-20 </_Date created_>
@@ -27,8 +27,8 @@
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
 <_ISCO Version_>				ISCO-88 </_ISCO Version_>
 <_OCCUP National_>				SASCO-2003 </_OCCUP National_>
-<_ISIC Version_>				ISIC Rev 4  (SIC 7 and ISIC 4 are equal to Division (4 digit) level) </_ISIC Version_>
-<_INDUS National_>				SIC 6 </_INDUS National_>
+<_ISIC Version_>				ISIC Rev 3 </_ISIC Version_>
+<_INDUS National_>				SIC 5 </_INDUS National_>
 
 -----------------------------------------------------------------------
 
@@ -114,13 +114,13 @@ local output "`id_data'"
 
 
 *<_vermast_>
-	gen vermast = "01"
+	gen str3 vermast = "V01"
 	label var vermast "Version of master data"
 *</_vermast_>
 
 
 *<_veralt_>
-	gen veralt = "01"
+	gen str3 veralt = "V01"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
@@ -194,6 +194,18 @@ local output "`id_data'"
 ================================================================================================*/
 
 {
+/*<_urban_>
+It is not clear how the three categories are defined because the code list in the
+documentation does not match the raw dataset. According to QLFS documentation and
+urbanization stats from:
+https://data.worldbank.org/indicator/SP.URB.TOTL.IN.ZS?locations=ZA,
+the final code list should be
+1=urban formal(urban)
+2=urban informal(urban)
+4=tribal areas(rural)
+5=rural formal(rural)
+</_urban_>*/
+
 
 *<_urban_>
 	gen byte urban=Geo_type
@@ -245,17 +257,17 @@ local output "`id_data'"
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = "subnatid2"
+	gen subnatidsurvey = "subnatid1"
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
 
-*<_subnatid1_prev_>
 /* <_subnatid1_prev>
-
 	subnatid1_prev is coded as missing unless the classification used for subnatid1 has changed since the previous survey.
-
 </_subnatid1_prev> */
+
+
+*<_subnatid1_prev_>
 	gen subnatid1_prev = .
 	label var subnatid1_prev "Classification used for subnatid1 from previous survey"
 *</_subnatid1_prev_>
@@ -299,7 +311,9 @@ local output "`id_data'"
 {
 
 *<_hsize_>
-	bys hhid: egen byte hsize=count(pid)
+	egen tag=tag(pid hhid)
+	egen hsize=total(tag), by(hhid)
+	drop tag
 	label var hsize "Household size"
 *</_hsize_>
 
@@ -344,6 +358,10 @@ Subnational ID at |
       9 - Limpopo |          6       14.29      100.00
 ------------------+-----------------------------------
             Total |         42      100.00
+
+Note: 575 observations are under 18 (or not adult) yet are household heads because
+they are originally asigned as the head --- their PERSONNO is 1.
+
 </_relationharm_>*/
 
 *<_relationharm_>
@@ -374,7 +392,7 @@ Subnational ID at |
 	drop _merge
 	bys hhid: egen male_present=max(Q13GENDER)
 	replace male_present=0 if male_present==2
-	replace relationharm=1 if hh5==0 & maxage>=18 & maxage<. & male_present==0
+	replace relationharm=1 if hh5==0 & maxage>=18 & maxage<. & age==maxage & male_present==0
 	preserve
 	collapse (max) relationharm, by(pid hhid hh5)
 	bys hhid: egen hh6=sum(relationharm)
@@ -385,7 +403,7 @@ Subnational ID at |
 	bys pid: egen head_max=max(!missing(relationharm))
 	bys pid: egen head_min=min(!missing(relationharm))
 	replace relationharm=1 if head_max==1&head_min==0
-	drop _merge hh2 hh3 hh4 hh5 hh6 head_* _merge
+	drop _merge hh2 hh3 hh4 hh5 hh6 head_* _merge maxage male_present
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm  lblrelationharm
@@ -534,8 +552,8 @@ Education module is only asked to those 0 and older.
 
 </_ed_mod_age_note> */
 
-gen byte ed_mod_age = 0
-label var ed_mod_age "Education module application age"
+	gen byte ed_mod_age = 0
+	label var ed_mod_age "Education module application age"
 
 *</_ed_mod_age_>
 
@@ -561,6 +579,33 @@ The National Technical Certificate level 1, 2, and 3 are mapped to grade 10, 11,
 respectively. In South Africa, one option for students is to exit school with GETC
 or grade 9 and enter a technical education program at N1, proceeding to N2.
 
+224 observations' years of education exceed their age:
+
+           |   Highest education
+Individual |         level
+       age | Bachelors  Bachelors
+	       |  Degree     Degree &
+		   |	            Post
+		   |		    Graduate  |     Total
+-----------+----------------------+----------
+         1 |         2          1 |         3
+         2 |        11          1 |        12
+         3 |        18          0 |        18
+         4 |        33          0 |        33
+         5 |        11          0 |        11
+         6 |         5          0 |         5
+         7 |         2          3 |         5
+         8 |        11          3 |        14
+         9 |         9          2 |        11
+        10 |        13          5 |        18
+        11 |        14          5 |        19
+        12 |         5          4 |         9
+        13 |         9          2 |        11
+        14 |        24          7 |        31
+        15 |        19          5 |        24
+-----------+----------------------+----------
+     Total |       186         38 |       224
+
 </_educy_>*/
 
 
@@ -574,6 +619,7 @@ or grade 9 and enter a technical education program at N1, proceeding to N2.
 	replace educy=. if inlist(Q17EDUCATION,29,30)
 	replace educy=0 if Q17EDUCATION==98
 	replace educy=. if age<ed_mod_age & age!=.
+	replace educy=age if educy>age & !mi(educy) & !mi(age)
 	label var educy "Years of education"
 *</_educy_>
 
@@ -591,7 +637,7 @@ or grade 9 and enter a technical education program at N1, proceeding to N2.
 
 *<_educat5_>
 	gen byte educat5 = educat7
-	recode educat5 4=3 5=4 6 7=5
+	recode educat5 (4=3) (5=4) (6 7=5)
 	label var educat5 "Level of education 2"
 	la de lbleducat5 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
 	label values educat5 lbleducat5
@@ -600,7 +646,7 @@ or grade 9 and enter a technical education program at N1, proceeding to N2.
 
 *<_educat4_>
 	gen byte educat4 = educat7
-	recode educat4 2 3=2 4 5=3 6 7=4
+	recode educat4 (2 3 4 = 2) (5=3) (6 7=4)
 	label var educat4 "Level of education 3"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values educat4 lbleducat4
@@ -828,9 +874,9 @@ Q310STARTBUSNS "Start a business if the circumstances have allowed?"
 	replace industrycat_isic=indus_string if Q43INDUSTRY<100
 	destring industrycat_isic, replace
 	recode industrycat_isic (11=01) (12=02) (13=05) (21=10) (22=11) (23=12) (24=13) (25=14) (29=.) (30=15) (31=17) (32=20) (33=23) (34=26) (35=27) (36=31) (37=32) (38=34) (39=36) (41=40) (42=41) (50=45) (61=51) (62=52) (63=50) (64=55) (71=60) (72=61) (73=62) (74=63) (75=64) (81=65) (82=66) (83=67) (84=70) (85=71) (86=72) (87=73) (88=74) (91=75) (92=80) (93=85) (94=90) (95=91) (96=92) (99=93) (01=95) (02=99)
-	
+
 	replace industrycat_isic=16 if Q43INDUSTRY==306
-	replace industrycat_isic=18 if Q43INDUSTRY==314
+	replace industrycat_isic=18 if inrange(Q43INDUSTRY, 314, 315)
 	replace industrycat_isic=19 if inrange(Q43INDUSTRY, 316, 317)
 	replace industrycat_isic=21 if Q43INDUSTRY==323
 	replace industrycat_isic=22 if inrange(Q43INDUSTRY, 324, 325)
@@ -839,7 +885,7 @@ Q310STARTBUSNS "Start a business if the circumstances have allowed?"
 	replace industrycat_isic=28 if inrange(Q43INDUSTRY, 354, 355)
 	replace industrycat_isic=29 if inrange(Q43INDUSTRY, 356, 358)
 	replace industrycat_isic=30 if Q43INDUSTRY==359
-	replace industrycat_isic=33 if inrange(Q43INDUSTRY, 374, 375)	
+	replace industrycat_isic=33 if inrange(Q43INDUSTRY, 374, 375)
 	replace industrycat_isic=35 if inrange(Q43INDUSTRY, 384, 387)
 	replace industrycat_isic=37 if Q43INDUSTRY==395
 	gen industrycat_isic2=industrycat_isic*100
@@ -896,7 +942,7 @@ Q310STARTBUSNS "Start a business if the circumstances have allowed?"
 	gen occup_skill = .
 	replace occup_skill=1 if inrange(skill_level, 1, 3)
 	replace occup_skill=2 if inrange(skill_level, 4, 8)
-	replace occup_skill=3 if inrange(skill_level, 9, 9)	
+	replace occup_skill=3 if inrange(skill_level, 9, 9)
 	drop skill_level
 	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
 	label values occup_skill lblskill
@@ -968,13 +1014,13 @@ The main job was decided based on time spent.
 *</_wmonths_>
 
 
-*<_wage_total_>
 /* <_wage_total>
-
 	Use gross wages when available and net wages only when gross wages are not available.
 	This is done to make it easy to compare earnings in formal and informal sectors.
-
 </_wage_total> */
+
+
+*<_wage_total_>
 	gen wage_total=.
 	label var wage_total "Annualized total wage primary job 7 day recall"
 *</_wage_total_>
@@ -1032,6 +1078,24 @@ The main job was decided based on time spent.
 	replace firmsize_u=. if lstatus!=1
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>
+
+
+/*<_Labor_status_&_ISIC/ISCO_>
+
+Recode ISIC and ISCO vars to missing if lstatus is not "1-employed".
+Because ISIC and ISCO are string variables, their missing values should be ""
+instead of ".".
+
+10 observations have missing values for labor status while have "actual" non-missing
+values for ISIC and ISCO variables.
+
+<_Labor_status_&_ISIC/ISCO_>*/
+
+
+*<_Labor_status_&_ISIC/ISCO_>
+	replace industrycat_isic="" if lstatus!=1
+	replace occup_isco="" if lstatus!=1
+*</_Labor_status_&_ISIC/ISCO_>
 
 }
 

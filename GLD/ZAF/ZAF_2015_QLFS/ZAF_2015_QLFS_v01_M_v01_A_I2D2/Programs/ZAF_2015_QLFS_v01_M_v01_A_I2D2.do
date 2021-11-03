@@ -3,7 +3,7 @@
 **                                                                                                  **
 **                       INTERNATIONAL INCOME DISTRIBUTION DATABASE (I2D2)                          **
 **                                                                                                  **
-** COUNTRY					South Africa 
+** COUNTRY					South Africa
 ** COUNTRY ISO CODE			ZAF
 ** YEAR						2015
 ** SURVEY NAME				Labour Market Dynamics
@@ -13,7 +13,7 @@
 ** INPUT DATABASES			Z:\_GLD-Harmonization\573465_JT\ZAF\ZAF_2015_LFS\ZAF_2015_LFS_v01_M\data\stata\lmdsa-2015-1.0-stata11.dta
 ** RESPONSIBLE				Wolrd Bank Job's Group
 ** Created					6/11/2021
-** Modified					7/14/2021
+** Modified					10/26/2021
 ** NUMBER OF HOUSEHOLDS		40,778
 ** NUMBER OF INDIVIDUALS	139,961
 ** EXPANDED POPULATION	 	54,420,645
@@ -29,25 +29,25 @@
 
 
 ** INITIAL COMMANDS
-	cap log close 
+	cap log close
 	clear
 	set more off
 	set mem 800m
 
 
 ** DIRECTORY
-	local 	drive 	`"Z"'		
-	local 	cty 	`"ZAF"' 	
-	local 	usr		`"573465_JT"' 
-	local 	surv_yr `"2015"'	
-	local 	year 	"`drive':\GLD-Harmonization\\`usr'\\`cty'\\`cty'_`surv_yr'_LFS" 
+	local 	drive 	`"Z"'
+	local 	cty 	`"ZAF"'
+	local 	usr		`"573465_JT"'
+	local 	surv_yr `"2015"'
+	local 	year 	"`drive':\GLD-Harmonization\\`usr'\\`cty'\\`cty'_`surv_yr'_LFS"
 	local 	main	"`year'\\`cty'_`surv_yr'_LFS_v01_M"
 	local 	stata	"`main'\data\stata"
 	local 	gld 	"`year'\\`cty'_`surv_yr'_LFS_v01_M_v01_A_GLD"
 	local 	i2d2	"`year'\\`cty'_`surv_yr'_LFS_v01_M_v01_A_I2D2"
 	local 	code 	"`i2d2'\Programs"
 	local 	id_data "`i2d2'\Data\Harmonized"
-	
+
 	local input "`stata'"
 	local output "`id_data'"
 
@@ -55,7 +55,7 @@
 ** LOG FILE
 	log using "`id_data'\ZAF_2015_QLFS_V01_M_v01_A_I2D2", replace
 
-	
+
 /*****************************************************************************************************
 *                                                                                                    *
                                    * ASSEMBLE DATABASE
@@ -65,7 +65,7 @@
 
 ** DATABASE ASSEMBLENT
 	use "`input'\LMDSA 2015 v1.0 Stata11.dta", clear
-	
+
 
 ** COUNTRY
 	gen str4 ccode="ZAF"
@@ -134,8 +134,8 @@ Q4: 3,243
 
 ** LOCATION (URBAN/RURAL)
 
-/* 
-Category 2 "urban informal" was identified as rural area according to the 
+/*
+Category 2 "urban informal" was identified as rural area according to the
 urban population stats, https://data.worldbank.org/indicator/SP.URB.TOTL.IN.ZS?locations=ZA
 1=urban formal
 2=urban informal(rural)
@@ -167,7 +167,7 @@ urban population stats, https://data.worldbank.org/indicator/SP.URB.TOTL.IN.ZS?l
 	label values reg03 Metro_code
 
 
-** REGIONAL AREA 3 DIGITS ADM LEVEL (ADMN2) (???)
+** REGIONAL AREA 3 DIGITS ADM LEVEL (ADMN2)
 	gen reg04=.
 	label var reg04 "Region at 3 digits (ADMN3)"
 
@@ -236,21 +236,23 @@ urban population stats, https://data.worldbank.org/indicator/SP.URB.TOTL.IN.ZS?l
 
 
 ** HOUSEHOLD SIZE
-	bys idh: egen byte hhsize=count(idp)
+	egen tag=tag(idp idh)
+	egen hhsize=total(tag), by(idh)
+	drop tag
 	label var hhsize "Household size"
-	
-	
+
+
 ** RELATIONSHIP TO THE HEAD OF HOUSEHOLD
 
 /*
 Not asked, all we know is that the person with personal number equal to 1 is the head, the problem is that in some cases that person is not present, probably because he/she didn't spend four nights or more in this household. In those cases I assigned the eldest adult male (or female absent male) present as the household head.
 73 observations were dropped due to no male memeber or multiple same old male (or female) members.
-Age of majority is 18 in South Africa.  
+Age of majority is 18 in South Africa.
 
 DROPS:
 OBS: 73
 HH: 31
-REGIONAL DISTRIBUTION: 
+REGIONAL DISTRIBUTION:
 Subnational ID at |
             First |
    Administrative |
@@ -283,7 +285,7 @@ Subnational ID at |
 	tempfile head_collapse
 	save `head_collapse'
 	restore
-	merge m:1 idh idp using `head_collapse' 
+	merge m:1 idh idp using `head_collapse'
 	drop _merge
 	replace head=. if hh3==2 & Q13GENDER==2 & head==1
 	bys idh: egen hh4=sum(head==1)
@@ -296,18 +298,18 @@ Subnational ID at |
 	drop _merge
 	bys idh: egen male_present=max(Q13GENDER)
 	replace male_present=0 if male_present==2
-	replace head=1 if hh5==0 & maxage>=18 & maxage<. & male_present==0
+	replace head=1 if hh5==0 & maxage>=18 & maxage<. & Q14AGE==maxage & male_present==0
 	preserve
 	collapse (max) head, by(idp idh hh5)
 	bys idh: egen hh6=sum(head)
 	save `head_collapse', replace
-	restore 
+	restore
 	merge m:1 idh idp using `head_collapse'
 	drop if hh6!=1
 	bys idp: egen head_max=max(!missing(head))
 	bys idp: egen head_min=min(!missing(head))
 	replace head=1 if head_max==1&head_min==0
-	drop _merge hh2 hh3 hh4 hh5 hh6 head_* _merge
+	drop _merge hh2 hh3 hh4 hh5 hh6 head_* _merge maxage male_present
 	label var head "Relationship to the head of household"
 	la de lblhead  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values head lblhead
@@ -348,7 +350,7 @@ Subnational ID at |
 *****************************************************************************************************/
 
 
-** EDUCATION MODULE AGE 
+** EDUCATION MODULE AGE
 	gen byte ed_mod_age=0
 	label var ed_mod_age "Education module application age"
 
@@ -370,13 +372,15 @@ Subnational ID at |
 	label values literacy lblliteracy
 
 
-** YEARS OF EDUCATION COMPLETED 
+** YEARS OF EDUCATION COMPLETED
 
 /*
 The National Technical Certificate level 1, 2, and 3 are mapped to grade 10, 11, and 12
 respectively. In South Africa, one option for students is to exit school with GETC
 or grade 9 and enter a technical education program at N1, proceeding to N2.
-*/ 
+
+Zero observation's years of education exceed their age.
+*/
 
 	gen byte educy=Q17EDUCATION if inrange(Q17EDUCATION,0,12)
 	replace educy=Q17EDUCATION-3 if inrange(Q17EDUCATION,13,18)
@@ -387,6 +391,7 @@ or grade 9 and enter a technical education program at N1, proceeding to N2.
 	replace educy=. if inlist(Q17EDUCATION,29,30)
 	replace educy=0 if Q17EDUCATION==98
 	replace educy=. if age<ed_mod_age & age!=.
+	replace educy=age if educy>age & !mi(educy) & !mi(age)
 	label var educy "Years of education"
 
 
@@ -411,7 +416,7 @@ or grade 9 and enter a technical education program at N1, proceeding to N2.
 
 ** EDUCATION LEVEL 3
 	gen byte edulevel3=edulevel1
-	recode edulevel3 3=2 4 5=3 6 7=4 8=.
+	recode edulevel3 3 4=2 5=3 6 7=4 8=.
 	replace edulevel3=. if age<ed_mod_age & age!=.
 	label var edulevel3 "Level of education 3"
 	la de lbledulevel3 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
@@ -424,8 +429,8 @@ or grade 9 and enter a technical education program at N1, proceeding to N2.
 For those who are currently attending educational institution or variable "atschool" equals 1,
 and have no education (no schooling) or "edulevel1" equals "edulevel2" equals "edulevel3" equals 1,
 they are probably in creche or day care. Note that "Educational institution" covers a wide range of places
-and ways of education. 
-*/ 
+and ways of education.
+*/
 
 	gen byte everattend=Education_Status
 	recode everattend 1=0 2/7=1
@@ -488,8 +493,8 @@ and ways of education.
 ** NUMBER OF TOTAL JOBS
 
 /*
-We do not know the number of total jobs a person has from the question 
-"In the last week did you have more than one job/business?". Hence observations 
+We do not know the number of total jobs a person has from the question
+"In the last week did you have more than one job/business?". Hence observations
 whose answers to this question are "Yes" were coded as missing values.
 */
 
@@ -562,7 +567,7 @@ whose answers to this question are "Yes" were coded as missing values.
 
 
 ** OCCUPATION CLASSIFICATION
-	recode occup 10=9 
+	recode occup 10=9
 	replace occup=. if lstatus!=1
 	label var occup "1 digit occupational classification"
 	la de lbloccup 1 "Senior officials" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
@@ -587,7 +592,7 @@ whose answers to this question are "Yes" were coded as missing values.
 	label var firmsize_u "Firm size (upper bracket)"
 
 
-** HOURS WORKED LAST WEEK 
+** HOURS WORKED LAST WEEK
 /*
 Variable "Q418HRSWRK" is working hours for people who only have one job and it is missing for people who have more than one job.
 
@@ -598,7 +603,7 @@ Variable "Hrswrk" is equal to "Q418HRSWRK" for people who have one job and it is
 	gen first=1 if (primary==Q420FIRSTHRSWRK & primary !=.) | (primary==Q418HRSWRK & primary !=.)
 	replace first=0 if primary!=. & primary==Q420SECONDHRSWRK
 
-The main job was decided based on time spent. 
+The main job was decided based on time spent.
 0.12% of people who have jobs spend more time on their second job.
 
       first |      Freq.     Percent        Cum.
@@ -619,7 +624,7 @@ The main job was decided based on time spent.
 ** WAGES
 	gen double wage=Q54a_monthly
 	replace wage=Q57a_monthly if wage==.
-	replace wage=. if lstatus!=1 
+	replace wage=. if lstatus!=1
 	replace wage=0 if empstat==2
 	label var wage "Last wage payment"
 
@@ -782,12 +787,12 @@ The main job was decided based on time spent.
 ** INCOME PER CAPITA
 	gen double pci=.
 	bys idh: egen hh_income=sum(wage)
-	replace pci=hh_income/hhsize	
+	replace pci=hh_income/hhsize
 	label var pci "Monthly income per capita"
 
-	
+
 ** DECILES OF PER CAPITA INCOME
-	xtile pci_d=pci [w=wgt], nq(10) 
+	xtile pci_d=pci [w=wgt], nq(10)
 	label var pci_d "Income per capita deciles"
 
 
@@ -796,9 +801,9 @@ The main job was decided based on time spent.
 	label var pcc "Monthly consumption per capita"
 
 	gen pcc_d=.
-	
+
 ** DECILES OF PER CAPITA CONSUMPTION
-	*xtile pcc_d=pcc [w=wgt], nq(10) 
+	*xtile pcc_d=pcc [w=wgt], nq(10)
 	label var pcc_d "Consumption per capita deciles"
 
 
