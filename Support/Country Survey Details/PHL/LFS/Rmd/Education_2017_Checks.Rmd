@@ -1,0 +1,80 @@
+---
+title: "2017 Education Level Checks"
+author: "Tom"
+date: "6/29/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+GLD <- "Y:/GLD-Harmonization/551206_TM/PHL"
+
+```
+
+
+```{css, echo=FALSE}
+pre {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+pre[class] {
+  max-height: 300px;
+}
+```
+A document to quickly review the distribution of 2017 Education level data compared to 2018 
+
+# Intro
+The 2017 data for highest level acheived has incomplete labels, but the distribution and value label scheme is very similar to that of 2018. This document will produce a quick distribution between the two years to assess if the labels for 2018 can be put on to 2017 with reasonable validity.
+
+## Data import and wrangling
+
+```{r, echo=FALSE}
+#import 2017
+lfs2017jan <- readRDS(file.path(GLD, "PHL_2017_LFS/PHL_2017_LFS_v01_M/Data/R/LFS JAN2017.Rds")) %>% 
+  select(pufsvymo, pufc07_grade)
+lfs2017apr <- readRDS(file.path(GLD, "PHL_2017_LFS/PHL_2017_LFS_v01_M/Data/R/LFS APR2017.Rds")) %>% 
+  select(lmonth, lc07_grade) %>%
+  rename(pufsvymo = lmonth, pufc07_grade = lc07_grade)
+lfs2017jul <- readRDS(file.path(GLD, "PHL_2017_LFS/PHL_2017_LFS_v01_M/Data/R/LFS JUL2017.Rds")) %>% 
+  select(pufsvymo, pufc07_grade)
+lfs2017oct <- readRDS(file.path(GLD, "PHL_2017_LFS/PHL_2017_LFS_v01_M/Data/R/LFS OCT2017.Rds")) %>% 
+  select(pufsvymo, pufc07_grade)
+
+# import 2018
+lfs2018jan <- readRDS(file.path(GLD, "PHL_2018_LFS/PHL_2018_LFS_v01_M/Data/R/LFS JAN2018.Rds")) %>% 
+  select(pufsvymo, pufc07_grade)
+lfs2018apr <- readRDS(file.path(GLD, "PHL_2018_LFS/PHL_2018_LFS_v01_M/Data/R/LFS APR2018.Rds")) %>% 
+  select(pufsvymo, pufc07_grade)
+lfs2018jul <- readRDS(file.path(GLD, "PHL_2018_LFS/PHL_2018_LFS_v01_M/Data/R/LFS JUL2018.Rds")) %>% 
+  select(pufsvymo, pufc07_grade)
+lfs2018oct <- readRDS(file.path(GLD, "PHL_2018_LFS/PHL_2018_LFS_v01_M/Data/R/LFS OCT2018.Rds")) %>% 
+  select(pufsvymo, pufc07_grade)
+
+# bind rows 
+lfs2017 <- bind_rows(lfs2017jan, lfs2017apr, lfs2017jul, lfs2017oct) %>%
+  mutate(year = 2017)
+lfs2018 <- bind_rows(lfs2018jan, lfs2018apr, lfs2018jul, lfs2018oct) %>%
+  mutate(year = 2018)
+
+lfs <- bind_rows(lfs2017, lfs2018)
+
+```
+
+
+## Plot 
+
+The shapes of the two year distributions provide some stylized support for using the 2018 value labels for 2017.
+
+```{r}
+
+hist <- ggplot(lfs, aes(pufc07_grade), color = year) +
+  geom_freqpoly(stat = "bin") +
+  scale_x_continuous(n.breaks = 10) +
+  facet_grid(rows = vars(year), labeller = label_both) + 
+  theme_minimal() +
+  labs(x = "Edu Value", y = "Count")
+
+hist
+```
