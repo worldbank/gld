@@ -52,12 +52,13 @@
 ###  Section ii)    ###
 #######################
 
-# For Support context information, allow Markdown, xlsx, and docx, R and Stata functions
+# For Support context information, allow Markdown, xlsx, and docx, R and Stata code, and Stata files.
 !Support/**/*.md
 !Support/**/*.xlsx
 !Support/**/*.docx
 !Support/**/*.R
 !Support/**/*.do
+!Support/**/*.dta
 
 # Allow also PDF andimages if needed
 !/Support/**/*.pdf
@@ -85,10 +86,7 @@
 !docs/**/*.svg
 
 # HTML files
-!/**/*.html
-
-# HTML files
-!/**/*.html
+!docs/**/*.html
 
 # .yml and .yaml files
 # These files sometimes have credentials, so only unignore these lines by removing
