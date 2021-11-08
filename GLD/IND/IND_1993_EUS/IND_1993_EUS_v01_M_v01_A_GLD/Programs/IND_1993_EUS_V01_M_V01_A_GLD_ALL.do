@@ -328,7 +328,6 @@ merge 1:1 Person_key using "`path_in'\Block-6-Unemployed-Persons-Rcds", assert(m
 
 
 *<_subnatid1_>
-
 	destring State, gen(subnatid1)
 	label de lblsubnatid1 2 "2 - Andhra Pradesh" 3 "3 - Arunachal Pradesh" 4 "4 - Assam" 5 "5 - Bihar" 6 "6 - Goa" 7 "7 - Gujarat" 8 "8 - Haryana" 9 "9 - Himachal Pradesh" 10 "10 - Jammu & Kashmir" 11 "11 - Karnataka" 12 "12 - Kerala" 13 "13 - Madhya Pradesh" 14 "14 - Maharashtra" 15 "15 - Manipur" 16 "16 - Meghalaya" 17 "17 - Mizoram" 18 "18 - Nagaland" 19 "19 - Orissa" 20 "20 - Punjab" 21 "21 - Rajasthan" 22 "22 - Sikkim" 23 "23 - Tamil Nadu" 24 "24 - Tripura" 25 "25 - Uttar Pradesh" 26 "26 - West Bengal" 27 "27 - A & N Islands" 28 "28 - Chandigarh" 29 "29 - Dadra & Nagar Haveli" 30 "30 - Daman & Diu" 31 "31 - Delhi" 32 "32 - Lakshdweep" 33 "33 - Pondicherry"
 	label values subnatid1 lblsubnatid1
@@ -363,6 +362,9 @@ merge 1:1 Person_key using "`path_in'\Block-6-Unemployed-Persons-Rcds", assert(m
 
 </_subnatid1_prev> */
 	gen subnatid1_prev = .
+	replace subnatid1_prev = 6 if subnatid1 == 30
+	label de lblsubnatid1_prev 6 "6 - Goa" 
+	label values subnatid1_prev lblsubnatid1_prev
 	label var subnatid1_prev "Classification used for subnatid1 from previous survey"
 *</_subnatid1_prev_>
 
