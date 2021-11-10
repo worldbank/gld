@@ -352,13 +352,15 @@ replace s7=. if s7==3 & s11==3 & s4==1
 	
 	gen helper_age=.
 	replace helper_age=1 if s4==1 & s12==.
-	replace helper_age=2 if s4==1 & s12!=.
+	replace helper_age=2 if s4==1 & s12==2
+	replace helper_age=3 if s4==1 & s12==1
 	* since we have ranges of age 
 	*we need to create an indicator using 
 	*the media for that age groups
 	gen age=.
-	replace age=5 if helper_age==1
-	replace age=10 if helper_age==2
+	replace age=0 if helper_age==1
+	replace age=6 if helper_age==2
+	replace age=11 if helper_age==3
 	replace age=15 if s4==2
 	replace age=20 if s4==3
 	replace age=25 if s4==4
@@ -750,21 +752,23 @@ foreach v of local ed_var {
 
 *<_industry_orig_>
 	gen industry_orig = s16kod
-	replace industry_orig=. if lstatus!=1
+	tostring industry_orig, replace
+	replace industry_orig="" if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
 
 *<_industrycat_isic_>
 *1 digit isic code
-	gen industrycat_isic=s16kod
-	tostring industrycat_isic, replace
+	gen str1 industrycat_isic= string(s16kod)
 	replace industrycat_isic="" if industrycat_isic=="."
+	replace industrycat_isic="" if lstatus!=1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
 
 *<_industrycat10_>
+*No correspondance table between rev3 and rev 4 https://unstats.un.org/unsd/classifications/Econ/isic 
 	gen industrycat10=.
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
@@ -773,6 +777,7 @@ foreach v of local ed_var {
 
 
 *<_industrycat4_>
+*No correspondance table between rev3 and rev 4 https://unstats.un.org/unsd/classifications/Econ/isic 
 	gen byte industrycat4 = industrycat10
 	recode industrycat4 (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
 	label var industrycat4 "1 digit industry classification (Broad Economic Activities), primary job 7 day recall"
@@ -782,7 +787,7 @@ foreach v of local ed_var {
 
 
 *<_occup_orig_>
-	gen occup_orig = s22kod
+	gen str1 occup_orig = string(s22kod)
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
@@ -823,7 +828,7 @@ foreach v of local ed_var {
 
 
 *<_unitwage_>
-	gen byte unitwage = 5
+	gen byte unitwage = .
 	replace unitwage = . if lstatus != 1
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
@@ -839,6 +844,7 @@ foreach v of local ed_var {
 
 </_whours_note> */
 	gen whours = s28a
+	replace whours=. if lstatus!=1
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -877,6 +883,7 @@ foreach v of local ed_var {
 *<_socialsec_>
 	gen byte socialsec = s25
 	recode socialsec (2=0)
+	replace socialsec=. if lstatus!=1
 	label var socialsec "Employment has social security insurance primary job 7 day recall"
 	la de lblsocialsec 1 "With social security" 0 "Without social secturity"
 	label values socialsec lblsocialsec
