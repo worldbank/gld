@@ -155,17 +155,18 @@ ILO webpage says that the version used was isco 88 note that for the bank TUIK s
 
 *<_hhid_>
 	
-	sort formno, stable
-    gen hhid=formno
+	tostring formno, gen(hhid) format(%05.0f)
 	label var hhid "Household ID"
 *</_hhid_>
 
 
 *<_pid_>
 	
-	egen pid=concat(hhid s1 s3 s4 s7)
-	
-	duplicates list pid hhid
+	tostring s1, gen(s1_helper) format(%02.0f)
+	tostring s3, gen(s3_helper) format(%02.0f)
+	tostring s4, gen(s4_helper) format(%02.0f)
+	tostring s7, gen(s7_helper) format(%02.0f)
+	egen pid=concat(hhid s1_helper s3_helper s4_helper s7_helper)
 	*duplicates drop pid, force
 	label var pid "Individual ID"
 
