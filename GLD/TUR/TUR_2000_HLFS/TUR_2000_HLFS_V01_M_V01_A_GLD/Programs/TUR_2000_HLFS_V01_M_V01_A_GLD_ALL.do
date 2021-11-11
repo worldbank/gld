@@ -938,13 +938,16 @@ foreach v of local ed_var {
 
 *<_industry_orig_2_>
 	gen industry_orig_2 = s26kod
-	replace industry_orig_2=. if lstatus!=1
+	tostring industry_orig, replace
+	replace industry_orig="" if lstatus!=1
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 
 
 *<_industrycat_isic_2_>
-	gen industrycat_isic_2 = .
+	gen str1 industrycat_isic_2= string(s26kod)
+	replace industrycat_isic_2="" if industrycat_isic_2=="."
+	replace industrycat_isic_2="" if lstatus!=1
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
@@ -1003,6 +1006,7 @@ foreach v of local ed_var {
 
 *<_whours_2_>
 	gen whours_2 = s28b
+	replace whours_2=. if lstatus!=1
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 

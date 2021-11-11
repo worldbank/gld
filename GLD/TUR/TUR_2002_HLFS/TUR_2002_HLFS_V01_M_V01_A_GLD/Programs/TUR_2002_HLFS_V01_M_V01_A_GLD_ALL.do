@@ -17,8 +17,8 @@
 <_Data collection to_>			[MM/YYYY] </_Data collection to_>
 <_Source of dataset_> 			Shared by Turkey Country Office, shareable within World Bank, not to
 								be shared outside. </_Source of dataset_>
-<_Sample size (HH)_> 			 </_Sample size (HH)_>
-<_Sample size (IND)_> 			299695</_Sample size (IND)_>
+<_Sample size (HH)_> 			78,453 </_Sample size (HH)_>
+<_Sample size (IND)_> 			300,689</_Sample size (IND)_>
 <_Sampling method_> 			Two-stage stratified cluster sampling method </_Sampling method_>
 <_Geographic coverage_> 		Urban/Rural , national level
 <_Currency_> 					Turkish Lira </_Currency_>
@@ -84,8 +84,11 @@ use "`path_in'\LFS2002-lab.dta"
 	label var survey "Survey type"
 *</_survey_>
 
-
 *<_icls_v_>
+/*<_icls_v_note>
+https://www.google.com.pe/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&ved=2ahUKEwjE5J29y__zAhULs5UCHQcRBpwQFnoECAYQAQ&url=https%3A%2F%2Funstats.un.org%2Funsd%2Fnationalaccount%2Fworkshops%2F2013%2Fankara%2FA-115.ppt&usg=AOvVaw3T_fzx1C9ZUpp1Rb1FQgxi
+The link above goes to a presentation from TUIK in which they explain that since 1988 ICLS-13 has been applied to HLFS.
+</_icls_v_note>*/
 	gen icls_v = "ICLS-13"
 	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
@@ -97,6 +100,9 @@ use "`path_in'\LFS2002-lab.dta"
 
 
 *<_isco_version_>
+/*<_isco_version_note>
+ILO webpage says that the version used was isco 88 note that for the bank TUIK shared isco 68 data.
+</_isco_version_note<*/
 	gen isco_version = "isco_1988"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
@@ -147,15 +153,17 @@ use "`path_in'\LFS2002-lab.dta"
 
 
 *<_hhid_>
-	tostring formno, replace
-	gen formno_str=substr("0000",1,5 - length(formno))+formno
-	gen hhid=formno_str
+	sort formno, stable
+    gen hhid=formno
 	label var hhid "Household ID"
 *</_hhid_>
 
 
 *<_pid_>
-	egen pid = concat(hhid s1)
+	egen pid=concat(hhid s1 s3 s4 s7)
+	
+	duplicates list pid hhid
+	*duplicates drop pid, force
 	label var pid "Individual ID"
 
 *</_pid_>
@@ -296,49 +304,82 @@ use "`path_in'\LFS2002-lab.dta"
 {
 
 *<_hsize_>
-/* <_hsize_note>
-	Released data does not contain those under 15 so it is difficult to estimate HH size. However, looking at
-	the data, it is clear that HH size (hane_buyukluk) does count all in the household including those with
-	relationship 11 to the HH head (yakinlik), meaning "Housekeepers staying at home", they are taken out.
-</_hsize_note> */
-
-	bysort hhid: generate hsize = _N
+	sort hhid pid
+	by hhid: generate hsize=_N
+	*bysort hhid: generate hsize = _N
+	*s7 = 8 represent non relatives , I am taking them out. 663 observations
+	replace hsize=. if s7==8
 	label var hsize "Household size"
 *</_hsize_>
 
 
 *<_age_>
 
-	tab s4 s12, mi
-	*count the amount of people between 0-14 years
-	di 82902/15
-	*multiply by 3 representing 12, 13, 14 years
-	di 5526.8 *3
-	*average between 12, 13,14
-	di (12+13+14)/3
-	*the labor age cutoff in this survey is 12
-	*then we need to create age groups such that
-	*a min labor age can be applied
+		*spouse cannot be under 16 years old based on https://www.unicef.org/turkey/en/child-marriage#:~:text=The%20legal%20age%20of%20marriage,circumstances%20and%20on%20vital%20grounds'.
+
+count if s7==2 & s4==1
+replace s7=. if s7==2 & s4==1  
+
+*count if s7==2 & s4==2 
+*this is treaky bc the age for marrige is 18 and the age bracket here is 15-19, should I still consider it?
+
+*hhead in the second bracket of age also treaky
+*count if s7==1 & s4==2
+
+*how come some old folks are children or grand children
+
+count if s7==3 & s4==11
+count if s7==3 & s4==12
+count if s7==5 & s4==12
+
+replace  s7=. if s7==3 & s4==11
+replace s7=. if s7==3 & s4==12
+replace s7=. if s7==5 & s4==12
+
+*widow 15-19 
+count if s11==4 & s4==2
+replace s11=. if s11==4 & s4==2
+*divorced 0-14 
+count if s11==3 & s4==1
+replace s11=. if s11==3 & s4==1
+
+*married 0-14
+count if s11==2 & s4==1
+replace s11=.  if s11==2 & s4==1
+
+*single but says has spouse in s7
+count if s7==2 & s11==1
+replace s7=. if s7==2 & s11==1
+
+*daughter or son in law but single in s7, widow?
+count if s7==4 & s11==1
+replace s7=. if s7==4 & s11==1
+
+*children underaged divorced
+count if s7==3 & s11==3 & s4==1
+replace s7=. if s7==3 & s11==3 & s4==1
+
+	
 	gen helper_age=.
 	replace helper_age=1 if s4==1 & s12==.
-	replace helper_age=2 if s4==1 & s12!=.
-	* since we have ranges of age
-	*we need to create an indicator using
-	*the media for that age groups
+	replace helper_age=2 if s4==1 & s12==2
+	replace helper_age=3 if s4==1 & s12==1
+	* ages are separated by intervals of 5 years 
 	gen age=.
-	replace age=4 if helper_age==1
-	replace age=12 if helper_age==2
-	replace age=17 if s4==2
-	replace age=22 if s4==3
-	replace age=27 if s4==4
-	replace age=32 if s4==5
-	replace age=37 if s4==6
-	replace age=42 if s4==7
-	replace age=47 if s4==8
-	replace age=52 if s4==9
-	replace age=57 if s4==10
-	replace age=62 if s4==11
-	replace age=81 if s4==12
+	replace age=0 if helper_age==1
+	replace age=6 if helper_age==2
+	replace age=11 if helper_age==3
+	replace age=15 if s4==2
+	replace age=20 if s4==3
+	replace age=25 if s4==4
+	replace age=30 if s4==5
+	replace age=35 if s4==6
+	replace age=40 if s4==7
+	replace age=45 if s4==8
+	replace age=50 if s4==9
+	replace age=55 if s4==10
+	replace age=60 if s4==11
+	replace age=65 if s4==12
 	label var age "Individual age"
 
 
@@ -635,7 +676,7 @@ foreach v of local ed_var {
 
 
 *<_minlaborage_>
-	gen byte minlaborage = 12
+	gen byte minlaborage = 15
 	label var minlaborage "Labor module application age"
 *</_minlaborage_>
 
@@ -720,21 +761,23 @@ foreach v of local ed_var {
 
 *<_industry_orig_>
 	gen industry_orig = s16kod
-	replace industry_orig=. if lstatus!=1
+	tostring industry_orig, replace
+	replace industry_orig="" if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
 
 *<_industrycat_isic_>
-*1 digit isic code
-	gen industrycat_isic=s16kod
-	tostring industrycat_isic, replace
+	*1 digit isic code
+	gen str1 industrycat_isic= string(s16kod)
 	replace industrycat_isic="" if industrycat_isic=="."
+	replace industrycat_isic="" if lstatus!=1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
 
 *<_industrycat10_>
+*No correspondance table between rev3 and rev 4 https://unstats.un.org/unsd/classifications/Econ/isic 
 	gen industrycat10=.
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
@@ -743,6 +786,7 @@ foreach v of local ed_var {
 
 
 *<_industrycat4_>
+*No correspondance table between rev3 and rev 4 https://unstats.un.org/unsd/classifications/Econ/isic 
 	gen byte industrycat4 = industrycat10
 	recode industrycat4 (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
 	label var industrycat4 "1 digit industry classification (Broad Economic Activities), primary job 7 day recall"
@@ -752,55 +796,31 @@ foreach v of local ed_var {
 
 
 *<_occup_orig_>
-	gen occup_orig = s22kod
+	gen str1 occup_orig = string(s22kod)
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
 
 *<_occup_isco_>
-	gen occup_isco=.
+	gen occup_isco=s22kod
+	replace occup_isco=. if lstatus!=1
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
 
 *<_occup_skill_>
-
-/* Broad skill level
-ISCO-88
-Skill levels 3 and 4 (high)
-1. Legislators, senior officials and managers
-2. Professionals
-3. Technicians and associate professionals
-
-Skill level 2 (medium)
-4. Clerks
-5. Service workers and shop and market sales workers
-6. Skilled agricultural and fishery workers
-7. Craft and related trades workers
-8. Plant and machine operators and assemblers
-
-Skill level 1 (low)
-9. Elementary occupations
-
-Armed forces
-0. Armed forces
-Not elsewhere classified
-X. Not elsewhere classified
-
-*/
-
-	gen occup_skill = .
-	replace occup_skill=1 if s22kod==9
-	replace occup_skill=2 if inrange(s22kod,4,8)
-	replace occup_skill=3 if inrange(s22kod,1,3)
+	gen occup_skill = occup_isco
+	recode occup_skill 1/3=3 4/8=2 9=1 0=4 99=.
+	replace occup_skill=. if lstatus!=1
 	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"  4 "Armed Forces"
 	label values occup_skill lblskill
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
+
 *</_occup_skill_>
 
 
 *<_occup_>
-	gen byte occup = .
+	gen byte occup = occup_isco
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup
@@ -808,9 +828,7 @@ X. Not elsewhere classified
 
 
 *<_wage_no_compen_>
-/* <_wage_no_compen_note>
 
-</_wage_no_compen_note> */
 	gen double wage_no_compen =s32c
 	replace wage_no_compen=. if lstatus!=1
 	replace wage_no_compen=. if empstat!=1
@@ -836,6 +854,7 @@ X. Not elsewhere classified
 
 </_whours_note> */
 	gen whours = s28a
+	replace whours=. if lstatus!=1
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -890,7 +909,7 @@ X. Not elsewhere classified
 
 *<_firmsize_l_>
 	gen firmsize_l=s21
-	recode firmsize_l (3=.) (4=.)
+	recode firmsize_l 2=10 3=25 4=50
 	replace firmsize_l=. if lstatus!=1
 	label var firmsize_l "Firm size (lower bracket) primary job 7 day recall"
 *</_firmsize_l_>
@@ -898,7 +917,7 @@ X. Not elsewhere classified
 
 *<_firmsize_u_>
 	gen firmsize_u=s21
-	recode firmsize_u (1=.) (2=.)
+	recode firmsize_u 1=9 2=24 3=49 4=50 
 	replace firmsize_u=. if lstatus!=1
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>
@@ -927,13 +946,16 @@ X. Not elsewhere classified
 
 *<_industry_orig_2_>
 	gen industry_orig_2 = s26kod
-	replace industry_orig_2=. if lstatus!=1
+	tostring industry_orig, replace
+	replace industry_orig="" if lstatus!=1
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 
 
 *<_industrycat_isic_2_>
-	gen industrycat_isic_2 = .
+	gen str1 industrycat_isic_2= string(s26kod)
+	replace industrycat_isic_2="" if industrycat_isic_2=="."
+	replace industrycat_isic_2="" if lstatus!=1
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
@@ -992,6 +1014,7 @@ X. Not elsewhere classified
 
 *<_whours_2_>
 	gen whours_2 = s28b
+	replace whours_2=. if lstatus!=1
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 

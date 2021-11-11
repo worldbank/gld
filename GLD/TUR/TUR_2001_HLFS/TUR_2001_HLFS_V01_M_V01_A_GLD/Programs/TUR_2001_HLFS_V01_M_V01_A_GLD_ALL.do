@@ -104,7 +104,7 @@ The link above goes to a presentation from TUIK in which they explain that since
 /*<_isco_version_note>
 ILO webpage says that the version used was isco 88 note that for the bank TUIK shared isco 68 data.
 </_isco_version_note<*/
-	gen isco_version = "isco_1968"
+	gen isco_version = "isco_1988"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
@@ -354,9 +354,7 @@ replace s7=. if s7==3 & s11==3 & s4==1
 	replace helper_age=1 if s4==1 & s12==.
 	replace helper_age=2 if s4==1 & s12==2
 	replace helper_age=3 if s4==1 & s12==1
-	* since we have ranges of age 
-	*we need to create an indicator using 
-	*the media for that age groups
+* ages are separated by intervals of 5 years 
 	gen age=.
 	replace age=0 if helper_age==1
 	replace age=6 if helper_age==2
@@ -939,13 +937,16 @@ foreach v of local ed_var {
 
 *<_industry_orig_2_>
 	gen industry_orig_2 = s26kod
-	replace industry_orig_2=. if lstatus!=1
+	tostring industry_orig, replace
+	replace industry_orig="" if lstatus!=1
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 
 
 *<_industrycat_isic_2_>
-	gen industrycat_isic_2 = .
+	gen str1 industrycat_isic_2= string(s26kod)
+	replace industrycat_isic_2="" if industrycat_isic_2=="."
+	replace industrycat_isic_2="" if lstatus!=1
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
@@ -1004,6 +1005,7 @@ foreach v of local ed_var {
 
 *<_whours_2_>
 	gen whours_2 = s28b
+	replace whours_2=. if lstatus!=1
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 
