@@ -901,7 +901,7 @@ foreach v of local ed_var {
 
 *<_firmsize_l_>
 	gen firmsize_l=s21
-	recode firmsize_l 2=10 3=25 4=50
+	recode firmsize_l 1=0 2=10 3=25 4=50
 	replace firmsize_l=. if lstatus!=1
 	label var firmsize_l "Firm size (lower bracket) primary job 7 day recall"
 *</_firmsize_l_>
@@ -909,7 +909,8 @@ foreach v of local ed_var {
 
 *<_firmsize_u_>
 	gen firmsize_u=s21
-	recode firmsize_u 1=9 2=24 3=49 4=50 
+	recode firmsize_u 1=9 2=24 3=49  
+	*ask about wether this one should be missing bc 50+ 4 is the same in both.
 	replace firmsize_u=. if lstatus!=1
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>
