@@ -272,7 +272,6 @@ use "`path_in'\LFS2019_raw.dta"
 	replace subnatid2 = 24 if ibbs_2 == "TRC1"
 	replace subnatid2 = 25 if ibbs_2 == "TRC2"
 	replace subnatid2 = 26 if ibbs_2 == "TRC3"
-	label var subnatid2 "NUTS-2 Region"
 	label define lblsubnatid2  1 "1 - Istanbul" 2 "2 - Edirne, Tekirdağ, Kırklareli" 3 "3 - Balıkesir, Çanakkale" 4 "4 - İzmir" 5 "5 - Denizli, Aydın, Muğla" 6 "6 - Manisa, Afyonkarahisar, Kütahya, Uşak" 7 "7 - Bursa, Eskişehir, Bilecik" 8 "8 - Kocaeli, Sakarya, Düzce, Bolu, Yalova" 9 "9 - Ankara" 10 "10 - Konya, Karaman" 11 "11 - Antalya, Isparta, Burdur" 12 "12 - Adana, Mersin" 13 "13 - Hatay, Kahramanmaraş, Osmaniye" 14 "14 - Nevşehir, Aksaray, Niğde, Kırıkkale, Kırşehir" 15 "15 - Kayseri, Sivas, Yozgat" 16 "16 - Zonguldak, Karabük, Bartın" 17 "17 - Kastamonu, Çankırı, Sinop" 18 "18 - Samsun, Tokat, Çorum, Amasya" 19 "19 - Trabzon, Ordu, Giresun, Rize, Artvin, Gümüşhane" 20 "20 - Erzurum, Erzincan, Bayburt" 21 "21 - Kars, Ağrı, Iğdır, Ardahan" 22 "22 - Malatya, Elazığ, Bingöl, Tunceli" 23 "23 - Van, Muş, Bitlis, Hakkari" 24 "24 - Gaziantep, Adıyaman, Kilis" 25 "25 - Diyarbakır, Şanlıurfa" 26 "26 - Siirt, Mardin, Batman, Şırnak"
 	label values subnatid2 lblsubnatid2
 	label var subnatid2 "Subnational ID at NUTS 2 Level"
@@ -974,6 +973,8 @@ Non-paid employee |    21,009          0          0 |    21,009
 
 *<_industry_orig_2_>
 	gen industry_orig_2 = .
+	tostring industry_orig_2, replace
+	replace industry_orig_2="" if lstatus!=1
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 

@@ -304,7 +304,7 @@ tostring formno, gen(hhid) format(%05.0f)
 	by hhid: generate hsize=_N
 	*bysort hhid: generate hsize = _N
 	*s7 = 8 represent non relatives , I am taking them out. 663 observations
-	replace hsize=. if s7==8
+	replace hsize=. if s11==8
 	label var hsize "Household size"
 *</_hsize_>
 
@@ -848,15 +848,15 @@ foreach v of local ed_var {
 /* <_wage_no_compen_note>
 
 </_wage_no_compen_note> */
-	gen double wage_no_compen =.
-	*replace wage_no_compen=. if lstatus!=1
-	*replace wage_no_compen=. if wage_no_compen == 0
+	gen double wage_no_compen =s69
+	replace wage_no_compen=. if lstatus!=1
+	replace wage_no_compen=. if wage_no_compen == 0
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
 
 *<_unitwage_>
-	gen byte unitwage = .
+	gen byte unitwage = 5
 	replace unitwage = . if lstatus != 1
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"

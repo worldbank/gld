@@ -965,6 +965,8 @@ Non-paid employee |    21,009          0          0 |    21,009
 
 *<_industry_orig_2_>
 	gen industry_orig_2 = .
+	tostring industry_orig_2, replace
+	replace industry_orig_2="" if lstatus!=1
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 

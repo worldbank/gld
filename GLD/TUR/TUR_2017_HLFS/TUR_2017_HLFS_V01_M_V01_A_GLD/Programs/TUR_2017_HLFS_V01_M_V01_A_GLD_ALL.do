@@ -147,13 +147,18 @@ use "`path_in'\LFS2017.dta"
 
 
 *<_hhid_>
-	tostring formno, gen(hhid)
+	tostring formno, gen(hhid) format(%05.0f)
 	label var hhid "Household ID"
 *</_hhid_>
 
 
 *<_pid_>
-	egen pid = concat(hhid s1)
+	tostring s1, gen(s1_helper) format(%02.0f)
+	tostring s3, gen(s3_helper) format(%02.0f)
+	tostring s6, gen(s6_helper) format(%02.0f)
+	tostring s11, gen(s11_helper) format(%02.0f)
+	egen pid=concat(hhid s1_helper s3_helper s6_helper s11_helper)
+	*duplicates drop pid, force
 	label var pid "Individual ID"
 
 *</_pid_>
@@ -268,8 +273,8 @@ use "`path_in'\LFS2017.dta"
 
 *<_subnatid3_>
 	gen byte subnatid3 = .
-	label de lblsubnatid3 1 "1 - Name"
-	label values subnatid3 lblsubnatid3
+	*label de lblsubnatid3 1 "1 - Name"
+	*label values subnatid3 lblsubnatid3
 	label var subnatid3 "Subnational ID at Third Administrative Level"
 *</_subnatid3_>
 
@@ -327,17 +332,55 @@ use "`path_in'\LFS2017.dta"
 {
 
 *<_hsize_>
-/* <_hsize_note>
-	Released data does not contain those under 15 so it is difficult to estimate HH size. However, looking at
-	the data, it is clear that HH size (hane_buyukluk) does count all in the household including those with
-	relationship 11 to the HH head (yakinlik), meaning "Housekeepers staying at home", they are taken out.
-</_hsize_note> */
 	bysort hhid: gen hsize=hh_size if s11<11
 	label var hsize "Household size"
 *</_hsize_>
 
 
 *<_age_>
+*spouse cannot be under 16 years old based on https://www.unicef.org/turkey/en/child-marriage#:~:text=The%20legal%20age%20of%20marriage,circumstances%20and%20on%20vital%20grounds'.
+
+count if s11==2 & s6==1
+replace s11=. if s11==2 & s6==1
+
+*count if s11==2 & s6==2
+*this is treaky bc the age for marrige is 18 and the age bracket here is 15-19, should I still consider it?
+
+*hhead in the second bracket of age also treaky
+*count if s11==1 & s6==2
+
+*how come some old folks are children or grand children
+
+count if s11==3 & s6==11
+count if s11==3 & s6==12
+count if s11==5 & s6==12
+
+replace  s11=. if s11==3 & s6==11
+replace s11=. if s11==3 & s6==12
+replace s11=. if s11==5 & s6==12
+
+*widow 15-19
+count if s24==4 & s6==2
+replace s24=. if s24==4 & s6==2
+*divorced 0-14
+count if s24==3 & s6==1
+replace s24=. if s24==3 & s6==1
+
+*married 0-14
+count if s24==2 & s6==1
+replace s24=.  if s24==2 & s6==1
+
+*single but says has spouse in s11
+count if s11==2 & s24==1
+replace s11=. if s11==2 & s24==1
+
+*daughter or son in law but single in s11, widow?
+count if s11==4 & s24==1
+replace s11=. if s11==4 & s24==1
+
+*children underaged divorced
+count if s11==3 & s24==3 & s6==1
+replace s11=. if s11==3 & s24==3 & s6==1
 	gen age = s6
 	label var age "Individual age"
 *</_age_>
@@ -726,6 +769,8 @@ foreach v of local ed_var {
 
 *<_industry_orig_>
 	gen industry_orig = s33kod
+	tostring industry_orig, replace
+	replace industry_orig="" if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
@@ -791,6 +836,7 @@ foreach v of local ed_var {
 	replace occup_skill = 2 if inrange(helper,4,8)
 	replace occup_skill = 3 if inrange(helper,1,3)
 	drop helper
+    replace occup_skill=. if lstatus!=1
 	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
 	label values occup_skill lblskill
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
@@ -814,7 +860,7 @@ foreach v of local ed_var {
 
 	No way to take out compensation.
 
-	The questions is only asked to paid employees only. Looking at the below crosstab
+	The questions is only asked to paid employees . Looking at the below crosstab
 
                   |               test
 Employment status | Wage Miss   Wage = 0   Wage > 0 |     Total
@@ -867,6 +913,7 @@ Non-paid employee |    21,009          0          0 |    21,009
 	* expect 57 replacements
 	replace whours = s56b_top if whours == 0
 	* expect 7 replacements
+	replace whours=. if lstatus!=1
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -921,7 +968,7 @@ Non-paid employee |    21,009          0          0 |    21,009
 
 *<_firmsize_l_>
 	gen firmsize_l=s37a
-	recode firmsize_l (1=.) (2=11) (3=20) (4=50) (5=11)
+	recode firmsize_l  1=0 2=10 3=25 4=50 5=250 6=500
 	replace firmsize_l=. if lstatus!=1
 	label var firmsize_l "Firm size (lower bracket) primary job 7 day recall"
 *</_firmsize_l_>
@@ -929,7 +976,7 @@ Non-paid employee |    21,009          0          0 |    21,009
 
 *<_firmsize_u_>
 	gen firmsize_u=s37a
-	recode firmsize_u (1=10) (2=19) (3=49) (4=.) (5=.)
+	recode firmsize_u 1=9 2=24 3=49 4=249 5=499
 	replace firmsize_u=. if lstatus!=1
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>
@@ -958,7 +1005,9 @@ Non-paid employee |    21,009          0          0 |    21,009
 
 
 *<_industry_orig_2_>
-	gen industry_orig_2 = .
+	gen industry_orig_2 = s53kod
+	tostring industry_orig_2, replace
+	replace industry_orig_2="" if lstatus!=1
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 
@@ -970,7 +1019,7 @@ Non-paid employee |    21,009          0          0 |    21,009
 
 
 *<_industrycat10_2_>
-	gen byte industrycat10_2 = .
+	gen byte industrycat10_2 = s53kod
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
 *</_industrycat10_2_>
@@ -1024,6 +1073,7 @@ Non-paid employee |    21,009          0          0 |    21,009
 
 *<_whours_2_>
 	gen whours_2 = s56b_top
+	replace whours_2=. if lstatus!=1
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 

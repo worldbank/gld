@@ -577,11 +577,8 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat7_>
-	gen byte educat7 = .
-	*issue with the definitions here 
-	*S14 0 = should be smaller thank six years old or iliterate
-	*s14 1 = should literate but never attended school
-	*s14 3 is combines not completed highschool and not completed primary
+	gen byte educat7 = s14
+	recode educat7 0=2 1=2 2=3 3=4 4=5 5=6 6=7
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -841,15 +838,15 @@ foreach v of local ed_var {
 /* <_wage_no_compen_note>
 
 </_wage_no_compen_note> */
-	gen double wage_no_compen =.
-	*replace wage_no_compen=. if lstatus!=1
-	*replace wage_no_compen=. if wage_no_compen == 0
+	gen double wage_no_compen =s78
+	replace wage_no_compen=. if lstatus!=1
+	replace wage_no_compen=. if wage_no_compen == 0
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
 
 *<_unitwage_>
-	gen byte unitwage = .
+	gen byte unitwage = 5
 	replace unitwage = . if lstatus != 1
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
