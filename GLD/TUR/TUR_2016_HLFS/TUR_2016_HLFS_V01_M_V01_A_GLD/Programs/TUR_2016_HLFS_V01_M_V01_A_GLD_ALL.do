@@ -774,7 +774,7 @@ foreach v of local ed_var {
 
 *<_industrycat_isic_>
 *1 digit isic code
-	gen industrycat_isic=industry_orig
+	gen industrycat_isic=s33kod
 	tostring industrycat_isic, replace
 	replace industrycat_isic="" if industrycat_isic=="."
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
@@ -782,7 +782,7 @@ foreach v of local ed_var {
 
 
 *<_industrycat10_>
-	gen industrycat10=industry_orig
+	gen industrycat10=s33kod
 	recode industrycat10 9=10
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
@@ -966,7 +966,7 @@ foreach v of local ed_var {
 
 
 *<_industrycat10_2_>
-	gen byte industrycat10_2 = industry_orig_2
+	gen byte industrycat10_2 = s53kod
 	recode industrycat10_2 9=10
 	replace industrycat10_2=. if lstatus!=1
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
