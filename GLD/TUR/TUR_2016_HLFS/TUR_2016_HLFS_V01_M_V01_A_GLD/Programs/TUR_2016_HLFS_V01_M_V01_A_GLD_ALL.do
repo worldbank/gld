@@ -20,7 +20,7 @@
 <_Sample size (HH)_> 			149076 </_Sample size (HH)_>
 <_Sample size (IND)_> 			380709</_Sample size (IND)_>
 <_Sampling method_> 			Two-stage stratified cluster sampling method </_Sampling method_>
-<_Geographic coverage_> 		Urban/Rural , national level
+<_Geographic coverage_> 		NUTS-2 (https://en.wikipedia.org/wiki/NUTS_statistical_regions_of_Turkey) </_Geographic coverage_>
 <_Currency_> 					Turkish Lira </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 13
@@ -914,7 +914,7 @@ foreach v of local ed_var {
 
 *<_firmsize_l_>
 	gen firmsize_l=s37a
-	recode firmsize_l  1=0 2=10 3=25 4=50 5=250 6=500
+	recode firmsize_l 1=9 2=10 3=25 4=50 5=250 6=500
 	replace firmsize_l=. if lstatus!=1
 	label var firmsize_l "Firm size (lower bracket) primary job 7 day recall"
 *</_firmsize_l_>
@@ -922,7 +922,7 @@ foreach v of local ed_var {
 
 *<_firmsize_u_>
 	gen firmsize_u=s37a
-	recode firmsize_u 1=9 2=24 3=49 4=249 5=499
+	recode firmsize_u 1=9 2=24 3=49 4=249 5=499 6=500
 	replace firmsize_u=. if lstatus!=1
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>

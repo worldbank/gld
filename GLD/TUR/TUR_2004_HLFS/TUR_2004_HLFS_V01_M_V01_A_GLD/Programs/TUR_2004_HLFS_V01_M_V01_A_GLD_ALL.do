@@ -20,7 +20,8 @@
 <_Sample size (HH)_> 			121,622 </_Sample size (HH)_>
 <_Sample size (IND)_> 			472,837</_Sample size (IND)_>
 <_Sampling method_> 			Two-stage stratified cluster sampling method </_Sampling method_>
-<_Geographic coverage_> 		Urban/Rural , national level
+<_Geographic coverage_> 		NUTS-2 (https://en.wikipedia.org/wiki/NUTS_statistical_regions_of_Turkey)
+ </_Geographic coverage_>
 <_Currency_> 					Turkish Lira </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 13
@@ -148,7 +149,7 @@ rename*, lower
 
 
 *<_hhid_>
-	
+
 	tostring formno, gen(hhid) format(%06.0f)
 	label var hhid "Household ID"
 *</_hhid_>
@@ -319,9 +320,9 @@ rename*, lower
 *spouse cannot be under 16 years old based on https://www.unicef.org/turkey/en/child-marriage#:~:text=The%20legal%20age%20of%20marriage,circumstances%20and%20on%20vital%20grounds'.
 
 count if s7==2 & s6==1
-replace s7=. if s7==2 & s6==1  
+replace s7=. if s7==2 & s6==1
 
-*count if s7==2 & s6==2 
+*count if s7==2 & s6==2
 *this is treaky bc the age for marrige is 18 and the age bracket here is 15-19, should I still consider it?
 
 *hhead in the second bracket of age also treaky
@@ -337,10 +338,10 @@ replace  s7=. if s7==3 & s6==11
 replace s7=. if s7==3 & s6==12
 replace s7=. if s7==5 & s6==12
 
-*widow 15-19 
+*widow 15-19
 count if s15==4 & s6==2
 replace s15=. if s15==4 & s6==2
-*divorced 0-14 
+*divorced 0-14
 count if s15==3 & s6==1
 replace s15=. if s15==3 & s6==1
 
@@ -362,12 +363,12 @@ replace s7=. if s7==3 & s15==3 & s6==1
 
 
 	tab s6 s21, mi
-	
+
 	gen helper_age=.
 	replace helper_age=1 if s6==1 & s21==.
 	replace helper_age=2 if s6==1 & s21==2
 	replace helper_age=3 if s6==1 & s21==1
-	* ages are separated by intervals of 5 years 
+	* ages are separated by intervals of 5 years
 	gen age=.
 	replace age=0 if helper_age==1
 	replace age=6 if helper_age==2
@@ -399,7 +400,7 @@ replace s7=. if s7==3 & s15==3 & s6==1
 *<_relationharm_>
 	gen relationharm =.
 	replace relationharm =5 if inrange(s7,4,7)
-	replace relationharm =6 if s7==8  
+	replace relationharm =6 if s7==8
 	replace relationharm=3 if s7==3 & age<22
 	replace relationharm=1 if s7==1
 	replace relationharm=2 if s7==2
@@ -579,7 +580,7 @@ label var ed_mod_age "Education module application age"
 
 *<_educat7_>
 	gen byte educat7 = .
-	*issue with the definitions here 
+	*issue with the definitions here
 	*S10 0 = should be smaller thank six years old or iliterate
 	*s10 1 = should literate but never attended school
 	*s10 3 is combines not completed highschool and not completed primary
@@ -788,7 +789,7 @@ foreach v of local ed_var {
 
 *<_industrycat10_>
 	gen industrycat10=s28kod
-	recode industrycat10 9=10 
+	recode industrycat10 9=10
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
@@ -918,7 +919,7 @@ foreach v of local ed_var {
 
 *<_firmsize_l_>
 	gen firmsize_l=s32a
-	recode firmsize_l 0=. 1=0 2=10 3=25 4=50
+	recode firmsize_l 1=9 2=10 3=25 4=50 5=250 6=500
 	replace firmsize_l=. if lstatus!=1
 	label var firmsize_l "Firm size (lower bracket) primary job 7 day recall"
 *</_firmsize_l_>
@@ -926,7 +927,7 @@ foreach v of local ed_var {
 
 *<_firmsize_u_>
 	gen firmsize_u=s32a
-	recode firmsize_u 0=. 1=9 2=24 3=49 4=249
+	recode firmsize_u 1=9 2=24 3=49 4=249 5=499 6=500
 	replace firmsize_u=. if lstatus!=1
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>
@@ -971,7 +972,7 @@ foreach v of local ed_var {
 
 *<_industrycat10_2_>
 	gen byte industrycat10_2 = s52kod
-	recode industrycat10_2 9=10 
+	recode industrycat10_2 9=10
 	replace industrycat10_2=. if lstatus!=1
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10

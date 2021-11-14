@@ -319,9 +319,9 @@ ILO webpage says that the version used was isco 88 note that for the bank TUIK s
 		*spouse cannot be under 16 years old based on https://www.unicef.org/turkey/en/child-marriage#:~:text=The%20legal%20age%20of%20marriage,circumstances%20and%20on%20vital%20grounds'.
 
 count if s7==2 & s4==1
-replace s7=. if s7==2 & s4==1  
+replace s7=. if s7==2 & s4==1
 
-*count if s7==2 & s4==2 
+*count if s7==2 & s4==2
 *this is treaky bc the age for marrige is 18 and the age bracket here is 15-19, should I still consider it?
 
 *hhead in the second bracket of age also treaky
@@ -337,10 +337,10 @@ replace  s7=. if s7==3 & s4==11
 replace s7=. if s7==3 & s4==12
 replace s7=. if s7==5 & s4==12
 
-*widow 15-19 
+*widow 15-19
 count if s11==4 & s4==2
 replace s11=. if s11==4 & s4==2
-*divorced 0-14 
+*divorced 0-14
 count if s11==3 & s4==1
 replace s11=. if s11==3 & s4==1
 
@@ -360,12 +360,12 @@ replace s7=. if s7==4 & s11==1
 count if s7==3 & s11==3 & s4==1
 replace s7=. if s7==3 & s11==3 & s4==1
 
-	
+
 	gen helper_age=.
 	replace helper_age=1 if s4==1 & s12==.
 	replace helper_age=2 if s4==1 & s12==2
 	replace helper_age=3 if s4==1 & s12==1
-	* ages are separated by intervals of 5 years 
+	* ages are separated by intervals of 5 years
 	gen age=.
 	replace age=0 if helper_age==1
 	replace age=6 if helper_age==2
@@ -778,7 +778,7 @@ foreach v of local ed_var {
 
 
 *<_industrycat10_>
-*No correspondance table between rev3 and rev 4 https://unstats.un.org/unsd/classifications/Econ/isic 
+*No correspondance table between rev3 and rev 4 https://unstats.un.org/unsd/classifications/Econ/isic
 	gen industrycat10=.
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
@@ -787,7 +787,7 @@ foreach v of local ed_var {
 
 
 *<_industrycat4_>
-*No correspondance table between rev3 and rev 4 https://unstats.un.org/unsd/classifications/Econ/isic 
+*No correspondance table between rev3 and rev 4 https://unstats.un.org/unsd/classifications/Econ/isic
 	gen byte industrycat4 = industrycat10
 	recode industrycat4 (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
 	label var industrycat4 "1 digit industry classification (Broad Economic Activities), primary job 7 day recall"
@@ -910,7 +910,7 @@ foreach v of local ed_var {
 
 *<_firmsize_l_>
 	gen firmsize_l=s21
-	recode firmsize_l 1=0 2=10 3=25 4=50
+	recode firmsize_l 1=9 2=10 3=25 4=50
 	replace firmsize_l=. if lstatus!=1
 	label var firmsize_l "Firm size (lower bracket) primary job 7 day recall"
 *</_firmsize_l_>
@@ -918,8 +918,7 @@ foreach v of local ed_var {
 
 *<_firmsize_u_>
 	gen firmsize_u=s21
-	recode firmsize_u 1=9 2=24 3=49  
-	*ask about wether this one should be missing bc 50+ 4 is the same in both.
+	recode firmsize_u 1=9 2=24 3=49 4=50
 	replace firmsize_u=. if lstatus!=1
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>

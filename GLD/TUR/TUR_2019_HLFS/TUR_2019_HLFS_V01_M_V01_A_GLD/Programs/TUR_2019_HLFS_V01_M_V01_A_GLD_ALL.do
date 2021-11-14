@@ -6,7 +6,7 @@
 /* -----------------------------------------------------------------------
 <_Program name_>				TUR_2019_HLFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata 16 <_Application_>
-<_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
+<_Author(s)_>					World Bank Job's Group </_Author(s)_>
 <_Date created_>				2021-06-23 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						TUR </_Country_>
@@ -146,23 +146,21 @@ use "`path_in'\LFS2019_raw.dta"
 
 
 *<_hhid_>
-	tostring birimno, gen(hhid)
-	*label var hhid "Household ID"
-	*tostring birimno, replace
-	*gen birimno_str=substr("0000",1,5 - length(birimno))+birimno
-	*gen hhid=birimno_str
-	label var hhid "Household ID"
 
+	tostring birimno, gen(hhid) format(%05.0f)
+	label var hhid "Household ID"
 
 *</_hhid_>
 
 
 *<_pid_>
-	egen pid = concat(hhid fertno)
-	*label var pid "Individual ID"
-	*tostring fertno, replace
-	*gen pid=hhid+fertno
-	label var pid "Individual ID"
+tostring fertno, gen(s1_helper) format(%02.0f)
+tostring yas, gen(s3_helper) format(%02.0f)
+tostring cinsiyet, gen(s6_helper) format(%02.0f)
+tostring yakinlik, gen(s11_helper) format(%02.0f)
+egen pid=concat(hhid s1_helper s3_helper s6_helper s11_helper)
+*duplicates drop pid, force
+label var pid "Individual ID"
 
 *</_pid_>
 
@@ -935,7 +933,7 @@ Non-paid employee |    21,009          0          0 |    21,009
 
 *<_firmsize_l_>
 	gen firmsize_l=calisan_sayi_hh
-	recode firmsize_l (1=.) (2=11) (3=20) (4=50) (5=11)
+	recode firmsize_l 1=10 2=11 3=20 4=50 5=.
 	replace firmsize_l=. if lstatus!=1
 	label var firmsize_l "Firm size (lower bracket) primary job 7 day recall"
 *</_firmsize_l_>
@@ -943,7 +941,7 @@ Non-paid employee |    21,009          0          0 |    21,009
 
 *<_firmsize_u_>
 	gen firmsize_u=calisan_sayi_hh
-	recode firmsize_u (1=10) (2=19) (3=49) (4=.) (5=.)
+	recode firmsize_u 1=10 2=19 3=49 4=50 5=.
 	replace firmsize_u=. if lstatus!=1
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>

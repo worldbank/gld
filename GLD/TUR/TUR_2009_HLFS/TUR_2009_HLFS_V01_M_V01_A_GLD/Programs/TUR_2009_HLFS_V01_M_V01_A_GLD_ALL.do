@@ -20,7 +20,7 @@
 <_Sample size (HH)_> 			 135891 </_Sample size (HH)_>
 <_Sample size (IND)_> 			 503329</_Sample size (IND)_>
 <_Sampling method_> 			Two-stage stratified cluster sampling method </_Sampling method_>
-<_Geographic coverage_> 		nuts2 (second level),Urban/Rural , national level
+<_Geographic coverage_> 		NUTS-2 (https://en.wikipedia.org/wiki/NUTS_statistical_regions_of_Turkey) </_Geographic coverage_>
 <_Currency_> 					Turkish Lira </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 13
@@ -313,9 +313,9 @@ tostring formno, gen(hhid) format(%05.0f)
 	*spouse cannot be under 16 years old based on https://www.unicef.org/turkey/en/child-marriage#:~:text=The%20legal%20age%20of%20marriage,circumstances%20and%20on%20vital%20grounds'.
 
 count if s11==2 & s6==1
-replace s11=. if s11==2 & s6==1  
+replace s11=. if s11==2 & s6==1
 
-*count if s11==2 & s6==2 
+*count if s11==2 & s6==2
 *this is treaky bc the age for marrige is 18 and the age bracket here is 15-19, should I still consider it?
 
 *hhead in the second bracket of age also treaky
@@ -331,10 +331,10 @@ replace  s11=. if s11==3 & s6==11
 replace s11=. if s11==3 & s6==12
 replace s11=. if s11==5 & s6==12
 
-*widow 15-19 
+*widow 15-19
 count if s24==4 & s6==2
 replace s24=. if s24==4 & s6==2
-*divorced 0-14 
+*divorced 0-14
 count if s24==3 & s6==1
 replace s24=. if s24==3 & s6==1
 
@@ -354,13 +354,13 @@ replace s11=. if s11==4 & s24==1
 count if s11==3 & s24==3 & s6==1
 replace s11=. if s11==3 & s24==3 & s6==1
 
-	
+
 	gen helper_age=.
 	replace helper_age=1 if s6==1 & s21==.
 	replace helper_age=2 if s6==1 & s21==2
 	replace helper_age=3 if s6==1 & s21==1
-	* since we have ranges of age 
-	*we need to create an indicator using 
+	* since we have ranges of age
+	*we need to create an indicator using
 	*the media for that age groups
 	gen age=.
 	replace age=0 if helper_age==1
@@ -393,7 +393,7 @@ replace s11=. if s11==3 & s24==3 & s6==1
 *<_relationharm_>
 	gen relationharm =.
 	replace relationharm =5 if inrange(s11,4,7)
-	replace relationharm =6 if s11==8  
+	replace relationharm =6 if s11==8
 	replace relationharm=3 if s11==3 & age<22
 	replace relationharm=1 if s11==1
 	replace relationharm=2 if s11==2
@@ -488,9 +488,9 @@ replace s11=. if s11==3 & s24==3 & s6==1
 
 
 *<_migrated_years_>
-	
+
 	gen helper_m=(2009-s8b)
-	recode helper_m 0=. 
+	recode helper_m 0=.
 	gen migrated_years = helper_m
 	drop helper_m
 	label var migrated_years "Years since latest migration"
@@ -498,7 +498,7 @@ replace s11=. if s11==3 & s24==3 & s6==1
 
 
 *<_migrated_from_urban_>
-	
+
 	gen helper_m2= 1  if urban==1 & s10b==1
 	replace helper_m2= 2  if urban==1 & s10b==2
 	replace helper_m2= 3  if urban==1 & s10b==3
@@ -701,6 +701,7 @@ foreach v of local ed_var {
 *<_lstatus_>
 	gen byte lstatus = durum
 	label var lstatus "Labor status"
+	recode lstatus 4=.
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
 *</_lstatus_>
@@ -759,7 +760,7 @@ foreach v of local ed_var {
 {
 *<_empstat_>
 	gen byte empstat = s39
-	recode empstat 2=3 4=2 3=4   
+	recode empstat 2=3 4=2 3=4
 	replace empstat=. if lstatus!=1
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
@@ -794,7 +795,7 @@ foreach v of local ed_var {
 
 *<_industrycat10_>
 	gen industrycat10=s33kodr2
-	recode industrycat10 9=10 
+	recode industrycat10 9=10
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
@@ -921,10 +922,9 @@ foreach v of local ed_var {
 	label values union lblunion
 *</_union_>
 
-
 *<_firmsize_l_>
 	gen firmsize_l=s37a
-	recode firmsize_l  1=0 2=10 3=25 4=50 5=250 6=500
+	recode firmsize_l 1=9 2=10 3=25 4=50 5=250 6=500
 	replace firmsize_l=. if lstatus!=1
 	label var firmsize_l "Firm size (lower bracket) primary job 7 day recall"
 *</_firmsize_l_>
@@ -932,7 +932,7 @@ foreach v of local ed_var {
 
 *<_firmsize_u_>
 	gen firmsize_u=s37a
-	recode firmsize_u 1=9 2=24 3=49 4=249 5=499
+	recode firmsize_u 1=9 2=24 3=49 4=249 5=499 6=500
 	replace firmsize_u=. if lstatus!=1
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>
@@ -977,7 +977,7 @@ foreach v of local ed_var {
 
 *<_industrycat10_2_>
 	gen byte industrycat10_2 = s53kod
-	recode industrycat10_2 9=10 
+	recode industrycat10_2 9=10
 	replace industrycat10_2=. if lstatus!=1
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
@@ -1229,7 +1229,7 @@ foreach v of local ed_var {
 *</_occup_year_>
 
 
-*<_wage_no_compen_year_> 
+*<_wage_no_compen_year_>
 	gen double wage_no_compen_year = .
 	label var wage_no_compen_year "Last wage payment primary job 12 month recall"
 *</_wage_no_compen_year_>

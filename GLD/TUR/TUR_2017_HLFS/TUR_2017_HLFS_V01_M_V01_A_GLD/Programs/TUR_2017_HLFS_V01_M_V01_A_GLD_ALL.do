@@ -160,7 +160,6 @@ use "`path_in'\LFS2017.dta"
 	egen pid=concat(hhid s1_helper s3_helper s6_helper s11_helper)
 	*duplicates drop pid, force
 	label var pid "Individual ID"
-
 *</_pid_>
 
 
@@ -968,7 +967,7 @@ Non-paid employee |    21,009          0          0 |    21,009
 
 *<_firmsize_l_>
 	gen firmsize_l=s37a
-	recode firmsize_l  1=0 2=10 3=25 4=50 5=250 6=500
+	recode firmsize_l 1=9 2=10 3=25 4=50 5=250 6=500
 	replace firmsize_l=. if lstatus!=1
 	label var firmsize_l "Firm size (lower bracket) primary job 7 day recall"
 *</_firmsize_l_>
@@ -976,7 +975,7 @@ Non-paid employee |    21,009          0          0 |    21,009
 
 *<_firmsize_u_>
 	gen firmsize_u=s37a
-	recode firmsize_u 1=9 2=24 3=49 4=249 5=499
+	recode firmsize_u 1=9 2=24 3=49 4=249 5=499 6=500
 	replace firmsize_u=. if lstatus!=1
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>
