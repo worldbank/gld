@@ -778,7 +778,9 @@ foreach v of local ed_var {
 
 
 *<_occup_orig_>
-	gen occup_orig = s38kod
+	gen str1 occup_orig = string(s38kod)
+	replace occup_orig="" if s38kod==.
+	replace occup_orig="" if lstatus!=1
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
