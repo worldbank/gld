@@ -160,14 +160,12 @@ rename*, lower
 
 *<_pid_>
 	tostring s1, gen(s1_helper) format(%02.0f)
-	tostring s3, gen(s3_helper) format(%02.0f)
-	tostring s6, gen(s6_helper) format(%02.0f)
-	tostring s11, gen(s11_helper) format(%02.0f)
-	egen pid=concat(hhid s1_helper s3_helper s6_helper s11_helper)
-	*duplicates drop pid, force
-	label var pid "Individual ID
+	egen pid=concat(hhid s1_helper)
+	label var pid "Individual ID"
+	isid hhid pid
 
 *</_pid_>
+
 
 
 *<_weight_>
@@ -314,73 +312,8 @@ rename*, lower
 
 
 *<_age_>
-	*spouse cannot be under 16 years old based on https://www.unicef.org/turkey/en/child-marriage#:~:text=The%20legal%20age%20of%20marriage,circumstances%20and%20on%20vital%20grounds'.
 
-count if s11==2 & s6==1
-replace s11=. if s11==2 & s6==1
-
-*count if s11==2 & s6==2
-*this is treaky bc the age for marrige is 18 and the age bracket here is 15-19, should I still consider it?
-
-*hhead in the second bracket of age also treaky
-*count if s11==1 & s6==2
-
-*how come some old folks are children or grand children
-
-count if s11==3 & s6==11
-count if s11==3 & s6==12
-count if s11==5 & s6==12
-
-replace  s11=. if s11==3 & s6==11
-replace s11=. if s11==3 & s6==12
-replace s11=. if s11==5 & s6==12
-
-*widow 15-19
-count if s24==4 & s6==2
-replace s24=. if s24==4 & s6==2
-*divorced 0-14
-count if s24==3 & s6==1
-replace s24=. if s24==3 & s6==1
-
-*married 0-14
-count if s24==2 & s6==1
-replace s24=.  if s24==2 & s6==1
-
-*single but says has spouse in s11
-count if s11==2 & s24==1
-replace s11=. if s11==2 & s24==1
-
-*daughter or son in law but single in s11, widow?
-count if s11==4 & s24==1
-replace s11=. if s11==4 & s24==1
-
-*children underaged divorced
-count if s11==3 & s24==3 & s6==1
-replace s11=. if s11==3 & s24==3 & s6==1
-
-
-	gen helper_age=.
-	replace helper_age=1 if s6==1 & s21==.
-	replace helper_age=2 if s6==1 & s21==2
-	replace helper_age=3 if s6==1 & s21==1
-	* since we have ranges of age
-	*we need to create an indicator using
-	*the media for that age groups
-	gen age=.
-	replace age=0 if helper_age==1
-	replace age=6 if helper_age==2
-	replace age=11 if helper_age==3
-	replace age=15 if s6==2
-	replace age=20 if s6==3
-	replace age=25 if s6==4
-	replace age=30 if s6==5
-	replace age=35 if s6==6
-	replace age=40 if s6==7
-	replace age=45 if s6==8
-	replace age=50 if s6==9
-	replace age=55 if s6==10
-	replace age=60 if s6==11
-	replace age=65 if s6==12
+	gen age=s6
 	label var age "Individual age"
 *</_age_>
 
@@ -395,6 +328,38 @@ replace s11=. if s11==3 & s24==3 & s6==1
 
 
 *<_relationharm_>
+
+*how come some old folks are children or grand children
+
+count if s11==3 & s6>60
+count if s11==3 & s6>60
+count if s11==5 & s6>60
+
+replace  s11=. if s11==3 & s6>60
+replace s11=. if s11==3 & s6>60
+replace s11=. if s11==5 & s6>60
+
+*widow 11
+count if s24==4 & s6<11
+replace s24=. if s24==4 & s6<11
+*divorced 0-11
+count if s24==3 & s6<11
+replace s24=. if s24==3 & s6<11
+
+*single but says has spouse in s11
+count if s11==2 & s24==1
+replace s11=. if s11==2 & s24==1
+
+*daughter or son in law but single in s11, widow?
+count if s11==4 & s24==1
+replace s11=. if s11==4 & s24==1
+
+*children underaged divorced
+count if s11==3 & s24==3 & s6<5
+replace s11=. if s11==3 & s24==3 & s6<5
+
+
+
 	gen relationharm =.
 	replace relationharm =5 if inrange(s11,4,7)
 	replace relationharm =6 if s11==8
@@ -929,7 +894,7 @@ foreach v of local ed_var {
 
 *<_firmsize_l_>
 	gen firmsize_l=s37a
-	recode firmsize_l 1=9 2=10 3=25 4=50 5=250 6=500
+	recode firmsize_l 1=1 2=10 3=25 4=50 5=250 6=500
 	replace firmsize_l=. if lstatus!=1
 	label var firmsize_l "Firm size (lower bracket) primary job 7 day recall"
 *</_firmsize_l_>
@@ -937,7 +902,7 @@ foreach v of local ed_var {
 
 *<_firmsize_u_>
 	gen firmsize_u=s37a
-	recode firmsize_u 1=9 2=24 3=49 4=249 5=499 6=500
+	recode firmsize_u 1=9 2=24 3=49 4=249 5=499 6=.
 	replace firmsize_u=. if lstatus!=1
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>
