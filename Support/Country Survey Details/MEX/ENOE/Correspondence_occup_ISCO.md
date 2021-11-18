@@ -1,5 +1,7 @@
 # Correspondence between Mexican occupation codes and ISCO 08
 
+This document first describes the logic of the process and then provides users with the underlying conversions tables, conversion algorithms, as well as the generated `dta` files used in the harmonization codes.
+
 ## Occupation codes used in Mexico’s ENOE
 
 The Mexican *Encuesta de Ocupación y Empleo* uses two different classification systems between 2005 and 2020. Between 2005 and the second quarter of 2012 the National Statistics Office [INEGI]( https://www.inegi.org.mx) uses the *Clasificación Mexicana de Ocupaciones* (CMO) while after that it uses the *Sistema Nacional de Clasificación de Ocupaciones* (SINCO).
@@ -95,3 +97,10 @@ There are also fewer matches at more detail. Only a quarter of matches are at fo
 The limitations of the match quality are explained in the caveats section of the [document on matching industrial codes]( https://github.com/worldbank/gld/blob/develop-merge/Support/Country%20Survey%20Details/MEX/ENOE/Correspondence_NAICS_ISIC.md). Additionally, users should consider that, while the series contains ISCO-08 data throughout, there is an underlying break in the occupation codes between 2012 and 2013. Not only is the matching more difficult but also the underlying classification may have caused changes. An individual working in the same occupation in 2012 and 2013 will be coded with different CMO and SINCO codes. This alone can change the outcome as definitions of categories do not overlap. In addition, a different code may be treated differently in the matching algorithm, thus leading to two different ISCO codes even if the person is doing the same job.
 
 The likelihood of this happening is low. For example, the most common CMO code, `7111` (shop assistants) has its own SINCO category (`4211`) and a perfect ISCO-08 match (`5223` – shop sales assistant) but should be kept in mind, especially if looking into certain sectors where matching is more difficult.
+
+## Underlying data for emulating process
+
+The [Excel document containing the correspondences between occupation classifications](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/tablas_comparativas.xlsx) is the basis of the mapping. In particular, the first sheet contains the SINCO to ISCO classification, while the second sheet contains the SINCO to CMO classification.
+
+Each are used in the `R` algorithms to [code directly from SINCO to ISCO](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/sinco_to_isco_correspondance.R) or to [code from CMO to ISCO via SINCO](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/cmo_isco_via_sinco.R). These codes create the `dta` files in the harmonization, namely the [CMO_09_ISCO_08.dta file](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/CMO_09_ISCO_08.dta) and the [SINCO_11_ISCO_08.dta file](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/SINCO_11_ISCO_08.dta).
+
