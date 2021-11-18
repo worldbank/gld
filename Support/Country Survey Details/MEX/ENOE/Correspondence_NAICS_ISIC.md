@@ -2,6 +2,8 @@
 
 Information regarding the industry respondents are employed in is coded in the Encuesta Nacional de Ocupación y Empleo (ENOE) using the codes of the [North American Industry Classification System](http://en.www.inegi.org.mx/app/scian/) (shortened as NAICS in English and SCIAN in Spanish). 
 
+This document first describes the logic of the process and then provides users with the underlying conversions tables, conversion algorithms, as well as the generated `dta` files used in the harmonization codes.
+
 ## Data as present in survey raw data
 
 The image below shows the answers to the relevant question (`p4a1` asks for the industry the company the respondent works for is in) for the dataset from the first quarter of 2010:
@@ -17,7 +19,7 @@ There are two things to note here. The first is that the information is at the f
 The Mexican Statistics Institute INEGI has [website dedicated to NAICS](https://www.inegi.org.mx/app/scian/) where it stores general information in the classificaiton and - most importantly for concordance purposes -  comparative tables between the different NAICS versions and the different ISCO versions. The image below shows the available comparisons in July 2021:  
 
 <br></br>
-![SCIAN available options](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/scian_options.PNG)
+![SCIAN available options](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/scian_options.png)
 <br></br>
 
 Of importance for the years covered by GLD (2005 to 2020) are the four classifications highlighted. Of the four, the latter three are mapped to ISIC Revision 4 while the earliest (NAICS 2002) is mapped to ISIC Revision 3.1.
@@ -33,7 +35,7 @@ Note how the first sheet contains the NAICS to ISIC mapping, while the second sh
 The last piece of information to understand before proceeding with creating a mapping `.dta` that can be used in the harmonization is the fact that mapping is not perfect in the correspondence tables provided by the NSO. In the above image this is the case (e.g., 111121 maps to 0111) but this is not always so. The image below shows how NAICS code 111410 maps to five (!) different and distinct ISIC codes.
 
 <br></br>
-![SCIAN Imperfect Matching](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/scian_imperfect_match.PNG)
+![SCIAN Imperfect Matching](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/scian_imperfect_match.png)
 <br></br>
 
 ## Creating a map between NAICS and ISIC
@@ -128,3 +130,24 @@ In this case no problem has arisen and as small niches grow, they can be expecte
 ### Extension - What you may add if you would be available
 
 A further extension, which may help in creating better matches is to use the text descriptions, provided in the NSO correspondence document, which define in more detail what the NAICS and ISIC codes cover. This is beyond our current capacity, though. If you, dear Reader, think you may be able to support this, please contact the team here on GitHub. We really would appreciate any help!
+
+## Underlying data for emulating process
+The harmonization codes merge in `dta` files created from the correspondence tables shown above using the algorithmic logic described in this document. In particular we use:
+
+- [The correspondence table between SCIAN 02 and ISIC 3.1](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/SCIAN_02_ISIC_3.1.xlsx);
+- [The correspondence table between SCIAN 07 and ISIC 4](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/SCIAN_07_ISIC_4.xlsx);
+- [The correspondence table between SCIAN 13 and ISIC 4](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/SCIAN_13_ISIC_4.xlsx);
+- [The correspondence table between SCIAN 18 and ISIC 4](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/SCIAN_18_ISIC_4.xlsx).
+
+Each of these correspondence tables are read in by each of the analogous `R` codes:
+- [The `R` code to map SCIAN 03 to ISIC 3.1](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/SCIAN_02_ISIC_3.1.R);
+- [The `R` code to map SCIAN 07 to ISIC 4](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/SCIAN_07_ISIC_4.R);
+- [The `R` code to map SCIAN 13 to ISIC 4](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/SCIAN_13_ISIC_4.R);
+- [The `R` code to map SCIAN 18 to ISIC 4](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/SCIAN_18_ISIC_4.R).
+
+These create then the used `dta` files:
+- [The `dta` file with codes for SCIAN 03 and ISIC 3.1](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/SCIAN_02_ISIC_3.1.dta);
+- [The `dta` file with codes for SCIAN 03 and ISIC 4](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/SCIAN_07_ISIC_4.dta);
+- [The `dta` file with codes for SCIAN 03 and ISIC 4](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/SCIAN_13_ISIC_4.dta);
+- [The `dta` file with codes for SCIAN 03 and ISIC 4](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/SCIAN_18_ISIC_4.dta).
+
