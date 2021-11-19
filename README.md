@@ -1,6 +1,8 @@
+<img src="/docs/assets/images/WB_Jobs_logo_color.svg" alt="drawing" align="right" width="200"/>
+
 # Welcome to the Global Labor Database Repository 
 
-## What is the problem we are addressing? <img src="/docs/assets/images/WB_Jobs_logo_color.svg" alt="drawing" align="right" width="200"/>
+## What is the problem we are addressing? 
 
 Household surveys may vary greatly not only from one country to the next, but also within a country over time. Recall periods may change. Similarly, concepts like the categories of unemployment duration can be coded as “*less than a week // more than a week but less than a month // between one month and two months // …*” in one country and simply “*less than a month // more than a month but fewer than three // …*” in another. Thus, a unified standard is necessary to make them comparable.
 Moreover, even in cases where the data is harmonized, the harmonization may not serve your particular purpose as you would have needed to add some variables and change the definition of the harmonization slightly to fit your purposes. Yet if the harmonized data is a finished data file, there is little to be done.
