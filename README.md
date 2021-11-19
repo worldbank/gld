@@ -1,4 +1,5 @@
 <img src="/docs/assets/images/WB_Jobs_logo_color.svg" alt="drawing" align="right" width="200"/>
+<br></br>
 
 # Welcome to the Global Labor Database Repository 
 
