@@ -95,7 +95,7 @@ The link above goes to a presentation from TUIK in which they explain that since
 *</_icls_v_>
 
 *<_isced_version_>
-	gen isced_version = "Isced_1997"
+	gen isced_version = "isced_1997"
 	label var isced_version "Version of ISCED used for educat_isced"
 *</_isced_version_>
 
@@ -104,13 +104,13 @@ The link above goes to a presentation from TUIK in which they explain that since
 /*<_isco_version_note>
 ILO webpage says that the version used was isco 88 note that for the bank TUIK shared isco 68 data.
 </_isco_version_note<*/
-	gen isco_version = "Isco_1968"
+	gen isco_version = "isco_1968"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
 
 *<_isic_version_>
-	gen isic_version = "Isic_3"
+	gen isic_version = "isic_3"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
@@ -154,20 +154,17 @@ ILO webpage says that the version used was isco 88 note that for the bank TUIK s
 
 
 *<_hhid_>
-
+	replace formno = formno + 33000 in 217021/217082
+	isid formno s1
 	tostring formno, gen(hhid) format(%05.0f)
 	label var hhid "Household ID"
 *</_hhid_>
 
 
 *<_pid_>
-
 	tostring s1, gen(s1_helper) format(%02.0f)
-	tostring s3, gen(s3_helper) format(%02.0f)
-	tostring s4, gen(s4_helper) format(%02.0f)
-	tostring s7, gen(s7_helper) format(%02.0f)
-	egen pid=concat(hhid s1_helper s3_helper s4_helper s7_helper)
-	*duplicates drop pid, force
+	egen pid=concat(hhid s1_helper)
+	isid hhid pid
 	label var pid "Individual ID"
 
 *</_pid_>
@@ -306,73 +303,19 @@ ILO webpage says that the version used was isco 88 note that for the bank TUIK s
 
 *<_age_>
 
-	*spouse cannot be under 16 years old based on https://www.unicef.org/turkey/en/child-marriage#:~:text=The%20legal%20age%20of%20marriage,circumstances%20and%20on%20vital%20grounds'.
-
-count if s7==2 & s4==1
-replace s7=. if s7==2 & s4==1
-
-*count if s7==2 & s4==2
-*this is treaky bc the age for marrige is 18 and the age bracket here is 15-19, should I still consider it?
-
-*hhead in the second bracket of age also treaky
-*count if s7==1 & s4==2
-
-*how come some old folks are children or grand children
-
-count if s7==3 & s4==11
-count if s7==3 & s4==12
-count if s7==5 & s4==12
-
-replace  s7=. if s7==3 & s4==11
-replace s7=. if s7==3 & s4==12
-replace s7=. if s7==5 & s4==12
-
-*widow 15-19
-count if s11==4 & s4==2
-replace s11=. if s11==4 & s4==2
-*divorced 0-14
-count if s11==3 & s4==1
-replace s11=. if s11==3 & s4==1
-
-*married 0-14
-count if s11==2 & s4==1
-replace s11=.  if s11==2 & s4==1
-
-*single but says has spouse in s7
-count if s7==2 & s11==1
-replace s7=. if s7==2 & s11==1
-
-*daughter or son in law but single in s7, widow?
-count if s7==4 & s11==1
-replace s7=. if s7==4 & s11==1
-
-*children underaged divorced
-count if s7==3 & s11==3 & s4==1
-replace s7=. if s7==3 & s11==3 & s4==1
-
-
+*The lower range needs to be broken down into 1-4, 5-9 and 10-14, we use helpers for this using the income status (s12)
 	gen helper_age=.
 	replace helper_age=1 if s4==1 & s12==.
 	replace helper_age=2 if s4==1 & s12==2
 	replace helper_age=3 if s4==1 & s12==1
-	* since we have ranges of age
-	*we need to create an indicator using
-	*the media for that age groups
-	gen age=.
-	replace age=0 if helper_age==1
-	replace age=6 if helper_age==2
-	replace age=11 if helper_age==3
-	replace age=15 if s4==2
-	replace age=20 if s4==3
-	replace age=25 if s4==4
-	replace age=30 if s4==5
-	replace age=35 if s4==6
-	replace age=40 if s4==7
-	replace age=45 if s4==8
-	replace age=50 if s4==9
-	replace age=55 if s4==10
-	replace age=60 if s4==11
-	replace age=65 if s4==12
+*we create the var age using s4 and recode for new groups (12 in total 5 years overlap)
+	gen age=s4
+	recode age 2=15 3=20 4=25 5=30 6=35 7=40 8=45 9=50 10=55 11=60 12=65
+
+	replace age=1 if helper_age==1
+	replace age=5 if helper_age==2
+	replace age=10 if helper_age==3
+
 	label var age "Individual age"
 
 *</_age_>
@@ -388,6 +331,24 @@ replace s7=. if s7==3 & s11==3 & s4==1
 
 
 *<_relationharm_>
+
+*few checks of consistency
+*divorced 0-14
+count if s11==3 & s4==1
+replace s11=. if s11==3 & s4==1
+
+*single but says has spouse in s7
+count if s7==2 & s11==1
+replace s7=. if s7==2 & s11==1
+
+*daughter or son in law but single in s7, widow?
+count if s7==4 & s11==1
+replace s7=. if s7==4 & s11==1
+
+*children underaged divorced
+count if s7==3 & s11==3 & s4==1
+replace s7=. if s7==3 & s11==3 & s4==1
+
 	gen relationharm = s7
 	recode relationharm 4 7=5 6=4 8=6
 	label var relationharm "Relationship to the head of household - Harmonized"
@@ -903,7 +864,7 @@ foreach v of local ed_var {
 
 *<_firmsize_l_>
 	gen firmsize_l=s21
-	recode firmsize_l 1=9 2=10 3=25 4=50
+	recode firmsize_l 1=1 2=10 3=25 4=50
 	replace firmsize_l=. if lstatus!=1
 	label var firmsize_l "Firm size (lower bracket) primary job 7 day recall"
 *</_firmsize_l_>
@@ -911,7 +872,7 @@ foreach v of local ed_var {
 
 *<_firmsize_u_>
 	gen firmsize_u=s21
-	recode firmsize_u 1=9 2=24 3=49 4=50
+	recode firmsize_u 1=9 2=24 3=49 4=.
 	replace firmsize_u=. if lstatus!=1
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>

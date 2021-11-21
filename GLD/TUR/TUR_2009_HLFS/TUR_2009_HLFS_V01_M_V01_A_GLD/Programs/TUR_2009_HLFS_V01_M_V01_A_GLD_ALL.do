@@ -308,22 +308,9 @@ rename*, lower
 
 *<_age_>
 
-	gen age=.
-	replace age=1 if s6==1
-	replace age=5 if s6==2
-	replace age=12 if s6==3
-	replace age=15 if s6==4
-	replace age=20 if s6==5
-	replace age=25 if s6==6
-	replace age=30 if s6==7
-	replace age=35 if s6==8
-	replace age=40 if s6==9
-	replace age=45 if s6==10
-	replace age=50 if s6==11
-	replace age=55 if s6==12
-	replace age=60 if s6==13
-	replace age=65 if s6==14
-	label var age "Individual age"
+gen age=s6
+recode age 1=1 2=5 3=12 4=15 5=20 6=25 7=30 8=35 9=40 10=45 11=50 12=55 13=60 14=65
+label var age "Individual age"
 *</_age_>
 
 
@@ -338,7 +325,7 @@ rename*, lower
 
 *<_relationharm_>
 
-	
+
 *how come some old folks are children or grand children
 
 count if s11==3 & s6==12
@@ -800,8 +787,10 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_>
-	gen occup_isco=s38kod
-	replace occup_isco=. if lstatus!=1
+gen helper_1 = "000"
+egen occup_isco=concat(helper_1 occup_orig)
+replace occup_isco="" if lstatus!=1
+drop helper_1
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 

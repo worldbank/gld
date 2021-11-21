@@ -156,13 +156,29 @@ rename*, lower
 
 
 *<_pid_>
+
+*Year 2004 has 14 duplicates in non consecutive observations , we chose to manually change this according to the s7 relation to the household. This is because in some cases inside each household de s1 identifier is repeated. We use own criteria following the s7 list to chose a new s1 identifier.
+*s1 identifiers go from 1 to 29 and are consecutive numbers that identify members within a household.
+duplicates list formno s1
+	replace s1=5 in 124444
+	replace s1=5 in 237173
+	replace s1=5 in 238442
+	replace s1=2 in 241045
+	replace s1=2 in 241111
+	replace s1=2 in 245708
+	replace s1=5 in 247782
+	replace s1=4 in 248551
+	replace s1=4 in 248687
+	replace s1=2 in 253894
+	replace s1=4 in 259489
+	replace s1=4 in 260557
+	replace s1=6 in 267535
+	replace s1=2 in 268685
+
 	tostring s1, gen(s1_helper) format(%02.0f)
-	tostring s3, gen(s3_helper) format(%02.0f)
-	tostring s6, gen(s6_helper) format(%02.0f)
-	tostring s7, gen(s7_helper) format(%02.0f)
-	egen pid=concat(hhid s1_helper s3_helper s6_helper s7_helper)
-	duplicates list pid hhid
+	egen pid=concat(hhid s1_helper)
 	label var pid "Individual ID"
+	isid hhid pid
 
 *</_pid_>
 
@@ -317,73 +333,8 @@ rename*, lower
 
 *<_age_>
 
-*spouse cannot be under 16 years old based on https://www.unicef.org/turkey/en/child-marriage#:~:text=The%20legal%20age%20of%20marriage,circumstances%20and%20on%20vital%20grounds'.
-
-count if s7==2 & s6==1
-replace s7=. if s7==2 & s6==1
-
-*count if s7==2 & s6==2
-*this is treaky bc the age for marrige is 18 and the age bracket here is 15-19, should I still consider it?
-
-*hhead in the second bracket of age also treaky
-*count if s7==1 & s6==2
-
-*how come some old folks are children or grand children
-
-count if s7==3 & s6==11
-count if s7==3 & s6==12
-count if s7==5 & s6==12
-
-replace  s7=. if s7==3 & s6==11
-replace s7=. if s7==3 & s6==12
-replace s7=. if s7==5 & s6==12
-
-*widow 15-19
-count if s15==4 & s6==2
-replace s15=. if s15==4 & s6==2
-*divorced 0-14
-count if s15==3 & s6==1
-replace s15=. if s15==3 & s6==1
-
-*married 0-14
-count if s15==2 & s6==1
-replace s15=.  if s15==2 & s6==1
-
-*single but says has spouse in s7
-count if s7==2 & s15==1
-replace s7=. if s7==2 & s15==1
-
-*daughter or son in law but single in s7, widow?
-count if s7==4 & s15==1
-replace s7=. if s7==4 & s15==1
-
-*children underaged divorced
-count if s7==3 & s15==3 & s6==1
-replace s7=. if s7==3 & s15==3 & s6==1
-
-
-	tab s6 s21, mi
-
-	gen helper_age=.
-	replace helper_age=1 if s6==1 & s21==.
-	replace helper_age=2 if s6==1 & s21==2
-	replace helper_age=3 if s6==1 & s21==1
-	* ages are separated by intervals of 5 years
-	gen age=.
-	replace age=0 if helper_age==1
-	replace age=6 if helper_age==2
-	replace age=11 if helper_age==3
-	replace age=15 if s6==2
-	replace age=20 if s6==3
-	replace age=25 if s6==4
-	replace age=30 if s6==5
-	replace age=35 if s6==6
-	replace age=40 if s6==7
-	replace age=45 if s6==8
-	replace age=50 if s6==9
-	replace age=55 if s6==10
-	replace age=60 if s6==11
-	replace age=65 if s6==12
+	gen age=s6
+	recode age 1=1 2=5 3=12 4=15 5=20 6=25 7=30 8=35 9=40 10=45 11=50 12=55 13=60 14=65
 	label var age "Individual age"
 *</_age_>
 
@@ -398,6 +349,36 @@ replace s7=. if s7==3 & s15==3 & s6==1
 
 
 *<_relationharm_>
+
+
+*how come some old folks are children or grand children
+count if s7==3 & s6==12
+count if s7==3 & s6==14
+count if s7==5 & s6==14
+
+replace s7=. if s7==3 & s6==12
+replace s7=. if s7==3 & s6==14
+replace s7=. if s7==5 & s6==14
+
+*widow -11
+count if s15==4 & s6==2
+replace s15=. if s15==4 & s6==2
+*divorced 0-4
+count if s15==3 & s6==1
+replace s15=. if s15==3 & s6==1
+
+*single but says has spouse in s7
+count if s7==2 & s15==1
+replace s7=. if s7==2 & s15==1
+
+*daughter or son in law but single in s7, widow?
+count if s7==4 & s15==1
+replace s7=. if s7==4 & s15==1
+
+*children underaged divorced
+count if s7==3 & s15==3 & s6==1
+replace s7=. if s7==3 & s15==3 & s6==1
+
 	gen relationharm =.
 	replace relationharm =5 if inrange(s7,4,7)
 	replace relationharm =6 if s7==8
@@ -815,14 +796,16 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_>
-	gen occup_isco=s33kod
-	replace occup_isco=. if lstatus!=1
+gen helper_1 = "000"
+egen occup_isco=concat(helper_1 occup_orig)
+replace occup_isco="" if lstatus!=1
+drop helper_1
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
 
 *<_occup_skill_>
-	gen occup_skill = .
+	gen occup_skill = s33kod
 	replace occup_skill=1 if s33kod==9
 	replace occup_skill=2 if inrange(s33kod,4,8)
 	replace occup_skill=3 if inrange(s33kod,1,3)
@@ -921,7 +904,7 @@ foreach v of local ed_var {
 
 *<_firmsize_l_>
 	gen firmsize_l=s32a
-	recode firmsize_l 1=9 2=10 3=25 4=50 5=250 6=500
+	recode firmsize_l 1=1 2=10 3=25 4=50 5=250 6=500
 	replace firmsize_l=. if lstatus!=1
 	label var firmsize_l "Firm size (lower bracket) primary job 7 day recall"
 *</_firmsize_l_>
@@ -929,7 +912,7 @@ foreach v of local ed_var {
 
 *<_firmsize_u_>
 	gen firmsize_u=s32a
-	recode firmsize_u 1=9 2=24 3=49 4=249 5=499 6=500
+	recode firmsize_u 1=9 2=24 3=49 4=249 5=499 6=.
 	replace firmsize_u=. if lstatus!=1
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>

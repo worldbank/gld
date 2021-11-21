@@ -93,19 +93,19 @@ rename*, lower
 *</_icls_v_>
 
 *<_isced_version_>
-	gen isced_version = "isced_1997"
+	gen isced_version = "isced_2011"
 	label var isced_version "Version of ISCED used for educat_isced"
 *</_isced_version_>
 
 
 *<_isco_version_>
-	gen isco_version = ""
+	gen isco_version = "isco_2008"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
 
 *<_isic_version_>
-	gen isic_version = ""
+	gen isic_version = "isic_4"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
@@ -773,8 +773,10 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_>
-	gen occup_isco=s38kod
-	replace occup_isco=. if lstatus!=1
+gen helper_1 = "000"
+egen occup_isco=concat(helper_1 occup_orig)
+replace occup_isco="" if lstatus!=1
+drop helper_1
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 

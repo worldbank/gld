@@ -99,7 +99,7 @@ rename*, lower
 
 
 *<_isco_version_>
-	gen isco_version = "isco_08"
+	gen isco_version = "isco_2008"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
@@ -773,8 +773,10 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_>
-	gen occup_isco=s38kod
-	replace occup_isco=. if lstatus!=1
+gen helper_1 = "000"
+egen occup_isco=concat(helper_1 occup_orig)
+replace occup_isco="" if lstatus!=1
+drop helper_1
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 

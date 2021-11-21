@@ -154,23 +154,19 @@ ILO webpage says that the version used was isco 88 note that for the bank TUIK s
 
 
 *<_hhid_>
-
 	tostring formno, gen(hhid) format(%05.0f)
 	label var hhid "Household ID"
 *</_hhid_>
 
 
 *<_pid_>
-
 	tostring s1, gen(s1_helper) format(%02.0f)
-	tostring s3, gen(s3_helper) format(%02.0f)
-	tostring s4, gen(s4_helper) format(%02.0f)
-	tostring s7, gen(s7_helper) format(%02.0f)
-	egen pid=concat(hhid s1_helper s3_helper s4_helper s7_helper)
-	*duplicates drop pid, force
+	egen pid=concat(hhid s1_helper)
 	label var pid "Individual ID"
+	isid hhid pid
 
 *</_pid_>
+
 
 
 *<_weight_>
@@ -306,7 +302,36 @@ ILO webpage says that the version used was isco 88 note that for the bank TUIK s
 
 *<_age_>
 
-	*spouse cannot be under 16 years old based on https://www.unicef.org/turkey/en/child-marriage#:~:text=The%20legal%20age%20of%20marriage,circumstances%20and%20on%20vital%20grounds'.
+*The lower range needs to be broken down into 1-4, 5-9 and 10-14, we use helpers for this using the income status (s12)
+gen helper_age=.
+replace helper_age=1 if s4==1 & s12==.
+replace helper_age=2 if s4==1 & s12==2
+replace helper_age=3 if s4==1 & s12==1
+*we create the var age using s4 and recode for new groups (12 in total 5 years overlap)
+gen age=s4
+recode age 2=15 3=20 4=25 5=30 6=35 7=40 8=45 9=50 10=55 11=60 12=65
+
+replace age=1 if helper_age==1
+replace age=5 if helper_age==2
+replace age=10 if helper_age==3
+
+label var age "Individual age"
+
+*</_age_>
+
+
+*<_male_>
+	gen male = s3
+	recode male (2=0)
+	label var male "Sex - Ind is male"
+	la de lblmale 1 "Male" 0 "Female"
+	label values male lblmale
+*</_male_>
+
+
+*<_relationharm_>
+
+*spouse cannot be under 16 years old based on https://www.unicef.org/turkey/en/child-marriage#:~:text=The%20legal%20age%20of%20marriage,circumstances%20and%20on%20vital%20grounds'.
 
 count if s7==2 & s4==1
 replace s7=. if s7==2 & s4==1
@@ -350,42 +375,6 @@ replace s7=. if s7==4 & s11==1
 count if s7==3 & s11==3 & s4==1
 replace s7=. if s7==3 & s11==3 & s4==1
 
-
-	gen helper_age=.
-	replace helper_age=1 if s4==1 & s12==.
-	replace helper_age=2 if s4==1 & s12==2
-	replace helper_age=3 if s4==1 & s12==1
-* ages are separated by intervals of 5 years
-	gen age=.
-	replace age=0 if helper_age==1
-	replace age=6 if helper_age==2
-	replace age=11 if helper_age==3
-	replace age=15 if s4==2
-	replace age=20 if s4==3
-	replace age=25 if s4==4
-	replace age=30 if s4==5
-	replace age=35 if s4==6
-	replace age=40 if s4==7
-	replace age=45 if s4==8
-	replace age=50 if s4==9
-	replace age=55 if s4==10
-	replace age=60 if s4==11
-	replace age=65 if s4==12
-	label var age "Individual age"
-
-*</_age_>
-
-
-*<_male_>
-	gen male = s3
-	recode male (2=0)
-	label var male "Sex - Ind is male"
-	la de lblmale 1 "Male" 0 "Female"
-	label values male lblmale
-*</_male_>
-
-
-*<_relationharm_>
 	gen relationharm = s7
 	recode relationharm 4 7=5 6=4 8=6
 	label var relationharm "Relationship to the head of household - Harmonized"
@@ -794,14 +783,16 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_>
-	gen occup_isco=s22kod
-	replace occup_isco=. if lstatus!=1
+	gen helper_1 = "000"
+	egen occup_isco=concat(helper_1 occup_orig)
+	replace occup_isco="" if lstatus!=1
+	drop helper_1
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
 
 *<_occup_skill_>
-	gen occup_skill = occup_isco
+	gen occup_skill = s22kod
 	recode occup_skill 1/3=3 4/8=2 9=1 0=4 99=.
 	replace occup_skill=. if lstatus!=1
 	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"  4 "Armed Forces"
@@ -811,7 +802,7 @@ foreach v of local ed_var {
 
 
 *<_occup_>
-	gen byte occup = occup_isco
+	gen byte occup = s22kod
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup
@@ -903,7 +894,7 @@ foreach v of local ed_var {
 
 *<_firmsize_l_>
 	gen firmsize_l=s21
-	recode firmsize_l 1=9 2=10 3=25 4=50
+	recode firmsize_l 1=1 2=10 3=25 4=50
 	replace firmsize_l=. if lstatus!=1
 	label var firmsize_l "Firm size (lower bracket) primary job 7 day recall"
 *</_firmsize_l_>
@@ -911,7 +902,7 @@ foreach v of local ed_var {
 
 *<_firmsize_u_>
 	gen firmsize_u=s21
-	recode firmsize_u 1=9 2=24 3=49 4=50
+	recode firmsize_u 1=9 2=24 3=49 4=.
 	replace firmsize_u=. if lstatus!=1
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>
