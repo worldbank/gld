@@ -670,7 +670,7 @@ foreach v of local ed_var {
 {
 *<_lstatus_>
 	gen byte lstatus = durum
-	replace lstatus=. if durum==3 & s24!=.
+	*replace lstatus=. if durum==3 & s24!=.
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
