@@ -6,7 +6,7 @@
 /* -----------------------------------------------------------------------
 <_Program name_>				TUR_2013_HLFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata 16 <_Application_>
-<_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
+<_Author(s)_>					World Bank Job's Group </_Author(s)_>
 <_Date created_>				2021-10-08 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						TUR </_Country_>
@@ -360,18 +360,11 @@ replace s11=. if s11==3 & s24==3 & s6<5
 
 
 
-	gen relationharm =.
-	replace relationharm =5 if inrange(s11,4,7)
-	replace relationharm =6 if s11==8
-	replace relationharm=3 if s11==3 & age<22
-	replace relationharm=1 if s11==1
-	replace relationharm=2 if s11==2
-	*age majority 18 https://eeca.unfpa.org/sites/default/files/pub-pdf/unfpa%20turkey%20summary.pdf
-	replace relationharm=4 if s12b!=99 & s11!=3
-	replace relationharm=4 if s12c!=99 & s11!=3
-	label var relationharm "Relationship to the head of household - Harmonized"
-	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
-	label values relationharm  lblrelationharm
+gen relationharm =s11
+recode relationharm 1=1 2=2 3=3 4/7=5 8=6
+label var relationharm "Relationship to the head of household - Harmonized"
+la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
+label values relationharm  lblrelationharm
 *</_relationharm_>
 
 
@@ -668,6 +661,7 @@ foreach v of local ed_var {
 *<_lstatus_>
 	gen byte lstatus = durum
 	recode lstatus 4=.
+	replace lstatus=. if durum==3 & s29!=.
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
@@ -753,16 +747,32 @@ foreach v of local ed_var {
 
 *<_industrycat_isic_>
 *1 digit isic code
-	gen industrycat_isic=s33kod
-	tostring industrycat_isic, replace
-	replace industrycat_isic="" if industrycat_isic=="."
-	label var industrycat_isic "ISIC code of primary job 7 day recall"
+gen helper_1 = string(s33kod,"%02.0f")
+gen helper_2 = "00"
+egen industrycat_isic = concat(helper_1 helper_2)
+replace industrycat_isic = "" if industrycat_isic == ".00"
+drop helper_1 helper_2
+label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
 
 *<_industrycat10_>
 	gen industrycat10=s33kod
-	recode industrycat10 9=10
+	replace industrycat10=1 if inrange(s33kod,1,3)
+	replace industrycat10=2 if inrange(s33kod,5,9)
+	replace industrycat10=3 if inrange(s33kod,10,33)
+	replace industrycat10=4 if inrange(s33kod,35,39)
+	replace industrycat10=5 if inrange(s33kod,41,43)
+	replace industrycat10=6 if inrange(s33kod,45,47)
+	replace industrycat10=6 if inrange(s33kod,55,56)
+	replace industrycat10=7 if inrange(s33kod,49,53)
+	replace industrycat10=7 if inrange(s33kod,58,63)
+	replace industrycat10=8 if inrange(s33kod,64,66)
+	replace industrycat10=8 if s33kod==68
+	replace industrycat10=9 if s33kod==84
+	replace industrycat10=10 if inrange(s33kod,69,82)
+	replace industrycat10=10 if inrange(s33kod,85,99)
+	recode industrycat10  0=.
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
@@ -797,10 +807,17 @@ drop helper_1
 
 
 *<_occup_skill_>
-	gen occup_skill = .
-	replace occup_skill=1 if s38kod==9
-	replace occup_skill=2 if inrange(s38kod,4,8)
-	replace occup_skill=3 if inrange(s38kod,1,3)
+	gen occup_skill =occup_orig
+	destring occup_skill,replace
+	replace occup_skill=1 if occup_orig=="9"
+	replace occup_skill=2 if occup_orig=="4"
+	replace occup_skill=2 if occup_orig=="5"
+	replace occup_skill=2 if occup_orig=="6"
+	replace occup_skill=2 if occup_orig=="7"
+	replace occup_skill=2 if occup_orig=="8"
+	replace occup_skill=3 if occup_orig=="1"
+	replace occup_skill=3 if occup_orig=="2"
+	replace occup_skill=3 if occup_orig=="3"
 	replace occup_skill=. if lstatus!=1
 	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"  4 "Armed Forces"
 	label values occup_skill lblskill
@@ -810,6 +827,19 @@ drop helper_1
 
 *<_occup_>
 	gen byte occup = s38kod
+	replace occup=. if s38kod==0
+	replace occup=99 if s38kod==99
+	replace occup=10 if s38kod==1
+	replace occup=1 if inrange(s38kod,11,14)
+	replace occup=2 if inrange(s38kod,21,26)
+	replace occup=3 if inrange(s38kod,31,35)
+	replace occup=4 if inrange(s38kod,41,44)
+	replace occup=5 if inrange(s38kod,51,54)
+	replace occup=6 if inrange(s38kod,61,63)
+	replace occup=7 if inrange(s38kod,71,75)
+	replace occup=8 if inrange(s38kod,81,83)
+	replace occup=9 if inrange(s38kod,91,96)
+	replace occup=. if lstatus!=1
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup
@@ -841,7 +871,9 @@ drop helper_1
 
 </_whours_note> */
 	gen whours = s56a_top
+	recode whours 0=.
 	replace whours=. if lstatus!=1
+replace whours=. if s56a_top>84
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -958,7 +990,7 @@ drop helper_1
 
 *<_industrycat4_2_>
 	gen byte industrycat4_2 = industrycat10_2
-	recode industrycat4 (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
+	recode industrycat4_2 (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
 	label var industrycat4_2 "1 digit industry classification (Broad Economic Activities), secondary job 7 day recall"
 	label values industrycat4_2 lblindustrycat4
 *</_industrycat4_2_>
@@ -1004,7 +1036,9 @@ drop helper_1
 
 *<_whours_2_>
 	gen whours_2 = s56b_top
+	recode whours_2 0=.
 	replace whours_2=. if lstatus!=1
+	replace whours_2=. if s56b_top>56
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 
@@ -1060,6 +1094,7 @@ drop helper_1
 *<_t_hours_total_>
 	gen helper_totalh=(whours+whours_2)
 	gen t_hours_total = helper_totalh
+replace t_hours_total=. if helper_totalh>140
 	label var t_hours_total "Annualized hours worked in all jobs 7 day recall"
 *</_t_hours_total_>
 

@@ -6,7 +6,7 @@
 /* -----------------------------------------------------------------------
 <_Program name_>				TUR_2007_HLFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata 16 <_Application_>
-<_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
+<_Author(s)_>					World Bank Job's Group </_Author(s)_>
 <_Date created_>				2021-10-08 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						TUR </_Country_>
@@ -366,18 +366,11 @@ count if s11==3 & s19==3 & s6==1
 replace s11=. if s11==3 & s19==3 & s6==1
 
 
-	gen relationharm =.
-	replace relationharm =5 if inrange(s11,4,7)
-	replace relationharm =6 if s11==8
-	replace relationharm=3 if s11==3 & age<22
-	replace relationharm=1 if s11==1
-	replace relationharm=2 if s11==2
-	*age majority 18 https://eeca.unfpa.org/sites/default/files/pub-pdf/unfpa%20turkey%20summary.pdf
-	replace relationharm=4 if s12b!=99 & s11!=3
-	replace relationharm=4 if s12c!=99 & s11!=3
-	label var relationharm "Relationship to the head of household - Harmonized"
-	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
-	label values relationharm  lblrelationharm
+gen relationharm =s11
+recode relationharm 1=1 2=2 3=3 4/7=5 8=6
+label var relationharm "Relationship to the head of household - Harmonized"
+la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
+label values relationharm  lblrelationharm
 *</_relationharm_>
 
 
@@ -661,6 +654,7 @@ foreach v of local ed_var {
 {
 *<_lstatus_>
 	gen byte lstatus = durum
+	replace lstatus=. if durum==3 & s29!=.
 	recode lstatus 0=.
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -693,7 +687,6 @@ foreach v of local ed_var {
 	recode nlfreason 0=.
 	recode nlfreason 1=4 2=3 3=5 4=5 6=5 7=1 8=5 9=3 10=5
 	replace nlfreason=. if lstatus!=3
-	*recode nlfreason .=5 if lstatus==3 & missing(s24)
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
 	label values nlfreason lblnlfreason
@@ -834,6 +827,8 @@ drop helper_1
 
 </_whours_note> */
 	gen whours = s63a_top
+	replace whours=. if  s63a_top==0
+	replace whours=. if s63a_top>84
 	replace whours=. if lstatus!=1
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
@@ -873,6 +868,7 @@ drop helper_1
 *<_socialsec_>
 	gen byte socialsec = s43
 	recode socialsec (2=0)
+	replace socialsec=. if lstatus!=1
 	label var socialsec "Employment has social security insurance primary job 7 day recall"
 	la de lblsocialsec 1 "With social security" 0 "Without social secturity"
 	label values socialsec lblsocialsec
@@ -951,7 +947,7 @@ drop helper_1
 
 *<_industrycat4_2_>
 	gen byte industrycat4_2 = industrycat10_2
-	recode industrycat4 (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
+	recode industrycat4_2 (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
 	label var industrycat4_2 "1 digit industry classification (Broad Economic Activities), secondary job 7 day recall"
 	label values industrycat4_2 lblindustrycat4
 *</_industrycat4_2_>
@@ -997,6 +993,8 @@ drop helper_1
 
 *<_whours_2_>
 	gen whours_2 = s63b_top
+	replace whours_2=. if  s63b_top==0
+	replace whours_2=. if s63b_top>56
 	replace whours_2=. if lstatus!=1
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
@@ -1053,6 +1051,7 @@ drop helper_1
 *<_t_hours_total_>
 	gen helper_totalh=(whours+whours_2)
 	gen t_hours_total = helper_totalh
+replace t_hours_total=. if helper_totalh>140
 	label var t_hours_total "Annualized hours worked in all jobs 7 day recall"
 *</_t_hours_total_>
 

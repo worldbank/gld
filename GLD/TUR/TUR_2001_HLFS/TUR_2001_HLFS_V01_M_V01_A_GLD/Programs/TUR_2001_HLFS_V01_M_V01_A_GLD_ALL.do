@@ -331,37 +331,6 @@ label var age "Individual age"
 
 *<_relationharm_>
 
-*spouse cannot be under 16 years old based on https://www.unicef.org/turkey/en/child-marriage#:~:text=The%20legal%20age%20of%20marriage,circumstances%20and%20on%20vital%20grounds'.
-
-count if s7==2 & s4==1
-replace s7=. if s7==2 & s4==1
-
-*count if s7==2 & s4==2
-*this is treaky bc the age for marrige is 18 and the age bracket here is 15-19, should I still consider it?
-
-*hhead in the second bracket of age also treaky
-*count if s7==1 & s4==2
-
-*how come some old folks are children or grand children
-
-count if s7==3 & s4==11
-count if s7==3 & s4==12
-count if s7==5 & s4==12
-
-replace  s7=. if s7==3 & s4==11
-replace s7=. if s7==3 & s4==12
-replace s7=. if s7==5 & s4==12
-
-*widow 15-19
-count if s11==4 & s4==2
-replace s11=. if s11==4 & s4==2
-*divorced 0-14
-count if s11==3 & s4==1
-replace s11=. if s11==3 & s4==1
-
-*married 0-14
-count if s11==2 & s4==1
-replace s11=.  if s11==2 & s4==1
 
 *single but says has spouse in s7
 count if s7==2 & s11==1
@@ -375,11 +344,11 @@ replace s7=. if s7==4 & s11==1
 count if s7==3 & s11==3 & s4==1
 replace s7=. if s7==3 & s11==3 & s4==1
 
-	gen relationharm = s7
-	recode relationharm 4 7=5 6=4 8=6
-	label var relationharm "Relationship to the head of household - Harmonized"
-	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
-	label values relationharm  lblrelationharm
+gen relationharm =s7
+recode relationharm 1=1 2=2 3=3 4/7=5 8=6
+label var relationharm "Relationship to the head of household - Harmonized"
+la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
+label values relationharm  lblrelationharm
 *</_relationharm_>
 
 
@@ -839,6 +808,7 @@ foreach v of local ed_var {
 </_whours_note> */
 	gen whours = s28a
 	replace whours=. if lstatus!=1
+replace whours=. if s28a>84
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -1000,6 +970,7 @@ foreach v of local ed_var {
 *<_whours_2_>
 	gen whours_2 = s28b
 	replace whours_2=. if lstatus!=1
+	replace whours_2=. if s28a>84
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 
@@ -1055,6 +1026,7 @@ foreach v of local ed_var {
 *<_t_hours_total_>
 	gen helper_totalh=(whours+whours_2)
 	gen t_hours_total = helper_totalh
+replace t_hours_total=. if helper_totalh>140
 	label var t_hours_total "Annualized hours worked in all jobs 7 day recall"
 *</_t_hours_total_>
 

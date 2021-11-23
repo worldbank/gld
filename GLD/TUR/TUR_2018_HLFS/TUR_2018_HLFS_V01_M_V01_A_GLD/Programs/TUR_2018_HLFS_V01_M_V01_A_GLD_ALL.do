@@ -6,7 +6,7 @@
 /* -----------------------------------------------------------------------
 <_Program name_>				TUR_2018_HLFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata 16 <_Application_>
-<_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
+<_Author(s)_>					World Bank Job's Group </_Author(s)_>
 <_Date created_>				2021-09-13 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						TUR </_Country_>
@@ -393,13 +393,12 @@ count if s11==3 & s24==3 & s6<5
 replace s11=. if s11==3 & s24==3 & s6<5
 
 
-
-
-	gen relationharm = s11
-	recode relationharm 6/9=5 10 11=6
-	label var relationharm "Relationship to the head of household - Harmonized"
-	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
-	label values relationharm  lblrelationharm
+gen relationharm =s11
+recode relationharm 11=.
+recode relationharm 1=1 2=2 3=3 4=4 5/9=5 10=6
+label var relationharm "Relationship to the head of household - Harmonized"
+la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
+label values relationharm  lblrelationharm
 *</_relationharm_>
 
 
@@ -693,7 +692,7 @@ foreach v of local ed_var {
 {
 *<_lstatus_>
 	gen byte lstatus = DURUM
-	replace lstatus = . if age < minlaborage
+	replace lstatus=. if DURUM==3 & IDO_NEDEN!=.
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
@@ -906,11 +905,9 @@ Non-paid employee |    21,009          0          0 |    21,009
 	and use those hours as first job.
 
 </_whours_note> */
-	gen whours = s55a
-	replace whours = . if s28 == 1 & whours == 0
-	* expect 57 replacements
-	replace whours = s56b_top if whours == 0
-	* expect 7 replacements
+	gen whours = round(s55a)
+	recode whours 0=.
+	replace whours =. if s55a>84
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -1024,7 +1021,7 @@ Non-paid employee |    21,009          0          0 |    21,009
 
 *<_industrycat4_2_>
 	gen byte industrycat4_2 = s53kod
-	recode industrycat4_2 (3=4) (4=3)
+	recode industrycat4_2 (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
 	label var industrycat4_2 "1 digit industry classification (Broad Economic Activities), secondary job 7 day recall"
 	label values industrycat4_2 lblindustrycat4
 *</_industrycat4_2_>
@@ -1069,7 +1066,9 @@ Non-paid employee |    21,009          0          0 |    21,009
 
 
 *<_whours_2_>
-	gen whours_2 = s56b_top
+	gen whours_2 = round(s56b_top)
+	recode whours_2 0=.
+	replace whours_2 =. if s56b_top>56
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 
@@ -1123,7 +1122,9 @@ Non-paid employee |    21,009          0          0 |    21,009
 
 
 *<_t_hours_total_>
-	gen t_hours_total = .
+		gen helper_totalh=(whours+whours_2)
+	gen t_hours_total = helper_totalh
+replace t_hours_total=. if helper_totalh>140
 	label var t_hours_total "Annualized hours worked in all jobs 7 day recall"
 *</_t_hours_total_>
 

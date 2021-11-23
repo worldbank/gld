@@ -6,7 +6,7 @@
 /* -----------------------------------------------------------------------
 <_Program name_>				TUR_2004_HLFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata 16 <_Application_>
-<_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
+<_Author(s)_>					World Bank Job's Group </_Author(s)_>
 <_Date created_>				2021-09-17 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						TUR </_Country_>
@@ -379,15 +379,8 @@ replace s7=. if s7==4 & s15==1
 count if s7==3 & s15==3 & s6==1
 replace s7=. if s7==3 & s15==3 & s6==1
 
-	gen relationharm =.
-	replace relationharm =5 if inrange(s7,4,7)
-	replace relationharm =6 if s7==8
-	replace relationharm=3 if s7==3 & age<22
-	replace relationharm=1 if s7==1
-	replace relationharm=2 if s7==2
-	*age majority 18 https://eeca.unfpa.org/sites/default/files/pub-pdf/unfpa%20turkey%20summary.pdf
-	replace relationharm=4 if s8b!=99 & s7!=3
-	replace relationharm=4 if s8c!=99 & s7!=3
+	gen relationharm =s7
+	recode relationharm 1=1 2=2 3=3 4/7=5 8=6
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm  lblrelationharm
@@ -402,7 +395,7 @@ replace s7=. if s7==3 & s15==3 & s6==1
 
 *<_marital_>
 	gen byte marital = s15
-	recode marital 1=2 2=1 4=1 5=4
+	recode marital 1=2 2=1 4=1 5=4 0=.
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
 	label values marital lblmarital
@@ -677,6 +670,7 @@ foreach v of local ed_var {
 {
 *<_lstatus_>
 	gen byte lstatus = durum
+	replace lstatus=. if durum==3 & s24!=.
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
@@ -705,8 +699,7 @@ foreach v of local ed_var {
 
 *<_nlfreason_>
 	gen byte nlfreason = s24
-	recode nlfreason 0=.
-	recode nlfreason 1=4 2=3 3=5 4=5 6=5 7=1 8=5 9=3 10=5
+	recode nlfreason 0=. 1/6=5 7=1 8/10=5
 	replace nlfreason=. if lstatus!=3
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
@@ -818,6 +811,7 @@ drop helper_1
 
 *<_occup_>
 	gen byte occup = s33kod
+	replace occup=. if lstatus==3
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup
@@ -849,7 +843,9 @@ drop helper_1
 
 </_whours_note> */
 	gen whours = s56a_top
+	recode whours 0=.
 	replace whours=. if lstatus!=1
+replace whours=. if s56a_top>84
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -1012,7 +1008,9 @@ drop helper_1
 
 *<_whours_2_>
 	gen whours_2 = s56b_top
+	recode whours_2 0=.
 	replace whours_2=. if lstatus!=1
+	replace whours_2=. if s56b_top>84
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 
@@ -1068,6 +1066,7 @@ drop helper_1
 *<_t_hours_total_>
 	gen helper_totalh=(whours+whours_2)
 	gen t_hours_total = helper_totalh
+replace t_hours_total=. if helper_totalh>140
 	label var t_hours_total "Annualized hours worked in all jobs 7 day recall"
 *</_t_hours_total_>
 
