@@ -70,7 +70,7 @@ Here you can see two folders are jumped to directly get to the *Programs* folder
 
 There are two types of support information. The first are guides and documentation. This includes the GLD guide and its data dictionary. These are stored in the [Guides and Documentation folder](https://github.com/worldbank/gld/tree/main/Support/Guides%20and%20Documentation).
 
-The second type of information is the survey context information. This can be found in the [Country Survey Details folder](/gld/Support/Country Survey Details). This folder is structured similarly to the GLD folder by the three letter country code followed by, within country, the survey acronym. Inside each country and survey folder you may find the *Introduction* text. The below is an example of the folder for the Indian EUS survey.
+The second type of information is the survey context information. This can be found in the [Country Survey Details folder](https://github.com/worldbank/gld/tree/main/Support/Country%20Survey%20Details). This folder is structured similarly to the GLD folder by the three letter country code followed by, within country, the survey acronym. Inside each country and survey folder you may find the *Introduction* text. The below is an example of the folder for the Indian EUS survey.
 
 Figure 2. Example of contents of Indian EUS country survey details folder
 
