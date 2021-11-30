@@ -43,12 +43,12 @@ That effort, however, presents information aggregated at national level, leaving
 
 Since 2020 the I2D2 has been discontinued, although the World Bank Jobs Group keeps updating certain surveys to service some legacy tools. Two different databases have taken its place: The *Global Monitoring Database* (GMD), managed by the Poverty General Practice (GP) and the *Global Labor Database*, managed by the Jobs Group. The GMD harmonizes all surveys that allow the Poverty GP to calculate poverty estimates (most often this means harmonising surveys with income and consumption modules like household income and expenditure surveys). The GLD harmonizes any other survey containing a rich labour market module (most often this means harmonising labour force surveys).
 
-Both the GMD and GLD use a common data dictionary, although there are some variables that only exists in one of the databases. You may find a detailed description of [the GLD data dictionary on this site](docs/data-dictionary) or [download the dictionary in Excel format from GitHub]( Support/Guides%20and%20Documentation/GLD_Dictionary_2021_04.xlsx).
+Both the GMD and GLD use a common data dictionary, although there are some variables that only exists in one of the databases. You may find a detailed description of [the GLD data dictionary on this site](docs/data-dictionary) or [download the dictionary in Excel format from GitHub](https://github.com/worldbank/gld/tree/main/Support/Guides%20and%20Documentation).
 
 
 ## Who is the GLD for?
 
-The GLD is open to all and the harmonization codes can be accessed by anyone. Some of the data may only be shared (through other channels) with members of the World Bank. The details of the data source are covered in [the Country Survey Details](/Support/Country%20Survey%20Details) section. 
+The GLD is open to all and the harmonization codes can be accessed by anyone. Some of the data may only be shared (through other channels) with members of the World Bank. The details of the data source are covered in [the Country Survey Details](https://github.com/worldbank/gld/tree/main/Support/Country%20Survey%20Details) section. 
 
 ## How do you use repository?
 
@@ -61,14 +61,14 @@ Note that this represents the structure as it is stored on the World Bank server
 
 Figure 1. Example of contents of GLD/IND folder
 <br></br>
-![](/docs/assets/images/ind_code_example.png)
+![](/gld/docs/assets/images/ind_code_example.png)
 <br></br>
 
 Here you can see two folders are jumped to directly get to the *Programs* folder where the harmonization code is stored.
 
 ### Finding the context information
 
-There are two types of support information. The first are guides and documentation. This includes the GLD guide and its data dictionary. These are stored in the [Guides and Documentation folder](/Support/Guides and Documentation).
+There are two types of support information. The first are guides and documentation. This includes the GLD guide and its data dictionary. These are stored in the [Guides and Documentation folder](/gld/Support/Guides and Documentation).
 
 The second type of information is the survey context information. This can be found in the [Country Survey Details folder](/Support/Country Survey Details). This folder is structured similarly to the GLD folder by the three letter country code followed by, within country, the survey acronym. Inside each country and survey folder you may find the *Introduction* text. The below is an example of the folder for the Indian EUS survey.
 
