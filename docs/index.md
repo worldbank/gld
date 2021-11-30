@@ -61,20 +61,20 @@ Note that this represents the structure as it is stored on the World Bank server
 
 Figure 1. Example of contents of GLD/IND folder
 <br></br>
-![](/gld/docs/assets/images/ind_code_example.png)
+![](https://github.com/worldbank/gld/blob/main/docs/assets/images/ind_code_example.png)
 <br></br>
 
 Here you can see two folders are jumped to directly get to the *Programs* folder where the harmonization code is stored.
 
 ### Finding the context information
 
-There are two types of support information. The first are guides and documentation. This includes the GLD guide and its data dictionary. These are stored in the [Guides and Documentation folder](/gld/Support/Guides and Documentation).
+There are two types of support information. The first are guides and documentation. This includes the GLD guide and its data dictionary. These are stored in the [Guides and Documentation folder](https://github.com/worldbank/gld/tree/main/Support/Guides%20and%20Documentation).
 
 The second type of information is the survey context information. This can be found in the [Country Survey Details folder](/Support/Country Survey Details). This folder is structured similarly to the GLD folder by the three letter country code followed by, within country, the survey acronym. Inside each country and survey folder you may find the *Introduction* text. The below is an example of the folder for the Indian EUS survey.
 
 Figure 2. Example of contents of Indian EUS country survey details folder
 <br></br>
-![](/docs/assets/images/ind_csd_example.png)
+![](https://github.com/worldbank/gld/blob/main/docs/assets/images/ind_csd_example.png)
 <br></br>
 
 In this case, in addition to `1. Introduction to EUS.md` we have three other markdown files that explain other aspects of the survey. However, these will be referenced first in the introduction document. The introduction is always numbered with a one to be on top of the list for easier access as it is the gateway document.
@@ -95,7 +95,7 @@ In addition to reporting on your experience, as you run and use the harmonizatio
 
 ### Harmonize a new survey yourself 
 
-Finally, if you are working on a project that needs a harmonization, please feel free to do it to our standard, we’d be excited to host your contribution. You may find the [data dictionary](https://github.com/worldbank/gld/blob/main/Support/Guides%20and%20Documentation/GLD_Dictionary_v01.xlsx) on our site as well as [the GLD harmonization template](/Support/Templates/GLD_Harmonization_Template.do). You may fork our repository, run through [the quality checks](/Support/Q%20Checks) and create a pull request and we will review it to add it to the collection.
+Finally, if you are working on a project that needs a harmonization, please feel free to do it to our standard, we’d be excited to host your contribution. You may find the [data dictionary](https://github.com/worldbank/gld/blob/main/Support/Guides%20and%20Documentation/GLD_Dictionary_v01.xlsx) on our site as well as [the GLD harmonization template](https://github.com/worldbank/gld/blob/main/Support/Templates/GLD_Harmonization_Template.do). You may fork our repository, run through [the quality checks](https://github.com/worldbank/gld/tree/main/Support/Q%20Checks) and create a pull request and we will review it to add it to the collection.
 
 ### Other support
 
