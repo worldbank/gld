@@ -61,7 +61,7 @@ Note that this represents the structure as it is stored on the World Bank server
 
 Figure 1. Example of contents of GLD/IND folder
 <br></br>
-![](https://github.com/worldbank/gld/blob/main/docs/assets/images/ind_code_example.png)
+![]("/assets/images/ind_code_example.png")
 <br></br>
 
 Here you can see two folders are jumped to directly get to the *Programs* folder where the harmonization code is stored.
