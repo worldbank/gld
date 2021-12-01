@@ -42,7 +42,7 @@
 # CCC_YYYY_Survey/CCC_YYYY_Survey_Version_GLD/Programs. Hence we allow
 
 # Stata
-!GLD/**/*.do
+!GLD/**/Programs/*.do
 
 # R
 !GLD/**/Programs/*.R
@@ -101,5 +101,6 @@
 !.jekyll-cache
 !.sass-cache
 !_site
-!Gemfile.lock
+!docs/Gemfile.lock
+!docs/Gemfile
 !node_modules
