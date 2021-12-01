@@ -42,7 +42,7 @@
 # CCC_YYYY_Survey/CCC_YYYY_Survey_Version_GLD/Programs. Hence we allow
 
 # Stata
-!GLD/**/Programs/*.do
+!GLD/**/*.do
 
 # R
 !GLD/**/Programs/*.R
