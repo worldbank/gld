@@ -12,6 +12,6 @@ As can be seen, it tells the computer program to read using the mentioned `.txt`
 
 Once the `.dct` files have been created, you just need to create a `.do` file that instructs `Stata` to run the `.dct` file and store the generated files in the location of your choice.
 
-As examples, you may find [here the `.dct` file for households](/Support/Country%20Survey%20Details/IND/PLFS/utilities/ hhv1.dct) and [here the file for individuals](/Support/Country%20Survey%20Details/IND/PLFS/utilities/ perv1.dct) for 2019, as well as [here the `.do` file calling them in](/Support/Country%20Survey%20Details/IND/PLFS/utilities/ Read_IND_2019_PLFS_from_text.do) and storing the output. 
+As examples, you may find [here the `.dct` file for households](/Support/Country%20Survey%20Details/IND/PLFS/utilities/hhv1.dct) and [here the file for individuals](/Support/Country%20Survey%20Details/IND/PLFS/utilities/perv1.dct) for 2019, as well as [here the `.do` file calling them in](/Support/Country%20Survey%20Details/IND/PLFS/utilities/Read_IND_2019_PLFS_from_text.do) and storing the output. 
 
 The character positions are the same for all years, but variable types may need to change from one year to the next. This is if non-numeric characters were introduced. For example, age in 2019 is a string as, wrongly, some special characters (`.` and `#`) have been coded in. This requires setting the variable as string. The harmonization code for 2019 then cleans these erroneous entries.
