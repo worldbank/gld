@@ -11,7 +11,7 @@
 #######################
 # Start by ignoring everything, and below we are explicitly saying
 # what to not ignore
-*
+**
 
 #######################
 # List of files with GitHub functionality anywhere in the repo
