@@ -63,6 +63,7 @@
 !Support/**/*.R
 !Support/**/*.do
 !Support/**/*.dta
+!Support/**/*.dct
 
 # Allow also PDF andimages if needed
 !/Support/**/*.pdf
