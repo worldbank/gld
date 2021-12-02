@@ -43,7 +43,7 @@
 
 # Stata
 !GLD/**/Programs/*.do
-!GLD/**/[a-zA-Z][a-zA-Z][a-zA-Z]_[0-9][0-9][0-9][0-9]_[a-zA-Z0-9-]+_[vV][0-9][0-9]_M_[vV][0-9][0-9]_A_GLD_ALL.dta
+!GLD/**/[a-zA-Z][a-zA-Z][a-zA-Z]_[0-9][0-9][0-9][0-9]_[a-zA-Z0-9-]+_[vV][0-9][0-9]_M_[vV][0-9][0-9]_A_GLD_ALL.do
 !GLD/**/*.do
 
 # R
