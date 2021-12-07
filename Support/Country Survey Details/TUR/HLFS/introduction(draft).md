@@ -1,12 +1,10 @@
-# Introduction to [Full Name of Survey] ([Survey Acronym)]
+# Introduction to the HOUSEHOLD AND LABOUR FORCE SURVEY OF TURKEY ([HLFS)]
 
-## What is the [CCC] [survey Acronym]?
+## What is the [HLFS]?
 
-Short introduction to what the survey is, meaning a paragraph of a few lines. Example:
+The Turkish Household and labour Force Survey is a survey ran from 2000 to 2019.
 
-The Indian Employment and Unemployment Survey (EUS) is the Indian Labour Force Survey run as part to India’s National Sample Survey series from 1987 to 2011.
-
-## What does the [CCC] [survey Acronym] cover?
+## What does the [HLFS] cover?
 
 Short paragraph on the topics covered as well as information on the years and the sample sizes. One way to generate a table is to use the [Individual and Household ID tabulator tool in R](../Global/unique_hh_ind_obs.R) Example:
 
