@@ -1,4 +1,4 @@
-# Changes in states over time
+# Changes in states' coding in EUS over time
 
 There are two moments of changes in the state make-up of India (the first administrative divisions of the country covered by the variable `subnatid1`). They in turn cause changes in the codes of the states. For example, the state of Arunachal Pradesh had the code 25 before 1993, code 3 in 1993 and 1999, and was given code 12 from 2004 onwards. 
 In the year [1987 the union territory of Goa, Daman and Diu was split](https://en.wikipedia.org/wiki/Goa,_Daman_and_Diu) off with Goa being granted full statehood on its own and Daman and Diu becoming a separate union territory.
