@@ -13,6 +13,11 @@
 # what to not ignore
 *
 
+
+#######################
+# First, whitelist anything that's a directory
+!*/
+
 #######################
 # List of files with GitHub functionality anywhere in the repo
 # that we do not want to ignore
@@ -42,10 +47,10 @@
 # CCC_YYYY_Survey/CCC_YYYY_Survey_Version_GLD/Programs. Hence we allow
 
 # Stata
-!GLD/**/Programs/*.do
+!GLD/*/*/*/Programs/*.do
 
 # R
-!GLD/**/Programs/*.R
+!GLD/*/*/*/Programs/*.R
 
 
 #######################
@@ -59,6 +64,7 @@
 !Support/**/*.R
 !Support/**/*.do
 !Support/**/*.dta
+!Support/**/*.dct
 
 # Allow also PDF andimages if needed
 !/Support/**/*.pdf
@@ -94,7 +100,7 @@
 !docs/**/*.yml
 !docs/**/*.yaml
 
-# Other files for github pages
+#  Other files for github pages
 !docs/**/*.gem
 !.bundle
 !.ruby-version

@@ -16,7 +16,7 @@
 <_Country_>						India </_Country_>
 <_Survey Title_>				National Sample survey 1987 Schedule 10 - Round 43 </_Survey Title_>
 <_Survey Year_>					1987 </_Survey Year_>
-<_ICLS Version_>				Unknown (does not seem to follow ICLS-13 </_ICLS Version_>
+<_ICLS Version_>				Unknown (does seem to follow ICLS-13) </_ICLS Version_>
 <_Study ID_>					DDI-IND-MOSPI-NSSO-43Rnd-Sch10-1987-88 </_Study ID_>
 <_Data collection from (M/Y)_>	07/1987 </_Data collection from (M/Y)_>
 <_Data collection to (M/Y)_>	06/1988 </_Data collection to (M/Y)_>
