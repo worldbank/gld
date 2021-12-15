@@ -66,7 +66,7 @@ To locate the documentation follow these steps.
 <br></br>
 
 
-3. Scroll down until you reach the Metadata Tab
+2. Scroll down until you reach the Metadata Tab
 
 
 <br></br>
@@ -74,7 +74,7 @@ To locate the documentation follow these steps.
 <br></br>
 
 
-5. Click on the up right corner, a drop down with the information on each section will appear, in this case we chose the "accounting conventions" section.
+3. Click on the up right corner, a drop down with the information on each section will appear, in this case we chose the "accounting conventions" section.
 
 
 <br></br>
