@@ -60,8 +60,30 @@ Note: There are changes in the sampling methodology, yet information is only ava
 To locate the documentation follow these steps.
 
 1. Access the website from the chosen presse release in this case we chose 2019
-2. Scroll down until you reach the Metadata Tab
-3. Click on the up right corner, a toggle with the information on each section will appear, in this case we chose the "accounting conventions" section.
+
+<br></br>
+![First_Step](/Support/Country%20Survey%20Details/TUR/HLFS/Utilities/First_Step.png)
+<br></br>
+
+
+3. Scroll down until you reach the Metadata Tab
+
+
+<br></br>
+![Second_Step](/Support/Country%20Survey%20Details/TUR/HLFS/Utilities/Second_Step.png)
+<br></br>
+
+
+5. Click on the up right corner, a drop down with the information on each section will appear, in this case we chose the "accounting conventions" section.
+
+
+<br></br>
+![Last_Step](/Support/Country%20Survey%20Details/TUR/HLFS/Utilities/Last_Step.png)
+<br></br>
+
+
+
+
 
 ## What is the geographic significance level?
 
