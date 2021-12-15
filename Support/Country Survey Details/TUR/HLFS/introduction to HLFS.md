@@ -64,7 +64,7 @@ To locate the documentation follow these steps.
 <br></br>
 ![First_Step](/Support/Country%20Survey%20Details/TUR/HLFS/Utilities/First_Step.png)
 <br></br>
-
+Source: Turkstat website
 
 2. Scroll down until you reach the Metadata Tab
 
@@ -72,7 +72,7 @@ To locate the documentation follow these steps.
 <br></br>
 ![Second_Step](/Support/Country%20Survey%20Details/TUR/HLFS/Utilities/Second_Step.png)
 <br></br>
-
+Source: Turkstat website
 
 3. Click on the up right corner, a drop down with the information on each section will appear, in this case we chose the "accounting conventions" section.
 
@@ -80,7 +80,7 @@ To locate the documentation follow these steps.
 <br></br>
 ![Last_Step](/Support/Country%20Survey%20Details/TUR/HLFS/Utilities/Last_Step.png)
 <br></br>
-
+Source: Turkstat website
 
 
 ## What is the geographic significance level?
