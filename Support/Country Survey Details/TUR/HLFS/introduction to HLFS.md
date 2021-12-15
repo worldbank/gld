@@ -83,8 +83,6 @@ To locate the documentation follow these steps.
 
 
 
-
-
 ## What is the geographic significance level?
 
 The official reports detail results by gender, sector (urban or rural), and province. According to [TURKSTAT](https://data.tuik.gov.tr/Bulten/Index?p=Labour-Force-Statistics-2020-37484&dil=2):
@@ -97,8 +95,13 @@ The official reports detail results by gender, sector (urban or rural), and prov
 ## Other noteworthy aspects
 
 ### Household ID
-### ...
+
+The raw datasets come with ID information masked due to privacy reasons. In the GLD project we have created IDs to provide the best user experience. The IDs had been used to check expanded population numbers, household id’s and the number of  observations, the results resemble those reported by the TURKSTAT.
+
+### Geographic information
+
+TURKSTAT developed the 2000-2013 surveys with a variable for urban, rural categories. However, the 2014-2019 survey do not have a variable for urbanization categories. Further information about this change can be accessed in the press releases from 2014-onwards.
 
 
 ### Other Documentation Files 
-...
+N/A
