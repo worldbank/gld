@@ -96,4 +96,4 @@ TURKSTAT developed the 2000-2013 surveys with a variable for urban, rural catego
 
 
 ### Other Documentation Files 
-The yearly HLFS has changed methodology since 2020. Though the do files do not cover the 2020 HLFS, users may find useful the basis for the change in methodology. Interested persons can access the information in the following link about the [changes](/Support/Country%20Survey%20Details/TUR/HLFS/Utilities/Changes_HLFS.pdf). 
+The yearly HLFS has changed methodology since 2020. Though the do files do not cover the 2020 HLFS, users may find useful the basis for the change in methodology. Interested persons can access the information in the following link about the [changes](https://www.tuik.gov.tr/indir/metodolojikDokumanlar/hia_metod_en.pdf). 
