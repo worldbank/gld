@@ -5,8 +5,10 @@ Example Documentation Template
     -   [Subheading 1](#subheading-1)
         -   [Sub-Sub Heading 1](#sub-sub-heading-1)
 
-This is an .Rmd template to show how we can use `here`, the `.Rproject`
+This is an .md template to show how we can use `here`, the `.Rproject`
 file, and yaml to create more user-friendly documents.
+
+Learn [more here](https://www.markdownguide.org/getting-started/)
 
 # Heading 1
 
@@ -32,5 +34,5 @@ Here’s a long table!
 Oops, maybe we need this!
 
 ``` r
-library(rmarkdown)
+computer code
 ```
