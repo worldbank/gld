@@ -1,30 +1,20 @@
----
-title: "Example Documentation Template"
-output: 
-  github_document:
-    html_preview: false
-    toc: true
-    toc_depth: 3
-editor_options: 
-  markdown: 
-    wrap: 72
-knit: (function(input, ...) {
-    rmarkdown::render(
-      input,
-      output_dir = here::here("Support/Guides and Documentation"),
-      envir = globalenv()
-    )
-  })
----
+Example Documentation Template
+================
 
-This is an .Rmd template to show how we can use `here`, the `.Rproject`
+-   [Heading 1](#heading-1)
+    -   [Subheading 1](#subheading-1)
+        -   [Sub-Sub Heading 1](#sub-sub-heading-1)
+
+This is an .md template to show how we can use `here`, the `.Rproject`
 file, and yaml to create more user-friendly documents.
+
+Learn [more here](https://www.markdownguide.org/getting-started/)
 
 # Heading 1
 
 ## Subheading 1
 
-Here's a long table!
+Here’s a long table!
 
 | Year | something | something else |
 |------|-----------|----------------|
@@ -43,6 +33,6 @@ Here's a long table!
 
 Oops, maybe we need this!
 
-```{r, eval=FALSE}
-library(rmarkdown)
+``` r
+computer code
 ```
