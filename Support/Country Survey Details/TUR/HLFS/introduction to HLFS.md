@@ -45,17 +45,9 @@ The datasets are not available to the public, the researcher/analyst has to purc
 
 ## What is the sampling procedure?
 
-The Turkish HLFS uses a stratified multi-stage design. The sampling procedure has changed across different survey rounds betweenn 2000-2019. For instance According to the 2019 [TURKSTAT documentation](https://data.tuik.gov.tr/Bulten/Index?p=Labour-Force-Statistics-2019-33784)
+The LFS is designed as a two-stage stratified cluster sampling survey. The sampling frame is based on a nationwide address database with households as the ultimate sampling unit. Note however, that the sampling frame is updated over the years and there are slight changes to the methodology over time. For example, from 2004 the sampling allowed for subnational estimates. For further details please see the Turkish NSO [site](https://www.tuik.gov.tr/).
 
-    "Method of Sampling: For Household Labour Force Survey, two-stage stratified cluster sampling method was used. 
-    Based on adress, a rotation pattern is formed to ensure a 50% of overlap between two consecutive periods 
-    and in the same periods of the two consecutive years and 8 sub samples have been used at each period. 
-    In design of the study,  sample size has been equally distributed to the weeks,  which will be applied in each term. 
-    In determining sample volume size Eurostat regulation numbered 577/98 is based on. In design of the study, 
-    administrative division of the year 2014 is based on. The estimate size of the study is periodically the whole Turkey, 
-    annualy is the NUTS Level 2." - Labor Force Newsletter 2019- Accounting Conventions
-
-Note: There are changes in the sampling methodology, yet information is only available from 2011 onwards. The presse releases are the best source of documentation of the sampling and weighting processess for each year. These can be accessed through the following [link](https://data.tuik.gov.tr/Kategori/GetKategori?p=istihdam-issizlik-ve-ucret-108&dil=2)
+Note: Information on methodology is only available from 2011 onwards. The presse releases are the best source of documentation of the sampling and weighting processess for each year. These can be accessed through the following [link](https://data.tuik.gov.tr/Kategori/GetKategori?p=istihdam-issizlik-ve-ucret-108&dil=2).
 
 To locate the documentation follow these steps.
 
@@ -104,4 +96,4 @@ TURKSTAT developed the 2000-2013 surveys with a variable for urban, rural catego
 
 
 ### Other Documentation Files 
-N/A
+The yearly HLFS has changed methodology since 2020. Though the do files do not cover the 2020 HLFS, users may find useful the basis for the change in methodology. Interested persons can access the information in the following link about the [changes](/Support/Country%20Survey%20Details/TUR/HLFS/Utilities/Changes_HLFS.pdf). 
