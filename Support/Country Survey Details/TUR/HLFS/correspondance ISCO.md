@@ -29,16 +29,39 @@ Between the years 2001-2011 the survey uses the first digit of the [ISCO-88](htt
 > 8. Plant and machine operators and assemblers
 > 9. Elementary occupations
 
-Finally between the years 2012-2019 the survey used the first digit of the [ISCO-08](https://www.ilo.org/public/english/bureau/stat/isco/isco08/index.htm).
+Finally between the years 2012-2019 the survey used the two digits of the [ISCO-08](https://www.ilo.org/public/english/bureau/stat/isco/isco08/index.htm) classification, below we show the highest level for simplicity yet more information on the different levels can be found in this [links](https://ilostat.ilo.org/resources/concepts-and-definitions/classification-occupation/).
 
-In the Harmonized GLD, skill level variables were developed for only ISCO-88 and ISCO-08 variables because the information of correspondance with ISCO-68 is not available in the ILO website. To learn more about skill level tables please visit the following [link](https://ilostat.ilo.org/resources/concepts-and-definitions/classification-occupation/):
+> 1. Managers
+> 2. Professionals
+> 3. Technicians and Associate Professionals
+> 4. Clerical Support Workers
+> 5. Services and Sales Workers
+> 6. Skilled Agricultural, Forestry and Fishery Workers
+> 7. Craft and Related Trades Workers
+> 8.  Plant and Machine Operators and Assemblers
+> 9. Elementary Occupations
+> 0. Armed Forces Occupations
+
+
+In the Harmonized GLD, skill level variables were developed for only ISCO-88 and ISCO-08 variables at the 1 digit level because the information of correspondance with ISCO-68 is not available in the ILO website. To learn more about skill level tables please visit the following [link](https://ilostat.ilo.org/resources/concepts-and-definitions/classification-occupation/):
 
 <br></br>
-![](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/isco.png)
+![](/Support/Country%20Survey%20Details/TUR/HLFS/Utilities/isco.png)
+<br></br>
+
+Source: ILO website - ISCO skill Correspondance Table
+
+## Limitations 
+
+In comparison to other surveys the process of mapping is straightforward in the Turkish HLFS but it only reaches the second level (digits) of detail from year 2012 to 2019.
+
+## List of variables per year for occupations harmonized
+
+Below we list the questions that helped in the development of the harmonized occupation variable for all the survey years. 
+
+<br></br>
+![](/Support/Country%20Survey%20Details/TUR/HLFS/Utilities/qisco.png)
 <br></br>
 
 
-
-
-
-
+Source: TUR HLFS, TURKSTAT
