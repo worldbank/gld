@@ -3,9 +3,7 @@
 
 Information regarding the industry respondents is coded in the Turkish Household Labour Force Survey (HLFS) using the codes of the [Statistical Classification of Economic Activities in the European Community](https://ec.europa.eu/eurostat/ramon/nomenclatures/index.cfm?TargetUrl=LST_NOM_DTL&StrNom=NACE_REV2&StrLanguageCode=EN&IntPcKey=&StrLayoutCode=HIERARCHIC) (shortened as NACE) since 2004. Previous to that TURKSTAT used the [isic rev 3](https://unstats.un.org/unsd/classifications/Family/Detail/2) economic activity classification. 
 
-## Data as present in survey raw data![image](https://user-images.githubusercontent.com/34625014/146469584-a6dd00d0-a69c-493f-a286-570bd151d46f.png)![image](https://user-images.githubusercontent.com/34625014/146469589-095e2d37-d94e-4e2d-8a05-e52d96b47eec.png)
-
-
+## Data as present in survey raw data
 
 The image below shows the answers to the relevant question (`s33kod` asks for the economic activity of the local unit in which persons worked) of the 2010 survey :
 
