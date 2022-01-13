@@ -147,7 +147,7 @@ local output "`id_data'"
 /*<_hhid_>
 
 Note that 282,277 observations' or 81,590 households' number of household member do
-not match the original household size variable "b1r12".
+not match the original household size variable "jart".
 
 	bys hhid: egen hhsize=count(pid)
 	gen gap=hhsize-jart
@@ -263,7 +263,7 @@ Therefore, we do not know about the urban/rural status.
 
 
 *<_urban_>
-	gen byte urban= .
+	gen byte urban= koped
 	label var urban "Location is urban"
 	la de lblurban 1 "Urban" 0 "Rural"
 	label values urban lblurban

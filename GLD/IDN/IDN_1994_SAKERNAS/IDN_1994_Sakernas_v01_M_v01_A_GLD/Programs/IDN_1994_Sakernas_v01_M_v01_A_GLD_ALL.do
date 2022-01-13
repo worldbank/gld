@@ -159,7 +159,7 @@ missing: nour = serial number of households
 
 
 Note that 138,896  observations' or 40,798 households' number of household member do
-not match the original household size variable "b1r12".
+not match the original household size variable "jart".
 
 	bys hhid: egen hhsize=count(pid)
 	gen gap=hhsize-jart

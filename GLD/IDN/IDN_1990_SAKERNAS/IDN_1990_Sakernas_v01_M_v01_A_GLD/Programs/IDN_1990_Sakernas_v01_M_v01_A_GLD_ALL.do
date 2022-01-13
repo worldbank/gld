@@ -27,7 +27,7 @@
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
 <_ISCO Version_>				N/A </_ISCO Ver UP National_>
 <_ISIC Version_>				N/A </_ISIC Version_>
-<_INDUS National_>				N/A </_INDUS National_>
+<_INDUS National_>				KBLI </_INDUS National_>
 
 -----------------------------------------------------------------------
 
@@ -146,8 +146,9 @@ local output "`id_data'"
 
 /*<_hhid_>
 
-Note that 174,753 observations' or 48,492 households' number of household member do
-not match the original household size variable "b1r12".
+Tried to create hhid according to the method prompted by the GUIDE:
+	sort prop kab koped nks nous nour
+	egen hhid=group(prop kab koped nks nous nour)
 
 	bys hhid: egen hhsize=count(pid)
 	gen gap=hhsize-jart
@@ -176,13 +177,16 @@ hhsize_larg |
           . |    116,342       39.97      100.00
 ------------+-----------------------------------
       Total |    291,095      100.00
+
+Note that 174,753 observations' or 48,492 households' number of household member do
+not match the original household size variable "jart".
+So var hhid was left missing. 
 	  
 <_hhid_>*/
 
 
 *<_hhid_>
-	sort prop kab koped nks nous nour
-	egen hhid=group(prop kab koped nks nous nour)
+	gen hhid=.
 	label var hhid "Household id"
 *</_hhid_>
 
@@ -214,9 +218,11 @@ hhsize_larg |
 
 
 /*<_psu_>
+
 We do know that the primary sampling unit of Sakernas is census block and the
 census block number is in the questionnaire. However this information is not
 provided due to it is part of the confidential information withheld by the NSO.
+
 <_psu_>*/
 
 
@@ -263,7 +269,7 @@ provided due to it is part of the confidential information withheld by the NSO.
 
 *<_subnatid1_>
 	gen byte subnatid1 = prop
-	label values subnatid1 province
+	label values subnatid1 prop
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 
@@ -278,7 +284,8 @@ The first two digits represent province whereas the last two digits mean distric
 
 *<_subnatid2_>
 	tostring kab, replace format(%02.0f)
-	gen subnatid2 = kab
+	tostring prop, gen (province) format(%02.0f)
+	gen subnatid2 = province+kab
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
 
@@ -292,7 +299,7 @@ The first two digits represent province whereas the last two digits mean distric
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = "subnatid2"
+	gen subnatidsurvey = "subnatid1"
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -712,8 +719,12 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 /*<_lstatus_>
 
 We define the employed as who "worked primarily (b4p4==1)" or
-							  "has a job/business but temporarily didn't work (b4p6==1)";
-unemployed: "who do not have a job/business (b4p6==2)" & seeking a job (b4p13==1);
+							  "worked at least for 1 hour in the past one week(b4p5==1)" or
+							  "has a job/business but temporarily did not work during the past one week(b4p6==1)";
+unemployed: "whose primary work last week is not work (b4p4!=1)" and
+			"who did not work at least one hour during the previous week (b4p5==2)" and 
+			"who do not have a job/business (b4p6==2)" and
+			"is currently seeking a job (b4p13==2)";
 non-labor force: "who do not have a job/business (b4p6==2)" & not seeking a job (b4p13=!1).
 
 Note:
@@ -763,16 +774,13 @@ Unable to do activiti |         0      7,255          1 |     7,256
 ----------------------+---------------------------------+----------
                 Total |     2,114    134,729    154,252 |   291,095
 
-Unemployment rate of 2.62 in 1991: https://data.worldbank.org/indicator/SL.UEM.TOTL.ZS?locations=ID
-compared with 1.8 using this dataset.
-
 <_lstatus_>*/
 
 *<_lstatus_>
 	gen byte lstatus=.
-	replace lstatus=1 if b4p4==1 | b4p6==1
-	replace lstatus=2 if b4p6==2 & b4p13==1
-	replace lstatus=3 if b4p6==2 & b4p13!=1
+	replace lstatus=1 if b4p4==1 | b4p5==1 | b4p6==1
+	replace lstatus=2 if b4p4!=1 & !mi(b4p4) & b4p5==2 & b4p6==2 & b4p13==1
+	replace lstatus=3 if b4p4!=1 & b4p5==2 & b4p6==2 & b4p13==2
 	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"

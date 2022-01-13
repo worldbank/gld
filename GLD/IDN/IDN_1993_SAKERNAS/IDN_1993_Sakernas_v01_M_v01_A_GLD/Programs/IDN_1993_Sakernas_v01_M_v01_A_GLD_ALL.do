@@ -147,7 +147,7 @@ local output "`id_data'"
 /*<_hhid_>
 
 Note that 279,711 observations' or 81,613 households' number of household member do
-not match the original household size variable "b1r12".
+not match the original household size variable "jart".
 
 	bys hhid: egen hhsize=count(pid)
 	gen gap=hhsize-jart
