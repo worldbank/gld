@@ -702,7 +702,8 @@ foreach v of local ed_var {
 
 
 *<_industry_orig_>
-	gen industry_orig = s16kod
+	gen industrycat10=s16kod
+	replace industrycat10=10 if s16kod==9
 	tostring industry_orig, replace
 	replace industry_orig="" if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
@@ -718,7 +719,9 @@ foreach v of local ed_var {
 
 *<_industrycat10_>
 *No correspondance table between rev3 and rev 4 https://unstats.un.org/unsd/classifications/Econ/isic
-	gen industrycat10=.
+	gen industrycat10=s16kod
+	replace industrycat10=. if lstatus!=1
+	recode industrycat10 9=10
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
@@ -906,7 +909,9 @@ foreach v of local ed_var {
 
 
 *<_industrycat10_2_>
-	gen byte industrycat10_2 = .
+	gen byte industrycat10_2 = s26kod
+	replace industrycat10_2=10 if s26kod==9
+	replace industrycat10_2=. if lstatus!=1
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
 *</_industrycat10_2_>
