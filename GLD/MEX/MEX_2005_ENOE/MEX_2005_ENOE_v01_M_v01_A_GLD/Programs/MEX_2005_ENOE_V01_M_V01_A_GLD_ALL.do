@@ -818,7 +818,8 @@ foreach v of local ed_var {
 	gen byte underemployment = .
 	replace underemployment=1 if  p8a==1 | p8a==3
 	replace underemployment = . if age < minlaborage & age != .
-	recode underemployment .=0
+	*recode underemployment .=0
+	replace underemployment=. if lstatus!=1
 	label var underemployment "Underemployment status"
 	la de lblunderemployment 0 "No" 1 "Yes"
 	label values underemployment lblunderemployment
@@ -834,7 +835,6 @@ foreach v of local ed_var {
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
 	label values nlfreason lblnlfreason
 *</_nlfreason_>
-
 
 *<_unempldur_l_>
 
@@ -940,12 +940,14 @@ foreach v of local ed_var {
 *</_occup_orig_>
 
 *<_occup_>
-	gen byte occup = floor(p3/1000)
+
+	destring isco_1, gen(occup_helper)
+	gen byte occup = floor(occup_helper/1000)
+	drop occup_helper
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup
 *</_occup_>
-
 
 *<_occup_isco_>
 	gen occup_isco = isco_1
@@ -1198,7 +1200,9 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 *</_occup_orig_2_>
 
 *<_occup_2_>
-	gen byte occup_2 = floor(p7a/1000)
+	destring isco_2, gen(occup_helper_2)
+	gen byte occup_2 = floor(occup_helper_2/1000)
+	drop occup_helper_2
 	label var occup_2 "1 digit occupational classification secondary job 7 day recall"
 	label values occup_2 lbloccup
 *</_occup_2_>
