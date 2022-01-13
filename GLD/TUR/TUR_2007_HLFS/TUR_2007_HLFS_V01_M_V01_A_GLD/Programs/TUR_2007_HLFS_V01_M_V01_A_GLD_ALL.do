@@ -336,11 +336,11 @@ label var age "Individual age"
 
 *<_relationharm_>
 
-gen relationharm =s11
-recode relationharm 1=1 2=2 3=3 4/7=5 8=6
-label var relationharm "Relationship to the head of household - Harmonized"
-la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
-label values relationharm  lblrelationharm
+	gen relationharm =s11
+	recode relationharm 1=1 2=2 3=3 4/7=5 8=6
+	label var relationharm "Relationship to the head of household - Harmonized"
+	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
+	label values relationharm  lblrelationharm
 *</_relationharm_>
 
 
