@@ -334,11 +334,11 @@ label var age "Individual age"
 
 *<_relationharm_>
 
-gen relationharm =s11
-recode relationharm 1=1 2=2 3=3 4/7=5 8=6
-label var relationharm "Relationship to the head of household - Harmonized"
-la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
-label values relationharm  lblrelationharm
+	gen relationharm =s11
+	recode relationharm 1=1 2=2 3=3 4/7=5 8=6
+	label var relationharm "Relationship to the head of household - Harmonized"
+	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
+	label values relationharm  lblrelationharm
 *</_relationharm_>
 
 
@@ -717,8 +717,7 @@ foreach v of local ed_var {
 
 *<_industrycat10_>
 	gen industrycat10=s33kod
-	recode industrycat10 1=1 2=2 3=3 4=4 5=5 6=6 7=7 8=8 9=10
-	*replace industrycat10=. if lstatus!=1
+	recode industrycat10 9=10
 	replace industrycat10=. if durum!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
@@ -744,10 +743,10 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_>
-gen helper_1 = "000"
-egen occup_isco=concat(helper_1 occup_orig)
-replace occup_isco="" if lstatus!=1
-drop helper_1
+	gen helper_1 = "000"
+	egen occup_isco=concat(helper_1 occup_orig)
+	replace occup_isco="" if lstatus!=1
+	drop helper_1
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
