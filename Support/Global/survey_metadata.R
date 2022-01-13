@@ -12,84 +12,9 @@ library(retroharmonize)
 
 
 
-
-# paths ----
-
-# user 
-
-user <- 5   # tom
-
-
-
-
-## top folders --------------------------
-## This has to be different for each user based on where you have your Github and network
-## drive on your computer/VDI. 
-
-if (user == 5) {
-  
-  data		<- ""					# data folder
-  GLD 		<- "Y:"					# set this to the letter the GLD drive is on your computer
-  i2d2 	  <- "Z:"					# set this to the letter the I2D2 drive is on your computer
-  clone	  <- "C:/Users/WB551206/local/GitHub" # github/code top folder
-  
-}
-
-
-if (user == 4) {
-  
-  data		<- ""					# data folder
-  GLD 		<- ""					# set this to the letter the GLD drive is on your computer
-  i2d2 	  <- ""					# set this to the letter the I2D2 drive is on your computer
-  clone	  <- "C:/Users/..." # github/code top folder
-  
-}
-
-if (user == 3) {
-  
-  data		<- ""					# data folder
-  GLD 		<- ""					# set this to the letter the GLD drive is on your computer
-  i2d2 	  <- ""					# set this to the letter the I2D2 drive is on your computer
-  clone	  <- "C:/Users/..." # github/code top folder
-  
-}
-
-if (user == 2) {
-  
-  data		<- ""					# data folder
-  GLD 		<- ""					# set this to the letter the GLD drive is on your computer
-  i2d2 	  <- ""					# set this to the letter the I2D2 drive is on your computer
-  clone	  <- "C:/Users/..." # github/code top folder
-  
-}
-
-if (user == 1) {
-  
-  data		<- ""					# data folder
-  GLD 		<- ""					# set this to the letter the GLD drive is on your computer
-  i2d2 	  <- ""					# set this to the letter the I2D2 drive is on your computer
-  clone	  <- "C:/Users/..." # github/code top folder
-  
-}
-
-
-
-
-
-# Shared file Paths --------------------------------------------------------
-# there's no need to change for each user, since all will be the same. Only add
-# new file paths if you want to add new folders etc.
-
-
-# Code ------------------------
-code 	        <- file.path(clone, "gld/Support")
-
-
-# Network Data -------
-PHL           <- file.path(GLD, "GLD-Harmonization/551206_TM/PHL")
-
-
-
+# source main ----
+here::i_am("main.R")
+source("main.R")
 
 
 
@@ -108,8 +33,8 @@ PHL           <- file.path(GLD, "GLD-Harmonization/551206_TM/PHL")
 #                         to FALSE to skip this stop and pull striaght from the Rds copies. Note that 
 #                         the copying to Rds can take a long time.               
 
-eval_directory          <- PHL
-metadata_output_folder  <- file.path(PHL, "PHL_data/I2D2/Rdata")
+eval_directory          <- ZWE
+metadata_output_folder  <- file.path(ZWE, "ZWE_data/GLD/Rdata")
 dta_to_rds              <- FALSE 
 
 
@@ -135,7 +60,7 @@ dta_to_rds              <- FALSE
 
 ## we know they are all .dta files
 files <- list.files(eval_directory,     
-                    pattern = "\\.dta$", # "\\.dta$"
+                    pattern = "\\.sav$", # "\\.dta$"
                     recursive = TRUE,   # search all sub folders
                     full.names = TRUE,  # list full file names
                     include.dirs = TRUE) # include the full file path
@@ -148,13 +73,13 @@ files <- list.files(eval_directory,
 files_tib <- as_tibble(files)
 files_tib <- 
   files_tib %>%
-  filter( str_detect(files_tib$value, pattern = "v01_M/Data/Stata") == TRUE )
+  filter( str_detect(files_tib$value, pattern = "v01_M/Data/Original") == TRUE )
 
 
 # make a directory for future RDS files 
 files_tib <- 
   files_tib %>%
-  separate(value, into = c("front", "back"), sep = "Stata", fill = "right", remove = FALSE) %>%
+  separate(value, into = c("front", "back"), sep = "Original", fill = "right", remove = FALSE) %>%
   separate(back, into = c("filename", "extension"), sep = "\\.") %>%
   mutate(r    = "R",
          rpath = paste0(front, r, filename, ".Rds")) %>%
@@ -172,11 +97,16 @@ files_list <-
 
 # Import/Export an RDS file ----------------------------------------------------------
 # Write a function that takes each survey round and writes a .RDS file in the same directory
+# This is only necesary if the raw files are not in .sav or another format that retroharmonize 
+# can read out of the box
 
 # With an eye on memory, write a function that takes each file in the list above 
 # and imports it, then exports it again
 
 ## function ----
+
+if (FALSE) {
+
 make_rds <- function(s, r) {
   
   # import
@@ -216,6 +146,7 @@ if (dta_to_rds == TRUE) {
 }
 
 
+} # end toggle for import of retroharmonize-friendly files
 
 
 
@@ -225,13 +156,14 @@ if (dta_to_rds == TRUE) {
 
 ## pull the list of surveys (.Rds files we just generated)
 surveys <- files_tib %>%
-  pull(rpath)
+  pull(dtapath)
+
 
 
 
 ## read in the surveys
 waves <- read_surveys(surveys,
-                      .f = "read_rds",
+                      .f = "read_spss",
                       save_to_rds = FALSE)
 
 
