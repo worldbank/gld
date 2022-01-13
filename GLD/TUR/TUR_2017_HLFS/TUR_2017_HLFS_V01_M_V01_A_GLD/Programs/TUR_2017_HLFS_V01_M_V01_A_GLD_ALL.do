@@ -220,51 +220,17 @@ use "`path_in'\LFS2017.dta"
 	First breakdown is NUTS-1 (https://en.wikipedia.org/wiki/NUTS_statistical_regions_of_Turkey), not actual
 	administrative divisions. Same for subnatid2.
 </_subnatid1> */
-	tostring nuts1, gen(subnatid1)
-	replace subnatid1 = "1 - Istanbul" if subnatid1 == "1"
-	replace subnatid1 = "2 - West Marmara" if subnatid1 == "2"
-	replace subnatid1 = "3 - Aegean" if subnatid1 == "3"
-	replace subnatid1 = "4 - East Marmara" if subnatid1 == "4"
-	replace subnatid1 = "5 - West Anatolia" if subnatid1 == "5"
-	replace subnatid1 = "6 - Mediterranean" if subnatid1 == "6"
-	replace subnatid1 = "7 - Central Anatolia" if subnatid1 == "7"
-	replace subnatid1 = "8 - West Black Sea" if subnatid1 == "8"
-	replace subnatid1 = "9 - East Black Sea" if subnatid1 == "9"
-	replace subnatid1 = "10 - Northeast Anatolia" if subnatid1 == "10"
-	replace subnatid1 = "11 - Centraleast Anatolia" if subnatid1 == "11"
-	replace subnatid1 = "12 - Southeast Anatolia" if subnatid1 == "12"
+gen subnatid1=nuts1
+label define lblsubnatid1  1 "1 - Istanbul" 2 "2 - West Marmara" 3 "3 - Aegean" 4 "4 - East Marmara" 5 "5 - West Anatolia" 6 "6 - Mediterranean" 7 "7 - Central Anatolia" 8 "8 - West Black Sea" 9 "9 - East Black Sea" 10 "10 - Northeast Anatolia" 11 "11- Middle East Anatolia" 12 "12 - Southeast Anatolia"
+label values subnatid1 lblsubnatid1
 	label var subnatid1 "Subnational ID at NUTS 1 Level"
 *</_subnatid1_>
 
 
 *<_subnatid2_>
-	tostring nuts2, gen(subnatid2)
-	replace subnatid2 = "1 - Istanbul" if subnatid2 == "1"
-	replace subnatid2 = "2 - Edirne, Tekirdağ, Kırklareli" if subnatid2 == "2"
-	replace subnatid2 = "3 - Balıkesir, Çanakkale" if subnatid2 == "3"
-	replace subnatid2 = "4 - İzmir" if subnatid2 == "4"
-	replace subnatid2 = "5 - Denizli, Aydın, Muğla"  if subnatid2 == "5"
-	replace subnatid2 = "6 - Manisa, Afyonkarahisar, Kütahya, Uşak" if subnatid2 == "6"
-	replace subnatid2 = "7 - Bursa, Eskişehir, Bilecik" if subnatid2 == "7"
-	replace subnatid2 = "8 - Kocaeli, Sakarya, Düzce, Bolu, Yalova" if subnatid2 == "8"
-	replace subnatid2 = "9 - Ankara" if subnatid2 == "9"
-	replace subnatid2 = "10 - Konya, Karaman" if subnatid2 == "10"
-	replace subnatid2 = "11 - Antalya, Isparta, Burdur" if subnatid2 == "11"
-	replace subnatid2 = "12 - Adana, Mersin" if subnatid2 == "12"
-	replace subnatid2 = "13 - Hatay, Kahramanmaraş, Osmaniye" if subnatid2 == "13"
-	replace subnatid2 = "14 - Nevşehir, Aksaray, Niğde, Kırıkkale, Kırşehir" if subnatid2 == "14"
-	replace subnatid2 = "15 - Kayseri, Sivas, Yozgat" if subnatid2 == "15"
-	replace subnatid2 = "16 - Zonguldak, Karabük, Bartın" if subnatid2 == "16"
-	replace subnatid2 = "17 - Kastamonu, Çankırı, Sinop" if subnatid2 == "17"
-	replace subnatid2 = "18 - Samsun, Tokat, Çorum, Amasya" if subnatid2 == "18"
-	replace subnatid2 = "19 - Trabzon, Ordu, Giresun, Rize, Artvin, Gümüşhane" if subnatid2 == "19"
-	replace subnatid2 = "20 - Erzurum, Erzincan, Bayburt" if subnatid2 == "20"
-	replace subnatid2 = "21 - Kars, Ağrı, Iğdır, Ardahan" if subnatid2 == "21"
-	replace subnatid2 = "22 - Malatya, Elazığ, Bingöl, Tunceli" if subnatid2 == "22"
-	replace subnatid2 = "23 - Van, Muş, Bitlis, Hakkari" if subnatid2 == "23"
-	replace subnatid2 = "24 - Gaziantep, Adıyaman, Kilis" if subnatid2 == "24"
-	replace subnatid2 = "25 - Diyarbakır, Şanlıurfa" if subnatid2 == "25"
-	replace subnatid2 = "26 - Siirt, Mardin, Batman, Şırnak" if subnatid2 == "26"
+	gen subnatid2=nuts2
+	label define lblsubnatid2  1 "1 - Istanbul" 2 "2 - Edirne, Tekirdağ, Kırklareli" 3 "3 - Balıkesir, Çanakkale" 4 "4 - İzmir" 5 "5 - Denizli, Aydın, Muğla" 6 "6 - Manisa, Afyonkarahisar, Kütahya, Uşak" 7 "7 - Bursa, Eskişehir, Bilecik" 8 "8 - Kocaeli, Sakarya, Düzce, Bolu, Yalova" 9 "9 - Ankara" 10 "10 - Konya, Karaman" 11 "11 - Antalya, Isparta, Burdur" 12 "12 - Adana, Mersin" 13 "13 - Hatay, Kahramanmaraş, Osmaniye" 14 "14 - Nevşehir, Aksaray, Niğde, Kırıkkale, Kırşehir" 15 "15 - Kayseri, Sivas, Yozgat" 16 "16 - Zonguldak, Karabük, Bartın" 17 "17 - Kastamonu, Çankırı, Sinop" 18 "18 - Samsun, Tokat, Çorum, Amasya" 19 "19 - Trabzon, Ordu, Giresun, Rize, Artvin, Gümüşhane" 20 "20 - Erzurum, Erzincan, Bayburt" 21 "21 - Kars, Ağrı, Iğdır, Ardahan" 22 "22 - Malatya, Elazığ, Bingöl, Tunceli" 23 "23 - Van, Muş, Bitlis, Hakkari" 24 "24 - Gaziantep, Adıyaman, Kilis" 25 "25 - Diyarbakır, Şanlıurfa" 26 "26 - Siirt, Mardin, Batman, Şırnak"
+	label values subnatid2 lblsubnatid2
 	label var subnatid2 "Subnational ID at NUTS 2 Level"
 *</_subnatid2_>
 
@@ -353,43 +319,12 @@ use "`path_in'\LFS2017.dta"
 
 *<_relationharm_>
 
-*how come some old folks are children or grand children
-
-count if s11==3 & s6>60
-count if s11==3 & s6>60
-count if s11==5 & s6>60
-
-replace  s11=. if s11==3 & s6>60
-replace s11=. if s11==3 & s6>60
-replace s11=. if s11==5 & s6>60
-
-*widow 11
-count if s24==4 & s6<11
-replace s24=. if s24==4 & s6<11
-*divorced 0-11
-count if s24==3 & s6<11
-replace s24=. if s24==3 & s6<11
-
-*single but says has spouse in s11
-count if s11==2 & s24==1
-replace s11=. if s11==2 & s24==1
-
-*daughter or son in law but single in s11, widow?
-count if s11==4 & s24==1
-replace s11=. if s11==4 & s24==1
-
-*children underaged divorced
-count if s11==3 & s24==3 & s6<5
-replace s11=. if s11==3 & s24==3 & s6<5
-
-
-
-gen relationharm =s11
-recode relationharm 11=.
-recode relationharm 1=1 2=2 3=3 4=4 5/9=5 10=6
-label var relationharm "Relationship to the head of household - Harmonized"
-la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
-label values relationharm  lblrelationharm
+	gen relationharm =s11
+	recode relationharm 11=.
+	recode relationharm 1=1 2=2 3=3 4=4 5/9=5 10=6
+	label var relationharm "Relationship to the head of household - Harmonized"
+	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
+	label values relationharm  lblrelationharm
 *</_relationharm_>
 
 
@@ -531,11 +466,11 @@ label values relationharm  lblrelationharm
 *<_ed_mod_age_>
 
 /* <_ed_mod_age_note>
-Note the data release we have has only 15 year old and older actual survey cut off is 5. A tad irrelevant but for completeness sake.
+Note the data release we have has only 15 year old and older actual survey cut off is 6. A tad irrelevant but for completeness sake.
 </_ed_mod_age_note> */
 
-gen byte ed_mod_age = 5
-label var ed_mod_age "Education module application age"
+	gen byte ed_mod_age = 6
+	label var ed_mod_age "Education module application age"
 
 *</_ed_mod_age_>
 
@@ -553,7 +488,7 @@ label var ed_mod_age "Education module application age"
 
 
 *<_literacy_>
-	gen byte literacy = s14 != 2
+	gen byte literacy = s14
 	recode literacy (2=0)
 	label var literacy "Individual can read & write"
 	la de lblliteracy 0 "No" 1 "Yes"
@@ -563,6 +498,12 @@ label var ed_mod_age "Education module application age"
 
 *<_educy_>
 	gen byte educy = .
+	replace educy=0 if s13==0
+	replace educy=4 if s13==1
+	replace educy=8 if s13==2
+	replace educy=12 if s13==3
+	replace educy=12 if s13==4
+	replace educy=19 if s13==6
 	label var educy "Years of education"
 *</_educy_>
 
@@ -576,12 +517,8 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat5_>
-	gen educat5=.
-	replace educat5 = 1 if s13  == 0
-	replace educat5 = 2 if s13  == 1
-	replace educat5 = 3 if s13  == 2
-	replace educat5 = 4 if s13  == 31 | s13  == 32
-	replace educat5 = 5 if s13  == 4 | s13  == 5
+	gen educat5=educat7
+	recode educat5 (3 4=3) (5=4) (6 7=5)
 	label var educat5 "Level of education 2"
 	la de lbleducat5 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
 	label values educat5 lbleducat5
@@ -801,7 +738,7 @@ foreach v of local ed_var {
 
 
 *<_occup_orig_>
-	gen str1 occup_orig = string(s38kod)
+	gen str2 occup_orig = string(s38kod)
 	replace occup_orig="" if s38kod==.
 	replace occup_orig="" if lstatus!=1
 	label var occup_orig "Original occupation record primary job 7 day recall"
@@ -809,25 +746,22 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_>
-	gen helper_1 = string(s38kod,"%02.0f")
-	gen helper_2 = "00"
-	egen occup_isco = concat(helper_1 helper_2)
-	replace occup_isco = "" if occup_isco == ".00"
-	drop helper_1 helper_2
+	gen occup_isco = occup_orig + substr("0000", 1, 4 - length(occup_orig))
+	replace occup_isco="" if lstatus!=1
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
 
 *<_occup_skill_>
-	gen helper = substr(occup_isco,1,1)
-	destring helper, replace
-	gen occup_skill = .
-	replace occup_skill = 1 if inrange(helper,9,9)
-	replace occup_skill = 2 if inrange(helper,4,8)
-	replace occup_skill = 3 if inrange(helper,1,3)
-	drop helper
-    replace occup_skill=. if lstatus!=1
-	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
+	gen occup_skill =occup_orig
+	destring occup_skill,replace
+	gen helper_1=occup_skill
+	replace occup_skill=1 if inrange(helper_1,91,96)
+	replace occup_skill=2 if inrange(helper_1,41,83)
+	replace occup_skill=3 if inrange(helper_1,11,35)
+	replace occup_skill=. if lstatus!=1
+	drop helper_1
+	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"  4 "Armed Forces"
 	label values occup_skill lblskill
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
 *</_occup_skill_>
@@ -905,7 +839,7 @@ Non-paid employee |    21,009          0          0 |    21,009
 	replace whours = s56b_top if whours == 0
 	* expect 7 replacements
 	replace whours=. if lstatus!=1
-replace whours=. if s55a>84
+	replace whours=. if s55a>84
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -1005,7 +939,11 @@ replace whours=. if s55a>84
 
 
 *<_industrycat_isic_2_>
-	gen industrycat_isic_2 = .
+	gen helper_1 = string(s53kod,"%02.0f")
+	gen helper_2 = "00"
+	egen industrycat_isic_2 = concat(helper_1 helper_2)
+	replace industrycat_isic_2 = "" if industrycat_isic == "."
+	drop helper_1 helper_2
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 

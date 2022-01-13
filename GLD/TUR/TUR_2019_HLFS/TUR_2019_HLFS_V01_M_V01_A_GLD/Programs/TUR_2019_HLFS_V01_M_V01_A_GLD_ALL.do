@@ -512,7 +512,7 @@ label values relationharm  lblrelationharm
 Note the data release we have has only 15 year old and older actual survey cut off is 5. A tad irrelevant but for completeness sake.
 </_ed_mod_age_note> */
 
-gen byte ed_mod_age = 5
+gen byte ed_mod_age = 6
 label var ed_mod_age "Education module application age"
 
 *</_ed_mod_age_>
@@ -540,7 +540,13 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educy_>
-	gen byte educy = .
+gen byte educy = .
+replace educy=0 if okul_biten_k==0
+replace educy=4 if okul_biten_k==1
+replace educy=8 if okul_biten_k==2
+replace educy=12 if okul_biten_k==3
+replace educy=12 if okul_biten_k==4
+replace educy=19 if okul_biten_k==6
 	label var educy "Years of education"
 *</_educy_>
 
@@ -554,12 +560,14 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat5_>
-	gen educat5=.
-	replace educat5 = 1 if okul_biten_k  == 0
+	*gen educat5=.
+	/*replace educat5 = 1 if okul_biten_k  == 0
 	replace educat5 = 2 if okul_biten_k  == 1
 	replace educat5 = 3 if okul_biten_k  == 2
 	replace educat5 = 4 if okul_biten_k  == 31 | okul_biten_k  == 32
-	replace educat5 = 5 if okul_biten_k  == 4 | okul_biten_k  == 5
+	replace educat5 = 5 if okul_biten_k  == 4 | okul_biten_k  == 5*/
+	gen educat5=educat7
+	recode educat5 (3 4=3) (5=4) (6 7=5)
 	label var educat5 "Level of education 2"
 	la de lbleducat5 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
 	label values educat5 lbleducat5
@@ -777,7 +785,8 @@ foreach v of local ed_var {
 
 
 *<_occup_orig_>
-	gen str1 occup_orig = string(isco08_esas_k)
+
+	gen str2 occup_orig = string(isco08_esas_k)
 	replace occup_orig="" if isco08_esas_k==.
 	replace occup_orig="" if lstatus!=1
 	label var occup_orig "Original occupation record primary job 7 day recall"
@@ -785,24 +794,22 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_>
-	gen helper_1 = string(isco08_esas_k,"%02.0f")
-	gen helper_2 = "00"
-	egen occup_isco = concat(helper_1 helper_2)
-	replace occup_isco = "" if occup_isco == ".00"
-	drop helper_1 helper_2
+	gen occup_isco = occup_orig + substr("0000", 1, 4 - length(occup_orig))
+	replace occup_isco="" if lstatus!=1
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
 
 *<_occup_skill_>
-	gen helper = substr(occup_isco,1,1)
-	destring helper, replace
-	gen occup_skill = .
-	replace occup_skill = 1 if inrange(helper,9,9)
-	replace occup_skill = 2 if inrange(helper,4,8)
-	replace occup_skill = 3 if inrange(helper,1,3)
-	drop helper
-	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
+	gen occup_skill =occup_orig
+	destring occup_skill,replace
+	gen helper_1=occup_skill
+	replace occup_skill=1 if inrange(helper_1,91,96)
+	replace occup_skill=2 if inrange(helper_1,41,83)
+	replace occup_skill=3 if inrange(helper_1,11,35)
+	replace occup_skill=. if lstatus!=1
+	drop helper_1
+	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"  4 "Armed Forces"
 	label values occup_skill lblskill
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
 *</_occup_skill_>

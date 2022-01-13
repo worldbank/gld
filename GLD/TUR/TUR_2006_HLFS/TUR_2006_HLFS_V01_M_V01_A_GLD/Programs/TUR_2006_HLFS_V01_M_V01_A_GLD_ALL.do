@@ -334,34 +334,6 @@ label var age "Individual age"
 
 *<_relationharm_>
 
-*how come some old folks are children or grand children
-count if s11==3 & s6==12
-count if s11==3 & s6==14
-count if s11==5 & s6==14
-
-replace s11=. if s11==3 & s6==12
-replace s11=. if s11==3 & s6==14
-replace s11=. if s11==5 & s6==14
-
-*widow -11
-count if s19==4 & s6==2
-replace s19=. if s19==4 & s6==2
-*divorced 0-4
-count if s19==3 & s6==1
-replace s19=. if s19==3 & s6==1
-
-*single but says has spouse in s11
-count if s11==2 & s19==1
-replace s11=. if s11==2 & s19==1
-
-*daughter or son in law but single in s11, widow?
-count if s11==4 & s19==1
-replace s11=. if s11==4 & s19==1
-
-*children underaged divorced
-count if s11==3 & s19==3 & s6==1
-replace s11=. if s11==3 & s19==3 & s6==1
-
 gen relationharm =s11
 recode relationharm 1=1 2=2 3=3 4/7=5 8=6
 label var relationharm "Relationship to the head of household - Harmonized"
@@ -506,7 +478,7 @@ label values relationharm  lblrelationharm
 
 *<_ed_mod_age_>
 
-gen byte ed_mod_age = 5
+gen byte ed_mod_age = 6
 label var ed_mod_age "Education module application age"
 
 *</_ed_mod_age_>
@@ -530,14 +502,19 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educy_>
-	gen byte educy = .
+gen byte educy = .
+	replace educy=0 if s14==0
+	replace educy=4 if s14==1
+	replace educy=8 if s14==2
+	replace educy=12 if s14==3
+	replace educy=12 if s14==4
+	replace educy=19 if s14==6
 	label var educy "Years of education"
 *</_educy_>
 
 
 *<_educat7_>
-	gen byte educat7 = s14
-	recode educat7 0=2 1=2 2=3 3=4 4=5 5=6 6=7
+	gen byte educat7 = .
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -554,8 +531,10 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat4_>
-	gen byte educat4 = educat5
-	recode educat4 (3=2) (4=3) (5=4)
+*gen byte educat4 = educat5
+*recode educat4 (3=2) (4=3) (5=4)
+	gen byte educat4=s14
+	recode educat4 (0=1) (3 4 5=3) (6=4)
 	label var educat4 "Level of education 3"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values educat4 lbleducat4
@@ -564,7 +543,6 @@ label var ed_mod_age "Education module application age"
 *<_educat_orig_>
 	gen educat_orig = s14
 	label var educat_orig "Original survey education code"
-	*what is this I do not see it in the guidelines???
 *</_educat_orig_>
 
 *<_educat_isced_>
@@ -732,10 +710,7 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_>
-*1 digit isic code
-	gen str1 industrycat_isic= string(s33kod)
-	replace industrycat_isic="" if industrycat_isic=="."
-	replace industrycat_isic="" if lstatus!=1
+  gen industrycat_isic= .
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
@@ -923,9 +898,7 @@ drop helper_1
 
 
 *<_industrycat_isic_2_>
-	gen industrycat_isic_2 = s59kod
-	tostring industrycat_isic_2, replace
-	replace industrycat_isic_2="" if industrycat_isic_2=="."
+	gen industrycat_isic_2 = .
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 

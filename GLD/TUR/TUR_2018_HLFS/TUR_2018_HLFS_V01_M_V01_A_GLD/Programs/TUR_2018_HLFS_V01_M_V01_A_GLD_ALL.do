@@ -266,7 +266,6 @@ use "`path_in'\LFS2018.dta"
 	replace subnatid2 = 24 if nuts2 == "TRC1"
 	replace subnatid2 = 25 if nuts2 == "TRC2"
 	replace subnatid2 = 26 if nuts2 == "TRC3"
-	label var subnatid2 "NUTS-2 Region"
 	label define lblsubnatid2  1 "1 - Istanbul" 2 "2 - Edirne, Tekirdağ, Kırklareli" 3 "3 - Balıkesir, Çanakkale" 4 "4 - İzmir" 5 "5 - Denizli, Aydın, Muğla" 6 "6 - Manisa, Afyonkarahisar, Kütahya, Uşak" 7 "7 - Bursa, Eskişehir, Bilecik" 8 "8 - Kocaeli, Sakarya, Düzce, Bolu, Yalova" 9 "9 - Ankara" 10 "10 - Konya, Karaman" 11 "11 - Antalya, Isparta, Burdur" 12 "12 - Adana, Mersin" 13 "13 - Hatay, Kahramanmaraş, Osmaniye" 14 "14 - Nevşehir, Aksaray, Niğde, Kırıkkale, Kırşehir" 15 "15 - Kayseri, Sivas, Yozgat" 16 "16 - Zonguldak, Karabük, Bartın" 17 "17 - Kastamonu, Çankırı, Sinop" 18 "18 - Samsun, Tokat, Çorum, Amasya" 19 "19 - Trabzon, Ordu, Giresun, Rize, Artvin, Gümüşhane" 20 "20 - Erzurum, Erzincan, Bayburt" 21 "21 - Kars, Ağrı, Iğdır, Ardahan" 22 "22 - Malatya, Elazığ, Bingöl, Tunceli" 23 "23 - Van, Muş, Bitlis, Hakkari" 24 "24 - Gaziantep, Adıyaman, Kilis" 25 "25 - Diyarbakır, Şanlıurfa" 26 "26 - Siirt, Mardin, Batman, Şırnak"
 	label values subnatid2 lblsubnatid2
 	label var subnatid2 "Subnational ID at NUTS 2 Level"
@@ -362,36 +361,6 @@ use "`path_in'\LFS2018.dta"
 
 
 *<_relationharm_>
-
-*how come some old folks are children or grand children
-
-count if s11==3 & s6>60
-count if s11==3 & s6>60
-count if s11==5 & s6>60
-
-replace  s11=. if s11==3 & s6>60
-replace s11=. if s11==3 & s6>60
-replace s11=. if s11==5 & s6>60
-
-*widow 11
-count if s24==4 & s6<11
-replace s24=. if s24==4 & s6<11
-*divorced 0-11
-count if s24==3 & s6<11
-replace s24=. if s24==3 & s6<11
-
-*single but says has spouse in s11
-count if s11==2 & s24==1
-replace s11=. if s11==2 & s24==1
-
-*daughter or son in law but single in s11, widow?
-count if s11==4 & s24==1
-replace s11=. if s11==4 & s24==1
-
-*children underaged divorced
-count if s11==3 & s24==3 & s6<5
-replace s11=. if s11==3 & s24==3 & s6<5
-
 
 gen relationharm =s11
 recode relationharm 11=.
@@ -543,7 +512,7 @@ label values relationharm  lblrelationharm
 Note the data release we have has only 15 year old and older actual survey cut off is 5. A tad irrelevant but for completeness sake.
 </_ed_mod_age_note> */
 
-gen byte ed_mod_age = 5
+gen byte ed_mod_age = 6
 label var ed_mod_age "Education module application age"
 
 *</_ed_mod_age_>
@@ -562,7 +531,7 @@ label var ed_mod_age "Education module application age"
 
 
 *<_literacy_>
-	gen byte literacy = s14 != 2
+	gen byte literacy = s14
 	recode literacy (2=0)
 	label var literacy "Individual can read & write"
 	la de lblliteracy 0 "No" 1 "Yes"
@@ -572,6 +541,12 @@ label var ed_mod_age "Education module application age"
 
 *<_educy_>
 	gen byte educy = .
+	replace educy=0 if s13==0
+	replace educy=4 if s13==1
+	replace educy=8 if s13==2
+	replace educy=12 if s13==3
+	replace educy=12 if s13==4
+	replace educy=19 if s13==6
 	label var educy "Years of education"
 *</_educy_>
 
@@ -585,12 +560,8 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat5_>
-	gen educat5=.
-	replace educat5 = 1 if s13  == 0
-	replace educat5 = 2 if s13  == 1
-	replace educat5 = 3 if s13  == 2
-	replace educat5 = 4 if s13  == 31 | s13  == 32
-	replace educat5 = 5 if s13  == 4 | s13  == 5
+	gen educat5=educat7
+	recode educat5 (3 4=3) (5=4) (6 7=5)
 	label var educat5 "Level of education 2"
 	la de lbleducat5 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
 	label values educat5 lbleducat5
@@ -808,7 +779,7 @@ foreach v of local ed_var {
 
 
 *<_occup_orig_>
-	gen str1 occup_orig = string(s38kod)
+	gen str2 occup_orig = string(s38kod)
 	replace occup_orig="" if s38kod==.
 	replace occup_orig="" if lstatus!=1
 	label var occup_orig "Original occupation record primary job 7 day recall"
@@ -816,24 +787,22 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_>
-	gen helper_1 = string(s38kod,"%02.0f")
-	gen helper_2 = "00"
-	egen occup_isco = concat(helper_1 helper_2)
-	replace occup_isco = "" if occup_isco == ".00"
-	drop helper_1 helper_2
+	gen occup_isco = occup_orig + substr("0000", 1, 4 - length(occup_orig))
+	replace occup_isco="" if lstatus!=1
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
 
 *<_occup_skill_>
-	gen helper = substr(occup_isco,1,1)
-	destring helper, replace
-	gen occup_skill = .
-	replace occup_skill = 1 if inrange(helper,9,9)
-	replace occup_skill = 2 if inrange(helper,4,8)
-	replace occup_skill = 3 if inrange(helper,1,3)
-	drop helper
-	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
+	gen occup_skill =occup_orig
+	destring occup_skill,replace
+	gen helper_1=occup_skill
+	replace occup_skill=1 if inrange(helper_1,91,96)
+	replace occup_skill=2 if inrange(helper_1,41,83)
+	replace occup_skill=3 if inrange(helper_1,11,35)
+	replace occup_skill=. if lstatus!=1
+	drop helper_1
+	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"  4 "Armed Forces"
 	label values occup_skill lblskill
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
 *</_occup_skill_>

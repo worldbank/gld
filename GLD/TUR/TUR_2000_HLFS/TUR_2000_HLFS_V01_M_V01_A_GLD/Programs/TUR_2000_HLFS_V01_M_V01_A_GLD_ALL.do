@@ -332,28 +332,11 @@ ILO webpage says that the version used was isco 88 note that for the bank TUIK s
 
 *<_relationharm_>
 
-*few checks of consistency
-*divorced 0-14
-count if s11==3 & s4==1
-replace s11=. if s11==3 & s4==1
-
-*single but says has spouse in s7
-count if s7==2 & s11==1
-replace s7=. if s7==2 & s11==1
-
-*daughter or son in law but single in s7, widow?
-count if s7==4 & s11==1
-replace s7=. if s7==4 & s11==1
-
-*children underaged divorced
-count if s7==3 & s11==3 & s4==1
-replace s7=. if s7==3 & s11==3 & s4==1
-
-gen relationharm =s7
-recode relationharm 1=1 2=2 3=3 4/7=5 8=6
-label var relationharm "Relationship to the head of household - Harmonized"
-la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
-label values relationharm  lblrelationharm
+	gen relationharm =s7
+	recode relationharm 1=1 2=2 3=3 4/7=5 8=6
+	label var relationharm "Relationship to the head of household - Harmonized"
+	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
+	label values relationharm  lblrelationharm
 *</_relationharm_>
 
 
@@ -497,8 +480,8 @@ label values relationharm  lblrelationharm
 Note the data release we have has only 15 year old and older actual survey cut off is 5. A tad irrelevant but for completeness sake.
 </_ed_mod_age_note> */
 
-gen byte ed_mod_age = 5
-label var ed_mod_age "Education module application age"
+	gen byte ed_mod_age = 6
+	label var ed_mod_age "Education module application age"
 
 *</_ed_mod_age_>
 
@@ -522,13 +505,18 @@ label var ed_mod_age "Education module application age"
 
 *<_educy_>
 	gen byte educy = .
+	replace educy=0 if s9==0
+	replace educy=4 if s9==1
+	replace educy=8 if s9==2
+	replace educy=12 if s9==3
+	replace educy=12 if s9==4
+	replace educy=19 if s9==6
 	label var educy "Years of education"
 *</_educy_>
 
 
 *<_educat7_>
-	gen byte educat7 = s9
-	recode educat7 0=1 1=2 2=3 3=4 4=5 5=6 6=7
+	gen byte educat7 = .
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -545,8 +533,11 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat4_>
-	gen byte educat4 = educat5
-	recode educat4 (3=2) (4=3) (5=4)
+*	gen byte educat4 = educat5
+*	recode educat4 (3=2) (4=3) (5=4)
+	gen byte educat4=s9
+	recode educat4 (0=1) (2=3) (3 4=5)
+	recode educat4 (3=2) (5=3) (6=4)
 	label var educat4 "Level of education 3"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values educat4 lbleducat4
@@ -721,10 +712,7 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_>
-*1 digit isic code
-	gen str1 industrycat_isic= string(s16kod)
-	replace industrycat_isic="" if industrycat_isic=="."
-	replace industrycat_isic="" if lstatus!=1
+  gen industrycat_isic= .
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
@@ -809,7 +797,7 @@ foreach v of local ed_var {
 </_whours_note> */
 	gen whours = s28a
 	replace whours=. if lstatus!=1
-replace whours=. if s28a>84
+	replace whours=. if s28a>84
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -909,9 +897,7 @@ replace whours=. if s28a>84
 
 
 *<_industrycat_isic_2_>
-	gen str1 industrycat_isic_2= string(s26kod)
-	replace industrycat_isic_2="" if industrycat_isic_2=="."
-	replace industrycat_isic_2="" if lstatus!=1
+	gen industrycat_isic_2= .
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
@@ -1027,7 +1013,7 @@ replace whours=. if s28a>84
 *<_t_hours_total_>
 	gen helper_totalh=(whours+whours_2)
 	gen t_hours_total = helper_totalh
-replace t_hours_total=. if helper_totalh>140
+	replace t_hours_total=. if helper_totalh>140
 	label var t_hours_total "Annualized hours worked in all jobs 7 day recall"
 *</_t_hours_total_>
 

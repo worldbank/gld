@@ -324,41 +324,12 @@ sort hhid pid
 
 *<_relationharm_>
 
-*how come some old folks are children or grand children
-
-count if s11==3 & s6>60
-count if s11==3 & s6>60
-count if s11==5 & s6>60
-
-replace  s11=. if s11==3 & s6>60
-replace s11=. if s11==3 & s6>60
-replace s11=. if s11==5 & s6>60
-
-*widow 11
-count if s24==4 & s6<11
-replace s24=. if s24==4 & s6<11
-*divorced 0-11
-count if s24==3 & s6<11
-replace s24=. if s24==3 & s6<11
-
-*single but says has spouse in s11
-count if s11==2 & s24==1
-replace s11=. if s11==2 & s24==1
-
-*daughter or son in law but single in s11, widow?
-count if s11==4 & s24==1
-replace s11=. if s11==4 & s24==1
-
-*children underaged divorced
-count if s11==3 & s24==3 & s6<5
-replace s11=. if s11==3 & s24==3 & s6<5
-
-gen relationharm =s11
-recode relationharm 11=.
-recode relationharm 1=1 2=2 3=3 4=4 5/9=5 10=6
-label var relationharm "Relationship to the head of household - Harmonized"
-la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
-label values relationharm  lblrelationharm
+	gen relationharm =s11
+	recode relationharm 11=.
+	recode relationharm 1=1 2=2 3=3 4=4 5/9=5 10=6
+	label var relationharm "Relationship to the head of household - Harmonized"
+	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
+	label values relationharm  lblrelationharm
 *</_relationharm_>
 
 
@@ -503,8 +474,8 @@ label values relationharm  lblrelationharm
 
 *<_ed_mod_age_>
 
-gen byte ed_mod_age = 5
-label var ed_mod_age "Education module application age"
+	gen byte ed_mod_age = 6
+	label var ed_mod_age "Education module application age"
 
 *</_ed_mod_age_>
 
@@ -528,15 +499,21 @@ label var ed_mod_age "Education module application age"
 
 *<_educy_>
 	gen byte educy = .
+	replace educy=0 if s13==0
+	replace educy=4 if s13==1
+	replace educy=8 if s13==2
+	replace educy=12 if s13==3
+	replace educy=12 if s13==4
+	replace educy=19 if s13==6
 	label var educy "Years of education"
 *</_educy_>
 
 
 *<_educat7_>
-	gen byte educat7 = s13
-	recode educat7 0=1 1=3 2=2 4=7 5=7 31=5 32=6
+	gen byte educat7 = .
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
+	label values educat7 lbleducat7
 *</_educat7_>
 
 
@@ -550,17 +527,18 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat4_>
-	gen byte educat4 = educat5
-	recode educat4 (3=2) (4=3) (5=4)
+*gen byte educat4 = educat5
+*recode educat4 (3=2) (4=3) (5=4)
+	gen educat4=s13 if age>=ed_mod_age
+	recode educat4 (0=1) (1=2) (2 31/32=3) (5=4)
 	label var educat4 "Level of education 3"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values educat4 lbleducat4
 *</_educat4_>
 
 *<_educat_orig_>
-	gen educat_orig = .
+	gen educat_orig = s13
 	label var educat_orig "Original survey education code"
-	*what is this I do not see it in the guidelines???
 *</_educat_orig_>
 
 *<_educat_isced_>
@@ -732,12 +710,12 @@ foreach v of local ed_var {
 
 *<_industrycat_isic_>
 *1 digit isic code
-gen helper_1 = string(s33kod,"%02.0f")
-gen helper_2 = "00"
-egen industrycat_isic = concat(helper_1 helper_2)
-replace industrycat_isic = "" if industrycat_isic == ".00"
-drop helper_1 helper_2
-label var industrycat_isic "ISIC code of primary job 7 day recall"
+	gen helper_1 = string(s33kod,"%02.0f")
+	gen helper_2 = "00"
+	egen industrycat_isic = concat(helper_1 helper_2)
+	replace industrycat_isic = "" if industrycat_isic == ".00"
+	drop helper_1 helper_2
+	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
 
@@ -755,7 +733,7 @@ label var industrycat_isic "ISIC code of primary job 7 day recall"
 	replace industrycat10=8 if inrange(s33kod,64,66)
 	replace industrycat10=8 if s33kod==68
 	replace industrycat10=9 if s33kod==84
-	replace industrycat10=10 if inrange(s33kod,69,82)
+	replace industrycat10=8 if inrange(s33kod,69,82)
 	replace industrycat10=10 if inrange(s33kod,85,99)
 	recode industrycat10  0=.
 	replace industrycat10=. if lstatus!=1
@@ -775,7 +753,7 @@ label var industrycat_isic "ISIC code of primary job 7 day recall"
 
 
 *<_occup_orig_>
-	gen str1 occup_orig = string(s38kod)
+	gen str2 occup_orig = string(s38kod)
 	replace occup_orig="" if s38kod==.
 	replace occup_orig="" if lstatus!=1
 	label var occup_orig "Original occupation record primary job 7 day recall"
@@ -783,28 +761,21 @@ label var industrycat_isic "ISIC code of primary job 7 day recall"
 
 
 *<_occup_isco_>
-gen helper_1 = "000"
-egen occup_isco=concat(helper_1 occup_orig)
-replace occup_isco="" if lstatus!=1
-drop helper_1
+	gen occup_isco = occup_orig + substr("0000", 1, 4 - length(occup_orig))
+	replace occup_isco="" if lstatus!=1
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
 
 *<_occup_skill_>
-
 	gen occup_skill =occup_orig
 	destring occup_skill,replace
-	replace occup_skill=1 if occup_orig=="9"
-	replace occup_skill=2 if occup_orig=="4"
-	replace occup_skill=2 if occup_orig=="5"
-	replace occup_skill=2 if occup_orig=="6"
-	replace occup_skill=2 if occup_orig=="7"
-	replace occup_skill=2 if occup_orig=="8"
-	replace occup_skill=3 if occup_orig=="1"
-	replace occup_skill=3 if occup_orig=="2"
-	replace occup_skill=3 if occup_orig=="3"
+	gen helper_1=occup_skill
+	replace occup_skill=1 if inrange(helper_1,91,96)
+	replace occup_skill=2 if inrange(helper_1,41,83)
+	replace occup_skill=3 if inrange(helper_1,11,35)
 	replace occup_skill=. if lstatus!=1
+	drop helper_1
 	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"  4 "Armed Forces"
 	label values occup_skill lblskill
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
@@ -858,7 +829,7 @@ drop helper_1
 	gen whours = s56a_top
 	recode whours 0=.
 	replace whours=. if lstatus!=1
-replace whours=. if s56a_top>84
+	replace whours=. if s56a_top>84
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -957,8 +928,11 @@ replace whours=. if s56a_top>84
 
 
 *<_industrycat_isic_2_>
-	gen industrycat_isic_2 = s53kod
-	tostring industrycat_isic_2, replace
+
+	gen helper_1 = string(s53kod,"%02.0f")
+	gen helper_2 = "00"
+	egen industrycat_isic_2 = concat(helper_1 helper_2)
+	drop helper_1 helper_2
 	replace industrycat_isic_2="" if industrycat_isic_2=="."
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>

@@ -322,10 +322,10 @@ ILO webpage says that the version used was isco 88 note that for the bank TUIK s
 
 *<_age_>
 *The lower range needs to be broken down into 1-4, 5-9 and 10-14, we use helpers for this using the income status (s12)
-gen helper_age=.
-replace helper_age=1 if s4==1 & s12==.
-replace helper_age=2 if s4==1 & s12==2
-replace helper_age=3 if s4==1 & s12==1
+	gen helper_age=.
+	replace helper_age=1 if s4==1 & s12==.
+	replace helper_age=2 if s4==1 & s12==2
+	replace helper_age=3 if s4==1 & s12==1
 
 *we create the var age using s4 and recode for new groups (12 in total 5 years overlap)
 	gen age=s4
@@ -352,26 +352,7 @@ replace helper_age=3 if s4==1 & s12==1
 
 *<_relationharm_>
 
-
-*how come some old folks are children or grand children
-
-count if s7==3 & s4==11
-count if s7==3 & s4==12
-count if s7==5 & s4==12
-
-replace  s7=. if s7==3 & s4==11
-replace s7=. if s7==3 & s4==12
-replace s7=. if s7==5 & s4==12
-
-*single but says has spouse in s7
-count if s7==2 & s11==1
-replace s7=. if s7==2 & s11==1
-
-*daughter or son in law but single in s7, widow?
-count if s7==4 & s11==1
-replace s7=. if s7==4 & s11==1
-
-gen relationharm =s7
+	gen relationharm =s7
 	recode relationharm 1=1 2=2 3=3 4/7=5 8=6
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
@@ -519,7 +500,7 @@ gen relationharm =s7
 Note the data release we have has only 15 year old and older actual survey cut off is 5. A tad irrelevant but for completeness sake.
 </_ed_mod_age_note> */
 
-gen byte ed_mod_age = 5
+gen byte ed_mod_age = 6
 label var ed_mod_age "Education module application age"
 
 *</_ed_mod_age_>
@@ -544,13 +525,18 @@ label var ed_mod_age "Education module application age"
 
 *<_educy_>
 	gen byte educy = .
+	replace educy=0 if s9==0
+	replace educy=4 if s9==1
+	replace educy=8 if s9==2
+	replace educy=12 if s9==3
+	replace educy=12 if s9==4
+	replace educy=19 if s9==6
 	label var educy "Years of education"
 *</_educy_>
 
 
 *<_educat7_>
-	gen byte educat7 = s9
-	recode educat7 0=1 1=2 2=3 3=4 4=5 5=6 6=7
+	gen byte educat7 = .
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -558,8 +544,10 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat5_>
-	gen educat5=educat7
-	recode educat5 (3 4=3) (5=4) (6 7=5)
+	*gen educat5=educat7
+	*recode educat5 (3 4=3) (5=4) (6 7=5)
+	gen educat5=s9
+	recode educat5 (0=1) (1=2) (3/5=4) (6=5)
 	label var educat5 "Level of education 2"
 	la de lbleducat5 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
 	label values educat5 lbleducat5
@@ -743,10 +731,8 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_>
-	*1 digit isic code
-	gen str1 industrycat_isic= string(s16kod)
-	replace industrycat_isic="" if industrycat_isic=="."
-	replace industrycat_isic="" if lstatus!=1
+
+  gen industrycat_isic= .
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
@@ -779,10 +765,10 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_>
-gen helper_1 = "000"
-egen occup_isco=concat(helper_1 occup_orig)
-replace occup_isco="" if lstatus!=1
-drop helper_1
+	gen helper_1 = "000"
+	egen occup_isco=concat(helper_1 occup_orig)
+	replace occup_isco="" if lstatus!=1
+	drop helper_1
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
@@ -834,7 +820,7 @@ drop helper_1
 </_whours_note> */
 	gen whours = s28a
 	replace whours=. if lstatus!=1
-replace whours=. if s28a>84
+	replace whours=. if s28a>84
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -933,9 +919,7 @@ replace whours=. if s28a>84
 
 
 *<_industrycat_isic_2_>
-	gen str1 industrycat_isic_2= string(s26kod)
-	replace industrycat_isic_2="" if industrycat_isic_2=="."
-	replace industrycat_isic_2="" if lstatus!=1
+	gen  industrycat_isic_2= .
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 

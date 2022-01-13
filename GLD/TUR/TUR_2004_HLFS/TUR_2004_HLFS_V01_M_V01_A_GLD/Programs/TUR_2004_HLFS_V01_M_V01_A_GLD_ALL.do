@@ -159,7 +159,7 @@ rename*, lower
 
 *Year 2004 has 14 duplicates in non consecutive observations , we chose to manually change this according to the s7 relation to the household. This is because in some cases inside each household de s1 identifier is repeated. We use own criteria following the s7 list to chose a new s1 identifier.
 *s1 identifiers go from 1 to 29 and are consecutive numbers that identify members within a household.
-duplicates list formno s1
+	duplicates list formno s1
 	replace s1=5 in 124444
 	replace s1=5 in 237173
 	replace s1=5 in 238442
@@ -350,35 +350,6 @@ duplicates list formno s1
 
 *<_relationharm_>
 
-
-*how come some old folks are children or grand children
-count if s7==3 & s6==12
-count if s7==3 & s6==14
-count if s7==5 & s6==14
-
-replace s7=. if s7==3 & s6==12
-replace s7=. if s7==3 & s6==14
-replace s7=. if s7==5 & s6==14
-
-*widow -11
-count if s15==4 & s6==2
-replace s15=. if s15==4 & s6==2
-*divorced 0-4
-count if s15==3 & s6==1
-replace s15=. if s15==3 & s6==1
-
-*single but says has spouse in s7
-count if s7==2 & s15==1
-replace s7=. if s7==2 & s15==1
-
-*daughter or son in law but single in s7, widow?
-count if s7==4 & s15==1
-replace s7=. if s7==4 & s15==1
-
-*children underaged divorced
-count if s7==3 & s15==3 & s6==1
-replace s7=. if s7==3 & s15==3 & s6==1
-
 	gen relationharm =s7
 	recode relationharm 1=1 2=2 3=3 4/7=5 8=6
 	label var relationharm "Relationship to the head of household - Harmonized"
@@ -523,8 +494,8 @@ replace s7=. if s7==3 & s15==3 & s6==1
 
 *<_ed_mod_age_>
 
-gen byte ed_mod_age = 5
-label var ed_mod_age "Education module application age"
+	gen byte ed_mod_age = 6
+	label var ed_mod_age "Education module application age"
 
 *</_ed_mod_age_>
 
@@ -548,16 +519,18 @@ label var ed_mod_age "Education module application age"
 
 *<_educy_>
 	gen byte educy = .
+	replace educy=0 if s10==0
+	replace educy=4 if s10==1
+	replace educy=8 if s10==2
+	replace educy=12 if s10==3
+	replace educy=12 if s10==4
+	replace educy=19 if s10==6
 	label var educy "Years of education"
 *</_educy_>
 
 
 *<_educat7_>
 	gen byte educat7 = .
-	*issue with the definitions here
-	*S10 0 = should be smaller thank six years old or iliterate
-	*s10 1 = should literate but never attended school
-	*s10 3 is combines not completed highschool and not completed primary
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -574,8 +547,10 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat4_>
-	gen byte educat4 = educat5
-	recode educat4 (3=2) (4=3) (5=4)
+	*gen byte educat4 = educat5
+	*recode educat4 (3=2) (4=3) (5=4)
+	gen byte educat4=s10
+	recode educat4 (0=1) (3 4 5=3) (6=4)
 	label var educat4 "Level of education 3"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values educat4 lbleducat4
@@ -753,10 +728,7 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_>
-*1 digit isic code
-	gen str1 industrycat_isic= string(s28kod)
-	replace industrycat_isic="" if industrycat_isic=="."
-	replace industrycat_isic="" if lstatus!=1
+  gen industrycat_isic= .
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
@@ -789,10 +761,10 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_>
-gen helper_1 = "000"
-egen occup_isco=concat(helper_1 occup_orig)
-replace occup_isco="" if lstatus!=1
-drop helper_1
+	gen helper_1 = "000"
+	egen occup_isco=concat(helper_1 occup_orig)
+	replace occup_isco="" if lstatus!=1
+	drop helper_1
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
@@ -944,9 +916,7 @@ replace whours=. if s56a_top>84
 
 
 *<_industrycat_isic_2_>
-	gen industrycat_isic_2 = s52kod
-	tostring industrycat_isic_2, replace
-	replace industrycat_isic_2="" if industrycat_isic_2=="."
+	gen industrycat_isic_2 = .
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
