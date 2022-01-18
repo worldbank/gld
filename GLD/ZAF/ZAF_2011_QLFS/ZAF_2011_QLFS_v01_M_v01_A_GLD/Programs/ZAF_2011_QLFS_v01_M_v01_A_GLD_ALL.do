@@ -193,18 +193,6 @@ local output "`id_data'"
 ================================================================================================*/
 
 {
-/*<_urban_>
-It is not clear how the three categories are defined because the code list in the
-documentation does not match the raw dataset. According to QLFS documentation and
-urbanization stats from:
-https://data.worldbank.org/indicator/SP.URB.TOTL.IN.ZS?locations=ZA,
-the final code list should be
-1=urban formal(urban)
-2=urban informal(urban)
-4=tribal areas(rural)
-5=rural formal(rural)
-</_urban_>*/
-
 
 *<_urban_>
 	gen byte urban=Geo_type
@@ -256,7 +244,7 @@ the final code list should be
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = "subnatid1"
+	gen subnatidsurvey = "subnatid2"
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -360,19 +348,19 @@ Subnational ID at |
 ------------------+-----------------------------------
             Total |        159      100.00
 
-Note: 415 observations are under 18 (or not adult) yet are household heads because
+Note: 415 observations are under 18 (or not adult) yet are household heads because 
 they are originally asigned as the head --- their PERSONNO is 1.
 
 But there are 5 observations are assigned as household heads even though their PERSONNOs
 are not originally 1 or their ages reach 18. Their pids are:
 
-53800066000001130104
+53800066000001130104 			
 90800181000001070102
-90800501000001860102
-90800501000002050102
+90800501000001860102	
+90800501000002050102	
 
-The problem is that their ages change between quarters, even though the pids show
-that people with two different ages, i.e. one is 23 and the other is 4, are the same person.
+The problem is that their ages change between quarters, even though the pids show 
+that people with two different ages, i.e. one is 23 and the other is 4, are the same person. 
 
 </_relationharm_>*/
 
@@ -606,7 +594,7 @@ Zero observation's years of education exceed their age.
 	replace educy=19 if inlist(Q17EDUCATION, 23, 24)
 	replace educy=. if inlist(Q17EDUCATION, 25, 26, 99)
 	replace educy=. if age<ed_mod_age & age!=.
-	replace educy=age if educy>age & !mi(educy) & !mi(age)
+	replace educy=age if educy>age & !mi(educy) & !mi(age)  
 	label var educy "Years of education"
 *</_educy_>
 
@@ -854,14 +842,13 @@ Q310STARTBUSNS "Start a business if the circumstances have allowed?"
 
 
 *<_industrycat_isic_>
-	tostring Q43INDUSTRY, gen(indus_string)
-	gen industrycat_isic=substr(indus_string, 1, 2) if Q43INDUSTRY>100
-	replace industrycat_isic=indus_string if Q43INDUSTRY<100
+	tostring Q43INDUSTRY, gen(indus_string) format(%03.0f)
+	gen industrycat_isic=substr(indus_string, 1, 2) 
 	destring industrycat_isic, replace
-	recode industrycat_isic (11=01) (12=02) (13=05) (21=10) (22=11) (23=12) (24=13) (25=14) (29=.) (30=15) (31=17) (32=20) (33=23) (34=26) (35=27) (36=31) (37=32) (38=34) (39=36) (41=40) (42=41) (50=45) (61=51) (62=52) (63=50) (64=55) (71=60) (72=61) (73=62) (74=63) (75=64) (81=65) (82=66) (83=67) (84=70) (85=71) (86=72) (87=73) (88=74) (91=75) (92=80) (93=85) (94=90) (95=91) (96=92) (99=93) (01=95) (02=99)
-
+	recode industrycat_isic (01=95) (03=99) (11=01) (12=02) (13=05) (21=10) (22=11) (23=12) (24=13) (25=14) (29=.) (30=15) (31=17) (32=20) (33=23) (34=26) (35=27) (36=31) (37=32) (38=34) (39=36) (41=40) (42=41) (50=45) (61=51) (62=52) (63=50) (64=55) (71=60) (72=61) (73=62) (74=63) (75=64) (81=65) (82=66) (83=67) (84=70) (85=71) (86=72) (87=73) (88=74) (91=75) (92=80) (93=85) (94=90) (95=91) (96=92) (99=93) 
+	
 	replace industrycat_isic=16 if Q43INDUSTRY==306
-	replace industrycat_isic=18 if inrange(Q43INDUSTRY, 314, 315)
+	replace industrycat_isic=18 if Q43INDUSTRY==314
 	replace industrycat_isic=19 if inrange(Q43INDUSTRY, 316, 317)
 	replace industrycat_isic=21 if Q43INDUSTRY==323
 	replace industrycat_isic=22 if inrange(Q43INDUSTRY, 324, 325)
@@ -870,7 +857,7 @@ Q310STARTBUSNS "Start a business if the circumstances have allowed?"
 	replace industrycat_isic=28 if inrange(Q43INDUSTRY, 354, 355)
 	replace industrycat_isic=29 if inrange(Q43INDUSTRY, 356, 358)
 	replace industrycat_isic=30 if Q43INDUSTRY==359
-	replace industrycat_isic=33 if inrange(Q43INDUSTRY, 374, 375)
+	replace industrycat_isic=33 if inrange(Q43INDUSTRY, 374, 375)	
 	replace industrycat_isic=35 if inrange(Q43INDUSTRY, 384, 387)
 	replace industrycat_isic=37 if Q43INDUSTRY==395
 	gen industrycat_isic2=industrycat_isic*100
@@ -910,7 +897,7 @@ Q310STARTBUSNS "Start a business if the circumstances have allowed?"
 *<_occup_isco_>
 	tostring Q42OCCUPATION, gen(occup_string)
 	gen occupcat_isco=substr(occup_string, 1, 3)
-	merge m:1 occupcat_isco using "C:\Users\wb573465\Desktop\ZAF_archive\GLD ISCO mapping files\ISCO\isco88_sasco03_mapping.dta"
+	merge m:1 occupcat_isco using "`input'\isco88_sasco03_mapping.dta"
 	drop if _merge==2
 	destring isco_88, replace
 	gen occup_isco=isco_88*10
@@ -927,7 +914,7 @@ Q310STARTBUSNS "Start a business if the circumstances have allowed?"
 	gen occup_skill = .
 	replace occup_skill=1 if inrange(skill_level, 1, 3)
 	replace occup_skill=2 if inrange(skill_level, 4, 8)
-	replace occup_skill=3 if inrange(skill_level, 9, 9)
+	replace occup_skill=3 if inrange(skill_level, 9, 9)	
 	drop skill_level
 	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
 	label values occup_skill lblskill
@@ -1068,9 +1055,9 @@ NOTE: One outlier who has worked 193 hours in total in the past week has more th
 
 /*<_Labor_status_&_ISIC/ISCO_>
 
-Recode ISIC and ISCO vars to missing if lstatus is not "1-employed".
-Because ISIC and ISCO are string variables, their missing values should be ""
-instead of ".".
+Recode ISIC and ISCO vars to missing if lstatus is not "1-employed". 
+Because ISIC and ISCO are string variables, their missing values should be "" 
+instead of ".". 
 
 <_Labor_status_&_ISIC/ISCO_>*/
 
