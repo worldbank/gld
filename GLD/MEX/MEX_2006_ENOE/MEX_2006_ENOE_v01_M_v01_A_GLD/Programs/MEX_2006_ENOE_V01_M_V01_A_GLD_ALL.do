@@ -68,17 +68,17 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2006_ENOE\MEX_2006_ENO
 	tostring (ent v_sel n_ren), gen(ent_str v_sel_str n_ren_str) format("%02.0f")
 	tostring con, gen(con_str) format("%05.0f")
 	tostring (n_hog h_mud), gen(n_hog_str h_mud_str) format("%01.0f")
-	
+
 	egen person = concat(ent_str con_str v_sel_str n_hog_str h_mud_str n_ren_str)
 	tempfile mex_ind
 	save `mex_ind'
-	
+
 	use "`path_in'\COE2T106.dta", clear
 	tostring (ent v_sel n_ren), gen(ent_str v_sel_str n_ren_str) format("%02.0f")
 	tostring con, gen(con_str) format("%05.0f")
 	tostring (n_hog h_mud), gen(n_hog_str h_mud_str) format("%01.0f")
-	
-	
+
+
 	egen person = concat(ent_str con_str v_sel_str n_hog_str h_mud_str n_ren_str)
 
 	* Merge with COE1, make sure all match through assert
@@ -91,13 +91,13 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2006_ENOE\MEX_2006_ENO
 	* Overwrtwrite temp file
 	tempfile mex_ind
 	save `mex_ind'
-	
-	
+
+
 	use "`path_in'\SDEMT106.dta", clear
 	tostring (ent v_sel n_ren), gen(ent_str v_sel_str n_ren_str) format("%02.0f")
 	tostring con, gen(con_str) format("%05.0f")
 	tostring (n_hog h_mud), gen(n_hog_str h_mud_str) format("%01.0f")
-	
+
 	egen person = concat(ent_str con_str v_sel_str n_hog_str h_mud_str n_ren_str)
 
 	drop if r_def != 0
@@ -113,27 +113,27 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2006_ENOE\MEX_2006_ENO
 	* Overwrtwrite temp file
 	tempfile mex_ind
 	save `mex_ind'
-	
-	
-	
+
+
+
 	use "`path_in'\VIVT106.dta",clear
 	drop p1-p3
-	
+
 	tostring (ent v_sel), gen(ent_str v_sel_str) format("%02.0f")
 	tostring con, gen(con_str) format("%05.0f")
 
 	egen casa_short = concat(ent_str con_str v_sel_str)
 
 	* Merge with Individual files, keep only what matches
-	merge 1:m casa_short using `mex_ind', keep(match) nogen 
+	merge 1:m casa_short using `mex_ind', keep(match) nogen
 
 	* Overwrtwrite temp file
 	tempfile mex_ind
 	save `mex_ind'
-	
-	
+
+
 	use "`path_in'\HOGT106.dta", clear
-	
+
 	tostring (ent v_sel), gen(ent_str v_sel_str) format("%02.0f")
 	tostring con, gen(con_str) format("%05.0f")
 	tostring n_hog h_mud, gen(n_hog_str h_mud_str) format("%01.0f")
@@ -142,8 +142,8 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2006_ENOE\MEX_2006_ENO
 
 	* Merge with Individual files, keep only what matches
 	merge 1:m casa_long using `mex_ind', keep(match) nogen
-	
-	
+
+
 	*the harmonization is for the first three months of the year , any other month will be put to missing.
 	tab d_mes
 	replace d_mes=. if d_mes == 4 | d_mes == 5 | d_mes == 12
@@ -815,7 +815,8 @@ foreach v of local ed_var {
 	gen byte underemployment = .
 	replace underemployment=1 if  p8a==1 | p8a==3
 	replace underemployment = . if age < minlaborage & age != .
-	recode underemployment .=0
+	**recode underemployment .=0
+	replace underemployment=. if lstatus!=1
 	label var underemployment "Underemployment status"
 	la de lblunderemployment 0 "No" 1 "Yes"
 	label values underemployment lblunderemployment
@@ -946,7 +947,9 @@ foreach v of local ed_var {
 
 
 *<_occup_>
-	gen byte occup = floor(p3/1000)
+	destring isco_1, gen(occup_helper)
+	gen byte occup = floor(occup_helper/1000)
+	drop occup_helper
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup
@@ -1204,7 +1207,9 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 *</_occup_isco_2_>
 
 *<_occup_2_>
-	gen byte occup_2 = floor(p7a/1000)
+	destring isco_2, gen(occup_helper_2)
+	gen byte occup_2 = floor(occup_helper_2/1000)
+	drop occup_helper_2
 	label var occup_2 "1 digit occupational classification secondary job 7 day recall"
 	label values occup_2 lbloccup
 *</_occup_2_>
