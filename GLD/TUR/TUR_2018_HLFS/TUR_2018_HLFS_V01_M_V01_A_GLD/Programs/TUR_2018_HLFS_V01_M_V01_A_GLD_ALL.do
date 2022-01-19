@@ -538,25 +538,24 @@ label var ed_mod_age "Education module application age"
 	label values literacy lblliteracy
 *</_literacy_>
 
-
 *<_educy_>
 	gen byte educy = .
 	replace educy=0 if s13==0
 	replace educy=4 if s13==1
 	replace educy=8 if s13==2
-	replace educy=12 if s13==3
-	replace educy=12 if s13==4
-	replace educy=19 if s13==6
+	replace educy=12 if s13==31
+	replace educy=12 if s13==32
+	replace educy=19 if s13==4
+	replace educy=19 if s13==5
 	label var educy "Years of education"
 *</_educy_>
 
-
 *<_educat7_>
-	gen byte educat7 = .
+	gen byte educat7 = s13
+	recode educat7 0=1 1=3 2=4 31=5 32=5 4=7 5=7
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
-*</_educat7_>
 
 
 *<_educat5_>
