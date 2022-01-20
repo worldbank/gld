@@ -350,9 +350,9 @@ rename*, lower
 
 
 *<_age_>
-gen age=s6
-recode age 1=1 2=5 3=12 4=15 5=20 6=25 7=30 8=35 9=40 10=45 11=50 12=55 13=60 14=65
-label var age "Individual age"
+	gen age=s6
+	recode age 1=1 2=5 3=12 4=15 5=20 6=25 7=30 8=35 9=40 10=45 11=50 12=55 13=60 14=65
+	label var age "Individual age"
 
 *</_age_>
 
@@ -368,11 +368,11 @@ label var age "Individual age"
 
 *<_relationharm_>
 
-gen relationharm =s11
-recode relationharm 1=1 2=2 3=3 4/7=5 8=6
-label var relationharm "Relationship to the head of household - Harmonized"
-la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
-label values relationharm  lblrelationharm
+	gen relationharm =s11
+	recode relationharm 1=1 2=2 3=3 4/7=5 8=6
+	label var relationharm "Relationship to the head of household - Harmonized"
+	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
+	label values relationharm  lblrelationharm
 
 *</_relationharm_>
 
@@ -549,7 +549,11 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat7_>
-	gen byte educat7 = .
+	gen byte educat7 = s14
+	replace educat7=2 if s14==3 & age<10
+	replace educat7=3 if s14==3 & age==10
+	replace educat7=4 if s14==3 & age>10
+	recode educat7 0=. 1=1 2=3 3=4 4=5 5=5 6=7
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -566,10 +570,8 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat4_>
-	*gen byte educat4 = educat5
-	*recode educat4 (3=2) (4=3) (5=4)
-	gen byte educat4=s14
-	recode educat4 (0=1) (3 4 5=3) (6=4)
+	gen byte educat4 = educat5
+	recode educat4 (3=2) (4=3) (5=4)
 	label var educat4 "Level of education 3"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values educat4 lbleducat4
