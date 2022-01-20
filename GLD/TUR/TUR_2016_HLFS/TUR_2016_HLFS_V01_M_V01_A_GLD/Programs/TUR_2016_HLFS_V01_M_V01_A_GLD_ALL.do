@@ -928,13 +928,14 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_2_>
-
 	gen helper_1 = string(s53kod,"%02.0f")
 	gen helper_2 = "00"
 	egen industrycat_isic_2 = concat(helper_1 helper_2)
-	drop helper_1 helper_2
+	replace industrycat_isic_2="" if industrycat_isic_2==".00"
 	replace industrycat_isic_2="" if industrycat_isic_2=="."
+	replace industry_orig_2="" if lstatus!=1
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
+	drop helper_1 helper_2
 *</_industrycat_isic_2_>
 
 
