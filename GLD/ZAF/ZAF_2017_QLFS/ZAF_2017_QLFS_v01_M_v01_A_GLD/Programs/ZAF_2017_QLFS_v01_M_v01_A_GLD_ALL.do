@@ -233,25 +233,15 @@ the final code list should be
 
 *<_subnatid2_>
 	gen byte subnatid2 = .
-	replace subnatid2 = 1 if Metro_code == 1
-	replace subnatid2 = 2 if Metro_code == 2
-	replace subnatid2 = 3 if Metro_code == 3
-	replace subnatid2 = 4 if Metro_code == 4
-	replace subnatid2 = 5 if Metro_code == 5
-	replace subnatid2 = 6 if Metro_code == 6
-	replace subnatid2 = 7 if Metro_code == 7
-	replace subnatid2 = 6 if Metro_code == 8
-	replace subnatid2 = 6 if Metro_code == 9
-	replace subnatid2 = 6 if Metro_code == 10
-	replace subnatid2 = 6 if Metro_code == 11
-	replace subnatid2 = 6 if Metro_code == 12
-	replace subnatid2 = 6 if Metro_code == 13
-	replace subnatid2 = 6 if Metro_code == 14
-	replace subnatid2 = 6 if Metro_code == 15
-	replace subnatid2 = 6 if Metro_code == 16
-	replace subnatid2 = 6 if Metro_code == 17
-	label de lblsubnatid2 1 "WC - Non Metro" 2 "WC -  City of Cape Town" 3 "EC - Non Metro" 4 "EC - Buffalo City" 5 "EC - Nelson Mandela Bay" 6 "NC - Non Metro" 7 "FS - Non Metro" 8 "FS - Mangaung" 9 "KZN - Non Metro" 10 "KZN - eThekwini" 11 "NW - Non Metro" 12 "GP - Non Metro" 13 "GP - Ekurhuleni" 14 "GP - City of Johannesburg" 15 "GP - City of Tshwane" 16 "MP - Non Metro" 17 "LP - Non Metro" 	
-	label values subnatid2 lblsubnatid2
+	replace subnatid2 = 1 if Metro_code == 0
+	replace subnatid2 = 2 if Metro_code == 71
+	replace subnatid2 = 3 if Metro_code == 72
+	replace subnatid2 = 4 if Metro_code == 73
+	replace subnatid2 = 5 if Metro_code == 74
+	replace subnatid2 = 6 if Metro_code == 75
+	replace subnatid2 = 7 if Metro_code == 76
+	label de lblsubnatid2 1 "1 - Non-Metro" 2 "2 - Cape Town" 3 "3 - eThekweni" 4 "4 - eKhurhuleni" 5 "5 - Johannesburg" 6 "6 - Nelson Mandela Metro" 7 "7 - Tshwane"
+ 	label values subnatid2 lblsubnatid2
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
 
@@ -265,7 +255,7 @@ the final code list should be
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = "subnatid1"
+	gen subnatidsurvey = "subnatid2"
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -373,9 +363,9 @@ they are originally asigned as the head --- their PERSONNO is 1.
 
 But there is 1 observation that is assigned as household heads even though their PERSONNOs
 are not originally 1 or their ages reach 18. Their pids are:
-
-87610340000000380103 "age changing from 26-17-18"
-
+	
+87610340000000380103 "age changing from 26-17-18"			
+			
 </_relationharm_>*/
 
 *<_relationharm_>
@@ -600,28 +590,28 @@ or grade 9 and enter a technical education program at N1, proceeding to N2.
 Individual |                      Highest education level
        age | Grade 7/S  Grade 8/S  Grade 9/S  Grade 10/  Grade 11/  Grade 12/ |     Total
 -----------+------------------------------------------------------------------+----------
-         6 |         2          4          3          1          1          0 |        11
-         7 |         0          8          4          2          3          2 |        20
-         8 |         0          0          6          3          2          3 |        14
-         9 |         0          0          0          3          3          1 |         8
-        10 |         0          0          0          0          1          1 |         2
-        11 |         0          0          0          0          0          1 |         1
-        13 |         0          0          0          0          0          0 |         1
+         6 |         2          4          3          1          1          0 |        11 
+         7 |         0          8          4          2          3          2 |        20 
+         8 |         0          0          6          3          2          3 |        14 
+         9 |         0          0          0          3          3          1 |         8 
+        10 |         0          0          0          0          1          1 |         2 
+        11 |         0          0          0          0          0          1 |         1 
+        13 |         0          0          0          0          0          0 |         1 
 -----------+------------------------------------------------------------------+----------
-     Total |         2         12         13          9         10          8 |        57
+     Total |         2         12         13          9         10          8 |        57 
 
 Individual |     Highest education level
        age | NTC l/N1/   N5/NTC 5  Certifica |     Total
 -----------+---------------------------------+----------
-         6 |         0          0          0 |        11
-         7 |         0          0          1 |        20
-         8 |         0          0          0 |        14
-         9 |         1          0          0 |         8
-        10 |         0          0          0 |         2
-        11 |         0          0          0 |         1
-        13 |         0          1          0 |         1
+         6 |         0          0          0 |        11 
+         7 |         0          0          1 |        20 
+         8 |         0          0          0 |        14 
+         9 |         1          0          0 |         8 
+        10 |         0          0          0 |         2 
+        11 |         0          0          0 |         1 
+        13 |         0          1          0 |         1 
 -----------+---------------------------------+----------
-     Total |         1          1          1 |        57
+     Total |         1          1          1 |        57 
 
 </_educy_>*/
 
@@ -636,7 +626,7 @@ Individual |     Highest education level
 	replace educy=. if inlist(Q17EDUCATION,29,30,31)
 	replace educy=0 if Q17EDUCATION==98
 	replace educy=. if age<ed_mod_age & age!=.
-	replace educy=age if educy>age & !mi(educy) & !mi(age)
+	replace educy=age if educy>age & !mi(educy) & !mi(age)  
 	label var educy "Years of education"
 *</_educy_>
 
@@ -884,14 +874,13 @@ Q310STARTBUSNS "Start a business if the circumstances have allowed?"
 
 
 *<_industrycat_isic_>
-	tostring Q43INDUSTRY, gen(indus_string)
-	gen industrycat_isic=substr(indus_string, 1, 2) if Q43INDUSTRY>100
-	replace industrycat_isic=indus_string if Q43INDUSTRY<100
+	tostring Q43INDUSTRY, gen(indus_string) format(%03.0f)
+	gen industrycat_isic=substr(indus_string, 1, 2) 
 	destring industrycat_isic, replace
-	recode industrycat_isic (11=01) (12=02) (13=05) (21=10) (22=11) (23=12) (24=13) (25=14) (29=.) (30=15) (31=17) (32=20) (33=23) (34=26) (35=27) (36=31) (37=32) (38=34) (39=36) (41=40) (42=41) (50=45) (61=51) (62=52) (63=50) (64=55) (71=60) (72=61) (73=62) (74=63) (75=64) (81=65) (82=66) (83=67) (84=70) (85=71) (86=72) (87=73) (88=74) (91=75) (92=80) (93=85) (94=90) (95=91) (96=92) (99=93) (01=95) (02=99)
-
+	recode industrycat_isic (01=95) (03=99) (11=01) (12=02) (13=05) (21=10) (22=11) (23=12) (24=13) (25=14) (29=.) (30=15) (31=17) (32=20) (33=23) (34=26) (35=27) (36=31) (37=32) (38=34) (39=36) (41=40) (42=41) (50=45) (61=51) (62=52) (63=50) (64=55) (71=60) (72=61) (73=62) (74=63) (75=64) (81=65) (82=66) (83=67) (84=70) (85=71) (86=72) (87=73) (88=74) (91=75) (92=80) (93=85) (94=90) (95=91) (96=92) (99=93) 
+	
 	replace industrycat_isic=16 if Q43INDUSTRY==306
-	replace industrycat_isic=18 if inrange(Q43INDUSTRY, 314, 315)
+	replace industrycat_isic=18 if Q43INDUSTRY==314
 	replace industrycat_isic=19 if inrange(Q43INDUSTRY, 316, 317)
 	replace industrycat_isic=21 if Q43INDUSTRY==323
 	replace industrycat_isic=22 if inrange(Q43INDUSTRY, 324, 325)
@@ -900,7 +889,7 @@ Q310STARTBUSNS "Start a business if the circumstances have allowed?"
 	replace industrycat_isic=28 if inrange(Q43INDUSTRY, 354, 355)
 	replace industrycat_isic=29 if inrange(Q43INDUSTRY, 356, 358)
 	replace industrycat_isic=30 if Q43INDUSTRY==359
-	replace industrycat_isic=33 if inrange(Q43INDUSTRY, 374, 375)
+	replace industrycat_isic=33 if inrange(Q43INDUSTRY, 374, 375)	
 	replace industrycat_isic=35 if inrange(Q43INDUSTRY, 384, 387)
 	replace industrycat_isic=37 if Q43INDUSTRY==395
 	gen industrycat_isic2=industrycat_isic*100
@@ -940,7 +929,7 @@ Q310STARTBUSNS "Start a business if the circumstances have allowed?"
 *<_occup_isco_>
 	tostring Q42OCCUPATION, gen(occup_string)
 	gen occupcat_isco=substr(occup_string, 1, 3)
-	merge m:1 occupcat_isco using "C:\Users\wb573465\Desktop\ZAF_archive\GLD ISCO mapping files\ISCO\isco88_sasco03_mapping.dta"
+	merge m:1 occupcat_isco using "`input'\isco88_sasco03_mapping.dta"
 	drop if _merge==2
 	destring isco_88, replace
 	gen occup_isco=isco_88*10
@@ -957,7 +946,7 @@ Q310STARTBUSNS "Start a business if the circumstances have allowed?"
 	gen occup_skill = .
 	replace occup_skill=1 if inrange(skill_level, 1, 3)
 	replace occup_skill=2 if inrange(skill_level, 4, 8)
-	replace occup_skill=3 if inrange(skill_level, 9, 9)
+	replace occup_skill=3 if inrange(skill_level, 9, 9)	
 	drop skill_level
 	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
 	label values occup_skill lblskill
@@ -1095,9 +1084,9 @@ The main job was decided based on time spent.
 
 /*<_Labor_status_&_ISIC/ISCO_>
 
-Recode ISIC and ISCO vars to missing if lstatus is not "1-employed".
-Because ISIC and ISCO are string variables, their missing values should be ""
-instead of ".".
+Recode ISIC and ISCO vars to missing if lstatus is not "1-employed". 
+Because ISIC and ISCO are string variables, their missing values should be "" 
+instead of ".". 
 
 <_Labor_status_&_ISIC/ISCO_>*/
 
