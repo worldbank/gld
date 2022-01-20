@@ -675,9 +675,11 @@ foreach v of local ed_var {
 
 
 *<_nlfreason_>
-	gen byte nlfreason = s24
-	recode nlfreason 0=. 1/6=5 7=1 8/10=5
-	replace nlfreason=. if lstatus!=3
+	*Not all peple gave a reason for not in labor force so missing yet the origianl answer can be found in s24.
+	gen byte nlfreason =.
+	*recode nlfreason 0=. 1/6=5 7=1 8/10=5
+	*replace nlfreason=. if lstatus!=3
+	*replace nlfreason=. if lstatus==3
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
 	label values nlfreason lblnlfreason
