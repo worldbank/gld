@@ -155,10 +155,10 @@ rename*, lower
 
 *<_pid_>
 
-*three observations had incorrectly labeled the reference person as a 5, 11 or a 2 in the household order (s1).
-replace s1=1 in 74909
-replace s1=1 in 188578
-replace s1=1 in 190731
+	*three observations had incorrectly labeled the reference person as a 5, 11 or a 2 in the household order (s1).
+	replace s1=1 in 74909
+	replace s1=1 in 188578
+	replace s1=1 in 190731
 
 	tostring s1, gen(s1_helper) format(%02.0f)
 	egen pid=concat(hhid s1_helper)
@@ -664,9 +664,10 @@ foreach v of local ed_var {
 
 
 *<_nlfreason_>
-	gen byte nlfreason = s29
-	recode nlfreason 0=. 1=4 2=3 3=5 4=5 6=5 7=1 8=5 9=3 10=5
-	replace nlfreason=. if lstatus!=3
+*alternavive answer could be found for few individuals in s29
+	gen byte nlfreason = .
+	*recode nlfreason 0=. 1=4 2=3 3=5 4=5 6=5 7=1 8=5 9=3 10=5
+	*replace nlfreason=. if lstatus!=3
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
 	label values nlfreason lblnlfreason
