@@ -515,7 +515,11 @@ Note the data release we have has only 15 year old and older actual survey cut o
 
 
 *<_educat7_>
-	gen byte educat7 = .
+	gen byte educat7 = s9
+	replace educat7=2 if s9==3 & age<10
+	replace educat7=3 if s9==3 & age==10
+	replace educat7=4 if s9==3 & age>10
+	recode educat7 0=. 1=1 2=3 3=4 4=5 5=5 6=7
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -523,10 +527,8 @@ Note the data release we have has only 15 year old and older actual survey cut o
 
 
 *<_educat5_>
-	*gen educat5=educat7
-	*recode educat5 (3 4=3) (5=4) (6 7=5)
-	gen educat5=s9
-	recode educat5 (0=1) (1=2) (3/5=4) (6=5)
+	gen educat5=educat7
+	recode educat5 (3 4=3) (5=4) (6 7=5)
 	label var educat5 "Level of education 2"
 	la de lbleducat5 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
 	label values educat5 lbleducat5
@@ -702,8 +704,7 @@ foreach v of local ed_var {
 
 
 *<_industry_orig_>
-	gen industrycat10=s16kod
-	replace industrycat10=10 if s16kod==9
+	gen industry_orig = s16kod
 	tostring industry_orig, replace
 	replace industry_orig="" if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
@@ -720,9 +721,10 @@ foreach v of local ed_var {
 *<_industrycat10_>
 *No correspondance table between rev3 and rev 4 https://unstats.un.org/unsd/classifications/Econ/isic
 	gen industrycat10=s16kod
-	replace industrycat10=. if lstatus!=1
-	recode industrycat10 9=10
-	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
+	replace industrycat10=10 if s16kod==9
+	tostring industry_orig, replace
+	replace industry_orig="" if lstatus!=1
+	label var industry_orig "Original survey industry code, main job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
 *</_industrycat10_>
