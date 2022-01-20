@@ -666,11 +666,12 @@ foreach v of local ed_var {
 
 
 *<_nlfreason_>
-	gen byte nlfreason = s29
-	recode nlfreason 0=.
-	recode nlfreason 1=4 2=3 3=5 4=5 6=5 7=1 8=5 9=3 10=5
-	replace nlfreason=. if lstatus!=3
-	*recode nlfreason .=5 if lstatus==3 & missing(s24)
+*s29 has some replies butnot for all so missing.
+	gen byte nlfreason = .
+	*recode nlfreason 0=.
+	*recode nlfreason 1=4 2=3 3=5 4=5 6=5 7=1 8=5 9=3 10=5
+	*replace nlfreason=. if lstatus!=3
+	*recode nlfreason .=5 if lstatus==3 & missing(s29)
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
 	label values nlfreason lblnlfreason
@@ -944,13 +945,14 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_2_>
-
 	gen helper_1 = string(s53kod,"%02.0f")
 	gen helper_2 = "00"
 	egen industrycat_isic_2 = concat(helper_1 helper_2)
-	drop helper_1 helper_2
+	replace industrycat_isic_2="" if industrycat_isic_2==".00"
 	replace industrycat_isic_2="" if industrycat_isic_2=="."
+	replace industry_orig_2="" if lstatus!=1
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
+	drop helper_1 helper_2
 *</_industrycat_isic_2_>
 
 
