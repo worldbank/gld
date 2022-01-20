@@ -330,11 +330,11 @@ label var age "Individual age"
 
 *<_relationharm_>
 
-gen relationharm =s11
-recode relationharm 1=1 2=2 3=3 4/7=5 8=6
-label var relationharm "Relationship to the head of household - Harmonized"
-la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
-label values relationharm  lblrelationharm
+	gen relationharm =s11
+	recode relationharm 1=1 2=2 3=3 4/7=5 8=6
+	label var relationharm "Relationship to the head of household - Harmonized"
+	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
+	label values relationharm  lblrelationharm
 *</_relationharm_>
 
 
@@ -486,8 +486,8 @@ label values relationharm  lblrelationharm
 
 *<_ed_mod_age_>
 
-gen byte ed_mod_age = 6
-label var ed_mod_age "Education module application age"
+	gen byte ed_mod_age = 6
+	label var ed_mod_age "Education module application age"
 
 *</_ed_mod_age_>
 
@@ -510,14 +510,14 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educy_>
-		gen byte educy = .
-		replace educy=0 if s13==0
-		replace educy=4 if s13==1
-		replace educy=8 if s13==2
-		replace educy=12 if s13==3
-		replace educy=12 if s13==4
-		replace educy=19 if s13==6
-		label var educy "Years of education"
+	gen byte educy = .
+	replace educy=0 if s13==0
+	replace educy=4 if s13==1
+	replace educy=8 if s13==2
+	replace educy=12 if s13==3
+	replace educy=12 if s13==4
+	replace educy=19 if s13==6
+	label var educy "Years of education"
 *</_educy_>
 
 
@@ -944,10 +944,13 @@ replace whours=. if s56a_top>84
 	gen helper_1 = string(s53kod,"%02.0f")
 	gen helper_2 = "00"
 	egen industrycat_isic_2 = concat(helper_1 helper_2)
+	replace industrycat_isic_2="" if industrycat_isic_2==".00"
 	replace industrycat_isic_2="" if industrycat_isic_2=="."
+	replace industry_orig_2="" if lstatus!=1
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 	drop helper_1 helper_2
 *</_industrycat_isic_2_>
+
 
 
 *<_industrycat10_2_>
