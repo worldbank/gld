@@ -542,10 +542,8 @@ rename*, lower
 
 
 *<_educat4_>
-	*gen byte educat4 = educat5
-	*recode educat4 (3=2) (4=3) (5=4)
-	gen educat4=s13 if age>=ed_mod_age
-	recode educat4 (0=1) (1=2) (2 31/32=3) (5=4)
+	gen byte educat4 = educat5
+	recode educat4 (3=2) (4=3) (5=4)
 	label var educat4 "Level of education 3"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values educat4 lbleducat4
@@ -669,10 +667,11 @@ foreach v of local ed_var {
 
 
 *<_nlfreason_>
-	gen byte nlfreason = s29
-	recode nlfreason 0=.
-	recode nlfreason 1=4 2=3 3=5 4=5 6=5 7=1 8=5 9=3 10=5
-	replace nlfreason=. if lstatus!=3
+	*s29 has answers only for few individuals then missing.
+	gen byte nlfreason = .
+	*recode nlfreason 0=.
+	*recode nlfreason 1=4 2=3 3=5 4=5 6=5 7=1 8=5 9=3 10=5
+	*replace nlfreason=. if lstatus!=3
 	*recode nlfreason .=5 if lstatus==3 & missing(s24)
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
@@ -946,13 +945,14 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_2_>
-
 	gen helper_1 = string(s53kod,"%02.0f")
 	gen helper_2 = "00"
 	egen industrycat_isic_2 = concat(helper_1 helper_2)
-	drop helper_1 helper_2
+	replace industrycat_isic_2="" if industrycat_isic_2==".00"
 	replace industrycat_isic_2="" if industrycat_isic_2=="."
+	replace industry_orig_2="" if lstatus!=1
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
+	drop helper_1 helper_2
 *</_industrycat_isic_2_>
 
 
