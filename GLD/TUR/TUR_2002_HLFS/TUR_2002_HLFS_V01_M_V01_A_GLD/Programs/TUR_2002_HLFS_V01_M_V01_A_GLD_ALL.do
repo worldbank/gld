@@ -527,7 +527,11 @@ Note the data release we have has only 15 year old and older actual survey cut o
 
 
 *<_educat7_>
-	gen byte educat7 = .
+	gen byte educat7 = s9
+	replace educat7=2 if s9==3 & age<10
+	replace educat7=3 if s9==3 & age==10
+	replace educat7=4 if s9==3 & age>10
+	recode educat7 0=. 1=1 2=3 3=4 4=5 5=5 6=7
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -535,10 +539,8 @@ Note the data release we have has only 15 year old and older actual survey cut o
 
 
 *<_educat5_>
-	*gen educat5=educat7
-	*recode educat5 (3 4=3) (5=4) (6 7=5)
-	gen educat5=s9
-	recode educat5 (0=1) (1=2) (3/5=4) (6=5)
+	gen educat5=educat7
+	recode educat5 (3 4=3) (5=4) (6 7=5)
 	label var educat5 "Level of education 2"
 	la de lbleducat5 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
 	label values educat5 lbleducat5
