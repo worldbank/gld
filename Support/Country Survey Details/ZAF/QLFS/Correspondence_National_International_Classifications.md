@@ -1,12 +1,12 @@
 # Correspondences between national and international classifications
 
-This document describes the methodology used to map information on occupation coded in the survey per the national classification schemes to the international ISIC and ISCO codes. For industrial classification, all QLFS years use [Standard Industrial Classification of All Economic Activities, Fifth Edition (SIC 5)](http://www.statssa.gov.za/additional_services/sic/contents.htm) which corresponds to *International Standard Industrial Classification of all Economic Activities (ISIC Rev. 3)*. For occupational classification, all QLFS years use [South African Standard Classification of Occupations published in 2003 (SASCO 2003)](http://www.statssa.gov.za/classifications/codelists/SASCO_2003.pdf) which corresponds to *International Standard Classification of Occupations (ISCO-88).*
+This document describes the methodology used to map information on occupation coded in the survey per the national classification schemes to the international ISIC and ISCO codes. For industrial classification, all QLFS years use [Standard Industrial Classification of All Economic Activities, Fifth Edition (SIC 5)](http://www.statssa.gov.za/additional_services/sic/contents.htm) which corresponds to *International Standard Industrial Classification of all Economic Activities (ISIC Rev. 3)*. For occupational classification, all QLFS years use [South African Standard Classification of Occupations published in 2003 (SASCO 2003)](http://www.statssa.gov.za/classifications/codelists/SASCO_2003.pdf) which corresponds to *International Standard Classification of Occupations (ISCO-88).* This is the  correspondence [dta file](/Support/Country%20Survey%20Details/ZAF/QLFS/utilities/isco88_sasco03_mapping.dta) for mapping SASCO-03 to ISCO-88. 
 
 ## Correspondence in occupation classification
 
-ISCO-88 has 28 sub-major groups that are at the two-digit level and 116 minor groups that are at three-digit level; to compare, SASCO 2003 has 30 two-digit groups and 153 three-digit groups. In the essence, they have exactly the same coding structure and classification.
+ISCO-88 has 28 sub-major groups that are at two-digit level and 116 minor groups that are at three-digit level; to compare, SASCO 2003 has 30 two-digit groups and 153 three-digit groups. In the essence, they have exactly the same coding structure and classification.
 
-At two-digit level, the different exists in that SASCO 2003 has two additional categories in additional to "*01-Armed Forces*" in both SASO 2003 and ISCO-88:
+At two-digit level, the difference exists in that SASCO 2003 has two additional categories in additional to "*01-Armed Forces*" in both SASCO 2003 and ISCO-88:
 
 ![](utilities/SASCO_additional_categories.png)
 
@@ -16,13 +16,13 @@ At three-digit level, the difference of 37 groups consists of 11 groups contribu
 
 ![SASCO's 26 additional "NCE" categories.](utilities/Screen%20Shot%202021-11-02%20at%2005.58.25.png)
 
-The original variable `Q42OCCUPATION` in QLFS codes occupations at four-digit level. In order to conduct a minor-group-level mapping, only the first three digits of `Q42OCCUPATION` were kept. All groups except "N.C.E." groups in SASCO 2003 are mapped to their counterparts in ISCO-88 directly, as they are coded in the same way. Regarding the "N.C.E." groups, they are all mapped back to the higher two-digit level as demonstrated in the table above.
+The original variable `Q42OCCUPATION` in QLFS codes occupations is at four-digit level. In order to conduct a minor-group-level mapping, only the first three digits of `Q42OCCUPATION` were kept. All groups except "N.C.E." groups in SASCO 2003 were mapped to their counterparts in ISCO-88 directly, as they were coded in the same way. Regarding the "N.C.E." groups, they were all mapped back to the higher two-digit level as demonstrated in the table above.
 
 Note that the only exception to the "N.C.E." grouping rule is category "*215 Physical sciences technologists*" in SASCO 2003, as no category 215 in ISCO-88 can be a perfect match for it. The solution is to map "*215 Physical sciences technologists*" to category *"210 Physical, mathematical and engineering science professionals"* in ISCO-88.
 
 ## Correspondence in industry classification
 
-The original variable `Q43INDUSTRY` in QLFS codes industries at three-digit level. The [online documentation of SIC 5](http://www.statssa.gov.za/additional_services/sic/descrip6.htm) provides a conversion table between SIC 5 and ISIC Rev.3, although only at two-digit level. As shown in the screenshot below, in most cases, the harmonization will be a one-to-one exclusive matching process, i.e. SIC \#11 will be mapped to ISIC \#01. But in some cases, the relationship is not exclusive but multiple in ISIC to one in SIC, i.e. SIC \#15 and SIC \#16 match SIC \#30. The solution is to go to a lower three-digit level in SIC to find minor-groups with narrower definition for each categories, \#15 and \#16 in this case, in ISIC.
+The original variable `Q43INDUSTRY` in QLFS coded industries is at three-digit level. The [online documentation of SIC 5](http://www.statssa.gov.za/additional_services/sic/descrip6.htm) provides a conversion table between SIC 5 and ISIC Rev.3, although only at two-digit level. As shown in the screenshot below, in most cases, the harmonization would be a one-to-one exclusive matching process, i.e. SIC \#11 will be mapped to ISIC \#01. But in some cases, the relationship is not exclusive but multiple in ISIC to one in SIC, i.e. SIC \#15 and SIC \#16 match SIC \#30. The solution is to go to a lower three-digit level in SIC to find minor-groups with narrower definition for each category, \#15 and \#16 in this case, in ISIC.
 
 ![Correspondence table for SIC-5 and ISIC Rev.3.](utilities/SIC_ISIC_conversion.png)
 
