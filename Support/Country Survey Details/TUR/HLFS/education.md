@@ -1,11 +1,11 @@
 
 # Relevant information about the education section
 
-The education section of the GLD harmonized dataset provides information to the user on the educational level of the individuals interviewed in the HLFS. Usually this section will ressemble fully the documentation from the raw dataset yet, in this case the user will find useful addtional information to understand the decisions made on the harmonized files.
+The education section of the GLD harmonized dataset provides information to the user on the educational level of the individuals interviewed in the HLFS. Usually this section will ressemble fully the documentation from the raw dataset, yet, in this case the user will find useful addtional information to understand the decisions made on the harmonized files.
 
 ## The education section in the harmonized file
 
-The education section contains variables that explain the concepts of literacy, education achieved and lenght of stay in formal education. To contruct these variables used age and research papers that contained information about the education system changes in Turkey. See reference section for more details. 
+The education section contains variables that explain the concepts of literacy, education achieved and lenght of stay in formal education. To contruct these variables, the harmonization team used the variable age from the dataset and research papers with information about the education system changes in Turkey, the main external document used can be found ![here](Support/Country%Survey%Details/TUR/HLFS/Utilities/education%paper.pdf). 
 
 ## Changes in the Turksish education system
 
