@@ -5,7 +5,7 @@ The education section of the GLD harmonized dataset provides information to the 
 
 ## The education section in the harmonized file
 
-The education section contains variables that explain the concepts of literacy, education achieved and lenght of stay in formal education. To contruct these variables, the harmonization team used the variable age from the dataset and research papers with information about the education system changes in Turkey, the main external document used can be found [here](/Support/Country%Survey%Details/TUR/HLFS/Utilities/education_paper.pdf). 
+The education section contains variables that explain the concepts of literacy, education achieved and lenght of stay in formal education. To contruct these variables, the harmonization team used the variable age from the dataset and research papers with information about the education system changes in Turkey, the main external document used can be found [here](/Support/Country%20Survey%20Details/TUR/HLFS/Utilities/education_paper.pdf). 
 
 ## Changes in the Turksish education system
 
@@ -41,7 +41,7 @@ As a result of the above the harmonization team decided to take in consideration
 Figure 1 . HLFS 2000 to 2013:
 
 <br></br>
-![educ2013](/Support/Country%Survey%Details/TUR/HLFS/Utilities/educ_2013.png)
+![educ2013](/Support/Country%20Survey%20Details/TUR/HLFS/Utilities/educ_2013.png)
 <br></br>
 
 
@@ -49,7 +49,7 @@ Figure 1 . HLFS 2000 to 2013:
 Figure 2 . HLFS 2013 to 2019:
 
 <br></br>
-![educ2014](/Support/Country%Survey%Details/TUR/HLFS/Utilities/educ_2014.png)
+![educ2014](/Support/Country%20Survey%20Details/TUR/HLFS/Utilities/educ_2014.png)
 <br></br>
 
 
