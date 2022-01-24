@@ -31,9 +31,33 @@ Table 1. Changes in the education law
 With the reform in 2012 the age of entrance to formal education changed to 5,5 years or 6 60-66 months, from the previous 69-80 months.
 
 
-## Noteworthy actions in the education section of the harmonized data
+## Choices made
 
-As a result of the above the harmonization team decided to take in consideration the changes in the education reform for the years 2000 to 2019. In particular the age of entry to formal education was considered 6 across all the files. The changes coming from the 4+4+4 to the structure of formal education were particularly adress for the primary education group. As a result, the user with access to the relevant files will find that files from 2000 TO 2013 have a different structure to those from 2014 to 2019 for educat7, educat5 and educat4. 
+As a result of the above the harmonization team decided to take in consideration the changes in the education reform for the years 2000 to 2019. In particular the age of entry to formal education was considered 6 across all the files. The changes coming from the 4+4+4 to the structure of formal education were particularly adress for the primary education group. As a result, the user with access to the relevant files will find that files from 2000 TO 2013 have a different structure to those from 2014 to 2019 for educat7, educat5 and educat4.
+
+
+
+
+Figure 1 . HLFS 2000 to 2013:
+
+<br></br>
+![educ2013](/Support/Country%Survey%Details/TUR/HLFS/Utilities/educ_2013.png)
+<br></br>
+
+
+
+Figure 2 . HLFS 2013 to 2019:
+
+<br></br>
+![educ2014](/Support/Country%Survey%Details/TUR/HLFS/Utilities/educ_2014.png)
+<br></br>
+
+
+
+## Nature of the data
+
+The data from year 2000 to 2013 contains population from ages 0 to 99 while the files from 2014 to 2019 contain only data for the respondants in the age bracket 15 year plus. As a result, between years 2014 onwards there is little information to clasify the respondants under the categories of primary incomplete or basic education based on age solely. 
+
 
 ## References
 eyza Gün, Gülsün Atanur Baskan,
