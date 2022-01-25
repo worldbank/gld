@@ -23,11 +23,11 @@ The structure above changed in the past years due to improvements in curricula a
 Table 1. Pivotal changes in the education system
 | Year	| Relevant Change	|
 | :-------	| :--------	 	|
-| 1997	| Formally established the 8-year primary education	|
-| 2012	| Extension of primary education from 8 to 12 years in the form of 4+4+4|
+| Pre 1997	| Enactment of law to introduce the 8-year primary education system	|
+| 1997-2012	| Formal implementation of the the 8-year primary education system across the country	|
+| 2012	| Extension of primary education from 8 to 12 years in the form of 4+4+4 |
 
 With the reform in 2012 the age of entrance to formal education changed to 5,5 years or 6 60-66 months, from the previous 69-80 months.
-
 
 ## Choices made
 
@@ -36,13 +36,13 @@ As a result of the above the harmonization team decided to take in consideration
 Figure 1 . HLFS 2000 to 2013:
 
 <br></br>
-![educ2013](/Support/Country%20Survey%20Details/TUR/HLFS/Utilities/educ_2013.png)
+![educ2013](/Support/Country%20Survey%20Details/TUR/HLFS/Utilities/educ_2013.PNG)
 <br></br>
 
 Figure 2 . HLFS 2014 to 2019:
 
 <br></br>
-![educ2014](/Support/Country%20Survey%20Details/TUR/HLFS/Utilities/educ_2014.png)
+![educ2014](/Support/Country%20Survey%20Details/TUR/HLFS/Utilities/educ_2014.PNG)
 <br></br>
 
 ## Nature of the data
