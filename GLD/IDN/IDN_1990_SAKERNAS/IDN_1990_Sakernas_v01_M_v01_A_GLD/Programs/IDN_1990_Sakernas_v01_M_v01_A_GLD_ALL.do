@@ -26,6 +26,7 @@
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
 <_ISCO Version_>				N/A </_ISCO Ver UP National_>
+<_OCCUP National_>				KBJI </_OCCUP National_> 
 <_ISIC Version_>				N/A </_ISIC Version_>
 <_INDUS National_>				KBLI </_INDUS National_>
 
