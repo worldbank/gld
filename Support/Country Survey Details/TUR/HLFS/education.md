@@ -20,13 +20,11 @@ Source: OECD Review, Turkey (accessed january 2022) https://www.oecd-ilibrary.or
 
 The structure above changed in the past years due to improvements in curricula and definition of years of schooling and aged of pupils. According to Gun and Baskan (2014), different laws were passed between 1997 and 2012 that affected the education system of turkey. Table 1 below summarizes the changes and the importance of each. The most dramatic change took place in 2012 with the enactment of the 4+4+4 law that stated 4 years primary, 4 years elementary and 4 years high school to replace the previous law of 8 years of primary education.
 
-Table 1. Changes in the education law
-| Year	| Law	| Relevant Change	|
-| :-------	| :--------		| :--------	 	|
-| 1973	| National Education Basic Law no. 1739	| Transition to 8-year compulsory primary education	|
-| 1997	| Law no. 4306	| Push to formally establish the 8-year primary education	|
-| 2004	| No law	| Changes in primary education curricula to be implemente 2012-2013	|
-| 2012	| Law on Making Amendments on Primary Education Law no. 6287	| extension of primary education from 8 to 12 years in the form of 4+4+4|
+Table 1. Pivotal changes in the education system
+| Year	| Relevant Change	|
+| :-------	| :--------	 	|
+| 1997	| Formally established the 8-year primary education	|
+| 2012	| Extension of primary education from 8 to 12 years in the form of 4+4+4|
 
 With the reform in 2012 the age of entrance to formal education changed to 5,5 years or 6 60-66 months, from the previous 69-80 months.
 
@@ -35,24 +33,17 @@ With the reform in 2012 the age of entrance to formal education changed to 5,5 y
 
 As a result of the above the harmonization team decided to take in consideration the changes in the education reform for the years 2000 to 2019. In particular the age of entry to formal education was considered 6 across all the files. The changes coming from the 4+4+4 to the structure of formal education were particularly adress for the primary education group. As a result, the user with access to the relevant files will find that files from 2000 TO 2013 have a different structure to those from 2014 to 2019 for educat7, educat5 and educat4.
 
-
-
-
 Figure 1 . HLFS 2000 to 2013:
 
 <br></br>
 ![educ2013](/Support/Country%20Survey%20Details/TUR/HLFS/Utilities/educ_2013.png)
 <br></br>
 
-
-
-Figure 2 . HLFS 2013 to 2019:
+Figure 2 . HLFS 2014 to 2019:
 
 <br></br>
 ![educ2014](/Support/Country%20Survey%20Details/TUR/HLFS/Utilities/educ_2014.png)
 <br></br>
-
-
 
 ## Nature of the data
 
