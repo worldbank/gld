@@ -722,7 +722,7 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 We define the employed as who "worked primarily (b4p4==1)" or
 							  "worked at least for 1 hour in the past one week(b4p5==1)" or
 							  "has a job/business but temporarily did not work during the past one week(b4p6==1)";
-unemployed: "whose primary work last week is not work (b4p4!=1)" and
+unemployed: "whose primary activity last week is not work (b4p4!=1)" and
 			"who did not work at least one hour during the previous week (b4p5==2)" and 
 			"who do not have a job/business (b4p6==2)" and
 			"is currently seeking a job (b4p13==2)";
