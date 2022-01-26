@@ -48,8 +48,8 @@ set mem 800m
 
 *----------1.2: Set directories------------------------------*
 
-local path_in "Z:\GLD-Harmonization\582018_AQ\CHL\1990\CHL_1990_CASEN_V01_M\Data\Stata"
-local path_output "Z:\GLD-Harmonization\582018_AQ\CHL\1990\CHL_1990_CASEN_V01_M_V01_A_GLD\Data\Harmonized" 
+local path_in "Z:\GLD-Harmonization\582018_AQ\CHL\CHL_1990_CASEN\CHL_1990_CASEN_V01_M\Data\Stata"
+local path_output "Z:\GLD-Harmonization\582018_AQ\CHL\CHL_1990_CASEN\CHL_1990_CASEN_V01_M_V01_A_GLD\Data\Harmonized" 
 
 *----------1.3: Database assembly------------------------------*
 
@@ -150,6 +150,7 @@ use "`path_in'\casen1990.dta"
 
 
 *<_hhid_>
+	sort z f
 	egen hhid = group(r p c z f)
 	label var hhid "Household ID"
 *</_hhid_>
@@ -227,7 +228,7 @@ label values subnatid2 lblsubnatid2
 
 *<_subnatid3_>
 	gen subnatid3 = comu
-	label de lblsubnatid3 1101 " 1 - Arica" 1301 " 2 - Iquique" 1305 " 3 - Pica" 1306 " 4 - Pozo Almonte" 2101 " 5 - Tocopilla" 2201 " 6 - Calama" 2301 " 7 - Antofagasta" 2302 " 8 - Mejillones" 2303 " 9 - Sierra Gorda" 3101  " 10 - Chañaral" 3102 " 11 - Diego de Almagro" 3201 " 12 - Copiapó " 3203 " 13 - Tierra Amarilla" 3301 " 14 - Vallenar" 3302  " 15 - Freirina" 3303 " 16 - Huasco" 4101 " 17 - La Serena" 4103 " 18 - Coquimbo" 4104 " 19 - Andacollo" 4201 " 20 - Ovalle " 4204 " 21 - Combarbalá " 4301 " 22 - Illapel" 4303 " 23 - Los Vilos" 5501 " 24 - Valparaíso" 5502 " 25 - Viña del Mar" 5505 " 26 - Quilpué" 5506 " 27 - Villa Alemana" 5507 " 28 - Casablanca" 5201 " 29 - Los Andes" 5101 " 30 - La Ligua" 5401 "31 - Quillota" 5403 " 32 - La Calera" 5404 " 33 - Nogales" 5601  " 34 - San Antonio" 5602 " 35 - Cartagena" 5301 " 36 - San Felipe" 6101 " 37 - Rancagua" 6103 " 38 - Mostazal" 6105 " 39 - Machalí" 6108 " 40 - Rengo" 6111 " 41 - San Vicente" 6116 " 42 - Doñihue" 6201  " 43 - San Fernando" 6202 " 44 - Chimbarongo" 6206  " 45 - Santa Cruz" 6306 " 46 - Paredones" 7101  " 47 - Curicó" 7102 " 48 -Teno" 7104 " 49 - Molina" 7106 " 50 - Hualañé" 7201 " 51 - Talca" 7202 " 52 - Pelarco" 7204 " 53 - San Clemente" 7208 " 54 - Constitución" 7401 " 55 - Cauquenes" 7402 " 56 - Pelluhue" 7301 " 57 - Linares" 7304 " 58 - Longaví"  7305 " 59 -  Parral" 7307 " 60 - Villa Alegre" 8101 " 61 - Chillán" 8105 " 62 - Coihueco" 8111 " 63 - Bulnes" 8112 " 64 - Quillón" 8120 " 65 - San Nicolás" 8201 " 66 - Los Ángeles" 8208 " 67 - Mulchén" 8301 " 68 - Concepción" 8302 " 69 - Talcahuano" 8303 "70 - Penco" 8304 "71 - Tomé"8305 "72 - Florida" 8306 " 73 - Hualqui" 8308 "74 - Lota" 8309 " 75 - Coronel" 8401 " 76 - Lebu" 8403 " 77 - Curanilahue" 8407 " 78 - Tirúa "9101 " 79 - Angol" 9102 "80 - Renaico" 9103 "81 - Collipulli" 9105 " 82  - Curacautín" 9107 "83 - Victoria" 9108 " 84 - Traiguén" 9201 " 85 -Temuco" 9208 " 86 - Pucón" 9209 "87 - Villarrica" 9211 " 88 - Pitrufquén" 9214 " 89 - Toltén" 9215 " 90 - Teodoro Schmidt" 9216 " 91 - Saavedra" 10101 " 92 - Valdivia" 10102 " 93 - Mariquina" 10109 " 94 - La Unión" 10110 " 95 - Paillaco" 10201 " 96 - Osorno" 10204 " 97 - Puerto Octay" 10205 " 98 - Purranque" 10301 " 99 - Puerto Montt" 10302 "100 - Puerto Varas" 10305 " 101 - Maullín" 10307 " 102 - Fresia" 10308 " 103 - Llanquihue" 10401 " 104 - Castro" 10408 " 105 - Chonchi" 11101 " 106 - Coyhaique" 11201 " 107 - Puerto Aisén" 12101 " 108 - Natales" 12201 " 109 - Punta Arenas" 12301 " 110 - Porvenir" 13101 " 111 - Santiago"  13103 " 112 - Conchalí"  13106 " 113 - Providencia" 13109 " 114 - Las Condes" 13110 " 115 - Ñuñoa" 13111 " 116 - La Reina" 13112 " 117 - Macul" 13113 "118 - Peñalolén" 13114 " 119 - La Florida" 13115 " 120 - San Joaquín" 13116 "121 La Granja" 13117 " 121 - La Pintana" 13118 " 122 - San Ramón" 13119 " 123 - San Miguel" 13120 "  124 - La Cisterna" 13124 " 125 - Estación Central" 13126 "126 - Maipú" 13127 "127 - Quinta Normal" 13128 "128 - Lo Prado" 13129 "129 - Pudahuel" 13130 " 130 - Cerro Navia" 13131 "131 - Renca" 13132 "132 - Quilicura" 13201 "133 - Colina" 13202 "134 - Lampa" 13203 " 135 - Tiltil" 13301 "136 - Puente Alto" 13302 "137 - San José de Maipo" 13303 "138 - Pirque" 13401 "139 - San Bernardo" 13402 "140 - Buin" 13403 "141 - Paine" 13404 "142 - Calera de Tango" 13501 "143 - Melipilla" 13502 " 144 - María Pinto"  13503 "145 - Curacaví" 13504 "146 - Alhué" 13505 " 147 - San Pedro" 13601 " 148 - Talagante" 13602 "149 - Peñaflor" 13603 " 150 - Isla de Maipo" 13604 " 151 - El Monte"
+	label de lblsubnatid3 1101 " 1 - Arica" 1301 " 2 - Iquique" 1305 " 3 - Pica" 1306 " 4 - Pozo Almonte" 2101 " 5 - Tocopilla" 2201 " 6 - Calama" 2301 " 7 - Antofagasta" 2302 " 8 - Mejillones" 2303 " 9 - Sierra Gorda" 3101  " 10 - Chañaral" 3102 " 11 - Diego de Almagro" 3201 " 12 - Copiapó " 3203 " 13 - Tierra Amarilla" 3301 " 14 - Vallenar" 3302  " 15 - Freirina" 3303 " 16 - Huasco" 4101 " 17 - La Serena" 4103 " 18 - Coquimbo" 4104 " 19 - Andacollo" 4201 " 20 - Ovalle " 4204 " 21 - Combarbalá " 4301 " 22 - Illapel" 4303 " 23 - Los Vilos" 5501 " 24 - Valparaíso" 5502 " 25 - Viña del Mar" 5505 " 26 - Quilpué" 5506 " 27 - Villa Alemana" 5507 " 28 - Casablanca" 5201 " 29 - Los Andes" 5101 " 30 - La Ligua" 5401 "31 - Quillota" 5403 " 32 - La Calera" 5404 " 33 - Nogales" 5601  " 34 - San Antonio" 5602 " 35 - Cartagena" 5301 " 36 - San Felipe" 6101 " 37 - Rancagua" 6103 " 38 - Mostazal" 6105 " 39 - Machalí" 6108 " 40 - Rengo" 6111 " 41 - San Vicente" 6116 " 42 - Doñihue" 6201  " 43 - San Fernando" 6202 " 44 - Chimbarongo" 6206  " 45 - Santa Cruz" 6306 " 46 - Paredones" 7101  " 47 - Curicó" 7102 " 48 -Teno" 7104 " 49 - Molina" 7106 " 50 - Hualañé" 7201 " 51 - Talca" 7202 " 52 - Pelarco" 7204 " 53 - San Clemente" 7208 " 54 - Constitución" 7401 " 55 - Cauquenes" 7402 " 56 - Pelluhue" 7301 " 57 - Linares" 7304 " 58 - Longaví"  7305 " 59 -  Parral" 7307 " 60 - Villa Alegre" 8101 " 61 - Chillán" 8105 " 62 - Coihueco" 8111 " 63 - Bulnes" 8112 " 64 - Quillón" 8120 " 65 - San Nicolás" 8201 " 66 - Los Ángeles" 8208 " 67 - Mulchén" 8301 " 68 - Concepción" 8302 " 69 - Talcahuano" 8303 "70 - Penco" 8304 "71 - Tomé"8305 "72 - Florida" 8306 " 73 - Hualqui" 8308 "74 - Lota" 8309 " 75 - Coronel" 8401 " 76 - Lebu" 8403 " 77 - Curanilahue" 8407 " 78 - Tirúa "9101 " 79 - Angol" 9102 "80 - Renaico" 9103 "81 - Collipulli" 9105 " 82  - Curacautín" 9107 "83 - Victoria" 9108 " 84 - Traiguén" 9201 " 85 -Temuco" 9208 " 86 - Pucón" 9209 "87 - Villarrica" 9211 " 88 - Pitrufquén" 9214 " 89 - Toltén" 9215 " 90 - Teodoro Schmidt" 9216 " 91 - Saavedra" 10101 " 92 - Valdivia" 10102 " 93 - Mariquina" 10109 " 94 - La Unión" 10110 " 95 - Paillaco" 10201 " 96 - Osorno" 10204 " 97 - Puerto Octay" 10205 " 98 - Purranque" 10301 " 99 - Puerto Montt" 10302 "100 - Puerto Varas" 10305 " 101 - Maullín" 10307 " 102 - Fresia" 10308 " 103 - Llanquihue" 10401 " 104 - Castro" 10408 " 105 - Chonchi" 11101 " 106 - Coyhaique" 11201 " 107 - Puerto Aisén" 12101 " 108 - Natales" 12201 " 109 - Punta Arenas" 12301 " 110 - Porvenir" 13101 " 111 - Santiago"  13103 " 112 - Conchalí"  13106 " 113 - Providencia" 13109 " 114 - Las Condes" 13110 " 115 - Ñuñoa" 13111 " 116 - La Reina" 13112 " 117 - Macul" 13113 "118 - Peñalolén" 13114 " 119 - La Florida" 13115 " 120 - San Joaquín" 13116 "121 La Granja" 13117 " 122 - La Pintana" 13118 " 123 - San Ramón" 13119 " 124 - San Miguel" 13120 "  125 - La Cisterna" 13124 " 126 - Estación Central" 13126 "127 - Maipú" 13127 "128 - Quinta Normal" 13128 "129 - Lo Prado" 13129 "130 - Pudahuel" 13130 " 131 - Cerro Navia" 13131 "132 - Renca" 13132 "133 - Quilicura" 13201 "134 - Colina" 13202 "135 - Lampa" 13203 " 136 - Tiltil" 13301 "137 - Puente Alto" 13302 "138 - San José de Maipo" 13303 "139 - Pirque" 13401 "140 - San Bernardo" 13402 "141 - Buin" 13403 "142 - Paine" 13404 "143 - Calera de Tango" 13501 "144 - Melipilla" 13502 " 145 - María Pinto"  13503 "146 - Curacaví" 13504 "147 - Alhué" 13505 " 148 - San Pedro" 13601 " 149 - Talagante" 13602 "150 - Peñaflor" 13603 " 151 - Isla de Maipo" 13604 " 152 - El Monte"
 	label values subnatid3 lblsubnatid3
 	label var subnatid3 "Subnational ID at Third Administrative Level"
 *</_subnatid3_>
@@ -418,7 +419,7 @@ label values subnatid2 lblsubnatid2
 
 *<_migrated_from_code_>
 	gen migrated_from_code = .
-	label de lblmigrated_from_code
+	label de lblmigrated_from_code 1 ""
 	label values migrated_from_code lblmigrated_from_code
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
 *</_migrated_from_code_>
@@ -590,7 +591,8 @@ foreach v of local ed_var {
 
 {
 *<_lstatus_>
-	gen byte lstatus = .
+*there is like 31,122 missing values , are they inactive? prob not reply
+	gen byte lstatus = o21
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
@@ -668,40 +670,70 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_>
-  gen industrycat_isic= .
+*two digits
+	gen industrycat_isic= string(o6,"%02.0f")
+	replace industrycat_isic = "" if industrycat_isic =="."
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
 
 *<_industrycat10_>
-/*No correspondance table between rev3 and rev 4 https://unstats.un.org/unsd/classifications/Econ/isic
-	gen industrycat10=s16kod
-	replace industrycat10=10 if s16kod==9
+	gen industrycat10=.
+	replace industrycat10=1 if inrange(o6,0,2)
+	replace industrycat10=2 if inrange(o6,10,2)
+	replace industrycat10=3 if inrange(o6,20,28)
+	replace industrycat10=4 if inrange(o6,70,75)
+	replace industrycat10=4 if inrange(o6,82,83)
+	replace industrycat10=5 if o6==30
+	replace industrycat10=6 if inrange(o6,40,42)
+	replace industrycat10=7 if inrange(o6,80,81)
+	replace industrycat10=8 if inrange(o6,51,53)
+	replace industrycat10=9 if o6==50
+	replace industrycat10=10 if inrange(o6,60,63)
+	replace industrycat10=10 if o6==90
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
-	label values industrycat10 lblindustrycat10*/
+	label values industrycat10 lblindustrycat10
 *</_industrycat10_>
 
 
 *<_industrycat4_>
-	/*gen byte industrycat4 = industrycat10
+	gen byte industrycat4 = industrycat10
 	recode industrycat4 (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
 	label var industrycat4 "1 digit industry classification (Broad Economic Activities), primary job 7 day recall"
 	la de lblindustrycat4 1 "Agriculture" 2 "Industry" 3 "Services" 4 "Other"
-	label values industrycat4 lblindustrycat4*/
+	label values industrycat4 lblindustrycat4
 *</_industrycat4_>
 
 
 *<_occup_orig_>
 	gen occup_orig = string(o5)
-	replace occup_orig="" if s22kod==.
+	replace occup_orig="" if o5==.
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
 
 *<_occup_isco_>
-	gen occup_isco=.
+	gen occup_isco=occup_orig
+	replace occup="01" if occup_orig=="0"
+	replace occup="11" if occup_orig=="1"
+	replace occup="21" if occup_orig=="2"
+	replace occup="31" if occup_orig=="3"
+	replace occup="41" if occup_orig=="4"
+	replace occup="51" if occup_orig=="5"
+	replace occup="61" if occup_orig=="6"
+	replace occup="71" if occup_orig=="7"
+	replace occup="11" if occup_orig=="10"
+	replace occup="21" if occup_orig=="20"
+	replace occup="31" if occup_orig=="30"
+	replace occup="41" if occup_orig=="40"
+	replace occup="51" if occup_orig=="50"
+	replace occup="61" if occup_orig=="60"
+	replace occup="71" if occup_orig=="70"
+	replace occup="81" if occup_orig=="80"
+	replace occup="91" if occup_orig=="90"
+	*probelm with two digit specifications
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
@@ -715,7 +747,12 @@ foreach v of local ed_var {
 
 
 *<_occup_>
-	gen byte occup = .
+	gen  occup = occup_orig
+	
+
+	
+
+	
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup
