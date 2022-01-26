@@ -480,8 +480,8 @@ label values subnatid2 lblsubnatid2
 
 
 *<_educat7_>
-	gen byte educat7 = e4
-	*not sure how yet.
+	gen byte educat7 = educ
+	recode educat7 0=1 1=2 2=3 3=4 6=5 7=6 8=6 9=7 11=6 12=. 13=. 14=3
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -506,7 +506,7 @@ label values subnatid2 lblsubnatid2
 *</_educat4_>
 
 *<_educat_orig_>
-	gen educat_orig = e4
+	gen educat_orig = educ
 	label var educat_orig "Original survey education code"
 *</_educat_orig_>
 
@@ -716,23 +716,23 @@ foreach v of local ed_var {
 
 *<_occup_isco_>
 	gen occup_isco=occup_orig
-	replace occup="01" if occup_orig=="0"
-	replace occup="11" if occup_orig=="1"
-	replace occup="21" if occup_orig=="2"
-	replace occup="31" if occup_orig=="3"
-	replace occup="41" if occup_orig=="4"
-	replace occup="51" if occup_orig=="5"
-	replace occup="61" if occup_orig=="6"
-	replace occup="71" if occup_orig=="7"
-	replace occup="11" if occup_orig=="10"
-	replace occup="21" if occup_orig=="20"
-	replace occup="31" if occup_orig=="30"
-	replace occup="41" if occup_orig=="40"
-	replace occup="51" if occup_orig=="50"
-	replace occup="61" if occup_orig=="60"
-	replace occup="71" if occup_orig=="70"
-	replace occup="81" if occup_orig=="80"
-	replace occup="91" if occup_orig=="90"
+	replace occup_isco="01" if occup_orig=="0"
+	replace occup_isco="11" if occup_orig=="1"
+	replace occup_isco="21" if occup_orig=="2"
+	replace occup_isco="31" if occup_orig=="3"
+	replace occup_isco="41" if occup_orig=="4"
+	replace occup_isco="51" if occup_orig=="5"
+	replace occup_isco="61" if occup_orig=="6"
+	replace occup_isco="71" if occup_orig=="7"
+	replace occup_isco="11" if occup_orig=="10"
+	replace occup_isco="21" if occup_orig=="20"
+	replace occup_isco="31" if occup_orig=="30"
+	replace occup_isco="41" if occup_orig=="40"
+	replace occup_isco="51" if occup_orig=="50"
+	replace occup_isco="61" if occup_orig=="60"
+	replace occup_isco="71" if occup_orig=="70"
+	replace occup_isco="81" if occup_orig=="80"
+	replace occup_isco="91" if occup_orig=="90"
 	*probelm with two digit specifications
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
@@ -747,12 +747,8 @@ foreach v of local ed_var {
 
 
 *<_occup_>
-	gen  occup = occup_orig
-	
-
-	
-
-	
+*under revision
+	gen  occup = o5
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup
@@ -760,12 +756,9 @@ foreach v of local ed_var {
 
 
 *<_wage_no_compen_>
-/* <_wage_no_compen_note>
-
-</_wage_no_compen_note> */
-	gen double wage_no_compen =.
-	*replace wage_no_compen=. if lstatus!=1
-	*replace wage_no_compen=. if wage_no_compen == 0
+	gen double wage_no_compen =ytrabaj
+	replace wage_no_compen=. if lstatus!=1
+	replace wage_no_compen=. if wage_no_compen == 0
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
@@ -780,15 +773,9 @@ foreach v of local ed_var {
 
 
 *<_whours_>
-/* <_whours_note>
-
-	Survey has two concepts - work usually in a week (s27a) and work the last week (s28a).
-
-
-</_whours_note> */
-	gen whours = s28a
+	gen whours = jh
 	replace whours=. if lstatus!=1
-	replace whours=. if s28a>84
+	replace whours=. if jh>84
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -800,16 +787,14 @@ foreach v of local ed_var {
 
 
 *<_wage_total_>
-/* <_wage_total>
-	Since months unknown, set to missing
-</_wage_total> */
 	gen wage_total = .
 	label var wage_total "Annualized total wage primary job 7 day recall"
 *</_wage_total_>
 
 
 *<_contract_>
-	gen byte contract = .
+	gen byte contract = o8
+	recode contract 1/3=1 4=0 5=.
 	label var contract "Employment has contract primary job 7 day recall"
 	la de lblcontract 0 "Without contract" 1 "With contract"
 	label values contract lblcontract
@@ -817,7 +802,8 @@ foreach v of local ed_var {
 
 
 *<_healthins_>
-	gen byte healthins = .
+	gen byte healthins = s42 
+	recode  healthins 1/8=1 0=. 9=0
 	label var healthins "Employment has health insurance primary job 7 day recall"
 	la de lblhealthins 0 "Without health insurance" 1 "With health insurance"
 	label values healthins lblhealthins
@@ -825,8 +811,7 @@ foreach v of local ed_var {
 
 
 *<_socialsec_>
-	gen byte socialsec = s25
-	recode socialsec (2=0)
+	gen byte socialsec = .
 	replace socialsec=. if lstatus!=1
 	label var socialsec "Employment has social security insurance primary job 7 day recall"
 	la de lblsocialsec 1 "With social security" 0 "Without social secturity"
@@ -843,16 +828,16 @@ foreach v of local ed_var {
 
 
 *<_firmsize_l_>
-	gen firmsize_l=s21
-	recode firmsize_l 1=1 2=10 3=25 4=50
+	gen firmsize_l=o9
+	recode firmsize_l 1=1 2=2 3=6 4=10 5=50 6=200 7=.
 	replace firmsize_l=. if lstatus!=1
 	label var firmsize_l "Firm size (lower bracket) primary job 7 day recall"
 *</_firmsize_l_>
 
 
 *<_firmsize_u_>
-	gen firmsize_u=s21
-	recode firmsize_u 1=9 2=24 3=49 4=.
+	gen firmsize_u=o9
+	recode firmsize_u 1=1 2=5 3=9 4=49 5=199 6=. 7=.
 	replace firmsize_u=. if lstatus!=1
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>
@@ -880,7 +865,7 @@ foreach v of local ed_var {
 
 
 *<_industry_orig_2_>
-	gen industry_orig_2 = s26kod
+	gen industry_orig_2 = .
 	tostring industry_orig_2, replace
 	replace industry_orig_2="" if lstatus!=1
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
@@ -894,9 +879,7 @@ foreach v of local ed_var {
 
 
 *<_industrycat10_2_>
-	gen byte industrycat10_2 = s26kod
-	replace industrycat10_2=10 if s26kod==9
-	replace industrycat10_2=. if lstatus!=1
+	gen byte industrycat10_2 = .
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
 *</_industrycat10_2_>
@@ -948,9 +931,8 @@ foreach v of local ed_var {
 
 
 *<_whours_2_>
-	gen whours_2 = s28b
+	gen whours_2 = .
 	replace whours_2=. if lstatus!=1
-	replace whours_2=. if s28b>24
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 
@@ -1004,7 +986,7 @@ foreach v of local ed_var {
 
 
 *<_t_hours_total_>
-	gen helper_totalh=(whours+whours_2)
+	gen helper_totalh=(whours)
 	gen t_hours_total = helper_totalh
 	replace t_hours_total=. if helper_totalh>140
 	label var t_hours_total "Annualized hours worked in all jobs 7 day recall"
