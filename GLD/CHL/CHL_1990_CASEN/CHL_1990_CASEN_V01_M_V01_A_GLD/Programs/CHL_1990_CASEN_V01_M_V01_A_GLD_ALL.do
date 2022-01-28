@@ -150,14 +150,26 @@ use "`path_in'\casen1990.dta"
 
 
 *<_hhid_>
-	sort z f
-	egen hhid = group(r p c z f)
+	
+	gen r_helper=string(r,"%02.0f")
+	gen p_helper=string(p,"%02.0f")
+	gen c_helper=string(c,"%02.0f")
+	gen z_helper=string(z,"%02.0f")
+	gen f_helper=string(f,"%03.0f")
+	
+	
+	egen hhid = concat(r_helper p_helper c_helper z_helper f_helper)
+	drop r_helper p_helper c_helper z_helper f_helper
+
 	label var hhid "Household ID"
 *</_hhid_>
 
 
 *<_pid_>
-	egen pid=concat(hhid o)
+	sort hhid
+	gen o_helper=string(o, "%02.0f")
+	egen pid=concat(hhid o_helper)
+	drop o_helper
 	label var pid "Individual ID"
 	
 	isid hhid pid
@@ -1488,6 +1500,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`path_output'\TUR_2000_HLFS_V01_M_V01_A_GLD_ALL.dta", replace
+save "`path_output'\CHL_1990_CASEN_V01_M_V01_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>
