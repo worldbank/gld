@@ -21,11 +21,11 @@ Source: OECD Review, Turkey (accessed january 2022) https://www.oecd-ilibrary.or
 The structure above changed in the past years due to improvements in curricula and definition of years of schooling and aged of pupils. According to Gun and Baskan (2014), different laws were passed between 1997 and 2012 that affected the education system of turkey. Table 1 below summarizes the changes and the importance of each. The most dramatic change took place in 2012 with the enactment of the 4+4+4 law that stated 4 years primary, 4 years elementary and 4 years high school to replace the previous law of 8 years of primary education.
 
 Table 1. Pivotal changes in the education system
-| Year	| Relevant Change	|
-| :-------	| :--------	 	|
-| Pre 1997	| Enactment of law to introduce the 8-year primary education system	|
-| 1997-2012	| Formal implementation of the the 8-year primary education system across the country	|
-| 2012	| Extension of primary education from 8 to 12 years in the form of 4+4+4 |
+| Year	    | Relevant Change	                                                                        |
+| :-------	| :--------	 	                                                                            |
+| Pre 1997	| 5 year primary education                                                                |
+| 1997-2012	| Formal implementation of the the 8-year primary education system across the country	    |
+| 2012	    | Extension of primary education from 8 to 12 years in the form of 4+4+4                  |
 
 With the reform in 2012 the age of entrance to formal education changed to 5,5 years or 6 60-66 months, from the previous 69-80 months.
 
@@ -49,16 +49,11 @@ Figure 2 . HLFS 2014 to 2019:
 
 The data from year 2000 to 2013 contains population from ages 0 to 99 while the files from 2014 to 2019 contain only data for the respondants in the age bracket 15 year plus. As a result, between years 2014 onwards there is little information to clasify the respondants under the categories of primary incomplete or basic education based on age solely. 
 
-
 ## References
-eyza Gün, Gülsün Atanur Baskan,
-New Education System in Turkey (4 +4 +4): A Critical Outlook,
+
+Feyza Gün, Gülsün Atanur Baskan,
+[New Education System in Turkey (4 +4 +4): A Critical Outlook](/Support/Country%20Survey%20Details/TUR/HLFS/Utilities/New_Ed_System_Turkey.pdf),
 Procedia - Social and Behavioral Sciences,
 Volume 131,
 2014,
-Pages 229-235,
-ISSN 1877-0428,
-https://doi.org/10.1016/j.sbspro.2014.04.109.
-(https://www.sciencedirect.com/science/article/pii/S1877042814030195)
-
-
+Pages 229-235.
