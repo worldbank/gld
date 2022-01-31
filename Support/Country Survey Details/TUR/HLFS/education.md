@@ -36,13 +36,13 @@ As a result of the above the harmonization team decided to take in consideration
 Figure 1 . HLFS 2000 to 2013:
 
 <br></br>
-![educ2013](/Support/Country%20Survey%20Details/TUR/HLFS/Utilities/educ_2013.PNG)
+![educ2013](/Support/Country%20Survey%20Details/TUR/HLFS/Utilities/educ_2013.png)
 <br></br>
 
 Figure 2 . HLFS 2014 to 2019:
 
 <br></br>
-![educ2014](/Support/Country%20Survey%20Details/TUR/HLFS/Utilities/educ_2014.PNG)
+![educ2014](/Support/Country%20Survey%20Details/TUR/HLFS/Utilities/educ_2014.png)
 <br></br>
 
 ## Nature of the data
