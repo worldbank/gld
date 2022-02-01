@@ -1,15 +1,15 @@
 # Country and Survey Specific Details
 
-The files in this folder cover explanations and background information of individual country surveys harmonization process.  
+The files in this folder cover explanations and background information of the harmonization process of individual country surveys, such as the Mexican Encuesta Nacional de Ocupación y Empleo (ENOE) or the Philippines Labour Force Survey.  
 
-The aim of the GLD Project is that one harmonized code suffices to guide the user through the translation process from raw data to harmonized output. However, there are two cases where more information may be necessary:
+The aim of the GLD Project is that one harmonized code suffices to guide the user through the translation process from raw data to harmonized output. However, there are two cases where more information may be either helpful or necessary:
 
 1. Unknown background details unearthed during the harmonization and,
-2. The creation and use of additional data files in addition to the raw data.
+2. The creation and use of additional data files in addition to raw data.
 
 ## Background details
 
-As users (Jobs Group Team Members, consultants, or users of this repository) work on the harmonization, they unearth survey details and additional context information. The project aimed at including all relevant pieces of information in the final outputs. Yet, users who wish to go deeper into country-specific survey details may find this section a good starting point. 
+As users (Jobs Group Team Members, consultants, or users of this repository) work on the harmonization, they unearth survey details and additional information about its context. The project aimed at including all relevant pieces of information in the final outputs. Yet, users who wish to go deeper into country-specific survey details may find this section a good starting point. 
 
 An example of this would be the education section. Governments update education policies and renew curriculums often. For instance, the changes may include shifts in the structure and length of primary and secondary education schemes. As a result, the national statistics officers will develop new codes with the new class structure, which will impact the national survey questionnaires. 
 
