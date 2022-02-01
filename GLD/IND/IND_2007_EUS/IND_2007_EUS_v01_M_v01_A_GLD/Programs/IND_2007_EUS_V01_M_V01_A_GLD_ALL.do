@@ -1419,16 +1419,16 @@ foreach v of local ed_var {
 	destring red_indus, replace
 
 	gen byte industrycat10_year = .
-	replace industrycat10_year=1 if red_indus>=0 & red_indus<=9
-	replace industrycat10_year=2 if red_indus>=10 & red_indus<=19
-	replace industrycat10_year=3 if red_indus>=20 & red_indus<=39
-	replace industrycat10_year=4 if red_indus>=40 & red_indus<=47
-	replace industrycat10_year=5 if red_indus>=50 & red_indus<=59
-	replace industrycat10_year=6 if red_indus>=60 & red_indus<=69
-	replace industrycat10_year=7 if red_indus>=70 & red_indus<=79
-	replace industrycat10_year=8 if red_indus>=80 & red_indus<=89
-	replace industrycat10_year=9 if red_indus==90
-	replace industrycat10_year=10 if red_indus>=91 & red_indus<=99
+    replace industrycat10_year=1 if red_indus>=00 & red_indus<=09
+    replace industrycat10_year=2 if red_indus>=10 & red_indus<=14
+    replace industrycat10_year=3 if red_indus>=15 & red_indus<=39
+    replace industrycat10_year=4 if red_indus>=40 & red_indus<=41
+    replace industrycat10_year=5 if red_indus>=45 & red_indus<=45
+    replace industrycat10_year=6 if red_indus>=50 & red_indus<=59
+    replace industrycat10_year=7 if red_indus>=60 & red_indus<=64
+    replace industrycat10_year=8 if red_indus>=65 & red_indus<=74
+    replace industrycat10_year=9 if red_indus==75
+    replace industrycat10_year=10 if red_indus>=80 & red_indus<=99
 	replace industrycat10_year= . if lstatus_year != 1 | (age < minlaborage & age != .)
 	label var industrycat10_year "1 digit industry classification, primary job 12 month recall"
 	la de lblindustrycat10_year 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"

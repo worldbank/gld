@@ -16,7 +16,7 @@
 <_Country_>						India </_Country_>
 <_Survey Title_>				National Sample survey 1987 Schedule 10 - Round 43 </_Survey Title_>
 <_Survey Year_>					1987 </_Survey Year_>
-<_ICLS Version_>				Unknown (does not seem to follow ICLS-13 </_ICLS Version_>
+<_ICLS Version_>				Unknown (does seem to follow ICLS-13) </_ICLS Version_>
 <_Study ID_>					DDI-IND-MOSPI-NSSO-43Rnd-Sch10-1987-88 </_Study ID_>
 <_Data collection from (M/Y)_>	07/1987 </_Data collection from (M/Y)_>
 <_Data collection to (M/Y)_>	06/1988 </_Data collection to (M/Y)_>
@@ -439,17 +439,8 @@ merge 1:1 Person_key using `block7', keep(match master) nogen
 
 
 *<_subnatid1_>
-
 	destring State, gen(subnatid1)
-	label de lblsubnatid1 2 "2 - Andhra Pradesh" 3 "3 - Arunachal Pradesh" 4 "4 - Assam" ///
-			5 "5 - Bihar" 6 "6 - Goa" 7 "7 - Gujarat" 8 "8 - Haryana" 9 "9 - Himachal Pradesh" ///
-			10 "10 - Jammu & Kashmir" 11 "11 - Karnataka" 12 "12 - Kerala" 13 "13 - Madhya Pradesh" ///
-			14 "14 - Maharashtra" 15 "15 - Manipur" 16 "16 - Meghalaya" 17 "17 - Mizoram" ///
-			18 "18 - Nagaland" 19 "19 - Orissa" 20 "20 - Punjab" 21 "21 - Rajasthan" ///
-			22 "22 - Sikkim" 23 "23 - Tamil Nadu" 24 "24 - Tripura" 25 "25 - Uttar Pradesh" ///
-			26 "26 - West Bengal" 27 "27 - A & N Islands" 28 "28 - Chandigarh" ///
-			29 "29 - Dadra & Nagar Haveli" 30 "30 - Daman & Diu" 31 "31 - Delhi" ///
-			32 "32 - Lakshdweep" 33 "33 - Pondicherry"
+	label de lblsubnatid1 2 "2 - Andhra Pradesh" 3 "3 - Assam" 4 "4 - Bihar" 5 "5 Gujarat" 6 "6 - Haryana" 7 "7 - Himachal Pradesh" 8 "8 - Jammu & Kashmir" 9 "9 - Karnataka" 10 "10 - Kerala" 11 "11 - Madhya Pradesh" 12 "12 - Maharashtra" 13 "13 - Manipur" 14 "14 - Meghalaya" 15 "15 - Nagaland" 16 "16 - Orissa" 17 "17 - Punjab" 18 "18 - Rajasthan" 19 "19 - Sikkim" 20 "20 - Tamil Nadu" 21 "21 - Tripura" 22 "22 - Uttar Pradesh" 23 "23 - West Bengal" 24 "24 - Andaman & Nicober" 25 "25 - Arunachal Pradesh" 26 "26 - Chandigarh" 27 "27 - Dadra & Nagar Haveli" 28 "28 - Delhi" 29 "29 - Goa" 30 "30 - Lakshdweep" 31 "31 - Mizoram" 32 "32 - Pondicherry"
 	label values subnatid1 lblsubnatid1
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
@@ -1117,23 +1108,24 @@ foreach v of local ed_var {
 		2) Use NIC87 to ISIC Rev2 translator
 	</_industrycat_isic_note> */
 
-	gen nic_87 = B4_q14
+	gen nic_87 = industry_orig
 	replace nic_87 = substr(nic_87,1,2)
 	replace nic_87 = nic_87 + "0" if length(nic_87) == 1
 	replace nic_87 = "" if lstatus != 1
-
-	replace nic_87 = "12" if B4_q14 == "120"
-	replace nic_87 = "13" if inlist(B4_q14, "121", "122", "123", "124", "125", "126", "127", "128", "129")
-	replace nic_87 = "15" if nic_87 == "19"
-	replace nic_87 = "30" if nic_87 == "31"
-	replace nic_87 = "31" if nic_87 == "30"
-	replace nic_87 = "61" if nic_87 == "62"
-	replace nic_87 = "62" if nic_87 == "63"
-	replace nic_87 = "63" if nic_87 == "64"
-	replace nic_87 = "64" if B4_q14 == "821"
-	replace nic_87 = "82" if B4_q14 == "820"
-	replace nic_87 = "85" if B4_q14 == "827"
-	replace nic_87 = "89" if inlist(B4_q14, "822", "823", "824", "825", "826", "828", "829")
+	gen nic_70 = nic_87 
+	
+	replace nic_87 = "12" if industry_orig == "120"
+	replace nic_87 = "13" if inlist(industry_orig, "121", "122", "123", "124", "125", "126", "127", "128", "129")
+	replace nic_87 = "15" if nic_70 == "19"
+	replace nic_87 = "30" if nic_70 == "31"
+	replace nic_87 = "31" if nic_70 == "30"
+	replace nic_87 = "61" if nic_70 == "62"
+	replace nic_87 = "62" if nic_70 == "63"
+	replace nic_87 = "63" if nic_70 == "64"
+	replace nic_87 = "64" if industry_orig == "821"
+	replace nic_87 = "82" if industry_orig == "820"
+	replace nic_87 = "85" if industry_orig == "827"
+	replace nic_87 = "89" if inlist(industry_orig, "822", "823", "824", "825", "826", "828", "829")
 
 	replace nic_87 = nic_87 + "0"
 	replace nic_87 = "" if regexm(nic_87, "x|X")
@@ -1143,7 +1135,7 @@ foreach v of local ed_var {
 	gen industrycat_isic = isic_68
 	replace industrycat_isic = "" if lstatus != 1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
-	drop nic_87 isic_68
+	drop nic_87 nic_70 isic_68
 *</_industrycat_isic_>
 
 
@@ -1570,20 +1562,21 @@ foreach v of local ed_var {
 	replace nic_87 = substr(nic_87,1,2)
 	replace nic_87 = nic_87 + "0" if length(nic_87) == 1
 	replace nic_87 = "" if lstatus != 1
-
-	replace nic_87 = "12" if B4_q14 == "120"
-	replace nic_87 = "13" if inlist(B4_q14, "121", "122", "123", "124", "125", "126", "127", "128", "129")
-	replace nic_87 = "15" if nic_87 == "19"
-	replace nic_87 = "30" if nic_87 == "31"
-	replace nic_87 = "31" if nic_87 == "30"
-	replace nic_87 = "61" if nic_87 == "62"
-	replace nic_87 = "62" if nic_87 == "63"
-	replace nic_87 = "63" if nic_87 == "64"
-	replace nic_87 = "64" if B4_q14 == "821"
-	replace nic_87 = "82" if B4_q14 == "820"
-	replace nic_87 = "85" if B4_q14 == "827"
-	replace nic_87 = "89" if inlist(B4_q14, "822", "823", "824", "825", "826", "828", "829")
-
+	gen nic_70 = nic_87 
+	
+	replace nic_87 = "12" if industry_orig_year == "120"
+	replace nic_87 = "13" if inlist(industry_orig_year, "121", "122", "123", "124", "125", "126", "127", "128", "129")
+	replace nic_87 = "15" if nic_70 == "19"
+	replace nic_87 = "30" if nic_70 == "31"
+	replace nic_87 = "31" if nic_70 == "30"
+	replace nic_87 = "61" if nic_70 == "62"
+	replace nic_87 = "62" if nic_70 == "63"
+	replace nic_87 = "63" if nic_70 == "64"
+	replace nic_87 = "64" if industry_orig_year == "821"
+	replace nic_87 = "82" if industry_orig_year == "820"
+	replace nic_87 = "85" if industry_orig_year == "827"
+	replace nic_87 = "89" if inlist(industry_orig_year, "822", "823", "824", "825", "826", "828", "829")
+	
 	replace nic_87 = nic_87 + "0"
 	replace nic_87 = "" if regexm(nic_87, "x|X")
 
@@ -1592,7 +1585,7 @@ foreach v of local ed_var {
 	gen industrycat_isic_year = isic_68
 	replace industrycat_isic_year = "" if lstatus_year != 1
 	label var industrycat_isic_year "ISIC code of primary job 12 month recall"
-	drop nic_87 isic_68
+	drop nic_87 nic_70 isic_68
 *</_industrycat_isic_year_>
 
 
@@ -1807,19 +1800,20 @@ foreach v of local ed_var {
 	replace nic_87 = substr(nic_87,1,2)
 	replace nic_87 = nic_87 + "0" if length(nic_87) == 1
 	replace nic_87 = "" if lstatus != 1
-
-	replace nic_87 = "12" if B4_q14 == "120"
-	replace nic_87 = "13" if inlist(B4_q14, "121", "122", "123", "124", "125", "126", "127", "128", "129")
-	replace nic_87 = "15" if nic_87 == "19"
-	replace nic_87 = "30" if nic_87 == "31"
-	replace nic_87 = "31" if nic_87 == "30"
-	replace nic_87 = "61" if nic_87 == "62"
-	replace nic_87 = "62" if nic_87 == "63"
-	replace nic_87 = "63" if nic_87 == "64"
-	replace nic_87 = "64" if B4_q14 == "821"
-	replace nic_87 = "82" if B4_q14 == "820"
-	replace nic_87 = "85" if B4_q14 == "827"
-	replace nic_87 = "89" if inlist(B4_q14, "822", "823", "824", "825", "826", "828", "829")
+	gen nic_70 = nic_87 
+	
+	replace nic_87 = "12" if industry_orig_2_year == "120"
+	replace nic_87 = "13" if inlist(industry_orig_2_year, "121", "122", "123", "124", "125", "126", "127", "128", "129")
+	replace nic_87 = "15" if nic_70 == "19"
+	replace nic_87 = "30" if nic_70 == "31"
+	replace nic_87 = "31" if nic_70 == "30"
+	replace nic_87 = "61" if nic_70 == "62"
+	replace nic_87 = "62" if nic_70 == "63"
+	replace nic_87 = "63" if nic_70 == "64"
+	replace nic_87 = "64" if industry_orig_2_year == "821"
+	replace nic_87 = "82" if industry_orig_2_year == "820"
+	replace nic_87 = "85" if industry_orig_2_year == "827"
+	replace nic_87 = "89" if inlist(industry_orig_2_year, "822", "823", "824", "825", "826", "828", "829")
 
 	replace nic_87 = nic_87 + "0"
 	replace nic_87 = "" if regexm(nic_87, "x|X")
@@ -1829,7 +1823,7 @@ foreach v of local ed_var {
 	gen industrycat_isic_2_year = isic_68
 	replace industrycat_isic_2_year = "" if lstatus_year != 1
 	label var industrycat_isic_2_year "ISIC code of secondary job 12 month recall"
-	drop nic_87 isic_68
+	drop nic_87 nic_70 isic_68
 *</_industrycat_isic_2_year_>
 
 

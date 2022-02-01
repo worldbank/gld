@@ -193,17 +193,6 @@ local output "`id_data'"
 ================================================================================================*/
 
 {
-/*<_urban_>
-It is not clear how the three categories are defined because the code list in the
-documentation does not match the raw dataset. According to QLFS documentation and
-urbanization stats from:
-https://data.worldbank.org/indicator/SP.URB.TOTL.IN.ZS?locations=ZA,
-the final code list should be
-1=urban formal(urban)
-2=urban informal(rural)
-3=tribal areas(rural)
-4=rural formal(rural)
-</_urban_>*/
 
 *<_urban_>
 	gen byte urban=Geo_type
@@ -233,25 +222,15 @@ the final code list should be
 
 *<_subnatid2_>
 	gen byte subnatid2 = .
-	replace subnatid2 = 1 if metro_code == 1
-	replace subnatid2 = 2 if metro_code == 2
-	replace subnatid2 = 3 if metro_code == 3
-	replace subnatid2 = 4 if metro_code == 4
-	replace subnatid2 = 5 if metro_code == 5
-	replace subnatid2 = 6 if metro_code == 6
-	replace subnatid2 = 7 if metro_code == 7
-	replace subnatid2 = 6 if metro_code == 8
-	replace subnatid2 = 6 if metro_code == 9
-	replace subnatid2 = 6 if metro_code == 10
-	replace subnatid2 = 6 if metro_code == 11
-	replace subnatid2 = 6 if metro_code == 12
-	replace subnatid2 = 6 if metro_code == 13
-	replace subnatid2 = 6 if metro_code == 14
-	replace subnatid2 = 6 if metro_code == 15
-	replace subnatid2 = 6 if metro_code == 16
-	replace subnatid2 = 6 if metro_code == 17
-	label de lblsubnatid2 1 "WC - Non Metro" 2 "WC -  City of Cape Town" 3 "EC - Non Metro" 4 "EC - Buffalo City" 5 "EC - Nelson Mandela Bay" 6 "NC - Non Metro" 7 "FS - Non Metro" 8 "FS - Mangaung" 9 "KZN - Non Metro" 10 "KZN - eThekwini" 11 "NW - Non Metro" 12 "GP - Non Metro" 13 "GP - Ekurhuleni" 14 "GP - City of Johannesburg" 15 "GP - City of Tshwane" 16 "MP - Non Metro" 17 "LP - Non Metro" 	
-	label values subnatid2 lblsubnatid2
+	replace subnatid2 = 1 if metro_code == 0
+	replace subnatid2 = 2 if metro_code == 71
+	replace subnatid2 = 3 if metro_code == 72
+	replace subnatid2 = 4 if metro_code == 73
+	replace subnatid2 = 5 if metro_code == 74
+	replace subnatid2 = 6 if metro_code == 75
+	replace subnatid2 = 7 if metro_code == 76
+	label de lblsubnatid2 1 "1 - Non-Metro" 2 "2 - Cape Town" 3 "3 - eThekweni" 4 "4 - eKhurhuleni" 5 "5 - Johannesburg" 6 "6 - Nelson Mandela Metro" 7 "7 - Tshwane"
+ 	label values subnatid2 lblsubnatid2
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
 
@@ -265,7 +244,7 @@ the final code list should be
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = "subnatid1"
+	gen subnatidsurvey = "subnatid2"
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -853,14 +832,13 @@ Q310STARTBUSNS "Start a business if the circumstances have allowed?"
 
 
 *<_industrycat_isic_>
-	tostring Q43INDUSTRY, gen(indus_string)
-	gen industrycat_isic=substr(indus_string, 1, 2) if Q43INDUSTRY>100
-	replace industrycat_isic=indus_string if Q43INDUSTRY<100
+	tostring Q43INDUSTRY, gen(indus_string) format(%03.0f)
+	gen industrycat_isic=substr(indus_string, 1, 2) 
 	destring industrycat_isic, replace
-	recode industrycat_isic (11=01) (12=02) (13=05) (21=10) (22=11) (23=12) (24=13) (25=14) (29=.) (30=15) (31=17) (32=20) (33=23) (34=26) (35=27) (36=31) (37=32) (38=34) (39=36) (41=40) (42=41) (50=45) (61=51) (62=52) (63=50) (64=55) (71=60) (72=61) (73=62) (74=63) (75=64) (81=65) (82=66) (83=67) (84=70) (85=71) (86=72) (87=73) (88=74) (91=75) (92=80) (93=85) (94=90) (95=91) (96=92) (99=93) (01=95) (02=99)
+	recode industrycat_isic (01=95) (03=99) (11=01) (12=02) (13=05) (21=10) (22=11) (23=12) (24=13) (25=14) (29=.) (30=15) (31=17) (32=20) (33=23) (34=26) (35=27) (36=31) (37=32) (38=34) (39=36) (41=40) (42=41) (50=45) (61=51) (62=52) (63=50) (64=55) (71=60) (72=61) (73=62) (74=63) (75=64) (81=65) (82=66) (83=67) (84=70) (85=71) (86=72) (87=73) (88=74) (91=75) (92=80) (93=85) (94=90) (95=91) (96=92) (99=93)
 	
 	replace industrycat_isic=16 if Q43INDUSTRY==306
-	replace industrycat_isic=18 if inrange(Q43INDUSTRY, 314, 315)
+	replace industrycat_isic=18 if Q43INDUSTRY==314
 	replace industrycat_isic=19 if inrange(Q43INDUSTRY, 316, 317)
 	replace industrycat_isic=21 if Q43INDUSTRY==323
 	replace industrycat_isic=22 if inrange(Q43INDUSTRY, 324, 325)
@@ -909,7 +887,7 @@ Q310STARTBUSNS "Start a business if the circumstances have allowed?"
 *<_occup_isco_>
 	tostring Q42OCCUPATION, gen(occup_string)
 	gen occupcat_isco=substr(occup_string, 1, 3)
-	merge m:1 occupcat_isco using "C:\Users\wb573465\Desktop\ZAF_archive\GLD ISCO mapping files\ISCO\isco88_sasco03_mapping.dta"
+	merge m:1 occupcat_isco using "`input'\isco88_sasco03_mapping.dta"
 	drop if _merge==2
 	destring isco_88, replace
 	gen occup_isco=isco_88*10

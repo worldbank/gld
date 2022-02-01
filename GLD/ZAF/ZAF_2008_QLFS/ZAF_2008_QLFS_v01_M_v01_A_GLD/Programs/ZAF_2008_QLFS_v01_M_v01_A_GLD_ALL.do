@@ -17,7 +17,7 @@
 <_Data collection to (M/Y)_>	[MM/YYYY] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			DataFirst </_Source of dataset_>
 								https://www.datafirst.uct.ac.za/dataportal/index.php/catalog/236
-<_Sample size (HH)_> 			49,221 </_Sample size (HH)_>
+<_Sample size (HH)_> 			49,221 </_Sample size (HH)_> 
 <_Sample size (IND)_> 			183,384 </_Sample size (IND)_>
 <_Sampling method_> 			Stratified two-stage cluster sampling method </_Sampling method_>
 <_Geographic coverage_> 		Province </_Geographic coverage_>
@@ -27,7 +27,7 @@
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
 <_ISCO Version_>				ISCO-88 </_ISCO Version_>
 <_OCCUP National_>				SASCO-2003 </_OCCUP National_>
-<_ISIC Version_>				ISIC Rev 3 </_ISIC Version_>
+<_ISIC Version_>				ISIC Rev 3 </_ISIC Version_>  
 <_INDUS National_>				SIC 5 </_INDUS National_>
 
 -----------------------------------------------------------------------
@@ -40,7 +40,7 @@
 </_Version Control_>
 
 -------------------------------------------------------------------------*/
-
+ 
 
 /*%%=============================================================================================
 	1: Setting up of program environment, dataset
@@ -194,18 +194,6 @@ local output "`id_data'"
 ================================================================================================*/
 
 {
-/*<_urban_>
-It is not clear how the three categories are defined because the code list in the
-documentation does not match the raw dataset. According to QLFS documentation and
-urbanization stats from:
-https://data.worldbank.org/indicator/SP.URB.TOTL.IN.ZS?locations=ZA,
-the final code list should be
-1=urban formal(urban)
-2=urban informal(urban)
-4=tribal areas(rural)
-5=rural formal(rural)
-</_urban_>*/
-
 
 *<_urban_>
 	gen byte urban=Geo_type
@@ -257,7 +245,7 @@ the final code list should be
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = "subnatid1"
+	gen subnatidsurvey = "subnatid2"
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -360,9 +348,9 @@ Subnational ID at |
 ------------------+-----------------------------------
             Total |         62      100.00
 
-Note: 773 observations are under 18 (or not adult) yet are household heads because
+Note: 773 observations are under 18 (or not adult) yet are household heads because 
 they are originally asigned as the head --- their PERSONNO is 1.
-
+			
 </_relationharm_>*/
 
 *<_relationharm_>
@@ -584,30 +572,30 @@ or grade 9 and enter a technical education program at N1, proceeding to N2.
 
            |   Highest education
 Individual |         level
-       age | Bachelors  Bachelors
-	       |  Degree     Degree &
-		   |	            Post
+       age | Bachelors  Bachelors 
+	       |  Degree     Degree & 
+		   |	            Post 
 		   |		    Graduate  |     Total
 -----------+----------------------+----------
-         0 |         1          1 |         2
-         1 |         3          1 |         4
-         2 |         2          1 |         3
-         3 |         8          0 |         8
-         4 |        23          0 |        23
-         5 |        12          0 |        12
-         6 |         5          0 |         5
-         7 |         4          0 |         4
-         8 |         9          1 |        10
-         9 |         9          1 |        10
-        10 |        16          4 |        20
-        11 |         7          2 |         9
-        12 |         8          5 |        13
-        13 |        12          3 |        15
-        14 |        22          5 |        27
-        15 |        26          3 |        29
+         0 |         1          1 |         2 
+         1 |         3          1 |         4 
+         2 |         2          1 |         3 
+         3 |         8          0 |         8 
+         4 |        23          0 |        23 
+         5 |        12          0 |        12 
+         6 |         5          0 |         5 
+         7 |         4          0 |         4 
+         8 |         9          1 |        10 
+         9 |         9          1 |        10 
+        10 |        16          4 |        20 
+        11 |         7          2 |         9 
+        12 |         8          5 |        13 
+        13 |        12          3 |        15 
+        14 |        22          5 |        27 
+        15 |        26          3 |        29 
 -----------+----------------------+----------
-     Total |       167         27 |       194
-
+     Total |       167         27 |       194 
+ 
 </_educy_>*/
 
 
@@ -621,7 +609,7 @@ Individual |         level
 	replace educy=. if inlist(Q17EDUCATION,29,30)
 	replace educy=0 if Q17EDUCATION==98
 	replace educy=. if age<ed_mod_age & age!=.
-	replace educy=age if educy>age & !mi(educy) & !mi(age)
+	replace educy=age if educy>age & !mi(educy) & !mi(age)  
 	label var educy "Years of education"
 *</_educy_>
 
@@ -876,14 +864,13 @@ Q310STARTBUSNS "Start a business if the circumstances have allowed?"
 
 
 *<_industrycat_isic_>
-	tostring Q43INDUSTRY, gen(indus_string)
-	gen industrycat_isic=substr(indus_string, 1, 2) if Q43INDUSTRY>100
-	replace industrycat_isic=indus_string if Q43INDUSTRY<100
+	tostring Q43INDUSTRY, gen(indus_string) format(%03.0f)
+	gen industrycat_isic=substr(indus_string, 1, 2) 
 	destring industrycat_isic, replace
-	recode industrycat_isic (11=01) (12=02) (13=05) (21=10) (22=11) (23=12) (24=13) (25=14) (29=.) (30=15) (31=17) (32=20) (33=23) (34=26) (35=27) (36=31) (37=32) (38=34) (39=36) (41=40) (42=41) (50=45) (61=51) (62=52) (63=50) (64=55) (71=60) (72=61) (73=62) (74=63) (75=64) (81=65) (82=66) (83=67) (84=70) (85=71) (86=72) (87=73) (88=74) (91=75) (92=80) (93=85) (94=90) (95=91) (96=92) (99=93) (01=95) (02=99)
-
+	recode industrycat_isic (01=95) (03=99) (11=01) (12=02) (13=05) (21=10) (22=11) (23=12) (24=13) (25=14) (29=.) (30=15) (31=17) (32=20) (33=23) (34=26) (35=27) (36=31) (37=32) (38=34) (39=36) (41=40) (42=41) (50=45) (61=51) (62=52) (63=50) (64=55) (71=60) (72=61) (73=62) (74=63) (75=64) (81=65) (82=66) (83=67) (84=70) (85=71) (86=72) (87=73) (88=74) (91=75) (92=80) (93=85) (94=90) (95=91) (96=92) (99=93) 
+	
 	replace industrycat_isic=16 if Q43INDUSTRY==306
-	replace industrycat_isic=18 if inrange(Q43INDUSTRY, 314, 315)
+	replace industrycat_isic=18 if Q43INDUSTRY==314
 	replace industrycat_isic=19 if inrange(Q43INDUSTRY, 316, 317)
 	replace industrycat_isic=21 if Q43INDUSTRY==323
 	replace industrycat_isic=22 if inrange(Q43INDUSTRY, 324, 325)
@@ -892,7 +879,7 @@ Q310STARTBUSNS "Start a business if the circumstances have allowed?"
 	replace industrycat_isic=28 if inrange(Q43INDUSTRY, 354, 355)
 	replace industrycat_isic=29 if inrange(Q43INDUSTRY, 356, 358)
 	replace industrycat_isic=30 if Q43INDUSTRY==359
-	replace industrycat_isic=33 if inrange(Q43INDUSTRY, 374, 375)
+	replace industrycat_isic=33 if inrange(Q43INDUSTRY, 374, 375)	
 	replace industrycat_isic=35 if inrange(Q43INDUSTRY, 384, 387)
 	replace industrycat_isic=37 if Q43INDUSTRY==395
 	gen industrycat_isic2=industrycat_isic*100
@@ -932,7 +919,7 @@ Q310STARTBUSNS "Start a business if the circumstances have allowed?"
 *<_occup_isco_>
 	tostring Q42OCCUPATION, gen(occup_string)
 	gen occupcat_isco=substr(occup_string, 1, 3)
-	merge m:1 occupcat_isco using "C:\Users\wb573465\Desktop\ZAF_archive\GLD ISCO mapping files\ISCO\isco88_sasco03_mapping.dta"
+	merge m:1 occupcat_isco using "`input'\isco88_sasco03_mapping.dta"
 	drop if _merge==2
 	destring isco_88, replace
 	gen occup_isco=isco_88*10
@@ -949,7 +936,7 @@ Q310STARTBUSNS "Start a business if the circumstances have allowed?"
 	gen occup_skill = .
 	replace occup_skill=1 if inrange(skill_level, 1, 3)
 	replace occup_skill=2 if inrange(skill_level, 4, 8)
-	replace occup_skill=3 if inrange(skill_level, 9, 9)
+	replace occup_skill=3 if inrange(skill_level, 9, 9)	
 	drop skill_level
 	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
 	label values occup_skill lblskill
@@ -1088,9 +1075,9 @@ The main job was decided based on time spent.
 
 /*<_Labor_status_&_ISIC/ISCO_>
 
-Recode ISIC and ISCO vars to missing if lstatus is not "1-employed".
-Because ISIC and ISCO are string variables, their missing values should be ""
-instead of ".".
+Recode ISIC and ISCO vars to missing if lstatus is not "1-employed". 
+Because ISIC and ISCO are string variables, their missing values should be "" 
+instead of ".". 
 
 <_Labor_status_&_ISIC/ISCO_>*/
 

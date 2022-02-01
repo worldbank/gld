@@ -67,17 +67,17 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2010_ENOE\MEX_2010_ENO
 	tostring (ent v_sel n_ren), gen(ent_str v_sel_str n_ren_str) format("%02.0f")
 	tostring con, gen(con_str) format("%05.0f")
 	tostring (n_hog h_mud), gen(n_hog_str h_mud_str) format("%01.0f")
-	
+
 	egen person = concat(ent_str con_str v_sel_str n_hog_str h_mud_str n_ren_str)
 	tempfile mex_ind
 	save `mex_ind'
-	
+
 	use "`path_in'\COE2T110.dta", clear
 	tostring (ent v_sel n_ren), gen(ent_str v_sel_str n_ren_str) format("%02.0f")
 	tostring con, gen(con_str) format("%05.0f")
 	tostring (n_hog h_mud), gen(n_hog_str h_mud_str) format("%01.0f")
-	
-	
+
+
 	egen person = concat(ent_str con_str v_sel_str n_hog_str h_mud_str n_ren_str)
 
 	* Merge with COE1, make sure all match through assert
@@ -90,13 +90,13 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2010_ENOE\MEX_2010_ENO
 	* Overwrtwrite temp file
 	tempfile mex_ind
 	save `mex_ind'
-	
-	
+
+
 	use "`path_in'\SDEMT110.dta", clear
 	tostring (ent v_sel n_ren), gen(ent_str v_sel_str n_ren_str) format("%02.0f")
 	tostring con, gen(con_str) format("%05.0f")
 	tostring (n_hog h_mud), gen(n_hog_str h_mud_str) format("%01.0f")
-	
+
 	egen person = concat(ent_str con_str v_sel_str n_hog_str h_mud_str n_ren_str)
 
 	drop if r_def != 0
@@ -112,27 +112,27 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2010_ENOE\MEX_2010_ENO
 	* Overwrtwrite temp file
 	tempfile mex_ind
 	save `mex_ind'
-	
-	
-	
+
+
+
 	use "`path_in'\VIVT110.dta",clear
 	drop p1-p3
-	
+
 	tostring (ent v_sel), gen(ent_str v_sel_str) format("%02.0f")
 	tostring con, gen(con_str) format("%05.0f")
 
 	egen casa_short = concat(ent_str con_str v_sel_str)
 
 	* Merge with Individual files, keep only what matches
-	merge 1:m casa_short using `mex_ind', keep(match) nogen 
+	merge 1:m casa_short using `mex_ind', keep(match) nogen
 
 	* Overwrtwrite temp file
 	tempfile mex_ind
 	save `mex_ind'
-	
-	
+
+
 	use "`path_in'\HOGT110.dta", clear
-	
+
 	tostring (ent v_sel), gen(ent_str v_sel_str) format("%02.0f")
 	tostring con, gen(con_str) format("%05.0f")
 	tostring n_hog h_mud, gen(n_hog_str h_mud_str) format("%01.0f")
@@ -141,8 +141,8 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2010_ENOE\MEX_2010_ENO
 
 	* Merge with Individual files, keep only what matches
 	merge 1:m casa_long using `mex_ind', keep(match) nogen
-	
-	
+
+
 	*the harmonization is for the first three months of the year , any other month will be put to missing.
 	tab d_mes
 	replace d_mes=. if d_mes == 4 | d_mes == 5 | d_mes == 12
@@ -341,7 +341,7 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2010_ENOE\MEX_2010_ENO
 </_subnatid1> */
 *states
 	gen byte subnatid1 =ent
-	label de lblsubnatid1 1 "1 - Aguas Calientes" 2 "2 - Baja California" 3 "3 - Baja California Sur" 4 " 4 - Campeche" 5 " 5 - Chiapas" 6 "6 - Chihuahua" 7 "7 - Coahuila de Zaragoza" 8 "8 - Colima" 9 "9 - Distrito Federal" 10 " 10 - Durango " 11 " 11- Guanajuato " 12 " 12 - Guerrero" 13 "13 - Hidalgo " 14 " 14 -Jalisco " 15 " 15 - Michoacan de Ocampo " 16 " 16 - Morelos " 17 " 17 - Mexico " 18 " 18 - Nayarit " 19 " 19 - Nuevo León " 20 " 20 - Oaxaca " 21 " 21 - Puebla" 22 " 22 - Queretaro" 23 " 23 - Quintana Roo " 24 " 24 - San Luis Potosi" 25 " 25- Sinaloa " 26 " 26 - Sonora " 27 " 27 - Tabasco " 28 " 28 - Tamaulipas" 29 " 29 - Tlaxcala " 30 " 30 - Veracruz de Ignacio de la Llave " 31 " 31 - Yucatán " 32 " 32 - Zacatecas "
+	label de lblsubnatid1  1 "1 - Aguas Calientes" 2 "2 - Baja California" 3 "3 - Baja California Sur" 4 " 4 - Campeche" 5 " 5 - Coahuila de Zaragoza" 6 "6 -  Colima" 7 "7 - Chiapas " 8 "8 - Chihuahua" 9 "9 - Distrito Federal" 10 " 10 - Durango " 11 " 11- Guanajuato " 12 " 12 - Guerrero" 13 "13 - Hidalgo " 14 " 14 -Jalisco " 15 " 15 - Michoacan de Ocampo " 16 " 16 - Morelos " 17 " 17 - Mexico " 18 " 18 - Nayarit " 19 " 19 - Nuevo León " 20 " 20 - Oaxaca " 21 " 21 - Puebla" 22 " 22 - Queretaro" 23 " 23 - Quintana Roo " 24 " 24 - San Luis Potosi" 25 " 25- Sinaloa " 26 " 26 - Sonora " 27 " 27 - Tabasco " 28 " 28 - Tamaulipas" 29 " 29 - Tlaxcala " 30 " 30 - Veracruz de Ignacio de la Llave " 31 " 31 - Yucatán " 32 " 32 - Zacatecas "
 	label values subnatid1 lblsubnatid1
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
@@ -813,7 +813,8 @@ foreach v of local ed_var {
 	gen byte underemployment = .
 	replace underemployment=1 if  p8a==1 | p8a==3
 	replace underemployment = . if age < minlaborage & age != .
-	recode underemployment .=0
+	*recode underemployment .=0
+	replace underemployment=. if lstatus!=1
 	label var underemployment "Underemployment status"
 	la de lblunderemployment 0 "No" 1 "Yes"
 	label values underemployment lblunderemployment
@@ -935,7 +936,9 @@ foreach v of local ed_var {
 
 
 *<_occup_>
-	gen byte occup = floor(p3/1000)
+	destring isco_1, gen(occup_helper)
+	gen byte occup = floor(occup_helper/1000)
+	drop occup_helper
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup
@@ -1201,7 +1204,9 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 *</_occup_isco_2_>
 
 *<_occup_2_>
-	gen byte occup_2 = floor(p7a/1000)
+	destring isco_2, gen(occup_helper_2)
+	gen byte occup_2 = floor(occup_helper_2/1000)
+	drop occup_helper_2
 	label var occup_2 "1 digit occupational classification secondary job 7 day recall"
 	label values occup_2 lbloccup
 *</_occup_2_>

@@ -22,7 +22,7 @@ The GLD project wishes to harmonize industries across years using the ISIC class
 For example, Mexico uses the [North American Industry Classification System](http://en.www.inegi.org.mx/app/scian/) which has no direct link to ISIC. Although, the NSO built official comparison tables to match values. These tables are imperfect (see the image below about the mapping of NAICS to five different ISIC codes) but help map the values on the national classifications to the international standards.
 
 <br></br>
-![SCIAN Imperfect Matching](/Support/Country%20Survey%20Details/MEX/ENOE/images/scian_imperfect_match.PNG)
+![SCIAN Imperfect Matching](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/scian_imperfect_match.png)
 <br></br>
 
 In this section, the team developed notes on the additional files, country, and survey-specific information used for the harmonization. The mentioned notes are stored here.
