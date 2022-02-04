@@ -360,9 +360,9 @@ merge 1:1 HHID Person_Serial_No using "`path_in'/Block_7_2_Follow-up questions o
 
 </_subnatid1_prev> */
 	gen subnatid1_prev = .
-	replace subnatid1_prev = 9 if subnatid1 == 5
-	replace subnatid1_prev = 23 if subnatid1 == 22
-	replace subnatid1_prev = 10 if subnatid1 == 20
+	replace subnatid1_prev = 9 if subnatid1 == 5 | subnatid1 == 9
+	replace subnatid1_prev = 23 if subnatid1 == 22 | subnatid1 == 23
+	replace subnatid1_prev = 10 if subnatid1 == 20 | subnatid1 == 10
 	label de lblsubnatid1_prev 10 "10 - Bihar" 23 "23 - Madhya Pradesh" 9 "9 - Uttar Pradesh"
 	label values subnatid1_prev lblsubnatid1_prev
 	label var subnatid1_prev "Classification used for subnatid1 from previous survey"
@@ -613,46 +613,6 @@ label var ed_mod_age "Education module application age"
 
 *<_educy_>
 	gen educy=.
-	/* no education */
-	replace educy=0 if General_Education=="01" | General_Education=="02" | General_Education=="03" | General_Education=="04"
-	/* below primary */
-	replace educy=1 if General_Education=="05"
-	/* primary */
-	replace educy=5 if General_Education=="06"
-	/* middle */
-	replace educy=8 if General_Education=="07"
-	/* secondary */
-	replace educy=10 if General_Education=="08"
-	/* higher secondary */
-	replace educy=12 if General_Education=="10"
-	/* diploma - as per ISCID 2011, diploma is longer by 1 year to finish viz senior secondary */
-	replace educy= 13 if General_Education=="11"
-	/* College graduate */
-	replace educy=16 if  General_Education=="12"
-	/* Finished graduate school */
-	replace educy=18 if General_Education=="13"
-
-	* Use age to get in between categories using the ISCED mapping
-	* (http://uis.unesco.org/en/isced-mappings)
-	* Entry into primary is 6, entry into middle is at 11,
-	* entry into secondar7 is 14, entry into higher sec is at 16
-	* Use age to adapt profile. For example a 17 year old with higher secondary
-	* has 11 years of education, not 12
-
-	* Primary kids, allow entry from 5
-	replace educy = educy - (5 - (age - 5)) if General_Education == "06" & inrange(age,5,11)
-	* Middle kids
-	replace educy = educy - (3 - (age - 11)) if General_Education == "07" & inrange(age,11,14)
-	* Secondary
-	replace educy = educy - (2 - (age - 14)) if General_Education == "08" & inrange(age,14,16)
-	* Higher secondary
-	replace educy = educy - (2 - (age - 16)) if General_Education == "10" & inrange(age,16,18)
-
-	* Correct if B4_q7 incorrect (e.g., a five year old high schooler)
-	replace educy = educy - 4 if (educy > age) & (educy > 0) & !missing(educy)
-	replace educy = 0 if (educy > age) & (age < 4) & (educy > 0) & !missing(educy)
-	replace educy = educy - (8 - age) if (educy > age) & (age >= 4 & age <=8) & (educy > 0) & !missing(educy)
-	replace educy = 0 if educy < 0
 	label var educy "Years of education"
 *</_educy_>
 
@@ -661,10 +621,10 @@ label var ed_mod_age "Education module application age"
 	destring General_Education, gen(genedulev)
 	gen byte educat7 = .
 	replace educat7= 1 if genedulev<=4
-	replace educat7 = 2 if genedulev == 5 & educy < 5 // Primary incomplete
-	replace educat7 = 3 if genedulev == 6 & educy >= 5  // Primary complete
-	replace educat7 = 4 if genedulev == 7 & educy < 12  // Secondary incomplete
-	replace educat7 = 5 if genedulev == 8 | genedulev == 10 & educy >= 12  // Secondary complete
+	replace educat7 = 2 if genedulev == 5 // Primary incomplete
+	replace educat7 = 3 if genedulev == 6 // Primary complete
+	replace educat7 = 4 if genedulev == 7 // Secondary incomplete
+	replace educat7 = 5 if genedulev == 8 | genedulev == 10 // Secondary complete
 	replace educat7 = 6 if genedulev ==11
 	replace educat7=7 if genedulev==12 | genedulev==13
 	label var educat7 "Level of education 1"
