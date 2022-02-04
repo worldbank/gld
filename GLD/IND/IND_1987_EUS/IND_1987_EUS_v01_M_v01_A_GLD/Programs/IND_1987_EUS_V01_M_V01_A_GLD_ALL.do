@@ -9,14 +9,14 @@
 <_Application_>					STATA 16 <_Application_>
 <_Author(s)_>					World Bank Jobs Group </_Author(s)_>
 <_Date created_>				2021-05-24 </_Date created_>
-<_Date modified>				2021-09-01 </_Date modified_>
+<_Date modified>				2022-01-03 </_Date modified_>
 
 -------------------------------------------------------------------------
 
 <_Country_>						India </_Country_>
 <_Survey Title_>				National Sample survey 1987 Schedule 10 - Round 43 </_Survey Title_>
 <_Survey Year_>					1987 </_Survey Year_>
-<_ICLS Version_>				Unknown (does seem to follow ICLS-13) </_ICLS Version_>
+<_ICLS Version_>				Unknown (does not seem to follow ICLS-13 </_ICLS Version_>
 <_Study ID_>					DDI-IND-MOSPI-NSSO-43Rnd-Sch10-1987-88 </_Study ID_>
 <_Data collection from (M/Y)_>	07/1987 </_Data collection from (M/Y)_>
 <_Data collection to (M/Y)_>	06/1988 </_Data collection to (M/Y)_>
@@ -808,47 +808,8 @@ label var ed_mod_age "Education module application age"
 	label values literacy lblliteracy
 *</_literacy_>
 
-
 *<_educy_>
 	gen educy=.
-	/* no education */
-	replace educy=0 if B4_q7=="01" | B4_q7=="00"
-	/* below primary */
-	replace educy=1 if B4_q7=="02"
-	/* primary */
-	replace educy=5 if B4_q7=="03"
-	/* middle */
-	replace educy=8 if B4_q7=="04"
-	/* secondary */
-	replace educy=10 if B4_q7=="05"
-	/* higher secondary */
-	* None
-	/* graduate and above in agriculture, engineering/technology, medicine */
-	replace educy=16 if B4_q7=="06" | B4_q7=="07" | B4_q7=="08"
-	/* graduate and above in other subjects */
-	replace educy=15 if B4_q7=="09"
-
-	* Use age to get in between categories using the ISCED mapping
-	* (http://uis.unesco.org/en/isced-mappings)
-	* Entry into primary is 6, entry into middle is at 11,
-	* entry into secondar7 is 14, entry into higher sec is at 16
-	* Use age to adapt profile. For example a 17 year old with higher secondary
-	* has 11 years of education, not 12
-
-	* Primary kids, allow entry from 5
-	replace educy = educy - (5 - (age - 5)) if B4_q7 == "03" & inrange(age,5,11)
-	* Middle kids
-	replace educy = educy - (3 - (age - 11)) if B4_q7 == "04" & inrange(age,11,14)
-	* Secondary
-	replace educy = educy - (2 - (age - 14)) if B4_q7 == "05" & inrange(age,14,16)
-	* Higher secondary
-	*replace educy = educy - (2 - (age - 16)) if B4_q7 == "09" & inrange(age,16,18)
-
-	* Correct if B4_q7 incorrect (e.g., a five year old high schooler)
-	replace educy = educy - 4 if (educy > age) & (educy > 0) & !missing(educy)
-	replace educy = 0 if (educy > age) & (age < 4) & (educy > 0) & !missing(educy)
-	replace educy = educy - (8 - age) if (educy > age) & (age >= 4 & age <=8) & (educy > 0) & !missing(educy)
-	replace educy = 0 if educy < 0
 	label var educy "Years of education"
 *</_educy_>
 
@@ -857,10 +818,10 @@ label var ed_mod_age "Education module application age"
 	destring B4_q7, gen(genedulev)
 	gen byte educat7 = .
 	replace educat7= 1 if genedulev== 0 | genedulev==1 // No educ
-	replace educat7 = 2 if genedulev == 2 & educy < 5 // Primary incomplete
-	replace educat7 = 3 if genedulev == 3 & educy >= 5  // Primary complete
-	replace educat7 = 4 if genedulev == 4 & educy < 12  // Secondary incomplete
-	replace educat7 = 5 if genedulev == 5 & educy >= 12  // Secondary complete
+	replace educat7 = 2 if genedulev == 2 // Primary incomplete
+	replace educat7 = 3 if genedulev == 3  // Primary complete
+	replace educat7 = 4 if genedulev == 4   // Secondary incomplete
+	replace educat7 = 5 if genedulev == 5  // Secondary complete
 	replace educat7= 7 if genedulev==6 | genedulev==7 | genedulev==8 | genedulev==9
 	replace educat7=. if  genedulev==99
 	label var educat7 "Level of education 1"

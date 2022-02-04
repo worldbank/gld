@@ -300,11 +300,8 @@ drop _merge hh_key
 
 </_subnatid1_prev_note> */
 	gen subnatid1_prev = .
-	replace subnatid1_prev = 9 if subnatid1 == 5
-	replace subnatid1_prev = 23 if subnatid1 == 22
-	replace subnatid1_prev = 10 if subnatid1 == 20
-	replace subnatid1_prev = 28 if subnatid1 == 36
-	label de lblsubnatid1_prev 10 "10 - Bihar" 23 "23 - Madhya Pradesh" 9 "9 - Uttar Pradesh" 28 "28 - Andhra Pradesh"
+	replace subnatid1_prev = 28 if subnatid1 == 36 | subnatid1 == 28
+	label de lblsubnatid1_prev 28 "28 - Andhra Pradesh"
 	label values subnatid1_prev lblsubnatid1_prev
 	label var subnatid1_prev "Classification used for subnatid1 from previous survey"
 *</_subnatid1_prev_>
