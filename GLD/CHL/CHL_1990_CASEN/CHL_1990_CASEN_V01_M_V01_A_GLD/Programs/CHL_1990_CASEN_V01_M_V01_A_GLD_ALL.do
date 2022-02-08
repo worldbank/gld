@@ -150,16 +150,18 @@ use "`path_in'\casen1990.dta"
 
 
 *<_hhid_>
+
+	local letters "r p c z o"
+
+	foreach letter of local letters {
+     gen helper_`letter' = string(`letter',"%02.0f")
+	}
+
+	gen helper_f=string(f,"%03.0f")
 	
-	gen r_helper=string(r,"%02.0f")
-	gen p_helper=string(p,"%02.0f")
-	gen c_helper=string(c,"%02.0f")
-	gen z_helper=string(z,"%02.0f")
-	gen f_helper=string(f,"%03.0f")
 	
-	
-	egen hhid = concat(r_helper p_helper c_helper z_helper f_helper)
-	drop r_helper p_helper c_helper z_helper f_helper
+	egen hhid = concat(helper_r helper_p helper_c helper_z helper_f)
+	drop helper_r helper_p helper_f helper_c helper_z
 
 	label var hhid "Household ID"
 *</_hhid_>
@@ -167,9 +169,8 @@ use "`path_in'\casen1990.dta"
 
 *<_pid_>
 	sort hhid
-	gen o_helper=string(o, "%02.0f")
-	egen pid=concat(hhid o_helper)
-	drop o_helper
+	egen pid=concat(hhid helper_o)
+	drop helper_o
 	label var pid "Individual ID"
 	
 	isid hhid pid
@@ -295,8 +296,7 @@ label values subnatid2 lblsubnatid2
 {
 
 *<_hsize_>
-*???? not sure how to get this
-	gen hsize=.
+	egen hsize= count(f), by (hhid)
 	label var hsize "Household size"
 *</_hsize_>
 
