@@ -346,37 +346,49 @@ local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
 
 *<_eye_dsablty_>
 	gen eye_dsablty = .
+	label define dsablty 1 "No – no difficulty" 2 "Yes – some difficulty" 3 "Yes – a lot of difficulty" 4 "Cannot do at all"
+	label values eye_dsablty dsablty
 	label var eye_dsablty "Disability related to eyesight"
 *</_eye_dsablty_>
 
 
 *<_hear_dsablty_>
 	gen hear_dsablty = .
-	label var eye_dsablty "Disability related to hearing"
+	label define dsablty 1 "No – no difficulty" 2 "Yes – some difficulty" 3 "Yes – a lot of difficulty" 4 "Cannot do at all", replace
+	label values hear_dsablty dsablty
+	label var hear_dsablty "Disability related to hearing"
 *</_hear_dsablty_>
 
 
 *<_walk_dsablty_>
 	gen walk_dsablty = .
-	label var eye_dsablty "Disability related to walking or climbing stairs"
+	label define dsablty 1 "No – no difficulty" 2 "Yes – some difficulty" 3 "Yes – a lot of difficulty" 4 "Cannot do at all", replace
+	label values walk_dsablty dsablty
+	label var walk_dsablty "Disability related to walking or climbing stairs"
 *</_walk_dsablty_>
 
 
 *<_conc_dsord_>
 	gen conc_dsord = .
-	label var eye_dsablty "Disability related to concentration or remembering"
+	label define dsablty 1 "No – no difficulty" 2 "Yes – some difficulty" 3 "Yes – a lot of difficulty" 4 "Cannot do at all", replace
+	label values conc_dsord dsablty
+	label var conc_dsord "Disability related to concentration or remembering"
 *</_conc_dsord_>
 
 
 *<_slfcre_dsablty_>
 	gen slfcre_dsablty  = .
-	label var eye_dsablty "Disability related to selfcare"
+	label define dsablty 1 "No – no difficulty" 2 "Yes – some difficulty" 3 "Yes – a lot of difficulty" 4 "Cannot do at all", replace
+	label values slfcre_dsablty dsablty
+	label var slfcre_dsablty "Disability related to selfcare"
 *</_slfcre_dsablty_>
 
 
 *<_comm_dsablty_>
 	gen comm_dsablty = .
-	label var eye_dsablty "Disability related to communicating"
+	label define dsablty 1 "No – no difficulty" 2 "Yes – some difficulty" 3 "Yes – a lot of difficulty" 4 "Cannot do at all", replace
+	label values comm_dsablty dsablty
+	label var comm_dsablty "Disability related to communicating"
 *</_comm_dsablty_>
 
 }
