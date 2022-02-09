@@ -203,6 +203,7 @@ local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
 
 }
 
+
 /*%%=============================================================================================
 	3: Geography
 ==============================================================================================%%*/
@@ -293,6 +294,7 @@ local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
 *</_gaul_adm3_code_>
 
 }
+
 
 /*%%=============================================================================================
 	4: Demography
@@ -558,7 +560,6 @@ foreach v of local ed_var {
 }
 
 
-
 /*%%=============================================================================================
 	7: Training
 ==============================================================================================%%*/
@@ -601,6 +602,7 @@ foreach v of local ed_var {
 *</_vocational_financed_>
 
 }
+
 
 /*%%=============================================================================================
 	8: Labour
@@ -750,6 +752,14 @@ foreach v of local ed_var {
 
 
 *<_unitwage_>
+
+/* <_unitwage_note>
+	Unitwage refers to the unit used to record wage_no_compen, *not* the unit of
+	general wage payent. For example, PHL LFS asks about wage periodicity, then
+	asks for basic daily pay. The value of that pay would be wage_no_compen,
+	while unitwage is code 1 ("Daily") for all, regardless of the periodicity.
+</_unitwage_note> */
+
 	gen byte unitwage = .
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
