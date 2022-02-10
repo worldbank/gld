@@ -4,14 +4,14 @@
 ==============================================================================================%%*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				CHL_1990_CASEN_V01_M_V01_A_GLD_ALL.do </_Program name_>
+<_Program name_>				CHL_1992_CASEN_V01_M_V01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata 16 <_Application_>
 <_Author(s)_>					World Bank Job's Group </_Author(s)_>
 <_Date created_>				2022-01-21 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						CHL </_Country_>
 <_Survey Title_>				 </_Survey Title_>
-<_Survey Year_>					1990 </_Survey Year_>
+<_Survey Year_>					1992 </_Survey Year_>
 <_Study ID_>					 </_Study ID_>
 <_Data collection from_>		[N/A] </_Data collection from_>
 <_Data collection to_>			[N/A] </_Data collection to_>
@@ -48,14 +48,14 @@ set mem 800m
 
 *----------1.2: Set directories------------------------------*
 
-local path_in "Z:\GLD-Harmonization\582018_AQ\CHL\CHL_1990_CASEN\CHL_1990_CASEN_V01_M\Data\Stata"
-local path_output "Z:\GLD-Harmonization\582018_AQ\CHL\CHL_1990_CASEN\CHL_1990_CASEN_V01_M_V01_A_GLD\Data\Harmonized"
+local path_in "Z:\GLD-Harmonization\582018_AQ\CHL\CHL_1992_CASEN\CHL_1992_CASEN_V01_M\Data\Stata"
+local path_output "Z:\GLD-Harmonization\582018_AQ\CHL\CHL_1992_CASEN\CHL_1992_CASEN_V01_M_V01_A_GLD\Data\Harmonized"
 
 *----------1.3: Database assembly------------------------------*
 
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
-use "`path_in'\casen1990.dta"
+use "`path_in'\casen1992.dta"
 
 
 /*%%=============================================================================================
@@ -83,30 +83,33 @@ use "`path_in'\casen1990.dta"
 
 
 *<_icls_v_>
+*this is not a labour survey ????
 	gen icls_v = .
 	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
 
 *<_isced_version_>
+*no mention
 	gen isced_version = .
 	label var isced_version "Version of ISCED used for educat_isced"
 *</_isced_version_>
 
 
 *<_isco_version_>
+
 	gen isco_version = "isco_1988"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
 
 *<_isic_version_>
-	gen isic_version = .
+	gen isic_version = "isic_2"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
 
 *<_year_>
-	gen int year = 1990
+	gen int year = 1992
 	label var year "Year of survey"
 *</_year_>
 
@@ -130,7 +133,7 @@ use "`path_in'\casen1990.dta"
 
 
 *<_int_year_>
-	gen int_year= 1990
+	gen int_year= 1992
 	label var int_year "Year of the interview"
 *</_int_year_>
 
@@ -145,17 +148,19 @@ use "`path_in'\casen1990.dta"
 
 *<_hhid_>
 
-	local letters "r p c z o"
+
+local letters "r p c z o seg"
 
 	foreach letter of local letters {
      gen helper_`letter' = string(`letter',"%02.0f")
 	}
 
-	gen helper_f=string(f,"%03.0f")
+	gen helper_f=string(f,"%05.0f")
 
 
-	egen hhid = concat(helper_r helper_p helper_c helper_z helper_f)
-	drop helper_r helper_p helper_f helper_c helper_z
+	egen hhid = concat(helper_r helper_p helper_c helper_z helper_seg helper_f )
+	drop helper_r helper_p helper_f helper_c helper_z helper_seg
+
 
 	label var hhid "Household ID"
 *</_hhid_>
@@ -172,7 +177,7 @@ use "`path_in'\casen1990.dta"
 *</_pid_>
 
 *<_weight_>
-*decided for population regional
+
 	gen weight = expr
 	label var weight "Household sampling weight"
 *</_weight_>
@@ -228,8 +233,8 @@ use "`path_in'\casen1990.dta"
 *<_subnatid2_>
 	gen subnatid2=provinci
 	la de lblsubnatid2 11 "1 - Arica"  13 "2 - Iquique"  21 "3 - Tocopilla"  22 "4 - El Loa"  23 "5 - Antofagasta"  31 "6 - Chañaral"  32 "7 - Copiapó"  33 "8 - Huasco"  41 "9 - Elqui"  42 "10 - Limarí"  43 "11 - Choapa"  51 "12 - Petorca"  52 "13 - Los Andes"  53 "14 - San Felipe de Aconcagua"  54 "15 - Quillota"  55 "16 - Valparaíso"  56 "17 - San Antonio"  61 "18 - Cachapoal"  62 "19 - Colchagua"  63 "20 - Cardenal Caro"  71 "21 - Curico"  72 "22 - Talca"  73 "23 - Linares"  74 "24 - Cauquenes"  81 "25 - Ñuble"  82 "26 - Bio Bío"  83 "27 - Concepción"  84 "28 - Arauco"  91 "29 - Malleco"  92 "30 - Cautín"  101 "31 - Valdivia"  102 "32 - Osorno"  104 "34 - Chiloé"  103 "33 - Llanquihue"  111 "35 - Coha iqu e"  112 "36 - Aisén"  121 "37 - Última Esperanza"  122 "38 - Magallanes"  123 "39 - Tierra del Fuego"  131 "40 - Santiago"  132 "41 - Chacabuco"  133 "42 - Cordillera"  134 "43 - Maipo"  135 "44 - Melipilla"  136 "45 - Talagante"
-label var subnatid2 "Subnational ID at NUTS 2 Level"
-label values subnatid2 lblsubnatid2
+	label var subnatid2 "Subnational ID at NUTS 2 Level"
+	label values subnatid2 lblsubnatid2
 *</_subnatid2_>
 
 
@@ -241,7 +246,7 @@ label values subnatid2 lblsubnatid2
 *</_subnatid3_>
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = "comuna"
+	gen subnatidsurvey = "province"
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -480,7 +485,6 @@ label values subnatid2 lblsubnatid2
 
 
 *<_educy_>
-*population 15 to older
 	gen byte educy = esc
 	label var educy "Years of education"
 *</_educy_>
@@ -548,7 +552,8 @@ foreach v of local ed_var {
 {
 
 *<_vocational_>
-	gen vocational = .
+	gen vocational = o18
+	recode vocational 2=0 3=.
 	label de lblvocational 0 "No" 1 "Yes"
 	label var vocational "Ever received vocational training"
 *</_vocational_>
@@ -678,8 +683,10 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_>
-*two digits, strange classification under review
-	gen industrycat_isic= string(o6,"%02.0f")
+*three digits, there is not clear definition for 110 120 310 320 630 710 940 950 however we belive that each is the two digit lead for that section for example 110 is the 2 digit section 11
+	gen o6_helper=o6
+	recode o6_helper 999=. 0=.
+	gen industrycat_isic= string(o6_helper,"%03.0f")
 	replace industrycat_isic = "" if industrycat_isic =="."
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
@@ -704,32 +711,18 @@ foreach v of local ed_var {
 
 
 *<_occup_orig_>
-	gen occup_orig = string(o5)
-	replace occup_orig="" if o5==.
+*three digits problem some codes do not exist on the isco 88 official international classification, are they chilean?
+	gen o5_helper=o5
+	recode o5_helper 999=. 
+	gen occup_orig = string(o5_helper,"%03.0f")
+	replace occup_orig="" if o5_helper==.
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
 
 *<_occup_isco_>
 	gen occup_isco=occup_orig
-	/*replace occup_isco="01" if occup_orig=="0"
-	replace occup_isco="11" if occup_orig=="1"
-	replace occup_isco="21" if occup_orig=="2"
-	replace occup_isco="31" if occup_orig=="3"
-	replace occup_isco="41" if occup_orig=="4"
-	replace occup_isco="51" if occup_orig=="5"
-	replace occup_isco="61" if occup_orig=="6"
-	replace occup_isco="71" if occup_orig=="7"
-	replace occup_isco="11" if occup_orig=="10"
-	replace occup_isco="21" if occup_orig=="20"
-	replace occup_isco="31" if occup_orig=="30"
-	replace occup_isco="41" if occup_orig=="40"
-	replace occup_isco="51" if occup_orig=="50"
-	replace occup_isco="61" if occup_orig=="60"
-	replace occup_isco="71" if occup_orig=="70"
-	replace occup_isco="81" if occup_orig=="80"
-	replace occup_isco="91" if occup_orig=="90"*/
-	*probelm with two digit specifications
+	*probelm with three digit specifications
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
@@ -764,6 +757,7 @@ foreach v of local ed_var {
 
 
 *<_unitwage_>
+*NOT IN the format of the survey , two alternatives days or hours
 	gen byte unitwage = .
 	replace unitwage = . if lstatus != 1
 	label var unitwage "Last wages' time unit primary job 7 day recall"
@@ -773,9 +767,9 @@ foreach v of local ed_var {
 
 
 *<_whours_>
-	gen whours = jh
+	gen whours = o14
 	replace whours=. if lstatus!=1
-	replace whours=. if jh>84
+	replace whours=. if o14>84
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -1488,6 +1482,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`path_output'\CHL_1990_CASEN_V01_M_V01_A_GLD_ALL.dta", replace
+save "`path_output'\CHL_1992_CASEN_V01_M_V01_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>
