@@ -64,7 +64,7 @@ if _rc ssc install distinct
 *----------1.2: Set directories------------------------------*
 
 global path_in "Y:\GLD\IND\IND_1983_EUS\IND_1983_EUS_v01_M\Data\Stata"
-global path_output "Y:\GLD\IND\IND_1983_EUS\IND_1983_EUS_v01_M_v01_A_GLD\Data\Harmonized"
+global path_output "Y:\GLD\IND\IND_1983_EUS\IND_1983_EUS_v01_M_v02_A_GLD\Data\Harmonized"
 
 *----------1.3: Database assembly------------------------------*
 
