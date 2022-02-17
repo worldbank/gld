@@ -10,24 +10,24 @@
 <_Date created_>				2022-01-21 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						CHL </_Country_>
-<_Survey Title_>				 </_Survey Title_>
+<_Survey Title_>			CASEN	 </_Survey Title_>
 <_Survey Year_>					1992 </_Survey Year_>
-<_Study ID_>					 </_Study ID_>
-<_Data collection from_>		[N/A] </_Data collection from_>
-<_Data collection to_>			[N/A] </_Data collection to_>
+<_Study ID_>					[N/A] </_Study ID_>
+<_Data collection from_>		November 1992 </_Data collection from_>
+<_Data collection to_>			December 1992 </_Data collection to_>
 <_Source of dataset_> 			CASEN </_Source of dataset_>
-<_Sample size (HH)_> 			 </_Sample size (HH)_>
-<_Sample size (IND)_> 			 </_Sample size (IND)_>
-<_Sampling method_> 			 </_Sampling method_>
-<_Geographic coverage_>
+<_Sample size (HH)_> 		35948	 </_Sample size (HH)_>
+<_Sample size (IND)_> 	143459		 </_Sample size (IND)_>
+<_Sampling method_> 			random sampling, compact conglomerates,stratified gepgraphically based on urban rua and non proportional distribution of surveys across strata.  </_Sampling method_>
+<_Geographic coverage_> National </_Geographic coverage_>
 <_Currency_> 					Chilean Pesos </_Currency_>
 -----------------------------------------------------------------------
-<_ICLS Version_>				</_ICLS Version_>
-<_ISCED Version_>				 </_ISCED Version_>
-<_ISCO Version_>				 </_ISCO Version_>
-<_OCCUP National_>			 </_OCCUP National_>
-<_ISIC Version_>			 </_ISIC Version_>
-<_INDUS National_>				  </_INDUS National_>
+<_ICLS Version_>		[N/A]		</_ICLS Version_>
+<_ISCED Version_>		[N/A]		 </_ISCED Version_>
+<_ISCO Version_>			ISCO 1988	 </_ISCO Version_>
+<_OCCUP National_>		ISCO 1988	 </_OCCUP National_>
+<_ISIC Version_>			ISIC REV 2 </_ISIC Version_>
+<_INDUS National_>		ISIC REV 2 </_INDUS National_>
 -----------------------------------------------------------------------
 <_Version Control_>
 * Date: [YYYY-MM-DD] - [Description of changes]
@@ -233,14 +233,14 @@ local letters "r p c z o seg"
 *<_subnatid2_>
 	gen subnatid2=provinci
 	la de lblsubnatid2 11 "1 - Arica"  13 "2 - Iquique"  21 "3 - Tocopilla"  22 "4 - El Loa"  23 "5 - Antofagasta"  31 "6 - Chañaral"  32 "7 - Copiapó"  33 "8 - Huasco"  41 "9 - Elqui"  42 "10 - Limarí"  43 "11 - Choapa"  51 "12 - Petorca"  52 "13 - Los Andes"  53 "14 - San Felipe de Aconcagua"  54 "15 - Quillota"  55 "16 - Valparaíso"  56 "17 - San Antonio"  61 "18 - Cachapoal"  62 "19 - Colchagua"  63 "20 - Cardenal Caro"  71 "21 - Curico"  72 "22 - Talca"  73 "23 - Linares"  74 "24 - Cauquenes"  81 "25 - Ñuble"  82 "26 - Bio Bío"  83 "27 - Concepción"  84 "28 - Arauco"  91 "29 - Malleco"  92 "30 - Cautín"  101 "31 - Valdivia"  102 "32 - Osorno"  104 "34 - Chiloé"  103 "33 - Llanquihue"  111 "35 - Coha iqu e"  112 "36 - Aisén"  121 "37 - Última Esperanza"  122 "38 - Magallanes"  123 "39 - Tierra del Fuego"  131 "40 - Santiago"  132 "41 - Chacabuco"  133 "42 - Cordillera"  134 "43 - Maipo"  135 "44 - Melipilla"  136 "45 - Talagante"
-	label var subnatid2 "Subnational ID at NUTS 2 Level"
+	label var subnatid2 "Subnational ID at 2nd Level"
 	label values subnatid2 lblsubnatid2
 *</_subnatid2_>
 
 
 *<_subnatid3_>
 	gen subnatid3 = comu
-	*label de lblsubnatid3 
+	*label de lblsubnatid3
 	*label values subnatid3 lblsubnatid3
 	label var subnatid3 "Subnational ID at Third Administrative Level"
 *</_subnatid3_>
@@ -301,10 +301,8 @@ local letters "r p c z o seg"
 
 
 *<_age_>
-
 	gen age=edad
 	label var age "Individual age"
-
 *</_age_>
 
 
@@ -603,7 +601,6 @@ foreach v of local ed_var {
 
 {
 *<_lstatus_>
-*there is like 31,122 missing values , are they inactive? prob not reply
 	gen byte lstatus = o21
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -685,7 +682,7 @@ foreach v of local ed_var {
 *<_industrycat_isic_>
 *three digits, there is not clear definition for 110 120 310 320 630 710 940 950 however we belive that each is the two digit lead for that section for example 110 is the 2 digit section 11
 	gen o6_helper=o6
-	recode o6_helper 999=. 0=.
+	recode o6_helper 999=.
 	gen industrycat_isic= string(o6_helper,"%03.0f")
 	replace industrycat_isic = "" if industrycat_isic =="."
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
@@ -711,18 +708,18 @@ foreach v of local ed_var {
 
 
 *<_occup_orig_>
-*three digits problem some codes do not exist on the isco 88 official international classification, are they chilean?
-	gen o5_helper=o5
-	recode o5_helper 999=. 
-	gen occup_orig = string(o5_helper,"%03.0f")
-	replace occup_orig="" if o5_helper==.
+	gen occup_orig = o5
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
 
 *<_occup_isco_>
-	gen occup_isco=occup_orig
-	*probelm with three digit specifications
+*three digits problem some codes do not exist on the isco 88 official international classification, are they chilean?
+	gen o5_helper=o5
+	recode o5_helper 999=.
+	gen occup_isco = string(o5_helper,"%03.0f")
+	replace occup_isco="" if o5_helper==.
+	drop o5_helper
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 

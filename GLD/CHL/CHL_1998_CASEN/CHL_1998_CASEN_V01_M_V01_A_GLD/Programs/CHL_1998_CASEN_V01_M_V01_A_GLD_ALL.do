@@ -10,24 +10,24 @@
 <_Date created_>				2022-01-21 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						CHL </_Country_>
-<_Survey Title_>				 </_Survey Title_>
+<_Survey Title_>				CASEN </_Survey Title_>
 <_Survey Year_>					1998 </_Survey Year_>
 <_Study ID_>					 </_Study ID_>
-<_Data collection from_>		[N/A] </_Data collection from_>
-<_Data collection to_>			[N/A] </_Data collection to_>
+<_Data collection from_>	November 1998 </_Data collection from_>
+<_Data collection to_>		December 2018 </_Data collection to_>
 <_Source of dataset_> 			CASEN </_Source of dataset_>
-<_Sample size (HH)_> 			 </_Sample size (HH)_>
-<_Sample size (IND)_> 			 </_Sample size (IND)_>
-<_Sampling method_> 			 </_Sampling method_>
-<_Geographic coverage_>
+<_Sample size (HH)_> 		48107	 </_Sample size (HH)_>
+<_Sample size (IND)_> 	188360		 </_Sample size (IND)_>
+<_Sampling method_> 			random sampling, compact conglomerates,stratified gepgraphically based on urban rua and non proportional distribution of surveys across strata.  </_Sampling method_>
+<_Geographic coverage_> National </_Geographic coverage_>
 <_Currency_> 					Chilean Pesos </_Currency_>
 -----------------------------------------------------------------------
-<_ICLS Version_>				</_ICLS Version_>
-<_ISCED Version_>				 </_ISCED Version_>
-<_ISCO Version_>				 </_ISCO Version_>
-<_OCCUP National_>			 </_OCCUP National_>
-<_ISIC Version_>			 </_ISIC Version_>
-<_INDUS National_>				  </_INDUS National_>
+<_ICLS Version_>		[N/A]		</_ICLS Version_>
+<_ISCED Version_>		[N/A]		 </_ISCED Version_>
+<_ISCO Version_>			ISCO 1988	 </_ISCO Version_>
+<_OCCUP National_>		ISCO 1988	 </_OCCUP National_>
+<_ISIC Version_>			ISIC REV 2 </_ISIC Version_>
+<_INDUS National_>		ISIC REV 2 </_INDUS National_>
 -----------------------------------------------------------------------
 <_Version Control_>
 * Date: [YYYY-MM-DD] - [Description of changes]
@@ -310,8 +310,8 @@ use "`path_in'\casen1998.dta"
 
 
 *<_relationharm_>
-	gen relationharm =pco2
-	recode relationharm  8=5 9=6
+	gen relationharm =pco1
+	recode relationharm  5/10=5 11/12=6
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm  lblrelationharm
@@ -676,19 +676,19 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_>
-*4 digits 
+*4 digits, not present in the raw data 3845 3853 3902
 	gen o7_helper=o7
-	recode o7_helper 999=. 0=.
+	recode o7_helper 9999=.
 	gen industrycat_isic= string(o7_helper,"%04.0f")
 	replace industrycat_isic = "" if industrycat_isic =="."
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
-	
+
 *</_industrycat_isic_>
 
 
 *<_industrycat10_>
 	gen industrycat10=rama
-	recode industrycat10 0=10 
+	recode industrycat10 0=10
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
@@ -713,8 +713,10 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_>
-	gen occup_isco=occup_orig
-	*probelm with two digit specifications
+	gen o6_helper=o6
+	recode o6_helper 9999=.
+	gen occup_isco = string(o6_helper,"%04.0f")
+	replace occup_isco="" if o6_helper==.
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
@@ -734,7 +736,7 @@ foreach v of local ed_var {
 *<_occup_>
 	gen  occup = oficio
 	recode occup 9999=.
-	recode occup 0=10 
+	recode occup 0=10
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup

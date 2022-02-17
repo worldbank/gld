@@ -4,21 +4,21 @@
 ==============================================================================================%%*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				CHL_1996_CASEN_V01_M_V01_A_GLD_ALL.do </_Program name_>
+<_Program name_>				CHL_2000_CASEN_V01_M_V01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata 16 <_Application_>
 <_Author(s)_>					World Bank Job's Group </_Author(s)_>
 <_Date created_>				2022-01-21 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						CHL </_Country_>
-<_Survey Title_>		CASEN		 </_Survey Title_>
-<_Survey Year_>					1996 </_Survey Year_>
+<_Survey Title_>			CASEN 	 </_Survey Title_>
+<_Survey Year_>					2000 </_Survey Year_>
 <_Study ID_>					 </_Study ID_>
-<_Data collection from_>		November 2016 </_Data collection from_>
-<_Data collection to_>		November 2016 </_Data collection to_>
+<_Data collection from_>		November 2000 </_Data collection from_>
+<_Data collection to_>			December 2000 </_Data collection to_>
 <_Source of dataset_> 			CASEN </_Source of dataset_>
-<_Sample size (HH)_> 	33636		 </_Sample size (HH)_>
-<_Sample size (IND)_> 	134262		 </_Sample size (IND)_>
-<_Sampling method_> 			random sampling, compact conglomerates,stratified gepgraphically based on urban rua and non proportional distribution of surveys across strata.  </_Sampling method_>
+<_Sample size (HH)_> 		65036	 </_Sample size (HH)_>
+<_Sample size (IND)_> 		252748	 </_Sample size (IND)_>
+<_Sampling method_> 	The type of sampling is stratified, by conglomerates and multistage. </_Sampling method_>
 <_Geographic coverage_> National </_Geographic coverage_>
 <_Currency_> 					Chilean Pesos </_Currency_>
 -----------------------------------------------------------------------
@@ -48,14 +48,14 @@ set mem 800m
 
 *----------1.2: Set directories------------------------------*
 
-local path_in "Z:\GLD-Harmonization\582018_AQ\CHL\CHL_1996_CASEN\CHL_1996_CASEN_V01_M\Data\Stata"
-local path_output "Z:\GLD-Harmonization\582018_AQ\CHL\CHL_1996_CASEN\CHL_1996_CASEN_V01_M_V01_A_GLD\Data\Harmonized"
+local path_in "Z:\GLD-Harmonization\582018_AQ\CHL\CHL_2000_CASEN\CHL_2000_CASEN_V01_M\Data\Stata"
+local path_output "Z:\GLD-Harmonization\582018_AQ\CHL\CHL_2000_CASEN\CHL_2000_CASEN_V01_M_V01_A_GLD\Data\Harmonized"
 
 *----------1.3: Database assembly------------------------------*
 
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
-use "`path_in'\casen1996.dta"
+use "`path_in'\casen2000_Stata.dta"
 
 
 /*%%=============================================================================================
@@ -83,7 +83,10 @@ use "`path_in'\casen1996.dta"
 
 
 *<_icls_v_>
-	gen icls_v = .
+/*<_icls_v_note>
+
+</_icls_v_note>*/
+	gen icls_v =.
 	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
 
@@ -94,6 +97,7 @@ use "`path_in'\casen1996.dta"
 
 
 *<_isco_version_>
+
 	gen isco_version = "isco_1988"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
@@ -106,7 +110,7 @@ use "`path_in'\casen1996.dta"
 
 
 *<_year_>
-	gen int year = 1996
+	gen int year = 2000
 	label var year "Year of survey"
 *</_year_>
 
@@ -130,7 +134,7 @@ use "`path_in'\casen1996.dta"
 
 
 *<_int_year_>
-	gen int_year= 1996
+	gen int_year= 2000
 	label var int_year "Year of the interview"
 *</_int_year_>
 
@@ -142,32 +146,25 @@ use "`path_in'\casen1996.dta"
 	label var int_month "Month of the interview"
 *</_int_month_>
 
-*the codes for this year do not have segmento so we do not use the code of the manual
+
 *<_hhid_>
-
-
-local letters "r p c z o seg f"
-
-	foreach letter of local letters {
-     gen helper_`letter' = string(`letter',"%02.0f")
-	}
-
-	egen hhid = concat(helper_r helper_p helper_c helper_z helper_seg helper_f )
-	drop helper_r helper_p helper_f helper_c helper_z helper_seg
+	gen seg_helper=string(segmento, "%08.0f")
+	gen f_helper=string(folio,"%03.0f")
+	egen hhid = concat(seg_helper f_helper)
+	drop f_helper seg_helper
 
 	label var hhid "Household ID"
-
 *</_hhid_>
 
 
 *<_pid_>
-	sort hhid
-	egen pid=concat(hhid helper_o)
-	drop helper_o
+
+	gen o_helper=string(o, "%02.0f")
+	egen pid=concat(hhid o_helper)
+	drop o_helper
 	label var pid "Individual ID"
 	isid pid hhid
 *</_pid_>
-
 
 *<_weight_>
 	gen weight = expr
@@ -188,7 +185,7 @@ local letters "r p c z o seg f"
 
 
 *<_strata_>
-	gen strata = .
+	gen strata = estrato
 	label var strata "Strata"
 *</_strata_>
 
@@ -223,10 +220,10 @@ local letters "r p c z o seg f"
 *</_subnatid1_>
 
 *<_subnatid2_>
-	gen subnatid2=p
-	la de lblsubnatid2 11 "1 - Arica"  12 "2 - Parinacota"  13 "3 - Iquique"  21 "4 - Tocopilla"  22 "5 - El Loa"  23 "6 - Antofagasta"  31 "7 - Chañaral"  32 "8 - Copiapó"  33 "9 - Huasco"  41 "10 - Elqui"  42 "11 - Limarí"  43 "12 - Choapa"  51 "13 - Petorca"  52 "14 - Los Andes"  53 "15 - San Felipe de Aconcagua"  54 "16 - Quillota"  55 "17 - Valparaíso"  56 "18 - San Antonio"  61 "19 - Cachapoal"  62 "20 - Colchagua"  63 "21 - Cardenal Caro"  71 "22 - Curico"  72 "23 - Talca"  73 "24 - Linares"  74 "25 - Cauquenes"  81 "26 - Ñuble"  82 "27 - BioBío"  83 "28 - Concepción"  84 "29 - Arauco"  91 "30 - Malleco"  92 "31 - Cautín"  101 "32 - Valdivia"  103 "34 - Llanquihue"  102 "33 - Osorno"  104 "35 - Chiloé"  105 "36 - Palena"  111 "37 - Co hai que"  112 "38 - Aysén"  113 "39 - General Carrera"  114 "40 - Capitán Prat"  121 "41 - Últ ima Esperanza"  122 "42 - Magallanes"  123 "43 - Tierra del Fuego"  131 "44 - Santiago"  132 "45 - Chacabuco"  133 "46 - Cordillera"  134 "47 - Maipo"  135 "48 - Melipilla"  136 "49 - Tala gante"
-	label var subnatid2 "Subnational ID at NUTS 2 Level"
-	label values subnatid2 lblsubnatid2
+	gen subnatid2=provi
+	la de lblsubnatid2   11 "1 - Arica"  12 "2 - Parinacota"  13 "3 - Iq uiq ue"  21 "4 - Tocopilla"  22 "5 - El Loa"  23 "6 - Antofagasta"  31 "7 - Chañaral"  32 "8 - Copiapó"  33 "9 - Huasco"  41 "10 - Elqui"  42 "11 - Limarí"  43 "12 - Choapa"  51 "13 - Petorca"  52 "14 - Los Andes"  53 "15 - San Felipe de Aconcagua 92"  54 "16 - Quillota"  55 "17 - Valparaíso"  56 "18 - San Antonio"  61 "19 - Cachapoal"  62 "20 - Colchagua"  63 "21 - Cardenal Caro"  71 "22 - Curico"  72 "23 - Talca"  73 "24 - Linares"  74 "25 - Cauquenes"  81 "26 - Ñuble"  82 "27 - BioBío"  83 "28 - Concepción"  84 "29 - Arauco"  91 "30 - Malleco"  92 "31 - Cautín"  101 "32 - Valdivia"  103 "34 - Llanquihue"  102 "33 - Osorno"  104 "35 - Chiloé"  105 "36 - Palena"  111 "37 - Co hai que"  112 "38 - Aisén"  113 "39 - General Carrera"  114 "40 - Capitán Prat"  121 "41 - Últ ima Esperanza"  122 "42 - Magallanes"  123 "43 - Tierra del Fuego"  131 "44 - Santiago"  132 "45 - Chacabuco"  133 "46 - Cordillera"  134 "47 - Maipo"  135 "48 - Melipilla"  136 "49 - Talagante"
+	 label var subnatid2 "Subnational ID at NUTS 2 Level"
+	 label values subnatid2 lblsubnatid2
 *</_subnatid2_>
 
 
@@ -238,7 +235,7 @@ local letters "r p c z o seg f"
 *</_subnatid3_>
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = "provincia"
+	gen subnatidsurvey = "comuna"
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -287,7 +284,8 @@ local letters "r p c z o seg f"
 {
 
 *<_hsize_>
-	egen hsize= count(f), by (hhid)
+
+	gen hsize=numper
 	label var hsize "Household size"
 *</_hsize_>
 
@@ -459,8 +457,8 @@ local letters "r p c z o seg f"
 *</_ed_mod_age_>
 
 *<_school_>
-	gen byte school = e2
-	recode school 2/12=0
+	gen byte school = e3
+	recode school 2=0
 	label var school "Attending school"
 	la de lblschool 0 "No" 1 "Yes"
 	label values school  lblschool
@@ -469,7 +467,7 @@ local letters "r p c z o seg f"
 
 *<_literacy_>
 	gen byte literacy = e1
-	recode literacy (2=0)
+	recode literacy 2=0
 	label var literacy "Individual can read & write"
 	la de lblliteracy 0 "No" 1 "Yes"
 	label values literacy lblliteracy
@@ -477,13 +475,14 @@ local letters "r p c z o seg f"
 
 
 *<_educy_>
-	gen byte educy =esc
+	gen byte educy = esc
 	label var educy "Years of education"
 *</_educy_>
 
+
 *<_educat7_>
-	gen byte educat7 = e6
-	recode educat7 0=1 1=2 5/6=5 7/12=6 13/15=7 99=.
+	gen byte educat7 = educ
+	recode educat7 4 6=4  5 7=5 8/9=6 10/11=7 99=.
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -508,7 +507,7 @@ local letters "r p c z o seg f"
 *</_educat4_>
 
 *<_educat_orig_>
-	gen educat_orig = e6
+	gen educat_orig = educ
 	label var educat_orig "Original survey education code"
 *</_educat_orig_>
 
@@ -544,26 +543,29 @@ foreach v of local ed_var {
 
 *<_vocational_>
 	gen vocational = o32
-	recode vocational 1/4=1 5=0 9=.
+	recode vocational 1/2=1 3=0
 	label de lblvocational 0 "No" 1 "Yes"
 	label var vocational "Ever received vocational training"
 *</_vocational_>
 
 *<_vocational_type_>
-	gen vocational_type = o32
-	recode vocational_type 2/4=2 5=. 9=.
+	gen vocational_type = .
 	label de lblvocational_type 1 "Inside Enterprise" 2 "External"
 	label values vocational_type lblvocational_type
 	label var vocational_type "Type of vocational training"
 *</_vocational_type_>
 
 *<_vocational_length_l_>
-	gen vocational_length_l = .
+	encode o33, gen(o33_helper)
+	gen vocational_length_l = o33_helper
+	recode vocational_length_l 1=0 2=1 3=4 4=6 5=.
 	label var vocational_length_l "Length of training, lower limit"
 *</_vocational_length_l_>
 
 *<_vocational_length_u_>
-	gen vocational_length_u = .
+	gen vocational_length_u = o33_helper
+	recode vocational_length_u 1=1 2=3 3=6 4=. 5=.
+	drop o33_helper
 	label var vocational_length_u "Length of training, upper limit"
 *</_vocational_length_u_>
 
@@ -573,8 +575,7 @@ foreach v of local ed_var {
 *</_vocational_field_>
 
 *<_vocational_financed_>
-	gen vocational_financed = o32
-	recode vocational_financed 3=4 4=5 5=. 9=.
+	gen vocational_financed =.
 	label de lblvocational_financed 1 "Employer" 2 "Government" 3 "Mixed Employer/Government" 4 "Own funds" 5 "Other"
 	label var vocational_financed "How training was financed"
 *</_vocational_financed_>
@@ -624,7 +625,7 @@ foreach v of local ed_var {
 
 
 *<_nlfreason_>
-	gen byte nlfreason = o5
+	gen byte nlfreason = o7
 	recode nlfreason 1=2 2=5 3=4 4=1 5=3 6/10=5
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
@@ -646,20 +647,21 @@ foreach v of local ed_var {
 
 
 *----------8.2: 7 day reference main job------------------------------*
-********here
+
 
 {
 *<_empstat_>
-	gen byte empstat = o8
-	recode empstat (1=3) (2=4) (3 4 5 6=1) (7=2) (8 9=5)
+	gen byte empstat = o10
+	recode empstat (1=3) (2=4) (3/5=1) (6=2) ( 6 7=5) (8=2) (9=1)
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat lblempstat
 *</_empstat_>
 
+
 *<_ocusec_>
-*cannot divide public private.
-	gen byte ocusec = .
+	gen byte ocusec = o10
+	recode ocusec (3 9=1) (5=1) (4=4) (1=.) (2 5 6 7=2 ) (8=.)
 	label var ocusec "Sector of activity primary job 7 day recall"
 	la de lblocusec 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec lblocusec
@@ -667,19 +669,19 @@ foreach v of local ed_var {
 
 
 *<_industry_orig_>
-	gen industry_orig = o7
+	gen industry_orig = o9
 	tostring industry_orig, replace
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
 
 *<_industrycat_isic_>
-*three digits , the following codes are not clear or do not match the guide 110 120 310 320 330 630 710 930 940 950"
-	gen o7_helper=o7
-	recode o7_helper 999=.
-	gen industrycat_isic= string(o7_helper,"%03.0f")
+*4 digits, not present in the raw data 3853
+	gen o9_helper=o9
+	gen industrycat_isic= string(o9_helper,"%04.0f")
 	replace industrycat_isic = "" if industrycat_isic =="."
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
+
 *</_industrycat_isic_>
 
 
@@ -703,17 +705,17 @@ foreach v of local ed_var {
 
 
 *<_occup_orig_>
-	gen occup_orig = string(o6)
-	replace occup_orig="" if o6==.
+	gen occup_orig = string(o8)
+	replace occup_orig="" if o8==.
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
 
 *<_occup_isco_>
-	gen o6_helper=o6
-	recode o6_helper 9999=.
-	gen occup_isco = string(o6_helper,"%04.0f")
-	replace occup_isco="" if o6_helper==.
+	gen o8_helper=o8
+	recode o8_helper 9999=.
+	gen occup_isco = string(o8_helper,"%04.0f")
+	replace occup_isco="" if o8_helper==.
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
@@ -723,16 +725,18 @@ foreach v of local ed_var {
 	replace occup_skill=1 if oficio==9
 	replace occup_skill=2 if inrange(oficio,4,8)
 	replace occup_skill=3 if inrange(oficio,1,3)
-	replace occup_skill=4 if oficio==10
+	replace occup_skill=4 if oficio==0
 	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"  4 "Armed Forces"
 	label values occup_skill lblskill
+	recode occup_skill 9999=.
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
 *</_occup_skill_>
 
 
 *<_occup_>
 	gen  occup = oficio
-	recode occup 9999=99
+	recode occup 9999=.
+	recode occup 0=10
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup
@@ -740,7 +744,7 @@ foreach v of local ed_var {
 
 
 *<_wage_no_compen_>
-	gen double wage_no_compen =ytrabaj
+	gen double wage_no_compen =yopraj
 	replace wage_no_compen=. if lstatus!=1
 	replace wage_no_compen=. if wage_no_compen == 0
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
@@ -748,9 +752,9 @@ foreach v of local ed_var {
 
 
 *<_unitwage_>
-	gen byte unitwage = o22
+	gen byte unitwage = o26
+	recode unitwage 4=5 5=4 7=10 8=7 9=8
 	replace unitwage = . if lstatus != 1
-	recode unitwage 1=5 2=3 3=2 4=1 5=7 7=8
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
 	label values unitwage lblunitwage
@@ -758,9 +762,9 @@ foreach v of local ed_var {
 
 
 *<_whours_>
-	gen whours = o19
+	gen whours = o14
 	replace whours=. if lstatus!=1
-	replace whours=. if o19>84
+	replace whours=. if o14>84
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -778,7 +782,7 @@ foreach v of local ed_var {
 
 
 *<_contract_>
-	gen byte contract = o9
+	gen byte contract = o11
 	recode contract 1/3=1 4=0 5=.
 	label var contract "Employment has contract primary job 7 day recall"
 	la de lblcontract 0 "Without contract" 1 "With contract"
@@ -813,17 +817,17 @@ foreach v of local ed_var {
 
 
 *<_firmsize_l_>
-	encode o10, gen(o10_helper)
-	gen firmsize_l=o10_helper
-	recode firmsize_l 1=1 2=2 3=5 4=6 5=10 6=50 7=200
+	encode o13, gen(o13_helper)
+	gen firmsize_l=o13_helper
+	recode firmsize_l 1=1 2=2 3=6 4=10 5=50 6=200 7=.
 	replace firmsize_l=. if lstatus!=1
 	label var firmsize_l "Firm size (lower bracket) primary job 7 day recall"
 *</_firmsize_l_>
 
 
 *<_firmsize_u_>
-	gen firmsize_u=o10_helper
-	recode firmsize_u 1=1 2=4 3=5 4=9 5=49 6=199 7=.
+	gen firmsize_u=o13_helper
+	recode firmsize_u 1=1 2=5 3=9 4=49 5=199 6=. 7=.
 	replace firmsize_u=. if lstatus!=1
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>
@@ -1474,6 +1478,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`path_output'\CHL_1996_CASEN_V01_M_V01_A_GLD_ALL.dta", replace
+save "`path_output'\CHL_2000_CASEN_V01_M_V01_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>

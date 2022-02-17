@@ -13,21 +13,21 @@
 <_Survey Title_>				 </_Survey Title_>
 <_Survey Year_>					1994 </_Survey Year_>
 <_Study ID_>					 </_Study ID_>
-<_Data collection from_>		[N/A] </_Data collection from_>
-<_Data collection to_>			[N/A] </_Data collection to_>
+<_Data collection from_>	November 1994 </_Data collection from_>
+<_Data collection to_>			November 1994 </_Data collection to_>
 <_Source of dataset_> 			CASEN </_Source of dataset_>
-<_Sample size (HH)_> 			 </_Sample size (HH)_>
-<_Sample size (IND)_> 			 </_Sample size (IND)_>
-<_Sampling method_> 			 </_Sampling method_>
-<_Geographic coverage_>
+<_Sample size (HH)_> 			45379 </_Sample size (HH)_>
+<_Sample size (IND)_> 		178057	 </_Sample size (IND)_>
+<_Sampling method_> 			random sampling, compact conglomerates,stratified gepgraphically based on urban rua and non proportional distribution of surveys across strata.  </_Sampling method_>
+<_Geographic coverage_> National </_Geographic coverage_>
 <_Currency_> 					Chilean Pesos </_Currency_>
 -----------------------------------------------------------------------
-<_ICLS Version_>				</_ICLS Version_>
-<_ISCED Version_>				 </_ISCED Version_>
-<_ISCO Version_>				 </_ISCO Version_>
-<_OCCUP National_>			 </_OCCUP National_>
-<_ISIC Version_>			 </_ISIC Version_>
-<_INDUS National_>				  </_INDUS National_>
+<_ICLS Version_>		[N/A]		</_ICLS Version_>
+<_ISCED Version_>		[N/A]		 </_ISCED Version_>
+<_ISCO Version_>			ISCO 1988	 </_ISCO Version_>
+<_OCCUP National_>		ISCO 1988	 </_OCCUP National_>
+<_ISIC Version_>			ISIC REV 2 </_ISIC Version_>
+<_INDUS National_>		ISIC REV 2 </_INDUS National_>
 -----------------------------------------------------------------------
 <_Version Control_>
 * Date: [YYYY-MM-DD] - [Description of changes]
@@ -675,9 +675,9 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_>
-*three digits , the following codes are not clear or do not match the guide 110 0 120 310 320 340 350 360 370 380 503 630 710 830 940 950"
+*three digits , the following codes are not clear or do not match the guide 110 120 123 310 320 340 350 360 363 370 380 503 630 710 830 940 950"
 	gen o6_helper=o6
-	recode o6_helper 999=. 0=.
+	recode o6_helper 999=.
 	gen industrycat_isic= string(o6_helper,"%03.0f")
 	replace industrycat_isic = "" if industrycat_isic =="."
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
@@ -686,7 +686,7 @@ foreach v of local ed_var {
 
 *<_industrycat10_>
 	gen industrycat10=rama
-	recode industrycat10 0=10 
+	recode industrycat10 0=10
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
@@ -704,18 +704,18 @@ foreach v of local ed_var {
 
 
 *<_occup_orig_>
-*110 130 220 230 330 410 510 610 620 720 740 810 820 910 are not in the guide from the nso but are in the data, they are not present on the isco 88 list either.
-	gen o5_helper=o5
-	recode o5_helper 999=. 
-	gen occup_orig = string(o5_helper,"%03.0f")
-	replace occup_orig="" if o5_helper==.
+	gen occup_orig = string(o5)
+	replace occup_orig="" if o6==.
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
 
 *<_occup_isco_>
-	gen occup_isco=occup_orig
-	*probelm with digits specifications
+	*110 130 220 230 330 410 510 610 620 720 740 810 820 910 are not in the guide from the nso but are in the data, they are not present on the isco 88 list either.
+		gen o5_helper=o5
+		recode o5_helper 999=.
+		gen occup_isco = string(o5_helper,"%03.0f")
+		replace occup_isco="" if o5_helper==.
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
@@ -790,7 +790,7 @@ label values occup lbloccup
 
 *<_healthins_>
 	gen byte healthins = s1
-	recode  healthins 1/9=1 
+	recode  healthins 1/9=1
 	label var healthins "Employment has health insurance primary job 7 day recall"
 	la de lblhealthins 0 "Without health insurance" 1 "With health insurance"
 	label values healthins lblhealthins
@@ -817,7 +817,7 @@ label values occup lbloccup
 
 	encode o9, gen(o9_helper)
 	gen firmsize_l=o9_helper
-	recode firmsize_l 1=1 2=2 3=5 4=6 5=10 6=50 7=200 
+	recode firmsize_l 1=1 2=2 3=5 4=6 5=10 6=50 7=200
 	replace firmsize_l=. if lstatus!=1
 	label var firmsize_l "Firm size (lower bracket) primary job 7 day recall"
 *</_firmsize_l_>

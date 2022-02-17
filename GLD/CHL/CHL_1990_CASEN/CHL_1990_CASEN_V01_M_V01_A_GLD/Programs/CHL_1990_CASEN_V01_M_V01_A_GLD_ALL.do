@@ -10,24 +10,24 @@
 <_Date created_>				2022-01-21 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						CHL </_Country_>
-<_Survey Title_>				 </_Survey Title_>
+<_Survey Title_>			CASEN	 </_Survey Title_>
 <_Survey Year_>					1990 </_Survey Year_>
-<_Study ID_>					 </_Study ID_>
-<_Data collection from_>		[N/A] </_Data collection from_>
-<_Data collection to_>			[N/A] </_Data collection to_>
-<_Source of dataset_> 			CASEN </_Source of dataset_>
-<_Sample size (HH)_> 			 </_Sample size (HH)_>
-<_Sample size (IND)_> 			 </_Sample size (IND)_>
-<_Sampling method_> 			 </_Sampling method_>
-<_Geographic coverage_>
+<_Study ID_>					[N/A] </_Study ID_>
+<_Data collection from_>		November 1990 </_Data collection from_>
+<_Data collection to_>			December 1990 </_Data collection to_>
+<_Source of dataset_> 			Ministerio de Desarrollo Social y Familia Chile </_Source of dataset_>
+<_Sample size (HH)_> 			25793 </_Sample size (HH)_>
+<_Sample size (IND)_> 		105189	 </_Sample size (IND)_>
+<_Sampling method_> 			random sampling, compact conglomerates,stratified gepgraphically based on urban rua and non proportional distribution of surveys across strata.  </_Sampling method_>
+<_Geographic coverage_> National </_Geographic coverage_>
 <_Currency_> 					Chilean Pesos </_Currency_>
 -----------------------------------------------------------------------
-<_ICLS Version_>				</_ICLS Version_>
-<_ISCED Version_>				 </_ISCED Version_>
-<_ISCO Version_>				 </_ISCO Version_>
-<_OCCUP National_>			 </_OCCUP National_>
-<_ISIC Version_>			 </_ISIC Version_>
-<_INDUS National_>				  </_INDUS National_>
+<_ICLS Version_>		[N/A]		</_ICLS Version_>
+<_ISCED Version_>		[N/A]		 </_ISCED Version_>
+<_ISCO Version_>			ISCO 1988	 </_ISCO Version_>
+<_OCCUP National_>		ISCO 1988	 </_OCCUP National_>
+<_ISIC Version_>			ISIC REV 2 </_ISIC Version_>
+<_INDUS National_>		ISIC REV 2 </_INDUS National_>
 -----------------------------------------------------------------------
 <_Version Control_>
 * Date: [YYYY-MM-DD] - [Description of changes]
@@ -235,7 +235,7 @@ label values subnatid2 lblsubnatid2
 
 *<_subnatid3_>
 	gen subnatid3 = comu
-	*label de lblsubnatid3 
+	*label de lblsubnatid3
 	*label values subnatid3 lblsubnatid3
 	label var subnatid3 "Subnational ID at Third Administrative Level"
 *</_subnatid3_>
@@ -711,25 +711,8 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_>
+*problem with codes
 	gen occup_isco=occup_orig
-	/*replace occup_isco="01" if occup_orig=="0"
-	replace occup_isco="11" if occup_orig=="1"
-	replace occup_isco="21" if occup_orig=="2"
-	replace occup_isco="31" if occup_orig=="3"
-	replace occup_isco="41" if occup_orig=="4"
-	replace occup_isco="51" if occup_orig=="5"
-	replace occup_isco="61" if occup_orig=="6"
-	replace occup_isco="71" if occup_orig=="7"
-	replace occup_isco="11" if occup_orig=="10"
-	replace occup_isco="21" if occup_orig=="20"
-	replace occup_isco="31" if occup_orig=="30"
-	replace occup_isco="41" if occup_orig=="40"
-	replace occup_isco="51" if occup_orig=="50"
-	replace occup_isco="61" if occup_orig=="60"
-	replace occup_isco="71" if occup_orig=="70"
-	replace occup_isco="81" if occup_orig=="80"
-	replace occup_isco="91" if occup_orig=="90"*/
-	*probelm with two digit specifications
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
