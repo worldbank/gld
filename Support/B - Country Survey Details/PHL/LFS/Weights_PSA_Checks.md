@@ -3,22 +3,17 @@ Geographic Administrative Levels
 
 -   [Weights and PSA Checks](#weights-and-psa-checks)
     -   [Weight Variables](#weight-variables)
-    -   [Expanded Population + Labor Force Participation by
-        Year](#expanded-population--labor-force-participation-by-year)
+    -   [Expanded Population + Labor Force Participation by Year](#expanded-population--labor-force-participation-by-year)
     -   [Labor Force Participation](#labor-force-participation)
 
 # Weights and PSA Checks
 
-Lightweight manual checks to ensure that final appended weight variables
-and Labor Force Participation measures align with figures in PSA
+Lightweight manual checks to ensure that final appended weight variables and Labor Force Participation measures align with figures in PSA
 publications.
 
 ## Weight Variables
 
-This table clarifies the raw weight variable that is used in GLD in
-order to emulate the closest results possible to those from the PSA.
-Year years 1998-2001 only include one data file. All raw weight
-variables are appended into `wgt` in the GLD final dataset.
+This table clarifies the raw weight variable that is used in GLD in order to emulate the closest results possible to those from the PSA. Year years 1998-2001 only include one data file. All raw weight variables are appended into `wgt` in the GLD final dataset.
 
 | Year | January    | April      | July       | October    |
 |------|------------|------------|------------|------------|
@@ -48,13 +43,7 @@ variables are appended into `wgt` in the GLD final dataset.
 
 ## Expanded Population + Labor Force Participation by Year
 
-This table gives the expanded population for the appended, four-round
-dataset for the entire year. It should generally reflect the population
-of the Philippines at that time, but for some years it does not. All
-effort has been made to ensure that the raw, incoming weight data has
-been coded appropriately. All numbers are reported in millions
-(1,000,000) of people ages 15 and over (inclusive). The Annual PSA
-reports are only available starting in 2016.
+This table gives the expanded population for the appended, four-round dataset for the entire year. It should generally reflect the population of the Philippines at that time, but for some years it does not. All effort has been made to ensure that the raw, incoming weight data has been coded appropriately. All numbers are reported in millions (1,000,000) of people ages 15 and over (inclusive). The Annual PSA reports are only available starting in 2016. 
 
 | Year | GLD Expanded Population | PSA Stated Population | GLD LFP | PSA LFP |
 |------|-------------------------|-----------------------|---------|---------|
@@ -82,22 +71,13 @@ reports are only available starting in 2016.
 | 2018 | 73.6 M                  | 71.3 M                | 60.92%  | 60.9%   |
 | 2019 | 75.1 M                  | 72.9 M                | 61.28%  | 61.3%   |
 
-Source: [PSA Labor Force Survey
-Releases](https://psa.gov.ph/statistics/survey/labor-and-employment/labor-force-survey)
+Source: [PSA Labor Force Survey Releases](https://psa.gov.ph/statistics/survey/labor-and-employment/labor-force-survey)
 
 ## Labor Force Participation
 
-This table gives select year-round labor force participation figures
-from our final datasets and from the PSA’s publication. Note that only
-relevant observations were included in our datasets for analysis – e.g.,
-only Janurary/round 1 observations when comparing to the PSA’s January
-publication for that year. Labor Force Participation includes the
-percent of observations who report as employed or unemployed; it
-excludes those who are not in the labor force.
+This table gives select year-round labor force participation figures from our final datasets and from the PSA’s publication. Note that only relevant observations were included in our datasets for analysis – e.g., only Janurary/round 1 observations when comparing to the PSA’s January publication for that year. Labor Force Participation includes the percent of observations who report as employed or unemployed; it excludes those who are not in the labor force.
 
-The GLD Figures can be obtained on any final year dataset with the
-following command in Stata, or by running the `weights_util.do` script
-available on the repository.
+The GLD Figures can be obtained on any final year dataset with the following command in Stata, or by running the `weights_util.do` script available on the repository.
 
 ``` stata
 tab lstatus [aw=wgt]            ///
@@ -118,6 +98,4 @@ tab lstatus [aw=wgt]            ///
 | 2016 | (round 1) January | 69.4           | 67.1 M         | 63.31 % | 63.3 %  |
 | 2017 | (round 2) April   | 71.9 M         | 69.6 M         | 61.36 % | 61.4 %  |
 
-Source: Philippine Statistics Authority Integrated Survey of Household
-Bulletins, [PSA Labor Force Survey
-Releases](https://psa.gov.ph/statistics/survey/labor-and-employment/labor-force-survey)
+Source: Philippine Statistics Authority Integrated Survey of Household Bulletins, [PSA Labor Force Survey Releases](https://psa.gov.ph/statistics/survey/labor-and-employment/labor-force-survey)

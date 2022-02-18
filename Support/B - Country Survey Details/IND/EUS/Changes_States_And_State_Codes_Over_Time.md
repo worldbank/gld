@@ -21,4 +21,4 @@ The second strategy is to classify states of the current days as if they had exi
 
 ## Unifying state codes
 
-To aid with unifying the codes into a single data file please see the Excel file with the [overview of state change codes](/Support/Country%20Survey%20Details/IND/EUS/utilities/IND_EUS_State_Code_Changes.xlsx).
+To aid with unifying the codes into a single data file please see the Excel file with the [overview of state change codes](utilities/IND_EUS_State_Code_Changes.xlsx).

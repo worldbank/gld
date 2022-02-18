@@ -16,20 +16,13 @@ Education Levels: Philippines GLD
     -   [Notes specific to the 2017 PSCED
         Classification](#notes-specific-to-the-2017-psced-classification)
 
-The following label classification explain the codification from raw
-survey label levels to GLD categories. Note that, according to the 2017
-Philippine Standard Classification of Education document, the education
-system was adjusted in 2018 in accordance with new legislation, linked
-[here](http://www.unesco.org/education/edurights/media/docs/e119986abbd26ebda9c3d8c18929b4487205d4d6.pdf).
-It appears both in the 2017 PSCED and the data labels that this change
-did not occur until the 2018 year, meaning that data for 2017 is still
-classified under the old system.
+The following label classification explain the codification from raw survey label levels to GLD categories. Note that, according to the 2017 Philippine Standard Classification of Education document, the education system was adjusted in 2018 in accordance with new legislation, linked [here](http://www.unesco.org/education/edurights/media/docs/e119986abbd26ebda9c3d8c18929b4487205d4d6.pdf).
+
+It appears both in the 2017 PSCED and the data labels that this change did not occur until the 2018 year, meaning that data for 2017 is still classified under the old system.
 
 ## Survey Years 1997 - 2011 (PSCED 1997)
 
-Luckily the education levels are fairly self explanatory for the first
-few years. In 2008 PSCED, we see that there is no level in 1997 schema
-for post-secondary or “secondary but not university” level.
+Luckily the education levels are fairly self explanatory for the first few years. In 2008 PSCED, we see that there is no level in 1997 schema for post-secondary or “secondary but not university” level.
 
 | PSA Labels / Ranges of Labels  | GLD Level                         | Notes |
 |--------------------------------|-----------------------------------|-------|
@@ -42,24 +35,15 @@ for post-secondary or “secondary but not university” level.
 
 ### Values Specific to PSCED 1997
 
-Note that in PSA documentation for [previous
-years](http://psada.psa.gov.ph/index.php/catalog/11/datafile/F5), values
-`40` - `98` refer to what appear to be completed bachelors or other
-advanced degrees. I code these values as
-`University Complete or Incomplete`.
+Note that in PSA documentation for [previous years](http://psada.psa.gov.ph/index.php/catalog/11/datafile/F5), values `40` - `98` refer to what appear to be completed bachelors or other advanced degrees. I code these values as `University Complete or Incomplete`.
 
 ### Notes Specific to PSCED 1997
 
-It seems that “College” usually refers to Post-secondary/Tertiary
-University in the labeling since [the most recent/similar
-documentation](http://psada.psa.gov.ph/index.php/catalog/11/datafile/F5)
-makes no reference to post-secondary, non-university education.
+It seems that “College” usually refers to Post-secondary/Tertiary University in the labeling since [the most recent/similar documentation](http://psada.psa.gov.ph/index.php/catalog/11/datafile/F5) makes no reference to post-secondary, non-university education.
 
 ## Survey Years 2012 - 2018 (PSCED 2008)
 
-These survey years appear to be coded according to the 2008 Philippine
-Statistical Classification of Education Document, accessible
-[here](https://psa.gov.ph/content/philippine-standard-classification-education-psced).
+These survey years appear to be coded according to the 2008 Philippine Statistical Classification of Education Document, accessible [here](https://psa.gov.ph/content/philippine-standard-classification-education-psced).
 
 ### Education levels
 
@@ -101,92 +85,38 @@ Statistical Classification of Education Document, accessible
 
 ### Values specific to the 2008 PSCED
 
-Note that PSA documentation for [other years in the same
-schema](http://psada.psa.gov.ph/index.php/catalog/175/datafile/F1) lists
-values between `502` and `689` as various completed degrees for
-associate-level, pre-professional programs. I will assume these values
-refer to these same programs, and code them as
-`Post-Secondary, not University`.
+Note that PSA documentation for [other years in the same schema](http://psada.psa.gov.ph/index.php/catalog/175/datafile/F1) lists values between `502` and `689` as various completed degrees for associate-level, pre-professional programs. I will assume these values refer to these same programs, and code them as `Post-Secondary, not University`.
 
 ### Notes specific to 2008 PSCED
 
-Some years contain two education grade variables that appear to
-correspond to the grade level under the 1997 and 2008 classification
-schemas – ie, two variable in the same survey round or data file.
-Sometimes this varible is called `c09_grd` for the old schema and
-usually the variable for the new schema is called `j12c09_grade`. While
-it may be convenient to use the 1997-schema variable, I decided to use
-the 2008-year one (usually the `j12c09_grade`) because it wasn’t clear
-that all years contained the 1997 year cognate variable and because, in
-theory, these years should be classified under the new schema anyway.
+Some years contain two education grade variables that appear to correspond to the grade level under the 1997 and 2008 classification schemas – ie, two variable in the same survey round or data file. Sometimes this varible is called `c09_grd` for the old schema and usually the variable for the new schema is called `j12c09_grade`. While
+it may be convenient to use the 1997-schema variable, I decided to use the 2008-year one (usually the `j12c09_grade`) because it wasn’t clear that all years contained the 1997 year cognate variable and because, in theory, these years should be classified under the new schema anyway.
 
-Furthermore, some years, such as 2016, have various names for the
-“highest grade completed” variable for within-year rounds, but *usually*
-only one variable in each file, but not always. We have to be very
-mindful of the variable names that refer to the new, 2008 coding schema
-and the old coding schema. An easy way to distinguish is the new coding
-schema variable has far more numeric or factor levels. In 2016, we want
-to use `j12c09_grade` in the January round, (not `c09_grd`),
-`pufc07_grade` in April, July, and October rounds.
+Furthermore, some years, such as 2016, have various names for the “highest grade completed” variable for within-year rounds, but *usually* only one variable in each file, but not always. We have to be very mindful of the variable names that refer to the new, 2008 coding schema and the old coding schema. An easy way to distinguish is the new coding schema variable has far more numeric or factor levels. In 2016, we want to use `j12c09_grade` in the January round, (not `c09_grd`), `pufc07_grade` in April, July, and October rounds.
 
 #### Additional Notes for survey year 2016
 
-Once the variable names for 2016 have been harmonized, the values
-themselves differ across rounds/months within 2016. (A small caveat is
-that the January values are labelled factors whereas the following three
-rounds are unlabeled integers, but the January values have integer
-values behind the labels, and these numeric values are the values to
-which I’m referring.)
+Once the variable names for 2016 have been harmonized, the values themselves differ across rounds/months within 2016. (A small caveat is that the January values are labelled factors whereas the following three rounds are unlabeled integers, but the January values have integer values behind the labels, and these numeric values are the values to which I’m referring.)
 
-The numeric values for January and April coincide; values for July and
-October coincide, but these two groups of values differ from each other.
-The January/April group most closely aligns with the 2016 survey
-published by the PSA. Since the July/October values have no value labels
-and there’s no reasonable inference to classify the values, I’m only
-going to categorize education for the first two rounds and leave the
-observations for July and October as missing for the time being.
+The numeric values for January and April coincide; values for July and October coincide, but these two groups of values differ from each other. The January/April group most closely aligns with the 2016 survey published by the PSA. Since the July/October values have no value labels and there’s no reasonable inference to classify the values, I’m only going to categorize education for the first two rounds and leave the observations for July and October as missing for the time being.
 
 #### Additional Notes for survey year 2017
 
-All rounds for 2017 seems to follow the same numeric schema set in the
-July/October grouping of 2016. However, the situation is slightly
-different from that of 2016: all rounds/months have the same numeric
-values and the values labels do not contain key levels such as those
-that indicate secondary completion. Furthermore, there is descriptive
-evidence to assume that the values in 2017 are the same “meaning” as the
-values in 2018, which are labelled and follow about the same
-distribution and value pattern. `Education_2017_Checks.Rmd` produces
-this evidence by comparing the distribution of values for education
-attainment in 2017 and 2018. For the time being, I will assume that,
-without complete value labels in 2017, that the similarly-distributed
-values in 2018 will suffice.
+All rounds for 2017 seems to follow the same numeric schema set in the July/October grouping of 2016. However, the situation is slightly different from that of 2016: all rounds/months have the same numeric values and the values labels do not contain key levels such as those that indicate secondary completion. Furthermore, there is descriptive evidence to assume that the values in 2017 are the same “meaning” as the values in 2018, which are labelled and follow about the same distribution and value pattern. `Education_2017_Checks.Rmd` produces this evidence by comparing the distribution of values for education attainment in 2017 and 2018. For the time being, I will assume that, without complete value labels in 2017, that the similarly-distributed values in 2018 will suffice.
 
 #### Additional Notes for survey year 2018
 
-All relevant raw “grade” variables are in labelled factor form, so no
-cross-checking of numeric/factor data types is needed as in 2016.
+All relevant raw “grade” variables are in labelled factor form, so no cross-checking of numeric/factor data types is needed as in 2016. 
 
 ## Survey Years 2019 +
 
-These survey years follow the newest PSA classification for
-[2017](https://psa.gov.ph/content/philippine-standard-classification-education-psced).
-The biggest difference in these years is the inclusion of two additional
-years in secondary school.
+These survey years follow the newest PSA classification for [2017](https://psa.gov.ph/content/philippine-standard-classification-education-psced). The biggest difference in these years is the inclusion of two additional years in secondary school.
 
 ### Education Levels
 
-Note that Secondary now includes 4 years of Junior High School and 2
-years of Senior High School. Also, this classification scheme
-specifically denotes tracks for special needs education, but does not
-provide enough information for our classification requirements.
+Note that Secondary now includes 4 years of Junior High School and 2 years of Senior High School. Also, this classification scheme specifically denotes tracks for special needs education, but does not provide enough information for our classification requirements.
 
-The big unknown is K-12 Programs. The 2017 PSCED doesn’t have any
-explicit information on what should be done with K-12 programs. For now,
-I will simply make the assumption that `grade 1` in K-12 corresponds to
-`grade 1` in the chart below. I will also assume that if the student has
-completed `grade 6` and `grade 12` then they have completed Primary and
-Secondary respectively, since under the new schema, secondary has been
-expanded from 4 to 6 years, which would correspond to grade 12.
+The big unknown is K-12 Programs. The 2017 PSCED doesn’t have any explicit information on what should be done with K-12 programs. For now, I will simply make the assumption that `grade 1` in K-12 corresponds to `grade 1` in the chart below. I will also assume that if the student has completed `grade 6` and `grade 12` then they have completed Primary and Secondary respectively, since under the new schema, secondary has been expanded from 4 to 6 years, which would correspond to grade 12.
 
 | Group                       | Typical Age | Levels in group |
 |-----------------------------|-------------|-----------------|
@@ -220,51 +150,19 @@ expanded from 4 to 6 years, which would correspond to grade 12.
 
 ### Notes specific to the 2017 PSCED Classification
 
-Similar to some of the years in the 2008 PSCED Classification above,
-some survey years have values within the same year, between
-different-month rounds that do not correspond. Also similarly, some of
-these “mismatched” values are labelled, and some are not.
+Similar to some of the years in the 2008 PSCED Classification above, some survey years have values within the same year, between different-month rounds that do not correspond. Also similarly, some of these “mismatched” values are labelled, and some are not.
 
 #### Additional Notes for survey year 2019
 
-The first two rounds of 2019, January and April, are factor labelled
-data types and the second two, July and October, are integer, without
-labels. The underlying value labels for all may, in theory, be the same.
-However, the underlying values for the first two rounds are slightly
-different than those of the second two. The PSCED 2017 codebooks is
-quite extensive and clear that the values and labels for the first two
-rounds are *almost* exactly correct, expect for a few exception in early
-school year groupings: it appears that the some education categories
-have been grouped and the resulting grouping has been formed into a
-numeric value that does not appear in the codebook.
+The first two rounds of 2019, January and April, are factor labelled data types and the second two, July and October, are integer, without labels. The underlying value labels for all may, in theory, be the same. However, the underlying values for the first two rounds are slightly different than those of the second two. The PSCED 2017 codebooks is uite extensive and clear that the values and labels for the first two rounds are *almost* exactly correct, expect for a few exception in early school year groupings: it appears that the some education categories have been grouped and the resulting grouping has been formed into a numeric value that does not appear in the codebook.
 
-For example, instead of listing out the “raw” values for grade 1, grade
-2, grade 3, grade 4, and grade 5 – and making labels for each – the data
-has been constructed with a “new” value `y` that represents “grades 1-5”
-with a label such as “Grades 1-5”. Neither this value nor label appear
-in the 2017 PSCED, nor the numeric versions of the variables in other
-rounds. The original values that represent grades 1, grades 2, grades 3,
-etc do not appear in the factor labelled data variables, nor is there an
+For example, instead of listing out the “raw” values for grade 1, grade 2, grade 3, grade 4, and grade 5 – and making labels for each – the data has been constructed with a “new” value `y` that represents “grades 1-5” with a label such as “Grades 1-5”. Neither this value nor label appear in the 2017 PSCED, nor the numeric versions of the variables in other rounds. The original values that represent grades 1, grades 2, grades 3, etc do not appear in the factor labelled data variables, nor is there an
 “original” integer variable available.
 
-This “grouping” appears to have been constructed for: - grades 1 - 5 -
-grades 7 - 9
+This “grouping” appears to have been constructed for: - grades 1 - 5 - grades 7 - 9
 
-Furthermore, there are key non-grouped levels that, similarly, do not
-appear in the 2017 PSCED codebook, including those for: - Grade 10, but
-whose value *does not* appear in the integer data for other rounds -
-Grade 11, and whose value *does* appear in the integer data for other
-rounds - Grade 12, and whose value *does* appear in the integer data for
-other rounds
+Furthermore, there are key non-grouped levels that, similarly, do not appear in the 2017 PSCED codebook, including those for: - Grade 10, but whose value *does not* appear in the integer data for other rounds - Grade 11, and whose value *does* appear in the integer data for other rounds - Grade 12, and whose value *does* appear in the integer data for other rounds
 
-Additionally, for the integer-labelled data (July and October rounds),
-there are a number of numeric values that do not appear in the PSCED
-2017 Codebook, similarly to the 2008 Schema situation. While many of
-these values could be inferred based on patterns and counts from
-previous years (ie, clusters of digits that end in 1, 2, and 3 refer to
-primary grades 1, 2, and 3), there’s no way to confirm these inferences
-– they are merely guesses without some sort of documentation evidence.
-For the time being, I am simply going to leave the education levels
-missing for the final two rounds until more information can be gathered,
-which seems the safest choice for now. Thus, I will only code based on
-the labelled factor/January and April rounds initially.
+Additionally, for the integer-labelled data (July and October rounds), there are a number of numeric values that do not appear in the PSCED 2017 Codebook, similarly to the 2008 Schema situation. While many of these values could be inferred based on patterns and counts from previous years (ie, clusters of digits that end in 1, 2, and 3 refer to primary grades 1, 2, and 3), there’s no way to confirm these inferences – they are merely guesses without some sort of documentation evidence.
+
+For the time being, I am simply going to leave the education levels missing for the final two rounds until more information can be gathered, which seems the safest choice for now. Thus, I will only code based on the labelled factor/January and April rounds initially.

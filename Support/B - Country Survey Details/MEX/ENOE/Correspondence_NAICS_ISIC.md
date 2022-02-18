@@ -9,7 +9,7 @@ This document first describes the logic of the process and then provides users w
 The image below shows the answers to the relevant question (`p4a1` asks for the industry the company the respondent works for is in) for the dataset from the first quarter of 2010:
 
 <br></br>
-![SCIAN ENOE example](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/scian_example_2010.PNG)
+![SCIAN ENOE example](utilities/scian_example_2010.PNG)
 <br></br>
 
 There are two things to note here. The first is that the information is at the four digit level (length of `p4a` is always 4), while NAICS is structured as a 6 digit system. Secondly, in some cases the information is only at the three-digit level. This is when the last digit is a zero (see higlighted cases above). The questionnaire allows respondents to describe their industry and this description is later converted into a code by the enumerators. If the information is insufficient to make a four-digit classification a higher level classification is done and the three-digit coded is padded with a zero so that all answers hace the same length. Note finally that the shown 14 codes cover 50% of all answers.
@@ -19,7 +19,7 @@ There are two things to note here. The first is that the information is at the f
 The Mexican Statistics Institute INEGI has [website dedicated to NAICS](https://www.inegi.org.mx/app/scian/) where it stores general information in the classificaiton and - most importantly for concordance purposes -  comparative tables between the different NAICS versions and the different ISCO versions. The image below shows the available comparisons in July 2021:  
 
 <br></br>
-![SCIAN available options](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/scian_options.png)
+![SCIAN available options](utilities/scian_options.png)
 <br></br>
 
 Of importance for the years covered by GLD (2005 to 2020) are the four classifications highlighted. Of the four, the latter three are mapped to ISIC Revision 4 while the earliest (NAICS 2002) is mapped to ISIC Revision 3.1.
@@ -27,7 +27,7 @@ Of importance for the years covered by GLD (2005 to 2020) are the four classific
 The information is available as both a PDF and an Excel File. The image below shows the first lines of the first sheet of the 2007 to ISIC 4 Excel document:
 
 <br></br>
-![SCIAN Excel example](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/scian_07_example_xlsx.PNG)
+![SCIAN Excel example](utilities/scian_07_example_xlsx.PNG)
 <br></br>
 
 Note how the first sheet contains the NAICS to ISIC mapping, while the second sheet maps the inverse relation. Note further that NAICS codes are all at 6 digit level in the comparison tables provided by the National Statistics Office (NSO) while the ISIC code is just at 4 digits.
@@ -35,7 +35,7 @@ Note how the first sheet contains the NAICS to ISIC mapping, while the second sh
 The last piece of information to understand before proceeding with creating a mapping `.dta` that can be used in the harmonization is the fact that mapping is not perfect in the correspondence tables provided by the NSO. In the above image this is the case (e.g., 111121 maps to 0111) but this is not always so. The image below shows how NAICS code 111410 maps to five (!) different and distinct ISIC codes.
 
 <br></br>
-![SCIAN Imperfect Matching](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/scian_imperfect_match.png)
+![SCIAN Imperfect Matching](utilities/scian_imperfect_match.png)
 <br></br>
 
 ## Creating a map between NAICS and ISIC
@@ -55,7 +55,7 @@ The first step in the process is to reduce the NSO correspondece six-digit syste
 The second step is to compare the correspondence of NAICS four-digit codes to ISIC four-digit codes, and count the number of total cases and the number of matches to each code. The image below shows this process for some of the first codes:
 
 <br></br>
-![SCIAN Reducation Logic](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/scian_07_2010_match_1.PNG)
+![SCIAN Reducation Logic](utilities/scian_07_2010_match_1.PNG)
 <br></br>
 
 The table shows  that of the 16 codes that start with `1111` all of them match to ISIC code `0111`, while one matches to `0112`. The 9 NAICS codes that start with `1112` match to three different ISIC four digit codes. However, further down, codes starting with `1121` and `1122` all match to one specific four-digit ISIC code - perfect matches.At this stage, only perfect matches are kept. All other matches (i.e., those like `1111` and `1112`) are sent to the third step.
@@ -63,7 +63,7 @@ The table shows  that of the 16 codes that start with `1111` all of them match t
 The third step matches each four-digit NAICS code at the three-digit level to the three digit ISIC equivalent. This is exemplified in the snapshot below:
 
 <br></br>
-![SCIAN Reducation Logic](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/scian_match_2_df_example.PNG)
+![SCIAN Reducation Logic](utilities/scian_match_2_df_example.PNG)
 <br></br>
 
 At this level, all 17 NAICS codes starting with `1111` map to an ISIC code starting with `011` (i.e., `pct` value is 100). Now we have a perfect match for it as well. For NAICS codes starting with `1112` there is no such perfect match. 8 out of 9 map to ISIC codes starting with `011` but one maps to `0112`. Again we only keep perfect matches. Also, the next step may seem already clear, that is, to map the four-digit NAICS code to ISIC two-digit codes. It is clear from the above image that this will yield a perfect match for `1112` as both start with `01`.
@@ -71,7 +71,7 @@ At this level, all 17 NAICS codes starting with `1111` map to an ISIC code start
 Hence, the fourth step comparres NAICS four-digit to ISIC two-digit. The image below shows what was said, codes starting with `1112` can be mapped perfectly to ISIC `01`. 
 
 <br></br>
-![SCIAN Reducation Logic](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/scian_match_3_df_example.PNG)
+![SCIAN Reducation Logic](utilities/scian_match_3_df_example.PNG)
 <br></br>
 
 The difference at this point is that two digits is the lowest classification we can do for ISIC. Hence we cannot just keep perfect matches. At this stage, the most common match is kept. Looking at the image above this means that for NAICS codes starting with `1114` these will be mapped to ISIC code `01`. The most difficult cases are when there are ties, as is the case for NAICS codes starting with `1133` or `2221`. In these cases one two digit ISIC code is chosen at random. A seed is set in the code to ensure that the randomisation always picks the same code.
@@ -81,13 +81,13 @@ Recalling the tabulation shown at the top of this explainer, even though the ENO
 After reducing all six-digit codes to three-digit codes, the comparison is made to the ISIC three-digit codes.  The image below shows the comparison where we see that codes starting with `111` map mostly to `011` and `012` but not to one uniquely. As previously only perfect matches are kept.
 
 <br></br>
-![SCIAN Reducation Logic](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/scian_match_d_df_example.PNG)
+![SCIAN Reducation Logic](utilities/scian_match_d_df_example.PNG)
 <br></br>
 
 Of the not perfect matches (as was the case for `111`) these are mapped to ISIC two-digit codes. As this is the smallest unit, as with NAICS four-digit codes now we map to the most common group. The image below shows this process:
 
 <br></br>
-![SCIAN Reducation Logic](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/scian_match_d2_df_example.PNG)
+![SCIAN Reducation Logic](utilities/scian_match_d2_df_example.PNG)
 <br></br>
 
 NAICS codes starting with `111` do not map perfectly but nearly all of the codes that start by it map to ISIC `01`. In this case, chosing the most common class is a good choice. For codes starting with `222`, however, this is more difficult. Here, again, the choice is made at random.
@@ -95,7 +95,7 @@ NAICS codes starting with `111` do not map perfectly but nearly all of the codes
 The final stage is to put together all different matches into a single data frame, pad zeroes to make sure both NAICS and ISIC codes are of lenght four, and export it as a `.dta` file (into `MEX_[YYYY]_ENOE\MEX_[YYYY]_ENOE_v01_M\Data\Stata`) to be merged. The final `.dta` file looks like this:
 
 <br></br>
-![SCIAN Reducation Logic](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/example_concordance_output.PNG)
+![SCIAN Reducation Logic](utilities/example_concordance_output.PNG)
 <br></br>
 
 ### Merging the correspondence with the survey data
@@ -103,7 +103,7 @@ The final stage is to put together all different matches into a single data fram
 The data is merged in the harmonization at the first stage of database assembly (see individual harmonization codes). In the case of the 2010 ENOE there are 166,283 individuals for which the survey has an industry NAICS code. The correspondence process is able to match to 160,698 of those (96.6%). The image below shows the quality of the matches made:
 
 <br></br>
-![SCIAN Reducation Logic](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/matching_outcome.png)
+![SCIAN Reducation Logic](utilities/matching_outcome.png)
 <br></br>
 
 The histogram on the left hand side shows that about three quarters of the observations are to perfect or nearly perfect matches (recall the match of `111` to `01` earlier) and nearly all are above 60%. However, there are a few worse matches. The right hand side shows the tabulation result in Stata. Recall that Stata will order observations alphanumerically (i.e., it starts with 25, the worst match, here and goes down to 100). That means that only 6.09% of observations have a match of 60% or worse. Nearly two thirds have a perfect match, while 85% of observations have a match of 66.7%.
@@ -134,20 +134,20 @@ A further extension, which may help in creating better matches is to use the tex
 ## Underlying data for emulating process
 The harmonization codes merge in `dta` files created from the correspondence tables shown above using the algorithmic logic described in this document. In particular we use:
 
-- [The correspondence table between SCIAN 02 and ISIC 3.1](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/SCIAN_02_ISIC_3.1.xlsx);
-- [The correspondence table between SCIAN 07 and ISIC 4](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/SCIAN_07_ISIC_4.xlsx);
-- [The correspondence table between SCIAN 13 and ISIC 4](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/SCIAN_13_ISIC_4.xlsx);
-- [The correspondence table between SCIAN 18 and ISIC 4](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/SCIAN_18_ISIC_4.xlsx).
+- [The correspondence table between SCIAN 02 and ISIC 3.1](utilities/SCIAN_02_ISIC_3.1.xlsx);
+- [The correspondence table between SCIAN 07 and ISIC 4](utilities/SCIAN_07_ISIC_4.xlsx);
+- [The correspondence table between SCIAN 13 and ISIC 4](utilities/SCIAN_13_ISIC_4.xlsx);
+- [The correspondence table between SCIAN 18 and ISIC 4](utilities/SCIAN_18_ISIC_4.xlsx).
 
 Each of these correspondence tables are read in by each of the analogous `R` codes:
-- [The `R` code to map SCIAN 03 to ISIC 3.1](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/SCIAN_02_ISIC_3.1.R);
-- [The `R` code to map SCIAN 07 to ISIC 4](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/SCIAN_07_ISIC_4.R);
-- [The `R` code to map SCIAN 13 to ISIC 4](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/SCIAN_13_ISIC_4.R);
-- [The `R` code to map SCIAN 18 to ISIC 4](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/SCIAN_18_ISIC_4.R).
+- [The `R` code to map SCIAN 03 to ISIC 3.1](utilities/SCIAN_02_ISIC_3.1.R);
+- [The `R` code to map SCIAN 07 to ISIC 4](utilities/SCIAN_07_ISIC_4.R);
+- [The `R` code to map SCIAN 13 to ISIC 4](utilities/SCIAN_13_ISIC_4.R);
+- [The `R` code to map SCIAN 18 to ISIC 4](utilities/SCIAN_18_ISIC_4.R).
 
 These create then the used `dta` files:
-- [The `dta` file with codes for SCIAN 03 and ISIC 3.1](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/SCIAN_02_ISIC_3.1.dta);
-- [The `dta` file with codes for SCIAN 03 and ISIC 4](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/SCIAN_07_ISIC_4.dta);
-- [The `dta` file with codes for SCIAN 03 and ISIC 4](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/SCIAN_13_ISIC_4.dta);
-- [The `dta` file with codes for SCIAN 03 and ISIC 4](/Support/Country%20Survey%20Details/MEX/ENOE/utilities/SCIAN_18_ISIC_4.dta).
+- [The `dta` file with codes for SCIAN 03 and ISIC 3.1](utilities/SCIAN_02_ISIC_3.1.dta);
+- [The `dta` file with codes for SCIAN 03 and ISIC 4](utilities/SCIAN_07_ISIC_4.dta);
+- [The `dta` file with codes for SCIAN 03 and ISIC 4](utilities/SCIAN_13_ISIC_4.dta);
+- [The `dta` file with codes for SCIAN 03 and ISIC 4](utilities/SCIAN_18_ISIC_4.dta).
 
