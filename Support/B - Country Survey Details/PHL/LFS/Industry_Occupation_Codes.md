@@ -32,7 +32,7 @@ labels, can be found by running `label_tools.R`.
 
 | Scheme | PSCIC Version    | Years Applicable  | Characteristics | Coding methodology                                 |
 |:------:|:------:  |:------:   |:------:|:------:|
-| 1      | 1977     | 1997-2000 | [PSIC 1977 based on ISIC 68](utilities/phl1990cbi.pdf) but with two digits cannot discern   | `floor([var]/10)` then adjust by case |
+| 1      | 1977     | 1997-2000 | [PSIC 1977 based on ISIC 68](utilities/phl1990cbi.pdf) but with two digits cannot assign   | -------- |
 | 2      | 1994     | 2001-2011 | Departure from first-digit pattern, vals range from 1-99                              | `gen industry1 = .` then manually replace |
 | 3      | 2009     | 2012-2013 | Values range from 100 - 9999, first 2 digits usually correspond to key level          | code manually by ranges                   |
 | 4      | 2009     | 2014-2016 | Values range from 1-99 but first two digits correspond to same first two in scheme\#3 | `gen industry1 = .` then manually replace |
