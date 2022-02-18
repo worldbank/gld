@@ -236,7 +236,7 @@ merge 1:1 Person_key using "`path_in'\Block-6-Unemployed-Persons-Rcds", assert(m
 
 
 *<_veralt_>
-	gen veralt = "V01"
+	gen veralt = "V02"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
