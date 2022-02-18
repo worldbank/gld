@@ -46,7 +46,7 @@ Finally between the years 2012-2019 the survey used the two digits of the [ISCO-
 In the Harmonized GLD, skill level variables were developed for only ISCO-88 and ISCO-08 variables at the 1 digit level because the information of correspondance with ISCO-68 is not available in the ILO website. To learn more about skill level tables please visit the following [link](https://ilostat.ilo.org/resources/concepts-and-definitions/classification-occupation/):
 
 <br></br>
-![](/Support/Country%20Survey%20Details/TUR/HLFS/Utilities/isco.png)
+![](Utilities/isco.png)
 <br></br>
 
 Source: ILO website - ISCO skill Correspondance Table
@@ -60,7 +60,7 @@ In comparison to other surveys the process of mapping is straightforward in the 
 Below we list the questions that helped in the development of the harmonized occupation variable for all the survey years. 
 
 <br></br>
-![](/Support/Country%20Survey%20Details/TUR/HLFS/Utilities/qisco.png)
+![](Utilities/qisco.png)
 <br></br>
 
 

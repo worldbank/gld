@@ -5,7 +5,7 @@ The education section of the GLD harmonized dataset provides information to the 
 
 ## The education section in the harmonized file
 
-The education section contains variables that explain the concepts of literacy, education achieved and lenght of stay in formal education. To contruct these variables, the harmonization team used the variable age from the dataset and research papers with information about the education system changes in Turkey, the main external document used can be found [here](/Support/Country%20Survey%20Details/TUR/HLFS/Utilities/education_paper.pdf). 
+The education section contains variables that explain the concepts of literacy, education achieved and lenght of stay in formal education. To contruct these variables, the harmonization team used the variable age from the dataset and research papers with information about the education system changes in Turkey, the main external document used can be found [here](Utilities/education_paper.pdf). 
 
 ## Changes in the Turksish education system
 
@@ -13,7 +13,7 @@ The formal education system in turkey is divided into primary education, lower s
 
 Figure 1. Turskish education system
 <br></br>
-![image1](/Support/Country%20Survey%20Details/TUR/HLFS/Utilities/image1.png)
+![image1](Utilities/image1.png)
 <br></br>
 Source: OECD Review, Turkey (accessed january 2022) https://www.oecd-ilibrary.org//sites/71ee93b4-en/index.html?itemId=/content/component/71ee93b4-en#figure-d1e3886
 
@@ -36,13 +36,13 @@ As a result of the above the harmonization team decided to take in consideration
 Figure 1 . HLFS 2000 to 2013:
 
 <br></br>
-![educ2013](/Support/Country%20Survey%20Details/TUR/HLFS/Utilities/educ_2013.png)
+![educ2013](Utilities/educ_2013.png)
 <br></br>
 
 Figure 2 . HLFS 2014 to 2019:
 
 <br></br>
-![educ2014](/Support/Country%20Survey%20Details/TUR/HLFS/Utilities/educ_2014.png)
+![educ2014](Utilities/educ_2014.png)
 <br></br>
 
 ## Nature of the data
@@ -52,7 +52,7 @@ The data from year 2000 to 2013 contains population from ages 0 to 99 while the 
 ## References
 
 Feyza Gün, Gülsün Atanur Baskan,
-[New Education System in Turkey (4 +4 +4): A Critical Outlook](/Support/Country%20Survey%20Details/TUR/HLFS/Utilities/New_Ed_System_Turkey.pdf),
+[New Education System in Turkey (4 +4 +4): A Critical Outlook](Utilities/New_Ed_System_Turkey.pdf),
 Procedia - Social and Behavioral Sciences,
 Volume 131,
 2014,

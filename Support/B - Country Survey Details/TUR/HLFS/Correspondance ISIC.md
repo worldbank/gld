@@ -8,7 +8,7 @@ Information regarding the industry respondents is coded in the Turkish Household
 The image below shows the answers to the relevant question (`s33kod` asks for the economic activity of the local unit in which persons worked) of the 2010 survey :
 
 <br></br>
-![s33kod](/Support/Country%20Survey%20Details/TUR/HLFS/Utilities/s33kod.png)
+![s33kod](Utilities/s33kod.png)
 <br></br>
 
 The information is at the two digit level (length of `s33kod` has to be 4), while NACE is structured at a 4 digit level with the first level being a letter from the alphabeth. The information from the raw dataset is coded up to the two-digit numeric level. Thus, If the information is insufficient to make a four-digit classification a higher level classification is done and the two-digit code is padded with a zero so that all answers have the same length.
@@ -18,7 +18,7 @@ The information is at the two digit level (length of `s33kod` has to be 4), whil
 In the table below we show the from where NACE and ISIC become mappable. For instance, year 2009 is the first year correspondance between the two groups is possible because at the two digit level, the NACE REV 2 has correspondance to the code from ISIC REV 4 where the dataset has a two digit code. 
 
 <br></br>
-![qisic](/Support/Country%20Survey%20Details/TUR/HLFS/Utilities/qisic.png)
+![qisic](Utilities/qisic.png)
 <br></br>
 
 The RAMON website from the statitiscal office of the European Union has developed correspondance tables for NACE REV 2. to ISIC 4, the information is available [here](https://ec.europa.eu/eurostat/ramon/relations/index.cfm?TargetUrl=LST_LINK&StrNomRelCode=NACE%20REV.%202%20-%20ISIC%20REV.%204&StrLanguageCode=EN). 
@@ -29,7 +29,7 @@ The RAMON website from the statitiscal office of the European Union has develope
 Following the table below, we grouped the sections of ISIC REV. 4 on a two digit level and then manually looked for the correspondence to the sections in the NACE REV.2  
 
 <br></br>
-![corisic](/Support/Country%20Survey%20Details/TUR/HLFS/Utilities/corisic.png)
+![corisic](Utilities/corisic.png)
 <br></br>
 
 The result was used for yeard 2009 onwards to create the variable `industry_isic'.
