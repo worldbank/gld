@@ -345,7 +345,7 @@ merge 1:1 Person_key using `block7', keep(match master) nogen
 
 
 *<_veralt_>
-	gen veralt = "V01"
+	gen veralt = "V02"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
