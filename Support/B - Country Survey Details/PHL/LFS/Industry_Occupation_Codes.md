@@ -30,10 +30,7 @@ The codes for the industry classification of the main job, `industrycat10`, are 
 The raw data naturally spans different categorization schemes over time. Principally, there are the 1994 PSCIC and the [2009 PSCIC](http://psa.gov.ph/content/philippine-standard-industrial-classification-psic); the latter went into effect in January 2012. Since these codes are available on the PSA website and are quite detailed, a the most useful overview here is a short table that summarizes the changes in the metadata. A detailed version of this table, along with individual
 labels, can be found by running `label_tools.R`.
 
-| :------:			    | :------:		| :------:			|
-
 | Scheme | PSCIC Version    | Years Applicable  | Characteristics | Coding methodology                                 |
-
 |:------:|:------:  |:------:   |:------:|:------:|
 | 1      | 1977     | 1997-2000 | [PSIC 1977 based on ISIC 68](utilities/phl1990cbi.pdf) but with two digits cannot discern   | `floor([var]/10)` then adjust by case |
 | 2      | 1994     | 2001-2011 | Departure from first-digit pattern, vals range from 1-99                              | `gen industry1 = .` then manually replace |
