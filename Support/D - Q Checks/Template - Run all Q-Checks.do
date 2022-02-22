@@ -23,6 +23,10 @@ Mac expansion is intended but not yet tackled. Apologies
 ==================================================*/
 
 version 16
+
+* Set variable abbreviation off, as otherwise certain checks will fail
+* e.g., look if industry_orig exists evaluates as True if
+* industry_orig does *not* exist but industry_orig_2 does.
 set varabbrev off, permanently
 
 *----------0.1: Set necessary paths
