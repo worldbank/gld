@@ -206,6 +206,40 @@ foreach list of global cat_list_names { // loop through list of categorical glob
 } // end list of category lists
 
 
+*----------1.11: Check survey versions agree with version variables
+
+* First read filename (from last slash)
+local current_filename "`c(filename)'"
+local last_slash = strrpos("`current_filename'", "\")
+local current_filename = substr("`current_filename'", `last_slash' + 1, .)
+
+* Obtain position of master, alter (harmomize) versions
+local position_master = strrpos("`current_filename'", "_M_")
+local position_alter = strrpos("`current_filename'", "_A_")
+
+* Make locals with that info
+local eval_master = substr("`current_filename'", `position_master' - 3, 3)
+local eval_alter  = substr("`current_filename'", `position_alter'  - 3, 3)
+
+* Check master
+cap confirm variable vermast 
+if _rc == 0 { // if var exists since if not captured in 1.1
+	qui: count if vermast != "`eval_master'"
+	if `r(N)' > 0 { // The version do not agree
+		post `memhold' ("Overall") ("vermast") ("Version of Master per filename unequal to vermast") (.) (1)
+	} // end if there are case of disagreement
+} // end if var exists
+
+* Check alter
+cap confirm variable veralt 
+if _rc == 0 { // if var exists since if not captured in 1.1
+	qui: count if veralt != "`eval_alter'"
+	if `r(N)' > 0 { // The version do not agree
+		post `memhold' ("Overall") ("veralt") ("Version of Alter per filename unequal to vermalt") (.) (1)
+	} // end if there are case of disagreement
+} // end if var exists
+
+
 /*==================================================
               2: Consistency Survey & ID Module
 ==================================================*/
@@ -749,6 +783,31 @@ foreach var of global isco_check {
 	} // end var exists as string
 } // end loop over isco code vars
 
+
+*----------8.19: Check industry original variables versus industrycat10
+* Run them in pairs (global is written to work in pairs)
+foreach token of global industry_alignment{
+	
+	* Confirm pair exists, otherwise var missing done at the start
+	cap confirm variable `token'
+	if _rc == 0 {
+		
+		* Split the token into its elements
+		tokenize "`token'"
+		local orig "`1'"
+		local cat "`2'"
+		
+		* Check if number of non-missing answers is equal
+		qui : count if !missing(`1') & missing(`2')
+		if `r(N)' > 0 { // There are cases when indus_orig not missing but induscat is
+		
+		post `memhold' ("Labour") ("`token'") ("indus_orig not missing but induscat10 is (number of cases ->)") (`r(N)') (1)
+		
+		} // end recording odd cases
+		
+	}
+	
+}
 
 
 /*==================================================
