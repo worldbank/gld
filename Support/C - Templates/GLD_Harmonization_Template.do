@@ -1474,13 +1474,6 @@ quietly{
 }
 
 
-*<_% COMPRESS_>
-
-compress
-
-*</_% COMPRESS_>
-
-
 *<_% DELETE MISSING VARIABLES_>
 
 quietly: describe, varlist
@@ -1492,6 +1485,13 @@ foreach var of local kept_vars {
 }
 
 *</_% DELETE MISSING VARIABLES_>
+
+
+*<_% COMPRESS_>
+
+compress
+
+*</_% COMPRESS_>
 
 
 *<_% SAVE_>
