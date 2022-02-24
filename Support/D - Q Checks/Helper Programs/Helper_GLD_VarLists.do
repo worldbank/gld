@@ -152,7 +152,7 @@ global isic_check industrycat_isic industrycat_isic_2 industrycat_isic_year indu
 global isco_check occup_isco occup_isco_2 occup_isco_year occup_isco_2_year
 
 *----------14.8: Check industry_orig to industrycat10 agreements
-global industry_alignment `""industry_orig industrycat10" "industry_orig_2 industrycat10_2" "industry_orig_year industrycat10_year" "industry_orig_2_year industrycat10_2_year"""'
+global industry_alignment `""industry_orig industrycat10" "industry_orig_2 industrycat10_2" "industry_orig_year industrycat10_year" "industry_orig_2_year industrycat10_2_year""'
 
 
 /*==================================================
