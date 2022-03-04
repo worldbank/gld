@@ -54,7 +54,7 @@ global overall_count = `r(N)'
 local current_filename "`c(filename)'"
 local last_slash = strrpos("`current_filename'", "\")
 local current_filename = substr("`current_filename'", `last_slash' + 1, .)
-local check = regexm("`current_filename'", "^[a-zA-Z][a-zA-Z][a-zA-Z]_[0-9][0-9][0-9][0-9]_[a-zA-Z0-9-]+_[vV][0-9][0-9]_M_[vV][0-9][0-9]_A_[a-zA-Z][a-zA-Z][a-zA-Z]_[a-zA-Z]+\.dta")
+local check = regexm("`current_filename'", "^[a-zA-Z][a-zA-Z][a-zA-Z]_[0-9][0-9][0-9][0-9]_[a-zA-Z0-9-]+_[vV][0-9][0-9]_M_[vV][0-9][0-9]_A_[a-zA-Z][a-zA-Z][a-zA-Z]_[a-zA-Z_]+\.dta")
 if `check' == 0 { // filename does not follow convention
 	post `memhold' ("Overall") ("FileName") ("Filename being checked does not follow naming convention") (.) (1)
 }
