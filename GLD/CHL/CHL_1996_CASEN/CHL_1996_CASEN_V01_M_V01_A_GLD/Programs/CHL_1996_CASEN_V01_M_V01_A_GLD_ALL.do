@@ -18,7 +18,8 @@
 <_Source of dataset_> 			CASEN </_Source of dataset_>
 <_Sample size (HH)_> 	33636		 </_Sample size (HH)_>
 <_Sample size (IND)_> 	134262		 </_Sample size (IND)_>
-<_Sampling method_> 			random sampling, compact conglomerates,stratified gepgraphically based on urban rua and non proportional distribution of surveys across strata.  </_Sampling method_>
+<_Sampling method_> design is stratified two-stage in the self-represented communes and stratified three-stage in the non-represented.
+self-represented.  </_Sampling method_>
 <_Geographic coverage_> National </_Geographic coverage_>
 <_Currency_> 					Chilean Pesos </_Currency_>
 -----------------------------------------------------------------------
@@ -469,7 +470,7 @@ local letters "r p c z o seg f"
 
 *<_literacy_>
 	gen byte literacy = e1
-	recode literacy (2=0)
+	recode literacy (2=0) (9=.)
 	label var literacy "Individual can read & write"
 	la de lblliteracy 0 "No" 1 "Yes"
 	label values literacy lblliteracy
@@ -669,6 +670,8 @@ foreach v of local ed_var {
 *<_industry_orig_>
 	gen industry_orig = o7
 	tostring industry_orig, replace
+	replace industry_orig="" if o7==.
+	replace industry_orig="" if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
@@ -677,7 +680,7 @@ foreach v of local ed_var {
 *three digits , the following codes are not clear or do not match the guide 110 120 310 320 330 630 710 930 940 950"
 	gen o7_helper=o7
 	recode o7_helper 999=.
-	gen industrycat_isic= string(o7_helper,"%03.0f")
+	gen industrycat_isic= string(o7_helper,"%04.0f")
 	replace industrycat_isic = "" if industrycat_isic =="."
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
@@ -789,6 +792,7 @@ foreach v of local ed_var {
 *<_healthins_>
 	gen byte healthins = s1
 	recode  healthins 1/8=1 9=.
+	replace healthins=. if lstatus!=1
 	label var healthins "Employment has health insurance primary job 7 day recall"
 	la de lblhealthins 0 "Without health insurance" 1 "With health insurance"
 	label values healthins lblhealthins

@@ -18,7 +18,7 @@
 <_Source of dataset_> 			CASEN </_Source of dataset_>
 <_Sample size (HH)_> 		35948	 </_Sample size (HH)_>
 <_Sample size (IND)_> 	143459		 </_Sample size (IND)_>
-<_Sampling method_> 			random sampling, compact conglomerates,stratified gepgraphically based on urban rua and non proportional distribution of surveys across strata.  </_Sampling method_>
+<_Sampling method_> 			sample design is characterized by being stratified and three-stage in all the districts of the country  </_Sampling method_>
 <_Geographic coverage_> National </_Geographic coverage_>
 <_Currency_> 					Chilean Pesos </_Currency_>
 -----------------------------------------------------------------------
@@ -316,8 +316,8 @@ local letters "r p c z o seg"
 
 
 *<_relationharm_>
-	gen relationharm =pco2
-	recode relationharm  8=5 9=6
+	gen relationharm =pco1
+	recode relationharm  5/8=5 9=6
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm  lblrelationharm
@@ -490,7 +490,7 @@ local letters "r p c z o seg"
 
 *<_educat7_>
 	gen byte educat7 = educ
-	recode educat7 0=1 1=2 2=3 3=4 6=5 7=6 8=6 9=7 11=6 12=. 13=. 14=3
+	recode educat7 0=1 1=2 2=3 3=4 6=5 7=6 8=6 9=7 11=6 12=. 13=. 14=3 99=.
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -508,7 +508,7 @@ local letters "r p c z o seg"
 
 *<_educat4_>
 	gen byte educat4 = educat5
-	recode educat4 (3=2) (4=3) (5=4)
+	recode educat4 (3=2) (4=3) (5=4) 
 	label var educat4 "Level of education 3"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values educat4 lbleducat4
@@ -675,6 +675,8 @@ foreach v of local ed_var {
 *<_industry_orig_>
 	gen industry_orig = o6
 	tostring industry_orig, replace
+	replace industry_orig="" if industry_orig=="."
+	replace industry_orig="" if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
@@ -683,7 +685,7 @@ foreach v of local ed_var {
 *three digits, there is not clear definition for 110 120 310 320 630 710 940 950 however we belive that each is the two digit lead for that section for example 110 is the 2 digit section 11
 	gen o6_helper=o6
 	recode o6_helper 999=.
-	gen industrycat_isic= string(o6_helper,"%03.0f")
+	gen industrycat_isic= string(o6_helper,"%04.0f")
 	replace industrycat_isic = "" if industrycat_isic =="."
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
@@ -717,7 +719,7 @@ foreach v of local ed_var {
 *three digits problem some codes do not exist on the isco 88 official international classification, are they chilean?
 	gen o5_helper=o5
 	recode o5_helper 999=.
-	gen occup_isco = string(o5_helper,"%03.0f")
+	gen occup_isco = string(o5_helper,"%04.0f")
 	replace occup_isco="" if o5_helper==.
 	drop o5_helper
 	label var occup_isco "ISCO code of primary job 7 day recall"
@@ -795,6 +797,7 @@ foreach v of local ed_var {
 *<_healthins_>
 	gen byte healthins = s42
 	recode  healthins 1/8=1 0=. 9=0
+	replace healthins=. if lstatus!=1
 	label var healthins "Employment has health insurance primary job 7 day recall"
 	la de lblhealthins 0 "Without health insurance" 1 "With health insurance"
 	label values healthins lblhealthins
