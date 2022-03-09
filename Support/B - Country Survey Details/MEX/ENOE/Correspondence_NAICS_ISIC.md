@@ -52,21 +52,45 @@ The second step is to use the `.dta` created in the first step in the harmonizat
 
 The mapping of NAICS to ISIC codes is performed by a user written `R` code. It reads from the relevant NSO correpsondence Excel file stored under `MEX_[YYYY]_ENOE\MEX_[YYYY]_ENOE_v01_M\Doc` and writes the comparison `.dta` file merged in the harmonization under `MEX_[YYYY]_ENOE\MEX_[YYYY]_ENOE_v[##]_M\Data\Stata`. The corresponding `R` itself is stored under `MEX_[YYYY]_ENOE\MEX_[YYYY]_ENOE_v[##]_M\Programs`. Note that the actual files are stored on a World Bank server - the conversion files are, however, avaialbe [in the utilities folder here](utilities).
 
-The first step in the process is to reduce the NSO correspondece six-digit system to the three digits covered in the ENOE. This creates duplicates as there are 70 codes between `111110` and `111199` for SCIAN-07 that are reduced to `111`.
+The first step in the process is to reduce the NSO correspondece six-digit system to the three digits covered in the ENOE. This creates duplicates as the, for example, 14 codes between `461110` and `46122` that can be reduced to the three-digit `461` maps to 27 distinct ISIC codes.
 
 The second step is to compare the correspondence of SCIAN three-digit codes to ISIC three-digit codes, and count the number of total cases and the number of matches to each code. The image below shows this process for some of the first codes:
 
 <br></br>
-![SCIAN Reducation Logic](utilities/scian_07_2010_match_1.PNG)
+![SCIAN Reducation Logic](utilities/match_1.png)
 <br></br>
 
-The table shows  that of the 16 codes that start with `1111` all of them match to ISIC code `0111`, while one matches to `0112`. The 9 NAICS codes that start with `1112` match to three different ISIC four digit codes. However, further down, codes starting with `1121` and `1122` all match to one specific four-digit ISIC code - perfect matches.At this stage, only perfect matches are kept. All other matches (i.e., those like `1111` and `1112`) are sent to the third step.
+In the above image the aforementioned code `461` has a total of 27 mappings, one of which starts with ISIC code `471`, and 13 cases each start with `472` and `478`. In the case of SCIAN `462` all three cases map directly to ISIC `471` (red box in the above image). In the case of SCIAN `464` the seven total cases are much more spread out (orange box in the above image).
+At this stage of the algorithm, only perfect matches are map from three-digit SCIAN codes to three-digit ISIC codes.
 
-The third step matches each four-digit NAICS code at the three-digit level to the three digit ISIC equivalent. This is exemplified in the snapshot below:
+The third step matches each three-digit NAICS code to the reduced two-digit ISIC equivalent. This is exemplified in the snapshot below:
 
 <br></br>
-![SCIAN Reducation Logic](utilities/scian_match_2_df_example.PNG)
+![SCIAN Reducation Logic](utilities/match_2.png)
 <br></br>
+
+In the case of SCIAN `464` (blue box in the above image) the mapping is now at 100%, meaning that all seven ISIC codes start with codes `47`. In the case of SCIAN `468` (orange box in the above image), the options are more evenly split even though there is a majority option.
+
+
+
+| Year	| Codes w/ abs. majority | Codes w/o abs. majority | 4 big codes w/o abs. majority | Share of 4 codes in w/o abs. maj. |
+| :----	| :----			 | :----		   | :----			   | :----			       |
+| 2005	| 85.4%			 | 14.6%		   | 11.5%			   | 78.7%			       |
+|2006	| 84.7%			 | 15.3%		   | 12.1%			   | 79.5%			       |
+|2007	| 85.1%			 | 14.9%		   | 11.9%			   | 79.6%			       |
+|2008	| 84.8%			 | 15.2%		   | 12.2%			   | 80.4%			       |
+|2009	| 85.6%			 | 14.4%		   | 11.7%			   | 81.7%			       |
+|2010	| 86.1%			 | 13.9%		   | 11.2%			   | 80.5%			       |
+|2011	| 86.0%			 | 14.0%		   | 11.1%			   | 79.7%			       |
+|2012	| 85.9%			 | 14.1%		   | 11.2%			   | 79.0%			       |
+|2013	| 85.8%			 | 14.2%		   | 11.1%			   | 78.0%			       |
+|2014	| 85.8%			 | 14.2%		   | 10.7%			   | 75.7%			       |
+|2015	| 85.5%			 | 14.5%		   | 11.0%			   | 75.8%			       |
+|2016	| 85.1%			 | 14.9%		   | 11.2%			   | 75.1%			       |
+|2017	| 84.8%			 | 15.2%		   | 11.4%			   | 75.3%			       |
+|2018	| 84.5%			 | 15.5%		   | 11.7%			   | 75.1%			       |
+|2019	| 84.8%			 | 15.2%		   | 11.3%			   | 74.3%			       |
+|2020	| 85.1%			 | 14.9%		   | 10.9%			   | 73.3%			       |
 
 At this level, all 17 NAICS codes starting with `1111` map to an ISIC code starting with `011` (i.e., `pct` value is 100). Now we have a perfect match for it as well. For NAICS codes starting with `1112` there is no such perfect match. 8 out of 9 map to ISIC codes starting with `011` but one maps to `0112`. Again we only keep perfect matches. Also, the next step may seem already clear, that is, to map the four-digit NAICS code to ISIC two-digit codes. It is clear from the above image that this will yield a perfect match for `1112` as both start with `01`.
 
