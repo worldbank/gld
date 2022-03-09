@@ -786,7 +786,7 @@ foreach v of local ed_var {
 
 
 *<_minlaborage_>
-	gen byte minlaborage = 15
+	gen byte minlaborage = 12
 	label var minlaborage "Labor module application age"
 *</_minlaborage_>
 
@@ -1303,7 +1303,7 @@ gen industrycat_isic_2=isic_2
 *<_t_hours_total_>
 /* approximate hours worked in a year 48 ILO standard */
 	gen t_hours_total =(whours*4)*wmonths
-	replace t_hours_total=. if t_hours_total>3120
+	*
 	label var t_hours_total "Annualized hours worked in all jobs 7 day recall"
 *</_t_hours_total_>
 

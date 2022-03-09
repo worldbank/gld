@@ -777,7 +777,7 @@ foreach v of local ed_var {
 
 
 *<_minlaborage_>
-	gen byte minlaborage = 15
+	gen byte minlaborage = 12
 	label var minlaborage "Labor module application age"
 *</_minlaborage_>
 

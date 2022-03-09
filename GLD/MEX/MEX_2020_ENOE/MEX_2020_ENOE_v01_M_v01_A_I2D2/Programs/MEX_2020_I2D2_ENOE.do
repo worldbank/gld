@@ -33,7 +33,7 @@
 
 
 ** INITIAL COMMANDS
-	cap log close 
+	cap log close
 	clear
 	set more off
 	set mem 800m
@@ -98,14 +98,14 @@
 	egen idh=concat(ent_str con_str v_sel_str n_hog_str h_mud_str)
 	label var idh "Household id"
 	assert !missing(idh)
-	
+
 ** INDIVIDUAL IDENTIFICATION NUMBER
 	egen idp=concat(idh n_ren_str)
 	label var idp "Individual id"
 	isid idh idp
 
 ** HOUSEHOLD WEIGHTS
-	gen double wgt=fac
+	gen double wgt=fac_np
 	label var wgt "Household sampling weight"
 
 
@@ -127,11 +127,11 @@
 
 
 ** LOCATION (URBAN/RURAL)
-	gen byte urb=.  
+	gen byte urb=.
  	replace urb=1 if inrange(t_loc,1,3)
- 	replace urb=2 if t_loc==4 
- 	label var urb "Location is urb" 
- 	la de lblurb 1 "urb" 2 "Rural" 
+ 	replace urb=2 if t_loc==4
+ 	label var urb "Location is urb"
+ 	la de lblurb 1 "urb" 2 "Rural"
  	label values urb lblurb
 
 
@@ -272,7 +272,7 @@
 
 ** MARITAL STATUS
 	gen byte marital=e_con
-	recode marital 1=3 2 3=4 4=5 5=1 6=2 9=. 
+	recode marital 1=3 2 3=4 4=5 5=1 6=2 9=.
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
 	label values marital lblmarital
@@ -327,7 +327,7 @@
 	replace edulevel1=3 if educy==6
 	replace edulevel1=4 if inrange(cs_p13_1,3,5)
 	replace edulevel1=5 if educy==12
-	replace edulevel1=6 if cs_p13_1==6 
+	replace edulevel1=6 if cs_p13_1==6
 	replace edulevel1=7 if inrange(cs_p13_1,7,9)
 	replace edulevel1=. if age<ed_mod_age & age!=.
 	label var edulevel1 "Level of education 1"
@@ -375,7 +375,7 @@
 
 ** LABOR STATUS
 	gen byte lstatus=1 if inlist(p1,1,2) | p1a1==1 | p1a2==2 | p1b==1 | inrange(p1c,1,4) | p1d==1 | p1e==1
-	replace lstatus=2 if (p2_1==1 | p2_2==2 | p2_3==3) 
+	replace lstatus=2 if (p2_1==1 | p2_2==2 | p2_3==3)
 	replace lstatus=3 if p2_4==4
 	replace lstatus=. if age<lb_mod_age & age!=.
 	label var lstatus "Labor status"
@@ -460,7 +460,7 @@
 
 ** INDUSTRY CLASSIFICATION
 	gen byte industry=floor(p4a/100)
-	recode industry 11=1 21=2 22=4 23=5 31/33=3 43 46 72=6 48/49 51=7 52/55=8 93=9 56/71 81 97/99=10 
+	recode industry 11=1 21=2 22=4 23=5 31/33=3 43 46 72=6 48/49 51=7 52/55=8 93=9 56/71 81 97/99=10
 	replace industry=. if lstatus!=1
 	label var industry "1 digit industry classification"
 	la de lblindustry 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
@@ -477,16 +477,16 @@
 
 
 **SURVEY SPECIFIC INDUSTRY CLASSIFICATION
-	local my_industry_orig p4a                                                                         
-	clonevar industry_orig=`my_industry_orig'                                                                 
-	capture confirm numeric format industry_orig                                                              
-	if _rc {                                                                                                  
-	       noi di "`my_industry_orig' is an string variable"                                                  
-	       destring industry_orig, replace                                                                    
-	       local industrystring "-was string"                                                                 
-	}                                                                                                         
-	local industrytemp : variable label `my_industry_orig'                                                    
-	label var industry_orig `"Original Industry Code (`my_industry_orig'`industrystring':`industrytemp')"'    
+	local my_industry_orig p4a
+	clonevar industry_orig=`my_industry_orig'
+	capture confirm numeric format industry_orig
+	if _rc {
+	       noi di "`my_industry_orig' is an string variable"
+	       destring industry_orig, replace
+	       local industrystring "-was string"
+	}
+	local industrytemp : variable label `my_industry_orig'
+	label var industry_orig `"Original Industry Code (`my_industry_orig'`industrystring':`industrytemp')"'
 
 
 
@@ -499,16 +499,16 @@
 
 
 ** SURVEY SPECIFIC OCCUPATION CLASSIFICATION
-	local my_occup_orig p3                                                   
-	clonevar occup_orig=`my_occup_orig'                                                           
-	capture confirm numeric format occup_orig                                                     
-	if _rc {                                                                                      
-	       noi di "`my_occup_orig' is an string variable"                                         
-	       destring occup_orig, replace                                                           
-	       local occupstring "-was string"                                                        
-	}                                                                                             
-	local occuptemp : variable label `my_occup_orig'                                              
-	label var occup_orig `"Original Occupation Code (`my_occup_orig'`occupstring':`occuptemp')"'  
+	local my_occup_orig p3
+	clonevar occup_orig=`my_occup_orig'
+	capture confirm numeric format occup_orig
+	if _rc {
+	       noi di "`my_occup_orig' is an string variable"
+	       destring occup_orig, replace
+	       local occupstring "-was string"
+	}
+	local occuptemp : variable label `my_occup_orig'
+	label var occup_orig `"Original Occupation Code (`my_occup_orig'`occupstring':`occuptemp')"'
 
 
 ** FIRM SIZE
@@ -584,7 +584,7 @@
 
 ** INDUSTRY CLASSIFICATION - SECOND JOB
 	gen byte industry_2=floor(p7c/100)
-	recode industry_2 11=1 21=2 22=4 23=5 31/33=3 43 46 72=6 48/49 51=7 52/55=8 93=9 56/71 81 97/99=10 
+	recode industry_2 11=1 21=2 22=4 23=5 31/33=3 43 46 72=6 48/49 51=7 52/55=8 93=9 56/71 81 97/99=10
 	replace industry_2=. if njobs==0 | njobs==.
 	label var industry_2 "1 digit industry classification - second job"
 	la de lblindustry_2 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
@@ -601,14 +601,14 @@
 
 
 ** SURVEY SPECIFIC INDUSTRY CLASSIFICATION - SECOND JOB
-	local my_industry_orig_2 p7c                                                                        
-	clonevar industry_orig_2=`my_industry_orig_2'                                                                 
+	local my_industry_orig_2 p7c
+	clonevar industry_orig_2=`my_industry_orig_2'
 	capture confirm numeric format industry_orig_2
-	if _rc {                                                                                                  
+	if _rc {
 	       noi di "`my_industry_orig_2' is an string variable"
 	       destring industry_orig_2, replace
 	       local industrystring2 "-was string"
-	}                                                                                                         
+	}
 	local industrytemp2 : variable label `my_industry_orig_2'
 	label var industry_orig_2 `"Original Industry Code (`my_industry_orig_2'`industrystring2':`industrytemp2') - second job"'
 	replace industry_orig_2=. if njobs==0 | njobs==.
@@ -626,11 +626,11 @@
 	local my_occup_orig_2 p7a
 	clonevar occup_orig_2=`my_occup_orig_2'
 	capture confirm numeric format occup_orig_2
-	if _rc {                                                                                      
+	if _rc {
 	       noi di "`my_occup_orig_2' is an string variable"
 	       destring occup_orig_2, replace
 	       local occupstring2 "-was string"
-	}                                                                                             
+	}
 	local occuptemp2 : variable label `my_occup_orig_2'
 	label var occup_orig_2 `"Original Occupation Code (`my_occup_orig_2'`occupstring2':`occuptemp2') - second job"'
 	replace occup_orig_2=. if njobs==0 | njobs==.
@@ -744,7 +744,7 @@
 	gen pci_d=.
 
 ** DECILES OF PER CAPITA INCOME
-	 *xtile pci_d=pci [w=wgt], nq(10) 
+	 *xtile pci_d=pci [w=wgt], nq(10)
 	label var pci_d "Income per capita deciles"
 
 
@@ -755,7 +755,7 @@
 	gen pcc_d=.
 
 ** DECILES OF PER CAPITA CONSUMPTION
-	*xtile pcc_d=pcc [w=wgt], nq(10) 
+	*xtile pcc_d=pcc [w=wgt], nq(10)
 	label var pcc_d "Consumption per capita deciles"
 
 

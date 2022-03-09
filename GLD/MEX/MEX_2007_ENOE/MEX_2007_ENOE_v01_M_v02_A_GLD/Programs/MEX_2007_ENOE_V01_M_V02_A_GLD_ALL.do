@@ -32,7 +32,7 @@
 <_ISCO Version_>				[ISCO-88] </_ISCO Version_>
 <_OCCUP National_>				[CMO I & II 1998] </_OCCUP National_>
 <_ISIC Version_>				[Rev.4] </_ISIC Version_>
-<_INDUS National_>				[SCIAN 2002] </_INDUS National_>
+<_INDUS National_>				[SCIAN 2007] </_INDUS National_>
 
 -----------------------------------------------------------------------
 <_Version Control_>
@@ -166,8 +166,8 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2007_ENOE\MEX_2007_ENO
 	rename scian scian_2
 	rename isic isic_2
 	rename scian_help scian_help_2
-	
-	
+
+
 *ISCO
 ***then first job
 	tostring p3, gen(cmo)
@@ -780,7 +780,7 @@ foreach v of local ed_var {
 
 
 *<_minlaborage_>
-	gen byte minlaborage = 15
+	gen byte minlaborage = 12
 	label var minlaborage "Labor module application age"
 *</_minlaborage_>
 
@@ -969,7 +969,7 @@ foreach v of local ed_var {
 
 *<_wage_no_compen_>
 	gen double wage_no_compen =.
-	replace wage_no_compen=p6b2 if lstatus==1 
+	replace wage_no_compen=p6b2 if lstatus==1
 	replace wage_no_compen=0 if empstat==2
 	replace wage_no_compen=. if lstatus!=1
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
@@ -1294,7 +1294,7 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 *<_t_hours_total_>
 /* approximate hours worked in a year 48 ILO standard */
 	gen t_hours_total =(whours*4)*wmonths
-	replace t_hours_total=. if t_hours_total>3120
+	*
 	label var t_hours_total "Annualized hours worked in all jobs 7 day recall"
 *</_t_hours_total_>
 

@@ -31,8 +31,8 @@
 <_ISCED Version_>				[ISCED 1997] </_ISCED Version_>
 <_ISCO Version_>				[ISCO-88] </_ISCO Version_>
 <_OCCUP National_>				[CMO I & II 1998] </_OCCUP National_>
-<_ISIC Version_>				[Rev. 3.1] </_ISIC Version_>
-<_INDUS National_>				[SCIAN 2002] </_INDUS National_>
+<_ISIC Version_>				[Rev. 4] </_ISIC Version_>
+<_INDUS National_>				[SCIAN 2007] </_INDUS National_>
 
 -----------------------------------------------------------------------
 <_Version Control_>
@@ -166,7 +166,7 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2006_ENOE\MEX_2006_ENO
 	rename scian scian_2
 	rename isic isic_2
 	rename scian_help scian_help_2
-	
+
 *ISCO
 ***then first job
 	tostring p3, gen(cmo)
@@ -224,7 +224,7 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2006_ENOE\MEX_2006_ENO
 
 
 *<_isic_version_>
-gen isic_version = "isic_3.1"
+gen isic_version = "isic_4"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
@@ -783,7 +783,7 @@ foreach v of local ed_var {
 
 
 *<_minlaborage_>
-	gen byte minlaborage = 15
+	gen byte minlaborage = 12
 	label var minlaborage "Labor module application age"
 *</_minlaborage_>
 
@@ -1011,7 +1011,7 @@ foreach v of local ed_var {
 	replace whours=. if lstatus!=1
 	replace whours=. if p4==4
 	replace whours=. if whours==999
-	replace whours=. if p5c_thrs>84
+	*
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -1298,7 +1298,7 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 
 *<_t_hours_total_>
 	gen t_hours_total =(whours*4)*wmonths
-	replace t_hours_total=. if t_hours_total>3120
+	*
 	label var t_hours_total "Annualized hours worked in all jobs 7 day recall"
 *</_t_hours_total_>
 
