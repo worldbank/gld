@@ -52,16 +52,17 @@ The second step is to use the `.dta` created in the first step in the harmonizat
 
 The mapping of NAICS to ISIC codes is performed by a user written `R` code. It reads from the relevant NSO correpsondence Excel file stored under `MEX_[YYYY]_ENOE\MEX_[YYYY]_ENOE_v01_M\Doc` and writes the comparison `.dta` file merged in the harmonization under `MEX_[YYYY]_ENOE\MEX_[YYYY]_ENOE_v[##]_M\Data\Stata`. The corresponding `R` itself is stored under `MEX_[YYYY]_ENOE\MEX_[YYYY]_ENOE_v[##]_M\Programs`. Note that the actual files are stored on a World Bank server - the conversion files are, however, avaialbe [in the utilities folder here](utilities).
 
-The first step in the process is to reduce the NSO correspondece six-digit system to the three digits covered in the ENOE. This creates duplicates as the, for example, 14 codes between `461110` and `46122` that can be reduced to the three-digit `461` maps to 27 distinct ISIC codes.
+The first step in the process is to reduce the NSO correspondece six-digit system to the three digits covered in the ENOE. This creates duplicates as the, for example, 14 codes between `461110` and `46122` that can be reduced to the three-digit `461` maps to 27 distinct ISIC codes. There are 94 unique three-digit codes in SCIAN 2007.
 
-The second step is to compare the correspondence of SCIAN three-digit codes to ISIC three-digit codes, and count the number of total cases and the number of matches to each code. The image below shows this process for some of the first codes:
+The second step is to compare the correspondence of SCIAN three-digit codes to ISIC three-digit codes and count the number of total cases and the number of matches to each code. The image below shows this process for some of the first codes:
 
 <br></br>
 ![SCIAN Reducation Logic](utilities/match_1.png)
 <br></br>
 
 In the above image the aforementioned code `461` has a total of 27 mappings, one of which starts with ISIC code `471`, and 13 cases each start with `472` and `478`. In the case of SCIAN `462` all three cases map directly to ISIC `471` (red box in the above image). In the case of SCIAN `464` the seven total cases are much more spread out (orange box in the above image).
-At this stage of the algorithm, only perfect matches are map from three-digit SCIAN codes to three-digit ISIC codes.
+
+At this stage of the algorithm, only perfect matches are map from three-digit SCIAN codes to three-digit ISIC codes. This applies to 17 of the 94 unique SCIAN three-digit codes, leaving 77 yet to map.
 
 The third step matches each three-digit NAICS code to the reduced two-digit ISIC equivalent. This is exemplified in the snapshot below:
 
@@ -69,70 +70,37 @@ The third step matches each three-digit NAICS code to the reduced two-digit ISIC
 ![SCIAN Reducation Logic](utilities/match_2.png)
 <br></br>
 
-In the case of SCIAN `464` (blue box in the above image) the mapping is now at 100%, meaning that all seven ISIC codes start with codes `47`. In the case of SCIAN `468` (orange box in the above image), the options are more evenly split even though there is a majority option.
+In the case of SCIAN `464` (blue box in the above image) the mapping is now at 100%, meaning that all seven ISIC codes start with codes `47`. In the case of SCIAN `468` (orange box in the above image), the options are more evenly split even though there is a majority option. In the case of the SCIAN `222` each of the four ISIC codes has the same number of mappings - no clear assignment can be made.
 
+At this third step assignments SCIAN to ISIC two-digits are made if there is a single option with >50% cases assigned to it. In the case above SCIAN `468` would not be assigned at this stage. This is because there may be two mappings with each 50.0% each, which would lead to a non-unique assignment. This logic maps a further 60 unique codes, leaving 17 codes still to match. 
 
-
-| Year	| Codes w/ abs. majority | Codes w/o abs. majority | 4 big codes w/o abs. majority | Share of 4 codes in w/o abs. maj. |
-| :----	| :----			 | :----		   | :----			   | :----			       |
-| 2005	| 85.4%			 | 14.6%		   | 11.5%			   | 78.7%			       |
-|2006	| 84.7%			 | 15.3%		   | 12.1%			   | 79.5%			       |
-|2007	| 85.1%			 | 14.9%		   | 11.9%			   | 79.6%			       |
-|2008	| 84.8%			 | 15.2%		   | 12.2%			   | 80.4%			       |
-|2009	| 85.6%			 | 14.4%		   | 11.7%			   | 81.7%			       |
-|2010	| 86.1%			 | 13.9%		   | 11.2%			   | 80.5%			       |
-|2011	| 86.0%			 | 14.0%		   | 11.1%			   | 79.7%			       |
-|2012	| 85.9%			 | 14.1%		   | 11.2%			   | 79.0%			       |
-|2013	| 85.8%			 | 14.2%		   | 11.1%			   | 78.0%			       |
-|2014	| 85.8%			 | 14.2%		   | 10.7%			   | 75.7%			       |
-|2015	| 85.5%			 | 14.5%		   | 11.0%			   | 75.8%			       |
-|2016	| 85.1%			 | 14.9%		   | 11.2%			   | 75.1%			       |
-|2017	| 84.8%			 | 15.2%		   | 11.4%			   | 75.3%			       |
-|2018	| 84.5%			 | 15.5%		   | 11.7%			   | 75.1%			       |
-|2019	| 84.8%			 | 15.2%		   | 11.3%			   | 74.3%			       |
-|2020	| 85.1%			 | 14.9%		   | 10.9%			   | 73.3%			       |
-
-At this level, all 17 NAICS codes starting with `1111` map to an ISIC code starting with `011` (i.e., `pct` value is 100). Now we have a perfect match for it as well. For NAICS codes starting with `1112` there is no such perfect match. 8 out of 9 map to ISIC codes starting with `011` but one maps to `0112`. Again we only keep perfect matches. Also, the next step may seem already clear, that is, to map the four-digit NAICS code to ISIC two-digit codes. It is clear from the above image that this will yield a perfect match for `1112` as both start with `01`.
-
-Hence, the fourth step comparres NAICS four-digit to ISIC two-digit. The image below shows what was said, codes starting with `1112` can be mapped perfectly to ISIC `01`. 
+The fourth step looks at all steps without an absolute majority. This step itself involves two sub-steps. This is best illustrated looking at the codes for SCIAN `222`, `487`, and `551` below.
 
 <br></br>
-![SCIAN Reducation Logic](utilities/scian_match_3_df_example.PNG)
+![SCIAN Reducation Logic](utilities/match_3.png)
 <br></br>
 
-The difference at this point is that two digits is the lowest classification we can do for ISIC. Hence we cannot just keep perfect matches. At this stage, the most common match is kept. Looking at the image above this means that for NAICS codes starting with `1114` these will be mapped to ISIC code `01`. The most difficult cases are when there are ties, as is the case for NAICS codes starting with `1133` or `2221`. In these cases one two digit ISIC code is chosen at random. A seed is set in the code to ensure that the randomisation always picks the same code.
+The overall idea at this step is to select a mapping based on simple majority – and chose randomly in the case of a tie. For code `487` this is mapping to ISIC code `49` as this is the mapping category in 3 out of 7 possible mappings (sum the number of possible mappings denoted in column `n`). 
 
-Recalling the tabulation shown at the top of this explainer, even though the ENOE information is always of length four, it is not always a four-digit code (e.g., the most common code is `1110`.) Since none of the four-digit codes end on `0`, this means we additionally need to create a classification for the NAICS three-digit codes. This is done in much the same ways as was done for the four digit codes.
+For `222` there is no single best category, but, if we look at the Sections the codes belong to – the top level ISIC aggregations – two of the codes are section `E` (Water supply; sewerage, waste management and remediation activities) while each one is from section `D` (Electricity, gas, steam, and air conditioning supply) and `H` (Transportation and storage). When selecting a mapping this sectional relevance should be taken into account to reduce any potential randomness in the mapping.
 
-After reducing all six-digit codes to three-digit codes, the comparison is made to the ISIC three-digit codes.  The image below shows the comparison where we see that codes starting with `111` map mostly to `011` and `012` but not to one uniquely. As previously only perfect matches are kept.
-
-<br></br>
-![SCIAN Reducation Logic](utilities/scian_match_d_df_example.PNG)
-<br></br>
-
-Of the not perfect matches (as was the case for `111`) these are mapped to ISIC two-digit codes. As this is the smallest unit, as with NAICS four-digit codes now we map to the most common group. The image below shows this process:
+Thus, the first sub-step is to assign the ISIC two-digit codes to their sections and see if there is a single section where a single value has at least 50% of the mappings. This is the case for SCIAN `222`, where section `E` represents 50% of the mappings. For SCIAN `551`, each possible mapping has a 50% weight and thus no sub-selection can be made. For SCIAN `487` the selection is even stronger as 6 out of the 7 mappings are from section `H`. The possible mapping choices are hence reduced to the following:
 
 <br></br>
-![SCIAN Reducation Logic](utilities/scian_match_d2_df_example.PNG)
+![SCIAN Reducation Logic](utilities/match_4.png)
 <br></br>
 
-NAICS codes starting with `111` do not map perfectly but nearly all of the codes that start by it map to ISIC `01`. In this case, chosing the most common class is a good choice. For codes starting with `222`, however, this is more difficult. Here, again, the choice is made at random.
-
-The final stage is to put together all different matches into a single data frame, pad zeroes to make sure both NAICS and ISIC codes are of lenght four, and export it as a `.dta` file (into `MEX_[YYYY]_ENOE\MEX_[YYYY]_ENOE_v01_M\Data\Stata`) to be merged. The final `.dta` file looks like this:
-
-<br></br>
-![SCIAN Reducation Logic](utilities/example_concordance_output.PNG)
-<br></br>
+At the second sub-step, within each SCIAN code the simple majority is selected. This allows a unique mapping of 13 of the remaining 17 codes. In just four cases (such as `222` and `551`) a random selection is made between equally likely mappings – in three of the four cases (such as `551` the selection is between codes of different ISIC sections).
 
 ### Merging the correspondence with the survey data
 
-The data is merged in the harmonization at the first stage of database assembly (see individual harmonization codes). In the case of the 2010 ENOE there are 166,283 individuals for which the survey has an industry NAICS code. The correspondence process is able to match to 160,698 of those (96.6%). The image below shows the quality of the matches made:
+The data is merged in the harmonization at the first stage of database assembly (see individual harmonization codes). In the case of the 2017 ENOE there are 167,033 individuals for which the survey has an industry SCIAN codes. The correspondence process is able to match to 162,374 of those (97.2%). The image below shows the quality of the matches made:
 
 <br></br>
-![SCIAN Reducation Logic](utilities/matching_outcome.png)
+![SCIAN Reducation Logic](utilities/merge_hist_17_cumul_w.png)
 <br></br>
 
-The histogram on the left hand side shows that about three quarters of the observations are to perfect or nearly perfect matches (recall the match of `111` to `01` earlier) and nearly all are above 60%. However, there are a few worse matches. The right hand side shows the tabulation result in Stata. Recall that Stata will order observations alphanumerically (i.e., it starts with 25, the worst match, here and goes down to 100). That means that only 6.09% of observations have a match of 60% or worse. Nearly two thirds have a perfect match, while 85% of observations have a match of 66.7%.
+The graph depicts weighted cumulative distribution by match quality. It shows that only 10% of all observations have a match quality of 47% or worse (green circle), while 80% have a quality of 77% or higher (blue circle). Two thirds of all cases have a quality of 90% or better (red circle).
 
 ## Caveats and extensions
 
@@ -160,20 +128,8 @@ A further extension, which may help in creating better matches is to use the tex
 ## Underlying data for emulating process
 The harmonization codes merge in `dta` files created from the correspondence tables shown above using the algorithmic logic described in this document. In particular we use:
 
-- [The correspondence table between SCIAN 02 and ISIC 3.1](utilities/SCIAN_02_ISIC_3.1.xlsx);
 - [The correspondence table between SCIAN 07 and ISIC 4](utilities/SCIAN_07_ISIC_4.xlsx);
-- [The correspondence table between SCIAN 13 and ISIC 4](utilities/SCIAN_13_ISIC_4.xlsx);
-- [The correspondence table between SCIAN 18 and ISIC 4](utilities/SCIAN_18_ISIC_4.xlsx).
 
-Each of these correspondence tables are read in by each of the analogous `R` codes:
-- [The `R` code to map SCIAN 03 to ISIC 3.1](utilities/SCIAN_02_ISIC_3.1.R);
-- [The `R` code to map SCIAN 07 to ISIC 4](utilities/SCIAN_07_ISIC_4.R);
-- [The `R` code to map SCIAN 13 to ISIC 4](utilities/SCIAN_13_ISIC_4.R);
-- [The `R` code to map SCIAN 18 to ISIC 4](utilities/SCIAN_18_ISIC_4.R).
+- [The `R` code to map SCIAN 07 to ISIC 4](utilities/SCIAN_07_3D_ISIC_4.R);
 
-These create then the used `dta` files:
-- [The `dta` file with codes for SCIAN 03 and ISIC 3.1](utilities/SCIAN_02_ISIC_3.1.dta);
-- [The `dta` file with codes for SCIAN 03 and ISIC 4](utilities/SCIAN_07_ISIC_4.dta);
-- [The `dta` file with codes for SCIAN 03 and ISIC 4](utilities/SCIAN_13_ISIC_4.dta);
-- [The `dta` file with codes for SCIAN 03 and ISIC 4](utilities/SCIAN_18_ISIC_4.dta).
-
+- [The `dta` file with codes for SCIAN 03 and ISIC 4](utilities/SCIAN_07_3D_ISIC_4.dta);
