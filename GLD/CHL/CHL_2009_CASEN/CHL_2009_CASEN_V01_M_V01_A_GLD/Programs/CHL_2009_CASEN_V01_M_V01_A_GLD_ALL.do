@@ -57,7 +57,8 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\CHL\CHL_2009_CASEN\CHL_2009_CA
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 use "`path_in'\casen2009stata.dta"
-
+drop in 1/1
+*first observation has all missing information so drop.
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -114,13 +115,13 @@ use "`path_in'\casen2009stata.dta"
 
 
 *<_vermast_>
-	gen vermast = "v01"
+	gen vermast = "V01"
 	label var vermast "Version of master data"
 *</_vermast_>
 
 
 *<_veralt_>
-	gen veralt = "v01"
+	gen veralt = "V01"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
@@ -283,6 +284,8 @@ use "`path_in'\casen2009stata.dta"
 
 *<_hsize_>
 	gen hsize=numper
+	bysort hhid: gen helper_1=_N
+	replace hsize=helper_1 if hsize!=helper_1
 	label var hsize "Household size"
 *</_hsize_>
 
@@ -305,7 +308,7 @@ use "`path_in'\casen2009stata.dta"
 
 *<_relationharm_>
 	gen relationharm =pco1
-	recode relationharm  5/12=5 13/14=6
+	recode relationharm  5/12=5 13/14=6 
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm  lblrelationharm
@@ -320,7 +323,7 @@ use "`path_in'\casen2009stata.dta"
 
 *<_marital_>
 	gen byte marital = ecivil
-	recode marital 2=3 6=2 3=4
+	recode marital 2=3 3=4 5=4 6=5 7=2
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
 	label values marital lblmarital
@@ -453,7 +456,7 @@ use "`path_in'\casen2009stata.dta"
 *</_ed_mod_age_>
 
 *<_school_>
-	gen byte school = e4
+	gen byte school = e3
 	recode school 2=0
 	label var school "Attending school"
 	la de lblschool 0 "No" 1 "Yes"
@@ -472,6 +475,7 @@ use "`path_in'\casen2009stata.dta"
 
 *<_educy_>
 	gen byte educy = esc
+	replace educy=. if age < educy & (age != . & educy != .)
 	label var educy "Years of education"
 *</_educy_>
 
@@ -479,7 +483,7 @@ use "`path_in'\casen2009stata.dta"
 *<_educat7_>
 *no division between institute and uni
 	gen byte educat7 = educ
-	recode educat7 0=1 1=2 2=3 3 4=4 5 6=5 6 7=7 99=.
+	recode educat7 5=6 6=5 7=6 8=7 9=7 99=.
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -664,6 +668,8 @@ foreach v of local ed_var {
 *<_industry_orig_>
 	gen industry_orig = c_o13
 	tostring industry_orig, replace
+	replace industry_orig="" if c_o13==.
+	replace industry_orig="" if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
@@ -757,7 +763,7 @@ foreach v of local ed_var {
 *<_whours_>
 	gen whours = o16
 	replace whours=. if lstatus!=1
-	replace whours=. if o16>84 
+	replace whours=. if o16>84
 	recode whours 999=.
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
@@ -777,7 +783,7 @@ foreach v of local ed_var {
 
 *<_contract_>
 	gen byte contract = o25
-	recode contract 1/2=1 3=0 9=.
+	recode contract 1/2=1 3=0 4=.
 	label var contract "Employment has contract primary job 7 day recall"
 	la de lblcontract 0 "Without contract" 1 "With contract"
 	label values contract lblcontract
@@ -788,6 +794,7 @@ foreach v of local ed_var {
 *strange question. 7 says non but particular and not clear anymore if the first is none (indigente)
 	gen byte healthins = s1
 	recode  healthins 1/7=1 8=0 9=1 99=.
+	replace healthins=. if lstatus!=1
 	label var healthins "Employment has health insurance primary job 7 day recall"
 	la de lblhealthins 0 "Without health insurance" 1 "With health insurance"
 	label values healthins lblhealthins

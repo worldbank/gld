@@ -18,7 +18,8 @@
 <_Source of dataset_> 			CASEN </_Source of dataset_>
 <_Sample size (HH)_> 		65036	 </_Sample size (HH)_>
 <_Sample size (IND)_> 		252748	 </_Sample size (IND)_>
-<_Sampling method_> 	The type of sampling is stratified, by conglomerates and multistage. </_Sampling method_>
+<_Sampling method_> design is stratified two-stage in the self-represented communes and stratified three-stage in the non-represented.
+self-represented. </_Sampling method_>
 <_Geographic coverage_> National </_Geographic coverage_>
 <_Currency_> 					Chilean Pesos </_Currency_>
 -----------------------------------------------------------------------
@@ -116,13 +117,13 @@ use "`path_in'\casen2000_Stata.dta"
 
 
 *<_vermast_>
-	gen vermast = "v01"
+	gen vermast = "V01"
 	label var vermast "Version of master data"
 *</_vermast_>
 
 
 *<_veralt_>
-	gen veralt = "v01"
+	gen veralt = "V01"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
@@ -286,6 +287,8 @@ use "`path_in'\casen2000_Stata.dta"
 *<_hsize_>
 
 	gen hsize=numper
+	bysort hhid: gen helper_1=_N
+	replace hsize=helper_1 if hsize!=helper_1
 	label var hsize "Household size"
 *</_hsize_>
 
@@ -324,7 +327,7 @@ use "`path_in'\casen2000_Stata.dta"
 
 *<_marital_>
 	gen byte marital = ecivil
-	recode marital 2=3 6=2 3=4
+	recode marital 2=3 7=2 3=4 5=4 6=5
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
 	label values marital lblmarital
@@ -543,7 +546,7 @@ foreach v of local ed_var {
 
 *<_vocational_>
 	gen vocational = o32
-	recode vocational 1/2=1 3=0
+	recode vocational 1/2=1 3=0 9=.
 	label de lblvocational 0 "No" 1 "Yes"
 	label var vocational "Ever received vocational training"
 *</_vocational_>
@@ -671,6 +674,8 @@ foreach v of local ed_var {
 *<_industry_orig_>
 	gen industry_orig = o9
 	tostring industry_orig, replace
+	replace industry_orig="" if o9==.
+	replace industry_orig="" if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
@@ -735,8 +740,9 @@ foreach v of local ed_var {
 
 *<_occup_>
 	gen  occup = oficio
-	recode occup 9999=.
+	recode occup 11=.
 	recode occup 0=10
+	replace occup=. if lstatus!=1
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup
@@ -793,6 +799,7 @@ foreach v of local ed_var {
 *<_healthins_>
 	gen byte healthins = s1
 	recode  healthins 1/8=1 9=.
+	replace healthins=. if lstatus!=1
 	label var healthins "Employment has health insurance primary job 7 day recall"
 	la de lblhealthins 0 "Without health insurance" 1 "With health insurance"
 	label values healthins lblhealthins

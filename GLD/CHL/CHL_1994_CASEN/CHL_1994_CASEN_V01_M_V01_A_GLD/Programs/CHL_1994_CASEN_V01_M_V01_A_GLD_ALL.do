@@ -113,13 +113,13 @@ use "`path_in'\casen1994.dta"
 
 
 *<_vermast_>
-	gen vermast = "v01"
+	gen vermast = "V01"
 	label var vermast "Version of master data"
 *</_vermast_>
 
 
 *<_veralt_>
-	gen veralt = "v01"
+	gen veralt = "V01"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 

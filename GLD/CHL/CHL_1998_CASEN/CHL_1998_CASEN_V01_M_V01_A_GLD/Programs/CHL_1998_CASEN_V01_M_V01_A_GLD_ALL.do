@@ -18,7 +18,8 @@
 <_Source of dataset_> 			CASEN </_Source of dataset_>
 <_Sample size (HH)_> 		48107	 </_Sample size (HH)_>
 <_Sample size (IND)_> 	188360		 </_Sample size (IND)_>
-<_Sampling method_> 			random sampling, compact conglomerates,stratified gepgraphically based on urban rua and non proportional distribution of surveys across strata.  </_Sampling method_>
+<_Sampling method_> design is stratified two-stage in the self-represented communes and stratified three-stage in the non-represented.
+self-represented.  </_Sampling method_>
 <_Geographic coverage_> National </_Geographic coverage_>
 <_Currency_> 					Chilean Pesos </_Currency_>
 -----------------------------------------------------------------------
@@ -116,13 +117,13 @@ use "`path_in'\casen1998.dta"
 
 
 *<_vermast_>
-	gen vermast = "v01"
+	gen vermast = "V01"
 	label var vermast "Version of master data"
 *</_vermast_>
 
 
 *<_veralt_>
-	gen veralt = "v01"
+	gen veralt = "V01"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
@@ -288,6 +289,9 @@ use "`path_in'\casen1998.dta"
 *<_hsize_>
 
 	gen hsize=numper
+	bysort hhid: gen helper_1=_N
+	replace hsize=helper_1 if hsize!=helper_1
+	drop helper_1
 	label var hsize "Household size"
 *</_hsize_>
 
@@ -326,7 +330,7 @@ use "`path_in'\casen1998.dta"
 
 *<_marital_>
 	gen byte marital = ecivil
-	recode marital 2=3 6=2 3=4
+	recode marital 2=3 7=2 3=4 5=4 6=5 9=.
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
 	label values marital lblmarital
@@ -477,8 +481,10 @@ use "`path_in'\casen1998.dta"
 
 
 *<_educy_>
+*5 instances of people that reported an age lower the years of education but the cases are for example 20 years and educy 19 or 15 years and educy 17 so set to missing
 	gen byte educy = esc
 	recode educy 10=.
+	replace educy=. if age < educy & (age != . & educy != .)
 	label var educy "Years of education"
 *</_educy_>
 
@@ -627,7 +633,7 @@ foreach v of local ed_var {
 
 *<_nlfreason_>
 	gen byte nlfreason = o5
-	recode nlfreason 1=2 3=4 4=1 5=3 6/9=5
+	recode nlfreason 1=2 3=4 4=1 5=3 6/10=5
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
 	label values nlfreason lblnlfreason
@@ -653,7 +659,7 @@ foreach v of local ed_var {
 {
 *<_empstat_>
 	gen byte empstat = o8
-	recode empstat (1=3) (2=4) (3=1) (6=2) (4 5 7=5) (8=.)
+	recode empstat (1=3) (2=4) (3=1) (6=2) (4 5 7=5) (9=.)
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat lblempstat
@@ -671,6 +677,8 @@ foreach v of local ed_var {
 *<_industry_orig_>
 	gen industry_orig = o7
 	tostring industry_orig, replace
+	replace industry_orig="" if industry_orig=="."
+	replace industry_orig="" if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
@@ -792,6 +800,7 @@ foreach v of local ed_var {
 *<_healthins_>
 	gen byte healthins = s1
 	recode  healthins 1/8=1 9=.
+	replace healthins=. if lstatus!=1
 	label var healthins "Employment has health insurance primary job 7 day recall"
 	la de lblhealthins 0 "Without health insurance" 1 "With health insurance"
 	label values healthins lblhealthins

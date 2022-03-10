@@ -114,13 +114,13 @@ use "`path_in'\casen2003.dta"
 
 
 *<_vermast_>
-	gen vermast = "v01"
+	gen vermast = "V01"
 	label var vermast "Version of master data"
 *</_vermast_>
 
 
 *<_veralt_>
-	gen veralt = "v01"
+	gen veralt = "V01"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
@@ -283,6 +283,8 @@ use "`path_in'\casen2003.dta"
 
 *<_hsize_>
 	gen hsize=numper
+	bysort hhid: gen helper_1=_N
+	replace hsize=helper_1 if hsize!=helper_1
 	label var hsize "Household size"
 *</_hsize_>
 
@@ -320,7 +322,7 @@ use "`path_in'\casen2003.dta"
 
 *<_marital_>
 	gen byte marital = ecivil
-	recode marital 2=3 6=2 3=4
+	recode marital 2=3 6=5 3=4 9=. 5=4 7=2
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
 	label values marital lblmarital
@@ -463,7 +465,7 @@ use "`path_in'\casen2003.dta"
 
 *<_literacy_>
 	gen byte literacy = e1
-	recode literacy 2=0
+	recode literacy 2=0 9=.
 	label var literacy "Individual can read & write"
 	la de lblliteracy 0 "No" 1 "Yes"
 	label values literacy lblliteracy
@@ -620,6 +622,7 @@ foreach v of local ed_var {
 *<_nlfreason_>
 	gen byte nlfreason = o6
 	recode nlfreason 1=2 2=5 3=4 4=1 5=3 6/10=5 99=.
+	replace nlfreason=. if lstatus!=3
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
 	label values nlfreason lblnlfreason
@@ -664,6 +667,8 @@ foreach v of local ed_var {
 *<_industry_orig_>
 	gen industry_orig = o8
 	tostring industry_orig, replace
+	replace industry_orig="" if o8==.
+	replace industry_orig="" if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
@@ -788,6 +793,7 @@ foreach v of local ed_var {
 *strange question. 7 says non but particular and not clear anymore if the first is none (indigente)
 	gen byte healthins = s1
 	recode  healthins 1/6=1 7=0 8=1 9=.
+	replace healthins=. if lstatus!=1
 	label var healthins "Employment has health insurance primary job 7 day recall"
 	la de lblhealthins 0 "Without health insurance" 1 "With health insurance"
 	label values healthins lblhealthins

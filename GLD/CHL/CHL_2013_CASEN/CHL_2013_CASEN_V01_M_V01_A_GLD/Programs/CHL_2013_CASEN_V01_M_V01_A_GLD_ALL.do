@@ -114,13 +114,13 @@ use "`path_in'\casen_2013_mn_b_principal.dta"
 
 
 *<_vermast_>
-	gen vermast = "v01"
+	gen vermast = "V01"
 	label var vermast "Version of master data"
 *</_vermast_>
 
 
 *<_veralt_>
-	gen veralt = "v01"
+	gen veralt = "V01"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
@@ -281,6 +281,8 @@ use "`path_in'\casen_2013_mn_b_principal.dta"
 
 *<_hsize_>
 	gen hsize=numper
+	bysort hhid: gen helper_1=_N
+	replace hsize=helper_1 if hsize!=helper_1
 	label var hsize "Household size"
 *</_hsize_>
 
@@ -318,7 +320,7 @@ use "`path_in'\casen_2013_mn_b_principal.dta"
 
 *<_marital_>
 	gen byte marital = ecivil
-	recode marital 2=3 6=2 3=4
+	recode marital 2=3 3 4 5=4 6=5 7=2
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
 	label values marital lblmarital
@@ -461,7 +463,7 @@ use "`path_in'\casen_2013_mn_b_principal.dta"
 
 *<_literacy_>
 	gen byte literacy = e1
-	recode literacy 2=0 9=.
+	recode literacy 2 3 4=0 9=.
 	label var literacy "Individual can read & write"
 	la de lblliteracy 0 "No" 1 "Yes"
 	label values literacy lblliteracy
@@ -477,7 +479,7 @@ use "`path_in'\casen_2013_mn_b_principal.dta"
 *<_educat7_>
 *no division between institute and uni
 	gen byte educat7 = educ
-	recode educat7 (0=1) (1=2) (2=3) (3/4=4) (5/6=5) (7/8 =6) (9/12=7)
+	recode educat7 (0=1) (1=2) (2=3) (3/4=4) (5/6=5) (7/8 =6) (9/12=7) (99=.)
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -616,7 +618,8 @@ foreach v of local ed_var {
 
 *<_nlfreason_>
 	gen byte nlfreason = o7r1
-	recode nlfreason 11=1 10=2 12=3 6=4 1/5=5 7/9=5 13/17=5
+	recode nlfreason 11=1 10=2 12=3 6=4 1/5=5 7/9=5 13/17=5 99=.
+	replace nlfreason=5 if lstatus==3 & missing(nlfreason)
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
 	label values nlfreason lblnlfreason
@@ -679,7 +682,7 @@ foreach v of local ed_var {
 
 *<_industrycat10_>
 	gen industrycat10=rama1_sub
-	recode industrycat10 2=1 3=2 4=3 5=4 6=5 7=6 8=10 9=7 10=8 11=10 12=9 13/16=10 99=.
+	recode industrycat10 2=1 3=2 4=3 5=4 6=5 7=6 8=10 9=7 10=8 11=10 12=9 13/16=10 17=9 18=. 99=.
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
@@ -757,8 +760,8 @@ foreach v of local ed_var {
 *<_whours_>
 	gen whours = o10
 	replace whours=. if lstatus!=1
-	replace whours=. if o10>84 
-	recode whours 999=.
+	replace whours=. if o10>84
+	recode whours 999=. 0=.
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -787,6 +790,7 @@ foreach v of local ed_var {
 *<_healthins_>
 	gen byte healthins = s15a
 	recode  healthins 2=0 9=.
+	replace healthins=. if lstatus!=1
 	label var healthins "Employment has health insurance primary job 7 day recall"
 	la de lblhealthins 0 "Without health insurance" 1 "With health insurance"
 	label values healthins lblhealthins
@@ -837,7 +841,7 @@ foreach v of local ed_var {
 {
 *<_empstat_2_>
 	gen byte empstat_2 = o28
-	recode empstat_2 (1=3) (2=4) (3/5=1) (6=2) ( 6 7=5) (8=5) (9=2)
+	recode empstat_2 (1=3) (2=4) (3/5=1) (6=2) ( 6 7=5) (8=5) (9=2) (99=.)
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
 	label values empstat_2 lblempstat
 *</_empstat_2_>

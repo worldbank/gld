@@ -114,13 +114,13 @@ rename fecha_aņo fecha_ano
 
 
 *<_vermast_>
-	gen vermast = "v01"
+	gen vermast = "V01"
 	label var vermast "Version of master data"
 *</_vermast_>
 
 
 *<_veralt_>
-	gen veralt = "v01"
+	gen veralt = "V01"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
@@ -281,6 +281,8 @@ rename fecha_aņo fecha_ano
 
 *<_hsize_>
 	gen hsize=numper
+	bysort hhid: gen helper_1=_N
+	replace hsize=helper_1 if hsize!=helper_1
 	label var hsize "Household size"
 *</_hsize_>
 
@@ -303,7 +305,7 @@ rename fecha_aņo fecha_ano
 
 *<_relationharm_>
 	gen relationharm =pco1
-	recode relationharm  5/12=5 13/14=6
+	recode relationharm  3=2 4/6=3 7=4 8/13=5 14/15=6
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm  lblrelationharm
@@ -318,7 +320,7 @@ rename fecha_aņo fecha_ano
 
 *<_marital_>
 	gen byte marital = ecivil
-	recode marital 2=3 6=2 3=4
+	recode marital 2/3=3 4/6=4 7=5 8=2
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
 	label values marital lblmarital
@@ -461,7 +463,7 @@ rename fecha_aņo fecha_ano
 
 *<_literacy_>
 	gen byte literacy = e1
-	recode literacy 2=0 9=.
+	recode literacy 2/4=0 9=.
 	label var literacy "Individual can read & write"
 	la de lblliteracy 0 "No" 1 "Yes"
 	label values literacy lblliteracy
@@ -477,7 +479,7 @@ rename fecha_aņo fecha_ano
 *<_educat7_>
 *no division between institute and uni
 	gen byte educat7 = educ
-	recode educat7 (0=1) (1=2) (2=3) (3/4=4) (5/6=5) (7/8 =6) (9/12=7)
+	recode educat7 (0=1) (1=2) (2=3) (3/4=4) (5/6=5) (7/8 =6) (9/12=7) (99=.)
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -617,6 +619,7 @@ foreach v of local ed_var {
 *<_nlfreason_>
 	gen byte nlfreason = o7r1
 	recode nlfreason 11=1 10=2 12=3 6=4 1/5=5 7/9=5 13/17=5
+	replace nlfreason=5 if lstatus==3 & missing(nlfreason)
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
 	label values nlfreason lblnlfreason
@@ -757,7 +760,7 @@ foreach v of local ed_var {
 *<_whours_>
 	gen whours = o10
 	replace whours=. if lstatus!=1
-	replace whours=. if o10>84 
+	replace whours=. if o10>84
 	recode whours 999=.
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
@@ -788,6 +791,7 @@ foreach v of local ed_var {
 *strange question. 7 says non but particular and not clear anymore if the first is none (indigente)
 	gen byte healthins = s12
 	recode  healthins 1/7=1 8=0 9=1 99=.
+	replace healthins=. if lstatus!=1
 	label var healthins "Employment has health insurance primary job 7 day recall"
 	la de lblhealthins 0 "Without health insurance" 1 "With health insurance"
 	label values healthins lblhealthins
