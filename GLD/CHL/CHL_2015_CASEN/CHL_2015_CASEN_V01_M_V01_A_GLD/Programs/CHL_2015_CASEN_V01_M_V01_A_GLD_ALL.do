@@ -590,6 +590,7 @@ foreach v of local ed_var {
 {
 *<_lstatus_>
 	gen byte lstatus = activ
+	replace lstatus=1 if activ!=1 & rama4_sub=="0140"
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
@@ -618,7 +619,7 @@ foreach v of local ed_var {
 
 *<_nlfreason_>
 	gen byte nlfreason = o7r1
-	recode nlfreason 11=1 10=2 12=3 6=4 1/5=5 7/9=5 13/17=5
+	recode nlfreason 11=1 10=2 12=3 6=4 1/5=5 7/9=5 13/17=5 99=.
 	replace nlfreason=5 if lstatus==3 & missing(nlfreason)
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
@@ -683,6 +684,7 @@ foreach v of local ed_var {
 *<_industrycat10_>
 	gen industrycat10=rama1_sub
 	recode industrycat10 2=1 3=2 4=3 5=4 6=5 7=6 8=10 9=7 10=8 11=10 12=9 13/16=10 99=.
+	replace lstatus=1 if industrycat10==. & lstatus!=1
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
@@ -697,7 +699,6 @@ foreach v of local ed_var {
 	la de lblindustrycat4 1 "Agriculture" 2 "Industry" 3 "Services" 4 "Other"
 	label values industrycat4 lblindustrycat4
 *</_industrycat4_>
-
 
 *<_occup_orig_>
 	*gen occup_orig = string(oficio4)
