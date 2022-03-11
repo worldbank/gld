@@ -18,7 +18,7 @@
 <_Source of dataset_> 			Ministerio de Desarrollo Social y Familia Chile </_Source of dataset_>
 <_Sample size (HH)_> 			25793 </_Sample size (HH)_>
 <_Sample size (IND)_> 		105189	 </_Sample size (IND)_>
-<_Sampling method_> 			random sampling, compact conglomerates,stratified gepgraphically based on urban rua and non proportional distribution of surveys across strata.  </_Sampling method_>
+<_Sampling method_> 	sample design is characterized by being stratified and three-stage in all the districts of the country		  </_Sampling method_>
 <_Geographic coverage_> National </_Geographic coverage_>
 <_Currency_> 					Chilean Pesos </_Currency_>
 -----------------------------------------------------------------------
@@ -112,13 +112,13 @@ use "`path_in'\casen1990.dta"
 
 
 *<_vermast_>
-	gen vermast = "v01"
+	gen vermast = "V01"
 	label var vermast "Version of master data"
 *</_vermast_>
 
 
 *<_veralt_>
-	gen veralt = "v01"
+	gen veralt = "V01"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
