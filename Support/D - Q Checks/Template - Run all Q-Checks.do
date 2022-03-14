@@ -46,7 +46,7 @@ global survey_id "CCC_YYYY_Survey-Name_V0X_M_V0Z_A_GLD_[ALL]"
 
 
 * Path to folder to hold output
-global path_to_output_folder "Z:\GLD-Harmonization\573465_JT\ZAF\ZAF_2008_LFS\ZAF_2008_LFS_v01_M_v01_A_GLD\Work"
+global path_to_output_folder "Z:\GLD-Harmonization\573465_JT\ZAF\ZAF_2008_LFS\ZAF_2008_LFS_v01_M_v01_A_GLD\Work\Output"
 
 * Path to folder containing helper files
 * Should be "[*]:\Support and Documentation\Q Checks\Helper Programs"
@@ -60,6 +60,13 @@ you. If some necessary input is not present, the program should warn you.
 If it breaks down, please inform an admin (currently : mgronert@worldbank.org)
 to look into the error and amend the bug(s).
 ========================================================================*/
+
+* Check the output folder in Work exists, make if not
+cap cd "$path_to_output_folder"
+if _rc != 0 {
+    mkdir "$path_to_output_folder"
+}
+
 
 /*==================================================
 	2: Program set up - Check everything is in place

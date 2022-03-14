@@ -140,17 +140,28 @@ foreach var of global change_should_vars {
 *----------1.9: Check variables that should not change within HH
 
 * Note unhappy with this as it is pretty loopy. However, the alternative with egen using by hhid and comparing mean to max (if equal no variance) only works for numeric, this solution does not depend on the type of variable being analysed.
-foreach var of global hh_level_vars {
-	cap confirm variable `var'
-	if _rc == 0 { // if var exists since if not captured in 1.1
-		by hhid (`var'), sort: gen diff = `var'[1] != `var'[_N] // if equal, in group first == last
-		qui : count if diff == 1
-		if `r(N)' > 0 { // there are cases where diff is 1 (condition is true)
-			post `memhold' ("Overall") ("`var'") ("Variable is not unique within HH") (.) (99)
+
+* Wrap first in confirm hhid as some surveys may not have this (e.g., Sakernas)
+cap confirm variable hhid
+if _rc == 0 { 
+    * hhid exists, can use it
+    foreach var of global hh_level_vars {
+		cap confirm variable `var'
+		if _rc == 0 { // if var exists since if not captured in 1.1
+			by hhid (`var'), sort: gen diff = `var'[1] != `var'[_N] // if equal, in group first == last
+			qui : count if diff == 1
+			if `r(N)' > 0 { // there are cases where diff is 1 (condition is true)
+				post `memhold' ("Overall") ("`var'") ("Variable is not unique within HH") (.) (99)
+			* Close if r(N) > 0
+			}
+			drop diff
+		* Close if _rc == 0 for global var exists
 		}
-		drop diff
+	* Close foreach var
 	}
+* Close hhid exists
 }
+
 
 *----------1.10: Categorical vars - Check whether values outside the range
 qui: count 
@@ -313,16 +324,19 @@ foreach three_vars of global subnat_hierarchy {
 ==================================================*/
 
 *----------4.1: HH size differs from number of obs
-cap confirm variable hsize
+cap confirm variable hsize hhid
 if _rc == 0 { // if var exists since if not captured in 1.1
 	bysort hhid: gen hh_size_verify = _N
 	qui : count if hh_size_verify != hsize
 	if `r(N)' >0 { // there are cases when it differs
 		local hh_size_error_ratio = `r(N)' / $overall_count
 		post `memhold' ("Demography") ("hsize") ("HHsize differs from number of obs per HH (ratio ->)") (`hh_size_error_ratio') (1)
-	drop hh_size_verify
+		drop hh_size_verify
+	* Close if r(N) > 0
 	}
+* Close if hsize & hhid exist
 }
+
 
 *----------4.2: Check age
 cap confirm variable age
@@ -338,7 +352,7 @@ if _rc == 0 { // if var exists since if not captured in 1.1
 }
 
 *----------4.3: Only one head per HH
-cap confirm variable relationharm
+cap confirm variable relationharm hhid
 if _rc == 0 { // if var exists since if not captured in 1.1
 	
 	qui : count if relationharm == 1
@@ -348,7 +362,9 @@ if _rc == 0 { // if var exists since if not captured in 1.1
 	
 		local hh_heads_ratio = `number_heads' / `r(ndistinct)'
 		post `memhold' ("Demography") ("relationharm") ("Ratio of Heads to HHID is not 1 (ratio ->)") (`hh_heads_ratio') (1)
+	* Close if `r(ndistinct)' != `number_heads'
 	}
+* Close if relationharm hhid exist
 }
 
 /*==================================================
