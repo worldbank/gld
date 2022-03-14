@@ -61,6 +61,13 @@ If it breaks down, please inform an admin (currently : mgronert@worldbank.org)
 to look into the error and amend the bug(s).
 ========================================================================*/
 
+* Check the output folder in Work exists, make if not
+cap cd "$path_to_output_folder"
+if _rc != 0 {
+    mkdir "$path_to_output_folder"
+}
+
+
 /*==================================================
 	2: Program set up - Check everything is in place
 ==================================================*/
