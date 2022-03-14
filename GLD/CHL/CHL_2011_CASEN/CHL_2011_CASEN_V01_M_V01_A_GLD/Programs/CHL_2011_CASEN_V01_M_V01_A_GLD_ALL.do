@@ -588,6 +588,7 @@ foreach v of local ed_var {
 {
 *<_lstatus_>
 	gen byte lstatus = activ
+	replace lstatus=1 if activ!=1 & rama4_sub=="7491"
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
