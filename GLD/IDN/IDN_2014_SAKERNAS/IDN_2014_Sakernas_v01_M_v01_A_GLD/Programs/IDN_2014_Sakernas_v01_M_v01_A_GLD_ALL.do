@@ -878,9 +878,15 @@ The original variable "b5_r31" has 5 categories:
 /*<_industry_orig_>
 
 Note that in the raw dataset, two industrial classification variables, "b5_r18" and "kbli2009_2", seem to represent industry of main job and industry of the main additional job respectively. "kbli2009_2" has 5 digits whereas "kbli2009_2" has 2 digits. Both have no labels. 
+<<<<<<< Updated upstream
 
 "b5_r18" is for question No.18 asking the industry of main additional job undoubtedly, leaving "kbli2009_2" used for industry of the main job, as the values are not the same if they were both for main additional job. 
 
+=======
+
+"b5_r18" is for question No.18 asking the industry of main additional job undoubtedly, leaving "kbli2009_2" used for industry of the main job, as the values are not the same if they were both for main additional job. 
+
+>>>>>>> Stashed changes
 Moreover, most cases are that people only have kbli2009_2 while they do not have b5_r18. 
 
 <_industry_orig_>*/

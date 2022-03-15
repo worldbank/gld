@@ -26,9 +26,9 @@
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
 <_ISCO Version_>				N/A </_ISCO Ver UP National_>
+<_OCCUP National_>				KBJI </_OCCUP National_> 
 <_ISIC Version_>				N/A </_ISIC Version_>
-<_INDUS National_>			    KJI1982 </_INDUS National_>
-
+<_INDUS National_>				KBLI </_INDUS National_>
 -----------------------------------------------------------------------
 
 <_Version Control_>
@@ -289,8 +289,9 @@ provinces.
 
 
 *<_subnatid1_>
-	gen byte subnatid1 = b1r1
-	label de lblsubnatid1 11 "11 - Nanggroe Aceh Darussalam" 12 "12 - North Sumatera" 13 "13 - West Sumatera" 14 "14 - Riau" 15 "15 - Jambi" 16 "16 - South Sumatera" 17 "17 - Gauteng" 18 "18 - Lampung" 31 "31 - DKI Jakarta" 32 "32 - West Java" 33 "33 - Central Java" 34 "34 - DI Yogyakarta" 35 "35 - East Java" 51 "51 - Bali" 52 "52 - West Nusa Tenggara" 53 "53 - East Nusa Tenggara" 54 "54 - East Timor" 61 "61 - West Kalimantan" 62 "62 - Central Kalimantan" 63 "63 - South Kalimantan" 64 "64 - East Kalimantan" 71 "71 - North Sulawesi" 72 "72 - Central Sulawesi" 73 "73 - South Sulawesi" 74 "74 - Southeast Sulawesi" 81 "81 - Maluku" 82 "82 - North Maluku"
+	gen byte b1r1_code = b1r1
+	gen subnatid1 = b1r1_code*100
+	label de lblsubnatid1 1100 " 1100 - Prov. Dista Aceh" 1200 " 1200 - Prov. Sumatera Utara" 1300 " 1300 - Prov. Sumatera Barat" 1400 " 1400 - Prov. Riau" 1500 " 1500 - Prov. Jambi" 1600 " 1600 - Prov. Sumatera Selatan" 1700 " 1700 - Prov. Bengkulu" 1800 " 1800 - Prov. Lampung" 3100 " 3100 - Prov. D K I Jakarta" 3200 " 3200 - Prov. Jawa Barat" 3300 " 3300 - Prov. Jawa Tengah" 3400 " 3400 - Prov. D I Yogyakarta" 3500 " 3500 - Prov. Jawa Timur" 5100 " 5100 - Prov. Bali" 5200 " 5200 - Prov. Nusa Tenggara Barat" 5300 " 5300 - Prov. Nusa Tenggara Timur" 5400 "5400 - East Timor" 6100 " 6100 - Prov. Kalimantan Barat" 6200 " 6200 - Prov. Kalimantan Tengah" 6300 " 6300 - Prov. Kalimantan Selatan" 6400 " 6400 - Prov. Kalimantan Timur" 7100 " 7100 - Prov. Sulawesi Utara" 7200 " 7200 - Prov. Sulawesi Tengah" 7300 " 7300 - Prov. Sulawesi Selatan" 7400 " 7400 - Prov. Sulawesi Tenggara" 8100 " 8100 - Prov. Maluku" 8200 " 8200 - Prov. Irian Jaya"
 	label values subnatid1 lblsubnatid1
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>

@@ -32,7 +32,7 @@ set varabbrev off, permanently
 *----------0.1: Set necessary paths
 
 * Path to harmonized .dta file
-global path_to_harmonization "Z:\GLD-Harmonization\573465_JT\ZAF\ZAF_2008_LFS\ZAF_2008_LFS_v01_M_v01_A_GLD\Data\Harmonized\ZAF_2008_QLFS_v01_M_v01_A_GLD.dta"
+global path_to_harmonization "Z:\GLD-Harmonization\573465_JT\IDN\IDN_1992_SAKERNAS\IDN_1992_SAKERNAS_v01_M_v01_A_GLD\Data\Harmonized\IDN_1992_SAKERNAS_v01_M_v01_A_GLD_ALL.dta"
 
 * Path to other harmonized files for dynamic comparison
 * Leave as `" "' to skip this (no others or to be done later)
@@ -46,7 +46,11 @@ global survey_id "CCC_YYYY_Survey-Name_V0X_M_V0Z_A_GLD_[ALL]"
 
 
 * Path to folder to hold output
+<<<<<<< Updated upstream:Support/D - Q Checks/Template - Run all Q-Checks.do
 global path_to_output_folder "Z:\GLD-Harmonization\573465_JT\ZAF\ZAF_2008_LFS\ZAF_2008_LFS_v01_M_v01_A_GLD\Work\Output"
+=======
+global path_to_output_folder "Z:\GLD-Harmonization\573465_JT\IDN\IDN_1992_SAKERNAS\IDN_1992_SAKERNAS_v01_M_v01_A_GLD\Work"
+>>>>>>> Stashed changes:Support/Q Checks/Template - Run all Q-Checks.do
 
 * Path to folder containing helper files
 * Should be "[*]:\Support and Documentation\Q Checks\Helper Programs"

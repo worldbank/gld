@@ -722,11 +722,9 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 We define the employed as who "worked primarily (b4p4==1)" or
 							  "worked at least for 1 hour in the past one week(b4p5==1)" or
 							  "has a job/business but temporarily did not work during the past one week(b4p6==1)";
-unemployed: "whose primary activity last week is not work (b4p4!=1)" and
-			"who did not work at least one hour during the previous week (b4p5==2)" and 
-			"who do not have a job/business (b4p6==2)" and
-			"is currently seeking a job (b4p13==2)";
-non-labor force: "who do not have a job/business (b4p6==2)" & not seeking a job (b4p13=!1).
+unemployed: "who do not have a job/business (b4p6==2)" and
+			"is currently seeking a job (b4p13==1)";
+non-labor force: "who do not have a job/business (b4p6==2)" & "not seeking a job (b4p13==2)."
 
 Note:
 1) that people whose primary activity is work are assigned missing values for
@@ -780,8 +778,8 @@ Unable to do activiti |         0      7,255          1 |     7,256
 *<_lstatus_>
 	gen byte lstatus=.
 	replace lstatus=1 if b4p4==1 | b4p5==1 | b4p6==1
-	replace lstatus=2 if b4p4!=1 & !mi(b4p4) & b4p5==2 & b4p6==2 & b4p13==1
-	replace lstatus=3 if b4p4!=1 & b4p5==2 & b4p6==2 & b4p13==2
+	replace lstatus=2 if b4p6==2 & b4p13==1
+	replace lstatus=3 if b4p6==2 & b4p13==2
 	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
