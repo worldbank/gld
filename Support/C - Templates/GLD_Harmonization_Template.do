@@ -12,17 +12,17 @@
 
 -------------------------------------------------------------------------
 
-<_Country_>						[Country_Name (CCC)] </_Country_>
+<_Country_>					[Country_Name (CCC)] </_Country_>
 <_Survey Title_>				[SurveyName] </_Survey Title_>
 <_Survey Year_>					[Year of start of the survey] </_Survey Year_>
 <_Study ID_>					[Microdata Library ID if present] </_Study ID_>
-<_Data collection from_>		[MM/YYYY] </_Data collection from_>
-<_Data collection to_>			[MM/YYYY] </_Data collection to_>
-<_Source of dataset_> 			[Source of data, e.g. NSO] </_Source of dataset_>
-<_Sample size (HH)_> 			[#] </_Sample size (HH)_>
-<_Sample size (IND)_> 			[#] </_Sample size (IND)_>
-<_Sampling method_> 			[Brief description] </_Sampling method_>
-<_Geographic coverage_> 		[To what level is data significant] </_Geographic coverage_>
+<_Data collection from_>			[MM/YYYY] </_Data collection from_>
+<_Data collection to_>				[MM/YYYY] </_Data collection to_>
+<_Source of dataset_> 				[Source of data, e.g. NSO] </_Source of dataset_>
+<_Sample size (HH)_> 				[#] </_Sample size (HH)_>
+<_Sample size (IND)_> 				[#] </_Sample size (IND)_>
+<_Sampling method_> 				[Brief description] </_Sampling method_>
+<_Geographic coverage_> 			[To what level is data significant] </_Geographic coverage_>
 <_Currency_> 					[Currency used for wages] </_Currency_>
 
 -----------------------------------------------------------------------
@@ -219,36 +219,38 @@ local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
 
 
 *<_subnatid1_>
-/* <_subnatid1>
+/* <_subnatid1_note>
 
-	Labels are to be defined as # - Name like 1 "1 - Alaska" 2 "2 - Arkansas".
+	The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: “1 – Hatay”. That is, the variable itself is to be string, not a labelled numeric vector. 
+	
+	Example of entries would be "1 - Alaska",  "2 - Arkansas", ...
 
-</_subnatid1> */
-	gen byte subnatid1 = .
-	label de lblsubnatid1 1 "1 - Name"
-	label values subnatid1 lblsubnatid1
+</_subnatid1_note> */
+	gen str subnatid1 = ""
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 
 
 *<_subnatid2_>
-	gen byte subnatid2 = .
-	label de lblsubnatid2 1 "1 - Name"
-	label values subnatid2 lblsubnatid2
+	gen str subnatid2 = ""
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
 
 
 *<_subnatid3_>
-	gen byte subnatid3 = .
-	label de lblsubnatid3 1 "1 - Name"
-	label values subnatid3 lblsubnatid3
+	gen str subnatid3 = ""
 	label var subnatid3 "Subnational ID at Third Administrative Level"
 *</_subnatid3_>
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = .
+/* <_subnatidsurvey_note>
+
+	Variable denoting lowest administrative info to which the survey is still significat.
+	See entry in GLD Guidelines (https://github.com/worldbank/gld/blob/main/Support/A%20-%20Guides%20and%20Documentation/GLD_1.0_Guidelines.docx) for more details
+
+</_subnatidsurvey_note> */
+	gen str subnatidsurvey = ""
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
