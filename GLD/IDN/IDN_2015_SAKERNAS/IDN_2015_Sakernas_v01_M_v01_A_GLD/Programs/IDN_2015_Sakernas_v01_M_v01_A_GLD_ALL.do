@@ -548,11 +548,11 @@ because of the unclear mapping for "Not finished primary school yet".
 According to isced-2019 mappings, there are day care centre, playgroup, and
 kindergarten as pre-primary education before 7 years old. Whether to map
 primary unfinished to those options depends on specific assumptions and research
-needs. Therefore, variable "educy" was left missing and so were educat7, educat5,
-and educat4.
+needs. Therefore, variable "educy" was left missing.
 
-There is no such category as "No education" nor missing observations. So 
-probably the survey grouped "no education" into "not yet completed primary school".
+"Packet A": an educational level equavalent to the primary school level;
+"Packet B": an educational level equavalent to the junior high school level of education;
+"Packet C": an educational level equavalent to the primary school level.
 
 Original code list of variable "B5_R1A" in the dataset:
 1.No schooling
@@ -581,7 +581,8 @@ Original code list of variable "B5_R1A" in the dataset:
 
 
 *<_educat7_>
-	gen byte educat7 = .
+	gen byte educat7 = b5_r1a
+	recode educat7 (4=3) (6 7=5) (8 9 10=6) (11/13=7)
 	replace educat7 = . if age < ed_mod_age & age!=.
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
@@ -708,6 +709,7 @@ We define the employed as who "worked primarily (b5_r2b==1)" or
 unemployed: "who do not have a job/business b5_r2b!=1 & b5_r3==2" & "seeking a job (b5_r4==1) | (b5_r5==1)" 
 non-labor force:  "who do not have a job/business b5_r2b!=1 & b5_r3==2" & "not seeking a job (b5_r4==2) & (b5_r5==2)"
 
+Labour force participation: 57.65%
 
 . tab b5_r2b b5_r3, m
 
@@ -844,22 +846,6 @@ of unemployment period.
 	label values empstat lblempstat
 *</_empstat_>
 
-
-/*<_ocusec_>
-
-The original variable "b5_r31" has 5 categories:
-
-1. Government
-2. international institution/organization 
-3. non-profit institutions
-4. profit institutions (private enterprises, state-owned enterprises, regional-owned enterprises)
-5. cooperatives
-6. individual/ household business
-7. Houeshold
-8. Others, specify:
-9. Do not know
-
-<_ocusec_>*/
 
 *<_ocusec_>
 	gen byte ocusec = .

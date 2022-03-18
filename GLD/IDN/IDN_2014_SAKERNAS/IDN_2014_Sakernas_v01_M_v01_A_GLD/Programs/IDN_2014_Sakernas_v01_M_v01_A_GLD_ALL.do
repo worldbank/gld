@@ -554,11 +554,11 @@ because of the unclear mapping for "Not finished primary school yet".
 According to isced-2019 mappings, there are day care centre, playgroup, and
 kindergarten as pre-primary education before 7 years old. Whether to map
 primary unfinished to those options depends on specific assumptions and research
-needs. Therefore, variable "educy" was left missing and so were educat7, educat5,
-and educat4.
+needs. Therefore, variable "educy" was left missing.
 
-There is no such category as "No education" nor missing observations. So 
-probably the survey grouped "no education" into "not yet completed primary school".
+"Packet A": an educational level equavalent to the primary school level;
+"Packet B": an educational level equavalent to the junior high school level of education;
+"Packet C": an educational level equavalent to the primary school level.
 
 Original code list of variable "B5_R1A" in the dataset:
 1.No schooling
@@ -587,7 +587,8 @@ Original code list of variable "B5_R1A" in the dataset:
 
 
 *<_educat7_>
-	gen byte educat7 = .
+	gen byte educat7 = b5_r1a
+	recode educat7 (4=3) (6 7=5) (8 9 10=6) (11/13=7)
 	replace educat7 = . if age < ed_mod_age & age!=.
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
@@ -714,36 +715,38 @@ We define the employed as who "worked primarily (b5_r2b==1)" or
 unemployed: "who do not have a job/business b5_r2b!=1 & b5_r3==2" & "seeking a job (b5_r4==1) | (b5_r5==1)" 
 non-labor force:  "who do not have a job/business b5_r2b!=1 & b5_r3==2" & "not seeking a job (b5_r4==2) & (b5_r5==2)"
 
+labour force participation: 60.34%
+
 
 . tab b5_r2b b5_r3, m
 
            |              b5_r3
-    b5_r2b |         0          1          2 |     Total
+    b5_r2b |         1          2          . |     Total
 -----------+---------------------------------+----------
-         1 |   290,393          0          0 |   290,393 
-         2 |     3,005         48     43,405 |    46,458 
-         3 |    30,322      3,279    108,563 |   142,164 
-         4 |     2,209      3,271     34,843 |    40,323 
+         1 |         0          0    269,769 |   269,769 
+         2 |        64     29,794      2,990 |    32,848 
+         3 |     4,210     95,796     31,017 |   131,023 
+         4 |     4,269     31,496      2,120 |    37,885 
 -----------+---------------------------------+----------
-     Total |   325,929      6,598    186,811 |   519,338 
-	 
+     Total |     8,543    157,086    305,896 |   471,525 
 
+	 
 . tab b5_r6 b5_r3, m
 
            |              b5_r3
-     b5_r6 |         0          1          2 |     Total
+     b5_r6 |         1          2          . |     Total
 -----------+---------------------------------+----------
-         0 |    10,822        341     14,891 |    26,054 
-         1 |     6,199        151      2,529 |     8,879 
-         2 |       574         58        751 |     1,383 
-         3 |     3,420         26     43,526 |    46,972 
-         4 |    37,381        905     83,625 |   121,911 
-         5 |   241,181      4,099          0 |   245,280 
-         6 |    20,608        312      2,948 |    23,868 
-         7 |         0          0     24,830 |    24,830 
-         8 |     5,744        706     13,711 |    20,161 
+         1 |       143      2,924      4,863 |     7,930 
+         2 |        88        716        459 |     1,263 
+         3 |        37     30,506      3,447 |    33,990 
+         4 |     1,135     73,732     38,532 |   113,399 
+         5 |     5,542          0    225,631 |   231,173 
+         6 |       461      2,540     20,507 |    23,508 
+         7 |         0     21,330          0 |    21,330 
+         8 |       787     13,040      4,625 |    18,452 
+         . |       350     12,298      7,832 |    20,480 
 -----------+---------------------------------+----------
-     Total |   325,929      6,598    186,811 |   519,338 
+     Total |     8,543    157,086    305,896 |   471,525 
 
 <_lstatus_>*/
 
@@ -851,22 +854,6 @@ of unemployment period.
 *</_empstat_>
 
 
-/*<_ocusec_>
-
-The original variable "b5_r31" has 5 categories:
-
-1. Government
-2. international institution/organization 
-3. non-profit institutions
-4. profit institutions (private enterprises, state-owned enterprises, regional-owned enterprises)
-5. cooperatives
-6. individual/ household business
-7. Houeshold
-8. Others, specify:
-9. Do not know
-
-<_ocusec_>*/
-
 *<_ocusec_>
 	gen byte ocusec = .
 	label var ocusec "Sector of activity primary job 7 day recall"
@@ -878,29 +865,23 @@ The original variable "b5_r31" has 5 categories:
 /*<_industry_orig_>
 
 Note that in the raw dataset, two industrial classification variables, "b5_r18" and "kbli2009_2", seem to represent industry of main job and industry of the main additional job respectively. "kbli2009_2" has 5 digits whereas "kbli2009_2" has 2 digits. Both have no labels. 
-<<<<<<< Updated upstream
 
 "b5_r18" is for question No.18 asking the industry of main additional job undoubtedly, leaving "kbli2009_2" used for industry of the main job, as the values are not the same if they were both for main additional job. 
 
-=======
-
-"b5_r18" is for question No.18 asking the industry of main additional job undoubtedly, leaving "kbli2009_2" used for industry of the main job, as the values are not the same if they were both for main additional job. 
-
->>>>>>> Stashed changes
 Moreover, most cases are that people only have kbli2009_2 while they do not have b5_r18. 
 
 <_industry_orig_>*/
 
 
 *<_industry_orig_>
-	gen industry_orig = kbli2009_2
+	gen industry_orig = kbli2009 
 	replace industry_orig = . if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
 
 *<_industrycat_isic_>
-	gen industrycat_isic = int(kbli2009_2/100)
+	gen industrycat_isic = kbli2009 
 	tostring industrycat_isic, replace format(%02.0f)
 	replace industrycat_isic = " " if lstatus!=1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
@@ -934,7 +915,7 @@ Although there is no label indicating whether kji1982 is for the main job or the
 	
 
 *<_occup_orig_>
-	gen occup_orig = kji1982
+	gen occup_orig = kbji2002
 	replace occup_orig=. if lstatus!=1
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
