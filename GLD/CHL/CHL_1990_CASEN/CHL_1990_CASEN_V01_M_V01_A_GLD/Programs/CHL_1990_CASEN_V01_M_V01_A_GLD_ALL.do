@@ -22,12 +22,12 @@
 <_Geographic coverage_> National </_Geographic coverage_>
 <_Currency_> 					Chilean Pesos </_Currency_>
 -----------------------------------------------------------------------
-<_ICLS Version_>		[N/A]		</_ICLS Version_>
+<_ICLS Version_>		ICLS-13		</_ICLS Version_>
 <_ISCED Version_>		[N/A]		 </_ISCED Version_>
-<_ISCO Version_>			ISCO 1988	 </_ISCO Version_>
-<_OCCUP National_>		ISCO 1988	 </_OCCUP National_>
-<_ISIC Version_>			ISIC REV 2 </_ISIC Version_>
-<_INDUS National_>		ISIC REV 2 </_INDUS National_>
+<_ISCO Version_>		[N/A]	 </_ISCO Version_>
+<_OCCUP National_>		[N/A] </_OCCUP National_>
+<_ISIC Version_>		[N/A] </_ISIC Version_>
+<_INDUS National_>		[N/A] </_INDUS National_>
 -----------------------------------------------------------------------
 <_Version Control_>
 * Date: [YYYY-MM-DD] - [Description of changes]
@@ -83,7 +83,7 @@ use "`path_in'\casen1990.dta"
 
 
 *<_icls_v_>
-	gen icls_v = .
+	gen icls_v = "ICLS-13"
 	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
 
@@ -94,7 +94,7 @@ use "`path_in'\casen1990.dta"
 
 
 *<_isco_version_>
-	gen isco_version = "isco_1988"
+	gen isco_version = .
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
@@ -313,8 +313,8 @@ label values subnatid2 lblsubnatid2
 
 
 *<_relationharm_>
-	gen relationharm =pco2
-	recode relationharm  8=5 9=6
+	gen relationharm =pco1
+	recode relationharm  5/8=5 9=6
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm  lblrelationharm
@@ -322,7 +322,7 @@ label values subnatid2 lblsubnatid2
 
 
 *<_relationcs_>
-	gen relationcs = pco2
+	gen relationcs = pco1
 	label var relationcs "Relationship to the head of household - Country original"
 *</_relationcs_>
 
@@ -671,23 +671,26 @@ foreach v of local ed_var {
 
 
 *<_industry_orig_>
-	gen industry_orig = o6
-	tostring industry_orig, replace
+	*gen industry_orig = o6
+	gen industry_orig = .
+	*tostring industry_orig, replace
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
 
 *<_industrycat_isic_>
 *two digits, strange classification under review
-	gen industrycat_isic= string(o6,"%02.0f")
-	replace industrycat_isic = "" if industrycat_isic =="."
+*	gen industrycat_isic= string(o6,"%02.0f")
+	gen industrycat_isic= .
+	*replace industrycat_isic = "" if industrycat_isic =="."
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
 
 *<_industrycat10_>
-	gen industrycat10=rama
-	recode industrycat10 0=10 999=.
+	*gen industrycat10=rama
+	*recode industrycat10 0=10 999=.
+	gen industrycat10=.
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
@@ -704,8 +707,9 @@ foreach v of local ed_var {
 
 
 *<_occup_orig_>
-	gen occup_orig = string(o5)
-	replace occup_orig="" if o5==.
+	*gen occup_orig = string(o5)
+	gen occup_orig = .
+	*replace occup_orig="" if o5==.
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
@@ -719,10 +723,10 @@ foreach v of local ed_var {
 
 *<_occup_skill_>
 	gen occup_skill = .
-	replace occup_skill=1 if oficio==9
-	replace occup_skill=2 if inrange(oficio,4,8)
-	replace occup_skill=3 if inrange(oficio,1,3)
-	replace occup_skill=4 if oficio==0
+	*replace occup_skill=1 if oficio==9
+	*replace occup_skill=2 if inrange(oficio,4,8)
+	*replace occup_skill=3 if inrange(oficio,1,3)
+	*replace occup_skill=4 if oficio==0
 	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"  4 "Armed Forces"
 	label values occup_skill lblskill
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
@@ -730,8 +734,9 @@ foreach v of local ed_var {
 
 
 *<_occup_>
-	gen  occup = oficio
-	recode occup 0=10 1=99 9999=.
+	*gen  occup = oficio
+	gen  occup = .
+	*recode occup 0=10 1=99 9999=.
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup
@@ -747,7 +752,7 @@ foreach v of local ed_var {
 
 
 *<_unitwage_>
-	gen byte unitwage = .
+	gen byte unitwage = 5
 	replace unitwage = . if lstatus != 1
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
@@ -759,6 +764,7 @@ foreach v of local ed_var {
 	gen whours = jh
 	replace whours=. if lstatus!=1
 	replace whours=. if jh>84
+	recode whours 0=.
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -787,6 +793,7 @@ foreach v of local ed_var {
 *<_healthins_>
 	gen byte healthins = s42
 	recode  healthins 1/8=1 0=. 9=0
+	replace healthins=. if lstatus!=1
 	label var healthins "Employment has health insurance primary job 7 day recall"
 	la de lblhealthins 0 "Without health insurance" 1 "With health insurance"
 	label values healthins lblhealthins
