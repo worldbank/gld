@@ -13,7 +13,7 @@ Below we will describe the ISCO information available in the data harmonized fol
 
 The documentation reveals that the CASEN works with the 1988 ISCO codes, yet there is not clarity onto whether the classification in the years 2011 onwards represents the 1988 ISCO or a version created by the INE for the survey.
 
-There is a website from the INE that states a [new Chilean ISCO version](https://www.ine.cl/institucional/buenas-practicas/clasificaciones), but no information in the CASEN documentation suggests these were used in the survey. Furthermore, in the [documentation of CASEN](http://observatorio.ministeriodesarrollosocial.gob.cl/storage/docs/casen/2017/Libro_de_Codigos_Casen_2017.pdf) for the year 2017, it is stated that the ISCO classification used is ISCO 1988 (see page 252) with no further details on national versions. 
+There is a website from the INE that states a [new Chilean ISCO (CIUO) version](https://www.ine.cl/institucional/buenas-practicas/clasificaciones), but no information in the CASEN documentation suggests these were used in the survey. Furthermore, in the [documentation of CASEN](http://observatorio.ministeriodesarrollosocial.gob.cl/storage/docs/casen/2017/Libro_de_Codigos_Casen_2017.pdf) for the year 2017, it is stated that the ISCO classification used is ISCO 1988 (see page 252) with no further details on national versions. 
 
 
 ## About codes that do not match the international ISCO classification
