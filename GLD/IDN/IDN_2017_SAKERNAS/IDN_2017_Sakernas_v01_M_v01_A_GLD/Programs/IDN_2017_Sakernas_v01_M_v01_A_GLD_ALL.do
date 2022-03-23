@@ -26,7 +26,7 @@
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
 <_ISCO Version_>				N/A </_ISCO Ver UP National_>
-<_OCCUP National_>				KBJI 2014 </_OCCUP National_> 
+<_OCCUP National_>				KBJI 2014 </_OCCUP National_>
 <_ISIC Version_>				N/A </_ISIC Version_>
 <_INDUS National_>				KBLI 2015 </_INDUS National_>
 ---------------------------------------------------------------------------------------
@@ -172,7 +172,7 @@ local output "`id_data'"
 
 	duplicates tag, gen(dup)
 	tab dup
-	
+
         dup |      Freq.     Percent        Cum.
 ------------+-----------------------------------
           0 |    536,648       99.94       99.94
@@ -180,7 +180,7 @@ local output "`id_data'"
 ------------+-----------------------------------
       Total |    536,970      100.00
 
-We do not know the reason for the duplicates. Because they only take 0.06% of all observations, I just dropped 161 observations.  
+We do not know the reason for the duplicates. Because they only take 0.06% of all observations, I just dropped 161 observations.
 
 <_pid_>*/
 
@@ -548,10 +548,10 @@ primary unfinished to those options depends on specific assumptions and research
 needs. Therefore, variable "educy" was left missing and so were educat7, educat5,
 and educat4.
 
-In 2019, there is no such category as "No education" nor missing observations. So 
+In 2019, there is no such category as "No education" nor missing observations. So
 probably the survey grouped "no education" into "not yet completed primary school".
 
-Original code list of variable "B5_R1A" in the dataset:
+Original code list of variable "b5_r1a" in the dataset:
 1.No elementary (SD) diploma
 2.Equivalency Package A
 3.Special elementary (SDLB)
@@ -705,7 +705,7 @@ We define the employed as who "worked primarily (b5_r5b==1)" or
 							  "usually worked at least an hour cumulatively in a week but temporarily not working (b5_r7b==2)" or
 							  "employed but was temporarily out of work because of certain reasons inlist(b5_r8, 1, 5, 6, 8) & !inlist(b5_r10, 0, 2)";
 
-unemployed: "who do not have a job/business !inlist(b5_r8, 0, 5, 6, 8) | b5_r10==2" & "seeking a job (b5_r15a==1) | (b5_r15b==1)" 
+unemployed: "who do not have a job/business !inlist(b5_r8, 0, 5, 6, 8) | b5_r10==2" & "seeking a job (b5_r15a==1) | (b5_r15b==1)"
 non-labor force:  "who do not have a job/business !inlist(b5_r8, 0, 5, 6, 8) | b5_r10==2" & "not seeking a job (b5_r15a==2) & (b5_r15b==2)"
 
 	Labor particiaption 93.43% (coding used):
@@ -740,7 +740,7 @@ non-labor force:  "who do not have a job/business !inlist(b5_r8, 0, 5, 6, 8) | b
           . |     38,163        7.11      100.00
 ------------+-----------------------------------
       Total |    536,809      100.00
-  
+
 <_lstatus_>*/
 
 
@@ -788,7 +788,7 @@ Note: var "potential_lf" is missing if the respondent is in labor force or unemp
 
 /*<_nlfreason_>
 
-The original variable "b4_r20a " has 6 non-missing categories:
+The original variable "b5_r20a " has 13 non-missing categories:
 	1  Already accepted for work but not yet starting the job
 	2  Already having a business but not yet starting it
 	3  Hopeless; feeling impossible to get a job
@@ -802,12 +802,12 @@ The original variable "b4_r20a " has 6 non-missing categories:
 	11 Under-age
 	12 Inability to work
 	13 Other, specify 1-12
-	
+
 <_nlfreason_>*/
 
 
 *<_nlfreason_>
-	gen byte nlfreason = b5_r20a  
+	gen byte nlfreason = b5_r20a
 	recode nlfreason (7=1) (6=2) (12=4) (1/5 8/11 13=5) (0=.)
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
@@ -931,7 +931,7 @@ Note that in the raw dataset variable "b5_r24_kbj" does not have labels.
 
 
 *<_occup_isco_>
-	gen occup_isco = .
+	gen occup_isco = " "
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
@@ -947,10 +947,10 @@ Note that in the raw dataset variable "b5_r24_kbj" does not have labels.
 	replace occup = . if lstatus!=1
 	replace occup = . if  occup==0
 	label var occup "1 digit occupational classification, primary job 7 day recall"
-  	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians and associate professionals" 4 "Clerical support workers" 5 "Service and market sales workers" 6 "Skilled agricultural, forestry and fishery workers" 7 "Craft and related trades workers" 8 "Plant and machine operators, and assemblers" 9 "Elementary occupations" 
+  	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians and associate professionals" 4 "Clerical support workers" 5 "Service and market sales workers" 6 "Skilled agricultural, forestry and fishery workers" 7 "Craft and related trades workers" 8 "Plant and machine operators, and assemblers" 9 "Elementary occupations"
 	label values occup lbloccup
 *</_occup_>
-	
+
 
 /*<_wage_no_compen_>
 
@@ -959,7 +959,7 @@ In the raw dataset, question 30 has 3 parts aksing about workdays and monthly sa
 Each of these two variables devides into "in cash" and "in-kind". For each observation, I calculated the total income by adding up "in cash" and "in-kind" salary. Part b is about "net income"; part c has 2 sub-sections asking about "salary/allowance" and "transportation and food allowance". "Transport and meal allowance" was not included for "wage_no_compen".
 
 	count if (b5_r30b1!=0 | b5_r30b2!=0 ) & (b5_r30c11!=0 | b5_r30c12!=0)
-	
+
 <_wage_no_compen_>*/
 
 
@@ -1140,7 +1140,7 @@ This question was only asked to those who are seld-employed.
 
 
 *<_occup_isco_2_>
-	gen occup_isco_2 = . 
+	gen occup_isco_2 = " "
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
@@ -1255,7 +1255,7 @@ This question was only asked to those who are seld-employed.
 *</_lstatus_year_>
 
 *<_potential_lf_year_>
-	gen byte potential_lf_year = . 
+	gen byte potential_lf_year = .
 	replace potential_lf_year = . if age < minlaborage & age != .
 	replace potential_lf_year = . if lstatus_year != 3
 	label var potential_lf_year "Potential labour force status"

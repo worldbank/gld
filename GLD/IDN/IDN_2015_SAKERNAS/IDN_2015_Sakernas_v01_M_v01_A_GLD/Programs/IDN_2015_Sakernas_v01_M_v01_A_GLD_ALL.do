@@ -26,7 +26,7 @@
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
 <_ISCO Version_>				N/A </_ISCO Ver UP National_>
-<_OCCUP National_>				KBJI 1982 </_OCCUP National_> 
+<_OCCUP National_>				KBJI 1982 </_OCCUP National_>
 <_ISIC Version_>				ISIC Rev.4 </_ISIC Version_>
 <_INDUS National_>				KBLI 2009 </_INDUS National_>
 ---------------------------------------------------------------------------------------
@@ -187,7 +187,7 @@ local output "`id_data'"
       Total |    526,030      100.00
 
 Because we do not know the reason for these duplicates and they only account for less than 1% of total sample, I just droppred 3,899 observations.
-	  
+
 <_pid_>*/
 
 
@@ -618,7 +618,7 @@ Original code list of variable "B5_R1A" in the dataset:
 
 *<_educat_isced_>
 	gen educat_isced = b5_r1a
-	recode educat_isced (1=020) (2/4=100) (5/7=244) (8/10=344) (11=454) (12=550) (13=760) (14=860) 
+	recode educat_isced (1=020) (2/4=100) (5/7=244) (8/10=344) (11=454) (12=550) (13=760) (14=860)
 	label var educat_isced "ISCED standardised level of education"
 *</_educat_isced_>
 
@@ -706,7 +706,7 @@ replace educat_isced_v = " " if ( age < ed_mod_age & !missing(age) )
 We define the employed as who "worked primarily (b5_r2b==1)" or
 							  "has a job but was temporarily out of work (b5_r3==1)" or
 							  "employed but was temporarily out of work because of certain reasons (b5_r6==5)";
-unemployed: "who do not have a job/business b5_r2b!=1 & b5_r3==2" & "seeking a job (b5_r4==1) | (b5_r5==1)" 
+unemployed: "who do not have a job/business b5_r2b!=1 & b5_r3==2" & "seeking a job (b5_r4==1) | (b5_r5==1)"
 non-labor force:  "who do not have a job/business b5_r2b!=1 & b5_r3==2" & "not seeking a job (b5_r4==2) & (b5_r5==2)"
 
 Labour force participation: 57.65%
@@ -716,30 +716,30 @@ Labour force participation: 57.65%
            |              b5_r3
     b5_r2b |         0          1          2 |     Total
 -----------+---------------------------------+----------
-         1 |   290,393          0          0 |   290,393 
-         2 |     3,005         48     43,405 |    46,458 
-         3 |    30,322      3,279    108,563 |   142,164 
-         4 |     2,209      3,271     34,843 |    40,323 
+         1 |   290,393          0          0 |   290,393
+         2 |     3,005         48     43,405 |    46,458
+         3 |    30,322      3,279    108,563 |   142,164
+         4 |     2,209      3,271     34,843 |    40,323
 -----------+---------------------------------+----------
-     Total |   325,929      6,598    186,811 |   519,338 
-	 
+     Total |   325,929      6,598    186,811 |   519,338
+
 
 . tab b5_r6 b5_r3, m
 
            |              b5_r3
      b5_r6 |         0          1          2 |     Total
 -----------+---------------------------------+----------
-         0 |    10,822        341     14,891 |    26,054 
-         1 |     6,199        151      2,529 |     8,879 
-         2 |       574         58        751 |     1,383 
-         3 |     3,420         26     43,526 |    46,972 
-         4 |    37,381        905     83,625 |   121,911 
-         5 |   241,181      4,099          0 |   245,280 
-         6 |    20,608        312      2,948 |    23,868 
-         7 |         0          0     24,830 |    24,830 
-         8 |     5,744        706     13,711 |    20,161 
+         0 |    10,822        341     14,891 |    26,054
+         1 |     6,199        151      2,529 |     8,879
+         2 |       574         58        751 |     1,383
+         3 |     3,420         26     43,526 |    46,972
+         4 |    37,381        905     83,625 |   121,911
+         5 |   241,181      4,099          0 |   245,280
+         6 |    20,608        312      2,948 |    23,868
+         7 |         0          0     24,830 |    24,830
+         8 |     5,744        706     13,711 |    20,161
 -----------+---------------------------------+----------
-     Total |   325,929      6,598    186,811 |   519,338 
+     Total |   325,929      6,598    186,811 |   519,338
 
 <_lstatus_>*/
 
@@ -788,22 +788,22 @@ Note: var "potential_lf" is missing if the respondent is in labor force or unemp
 
 /*<_nlfreason_>
 
-The original variable "b4_r16a " has 6 non-missing categories:
+The original variable "b5_r6 " has 8 non-missing categories:
 	1 Discouraged
 	2 Have a job but not yet starting it
 	3 Attending school
 	4 Housekeeping
-	5 Already have a job 
+	5 Already have a job
 	6 Sufficient income
 	7 Unable to do work
 	8 Other, specify
-	
+
 <_nlfreason_>*/
 
 
 *<_nlfreason_>
 	gen byte nlfreason = b5_r6
-	recode nlfreason (3=1) (4=2) (7=4) (1 2 5 6 8=5) 
+	recode nlfreason (3=1) (4=2) (7=4) (1 2 5 6 8=5)
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
 	label values nlfreason lblnlfreason
@@ -840,7 +840,7 @@ of unemployment period.
 {
 *<_empstat_>
 	gen byte empstat = b5_r12
-	recode empstat (1 2=4) (4=1) (6=5) (7=2) 
+	recode empstat (1 2=4) (4=1) (6=5) (7=2)
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat lblempstat
@@ -857,11 +857,11 @@ of unemployment period.
 
 /*<_industry_orig_>
 
-Note that in the raw dataset, two industrial classification variables, "b5_r18" and "kbli2009_2", seem to represent industry of main job and industry of the main additional job respectively. "kbli2009_2" has 5 digits whereas "kbli2009_2" has 2 digits. Both have no labels. 
+Note that in the raw dataset, two industrial classification variables, "b5_r18" and "kbli2009_2", seem to represent industry of main job and industry of the main additional job respectively. "kbli2009_2" has 5 digits whereas "kbli2009_2" has 2 digits. Both have no labels.
 
-"b5_r18" is for question No.18 asking the industry of main additional job undoubtedly, leaving "kbli2009_2" used for industry of the main job, as the values are not the same if they were both for main additional job. 
+"b5_r18" is for question No.18 asking the industry of main additional job undoubtedly, leaving "kbli2009_2" used for industry of the main job, as the values are not the same if they were both for main additional job.
 
-Moreover, most cases are that people only have kbli2009_2 while they do not have b5_r18. 
+Moreover, most cases are that people only have kbli2009_2 while they do not have b5_r18.
 
 <_industry_orig_>*/
 
@@ -905,7 +905,7 @@ Variable "kji1982" uses KBJI 1982 and it has three digits. However, we do not ha
 Although there is no label indicating whether kji1982 is for the main job or the main additional job, the survey does not ask occupation of the main additional job. So we used kji1982 for occupation of the main job.
 
 <_occup_orig_>*/
-	
+
 
 *<_occup_orig_>
 	gen occup_orig = kji1982
@@ -915,7 +915,7 @@ Although there is no label indicating whether kji1982 is for the main job or the
 
 
 *<_occup_isco_>
-	gen occup_isco = .
+	gen occup_isco = " "
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
@@ -931,14 +931,14 @@ Although there is no label indicating whether kji1982 is for the main job or the
 	replace occup = . if lstatus!=1
 	replace occup = . if  occup==0
 	label var occup "1 digit occupational classification, primary job 7 day recall"
-  	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians and associate professionals" 4 "Clerical support workers" 5 "Service and market sales workers" 6 "Skilled agricultural, forestry and fishery workers" 7 "Craft and related trades workers" 8 "Plant and machine operators, and assemblers" 9 "Elementary occupations" 
+  	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians and associate professionals" 4 "Clerical support workers" 5 "Service and market sales workers" 6 "Skilled agricultural, forestry and fishery workers" 7 "Craft and related trades workers" 8 "Plant and machine operators, and assemblers" 9 "Elementary occupations"
 	label values occup lbloccup
 *</_occup_>
-	
+
 
 /*<_wage_no_compen_>
 
-In the raw dataset, question 13 devides into "in cash" and "in-kind". For each observation, I calculated the total income by adding up "in cash" and "in-kind" salary. 
+In the raw dataset, question 13 devides into "in cash" and "in-kind". For each observation, I calculated the total income by adding up "in cash" and "in-kind" salary.
 
 <_wage_no_compen_>*/
 
@@ -983,13 +983,6 @@ many months each observation works for, we left the annualized total wage missin
 	gen wage_total = .
 	label var wage_total "Annualized total wage primary job 7 day recall"
 *</_wage_total_>
-
-
-/*<_contract_>
-
-We counted  "Verbal agreement" as "having a contract" as well, considering its big magnitude larger than category 1 "employment agreement for unspecified time".
-
-<_contract_>*/
 
 
 *<_contract_>
@@ -1066,8 +1059,8 @@ This question was only asked to those who are seld-employed.
 
 We do not have information on the employment status of the main additional job. But we know whether the respondent has a second job. Therefore, for people who have a second job, they were all coded as "Other, unclassified workers."
 
-<_empstat_2_>*/ 	
-	
+<_empstat_2_>*/
+
 *<_empstat_2_>
 	gen byte empstat_2 = 5 if b5_r17==1
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
@@ -1126,7 +1119,7 @@ We do not have information on the employment status of the main additional job. 
 
 
 *<_occup_isco_2_>
-	gen occup_isco_2 = . 
+	gen occup_isco_2 = " "
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
@@ -1240,7 +1233,7 @@ We do not have information on the employment status of the main additional job. 
 *</_lstatus_year_>
 
 *<_potential_lf_year_>
-	gen byte potential_lf_year = . 
+	gen byte potential_lf_year = .
 	replace potential_lf_year = . if age < minlaborage & age != .
 	replace potential_lf_year = . if lstatus_year != 3
 	label var potential_lf_year "Potential labour force status"

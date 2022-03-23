@@ -26,7 +26,7 @@
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
 <_ISCO Version_>				N/A </_ISCO Ver UP National_>
-<_OCCUP National_>				KBJI 2014 </_OCCUP National_> 
+<_OCCUP National_>				KBJI 2014 </_OCCUP National_>
 <_ISIC Version_>				N/A </_ISIC Version_>
 <_INDUS National_>				KBLI 2009 </_INDUS National_>
 ---------------------------------------------------------------------------------------
@@ -541,10 +541,10 @@ primary unfinished to those options depends on specific assumptions and research
 needs. Therefore, variable "educy" was left missing and so were educat7, educat5,
 and educat4.
 
-There is no such category as "No education" nor missing observations. So 
+There is no such category as "No education" nor missing observations. So
 probably the survey grouped "no education" into "not yet completed primary school".
 
-Original code list of variable "B5_R1A" in the dataset:
+Original code list of variable "b5_r1a" in the dataset:
 1.No elementary (SD) diploma
 2.Equivalency Package A
 3.Special elementary (SDLB)
@@ -696,7 +696,7 @@ replace educat_isced_v = " " if ( age < ed_mod_age & !missing(age) )
 We define the employed as who "worked primarily (b5_r5b==1)" or
 							  "was not templrarily out of work in the previous week (b5_r6==2)" or
 							  "employed but was temporarily out of work because of certain reasons inlist(b5_r7, 1, 3, 4, 6) & !inlist(b5_r9, ., 2)";
-unemployed: "who do not have a job/business !inlist(b5_r7, ., 1, 3, 4, 6) | b5_r9==2" & "seeking a job (b5_r11==1) | (b5_r12==1)" 
+unemployed: "who do not have a job/business !inlist(b5_r7, ., 1, 3, 4, 6) | b5_r9==2" & "seeking a job (b5_r11==1) | (b5_r12==1)"
 non-labor force:  "who do not have a job/business !inlist(b5_r7, ., 1, 3, 4, 6) | b5_r9==2" & "not seeking a job (b5_r11==2) & (b5_r12==2)"
 
 tab b5_r7 b5_r9, m
@@ -704,18 +704,18 @@ tab b5_r7 b5_r9, m
            |              b5_r9
      b5_r7 |         1          2          . |     Total
 -----------+---------------------------------+----------
-         1 |       280         37          0 |       317 
-         2 |        17         14          0 |        31 
-         3 |        34          4          0 |        38 
-         4 |         1          0          0 |         1 
-         5 |       179         14          0 |       193 
-         6 |       353         49          0 |       402 
-         7 |       739         85          0 |       824 
-         . |         0          0    129,346 |   129,346 
+         1 |       280         37          0 |       317
+         2 |        17         14          0 |        31
+         3 |        34          4          0 |        38
+         4 |         1          0          0 |         1
+         5 |       179         14          0 |       193
+         6 |       353         49          0 |       402
+         7 |       739         85          0 |       824
+         . |         0          0    129,346 |   129,346
 -----------+---------------------------------+----------
-     Total |     1,603        203    129,346 |   131,152 
-	 
-	 
+     Total |     1,603        203    129,346 |   131,152
+
+
 	Labor particiaption 92.02% (coding used):
 
 . tab lstatus, m
@@ -730,13 +730,13 @@ tab b5_r7 b5_r9, m
 ------------+-----------------------------------
       Total |    131,152      100.00
 
-	Labor particiaption 92.84% (coding backup):	  
-	  
+	Labor particiaption 92.84% (coding backup):
+
 	gen byte lstatus = .
 	replace lstatus = 1 if b5_r5b==1 | b5_r6==2
 	replace lstatus = 2 if b5_r6==1 & [(b5_r11==1) | (b5_r12==1)]
-	replace lstatus = 2 if b5_r6==1 & [(b5_r11==2) & (b5_r12==2)] 
-	  
+	replace lstatus = 2 if b5_r6==1 & [(b5_r11==2) & (b5_r12==2)]
+
 . tab lstatus, m
 
       Labor |
@@ -755,7 +755,7 @@ tab b5_r7 b5_r9, m
 	gen byte lstatus = .
 	replace lstatus = 1 if b5_r5b==1 | b5_r6==2 | [inlist(b5_r7, 1, 3, 4, 6) & !inlist(b5_r9, ., 2)]
 	replace lstatus = 2 if [!inlist(b5_r7, ., 1, 3, 4, 6) | b5_r9==2] & [(b5_r11==1) | (b5_r12==1)]
-	replace lstatus = 3 if [!inlist(b5_r7, ., 1, 3, 4, 6) | b5_r9==2] & [(b5_r11==2) & (b5_r12==2)] 
+	replace lstatus = 3 if [!inlist(b5_r7, ., 1, 3, 4, 6) | b5_r9==2] & [(b5_r11==2) & (b5_r12==2)]
 	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -795,7 +795,7 @@ Note: var "potential_lf" is missing if the respondent is in labor force or unemp
 
 /*<_nlfreason_>
 
-The original variable "b4_r16a " has 6 non-missing categories:
+The original variable "b5_r16a " has 12 non-missing categories:
 	1  Already accepted for work but not yet starting the job
 	2  Already having a business but not yet starting it
 	3  Hopeless; feeling impossible to get a job
@@ -808,13 +808,13 @@ The original variable "b4_r16a " has 6 non-missing categories:
 	10 Experiencing social exclusion/rejection
 	11 Inability to work
 	12 Other, specify
-	
+
 <_nlfreason_>*/
 
 
 *<_nlfreason_>
-	gen byte nlfreason = b5_r16a  
-	recode nlfreason (7=1) (6=2) (11=4) (1/5 8/10 12=5) 
+	gen byte nlfreason = b5_r16a
+	recode nlfreason (7=1) (6=2) (11=4) (1/5 8/10 12=5)
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
 	label values nlfreason lblnlfreason
@@ -851,7 +851,7 @@ of unemployment period.
 {
 *<_empstat_>
 	gen byte empstat = b5_r23
-	recode empstat (1 2=4) (4=1) (6=5) (7=2) 
+	recode empstat (1 2=4) (4=1) (6=5) (7=2)
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat lblempstat
@@ -863,7 +863,7 @@ of unemployment period.
 The original variable "b5_r31" has 5 categories:
 
 1. Government
-2. international institution/organization 
+2. international institution/organization
 3. non-profit institutions
 4. profit institutions (private enterprises, state-owned enterprises, regional-owned enterprises)
 5. cooperatives
@@ -876,7 +876,7 @@ The original variable "b5_r31" has 5 categories:
 
 *<_ocusec_>
 	gen byte ocusec = b5_r31
-	recode ocusec (2 8 9=4) (3 4/7=2) 
+	recode ocusec (2 8 9=4) (3 4/7=2)
 	label var ocusec "Sector of activity primary job 7 day recall"
 	la de lblocusec 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec lblocusec
@@ -927,7 +927,7 @@ Variable "b5_r20_201" uses KBJI 2014 and it has one digit and 10 categories in t
 Note that in the raw dataset variable "b5_r20_201" does not have labels.
 
 <_occup_orig_>*/
-	
+
 
 *<_occup_orig_>
 	gen occup_orig = b5_r20_201
@@ -937,7 +937,7 @@ Note that in the raw dataset variable "b5_r20_201" does not have labels.
 
 
 *<_occup_isco_>
-	gen occup_isco = .
+	gen occup_isco = " "
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
@@ -953,14 +953,14 @@ Note that in the raw dataset variable "b5_r20_201" does not have labels.
 	replace occup = . if lstatus!=1
 	replace occup = . if  occup==0
 	label var occup "1 digit occupational classification, primary job 7 day recall"
-  	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians and associate professionals" 4 "Clerical support workers" 5 "Service and market sales workers" 6 "Skilled agricultural, forestry and fishery workers" 7 "Craft and related trades workers" 8 "Plant and machine operators, and assemblers" 9 "Elementary occupations" 
+  	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians and associate professionals" 4 "Clerical support workers" 5 "Service and market sales workers" 6 "Skilled agricultural, forestry and fishery workers" 7 "Craft and related trades workers" 8 "Plant and machine operators, and assemblers" 9 "Elementary occupations"
 	label values occup lbloccup
 *</_occup_>
-	
+
 
 /*<_wage_no_compen_>
 
-In the raw dataset, question 26 devides into "in cash" and "in-kind". For each observation, I calculated the total income by adding up "in cash" and "in-kind" salary. 
+In the raw dataset, question 26 devides into "in cash" and "in-kind". For each observation, I calculated the total income by adding up "in cash" and "in-kind" salary.
 
 <_wage_no_compen_>*/
 
@@ -1140,7 +1140,7 @@ This question was only asked to those who are seld-employed.
 
 
 *<_occup_isco_2_>
-	gen occup_isco_2 = . 
+	gen occup_isco_2 = " "
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
@@ -1172,7 +1172,7 @@ This question was only asked to those who are seld-employed.
 
 
 *<_whours_2_>
-	gen whours_2 = b5_r37b-b5_r22b 
+	gen whours_2 = b5_r37b-b5_r22b
 	replace whours_2 = . if b5_r34!=1
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
@@ -1255,7 +1255,7 @@ This question was only asked to those who are seld-employed.
 *</_lstatus_year_>
 
 *<_potential_lf_year_>
-	gen byte potential_lf_year = . 
+	gen byte potential_lf_year = .
 	replace potential_lf_year = . if age < minlaborage & age != .
 	replace potential_lf_year = . if lstatus_year != 3
 	label var potential_lf_year "Potential labour force status"

@@ -26,7 +26,7 @@
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
 <_ISCO Version_>				N/A </_ISCO Ver UP National_>
-<_OCCUP National_>				KBJI 2014 </_OCCUP National_> 
+<_OCCUP National_>				KBJI 2014 </_OCCUP National_>
 <_ISIC Version_>				N/A </_ISIC Version_>
 <_INDUS National_>				KBLI 2015 </_INDUS National_>
 ---------------------------------------------------------------------------------------
@@ -543,7 +543,7 @@ primary unfinished to those options depends on specific assumptions and research
 needs. Therefore, variable "educy" was left missing and so were educat7, educat5,
 and educat4.
 
-In 2019, there is no such category as "No education" nor missing observations. So 
+In 2019, there is no such category as "No education" nor missing observations. So
 probably the survey grouped "no education" into "not yet completed primary school".
 
 Original code list of variable "B5_R1A" in the dataset:
@@ -722,9 +722,9 @@ non-labor force: "who do not have a job/business !inlist(B5_R8, 0, 5, 6, 8) | B5
 	replace lstatus = 1 if B5_R5B==1 | B5_R6==1 | B5_R7A==1 | B5_R7B==2
 	replace lstatus = 2 if B5_R7B==1 & [(B5_R12A==1) | (B5_R12B==1) ]
 	replace lstatus = 3 if B5_R7B==1 & B5_R12A==2 & B5_R12B==2
-	
+
 	  	  Labor particiaption 93.33% (coding backup):
-		  
+
 . tab lstatus, m
 
       Labor |
@@ -737,7 +737,7 @@ non-labor force: "who do not have a job/business !inlist(B5_R8, 0, 5, 6, 8) | B5
 ------------+-----------------------------------
       Total |    782,789      100.00
 
-	
+
 <_lstatus_>*/
 
 
@@ -765,11 +765,11 @@ Note: var "potential_lf" is missing if the respondent is in labor force or unemp
            |        B5_R12A
     B5_R19 |         1          2 |     Total
 -----------+----------------------+----------
-         0 |         0     10,553 |    10,553 
-         1 |    32,704    157,482 |   190,186 
-         2 |     3,749    578,301 |   582,050 
+         0 |         0     10,553 |    10,553
+         1 |    32,704    157,482 |   190,186
+         2 |     3,749    578,301 |   582,050
 -----------+----------------------+----------
-     Total |    36,453    746,336 |   782,789 
+     Total |    36,453    746,336 |   782,789
 
 </_potential_lf_>*/
 
@@ -816,7 +816,7 @@ The original variable "B5R17A " for 7-day reference period:
 
 
 *<_nlfreason_>
-	gen byte nlfreason = B5_R17A  
+	gen byte nlfreason = B5_R17A
 	recode nlfreason (7=1) (6=2) (12=3) (13=4) (1/5 8/11 14=5) (0=.)
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
@@ -932,7 +932,7 @@ Note that in the raw dataset variable "B5_R21_KBJ" does not have labels.
 
 
 *<_occup_isco_>
-	gen occup_isco = .
+	gen occup_isco = " "
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
@@ -948,7 +948,7 @@ Note that in the raw dataset variable "B5_R21_KBJ" does not have labels.
 	replace occup = . if lstatus!=1
 	replace occup = . if  occup==0
 	label var occup "1 digit occupational classification, primary job 7 day recall"
-  	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians and associate professionals" 4 "Clerical support workers" 5 "Service and market sales workers" 6 "Skilled agricultural, forestry and fishery workers" 7 "Craft and related trades workers" 8 "Plant and machine operators, and assemblers" 9 "Elementary occupations" 
+  	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians and associate professionals" 4 "Clerical support workers" 5 "Service and market sales workers" 6 "Skilled agricultural, forestry and fishery workers" 7 "Craft and related trades workers" 8 "Plant and machine operators, and assemblers" 9 "Elementary occupations"
 	label values occup lbloccup
 *</_occup_>
 
@@ -968,7 +968,7 @@ Each of these two variables devides into "in cash" and "in-kind". For each obser
 
 *<_wage_no_compen_>
 	gen double wage_no_compen = .
-	gen wagec1 = B5_R28C1 
+	gen wagec1 = B5_R28C1
 	replace wagec1 =0 if (B5_R28B1!=0 | B5_R28B2!=0 ) & (B5_R28C1!=0 | B5_R28C2!=0) & B5_R28B1==B5_R28C1
 	replace wage_no_compen = B5_R28B1+B5_R28B2+wagec1+B5_R28C2
 	replace wage_no_compen = . if lstatus!=1
@@ -1140,7 +1140,7 @@ We count both "old age benefit (lump sum)" and "pension benefit (annuity)" as in
 
 
 *<_occup_isco_2_>
-	gen occup_isco_2 = . 
+	gen occup_isco_2 = " "
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
@@ -1254,7 +1254,7 @@ We count both "old age benefit (lump sum)" and "pension benefit (annuity)" as in
 *</_lstatus_year_>
 
 *<_potential_lf_year_>
-	gen byte potential_lf_year = . 
+	gen byte potential_lf_year = .
 	replace potential_lf_year = . if age < minlaborage & age != .
 	replace potential_lf_year = . if lstatus_year != 3
 	label var potential_lf_year "Potential labour force status"
