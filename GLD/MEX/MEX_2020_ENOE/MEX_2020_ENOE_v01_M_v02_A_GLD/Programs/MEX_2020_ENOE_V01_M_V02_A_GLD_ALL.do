@@ -150,7 +150,7 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2020_ENOE\MEX_2020_ENO
 		rename scian scian_orig
 		tostring p4a, gen(scian_help)
 		gen scian = substr(scian_help,1,3)
-		merge m:1 scian using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2020_ENOE\MEX_2020_ENOE_V01_M\Data\Stata\SCIAN_07_3D_ISIC_4.dta", keep(master match) nogen
+		merge m:1 scian using "`path_in'\SCIAN_07_3D_ISIC_4.dta", keep(master match) nogen
 	*Note: rename necessary to allow for the second job code to generate a new cmo for the merge
 		rename scian scian_1
 		rename isic isic_1
@@ -158,7 +158,7 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2020_ENOE\MEX_2020_ENO
 	***second job
 		tostring p7c, gen(scian_help)
 		gen scian = substr(scian_help,1,3)
-		merge m:1 scian using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2020_ENOE\MEX_2020_ENOE_V01_M\Data\Stata\SCIAN_07_3D_ISIC_4.dta", keep(master match) nogen
+		merge m:1 scian using "`path_in'\SCIAN_07_3D_ISIC_4.dta", keep(master match) nogen
 	*Note: rename necessary to interpret scian
 		rename scian scian_2
 		rename isic isic_2
@@ -170,14 +170,14 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2020_ENOE\MEX_2020_ENO
 
 ***then first job
 	tostring p3, gen(sinco)
-	merge m:1 sinco using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2020_ENOE\MEX_2020_ENOE_V01_M\Data\Stata\SINCO_11_ISCO_08.dta", keep(master match) nogen
+	merge m:1 sinco using "`path_in'\SINCO_11_ISCO_08.dta", keep(master match) nogen
 *Note: rename necessary to allow for the second job code to generate a new cmo for the merge
 	rename sinco sinco_1
 	rename isco isco_1
 
 ***then second job
 	tostring p7a, gen(sinco)
-	merge m:1 sinco using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2020_ENOE\MEX_2020_ENOE_V01_M\Data\Stata\SINCO_11_ISCO_08.dta", keep(master match) nogen
+	merge m:1 sinco using "`path_in'\SINCO_11_ISCO_08.dta", keep(master match) nogen
 *Note: rename necessary to misinterpret cmo
 	rename sinco sinco_2
 	rename isco isco_2
@@ -371,7 +371,7 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2020_ENOE\MEX_2020_ENO
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = "subnatid3"
+	gen subnatidsurvey = "subnatid2"
 	*tostring subnatidsurvey, replace
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
@@ -981,7 +981,8 @@ replace industrycat10_helper=10 if industrycat10=="85" | industrycat10=="86" | i
 
 
 *<_unitwage_>
-	gen byte unitwage = p6b1
+	*gen byte unitwage = p6b1
+	gen byte unitwage = 5
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	/*
 	LFS 				GLD
@@ -997,7 +998,7 @@ replace industrycat10_helper=10 if industrycat10=="85" | industrycat10=="86" | i
 	(10)				(10) other
 
 	*/
-	recode unitwage 1=5 2=3 3=2 4=1 6 5=10 7 8=.
+	*recode unitwage 1=5 2=3 3=2 4=1 6 5=10 7 8=.
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
 	replace unitwage=. if wage_no_compen==.
 	label values unitwage lblunitwage
@@ -1006,9 +1007,10 @@ replace industrycat10_helper=10 if industrycat10=="85" | industrycat10=="86" | i
 
 *<_whours_>
 *this variable has outliers starting in 85 to 168 hours of work
-	gen whours = p5c_thrs
+	*gen whours = p5c_thrs
+	gen whours = p5e_thrs
 	replace whours=. if lstatus!=1
-	replace whours=. if p4==4
+*	replace whours=. if p4==4
 	replace whours=. if whours==999
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
@@ -1039,12 +1041,13 @@ replace unitwage=. if wmonths==.
 
 </_wage_total> */
 	gen double wage_total=.
-replace wage_total=(wage_no_compen*5*4.3)*wmonths if unitwage==1
+	replace wage_total=( wage_no_compen)*wmonths
+/*replace wage_total=(wage_no_compen*5*4.3)*wmonths if unitwage==1
 //Wage in daily unit
 replace wage_total=(wage_no_compen*4.3)*wmonths if unitwage==2 //Wage in weekly unit
 replace wage_total=(wage_no_compen*2.15)*wmonths if unitwage==3
 replace wage_total=( wage_no_compen)*wmonths if unitwage==5 //Wage in monthly unit
-replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
+replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others*/
 	replace wage_total=. if lstatus!=1 & empstat!=1
 	replace wage_total=round(wage_total)
 	label var wage_total "Annualized total wage primary job 7 day recall"

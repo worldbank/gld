@@ -29,7 +29,7 @@
 
 <_ICLS Version_>				[ICLS 13] </_ICLS Version_>
 <_ISCED Version_>				[ISCED 1997] </_ISCED Version_>
-<_ISCO Version_>				[ISCO-68] </_ISCO Version_>
+<_ISCO Version_>				[ISCO-08] </_ISCO Version_>
 <_OCCUP National_>				[CMO I & II 1998 ] </_OCCUP National_>
 <_ISIC Version_>				[Rev 4] </_ISIC Version_>
 <_INDUS National_>				[SCIAN 2007] </_INDUS National_>
@@ -156,7 +156,7 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_ENOE\MEX_2005_ENO
 	rename scian scian_orig
 	tostring p4a, gen(scian_help)
 	gen scian = substr(scian_help,1,3)
-	merge m:1 scian using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_ENOE\MEX_2005_ENOE_V01_M\Data\Stata\SCIAN_07_3D_ISIC_4.dta", keep(master match) nogen
+	merge m:1 scian using "`path_in'\SCIAN_07_3D_ISIC_4.dta", keep(master match) nogen
 *Note: rename necessary to allow for the second job code to generate a new cmo for the merge
 	rename scian scian_1
 	rename isic isic_1
@@ -164,7 +164,7 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_ENOE\MEX_2005_ENO
 ***second job
 	tostring p7c, gen(scian_help)
 	gen scian = substr(scian_help,1,3)
-	merge m:1 scian using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_ENOE\MEX_2005_ENOE_V01_M\Data\Stata\SCIAN_07_3D_ISIC_4.dta", keep(master match) nogen
+	merge m:1 scian using "`path_in'\SCIAN_07_3D_ISIC_4.dta", keep(master match) nogen
 *Note: rename necessary to interpret scian
 	rename scian scian_2
 	rename isic isic_2
@@ -173,14 +173,14 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_ENOE\MEX_2005_ENO
 *ISCO
 ***then first job
 	tostring p3, gen(cmo)
-	merge m:1 cmo using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_ENOE\MEX_2005_ENOE_V01_M\Data\Stata\CMO_09_ISCO_08.dta", keep(master match) nogen
+	merge m:1 cmo using "`path_in'\CMO_09_ISCO_08.dta", keep(master match) nogen
 *Note: rename necessary to allow for the second job code to generate a new cmo for the merge
 	rename cmo cmo_1
 	rename isco isco_1
 
 ***then second job
 	tostring p7a, gen(cmo)
-	merge m:1 cmo using "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_ENOE\MEX_2005_ENOE_V01_M\Data\Stata\CMO_09_ISCO_08.dta", keep(master match) nogen
+	merge m:1 cmo using "`path_in'\CMO_09_ISCO_08.dta", keep(master match) nogen
 *Note: rename necessary to interpret cmo
 	rename cmo cmo_2
 	rename isco isco_2
@@ -222,7 +222,7 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2005_ENOE\MEX_2005_ENO
 
 
 *<_isco_version_>
-	gen isco_version = "isco_1968"
+	gen isco_version = "isco_2008"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
@@ -377,7 +377,7 @@ gen isic_version = "isic_4"
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = "subnatid3"
+	gen subnatidsurvey = "subnatid2"
 	*tostring subnatidsurvey, replace
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
@@ -439,7 +439,7 @@ gen isic_version = "isic_4"
 
 *<_age_>
 	gen age = eda
-replace age = . if eda == 99
+	replace age = . if eda == 99
 	label var age "Individual age"
 *</_age_>
 
@@ -982,23 +982,10 @@ foreach v of local ed_var {
 
 
 *<_unitwage_>
-	gen byte unitwage = p6b1
+	*gen byte unitwage = p6b1
+	gen byte unitwage = 5
 	label var unitwage "Last wages' time unit primary job 7 day recall"
-	/*
-	LFS 				GLD
-	(1) Cada mes  -  	(1) Daily
-	(2) every 15 days - (2) Weekly
-	(3) every week - 	(3) every two weeks
-	(4) daily  - 		(4) bimonthly
-	(5) other		  	(5) monthly
-	(6) paid by product (6) trimester
-	(7) don't know		(7) biannual
-	(8) no reply		(8) annualy
-	(9) 				(9) hourly
-	(10)				(10) other
-
-	*/
-	recode unitwage 1=5 2=3 3=2 4=1 6 5=10 7 8=.
+	*recode unitwage 1=5 2=3 3=2 4=1 6 5=10 7 8=.
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
 	replace unitwage=. if wage_no_compen==.
 	label values unitwage lblunitwage
@@ -1007,11 +994,11 @@ foreach v of local ed_var {
 
 *<_whours_>
 *this variable has outliers starting in 85 to 168 hours of work
-	gen whours = p5c_thrs
+	*gen whours = p5c_thrs
+	gen whours=p5e_thrs
 	replace whours=. if lstatus!=1
-	replace whours=. if p4==4
+	*replace whours=. if p4==4
 	replace whours=. if whours==999
-	*
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -1041,12 +1028,13 @@ foreach v of local ed_var {
 
 </_wage_total> */
 	gen double wage_total=.
-replace wage_total=(wage_no_compen*5*4.3)*wmonths if unitwage==1
+	replace wage_total=( wage_no_compen)*wmonths
+*replace wage_total=(wage_no_compen*5*4.3)*wmonths if unitwage==1
 //Wage in daily unit
-replace wage_total=(wage_no_compen*4.3)*wmonths if unitwage==2 //Wage in weekly unit
-replace wage_total=(wage_no_compen*2.15)*wmonths if unitwage==3
-replace wage_total=( wage_no_compen)*wmonths if unitwage==5 //Wage in monthly unit
-replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
+*replace wage_total=(wage_no_compen*4.3)*wmonths if unitwage==2 //Wage in weekly unit
+*replace wage_total=(wage_no_compen*2.15)*wmonths if unitwage==3
+*replace wage_total=( wage_no_compen)*wmonths if unitwage==5 //Wage in monthly unit
+*replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others
 	replace wage_total=. if lstatus!=1 & empstat!=1
 	replace wage_total=round(wage_total)
 	label var wage_total "Annualized total wage primary job 7 day recall"
