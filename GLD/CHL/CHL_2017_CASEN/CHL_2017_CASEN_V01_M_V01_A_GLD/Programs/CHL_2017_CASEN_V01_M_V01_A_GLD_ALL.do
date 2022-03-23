@@ -22,9 +22,9 @@
 <_Geographic coverage_> "The geographic coverage of the study is national. However, areas of difficult access are excluded (General Lagos, Colchane, Ollagüe, Juan Fernández, Easter Island, Cochamó, Chaitén, Futaleufú, Hualaihué, Palena, Lago Verde, Guaitecas, O'Higgins , Tortel, Laguna Blanca, Río Verde, San Gregorio, Cape Horn (Ex - Navarino), Antarctica, Primavera, Timaukel, Torres del Paine)." </_Geographic coverage_>
 <_Currency_> 	Chilean Pesos </_Currency_>
 -----------------------------------------------------------------------
-<_ICLS Version_>		N/A		</_ICLS Version_>
-<_ISCED Version_>		N/A		 </_ISCED Version_>
-<_ISCO Version_>		ISOC 1988		 </_ISCO Version_>
+<_ICLS Version_>		ICLS-19		</_ICLS Version_>
+<_ISCED Version_>		ISCED 2013		 </_ISCED Version_>
+<_ISCO Version_>		ISCO 1988		 </_ISCO Version_>
 <_OCCUP National_>		ISCO 1988	 </_OCCUP National_>
 <_ISIC Version_>		 	 </_ISIC Version_>
 <_INDUS National_>			 </_INDUS National_>
@@ -83,19 +83,19 @@ use "`path_in'\casen_2017.dta"
 
 
 *<_icls_v_>
-	gen icls_v =.
+	gen icls_v ="ICLS-19"
 	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
 
 *<_isced_version_>
-	gen isced_version = .
+	gen isced_version = "ISCED_2013"
 	label var isced_version "Version of ISCED used for educat_isced"
 *</_isced_version_>
 
 
 *<_isco_version_>
 
-	gen isco_version = ""
+	gen isco_version = "isco_1988"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 

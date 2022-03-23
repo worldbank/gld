@@ -22,9 +22,9 @@
 <_Geographic coverage_> "The geographic coverage of the study is national." </_Geographic coverage_>
 <_Currency_> 	Chilean Pesos </_Currency_>
 -----------------------------------------------------------------------
-<_ICLS Version_>		N/A		</_ICLS Version_>
-<_ISCED Version_>		N/A		 </_ISCED Version_>
-<_ISCO Version_>		ISOC 1988		 </_ISCO Version_>
+<_ICLS Version_>		ICLS-19		</_ICLS Version_>
+<_ISCED Version_>		ISCED 2013		 </_ISCED Version_>
+<_ISCO Version_>		ISC0 1988		 </_ISCO Version_>
 <_OCCUP National_>		ISCO 1988	 </_OCCUP National_>
 <_ISIC Version_>		 	 </_ISIC Version_>
 <_INDUS National_>			 </_INDUS National_>
@@ -84,19 +84,19 @@ rename fecha_aņo fecha_ano
 
 
 *<_icls_v_>
-	gen icls_v =.
+	gen icls_v ="ICLS-19"
 	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
 
 *<_isced_version_>
-	gen isced_version = .
+	gen isced_version = "ISCED_2013"
 	label var isced_version "Version of ISCED used for educat_isced"
 *</_isced_version_>
 
 
 *<_isco_version_>
 
-	gen isco_version = ""
+	gen isco_version = "isco_1988"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
@@ -590,6 +590,7 @@ foreach v of local ed_var {
 {
 *<_lstatus_>
 	gen byte lstatus = activ
+	*Note : we include this restriction (below) because there was an input error in the data that shifted one observation to missing eventhough the person worked in an economic sector.
 	replace lstatus=1 if activ!=1 & rama4_sub=="0140"
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -684,7 +685,6 @@ foreach v of local ed_var {
 *<_industrycat10_>
 	gen industrycat10=rama1_sub
 	recode industrycat10 2=1 3=2 4=3 5=4 6=5 7=6 8=10 9=7 10=8 11=10 12=9 13/16=10 99=.
-	replace lstatus=1 if industrycat10==. & lstatus!=1
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"

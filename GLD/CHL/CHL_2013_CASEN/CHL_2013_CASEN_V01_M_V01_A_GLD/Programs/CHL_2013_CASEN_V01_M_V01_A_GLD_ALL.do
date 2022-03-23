@@ -22,8 +22,8 @@
 <_Geographic coverage_> "The geographic coverage of the study is national." </_Geographic coverage_>
 <_Currency_> 	Chilean Pesos </_Currency_>
 -----------------------------------------------------------------------
-<_ICLS Version_>		N/A		</_ICLS Version_>
-<_ISCED Version_>		N/A		 </_ISCED Version_>
+<_ICLS Version_>		ICLS-19		</_ICLS Version_>
+<_ISCED Version_>		ISCED 2011		 </_ISCED Version_>
 <_ISCO Version_>		ISOC 1988		 </_ISCO Version_>
 <_OCCUP National_>		ISCO 1988	 </_OCCUP National_>
 <_ISIC Version_>		 	 </_ISIC Version_>
@@ -84,19 +84,19 @@ use "`path_in'\casen_2013_mn_b_principal.dta"
 
 
 *<_icls_v_>
-	gen icls_v =.
+	gen icls_v ="ICLS-19"
 	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
 
 *<_isced_version_>
-	gen isced_version = .
+	gen isced_version = "ISCED_2011"
 	label var isced_version "Version of ISCED used for educat_isced"
 *</_isced_version_>
 
 
 *<_isco_version_>
 
-	gen isco_version = ""
+	gen isco_version = "isco_1988"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 

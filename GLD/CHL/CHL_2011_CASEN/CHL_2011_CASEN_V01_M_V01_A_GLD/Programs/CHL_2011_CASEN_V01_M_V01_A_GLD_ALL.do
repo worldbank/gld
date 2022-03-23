@@ -16,14 +16,14 @@
 <_Data collection from_> oct 2011 </_Data collection from_>
 <_Data collection to_>		january 2012 </_Data collection to_>
 <_Source of dataset_> 	CASEN </_Source of dataset_>
-<_Sample size (HH)_> 	. </_Sample size (HH)_>
-<_Sample size (IND)_> 	. </_Sample size (IND)_>
+<_Sample size (HH)_> 	   294791 </_Sample size (HH)_>
+<_Sample size (IND)_> 	 86854 </_Sample size (IND)_>
 <_Sampling method_> Probabilistic, stratified, by cluster and in multiple stages. The final unit of selection is the dwelling.	 </_Sampling method_>
 <_Geographic coverage_> "The geographic coverage of the study is national." </_Geographic coverage_>
 <_Currency_> 	Chilean Pesos </_Currency_>
 -----------------------------------------------------------------------
-<_ICLS Version_>		N/A		</_ICLS Version_>
-<_ISCED Version_>		N/A		 </_ISCED Version_>
+<_ICLS Version_>		ICLS-19		</_ICLS Version_>
+<_ISCED Version_>		ISCED 1997	 </_ISCED Version_>
 <_ISCO Version_>		ISOC 1988		 </_ISCO Version_>
 <_OCCUP National_>		ISCO 1988	 </_OCCUP National_>
 <_ISIC Version_>		 ISIC REV 3	 </_ISIC Version_>
@@ -84,12 +84,12 @@ use "`path_in'\casen2011_octubre2011_enero2012_principal_08032013stata.dta"
 
 
 *<_icls_v_>
-	gen icls_v =.
+	gen icls_v ="ICLS-19"
 	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
 
 *<_isced_version_>
-	gen isced_version = .
+	gen isced_version = "ISCED_1997"
 	label var isced_version "Version of ISCED used for educat_isced"
 *</_isced_version_>
 
@@ -588,6 +588,7 @@ foreach v of local ed_var {
 {
 *<_lstatus_>
 	gen byte lstatus = activ
+	*Note : we include this restriction because there was an input error in the data that shifted one observation to missing eventhough the person worked in an economic sector.
 	replace lstatus=1 if activ!=1 & rama4_sub=="7491"
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"

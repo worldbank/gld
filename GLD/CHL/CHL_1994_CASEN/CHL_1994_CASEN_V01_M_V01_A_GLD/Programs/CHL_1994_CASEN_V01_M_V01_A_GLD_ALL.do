@@ -22,7 +22,7 @@
 <_Geographic coverage_> National </_Geographic coverage_>
 <_Currency_> 					Chilean Pesos </_Currency_>
 -----------------------------------------------------------------------
-<_ICLS Version_>		[N/A]		</_ICLS Version_>
+<_ICLS Version_>		ICLS-13		</_ICLS Version_>
 <_ISCED Version_>		[N/A]		 </_ISCED Version_>
 <_ISCO Version_>			ISCO 1988	 </_ISCO Version_>
 <_OCCUP National_>		ISCO 1988	 </_OCCUP National_>
@@ -84,7 +84,7 @@ use "`path_in'\casen1994.dta"
 
 *<_icls_v_>
 
-	gen icls_v = .
+	gen icls_v = "ICLS-13"
 	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
 
@@ -310,7 +310,7 @@ local letters "r p c z o seg f"
 
 *<_relationharm_>
 	gen relationharm =pco1
-	recode relationharm  5/10=5 11/12=6 
+	recode relationharm  5/10=5 11/12=6
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm  lblrelationharm

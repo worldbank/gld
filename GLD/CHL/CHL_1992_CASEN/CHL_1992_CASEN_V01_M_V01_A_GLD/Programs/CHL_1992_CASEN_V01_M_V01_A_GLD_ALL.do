@@ -22,7 +22,7 @@
 <_Geographic coverage_> National </_Geographic coverage_>
 <_Currency_> 					Chilean Pesos </_Currency_>
 -----------------------------------------------------------------------
-<_ICLS Version_>		[N/A]		</_ICLS Version_>
+<_ICLS Version_>		ICSL-13	</_ICLS Version_>
 <_ISCED Version_>		[N/A]		 </_ISCED Version_>
 <_ISCO Version_>			ISCO 1988	 </_ISCO Version_>
 <_OCCUP National_>		ISCO 1988	 </_OCCUP National_>
@@ -83,8 +83,7 @@ use "`path_in'\casen1992.dta"
 
 
 *<_icls_v_>
-*this is not a labour survey ????
-	gen icls_v = .
+	gen icls_v = "ICLS-13"
 	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
 
@@ -508,7 +507,7 @@ local letters "r p c z o seg"
 
 *<_educat4_>
 	gen byte educat4 = educat5
-	recode educat4 (3=2) (4=3) (5=4) 
+	recode educat4 (3=2) (4=3) (5=4)
 	label var educat4 "Level of education 3"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values educat4 lbleducat4
@@ -756,8 +755,7 @@ foreach v of local ed_var {
 
 
 *<_unitwage_>
-*NOT IN the format of the survey , two alternatives days or hours
-	gen byte unitwage = .
+	gen byte unitwage = 5
 	replace unitwage = . if lstatus != 1
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"

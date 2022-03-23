@@ -23,8 +23,8 @@ communes of the country.	 </_Sampling method_>
 <_Geographic coverage_> National </_Geographic coverage_>
 <_Currency_> 	Chilean Pesos </_Currency_>
 -----------------------------------------------------------------------
-<_ICLS Version_>		N/A		</_ICLS Version_>
-<_ISCED Version_>		N/A		 </_ISCED Version_>
+<_ICLS Version_>		ICLS-13		</_ICLS Version_>
+<_ISCED Version_>		ISCED 1997		 </_ISCED Version_>
 <_ISCO Version_>		ISOC 1988		 </_ISCO Version_>
 <_OCCUP National_>		ISCO 1988	 </_OCCUP National_>
 <_ISIC Version_>		ISIC REV 2	 </_ISIC Version_>
@@ -84,12 +84,12 @@ use "`path_in'\casen2006.dta"
 
 
 *<_icls_v_>
-	gen icls_v =.
+	gen icls_v ="ICLS-13"
 	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
 
 *<_isced_version_>
-	gen isced_version = .
+	gen isced_version = "ISCED_1997"
 	label var isced_version "Version of ISCED used for educat_isced"
 *</_isced_version_>
 
@@ -763,7 +763,7 @@ foreach v of local ed_var {
 	gen whours = o15
 	replace whours=. if lstatus!=1
 	replace whours=. if o15>84
-	recode whours 999=.
+	recode whours 99=.
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
