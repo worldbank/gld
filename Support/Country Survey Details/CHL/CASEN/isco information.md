@@ -11,5 +11,22 @@ Below we will describe the ISCO information available in the data harmonized fol
 | 1990, 2011	| Not Available	|
 | 1992-2017	| ISCO 1988	|
 
-As the table shows the documentation in the official CASEN website does not provide updated information on the 
+The documentation reveals that the CASEN works with the 1988 ISCO codes, yet there is not clarity onto whether the classification in the years 2011 onwards represents the 1988 ISCO or a version created by the INE for the survey. Yet, for the year 2011 in particular is very difficult to assert the isco classification used because of the limited documentation available publicly. 
+
+There is a website from the INE that states a [new Chilean ISCO version](https://www.ine.cl/institucional/buenas-practicas/clasificaciones), but no information in the CASEN documentation suggests these were used in the survey. Furthermore, in the [documentation of CASEN](http://observatorio.ministeriodesarrollosocial.gob.cl/storage/docs/casen/2017/Libro_de_Codigos_Casen_2017.pdf) for the year 2017, it is stated that the ISCO classification used is ISCO 1988 (see page 252) with no further details on national versions. 
+
+
+## About codes that do not match the international ISCO classification
+
+The years with occupation classification information have glitches on the labelling. Example:
+
+
+ISCO 88 (ILO)	| ISCO 88 (CASEN) | 
+| :-------	| :-------- | 
+| 1	| 100	|
+| 12	| 120|
+| 122	| 122|
+
+
+Figure 1. Shows that in the left side the ISCO classification has three levels represented by the number of digits in each. Yet in the right side we can see that the information in the raw CASEN files give us no difference in the number of digits so it is natural to confuse many of the digits with zero at the end as part of the last digit group, instead these are the upper digit classifications. In the harmonization we tried to clean this issue through a process of mapping each year yet there is no documentation from CASEN that explains whether this approach is the correct one to address this issue. 
 
