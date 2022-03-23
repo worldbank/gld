@@ -28,5 +28,5 @@ ISCO 88 (ILO)	| ISCO 88 (CASEN) |
 | 122	| 122|
 
 
-Figure 1. Shows that in the left side the ISCO classification has three levels represented by the number of digits in each. Yet in the right side we can see that the information in the raw CASEN files give us no difference in the number of digits so it is natural to confuse many of the digits with zero at the end as part of the last digit group, instead these are the upper digit classifications. In the harmonization we tried to clean this issue through a process of mapping each year yet there is no documentation from CASEN that explains whether this approach is the correct one to address this issue. 
+Figure 1. Shows that in the left side the ISCO classification has three levels represented by the number of digits in each. Yet in the right side we can see that the information in the raw CASEN files give us no difference in the number of digits so it is natural to confuse many of the digits with zero at the end as part of the last digit group, instead these are the upper digit classifications. In the harmonization point out this abnormalities in the do files.
 
