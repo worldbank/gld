@@ -174,7 +174,7 @@ local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
 
 *<_weight_>
 	gen weight = .
-	label var weight "Household sampling weight"
+	label var weight "Survey sampling weight"
 *</_weight_>
 
 
