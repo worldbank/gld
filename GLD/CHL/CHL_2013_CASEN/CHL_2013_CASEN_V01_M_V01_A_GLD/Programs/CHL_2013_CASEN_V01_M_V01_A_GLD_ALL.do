@@ -26,8 +26,8 @@
 <_ISCED Version_>		ISCED 2011		 </_ISCED Version_>
 <_ISCO Version_>		ISOC 1988		 </_ISCO Version_>
 <_OCCUP National_>		ISCO 1988	 </_OCCUP National_>
-<_ISIC Version_>		 	 </_ISIC Version_>
-<_INDUS National_>			 </_INDUS National_>
+<_ISIC Version_>		 	ISIC REV 3 </_ISIC Version_>
+<_INDUS National_>		ISIC REV 3	 </_INDUS National_>
 -----------------------------------------------------------------------
 <_Version Control_>
 * Date: [YYYY-MM-DD] - [Description of changes]
@@ -102,7 +102,7 @@ use "`path_in'\casen_2013_mn_b_principal.dta"
 
 
 *<_isic_version_>
-	gen isic_version = ""
+	gen isic_version = "isic_3"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
