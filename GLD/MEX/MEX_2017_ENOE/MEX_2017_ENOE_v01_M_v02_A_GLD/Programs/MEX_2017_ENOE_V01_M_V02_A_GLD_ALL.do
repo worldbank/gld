@@ -1007,11 +1007,37 @@ gen  occup_skill= substr(isco_1, 1,2)
 
 
 *<_whours_>
+/*<_whours_note>
+Variables of importance
+p5a – The past week , did you have almost not work to do?
+p5b – Are you worried about this situation (in reference to the previous question)?
+p5c_thrs – The past week , what days and how many hours did you spend at work?
+p5d - in reference to the previous question , is this the number of hours that you usually work?
+p5e_thrs – In reference to the previous question, what days and how many hours do you usually work?
+
+for a matter of simplicity please check thw questionnaire to get the full detail of each variable
+
+we are taking question p5c and p5e to construct the whours because both complement each other
+the key variable used is p5c following the INEGI recommendations,
+from this we set logical tests that allow to complement the
+information or correct to include people that were on vacations,
+leave or that usually work but for some other reason were not working on the week surveyed
+
+The restrictions below could be completed with the following, yet these are not included because they dependent to individual perspective
+*replace if usually it happens the same this season (4) and if you consider this will not last (5)
+	replace whours=p5e_thrs if inrange(p5b,4,5)
+*replace with usual hours if they declare that not the usual hours in p5d
+	replace whours=p5e_thrs if p5d==2
+
+<_whours_note_>*/
+
 *this variable has outliers starting in 85 to 168 hours of work
-*	gen whours = p5c_thrs
-	gen whours = p5e_thrs
+	gen whours=p5c_thrs
+*replace if not the usual hours in the week
+	replace whours=p5e_thrs if p5a==2
+
 	replace whours=. if lstatus!=1
-	*replace whours=. if p4==4
+	replace whours=. if p4==4
 	replace whours=. if whours==999
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
