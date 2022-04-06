@@ -113,7 +113,7 @@ local output "`id_data'"
 
 
 *<_isco_version_>
-	gen isco_version = " "
+	gen isco_version = ""
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
@@ -191,15 +191,9 @@ local output "`id_data'"
 *</_pid_>
 
 
-/*<_weight_>
-
-Only individual weight available in the raw dataset -- "weight".
-
-<_weight_>*/
-
 *<_weight_>
 	gen weight = final_weig
-	label var weight "Household sampling weight"
+	label var weight "Survey sampling weight"
 *</_weight_>
 
 
@@ -502,13 +496,6 @@ provided due to it is part of the confidential information withheld by the NSO.
 
 {
 
-/* <_ed_mod_age_note>
-
-Education module is only asked to those 5 and older.
-
-</_ed_mod_age_note> */
-
-
 *<_ed_mod_age_>
 	gen byte ed_mod_age = 5
 	label var ed_mod_age "Education module application age"
@@ -538,7 +525,7 @@ Education module is only asked to those 5 and older.
 Years of education, or "educy" (and all other related variables were left missing)
 because of the unclear mapping for "Not finished primary school yet".
 
-According to isced-2019 mappings, there are day care centre, playgroup, and
+According to isced-2011 mappings, there are day care centre, playgroup, and
 kindergarten as pre-primary education before 7 years old. Whether to map
 primary unfinished to those options depends on specific assumptions and research
 needs. Therefore, variable "educy" was left missing and so were educat7, educat5,
@@ -585,7 +572,8 @@ Original code list of variable "b5_r1a" in the dataset:
 
 
 *<_educat5_>
-	gen byte educat5 = .
+	gen byte educat5 = educat7
+	recode educat5 (4=3) (5=4) (6/7=5)
 	replace educat5 = . if age < ed_mod_age & age!=.
 	label var educat5 "Level of education 2"
 	la de lbleducat5 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
@@ -594,9 +582,9 @@ Original code list of variable "b5_r1a" in the dataset:
 
 
 *<_educat4_>
-	gen byte educat4 = b5_r1a
+	gen byte educat4 = educat5
 	replace educat4 = . if age < ed_mod_age & age!=.
-	recode educat4 (2/4=2) (5/11=3) (12/16=4)
+	recode educat4 (3=2) (4=3) (5=4)
 	label var educat4 "Level of education 3"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values educat4 lbleducat4
@@ -630,7 +618,7 @@ local ed_var school literacy educy educat7 educat5 educat4 educat_isced
 foreach v of local ed_var {
 	replace `v' = . if ( age < ed_mod_age & !missing(age) )
 }
-replace educat_isced_v = " " if ( age < ed_mod_age & !missing(age) )
+replace educat_isced_v = "" if ( age < ed_mod_age & !missing(age) )
 *</_% Correction min age_>
 
 
@@ -704,7 +692,16 @@ We define the employed as who "worked primarily (b5_r5b==1)" or
 unemployed: "who do not have a job/business !inlist(b5_r8, 0, 5, 6, 8) | b5_r10==2" & "seeking a job (b5_r15a==1) | (b5_r15b==1)"
 non-labor force:  "who do not have a job/business !inlist(b5_r8, 0, 5, 6, 8) | b5_r10==2" & "not seeking a job (b5_r15a==2) & (b5_r15b==2)"
 
-	Labor particiaption 92.46% (coding used):
+	Labor participation 92.46% (coding used):
+
+	gen byte lstatus = .
+	replace lstatus = 1 if b5_r5b==1 | b5_r7a==1 | b5_r7b==2 | [inlist(b5_r8, 1, 5, 6, 8) & !inlist(b5_r10, 0, 2)]
+	replace lstatus = 2 if [!inlist(b5_r8, 0, 5, 6, 8) | b5_r10==2] | [(b5_r15a==1) | (b5_r15b==1)]
+	replace lstatus = 3 if [!inlist(b5_r8, 0, 5, 6, 8) | b5_r10==2] & (b5_r15a==2) & (b5_r15b==2)
+	replace lstatus = . if age < minlaborage
+	label var lstatus "Labor status"
+	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
+	label values lstatus lbllstatus
 
 . tab lstatus, m
 
@@ -719,7 +716,7 @@ non-labor force:  "who do not have a job/business !inlist(b5_r8, 0, 5, 6, 8) | b
       Total |    508,460      100.00
 
 
-	  Labor particiaption 92.46% (coding backup):
+	  Labor participation 92.46% (coding backup):
 
 	gen byte lstatus=.
 	replace lstatus=1 if b5_r5b==1 | b5_r7a==1 | b5_r7b==2
@@ -744,9 +741,9 @@ non-labor force:  "who do not have a job/business !inlist(b5_r8, 0, 5, 6, 8) | b
 
 *<_lstatus_>
 	gen byte lstatus = .
-	replace lstatus = 1 if b5_r5b==1 | b5_r7a==1 | b5_r7b==2 | [inlist(b5_r8, 1, 5, 6, 8) & !inlist(b5_r10, 0, 2)]
-	replace lstatus = 2 if [!inlist(b5_r8, 0, 5, 6, 8) | b5_r10==2] | [(b5_r15a==1) | (b5_r15b==1)]
-	replace lstatus = 3 if [!inlist(b5_r8, 0, 5, 6, 8) | b5_r10==2] & (b5_r15a==2) & (b5_r15b==2)
+	replace lstatus = 1 if b5_r37 != 0
+    replace lstatus = 2 if (b5_r15a==1 | b5_r15b==1 | b5_r20a==2 | b5_r20a==3) & b5_r21a==1 & missing(lstatus)
+    replace lstatus = 3 if missing(lstatus)
 	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -786,7 +783,7 @@ Note: var "potential_lf" is missing if the respondent is in labor force or unemp
 
 /*<_nlfreason_>
 
-The original variable "b5_r20a " has 14 non-missing categories:
+The original variable "b5_r20a" has 14 non-missing categories:
 	1  Already accepted for work but not yet starting the job
 	2  Already having a business but not yet starting it
 	3  Hopeless; feeling impossible to get a job
@@ -886,14 +883,14 @@ directly.
 
 *<_industrycat_isic_>
 	gen industrycat_isic = int(b5_r23/100)
-	tostring industrycat_isic, replace format(%03.0f)
+	tostring industrycat_isic, replace format(%04.0f)
 	gen kbli2 = int(b5_r23/100)
 	gen kbli4 = int(b5_r23/10)
-	replace industrycat_isic = "072" if kbli2==73
-	replace industrycat_isic = "492" if kbli2==494
-	replace industrycat_isic = "552" if kbli4==5519
-	replace industrycat_isic = "960" if inlist(kbli2, 961, 962, 969)
-	replace industrycat_isic = " " if lstatus!=1
+	replace industrycat_isic = "0720" if kbli2==73
+	replace industrycat_isic = "4920" if kbli2==494
+	replace industrycat_isic = "5520" if kbli4==5519
+	replace industrycat_isic = "9600" if inlist(kbli2, 961, 962, 969)
+	replace industrycat_isic = "" if lstatus!=1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
@@ -932,7 +929,7 @@ Note that in the raw dataset variable "b5_r24_kbj" does not have labels.
 
 
 *<_occup_isco_>
-	gen occup_isco = " "
+	gen occup_isco = ""
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
@@ -987,6 +984,7 @@ Each of these two variables devides into "in cash" and "in-kind". For each obser
 *<_whours_>
 	gen whours= b5_r31a1
 	replace whours = . if lstatus!=1
+	replace whours = . if b5_r31a1 == 0
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -1160,7 +1158,7 @@ This question was only asked to those who are seld-employed.
 
 
 *<_occup_2_>
-	gen byte occup_2 = b5_r42_kbj
+	gen byte occup_2 = .
 	label var occup_2 "1 digit occupational classification secondary job 7 day recall"
 	label values occup_2 lbloccup
 *</_occup_2_>
@@ -1328,7 +1326,7 @@ This question was only asked to those who are seld-employed.
 
 
 *<_industrycat_isic_year_>
-	gen industrycat_isic_year = .
+	gen industrycat_isic_year = ""
 	label var industrycat_isic_year "ISIC code of primary job 12 month recall"
 *</_industrycat_isic_year_>
 
@@ -1481,7 +1479,7 @@ This question was only asked to those who are seld-employed.
 
 
 *<_industrycat_isic_2_year_>
-	gen industrycat_isic_2_year = .
+	gen industrycat_isic_2_year = ""
 	label var industrycat_isic_2_year "ISIC code of secondary job 12 month recall"
 *</_industrycat_isic_2_year_>
 

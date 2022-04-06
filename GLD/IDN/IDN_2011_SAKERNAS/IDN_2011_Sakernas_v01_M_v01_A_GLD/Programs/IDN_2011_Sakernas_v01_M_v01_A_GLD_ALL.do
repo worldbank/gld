@@ -18,7 +18,7 @@
 <_Source of dataset_> 			Shared with Job's Group by the World Bank Indonesia Team
 								data request form required to get the access</_Source of dataset_>
 <_Sample size (HH)_> 			N/A </_Sample size (HH)_>
-<_Sample size (IND)_> 			505,090 </_Sample size (IND)_>
+<_Sample size (IND)_> 			524,810 </_Sample size (IND)_>
 <_Sampling method_> 			Two-stage cluster sampling method </_Sampling method_>
 <_Geographic coverage_> 		Province </_Geographic coverage_>
 <_Currency_> 					Indonesian Rupiah </_Currency_>
@@ -27,7 +27,7 @@
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
 <_ISCO Version_>				N/A </_ISCO Ver UP National_>
 <_OCCUP National_>				KBJI 2000 </_OCCUP National_>
-<_ISIC Version_>				ISIC N/A </_ISIC Version_>
+<_ISIC Version_>				ISIC Rev.4 </_ISIC Version_>
 <_INDUS National_>				KBLI 2009 </_INDUS National_>
 ---------------------------------------------------------------------------------------
 
@@ -113,13 +113,13 @@ local output "`id_data'"
 
 
 *<_isco_version_>
-	gen isco_version = " "
+	gen isco_version = ""
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
 
 *<_isic_version_>
-	gen isic_version = " "
+	gen isic_version = "isic_4"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
@@ -173,36 +173,26 @@ local output "`id_data'"
 	duplicates tag, gen(dup)
 	tab dup
 
-
         dup |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          0 |    492,007       93.75       93.75
-          1 |     18,980        3.62       97.37
-          2 |      6,192        1.18       98.55
-          3 |      3,228        0.62       99.16
-          4 |      1,835        0.35       99.51
-          5 |      1,086        0.21       99.72
-          6 |        469        0.09       99.81
-          7 |        360        0.07       99.88
-          8 |        279        0.05       99.93
-          9 |        130        0.02       99.95
-         10 |         66        0.01       99.97
-         11 |         60        0.01       99.98
-         12 |         13        0.00       99.98
-         13 |         14        0.00       99.98
-         15 |         16        0.00       99.99
-         16 |         17        0.00       99.99
-         17 |         18        0.00       99.99
-         19 |         40        0.01      100.00
+          0 |    518,535       98.58       98.58
+          1 |      6,692        1.27       99.85
+          2 |        651        0.12       99.97
+          3 |         96        0.02       99.99
+          4 |         20        0.00       99.99
+          5 |          6        0.00       99.99
+          6 |         21        0.00      100.00
+          8 |          9        0.00      100.00
 ------------+-----------------------------------
-      Total |    524,810      100.00
+      Total |    526,030      100.00
 
-Because we do not know the reason for these duplicates and they only account for less than 4% of total sample, I just droppred 19,720 observations.
+Because we do not know the reason for these duplicates and they only account for less than 1% of total sample, I just droppred 3,899 observations.
 
 <_pid_>*/
 
 
 *<_pid_>
+	duplicates tag, gen(dup)
 	duplicates drop
 	gen pid = string(_n,"%06.0f")
 	tostring pid, replace
@@ -219,7 +209,7 @@ The original weight variable is called "weight".
 
 *<_weight_>
 	*gen weight = weight
-	label var weight "Household sampling weight"
+	label var weight "Survey sampling weight"
 *</_weight_>
 
 
@@ -260,6 +250,7 @@ provided due to it is part of the confidential information withheld by the NSO.
 /*%%=============================================================================================
 	3: Geography
 ================================================================================================*/
+
 {
 
 *<_urban_>
@@ -273,7 +264,7 @@ provided due to it is part of the confidential information withheld by the NSO.
 
 *<_subnatid1_>
 	gen byte subnatid1_copy =  b1p01
-	label de lblsubnatid1 11 "11 - ACEH" 12 "12 - SUMATERA UTARA" 13 "13 - SUMATERA BARAT" 14 "14 - RIAU" 15 "15 - JAMBI" 16 "16 - SUMATERA SELATAN" 17 "17 - BENGKULU" 18 "18 - LAMPUNG" 19 "19 - KEPULAUAN BANGKA BELITUNG" 21 "21 - KEPULAUAN RIAU" 31 "31 - DKI JAKARTA" 32 "32 - JAWA BARAT" 33 "33 - JAWA TENGAH" 34 "34 - DI YOGYAKARTA" 35 "35 - JAWA TIMUR" 36 "36 - BANTEN" 51 "51 - BALI" 52 "52 - NUSA TENGGARA BARAT" 53 "53 - NUSA TENGGARA TIMUR" 61 "61 - KALIMANTAN BARAT" 62 "62 - KALIMANTAN TENGAH" 63 "63 - KALIMANTAN SELATAN" 64 "64 - KALIMANTAN TIMUR" 71 "71 - SULAWESI UTARA" 72 "72 - SULAWESI TENGAH" 73 "73 - SULAWESI SELATAN" 74 "74 - SULAWESI TENGGARA" 75 "75 - GORONTALO" 76 "76 - SULAWESI BARAT" 81 "81 - MALUKU" 82 "82 - MALUKU UTARA" 91 "91 - PAPUA BARAT" 94 "94 - PAPUA"
+	label de lblsubnatid1 11 "11 - ACEH" 12 "12 - SUMATERA UTARA" 13 "13 - SUMATERA BARAT" 14 "14 - RIAU" 15 "15 - JAMBI" 16 "16 - SUMATERA SELATAN" 17 "17 - BENGKULU" 18 "18 - LAMPUNG" 19 "19 - KEPULAUAN BANGKA BELITUNG" 21 "21 - KEPULAUAN RIAU" 31 "31 - DKI JAKARTA" 32 "32 - JAWA BARAT" 33 "33 - JAWA TENGAH" 34 "34 - DI YOGYAKARTA" 35 "35 - JAWA TIMUR" 36 "36 - BANTEN" 51 "51 - BALI" 52 "52 - NUSA TENGGARA BARAT" 53 "53 - NUSA TENGGARA TIMUR" 61 "61 - KALIMANTAN BARAT" 62 "62 - KALIMANTAN TENGAH" 63 "63 - KALIMANTAN SELATAN" 64 "64 - KALIMANTAN TIMUR" 65 "65 - KALIMANTAN UTARA" 71 "71 - SULAWESI UTARA" 72 "72 - SULAWESI TENGAH" 73 "73 - SULAWESI SELATAN" 74 "74 - SULAWESI TENGGARA" 75 "75 - GORONTALO" 76 "76 - SULAWESI BARAT" 81 "81 - MALUKU" 82 "82 - MALUKU UTARA" 91 "91 - PAPUA BARAT" 94 "94 - PAPUA"
 	label values subnatid1_copy lblsubnatid1
 	decode subnatid1_copy, gen(subnatid1)
 	drop subnatid1_copy
@@ -282,9 +273,10 @@ provided due to it is part of the confidential information withheld by the NSO.
 
 
 /*<_subnatid2_>
-	Because SAKERNAS 2011 does not have the district name variable as other years, yet it has the same districts surveyed in 2013. Therefore, I used districts' names and codes in 2013 to codify subnatid2 in 2011.
 
-	But note that 10 district codes only appear in 2011 and 2012 (no district labels) not in 2013: 1171 1572 2171 3273 6271 7271 7371 9171 9110 9415. These districts' names were left missing.
+	Because SAKERNAS 2011 does not have the district name variable as other years, yet it has the same districts surveyed in 2013. Therefore, I used districts' names and codes in 2013 to codify subnatid2 in 2010.
+
+	But note that 10 district codes only appear in 2011 (no district labels) not in 2013: 1171 1572 2171 3273 6271 7271 7371 9171 9110 9415. These districts' names were left missing.
 
 *<_subnatid2_>*/
 
@@ -316,7 +308,8 @@ provided due to it is part of the confidential information withheld by the NSO.
 
 
 *<_subnatid1_prev_>
-	gen subnatid1_prev = .
+	gen subnatid1_prev = ""
+	replace subnatid1_prev = "64 - KALIMANTAN TIMUR" if subnatid1=="65 - KALIMANTAN UTARA"
 	label var subnatid1_prev "Classification used for subnatid1 from previous survey"
 *</_subnatid1_prev_>
 
@@ -530,13 +523,6 @@ provided due to it is part of the confidential information withheld by the NSO.
 
 {
 
-/* <_ed_mod_age_note>
-
-Education module is only asked to those 5 and older.
-
-</_ed_mod_age_note> */
-
-
 *<_ed_mod_age_>
 	gen byte ed_mod_age = 10
 	label var ed_mod_age "Education module application age"
@@ -566,7 +552,7 @@ Education module is only asked to those 5 and older.
 Years of education, or "educy" (and all other related variables were left missing)
 because of the unclear mapping for "Not finished primary school yet".
 
-According to isced-2019 mappings, there are day care centre, playgroup, and
+According to isced-2011 mappings, there are day care centre, playgroup, and
 kindergarten as pre-primary education before 7 years old. Whether to map
 primary unfinished to those options depends on specific assumptions and research
 needs. Therefore, variable "educy" was left missing.
@@ -576,6 +562,7 @@ needs. Therefore, variable "educy" was left missing.
 "Packet C": an educational level equavalent to the primary school level.
 
 Original code list of variable "b5p1a" in the dataset:
+
 1.No schooling
 2.Incompleted primary school
 3.Primary school
@@ -603,7 +590,7 @@ Original code list of variable "b5p1a" in the dataset:
 
 *<_educat7_>
 	gen byte educat7 = b5p1a
-	recode educat7 (4=3) (6 7=5) (8 9 10=6) (11/13=7)
+	recode educat7 (4=3) (6/10=5) (11/12=6) (13/14=7)
 	replace educat7 = . if age < ed_mod_age & age!=.
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
@@ -612,8 +599,8 @@ Original code list of variable "b5p1a" in the dataset:
 
 
 *<_educat5_>
-	gen byte educat5 = b5p1a
-	recode educat5 (4=3) (5/10=4) (11/14=5)
+	gen byte educat5 = educat7
+	recode educat5 (4=3) (5=4) (6/7=5)
 	replace educat5 = . if age < ed_mod_age & age!=.
 	label var educat5 "Level of education 2"
 	la de lbleducat5 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
@@ -622,9 +609,9 @@ Original code list of variable "b5p1a" in the dataset:
 
 
 *<_educat4_>
-	gen byte educat4 = b5p1a
+	gen byte educat4 = educat5
 	replace educat4 = . if age < ed_mod_age & age!=.
-	recode educat4 (2/4=2) (5/10=3) (11/14=4)
+	recode educat4 (3=2) (4=3) (5=4)
 	label var educat4 "Level of education 3"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values educat4 lbleducat4
@@ -639,7 +626,7 @@ Original code list of variable "b5p1a" in the dataset:
 
 *<_educat_isced_>
 	gen educat_isced = b5p1a
-	recode educat_isced (1=020) (2/4=100) (5/7=244) (8/10=344) (11=454) (12=550) (13=760) (14=860)
+	recode educat_isced (1=020) (2/4=100) (5/7=244) (8/10=344) (11=454) (12=550) (13=660) (14=860)
 	label var educat_isced "ISCED standardised level of education"
 *</_educat_isced_>
 
@@ -658,7 +645,7 @@ local ed_var school literacy educy educat7 educat5 educat4 educat_isced
 foreach v of local ed_var {
 	replace `v' = . if ( age < ed_mod_age & !missing(age) )
 }
-replace educat_isced_v = " " if ( age < ed_mod_age & !missing(age) )
+replace educat_isced_v = "" if ( age < ed_mod_age & !missing(age) )
 *</_% Correction min age_>
 
 
@@ -724,57 +711,22 @@ replace educat_isced_v = " " if ( age < ed_mod_age & !missing(age) )
 
 /*<_lstatus_>
 
-We define the employed as who "worked primarily (b5p2b ==1)" or
-							  "has a job but was temporarily out of work (b5p3==1)" or
+We define the employed as who "worked primarily (b5_r2b==1)" or
+							  "has a job but was temporarily out of work (b5_r3==1)" or
 							  "employed but was temporarily out of work because of certain reasons (b5p6==5)";
-unemployed: "who do not have a job/business b5p2b!=1 & b5p3==2" & "seeking a job (b5p4==1) | (b5p5==1)"
-non-labor force:  "who do not have a job/business b5p2b!=1 & b5p3==2" & "not seeking a job (b5p4==2) & (b5p5==2)"
+unemployed: "who do not have a job/business b5_r2b!=1 & b5_r3==2" & "seeking a job (b5p4==1) | (b5p5==1)"
+non-labor force:  "who do not have a job/business b5_r2b!=1 & b5_r3==2" & "not seeking a job (b5p4==2) & (b5p5==2)"
 
-labour force participation: 63.27%
-
-. tab b5p2b b5p3, m
-
- Activity mostly |
- engaged  in the |     Temporarily not working
-   past one week |       Yes         No          . |     Total
------------------+---------------------------------+----------
-         Working |         0          0    289,291 |   289,291
- Going to school |        75     29,227      2,555 |    31,857
-    Housekeeping |     4,944    107,003     29,076 |   141,023
-          Others |     4,406     36,965      1,304 |    42,675
-               . |         0          0        244 |       244
------------------+---------------------------------+----------
-           Total |     9,425    173,195    322,470 |   505,090
-
-
-. tab b5p6 b5p3, m
-
-
-  Main reason for not |
- looking for a job or |
-   establishing a new |     Temporarily not working
-        business/firm |       Yes         No          . |     Total
-----------------------+---------------------------------+----------
-            Desperate |       255      8,227      9,860 |    18,342
-Have a job but has no |        66        711      1,113 |     1,890
-     Attending school |        56     31,388      3,702 |    35,146
-         Housekeeping |     1,312     78,527     37,298 |   117,137
-   Already have a job |     5,730          0    224,500 |   230,230
-    Sufficient income |       592      2,663     26,849 |    30,104
-    Unable to do work |         0     24,178          0 |    24,178
-Others (write complet |       919     13,776      8,028 |    22,723
-                    . |       495     13,725     11,120 |    25,340
-----------------------+---------------------------------+----------
-                Total |     9,425    173,195    322,470 |   505,090
+Labour force participation: 57.65%
 
 <_lstatus_>*/
 
 
 *<_lstatus_>
 	gen byte lstatus = .
-	replace lstatus = 1 if b5p2b==1 | b5p3==1 | b5p6==5
-	replace lstatus = 2 if b5p2b!=1 & b5p3==2 & [(b5p4==1) | (b5p5==1)]
-	replace lstatus = 3 if b5p2b!=1 & b5p3==2 & (b5p4==2) & (b5p5==2)
+	replace lstatus = 1 if b5p2a1 == 1 | b5p3 == 1
+	replace lstatus = 2 if mi(lstatus) & [(b5p4==1) | (b5p5==1)]
+	replace lstatus = 3 if mi(lstatus) & (b5p4==2) & (b5p5==2)
 	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -814,7 +766,7 @@ Note: var "potential_lf" is missing if the respondent is in labor force or unemp
 
 /*<_nlfreason_>
 
-The original variable "b5p6 " has 8 non-missing categories:
+The original variable "b5p6" has 8 non-missing categories:
 	1 Discouraged
 	2 Have a job but not yet starting it
 	3 Attending school
@@ -823,6 +775,7 @@ The original variable "b5p6 " has 8 non-missing categories:
 	6 Sufficient income
 	7 Unable to do work
 	8 Other, specify
+
 <_nlfreason_>*/
 
 
@@ -882,26 +835,25 @@ of unemployment period.
 
 /*<_industry_orig_>
 
-Note that in the raw dataset, two industrial classification variables, "kbli9" and "b5p18", seem to represent industry of main job and industry of the main additional job respectively. "b5p18" has 5 digits whereas "kbli9" has 1 digits. Both have no labels.
+Note that in the raw dataset, two industrial classification variables, "kbli2" and "b5p18", seem to represent industry of main job and industry of the main additional job respectively. "kbli2" has 2 digits whereas "b5p18" has 5 digits. Both have no labels.
 
-"b5p18" is for question No.18 asking the industry of main additional job undoubtedly, leaving "kbli9" used for industry of the main job, as the values are not the same if they were both for main additional job.
+"b5p18" is for question No.18 asking the industry of main additional job undoubtedly, leaving "kbli2" used for industry of the main job, as the values are not the same if they were both for main additional job.
 
-Moreover, most cases are that people only have kbli2009_2 while they do not have b5p18.
+Moreover, most cases are that people only have kbli2 while they do not have b5p18.
 
 <_industry_orig_>*/
 
 
 *<_industry_orig_>
-	gen industry_orig = kbli9
+	gen industry_orig = kbli2
 	replace industry_orig = . if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
 
 *<_industrycat_isic_>
-	gen industrycat_isic = " "
-	tostring industrycat_isic, replace format(%02.0f)
-	replace industrycat_isic = " " if lstatus!=1
+	gen industrycat_isic = ""
+	replace industrycat_isic = "" if lstatus!=1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
@@ -923,6 +875,15 @@ Moreover, most cases are that people only have kbli2009_2 while they do not have
 *</_industrycat4_>
 
 
+/*<_occup_orig_>
+
+Variable "kji2000" uses KBJI 2000 and it has one digits. 
+
+Although there is no label indicating whether kji2000 is for the main job or the main additional job, the survey does not ask occupation of the main additional job. So we used kji2000 for occupation of the main job.
+
+<_occup_orig_>*/
+
+
 *<_occup_orig_>
 	gen occup_orig = kbji2000
 	replace occup_orig=. if lstatus!=1
@@ -931,7 +892,7 @@ Moreover, most cases are that people only have kbli2009_2 while they do not have
 
 
 *<_occup_isco_>
-	gen occup_isco = .
+	gen occup_isco = ""
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
@@ -942,34 +903,9 @@ Moreover, most cases are that people only have kbli2009_2 while they do not have
 *</_occup_skill_>
 
 
-/*<_occup_>
-
-Original variable "kbji2000" has 8 categories but it combines professionals and technicians together.
-It does not have category "7 - Craft...", "8 - plant ...", and "9 - elementary ..."
-
-                        23,344         1  Professional, technical, and
-                                          related worker
-                         3,720         2  Administrative and managerial
-                                          worker
-                        16,866         3  Clerical and related worker
-                        54,890         4  Sales worker
-                        15,332         5  Services worker
-                       138,261         6  Agriculture, animal husbandry,
-                                          forestry worker, fisherman,
-                                          hunter
-                        77,181         7  Production and related worker,
-                                          transport equipment operator,
-                                          and laborer
-                         2,301         8  Others
-                       173,195         .
-<_occup_>*/
-
-
-
 *<_occup_>
 	gen occup = .
 	replace occup = . if lstatus!=1
-	replace occup = . if  occup==0
 	label var occup "1 digit occupational classification, primary job 7 day recall"
   	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians and associate professionals" 4 "Clerical support workers" 5 "Service and market sales workers" 6 "Skilled agricultural, forestry and fishery workers" 7 "Craft and related trades workers" 8 "Plant and machine operators, and assemblers" 9 "Elementary occupations"
 	label values occup lbloccup
@@ -1001,6 +937,7 @@ In the raw dataset, question 13 devides into "in cash" and "in-kind". For each o
 *<_whours_>
 	gen whours = b5p11
 	replace whours = . if lstatus!=1
+	replace whours = . if whours == 0
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -1124,15 +1061,8 @@ We do not have information on the employment status of the main additional job. 
 
 
 *<_industrycat_isic_2_>
-	gen industrycat_isic_2 = int(b5p18/100)
-	tostring industrycat_isic_2, replace format(%03.0f)
-	gen kbli2_2 = int(b5p23/100)
-	gen kbli4 = int(b5p23/10)
-	replace industrycat_isic_2 = "072" if kbli2_2==73
-	replace industrycat_isic_2 = "492" if kbli2_2==494
-	replace industrycat_isic_2 = "552" if kbli4==5519
-	replace industrycat_isic_2 = "960" if inlist(kbli2, 961, 962, 969)
-	replace industrycat_isic_2= " " if b5p17!=1
+	gen industrycat_isic_2 = ""
+	replace industrycat_isic_2= "" if b5p17!=1
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
@@ -1159,7 +1089,7 @@ We do not have information on the employment status of the main additional job. 
 
 
 *<_occup_isco_2_>
-	gen occup_isco_2 = " "
+	gen occup_isco_2 = ""
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
