@@ -233,7 +233,7 @@ use "`path_in'\casen2000_Stata.dta"
 *</_subnatid3_>
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = "comuna"
+	gen subnatidsurvey = subnatid1
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 

@@ -24,7 +24,7 @@
 -----------------------------------------------------------------------
 <_ICLS Version_>		ICLS-13		</_ICLS Version_>
 <_ISCED Version_>		[N/A]		 </_ISCED Version_>
-<_ISCO Version_>		[N/A]	 </_ISCO Version_>
+<_ISCO Version_>		ISCO-88	 </_ISCO Version_>
 <_OCCUP National_>		[N/A] </_OCCUP National_>
 <_ISIC Version_>		[N/A] </_ISIC Version_>
 <_INDUS National_>		[N/A] </_INDUS National_>
@@ -94,7 +94,7 @@ use "`path_in'\casen1990.dta"
 
 
 *<_isco_version_>
-	gen isco_version = .
+	gen isco_version = "isco_1988"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
@@ -241,7 +241,7 @@ label values subnatid2 lblsubnatid2
 *</_subnatid3_>
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = "comuna"
+	gen subnatidsurvey = subnatid1
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -707,15 +707,14 @@ foreach v of local ed_var {
 
 
 *<_occup_orig_>
-	*gen occup_orig = string(o5)
-	gen occup_orig = .
-	*replace occup_orig="" if o5==.
+	gen occup_orig = string(o5,"%04.0f")
+	*gen occup_orig = .
+	replace occup_orig="" if o5==.
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
 
 *<_occup_isco_>
-*problem with codes
 	gen occup_isco=occup_orig
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
@@ -723,10 +722,10 @@ foreach v of local ed_var {
 
 *<_occup_skill_>
 	gen occup_skill = .
-	*replace occup_skill=1 if oficio==9
-	*replace occup_skill=2 if inrange(oficio,4,8)
-	*replace occup_skill=3 if inrange(oficio,1,3)
-	*replace occup_skill=4 if oficio==0
+	replace occup_skill=1 if oficio==9
+	replace occup_skill=2 if inrange(oficio,4,8)
+	replace occup_skill=3 if inrange(oficio,1,3)
+	replace occup_skill=4 if oficio==0
 	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"  4 "Armed Forces"
 	label values occup_skill lblskill
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
@@ -734,9 +733,9 @@ foreach v of local ed_var {
 
 
 *<_occup_>
-	*gen  occup = oficio
-	gen  occup = .
-	*recode occup 0=10 1=99 9999=.
+	gen  occup = oficio
+	*gen  occup = .
+	recode occup 0=10 1=99 9999=.
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup

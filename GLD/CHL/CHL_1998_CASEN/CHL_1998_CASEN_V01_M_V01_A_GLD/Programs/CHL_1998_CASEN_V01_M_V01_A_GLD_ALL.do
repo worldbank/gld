@@ -236,7 +236,7 @@ use "`path_in'\casen1998.dta"
 *</_subnatid3_>
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = "national"
+	gen subnatidsurvey = subnatid1
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 

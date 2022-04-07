@@ -213,7 +213,7 @@ drop in 1/1
 
 *<_subnatid1_>
 	gen subnatid1=region
-	la de lblsubnatid1 1 "1 - I" 2 "2 - II" 3 "3 - III" 4 "4 - IV" 5 "5 - V" 6 "6 - VI" 7 "7 - VII" 8 "8 - VIII" 9 "9 - IX" 10 "10 - X" 11 "11 - XI" 12 "12 - XII" 13 "13 - R.M."
+	la de lblsubnatid1 1 "1 - I" 2 "2 - II" 3 "3 -III" 4 "4 - IV" 5 "5 - V" 6 "6 - VI" 7 "7 - VII" 8 "8 - VIII" 9 "9 - IX" 10 "10 - X" 11 "11 -XI" 12 "12 - XII" 13 "13 - R.M." 14 "14 - XIV" 15 "15 - XV"
 	label var subnatid1 "Subnational ID at NUTS 1 Level"
 	label values subnatid1 lblsubnatid1
 *</_subnatid1_>
@@ -234,13 +234,15 @@ drop in 1/1
 *</_subnatid3_>
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = "provincia"
+	gen subnatidsurvey = subnatid1
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
 
 *<_subnatid1_prev_>
-	gen subnatid1_prev = .
+	gen subnatid1_prev = ""
+	replace subnatid1_prev = "10 - X" if region==10 | region==14
+	replace subnatid1_prev = "1 - I" if region==1 | region==15
 	label var subnatid1_prev "Classification used for subnatid1 from previous survey"
 *</_subnatid1_prev_>
 

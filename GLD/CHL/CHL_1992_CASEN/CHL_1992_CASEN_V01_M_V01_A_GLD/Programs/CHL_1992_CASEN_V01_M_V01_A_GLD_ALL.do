@@ -245,7 +245,7 @@ local letters "r p c z o seg"
 *</_subnatid3_>
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = "province"
+	gen subnatidsurvey = subnatid1
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 

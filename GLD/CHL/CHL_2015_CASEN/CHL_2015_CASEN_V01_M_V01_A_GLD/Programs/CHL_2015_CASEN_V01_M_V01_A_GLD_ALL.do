@@ -210,7 +210,7 @@ rename fecha_aņo fecha_ano
 
 *<_subnatid1_>
 	gen subnatid1=region
-	la de lblsubnatid1 1 "1 - I" 2 "2 - II" 3 "3 - III" 4 "4 - IV" 5 "5 - V" 6 "6 - VI" 7 "7 - VII" 8 "8 - VIII" 9 "9 - IX" 10 "10 - X" 11 "11 - XI" 12 "12 - XII" 13 "13 - R.M."
+	la de lblsubnatid1 1 "1 - I" 2 "2 - II" 3 "3 -III" 4 "4 - IV" 5 "5 - V" 6 "6 - VI" 7 "7 - VII" 8 "8 - VIII" 9 "9 - IX" 10 "10 - X" 11 "11 -XI" 12 "12 - XII" 13 "13 - R.M." 14 "14 - XIV" 15 "15 - XV"
 	label var subnatid1 "Subnational ID at NUTS 1 Level"
 	label values subnatid1 lblsubnatid1
 *</_subnatid1_>
@@ -231,7 +231,7 @@ rename fecha_aņo fecha_ano
 *</_subnatid3_>
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = "provincia"
+	gen subnatidsurvey = subnatid1
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
