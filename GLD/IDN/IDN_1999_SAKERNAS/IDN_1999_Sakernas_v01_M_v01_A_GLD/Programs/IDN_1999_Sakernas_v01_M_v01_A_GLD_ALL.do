@@ -15,7 +15,8 @@
 <_Study ID_>					IDN_1999_Sakernas_v01_M </_Study ID_>
 <_Data collection from (M/Y)_>	[MM/YYYY] </_Data collection from (M/Y)_>
 <_Data collection to (M/Y)_>	[MM/YYYY] </_Data collection to (M/Y)_>
-<_Source of dataset_> 			Shared with Job's Group by the World Bank Indonesia Team
+<_Source of dataset_> 			Central Bureau of Statistics (BPS), Indonesia
+								Shared with Job's Group by the World Bank Indonesia Team
 								data request form required to get the access</_Source of dataset_>
 <_Sample size (HH)_> 			47,580  </_Sample size (HH)_>
 <_Sample size (IND)_> 			155,572 </_Sample size (IND)_>

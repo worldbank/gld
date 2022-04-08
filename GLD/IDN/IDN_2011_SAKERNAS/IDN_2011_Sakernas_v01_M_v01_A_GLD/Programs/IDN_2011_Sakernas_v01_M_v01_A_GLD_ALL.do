@@ -15,7 +15,8 @@
 <_Study ID_>					IDN_2011_Sakernas_v01_M </_Study ID_>
 <_Data collection from (M/Y)_>	[MM/YYYY] </_Data collection from (M/Y)_>
 <_Data collection to (M/Y)_>	[MM/YYYY] </_Data collection to (M/Y)_>
-<_Source of dataset_> 			Shared with Job's Group by the World Bank Indonesia Team
+<_Source of dataset_> 			Central Bureau of Statistics (BPS), Indonesia
+								Shared with Job's Group by the World Bank Indonesia Team
 								data request form required to get the access</_Source of dataset_>
 <_Sample size (HH)_> 			N/A </_Sample size (HH)_>
 <_Sample size (IND)_> 			524,810 </_Sample size (IND)_>
@@ -877,7 +878,7 @@ Moreover, most cases are that people only have kbli2 while they do not have b5p1
 
 /*<_occup_orig_>
 
-Variable "kji2000" uses KBJI 2000 and it has one digits. 
+Variable "kji2000" uses KBJI 2000 and it has one digits.
 
 Although there is no label indicating whether kji2000 is for the main job or the main additional job, the survey does not ask occupation of the main additional job. So we used kji2000 for occupation of the main job.
 

@@ -15,7 +15,8 @@
 <_Study ID_>					IDN_2017_Sakernas_v01_M </_Study ID_>
 <_Data collection from (M/Y)_>	[MM/YYYY] </_Data collection from (M/Y)_>
 <_Data collection to (M/Y)_>	[MM/YYYY] </_Data collection to (M/Y)_>
-<_Source of dataset_> 			Shared with Job's Group by the World Bank Indonesia Team
+<_Source of dataset_> 			Central Bureau of Statistics (BPS), Indonesia
+								Shared with Job's Group by the World Bank Indonesia Team
 								data request form required to get the access</_Source of dataset_>
 <_Sample size (HH)_> 			N/A </_Sample size (HH)_>
 <_Sample size (IND)_> 			536,809 </_Sample size (IND)_>
@@ -1176,7 +1177,8 @@ This question was only asked to those who are seld-employed.
 *<_whours_2_>
 	gen whours_2 = b5_r41
 	replace whours_2 = . if b5_r38a==2 & b5_r38b == 2
-	label var whours_2 "Hours of work in last week secondary job 7 day recall"
+	gen whours_ttl = whours + whours_2 if njobs >1 & !mi(njobs)
+	replace whours_ttl = 140 if whours_ttl > 140 & !mi(whours_ttl)
 *</_whours_2_>
 
 
