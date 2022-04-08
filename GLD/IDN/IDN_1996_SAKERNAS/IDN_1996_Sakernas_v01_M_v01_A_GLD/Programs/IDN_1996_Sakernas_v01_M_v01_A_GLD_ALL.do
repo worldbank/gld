@@ -1238,22 +1238,9 @@ It follows KJI 1982 industrial classifications.
 *----------8.6: 12 month reference overall------------------------------*
 
 {
-/*<_lstatus_year_>
-
-According to the original variable "b4r19", we only know whether a given respondent
-had a work or not in the last year. We do not know among those who did not have
-a work, who were actively seeking a job. Therefore, we cannot decide who are unemployed
-nor who are non-labor force.
-
-Same reason for leaving "potential_lf_year" missing.
-
-<_lstatus_year_>*/
-
 
 *<_lstatus_year_>
 	gen byte lstatus_year = .
-	replace lstatus_year = 1 if b4r19==1
-	replace lstatus_year = . if b4r19!=1
 	replace lstatus_year = . if age < minlaborage & age != .
 	label var lstatus_year "Labor status during last year"
 	la de lbllstatus_year 1 "Employed" 2 "Unemployed" 3 "Non-LF"
