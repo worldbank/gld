@@ -15,8 +15,7 @@
 <_Study ID_>					IDN_2016_Sakernas_v01_M </_Study ID_>
 <_Data collection from (M/Y)_>	[MM/YYYY] </_Data collection from (M/Y)_>
 <_Data collection to (M/Y)_>	[MM/YYYY] </_Data collection to (M/Y)_>
-<_Source of dataset_> 			Central Bureau of Statistics (BPS), Indonesia
-								Shared with Job's Group by the World Bank Indonesia Team
+<_Source of dataset_> 			Shared with Job's Group by the World Bank Indonesia Team
 								data request form required to get the access</_Source of dataset_>
 <_Sample size (HH)_> 			N/A </_Sample size (HH)_>
 <_Sample size (IND)_> 			131,152 </_Sample size (IND)_>
@@ -361,7 +360,7 @@ provided due to it is part of the confidential information withheld by the NSO.
 
 
 *<_marital_>
-	gen byte marital = b4_k8
+	gen byte marital = b4_k7
 	recode marital (1=2) (2=1) (3=4) (4=5)
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
@@ -509,7 +508,7 @@ provided due to it is part of the confidential information withheld by the NSO.
 *<_school_>
 	gen byte school = b4_k8
 	recode school (2=1) (1 3=0)
-	replace school=. if age < ed_mod_age & age!=.
+	replace school = . if age < ed_mod_age & age!=.
 	label var school "Attending school"
 	la de lblschool 0 "No" 1 "Yes"
 	label values school lblschool
@@ -561,7 +560,7 @@ Original code list of variable "b5_r1a" in the dataset:
 
 *<_educy_>
 	gen byte educy = .
-	replace educy=. if age < ed_mod_age & age!=.
+	replace educy = . if age < ed_mod_age & age!=.
 	label var educy "Years of education"
 *</_educy_>
 
@@ -685,75 +684,6 @@ replace educat_isced_v = "" if ( age < ed_mod_age & !missing(age) )
 *----------8.1: 7 day reference overall------------------------------*
 
 {
-
-/*<_lstatus_>
-
-We define the employed as who "worked primarily (b5_r5b==1)" or
-							  "was not templrarily out of work in the previous week (b5_r6==2)" or
-							  "employed but was temporarily out of work because of certain reasons inlist(b5_r7, 1, 3, 4, 6) & !inlist(b5_r9, ., 2)";
-unemployed: "who do not have a job/business !inlist(b5_r7, ., 1, 3, 4, 6) | b5_r9==2" & "seeking a job (b5_r11==1) | (b5_r12==1)"
-non-labor force:  "who do not have a job/business !inlist(b5_r7, ., 1, 3, 4, 6) | b5_r9==2" & "not seeking a job (b5_r11==2) & (b5_r12==2)"
-
-tab b5_r7 b5_r9, m
-
-           |              b5_r9
-     b5_r7 |         1          2          . |     Total
------------+---------------------------------+----------
-         1 |       280         37          0 |       317
-         2 |        17         14          0 |        31
-         3 |        34          4          0 |        38
-         4 |         1          0          0 |         1
-         5 |       179         14          0 |       193
-         6 |       353         49          0 |       402
-         7 |       739         85          0 |       824
-         . |         0          0    129,346 |   129,346
------------+---------------------------------+----------
-     Total |     1,603        203    129,346 |   131,152
-
-
-	Labor participation 92.02% (coding used):
-
-	gen byte lstatus = .
-	replace lstatus = 1 if b5_r5b==1 | b5_r6==2 | [inlist(b5_r7, 1, 3, 4, 6) & !inlist(b5_r9, ., 2)]
-	replace lstatus = 2 if [!inlist(b5_r7, ., 1, 3, 4, 6) | b5_r9==2] & [(b5_r11==1) | (b5_r12==1)]
-	replace lstatus = 3 if [!inlist(b5_r7, ., 1, 3, 4, 6) | b5_r9==2] & [(b5_r11==2) & (b5_r12==2)]
-	replace lstatus = . if age < minlaborage
-	label var lstatus "Labor status"
-	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
-	label values lstatus lbllstatus
-
-. tab lstatus, m
-
-      Labor |
-     status |      Freq.     Percent        Cum.
-------------+-----------------------------------
-   Employed |    120,623       91.97       91.97
- Unemployed |         67        0.05       92.02
-     Non-LF |      1,071        0.82       92.84
-          . |      9,391        7.16      100.00
-------------+-----------------------------------
-      Total |    131,152      100.00
-
-	Labor participation 92.84% (coding backup):
-
-	gen byte lstatus = .
-	replace lstatus = 1 if b5_r5b==1 | b5_r6==2
-	replace lstatus = 2 if b5_r6==1 & [(b5_r11==1) | (b5_r12==1)]
-	replace lstatus = 2 if b5_r6==1 & [(b5_r11==2) & (b5_r12==2)]
-
-. tab lstatus, m
-
-      Labor |
-     status |      Freq.     Percent        Cum.
-------------+-----------------------------------
-   Employed |    119,955       91.46       91.46
- Unemployed |      1,806        1.38       92.84
-          . |      9,391        7.16      100.00
-------------+-----------------------------------
-      Total |    131,152      100.00
-
-<_lstatus_>*/
-
 
 *<_lstatus_>
 	gen byte lstatus = .
@@ -935,7 +865,7 @@ Note that in the raw dataset variable "b5_r20_201" does not have labels.
 
 *<_occup_orig_>
 	gen occup_orig = b5_r20_201
-	replace occup_orig=. if lstatus!=1
+	replace occup_orig = . if lstatus!=1
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
@@ -1096,7 +1026,7 @@ This question was only asked to those who are seld-employed.
 {
 *<_empstat_2_>
 	gen byte empstat_2 = b5_r36
-	recode empstat (1 2=4) (4=1) (6=5) (7=2) (0=.)
+	recode empstat_2 (1 2=4) (4=1) (6=5) (7=2) (0=.)
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
 	la de lblempstat_2 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat_2 lblempstat_2

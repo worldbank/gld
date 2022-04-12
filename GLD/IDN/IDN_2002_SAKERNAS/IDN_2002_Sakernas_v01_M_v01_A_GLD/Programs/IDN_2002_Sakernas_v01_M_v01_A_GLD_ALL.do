@@ -15,8 +15,7 @@
 <_Study ID_>					IDN_2002_Sakernas_v01_M </_Study ID_>
 <_Data collection from (M/Y)_>	[MM/YYYY] </_Data collection from (M/Y)_>
 <_Data collection to (M/Y)_>	[MM/YYYY] </_Data collection to (M/Y)_>
-<_Source of dataset_> 			Central Bureau of Statistics (BPS), Indonesia
-								Shared with Job's Group by the World Bank Indonesia Team
+<_Source of dataset_> 			Shared with Job's Group by the World Bank Indonesia Team
 								data request form required to get the access</_Source of dataset_>
 <_Sample size (HH)_> 			N/A </_Sample size (HH)_>
 <_Sample size (IND)_> 			275,342 </_Sample size (IND)_>
@@ -25,7 +24,7 @@
 <_Currency_> 					Indonesian Rupiah </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
-<_ISCED Version_>				ISCED-2002 </_ISCED Version_>
+<_ISCED Version_>				ISCED-2011 </_ISCED Version_>
 <_ISCO Version_>				N/A </_ISCO Ver UP National_>
 <_OCCUP National_>				KBJI 1982 </_OCCUP National_>
 <_ISIC Version_>				ISIC N/A </_ISIC Version_>
@@ -296,7 +295,7 @@ Note that the raw data set mistakenly coded 91 as West Irian Jaya which is now W
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = "subnatid2"
+	gen subnatidsurvey = "subnatid1"
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -571,7 +570,7 @@ Original code list of variable "b4ar1a" in the dataset:
 
 *<_educy_>
 	gen byte educy = .
-	replace educy=. if age < ed_mod_age & age!=.
+	replace educy = . if age < ed_mod_age & age!=.
 	label var educy "Years of education"
 *</_educy_>
 

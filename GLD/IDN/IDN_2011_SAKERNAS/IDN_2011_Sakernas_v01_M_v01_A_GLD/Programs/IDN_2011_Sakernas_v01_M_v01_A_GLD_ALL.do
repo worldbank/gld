@@ -15,8 +15,7 @@
 <_Study ID_>					IDN_2011_Sakernas_v01_M </_Study ID_>
 <_Data collection from (M/Y)_>	[MM/YYYY] </_Data collection from (M/Y)_>
 <_Data collection to (M/Y)_>	[MM/YYYY] </_Data collection to (M/Y)_>
-<_Source of dataset_> 			Central Bureau of Statistics (BPS), Indonesia
-								Shared with Job's Group by the World Bank Indonesia Team
+<_Source of dataset_> 			Shared with Job's Group by the World Bank Indonesia Team
 								data request form required to get the access</_Source of dataset_>
 <_Sample size (HH)_> 			N/A </_Sample size (HH)_>
 <_Sample size (IND)_> 			524,810 </_Sample size (IND)_>
@@ -533,7 +532,7 @@ provided due to it is part of the confidential information withheld by the NSO.
 *<_school_>
 	gen byte school = sek
 	recode school (2 3=1) (1 4=0)
-	replace school=. if age < ed_mod_age & age!=.
+	replace school = . if age < ed_mod_age & age!=.
 	label var school "Attending school"
 	la de lblschool 0 "No" 1 "Yes"
 	label values school lblschool
@@ -584,7 +583,7 @@ Original code list of variable "b5p1a" in the dataset:
 
 *<_educy_>
 	gen byte educy = .
-	replace educy=. if age < ed_mod_age & age!=.
+	replace educy = . if age < ed_mod_age & age!=.
 	label var educy "Years of education"
 *</_educy_>
 
@@ -712,11 +711,10 @@ replace educat_isced_v = "" if ( age < ed_mod_age & !missing(age) )
 
 /*<_lstatus_>
 
-We define the employed as who "worked primarily (b5_r2b==1)" or
-							  "has a job but was temporarily out of work (b5_r3==1)" or
-							  "employed but was temporarily out of work because of certain reasons (b5p6==5)";
-unemployed: "who do not have a job/business b5_r2b!=1 & b5_r3==2" & "seeking a job (b5p4==1) | (b5p5==1)"
-non-labor force:  "who do not have a job/business b5_r2b!=1 & b5_r3==2" & "not seeking a job (b5p4==2) & (b5p5==2)"
+We define the employed as who "worked primarily (b5p2a1==1)" or
+							  "has a job but was temporarily out of work (b5p3==1)" ;
+unemployed: "who do not have a job/business mi(lstatus)" & "seeking a job (b5p4==1) | (b5p5==1)"
+non-labor force:  "who do not have a job/business mi(lstatus)" & "not seeking a job (b5p4==2) & (b5p5==2)"
 
 Labour force participation: 57.65%
 
@@ -878,7 +876,7 @@ Moreover, most cases are that people only have kbli2 while they do not have b5p1
 
 /*<_occup_orig_>
 
-Variable "kji2000" uses KBJI 2000 and it has one digits.
+Variable "kji2000" uses KBJI 2000 and it has one digits. 
 
 Although there is no label indicating whether kji2000 is for the main job or the main additional job, the survey does not ask occupation of the main additional job. So we used kji2000 for occupation of the main job.
 
@@ -887,7 +885,7 @@ Although there is no label indicating whether kji2000 is for the main job or the
 
 *<_occup_orig_>
 	gen occup_orig = kbji2000
-	replace occup_orig=. if lstatus!=1
+	replace occup_orig = . if lstatus!=1
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
@@ -1003,13 +1001,6 @@ We count both "old-age insurance" and "pension insurance" as indicators for havi
 	la de lblunion 0 "Not union member" 1 "Union member"
 	label values union lblunion
 *</_union_>
-
-
-/*<_firmsize_l_>
-
-This question was only asked to those who are seld-employed.
-
-<_firmsize_l_>*/
 
 
 *<_firmsize_l_>

@@ -15,8 +15,7 @@
 <_Study ID_>					IDN_1999_Sakernas_v01_M </_Study ID_>
 <_Data collection from (M/Y)_>	[MM/YYYY] </_Data collection from (M/Y)_>
 <_Data collection to (M/Y)_>	[MM/YYYY] </_Data collection to (M/Y)_>
-<_Source of dataset_> 			Central Bureau of Statistics (BPS), Indonesia
-								Shared with Job's Group by the World Bank Indonesia Team
+<_Source of dataset_> 			Shared with Job's Group by the World Bank Indonesia Team
 								data request form required to get the access</_Source of dataset_>
 <_Sample size (HH)_> 			47,580  </_Sample size (HH)_>
 <_Sample size (IND)_> 			155,572 </_Sample size (IND)_>
@@ -25,7 +24,7 @@
 <_Currency_> 					Indonesian Rupiah </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
-<_ISCED Version_>				ISCED-1999 </_ISCED Version_>
+<_ISCED Version_>				ISCED-2011 </_ISCED Version_>
 <_ISCO Version_>				N/A </_ISCO Ver UP National_>
 <_OCCUP National_>				KBJI 1982 </_OCCUP National_>
 <_ISIC Version_>				ISIC N/A </_ISIC Version_>
@@ -302,7 +301,7 @@ provided due to it is part of the confidential information withheld by the NSO.
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = "subnatid2"
+	gen subnatidsurvey = "subnatid1"
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -532,7 +531,7 @@ provided due to it is part of the confidential information withheld by the NSO.
 *<_school_>
 	gen byte school = b3k7
 	recode school (1 3=0) (2=1)
-	replace school=. if age < ed_mod_age & age!=.
+	replace school = . if age < ed_mod_age & age!=.
 	label var school "Attending school"
 	la de lblschool 0 "No" 1 "Yes"
 	label values school lblschool
@@ -705,7 +704,7 @@ replace educat_isced_v = "" if ( age < ed_mod_age & !missing(age) )
 
 /*<_lstatus_>
 
-We define the employed as who "worked primarily (b4p2b ==1)" or
+We define the employed as who "worked primarily (b4p2b==1)" or
 							  "worked at least 1 hour during the last week (b4p3==1)" or
 							  "has a job but was temporarily out of work (b4p4==1)";
 unemployed: "who do not have a job/business lstatus != 1" & "seeking a job (b4p13==1)"
@@ -873,7 +872,7 @@ We do not have any information on translating KBLI 1997 to ISIC. Therefore, we o
 
 *<_occup_orig_>
 	gen occup_orig = b4p7
-	replace occup_orig=. if lstatus!=1
+	replace occup_orig = . if lstatus!=1
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 

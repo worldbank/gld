@@ -15,8 +15,7 @@
 <_Study ID_>					IDN_1997_Sakernas_v01_M </_Study ID_>
 <_Data collection from (M/Y)_>	[MM/YYYY] </_Data collection from (M/Y)_>
 <_Data collection to (M/Y)_>	[MM/YYYY] </_Data collection to (M/Y)_>
-<_Source of dataset_> 			Central Bureau of Statistics (BPS), Indonesia
-								Shared with Job's Group by the World Bank Indonesia Team
+<_Source of dataset_> 			Shared with Job's Group by the World Bank Indonesia Team
 								data request form required to get the access</_Source of dataset_>
 <_Sample size (HH)_> 			65,648  </_Sample size (HH)_>
 <_Sample size (IND)_> 			219,439 </_Sample size (IND)_>
@@ -25,7 +24,7 @@
 <_Currency_> 					Indonesian Rupiah </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
-<_ISCED Version_>				ISCED-1997 </_ISCED Version_>
+<_ISCED Version_>				ISCED-2011 </_ISCED Version_>
 <_ISCO Version_>				N/A </_ISCO Ver UP National_>
 <_OCCUP National_>				KBJI 1982 </_OCCUP National_>
 <_ISIC Version_>				ISIC N/A </_ISIC Version_>
@@ -320,7 +319,7 @@ Province 54 - East Timor became indipendent from Indonesia in 2002. All district
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = "subnatid2"
+	gen subnatidsurvey = "subnatid1"
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -549,7 +548,7 @@ Province 54 - East Timor became indipendent from Indonesia in 2002. All district
 *<_school_>
 	gen byte school = b3p7
 	recode school (1 3=0) (2=1)
-	replace school=. if age < ed_mod_age & age!=.
+	replace school = . if age < ed_mod_age & age!=.
 	label var school "Attending school"
 	la de lblschool 0 "No" 1 "Yes"
 	label values school lblschool

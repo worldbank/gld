@@ -303,7 +303,7 @@ Province 54 - East Timor became indipendent from Indonesia in 2002. All district
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = "subnatid2"
+	gen subnatidsurvey = "subnatid1"
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -532,7 +532,7 @@ activities are attending school or not, there is no category zero.
 *<_school_>
 	gen byte school = .
 	replace school = 1 if b4p4 == 2
-	replace school=. if age<ed_mod_age & age!=.
+	replace school = . if age<ed_mod_age & age!=.
 	label var school "Attending school"
 	la de lblschool 0 "No" 1 "Yes"
 	label values school lblschool

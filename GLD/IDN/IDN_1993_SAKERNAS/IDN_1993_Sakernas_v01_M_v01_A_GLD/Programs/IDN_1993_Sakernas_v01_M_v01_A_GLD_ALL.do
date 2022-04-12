@@ -15,8 +15,7 @@
 <_Study ID_>					IDN_1993_Sakernas_v01_M </_Study ID_>
 <_Data collection from (M/Y)_>	[MM/YYYY] </_Data collection from (M/Y)_>
 <_Data collection to (M/Y)_>	[MM/YYYY] </_Data collection to (M/Y)_>
-<_Source of dataset_> 			Central Bureau of Statistics (BPS), Indonesia
-								Shared with Job's Group by the World Bank Indonesia Team
+<_Source of dataset_> 			Shared with Job's Group by the World Bank Indonesia Team
 								data request form required to get the access</_Source of dataset_>
 <_Sample size (HH)_> 			81,618    </_Sample size (HH)_>
 <_Sample size (IND)_> 		    279,784 </_Sample size (IND)_>
@@ -296,7 +295,7 @@ Both province and district only have codes without name labels.
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = "subnatid2"
+	gen subnatidsurvey = "subnatid1"
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -525,7 +524,7 @@ activities are attending school or not, there is no category zero.
 *<_school_>
 	gen byte school = .
 	replace school = 1 if b4p4 == 2
-	replace school=. if age<ed_mod_age & age!=.
+	replace school = . if age<ed_mod_age & age!=.
 	label var school "Attending school"
 	la de lblschool 0 "No" 1 "Yes"
 	label values school lblschool
