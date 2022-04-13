@@ -12,7 +12,7 @@
 
 -------------------------------------------------------------------------
 
-<_Country_>					[Egypt (EGY)] </_Country_>
+<_Country_>						[Egypt (EGY)] </_Country_>
 <_Survey Title_>				[Labour Force Survey] </_Survey Title_>
 <_Survey Year_>					[Year of start of the survey] </_Survey Year_>
 <_Study ID_>					[Microdata Library ID if present] </_Study ID_>
@@ -27,9 +27,9 @@
 
 -----------------------------------------------------------------------
 
-<_ICLS Version_>				[Version of ICLS for Labor Questions] </_ICLS Version_>
-<_ISCED Version_>				[Version of ICLS for Labor Questions] </_ISCED Version_>
-<_ISCO Version_>				[Version of ICLS for Labor Questions] </_ISCO Version_>
+<_ICLS Version_>				ICLS 13 </_ICLS Version_>
+<_ISCED Version_>				ISCED 1997 </_ISCED Version_>
+<_ISCO Version_>				ISCO-88 </_ISCO Version_>
 <_OCCUP National_>				[Version of ICLS for Labor Questions] </_OCCUP National_>
 <_ISIC Version_>				[Version of ICLS for Labor Questions] </_ISIC Version_>
 <_INDUS National_>				[Version of ICLS for Labor Questions] </_INDUS National_>
@@ -99,7 +99,7 @@ drop _merge
 
 
 *<_icls_v_>
-	gen icls_v = "ICLS-[##]"
+	gen icls_v = "ICLS-[13]"
 	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
 
@@ -129,7 +129,7 @@ drop _merge
 
 
 *<_vermast_>
-	gen vermast = "v1"
+	gen str3 vermast = "V01"
 	label var vermast "Version of master data"
 *</_vermast_>
 
@@ -275,280 +275,280 @@ drop _merge
 	gen subnatid2 = area
 	tostring subnatid2, replace force
 	replace	subnatid2="1-El Tebein"	if subnatid2=="8180101"
-replace	subnatid2="2-Helwan"	if subnatid2=="8180102"
-replace	subnatid2="3-15 of May"	if subnatid2=="8180103"
-replace	subnatid2="4-EL Maadi"	if subnatid2=="8180104"
-replace	subnatid2="5-Masr El Kadima"	if subnatid2=="8180106"
-replace	subnatid2="6-Al Sayeda Zeinab"	if subnatid2=="8180107"
-replace	subnatid2="7-El Khalifa"	if subnatid2=="8180108"
-replace	subnatid2="8-Abdeen"	if subnatid2=="8180109"
-replace	subnatid2="9-Bolaq"	if subnatid2=="8180112"
-replace	subnatid2="10-Darb al-Ahmar"	if subnatid2=="8180114"
-replace	subnatid2="11-El-Gamaleya"	if subnatid2=="8180115"
-replace	subnatid2="12-Bab Al-Sharia"	if subnatid2=="8180116"
-replace	subnatid2="13-El Sharabia"	if subnatid2=="8180118"
-replace	subnatid2="14-Shubra"	if subnatid2=="8180119"
-replace	subnatid2="15-Rod El Farag"	if subnatid2=="8180120"
-replace	subnatid2="16-El sahel"	if subnatid2=="8180121"
-replace	subnatid2="17-El waly"	if subnatid2=="8180122"
-replace	subnatid2="18-Hadayek El Kobba"	if subnatid2=="8180123"
-replace	subnatid2="19-El Zaton"	if subnatid2=="8180124"
-replace	subnatid2="20-El Mataria"	if subnatid2=="8180125"
-replace	subnatid2="21-Madinet nasr"	if subnatid2=="8180126"
-replace	subnatid2="22-Tani madinet nasr"	if subnatid2=="8180127"
-replace	subnatid2="23-Masr El Gedida"	if subnatid2=="8180128"
-replace	subnatid2="24-El Nozha"	if subnatid2=="8180129"
-replace	subnatid2="25-Ain Shams"	if subnatid2=="8180130"
-replace	subnatid2="26-El Zawya El Hamra"	if subnatid2=="8180131"
-replace	subnatid2="27-El salam"	if subnatid2=="8180132"
-replace	subnatid2="28-El zamalek"	if subnatid2=="8180133"
-replace	subnatid2="29-Manshiyat Naser"	if subnatid2=="8180134"
-replace	subnatid2="30-El Basteen"	if subnatid2=="8180135"
-replace	subnatid2="31-El-Marg"	if subnatid2=="8180136"
-replace	subnatid2="32-El Montaza"	if subnatid2=="8180201"
-replace	subnatid2="33-Awel El Ramel"	if subnatid2=="8180202"
-replace	subnatid2="34-Sidi Gaber"	if subnatid2=="8180203"
-replace	subnatid2="35-Bab Sharq"	if subnatid2=="8180204"
-replace	subnatid2="36-Moharam Bek"	if subnatid2=="8180205"
-replace	subnatid2="37-El Attareen"	if subnatid2=="8180206"
-replace	subnatid2="38-El Mansheya"	if subnatid2=="8180207"
-replace	subnatid2="39-Karmoz"	if subnatid2=="8180208"
-replace	subnatid2="40-El Laban"	if subnatid2=="8180209"
-replace	subnatid2="41-Mena El Basal"	if subnatid2=="8180211"
-replace	subnatid2="42-El Dekhela"	if subnatid2=="8180212"
-replace	subnatid2="43-El Ameriya"	if subnatid2=="8180213"
-replace	subnatid2="44-New Borg El Arab City"	if subnatid2=="8180216"
-replace	subnatid2="45-Tani El Ramel"	if subnatid2=="8180217"
-replace	subnatid2="46-El-Sharq"	if subnatid2=="8180301"
-replace	subnatid2="47-El-Arab"	if subnatid2=="8180302"
-replace	subnatid2="48-El-Manakh"	if subnatid2=="8180303"
-replace	subnatid2="49-Port Fuad"	if subnatid2=="8180304"
-replace	subnatid2="50-El-Ganoub"	if subnatid2=="8180306"
-replace	subnatid2="51-El-Zohour"	if subnatid2=="8180307"
-replace	subnatid2="52-Suez"	if subnatid2=="8180401"
-replace	subnatid2="53-Arbaeen"	if subnatid2=="8180402"
-replace	subnatid2="54-Faisal"	if subnatid2=="8180404"
-replace	subnatid2="55-Ganayen"	if subnatid2=="8180405"
-replace	subnatid2="56-Markaz Dumyat"	if subnatid2=="8181102"
-replace	subnatid2="57-Farskor"	if subnatid2=="8181103"
-replace	subnatid2="58-Kafr Saad"	if subnatid2=="8181104"
-replace	subnatid2="59-New Dumyat City"	if subnatid2=="8181105"
-replace	subnatid2="60-El-Zarqa"	if subnatid2=="8181107"
-replace	subnatid2="61-Qism Awel El Mansoura"	if subnatid2=="8181201"
-replace	subnatid2="62-Qism Tani El Mansoura"	if subnatid2=="8181202"
-replace	subnatid2="63-Markaz El Mansoura"	if subnatid2=="8181203"
-replace	subnatid2="64-Aga"	if subnatid2=="8181204"
-replace	subnatid2="65-El Senbellawein"	if subnatid2=="8181205"
-replace	subnatid2="66-El Matareya"	if subnatid2=="8181206"
-replace	subnatid2="67-Manzala"	if subnatid2=="8181207"
-replace	subnatid2="68-Bilqas"	if subnatid2=="8181208"
-replace	subnatid2="69-Dikirnis"	if subnatid2=="8181209"
-replace	subnatid2="70-Sherbin"	if subnatid2=="8181210"
-replace	subnatid2="71-Talkha"	if subnatid2=="8181211"
-replace	subnatid2="72-Qism Mit Ghamr"	if subnatid2=="8181212"
-replace	subnatid2="73-Markaz Mit Ghamr"	if subnatid2=="8181213"
-replace	subnatid2="74-Menyet El-Nasr"	if subnatid2=="8181214"
-replace	subnatid2="75-El-Gammaliyyah"	if subnatid2=="8181215"
-replace	subnatid2="76-Temay Alamded"	if subnatid2=="8181216"
-replace	subnatid2="77-Mit Salsil"	if subnatid2=="8181217"
-replace	subnatid2="78-Beni Obeid"	if subnatid2=="8181218"
-replace	subnatid2="79-Mahalet Dimna"	if subnatid2=="8181219"
-replace	subnatid2="80-Nabaroh"	if subnatid2=="8181221"
-replace	subnatid2="81-Qism Awel Zagazig"	if subnatid2=="8181301"
-replace	subnatid2="82-Qism Tani Zagazig"	if subnatid2=="8181302"
-replace	subnatid2="83-Markaz El Zagazig"	if subnatid2=="8181303"
-replace	subnatid2="84-Abu Hammad"	if subnatid2=="8181304"
-replace	subnatid2="85-Abu Kabeer"	if subnatid2=="8181305"
-replace	subnatid2="86-Markaz El-Hosayneya"	if subnatid2=="8181306"
-replace	subnatid2="87-Bilbeis"	if subnatid2=="8181308"
-replace	subnatid2="88-Qism Awel 10th of Ramadan City"	if subnatid2=="8181309"
-replace	subnatid2="89-Diarb Negm"	if subnatid2=="8181310"
-replace	subnatid2="90-Qism Faqous"	if subnatid2=="8181311"
-replace	subnatid2="91-Markaz Faqous"	if subnatid2=="8181312"
-replace	subnatid2="92-Kafr Saqr"	if subnatid2=="8181313"
-replace	subnatid2="93-Minya Al Qamh"	if subnatid2=="8181314"
-replace	subnatid2="94-Hihya"	if subnatid2=="8181315"
-replace	subnatid2="95-Markaz Mashtoul as Souq"	if subnatid2=="8181316"
-replace	subnatid2="96-Al Ibrahimiah"	if subnatid2=="8181317"
-replace	subnatid2="97-Markaz Awlad Saqr"	if subnatid2=="8181319"
-replace	subnatid2="98-Al Qurayn"	if subnatid2=="8181320"
-replace	subnatid2="99-Qism Banha"	if subnatid2=="8181401"
-replace	subnatid2="100-Markaz Banha"	if subnatid2=="8181402"
-replace	subnatid2="101-El Khanka"	if subnatid2=="8181403"
-replace	subnatid2="102-El Qanater El Khayreyya"	if subnatid2=="8181404"
-replace	subnatid2="103-Shibin Al-Qanater"	if subnatid2=="8181405"
-replace	subnatid2="104-Qism Awel Shubra El-Kheima"	if subnatid2=="8181406"
-replace	subnatid2="105-Qism Tani Shubra El-Kheima"	if subnatid2=="8181407"
-replace	subnatid2="106-Tukh"	if subnatid2=="8181408"
-replace	subnatid2="107-Qism Qalyub"	if subnatid2=="8181409"
-replace	subnatid2="108-Markaz Qalyub"	if subnatid2=="8181410"
-replace	subnatid2="109-Kafr Shukr"	if subnatid2=="8181411"
-replace	subnatid2="110-El Khosous"	if subnatid2=="8181412"
-replace	subnatid2="111-Qism Kafr El Sheik"	if subnatid2=="8181501"
-replace	subnatid2="112-Markaz Kafr El Sheik"	if subnatid2=="8181502"
-replace	subnatid2="113-Markaz El Burlos"	if subnatid2=="8181503"
-replace	subnatid2="114-Markaz Beila"	if subnatid2=="8181504"
-replace	subnatid2="115-Qism Desouk"	if subnatid2=="8181505"
-replace	subnatid2="116-Markaz Desouk"	if subnatid2=="8181506"
-replace	subnatid2="117-Sidi Salem"	if subnatid2=="8181507"
-replace	subnatid2="118-Fuwa"	if subnatid2=="8181508"
-replace	subnatid2="119-Qallin"	if subnatid2=="8181509"
-replace	subnatid2="120-Metoubes"	if subnatid2=="8181510"
-replace	subnatid2="121-Al Hamool"	if subnatid2=="8181511"
-replace	subnatid2="122-El Riyad"	if subnatid2=="8181512"
-replace	subnatid2="123-Qism Awel Tanta"	if subnatid2=="8181601"
-replace	subnatid2="124-Qism Tani Tanta"	if subnatid2=="8181602"
-replace	subnatid2="125-Markaz Tanta"	if subnatid2=="8181603"
-replace	subnatid2="126-El-Santa"	if subnatid2=="8181604"
-replace	subnatid2="127-Qism Awel El-Mahalla El-Kubra"	if subnatid2=="8181605"
-replace	subnatid2="128-Qism Tani El-Mahalla El-Kubra"	if subnatid2=="8181606"
-replace	subnatid2="129-Markaz El-Mahalla El-Kubra"	if subnatid2=="8181607"
-replace	subnatid2="130-Bassyoun"	if subnatid2=="8181608"
-replace	subnatid2="131-Zifta"	if subnatid2=="8181609"
-replace	subnatid2="132-Samannoud"	if subnatid2=="8181610"
-replace	subnatid2="133-Kotoor"	if subnatid2=="8181611"
-replace	subnatid2="134-Kafr El-Zayat"	if subnatid2=="8181612"
-replace	subnatid2="135-Qism Shibin El-Kawm"	if subnatid2=="8181701"
-replace	subnatid2="136-Markaz Shibin El-Kawm"	if subnatid2=="8181702"
-replace	subnatid2="137-Ashmoun"	if subnatid2=="8181703"
-replace	subnatid2="138-Bagour"	if subnatid2=="8181704"
-replace	subnatid2="139-Al-Shohada"	if subnatid2=="8181705"
-replace	subnatid2="140-Berket El-Sabaa"	if subnatid2=="8181706"
-replace	subnatid2="141-Tala"	if subnatid2=="8181707"
-replace	subnatid2="142-Quesna"	if subnatid2=="8181708"
-replace	subnatid2="143-Markaz Menouf"	if subnatid2=="8181709"
-replace	subnatid2="144-Sers El-Lyan"	if subnatid2=="8181710"
-replace	subnatid2="145-Qism Damanhur"	if subnatid2=="8181801"
-replace	subnatid2="146-Markaz Damanhur"	if subnatid2=="8181802"
-replace	subnatid2="147-Abou El Matamer"	if subnatid2=="8181803"
-replace	subnatid2="148-Abu Hummus"	if subnatid2=="8181804"
-replace	subnatid2="149-El Delengat"	if subnatid2=="8181805"
-replace	subnatid2="150-El Mahmoudiyah"	if subnatid2=="8181806"
-replace	subnatid2="151-Etay El Barud"	if subnatid2=="8181807"
-replace	subnatid2="152-Hosh Issa"	if subnatid2=="8181808"
-replace	subnatid2="153-Rashid"	if subnatid2=="8181809"
-replace	subnatid2="154-Shubrakhit"	if subnatid2=="8181810"
-replace	subnatid2="155-Qism Kafr El-Dawwar"	if subnatid2=="8181811"
-replace	subnatid2="156-Markaz Kafr El-Dawwar"	if subnatid2=="8181812"
-replace	subnatid2="157-Kom Hamada"	if subnatid2=="8181813"
-replace	subnatid2="158-Rahmaniya"	if subnatid2=="8181815"
-replace	subnatid2="159-Edko"	if subnatid2=="8181816"
-replace	subnatid2="160-Badr"	if subnatid2=="8181818"
-replace	subnatid2="161-Qism Awel Ismaelia"	if subnatid2=="8181901"
-replace	subnatid2="162-Qism Tani Ismaelia"	if subnatid2=="8181902"
-replace	subnatid2="163-Qism Talet Ismaelia"	if subnatid2=="8181903"
-replace	subnatid2="164-Markaz Talet Ismaelia"	if subnatid2=="8181904"
-replace	subnatid2="165-Tel-El-Kebir"	if subnatid2=="8181905"
-replace	subnatid2="166-El Qantara Gharb"	if subnatid2=="8181906"
-replace	subnatid2="167-Fayed"	if subnatid2=="8181907"
-replace	subnatid2="168-Qism Imbabah"	if subnatid2=="8182101"
-replace	subnatid2="169-Agouza"	if subnatid2=="8182102"
-replace	subnatid2="170-Dokki"	if subnatid2=="8182103"
-replace	subnatid2="171-Qism El Giza"	if subnatid2=="8182104"
-replace	subnatid2="172-Bulaq ad Dakrur"	if subnatid2=="8182105"
-replace	subnatid2="173-El Aharam"	if subnatid2=="8182106"
-replace	subnatid2="174-El Hawamdia"	if subnatid2=="8182108"
-replace	subnatid2="175-Markaz El Giza"	if subnatid2=="8182109"
-replace	subnatid2="176-El Badrashen"	if subnatid2=="8182110"
-replace	subnatid2="177-El Saf"	if subnatid2=="8182111"
-replace	subnatid2="178-El Ayat"	if subnatid2=="8182112"
-replace	subnatid2="179-Embaba"	if subnatid2=="8182113"
-replace	subnatid2="180-Etfeih"	if subnatid2=="8182115"
-replace	subnatid2="181-Oseim"	if subnatid2=="8182116"
-replace	subnatid2="182-El Warak"	if subnatid2=="8182117"
-replace	subnatid2="183-Omrania"	if subnatid2=="8182118"
-replace	subnatid2="184-Kerdasa"	if subnatid2=="8182120"
-replace	subnatid2="185-Qism Beni suef"	if subnatid2=="8182201"
-replace	subnatid2="186-Markaz Beni suef"	if subnatid2=="8182202"
-replace	subnatid2="187-El fashn"	if subnatid2=="8182204"
-replace	subnatid2="188-El Wasta"	if subnatid2=="8182205"
-replace	subnatid2="189-Ihnasiya"	if subnatid2=="8182206"
-replace	subnatid2="190-Bpa"	if subnatid2=="8182207"
-replace	subnatid2="191-Smsta"	if subnatid2=="8182208"
-replace	subnatid2="192-Nasser"	if subnatid2=="8182209"
-replace	subnatid2="193-Qism Fayoum"	if subnatid2=="8182301"
-replace	subnatid2="194-Markaz Fayoum"	if subnatid2=="8182302"
-replace	subnatid2="195-Ibsheway"	if subnatid2=="8182303"
-replace	subnatid2="196-Atsa"	if subnatid2=="8182304"
-replace	subnatid2="197-Snores"	if subnatid2=="8182305"
-replace	subnatid2="198-Tamiya"	if subnatid2=="8182306"
-replace	subnatid2="199-Youssef El Seddik"	if subnatid2=="8182307"
-replace	subnatid2="200-Qism El Minya"	if subnatid2=="8182401"
-replace	subnatid2="201-Markaz El Minya"	if subnatid2=="8182402"
-replace	subnatid2="202-Abu Qirqas"	if subnatid2=="8182404"
-replace	subnatid2="203-El Idwa"	if subnatid2=="8182405"
-replace	subnatid2="204-Beni Mazar"	if subnatid2=="8182406"
-replace	subnatid2="205-Deir Mawas"	if subnatid2=="8182407"
-replace	subnatid2="206-Samalut"	if subnatid2=="8182408"
-replace	subnatid2="207-Matai"	if subnatid2=="8182409"
-replace	subnatid2="208-Maghagha"	if subnatid2=="8182410"
-replace	subnatid2="209-Qism Mallawi"	if subnatid2=="8182411"
-replace	subnatid2="210-Markaz Mallawi"	if subnatid2=="8182412"
-replace	subnatid2="211-Qism Awel Asyut"	if subnatid2=="8182501"
-replace	subnatid2="212-Qism Tani Asyut"	if subnatid2=="8182502"
-replace	subnatid2="213-Markaz Asyut"	if subnatid2=="8182503"
-replace	subnatid2="214-Abnub"	if subnatid2=="8182504"
-replace	subnatid2="215-Markaz Abutig"	if subnatid2=="8182505"
-replace	subnatid2="216-El Badari"	if subnatid2=="8182506"
-replace	subnatid2="217-Sahel Selim"	if subnatid2=="8182507"
-replace	subnatid2="218-El Ghanayem"	if subnatid2=="8182508"
-replace	subnatid2="219-El Quseyya"	if subnatid2=="8182509"
-replace	subnatid2="220-Dairut"	if subnatid2=="8182510"
-replace	subnatid2="221-Manfalut"	if subnatid2=="8182512"
-replace	subnatid2="222-El Fateh"	if subnatid2=="8182513"
-replace	subnatid2="223-Qism Awel Sohag"	if subnatid2=="8182601"
-replace	subnatid2="224-Qism Tani Sohag"	if subnatid2=="8182602"
-replace	subnatid2="225-Markaz Sohag"	if subnatid2=="8182603"
-replace	subnatid2="226-Markaz Akhmim"	if subnatid2=="8182604"
-replace	subnatid2="227-El-Balyana"	if subnatid2=="8182605"
-replace	subnatid2="228-El-Maragha"	if subnatid2=="8182606"
-replace	subnatid2="229-El Minshah"	if subnatid2=="8182607"
-replace	subnatid2="230-Dar el-Salam"	if subnatid2=="8182608"
-replace	subnatid2="231-Qism Girga"	if subnatid2=="8182609"
-replace	subnatid2="232-Markaz Girga"	if subnatid2=="8182610"
-replace	subnatid2="233-Juhaynah El Gharbyah"	if subnatid2=="8182611"
-replace	subnatid2="234-Sakulta"	if subnatid2=="8182612"
-replace	subnatid2="235-Tima"	if subnatid2=="8182613"
-replace	subnatid2="236-Markaz Tahta"	if subnatid2=="8182614"
-replace	subnatid2="237-Qism Tahta"	if subnatid2=="8182615"
-replace	subnatid2="238-El-Usayrat"	if subnatid2=="8182617"
-replace	subnatid2="239-Qism Qena"	if subnatid2=="8182701"
-replace	subnatid2="240-Markaz Qena"	if subnatid2=="8182702"
-replace	subnatid2="241-Abu Tesht"	if subnatid2=="8182703"
-replace	subnatid2="242-Armant"	if subnatid2=="8182704"
-replace	subnatid2="243-Esna"	if subnatid2=="8182705"
-replace	subnatid2="244-Dishna"	if subnatid2=="8182706"
-replace	subnatid2="245-Qus"	if subnatid2=="8182707"
-replace	subnatid2="246-Nag Hammadi"	if subnatid2=="8182708"
-replace	subnatid2="247-Naqada"	if subnatid2=="8182709"
-replace	subnatid2="248-Farshout"	if subnatid2=="8182710"
-replace	subnatid2="249-Qift"	if subnatid2=="8182711"
-replace	subnatid2="250-El Waqf"	if subnatid2=="8182712"
-replace	subnatid2="251-Qism Aswan"	if subnatid2=="8182801"
-replace	subnatid2="252-Markaz Aswan"	if subnatid2=="8182802"
-replace	subnatid2="253-Edfu"	if subnatid2=="8182803"
-replace	subnatid2="254-Kom Ombo"	if subnatid2=="8182804"
-replace	subnatid2="255-Nasr"	if subnatid2=="8182805"
-replace	subnatid2="256-Deraw"	if subnatid2=="8182806"
-replace	subnatid2="257-Qism Luxor"	if subnatid2=="8182901"
-replace	subnatid2="258-Markaz Luxor"	if subnatid2=="8182902"
-replace	subnatid2="259-Qism Awel Hurghada"	if subnatid2=="8183101"
-replace	subnatid2="260-Kharga"	if subnatid2=="8183201"
-replace	subnatid2="261-Paris"	if subnatid2=="8183204"
-replace	subnatid2="262-Mersa Matruh"	if subnatid2=="8183301"
-replace	subnatid2="263-El Hamam"	if subnatid2=="8183302"
-replace	subnatid2="264-Qism Tani  El Arish"	if subnatid2=="8183402"
-replace	subnatid2="265-Qism Talet  El Arish"	if subnatid2=="8183403"
-replace	subnatid2="266-Bir el Abd"	if subnatid2=="8183405"
-replace	subnatid2="267-Rafah"	if subnatid2=="8183409"
-replace	subnatid2="268-El-Tor"	if subnatid2=="8183501"
-replace	subnatid2="269-Ras Sedr"	if subnatid2=="8183502"
+	replace	subnatid2="2-Helwan"	if subnatid2=="8180102"
+	replace	subnatid2="3-15 of May"	if subnatid2=="8180103"
+	replace	subnatid2="4-EL Maadi"	if subnatid2=="8180104"
+	replace	subnatid2="5-Masr El Kadima"	if subnatid2=="8180106"
+	replace	subnatid2="6-Al Sayeda Zeinab"	if subnatid2=="8180107"
+	replace	subnatid2="7-El Khalifa"	if subnatid2=="8180108"
+	replace	subnatid2="8-Abdeen"	if subnatid2=="8180109"
+	replace	subnatid2="9-Bolaq"	if subnatid2=="8180112"
+	replace	subnatid2="10-Darb al-Ahmar"	if subnatid2=="8180114"
+	replace	subnatid2="11-El-Gamaleya"	if subnatid2=="8180115"
+	replace	subnatid2="12-Bab Al-Sharia"	if subnatid2=="8180116"
+	replace	subnatid2="13-El Sharabia"	if subnatid2=="8180118"
+	replace	subnatid2="14-Shubra"	if subnatid2=="8180119"
+	replace	subnatid2="15-Rod El Farag"	if subnatid2=="8180120"
+	replace	subnatid2="16-El sahel"	if subnatid2=="8180121"
+	replace	subnatid2="17-El waly"	if subnatid2=="8180122"
+	replace	subnatid2="18-Hadayek El Kobba"	if subnatid2=="8180123"
+	replace	subnatid2="19-El Zaton"	if subnatid2=="8180124"
+	replace	subnatid2="20-El Mataria"	if subnatid2=="8180125"
+	replace	subnatid2="21-Madinet nasr"	if subnatid2=="8180126"
+	replace	subnatid2="22-Tani madinet nasr"	if subnatid2=="8180127"
+	replace	subnatid2="23-Masr El Gedida"	if subnatid2=="8180128"
+	replace	subnatid2="24-El Nozha"	if subnatid2=="8180129"
+	replace	subnatid2="25-Ain Shams"	if subnatid2=="8180130"
+	replace	subnatid2="26-El Zawya El Hamra"	if subnatid2=="8180131"
+	replace	subnatid2="27-El salam"	if subnatid2=="8180132"
+	replace	subnatid2="28-El zamalek"	if subnatid2=="8180133"
+	replace	subnatid2="29-Manshiyat Naser"	if subnatid2=="8180134"
+	replace	subnatid2="30-El Basteen"	if subnatid2=="8180135"
+	replace	subnatid2="31-El-Marg"	if subnatid2=="8180136"
+	replace	subnatid2="32-El Montaza"	if subnatid2=="8180201"
+	replace	subnatid2="33-Awel El Ramel"	if subnatid2=="8180202"
+	replace	subnatid2="34-Sidi Gaber"	if subnatid2=="8180203"
+	replace	subnatid2="35-Bab Sharq"	if subnatid2=="8180204"
+	replace	subnatid2="36-Moharam Bek"	if subnatid2=="8180205"
+	replace	subnatid2="37-El Attareen"	if subnatid2=="8180206"
+	replace	subnatid2="38-El Mansheya"	if subnatid2=="8180207"
+	replace	subnatid2="39-Karmoz"	if subnatid2=="8180208"
+	replace	subnatid2="40-El Laban"	if subnatid2=="8180209"
+	replace	subnatid2="41-Mena El Basal"	if subnatid2=="8180211"
+	replace	subnatid2="42-El Dekhela"	if subnatid2=="8180212"
+	replace	subnatid2="43-El Ameriya"	if subnatid2=="8180213"
+	replace	subnatid2="44-New Borg El Arab City"	if subnatid2=="8180216"
+	replace	subnatid2="45-Tani El Ramel"	if subnatid2=="8180217"
+	replace	subnatid2="46-El-Sharq"	if subnatid2=="8180301"
+	replace	subnatid2="47-El-Arab"	if subnatid2=="8180302"
+	replace	subnatid2="48-El-Manakh"	if subnatid2=="8180303"
+	replace	subnatid2="49-Port Fuad"	if subnatid2=="8180304"
+	replace	subnatid2="50-El-Ganoub"	if subnatid2=="8180306"
+	replace	subnatid2="51-El-Zohour"	if subnatid2=="8180307"
+	replace	subnatid2="52-Suez"	if subnatid2=="8180401"
+	replace	subnatid2="53-Arbaeen"	if subnatid2=="8180402"
+	replace	subnatid2="54-Faisal"	if subnatid2=="8180404"
+	replace	subnatid2="55-Ganayen"	if subnatid2=="8180405"
+	replace	subnatid2="56-Markaz Dumyat"	if subnatid2=="8181102"
+	replace	subnatid2="57-Farskor"	if subnatid2=="8181103"
+	replace	subnatid2="58-Kafr Saad"	if subnatid2=="8181104"
+	replace	subnatid2="59-New Dumyat City"	if subnatid2=="8181105"
+	replace	subnatid2="60-El-Zarqa"	if subnatid2=="8181107"
+	replace	subnatid2="61-Qism Awel El Mansoura"	if subnatid2=="8181201"
+	replace	subnatid2="62-Qism Tani El Mansoura"	if subnatid2=="8181202"
+	replace	subnatid2="63-Markaz El Mansoura"	if subnatid2=="8181203"
+	replace	subnatid2="64-Aga"	if subnatid2=="8181204"
+	replace	subnatid2="65-El Senbellawein"	if subnatid2=="8181205"
+	replace	subnatid2="66-El Matareya"	if subnatid2=="8181206"
+	replace	subnatid2="67-Manzala"	if subnatid2=="8181207"
+	replace	subnatid2="68-Bilqas"	if subnatid2=="8181208"
+	replace	subnatid2="69-Dikirnis"	if subnatid2=="8181209"
+	replace	subnatid2="70-Sherbin"	if subnatid2=="8181210"
+	replace	subnatid2="71-Talkha"	if subnatid2=="8181211"
+	replace	subnatid2="72-Qism Mit Ghamr"	if subnatid2=="8181212"
+	replace	subnatid2="73-Markaz Mit Ghamr"	if subnatid2=="8181213"
+	replace	subnatid2="74-Menyet El-Nasr"	if subnatid2=="8181214"
+	replace	subnatid2="75-El-Gammaliyyah"	if subnatid2=="8181215"
+	replace	subnatid2="76-Temay Alamded"	if subnatid2=="8181216"
+	replace	subnatid2="77-Mit Salsil"	if subnatid2=="8181217"
+	replace	subnatid2="78-Beni Obeid"	if subnatid2=="8181218"
+	replace	subnatid2="79-Mahalet Dimna"	if subnatid2=="8181219"
+	replace	subnatid2="80-Nabaroh"	if subnatid2=="8181221"
+	replace	subnatid2="81-Qism Awel Zagazig"	if subnatid2=="8181301"
+	replace	subnatid2="82-Qism Tani Zagazig"	if subnatid2=="8181302"
+	replace	subnatid2="83-Markaz El Zagazig"	if subnatid2=="8181303"
+	replace	subnatid2="84-Abu Hammad"	if subnatid2=="8181304"
+	replace	subnatid2="85-Abu Kabeer"	if subnatid2=="8181305"
+	replace	subnatid2="86-Markaz El-Hosayneya"	if subnatid2=="8181306"
+	replace	subnatid2="87-Bilbeis"	if subnatid2=="8181308"
+	replace	subnatid2="88-Qism Awel 10th of Ramadan City"	if subnatid2=="8181309"
+	replace	subnatid2="89-Diarb Negm"	if subnatid2=="8181310"
+	replace	subnatid2="90-Qism Faqous"	if subnatid2=="8181311"
+	replace	subnatid2="91-Markaz Faqous"	if subnatid2=="8181312"
+	replace	subnatid2="92-Kafr Saqr"	if subnatid2=="8181313"
+	replace	subnatid2="93-Minya Al Qamh"	if subnatid2=="8181314"
+	replace	subnatid2="94-Hihya"	if subnatid2=="8181315"
+	replace	subnatid2="95-Markaz Mashtoul as Souq"	if subnatid2=="8181316"
+	replace	subnatid2="96-Al Ibrahimiah"	if subnatid2=="8181317"
+	replace	subnatid2="97-Markaz Awlad Saqr"	if subnatid2=="8181319"
+	replace	subnatid2="98-Al Qurayn"	if subnatid2=="8181320"
+	replace	subnatid2="99-Qism Banha"	if subnatid2=="8181401"
+	replace	subnatid2="100-Markaz Banha"	if subnatid2=="8181402"
+	replace	subnatid2="101-El Khanka"	if subnatid2=="8181403"
+	replace	subnatid2="102-El Qanater El Khayreyya"	if subnatid2=="8181404"
+	replace	subnatid2="103-Shibin Al-Qanater"	if subnatid2=="8181405"
+	replace	subnatid2="104-Qism Awel Shubra El-Kheima"	if subnatid2=="8181406"
+	replace	subnatid2="105-Qism Tani Shubra El-Kheima"	if subnatid2=="8181407"
+	replace	subnatid2="106-Tukh"	if subnatid2=="8181408"
+	replace	subnatid2="107-Qism Qalyub"	if subnatid2=="8181409"
+	replace	subnatid2="108-Markaz Qalyub"	if subnatid2=="8181410"
+	replace	subnatid2="109-Kafr Shukr"	if subnatid2=="8181411"
+	replace	subnatid2="110-El Khosous"	if subnatid2=="8181412"
+	replace	subnatid2="111-Qism Kafr El Sheik"	if subnatid2=="8181501"
+	replace	subnatid2="112-Markaz Kafr El Sheik"	if subnatid2=="8181502"
+	replace	subnatid2="113-Markaz El Burlos"	if subnatid2=="8181503"
+	replace	subnatid2="114-Markaz Beila"	if subnatid2=="8181504"
+	replace	subnatid2="115-Qism Desouk"	if subnatid2=="8181505"
+	replace	subnatid2="116-Markaz Desouk"	if subnatid2=="8181506"
+	replace	subnatid2="117-Sidi Salem"	if subnatid2=="8181507"
+	replace	subnatid2="118-Fuwa"	if subnatid2=="8181508"
+	replace	subnatid2="119-Qallin"	if subnatid2=="8181509"
+	replace	subnatid2="120-Metoubes"	if subnatid2=="8181510"
+	replace	subnatid2="121-Al Hamool"	if subnatid2=="8181511"
+	replace	subnatid2="122-El Riyad"	if subnatid2=="8181512"
+	replace	subnatid2="123-Qism Awel Tanta"	if subnatid2=="8181601"
+	replace	subnatid2="124-Qism Tani Tanta"	if subnatid2=="8181602"
+	replace	subnatid2="125-Markaz Tanta"	if subnatid2=="8181603"
+	replace	subnatid2="126-El-Santa"	if subnatid2=="8181604"
+	replace	subnatid2="127-Qism Awel El-Mahalla El-Kubra"	if subnatid2=="8181605"
+	replace	subnatid2="128-Qism Tani El-Mahalla El-Kubra"	if subnatid2=="8181606"
+	replace	subnatid2="129-Markaz El-Mahalla El-Kubra"	if subnatid2=="8181607"
+	replace	subnatid2="130-Bassyoun"	if subnatid2=="8181608"
+	replace	subnatid2="131-Zifta"	if subnatid2=="8181609"
+	replace	subnatid2="132-Samannoud"	if subnatid2=="8181610"
+	replace	subnatid2="133-Kotoor"	if subnatid2=="8181611"
+	replace	subnatid2="134-Kafr El-Zayat"	if subnatid2=="8181612"
+	replace	subnatid2="135-Qism Shibin El-Kawm"	if subnatid2=="8181701"
+	replace	subnatid2="136-Markaz Shibin El-Kawm"	if subnatid2=="8181702"
+	replace	subnatid2="137-Ashmoun"	if subnatid2=="8181703"
+	replace	subnatid2="138-Bagour"	if subnatid2=="8181704"
+	replace	subnatid2="139-Al-Shohada"	if subnatid2=="8181705"
+	replace	subnatid2="140-Berket El-Sabaa"	if subnatid2=="8181706"
+	replace	subnatid2="141-Tala"	if subnatid2=="8181707"
+	replace	subnatid2="142-Quesna"	if subnatid2=="8181708"
+	replace	subnatid2="143-Markaz Menouf"	if subnatid2=="8181709"
+	replace	subnatid2="144-Sers El-Lyan"	if subnatid2=="8181710"
+	replace	subnatid2="145-Qism Damanhur"	if subnatid2=="8181801"
+	replace	subnatid2="146-Markaz Damanhur"	if subnatid2=="8181802"
+	replace	subnatid2="147-Abou El Matamer"	if subnatid2=="8181803"
+	replace	subnatid2="148-Abu Hummus"	if subnatid2=="8181804"
+	replace	subnatid2="149-El Delengat"	if subnatid2=="8181805"
+	replace	subnatid2="150-El Mahmoudiyah"	if subnatid2=="8181806"
+	replace	subnatid2="151-Etay El Barud"	if subnatid2=="8181807"
+	replace	subnatid2="152-Hosh Issa"	if subnatid2=="8181808"
+	replace	subnatid2="153-Rashid"	if subnatid2=="8181809"
+	replace	subnatid2="154-Shubrakhit"	if subnatid2=="8181810"
+	replace	subnatid2="155-Qism Kafr El-Dawwar"	if subnatid2=="8181811"
+	replace	subnatid2="156-Markaz Kafr El-Dawwar"	if subnatid2=="8181812"
+	replace	subnatid2="157-Kom Hamada"	if subnatid2=="8181813"
+	replace	subnatid2="158-Rahmaniya"	if subnatid2=="8181815"
+	replace	subnatid2="159-Edko"	if subnatid2=="8181816"
+	replace	subnatid2="160-Badr"	if subnatid2=="8181818"
+	replace	subnatid2="161-Qism Awel Ismaelia"	if subnatid2=="8181901"
+	replace	subnatid2="162-Qism Tani Ismaelia"	if subnatid2=="8181902"
+	replace	subnatid2="163-Qism Talet Ismaelia"	if subnatid2=="8181903"
+	replace	subnatid2="164-Markaz Talet Ismaelia"	if subnatid2=="8181904"
+	replace	subnatid2="165-Tel-El-Kebir"	if subnatid2=="8181905"
+	replace	subnatid2="166-El Qantara Gharb"	if subnatid2=="8181906"
+	replace	subnatid2="167-Fayed"	if subnatid2=="8181907"
+	replace	subnatid2="168-Qism Imbabah"	if subnatid2=="8182101"
+	replace	subnatid2="169-Agouza"	if subnatid2=="8182102"
+	replace	subnatid2="170-Dokki"	if subnatid2=="8182103"
+	replace	subnatid2="171-Qism El Giza"	if subnatid2=="8182104"
+	replace	subnatid2="172-Bulaq ad Dakrur"	if subnatid2=="8182105"
+	replace	subnatid2="173-El Aharam"	if subnatid2=="8182106"
+	replace	subnatid2="174-El Hawamdia"	if subnatid2=="8182108"
+	replace	subnatid2="175-Markaz El Giza"	if subnatid2=="8182109"
+	replace	subnatid2="176-El Badrashen"	if subnatid2=="8182110"
+	replace	subnatid2="177-El Saf"	if subnatid2=="8182111"
+	replace	subnatid2="178-El Ayat"	if subnatid2=="8182112"
+	replace	subnatid2="179-Embaba"	if subnatid2=="8182113"
+	replace	subnatid2="180-Etfeih"	if subnatid2=="8182115"
+	replace	subnatid2="181-Oseim"	if subnatid2=="8182116"
+	replace	subnatid2="182-El Warak"	if subnatid2=="8182117"
+	replace	subnatid2="183-Omrania"	if subnatid2=="8182118"
+	replace	subnatid2="184-Kerdasa"	if subnatid2=="8182120"
+	replace	subnatid2="185-Qism Beni suef"	if subnatid2=="8182201"
+	replace	subnatid2="186-Markaz Beni suef"	if subnatid2=="8182202"
+	replace	subnatid2="187-El fashn"	if subnatid2=="8182204"
+	replace	subnatid2="188-El Wasta"	if subnatid2=="8182205"
+	replace	subnatid2="189-Ihnasiya"	if subnatid2=="8182206"
+	replace	subnatid2="190-Bpa"	if subnatid2=="8182207"
+	replace	subnatid2="191-Smsta"	if subnatid2=="8182208"
+	replace	subnatid2="192-Nasser"	if subnatid2=="8182209"
+	replace	subnatid2="193-Qism Fayoum"	if subnatid2=="8182301"
+	replace	subnatid2="194-Markaz Fayoum"	if subnatid2=="8182302"
+	replace	subnatid2="195-Ibsheway"	if subnatid2=="8182303"
+	replace	subnatid2="196-Atsa"	if subnatid2=="8182304"
+	replace	subnatid2="197-Snores"	if subnatid2=="8182305"
+	replace	subnatid2="198-Tamiya"	if subnatid2=="8182306"
+	replace	subnatid2="199-Youssef El Seddik"	if subnatid2=="8182307"
+	replace	subnatid2="200-Qism El Minya"	if subnatid2=="8182401"
+	replace	subnatid2="201-Markaz El Minya"	if subnatid2=="8182402"
+	replace	subnatid2="202-Abu Qirqas"	if subnatid2=="8182404"
+	replace	subnatid2="203-El Idwa"	if subnatid2=="8182405"
+	replace	subnatid2="204-Beni Mazar"	if subnatid2=="8182406"
+	replace	subnatid2="205-Deir Mawas"	if subnatid2=="8182407"
+	replace	subnatid2="206-Samalut"	if subnatid2=="8182408"
+	replace	subnatid2="207-Matai"	if subnatid2=="8182409"
+	replace	subnatid2="208-Maghagha"	if subnatid2=="8182410"
+	replace	subnatid2="209-Qism Mallawi"	if subnatid2=="8182411"
+	replace	subnatid2="210-Markaz Mallawi"	if subnatid2=="8182412"
+	replace	subnatid2="211-Qism Awel Asyut"	if subnatid2=="8182501"
+	replace	subnatid2="212-Qism Tani Asyut"	if subnatid2=="8182502"
+	replace	subnatid2="213-Markaz Asyut"	if subnatid2=="8182503"
+	replace	subnatid2="214-Abnub"	if subnatid2=="8182504"
+	replace	subnatid2="215-Markaz Abutig"	if subnatid2=="8182505"
+	replace	subnatid2="216-El Badari"	if subnatid2=="8182506"
+	replace	subnatid2="217-Sahel Selim"	if subnatid2=="8182507"
+	replace	subnatid2="218-El Ghanayem"	if subnatid2=="8182508"
+	replace	subnatid2="219-El Quseyya"	if subnatid2=="8182509"
+	replace	subnatid2="220-Dairut"	if subnatid2=="8182510"
+	replace	subnatid2="221-Manfalut"	if subnatid2=="8182512"
+	replace	subnatid2="222-El Fateh"	if subnatid2=="8182513"
+	replace	subnatid2="223-Qism Awel Sohag"	if subnatid2=="8182601"
+	replace	subnatid2="224-Qism Tani Sohag"	if subnatid2=="8182602"
+	replace	subnatid2="225-Markaz Sohag"	if subnatid2=="8182603"
+	replace	subnatid2="226-Markaz Akhmim"	if subnatid2=="8182604"
+	replace	subnatid2="227-El-Balyana"	if subnatid2=="8182605"
+	replace	subnatid2="228-El-Maragha"	if subnatid2=="8182606"
+	replace	subnatid2="229-El Minshah"	if subnatid2=="8182607"
+	replace	subnatid2="230-Dar el-Salam"	if subnatid2=="8182608"
+	replace	subnatid2="231-Qism Girga"	if subnatid2=="8182609"
+	replace	subnatid2="232-Markaz Girga"	if subnatid2=="8182610"
+	replace	subnatid2="233-Juhaynah El Gharbyah"	if subnatid2=="8182611"
+	replace	subnatid2="234-Sakulta"	if subnatid2=="8182612"
+	replace	subnatid2="235-Tima"	if subnatid2=="8182613"
+	replace	subnatid2="236-Markaz Tahta"	if subnatid2=="8182614"
+	replace	subnatid2="237-Qism Tahta"	if subnatid2=="8182615"
+	replace	subnatid2="238-El-Usayrat"	if subnatid2=="8182617"
+	replace	subnatid2="239-Qism Qena"	if subnatid2=="8182701"
+	replace	subnatid2="240-Markaz Qena"	if subnatid2=="8182702"
+	replace	subnatid2="241-Abu Tesht"	if subnatid2=="8182703"
+	replace	subnatid2="242-Armant"	if subnatid2=="8182704"
+	replace	subnatid2="243-Esna"	if subnatid2=="8182705"
+	replace	subnatid2="244-Dishna"	if subnatid2=="8182706"
+	replace	subnatid2="245-Qus"	if subnatid2=="8182707"
+	replace	subnatid2="246-Nag Hammadi"	if subnatid2=="8182708"
+	replace	subnatid2="247-Naqada"	if subnatid2=="8182709"
+	replace	subnatid2="248-Farshout"	if subnatid2=="8182710"
+	replace	subnatid2="249-Qift"	if subnatid2=="8182711"
+	replace	subnatid2="250-El Waqf"	if subnatid2=="8182712"
+	replace	subnatid2="251-Qism Aswan"	if subnatid2=="8182801"
+	replace	subnatid2="252-Markaz Aswan"	if subnatid2=="8182802"
+	replace	subnatid2="253-Edfu"	if subnatid2=="8182803"
+	replace	subnatid2="254-Kom Ombo"	if subnatid2=="8182804"
+	replace	subnatid2="255-Nasr"	if subnatid2=="8182805"
+	replace	subnatid2="256-Deraw"	if subnatid2=="8182806"
+	replace	subnatid2="257-Qism Luxor"	if subnatid2=="8182901"
+	replace	subnatid2="258-Markaz Luxor"	if subnatid2=="8182902"
+	replace	subnatid2="259-Qism Awel Hurghada"	if subnatid2=="8183101"
+	replace	subnatid2="260-Kharga"	if subnatid2=="8183201"
+	replace	subnatid2="261-Paris"	if subnatid2=="8183204"
+	replace	subnatid2="262-Mersa Matruh"	if subnatid2=="8183301"
+	replace	subnatid2="263-El Hamam"	if subnatid2=="8183302"
+	replace	subnatid2="264-Qism Tani  El Arish"	if subnatid2=="8183402"
+	replace	subnatid2="265-Qism Talet  El Arish"	if subnatid2=="8183403"
+	replace	subnatid2="266-Bir el Abd"	if subnatid2=="8183405"
+	replace	subnatid2="267-Rafah"	if subnatid2=="8183409"
+	replace	subnatid2="268-El-Tor"	if subnatid2=="8183501"
+	replace	subnatid2="269-Ras Sedr"	if subnatid2=="8183502"
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
 
 
 *<_subnatid3_>
-	gen str subnatid3 = .
+	gen str subnatid3 = ""
 	label var subnatid3 "Subnational ID at Third Administrative Level"
 *</_subnatid3_>
 
@@ -621,7 +621,7 @@ replace	subnatid2="269-Ras Sedr"	if subnatid2=="8183502"
 
 
 *<_age_>
-	gen age = age
+	*gen age = age
 	label var age "Individual age"
 *</_age_>
 
@@ -729,7 +729,8 @@ replace	subnatid2="269-Ras Sedr"	if subnatid2=="8183502"
 
 
 *<_migrated_binary_>
-	gen migrated_binary = .
+	gen migrated_binary = immigr
+	recode migrated_binary (1 2=1) (3=0)
 	label de lblmigrated_binary 0 "No" 1 "Yes"
 	label values migrated_binary lblmigrated_binary
 	label var migrated_binary "Individual has migrated"
@@ -737,7 +738,7 @@ replace	subnatid2="269-Ras Sedr"	if subnatid2=="8183502"
 
 
 *<_migrated_years_>
-	gen migrated_years = .
+	gen migrated_years = (2007-curresd_y)
 	label var migrated_years "Years since latest migration"
 *</_migrated_years_>
 
@@ -760,8 +761,8 @@ replace	subnatid2="269-Ras Sedr"	if subnatid2=="8183502"
 
 *<_migrated_from_code_>
 	gen migrated_from_code = .
-	*label de lblmigrated_from_code
-	*label values migrated_from_code lblmigrated_from_code
+	label de lblmigrated_from_code 1 ""
+	label values migrated_from_code lblmigrated_from_code
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
 *</_migrated_from_code_>
 
@@ -773,7 +774,8 @@ replace	subnatid2="269-Ras Sedr"	if subnatid2=="8183502"
 
 
 *<_migrated_reason_>
-	gen migrated_reason = .
+	gen migrated_reason = curresd_r
+	recode migrated_reason 10=3 20=2 30=1 40=1 50=1 90=5 999=.
 	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
 	label values migrated_reason lblmigrated_reason
 	label var migrated_reason "Reason for migrating"
@@ -798,13 +800,13 @@ Education module is only asked to those XX and older.
 
 </_ed_mod_age_note> */
 
-gen byte ed_mod_age = .
-label var ed_mod_age "Education module application age"
+	gen byte ed_mod_age = 6
+	label var ed_mod_age "Education module application age"
 
 *</_ed_mod_age_>
 
 *<_school_>
-	gen byte school=.
+	gen byte school=attsch
 	label var school "Attending school"
 	la de lblschool 0 "No" 1 "Yes"
 	label values school  lblschool
@@ -812,7 +814,7 @@ label var ed_mod_age "Education module application age"
 
 
 *<_literacy_>
-	gen byte literacy = .
+	gen byte literacy = lit
 	label var literacy "Individual can read & write"
 	la de lblliteracy 0 "No" 1 "Yes"
 	label values literacy lblliteracy
@@ -820,14 +822,17 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educy_>
-	gen byte educy =.
+	gen byte educy =yeduc
+	replace educy=. if age < educy & (age != . & educy != .)
 	label var educy "Years of education"
 *</_educy_>
 
 
 *<_educat7_>
-	gen byte educat7 =.
+	gen  educat7=educ_d
 	label var educat7 "Level of education 1"
+	*assuming that read and write is incomplete primary
+	recode educat7 110=1 130=2 210=3  220=4 310=5 320=6 400=6 500=7 600=7 999=.
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
 *</_educat7_>
@@ -852,7 +857,7 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat_orig_>
-	gen educat_orig = .
+	gen educat_orig = educ_d
 	label var educat_orig "Original survey education code"
 *</_educat_orig_>
 
@@ -937,7 +942,8 @@ foreach v of local ed_var {
 
 
 *<_minlaborage_>
-	gen byte minlaborage =.
+*15 to 64 
+	gen byte minlaborage =15
 	label var minlaborage "Labor module application age"
 *</_minlaborage_>
 
@@ -947,6 +953,9 @@ foreach v of local ed_var {
 {
 *<_lstatus_>
 	gen byte lstatus = .
+	replace lstatus=1 if mas==1
+	replace lstatus=2 if mas==2
+	replace lstatus=3 if lfs==2
 	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -1000,7 +1009,8 @@ foreach v of local ed_var {
 
 {
 *<_empstat_>
-	gen byte empstat=.
+	gen byte empstat=emps
+	recode empstat 2=3 3=4 4=2 99=.
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat lblempstat
@@ -1008,27 +1018,36 @@ foreach v of local ed_var {
 
 
 *<_ocusec_>
-	gen byte ocusec = .
-	label var ocusec "Sector of activity primary job 7 day recall"
+	gen byte ocusec = sector
+	recode ocusec (2=3) (3=2) (5=.) (6=.) (99=.)
+	label var ocusec "Sector of activity primary job 7 day recall" 
 	la de lblocusec 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec lblocusec
 *</_ocusec_>
 
 
 *<_industry_orig_>
-	gen industry_orig = .
+	gen industry_orig = ind
+	tostring industry_orig, replace
+	replace industry_orig="" if ind==.
+	replace industry_orig="" if lstatus!=1
+	replace industry_orig="" if ind==999 | ind==998
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
 
 *<_industrycat_isic_>
-	gen industrycat_isic = .
+	gen ind_helper=ind
+	recode ind_helper 999=. 998=.
+	gen industrycat_isic= string(ind_helper,"%04.0f")
+	replace industrycat_isic = "" if industrycat_isic =="."
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
 
 *<_industrycat10_>
-	gen byte industrycat10 = .
+	gen byte industrycat10 = (ind/10)
+	recode industrycat10 (99=.) (8 9 11 13 14 15=10) (10=8) (12=9)
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
@@ -1045,19 +1064,29 @@ foreach v of local ed_var {
 
 
 *<_occup_orig_>
-	gen occup_orig = .
+*gen occup_orig = occ
+	gen occup_orig = string(occ)
+	replace occup_orig="" if occ==.
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
 
 *<_occup_isco_>
-	gen occup_isco = ""
+	*gen occup_isco = ""
+	gen occ_helper=occ
+	recode occ_helper 998=. 999=.
+	gen occup_isco = string(occ_helper,"%04.0f")
+	replace occup_isco="" if occ_helper==.
+	drop occ_helper
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
 
 *<_occup_skill_>
-	gen occup_skill = .
+*isco-88
+	gen occup_skill = (occ/10)
+	recode occup_skill 99.8=. 99.9=.
+	recode occup_skill (1/3=3) (4/8=2) (9=1)
 	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
 	label values occup_skill lblskill
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
@@ -1073,7 +1102,7 @@ foreach v of local ed_var {
 
 
 *<_wage_no_compen_>
-	gen double wage_no_compen = .
+	gen double wage_no_compen = round(totwag)
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
@@ -1087,7 +1116,8 @@ foreach v of local ed_var {
 	while unitwage is code 1 ("Daily") for all, regardless of the periodicity.
 </_unitwage_note> */
 
-	gen byte unitwage = .
+	gen byte unitwage = 5
+	replace unitwage=. if lstatus!=1
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
 	label values unitwage lblunitwage
@@ -1095,7 +1125,8 @@ foreach v of local ed_var {
 
 
 *<_whours_>
-	gen whours = .
+	gen whours = hrswk
+	replace whours=. if hrswk>84
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -1119,7 +1150,8 @@ foreach v of local ed_var {
 
 
 *<_contract_>
-	gen byte contract = .
+	gen byte contract = empcont
+	recode contract 100=1 200=0 999=.
 	label var contract "Employment has contract primary job 7 day recall"
 	la de lblcontract 0 "Without contract" 1 "With contract"
 	label values contract lblcontract
@@ -1135,7 +1167,8 @@ foreach v of local ed_var {
 
 
 *<_socialsec_>
-	gen byte socialsec = .
+	gen byte socialsec = socsec
+	recode socialsec 99=.
 	label var socialsec "Employment has social security insurance primary job 7 day recall"
 	la de lblsocialsec 1 "With social security" 0 "Without social secturity"
 	label values socialsec lblsocialsec
@@ -1251,7 +1284,9 @@ foreach v of local ed_var {
 
 
 *<_whours_2_>
-	gen whours_2 = .
+	gen whours_2 = hrswksc
+	*it is not logical to work more than 140 hours a day, people that said they work more than 56 will be violating the logical rule, as a result we put them as missing. The user should not use this variable to test whether the individual has a second job.
+	replace whours_2=. if hrswksc>56
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 
@@ -1305,7 +1340,10 @@ foreach v of local ed_var {
 
 
 *<_t_hours_total_>
-	gen t_hours_total = .
+	*gen t_hours_total = .
+	gen helper_totalh=(whours+whours_2)
+	gen t_hours_total = helper_totalh
+	replace t_hours_total=. if helper_totalh>140
 	label var t_hours_total "Annualized hours worked in all jobs 7 day recall"
 *</_t_hours_total_>
 
@@ -1450,7 +1488,7 @@ foreach v of local ed_var {
 
 
 *<_wage_no_compen_year_> --- this var has the same name as other and when quoted in the keep and order codes is repeated.
-	gen double wage_no_compen_year =
+	gen double wage_no_compen_year = .
 	label var wage_no_compen_year "Last wage payment primary job 12 month recall"
 *</_wage_no_compen_year_>
 
@@ -1689,14 +1727,17 @@ foreach v of local ed_var {
 *----------8.11: Overall across reference periods------------------------------*
 
 
-*<_njobs_>
-	gen njobs = .
+*<_njobs_
+	gen njobs_helper_1=1 if secjob==1
+	gen njobs_helper_2=1 if inrange(emps,1,4)
+	gen njobs = (njobs_helper_1 + njobs_helper_2)
+	replace njobs=. if lstatus!=1
 	label var njobs "Total number of jobs"
 *</_njobs_>
 
 
 *<_t_hours_annual_>
-	gen t_hours_annual = .
+	gen t_hours_annual = t_hours_total
 	label var t_hours_annual "Total hours worked in all jobs in the previous 12 months"
 *</_t_hours_annual_>
 
