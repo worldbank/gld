@@ -48,3 +48,12 @@ Question 5 = 1: seeking a job – unemployed / 2: not seeking a job – non-labo
 ## 2017-2019
 >The last three years have the most up-to-date questionnaire structure, which adds details like work environment and welfare. But meanwhile as question block increases and expands, the previous order was discarded and guide becomes blurred. Following the logic of the questionnaire would not produce sound labor force participation rate. We slightly changed the way we coded lstatus so as to get close to the ILO estimates.
 
+**Labor module in the questionnaire**
+
+![labor_2017](utilities/labor_2017.png)
+
+Applying the same logic as we did with years before 2017 would produce an extremely high labor force participation over 90%, which does not match the ILO data. Although 2017-2019 does not have a reminder like the one shown in 2000-2016 section, we used another hint – employment status.  
+
+![labor_2017_2](utilities/labor_2017_2.png)
+
+Question 35 was only asked to people whose employment status is not blank.
