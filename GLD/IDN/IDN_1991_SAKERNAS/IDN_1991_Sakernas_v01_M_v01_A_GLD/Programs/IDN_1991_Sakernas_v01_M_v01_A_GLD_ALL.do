@@ -172,7 +172,7 @@ Following codes given by the "A guide to working with Indonesian survey data":
 // koped = urban/rural
 // nks = sample code number
 // nous = household sample sequential number
-// nour = serial numbger of households
+// nour = serial number of households
 
 <_hhid_>*/
 
