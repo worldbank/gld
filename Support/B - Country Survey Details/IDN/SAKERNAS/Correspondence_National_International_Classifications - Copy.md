@@ -1,24 +1,12 @@
 # Correspondences between national and international classifications
 
-This document describes the methodology used to map information on occupation coded in the survey per the national classification schemes to the international ISIC and ISCO codes. For industrial classification, all QLFS years use [Standard Industrial Classification of All Economic Activities, Fifth Edition (SIC 5)](http://www.statssa.gov.za/additional_services/sic/contents.htm) which corresponds to *International Standard Industrial Classification of all Economic Activities (ISIC Rev. 3)*. For occupational classification, all QLFS years use [South African Standard Classification of Occupations published in 2003 (SASCO 2003)](http://www.statssa.gov.za/classifications/codelists/SASCO_2003.pdf) which corresponds to *International Standard Classification of Occupations (ISCO-88).* This is the  correspondence [dta file](/Support/Country%20Survey%20Details/ZAF/QLFS/utilities/isco88_sasco03_mapping.dta) for mapping SASCO-03 to ISCO-88. 
+This document describes the methodology used to map KBLI2015 and KBLI2009 to *International Standard Industrial Classification of all Economic Activities (ISIC Rev. 4)*. As described in the introduction to SAKERNAS, other versions of KBLI either do not have official guidebooks or they are unable to communicate with their ISIC counterparts. As for occupation codes, we currently do not have sufficient information on KBJI code table. Thus we only describe the KBLI2015 and KBLI2009, the two national industrial classifications we mapped for GLD harmonization here.
 
-## Correspondence in occupation classification
+The official documentation of KBLI2015 can be found here![](utilities/SASCO_additional_categories.png).
 
-ISCO-88 has 28 sub-major groups that are at two-digit level and 116 minor groups that are at three-digit level; to compare, SASCO 2003 has 30 two-digit groups and 153 three-digit groups. In the essence, they have exactly the same coding structure and classification.
+*We will update this documentation along with IDN GLD if we get more information on correspondence tables for KBJI and KBLI in the future. Please feel free to contact us if you know anything that might help map Idonesia's industrial or occupational codes. Thanks!*
 
-At two-digit level, the difference exists in that SASCO 2003 has two additional categories in additional to "*01-Armed Forces*" in both SASCO 2003 and ISCO-88:
 
-![](utilities/SASCO_additional_categories.png)
-
-At three-digit level, the difference of 37 groups consists of 11 groups contributed by the two additional sub-major groups "*08*" and "*09*" and 26 *"XX9"* groups that are particularly for items "not classified elsewhere" (N.C.E.).
-
-![SASCO's 11 aditional minor groups coming from the two sub-major groups](utilities/SASCO_11_additional_groups.png)
-
-![SASCO's 26 additional "NCE" categories.](utilities/Screen%20Shot%202021-11-02%20at%2005.58.25.png)
-
-The original variable `Q42OCCUPATION` in QLFS codes occupations is at four-digit level. In order to conduct a minor-group-level mapping, only the first three digits of `Q42OCCUPATION` were kept. All groups except "N.C.E." groups in SASCO 2003 were mapped to their counterparts in ISCO-88 directly, as they were coded in the same way. Regarding the "N.C.E." groups, they were all mapped back to the higher two-digit level as demonstrated in the table above.
-
-Note that the only exception to the "N.C.E." grouping rule is category "*215 Physical sciences technologists*" in SASCO 2003, as no category 215 in ISCO-88 can be a perfect match for it. The solution is to map "*215 Physical sciences technologists*" to category *"210 Physical, mathematical and engineering science professionals"* in ISCO-88.
 
 ## Correspondence in industry classification
 
