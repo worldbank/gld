@@ -80,10 +80,22 @@ This definition interacts with the other question asking about the main reason w
 
 ![question20_2017](utilities/question20_2017.png)
 
+
 Because in previous years, *"Already having a job, but has not started to work* was classified as *employed*. To main consistency with previous years but also cater for the definition in the report, we deem people who have a new business but yet started as unemployed.
 ```
 Question 20a = 2 : having a new business but not started yet.
 ```
 
 In terms of *non-labor force*, people left with no labor status would be not in the labor force.
+
+
+## Labor Force Participation Rate Comparison
+
+The labor force participation rate produced for 2014-2017 using the method described above is almost identical to the estimates in the report. The rounded numbers of 2014, 2015 and 2016 are the same; 2017 has a difference of 1.9 percentage points.
+
+The comparison among GLD harmonization, WDI, and WB country indicators is as follows:
+
+![lfp_comparison](utilities/lfp_comparison.png)
+
+As the earlist year of WB indicators is 2000, we only compared 2000-2019. The larget gap is 2.9 percentage points. This could be a result of different data sources as well as sample sizes.
 
