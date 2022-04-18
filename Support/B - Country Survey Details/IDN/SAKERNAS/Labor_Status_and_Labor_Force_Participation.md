@@ -17,7 +17,7 @@ Question 5 = 1: work at least 1 hour in the previous week
 Question 6 = 1: have a job but are not temporarily working
 ```
 
-Because the questionnaire is desinged in such way that people who have job will be led to question 8, question 6 is the minimum requirement for "being employed". Thus `lstatus=2` *(unemployed)* is: 
+Because the questionnaire is designed in such way that people who have job will be led to question 8, question 6 is the minimum requirement for "being employed". Thus `lstatus=2` *(unemployed)* is: 
 ```
 Question 6 = 2: people who do not have work
 Question 13 = 1: seeking a job 
@@ -81,7 +81,7 @@ This definition interacts with the other question asking about the main reason w
 ![question20_2017](utilities/question20_2017.png)
 
 
-Because in previous years, *"Already having a job, but has not started to work* was classified as *employed*. To main consistency with previous years but also cater for the definition in the report, we deem people who have a new business but yet started as unemployed.
+Because in previous years, *"Already having a job, but has not started to work* was classified as *employed*. To main consistency with previous years but also cater for the definition in the report, we deem people who have a new business but they have not stsrted yet as unemployed.
 ```
 Question 20a = 2 : having a new business but not started yet.
 ```
@@ -97,5 +97,5 @@ The comparison among GLD harmonization, WDI, and WB country indicators is as fol
 
 ![lfp_comparison](utilities/lfp_comparison.png)
 
-As the earlist year of WB indicators is 2000, we only compared 2000-2019. The larget gap is 2.9 percentage points. This could be a result of different data sources as well as sample sizes.
+As the earliest year of WB indicators is 2000, we only compared 2000-2019. The largest gap is 2.9 percentage points. This could be a result of different data sources as well as sample sizes.
 
