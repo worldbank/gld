@@ -57,3 +57,12 @@ Applying the same logic as we did with years before 2017 would produce an extrem
 ![labor_2017_2](utilities/labor_2017_2.png)
 
 Question 35 was only asked to people whose employment status is not blank.
+
+![employment_status_2017](utilities/employment_status_2017.png)
+
+Thus, our way of defining *employed* for 2017-2019 becomes:
+```
+Question 35 !=0 : have employment status
+```
+
+Following the definition of *employed*, the unemployed would be those without employment status but also seeking work. 
