@@ -65,4 +65,25 @@ Thus, our way of defining *employed* for 2017-2019 becomes:
 Question 35 !=0 : have employment status
 ```
 
-Following the definition of *employed*, the unemployed would be those without employment status but also seeking work. 
+Following the definition of *employed*, the unemployed would be those without employment status but also seeking work. Seeking work is straightforward according to the questionnaire:
+```
+Question 15a = 1 : searching work in the previous week
+Question 15b = 1 : preparing for a business in the previous week
+Question 21a = 1 : would accept a job if being offered
+```
+
+However, the definition of *unemployed* in the labor force survey report 2015 from ILO is different from ours.
+
+![unemployment_define2015](utilities/unemployment_define2015.png)
+
+This definition interacts with the other question asking about the main reason why not seeking a job or preparing for a business:
+
+![question20_2017](utilities/question20_2017.png)
+
+Because in previous years, *"Already having a job, but has not started to work* was classified as *employed*. To main consistency with previous years but also cater for the definition in the report, we deem people who have a new business but yet started as unemployed.
+```
+Question 20a = 2 : having a new business but not started yet.
+```
+
+In terms of *non-labor force*, people left with no labor status would be not in the labor force.
+
