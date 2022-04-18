@@ -57,8 +57,10 @@ set mem 800m
 
 *----------1.2: Set directories------------------------------*
 
-local path_in "Z:\GLD-Harmonization\582018_AQ\EGY\EGY_2007_LFS\EGY_2007_LFS_v01_M\Data\Stata"
-local path_output "Z:\GLD-Harmonization\582018_AQ\EGY\EGY_2007_LFS\EGY_2007_LFS_v01_M_v01_A_GLD\Data\Harmonized"
+*local path_in "Z:\GLD-Harmonization\582018_AQ\EGY\EGY_2007_LFS\EGY_2007_LFS_v01_M\Data\Stata"
+local path_in "/Users/aleqn/Desktop/2007"
+*local path_output "Z:\GLD-Harmonization\582018_AQ\EGY\EGY_2007_LFS\EGY_2007_LFS_v01_M_v01_A_GLD\Data\Harmonized"
+local path_output"/Users/aleqn/Desktop/2007/Harmonized"
 
 *----------1.3: Database assembly------------------------------*
 
@@ -66,10 +68,12 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\EGY\EGY_2007_LFS\EGY_2007_LFS_
 * harmonized output in a single file
 
 *Use household file as a base
-use "`path_in'\Egypt 2007-LFS HH-V1.dta"
+*use "`path_in'\Egypt 2007-LFS HH-V1.dta"
+use "`path_in'/Egypt 2007-LFS HH-V1.dta"
 
 *Merge to individual file
-merge 1:m caseser using "`path_in'\Egypt 2007-LFS IND-V1.dta"
+*merge 1:m caseser using "`path_in'\Egypt 2007-LFS IND-V1.dta"
+merge 1:m caseser using "`path_in'/Egypt 2007-LFS IND-V1.dta"
 drop _merge
 
 
@@ -1852,6 +1856,7 @@ compress
 
 *<_% SAVE_>
 
-save "`path_output'\EGY_2007_LFS_V01_M_V01_A_GLD_ALL.dta", replace
+*save "`path_output'\EGY_2007_LFS_V01_M_V01_A_GLD_ALL.dta", replace
+save "`path_output'/EGY_2007_LFS_V01_M_V01_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>
