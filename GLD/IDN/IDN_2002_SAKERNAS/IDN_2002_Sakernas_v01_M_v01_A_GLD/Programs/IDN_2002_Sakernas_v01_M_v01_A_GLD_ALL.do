@@ -17,7 +17,7 @@
 <_Data collection to (M/Y)_>	[MM/YYYY] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			Shared with Job's Group by the World Bank Indonesia Team
 								data request form required to get the access</_Source of dataset_>
-<_Sample size (HH)_> 			N/A </_Sample size (HH)_>
+<_Sample size (HH)_> 			70,176 </_Sample size (HH)_>
 <_Sample size (IND)_> 			275,342 </_Sample size (IND)_>
 <_Sampling method_> 			Two-stage cluster sampling method </_Sampling method_>
 <_Geographic coverage_> 		Province </_Geographic coverage_>
@@ -163,7 +163,9 @@ local output "`id_data'"
 
 
 *<_hhid_>
-	gen hhid = .
+	duplicates drop
+	sort b1r1 b1r2 b1r5 b1r7 b1r8
+	egen hhid = group(b1r1 b1r2 b1r5 b1r7 b1r8)
 	label var hhid "Household id"
 *</_hhid_>
 
@@ -249,15 +251,20 @@ provided due to it is part of the confidential information withheld by the NSO.
 
 /*<_subnatid1_>
 
-Note that the raw data set mistakenly coded 91 as West Irian Jaya which is now West Papua. But West Papua did not split from province Pupa until 2003. Therefore, category 91 here in 2002 should be Papua.
+Note that Irian Jaya (Papua Barat/or West Papua) was assigned three codes in 1999 into which it was to be divided into. These three codes are:
+
+91 Papua West
+92 Irian Jaya Tengah
+93 Irian Jaya Timur
+
+West Papua did not split from province Papua until 2003. 94-Papua did not appear in SAKERNAS until 2003. In 2001, the raw data only has 91-Papua West. Though it has 92 and 93 yet they do not have value labels. They probably refer to Irian Jaya Tengah and Irian Jaya Timur respectively. 
 
 <_subnatid1_>*/
 
 
 *<_subnatid1_>
 	gen byte subnatid1_copy = b1r1
-	replace subnatid1_copy = . if inlist(b1r1, 92, 93)
-	label de lblsubnatid1 11 "11 - ACEH" 12 "12 - SUMATERA UTARA" 13 "13 - SUMATERA BARAT" 14 "14 - RIAU" 15 "15 - JAMBI" 16 "16 - SUMATERA SELATAN" 17 "17 - BENGKULU" 18 "18 - LAMPUNG" 19 "19 - KEPULAUAN BANGKA BELITUNG" 31 "31 - DKI JAKARTA" 32 "32 - JAWA BARAT" 33 "33 - JAWA TENGAH" 34 "34 - DI YOGYAKARTA" 35 "35 - JAWA TIMUR" 36 "36 - BANTEN" 51 "51 - BALI" 52 "52 - NUSA TENGGARA BARAT" 53 "53 - NUSA TENGGARA TIMUR" 61 "61 - KALIMANTAN BARAT" 62 "62 - KALIMANTAN TENGAH" 63 "63 - KALIMANTAN SELATAN" 64 "64 - KALIMANTAN TIMUR" 71 "71 - SULAWESI UTARA" 72 "72 - SULAWESI TENGAH" 73 "73 - SULAWESI SELATAN" 74 "74 - SULAWESI TENGGARA" 75 "75 - GORONTALO"  81 "81 - MALUKU" 82 "82 - MALUKU UTARA" 91 "91 - PAPUA"
+	label de lblsubnatid1 11 "11 - ACEH" 12 "12 - SUMATERA UTARA" 13 "13 - SUMATERA BARAT" 14 "14 - RIAU" 15 "15 - JAMBI" 16 "16 - SUMATERA SELATAN" 17 "17 - BENGKULU" 18 "18 - LAMPUNG" 19 "19 - KEPULAUAN BANGKA BELITUNG" 31 "31 - DKI JAKARTA" 32 "32 - JAWA BARAT" 33 "33 - JAWA TENGAH" 34 "34 - DI YOGYAKARTA" 35 "35 - JAWA TIMUR" 36 "36 - BANTEN" 51 "51 - BALI" 52 "52 - NUSA TENGGARA BARAT" 53 "53 - NUSA TENGGARA TIMUR" 61 "61 - KALIMANTAN BARAT" 62 "62 - KALIMANTAN TENGAH" 63 "63 - KALIMANTAN SELATAN" 64 "64 - KALIMANTAN TIMUR" 71 "71 - SULAWESI UTARA" 72 "72 - SULAWESI TENGAH" 73 "73 - SULAWESI SELATAN" 74 "74 - SULAWESI TENGGARA" 75 "75 - GORONTALO"  81 "81 - MALUKU" 82 "82 - MALUKU UTARA" 91 "91 - PAPUA" 92 "92 - IRIAN JAYA TENGAH" 93 "93 - IRIAN JAYA TIMUR"
 	label values subnatid1_copy lblsubnatid1
 	decode subnatid1_copy, gen(subnatid1)
 	drop subnatid1_copy
