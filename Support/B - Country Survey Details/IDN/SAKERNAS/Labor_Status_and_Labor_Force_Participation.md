@@ -45,9 +45,6 @@ Question 5 = 1: seeking a job – unemployed / 2: not seeking a job – non-labo
 ```
 
 
-
-## Correspondence in industry classification
-
-The original variable `Q43INDUSTRY` in QLFS coded industries is at three-digit level. The [online documentation of SIC 5](http://www.statssa.gov.za/additional_services/sic/descrip6.htm) provides a conversion table between SIC 5 and ISIC Rev.3, although only at two-digit level. As shown in the screenshot below, in most cases, the harmonization would be a one-to-one exclusive matching process, i.e. SIC \#11 will be mapped to ISIC \#01. But in some cases, the relationship is not exclusive but multiple in ISIC to one in SIC, i.e. SIC \#15 and SIC \#16 match SIC \#30. The solution is to go to a lower three-digit level in SIC to find minor-groups with narrower definition for each category, \#15 and \#16 in this case, in ISIC.
-
+## 2017-2019
+>The last three years have the most up-to-date questionnaire structure, which adds details like work environment and welfare. But meanwhile as question block increases and expands, the previous order was discarded and guide becomes blurred. Following the logic of the questionnaire would not produce sound labor force participation rate. We slightly changed the way we coded lstatus so as to get close to the ILO estimates.
 
