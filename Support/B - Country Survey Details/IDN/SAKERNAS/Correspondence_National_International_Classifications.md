@@ -1,14 +1,14 @@
 # Correspondences between national and international classifications
 
-This document describes the methodology used to map KBLI2015 and KBLI2009 to *International Standard Industrial Classification of all Economic Activities (ISIC Rev. 4)*. As described in the introduction to SAKERNAS, other versions of KBLI either do not have official guidebooks or they are unable to communicate with their ISIC counterparts. As for occupation codes, we currently do not have sufficient information on KBJI code table. Thus we only describe the KBLI2015 and KBLI2009, the two national industrial classifications we mapped for GLD harmonization here.
+This document describes the methodology used to map KBLI-2015 and KBLI-2009 to *International Standard Industrial Classification of all Economic Activities (ISIC Rev. 4)*. As described in the [introduction to SAKERNAS](1.%20Introduction%20to%20SAKERNAS.md), other versions of KBLI either do not have official guidebooks or they are unable to communicate with their ISIC counterparts. As for occupation codes, we currently do not have sufficient information on KBJI code table. Thus we only describe the KBLI-2015 and KBLI-2009, the two national industrial classifications we mapped for GLD harmonization here.
 
 
-*(We will update this documentation along with IDN GLD if we get more information on correspondence tables for KBJI and KBLI in the future. Please feel free to contact us if you know anything that might help map Indonesia's industrial or occupational codes. Thanks!)*
+*(We will update this documentation along with IDN GLD if we get more information on correspondence tables for KBJI and KBLI in the future. Please feel free to contact the GLD focal point (gld@worldbank.org) if you know anything that might help map Indonesia's industrial or occupational codes. Thanks!)*
 
 
 ## Correspondence in industry classification
 
-The official documentation of KBLI2015 can be found [here.](utilities/KBLI-2015.pdf) This documentation is only available in Indonesian. But it has a complete correspondence table with ISIC Rev.4 showing all the differences (see the picture below) and another one compared to KBLI2009 from which KBLI2015 was adapted.
+The official documentation of KBLI-2015 can be found [here.](utilities/KBLI-2015.pdf) This documentation is only available in Indonesian. But it has a complete correspondence table with ISIC Rev.4 showing all the differences (see the picture below) and another one compared to KBLI-2009 from which KBLI-2015 was adapted.
 
 **Example of the correspondence between KBLI-2015 and ISIC Rev.4**
 
@@ -38,7 +38,7 @@ The structure of KBLI-2015 is almost the same as KBLI-2009 and ISIC Rev.4. As be
 | Group | 5-digit        | 1573  |  
 
 
-Balancing between the level of precision and difficulty of mapping, we mapped KBLI-2015 to ISIC at a three-digit level, as the differences at three-digit level can be easily located and manually recoded. The table below shows all the differences between KBLI-15 and ISIC, and those between KBLI-09 and ISIC. When mapping KBLI to ISIC, for example, KBLI code 073 will be coded as ISIC 072.  
+Balancing between the level of precision and difficulty of mapping, we mapped KBLI-2015 to ISIC at a three-digit level, as the differences at three-digit level can be easily located and manually recoded. The table below shows all the differences between KBLI-2015 and ISIC, and those between KBLI-2009 and ISIC. When mapping KBLI to ISIC, for example, KBLI code 073 will be coded as ISIC 072.  
 
 
 | **ISIC Rev.4**	| **KBLI 2015**	| **KBLI 2009**	|
