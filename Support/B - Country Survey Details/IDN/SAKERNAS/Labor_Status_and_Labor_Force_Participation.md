@@ -10,7 +10,7 @@ This document shows the details of coding `lstatus` for the three groups of year
 
 ![labor_1989](utilities/labor_1989.png)
 
-Starting from question 4 in this module, question 4, 5 and 6 were used for defining `lstatus==1`*(employed)*. 
+Starting from question 4 in this module, question 4, 5 and 6 were used for defining `lstatus==1` *(employed)*. 
 ```
 Question 4 = 1: work primarily in the previous week
 Question 5 = 1: work at least 1 hour in the previous week
@@ -91,7 +91,7 @@ In terms of *non-labor force*, people left with no labor status would be not in 
 
 ## Labor Force Participation Rate Comparison
 
-The labor force participation rate produced for 2014-2017 using the method described above is almost identical to the estimates in the report. The rounded numbers of 2014, 2015 and 2016 are the same; 2017 has a difference of 1.9 percentage points.
+The labor force participation rate produced for 2014-2017 using the method described above is almost identical to the estimates in the reports of the Indonesian Statistics Office (BPS). The labour force participation estimates of 2014, 2015 and 2016 are the identical to the official reports at on decimal place; 2017 has a difference of 1.9 percentage points.
 
 The comparison among GLD harmonization, WDI, and WB country indicators is as follows:
 
