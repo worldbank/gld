@@ -57,10 +57,10 @@ set mem 800m
 
 *----------1.2: Set directories------------------------------*
 
-*local path_in "Z:\GLD-Harmonization\582018_AQ\EGY\EGY_2014_LFS\EGY_2014_LFS_v01_M\Data\Stata"
-local path_in "/Users/aleqn/Desktop/2014"
-*local path_output "Z:\GLD-Harmonization\582018_AQ\EGY\EGY_2014_LFS\EGY_2014_LFS_v01_M_v01_A_GLD\Data\Harmonized"
-local path_output"/Users/aleqn/Desktop/2014/Harmonized"
+local path_in "Z:\GLD-Harmonization\582018_AQ\EGY\EGY_2014_LFS\EGY_2014_LFS_v01_M\Data\Stata"
+
+local path_output "Z:\GLD-Harmonization\582018_AQ\EGY\EGY_2014_LFS\EGY_2014_LFS_v01_M_v01_A_GLD\Data\Harmonized"
+
 
 *----------1.3: Database assembly------------------------------*
 
@@ -68,12 +68,11 @@ local path_output"/Users/aleqn/Desktop/2014/Harmonized"
 * harmonized output in a single file
 
 *Use household file as a base
-*use "`path_in'\Egypt 2014-LFS HH-V1.dta"
-use "`path_in'/Egypt 2014-LFS HH-V1.dta"
+use "`path_in'\Egypt 2014-LFS HH-V1.dta"
 
 *Merge to individual file
-*merge 1:m caseser using "`path_in'\Egypt 2014-LFS IND-V1.dta"
-merge 1:m caseser using "`path_in'/Egypt 2014-LFS IND-V1.dta"
+merge 1:m caseser using "`path_in'\Egypt 2014-LFS IND-V1.dta"
+
 drop _merge
 
 
@@ -235,8 +234,8 @@ drop _merge
 *<_subnatid1_>
 /* <_subnatid1_note>
 
-	The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: “1 – Hatay”. That is, the variable itself is to be string, not a labelled numeric vector. 
-	
+	The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: “1 – Hatay”. That is, the variable itself is to be string, not a labelled numeric vector.
+
 	Example of entries would be "1 - Alaska",  "2 - Arkansas", ...
 
 </_subnatid1_note> */
@@ -268,7 +267,7 @@ drop _merge
 	replace subnatid1="24 - El-wadi El-Gidid" if subnatid1=="818032"
 	replace subnatid1="25 - Matrouh" if subnatid1=="818033"
 	replace subnatid1="26 - North Sinai" if subnatid1=="818034"
-	replace subnatid1="27 - South Sinai" if subnatid1=="818035"	
+	replace subnatid1="27 - South Sinai" if subnatid1=="818035"
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 
@@ -970,7 +969,7 @@ foreach v of local ed_var {
 
 
 *<_minlaborage_>
-*15 to 64 
+*15 to 64
 	gen byte minlaborage =15
 	label var minlaborage "Labor module application age"
 *</_minlaborage_>
@@ -1048,7 +1047,7 @@ foreach v of local ed_var {
 *<_ocusec_>
 	gen byte ocusec = sector
 	recode ocusec (2=3) (3=2) (5=.) (6=.) (99=.)
-	label var ocusec "Sector of activity primary job 7 day recall" 
+	label var ocusec "Sector of activity primary job 7 day recall"
 	la de lblocusec 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec lblocusec
 *</_ocusec_>
@@ -1882,7 +1881,6 @@ compress
 
 *<_% SAVE_>
 
-*save "`path_output'\EGY_2014_LFS_V01_M_V01_A_GLD_ALL.dta", replace
-save "`path_output'/EGY_2014_LFS_V01_M_V01_A_GLD_ALL.dta", replace
+save "`path_output'\EGY_2014_LFS_V01_M_V01_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>
