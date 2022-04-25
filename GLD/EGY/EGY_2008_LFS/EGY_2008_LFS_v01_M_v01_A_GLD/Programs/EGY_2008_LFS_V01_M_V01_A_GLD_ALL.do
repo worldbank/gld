@@ -14,25 +14,25 @@
 
 <_Country_>						[Egypt (EGY)] </_Country_>
 <_Survey Title_>				[Labour Force Survey] </_Survey Title_>
-<_Survey Year_>					[Year of start of the survey] </_Survey Year_>
-<_Study ID_>					[Microdata Library ID if present] </_Study ID_>
-<_Data collection from_>			[MM/YYYY] </_Data collection from_>
-<_Data collection to_>				[MM/YYYY] </_Data collection to_>
-<_Source of dataset_> 				[Source of data, e.g. NSO] </_Source of dataset_>
-<_Sample size (HH)_> 				[#] </_Sample size (HH)_>
-<_Sample size (IND)_> 				[#] </_Sample size (IND)_>
-<_Sampling method_> 				[Brief description] </_Sampling method_>
-<_Geographic coverage_> 			[To what level is data significant] </_Geographic coverage_>
-<_Currency_> 					[Currency used for wages] </_Currency_>
+<_Survey Year_>					[2008] </_Survey Year_>
+<_Study ID_>					[Economic Research Forum ] </_Study ID_>
+<_Data collection from_>			[01/2008] </_Data collection from_>
+<_Data collection to_>				[12/2008] </_Data collection to_>
+<_Source of dataset_> 				[Central Agency for Public Mobilization and Statistics (CAPMAS)Central Agency for Public Mobilization and Statistics (CAPMAS)] </_Source of dataset_>
+<_Sample size (HH)_> 			75,327	 </_Sample size (HH)_>
+<_Sample size (IND)_> 		 330,850 </_Sample size (IND)_>
+<_Sampling method_> 				[systematic random sample.] </_Sampling method_>
+<_Geographic coverage_> 		regional 	[To what level is data significant] </_Geographic coverage_>
+<_Currency_> 					[Egyptian pound] </_Currency_>
 
 -----------------------------------------------------------------------
 
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
 <_ISCED Version_>				ISCED 1997 </_ISCED Version_>
-<_ISCO Version_>				ISCO-88 </_ISCO Version_>
-<_OCCUP National_>				[Version of ICLS for Labor Questions] </_OCCUP National_>
-<_ISIC Version_>				[Version of ICLS for Labor Questions] </_ISIC Version_>
-<_INDUS National_>				[Version of ICLS for Labor Questions] </_INDUS National_>
+<_ISCO Version_>				 </_ISCO Version_>
+<_OCCUP National_>				n/A </_OCCUP National_>
+<_ISIC Version_>				 </_ISIC Version_>
+<_INDUS National_>				N/A </_INDUS National_>
 
 -----------------------------------------------------------------------
 <_Version Control_>
@@ -1133,6 +1133,7 @@ foreach v of local ed_var {
 *<_whours_>
 	gen whours = hrswk
 	replace whours=. if hrswk>84
+	replace whours=. if hrswk==0
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 

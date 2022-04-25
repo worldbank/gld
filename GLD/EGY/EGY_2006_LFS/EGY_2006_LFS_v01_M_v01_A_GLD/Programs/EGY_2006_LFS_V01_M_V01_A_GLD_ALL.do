@@ -14,22 +14,22 @@
 
 <_Country_>						[Egypt (EGY)] </_Country_>
 <_Survey Title_>				[Labour Force Survey] </_Survey Title_>
-<_Survey Year_>					[Year of start of the survey] </_Survey Year_>
-<_Study ID_>					[Microdata Library ID if present] </_Study ID_>
-<_Data collection from_>			[MM/YYYY] </_Data collection from_>
-<_Data collection to_>				[MM/YYYY] </_Data collection to_>
-<_Source of dataset_> 				[Source of data, e.g. NSO] </_Source of dataset_>
-<_Sample size (HH)_> 				[#] </_Sample size (HH)_>
-<_Sample size (IND)_> 				[#] </_Sample size (IND)_>
-<_Sampling method_> 				[Brief description] </_Sampling method_>
-<_Geographic coverage_> 			[To what level is data significant] </_Geographic coverage_>
-<_Currency_> 					[Currency used for wages] </_Currency_>
+<_Survey Year_>					[2006] </_Survey Year_>
+<_Study ID_>					[Economic Research Forum ] </_Study ID_>
+<_Data collection from_>			[01/2006] </_Data collection from_>
+<_Data collection to_>				[12/2006] </_Data collection to_>
+<_Source of dataset_> 				[Central Agency for Public Mobilization and Statistics (CAPMAS)Central Agency for Public Mobilization and Statistics (CAPMAS)] </_Source of dataset_>
+<_Sample size (HH)_> 				76,802 </_Sample size (HH)_>
+<_Sample size (IND)_> 		335,449  </_Sample size (IND)_>
+<_Sampling method_> 				[systematic random sample.] </_Sampling method_>
+<_Geographic coverage_> 		regional 	[To what level is data significant] </_Geographic coverage_>
+<_Currency_> 					[Egyptian pound] </_Currency_>
 
 -----------------------------------------------------------------------
 
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
 <_ISCED Version_>				ISCED 1997 </_ISCED Version_>
-<_ISCO Version_>				ISCO-88 </_ISCO Version_>
+<_ISCO Version_>				 </_ISCO Version_>
 <_OCCUP National_>				[Version of ICLS for Labor Questions] </_OCCUP National_>
 <_ISIC Version_>				[Version of ICLS for Labor Questions] </_ISIC Version_>
 <_INDUS National_>				[Version of ICLS for Labor Questions] </_INDUS National_>
@@ -231,8 +231,8 @@ drop _merge
 *<_subnatid1_>
 /* <_subnatid1_note>
 
-	The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: “1 – Hatay”. That is, the variable itself is to be string, not a labelled numeric vector. 
-	
+	The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: “1 – Hatay”. That is, the variable itself is to be string, not a labelled numeric vector.
+
 	Example of entries would be "1 - Alaska",  "2 - Arkansas", ...
 
 </_subnatid1_note> */
@@ -264,7 +264,7 @@ drop _merge
 	replace subnatid1="24 - El-wadi El-Gidid" if subnatid1=="818032"
 	replace subnatid1="25 - Matrouh" if subnatid1=="818033"
 	replace subnatid1="26 - North Sinai" if subnatid1=="818034"
-	replace subnatid1="27 - South Sinai" if subnatid1=="818035"	
+	replace subnatid1="27 - South Sinai" if subnatid1=="818035"
 	/*label define lblsubnatid1 818001 "1 - Cairo"  818002 "2 - Alexandria"  818003 "3 - Port Said" 818004 "4 - Suez" 818011"5 - Damietta" 818012 "6 - Dakahlia" 818013 "7 - Sharkia" 818014 "8 - Kalyoubia" 818015 "9 - Kafr-El- sheik" 818016 "10 - Gharbia" 818017 "11 - Menoufia" 818018 "12 - Behira" 818019 "13 - Ismaelia" 818021 "14 - Giza" 818022 "15 - Beni- Suef" 818023 "16 - Fayoum" 818024 "17 - Menia" 818025 "18 - Asyout" 818026 "19 - Suhag" 818027 "20 - Qena" 818028 "21 - Aswan" 818029 "22 - Luxor" 818031 "23 - Red Sea" 818032 "24 - El-wadi El-Gidid" 818033 "25 - Matrouh" 818034 "26 - North Sinai" 818035 "27 - South Sinai"*/
 	/*label values subnatid1 lblsubnatid1*/
 	label var subnatid1 "Subnational ID at First Administrative Level"
@@ -943,7 +943,7 @@ foreach v of local ed_var {
 
 
 *<_minlaborage_>
-*15 to 64 
+*15 to 64
 	gen byte minlaborage =15
 	label var minlaborage "Labor module application age"
 *</_minlaborage_>
@@ -1021,7 +1021,7 @@ foreach v of local ed_var {
 *<_ocusec_>
 	gen byte ocusec = sector
 	recode ocusec (2=3) (3=2) (5=.) (6=.) (99=.)
-	label var ocusec "Sector of activity primary job 7 day recall" 
+	label var ocusec "Sector of activity primary job 7 day recall"
 	la de lblocusec 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec lblocusec
 *</_ocusec_>

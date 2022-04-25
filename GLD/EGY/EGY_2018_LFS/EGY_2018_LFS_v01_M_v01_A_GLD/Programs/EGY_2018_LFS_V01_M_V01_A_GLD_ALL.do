@@ -14,25 +14,25 @@
 
 <_Country_>						[Egypt (EGY)] </_Country_>
 <_Survey Title_>				[Labour Force Survey] </_Survey Title_>
-<_Survey Year_>					[Year of start of the survey] </_Survey Year_>
-<_Study ID_>					[Microdata Library ID if present] </_Study ID_>
-<_Data collection from_>			[MM/YYYY] </_Data collection from_>
-<_Data collection to_>				[MM/YYYY] </_Data collection to_>
-<_Source of dataset_> 				[Source of data, e.g. NSO] </_Source of dataset_>
-<_Sample size (HH)_> 				[#] </_Sample size (HH)_>
-<_Sample size (IND)_> 				[#] </_Sample size (IND)_>
-<_Sampling method_> 				[Brief description] </_Sampling method_>
-<_Geographic coverage_> 			[To what level is data significant] </_Geographic coverage_>
-<_Currency_> 					[Currency used for wages] </_Currency_>
+<_Survey Year_>					[2018] </_Survey Year_>
+<_Study ID_>					[Economic Research Forum ] </_Study ID_>
+<_Data collection from_>			[01/2018] </_Data collection from_>
+<_Data collection to_>				[12/2018] </_Data collection to_>
+<_Source of dataset_> 				[Central Agency for Public Mobilization and Statistics (CAPMAS)Central Agency for Public Mobilization and Statistics (CAPMAS)] </_Source of dataset_>
+<_Sample size (HH)_> 			80,804	 </_Sample size (HH)_>
+<_Sample size (IND)_> 		 323,679 </_Sample size (IND)_>
+<_Sampling method_> 				[systematic random sample.] </_Sampling method_>
+<_Geographic coverage_> 		regional 	[To what level is data significant] </_Geographic coverage_>
+<_Currency_> 					[Egyptian pound] </_Currency_>
 
 -----------------------------------------------------------------------
 
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
-<_ISCED Version_>				ISCED 1997 </_ISCED Version_>
+<_ISCED Version_>				ISCED 2011 </_ISCED Version_>
 <_ISCO Version_>				ISCO-88 </_ISCO Version_>
-<_OCCUP National_>				[Version of ICLS for Labor Questions] </_OCCUP National_>
-<_ISIC Version_>				[Version of ICLS for Labor Questions] </_ISIC Version_>
-<_INDUS National_>				[Version of ICLS for Labor Questions] </_INDUS National_>
+<_OCCUP National_>			N/A	[Version of ICLS for Labor Questions] </_OCCUP National_>
+<_ISIC Version_>				ISCO-4 [Version of ICLS for Labor Questions] </_ISIC Version_>
+<_INDUS National_>			N/A	[Version of ICLS for Labor Questions] </_INDUS National_>
 
 -----------------------------------------------------------------------
 <_Version Control_>
@@ -108,19 +108,19 @@ drop _merge
 
 
 *<_isced_version_>
-	gen isced_version = "isced_1997"
+	gen isced_version = "isced_2011"
 	label var isced_version "Version of ISCED used for educat_isced"
 *</_isced_version_>
 
 
 *<_isco_version_>
-	gen isco_version = ""
+	gen isco_version = "isco_1988"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
 
 *<_isic_version_>
-	gen isic_version = ""
+	gen isic_version = "isic_4"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
@@ -579,7 +579,7 @@ drop _merge
 	replace	subnatid2= " 303 -  Abu Rudeis "	if subnatid2=="8183503"
 	replace	subnatid2= " 304 -  Saint Catherine "	if subnatid2=="8183504"
 	replace	subnatid2= " 305 -  Dahab "	if subnatid2=="8183506"
-	
+
 
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
@@ -690,7 +690,7 @@ drop _merge
 
 *<_marital_>
 	gen byte marital = mart
-	recode marital (2 3=1) (1=2)
+	recode marital (2 3=1) (1=2) (99=.)
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
 	label values marital lblmarital
@@ -853,6 +853,7 @@ Education module is only asked to those XX and older.
 
 *<_literacy_>
 	gen byte literacy = lit
+	recode literacy 99=.
 	label var literacy "Individual can read & write"
 	la de lblliteracy 0 "No" 1 "Yes"
 	label values literacy lblliteracy
@@ -870,7 +871,7 @@ Education module is only asked to those XX and older.
 	gen  educat7=educ_d
 	label var educat7 "Level of education 1"
 	*assuming that read and write is incomplete primary
-	recode educat7 110=1 130=2 210=3  220=4 310=5 320=6 400=6 500=7 600=7 999=.
+	recode educat7 100=1 110=1 120=2 130=2 140=2 150=1 210=3  220=4 310=5 320=6 400=6 500=7 600=7 999=.
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
 *</_educat7_>
@@ -1167,6 +1168,7 @@ foreach v of local ed_var {
 *<_whours_>
 	gen whours = hrswk
 	replace whours=. if hrswk>84
+	replace whours=. if hrswk==0
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
