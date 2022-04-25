@@ -182,7 +182,8 @@ drop _merge
 
 
 *<_weight_>
-	gen weight = pweight
+*for year 2006 the weight needs to be divided by 3.9 which is the factor of the survey for individuals. This does not happen again in other years.
+	gen weight = (pweight/3.9)
 	label var weight "Survey sampling weight"
 *</_weight_>
 
