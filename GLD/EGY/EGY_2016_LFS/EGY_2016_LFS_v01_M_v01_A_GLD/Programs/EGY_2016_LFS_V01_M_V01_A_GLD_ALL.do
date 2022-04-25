@@ -546,6 +546,7 @@ Education module is only asked to those XX and older.
 
 *<_literacy_>
 	gen byte literacy = lit
+	recode literacy 99=.
 	label var literacy "Individual can read & write"
 	la de lblliteracy 0 "No" 1 "Yes"
 	label values literacy lblliteracy
@@ -563,7 +564,7 @@ Education module is only asked to those XX and older.
 	gen  educat7=educ_d
 	label var educat7 "Level of education 1"
 	*assuming that read and write is incomplete primary
-	recode educat7 110=1 130=2 210=3  220=4 310=5 320=6 400=6 500=7 600=7 999=.
+	recode educat7 100=1 110=1 120=2 130=2 140=2 150=1 210=3  220=4 310=5 320=6 400=6 500=7 600=7 999=.
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
 *</_educat7_>
@@ -860,6 +861,7 @@ foreach v of local ed_var {
 *<_whours_>
 	gen whours = hrswk
 	replace whours=. if hrswk>84
+	replace whours=. if hrswk==0
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
