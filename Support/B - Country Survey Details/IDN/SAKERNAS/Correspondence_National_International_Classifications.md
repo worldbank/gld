@@ -30,7 +30,7 @@ Translated by online software as:
 
 >The 2015 KBLI classification consists of a classification structure consistent and interconnected with economic activity, based on concepts, definitions, principles, and classification procedures that has been agreed internationally. Classification structure shows standard format for managing detailed information about the state economy, according to economic principles and perceptions.
 
->In general, both KBLI-2015 and KBLI-2009 issue III still refers to the same reference, namely ISIC Rev.4 which consists of 21 categories. Changes happened in the form of shifts or grouping an activity from one classification to another.    
+>In general, both KBLI-2015 and KBLI-2009 (ver. III) still refers to the same reference, namely ISIC Rev.4 which consists of 21 categories. Changes happened in the form of shifts or grouping an activity from one classification to another.    
 
 
 **Categories and Groupings of KBLI-2015**
