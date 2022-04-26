@@ -22,6 +22,12 @@ The official documentation of KBLI-2015 can be found [here.](utilities/KBLI-2015
 
 The structure of KBLI-2015 is almost the same as KBLI-2009 and ISIC Rev.4. As being described in the documentation attached above: 
 
+>Klasifikasi KBLI 2015 terdiri dari struktur pengklasifikasian aktivitas ekonomi yang konsisten dan saling berhubungan, didasarkan pada konsep, definisi, prinsip, dan tatacara pengklasifikasian yang telah disepakati secara internasional. Struktur klasifikasi menunjukkan format standar untuk mengelola informasi rinci tentang keadaan ekonomi, sesuai prinsip-prinsip dan persepsi ekonomi.
+
+>Secara umum, baik KBLI 2015 dan KBLI 2009 Cetakan III masih mengacu pada rujukan yang sama yaitu ISIC Rev. 4 yang terdiri dari 21 kategori. Perubahan struktur berupa pergeseran atau pengelompokkan suatu kegiatan dari satu klasifikasi ke klasifikasi lainnya, dan penambahan klasifikasi baru yang disebabkan adanya perkembangan aktivitas ekonomi, memungkinkan untuk terbentuknya kelompok yang berdiri sendiri atau digabungkan dengan kategori lain yang lebih sesuai.
+
+Translated by online software as:
+
 >The 2015 KBLI classification consists of a classification structure consistent and interconnected with economic activity, based on concepts, definitions, principles, and classification procedures that has been agreed internationally. Classification structure shows standard format for managing detailed information about the state economy, according to economic principles and perceptions.
 
 >In general, both KBLI-2015 and KBLI-2009 issue III still refers to the same reference, namely ISIC Rev.4 which consists of 21 categories. Changes happened in the form of shifts or grouping an activity from one classification to another.    
