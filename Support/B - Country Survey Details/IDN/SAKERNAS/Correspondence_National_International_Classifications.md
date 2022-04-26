@@ -52,8 +52,7 @@ Balancing between the level of precision and difficulty of mapping, we mapped KB
 | 072-Mining of non-ferrous metal ores|073-Pertambangan bijih logam|073-Pertambangan bijih logam |  
 | 492-Other land transport|494-Angkutan darat bukan |494-Angkutan Darat Bukan Bus|
 | 5520-Camping grounds, recreational vehicle, parks and trailer parks|5519-Penyediaan akomodasi|5519-Penyediaan akomodasi|
-| 552-Provision of accommodation in campgrounds, trailer parks, recreational camps and
-fishing and hunting camps for short stay visitors| (Same as ISIC) |551-Penyediaan Akomodasi Jangka Pendek|  
+| 552-Provision of accommodation in campgrounds, trailer parks, recreational camps and fishing and hunting camps for short stay visitors| (Same as ISIC) |551-Penyediaan Akomodasi Jangka Pendek|  
 | 851-Early childhood education and basic education services | (Same as ISIC) |856-Jasa Pendidikan Anak Usia Dini|  
 | 960-Other personal service activities |961-Aktivitas jasa perorangan|961-Jasa Perorangan Untuk Kebugaran, Bukan Olahraga|  
 | 960-Other personal service activities |962-Aktivitas binatu | 962-Jasa Binatu |
