@@ -81,7 +81,7 @@ This definition interacts with the other question asking about the main reason w
 ![question20_2017](utilities/question20_2017.png)
 
 
-Because in previous years, *"Already having a job, but has not started to work* was classified as *employed*. To main consistency with previous years but also cater for the definition in the report, we deem people who have a new business but they have not stsrted yet as unemployed.
+Because in previous years, *"Already having a job, but has not started to work* was classified as *employed*. To maintain consistency with previous years but also cater for the definition in the report, we deem people who have a new business but they have not stsrted yet as unemployed.
 ```
 Question 20a = 2 : having a new business but not started yet.
 ```
