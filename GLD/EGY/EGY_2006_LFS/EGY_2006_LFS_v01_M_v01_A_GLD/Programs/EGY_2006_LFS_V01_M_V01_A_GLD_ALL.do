@@ -29,10 +29,10 @@
 
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
 <_ISCED Version_>				ISCED 1997 </_ISCED Version_>
-<_ISCO Version_>			 	 </_ISCO Version_>
-<_OCCUP National_>				  </_OCCUP National_>
-<_ISIC Version_>				[Version of ICLS for Labor Questions] </_ISIC Version_>
-<_INDUS National_>				[Version of ICLS for Labor Questions] </_INDUS National_>
+<_ISCO Version_>			 	ISCO 1988 </_ISCO Version_>
+<_OCCUP National_>				N/A  </_OCCUP National_>
+<_ISIC Version_>				ISIC REV 4 </_ISIC Version_>
+<_INDUS National_>			N/A	 </_INDUS National_>
 
 -----------------------------------------------------------------------
 <_Version Control_>
@@ -111,13 +111,13 @@ drop _merge
 
 
 *<_isco_version_>
-	gen isco_version = ""
+	gen isco_version = "isco_1988"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
 
 *<_isic_version_>
-	gen isic_version = ""
+	gen isic_version = "isic_4"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
