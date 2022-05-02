@@ -29,8 +29,8 @@
 
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
 <_ISCED Version_>				ISCED 1997 </_ISCED Version_>
-<_ISCO Version_>				 </_ISCO Version_>
-<_OCCUP National_>				[Version of ICLS for Labor Questions] </_OCCUP National_>
+<_ISCO Version_>			 	 </_ISCO Version_>
+<_OCCUP National_>				  </_OCCUP National_>
 <_ISIC Version_>				[Version of ICLS for Labor Questions] </_ISIC Version_>
 <_INDUS National_>				[Version of ICLS for Labor Questions] </_INDUS National_>
 
