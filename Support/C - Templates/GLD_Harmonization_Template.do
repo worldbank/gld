@@ -743,20 +743,23 @@ foreach v of local ed_var {
 *</_occup_isco_>
 
 
-*<_occup_skill_>
-	gen occup_skill = .
-	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
-	label values occup_skill lblskill
-	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
-*</_occup_skill_>
-
-
 *<_occup_>
 	gen byte occup = .
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup
 *</_occup_>
+
+
+*<_occup_skill_>
+	gen occup_skill = .
+	replace occup_skill = 3 if inrange(occup, 1, 3)
+	replace occup_skill = 2 if inrange(occup, 4, 8)
+	replace occup_skill = 1 if occup == 9
+	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
+	label values occup_skill lblskill
+	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
+*</_occup_skill_>
 
 
 *<_wage_no_compen_>
@@ -909,19 +912,22 @@ foreach v of local ed_var {
 *</_occup_isco_2_>
 
 
-*<_occup_skill_2_>
-	gen occup_skill_2 = .
-	la de lblskill2 1 "Low skill" 2 "Medium skill" 3 "High skill"
-	label values occup_skill_2 lblskill2
-	label var occup_skill_2 "Skill based on ISCO standard secondary job 7 day recall"
-*</_occup_skill_2_>
-
-
 *<_occup_2_>
 	gen byte occup_2 = .
 	label var occup_2 "1 digit occupational classification secondary job 7 day recall"
 	label values occup_2 lbloccup
 *</_occup_2_>
+
+
+*<_occup_skill_2_>
+	gen occup_skill_2 = .
+	replace occup_skill_2 = 3 if inrange(occup_2, 1, 3)
+	replace occup_skill_2 = 2 if inrange(occup_2, 4, 8)
+	replace occup_skill_2 = 1 if occup_2 == 9
+	la de lblskill2 1 "Low skill" 2 "Medium skill" 3 "High skill"
+	label values occup_skill_2 lblskill2
+	label var occup_skill_2 "Skill based on ISCO standard secondary job 7 day recall"
+*</_occup_skill_2_>
 
 
 *<_wage_no_compen_2_>
@@ -1120,20 +1126,23 @@ foreach v of local ed_var {
 *</_occup_isco_year_>
 
 
-*<_occup_skill_year_>
-	gen occup_skill_year = .
-	la de lblskillyear 1 "Low skill" 2 "Medium skill" 3 "High skill"
-	label values occup_skill_year lblskillyear
-	label var occup_skill_year "Skill based on ISCO standard primary job 12 month recall"
-*</_occup_skill_year_>
-
-
 *<_occup_year_>
 	gen byte occup_year = .
 	label var occup_year "1 digit occupational classification, primary job 12 month recall"
 	la de lbloccup_year 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup_year lbloccup_year
 *</_occup_year_>
+
+
+*<_occup_skill_year_>
+	gen occup_skill_year = .
+	replace occup_skill_year = 3 if inrange(occup_year, 1, 3)
+	replace occup_skill_year = 2 if inrange(occup_year, 4, 8)
+	replace occup_skill_year = 1 if occup_year == 9
+	la de lblskillyear 1 "Low skill" 2 "Medium skill" 3 "High skill"
+	label values occup_skill_year lblskillyear
+	label var occup_skill_year "Skill based on ISCO standard primary job 12 month recall"
+*</_occup_skill_year_>
 
 
 *<_wage_no_compen_year_> --- this var has the same name as other and when quoted in the keep and order codes is repeated.
@@ -1274,19 +1283,22 @@ foreach v of local ed_var {
 *</_occup_isco_2_year_>
 
 
-*<_occup_skill_2_year_>
-	gen occup_skill_2_year = .
-	la de lblskilly2 1 "Low skill" 2 "Medium skill" 3 "High skill"
-	label values occup_skill_2_year lblskilly2
-	label var occup_skill_2_year "Skill based on ISCO standard secondary job 12 month recall"
-*</_occup_skill_2_year_>
-
-
 *<_occup_2_year_>
 	gen byte occup_2_year = .
 	label var occup_2_year "1 digit occupational classification, secondary job 12 month recall"
 	label values occup_2_year lbloccup_year
 *</_occup_2_year_>
+
+
+*<_occup_skill_2_year_>
+	gen occup_skill_2_year = .
+	replace occup_skill_2_year = 3 if inrange(occup_2_year, 1, 3)
+	replace occup_skill_2_year = 2 if inrange(occup_2_year, 4, 8)
+	replace occup_skill_2_year = 1 if occup_2_year == 9
+	la de lblskilly2 1 "Low skill" 2 "Medium skill" 3 "High skill"
+	label values occup_skill_2_year lblskilly2
+	label var occup_skill_2_year "Skill based on ISCO standard secondary job 12 month recall"
+*</_occup_skill_2_year_>
 
 
 *<_wage_no_compen_2_year_>
