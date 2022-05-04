@@ -4,15 +4,15 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				ZAF_2010_QLFS_v01_M_v01_A_GLD_ALL.do </_Program name_>
+<_Program name_>				PAK_2010_LFS_v01_M_v01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata MP 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
 <_Date created_>				2021-06-20 </_Date created_>
 -------------------------------------------------------------------------
-<_Country_>						South Africa(ZAF) </_Country_>
-<_Survey Title_>				Labor Market Dynamics in South Africa </_Survey Title_>
+<_Country_>						Pakistan(PAK) </_Country_>
+<_Survey Title_>				Labor Market Dynamics in Pakistan </_Survey Title_>
 <_Survey Year_>					2010 </_Survey Year_>
-<_Study ID_>					ZAF_2010_LMDSA_v01_M </_Study ID_>
+<_Study ID_>					PAK_2010_LMDSA_v01_M </_Study ID_>
 <_Data collection from (M/Y)_>	[MM/YYYY] </_Data collection from (M/Y)_>
 <_Data collection to (M/Y)_>	[MM/YYYY] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			DataFirst </_Source of dataset_>
@@ -21,7 +21,7 @@
 <_Sample size (IND)_> 			161,573 </_Sample size (IND)_>
 <_Sampling method_> 			Stratified two-stage cluster sampling method </_Sampling method_>
 <_Geographic coverage_> 		Province </_Geographic coverage_>
-<_Currency_> 					South African Rand </_Currency_>
+<_Currency_> 					Pakistann Rand </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
@@ -54,7 +54,7 @@ set mem 800m
 *----------1.2: Set directories------------------------------*
 
 local 	drive 	`"Z"'
-local 	cty 	`"ZAF"'
+local 	cty 	`"PAK"'
 local 	usr		`"573465_JT"'
 local 	surv_yr `"2010"'
 local 	year 	"`drive':\GLD-Harmonization\\`usr'\\`cty'\\`cty'_`surv_yr'_LFS"
@@ -74,7 +74,7 @@ local output "`id_data'"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	use "`input'\lmdsa_2010_v1.1_20150407.dta", clear
+	use "`input'\lfs2010-11.dta", clear
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -83,19 +83,19 @@ local output "`id_data'"
 {
 
 *<_countrycode_>
-	gen str4 countrycode="ZAF"
+	gen str4 countrycode="PAK"
 	label var countrycode "Country code"
 *</_countrycode_>
 
 
 *<_survname_>
-	gen survname = "QLFS"
+	gen survname = "LFS"
 	label var survname "Survey acronym"
 *</_survname_>
 
 
 *<_survey_>
-	gen survey = "QLFS"
+	gen survey = "LFS"
 	label var survey "Survey type"
 *</_survey_>
 
@@ -324,7 +324,7 @@ local output "`id_data'"
 
 Not asked, all we know is that the person with personal number equal to 1 is the head, the problem is that in some cases that person is not present, probably because he/she didn't spend four nights or more in this household. In those cases I assigned the eldest adult male (or female absent male) present as the household head.
 21 observations were dropped due to no male memeber or multiple same old male (or female) members.
-Age of majority is 18 in South Africa.
+Age of majority is 18 in Pakistan.
 
 DROPS:
 OBS: 21
@@ -562,7 +562,7 @@ Education module is only asked to those 0 and older.
 /*<_educy_>
 
 The National Technical Certificate level 1, 2, and 3 are mapped to grade 10, 11, and 12
-respectively. In South Africa, one option for students is to exit school with GETC
+respectively. In Pakistan, one option for students is to exit school with GETC
 or grade 9 and enter a technical education program at N1, proceeding to N2.
 
 count if educy>age & !mi(educy) & !mi(age)
@@ -1676,6 +1676,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`output'\ZAF_2010_QLFS_v01_M_v01_A_GLD_ALL.dta", replace
+save "`output'\PAK_2010_LFS_v01_M_v01_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>
