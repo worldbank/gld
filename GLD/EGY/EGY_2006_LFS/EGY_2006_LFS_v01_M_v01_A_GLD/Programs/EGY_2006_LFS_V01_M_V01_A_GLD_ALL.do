@@ -31,7 +31,7 @@
 <_ISCED Version_>				ISCED 1997 </_ISCED Version_>
 <_ISCO Version_>			 	ISCO 1988 </_ISCO Version_>
 <_OCCUP National_>				N/A  </_OCCUP National_>
-<_ISIC Version_>				ISIC REV 4 </_ISIC Version_>
+<_ISIC Version_>				ISIC REV 3 </_ISIC Version_>
 <_INDUS National_>			N/A	 </_INDUS National_>
 
 -----------------------------------------------------------------------
@@ -117,7 +117,7 @@ drop _merge
 
 
 *<_isic_version_>
-	gen isic_version = "isic_4"
+	gen isic_version = "isic_3"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
@@ -265,8 +265,6 @@ drop _merge
 	replace subnatid1="25 - Matrouh" if subnatid1=="818033"
 	replace subnatid1="26 - North Sinai" if subnatid1=="818034"
 	replace subnatid1="27 - South Sinai" if subnatid1=="818035"
-	/*label define lblsubnatid1 818001 "1 - Cairo"  818002 "2 - Alexandria"  818003 "3 - Port Said" 818004 "4 - Suez" 818011"5 - Damietta" 818012 "6 - Dakahlia" 818013 "7 - Sharkia" 818014 "8 - Kalyoubia" 818015 "9 - Kafr-El- sheik" 818016 "10 - Gharbia" 818017 "11 - Menoufia" 818018 "12 - Behira" 818019 "13 - Ismaelia" 818021 "14 - Giza" 818022 "15 - Beni- Suef" 818023 "16 - Fayoum" 818024 "17 - Menia" 818025 "18 - Asyout" 818026 "19 - Suhag" 818027 "20 - Qena" 818028 "21 - Aswan" 818029 "22 - Luxor" 818031 "23 - Red Sea" 818032 "24 - El-wadi El-Gidid" 818033 "25 - Matrouh" 818034 "26 - North Sinai" 818035 "27 - South Sinai"*/
-	/*label values subnatid1 lblsubnatid1*/
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 
@@ -1028,29 +1026,35 @@ foreach v of local ed_var {
 
 
 *<_industry_orig_>
-	gen industry_orig = ind
+	gen industry_orig = ind_unrec
 	tostring industry_orig, replace
-	replace industry_orig="" if ind==.
+	replace industry_orig="" if ind_unrec==.
+	replace industry_orig="" if ind_unrec==0
+	replace industry_orig="" if ind_unrec==11
 	replace industry_orig="" if lstatus!=1
-	replace industry_orig="" if ind==999 | ind==998
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
 
 *<_industrycat_isic_>
-	gen ind_helper=ind
-	recode ind_helper 999=. 998=.
+	gen ind_helper=ind_unrec
+	recode ind_helper 11=. 0=.
 	gen industrycat_isic= string(ind_helper,"%04.0f")
 	replace industrycat_isic = "" if industrycat_isic =="."
+	drop ind_helper
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
 
-*<_industrycat10_>
-	gen byte industrycat10 = (ind/10)
-	recode industrycat10 (99=.) (8 9 11 13 14 15=10) (10=8) (12=9)
+*<_industrycat10_> 
+*education and health put in other (10) because there is no correspondance (public or private?) rental was put in other business services 8
+	gen ind_helper2= ind_unrec
+	recode ind_helper2 0=. 11=.
+	gen byte industrycat10 = (ind_helper2/100)
+	recode industrycat10 2=1 5=1 10/14=2 15/37=3 40/41=4 45=5 50/52=6 60/64=7 65/67=8 74=8 75=9 90/93=9 95/99=10 80/85=10 70/73=8 55=6 38=3
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
+	drop ind_helper2
 	label values industrycat10 lblindustrycat10
 *</_industrycat10_>
 
@@ -1065,19 +1069,18 @@ foreach v of local ed_var {
 
 
 *<_occup_orig_>
-*gen occup_orig = occ
-	gen occup_orig = string(occ)
-	replace occup_orig="" if occ==.
+	gen occup_orig = string(occ_unrec)
+	replace occup_orig="" if occ_unrec==.
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
 
 *<_occup_isco_>
-	*gen occup_isco = ""
-	gen occ_helper=occ
-	recode occ_helper 998=. 999=.
-	gen occup_isco = string(occ_helper,"%04.0f")
-	replace occup_isco="" if occ_helper==.
+	gen occ_helper=floor(occ_unrec/100)
+	recode occ_helper 2=21
+	tostring occ_helper, replace 
+	gen occup_isco=occ_helper + substr("0000", 1, 4 - length(occ_helper))
+	replace occup_isco="" if occup_isco==".000"
 	drop occ_helper
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
@@ -1095,7 +1098,9 @@ foreach v of local ed_var {
 
 
 *<_occup_>
-	gen byte occup = .
+*correspondance 88 and 08
+	gen byte occup = (occ/10)
+	recode occup 99.8=. 99.9=.
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup
