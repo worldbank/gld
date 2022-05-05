@@ -18,7 +18,7 @@
 <_Source of dataset_> 			Shared with Job's Group by the World Bank Indonesia Team
 								data request form required to get the access</_Source of dataset_>
 <_Sample size (HH)_> 			N/A </_Sample size (HH)_>
-<_Sample size (IND)_> 			524,810 </_Sample size (IND)_>
+<_Sample size (IND)_> 			504,997 </_Sample size (IND)_>
 <_Sampling method_> 			Two-stage cluster sampling method </_Sampling method_>
 <_Geographic coverage_> 		Province </_Geographic coverage_>
 <_Currency_> 					Indonesian Rupiah </_Currency_>
@@ -26,7 +26,7 @@
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
 <_ISCO Version_>				N/A </_ISCO Ver UP National_>
-<_OCCUP National_>				KBJI 2000 </_OCCUP National_>
+<_OCCUP National_>				KBJI 2002 </_OCCUP National_>
 <_ISIC Version_>				ISIC Rev.4 </_ISIC Version_>
 <_INDUS National_>				KBLI 2009 </_INDUS National_>
 ---------------------------------------------------------------------------------------
@@ -74,7 +74,7 @@ local output "`id_data'"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	use "`input'\sakernas11aug.dta", clear
+	use "`input'\sak_aug2011_backcast.dta", clear
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -172,21 +172,31 @@ local output "`id_data'"
 
 	duplicates tag, gen(dup)
 	tab dup
-
+	
         dup |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          0 |    518,535       98.58       98.58
-          1 |      6,692        1.27       99.85
-          2 |        651        0.12       99.97
-          3 |         96        0.02       99.99
-          4 |         20        0.00       99.99
-          5 |          6        0.00       99.99
-          6 |         21        0.00      100.00
-          8 |          9        0.00      100.00
+          0 |    491,909       93.73       93.73
+          1 |     18,904        3.60       97.33
+          2 |      6,276        1.20       98.53
+          3 |      3,256        0.62       99.15
+          4 |      1,860        0.35       99.50
+          5 |      1,086        0.21       99.71
+          6 |        462        0.09       99.80
+          7 |        368        0.07       99.87
+          8 |        288        0.05       99.92
+          9 |        120        0.02       99.95
+         10 |         77        0.01       99.96
+         11 |         72        0.01       99.97
+         12 |         13        0.00       99.98
+         13 |         28        0.01       99.98
+         15 |         16        0.00       99.99
+         16 |         17        0.00       99.99
+         17 |         18        0.00       99.99
+         19 |         40        0.01      100.00
 ------------+-----------------------------------
-      Total |    526,030      100.00
+      Total |    524,810      100.00
 
-Because we do not know the reason for these duplicates and they only account for less than 1% of total sample, I just droppred 3,899 observations.
+Because we do not know the reason for these duplicates and they only account for 3.78% of total sample, I just droppred 19,813 observations.
 
 <_pid_>*/
 
@@ -200,15 +210,8 @@ Because we do not know the reason for these duplicates and they only account for
 *</_pid_>
 
 
-/*<_weight_>
-
-The original weight variable is called "weight".
-
-<_weight_>*/
-
-
 *<_weight_>
-	*gen weight = weight
+	gen weight = weightbc
 	label var weight "Survey sampling weight"
 *</_weight_>
 
@@ -716,7 +719,7 @@ We define the employed as who "worked primarily (b5p2a1==1)" or
 unemployed: "who do not have a job/business mi(lstatus)" & "seeking a job (b5p4==1) | (b5p5==1)"
 non-labor force:  "who do not have a job/business mi(lstatus)" & "not seeking a job (b5p4==2) & (b5p5==2)"
 
-Labour force participation: 57.65%
+Labour force participation: 67.75%
 
 <_lstatus_>*/
 
@@ -834,24 +837,25 @@ of unemployment period.
 
 /*<_industry_orig_>
 
-Note that in the raw dataset, two industrial classification variables, "kbli2" and "b5p18", seem to represent industry of main job and industry of the main additional job respectively. "kbli2" has 2 digits whereas "b5p18" has 5 digits. Both have no labels.
+Note that in the raw dataset, two industrial classification variables, "kbli2009_2" and "b5p18", seem to represent industry of main job and industry of the main additional job respectively. "kbli2009_2" has 2 digits whereas "b5p18" has 5 digits. Both have no labels.
 
-"b5p18" is for question No.18 asking the industry of main additional job undoubtedly, leaving "kbli2" used for industry of the main job, as the values are not the same if they were both for main additional job.
+"b5p18" is for question No.18 asking the industry of main additional job undoubtedly, leaving "kbli2009_2" used for industry of the main job, as the values are not the same if they were both for main additional job.
 
-Moreover, most cases are that people only have kbli2 while they do not have b5p18.
+Moreover, most cases are that people only have kbli2009_2 while they do not have b5p18.
 
 <_industry_orig_>*/
 
 
 *<_industry_orig_>
-	gen industry_orig = kbli2
+	gen industry_orig = kbli2009_2
 	replace industry_orig = . if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
 
 *<_industrycat_isic_>
-	gen industrycat_isic = ""
+	gen industrycat_isic = kbli2009_2
+	tostring industrycat_isic, replace format(%04.0f)
 	replace industrycat_isic = "" if lstatus!=1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
@@ -876,15 +880,15 @@ Moreover, most cases are that people only have kbli2 while they do not have b5p1
 
 /*<_occup_orig_>
 
-Variable "kji2000" uses KBJI 2000 and it has one digits. 
+Variable "kbji2002" uses KBJI 2002 and it has one digits. 
 
-Although there is no label indicating whether kji2000 is for the main job or the main additional job, the survey does not ask occupation of the main additional job. So we used kji2000 for occupation of the main job.
+Although there is no label indicating whether kbji2002is for the main job or the main additional job, the survey does not ask occupation of the main additional job. So we used kji2002 for occupation of the main job.
 
 <_occup_orig_>*/
 
 
 *<_occup_orig_>
-	gen occup_orig = kbji2000
+	gen occup_orig = kbji2002
 	replace occup_orig = . if lstatus!=1
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>

@@ -28,7 +28,7 @@
 <_ISCO Version_>				N/A </_ISCO Ver UP National_>
 <_OCCUP National_>				KBJI 2002 </_OCCUP National_>
 <_ISIC Version_>				ISIC N/A </_ISIC Version_>
-<_INDUS National_>				KBLI 1988 </_INDUS National_>
+<_INDUS National_>				KBLI 2009 </_INDUS National_>
 ---------------------------------------------------------------------------------------
 
 <_Version Control_>
@@ -36,7 +36,7 @@
 * Date: [YYYY-MM-DD] File: [As in Program name above] - [Description of changes]
 * Date: [YYYY-MM-DD] File: [As in Program name above] - [Description of changes]
 
-</_Version Control_>
+</_Version Control_>	
 
 -------------------------------------------------------------------------*/
 
@@ -74,7 +74,7 @@ local output "`id_data'"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	use "`input'\sakernas12aug.dta", clear
+	use "`input'\sak_aug2012_backcast.dta", clear
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -173,14 +173,15 @@ local output "`id_data'"
 	duplicates tag, gen(dup)
 	tab dup
 
+
         dup |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          0 |    476,908       93.93       93.93
-          1 |     17,602        3.47       97.40
-          2 |      6,048        1.19       98.59
-          3 |      2,976        0.59       99.18
-          4 |      1,665        0.33       99.50
-          5 |        858        0.17       99.67
+          0 |    477,021       93.95       93.95
+          1 |     17,510        3.45       97.40
+          2 |      6,039        1.19       98.59
+          3 |      2,980        0.59       99.18
+          4 |      1,655        0.33       99.51
+          5 |        852        0.17       99.67
           6 |        679        0.13       99.81
           7 |        400        0.08       99.89
           8 |        225        0.04       99.93
@@ -194,7 +195,7 @@ local output "`id_data'"
 ------------+-----------------------------------
       Total |    507,713      100.00
 
-Because we do not know the reason for these duplicates and they only account for less than 4% of total sample, I just droppred 18,567 observations.
+Because we do not know the reason for these duplicates and they only account for less than 4% of total sample, I just droppred 18,505 observations.
 
 <_pid_>*/
 
@@ -207,15 +208,8 @@ Because we do not know the reason for these duplicates and they only account for
 *</_pid_>
 
 
-/*<_weight_>
-
-The original weight variable is called "weight".
-
-<_weight_>*/
-
-
 *<_weight_>
-	*gen weight = weight
+	gen weight = weightbc
 	label var weight "Survey sampling weight"
 *</_weight_>
 
@@ -288,7 +282,7 @@ But note that 10 district codes only appear in 2012 not in 2013: 1171 1572 2171 
 
 
 *<_subnatid2_>
-	tostring b1p02, replace
+	tostring b1p02k, gen(b1p02)
 	merge n:1 b1p02 using "`gld'\Work\district_list_2013.dta"
 	drop if _merge==2
 	drop _merge nkab
@@ -865,9 +859,9 @@ of unemployment period.
 
 /*<_industry_orig_>
 
-Note that in the raw dataset, two industrial classification variables, "kbli88" and "b5p18", seem to represent industry of main job and industry of the main additional job respectively. "b5p18" has 5 digits whereas "kbli88" has 2 digits. Both have no labels.
+Note that in the raw dataset, two industrial classification variables, "kbli88" and "b5p18", seem to represent industry of main job and industry of the main additional job respectively. "b5p18" has 5 digits whereas "kbli2009_2" has 2 digits. Both have no labels.
 
-"b5p18" is for question No.18 asking the industry of main additional job undoubtedly, leaving "kbli88" used for industry of the main job, as the values are not the same if they were both for main additional job.
+"b5p18" is for question No.18 asking the industry of main additional job undoubtedly, leaving "kbli2009_2" used for industry of the main job, as the values are not the same if they were both for main additional job.
 
 Moreover, most cases are that people only have kbli88 while they do not have b5p18.
 
@@ -875,15 +869,15 @@ Moreover, most cases are that people only have kbli88 while they do not have b5p
 
 
 *<_industry_orig_>
-	gen industry_orig = kbli88
+	gen industry_orig = kbli2009_2
 	replace industry_orig = . if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
 
 *<_industrycat_isic_>
-	gen industrycat_isic = ""
-	tostring industrycat_isic, replace format(%02.0f)
+	gen industrycat_isic = kbli2009_2
+	tostring industrycat_isic, replace format(%04.0f)
 	replace industrycat_isic = "" if lstatus!=1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
@@ -908,13 +902,13 @@ Moreover, most cases are that people only have kbli88 while they do not have b5p
 
 /*<_occup_orig_>
 
-The only KBJI variable is "kji", however, we do know anything about its labels nor its version.
+The newest version of KBJI variable is "kbji2002", however, we do know anything about its labels nor its version.
 
 <_occup_orig_>*/
 
 
 *<_occup_orig_>
-	gen occup_orig = kji
+	gen occup_orig = kbji2002
 	replace occup_orig = . if lstatus!=1
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>

@@ -74,7 +74,7 @@ local output "`id_data'"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	use "`input'\sakernas13aug.dta", clear
+	use "`input'\sak_aug2013_backcast.dta", clear
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -208,15 +208,8 @@ Because we do not know the reason for these duplicates and they only account for
 *</_pid_>
 
 
-/*<_weight_>
-
-The original weight variable is called "weight".
-
-<_weight_>*/
-
-
 *<_weight_>
-	*gen weight = weight
+	gen weight = weightbc
 	label var weight "Survey sampling weight"
 *</_weight_>
 
@@ -877,8 +870,8 @@ Moreover, most cases are that people only have kbli2009_2 while they do not have
 
 
 *<_industrycat_isic_>
-	gen industrycat_isic = ""
-	tostring industrycat_isic, replace format(%02.0f)
+	gen industrycat_isic = kbli2009_2
+	tostring industrycat_isic, replace format(%04.0f)
 	replace industrycat_isic = "" if lstatus!=1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
@@ -902,7 +895,7 @@ Moreover, most cases are that people only have kbli2009_2 while they do not have
 
 
 *<_occup_orig_>
-	gen occup_orig = kbli2009_2
+	gen occup_orig = kbji2002
 	replace occup_orig = . if lstatus!=1
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
