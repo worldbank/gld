@@ -712,13 +712,13 @@ replace educat_isced_v = "" if ( age < ed_mod_age & !missing(age) )
 
 /*<_lstatus_>
 
-We define the employed as who "worked primarily (b5p2b ==1)" or
+We define the employed as who "worked primarily (b5p2b==1)" or
 							  "has a job but was temporarily out of work (b5p3==1)" or
 							  "employed but was temporarily out of work because of certain reasons (b5p22==5)";
 unemployed: "who do not have a job/business b5p2b!=1 & b5p3==2" & "seeking a job (b5p4==1) | (b5p5==1)"
 non-labor force:  "who do not have a job/business b5p2b!=1 & b5p3==2" & "not seeking a job (b5p4==2) & (b5p5==2)"
 
-labour force participation: 55.98%
+labour force participation: 59.86%
 
 . tab b5p2b b5p3, m
 
@@ -759,9 +759,9 @@ Others (write complet |     1,329     27,185     15,908 |    44,422
 
 *<_lstatus_>
 	gen byte lstatus = .
-	replace lstatus = 1 if b5p2b==1 | b5p3==1 | b5p22==5
-	replace lstatus = 2 if b5p2b!=1 & b5p3==2 & [(b5p4==1) | (b5p5==1)]
-	replace lstatus = 3 if b5p2b!=1 & b5p3==2 & (b5p4==2) & (b5p5==2)
+	replace lstatus = 1 if b5p2a1==1 
+	replace lstatus = 2 if lstatus!=1 & [(b5p4==1) | (b5p5==1)]
+	replace lstatus = 3 if lstatus==.
 	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
