@@ -564,7 +564,7 @@ Education module is only asked to those XX and older.
 	gen  educat7=educ_d
 	label var educat7 "Level of education 1"
 	*assuming that read and write is incomplete primary and literacy is also incomplete primary
-	recode educat7 110=1 130=2 140=2 210=3  220=4 310=5 320=6 400=6 500=7 600=7 999=.
+	recode educat7 110=1 130=2 140=2 210=3 220=4 310=5 320=5 400=6 500=7 600=7 999=.
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
 *</_educat7_>
@@ -759,19 +759,15 @@ foreach v of local ed_var {
 
 
 *<_industry_orig_>
-	gen industry_orig = ind
+	gen industry_orig = ind_isic4_4
 	tostring industry_orig, replace
-	replace industry_orig="" if ind==.
+	replace industry_orig="" if ind_isic4_4==.
 	replace industry_orig="" if lstatus!=1
-	replace industry_orig="" if ind==999 | ind==998
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
 
 *<_industrycat_isic_>
-	*gen ind_helper=ind
-	*recode ind_helper 999=. 998=.
-	*gen industrycat_isic= string(ind_helper,"%04.0f")
 	gen industrycat_isic= string(ind_isic4_4,"%04.0f")
 	replace industrycat_isic = "" if industrycat_isic =="."
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
@@ -779,8 +775,8 @@ foreach v of local ed_var {
 
 
 *<_industrycat10_>
-	gen byte industrycat10 = (ind/10)
-	recode industrycat10 (99=.) (8 9 11 13 14 15=10) (10=8) (12=9)
+	gen byte industrycat10 = (ind_isic4_4/100)
+	recode industrycat10 1/3=1 5/9=2 10/33=3 35/39=4 41/43=5 45/47=6 55/56=6 49/53=7 58/63=7 64/82=8 84=9 85/99=10
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
@@ -797,42 +793,35 @@ foreach v of local ed_var {
 
 
 *<_occup_orig_>
-*gen occup_orig = occ
-	gen occup_orig = string(occ)
-	replace occup_orig="" if occ==.
+	gen occup_orig = string(occ_isco88_4)
+	replace occup_orig="" if occ_isco88_4==.
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
 
 *<_occup_isco_>
-	*gen occup_isco = ""
-	*gen occ_helper=occ
-	*recode occ_helper 998=. 999=.
-	*gen occup_isco = string(occ_helper,"%04.0f")
 	gen occup_isco = string(occ_isco88_4,"%04.0f")
 	replace occup_isco="" if occ_isco88_4==.
-	*drop occ_helper
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
 
 *<_occup_skill_>
 *isco-88
-	gen occup_skill = (occ/10)
-	recode occup_skill 99.8=. 99.9=.
+	gen byte occup_skill = (occ_isco88_4/1000)
 	recode occup_skill (1/3=3) (4/8=2) (9=1)
 	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
 	label values occup_skill lblskill
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
 *</_occup_skill_>
 
-
 *<_occup_>
-	gen byte occup = .
+	gen byte occup = (occ_isco88_4/1000)
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup
 *</_occup_>
+
 
 
 *<_wage_no_compen_>

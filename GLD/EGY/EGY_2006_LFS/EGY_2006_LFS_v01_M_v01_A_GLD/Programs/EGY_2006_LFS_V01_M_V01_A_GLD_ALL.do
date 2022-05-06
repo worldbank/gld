@@ -831,7 +831,7 @@ Education module is only asked to those XX and older.
 	gen  educat7=educ_d
 	label var educat7 "Level of education 1"
 	*assuming that read and write is incomplete primary
-	recode educat7 110=1 130=2 210=3  220=4 310=5 320=6 400=6 500=7 600=7 999=.
+	recode educat7 110=1 130=2 210=3  220=4 310=5 320=5 400=6 500=7 600=7 999=.
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
 *</_educat7_>
@@ -1046,7 +1046,7 @@ foreach v of local ed_var {
 *</_industrycat_isic_>
 
 
-*<_industrycat10_> 
+*<_industrycat10_>
 *education and health put in other (10) because there is no correspondance (public or private?) rental was put in other business services 8
 	gen ind_helper2= ind_unrec
 	recode ind_helper2 0=. 11=.
@@ -1078,7 +1078,7 @@ foreach v of local ed_var {
 *<_occup_isco_>
 	gen occ_helper=floor(occ_unrec/100)
 	recode occ_helper 2=21
-	tostring occ_helper, replace 
+	tostring occ_helper, replace
 	gen occup_isco=occ_helper + substr("0000", 1, 4 - length(occ_helper))
 	replace occup_isco="" if occup_isco==".000"
 	drop occ_helper
