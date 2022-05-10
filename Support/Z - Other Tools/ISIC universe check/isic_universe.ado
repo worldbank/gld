@@ -41,7 +41,10 @@ qui : merge m:1 code using `isic_universe', keepusing(code) keep(master match)
 * Reduce to only those with ISIC values and not in the universe (_merge takes value 1)
 keep if !missing(`var') & _merge == 1
 
-collapse (first) countrycode year isic_version, by(industrycat_isic)
+* Generate variable that counts instances
+gen instances = 1
+
+collapse (count) instances (first) countrycode year isic_version, by(industrycat_isic)
 
 }
 end
