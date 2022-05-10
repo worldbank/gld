@@ -51,3 +51,6 @@ replace industrycat_isic = “3610” if inlist(industrycat_isic, “3611”, �
 
 to the code harmonizing `industrycat_isic`.
 
+## Sources
+
+The full list of ISIC codes is read from the list stored in the Checks folder ([link here](https://github.com/worldbank/gld/blob/main/Support/D%20-%20Q%20Checks/Helper%20Programs/isic_codes.txt)). The R code used to create that file is [also available there](https://github.com/worldbank/gld/blob/main/Support/D%20-%20Q%20Checks/Helper%20Programs/create_txt_isic_codes.R).
