@@ -17,7 +17,7 @@ There are two possible explanations for this. Either the code was entered wrongl
 
 In either case, this represents an error in the harmonization as the values of `industrycat_isic` should be wholly within the range of possible values of the specific ISIC revision the survey deals with. 
 
-The quality checks (commit #e93f90d) now will spot if there are values outside of the ISIC universe in either `industrycat_isic` or `industrycat_isic_year` (or their second job counterparts). However, this will only alert users to the fact that there are values outside. It does not tell the user which ones.
+The quality checks have been updated to spot whether there are values outside of the ISIC universe in either `industrycat_isic` or `industrycat_isic_year` - or their second job counterparts ([view commit details here](https://github.com/worldbank/gld/commit/e93f90daa087284b4f318b9755c3112203bee98e)). However, this will only alert users to the fact that there are values outside. It does not tell the user which ones.
 
 
 ## Installing and using the `isic_universe` command
