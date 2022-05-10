@@ -63,6 +63,7 @@
 !Support/**/*.docx
 !Support/**/*.R
 !Support/**/*.do
+!Support/**/*.ado
 !Support/**/*.dta
 !Support/**/*.dct
 
