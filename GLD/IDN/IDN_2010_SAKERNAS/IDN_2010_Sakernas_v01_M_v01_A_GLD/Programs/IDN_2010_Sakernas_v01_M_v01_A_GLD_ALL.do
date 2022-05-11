@@ -718,48 +718,14 @@ We define the employed as who "worked primarily (b5p2b==1)" or
 unemployed: "who do not have a job/business b5p2b!=1 & b5p3==2" & "seeking a job (b5p4==1) | (b5p5==1)"
 non-labor force:  "who do not have a job/business b5p2b!=1 & b5p3==2" & "not seeking a job (b5p4==2) & (b5p5==2)"
 
-labour force participation: 59.86%
-
-. tab b5p2b b5p3, m
-
-    Activity used the |
-most time in the past |     Temporarily not working
-             one week |       Yes         No          . |     Total
-----------------------+---------------------------------+----------
-              Working |         0          0    469,638 |   469,638
-      Going to school |       154    152,016      8,225 |   160,395
-         Housekeeping |     7,032    170,187     45,902 |   223,121
-Other activity, besid |     6,561     67,894      2,827 |    77,282
-----------------------+---------------------------------+----------
-                Total |    13,747    390,097    526,592 |   930,436
-
-
-. tab b5p22 b5p3, m
-
-   Main reason of not |
- seeking for a job or |
-   establishing a new |     Temporarily not working
-        business/firm |       Yes         No          . |     Total
-----------------------+---------------------------------+----------
-            Desperate |       315      6,012     22,869 |    29,196
-Have a job but has no |       118      2,745     12,504 |    15,367
-     Attending school |       119    162,363     10,260 |   172,742
-         Housekeeping |     2,164    127,316     64,881 |   194,361
-   Already have a job |     7,814         11    339,407 |   347,232
-    Sufficient income |     1,094      3,615     44,832 |    49,541
-   Unable to do a job |         0     34,461          0 |    34,461
-Others (write complet |     1,329     27,185     15,908 |    44,422
-                    . |       794     26,389     15,931 |    43,114
-----------------------+---------------------------------+----------
-                Total |    13,747    390,097    526,592 |   930,436
-
+labour force participation: 59.86% (65.78% age above 15)
 
 <_lstatus_>*/
 
 
 *<_lstatus_>
 	gen byte lstatus = .
-	replace lstatus = 1 if b5p2a1==1 
+	replace lstatus = 1 if b5p2a1==1
 	replace lstatus = 2 if lstatus!=1 & [(b5p4==1) | (b5p5==1)]
 	replace lstatus = 3 if lstatus==.
 	replace lstatus = . if age < minlaborage

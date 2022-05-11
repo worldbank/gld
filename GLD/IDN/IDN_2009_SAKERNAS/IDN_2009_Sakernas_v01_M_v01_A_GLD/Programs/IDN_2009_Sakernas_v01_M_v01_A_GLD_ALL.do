@@ -694,54 +694,21 @@ replace educat_isced_v = "" if ( age < ed_mod_age & !missing(age) )
 
 /*<_lstatus_>
 
-We define the employed as who "worked primarily (b5p2b ==1)" or
-							  "has a job but was temporarily out of work (b5p3==1)" or
-							  "employed but was temporarily out of work because of certain reasons (b5p22==5)";
+We define the employed as who "worked primarily (b5p2a1==1)" ;
 unemployed: "who do not have a job/business b5p2b!=1 & b5p3==2" & "seeking a job (b5p4==1) | (b5p5==1)"
 non-labor force:  "who do not have a job/business b5p2b!=1 & b5p3==2" & "not seeking a job (b5p4==2) & (b5p5==2)"
 
-labour force participation: 53.55%
+labour force participation: 53.55% (64.18% age above 15)
 
-. tab b5p2b b5p3, m
-
-    Activity used the |
-most time in the past |     Temporarily not working
-             one week |       Yes         No          . |     Total
-----------------------+---------------------------------+----------
-              Working |         0          0    449,605 |   449,605
-      Going to school |       133    170,621      9,242 |   179,996
-         Housekeeping |     5,809    169,803     46,801 |   222,413
-Other activity, besid |     6,624     64,720      3,180 |    74,524
-----------------------+---------------------------------+----------
-                Total |    12,566    405,144    508,828 |   926,538
-
-. tab b5p22 b5p3, m
-
-   Main reason of not |
- seeking for a job or |
-   establishing a new |     Temporarily not working
-        business/firm |       Yes         No          . |     Total
-----------------------+---------------------------------+----------
-            Desperate |       489      6,048     15,691 |    22,228
-Have a job but has no |       135      7,299      2,391 |     9,825
-     Attending school |        96    172,276     10,129 |   182,501
-         Housekeeping |     2,281    130,803     68,130 |   201,214
-   Already have a job |     6,239          0    309,854 |   316,093
-    Sufficient income |       963      3,358     43,067 |    47,388
-   Unable to do a job |         0     32,521          0 |    32,521
-Others (write complet |     1,619     29,016     21,653 |    52,288
-                    . |       744     23,823     37,913 |    62,480
-----------------------+---------------------------------+----------
-                Total |    12,566    405,144    508,828 |   926,538
 
 <_lstatus_>*/
 
 
 *<_lstatus_>
 	gen byte lstatus = .
-	replace lstatus = 1 if b5p2b==1 | b5p3==1 | b5p22==5
-	replace lstatus = 2 if b5p2b!=1 & b5p3==2 & [(b5p4==1) | (b5p5==1)]
-	replace lstatus = 3 if b5p2b!=1 & b5p3==2 & (b5p4==2) & (b5p5==2)
+	replace lstatus = 1 if b5p2a1==1 
+	replace lstatus = 2 if lstatus!=1 & [(b5p4==1) | (b5p5==1)]
+	replace lstatus = 3 if lstatus==.
 	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
