@@ -276,6 +276,8 @@ provided due to it is part of the confidential information withheld by the NSO.
 	tostring b1p02, replace
 	gen code_subnatid2 = b1p02
 	gen subnatid2 = code_subnatid2 +" - " + nkab
+	replace subnatid2 = "9499 - Tak memenuhi kecukupan sampel u/ dilakukan estimasi" if code_subnatid2=="9499"
+	replace subnatid2 = "9199 - Tak memenuhi kecukupan sampel u/ dilakukan estimasi" if code_subnatid2=="9199"
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 	preserve
 	duplicates drop subnatid2 b1p02 nkab, force
