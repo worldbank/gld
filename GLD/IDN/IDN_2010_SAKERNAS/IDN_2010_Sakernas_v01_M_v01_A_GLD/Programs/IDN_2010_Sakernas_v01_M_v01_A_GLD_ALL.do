@@ -27,7 +27,7 @@
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
 <_ISCO Version_>				N/A </_ISCO Ver UP National_>
 <_OCCUP National_>				KBJI 2002 </_OCCUP National_>
-<_ISIC Version_>				ISIC N/A </_ISIC Version_>
+<_ISIC Version_>				ISIC Rev.3 </_ISIC Version_>
 <_INDUS National_>				KBLI 2005 </_INDUS National_>
 ---------------------------------------------------------------------------------------
 
@@ -119,7 +119,7 @@ local output "`id_data'"
 
 
 *<_isic_version_>
-	gen isic_version = ""
+	gen isic_version = "Rev.3"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
@@ -841,25 +841,21 @@ of unemployment period.
 *</_industry_orig_>
 
 
-/*<_industrycat_isic_>
-
-The original industrial classification used in 2010, "b5p7", is KBLI 2005 which is based on KBLI 2000.
-
-We do not have any information on translating KBLI 2005 to ISIC. Therefore, we only provided the original 5-digit code here.
-
-<_industrycat_isic_>*/
-
-
 *<_industrycat_isic_>
-	gen industrycat_isic = ""
-	tostring industrycat_isic, replace format(%02.0f)
+	tostring b5p7, gen(b5p7_str) format(%05.0f) 
+	gen industrycat_isic2 = substr(b5p7_str, 1, 2) 
+	destring industrycat_isic2, gen (industrycat_num)
+	replace industrycat_num = 52 if industrycat_num==53|industrycat_num==54
+	gen industrycat_isic = industrycat_num*100
+	tostring industrycat_isic, replace format(%04.0f)
 	replace industrycat_isic = "" if lstatus!=1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
 
 *<_industrycat10_>
-	gen byte industrycat10 = .
+	gen byte industrycat10 = industrycat_num
+	recode industrycat10 (1/5=1) (10/14=2) (15/37=3) (40/41=4) (45=5) (50/55=6) (60/64=7) (65/74=8) (75=9) (80/99=10)
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10

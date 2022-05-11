@@ -46,6 +46,26 @@ use "${path_to_harmonization}", clear
 qui : count
 global overall_count = `r(N)'
 
+*----------0.6: Read in isic universe, save as temp
+
+* Record what isic version this file has
+local isic_version = isic_version in 1
+
+* Preserve harmonization file to read in ISIC universe, save
+preserve
+
+* Read in ISIC codes
+import delimited "https://raw.githubusercontent.com/worldbank/gld/main/Support/D%20-%20Q%20Checks/Helper%20Programs/isic_codes.txt", delimiter(comma) varnames(1) clear 
+
+* Reduce to only cases of said version
+keep if version == "`isic_version'"
+
+* Save as temp
+tempfile isic_universe
+save `isic_universe'
+
+restore
+
 /*==================================================
               1: Overall Survey adherence
 ==================================================*/
@@ -824,6 +844,50 @@ foreach token of global industry_alignment{
 	}
 	
 }
+
+
+*----------8.20: lstatus has no missing values for 15-65
+
+foreach var of varlist lstatus lstatus_year {
+	
+	cap confirm variable `var' age
+	* if var exists, else issue captured in 1.1
+	if _rc == 0 { 
+				
+		qui : count if missing(`var') & inrange(age,15,65)
+		if `r(N)' > 0 { // There are cases when with missing lstatus in age range
+		
+			post `memhold' ("Labour") ("`var'") ("`var' has missing values (number of cases ->)") (`r(N)') (1)
+			
+		} // end recording odd cases
+	} // end vars exist
+} // end varlist
+
+
+*----------8.21: isco vars are in universe
+
+foreach var of global isic_check {
+	
+	cap confirm variable `var'
+	if _rc == 0 { // if var exists, else issue captured in 1.1
+		
+		* Create variable code out of var
+		qui : gen code = `var'
+		* Merge with ISIC universe, keeping only code variable from using, only match and master
+		qui : merge m:1 code using `isic_universe', keepusing(code) keep(master match)
+		* Count if there are variables that exist in survey that are not in ISIC universe
+		qui : count if !missing(`var') & _merge == 1
+		if `r(N)' > 0 {
+			
+			post `memhold' ("Labour") ("`var'") ("`var' has ISIC codes not in ISIC universe (number of cases ->)") (`r(N)') (1)
+			
+		} // close cases that are concerning
+		
+		* Clean up for next iteration (or exit)
+		qui : drop code _merge
+		
+	} // close if var exists
+} // close foreach
 
 
 /*==================================================
