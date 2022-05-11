@@ -27,7 +27,7 @@
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
 <_ISCO Version_>				N/A </_ISCO Ver UP National_>
 <_OCCUP National_>				KBJI 2002 </_OCCUP National_>
-<_ISIC Version_>				ISIC N/A </_ISIC Version_>
+<_ISIC Version_>				ISIC Rev.3 </_ISIC Version_>
 <_INDUS National_>				KBLI 2009 </_INDUS National_>
 ---------------------------------------------------------------------------------------
 
@@ -119,7 +119,7 @@ local output "`id_data'"
 
 
 *<_isic_version_>
-	gen isic_version = ""
+	gen isic_version = "Rev.3"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
@@ -710,48 +710,16 @@ We define the employed as who "worked primarily (b5p2b==1)" or
 unemployed: "who do not have a job/business b5p2b!=1 & b5p3==2" & "seeking a job (b5p4==1) | (b5p5==1)"
 non-labor force:  "who do not have a job/business b5p2b!=1 & b5p3==2" & "not seeking a job (b5p4==2) & (b5p5==2)"
 
-labour force participation: 63.87%
-
-. tab b5p2b b5p3, m
-
-           |               b5p3
-     b5p2b |         0          1          2 |     Total
------------+---------------------------------+----------
-         1 |   282,894          0          0 |   282,894
-         2 |     2,688         73     26,765 |    29,526
-         3 |    30,642      5,959     99,704 |   136,305
-         4 |     1,619      4,760     34,042 |    40,421
------------+---------------------------------+----------
-     Total |   317,843     10,792    160,511 |   489,146
-
-
-. tab b5p6 b5p3, m
-
-           |               b5p3
-      b5p6 |         0          1          2 |     Total
------------+---------------------------------+----------
-         0 |     8,457        410     11,135 |    20,002
-         1 |     6,123        208      6,182 |    12,513
-         2 |       641         61        598 |     1,300
-         3 |     4,148         66     30,629 |    34,843
-         4 |    39,927      1,554     73,878 |   115,359
-         5 |   228,726      6,968          0 |   235,694
-         6 |    21,955        539      2,450 |    24,944
-         7 |         0          0     22,037 |    22,037
-         8 |     7,866        986     13,602 |    22,454
------------+---------------------------------+----------
-     Total |   317,843     10,792    160,511 |   489,146
-
-
-
+labour force participation: 63.87% (69.47% age above 14)
+*b5p2b==1 | b5p3==1 | b5p6==5
 <_lstatus_>*/
 
 
 *<_lstatus_>
 	gen byte lstatus = .
-	replace lstatus = 1 if b5p2b==1 | b5p3==1 | b5p6==5
-	replace lstatus = 2 if b5p2b!=1 & b5p3==2 & [(b5p4==1) | (b5p5==1)]
-	replace lstatus = 3 if b5p2b!=1 & b5p3==2 & (b5p4==2) & (b5p5==2)
+	replace lstatus = 1 if 0<b5p8a & b5p8a<.
+	replace lstatus = 2 if lstatus!=1 & [(b5p4==1) | (b5p5==1)]
+	replace lstatus = 3 if lstatus==.
 	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -859,24 +827,25 @@ of unemployment period.
 
 /*<_industry_orig_>
 
-Note that in the raw dataset, two industrial classification variables, "kbli88" and "b5p18", seem to represent industry of main job and industry of the main additional job respectively. "b5p18" has 5 digits whereas "kbli2009_2" has 2 digits. Both have no labels.
+Note that in the raw dataset, two industrial classification variables, "kbli2000_3" and "b5p18", seem to represent industry of main job and industry of the main additional job respectively. "b5p18" has 5 digits whereas "kbli2000_3" has 2 digits. Both have no labels.
 
-"b5p18" is for question No.18 asking the industry of main additional job undoubtedly, leaving "kbli2009_2" used for industry of the main job, as the values are not the same if they were both for main additional job.
+"b5p18" is for question No.18 asking the industry of main additional job undoubtedly, leaving "kbli2000_3" used for industry of the main job, as the values are not the same if they were both for main additional job.
 
-Moreover, most cases are that people only have kbli88 while they do not have b5p18.
+Moreover, most cases are that people only have kbli2000_3 while they do not have b5p18.
 
 <_industry_orig_>*/
 
 
 *<_industry_orig_>
-	gen industry_orig = kbli2009_2
+	gen industry_orig = kbli2000_3
 	replace industry_orig = . if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
 
 *<_industrycat_isic_>
-	gen industrycat_isic = kbli2009_2
+	gen industrycat_isic = kbli2000_3*10
+	recode industrycat_isic (1010 1020=1000) (1740=1700) (2620/2660=2600) (5310/5490=.) (6310/6390=6300)
 	tostring industrycat_isic, replace format(%04.0f)
 	replace industrycat_isic = "" if lstatus!=1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
@@ -884,7 +853,8 @@ Moreover, most cases are that people only have kbli88 while they do not have b5p
 
 
 *<_industrycat10_>
-	gen byte industrycat10 = .
+	gen byte industrycat10 = kbli2000_3
+	recode industrycat10 (11/50=1) (101/142=2) (151/372=3) (401/410=4) (451/455=5) (501/552=6) (601/642=7) (651/749=8) (751/753=9) (801/990=10)
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10

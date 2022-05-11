@@ -713,38 +713,16 @@ We define the employed as who "worked primarily (b5p2a1 ==1)" or
 unemployed: "who do not have a job/business lstatus != 1" & "seeking a job (b5p4==1) | (b5p5==1)"
 non-labor force:  "who do not have a job/business lstatus != 1" & "not seeking a job (b5p4==2) & (b5p5==2)"
 
-labour force participation: 58.82%
-
-. tab b5p6a, m
-
- Total work |
-  day(s) in |
-   the past |
-   one week |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |     11,480        1.23        1.23
-          1 |      3,122        0.34        1.57
-          2 |      8,715        0.94        2.50
-          3 |     18,142        1.95        4.45
-          4 |     33,243        3.57        8.02
-          5 |     70,850        7.60       15.62
-          6 |    172,630       18.52       34.14
-          7 |    200,510       21.52       55.66
-          . |    413,198       44.34      100.00
-------------+-----------------------------------
-      Total |    931,890      100.00
-
-. count if !mi(b5p6a)
-  518,692
+labour force participation: 58.82% (64.57% age above 14)
 
 <_lstatus_>*/
 
 
 *<_lstatus_>
 	gen byte lstatus = .
-	replace lstatus = 1 if b5p2a1 ==1 | b5p3==1
+	replace lstatus = 1 if !inlist(b5p6a, ., 0)
 	replace lstatus = 2 if lstatus != 1 & [(b5p4==1) | (b5p5==1)]
-	replace lstatus = 3 if lstatus != 1 & (b5p4==2) & (b5p5==2)
+	replace lstatus = 3 if lstatus==.
 	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"

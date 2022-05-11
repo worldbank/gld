@@ -27,7 +27,7 @@
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
 <_ISCO Version_>				N/A </_ISCO Ver UP National_>
 <_OCCUP National_>				KBJI 1982 </_OCCUP National_>
-<_ISIC Version_>				ISIC N/A </_ISIC Version_>
+<_ISIC Version_>				ISIC Rev.3 </_ISIC Version_>
 <_INDUS National_>				KBLI 2000 </_INDUS National_>
 ---------------------------------------------------------------------------------------
 
@@ -119,7 +119,7 @@ local output "`id_data'"
 
 
 *<_isic_version_>
-	gen isic_version = ""
+	gen isic_version = "Rev.3"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
@@ -720,36 +720,14 @@ non-labor force:  "who do not have a job/business lstatus != 1" & "not seeking a
 
 labour force participation: 64.79%
 
-. tab b4p6a, m
-
-      Total |
-    working |
-     day(s) |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |      2,914        1.50        1.50
-          1 |        250        0.13        1.63
-          2 |      1,156        0.60        2.23
-          3 |      3,002        1.55        3.78
-          4 |      6,312        3.26        7.04
-          5 |     14,260        7.36       14.40
-          6 |     42,267       21.82       36.22
-          7 |     47,320       24.43       60.65
-          . |     76,215       39.35      100.00
-------------+-----------------------------------
-      Total |    193,696      100.00
-
-
-. count if !mi(b4p6a)
-  117,481
-
 <_lstatus_>*/
 
 
 *<_lstatus_>
 	gen byte lstatus = .
-	replace lstatus = 1 if b4p2a1==1 | b4p3==1
+	replace lstatus = 1 if !inlist(b4p6a, ., 0)
 	replace lstatus = 2 if lstatus != 1 & [(b4p4==1) | (b4p5==1)]
-	replace lstatus = 3 if lstatus != 1 & (b4p4==2) & (b4p5==2)
+	replace lstatus = 3 if lstatus==.
 	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"

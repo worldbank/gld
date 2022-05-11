@@ -701,7 +701,7 @@ replace educat_isced_v = "" if ( age < ed_mod_age & !missing(age) )
 
 /*<_lstatus_>
 
-We define the employed as who "worked primarily (b5p2b ==1)" or
+We define the employed as who "worked primarily (b5p2b==1)" or
 							  "has a job but was temporarily out of work (b5p3==1)" or
 							  "employed but was temporarily out of work because of certain reasons (b5p6==5)";
 unemployed: "who do not have a job/business b5p2b!=1 & b5p3==2" & "seeking a job (b5p4==1) | (b5p5==1)"
@@ -709,45 +709,14 @@ non-labor force:  "who do not have a job/business b5p2b!=1 & b5p3==2" & "not see
 
 labour force participation: 66.73%
 
-. tab b5p2b b5p3, m
-
-           |               b5p3
-     b5p2b |         1          2          . |     Total
------------+---------------------------------+----------
-         1 |         0          0    256,090 |   256,090
-         2 |        75     26,805      2,826 |    29,706
-         3 |    10,090     98,985     33,255 |   142,330
-         4 |     9,842     35,295      3,520 |    48,657
------------+---------------------------------+----------
-     Total |    20,007    161,085    295,691 |   476,783
-
-
-. tab b5p6 b5p3, m
-
-           |               b5p3
-      b5p6 |         1          2          . |     Total
------------+---------------------------------+----------
-         1 |       231      3,491      4,938 |     8,660
-         2 |       134        654        588 |     1,376
-         3 |        80     30,606      4,192 |    34,878
-         4 |     2,171     74,969     39,030 |   116,170
-         5 |    14,807          0    213,055 |   227,862
-         6 |       878      2,774     20,305 |    23,957
-         7 |         0     21,759          0 |    21,759
-         8 |     1,090     14,396      6,302 |    21,788
-         . |       616     12,436      7,281 |    20,333
------------+---------------------------------+----------
-     Total |    20,007    161,085    295,691 |   476,783
-
-
 <_lstatus_>*/
 
 
 *<_lstatus_>
 	gen byte lstatus = .
-	replace lstatus = 1 if b5p2b==1 | b5p3==1 | b5p6==5
-	replace lstatus = 2 if b5p2b!=1 & b5p3==2 & [(b5p4==1) | (b5p5==1)]
-	replace lstatus = 3 if b5p2b!=1 & b5p3==2 & (b5p4==2) & (b5p5==2)
+	replace lstatus = 1 if 0<b5p8a & b5p8a<.
+	replace lstatus = 2 if lstatus!=1 & [(b5p4==1) | (b5p5==1)]
+	replace lstatus = 3 if lstatus==.
 	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -880,7 +849,9 @@ Moreover, most cases are that people only have kbli2009_2 while they do not have
 
 
 *<_industrycat10_>
-	gen byte industrycat10 = .
+	destring industrycat_isic, gen(industrycat_num)
+	gen byte industrycat10 = industrycat_num
+	recode industrycat10 (1/3=1) (5/9=2) (10/33=3) (35/39=4) (41/43=5) (45/47=6) (49/53 58/63=7) (64/68=8) (84=9) (55/56 69/75 85/99=10)
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10

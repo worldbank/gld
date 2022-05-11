@@ -27,7 +27,7 @@
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
 <_ISCO Version_>				N/A </_ISCO Ver UP National_>
 <_OCCUP National_>				KBJI 2002 </_OCCUP National_>
-<_ISIC Version_>				ISIC N/A </_ISIC Version_>
+<_ISIC Version_>				ISIC Rev.3 </_ISIC Version_>
 <_INDUS National_>				KBLI 2005 </_INDUS National_>
 ---------------------------------------------------------------------------------------
 
@@ -119,7 +119,7 @@ local output "`id_data'"
 
 
 *<_isic_version_>
-	gen isic_version = ""
+	gen isic_version = "Rev.3"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
@@ -716,39 +716,16 @@ We define the employed as who "worked primarily (b4p2a1 ==1)" or
 unemployed: "who do not have a job/business lstatus != 1" & "seeking a job (b4p4==1) | (b4p5==1)"
 non-labor force:  "who do not have a job/business lstatus != 1" & "not seeking a job (b4p4==2) & (b4p5==2)"
 
-labour force participation: 59.03%
-
-. tab b4p6a, m
-
-jumlah hari |
-      kerja |
- seluruhnya |
-   seminggu |
-  yang lalu |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |     11,775        1.29        1.29
-          1 |      2,571        0.28        1.58
-          2 |      7,989        0.88        2.45
-          3 |     16,010        1.76        4.21
-          4 |     31,091        3.42        7.63
-          5 |     63,704        7.00       14.63
-          6 |    173,531       19.06       33.69
-          7 |    196,030       21.54       55.23
-          . |    407,576       44.77      100.00
-------------+-----------------------------------
-      Total |    910,277      100.00
-
-. count if !mi(b4p6a)
-  502,701
+labour force participation: 58.04% (64.69% age above 14)
 
 <_lstatus_>*/
 
 
 *<_lstatus_>
 	gen byte lstatus = .
-	replace lstatus = 1 if b4p2a1==1 | b4p3==1
+	replace lstatus = 1 if !inlist(b4p6a, ., 0)
 	replace lstatus = 2 if lstatus != 1 & [(b4p4==1) | (b4p5==1)]
-	replace lstatus = 3 if lstatus != 1 & (b4p4==2) & (b4p5==2)
+	replace lstatus = 3 if lstatus ==.
 	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
