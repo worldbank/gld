@@ -827,7 +827,7 @@ Note that in the raw dataset variable "B5_R20_KAT" does not have labels.
 
 /*<_industrycat_isic_>
 
-Because variable "B5_R20_KAT" only has one digit and i does not have labels, it
+Because variable "B5_R20_KAT" only has one digit and it does not have labels, it
 was not mapped to ISIC.
 
 <_industrycat_isic_>*/
