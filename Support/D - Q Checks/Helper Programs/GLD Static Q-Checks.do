@@ -54,8 +54,11 @@ local isic_version = isic_version in 1
 * Preserve harmonization file to read in ISIC universe, save
 preserve
 
-* Read in ISIC codes
-import delimited "https://raw.githubusercontent.com/worldbank/gld/main/Support/D%20-%20Q%20Checks/Helper%20Programs/isic_codes.txt", delimiter(comma) varnames(1) clear 
+* Importing from GitHub gives error on VDI
+*import delimited "https://raw.githubusercontent.com/worldbank/gld/main/Support/D%20-%20Q%20Checks/Helper%20Programs/isic_codes.txt", delimiter(comma) varnames(1) clear 
+
+* Import from file in Helper Programs Folder for now
+import delimited "$path_to_helpers/isic_codes.txt", delimiter(comma) varnames(1) clear 
 
 * Reduce to only cases of said version
 keep if version == "`isic_version'"
