@@ -48,26 +48,31 @@ global overall_count = `r(N)'
 
 *----------0.6: Read in isic universe, save as temp
 
-* Record what isic version this file has
-local isic_version = isic_version in 1
+cap confirm variable isic_version
+if _rc == 0 { // if isic version info exists, otherwise cannot know which ISIC version to compare to
 
-* Preserve harmonization file to read in ISIC universe, save
-preserve
+	* Record what isic version this file has
+	local isic_version = isic_version in 1
 
-* Importing from GitHub gives error on VDI
-*import delimited "https://raw.githubusercontent.com/worldbank/gld/main/Support/D%20-%20Q%20Checks/Helper%20Programs/isic_codes.txt", delimiter(comma) varnames(1) clear 
+	* Preserve harmonization file to read in ISIC universe, save
+	preserve
 
-* Import from file in Helper Programs Folder for now
-import delimited "$path_to_helpers/isic_codes.txt", delimiter(comma) varnames(1) clear 
+	* Importing from GitHub gives error on VDI
+	*import delimited "https://raw.githubusercontent.com/worldbank/gld/main/Support/D%20-%20Q%20Checks/Helper%20Programs/isic_codes.txt", delimiter(comma) varnames(1) clear 
 
-* Reduce to only cases of said version
-keep if version == "`isic_version'"
+	* Import from file in Helper Programs Folder for now
+	import delimited "$path_to_helpers/isic_codes.txt", delimiter(comma) varnames(1) clear 
 
-* Save as temp
-tempfile isic_universe
-save `isic_universe'
+	* Reduce to only cases of said version
+	keep if version == "`isic_version'"
 
-restore
+	* Save as temp
+	tempfile isic_universe
+	save `isic_universe'
+
+	restore
+
+}
 
 /*==================================================
               1: Overall Survey adherence
