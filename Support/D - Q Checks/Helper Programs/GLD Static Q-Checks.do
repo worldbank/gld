@@ -851,7 +851,8 @@ foreach token of global industry_alignment{
 
 *----------8.20: lstatus has no missing values for 15-65
 
-foreach var of varlist lstatus lstatus_year {
+local lstatus_vars "lstatus lstatus_year"
+foreach var of local lstatus_vars {
 	
 	cap confirm variable `var' age
 	* if var exists, else issue captured in 1.1
