@@ -840,9 +840,10 @@ directly.
 
 *<_industrycat10_>
 	gen byte industrycat10 = b5_r23_sek
-	recode industrycat10 (5=4) (6=5) (7 9=6) (8 10=7) (11 13=8) (14=9) (12 15/17=10) (0=.)
+	recode industrycat10 (5=4) (6=5) (7 9=6) (8 10=7) (11 12 13=8) (14=9) (15 16 17=10) (0=.)
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
+	replace industrycat10 = . if lstatus!=1
 	label values industrycat10 lblindustrycat10
 *</_industrycat10_>
 
@@ -878,7 +879,9 @@ Note that in the raw dataset variable "b5_r24_kbj" does not have labels.
 
 
 *<_occup_skill_>
-	gen occup_skill = .
+	gen occup_skill = b5_r24_kbj
+	recode occup_skill (1/3=3) (4/8=2) (9=1) (0=.)
+	replace occup_skill = . if lstatus!=1
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
 *</_occup_skill_>
 

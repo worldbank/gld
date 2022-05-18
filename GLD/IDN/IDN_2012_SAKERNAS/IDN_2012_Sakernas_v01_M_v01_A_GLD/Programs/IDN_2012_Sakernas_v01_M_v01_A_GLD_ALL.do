@@ -25,9 +25,9 @@
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
-<_ISCO Version_>				N/A </_ISCO Ver UP National_>
-<_OCCUP National_>				KBJI 2002 </_OCCUP National_>
-<_ISIC Version_>				ISIC Rev.3 </_ISIC Version_>
+<_ISCO Version_>				ISCO 1968 </_ISCO Ver UP National_>
+<_OCCUP National_>				KBJI 1982 </_OCCUP National_>
+<_ISIC Version_>				ISIC Rev.4 </_ISIC Version_>
 <_INDUS National_>				KBLI 2009 </_INDUS National_>
 ---------------------------------------------------------------------------------------
 
@@ -113,13 +113,13 @@ local output "`id_data'"
 
 
 *<_isco_version_>
-	gen isco_version = ""
+	gen isco_version = "isco_1968"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
 
 *<_isic_version_>
-	gen isic_version = "Rev.3"
+	gen isic_version = "isic_4"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
@@ -827,25 +827,25 @@ of unemployment period.
 
 /*<_industry_orig_>
 
-Note that in the raw dataset, two industrial classification variables, "kbli2000_3" and "b5p18", seem to represent industry of main job and industry of the main additional job respectively. "b5p18" has 5 digits whereas "kbli2000_3" has 2 digits. Both have no labels.
+Note that in the raw dataset, two industrial classification variables, "kbli2009_2" and "b5p18", seem to represent industry of main job and industry of the main additional job respectively. "b5p18" has 5 digits whereas "kbli2009_2" has 2 digits. Both have no labels.
 
-"b5p18" is for question No.18 asking the industry of main additional job undoubtedly, leaving "kbli2000_3" used for industry of the main job, as the values are not the same if they were both for main additional job.
+"b5p18" is for question No.18 asking the industry of main additional job undoubtedly, leaving "kbli2009_2" used for industry of the main job, as the values are not the same if they were both for main additional job.
 
-Moreover, most cases are that people only have kbli2000_3 while they do not have b5p18.
+Moreover, most cases are that people only have kbli2009_2 while they do not have b5p18.
 
 <_industry_orig_>*/
 
 
 *<_industry_orig_>
-	gen industry_orig = kbli2000_3
+	gen industry_orig = kbli2009_2
 	replace industry_orig = . if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
 
 *<_industrycat_isic_>
-	gen industrycat_isic = kbli2000_3*10
-	recode industrycat_isic (1010 1020=1000) (1740=1700) (2620/2660=2600) (5310/5490=.) (6310/6390=6300)
+	gen industrycat_isic = kbli2009_2
+	replace industrycat_isic = industrycat_isic*100
 	tostring industrycat_isic, replace format(%04.0f)
 	replace industrycat_isic = "" if lstatus!=1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
@@ -853,10 +853,11 @@ Moreover, most cases are that people only have kbli2000_3 while they do not have
 
 
 *<_industrycat10_>
-	gen byte industrycat10 = kbli2000_3
-	recode industrycat10 (11/50=1) (101/142=2) (151/372=3) (401/410=4) (451/455=5) (501/552=6) (601/642=7) (651/749=8) (751/753=9) (801/990=10)
+	gen byte industrycat10 = kbli2009_2
+	recode industrycat10 (1/3=1) (5/9=2) (10/33=3) (35/39=4) (41/43=5) (45/47 55/56=6) (49/53 58/63=7) (64/82=8) (84=9) (85/99=10) (0=.)
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
+	replace industrycat10 = . if lstatus!=1
 	label values industrycat10 lblindustrycat10
 *</_industrycat10_>
 
@@ -870,36 +871,35 @@ Moreover, most cases are that people only have kbli2000_3 while they do not have
 *</_industrycat4_>
 
 
-/*<_occup_orig_>
-
-The newest version of KBJI variable is "kbji2002", however, we do know anything about its labels nor its version.
-
-<_occup_orig_>*/
-
-
 *<_occup_orig_>
-	gen occup_orig = kbji2002
+	gen occup_orig = kji1982
 	replace occup_orig = . if lstatus!=1
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
 
 *<_occup_isco_>
-	gen occup_isco = ""
+	gen occup_isco = kji1982
+	recode occup_isco (55=5) (123=129) (133=132) (134=133) (135=134) (136=139) (137=135) (142/145=141) (153=152) (169=160) (176 177=179) (213/217=219) (323/324=320) (332/333=339) (349=340) (352 353=359) (354 355=352) (371 372=370) (442/443=441) (444=442) (445=443) (593=599) (613=610) (632=630) (633=632) (642/646=641) (721/729=720) (739=730) (757=759) (911=910) (932=939) (944/946=949) (987=989) 
+	replace occup_isco = occup_isco*10
+	tostring occup_isco, replace format(%04.0f)
+	replace occup_isco = "" if lstatus!=1
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
 
 *<_occup_skill_>
-	gen occup_skill = .
+	gen occup_skill = kbji2002
+	recode occup_skill (1/3=3) (4/8=2) (9=1) (0=.)
+	replace occup_skill = . if lstatus!=1
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
 *</_occup_skill_>
 
 
 *<_occup_>
-	gen occup = .
+	gen occup = kbji2002
 	replace occup = . if lstatus!=1
-	replace occup = . if  occup==0
+	replace occup = . if occup==0
 	label var occup "1 digit occupational classification, primary job 7 day recall"
   	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians and associate professionals" 4 "Clerical support workers" 5 "Service and market sales workers" 6 "Skilled agricultural, forestry and fishery workers" 7 "Craft and related trades workers" 8 "Plant and machine operators, and assemblers" 9 "Elementary occupations"
 	label values occup lbloccup

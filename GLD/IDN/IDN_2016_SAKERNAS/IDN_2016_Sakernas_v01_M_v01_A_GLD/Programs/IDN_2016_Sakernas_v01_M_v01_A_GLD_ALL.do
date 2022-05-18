@@ -28,7 +28,7 @@
 <_ISCO Version_>				N/A </_ISCO Ver UP National_>
 <_OCCUP National_>				KBJI 2014 </_OCCUP National_>
 <_ISIC Version_>				N/A </_ISIC Version_>
-<_INDUS National_>				KBLI 2009 </_INDUS National_>
+<_INDUS National_>				KBLI 2015 </_INDUS National_>
 ---------------------------------------------------------------------------------------
 
 <_Version Control_>
@@ -819,7 +819,7 @@ The original variable "b5_r31" has 5 categories:
 
 /*<_industry_orig_>
 
-Variable "b5_r19_17" uses KBLI 2009 which has five digits.
+Variable "b5_r19_17" uses KBLI 2015, including 17 sectors, which is at one-digit level.
 Note that in the raw dataset variable "b5_r19_17" does not have labels.
 
 <_industry_orig_>*/
@@ -839,9 +839,11 @@ Note that in the raw dataset variable "b5_r19_17" does not have labels.
 
 
 *<_industrycat10_>
-	gen byte industrycat10 = .
+	gen byte industrycat10 = b5_r19_17
+	recode industrycat10 (5=4) (6=5) (7 9=6) (8 10=7) (11 12 13=8) (14=9) (15 16 17=10) (0=.)
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
+	replace industrycat10 = . if lstatus!=1
 	label values industrycat10 lblindustrycat10
 *</_industrycat10_>
 
@@ -877,7 +879,9 @@ Note that in the raw dataset variable "b5_r20_201" does not have labels.
 
 
 *<_occup_skill_>
-	gen occup_skill = .
+	gen occup_skill = b5_r20_201
+	recode occup_skill (1/3=3) (4/8=2) (9=1) (0=.)
+	replace occup_skill = . if lstatus!=1
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
 *</_occup_skill_>
 
@@ -885,7 +889,7 @@ Note that in the raw dataset variable "b5_r20_201" does not have labels.
 *<_occup_>
 	gen occup = b5_r20_201
 	replace occup = . if lstatus!=1
-	replace occup = . if  occup==0
+	replace occup = . if occup==0
 	label var occup "1 digit occupational classification, primary job 7 day recall"
   	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians and associate professionals" 4 "Clerical support workers" 5 "Service and market sales workers" 6 "Skilled agricultural, forestry and fishery workers" 7 "Craft and related trades workers" 8 "Plant and machine operators, and assemblers" 9 "Elementary occupations"
 	label values occup lbloccup

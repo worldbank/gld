@@ -25,7 +25,7 @@
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
-<_ISCO Version_>				N/A </_ISCO Ver UP National_>
+<_ISCO Version_>				ISCO 1988 </_ISCO Ver UP National_>
 <_OCCUP National_>				KBJI 2002 </_OCCUP National_>
 <_ISIC Version_>				ISIC Rev.3 </_ISIC Version_>
 <_INDUS National_>				KBLI 2005 </_INDUS National_>
@@ -113,13 +113,13 @@ local output "`id_data'"
 
 
 *<_isco_version_>
-	gen isco_version = ""
+	gen isco_version = "isco_1988"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
 
 *<_isic_version_>
-	gen isic_version = "Rev.3"
+	gen isic_version = "isic_3"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
@@ -858,6 +858,7 @@ of unemployment period.
 	recode industrycat10 (1/5=1) (10/14=2) (15/37=3) (40/41=4) (45=5) (50/55=6) (60/64=7) (65/74=8) (75=9) (80/99=10)
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
+	replace industrycat10 = . if lstatus!=1
 	label values industrycat10 lblindustrycat10
 *</_industrycat10_>
 
@@ -878,55 +879,32 @@ of unemployment period.
 *</_occup_orig_>
 
 
-/*<_occup_isco_>
-
-Similarly here, the original occupational classification used in 2010, "b5p8", is KBJI 2002 which is based on ISCO 1988.
-
-We do not have any information on translating KBJI 2002 to ISCO. Therefore, we only provided the original 4-digit code here.
-
-<_occup_isco_>*/
-
-
 *<_occup_isco_>
-	gen occup_isco = ""
+	tostring b5p8, gen(occup_isco3)
+	replace occup_isco3 = substr(occup_isco3, 1, 3)
+	destring occup_isco3, gen(occup_isco)
+	recode occup_isco (24=23) (23 231=244) (241=231) (242=232) (243=233) (244 246=235) (245=234) (25 251=242) (26 261=241) (291=243) (292=245) (293=246) (29=24) (331=333) (332=33) (34=341) (35 351=342) (39=34) (391=343) (392=344) (393=345) (394=346) (395=347) (396=348)
+	replace occup_isco3 = occup_isco3*10
+	tostring occup_isco, replace
+	replace occup_isco = "" if lstatus!=1
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
 
 *<_occup_skill_>
-	gen occup_skill = .
+	gen occup_skill = substr(occup_isco3, 1, 1)
+	destring occup_skill, replace
+	recode occup_skill (1/3=3) (4/8=2) (9=1) (0=.)
+	replace occup_skill = . if lstatus!=1
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
 *</_occup_skill_>
 
 
-/*<_occup_>
-
-Original variable "kbji" has 8 categories but it combines professionals and technicians together.
-It does not have category "7 - Craft...", "8 - plant ...", and "9 - elementary ..."
-
-                        23,344         1  Professional, technical, and
-                                          related worker
-                         3,720         2  Administrative and managerial
-                                          worker
-                        16,866         3  Clerical and related worker
-                        54,890         4  Sales worker
-                        15,332         5  Services worker
-                       138,261         6  Agriculture, animal husbandry,
-                                          forestry worker, fisherman,
-                                          hunter
-                        77,181         7  Production and related worker,
-                                          transport equipment operator,
-                                          and laborer
-                         2,301         8  Others
-                       173,195         .
-<_occup_>*/
-
-
-
 *<_occup_>
-	gen occup = .
+	gen occup = substr(occup_isco3, 1, 1)
+	destring occup, replace
 	replace occup = . if lstatus!=1
-	replace occup = . if  occup==0
+	replace occup = . if occup==0
 	label var occup "1 digit occupational classification, primary job 7 day recall"
   	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians and associate professionals" 4 "Clerical support workers" 5 "Service and market sales workers" 6 "Skilled agricultural, forestry and fishery workers" 7 "Craft and related trades workers" 8 "Plant and machine operators, and assemblers" 9 "Elementary occupations"
 	label values occup lbloccup
