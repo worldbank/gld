@@ -31,7 +31,7 @@
 <_ISCED Version_>				ISCED 1997 </_ISCED Version_>
 <_ISCO Version_>			ISCO 1988 </_ISCO Version_>
 <_OCCUP National_>				N/A </_OCCUP National_>
-<_ISIC Version_>				ISIC REV 4 </_ISIC Version_>
+<_ISIC Version_>				ISIC REV 3 </_ISIC Version_>
 <_INDUS National_>				N/A </_INDUS National_>
 
 -----------------------------------------------------------------------
@@ -118,7 +118,7 @@ drop _merge
 
 
 *<_isic_version_>
-	gen isic_version = "isic_4"
+	gen isic_version = "isic_3"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
