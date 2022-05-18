@@ -875,28 +875,33 @@ foreach var of local lstatus_vars {
 
 *----------8.21: isco vars are in universe
 
-foreach var of global isic_check {
-	
-	cap confirm variable `var'
-	if _rc == 0 { // if var exists, else issue captured in 1.1
+cap confirm variable isic_version
+if _rc == 0 { // if isic version info exists, otherwise cannot know which ISIC version to compare to
+
+	foreach var of global isic_check {
 		
-		* Create variable code out of var
-		qui : gen code = `var'
-		* Merge with ISIC universe, keeping only code variable from using, only match and master
-		qui : merge m:1 code using `isic_universe', keepusing(code) keep(master match)
-		* Count if there are variables that exist in survey that are not in ISIC universe
-		qui : count if !missing(`var') & _merge == 1
-		if `r(N)' > 0 {
+		cap confirm variable `var'
+		if _rc == 0 { // if var exists, else issue captured in 1.1
 			
-			post `memhold' ("Labour") ("`var'") ("`var' has ISIC codes not in ISIC universe (number of cases ->)") (`r(N)') (1)
+			* Create variable code out of var
+			qui : gen code = `var'
+			* Merge with ISIC universe, keeping only code variable from using, only match and master
+			qui : merge m:1 code using `isic_universe', keepusing(code) keep(master match)
+			* Count if there are variables that exist in survey that are not in ISIC universe
+			qui : count if !missing(`var') & _merge == 1
+			if `r(N)' > 0 {
+				
+				post `memhold' ("Labour") ("`var'") ("`var' has ISIC codes not in ISIC universe (number of cases ->)") (`r(N)') (1)
+				
+			} // close cases that are concerning
 			
-		} // close cases that are concerning
-		
-		* Clean up for next iteration (or exit)
-		qui : drop code _merge
-		
-	} // close if var exists
-} // close foreach
+			* Clean up for next iteration (or exit)
+			qui : drop code _merge
+			
+		} // close if var exists
+	} // close foreach
+
+} // close if isic_version present
 
 
 /*==================================================
