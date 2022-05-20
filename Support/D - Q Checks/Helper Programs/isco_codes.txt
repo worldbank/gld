@@ -1,0 +1,1459 @@
+code	label	version
+0000	Professional Technical and Related Workers	isco_1968
+0100	Physical Scientists and Related Technicians	isco_1968
+0110	Chemists	isco_1968
+0120	Physicists	isco_1968
+0130	Physical scientists not elsewhere classified	isco_1968
+0140	Physical science technicians	isco_1968
+0200	Architects Engineers and Related Technicians	isco_1968
+0210	Architects and town planners	isco_1968
+0220	Civil engineers	isco_1968
+0230	Electrical and electronics engineers	isco_1968
+0240	Mechanical engineers	isco_1968
+0250	Chemical engineers	isco_1968
+0260	Metallurgists	isco_1968
+0270	Mining engineers	isco_1968
+0280	Industrial engineers	isco_1968
+0290	Engineers not elsewhere classified	isco_1968
+0300	Architects Engineers and Related Technicians	isco_1968
+0310	Surveyors	isco_1968
+0320	Draughtsmen	isco_1968
+0330	Civil engineering technicians	isco_1968
+0340	Electrical and electronics engineering technicians	isco_1968
+0350	Mechanical engineering technicians	isco_1968
+0360	Chemical engineering technicians	isco_1968
+0370	Metallurgical technicians	isco_1968
+0380	Mining technicians	isco_1968
+0390	Engineering technicians not elsewhere classified	isco_1968
+0400	Aircraft and Ships' Officers	isco_1968
+0410	Aircraft pilots navigators and flight engineers	isco_1968
+0420	Ships' deck officers and pilots	isco_1968
+0430	Ships' engineers	isco_1968
+0500	Life Scientists and Related Technicians	isco_1968
+0510	Biologists zoologists and related scientists	isco_1968
+0520	Bacteriologists pharmacologists and related scientists	isco_1968
+0530	Agronomists and related scientists	isco_1968
+0540	Life sciences technicians	isco_1968
+0600	Medical Dental Veterinary and Related Workers	isco_1968
+0610	Medical doctors	isco_1968
+0620	Medical assistants	isco_1968
+0630	Dentists	isco_1968
+0640	Dental assistants	isco_1968
+0650	Veterinarians	isco_1968
+0660	Veterinary assistants	isco_1968
+0670	Pharmacists	isco_1968
+0680	Pharmaceutical assistants	isco_1968
+0690	Dietitians and public health nutritionists	isco_1968
+0700	Medical Dental Veterinary and Related Workers	isco_1968
+0710	Professional nurses	isco_1968
+0720	Nursing personnel not elsewhere classified	isco_1968
+0730	Professional midwives	isco_1968
+0740	Midwifery personnel not elsewhere classified	isco_1968
+0750	Optometrists and opticians	isco_1968
+0760	Physiotherapists and occupational therapists	isco_1968
+0770	Medical X-ray technicians	isco_1968
+0790	Medical dental veterinary and related workers not elsewhere classified	isco_1968
+0800	Statisticians Mathematicians Systems Analysts and Related Technicians	isco_1968
+0810	Statisticians	isco_1968
+0820	Mathematicians and actuaries	isco_1968
+0830	Systems Analysts	isco_1968
+0840	Statistical and mathematical technicians	isco_1968
+0900	Economists	isco_1968
+1000	Professional Technical and Related Workers	isco_1968
+1100	Accountants	isco_1968
+1200	Jurists	isco_1968
+1210	Lawyers	isco_1968
+1220	Judges	isco_1968
+1290	Jurists not elsewhere classified	isco_1968
+1300	Teachers	isco_1968
+1310	University and higher education teachers	isco_1968
+1320	Secondary education teachers	isco_1968
+1330	Primary education teachers	isco_1968
+1340	Pre-primary education teachers	isco_1968
+1350	Special education teachers	isco_1968
+1390	Teachers not elsewhere classified	isco_1968
+1400	Workers in Religion	isco_1968
+1410	Ministers of religion and related members of religious orders	isco_1968
+1490	Workers in religion not elsewhere classified	isco_1968
+1500	Authors Journalists and Related Writers	isco_1968
+1510	Authors and critics	isco_1968
+1590	Authors journalists and related writers not elsewhere classified	isco_1968
+1600	Sculptors Painters Photographers and Related Creative Artists	isco_1968
+1610	Sculptors painters and related artists	isco_1968
+1620	Commercial artists and designers	isco_1968
+1630	Photographers and cameramen	isco_1968
+1700	Composers and Performing Artists	isco_1968
+1710	Composers musicians and singers	isco_1968
+1720	Choreographers and dancers	isco_1968
+1730	Actors and stage directors	isco_1968
+1740	Producers performing arts	isco_1968
+1750	Circus performers	isco_1968
+1790	Performing artists not elsewhere classified	isco_1968
+1800	Athletes Sportsmen and Related Workers	isco_1968
+1900	Professional Technical and Related Workers Not Elsewhere Classified	isco_1968
+1910	Librarians archivists and curators	isco_1968
+1920	Sociologists anthropologists and related scientists	isco_1968
+1930	Social workers	isco_1968
+1940	Personnel and occupational specialists	isco_1968
+1950	Philologists translators and interpreters	isco_1968
+1990	Other professional technical and related workers	isco_1968
+2000	Administrative and Managerial Workers	isco_1968
+2010	Legislative officials	isco_1968
+2020	Government administrators	isco_1968
+2100	Managers	isco_1968
+2110	General managers	isco_1968
+2120	Production managers (except farm)	isco_1968
+2190	Managers not elsewhere classified	isco_1968
+3000	Clerical and Related Workers	isco_1968
+3100	Government Executive Officials	isco_1968
+3200	Stenographers Typists and Card- and Tape-Punching Machine Operators	isco_1968
+3210	Stenographers typists and teletypists	isco_1968
+3220	Card- and tape-punching machine operators	isco_1968
+3300	Bookkeepers Cashiers and Related Workers	isco_1968
+3310	Bookkeepers and cashiers	isco_1968
+3390	Bookkeepers cashiers and related workers not elsewhere classified	isco_1968
+3400	Computing Machine Operators	isco_1968
+3410	Bookkeeping and calculating machine operators	isco_1968
+3420	Automatic data-processing machine operators	isco_1968
+3500	Transport and Communications Supervisors	isco_1968
+3510	Railway station masters	isco_1968
+3520	Postmasters	isco_1968
+3590	Transport and communications supervisors not elsewhere classified	isco_1968
+3600	Transport Conductors	isco_1968
+3700	Mail Distribution Clerks	isco_1968
+3800	Telephone and Telegraph Operators	isco_1968
+3900	Clerical and Related Workers Not Elsewhere Classified	isco_1968
+3910	Stock clerks	isco_1968
+3920	Material and production planning clerks	isco_1968
+3930	Correspondence and reporting clerks	isco_1968
+3940	Receptionists and travel agency clerks	isco_1968
+3950	Library and filing clerks	isco_1968
+3990	Clerks not elsewhere classified	isco_1968
+4000	Sales Workers	isco_1968
+4100	Working Proprietors (Wholesale and Retail Trade)	isco_1968
+4200	Sales Supervisors and Buyers	isco_1968
+4210	Sales supervisors	isco_1968
+4220	Buyers	isco_1968
+4300	Technical Salesmen Commercial Travellers and Manufacturers' Agents	isco_1968
+4310	Technical salesmen and service advisers	isco_1968
+4320	Commercial travellers and Manufacturers' agents	isco_1968
+4400	Insurance Real Estate Securities and Business Services Salesmen and Auctioneers	isco_1968
+4410	Insurance real estate and securities salesmen	isco_1968
+4420	Business services salesmen	isco_1968
+4430	Auctioneers	isco_1968
+4500	Salesmen Shop Assistants and Related Workers	isco_1968
+4510	Salesmen shop assistants and demonstrators	isco_1968
+4520	Street vendors canvassers and newsvendors	isco_1968
+4900	Sales Workers Not Elsewhere Classified	isco_1968
+5000	Service Workers	isco_1968
+5100	Working Proprietors (Catering and Lodging Services)	isco_1968
+5200	Housekeeping and Related Service Supervisors	isco_1968
+5300	Cooks Waiters Bartenders and Relaters Workers	isco_1968
+5310	Cooks	isco_1968
+5320	Waiters bartenders and related workers	isco_1968
+5400	Maids and Related Housekeeping Service Workers Not Elsewhere Classified	isco_1968
+5500	Building Caretakers Charworkers Cleaners and Related Workers	isco_1968
+5510	Building caretakers	isco_1968
+5520	Charworkers cleaners and related workers	isco_1968
+5600	Launderers Dry-Cleaners and Pressers	isco_1968
+5700	Hairdressers Barbers Beauticians and Related Workers	isco_1968
+5800	Protective Service Workers	isco_1968
+5810	Fire-fighters	isco_1968
+5820	Policemen and detectives	isco_1968
+5890	Protective service workers not elsewhere classified	isco_1968
+5900	Service Workers Not Elsewhere Classified	isco_1968
+5910	Guides	isco_1968
+5920	Undertakers and embalmers	isco_1968
+5990	Other service workers	isco_1968
+6000	Agricultural Animal Husbandry and Forestry Workers Fishermen and Hunters	isco_1968
+6100	Farmers	isco_1968
+6110	General farmers	isco_1968
+6120	Specialised farmers	isco_1968
+6200	Agricultural and Animal Husbandry Workers	isco_1968
+6210	General farm workers	isco_1968
+6220	Field crop and vegetable farm workers	isco_1968
+6230	Orchard vineyard and related tree and shrub crop workers	isco_1968
+6240	Livestock workers	isco_1968
+6250	Dairy farm workers	isco_1968
+6260	Poultry farm workers	isco_1968
+6270	Nursery workers and gardeners	isco_1968
+6280	Farm machinery operators	isco_1968
+6290	Agricultural and animal husbandry workers not elsewhere classified	isco_1968
+6300	Forestry Workers	isco_1968
+6310	Loggers	isco_1968
+6320	Forestry workers (except logging)	isco_1968
+6400	Fishermen Hunters and Related Workers	isco_1968
+6410	Fishermen	isco_1968
+6490	Fishermen hunters and related workers not elsewhere classified	isco_1968
+7000	Production and Related Workers Transport Equipment Operators and Labourers	isco_1968
+7100	Miners Quarrymen Well Drillers and Related Workers	isco_1968
+7110	Miners and quarrymen	isco_1968
+7120	Mineral and stone treaters	isco_1968
+7130	Well drillers borers and related workers	isco_1968
+7200	Metal Processers	isco_1968
+7210	Metal smelting converting and refining furnacemen	isco_1968
+7220	Metal rolling-mill workers	isco_1968
+7230	Metal melters and reheaters	isco_1968
+7240	Metal casters	isco_1968
+7250	Metal moulders and coremakers	isco_1968
+7260	Metal annealers temperers and case-hardeners	isco_1968
+7270	Metal drawers and extruders	isco_1968
+7280	Metal platers and coaters	isco_1968
+7290	Metal processers not elsewhere classified	isco_1968
+7300	Wood Preparation Workers and Paper Makers	isco_1968
+7310	Wood treaters	isco_1968
+7320	Sawyers plywood makers and related wood-processing workers	isco_1968
+7330	Paper pulp preparers	isco_1968
+7340	Paper makers	isco_1968
+7400	Chemical Processers and Related Workers	isco_1968
+7410	Crushers grinders and mixers	isco_1968
+7420	Cookers roasters and related heat-treaters	isco_1968
+7430	Filter and separator operators	isco_1968
+7440	Still and reactor operators	isco_1968
+7450	Petroleum-refining workers	isco_1968
+7490	Chemical processers and related workers not elsewhere classified	isco_1968
+7500	Spinners Weavers Knitters Dyers and Related Workers	isco_1968
+7510	Fibre preparers	isco_1968
+7520	Spinners and winders	isco_1968
+7530	Weaving- and knitting-machine setters and pattern-card preparers	isco_1968
+7540	Weavers and related workers	isco_1968
+7550	Knitters	isco_1968
+7560	Bleachers dyers and textile product finishers	isco_1968
+7590	Spinners weavers knitters dyers and related workers not elsewhere classified	isco_1968
+7600	Tanners Fellmongers and Pelt Dressers	isco_1968
+7610	Tanners and fellmongers	isco_1968
+7620	Pelt dressers	isco_1968
+7700	Food and Beverage Processers	isco_1968
+7710	Grain millers and related workers	isco_1968
+7720	Sugar processers and refiners	isco_1968
+7730	Butchers and meat preparers	isco_1968
+7740	Food preservers	isco_1968
+7750	Dairy product processers	isco_1968
+7760	Bakers pastrycooks and confectionery makers	isco_1968
+7770	Tea coffee and cocoa preparers	isco_1968
+7780	Brewers wine and beverage makers	isco_1968
+7790	Food and beverage processers not elsewhere classified	isco_1968
+7800	Tobacco Preparers and Tobacco Product Makers	isco_1968
+7810	Tobacco preparers	isco_1968
+7820	Cigar makers	isco_1968
+7830	Cigarette makers	isco_1968
+7890	Tobacco preparers and tobacco product makers not elsewhere classified	isco_1968
+7900	Tailors Dressmakers Sewers Upholsterers and Related Workers	isco_1968
+7910	Tailors and dressmakers	isco_1968
+7920	Fur tailors and related workers	isco_1968
+7930	Milliners and hatmakers	isco_1968
+7940	Patternmakers and cutters	isco_1968
+7950	Sewers and embroiderers	isco_1968
+7960	Upholsterers and related workers	isco_1968
+7990	Tailors dressmakers sewers upholsterers and related workers not elsewhere classified	isco_1968
+8000	Production and Related Workers Transport Equipment Operators and Labourers	isco_1968
+8010	Shoemakers and shoe repairers	isco_1968
+8020	Shoe cutters lasters sewers and related workers	isco_1968
+8030	Leather goods makers	isco_1968
+8100	Cabinetmakers and Related Woodworkers	isco_1968
+8110	Cabinetmakers	isco_1968
+8120	Woodworking-machine operators	isco_1968
+8190	Cabinetmakers and related woodworkers not elsewhere classified	isco_1968
+8200	Stone Cutters and Carvers	isco_1968
+8300	Blacksmiths Toolmakers and Machine-Tool Operators	isco_1968
+8310	Blacksmiths hammersmiths and forging-press operators	isco_1968
+8320	Toolmakers metal patternmakers and metal markers	isco_1968
+8330	Machine-tool setter-operators	isco_1968
+8340	Machine-tool operators	isco_1968
+8350	Metal grinders polishers and tool sharpeners	isco_1968
+8390	Blacksmiths toolmakers and machine-tool operators not elsewhere classified	isco_1968
+8400	Machinery Fitters Machine Assemblers and Precision Instrument Makers (except Electrical)	isco_1968
+8410	Machinery fitters and machine assemblers	isco_1968
+8420	Watch clock and precision instrument makers	isco_1968
+8430	Motor vehicle mechanics	isco_1968
+8440	Aircraft engine mechanics	isco_1968
+8490	Machinery fitters machine assemblers and precision instrument makers (except electrical) not elsewhere classified	isco_1968
+8500	Electrical Fitters and Related Electrical and Electronics Workers	isco_1968
+8510	Electrical fitters	isco_1968
+8520	Electronics fitters	isco_1968
+8530	Electrical and electronics equipment assemblers	isco_1968
+8540	Radio and television repairmen	isco_1968
+8550	Electrical wiremen	isco_1968
+8560	Telephone and telegraph installers	isco_1968
+8570	Electric linemen and cable jointers	isco_1968
+8590	Electrical fitters and related electrical and electronics workers not elsewhere classified	isco_1968
+8600	Broadcasting Station and Sound Equipment Operators and Cinema Projectionists	isco_1968
+8610	Broadcasting station operators	isco_1968
+8620	Sound equipment operators and cinema projectionists	isco_1968
+8700	Plumbers Welders Sheet Metal and Structural Metal Preparers and Erectors	isco_1968
+8710	Plumbers and pipe fitters	isco_1968
+8720	Welders and flame-cutters	isco_1968
+8730	Sheet-metal workers	isco_1968
+8740	Structural metal preparers and erectors	isco_1968
+8800	Jewellery and Precious Metal Workers	isco_1968
+8900	Glass Formers Potters and Related Workers	isco_1968
+8910	Glass formers cutters grinders and finishers	isco_1968
+8920	Potters and related clay and abrasive formers	isco_1968
+8930	Glass and ceramics kilnmen	isco_1968
+8940	Glass engravers and etchers	isco_1968
+8950	Glass and ceramics painters and decorators	isco_1968
+8990	Glass formers potters and related workers not elsewhere classified	isco_1968
+9000	Production and Related Workers Transport Equipment Operators and Labourers	isco_1968
+9010	Rubber and plastics product makers (except tire makers and tire vulcanisers)	isco_1968
+9020	Tire makers and vulcanisers	isco_1968
+9100	Paper and Paperboard Products Makers	isco_1968
+9200	Printers and Related Workers	isco_1968
+9210	Compositors and typesetters	isco_1968
+9220	Printing pressmen	isco_1968
+9230	Stereotypers and electrotypers	isco_1968
+9240	Printing engravers (except photo-engravers)	isco_1968
+9250	Photo-engravers	isco_1968
+9260	Bookbinders and related workers	isco_1968
+9270	Photographic darkroom workers	isco_1968
+9290	Printers and related workers not elsewhere classified	isco_1968
+9300	Painters	isco_1968
+9310	Painters construction	isco_1968
+9390	Painters not elsewhere classified	isco_1968
+9400	Production and Related Workers Not Elsewhere Classified	isco_1968
+9410	Musical instrument makers and tuners	isco_1968
+9420	Basketry weavers and brush makers	isco_1968
+9430	Non-metallic mineral product makers	isco_1968
+9490	Other production and related workers	isco_1968
+9500	Bricklayers Carpenters and Other Construction Workers	isco_1968
+9510	Bricklayers stonemasons and tile setters	isco_1968
+9520	Reinforced-concreters cement finishers and terrazzo workers	isco_1968
+9530	Roofers	isco_1968
+9540	Carpenters joiners and parquetry workers	isco_1968
+9550	Plasterers	isco_1968
+9560	Insulators	isco_1968
+9570	Glaziers	isco_1968
+9590	Construction workers not elsewhere classified	isco_1968
+9600	Stationary Engine and Related Equipment Operators	isco_1968
+9610	Power-generating machinery operators	isco_1968
+9690	Stationary engine and related equipment operators not elsewhere classified	isco_1968
+9700	Material-Handling and Related Equipment Operators Dockers and Freight Handlers	isco_1968
+9710	Dockers and freight handlers	isco_1968
+9720	Riggers and cable splicers	isco_1968
+9730	Crane and hoist operators	isco_1968
+9740	Earth-moving and related machinery operators	isco_1968
+9790	Material-handling equipment operators not elsewhere classified	isco_1968
+9800	Transport Equipment Operators	isco_1968
+9810	Ships' deck ratings barge crews and boatmen	isco_1968
+9820	Ships' engine-room ratings	isco_1968
+9830	Railway engine drivers and firemen	isco_1968
+9840	Railway brakemen signalmen and shunters	isco_1968
+9850	Motor vehicle drivers	isco_1968
+9860	Animal and animal-drawn vehicle drivers	isco_1968
+9890	Transport equipment operators not elsewhere classified	isco_1968
+9900	Labourers Not Elsewhere Classified	isco_1968
+9990	Labourers not elsewhere classified	isco_1968
+X	Workers Not Classifiable by Occupation	isco_1968
+X1	New Workers Seeking Employment	isco_1968
+X10	New workers seeking employment	isco_1968
+X2	Workers Reporting Occupations Unidentifiable or Inadequately Described	isco_1968
+X20	Workers reporting occupations unidentifiable or inadequately described	isco_1968
+X3	Workers Not Reporting Any Occupation	isco_1968
+X30	Workers not reporting any occupation	isco_1968
+Y	Members of the Armed Forces	isco_1968
+0000	Armed Forces	isco_1988
+0100	Armed Forces	isco_1988
+0110	Armed Forces	isco_1988
+1000	Legislators Senior Officials and Managers	isco_1988
+1100	Legislators and Senior Officials	isco_1988
+1110	Legislators	isco_1988
+1120	Senior Government Officials	isco_1988
+1130	Traditional Chiefs and Heads of Villages	isco_1988
+1140	Senior Officials of Special-Interest Organisations	isco_1988
+1141	Senior officials of political-party organisations	isco_1988
+1142	Senior officials of employers' workers' and other economic-interest organisations	isco_1988
+1143	Senior officials of humanitarian and other special-interest organisations	isco_1988
+1200	Corporate Managers	isco_1988
+1210	Directors and Chief Executives	isco_1988
+1220	Production and Operations Department Managers	isco_1988
+1221	Production and operations department managers in agriculture hunting forestry and fishing	isco_1988
+1222	Production and operations department managers in manufacturing	isco_1988
+1223	Production and operations department managers in construction	isco_1988
+1224	Production and operations department managers in wholesale and retail trade	isco_1988
+1225	Production and operations department managers in restaurants and hotels	isco_1988
+1226	Production and operations department managers in transport storage and communications	isco_1988
+1227	Production and operations department managers in business services	isco_1988
+1228	Production and operations department managers in personal care cleaning and related services	isco_1988
+1229	Production and operations department managers not elsewhere classified	isco_1988
+1230	Other Department Managers	isco_1988
+1231	Finance and administration department managers	isco_1988
+1232	Personnel and industrial relations department managers	isco_1988
+1233	Sales and marketing department managers	isco_1988
+1234	Advertising and public relations department managers	isco_1988
+1235	Supply and distribution department managers	isco_1988
+1236	Computing services department managers	isco_1988
+1237	Research and development department managers	isco_1988
+1239	Other department managers not elsewhere classified	isco_1988
+1300	General Managers	isco_1988
+1310	General Managers	isco_1988
+1311	General managers in agriculture hunting forestry/ and fishing	isco_1988
+1312	General managers in manufacturing	isco_1988
+1313	General managers in construction	isco_1988
+1314	General managers in wholesale and retail trade	isco_1988
+1315	General managers of restaurants and hotels	isco_1988
+1316	General managers in transport storage and communications	isco_1988
+1317	General managers of business services	isco_1988
+1318	General managers in personal care cleaning and related services	isco_1988
+1319	General managers not elsewhere classified	isco_1988
+2000	Professionals	isco_1988
+2100	Physical Mathematical and Engineering Science Professionals	isco_1988
+2110	Physicists Chemists and Related Professionals	isco_1988
+2111	Physicists and astronomers	isco_1988
+2112	Meteorologists	isco_1988
+2113	Chemists	isco_1988
+2114	Geologists and geophysicists	isco_1988
+2120	Mathematicians Statisticians and Related Professionals	isco_1988
+2121	Mathematicians and related professionals	isco_1988
+2122	Statisticians	isco_1988
+2130	Computing Professionals	isco_1988
+2131	Computer systems designers and analysts	isco_1988
+2132	Computer programmers	isco_1988
+2139	Computing professionals not elsewhere classified	isco_1988
+2140	Architects Engineers and Related Professionals	isco_1988
+2141	Architects town and traffic planners	isco_1988
+2142	Civil engineers	isco_1988
+2143	Electrical engineers	isco_1988
+2144	Electronics and telecommunications engineers	isco_1988
+2145	Mechanical engineers	isco_1988
+2146	Chemical engineers	isco_1988
+2147	Mining engineers metallurgists and related professionals	isco_1988
+2148	Cartographers and surveyors	isco_1988
+2149	Architects engineers and related professionals not elsewhere classified	isco_1988
+2200	Life Science and Health Professionals	isco_1988
+2210	Life Science Professionals	isco_1988
+2211	Biologists botanists zoologists and related professionals	isco_1988
+2212	Pharmacologists pathologists and related professionals	isco_1988
+2213	Agronomists and related professionals	isco_1988
+2220	Health Professionals (Except Nursing)	isco_1988
+2221	Medical doctors	isco_1988
+2222	Dentists	isco_1988
+2223	Veterinarians	isco_1988
+2224	Pharmacists	isco_1988
+2229	Health professionals (except nursing) not elsewhere classified	isco_1988
+2230	Nursing and Midwifery Professionals	isco_1988
+2300	Teaching Professionals	isco_1988
+2310	College University and Higher Education Teaching Professionals	isco_1988
+2320	Secondary Education Teaching Professionals	isco_1988
+2330	Primary and Pre-Primary Education Teaching Professionals	isco_1988
+2331	Primary education teaching professionals	isco_1988
+2332	Pre-primary education teaching professionals	isco_1988
+2340	Special Education Teaching Professionals	isco_1988
+2350	Other Teaching Professionals	isco_1988
+2351	Education methods specialists	isco_1988
+2352	School inspectors	isco_1988
+2359	Other teaching professionals not elsewhere classified	isco_1988
+2400	Other Professionals	isco_1988
+2410	Business Professionals	isco_1988
+2411	Accountants	isco_1988
+2412	Personnel and careers professionals	isco_1988
+2419	Business professionals not elsewhere classified	isco_1988
+2420	Legal Professionals	isco_1988
+2421	Lawyers	isco_1988
+2422	Judges	isco_1988
+2429	Legal professionals not elsewhere classified	isco_1988
+2430	Archivists Librarians and Related Information Professionals	isco_1988
+2431	Archivists and curators	isco_1988
+2432	Librarians and related information professionals	isco_1988
+2440	Social Science and Related Professionals	isco_1988
+2441	Economists	isco_1988
+2442	Sociologists anthropologists and related professionals	isco_1988
+2443	Philosophers historians and political scientists	isco_1988
+2444	Philologists translators and interpreters	isco_1988
+2445	Psychologists	isco_1988
+2446	Social work professionals	isco_1988
+2450	Writers and Creative or Performing Artists	isco_1988
+2451	Authors journalists and other writers	isco_1988
+2452	Sculptors painters and related artists	isco_1988
+2453	Composers musicians and singers	isco_1988
+2454	Choreographers and dancers	isco_1988
+2455	Film stage and related actors and directors	isco_1988
+2460	Religious Professionals	isco_1988
+3000	Technicians and Associate Professionals	isco_1988
+3100	Physical and Engineering Science Associate Professionals	isco_1988
+3110	Physical and Engineering Science Technicians	isco_1988
+3111	Chemical and physical science technicians	isco_1988
+3112	Civil engineering technicians	isco_1988
+3113	Electrical engineering technicians	isco_1988
+3114	Electronics and telecommunications engineering technicians	isco_1988
+3115	Mechanical engineering technicians	isco_1988
+3116	Chemical engineering technicians	isco_1988
+3117	Mining and metallurgical technicians	isco_1988
+3118	Draughtspersons	isco_1988
+3119	Physical and engineering science technicians not elsewhere classified	isco_1988
+3120	Computer Associate Professionals	isco_1988
+3121	Computer assistants	isco_1988
+3122	Computer equipment operators	isco_1988
+3123	Industrial robot controllers	isco_1988
+3130	Optical and Electronic Equipment Operators	isco_1988
+3131	Photographers and image and sound recording equipment operators	isco_1988
+3132	Broadcasting and telecommunications equipment operators	isco_1988
+3133	Medical equipment operators	isco_1988
+3139	Optical and electronic equipment operators not elsewhere classified	isco_1988
+3140	Ship and Aircraft Controllers and Technicians	isco_1988
+3141	Ships' engineers	isco_1988
+3142	Ships' deck officers and pilots	isco_1988
+3143	Aircraft pilots and related associate professionals	isco_1988
+3144	Air traffic controllers	isco_1988
+3145	Air traffic safety technicians	isco_1988
+3150	Safety and Quality Inspectors	isco_1988
+3151	Building and fire inspectors	isco_1988
+3152	Safety health and quality inspectors	isco_1988
+3200	Life Science and Health Associate Professionals	isco_1988
+3210	Life Science Technicians and Related Associate Professionals	isco_1988
+3211	Life science technicians	isco_1988
+3212	Agronomy and forestry technicians	isco_1988
+3213	Farming and forestry advisers	isco_1988
+3220	Modern Health Associate Professionals (Except Nursing)	isco_1988
+3221	Medical assistants	isco_1988
+3222	Sanitarians	isco_1988
+3223	Dieticians and nutritionists	isco_1988
+3224	Optometrists and opticians	isco_1988
+3225	Dental assistants	isco_1988
+3226	Physiotherapists and related associate professionals	isco_1988
+3227	Veterinary assistants	isco_1988
+3228	Pharmaceutical assistants	isco_1988
+3229	Modern health associate professionals (except nursing) not elsewhere classified	isco_1988
+3230	Nursing and Midwifery Associate Professionals	isco_1988
+3231	Nursing associate professionals	isco_1988
+3232	Midwifery associate professionals	isco_1988
+3240	Traditional Medicine Practitioners and Faith Healers	isco_1988
+3241	Traditional medicine practitioners	isco_1988
+3242	Faith healers	isco_1988
+3300	Teaching Associate Professionals	isco_1988
+3310	Primary Education Teaching Associate Professionals	isco_1988
+3320	Pre-Primary Education Teaching Associate Professionals	isco_1988
+3330	Special Education Teaching Associate Professionals	isco_1988
+3340	Other Teaching Associate Professionals	isco_1988
+3400	Other Associate Professionals	isco_1988
+3410	Finance and Sales Associate Professionals	isco_1988
+3411	Securities and finance dealers and brokers	isco_1988
+3412	Insurance representatives	isco_1988
+3413	Estate agents	isco_1988
+3414	Travel consultants and organisers	isco_1988
+3415	Technical and commercial sales representatives	isco_1988
+3416	Buyers	isco_1988
+3417	Appraisers valuers and auctioneers	isco_1988
+3419	Finance and sales associate professionals not elsewhere classified	isco_1988
+3420	Business Services Agents and Trade Brokers	isco_1988
+3421	Trade brokers	isco_1988
+3422	Clearing and forwarding agents	isco_1988
+3423	Employment agents and labour contractors	isco_1988
+3429	Business services agents and trade brokers not elsewhere classified	isco_1988
+3430	Administrative Associate Professionals	isco_1988
+3431	Administrative secretaries and related associate professionals	isco_1988
+3432	Legal and related business associate professionals	isco_1988
+3433	Bookkeepers	isco_1988
+3434	Statistical mathematical and related associate professionals	isco_1988
+3439	Administrative associate professionals not elsewhere classified	isco_1988
+3440	Customs Tax and Related Government Associate Professionals	isco_1988
+3441	Customs and border inspectors	isco_1988
+3442	Government tax and excise officials	isco_1988
+3443	Government social benefits officials	isco_1988
+3444	Government licensing officials	isco_1988
+3449	Customs tax and related government associate professionals not elsewhere classified	isco_1988
+3450	Police Inspectors and Detectives	isco_1988
+3460	Social Work Associate Professionals	isco_1988
+3470	Artistic Entertainment and Sports Associate Professionals	isco_1988
+3471	Decorators and commercial designers	isco_1988
+3472	Radio television and other announcers	isco_1988
+3473	Street night-club and related musicians singers and dancers	isco_1988
+3474	Clowns magicians acrobats and related associate professionals	isco_1988
+3475	Athletes sportspersons and related associate professionals	isco_1988
+3480	Religious Associate Professionals	isco_1988
+4000	Clerks	isco_1988
+4100	Office Clerks	isco_1988
+4110	Secretaries and Keyboard-Operating Clerks	isco_1988
+4111	Stenographers and typists	isco_1988
+4112	Word-processor and related operators	isco_1988
+4113	Data entry operators	isco_1988
+4114	Calculating-machine operators	isco_1988
+4115	Secretaries	isco_1988
+4120	Numerical Clerks	isco_1988
+4121	Accounting and bookkeeping clerks	isco_1988
+4122	Statistical and finance clerks	isco_1988
+4130	Material-Recording and Transport Clerks	isco_1988
+4131	Stock clerks	isco_1988
+4132	Production clerks	isco_1988
+4133	Transport clerks	isco_1988
+4140	Library Mail and Related Clerks	isco_1988
+4141	Library and filing clerks	isco_1988
+4142	Mail carriers and sorting clerks	isco_1988
+4143	Coding proof-reading and related clerks	isco_1988
+4144	Scribes and related workers	isco_1988
+4190	Other Office Clerks	isco_1988
+4200	Customer Services Clerks	isco_1988
+4210	Cashiers Tellers and Related Clerks	isco_1988
+4211	Cashiers and ticket clerks	isco_1988
+4212	Tellers and other counter clerks	isco_1988
+4213	Bookmakers and croupiers	isco_1988
+4214	Pawnbrokers and money-lenders	isco_1988
+4215	Debt-collectors and related workers	isco_1988
+4220	Client Information Clerks	isco_1988
+4221	Travel agency and related clerks	isco_1988
+4222	Receptionists and information clerks	isco_1988
+4223	Telephone switchboard operators	isco_1988
+5000	Service Workers and Shop and Market Sales Workers	isco_1988
+5100	Personal and Protective Services Workers	isco_1988
+5110	Travel Attendants and Related Workers	isco_1988
+5111	Travel attendants and travel stewards	isco_1988
+5112	Transport conductors	isco_1988
+5113	Travel guides	isco_1988
+5120	Housekeeping and Restaurant Services Workers	isco_1988
+5121	Housekeepers and related workers	isco_1988
+5122	Cooks	isco_1988
+5123	Waiters waitresses and bartenders	isco_1988
+5130	Personal Care and Related Workers	isco_1988
+5131	Child-care workers	isco_1988
+5132	Institution-based personal care workers	isco_1988
+5133	Home-based personal care workers	isco_1988
+5139	Personal care and related workers not elsewhere classified	isco_1988
+5140	Other Personal Services Workers	isco_1988
+5141	Hairdressers barbers beauticians and related workers	isco_1988
+5142	Companions and valets	isco_1988
+5143	Undertakers and embalmers	isco_1988
+5149	Other personal services workers not elsewhere classified	isco_1988
+5150	Astrologers Fortune-Tellers and Related Workers	isco_1988
+5151	Astrologers and related workers	isco_1988
+5152	Fortune-tellers palmists and related workers	isco_1988
+5160	Protective Services Workers	isco_1988
+5161	Fire-fighters	isco_1988
+5162	Police officers	isco_1988
+5163	Prison guards	isco_1988
+5169	Protective services workers not elsewhere classified	isco_1988
+5200	Models Salespersons and Demonstrators	isco_1988
+5210	Fashion and Other Models	isco_1988
+5220	Shop Salespersons and Demonstrators	isco_1988
+5230	Stall and Market Salespersons	isco_1988
+6000	Skilled Agricultural and Fishery Workers	isco_1988
+6100	Market-Oriented Skilled Agricultural and Fishery Workers	isco_1988
+6110	Market Gardeners and Crop Growers	isco_1988
+6111	Field crop and vegetable growers	isco_1988
+6112	Tree and shrub crop growers	isco_1988
+6113	Gardeners horticultural and nursery growers	isco_1988
+6114	Mixed-crop growers	isco_1988
+6120	Market-Oriented Animal Producers and Related Workers	isco_1988
+6121	Dairy and livestock producers	isco_1988
+6122	Poultry producers	isco_1988
+6123	Apiarists and sericulturists	isco_1988
+6124	Mixed-animal producers	isco_1988
+6129	Market-oriented animal producers and related workers not elsewhere classified	isco_1988
+6130	Market-Oriented Crop and Animal Producers	isco_1988
+6140	Forestry and Related Workers	isco_1988
+6141	Forestry workers and loggers	isco_1988
+6142	Charcoal burners and related workers	isco_1988
+6150	Fishery Workers Hunters and Trappers	isco_1988
+6151	Aquatic-life cultivation workers	isco_1988
+6152	Inland and coastal waters fishery workers	isco_1988
+6153	Deep-sea fishery workers	isco_1988
+6154	Hunters and trappers	isco_1988
+6200	Subsistence Agricultural and Fishery Workers	isco_1988
+6210	Subsistence Agricultural and Fishery Workers	isco_1988
+7000	Craft and Related Trades Workers	isco_1988
+7100	Extraction and Building Trades Workers	isco_1988
+7110	Miners Shotfirers Stone Cutters and Carvers	isco_1988
+7111	Miners and quarry workers	isco_1988
+7112	Shotfirers and blasters	isco_1988
+7113	Stone splitters cutters and carvers	isco_1988
+7120	Building Frame and Related Trades Workers	isco_1988
+7121	Builders traditional materials	isco_1988
+7122	Bricklayers and stonemasons	isco_1988
+7123	Concrete placers concrete finishers and related workers	isco_1988
+7124	Carpenters and joiners	isco_1988
+7129	Building frame and related trades workers not elsewhere classified	isco_1988
+7130	Building Finishers and Related Trades Workers	isco_1988
+7131	Roofers	isco_1988
+7132	Floor layers and tile setters	isco_1988
+7133	Plasterers	isco_1988
+7134	Insulation workers	isco_1988
+7135	Glaziers	isco_1988
+7136	Plumbers and pipe fitters	isco_1988
+7137	Building and related electricians	isco_1988
+7140	Painters Building Structure Cleaners and Related Trades Workers	isco_1988
+7141	Painters and related workers	isco_1988
+7142	Varnishers and related painters	isco_1988
+7143	Building structure cleaners	isco_1988
+7200	Metal Machinery and Related Trades Workers	isco_1988
+7210	Metal Moulders Welders Sheet-Metal Workers Structural- Metal Preparers and Related Trades Workers	isco_1988
+7211	Metal moulders and coremakers	isco_1988
+7212	Welders and flamecutters	isco_1988
+7213	Sheet metal workers	isco_1988
+7214	Structural-metal preparers and erectors	isco_1988
+7215	Riggers and cable splicers	isco_1988
+7216	Underwater workers	isco_1988
+7220	Blacksmiths Tool-Makers and Related Trades Workers	isco_1988
+7221	Blacksmiths hammer-smiths and forging-press workers	isco_1988
+7222	Tool-makers and related workers	isco_1988
+7223	Machine-tool setters and setter-operators	isco_1988
+7224	Metal wheel-grinders polishers and tool sharpeners	isco_1988
+7230	Machinery Mechanics and Fitters	isco_1988
+7231	Motor vehicle mechanics and fitters	isco_1988
+7232	Aircraft engine mechanics and fitters	isco_1988
+7233	Agricultural- or industrial-machinery mechanics and fitters	isco_1988
+7240	Electrical and Electronic Equipment Mechanics and Fitters	isco_1988
+7241	Electrical mechanics and fitters	isco_1988
+7242	Electronics fitters	isco_1988
+7243	Electronics mechanics and servicers	isco_1988
+7244	Telegraph and telephone installers and servicers	isco_1988
+7245	Electrical line installers repairers and cable jointers	isco_1988
+7300	Precision Handicraft Printing and Related Trades Workers	isco_1988
+7310	Precision Workers in Metal and Related Materials	isco_1988
+7311	Precision-instrument makers and repairers	isco_1988
+7312	Musical instrument makers and tuners	isco_1988
+7313	Jewellery and precious-metal workers	isco_1988
+7320	Potters Glass-Makers and Related Trades Workers	isco_1988
+7321	Abrasive wheel formers potters and related workers	isco_1988
+7322	Glass makers cutters grinders and finishers	isco_1988
+7323	Glass engravers and etchers	isco_1988
+7324	Glass ceramics and related decorative painters	isco_1988
+7330	Handicraft Workers in Woodtextile Leather and Related Materials	isco_1988
+7331	Handicraft workers in wood and related materials	isco_1988
+7332	Handicraft workers in textile leather and related materials	isco_1988
+7340	Printing and Related Trades Workers	isco_1988
+7341	Compositors typesetters and related workers	isco_1988
+7342	Stereotypers and electrotypers	isco_1988
+7343	Printing engravers and etchers	isco_1988
+7344	Photographic and related workers	isco_1988
+7345	Bookbinders and related workers	isco_1988
+7346	Silk-screen block and textile printers	isco_1988
+7400	Other Craft and Related Trades Workers	isco_1988
+7410	Food Processing and Related Trades Workers	isco_1988
+7411	Butchers fishmongers and related food preparers	isco_1988
+7412	Bakers pastry-cooks and confectionery makers	isco_1988
+7413	Dairy-products makers	isco_1988
+7414	Fruit vegetable and related preservers	isco_1988
+7415	Food and beverage tasters and graders	isco_1988
+7416	Tobacco preparers and tobacco products makers	isco_1988
+7420	Wood Treaters Cabinet-Makers and Related Trades Workers	isco_1988
+7421	Wood treaters	isco_1988
+7422	Cabinet makers and related workers	isco_1988
+7423	Woodworking machine setters and setter-operators	isco_1988
+7424	Basketry weavers brush makers and related workers	isco_1988
+7430	Textile Garment and Related Trades Workers	isco_1988
+7431	Fibre preparers	isco_1988
+7432	Weavers knitters and related workers	isco_1988
+7433	Tailors dressmakers and hatters	isco_1988
+7434	Furriers and related workers	isco_1988
+7435	Textile leather and related pattern-makers and cutters	isco_1988
+7436	Sewers embroiderers and related workers	isco_1988
+7437	Upholsterers and related workers	isco_1988
+7440	Pelt Leather and Shoemaking Trades Workers	isco_1988
+7441	Pelt dressers tanners and fellmongers	isco_1988
+7442	Shoe-makers and related workers	isco_1988
+8000	Plant and Machine Operators and Assemblers	isco_1988
+8100	Stationary-Plant and Related Operators	isco_1988
+8110	Mining- And Mineral-Processing-Plant Operators	isco_1988
+8111	Mining-plant operators	isco_1988
+8112	Mineral-ore- and stone-processing-plant operators	isco_1988
+8113	Well drillers and borers and related workers	isco_1988
+8120	Metal-Processing-Plant Operators	isco_1988
+8121	Ore and metal furnace operators	isco_1988
+8122	Metal melters casters and rolling-mill operators	isco_1988
+8123	Metal-heat-treating-plant operators	isco_1988
+8124	Metal drawers and extruders	isco_1988
+8130	Glass Ceramics and Related Plant Operators	isco_1988
+8131	Glass and ceramics kiln and related machine operators	isco_1988
+8139	Glass ceramics and related plant operators not elsewhere classified	isco_1988
+8140	Wood-Processing- And Papermaking-Plant Operators	isco_1988
+8141	Wood-processing-plant operators	isco_1988
+8142	Paper-pulp plant operators	isco_1988
+8143	Papermaking-plant operators	isco_1988
+8150	Chemical-Processing-Plant Operators	isco_1988
+8151	Crushing- grinding- and chemical-mixing-machinery operators	isco_1988
+8152	Chemical-heat-treating-plant operators	isco_1988
+8153	Chemical-filtering- and separating-equipment operators	isco_1988
+8154	Chemical-still and reactor operators (except petroleum and natural gas)	isco_1988
+8155	Petroleum- and natural-gas-refining-plant operators	isco_1988
+8159	Chemical-processing-plant operators not elsewhere classified	isco_1988
+8160	Power-Production and Related Plant Operators	isco_1988
+8161	Power-production plant operators	isco_1988
+8162	Steam-engine and boiler operators	isco_1988
+8163	Incinerator water-treatment and related plant operators	isco_1988
+8170	Automated-Assembly-Line and Industrial-Robot Operators	isco_1988
+8171	Automated-assembly-line operators	isco_1988
+8172	Industrial-robot operators	isco_1988
+8200	Machine Operators and Assemblers	isco_1988
+8210	Metal- And Mineral-Products Machine Operators	isco_1988
+8211	Machine-tool operators	isco_1988
+8212	Cement and other mineral products machine operators	isco_1988
+8220	Chemical-Products Machine Operators	isco_1988
+8221	Pharmaceutical- and toiletry-products machine operators	isco_1988
+8222	Ammunition- and explosive-products machine operators	isco_1988
+8223	Metal finishing- plating- and coating-machine operators	isco_1988
+8224	Photographic-products machine operators	isco_1988
+8229	Chemical-products machine operators not elsewhere classified	isco_1988
+8230	Rubber- And Plastic-Products Machine Operators	isco_1988
+8231	Rubber-products machine operators	isco_1988
+8232	Plastic-products machine operators	isco_1988
+8240	Wood-Products Machine Operators	isco_1988
+8250	Printing- Binding- And Paper-Products Machine Operators	isco_1988
+8251	Printing-machine operators	isco_1988
+8252	Bookbinding-machine operators	isco_1988
+8253	Paper-products machine operators	isco_1988
+8260	Textile- Fur- And Leather-Products Machine Operators	isco_1988
+8261	Fibre-preparing- spinning- and winding-machine operators	isco_1988
+8262	Weaving- and knitting-machine operators	isco_1988
+8263	Sewing-machine operators	isco_1988
+8264	Bleaching- dyeing- and cleaning-machine operators	isco_1988
+8265	Fur and leather-preparing-machine operators	isco_1988
+8266	Shoemaking- and related machine operators	isco_1988
+8269	Textile- fur- and leather-products machine operators not elsewhere classified	isco_1988
+8270	Food and Related Products Machine Operators	isco_1988
+8271	Meat- and fish-processing-machine operators	isco_1988
+8272	Dairy-products machine operators	isco_1988
+8273	Grain- and spice-milling-machine operators	isco_1988
+8274	Baked-goods cereal and chocolate-products machine operators	isco_1988
+8275	Fruit- vegetable- and nut-processing-machine operators	isco_1988
+8276	Sugar production machine operators	isco_1988
+8277	Tea- coffee- and cocoa-processing-machine operators	isco_1988
+8278	Brewers wine and other beverage machine operators	isco_1988
+8279	Tobacco production machine operators	isco_1988
+8280	Assemblers	isco_1988
+8281	Mechanical-machinery assemblers	isco_1988
+8282	Electrical-equipment assemblers	isco_1988
+8283	Electronic-equipment assemblers	isco_1988
+8284	Metal- rubber- and plastic-products assemblers	isco_1988
+8285	Wood and related products assemblers	isco_1988
+8286	Paperboard textile and related products assemblers	isco_1988
+8290	Other Machine Operators and Assemblers	isco_1988
+8300	Drivers and Mobile-Plant Operators	isco_1988
+8310	Locomotive-Engine Drivers and Related Workers	isco_1988
+8311	Locomotive-engine drivers	isco_1988
+8312	Railway brakers signallers and shunters	isco_1988
+8320	Motor-Vehicle Drivers	isco_1988
+8321	Motor-cycle drivers	isco_1988
+8322	Car taxi and van drivers	isco_1988
+8323	Bus and tram drivers	isco_1988
+8324	Heavy-truck and lorry drivers	isco_1988
+8330	Agricultural and Other Mobile-Plant Operators	isco_1988
+8331	Motorised farm and forestry plant operators	isco_1988
+8332	Earth-moving- and related plant operators	isco_1988
+8333	Crane hoist and related plant operators	isco_1988
+8334	Lifting-truck operators	isco_1988
+8340	Ships' Deck Crews and Related Workers	isco_1988
+9000	Elementary Occupations	isco_1988
+9100	Sales and Services Elementary Occupations	isco_1988
+9110	Street Vendors and Related Workers	isco_1988
+9111	Street food vendors	isco_1988
+9112	Street vendors non-food products	isco_1988
+9113	Door-to-door and telephone salespersons	isco_1988
+9120	Shoe Cleaning and Other Street Services Elementary Occupations	isco_1988
+9130	Domestic and Related Helpers Cleaners and Launderers	isco_1988
+9131	Domestic helpers and cleaners	isco_1988
+9132	Helpers and cleaners in offices hotels and other establishments	isco_1988
+9133	Hand-launderers and pressers	isco_1988
+9140	Building Caretakers Window and Related Cleaners	isco_1988
+9141	Building caretakers	isco_1988
+9142	Vehicle window and related cleaners	isco_1988
+9150	Messengers Porters Doorkeepers and Related Workers	isco_1988
+9151	Messengers package and luggage porters and deliverers	isco_1988
+9152	Doorkeepers watchpersons and related workers	isco_1988
+9153	Vending-machine money collectors meter readers and related workers	isco_1988
+9160	Garbage Collectors and Related Labourers	isco_1988
+9161	Garbage collectors	isco_1988
+9162	Sweepers and related labourers	isco_1988
+9200	Agricultural Fishery and Related Labourers	isco_1988
+9210	Agricultural Fishery and Related Labourers	isco_1988
+9211	Farm-hands and labourers	isco_1988
+9212	Forestry labourers	isco_1988
+9213	Fishery hunting and trapping labourers	isco_1988
+9300	Labourers in Mining Construction Manufacturing and Transport	isco_1988
+9310	Mining and Construction Labourers	isco_1988
+9311	Mining and quarrying labourers	isco_1988
+9312	Construction and maintenance labourers; roads dams and similar constructions	isco_1988
+9313	Building construction labourers	isco_1988
+9320	Manufacturing Labourers	isco_1988
+9321	Assembling labourers	isco_1988
+9322	Hand packers and other manufacturing labourers	isco_1988
+9330	Transport Labourers and Freight Handlers	isco_1988
+9331	Hand or pedal vehicle drivers	isco_1988
+9332	Drivers of animal-drawn vehicles and machinery	isco_1988
+9333	Freight handlers	isco_1988
+0000	Armed Forces Occupations	isco_2008
+0100	Commissioned Armed Forces Officers	isco_2008
+0110	Commissioned Armed Forces Officers	isco_2008
+0200	Non-commissioned Armed Forces Officers	isco_2008
+0210	Non-commissioned Armed Forces Officers	isco_2008
+0300	Armed Forces Occupations Other Ranks	isco_2008
+0310	Armed Forces Occupations Other Ranks	isco_2008
+1000	Managers	isco_2008
+1100	Chief Executives Senior Officials and Legislators	isco_2008
+1110	Legislators and Senior Officials	isco_2008
+1111	Legislators	isco_2008
+1112	Senior Government Officials	isco_2008
+1113	Traditional Chiefs and Heads of Villages	isco_2008
+1114	Senior Officials of Special-interest Organizations	isco_2008
+1120	Managing Directors and Chief Executives	isco_2008
+1200	Administrative and Commercial Managers	isco_2008
+1210	Business Services and Administration Managers	isco_2008
+1211	Finance Managers	isco_2008
+1212	Human Resource Managers	isco_2008
+1213	Policy and Planning Managers	isco_2008
+1219	Business Services and Administration Managers Not Elsewhere Classified	isco_2008
+1220	Sales Marketing and Development Managers	isco_2008
+1221	Sales and Marketing Managers	isco_2008
+1222	Advertising and Public Relations Managers	isco_2008
+1223	Research and Development Managers	isco_2008
+1300	Production and Specialized Services Managers	isco_2008
+1310	Production Managers in Agriculture Forestry and Fisheries	isco_2008
+1311	Agricultural and Forestry Production Managers	isco_2008
+1312	Aquaculture and Fisheries Production Managers	isco_2008
+1320	Manufacturing Mining Construction and Distribution Managers	isco_2008
+1321	Manufacturing Managers	isco_2008
+1322	Mining Managers	isco_2008
+1323	Construction Managers	isco_2008
+1324	Supply Distribution and Related Managers	isco_2008
+1330	Information and Communications Technology Services Managers	isco_2008
+1340	Professional Services Managers	isco_2008
+1341	Child Care Services Managers	isco_2008
+1342	Health Services Managers	isco_2008
+1343	Aged Care Services Managers	isco_2008
+1344	Social Welfare Managers	isco_2008
+1345	Education Managers	isco_2008
+1346	Financial and Insurance Services Branch Managers	isco_2008
+1349	Professional Services Managers Not Elsewhere Classified	isco_2008
+1400	Hospitality Retail and Other Services Managers	isco_2008
+1410	Hotel and Restaurant Managers	isco_2008
+1411	Hotel Managers	isco_2008
+1412	Restaurant Managers	isco_2008
+1420	Retail and Wholesale Trade Managers	isco_2008
+1430	Other Services Managers	isco_2008
+1431	Sports Recreation and Cultural Centre Managers	isco_2008
+1439	Services Managers Not Elsewhere Classified	isco_2008
+2000	Professionals	isco_2008
+2100	Science and Engineering Professionals	isco_2008
+2110	Physical and Earth Science Professionals	isco_2008
+2111	Physicists and Astronomers	isco_2008
+2112	Meteorologists	isco_2008
+2113	Chemists	isco_2008
+2114	Geologists and Geophysicists	isco_2008
+2120	Mathematicians Actuaries and Statisticians	isco_2008
+2130	Life Science Professionals	isco_2008
+2131	Biologists Botanists Zoologists and Related Professionals	isco_2008
+2132	Farming Forestry and Fisheries Advisers	isco_2008
+2133	Environmental Protection Professionals	isco_2008
+2140	Engineering Professionals (excluding Electrotechnology)	isco_2008
+2141	Industrial and Production Engineers	isco_2008
+2142	Civil Engineers	isco_2008
+2143	Environmental Engineers	isco_2008
+2144	Mechanical Engineers	isco_2008
+2145	Chemical Engineers	isco_2008
+2146	Mining Engineers Metallurgists and Related Professionals	isco_2008
+2149	Engineering Professionals Not Elsewhere Classified	isco_2008
+2150	Electrotechnology Engineers	isco_2008
+2151	Electrical Engineers	isco_2008
+2152	Electronics Engineers	isco_2008
+2153	Telecommunications Engineers	isco_2008
+2160	Architects Planners Surveyors and Designers	isco_2008
+2161	Building Architects	isco_2008
+2162	Landscape Architects	isco_2008
+2163	Product and Garment Designers	isco_2008
+2164	Town and Traffic Planners	isco_2008
+2165	Cartographers and Surveyors	isco_2008
+2166	Graphic and Multimedia Designers	isco_2008
+2200	Health Professionals	isco_2008
+2210	Medical Doctors	isco_2008
+2211	Generalist Medical Practitioners	isco_2008
+2212	Specialist Medical Practitioners	isco_2008
+2220	Nursing and Midwifery Professionals	isco_2008
+2221	Nursing Professionals	isco_2008
+2222	Midwifery Professionals	isco_2008
+2230	Traditional and Complementary Medicine Professionals	isco_2008
+2240	Paramedical Practitioners	isco_2008
+2250	Veterinarians	isco_2008
+2260	Other Health Professionals	isco_2008
+2261	Dentists	isco_2008
+2262	Pharmacists	isco_2008
+2263	Environmental and Occupational Health and Hygiene Professionals	isco_2008
+2264	Physiotherapists	isco_2008
+2265	Dieticians and Nutritionists	isco_2008
+2266	Audiologists and Speech Therapists	isco_2008
+2267	Optometrists and Ophthalmic Opticians	isco_2008
+2269	Health Professionals Not Elsewhere Classified	isco_2008
+2300	Teaching Professionals	isco_2008
+2310	University and Higher Education Teachers	isco_2008
+2320	Vocational Education Teachers	isco_2008
+2330	Secondary Education Teachers	isco_2008
+2340	Primary School and Early Childhood Teachers	isco_2008
+2341	Primary School Teachers	isco_2008
+2342	Early Childhood Educators	isco_2008
+2350	Other Teaching Professionals	isco_2008
+2351	Education Methods specialists	isco_2008
+2352	Special Needs Teachers	isco_2008
+2353	Other Language Teachers	isco_2008
+2354	Other Music Teachers	isco_2008
+2355	Other Arts Teachers	isco_2008
+2356	Information Technology Trainers	isco_2008
+2359	Teaching Professionals Not Elsewhere Classified	isco_2008
+2400	Business and Administration Professionals	isco_2008
+2410	Finance Professionals	isco_2008
+2411	Accountants	isco_2008
+2412	Financial and Investment Advisers	isco_2008
+2413	Financial Analysts	isco_2008
+2420	Administration Professionals	isco_2008
+2421	Management and Organization Analysts	isco_2008
+2422	Policy Administration Professionals	isco_2008
+2423	Personnel and Careers Professionals	isco_2008
+2424	Training and Staff Development Professionals	isco_2008
+2430	Sales Marketing and Public Relations Professionals	isco_2008
+2431	Advertising and Marketing Professionals	isco_2008
+2432	Public Relations Professionals	isco_2008
+2433	Technical and Medical Sales Professionals (excluding ICT)	isco_2008
+2434	Information and Communications Technology Sales Professionals	isco_2008
+2500	Information and Communications Technology Professionals	isco_2008
+2510	Software and Applications Developers and Analysts	isco_2008
+2511	Systems Analysts	isco_2008
+2512	Software Developers	isco_2008
+2513	Web and Multimedia Developers	isco_2008
+2514	Applications Programmers	isco_2008
+2519	Software and Applications Developers and Analysts Not Elsewhere Classified	isco_2008
+2520	Database and Network Professionals	isco_2008
+2521	Database Designers and Administrators	isco_2008
+2522	Systems Administrators	isco_2008
+2523	Computer Network Professionals	isco_2008
+2529	Database and Network Professionals Not Elsewhere Classified	isco_2008
+2600	Legal Social and Cultural Professionals	isco_2008
+2610	Legal Professionals	isco_2008
+2611	Lawyers	isco_2008
+2612	Judges	isco_2008
+2619	Legal Professionals Not Elsewhere Classified	isco_2008
+2620	Librarians Archivists and Curators	isco_2008
+2621	Archivists and Curators	isco_2008
+2622	Librarians and Related Information Professionals	isco_2008
+2630	Social and Religious Professionals	isco_2008
+2631	Economists	isco_2008
+2632	Sociologists Anthropologists and Related Professionals	isco_2008
+2633	Philosophers Historians and Political Scientists	isco_2008
+2634	Psychologists	isco_2008
+2635	Social Work and Counselling Professionals	isco_2008
+2636	Religious Professionals	isco_2008
+2640	Authors Journalists and Linguists	isco_2008
+2641	Authors and Related Writers	isco_2008
+2642	Journalists	isco_2008
+2643	Translators Interpreters and Other Linguists	isco_2008
+2650	Creative and Performing Artists	isco_2008
+2651	Visual Artists	isco_2008
+2652	Musicians Singers and Composers	isco_2008
+2653	Dancers and Choreographers	isco_2008
+2654	Film Stage and Related Directors and Producers	isco_2008
+2655	Actors	isco_2008
+2656	Announcers on Radio Television and Other Media	isco_2008
+2659	Creative and Performing Artists Not Elsewhere Classified	isco_2008
+3000	Technicians and Associate Professionals	isco_2008
+3100	Science and Engineering Associate Professionals	isco_2008
+3110	Physical and Engineering Science Technicians	isco_2008
+3111	Chemical and Physical Science Technicians	isco_2008
+3112	Civil Engineering Technicians	isco_2008
+3113	Electrical Engineering Technicians	isco_2008
+3114	Electronics Engineering Technicians	isco_2008
+3115	Mechanical Engineering Technicians	isco_2008
+3116	Chemical Engineering Technicians	isco_2008
+3117	Mining and Metallurgical Technicians	isco_2008
+3118	Draughtspersons	isco_2008
+3119	Physical and Engineering Science Technicians Not Elsewhere Classified	isco_2008
+3120	Mining Manufacturing and Construction Supervisors	isco_2008
+3121	Mining Supervisors	isco_2008
+3122	Manufacturing Supervisors	isco_2008
+3123	Construction Supervisors	isco_2008
+3130	Process Control Technicians	isco_2008
+3131	Power Production Plant Operators	isco_2008
+3132	Incinerator and Water Treatment Plant Operators	isco_2008
+3133	Chemical Processing Plant Controllers	isco_2008
+3134	Petroleum and Natural Gas Refining Plant Operators	isco_2008
+3135	Metal Production Process Controllers	isco_2008
+3139	Process Control Technicians Not Elsewhere Classified	isco_2008
+3140	Life Science Technicians and Related Associate Professionals	isco_2008
+3141	Life Science Technicians (excluding Medical)	isco_2008
+3142	Agricultural Technicians	isco_2008
+3143	Forestry Technicians	isco_2008
+3150	Ship and Aircraft Controllers and Technicians	isco_2008
+3151	Ships Engineers	isco_2008
+3152	Ships Deck Officers and Pilots	isco_2008
+3153	Aircraft Pilots and Related Associate Professionals	isco_2008
+3154	Air Traffic Controllers	isco_2008
+3155	Air Traffic Safety Electronics Technicians	isco_2008
+3200	Health Associate Professionals	isco_2008
+3210	Medical and Pharmaceutical Technicians	isco_2008
+3211	Medical Imaging and Therapeutic Equipment Technicians	isco_2008
+3212	Medical and Pathology Laboratory Technicians	isco_2008
+3213	Pharmaceutical Technicians and Assistants	isco_2008
+3214	Medical and Dental Prosthetic Technicians	isco_2008
+3220	Nursing and Midwifery Associate Professionals	isco_2008
+3221	Nursing Associate Professionals	isco_2008
+3222	Midwifery Associate Professionals	isco_2008
+3230	Traditional and Complementary Medicine Associate Professionals	isco_2008
+3240	Veterinary Technicians and Assistants	isco_2008
+3250	Other Health Associate Professionals	isco_2008
+3251	Dental Assistants and Therapists	isco_2008
+3252	Medical Records and Health Information Technicians	isco_2008
+3253	Community Health Workers	isco_2008
+3254	Dispensing Opticians	isco_2008
+3255	Physiotherapy Technicians and Assistants	isco_2008
+3256	Medical Assistants	isco_2008
+3257	Environmental and Occupational Health Inspectors and Associates	isco_2008
+3258	Ambulance Workers	isco_2008
+3259	Health Associate Professionals Not Elsewhere Classified	isco_2008
+3300	Business and Administration Associate Professionals	isco_2008
+3310	Financial and Mathematical Associate Professionals	isco_2008
+3311	Securities and Finance Dealers and Brokers	isco_2008
+3312	Credit and Loans Officers	isco_2008
+3313	Accounting Associate Professionals	isco_2008
+3314	Statistical Mathematical and Related Associate Professionals	isco_2008
+3315	Valuers and Loss Assessors	isco_2008
+3320	Sales and Purchasing Agents and Brokers	isco_2008
+3321	Insurance Representatives	isco_2008
+3322	Commercial Sales Representatives	isco_2008
+3323	Buyers	isco_2008
+3324	Trade Brokers	isco_2008
+3330	Business Services Agents	isco_2008
+3331	Clearing and Forwarding Agents	isco_2008
+3332	Conference and Event Planners	isco_2008
+3333	Employment Agents and Contractors	isco_2008
+3334	Real Estate Agents and Property Managers	isco_2008
+3339	Business Services Agents Not Elsewhere Classified	isco_2008
+3340	Administrative and Specialized Secretaries	isco_2008
+3341	Office Supervisors	isco_2008
+3342	Legal Secretaries	isco_2008
+3343	Administrative and Executive Secretaries	isco_2008
+3344	Medical Secretaries	isco_2008
+3350	Government Regulatory Associate Professionals	isco_2008
+3351	Customs and Border Inspectors	isco_2008
+3352	Government Tax and Excise Officials	isco_2008
+3353	Government Social Benefits Officials	isco_2008
+3354	Government Licensing Officials	isco_2008
+3355	Police Inspectors and Detectives	isco_2008
+3359	Government Regulatory Associate Professionals Not Elsewhere Classified	isco_2008
+3400	Legal Social Cultural and Related Associate Professionals	isco_2008
+3410	Legal Social and Religious Associate Professionals	isco_2008
+3411	Legal and Related Associate Professionals	isco_2008
+3412	Social Work Associate Professionals	isco_2008
+3413	Religious Associate Professionals	isco_2008
+3420	Sports and Fitness Workers	isco_2008
+3421	Athletes and Sports Players	isco_2008
+3422	Sports Coaches Instructors and Officials	isco_2008
+3423	Fitness and Recreation Instructors and Programme Leaders	isco_2008
+3430	Artistic Cultural and Culinary Associate Professionals	isco_2008
+3431	Photographers	isco_2008
+3432	Interior Designers and Decorators	isco_2008
+3433	Gallery Museum and Library Technicians	isco_2008
+3434	Chefs	isco_2008
+3435	Other Artistic and Cultural Associate Professionals	isco_2008
+3500	Information and Communications Technicians	isco_2008
+3510	Information and Communications Technology Operations and User Support Technicians	isco_2008
+3511	Information and Communications Technology Operations Technicians	isco_2008
+3512	Information and Communications Technology User Support Technicians	isco_2008
+3513	Computer Network and Systems Technicians	isco_2008
+3514	Web Technicians	isco_2008
+3520	Telecommunications and Broadcasting Technicians	isco_2008
+3521	Broadcasting and Audiovisual Technicians	isco_2008
+3522	Telecommunications Engineering Technicians	isco_2008
+4000	Clerical Support Workers	isco_2008
+4100	General and Keyboard Clerks	isco_2008
+4110	General Office Clerks	isco_2008
+4120	Secretaries (general)	isco_2008
+4130	Keyboard Operators	isco_2008
+4131	Typists and Word Processing Operators	isco_2008
+4132	Data Entry Clerks	isco_2008
+4200	Customer Services Clerks	isco_2008
+4210	Tellers Money Collectors and Related Clerks	isco_2008
+4211	Bank Tellers and Related Clerks	isco_2008
+4212	Bookmakers Croupiers and Related Gaming Workers	isco_2008
+4213	Pawnbrokers and Money-lenders	isco_2008
+4214	Debt Collectors and Related Workers	isco_2008
+4220	Client Information Workers	isco_2008
+4221	Travel Consultants and Clerks	isco_2008
+4222	Contact Centre Information Clerks	isco_2008
+4223	Telephone Switchboard Operators	isco_2008
+4224	Hotel Receptionists	isco_2008
+4225	Inquiry Clerks	isco_2008
+4226	Receptionists (general)	isco_2008
+4227	Survey and Market Research Interviewers	isco_2008
+4229	Client Information Workers Not Elsewhere Classified	isco_2008
+4300	Numerical and Material Recording Clerks	isco_2008
+4310	Numerical Clerks	isco_2008
+4311	Accounting and Bookkeeping Clerks	isco_2008
+4312	Statistical Finance and Insurance Clerks	isco_2008
+4313	Payroll Clerks	isco_2008
+4320	Material Recording and Transport Clerks	isco_2008
+4321	Stock Clerks	isco_2008
+4322	Production Clerks	isco_2008
+4323	Transport Clerks	isco_2008
+4400	Other Clerical Support Workers	isco_2008
+4410	Other Clerical Support Workers	isco_2008
+4411	Library Clerks	isco_2008
+4412	Mail Carriers and Sorting Clerks	isco_2008
+4413	Coding Proofreading and Related Clerks	isco_2008
+4414	Scribes and Related Workers	isco_2008
+4415	Filing and Copying Clerks	isco_2008
+4416	Personnel Clerks	isco_2008
+4419	Clerical Support Workers Not Elsewhere Classified	isco_2008
+5000	Services And Sales Workers	isco_2008
+5100	Personal Services Workers	isco_2008
+5110	Travel Attendants Conductors and Guides	isco_2008
+5111	Travel Attendants and Travel Stewards	isco_2008
+5112	Transport Conductors	isco_2008
+5113	Travel Guides	isco_2008
+5120	Cooks	isco_2008
+5130	Waiters and Bartenders	isco_2008
+5131	Waiters	isco_2008
+5132	Bartenders	isco_2008
+5140	Hairdressers Beauticians and Related Workers	isco_2008
+5141	Hairdressers	isco_2008
+5142	Beauticians and Related Workers	isco_2008
+5150	Building and Housekeeping Supervisors	isco_2008
+5151	Cleaning and Housekeeping Supervisors in Offices Hotels and Other Establishments	isco_2008
+5152	Domestic Housekeepers	isco_2008
+5153	Building Caretakers	isco_2008
+5160	Other Personal Services Workers	isco_2008
+5161	Astrologers Fortune-tellers and Related Workers	isco_2008
+5162	Companions and Valets	isco_2008
+5163	Undertakers and Embalmers	isco_2008
+5164	Pet Groomers and Animal Care Workers	isco_2008
+5165	Driving Instructors	isco_2008
+5169	Personal Services Workers Not Elsewhere Classified	isco_2008
+5200	Sales Workers	isco_2008
+5210	Street and Market Salespersons	isco_2008
+5211	Stall and Market Salespersons	isco_2008
+5212	Street Food Salespersons	isco_2008
+5220	Shop Salespersons	isco_2008
+5221	Shopkeepers	isco_2008
+5222	Shop Supervisors	isco_2008
+5223	Shop Sales Assistants	isco_2008
+5230	Cashiers and Ticket Clerks	isco_2008
+5240	Other Sales Workers	isco_2008
+5241	Fashion and Other Models	isco_2008
+5242	Sales Demonstrators	isco_2008
+5243	Door-to-door Salespersons	isco_2008
+5244	Contact Centre Salespersons	isco_2008
+5245	Service Station Attendants	isco_2008
+5246	Food Service Counter Attendants	isco_2008
+5249	Sales Workers Not Elsewhere Classified	isco_2008
+5300	Personal Care Workers	isco_2008
+5310	Child Care Workers and Teachers Aides	isco_2008
+5311	Child Care Workers	isco_2008
+5312	Teachers Aides	isco_2008
+5320	Personal Care Workers in Health Services	isco_2008
+5321	Health Care Assistants	isco_2008
+5322	Home-based Personal Care Workers	isco_2008
+5329	Personal Care Workers in Health Services Not Elsewhere Classified	isco_2008
+5400	Protective Services Workers	isco_2008
+5410	Protective Services Workers	isco_2008
+5411	Firefighters	isco_2008
+5412	Police Officers	isco_2008
+5413	Prison Guards	isco_2008
+5414	Security Guards	isco_2008
+5419	Protective Services Workers Not Elsewhere Classified	isco_2008
+6000	Skilled Agricultural Forestry and Fishery Workers	isco_2008
+6100	Market-oriented Skilled Agricultural Workers	isco_2008
+6110	Market Gardeners and Crop Growers	isco_2008
+6111	Field Crop and Vegetable Growers	isco_2008
+6112	Tree and Shrub Crop Growers	isco_2008
+6113	Gardeners; Horticultural and Nursery Growers	isco_2008
+6114	Mixed Crop Growers	isco_2008
+6120	Animal Producers	isco_2008
+6121	Livestock and Dairy Producers	isco_2008
+6122	Poultry Producers	isco_2008
+6123	Apiarists and Sericulturists	isco_2008
+6129	Animal Producers Not Elsewhere Classified	isco_2008
+6130	Mixed Crop and Animal Producers	isco_2008
+6200	Market-oriented Skilled Forestry Fishery and Hunting Workers	isco_2008
+6210	Forestry and Related Workers	isco_2008
+6220	Fishery Workers Hunters and Trappers	isco_2008
+6221	Aquaculture Workers	isco_2008
+6222	Inland and Coastal Waters Fishery Workers	isco_2008
+6223	Deep-sea Fishery Workers	isco_2008
+6224	Hunters and Trappers	isco_2008
+6300	Subsistence Farmers Fishers Hunters and Gatherers	isco_2008
+6310	Subsistence Crop Farmers	isco_2008
+6320	Subsistence Livestock Farmers	isco_2008
+6330	Subsistence Mixed Crop and Livestock Farmers	isco_2008
+6340	Subsistence Fishers Hunters Trappers and Gatherers	isco_2008
+7000	Craft and Related Trades Workers	isco_2008
+7100	Building and Related Trades Workers (excluding Electricians)	isco_2008
+7110	Building Frame and Related Trades Workers	isco_2008
+7111	House Builders	isco_2008
+7112	Bricklayers and Related Workers	isco_2008
+7113	Stonemasons Stone Cutters Splitters and Carvers	isco_2008
+7114	Concrete Placers Concrete Finishers and Related Workers	isco_2008
+7115	Carpenters and Joiners	isco_2008
+7119	Building Frame and Related Trades Workers Not Elsewhere Classified	isco_2008
+7120	Building Finishers and Related Trades Workers	isco_2008
+7121	Roofers	isco_2008
+7122	Floor Layers and Tile Setters	isco_2008
+7123	Plasterers	isco_2008
+7124	Insulation Workers	isco_2008
+7125	Glaziers	isco_2008
+7126	Plumbers and Pipe Fitters	isco_2008
+7127	Air Conditioning and Refrigeration Mechanics	isco_2008
+7130	Painters Building Structure Cleaners and Related Trades Workers	isco_2008
+7131	Painters and Related Workers	isco_2008
+7132	Spray Painters and Varnishers	isco_2008
+7133	Building Structure Cleaners	isco_2008
+7200	Metal Machinery and Related Trades Workers	isco_2008
+7210	Sheet and Structural Metal Workers Moulders and Welders and Related Workers	isco_2008
+7211	Metal Moulders and Coremakers	isco_2008
+7212	Welders and Flame Cutters	isco_2008
+7213	Sheet Metal Workers	isco_2008
+7214	Structural Metal Preparers and Erectors	isco_2008
+7215	Riggers and Cable Splicers	isco_2008
+7220	Blacksmiths Toolmakers and Related Trades Workers	isco_2008
+7221	Blacksmiths Hammersmiths and Forging Press Workers	isco_2008
+7222	Toolmakers and Related Workers	isco_2008
+7223	Metal Working Machine Tool Setters and Operators	isco_2008
+7224	Metal Polishers Wheel Grinders and Tool Sharpeners	isco_2008
+7230	Machinery Mechanics and Repairers	isco_2008
+7231	Motor Vehicle Mechanics and Repairers	isco_2008
+7232	Aircraft Engine Mechanics and Repairers	isco_2008
+7233	Agricultural and Industrial Machinery Mechanics and Repairers	isco_2008
+7234	Bicycle and Related Repairers	isco_2008
+7300	Handicraft and Printing Workers	isco_2008
+7310	Handicraft Workers	isco_2008
+7311	Precision-instrument Makers and Repairers	isco_2008
+7312	Musical Instrument Makers and Tuners	isco_2008
+7313	Jewellery and Precious Metal Workers	isco_2008
+7314	Potters and Related Workers	isco_2008
+7315	Glass Makers Cutters Grinders and Finishers	isco_2008
+7316	Signwriters Decorative Painters Engravers and Etchers	isco_2008
+7317	Handicraft Workers in Wood Basketry and Related Materials	isco_2008
+7318	Handicraft Workers in Textile Leather and Related Materials	isco_2008
+7319	Handicraft Workers Not Elsewhere Classified	isco_2008
+7320	Printing Trades Workers	isco_2008
+7321	Pre-press Technicians	isco_2008
+7322	Printers	isco_2008
+7323	Print Finishing and Binding Workers	isco_2008
+7400	Electrical and Electronics Trades Workers	isco_2008
+7410	Electrical Equipment Installers and Repairers	isco_2008
+7411	Building and Related Electricians	isco_2008
+7412	Electrical Mechanics and Fitters	isco_2008
+7413	Electrical Line Installers and Repairers	isco_2008
+7420	Electronics and Telecommunications Installers and Repairers	isco_2008
+7421	Electronics Mechanics and Servicers	isco_2008
+7422	Information and Communications Technology Installers and Servicers	isco_2008
+7500	Food Processing Woodworking Garment and Other Craft and Related Trades Workers	isco_2008
+7510	Food Processing and Related Trades Workers	isco_2008
+7511	Butchers Fishmongers and Related Food Preparers	isco_2008
+7512	Bakers Pastry-cooks and Confectionery Makers	isco_2008
+7513	Dairy Products Makers	isco_2008
+7514	Fruit Vegetable and Related Preservers	isco_2008
+7515	Food and Beverage Tasters and Graders	isco_2008
+7516	Tobacco Preparers and Tobacco Products Makers	isco_2008
+7520	Wood Treaters Cabinet-makers and Related Trades Workers	isco_2008
+7521	Wood Treaters	isco_2008
+7522	Cabinet-makers and Related Workers	isco_2008
+7523	Woodworking Machine Tool Setters and Operators	isco_2008
+7530	Garment and Related Trades Workers	isco_2008
+7531	Tailors Dressmakers Furriers and Hatters	isco_2008
+7532	Garment and Related Patternmakers and Cutters	isco_2008
+7533	Sewing Embroidery and Related Workers	isco_2008
+7534	Upholsterers and Related Workers	isco_2008
+7535	Pelt Dressers Tanners and Fellmongers	isco_2008
+7536	Shoemakers and Related Workers	isco_2008
+7540	Other Craft and Related Workers	isco_2008
+7541	Underwater Divers	isco_2008
+7542	Shotfirers and Blasters	isco_2008
+7543	Product Graders and Testers (excluding Foods and Beverages)	isco_2008
+7544	Fumigators and Other Pest and Weed Controllers	isco_2008
+7549	Craft and Related Workers Not Elsewhere Classified	isco_2008
+8000	Plant and Machine Operators and Assemblers	isco_2008
+8100	Stationary Plant and Machine Operators	isco_2008
+8110	Mining and Mineral Processing Plant Operators	isco_2008
+8111	Miners and Quarriers	isco_2008
+8112	Mineral and Stone Processing Plant Operators	isco_2008
+8113	Well Drillers and Borers and Related Workers	isco_2008
+8114	Cement Stone and Other Mineral Products Machine Operators	isco_2008
+8120	Metal Processing and Finishing Plant Operators	isco_2008
+8121	Metal Processing Plant Operators	isco_2008
+8122	Metal Finishing Plating and Coating Machine Operators	isco_2008
+8130	Chemical and Photographic Products Plant and Machine Operators	isco_2008
+8131	Chemical Products Plant and Machine Operators	isco_2008
+8132	Photographic Products Machine Operators	isco_2008
+8140	Rubber Plastic and Paper Products Machine Operators	isco_2008
+8141	Rubber Products Machine Operators	isco_2008
+8142	Plastic Products Machine Operators	isco_2008
+8143	Paper Products Machine Operators	isco_2008
+8150	Textile Fur and Leather Products Machine Operators	isco_2008
+8151	Fibre Preparing Spinning and Winding Machine Operators	isco_2008
+8152	Weaving and Knitting Machine Operators	isco_2008
+8153	Sewing Machine Operators	isco_2008
+8154	Bleaching Dyeing and Fabric Cleaning Machine Operators	isco_2008
+8155	Fur and Leather Preparing Machine Operators	isco_2008
+8156	Shoemaking and Related Machine Operators	isco_2008
+8157	Laundry Machine Operators	isco_2008
+8159	Textile Fur and Leather Products Machine Operators Not Elsewhere Classified	isco_2008
+8160	Food and Related Products Machine Operators	isco_2008
+8170	Wood Processing and Papermaking Plant Operators	isco_2008
+8171	Pulp and Papermaking Plant Operators	isco_2008
+8172	Wood Processing Plant Operators	isco_2008
+8180	Other Stationary Plant and Machine Operators	isco_2008
+8181	Glass and Ceramics Plant Operators	isco_2008
+8182	Steam Engine and Boiler Operators	isco_2008
+8183	Packing Bottling and Labelling Machine Operators	isco_2008
+8189	Stationary Plant and Machine Operators Not Elsewhere Classified	isco_2008
+8200	Assemblers	isco_2008
+8210	Assemblers	isco_2008
+8211	Mechanical Machinery Assemblers	isco_2008
+8212	Electrical and Electronic Equipment Assemblers	isco_2008
+8219	Assemblers Not Elsewhere Classified	isco_2008
+8300	Drivers and Mobile Plant Operators	isco_2008
+8310	Locomotive Engine Drivers and Related Workers	isco_2008
+8311	Locomotive Engine Drivers	isco_2008
+8312	Railway Brake Signal and Switch Operators	isco_2008
+8320	Car Van and Motorcycle Drivers	isco_2008
+8321	Motorcycle Drivers	isco_2008
+8322	Car Taxi and Van Drivers	isco_2008
+8330	Heavy Truck and Bus Drivers	isco_2008
+8331	Bus and Tram Drivers	isco_2008
+8332	Heavy Truck and Lorry Drivers	isco_2008
+8340	Mobile Plant Operators	isco_2008
+8341	Mobile Farm and Forestry Plant Operators	isco_2008
+8342	Earthmoving and Related Plant Operators	isco_2008
+8343	Crane Hoist and Related Plant Operators	isco_2008
+8344	Lifting Truck Operators	isco_2008
+8350	Ships Deck Crews and Related Workers	isco_2008
+9000	Elementary Occupations	isco_2008
+9100	Cleaners and Helpers	isco_2008
+9110	Domestic Hotel and Office Cleaners and Helpers	isco_2008
+9111	Domestic Cleaners and Helpers	isco_2008
+9112	Cleaners and Helpers in Offices Hotels and Other Establishments	isco_2008
+9120	Vehicle Window Laundry and Other Hand Cleaning Workers	isco_2008
+9121	Hand Launderers and Pressers	isco_2008
+9122	Vehicle Cleaners	isco_2008
+9123	Window Cleaners	isco_2008
+9129	Other Cleaning Workers	isco_2008
+9200	Agricultural Forestry and Fishery Labourers	isco_2008
+9210	Agricultural Forestry and Fishery Labourers	isco_2008
+9211	Crop Farm Labourers	isco_2008
+9212	Livestock Farm Labourers	isco_2008
+9213	Mixed Crop and Livestock Farm Labourers	isco_2008
+9214	Garden and Horticultural Labourers	isco_2008
+9215	Forestry Labourers	isco_2008
+9216	Fishery and Aquaculture Labourers	isco_2008
+9300	Labourers in Mining Construction Manufacturing and Transport	isco_2008
+9310	Mining and Construction Labourers	isco_2008
+9311	Mining and Quarrying Labourers	isco_2008
+9312	Civil Engineering Labourers	isco_2008
+9313	Building Construction Labourers	isco_2008
+9320	Manufacturing Labourers	isco_2008
+9321	Hand Packers	isco_2008
+9329	Manufacturing Labourers Not Elsewhere Classified	isco_2008
+9330	Transport and Storage Labourers	isco_2008
+9331	Hand and Pedal Vehicle Drivers	isco_2008
+9332	Drivers of Animal-drawn Vehicles and Machinery	isco_2008
+9333	Freight Handlers	isco_2008
+9334	Shelf Fillers	isco_2008
+9400	Food Preparation Assistants	isco_2008
+9410	Food Preparation Assistants	isco_2008
+9411	Fast Food Preparers	isco_2008
+9412	Kitchen Helpers	isco_2008
+9500	Street and Related Sales and Services Workers	isco_2008
+9510	Street and Related Services Workers	isco_2008
+9520	Street Vendors (excluding Food)	isco_2008
+9600	Refuse Workers and Other Elementary Workers	isco_2008
+9610	Refuse Workers	isco_2008
+9611	Garbage and Recycling Collectors	isco_2008
+9612	Refuse Sorters	isco_2008
+9613	Sweepers and Related Labourers	isco_2008
+9620	Other Elementary Workers	isco_2008
+9621	Messengers Package Deliverers and Luggage Porters	isco_2008
+9622	Odd-job Persons	isco_2008
+9623	Meter Readers and Vending-machine Collectors	isco_2008
+9624	Water and Firewood Collectors	isco_2008
+9629	Elementary Workers Not Elsewhere Classified	isco_2008
