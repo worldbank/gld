@@ -766,22 +766,22 @@ foreach v of local ed_var {
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
-
 *<_industrycat_isic_>
 	gen industrycat_isic= string(ind_isic4_4,"%04.0f")
 	replace industrycat_isic = "" if industrycat_isic =="."
+	replace industrycat_isic = "9600" if inlist(industrycat_isic, "9999", "9998")
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
 
 *<_industrycat10_>
-	gen byte industrycat10 = (ind_isic4_4/100)
+	gen industrycat10=substr(industrycat_isic, 1,2)
+	destring industrycat10, replace force
 	recode industrycat10 1/3=1 5/9=2 10/33=3 35/39=4 41/43=5 45/47=6 55/56=6 49/53=7 58/63=7 64/82=8 84=9 85/99=10
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
 *</_industrycat10_>
-
 
 *<_industrycat4_>
 	gen byte industrycat4 = industrycat10

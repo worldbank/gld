@@ -114,7 +114,7 @@ drop _merge
 
 
 *<_isco_version_>
-	gen isco_version = "isco_88"
+	gen isco_version = "isco_1988"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
@@ -770,12 +770,14 @@ foreach v of local ed_var {
 *<_industrycat_isic_>
 	gen industrycat_isic= string(ind_isic4_4,"%04.0f")
 	replace industrycat_isic = "" if industrycat_isic =="."
+	replace industrycat_isic = "9600" if inlist(industrycat_isic, "9999")
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
 
 *<_industrycat10_>
-	gen byte industrycat10 = (ind_isic4_4/100)
+	gen industrycat10=substr(industrycat_isic, 1,2)
+	destring industrycat10, replace force
 	recode industrycat10 1/3=1 5/9=2 10/33=3 35/39=4 41/43=5 45/47=6 55/56=6 49/53=7 58/63=7 64/82=8 84=9 85/99=10
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
@@ -817,6 +819,7 @@ foreach v of local ed_var {
 
 *<_occup_>
 	gen byte occup = (occ_isco88_4/1000)
+	recode occup  0=.
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup

@@ -270,9 +270,8 @@ drop _merge
 	replace subnatid1="27 - Matrouh" if subnatid1=="818033"
 	replace subnatid1="28 - North Sinai" if subnatid1=="818034"
 	replace subnatid1="29 - South Sinai" if subnatid1=="818035"
-	/*label define lblsubnatid1 818001 "1 - Cairo"  818002 "2 - Alexandria"  818003 "3 - Port Said" 818004 "4 - Suez" 818011"5 - Damietta" 818012 "6 - Dakahlia" 818013 "7 - Sharkia" 818014 "8 - Kalyoubia" 818015 "9 - Kafr-El- sheik" 818016 "10 - Gharbia" 818017 "11 - Menoufia" 818018 "12 - Behira" 818019 "13 - Ismaelia" 818021 "14 - Giza" 818022 "15 - Beni- Suef" 818023 "16 - Fayoum" 818024 "17 - Menia" 818025 "18 - Asyout" 818026 "19 - Suhag" 818027 "20 - Qena" 818028 "21 - Aswan" 818029 "22 - Luxor" 818031 "23 - Red Sea" 818032 "24 - El-wadi El-Gidid" 818033 "25 - Matrouh" 818034 "26 - North Sinai" 818035 "27 - South Sinai"*/
-	/*label values subnatid1 lblsubnatid1*/
 	label var subnatid1 "Subnational ID at First Administrative Level"
+	
 *</_subnatid1_>
 
 
@@ -578,7 +577,9 @@ drop _merge
 	subnatid1_prev is coded as missing unless the classification used for subnatid1 has changed since the previous survey.
 
 </_subnatid1_prev_note> */
-	gen subnatid1_prev = .
+	gen subnatid1_prev = ""
+	replace subnatid1_prev = "1 - Cairo" if reg==818001 | reg==818005
+	replace subnatid1_prev = "16 - Giza" if reg==818021 | reg==818006
 	label var subnatid1_prev "Classification used for subnatid1 from previous survey"
 *</_subnatid1_prev_>
 
@@ -1045,12 +1046,14 @@ foreach v of local ed_var {
 *<_industrycat_isic_>
 	gen industrycat_isic= string(ind_isic4_4,"%04.0f")
 	replace industrycat_isic = "" if industrycat_isic =="."
+	replace industrycat_isic = "9600" if inlist(industrycat_isic, "9999", "9998")
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
 
 *<_industrycat10_>
-	gen byte industrycat10 = (ind_isic4_4/100)
+	gen industrycat10=substr(industrycat_isic, 1,2)
+	destring industrycat10, replace force
 	recode industrycat10 1/3=1 5/9=2 10/33=3 35/39=4 41/43=5 45/47=6 55/56=6 49/53=7 58/63=7 64/82=8 84=9 85/99=10
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"

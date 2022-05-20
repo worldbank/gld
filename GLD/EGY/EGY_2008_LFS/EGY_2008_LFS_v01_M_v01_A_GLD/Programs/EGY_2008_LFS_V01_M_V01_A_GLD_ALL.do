@@ -267,8 +267,6 @@ drop _merge
 	replace subnatid1="25 - Matrouh" if subnatid1=="818033"
 	replace subnatid1="26 - North Sinai" if subnatid1=="818034"
 	replace subnatid1="27 - South Sinai" if subnatid1=="818035"
-	/*label define lblsubnatid1 818001 "1 - Cairo"  818002 "2 - Alexandria"  818003 "3 - Port Said" 818004 "4 - Suez" 818011"5 - Damietta" 818012 "6 - Dakahlia" 818013 "7 - Sharkia" 818014 "8 - Kalyoubia" 818015 "9 - Kafr-El- sheik" 818016 "10 - Gharbia" 818017 "11 - Menoufia" 818018 "12 - Behira" 818019 "13 - Ismaelia" 818021 "14 - Giza" 818022 "15 - Beni- Suef" 818023 "16 - Fayoum" 818024 "17 - Menia" 818025 "18 - Asyout" 818026 "19 - Suhag" 818027 "20 - Qena" 818028 "21 - Aswan" 818029 "22 - Luxor" 818031 "23 - Red Sea" 818032 "24 - El-wadi El-Gidid" 818033 "25 - Matrouh" 818034 "26 - North Sinai" 818035 "27 - South Sinai"*/
-	/*label values subnatid1 lblsubnatid1*/
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 
@@ -1048,6 +1046,12 @@ foreach v of local ed_var {
 	recode ind_helper 11=. 0=.
 	gen industrycat_isic= string(ind_helper,"%04.0f")
 	replace industrycat_isic = "" if industrycat_isic =="."
+	replace industrycat_isic = "3610" if inlist(industrycat_isic, "3611", "3612")
+	replace industrycat_isic = "3699" if inlist(industrycat_isic, "3811", "3813","3814","3819")
+	replace industrycat_isic = "1550" if inlist(industrycat_isic, "1555")
+	replace industrycat_isic = "1720" if inlist(industrycat_isic, "1724")
+	replace industrycat_isic = "5260" if inlist(industrycat_isic, "5261", "5262","5263", "5264", "5269")
+	replace industrycat_isic = "9300" if inlist(industrycat_isic, "9999")
 	drop ind_helper
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
@@ -1055,13 +1059,11 @@ foreach v of local ed_var {
 
 *<_industrycat10_>
 *education and health put in other (10) because there is no correspondance (public or private?) rental was put in other business services 8
-	gen ind_helper2= ind_unrec
-	recode ind_helper2 0=. 11=.
-	gen byte industrycat10 = (ind_helper2/100)
+	gen industrycat10=substr(industrycat_isic, 1,2)
+	destring industrycat10, replace force
 	recode industrycat10 2=1 5=1 10/14=2 15/37=3 40/41=4 45=5 50/52=6 60/64=7 65/67=8 74=8 75=9 90/93=9 95/99=10 80/85=10 70/73=8 55=6 38=3
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
-	drop ind_helper2
 	label values industrycat10 lblindustrycat10
 *</_industrycat10_>
 
