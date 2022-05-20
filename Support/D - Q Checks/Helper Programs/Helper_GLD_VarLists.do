@@ -154,6 +154,9 @@ global isco_check occup_isco occup_isco_2 occup_isco_year occup_isco_2_year
 *----------14.8: Check industry_orig to industrycat10 agreements
 global industry_alignment `""industry_orig industrycat10" "industry_orig_2 industrycat10_2" "industry_orig_year industrycat10_year" "industry_orig_2_year industrycat10_2_year""'
 
+*----------14.9: Check wage has always unitwage info tied to it
+global wage_and_unit `""wage_no_compen unitwage" "wage_no_compen_2 unitwage_2" "wage_no_compen_year unitwage_year" "wage_no_compen_2_year unitwage_2_year""'
+
 
 /*==================================================
               15: Dynamic comparison vars
