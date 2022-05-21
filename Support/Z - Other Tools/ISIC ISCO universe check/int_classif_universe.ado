@@ -88,7 +88,7 @@ if ustrregexm("`universe'", "^(isco|ISCO)$") {
 	preserve
 
 	* Read in ISCO codes
-	import delimited "https://raw.githubusercontent.com/worldbank/gld/main/Support/D%20-%20Q%20Checks/Helper%20Programs/isco_codes.txt", delimiter(tab) varnames(1) clear 
+	import delimited "https://raw.githubusercontent.com/worldbank/gld/main/Support/D%20-%20Q%20Checks/Helper%20Programs/isco_codes.txt", delimiter(comma) varnames(1) clear 
 
 	* Reduce to only cases of said version
 	keep if version == "`isco_version'"
