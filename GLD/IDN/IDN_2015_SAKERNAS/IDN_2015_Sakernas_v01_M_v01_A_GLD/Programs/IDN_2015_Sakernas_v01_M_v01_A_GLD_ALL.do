@@ -846,7 +846,7 @@ Moreover, most cases are that people only have kbli2009_2 while they do not have
 
 *<_industrycat10_>
 	gen byte industrycat10 = kbli2009_2
-	recode industrycat10 (1/3=1) (5/9=2) (10/33=3) (35/39=4) (41/43=5) (45/47 55/56=6) (49/53 58/63=7) (64/82=8) (84=9) (85/99=10) (0=.)
+	recode industrycat10 (1/3=1) (5/9=2) (10/33=3) (35/39=4) (41/43=5) (45/47 55/56=6) (49/53 58/63=7) (64/82=8) (84=9) (0 85/99=10) 
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	replace industrycat10 = . if lstatus!=1
@@ -1041,12 +1041,14 @@ We do not have information on the employment status of the main additional job. 
 
 *<_industrycat_isic_2_>
 	gen industrycat_isic_2 = int(b5_r18/100)
+	replace industrycat_isic_2 = industrycat_isic_2*10 
 	tostring industrycat_isic_2, replace format(%04.0f)
-	gen kbli2 = int(b5_r23/100)
-	gen kbli4 = int(b5_r23/10)
+	gen kbli2 = int(b5_r18/100)
+	gen kbli4 = int(b5_r18/10)
 	replace industrycat_isic_2 = "0720" if kbli2==73
 	replace industrycat_isic_2 = "4920" if kbli2==494
 	replace industrycat_isic_2 = "5520" if kbli4==5519
+	replace industrycat_isic_2 = "8550" if kbli4==8560
 	replace industrycat_isic_2 = "9600" if inlist(kbli2, 961, 962, 969)
 	replace industrycat_isic_2= "" if b5_r17!=1
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
@@ -1054,7 +1056,10 @@ We do not have information on the employment status of the main additional job. 
 
 
 *<_industrycat10_2_>
-	gen byte industrycat10_2 = .
+	gen industrycat10_2 = substr(industrycat_isic_2, 1, 2)
+	destring industrycat10_2, replace
+	recode industrycat10_2 (1/3=1) (5/9=2) (10/33=3) (35/39=4) (41/43=5) (45/47 55/56=6) (49/53 58/63=7) (64/82=8) (84=9) (0 85/99=10) 
+	replace industrycat10_2 = . if b5_r17!=1
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
 *</_industrycat10_2_>
