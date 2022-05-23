@@ -112,7 +112,7 @@ if ustrregexm("`universe'", "^(isco|ISCO)$") {
 	* Generate variable that counts instances
 	gen instances = 1
 
-	collapse (count) instances (first) countrycode year isic_version, by(`var')
+	collapse (count) instances (first) countrycode year isco_version, by(`var')
 
 } 
 
