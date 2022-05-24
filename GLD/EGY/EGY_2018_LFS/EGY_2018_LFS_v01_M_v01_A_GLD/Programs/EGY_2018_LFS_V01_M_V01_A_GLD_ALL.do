@@ -1111,6 +1111,7 @@ foreach v of local ed_var {
 *<_occup_isco_>
 	gen occup_isco = string(occ_isco88_4,"%04.0f")
 	replace occup_isco="" if occ_isco88_4==.
+	replace occup_isco="" if occ_isco88_4==9999
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 

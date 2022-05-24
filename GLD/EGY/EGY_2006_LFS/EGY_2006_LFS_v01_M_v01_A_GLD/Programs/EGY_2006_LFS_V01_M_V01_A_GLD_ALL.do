@@ -951,7 +951,7 @@ foreach v of local ed_var {
 
 {
 *<_lstatus_>
-*missing lstatus within labor age is because individuals did not give information of their status so they were coded as missing. 
+*missing lstatus within labor age is because individuals did not give information of their status so they were coded as missing.
 	gen byte lstatus = .
 	replace lstatus=1 if mas==1
 	replace lstatus=2 if mas==2
@@ -1083,18 +1083,21 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_>
-	gen occ_helper=floor(occ_unrec/100)
+*isco 68
+	/*gen occ_helper=floor(occ_unrec/100)
 	recode occ_helper 2=21
 	tostring occ_helper, replace
-	gen occup_isco=occ_helper + substr("0000", 1, 4 - length(occ_helper))
-	replace occup_isco="" if occup_isco==".000"
-	drop occ_helper
+	gen occup_isco=occ_helper + substr("0000", 1, 4 - length(occ_helper))*/
+	/*gen occup_isco=occ_unrec
+	tostring occup_isco, replace force*/
+	gen occup_isco=.
+	*replace occup_isco="" if occup_isco=="."
+	*drop occ_helper
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
 
 *<_occup_skill_>
-*isco-88
 	gen occup_skill = (occ/10)
 	recode occup_skill 99.8=. 99.9=.
 	recode occup_skill (1/3=3) (4/8=2) (9=1)
@@ -1102,7 +1105,6 @@ foreach v of local ed_var {
 	label values occup_skill lblskill
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
 *</_occup_skill_>
-
 
 *<_occup_>
 *correspondance 88 and 08
