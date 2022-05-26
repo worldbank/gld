@@ -872,8 +872,9 @@ Moreover, most cases are that people only have kbli2009_2 while they do not have
 
 *<_occup_isco_>
 	gen occup_isco = kji1982
-	recode occup_isco (55=5) (123=129) (133=132) (134=133) (135=134) (136=139) (137=135) (142/145=141) (153=152) (169=160) (176 177=179) (213/217=219) (323/324=320) (332/333=339) (349=340) (352 353=359) (354 355=352) (371 372=370) (442/443=441) (444=442) (445=443) (593=599) (613=610) (632=630) (633=632) (642/646=641) (721/729=720) (739=730) (757=759) (911=910) (932=939) (944/946=949) (987=989) 
-	replace occup_isco = occup_isco*10
+	recode occup_isco (55=5) (123=129) (133=132) (134=133) (135=134) (136=139) (137=135) (142/145=141) (152 153=159) (169=160) (176 177=179) (213/217=219) (323/324=320) (332/333=339) (349=340) (352 353=359) (354 355=352) (371 372=370) (442/443=441) (444=442) (445=443) (593=599) (613=610) (632=630) (633=632) (642/646=641) (721/729=720) (739=730) (757=759) (911=910) (932=939) (944/946=949) (987=989) 
+	replace occup_isco = occup_isco*10 if kji1982>9
+	replace occup_isco = occup_isco*100 if kji1982<10
 	tostring occup_isco, replace format(%04.0f)
 	replace occup_isco = "" if lstatus!=1
 	label var occup_isco "ISCO code of primary job 7 day recall"
@@ -1035,6 +1036,8 @@ We do not have information on the employment status of the main additional job. 
 
 *<_industry_orig_2_>
 	gen industry_orig_2 = b5_r18
+	replace industry_orig_2 = int(b5_r18/100) if b5_r18>9999
+	replace industry_orig_2 = int(b5_r18/10) if industry_orig_2>999
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 

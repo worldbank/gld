@@ -57,11 +57,7 @@ if _rc == 0 { // if isic version info exists, otherwise cannot know which ISIC v
 	* Preserve harmonization file to read in ISIC universe, save
 	preserve
 
-	* Importing from GitHub gives error on VDI
-	*import delimited "https://raw.githubusercontent.com/worldbank/gld/main/Support/D%20-%20Q%20Checks/Helper%20Programs/isic_codes.txt", delimiter(comma) varnames(1) clear 
-
-	* Import from file in Helper Programs Folder for now
-	import delimited "$path_to_helpers/isic_codes.txt", delimiter(comma) varnames(1) clear 
+	import delimited "https://raw.githubusercontent.com/worldbank/gld/main/Support/D%20-%20Q%20Checks/Helper%20Programs/isic_codes.txt", delimiter(comma) varnames(1) clear 
 
 	* Reduce to only cases of said version
 	keep if version == "`isic_version'"
@@ -73,6 +69,32 @@ if _rc == 0 { // if isic version info exists, otherwise cannot know which ISIC v
 	restore
 
 }
+
+
+*----------0.7: Read in isic universe, save as temp
+
+cap confirm variable isco_version
+if _rc == 0 { // if isic version info exists, otherwise cannot know which ISIC version to compare to
+
+	* Record what isic version this file has
+	local isco_version = isco_version in 1
+
+	* Preserve harmonization file to read in ISIC universe, save
+	preserve
+
+	import delimited "https://raw.githubusercontent.com/worldbank/gld/main/Support/D%20-%20Q%20Checks/Helper%20Programs/isco_codes.txt", delimiter(comma) varnames(1) clear 
+	
+	* Reduce to only cases of said version
+	keep if version == "`isco_version'"
+
+	* Save as temp
+	tempfile isco_universe
+	save `isco_universe'
+
+	restore
+
+}
+
 
 /*==================================================
               1: Overall Survey adherence
@@ -327,7 +349,7 @@ if _rc == 0 { // if var exists since if not captured in 1.1
 foreach var of global int_class_versions {
 	cap confirm variable `var'
 	if _rc == 0 { // if var exists since if not captured in 1.1
-		qui : count if !ustrregexm(`var', "^(isco_1988|isco_2008|isic_2|isic_3|isic_3\.1|isic_4|isced_1976|isced_1997|isced_2011)$")
+		qui : count if !ustrregexm(`var', "^(isco_1968|isco_1988|isco_2008|isic_2|isic_3|isic_3\.1|isic_4|isced_1976|isced_1997|isced_2011)$")
 		if `r(N)' > 0 { // not defined as in the possible options
 			post `memhold' ("Survey & ID") ("`var'") ("Variable `var' is not correctly defined") (.) (1)
 		} // end if not correctly defined
@@ -873,7 +895,7 @@ foreach var of local lstatus_vars {
 } // end varlist
 
 
-*----------8.21: isco vars are in universe
+*----------8.21: isic vars are in universe
 
 cap confirm variable isic_version
 if _rc == 0 { // if isic version info exists, otherwise cannot know which ISIC version to compare to
@@ -903,6 +925,73 @@ if _rc == 0 { // if isic version info exists, otherwise cannot know which ISIC v
 
 } // close if isic_version present
 
+
+*----------8.22: isco vars are in universe
+
+cap confirm variable isco_version
+if _rc == 0 { // if isic version info exists, otherwise cannot know which ISIC version to compare to
+
+	foreach var of global isco_check {
+		
+		cap confirm variable `var'
+		if _rc == 0 { // if var exists, else issue captured in 1.1
+			
+			* Create variable code out of var
+			qui : gen code = `var'
+			* Merge with ISIC universe, keeping only code variable from using, only match and master
+			qui : merge m:1 code using `isco_universe', keepusing(code) keep(master match)
+			* Count if there are variables that exist in survey that are not in ISIC universe
+			qui : count if !missing(`var') & _merge == 1
+			if `r(N)' > 0 {
+				
+				post `memhold' ("Labour") ("`var'") ("`var' has ISCO codes not in ISCO universe (number of cases ->)") (`r(N)') (1)
+				
+			} // close cases that are concerning
+			
+			* Clean up for next iteration (or exit)
+			qui : drop code _merge
+			
+		} // close if var exists
+	} // close foreach
+
+} // close if isic_version present
+
+
+*----------8.23: Check wage info has unit info
+foreach token of global wage_and_unit{
+	
+	* Split the token into its elements
+	tokenize "`token'"
+	local wage "`1'"
+	local unit "`2'"
+	
+	* Confirm if there is wage, that there is unit
+	cap confirm variable `wage'
+	if _rc == 0 { // wage info exists
+	
+		cap confirm variable `unit'
+		if _rc != 0 { // unit does not exist
+		
+		post `memhold' ("Labour") ("`token'") ("There is `wage' info but no `unit' info") (.) (1)
+		
+		}
+	
+	}
+	
+	* Confirm if there is unit, that there is wage
+	cap confirm variable `unit'
+	if _rc == 0 { // unit info exists
+	
+		cap confirm variable `wage'
+		if _rc != 0 { // wage does not exist
+		
+		post `memhold' ("Labour") ("`token'") ("There is `unit' info but no `wage' info") (.) (1)
+		
+		}
+	
+	}
+	
+}
 
 /*==================================================
               9: Consistency compared to WDI

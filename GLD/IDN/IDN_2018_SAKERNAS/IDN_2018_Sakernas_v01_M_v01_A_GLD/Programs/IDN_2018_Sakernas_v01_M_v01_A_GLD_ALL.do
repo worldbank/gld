@@ -802,7 +802,7 @@ of unemployment period.
 
 /*<_industry_orig_>
 
-Variable "b5_r23" uses KBLI 2015 which has five digits.
+Variable "b5_r23" uses KBLI 2015 which has five digits originally.
 Note that in the raw dataset variable "b5_r23" does not have labels.
 
 <_industry_orig_>*/
@@ -810,6 +810,8 @@ Note that in the raw dataset variable "b5_r23" does not have labels.
 
 *<_industry_orig_>
 	gen industry_orig = b5_r23
+	replace industry_orig = int(b5_r23/100) if b5_r23>9999
+	replace industry_orig = int(b5_r23/10) if industry_orig>999
 	replace industry_orig = . if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
@@ -826,12 +828,14 @@ directly.
 
 *<_industrycat_isic_>
 	gen industrycat_isic = int(b5_r23/100)
+	replace industrycat_isic = industrycat_isic*10
 	tostring industrycat_isic, replace format(%04.0f)
 	gen kbli2 = int(b5_r23/100)
 	gen kbli4 = int(b5_r23/10)
 	replace industrycat_isic = "0720" if kbli2==73
 	replace industrycat_isic = "4920" if kbli2==494
 	replace industrycat_isic = "5520" if kbli4==5519
+	replace industrycat_isic = "8550" if kbli4==8560
 	replace industrycat_isic = "9600" if inlist(kbli2, 961, 962, 969)
 	replace industrycat_isic = "" if lstatus!=1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"

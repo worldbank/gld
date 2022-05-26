@@ -835,6 +835,8 @@ of unemployment period.
 
 *<_industry_orig_>
 	gen industry_orig = b5p7
+	replace industry_orig = int(b5p7/100) if b5p7>9999
+	replace industry_orig = int(b5p7/10) if industry_orig>999
 	tostring industry_orig, replace
 	replace industry_orig = "" if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
@@ -874,6 +876,7 @@ of unemployment period.
 
 *<_occup_orig_>
 	gen occup_orig = b5p8
+	replace occup_orig = int(b5p8/10) if b5p8>999 
 	replace occup_orig = . if lstatus!=1
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
@@ -883,9 +886,10 @@ of unemployment period.
 	tostring b5p8, gen(occup_isco3)
 	replace occup_isco3 = substr(occup_isco3, 1, 3)
 	destring occup_isco3, gen(occup_isco)
-	recode occup_isco (24=23) (23 231=244) (241=231) (242=232) (243=233) (244 246=235) (245=234) (25 251=242) (26 261=241) (291=243) (292=245) (293=246) (29=24) (331=333) (332=33) (34=341) (35 351=342) (39=34) (391=343) (392=344) (393=345) (394=346) (395=347) (396=348)
-	replace occup_isco3 = occup_isco3*10
-	tostring occup_isco, replace
+	recode occup_isco (24=23) (23 231=244) (241=231) (242=232) (243=233) (244 246=235) (245=234) (25 251=242) (110/190=110) (26 261=241) (291=243) (292=245) (293=246) (29=24) (331=333) (332=33) (34=341) (35 351=342) (39=34) (391=343) (392=344) (393=345) (394=346) (395=347) (396=348)
+	replace occup_isco = occup_isco*10 if occup_isco>99
+	replace occup_isco = occup_isco*100 if occup_isco<100
+	tostring occup_isco, format(%04.0f) replace
 	replace occup_isco = "" if lstatus!=1
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
@@ -1057,6 +1061,8 @@ We do not have information on the employment status of the main additional job. 
 
 *<_industry_orig_2_>
 	gen industry_orig_2 = b5p17
+	replace industry_orig_2 = int(b5p17/100) if b5p17>9999
+	replace industry_orig_2 = int(b5p17/10) if industry_orig_2>999
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 

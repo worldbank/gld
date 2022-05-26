@@ -835,6 +835,8 @@ of unemployment period.
 
 *<_industry_orig_>
 	gen industry_orig = b4p7
+	replace industry_orig = int(b4p7/100) if b4p7>9999
+	replace industry_orig = int(b4p7/10) if industry_orig>999
 	tostring industry_orig, replace
 	replace industry_orig = "" if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
@@ -876,6 +878,7 @@ of unemployment period.
 
 *<_occup_orig_>
 	gen occup_orig = b4p8
+	replace occup_orig = int(b4p8/10) if b4p8>999
 	replace occup_orig = . if lstatus!=1
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
@@ -892,15 +895,14 @@ of unemployment period.
 
 
 *<_occup_skill_>
-	gen occup_skill = b4p8
-	recode occup_skill (1/3=3) (4/8=2) (9=1) (0=.)
+	gen occup_skill = .
 	replace occup_skill = . if lstatus!=1
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
 *</_occup_skill_>
 
 
 *<_occup_>
-	gen occup = b4p8
+	gen occup = .
 	replace occup = . if lstatus!=1
 	replace occup = . if occup==0
 	label var occup "1 digit occupational classification, primary job 7 day recall"

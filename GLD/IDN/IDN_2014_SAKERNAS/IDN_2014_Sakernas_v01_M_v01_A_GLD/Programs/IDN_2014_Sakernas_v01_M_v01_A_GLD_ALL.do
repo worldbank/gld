@@ -1,4 +1,3 @@
-
 /*%%=============================================================================================
 	0: GLD Harmonization Preamble
 ================================================================================================*/
@@ -1049,6 +1048,8 @@ We do not have information on the employment status of the main additional job. 
 
 *<_industry_orig_2_>
 	gen industry_orig_2 = b5_r18
+	replace industry_orig_2 = int(b5_r18/100) if b5_r18>9999
+	replace industry_orig_2 = int(b5_r18/10) if industry_orig_2>999
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 
