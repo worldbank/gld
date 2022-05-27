@@ -25,7 +25,7 @@
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
-<_ISCO Version_>				N/A </_ISCO Ver UP National_>
+<_ISCO Version_>				ISCO 1968 </_ISCO Ver UP National_>
 <_OCCUP National_>				KBJI 1982 </_OCCUP National_>
 <_ISIC Version_>				N/A </_ISIC Version_>
 <_INDUS National_>				KBLI 1990 </_INDUS National_>
@@ -113,7 +113,7 @@ local output "`id_data'"
 
 
 *<_isco_version_>
-	gen isco_version = ""
+	gen isco_version = "isco_1968"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
@@ -876,26 +876,43 @@ use the two-digit format.
 
 
 *<_occup_orig_>
-	gen occup_orig = .
+	gen occup_orig = b4p10
 	replace occup_orig = . if lstatus!=1
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
 
 *<_occup_isco_>
-	gen occup_isco = ""
+	gen occup_isco = b4p10
+	recode occup_isco (55=5) 
+	replace occup_isco = occup_isco*100
+	tostring occup_isco, replace format(%04.0f)
+	replace occup_isco = "" if occup_isco=="."
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
 
 *<_occup_skill_>
-	gen occup_skill = .
+	gen kji1982 = b4p10
+	merge m:1 kji1982 urban using "`gld'\Work\Mappings.dta", keep (match master) nogen
+	set seed 123
+	gen helper_occup = uniform()
+	gen occup = .
+	replace occup = option_1 if !missing(kji1982) & probs_1 == 1
+	replace occup = option_1 if !missing(kji1982) & probs_1 < 1 & helper_occup <= probs_1 & missing(probs_3)
+	replace occup = option_2 if !missing(kji1982) & probs_1 < 1 & helper_occup > probs_1 & missing(probs_3)
+	replace occup = option_1 if !missing(kji1982) & probs_1 < 1 & helper_occup <= probs_1 & !missing(probs_3)
+	replace occup = option_2 if !missing(kji1982) & probs_1 < 1 & (helper_occup > probs_1 & helper_occup <= (probs_1 + probs_2)) & !missing(probs_3)
+	replace occup = option_3 if !missing(kji1982) & probs_1 < 1 & (helper_occup > (probs_1 + probs_2)) & !missing(probs_3)
+	gen occup_skill = occup
+	recode occup_skill (1/3=3) (4/8=2) (9=1) (0=.)
+	replace occup_skill = . if lstatus!=1
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
 *</_occup_skill_>
 
 
 *<_occup_>
-	gen occup = .
+	*gen occup = .
 	replace occup = . if lstatus!=1
 	label var occup "1 digit occupational classification, primary job 7 day recall"
   	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"

@@ -734,6 +734,8 @@ Labor force participation: 55.04%
 	replace lstatus = 2 if absent=="2" & seeking==1
 	replace lstatus = 3 if absent=="2" & seeking==2
 	replace lstatus = . if age < minlaborage
+	replace lstatus = 2 if seeking==1 & lstatus==.
+	replace lstatus = 3 if seeking==2 & lstatus==.
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus

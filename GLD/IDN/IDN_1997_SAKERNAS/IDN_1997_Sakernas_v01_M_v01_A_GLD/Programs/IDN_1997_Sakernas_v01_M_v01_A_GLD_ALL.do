@@ -25,9 +25,9 @@
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
-<_ISCO Version_>				N/A </_ISCO Ver UP National_>
+<_ISCO Version_>				ISCO 1968 </_ISCO Ver UP National_>
 <_OCCUP National_>				KBJI 1982 </_OCCUP National_>
-<_ISIC Version_>				ISIC N/A </_ISIC Version_>
+<_ISIC Version_>				ISIC Rev.3 </_ISIC Version_>
 <_INDUS National_>				KBLI 1997 </_INDUS National_>
 ---------------------------------------------------------------------------------------
 
@@ -113,13 +113,13 @@ local output "`id_data'"
 
 
 *<_isco_version_>
-	gen isco_version = ""
+	gen isco_version = "isco_1968"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
 
 *<_isic_version_>
-	gen isic_version = ""
+	gen isic_version = "isic_3"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
@@ -848,7 +848,7 @@ of unemployment period.
 
 
 *<_industry_orig_>
-	gen industry_orig = b4p8
+	gen industry_orig = b4p6
 	tostring industry_orig, replace
 	replace industry_orig = "" if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
@@ -857,17 +857,16 @@ of unemployment period.
 
 /*<_industrycat_isic_>
 
-The original industrial classification used in 1997, "b4p8", is KBLI 1997 which is based on ISIC Rev.3 .
+The original industrial classification used in 1997, "b4p6", is supposed to be KBLI 1997 which is based on ISIC Rev.3 .
 
-We do not have any information on translating KBLI 1997 to ISIC. Therefore, we only provided the original 5-digit code here.
+However, in the raw dataset, "b4p6" only has two categories without labels. Since we do not know what these categories represent and they do not match the structure of KBLI1997, following industry mappings were not coded.
 
 <_industrycat_isic_>*/
 
 
 *<_industrycat_isic_>
-	gen industrycat_isic = ""
-	tostring industrycat_isic, replace format(%04.0f)
-	replace industrycat_isic = "" if lstatus!=1
+	gen industrycat_isic = .
+	replace industrycat_isic = . if lstatus!=1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
@@ -896,29 +895,37 @@ We do not have any information on translating KBLI 1997 to ISIC. Therefore, we o
 *</_occup_orig_>
 
 
-/*<_occup_isco_>
-
-Similarly here, the original occupational classification used in 1997, "b4p9", is KBJI 1982 which is based on ISCO 1968.
-
-We do not have any information on translating KBJI 1982 to ISCO. Therefore, we only provided the original code here.
-
-<_occup_isco_>*/
-
-
 *<_occup_isco_>
-	gen occup_isco = ""
+	gen occup_isco = b4p9
+	recode occup_isco (55=5) (65/67=.)
+	replace occup_isco = occup_isco*100
+	tostring occup_isco, replace format(%04.0f)
+	replace occup_isco = "" if occup_isco=="."
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
 
 *<_occup_skill_>
-	gen occup_skill = .
+	gen kji1982 = b4p9
+	merge m:1 kji1982 urban using "`gld'\Work\Mappings.dta", keep (match master) nogen
+	set seed 123
+	gen helper_occup = uniform()
+	gen occup = .
+	replace occup = option_1 if !missing(kji1982) & probs_1 == 1
+	replace occup = option_1 if !missing(kji1982) & probs_1 < 1 & helper_occup <= probs_1 & missing(probs_3)
+	replace occup = option_2 if !missing(kji1982) & probs_1 < 1 & helper_occup > probs_1 & missing(probs_3)
+	replace occup = option_1 if !missing(kji1982) & probs_1 < 1 & helper_occup <= probs_1 & !missing(probs_3)
+	replace occup = option_2 if !missing(kji1982) & probs_1 < 1 & (helper_occup > probs_1 & helper_occup <= (probs_1 + probs_2)) & !missing(probs_3)
+	replace occup = option_3 if !missing(kji1982) & probs_1 < 1 & (helper_occup > (probs_1 + probs_2)) & !missing(probs_3)
+	gen occup_skill = occup
+	recode occup_skill (1/3=3) (4/8=2) (9=1) (0=.)
+	replace occup_skill = . if lstatus!=1
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
 *</_occup_skill_>
 
 
 *<_occup_>
-	gen occup = .
+	*gen occup = .
 	replace occup = . if lstatus!=1
 	replace occup = . if  occup==0
 	label var occup "1 digit occupational classification, primary job 7 day recall"

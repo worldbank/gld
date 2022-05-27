@@ -25,9 +25,9 @@
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
-<_ISCO Version_>				N/A </_ISCO Ver UP National_>
+<_ISCO Version_>				ISCO 1968 </_ISCO Ver UP National_>
 <_OCCUP National_>				KBJI 1982 </_OCCUP National_>
-<_ISIC Version_>				N/A </_ISIC Version_>
+<_ISIC Version_>				ISIC Rev.3 </_ISIC Version_>
 <_INDUS National_>				KBLI 1990 </_INDUS National_>
 -----------------------------------------------------------------------
 
@@ -885,35 +885,43 @@ of unemployment period.
 /*<_industry_orig_>
 
 Variable "b4r8" has the KJI 1982 codes which is the national occupational
-classifications. And this variable is built in the 7-day recall period. But it
-doesn't have value labels.
+classifications. 
 
 Variable "b4r9" has 48 unique values and seems to also follow the KJI 1982
-industrial classifications. This doesn't have value labels either.
-
+industrial classifications. 
 <_industry_orig_>*/
 
 
 *<_industry_orig_>
 	gen industry_orig = b4r9
+	replace industry_orig = . if inlist(b4r9, 38,39,42,43,81,82,83,94,96)
 	tostring industry_orig, replace
+	replace industry_orig = "" if industry_orig=="."
 	replace industry_orig = "" if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
 
 *<_industrycat_isic_>
-	gen industrycat_isic = ""
+	gen industrycat_isic = b4r9
+	replace industrycat_isic=. if inlist(b4r9, 38,39,42,43,81,82,83,94,96)  
+	replace industrycat_isic = industrycat_isic*100
 	tostring industrycat_isic, replace format(%04.0f)
+	replace industrycat_isic = "" if industrycat_isic=="."
 	replace industrycat_isic = "" if lstatus!=1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
 
 *<_industrycat10_>
-	gen byte industrycat10 = .
+	gen industrycat10_str = substr(industrycat_isic, 1, 2)
+	destring industrycat10_str, replace
+	gen byte industrycat10 = industrycat10_str
+	recode industrycat10 (1/5=1) (10/14=2) (15/37=3) (40/41=4) (45=5) (50/55=6) (60/64=7) (65/74=8) (75=9) (75/99=10)
+	replace industrycat10 = . if inlist(b4r9, 38,39,42,43,81,82,83,94,96)
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
+	replace industrycat10 = . if lstatus!=1
 	label values industrycat10 lblindustrycat10
 *</_industrycat10_>
 
@@ -935,19 +943,36 @@ industrial classifications. This doesn't have value labels either.
 
 
 *<_occup_isco_>
-	gen occup_isco = ""
+	gen occup_isco = b4r8
+	recode occup_isco (55=5) 
+	replace occup_isco = occup_isco*100
+	tostring occup_isco, replace format(%04.0f)
+	replace occup_isco = "" if occup_isco=="."
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
 
 *<_occup_skill_>
-	gen occup_skill = .
+	gen kji1982 = b4r8
+	merge m:1 kji1982 urban using "`gld'\Work\Mappings.dta", keep (match master) nogen
+	set seed 123
+	gen helper_occup = uniform()
+	gen occup = .
+	replace occup = option_1 if !missing(kji1982) & probs_1 == 1
+	replace occup = option_1 if !missing(kji1982) & probs_1 < 1 & helper_occup <= probs_1 & missing(probs_3)
+	replace occup = option_2 if !missing(kji1982) & probs_1 < 1 & helper_occup > probs_1 & missing(probs_3)
+	replace occup = option_1 if !missing(kji1982) & probs_1 < 1 & helper_occup <= probs_1 & !missing(probs_3)
+	replace occup = option_2 if !missing(kji1982) & probs_1 < 1 & (helper_occup > probs_1 & helper_occup <= (probs_1 + probs_2)) & !missing(probs_3)
+	replace occup = option_3 if !missing(kji1982) & probs_1 < 1 & (helper_occup > (probs_1 + probs_2)) & !missing(probs_3)
+	gen occup_skill = occup
+	recode occup_skill (1/3=3) (4/8=2) (9=1) (0=.)
+	replace occup_skill = . if lstatus!=1
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
 *</_occup_skill_>
 
 
 *<_occup_>
-	gen occup = .
+	*gen occup = .
 	replace occup = . if lstatus!=1
 	replace occup = . if  occup==0
 	label var occup "1 digit occupational classification, primary job 7 day recall"

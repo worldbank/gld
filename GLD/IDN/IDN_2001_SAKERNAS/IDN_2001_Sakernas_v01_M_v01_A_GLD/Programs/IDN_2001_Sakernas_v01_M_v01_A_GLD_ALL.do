@@ -888,9 +888,14 @@ of unemployment period.
 
 
 *<_industrycat10_>
-	gen byte industrycat10 = .
+	gen industrycat10_str = substr(industrycat_isic, 1, 2)
+	destring industrycat10_str, replace
+	gen byte industrycat10 = industrycat10_str
+	recode industrycat10 (1/5=1) (10/14=2) (15/37=3) (40/41=4) (45=5) (50/55=6) (60/64=7) (65/74=8) (75=9) (75/99=10)
+	replace industrycat10 = 6 if inrange(b4p7, 531, 549)
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
+	replace industrycat10 = . if lstatus!=1
 	label values industrycat10 lblindustrycat10
 *</_industrycat10_>
 
