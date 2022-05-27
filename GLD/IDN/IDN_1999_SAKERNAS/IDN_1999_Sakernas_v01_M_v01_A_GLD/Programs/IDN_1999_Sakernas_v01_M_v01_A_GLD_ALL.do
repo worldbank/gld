@@ -902,6 +902,7 @@ of unemployment period.
 	replace occup = option_2 if !missing(kji1982) & probs_1 < 1 & (helper_occup > probs_1 & helper_occup <= (probs_1 + probs_2)) & !missing(probs_3)
 	replace occup = option_3 if !missing(kji1982) & probs_1 < 1 & (helper_occup > (probs_1 + probs_2)) & !missing(probs_3)
 	gen occup_skill = occup
+	recode occup_skill (1/3=3) (4/8=2) (9=1) (0=.)
 	replace occup_skill = . if lstatus!=1
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
 *</_occup_skill_>
