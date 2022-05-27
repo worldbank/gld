@@ -1,101 +1,62 @@
-# Labor status and labor force participation rate
+# Geographic significance level
 
-This document shows the details of coding `lstatus` for the three groups of years mentioned in the [Introduction to SAKERNAS.](/Support/B%20-%20Country%20Survey%20Details/IDN/SAKERNAS/1.Introduction.to.SAKERNAS.md)
-
-
-## 1989-1999
->The questionnaires of these years follow the same structure and have the same labor force module questions. Simply following the order of the questions can locate all the conditions needed to decide the employed, the unemployed, and non-labor force population.
-
-**Labor module in the questionnaire**
-
-![labor_1989](utilities/labor_1989.png)
-
-Starting from question 4 in this module, question 4, 5 and 6 were used for defining `lstatus==1` *(employed)*. 
-```
-Question 4 = 1: work primarily in the previous week
-Question 5 = 1: work at least 1 hour in the previous week
-Question 6 = 1: have a job but are not temporarily working
-```
-
-Because the questionnaire is designed in such way that people who have job will be led to question 8, question 6 is the minimum requirement for "being employed". Thus `lstatus=2` *(unemployed)* is: 
-```
-Question 6 = 2: people who do not have work
-Question 13 = 1: seeking a job 
-```
-
-In this way, *non-labor force* becomes clear as same answer to question 6 as unemployed yet not seeking a job. 
-
-## 2000-2016
->The labor force module has become more complete and questions are more well-guided during this time period. The Only for Working Household Members block states clearly the requirements for people to answer this block, which is a clear clue to code employed people.
-
-**Labor module in the questionnaire**
-
-![labor_2000](utilities/labor_2000.png)
-
-As shown in the screenshot above, work hours (Q6) is only asked to who are employed. It is stated clearly how the questionnaire defines *employed*, which is consistent with ours for 1989-1999:
-```
-Question 2B = 1: work primarily in the previous week
-Question 3 = 1: work at least 1 hour in the previous week
-Question 4 = 1: have a job but are not temporarily working
-```
-
-Both *unemployed* and *non-labor force* groups do not answer question 6. They only differentiate each other in whether they were seeking a job.
-```
-Question 5 = 1: seeking a job – unemployed / 2: not seeking a job – non-labor force
-```
+This document shows the details of historical change in Indonesia's administrative divisions mentioned in the [Introduction to SAKERNAS.](/Support/B%20-%20Country%20Survey%20Details/IDN/SAKERNAS/1.Introduction.to.SAKERNAS.md)
 
 
-## 2017-2019
->The last three years have the most up-to-date questionnaire structure, which adds details like work environment and welfare. But meanwhile as question block increases and expands, the previous order was discarded and guide becomes blurred. Following the logic of the questionnaire would not produce sound labor force participation rate. We slightly changed the way we coded lstatus so as to get close to the ILO and national estimates.
+## Detailed historical changes to Indonesia's provicnes
 
-**Labor module in the questionnaire**
+Quite a few historical changes happened to administrative divisions in Indonesia during the time period of interest considering the long duration. The provinces and districts in SAKERNAS do not necessarily reflect the real administrative divisions in the same year. For example, in SAKERNAS 1991 and 1993, there are only 24 unique province codes in the raw datasets and only 9 of 24 appear in other years. However, since they are unlabelled, we did not map 1991 and 1993 to other years, meaning all provinces in the table below will not appear in 1991 and 1993. Another example is that 54-Timur Timor (or East Timor) became independent from Indonesia in 2002 but SAKERNAS excludes Timur Timor since 2000. 
 
-![labor_2017](utilities/labor_2017.png)
+One reason is because of the time lag – SAKERNAS might still used the old names and coding for provinces even though the system has been changed. Or on the contrary, SAKERNAS had acted before the change actually happened. The other reason is the lack of information about province names or inconsistent coding of divisions in some years. For our harmonization purpose, we used province names in the last harmonized year, 2019, as the standard version for all years' provinces; and year 2013 for all years' districts. 
 
-Applying the same logic as we did with years before 2017 would produce an extremely high labor force participation over 90%, which does not match the ILO data. Although 2017-2019 does not have a reminder like the one shown in 2000-2016 section, we used another hint – employment status.  
+## Summary
 
-![labor_2017_2](utilities/labor_2017_2.png)
-
-Question 35 was only asked to people whose employment status is not blank.
-
-![employment_status_2017](utilities/employment_status_2017.png)
-
-Thus, our way of defining *employed* for 2017-2019 becomes:
-```
-Question 35 !=0 : have employment status
-```
-
-Following the definition of *employed*, the unemployed would be those without employment status but also seeking work. Seeking work is straightforward according to the questionnaire:
-```
-Question 15a = 1 : searching work in the previous week
-Question 15b = 1 : preparing for a business in the previous week
-Question 21a = 1 : would accept a job if being offered
-```
-
-However, the definition of *unemployed* in the labor force survey report 2015 from ILO is different from ours.
-
-![unemployment_define2015](utilities/unemployment_define2015.png)
-
-This definition interacts with the other question asking about the main reason why not seeking a job or preparing for a business:
-
-![question20_2017](utilities/question20_2017.png)
+1. SAKERNAS is significant at **province** level: 1989-2006 ; siginificant at **district** level: 2007-2019
+2. Number of province changes from 27 in 1989 to 34 in 2019
+3. Year 1991 and year 1993 might use other coding scheme for province. The raw data of these two years only contain 24 unique codes (see the screenshot of 1991 below). without labels. As they are unlabelled, they cannot be fully comprehended and were not mapped to other years. Users who want to have a time series of province are advised to drop 1991 and 1993. 
+   
+![1991_propcodes](https://user-images.githubusercontent.com/84488698/165405147-de058fde-e4e9-47f6-84e7-5c2b219674e9.png)
 
 
-Because in previous years, *"Already having a job, but has not started to work* was classified as *employed*. To maintain consistency with previous years but also cater for the definition in the report, we deem people who have a new business but they have not stsrted yet as unemployed.
-```
-Question 20a = 2 : having a new business but not started yet.
-```
+The table below lists all the 34 provinces in Indonesia since 2015 till now, using their current names and codes:
 
-In terms of *non-labor force*, people left with no labor status would be not in the labor force.
-
-
-## Labor Force Participation Rate Comparison
-
-The labor force participation rate produced for 2014-2017 using the method described above is almost identical to the estimates in the reports of the Indonesian Statistics Office (BPS). The labour force participation estimates of 2014, 2015 and 2016 are the identical to the official reports at on decimal place; 2017 has a difference of 1.9 percentage points.
-
-The comparison among GLD harmonization, WDI, and WB country indicators is as follows:
-
-![lfp_comparison](utilities/lfp_comparison.png)
-
-As the earliest year of WB indicators is 2000, we only compared 2000-2019. The largest gap is 2.9 percentage points. This could be a result of different data sources as well as sample sizes.
+|   **Code**   | **Province** | **Year of Appearance** | **Reason for Exclusion** |
+| :------: | :------: | :-------------: | :-----: | 
+| **11** | **ACEH**         | 1989-1990, 1992, 1994-2019               | 1991 & 1993 unlabelled| 
+| **12** | **SUMATERA UTARA**         |  1989-1990, 1992, 1994-2019            |  1991 & 1993 unlabelled    |
+| **13** | **SUMATERA BARAT**         |  1989-1990, 1992, 1994-2019               |  1991 & 1993 unlabelled | 
+| **14** | **RIAU**         |  1989-1990, 1992, 1994-2019 |  1991 & 1993 unlabelled | 
+| **15** | **JAMBI**         |  1989-1990, 1992, 1994-2019 | 1991 & 1993 unlabelled| 
+| **16** | **SUMATERA SELATAN**         |  1989-1990, 1992, 1994-2019 | 1991 & 1993 unlabelled | 
+| **17** | **BENGKULU**         |  1989-1990, 1992, 1994-2019  |  1991 & 1993 unlabelled| 
+| **18** | **LAMPUNG**         |  1989-1990, 1992, 1994-2019 | 1991 & 1993 unlabelled | 
+| **19** | **KEPULAUAN BANGKA BELITUNG**         |  2001-2019               | Split from SUMATERA SELATAN in 2000     | 
+| **21** | **KEPULAUAN RIAU**         |  2005-2019                | Split from RIAU in 2002  | 
+| **31** | **DKI JAKARTA**         |  1989-1990, 1992, 1994-2019 |  1991 & 1993 unlabelled | 
+| **32** | **JAWA BARAT**         |  1989-1990, 1992, 1994-2019  | 1991 & 1993 unlabelled| 
+| **33** | **JAWA TENGAH**         |  1989-1990, 1992, 1994-2019   |  1991 & 1993 unlabelled|  
+| **34** | **DI YOGYAKARTA**         |  1989-1990, 1992, 1994-2019| 1991 & 1993 unlabelled| 
+| **35** | **JAWA TIMUR**         |  1989-1990, 1992, 1994-2019 |  1991 & 1993 unlabelled| 
+| **36** | **BANTEN**         |  2001-2019               | Split from JAWA BARAT in 2000   | 
+| **51** | **BALI**        |  1989-1990, 1992, 1994-2019               | 1991 & 1993 unlabelled|   
+| **52** | **NUSA TENGGARA BARAT**         |  1989-1990, 1992, 1994-2019               | 1991 & 1993 unlabelled|
+| **53** | **NUSA TENGGARA TIMUR**         |  1989-1990, 1992, 1994-1999               | 1991 & 1993 unlabelled|
+| **54** | **TIMUR TIMOR**         |  1989-1990, 1992, 1994-1999               | Became independent in 2002    | 
+| **61** | **KALIMANTAN BARAT**         |  1989-1990, 1992, 1994-2019             | 1991 & 1993 unlabelled| 
+| **62** | **KALIMANTAN TENGAH**         |  1989-1990, 1992, 1994-2019               | 1991 & 1993 unlabelled| 
+| **63** | **KALIMANTAN SELATAN**         |  1989-1990, 1992, 1994-2019              | 1991 & 1993 unlabelled| 
+| **64** | **KALIMANTAN TIMUR**         |  1989-1990, 1992, 1994-2019               |  1991 & 1993 unlabelled|  
+| **65** | **KALIMANTAN UTARA**         |  2015-2019               | Split from KALIMANTAN TIMUR in 2012  | 
+| **71** | **SULAWESI UTARA**         |  1989-1990, 1992, 1994-2019               | 1991 & 1993 unlabelled |  
+| **72** | **SULAWESI TENGAH**         |  1989-1990, 1992, 1994-2019               | 1991 & 1993 unlabelled | 
+| **73** | **SULAWESI SELATAN**         |  1989-1990, 1992, 1994-2019               | 1991 & 1993 unlabelled |  
+| **74** | **SULAWESI TENGGARA**         |  1989-1990, 1992, 1994-2019               | 1991 & 1993 unlabelled |
+| **75** | **GORONTALO**         |  2001-2019               | Split from SULAWESI UTARA in 2000 |
+| **76** | **SULAWESI BARAT**        |  2006-2019               | Split from SULAWESI SELATAN in 2004   | 
+| **81** | **MALUKU**        |  1989-1990, 1992, 1994-1999，2001-2019               | 1991 & 1993 unlabelled; not surveyed in 2000 | 
+| **82** | **MALUKU UTARA**         |  1989-1990, 1992, 1994-2019               | 1991 & 1993 unlabelled | 
+| **91** | **PAPUA BARAT**         |  2001-2002，2006-2019               | Split from PAPUA in 2003    | 
+| **92** | **IRIAN JAYA TENGAH**         |  2001-2002               | Split from PAPUA in 2003      | 
+| **93** | **Irian JAYA TIMUR**         |  2001-2002               | Split from PAPUA in 2003      |  
+| **94** | **PAPUA**         |  2003-2019              | Not incluided in the survey untill 2003                 | 
 
