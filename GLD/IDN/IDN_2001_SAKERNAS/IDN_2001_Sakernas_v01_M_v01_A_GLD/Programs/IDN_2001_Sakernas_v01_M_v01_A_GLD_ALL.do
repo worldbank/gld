@@ -25,9 +25,9 @@
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
-<_ISCO Version_>				N/A </_ISCO Ver UP National_>
+<_ISCO Version_>				ISCO 1968 </_ISCO Ver UP National_>
 <_OCCUP National_>				KBJI 1982 </_OCCUP National_>
-<_ISIC Version_>				ISIC N/A </_ISIC Version_>
+<_ISIC Version_>				ISIC Rev.3 </_ISIC Version_>
 <_INDUS National_>				KBLI 2000 </_INDUS National_>
 ---------------------------------------------------------------------------------------
 
@@ -113,13 +113,13 @@ local output "`id_data'"
 
 
 *<_isco_version_>
-	gen isco_version = ""
+	gen isco_version = "isco_1968"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
 
 *<_isic_version_>
-	gen isic_version = ""
+	gen isic_version = "isic_3"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
@@ -869,24 +869,19 @@ of unemployment period.
 
 *<_industry_orig_>
 	gen industry_orig = b4p7
+	replace industry_orig = int(b4p7/100) if b4p7>9999
+	replace industry_orig = int(b4p7/10) if industry_orig>999
 	tostring industry_orig, replace
 	replace industry_orig = "" if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
 
-/*<_industrycat_isic_>
-
-The original industrial classification used in 2001, "b4p7", is KBLI 2000 which is based on ISIC Rev.3 .
-
-We do not have any information on translating KBLI 2000 to ISIC. Therefore, we only provided the original 5-digit code here.
-
-<_industrycat_isic_>*/
-
-
 *<_industrycat_isic_>
-	gen industrycat_isic = ""
-	tostring industrycat_isic, replace format(%02.0f)
+	gen industrycat_isic = b4p7
+	recode industrycat_isic (101 102=100) (174=170) (262/266=260) (531/549 000 268 625=.) (631/639=630) (703=700)
+	replace industrycat_isic = industrycat_isic*10
+	tostring industrycat_isic, replace format(%04.0f)
 	replace industrycat_isic = "" if lstatus!=1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
@@ -911,34 +906,49 @@ We do not have any information on translating KBLI 2000 to ISIC. Therefore, we o
 
 *<_occup_orig_>
 	gen occup_orig = b4p8
+	replace occup_orig = int(b4p8/10) if b4p8>999
 	replace occup_orig=. if lstatus!=1
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
 
-/*<_occup_isco_>
-
-Similarly here, the original occupational classification used in 2001, "b4p8", is KBJI 1982 which is based on ISCO 1968.
-
-We do not have any information on translating KBJI 1982 to ISCO. Therefore, we only provided the original 4-digit code here.
-
-<_occup_isco_>*/
-
-
 *<_occup_isco_>
-	gen occup_isco = ""
+	gen occup_isco = b4p8
+	recode occup_isco (55=5) (123=129) (133=132) (134=133) (135=134) (136=139) (137=135) (142/145=141) (152 153=159) (169=160) (176 177=179) (213/217=219) (323/329=320) (332/333=339) (349=340) (352 353=359) (354 355=352) (371 372=370) (442/443=441) (444=442) (445=443) (593=599) (613=610) (632=630) (633=632) (642/646=641) (721/729=720) (739=730) (757=759) (911=910) (932=939) (944/946=949) (987=989) 
+	replace occup_isco = occup_isco*10 if occup_isco>9
+	replace occup_isco = occup_isco*100 if occup_isco<10
+	tostring occup_isco, replace format(%04.0f)
+	replace occup_isco = "" if b4p8==409
+	replace occup_isco = "" if b4p8==138
+	replace occup_isco = "" if inrange(b4p8, 491, 498)
+	replace occup_isco = "" if inrange(b4p8, 647, 648)
+	decode b4p8, gen(label_copy)
+	replace occup_isco = "" if label_copy==""
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
 
 *<_occup_skill_>
-	gen occup_skill = .
+	gen kji1982 = b4p8
+	merge m:1 kji1982 urban using "`gld'\Work\Mappings.dta", keep (match master) nogen
+	set seed 123
+	gen helper_occup = uniform()
+	gen occup = .
+	replace occup = option_1 if !missing(kji1982) & probs_1 == 1
+	replace occup = option_1 if !missing(kji1982) & probs_1 < 1 & helper_occup <= probs_1 & missing(probs_3)
+	replace occup = option_2 if !missing(kji1982) & probs_1 < 1 & helper_occup > probs_1 & missing(probs_3)
+	replace occup = option_1 if !missing(kji1982) & probs_1 < 1 & helper_occup <= probs_1 & !missing(probs_3)
+	replace occup = option_2 if !missing(kji1982) & probs_1 < 1 & (helper_occup > probs_1 & helper_occup <= (probs_1 + probs_2)) & !missing(probs_3)
+	replace occup = option_3 if !missing(kji1982) & probs_1 < 1 & (helper_occup > (probs_1 + probs_2)) & !missing(probs_3)
+	gen occup_skill = occup
+	recode occup_skill (1/3=3) (4/8=2) (9=1) (0=.)
+	replace occup_skill = . if lstatus!=1
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
 *</_occup_skill_>
 
 
 *<_occup_>
-	gen occup = .
+	*gen occup = .
 	replace occup = . if lstatus!=1
 	replace occup = . if  occup==0
 	label var occup "1 digit occupational classification, primary job 7 day recall"
