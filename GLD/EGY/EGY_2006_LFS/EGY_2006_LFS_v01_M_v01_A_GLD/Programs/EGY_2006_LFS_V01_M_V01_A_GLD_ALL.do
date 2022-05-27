@@ -1083,16 +1083,9 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_>
-*isco 68
-	/*gen occ_helper=floor(occ_unrec/100)
-	recode occ_helper 2=21
-	tostring occ_helper, replace
-	gen occup_isco=occ_helper + substr("0000", 1, 4 - length(occ_helper))*/
-	/*gen occup_isco=occ_unrec
-	tostring occup_isco, replace force*/
+	* Occ unrec does not align with ISCO 88 and we have no correspondence table.
+	* Thus occup is left missing
 	gen occup_isco=.
-	*replace occup_isco="" if occup_isco=="."
-	*drop occ_helper
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
