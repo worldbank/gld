@@ -7,8 +7,8 @@ This document describes the methodology used to map national industrial and occu
 
 | **Version of KBJI**	| **Corresponding ISCO**	| 
 | :-----------------------:	| :-------:	| 
-| [1982](utilities/KBLI-1982.pdf)  | ISCO 1968| 
-| [2002](utilities/KBLI-2002.pdf)  | ISCO 1988| 
+| [1982](utilities/KBJI-1982.pdf)  | ISCO 1968| 
+| [2002](utilities/KBJI-2002.pdf)  | ISCO 1988| 
 
 |**Version of KBLI**	| **Corresponding ISIC**	|
 | :-----------------: |:-----------------------:|	 	 
