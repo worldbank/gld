@@ -197,3 +197,6 @@ KBJI-1982 was used for most of the years as it constantly exists in the harmoniz
 | 911 | Paper- and paperboard-products makers | 910 | Paper and paperboard products makers |
 | 932 | Vehicle painters | 939 | Painters not elsewhere classified |
 | 944 | Wood-curving-processing and related workers | 949 | Other production and related workers |
+| 945 | Bamboo-processing workers | 949 | Other production and related workers |
+| 946 | Rattan-processing workers | 949 | Other production and related workers |
+| 987 | Rickshaws and pedal vehicle drivers | 989 | Transport equipment operators not elsewhere classified |
