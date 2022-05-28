@@ -1,14 +1,50 @@
 # Correspondences between national and international classifications
 
-This document describes the methodology used to map KBLI-2015 and KBLI-2009 to *International Standard Industrial Classification of all Economic Activities (ISIC Rev. 4)*. As described in the [introduction to SAKERNAS](1.%20Introduction%20to%20SAKERNAS.md), other versions of KBLI either do not have official guidebooks or they are unable to communicate with their ISIC counterparts. As for occupation codes, we currently do not have sufficient information on KBJI code table. Thus we only describe the KBLI-2015 and KBLI-2009, the two national industrial classifications we mapped for GLD harmonization here.
+This document describes the methodology used to map national industrial and occupational codes to their international counterparts. For industry, five versions of national classification, *Klasifikasi Baku Lapangan Usaha Indonesia (KBLI)*, were mapped to two versions of *International Standard Industrial Classification of all Economic Activities (ISIC)*; regarding occupation, two versions of national classification, *Klasifikasi Baku Jenis Pekerjaan Indonesia (KBJI)*, were mapped to two versions of *International Standard Classification of Occupations (ISCO)*. Specific versions mapped for each year harmonized are summarized in the table below along with internal links to the docs.
 
+![mapping_summary](utilities/mapping_summary.png)
+
+
+| **Version of KBJI**	| **Corresponding ISCO**	| 
+| :-----------------------:	| :-------:	| 
+| [1982](utilities/KBLI-1982)  | ISCO 1968| 
+| [2002](utilities/KBLI-2002)  | ISCO 1988| 
+
+|**Version of KBLI**	| **Corresponding ISIC**	|
+| :-----------------: |:-----------------------:|	 	 
+| [1997](utilities/KBLI-1997) | ISIC Rev.3| 
+| [2000](utilities/KBLI-2000) | ISIC Rev.3|
+| [2005](utilities/KBLI-2005) | ISIC Rev.3|
+| [2009](utilities/KBLI-2009) | ISIC Rev.4|
+| [2015](utilities/KBLI-2015) | ISIC Rev.4|
+
+In general, we only mapped 1994-2018 as earlier years like 1989-1993 do not have two-digit industrial or occupational codes; and recent year, 2019, only has one-digit variables which directly corresponds to the top level of ISIC/ISCO.
 
 *(We will update this documentation along with IDN GLD if we get more information on correspondence tables for KBJI and KBLI in the future. Please feel free to contact the GLD focal point (gld@worldbank.org) if you know anything that might help map Indonesia's industrial or occupational codes. Thanks!)*
 
 
 ## Correspondence in industry classification
 
-The official documentation of KBLI-2015 can be found [here.](utilities/KBLI-2015.pdf) This documentation is only available in Indonesian. But it has a complete correspondence table with ISIC Rev.4 showing all the differences (see the picture below) and another one compared to KBLI-2009 from which KBLI-2015 was adapted.
+**KBLI 2000 to ISIC Rev.3**
+
+
+**KBLI 2005 to ISIC Rev.3**
+
+The KBLI-2005 document is in Indonesian but it compares not only between KBLI 2005 and ISIC Rev.3 but also between KBLI-2005 and KBLI-2009. KBLI-2005 has the same structure as ISIC Rev.3, which has 15 major groups. The differences between KBLI-2005 and ISIC Rev.3 at two-digit level are very minor. Here is a short list showing the differences when mapping at two-digit level. The full correspondence table is [here](utilities/Industry correspondences.xlsx) with an English version of KBLI-2005 translated by online software.
+
+| **KBLI-2005 Code**	| **KBLI-2005 Industry**	| **ISIC Rev.3 Code**	| **ISIC Rev.3 Industry**	|
+| :-----------------------:	| :---------------------------:	| :-------------:|:----------------:|	 	
+| 52 | Retail trade, except cars and motorcycles             | 52 |  Retail trade, except of motor vehicles and motorcycles; repair of personal and household goods |
+| 53 | Export trade, except for trade in cars and motorcycles| 52 |  Retail trade, except of motor vehicles and motorcycles; repair of personal and household goods |
+| 54 | Import trade, except car and motorcycle trade         | 52 |  Retail trade, except of motor vehicles and motorcycles; repair of personal and household goods|
+| 00 | Activities that has no clear boundaries               | -  |  (Coded missing)|
+
+
+**KBLI 2009 & KBLI 2015 to ISIC Rev.4**
+
+
+The KBLI-2015 document in the summary table above is only available in Indonesian. But it has a complete correspondence table with ISIC Rev.4 showing all the differences (see the picture below) and another one compared to KBLI-2009 from which KBLI-2015 was adapted. Here are the differences between the two classifications.
+
 
 **Example of the correspondence between KBLI-2015 and ISIC Rev.4**
 
