@@ -4,7 +4,7 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				IDN_1996_Sakernas_v01_M_v01_A_GLD.do </_Program name_>
+<_Program name_>				IDN_1996_Sakernas_v01_M_v02_A_GLD.do </_Program name_>
 <_Application_>					Stata MP 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
 <_Date created_>				2021-07-30 </_Date created_>
@@ -60,8 +60,8 @@ local 	surv_yr `"1996"'
 local 	year 	"`drive':\GLD-Harmonization\\`usr'\\`cty'\\`cty'_`surv_yr'_Sakernas"
 local 	main	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M"
 local 	stata	"`main'\data\stata"
-local 	gld 	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M_v01_A_GLD"
-local 	i2d2	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M_v01_A_I2D2"
+local 	gld 	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M_v02_A_GLD"
+local 	i2d2	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M_v02_A_I2D2"
 local 	code 	"`gld'\Programs"
 local 	id_data "`gld'\Data\Harmonized"
 
@@ -131,7 +131,7 @@ local output "`id_data'"
 
 
 *<_vermast_>
-	gen vermast = "v01"
+	gen vermast = "v02"
 	label var vermast "Version of master data"
 *</_vermast_>
 
@@ -885,10 +885,10 @@ of unemployment period.
 /*<_industry_orig_>
 
 Variable "b4r8" has the KJI 1982 codes which is the national occupational
-classifications. 
+classifications.
 
 Variable "b4r9" has 48 unique values and seems to also follow the KJI 1982
-industrial classifications. 
+industrial classifications.
 <_industry_orig_>*/
 
 
@@ -904,7 +904,7 @@ industrial classifications.
 
 *<_industrycat_isic_>
 	gen industrycat_isic = b4r9
-	replace industrycat_isic=. if inlist(b4r9, 38,39,42,43,81,82,83,94,96)  
+	replace industrycat_isic=. if inlist(b4r9, 38,39,42,43,81,82,83,94,96)
 	replace industrycat_isic = industrycat_isic*100
 	tostring industrycat_isic, replace format(%04.0f)
 	replace industrycat_isic = "" if industrycat_isic=="."
@@ -944,7 +944,7 @@ industrial classifications.
 
 *<_occup_isco_>
 	gen occup_isco = b4r8
-	recode occup_isco (55=5) 
+	recode occup_isco (55=5)
 	replace occup_isco = occup_isco*100
 	tostring occup_isco, replace format(%04.0f)
 	replace occup_isco = "" if occup_isco=="."
@@ -1748,6 +1748,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`output'\IDN_1996_SAKERNAS_v01_M_v01_A_GLD_ALL.dta", replace
+save "`output'\IDN_1996_SAKERNAS_v01_M_v02_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>

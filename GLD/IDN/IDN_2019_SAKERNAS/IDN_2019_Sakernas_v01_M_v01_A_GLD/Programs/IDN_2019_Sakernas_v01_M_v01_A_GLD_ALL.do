@@ -4,7 +4,7 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				IDN_2019_Sakernas_v01_M_v01_A_GLD.do </_Program name_>
+<_Program name_>				IDN_2019_Sakernas_v01_M_v02_A_GLD.do </_Program name_>
 <_Application_>					Stata MP 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
 <_Date created_>				2021-08-23 </_Date created_>
@@ -60,8 +60,8 @@ local 	surv_yr `"2019"'
 local 	year 	"`drive':\GLD-Harmonization\\`usr'\\`cty'\\`cty'_`surv_yr'_Sakernas"
 local 	main	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M"
 local 	stata	"`main'\data\stata"
-local 	gld 	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M_v01_A_GLD"
-local 	i2d2	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M_v01_A_I2D2"
+local 	gld 	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M_v02_A_GLD"
+local 	i2d2	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M_v02_A_I2D2"
 local 	code 	"`gld'\Programs"
 local 	id_data "`gld'\Data\Harmonized"
 
@@ -131,7 +131,7 @@ local output "`id_data'"
 
 
 *<_vermast_>
-	gen vermast = "v01"
+	gen vermast = "v02"
 	label var vermast "Version of master data"
 *</_vermast_>
 
@@ -841,7 +841,7 @@ was not mapped to ISIC.
 
 *<_industrycat10_>
 	gen byte industrycat10 = .
-	recode industrycat10 (5=4) (6=5) (7 9=6) (8 10=7) (11 12 13=8) (14=9) (15 16 17=10) (0=.) 
+	recode industrycat10 (5=4) (6=5) (7 9=6) (8 10=7) (11 12 13=8) (14=9) (15 16 17=10) (0=.)
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	replace industrycat10 = . if lstatus!=1
@@ -930,8 +930,8 @@ Each of these two variables devides into "in cash" and "in-kind". For each obser
 
 *<_whours_>
 	gen whours= B5_R23A
-	replace whours = . if lstatus!=1 
-	replace whours = . if B5_R23A == 0 
+	replace whours = . if lstatus!=1
+	replace whours = . if B5_R23A == 0
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -1674,6 +1674,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`output'\IDN_2019_SAKERNAS_v01_M_v01_A_GLD_ALL.dta", replace
+save "`output'\IDN_2019_SAKERNAS_v01_M_v02_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>

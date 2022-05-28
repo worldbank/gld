@@ -4,7 +4,7 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				IDN_2010_Sakernas_v01_M_v01_A_GLD.do </_Program name_>
+<_Program name_>				IDN_2010_Sakernas_v01_M_v02_A_GLD.do </_Program name_>
 <_Application_>					Stata MP 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
 <_Date created_>				2021-08-18 </_Date created_>
@@ -60,8 +60,8 @@ local 	surv_yr `"2010"'
 local 	year 	"`drive':\GLD-Harmonization\\`usr'\\`cty'\\`cty'_`surv_yr'_Sakernas"
 local 	main	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M"
 local 	stata	"`main'\data\stata"
-local 	gld 	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M_v01_A_GLD"
-local 	i2d2	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M_v01_A_I2D2"
+local 	gld 	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M_v02_A_GLD"
+local 	i2d2	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M_v02_A_I2D2"
 local 	code 	"`gld'\Programs"
 local 	id_data "`gld'\Data\Harmonized"
 
@@ -131,7 +131,7 @@ local output "`id_data'"
 
 
 *<_vermast_>
-	gen vermast = "v01"
+	gen vermast = "v02"
 	label var vermast "Version of master data"
 *</_vermast_>
 
@@ -844,8 +844,8 @@ of unemployment period.
 
 
 *<_industrycat_isic_>
-	tostring b5p7, gen(b5p7_str) format(%05.0f) 
-	gen industrycat_isic2 = substr(b5p7_str, 1, 2) 
+	tostring b5p7, gen(b5p7_str) format(%05.0f)
+	gen industrycat_isic2 = substr(b5p7_str, 1, 2)
 	destring industrycat_isic2, gen (industrycat_num)
 	replace industrycat_num = 52 if industrycat_num==53|industrycat_num==54
 	gen industrycat_isic = industrycat_num*100
@@ -876,7 +876,7 @@ of unemployment period.
 
 *<_occup_orig_>
 	gen occup_orig = b5p8
-	replace occup_orig = int(b5p8/10) if b5p8>999 
+	replace occup_orig = int(b5p8/10) if b5p8>999
 	replace occup_orig = . if lstatus!=1
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
@@ -1687,6 +1687,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`output'\IDN_2010_SAKERNAS_v01_M_v01_A_GLD_ALL.dta", replace
+save "`output'\IDN_2010_SAKERNAS_v01_M_v02_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>

@@ -6,7 +6,7 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				IDN_2000_Sakernas_v01_M_v01_A_GLD.do </_Program name_>
+<_Program name_>				IDN_2000_Sakernas_v01_M_v02_A_GLD.do </_Program name_>
 <_Application_>					Stata MP 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
 <_Date created_>				2021-08-18 </_Date created_>
@@ -62,8 +62,8 @@ local 	surv_yr `"2000"'
 local 	year 	"`drive':\GLD-Harmonization\\`usr'\\`cty'\\`cty'_`surv_yr'_Sakernas"
 local 	main	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M"
 local 	stata	"`main'\data\stata"
-local 	gld 	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M_v01_A_GLD"
-local 	i2d2	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M_v01_A_I2D2"
+local 	gld 	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M_v02_A_GLD"
+local 	i2d2	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M_v02_A_I2D2"
 local 	code 	"`gld'\Programs"
 local 	id_data "`gld'\Data\Harmonized"
 
@@ -133,7 +133,7 @@ local output "`id_data'"
 
 
 *<_vermast_>
-	gen vermast = "v01"
+	gen vermast = "v02"
 	label var vermast "Version of master data"
 *</_vermast_>
 
@@ -901,7 +901,7 @@ of unemployment period.
 
 *<_occup_isco_>
 	gen occup_isco = b4p8
-	recode occup_isco (55=5) (123=129) (133=132) (134=133) (135=134) (136=139) (137=135) (142/145=141) (152 153=159) (169=160) (176 177=179) (213/217=219) (323/329=320) (332/333=339) (349=340) (352 353=359) (354 355=352) (371 372=370) (442/443=441) (444=442) (445=443) (593=599) (613=610) (632=630) (633=632) (642/646=641) (721/729=720) (739=730) (757=759) (911=910) (932=939) (944/946=949) (987=989) 
+	recode occup_isco (55=5) (123=129) (133=132) (134=133) (135=134) (136=139) (137=135) (142/145=141) (152 153=159) (169=160) (176 177=179) (213/217=219) (323/329=320) (332/333=339) (349=340) (352 353=359) (354 355=352) (371 372=370) (442/443=441) (444=442) (445=443) (593=599) (613=610) (632=630) (633=632) (642/646=641) (721/729=720) (739=730) (757=759) (911=910) (932=939) (944/946=949) (987=989)
 	replace occup_isco = occup_isco*10 if occup_isco>9
 	replace occup_isco = occup_isco*100 if occup_isco<10
 	tostring occup_isco, replace format(%04.0f)
@@ -1723,6 +1723,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`output'\IDN_2000_SAKERNAS_v01_M_v01_A_GLD_ALL.dta", replace
+save "`output'\IDN_2000_SAKERNAS_v01_M_v02_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>

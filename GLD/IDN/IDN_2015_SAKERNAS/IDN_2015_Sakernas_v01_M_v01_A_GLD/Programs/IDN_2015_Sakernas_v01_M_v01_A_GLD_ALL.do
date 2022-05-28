@@ -4,7 +4,7 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				IDN_2015_Sakernas_v01_M_v01_A_GLD.do </_Program name_>
+<_Program name_>				IDN_2015_Sakernas_v01_M_v02_A_GLD.do </_Program name_>
 <_Application_>					Stata MP 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
 <_Date created_>				2021-08-18 </_Date created_>
@@ -60,8 +60,8 @@ local 	surv_yr `"2015"'
 local 	year 	"`drive':\GLD-Harmonization\\`usr'\\`cty'\\`cty'_`surv_yr'_Sakernas"
 local 	main	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M"
 local 	stata	"`main'\data\stata"
-local 	gld 	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M_v01_A_GLD"
-local 	i2d2	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M_v01_A_I2D2"
+local 	gld 	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M_v02_A_GLD"
+local 	i2d2	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M_v02_A_I2D2"
 local 	code 	"`gld'\Programs"
 local 	id_data "`gld'\Data\Harmonized"
 
@@ -131,7 +131,7 @@ local output "`id_data'"
 
 
 *<_vermast_>
-	gen vermast = "v01"
+	gen vermast = "v02"
 	label var vermast "Version of master data"
 *</_vermast_>
 
@@ -846,7 +846,7 @@ Moreover, most cases are that people only have kbli2009_2 while they do not have
 
 *<_industrycat10_>
 	gen byte industrycat10 = kbli2009_2
-	recode industrycat10 (1/3=1) (5/9=2) (10/33=3) (35/39=4) (41/43=5) (45/47 55/56=6) (49/53 58/63=7) (64/82=8) (84=9) (0 85/99=10) 
+	recode industrycat10 (1/3=1) (5/9=2) (10/33=3) (35/39=4) (41/43=5) (45/47 55/56=6) (49/53 58/63=7) (64/82=8) (84=9) (0 85/99=10)
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	replace industrycat10 = . if lstatus!=1
@@ -872,7 +872,7 @@ Moreover, most cases are that people only have kbli2009_2 while they do not have
 
 *<_occup_isco_>
 	gen occup_isco = kji1982
-	recode occup_isco (55=5) (123=129) (133=132) (134=133) (135=134) (136=139) (137=135) (142/145=141) (152 153=159) (169=160) (176 177=179) (213/217=219) (323/324=320) (332/333=339) (349=340) (352 353=359) (354 355=352) (371 372=370) (442/443=441) (444=442) (445=443) (593=599) (613=610) (632=630) (633=632) (642/646=641) (721/729=720) (739=730) (757=759) (911=910) (932=939) (944/946=949) (987=989) 
+	recode occup_isco (55=5) (123=129) (133=132) (134=133) (135=134) (136=139) (137=135) (142/145=141) (152 153=159) (169=160) (176 177=179) (213/217=219) (323/324=320) (332/333=339) (349=340) (352 353=359) (354 355=352) (371 372=370) (442/443=441) (444=442) (445=443) (593=599) (613=610) (632=630) (633=632) (642/646=641) (721/729=720) (739=730) (757=759) (911=910) (932=939) (944/946=949) (987=989)
 	replace occup_isco = occup_isco*10 if kji1982>9
 	replace occup_isco = occup_isco*100 if kji1982<10
 	tostring occup_isco, replace format(%04.0f)
@@ -1044,7 +1044,7 @@ We do not have information on the employment status of the main additional job. 
 
 *<_industrycat_isic_2_>
 	gen industrycat_isic_2 = int(b5_r18/100)
-	replace industrycat_isic_2 = industrycat_isic_2*10 
+	replace industrycat_isic_2 = industrycat_isic_2*10
 	tostring industrycat_isic_2, replace format(%04.0f)
 	gen kbli2 = int(b5_r18/100)
 	gen kbli4 = int(b5_r18/10)
@@ -1061,7 +1061,7 @@ We do not have information on the employment status of the main additional job. 
 *<_industrycat10_2_>
 	gen industrycat10_2 = substr(industrycat_isic_2, 1, 2)
 	destring industrycat10_2, replace
-	recode industrycat10_2 (1/3=1) (5/9=2) (10/33=3) (35/39=4) (41/43=5) (45/47 55/56=6) (49/53 58/63=7) (64/82=8) (84=9) (0 85/99=10) 
+	recode industrycat10_2 (1/3=1) (5/9=2) (10/33=3) (35/39=4) (41/43=5) (45/47 55/56=6) (49/53 58/63=7) (64/82=8) (84=9) (0 85/99=10)
 	replace industrycat10_2 = . if b5_r17!=1
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
@@ -1674,6 +1674,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`output'\IDN_2015_SAKERNAS_v01_M_v01_A_GLD_ALL.dta", replace
+save "`output'\IDN_2015_SAKERNAS_v01_M_v02_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>
