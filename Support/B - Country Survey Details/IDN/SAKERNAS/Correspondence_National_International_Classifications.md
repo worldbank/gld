@@ -200,3 +200,9 @@ KBJI-1982 was used for most of the years as it constantly exists in the harmoniz
 | 945 | Bamboo-processing workers | 949 | Other production and related workers |
 | 946 | Rattan-processing workers | 949 | Other production and related workers |
 | 987 | Rickshaws and pedal vehicle drivers | 989 | Transport equipment operators not elsewhere classified |
+
+**KBJI 2002 to ISCO 1988**
+
+Same as ISCO 1988, KBJI-2002 also has 0 to 9, 10 major groups in total. At three-digit level, only category 2 "Professionals", categroy 3 "Technicians and associate professionals", and category 0 "Armed forces" have different numbers of subgroups. KBJI-2002 has 19 whereas ISCO has 18 in category 2; and KBJI has 19 compared to 21 in ISCO's category 3; and 5 in KBJI category 0 versus 1 in ISCO. Therefore, we only recoded subgroups in "Professionals", "Technicians and associate professionals", and "Armed forces". 
+
+![mapping_KBJI02_ISCO](utilities/correspondence_KBJI2002_ISCO88.png)
