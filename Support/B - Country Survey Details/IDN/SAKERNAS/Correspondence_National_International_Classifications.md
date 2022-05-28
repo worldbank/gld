@@ -136,4 +136,64 @@ Balancing between the level of precision and difficulty of mapping, we mapped KB
 
 **KBLJI 1982 to ISCO 1968**
 
-KBJI1982 was used for most of the years as it constantly exists in the harmonized years with three digits. In terms of structure, it categorizes occupations in the same way as ISCO 1968 does. Similar to industry correspondence described above, KBJI 1982 sometimes has more subcategories than ISCO 1968. Therefore, the mapping work mainly refers to mapping additional KBJI subcategories to broader, more general subcategories in ISCO 1968. The table below shows the differences between the two classifications and how they were mapped.   
+KBJI-1982 was used for most of the years as it constantly exists in the harmonized years with three digits. In terms of structure, it categorizes occupations in the same way as ISCO-1968 does. Similar to industry correspondence described above, several categories in KBJI-1982 have more subcategories than ISCO-1968's, which requests a good number of recoding. Therefore, the mapping work mainly refers to mapping additional KBJI subcategories to broader, more general subcategories in ISCO-1968. The table below shows the differences between the two classifications and how they were mapped.   
+
+| **KBLI-1982 Code**	| **KBLI-1982 Industry**	| **ISCO 1968 Code**	| **ISCO 1968 Industry**	|
+| :-----------------------:	| :---------------------------:	| :-------------:|:----------------:|	 	
+| 055 | Life science technicians | 05 | Life scientists and related technicians |
+| 123 | Attorney| 129 | Jurists not elsewhere classified |
+| 133 | Junior secondary school teaching professionals  | 132 |Secondary education teachers |
+| 134 | Primary school teaching professionals| 133 | Primary education teachers |
+| 135 | Preschool teaching professionals | 134 | Pre-primary education teachers |
+| 136 | Non-formal education teaching professionals | 139 | Manufacture of other non-metallic mineral products |
+| 137 | Special education teaching professionals | 135 | Special education teachers |
+| 142 | Christian-Protestant pastor and other associate professionals | 140 | workers in religion|
+| 143 | Christian-Catholic priest and other associate professionals | 140 | workers in religion|
+| 144 | Monks and other associate professionals in Buddhism religion | 140 | workers in religion|
+| 145 | Pastor/ Pedanda and other associate professionals in Hinduism religion | 140 | workers in religion|
+| 153 | Editors, writers and other not elsewhere classified | 150 | Authors, journalists and related writers|
+| 169 | Others not elsewhere classified | 160 | Sculptors, painters, photographers and related creative artists
+| 176 | Puppeteers, gamelan players and other associate artists | 179 | Performing artists not elsewhere classified |
+| 177 | Protocols, broadcasters and associate professionals | 179 | Performing artists not elsewhere classified |
+| 213 | Marketing Manager | 219 | Managers not elsewhere classified |
+| 215 | Administration Manager | 219 | Managers not elsewhere classified |
+| 216 | Personnel Manager | 219 | Managers not elsewhere classified |
+| 217 | Manager of research and development | 219 | Managers not elsewhere classified |
+| 323 | Telex clerks | 320 | Stenographers, typists and card- and tape-punching machine operators|
+| 324 | Other stenographer, typist, and telex clerk not elsewhere classified | 320 | stenographers, typists and card- and tape-punching machine operators |
+| 332 | Cashiers | 331 | Bookkeepers and cashiers |
+| 333 | Treasurers | 339 | Bookkeepers, cashiers and related workers not elsewhere classified |
+| 349 | Calculating machine operators and data processors not elsewhere classified | 340 | Computing machine operators |
+| 352 | Head of ports | 359 | Transport and communications supervisors not elsewhere classified |
+| 353 | Head of Airport | 359 | Transport and communications supervisors not elsewhere classified |
+| 354 | Head of postal and giro office | 352 | Postmasters |
+| 355 | Head of telephone and telegraph office | 352 | Postmasters |
+| 371 | Letter deliverers | 370 | Mail distribution clerks |
+| 372 | Other cargo distribution workers | 370 | Mail distribution clerks |
+| 442 | Salesperson for building and land rental | 441 | Insurance, real estate and securities salesmen |
+| 443 | Salesperson for bonds | 441 | Insurance, real estate and securities salesmen |
+| 444 | Salesperson for corporate service | 442 | Business services salesmen |
+| 445 | Auctioneer and appraisers | 443 | Auctioneers |
+| 593 | Health service personnel | 599 | Other service workers |
+| 613 | Breeders | 610 | Farmers |
+| 632 | Forestry business workers | 630 | Forestry workers |
+| 633 | Forest products seekers (except wood) | 632 | Forestry workers (except logging) |
+| 642 | Inland waters fish catching workers | 641 | Fishermen |
+| 643 | Marine fish cultivation workers | 641 | Fishermen |
+| 644 | Marine fish catching workers (except the ship captain and crews) | 641 | Fishermen |
+| 645 | Sea-product seekers (except fish) | 641 | Fishermen |
+| 646 | Hunters | 641 | Fishermen |
+| 721 | Main metal melting and refining operators | 720 | Metal processers |
+| 722 | Metal grinding operators (metal grinding machine operators) | 720 | Metal processers |
+| 723 | Metal metal melting and refining operators | 720 | Metal processers |
+| 724 | Metal melting operators | 720 | Metal processers |
+| 725 | Metal melting makers | 720 | Metal processers |
+| 726 | Thermostat and metal hardening operators | 720 | Metal processers |
+| 727 | Wire and pipe makers | 720 | Metal processers 
+| 728 | Metal coating workers | 720 | Metal processers |
+| 729 | Other metal processing workers not elsewhere classified | 720 | Metal processers |
+| 739 | Other wood processing-, papermaking-, bamboo processing, rattan-processing not elsewhere classified | 730 | Wood preparation workers and paper makers |
+| 757 | Batik makers | 759 | Spinners, weavers, knitters, dyers and related workers not elsewhere classified |
+| 911 | Paper- and paperboard-products makers | 910 | Paper and paperboard products makers |
+| 932 | Vehicle painters | 939 | Painters not elsewhere classified |
+| 944 | Wood-curving-processing and related workers | 949 | Other production and related workers |
