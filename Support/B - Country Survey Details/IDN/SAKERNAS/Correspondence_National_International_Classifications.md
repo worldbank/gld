@@ -18,7 +18,10 @@ This document describes the methodology used to map national industrial and occu
 | [2009](utilities/KBLI-2009) | ISIC Rev.4|
 | [2015](utilities/KBLI-2015) | ISIC Rev.4|
 
-In general, we only mapped 1994-2018 as earlier years like 1989-1993 do not have two-digit industrial or occupational codes; and recent year, 2019, only has one-digit variables which directly corresponds to the top level of ISIC/ISCO.
+In general, we only mapped 1994-2018 as earlier years like 1989-1993 do not have two-digit industrial or occupational codes; and recent year, 2019, only has one-digit variables which directly corresponds to the top level of ISIC/ISCO. 
+
+Years between 2011 and 2015 have multiple variables using different versions of KBJI and KBLI at different digital levels. The dicision rule for choosing one version is *the newest version with at least two digits*.
+
 
 *(We will update this documentation along with IDN GLD if we get more information on correspondence tables for KBJI and KBLI in the future. Please feel free to contact the GLD focal point (gld@worldbank.org) if you know anything that might help map Indonesia's industrial or occupational codes. Thanks!)*
 
@@ -131,3 +134,6 @@ Balancing between the level of precision and difficulty of mapping, we mapped KB
 
 ## Correspondence in occupation classification
 
+**KBLJI 1982 to ISCO 1968**
+
+KBJI1982 was used for most of the years as it constantly exists in the harmonized years with three digits. In terms of structure, it categorizes occupations in the same way as ISCO 1968 does. Similar to industry correspondence described above, KBJI 1982 sometimes has more subcategories than ISCO 1968. Therefore, the mapping work mainly refers to mapping additional KBJI subcategories to broader, more general subcategories in ISCO 1968. The table below shows the differences between the two classifications and how they were mapped.   
