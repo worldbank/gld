@@ -4,21 +4,22 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				IDN_1989_Sakernas_v01_M_v02_A_GLD.do </_Program name_>
+<_Program name_>				IDN_1990_Sakernas_v01_M_v01_A_GLD.do </_Program name_>
 <_Application_>					Stata MP 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
 <_Date created_>				2021-07-25 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						Indonesia (IDN) </_Country_>
 <_Survey Title_>				Survei Angkatan Kerja Nasional (The National Labor Force Survey) </_Survey Title_>
-<_Survey Year_>					1989 </_Survey Year_>
-<_Study ID_>					IDN_1989_Sakernas_v01_M </_Study ID_>
+<_Survey Year_>					1990 </_Survey Year_>
+<_Study ID_>					IDN_1990_Sakernas_v01_M </_Study ID_>
 <_Data collection from (M/Y)_>	[MM/YYYY] </_Data collection from (M/Y)_>
 <_Data collection to (M/Y)_>	[MM/YYYY] </_Data collection to (M/Y)_>
-<_Source of dataset_> 			Shared with Job's Group by the World Bank Indonesia Team
+<_Source of dataset_> 			Central Bureau of Statistics (BPS), Indonesia
+								Shared with Job's Group by the World Bank Indonesia Team
 								data request form required to get the access</_Source of dataset_>
-<_Sample size (HH)_> 			N/A   </_Sample size (HH)_>
-<_Sample size (IND)_> 		    283,278 </_Sample size (IND)_>
+<_Sample size (HH)_> 			81,814   </_Sample size (HH)_>
+<_Sample size (IND)_> 		    291,095 </_Sample size (IND)_>
 <_Sampling method_> 			Two-stage cluster sampling method </_Sampling method_>
 <_Geographic coverage_> 		Province </_Geographic coverage_>
 <_Currency_> 					Indonesian Rupiah </_Currency_>
@@ -56,12 +57,12 @@ set mem 800m
 local 	drive 	`"Z"'
 local 	cty 	`"IDN"'
 local 	usr		`"573465_JT"'
-local 	surv_yr `"1989"'
+local 	surv_yr `"1990"'
 local 	year 	"`drive':\GLD-Harmonization\\`usr'\\`cty'\\`cty'_`surv_yr'_Sakernas"
 local 	main	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M"
 local 	stata	"`main'\data\stata"
-local 	gld 	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M_v02_A_GLD"
-local 	i2d2	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M_v02_A_I2D2"
+local 	gld 	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M_v01_A_GLD"
+local 	i2d2	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M_v01_A_I2D2"
 local 	code 	"`gld'\Programs"
 local 	id_data "`gld'\Data\Harmonized"
 
@@ -74,7 +75,7 @@ local output "`id_data'"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	use "`input'\sakernas89.dta", clear
+	use "`input'\sakernas90.dta", clear
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -125,14 +126,13 @@ local output "`id_data'"
 
 
 *<_year_>
-	rename year Year
-	gen int year = 1989
+	gen int year = 1990
 	label var year "Year of survey"
 *</_year_>
 
 
 *<_vermast_>
-	gen vermast = "v02"
+	gen vermast = "v01"
 	label var vermast "Version of master data"
 *</_vermast_>
 
@@ -150,7 +150,7 @@ local output "`id_data'"
 
 
 *<_int_year_>
-	gen int_year = 1989
+	gen int_year = 1990
 	label var int_year "Year of the interview"
 *</_int_year_>
 
@@ -168,22 +168,19 @@ local output "`id_data'"
 Following codes given by the "A guide to working with Indonesian survey data":
 
 // create household ID with
-// province = province
+// prop = province
 // kab = district/city
-// rural = urban/rural
-// codesamp = sample code number
-// sampseq = household sample sequential number
-// hhseq = serial number of households
-
-But year 1989 was decided unable to recreate unique household IDs.
+// koped = urban/rural
+// nks = sample code number
+// nous = household sample sequential number
+// nour = serial number of households
 
 <_hhid_>*/
 
 
 *<_hhid_>
-	*sort province kab rural codesamp sampseq hhseq
-	*egen hhid = group(province kab rural codesamp sampseq hhseq)
-	gen hhid = .
+	sort prop kab koped nks nous nour
+	egen hhid = group(prop kab koped nks nous nour)
 	label var hhid "Household id"
 *</_hhid_>
 
@@ -195,11 +192,9 @@ But year 1989 was decided unable to recreate unique household IDs.
 
         dup |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          0 |    283,276      100.00      100.00
-          1 |          4        0.00      100.00
+          0 |    291,095      100.00      100.00
 ------------+-----------------------------------
-      Total |    283,280      100.00
-
+      Total |    291,095      100.00
 
 <_pid_>*/
 
@@ -212,7 +207,7 @@ But year 1989 was decided unable to recreate unique household IDs.
 
 
 *<_weight_>
-	gen weight = infl
+	gen weight = inflate
 	label var weight "Survey sampling weight"
 *</_weight_>
 
@@ -236,7 +231,7 @@ But year 1989 was decided unable to recreate unique household IDs.
 
 
 *<_wave_>
-	tostring quarter, gen(wave) format(%02.0f)
+	tostring kuart, gen(wave) format(%02.0f)
 	replace wave = "Q" + substr(wave, 2, 1)
 	label var wave "Survey wave"
 *</_wave_>
@@ -250,8 +245,8 @@ But year 1989 was decided unable to recreate unique household IDs.
 {
 
 *<_urban_>
-	gen byte urban = rural
-	recode urban 0=1 1=0
+	gen byte urban = koped
+	recode urban (2=0)
 	label var urban "Location is urban"
 	la de lblurban 1 "Urban" 0 "Rural"
 	label values urban lblurban
@@ -259,8 +254,8 @@ But year 1989 was decided unable to recreate unique household IDs.
 
 
 *<_subnatid1_>
-	gen subnatid1_copy = province
-	label de lblsubnatid1 11 "11 - ACEH" 12 "12 - SUMATERA UTARA" 13 "13 - SUMATERA BARAT" 14 "14 - RIAU" 15 "15 - JAMBI" 16 "16 - SUMATERA SELATAN" 17 "17 - BENGKULU" 18 "18 - LAMPUNG" 31 "31 - DKI JAKARTA" 32 "32 - JAWA BARAT" 33 "33 - JAWA TENGAH" 34 "34 - DI YOGYAKARTA" 35 "35 - JAWA TIMUR"  51 "51 - BALI" 52 "52 - NUSA TENGGARA BARAT" 54 "54 - TIMUR TIMOR" 53 "53 - NUSA TENGGARA TIMUR" 54 "54 - TIMUR TIMOR" 61 "61 - KALIMANTAN BARAT" 62 "62 - KALIMANTAN TENGAH" 63 "63 - KALIMANTAN SELATAN" 64 "64 - KALIMANTAN TIMUR" 71 "71 - SULAWESI UTARA" 72 "72 - SULAWESI TENGAH" 73 "73 - SULAWESI SELATAN" 74 "74 - SULAWESI TENGGARA" 81 "81 - MALUKU" 82 "82 - MALUKU UTARA"
+	gen subnatid1_copy = prop
+	label de lblsubnatid1 11 "11 - ACEH" 12 "12 - SUMATERA UTARA" 13 "13 - SUMATERA BARAT" 14 "14 - RIAU" 15 "15 - JAMBI" 16 "16 - SUMATERA SELATAN" 17 "17 - BENGKULU" 18 "18 - LAMPUNG" 31 "31 - DKI JAKARTA" 32 "32 - JAWA BARAT" 33 "33 - JAWA TENGAH" 34 "34 - DI YOGYAKARTA" 35 "35 - JAWA TIMUR"  51 "51 - BALI" 52 "52 - NUSA TENGGARA BARAT" 54 "54 - TIMUR TIMOR" 53 "53 - NUSA TENGGARA TIMUR" 61 "61 - KALIMANTAN BARAT" 62 "62 - KALIMANTAN TENGAH" 63 "63 - KALIMANTAN SELATAN" 64 "64 - KALIMANTAN TIMUR" 71 "71 - SULAWESI UTARA" 72 "72 - SULAWESI TENGAH" 73 "73 - SULAWESI SELATAN" 74 "74 - SULAWESI TENGGARA" 81 "81 - MALUKU" 82 "82 - MALUKU UTARA"
 	label values subnatid1_copy lblsubnatid1
 	decode subnatid1_copy, gen(subnatid1)
 	drop subnatid1_copy
@@ -270,15 +265,15 @@ But year 1989 was decided unable to recreate unique household IDs.
 
 /*<_subnatid2_>
 
-	Because SAKERNAS 1989 does not have the district name variable as other years, yet it has the same districts surveyed in 2013. Therefore, I used districts' names and codes in 2013 to codify subnatid2 in 1996.
+	Because SAKERNAS 1990 does not have the district name variable as other years, yet it has the same districts surveyed in 2013. Therefore, I used districts' names and codes in 2013 to codify subnatid2 in 1996.
 
-	But note that 26 district codes only appear in 1989 (no district labels) not in 2013:
-1171
+	But note that 26 district codes only appear in 1990 (no district labels) not in 2013:
+1171 1472
 3218 3219 3220 3273
 5401 5402 5403 5404 5405 5406 5407 5408 5409 5410 5411 5412 5413
 6271
 7319 7320 7321 7371
-8184 8208 8209
+8208 8209
 These districts' names were left missing.
 
 Province 54 - East Timor became indipendent from Indonesia in 2002. All districts in province 54 do not have names as in no year do these districts have name labels.
@@ -289,7 +284,7 @@ Province 54 - East Timor became indipendent from Indonesia in 2002. All district
 *<_subnatid2_>
 	gen code_kab = kab
 	tostring code_kab, format (%02.0f) replace
-	gen code_prop = province
+	gen code_prop = prop
 	tostring code_prop, format (%02.0f) replace
 	gen subnatid2_code = code_prop + code_kab
 	rename subnatid2_code b1r2
@@ -357,28 +352,19 @@ Province 54 - East Timor became indipendent from Indonesia in 2002. All district
 {
 
 *<_hsize_>
-	gen byte hsize = n_hhmem
+	gen byte hsize = jart
 	label var hsize "Household size"
 *</_hsize_>
 
 
-/*<_age_>
-
-Note that because the variable of age is called "age" in the raw dataset,
-here I did not create a new variable.
-
-<_age_>*/
-
-
 *<_age_>
-	*gen age = Q14AGE
+	gen age = b4p2
 	label var age "Individual age"
 *</_age_>
 
 
 *<_male_>
-	destring sex, replace
-	gen male = sex
+	gen male = b4p1
 	recode male 2=0
 	label var male "Sex - Ind is male"
 	la de lblmale 1 "Male" 0 "Female"
@@ -536,18 +522,20 @@ here I did not create a new variable.
 /*<_school_>
 
 Note that variable "school" refers to be currently attending school; but the only
-variable viable for "school" is "inschool", which indicates the primary activity
-during the previous week.
+variable viable for "school" is "b4p4", which indicates the primary activity
+during the previous week. Because we are not sure whether people have other primary
+activities are attending school or not, there is no category zero.
 
 <_school_>*/
 
 
 *<_school_>
-	gen byte school = inschool
+	gen byte school = .
+	replace school = 1 if b4p4 == 2
 	replace school = . if age<ed_mod_age & age!=.
 	label var school "Attending school"
 	la de lblschool 0 "No" 1 "Yes"
-	label values school  lblschool
+	label values school lblschool
 *</_school_>
 
 
@@ -564,7 +552,7 @@ during the previous week.
 Years of education, or "educy" (and all other related variables were left missing)
 because of the unclear mapping for "Not finished primary school yet".
 
-Original code list of variable "educa" in the dataset:
+Original code list of variable "b4p3" in the dataset:
 
 1.Not/never been in school
 2.Not finished primary school yet
@@ -575,7 +563,7 @@ Original code list of variable "educa" in the dataset:
 7.Vocational high school
 8.Diploma I/II
 9.Academy/Diploma III
-0.University
+0.Diploma IV/Bachelor/Postgraduate
 
 According to isced-2011 mappings, there are day care centre, playgroup, and
 kindergarten as pre-primary education before 7 years old. Whether to map
@@ -593,8 +581,7 @@ needs. Therefore, variable "educy" was left missing.
 
 
 *<_educat7_>
-	destring educa, replace
-	gen byte educat7 = educa
+	gen byte educat7 = b4p3
 	recode educat7 (4/7=5) (8/9=6) (0=7)
 	replace educat7 = . if age<ed_mod_age & age!=.
 	label var educat7 "Level of education 1"
@@ -624,13 +611,13 @@ needs. Therefore, variable "educy" was left missing.
 
 
 *<_educat_orig_>
-	gen educat_orig = educa
+	gen educat_orig = b4p3
 	label var educat_orig "Original survey education code"
 *</_educat_orig_>
 
 
 *<_educat_isced_>
-	gen educat_isced = educa
+	gen educat_isced = b4p3
 	recode educat_isced (0=660) (1=020) (2/3=100) (4/5=244) (6/7=344) (8=454) (9=550)
 	label var educat_isced "ISCED standardised level of education"
 *</_educat_isced_>
@@ -717,25 +704,23 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 
 /*<_lstatus_>
 
-We define the employed as who "worked primarily (activity=="1")" or
-							  "worked at least for 1 hour in the past one week(work1hr=="1")" or
-							  "has a job/business but temporarily did not work during the past one week(absent=="1")";
-unemployed:"who do not have a job/business (absent=="2") & seeking a job (seeking==1)"
-non-labor force: "who do not have a job/business (absent=="2")" & not seeking a job (seeking==2).
+We define the employed as who "worked primarily (b4p4==1)" or
+							  "worked at least for 1 hour last week (b4p5==1)" or
+							  "has a job/business but temporarily didn't work (b4p6==1)";
+unemployed: "who do not have a job/business (b4p6==2)" & seeking a job (b4p13==1);
+non-labor force: "who do not have a job/business (b4p6==2)" & not seeking a job (b4p13=!1).
 
-Labor force participation: 55.04%
+Labor force participation: 55.37%
 
 <_lstatus_>*/
 
 
 *<_lstatus_>
 	gen byte lstatus = .
-	replace lstatus = 1 if activity=="1" | work1hr=="1" | absent=="1"
-	replace lstatus = 2 if absent=="2" & seeking==1
-	replace lstatus = 3 if absent=="2" & seeking==2
+	replace lstatus = 1 if b4p4==1 | b4p5==1 | b4p6==1
+	replace lstatus = 2 if b4p6==2 & b4p13==1
+	replace lstatus = 3 if b4p6==2 & b4p13==2
 	replace lstatus = . if age < minlaborage
-	replace lstatus = 2 if seeking==1 & lstatus==.
-	replace lstatus = 3 if seeking==2 & lstatus==.
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
@@ -743,38 +728,33 @@ Labor force participation: 55.04%
 
 
 /*<_potential_lf_>
-
 Note: var "potential_lf" is missing if the respondent is in labor force or unemployed; it only takes value if the respondent is not in labor force. (lstatus==3)
 
 "potential_lf" = 1 if the person is
-1)available but not searching or (wantwork==1 & subopt==0)
-2)searching but not immediately available to work (subopt==1 & wantwork==0)
+1)available but not searching or (b4p13==1 & b4p14==2)
+2)searching but not immediately available to work (b4p14==1 & b4p13==2)
 
-Note that the raw dataset seems to assume people who are looking for jobs are also
-willing to accept jobs and people who are not looking for jobs are not. But also
-note that 7,771 observations looking for jobs do not follow this rule. They may be
-errors and the reason for this is not known.
+Note that there are observations who want to accept a job (seen as being available)
+but not seeking for a job, which is different from year 1989. But no observation
+satisfies the second requirement.
 
-In this case, no observations fit the requirement and will be assigned any non-missing values.
+. tab b4p13 b4p14, m
 
-   Want to |  LOOKING FOR OR WANT
-  accept a |         WORK
-       job |         0          1 |     Total
------------+----------------------+----------
-           |         0      7,771 |     7,771
-         1 |         0     52,465 |    52,465
-         2 |   223,038          0 |   223,038
-         9 |         6          0 |         6
------------+----------------------+----------
-     Total |   223,044     60,236 |   283,280
+   Seeking |            Want to accept a job
+ for a job |       Yes         No          9          . |     Total
+-----------+--------------------------------------------+----------
+       Yes |         0          0          0      7,949 |     7,949
+        No |    55,680    227,464          2          0 |   283,146
+-----------+--------------------------------------------+----------
+     Total |    55,680    227,464          2      7,949 |   291,095
 
 </_potential_lf_>*/
 
 
 *<_potential_lf_>
 	gen byte potential_lf = .
-	replace potential_lf = 1 if (wantwork=="1" & subopt==0) | (subopt==1 & wantwork=="2")
-	replace potential_lf = 0 if (wantwork=="1" & subopt==1) | (subopt==0 & wantwork=="0")
+	replace potential_lf = 1 if [ b4p13==1 & b4p14==2 ] | [ b4p14==1 & b4p13==2]
+	replace potential_lf = 0 if [ b4p13==1 & b4p14==1 ] | [ b4p14==2 & b4p13==2]
 	replace potential_lf = . if age < minlaborage & age != .
 	replace potential_lf = . if lstatus != 3
 	label var potential_lf "Potential labour force status"
@@ -808,16 +788,15 @@ The unit is month but it is a specific value.
 
 
 *<_unempldur_l_>
-	destring seek_c, replace
-	gen byte unempldur_l = seek_c
+	gen byte unempldur_l = b4p16
 	replace unempldur_l = . if lstatus!=2
 	label var unempldur_l "Unemployment duration (months) lower bracket"
 *</_unempldur_l_>
 
 
 *<_unempldur_u_>
-	gen byte unempldur_u = seek_c
-	replace unempldur_u = . if lstatus!=2
+	gen byte unempldur_u = b4p16
+	replace unempldur_u=. if lstatus!=2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
 *</_unempldur_u_>
 }
@@ -829,10 +808,10 @@ The unit is month but it is a specific value.
 {
 *<_empstat_>
 	gen byte empstat = .
-	replace empstat = 1 if status=="4"
-	replace empstat = 2 if status=="5"
-	replace empstat = 3 if status=="3"
-	replace empstat = 4 if status=="1" | status=="2"
+	replace empstat = 1 if b4p10==4
+	replace empstat = 2 if b4p10==5
+	replace empstat = 3 if b4p10==3
+	replace empstat = 4 if b4p10==1|b4p10==2
 	replace empstat = . if lstatus!=1
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
@@ -861,11 +840,9 @@ use the two-digit format.
 
 
 *<_industry_orig_>
-	gen industry2 = industry
-	destring industry2, replace
-	format industry2 %02.0f if inlist(substr(industry,1,1), "0")
-	gen industry_orig = industry2
-	replace industry_orig = . if lstatus!=1
+	gen industry_orig = b4p9
+	tostring industry_orig, replace
+	replace industry_orig = "" if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
@@ -879,8 +856,8 @@ use the two-digit format.
 
 
 *<_industrycat10_>
-	gen byte industrycat10 = industry2
-	recode industrycat10 (01/04=1) (05=2) (06/09=3) (10=4) (11=5) (12=6) (13=7) (14=8) (15=9) (00 16 17=10)
+	gen byte industrycat10 = b4p9
+	recode industrycat10 (1/4=1) (5=2) (6/9=3) (10=4) (11=5) (12=6) (13=7) (14=8) (15=9) (16 0 17=10)
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
@@ -926,23 +903,23 @@ use the two-digit format.
 
 /*<_wage_no_compen_>
 
-Two variables in the raw dataset are the same --- "wagewk_c" and "wagewk"; the
-former is a string variable while the other one is a numeric variable.
+The raw dataset has two wage-related variables --- b4p11mg, average weekly net salary
+and b4p11bl, average monthly net salary; both refer to the wage received from the main job.
 
-Note that these two variables reflect average weekly wage instead of the last payment.
+Note that these two variables reflect AVERAGE wage instead of LAST payment.
 
 <_wage_no_compen_>*/
 
 
 *<_wage_no_compen_>
-	gen double wage_no_compen = wagewk
+	gen double wage_no_compen = b4p11bl
 	replace wage_no_compen=. if lstatus!=1
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
 
 *<_unitwage_>
-	gen byte unitwage = 2
+	gen byte unitwage = 5
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
 	label values unitwage lblunitwage
@@ -950,7 +927,7 @@ Note that these two variables reflect average weekly wage instead of the last pa
 
 
 *<_whours_>
-	gen whours = hrsmain
+	gen whours = b4p12jj
 	replace whours = . if lstatus!=1
 	replace whours = . if whours == 0
 	label var whours "Hours of work in last week primary job 7 day recall"
@@ -1673,6 +1650,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`output'\IDN_1989_SAKERNAS_v01_M_v02_A_GLD_ALL.dta", replace
+save "`output'\IDN_1990_SAKERNAS_v01_M_v01_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>
