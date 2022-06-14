@@ -120,7 +120,7 @@ rename fecha_aņo fecha_ano
 
 
 *<_veralt_>
-	gen veralt = "V01"
+	gen veralt = "V02"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
