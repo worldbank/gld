@@ -121,7 +121,7 @@ drop in 1/1
 
 
 *<_veralt_>
-	gen veralt = "V01"
+	gen veralt = "V02"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
