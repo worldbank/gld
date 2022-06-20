@@ -4,7 +4,7 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				COL_2010_GLD_v01_M_v01_A_GLD_ALL
+<_Program name_>				
 <_Application_>					Stata 16
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) Eliana Carranza, Andreas Eberhardt, Alejandro Rueda-Sanz
 <_Date created_>				2022-04-11
@@ -13,30 +13,30 @@
 
 <_Country_>					    Colombia (COL)
 <_Survey Title_>				Gran Encuesta Integrada de Hogares - GEIH
-<_Survey Year_>					2010
-<_Study ID_>					[] </_Study ID_>
-<_Data collection from_>			[01/2010] </_Data collection from_>
-<_Data collection to_>				[12/2010] </_Data collection to_>
+<_Survey Year_>					2012
+<_Study ID_>					 </_Study ID_>
+<_Data collection from_>			01/2012
+<_Data collection to_>				12/2012 </_Data collection to_>
 <_Source of dataset_> 				Departamento Administrativo Nacional de Estadistica - DANE
-<_Sample size (HH)_> 				226,261</_Sample size (HH)_>
-<_Sample size (IND)_> 				821,951 </_Sample size (IND)_> 
-<_Sampling method_> 				[] </_Sampling method_>
-<_Geographic coverage_> 			[] </_Geographic coverage_>
-<_Currency_> 					[Colombian Pesos] </_Currency_>
+<_Sample size (HH)_> 				 </_Sample size (HH)_>
+<_Sample size (IND)_> 				 </_Sample size (IND)_>
+<_Sampling method_> 				 </_Sampling method_>
+<_Geographic coverage_> 			 </_Geographic coverage_>
+<_Currency_> 					Colombian Pesos </_Currency_>
 
 -----------------------------------------------------------------------
 
 <_ICLS Version_>				[Version of ICLS for Labor Questions] </_ICLS Version_>
 <_ISCED Version_>				[Version of ICLS for Labor Questions] </_ISCED Version_>
-<_ISCO Version_>				ISCO-1968 </_ISCO Version_>
-<_OCCUP National_>				CNO 1970 </_OCCUP National_>
-<_ISIC Version_>				ISIC REV 3.1 </_ISIC Version_>
-<_INDUS National_>				N/A </_INDUS National_>
+<_ISCO Version_>				[Version of ICLS for Labor Questions] </_ISCO Version_>
+<_OCCUP National_>				[Version of ICLS for Labor Questions] </_OCCUP National_>
+<_ISIC Version_>				[Version of ICLS for Labor Questions] </_ISIC Version_>
+<_INDUS National_>				[Version of ICLS for Labor Questions] </_INDUS National_>
 
 -----------------------------------------------------------------------
 <_Version Control_>
 
-* Date: 2022-11-04 - Changes from I2D2 to GLD
+* Date: 2022-15-04 - Changes from I2D2 to GLD
 * Date: [YYYY-MM-DD] - [Description of changes]
 
 </_Version Control_>
@@ -55,34 +55,52 @@ set mem 800m
 
 *----------1.2: Set directories------------------------------*
 
-local path_in "Z:\GLD-Harmonization\582018_AQ\COL\COL_2010_GEIH\COL_2010_GEIH_v01_M\Data\Stata\" 
-local path_output "Z:\GLD-Harmonization\582018_AQ\COL\COL_2010_GEIH\COL_2010_GEIH_v01_M_v01_A_GLD\Data\Harmonized\"
+local path_in "Z:\GLD-Harmonization\582018_AQ\COL\COL_2012_GEIH\COL_2012_GEIH_v01_M\Data\Stata\" 
+local path_output "Z:\GLD-Harmonization\582018_AQ\COL\COL_2012_GEIH\COL_2012_GEIH_v01_M_v01_A_GLD\Data\Harmonized\"
+
 *----------1.3: Database assembly------------------------------*
 
-*** append monthly data
+*** append household monthly data
 clear all
-use "`path_in'\GEIH_2010_1.dta"
+use "Z:\GLD-Harmonization\582018_AQ\COL\COL_2012_GEIH\COL_2012_GEIH_v01_M\Data\Stata\GEIH_2012_1.dta"
 
 forvalues i=2/12 {
-    append using "`path_in'\GEIH_2010_`i'.dta", force
+    append using "Z:\GLD-Harmonization\582018_AQ\COL\COL_2012_GEIH\COL_2012_GEIH_v01_M\Data\Stata\GEIH_2012_`i'.dta", force
 }
 keep if _merge==3
 drop _merge
 rename *, lower
-save "`path_in'\GEIH_2010.dta", replace
+save "Z:\GLD-Harmonization\582018_AQ\COL\COL_2012_GEIH\COL_2012_GEIH_v01_M\Data\Stata\GEIH_2012.dta", replace
 
 clear all
 
-****final dataset with updated weights
-use "`path_in'\Fex proyeccion CNPV_2018.dta"
-rename *, lower
-merge 1:m directorio secuencia_p orden using "`path_in'\GEIH_2010.dta", force
+
+use "Z:\GLD-Harmonization\582018_AQ\COL\COL_2012_GEIH\COL_2012_GEIH_v01_M\Data\Stata\Migration\mi_2.dta"
+forvalues i=3/12 {
+    append using "Z:\GLD-Harmonization\582018_AQ\COL\COL_2012_GEIH\COL_2012_GEIH_v01_M\Data\Stata\Migration\mi_`i'.dta", force
+}
+save "Z:\GLD-Harmonization\582018_AQ\COL\COL_2012_GEIH\COL_2012_GEIH_v01_M\Data\Stata\migration_2012.dta", replace
+	
+	
+*** merge appended to households data 
+merge 1:m directorio secuencia_p orden using "Z:\GLD-Harmonization\582018_AQ\COL\COL_2012_GEIH\COL_2012_GEIH_v01_M\Data\Stata\GEIH_2012.dta"
 keep if _merge==3
 drop _merge 
 
-save "`path_in'\data_2010_final.dta", replace
+save "Z:\GLD-Harmonization\582018_AQ\COL\COL_2012_GEIH\COL_2012_GEIH_v01_M\Data\Stata\merged_2012.dta", replace
 
+ 
 
+****final dataset with updated weights
+use "Z:\GLD-Harmonization\582018_AQ\COL\COL_2012_GEIH\COL_2012_GEIH_v01_M\Data\Stata\Fex proyeccion CNPV_2018.dta"
+rename *, lower
+merge 1:m directorio secuencia_p orden using "Z:\GLD-Harmonization\582018_AQ\COL\COL_2012_GEIH\COL_2012_GEIH_v01_M\Data\Stata\merged_2012.dta", force
+
+keep if _merge==3
+drop _merge 
+
+save "Z:\GLD-Harmonization\582018_AQ\COL\COL_2012_GEIH\COL_2012_GEIH_v01_M\Data\Stata\data_2012_final.dta", replace
+	
 
 	
 /*%%=============================================================================================
@@ -104,7 +122,7 @@ save "`path_in'\data_2010_final.dta", replace
 
 
 *<_survey_>
-	gen survey = "household survey"
+	gen survey = ""
 	label var survey "Survey type"
 *</_survey_>
 
@@ -122,7 +140,7 @@ save "`path_in'\data_2010_final.dta", replace
 
 
 *<_isco_version_>
-	gen isco_version = "isco_1968"
+	gen isco_version = ""
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
@@ -134,7 +152,7 @@ save "`path_in'\data_2010_final.dta", replace
 
 
 *<_year_>
-	gen int year = 2010
+	gen int year = 2012
 	label var year "Year of survey"
 *</_year_>
 
@@ -158,12 +176,12 @@ save "`path_in'\data_2010_final.dta", replace
 
 
 *<_int_year_>
-	gen int_year = 2010 
+	gen int_year = 2012 //instead of intv_year=ano
 	label var int_year "Year of the interview"
 *</_int_year_>
 
 
-*<_int_month_> 
+*<_int_month_> // Includes all months
 	destring mes, replace
 	gen  int_month = mes
 	label de lblint_month 1 "January" 2 "February" 3 "March" 4 "April" 5 "May" 6 "June" 7 "July" 8 "August" 9 "September" 10 "October" 11 "November" 12 "December"
@@ -216,12 +234,12 @@ save "`path_in'\data_2010_final.dta", replace
 
 
 *<_strata_>
-	gen strata = p4030s1a1
+	gen strata = .
 	label var strata "Strata"
 *</_strata_>
 
 
-*<_wave_> 
+*<_wave_>  
 	gen wave = . 
 	label var wave "Survey wave"
 *</_wave_>
@@ -255,7 +273,7 @@ save "`path_in'\data_2010_final.dta", replace
 
 /* <_subnatid1_note>
 
-	The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: “1 – Hatay”. That is, the variable itself is to be string, not a labelled numeric vector. 
+	The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: "1 – Hatay". That is, the variable itself is to be string, not a labelled numeric vector. 
 	
 	Example of entries would be "1 - Alaska",  "2 - Arkansas", ...
 
@@ -382,10 +400,8 @@ save "`path_in'\data_2010_final.dta", replace
 
 
 *<_relationharm_>
-	gen relationharm = p6050 //add
-	gen byte head=relationharm
-	*replace ownhouse=. if (head==6|head==7|head==8) //instead of replace ownhouse=. if head==6 (taking out pensionista and trabajador)
-	recode head (7=6) (8=6)  (9=6)  //added
+	gen relationharm = p6050
+	recode relationharm (7=6) (8=6)  (9=6) (4=5) //added
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm  lblrelationharm
@@ -458,11 +474,11 @@ save "`path_in'\data_2010_final.dta", replace
 /*%%=============================================================================================
 	5: Migration
 ==============================================================================================%%*/
-//seems like this information is in separate database available online, even if it was in the same questionnaire (P.Modulo de Migracion)
+
 {
 
 *<_migrated_mod_age_>
-	gen migrated_mod_age = .
+	gen migrated_mod_age = 5
 	label var migrated_mod_age "Migration module application age"
 *</_migrated_mod_age_>
 
@@ -474,7 +490,8 @@ save "`path_in'\data_2010_final.dta", replace
 
 
 *<_migrated_binary_>
-	gen migrated_binary = .
+	gen migrated_binary = p6074
+	recode migrated_binary 1=0 2=1
 	label de lblmigrated_binary 0 "No" 1 "Yes"
 	label values migrated_binary lblmigrated_binary
 	label var migrated_binary "Individual has migrated"
@@ -482,7 +499,7 @@ save "`path_in'\data_2010_final.dta", replace
 
 
 *<_migrated_years_>
-	gen migrated_years = .
+	gen migrated_years = p6075
 	label var migrated_years "Years since latest migration"
 *</_migrated_years_>
 
@@ -531,7 +548,6 @@ save "`path_in'\data_2010_final.dta", replace
 	6: Education
 ==============================================================================================%%*/
 
-
 {
 
 *<_ed_mod_age_>
@@ -552,7 +568,7 @@ label var ed_mod_age "Education module application age"
 	recode school 2=0
 	label var school "Attending school"
 	la de lblschool 0 "No" 1 "Yes"
-	label values school  lblschool
+	label values school lblschool
 *</_school_>
 
 *<_literacy_>
@@ -567,6 +583,7 @@ label var ed_mod_age "Education module application age"
 *<_educy_>
 	gen byte educy = esc
 	replace educy=. if age<ed_mod_age & age!=.
+	replace educy=. if age < educy & (age != . & educy != .)
 	label var educy "Years of education"
 
 *</_educy_>
@@ -789,6 +806,7 @@ foreach v of local ed_var {
 *<_industry_orig_>
 	destring rama2d rama4d, replace
 	gen industry_orig = rama4d
+	replace industry_orig=. if rama4d==0
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
@@ -1054,8 +1072,8 @@ foreach v of local ed_var {
 	replace industrycat_isic = 8010 if rama4d == 8011 | rama4d == 8012 | rama4d == 8041 | rama4d == 8042 | rama4d == 8043 | rama4d == 8044 | rama4d == 8045 | rama4d == 8046
 	replace industrycat_isic = 8021 if rama4d == 8021 | rama4d == 8022
 	replace industrycat_isic = 8022 if rama4d == 8030 
-	replace industrycat_isic = 8050 if rama4d == 8050
-	replace industrycat_isic = 8060 if rama4d == 8060
+	replace industrycat_isic = 8090 if rama4d == 8050
+	replace industrycat_isic = 8090 if rama4d == 8060
 	replace industrycat_isic = 8511 if rama4d == 8511
 	replace industrycat_isic = 8512 if rama4d == 8512 | rama4d == 8513
 	replace industrycat_isic = 8519 if rama4d == 8514 | rama4d == 8515 | rama4d == 8519
@@ -1091,6 +1109,8 @@ foreach v of local ed_var {
 	gen industrycat_isic_S = string(industrycat_isic, "%04.0f")
 	drop industrycat_isic
 	rename industrycat_isic_S industrycat_isic
+	replace industrycat_isic="" if lstatus!=1
+	replace industrycat_isic="" if industrycat_isic=="."
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
@@ -1185,6 +1205,7 @@ foreach v of local ed_var {
 	gen byte unitwage = 5
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
+	replace unitwage=. if lstatus!=1
 	label values unitwage lblunitwage
 *</_unitwage_>
 
@@ -1317,6 +1338,7 @@ foreach v of local ed_var {
 	replace contract=. if p6450==9 //instead of replace contract=. if p6450==3
 	label var contract "Employment has contract primary job 7 day recall"
 	la de lblcontract 0 "Without contract" 1 "With contract"
+	replace contract=. if lstatus!=1
 	label values contract lblcontract
 *</_contract_>
 
@@ -1459,7 +1481,7 @@ foreach v of local ed_var {
 
 
 *<_wmonths_2_>
-	gen wmonths_2 = p760
+	gen wmonths_2 = .
 	label var wmonths_2 "Months of work in past 12 months secondary job 7 day recall"
 *</_wmonths_2_>
 
@@ -1855,6 +1877,10 @@ foreach v of local ed_var {
 
 *----------8.9: 12 month reference additional jobs------------------------------*
 
+* NUMBER OF ADDITIONAL JOBS LAST YEAR  //not creating any variable, should wait for joining datasets with 2009?
+	gen byte njobs_year=.
+	replace njobs_year=. if lstatus_year!=1
+	label var njobs_year "Number of additional jobs during last year"
 
 *<_t_hours_others_year_>
 	gen t_hours_others_year = .
@@ -1896,10 +1922,10 @@ foreach v of local ed_var {
 *----------8.11: Overall across reference periods------------------------------*
 
 
-/*<_njobs_>
+/*<_njobs_> Defined above
 	gen njobs = .
 	label var njobs "Total number of jobs"
-*</_njobs_> */
+*</_njobs_> */ 
 
 
 *<_t_hours_annual_>
@@ -2017,8 +2043,7 @@ compress
 
 *<_% SAVE_>
 
-save "`path_output'\COL_2010_GLD_v01_M_v01_A_GLD_ALL.dta", replace
+save "`path_output'\COL_2012_GEIH_V01_M_V01_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>
-
 }

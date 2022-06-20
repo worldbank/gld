@@ -26,12 +26,12 @@
 
 -----------------------------------------------------------------------
 
-<_ICLS Version_>				[Version of ICLS for Labor Questions] </_ICLS Version_>
-<_ISCED Version_>				[Version of ICLS for Labor Questions] </_ISCED Version_>
-<_ISCO Version_>				isco 1968 </_ISCO Version_>
+<_ICLS Version_>				ICLS-13 </_ICLS Version_>
+<_ISCED Version_>				 </_ISCED Version_>
+<_ISCO Version_>				N/A </_ISCO Version_>
 <_OCCUP National_>				cno 1970 </_OCCUP National_>
 <_ISIC Version_>				isic rev 3.1 </_ISIC Version_>
-<_INDUS National_>				isic rev 3.1 </_INDUS National_>
+<_INDUS National_>				colombian isic rev 3.1 </_INDUS National_>
 
 -----------------------------------------------------------------------
 <_Version Control_>
@@ -122,7 +122,7 @@ save "`path_in'\data_2011_final.dta", replace
 
 
 *<_isco_version_>
-	gen isco_version = "isco_1968"
+	gen isco_version = ""
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
@@ -382,10 +382,8 @@ save "`path_in'\data_2011_final.dta", replace
 
 
 *<_relationharm_>
-	gen relationharm = p6050 //add
-	gen byte head=relationharm
-	*replace ownhouse=. if (head==6|head==7|head==8) //instead of replace ownhouse=. if head==6 (taking out pensionista and trabajador)
-	recode head (7=6) (8=6)  (9=6)  //added
+	gen relationharm = p6050
+	recode relationharm (7=6) (8=6)  (9=6) (4=5) //added
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm  lblrelationharm
@@ -566,6 +564,7 @@ label var ed_mod_age "Education module application age"
 *<_educy_>
 	gen byte educy = esc
 	replace educy=. if age<ed_mod_age & age!=.
+	replace educy=. if age < educy & (age != . & educy != .)
 	label var educy "Years of education"
 
 *</_educy_>
@@ -788,6 +787,7 @@ foreach v of local ed_var {
 *<_industry_orig_>
 	destring rama2d rama4d, replace
 	gen industry_orig = rama4d
+	replace industry_orig=. if rama4d==0
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
@@ -1053,8 +1053,8 @@ foreach v of local ed_var {
 	replace industrycat_isic = 8010 if rama4d == 8011 | rama4d == 8012 | rama4d == 8041 | rama4d == 8042 | rama4d == 8043 | rama4d == 8044 | rama4d == 8045 | rama4d == 8046
 	replace industrycat_isic = 8021 if rama4d == 8021 | rama4d == 8022
 	replace industrycat_isic = 8022 if rama4d == 8030 
-	replace industrycat_isic = 8050 if rama4d == 8050
-	replace industrycat_isic = 8060 if rama4d == 8060
+	replace industrycat_isic = 8090 if rama4d == 8050
+	replace industrycat_isic = 8090 if rama4d == 8060
 	replace industrycat_isic = 8511 if rama4d == 8511
 	replace industrycat_isic = 8512 if rama4d == 8512 | rama4d == 8513
 	replace industrycat_isic = 8519 if rama4d == 8514 | rama4d == 8515 | rama4d == 8519
@@ -1090,6 +1090,8 @@ foreach v of local ed_var {
 	gen industrycat_isic_S = string(industrycat_isic, "%04.0f")
 	drop industrycat_isic
 	rename industrycat_isic_S industrycat_isic
+	replace industrycat_isic="" if lstatus!=1
+	replace industrycat_isic="" if industrycat_isic=="."
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
@@ -1184,6 +1186,7 @@ foreach v of local ed_var {
 	gen byte unitwage = 5
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
+	replace unitwage=. if lstatus!=1
 	label values unitwage lblunitwage
 *</_unitwage_>
 
@@ -1317,6 +1320,7 @@ foreach v of local ed_var {
 	label var contract "Employment has contract primary job 7 day recall"
 	la de lblcontract 0 "Without contract" 1 "With contract"
 	label values contract lblcontract
+	replace contract=. if lstatus!=1
 *</_contract_>
 
 
@@ -1458,7 +1462,7 @@ foreach v of local ed_var {
 
 
 *<_wmonths_2_>
-	gen wmonths_2 = p760
+	gen wmonths_2 = .
 	label var wmonths_2 "Months of work in past 12 months secondary job 7 day recall"
 *</_wmonths_2_>
 
@@ -2020,7 +2024,7 @@ compress
 
 *<_% SAVE_>
 
-save "`path_output'\COL_2011_GLD_v01_M_v01_A_GLD_ALL.dta", replace
+save "`path_output'\COL_2011_GEIH_V01_M_V01_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>
 }
