@@ -4,9 +4,9 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				COL_2017_GLD_GEIH_v06
+<_Program name_>				COL_2017_GEIH_V01_M_V01_A_GLD_ALL
 <_Application_>					Stata 17
-<_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) Eliana Carranza, Andreas Eberhardt, Alejandro Rueda-Sanz
+<_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) 
 <_Date created_>				2022-04-11
 
 -------------------------------------------------------------------------
@@ -25,13 +25,12 @@
 <_Currency_> 					COP </_Currency_>
 
 -----------------------------------------------------------------------
-
-<_ICLS Version_>				[Version of ICLS for Labor Questions] </_ICLS Version_>
+<_ICLS Version_>				ICLS-13 </_ICLS Version_>
 <_ISCED Version_>				[Version of ICLS for Labor Questions] </_ISCED Version_>
-<_ISCO Version_>				[Version of ICLS for Labor Questions] </_ISCO Version_>
-<_OCCUP National_>				[Version of ICLS for Labor Questions] </_OCCUP National_>
-<_ISIC Version_>				[Version of ICLS for Labor Questions] </_ISIC Version_>
-<_INDUS National_>				[Version of ICLS for Labor Questions] </_INDUS National_>
+<_ISCO Version_>				N/A </_ISCO Version_>
+<_OCCUP National_>				CNO 1970 </_OCCUP National_>
+<_ISIC Version_>				ISIC REV 4 </_ISIC Version_>
+<_INDUS National_>				ISIC REV 4 COLOMBIA </_INDUS National_>
 
 -----------------------------------------------------------------------
 <_Version Control_>
@@ -147,7 +146,7 @@ save "Z:\GLD-Harmonization\582018_AQ\COL\COL_2017_GEIH\COL_2017_GEIH_v01_M\Data\
 
 
 *<_isic_version_>
-	gen isic_version = ""
+	gen isic_version = "isic_4"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
@@ -401,10 +400,8 @@ save "Z:\GLD-Harmonization\582018_AQ\COL\COL_2017_GEIH\COL_2017_GEIH_v01_M\Data\
 
 
 *<_relationharm_>
-	gen relationharm = p6050 //add
-	gen byte head=relationharm
-	*replace ownhouse=. if (head==6|head==7|head==8) //instead of replace ownhouse=. if head==6 (taking out pensionista and trabajador)
-	recode head (7=6) (8=6)  (9=6)  //added
+	gen relationharm = p6050
+	recode relationharm (7=6) (8=6)  (9=6) (4=5) //added
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm  lblrelationharm
@@ -587,6 +584,7 @@ label var ed_mod_age "Education module application age"
 *<_educy_>
 	gen byte educy = esc
 	replace educy=. if age<ed_mod_age & age!=.
+	replace educy=. if age < educy & (age != . & educy != .)
 	label var educy "Years of education"
 
 *</_educy_>
@@ -613,7 +611,7 @@ label var ed_mod_age "Education module application age"
 
 *<_educat4_>
 	gen byte educat4 = educat7
-	recode educat4 (2 3 = 2) (4 5=3) (6 7=4)
+	recode educat4 (2 3 4 = 2) (5=3) (6 7=4)
 	label var educat4 "Level of education 3"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values educat4 lbleducat4
@@ -809,6 +807,7 @@ foreach v of local ed_var {
 *<_industry_orig_>
 	destring rama2d rama4d, replace
 	gen industry_orig = rama4d
+	replace industry_orig=. if rama4d==0
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
@@ -1218,6 +1217,8 @@ foreach v of local ed_var {
 	gen industrycat_isic_S = string(industrycat_isic, "%04.0f")
 	drop industrycat_isic
 	rename industrycat_isic_S industrycat_isic
+	replace industrycat_isic="" if lstatus!=1
+	replace industrycat_isic="" if industrycat_isic=="."
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
@@ -1312,6 +1313,7 @@ foreach v of local ed_var {
 	gen byte unitwage = 5
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
+	replace unitwage=. if lstatus!=1
 	label values unitwage lblunitwage
 *</_unitwage_>
 
@@ -1444,6 +1446,7 @@ foreach v of local ed_var {
 	replace contract=. if p6450==9 //instead of replace contract=. if p6450==3
 	label var contract "Employment has contract primary job 7 day recall"
 	la de lblcontract 0 "Without contract" 1 "With contract"
+	replace contract=. if lstatus!=1
 	label values contract lblcontract
 *</_contract_>
 
@@ -1459,7 +1462,7 @@ foreach v of local ed_var {
 
 *<_socialsec_>
 	gen byte socialsec=p6920
-	recode socialsec 2=0 3=.
+	recode socialsec 2=0 3=. 9=.
 	label var socialsec "Employment has social security insurance primary job 7 day recall"
 	la de lblsocialsec 1 "With social security" 0 "Without social secturity"
 	label values socialsec lblsocialsec
@@ -1586,7 +1589,7 @@ foreach v of local ed_var {
 
 
 *<_wmonths_2_>
-	gen wmonths_2 = p760
+	gen wmonths_2 = .
 	label var wmonths_2 "Months of work in past 12 months secondary job 7 day recall"
 *</_wmonths_2_>
 
@@ -2148,7 +2151,7 @@ compress
 
 *<_% SAVE_>
 
-save "`path_output'\COL_2017_GLD_v01_M_v01_A_GLD_ALL.dta", replace
+save "`path_output'\COL_2017_GEIH_V01_M_V01_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>
 }
