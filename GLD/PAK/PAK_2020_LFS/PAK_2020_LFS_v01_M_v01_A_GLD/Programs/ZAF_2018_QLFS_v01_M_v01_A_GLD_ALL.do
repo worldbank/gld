@@ -4,21 +4,21 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				ZAF_2011_QLFS_v01_M_v01_A_GLD_ALL.do </_Program name_>
+<_Program name_>				ZAF_2018_QLFS_v01_M_v01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata MP 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
-<_Date created_>				2021-06-20 </_Date created_>
+<_Date created_>				2021-06-30 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						South Africa(ZAF) </_Country_>
 <_Survey Title_>				Labor Market Dynamics in South Africa </_Survey Title_>
-<_Survey Year_>					2011 </_Survey Year_>
-<_Study ID_>					ZAF_2011_LMDSA_v01_M </_Study ID_>
+<_Survey Year_>					2018 </_Survey Year_>
+<_Study ID_>					ZAF_2018_LMDSA_v01_M </_Study ID_>
 <_Data collection from (M/Y)_>	[MM/YYYY] </_Data collection from (M/Y)_>
 <_Data collection to (M/Y)_>	[MM/YYYY] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			DataFirst </_Source of dataset_>
-								https://www.datafirst.uct.ac.za/dataportal/index.php/catalog/246
-<_Sample size (HH)_> 			45,044 </_Sample size (HH)_>
-<_Sample size (IND)_> 			160,350 </_Sample size (IND)_>
+								https://www.datafirst.uct.ac.za/dataportal/index.php/catalog/818
+<_Sample size (HH)_> 			39,084 </_Sample size (HH)_>
+<_Sample size (IND)_> 			131,374 </_Sample size (IND)_>
 <_Sampling method_> 			Stratified two-stage cluster sampling method </_Sampling method_>
 <_Geographic coverage_> 		Province </_Geographic coverage_>
 <_Currency_> 					South African Rand </_Currency_>
@@ -56,7 +56,7 @@ set mem 800m
 local 	drive 	`"Z"'
 local 	cty 	`"ZAF"'
 local 	usr		`"573465_JT"'
-local 	surv_yr `"2011"'
+local 	surv_yr `"2018"'
 local 	year 	"`drive':\GLD-Harmonization\\`usr'\\`cty'\\`cty'_`surv_yr'_LFS"
 local 	main	"`year'\\`cty'_`surv_yr'_LFS_v01_M"
 local 	stata	"`main'\data\stata"
@@ -74,7 +74,7 @@ local output "`id_data'"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	use "`input'\lmdsa_2011_v1.1_20150407.dta", clear
+	use "`input'\lmdsa-2018-v1.0.dta", clear
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -107,7 +107,7 @@ local output "`id_data'"
 
 
 *<_year_>
-	gen int year = 2011
+	gen int year = 2018
 	label var year "Year of survey"
 *</_year_>
 
@@ -131,7 +131,7 @@ local output "`id_data'"
 
 
 *<_int_year_>
-	gen int_year= 2011
+	gen int_year= 2018
 	label var int_year "Year of the interview"
 *</_int_year_>
 
@@ -157,7 +157,7 @@ local output "`id_data'"
 
 
 *<_weight_>
-	gen weight = Weight
+	gen weight=Weight
 	label var weight "Household sampling weight"
 *</_weight_>
 
@@ -175,7 +175,7 @@ local output "`id_data'"
 
 
 *<_strata_>
-	gen strata=Stratum
+	gen strata=STRATUM
 	label var strata "Strata"
 *</_strata_>
 
@@ -194,9 +194,20 @@ local output "`id_data'"
 
 {
 
+/*<_urban_>
+It is not clear how the three categories are defined because the code list in the
+documentation does not match the raw dataset. According to QLFS documentation and
+urbanization stats from:
+ https://data.worldbank.org/indicator/SP.URB.TOTL.IN.ZS?locations=ZA,
+the final code list should be
+1=urban
+2=traditional(rural)
+3=farms/mining areas(rural)
+</_urban_>*/
+
 *<_urban_>
-	gen byte urban=Geo_type
-	recode urban 1/2=1 4/5=0
+	gen byte urban=Geo_type_code
+	recode urban 1=1 2/3=0
 	label var urban "Location is urban"
 	la de lblurban 1 "Urban" 0 "Rural"
 	label values urban lblurban
@@ -323,45 +334,39 @@ local output "`id_data'"
 /*<_relationharm_>
 
 Not asked, all we know is that the person with personal number equal to 1 is the head, the problem is that in some cases that person is not present, probably because he/she didn't spend four nights or more in this household. In those cases I assigned the eldest adult male (or female absent male) present as the household head.
-159 observations were dropped due to no male memeber or multiple same old male (or female) members.
+135 observations were dropped due to no male memeber or multiple same old male (or female) members.
 Age of majority is 18 in South Africa.
 
 DROPS:
-OBS: 159
-HH: 54
-
+OBS: 135
+HH: 52
 REGIONAL DISTRIBUTION:
-
 Subnational ID at |
             First |
    Administrative |
             Level |      Freq.     Percent        Cum.
 ------------------+-----------------------------------
- 1 - Western Cape |          5        3.14        3.14
- 2 - Eastern Cape |         42       26.42       29.56
-   4 - Free State |         12        7.55       37.11
-5 - KwaZulu-Natal |         31       19.50       56.60
-   6 - North West |          2        1.26       57.86
-      7 - Gauteng |          8        5.03       62.89
-   8 - Mpumalanga |         21       13.21       76.10
-      9 - Limpopo |         38       23.90      100.00
+ 1 - Western Cape |         15       11.11       11.11
+ 2 - Eastern Cape |         31       22.96       34.07
+3 - Northern Cape |          6        4.44       38.52
+   4 - Free State |          4        2.96       41.48
+5 - KwaZulu-Natal |         21       15.56       57.04
+   6 - North West |          1        0.74       57.78
+      7 - Gauteng |         13        9.63       67.41
+   8 - Mpumalanga |          7        5.19       72.59
+      9 - Limpopo |         37       27.41      100.00
 ------------------+-----------------------------------
-            Total |        159      100.00
+            Total |        135      100.00
 
-Note: 415 observations are under 18 (or not adult) yet are household heads because 
+Note: 193 observations are under 18 (or not adult) yet are household heads because
 they are originally asigned as the head --- their PERSONNO is 1.
 
-But there are 5 observations are assigned as household heads even though their PERSONNOs
+But there are 2 observations are assigned as household heads even though their PERSONNOs
 are not originally 1 or their ages reach 18. Their pids are:
-
-53800066000001130104 			
-90800181000001070102
-90800501000001860102	
-90800501000002050102	
-
-The problem is that their ages change between quarters, even though the pids show 
-that people with two different ages, i.e. one is 23 and the other is 4, are the same person. 
-
+	
+97410802000000360206 "turning from 4 to 4 to 36"
+97410802000000360206 "turning from 4 to 4 to 36"	
+	
 </_relationharm_>*/
 
 *<_relationharm_>
@@ -402,7 +407,7 @@ that people with two different ages, i.e. one is 23 and the other is 4, are the 
 	drop if hh6!=1
 	bys pid: egen head_max=max(!missing(relationharm))
 	bys pid: egen head_min=min(!missing(relationharm))
-	replace relationharm=1 if head_max==1 & head_min==0
+	replace relationharm=1 if head_max==1&head_min==0
 	drop _merge hh2 hh3 hh4 hh5 hh6 head_* _merge maxage male_present
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
@@ -558,7 +563,9 @@ Education module is only asked to those 0 and older.
 *</_ed_mod_age_>
 
 *<_school_>
-	gen byte school = .
+	gen byte school = Q19ATTE
+	recode school 2=0
+	replace school=. if age<ed_mod_age & age!=.
 	label var school "Attending school"
 	la de lblschool 0 "No" 1 "Yes"
 	label values school  lblschool
@@ -579,20 +586,70 @@ The National Technical Certificate level 1, 2, and 3 are mapped to grade 10, 11,
 respectively. In South Africa, one option for students is to exit school with GETC
 or grade 9 and enter a technical education program at N1, proceeding to N2.
 
-Zero observation's years of education exceed their age.
+77 observations' years of education exceed their age.
+
+Individual |                      Highest education level
+       age | Grade 7/S  Grade 8/S  Grade 9/S  Grade 10/  Grade 11/  Grade 12/ |     Total
+-----------+------------------------------------------------------------------+----------
+         6 |         5          6          2          2          0          0 |        15 
+         7 |         0          4          4          6          3          2 |        20 
+         8 |         0          0          8          2          3          2 |        15 
+         9 |         0          0          0          4          2          4 |        12 
+        10 |         0          0          0          0          5          0 |         6 
+        11 |         0          0          0          0          0          2 |         3 
+        13 |         0          0          0          0          0          0 |         1 
+        14 |         0          0          0          0          0          0 |         1 
+        15 |         0          0          0          0          0          0 |         1 
+        18 |         0          0          0          0          0          0 |         3 
+-----------+------------------------------------------------------------------+----------
+     Total |         5         10         14         14         13         10 |        77 
+
+Individual |                      Highest education level
+       age | NTC l/N1/  Certifica  Diploma w  Higher Di  Post High  Bachelors |     Total
+-----------+------------------------------------------------------------------+----------
+         6 |         0          0          0          0          0          0 |        15 
+         7 |         0          0          0          0          0          0 |        20 
+         8 |         0          0          0          0          0          0 |        15 
+         9 |         1          0          1          0          0          0 |        12 
+        10 |         0          1          0          0          0          0 |         6 
+        11 |         0          0          0          1          0          0 |         3 
+        13 |         0          0          0          0          0          1 |         1 
+        14 |         0          0          0          1          0          0 |         1 
+        15 |         0          0          0          0          0          0 |         1 
+        18 |         0          0          0          0          3          0 |         3 
+-----------+------------------------------------------------------------------+----------
+     Total |         1          1          1          2          3          1 |        77 
+		   
+		   |  Highest
+           | education
+Individual |   level
+       age | Higher De |     Total
+-----------+-----------+----------
+         6 |         0 |        15 
+         7 |         1 |        20 
+         8 |         0 |        15 
+         9 |         0 |        12 
+        10 |         0 |         6 
+        11 |         0 |         3 
+        13 |         0 |         1 
+        14 |         0 |         1 
+        15 |         1 |         1 
+        18 |         0 |         3 
+-----------+-----------+----------
+     Total |         2 |        77 
 
 </_educy_>*/
 
 
 *<_educy_>
-	gen byte educy=Q17EDUCATION if inrange(Q17EDUCATION,1,13)
-	replace educy=0 if Q17EDUCATION==0
-	replace educy=Q17EDUCATION-3 if inrange(Q17EDUCATION,14,16)
-	replace educy=11 if inrange(Q17EDUCATION,17,18)
-	replace educy=12 if inrange(Q17EDUCATION,19,20)
-	replace educy=16 if inlist(Q17EDUCATION, 21, 22)
-	replace educy=19 if inlist(Q17EDUCATION, 23, 24)
-	replace educy=. if inlist(Q17EDUCATION, 25, 26, 99)
+	gen byte educy=Q17EDUCATION if inrange(Q17EDUCATION,0,12)
+	replace educy=Q17EDUCATION-3 if inrange(Q17EDUCATION,13,18)
+	replace educy=11 if inrange(Q17EDUCATION,19,20)
+	replace educy=12 if inrange(Q17EDUCATION,21,22)
+	replace educy=16 if inlist(Q17EDUCATION,23,25, 26)
+	replace educy=19 if inlist(Q17EDUCATION,24,27,28)
+	replace educy=. if inlist(Q17EDUCATION,29,30,31)
+	replace educy=0 if Q17EDUCATION==98
 	replace educy=. if age<ed_mod_age & age!=.
 	replace educy=age if educy>age & !mi(educy) & !mi(age)  
 	label var educy "Years of education"
@@ -786,7 +843,7 @@ Q310STARTBUSNS "Start a business if the circumstances have allowed?"
 
 *<_nlfreason_>
 	gen byte nlfreason=Q35YNOTWRK
-	recode nlfreason 4=3 3 5/7=5
+	recode nlfreason 4=3 8=4 3 5/7 9=5
 	replace nlfreason=. if lstatus!=3
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
@@ -869,7 +926,7 @@ Q310STARTBUSNS "Start a business if the circumstances have allowed?"
 
 
 *<_industrycat10_>
-	gen byte industrycat10=Indus
+	gen byte industrycat10=indus
 	recode industrycat10 9 11=10
 	replace industrycat10=9 if inrange(Q43INDUSTRY,911,917)
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
@@ -923,13 +980,12 @@ Q310STARTBUSNS "Start a business if the circumstances have allowed?"
 
 
 *<_occup_>
-	  gen occup=Occup
-	  recode occup 10=9
-	  replace occup=. if Q42OCCUPATION==9999
-	  replace occup=10 if Q42OCCUPATION==5164
-	  replace occup=. if lstatus!=1
-	  label var occup "1 digit occupational classification, primary job 7 day recall"
-  	  la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
+	recode occup 10=9 11=99
+	replace occup=. if Q42OCCUPATION==9999
+	replace occup=10 if Q42OCCUPATION==5164
+	replace occup=. if lstatus!=1
+	label var occup "1 digit occupational classification, primary job 7 day recall"
+  	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	  label values occup lbloccup
 *</_occup_>
 
@@ -959,16 +1015,14 @@ Variable "Hrswrk" is equal to "Q418HRSWRK" for people who have one job and it is
 	replace first=0 if primary!=. & primary==Q420SECONDHRSWRK
 
 The main job was decided based on time spent.
-0.09% of people who have jobs spend more time on their second job.
+0.1% of people who have jobs spend more time on their second job.
 
-    first |      Freq.     Percent        Cum.
+   first |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          0 |         76        0.09        0.09
-          1 |     80,928       99.91      100.00
+          0 |         70        0.10        0.10
+          1 |     73,050       99.90      100.00
 ------------+-----------------------------------
-      Total |     81,004      100.00
-
-NOTE: One outlier who has worked 193 hours in total in the past week has more than one job. For people who have moer than one job, the primary job will be selected between the firt and the second jobs based on time they spend in each. The outlier was not cut truncated to 168 hours.
+      Total |     73,120      100.00
 
 <_whours_>*/
 
@@ -1066,6 +1120,8 @@ instead of ".".
 	replace industrycat_isic="" if lstatus!=1
 	replace occup_isco="" if lstatus!=1
 *</_Labor_status_&_ISIC/ISCO_>
+
+
 }
 
 
@@ -1683,6 +1739,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`output'\ZAF_2011_QLFS_v01_M_v01_A_GLD_ALL.dta", replace
+save "`output'\ZAF_2018_QLFS_v01_M_v01_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>
