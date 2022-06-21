@@ -18,8 +18,8 @@
 <_Data collection from_>			01/2012
 <_Data collection to_>				12/2012 </_Data collection to_>
 <_Source of dataset_> 				Departamento Administrativo Nacional de Estadistica - DANE
-<_Sample size (HH)_> 				 </_Sample size (HH)_>
-<_Sample size (IND)_> 				 </_Sample size (IND)_>
+<_Sample size (HH)_> 				209,920 </_Sample size (HH)_>
+<_Sample size (IND)_> 				 684,060 </_Sample size (IND)_>
 <_Sampling method_> 				 </_Sampling method_>
 <_Geographic coverage_> 			 </_Geographic coverage_>
 <_Currency_> 					Colombian Pesos </_Currency_>

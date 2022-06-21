@@ -15,10 +15,10 @@
 <_Survey Title_>				Gran Encuesta Integrada de Hogares - GEIH
 <_Survey Year_>					2018
 <_Study ID_>					[Microdata Library ID if present] </_Study ID_>
-<_Data collection from_>			07/2018
-<_Data collection to_>				[MM/YYYY] </_Data collection to_>
+<_Data collection from_>			01/2018
+<_Data collection to_>				12/2018 </_Data collection to_>
 <_Source of dataset_> 				Departamento Administrativo Nacional de Estadistica - DANE
-<_Sample size (HH)_> 				[#] </_Sample size (HH)_>
+<_Sample size (HH)_> 				231,128 </_Sample size (HH)_>
 <_Sample size (IND)_> 				762,753  </_Sample size (IND)_>
 <_Sampling method_> 				[Brief description] </_Sampling method_>
 <_Geographic coverage_> 			[To what level is data significant] </_Geographic coverage_>
