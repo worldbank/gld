@@ -155,7 +155,7 @@ local output "`id_data'"
 
 
 *<_int_month_>
-	gen int_month=6
+	gen int_month=7
 	label de lblint_month 1 "January" 2 "February" 3 "March" 4 "April" 5 "May" 6 "June" 7 "July" 8 "August" 9 "September" 10 "October" 11 "November" 12 "December"
 	label value int_month lblint_month
 	label var int_month "Month of the interview"
@@ -335,6 +335,7 @@ local output "`id_data'"
 *<_relationharm_>
 	gen byte relationharm=Sec4_4_3
 	recode relationharm 4=3 5=4 6 7=5 8 9=6
+	replace relationharm=1 if pid=="610002706001" 
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm lblrelationharm
@@ -380,8 +381,6 @@ local output "`id_data'"
 *</_conc_dsord_>
 
 
-
-
 *<_slfcre_dsablty_>
 	gen slfcre_dsablty  = .
 	label var eye_dsablty "Disability related to selfcare"
@@ -416,7 +415,7 @@ local output "`id_data'"
 
 
 *<_migrated_binary_>
-	gen migrated_binary=cond(Sec4_4_15==1, 1, 0)
+	gen migrated_binary=cond(Sec4_4_15==1, 0, 1)
 	label de lblmigrated_binary 0 "No" 1 "Yes"
 	label values migrated_binary lblmigrated_binary
 	label var migrated_binary "Individual has migrated"
@@ -678,8 +677,7 @@ is 10 and above, Pakistan employment report defines active population as 15 year
 	gen byte lstatus=.
 	replace lstatus=1 if inlist(1, Sec5_5_1, Sec5_5_2, Sec5_5_3) | inlist(Sec5_5_4,1,2)
 	replace lstatus=2 if inrange(Sec9_9_1,1,6) | inrange(Sec9_9_2,1,5) | inlist(Sec9_9_3,1,2) 
-	replace lstatus=3 if Sec9_9_1==7 | inrange(Sec9_9_3,3,7)
-	replace lstatus=. if age<minlaborage & age!=.
+	replace lstatus=3 if lstatus==.
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
@@ -787,7 +785,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 	recode industrycat_isic (96 97=93)
 	replace industrycat_isic=industrycat_isic*100
 	tostring industrycat_isic, replace format(%04.0f)
-	replace industrycat_isic = "" if lstatus!=1
+	replace industrycat_isic="" if lstatus!=1 | industrycat_isic=="."
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
@@ -822,7 +820,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 	gen occup_isco=Sec5_5_9
 	replace occup_isco=occup_isco*100
 	tostring occup_isco, replace format(%04.0f)
-	replace occup_isco = "" if lstatus!=1
+	replace occup_isco="" if lstatus!=1 | occup_isco=="."
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
@@ -961,7 +959,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_ocusec_2_>
 	gen byte ocusec_2=Sec5_5_19
-	recode ocusec (1/3=1) (4 6=3) (5 7/9=2) (10=4)
+	recode ocusec_2 (1/3=1) (4 6=3) (5 7/9=2) (10=4)
 	label var ocusec_2 "Sector of activity secondary job 7 day recall"
 	la de lblocusec_2 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec_2 lblocusec_2
@@ -976,10 +974,10 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_industrycat_isic_2_>
 	gen industrycat_isic_2=Sec5_5_21
-	recode industrycat_isic_2 (96 97=93)
+	recode industrycat_isic_2 (96 97=93) (7/9 48 58 69 78 83 88 81=.)
 	replace industrycat_isic_2=industrycat_isic_2*100
 	tostring industrycat_isic_2, replace format(%04.0f)
-	replace industrycat_isic_2= "" if Sec5_5_18!=1
+	replace industrycat_isic_2="" if Sec5_5_18!=1 | mi(Sec5_5_21) | industrycat_isic_2=="."
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
@@ -1010,10 +1008,10 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_occup_isco_2_>
 	gen occup_isco_2=Sec5_5_20
-	recode occup_isco_2 (2/6=.)
+	recode occup_isco_2 (2/6 14 18 25 39 67 94=.)
 	replace occup_isco_2=occup_isco_2*100
 	tostring occup_isco_2, replace format(%04.0f)
-	replace occup_isco_2= "" if Sec5_5_18!=1
+	replace occup_isco_2="" if Sec5_5_18!=1 | mi(Sec5_5_20) | occup_isco_2=="."
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
