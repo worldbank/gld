@@ -404,7 +404,6 @@ Have yet to determine the level at which the data is representative
 	bys hhid: egen tot_head = sum(head)
 	
 	count if tot_head!=1
-	* There are 153 cases with zero HH head
 	
 	gen neg_age = -(age)
 	
@@ -492,7 +491,7 @@ Have yet to determine the level at which the data is representative
 {
 
 *<_migrated_mod_age_>
-	gen migrated_mod_age = .
+	gen migrated_mod_age = 11
 	label var migrated_mod_age "Migration module application age"
 *</_migrated_mod_age_>
 
@@ -567,11 +566,8 @@ Have yet to determine the level at which the data is representative
 
 *<_ed_mod_age_>
 
-/* <_ed_mod_age_note>
-In the data, the minimum age is 7. Not sure if this is an age restriction or just incidental
-</_ed_mod_age_note> */
 
-gen byte ed_mod_age = .
+gen byte ed_mod_age = 11
 label var ed_mod_age "Education module application age"
 
 *</_ed_mod_age_>
@@ -730,12 +726,13 @@ foreach v of local ed_var {
 *----------8.1: 7 day reference overall------------------------------*
 
 {
+
 *<_lstatus_>
 	gen byte lstatus = .
 	replace lstatus = . if age < minlaborage
-	replace lstatus = 1 if wklw == 1 | perjob == 1
-	replace lstatus = 2 if avaiwk == 1
-	replace lstatus = 3 if avaiwk == 2
+	replace lstatus = 1 if wklw == 1 | perjob == 1 
+	replace lstatus = 2 if lookwk == 1 | (lookwk == 2 & avaiwk== 1)
+	replace lstatus = 3 if (lookwk == 2 & avaiwk == 2) | (lookwk == 2 & avaiwk==1) | (lookwk == 1 & avaiwk == 2) | (avaiwk == 2)
 	
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -743,12 +740,12 @@ foreach v of local ed_var {
 *</_lstatus_>
 
 
+
 *<_potential_lf_>
 	gen byte potential_lf = .
 	replace potential_lf = 0 if lstatus == 3
-	replace potential_lf = 1 if (lookwk == 2 & avaiwk == 1) | (lookwk == 1 & avaiwk == 2)
-	replace potential_lf = . if age < minlaborage & age != .
-	replace potential_lf = . if lstatus != 3
+	replace potential_lf = 1 if (lookwk == 2 & avaiwk== 1) | (lookwk == 1 & avaiwk== 2)
+	replace potential_lf = . if age < minlaborage & age != .	
 	label var potential_lf "Potential labour force status"
 	la de lblpotential_lf 0 "No" 1 "Yes"
 	label values potential_lf lblpotential_lf
@@ -757,23 +754,17 @@ foreach v of local ed_var {
 
 *<_underemployment_>
 
-/* <_underemployment_note>
-Here, I follow the definition of the Thailand BOT (Central Bank of Thailand):
-
-== work less than 35 hours per week and available for additional work
-</_underemployment_note> */
 
 	gen byte underemployment = .
-	replace underemployment = 1 if add_hwk == 1 & total_hr < 35
-	replace underemployment = 0 if add_hwk == 2 | total_hr >=35 
-	
 	replace underemployment = . if age < minlaborage & age != .
 	replace underemployment = . if lstatus != 1
+	replace underemployment = 1 if lstatus == 1 & add_hwk== 1
+	replace underemployment = 0 if lstatus == 1 & add_hwk== 2
+	
 	label var underemployment "Underemployment status"
 	la de lblunderemployment 0 "No" 1 "Yes"
 	label values underemployment lblunderemployment
 *</_underemployment_>
-
 
 *<_nlfreason_>
 	gen byte nlfreason=.
@@ -807,7 +798,7 @@ Here, I follow the definition of the Thailand BOT (Central Bank of Thailand):
 {
 *<_empstat_>
 	gen byte empstat= .
-	replace empstat = 1 if status == 1 | status == 2
+	replace empstat = 1 if status == 1 | status == 2 | status == 6
 	replace empstat = 2 if status == 5
 	replace empstat = 3 if status == 3
 	replace empstat = 4 if status == 4
@@ -946,8 +937,10 @@ Occupation code is based on the ISCO 1958
 	label values unitwage lblunitwage
 *</_unitwage_>
 
+
 *<_whours_>
 	gen whours = hour_po
+	replace whours = . if hour_po == 0
 	replace whours = . if lstatus!=1
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
@@ -1168,7 +1161,10 @@ Also, it does not make sense to assume individuals reporting non-missing hour_oo
 
 
 *<_t_hours_total_>
-	gen t_hours_total = .
+	gen t_hours_total = total_hr
+	replace t_hours_total = . if total_hr== 0 | (total_hr>140 & !missing(total_hr))
+	replace t_hours_total = t_hours_total * 52
+	
 	label var t_hours_total "Annualized hours worked in all jobs 7 day recall"
 *</_t_hours_total_>
 

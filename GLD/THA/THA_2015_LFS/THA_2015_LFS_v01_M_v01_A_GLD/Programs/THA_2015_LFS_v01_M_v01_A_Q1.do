@@ -99,9 +99,10 @@ global path_output "C:\Users\wb510859\OneDrive - WBG\GLD-Harmonization\510859_AS
 
 
 *<_icls_v_>
-	gen icls_v = "Not stated"
+	gen icls_v = "ICLS-13"
 	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
+
 
 
 *<_isced_version_>
@@ -361,6 +362,8 @@ Have yet to determine the level at which the data is representative
 	501 "1 - Bangkok Metropolis"
 
 	label values subnatid2_prev lblsubnatid2_prev
+	label var subnatid2_prev "Classification used for subnatid2 from previous survey"
+
 *</_subnatid2_prev_>
 
 
@@ -772,11 +775,9 @@ foreach var of varlist wklw perjob avaiwk lookwk add_hwk tothour receive reunwk 
 
 *<_lstatus_>
 
-* Based on Thai NSO, employed are those who worked at least one hour in the past week, or did not work but receive salary/wage, not receive wagebut had regular job, or worked at least 1 hour without pay in business enterprises
-
 	gen byte lstatus = 1 if wklw == 1 | perjob == 1 | receive == 1
-	replace lstatus = 2 if inrange(lookwk, 1, 2) | avaiwk == 1
-	replace lstatus = 3 if avaiwk == 2
+	replace lstatus = 2 if lookwk == 1 | (lookwk == 2 & avaiwk == 1)
+	replace lstatus = 3 if (lookwk == 3 & avaiwk == 2) | (lookwk == 3 & avaiwk == 1) | (lookwk == 2 & avaiwk == 2)
 	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -784,10 +785,11 @@ foreach var of varlist wklw perjob avaiwk lookwk add_hwk tothour receive reunwk 
 *</_lstatus_>
 
 
+
 *<_potential_lf_>
 	gen byte potential_lf = .
 	replace potential_lf = 0 if lstatus == 3
-	replace potential_lf = 1 if (lookwk == 2 & avaiwk == 1) | (lookwk == 1 & avaiwk == 2)
+	replace potential_lf = 1 if (lookwk == 3 & avaiwk == 1) | (lookwk == 2 & avaiwk == 2)
 	replace potential_lf = . if age < minlaborage & age != .
 	replace potential_lf = . if lstatus != 3
 	label var potential_lf "Potential labour force status"
@@ -797,9 +799,13 @@ foreach var of varlist wklw perjob avaiwk lookwk add_hwk tothour receive reunwk 
 
 
 *<_underemployment_>
+	destring add_hwk, replace
 	gen byte underemployment = .
 	replace underemployment = . if age < minlaborage & age != .
-	replace underemployment = . if lstatus == 1
+	replace underemployment = . if lstatus != 1
+	replace underemployment = 1 if lstatus == 1 & add_hwk == 1
+	replace underemployment = 0 if lstatus == 1 & add_hwk == 2
+	
 	label var underemployment "Underemployment status"
 	la de lblunderemployment 0 "No" 1 "Yes"
 	label values underemployment lblunderemployment
@@ -890,6 +896,11 @@ foreach var of varlist wklw perjob avaiwk lookwk add_hwk tothour receive reunwk 
 	gen TSIC = industry_orig
 	merge m:1 TSIC using "$path_in\TSIC_to_ISIC_v3.dta", keep(master match) nogen
 	gen industrycat_isic = ISIC_v3
+	* Correct the typos in the conversion table
+	* This is based on the TSIC 2009 main report from http://statstd.nso.go.th/classification/download.aspx
+
+	replace industrycat_isic = "2927" if industrycat_isic == "2729"
+	replace industrycat_isic = "9309" if industrycat_isic == "9306"
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
@@ -987,14 +998,12 @@ foreach var of varlist wklw perjob avaiwk lookwk add_hwk tothour receive reunwk 
 	label values unitwage lblunitwage
 *</_unitwage_>
 
-
 *<_whours_>
 	gen whours = hour_po
-	replace whours = . if (hour_po>84 & !missing(hour_po)) | hour_po == 0
+	replace whours = . if  hour_po == 0
 
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
-
 
 
 *<_wmonths_>
@@ -1218,10 +1227,11 @@ foreach var of varlist wklw perjob avaiwk lookwk add_hwk tothour receive reunwk 
 
 
 *<_t_hours_total_>
-	gen t_hours_total = .
+	gen t_hours_total = tothour
+	replace t_hours_total = . if tothour == 0 | (tothour > 140 & !missing(tothour))
+	replace t_hours_total = t_hours_total * 52
 	label var t_hours_total "Annualized hours worked in all jobs 7 day recall"
 *</_t_hours_total_>
-
 
 *<_t_wage_nocompen_total_>
 	gen t_wage_nocompen_total = .
@@ -1630,8 +1640,8 @@ foreach var of varlist wklw perjob avaiwk lookwk add_hwk tothour receive reunwk 
 
 {
     
-	* Set missing values for unemployed with responses on occupation and industry questions
-foreach var of varlist ocusec industry_orig industrycat_isic industrycat10 occup_orig occup occup_isco firmsize_l firmsize_u {
+* Set missing values for unemployed with responses on occupation and industry questions
+foreach var of varlist ocusec empstat industry_orig industrycat_isic industrycat10  industrycat4 occup_orig occup occup_isco wage_no_compen unitwage firmsize_l firmsize_u {
 	cap confirm numeric variable `var'
 	
 	if _rc==0 {

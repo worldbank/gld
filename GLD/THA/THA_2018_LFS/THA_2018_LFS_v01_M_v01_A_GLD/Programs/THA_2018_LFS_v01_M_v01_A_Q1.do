@@ -101,9 +101,10 @@ rename (*_) (*)
 
 
 *<_icls_v_>
-	gen icls_v = "Not stated"
+	gen icls_v = "ICLS-13"
 	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
+
 
 
 *<_isced_version_>
@@ -375,6 +376,8 @@ Have yet to determine the level at which the data is representative
 	501 "1 - Bangkok Metropolis"
 
 	label values subnatid2_prev lblsubnatid2_prev
+	label var subnatid2_prev "Classification used for subnatid2 from previous survey"
+
 *</_subnatid2_prev_>
 
 
@@ -792,8 +795,8 @@ foreach v of local ed_var {
 gen byte lstatus = .
 	replace lstatus = . if age < minlaborage
 	replace lstatus = 1 if WK_7DAY == 1 | RETURN == 1 | RECEIVE == 1
-	replace lstatus = 2 if inrange(SEEKING, 1, 2) | AVAILABLE == 1
-	replace lstatus = 3 if AVAILABLE == 2
+	replace lstatus = 2 if SEEKING == 1 | (SEEKING == 2 & AVAILABLE == 1)
+	replace lstatus = 3 if (SEEKING == 3 & AVAILABLE == 2) | (SEEKING == 3 & AVAILABLE == 1) | (SEEKING == 2 & AVAILABLE == 2)
 	
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -804,7 +807,7 @@ gen byte lstatus = .
 *<_potential_lf_>
 	gen byte potential_lf = .
 	replace potential_lf = 0 if lstatus == 3
-	replace potential_lf = 1 if (SEEKING == 2 & AVAILABLE == 1) | (SEEKING == 1 & AVAILABLE == 2)
+	replace potential_lf = 1 if (SEEKING == 3 & AVAILABLE == 1) | (SEEKING == 2 & AVAILABLE == 2)
 	replace potential_lf = . if age < minlaborage & age != .	
 	label var potential_lf "Potential labour force status"
 	la de lblpotential_lf 0 "No" 1 "Yes"
@@ -813,9 +816,13 @@ gen byte lstatus = .
 
 
 *<_underemployment_>
+	destring MORE_WK, replace
 	gen byte underemployment = .
 	replace underemployment = . if age < minlaborage & age != .
-	replace underemployment = . if lstatus == 1
+	replace underemployment = . if lstatus != 1
+	replace underemployment = 1 if lstatus == 1 & MORE_WK == 1
+	replace underemployment = 0 if lstatus == 1 & MORE_WK == 2
+	
 	label var underemployment "Underemployment status"
 	la de lblunderemployment 0 "No" 1 "Yes"
 	label values underemployment lblunderemployment

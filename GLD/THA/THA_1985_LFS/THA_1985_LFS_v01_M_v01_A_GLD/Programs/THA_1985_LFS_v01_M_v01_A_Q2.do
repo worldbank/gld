@@ -5,37 +5,49 @@
 ==============================================================================================%%*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				THA_1985_LFS_v01_M_v01_A_Q2.do </_Program name_>
+<_Program name_>				THA_2019_LFS_v01_M_v01_A_Q1.do </_Program name_>
 <_Application_>					Stata 17 <_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
-<_Date created_>				2022-02-18 </_Date created_>
+<_Date created_>				2022-01-08 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						Thailand (THA) </_Country_>
-<_Survey Title_>				Labor Force Survey 2021 Q1 </_Survey Title_>
-<_Survey Year_>					1985 </_Survey Year_>
+<_Survey Title_>				Labor Force Survey 2019 Q1 </_Survey Title_>
+<_Survey Year_>					2019 </_Survey Year_>
 <_Study ID_>					N.A. </_Study ID_>
-<_Data collection from_>		April 1985 </_Data collection from_>
-<_Data collection to_>			June 1985 </_Data collection to_>
+<_Data collection from_>		January 2019 </_Data collection from_>
+<_Data collection to_>			March 2019 </_Data collection to_>
 <_Source of dataset_> 			NSO </_Source of dataset_>
-<_Sample size (HH)_> 			17,366 </_Sample size (HH)_>
-<_Sample size (IND)_> 			80,021 </_Sample size (IND)_>
-<_Sampling method_> 			[Brief description] </_Sampling method_>
-<_Geographic coverage_> 		[To what level is data significant] </_Geographic coverage_>
+<_Sample size (HH)_> 			74,513 </_Sample size (HH)_>
+<_Sample size (IND)_> 			201,976 </_Sample size (IND)_>
+<_Sampling method_> 			
+A stratified two-stage sampling was adopted to the survey: Bangkok Metroplois and the 76 provinces constituted the strata. Each stratum (excluding Bangkok Metropolis) was divided into two parts according to the type of local administration, namely municipal areas and non-municipal areas. The primary and secondary sampling units were enumeration areas (EAs) for municipal areas and non-municipal areas and private households and persons in the collective households respectively.
+
+At the first stage, the EAs based on the 2010 census frame was updated from other sample surveys and selected separately and independently in each stratum by using probability proportional to zero, giving the total number of households.
+
+At the second stage, private households and persons in the collective households were our ultimate sampling units. A new listing of private households was made for every sampled EAs to serve as the sampling frome. In each sampled EAs, a systematic sample of private households were selected with the following sample size: Municipal areas : 16 sample households per EAs and Non-municipal areas : 12 sample households per EAs.
+
+ </_Sampling method_>
+ 
+<_Geographic coverage_> 
+		
+Data is significant at the regional level. As of today, still need to confirm if data at the province (changwat) is representative. 
+
+</_Geographic coverage_>
+
 <_Currency_> 					Thailand Baht </_Currency_>
 -----------------------------------------------------------------------
-<_ICLS Version_>				[Version of ICLS for Labor Questions] </_ICLS Version_>
-<_ISCED Version_>				[Version of ICLS for Labor Questions] </_ISCED Version_>
-<_ISCO Version_>				[Version of ICLS for Labor Questions] </_ISCO Version_>
-<_OCCUP National_>				[Version of ICLS for Labor Questions] </_OCCUP National_>
-<_ISIC Version_>				[Version of ICLS for Labor Questions] </_ISIC Version_>
-<_INDUS National_>				[Version of ICLS for Labor Questions] </_INDUS National_>
+<_ICLS Version_>				Not stated </_ICLS Version_>
+<_ISCED Version_>				ISCED 2011 </_ISCED Version_>
+<_ISCO Version_>				ISCO 1958 </_ISCO Version_>
+<_OCCUP National_>			Based on ISCO 1958 </_OCCUP National_>
+<_ISIC Version_>				ISIC version 1 </_ISIC Version_>
+<_INDUS National_>			Based on ISIC version 1 </_INDUS National_>
 -----------------------------------------------------------------------
 <_Version Control_>
-* Date: [YYYY-MM-DD] - [Description of changes]
-* Date: [YYYY-MM-DD] - [Description of changes]
+* Date: [2022-01-08] - Prepared initial code
+* Date: [2022-06-15] - Added codes that harmonize data for specific variables, including school attendance, ISCO and ISIC codes, etc...
 </_Version Control_>
 -------------------------------------------------------------------------*/
-
 
 /*%%=============================================================================================
 	1: Setting up of program environment, dataset
@@ -87,28 +99,26 @@ duplicates drop
 
 
 *<_icls_v_>
-	gen icls_v = "ICLS-[##]"
+	gen icls_v = "ICLS-13"
 	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
 
-
 *<_isced_version_>
-	gen isced_version = ""
+	gen isced_version = "isced_2011"
 	label var isced_version "Version of ISCED used for educat_isced"
 *</_isced_version_>
 
 
 *<_isco_version_>
-	gen isco_version = "V01"
+	gen isco_version = "isco_1958"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
 
 *<_isic_version_>
-	gen isic_version = "1958"
+	gen isic_version = "isic_1"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
-
 
 *<_year_>
 	gen int year = 1985
@@ -301,16 +311,11 @@ duplicates drop
 
 *<_subnatidsurvey_>
 
-/*<_subnatidsurvey_note_>
-
-Have yet to determine the level at which the data is representative
-
-*<_subnatidsurvey_note>*/
-
-	gen subnatidsurvey = .
+	gen subnatidsurvey = "subnatid1"
 	label var subnatidsurvey "Administrative level at which survey is representative"
 	
 *</_subnatidsurvey_>
+
 
 
 *<_subnatid1_prev_>
@@ -333,15 +338,23 @@ Have yet to determine the level at which the data is representative
 	label var subnatid3_prev "Classification used for subnatid3 from previous survey"
 *</_subnatid3_prev_>
 
-
 /*<_gaul_adm_code_notes>
 
-	Based on the EAPLAB codes, the gaul_adm1 and gaul_adm2 are region and province respectively
+Based on this reference (https://data.humdata.org/dataset/cod-ab-tha):
+
+level 0 = country
+level 1 = province
+level 2 = district
+level 3 = subdistrict/tambon
+
+* But for the available datasets, the district (amphoe) and tambon are NA
+
+Hence, leave adm2 and adm3 missing
 
 </_gaul_adm_code_notes>*/
 
 *<_gaul_adm1_code_>
-	gen gaul_adm1_code = .
+	gen gaul_adm1_code = subnatid2
 	label var gaul_adm1_code "Global Administrative Unit Layers (GAUL) Admin 1 code"
 *</_gaul_adm1_code_>
 
@@ -513,6 +526,7 @@ Have yet to determine the level at which the data is representative
 *</_migrated_years_>
 
 
+
 *<_migrated_from_urban_>
 	gen migrated_from_urban = .
 	label de lblmigrated_from_urban 0 "Rural" 1 "Urban"
@@ -563,14 +577,11 @@ Have yet to determine the level at which the data is representative
 
 *<_ed_mod_age_>
 
-/* <_ed_mod_age_note>
-In the data, the minimum age is 7. Not sure if this is an age restriction or just incidental
-</_ed_mod_age_note> */
-
-gen byte ed_mod_age = .
+gen byte ed_mod_age = 7
 label var ed_mod_age "Education module application age"
 
 *</_ed_mod_age_>
+
 
 *<_school_>
 	gen byte school= study
@@ -729,9 +740,9 @@ foreach v of local ed_var {
 *<_lstatus_>
 	gen byte lstatus = .
 	replace lstatus = . if age < minlaborage
-	replace lstatus = 1 if wklw == 1 | perjob == 1
-	replace lstatus = 2 if avaiwk == 1
-	replace lstatus = 3 if avaiwk == 2
+	replace lstatus = 1 if wklw == 1 | perjob == 1 
+	replace lstatus = 2 if lookwk == 1 | (lookwk == 2 & avaiwk== 1)
+	replace lstatus = 3 if (lookwk == 2 & avaiwk == 2) | (lookwk == 2 & avaiwk==1) | (lookwk == 1 & avaiwk == 2) | (avaiwk == 2)
 	
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -739,12 +750,12 @@ foreach v of local ed_var {
 *</_lstatus_>
 
 
+
 *<_potential_lf_>
 	gen byte potential_lf = .
 	replace potential_lf = 0 if lstatus == 3
-	replace potential_lf = 1 if (lookwk == 2 & avaiwk == 1) | (lookwk == 1 & avaiwk == 2)
-	replace potential_lf = . if age < minlaborage & age != .
-	replace potential_lf = . if lstatus != 3
+	replace potential_lf = 1 if (lookwk == 2 & avaiwk== 1) | (lookwk == 1 & avaiwk== 2)
+	replace potential_lf = . if age < minlaborage & age != .	
 	label var potential_lf "Potential labour force status"
 	la de lblpotential_lf 0 "No" 1 "Yes"
 	label values potential_lf lblpotential_lf
@@ -753,22 +764,18 @@ foreach v of local ed_var {
 
 *<_underemployment_>
 
-/* <_underemployment_note>
-Here, I follow the definition of the Thailand BOT (Central Bank of Thailand):
-
-== work less than 35 hours per week and available for additional work
-</_underemployment_note> */
 
 	gen byte underemployment = .
-	replace underemployment = 1 if add_hwk == 1 & total_hr < 35
-	replace underemployment = 0 if add_hwk == 2 | total_hr >=35 
-	
 	replace underemployment = . if age < minlaborage & age != .
 	replace underemployment = . if lstatus != 1
+	replace underemployment = 1 if lstatus == 1 & add_hwk== 1
+	replace underemployment = 0 if lstatus == 1 & add_hwk== 2
+	
 	label var underemployment "Underemployment status"
 	la de lblunderemployment 0 "No" 1 "Yes"
 	label values underemployment lblunderemployment
 *</_underemployment_>
+
 
 
 *<_nlfreason_>
@@ -785,13 +792,19 @@ Here, I follow the definition of the Thailand BOT (Central Bank of Thailand):
 
 
 *<_unempldur_l_>
-	gen byte unempldur_l= .
+
+	gen byte unempldur_l = floor(dr_seek)/30
+	replace unempldur_l = 12 if unempldur_l >= 12
+	replace unempldur_l = . if lstatus!=2 
+
 	label var unempldur_l "Unemployment duration (months) lower bracket"
 *</_unempldur_l_>
 
 
 *<_unempldur_u_>
-	gen byte unempldur_u= .
+	gen byte unempldur_u = ceil(dr_seek)/30
+	replace unempldur_u = . if unempldur_u >= 12
+	replace unempldur_u = . if lstatus!=2 
 	label var unempldur_u "Unemployment duration (months) upper bracket"
 *</_unempldur_u_>
 }
@@ -939,6 +952,7 @@ Occupation code is based on the ISCO 1958
 
 *<_whours_>
 	gen whours = hour_po
+	replace whours = . if hour_po == 0
 	replace whours = . if lstatus!=1
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
@@ -1127,17 +1141,9 @@ Occupation code is based on the ISCO 1958
 
 *<_t_hours_others_>
 
-/*<_t_hours_others_notes>
+*<_t_hours_others_>
 
-Since the variable, hour_oo pertains to hours worked other than the primary job in the past 7 days, there is no way to determine the separate the hours worked for the secondary job from the other jobs as both are lumped together. 
-
-Thus, we set hours worked for secondary job as missing, and instead, code the lumped hours variable as hours worked for other jobs. 
-
-Also, it does not make sense to assume individuals reporting non-missing hour_oo have a secondary job. And, it may be a source of confusion for people seeing that there is a value for hours worked in the secondary job but the empstat2 variable is missing.
-
-</_t_hours_others_notes>*/
-
-	gen t_hours_others = hour_oo
+	gen t_hours_others = . 
 	label var t_hours_others "Annualized hours worked in all but primary and secondary jobs 7 day recall"
 *</_t_hours_others_>
 
@@ -1158,7 +1164,10 @@ Also, it does not make sense to assume individuals reporting non-missing hour_oo
 
 
 *<_t_hours_total_>
-	gen t_hours_total = .
+	gen t_hours_total = total_hr
+	replace t_hours_total = . if total_hr== 0 | (total_hr>140 & !missing(total_hr))
+	replace t_hours_total = t_hours_total * 52
+	
 	label var t_hours_total "Annualized hours worked in all jobs 7 day recall"
 *</_t_hours_total_>
 
@@ -1569,6 +1578,18 @@ Also, it does not make sense to assume individuals reporting non-missing hour_oo
 *----------8.13: Labour cleanup------------------------------*
 
 {
+* Set missing values for unemployed with responses on occupation and industry questions
+foreach var of varlist ocusec empstat industry_orig industrycat_isic industrycat10  industrycat4 occup_orig occup occup_isco wage_no_compen unitwage firmsize_l firmsize_u {
+	cap confirm numeric variable `var'
+	
+	if _rc==0 {
+		replace `var' = . if lstatus !=1
+	}
+	else {
+		replace `var' = "" if lstatus !=1
+	}
+}
+
 *<_% Correction min age_>
 
 ** Drop info for cases under the age for which questions to be asked (do not need a variable for this)

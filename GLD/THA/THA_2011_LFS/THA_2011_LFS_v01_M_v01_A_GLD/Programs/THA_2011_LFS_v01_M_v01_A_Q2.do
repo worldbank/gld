@@ -92,11 +92,11 @@ global path_output "C:\Users\wb510859\OneDrive - WBG\GLD-Harmonization\510859_AS
 	label var survey "Survey type"
 *</_survey_>
 
-
 *<_icls_v_>
-	gen icls_v = "Not stated"
+	gen icls_v = "ICLS-13"
 	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
+
 
 
 *<_isced_version_>
@@ -768,11 +768,14 @@ foreach v of local ed_var {
 
 {
 *<_lstatus_>
+
+* Based on Thai NSO, employed are those who worked at least one hour in the past week, or did not work but receive salary/wage, not receive wagebut had regular job, or worked at least 1 hour without pay in business enterprises
+
 	gen byte lstatus = .
 	replace lstatus = . if age < minlaborage
 	replace lstatus = 1 if wk_7day == 1 | return == 1 | receive == 1
 	replace lstatus = 2 if inrange(seeking, 1, 2) | available == 1
-	replace lstatus = 3 if available == 2
+	replace lstatus = 3 if (seeking == 3 & available == 2) | (seeking == 3 & available == 1) | (seeking == 2 & available == 2)
 	
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -784,7 +787,7 @@ foreach v of local ed_var {
 *<_potential_lf_>
 	gen byte potential_lf = .
 	replace potential_lf = 0 if lstatus == 3
-	replace potential_lf = 1 if (seeking == 2 & available == 1) | (seeking == 1 & available == 2)
+	replace potential_lf = 1 if (seeking == 3 & available == 1) | (seeking == 2 & available == 2)
 	replace potential_lf = . if age < minlaborage & age != .
 	replace potential_lf = . if lstatus != 3
 	label var potential_lf "Potential labour force status"
@@ -795,12 +798,12 @@ foreach v of local ed_var {
 
 *<_underemployment_>
 
-/* Here, I follow the definition of the Thailand BOT (Central Bank of Thailand):
-
-== work less than 35 hours per week and available for additional work
-</_underemployment_note> */
-
 	gen byte underemployment = .
+	replace underemployment = . if age < minlaborage & age != .
+	replace underemployment = . if lstatus != 1
+	replace underemployment = 1 if lstatus == 1 & more_wk == 1
+	replace underemployment = 0 if lstatus == 1 & more_wk == 2
+	
 	label var underemployment "Underemployment status"
 	la de lblunderemployment 0 "No" 1 "Yes"
 	label values underemployment lblunderemployment
@@ -890,6 +893,12 @@ foreach v of local ed_var {
 	gen TSIC = industry_orig
 	merge m:1 TSIC using "$path_in\TSIC_to_ISIC_v3.dta", keep(master match) nogen 
 	gen industrycat_isic = ISIC_v3
+	
+	* Correct the typos in the conversion table
+	* This is based on the TSIC 2009 main report from http://statstd.nso.go.th/classification/download.aspx
+
+	replace industrycat_isic = "2927" if industrycat_isic == "2729"
+	replace industrycat_isic = "9309" if industrycat_isic == "9306"
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
@@ -990,7 +999,7 @@ foreach v of local ed_var {
 
 *<_whours_>
 	gen whours = main_hr
-	replace whours = . if (main_hr>84 & !missing(main_hr)) | main_hr == 0
+replace whours = . if main_hr == 0
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -1217,8 +1226,11 @@ foreach v of local ed_var {
 
 *<_t_hours_total_>
 	gen t_hours_total = total_hr
+	replace t_hours_total = . if total_hr == 0 | (total_hr>140 & !missing(total_hr))
+	replace t_hours_total = t_hours_total * 52 
 	label var t_hours_total "Annualized hours worked in all jobs 7 day recall"
 *</_t_hours_total_>
+
 
 
 *<_t_wage_nocompen_total_>
@@ -1630,7 +1642,7 @@ foreach v of local ed_var {
 *<_% Correction min age_>
 
 * Set missing values for unemployed with responses on occupation and industry questions
-foreach var of varlist ocusec industry_orig industrycat_isic industrycat10 occup_orig occup occup_isco firmsize_l firmsize_u {
+foreach var of varlist ocusec empstat industry_orig industrycat_isic industrycat10  industrycat4 occup_orig occup occup_isco wage_no_compen unitwage firmsize_l firmsize_u {
 	cap confirm numeric variable `var'
 	
 	if _rc==0 {
