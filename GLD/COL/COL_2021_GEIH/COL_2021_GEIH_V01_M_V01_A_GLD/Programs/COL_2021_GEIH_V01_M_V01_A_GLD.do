@@ -4,8 +4,8 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>
-<_Application_>					Stata 16
+<_Program name_>				COL_2021_GLD_GEIH_v06
+<_Application_>					Stata 17
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) Eliana Carranza, Andreas Eberhardt, Alejandro Rueda-Sanz
 <_Date created_>				2022-04-11
 
@@ -13,33 +13,30 @@
 
 <_Country_>					    Colombia (COL)
 <_Survey Title_>				Gran Encuesta Integrada de Hogares - GEIH
-<_Survey Year_>					2012
-<_Study ID_>					 </_Study ID_>
-<_Data collection from_>			01/2012
-<_Data collection to_>				12/2012 </_Data collection to_>
+<_Survey Year_>					2021
+<_Study ID_>					[Microdata Library ID if present] </_Study ID_>
+<_Data collection from_>			07/2021
+<_Data collection to_>				[MM/YYYY] </_Data collection to_>
 <_Source of dataset_> 				Departamento Administrativo Nacional de Estadistica - DANE
-<_Sample size (HH)_> 				209,920 </_Sample size (HH)_>
-<_Sample size (IND)_> 				 684,060 </_Sample size (IND)_>
-<_Sampling method_> 				 </_Sampling method_>
-<_Geographic coverage_> 			 </_Geographic coverage_>
-<_Currency_> 					Colombian Pesos </_Currency_>
+<_Sample size (HH)_> 				[#] </_Sample size (HH)_>
+<_Sample size (IND)_> 				756,063  </_Sample size (IND)_>
+<_Sampling method_> 				[Brief description] </_Sampling method_>
+<_Geographic coverage_> 			[To what level is data significant] </_Geographic coverage_>
+<_Currency_> 					COP </_Currency_>
 
 -----------------------------------------------------------------------
 
-<_ICLS Version_>				icls-13 </_ICLS Version_>
-<_ISCED Version_>				isced-1997 </_ISCED Version_>
+<_ICLS Version_>				ICLS-13 </_ICLS Version_>
+<_ISCED Version_>				[Version of ICLS for Labor Questions] </_ISCED Version_>
 <_ISCO Version_>				N/A </_ISCO Version_>
-<_OCCUP National_>			cno 1970	 </_OCCUP National_>
-<_ISIC Version_>			ISIC REV 3.1	 </_ISIC Version_>
-<_INDUS National_>			Colombia ISIC rev 3.1	 </_INDUS National_>
+<_OCCUP National_>				CNO 1970 </_OCCUP National_>
+<_ISIC Version_>				ISIC REV 4 </_ISIC Version_>
+<_INDUS National_>				ISIC REV 4 COLOMBIA </_INDUS National_>
 
 -----------------------------------------------------------------------
 <_Version Control_>
 
------------------------------------------------------------------------
-<_Version Control_>
-
-* Date: 2022-15-04 - Changes from I2D2 to GLD
+* Date: 2022-18-04 - Changes from I2D2 to GLD
 * Date: [YYYY-MM-DD] - [Description of changes]
 
 </_Version Control_>
@@ -52,46 +49,49 @@
 
 *----------1.1: Initial commands------------------------------*
 
+
 clear
 set more off
-set mem 800m
+*set mem 800m
+set max_memory .
 
 *----------1.2: Set directories------------------------------*
 
-local path_in "Z:\GLD-Harmonization\582018_AQ\COL\COL_2012_GEIH\COL_2012_GEIH_v01_M\Data\Stata\"
-local path_output "Z:\GLD-Harmonization\582018_AQ\COL\COL_2012_GEIH\COL_2012_GEIH_v01_M_v01_A_GLD\Data\Harmonized\"
+
+local path_in "Z:\GLD-Harmonization\582018_AQ\COL\COL_2021_GEIH\COL_2021_GEIH_v01_M\Data\Stata\" 
+local path_output "Z:\GLD-Harmonization\582018_AQ\COL\COL_2021_GEIH\COL_2021_GEIH_v01_M_v01_A_GLD\Data\Harmonized\"
 
 *----------1.3: Database assembly------------------------------*
 
 *** append household monthly data
 clear all
-use "`path_in'\GEIH_2012_1.dta"
+use "`path_in'\GEIH_2021_1.dta"
 
 forvalues i=2/12 {
-    append using "`path_in'\GEIH_2012_`i'.dta", force
+    append using "`path_in'\GEIH_2021_`i'.dta", force
 }
 
 rename *, lower
 drop _merge
-tempfile general_2012
-save `general_2012'
+tempfile general_2021
+save `general_2021'
 
 clear all
 
 
-use "`path_in'\Migration\mi_2.dta"
-forvalues i=3/12 {
+use "`path_in'\Migration\mi_1.dta"
+forvalues i=2/12 {
     append using "`path_in'\Migration\mi_`i'.dta", force
 }
-*save "`path_in'\migration_2012.dta", replace
-tempfile migration_2012
-save `migration_2012'
+*save "`path_in'\migration_2021.dta", replace
+tempfile migration_2021
+save `migration_2021'
 
 *full set
-use "`general_2012'",clear
+use "`general_2021'",clear
 
-*merge with migration asserting matches that need to be in master only (not in migration) or match (in both) in using would be an error.
-merge 1:1 directorio secuencia_p orden  using "`migration_2012'", assert(master match) nogen
+*merge with migration asserting matches that need to be in master only (not in migration) or match (in both) in using would be an error. 
+merge 1:1 directorio secuencia_p orden  using "`migration_2021'", assert(master match) nogen
 tempfile general_mig
 save `general_mig'
 
@@ -102,9 +102,8 @@ rename *, lower
 merge 1:1 directorio secuencia_p orden using "`general_mig'", force assert(master match) keep(match) nogen
 
 
-save "`path_in'\data_2012_final.dta", replace
-
-
+save "`path_in'\data_2021_final.dta", replace
+	
 /*%%=============================================================================================
 	2: Survey & ID
 ==============================================================================================%%*/
@@ -136,7 +135,7 @@ save "`path_in'\data_2012_final.dta", replace
 
 
 *<_isced_version_>
-	gen isced_version = "isced_1997"
+	gen isced_version = ""
 	label var isced_version "Version of ISCED used for educat_isced"
 *</_isced_version_>
 
@@ -148,13 +147,13 @@ save "`path_in'\data_2012_final.dta", replace
 
 
 *<_isic_version_>
-	gen isic_version = "isic_3.1"
+	gen isic_version = "isic_4"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
 
 *<_year_>
-	gen int year = 2012
+	gen int year = 2021
 	label var year "Year of survey"
 *</_year_>
 
@@ -178,13 +177,12 @@ save "`path_in'\data_2012_final.dta", replace
 
 
 *<_int_year_>
-	gen int_year = 2012 //instead of intv_year=ano
+	gen int_year = 2021 //instead of intv_year=ano
 	label var int_year "Year of the interview"
 *</_int_year_>
 
 
 *<_int_month_> // Includes all months
-	destring mes, replace
 	gen  int_month = mes
 	label de lblint_month 1 "January" 2 "February" 3 "March" 4 "April" 5 "May" 6 "June" 7 "July" 8 "August" 9 "September" 10 "October" 11 "November" 12 "December"
 	label value int_month lblint_month
@@ -201,9 +199,9 @@ save "`path_in'\data_2012_final.dta", replace
 	002, ..., 160.
 
 </_hhid_note> */
-
+	
 	ren id id2
-	egen id=group(directorio secuencia_p)
+	egen id=group(directorio secuencia_p mes)
 	egen hhid = concat(id)
 	label var hhid "Household ID"
 *</_hhid_>
@@ -213,7 +211,7 @@ save "`path_in'\data_2012_final.dta", replace
 	gen com=string(orden,"%02.0f")
 	egen  pid = concat(id com)
 	label var pid "Individual ID"
-	isid pid 
+	isid pid hhid
 *</_pid_>
 
 
@@ -241,8 +239,8 @@ save "`path_in'\data_2012_final.dta", replace
 *</_strata_>
 
 
-*<_wave_>
-	gen wave = .
+*<_wave_>  // NOT USED
+	gen wave = . 
 	label var wave "Survey wave"
 *</_wave_>
 
@@ -275,8 +273,8 @@ save "`path_in'\data_2012_final.dta", replace
 
 /* <_subnatid1_note>
 
-	The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: "1 – Hatay". That is, the variable itself is to be string, not a labelled numeric vector.
-
+	The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: "1 – Hatay". That is, the variable itself is to be string, not a labelled numeric vector. 
+	
 	Example of entries would be "1 - Alaska",  "2 - Arkansas", ...
 
 </_subnatid1_note> */
@@ -391,7 +389,7 @@ save "`path_in'\data_2012_final.dta", replace
 	replace age=98 if age>98 & age!=.
 	label var age "Individual age"
 *</_age_>
-
+	
 *<_male_>
 	gen male =(p6020==1)  //add
 	gen byte gender=male
@@ -476,7 +474,7 @@ save "`path_in'\data_2012_final.dta", replace
 /*%%=============================================================================================
 	5: Migration
 ==============================================================================================%%*/
-
+//seems like this information is in separate database available online, even if it was in the same questionnaire (P.Modulo de Migracion)
 {
 
 *<_migrated_mod_age_>
@@ -486,14 +484,14 @@ save "`path_in'\data_2012_final.dta", replace
 
 
 *<_migrated_ref_time_>
-	gen migrated_ref_time = .
+	gen migrated_ref_time = 5
 	label var migrated_ref_time "Reference time applied to migration questions (in years)"
 *</_migrated_ref_time_>
 
 
 *<_migrated_binary_>
-	gen migrated_binary = p6074
-	recode migrated_binary 1=0 2=1
+	gen migrated_binary = p755
+	recode migrated_binary 1/2=0 3/4=1
 	label de lblmigrated_binary 0 "No" 1 "Yes"
 	label values migrated_binary lblmigrated_binary
 	label var migrated_binary "Individual has migrated"
@@ -501,7 +499,7 @@ save "`path_in'\data_2012_final.dta", replace
 
 
 *<_migrated_years_>
-	gen migrated_years = p6075
+	gen migrated_years = .
 	label var migrated_years "Years since latest migration"
 *</_migrated_years_>
 
@@ -537,7 +535,8 @@ save "`path_in'\data_2012_final.dta", replace
 
 
 *<_migrated_reason_>
-	gen migrated_reason = .
+	gen migrated_reason = p1662
+	recode migrated_reason 1=3 3=5 4/6=4 9/10=5 7/8=1
 	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
 	label values migrated_reason lblmigrated_reason
 	label var migrated_reason "Reason for migrating"
@@ -620,7 +619,7 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat_orig_>
-	gen educat_orig = p6210
+	gen educat_orig = .
 	label var educat_orig "Original survey education code"
 *</_educat_orig_>
 
@@ -684,10 +683,10 @@ foreach v of local ed_var {
 	label var vocational_length_u "Length of training in months, upper limit"
 *</_vocational_length_u_>
 
-*<_vocational_field_orig_>
-	gen vocational_field_orig = .
-	label var vocational_field_orig "Field of training"
-*</_vocational_field_orig_>
+*<_vocational_field_>
+	gen vocational_field = .
+	label var vocational_field "Field of training"
+*</_vocational_field_>
 
 *<_vocational_financed_>
 	gen vocational_financed = .
@@ -705,7 +704,7 @@ foreach v of local ed_var {
 *<_minlaborage_>
 	gen byte minlaborage = 10
 	label var minlaborage "Labor module application age"
-*</_minlaborage_>
+*</_minlaborage_>	
 
 
 *----------8.1: 7 day reference overall------------------------------*
@@ -725,10 +724,10 @@ foreach v of local ed_var {
 
 *For unemployed and inactive that report some kind of labor earning on the last month
 	tab p7422 dsi,m
-	tab p7310 dsi,m //Jump for unemployed in question p7310
+	tab p7310 dsi,m //Jump for unemployed in question p7310 
 	sum p7422s1
 	tab p7472 ini,m
-	tab p7430 ini,m //Jump for inactive in question p7430
+	tab p7430 ini,m //Jump for inactive in question p7430 
 	sum p7472s1
 	*lstatus_extra identifies unemployed and inactive that report labor earnings on the last month (sub-employment)
 	gen lstatus_extra = (p7422==1 | p7472==1)
@@ -806,319 +805,416 @@ foreach v of local ed_var {
 *</_ocusec_>
 
 *<_industry_orig_>
-	destring rama2d rama4d, replace
-	gen industry_orig = rama4d
-	replace industry_orig=. if rama4d==0
+	*destring rama2d_r4 rama4d_r4, replace
+	gen industry_orig = rama4d_r4
+	replace industry_orig="" if rama4d_r4=="0000"
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
 
-*<_industrycat_isic_> // Colombian ISIC rev 3.1 to ISIC rev. 3.1
+*<_industrycat_isic_>// Colombian ISIC rev 4 to ISIC rev. 4
 	gen industrycat_isic = .
-	replace industrycat_isic = 111 if rama4d == 114 | rama4d == 115 | rama4d == 118 | rama4d == 119
-	replace industrycat_isic = 112 if rama4d == 112 | rama4d == 116
-	replace industrycat_isic = 113 if rama4d == 111 | rama4d == 113 | rama4d == 117
-	replace industrycat_isic = 121 if rama4d == 121 | rama4d == 124
-	 replace industrycat_isic = 120 if  rama4d == 129
-	replace industrycat_isic = 122 if rama4d == 122 | rama4d == 123 | rama4d == 125
-	replace industrycat_isic = 130 if rama4d == 130
-	replace industrycat_isic = 140 if rama4d == 140
-	replace industrycat_isic = 150 if rama4d == 150
-	replace industrycat_isic = 200 if rama4d == 201 | rama4d == 202
-	replace industrycat_isic = 501 if rama4d == 501
-	replace industrycat_isic = 502 if rama4d == 502
-	replace industrycat_isic = 1010 if rama4d == 1010
-	replace industrycat_isic = 1020 if rama4d == 1020
-	replace industrycat_isic = 1030 if rama4d == 1030
-	replace industrycat_isic = 1110 if rama4d == 1110
-	replace industrycat_isic = 1120 if rama4d == 1120
-	replace industrycat_isic = 1200 if rama4d == 1200
-	replace industrycat_isic = 1310 if rama4d == 1310
-	replace industrycat_isic = 1320 if rama4d == 1320 | rama4d == 1331 | rama4d == 1339
-	replace industrycat_isic = 1410 if rama4d == 1411 | rama4d == 1412 | rama4d == 1413 | rama4d == 1414 | rama4d == 1415
-	replace industrycat_isic = 1421 if rama4d == 1421
-	replace industrycat_isic = 1422 if rama4d == 1422
-	replace industrycat_isic = 1429 if rama4d == 1431 | rama4d == 1432 | rama4d == 1490
-	replace industrycat_isic = 1511 if rama4d == 1511
-	replace industrycat_isic = 1512 if rama4d == 1512
-	replace industrycat_isic = 1513 if rama4d == 1521
-	replace industrycat_isic = 1514 if rama4d == 1522
-	replace industrycat_isic = 1520 if rama4d == 1530
-	replace industrycat_isic = 1531 if rama4d == 1541
-	replace industrycat_isic = 1532 if rama4d == 1542
-	replace industrycat_isic = 1533 if rama4d == 1543
-	replace industrycat_isic = 1541 if rama4d == 1551
-	replace industrycat_isic = 1542 if rama4d == 1571 | rama4d == 1572
-	replace industrycat_isic = 1544 if rama4d == 1581
-	replace industrycat_isic = 1544 if rama4d == 1552
-	replace industrycat_isic = 1549 if rama4d == 1561 | rama4d == 1562 | rama4d == 1563 | rama4d == 1564 | rama4d == 1589
-	replace industrycat_isic = 1551 if rama4d == 1591
-	replace industrycat_isic = 1552 if rama4d == 1592
-	replace industrycat_isic = 1553 if rama4d == 1593
-	replace industrycat_isic = 1554 if rama4d == 1594
-	replace industrycat_isic = 1600 if rama4d == 1600
-	replace industrycat_isic = 1711 if rama4d == 1710 | rama4d == 1720
-	replace industrycat_isic = 1712 if rama4d == 1730
-	replace industrycat_isic = 1721 if rama4d == 1741
-	replace industrycat_isic = 1722 if rama4d == 1742
-	replace industrycat_isic = 1723 if rama4d == 1743
-	replace industrycat_isic = 1729 if rama4d == 1749
-	replace industrycat_isic = 1730 if rama4d == 1750
-	replace industrycat_isic = 1810 if rama4d == 1810
-	replace industrycat_isic = 1820 if rama4d == 1820
-	replace industrycat_isic = 1911 if rama4d == 1910
-	replace industrycat_isic = 1912 if rama4d == 1931 | rama4d == 1932 | rama4d == 1939
-	replace industrycat_isic = 1920 if rama4d == 1921 | rama4d == 1922 | rama4d == 1923 | rama4d == 1924 | rama4d == 1925 | rama4d == 1926 | rama4d == 1929
-	replace industrycat_isic = 2010 if rama4d == 2010
-	replace industrycat_isic = 2021 if rama4d == 2020
-	replace industrycat_isic = 2022 if rama4d == 2030
-	replace industrycat_isic = 2023 if rama4d == 2040
-	replace industrycat_isic = 2029 if rama4d == 2090
-	replace industrycat_isic = 2101 if rama4d == 2101
-	replace industrycat_isic = 2102 if rama4d == 2102
-	replace industrycat_isic = 2109 if rama4d == 2109
-	replace industrycat_isic = 2211 if rama4d == 2211
-	replace industrycat_isic = 2212 if rama4d == 2212
-	replace industrycat_isic = 2213 if rama4d == 2213
-	replace industrycat_isic = 2219 if rama4d == 2219
-	replace industrycat_isic = 2221 if rama4d == 2220
-	replace industrycat_isic = 2222 if rama4d == 2231 | rama4d == 2232 | rama4d == 2233 | rama4d == 2234 | rama4d == 2239
-	replace industrycat_isic = 2230 if rama4d == 2240
-	replace industrycat_isic = 2310 if rama4d == 2310
-	replace industrycat_isic = 2320 if rama4d == 2321 | rama4d == 2322
-	replace industrycat_isic = 2330 if rama4d == 2330
-	replace industrycat_isic = 2411 if rama4d == 2411
-	replace industrycat_isic = 2412 if rama4d == 2412
-	replace industrycat_isic = 2413 if rama4d == 2413 | rama4d == 2414
-	replace industrycat_isic = 2421 if rama4d == 2421
-	replace industrycat_isic = 2422 if rama4d == 2422
-	replace industrycat_isic = 2423 if rama4d == 2423
-	replace industrycat_isic = 2424 if rama4d == 2424
-	replace industrycat_isic = 2429 if rama4d == 2429
-	replace industrycat_isic = 2430 if rama4d == 2430
-	replace industrycat_isic = 2511 if rama4d == 2511 | rama4d == 2512 | rama4d == 2513 /* included*/
-	replace industrycat_isic = 2520 if rama4d == 2521 | rama4d == 2529
-	*included
-	replace industrycat_isic = 2519 if rama4d == 2519
-	*
-	replace industrycat_isic = 2610 if rama4d == 2610
-	replace industrycat_isic = 2691 if rama4d == 2691
-	replace industrycat_isic = 2692 if rama4d == 2692
-	replace industrycat_isic = 2693 if rama4d == 2693
-	replace industrycat_isic = 2694 if rama4d == 2694
-	replace industrycat_isic = 2695 if rama4d == 2695
-	replace industrycat_isic = 2696 if rama4d == 2696
-	replace industrycat_isic = 2699 if rama4d == 2699
-	replace industrycat_isic = 2710 if rama4d == 2710
-	replace industrycat_isic = 2720 if rama4d == 2721 | rama4d == 2729
-	replace industrycat_isic = 2731 if rama4d == 2731
-	replace industrycat_isic = 2732 if rama4d == 2732
-	replace industrycat_isic = 2811 if rama4d == 2811
-	replace industrycat_isic = 2812 if rama4d == 2812
-	replace industrycat_isic = 2813 if rama4d == 2813
-	replace industrycat_isic = 2891 if rama4d == 2891
-	replace industrycat_isic = 2892 if rama4d == 2892
-	replace industrycat_isic = 2893 if rama4d == 2893
-	replace industrycat_isic = 2899 if rama4d == 2899
-	replace industrycat_isic = 2911 if rama4d == 2911
-	replace industrycat_isic = 2912 if rama4d == 2912
-	replace industrycat_isic = 2913 if rama4d == 2913
-	replace industrycat_isic = 2914 if rama4d == 2914
-	replace industrycat_isic = 2915 if rama4d == 2915
-	replace industrycat_isic = 2919 if rama4d == 2919
-	replace industrycat_isic = 2921 if rama4d == 2921
-	replace industrycat_isic = 2922 if rama4d == 2922
-	replace industrycat_isic = 2923 if rama4d == 2923
-	replace industrycat_isic = 2924 if rama4d == 2924
-	replace industrycat_isic = 2925 if rama4d == 2925
-	replace industrycat_isic = 2926 if rama4d == 2926
-	replace industrycat_isic = 2927 if rama4d == 2927
-	replace industrycat_isic = 2929 if rama4d == 2929
-	replace industrycat_isic = 2930 if rama4d == 2930
-	replace industrycat_isic = 3000 if rama4d == 3000
-	replace industrycat_isic = 3110 if rama4d == 3110
-	replace industrycat_isic = 3120 if rama4d == 3120
-	replace industrycat_isic = 3130 if rama4d == 3130
-	replace industrycat_isic = 3140 if rama4d == 3140
-	replace industrycat_isic = 3150 if rama4d == 3150
-	replace industrycat_isic = 3190 if rama4d == 3190
-	replace industrycat_isic = 3210 if rama4d == 3210
-	replace industrycat_isic = 3220 if rama4d == 3220
-	replace industrycat_isic = 3230 if rama4d == 3230
-	replace industrycat_isic = 3311 if rama4d == 3311
-	replace industrycat_isic = 3312 if rama4d == 3312
-	replace industrycat_isic = 3313 if rama4d == 3313
-	replace industrycat_isic = 3320 if rama4d == 3320
-	replace industrycat_isic = 3330 if rama4d == 3330
-	replace industrycat_isic = 3410 if rama4d == 3410
-	replace industrycat_isic = 3420 if rama4d == 3420
-	replace industrycat_isic = 3430 if rama4d == 3420 | rama4d == 3430 /*included*/
-	replace industrycat_isic = 3511 if rama4d == 3511
-	replace industrycat_isic = 3512 if rama4d == 3512
-	replace industrycat_isic = 3520 if rama4d == 3520
-	replace industrycat_isic = 3530 if rama4d == 3530
-	replace industrycat_isic = 3591 if rama4d == 3591
-	replace industrycat_isic = 3592 if rama4d == 3592
-	replace industrycat_isic = 3599 if rama4d == 3599
-	replace industrycat_isic = 3610 if rama4d == 3611 | rama4d == 3612 | rama4d == 3613 | rama4d == 3614 | rama4d == 3619
-	replace industrycat_isic = 3691 if rama4d == 3691
-	replace industrycat_isic = 3692 if rama4d == 3692
-	replace industrycat_isic = 3693 if rama4d == 3693
-	replace industrycat_isic = 3694 if rama4d == 3694
-	replace industrycat_isic = 3699 if rama4d == 3699
-	replace industrycat_isic = 3710 if rama4d == 3710
-	replace industrycat_isic = 3720 if rama4d == 3720
-	replace industrycat_isic = 4010 if rama4d == 4010
-	replace industrycat_isic = 4020 if rama4d == 4020
-	replace industrycat_isic = 4030 if rama4d == 4030
-	replace industrycat_isic = 4100 if rama4d == 4100
-	replace industrycat_isic = 4510 if rama4d == 4511 | rama4d == 4512
-	replace industrycat_isic = 4520 if rama4d == 4521 | rama4d == 4522 | rama4d == 4530
-	replace industrycat_isic = 4530 if rama4d == 4541 | rama4d == 4542 | rama4d == 4543 | rama4d == 4549
-	replace industrycat_isic = 4540 if rama4d == 4551 | rama4d == 4552 | rama4d == 4559
-	replace industrycat_isic = 4550 if rama4d == 4560
-	replace industrycat_isic = 5010 if rama4d == 5011 | rama4d == 5012
-	replace industrycat_isic = 5020 if rama4d == 5020
-	replace industrycat_isic = 5030 if rama4d == 5030
-	replace industrycat_isic = 5040 if rama4d == 5040
-	replace industrycat_isic = 5050 if rama4d == 5051 | rama4d == 5052
-	replace industrycat_isic = 5110 if rama4d == 5111 | rama4d == 5112 | rama4d == 5113 | rama4d == 5119
-	replace industrycat_isic = 5121 if rama4d == 5121 | rama4d == 5123 | rama4d == 5124
-	replace industrycat_isic = 5122 if rama4d == 5122 | rama4d == 5125 | rama4d == 5126 | rama4d == 5127
-	replace industrycat_isic = 5131 if rama4d == 5131 | rama4d == 5132 | rama4d == 5133
-	replace industrycat_isic = 5139 if rama4d == 5134 | rama4d == 5135 | rama4d == 5136 | rama4d == 5137 | rama4d == 5139
-	replace industrycat_isic = 5143 if rama4d == 5141 | rama4d == 5142
-	replace industrycat_isic = 5149 if rama4d == 5153 | rama4d == 5154 | rama4d == 5155 | rama4d == 5159
-	*included
-	replace industrycat_isic = 5520 if rama4d == 5521 | rama4d == 5522 | rama4d == 5523 |  rama4d == 5524 | rama4d == 5529 | rama4d == 5530
-	*
-	replace industrycat_isic = 5151 if rama4d == 5163 | rama4d == 5151
-	replace industrycat_isic = 5152 if rama4d == 5169 | rama4d == 5152
-	replace industrycat_isic = 5159 if rama4d == 5161 | rama4d == 5162 | rama4d == 5170
-	replace industrycat_isic = 5190 if rama4d == 5190
-	replace industrycat_isic = 5211 if rama4d == 5211
-	replace industrycat_isic = 5219 if rama4d == 5219
-	replace industrycat_isic = 5220 if rama4d == 5221 | rama4d == 5222 | rama4d == 5223 | rama4d == 5224 | rama4d == 5225 | rama4d == 5229
-	replace industrycat_isic = 5231 if rama4d == 5231
-	replace industrycat_isic = 5232 if rama4d == 5232 | rama4d == 5233 | rama4d == 5234
-	replace industrycat_isic = 5233 if rama4d == 5235 | rama4d == 5236 | rama4d == 5237
-	replace industrycat_isic = 5234 if rama4d == 5241 | rama4d == 5242
-	replace industrycat_isic = 5239 if rama4d == 5243 | rama4d == 5244 | rama4d == 5245 | rama4d == 5246 | rama4d == 5249 | rama4d == 5239
-	replace industrycat_isic = 5240 if rama4d == 5251 | rama4d == 5252
-	replace industrycat_isic = 5251 if rama4d == 5261
-	replace industrycat_isic = 5252 if rama4d == 5262
-	replace industrycat_isic = 5259 if rama4d == 5269
-	replace industrycat_isic = 5260 if rama4d == 5271 | rama4d == 5272
-	replace industrycat_isic = 5510 if rama4d == 5511 | rama4d == 5512 | rama4d == 5513 | rama4d == 5519
-	replace industrycat_isic = 6010 if rama4d == 6010
-	replace industrycat_isic = 6021 if rama4d == 6021 | rama4d == 6022 | rama4d == 6023
-	replace industrycat_isic = 6022 if rama4d == 6031 | rama4d == 6032 | rama4d == 6039
-	replace industrycat_isic = 6023 if rama4d == 6041 | rama4d == 6042 | rama4d == 6043 | rama4d == 6044
-	replace industrycat_isic = 6030 if rama4d == 6050
-	replace industrycat_isic = 6110 if rama4d == 6111 | rama4d == 6112
-	replace industrycat_isic = 6120 if rama4d == 6120
-	replace industrycat_isic = 6210 if rama4d == 6211 | rama4d == 6212 | rama4d == 6213 | rama4d == 6214
-	replace industrycat_isic = 6220 if rama4d == 6220
-	replace industrycat_isic = 6301 if rama4d == 6310
-	replace industrycat_isic = 6302 if rama4d == 6320
-	replace industrycat_isic = 6303 if rama4d == 6331 | rama4d == 6332 | rama4d == 6333 | rama4d == 6339
-	replace industrycat_isic = 6304 if rama4d == 6340
-	replace industrycat_isic = 6309 if rama4d == 6390
-	replace industrycat_isic = 6411 if rama4d == 6411
-	replace industrycat_isic = 6412 if rama4d == 6412
-	replace industrycat_isic = 6420 if rama4d == 6421 | rama4d == 6422 | rama4d == 6423 | rama4d == 6424 | rama4d == 6425 | rama4d == 6426
-	replace industrycat_isic = 6511 if rama4d == 6511
-	replace industrycat_isic = 6519 if rama4d == 6512 | rama4d == 6513 | rama4d == 6514 | rama4d == 6515 | rama4d == 6516 | rama4d == 6519
-	replace industrycat_isic = 6591 if rama4d == 6591
-	replace industrycat_isic = 6592 if rama4d == 6593 | rama4d == 6596
-	replace industrycat_isic = 6599 if rama4d == 6594 | rama4d == 6595 | rama4d == 6599
-	replace industrycat_isic = 6601 if rama4d == 6602 | rama4d == 6603
-	replace industrycat_isic = 6602 if rama4d == 6604
-	replace industrycat_isic = 6603 if rama4d == 6601
-	replace industrycat_isic = 6711 if rama4d == 6711 | rama4d == 6712
-	replace industrycat_isic = 6712 if rama4d == 6592 | rama4d == 6713 | rama4d == 6714
-	replace industrycat_isic = 6719 if rama4d == 6715 | rama4d == 6716 | rama4d == 6719
-	replace industrycat_isic = 6720 if rama4d == 6721 | rama4d == 6722
-	replace industrycat_isic = 7010 if rama4d == 7010
-	replace industrycat_isic = 7020 if rama4d == 7020
-	replace industrycat_isic = 7111 if rama4d == 7111
-	replace industrycat_isic = 7112 if rama4d == 7112
-	replace industrycat_isic = 7113 if rama4d == 7113
-	replace industrycat_isic = 7121 if rama4d == 7121
-	replace industrycat_isic = 7122 if rama4d == 7122
-	replace industrycat_isic = 7123 if rama4d == 7123
-	replace industrycat_isic = 7129 if rama4d == 7129
-	replace industrycat_isic = 7130 if rama4d == 7130
-	replace industrycat_isic = 7210 if rama4d == 7210
-	replace industrycat_isic = 7221 if rama4d == 7220
-	replace industrycat_isic = 7230 if rama4d == 7230
-	replace industrycat_isic = 7240 if rama4d == 7240
-	replace industrycat_isic = 7250 if rama4d == 7250
-	replace industrycat_isic = 7290 if rama4d == 7290
-	replace industrycat_isic = 7310 if rama4d == 7310
-	replace industrycat_isic = 7320 if rama4d == 7320
-	replace industrycat_isic = 7411 if rama4d == 7411
-	replace industrycat_isic = 7412 if rama4d == 7412
-	replace industrycat_isic = 7413 if rama4d == 7413
-	replace industrycat_isic = 7414 if rama4d == 7414
-	replace industrycat_isic = 7421 if rama4d == 7421
-	replace industrycat_isic = 7422 if rama4d == 7422
-	replace industrycat_isic = 7430 if rama4d == 7430
-	replace industrycat_isic = 7491 if rama4d == 7491
-	replace industrycat_isic = 7492 if rama4d == 7492
-	replace industrycat_isic = 7493 if rama4d == 7493
-	replace industrycat_isic = 7494 if rama4d == 7494
-	replace industrycat_isic = 7495 if rama4d == 7495
-	replace industrycat_isic = 7499 if rama4d == 7499
-	replace industrycat_isic = 7511 if rama4d == 7511 | rama4d == 7512
-	replace industrycat_isic = 7512 if rama4d == 7513
-	replace industrycat_isic = 7513 if rama4d == 7514
-	replace industrycat_isic = 7514 if rama4d == 7515
-	replace industrycat_isic = 7521 if rama4d == 7521
-	replace industrycat_isic = 7522 if rama4d == 7522
-	replace industrycat_isic = 7523 if rama4d == 7523 | rama4d == 7524
-	replace industrycat_isic = 7530 if rama4d == 7530
-	replace industrycat_isic = 8010 if rama4d == 8011 | rama4d == 8012 | rama4d == 8041 | rama4d == 8042 | rama4d == 8043 | rama4d == 8044 | rama4d == 8045 | rama4d == 8046
-	replace industrycat_isic = 8021 if rama4d == 8021 | rama4d == 8022
-	replace industrycat_isic = 8022 if rama4d == 8030
-	replace industrycat_isic = 8090 if rama4d == 8050
-	replace industrycat_isic = 8090 if rama4d == 8060
-	replace industrycat_isic = 8511 if rama4d == 8511
-	replace industrycat_isic = 8512 if rama4d == 8512 | rama4d == 8513
-	replace industrycat_isic = 8519 if rama4d == 8514 | rama4d == 8515 | rama4d == 8519
-	replace industrycat_isic = 8520 if rama4d == 8520
-	replace industrycat_isic = 8531 if rama4d == 8531
-	replace industrycat_isic = 8532 if rama4d == 8532
-	replace industrycat_isic = 9000 if rama4d == 9000
-	replace industrycat_isic = 9111 if rama4d == 9111
-	replace industrycat_isic = 9112 if rama4d == 9112
-	replace industrycat_isic = 9120 if rama4d == 9120
-	replace industrycat_isic = 9191 if rama4d == 9191
-	replace industrycat_isic = 9192 if rama4d == 9192
-	replace industrycat_isic = 9199 if rama4d == 9199
-	replace industrycat_isic = 9211 if rama4d == 9211
-	replace industrycat_isic = 9212 if rama4d == 9212
-	replace industrycat_isic = 9213 if rama4d == 9213
-	replace industrycat_isic = 9214 if rama4d == 9214
-	replace industrycat_isic = 9219 if rama4d == 9219
-	replace industrycat_isic = 9220 if rama4d == 9220
-	replace industrycat_isic = 9231 if rama4d == 9231
-	replace industrycat_isic = 9232 if rama4d == 9232
-	replace industrycat_isic = 9233 if rama4d == 9233
-	replace industrycat_isic = 9241 if rama4d == 9241
-	replace industrycat_isic = 9249 if rama4d == 9242 | rama4d == 9249
-	replace industrycat_isic = 9301 if rama4d == 9301
-	replace industrycat_isic = 9302 if rama4d == 9302
-	replace industrycat_isic = 9303 if rama4d == 9303
-	*included
-	replace industrycat_isic = 9309 if rama4d == 9309
-	*
-	replace industrycat_isic = 9500 if rama4d == 9500
-	replace industrycat_isic = 9600 if rama4d == 9600
-	replace industrycat_isic = 9700 if rama4d == 9700
-	replace industrycat_isic = 9900 if rama4d == 9900
-	replace industrycat_isic = . if rama4d == 0000
-	replace industrycat_isic = . if rama4d == 0
+	destring rama4d_r4, replace force
+	replace industrycat_isic = 111 if rama4d_r4 == 111
+	replace industrycat_isic = 112 if rama4d_r4 == 112
+	replace industrycat_isic = 113 if rama4d_r4 == 113
+	replace industrycat_isic = 115 if rama4d_r4 == 114 | rama4d_r4 == 124
+	replace industrycat_isic = 116 if rama4d_r4 == 115
+	replace industrycat_isic = 119 if rama4d_r4 == 119 | rama4d_r4 == 125
+	replace industrycat_isic = 122 if rama4d_r4 == 121 | rama4d_r4 == 122
+	replace industrycat_isic = 126 if rama4d_r4 == 126
+	replace industrycat_isic = 127 if rama4d_r4 == 123 | rama4d_r4 == 127
+	replace industrycat_isic = 128 if rama4d_r4 == 128
+	replace industrycat_isic = 129 if rama4d_r4 == 129
+	replace industrycat_isic = 130 if rama4d_r4 == 130
+	replace industrycat_isic = 141 if rama4d_r4 == 141
+	replace industrycat_isic = 142 if rama4d_r4 == 142
+	replace industrycat_isic = 144 if rama4d_r4 == 143
+	replace industrycat_isic = 145 if rama4d_r4 == 144
+	replace industrycat_isic = 146 if rama4d_r4 == 145
+	replace industrycat_isic = 149 if rama4d_r4 == 143 | rama4d_r4 == 149
+	replace industrycat_isic = 150 if rama4d_r4 == 150
+	replace industrycat_isic = 161 if rama4d_r4 == 161
+	replace industrycat_isic = 162 if rama4d_r4 == 162
+	replace industrycat_isic = 163 if rama4d_r4 == 163
+	replace industrycat_isic = 164 if rama4d_r4 == 164
+	replace industrycat_isic = 170 if rama4d_r4 == 170
+	replace industrycat_isic = 210 if rama4d_r4 == 210
+	replace industrycat_isic = 220 if rama4d_r4 == 220
+	replace industrycat_isic = 230 if rama4d_r4 == 230
+	replace industrycat_isic = 240 if rama4d_r4 == 240
+	replace industrycat_isic = 311 if rama4d_r4 == 311
+	replace industrycat_isic = 312 if rama4d_r4 == 312
+	replace industrycat_isic = 321 if rama4d_r4 == 321
+	replace industrycat_isic = 322 if rama4d_r4 == 322
+	replace industrycat_isic = 510 if rama4d_r4 == 510
+	replace industrycat_isic = 520 if rama4d_r4 == 520
+	replace industrycat_isic = 610 if rama4d_r4 == 610
+	replace industrycat_isic = 620 if rama4d_r4 == 620
+	replace industrycat_isic = 710 if rama4d_r4 == 710
+	replace industrycat_isic = 721 if rama4d_r4 == 721
+	replace industrycat_isic = 729 if rama4d_r4 == 722 | rama4d_r4 == 723 | rama4d_r4 == 729
+	replace industrycat_isic = 810 if rama4d_r4 == 811 | rama4d_r4 == 812
+	replace industrycat_isic = 891 if rama4d_r4 == 891
+	replace industrycat_isic = 892 if rama4d_r4 == 892 | rama4d_r4 == 899
+	replace industrycat_isic = 899 if rama4d_r4 == 820
+	replace industrycat_isic = 910 if rama4d_r4 == 910
+	replace industrycat_isic = 990 if rama4d_r4 == 990
+	replace industrycat_isic = 1010 if rama4d_r4 == 1011
+	replace industrycat_isic = 1020 if rama4d_r4 == 1012
+	replace industrycat_isic = 1030 if rama4d_r4 == 1020
+	replace industrycat_isic = 1040 if rama4d_r4 == 1030
+	replace industrycat_isic = 1050 if rama4d_r4 == 1040
+	replace industrycat_isic = 1061 if rama4d_r4 == 1051
+	replace industrycat_isic = 1062 if rama4d_r4 == 1052
+	replace industrycat_isic = 1071 if rama4d_r4 == 1081
+	replace industrycat_isic = 1072 if rama4d_r4 == 1071 | rama4d_r4 == 1072
+	replace industrycat_isic = 1073 if rama4d_r4 == 1082
+	replace industrycat_isic = 1074 if rama4d_r4 == 1083
+	replace industrycat_isic = 1075 if rama4d_r4 == 1084
+	replace industrycat_isic = 1079 if rama4d_r4 == 1061 | rama4d_r4 == 1062 | rama4d_r4 == 1063 | rama4d_r4 == 1089
+	replace industrycat_isic = 1080 if rama4d_r4 == 1090
+	replace industrycat_isic = 1101 if rama4d_r4 == 1101
+	replace industrycat_isic = 1102 if rama4d_r4 == 1102
+	replace industrycat_isic = 1103 if rama4d_r4 == 1103
+	replace industrycat_isic = 1104 if rama4d_r4 == 1104
+	replace industrycat_isic = 1200 if rama4d_r4 == 1200
+	replace industrycat_isic = 1311 if rama4d_r4 == 1311
+	replace industrycat_isic = 1312 if rama4d_r4 == 1312
+	replace industrycat_isic = 1313 if rama4d_r4 == 1313
+	replace industrycat_isic = 1391 if rama4d_r4 == 1391
+	replace industrycat_isic = 1392 if rama4d_r4 == 1392
+	replace industrycat_isic = 1393 if rama4d_r4 == 1393
+	replace industrycat_isic = 1394 if rama4d_r4 == 1394
+	replace industrycat_isic = 1399 if rama4d_r4 == 1399
+	replace industrycat_isic = 1410 if rama4d_r4 == 1410
+	replace industrycat_isic = 1420 if rama4d_r4 == 1420
+	replace industrycat_isic = 1430 if rama4d_r4 == 1430
+	replace industrycat_isic = 1511 if rama4d_r4 == 1511
+	replace industrycat_isic = 1512 if rama4d_r4 == 1512 | rama4d_r4 == 1513
+	replace industrycat_isic = 1520 if rama4d_r4 == 1521 | rama4d_r4 == 1522 | rama4d_r4 == 1523
+	replace industrycat_isic = 1610 if rama4d_r4 == 1610
+	replace industrycat_isic = 1621 if rama4d_r4 == 1620
+	replace industrycat_isic = 1622 if rama4d_r4 == 1630
+	replace industrycat_isic = 1623 if rama4d_r4 == 1640
+	replace industrycat_isic = 1629 if rama4d_r4 == 1690
+	replace industrycat_isic = 1701 if rama4d_r4 == 1701
+	replace industrycat_isic = 1702 if rama4d_r4 == 1702
+	replace industrycat_isic = 1709 if rama4d_r4 == 1709
+	replace industrycat_isic = 1811 if rama4d_r4 == 1811
+	replace industrycat_isic = 1812 if rama4d_r4 == 1812
+	replace industrycat_isic = 1820 if rama4d_r4 == 1820
+	replace industrycat_isic = 1910 if rama4d_r4 == 1910
+	replace industrycat_isic = 1920 if rama4d_r4 == 1921 | rama4d_r4 == 1922
+	replace industrycat_isic = 2011 if rama4d_r4 == 2011
+	replace industrycat_isic = 2012 if rama4d_r4 == 2012
+	replace industrycat_isic = 2013 if rama4d_r4 == 2013 | rama4d_r4 == 2014
+	replace industrycat_isic = 2021 if rama4d_r4 == 2021
+	replace industrycat_isic = 2022 if rama4d_r4 == 2022
+	replace industrycat_isic = 2023 if rama4d_r4 == 2023
+	replace industrycat_isic = 2029 if rama4d_r4 == 2029
+	replace industrycat_isic = 2030 if rama4d_r4 == 2030
+	replace industrycat_isic = 2100 if rama4d_r4 == 2100
+	replace industrycat_isic = 2211 if rama4d_r4 == 2211 | rama4d_r4 == 2212 | rama4d_r4 == 2219
+	replace industrycat_isic = 2220 if rama4d_r4 == 2221 | rama4d_r4 == 2229
+	replace industrycat_isic = 2310 if rama4d_r4 == 2310
+	replace industrycat_isic = 2391 if rama4d_r4 == 2391
+	replace industrycat_isic = 2392 if rama4d_r4 == 2392
+	replace industrycat_isic = 2393 if rama4d_r4 == 2393
+	replace industrycat_isic = 2394 if rama4d_r4 == 2394
+	replace industrycat_isic = 2395 if rama4d_r4 == 2395
+	replace industrycat_isic = 2396 if rama4d_r4 == 2396
+	replace industrycat_isic = 2399 if rama4d_r4 == 2399
+	replace industrycat_isic = 2410 if rama4d_r4 == 2410
+	replace industrycat_isic = 2420 if rama4d_r4 == 2421 | rama4d_r4 == 2429
+	replace industrycat_isic = 2431 if rama4d_r4 == 2431
+	replace industrycat_isic = 2432 if rama4d_r4 == 2432
+	replace industrycat_isic = 2511 if rama4d_r4 == 2511
+	replace industrycat_isic = 2512 if rama4d_r4 == 2512
+	replace industrycat_isic = 2513 if rama4d_r4 == 2513
+	replace industrycat_isic = 2520 if rama4d_r4 == 2520
+	replace industrycat_isic = 2591 if rama4d_r4 == 2591
+	replace industrycat_isic = 2592 if rama4d_r4 == 2592
+	replace industrycat_isic = 2593 if rama4d_r4 == 2593
+	replace industrycat_isic = 2599 if rama4d_r4 == 2599
+	replace industrycat_isic = 2610 if rama4d_r4 == 2610
+	replace industrycat_isic = 2620 if rama4d_r4 == 2620
+	replace industrycat_isic = 2630 if rama4d_r4 == 2630
+	replace industrycat_isic = 2640 if rama4d_r4 == 2640
+	replace industrycat_isic = 2651 if rama4d_r4 == 2651
+	replace industrycat_isic = 2652 if rama4d_r4 == 2652
+	replace industrycat_isic = 2660 if rama4d_r4 == 2660
+	replace industrycat_isic = 2670 if rama4d_r4 == 2670
+	replace industrycat_isic = 2680 if rama4d_r4 == 2680
+	replace industrycat_isic = 2710 if rama4d_r4 == 2711 | rama4d_r4 == 2712
+	replace industrycat_isic = 2720 if rama4d_r4 == 2720
+	replace industrycat_isic = 2731 if rama4d_r4 == 2731
+	replace industrycat_isic = 2733 if rama4d_r4 == 2732
+	replace industrycat_isic = 2740 if rama4d_r4 == 2740
+	replace industrycat_isic = 2750 if rama4d_r4 == 2750
+	replace industrycat_isic = 2790 if rama4d_r4 == 2790
+	replace industrycat_isic = 2811 if rama4d_r4 == 2811
+	replace industrycat_isic = 2812 if rama4d_r4 == 2812
+	replace industrycat_isic = 2813 if rama4d_r4 == 2813
+	replace industrycat_isic = 2814 if rama4d_r4 == 2814
+	replace industrycat_isic = 2815 if rama4d_r4 == 2815
+	replace industrycat_isic = 2816 if rama4d_r4 == 2816
+	replace industrycat_isic = 2818 if rama4d_r4 == 2818
+	replace industrycat_isic = 2819 if rama4d_r4 == 2819
+	replace industrycat_isic = 2821 if rama4d_r4 == 2821
+	replace industrycat_isic = 2822 if rama4d_r4 == 2822
+	replace industrycat_isic = 2823 if rama4d_r4 == 2823
+	replace industrycat_isic = 2824 if rama4d_r4 == 2824
+	replace industrycat_isic = 2825 if rama4d_r4 == 2825
+	replace industrycat_isic = 2826 if rama4d_r4 == 2826
+	replace industrycat_isic = 2829 if rama4d_r4 == 2829
+	replace industrycat_isic = 2910 if rama4d_r4 == 2910
+	replace industrycat_isic = 2920 if rama4d_r4 == 2920
+	replace industrycat_isic = 2930 if rama4d_r4 == 2930
+	replace industrycat_isic = 3011 if rama4d_r4 == 3011
+	replace industrycat_isic = 3012 if rama4d_r4 == 3012
+	replace industrycat_isic = 3020 if rama4d_r4 == 3020
+	replace industrycat_isic = 3030 if rama4d_r4 == 3030
+	replace industrycat_isic = 3040 if rama4d_r4 == 3040
+	replace industrycat_isic = 3091 if rama4d_r4 == 3091
+	replace industrycat_isic = 3092 if rama4d_r4 == 3092
+	replace industrycat_isic = 3099 if rama4d_r4 == 3099
+	replace industrycat_isic = 3100 if rama4d_r4 == 3110 | rama4d_r4 == 3120
+	replace industrycat_isic = 3211 if rama4d_r4 == 3210
+	replace industrycat_isic = 3220 if rama4d_r4 == 3220
+	replace industrycat_isic = 3230 if rama4d_r4 == 3230
+	replace industrycat_isic = 3240 if rama4d_r4 == 3240
+	replace industrycat_isic = 3250 if rama4d_r4 == 3250
+	replace industrycat_isic = 3290 if rama4d_r4 == 3290
+	replace industrycat_isic = 3311 if rama4d_r4 == 3311
+	replace industrycat_isic = 3312 if rama4d_r4 == 3312
+	replace industrycat_isic = 3313 if rama4d_r4 == 3313
+	replace industrycat_isic = 3314 if rama4d_r4 == 3314
+	replace industrycat_isic = 3315 if rama4d_r4 == 3315
+	replace industrycat_isic = 3319 if rama4d_r4 == 3319
+	replace industrycat_isic = 3320 if rama4d_r4 == 3320
+	replace industrycat_isic = 3510 if rama4d_r4 == 3511 | rama4d_r4 == 3512 | rama4d_r4 == 3513 | rama4d_r4 == 3514
+	replace industrycat_isic = 3520 if rama4d_r4 == 3520
+	replace industrycat_isic = 3530 if rama4d_r4 == 3530
+	replace industrycat_isic = 3600 if rama4d_r4 == 3600
+	replace industrycat_isic = 3700 if rama4d_r4 == 3700
+	replace industrycat_isic = 3811 if rama4d_r4 == 3811
+	replace industrycat_isic = 3812 if rama4d_r4 == 3812
+	replace industrycat_isic = 3821 if rama4d_r4 == 3821
+	replace industrycat_isic = 3822 if rama4d_r4 == 3822
+	replace industrycat_isic = 3830 if rama4d_r4 == 3830
+	replace industrycat_isic = 3900 if rama4d_r4 == 3900
+	replace industrycat_isic = 4100 if rama4d_r4 == 4111 | rama4d_r4 == 4112
+	replace industrycat_isic = 4210 if rama4d_r4 == 4210
+	replace industrycat_isic = 4220 if rama4d_r4 == 4220
+	replace industrycat_isic = 4290 if rama4d_r4 == 4290
+	replace industrycat_isic = 4311 if rama4d_r4 == 4311
+	replace industrycat_isic = 4312 if rama4d_r4 == 4312
+	replace industrycat_isic = 4321 if rama4d_r4 == 4321
+	replace industrycat_isic = 4322 if rama4d_r4 == 4322
+	replace industrycat_isic = 4329 if rama4d_r4 == 4329
+	replace industrycat_isic = 4330 if rama4d_r4 == 4330
+	replace industrycat_isic = 4390 if rama4d_r4 == 4390
+	replace industrycat_isic = 4510 if rama4d_r4 == 4511 | rama4d_r4 == 4512
+	replace industrycat_isic = 4520 if rama4d_r4 == 4520
+	replace industrycat_isic = 4530 if rama4d_r4 == 4530
+	replace industrycat_isic = 4540 if rama4d_r4 == 4541
+	replace industrycat_isic = 4540 if rama4d_r4 == 4542
+	replace industrycat_isic = 4610 if rama4d_r4 == 4610
+	replace industrycat_isic = 4620 if rama4d_r4 == 4620
+	replace industrycat_isic = 4630 if rama4d_r4 == 4631 | rama4d_r4 == 4632
+	replace industrycat_isic = 4641 if rama4d_r4 == 4641 | rama4d_r4 == 4642 | rama4d_r4 == 4643 | rama4d_r4 == 4649
+	replace industrycat_isic = 4649 if rama4d_r4 == 4644 | rama4d_r4 == 4644 
+	replace industrycat_isic = 4651 if rama4d_r4 == 4651
+	replace industrycat_isic = 4652 if rama4d_r4 == 4652
+	replace industrycat_isic = 4653 if rama4d_r4 == 4653
+	replace industrycat_isic = 4659 if rama4d_r4 == 4659
+	replace industrycat_isic = 4661 if rama4d_r4 == 4661
+	replace industrycat_isic = 4662 if rama4d_r4 == 4662
+	replace industrycat_isic = 4663 if rama4d_r4 == 4663
+	replace industrycat_isic = 4669 if rama4d_r4 == 4664 | rama4d_r4 == 4665 | rama4d_r4 == 4669
+	replace industrycat_isic = 4690 if rama4d_r4 == 4690
+	replace industrycat_isic = 4711 if rama4d_r4 == 4711
+	replace industrycat_isic = 4719 if rama4d_r4 == 4719
+	replace industrycat_isic = 4721 if rama4d_r4 == 4721 | rama4d_r4 == 4722 | rama4d_r4 == 4723 | rama4d_r4 == 4729
+	replace industrycat_isic = 4722 if rama4d_r4 == 4724
+	replace industrycat_isic = 4730 if rama4d_r4 == 4731 | rama4d_r4 == 4722
+	replace industrycat_isic = 4741 if rama4d_r4 == 4741
+	replace industrycat_isic = 4742 if rama4d_r4 == 4742
+	replace industrycat_isic = 4751 if rama4d_r4 == 4751
+	replace industrycat_isic = 4752 if rama4d_r4 == 4752
+	replace industrycat_isic = 4753 if rama4d_r4 == 4753 | rama4d_r4 == 4755
+	replace industrycat_isic = 4759 if rama4d_r4 == 4754 | rama4d_r4 == 4759
+	replace industrycat_isic = 4761 if rama4d_r4 == 4761
+	replace industrycat_isic = 4762 if rama4d_r4 == 4762 | rama4d_r4 == 4769
+	replace industrycat_isic = 4771 if rama4d_r4 == 4771 | rama4d_r4 == 4772
+	replace industrycat_isic = 4772 if rama4d_r4 == 4773
+	replace industrycat_isic = 4773 if rama4d_r4 == 4774
+	replace industrycat_isic = 4774 if rama4d_r4 == 4773
+	replace industrycat_isic = 4781 if rama4d_r4 == 4781
+	replace industrycat_isic = 4782 if rama4d_r4 == 4782
+	replace industrycat_isic = 4789 if rama4d_r4 == 4789
+	replace industrycat_isic = 4791 if rama4d_r4 == 4791 | rama4d_r4 == 4792
+	replace industrycat_isic = 4799 if rama4d_r4 == 4799
+	replace industrycat_isic = 4911 if rama4d_r4 == 4911
+	replace industrycat_isic = 4912 if rama4d_r4 == 4912
+	replace industrycat_isic = 4921 if rama4d_r4 == 4921
+	replace industrycat_isic = 4922 if rama4d_r4 == 4922
+	replace industrycat_isic = 4930 if rama4d_r4 == 4930
+	replace industrycat_isic = 5011 if rama4d_r4 == 5011
+	replace industrycat_isic = 5012 if rama4d_r4 == 5012
+	replace industrycat_isic = 5021 if rama4d_r4 == 5021
+	replace industrycat_isic = 5022 if rama4d_r4 == 5022
+	replace industrycat_isic = 5110 if rama4d_r4 == 5111 | rama4d_r4 == 5112
+	replace industrycat_isic = 5120 if rama4d_r4 == 5121 | rama4d_r4 == 5122
+	replace industrycat_isic = 5221 if rama4d_r4 == 5221
+	replace industrycat_isic = 5222 if rama4d_r4 == 5222
+	replace industrycat_isic = 5223 if rama4d_r4 == 5223
+	replace industrycat_isic = 5224 if rama4d_r4 == 5224
+	replace industrycat_isic = 5229 if rama4d_r4 == 5229
+	replace industrycat_isic = 5310 if rama4d_r4 == 5310
+	replace industrycat_isic = 5320 if rama4d_r4 == 5320
+	replace industrycat_isic = 5510 if rama4d_r4 == 5511 | rama4d_r4 == 5512 | rama4d_r4 == 5513 | rama4d_r4 == 5514 | rama4d_r4 == 5519
+	replace industrycat_isic = 5520 if rama4d_r4 == 5520
+	replace industrycat_isic = 5590 if rama4d_r4 == 5530 | rama4d_r4 == 5590
+	replace industrycat_isic = 5610 if rama4d_r4 == 5611 | rama4d_r4 == 5612 | rama4d_r4 == 5613 | rama4d_r4 == 5619
+	replace industrycat_isic = 5621 if rama4d_r4 == 5621
+	replace industrycat_isic = 5629 if rama4d_r4 == 5629
+	replace industrycat_isic = 5630 if rama4d_r4 == 5630
+	replace industrycat_isic = 5811 if rama4d_r4 == 5811
+	replace industrycat_isic = 5812 if rama4d_r4 == 5812
+	replace industrycat_isic = 5813 if rama4d_r4 == 5813
+	replace industrycat_isic = 5819 if rama4d_r4 == 5819
+	replace industrycat_isic = 5820 if rama4d_r4 == 5820
+	replace industrycat_isic = 5911 if rama4d_r4 == 5911
+	replace industrycat_isic = 5912 if rama4d_r4 == 5912
+	replace industrycat_isic = 5913 if rama4d_r4 == 5913
+	replace industrycat_isic = 5914 if rama4d_r4 == 5914
+	replace industrycat_isic = 5920 if rama4d_r4 == 5920
+	replace industrycat_isic = 6010 if rama4d_r4 == 6010
+	replace industrycat_isic = 6020 if rama4d_r4 == 6020
+	replace industrycat_isic = 6110 if rama4d_r4 == 6110
+	replace industrycat_isic = 6120 if rama4d_r4 == 6120
+	replace industrycat_isic = 6130 if rama4d_r4 == 6130
+	replace industrycat_isic = 6190 if rama4d_r4 == 6190
+	replace industrycat_isic = 6201 if rama4d_r4 == 6201
+	replace industrycat_isic = 6202 if rama4d_r4 == 6202
+	replace industrycat_isic = 6209 if rama4d_r4 == 6209
+	replace industrycat_isic = 6311 if rama4d_r4 == 6311
+	replace industrycat_isic = 6312 if rama4d_r4 == 6312
+	replace industrycat_isic = 6391 if rama4d_r4 == 6391
+	replace industrycat_isic = 6399 if rama4d_r4 == 6399
+	replace industrycat_isic = 6411 if rama4d_r4 == 6411
+	replace industrycat_isic = 6419 if rama4d_r4 == 6412 | rama4d_r4 == 6421 | rama4d_r4 == 6422 | rama4d_r4 == 6424
+	replace industrycat_isic = 6430 if rama4d_r4 == 6431 | rama4d_r4 == 6432
+	replace industrycat_isic = 6491 if rama4d_r4 == 6491
+	replace industrycat_isic = 6492 if rama4d_r4 == 6423 | rama4d_r4 == 6492 | rama4d_r4 == 6494 | rama4d_r4 == 6495
+	replace industrycat_isic = 6499 if rama4d_r4 == 6493 | rama4d_r4 == 6496 | rama4d_r4 == 6499
+	replace industrycat_isic = 6511 if rama4d_r4 == 6512
+	replace industrycat_isic = 6512 if rama4d_r4 == 6511 | rama4d_r4 == 6515 | rama4d_r4 == 6521 | rama4d_r4 == 6522 | rama4d_r4 == 6523
+	replace industrycat_isic = 6520 if rama4d_r4 == 6513
+	replace industrycat_isic = 6530 if rama4d_r4 == 6531 | rama4d_r4 == 6532
+	replace industrycat_isic = 6611 if rama4d_r4 == 6611
+	replace industrycat_isic = 6612 if rama4d_r4 == 6612 | rama4d_r4 == 6613 | rama4d_r4 == 6614 | rama4d_r4 == 6615
+	replace industrycat_isic = 6619 if rama4d_r4 == 6619
+	replace industrycat_isic = 6622 if rama4d_r4 == 6621 | rama4d_r4 == 6629
+	replace industrycat_isic = 6630 if rama4d_r4 == 6630
+	replace industrycat_isic = 6810 if rama4d_r4 == 6810
+	replace industrycat_isic = 6820 if rama4d_r4 == 6820
+	replace industrycat_isic = 6910 if rama4d_r4 == 6910
+	replace industrycat_isic = 6920 if rama4d_r4 == 6920
+	replace industrycat_isic = 7010 if rama4d_r4 == 7010
+	replace industrycat_isic = 7020 if rama4d_r4 == 7020
+	replace industrycat_isic = 7110 if rama4d_r4 == 7111 | rama4d_r4 == 7112
+	replace industrycat_isic = 7120 if rama4d_r4 == 7120
+	replace industrycat_isic = 7210 if rama4d_r4 == 7210
+	replace industrycat_isic = 7220 if rama4d_r4 == 7220
+	replace industrycat_isic = 7310 if rama4d_r4 == 7310
+	replace industrycat_isic = 7320 if rama4d_r4 == 7320
+	replace industrycat_isic = 7410 if rama4d_r4 == 7410
+	replace industrycat_isic = 7420 if rama4d_r4 == 7420
+	replace industrycat_isic = 7490 if rama4d_r4 == 7490
+	replace industrycat_isic = 7500 if rama4d_r4 == 7500
+	replace industrycat_isic = 7710 if rama4d_r4 == 7710
+	replace industrycat_isic = 7721 if rama4d_r4 == 7721
+	replace industrycat_isic = 7722 if rama4d_r4 == 7722
+	replace industrycat_isic = 7729 if rama4d_r4 == 7729
+	replace industrycat_isic = 7730 if rama4d_r4 == 7730
+	replace industrycat_isic = 7740 if rama4d_r4 == 7740
+	replace industrycat_isic = 7810 if rama4d_r4 == 7810
+	replace industrycat_isic = 7820 if rama4d_r4 == 7820
+	replace industrycat_isic = 7830 if rama4d_r4 == 7830
+	replace industrycat_isic = 7911 if rama4d_r4 == 7911
+	replace industrycat_isic = 7912 if rama4d_r4 == 7912
+	replace industrycat_isic = 7990 if rama4d_r4 == 7990
+	replace industrycat_isic = 8010 if rama4d_r4 == 8010
+	replace industrycat_isic = 8020 if rama4d_r4 == 8020
+	replace industrycat_isic = 8030 if rama4d_r4 == 8030
+	replace industrycat_isic = 8110 if rama4d_r4 == 8110
+	replace industrycat_isic = 8121 if rama4d_r4 == 8121
+	replace industrycat_isic = 8129 if rama4d_r4 == 8129
+	replace industrycat_isic = 8130 if rama4d_r4 == 8130
+	replace industrycat_isic = 8211 if rama4d_r4 == 8211
+	replace industrycat_isic = 8219 if rama4d_r4 == 8219
+	replace industrycat_isic = 8220 if rama4d_r4 == 8220
+	replace industrycat_isic = 8230 if rama4d_r4 == 8230
+	replace industrycat_isic = 8291 if rama4d_r4 == 8291
+	replace industrycat_isic = 8292 if rama4d_r4 == 8292
+	replace industrycat_isic = 8299 if rama4d_r4 == 8299
+	replace industrycat_isic = 8411 if rama4d_r4 == 8411 | rama4d_r4 == 8412 | rama4d_r4 == 8415
+	replace industrycat_isic = 8412 if rama4d_r4 == 8413
+	replace industrycat_isic = 8413 if rama4d_r4 == 8414
+	replace industrycat_isic = 8421 if rama4d_r4 == 8421
+	replace industrycat_isic = 8422 if rama4d_r4 == 8422
+	replace industrycat_isic = 8423 if rama4d_r4 == 8411 | rama4d_r4 == 8424
+	replace industrycat_isic = 8430 if rama4d_r4 == 8430
+	replace industrycat_isic = 8510 if rama4d_r4 == 8511 | rama4d_r4 == 8512 | rama4d_r4 == 8513 | rama4d_r4 == 8530
+	replace industrycat_isic = 8521 if rama4d_r4 == 8521 | rama4d_r4 == 8522
+	replace industrycat_isic = 8522 if rama4d_r4 == 8523
+	replace industrycat_isic = 8530 if rama4d_r4 == 8541 | rama4d_r4 == 8542 | rama4d_r4 == 8543 | rama4d_r4 == 8544
+	replace industrycat_isic = 8541 if rama4d_r4 == 8552
+	replace industrycat_isic = 8542 if rama4d_r4 == 8553
+	replace industrycat_isic = 8549 if rama4d_r4 == 8551 | rama4d_r4 == 8559
+	replace industrycat_isic = 8550 if rama4d_r4 == 8560
+	replace industrycat_isic = 8610 if rama4d_r4 == 8610
+	replace industrycat_isic = 8620 if rama4d_r4 == 8621 | rama4d_r4 == 8622
+	replace industrycat_isic = 8690 if rama4d_r4 == 8691 | rama4d_r4 == 8692 | rama4d_r4 == 8699
+	replace industrycat_isic = 8710 if rama4d_r4 == 8710
+	replace industrycat_isic = 8720 if rama4d_r4 == 8720
+	replace industrycat_isic = 8730 if rama4d_r4 == 8730
+	replace industrycat_isic = 8810 if rama4d_r4 == 8810
+	replace industrycat_isic = 8890 if rama4d_r4 == 8891 | rama4d_r4 == 8899
+	replace industrycat_isic = 9000 if rama4d_r4 == 9001 | rama4d_r4 == 9002 | rama4d_r4 == 9003 | rama4d_r4 == 9004 | rama4d_r4 == 9005 | rama4d_r4 == 9006 | rama4d_r4 == 9007 | rama4d_r4 == 9008
+	replace industrycat_isic = 9101 if rama4d_r4 == 9101
+	replace industrycat_isic = 9102 if rama4d_r4 == 9102
+	replace industrycat_isic = 9103 if rama4d_r4 == 9103
+	replace industrycat_isic = 9200 if rama4d_r4 == 9200
+	replace industrycat_isic = 9311 if rama4d_r4 == 9311
+	replace industrycat_isic = 9312 if rama4d_r4 == 9312
+	replace industrycat_isic = 9319 if rama4d_r4 == 9319
+	replace industrycat_isic = 9321 if rama4d_r4 == 9321
+	replace industrycat_isic = 9329 if rama4d_r4 == 9329
+	replace industrycat_isic = 9411 if rama4d_r4 == 9411
+	replace industrycat_isic = 9412 if rama4d_r4 == 9412
+	replace industrycat_isic = 9420 if rama4d_r4 == 9420
+	replace industrycat_isic = 9491 if rama4d_r4 == 9491
+	replace industrycat_isic = 9492 if rama4d_r4 == 9492
+	replace industrycat_isic = 9499 if rama4d_r4 == 9499
+	replace industrycat_isic = 9511 if rama4d_r4 == 9511
+	replace industrycat_isic = 9512 if rama4d_r4 == 9512
+	replace industrycat_isic = 9521 if rama4d_r4 == 9521
+	replace industrycat_isic = 9522 if rama4d_r4 == 9522
+	replace industrycat_isic = 9524 if rama4d_r4 == 9524
+	replace industrycat_isic = 9529 if rama4d_r4 == 9529
+	replace industrycat_isic = 9601 if rama4d_r4 == 9601
+	replace industrycat_isic = 9602 if rama4d_r4 == 9602
+	replace industrycat_isic = 9603 if rama4d_r4 == 9603
+	replace industrycat_isic = 9609 if rama4d_r4 == 9609
+	replace industrycat_isic = 9700 if rama4d_r4 == 9700
+	replace industrycat_isic = 9810 if rama4d_r4 == 9810
+	replace industrycat_isic = 9820 if rama4d_r4 == 9820
+	replace industrycat_isic = 9900 if rama4d_r4 == 9900
+	
 	gen industrycat_isic_S = string(industrycat_isic, "%04.0f")
 	drop industrycat_isic
 	rename industrycat_isic_S industrycat_isic
@@ -1130,16 +1226,20 @@ foreach v of local ed_var {
 
 *<_industrycat10_>
 	gen byte industrycat10 = .
-	replace industrycat10 = 1 if rama2d==1 | rama2d==2|rama2d==5
-	replace industrycat10 = 2 if rama2d>=10 & rama2d<=14
-	replace industrycat10 = 3 if rama2d>=15 & rama2d<=37
-	replace industrycat10 = 4 if rama2d==40 | rama2d==41
-	replace industrycat10 = 5 if rama2d==45
-	replace industrycat10 = 6 if (rama2d>=50 & rama2d<=52) | rama2d==55
-	replace industrycat10 = 7 if rama2d>=60 & rama2d<=64
-	replace industrycat10 = 8 if (rama2d>=65 & rama2d<=67)|(rama2d>=70 & rama2d<=74)
-	replace industrycat10 = 9 if rama2d==75
-	replace industrycat10 = 10 if rama2d>=80 & rama2d<=99
+	destring rama2d_r4, replace force
+	replace industrycat10 = 1 if inrange(rama2d_r4,1,3)
+	replace industrycat10 = 2 if inrange(rama2d_r4,5,9)
+	replace industrycat10 = 3 if inrange(rama2d_r4,10,33)
+	replace industrycat10 = 4 if inrange(rama2d_r4,35,39)
+	replace industrycat10 = 5 if inrange(rama2d_r4,41,43)
+	replace industrycat10 = 6 if inrange(rama2d_r4,45,47) 
+	replace industrycat10 = 6 if inrange(rama2d_r4,55,56)
+ 	replace industrycat10 = 7 if inrange(rama2d_r4,49,53) 
+	replace industrycat10 = 7 if inrange(rama2d_r4,58,63)
+	replace industrycat10 = 8 if inrange(rama2d_r4,64,68)
+	replace industrycat10 = 9 if rama2d_r4==84
+	replace industrycat10 = 10 if inrange(rama2d_r4,69,82) 
+	replace industrycat10 = 10 if inrange(rama2d_r4,85,99)
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
@@ -1218,8 +1318,8 @@ foreach v of local ed_var {
 	gen byte unitwage = 5
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
-	replace unitwage=. if lstatus!=1
 	label values unitwage lblunitwage
+	replace unitwage=. if lstatus!=1
 *</_unitwage_>
 
 
@@ -1234,7 +1334,6 @@ foreach v of local ed_var {
 	label var wmonths "Months of work in past 12 months primary job 7 day recall"
 *</_wmonths_>
 
-
 *<_wage_total_>
 /* <_wage_total_note>
 
@@ -1243,7 +1342,7 @@ foreach v of local ed_var {
 
 </_wage_total_note> */
 	des p6500 p6510 p6510s1 p6510s2
-
+  
 	*Extra hours  QI.15
 	gen wage_extra = p6510s1 if p6510==1
 	*Replace by median value those who did not know the exact amount
@@ -1290,27 +1389,27 @@ foreach v of local ed_var {
 	count if wage_kind==0
 	replace wage_kind = . if wage_kind == 0
 	*mediana en lugar de media. ok para transporte, pero no bonificaciones
-
+	
 	*Bonuses
 	*Q.I22a
-	gen prim_serv = p6630s1a1/12
+	gen prim_serv = p6630s1a1/12 
     *Q.I22b
-	gen prim_christ = p6630s2a1/12
+	gen prim_christ = p6630s2a1/12 
 	*Q.I22c
 	gen prim_vac = p6630s3a1/12
 	*Q.I22d
-	gen bon_ann = p6630s4a1/12
+	gen bon_ann = p6630s4a1/12 
 	*Bonuses (all)
 	egen prim_bon = rsum(prim_serv prim_christ prim_vac bon_ann)
 	replace prim_bon = . if prim_bon==0
-
+	
 	*Wage - Monthly income, including extra hours QI.14 + QI.15
 	*Paid employees
 	gen wage_principal_1 = p6500
-	replace wage_principal_1 = p6500 + wage_extra if wage_extra!=.
-
+	replace wage_principal_1 = p6500 + wage_extra if wage_extra!=. 
+	
 	*Self-employed, employer and others
-	*Wage for employers and self-employed workers
+	*Wage for employers and self-employed workers 
 	count if p6750!=. & (empstat!=3 & empstat!=4 & empstat!=5)
 	gen wage_self = p6750 if (empstat==3 | empstat==4 | empstat==5)
 	  **Divide by number of months represented
@@ -1318,27 +1417,27 @@ foreach v of local ed_var {
 	replace wage_self = p6750/`x' if (empstat==3 | empstat==4 | empstat==5) & p6760==`x'
 	}
 	replace wage_self = p550/12 if p550!=. & wage_self==.
-
+	
 	*Replace wage for self-employed, employers, others
 	replace wage_principal_1 = wage_self if (empstat==3 | empstat==4 | empstat==5 | p550!=.) & wage_self!=.
-	replace wage_principal_1=0 if empstat==2
+	replace wage_principal_1=0 if empstat==2  
 	replace wage_principal_1=. if lstatus!=1
 	label var wage_principal_1 "Monthly income, including extra hours"
 	sum wage_principal_1
 	replace wage_principal_1 = wage_principal_1 + prim_bon if prim_bon!=.
 	sum wage_principal_1
-
+	
 	*Wage - Monthly income, including extra hours + other job remunerations + bonuses
-	gen wage_principal_2 = wage_principal_1
+	gen wage_principal_2 = wage_principal_1 
 	replace wage_principal_2 = wage_principal_1 + wage_kind if wage_kind!=.
     replace wage_principal_2 = wage_principal_2 + prim_bon if prim_bon!=.
-
+	
 	*Replace wage for self-employed, employers, others
 	replace wage_principal_2 = wage_self if (empstat==3 | empstat==4 | empstat==5 | p550!=.) & wage_self!=.
-	replace wage_principal_2=0 if empstat==2
+	replace wage_principal_2=0 if empstat==2  
 	replace wage_principal_2=. if lstatus!=1
 	label var wage_principal_2 "Monthly income, including extra hours + in-kind payments"
-	sum wage_principal_2
+	sum wage_principal_2 
 
 	gen wage_total = wage_principal_2*12
 	label var wage_total "Annualized total wage primary job 7 day recall"
@@ -1367,7 +1466,7 @@ foreach v of local ed_var {
 
 *<_socialsec_>
 	gen byte socialsec=p6920
-	recode socialsec 2=0 3=.
+	recode socialsec 2=0 3=. 9=.
 	label var socialsec "Employment has social security insurance primary job 7 day recall"
 	la de lblsocialsec 1 "With social security" 0 "Without social secturity"
 	label values socialsec lblsocialsec
@@ -1392,7 +1491,7 @@ foreach v of local ed_var {
 
 *<_firmsize_u_>
 	gen byte firmsize_u= p6870
-	recode firmsize_u 2=3 3=5 4=10 5=19 6=30 7=50 8=100 9=.
+	recode firmsize_u 2=3 3=5 4=10 5=19 6=30 7=50 8=100 9=.  
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>
 
@@ -1514,7 +1613,7 @@ foreach v of local ed_var {
 
 *<_firmsize_u_2_>
 	gen byte firmsize_u_2 = p7075
-	recode firmsize_u_2 2=3 3=5 4=10 5=19 6=30 7=50 8=100 9=.
+	recode firmsize_u_2 2=3 3=5 4=10 5=19 6=30 7=50 8=100 9=. 
 	label var firmsize_u_2 "Firm size (upper bracket) secondary job 7 day recall"
 *</_firmsize_u_2_>
 
@@ -1938,7 +2037,7 @@ foreach v of local ed_var {
 /*<_njobs_> Defined above
 	gen njobs = .
 	label var njobs "Total number of jobs"
-*</_njobs_> */
+*</_njobs_> */ 
 
 
 *<_t_hours_annual_>
@@ -1989,13 +2088,13 @@ quietly{
 
 *<_% KEEP VARIABLES - ALL_>
 
-	keep countrycode survname survey icls_v isced_version isco_version isic_version year vermast veralt harmonization int_year int_month hhid pid weight psu strata wave urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_orig educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field_orig vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
+	keep countrycode survname survey icls_v isced_version isco_version isic_version year vermast veralt harmonization int_year int_month hhid pid weight psu strata wave urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_orig educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
 
 *</_% KEEP VARIABLES - ALL_>
 
 *<_% ORDER VARIABLES_>
 
-	order countrycode survname survey icls_v isced_version isco_version isic_version year vermast veralt harmonization int_year int_month hhid pid weight psu strata wave urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_orig educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field_orig vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
+	order countrycode survname survey icls_v isced_version isco_version isic_version year vermast veralt harmonization int_year int_month hhid pid weight psu strata wave urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_orig educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
 
 *</_% ORDER VARIABLES_>
 
@@ -2056,7 +2155,7 @@ compress
 
 *<_% SAVE_>
 
-save "`path_output'\COL_2012_GEIH_V01_M_V01_A_GLD_ALL.dta", replace
+save "`path_output'\COL_2021_GEIH_V01_M_V01_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>
 }

@@ -6,7 +6,7 @@
 
 <_Program name_>				COL_2020_GEIH_V01_M_V01_A_GLD_ALL
 <_Application_>					Stata 17
-<_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) 
+<_Author(s)_>					World Bank Jobs Group (gld@worldbank.org)
 <_Date created_>				2022-04-11
 
 -------------------------------------------------------------------------
@@ -16,10 +16,10 @@
 <_Survey Year_>					2020
 <_Study ID_>					[Microdata Library ID if present] </_Study ID_>
 <_Data collection from_>			01/2020
-<_Data collection to_>				12/2020] </_Data collection to_>
+<_Data collection to_>				12/2020 </_Data collection to_>
 <_Source of dataset_> 				Departamento Administrativo Nacional de Estadistica - DANE
-<_Sample size (HH)_> 				121,503 </_Sample size (HH)_>
-<_Sample size (IND)_> 				393,698  </_Sample size (IND)_>
+<_Sample size (HH)_> 				229935 </_Sample size (HH)_>
+<_Sample size (IND)_> 				747822  </_Sample size (IND)_>
 <_Sampling method_> 				[Brief description] </_Sampling method_>
 <_Geographic coverage_> 			[To what level is data significant] </_Geographic coverage_>
 <_Currency_> 					COP </_Currency_>
@@ -27,11 +27,11 @@
 -----------------------------------------------------------------------
 
 <_ICLS Version_>				ICLS-13 </_ICLS Version_>
-<_ISCED Version_>				[Version of ICLS for Labor Questions] </_ISCED Version_>
+<_ISCED Version_>				isced_2011 </_ISCED Version_>
 <_ISCO Version_>				N/A </_ISCO Version_>
 <_OCCUP National_>				CNO 1970 </_OCCUP National_>
 <_ISIC Version_>				ISIC REV 4 </_ISIC Version_>
-<_INDUS National_>				ISIC REV 4 COLOMBIA </_INDUS National_>
+<_INDUS National_>				ISIC REV 4 COLOMBIA (2020) </_INDUS National_>
 
 -----------------------------------------------------------------------
 <_Version Control_>
@@ -56,7 +56,7 @@ set mem 800m
 *----------1.2: Set directories------------------------------*
 
 
-local path_in "Z:\GLD-Harmonization\582018_AQ\COL\COL_2020_GEIH\COL_2020_GEIH_v01_M\Data\Stata\" 
+local path_in "Z:\GLD-Harmonization\582018_AQ\COL\COL_2020_GEIH\COL_2020_GEIH_v01_M\Data\Stata\"
 local path_output "Z:\GLD-Harmonization\582018_AQ\COL\COL_2020_GEIH\COL_2020_GEIH_v01_M_v01_A_GLD\Data\Harmonized\"
 
 *----------1.3: Database assembly------------------------------*
@@ -64,46 +64,117 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\COL\COL_2020_GEIH\COL_2020_GEI
 
 *** append household monthly data
 clear all
-use "Z:\GLD-Harmonization\582018_AQ\COL\COL_2020_GEIH\COL_2020_GEIH_v01_M\Data\Stata\GEIH_2020_1.dta"
+use "`path_in'\GEIH_2020_1.dta"
 
 forvalues i=2/12 {
-    append using "Z:\GLD-Harmonization\582018_AQ\COL\COL_2020_GEIH\COL_2020_GEIH_v01_M\Data\Stata\GEIH_2020_`i'.dta", force
+    append using "`path_in'\GEIH_2020_`i'.dta", force
 }
-keep if _merge==3
-drop _merge
 rename *, lower
-save "Z:\GLD-Harmonization\582018_AQ\COL\COL_2020_GEIH\COL_2020_GEIH_v01_M\Data\Stata\GEIH_2020.dta", replace
+
+** Get rid of duplicates process
+* Identify duplicates
+duplicates tag directorio secuencia_p orden, gen(dup)
+
+* Households can be identified uniquely by month
+duplicates tag directorio secuencia_p orden mes, gen(asserter)
+assert asserter == 0
+drop asserter
+
+* Convert directorio to a string variable of length 7
+tostring directorio, gen(direct_str) format("%07.0f")
+
+* Extract the latter 5 digits
+gen latter_five = substr(direct_str,3,.)
+
+* Extract the first two digits
+gen first_two = substr(direct_str,1,2)
+
+* Convert month into a number
+destring mes, gen(mes_num)
+
+* Mark the one with the earlier month
+bys directorio : egen min_month = min(mes_num) if (dup > 0 & !missing(dup))
+
+* Since directorio always starts with either 00, 01, 51, 52, or 53, we can convert the first digits to
+* 99 and make it unique that way.
+replace first_two = "99" if mes_num == min_month & (dup > 0 & !missing(dup))
+
+* Create a new unique directorio
+egen directorio_unique = concat(first_two latter_five)
+
+* Check it is unique now
+isid directorio_unique secuencia_p orden
+
+* Convert it back to a number, drop the original, replace with unique
+destring directorio_unique, replace
+drop directorio
+rename directorio_unique directorio
+
+* Save tempfile
+tempfile general_2020
+save `general_2020'
+
 
 clear all
 
 
-use "Z:\GLD-Harmonization\582018_AQ\COL\COL_2020_GEIH\COL_2020_GEIH_v01_M\Data\Stata\Migration\mi_1.dta"
+use "`path_in'\Migration\mi_1.dta"
 forvalues i=2/12 {
-    append using "Z:\GLD-Harmonization\582018_AQ\COL\COL_2020_GEIH\COL_2020_GEIH_v01_M\Data\Stata\Migration\mi_`i'.dta", force
+    append using "`path_in'\Migration\mi_`i'.dta", force
 }
+
 rename *, lower
-save "Z:\GLD-Harmonization\582018_AQ\COL\COL_2020_GEIH\COL_2020_GEIH_v01_M\Data\Stata\migration_2020.dta", replace
-	
-	
-*** merge appended to households data 
-merge 1:m directorio secuencia_p mes orden using "Z:\GLD-Harmonization\582018_AQ\COL\COL_2020_GEIH\COL_2020_GEIH_v01_M\Data\Stata\GEIH_2020.dta"
-keep if _merge==3
-drop _merge 
-destring mes, replace force
-save "Z:\GLD-Harmonization\582018_AQ\COL\COL_2020_GEIH\COL_2020_GEIH_v01_M\Data\Stata\merged_2020.dta", replace
 
- 
+** Get rid of duplicates process
+* Identify duplicates
+duplicates tag directorio secuencia_p orden, gen(dup)
 
-****final dataset with updated weights
-use "Z:\GLD-Harmonization\582018_AQ\COL\COL_2020_GEIH\COL_2020_GEIH_v01_M\Data\Stata\Fex proyeccion CNPV_2018.dta"
-rename *, lower
-merge 1:m directorio secuencia_p mes orden using "Z:\GLD-Harmonization\582018_AQ\COL\COL_2020_GEIH\COL_2020_GEIH_v01_M\Data\Stata\merged_2020.dta", force
+* Households can be identified uniquely by month
+duplicates tag directorio secuencia_p orden mes, gen(asserter)
+assert asserter == 0
+drop asserter
 
-keep if _merge==3
-drop _merge 
+* Convert directorio to a string variable of length 7
+tostring directorio, gen(direct_str) format("%07.0f")
 
-save "Z:\GLD-Harmonization\582018_AQ\COL\COL_2020_GEIH\COL_2020_GEIH_v01_M\Data\Stata\data_2020_final.dta", replace
-	
+* Extract the latter 5 digits
+gen latter_five = substr(direct_str,3,.)
+
+* Extract the first two digits
+gen first_two = substr(direct_str,1,2)
+
+* Convert month into a number
+destring mes, gen(mes_num)
+
+* Mark the one with the earlier month
+bys directorio : egen min_month = min(mes_num) if (dup > 0 & !missing(dup))
+
+* Since directorio always starts with either 00, 01, 51, 52, or 53, we can convert the first digits to
+* 99 and make it unique that way.
+replace first_two = "99" if mes_num == min_month & (dup > 0 & !missing(dup))
+
+* Create a new unique directorio
+egen directorio_unique = concat(first_two latter_five)
+
+* Check it is unique now
+isid directorio_unique secuencia_p orden
+
+* Convert it back to a number, drop the original, replace with unique
+destring directorio_unique, replace
+drop directorio
+rename directorio_unique directorio
+
+* Save tempfile
+tempfile migration_2020
+save `migration_2020'
+
+
+* Start with full set
+use "`general_2020'", clear
+
+merge 1:1 directorio secuencia_p orden using "`migration_2020'", assert(match) nogen
+save "`path_in'\data_2020_final.dta", replace
+
 /*%%=============================================================================================
 	2: Survey & ID
 ==============================================================================================%%*/
@@ -135,7 +206,7 @@ save "Z:\GLD-Harmonization\582018_AQ\COL\COL_2020_GEIH\COL_2020_GEIH_v01_M\Data\
 
 
 *<_isced_version_>
-	gen isced_version = ""
+	gen isced_version = "isced_2011"
 	label var isced_version "Version of ISCED used for educat_isced"
 *</_isced_version_>
 
@@ -184,6 +255,7 @@ save "Z:\GLD-Harmonization\582018_AQ\COL\COL_2020_GEIH\COL_2020_GEIH_v01_M\Data\
 
 *<_int_month_>  // Includes all months
 	gen  int_month = mes
+	destring int_month, replace force
 	label de lblint_month 1 "January" 2 "February" 3 "March" 4 "April" 5 "May" 6 "June" 7 "July" 8 "August" 9 "September" 10 "October" 11 "November" 12 "December"
 	label value int_month lblint_month
 	label var int_month "Month of the interview"
@@ -199,9 +271,9 @@ save "Z:\GLD-Harmonization\582018_AQ\COL\COL_2020_GEIH\COL_2020_GEIH_v01_M\Data\
 	002, ..., 160.
 
 </_hhid_note> */
-	
+
 	ren id id2
-	egen id=group(directorio secuencia_p mes)
+	egen id=group(directorio secuencia_p)
 	egen hhid = concat(id)
 	label var hhid "Household ID"
 *</_hhid_>
@@ -211,7 +283,7 @@ save "Z:\GLD-Harmonization\582018_AQ\COL\COL_2020_GEIH\COL_2020_GEIH_v01_M\Data\
 	gen com=string(orden,"%02.0f")
 	egen  pid = concat(id com)
 	label var pid "Individual ID"
-	isid pid hhid
+	isid pid 
 *</_pid_>
 
 
@@ -240,7 +312,7 @@ save "Z:\GLD-Harmonization\582018_AQ\COL\COL_2020_GEIH\COL_2020_GEIH_v01_M\Data\
 
 
 *<_wave_>  // NOT USED
-	gen wave = . 
+	gen wave = .
 	label var wave "Survey wave"
 *</_wave_>
 
@@ -273,8 +345,8 @@ save "Z:\GLD-Harmonization\582018_AQ\COL\COL_2020_GEIH\COL_2020_GEIH_v01_M\Data\
 
 /* <_subnatid1_note>
 
-	The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: "1 – Hatay". That is, the variable itself is to be string, not a labelled numeric vector. 
-	
+	The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: "1 – Hatay". That is, the variable itself is to be string, not a labelled numeric vector.
+
 	Example of entries would be "1 - Alaska",  "2 - Arkansas", ...
 
 </_subnatid1_note> */
@@ -389,7 +461,7 @@ save "Z:\GLD-Harmonization\582018_AQ\COL\COL_2020_GEIH\COL_2020_GEIH_v01_M\Data\
 	replace age=98 if age>98 & age!=.
 	label var age "Individual age"
 *</_age_>
-	
+
 *<_male_>
 	gen male =(p6020==1)  //add
 	gen byte gender=male
@@ -681,10 +753,10 @@ foreach v of local ed_var {
 	label var vocational_length_u "Length of training in months, upper limit"
 *</_vocational_length_u_>
 
-*<_vocational_field_>
-	gen vocational_field = .
-	label var vocational_field "Field of training"
-*</_vocational_field_>
+*<_vocational_field_orig_>
+	gen vocational_field_orig = .
+	label var vocational_field_orig "Field of training"
+*</_vocational_field_orig_>
 
 *<_vocational_financed_>
 	gen vocational_financed = .
@@ -702,7 +774,7 @@ foreach v of local ed_var {
 *<_minlaborage_>
 	gen byte minlaborage = 10
 	label var minlaborage "Labor module application age"
-*</_minlaborage_>	
+*</_minlaborage_>
 
 
 *----------8.1: 7 day reference overall------------------------------*
@@ -722,10 +794,10 @@ foreach v of local ed_var {
 
 *For unemployed and inactive that report some kind of labor earning on the last month
 	tab p7422 dsi,m
-	tab p7310 dsi,m //Jump for unemployed in question p7310 
+	tab p7310 dsi,m //Jump for unemployed in question p7310
 	sum p7422s1
 	tab p7472 ini,m
-	tab p7430 ini,m //Jump for inactive in question p7430 
+	tab p7430 ini,m //Jump for inactive in question p7430
 	sum p7472s1
 	*lstatus_extra identifies unemployed and inactive that report labor earnings on the last month (sub-employment)
 	gen lstatus_extra = (p7422==1 | p7472==1)
@@ -1022,7 +1094,7 @@ foreach v of local ed_var {
 	replace industrycat_isic = 4620 if rama4d_r4 == 4620
 	replace industrycat_isic = 4630 if rama4d_r4 == 4631 | rama4d_r4 == 4632
 	replace industrycat_isic = 4641 if rama4d_r4 == 4641 | rama4d_r4 == 4642 | rama4d_r4 == 4643 | rama4d_r4 == 4649
-	replace industrycat_isic = 4649 if rama4d_r4 == 4644 | rama4d_r4 == 4644 
+	replace industrycat_isic = 4649 if rama4d_r4 == 4644 | rama4d_r4 == 4644
 	replace industrycat_isic = 4651 if rama4d_r4 == 4651
 	replace industrycat_isic = 4652 if rama4d_r4 == 4652
 	replace industrycat_isic = 4653 if rama4d_r4 == 4653
@@ -1212,7 +1284,7 @@ foreach v of local ed_var {
 	replace industrycat_isic = 9810 if rama4d_r4 == 9810
 	replace industrycat_isic = 9820 if rama4d_r4 == 9820
 	replace industrycat_isic = 9900 if rama4d_r4 == 9900
-	
+
 	gen industrycat_isic_S = string(industrycat_isic, "%04.0f")
 	drop industrycat_isic
 	rename industrycat_isic_S industrycat_isic
@@ -1231,13 +1303,13 @@ foreach v of local ed_var {
 	replace industrycat10 = 3 if inrange(rama2d_r4,10,33)
 	replace industrycat10 = 4 if inrange(rama2d_r4,35,39)
 	replace industrycat10 = 5 if inrange(rama2d_r4,41,43)
-	replace industrycat10 = 6 if inrange(rama2d_r4,45,47) 
+	replace industrycat10 = 6 if inrange(rama2d_r4,45,47)
 	replace industrycat10 = 6 if inrange(rama2d_r4,55,56)
- 	replace industrycat10 = 7 if inrange(rama2d_r4,49,53) 
+ 	replace industrycat10 = 7 if inrange(rama2d_r4,49,53)
 	replace industrycat10 = 7 if inrange(rama2d_r4,58,63)
 	replace industrycat10 = 8 if inrange(rama2d_r4,64,68)
 	replace industrycat10 = 9 if rama2d_r4==84
-	replace industrycat10 = 10 if inrange(rama2d_r4,69,82) 
+	replace industrycat10 = 10 if inrange(rama2d_r4,69,82)
 	replace industrycat10 = 10 if inrange(rama2d_r4,85,99)
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
@@ -1342,7 +1414,7 @@ foreach v of local ed_var {
 
 </_wage_total_note> */
 	des p6500 p6510 p6510s1 p6510s2
-  
+
 	*Extra hours  QI.15
 	gen wage_extra = p6510s1 if p6510==1
 	*Replace by median value those who did not know the exact amount
@@ -1389,27 +1461,27 @@ foreach v of local ed_var {
 	count if wage_kind==0
 	replace wage_kind = . if wage_kind == 0
 	*mediana en lugar de media. ok para transporte, pero no bonificaciones
-	
+
 	*Bonuses
 	*Q.I22a
-	gen prim_serv = p6630s1a1/12 
+	gen prim_serv = p6630s1a1/12
     *Q.I22b
-	gen prim_christ = p6630s2a1/12 
+	gen prim_christ = p6630s2a1/12
 	*Q.I22c
 	gen prim_vac = p6630s3a1/12
 	*Q.I22d
-	gen bon_ann = p6630s4a1/12 
+	gen bon_ann = p6630s4a1/12
 	*Bonuses (all)
 	egen prim_bon = rsum(prim_serv prim_christ prim_vac bon_ann)
 	replace prim_bon = . if prim_bon==0
-	
+
 	*Wage - Monthly income, including extra hours QI.14 + QI.15
 	*Paid employees
 	gen wage_principal_1 = p6500
-	replace wage_principal_1 = p6500 + wage_extra if wage_extra!=. 
-	
+	replace wage_principal_1 = p6500 + wage_extra if wage_extra!=.
+
 	*Self-employed, employer and others
-	*Wage for employers and self-employed workers 
+	*Wage for employers and self-employed workers
 	count if p6750!=. & (empstat!=3 & empstat!=4 & empstat!=5)
 	gen wage_self = p6750 if (empstat==3 | empstat==4 | empstat==5)
 	  **Divide by number of months represented
@@ -1417,27 +1489,27 @@ foreach v of local ed_var {
 	replace wage_self = p6750/`x' if (empstat==3 | empstat==4 | empstat==5) & p6760==`x'
 	}
 	replace wage_self = p550/12 if p550!=. & wage_self==.
-	
+
 	*Replace wage for self-employed, employers, others
 	replace wage_principal_1 = wage_self if (empstat==3 | empstat==4 | empstat==5 | p550!=.) & wage_self!=.
-	replace wage_principal_1=0 if empstat==2  
+	replace wage_principal_1=0 if empstat==2
 	replace wage_principal_1=. if lstatus!=1
 	label var wage_principal_1 "Monthly income, including extra hours"
 	sum wage_principal_1
 	replace wage_principal_1 = wage_principal_1 + prim_bon if prim_bon!=.
 	sum wage_principal_1
-	
+
 	*Wage - Monthly income, including extra hours + other job remunerations + bonuses
-	gen wage_principal_2 = wage_principal_1 
+	gen wage_principal_2 = wage_principal_1
 	replace wage_principal_2 = wage_principal_1 + wage_kind if wage_kind!=.
     replace wage_principal_2 = wage_principal_2 + prim_bon if prim_bon!=.
-	
+
 	*Replace wage for self-employed, employers, others
 	replace wage_principal_2 = wage_self if (empstat==3 | empstat==4 | empstat==5 | p550!=.) & wage_self!=.
-	replace wage_principal_2=0 if empstat==2  
+	replace wage_principal_2=0 if empstat==2
 	replace wage_principal_2=. if lstatus!=1
 	label var wage_principal_2 "Monthly income, including extra hours + in-kind payments"
-	sum wage_principal_2 
+	sum wage_principal_2
 
 	gen wage_total = wage_principal_2*12
 	label var wage_total "Annualized total wage primary job 7 day recall"
@@ -1491,7 +1563,7 @@ foreach v of local ed_var {
 
 *<_firmsize_u_>
 	gen byte firmsize_u= p6870
-	recode firmsize_u 2=3 3=5 4=10 5=19 6=30 7=50 8=100 9=.  
+	recode firmsize_u 2=3 3=5 4=10 5=19 6=30 7=50 8=100 9=.
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>
 
@@ -1613,7 +1685,7 @@ foreach v of local ed_var {
 
 *<_firmsize_u_2_>
 	gen byte firmsize_u_2 = p7075
-	recode firmsize_u_2 2=3 3=5 4=10 5=19 6=30 7=50 8=100 9=. 
+	recode firmsize_u_2 2=3 3=5 4=10 5=19 6=30 7=50 8=100 9=.
 	label var firmsize_u_2 "Firm size (upper bracket) secondary job 7 day recall"
 *</_firmsize_u_2_>
 
@@ -2037,7 +2109,7 @@ foreach v of local ed_var {
 /*<_njobs_> Defined above
 	gen njobs = .
 	label var njobs "Total number of jobs"
-*</_njobs_> */ 
+*</_njobs_> */
 
 
 *<_t_hours_annual_>
@@ -2088,13 +2160,13 @@ quietly{
 
 *<_% KEEP VARIABLES - ALL_>
 
-	keep countrycode survname survey icls_v isced_version isco_version isic_version year vermast veralt harmonization int_year int_month hhid pid weight psu strata wave urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_orig educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
+	keep countrycode survname survey icls_v isced_version isco_version isic_version year vermast veralt harmonization int_year int_month hhid pid weight psu strata wave urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_orig educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field_orig vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
 
 *</_% KEEP VARIABLES - ALL_>
 
 *<_% ORDER VARIABLES_>
 
-	order countrycode survname survey icls_v isced_version isco_version isic_version year vermast veralt harmonization int_year int_month hhid pid weight psu strata wave urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_orig educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
+	order countrycode survname survey icls_v isced_version isco_version isic_version year vermast veralt harmonization int_year int_month hhid pid weight psu strata wave urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_orig educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field_orig vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
 
 *</_% ORDER VARIABLES_>
 
