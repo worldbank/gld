@@ -27,7 +27,7 @@ if (ustrregexm("`universe'", "^(isic|ISIC)$")) & (ustrregexm("`var'", "(isco)"))
 	exit 198
 }
 
-if !ustrregexm("`var'", "(isco|isic)$") {
+if !ustrregexm("`var'", "(_isco|_isic)") {
 	di as error "Variable `var' is not one of the variables with ISCO/ISIC information. Please review"
 	exit 198
 }
