@@ -15,8 +15,8 @@
 <_Survey Title_>				Gran Encuesta Integrada de Hogares - GEIH
 <_Survey Year_>					2021
 <_Study ID_>					[Microdata Library ID if present] </_Study ID_>
-<_Data collection from_>			07/2021
-<_Data collection to_>				[MM/YYYY] </_Data collection to_>
+<_Data collection from_>			01/2021
+<_Data collection to_>				12/2021 </_Data collection to_>
 <_Source of dataset_> 				Departamento Administrativo Nacional de Estadistica - DANE
 <_Sample size (HH)_> 				225,853 </_Sample size (HH)_>
 <_Sample size (IND)_> 				711,381   </_Sample size (IND)_>
@@ -27,7 +27,7 @@
 -----------------------------------------------------------------------
 
 <_ICLS Version_>				ICLS-13 </_ICLS Version_>
-<_ISCED Version_>				[Version of ICLS for Labor Questions] </_ISCED Version_>
+<_ISCED Version_>				ISCED-2011 </_ISCED Version_>
 <_ISCO Version_>				N/A </_ISCO Version_>
 <_OCCUP National_>				CNO 1970 </_OCCUP National_>
 <_ISIC Version_>				ISIC REV 4 </_ISIC Version_>
@@ -135,7 +135,7 @@ save "`path_in'\data_2021_final.dta", replace
 
 
 *<_isced_version_>
-	gen isced_version = ""
+	gen isced_version = "ISCED-2011"
 	label var isced_version "Version of ISCED used for educat_isced"
 *</_isced_version_>
 
