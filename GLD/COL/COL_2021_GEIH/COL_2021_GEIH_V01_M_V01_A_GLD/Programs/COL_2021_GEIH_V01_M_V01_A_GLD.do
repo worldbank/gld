@@ -18,8 +18,8 @@
 <_Data collection from_>			07/2021
 <_Data collection to_>				[MM/YYYY] </_Data collection to_>
 <_Source of dataset_> 				Departamento Administrativo Nacional de Estadistica - DANE
-<_Sample size (HH)_> 				[#] </_Sample size (HH)_>
-<_Sample size (IND)_> 				756,063  </_Sample size (IND)_>
+<_Sample size (HH)_> 				225,853 </_Sample size (HH)_>
+<_Sample size (IND)_> 				711,381   </_Sample size (IND)_>
 <_Sampling method_> 				[Brief description] </_Sampling method_>
 <_Geographic coverage_> 			[To what level is data significant] </_Geographic coverage_>
 <_Currency_> 					COP </_Currency_>
