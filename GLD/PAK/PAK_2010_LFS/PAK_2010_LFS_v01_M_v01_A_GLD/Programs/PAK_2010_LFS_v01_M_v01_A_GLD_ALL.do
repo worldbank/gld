@@ -567,7 +567,7 @@ local output "`id_data'"
 	gen educat_isced=Sec4_4_9
 	replace educat_isced=. if Sec4_4_9==34
 	recode educat_isced 1=. 2/3=20 3=100 4/6=244 7=344 8/12=660 13=760 14=860
-	replace educat_isced=. if age<ed_mod_age | !mi(age)
+	replace educat_isced=. if age<ed_mod_age
 	label var educat_isced "ISCED standardised level of education"
 *</_educat_isced_>
 
@@ -695,10 +695,10 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_potential_lf_>
 	gen byte potential_lf=.
-	replace potential_lf=1 if Sec9_9_3==7 & inrange(Sec9_9_6, 1, 2)
-	replace potential_lf=0 if inrange(Sec9_9_3, 1, 6) & Sec9_9_6==3
-	replace potential_lf=. if age < minlaborage & age != .
-	replace potential_lf=. if lstatus != 3
+	replace potential_lf=1 if [Sec9_9_3==7 & inrange(Sec9_9_6, 1, 2)] | [inrange(Sec9_9_3, 1, 6) & Sec9_9_6==3]
+	replace potential_lf=0 if [inrange(Sec9_9_3, 1, 6) & inrange(Sec9_9_6, 1, 2)] | [Sec9_9_3==7 & Sec9_9_6==3]
+	replace potential_lf=. if age < minlaborage 
+	replace potential_lf=. if lstatus !=3
 	label var potential_lf "Potential labour force status"
 	la de lblpotential_lf 0 "No" 1 "Yes"
 	label values potential_lf lblpotential_lf
@@ -708,7 +708,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 *<_underemployment_>
 	gen byte underemployment=.
 	replace underemployment=1 if Sec6_6_2==1
-	replace underemployment=0 if Sec6_6_2==0
+	replace underemployment=0 if Sec6_6_2==2
 	replace underemployment=. if age < minlaborage & age != .
 	replace underemployment=. if lstatus == 1
 	label var underemployment "Underemployment status"
@@ -863,8 +863,9 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_unitwage_>
-	gen byte unitwage=Sec7_7_3
-	recode unitwage (4=5) (6/7=10)
+	gen byte unitwage=.
+	replace unitwage=2 if wage_no_compen==Sec7_7_3
+	replace unitwage=5 if wage_no_compen==Sec7_7_4
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
 	label values unitwage lblunitwage
