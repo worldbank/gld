@@ -240,7 +240,7 @@ local output "`id_data'"
 	drop if _merge!=3
 	egen city_fullname=concat(city_name urban_status), punct(-)
 	labmask city_code, values (city_fullname)
-	gen byte subnatid2=city_code
+	gen subnatid2=city_code
  	label values subnatid2 lblsubnatid2
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
@@ -951,7 +951,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 {
 *<_empstat_2_>
 	gen byte empstat_2=Sec5_5_19
-	recode empstat_2 (1/4=1) (10=2) (5=3) (6/9 11=4) (12=5)
+	recode empstat_2 (1/4=1) (10=2) (5=3) (6/9 11=4) (12=5) (0=.)
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
 	la de lblempstat_2 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat_2 lblempstat
@@ -959,8 +959,8 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_ocusec_2_>
-	gen byte ocusec_2=Sec5_5_19
-	recode ocusec_2 (1/3=1) (4 6=3) (5 7/9=2) (10=4)
+	gen byte ocusec_2=Sec5_5_22
+	recode ocusec_2 (1/3=1) (4 6=3) (5/9=2) (10=4)
 	label var ocusec_2 "Sector of activity secondary job 7 day recall"
 	la de lblocusec_2 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec_2 lblocusec_2

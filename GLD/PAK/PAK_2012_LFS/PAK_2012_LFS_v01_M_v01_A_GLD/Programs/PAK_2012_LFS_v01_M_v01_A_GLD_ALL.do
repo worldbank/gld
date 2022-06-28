@@ -28,7 +28,7 @@
 <_ISCO Version_>				ISCO-08 </_ISCO Version_>
 <_OCCUP National_>				PSCO 2012 </_OCCUP National_>
 <_ISIC Version_>				ISIC Rev.4 </_ISIC Version_>
-<_INDUS National_>				PSIC 2012 </_INDUS National_>
+<_INDUS National_>				PSIC 2010 </_INDUS National_>
 -----------------------------------------------------------------------
 
 <_Version Control_>
@@ -240,7 +240,7 @@ local output "`id_data'"
 	drop if _merge!=3
 	egen city_fullname=concat(city_name urban_status), punct(-)
 	labmask city_code, values (city_fullname)
-	gen byte subnatid2=city_code
+	gen subnatid2=city_code
  	label values subnatid2 lblsubnatid2
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
@@ -502,7 +502,7 @@ local output "`id_data'"
 
 
 *<_literacy_>
-	gen byte literacy=s4_q10
+	gen byte literacy=s4_q8
 	recode literacy 2=0
 	replace literacy=. if age<ed_mod_age & age!=.
 	label var literacy "Individual can read & write"
@@ -646,7 +646,7 @@ are the same here.
 
 
 *<_vocational_financed_>
-	gen vocational_financed=s4_q13
+	gen vocational_financed=s4_q14
 	recode vocational_financed (2=4) (3=2) (4=5)
  	label de lblvocational_financed 1 "Employer" 2 "Government" 3 "Mixed Employer/Government" 4 "Own funds" 5 "Other"
 	label var vocational_financed "How training was financed"
@@ -950,7 +950,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 {
 *<_empstat_2_>
 	gen byte empstat_2=s5_q19
-	recode empstat_2 (1/4=1) (10=2) (5=3) (6/9 11=4) (12=5)
+	recode empstat_2 (1/4=1) (10=2) (5=3) (6/9 11=4) (12=5) (0=.)
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
 	la de lblempstat_2 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat_2 lblempstat
@@ -958,8 +958,8 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_ocusec_2_>
-	gen byte ocusec_2=s5_q19
-	recode ocusec_2 (1/3=1) (4 6=3) (5 7/9=2) (10=4)
+	gen byte ocusec_2=s5_q22
+	recode ocusec_2 (1/3=1) (4 6=3) (5/9=2) (10=4)
 	label var ocusec_2 "Sector of activity secondary job 7 day recall"
 	la de lblocusec_2 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec_2 lblocusec_2
@@ -984,7 +984,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_industrycat10_2_>
 	gen byte industrycat10_2=s5_q21
-	recode industrycat10_2 (2 5=1) (10/14=2) (15/37=3) (40 41=4) (45=5) (50/55=6) (60/64=7) (65/74=8) (75=9) (80/99=10)
+	recode industrycat10_2 1/3=1 5/9=2 10/14=2 11/33=3 35/39=4 41/43=5 45/47=6 49/63=7 64/82=8 84=9 85/99=10
 	replace industrycat10_2=. if s5_q18!=1
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
