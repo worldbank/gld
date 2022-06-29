@@ -18,9 +18,87 @@ The Thailand LFS has been conducted by the National Statistical office since 196
 
 ## What does the THA LFS cover?
 
-The Thailand LFS is a labor force survey with information on demographic characteristics, education, and labor market activities over the past 7 days. The harmonized years and sample sizes used in the GLD harmonization are:
+The Thailand LFS is a labor force survey with information on demographic characteristics, education, and labor market activities over the past 7 days. The harmonized years and sample sizes used in the GLD harmonization are as follows:
 
-(placeholder for hh and ind count)
+**Individual counts**
+| Year |         Q1        |          Q2         |          Q3         |         Q4        |      Full Year      |
+|------|:-----------------:|:-------------------:|:-------------------:|:-----------------:|:-------------------:|
+| 1985 |           74,433  |            80,166   |            78,358   |                   |          232,957    |
+| 1986 |                   |             83,092  |             77,237  |                   |           160,329   |
+| 1987 |           71,657  |             78,181  |             69,698  |                   |           219,536   |
+| 1988 |           73,060  |                     |             71,727  |                   |           144,787   |
+| 1989 |           98,910  |           102,925   |             95,592  |                   |           297,427   |
+| 1990 |                   |                     |             90,135  |                   |             90,135  |
+| 1991 |           93,006  |             99,127  |             93,449  |                   |           285,582   |
+| 1992 |           92,832  |             97,366  |             91,015  |                   |           281,213   |
+| 1993 |           87,782  |                     |             86,039  |                   |           173,821   |
+| 1994 |         184,031   |             82,981  |           177,958   |                   |           444,970   |
+| 1995 |         176,717   |                     |           176,267   |                   |           352,984   |
+| 1996 |         129,128   |             59,145  |           126,219   |                   |           314,492   |
+| 1997 |         176,087   |                     |           175,438   |                   |           351,525   |
+| 1998 |         170,865   |             79,748  |           167,469   |          182,525  |           600,607   |
+| 1999 |         167,503   |           180,712   |           164,832   |          178,512  |           691,559   |
+| 2000 |         164,636   |           176,684   |           161,834   |          176,684  |           679,838   |
+| 2001 |         215,852   |           223,814   |           207,899   |          222,991  |           870,556   |
+| 2002 |         220,049   |           213,175   |           210,264   |          213,250  |           856,738   |
+| 2003 |         213,993   |           207,320   |           206,371   |          211,720  |           839,404   |
+| 2004 |         209,922   |           208,042   |           203,810   |          210,103  |           831,877   |
+| 2005 |         212,006   |           207,533   |           208,952   |          208,835  |           837,326   |
+| 2006 |         210,929   |           216,016   |           222,224   |          230,030  |           879,199   |
+| 2007 |         228,409   |           221,531   |           219,538   |          222,897  |           892,375   |
+| 2008 |         224,859   |           222,613   |           225,406   |          226,905  |           899,783   |
+| 2009 |         225,578   |           224,076   |           220,704   |          223,860  |           894,218   |
+| 2010 |         223,592   |           223,341   |           147,718   |          221,167  |           815,818   |
+| 2011 |         227,436   |           228,459   |           227,216   |          215,720  |           898,831   |
+| 2012 |         218,074   |           226,889   |           239,313   |                   |           684,276   |
+| 2014 |         213,176   |           222,556   |           232,710   |          221,279  |           889,721   |
+| 2015 |         209,582   |           218,289   |           229,332   |          219,433  |           876,636   |
+| 2016 |         210,216   |           220,055   |           230,798   |          215,997  |           877,066   |
+| 2017 |         207,482   |           219,256   |           227,229   |          213,746  |           867,713   |
+| 2018 |         202,450   |           214,949   |           222,537   |          209,747  |           849,683   |
+| 2019 |         201,976   |           210,335   |           215,707   |          205,256  |           833,274   |
+| 2020 |         199,641   |           210,175   |           220,672   |          209,671  |           840,159   |
+| 2021 |         200,956   |           209,894   |           217,471   |          206,991  |           835,312   |
+
+**Household counts**
+| Year |         Q1        |          Q2         |          Q3         |          Q4         |      Full Year      |
+|------|:-----------------:|:-------------------:|:-------------------:|:-------------------:|:-------------------:|
+| 1985 |           17,240  |            17,367   |            17,952   |                     |            52,559   |
+| 1986 |                   |             17,656  |             18,346  |                     |             36,002  |
+| 1987 |           17,066  |             17,231  |             16,719  |                     |             51,016  |
+| 1988 |           17,046  |                     |             16,920  |                     |             33,966  |
+| 1989 |           24,258  |             23,976  |             23,726  |                     |             71,960  |
+| 1990 |                   |                     |             22,619  |                     |             22,619  |
+| 1991 |           23,999  |             24,205  |             24,293  |                     |             72,497  |
+| 1992 |           24,714  |             24,658  |             24,402  |                     |             73,774  |
+| 1993 |           23,736  |                     |             23,436  |                     |             47,172  |
+| 1994 |           50,655  |             21,523  |             49,313  |                     |           121,491   |
+| 1995 |           49,288  |                     |             49,184  |                     |             98,472  |
+| 1996 |           49,424  |             21,034  |             48,651  |                     |           119,109   |
+| 1997 |           48,401  |                     |             48,612  |                     |             97,013  |
+| 1998 |           48,422  |             21,186  |             47,768  |             49,077  |           166,453   |
+| 1999 |           48,123  |             49,161  |             47,671  |             49,175  |           194,130   |
+| 2000 |           47,911  |             48,824  |             47,562  |             48,824  |           193,121   |
+| 2001 |           63,038  |             62,822  |             61,584  |             63,083  |           250,527   |
+| 2002 |           63,598  |             62,342  |             62,448  |             62,947  |           251,335   |
+| 2003 |           62,923  |             61,131  |             61,283  |             62,006  |           247,343   |
+| 2004 |           61,960  |             61,383  |             61,179  |             62,645  |           247,167   |
+| 2005 |           63,361  |             62,061  |             62,890  |             62,792  |           251,104   |
+| 2006 |           63,839  |             65,911  |             68,172  |             70,157  |           268,079   |
+| 2007 |           69,762  |             68,041  |             68,072  |             68,422  |           274,297   |
+| 2008 |           69,089  |             68,783  |             70,058  |             70,436  |           278,366   |
+| 2009 |           69,884  |             69,382  |             68,630  |             69,452  |           277,348   |
+| 2010 |           69,604  |             69,716  |             46,690  |             69,523  |           255,533   |
+| 2011 |           76,500  |             79,858  |             79,980  |             68,905  |           305,243   |
+| 2012 |           73,885  |             73,536  |             73,709  |                     |           221,130   |
+| 2014 |           73,972  |             73,983  |             73,390  |             73,281  |           294,626   |
+| 2015 |           73,820  |             73,502  |             73,086  |             73,068  |           293,476   |
+| 2016 |           74,035  |             74,218  |             73,770  |             72,949  |           294,972   |
+| 2017 |           74,113  |             74,332  |             73,456  |             72,788  |           294,689   |
+| 2018 |           73,738  |             74,428  |             73,560  |             73,204  |           294,930   |
+| 2019 |           74,513  |             74,155  |             73,103  |             72,895  |           294,666   |
+| 2020 |           74,502  |             73,970  |             73,892  |             72,973  |           295,337   |
+| 2021 |           74,981  |             74,865  |             73,422  |             73,286  |           296,554   |
 
 ## Where can the data be found?
 
@@ -48,7 +126,7 @@ In 2001, the Thailand LFS changed the area of residence categories to urban and 
 
 ### Minimum age for education, migration and employment questions
 
-Since 2001, the education and employment questions are asked only for respondents aged 15 and above. Between 1998 and 1995, the questions (including those for migration module) are asked for 13 and above. Between 1985 and 1994, the employment and migration questions are asked for 11 and above. Meanwhile, the education questions are asked for 11 and above only between 1988 and 1994, and before then, it applied to ages 7 and above.
+Since 2001, the education and employment questions are asked only for respondents aged 15 and above. Between 1995 and 2000, the questions (including those for migration module) are asked for 13 and above. Between 1985 and 1994, the employment and migration questions are asked for 11 and above. Meanwhile, the education questions are asked for 11 and above only between 1988 and 1994, and before then, it applied to ages 7 and above.
 
 ### Frequency of surveys
 
@@ -70,13 +148,8 @@ The Thailand LFS occupation data followed the coding from the international clas
 
 ## Other Documentation Files
 
-[Administrative Levels](Administrative_Levels.md)
+[Geographic codes]([Geographic codes.md)](https://github.com/worldbank/gld/blob/Thailand_Survey_Details/Support/B%20-%20Country%20Survey%20Details/THA/Geographic%20codes.md)
 
-[Education and Labor Modules Minimum Ages](Edu_Labor_Ages.md)
+[Changes in industry and occupation](https://github.com/worldbank/gld/blob/Thailand_Survey_Details/Support/B%20-%20Country%20Survey%20Details/THA/Changes%20in%20industry%20and%20occupation.md)
 
-[Education Levels](Education_Levels.md)
-
-[Household IDs](Household_IDs.md)
-
-[Industry and Occupation Codes](Industry_Occupation_Codes.md)
 
