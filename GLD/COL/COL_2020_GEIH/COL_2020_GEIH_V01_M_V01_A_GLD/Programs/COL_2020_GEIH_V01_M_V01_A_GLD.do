@@ -20,8 +20,8 @@
 <_Source of dataset_> 				Departamento Administrativo Nacional de Estadistica - DANE
 <_Sample size (HH)_> 				229935 </_Sample size (HH)_>
 <_Sample size (IND)_> 				747822  </_Sample size (IND)_>
-<_Sampling method_> 				[Brief description] </_Sampling method_>
-<_Geographic coverage_> 			[To what level is data significant] </_Geographic coverage_>
+<_Sampling method_> 				 probabilistic, multi-stage, stratified, unequal conglomerate and self-weighted design </_Sampling method_>
+<_Geographic coverage_> 			national </_Geographic coverage_>
 <_Currency_> 					COP </_Currency_>
 
 -----------------------------------------------------------------------
@@ -160,7 +160,9 @@ egen directorio_unique = concat(first_two latter_five)
 isid directorio_unique secuencia_p orden
 
 * Convert it back to a number, drop the original, replace with unique
-destring directorio_unique, replace
+*destring directorio_unique, replace
+destring directorio_unique , replace
+format %16.0g directorio_unique
 drop directorio
 rename directorio_unique directorio
 
@@ -173,6 +175,55 @@ save `migration_2020'
 use "`general_2020'", clear
 
 merge 1:1 directorio secuencia_p orden using "`migration_2020'", assert(match) nogen
+
+tempfile general_mig
+save `general_mig'
+
+****final dataset with updated weights
+use "`path_in'\Fex proyeccion CNPV_2018.dta"
+rename *, lower
+
+** Get rid of duplicates process
+* Identify duplicates
+duplicates tag directorio secuencia_p orden, gen(dup)
+
+* Households can be identified uniquely by month
+duplicates tag directorio secuencia_p orden mes, gen(asserter)
+assert asserter == 0
+drop asserter
+
+* Convert directorio to a string variable of length 7
+tostring directorio, gen(direct_str) format("%07.0f")
+
+* Extract the latter 5 digits
+gen latter_five = substr(direct_str,3,.)
+
+* Extract the first two digits
+gen first_two = substr(direct_str,1,2)
+
+* FEX 2018 mes already numeric
+gen mes_num = mes
+
+* Mark the one with the earlier month
+bys directorio : egen min_month = min(mes_num) if (dup > 0 & !missing(dup))
+
+* Since directorio always starts with either 00, 01, 51, 52, or 53, we can convert the first digits to
+* 99 and make it unique that way.
+replace first_two = "99" if mes_num == min_month & (dup > 0 & !missing(dup))
+
+* Create a new unique directorio
+egen directorio_unique = concat(first_two latter_five)
+
+* Check it is unique now
+isid directorio_unique secuencia_p orden
+
+* Convert it back to a number, drop the original, replace with unique
+destring directorio_unique, replace
+drop directorio
+rename directorio_unique directorio
+
+merge 1:1 directorio secuencia_p  orden using "`general_mig'", force assert(master match) keep(match) nogen
+
 save "`path_in'\data_2020_final.dta", replace
 
 /*%%=============================================================================================
@@ -194,7 +245,7 @@ save "`path_in'\data_2020_final.dta", replace
 
 
 *<_survey_>
-	gen survey = ""
+	gen survey = "household survey"
 	label var survey "Survey type"
 *</_survey_>
 
@@ -261,7 +312,6 @@ save "`path_in'\data_2020_final.dta", replace
 	label var int_month "Month of the interview"
 *</_int_month_>
 
-
 *<_hhid_>
 /* <_hhid_note>
 
@@ -272,18 +322,28 @@ save "`path_in'\data_2020_final.dta", replace
 
 </_hhid_note> */
 
-	ren id id2
-	egen id=group(directorio secuencia_p)
-	egen hhid = concat(id)
+
+local letters "secuencia_p orden"
+
+	foreach letter of local letters {
+     gen helper_`letter' = string(`letter',"%02.0f")
+	}
+
+	gen helper_d=string(directorio,"%07.0f")
+	egen hhid = concat(helper_d helper_secuencia_p)
+	drop helper_d helper_secuencia_p
+
 	label var hhid "Household ID"
+
 *</_hhid_>
 
 
 *<_pid_>
-	gen com=string(orden,"%02.0f")
-	egen  pid = concat(id com)
+
+	gen com=orden
+	egen  pid = concat(hhid com)
 	label var pid "Individual ID"
-	isid pid 
+	isid pid hhid
 *</_pid_>
 
 
@@ -328,6 +388,7 @@ save "`path_in'\data_2020_final.dta", replace
  	destring clase, gen(urbano) //add
 	gen byte urban=urbano
 	replace urban = 0 if urban == 2
+	recode urban .=1
 	label var urban "Location is urban"
 	la de lblurban 1 "Urban" 0 "Rural"
 	label values urban lblurban
@@ -1671,7 +1732,7 @@ foreach v of local ed_var {
 
 
 *<_wage_total_2_>
-	gen wage_total_2 = wage_no_compen_2
+	gen wage_total_2 = .
 	label var wage_total_2 "Annualized total wage secondary job 7 day recall"
 *</_wage_total_2_>
 

@@ -20,8 +20,8 @@
 <_Source of dataset_> 				Departamento Administrativo Nacional de Estadistica - DANE
 <_Sample size (HH)_> 				226,261</_Sample size (HH)_>
 <_Sample size (IND)_> 				821,951 </_Sample size (IND)_>
-<_Sampling method_> 				[] </_Sampling method_>
-<_Geographic coverage_> 			[] </_Geographic coverage_>
+<_Sampling method_> 				 probabilistic, multi-stage, stratified, unequal conglomerate and self-weighted design </_Sampling method_>
+<_Geographic coverage_> 			national </_Geographic coverage_>
 <_Currency_> 					[Colombian Pesos] </_Currency_>
 
 -----------------------------------------------------------------------
@@ -179,18 +179,28 @@ save "`path_in'\data_2010_final.dta", replace
 
 </_hhid_note> */
 
-	ren id id2
-	egen id=group(directorio secuencia_p)
-	egen hhid = concat(id)
+
+local letters "secuencia_p orden"
+
+	foreach letter of local letters {
+     gen helper_`letter' = string(`letter',"%02.0f")
+	}
+
+	gen helper_d=string(directorio,"%07.0f")
+	egen hhid = concat(helper_d helper_secuencia_p)
+	drop helper_d helper_secuencia_p
+
 	label var hhid "Household ID"
+
 *</_hhid_>
 
 
 *<_pid_>
-	gen com=string(orden,"%02.0f")
-	egen  pid = concat(id com)
+
+	gen com=orden
+	egen  pid = concat(hhid com)
 	label var pid "Individual ID"
-	isid pid 
+	isid pid hhid
 *</_pid_>
 
 
@@ -1477,7 +1487,7 @@ foreach v of local ed_var {
 
 
 *<_wage_total_2_>
-	gen wage_total_2 = wage_no_compen_2
+	gen wage_total_2 = .
 	label var wage_total_2 "Annualized total wage secondary job 7 day recall"
 *</_wage_total_2_>
 

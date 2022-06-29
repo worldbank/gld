@@ -20,14 +20,14 @@
 <_Source of dataset_> 				Departamento Administrativo Nacional de Estadistica - DANE
 <_Sample size (HH)_> 				228,944 </_Sample size (HH)_>
 <_Sample size (IND)_> 				772,074 </_Sample size (IND)_>
-<_Sampling method_> 				[Brief description] </_Sampling method_>
-<_Geographic coverage_> 			[To what level is data significant] </_Geographic coverage_>
+<_Sampling method_> 				 probabilistic, multi-stage, stratified, unequal conglomerate and self-weighted design </_Sampling method_>
+<_Geographic coverage_> 			national </_Geographic coverage_>
 <_Currency_> 					COP </_Currency_>
 
 -----------------------------------------------------------------------
 
 <_ICLS Version_>				icls-13 </_ICLS Version_>
-<_ISCED Version_>				 </_ISCED Version_>
+<_ISCED Version_>				isced_2011 </_ISCED Version_>
 <_ISCO Version_>				N/A </_ISCO Version_>
 <_OCCUP National_>			cno 1970	 </_OCCUP National_>
 <_ISIC Version_>			ISIC REV 3.1	 </_ISIC Version_>
@@ -124,7 +124,7 @@ save "`path_in'\data_2013_final.dta", replace
 
 
 *<_survey_>
-	gen survey = ""
+	gen survey = "household survey"
 	label var survey "Survey type"
 *</_survey_>
 
@@ -136,7 +136,7 @@ save "`path_in'\data_2013_final.dta", replace
 
 
 *<_isced_version_>
-	gen isced_version = ""
+	gen isced_version = "isced_2011"
 	label var isced_version "Version of ISCED used for educat_isced"
 *</_isced_version_>
 
@@ -191,7 +191,6 @@ save "`path_in'\data_2013_final.dta", replace
 	label var int_month "Month of the interview"
 *</_int_month_>
 
-
 *<_hhid_>
 /* <_hhid_note>
 
@@ -202,19 +201,28 @@ save "`path_in'\data_2013_final.dta", replace
 
 </_hhid_note> */
 
-	ren id id2
-*	egen id=group(directorio secuencia_p)
-	egen id=group(directorio secuencia_p)
-	egen hhid = concat(id)
+
+local letters "secuencia_p orden"
+
+	foreach letter of local letters {
+     gen helper_`letter' = string(`letter',"%02.0f")
+	}
+
+	gen helper_d=string(directorio,"%07.0f")
+	egen hhid = concat(helper_d helper_secuencia_p)
+	drop helper_d helper_secuencia_p
+
 	label var hhid "Household ID"
+
 *</_hhid_>
 
 
 *<_pid_>
-	gen com=string(orden,"%02.0f")
-	egen  pid = concat(id com)
+
+	gen com=orden
+	egen  pid = concat(hhid com)
 	label var pid "Individual ID"
-	isid pid
+	isid pid hhid
 *</_pid_>
 
 
@@ -1502,7 +1510,7 @@ foreach v of local ed_var {
 
 
 *<_wage_total_2_>
-	gen wage_total_2 = wage_no_compen_2
+	gen wage_total_2 = .
 	label var wage_total_2 "Annualized total wage secondary job 7 day recall"
 *</_wage_total_2_>
 
