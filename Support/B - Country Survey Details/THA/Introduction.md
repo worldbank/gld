@@ -148,7 +148,7 @@ The Thailand LFS occupation data followed the coding from the international clas
 
 ## Other Documentation Files
 
-[Geographic codes]([Geographic codes.md)](https://github.com/worldbank/gld/blob/Thailand_Survey_Details/Support/B%20-%20Country%20Survey%20Details/THA/Geographic%20codes.md)
+[Geographic codes](https://github.com/worldbank/gld/blob/Thailand_Survey_Details/Support/B%20-%20Country%20Survey%20Details/THA/Geographic%20codes.md)
 
 [Changes in industry and occupation](https://github.com/worldbank/gld/blob/Thailand_Survey_Details/Support/B%20-%20Country%20Survey%20Details/THA/Changes%20in%20industry%20and%20occupation.md)
 
