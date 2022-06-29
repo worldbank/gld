@@ -849,6 +849,18 @@ foreach v of local ed_var {
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
+	
+*there are missing values in lstatus that require manual input , thus code below
+    gen oci_alt = 1 if p6240 == 1 | p6250 == 1 | p6260 == 1 | p6270 == 1 & missing(lstatus)
+    gen dsi_alt = 1 if p6250 == 2 & p6260 == 2 & p6270 == 2 & p6280 == 1 | p6280 == 2 & p6300 == 1 & missing(lstatus)
+    gen ini_alt = 1 if missing(oci_alt) & missing(dsi_alt) & missing(lstatus)
+	
+	replace lstatus = 1 if oci_alt==1
+	replace lstatus=2 if dsi_alt==1
+	replace lstatus=3 if ini_alt==1
+	
+	drop oci_alt dsi_alt ini_alt
+	
 *</_lstatus_>
 
 *<_lstatus_extra>
