@@ -519,9 +519,10 @@ local output "`id_data'"
 	replace educy=16 if s4_q9==10
 	replace educy=16 if s4_q9==11
 	replace educy=16 if s4_q9==12
-	replace educy=17 if s4_q9==13
+	replace educy=19 if s4_q9==13
 	replace educy=20 if s4_q9==14
-	replace educy=. if age<5 
+	replace educy=22 if s4_q9==15
+	replace educy=. if age<5 | !inrange(s4_q9, 1, 15)
 	replace educy=age if educy>age & !mi(educy) & !mi(age)
 	label var educy "Years of education"
 *</_educy_>
@@ -562,7 +563,7 @@ local output "`id_data'"
 *<_educat_isced_>
 	gen educat_isced=s4_q9
 	replace educat_isced=. if s4_q9==61
-	recode educat_isced 1=. 2/3=20 3=100 4/6=244 7=344 8/12=660 13=760 14=860
+	recode educat_isced 1=. 2/3=20 3=100 4/6=244 7=344 8/12=660 13/14=760 15=860
 	replace educat_isced=. if age<ed_mod_age
 	label var educat_isced "ISCED standardised level of education"
 *</_educat_isced_>
@@ -607,7 +608,7 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 
 *<_vocational_type_>
 	gen vocational_type=s4_q11
-	recode vocational_type (10/14=1) (15/20=2)
+	recode vocational_type (10/14=1) (15/19=2)
 	label de lblvocational_type 1 "Inside Enterprise" 2 "External"
 	label values vocational_type lblvocational_type
 	label var vocational_type "Type of vocational training"

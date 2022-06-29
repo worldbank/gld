@@ -611,7 +611,7 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 
 *<_vocational_type_>
 	gen vocational_type=s4_q11
-	recode vocational_type (10/14=1) (15/20=2)
+	recode vocational_type (10/14=1) (15/19=2)
 	label de lblvocational_type 1 "Inside Enterprise" 2 "External"
 	label values vocational_type lblvocational_type
 	label var vocational_type "Type of vocational training"
