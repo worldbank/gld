@@ -30,8 +30,8 @@
 <_ISCED Version_>				isced 1997 </_ISCED Version_>
 <_ISCO Version_>				N/A </_ISCO Version_>
 <_OCCUP National_>				cno 1970 </_OCCUP National_>
-<_ISIC Version_>				isic rev 3.1 </_ISIC Version_>
-<_INDUS National_>				colombian isic rev 3.1 </_INDUS National_>
+<_ISIC Version_>				ISIC REV 3 </_ISIC Version_>
+<_INDUS National_>				ISIC COLOLMBIA REV 3</_INDUS National_>
 
 -----------------------------------------------------------------------
 <_Version Control_>
@@ -126,7 +126,7 @@ save "`path_in'\data_2011_final.dta", replace
 
 
 *<_isic_version_>
-	gen isic_version = "isic_3.1"
+	gen isic_version = "isic_3"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
