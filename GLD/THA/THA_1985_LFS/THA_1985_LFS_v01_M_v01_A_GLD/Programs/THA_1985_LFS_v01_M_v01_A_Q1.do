@@ -1,45 +1,32 @@
 
-
-
 /*%%=============================================================================================
 	0: GLD Harmonization Preamble
 ==============================================================================================%%*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				THA_2019_LFS_v01_M_v01_A_Q1.do </_Program name_>
+<_Program name_>				THA_1985_LFS_v01_M_v01_A_Q1.do </_Program name_>
 <_Application_>					Stata 17 <_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
 <_Date created_>				2022-01-08 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						Thailand (THA) </_Country_>
-<_Survey Title_>				Labor Force Survey 2021 Q1 </_Survey Title_>
-<_Survey Title_>				Labor Force Survey 2019 Q1 </_Survey Title_>
-<_Survey Year_>					2019 </_Survey Year_>
+<_Survey Title_>				Labor Force Survey 1985 Q2 </_Survey Title_>
+<_Survey Year_>					1985 </_Survey Year_>
 <_Study ID_>					N.A. </_Study ID_>
-<_Data collection from_>		January 2019 </_Data collection from_>
-<_Data collection to_>			March 2019 </_Data collection to_>
+<_Data collection from_>		Not specified </_Data collection from_>
+<_Data collection to_>			Not specified  </_Data collection to_>
 <_Source of dataset_> 			NSO </_Source of dataset_>
-<_Sample size (HH)_> 			74,513 </_Sample size (HH)_>
-<_Sample size (IND)_> 			201,976 </_Sample size (IND)_>
-<_Sampling method_> 			
-A stratified two-stage sampling was adopted to the survey: Bangkok Metroplois and the 76 provinces constituted the strata. Each stratum (excluding Bangkok Metropolis) was divided into two parts according to the type of local administration, namely municipal areas and non-municipal areas. The primary and secondary sampling units were enumeration areas (EAs) for municipal areas and non-municipal areas and private households and persons in the collective households respectively.
-
-At the first stage, the EAs based on the 2010 census frame was updated from other sample surveys and selected separately and independently in each stratum by using probability proportional to zero, giving the total number of households.
-
-At the second stage, private households and persons in the collective households were our ultimate sampling units. A new listing of private households was made for every sampled EAs to serve as the sampling frome. In each sampled EAs, a systematic sample of private households were selected with the following sample size: Municipal areas : 16 sample households per EAs and Non-municipal areas : 12 sample households per EAs.
-
+<_Sample size (HH)_> 			17,240 </_Sample size (HH)_>
+<_Sample size (IND)_> 			74,433 </_Sample size (IND)_>
+<_Sampling method_> 			No information available
  </_Sampling method_>
  
-<_Geographic coverage_> 
-		
-Data is significant at the regional level. As of today, still need to confirm if data at the province (changwat) is representative. 
-
-</_Geographic coverage_>
+<_Geographic coverage_> 		National </_Geographic coverage_>
 
 <_Currency_> 					Thailand Baht </_Currency_>
 -----------------------------------------------------------------------
-<_ICLS Version_>				Not stated </_ICLS Version_>
-<_ISCED Version_>				ISCED 2011 </_ISCED Version_>
+<_ICLS Version_>				ICLS 13 </_ICLS Version_>
+<_ISCED Version_>				ISCED 1997 </_ISCED Version_>
 <_ISCO Version_>				ISCO 1958 </_ISCO Version_>
 <_OCCUP National_>			Based on ISCO 1958 </_OCCUP National_>
 <_ISIC Version_>				ISIC version 1 </_ISIC Version_>
@@ -47,7 +34,7 @@ Data is significant at the regional level. As of today, still need to confirm if
 -----------------------------------------------------------------------
 <_Version Control_>
 * Date: [2022-01-08] - Prepared initial code
-* Date: [2022-06-15] - Added codes that harmonize data for specific variables, including school attendance, ISCO and ISIC codes, etc...
+* Date: [2022-06-23] - Added codes that harmonize data for specific variables, including school attendance, ISCO and ISIC codes, etc...
 </_Version Control_>
 -------------------------------------------------------------------------*/
 
@@ -645,17 +632,25 @@ label var ed_mod_age "Education module application age"
 	label var educat_orig "Original survey education code"
 *</_educat_orig_>
 
-
 *<_educat_isced_>
+
+capture confirm variable edcode
+
+	if !_rc {
+		gen re_ed = edcode
+	}
+	
 	gen educat_isced = ""
-	replace educat_isced = "020" if edcode == 2 | edcode == 3
-	replace educat_isced = "100" if edcode == 4
-	replace educat_isced = "244" if edcode == 5
-	replace educat_isced = "344" if edcode == 6
-	replace educat_isced = "354" if edcode == 7
-	replace educat_isced = "550" if edcode == 8
-	replace educat_isced = "660" if inrange(edcode, 9, 11)
-	replace educat_isced = "" if inrange(edcode, 12, 14) | edcode == 2
+	replace educat_isced = "0" if re_ed == 2 | re_ed == 3
+	replace educat_isced = "1" if re_ed == 4
+	replace educat_isced = "2A" if re_ed == 5
+	replace educat_isced = "3A" if re_ed == 6
+	replace educat_isced = "3B" if re_ed == 7
+	replace educat_isced = "3B" if re_ed == 8
+	replace educat_isced = "5A" if re_ed == 9
+	replace educat_isced = "5B" if re_ed == 10
+	replace educat_isced = "5A" if re_ed == 11
+
 	label var educat_isced "ISCED standardised level of education"
 *</_educat_isced_>
 

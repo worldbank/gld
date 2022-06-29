@@ -28,11 +28,7 @@ At the second stage, private households and persons in the collective households
 
  </_Sampling method_>
  
-<_Geographic coverage_> 
-		
-Data is significant at the regional level. As of today, still need to confirm if data at the province (changwat) is representative. 
-
-</_Geographic coverage_>
+<_Geographic coverage_> 		National </_Geographic coverage_>
 
 <_Currency_> 					Thailand Baht </_Currency_>
 -----------------------------------------------------------------------

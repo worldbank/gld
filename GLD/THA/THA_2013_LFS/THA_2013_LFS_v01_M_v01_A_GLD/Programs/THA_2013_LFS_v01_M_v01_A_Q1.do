@@ -82,7 +82,7 @@ global path_output "C:\Users\wb510859\OneDrive - WBG\GLD-Harmonization\510859_AS
 
 
 *<_icls_v_>
-	gen icls_v = "Not stated"
+	gen icls_v = "ICLS-13"
 	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
 
@@ -103,7 +103,6 @@ global path_output "C:\Users\wb510859\OneDrive - WBG\GLD-Harmonization\510859_AS
 	gen isic_version = "isic_3"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
-
 
 
 *<_year_>
@@ -146,48 +145,22 @@ global path_output "C:\Users\wb510859\OneDrive - WBG\GLD-Harmonization\510859_AS
 
 *<_hhid_>
 /* <_hhid_note>
-	The variable should be a string made up of the elements to define it, that is psu code, ssu, ...
-	Each element should always be as long as needed for the longest element. That is, if there are
-	60 psu coded 1 through 60, codes should be 01, 02, ..., 60. If there are 160 it should be 001,
-	002, ..., 160.
-	
-	In this survey, the HHID can be determined based on the following information:
-	
-	- REG (Region)
-	- CWT (Province)
-	- AREA (Urban/Rural)
-	- PSU_NO (Primary sampling unit)
-	- EA_SET (Enumeration area)
-	- SAMSET (Sample set)
-	- hh_no  (Household No)
-	
+
+For this year, we cannot crack the code to generate the unique household and person ID variables
+
 </_hhid_note> */
 
 duplicates drop
 drop if missing(wt)
-	* First, convert to string
-	
-	foreach var of varlist reg cwt area psu_no ea_set hh_no no{
-	    tostring `var', gen(`var'_str)
-		
-	}
-	
-	* Make sure elements are consistent in lenght
-	replace psu_no_str = "0" + psu_no_str if length(psu_no_str)==2
-	replace hh_no_str =  "0" + hh_no_str if length(hh_no_str)==1
-	replace no_str =  "0" + no_str if length(no_str)==1
 
 
-	egen hhid = concat(reg_str cwt_str area_str psu_no_str ea_set_str SAMSET HH_NO_str)
-	label var hhid "Household ID"
 *</_hhid_>
 
 
 *<_pid_>
 
-	*drop if missing(NO)
-	
-	egen pid = concat(hhid NO_str)
+
+	egen pid = ""
 	label var pid "Individual ID"
 *</_pid_>
 
@@ -259,28 +232,15 @@ drop if missing(wt)
 
 *<_subnatid2_>
 	gen byte subnatid2 = CWT
-	label de lblsubnatid2 10 "10 - Bangkok Metropolis" 11 "11 - Samut Prakan" ///
-		12 "12 - Nonthaburi"	13 "13 - Pathum Thani" 14 "14 - Phra Nakhon Si Ayutthaya"  ///
-		15 "15 - Ang Thong" 16 "16 - Lop Buri" 17 "17 - Sing Buri" 18 "18 - Chai Nat" ///
-		19 "19 - Saraburi" 20 "20 - Chon Buri"	21 "21 - Rayong"	22 "22 - Chanthaburi" /// 
-		23 "23 - Trat" 24 "24 - Chachoengsao" 25 "25 - Prachin Buri" ///
-		26 "26 - Nakhon Nayok" 27 "27 - Sa Kaeo" 30 "30 - Nakhon Ratchasima" ///
-		31 "31 - Buri Ram" 32 "32 - Surin" 33 "33 - Si Sa Ket" 34 "34 - Ubon Ratchathani" ///
-		35 "35 - Yasothon" 36 "36 - Chaiyaphum" 37 "37 - Am Nat Charoen" ///
-		38 "38 - Bueng Kan" 39 "39 - Nong Bua Lam Phu" 40 "40 - Khon Kaen" ///
-		41 "41 - Udon Thani" 42 "42 - Loei" 43 "43 - Nong Khai" 44 "44 - Maha Sarakham" ///
-		45 "45 - Roi Et" 46 "46 - Kalasin" 47 "47 - Sakon Nakhon"	48 "48 - Nakhon Phanom"  ///
-		49 "49 - Mukdahan" 50 "50 - Chiang Mai"	51 "51 - Lamphun" 52 "52 - Lampang" 53 "53 - Uttaradit"  ///
-		54 "54 - Phrae"	55 "55 - Nan" 56 "56 - Phayao" 57 "57 - Chiang Rai" 58 "58 - Mae Hong Son" ///
-		60 "60 - Nakhon Sawan" 61 "61 - Uthai Thani"  62 "62 - Kamphaeng Phet" 63 "63 - Tak" 64 "64 - Sukhothai" /// 
-		65 "65 - Phitsanulok"	66 "66 - Phichit" 67 "67 - Phetchabun" 70 "70 - Ratchaburi" ///
-		71 "71 - Kanchanaburi" 72 "72 - Suphan Buri" 73 "73 - Nakhon Pathom" ///
-		74 "74 - Samut Sakhon" 75 "75 - Samut Songkhram" 76 "76 - Phetchaburi"	///
-		77 "77 - Prachuap Khiri Khan" 80 "80 - Nakhon Si Thammarat" 81 "81 - Krabi" ///
-		82 "82 - Phangnga" 83 "83 - Phuket" 84 "84 - Surat Thani" ///
-		85 "85 - Ranong" 86 "86 - Chumphon" 90 "90 - Songkhla" 91 "91 - Satun" 92 "92 - Trang" ///
-		93 "93 - Phatthalung" 94 "94 - Pattani" 95 "95 - Yala" 96 "96 - Narathiwat"
-			
+	label de lblsubnatid2 10 "Bangkok Metropolis" 11 "Samut Prakan"	12 "Nonthaburi"	13 "Pathum Thani" 14 "Phra Nakhon Si Ayutthaya" 15 "Ang Thong" ///
+		16 "Lop Buri" 17 "Sing Buri" 18 "Chai Nat" 19 "Saraburi" 20 "Chon Buri"	21 "Rayong"	22 "Chanthaburi" 23 "Trat" 24 "Chachoengsao" 25 "Prachin Buri" ///
+		26 "Nakhon Nayok" 27 "Sakaeo" 30 "Nakhon Ratchasima" 31 "Buri Ram" 32 "Surin" 33 "Si Sa Ket" 34 "Ubon Ratchathani" 35 "Yasothon" 36 "Chaiyaphum" 37 "Amnat Charoen" ///
+		39 "Nong Bua Lam Phu" 40 "Khon Kaen" 41 "Udon Thani" 42 "Loei" 43 "Nong Khai" 44 "Maha Sarakham" 45 "Roi Et" 46 "kalasin" 47 "Sakon Nakhon"	48 "Nakhon Phanom" 49 "Mukdahan" ///
+		50 "Chiang Mai"	51 "Lamphun" 52 "Lampang" 53 "Uttaradit" 54 "Phrae"	55 "Nan" 56 "Phayao" 57 "Chiang Rai" 58 "Mae Hong Son" 60 "Nakhon Sawan" 61 "Uthai Thani" /// 
+		62 "Kamphang Phet" 63 "Tak"	64 "Sukhothai" 65 "Phitsanulok"	66 "Phichit" 67 "Phetchabun" 70 "Ratchaburi" 71 "Kanchanaburi" 72 "Suphanburi" 73 "Nakhon Pathom" ///
+		74 "Samut Sakhon" 75 "Samut Songkhram" 76 "Phetchaburi"	77 "Prachuap Khiri Khan" 80 "Nakhon Si Thammarat" 81 "Krabi" 82 "Phangnga" 83 "Phuket" 84 "Surat Thani" ///
+		85 "Ranong" 86 "Chumphon" 90 "Songkhla" 91 "Satun" 92 "Trang" 93 "Phatthalung" 94 "Pattani" 95 "Yala" 96 "Naratiwat"
+		
 		
 	label values subnatid2 lblsubnatid2
 	label var subnatid2 "Subnational ID at Second Administrative Level"
@@ -303,54 +263,25 @@ Have yet to determine the level at which the data is representative
 
 *<_subnatidsurvey_note>*/
 
-	gen subnatidsurvey = "subnatid1"
+	gen subnatidsurvey = .
 	label var subnatidsurvey "Administrative level at which survey is representative"
 	
 *</_subnatidsurvey_>
 
 
-
 *<_subnatid1_prev_>
+/* <_subnatid1_prev_note>
 
-	gen subnatid1_prev = subnatid1
-	recode subnatid1_prev (3 = 1) (4 = 2) (5 = 3) (2 = 4) (1 = 5)
-	label de lblsubnatid1_prev 1 "1 - North" 2 "2 - Northeast" 3 "3 - South" 4 "4 - Central" 5 "5 - Bangkok Metropolis"
-	label values subnatid1_prev lblsubnatid1_prev
-
+</_subnatid1_prev_note> */
+	gen subnatid1_prev = .
 	label var subnatid1_prev "Classification used for subnatid1 from previous survey"
 *</_subnatid1_prev_>
 
 
-
 *<_subnatid2_prev_>
-
-	merge m:1 subnatid2 using "$path_in\changwad_subnatid2_prev.dta", keep(master match)
+	gen subnatid2_prev = .
 	label var subnatid2_prev "Classification used for subnatid2 from previous survey"
-	
-	label de lblsubnatid2_prev  101 "1 - Mae Hong Son" 102 "2 - Chiang Mai"	103 "3 - Phayao" ///
-	104 "4 - Chiang Rai" 105 "5 - Nan" 106 "6 - Lamphun" 107 "7 - Lampang" 108 "8 - Phrae" 109 "9 - Tak" ///
-	110 "10 - Sukhothai" 111 "11 - Uttaradit" 112 "12 - Kamphaeng Phet" 113 "13 - Phichit" 114 "14 - Uthai Thani" ///
-	115 "15 - Nakhon Sawan" 116 "16 - Phitsanulok" 117 "17 - Phetchabun" ///
-	201 "1 - Loei"	202 "2 - Udon Thani" 203 "3 - Nong Khai" 204 "4 - Sakon Nakhon" ///
-	205 "5 - Nakhon Phanom" 206 "6 - Kalasin" 207 "7 - Roi Et" 208 "8 - Maha Sarakham"  ///
-	209 "9 - Khon Daen" 210 "10 - Chaiyaphum" 211 "11 - Nakhon Ratchasima" 212 "12 - Buri Ram" ///
-	213 "13 - Surin" 214 "14 - Si Sa Ket" 215 "15 - Ubon Ratchathani" 216 "16 - Yasothon" ///
-	217 "17 - Mukdahan" 274 "74 - Nong Bua Lam Phu" 275 "75 - Am Nat Charoen" 301 "1 - Chumphon" 302 "2 - Ranong" 303 "3 - Surat Thani" ///
-	304 "4 - Phangnga" 305 "5 - Phuket" 306 "6 - Krabi" 307 "7 - Nakhon Si Thammarat" ///
-	308 "8 - Phatthalung" 309 "9 - Songkhla" 310 "10 - Trang" 311 "11 - Satun" ///
-	312 "12 - Pattani" 313 "13 - Yala" 314 "14 - Narathiwat" 401 "1 - Kanchanaburi" ///
-	402 "2 - Suphan Buri" 403 "3 - Ratchaburi" 404 "4 - Prachuap Khiri Khan" ///
-	405 "5 - Phetchaburi" 406 "6 - Nakhon Pathom" 407 "7 - Samut Songkhram"	/// 
-	408 "8 - Samut Sakhon" 409 "9 - Saraburi" 410 "10 - Lop Buri" ///
-	411 "11 - Phranakhon Si Ayutthaya" 412 "12 - Ang Thong" 413 "13 - Sing Buri" ///
-	414 "14 - Chai Nat" 415 "15 - Trat" 416 "16 - Chanthaburi" 417 "17 - Rayong" 418 "18 - Chon Buri" ///
-	419 "19 - Prachin Buri" 420 "20 - Nakhon Nayok" 421 "21 - Chachoengsao" ///
-	422 "22 - Nonthaburi" 423 "23 - Pathum Thani" 424 "24 - Sumut Prakan" 476 "76 - Sa Kaeo" ///
-	501 "1 - Bangkok Metropolis"
-
-	label values subnatid2_prev lblsubnatid2_prev
 *</_subnatid2_prev_>
-
 
 
 *<_subnatid3_prev_>
@@ -361,21 +292,12 @@ Have yet to determine the level at which the data is representative
 
 /*<_gaul_adm_code_notes>
 
-Based on this reference (https://data.humdata.org/dataset/cod-ab-tha):
-
-level 0 = country
-level 1 = province
-level 2 = district
-level 3 = subdistrict/tambon
-
-* But for the available datasets, the district (amphoe) and tambon are NA
-
-Hence, leave adm2 and adm3 missing
+	Based on the EAPLAB codes, the gaul_adm1 and gaul_adm2 are region and province respectively
 
 </_gaul_adm_code_notes>*/
 
 *<_gaul_adm1_code_>
-	gen gaul_adm1_code = subnatid2
+	gen gaul_adm1_code = .
 	label var gaul_adm1_code "Global Administrative Unit Layers (GAUL) Admin 1 code"
 *</_gaul_adm1_code_>
 
@@ -390,6 +312,7 @@ Hence, leave adm2 and adm3 missing
 	gen gaul_adm3_code = .
 	label var gaul_adm3_code "Global Administrative Unit Layers (GAUL) Admin 3 code"
 *</_gaul_adm3_code_>
+
 }
 
 /*%%=============================================================================================
@@ -422,13 +345,6 @@ Hence, leave adm2 and adm3 missing
 *<_relationharm_>
 
 	* First check if there are instances where there are no or more than 1 HH head
-	gen head = RELATION==1
-	bys hhid: egen tot_head = sum(head)
-	
-	count if tot_head!=1
-	
-	assert RELATION == 0 if tot_head!=1
-	* The households with missing HH heads are "special household members"
 	
 	gen relationharm = RELATION
 	
@@ -592,11 +508,10 @@ label var ed_mod_age "Education module application age"
 
 *</_ed_mod_age_>
 
-
-
 *<_school_>
-	destring GRADE_A, replace
-	gen byte school= (GRADE_A != 1) & age>=ed_mod_age
+
+* School attendance is asked in the questionnaire, but there doesn't seem to be a variable that corresponds to it in the dataset. Leave missing then.
+	gen byte school=.
 	label var school "Attending school"
 	la de lblschool 0 "No" 1 "Yes"
 	label values school  lblschool
@@ -753,12 +668,9 @@ foreach v of local ed_var {
 
 {
 *<_lstatus_>
-
-* Based on Thai NSO, employed are those who worked at least one hour in the past week, or did not work but receive salary/wage, not receive wagebut had regular job, or worked at least 1 hour without pay in business enterprises
-
 	gen byte lstatus = .
 	replace lstatus = . if age < minlaborage
-	replace lstatus = 1 if WK_7DAY == 1 | RETURN == 1 | RECEIVE == 1
+	replace lstatus = 1 if WK_7DAY == 1 | RETURN_ == 1 | RECEIVE == 1
 	replace lstatus = 2 if inrange(SEEKING, 1, 2) | AVAILABLE == 1
 	replace lstatus = 3 if AVAILABLE == 2
 	
@@ -766,6 +678,7 @@ foreach v of local ed_var {
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
 *</_lstatus_>
+
 
 
 *<_potential_lf_>
@@ -788,11 +701,6 @@ foreach v of local ed_var {
 </_underemployment_note> */
 
 	gen byte underemployment = .
-	replace underemployment = 1 if MORE_WK == 1 & TOTAL_HR < 35
-	replace underemployment = 0 if MORE_WK == 2 | TOTAL_HR >=35 
-	
-	replace underemployment = . if age < minlaborage & age != .
-	replace underemployment = . if lstatus != 1
 	label var underemployment "Underemployment status"
 	la de lblunderemployment 0 "No" 1 "Yes"
 	label values underemployment lblunderemployment
@@ -958,7 +866,6 @@ foreach v of local ed_var {
 
 *<_wage_no_compen_>
 	gen double wage_no_compen = AMOUNT
-	replace wage_no_compen = . if AMOUNT == 99999
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
@@ -984,6 +891,7 @@ foreach v of local ed_var {
 	replace whours = . if (MAIN_HR>84 & !missing(MAIN_HR)) | MAIN_HR == 0
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
+
 
 
 *<_wmonths_>
@@ -1618,8 +1526,7 @@ foreach v of local ed_var {
 *----------8.13: Labour cleanup------------------------------*
 
 {
- 
-* Set missing values for unemployed with responses on occupation and industry questions
+ * Set missing values for unemployed with responses on occupation and industry questions
 foreach var of varlist ocusec industry_orig industrycat_isic industrycat10 occup_orig occup occup_isco firmsize_l firmsize_u {
 	cap confirm numeric variable `var'
 	

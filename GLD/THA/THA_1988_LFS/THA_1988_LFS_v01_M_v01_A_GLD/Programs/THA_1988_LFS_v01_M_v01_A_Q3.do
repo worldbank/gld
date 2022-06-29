@@ -1,38 +1,40 @@
 
-
 /*%%=============================================================================================
 	0: GLD Harmonization Preamble
 ==============================================================================================%%*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				THA_1988_LFS_v01_M_v01_A_Q3.do </_Program name_>
+<_Program name_>				THA_1985_LFS_v01_M_v01_A_Q3.do </_Program name_>
 <_Application_>					Stata 17 <_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
-<_Date created_>				2022-02-04 </_Date created_>
+<_Date created_>				2022-01-08 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						Thailand (THA) </_Country_>
-<_Survey Title_>				Labor Force Survey 1988 Q3 </_Survey Title_>
-<_Survey Year_>					1988 </_Survey Year_>
+<_Survey Title_>				Labor Force Survey 1985 Q3 </_Survey Title_>
+<_Survey Year_>					1985 </_Survey Year_>
 <_Study ID_>					N.A. </_Study ID_>
-<_Data collection from_>		July 1988 </_Data collection from_>
-<_Data collection to_>			Septmber 1988 </_Data collection to_>
+<_Data collection from_>		Not specified </_Data collection from_>
+<_Data collection to_>			Not specified </_Data collection to_>
 <_Source of dataset_> 			NSO </_Source of dataset_>
-<_Sample size (HH)_> 			16,919 </_Sample size (HH)_>
-<_Sample size (IND)_> 			71,579 </_Sample size (IND)_>
-<_Sampling method_> 			[Brief description] </_Sampling method_>
-<_Geographic coverage_> 		[To what level is data significant] </_Geographic coverage_>
+<_Sample size (HH)_> 			16,920 </_Sample size (HH)_>
+<_Sample size (IND)_> 			71,727 </_Sample size (IND)_>
+<_Sampling method_> 			No information available
+ </_Sampling method_>
+ 
+<_Geographic coverage_> 		National </_Geographic coverage_>
+
 <_Currency_> 					Thailand Baht </_Currency_>
 -----------------------------------------------------------------------
-<_ICLS Version_>				[Version of ICLS for Labor Questions] </_ICLS Version_>
-<_ISCED Version_>				[Version of ICLS for Labor Questions] </_ISCED Version_>
-<_ISCO Version_>				[Version of ICLS for Labor Questions] </_ISCO Version_>
-<_OCCUP National_>				[Version of ICLS for Labor Questions] </_OCCUP National_>
-<_ISIC Version_>				[Version of ICLS for Labor Questions] </_ISIC Version_>
-<_INDUS National_>				[Version of ICLS for Labor Questions] </_INDUS National_>
+<_ICLS Version_>				ICLS 13 </_ICLS Version_>
+<_ISCED Version_>				ISCED 1997 </_ISCED Version_>
+<_ISCO Version_>				ISCO 1958 </_ISCO Version_>
+<_OCCUP National_>			Based on ISCO 1958 </_OCCUP National_>
+<_ISIC Version_>				ISIC version 1 </_ISIC Version_>
+<_INDUS National_>			Based on ISIC version 1 </_INDUS National_>
 -----------------------------------------------------------------------
 <_Version Control_>
-* Date: [YYYY-MM-DD] - [Description of changes]
-* Date: [YYYY-MM-DD] - [Description of changes]
+* Date: [2022-01-08] - Prepared initial code
+* Date: [2022-06-15] - Added codes that harmonize data for specific variables, including school attendance, ISCO and ISIC codes, etc...
 </_Version Control_>
 -------------------------------------------------------------------------*/
 
@@ -629,17 +631,25 @@ label var ed_mod_age "Education module application age"
 	label var educat_orig "Original survey education code"
 *</_educat_orig_>
 
-
 *<_educat_isced_>
+
+capture confirm variable edcode
+
+	if !_rc {
+		gen re_ed = edcode
+	}
+	
 	gen educat_isced = ""
-	replace educat_isced = "020" if edcode == 2 | edcode == 3
-	replace educat_isced = "100" if edcode == 4
-	replace educat_isced = "244" if edcode == 5
-	replace educat_isced = "344" if edcode == 6
-	replace educat_isced = "354" if edcode == 7
-	replace educat_isced = "550" if edcode == 8
-	replace educat_isced = "660" if inrange(edcode, 9, 11)
-	replace educat_isced = "" if inrange(edcode, 12, 14) | edcode == 2
+	replace educat_isced = "0" if re_ed == 2 | re_ed == 3
+	replace educat_isced = "1" if re_ed == 4
+	replace educat_isced = "2A" if re_ed == 5
+	replace educat_isced = "3A" if re_ed == 6
+	replace educat_isced = "3B" if re_ed == 7
+	replace educat_isced = "3B" if re_ed == 8
+	replace educat_isced = "5A" if re_ed == 9
+	replace educat_isced = "5B" if re_ed == 10
+	replace educat_isced = "5A" if re_ed == 11
+
 	label var educat_isced "ISCED standardised level of education"
 *</_educat_isced_>
 

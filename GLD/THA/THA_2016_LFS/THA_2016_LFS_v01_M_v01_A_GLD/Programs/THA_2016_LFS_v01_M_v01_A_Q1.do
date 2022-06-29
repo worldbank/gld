@@ -26,13 +26,9 @@ At the first stage, the EAs based on the 2010 census frame was updated from othe
 
 At the second stage, private households and persons in the collective households were our ultimate sampling units. A new listing of private households was made for every sampled EAs to serve as the sampling frome. In each sampled EAs, a systematic sample of private households were selected with the following sample size: Municipal areas : 16 sample households per EAs and Non-municipal areas : 12 sample households per EAs.
 
- </_Sampling method_>
+</_Sampling method_>
  
-<_Geographic coverage_> 
-		
-Data is significant at the regional level. As of today, still need to confirm if data at the province (changwat) is representative. 
-
-</_Geographic coverage_>
+<_Geographic coverage_> 		National </_Geographic coverage_>
 
 <_Currency_> 					Thailand Baht </_Currency_>
 -----------------------------------------------------------------------

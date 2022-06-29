@@ -3,17 +3,17 @@
 ==============================================================================================%%*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				THA_2019_LFS_v01_M_v01_A_Q1.do </_Program name_>
+<_Program name_>				THA_2009_LFS_v01_M_v01_A_Q1.do </_Program name_>
 <_Application_>					Stata 17 <_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
 <_Date created_>				2022-01-08 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						Thailand (THA) </_Country_>
-<_Survey Title_>				Labor Force Survey 2019 Q1 </_Survey Title_>
-<_Survey Year_>					2019 </_Survey Year_>
+<_Survey Title_>				Labor Force Survey 2009 Q1 </_Survey Title_>
+<_Survey Year_>					2009 </_Survey Year_>
 <_Study ID_>					N.A. </_Study ID_>
-<_Data collection from_>		January 2019 </_Data collection from_>
-<_Data collection to_>			March 2019 </_Data collection to_>
+<_Data collection from_>		January 2009 </_Data collection from_>
+<_Data collection to_>			March 2009 </_Data collection to_>
 <_Source of dataset_> 			NSO </_Source of dataset_>
 <_Sample size (HH)_> 			74,513 </_Sample size (HH)_>
 <_Sample size (IND)_> 			201,976 </_Sample size (IND)_>
@@ -26,16 +26,13 @@ At the second stage, private households and persons in the collective households
 
  </_Sampling method_>
  
-<_Geographic coverage_> 
-		
-Data is significant at the regional level. As of today, still need to confirm if data at the province (changwat) is representative. 
-
-</_Geographic coverage_>
+ 
+<_Geographic coverage_> 		National </_Geographic coverage_> 
 
 <_Currency_> 					Thailand Baht </_Currency_>
 -----------------------------------------------------------------------
-<_ICLS Version_>				Not stated </_ICLS Version_>
-<_ISCED Version_>				ISCED 2011 </_ISCED Version_>
+<_ICLS Version_>				ICLS 13 </_ICLS Version_>
+<_ISCED Version_>				ISCED 1997 </_ISCED Version_>
 <_ISCO Version_>				ISCO 1988 </_ISCO Version_>
 <_OCCUP National_>				Based on ISCO 1988 </_OCCUP National_>
 <_ISIC Version_>				ISIC version 3 </_ISIC Version_>
@@ -685,20 +682,27 @@ label var ed_mod_age "Education module application age"
 *</_educat_orig_>
 
 *<_educat_isced_>
-	gen educat_isced = ""
-	replace educat_isced = "020" if re_ed == 2
-	replace educat_isced = "100" if re_ed == 3
-	replace educat_isced = "244" if re_ed == 4
-	replace educat_isced = "344" if inrange(re_ed, 5, 7)
-	replace educat_isced = "354" if re_ed == 8
-	replace educat_isced = "550" if re_ed == 9
-	replace educat_isced = "540" if re_ed == 10
-	replace educat_isced = "660" if inrange(re_ed, 11, 13)
-	replace educat_isced = "760" if re_ed == 14
-	replace educat_isced = "860" if re_ed == 15
+
+capture confirm variable edcode
+
+	if !_rc {
+		gen re_ed = edcode
+	}
 	
+	gen educat_isced = ""
+	replace educat_isced = "0" if re_ed == 2 
+	replace educat_isced = "1" if re_ed == 3 
+	replace educat_isced = "2A" if re_ed == 4 
+	replace educat_isced = "3A" if re_ed == 5 
+	replace educat_isced = "3B" if re_ed == 6 
+	replace educat_isced = "3A" if re_ed == 7 
+	replace educat_isced = "3C" if inrange(re_ed, 8, 10)
+	replace educat_isced = "5A" if inrange(re_ed, 11, 14)
+	replace educat_isced = "6" if re_ed == 15
+
 	label var educat_isced "ISCED standardised level of education"
 *</_educat_isced_>
+
 
 
 *----------6.1: Education cleanup------------------------------*
