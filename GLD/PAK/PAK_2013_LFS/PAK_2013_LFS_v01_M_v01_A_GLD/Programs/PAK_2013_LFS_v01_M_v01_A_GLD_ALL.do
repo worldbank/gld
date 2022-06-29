@@ -724,9 +724,17 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 *</_nlfreason_>
 
 
+/*<_unempldur_l_>
+
+Unemployment duration in 2013 is a specific number of weeks/months/years. So the 
+upper and lower bonds are the same.
+
+*<_unempldur_l_>*/
+
+
+
 *<_unempldur_l_>
 	gen byte unempldur_l=s9_q3
-	recode unempldur_l 1=0 2=1 3=3 4=7 5=12
 	replace unempldur_l=. if lstatus!=2
 	label var unempldur_l "Unemployment duration (months) lower bracket"
 *</_unempldur_l_>
@@ -734,7 +742,6 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_unempldur_u_>
 	gen byte unempldur_u=s9_q3
-	recode unempldur_u 1=1 2=2 3=6 4=12 5=.
 	replace unempldur_u=. if lstatus!=2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
 *</_unempldur_u_>
@@ -750,9 +757,9 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 	replace empstat=1 if s5_q8<=4 
 	replace empstat=2 if s5_q8==10
 	replace empstat=3 if s5_q8==5
-	replace empstat=4 if (s5_q8>=6 & s5_q8<=9) | s5_q8==11
-	replace empstat=5 if s5_q8==12
-	replace empstat=. if !inrange(s5_q8, 1, 12)
+	replace empstat=4 if (s5_q8>=6 & s5_q8<=10) | s5_q8==13
+	replace empstat=5 if s5_q8==14
+	replace empstat=. if !inrange(s5_q8, 1, 14)
 	replace empstat=. if lstatus!=1
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
@@ -925,7 +932,6 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_firmsize_l_>
 	gen byte firmsize_l=s5_q13
-	recode firmsize_l 1=0 2=6 3=10 4=20
 	replace firmsize_l=. if lstatus!=1
 	label var firmsize_l "Firm size (lower bracket) primary job 7 day recall"
 *</_firmsize_l_>
@@ -933,7 +939,6 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_firmsize_u_>
 	gen byte firmsize_u=s5_q13
-	recode firmsize_u 1=5 2=9 3=19 4=.
 	replace firmsize_u=. if lstatus!=1
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>
@@ -947,7 +952,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 {
 *<_empstat_2_>
 	gen byte empstat_2=s5_q19
-	recode empstat_2 (1/4=1) (10=2) (5=3) (6/9 11=4) (12=5) (0=.)
+	recode empstat_2 (1/4=1) (10=2) (5=3) (6/10 13=4) (14=5)
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
 	la de lblempstat_2 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat_2 lblempstat
@@ -1069,7 +1074,6 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_firmsize_l_2_>
 	gen byte firmsize_l_2=s5_q24
-	recode firmsize_l_2 1=0 2=6 3=10 4=20
 	replace firmsize_l_2=. if s5_q18!=1
 	label var firmsize_l_2 "Firm size (lower bracket) secondary job 7 day recall"
 *</_firmsize_l_2_>
@@ -1077,7 +1081,6 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_firmsize_u_2_>
 	gen byte firmsize_u_2=s5_q24
-	recode firmsize_u_2 1=5 2=9 3=19 4=.
 	replace firmsize_l_2=. if s5_q18!=1
 	label var firmsize_u_2 "Firm size (upper bracket) secondary job 7 day recall"
 *</_firmsize_u_2_>

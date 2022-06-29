@@ -17,7 +17,7 @@
 <_Data collection to (M/Y)_>	[June/2014] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			Pakistan Bureau of Statistics </_Source of dataset_>
 								https://www.pbs.gov.pk/content/microdata
-<_Sample size (HH)_> 			</_Sample size (HH)_>
+<_Sample size (HH)_> 			41,627 </_Sample size (HH)_>
 <_Sample size (IND)_> 			264,136 </_Sample size (IND)_>
 <_Sampling method_> 			Stratified two-stage cluster sampling method </_Sampling method_>
 <_Geographic coverage_> 		8 provinces </_Geographic coverage_>
@@ -678,8 +678,8 @@ is 10 and above, Pakistan employment report defines active population as 15 year
 {
 *<_lstatus_>
 	gen byte lstatus=.
-	replace lstatus=1 if inlist(1, s5_q1, s5_q2, s5_q3) | inlist(s5_q4,1,2)
-	replace lstatus=2 if s9_q1==1 | inrange(s9_q4,1,6) | inrange(s9_q5,1,5) 
+	replace lstatus=1 if inlist(1, SEC5_COL1, SEC5_COL2, SEC5_COL3) | inlist(SEC5_COL4,1,2)
+	replace lstatus=2 if SEC9_COL1==1 | inrange(SEC9_COL4,1,6) | inrange(SEC9_COL5,1,5) 
 	replace lstatus=3 if lstatus==.
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -691,15 +691,15 @@ is 10 and above, Pakistan employment report defines active population as 15 year
 Note: var "potential_lf" only takes value if the respondent is not in labor force. (lstatus==3)
 
 "potential_lf" = 1 if the person is
-1)available but not searching or s9_q1==2 & inrange(s9_q4, 1, 6)
-2)searching but not immediately available to work or s9_q1==1 & s9_q4==7
+1)available but not searching or SEC9_COL1==2 & inrange(SEC9_COL4, 1, 6)
+2)searching but not immediately available to work or SEC9_COL1==1 & SEC9_COL4==7
 </_potential_lf_>*/
 
 
 *<_potential_lf_>
 	gen byte potential_lf=.
-	replace potential_lf=1 if [s9_q1==2 & inrange(s9_q4, 1, 6)] | [s9_q1==1 & s9_q4==7]
-	replace potential_lf=0 if [s9_q1==1 & inrange(s9_q4, 1, 6)] | [s9_q1==2 & s9_q4==7]
+	replace potential_lf=1 if [SEC9_COL1==2 & inrange(SEC9_COL4, 1, 6)] | [SEC9_COL1==1 & SEC9_COL4==7]
+	replace potential_lf=0 if [SEC9_COL1==1 & inrange(SEC9_COL4, 1, 6)] | [SEC9_COL1==2 & SEC9_COL4==7]
 	replace potential_lf=. if age < minlaborage
 	replace potential_lf=. if lstatus !=3
 	label var potential_lf "Potential labour force status"
@@ -710,8 +710,8 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_underemployment_>
 	gen byte underemployment=.
-	replace underemployment=1 if s6_q2==1
-	replace underemployment=0 if s6_q2==2
+	replace underemployment=1 if SEC6_COL2==1
+	replace underemployment=0 if SEC6_COL2==2
 	replace underemployment=. if age < minlaborage
 	replace underemployment=. if lstatus!=1
 	label var underemployment "Underemployment status"
@@ -721,7 +721,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_nlfreason_>
-	gen byte nlfreason=s9_q6
+	gen byte nlfreason=SEC9_COL6
 	recode nlfreason (5=1) (6=2) (7=3) (11=4) (1/4 8/10 12=5)
 	replace nlfreason=. if lstatus!=3
 	label var nlfreason "Reason not in the labor force"
@@ -730,17 +730,23 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 *</_nlfreason_>
 
 
+/*<_unempldur_l_>
+
+Unemployment duration in 2014 is a specific number of weeks/months/years. So the 
+upper and lower bonds are the same.
+
+*<_unempldur_l_>*/
+
+
 *<_unempldur_l_>
-	gen byte unempldur_l=s9_q3
-	recode unempldur_l 1=0 2=1 3=3 4=7 5=12
+	gen byte unempldur_l=SEC9_COL3_2
 	replace unempldur_l=. if lstatus!=2
 	label var unempldur_l "Unemployment duration (months) lower bracket"
 *</_unempldur_l_>
 
 
 *<_unempldur_u_>
-	gen byte unempldur_u=s9_q3
-	recode unempldur_u 1=1 2=2 3=6 4=12 5=.
+	gen byte unempldur_u=SEC9_COL3_2
 	replace unempldur_u=. if lstatus!=2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
 *</_unempldur_u_>
@@ -753,12 +759,12 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 {
 *<_empstat_>
 	gen byte empstat=.
-	replace empstat=1 if s5_q8<=4 
-	replace empstat=2 if s5_q8==10
-	replace empstat=3 if s5_q8==5
-	replace empstat=4 if (s5_q8>=6 & s5_q8<=9) | s5_q8==11
-	replace empstat=5 if s5_q8==12
-	replace empstat=. if !inrange(s5_q8, 1, 12)
+	replace empstat=1 if SEC5_COL8<=4 
+	replace empstat=2 if SEC5_COL8==10
+	replace empstat=3 if SEC5_COL8==5
+	replace empstat=4 if (SEC5_COL8>=6 & SEC5_COL8<=10) | SEC5_COL8==13
+	replace empstat=5 if SEC5_COL8==14
+	replace empstat=. if !inrange(SEC5_COL8, 1, 14)
 	replace empstat=. if lstatus!=1
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
@@ -767,7 +773,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_ocusec_>
-	gen byte ocusec=s5_q11
+	gen byte ocusec=SEC5_COL11
 	recode ocusec (1/3=1) (4=3) (5/9=2) (10=4)
 	replace ocusec=. if lstatus!=1
 	label var ocusec "Sector of activity primary job 7 day recall"
@@ -777,15 +783,14 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_industry_orig_>
-	gen industry_orig=s5_q10
+	gen industry_orig=SEC5_COL10
 	replace industry_orig=. if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
 
 *<_industrycat_isic_>
-	gen industrycat_isic=s5_q10
-	replace industrycat_isic=industrycat_isic*100
+	gen industrycat_isic=SEC5_COL10
 	tostring industrycat_isic, replace format(%04.0f)
 	replace industrycat_isic="" if lstatus!=1 | industrycat_isic=="."
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
@@ -793,7 +798,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_industrycat10_>
-	gen byte industrycat10=s5_q10
+	gen byte industrycat10=floor(SEC5_COL10/100)
 	recode industrycat10 1/3=1 5/9=2 10/14=2 11/33=3 35/39=4 41/43=5 45/47=6 49/63=7 64/82=8 84=9 85/99=10
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
@@ -812,15 +817,14 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_occup_orig_>
-	gen occup_orig=s5_q9
+	gen occup_orig=SEC5_COL9
 	replace occup_orig=. if lstatus!=1
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
 
 *<_occup_isco_>
-	gen occup_isco=s5_q9
-	replace occup_isco=occup_isco*100
+	gen occup_isco=SEC5_COL9
 	tostring occup_isco, replace format(%04.0f)
 	replace occup_isco="" if lstatus!=1 | occup_isco=="."
 	label var occup_isco "ISCO code of primary job 7 day recall"
@@ -852,21 +856,14 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_wage_no_compen_>
-	gen last_week=s7_q3
-	gen last_month=s7_q4
-	foreach v of varlist last_*{
-		replace `v'=0 if s7_q3>0 & s7_q4>0 & !mi(s7_q3) & !mi(s7_q4 )
-		replace `v'=. if lstatus!=1
-	}
-	egen double wage_no_compen=rowtotal(last_week last_month), missing
+	gen double wage_no_compen=SEC7_COL33
+	replace wage_no_compen=. if lstatus!=1
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
 
 *<_unitwage_>
-	gen byte unitwage=.
-	replace unitwage=2 if wage_no_compen==s7_q3
-	replace unitwage=5 if wage_no_compen==s7_q4
+	gen byte unitwage=5
 	replace unitwage=. if lstatus!=1
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
@@ -875,7 +872,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_whours_>
-	gen whours=s5_q17_1
+	gen whours=SEC5_COL17_1
 	replace whours=. if lstatus!=1
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
@@ -894,7 +891,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_contract_>
-	gen byte contract=s7_q1
+	gen byte contract=SEC7_COL1
 	recode contract (2/6=1) (7=0)
 	replace contract=. if lstatus!=1
 	label var contract "Employment has contract primary job 7 day recall"
@@ -930,16 +927,14 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_firmsize_l_>
-	gen byte firmsize_l=s5_q13
-	recode firmsize_l 1=0 2=6 3=10 4=20
+	gen byte firmsize_l=SEC5_COL13
 	replace firmsize_l=. if lstatus!=1
 	label var firmsize_l "Firm size (lower bracket) primary job 7 day recall"
 *</_firmsize_l_>
 
 
 *<_firmsize_u_>
-	gen byte firmsize_u=s5_q13
-	recode firmsize_u 1=5 2=9 3=19 4=.
+	gen byte firmsize_u=SEC5_COL13
 	replace firmsize_u=. if lstatus!=1
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>
@@ -952,8 +947,8 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 {
 *<_empstat_2_>
-	gen byte empstat_2=s5_q19
-	recode empstat_2 (1/4=1) (10=2) (5=3) (6/9 11=4) (12=5) (0=.)
+	gen byte empstat_2=SEC5_COL19
+	recode empstat_2 (1/4=1) (10=2) (5=3) (6/10 13=4) (14=5)
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
 	la de lblempstat_2 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat_2 lblempstat
@@ -961,7 +956,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_ocusec_2_>
-	gen byte ocusec_2=s5_q22
+	gen byte ocusec_2=SEC5_COL22
 	recode ocusec_2 (1/3=1) (4 6=3) (5/9=2) (10=4)
 	label var ocusec_2 "Sector of activity secondary job 7 day recall"
 	la de lblocusec_2 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
@@ -970,26 +965,23 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_industry_orig_2_>
-	gen industry_orig_2=s5_q21
+	gen industry_orig_2=SEC5_COL21
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 
 
 *<_industrycat_isic_2_>
-	gen industrycat_isic_2=s5_q21
-	replace industrycat_isic_2=industrycat_isic_2*100
+	gen industrycat_isic_2=SEC5_COL21
 	tostring industrycat_isic_2, replace format(%04.0f)
-	replace industrycat_isic_2="" if industrycat_isic_2=="4000"
-	replace industrycat_isic_2="" if industrycat_isic_2=="4800"
-	replace industrycat_isic_2="" if s5_q18!=1 | mi(s5_q21) | industrycat_isic_2=="."
+	replace industrycat_isic_2="" if SEC5_COL18!=1 | mi(SEC5_COL21) | industrycat_isic_2=="."
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
 
 *<_industrycat10_2_>
-	gen byte industrycat10_2=s5_q21
+	gen byte industrycat10_2=SEC5_COL21
 	recode industrycat10_2 1/3=1 5/9=2 10/14=2 11/33=3 35/39=4 41/43=5 45/47=6 49/63=7 64/82=8 84=9 85/99=10
-	replace industrycat10_2=. if s5_q18!=1
+	replace industrycat10_2=. if SEC5_COL18!=1
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
 *</_industrycat10_2_>
@@ -1004,18 +996,16 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_occup_orig_2_>
-	gen occup_orig_2=s5_q20
-	replace occup_orig_2=. if s5_q18!=1
+	gen occup_orig_2=SEC5_COL20
+	replace occup_orig_2=. if SEC5_COL18!=1
 	label var occup_orig_2 "Original occupation record secondary job 7 day recall"
 *</_occup_orig_2_>
 
 
 *<_occup_isco_2_>
-	gen occup_isco_2=s5_q20
-	recode occup_isco_2 (2 14 25=.)
-	replace occup_isco_2=occup_isco_2*100
+	gen occup_isco_2=SEC5_COL20
 	tostring occup_isco_2, replace format(%04.0f)
-	replace occup_isco_2="" if s5_q18!=1 | mi(s5_q20) | occup_isco_2=="."
+	replace occup_isco_2="" if SEC5_COL18!=1 | mi(SEC5_COL20) | occup_isco_2=="."
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
@@ -1027,7 +1017,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 	replace occup_skill_2=1 if skill_level_2==9
 	replace occup_skill_2=2 if inrange(skill_level_2, 4, 8)
 	replace occup_skill_2=3 if inrange(skill_level_2, 1, 3)
-	replace occup_skill_2=. if skill_level_2==0 | s5_q18!=1
+	replace occup_skill_2=. if skill_level_2==0 | SEC5_COL18!=1
 	label var occup_skill_2 "Skill based on ISCO standard secondary job 7 day recall"
 *</_occup_skill_2_>
 
@@ -1036,7 +1026,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 	gen occup_2=substr(occup_isco_2, 1, 1)
 	destring occup_2, replace
 	recode occup_2 (0=10)
-	replace occup=. if s5_q18!=1
+	replace occup=. if SEC5_COL18!=1
 	label var occup_2 "1 digit occupational classification secondary job 7 day recall"
 	label values occup_2 lbloccup
 *</_occup_2_>
@@ -1056,7 +1046,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_whours_2_>
-	gen whours_2=s5_q26
+	gen whours_2=SEC5_COL26
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 
@@ -1074,17 +1064,15 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_firmsize_l_2_>
-	gen byte firmsize_l_2=s5_q24
-	recode firmsize_l_2 1=0 2=6 3=10 4=20
-	replace firmsize_l_2=. if s5_q18!=1
+	gen byte firmsize_l_2=SEC5_COL24
+	replace firmsize_l_2=. if SEC5_COL18!=1
 	label var firmsize_l_2 "Firm size (lower bracket) secondary job 7 day recall"
 *</_firmsize_l_2_>
 
 
 *<_firmsize_u_2_>
-	gen byte firmsize_u_2=s5_q24
-	recode firmsize_u_2 1=5 2=9 3=19 4=.
-	replace firmsize_l_2=. if s5_q18!=1
+	gen byte firmsize_u_2=SEC5_COL24
+	replace firmsize_l_2=. if SEC5_COL18!=1
 	label var firmsize_u_2 "Firm size (upper bracket) secondary job 7 day recall"
 *</_firmsize_u_2_>
 
@@ -1496,10 +1484,10 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_njobs_>
 	gen njobs=.
-	replace njobs=1 if s5_q18==2
-	replace njobs=2 if s5_q18==1 & s5_q27==3
-	replace njobs=3 if s5_q18==1 & s5_q27==1
-	replace njobs=4 if s5_q18==1 & s5_q27==2
+	replace njobs=1 if SEC5_COL18==2
+	replace njobs=2 if SEC5_COL18==1 & SEC5_COL27==3
+	replace njobs=3 if SEC5_COL18==1 & SEC5_COL27==1
+	replace njobs=4 if SEC5_COL18==1 & SEC5_COL27==2
 	replace njobs=. if lstatus!=1
 	label var njobs "Total number of jobs"
 *</_njobs_>
