@@ -17,8 +17,8 @@
 <_Data collection to (M/Y)_>	[June/2020] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			Pakistan Bureau of Statistics </_Source of dataset_>
 								https://www.pbs.gov.pk/content/microdata
-<_Sample size (HH)_> 			</_Sample size (HH)_>
-<_Sample size (IND)_> 			</_Sample size (IND)_>
+<_Sample size (HH)_> 			96,440 </_Sample size (HH)_>
+<_Sample size (IND)_> 			570,991 </_Sample size (IND)_>
 <_Sampling method_> 			Stratified two-stage cluster sampling method </_Sampling method_>
 <_Geographic coverage_> 		7 provinces </_Geographic coverage_>
 <_Currency_> 					Pakistann Rupee </_Currency_>
