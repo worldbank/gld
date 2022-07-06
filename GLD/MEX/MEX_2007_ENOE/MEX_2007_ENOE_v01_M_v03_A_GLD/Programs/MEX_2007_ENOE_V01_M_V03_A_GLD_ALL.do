@@ -1163,17 +1163,16 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others*/
 		replace firmsize_l = 1 if empstat == 4
 
 		* Add employer
-		replace firmsize_l = 1 if p3g_tot == 1
-		replace firmsize_l = 2 if inrange(p3g_tot, 2, 5)
-		replace firmsize_l = 6 if inrange(p3g_tot, 6, 10)
-		replace firmsize_l = 11 if inrange(p3g_tot, 11, 15)
-		replace firmsize_l = 16 if inrange(p3g_tot, 16, 20)
-		replace firmsize_l = 21 if inrange(p3g_tot, 21, 30)
-		replace firmsize_l = 31 if inrange(p3g_tot, 31, 50)
-		replace firmsize_l = 51 if inrange(p3g_tot, 51, 100)
-		replace firmsize_l = 101 if inrange(p3g_tot, 101, 250)
-		replace firmsize_l = 251 if inrange(p3g_tot, 251, 500)
-		replace firmsize_l = 501 if inrange(p3g_tot, 501, 999999)
+		     replace firmsize_l = 2 if inrange(p3g_tot, 1, 4)
+		     replace firmsize_l = 6 if inrange(p3g_tot, 5, 9)
+		     replace firmsize_l = 11 if inrange(p3g_tot, 10, 14)
+		     replace firmsize_l = 16 if inrange(p3g_tot, 15, 19)
+		     replace firmsize_l = 21 if inrange(p3g_tot, 20, 29)
+		     replace firmsize_l = 31 if inrange(p3g_tot, 30, 49)
+		     replace firmsize_l = 51 if inrange(p3g_tot, 50, 99)
+		     replace firmsize_l = 101 if inrange(p3g_tot, 100, 249)
+		     replace firmsize_l = 251 if inrange(p3g_tot, 250, 499)
+		     replace firmsize_l = 501 if inrange(p3g_tot, 500, 999999)
 
 		replace firmsize_l=. if lstatus!=1
 		label var firmsize_l "Firm size (lower bracket) primary job 7 day recall"
@@ -1204,23 +1203,22 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others*/
 		 replace firmsize_u=100 if p3l==08
 		 replace firmsize_u = 250 if p3l==09
 		 replace firmsize_u = 500 if p3l==10
-		 replace firmsize_u = 501 if p3l==11
+			replace firmsize_u = . if p3l==11
 
 		 * Add self-employed
 		 replace firmsize_u = 1 if empstat == 4
 
 		 * Add employer
-		 replace firmsize_u = 1 if p3g_tot == 1
-		 replace firmsize_u = 5 if inrange(p3g_tot, 2, 5)
-		 replace firmsize_u = 10 if inrange(p3g_tot, 6, 10)
-		 replace firmsize_u = 15 if inrange(p3g_tot, 11, 15)
-		 replace firmsize_u = 20 if inrange(p3g_tot, 16, 20)
-		 replace firmsize_u = 30 if inrange(p3g_tot, 21, 30)
-		 replace firmsize_u = 50 if inrange(p3g_tot, 31, 50)
-		 replace firmsize_u = 100 if inrange(p3g_tot, 51, 100)
-		 replace firmsize_u = 250 if inrange(p3g_tot, 101, 250)
-		 replace firmsize_u = 500 if inrange(p3g_tot, 251, 500)
-		 replace firmsize_u = 501 if inrange(p3g_tot, 501, 999999)
+ 		     replace firmsize_u = 5 if inrange(p3g_tot, 1, 4)
+ 		     replace firmsize_u = 10 if inrange(p3g_tot, 5, 9)
+ 		     replace firmsize_u = 15 if inrange(p3g_tot, 10, 14)
+ 		     replace firmsize_u = 20 if inrange(p3g_tot, 15, 19)
+ 		     replace firmsize_u = 30 if inrange(p3g_tot, 20, 29)
+ 		     replace firmsize_u = 50 if inrange(p3g_tot, 30, 49)
+ 		     replace firmsize_u = 100 if inrange(p3g_tot, 50, 99)
+ 		     replace firmsize_u = 250 if inrange(p3g_tot, 100, 249)
+ 		     replace firmsize_u = 500 if  inrange(p3g_tot, 250, 499)
+ 		     replace firmsize_u = . if inrange(p3g_tot, 500, 999999)
 
 		 replace firmsize_u=. if lstatus!=1
 		 label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
