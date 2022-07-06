@@ -462,7 +462,7 @@ local output "`id_data'"
 
 *<_migrated_reason_>
 	gen migrated_reason=s4_q18
-	recode migrated_reason (1/4 6=3) (5=2) (8/11=1) (14=4) (7 12/13=5) 
+	recode migrated_reason (1/4 6=3) (5=2) (8/11=1) (14=4) (7 12/13 15=5) 
 	replace migrated_reason=. if migrated_binary==0
 	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
 	label values migrated_reason lblmigrated_reason
