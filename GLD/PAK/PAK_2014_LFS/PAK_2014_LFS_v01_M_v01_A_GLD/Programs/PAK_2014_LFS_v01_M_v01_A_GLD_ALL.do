@@ -20,7 +20,7 @@
 <_Sample size (HH)_> 			41,627 </_Sample size (HH)_>
 <_Sample size (IND)_> 			264,136 </_Sample size (IND)_>
 <_Sampling method_> 			Stratified two-stage cluster sampling method </_Sampling method_>
-<_Geographic coverage_> 		8 provinces </_Geographic coverage_>
+<_Geographic coverage_> 		5 provinces </_Geographic coverage_>
 <_Currency_> 					Pakistann Rupee </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
@@ -468,7 +468,7 @@ local output "`id_data'"
 
 *<_migrated_reason_>
 	gen migrated_reason=SEC4_COL18
-	recode migrated_reason (1/4 6=3) (5=2) (8/11=1) (14=4) (7 12/13=5) 
+	recode migrated_reason (1/4 6=3) (5=2) (8/11=1) (14=4) (7 12/13 15=5) 
 	replace migrated_reason=. if migrated_binary==0
 	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
 	label values migrated_reason lblmigrated_reason
@@ -760,7 +760,7 @@ upper and lower bonds are the same.
 *<_empstat_>
 	gen byte empstat=.
 	replace empstat=1 if SEC5_COL8<=4 
-	replace empstat=2 if SEC5_COL8==10
+	replace empstat=2 if SEC5_COL8==11 | SEC5_COL8==12 
 	replace empstat=3 if SEC5_COL8==5
 	replace empstat=4 if (SEC5_COL8>=6 & SEC5_COL8<=10) | SEC5_COL8==13
 	replace empstat=5 if SEC5_COL8==14
@@ -948,7 +948,7 @@ upper and lower bonds are the same.
 {
 *<_empstat_2_>
 	gen byte empstat_2=SEC5_COL19
-	recode empstat_2 (1/4=1) (10=2) (5=3) (6/10 13=4) (14=5)
+	recode empstat_2 (1/4=1) (11/12=2) (5=3) (6/10 13=4) (14=5)
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
 	la de lblempstat_2 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat_2 lblempstat
