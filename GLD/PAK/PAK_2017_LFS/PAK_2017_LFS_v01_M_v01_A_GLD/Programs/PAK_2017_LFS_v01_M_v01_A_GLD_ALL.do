@@ -17,8 +17,8 @@
 <_Data collection to (M/Y)_>	[June/2017] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			Pakistan Bureau of Statistics </_Source of dataset_>
 								https://www.pbs.gov.pk/content/microdata
-<_Sample size (HH)_> 			</_Sample size (HH)_>
-<_Sample size (IND)_> 			</_Sample size (IND)_>
+<_Sample size (HH)_> 			43,248 </_Sample size (HH)_>
+<_Sample size (IND)_> 			272,490 </_Sample size (IND)_>
 <_Sampling method_> 			Stratified two-stage cluster sampling method </_Sampling method_>
 <_Geographic coverage_> 		8 provinces </_Geographic coverage_>
 <_Currency_> 					Pakistann Rupee </_Currency_>
@@ -184,7 +184,7 @@ local output "`id_data'"
 
 
 *<_psu_>
-	gen str3 psu=substr(Prcode,7,2)
+	gen str3 psu=substr(Prcode,6,3)
 	label var psu "Primary sampling units"
 *</_psu_>
 
@@ -216,9 +216,9 @@ local output "`id_data'"
 {
 
 *<_urban_>
-	gen str1 urban=substr(Prcode,5,1)
+	gen str1 urban=substr(Prcode,4,1)
 	destring urban, replace
-	recode urban 2=0
+	recode urban 2=0 3=.
 	label var urban "Location is urban"
 	la de lblurban 1 "Urban" 0 "Rural"
 	label values urban lblurban
@@ -329,10 +329,21 @@ local output "`id_data'"
 *<_relationharm_>
 	gen byte relationharm=S04C03
 	recode relationharm 4=3 5=4 6 7=5 8 9=6
-	replace relationharm=1 if pid=="4212100315009" 
+	replace relationharm=5 if hhid=="2921302014" & pid!="2921302014001"
+	replace relationharm=5 if hhid=="3441100113" & pid!="3441100113001"
+	replace relationharm=5 if hhid=="2451402811" & pid!="2451402811001"
+	replace relationharm=5 if hhid=="4502403410" & pid!="4502403410001"
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm lblrelationharm
+	
+	gen head=1 if relationharm==1
+	bys hhid:egen headcount=total(head)
+	replace relationharm=5 if headcount>1 & S04Psn1!=1
+	replace relationharm=1 if headcount==0 & S04Psn1==1
+	gen head2=1 if relationharm==1
+	bys hhid:egen headcount2=total(head2)	
+	replace relationharm=1 if headcount2==0 & S04Psn1==2
 *</_relationharm_>
 
 
@@ -463,7 +474,7 @@ local output "`id_data'"
 
 *<_migrated_reason_>
 	gen migrated_reason=S04C18
-	recode migrated_reason (1/4 6=3) (5=2) (8/11=1) (14=4) (7 12/13=5) 
+	recode migrated_reason (1/4 6=3) (5=2) (8/11=1) (14=4) (7 12/13 15=5) 
 	replace migrated_reason=. if migrated_binary==0
 	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
 	label values migrated_reason lblmigrated_reason
@@ -717,7 +728,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_nlfreason_>
 	gen byte nlfreason=S09C06
-	recode nlfreason (5=1) (6=2) (7=3) (11=4) (1/4 8/10 12=5) (0=.) 
+	recode nlfreason (5=1) (6=2) (7=3) (11=4) (0/3 8/10 12=5)  
 	replace nlfreason=. if lstatus!=3
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
@@ -755,7 +766,7 @@ upper and lower bonds are the same.
 *<_empstat_>
 	gen byte empstat=.
 	replace empstat=1 if S05C08<=4 
-	replace empstat=2 if S05C08==10
+	replace empstat=2 if S05C08==11 | S05C08==12
 	replace empstat=3 if S05C08==5
 	replace empstat=4 if (S05C08>=6 & S05C08<=10) | S05C08==13
 	replace empstat=5 if S05C08==14
@@ -943,7 +954,7 @@ upper and lower bonds are the same.
 {
 *<_empstat_2_>
 	gen byte empstat_2=S05C19
-	recode empstat_2 (1/4=1) (10=2) (5=3) (6/10 13=4) (14=5)
+	recode empstat_2 (1/4=1) (11/12=2) (5=3) (6/10 13=4) (14=5)
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
 	la de lblempstat_2 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat_2 lblempstat
@@ -969,12 +980,13 @@ upper and lower bonds are the same.
 	gen industrycat_isic_2=S05C21
 	tostring industrycat_isic_2, replace format(%04.0f)
 	replace industrycat_isic_2="" if S05C18!=1 | mi(S05C21) | industrycat_isic_2=="."
+	replace industrycat_isic_2="" if inlist(industrycat_isic_2, "0041", "0180", "0611", "0741", "1014", "4110", "4550", "6121", "7531")
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
 
 *<_industrycat10_2_>
-	gen byte industrycat10_2=S05C21
+	gen byte industrycat10_2=floor(S05C21/100)
 	recode industrycat10_2 1/3=1 5/9=2 10/14=2 11/33=3 35/39=4 41/43=5 45/47=6 49/63=7 64/82=8 84=9 85/99=10
 	replace industrycat10_2=. if S05C18!=1
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
@@ -1001,6 +1013,8 @@ upper and lower bonds are the same.
 	gen occup_isco_2=S05C20
 	tostring occup_isco_2, replace format(%04.0f)
 	replace occup_isco_2="" if S05C18!=1 | mi(S05C20) | occup_isco_2=="."
+	replace occup_isco_2="" if inlist(occup_isco_2, "1612", "2311", "2336", "2395", "3224")
+	replace occup_isco_2="" if inlist(occup_isco_2, "3636", "4921", "5229", "6125", "6144")
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
