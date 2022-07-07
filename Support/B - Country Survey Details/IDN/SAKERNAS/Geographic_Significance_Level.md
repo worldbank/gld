@@ -60,7 +60,7 @@ The table below lists all the 34 provinces in Indonesia since 2015 till now, usi
 | **93** | **Irian JAYA TIMUR**         |  2001-2002               | Split from PAPUA in 2003      |  
 | **94** | **PAPUA**         |  2003-2019              | Not incluided in the survey untill 2003                 |
 
-(†) Labelled as *91 - Papua* for 2001 to 2002 despite being Papua Barat.
+(†) Labelled as `91 - Papua` for 2001 to 2002 despite being Papua Barat.
 
 ## Particularities about admin codes in Western New Guinea
 
