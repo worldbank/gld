@@ -236,7 +236,7 @@ local output "`id_data'"
 *<_subnatid2_>
 	gen city_code = substr(Prcode, 1, 4)
 	destring city_code, replace
-	merge m:1 city_code using "`gld'\Work\PAK_city_code.dta"
+	merge m:1 city_code using "`stata'\PAK_city_code.dta"
 	drop if _merge!=3
 	egen city_fullname=concat(city_name urban_status), punct(-)
 	labmask city_code, values (city_fullname)
@@ -641,7 +641,8 @@ are the same here.
 
 *<_vocational_field_orig_>
 	gen code=s4_q12
-	merge m:1 code using "`gld'\Work\PAK_training_code.dta", gen(_merge1)
+	merge m:1 code using "`stata'\PAK_training_code.dta", gen(_merge1)
+	drop if _merge1==2
 	gen vocational_field_orig=code
 	labmask vocational_field_orig, values(training_field) 
 	label var vocational_field_orig "Field of training"

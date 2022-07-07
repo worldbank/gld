@@ -650,7 +650,8 @@ are the same here.
 
 *<_vocational_field_orig_>
 	gen code=S04C12
-	merge m:1 code using "`gld'\Work\PAK_training_code.dta", gen(_merge1)
+	merge m:1 code using "`stata'\PAK_training_code.dta", gen(_merge1)
+	drop if _merge1==2
 	gen vocational_field_orig=code
 	label var vocational_field_orig "Field of training"
 *</_vocational_field_orig_>

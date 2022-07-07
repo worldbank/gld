@@ -327,6 +327,14 @@ local output "`id_data'"
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm lblrelationharm
+	
+	gen head=1 if relationharm==1
+	bys hhid: egen headcount=total(head)
+	gen pid_head=substr(pid, 13, 1)
+	destring pid_head, replace
+	bys hhid: egen pid_min=min(pid_head)
+	replace relationharm=1 if headcount==0 & pid_head==pid_min 
+	replace relationharm=5 if headcount>1 & pid_head!=pid_min & head==1
 *</_relationharm_>
 
 
@@ -455,8 +463,9 @@ local output "`id_data'"
 
 *<_migrated_from_code_>
 	destring S4C16, gen(city_code)
-	merge m:1 city_code using "`gld'\Work\PAK_migration_code_2020.dta"
+	merge m:1 city_code using "`stata'\PAK_migration_code_2020.dta"
 	replace city_code=. if _merge==1
+	drop if _merge==2
 	labmask city_code, values(city_name)
 	gen migrated_from_code=city_code
 	replace migrated_from_code=. if city_code>999
@@ -466,7 +475,8 @@ local output "`id_data'"
 
 
 *<_migrated_from_country_>
-	merge m:1 city_code using "`gld'\Work\PAK_country_code_2020.dta", gen(_merge_c)
+	merge m:1 city_code using "`stata'\PAK_country_code_2020.dta", gen(_merge_c)
+	drop if _merge_c==2
 	gen migrated_from_country=iso_code if country==1&migrated_binary==1
 	label var migrated_from_country "Code of migration country (ISO 3 Letter Code)"
 *</_migrated_from_country_>
@@ -612,7 +622,8 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 {
 *<_vocational_>
 	gen vocational=S4C11
-	recode vocational (10/19=1) (20=0) 
+	recode vocational (10/19=1) (20=0)
+	replace vocational=. if !inrange(vocational, 0, 1)
 	la de vocationallbl 1 "Yes" 0 "No"
 	la values vocational vocationallbl
 	label var vocational "Ever received vocational training"
@@ -652,7 +663,8 @@ are the same here.
 *<_vocational_field_orig_>
 	replace S4C12="" if S4C12=="NULL" 
 	destring S4C12, gen(code)
-	merge m:1 code using "`gld'\Work\PAK_training_code_2020.dta"
+	merge m:1 code using "`stata'\PAK_training_code_2020.dta"
+	drop if _merge==2
 	gen vocational_field_orig=code
 	labmask vocational_field_orig, values(training_field) 
 	label var vocational_field_orig "Field of training"
@@ -786,7 +798,7 @@ upper and lower bonds are the same.
 
 
 *<_ocusec_>
-	gen byte ocusec=S5C11
+	gen byte ocusec=S5C10
 	recode ocusec (1/3=1) (4=3) (5/9=2) (10=4)
 	replace ocusec=. if lstatus!=1
 	label var ocusec "Sector of activity primary job 7 day recall"
@@ -796,14 +808,14 @@ upper and lower bonds are the same.
 
 
 *<_industry_orig_>
-	gen industry_orig=S5C10
-	replace industry_orig=. if lstatus!=1
+	gen industry_orig=S5C9
+	replace industry_orig="" if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
 
 *<_industrycat_isic_>
-	gen industrycat_isic=S5C10
+	gen industrycat_isic=S5C9
 	tostring industrycat_isic, replace format(%04.0f)
 	replace industrycat_isic="" if lstatus!=1 | industrycat_isic=="."
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
@@ -811,7 +823,8 @@ upper and lower bonds are the same.
 
 
 *<_industrycat10_>
-	gen byte industrycat10=floor(S5C10/100)
+	destring S5C9, replace
+	gen byte industrycat10=floor(S5C9/100)
 	recode industrycat10 1/3=1 5/9=2 10/14=2 11/33=3 35/39=4 41/43=5 45/47=6 49/63=7 64/82=8 84=9 85/99=10
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
@@ -830,18 +843,17 @@ upper and lower bonds are the same.
 
 
 *<_occup_orig_>
-	gen occup_orig=S5C9
+	gen occup_orig=S5C8
 	replace occup_orig="" if lstatus!=1
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
 
 *<_occup_isco_>
-	gen occup_isco=S5C9
+	gen occup_isco=S5C8
 	destring occup_isco, replace
 	tostring occup_isco, replace format(%04.0f)
 	replace occup_isco="" if lstatus!=1 | occup_isco=="."
-	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
 
