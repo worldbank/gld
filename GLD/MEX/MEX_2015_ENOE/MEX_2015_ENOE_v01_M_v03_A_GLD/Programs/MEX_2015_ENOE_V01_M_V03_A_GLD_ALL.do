@@ -369,15 +369,12 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\MEX\MEX_2015_ENOE\MEX_2015_ENO
 *<_subnatid3_>
 *selected towns within selected cities from states
 	gen byte subnatid3 = loc
-	*label de lblsubnatid3 1 "1 - Name"
-	*label values subnatid3 lblsubnatid3
 	label var subnatid3 "Subnational ID at Third Administrative Level"
 *</_subnatid3_>
 
 
 *<_subnatidsurvey_>
 	gen subnatidsurvey = "subnatid2"
-	*tostring subnatidsurvey, replace
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -577,8 +574,6 @@ replace age = . if eda == 99
 
 *<_migrated_from_code_>
 	gen migrated_from_code = .
-	*label de lblmigrated_from_code
-	*label values migrated_from_code lblmigrated_from_code
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
 *</_migrated_from_code_>
 
@@ -673,7 +668,6 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat7_>
-	*gen byte educat7 =
 	gen byte educat7=1 if educy==0
 	replace educat7=2 if cs_p13_1==2
 	replace educat7=3 if educy==6 & cs_p13_1==2
@@ -821,7 +815,6 @@ foreach v of local ed_var {
 	gen byte underemployment = .
 	replace underemployment=1 if  p8a==1 | p8a==3
 	replace underemployment = . if age < minlaborage & age != .
-	**recode underemployment .=0
 	replace underemployment=. if lstatus!=1
 	label var underemployment "Underemployment status"
 	la de lblunderemployment 0 "No" 1 "Yes"
@@ -867,12 +860,7 @@ foreach v of local ed_var {
 
 {
 *<_empstat_>
-	/*gen byte empstat=5
-	replace empstat=1 if p3a==1 & p3h==1
-	replace empstat=2 if p3a==2 & inlist(p3h,2,3)
-	replace empstat=3 if p3b==1 & p3d==1
-	replace empstat=4 if p3b==1 & p3d==2
-	replace empstat=. if lstatus!=1*/
+
 	gen int empstat = 5
 
 	replace empstat = 1 if p3a == 1 & p3h == 1
@@ -995,7 +983,6 @@ gen  occup_skill= substr(isco_1, 1,2)
 
 
 *<_unitwage_>
-	*gen byte unitwage = p6b1
 	gen byte unitwage = 5
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	/*
@@ -1012,7 +999,7 @@ gen  occup_skill= substr(isco_1, 1,2)
 	(10)				(10) other
 
 	*/
-	*recode unitwage 1=5 2=3 3=2 4=1 6 5=10 7 8=.
+
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
 	replace unitwage=. if wage_no_compen==.
 	label values unitwage lblunitwage
@@ -1082,12 +1069,6 @@ replace unitwage=. if wmonths==.
 </_wage_total> */
 	gen double wage_total=.
 	replace wage_total=( wage_no_compen)*wmonths
-/*replace wage_total=(wage_no_compen*5*4.3)*wmonths if unitwage==1
-//Wage in daily unit
-replace wage_total=(wage_no_compen*4.3)*wmonths if unitwage==2 //Wage in weekly unit
-replace wage_total=(wage_no_compen*2.15)*wmonths if unitwage==3
-replace wage_total=( wage_no_compen)*wmonths if unitwage==5 //Wage in monthly unit
-replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others*/
 	replace wage_total=. if lstatus!=1 & empstat!=1
 	replace wage_total=round(wage_total)
 	label var wage_total "Annualized total wage primary job 7 day recall"
@@ -1136,17 +1117,7 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others*/
 
 
 *<_firmsize_l_>
-	/*gen byte firmsize_l = .
-	replace firmsize_l=1 if p3q==01
-	replace firmsize_l=2 if p3q==02
-	replace firmsize_l=6 if p3q==03
-	replace firmsize_l=11 if p3q==04
-	replace firmsize_l=16 if p3q==05
-	replace firmsize_l=21 if p3q==06
-	replace firmsize_l=31 if p3q==07
-	replace firmsize_l=51 if p3q==08
-	replace firmsize_l=100 if inrange(p3q,09,12)
-	replace firmsize_l=. if lstatus!=1*/
+
 	gen byte firmsize_l = .
 	 replace firmsize_l=1 if p3q==01
 	 replace firmsize_l=2 if p3q==02
@@ -1182,16 +1153,7 @@ replace wage_total=( wage_no_compen) if unitwage==10 //Wage for others*/
 
 
 *<_firmsize_u_>
-	/*gen byte firmsize_u=.
-	replace firmsize_u=1 if p3q==01
-	replace firmsize_u=5 if p3q==02
-	replace firmsize_u=10 if p3q==03
-	replace firmsize_u=15 if p3q==04
-	replace firmsize_u=20 if p3q==05
-	replace firmsize_u=30 if p3q==06
-	replace firmsize_u=50 if p3q==07
-	replace firmsize_u=100 if inrange(p3q,8,12)
-	replace firmsize_u=. if lstatus!=1*/
+
 	gen byte firmsize_u = .
 		replace firmsize_u=1 if p3q==01
 		replace firmsize_u=5 if p3q==02
@@ -1362,7 +1324,6 @@ replace industrycat10_2_helper=. if lstatus!=1
 
 
 *<_firmsize_l_2_>
-	*gen byte firmsize_l_2 = p7e
 	gen byte firmsize_l_2 = .
      replace firmsize_l_2=1 if p7e==01
      replace firmsize_l_2=2 if p7e==02
@@ -1384,7 +1345,6 @@ replace industrycat10_2_helper=. if lstatus!=1
 
 
 *<_firmsize_u_2_>
-	*gen byte firmsize_u_2 = p7e
 	gen byte firmsize_u_2 = .
      replace firmsize_u_2=1 if p7e==01
      replace firmsize_u_2=5 if p7e==02
