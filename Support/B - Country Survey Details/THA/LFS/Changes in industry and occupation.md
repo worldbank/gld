@@ -8,4 +8,4 @@ The ISCO 1958 is outdated and not compatible with the specifications of the occu
 
 An issue faced in the conversion process is the  many-to-many correspondence when mapping the ISCO 1968 codes with the ISCO 1988 at the three-digit level. In the example below, the code “0-23” can be mapped to two distinct three-digit ISCO 1988 codes (i.e., “213” and “214”). We select the ISCO 1988 code with the greater number of occurrences, which in this case is “214”. When the number of occurrences is equally split between two codes, the code that is lower in value is chosen. That is, if the frequency counts are split between “315” and “316”, “315” will be selected because 315 < 316. There is no logic to this and merely an arbitrary rule selection. 
 
-![image](https://user-images.githubusercontent.com/76545296/176477588-1c59dedf-2aa8-4887-a294-8761160abfe5.png)
+![image](https://github.com/worldbank/gld/blob/Thailand_Survey_Details/Support/B%20-%20Country%20Survey%20Details/THA/LFS/utilities/isco_codes.png?raw=true)
