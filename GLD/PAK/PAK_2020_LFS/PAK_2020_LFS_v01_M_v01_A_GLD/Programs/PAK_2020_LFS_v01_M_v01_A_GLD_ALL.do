@@ -430,16 +430,26 @@ local output "`id_data'"
 *</_migrated_binary_>
 
 
+/* <_migrated_years_note>
+   Information is on years living in current place (which is equal
+   to years since left previous residence). However, info is 
+   code 2 for less than a year,
+   code 3 to 6 for 1 to 4 years,
+   code 7 for 5 to 9 years,
+   code 8 for 10 or more years
+
+   Code 0.5 for less than a year, half-point for 5-9 window (e.g., 7)
+   and code 10 as a lower bound for the 10+ option  
+</_migrated_years_note> */
+
+
 *<_migrated_years_>
-	gen int migrated_years=2020 if S4C15==2
-	replace migrated_years=2019 if S4C15==3
-	replace migrated_years=2018 if S4C15==4
-	replace migrated_years=2017 if S4C15==5
-	replace migrated_years=2016 if S4C15==6
-	replace migrated_years=2015 if S4C15==7
-	replace migrated_years=2010 if S4C15==8	
-	replace migrated_years=. if S4C15==1
-	label var migrated_years "Years since latest migration"
+   gen migrated_years=.
+   replace migrated_years=0.5 if S4C15==2
+   replace migrated_years =S4C15-2 if inrange(S4C15,3,6)
+   replace migrated_years=7 if S4C15==7
+   replace migrated_years=10 if S4C15==8
+   label var migrated_years "Years since latest migration"
 *</_migrated_years_>
 
 
@@ -503,7 +513,7 @@ local output "`id_data'"
 {
 
 *<_ed_mod_age_>
-	gen byte ed_mod_age=0
+	gen byte ed_mod_age=5
 	label var ed_mod_age "Education module application age"
 *</_ed_mod_age_>
 
@@ -699,10 +709,23 @@ is 10 and above, Pakistan employment report defines active population as 15 year
 *----------8.1: 7 day reference overall------------------------------*
 
 {
+	
+/*<_lstatus_note>
+
+Employed if work for profit or in a farm business; 
+Unemployed if seeking (S9C1==1) and available [!mi(S9C5)] and unavailable to work
+only because 
+- illness
+- will take a job within a month
+- temporarily laid off
+- apprentice and not willing to work
+*<_lstatus_note>*/	
+
+	
 *<_lstatus_>
 	gen byte lstatus=.
 	replace lstatus=1 if inlist(1, S5C1, S5C2, S5C3) | inlist(S5C4,1,2)
-	replace lstatus=2 if S9C1==1 
+	replace lstatus=2 if lstatus!=1 & S9C1==1
 	replace lstatus=3 if lstatus==.
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -721,6 +744,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_potential_lf_>
 	gen byte potential_lf=.
+	replace potential_lf=0 if lstatus==3
 	replace potential_lf=1 if [S9C1==2 & inrange(S9C6, 1, 2)] | [S9C1==1 & inrange(S9C6, 3, 4)]
 	replace potential_lf=0 if [S9C1==1 & inrange(S9C6, 1, 2)] | [S9C1==2 & inrange(S9C6, 3, 4)]
 	replace potential_lf=. if age < minlaborage
@@ -1221,6 +1245,7 @@ upper and lower bonds are the same.
 	label values ocusec_year lblocusec_year
 *</_ocusec_year_>
 
+
 *<_industry_orig_year_>
 	gen industry_orig_year=.
 	label var industry_orig_year "Original industry record main job 12 month recall"
@@ -1231,6 +1256,7 @@ upper and lower bonds are the same.
 	gen industrycat_isic_year=.
 	label var industrycat_isic_year "ISIC code of primary job 12 month recall"
 *</_industrycat_isic_year_>
+
 
 *<_industrycat10_year_>
 	gen byte industrycat10_year=.

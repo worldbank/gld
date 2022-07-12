@@ -21,7 +21,7 @@
 <_Sample size (IND)_> 			182,541 </_Sample size (IND)_>
 <_Sampling method_> 			Stratified two-stage cluster sampling method </_Sampling method_>
 <_Geographic coverage_> 		Four main provinces </_Geographic coverage_>
-<_Currency_> 					Pakistann Rupee </_Currency_>
+<_Currency_> 					Pakistani Rupee </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
@@ -422,13 +422,27 @@ local output "`id_data'"
 *</_migrated_binary_>
 
 
+/*<_migrated_years_>
+
+   Information is on years living in current place (which is equal
+   to years since left previous residence). However, info is 
+   code 2 for less than a year,
+   code 3 for 1 to 4 years,
+   code 4 for 5 to 9 years,
+   code 5 for 10 or more years
+
+   Code 0.5 for less than a year, half-point for 1-4 and 5-9 windows (e.g., 2.5 and 7)
+   and code 10 as a lower bound for the 10+ option  
+*<_migrated_years_>*/
+
+
 *<_migrated_years_>
-	gen int migrated_years=2012 if s4_q15==2
-	replace migrated_years=2011 if s4_q15==3
-	replace migrated_years=2007 if s4_q15==4
-	replace migrated_years=2002 if s4_q15==5
-	replace migrated_years=. if s4_q15==1
-	label var migrated_years "Years since latest migration"
+   gen migrated_years=.
+   replace migrated_years=0.5 if s4_q15==2
+   replace migrated_years=2.5 if s4_q15==3
+   replace migrated_years=7 if s4_q15==4
+   replace migrated_years=10 if s4_q15==5
+   label var migrated_years "Years since latest migration"
 *</_migrated_years_>
 
 
@@ -483,9 +497,49 @@ local output "`id_data'"
 
 
 {
+	
+/*<_ed_mod_age_>
+
+Note that in the questionnaire, questions for literacy and education level are asked to 
+all respondents without age restriction. 
+
+But the current enrolment question is asked to people aged 5 and above. 
+Tabbing age and literacy or age and education level will show that the two questions, 
+literacy and education level were actually asked to people aged 5 and above as well instead of 
+all people.
+
+**Here is just part of an exmple of tabbing age and literacy, 0-15 years old
+and all ages above 15 are NOT missed.**
+
+. tab age s4_q8, m
+
+Individual |              s4_q8
+       age |         1          2          . |     Total
+-----------+---------------------------------+----------
+         0 |         0          0      3,233 |     3,233 
+         1 |         0          0      4,085 |     4,085 
+         2 |         0          0      5,447 |     5,447 
+         3 |         0          0      5,843 |     5,843 
+         4 |         0          0      5,730 |     5,730 
+         5 |       564      5,488          0 |     6,052 
+         6 |     1,132      4,437          0 |     5,569 
+         7 |     1,942      3,811          0 |     5,753 
+         8 |     2,786      3,266          0 |     6,052 
+         9 |     2,618      2,013          0 |     4,631 
+        10 |     4,259      1,571          0 |     5,830 
+        11 |     2,769        746          0 |     3,515 
+        12 |     4,578      1,331          0 |     5,909 
+        13 |     3,431        824          0 |     4,255 
+        14 |     3,760      1,120          0 |     4,880 
+        15 |     3,255      1,044          0 |     4,299 
+
+
+Therefore, the ed_mod_age was set to 5 as oppsed to 0.		
+*<_ed_mod_age_>*/
+
 
 *<_ed_mod_age_>
-	gen byte ed_mod_age=0
+	gen byte ed_mod_age=5
 	label var ed_mod_age "Education module application age"
 *</_ed_mod_age_>
 
@@ -677,10 +731,22 @@ is 10 and above, Pakistan employment report defines active population as 15 year
 *----------8.1: 7 day reference overall------------------------------*
 
 {
+/*<_lstatus_note>
+
+Employed if work for profit or in a farm business; 
+Unemployed if seeking (s9_q1==1) and available [!mi(s9_q5)] and unavailable to work
+only because 
+- illness
+- will take a job within a month
+- temporarily laid off
+- apprentice and not willing to work
+*<_lstatus_note>*/	
+	
+	
 *<_lstatus_>
 	gen byte lstatus=.
-	replace lstatus=1 if inlist(1, s5_q1, s5_q2, s5_q3) | inlist(s5_q4,1,2)
-	replace lstatus=2 if s9_q1==1 | inrange(s9_q4,1,6) | inrange(s9_q5,1,5) 
+	replace lstatus=1 if inlist(1, s5_q2, s5_q3) | inlist(s5_q4,1,2)
+	replace lstatus=2 if lstatus!=1 & [s9_q1==1 | !mi(s9_q5) | inrange(s9_q6,1,4)]
 	replace lstatus=3 if lstatus==.
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -699,6 +765,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_potential_lf_>
 	gen byte potential_lf=.
+	replace potential_lf=0 if lstatus ==3
 	replace potential_lf=1 if [s9_q1==2 & inrange(s9_q4, 1, 6)] | [s9_q1==1 & s9_q4==7]
 	replace potential_lf=0 if [s9_q1==1 & inrange(s9_q4, 1, 6)] | [s9_q1==2 & s9_q4==7]
 	replace potential_lf=. if age < minlaborage
