@@ -224,7 +224,7 @@ save "`path_in'\data_2019_final.dta", replace
 
 *<_urban_>
 	gen byte urban=resid
-	recode urban 2=0
+	recode urban 1=0 2=1
 	label var urban "Location is urban"
 	la de lblurban 1 "Urban" 0 "Rural"
 	label values urban lblurban
@@ -373,6 +373,7 @@ save "`path_in'\data_2019_final.dta", replace
 
 *<_age_>
 	gen age = b05_years
+	replace age=. if b05_years>112
 	label var age "Individual age"
 *</_age_>
 
@@ -771,6 +772,7 @@ foreach v of local ed_var {
 	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
+	*10 people in working age do not provide information for any labour question.
 	label values lstatus lbllstatus
 *</_lstatus_>
 
@@ -803,6 +805,7 @@ foreach v of local ed_var {
 	recode nlfreason 8=1 4=2 2=4 17=3 1=5 3=5 5/7=5 9/16=5 18=5 96=5
 	label var nlfreason "Reason not in the labor force" 
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
+	replace nlfreason=. if lstatus!=3
 	label values nlfreason lblnlfreason
 *</_nlfreason_>
 
@@ -814,7 +817,7 @@ foreach v of local ed_var {
 	replace unempldur_l=4 if d20==3
 	replace unempldur_l=7 if d20==4
 	replace unempldur_l=13 if d20==5
-	
+	replace unempldur_l=. if lstatus!=2
 	label var unempldur_l "Unemployment duration (months) lower bracket"
 *</_unempldur_l_>
 
@@ -826,6 +829,7 @@ foreach v of local ed_var {
 	replace unempldur_u=6 if d20==3
 	replace unempldur_u=12 if d20==4
 	replace unempldur_u=. if d20==5
+	replace unempldur_u=. if lstatus!=2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
 *</_unempldur_u_>
 }
@@ -850,7 +854,8 @@ foreach v of local ed_var {
 
 
 *<_ocusec_>
-	gen byte ocusec = .
+	gen byte ocusec = d24
+	recode ocusec 5=3 1/4=1 6/7=1 8/20=2
 	label var ocusec "Sector of activity primary job 7 day recall"
 	la de lblocusec 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec lblocusec
@@ -865,6 +870,9 @@ foreach v of local ed_var {
 
 *<_industrycat_isic_>
 	gen industrycat_isic = string(d23_isic, "%04.0f")
+	replace industrycat_isic="" if lstatus!=1
+	replace industrycat_isic="8510" if d23_isic==8511
+	replace industrycat_isic="8210" if d23_isic==9495
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
@@ -935,7 +943,8 @@ foreach v of local ed_var {
 
 
 *<_wage_no_compen_>
-	gen double wage_no_compen = .
+	gen double wage_no_compen = d40_basic 
+	*around 3000 people informed they recieve a salary monthly but do not say how much.
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
@@ -949,21 +958,25 @@ foreach v of local ed_var {
 	while unitwage is code 1 ("Daily") for all, regardless of the periodicity.
 </_unitwage_note> */
 
-	gen byte unitwage = .
+	gen byte unitwage = 1
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
+	replace unitwage=. if lstatus!=1
 	label values unitwage lblunitwage
 *</_unitwage_>
 
 
 *<_whours_>
 	gen whours =d27
+	recode whours 0=.
+	replace whours=. if d27>84
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
 
 *<_wmonths_>
-	gen wmonths = .
+	gen wmonths = d31
+	recode wmonths 0=.
 	label var wmonths "Months of work in past 12 months primary job 7 day recall"
 *</_wmonths_>
 
@@ -975,7 +988,7 @@ foreach v of local ed_var {
 	This is done to make it easy to compare earnings in formal and informal sectors.
 
 </_wage_total_note> */
-	gen wage_total = .
+	gen wage_total = (wage_no_compen+d41+d42+d43+d44)
 	label var wage_total "Annualized total wage primary job 7 day recall"
 *</_wage_total_>
 
@@ -1063,7 +1076,8 @@ foreach v of local ed_var {
 
 
 *<_ocusec_2_>
-	gen byte ocusec_2 = .
+	gen byte ocusec_2 = d57
+	recode ocusec_2 5=3 7=1 8/20=2 96=2
 	label var ocusec_2 "Sector of activity secondary job 7 day recall"
 	label values ocusec_2 lblocusec
 *</_ocusec_2_>
@@ -1077,6 +1091,8 @@ foreach v of local ed_var {
 
 *<_industrycat_isic_2_>
 	gen industrycat_isic_2 = string(d56_code, "%04.0f")
+	replace industrycat_isic_2="" if lstatus!=1
+	replace industrycat_isic_2="" if industrycat_isic_2=="."
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
@@ -1157,12 +1173,15 @@ foreach v of local ed_var {
 
 *<_whours_2_>
 	gen whours_2 = d59
+	recode whours_2 0=.
+	replace whours_2=. if d59>36
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 
 
 *<_wmonths_2_>
 	gen wmonths_2 = d62
+	recode wmonths_2 0=.
 	label var wmonths_2 "Months of work in past 12 months secondary job 7 day recall"
 *</_wmonths_2_>
 
@@ -1210,19 +1229,19 @@ foreach v of local ed_var {
 
 
 *<_t_hours_total_>
-	gen t_hours_total = .
+	gen t_hours_total = whours + whours_2 + t_hours_others
 	label var t_hours_total "Annualized hours worked in all jobs 7 day recall"
 *</_t_hours_total_>
 
 
 *<_t_wage_nocompen_total_>
-	gen t_wage_nocompen_total = .
+	gen t_wage_nocompen_total = wage_no_compen
 	label var t_wage_nocompen_total "Annualized wage in all jobs excl. bonuses, etc. 7 day recall"
 *</_t_wage_nocompen_total_>
 
 
 *<_t_wage_total_>
-	gen t_wage_total = .
+	gen t_wage_total = wage_total + wage_total_2 +t_wage_others
 	label var t_wage_total "Annualized total wage for all jobs 7 day recall"
 *</_t_wage_total_>
 
@@ -1592,7 +1611,7 @@ foreach v of local ed_var {
 
 
 *<_t_wage_total_year_>
-	gen t_wage_total_year = .
+	gen t_wage_total_year = t_wage_total
 	label var t_wage_total_year "Annualized total wage for all jobs 12 month recall"
 *</_t_wage_total_year_>
 
@@ -1613,7 +1632,7 @@ foreach v of local ed_var {
 
 
 *<_linc_nc_>
-	gen linc_nc = .
+	gen linc_nc = t_wage_total
 	label var linc_nc "Total annual wage income in all jobs, excl. bonuses, etc."
 *</_linc_nc_>
 
