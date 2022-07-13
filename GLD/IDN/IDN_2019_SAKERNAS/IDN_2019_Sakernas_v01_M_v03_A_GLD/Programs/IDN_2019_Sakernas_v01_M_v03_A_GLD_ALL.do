@@ -131,13 +131,13 @@ local output "`id_data'"
 
 
 *<_vermast_>
-	gen vermast = "v02"
+	gen vermast = "v01"
 	label var vermast "Version of master data"
 *</_vermast_>
 
 
 *<_veralt_>
-	gen veralt = "v01"
+	gen veralt = "v03"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
@@ -544,13 +544,12 @@ Original code list of variable "B5_R1A" in the dataset:
 8.Non-formal senior high school (Paket C)
 9.Senior high school for special needs
 10.Senior high school
-11.Vocational high school
+11.Vocational high school(SMK/MAK)
 12.Diploma I/II
 13.Diploma III
 14.Diploma IV/Bachelor
 15.Master
 16.Doctoral
-
 </_educy_>*/
 
 
@@ -563,7 +562,8 @@ Original code list of variable "B5_R1A" in the dataset:
 
 *<_educat7_>
 	gen byte educat7 = B5_R1A
-	recode educat7 (1=2) (3/4=3) (5/8=4) (9/10=5) (11=6) (12/16=7)
+	recode educat7 (1=2) (2/4=3) (5/7=4) (8/11=5) (12/13=6) (14/16=7)
+	replace educat7 = 1 if B4_K9==1
 	replace educat7 = . if age < ed_mod_age & age!=.
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"

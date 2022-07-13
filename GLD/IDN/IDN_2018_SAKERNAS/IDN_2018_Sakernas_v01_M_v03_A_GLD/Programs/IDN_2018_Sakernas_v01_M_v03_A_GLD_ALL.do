@@ -4,21 +4,21 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				IDN_2016_Sakernas_v01_M_v02_A_GLD.do </_Program name_>
+<_Program name_>				IDN_2018_Sakernas_v01_M_v03_A_GLD.do </_Program name_>
 <_Application_>					Stata MP 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
 <_Date created_>				2021-08-18 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						Indonesia (IDN) </_Country_>
 <_Survey Title_>				Survei Angkatan Kerja Nasional (The National Labor Force Survey) </_Survey Title_>
-<_Survey Year_>					2016 </_Survey Year_>
-<_Study ID_>					IDN_2016_Sakernas_v01_M </_Study ID_>
+<_Survey Year_>					2018 </_Survey Year_>
+<_Study ID_>					IDN_2018_Sakernas_v01_M </_Study ID_>
 <_Data collection from (M/Y)_>	[MM/YYYY] </_Data collection from (M/Y)_>
 <_Data collection to (M/Y)_>	[MM/YYYY] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			Shared with Job's Group by the World Bank Indonesia Team
 								data request form required to get the access</_Source of dataset_>
 <_Sample size (HH)_> 			N/A </_Sample size (HH)_>
-<_Sample size (IND)_> 			131,152 </_Sample size (IND)_>
+<_Sample size (IND)_> 			508,460 </_Sample size (IND)_>
 <_Sampling method_> 			Two-stage cluster sampling method </_Sampling method_>
 <_Geographic coverage_> 		Province </_Geographic coverage_>
 <_Currency_> 					Indonesian Rupiah </_Currency_>
@@ -27,14 +27,14 @@
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
 <_ISCO Version_>				N/A </_ISCO Ver UP National_>
 <_OCCUP National_>				KBJI 2014 </_OCCUP National_>
-<_ISIC Version_>				N/A </_ISIC Version_>
+<_ISIC Version_>				ISIC Rev.4 </_ISIC Version_>
 <_INDUS National_>				KBLI 2015 </_INDUS National_>
 ---------------------------------------------------------------------------------------
 
 <_Version Control_>
 
 * Date: [2022-05-24] File: [As in Program name above] - [Reducing original indutry and occupation codes digits and remapping those two to ISIC/ISCO.]
-* Date: [YYYY-MM-DD] File: [As in Program name above] - [Description of changes]
+* Date: [2022-07-13] File: [As in Program name above] - [Adding educat4-educat7]
 
 </_Version Control_>
 
@@ -56,12 +56,12 @@ set mem 800m
 local 	drive 	`"Z"'
 local 	cty 	`"IDN"'
 local 	usr		`"573465_JT"'
-local 	surv_yr `"2016"'
+local 	surv_yr `"2018"'
 local 	year 	"`drive':\GLD-Harmonization\\`usr'\\`cty'\\`cty'_`surv_yr'_Sakernas"
 local 	main	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M"
 local 	stata	"`main'\data\stata"
-local 	gld 	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M_v02_A_GLD"
-local 	i2d2	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M_v02_A_I2D2"
+local 	gld 	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M_v03_A_GLD"
+local 	i2d2	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M_v03_A_I2D2"
 local 	code 	"`gld'\Programs"
 local 	id_data "`gld'\Data\Harmonized"
 
@@ -74,7 +74,7 @@ local output "`id_data'"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	use "`input'\sakernas16aug.dta", clear
+	use "`input'\sakernas18aug.dta", clear
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -119,13 +119,13 @@ local output "`id_data'"
 
 
 *<_isic_version_>
-	gen isic_version = ""
+	gen isic_version = "isic_4"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
 
 *<_year_>
-	gen int year = 2016
+	gen int year = 2018
 	label var year "Year of survey"
 *</_year_>
 
@@ -137,7 +137,7 @@ local output "`id_data'"
 
 
 *<_veralt_>
-	gen veralt = "v02"
+	gen veralt = "v03"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
@@ -149,7 +149,7 @@ local output "`id_data'"
 
 
 *<_int_year_>
-	gen int_year = 2016
+	gen int_year = 2018
 	label var int_year "Year of the interview"
 *</_int_year_>
 
@@ -175,9 +175,10 @@ local output "`id_data'"
 
         dup |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          0 |    131,152      100.00      100.00
+          0 |    508,460      100.00      100.00
 ------------+-----------------------------------
-      Total |    131,152      100.00
+      Total |    508,460      100.00
+
 
 <_pid_>*/
 
@@ -190,15 +191,8 @@ local output "`id_data'"
 *</_pid_>
 
 
-/*<_weight_>
-
-The original weight variable is called "weight".
-
-<_weight_>*/
-
-
 *<_weight_>
-	*gen weight = weight
+	gen weight = final_weig
 	label var weight "Survey sampling weight"
 *</_weight_>
 
@@ -263,7 +257,10 @@ provided due to it is part of the confidential information withheld by the NSO.
 
 
 *<_subnatid2_>
-	gen subnatid2 = .
+	tostring kode_kab, replace format(%02.0f)
+	tostring kode_prov, replace
+	gen code_subnatid2 = kode_prov+kode_kab
+	gen subnatid2 = code_subnatid2+" - " + nama_kab
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
 
@@ -275,7 +272,7 @@ provided due to it is part of the confidential information withheld by the NSO.
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = "subnatid1"
+	gen subnatidsurvey = "subnatid2"
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -330,13 +327,13 @@ provided due to it is part of the confidential information withheld by the NSO.
 
 
 *<_age_>
-	gen age = b4_k6
+	gen age = b4_k8
 	label var age "Individual age"
 *</_age_>
 
 
 *<_male_>
-	gen male = b4_k4
+	gen male = b4_k6
 	recode male 2=0
 	label var male "Sex - Ind is male"
 	la de lblmale 1 "Male" 0 "Female"
@@ -346,7 +343,7 @@ provided due to it is part of the confidential information withheld by the NSO.
 
 *<_relationharm_>
 	gen byte relationharm = b4_k3
-	recode relationharm (4 5=3) (6=4) (7/9 0=6)
+	recode relationharm (3 4 5 6=3) (7=4) (8=5) (9 10 11=6)
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Non-relatives"
 	label values relationharm lblrelationharm
@@ -360,7 +357,7 @@ provided due to it is part of the confidential information withheld by the NSO.
 
 
 *<_marital_>
-	gen byte marital = b4_k7
+	gen byte marital = b4_k10
 	recode marital (1=2) (2=1) (3=4) (4=5)
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
@@ -500,14 +497,14 @@ provided due to it is part of the confidential information withheld by the NSO.
 {
 
 *<_ed_mod_age_>
-	gen byte ed_mod_age = 10
+	gen byte ed_mod_age = 5
 	label var ed_mod_age "Education module application age"
 *</_ed_mod_age_>
 
 
 *<_school_>
-	gen byte school = b4_k8
-	recode school (2=1) (1 3=0)
+	gen byte school = b4_k9
+	recode school (1 3=0) (2=1)
 	replace school = . if age < ed_mod_age & age!=.
 	label var school "Attending school"
 	la de lblschool 0 "No" 1 "Yes"
@@ -534,7 +531,7 @@ primary unfinished to those options depends on specific assumptions and research
 needs. Therefore, variable "educy" was left missing and so were educat7, educat5,
 and educat4.
 
-There is no such category as "No education" nor missing observations. So
+In 2019, there is no such category as "No education" nor missing observations. So
 probably the survey grouped "no education" into "not yet completed primary school".
 
 Original code list of variable "b5_r1a" in the dataset:
@@ -566,7 +563,9 @@ Original code list of variable "b5_r1a" in the dataset:
 
 
 *<_educat7_>
-	gen byte educat7 = .
+	gen byte educat7 = b5_r1a
+	recode educat7 (1=2) (2/4=3) (5/7=4) (8/11=5) (12/13=6) (14/16=7)
+	replace educat7 = 1 if b4_k9==1
 	replace educat7 = . if age < ed_mod_age & age!=.
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
@@ -585,9 +584,9 @@ Original code list of variable "b5_r1a" in the dataset:
 
 
 *<_educat4_>
-	gen byte educat4 = educat5
-	replace educat4 = . if age < ed_mod_age & age!=.
+	gen byte educat4 = educat5	
 	recode educat4 (3=2) (4=3) (5=4)
+	replace educat4 = . if age < ed_mod_age & age!=.
 	label var educat4 "Level of education 3"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values educat4 lbleducat4
@@ -676,7 +675,7 @@ replace educat_isced_v = "" if ( age < ed_mod_age & !missing(age) )
 
 
 *<_minlaborage_>
-	gen byte minlaborage = 10
+	gen byte minlaborage = 5
 	label var minlaborage "Labor module application age"
 *</_minlaborage_>
 
@@ -687,8 +686,8 @@ replace educat_isced_v = "" if ( age < ed_mod_age & !missing(age) )
 
 *<_lstatus_>
 	gen byte lstatus = .
-	replace lstatus = 1 if b5_r31 != .
-    replace lstatus = 2 if (b5_r11==1 | b5_r12==1 | b5_r16a==1 | b5_r16a==2) & b5_r17a==1 & missing(lstatus)
+	replace lstatus = 1 if b5_r37 != 0
+    replace lstatus = 2 if (b5_r15a==1 | b5_r15b==1 | b5_r20a==2 | b5_r20a==3) & b5_r21a==1 & missing(lstatus)
     replace lstatus = 3 if missing(lstatus)
 	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
@@ -701,16 +700,16 @@ replace educat_isced_v = "" if ( age < ed_mod_age & !missing(age) )
 Note: var "potential_lf" is missing if the respondent is in labor force or unemployed; it only takes value if the respondent is not in labor force. (lstatus==3)
 
 "potential_lf" = 1 if the person is
-1)available but not searching (b5_r17b==1 & (b5_r11==2) & (b5_r12==2)) or
-2)searching but not immediately available to work ((b5_r11==1) | (b5_r12==1)) & (b5_r17a==2 | b5_r17b==2)
+1)available but not searching (b5_r21b==1 & (b5_r15a==2) & (b5_r15b==2)) or
+2)searching but not immediately available to work ((b5_r15a==1) | (b5_r15b==1)) & b5_r22!=0
 
 </_potential_lf_>*/
 
 
 *<_potential_lf_>
 	gen byte potential_lf = .
-	replace potential_lf = 1 if [b5_r17b==1 & (b5_r11==2) & (b5_r12==2)] | [((b5_r11==1) | (b5_r12==1)) & (b5_r17a==2 | b5_r17b==2)]
-	replace potential_lf = 0 if [b5_r17b==1 & (b5_r11==1 | b5_r12==1)] | [(b5_r17a==2 | b5_r17b==2) & (b5_r11==2) & (b5_r12==2)]
+	replace potential_lf = 1 if [b5_r21b==1 & (b5_r15a==2) & (b5_r15b==2)] | [((b5_r15a==1) | (b5_r15b==1)) & b5_r22!=0]
+	replace potential_lf = 0 if [b5_r22==1 & (b5_r15a==1 | b5_r15b==1)] | [b5_r22==2 & (b5_r15a==2) & (b5_r15b==2)]
 	replace potential_lf = . if age < minlaborage & age != .
 	replace potential_lf = . if lstatus != 3
 	label var potential_lf "Potential labour force status"
@@ -729,7 +728,7 @@ Note: var "potential_lf" is missing if the respondent is in labor force or unemp
 
 /*<_nlfreason_>
 
-The original variable "b5_r16a" has 12 non-missing categories:
+The original variable "b5_r20a" has 14 non-missing categories:
 	1  Already accepted for work but not yet starting the job
 	2  Already having a business but not yet starting it
 	3  Hopeless; feeling impossible to get a job
@@ -739,16 +738,18 @@ The original variable "b5_r16a" has 12 non-missing categories:
 	7  Attending school/just completed school/will continue school
 	8  Pregnancy/childbirth/postnatal care
 	9  Lack of infrastructure (assets, roads, transport, employment service)
-	10 Experiencing social exclusion/rejection
-	11 Inability to work
-	12 Other, specify
+	10 Absence/shortage of capital
+	11 Under-age
+	12 Advanced age
+	13 Inability to work
+	14 Unable to be classified into code 1-13
 
 <_nlfreason_>*/
 
 
 *<_nlfreason_>
-	gen byte nlfreason = b5_r21b
-	recode nlfreason (7=1) (6=2) (11=4) (1/5 8/10 12=5)
+	gen byte nlfreason = b5_r20a
+	recode nlfreason (7=1) (6=2) (12=3) (13=4) (1/5 8/11 14=5) (0=.)
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
 	label values nlfreason lblnlfreason
@@ -757,7 +758,7 @@ The original variable "b5_r16a" has 12 non-missing categories:
 
 /*<_unempldur_l_>
 
-The original variable "b5_r21b" is the period of seeking job. Therefore, the lower
+The original variable "b5_r25b" is the period of seeking job. Therefore, the lower
 and upper bound of unemploymenmt duration are the same. They are in fact the length
 of unemployment period.
 
@@ -765,14 +766,14 @@ of unemployment period.
 
 
 *<_unempldur_l_>
-	gen byte unempldur_l = b5_r21b
+	gen byte unempldur_l = b5_r25b
 	replace unempldur_l = . if lstatus != 2
 	label var unempldur_l "Unemployment duration (months) lower bracket"
 *</_unempldur_l_>
 
 
 *<_unempldur_u_>
-	gen byte unempldur_u = b5_r21b
+	gen byte unempldur_u = b5_r25b
 	replace unempldur_u = . if lstatus!=2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
 *</_unempldur_u_>
@@ -784,33 +785,17 @@ of unemployment period.
 
 {
 *<_empstat_>
-	gen byte empstat = b5_r23
-	recode empstat (1 2=4) (4=1) (6=5) (7=2)
+	gen byte empstat = b5_r27a
+	recode empstat (1 2=4) (4=1) (6=5) (7=2) (0=.)
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat lblempstat
 *</_empstat_>
 
 
-/*<_ocusec_>
-
-The original variable "b5_r31" has 5 categories:
-
-1. Government
-2. international institution/organization
-3. non-profit institutions
-4. profit institutions (private enterprises, state-owned enterprises, regional-owned enterprises)
-5. cooperatives
-6. individual/ household business
-7. Houeshold
-8. Others, specify:
-9. Do not know
-
-<_ocusec_>*/
-
 *<_ocusec_>
-	gen byte ocusec = b5_r31
-	recode ocusec (2 8 9=4) (3 4/7=2)
+	gen byte ocusec = b5_r37
+	recode ocusec (2 8 9=4) (3/7=2) (0=.)
 	label var ocusec "Sector of activity primary job 7 day recall"
 	la de lblocusec 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec lblocusec
@@ -819,27 +804,48 @@ The original variable "b5_r31" has 5 categories:
 
 /*<_industry_orig_>
 
-Variable "b5_r19_17" uses KBLI 2015, including 17 sectors, which is at one-digit level.
-Note that in the raw dataset variable "b5_r19_17" does not have labels.
+Variable "b5_r23" uses KBLI 2015 which has five digits originally.
+Note that in the raw dataset variable "b5_r23" does not have labels.
 
 <_industry_orig_>*/
 
 
 *<_industry_orig_>
-	gen industry_orig = b5_r19_17
+	gen industry_orig = b5_r23
+	replace industry_orig = int(b5_r23/100) if b5_r23>9999
+	replace industry_orig = int(b5_r23/10) if industry_orig>999
 	replace industry_orig = . if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
 
+/*<_industrycat_isic_>
+
+we used the first three digits of variable "b5_r23" to do industrial mappings.
+Only 6 categories need rematching manually. All the others can be mapped to ISIC
+directly.
+
+<_industrycat_isic_>*/
+
+
 *<_industrycat_isic_>
-	gen industrycat_isic = ""
+	gen industrycat_isic = int(b5_r23/100)
+	replace industrycat_isic = industrycat_isic*10
+	tostring industrycat_isic, replace format(%04.0f)
+	gen kbli2 = int(b5_r23/100)
+	gen kbli4 = int(b5_r23/10)
+	replace industrycat_isic = "0720" if kbli2==73
+	replace industrycat_isic = "4920" if kbli2==494
+	replace industrycat_isic = "5520" if kbli4==5519
+	replace industrycat_isic = "8550" if kbli4==8560
+	replace industrycat_isic = "9600" if inlist(kbli2, 961, 962, 969)
+	replace industrycat_isic = "" if lstatus!=1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
 
 *<_industrycat10_>
-	gen byte industrycat10 = b5_r19_17
+	gen byte industrycat10 = b5_r23_sek
 	recode industrycat10 (5=4) (6=5) (7 9=6) (8 10=7) (11 12 13=8) (14=9) (15 16 17=10) (0=.)
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
@@ -859,14 +865,14 @@ Note that in the raw dataset variable "b5_r19_17" does not have labels.
 
 /*<_occup_orig_>
 
-Variable "b5_r20_201" uses KBJI 2014 and it has one digit and 10 categories in total.
-Note that in the raw dataset variable "b5_r20_201" does not have labels.
+Variable "b5_r24_kbj" uses KBJI 2014 and it has one digit and 10 categories in total.
+Note that in the raw dataset variable "b5_r24_kbj" does not have labels.
 
 <_occup_orig_>*/
 
 
 *<_occup_orig_>
-	gen occup_orig = b5_r20_201
+	gen occup_orig = b5_r24_kbj
 	replace occup_orig = . if lstatus!=1
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
@@ -879,7 +885,7 @@ Note that in the raw dataset variable "b5_r20_201" does not have labels.
 
 
 *<_occup_skill_>
-	gen occup_skill = b5_r20_201
+	gen occup_skill = b5_r24_kbj
 	recode occup_skill (1/3=3) (4/8=2) (9=1) (0=.)
 	replace occup_skill = . if lstatus!=1
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
@@ -887,9 +893,9 @@ Note that in the raw dataset variable "b5_r20_201" does not have labels.
 
 
 *<_occup_>
-	gen occup = b5_r20_201
+	gen occup = b5_r24_kbj
 	replace occup = . if lstatus!=1
-	replace occup = . if occup==0
+	replace occup = . if  occup==0
 	label var occup "1 digit occupational classification, primary job 7 day recall"
   	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians and associate professionals" 4 "Clerical support workers" 5 "Service and market sales workers" 6 "Skilled agricultural, forestry and fishery workers" 7 "Craft and related trades workers" 8 "Plant and machine operators, and assemblers" 9 "Elementary occupations"
 	label values occup lbloccup
@@ -898,13 +904,22 @@ Note that in the raw dataset variable "b5_r20_201" does not have labels.
 
 /*<_wage_no_compen_>
 
-In the raw dataset, question 26 devides into "in cash" and "in-kind". For each observation, I calculated the total income by adding up "in cash" and "in-kind" salary.
+In the raw dataset, question 31 has 3 parts aksing about working days and monthly salary of 1) self-employed people and 2) employees. Variable "b5_r31b" is for self-employed people whereas "b5_r31c" is for employees.
+
+Each of these two variables devides into "in cash" and "in-kind". For each observation, I calculated the total income by adding up "in cash" and "in-kind" salary.
+
+	count if (b5_r31b1!=0 | b5_r31b2!=0 ) & (b5_r31c1!=0 | b5_r31c2!=0)
+
+17 observations in total answered both "b5_r31b" and "b5_r31c", indicating that they self-employed and employees at the same time. But all of these observations have the same amount of income (in cash) from the self-employed work and being an employee, which is suspicious. Therefore, I treated these observations as "wrongly" answered the questions and did not add up across "b5_r31b" and  "b5_r31c".
 
 <_wage_no_compen_>*/
 
 
 *<_wage_no_compen_>
-	gen double wage_no_compen = b5_r26a + b5_r26b
+	gen double wage_no_compen = .
+	gen wagec1 = b5_r31c1
+	replace wagec1 =0 if (b5_r31b1!=0 | b5_r31b2!=0 ) & (b5_r31c1!=0 | b5_r31c2!=0) & b5_r31b1==b5_r31c1
+	replace wage_no_compen = b5_r31b1+b5_r31b2+wagec1+b5_r31c2
 	replace wage_no_compen = . if lstatus!=1
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
@@ -919,9 +934,9 @@ In the raw dataset, question 26 devides into "in cash" and "in-kind". For each o
 
 
 *<_whours_>
-	gen whours = b5_r22b
+	gen whours= b5_r31a1
 	replace whours = . if lstatus!=1
-	replace whours = . if b5_r22b == 0
+	replace whours = . if b5_r31a1 == 0
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -934,7 +949,7 @@ In the raw dataset, question 26 devides into "in cash" and "in-kind". For each o
 
 /*<_wage_total_>
 
-We know the average monthly wage, which is "wage_no_compen". But since we do not know how
+We know the average monthly wage, which is wage_no_compen. But since we do not know how
 many months each observation works for, we left the annualized total wage missing.
 
 <_wage_total_>*/
@@ -953,9 +968,10 @@ We counted  "Verbal agreement" as "having a contract" as well, considering its b
 <_contract_>*/
 
 
+
 *<_contract_>
-	gen byte contract = b5_r29
-	recode contract (2/3=1) (4=0) (5=.)
+	gen byte contract = b5_r34
+	recode contract (2/3=1) (4=0) (5 0=.)
 	replace contract = . if lstatus!=1
 	label var contract "Employment has contract primary job 7 day recall"
 	la de lblcontract 0 "Without contract" 1 "With contract"
@@ -964,7 +980,7 @@ We counted  "Verbal agreement" as "having a contract" as well, considering its b
 
 
 *<_healthins_>
-	gen byte healthins = b5_r28a
+	gen byte healthins = b5_r33a
 	recode healthins (0 3=.) (2=0)
 	replace healthins = . if lstatus!=1
 	label var healthins "Employment has health insurance primary job 7 day recall"
@@ -975,15 +991,15 @@ We counted  "Verbal agreement" as "having a contract" as well, considering its b
 
 /*<_socialsec_>
 
-We count both "old-age insurance" and "pension insurance" as indicators for having social security or not. A given respondent does not have social security if he/she does not have neither.
+We count both "old age benefit (lump sum)" and "pension benefit (annuity)" as indicators for having social security or not. A given respondent does not have social security if he/she does not have neither.
 
 <_socialsec_>*/
 
 
 *<_socialsec_>
 	gen byte socialsec = .
-	replace socialsec = 1 if b5_r28c == 1 | b5_r28d == 1
-	replace socialsec = 0 if b5_r28c == 2 & b5_r28d == 5
+	replace socialsec = 1 if b5_r33d == 4 | b5_r33e == 1
+	replace socialsec = 0 if b5_r33d == 5 & b5_r33e == 2
 	replace socialsec = . if lstatus!=1
 	label var socialsec "Employment has social security insurance primary job 7 day recall"
 	la de lblsocialsec 1 "With social security" 0 "Without social secturity"
@@ -992,8 +1008,8 @@ We count both "old-age insurance" and "pension insurance" as indicators for havi
 
 
 *<_union_>
-	gen byte union = b5_r30
-	recode union (3=.) (2=0)
+	gen byte union = b5_r35
+	recode union (0 3=.) (2=0)
 	label var union "Union membership at primary job 7 day recall"
 	la de lblunion 0 "Not union member" 1 "Union member"
 	label values union lblunion
@@ -1008,14 +1024,16 @@ This question was only asked to those who are seld-employed.
 
 
 *<_firmsize_l_>
-	gen byte firmsize_l = .
+	gen byte firmsize_l = b5_r27b
+	recode firmsize_l (2=5) (3=20) (4=100) (0=.)
 	replace firmsize_l = . if lstatus!=1
 	label var firmsize_l "Firm size (lower bracket) primary job 7 day recall"
 *</_firmsize_l_>
 
 
 *<_firmsize_u_>
-	gen byte firmsize_u = .
+	gen byte firmsize_u = b5_r27b
+	recode firmsize_u (1=4) (2=19) (3=99) (0=.)
 	replace firmsize_u = . if lstatus!=1
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>
@@ -1029,8 +1047,9 @@ This question was only asked to those who are seld-employed.
 
 {
 *<_empstat_2_>
-	gen byte empstat_2 = b5_r36
-	recode empstat_2 (1 2=4) (4=1) (6=5) (7=2) (0=.)
+	gen byte empstat_2 = b5_r44
+	recode empstat (1 2=4) (4=1) (6=5) (7=2) (0=.)
+	replace empstat_2 = . if b5_r40a==2 & b5_r40b == 2
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
 	la de lblempstat_2 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat_2 lblempstat_2
@@ -1046,7 +1065,7 @@ This question was only asked to those who are seld-employed.
 
 
 *<_industry_orig_2_>
-	gen industry_orig_2 = b5_r35_17
+	gen industry_orig_2 = b5_r41_sek
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 
@@ -1073,13 +1092,13 @@ This question was only asked to those who are seld-employed.
 
 
 *<_occup_orig_2_>
-	gen occup_orig_2 = .
+	gen occup_orig_2 = b5_r42_kbj
 	label var occup_orig_2 "Original occupation record secondary job 7 day recall"
 *</_occup_orig_2_>
 
 
 *<_occup_isco_2_>
-	gen occup_isco_2 = ""
+	gen occup_isco_2 = .
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
@@ -1111,8 +1130,8 @@ This question was only asked to those who are seld-employed.
 
 
 *<_whours_2_>
-	gen whours_2 = b5_r37b-b5_r22b
-	replace whours_2 = . if b5_r34!=1
+	gen whours_2 = b5_r43
+	replace whours_2 = . if b5_r40a==2 & b5_r40b == 2
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 
@@ -1259,7 +1278,7 @@ This question was only asked to those who are seld-employed.
 
 
 *<_industrycat_isic_year_>
-	gen industrycat_isic_year = .
+	gen industrycat_isic_year = ""
 	label var industrycat_isic_year "ISIC code of primary job 12 month recall"
 *</_industrycat_isic_year_>
 
@@ -1412,7 +1431,7 @@ This question was only asked to those who are seld-employed.
 
 
 *<_industrycat_isic_2_year_>
-	gen industrycat_isic_2_year = .
+	gen industrycat_isic_2_year = ""
 	label var industrycat_isic_2_year "ISIC code of secondary job 12 month recall"
 *</_industrycat_isic_2_year_>
 
@@ -1669,6 +1688,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`output'\IDN_2016_SAKERNAS_v01_M_v02_A_GLD_ALL.dta", replace
+save "`output'\IDN_2018_SAKERNAS_v01_M_v03_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>
