@@ -4,7 +4,7 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				IDN_2019_Sakernas_v01_M_v02_A_GLD.do </_Program name_>
+<_Program name_>				IDN_2019_Sakernas_v01_M_v03_A_GLD.do </_Program name_>
 <_Application_>					Stata MP 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
 <_Date created_>				2021-08-23 </_Date created_>
@@ -34,7 +34,7 @@
 <_Version Control_>
 
 * Date: [2022-05-24] File: [As in Program name above] - [Reducing original indutry and occupation codes digits and remapping those two to ISIC/ISCO.]
-* Date: [YYYY-MM-DD] File: [As in Program name above] - [Description of changes]
+* Date: [2022-07-13] File: [As in Program name above] - [Adding educat4-educat7]
 
 </_Version Control_>
 
@@ -60,8 +60,8 @@ local 	surv_yr `"2019"'
 local 	year 	"`drive':\GLD-Harmonization\\`usr'\\`cty'\\`cty'_`surv_yr'_Sakernas"
 local 	main	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M"
 local 	stata	"`main'\data\stata"
-local 	gld 	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M_v02_A_GLD"
-local 	i2d2	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M_v02_A_I2D2"
+local 	gld 	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M_v03_A_GLD"
+local 	i2d2	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M_v03_A_I2D2"
 local 	code 	"`gld'\Programs"
 local 	id_data "`gld'\Data\Harmonized"
 
@@ -562,7 +562,8 @@ Original code list of variable "B5_R1A" in the dataset:
 
 
 *<_educat7_>
-	gen byte educat7 = .
+	gen byte educat7 = B5_R1A
+	recode educat7 (1=2) (3/4=3) (5/8=4) (9/10=5) (11=6) (12/16=7)
 	replace educat7 = . if age < ed_mod_age & age!=.
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
@@ -1674,6 +1675,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`output'\IDN_2019_SAKERNAS_v01_M_v02_A_GLD_ALL.dta", replace
+save "`output'\IDN_2019_SAKERNAS_v01_M_v03_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>
