@@ -1044,14 +1044,14 @@ foreach v of local ed_var {
 
 *<_firmsize_u_>
 	gen byte firmsize_u= .
-	replace firmsize_l=. if d25==1
-	replace firmsize_l=. if d25==2
-	replace firmsize_l=4 if d25==3
-	replace firmsize_l=9 if d25==4
-	replace firmsize_l=19 if d25==5
-	replace firmsize_l=49 if d25==6
-	replace firmsize_l=99 if d25==7
-	replace firmsize_l=. if d25==8
+	replace firmsize_u=. if d25==1
+	replace firmsize_u=. if d25==2
+	replace firmsize_u=4 if d25==3
+	replace firmsize_u=9 if d25==4
+	replace firmsize_u=19 if d25==5
+	replace firmsize_u=49 if d25==6
+	replace firmsize_u=99 if d25==7
+	replace firmsize_u=. if d25==8
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>
 

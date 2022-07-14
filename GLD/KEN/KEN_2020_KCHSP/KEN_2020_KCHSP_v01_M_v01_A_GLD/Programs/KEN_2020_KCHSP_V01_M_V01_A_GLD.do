@@ -5,34 +5,34 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				[Name of your do file] </_Program name_>
-<_Application_>					[Name of your software (STATA) and version] <_Application_>
+<_Program name_>				[KEN_2020_KCHSP_V01_M_V01_A_GLD] </_Program name_>
+<_Application_>					[STATA 16] <_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
-<_Date created_>				YYYY-MM-DD </_Date created_>
+<_Date created_>				2022-07-08 </_Date created_>
 
 -------------------------------------------------------------------------
 
-<_Country_>					[Country_Name (CCC)] </_Country_>
-<_Survey Title_>				[SurveyName] </_Survey Title_>
-<_Survey Year_>					[Year of start of the survey] </_Survey Year_>
-<_Study ID_>					[Microdata Library ID if present] </_Study ID_>
-<_Data collection from_>			[MM/YYYY] </_Data collection from_>
-<_Data collection to_>				[MM/YYYY] </_Data collection to_>
-<_Source of dataset_> 				[Source of data, e.g. NSO] </_Source of dataset_>
-<_Sample size (HH)_> 				[#] </_Sample size (HH)_>
-<_Sample size (IND)_> 				[#] </_Sample size (IND)_>
-<_Sampling method_> 				[Brief description] </_Sampling method_>
-<_Geographic coverage_> 			[To what level is data significant] </_Geographic coverage_>
-<_Currency_> 					[Currency used for wages] </_Currency_>
+<_Country_>					[Kenya (KEN)] </_Country_>
+<_Survey Title_>				[KCHSP Kenya continous household survey programme] </_Survey Title_>
+<_Survey Year_>					[2020] </_Survey Year_>
+<_Study ID_>					[N/A] </_Study ID_>
+<_Data collection from_>			[01/2020] </_Data collection from_>
+<_Data collection to_>				[12/2020] </_Data collection to_>
+<_Source of dataset_> 				[Kenya National Bureau of Statistics] </_Source of dataset_>
+<_Sample size (HH)_> 				[] </_Sample size (HH)_>
+<_Sample size (IND)_> 				[] </_Sample size (IND)_>
+<_Sampling method_> 				[N/A] </_Sampling method_>
+<_Geographic coverage_> 			[The survey covers all the Counties in Kenya based on the following levels National, Urban, Rural and County] </_Geographic coverage_>
+<_Currency_> 					[Kenyan Shilling] </_Currency_>
 
 -----------------------------------------------------------------------
 
-<_ICLS Version_>				[Version of ICLS for Labor Questions] </_ICLS Version_>
-<_ISCED Version_>				[Version of ICLS for Labor Questions] </_ISCED Version_>
-<_ISCO Version_>				[Version of ICLS for Labor Questions] </_ISCO Version_>
-<_OCCUP National_>				[Version of ICLS for Labor Questions] </_OCCUP National_>
-<_ISIC Version_>				[Version of ICLS for Labor Questions] </_ISIC Version_>
-<_INDUS National_>				[Version of ICLS for Labor Questions] </_INDUS National_>
+<_ICLS Version_>				ICLS-13 </_ICLS Version_>
+<_ISCED Version_>				ISCED-2011 </_ISCED Version_>
+<_ISCO Version_>				N/A </_ISCO Version_>
+<_OCCUP National_>				KNOCS kenya national occupation survey </_OCCUP National_>
+<_ISIC Version_>				ISIC REV. 4 </_ISIC Version_>
+<_INDUS National_>				N/A </_INDUS National_>
 
 -----------------------------------------------------------------------
 <_Version Control_>
@@ -57,13 +57,18 @@ set mem 800m
 
 *----------1.2: Set directories------------------------------*
 
-local path_in "[Path to CCC_YYYY_SVY_v01_M / Data / Stata]"
-local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
+local path_in "Z:\GLD-Harmonization\582018_AQ\KEN\KEN_2020_KCHSP\KEN_2020_KCHSP_v01_M\Data\Stata"
+local path_output "Z:\GLD-Harmonization\582018_AQ\KEN\KEN_2020_KCHSP\KEN_2020_KCHSP_v01_M_v01_A_GLD\Data\Harmonized\"
 
 *----------1.3: Database assembly------------------------------*
 
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
+
+use "`path_in'\kchsp2020_annual_hhm.dta"
+merge m:1 hhid qrt clid using "`path_in'\kchsp2020_annual_hh.dta", force
+
+save "`path_in'\data_2020_final.dta", replace
 
 
 /*%%=============================================================================================
@@ -73,31 +78,31 @@ local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
 {
 
 *<_countrycode_>
-	gen str4 countrycode = ""
+	gen str4 countrycode = "KEN"
 	label var countrycode "Country code"
 *</_countrycode_>
 
 
 *<_survname_>
-	gen survname = ""
+	gen survname = "KCHSP"
 	label var survname "Survey acronym"
 *</_survname_>
 
 
 *<_survey_>
-	gen survey = ""
+	gen survey = "Household survey "
 	label var survey "Survey type"
 *</_survey_>
 
 
 *<_icls_v_>
-	gen icls_v = "ICLS-[##]"
+	gen icls_v = "ICLS-[13]"
 	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
 
 
 *<_isced_version_>
-	gen isced_version = ""
+	gen isced_version = "isced_2011"
 	label var isced_version "Version of ISCED used for educat_isced"
 *</_isced_version_>
 
@@ -109,19 +114,19 @@ local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
 
 
 *<_isic_version_>
-	gen isic_version = ""
+	gen isic_version = "isic_4"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
 
 *<_year_>
-	gen int year =
+	gen int year = 2020
 	label var year "Year of survey"
 *</_year_>
 
 
 *<_vermast_>
-	gen vermast = ""
+	gen vermast = "V01"
 	label var vermast "Version of master data"
 *</_vermast_>
 
@@ -161,13 +166,20 @@ local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
 	002, ..., 160.
 
 </_hhid_note> */
-	egen hhid = concat( [Elements] )
+	tostring hhid, gen(hhid_str) format (%02.0f)
+	tostring clid, gen(clid_str) format (%04.0f)
+	tostring qrt, gen(qrt_str) format (%01.0f)
+	drop hhid
+	egen hhid= concat(hhid_str clid_str qrt_str)
+	drop hhid_str clid_str qrt_str
 	label var hhid "Household ID"
 *</_hhid_>
 
 
 *<_pid_>
-	gen  pid = .
+	tostring b01, gen(b_str) format (%02.0f)
+	egen  pid = concat(hhid b_str)
+	isid pid 
 	label var pid "Individual ID"
 *</_pid_>
 
@@ -211,7 +223,8 @@ local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
 {
 
 *<_urban_>
-	gen byte urban
+	gen byte urban=resid
+	recode urban 1=0 2=1
 	label var urban "Location is urban"
 	la de lblurban 1 "Urban" 0 "Rural"
 	label values urban lblurban
@@ -226,10 +239,58 @@ local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
 	Example of entries would be "1 - Alaska",  "2 - Arkansas", ...
 
 </_subnatid1_note> */
-	gen str subnatid1 = ""
+	tostring a01, gen(subnatid1)
+	replace subnatid1=" 1 - Mombasa "  if subnatid1=="1"
+	replace subnatid1="2 - Kwale"  if subnatid1=="2"
+	replace subnatid1="3 - Kilifi"  if subnatid1=="3"
+	replace subnatid1="4 - Tana River"  if subnatid1=="4"
+	replace subnatid1="5 - Lamu"  if subnatid1=="5"
+	replace subnatid1="6 - Taita Taveta"  if subnatid1=="6"
+	replace subnatid1="7 - Garissa"  if subnatid1=="7"
+	replace subnatid1="8 - Wajir"  if subnatid1=="8"
+	replace subnatid1="9 - Mandera" if subnatid1=="9"
+	replace subnatid1= "10 - Marsabit"  if subnatid1=="10"
+	replace subnatid1= "11 - Isiolo"  if subnatid1=="11"
+	replace subnatid1= "12 - Meru " if subnatid1=="12"
+	replace subnatid1="13 - Tharaka Nithi" if subnatid1=="13"
+	replace subnatid1= " 14 - Embu"  if subnatid1=="14"
+	replace subnatid1= "15 - Kitui"  if subnatid1=="15"
+	replace subnatid1= " 16 - Machakos " if subnatid1=="16"
+	replace subnatid1="17 - Makueni"  if subnatid1=="17"
+	replace subnatid1=" 18 - Nyandarua" if subnatid1=="18"
+	replace subnatid1= "19 - Nyeri"  if subnatid1=="19"
+	replace subnatid1=   "20 - Kirinyaga" if subnatid1=="20"
+	replace subnatid1= "21 - Murang'a" if subnatid1=="21"
+	replace subnatid1="22 - Kiambu "  if subnatid1=="22"
+	replace subnatid1= "23 - Turkana" if subnatid1=="23"
+	replace subnatid1="24 - West Pokot" if subnatid1=="24"
+	replace subnatid1="25 - Samburu" if subnatid1=="25"
+	replace subnatid1="26 - Trans Nzoia" if subnatid1=="26"
+	replace subnatid1= "27 - Uasin Gishu" if subnatid1=="27"
+	replace subnatid1= "28 - Elgeyo Marakwet" if subnatid1=="28"
+	replace subnatid1= "29 - Nandi" if subnatid1=="29"
+	replace subnatid1= "30 - Baringo" if subnatid1=="30"
+	replace subnatid1= "31 - Laikipia" if subnatid1=="31"
+	replace subnatid1= "32 - Nakuru"  if subnatid1=="32"
+	replace subnatid1=   "33 - Narok"  if subnatid1=="33"
+	replace subnatid1=   "34 - Kajiado" if subnatid1=="34"
+	replace subnatid1=   "35 - Kericho" if subnatid1=="35"
+	replace subnatid1=  "36 - Bomet"  if subnatid1=="36"
+	replace subnatid1=  "37 - Kakamega"  if subnatid1=="37"
+	replace subnatid1=  "38 - Vihiga"  if subnatid1=="38"
+	replace subnatid1= "39 - Bungoma"  if subnatid1=="39"
+	replace subnatid1=  "40 - Busia" if subnatid1=="40"
+	replace subnatid1= "41 - Siaya" if subnatid1=="41"
+	replace subnatid1=   "42 - Kisumu" if subnatid1=="42"
+	replace subnatid1=  "43 - Homa Bay" if subnatid1=="43"
+	replace subnatid1= "44 - Migori" if subnatid1=="44"
+	replace subnatid1="45 - Kisii" if subnatid1=="45"
+	replace subnatid1="46 - Nyamira" if subnatid1=="46"
+	replace subnatid1= "47 - Nairobi" if subnatid1=="47"
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 
+	
 
 *<_subnatid2_>
 	gen str subnatid2 = ""
@@ -250,7 +311,7 @@ local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
 	See entry in GLD Guidelines (https://github.com/worldbank/gld/blob/main/Support/A%20-%20Guides%20and%20Documentation/GLD_1.0_Guidelines.docx) for more details
 
 </_subnatidsurvey_note> */
-	gen str subnatidsurvey = ""
+	gen str subnatidsurvey = "subnatid1"
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -305,19 +366,21 @@ local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
 {
 
 *<_hsize_>
-	gen hsize = .
+	gen hsize = a12
 	label var hsize "Household size"
 *</_hsize_>
 
 
 *<_age_>
-	gen age = .
+	gen age = b05_years
+	replace age=. if b05_years>112
 	label var age "Individual age"
 *</_age_>
 
 
 *<_male_>
-	gen male = .
+	gen male = b04
+	recode male 2=0
 	label var male "Sex - Ind is male"
 	la de lblmale 1 "Male" 0 "Female"
 	label values male lblmale
@@ -325,7 +388,8 @@ local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
 
 
 *<_relationharm_>
-	gen relationharm = .
+	gen relationharm = b03
+	recode relationharm 4/5=5 6=4 7/10=5 11=6
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm  lblrelationharm
@@ -333,13 +397,14 @@ local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
 
 
 *<_relationcs_>
-	gen relationcs = .
+	gen relationcs = b03
 	label var relationcs "Relationship to the head of household - Country original"
 *</_relationcs_>
 
 
 *<_marital_>
-	gen byte marital = .
+	gen byte marital = b07
+	recode marital 1/2=1 4/5=4 6=5 7=2
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
 	label values marital lblmarital
@@ -424,7 +489,8 @@ local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
 
 
 *<_migrated_years_>
-	gen migrated_years = .
+	gen migrated_years = round(2020-b12_year)
+	recode migrated_years 1020=. 1021=.
 	label var migrated_years "Years since latest migration"
 *</_migrated_years_>
 
@@ -446,7 +512,55 @@ local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
 
 
 *<_migrated_from_code_>
-	gen migrated_from_code = .
+*the codes next to the name come from subnatid1 yet the other in the variable data was different hence the replace commands.
+	gen migrated_from_code = ""
+	replace migrated_from_code= "47 - Nairobi" if b11==1
+	replace migrated_from_code= "18 - Nyandarua"  if b11==2
+	replace migrated_from_code= "19 - Nyeri"  if b11==3
+	replace migrated_from_code=   "20 - Kirinyaga" if b11==4
+	replace migrated_from_code= "21 - Murang'a" if b11==5
+	replace migrated_from_code="22 - Kiambu "  if b11==6
+	replace migrated_from_code=" 1 - Mombasa "  if b11==7
+	replace migrated_from_code="2 - Kwale"  if b11==8
+	replace migrated_from_code="3 - Kilifi"  if b11==9
+	replace migrated_from_code="4 - Tana River"  if b11==10
+	replace migrated_from_code="5 - Lamu"  if b11==11
+	replace migrated_from_code="6 - Taita Taveta"  if b11==12
+	replace migrated_from_code= "10 - Marsabit"  if b11==13
+	replace migrated_from_code= "11 - Isiolo"  if b11==14
+	replace migrated_from_code= "12 - Meru " if b11==15
+	replace migrated_from_code="13 - Tharaka Nithi" if b11==16
+	replace migrated_from_code= " 14 - Embu"  if b11==17
+	replace migrated_from_code= "15 - Kitui"  if b11==18
+	replace migrated_from_code= " 16 - Machakos " if b11==19
+	replace migrated_from_code="17 - Makueni"  if b11==20
+	replace migrated_from_code="7 - Garissa"  if b11==21
+	replace migrated_from_code="8 - Wajir"  if b11==22
+	replace migrated_from_code="9 - Mandera" if b11==23
+	replace migrated_from_code= "41 - Siaya" if b11==24
+	replace migrated_from_code=   "42 - Kisumu" if b11==25
+	replace migrated_from_code=  "43 - Homa Bay" if b11==26
+	replace migrated_from_code= "44 - Migori" if b11==27
+	replace migrated_from_code="45 - Kisii" if b11==28
+	replace migrated_from_code="46 - Nyamira" if b11==29
+	replace migrated_from_code= "23 - Turkana" if b11==30
+	replace migrated_from_code="24 - West Pokot" if b11==31
+	replace migrated_from_code="25 - Samburu" if b11==32
+	replace migrated_from_code="26 - Trans Nzoia" if b11==33
+	replace migrated_from_code= "30 - Baringo" if b11==34
+	replace migrated_from_code= "27 - Uasin Gishu" if b11==35
+	replace migrated_from_code= "28 - Elgeyo Marakwet" if b11==36
+	replace migrated_from_code= "29 - Nandi" if b11==37
+	replace migrated_from_code= "31 - Laikipia" if b11==38
+	replace migrated_from_code= "32 - Nakuru"  if b11==39
+	replace migrated_from_code=   "33 - Narok"  if b11==40
+	replace migrated_from_code=   "34 - Kajiado" if b11==41
+	replace migrated_from_code=   "35 - Kericho" if b11==42
+	replace migrated_from_code=  "36 - Bomet"  if b11==43
+	replace migrated_from_code=  "37 - Kakamega"  if b11==44
+	replace migrated_from_code=  "38 - Vihiga"  if b11==45
+	replace migrated_from_code= "39 - Bungoma"  if b11==46
+	replace migrated_from_code=  "40 - Busia" if b11==47
 	*label de lblmigrated_from_code
 	*label values migrated_from_code lblmigrated_from_code
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
@@ -454,13 +568,28 @@ local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
 
 
 *<_migrated_from_country_>
-	gen migrated_from_country = .
+	decode b11, gen(helper_3)
+	gen migrated_from_country= helper_3 if b11>47
+	replace migrated_from_country="cote" if b11==60
+	drop helper_3
+	replace migrated_from_country = upper( migrated_from_country)
+	replace migrated_from_country=substr(migrated_from_country,1,3)
+	
+	replace migrated_from_country="BHR" if  migrated_from_country=="BAH"
+	replace migrated_from_country="CHL" if  migrated_from_country=="CHI"
+	replace migrated_from_country="CRI" if  migrated_from_country=="COS"
+	replace migrated_from_country="CIV" if  migrated_from_country=="COT"
+	replace migrated_from_country="DNK" if  migrated_from_country=="DEN"
+	replace migrated_from_country="MWI" if  migrated_from_country=="MAL"
+	replace migrated_from_country="SDN" if  migrated_from_country=="SUD"
+	replace migrated_from_country="TZA" if  migrated_from_country=="UNI"
+	
 	label var migrated_from_country "Code of migration country (ISO 3 Letter Code)"
 *</_migrated_from_country_>
 
-
 *<_migrated_reason_>
-	gen migrated_reason = .
+	gen migrated_reason = b13
+	recode migrated_reason 1/3=3 4=5 5/6=1 7=2 8/9=5 10=5 11=4 96=5 98=.
 	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
 	label values migrated_reason lblmigrated_reason
 	label var migrated_reason "Reason for migrating"
@@ -485,13 +614,14 @@ Education module is only asked to those XX and older.
 
 </_ed_mod_age_note> */
 
-gen byte ed_mod_age = .
+gen byte ed_mod_age = 3
 label var ed_mod_age "Education module application age"
 
 *</_ed_mod_age_>
 
 *<_school_>
-	gen byte school=.
+	gen byte school=c03
+	recode school 2=0
 	label var school "Attending school"
 	la de lblschool 0 "No" 1 "Yes"
 	label values school  lblschool
@@ -513,7 +643,8 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat7_>
-	gen byte educat7 =.
+	gen byte educat7 =c08
+	recode educat7 22/32=7 34/36=6 97=1 99=. 1/7=2 8=3 12/14=4 15=5 16/21=6 33=3 34=5 35/36=6 37=5 9/10=4 11=5
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -539,7 +670,7 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat_orig_>
-	gen educat_orig = .
+	gen educat_orig = c08
 	label var educat_orig "Original survey education code"
 *</_educat_orig_>
 
@@ -605,7 +736,7 @@ foreach v of local ed_var {
 *</_vocational_length_u_>
 
 *<_vocational_field_orig_>
-	gen str vocational_field_orig = .
+	gen str vocational_field_orig = ""
 	label var vocational_field_orig "Original field of training information"
 *</_vocational_field_orig_>
 
@@ -624,7 +755,7 @@ foreach v of local ed_var {
 
 
 *<_minlaborage_>
-	gen byte minlaborage =.
+	gen byte minlaborage =5
 	label var minlaborage "Labor module application age"
 *</_minlaborage_>
 
@@ -633,16 +764,24 @@ foreach v of local ed_var {
 
 {
 *<_lstatus_>
+
 	gen byte lstatus = .
+	replace lstatus = 1 if !missing(d11) // Answers question relative to employment
+	replace lstatus = 2 if d15__16 == 0 & (!missing(d18) & d18 != 6) // Looking and available
+	replace lstatus = 3 if d15__16 == 1 | (d15__16 == 0 & d18 == 6) // Now looking or looking but not available
 	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
+	*10 people in working age do not provide information for any labour question.
 	label values lstatus lbllstatus
 *</_lstatus_>
 
 
 *<_potential_lf_>
 	gen byte potential_lf = .
+	replace potential_lf = 0 if lstatus == 3
+	replace potential_lf = 1 if d15__16 == 0 & d18 == 6 // Those looking but not available
+	replace potential_lf = 1 if d15__16 == 1 & (!missing(d18) & !inrange(d18,6,8)) // Those not looking but available
 	replace potential_lf = . if age < minlaborage & age != .
 	replace potential_lf = . if lstatus != 3
 	label var potential_lf "Potential labour force status"
@@ -662,21 +801,35 @@ foreach v of local ed_var {
 
 
 *<_nlfreason_>
-	gen byte nlfreason=.
-	label var nlfreason "Reason not in the labor force"
+	gen byte nlfreason=d17
+	recode nlfreason 8=1 4=2 2=4 17=3 1=5 3=5 5/7=5 9/16=5 18/19=5 96=5
+	label var nlfreason "Reason not in the labor force" 
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
+	replace nlfreason=. if lstatus!=3
 	label values nlfreason lblnlfreason
 *</_nlfreason_>
 
 
 *<_unempldur_l_>
 	gen byte unempldur_l=.
+	replace unempldur_l=0 if d20==1
+	replace unempldur_l=2 if d20==2
+	replace unempldur_l=4 if d20==3
+	replace unempldur_l=7 if d20==4
+	replace unempldur_l=13 if d20==5
+	replace unempldur_l=. if lstatus!=2
 	label var unempldur_l "Unemployment duration (months) lower bracket"
 *</_unempldur_l_>
 
 
 *<_unempldur_u_>
 	gen byte unempldur_u=.
+	replace unempldur_u=1 if d20==1
+	replace unempldur_u=3 if d20==2
+	replace unempldur_u=6 if d20==3
+	replace unempldur_u=12 if d20==4
+	replace unempldur_u=. if d20==5
+	replace unempldur_u=. if lstatus!=2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
 *</_unempldur_u_>
 }
@@ -687,35 +840,62 @@ foreach v of local ed_var {
 
 {
 *<_empstat_>
-	gen byte empstat=.
+	
+	gen byte empstat=d13_primary
+	encode d13_primaryother, gen (d13_helper_1)
+	replace empstat=5 if inrange(d13_helper_1,1,10)
+	replace empstat=5 if d13_helper_1==12
+	recode empstat 2=1 8=2 5/7=5 96=5
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat lblempstat
+	drop d13_helper_1
+	replace empstat=. if lstatus!=1
 *</_empstat_>
 
 
 *<_ocusec_>
-	gen byte ocusec = .
+	gen byte ocusec = d24
+	recode ocusec 5=3 1/4=1 6/7=1 8/20=2 96=2
 	label var ocusec "Sector of activity primary job 7 day recall"
 	la de lblocusec 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec lblocusec
+	replace ocusec=. if lstatus!=1
 *</_ocusec_>
 
 
 *<_industry_orig_>
-	gen industry_orig = .
+	gen industry_orig = d23
+	replace industry_orig="" if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
 
 *<_industrycat_isic_>
-	gen industrycat_isic = .
+	gen industrycat_isic = string(d23_isic, "%04.0f")
+	replace industrycat_isic="" if lstatus!=1
+	replace industrycat_isic="8510" if d23_isic==8511
+	replace industrycat_isic="8210" if d23_isic==9495
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
+	replace industrycat_isic="" if lstatus!=1
 *</_industrycat_isic_>
 
 
 *<_industrycat10_>
 	gen byte industrycat10 = .
+	replace industrycat10 = 1 if inrange(d23_isic,111,322)
+	replace industrycat10= 2 if inrange(d23_isic,710,990)
+	replace industrycat10= 3 if inrange(d23_isic,1010,3320)
+	replace industrycat10= 4 if inrange(d23_isic,3510,3830)
+	replace industrycat10= 5 if inrange(d23_isic,4100,4390)
+	replace industrycat10= 6 if inrange(d23_isic,4510,4799)
+	replace industrycat10= 7 if inrange(d23_isic,4911,5320)
+	replace industrycat10= 6 if inrange(d23_isic,5510,5630)
+	replace industrycat10= 7 if inrange(d23_isic,5911,6399)
+	replace industrycat10= 8 if inrange(d23_isic,6411,6820)
+	replace industrycat10= 10 if inrange(d23_isic,6910,8299)
+	replace industrycat10= 9 if inrange(d23_isic,8411,8430)
+	replace industrycat10= 10 if inrange(d23_isic,8510,9900)
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
@@ -732,22 +912,28 @@ foreach v of local ed_var {
 
 
 *<_occup_orig_>
-	gen occup_orig = .
+*the job classification is based on the national occupation classification
+	gen occup_orig = d22_knocs
+	replace occup_orig=. if lstatus!=1
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
 
 *<_occup_isco_>
-	gen occup_isco = ""
+	gen occup_isco = .
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
 
 *<_occup_>
 	gen byte occup = .
+	gen occup_help=floor(d22_knocs/100) if d22_knocs!=11
+	replace occup_help=1 if d22_knocs==11
+	replace occup=occup_help
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup
+	replace occup=. if lstatus!=1
 *</_occup_>
 
 
@@ -763,7 +949,9 @@ foreach v of local ed_var {
 
 
 *<_wage_no_compen_>
-	gen double wage_no_compen = .
+	gen double wage_no_compen = d40_basic 
+	replace wage_no_compen=. if lstatus!=1
+	*around 3000 people informed they recieve a salary monthly but do not say how much.
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
@@ -777,21 +965,27 @@ foreach v of local ed_var {
 	while unitwage is code 1 ("Daily") for all, regardless of the periodicity.
 </_unitwage_note> */
 
-	gen byte unitwage = .
+	gen byte unitwage = 1
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
+	replace unitwage=. if lstatus!=1
 	label values unitwage lblunitwage
 *</_unitwage_>
 
 
 *<_whours_>
-	gen whours = .
+	gen whours =d27
+	recode whours 0=.
+	replace whours=. if d27>84
+	replace whours=. if lstatus!=1
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
 
 *<_wmonths_>
-	gen wmonths = .
+	gen wmonths = d31
+	recode wmonths 0=.
+	replace wmonths=. if lstatus!=1
 	label var wmonths "Months of work in past 12 months primary job 7 day recall"
 *</_wmonths_>
 
@@ -803,16 +997,20 @@ foreach v of local ed_var {
 	This is done to make it easy to compare earnings in formal and informal sectors.
 
 </_wage_total_note> */
-	gen wage_total = .
+	gen wage_total = (wage_no_compen+d41+d42+d43+d44)
+	replace wage_total=. if lstatus!=1
 	label var wage_total "Annualized total wage primary job 7 day recall"
 *</_wage_total_>
 
 
 *<_contract_>
-	gen byte contract = .
+	gen byte contract = d47_type
+	recode contract 4=0 1/3=1
+	*on the basis that any agreemtn verbal, implied or written between the parties in considered contract.
 	label var contract "Employment has contract primary job 7 day recall"
 	la de lblcontract 0 "Without contract" 1 "With contract"
 	label values contract lblcontract
+	replace contract=. if lstatus!=1
 *</_contract_>
 
 
@@ -833,25 +1031,46 @@ foreach v of local ed_var {
 
 
 *<_union_>
-	gen byte union = .
+	gen byte union = d50
+	recode union 2=0
 	label var union "Union membership at primary job 7 day recall"
 	la de lblunion 0 "Not union member" 1 "Union member"
 	label values union lblunion
+	replace union=. if lstatus!=1
 *</_union_>
 
 
 *<_firmsize_l_>
 	gen byte firmsize_l = .
+	replace firmsize_l=0 if d25==1
+	replace firmsize_l=1 if d25==2
+	replace firmsize_l=2 if d25==3
+	replace firmsize_l=5 if d25==4
+	replace firmsize_l=10 if d25==5
+	replace firmsize_l=20 if d25==6
+	replace firmsize_l=50 if d25==7
+	replace firmsize_l=100 if d25==8
+	replace firmsize_l=. if lstatus!=1
 	label var firmsize_l "Firm size (lower bracket) primary job 7 day recall"
 *</_firmsize_l_>
 
 
 *<_firmsize_u_>
 	gen byte firmsize_u= .
+	replace firmsize_u=. if d25==1
+	replace firmsize_u=. if d25==2
+	replace firmsize_u=4 if d25==3
+	replace firmsize_u=9 if d25==4
+	replace firmsize_u=19 if d25==5
+	replace firmsize_u=49 if d25==6
+	replace firmsize_u=99 if d25==7
+	replace firmsize_u=. if d25==8
+	replace firmsize_u=. if lstatus!=1
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>
 
 }
+
 
 
 *----------8.3: 7 day reference secondary job------------------------------*
@@ -860,33 +1079,54 @@ foreach v of local ed_var {
 
 {
 *<_empstat_2_>
-	gen byte empstat_2 = .
+	gen byte empstat_2=d13_secondary
+	encode d13_secondaryother, gen (d13_helper)
+	replace empstat_2=1 if d13_helper==1
+	replace empstat_2=5 if d13_helper==2
+	replace empstat_2=4 if d13_helper==3
+	recode empstat_2 2=1 5/6=5 8=2 96=5
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
 	label values empstat_2 lblempstat
 *</_empstat_2_>
 
 
 *<_ocusec_2_>
-	gen byte ocusec_2 = .
+	gen byte ocusec_2 = d57
+	recode ocusec_2 5=3 6=1 7=1 8/20=2 96=2
 	label var ocusec_2 "Sector of activity secondary job 7 day recall"
 	label values ocusec_2 lblocusec
 *</_ocusec_2_>
 
 
 *<_industry_orig_2_>
-	gen industry_orig_2 = .
+	gen industry_orig_2 = d56_code
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 
 
 *<_industrycat_isic_2_>
-	gen industrycat_isic_2 = .
+	gen industrycat_isic_2 = string(d56_code, "%04.0f")
+	replace industrycat_isic_2="" if lstatus!=1
+	replace industrycat_isic_2="" if industrycat_isic_2=="."
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
 
 *<_industrycat10_2_>
 	gen byte industrycat10_2 = .
+	replace industrycat10_2 = 1 if inrange(d56_code,111,322)
+	replace industrycat10_2= 2 if inrange(d56_code,710,990)
+	replace industrycat10_2= 3 if inrange(d56_code,1010,3320)
+	replace industrycat10_2= 4 if inrange(d56_code,3510,3830)
+	replace industrycat10_2= 5 if inrange(d56_code,4100,4390)
+	replace industrycat10_2= 6 if inrange(d56_code,4510,4799)
+	replace industrycat10_2= 7 if inrange(d56_code,4911,5320)
+	replace industrycat10_2= 6 if inrange(d56_code,5510,5630)
+	replace industrycat10_2= 7 if inrange(d56_code,5911,6399)
+	replace industrycat10_2= 8 if inrange(d56_code,6411,6820)
+	replace industrycat10_2= 10 if inrange(d56_code,6910,8299)
+	replace industrycat10_2= 9 if inrange(d56_code,8411,8430)
+	replace industrycat10_2= 10 if inrange(d56_code,8510,9900)
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
 *</_industrycat10_2_>
@@ -901,7 +1141,7 @@ foreach v of local ed_var {
 
 
 *<_occup_orig_2_>
-	gen occup_orig_2 = .
+	gen occup_orig_2 = d55_code
 	label var occup_orig_2 "Original occupation record secondary job 7 day recall"
 *</_occup_orig_2_>
 
@@ -914,6 +1154,9 @@ foreach v of local ed_var {
 
 *<_occup_2_>
 	gen byte occup_2 = .
+	gen occup_help_2=floor(d55_code/100) if d55_code!=11
+	replace occup_help_2=1 if d55_code==11
+	replace occup_2=occup_help_2
 	label var occup_2 "1 digit occupational classification secondary job 7 day recall"
 	label values occup_2 lbloccup
 *</_occup_2_>
@@ -944,19 +1187,22 @@ foreach v of local ed_var {
 
 
 *<_whours_2_>
-	gen whours_2 = .
+	gen whours_2 = d59
+	recode whours_2 0=.
+	replace whours_2=. if d59>36
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 
 
 *<_wmonths_2_>
-	gen wmonths_2 = .
+	gen wmonths_2 = d62
+	recode wmonths_2 0=.
 	label var wmonths_2 "Months of work in past 12 months secondary job 7 day recall"
 *</_wmonths_2_>
 
 
 *<_wage_total_2_>
-	gen wage_total_2 = .
+	gen wage_total_2 = d63
 	label var wage_total_2 "Annualized total wage secondary job 7 day recall"
 *</_wage_total_2_>
 
@@ -989,7 +1235,7 @@ foreach v of local ed_var {
 
 
 *<_t_wage_others_>
-	gen t_wage_others = .
+	gen t_wage_others = d65*12
 	label var t_wage_others "Annualized wage in all but primary and secondary jobs (12-mon ref period)"
 *</_t_wage_others_>
 
@@ -998,19 +1244,19 @@ foreach v of local ed_var {
 
 
 *<_t_hours_total_>
-	gen t_hours_total = .
+	gen t_hours_total = whours + whours_2 + t_hours_others
 	label var t_hours_total "Annualized hours worked in all jobs 7 day recall"
 *</_t_hours_total_>
 
 
 *<_t_wage_nocompen_total_>
-	gen t_wage_nocompen_total = .
+	gen t_wage_nocompen_total = wage_no_compen
 	label var t_wage_nocompen_total "Annualized wage in all jobs excl. bonuses, etc. 7 day recall"
 *</_t_wage_nocompen_total_>
 
 
 *<_t_wage_total_>
-	gen t_wage_total = .
+	gen t_wage_total = wage_total + wage_total_2 +t_wage_others
 	label var t_wage_total "Annualized total wage for all jobs 7 day recall"
 *</_t_wage_total_>
 
@@ -1146,7 +1392,7 @@ foreach v of local ed_var {
 
 
 *<_wage_no_compen_year_> --- this var has the same name as other and when quoted in the keep and order codes is repeated.
-	gen double wage_no_compen_year =
+	gen double wage_no_compen_year =.
 	label var wage_no_compen_year "Last wage payment primary job 12 month recall"
 *</_wage_no_compen_year_>
 
@@ -1380,7 +1626,7 @@ foreach v of local ed_var {
 
 
 *<_t_wage_total_year_>
-	gen t_wage_total_year = .
+	gen t_wage_total_year = t_wage_total
 	label var t_wage_total_year "Annualized total wage for all jobs 12 month recall"
 *</_t_wage_total_year_>
 
@@ -1401,7 +1647,7 @@ foreach v of local ed_var {
 
 
 *<_linc_nc_>
-	gen linc_nc = .
+	gen linc_nc = t_wage_total
 	label var linc_nc "Total annual wage income in all jobs, excl. bonuses, etc."
 *</_linc_nc_>
 
@@ -1510,6 +1756,6 @@ compress
 
 *<_% SAVE_>
 
-save "`path_output'\[Name of file].dta", replace
+save "`path_output'\KEN_2020_KCHSP_V01_M_V01_A_GLD_ALL.dta", replace 
 
 *</_% SAVE_>
