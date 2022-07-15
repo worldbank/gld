@@ -17,8 +17,8 @@
 <_Data collection to (M/Y)_>	[June/2008] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			Pakistan Bureau of Statistics </_Source of dataset_>
 								https://www.pbs.gov.pk/content/microdata
-<_Sample size (HH)_> 			38,818 </_Sample size (HH)_>
-<_Sample size (IND)_> 			260,894 </_Sample size (IND)_>
+<_Sample size (HH)_> 			36,069  </_Sample size (HH)_>
+<_Sample size (IND)_> 			250,820 </_Sample size (IND)_>
 <_Sampling method_> 			Stratified two-stage cluster sampling method </_Sampling method_>
 <_Geographic coverage_> 		Six provinces(Islamabad exlcuded) </_Geographic coverage_>
 <_Currency_> 					Pakistann Rupee </_Currency_>
@@ -170,18 +170,16 @@ local output "`id_data'"
 
 
 *<_pid_>
-
-	gen str2 ind_str= string(q401,"%02.0f")
-	gen pid= pcode + ind_str  
-
-	
+	gen person_id=q401
+	tostring person_id, replace format(%02.0f)
+	egen str12 pid=concat(hhid person_id), p("0")
 	isid pid
 	label var pid "Individual ID"
 *</_pid_>
 
 
 *<_weight_>
-	gen weight = weights
+	gen weight=weights
 	label var weight "Household sampling weight"
 *</_weight_>
 
@@ -239,9 +237,9 @@ local output "`id_data'"
 
 
 *<_subnatid2_>
-	gen city_code = substr(pcode, 1, 4 )
+	gen city_code=substr(pcode, 1, 4 )
 	destring city_code, replace
-	merge m:1 city_code using "`gld'\Work\PAK_city_code.dta", keep(master match)
+	merge m:1 city_code using "`gld'\Work\PAK_city_code.dta"
 	drop if _merge!=3
 	egen city_fullname=concat(city_name urban_status), punct(-)
 	labmask city_code, values (city_fullname)
@@ -252,7 +250,7 @@ local output "`id_data'"
 
 
 *<_subnatid3_>
-	gen byte subnatid3 = .
+	gen byte subnatid3=.
 	label de lblsubnatid3 1 "1 - Name"
 	label values subnatid3 lblsubnatid3
 	label var subnatid3 "Subnational ID at Third Administrative Level"
@@ -342,31 +340,22 @@ local output "`id_data'"
 	recode relationharm 4=3 5=4 6 7=5 8 9=6
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
-	
 	gen neg_age = -(age)
-	
 	sort hhid q405 neg_age q401
 	by hhid: gen hhorder = _n
 	replace hhorder = . if hhorder!=1
 	
 	* Check if hh head count is equal to one
-	gen head = relationharm==1
-	bys hhid: egen tot_head = sum(head)
-	
-	
-	replace relationharm = 1 if hhorder==1 & tot_head!=1
-	replace relationharm = 5 if hhorder!=1 & q403 ==1 & tot_head!=1
-
+	gen head=relationharm==1
+	bys hhid: egen tot_head=sum(head)	
+	replace relationharm=1 if hhorder==1 & tot_head==0
+	replace relationharm=5 if hhorder!=1 & q403==1 & tot_head==2
 	drop tot_head head
 	
 	* Check if hh head count is equal to one
-	gen head = relationharm==1
-	bys hhid: egen tot_head = sum(head)
-	
-
-	assert tot_head == 1
-	
-	
+	gen head=relationharm==1
+	bys hhid: egen tot_head=sum(head)
+	assert tot_head==1
 	label values relationharm lblrelationharm
 *</_relationharm_>
 
@@ -451,13 +440,25 @@ local output "`id_data'"
 *</_migrated_binary_>
 
 
+/*<_migrated_years_>
+   Information is on years living in current place (which is equal
+   to years since left previous residence). However, info is 
+   code 2 for less than a year,
+   code 3 for 1 to 4 years,
+   code 4 for 5 to 9 years,
+   code 5 for 10 or more years
+   Code 0.5 for less than a year, half-point for 1-4 and 5-9 windows (e.g., 2.5 and 7)
+   and code 10 as a lower bound for the 10+ option  
+*<_migrated_years_>*/
+
+
 *<_migrated_years_>
-	gen int migrated_years=2007 if q415==2
-	replace migrated_years=2006 if q415==3
-	replace migrated_years=2003 if q415==4
-	replace migrated_years=1998 if q415==5
-	replace migrated_years=. if q415==1
-	label var migrated_years "Years since latest migration"
+   gen migrated_years=.
+   replace migrated_years=0.5 if q415==2
+   replace migrated_years=2.5 if q415==3
+   replace migrated_years=7 if q415==4
+   replace migrated_years=10 if q415==5
+   label var migrated_years "Years since latest migration"
 *</_migrated_years_>
 
 
@@ -495,7 +496,7 @@ local output "`id_data'"
 
 *<_migrated_reason_>
 	gen migrated_reason=q418
-	recode migrated_reason (1/4 6=3) (5=2) (8/11=1) (7 12/13=5) (54=.)
+	recode migrated_reason (1/4 6=3) (5=2) (8/11=1) (7 12/13=5) 
 	replace migrated_reason=. if migrated_binary==0
 	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
 	label values migrated_reason lblmigrated_reason
@@ -512,6 +513,40 @@ local output "`id_data'"
 
 
 {
+
+/*<_ed_mod_age_>
+Note that in the questionnaire, questions for literacy and education level are asked to 
+all respondents without age restriction. 
+But the current enrolment question is asked to people aged 5 and above. 
+Tabbing age and literacy or age and education level will show that the two questions, 
+literacy and education level were actually asked to people aged 5 and above as well instead of 
+all people.
+**Here is just part of an exmple of tabbing age and literacy, 0-15 years old
+and all ages above 15 are NOT missed.**
+
+. tab age q408, m
+
+Individual |        SECTION - 4   4.8
+       age |         1          2          . |     Total
+-----------+---------------------------------+----------
+         0 |         0          0      4,537 |     4,537 
+         1 |         0          0      5,787 |     5,787 
+         2 |         0          0      7,650 |     7,650 
+         3 |         0          0      8,043 |     8,043 
+         4 |         0          0      8,124 |     8,124 
+         5 |       469      7,885          0 |     8,354 
+         6 |     1,361      6,755          0 |     8,116 
+         7 |     2,310      6,024          0 |     8,334 
+         8 |     3,542      5,137          0 |     8,679 
+         9 |     3,457      2,630          0 |     6,087 
+        10 |     5,766      3,013          0 |     8,779 
+        11 |     3,513      1,210          0 |     4,723 
+        12 |     6,149      2,543          0 |     8,692 
+        13 |     4,637      1,390          0 |     6,027 
+        14 |     4,703      1,787          0 |     6,490 
+        15 |     4,783      1,752          0 |     6,535 
+
+*<_ed_mod_age_>*/
 
 *<_ed_mod_age_>
 	gen byte ed_mod_age=0
@@ -561,8 +596,8 @@ local output "`id_data'"
 
 
 *<_educat7_>
-	gen byte educat7= q409
-	recode educat7 (3 = 2) (4 = 3) (5 = 4) (6 = 4) (7 = 5) (8 9 10 11 12 13 14 = 7)	
+	gen byte educat7=q409
+	recode educat7 (3=2) (4=3) (5=4) (6=4) (7=5) (8 9 10 11 12 13 14=7) (92=.)	
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -595,7 +630,7 @@ local output "`id_data'"
 
 *<_educat_isced_>
 	gen educat_isced=q409
-	replace educat_isced=. if q409==34
+	replace educat_isced=. if q409==92
 	recode educat_isced 1=. 2/3=20 3=100 4/6=244 7=344 8/12=660 13=760 14=860
 	replace educat_isced=. if age<ed_mod_age
 	label var educat_isced "ISCED standardised level of education"
@@ -670,7 +705,7 @@ are the same here.
 
 
 *<_vocational_field_orig_>
-	gen vocational_field_orig=.
+	gen vocational_field_orig=q412
 	label var vocational_field_orig "Field of training"
 *</_vocational_field_orig_>
 
@@ -705,8 +740,8 @@ is 10 and above, Pakistan employment report defines active population as 15 year
 {
 *<_lstatus_>
 	gen byte lstatus=.
-	replace lstatus=1 if inlist(1, q501, q502, q503) | inlist(q504,1,2)
-	replace lstatus=2 if inrange(q901,1,6) | inrange(q902,1,5) | inlist(q903,1,2) 
+	replace lstatus=1 if inlist(1,q502,q503) | inlist(q504,1,2)
+	replace lstatus=2 if [inrange(q901,1,6) | inrange(q902,1,5)] & inlist(q903,1,2) 
 	replace lstatus=3 if lstatus==.
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -725,6 +760,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_potential_lf_>
 	gen byte potential_lf=.
+	replace potential_lf=0 if lstatus==3
 	replace potential_lf=1 if [q903==7 & inrange(q906, 1, 2)] | [inrange(q903, 1, 6) & q906==3]
 	replace potential_lf=0 if [inrange(q903, 1, 6) & inrange(q906, 1, 2)] | [q903==7 & q906==3]
 	replace potential_lf=. if age < minlaborage 
@@ -749,7 +785,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_nlfreason_>
 	gen byte nlfreason=q914
-	recode nlfreason (21 31=1) (22 32=2) (23 33=3) (11 15 16=4) (12/14 24/28 34/38=5)
+	recode nlfreason (5=1) (6=2) (7=3) (1 11=4) (2/4 8/10 12=5)
 	replace nlfreason=. if lstatus!=3
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
@@ -783,9 +819,9 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 	replace empstat=1 if q508<=4 
 	replace empstat=2 if q508==10
 	replace empstat=3 if q508==5
-	replace empstat=4 if (q508>=6 & q508<=9) | q508==11
-	replace empstat=5 if q508==12
-	replace empstat=. if !inrange(q508, 1, 12)
+	replace empstat=4 if (q508>=6 & q508<=9)
+	replace empstat=5 if q508==11
+	replace empstat=. if !inrange(q508, 1, 11)
 	replace empstat=. if lstatus!=1
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
@@ -812,7 +848,8 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_industrycat_isic_>
 	gen industrycat_isic=q510
-	recode industrycat_isic (96 97=93)
+	recode industrycat_isic (96 97=93) (51/55 57 74=.)
+	replace industrycat_isic=industrycat_isic*100
 	tostring industrycat_isic, replace format(%04.0f)
 	replace industrycat_isic="" if lstatus!=1 | industrycat_isic=="."
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
@@ -821,7 +858,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_industrycat10_>
 	gen byte industrycat10=q510
-	recode industrycat10 11/13=1 21/29 = 2 31/39=3 41 42=4 45=4 51/59=5 61/63=6 71/72= 7 81/83 = 8 91=9 92/96=10 0 =.
+	recode industrycat10 11/13=1 21/29 = 2 31/39=3 41 42=4 45=4 51/59=5 61/63=6 71/72=7 81/83=8 91=9 92/96=10 0=.
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
@@ -986,6 +1023,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 	gen byte empstat_2=q519
 	recode empstat_2 (1/4=1) (10=2) (5=3) (6/9 11=4) (12=5) (0=.)
 	replace empstat_2 = . if lstatus!=1
+	replace empstat_2=. if q518!=1
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
 	la de lblempstat_2 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat_2 lblempstat
@@ -996,7 +1034,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 	gen byte ocusec_2=q522
 	recode ocusec_2 (1/3=1) (4 6=3) (5/9=2) (10=4)
 	replace ocusec_2 = . if lstatus!=1
-
+	replace ocusec_2=. if q518!=1
 	label var ocusec_2 "Sector of activity secondary job 7 day recall"
 	la de lblocusec_2 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec_2 lblocusec_2
@@ -1005,15 +1043,16 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_industry_orig_2_>
 	gen industry_orig_2=q521
-	replace industry_orig_2 = . if lstatus!=1
-	
+	replace industry_orig_2=. if lstatus!=1
+	replace industry_orig_2=. if q518!=1
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 
 
 *<_industrycat_isic_2_>
 	gen industrycat_isic_2=q521
-	recode industrycat_isic_2 (96 97=93) (7/9 48 58 69 78 83 88 81=.)
+	recode industrycat_isic_2 (1/5 8/9 16 51 52 55 58 75 77=.) 
+	replace industrycat_isic_2=industrycat_isic_2*100
 	tostring industrycat_isic_2, replace format(%04.0f)
 	replace industrycat_isic_2="" if q518!=1 | mi(q521) | industrycat_isic_2=="."
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
@@ -1022,10 +1061,9 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_industrycat10_2_>
 	gen byte industrycat10_2=q521
-	recode industrycat10_2 11/13=1 21/29 = 2 31/39=3 41 42=4 45=4 51/59=5 61/63=6 71/72= 7 81/83 = 8 91=9 92/96=10 0 =.
+	recode industrycat10_2 11/13=1 21/29 = 2 31/39=3 41 42=4 45=4 51/59=5 61/63=6 71/72= 7 81/83=8 91=9 92/96=10 0 =.
 	replace industrycat10_2=. if q518!=1
 	replace industrycat10_2 = . if industrycat10_2 > 10 & !missing(industrycat10_2)
-	
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
 *</_industrycat10_2_>
@@ -1048,7 +1086,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_occup_isco_2_>
 	gen occup_isco_2=q520
-	recode occup_isco_2 (2/6 14 18 25 39 67 94=.)
+	recode occup_isco_2 (2/6 16/17 29 55 95 96=.)
 	replace occup_isco_2=occup_isco_2*100
 	tostring occup_isco_2, replace format(%04.0f)
 	replace occup_isco_2="" if q518!=1 | mi(q520) | occup_isco_2=="."
@@ -1093,6 +1131,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_whours_2_>
 	gen whours_2=q526
+	replace whours_2=. if q518!=1
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 

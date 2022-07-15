@@ -1021,6 +1021,7 @@ upper and lower bonds are the same.
 {
 *<_empstat_2_>
 	gen byte empstat_2=S05C19
+	replace empstat_2=. if S05C18!=1
 	recode empstat_2 (1/4=1) (11/12=2) (5=3) (6/10 13=4) (14=5)
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
 	la de lblempstat_2 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
@@ -1031,6 +1032,7 @@ upper and lower bonds are the same.
 *<_ocusec_2_>
 	gen byte ocusec_2=S05C22
 	recode ocusec_2 (1/3=1) (4 6=3) (5/9=2) (10=4)
+	replace ocusec_2=. if S05C18!=1
 	label var ocusec_2 "Sector of activity secondary job 7 day recall"
 	la de lblocusec_2 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec_2 lblocusec_2
@@ -1039,6 +1041,7 @@ upper and lower bonds are the same.
 
 *<_industry_orig_2_>
 	gen industry_orig_2=S05C21
+	replace industry_orig_2=. if S05C18!=1
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 
@@ -1123,6 +1126,7 @@ upper and lower bonds are the same.
 
 *<_whours_2_>
 	gen whours_2=S05C26
+	replace whours_2=. if S05C18!=1
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 

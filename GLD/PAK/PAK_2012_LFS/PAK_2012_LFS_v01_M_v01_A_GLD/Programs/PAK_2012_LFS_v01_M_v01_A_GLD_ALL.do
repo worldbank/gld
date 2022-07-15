@@ -923,7 +923,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 	gen last_week=s7_q3
 	gen last_month=s7_q4
 	foreach v of varlist last_*{
-		replace `v'=0 if s7_q3>0 & s7_q4>0 & !mi(s7_q3) & !mi(s7_q4 )
+		replace `v'=0 if s7_q3>0 & s7_q4>0 & !mi(s7_q3) & !mi(s7_q4)
 		replace `v'=. if lstatus!=1
 	}
 	egen double wage_no_compen=rowtotal(last_week last_month), missing
@@ -1022,6 +1022,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 *<_empstat_2_>
 	gen byte empstat_2=s5_q19
 	recode empstat_2 (1/4=1) (10=2) (5=3) (6/9 11=4) (12=5) (0=.)
+	replace empstat_2=. if s5_q18!=1
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
 	la de lblempstat_2 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat_2 lblempstat
@@ -1031,6 +1032,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 *<_ocusec_2_>
 	gen byte ocusec_2=s5_q22
 	recode ocusec_2 (1/3=1) (4 6=3) (5/9=2) (10=4)
+	replace ocusec_2=. if s5_q18!=1
 	label var ocusec_2 "Sector of activity secondary job 7 day recall"
 	la de lblocusec_2 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec_2 lblocusec_2
@@ -1039,6 +1041,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_industry_orig_2_>
 	gen industry_orig_2=s5_q21
+	replace industry_orig_2=. if s5_q18!=1
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 
@@ -1124,6 +1127,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_whours_2_>
 	gen whours_2=s5_q26
+	replace whours_2=. if s5_q18!=1
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 
