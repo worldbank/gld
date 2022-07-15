@@ -19,8 +19,8 @@
 <_Data collection from_>			[01/2020] </_Data collection from_>
 <_Data collection to_>				[12/2020] </_Data collection to_>
 <_Source of dataset_> 				[Kenya National Bureau of Statistics] </_Source of dataset_>
-<_Sample size (HH)_> 				[] </_Sample size (HH)_>
-<_Sample size (IND)_> 				[] </_Sample size (IND)_>
+<_Sample size (HH)_> 				[24,638] </_Sample size (HH)_>
+<_Sample size (IND)_> 				[89,613] </_Sample size (IND)_>
 <_Sampling method_> 				[N/A] </_Sampling method_>
 <_Geographic coverage_> 			[The survey covers all the Counties in Kenya based on the following levels National, Urban, Rural and County] </_Geographic coverage_>
 <_Currency_> 					[Kenyan Shilling] </_Currency_>
@@ -806,6 +806,7 @@ foreach v of local ed_var {
 	label var nlfreason "Reason not in the labor force" 
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
 	replace nlfreason=. if lstatus!=3
+	replace nlfreason=5 if lstatus==3 & nlfreason==.
 	label values nlfreason lblnlfreason
 *</_nlfreason_>
 
@@ -876,6 +877,8 @@ foreach v of local ed_var {
 	replace industrycat_isic="" if lstatus!=1
 	replace industrycat_isic="8510" if d23_isic==8511
 	replace industrycat_isic="8210" if d23_isic==9495
+	replace industrycat_isic="" if d23_isic==.
+	replace industrycat_isic="4690" if d23_isic==9130
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 	replace industrycat_isic="" if lstatus!=1
 *</_industrycat_isic_>
@@ -884,21 +887,23 @@ foreach v of local ed_var {
 *<_industrycat10_>
 	gen byte industrycat10 = .
 	replace industrycat10 = 1 if inrange(d23_isic,111,322)
-	replace industrycat10= 2 if inrange(d23_isic,710,990)
-	replace industrycat10= 3 if inrange(d23_isic,1010,3320)
-	replace industrycat10= 4 if inrange(d23_isic,3510,3830)
+	replace industrycat10= 2 if inrange(d23_isic,510,990)
+	replace industrycat10= 3 if inrange(d23_isic,1010,3319)
+	replace industrycat10= 4 if inrange(d23_isic,3510,3811)
 	replace industrycat10= 5 if inrange(d23_isic,4100,4390)
 	replace industrycat10= 6 if inrange(d23_isic,4510,4799)
 	replace industrycat10= 7 if inrange(d23_isic,4911,5320)
 	replace industrycat10= 6 if inrange(d23_isic,5510,5630)
-	replace industrycat10= 7 if inrange(d23_isic,5911,6399)
+	replace industrycat10= 7 if inrange(d23_isic,5813,6399)
 	replace industrycat10= 8 if inrange(d23_isic,6411,6820)
 	replace industrycat10= 10 if inrange(d23_isic,6910,8299)
-	replace industrycat10= 9 if inrange(d23_isic,8411,8430)
+	replace industrycat10= 9 if inrange(d23_isic,8410,8430)
 	replace industrycat10= 10 if inrange(d23_isic,8510,9900)
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
+	replace industrycat10=. if lstatus==3 & !missing(industrycat10)
+	replace industrycat10=. if lstatus!=1 
 *</_industrycat10_>
 
 
@@ -1084,7 +1089,8 @@ foreach v of local ed_var {
 	replace empstat_2=1 if d13_helper==1
 	replace empstat_2=5 if d13_helper==2
 	replace empstat_2=4 if d13_helper==3
-	recode empstat_2 2=1 5/6=5 8=2 96=5
+	recode empstat_2 2=1 5/6=5 7/8=2 96=5
+	replace empstat_2=. if lstatus==3 & !missing(empstat_2)
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
 	label values empstat_2 lblempstat
 *</_empstat_2_>
@@ -1095,11 +1101,13 @@ foreach v of local ed_var {
 	recode ocusec_2 5=3 6=1 7=1 8/20=2 96=2
 	label var ocusec_2 "Sector of activity secondary job 7 day recall"
 	label values ocusec_2 lblocusec
+	replace ocusec_2=. if lstatus==3 & !missing(ocusec_2)
 *</_ocusec_2_>
 
 
 *<_industry_orig_2_>
 	gen industry_orig_2 = d56_code
+	replace industry_orig_2=. if lstatus==3 & !missing(industry_orig_2)
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 
@@ -1115,18 +1123,19 @@ foreach v of local ed_var {
 *<_industrycat10_2_>
 	gen byte industrycat10_2 = .
 	replace industrycat10_2 = 1 if inrange(d56_code,111,322)
-	replace industrycat10_2= 2 if inrange(d56_code,710,990)
-	replace industrycat10_2= 3 if inrange(d56_code,1010,3320)
-	replace industrycat10_2= 4 if inrange(d56_code,3510,3830)
+	replace industrycat10_2= 2 if inrange(d56_code,510,990)
+	replace industrycat10_2= 3 if inrange(d56_code,1010,3319)
+	replace industrycat10_2= 4 if inrange(d56_code,3510,3811)
 	replace industrycat10_2= 5 if inrange(d56_code,4100,4390)
 	replace industrycat10_2= 6 if inrange(d56_code,4510,4799)
 	replace industrycat10_2= 7 if inrange(d56_code,4911,5320)
 	replace industrycat10_2= 6 if inrange(d56_code,5510,5630)
-	replace industrycat10_2= 7 if inrange(d56_code,5911,6399)
+	replace industrycat10_2= 7 if inrange(d56_code,5813,6399)
 	replace industrycat10_2= 8 if inrange(d56_code,6411,6820)
 	replace industrycat10_2= 10 if inrange(d56_code,6910,8299)
-	replace industrycat10_2= 9 if inrange(d56_code,8411,8430)
+	replace industrycat10_2= 9 if inrange(d56_code,8410,8430)
 	replace industrycat10_2= 10 if inrange(d56_code,8510,9900)
+	replace industrycat10_2=. if lstatus==3 & !missing(industrycat10_2)
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
 *</_industrycat10_2_>
@@ -1142,6 +1151,7 @@ foreach v of local ed_var {
 
 *<_occup_orig_2_>
 	gen occup_orig_2 = d55_code
+	replace occup_orig_2=. if lstatus==3 & !missing(occup_orig_2)
 	label var occup_orig_2 "Original occupation record secondary job 7 day recall"
 *</_occup_orig_2_>
 
@@ -1157,6 +1167,7 @@ foreach v of local ed_var {
 	gen occup_help_2=floor(d55_code/100) if d55_code!=11
 	replace occup_help_2=1 if d55_code==11
 	replace occup_2=occup_help_2
+	replace occup_2=. if lstatus==3 & !missing(occup_2)
 	label var occup_2 "1 digit occupational classification secondary job 7 day recall"
 	label values occup_2 lbloccup
 *</_occup_2_>
@@ -1190,6 +1201,7 @@ foreach v of local ed_var {
 	gen whours_2 = d59
 	recode whours_2 0=.
 	replace whours_2=. if d59>36
+	replace whours_2=. if lstatus==3 & !missing(whours_2)
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 
@@ -1197,12 +1209,14 @@ foreach v of local ed_var {
 *<_wmonths_2_>
 	gen wmonths_2 = d62
 	recode wmonths_2 0=.
+	replace wmonths_2=. if lstatus==3 & !missing(wmonths_2)
 	label var wmonths_2 "Months of work in past 12 months secondary job 7 day recall"
 *</_wmonths_2_>
 
 
 *<_wage_total_2_>
 	gen wage_total_2 = d63
+	replace wage_total_2=. if lstatus==3 & !missing(wage_total_2)
 	label var wage_total_2 "Annualized total wage secondary job 7 day recall"
 *</_wage_total_2_>
 
