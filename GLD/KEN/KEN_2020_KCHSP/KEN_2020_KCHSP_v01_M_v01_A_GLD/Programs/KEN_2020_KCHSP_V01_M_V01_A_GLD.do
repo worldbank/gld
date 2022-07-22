@@ -769,6 +769,8 @@ foreach v of local ed_var {
 	replace lstatus = 1 if !missing(d11) // Answers question relative to employment
 	replace lstatus = 2 if d15__16 == 0 & (!missing(d18) & d18 != 6) // Looking and available
 	replace lstatus = 3 if d15__16 == 1 | (d15__16 == 0 & d18 == 6) // Now looking or looking but not available
+	* this line should be revised due to possible exclusion based on economic sector
+	replace lstatus=3 if inrange(qrt,2,4) | d02_3==1 | d02_5 ==1 | d04_3 == 1 & d04_5 ==2 | d10==3 | d10==4
 	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -954,8 +956,9 @@ foreach v of local ed_var {
 
 
 *<_wage_no_compen_>
-	gen double wage_no_compen = d40_basic 
-	replace wage_no_compen=. if lstatus!=1
+	*gen double wage_no_compen = d40_basic 
+	gen double wage_no_compen =  .
+	*replace wage_no_compen=. if lstatus!=1
 	*around 3000 people informed they recieve a salary monthly but do not say how much.
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
@@ -1002,8 +1005,9 @@ foreach v of local ed_var {
 	This is done to make it easy to compare earnings in formal and informal sectors.
 
 </_wage_total_note> */
-	gen wage_total = (wage_no_compen+d41+d42+d43+d44)
-	replace wage_total=. if lstatus!=1
+	*gen wage_total = (wage_no_compen+d41+d42+d43+d44)
+	gen wage_total =.
+	*replace wage_total=. if lstatus!=1
 	label var wage_total "Annualized total wage primary job 7 day recall"
 *</_wage_total_>
 
@@ -1215,8 +1219,9 @@ foreach v of local ed_var {
 
 
 *<_wage_total_2_>
-	gen wage_total_2 = d63
-	replace wage_total_2=. if lstatus==3 & !missing(wage_total_2)
+	*gen wage_total_2 = d63
+	gen wage_total_2 = .
+	*replace wage_total_2=. if lstatus==3 & !missing(wage_total_2)
 	label var wage_total_2 "Annualized total wage secondary job 7 day recall"
 *</_wage_total_2_>
 
@@ -1270,7 +1275,8 @@ foreach v of local ed_var {
 
 
 *<_t_wage_total_>
-	gen t_wage_total = wage_total + wage_total_2 +t_wage_others
+	*gen t_wage_total = wage_total + wage_total_2 +t_wage_others
+	gen t_wage_total =.
 	label var t_wage_total "Annualized total wage for all jobs 7 day recall"
 *</_t_wage_total_>
 

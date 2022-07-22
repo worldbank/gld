@@ -943,7 +943,8 @@ foreach v of local ed_var {
 
 
 *<_wage_no_compen_>
-	gen double wage_no_compen = d40_basic 
+	gen double wage_no_compen = .
+	*gen double wage_no_compen = d40_basic 
 	*around 3000 people informed they recieve a salary monthly but do not say how much.
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
@@ -958,6 +959,7 @@ foreach v of local ed_var {
 	while unitwage is code 1 ("Daily") for all, regardless of the periodicity.
 </_unitwage_note> */
 
+	*gen byte unitwage = 1
 	gen byte unitwage = 1
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
@@ -988,7 +990,8 @@ foreach v of local ed_var {
 	This is done to make it easy to compare earnings in formal and informal sectors.
 
 </_wage_total_note> */
-	gen wage_total = (wage_no_compen+d41+d42+d43+d44)
+	gen wage_total = .
+	*gen wage_total = (wage_no_compen+d41+d42+d43+d44)
 	label var wage_total "Annualized total wage primary job 7 day recall"
 *</_wage_total_>
 
@@ -1187,7 +1190,8 @@ foreach v of local ed_var {
 
 
 *<_wage_total_2_>
-	gen wage_total_2 = d63
+	*gen wage_total_2 = d63
+	gen wage_total_2 = .
 	label var wage_total_2 "Annualized total wage secondary job 7 day recall"
 *</_wage_total_2_>
 
@@ -1235,13 +1239,15 @@ foreach v of local ed_var {
 
 
 *<_t_wage_nocompen_total_>
-	gen t_wage_nocompen_total = wage_no_compen
+	*gen t_wage_nocompen_total = wage_no_compen
+	gen t_wage_nocompen_total = .
 	label var t_wage_nocompen_total "Annualized wage in all jobs excl. bonuses, etc. 7 day recall"
 *</_t_wage_nocompen_total_>
 
 
 *<_t_wage_total_>
-	gen t_wage_total = wage_total + wage_total_2 +t_wage_others
+	*gen t_wage_total = wage_total + wage_total_2 +t_wage_others
+	gen t_wage_total = .
 	label var t_wage_total "Annualized total wage for all jobs 7 day recall"
 *</_t_wage_total_>
 
