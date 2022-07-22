@@ -131,13 +131,13 @@ local output "`id_data'"
 
 
 *<_vermast_>
-	gen vermast = "v02"
+	gen vermast = "v01"
 	label var vermast "Version of master data"
 *</_vermast_>
 
 
 *<_veralt_>
-	gen veralt = "v01"
+	gen veralt = "v02"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
@@ -536,7 +536,7 @@ probably the survey grouped "no education" into "not yet completed primary schoo
 Original code list of variable "B5_R1A" in the dataset:
 1.Not yet completed primary school
 2.Non-formal primary school (Paket A)
-3.Primary School for spechial needs
+3.Primary School for special needs
 4.Primary school
 5.Non-formal junior high school (Paket B)
 6.Junior high school for special needs
