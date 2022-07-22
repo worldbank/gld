@@ -435,6 +435,7 @@ local output "`id_data'"
 *<_migrated_binary_>
 	gen migrated_binary=cond(q415==1, 0, 1)
 	label de lblmigrated_binary 0 "No" 1 "Yes"
+	replace migrated_binary=. if age<migrated_mod_age
 	label values migrated_binary lblmigrated_binary
 	label var migrated_binary "Individual has migrated"
 *</_migrated_binary_>
@@ -458,6 +459,8 @@ local output "`id_data'"
    replace migrated_years=2.5 if q415==3
    replace migrated_years=7 if q415==4
    replace migrated_years=10 if q415==5
+   replace migrated_years=. if migrated_binary==0
+   replace migrated_years=. if age<migrated_mod_age
    label var migrated_years "Years since latest migration"
 *</_migrated_years_>
 
@@ -466,6 +469,7 @@ local output "`id_data'"
 	gen migrated_from_urban=q417
 	recode migrated_from_urban 0=. 1=0 2=1 
 	replace migrated_from_urban=. if migrated_binary==0
+	replace migrated_from_urban=. if age<migrated_mod_age
 	label de lblmigrated_from_urban 0 "Rural" 1 "Urban"
 	label values migrated_from_urban lblmigrated_from_urban
 	label var migrated_from_urban "Migrated from area"
@@ -481,7 +485,9 @@ local output "`id_data'"
 
 
 *<_migrated_from_code_>
-	gen migrated_from_code = .
+	gen migrated_from_code=.
+	replace migrated_from_cat=. if migrated_binary==0
+	replace migrated_from_cat=. if age<migrated_mod_age
 	*label de lblmigrated_from_code
 	*label values migrated_from_code lblmigrated_from_code
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
@@ -489,7 +495,9 @@ local output "`id_data'"
 
 
 *<_migrated_from_country_>
-	gen migrated_from_country = .
+	gen migrated_from_country=.
+	replace migrated_from_country=. if migrated_binary==0
+	replace migrated_from_country=. if age<migrated_mod_age
 	label var migrated_from_country "Code of migration country (ISO 3 Letter Code)"
 *</_migrated_from_country_>
 
@@ -498,6 +506,7 @@ local output "`id_data'"
 	gen migrated_reason=q418
 	recode migrated_reason (1/4 6=3) (5=2) (8/11=1) (7 12/13=5) 
 	replace migrated_reason=. if migrated_binary==0
+	replace migrated_reason=. if age<migrated_mod_age	
 	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
 	label values migrated_reason lblmigrated_reason
 	label var migrated_reason "Reason for migrating"
@@ -597,7 +606,9 @@ Individual |        SECTION - 4   4.8
 
 *<_educat7_>
 	gen byte educat7=q409
-	recode educat7 (3=2) (4=3) (5=4) (6=4) (7=5) (8 9 10 11 12 13 14=7) (92=.)	
+	recode educat7 (3=2) (4=3) (5/6=4) (8/14=7) (92=.)
+	replace educat7=5 if q409==7&q410==1
+	replace educat7=7 if q409==7&inrange(q410,8,14) 
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -924,6 +935,8 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 	}
 
 	egen double wage_no_compen=rowtotal(last_week last_month), missing
+	replace wage_no_compen=0 if empstat==2
+	replace wage_no_compen=. if lstatus!=1
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
@@ -932,9 +945,8 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 	gen byte unitwage=.
 	replace unitwage=2 if wage_no_compen==q703
 	replace unitwage=5 if wage_no_compen==q704
+	replace unitwage=10 if wage_no_compen>q703&!mi(wage_no_compen)
 	replace unitwage = . if lstatus!=1
-	
-	
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
 	replace unitwage = . if lstatus !=1

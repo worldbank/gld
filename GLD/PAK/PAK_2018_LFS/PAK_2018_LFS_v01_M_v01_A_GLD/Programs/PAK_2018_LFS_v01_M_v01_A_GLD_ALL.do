@@ -424,6 +424,7 @@ So their households also miss household heads.
 *<_migrated_binary_>
 	gen migrated_binary=cond(S04C15==1, 0, 1)
 	label de lblmigrated_binary 0 "No" 1 "Yes"
+	replace migrated_binary=. if age<migrated_mod_age
 	label values migrated_binary lblmigrated_binary
 	label var migrated_binary "Individual has migrated"
 *</_migrated_binary_>
@@ -448,6 +449,8 @@ So their households also miss household heads.
    replace migrated_years =S04C15-2 if inrange(S04C15,3,6)
    replace migrated_years=7 if S04C15==7
    replace migrated_years=10 if S04C15==8
+   replace migrated_years=. if migrated_binary==0
+   replace migrated_years=. if age<migrated_mod_age
    label var migrated_years "Years since latest migration"
 *</_migrated_years_>
 
@@ -456,6 +459,7 @@ So their households also miss household heads.
 	gen migrated_from_urban=S04C17
 	recode migrated_from_urban 0=. 1=0 2=1 
 	replace migrated_from_urban=. if migrated_binary==0
+	replace migrated_from_urban=. if age<migrated_mod_age
 	label de lblmigrated_from_urban 0 "Rural" 1 "Urban"
 	label values migrated_from_urban lblmigrated_from_urban
 	label var migrated_from_urban "Migrated from area"
@@ -465,13 +469,17 @@ So their households also miss household heads.
 *<_migrated_from_cat_>
 	gen migrated_from_cat=.
 	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country"
+	replace migrated_from_cat=. if migrated_binary==0
+	replace migrated_from_cat=. if age<migrated_mod_age
 	label values migrated_from_cat lblmigrated_from_cat
 	label var migrated_from_cat "Category of migration area"
 *</_migrated_from_cat_>
 
 
 *<_migrated_from_code_>
-	gen migrated_from_code = .
+	gen migrated_from_code=.
+	replace migrated_from_code=. if migrated_binary==0
+	replace migrated_from_code=. if age<migrated_mod_age
 	*label de lblmigrated_from_code
 	*label values migrated_from_code lblmigrated_from_code
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
@@ -479,7 +487,9 @@ So their households also miss household heads.
 
 
 *<_migrated_from_country_>
-	gen migrated_from_country = .
+	gen migrated_from_country=.
+	replace migrated_from_country=. if migrated_binary==0
+	replace migrated_from_country=. if age<migrated_mod_age
 	label var migrated_from_country "Code of migration country (ISO 3 Letter Code)"
 *</_migrated_from_country_>
 
@@ -488,6 +498,7 @@ So their households also miss household heads.
 	gen migrated_reason=S04C18
 	recode migrated_reason (1/4 6=3) (5=2) (8/11=1) (14=4) (7 12/13 15=5) 
 	replace migrated_reason=. if migrated_binary==0
+	replace migrated_reason=. if age<migrated_mod_age
 	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
 	label values migrated_reason lblmigrated_reason
 	label var migrated_reason "Reason for migrating"
@@ -592,7 +603,11 @@ Therefore, the ed_mod_age was set to 5 as oppsed to 0.
 
 
 *<_educat7_>
-	gen byte educat7=.
+	gen byte educat7=S04C09
+	recode educat7 (3=2) (4=3) (5/6=4) (8/15=7)
+	replace educat7=5 if S04C09==7&S04C10==1
+	replace educat7=7 if S04C09==7&inrange(S04C10,8,15) 
+	replace educat7=. if age<ed_mod_age & age!=.
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -930,15 +945,24 @@ upper and lower bonds are the same.
 
 
 *<_wage_no_compen_>
-	gen double wage_no_compen=S07C03
+	gen last_week=S07C03
+	gen last_month=S07C04
+	foreach v of varlist last_*{
+		replace `v'=0 if S07C03>0 & S07C04>0 & !mi(S07C03) & !mi(S07C04)
+		replace `v'=. if lstatus!=1
+	}
+	egen double wage_no_compen=rowtotal(last_week last_month), missing
+	replace wage_no_compen=0 if empstat==2
 	replace wage_no_compen=. if lstatus!=1
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
 
 *<_unitwage_>
-	gen byte unitwage=5
-	replace unitwage=. if lstatus!=1
+	gen byte unitwage=.
+	replace unitwage=2 if wage_no_compen==S07C03
+	replace unitwage=5 if wage_no_compen==S07C04
+	replace unitwage=10 if wage_no_compen>S07C03&!mi(wage_no_compen)	
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
 	label values unitwage lblunitwage
