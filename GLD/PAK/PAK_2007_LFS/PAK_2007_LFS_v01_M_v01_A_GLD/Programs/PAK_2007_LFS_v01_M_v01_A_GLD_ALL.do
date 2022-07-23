@@ -459,7 +459,7 @@ local output "`id_data'"
    replace migrated_years=2.5 if q415==3
    replace migrated_years=7 if q415==4
    replace migrated_years=10 if q415==5
-   replace migrated_years=. if migrated_binary==0
+   replace migrated_years=. if migrated_binary!=1
    replace migrated_years=. if age<migrated_mod_age
    label var migrated_years "Years since latest migration"
 *</_migrated_years_>
@@ -468,7 +468,7 @@ local output "`id_data'"
 *<_migrated_from_urban_>
 	gen migrated_from_urban=q417
 	recode migrated_from_urban 0=. 1=0 2=1 
-	replace migrated_from_urban=. if migrated_binary==0
+	replace migrated_from_urban=. if migrated_binary!=1
 	replace migrated_from_urban=. if age<migrated_mod_age
 	label de lblmigrated_from_urban 0 "Rural" 1 "Urban"
 	label values migrated_from_urban lblmigrated_from_urban
@@ -486,7 +486,7 @@ local output "`id_data'"
 
 *<_migrated_from_code_>
 	gen migrated_from_code=.
-	replace migrated_from_cat=. if migrated_binary==0
+	replace migrated_from_cat=. if migrated_binary!=1
 	replace migrated_from_cat=. if age<migrated_mod_age
 	*label de lblmigrated_from_code
 	*label values migrated_from_code lblmigrated_from_code
@@ -496,7 +496,7 @@ local output "`id_data'"
 
 *<_migrated_from_country_>
 	gen migrated_from_country=.
-	replace migrated_from_country=. if migrated_binary==0
+	replace migrated_from_country=. if migrated_binary!=1
 	replace migrated_from_country=. if age<migrated_mod_age
 	label var migrated_from_country "Code of migration country (ISO 3 Letter Code)"
 *</_migrated_from_country_>
@@ -505,7 +505,7 @@ local output "`id_data'"
 *<_migrated_reason_>
 	gen migrated_reason=q418
 	recode migrated_reason (1/4 6=3) (5=2) (8/11=1) (7 12/13=5) 
-	replace migrated_reason=. if migrated_binary==0
+	replace migrated_reason=. if migrated_binary!=1
 	replace migrated_reason=. if age<migrated_mod_age	
 	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
 	label values migrated_reason lblmigrated_reason
@@ -558,7 +558,7 @@ Individual |        SECTION - 4   4.8
 *<_ed_mod_age_>*/
 
 *<_ed_mod_age_>
-	gen byte ed_mod_age=0
+	gen byte ed_mod_age=5
 	label var ed_mod_age "Education module application age"
 *</_ed_mod_age_>
 
@@ -608,7 +608,8 @@ Individual |        SECTION - 4   4.8
 	gen byte educat7=q409
 	recode educat7 (3=2) (4=3) (5/6=4) (8/14=7) (92=.)
 	replace educat7=5 if q409==7&q410==1
-	replace educat7=7 if q409==7&inrange(q410,8,14) 
+	replace educat7=7 if q409==7&inrange(q410,8,14)
+	replace educat7=. if age<ed_mod_age
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -764,16 +765,16 @@ is 10 and above, Pakistan employment report defines active population as 15 year
 Note: var "potential_lf" only takes value if the respondent is not in labor force. (lstatus==3)
 
 "potential_lf" = 1 if the person is
-1)available but not searching or [q903==7 & inrange(q906, 1, 2)]
-2)searching but not immediately available to work [inrange(q903, 1, 6) & q906==3)
+1)available but not searching or [q903==7 & inrange(q901, 1, 6)]
+2)searching but not immediately available to work [inrange(q903, 1, 6) & q906==7)
 </_potential_lf_>*/
 
 
 *<_potential_lf_>
 	gen byte potential_lf=.
 	replace potential_lf=0 if lstatus==3
-	replace potential_lf=1 if [q903==7 & inrange(q906, 1, 2)] | [inrange(q903, 1, 6) & q906==3]
-	replace potential_lf=0 if [inrange(q903, 1, 6) & inrange(q906, 1, 2)] | [q903==7 & q906==3]
+	replace potential_lf=1 if [q903==7 & inrange(q901, 1, 6)] | [inrange(q903, 1, 6) & q901==7]
+	replace potential_lf=0 if [inrange(q903, 1, 6) & inrange(q901, 1, 6)] | [q903==7 & q901==7]
 	replace potential_lf=. if age < minlaborage 
 	replace potential_lf=. if lstatus !=3
 	label var potential_lf "Potential labour force status"
@@ -859,7 +860,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_industrycat_isic_>
 	gen industrycat_isic=q510
-	recode industrycat_isic (96 97=93) (51/55 57 74=.)
+	recode industrycat_isic (97 74=.) (51/57 29=50)
 	replace industrycat_isic=industrycat_isic*100
 	tostring industrycat_isic, replace format(%04.0f)
 	replace industrycat_isic="" if lstatus!=1 | industrycat_isic=="."
@@ -869,7 +870,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_industrycat10_>
 	gen byte industrycat10=q510
-	recode industrycat10 11/13=1 21/29 = 2 31/39=3 41 42=4 45=4 51/59=5 61/63=6 71/72=7 81/83=8 91=9 92/96=10 0=.
+	recode industrycat10 11/13=1 21/29=2 31/39=3 41 42 45=4 51/59=5 61/63=6 71/72=7 81/83=8 91=9 92/96=10 0=.
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
@@ -1063,7 +1064,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_industrycat_isic_2_>
 	gen industrycat_isic_2=q521
-	recode industrycat_isic_2 (1/5 8/9 16 51 52 55 58 75 77=.) 
+	recode industrycat_isic_2 (1/5 8/9 16 58 75 77=.) (51/57 59=50)
 	replace industrycat_isic_2=industrycat_isic_2*100
 	tostring industrycat_isic_2, replace format(%04.0f)
 	replace industrycat_isic_2="" if q518!=1 | mi(q521) | industrycat_isic_2=="."
