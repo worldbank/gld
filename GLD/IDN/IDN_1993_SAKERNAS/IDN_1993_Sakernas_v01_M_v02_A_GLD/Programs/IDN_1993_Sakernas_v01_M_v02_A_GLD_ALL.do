@@ -131,13 +131,13 @@ local output "`id_data'"
 
 
 *<_vermast_>
-	gen vermast = "v02"
+	gen vermast = "v01"
 	label var vermast "Version of master data"
 *</_vermast_>
 
 
 *<_veralt_>
-	gen veralt = "v01"
+	gen veralt = "v02"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 

@@ -4,7 +4,7 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				IDN_2013_Sakernas_v01_M_v02_A_GLD.do </_Program name_>
+<_Program name_>				IDN_2013_Sakernas_v02_M_v01_A_GLD.do </_Program name_>
 <_Application_>					Stata MP 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
 <_Date created_>				2021-08-18 </_Date created_>
@@ -12,7 +12,7 @@
 <_Country_>						Indonesia (IDN) </_Country_>
 <_Survey Title_>				Survei Angkatan Kerja Nasional (The National Labor Force Survey) </_Survey Title_>
 <_Survey Year_>					2013 </_Survey Year_>
-<_Study ID_>					IDN_2013_Sakernas_v01_M </_Study ID_>
+<_Study ID_>					IDN_2013_Sakernas_v02_M </_Study ID_>
 <_Data collection from (M/Y)_>	[MM/YYYY] </_Data collection from (M/Y)_>
 <_Data collection to (M/Y)_>	[MM/YYYY] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			Shared with Job's Group by the World Bank Indonesia Team
@@ -33,7 +33,7 @@
 
 <_Version Control_>
 
-* Date: [2022-05-24] File: [As in Program name above] - [Reducing original indutry and occupation codes digits and remapping those two to ISIC/ISCO.]
+* Date: [2022-05-24] File: [As in Program name above] - [Reducing original indutry and occupation codes digits and remapping those two to ISIC/ISCO & using backcasting data]
 * Date: [YYYY-MM-DD] File: [As in Program name above] - [Description of changes]
 
 </_Version Control_>
@@ -58,10 +58,10 @@ local 	cty 	`"IDN"'
 local 	usr		`"573465_JT"'
 local 	surv_yr `"2013"'
 local 	year 	"`drive':\GLD-Harmonization\\`usr'\\`cty'\\`cty'_`surv_yr'_Sakernas"
-local 	main	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M"
+local 	main	"`year'\\`cty'_`surv_yr'_Sakernas_v02_M"
 local 	stata	"`main'\data\stata"
-local 	gld 	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M_v02_A_GLD"
-local 	i2d2	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M_v02_A_I2D2"
+local 	gld 	"`year'\\`cty'_`surv_yr'_Sakernas_v02_M_v01_A_GLD"
+local 	i2d2	"`year'\\`cty'_`surv_yr'_Sakernas_v02_M_v01_A_I2D2"
 local 	code 	"`gld'\Programs"
 local 	id_data "`gld'\Data\Harmonized"
 
@@ -1687,6 +1687,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`output'\IDN_2013_SAKERNAS_v01_M_v02_A_GLD_ALL.dta", replace
+save "`output'\IDN_2013_SAKERNAS_v02_M_v01_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>
