@@ -1,0 +1,49 @@
+
+# Introduction to Brazilian Continuous National Household Sample Survey (PNADC)
+
+- [What is the BRA PNADC](#what-is-the-bra-pnadc)
+- [What does the BRA PNADC cover?](#what-does-the-bra-pnadc-cover)
+- [Where can the data be found?](#where-can-the-data-be-found)
+- [What is the sampling procedure?](#what-is-the-sampling-procedure)
+- [What is the significance level?](#what-is-the-geographic-significance-level)
+- [Other noteworthy aspects](#other-noteworthy-aspects)
+
+## What is the [BRA] [PNADC]?
+
+The Brazilian Continuous National Household Sample Survey (PNADC) is the Brazilian annual Labour Force Survey run by the Brazilian Institute of Geography and Statistics (IBGE) from 2012 onward.
+
+## What does the BRA PNAD cover?
+
+The Brazilian PNAD is a labour force survey collecting information on demographic details (age, sex, location), education (academic), labour market activities in the reference week. The years and sample size of PNADC harmonized for GLD are:
+
+## Where can the data be found?
+
+The microdata are free and publicly available on the Brazilian Institute of Geography and Statistics (IBGE) [download website]( https://www.ibge.gov.br/estatisticas/downloads-estatisticas.html). The section where it can be found is called ‘Trabalho e Rendimento’ (Employment and Income).
+
+## What is the sampling procedure?
+
+The sampling design adopted in the PNADC has two stages of selection with stratification of the primary sampling units (PSU). The definition of the PSUs took into account the size of the census sectors, each one of them had to have at least 60 permanent private households (PPHH), including occupied ones, occupied ones without an interview and vacant ones. A census sector that had 60 or more PPHHs constituted a PSU by itself. The census sectors, whose sizes were smaller than the defined minimum, were grouped within the same sub-district, respecting the contiguity, type and situation of the sectors, until the formed group had at least 60 PPHHs. Each of these groups formed a PSU. 
+
+In the first stage, PSUs are selected with a probability proportional to the number of households within each defined stratum. The selection of PSUs is done from the Master Registry, which contains information for each PSU on administrative dependency and some sociodemographic characteristics. The PSUs that make up the PNADC sample are those selected to make up the one-quarter Master Sample. In the second stage, 14 permanent private households occupied within each PSU of the sample are selected, by simple random sampling from the updated National Registry of Addresses for Statistical Purposes (CNEFE). The sample of PSUs and households is done every 3 months of a quarter, following the rotation scheme.
+
+## What is the geographic significance level?
+
+The survey reports statistically representative estimates for the Country, Major Regions, Federation Units (States), Metropolitan Areas linked to State Capital and State Capitals.
+
+## Other noteworthy aspects
+
+In 2015.4, PNADC underwent some changed in its collection. The main change was observed in the variable 'Effectively earned income', which has a significant increase, due to the introduction of supporting questions regarding potential sources of income that were usually forgotten by surveyees when reporting their earnings.
+
+In 2020, PNADC underwent some changes to adapt to the pandemic context. For around the second and third quarter of that year, the variable 'Usually earned income' had as reference period the pre-pandemic months. Also, the survey was carried out for two years by phone, introducing a potential bias.
+
+### Differences in methodology with respect to the PNADC
+
+PNADC replaced the Brazilian National Household Sample Survey (PNAD). The questionnaires are similar, although with some differences. PNADC is collected quarterly, surveying the same household for five rounds. There is an annual edition, both for first and fifth rounds of the survey. 
+
+Another important difference is related to the years of study. The National Constitution of 1988 determined the universalization of the right to basic, compulsory and free education, initially from seven to seventeen years old. In 1996, this right was expanded to 6 years old – although in the early years it was not universally observed –, with enrollment at this age taking place in the so-called “literacy grade”, which was not considered a year of study by the IBGE. However, in 2006, compulsory elementary education was established to last 9 years, starting at 6 years of age, incorporating, in practice, the “literacy grade”. The PNADC, therefore, starts to consider this first year as a year of study.
+
+The employment definition is more restrictive in PNADC. Since 1992, PNAD classify a worker as employed with no restrictions on the number of hours worked in the week, whereas in PNADC it must have worked at least on hour. Unpaid work in aid of a religious, charitable or cooperative institution was no longer considered employment in PNADC, along with work in production for own consumption or in construction for own use. Finally, in PNADC, some restrictions were introduced regarding the time of leave to consider the person as employed.
+
+### Coding of industry and occupation codes
+
+The PNAD codes occupation is based on the Brazilian National Occupation classification (CBO) and industry based on the National Industry classification (CNAE). Different survey editions use different iterations of the CBO and CNAE, which in turn lead to different mappings to the International Standard Classification of Occupations (ISCO) and International Standard Industrial Classification (ISIC). The details on the process of creating the correspondence between national and international classifications are covered here in a separate document. The table below shows the overview of the underlying version of the national classification and what version of the international they have been matched to.
