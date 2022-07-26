@@ -72,6 +72,14 @@ forvalues i=2/12 {
 
 rename *, lower
 drop _merge
+
+*** amazonia annual data append
+*for data transformation use convert file in programs folder in original data folder
+append using "`path_in'\amazonia\GEIH_AMA_2015.dta"
+
+***San andrés
+append using "`path_in'\SA_2015.dta"
+
 tempfile general_2015
 save `general_2015'
 
@@ -98,7 +106,7 @@ save `general_mig'
 ****final dataset with updated weights
 use "`path_in'\Fex proyeccion CNPV_2018.dta"
 rename *, lower
-merge 1:1 directorio secuencia_p orden using "`general_mig'", force assert(master match) keep(match) nogen
+merge 1:1 directorio secuencia_p orden using "`general_mig'", force assert(match using)  nogen
 
 
 save "`path_in'\data_2015_final.dta", replace
@@ -265,19 +273,24 @@ local letters "secuencia_p orden"
  	destring clase, gen(urbano) //add
 	gen byte urban=urbano
 	replace urban = 0 if urban == 2
+	*san andres urban
+	replace urban=1 if dpto=="88"
+	*amazonia ? ciudades entonces urbano
+	replace urban=1 if inrange(area,"81","99")
 	label var urban "Location is urban"
 	la de lblurban 1 "Urban" 0 "Rural"
 	label values urban lblurban
 *</_urban_>
 
 *<_subnatid1_>
-	destring dpto, replace
-	gen subnatid1 =string(dpto)
-	replace subnatid1 = "1 - Atlantica" if subnatid1 == "8" | subnatid1 == "13" | subnatid1 == "20" | subnatid1 == "23" | subnatid1 == "44" | subnatid1 == "47" | subnatid1 == "70"
-	replace subnatid1 = "2 - Oriental" if subnatid1 == "15" | subnatid1 == "25" | subnatid1 == "50" | subnatid1 == "54" | subnatid1 == "68"
-	replace subnatid1 = "3 - Central" if subnatid1 == "5" | subnatid1== "17" | subnatid1 == "18" | subnatid1 == "41" | subnatid1 == "63" | subnatid1 == "66" | subnatid1 == "66" | subnatid1 == "73"
-	replace subnatid1 = "4 - Pacifica" if subnatid1 == "19" | subnatid1 == "27" | subnatid1 == "52" | subnatid1 == "76"
-	replace subnatid1 = "5 - Santa Fe de Bogota" if subnatid1 == "11"
+	gen str subnatid1 =""
+	replace subnatid1 = "1 - Atlantica" if dpto == "08" | dpto == "13"  | dpto == "20" | dpto == "23" | dpto == "44" | dpto == "47" | dpto == "70" | area == "08" | area == "13"  | area == "20" | area == "23" | area == "44" | area == "47" | area == "70"
+	replace subnatid1 = "2 - Oriental" if dpto == "15" | dpto == "25" | dpto == "50" | dpto == "54" | dpto == "68" | area == "15" | area == "25" | area == "50" | area == "54" | area == "68"
+	replace subnatid1 = "3 - Central" if dpto == "05" | dpto== "17" | dpto == "18" | dpto == "41" | dpto == "63" | dpto == "66" | dpto == "66" | dpto == "73" | area == "05" | area== "17" | area == "18" | area == "41" | area == "63" | area == "66" | area == "66" | area == "73"
+	replace subnatid1 = "4 - Pacifica" if dpto == "19" | dpto == "27" | dpto == "52" | dpto == "76" | area == "19" | area == "27" | area == "52" | area == "76"
+	replace subnatid1 = "5 - Santa Fe de Bogota" if dpto == "11" | area == "11"
+	replace subnatid1 = "6 - Aamazonia y Orinoquía" if area == "81" | area == "85" | area == "86" |area == "91" | area == "94" | area == "95" | area == "97" | area == "99"
+	replace subnatid1 = "7 - San Andrés" if dpto =="88" | area == "88"
 	label var subnatid1 "Subnational ID at First Administrative Level"
 
 /* <_subnatid1_note>
@@ -291,7 +304,7 @@ local letters "secuencia_p orden"
 
 
 *<_subnatid2_>
-	gen subnatid2 = string(dpto)
+	gen str subnatid2 = dpto
 	replace subnatid2 = "5 - Antioquia" if subnatid2 == "5"
 	replace subnatid2 = "8 - Atlántico" if subnatid2 == "8"
 	replace subnatid2 = "11 - Bogotá, D.C." if subnatid2 == "11"
@@ -316,6 +329,16 @@ local letters "secuencia_p orden"
 	replace subnatid2 = "70 - Sucre" if subnatid2 == "70"
 	replace subnatid2 = "73 - Tolima" if subnatid2 == "73"
 	replace subnatid2 = "76 - Valle del Cauca" if subnatid2 == "76"
+	replace subnatid2= "" if dpto=="."
+	replace subnatid2 = "81 - Arauca" if area == "81"
+	replace subnatid2 = "85 - Yopal" if area == "85"
+	replace subnatid2 = "86 - Mocoa" if area == "86"
+	replace subnatid2 = "88 - San Andrés" if dpto =="88"
+	replace subnatid2 = "91 - Leticia" if area == "91"
+	replace subnatid2 = "94 - Inirida" if area == "94"
+	replace subnatid2 = "95 - San Jose del Guaviare" if area == "95"
+	replace subnatid2 = "97 - Mitu" if area == "97"
+	replace subnatid2 = "99 - Puerto Carreño" if area == "99"
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
 
