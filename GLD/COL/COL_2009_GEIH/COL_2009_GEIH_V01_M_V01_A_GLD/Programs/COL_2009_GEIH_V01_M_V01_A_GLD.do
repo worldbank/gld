@@ -326,9 +326,9 @@ local letters "secuencia_p orden"
 *<_subnatid1_>
 	destring dpto, replace
 	gen subnatid1 =string(dpto)
-	replace subnatid1 = "1 - Atlantica" if subnatid1 == "8" | subnatid1 == "13" | subnatid1 == "20" | subnatid1 == "23" | subnatid1 == "44" | subnatid1 == "47" | subnatid1 == "70"
+	replace subnatid1 = "1 - Atlantica" if subnatid1 == "08" | subnatid1 == "13" | subnatid1 == "20" | subnatid1 == "23" | subnatid1 == "44" | subnatid1 == "47" | subnatid1 == "70"
 	replace subnatid1 = "2 - Oriental" if subnatid1 == "15" | subnatid1 == "25" | subnatid1 == "50" | subnatid1 == "54" | subnatid1 == "68"
-	replace subnatid1 = "3 - Central" if subnatid1 == "5" | subnatid1== "17" | subnatid1 == "18" | subnatid1 == "41" | subnatid1 == "63" | subnatid1 == "66" | subnatid1 == "66" | subnatid1 == "73"
+	replace subnatid1 = "3 - Central" if subnatid1 == "05" | subnatid1== "17" | subnatid1 == "18" | subnatid1 == "41" | subnatid1 == "63" | subnatid1 == "66" | subnatid1 == "66" | subnatid1 == "73"
 	replace subnatid1 = "4 - Pacifica" if subnatid1 == "19" | subnatid1 == "27" | subnatid1 == "52" | subnatid1 == "76"
 	replace subnatid1 = "5 - Santa Fe de Bogota" if subnatid1 == "11"
 	label var subnatid1 "Subnational ID at First Administrative Level"
@@ -345,8 +345,8 @@ local letters "secuencia_p orden"
 
 *<_subnatid2_>
 	gen subnatid2 = string(dpto)
-	replace subnatid2 = "5 - Antioquia" if subnatid2 == "5"
-	replace subnatid2 = "8 - Atlántico" if subnatid2 == "8"
+	replace subnatid2 = "5 - Antioquia" if subnatid2 == "05"
+	replace subnatid2 = "8 - Atlántico" if subnatid2 == "08"
 	replace subnatid2 = "11 - Bogotá, D.C." if subnatid2 == "11"
 	replace subnatid2 = "13 - Bolívar" if subnatid2 == "13"
 	replace subnatid2 = "15 - Boyacá" if subnatid2 == "15"

@@ -306,8 +306,8 @@ local letters "secuencia_p orden"
 
 *<_subnatid2_>
 	gen str subnatid2 = dpto
-	replace subnatid2 = "5 - Antioquia" if subnatid2 == "5"
-	replace subnatid2 = "8 - Atlántico" if subnatid2 == "8"
+	replace subnatid2 = "5 - Antioquia" if subnatid2 == "05"
+	replace subnatid2 = "8 - Atlántico" if subnatid2 == "08"
 	replace subnatid2 = "11 - Bogotá, D.C." if subnatid2 == "11"
 	replace subnatid2 = "13 - Bolívar" if subnatid2 == "13"
 	replace subnatid2 = "15 - Boyacá" if subnatid2 == "15"
