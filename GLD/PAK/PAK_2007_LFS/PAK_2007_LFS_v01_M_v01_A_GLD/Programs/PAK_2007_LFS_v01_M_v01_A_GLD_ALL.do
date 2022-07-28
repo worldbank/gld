@@ -788,7 +788,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 	replace underemployment=1 if q602==1
 	replace underemployment=0 if q602==2
 	replace underemployment=. if age < minlaborage & age != .
-	replace underemployment=. if lstatus == 1
+	replace underemployment=. if lstatus!=1
 	label var underemployment "Underemployment status"
 	la de lblunderemployment 0 "No" 1 "Yes"
 	label values underemployment lblunderemployment
@@ -860,7 +860,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_industrycat_isic_>
 	gen industrycat_isic=q510
-	recode industrycat_isic (97 74=.) (51/57 29=50)
+	recode industrycat_isic (97 74=.) (51/57 59=50)
 	replace industrycat_isic=industrycat_isic*100
 	tostring industrycat_isic, replace format(%04.0f)
 	replace industrycat_isic="" if lstatus!=1 | industrycat_isic=="."
@@ -870,7 +870,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_industrycat10_>
 	gen byte industrycat10=q510
-	recode industrycat10 11/13=1 21/29=2 31/39=3 41 42 45=4 51/59=5 61/63=6 71/72=7 81/83=8 91=9 92/96=10 0=.
+	recode industrycat10 11/13=1 21/29=2 31/39=3 41 42 45=4 51/59=5 61/63=6 71/72=7 81/83=8 91=9 92/96 0=10 
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
