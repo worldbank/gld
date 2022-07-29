@@ -67,10 +67,27 @@ if ustrregexm("`universe'", "^(isic|ISIC)$") {
 	* Reduce to only those with ISIC values and not in the universe (_merge takes value 1)
 	keep if !missing(`var') & _merge == 1
 
+	* Count if there are any cases left
+	qui: count
+	
+	* If there are none, stop
+	if `r(N)' == 0 {
+	    
+		dis _newline
+		dis "{bf:     All good here!}"
+		dis _newline
+		exit, clear
+		
+	}
+	else {
+	    
 	* Generate variable that counts instances
 	gen instances = 1
-
+	
 	collapse (count) instances (first) countrycode year isic_version, by(`var')
+		
+	}
+
 
 }
 
@@ -109,10 +126,26 @@ if ustrregexm("`universe'", "^(isco|ISCO)$") {
 	* Reduce to only those with ISIC values and not in the universe (_merge takes value 1)
 	keep if !missing(`var') & _merge == 1
 
+	* Count if there are any cases left
+	qui: count
+	
+	* If there are none, stop
+	if `r(N)' == 0 {
+	    
+		dis _newline
+		dis "{bf:     All good here!}"
+		dis _newline
+		exit, clear
+		
+	}
+	else {
+	    
 	* Generate variable that counts instances
 	gen instances = 1
-
+	
 	collapse (count) instances (first) countrycode year isco_version, by(`var')
+		
+	}
 
 } 
 

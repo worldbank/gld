@@ -1,6 +1,6 @@
 # Correspondence between NAICS Mexico and ISIC
 
-Information regarding the industry respondents are employed in is coded in the Encuesta Nacional de Ocupación y Empleo (ENOE) using the codes of the [North American Industry Classification System](http://en.www.inegi.org.mx/app/scian/) (shortened as NAICS in English and SCIAN in Spanish). 
+Information regarding the industry respondents are employed in is coded in the Encuesta Nacional de Ocupación y Empleo (ENOE) using the codes of the [North American Industry Classification System](http://en.www.inegi.org.mx/app/scian/) (shortened as NAICS in English and SCIAN in Spanish).
 
 This document first describes the logic of the process and then provides users with the underlying conversions tables, conversion algorithms, as well as the generated `dta` files used in the harmonization codes.
 
@@ -72,7 +72,7 @@ The third step matches each three-digit NAICS code to the reduced two-digit ISIC
 
 In the case of SCIAN `464` (blue box in the above image) the mapping is now at 100%, meaning that all seven ISIC codes start with codes `47`. In the case of SCIAN `468` (orange box in the above image), the options are more evenly split even though there is a majority option. In the case of the SCIAN `222` each of the four ISIC codes has the same number of mappings - no clear assignment can be made.
 
-At this third step assignments SCIAN to ISIC two-digits are made if there is a single option with >50% cases assigned to it. In the case above SCIAN `468` would not be assigned at this stage. This is because there may be two mappings with each 50.0% each, which would lead to a non-unique assignment. This logic maps a further 60 unique codes, leaving 17 codes still to match. 
+At this third step assignments SCIAN to ISIC two-digits are made if there is a single option with >50% cases assigned to it. In the case above SCIAN `468` would not be assigned at this stage. This is because there may be two mappings with each 50.0% each, which would lead to a non-unique assignment. This logic maps a further 60 unique codes, leaving 17 codes still to match.
 
 The fourth step looks at all steps without an absolute majority. This step itself involves two sub-steps. This is best illustrated looking at the codes for SCIAN `222`, `487`, and `551` below.
 
@@ -80,7 +80,7 @@ The fourth step looks at all steps without an absolute majority. This step itsel
 ![SCIAN Reducation Logic](utilities/match_3.png)
 <br></br>
 
-The overall idea at this step is to select a mapping based on simple majority – and chose randomly in the case of a tie. For code `487` this is mapping to ISIC code `49` as this is the mapping category in 3 out of 7 possible mappings (sum the number of possible mappings denoted in column `n`). 
+The overall idea at this step is to select a mapping based on simple majority – and chose randomly in the case of a tie. For code `487` this is mapping to ISIC code `49` as this is the mapping category in 3 out of 7 possible mappings (sum the number of possible mappings denoted in column `n`).
 
 For `222` there is no single best category, but, if we look at the Sections the codes belong to – the top level ISIC aggregations – two of the codes are section `E` (Water supply; sewerage, waste management and remediation activities) while each one is from section `D` (Electricity, gas, steam, and air conditioning supply) and `H` (Transportation and storage). When selecting a mapping this sectional relevance should be taken into account to reduce any potential randomness in the mapping.
 
@@ -117,7 +117,7 @@ Overall, the quality of the mapping seems to be very good. However, the metric u
 | 312142        | Distilled agave drinks            | 1101      |
 
 
-The way the correspondence has proceeded, it treats every entry equally. However, given that tequila, probably the economically most important drink in Mexico is made from agave, NAICS code `312142` should be weighted more strongly in this context. If we think of Cuba, code `312141` should probably be more important. This information, however, is not avaialable to us. Furthermore, note that the process of matching less than perfectly at only the lowest level of ISIC solves the issue here. All these NAICS codes starting with `3121` don't match to ISIC at four digits but do so perfectly to `110`. 
+The way the correspondence has proceeded, it treats every entry equally. However, given that tequila, probably the economically most important drink in Mexico is made from agave, NAICS code `312142` should be weighted more strongly in this context. If we think of Cuba, code `312141` should probably be more important. This information, however, is not avaialable to us. Furthermore, note that the process of matching less than perfectly at only the lowest level of ISIC solves the issue here. All these NAICS codes starting with `3121` don't match to ISIC at four digits but do so perfectly to `110`.
 
 In this case no problem has arisen and as small niches grow, they can be expected to obtain more codes (as clothing grows, groups are created for shirts, trousers, ...) so it can be assumed that a single category is not significantly larger than any other category in the economy, but it still should be kept in mind that the evaluation of the mapping is based only on the number of categories, regardless of the economic relevance.
 
@@ -132,4 +132,4 @@ The harmonization codes merge in `dta` files created from the correspondence tab
 
 - [The `R` code to map SCIAN 07 to ISIC 4](utilities/SCIAN_07_3D_ISIC_4.R);
 
-- [The `dta` file with codes for SCIAN 03 and ISIC 4](utilities/SCIAN_07_3D_ISIC_4.dta);
+- [The `dta` file with codes for SCIAN 07 and ISIC 4](utilities/SCIAN_07_3D_ISIC_4.dta);
