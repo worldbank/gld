@@ -755,6 +755,7 @@ is 10 and above, Pakistan employment report defines active population as 15 year
 	replace lstatus=1 if inlist(1,q502,q503) | inlist(q504,1,2)
 	replace lstatus=2 if [inrange(q901,1,6) | inrange(q902,1,5)] & inlist(q903,1,2) 
 	replace lstatus=3 if lstatus==.
+	replace lstatus=. if age<minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
@@ -765,16 +766,16 @@ is 10 and above, Pakistan employment report defines active population as 15 year
 Note: var "potential_lf" only takes value if the respondent is not in labor force. (lstatus==3)
 
 "potential_lf" = 1 if the person is
-1)available but not searching or [q903==7 & inrange(q901, 1, 6)]
-2)searching but not immediately available to work [inrange(q903, 1, 6) & q906==7)
+1)available but not searching or [inrange(q903,3,7) & inrange(q901, 1, 6)]
+2)searching but not immediately available to work [inrange(q903, 1, 2) & q906==7)
 </_potential_lf_>*/
 
 
 *<_potential_lf_>
 	gen byte potential_lf=.
 	replace potential_lf=0 if lstatus==3
-	replace potential_lf=1 if [q903==7 & inrange(q901, 1, 6)] | [inrange(q903, 1, 6) & q901==7]
-	replace potential_lf=0 if [inrange(q903, 1, 6) & inrange(q901, 1, 6)] | [q903==7 & q901==7]
+	replace potential_lf=1 if [inrange(q903,3,7) & inrange(q901, 1, 6)] | [inrange(q903, 1, 2) & q901==7]
+	replace potential_lf=0 if [inrange(q903, 1, 2) & inrange(q901, 1, 6)] | [inrange(q903,3,7) & q901==7]
 	replace potential_lf=. if age < minlaborage 
 	replace potential_lf=. if lstatus !=3
 	label var potential_lf "Potential labour force status"

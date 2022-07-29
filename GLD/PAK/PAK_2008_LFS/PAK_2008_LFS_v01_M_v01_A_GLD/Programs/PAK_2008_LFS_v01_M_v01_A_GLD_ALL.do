@@ -764,6 +764,7 @@ is 10 and above, Pakistan employment report defines active population as 15 year
 	replace lstatus=1 if inlist(1,q5_2,q5_3) | inlist(q5_4,1,2)
 	replace lstatus=2 if [inrange(q9_1,1,6) | inrange(q9_2,1,5)] & inlist(q9_3,1,2) 
 	replace lstatus=3 if lstatus==.
+	replace lstatus=. if age<minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
@@ -774,7 +775,7 @@ is 10 and above, Pakistan employment report defines active population as 15 year
 Note: var "potential_lf" only takes value if the respondent is not in labor force. (lstatus==3)
 
 "potential_lf" = 1 if the person is
-1)available but not searching or [q9_3==7 & inrange(q9_6, 1, 2)]
+1)available but not searching or [inrange(q9_3,3,7) & inrange(q9_6, 1, 2)]
 2)searching but not immediately available to work [inrange(q9_3, 1, 6) & q9_6==3)
 </_potential_lf_>*/
 
@@ -782,8 +783,8 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 *<_potential_lf_>
 	gen byte potential_lf=.
 	replace potential_lf=0 if lstatus==3
-	replace potential_lf=1 if [q9_3==7 & inrange(q9_6, 1, 2)] | [inrange(q9_3, 1, 6) & q9_6==3]
-	replace potential_lf=0 if [inrange(q9_3, 1, 6) & inrange(q9_6, 1, 2)] | [q9_3==7 & q9_6==3]
+	replace potential_lf=1 if [inrange(q9_3,3,7) & inrange(q9_6, 1, 2)] | [inrange(q9_3, 1, 2) & q9_6==3]
+	replace potential_lf=0 if [inrange(q9_3, 1, 2) & inrange(q9_6, 1, 2)] | [inrange(q9_3,3,7) & q9_6==3]
 	replace potential_lf=. if age < minlaborage 
 	replace potential_lf=. if lstatus !=3
 	label var potential_lf "Potential labour force status"
@@ -797,7 +798,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 	replace underemployment=1 if q6_2==1
 	replace underemployment=0 if q6_2==2
 	replace underemployment=. if age < minlaborage & age != .
-	replace underemployment=. if lstatus == 1
+	replace underemployment=. if lstatus!=1
 	label var underemployment "Underemployment status"
 	la de lblunderemployment 0 "No" 1 "Yes"
 	label values underemployment lblunderemployment
