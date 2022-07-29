@@ -705,12 +705,20 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 
 *----------8.1: 7 day reference overall------------------------------*
 
-{
+{	
+/*<_lstatus_>
+
+We defined someone "seeking work" as:
+the last time he/she sought work 1-4 weeks ago.
+  
+*<_lstatus_>*/
+
 *<_lstatus_>
 	gen byte lstatus=.
 	replace lstatus=1 if sec5q01==1|inlist(sec5q02,1,2)|sec5q03==1
-	replace lstatus=2 if [inrange(sec10q42,1,5) | inrange(sec10q47,1,5)] & inlist(sec10q44,1,5) 
+	replace lstatus=2 if inrange(sec10q42,1,5) & inlist(sec10q44,1,2) 
 	replace lstatus=3 if lstatus==.
+	replace lstatus=. if age<minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
@@ -721,16 +729,16 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 Note: var "potential_lf" only takes value if the respondent is not in labor force. (lstatus==3)
 
 "potential_lf" = 1 if the person is
-1)available but not searching or [inlist(sec10q44,6,7) & !inrange(sec10q42, 1, 5)]
-2)searching but not immediately available to work or [sec10q42==6 & !inrange(sec10q42, 6, 7)]
+1)available but not searching or [inlist(sec10q44,3,7) & !inrange(sec10q42, 1, 5)]
+2)searching but not immediately available to work or [sec10q42==6 & !inrange(sec10q42, 3, 7)]
 </_potential_lf_>*/
 
 
 *<_potential_lf_>
 	gen byte potential_lf=.
 	replace potential_lf=0 if lstatus==3
-	replace potential_lf=1 if [inrange(sec10q44,6,7) & !inrange(sec10q42, 1, 5)] | [sec10q42==6 & inrange(sec10q44,1,5)]
-	replace potential_lf=0 if [inrange(sec10q44,1,5) & inrange(sec10q42, 1, 5)] | [inrange(sec10q44,6,7) & sec10q42==6]
+	replace potential_lf=1 if [inrange(sec10q44,3,7) & !inrange(sec10q42, 1, 5)] | [sec10q42==6 & inrange(sec10q44,1,2)]
+	replace potential_lf=0 if [inrange(sec10q44,1,2) & inrange(sec10q42, 1, 5)] | [inrange(sec10q44,3,7) & sec10q42==6]
 	replace potential_lf=. if age < minlaborage 
 	replace potential_lf=. if lstatus !=3
 	label var potential_lf "Potential labour force status"
@@ -913,13 +921,19 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 /*<_whours_>
 
-The working hour question in the questionnaire asks hours from primary and subsidiaryjob jointly.
+The working hour question in the questionnaire asks hours from primary and subsidiary job jointly.
+Four variables are related to this question:
+sec5q19tot ; sec5q19_1 ; sec5q19_2 ; sec5q19_3
 
+Except sec5q19tot, the other three variables only have 0-7, 8 categories in total, which does not make sense in terms of "working hours", as this working hours is supposed to be continuous integers.
+
+To code whours for primary job, we separated people who have one job from those who have a second job.   
 *<_whours_>*/ 
 
 
 *<_whours_>
-	gen whours=sec5q19_1
+	gen whours=.
+	replace whours=sec5q19tot if sec5q17==2
 	replace whours=. if lstatus!=1
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>

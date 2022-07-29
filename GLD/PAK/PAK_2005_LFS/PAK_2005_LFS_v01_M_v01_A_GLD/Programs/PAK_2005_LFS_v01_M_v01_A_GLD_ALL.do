@@ -720,11 +720,20 @@ is 10 and above, Pakistan employment report defines active population as 15 year
 *----------8.1: 7 day reference overall------------------------------*
 
 {
+	
+/*<_lstatus_>
+We defined someone "seeking work" as:
+the last time he/she sought work 1-4 weeks ago.
+  
+*<_lstatus_>*/
+
+	
 *<_lstatus_>
 	gen byte lstatus=.
 	replace lstatus=1 if inlist(1,q_5_2,q_5_3) | inlist(q_5_4,1,2)
 	replace lstatus=2 if [inrange(q_10_1,1,6) | inrange(q_10_2,1,5)] & inlist(q_10_3,1,2) 
 	replace lstatus=3 if lstatus==.
+	replace lstatus=. if age<minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
@@ -735,16 +744,16 @@ is 10 and above, Pakistan employment report defines active population as 15 year
 Note: var "potential_lf" only takes value if the respondent is not in labor force. (lstatus==3)
 
 "potential_lf" = 1 if the person is
-1)available but not searching or [q_10_3==7 & inrange(q_10_1, 1, 5)]
-2)searching but not immediately available to work [inrange(q_10_3, 1, 5) & q_10_1==3)
+1)available but not searching or [inrange(q_10_3,3,7) & inrange(q_10_1, 1, 5)]
+2)searching but not immediately available to work [inrange(q_10_3, 1, 2) & q_10_1==3)
 </_potential_lf_>*/
 
 
 *<_potential_lf_>
 	gen byte potential_lf=.
 	replace potential_lf=0 if lstatus==3
-	replace potential_lf=1 if [q_10_3==7 & inrange(q_10_1, 1, 5)] | [inrange(q_10_3, 1, 6) & q_10_1==6]
-	replace potential_lf=0 if [inrange(q_10_3, 1, 6) & inrange(q_10_1, 1, 5)] | [q_10_3==7 & q_10_1==6]
+	replace potential_lf=1 if [inrange(q_10_3,3,7) & inrange(q_10_1, 1,5)] | [inrange(q_10_3, 1, 2) & q_10_1==6]
+	replace potential_lf=0 if [inrange(q_10_3, 1, 2) & inrange(q_10_1, 1, 5)] | [inrange(q_10_3,3,7)& q_10_1==6]
 	replace potential_lf=. if age < minlaborage 
 	replace potential_lf=. if lstatus !=3
 	label var potential_lf "Potential labour force status"
@@ -926,14 +935,18 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 /*<_whours_>
+The working hour question in the questionnaire asks hours from primary and subsidiary job jointly.
+Four variables are related to this question:
+q_5_25_1 ; q_5_25_2 ; q_5_25_3 ; q_5_25_4
 
-The working hour question in the questionnaire asks hours from primary and subsidiaryjob jointly.
-
+Except q_5_25_1, the other three variables only have 0-7, 8 categories in total, which does not make sense in terms of "working hours", as this working hours is supposed to be continuous integers.
+To code whours for primary job, we separated people who have one job from those who have a second job.   
 *<_whours_>*/ 
 
 
 *<_whours_>
 	gen whours=.
+	replace whours=q_5_25_1 if q_5_17==2
 	replace whours=. if lstatus!=1
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
