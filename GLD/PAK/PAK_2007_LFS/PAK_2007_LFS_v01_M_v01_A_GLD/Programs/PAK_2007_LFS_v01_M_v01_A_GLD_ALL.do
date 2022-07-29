@@ -755,6 +755,7 @@ is 10 and above, Pakistan employment report defines active population as 15 year
 	replace lstatus=1 if inlist(1,q502,q503) | inlist(q504,1,2)
 	replace lstatus=2 if [inrange(q901,1,6) | inrange(q902,1,5)] & inlist(q903,1,2) 
 	replace lstatus=3 if lstatus==.
+	replace lstatus=. if age<minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
@@ -765,16 +766,16 @@ is 10 and above, Pakistan employment report defines active population as 15 year
 Note: var "potential_lf" only takes value if the respondent is not in labor force. (lstatus==3)
 
 "potential_lf" = 1 if the person is
-1)available but not searching or [q903==7 & inrange(q901, 1, 6)]
-2)searching but not immediately available to work [inrange(q903, 1, 6) & q906==7)
+1)available but not searching or [inrange(q903,3,7) & inrange(q901, 1, 6)]
+2)searching but not immediately available to work [inrange(q903, 1, 2) & q906==7)
 </_potential_lf_>*/
 
 
 *<_potential_lf_>
 	gen byte potential_lf=.
 	replace potential_lf=0 if lstatus==3
-	replace potential_lf=1 if [q903==7 & inrange(q901, 1, 6)] | [inrange(q903, 1, 6) & q901==7]
-	replace potential_lf=0 if [inrange(q903, 1, 6) & inrange(q901, 1, 6)] | [q903==7 & q901==7]
+	replace potential_lf=1 if [inrange(q903,3,7) & inrange(q901, 1, 6)] | [inrange(q903, 1, 2) & q901==7]
+	replace potential_lf=0 if [inrange(q903, 1, 2) & inrange(q901, 1, 6)] | [inrange(q903,3,7) & q901==7]
 	replace potential_lf=. if age < minlaborage 
 	replace potential_lf=. if lstatus !=3
 	label var potential_lf "Potential labour force status"
@@ -788,7 +789,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 	replace underemployment=1 if q602==1
 	replace underemployment=0 if q602==2
 	replace underemployment=. if age < minlaborage & age != .
-	replace underemployment=. if lstatus == 1
+	replace underemployment=. if lstatus!=1
 	label var underemployment "Underemployment status"
 	la de lblunderemployment 0 "No" 1 "Yes"
 	label values underemployment lblunderemployment
@@ -860,7 +861,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_industrycat_isic_>
 	gen industrycat_isic=q510
-	recode industrycat_isic (97 74=.) (51/57 29=50)
+	recode industrycat_isic (97 74=.) (51/57 59=50)
 	replace industrycat_isic=industrycat_isic*100
 	tostring industrycat_isic, replace format(%04.0f)
 	replace industrycat_isic="" if lstatus!=1 | industrycat_isic=="."
@@ -870,7 +871,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_industrycat10_>
 	gen byte industrycat10=q510
-	recode industrycat10 11/13=1 21/29=2 31/39=3 41 42 45=4 51/59=5 61/63=6 71/72=7 81/83=8 91=9 92/96=10 0=.
+	recode industrycat10 11/13=1 21/29=2 31/39=3 41 42 45=4 51/59=5 61/63=6 71/72=7 81/83=8 91=9 92/96 0=10 
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"

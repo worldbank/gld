@@ -763,6 +763,7 @@ only because
 	replace lstatus=1 if inlist(1, s5_q2, s5_q3) | inlist(s5_q4,1,2)
 	replace lstatus=2 if lstatus!=1 & [s9_q1==1 | !mi(s9_q5) | inrange(s9_q6,1,4)]
 	replace lstatus=3 if lstatus==.
+	replace lstatus=. if age<minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
@@ -783,7 +784,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 	replace potential_lf=0 if lstatus ==3
 	replace potential_lf=1 if [s9_q1==2 & inrange(s9_q4, 1, 6)] | [s9_q1==1 & s9_q4==7]
 	replace potential_lf=0 if [s9_q1==1 & inrange(s9_q4, 1, 6)] | [s9_q1==2 & s9_q4==7]
-	replace potential_lf=. if age < minlaborage
+	replace potential_lf=. if age<minlaborage
 	replace potential_lf=. if lstatus !=3
 	label var potential_lf "Potential labour force status"
 	la de lblpotential_lf 0 "No" 1 "Yes"

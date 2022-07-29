@@ -754,6 +754,7 @@ Unemployed if seeking (Sec9_9_1==1) and available [inrange(Sec9_9_4, 1, 6)]
 	replace lstatus=1 if inlist(1, Sec5_5_2, Sec5_5_3) | inlist(Sec5_5_4,1,2)
 	replace lstatus=2 if [inrange(Sec9_9_1,1,6) | inrange(Sec9_9_2,1,5)] & inlist(Sec9_9_3,1,2) 
 	replace lstatus=3 if lstatus==.
+	replace lstatus=. if age<minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
@@ -764,16 +765,16 @@ Unemployed if seeking (Sec9_9_1==1) and available [inrange(Sec9_9_4, 1, 6)]
 Note: var "potential_lf" only takes value if the respondent is not in labor force. (lstatus==3)
 
 "potential_lf" = 1 if the person is
-1)available but not searching or [Sec9_9_3==7 & inrange(Sec9_9_6, 1, 2)]
-2)searching but not immediately available to work [inrange(Sec9_9_3, 1, 6) & Sec9_9_6==3)
+1)available but not searching or [inrange(Sec9_9_3,3,7)& inrange(Sec9_9_6, 1, 2)]
+2)searching but not immediately available to work [inrange(Sec9_9_3, 1, 2) & Sec9_9_6==3)
 </_potential_lf_>*/
 
 
 *<_potential_lf_>
 	gen byte potential_lf=.
 	replace potential_lf=0 if lstatus==3
-	replace potential_lf=1 if [Sec9_9_3==7 & inrange(Sec9_9_6, 1, 2)] | [inrange(Sec9_9_3, 1, 6) & Sec9_9_6==3]
-	replace potential_lf=0 if [inrange(Sec9_9_3, 1, 6) & inrange(Sec9_9_6, 1, 2)] | [Sec9_9_3==7 & Sec9_9_6==3]
+	replace potential_lf=1 if [inrange(Sec9_9_3,3,7) & inrange(Sec9_9_6,1,2)] | [inrange(Sec9_9_3,1,2) & Sec9_9_6==3]
+	replace potential_lf=0 if [inrange(Sec9_9_3,1,2) & inrange(Sec9_9_6,1,2)] | [inrange(Sec9_9_3,3,7) & Sec9_9_6==3]
 	replace potential_lf=. if age < minlaborage 
 	replace potential_lf=. if lstatus !=3
 	label var potential_lf "Potential labour force status"
@@ -786,8 +787,8 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 	gen byte underemployment=.
 	replace underemployment=1 if Sec6_6_2==1
 	replace underemployment=0 if Sec6_6_2==2
-	replace underemployment=. if age < minlaborage & age != .
-	replace underemployment=. if lstatus == 1
+	replace underemployment=. if age < minlaborage
+	replace underemployment=. if lstatus!=1
 	label var underemployment "Underemployment status"
 	la de lblunderemployment 0 "No" 1 "Yes"
 	label values underemployment lblunderemployment

@@ -768,6 +768,7 @@ only because
 	replace lstatus=1 if inlist(1, S05C02, S05C03) | inlist(S05C04,1,2)
 	replace lstatus=2 if lstatus!=1 & [S09C01==1 | !mi(S09C05) | inrange(S09C06,1,4)]
 	replace lstatus=3 if lstatus==.
+	replace lstatus=. if age<minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
