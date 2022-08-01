@@ -244,7 +244,6 @@ local output "`id_data'"
 	egen city_fullname=concat(city_name urban_status), punct(-)
 	labmask city_code, values (city_fullname)
 	gen subnatid2=city_code
- 	label values subnatid2 lblsubnatid2
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
 
@@ -914,7 +913,6 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 	replace unitwage = . if lstatus!=1
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
-	replace unitwage = . if lstatus !=1
 	label values unitwage lblunitwage
 *</_unitwage_>
 
