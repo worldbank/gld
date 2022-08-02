@@ -769,8 +769,14 @@ foreach v of local ed_var {
 	replace lstatus = 1 if !missing(d11) // Answers question relative to employment
 	replace lstatus = 2 if d15__16 == 0 & (!missing(d18) & d18 != 6) // Looking and available
 	replace lstatus = 3 if d15__16 == 1 | (d15__16 == 0 & d18 == 6) // Now looking or looking but not available
-	* this line should be revised due to possible exclusion based on economic sector
-	replace lstatus=3 if inrange(qrt,2,4) | d02_3==1 | d02_5 ==1 | d04_3 == 1 & d04_5 ==2 | d10==3 | d10==4
+	* Correction for ICLS-19 definition in Q1
+    * Create variable of only farm worker
+     gen only_farm = (d02_3 == 1) & inlist(2, d02_1, d02_2, d02_4, d02_5, d02_6, d02_7)
+     replace lstatus = 1 if lstatus != 1 & only_farm == 1 & qrt == 1 // subsitence farmers not counted as employed in Q1, counted in all other quarters
+            
+    * There are still 1157 individuals with lstatus missing despite age 5 or above. They all have
+    * specific missing values (".a" not ".") and have no answers. Cannot establish their lstatus.
+
 	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"

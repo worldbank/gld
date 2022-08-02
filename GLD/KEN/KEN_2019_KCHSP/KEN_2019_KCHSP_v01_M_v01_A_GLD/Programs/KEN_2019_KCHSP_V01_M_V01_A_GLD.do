@@ -776,7 +776,6 @@ foreach v of local ed_var {
 	label values lstatus lbllstatus
 *</_lstatus_>
 
-
 *<_potential_lf_>
 	gen byte potential_lf = .
 	replace potential_lf = 0 if lstatus == 3
