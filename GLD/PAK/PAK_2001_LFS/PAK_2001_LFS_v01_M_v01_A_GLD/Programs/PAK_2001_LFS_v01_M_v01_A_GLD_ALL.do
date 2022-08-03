@@ -14,7 +14,7 @@
 <_Survey Year_>					2001 </_Survey Year_>
 <_Study ID_>					PAK_2001_LFS_v01_M </_Study ID_>
 <_Data collection from (M/Y)_>	[July/2001] </_Data collection from (M/Y)_>
-<_Data collection to (M/Y)_>	[June/2006] </_Data collection to (M/Y)_>
+<_Data collection to (M/Y)_>	[June/2002] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			Pakistan Bureau of Statistics </_Source of dataset_>
 								https://www.pbs.gov.pk/content/microdata
 <_Sample size (HH)_> 			18,889 </_Sample size (HH)_>
@@ -797,7 +797,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 	replace empstat=3 if sec5q09==5
 	replace empstat=4 if (sec5q09>=6 & sec5q09<=10)
 	replace empstat=5 if sec5q09==13
-	replace empstat=. if !inrange(sec5q09, 1, 11)
+	replace empstat=. if !inrange(sec5q09, 1, 13)
 	replace empstat=. if lstatus!=1
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
