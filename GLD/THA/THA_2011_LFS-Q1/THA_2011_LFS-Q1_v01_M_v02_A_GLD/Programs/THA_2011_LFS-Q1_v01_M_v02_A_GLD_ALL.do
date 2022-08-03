@@ -45,6 +45,7 @@ At the second stage, private households and persons in the collective households
 * Date: [2022-01-08] - Prepared initial code
 * Date: [2022-06-15] - Added codes that harmonize data for specific variables, including school attendance, ISCO and ISIC codes, etc...
 * Date: [2022-07-11] - Updated ISCED version
+* Date: [2022-08-03] - Updated ISIC mapping
 
 </_Version Control_>
 -------------------------------------------------------------------------*/

@@ -43,6 +43,7 @@ At the second stage, private households and persons in the collective households
 * Date: [2022-01-08] - Prepared initial code
 * Date: [2022-06-15] - Added codes that harmonize data for specific variables, including school attendance, ISCO and ISIC codes, etc...
 * Date: [2022-07-11] - Updated ISCED version
+* Date: [2022-08-03] - Updated ISIC mapping
 
 </_Version Control_>
 -------------------------------------------------------------------------*/
@@ -900,11 +901,12 @@ foreach v of local ed_var {
 *</_industry_orig_>
 
 
+
 *<_industrycat_isic_>
 
-	gen TSIC = industry_orig
-	merge m:1 TSIC using "$path_in\TSIC_to_ISIC_v3.dta", keep(master match) nogen 
+	merge m:1 industry_orig using "$path_in\TSIC4d_to_ISIC_v3.dta", keep(master match) nogen 
 	gen industrycat_isic = ISIC_v3
+
 	* Correct the typos in the conversion table
 	* This is based on the TSIC 2009 main report from http://statstd.nso.go.th/classification/download.aspx
 
@@ -912,6 +914,7 @@ foreach v of local ed_var {
 	replace industrycat_isic = "9309" if industrycat_isic == "9306"
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
+
 
 
 *<_industrycat10_>
