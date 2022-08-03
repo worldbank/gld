@@ -37,6 +37,8 @@
 * Date: [2022-01-08] - Prepared initial code
 * Date: [2022-06-15] - Added codes that harmonize data for specific variables, including school attendance, ISCO and ISIC codes, etc...
 * Date: [2022-07-11] - Updated ISCED version and changed ISIC code to 2 digits
+* Date: [2022-08-03] - Fixed the subnatid2 labels, removed code for occup_isco and occup
+
 
 </_Version Control_>
 -------------------------------------------------------------------------*/
@@ -292,7 +294,8 @@ duplicates drop
 	destring regprov, gen(subnatid2)
 
 
-	label de lblsubnatid2  11 "Mae Hong Son" 12 "Chiang Mai"	13 "Phayso" 14 "Chiang Rai" 15 "Nan" 16 "Lamjphun" 17 "Lampang" 18 "Phrae" 19 "Tak" 110 "Sukhothai" 111 "Uttaradit"112 "Kamphaeng Phet" 113 "Phichit" 114 "Uthai Thani" 115 "Nakhon Sawan" 116 "Phitsanulok" 117 "Phetchabun" 21 "Loei"	22 "Udon Thani" 23 "Nong Khai" 24 "Sakon Nakhon" 25 "Nakhon Phanom" 26 "Kalasin" 27 "Roi Et" 28 "Maha Sarakham" 29 "Khon Daen" 210 "Chaiyaphum" 211 "Nakhon Ratchasima" 212 "Buri Ram" 213 "Surin" 214 "Si Sa Ket" 215 "Ubon Ratchathani" 216 "Yasothon" 217 "Mukdahan"  31 "Chumphon" 32 "Ranong" 33 "Surat Thani" 34 "Phangnga" 35 "Phuket" 36 "Krabi" 37 "Nakhon Si Thammarat" 38 "Phatthalung" 39 "Songkhla" 310 "Trang" 311 "Satun" 312 "Pattani" 313 "Yala" 314 "Narathiwat" 41 "Kanchanaburi" 42 "Suphan Buri" 43 "Ratchaburi" 44 "Prachuap Khiri Khan" 45 "Phetchaburi" 46 "Nakhon Pathom" 47 "Samut Songkhram"	48 "Samut Sakhon" 49 "Saraburi" 410 "Lop Buri" 411 "Phranakhon Si Ayutthaya" 412 "Ang Thong" 413 "Sing Buri" 414 "Chai Nat" 415 "Trat" 416 "Chanthaburi" 417 "Rayong" 418 "Chon Buri" 419 "Prachin Buri" 420 "Nakhon Nayok" 421 "Chachoengsao" 422 "Nonthaburi" 423 "Pathum Thani" 424 "Sumut Prakan" 51 "Bangkok Metropolis"
+		label de lblsubnatid2  101 "Mae Hong Son" 102 "Chiang Mai"	103 "Phayso" 104 "Chiang Rai" 105 "Nan" 106 "Lamjphun" 107 "Lampang" 108 "Phrae" 109 "Tak" 110 "Sukhothai" 111 "Uttaradit"112 "Kamphaeng Phet" 113 "Phichit" 114 "Uthai Thani" 115 "Nakhon Sawan" 116 "Phitsanulok" 117 "Phetchabun" 201 "Loei"	202 "Udon Thani" 203 "Nong Khai" 204 "Sakon Nakhon" 205 "Nakhon Phanom" 206 "Kalasin" 207 "Roi Et" 208 "Maha Sarakham" 209 "Khon Daen" 210 "Chaiyaphum" 211 "Nakhon Ratchasima" 212 "Buri Ram" 213 "Surin" 214 "Si Sa Ket" 215 "Ubon Ratchathani" 216 "Yasothon" 217 "Mukdahan"  301 "Chumphon" 302 "Ranong" 303 "Surat Thani" 304 "Phangnga" 305 "Phuket" 306 "Krabi" 307 "Nakhon Si Thammarat" 308 "Phatthalung" 309 "Songkhla" 310 "Trang" 311 "Satun" 312 "Pattani" 313 "Yala" 314 "Narathiwat" 401 "Kanchanaburi" 402 "Suphan Buri" 403 "Ratchaburi" 404 "Prachuap Khiri Khan" 405 "Phetchaburi" 406 "Nakhon Pathom" 407 "Samut Songkhram"	408 "Samut Sakhon" 409 "Saraburi" 410 "Lop Buri" 411 "Phranakhon Si Ayutthaya" 412 "Ang Thong" 413 "Sing Buri" 414 "Chai Nat" 415 "Trat" 416 "Chanthaburi" 417 "Rayong" 418 "Chon Buri" 419 "Prachin Buri" 420 "Nakhon Nayok" 421 "Chachoengsao" 422 "Nonthaburi" 423 "Pathum Thani" 424 "Sumut Prakan" 501 "Bangkok Metropolis"
+
 
 		
 	label values subnatid2 lblsubnatid2
@@ -909,19 +912,9 @@ Industry code is based on the 1958 ISIC (version 1). Note that ISIC rev 1 and th
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
-
 *<_occup_isco_>
 
-/* <_occup_isco_note>
-
-Occupation code is based on the ISCO 1958 
-
-</_occup_isco_note>*/	
-
-	gen ISCO58_3d = substr(occup_orig, 1, 3)
-	
-	merge m:1 ISCO58_3d using "$path_in\ISCO58_88_conversion.dta"
-	gen occup_isco = ISCO88_3d_mapped
+	gen occup_isco = .
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
@@ -936,12 +929,12 @@ Occupation code is based on the ISCO 1958
 
 
 *<_occup_>
-	gen occup = substr(occup_isco, 1, 1)
-	destring occup, replace
+	gen occup = .
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup
 *</_occup_>
+
 
 *<_wage_no_compen_>
 	gen double wage_no_compen = .

@@ -46,6 +46,7 @@ Data is significant at the national level
 * Date: [2022-01-08] - Prepared initial code
 * Date: [2022-06-15] - Added codes that harmonize data for specific variables, including school attendance, ISCO and ISIC codes, etc...
 * Date: [2022-07-11] - Updated ISCED version, changed ISIC code to 2 digits 
+* Date: [2022-08-03] - Removed code for occup_isco and occup
 
 </_Version Control_>
 -------------------------------------------------------------------------*/
@@ -971,17 +972,11 @@ Industry code is based on the 1958 ISIC (version 1). Note that ISIC rev 1 and th
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
-
 *<_occup_isco_>
 
-	gen ISCO58_3d = substr(occup_orig, 1, 3)
-	
-	merge m:1 ISCO58_3d using "$path_in\ISCO58_88_conversion.dta", keep(master match) nogen
-	gen occup_isco = ISCO88_3d_mapped
+	gen occup_isco = .
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
-
-
 
 
 *<_occup_skill_>
@@ -994,12 +989,12 @@ Industry code is based on the 1958 ISIC (version 1). Note that ISIC rev 1 and th
 
 
 *<_occup_>
-	gen occup = substr(occup_isco, 1, 1)
-	destring occup, replace
+	gen occup = .
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup
 *</_occup_>
+
 
 *<_wage_no_compen_>
 	gen double wage_no_compen = baht

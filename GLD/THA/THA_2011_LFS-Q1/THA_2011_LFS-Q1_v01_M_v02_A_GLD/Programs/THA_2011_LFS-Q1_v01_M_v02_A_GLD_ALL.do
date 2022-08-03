@@ -894,16 +894,15 @@ foreach v of local ed_var {
 *<_industry_orig_>
 	gen industry_orig = indus
 	tostring industry_orig, replace
-	replace industry_orig = "0" + industry_orig if length(industry_orig) == 4
-	replace industry_orig = "" if industry_orig == "." | industry_orig == "99999"
+	replace industry_orig = "0" + industry_orig if length(industry_orig) == 3
+	replace industry_orig = "" if industry_orig == "." | industry_orig == "9999"
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
 
 *<_industrycat_isic_>
 
-	gen TSIC = industry_orig
-	merge m:1 TSIC using "$path_in\TSIC_to_ISIC_v3.dta", keep(master match) nogen 
+	merge m:1 industry_orig using "$path_in\TSIC4d_to_ISIC_v3.dta", keep(master match) nogen 
 	gen industrycat_isic = ISIC_v3
 
 	* Correct the typos in the conversion table
