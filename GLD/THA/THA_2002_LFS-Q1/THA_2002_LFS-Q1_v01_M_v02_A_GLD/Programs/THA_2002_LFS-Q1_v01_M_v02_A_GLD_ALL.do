@@ -974,13 +974,6 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_>
-
-/* <_occup_isco_note>
-
-Occupation code is based on the ISCO 1958 
-
-</_occup_isco_note>*/	
-
 	gen occup_isco = occup_orig
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
