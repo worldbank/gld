@@ -4,7 +4,7 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				PAK_1999_LFS_v01_M_v01_A_GLD_ALL.do </_Program name_>
+<_Program name_>				PAK_1992_LFS_v01_M_v01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata MP 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
 <_Date created_>				2022-08-02 </_Date created_>
@@ -12,13 +12,13 @@
 <_Country_>						Pakistan(PAK) </_Country_>
 <_Survey Title_>				Labour Force Survey </_Survey Title_>
 <_Survey Year_>					1992 </_Survey Year_>
-<_Study ID_>					PAK_1999_LFS_v01_M </_Study ID_>
+<_Study ID_>					PAK_1992_LFS_v01_M </_Study ID_>
 <_Data collection from (M/Y)_>	[July/1992] </_Data collection from (M/Y)_>
 <_Data collection to (M/Y)_>	[June/1993] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			Pakistan Bureau of Statistics </_Source of dataset_>
 								https://www.pbs.gov.pk/content/microdata
-<_Sample size (HH)_> 			 </_Sample size (HH)_>
-<_Sample size (IND)_> 			 </_Sample size (IND)_>
+<_Sample size (HH)_> 			20,118 </_Sample size (HH)_>
+<_Sample size (IND)_> 			129,109 </_Sample size (IND)_>
 <_Sampling method_> 			Stratified two-stage cluster sampling method </_Sampling method_>
 <_Geographic coverage_> 		All urban and rural areas of the four provinces 
 								of Pakistan defined as such by 1998 Population Census, 
@@ -722,9 +722,9 @@ the last time he/she sought work 1-4 weeks ago.
 
 *<_lstatus_>
 	gen byte lstatus=.
-	replace lstatus = 1 if inlist(1, q01, q03) | inlist(q02, 1, 2) 
-	replace lstatus = 2 if inlist(q18,1,2) | inrange(q21,1,5)
-	replace lstatus = 3 if mi(lstatus) & !mi(q01)
+	replace lstatus=1 if inlist(1, q01, q03) | inlist(q02, 1, 2) 
+	replace lstatus=2 if inlist(q18,1,2) | inrange(q21,1,5)
+	replace lstatus=3 if mi(lstatus) & !mi(q01)
 	replace lstatus=. if age<minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -1175,15 +1175,8 @@ To code whours for primary job, we separated people who have one job from those 
 *----------8.6: 12 month reference overall------------------------------*
 
 {
-/*<_lstatus_year_>
-Question about working during the last 12 months is only asked yo those unemployed individuals that were available to year within the last 7 days.
-*<_lstatus_year_>*/
-
-
 *<_lstatus_year_>
-	gen byte lstatus_year=1 if lstatus==1 | q29==1
-	replace lstatus_year=0 if inlist(q29,2,3)
-	replace lstatus_year=. if age<minlaborage & age!=.
+	gen byte lstatus_year=.
 	label var lstatus_year "Labor status during last year"
 	la de lbllstatus_year 1 "Employed" 0 "Not employed"
 	label values lstatus_year lbllstatus_year
@@ -1666,6 +1659,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`output'\PAK_1999_LFS_v01_M_v01_A_GLD_ALL.dta", replace
+save "`output'\PAK_1992_LFS_v01_M_v01_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>
