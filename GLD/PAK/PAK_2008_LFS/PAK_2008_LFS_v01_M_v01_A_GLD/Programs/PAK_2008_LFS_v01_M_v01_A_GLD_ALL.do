@@ -227,6 +227,7 @@ local output "`id_data'"
 
 
 *<_subnatid1_>
+	
 	gen subnatid1=substr(process_code,1,1)
 	destring subnatid1, replace
 	label de lblsubnatid1 1 "1-Punjab" 2 "2-Sindh" 3 "3-N.W.F.P." 4 "4-Balochistan" 5 "5-AJ & Kashmir" 6 "6-Gilgit/Baltistan" 7 "7-Federally Administered Tribal Areas"
@@ -459,7 +460,7 @@ local output "`id_data'"
    replace migrated_years=2.5 if q4_15==3
    replace migrated_years=7 if q4_15==4
    replace migrated_years=10 if q4_15==5
-   replace migrated_years=. if migrated_binary==0
+   replace migrated_years=. if migrated_binary!=1
    replace migrated_years=. if age<migrated_mod_age
    label var migrated_years "Years since latest migration"
 *</_migrated_years_>
@@ -468,7 +469,7 @@ local output "`id_data'"
 *<_migrated_from_urban_>
 	gen migrated_from_urban=q4_17
 	recode migrated_from_urban 0=. 1=0 2=1 
-	replace migrated_from_urban=. if migrated_binary==0
+	replace migrated_from_urban=. if migrated_binary!=1
 	replace migrated_from_urban=. if age<migrated_mod_age
 	label de lblmigrated_from_urban 0 "Rural" 1 "Urban"
 	label values migrated_from_urban lblmigrated_from_urban
@@ -478,7 +479,7 @@ local output "`id_data'"
 
 *<_migrated_from_cat_>
 	gen migrated_from_cat=.
-	replace migrated_from_cat=. if migrated_binary==0
+	replace migrated_from_cat=. if migrated_binary!=1
 	replace migrated_from_cat=. if age<migrated_mod_age
 	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country"
 	label values migrated_from_cat lblmigrated_from_cat
@@ -488,7 +489,7 @@ local output "`id_data'"
 
 *<_migrated_from_code_>
 	gen migrated_from_code=.
-	replace migrated_from_code=. if migrated_binary==0
+	replace migrated_from_code=. if migrated_binary!=1
 	replace migrated_from_code=. if age<migrated_mod_age
 	*label de lblmigrated_from_code
 	*label values migrated_from_code lblmigrated_from_code
@@ -498,7 +499,7 @@ local output "`id_data'"
 
 *<_migrated_from_country_>
 	gen migrated_from_country=.
-	replace migrated_from_country=. if migrated_binary==0
+	replace migrated_from_country=. if migrated_binary!=1
 	replace migrated_from_country=. if age<migrated_mod_age
 	label var migrated_from_country "Code of migration country (ISO 3 Letter Code)"
 *</_migrated_from_country_>
@@ -507,7 +508,7 @@ local output "`id_data'"
 *<_migrated_reason_>
 	gen migrated_reason=q4_18
 	recode migrated_reason (1/4 6=3) (5=2) (8/11=1) (7 12/13=5)
-	replace migrated_reason=. if migrated_binary==0
+	replace migrated_reason=. if migrated_binary!=1
 	replace migrated_reason=. if age<migrated_mod_age
 	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
 	label values migrated_reason lblmigrated_reason
@@ -616,6 +617,7 @@ Therefore, the ed_mod_age was set to 5 as oppsed to 0.
 	recode educat7 (3=2) (4=3) (5/6=4) (8/14=7) (0=.)
 	replace educat7=5 if q4_9==7&q4_10==1
 	replace educat7=7 if q4_9==7&inrange(q4_10,8,14)
+	replace educat7=. if age<ed_mod_age
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -761,6 +763,7 @@ is 10 and above, Pakistan employment report defines active population as 15 year
 	replace lstatus=1 if inlist(1,q5_2,q5_3) | inlist(q5_4,1,2)
 	replace lstatus=2 if [inrange(q9_1,1,6) | inrange(q9_2,1,5)] & inlist(q9_3,1,2) 
 	replace lstatus=3 if lstatus==.
+	replace lstatus=. if age<minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
@@ -771,7 +774,7 @@ is 10 and above, Pakistan employment report defines active population as 15 year
 Note: var "potential_lf" only takes value if the respondent is not in labor force. (lstatus==3)
 
 "potential_lf" = 1 if the person is
-1)available but not searching or [q9_3==7 & inrange(q9_6, 1, 2)]
+1)available but not searching or [inrange(q9_3,3,7) & inrange(q9_6, 1, 2)]
 2)searching but not immediately available to work [inrange(q9_3, 1, 6) & q9_6==3)
 </_potential_lf_>*/
 
@@ -779,8 +782,8 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 *<_potential_lf_>
 	gen byte potential_lf=.
 	replace potential_lf=0 if lstatus==3
-	replace potential_lf=1 if [q9_3==7 & inrange(q9_6, 1, 2)] | [inrange(q9_3, 1, 6) & q9_6==3]
-	replace potential_lf=0 if [inrange(q9_3, 1, 6) & inrange(q9_6, 1, 2)] | [q9_3==7 & q9_6==3]
+	replace potential_lf=1 if [inrange(q9_3,3,7) & inrange(q9_6, 1, 2)] | [inrange(q9_3, 1, 2) & q9_6==3]
+	replace potential_lf=0 if [inrange(q9_3, 1, 2) & inrange(q9_6, 1, 2)] | [inrange(q9_3,3,7) & q9_6==3]
 	replace potential_lf=. if age < minlaborage 
 	replace potential_lf=. if lstatus !=3
 	label var potential_lf "Potential labour force status"
@@ -794,7 +797,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 	replace underemployment=1 if q6_2==1
 	replace underemployment=0 if q6_2==2
 	replace underemployment=. if age < minlaborage & age != .
-	replace underemployment=. if lstatus == 1
+	replace underemployment=. if lstatus!=1
 	label var underemployment "Underemployment status"
 	la de lblunderemployment 0 "No" 1 "Yes"
 	label values underemployment lblunderemployment

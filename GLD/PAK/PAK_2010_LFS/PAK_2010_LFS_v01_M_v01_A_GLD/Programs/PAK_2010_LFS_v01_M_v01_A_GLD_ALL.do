@@ -241,11 +241,11 @@ in 2010. So it will be coded as K/P in later years.
 
 
 *<_subnatid2_>
-	gen city_code = substr(PrCode, 1, 4 )
+	gen city_code=substr(PrCode, 1, 4 )
 	destring city_code, replace
 	merge m:1 city_code using "`stata'\PAK_city_code.dta"
 	drop if _merge!=3
-	egen city_fullname=concat(city_code city_name), punct(-)
+	egen city_fullname=concat(city_code city_name), punct(-)	
 	labmask city_code, values (city_fullname)
 	rename city_code subnatid2
 	label var subnatid2 "Subnational ID at Second Administrative Level"
@@ -272,37 +272,37 @@ in 2010. So it will be coded as K/P in later years.
 
 
 *<_subnatid1_prev_>
-	gen subnatid1_prev = .
+	gen subnatid1_prev=.
 	label var subnatid1_prev "Classification used for subnatid1 from previous survey"
 *</_subnatid1_prev_>
 
 
 *<_subnatid2_prev_>
-	gen subnatid2_prev = .
+	gen subnatid2_prev=.
 	label var subnatid2_prev "Classification used for subnatid2 from previous survey"
 *</_subnatid2_prev_>
 
 
 *<_subnatid3_prev_>
-	gen subnatid3_prev = .
+	gen subnatid3_prev=.
 	label var subnatid3_prev "Classification used for subnatid3 from previous survey"
 *</_subnatid3_prev_>
 
 
 *<_gaul_adm1_code_>
-	gen gaul_adm1_code = .
+	gen gaul_adm1_code=.
 	label var gaul_adm1_code "Global Administrative Unit Layers (GAUL) Admin 1 code"
 *</_gaul_adm1_code_>
 
 
 *<_gaul_adm2_code_>
-	gen gaul_adm2_code = .
+	gen gaul_adm2_code=.
 	label var gaul_adm2_code "Global Administrative Unit Layers (GAUL) Admin 2 code"
 *</_gaul_adm2_code_>
 
 
 *<_gaul_adm3_code_>
-	gen gaul_adm3_code = .
+	gen gaul_adm3_code=.
 	label var gaul_adm3_code "Global Administrative Unit Layers (GAUL) Admin 3 code"
 *</_gaul_adm3_code_>
 
@@ -449,7 +449,7 @@ in 2010. So it will be coded as K/P in later years.
    replace migrated_years=2.5 if Sec4_4_15==3
    replace migrated_years=7 if Sec4_4_15==4
    replace migrated_years=10 if Sec4_4_15==5
-   replace migrated_years=. if migrated_binary==0
+   replace migrated_years=. if migrated_binary!=1
    replace migrated_years=. if age<migrated_mod_age
    label var migrated_years "Years since latest migration"
 *</_migrated_years_>
@@ -458,7 +458,7 @@ in 2010. So it will be coded as K/P in later years.
 *<_migrated_from_urban_>
 	gen migrated_from_urban=Sec4_4_17
 	recode migrated_from_urban 0=. 1=0 2=1 
-	replace migrated_from_urban=. if migrated_binary==0
+	replace migrated_from_urban=. if migrated_binary!=1
 	replace migrated_from_urban=. if age<migrated_mod_age
 	label de lblmigrated_from_urban 0 "Rural" 1 "Urban"
 	label values migrated_from_urban lblmigrated_from_urban
@@ -469,7 +469,7 @@ in 2010. So it will be coded as K/P in later years.
 *<_migrated_from_cat_>
 	gen migrated_from_cat=.
 	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country"
-	replace migrated_from_cat=. if migrated_binary==0
+	replace migrated_from_cat=. if migrated_binary!=1
 	replace migrated_from_cat=. if age<migrated_mod_age
 	label values migrated_from_cat lblmigrated_from_cat
 	label var migrated_from_cat "Category of migration area"
@@ -478,7 +478,7 @@ in 2010. So it will be coded as K/P in later years.
 
 *<_migrated_from_code_>
 	gen migrated_from_code=.
-	replace migrated_from_code=. if migrated_binary==0
+	replace migrated_from_code=. if migrated_binary!=1
 	replace migrated_from_code=. if age<migrated_mod_age
 	*label de lblmigrated_from_code
 	*label values migrated_from_code lblmigrated_from_code
@@ -488,7 +488,7 @@ in 2010. So it will be coded as K/P in later years.
 
 *<_migrated_from_country_>
 	gen migrated_from_country=.
-	replace migrated_from_country=. if migrated_binary==0
+	replace migrated_from_country=. if migrated_binary!=1
 	replace migrated_from_country=. if age<migrated_mod_age
 	label var migrated_from_country "Code of migration country (ISO 3 Letter Code)"
 *</_migrated_from_country_>
@@ -497,7 +497,7 @@ in 2010. So it will be coded as K/P in later years.
 *<_migrated_reason_>
 	gen migrated_reason=Sec4_4_18
 	recode migrated_reason (1/4 6=3) (5=2) (8/11=1) (7 12/13=5) (54=.)
-	replace migrated_reason=. if migrated_binary==0
+	replace migrated_reason=. if migrated_binary!=1
 	replace migrated_reason=. if age<migrated_mod_age
 	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
 	label values migrated_reason lblmigrated_reason
@@ -606,7 +606,7 @@ Therefore, the ed_mod_age was set to 5 as oppsed to 0.
 	recode educat7 (3=2) (4=3) (5/6=4) (8/14=7) (0 34=.)
 	replace educat7=5 if Sec4_4_9==7&Sec4_4_10==1
 	replace educat7=7 if Sec4_4_9==7&inrange(Sec4_4_10,8,14) 
-	replace educat7=. if age<ed_mod_age & age!=.
+	replace educat7=. if age<ed_mod_age 
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -760,6 +760,7 @@ Unemployed if seeking (Sec9_9_1==1) and available [inrange(Sec9_9_4, 1, 6)]
 	replace lstatus=1 if inlist(1, Sec5_5_2, Sec5_5_3) | inlist(Sec5_5_4,1,2)
 	replace lstatus=2 if [inrange(Sec9_9_1,1,6) | inrange(Sec9_9_2,1,5)] & inlist(Sec9_9_3,1,2) 
 	replace lstatus=3 if lstatus==.
+	replace lstatus=. if age<minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
@@ -770,16 +771,16 @@ Unemployed if seeking (Sec9_9_1==1) and available [inrange(Sec9_9_4, 1, 6)]
 Note: var "potential_lf" only takes value if the respondent is not in labor force. (lstatus==3)
 
 "potential_lf" = 1 if the person is
-1)available but not searching or [Sec9_9_3==7 & inrange(Sec9_9_6, 1, 2)]
-2)searching but not immediately available to work [inrange(Sec9_9_3, 1, 6) & Sec9_9_6==3)
+1)available but not searching or [inrange(Sec9_9_3,3,7)& inrange(Sec9_9_6, 1, 2)]
+2)searching but not immediately available to work [inrange(Sec9_9_3, 1, 2) & Sec9_9_6==3)
 </_potential_lf_>*/
 
 
 *<_potential_lf_>
 	gen byte potential_lf=.
 	replace potential_lf=0 if lstatus==3
-	replace potential_lf=1 if [Sec9_9_3==7 & inrange(Sec9_9_6, 1, 2)] | [inrange(Sec9_9_3, 1, 6) & Sec9_9_6==3]
-	replace potential_lf=0 if [inrange(Sec9_9_3, 1, 6) & inrange(Sec9_9_6, 1, 2)] | [Sec9_9_3==7 & Sec9_9_6==3]
+	replace potential_lf=1 if [inrange(Sec9_9_3,3,7) & inrange(Sec9_9_6,1,2)] | [inrange(Sec9_9_3,1,2) & Sec9_9_6==3]
+	replace potential_lf=0 if [inrange(Sec9_9_3,1,2) & inrange(Sec9_9_6,1,2)] | [inrange(Sec9_9_3,3,7) & Sec9_9_6==3]
 	replace potential_lf=. if age < minlaborage 
 	replace potential_lf=. if lstatus !=3
 	label var potential_lf "Potential labour force status"
@@ -792,8 +793,8 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 	gen byte underemployment=.
 	replace underemployment=1 if Sec6_6_2==1
 	replace underemployment=0 if Sec6_6_2==2
-	replace underemployment=. if age < minlaborage & age != .
-	replace underemployment=. if lstatus == 1
+	replace underemployment=. if age < minlaborage
+	replace underemployment=. if lstatus!=1
 	label var underemployment "Underemployment status"
 	la de lblunderemployment 0 "No" 1 "Yes"
 	label values underemployment lblunderemployment

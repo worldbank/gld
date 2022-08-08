@@ -228,7 +228,7 @@ local output "`id_data'"
 *<_subnatid1_>
 	gen subnatid1=substr(Prcode,1,1)
 	destring subnatid1, replace
-	label de lblsubnatid1 1 "1-Khyber/Pakhtoonkhua" 2 "2-Punjab" 3 "3-Sindh" 4 "4-Balochistan" 5 "5-Federally Administered Tribal Areas" 6 "6-Islamabad" 7 "7-Gilgit-Baltistian" 8 "8-AJ & Kashmir" 
+	label de lblsubnatid1 1 "1-Khyber/Pakhtoonkhua" 2 "2-Punjab" 3 "3-Sindh" 4 "4-Balochistan" 5 "5-Federally Administered Tribal Areas" 6 "6-Islamabad" 7 "7-Gilgit-Baltistian" 8 "8-AJ & Kashmir"
 	label values subnatid1 lblsubnatid1
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
@@ -442,7 +442,7 @@ local output "`id_data'"
    replace migrated_years =SEC4_COL15-2 if inrange(SEC4_COL15,3,6)
    replace migrated_years=7 if SEC4_COL15==7
    replace migrated_years=10 if SEC4_COL15==8
-   replace migrated_years=. if migrated_binary==0
+   replace migrated_years=. if migrated_binary!=1
    replace migrated_years=. if age<migrated_mod_age
    label var migrated_years "Years since latest migration"
 *</_migrated_years_>
@@ -451,7 +451,7 @@ local output "`id_data'"
 *<_migrated_from_urban_>
 	gen migrated_from_urban=SEC4_COL17
 	recode migrated_from_urban 0=. 1=0 2=1 
-	replace migrated_from_urban=. if migrated_binary==0
+	replace migrated_from_urban=. if migrated_binary!=1
 	replace migrated_from_urban=. if age<migrated_mod_age
 	label de lblmigrated_from_urban 0 "Rural" 1 "Urban"
 	label values migrated_from_urban lblmigrated_from_urban
@@ -462,7 +462,7 @@ local output "`id_data'"
 *<_migrated_from_cat_>
 	gen migrated_from_cat=.
 	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country"
-	replace migrated_from_cat=. if migrated_binary==0
+	replace migrated_from_cat=. if migrated_binary!=1
 	replace migrated_from_cat=. if age<migrated_mod_age
 	label values migrated_from_cat lblmigrated_from_cat
 	label var migrated_from_cat "Category of migration area"
@@ -471,7 +471,7 @@ local output "`id_data'"
 
 *<_migrated_from_code_>
 	gen migrated_from_code=.
-	replace migrated_from_code=. if migrated_binary==0
+	replace migrated_from_code=. if migrated_binary!=1
 	replace migrated_from_code=. if age<migrated_mod_age
 	*label de lblmigrated_from_code
 	*label values migrated_from_code lblmigrated_from_code
@@ -481,7 +481,7 @@ local output "`id_data'"
 
 *<_migrated_from_country_>
 	gen migrated_from_country=.
-	replace migrated_from_country=. if migrated_binary==0
+	replace migrated_from_country=. if migrated_binary!=1
 	replace migrated_from_country=. if age<migrated_mod_age
 	label var migrated_from_country "Code of migration country (ISO 3 Letter Code)"
 *</_migrated_from_country_>
@@ -490,7 +490,7 @@ local output "`id_data'"
 *<_migrated_reason_>
 	gen migrated_reason=SEC4_COL18
 	recode migrated_reason (1/4 6=3) (5=2) (8/11=1) (14=4) (7 12/13 15=5) 
-	replace migrated_reason=. if migrated_binary==0
+	replace migrated_reason=. if migrated_binary!=1
 	replace migrated_reason=. if age<migrated_mod_age
 	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
 	label values migrated_reason lblmigrated_reason
@@ -601,7 +601,7 @@ Therefore, the ed_mod_age was set to 5 as oppsed to 0.
 	recode educat7 (3=2) (4=3) (5/6=4) (8/15=7) 
 	replace educat7=5 if SEC4_COL9==7&SEC4_COL10==1
 	replace educat7=7 if SEC4_COL9==7&inrange(SEC4_COL10,8,15) 
-	replace educat7=. if age<ed_mod_age & age!=.
+	replace educat7=. if age<ed_mod_age 
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -764,6 +764,7 @@ only because
 	replace lstatus=1 if inlist(1, SEC5_COL2, SEC5_COL3) | inlist(SEC5_COL4,1,2)
 	replace lstatus=2 if lstatus!=1 & [SEC9_COL1==1 | !mi(SEC9_COL5) | inrange(SEC9_COL6,1,4)]
 	replace lstatus=3 if lstatus==.
+	replace lstatus=. if age<minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
