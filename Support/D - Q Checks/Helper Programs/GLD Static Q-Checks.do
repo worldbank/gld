@@ -269,14 +269,18 @@ foreach list of global cat_list_names { // loop through list of categorical glob
 
 *----------1.11: Check survey versions agree with version variables
 
-* First read filename (from last slash)
+* First read filename (from last slash) and lowercase 
 local current_filename "`c(filename)'"
 local last_slash = strrpos("`current_filename'", "\")
 local current_filename = substr("`current_filename'", `last_slash' + 1, .)
+gen helper_filename = "`current_filename'"
+replace helper_filename = lower(helper_filename)
+local current_filename = helper_filename
+drop helper_filename
 
 * Obtain position of master, alter (harmomize) versions
-local position_master = strrpos("`current_filename'", "_M_")
-local position_alter = strrpos("`current_filename'", "_A_")
+local position_master = strrpos("`current_filename'", "_m_")
+local position_alter = strrpos("`current_filename'", "_a_")
 
 * Make locals with that info
 local eval_master = substr("`current_filename'", `position_master' - 3, 3)
@@ -285,6 +289,7 @@ local eval_alter  = substr("`current_filename'", `position_alter'  - 3, 3)
 * Check master
 cap confirm variable vermast 
 if _rc == 0 { // if var exists since if not captured in 1.1
+	replace vermast = lower(vermast)
 	qui: count if vermast != "`eval_master'"
 	if `r(N)' > 0 { // The version do not agree
 		post `memhold' ("Overall") ("vermast") ("Version of Master per filename unequal to vermast") (.) (1)
@@ -294,6 +299,7 @@ if _rc == 0 { // if var exists since if not captured in 1.1
 * Check alter
 cap confirm variable veralt 
 if _rc == 0 { // if var exists since if not captured in 1.1
+	replace veralt = lower(veralt)
 	qui: count if veralt != "`eval_alter'"
 	if `r(N)' > 0 { // The version do not agree
 		post `memhold' ("Overall") ("veralt") ("Version of Alter per filename unequal to vermalt") (.) (1)
