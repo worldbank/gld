@@ -1,5 +1,5 @@
 
-# GEIH Geographic classification
+# About the GEIH geographic coverage
 
 The Colombian GEIH survey uses cartographic references from the Master Household Sample (list of households) that is permanently updated by the NSO. 
 
