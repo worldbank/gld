@@ -14,7 +14,7 @@ The user should follow the recommendations below to assembly the microdata used 
 
 6- Do not skip the merging of San Andrés and Amazonía & Orinoquía data because otherwise, the values of urbanization and labour participation will be inaccurate. 
 
-Please note that the GLD programs folder is only available for authorized users within the world bank. for further questions and request kindly contact gld@worldbank.org .
+Please note that the GLD programs folder is only available for authorized users within the world bank. for further questions and requests kindly contact gld@worldbank.org .
 
 
 
