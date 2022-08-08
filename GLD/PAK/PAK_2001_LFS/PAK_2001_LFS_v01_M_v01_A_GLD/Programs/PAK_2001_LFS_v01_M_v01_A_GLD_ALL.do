@@ -244,10 +244,9 @@ local output "`id_data'"
 	destring city_code, replace
 	merge m:1 city_code using "`stata'\PAK_city_code.dta"
 	drop if _merge!=3
-	egen city_fullname=concat(city_name urban_status), punct(-)
+	egen city_fullname=concat(city_code city_name), punct(-)
 	labmask city_code, values (city_fullname)
-	gen subnatid2=city_code
- 	label values subnatid2 lblsubnatid2
+	rename city_code subnatid2
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
 
@@ -261,7 +260,7 @@ local output "`id_data'"
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey="subnatid2"
+	gen subnatidsurvey="subnatid1"
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 

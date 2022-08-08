@@ -255,7 +255,7 @@ local output "`id_data'"
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey="subnatid2"
+	gen subnatidsurvey="subnatid1"
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -828,7 +828,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_industrycat_isic_>
 	gen industrycat_isic=q09
-	recode industrycat_isic (51/59=50) 
+	recode industrycat_isic (1/4 73/79 84/87 97/98=.) (51/59=50) 
 	replace industrycat_isic=industrycat_isic*100
 	tostring industrycat_isic, replace format(%04.0f)
 	replace industrycat_isic="" if lstatus!=1 | industrycat_isic=="."
@@ -865,6 +865,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 *<_occup_isco_>
 	gen occup_isco=q08
 	destring occup_isco, replace
+	recode occup_isco (01/10 14/20 26 30 35/40 43/50 53/60 63/70 75/80 84/90 94/99=.)
 	replace occup_isco=occup_isco*100
 	tostring occup_isco, replace format(%04.0f)
 	replace occup_isco="" if lstatus!=1 | occup_isco=="."

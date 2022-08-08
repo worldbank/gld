@@ -224,6 +224,13 @@ local output "`id_data'"
 *</_urban_>
 
 
+/*<_subnatid1_>
+The province "Khyber/Pakhtoonkhua" (or K/P) in this year, was named N.W.F.P. 
+(North-West Frontier Province) in the past years. It changed its name to K/P
+in 2010. So it will be coded as K/P in later years. 
+*<_subnatid1_>*/
+
+
 *<_subnatid1_>
 	gen subnatid1=substr(PrCode,1,1)
 	destring subnatid1, replace
@@ -238,16 +245,15 @@ local output "`id_data'"
 	destring city_code, replace
 	merge m:1 city_code using "`stata'\PAK_city_code.dta"
 	drop if _merge!=3
-	egen city_fullname=concat(city_name urban_status), punct(-)
+	egen city_fullname=concat(city_code city_name), punct(-)
 	labmask city_code, values (city_fullname)
-	gen subnatid2=city_code
- 	label values subnatid2 lblsubnatid2
+	rename city_code subnatid2
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
 
 
 *<_subnatid3_>
-	gen byte subnatid3 = .
+	gen byte subnatid3=.
 	label de lblsubnatid3 1 "1 - Name"
 	label values subnatid3 lblsubnatid3
 	label var subnatid3 "Subnational ID at Third Administrative Level"
@@ -255,7 +261,7 @@ local output "`id_data'"
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = "subnatid2"
+	gen subnatidsurvey="subnatid1"
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 

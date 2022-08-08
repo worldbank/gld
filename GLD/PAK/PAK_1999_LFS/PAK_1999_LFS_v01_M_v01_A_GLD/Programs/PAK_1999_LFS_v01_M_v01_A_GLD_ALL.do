@@ -244,10 +244,9 @@ local output "`id_data'"
 	destring city_code, replace
 	merge m:1 city_code using "`stata'\PAK_city_code.dta"
 	drop if _merge!=3
-	egen city_fullname=concat(city_name urban_status), punct(-)
+	egen city_fullname=concat(city_code city_name), punct(-)
 	labmask city_code, values (city_fullname)
-	gen subnatid2=city_code
- 	label values subnatid2 lblsubnatid2
+	rename city_code subnatid2
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
 
@@ -261,7 +260,7 @@ local output "`id_data'"
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey="subnatid2"
+	gen subnatidsurvey="subnatid1"
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -1163,15 +1162,8 @@ To code whours for primary job, we separated people who have one job from those 
 *----------8.6: 12 month reference overall------------------------------*
 
 {
-/*<_lstatus_year_>
-Question about working during the last 12 months is only asked yo those unemployed individuals that were available to year within the last 7 days.
-*<_lstatus_year_>*/
-
-
 *<_lstatus_year_>
-	gen byte lstatus_year=1 if q33==1 
-	replace lstatus_year=0 if q32==2 | q33==2
-	replace lstatus_year=. if age<minlaborage & age!=.
+	gen byte lstatus_year=.
 	label var lstatus_year "Labor status during last year"
 	la de lbllstatus_year 1 "Employed" 0 "Not employed"
 	label values lstatus_year lbllstatus_year

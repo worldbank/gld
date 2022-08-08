@@ -227,30 +227,28 @@ local output "`id_data'"
 
 
 *<_subnatid1_>
-	
 	gen subnatid1=substr(process_code,1,1)
 	destring subnatid1, replace
-	label de lblsubnatid1 1 "1-Punjab" 2 "2-Sindh" 3 "3-Khyber/Pakhtoonkhua" 4 "4-Balochistan" 5 "5-AJ & Kashmir" 6 "6-Gilgit/Baltistan" 7 "7-Federally Administered Tribal Areas"
+	label de lblsubnatid1 1 "1-Punjab" 2 "2-Sindh" 3 "3-N.W.F.P." 4 "4-Balochistan" 5 "5-AJ & Kashmir" 6 "6-Gilgit/Baltistan" 7 "7-Federally Administered Tribal Areas"
 	label values subnatid1 lblsubnatid1
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 
 
 *<_subnatid2_>
-	gen city_code = substr(process_code, 1, 4 )
+	gen city_code=substr(process_code, 1, 4 )
 	destring city_code, replace
 	merge m:1 city_code using "`stata'\PAK_city_code.dta"
 	drop if _merge!=3
-	egen city_fullname=concat(city_name urban_status), punct(-)
+	egen city_fullname=concat(city_code city_name), punct(-)
 	labmask city_code, values (city_fullname)
-	gen subnatid2=city_code
- 	label values subnatid2 lblsubnatid2
+	rename city_code subnatid2
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
 
 
 *<_subnatid3_>
-	gen byte subnatid3 = .
+	gen byte subnatid3=.
 	label de lblsubnatid3 1 "1 - Name"
 	label values subnatid3 lblsubnatid3
 	label var subnatid3 "Subnational ID at Third Administrative Level"
@@ -258,7 +256,7 @@ local output "`id_data'"
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = "subnatid2"
+	gen subnatidsurvey="subnatid1"
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 

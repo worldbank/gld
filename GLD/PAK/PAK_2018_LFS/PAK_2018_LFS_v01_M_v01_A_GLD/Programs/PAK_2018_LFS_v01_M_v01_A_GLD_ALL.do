@@ -228,7 +228,7 @@ local output "`id_data'"
 *<_subnatid1_>
 	gen subnatid1=substr(Prcode,1,1)
 	destring subnatid1, replace
-	label de lblsubnatid1 1 "1-Khyber/Pakhtoonkhua" 2 "2-Punjab" 3 "3-Sindh" 4 "4-Balochistan" 6 "6-Islanmabad" 7 "7-Gilgit-Baltistian" 8 "8-AJ & Kashmir" 
+	label de lblsubnatid1 1 "1-Khyber/Pakhtoonkhua" 2 "2-Punjab" 3 "3-Sindh" 4 "4-Balochistan" 6 "6-Islamabad"  
 	label values subnatid1 lblsubnatid1
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>

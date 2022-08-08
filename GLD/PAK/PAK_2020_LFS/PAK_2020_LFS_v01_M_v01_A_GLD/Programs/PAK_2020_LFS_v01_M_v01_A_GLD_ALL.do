@@ -225,13 +225,23 @@ local output "`id_data'"
 
 *<_subnatid1_>
 	gen subnatid1=Province
+	label de lblsubnatid1 1 "1-Khyber/Pakhtoonkhua" 2 "2-Punjab" 3 "3-Sindh" 4 "4-Balochistan" 
+	label values subnatid1 lblsubnatid1
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 
 
 *<_subnatid2_>
-	gen subnatid2=District
+	gen city_name=proper(District)
+	replace city_name="Karachi West" if city_name=="West"
+	replace city_name="Karachi East" if city_name=="East"
+	merge m:m city_name using "`stata'\PAK_subnatid2_code_2020.dta"
+	drop if _merge!=3
+	egen city_fullname=concat(city_code city_name), punct(-)
+	labmask city_code, values (city_fullname)
+	rename city_code subnatid2
 	label var subnatid2 "Subnational ID at Second Administrative Level"
+	drop _merge city_name city_fullname
 *</_subnatid2_>
 
 
@@ -407,9 +417,7 @@ local output "`id_data'"
 	5: Migration
 ================================================================================================*/
 
-
 {
-
 *<_migrated_mod_age_>
 	gen migrated_mod_age=10
 	label var migrated_mod_age "Migration module application age"
@@ -450,7 +458,7 @@ local output "`id_data'"
    replace migrated_years =S4C15-2 if inrange(S4C15,3,6)
    replace migrated_years=7 if S4C15==7
    replace migrated_years=10 if S4C15==8
-   replace migrated_years=. if migrated_binary==0
+   replace migrated_years=. if migrated_binary!=1
    replace migrated_years=. if age<migrated_mod_age
    label var migrated_years "Years since latest migration"
 *</_migrated_years_>
@@ -459,7 +467,7 @@ local output "`id_data'"
 *<_migrated_from_urban_>
 	gen migrated_from_urban=S4C17
 	recode migrated_from_urban 0=. 1=0 2=1 
-	replace migrated_from_urban=. if migrated_binary==0
+	replace migrated_from_urban=. if migrated_binary!=1
 	label de lblmigrated_from_urban 0 "Rural" 1 "Urban"
 	replace migrated_from_urban=. if age<migrated_mod_age
 	label values migrated_from_urban lblmigrated_from_urban
@@ -468,8 +476,10 @@ local output "`id_data'"
 
 
 *<_migrated_from_cat_>
+	destring S4C16, gen(city_code)
 	gen migrated_from_cat=2
-	replace migrated_from_cat=. if migrated_binary==0
+	replace migrated_from_cat=5 if city_code>999
+	replace migrated_from_cat=. if migrated_binary!=1
 	replace migrated_from_cat=. if age<migrated_mod_age
 	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country"
 	label values migrated_from_cat lblmigrated_from_cat
@@ -478,16 +488,18 @@ local output "`id_data'"
 
 
 *<_migrated_from_code_>
-	destring S4C16, gen(city_code)
 	merge m:1 city_code using "`stata'\PAK_migration_code_2020.dta"
 	replace city_code=. if _merge==1
 	drop if _merge==2
-	labmask city_code, values(city_name)
-	gen migrated_from_code=city_code
+	egen migrated_from_code=concat(city_code city_name), p("-")
+	labmask city_code, values(migrated_from_code)
+	drop migrated_from_code
+	rename city_code migrated_from_code
+	gen city_code=migrated_from_code
 	replace migrated_from_code=. if city_code>999
-	replace migrated_from_code=. if migrated_binary==0
+	replace migrated_from_code=. if migrated_binary!=1
 	replace migrated_from_code=. if age<migrated_mod_age
-	drop _merge
+	drop _merge city_name
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
 *</_migrated_from_code_>
 
@@ -498,7 +510,7 @@ local output "`id_data'"
 	gen migrated_from_country=city_code if country==1&migrated_binary==1
 	gen country_name=iso_code if country==1&migrated_binary==1
 	labmask migrated_from_country, values(country_name)
-	replace migrated_from_country=. if migrated_binary==0
+	replace migrated_from_country=. if migrated_binary!=1
 	replace migrated_from_country=. if age<migrated_mod_age
 	label var migrated_from_country "Code of migration country (ISO 3 Letter Code)"
 *</_migrated_from_country_>
@@ -507,14 +519,12 @@ local output "`id_data'"
 *<_migrated_reason_>
 	gen migrated_reason=S4C18
 	recode migrated_reason (1/4 6=3) (5=2) (8/11=1) (14/15=4) (7 12/13 16=5) 
-	replace migrated_reason=. if migrated_binary==0
+	replace migrated_reason=. if migrated_binary!=1
 	replace migrated_reason=. if age<migrated_mod_age
 	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
 	label values migrated_reason lblmigrated_reason
 	label var migrated_reason "Reason for migrating"
 *</_migrated_reason_>
-
-
 }
 
 
@@ -579,7 +589,7 @@ local output "`id_data'"
 	recode educat7 (3=2) (4=3) (5/6=4) (8/15=7) 
 	replace educat7=5 if S4C9==7&S4C10==1
 	replace educat7=7 if S4C9==7&inrange(S4C10,8,15) 
-	replace educat7=. if age<ed_mod_age & age!=.
+	replace educat7=. if age<ed_mod_age
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -744,6 +754,7 @@ only because
 	replace lstatus=1 if inlist(1, S5C1, S5C2, S5C3) | inlist(S5C4,1,2)
 	replace lstatus=2 if lstatus!=1 & S9C1==1
 	replace lstatus=3 if lstatus==.
+	replace lstatus=. if age<minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
@@ -765,7 +776,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 	replace potential_lf=1 if [S9C1==2 & inrange(S9C6, 1, 2)] | [S9C1==1 & inrange(S9C6, 3, 4)]
 	replace potential_lf=0 if [S9C1==1 & inrange(S9C6, 1, 2)] | [S9C1==2 & inrange(S9C6, 3, 4)]
 	replace potential_lf=. if age < minlaborage
-	replace potential_lf=. if lstatus !=3
+	replace potential_lf=. if lstatus!=3
 	label var potential_lf "Potential labour force status"
 	la de lblpotential_lf 0 "No" 1 "Yes"
 	label values potential_lf lblpotential_lf

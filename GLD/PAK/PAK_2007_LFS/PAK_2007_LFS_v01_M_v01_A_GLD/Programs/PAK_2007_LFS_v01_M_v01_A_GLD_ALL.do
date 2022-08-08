@@ -227,10 +227,9 @@ local output "`id_data'"
 
 
 *<_subnatid1_>
-	
 	gen subnatid1=substr(pcode,1,1)
 	destring subnatid1, replace
-	label de lblsubnatid1 1 "1-Punjab" 2 "2-Sindh" 3 "3-Khyber/Pakhtoonkhua" 4 "4-Balochistan" 5 "5-AJ & Kashmir" 6 "6-Gilgit/Baltistan" 7 "7-Federally Administered Tribal Areas"
+	label de lblsubnatid1 1 "1-Punjab" 2 "2-Sindh" 3 "3-N.W.F.P." 4 "4-Balochistan" 5 "5-AJ & Kashmir" 6 "6-Gilgit/Baltistan" 7 "7-Federally Administered Tribal Areas"
 	label values subnatid1 lblsubnatid1
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
@@ -241,10 +240,9 @@ local output "`id_data'"
 	destring city_code, replace
 	merge m:1 city_code using "`stata'\PAK_city_code.dta"
 	drop if _merge!=3
-	egen city_fullname=concat(city_name urban_status), punct(-)
+	egen city_fullname=concat(city_code city_name), punct(-)
 	labmask city_code, values (city_fullname)
-	gen subnatid2=city_code
- 	label values subnatid2 lblsubnatid2
+	rename city_code subnatid2
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
 
@@ -258,7 +256,7 @@ local output "`id_data'"
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = "subnatid2"
+	gen subnatidsurvey="subnatid1"
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -269,25 +267,25 @@ local output "`id_data'"
 
 
 *<_subnatid1_prev_>
-	gen subnatid1_prev = .
+	gen subnatid1_prev=.
 	label var subnatid1_prev "Classification used for subnatid1 from previous survey"
 *</_subnatid1_prev_>
 
 
 *<_subnatid2_prev_>
-	gen subnatid2_prev = .
+	gen subnatid2_prev=.
 	label var subnatid2_prev "Classification used for subnatid2 from previous survey"
 *</_subnatid2_prev_>
 
 
 *<_subnatid3_prev_>
-	gen subnatid3_prev = .
+	gen subnatid3_prev=.
 	label var subnatid3_prev "Classification used for subnatid3 from previous survey"
 *</_subnatid3_prev_>
 
 
 *<_gaul_adm1_code_>
-	gen gaul_adm1_code = .
+	gen gaul_adm1_code=.
 	label var gaul_adm1_code "Global Administrative Unit Layers (GAUL) Admin 1 code"
 *</_gaul_adm1_code_>
 
@@ -299,7 +297,7 @@ local output "`id_data'"
 
 
 *<_gaul_adm3_code_>
-	gen gaul_adm3_code = .
+	gen gaul_adm3_code=.
 	label var gaul_adm3_code "Global Administrative Unit Layers (GAUL) Admin 3 code"
 *</_gaul_adm3_code_>
 

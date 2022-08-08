@@ -225,10 +225,20 @@ local output "`id_data'"
 *</_urban_>
 
 
+/*<_subnatid1_>
+
+The Federally Administered Tribal Areas (FATA) was merged into K/P in 2017, 
+therefore, years since 2017 will not have FATA. Instead, K/P in years since 2017
+also include areas of FATA. However, FATA was not in previous years. So the 
+variable "subnatid1_prev" in 2017 does not have values.
+
+*<_subnatid1_>*/
+
+
 *<_subnatid1_>
 	gen subnatid1=substr(Prcode,1,1)
 	destring subnatid1, replace
-	label de lblsubnatid1 1 "1-Khyber/Pakhtoonkhua" 2 "2-Punjab" 3 "3-Sindh" 4 "4-Balochistan" 6 "6-Islanmabad" 7 "7-Gilgit-Baltistian" 8 "8-AJ & Kashmir" 
+	label de lblsubnatid1 1 "1-Khyber/Pakhtoonkhua" 2 "2-Punjab" 3 "3-Sindh" 4 "4-Balochistan" 6 "6-Islamabad" 7 "7-Gilgit-Baltistian" 8 "8-AJ & Kashmir" 
 	label values subnatid1 lblsubnatid1
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
@@ -249,7 +259,7 @@ local output "`id_data'"
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey="subnatid2"
+	gen subnatidsurvey="subnatid1"
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
