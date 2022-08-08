@@ -1,15 +1,5 @@
----
 title: "PNAD Description"
-output: html_document
----
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = F)
-
-library(tidyverse)
-library(xtable)
-
-```
 
 # Introduction to Brazilian National Household Sample Survey (PNAD)
 
@@ -62,6 +52,8 @@ The Brazilian PNAD is a labour force survey collecting information on demographi
 
 The microdata are free and publicly available on the Brazilian Institute of Geography and Statistics (IBGE) [download website]( https://www.ibge.gov.br/estatisticas/downloads-estatisticas.html). The section where it can be found is called ‘Trabalho e Rendimento’ (Employment and Income).
 
+Besides, many instructions on dealing with PNAD and PNADC idiosyncrasies can be found on [PUC – Datazoom](http://www.econ.puc-rio.br/datazoom/english/index.html).
+
 ## What is the sampling procedure?
 
 First, a geographic stratification is carried out, splitting the country into 36 strata. Eighteen federation units each form an independent stratum for sampling purposes. The other nine federation units are split into other eighteen strata, since in each of them two strata are defined: one with all the municipalities and pseudo-municipalities of the metropolitan region based in the capital, and the other with the other municipalities. 
@@ -72,6 +64,8 @@ Some municipalities considered large in terms of population but which are locate
 
 In each of the strata of non-self-representative municipalities, municipalities are selected through a systematic draw with probability proportional to the population existing at the time of the Demographic Census. In the second stage, the selection of sectors is made within each municipality contained in the sample of the first stage, using the same method already described for the selection of sectors in the strata of metropolitan regions or self-representative municipalities. 
 Note that, even though the sampling logic is consistent over time, there are changes over time (e.g.m the blocks come from different censuses).
+
+More information is available on IBGE [methodological notes] (https://ftp.ibge.gov.br/Trabalho_e_Rendimento/Pesquisa_Nacional_por_Amostra_de_Domicilios_continua/Notas_metodologicas/notas_metodologicas.pdf).
 
 ## What is the geographic significance level?
 
