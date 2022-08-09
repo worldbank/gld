@@ -257,7 +257,9 @@ variable "subnatid1_prev" in 2017 does not have values.
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey="subnatid1"
+	decode subnatid1, gen(province)
+	gen province2=substr(province,3,.)
+	egen subnatidsurvey=concat(urban province2),p(-)
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 

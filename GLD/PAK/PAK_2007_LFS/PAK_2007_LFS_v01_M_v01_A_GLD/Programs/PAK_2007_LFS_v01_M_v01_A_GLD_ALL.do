@@ -227,17 +227,16 @@ local output "`id_data'"
 
 
 *<_subnatid1_>
-	
 	gen subnatid1=substr(pcode,1,1)
 	destring subnatid1, replace
-	label de lblsubnatid1 1 "1-Punjab" 2 "2-Sindh" 3 "3-N.W.F.P." 4 "4-Balochistan" 5 "5-AJ & Kashmir" 6 "6-Gilgit/Baltistan" 7 "7-Federally Administered Tribal Areas"
+	label de lblsubnatid1 1 "1-Punjab" 2 "2-Sindh" 3 "3-N.W.F.P." 4 "4-Balochistan"
 	label values subnatid1 lblsubnatid1
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 
 
 *<_subnatid2_>
-	gen city_code=substr(pcode, 1, 4 )
+	gen city_code=substr(pcode,1,4)
 	destring city_code, replace
 	merge m:1 city_code using "`stata'\PAK_city_code.dta"
 	drop if _merge!=3
@@ -257,7 +256,9 @@ local output "`id_data'"
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey="subnatid1"
+	decode subnatid1, gen(province)
+	gen pro_name=substr(province,3,.)
+	egen subnatidsurvey=concat(urban pro_name), p(-)
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 

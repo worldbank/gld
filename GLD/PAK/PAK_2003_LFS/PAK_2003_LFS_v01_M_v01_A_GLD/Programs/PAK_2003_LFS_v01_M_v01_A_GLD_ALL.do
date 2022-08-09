@@ -257,7 +257,9 @@ local output "`id_data'"
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey="subnatid1"
+	decode subnatid1, gen(province)
+	gen pro_name=substr(province,3,.)
+	egen subnatidsurvey=concat(urban pro_name), p(-)
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 

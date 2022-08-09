@@ -253,8 +253,9 @@ local output "`id_data'"
 *</_subnatid3_>
 
 
-*<_subnatidsurvey_>
-	gen subnatidsurvey="subnatid2"
+*<_subnatidsurvey_>	
+	gen district=proper(District)
+	egen subnatidsurvey=concat(urban district), p(-)
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
