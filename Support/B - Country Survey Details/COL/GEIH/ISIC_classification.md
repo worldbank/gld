@@ -13,4 +13,4 @@ In the year 2020 the COVID-19 pandemic affected the collection process of the GE
 
 As with the previous version, the Colombian version of ISIC 4 2020 had more similarities than differences to the international version, yet the differences are more evident at the four digit level, see the correspondence table [here](https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fwww.dane.gov.co%2Ffiles%2Fsen%2Fnomenclatura%2FtablasCorrelativas%2FTC-CIIU-4AC-2020-vsCIIU-4Int.xls&wdOrigin=BROWSELINK)
 
-The same correspondence tables apply for the year 2021. 
+The 2021 data uses the same ISIC 4 Colombia version. If the user wants to compare it to the ISIC 4 international version, please use the same link from 2020.
