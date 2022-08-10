@@ -723,7 +723,7 @@ the last time he/she sought work 1-4 weeks ago.
 *<_lstatus_>
 	gen byte lstatus=.
 	replace lstatus=1 if inlist(1, q01, q03) | inlist(q02, 1, 2) 
-	replace lstatus=2 if inlist(q18,1,2) | inrange(q21,1,5)
+	replace lstatus=2 if inlist(q23,1,2) & inrange(q21,1,5)
 	replace lstatus=3 if mi(lstatus) & !mi(q01)
 	replace lstatus=. if age<minlaborage
 	label var lstatus "Labor status"
@@ -736,16 +736,16 @@ the last time he/she sought work 1-4 weeks ago.
 Note: var "potential_lf" only takes value if the respondent is not in labor force. (lstatus==3)
 
 "potential_lf" = 1 if the person is
-1)available but not searching or [inlist(q18,3,7) & !inrange(q21, 1, 5)]
-2)searching but not immediately available to work or [q21==6 & !inrange(q21, 3, 7)]
+1)available but not searching or [inlist(q23,3,7) & !inrange(q21, 1, 5)]
+2)searching but not immediately available to work or [q21==6 & !inrange(q23, 3, 7)]
 </_potential_lf_>*/
 
 
 *<_potential_lf_>
 	gen byte potential_lf=.
 	replace potential_lf=0 if lstatus==3
-	replace potential_lf=1 if [inrange(q18,3,7) & !inrange(q21,1,5)] | [q21==6 & inrange(q18,1,2)]
-	replace potential_lf=0 if [inrange(q18,1,2) & inrange(q21,1,5)] | [inrange(q18,3,7) & q21==6]
+	replace potential_lf=1 if [inrange(q23,3,7) & !inrange(q21,1,5)] | [q21==6 & inrange(q23,1,2)]
+	replace potential_lf=0 if [inrange(q23,1,2) & inrange(q21,1,5)] | [inrange(q23,3,7) & q21==6]
 	replace potential_lf=. if age < minlaborage 
 	replace potential_lf=. if lstatus !=3
 	label var potential_lf "Potential labour force status"

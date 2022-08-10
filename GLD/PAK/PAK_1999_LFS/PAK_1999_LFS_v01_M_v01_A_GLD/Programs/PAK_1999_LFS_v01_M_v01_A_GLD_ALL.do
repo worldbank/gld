@@ -709,7 +709,7 @@ the last time he/she sought work 1-4 weeks ago.
 *<_lstatus_>
 	gen byte lstatus=.
 	replace lstatus = 1 if inlist(1, q01, q03) | inlist(q02, 1, 2) 
-	replace lstatus = 2 if inlist(q28,1,2) | inrange(q26,1,5)
+	replace lstatus = 2 if inlist(q28,1,2) & inrange(q26,1,5)
 	replace lstatus = 3 if mi(lstatus) & !mi(q01)
 	replace lstatus=. if age<minlaborage
 	label var lstatus "Labor status"
