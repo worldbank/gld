@@ -12,7 +12,7 @@ The user should follow the recommendations below to assemble the [microdata](htt
 
 5. The data for  "Amazonia & Orinoquía" and the City of "San Andrés" had been included separate from the rest. Yet, the codes to merge monthly to annual data followed for all years have been the same as with the main GEIH files. File locations for the unified files are available in the harmonized do-files.
 
-Please note that the GLD programs folder is only available for authorized users within the World Bank. for further questions and requests kindly contact gld@worldbank.org .
+Please note that the GLD programs folder is only available for authorized users within the World Bank. for further questions and requests kindly contact gld@worldbank.org.
 
 
 
