@@ -15,7 +15,7 @@ The municipalities were stratified following socioeconomic criteria:
 - urban-rural structure: % of the population by the municipality over the proportion of the population with unsatisfied basic needs. 
 - Population size from the social group ("estrato"): every municipality with 7,000 o more inhabitants was considered a PSU (primary sampling unit), and those with lower population size were regrouped with nearby locations.
 
-The image below shows the locations that contain data for urban and rural areas (green) and only urban/metropolitan cities (red). The red area represents the region of Amazonia and Orinoquia on the mainland and the San Andres city on the box of the top right corner.
+The image below shows the locations that contain data for urban and rural areas (green) and only urban/metropolitan cities (red). The red area represents the region of Amazonia and Orinoquia on the mainland and the San Andres city on the box of the top right corner. Amazonia represents approximately 2.3% (2017) of the total population, Orinoquia represents 3.4% (2015) of the total population and San Andres represents 0.1% (2018).
 
 <br></br>
 ![COL_GEIH](utilities/Col_GEIH_coverage.png)
