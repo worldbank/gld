@@ -5,8 +5,8 @@ clear all
 
 local year 2017
 
-local path_original "Z:\GLD-Harmonization\582018_AQ\COL\COL_`year'_GEIH\COL_`year'_GEIH_v01_M\Data\Original"
-local path_stata "Z:\GLD-Harmonization\582018_AQ\COL\COL_`year'_GEIH\COL_`year'_GEIH_v01_M\Data\Stata"
+local path_original "Z:\GLD-Harmonization\xxx\COL\COL_`year'_GEIH\COL_`year'_GEIH_v01_M\Data\Original"
+local path_stata "Z:\GLD-Harmonization\xxx\COL\COL_`year'_GEIH\COL_`year'_GEIH_v01_M\Data\Stata"
 
 forvalues i = 1/8 {
 	
