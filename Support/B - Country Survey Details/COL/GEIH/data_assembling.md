@@ -1,20 +1,18 @@
  # For users of the DANE public microdata 
  
-The user should follow the recommendations below to assembly the microdata used with the do files on this page, 
+The user should follow the recommendations below to assemble the [microdata](https://microdatos.dane.gov.co/catalog/MICRODATOS/about_collection/23/?per_page=5) used with the do files on this page, 
 
-1- The microdata for the GEIH is available by month in the .stata, .txt, .sav and .csv formats on a monthly frequency. It is possible that some years (2017).  The data for some months is available in one format, while the rest of the months only have another reading format. 
+1. The microdata for the GEIH is available in various formats such as .stata, .txt, .sav and .csv. The data has a monthly frequency (From January to December). However, the user could find that not all formats are available for every month. For instance, in [2017](https://microdatos.dane.gov.co//catalog/458/get_microdata), the data for the first few months is available in .sav, .txt and .csv formats. While the last months of the same year are available in .stata , .txt and .csv.
 
-2- For the WBG users, the harmonization team prepared to do files that pre-process the monthly data into one file, please check the C://programs location in your GLD server access domain for the respective years.
+2. For the WBG users, the harmonization team prepared do files that pre-process the monthly data into one file, please check the following [link]() for a sample, if you help with this please contact the email on the bottom of this page.
 
-3- Each year has monhtly migration data that is merged to the main data with another code available in the GLD "programs" folder.
+3. Migration data is accessible online as a separate monthly dataset that needs to be assembled and merged to the general GEIH data. In the following [link]() you will find a sample and if you have further questions contact the email below.
 
-4- the identifiers shall never contain months to preserve the sample size. In the do-files from 2009, 2011 and 2020, the harmonization team has included a long process of sorting month information against id values to recognize duplicates.  
+4. Generally, the creation of household and individual ID codes never uses the variable denoting the month during which the survey took place. In the do-files from 2009, 2011 and 2020, the harmonization team included a longer process which does include month information against ID values to recognize duplicates. That is, there are different household that erroneously have the same household ID. Since the interviews took place at different points in time, the month variable is necessary to split these false duplicates.
 
-5- The data for  "Amazonia & orinoquía" and the City of "San Andrés" had been included separately from the rest. Yet, the codes to merge monthly to annual data followed for all years has been the same as with the main GEIH files. File locations for the unified files are available in the harmonized do-files.
+5. The data for  "Amazonia & Orinoquía" and the City of "San Andrés" had been included separate from the rest. Yet, the codes to merge monthly to annual data followed for all years have been the same as with the main GEIH files. File locations for the unified files are available in the harmonized do-files.
 
-6- Do not skip the merging of San Andrés and Amazonía & Orinoquía data because otherwise, the values of urbanization and labour participation will be inaccurate. 
-
-Please note that the GLD programs folder is only available for authorized users within the world bank. for further questions and requests kindly contact gld@worldbank.org .
+Please note that the GLD programs folder is only available for authorized users within the World Bank. for further questions and requests kindly contact gld@worldbank.org .
 
 
 
