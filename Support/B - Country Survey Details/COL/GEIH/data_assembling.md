@@ -2,7 +2,7 @@
  
 The user should follow the recommendations below to assemble the [microdata](https://microdatos.dane.gov.co/catalog/MICRODATOS/about_collection/23/?per_page=5) used with the do files on this page, 
 
-1. The microdata for the GEIH is available in various formats such as .stata, .txt, .sav and .csv. The data has a monthly frequency (From January to December). However, the user could find that not all formats are available for every month. For instance, in [2017](https://microdatos.dane.gov.co//catalog/458/get_microdata), the data for the first few months of the year is available in .sav, .txt and .csv formats; while for the same year, the data for the months of october through december are available in .stata, .txt and .csv formats.
+1. The microdata for the GEIH is available in various formats such as .stata, .txt, .sav and .csv. The data has a monthly frequency (From January to December). However, the user could find that not all formats are available for every month. For instance, in [2017](https://microdatos.dane.gov.co//catalog/458/get_microdata), the data for the first few months of the year is available in .sav, .txt and .csv formats; while for the same year, the data for the months of october through december is available in .stata, .txt and .csv formats.
 
 2. For the WBG users, the harmonization team prepared do files that pre-process the monthly data into one file, please check the following [link]() for a sample, if you help with this please contact the email on the bottom of this page.
 
