@@ -3,7 +3,7 @@
 
 The Colombian GEIH survey uses cartographic references from the Master Household Sample (list of households) that is permanently updated by the NSO. 
 
-The GEIH survey uses probabilistic, stratified and multi-stage sampling. 
+The GEIH survey uses probabilistic, stratified, and multi-stage sampling. 
 
 In the GEIH, the first strata contain 24 capital cities (varies across years) and metropolitan areas (urban) as independent domains of study. Every city and metropolitan area is auto-represented.  
 
@@ -15,7 +15,7 @@ The municipalities were stratified following socioeconomic criteria:
 - urban-rural structure: % of the population by the municipality over the proportion of the population with unsatisfied basic needs. 
 - Population size from the social group ("estrato"): every municipality with 7,000 o more inhabitants was considered a PSU (primary sampling unit), and those with lower population size were regrouped with nearby locations.
 
-The image below shows the locations that contain data for urban and rural areas (red) and only urban/metropolitan cities (green).
+The image below shows the locations that contain data for urban and rural areas (green) and only urban/metropolitan cities (red). The red area represents the region of Amazonia and Orinoquia on the mainland and the San Andres city on the box of the top right corner.
 
 <br></br>
 ![COL_GEIH](utilities/Col_GEIH_coverage.png)
