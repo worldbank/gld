@@ -91,7 +91,7 @@ In terms of *non-labor force*, people left with no labor status would be not in 
 
 ## Labor Force Participation Rate Comparison
 
-The labor force participation rate produced for 2014-2017 using the method described above is almost identical to the estimates in the reports of the Indonesian Statistics Office (BPS). The labour force participation estimates of 2014, 2015 and 2016 are the identical to the official reports at on decimal place; 2017 has a difference of 1.9 percentage points.
+The labor force participation rate produced for 2014-2017 using the method described above is almost identical to the estimates in the reports of the Indonesian Statistics Office (BPS). The labour force participation estimates of 2014, 2015 and 2016 are identical to the official reports at on decimal place; 2017 has a difference of 1.9 percentage points.
 
 The comparison among GLD harmonization, WDI, and WB country indicators is as follows:
 
