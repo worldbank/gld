@@ -14,7 +14,7 @@
 <_Survey Year_>					2009 </_Survey Year_>
 <_Study ID_>					PAK_2009_LFS_v01_M </_Study ID_>
 <_Data collection from (M/Y)_>	[July/2009] </_Data collection from (M/Y)_>
-<_Data collection to (M/Y)_>	[June/2009] </_Data collection to (M/Y)_>
+<_Data collection to (M/Y)_>	[June/2010] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			Pakistan Bureau of Statistics </_Source of dataset_>
 								https://www.pbs.gov.pk/content/microdata
 <_Sample size (HH)_> 			38,764 </_Sample size (HH)_>
@@ -1085,7 +1085,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_industrycat_isic_2_>
 	gen industrycat_isic_2=Sec5_5_21
-	recode industrycat_isic_2 (96 97=93) (7/9 43 48 57 58 69 78 83 88 81=.)
+	recode industrycat_isic_2 (96 97=93) (3/4 6/9 42/43 48 53 57 58 69 78 83 88 81=.)
 	replace industrycat_isic_2=industrycat_isic_2*100
 	tostring industrycat_isic_2, replace format(%04.0f)
 	replace industrycat_isic_2="" if Sec5_5_18!=1 | mi(Sec5_5_21) | industrycat_isic_2=="."
@@ -1095,7 +1095,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_industrycat10_2_>
 	gen byte industrycat10_2=Sec5_5_21
-	recode industrycat10_2 (2 5=1) (10/14=2) (15/37=3) (40 41=4) (45=5) (50/55=6) (60/64=7) (65/74=8) (75=9) (80/99=10)
+	recode industrycat10_2 (2 5=1) (10/14=2) (15/37=3) (40/42=4) (45=5) (50/55=6) (60/64=7) (65/74=8) (75=9) (80/99=10)
 	replace industrycat10_2=. if Sec5_5_18!=1
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
@@ -1119,7 +1119,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_occup_isco_2_>
 	gen occup_isco_2=Sec5_5_20
-	recode occup_isco_2 (2/6 14 18 25 37 39 67 94=.)
+	recode occup_isco_2 (2/6 14/15 18 25 36/37 39 45 60 63/64 67 80 85 94 96=.)
 	replace occup_isco_2=occup_isco_2*100
 	tostring occup_isco_2, replace format(%04.0f)
 	replace occup_isco_2="" if Sec5_5_18!=1 | mi(Sec5_5_20) | occup_isco_2=="."
