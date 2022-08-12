@@ -1,29 +1,28 @@
 # Correspondences between national and international classifications
 
-This document describes the methodology used to map national industrial and occupational codes to their international counterparts. For industry, five versions of national classification, *Klasifikasi Baku Lapangan Usaha Indonesia (KBLI)*, were mapped to two versions of *International Standard Industrial Classification of all Economic Activities (ISIC)*; regarding occupation, two versions of national classification, *Klasifikasi Baku Jenis Pekerjaan Indonesia (KBJI)*, were mapped to two versions of *International Standard Classification of Occupations (ISCO)*. Specific versions mapped for each year harmonized are summarized in the table below along with internal links to the docs.
-
-![mapping_summary](utilities/mapping_summary.png)
+This document describes the methodology used to map national industrial and occupational codes to their international counterparts. For industry, three versions of national classification, *Pakistan Standard Industrial Classification (PSIC)*, were mapped to three versions of *International Standard Industrial Classification of all Economic Activities (ISIC)*; regarding occupation, three versions of national classification, *Pakistan Standard Classification of Occupations (PSCO)*, were mapped to two versions of *International Standard Classification of Occupations (ISCO)*. Specific versions mapped for each year harmonized are summarized in the table below along with internal links to the docs.
 
 
-| **Version of KBJI**	| **Corresponding ISCO**	| 
-| :-----------------------:	| :-------:	| 
-| [1982](utilities/KBJI-1982.pdf)  | ISCO 1968| 
-| [2002](utilities/KBJI-2002.pdf)  | ISCO 1988| 
+|**Year**|**# Digit of PSIC**|**PSIC Version**|**ISIC Version**|**# Digit of PSCO**|**PSCO Version**|**ISCO Version**| 
+|:----:|:-:|:----:|:----------:|:-:|:----:|:-------:|  
+| 1992 | 2 | [1970](utilities/PSIC_2007) | ISIC Rev.2 | 2 | [1994](utilities/PSCO94_to_ISCO88) | ISCO-88 | 
+| 1999 | 2 | 1970 | ISIC Rev.2 | 2 | 1994 | ISCO-88 |
+| 2001 | 2 | 1970 | ISIC Rev.2 | 2 | 1994 | ISCO-88 |
+| 2003 | 2 | 1970 | ISIC Rev.2 | 2 | 1994 | ISCO-88 |
+| 2005 | 2 | 1970 | ISIC Rev.2 | 2 | 1994 | ISCO-88 |
+| 2007 | 2 | 1970 | ISIC Rev.2 | 2 | 1994 | ISCO-88 |
+| 2008 | 2 | [2007](utilities/PSIC_2007) | ISIC Rev.3 | 2 | 1994 | ISCO-88 |
+| 2009 | 2 | 2007 | ISIC Rev.3 | 2 | 1994 | ISCO-88 |
+| 2010 | 2 | 2007 | ISIC Rev.3 | 2 | 1994 | ISCO-88 |
+| 2012 | 2 | 2010 | ISIC Rev.4 | 2 | 2011 | ISCO-08 |
+| 2013 | 2 | [2010](utilities/PSIC_2010) | ISIC Rev.4 | 2 | 2015 | ISCO-08 |
+| 2014 | 2 | 2010 | ISIC Rev.4 | 2 | [2015](utilities/PSCO_2015) | ISCO-08 |
+| 2017 | 4 | 2010 | ISIC Rev.4 | 4 | 2015 | ISCO-88 |
+| 2018 | 4 | 2010 | ISIC Rev.4 | 4 | 2015 | ISCO-88 |
+| 2020 | 4 | 2010 | ISIC Rev.4 | 2 | 2015 | ISCO-88 |
 
-|**Version of KBLI**	| **Corresponding ISIC**	|
-| :-----------------: |:-----------------------:|	 	 
-| [1997](utilities/KBLI-1997.pdf) | ISIC Rev.3| 
-| [2000](utilities/KBLI-2000.pdf) | ISIC Rev.3|
-| [2005](utilities/KBLI-2005.pdf) | ISIC Rev.3|
-| [2009](utilities/KBLI-2009.pdf) | ISIC Rev.4|
-| [2015](utilities/KBLI-2015.pdf) | ISIC Rev.4|
-
-In general, we only mapped 1994-2018 as earlier years like 1989-1993 do not have two-digit industrial or occupational codes; and recent year, 2019, only has one-digit variables which directly corresponds to the top level of ISIC/ISCO. 
-
-Years between 2011 and 2015 have multiple variables using different versions of KBJI and KBLI at different digital levels. The decision rule for choosing one version is *the newest version with at least two digits*.
 
 
-*(We will update this documentation along with IDN GLD if we get more information on correspondence tables for KBJI and KBLI in the future. Please feel free to contact the GLD focal point (gld@worldbank.org) if you know anything that might help map Indonesia's industrial or occupational codes. Thanks!)*
 
 
 ## Correspondence in industry classification
