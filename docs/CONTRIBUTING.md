@@ -1,37 +1,15 @@
-  #steps for creating a good issue
-  
-  #steps for creating a good pull request
-  
-  #links to external documentation
-  
-  #links to mailing list
-  
-  #links to code of conduct
-  
-  
-# Welcome to the contributing guide <!-- omit in toc -->
 
-Thank you for investing your time in contributing to our project! Any contribution you make will be reflected on [docs.github.com](https://docs.github.com/en) :sparkles:. 
+# Welcome to the GLD repository contributing guide <!-- omit in toc -->
 
-Read our [Code of Conduct](./CODE_OF_CONDUCT.md) to keep our community approachable and respectable.
+Thank you for investing your time in contributing to the GLD project! Any contribution you make will be reflected on [worldbank/gld](https://github.com/worldbank/gld) :sparkles: 
 
-In this guide you will get an overview of the contribution workflow from opening an issue, creating a PR, reviewing, and merging the PR.
+Read our [Code of Conduct](./CODE_OF_CONDUCT.md) to keep our community approachable and respectful.
 
-Use the table of contents icon <img src="./assets/images/table-of-contents.png" width="25" height="25" /> on the top left corner of this document to get to a specific section of this guide quickly.
-
-## New contributor guide
-
-To get an overview of the project, read the [README](README.md). Here are some resources to help you get started with open source contributions:
-
-- [Finding ways to contribute to open source on GitHub](https://docs.github.com/en/get-started/exploring-projects-on-github/finding-ways-to-contribute-to-open-source-on-github)
-- [Set up Git](https://docs.github.com/en/get-started/quickstart/set-up-git)
-- [GitHub flow](https://docs.github.com/en/get-started/quickstart/github-flow)
-- [Collaborating with pull requests](https://docs.github.com/en/github/collaborating-with-pull-requests)
-
+In this guide you will get an overview of the contribution workflow from opening an issue, creating a pull request (PR), reviewing, and merging the PR.
 
 ## Getting started
 
-To navigate our codebase with confidence, see [the introduction to working in the docs repository](/contributing/working-in-docs-repository.md) :confetti_ball:. For more information on how we write our markdown files, see [the GitHub Markdown reference](contributing/content-markup-reference.md).
+To get an overview of the project, read the [README](README.md). 
 
 Check to see what [types of contributions](/contributing/types-of-contributions.md) we accept before making changes. Some of them don't even require writing a single line of code :sparkles:.
 
@@ -92,8 +70,5 @@ Once you submit your PR, a Docs team member will review your proposal. We may as
 
 ### Your PR is merged!
 
-Congratulations :tada::tada: The GitHub team thanks you :sparkles:. 
+Congratulations :tada::tada: The GLD team thanks you :sparkles:. 
 
-Once your PR is merged, your contributions will be publicly visible on the [GitHubs docs](https://docs.github.com/en). 
-
-Now that you are part of the GitHub docs community, see how else you can [contribute to the docs](/contributing/types-of-contributions.md).
