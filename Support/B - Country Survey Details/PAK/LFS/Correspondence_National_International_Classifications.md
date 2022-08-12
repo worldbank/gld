@@ -14,15 +14,16 @@ This document describes the methodology used to map national industrial and occu
 | 2008 | 2 | [2007](utilities/PSIC_2007) | ISIC Rev.3 | 2 | 1994 | ISCO-88 |
 | 2009 | 2 | 2007 | ISIC Rev.3 | 2 | 1994 | ISCO-88 |
 | 2010 | 2 | 2007 | ISIC Rev.3 | 2 | 1994 | ISCO-88 |
-| 2012 | 2 | 2010 | ISIC Rev.4 | 2 | 2011 | ISCO-08 |
+| 2012 | 2 | 2010 | ISIC Rev.4 | 2 | 2012 | ISCO-08 |
 | 2013 | 2 | [2010](utilities/PSIC_2010) | ISIC Rev.4 | 2 | 2015 | ISCO-08 |
 | 2014 | 2 | 2010 | ISIC Rev.4 | 2 | [2015](utilities/PSCO_2015) | ISCO-08 |
 | 2017 | 4 | 2010 | ISIC Rev.4 | 4 | 2015 | ISCO-88 |
 | 2018 | 4 | 2010 | ISIC Rev.4 | 4 | 2015 | ISCO-88 |
 | 2020 | 4 | 2010 | ISIC Rev.4 | 2 | 2015 | ISCO-88 |
 
+Note that in the annual report of LFS 2012, PSCO 2012 is said to be used for occupation classification. However, PSCO 2012 is a PSCO draft that is in fact the same as PSCO 2015 which is the latest version, according to the FOREWORD page of PSCO 2015 manual.
 
-
+![screenshot_PSCO2015](utilities/draft psco 2012.png)
 
 
 ## Correspondence in industry classification
