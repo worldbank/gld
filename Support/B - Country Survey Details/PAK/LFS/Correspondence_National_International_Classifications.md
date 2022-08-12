@@ -5,7 +5,7 @@ This document describes the methodology used to map national industrial and occu
 
 |**Year**|**# Digit of PSIC**|**PSIC Version**|**ISIC Version**|**# Digit of PSCO**|**PSCO Version**|**ISCO Version**| 
 |:----:|:-:|:----:|:----------:|:-:|:----:|:-------:|  
-| 1992 | 2 | [1970](utilities/PSIC_2007) | ISIC Rev.2 | 2 | [1994](utilities/PSCO94_to_ISCO88) | ISCO-88 | 
+| 1992 | 2 | [1970](utilities/PSIC_2007.pdf) | ISIC Rev.2 | 2 | [1994](utilities/PSCO94_to_ISCO88) | ISCO-88 | 
 | 1999 | 2 | 1970 | ISIC Rev.2 | 2 | 1994 | ISCO-88 |
 | 2001 | 2 | 1970 | ISIC Rev.2 | 2 | 1994 | ISCO-88 |
 | 2003 | 2 | 1970 | ISIC Rev.2 | 2 | 1994 | ISCO-88 |
