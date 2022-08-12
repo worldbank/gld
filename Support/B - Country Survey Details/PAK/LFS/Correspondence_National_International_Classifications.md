@@ -23,7 +23,7 @@ This document describes the methodology used to map national industrial and occu
 
 Note that in the annual report of LFS 2012, PSCO 2012 is said to be used for occupation classification. However, PSCO 2012 is a PSCO draft that is in fact the same as PSCO 2015 which is the latest version, according to the FOREWORD page of PSCO 2015 manual.
 
-![PSCO 2012 & PSCO 2015](utilities/draft psco 2012.png)
+![PSCO 2012 & PSCO 2015](utilities/draft%20psco%202012.png)
 
 
 ## Correspondence in industry classification
