@@ -3,7 +3,7 @@
 This document shows the details of coding `lstatus` for the three groups of years mentioned in the [Introduction to PAK LFS.](/Support/B%20-%20Country%20Survey%20Details/IDN/SAKERNAS/1.Introduction to Pakistan LFS.md)
 
 
-## 1989-1999
+## 1992-2007
 >The questionnaires of these years follow the same structure and have the same labor force module questions. Simply following the order of the questions can locate all the conditions needed to decide the employed, the unemployed, and non-labor force population.
 
 **Labor module in the questionnaire**
@@ -25,7 +25,7 @@ Question 13 = 1: seeking a job
 
 In this way, *non-labor force* becomes clear as same answer to question 6 as unemployed yet not seeking a job. 
 
-## 2000-2016
+## 2008-2010
 >The labor force module has become more complete and questions are more well-guided during this time period. The Only for Working Household Members block states clearly the requirements for people to answer this block, which is a clear clue to code employed people.
 
 **Labor module in the questionnaire**
@@ -45,7 +45,7 @@ Question 5 = 1: seeking a job – unemployed / 2: not seeking a job – non-labo
 ```
 
 
-## 2017-2019
+## 2012-2018
 >The last three years have the most up-to-date questionnaire structure, which adds details like work environment and welfare. But meanwhile as question block increases and expands, the previous order was discarded and guide becomes blurred. Following the logic of the questionnaire would not produce sound labor force participation rate. We slightly changed the way we coded lstatus so as to get close to the ILO and national estimates.
 
 **Labor module in the questionnaire**
@@ -88,6 +88,8 @@ Question 20a = 2 : having a new business but not started yet.
 
 In terms of *non-labor force*, people left with no labor status would be not in the labor force.
 
+## 2020
+
 
 ## Labor Force Participation Rate Comparison
 
@@ -95,7 +97,7 @@ The labor force participation rate produced for 2014-2017 using the method descr
 
 The comparison among GLD harmonization, WDI, and WB country indicators is as follows:
 
-![lfp_comparison](utilities/lfp_comparison.png)
+![lfp_comparison](utilities/LFP_figure.png)
 
 As the earliest year of WB indicators is 2000, we only compared 2000-2019. The largest gap is 2.9 percentage points. This could be a result of different data sources as well as sample sizes.
 
