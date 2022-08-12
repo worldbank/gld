@@ -20,7 +20,10 @@
 <_Sample size (HH)_> 			35,067</_Sample size (HH)_>
 <_Sample size (IND)_> 			228,224 </_Sample size (IND)_>
 <_Sampling method_> 			Stratified two-stage cluster sampling method </_Sampling method_>
-<_Geographic coverage_> 		Four main provinces </_Geographic coverage_>
+<_Geographic coverage_> 		All urban and rural areas of the four provinces 
+								of Pakistan defined as such by 1998 Population Census, 
+								excluding Federally Administered Tribal Areas (FATA), 
+								military restricted areas, and protected areas of NWFP. </_Geographic coverage_>
 <_Currency_> 					Pakistani Rupee </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>

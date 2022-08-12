@@ -14,13 +14,13 @@
 <_Survey Year_>					2014 </_Survey Year_>
 <_Study ID_>					PAK_2014_LFS_v01_M </_Study ID_>
 <_Data collection from (M/Y)_>	[July/2014] </_Data collection from (M/Y)_>
-<_Data collection to (M/Y)_>	[June/2014] </_Data collection to (M/Y)_>
+<_Data collection to (M/Y)_>	[June/2015] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			Pakistan Bureau of Statistics </_Source of dataset_>
 								https://www.pbs.gov.pk/content/microdata
 <_Sample size (HH)_> 			41,627 </_Sample size (HH)_>
 <_Sample size (IND)_> 			264,136 </_Sample size (IND)_>
 <_Sampling method_> 			Stratified two-stage cluster sampling method </_Sampling method_>
-<_Geographic coverage_> 		5 provinces </_Geographic coverage_>
+<_Geographic coverage_> 		Four major provinces plus Islamabad. </_Geographic coverage_>
 <_Currency_> 					Pakistani Rupee </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>

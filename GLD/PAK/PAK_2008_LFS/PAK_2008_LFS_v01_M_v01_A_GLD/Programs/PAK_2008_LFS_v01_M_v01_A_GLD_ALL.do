@@ -20,7 +20,10 @@
 <_Sample size (HH)_> 			36,253 </_Sample size (HH)_>
 <_Sample size (IND)_> 			249,216   </_Sample size (IND)_>
 <_Sampling method_> 			Stratified two-stage cluster sampling method </_Sampling method_>
-<_Geographic coverage_> 		Four main provinces </_Geographic coverage_>
+<_Geographic coverage_> 		All urban and rural areas of the four provinces 
+								of Pakistan defined as such by 1998 Population Census, 
+								excluding Federally Administered Tribal Areas (FATA), 
+								military restricted areas, and protected areas of NWFP. </_Geographic coverage_>
 <_Currency_> 					Pakistann Rupee </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
@@ -783,9 +786,9 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 *<_potential_lf_>
 	gen byte potential_lf=.
 	replace potential_lf=0 if lstatus==3
-	replace potential_lf=1 if [inrange(q9_3,3,7) & inrange(q9_6, 1, 2)] | [inrange(q9_3, 1, 2) & q9_6==3]
-	replace potential_lf=0 if [inrange(q9_3, 1, 2) & inrange(q9_6, 1, 2)] | [inrange(q9_3,3,7) & q9_6==3]
-	replace potential_lf=. if age < minlaborage 
+	replace potential_lf=1 if [inrange(q9_3,3,7) & inrange(q9_6,1,2)] | [inrange(q9_3,1,2) & q9_6==3]
+	replace potential_lf=0 if [inrange(q9_3,1,2) & inrange(q9_6,1,2)] | [inrange(q9_3,3,7) & q9_6==3]
+	replace potential_lf=. if age<minlaborage 
 	replace potential_lf=. if lstatus !=3
 	label var potential_lf "Potential labour force status"
 	la de lblpotential_lf 0 "No" 1 "Yes"

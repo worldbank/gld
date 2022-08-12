@@ -20,7 +20,7 @@
 <_Sample size (HH)_> 			43,248 </_Sample size (HH)_>
 <_Sample size (IND)_> 			272,490 </_Sample size (IND)_>
 <_Sampling method_> 			Stratified two-stage cluster sampling method </_Sampling method_>
-<_Geographic coverage_> 		8 provinces </_Geographic coverage_>
+<_Geographic coverage_> 		Four major provinces plus Islamabad </_Geographic coverage_>
 <_Currency_> 					Pakistan1 Rupee </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
@@ -789,7 +789,7 @@ only because
 Note: var "potential_lf" only takes value if the respondent is not in labor force. (lstatus==3)
 
 "potential_lf" = 1 if the person is
-1)available but not searching or S09C01==2 & inrange(S09C04, 1, 6)
+1)available but not searching or S09C01==2 & inrange(S09C04,1,6)
 2)searching but not immediately available to work or S09C01==1 & S09C04==7
 </_potential_lf_>*/
 

@@ -20,7 +20,9 @@
 <_Sample size (HH)_> 			38,818 </_Sample size (HH)_>
 <_Sample size (IND)_> 			260,894 </_Sample size (IND)_>
 <_Sampling method_> 			Stratified two-stage cluster sampling method </_Sampling method_>
-<_Geographic coverage_> 		Six provinces(Islamabad exlcuded) </_Geographic coverage_>
+<_Geographic coverage_> 		Six provinces:
+								Punjab/Sindh/KP/Balochistan/AK,Kashmir/GB
+								(Islamabad exlcuded) </_Geographic coverage_>
 <_Currency_> 					Pakistani Rupee </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>

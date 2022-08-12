@@ -14,13 +14,13 @@
 <_Survey Year_>					2018 </_Survey Year_>
 <_Study ID_>					PAK_2018_LFS_v01_M </_Study ID_>
 <_Data collection from (M/Y)_>	[July/2018] </_Data collection from (M/Y)_>
-<_Data collection to (M/Y)_>	[June/2018] </_Data collection to (M/Y)_>
+<_Data collection to (M/Y)_>	[June/2019] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			Pakistan Bureau of Statistics </_Source of dataset_>
 								https://www.pbs.gov.pk/content/microdata
 <_Sample size (HH)_> 			40,963 </_Sample size (HH)_>
 <_Sample size (IND)_> 			257,054 </_Sample size (IND)_>
 <_Sampling method_> 			Stratified two-stage cluster sampling method </_Sampling method_>
-<_Geographic coverage_> 		7 provinces </_Geographic coverage_>
+<_Geographic coverage_> 		Four major provinces plus Islamabad </_Geographic coverage_>
 <_Currency_> 					Pakistani Rupee </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
@@ -781,8 +781,8 @@ only because
 /*<_potential_lf_>
 Note: var "potential_lf" only takes value if the respondent is not in labor force. (lstatus==3)
 
-"potential_lf" = 1 if the person is
-1)available but not searching or SEC9_COL1==2 & inrange(SEC9_COL4, 1, 6)
+"potential_lf"=1 if the person is
+1)available but not searching or SEC9_COL1==2 & inrange(SEC9_COL4,1,6)
 2)searching but not immediately available to work or SEC9_COL1==1 & SEC9_COL4==7
 </_potential_lf_>*/
 
