@@ -1,6 +1,6 @@
 # Labor status and labor force participation rate
 
-This document shows the details of coding `lstatus` for the three groups of years mentioned in the [Introduction to SAKERNAS.](/Support/B%20-%20Country%20Survey%20Details/IDN/SAKERNAS/1.Introduction.to.SAKERNAS.md)
+This document shows the details of coding `lstatus` for the three groups of years mentioned in the [Introduction to PAK LFS.](/Support/B%20-%20Country%20Survey%20Details/IDN/SAKERNAS/1.Introduction to Pakistan LFS.md)
 
 
 ## 1989-1999
