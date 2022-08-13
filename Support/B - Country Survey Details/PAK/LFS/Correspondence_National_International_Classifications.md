@@ -30,7 +30,7 @@ Note that in the annual report of LFS 2012, PSCO 2012 is said to be used for occ
 
 **PSIC 1970 to ISIC Rev.2**
 
-PSIC 1970 has an identical structure as ISIC Rev.2 with 10 major divisions. At two-digit level, PSIC has the same code and categories mathcing ISIC except the fifth major division, construction. In construction division, PSIC mas more sub-categories. In this case, we mapped all sub-categories of construction to 50-Construction in ISIC. This is the only difference between the two classifications. 
+PSIC 1970 has an identical structure as ISIC Rev.2 with 10 major divisions. At two-digit level, PSIC has the same codes and categories mathcing ISIC except the fifth major division, construction. In construction division, PSIC mas more sub-categories. In this case, we mapped all sub-categories of construction to 50-Construction in ISIC. This is the only difference between the two classifications. 
 
 | **PSIC-1970 Code**	| **PSIC-1970 Industry**	| **ISIC Rev.2 Code**	| **ISIC Rev.2 Industry**	|
 | :-----------------------:	| :---------------------------:	| :-------------:|:----------------:|	 	
