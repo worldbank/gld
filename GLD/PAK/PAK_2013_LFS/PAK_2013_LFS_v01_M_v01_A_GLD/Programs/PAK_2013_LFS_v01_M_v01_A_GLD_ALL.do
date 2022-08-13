@@ -733,12 +733,6 @@ are the same here.
 	8: Labour
 ================================================================================================*/
 
-/*<_minlaborage_>
-	Although the age restriction for respondents answering labor module in the survey
-is 10 and above, Pakistan employment report defines active population as 15 years and above.
-<_minlaborage_>*/
-
-
 *<_minlaborage_>
 	gen byte minlaborage=10 
 	label var minlaborage "Labor module application age"
