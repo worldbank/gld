@@ -30,7 +30,7 @@ According to BPS, unemployment is:
 ![BPS_unemployment](utilities/unemployment_definition.png)
 
 
-## 1992-2007
+## 1992-2010
 >The questionnaires of these years follow the same structure and have the same labor force module questions. Question 9.1 and 9.2 are availability questions and question 9.3 is "seeking work or not" question.   
 
 **Labor module in the questionnaire**
@@ -41,85 +41,55 @@ According to BPS, unemployment is:
 Starting from question 9.1 in this module, question 9.1, 9.2 and 9.3 were used for defining `lstatus==1` *(employed)*. 
 ```
 Question 9.1 (1-6) or Question 9.2 (1-5): available for work
-Question 9.3 (1-2): currently seeking a job
+Question 9.3 (1-2): currently seeking a job 
+
+*Note that accoding to the logic of the unemployment section, we define "currently seeking work" as "the last time I sought work" is no more than 1-4 weeks ago, for years without a direct question asking whether someone is seeking work or not.
 ```
  
-For years from 1992 to 2007, questionnaires do not ask respondents **why they are not available for work**. This is one of the main differences in the unemployment section structure between earlier and later years.  
+For years from 1992 to 2010, questionnaires do not ask respondents **why they are not available for work**. This is one of the main differences in the unemployment section structure between earlier and later years.  
  
-
-## 2008-2010
->The labor force module has become more complete and questions are more well-guided during this time period. The Only for Working Household Members block states clearly the requirements for people to answer this block, which is a clear clue to code employed people.
-
-**Labor module in the questionnaire**
-
-![labor_2000](utilities/labor_2000.png)
-
-As shown in the screenshot above, work hours (Q6) is only asked to who are employed. It is stated clearly how the questionnaire defines *employed*, which is consistent with ours for 1989-1999:
-```
-Question 2B = 1: work primarily in the previous week
-Question 3 = 1: work at least 1 hour in the previous week
-Question 4 = 1: have a job but are not temporarily working
-```
-
-Both *unemployed* and *non-labor force* groups do not answer question 6. They only differentiate each other in whether they were seeking a job.
-```
-Question 5 = 1: seeking a job – unemployed / 2: not seeking a job – non-labor force
-```
-
 
 ## 2012-2018
->The last three years have the most up-to-date questionnaire structure, which adds details like work environment and welfare. But meanwhile as question block increases and expands, the previous order was discarded and guide becomes blurred. Following the logic of the questionnaire would not produce sound labor force participation rate. We slightly changed the way we coded lstatus so as to get close to the ILO and national estimates.
+
+Questionnaire since 2012 has some pretty distinct changes in the unemployment section. Question 9.1, 9.4, and 9.6 are "seeking work", "availability", and "reason why not available" questions respectively. Note that 2012 is the first year that begins to have a specific question about reason why not available for work.  
 
 **Labor module in the questionnaire**
 
-![labor_2017](utilities/labor_2017.png)
+![labor_2012_1](utilities/2012_labor_1.png)
+![labor_2012_2](utilities/2012_labor_2.png)
 
-Applying the same logic as we did with years before 2017 would produce an extremely high labor force participation over 90%, which does not match the ILO data. Although 2017-2019 does not have a reminder like the one shown in 2000-2016 section, we used another hint – employment status.  
-
-![labor_2017_2](utilities/labor_2017_2.png)
-
-Question 35 was only asked to people whose employment status is not blank.
-
-![employment_status_2017](utilities/employment_status_2017.png)
-
-Thus, our way of defining *employed* for 2017-2019 becomes:
 ```
-Question 35 !=0 : have employment status
+Question 9.1 = 1: seeking work in the past week
+Question 9.4 (1-6): available for work
+Question 9.6 (1-4): unavailable for certain reasons that still belong to unemployed population
 ```
 
-Following the definition of *employed*, the unemployed would be those without employment status but also seeking work. Seeking work is straightforward according to the questionnaire:
-```
-Question 15a = 1 : searching work in the previous week
-Question 15b = 1 : preparing for a business in the previous week
-Question 21a = 1 : would accept a job if being offered
-```
-
-However, the definition of *unemployed* in the labor force survey report 2015 from ILO is different from ours.
-
-![unemployment_define2015](utilities/unemployment_define2015.png)
-
-This definition interacts with the other question asking about the main reason why not seeking a job or preparing for a business:
-
-![question20_2017](utilities/question20_2017.png)
-
-
-Because in previous years, *"Already having a job, but has not started to work* was classified as *employed*. To maintain consistency with previous years but also cater for the definition in the report, we deem people who have a new business but they have not stsrted yet as unemployed.
-```
-Question 20a = 2 : having a new business but not started yet.
-```
-
-In terms of *non-labor force*, people left with no labor status would be not in the labor force.
 
 ## 2020
+
+2020 is slightly different from years before in availability question. Compared to years between 2012 and 2018, question 9.6 in 2020 asks about availability after answering the questionnaire. In previous years, availability is about whether being available in the past week not in the next week. 
+
+We only used question 9.1 to code unemployment for 2020 considering: 1) being consistent with previous years; 2) following the time restraint of seeking work during **last week**.
+
+![labor_2020_1](utilities/2020_labor_1.png)
+![labor_2020_2](utilities/2020_labor_2.png)
 
 
 ## Labor Force Participation Rate Comparison
 
-The labor force participation rate produced for 2014-2017 using the method described above is almost identical to the estimates in the reports of the Indonesian Statistics Office (BPS). The labour force participation estimates of 2014, 2015 and 2016 are the identical to the official reports at on decimal place; 2017 has a difference of 1.9 percentage points.
-
-The comparison among GLD harmonization, WDI, and WB country indicators is as follows:
+The figure below is a comparison among GLD harmonization, BPS reports (*refined activity participation rate* shown in a following screenshot), and WDI:
 
 ![lfp_comparison](utilities/LFP_figure.png)
 
-As the earliest year of WB indicators is 2000, we only compared 2000-2019. The largest gap is 2.9 percentage points. This could be a result of different data sources as well as sample sizes.
+![refined_activity](utilities/refined_activity.png)
+
+The labor force participation rate produced for 2012-2020 using the method described above is almost identical to the estimates in the reports of the BPS, whereas years before 2012 fall below BPS estimates in a parallel way. WDI has higher numbers for all years which highly possibly results from a narrower age restraint. WDI only accounts for people aged 15 to 64 for LFP estimation while GLD and BPS account for 10 and above.
+
+In order to find out the reason for the continuous gaps between GLD and BPS in 1992-2012, we compared other variables such as marital status and literacy. The close results show that the sample size and weight we used should be the same as those reports sued. In that sense, sample size and weight should not be the cause.
+
+![marital_comparison](utilities/marital_comparison.png)
+
+Another possible explanation might be that BPS changed their definition of employment when doing estimation for the reports. But so far, this has not been verified. 
+
+We will update this documentation if we get more information in the future. Please feel free to contact the GLD focal point (gld@worldbank.org) if you know anything that might help. Thanks!
 
