@@ -44,6 +44,7 @@ Question 9.1 (1-6) or Question 9.2 (1-5): available for work
 Question 9.3 (1-2): currently seeking a job
 ```
  
+For years from 1992 to 2007, questionnaires do not ask respondents **why they are not available for work**. This is one of the main differences in the unemployment section structure between earlier and later years.  
  
 
 ## 2008-2010
