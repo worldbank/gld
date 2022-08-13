@@ -1,29 +1,50 @@
 # Labor status and labor force participation rate
 
-This document shows the details of coding `lstatus` for the three groups of years mentioned in the [Introduction to PAK LFS.](/Support/B%20-%20Country%20Survey%20Details/IDN/SAKERNAS/1.Introduction to Pakistan LFS.md)
+This document shows the details of coding `lstatus` for different years whose labor questions are structured in different ways. 
+
+
+## Employed Population
+
+The way of coding **employed** population is consistent for all years. The definition of being employed from the BPS for all years is:  
+
+![employment_definition](utilities/employment_definition.png)
+
+And here is an example of employment question section from the questionnaire of 2012: 
+
+![employment_questions](utilities/2012_employed.png)
+
+Following BPS's definition, we used questions from 5.1 to 5.4 to code `lstatus==1`, or the employed. We define that anyone answering either one of the following options as being employed: 
+```
+1.Being employed was the principal activity during most of the last 12 months or
+2.Did some work for pay, profit or family gain during last week, as least for one hour one day or
+3.Helped to work for family gain in a family business or family farm during last week or
+4.Had a job or enterprise such as a shop, business, farm or service establishment(fixed or mobile)
+```
+
+
+Compared to coding "employed", coding "unemployed" varies across years due to changes of the questions of the unemployment section as well as the order of them. Whether a given respondent is **seeking a job** and whether the respondent is **available for work** are two important elements of defining unemployed population and potential labor force. Sub-sections below focus on questions concerning "seeking a job" and availability and changes of these questions over years.
+
+We define being unemployed is 1) not have job and 2) currently seeking a job. But BPS has a broader definition of unemployment which incorporates ours. As such, we follow BPS's definition when harmonizing the data. 
+According to BPS, unemployment is:
+
+![BPS_unemployment](utilities/unemployment_definition.png)
 
 
 ## 1992-2007
->The questionnaires of these years follow the same structure and have the same labor force module questions. Simply following the order of the questions can locate all the conditions needed to decide the employed, the unemployed, and non-labor force population.
+>The questionnaires of these years follow the same structure and have the same labor force module questions. Question 9.1 and 9.2 are availability questions and question 9.3 is "seeking work or not" question.   
 
 **Labor module in the questionnaire**
 
-![labor_1989](utilities/labor_1989.png)
+![labor_2007_1](utilities/2007_labor_1.png)
+![labor_2007_2](utilities/2007_labor_2.png)
 
-Starting from question 4 in this module, question 4, 5 and 6 were used for defining `lstatus==1` *(employed)*. 
+Starting from question 9.1 in this module, question 9.1, 9.2 and 9.3 were used for defining `lstatus==1` *(employed)*. 
 ```
-Question 4 = 1: work primarily in the previous week
-Question 5 = 1: work at least 1 hour in the previous week
-Question 6 = 1: have a job but are not temporarily working
+Question 9.1 (1-6) or Question 9.2 (1-5): available for work
+Question 9.3 (1-2): currently seeking a job
 ```
-
-Because the questionnaire is designed in such way that people who have job will be led to question 8, question 6 is the minimum requirement for "being employed". Thus `lstatus=2` *(unemployed)* is: 
-```
-Question 6 = 2: people who do not have work
-Question 13 = 1: seeking a job 
-```
-
-In this way, *non-labor force* becomes clear as same answer to question 6 as unemployed yet not seeking a job. 
+ 
+ 
 
 ## 2008-2010
 >The labor force module has become more complete and questions are more well-guided during this time period. The Only for Working Household Members block states clearly the requirements for people to answer this block, which is a clear clue to code employed people.
