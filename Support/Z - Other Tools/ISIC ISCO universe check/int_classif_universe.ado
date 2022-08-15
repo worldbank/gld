@@ -45,7 +45,9 @@ if ustrregexm("`universe'", "^(isic|ISIC)$") {
 	* Preserve harmonization file to read in ISIC universe, save
 	preserve
 	
-	
+	* World Bank VDI has sometimes problems with executing the comand below to read from a website directly
+	* Have reached out to IT, in the works. Workaround found is to relax the SSL encryption. This can be dangerous
+	* if you don't know the site. Here we do. Nonetheless, setting is instantly reverted after executing command.
 	set sslrelax on
 	
 	* Read in ISIC codes
@@ -110,6 +112,7 @@ if ustrregexm("`universe'", "^(isco|ISCO)$") {
 	* Preserve harmonization file to read in ISIC universe, save
 	preserve
 	
+	* Same SSL process as for ISIC
 	set sslrelax on
 
 	* Read in ISCO codes
