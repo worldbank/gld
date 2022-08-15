@@ -44,10 +44,16 @@ if ustrregexm("`universe'", "^(isic|ISIC)$") {
 
 	* Preserve harmonization file to read in ISIC universe, save
 	preserve
-
+	
+	
+	set sslrelax on
+	
 	* Read in ISIC codes
 	import delimited "https://raw.githubusercontent.com/worldbank/gld/main/Support/D%20-%20Q%20Checks/Helper%20Programs/isic_codes.txt", delimiter(comma) varnames(1) clear 
 
+
+	set sslrelax off
+	
 	* Reduce to only cases of said version
 	keep if version == "`isic_version'"
 
@@ -103,9 +109,13 @@ if ustrregexm("`universe'", "^(isco|ISCO)$") {
 
 	* Preserve harmonization file to read in ISIC universe, save
 	preserve
+	
+	set sslrelax on
 
 	* Read in ISCO codes
 	import delimited "https://raw.githubusercontent.com/worldbank/gld/main/Support/D%20-%20Q%20Checks/Helper%20Programs/isco_codes.txt", delimiter(comma) varnames(1) clear 
+
+	set sslrelax off
 
 	* Reduce to only cases of said version
 	keep if version == "`isco_version'"
