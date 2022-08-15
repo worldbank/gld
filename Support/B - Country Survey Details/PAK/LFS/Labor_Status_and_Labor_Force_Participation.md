@@ -55,8 +55,8 @@ Questionnaires since 2012 have some pretty distinct changes in the unemployment 
 
 **Labor module in the questionnaire**
 
-![labor_2012_1](utilities/2012_labor_1.png)
-![labor_2012_2](utilities/2012_labor_2.png)
+![labor_2012_1](utilities/labor_2012_1.png)
+![labor_2012_2](utilities/labor_2012_2.png)
 
 ```
 Question 9.1 = 1: seeking work in the past week
@@ -71,8 +71,8 @@ Question 9.6 (1-4): unavailable for certain reasons that still belong to unemplo
 
 We only used question 9.1 to code unemployment for 2020 considering: 1) being consistent with previous years; 2) following the time restraint of seeking work during **last week**.
 
-![labor_2020_1](utilities/2020_labor_1.png)
-![labor_2020_2](utilities/2020_labor_2.png)
+![labor_2020_1](utilities/labor_2020_1.png)
+![labor_2020_2](utilities/labor_2020_2.png)
 
 
 ## Labor Force Participation Rate Comparison
