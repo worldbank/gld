@@ -44,10 +44,18 @@ if ustrregexm("`universe'", "^(isic|ISIC)$") {
 
 	* Preserve harmonization file to read in ISIC universe, save
 	preserve
-
+	
+	* World Bank VDI has sometimes problems with executing the comand below to read from a website directly
+	* Have reached out to IT, in the works. Workaround found is to relax the SSL encryption. This can be dangerous
+	* if you don't know the site. Here we do. Nonetheless, setting is instantly reverted after executing command.
+	set sslrelax on
+	
 	* Read in ISIC codes
 	import delimited "https://raw.githubusercontent.com/worldbank/gld/main/Support/D%20-%20Q%20Checks/Helper%20Programs/isic_codes.txt", delimiter(comma) varnames(1) clear 
 
+
+	set sslrelax off
+	
 	* Reduce to only cases of said version
 	keep if version == "`isic_version'"
 
@@ -103,9 +111,14 @@ if ustrregexm("`universe'", "^(isco|ISCO)$") {
 
 	* Preserve harmonization file to read in ISIC universe, save
 	preserve
+	
+	* Same SSL process as for ISIC
+	set sslrelax on
 
 	* Read in ISCO codes
 	import delimited "https://raw.githubusercontent.com/worldbank/gld/main/Support/D%20-%20Q%20Checks/Helper%20Programs/isco_codes.txt", delimiter(comma) varnames(1) clear 
+
+	set sslrelax off
 
 	* Reduce to only cases of said version
 	keep if version == "`isco_version'"
