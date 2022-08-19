@@ -11,7 +11,7 @@ In this guide you will get an overview of the contribution workflow from opening
 
 To get an overview of the project, read the [README](README.md). 
 
-Check to see what [types of contributions](/contributing/types-of-contributions.md) we accept before making changes. Some of them don't even require writing a single line of code :sparkles:.
+Check to see what [types of contributions](https://github.com/worldbank/gld/blob/b08f35fbe3b519bafcc1d02c8fee6e82ca503f87/Support/E%20-%20Community%20Guidelines/type_of_contributions.md) we accept before making changes. Some of them don't even require writing a single line of code :sparkles:.
 
 ### Issues
 
