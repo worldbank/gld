@@ -3,7 +3,7 @@
 
 Thank you for investing your time in contributing to the GLD project! Any contribution you make will be reflected on [worldbank/gld](https://github.com/worldbank/gld) :sparkles: 
 
-Read our [Code of Conduct](./CODE_OF_CONDUCT.md) to keep our community approachable and respectful.
+Read our [Code of Conduct](https://github.com/worldbank/gld/blob/ccfabd4a45e8804d4b8886711366f765cf1e2c37/Support/E%20-%20Community%20Guidelines/CODE_OF_CONDUCT.md) to keep our community approachable and respectful.
 
 In this guide you will get an overview of the contribution workflow from opening an issue, creating a pull request (PR), reviewing, and merging the PR.
 
