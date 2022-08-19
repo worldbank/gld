@@ -15,8 +15,7 @@
 <_Study ID_>					ZAF_2020_LMDSA_v02_M </_Study ID_>
 <_Data collection from (M/Y)_>	[MM/YYYY] </_Data collection from (M/Y)_>
 <_Data collection to (M/Y)_>	[MM/YYYY] </_Data collection to (M/Y)_>
-<_Source of dataset_> 			DataFirst </_Source of dataset_>
-								https://www.datafirst.uct.ac.za/dataportal/index.php/catalog/823 (Quarter 1)
+<_Source of dataset_> 			https://www.datafirst.uct.ac.za/dataportal/index.php/catalog/901 </_Source of dataset_>
 <_Sample size (HH)_> 			20,865 </_Sample size (HH)_>
 <_Sample size (IND)_> 			72,396</_Sample size (IND)_>
 <_Sampling method_> 			Stratified two-stage cluster sampling method </_Sampling method_>
