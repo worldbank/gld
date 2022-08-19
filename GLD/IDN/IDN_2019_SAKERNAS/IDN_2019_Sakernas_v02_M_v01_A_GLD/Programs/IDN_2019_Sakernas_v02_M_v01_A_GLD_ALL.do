@@ -842,7 +842,7 @@ was not mapped to ISIC.
 
 
 *<_industrycat10_>
-	gen byte industrycat10 = .
+	gen byte industrycat10 = b5_r20_kat
 	recode industrycat10 (5=4) (6=5) (7 9=6) (8 10=7) (11 12 13=8) (14=9) (15 16 17=10) (0=.)
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
