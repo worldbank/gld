@@ -58,7 +58,7 @@ global hh_level_vars int_year int_month hhid weight strata wave psu urban subnat
 global cat_0_1 urban male migrated_binary school literacy vocational contract healthins socialsec union contract_year healthins_year socialsec_year union_year
 
 *----------7.2: Categorical - 1 / 3
-global cat_1_3 lstatus lstatus_year
+global cat_1_3 lstatus lstatus_year occup_skill occup_skill_2 occup_skill_year occup_skill_2_year
 
 *----------7.3: Categorical - 1 / 4
 global cat_1_4 eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty educat4 ocusec industrycat4 ocusec_2 industrycat4_2 ocusec_year industrycat4_year ocusec_2_year industrycat4_2_year
