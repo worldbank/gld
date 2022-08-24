@@ -60,11 +60,11 @@ local path_output "Z:\GLD-Harmonization\582018_AQ\COL\COL_2004_ECH\COL_2004_ECH_
 
 *----------1.3: Database assembly------------------------------*
 
-** DATABASE ASSEMBLENT 
+** DATABASE ASSEMBLENT
 
 use "`path_in'/COL_2004_ECH_MERGED.dta"
 
-	
+
 /*%%=============================================================================================
 	2: Survey & ID
 ==============================================================================================%%*/
@@ -126,7 +126,7 @@ use "`path_in'/COL_2004_ECH_MERGED.dta"
 
 
 *<_veralt_>
-	gen veralt = ""
+	gen veralt = "V01"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
@@ -161,7 +161,7 @@ use "`path_in'/COL_2004_ECH_MERGED.dta"
 	002, ..., 160.
 
 </_hhid_note> */
-	
+
 	gen helper_h=string(id, "%05.0f")
 	gen hhid = helper_h
 	label var hhid "Household ID"
@@ -195,13 +195,13 @@ use "`path_in'/COL_2004_ECH_MERGED.dta"
 
 
 *<_strata_>
-	gen strata = . 
+	gen strata = .
 	label var strata "Strata"
 *</_strata_>
 
 
-*<_wave_> 
-	gen wave = . 
+*<_wave_>
+	gen wave = .
 	label var wave "Survey wave"
 *</_wave_>
 
@@ -234,8 +234,8 @@ use "`path_in'/COL_2004_ECH_MERGED.dta"
 
 /* <_subnatid1_note>
 
-	The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: "1 – Hatay". That is, the variable itself is to be string, not a labelled numeric vector. 
-	
+	The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: "1 – Hatay". That is, the variable itself is to be string, not a labelled numeric vector.
+
 	Example of entries would be "1 - Alaska",  "2 - Arkansas", ...
 
 </_subnatid1_note> */
@@ -339,7 +339,7 @@ use "`path_in'/COL_2004_ECH_MERGED.dta"
 {
 
 *<_hsize_>
-	gen a=1 if (relacion!=14 & relacion!=15) 
+	gen a=1 if (relacion!=14 & relacion!=15)
 	egen byte hsize=sum(a), by(hhid)
 	label var hsize "Household size"
 *</_hsize_>
@@ -350,9 +350,9 @@ use "`path_in'/COL_2004_ECH_MERGED.dta"
 	replace age=98 if age>98 & age!=.
 	label var age "Individual age"
 *</_age_>
-	
+
 *<_male_>
-	gen male =(hombre==1) 
+	gen male =(hombre==1)
 	gen byte gender=male
 	label var male "Sex - Ind is male"
 	la de lblmale 1 "Male" 0 "Female"
@@ -362,7 +362,7 @@ use "`path_in'/COL_2004_ECH_MERGED.dta"
 
 *<_relationharm_>
 	gen relationharm = relacion
-	recode relationharm 4/9=5 10/15=6	
+	recode relationharm 4/9=5 10/15=6
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm  lblrelationharm
@@ -661,7 +661,7 @@ foreach v of local ed_var {
 *<_minlaborage_>
 	gen byte minlaborage = 6
 	label var minlaborage "Labor module application age"
-*</_minlaborage_>	
+*</_minlaborage_>
 
 
 *----------8.1: 7 day reference overall------------------------------*
@@ -729,7 +729,7 @@ foreach v of local ed_var {
 	label values empstat lblempstat
 *</_empstat_>
 
-* NUMBER OF ADDITIONAL JOBS 
+* NUMBER OF ADDITIONAL JOBS
 	gen byte njobs= .
 	replace njobs=. if lstatus!=1
 	label var njobs "Number of additional jobs"
@@ -755,7 +755,7 @@ foreach v of local ed_var {
 *<_industrycat_isic_> // Colombian ISIC rev 3 to ISIC rev. 3, rama4d not in ECH merged dataset given
 	gen industrycat_isic = .
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
-	
+
 *</_industrycat_isic_>
 
 
@@ -763,7 +763,7 @@ foreach v of local ed_var {
 	gen byte industrycat10 = .
 	replace industrycat10 = 1 if rama2d==1 | rama2d==2
 	replace industrycat10 = 2 if rama2d==3
-	replace industrycat10 = 3 if rama2d==4 
+	replace industrycat10 = 3 if rama2d==4
 	replace industrycat10 = 4 if rama2d==5
 	replace industrycat10 = 5 if rama2d==6
 	replace industrycat10 = 6 if rama2d==7
@@ -828,6 +828,7 @@ foreach v of local ed_var {
 	replace occup_skill = 3 if inrange(occup, 1, 3)
 	replace occup_skill = 2 if inrange(occup, 4, 8)
 	replace occup_skill = 1 if occup == 9
+	replace occup_skill =. if occup==99
 	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
 	label values occup_skill lblskill
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
@@ -860,7 +861,7 @@ foreach v of local ed_var {
 
 *<_whours_>
 	gen whours = p34
-	replace whours=. if whours > 84 
+	replace whours=. if whours > 84
 	replace whours=. if lstatus!=1
 	replace whours=. if whours==0
 	label var whours "Hours of work in last week primary job 7 day recall"
@@ -880,9 +881,9 @@ foreach v of local ed_var {
 	This is done to make it easy to compare earnings in formal and informal sectors.
 
 </_wage_total_note> */
-	des valor28 
+	des valor28
 	* ECH doesn't include payment for extra hours
-  
+
 	*Extra hours  QI.15
 	gen wage_extra = .
 	*Replace by median value those who did not know the exact amount
@@ -913,7 +914,7 @@ foreach v of local ed_var {
 	count if wage_kind==0
 	replace wage_kind = . if wage_kind == 0
 	*mediana en lugar de media. ok para transporte, pero no bonificaciones
-	
+
 	*Bonuses - Not asked in ECH
 	*Q.I22a
 	gen prim_serv = .
@@ -926,35 +927,35 @@ foreach v of local ed_var {
 	*Bonuses (all)
 	egen prim_bon = rsum(prim_serv prim_christ prim_vac bon_ann)
 	replace prim_bon = . if prim_bon==0
-	
+
 	*Wage - Monthly income, including extra hours QI.14 + QI.15
 	*Paid employees
 	gen wage_principal_1 = valor28
-	replace wage_principal_1 = valor31 + wage_extra if wage_extra!=. 
-	
+	replace wage_principal_1 = valor31 + wage_extra if wage_extra!=.
+
 	*Self-employed, employer and others
-	*Wage for employers and self-employed workers 
+	*Wage for employers and self-employed workers
 	count if valor31!=. & (empstat!=3 & empstat!=4 & empstat!=5)
 	gen wage_self = valor31 if empstat==3 | empstat==4 | empstat==5
-	
+
 	*Replace wage for self-employed, employers, others
 	replace wage_principal_1 = wage_self if (empstat==3 | empstat==4 | empstat==5 | valor31!=.) & wage_self!=.
-	replace wage_principal_1=0 if empstat==2  
+	replace wage_principal_1=0 if empstat==2
 	replace wage_principal_1=. if lstatus!=1
 	sum wage_principal_1
 	replace wage_principal_1 = wage_principal_1 + prim_bon if prim_bon!=.
 	sum wage_principal_1
-	
+
 	*Wage - Monthly income, including extra hours + other job remunerations + bonuses
-	gen wage_principal_2 = wage_principal_1 
+	gen wage_principal_2 = wage_principal_1
 	replace wage_principal_2 = wage_principal_1 + wage_kind if wage_kind!=.
     replace wage_principal_2 = wage_principal_2 + prim_bon if prim_bon!=.
-	
+
 	*Replace wage for self-employed, employers, others
 	replace wage_principal_2 = wage_self if (empstat==3 | empstat==4 | empstat==5 | valor31!=.) & wage_self!=.
-	replace wage_principal_2=0 if empstat==2  
+	replace wage_principal_2=0 if empstat==2
 	replace wage_principal_2=. if lstatus!=1
-	sum wage_principal_2 
+	sum wage_principal_2
 
 	gen wage_total = wage_principal_2*12
 	label var wage_total "Annualized total wage primary job 7 day recall"
@@ -1007,7 +1008,7 @@ foreach v of local ed_var {
 
 *<_firmsize_u_>
 	gen byte firmsize_u = .
-	recode firmsize_u 2=3 3=5 4=10 5=19 6=30 7=50 8=100 9=.  
+	recode firmsize_u 2=3 3=5 4=10 5=19 6=30 7=50 8=100 9=.
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>
 
@@ -1022,7 +1023,7 @@ foreach v of local ed_var {
 *<_empstat_2_>
 	*destring p37, replace
 	*gen byte empstat_2 = p37
-	*recode empstat_2 2=0 
+	*recode empstat_2 2=0
 	gen byte empstat_2 = .
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
 	*la de lblempstat2 1 "Yes" 0 "No"
@@ -1123,16 +1124,16 @@ foreach v of local ed_var {
 *</_wage_total_2_>
 
 
-*<_firmsize_l_2_> 
+*<_firmsize_l_2_>
 	gen byte firmsize_l_2 = .
 	recode firmsize_l_2 3=4 4=6 5=11 6=20 7=31 8=51 9=101
 	label var firmsize_l_2 "Firm size (lower bracket) secondary job 7 day recall"
 *</_firmsize_l_2_>
 
 
-*<_firmsize_u_2_> 
+*<_firmsize_u_2_>
 	gen byte firmsize_u_2 = .
-	recode firmsize_u_2 2=3 3=5 4=10 5=19 6=30 7=50 8=100 9=. 
+	recode firmsize_u_2 2=3 3=5 4=10 5=19 6=30 7=50 8=100 9=.
 	label var firmsize_u_2 "Firm size (upper bracket) secondary job 7 day recall"
 *</_firmsize_u_2_>
 
@@ -1508,7 +1509,7 @@ foreach v of local ed_var {
 
 *----------8.9: 12 month reference additional jobs------------------------------*
 
-* NUMBER OF ADDITIONAL JOBS LAST YEAR 
+* NUMBER OF ADDITIONAL JOBS LAST YEAR
 	gen byte njobs_year=.
 	replace njobs_year=. if lstatus_year!=1
 	label var njobs_year "Number of additional jobs during last year"
@@ -1556,7 +1557,7 @@ foreach v of local ed_var {
 /*<_njobs_> Defined above
 	gen njobs = .
 	label var njobs "Total number of jobs"
-*</_njobs_> */ 
+*</_njobs_> */
 
 
 *<_t_hours_annual_>
