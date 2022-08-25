@@ -108,7 +108,7 @@ use "`path_in'/COL_1999_ENH-FT_BASE.dta"
 
 
 *<_isic_version_>
-	gen isic_version = "isic_3"
+	gen isic_version = ""
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
@@ -756,6 +756,33 @@ foreach v of local ed_var {
 *</_ocusec_>
 
 *<_industry_orig_> // NOT IN DATASET: rama4d
+/* <_industry_orig_note>
+	Original information at letter code level for ISIC 3(3.1).
+
+        | #  | A/Z | Name
+        | 1  | A   | Agriculture, hunting and forestry
+        | 2  | B   | Fishing
+        | 3  | C   | Mining and quarrying
+        | 4  | D   | Manufacturing
+        | 5  | E   | Electricity, gas and water supply
+        | 6  | F   | Construction
+        | 7  | G   | Wholesale and retail trade; repair of motor vehicles, motorcycles and
+personal and household goods
+        | 8  | H   | Hotels and restaurants
+        | 9  | I   | Transport, storage and communications
+        | 10 | J   | Financial intermediation
+        | 11 | K   | Real estate, renting and business activities
+        | 12 | L   | Public administration and defence; compulsory social security
+        | 13 | M   | Education
+        | 14 | N   | Health and social work
+        | 15 | O   | Other community, social and personal service activities
+        | 16 | P   | Activities of private households as employers and undifferentiated production
+activities of private households
+        | 17 | Q   | Extra-territorial organizations and bodies
+
+        See https://unstats.un.org/unsd/statcom/doc02/isic.pdf for more details
+
+</_industry_orig_note> */
 	rename rama rama2d
 	destring rama2d, replace
 	gen industry_orig = rama2d
@@ -804,13 +831,18 @@ foreach v of local ed_var {
 *<_occup_orig_>
 	gen occup_orig = ocup
 	replace occup_orig=. if lstatus!=1
+	replace occup_orig=. if ocup==-100
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
 
 *<_occup_isco_>
-	gen occup_isco = .
-	label var occup_isco "ISCO code of primary job 7 day recall"
+	gen help_isco=string(ocup)
+	gen occup_isco = help_isco + substr("0000", 1, 4 - length(help_isco))
+	replace occup_isco="" if lstatus!=1
+	replace occup_isco="" if occup_isco=="-100"
+label var occup_isco "ISCO code of primary job 7 day recall"
+	
 *</_occup_isco_>
 
 
