@@ -899,6 +899,8 @@ of unemployment period.
 	destring occup_skill, replace
 	recode occup_skill (1/3=3) (4/8=2) (9=1) (0=.)
 	replace occup_skill = . if lstatus!=1
+	label define lbl_occup_skill 1 "Low skill" 2 "Medium skill" 3 "High skill"
+	label values occup_skill lbl_occup_skill
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
 *</_occup_skill_>
 
