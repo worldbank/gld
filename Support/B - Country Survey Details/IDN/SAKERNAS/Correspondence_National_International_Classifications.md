@@ -201,6 +201,8 @@ KBJI-1982 was used for most of the years as it constantly exists in the harmoniz
 | 946 | Rattan-processing workers | 949 | Other production and related workers |
 | 987 | Rickshaws and pedal vehicle drivers | 989 | Transport equipment operators not elsewhere classified |
 
+In terms of categorizing level of occupation skills, using ISCO-68 is problematic as the broad skill level defined by the ILO is based on ISCO-08 and ISCO-88 whereas ISCO-68 is significantly different from the two versions after it. To solve this issue, we matched Indonesia's national classification of occuption, KBJI 1982 to the nine broad occupation categories (also `occup` in the GLD) at KBJI's two-digit level, and then mapped the nine types of occupation to the three-tier occupation skills. The full list of two-digit KBJI and their correspondence table with nine broad occupation classification is in this [file]((utilities/occup_skill_mapping.xlsx)).  
+
 **KBJI 2002 to ISCO 1988**
 
 Same as ISCO 1988, KBJI-2002 also has 0 to 9, 10 major groups in total. At three-digit level, only category 2 "Professionals", categroy 3 "Technicians and associate professionals", and category 0 "Armed forces" have different numbers of subgroups. KBJI-2002 has 19 whereas ISCO has 18 in category 2; and KBJI has 19 compared to 21 in ISCO's category 3; and 5 in KBJI category 0 versus 1 in ISCO. Therefore, we only recoded subgroups in "Professionals", "Technicians and associate professionals", and "Armed forces". 
