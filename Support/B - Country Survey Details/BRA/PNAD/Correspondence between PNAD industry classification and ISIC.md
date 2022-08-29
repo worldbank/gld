@@ -20,12 +20,12 @@ Table below summarizes the process, showing the CNAE versions, the years they ar
 
 # Converting national system to international system
 
-For the years using CNAE 1980/1991 the information is first converted to CNAE-DOM 1.0 information, using the file [`Ind_Corresp_198090s`](utilities/Ind_Corresp_198090s.dta).
+For the years using CNAE 1980/1991 the information is first converted to CNAE-DOM 1.0 information, using the file [`Ind_Corresp_198090s.dta`](utilities/Ind_Corresp_198090s.dta).
 
 Then information in CNAE-Dom 1.0 is mapped to ISIC Revision 3. This last mapping is nearly perfect except for CNAE-Dom 1.0 category 53 – inexistent in ISIC – needing to be mapped to either 51 or 52.
 
 
-Table below shows which codes, which are mapped into sector 53 in step 1, are mapped into sector 51 in step 2.  All the other codes in category 53 are mapped into 52.
+Table below shows which codes starting with `53` are mapped to ISIC Rev 3 code `51`. All other Brazilian codes starting with `53` are mapped to ISIC REv 3 code `52`.
 
 | Years          | Codes (original classification)                                                                |
 |----------------|------------------------------------------------------------------------------------------------|
