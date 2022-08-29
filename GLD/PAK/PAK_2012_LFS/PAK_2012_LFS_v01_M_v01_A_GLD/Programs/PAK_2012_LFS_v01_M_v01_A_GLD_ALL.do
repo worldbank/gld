@@ -20,7 +20,10 @@
 <_Sample size (HH)_> 			27,551 </_Sample size (HH)_>
 <_Sample size (IND)_> 			182,541 </_Sample size (IND)_>
 <_Sampling method_> 			Stratified two-stage cluster sampling method </_Sampling method_>
-<_Geographic coverage_> 		Four main provinces </_Geographic coverage_>
+<_Geographic coverage_> 		All urban and rural areas of the four provinces 
+								of Pakistan defined as such by 1998 Population Census, 
+								excluding Federally Administered Tribal Areas (FATA), 
+								military restricted areas, and protected areas of NWFP. </_Geographic coverage_>
 <_Currency_> 					Pakistani Rupee </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
@@ -234,20 +237,19 @@ local output "`id_data'"
 
 
 *<_subnatid2_>
-	gen city_code = substr(Prcode, 1, 4)
+	gen city_code=substr(Prcode,1,4)
 	destring city_code, replace
-	merge m:1 city_code using "`stata'\PAK_city_code.dta"
+	merge m:m city_code using "`stata'\PAK_city_code_2012.dta"
 	drop if _merge!=3
-	egen city_fullname=concat(city_name urban_status), punct(-)
+	egen city_fullname=concat(city_code city_name), punct(-)
 	labmask city_code, values (city_fullname)
-	gen subnatid2=city_code
- 	label values subnatid2 lblsubnatid2
+	rename city_code subnatid2
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
 
 
 *<_subnatid3_>
-	gen byte subnatid3 = .
+	gen byte subnatid3=.
 	label de lblsubnatid3 1 "1 - Name"
 	label values subnatid3 lblsubnatid3
 	label var subnatid3 "Subnational ID at Third Administrative Level"
@@ -255,7 +257,8 @@ local output "`id_data'"
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = "subnatid2"
+	decode province, gen(province2)
+	egen subnatidsurvey=concat(urban province2),p(-)
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -266,37 +269,37 @@ local output "`id_data'"
 
 
 *<_subnatid1_prev_>
-	gen subnatid1_prev = .
+	gen subnatid1_prev=.
 	label var subnatid1_prev "Classification used for subnatid1 from previous survey"
 *</_subnatid1_prev_>
 
 
 *<_subnatid2_prev_>
-	gen subnatid2_prev = .
+	gen subnatid2_prev=.
 	label var subnatid2_prev "Classification used for subnatid2 from previous survey"
 *</_subnatid2_prev_>
 
 
 *<_subnatid3_prev_>
-	gen subnatid3_prev = .
+	gen subnatid3_prev=.
 	label var subnatid3_prev "Classification used for subnatid3 from previous survey"
 *</_subnatid3_prev_>
 
 
 *<_gaul_adm1_code_>
-	gen gaul_adm1_code = .
+	gen gaul_adm1_code=.
 	label var gaul_adm1_code "Global Administrative Unit Layers (GAUL) Admin 1 code"
 *</_gaul_adm1_code_>
 
 
 *<_gaul_adm2_code_>
-	gen gaul_adm2_code = .
+	gen gaul_adm2_code=.
 	label var gaul_adm2_code "Global Administrative Unit Layers (GAUL) Admin 2 code"
 *</_gaul_adm2_code_>
 
 
 *<_gaul_adm3_code_>
-	gen gaul_adm3_code = .
+	gen gaul_adm3_code=.
 	label var gaul_adm3_code "Global Administrative Unit Layers (GAUL) Admin 3 code"
 *</_gaul_adm3_code_>
 
@@ -443,7 +446,7 @@ local output "`id_data'"
    replace migrated_years=2.5 if s4_q15==3
    replace migrated_years=7 if s4_q15==4
    replace migrated_years=10 if s4_q15==5
-    replace migrated_years=. if migrated_binary!=1
+   replace migrated_years=. if migrated_binary!=1
    replace migrated_years=. if age<migrated_mod_age
    label var migrated_years "Years since latest migration"
 *</_migrated_years_>
@@ -731,12 +734,6 @@ are the same here.
 	8: Labour
 ================================================================================================*/
 
-/*<_minlaborage_>
-	Although the age restriction for respondents answering labor module in the survey
-is 10 and above, Pakistan employment report defines active population as 15 years and above.
-<_minlaborage_>*/
-
-
 *<_minlaborage_>
 	gen byte minlaborage=10 
 	label var minlaborage "Labor module application age"
@@ -774,7 +771,7 @@ only because
 Note: var "potential_lf" only takes value if the respondent is not in labor force. (lstatus==3)
 
 "potential_lf" = 1 if the person is
-1)available but not searching or s9_q1==2 & inrange(s9_q4, 1, 6)
+1)available but not searching or s9_q1==2 & inrange(s9_q4,1,6)
 2)searching but not immediately available to work or s9_q1==1 & s9_q4==7
 </_potential_lf_>*/
 
@@ -782,8 +779,8 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 *<_potential_lf_>
 	gen byte potential_lf=.
 	replace potential_lf=0 if lstatus ==3
-	replace potential_lf=1 if [s9_q1==2 & inrange(s9_q4, 1, 6)] | [s9_q1==1 & s9_q4==7]
-	replace potential_lf=0 if [s9_q1==1 & inrange(s9_q4, 1, 6)] | [s9_q1==2 & s9_q4==7]
+	replace potential_lf=1 if [s9_q1==2 & inrange(s9_q4,1,6)] | [s9_q1==1 & s9_q4==7]
+	replace potential_lf=0 if [s9_q1==1 & inrange(s9_q4,1,6)] | [s9_q1==2 & s9_q4==7]
 	replace potential_lf=. if age<minlaborage
 	replace potential_lf=. if lstatus !=3
 	label var potential_lf "Potential labour force status"

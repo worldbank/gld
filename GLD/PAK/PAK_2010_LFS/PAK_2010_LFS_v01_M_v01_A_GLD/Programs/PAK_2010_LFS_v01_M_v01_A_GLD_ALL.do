@@ -20,7 +20,9 @@
 <_Sample size (HH)_> 			38,818 </_Sample size (HH)_>
 <_Sample size (IND)_> 			260,894 </_Sample size (IND)_>
 <_Sampling method_> 			Stratified two-stage cluster sampling method </_Sampling method_>
-<_Geographic coverage_> 		Six provinces(Islamabad exlcuded) </_Geographic coverage_>
+<_Geographic coverage_> 		Six provinces:
+								Punjab/Sindh/KP/Balochistan/AK,Kashmir/GB
+								(Islamabad exlcuded) </_Geographic coverage_>
 <_Currency_> 					Pakistani Rupee </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
@@ -224,30 +226,36 @@ local output "`id_data'"
 *</_urban_>
 
 
+/*<_subnatid1_>
+The province "Khyber/Pakhtoonkhua" (or K/P) in this year, was named N.W.F.P. 
+(North-West Frontier Province) in the past years. It changed its name to K/P
+in 2010. So it will be coded as K/P in later years. 
+*<_subnatid1_>*/
+
+
 *<_subnatid1_>
 	gen subnatid1=substr(PrCode,1,1)
 	destring subnatid1, replace
-	label de lblsubnatid1 1 "1-Punjab" 2 "2-Sindh" 3 "3-Khyber/Pakhtoonkhua" 4 "4-Balochistan" 5 "5-AJ & Kashmir" 6 "6-Gilgit/Baltistan" 7 "7-Federally Administered Tribal Areas"
+	label de lblsubnatid1 1 "1-Punjab" 2 "2-Sindh" 3 "3-Khyber/Pakhtoonkhua" 4 "4-Balochistan" 5 "5-AJ & Kashmir" 6 "6-Gilgit/Baltistan" 
 	label values subnatid1 lblsubnatid1
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 
 
 *<_subnatid2_>
-	gen city_code = substr(PrCode, 1, 4 )
+	gen city_code=substr(PrCode, 1, 4 )
 	destring city_code, replace
 	merge m:1 city_code using "`stata'\PAK_city_code.dta"
 	drop if _merge!=3
-	egen city_fullname=concat(city_name urban_status), punct(-)
+	egen city_fullname=concat(city_code city_name), punct(-)	
 	labmask city_code, values (city_fullname)
-	gen subnatid2=city_code
- 	label values subnatid2 lblsubnatid2
+	rename city_code subnatid2
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
 
 
 *<_subnatid3_>
-	gen byte subnatid3 = .
+	gen byte subnatid3=.
 	label de lblsubnatid3 1 "1 - Name"
 	label values subnatid3 lblsubnatid3
 	label var subnatid3 "Subnational ID at Third Administrative Level"
@@ -255,7 +263,9 @@ local output "`id_data'"
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = "subnatid2"
+	decode subnatid1, gen (pro_name)
+	gen pro_name2=substr(pro_name,3,.)
+	egen subnatidsurvey=concat(urban pro_name2), p(-)
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -266,37 +276,37 @@ local output "`id_data'"
 
 
 *<_subnatid1_prev_>
-	gen subnatid1_prev = .
+	gen subnatid1_prev=.
 	label var subnatid1_prev "Classification used for subnatid1 from previous survey"
 *</_subnatid1_prev_>
 
 
 *<_subnatid2_prev_>
-	gen subnatid2_prev = .
+	gen subnatid2_prev=.
 	label var subnatid2_prev "Classification used for subnatid2 from previous survey"
 *</_subnatid2_prev_>
 
 
 *<_subnatid3_prev_>
-	gen subnatid3_prev = .
+	gen subnatid3_prev=.
 	label var subnatid3_prev "Classification used for subnatid3 from previous survey"
 *</_subnatid3_prev_>
 
 
 *<_gaul_adm1_code_>
-	gen gaul_adm1_code = .
+	gen gaul_adm1_code=.
 	label var gaul_adm1_code "Global Administrative Unit Layers (GAUL) Admin 1 code"
 *</_gaul_adm1_code_>
 
 
 *<_gaul_adm2_code_>
-	gen gaul_adm2_code = .
+	gen gaul_adm2_code=.
 	label var gaul_adm2_code "Global Administrative Unit Layers (GAUL) Admin 2 code"
 *</_gaul_adm2_code_>
 
 
 *<_gaul_adm3_code_>
-	gen gaul_adm3_code = .
+	gen gaul_adm3_code=.
 	label var gaul_adm3_code "Global Administrative Unit Layers (GAUL) Admin 3 code"
 *</_gaul_adm3_code_>
 
@@ -725,12 +735,6 @@ are the same here.
 /*%%=============================================================================================
 	8: Labour
 ================================================================================================*/
-
-/*<_minlaborage_>
-	Although the age restriction for respondents answering labor module in the survey
-is 10 and above, Pakistan employment report defines active population as 15 years and above.
-<_minlaborage_>*/
-
 
 *<_minlaborage_>
 	gen byte minlaborage=10 
