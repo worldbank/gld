@@ -89,7 +89,7 @@ rename fecha_aņo fecha_ano
 *</_icls_v_>
 
 *<_isced_version_>
-	gen isced_version = "ISCED_2013"
+	gen isced_version = "isced_2013"
 	label var isced_version "Version of ISCED used for educat_isced"
 *</_isced_version_>
 
@@ -736,10 +736,10 @@ foreach v of local ed_var {
 	replace occup_skill=1 if oficio1==9
 	replace occup_skill=2 if inrange(oficio1,4,8)
 	replace occup_skill=3 if inrange(oficio1,1,3)
-	replace occup_skill=4 if oficio1==0
+	replace occup_skill=. if oficio1==0
 	replace occup_skill=. if oficio1==999
 	replace occup_skill=. if oficio1==9999
-	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"  4 "Armed Forces"
+la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
 	label values occup_skill lblskill
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
 *</_occup_skill_>

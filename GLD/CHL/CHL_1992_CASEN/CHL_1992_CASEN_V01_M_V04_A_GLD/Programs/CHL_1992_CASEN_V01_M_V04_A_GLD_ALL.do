@@ -733,10 +733,10 @@ foreach v of local ed_var {
 	replace occup_skill=1 if oficio==9
 	replace occup_skill=2 if inrange(oficio,4,8)
 	replace occup_skill=3 if inrange(oficio,1,3)
-	replace occup_skill=4 if oficio==0
+	replace occup_skill=. if oficio==0
 	replace occup_skill=. if oficio==999
 	replace occup_skill=. if oficio==9999
-	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"  4 "Armed Forces"
+la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
 	label values occup_skill lblskill
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
 *</_occup_skill_>

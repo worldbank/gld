@@ -89,7 +89,7 @@ use "`path_in'\casen2011_octubre2011_enero2012_principal_08032013stata.dta"
 *</_icls_v_>
 
 *<_isced_version_>
-	gen isced_version = "ISCED_1997"
+	gen isced_version = "isced_1997"
 	label var isced_version "Version of ISCED used for educat_isced"
 *</_isced_version_>
 
@@ -736,7 +736,7 @@ foreach v of local ed_var {
 	replace occup_skill=1 if oficio1==9
 	replace occup_skill=2 if inrange(oficio1,4,8)
 	replace occup_skill=3 if inrange(oficio1,1,3)
-	replace occup_skill=4 if oficio1==0
+	replace occup_skill=. if oficio1==0
 	replace occup_skill=. if oficio1==999
 	replace occup_skill=. if oficio1==9999
 	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"  4 "Armed Forces"

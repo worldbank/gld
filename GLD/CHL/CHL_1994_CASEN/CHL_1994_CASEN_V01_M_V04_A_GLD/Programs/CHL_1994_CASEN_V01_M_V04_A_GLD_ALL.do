@@ -734,10 +734,10 @@ foreach v of local ed_var {
 	replace occup_skill=1 if oficio==10
 	replace occup_skill=2 if inrange(oficio,5,9)
 	replace occup_skill=3 if inrange(oficio,2,4)
-	replace occup_skill=4 if oficio==1
+	replace occup_skill=. if oficio==1
 	replace occup_skill=. if oficio==999
 	replace occup_skill=. if oficio==9999
-	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"  4 "Armed Forces"
+la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
 *</_occup_skill_>
 
 
