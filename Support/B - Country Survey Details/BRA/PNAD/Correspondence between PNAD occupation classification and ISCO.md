@@ -6,7 +6,7 @@ It is organized as follows: First, we give an overview of the occupation classif
 
 # Overview of occupation classification used in PNAD and PNADC
 
-Information regarding which occupation respondents are employed in is coded in the Brazilian National Household Sample Survey (PNAD) using the codes of the [Brazilian Classification of Occupations] (https://concla.ibge.gov.br/documentacao/cronologia/cbo.html) (CBO, in Portuguese).
+Information regarding which occupation respondents are employed in is coded in the Brazilian National Household Sample Survey (PNAD) using the codes of the [Brazilian Classification of Occupations](https://concla.ibge.gov.br/documentacao/cronologia/cbo.html) (CBO, in Portuguese).
 
 Table below shows the CBO versions, the years they are used in PNAD, and where they are been mapping to.
 
