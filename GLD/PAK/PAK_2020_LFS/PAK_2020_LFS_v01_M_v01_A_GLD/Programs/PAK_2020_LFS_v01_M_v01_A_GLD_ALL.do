@@ -14,13 +14,16 @@
 <_Survey Year_>					2020 </_Survey Year_>
 <_Study ID_>					PAK_2020_LFS_v01_M </_Study ID_>
 <_Data collection from (M/Y)_>	[July/2020] </_Data collection from (M/Y)_>
-<_Data collection to (M/Y)_>	[June/2020] </_Data collection to (M/Y)_>
+<_Data collection to (M/Y)_>	[June/2021] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			Pakistan Bureau of Statistics </_Source of dataset_>
 								https://www.pbs.gov.pk/content/microdata
 <_Sample size (HH)_> 			96,440 </_Sample size (HH)_>
 <_Sample size (IND)_> 			570,991 </_Sample size (IND)_>
 <_Sampling method_> 			Stratified two-stage cluster sampling method </_Sampling method_>
-<_Geographic coverage_> 		7 provinces </_Geographic coverage_>
+<_Geographic coverage_> 		All urban and rural areas of the four provinces 
+								of Pakistan defined as such by 1998 Population Census, 
+								excluding Federally Administered Tribal Areas (FATA), 
+								military restricted areas, and protected areas of K/P. </_Geographic coverage_>
 <_Currency_> 					Pakistann Rupee </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
@@ -225,13 +228,23 @@ local output "`id_data'"
 
 *<_subnatid1_>
 	gen subnatid1=Province
+	label de lblsubnatid1 1 "1-Khyber/Pakhtoonkhua" 2 "2-Punjab" 3 "3-Sindh" 4 "4-Balochistan" 
+	label values subnatid1 lblsubnatid1
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 
 
 *<_subnatid2_>
-	gen subnatid2=District
+	gen city_name=proper(District)
+	replace city_name="Karachi West" if city_name=="West"
+	replace city_name="Karachi East" if city_name=="East"
+	merge m:m city_name using "`stata'\PAK_subnatid2_code_2020.dta"
+	drop if _merge!=3
+	egen city_fullname=concat(city_code city_name), punct(-)
+	labmask city_code, values (city_fullname)
+	rename city_code subnatid2
 	label var subnatid2 "Subnational ID at Second Administrative Level"
+	drop _merge city_name city_fullname
 *</_subnatid2_>
 
 
@@ -243,8 +256,9 @@ local output "`id_data'"
 *</_subnatid3_>
 
 
-*<_subnatidsurvey_>
-	gen subnatidsurvey="subnatid2"
+*<_subnatidsurvey_>	
+	gen district=proper(District)
+	egen subnatidsurvey=concat(urban district), p(-)
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -407,9 +421,7 @@ local output "`id_data'"
 	5: Migration
 ================================================================================================*/
 
-
 {
-
 *<_migrated_mod_age_>
 	gen migrated_mod_age=10
 	label var migrated_mod_age "Migration module application age"
@@ -468,7 +480,9 @@ local output "`id_data'"
 
 
 *<_migrated_from_cat_>
+	destring S4C16, gen(city_code)
 	gen migrated_from_cat=2
+	replace migrated_from_cat=5 if city_code>999
 	replace migrated_from_cat=. if migrated_binary!=1
 	replace migrated_from_cat=. if age<migrated_mod_age
 	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country"
@@ -478,16 +492,18 @@ local output "`id_data'"
 
 
 *<_migrated_from_code_>
-	destring S4C16, gen(city_code)
 	merge m:1 city_code using "`stata'\PAK_migration_code_2020.dta"
 	replace city_code=. if _merge==1
 	drop if _merge==2
-	labmask city_code, values(city_name)
-	gen migrated_from_code=city_code
+	egen migrated_from_code=concat(city_code city_name), p("-")
+	labmask city_code, values(migrated_from_code)
+	drop migrated_from_code
+	rename city_code migrated_from_code
+	gen city_code=migrated_from_code
 	replace migrated_from_code=. if city_code>999
 	replace migrated_from_code=. if migrated_binary!=1
 	replace migrated_from_code=. if age<migrated_mod_age
-	drop _merge
+	drop _merge city_name
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
 *</_migrated_from_code_>
 
@@ -513,8 +529,6 @@ local output "`id_data'"
 	label values migrated_reason lblmigrated_reason
 	label var migrated_reason "Reason for migrating"
 *</_migrated_reason_>
-
-
 }
 
 
@@ -711,12 +725,6 @@ are the same here.
 	8: Labour
 ================================================================================================*/
 
-/*<_minlaborage_>
-	Although the age restriction for respondents answering labor module in the survey
-is 10 and above, Pakistan employment report defines active population as 15 years and above.
-<_minlaborage_>*/
-
-
 *<_minlaborage_>
 	gen byte minlaborage=10 
 	label var minlaborage "Labor module application age"
@@ -754,9 +762,9 @@ only because
 /*<_potential_lf_>
 Note: var "potential_lf" only takes value if the respondent is not in labor force. (lstatus==3)
 
-"potential_lf" = 1 if the person is
-1)available but not searching or SEC9_COL1==2 & inrange(SEC9_COL4, 1, 6)
-2)searching but not immediately available to work or SEC9_COL1==1 & SEC9_COL4==7
+"potential_lf"=1 if the person is
+1)available but not searching or S9C1==2 & inrange(S9C6, 1, 6)
+2)searching but not immediately available to work or S9C1==1 & S9C6==7
 </_potential_lf_>*/
 
 

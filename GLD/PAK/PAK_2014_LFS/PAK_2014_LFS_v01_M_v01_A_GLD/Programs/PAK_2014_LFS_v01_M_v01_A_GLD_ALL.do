@@ -14,13 +14,13 @@
 <_Survey Year_>					2014 </_Survey Year_>
 <_Study ID_>					PAK_2014_LFS_v01_M </_Study ID_>
 <_Data collection from (M/Y)_>	[July/2014] </_Data collection from (M/Y)_>
-<_Data collection to (M/Y)_>	[June/2014] </_Data collection to (M/Y)_>
+<_Data collection to (M/Y)_>	[June/2015] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			Pakistan Bureau of Statistics </_Source of dataset_>
 								https://www.pbs.gov.pk/content/microdata
 <_Sample size (HH)_> 			41,627 </_Sample size (HH)_>
 <_Sample size (IND)_> 			264,136 </_Sample size (IND)_>
 <_Sampling method_> 			Stratified two-stage cluster sampling method </_Sampling method_>
-<_Geographic coverage_> 		5 provinces </_Geographic coverage_>
+<_Geographic coverage_> 		Four major provinces plus Islamabad. </_Geographic coverage_>
 <_Currency_> 					Pakistani Rupee </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
@@ -228,19 +228,20 @@ local output "`id_data'"
 *<_subnatid1_>
 	gen subnatid1=substr(Prcode,1,1)
 	destring subnatid1, replace
-	label de lblsubnatid1 1 "1-Khyber/Pakhtoonkhua" 2 "2-Punjab" 3 "3-Sindh" 4 "4-Balochistan" 5 "5-Federally Administered Tribal Areas" 6 "6-Islanmabad" 7 "7-Gilgit-Baltistian" 8 "8-AJ & Kashmir" 
+	label de lblsubnatid1 1 "1-Khyber/Pakhtoonkhua" 2 "2-Punjab" 3 "3-Sindh" 4 "4-Balochistan" 5 "5-Federally Administered Tribal Areas" 6 "6-Islamabad" 7 "7-Gilgit-Baltistian" 8 "8-AJ & Kashmir"
 	label values subnatid1 lblsubnatid1
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 
 
 *<_subnatid2_>
-	gen city_code=substr(Prcode, 1, 3)
+	gen city_code=substr(Prcode,1,3)
 	destring city_code, replace
 	merge m:m city_code using "`stata'\PAK_city_code_2014.dta"
 	drop if _merge==2
-	gen subnatid2=city_code
-	labmask subnatid2, values(city_name_unite)
+	egen city_fullname=concat(city_code city_name_unite), punct(-)
+	labmask city_code, values(city_fullname)
+	rename city_code subnatid2
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
 
@@ -254,7 +255,9 @@ local output "`id_data'"
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey="subnatid2"
+	decode subnatid1, gen(province)
+	gen province2=substr(province,3,.)
+	egen subnatidsurvey=concat(urban province2),p(-)
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -729,12 +732,6 @@ are the same here.
 /*%%=============================================================================================
 	8: Labour
 ================================================================================================*/
-
-/*<_minlaborage_>
-	Although the age restriction for respondents answering labor module in the survey
-is 10 and above, Pakistan employment report defines active population as 15 years and above.
-<_minlaborage_>*/
-
 
 *<_minlaborage_>
 	gen byte minlaborage=10 

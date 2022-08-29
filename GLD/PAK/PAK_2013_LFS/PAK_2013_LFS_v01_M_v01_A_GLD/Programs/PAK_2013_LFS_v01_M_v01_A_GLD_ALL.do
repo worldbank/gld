@@ -20,7 +20,10 @@
 <_Sample size (HH)_> 			35,067</_Sample size (HH)_>
 <_Sample size (IND)_> 			228,224 </_Sample size (IND)_>
 <_Sampling method_> 			Stratified two-stage cluster sampling method </_Sampling method_>
-<_Geographic coverage_> 		Four main provinces </_Geographic coverage_>
+<_Geographic coverage_> 		All urban and rural areas of the four provinces 
+								of Pakistan defined as such by 1998 Population Census, 
+								excluding Federally Administered Tribal Areas (FATA), 
+								military restricted areas, and protected areas of NWFP. </_Geographic coverage_>
 <_Currency_> 					Pakistani Rupee </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
@@ -234,7 +237,13 @@ local output "`id_data'"
 
 
 *<_subnatid2_>
-	gen subnatid2=.
+	gen city_code = substr(Prcode,1,4)
+	destring city_code, replace
+	merge m:m city_code using "`stata'\PAK_city_code_2013.dta"
+	drop if _merge!=3
+	egen city_fullname=concat(city_code city_name), punct(-)
+	labmask city_code, values (city_fullname)
+	rename city_code subnatid2
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
 
@@ -248,7 +257,8 @@ local output "`id_data'"
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey="subnatid2"
+	decode province, gen(province2)
+	egen subnatidsurvey=concat(urban province2),p(-)
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -722,12 +732,6 @@ are the same here.
 /*%%=============================================================================================
 	8: Labour
 ================================================================================================*/
-
-/*<_minlaborage_>
-	Although the age restriction for respondents answering labor module in the survey
-is 10 and above, Pakistan employment report defines active population as 15 years and above.
-<_minlaborage_>*/
-
 
 *<_minlaborage_>
 	gen byte minlaborage=10 
