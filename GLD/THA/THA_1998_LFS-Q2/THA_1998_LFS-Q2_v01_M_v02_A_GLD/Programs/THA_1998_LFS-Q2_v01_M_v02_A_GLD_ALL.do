@@ -37,6 +37,9 @@ A stratified two-stage sampling was adopted to the survey: Bangkok Metroplois an
 <_ISIC Version_>				ISIC version 1 </_ISIC Version_>
 <_INDUS National_>			Based on ISIC version 1 </_INDUS National_>
 -----------------------------------------------------------------------
+
+<_Version Control_>
+
 * Date: [2022-01-08] - Prepared initial code
 * Date: [2022-06-15] - Added codes that harmonize data for specific variables, including school attendance, ISCO and ISIC codes, etc...
 * Date: [2022-07-11] - Updated ISCED version, changed ISIC code to 2 digits 
