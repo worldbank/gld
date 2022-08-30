@@ -34,9 +34,7 @@
 <_INDUS National_>			Colombia ISIC rev 3	 </_INDUS National_>
 
 -----------------------------------------------------------------------
-<_Version Control_>
 
------------------------------------------------------------------------
 <_Version Control_>
 
 * Date: 2022-15-04 - Changes from I2D2 to GLD
