@@ -16,7 +16,7 @@ body:
       description: How can we get in touch with you if we need more info?
       placeholder: ex. email@example.com
     validations:
-      required: false
+      required: true
   - type: textarea
     id: what-happened
     attributes:
@@ -29,7 +29,7 @@ body:
   - type: dropdown
     id: Country
     attributes:
-      label: country
+      label: Country
       description: What country is this issue related to?
       options:
         - Colombia (COL)
@@ -59,12 +59,16 @@ body:
         - V03
         - V04
         - Multiple (please explain in the log)
+     validations:
+      required: true
   - type: textarea
     id: year
     attributes:
       label: What year are you seeing the problem on?
       description: Please, specify the year(s) where the problem is present.
       render: shell
+    validations:
+      required: true
   - type: textarea
     id: logs
     attributes:
