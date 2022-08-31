@@ -34,6 +34,18 @@ body:
       options:
         - Colombia (COL)
         - Mexico (MEX)
+        - Brasil (BRA)
+        - India (IDN)
+        - Indonesia (IND)
+        - Pakistan (PAK)
+        - Thailand (THA)
+        - Zimbabwe (ZWE)
+        - Chile (CHL)
+        - Egypt (EGY)
+        - Turkey (TUR)
+        - South Africa (ZAR)
+        - The Philippines (PHL)
+        - Not country related (please elaborate in the box below)
     validations:
       required: true
   - type: dropdown
