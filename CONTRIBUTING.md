@@ -142,4 +142,4 @@ Replace the bracketed text as follows:
 
 ## Attribution
 
-The information on this page has been adapted from the [GLD contribution template]() , and the [sign-in CLA contributing guidelines]() from github. 
+The information on this page has been adapted from the [GLD contribution template](https://github.com/auth0/open-source-template/blob/master/GENERAL-CONTRIBUTING.md) , and the [sign-in CLA contributing guidelines](https://github.com/Medium/opensource/blob/master/sign-cla.md) from github. 
