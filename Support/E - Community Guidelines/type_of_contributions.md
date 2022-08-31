@@ -1,4 +1,4 @@
-#Type of contributions accepted by Project Team
+Type of contributions accepted by Project Team
 
 1. If you want to point out certain details from the microdata that are not common knowledge but that could be relevant for public use.
 2. If you face issues running the codes or using the checks. 
