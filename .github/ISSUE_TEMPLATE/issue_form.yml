@@ -27,9 +27,9 @@ body:
     validations:
       required: true
   - type: dropdown
-    id: version
+    id: Country
     attributes:
-      label: Version
+      label: country
       description: What country is this issue related to?
       options:
         - Colombia (COL)
@@ -49,13 +49,22 @@ body:
     validations:
       required: true
   - type: dropdown
-    id: browsers
+    id: version
     attributes:
-      label: What files are you seeing the problem on?
+      label: What version are you seeing the problem on?
       multiple: true
       options:
-        - stata
-        - R
+        - V01
+        - V02
+        - V03
+        - V04
+        - Multiple (please explain in the log)
+  - type: textarea
+    id: year
+    attributes:
+      label: What year are you seeing the problem on?
+      description: Please, specify the year(s) where the problem is present.
+      render: shell
   - type: textarea
     id: logs
     attributes:
@@ -66,7 +75,7 @@ body:
     id: terms
     attributes:
       label: Code of Conduct
-      description: By submitting this issue, you agree to follow our [Code of Conduct](https://example.com)
+      description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/worldbank/gld/blob/c3e0e28037247a64d7348824c9fdf03d142ad1d7/Support/E%20-%20Community%20Guidelines/CODE_OF_CONDUCT.md)
       options:
         - label: I agree to follow this project's Code of Conduct
           required: true
