@@ -86,7 +86,7 @@ local output "`id_data'"
 	rename Geo_type geo
 	la de lblgeo 1 "Urban" 2 "Traditional" 3 "Farms" 4 "Mining"
 	la values geo lblgeo
-	save "`gld'\Work\append\ZAF_2016_QLFS_v01_M_v03_A_GLD_append_GEO.dta", replace
+	save "`input'\ZAF_2016_QLFS_v01_M_v03_A_GLD_append_GEO.dta", replace
 	use "`input'\lmdsa-2016-1.0-stata11.dta", clear
 
 /*%%=============================================================================================
@@ -236,7 +236,7 @@ Code list:
 </_urban_>*/
 
 *<_urban_>
-	merge m:m PERSONNO UQNO Qtr using "`gld'\Work\append\ZAF_2016_QLFS_v01_M_v03_A_GLD_append_GEO.dta"
+	merge m:m PERSONNO UQNO Qtr using "`input'\ZAF_2016_QLFS_v01_M_v03_A_GLD_append_GEO.dta"
 	drop _merge
 	gen byte urban=geo
 	recode urban 1=1 2/4=0

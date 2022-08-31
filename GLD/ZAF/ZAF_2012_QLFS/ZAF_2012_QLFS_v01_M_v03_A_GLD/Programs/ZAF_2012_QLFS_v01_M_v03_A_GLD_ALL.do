@@ -83,7 +83,7 @@ local output "`id_data'"
 	recode Qtr .=4
 	gen WEIGHT=Weight/4
 	keep UQNO PERSONNO Q19ATTE WEIGHT Qtr
-	save "`gld'\Work\append\ZAF_2012_QLFS_v01_M_v03_A_GLD_append_Q19ATTE.dta", replace
+	save "`input'\ZAF_2012_QLFS_v01_M_v03_A_GLD_append_Q19ATTE.dta", replace
 	use "`input'\lmdsa_2012_v1.1_20150407.dta", clear
 
 /*%%=============================================================================================
@@ -574,7 +574,7 @@ Education module is only asked to those 0 and older.
 *</_ed_mod_age_>
 
 *<_school_>
-	merge m:m UQNO PERSONNO Qtr using "`gld'\Work\append\ZAF_2012_QLFS_v01_M_v03_A_GLD_append_Q19ATTE.dta"
+	merge m:m UQNO PERSONNO Qtr using "`input'\ZAF_2012_QLFS_v01_M_v03_A_GLD_append_Q19ATTE.dta"
 	drop if _merge==2
 	drop _merge WEIGHT
 	gen byte school=Q19ATTE
