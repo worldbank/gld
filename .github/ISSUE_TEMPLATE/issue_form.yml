@@ -46,8 +46,6 @@ body:
         - South Africa (ZAR)
         - The Philippines (PHL)
         - Not country related (please elaborate in the box below)
-    validations:
-      required: true
   - type: dropdown
     id: version
     attributes:
@@ -59,8 +57,6 @@ body:
         - V03
         - V04
         - Multiple (please explain in the log)
-     validations:
-      required: true
   - type: textarea
     id: year
     attributes:
