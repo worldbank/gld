@@ -1205,6 +1205,7 @@ foreach v of local ed_var {
 *</_occup_>
 
 
+*<_occup_skill_>
 	gen occup_skill=occup
 	recode occup_skill (1/3=3) (4/8=2) (9=1) (0 5=.)
 	replace occup_skill=. if lstatus!=1
