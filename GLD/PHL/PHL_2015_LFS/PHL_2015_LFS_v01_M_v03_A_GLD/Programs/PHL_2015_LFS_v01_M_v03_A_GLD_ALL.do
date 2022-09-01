@@ -4,7 +4,7 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				PHL_2010_GLD_LFS.do </_Program name_>
+<_Program name_>				PHL_2015_GLD_LFS.do </_Program name_>
 <_Application_>					Stata 15 <_Application_>
 <_Author(s)_>					World Bank Jobs Group </_Author(s)_>
 <_Date created_>				2022-02-17 </_Date created_>
@@ -13,10 +13,10 @@
 
 <_Country_>						Philippines (PHL) </_Country_>
 <_Survey Title_>				Labor Force Survey </_Survey Title_>
-<_Survey Year_>					2010 </_Survey Year_>
+<_Survey Year_>					2015 </_Survey Year_>
 <_Study ID_>					[Microdata Library ID if present] </_Study ID_>
-<_Data collection from_>		[01/2010] </_Data collection from_>
-<_Data collection to_>			[10/2010] </_Data collection to_>
+<_Data collection from_>		[01/2015] </_Data collection from_>
+<_Data collection to_>			[10/2015] </_Data collection to_>
 <_Source of dataset_> 			[Source of data, e.g. NSO] </_Source of dataset_>
 <_Sample size (HH)_> 			39274 </_Sample size (HH)_>
 <_Sample size (IND)_> 			202742 </_Sample size (IND)_>
@@ -30,13 +30,14 @@
 <_ISCED Version_>				[Version of ICLS for Labor Questions] </_ISCED Version_>
 <_ISCO Version_>				ISCO 88 </_ISCO Version_>
 <_OCCUP National_>				PSOC 92 </_OCCUP National_>
-<_ISIC Version_>				ISIC 3.1 </_ISIC Version_>
-<_INDUS National_>				PSIC 94 </_INDUS National_>
+<_ISIC Version_>				ISIC 4 </_ISIC Version_>
+<_INDUS National_>				PSIC 2009 </_INDUS National_>
 
 -----------------------------------------------------------------------
 <_Version Control_>
 
 Unitwage was coded as per payment period not wage_non_compen timeframe
+* Date: [2022-08-26] File: [As in Program name above] - [Update PSIC-ISIC 09 key; occup_skill only keeps three categories and others were recoded to missing]
 
 </_Version Control_>
 
@@ -67,7 +68,7 @@ local user_commands ietoolkit scores missings mdesc iefieldkit  //Fill this list
 ** DIRECTORY
 
 	local 	cty3 	"PHL" 			// set this to the three letter country/economy abbreviation
-	local 	surv_yr  = 2010			// set this to the survey year
+	local 	surv_yr  = 2015			// set this to the survey year
 
 ** RUN SETTINGS
 	local 	cb_pause = 0		// 1 to pause+edit the exported codebook for harmonizing varnames, else 0
@@ -79,30 +80,30 @@ local user_commands ietoolkit scores missings mdesc iefieldkit  //Fill this list
 
 	local 	main		"`year'\\`cty3'_`surv_yr'_LFS_v01_M"
 	local 	 stata		"`main'\Data\Stata"
-	local 	gld 		"`year'\\`cty3'_`surv_yr'_LFS_v01_M_v02_A_GLD"
+	local 	gld 		"`year'\\`cty3'_`surv_yr'_LFS_v01_M_v03_A_GLD"
 	local 	 code 		"`gld'\Programs"
 	local 	 gld_data 	"`gld'\Data\Harmonized"
 
 	local 	lb_mod_age	15	// labor module minimun age (inclusive)
 	local 	ed_mod_age	5	// labor module minimun age (inclusive)
 
-	local 	weightvar 	fwgt // final weightvar
+	local 	weightvar 	pwgt // final weightvar
 
 
 ** FILES
 	* input
-	local round1 `"`stata'\LFS JAN2010.dta"'
-	local round2 `"`stata'\LFS APR2010.dta"'
-	local round3 `"`stata'\LFS JUL2010.dta"'
-	local round4 `"`stata'\LFS OCT2010.dta"'
+	local round1 `"`stata'\LFS JAN2015.dta"'
+	local round2 `"`stata'\LFS APR2015.dta"'
+	local round3 `"`stata'\LFS JUL2015.dta"'
+	local round4 `"`stata'\LFS OCT2015.dta"'
 
-	local isic_key 	 `"`stata'\PHL_PSIC_ISIC_94_key_2dig.dta"'
+	local isic_key 	 `"`stata'\PHL_PSIC_ISIC_09_key_2dig_updated.dta"'
 	local isco_key 	 `"`stata'\PHL_PSOC92_ISCO88_08_key.dta"'
 
     local adm2_labs	 `"`stata'\GLD_PHL_admin2_labels.dta"'
 
 * ouput
-	local path_output `"`gld_data'\\`cty3'_`surv_yr'_LFS_v01_M_v02_A_GLD_ALL.dta"'
+	local path_output `"`gld_data'\\`cty3'_`surv_yr'_LFS_v01_M_v03_A_GLD_ALL.dta"'
 
 ** VALUES
 	local n_round 	4			// numer of survey rounds
@@ -118,7 +119,7 @@ local user_commands ietoolkit scores missings mdesc iefieldkit  //Fill this list
 	iecodebook append ///
 		`"`round1'"' `"`round2'"' `"`round3'"' `"`round4'"' /// survey files
 		using `"`stata'\\`cty3'_`surv_yr'_append_template-IN.xlsx"' /// output just created above
-		, clear surveys(JAN2010 APR2010 JUL2010 OCT2010) generate(round) // survey names
+		, clear surveys(JAN2015 APR2015 JUL2015 OCT2015) generate(round) // survey names
 
 
 /*%%=============================================================================================
@@ -163,7 +164,7 @@ local user_commands ietoolkit scores missings mdesc iefieldkit  //Fill this list
 
 
 *<_isic_version_>
-	gen isic_version = "isic_3.1"
+	gen isic_version = "isic_4"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
@@ -181,7 +182,7 @@ local user_commands ietoolkit scores missings mdesc iefieldkit  //Fill this list
 
 
 *<_veralt_>
-	gen veralt = "v02"
+	gen veralt = "v03"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
@@ -229,9 +230,6 @@ replace int_month = 10 	if round == 4
 
 </_hhid_note> */
 ** HOUSEHOLD IDENTIFICATION NUMBER
-
-** HOUSEHOLD IDENTIFICATION NUMBER
-
 
 	loc idhvars 	hhnum   							// store idh vars in local
 
@@ -303,7 +301,6 @@ replace int_month = 10 	if round == 4
 ** ID CHECKS
 	isid idh idp 										// household and individual id uniquely identify
 
-
 	gen  hhid = idh  									// make hhid from idh in module
 	label var hhid "Household ID"
 
@@ -320,8 +317,8 @@ replace int_month = 10 	if round == 4
 
 
 *<_weight_>
-	rename 	weight weight_orig
-	gen 		weight = fwgt / 4
+	*rename 		weight weight_orig
+	gen 		weight = pwgt / 4
 	label 		var weight "Household sampling weight"
 *</_weight_>
 
@@ -744,15 +741,17 @@ label var ed_mod_age "Education module application age"
 	classificition of how each level is classified and why,
 	available in github repository. */
 
-	gen byte educat7 =.
+	gen byte educat7=.
 
+	replace educat7=1 if j12c09_grade==0 | j12c09_grade == 10 	// "No education" and "Preschool" -> "No Education"
+	replace educat7=2 if j12c09_grade>=210 &  j12c09_grade<=260	// Grades 1-7 to "Primary Incomplete"
+	replace educat7=3 if j12c09_grade==280						// "Elementary Graduate" to "Primary Complete"
+	replace educat7=4 if j12c09_grade>=310 &  j12c09_grade<=340 	// First-Fourth year in High school -> "secondary incomplete"
+	replace educat7=5 if j12c09_grade==350						// "High school graduate" -> "secondary complete"
+	replace educat7=6 if j12c09_grade>=410 &  j12c09_grade<=501 	// Post secondary + Basic Programs -> "Higher secondary not uni"
+	replace educat7=6 if j12c09_grade>=502 & 	j12c09_grade<=699	// Basic Program degrees to "Higher secondary not uni"
+	replace educat7=7 if j12c09_grade>= 810 & j12c09_grade <= . // all labelled uni levels Advanced Degree" -> "University"
 
-	replace educat7=1 if c09_grd==0			// "No Grade Completed" -> "No education"
-	replace educat7=2 if c09_grd==1 	// "Elementary Undergraduate" -> " Primary Incomplete"
-	replace educat7=3 if c09_grd==2 	// "Elementary Graduate" -> "Primary Complete"
-	replace educat7=4 if c09_grd==3		// "High School Undergraduate" -> "Secondary Incomplete"
-	replace educat7=5 if c09_grd==4		// "High school graduate" -> "Secondary Complete"
-	replace educat7=7 if c09_grd==5 | ( c09_grd>=60 & c09_grd<=98) // "College Graduate" and "[x] Bachelors/Advanced Degree" -> "University"
 
 	label var educat7 "Level of education 1"
 	la de lbleducat7 	1 "No education" ///
@@ -793,7 +792,7 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat_orig_>
-	gen educat_orig = c09_grd
+	gen educat_orig = j12c09_grade
 	label var educat_orig "Original survey education code"
 *</_educat_orig_>
 
@@ -1016,27 +1015,29 @@ foreach v of local ed_var {
 				* the string variable in isic4 will is industrycat_isic
 
 	// replace one code that I know doesn't match
-	rename 		isic3_1_2dig_pad	isic3_1_2dig_`n'
+	rename 		isic4_2dig_pad	isic4_2dig_`n'
 
-	gen 		industrycat_isic = isic3_1_2dig_`n'  	// the string variable becomes industrycat_isic
+	gen 		industrycat_isic = isic4_2dig_`n'  	// the string variable becomes industrycat_isic
 
 	drop 		psic_2dig 				// no longer needed, maintained in matchvar
 	label var 	industrycat_isic "ISIC code of primary job 7 day recall"
-*</_industrycat_isic_>
+	*</_industrycat_isic_>
 
 
 *<_industrycat10_>
 	gen byte 		industrycat10=.
-	replace 		industrycat10=1 if c18_pkb >= 1 & c18_pkb <= 9		// Agriculture
-	replace 		industrycat10=2 if c18_pkb == 10 | c18_pkb == 11		// Mining
-	replace 		industrycat10=3 if c18_pkb>=15 & c18_pkb <= 39		// Manufacturing
-	replace 		industrycat10=4 if c18_pkb==40 | c18_pkb==41			// Public Utility Services
-	replace 		industrycat10=5 if c18_pkb==45						// Construction
-	replace 		industrycat10=6 if c18_pkb >= 50 & c18_pkb <= 55		// Commerce
-	replace 		industrycat10=7 if c18_pkb >= 60 & c18_pkb <= 64		// Transport + Communication
-	replace 		industrycat10=8 if c18_pkb >= 65 & c18_pkb <= 74		// Financial + Business Services
-	replace 		industrycat10=9 if c18_pkb == 75						// Public Administration
-	replace 		industrycat10=10 if c18_pkb>=76 & c18_pkb <= 99 		// this includes education/teaching.
+	replace 		industrycat10=1 if (c18_pkb>=1& c18_pkb<=4)		// to Agriculture
+	replace 		industrycat10=2 if (c18_pkb>=5 & c18_pkb<=9)		// to Mining
+	replace 		industrycat10=3 if (c18_pkb>=10 & c18_pkb<=33)	// to Manufacturing
+	replace 		industrycat10=4 if (c18_pkb>=35 & c18_pkb<=39)	// to Public utility
+	replace 		industrycat10=5 if (c18_pkb>=41 &  c18_pkb<=43)	// to Construction
+	replace 		industrycat10=6 if (c18_pkb>=45 & c18_pkb<=47) | (c18_pkb >= 55 & c18_pkb <= 56)	// to Commerce
+	replace 		industrycat10=7 if (c18_pkb>=49 & c18_pkb<=53)| (c18_pkb>=58 & c18_pkb<=63) // to Transport/coms
+	replace 		industrycat10=8 if (c18_pkb>=64 & c18_pkb<=82) 	// to financial/business services
+	replace 		industrycat10=9 if (c18_pkb==84) 				// to public administration
+	replace 		industrycat10=10 if  (c18_pkb>=91 & c18_pkb<=99) // to other
+	replace 		industrycat10=10 if industrycat10==. & c18_pkb!=.
+
 
 	label var 		industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de 			lblindustrycat10 	///
@@ -1107,11 +1108,14 @@ foreach v of local ed_var {
 
 
 *<_occup_>
+	* in 2015, raw variable is numeric 2 digits only
+
 	* generate occupation variable
-	gen byte 		occup = floor(c16_proc/10)		// this handles most of recoding automatically.
-	recode 			occup 0 = 10	if 	c16_proc==1 	// recode "armed forces" to appropriate label
-	recode 			occup 0 = 99	if 	(c16_proc>=2 & c16_proc <=9) ///
-							| 		(c16_proc >=94 & c16_proc <= 99) // recode "Not classifiable occupations"
+	gen byte occup=floor(c16_proc/10)		// this handles most of recoding automatically.
+	recode occup 0 = 10	if 	c16_proc==1 	// recode "armed forces" to appropriate label
+	recode occup 0 = 99	if 	(c16_proc>=2 & c16_proc <=9) ///
+							| (c16_proc >=94 & c16_proc <= 99) // recode "Not classifiable occupations"
+
 
 	/* Note that the raw variable, procc lists values, 94-99 for which there are no associated occupation
 	   codes. Given that the raw data indicate that these individauls do have valid, non-missing occupations,
@@ -1247,9 +1251,7 @@ foreach v of local ed_var {
 
 *----------8.3: 7 day reference secondary job------------------------------*
 * Since labels are the same as main job, values are labelled using main job labels
-/*
-2010 has no secondary job information.
-*/
+
 
 {
 *<_empstat_2_>
@@ -1302,9 +1304,9 @@ foreach v of local ed_var {
 				* the string variable in isic4 will is industrycat_isic
 
 	// replace one code that I know doesn't match
-	rename 		isic3_1_2dig_pad	isic3_1_2dig_`n'
+	rename 		isic4_2dig_pad	isic4_2dig_`n'
 
-	gen 		industrycat_isic_2 = isic3_1_2dig_`n'  	// the string variable becomes industrycat_isic
+	gen 		industrycat_isic_2 = isic4_2dig_`n'  	// the string variable becomes industrycat_isic
 
 	drop 		psic_2dig 				// no longer needed, maintained in matchvar
 	label var 	industrycat_isic_2 "ISIC code of secondary job 7 day recall"
@@ -1314,16 +1316,20 @@ foreach v of local ed_var {
 *<_industrycat10_2_>
 	gen byte 		industrycat10_2 = .
 
-	replace 		industrycat10_2=1 if j03_okb >= 1 & j03_okb <= 9		// Agriculture
-	replace 		industrycat10_2=2 if j03_okb == 10 | j03_okb == 11		// Mining
-	replace 		industrycat10_2=3 if j03_okb>=15 & j03_okb <= 39		// Manufacturing
-	replace 		industrycat10_2=4 if j03_okb==40 | j03_okb==41			// Public Utility Services
-	replace 		industrycat10_2=5 if j03_okb==45						// Construction
-	replace 		industrycat10_2=6 if j03_okb >= 50 & j03_okb <= 55		// Commerce
-	replace 		industrycat10_2=7 if j03_okb >= 60 & j03_okb <= 64		// Transport + Communication
-	replace 		industrycat10_2=8 if j03_okb >= 65 & j03_okb <= 74		// Financial + Business Services
-	replace 		industrycat10_2=9 if j03_okb == 75						// Public Administration
-	replace 		industrycat10_2=10 if j03_okb>=76 & j03_okb <= 99 		// this includes education for now.
+
+	replace 		industrycat10_2=1 if (j03_okb>=1& j03_okb<=4)		// to Agriculture
+	replace 		industrycat10_2=2 if (j03_okb>=5 & j03_okb<=9)		// to Mining
+	replace 		industrycat10_2=3 if (j03_okb>=10 & j03_okb<=33)	// to Manufacturing
+	replace 		industrycat10_2=4 if (j03_okb>=35 & j03_okb<=39)	// to Public utility
+	replace 		industrycat10_2=5 if (j03_okb>=41 &  j03_okb<=43)	// to Construction
+	replace 		industrycat10_2=6 if (j03_okb>=45 & j03_okb<=47) | (j03_okb>= 55 & j03_okb <= 56)	// to Commerce
+	replace 		industrycat10_2=7 if (j03_okb>=49 & j03_okb<=53)| (j03_okb>=58 & j03_okb<=63) // to Transport/coms
+	replace 		industrycat10_2=8 if (j03_okb>=64 & j03_okb<=82) 	// to financial/business services
+	replace 		industrycat10_2=9 if (j03_okb==84) 				// to public administration
+	replace 		industrycat10_2=10 if  (j03_okb>=91 & j03_okb<=99) // to other
+	replace 		industrycat10_2=10 if industrycat10_2==. & j03_okb!=.
+
+
 
 	label var 		industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values 	industrycat10_2 lblindustrycat10
@@ -1390,10 +1396,11 @@ foreach v of local ed_var {
 
 
 *<_occup_2_>
-	gen byte occup_2=floor(j02_otoc/10)		// this handles most of recoding automatically.
-	recode occup_2 0 = 10	if 	j02_otoc==1 	// recode "armed forces" to appropriate label
-	recode occup_2 0 = 99	if 	(j02_otoc>=2 & j02_otoc <=9) ///
+	gen byte		occup_2=floor(j02_otoc/10)		// this handles most of recoding automatically.
+	recode 			occup_2 0 = 10	if 	j02_otoc==1 	// recode "armed forces" to appropriate label
+	recode 			occup_2 0 = 99	if 	(j02_otoc>=2 & j02_otoc <=9) ///
 							| (j02_otoc >=94 & j02_otoc <= 99) // recode "Not classifiable occupations"
+
 
 	label var 		occup_2 "1 digit occupational classification secondary job 7 day recall"
 	label values 	occup_2 lbloccup
