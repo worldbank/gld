@@ -75,7 +75,7 @@ local user_commands ietoolkit scores missings mdesc iefieldkit  //Fill this list
 	local 	drop 	 = 1 		// 1 to drop variables with all missing values, 0 otherwise
 
 
-	local 	year 		"Y:\GLD\\`cty3'\\`cty3'_`surv_yr'_LFS" // top data folder
+	local 	year 		"Z:\GLD-Harmonization\551206_TM\\`cty3'\\`cty3'_`surv_yr'_LFS" // top data folder
 
 	local 	main		"`year'\\`cty3'_`surv_yr'_LFS_v01_M"
 	local 	 stata		"`main'\Data\Stata"
@@ -87,9 +87,6 @@ local user_commands ietoolkit scores missings mdesc iefieldkit  //Fill this list
 	local 	ed_mod_age	5	// labor module minimun age (inclusive)
 
 	local 	weightvar 	fwgt // final weightvar
-
-** LOG FILE
-	log using `"`gld_data'\\`cty3'_`surv_yr'_I2D2_LFS.log"', replace
 
 
 ** FILES
@@ -120,7 +117,7 @@ local user_commands ietoolkit scores missings mdesc iefieldkit  //Fill this list
 
 	iecodebook append ///
 		`"`round1'"' `"`round2'"' `"`round3'"' `"`round4'"' /// survey files
-		using `"`main'\Doc\\`cty3'_`surv_yr'_append_template-IN.xlsx"' /// output just created above
+		using `"`stata'\\`cty3'_`surv_yr'_append_template-IN.xlsx"' /// output just created above
 		, clear surveys(JAN2011 APR2011 JUL2011 OCT2011) generate(round) // survey names
 
 
@@ -1138,15 +1135,13 @@ foreach v of local ed_var {
 
 
 *<_occup_skill_>
-	gen 			occup_skill = .
-	replace 		occup_skill = 1 	if occup == 9
-	replace 		occup_skill = 2 	if occup >=4 & occup <= 8
-	replace 		occup_skill = 3 	if occup >=1 & occup <= 3
-	replace 		occup_skill = 4 	if occup == 10
-	replace 		occup_skill = 5 	if occup == 99
-	la de 			lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill" 4 "Armed Forces" 5 "Not Classified"
-	label values 	occup_skill lblskill
-	label var 		occup_skill "Skill based on ISCO standard primary job 7 day recall"
+	gen occup_skill=occup
+	recode occup_skill (1/3=3) (4/8=2) (9=1) (0 5=.)
+	replace occup_skill=. if lstatus!=1
+	replace occup_skill=. if !inrange(occup, 1, 9)
+	label define lbl_occup_skill 1 "Low skill" 2 "Medium skill" 3 "High skill"
+	label values occup_skill lbl_occup_skill
+	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
 *</_occup_skill_>
 
 
