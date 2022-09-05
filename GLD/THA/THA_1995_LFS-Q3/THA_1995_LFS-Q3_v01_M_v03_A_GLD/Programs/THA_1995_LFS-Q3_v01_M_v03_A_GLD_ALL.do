@@ -923,8 +923,8 @@ foreach v of local ed_var {
 Industry code is based on the 1958 ISIC (version 1). Note that ISIC rev 1 and the THA industry codes for 1985 - 2000 are not exact match. The ISIC rev 1 are only up to 3 digits while the THA industry codes are up to 4 digits. The THA documentation for industry codes mentioned that a separate classification system is used to fit the specific country context, and we are not certain about the extent to which the national industry codes differ from the ISIC rev 1 at the 3-digit level. We are able to confirm that the national industry and ISIC rev 1 codes perfectly match at the 2-digit level. Thus, we code industrycat_isic using the first 2 digits of the national industry code.
 
 </_industrycat_isic_note>*/
-
 	gen industrycat_isic = substr(industry_orig, 1, 2)
+	replace industrycat_isic = industrycat_isic + "00"
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 

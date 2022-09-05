@@ -671,7 +671,7 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat_orig_>
-	gen educat_orig = .
+	gen educat_orig = re_ed
 	label var educat_orig "Original survey education code"
 *</_educat_orig_>
 
@@ -895,8 +895,8 @@ foreach v of local ed_var {
 *<_industry_orig_>
 	gen industry_orig = indus
 	tostring industry_orig, replace
-	replace industry_orig = "0" + industry_orig if length(industry_orig) == 4
-	replace industry_orig = "" if industry_orig == "." | industry_orig == "99999"
+	replace industry_orig = "0" + industry_orig if length(industry_orig) == 3
+	replace industry_orig = "" if industry_orig == "." | industry_orig == "9999"
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 

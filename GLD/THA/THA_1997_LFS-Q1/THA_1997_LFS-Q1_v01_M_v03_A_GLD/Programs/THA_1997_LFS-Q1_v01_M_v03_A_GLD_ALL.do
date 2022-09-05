@@ -931,7 +931,8 @@ Industry code is based on the 1958 ISIC (version 1)
 
 </_industrycat_isic_note>*/
 
-	gen industrycat_isic = industry_orig
+	gen industrycat_isic = substr(industry_orig, 1, 2)
+	replace industrycat_isic = industrycat_isic + "00"
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 

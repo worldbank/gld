@@ -959,9 +959,9 @@ Industry code is based on the 1958 ISIC (version 1). Note that ISIC rev 1 and th
 </_industrycat_isic_note>*/
 
 	gen industrycat_isic = substr(industry_orig, 1, 2)
+	replace industrycat_isic = industrycat_isic + "00"
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
-
 
 *<_industrycat10_>
 	gen isic_1d = substr(industrycat_isic, 1, 1)

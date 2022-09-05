@@ -1757,6 +1757,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "$path_output\THA_2004_LFS-Q1_v01_M_v02_A_GLD_ALL.dta", replace
+save "$path_output\THA_2004_LFS-Q1_v01_M_v03_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>
