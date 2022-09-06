@@ -994,17 +994,18 @@ and ISCO-88 to ISCO-08 respectively. Kept one off the old matchings just in case
 *<_industrycat10_>
 	gen industrycat10 = substr((industrycat_isic), 1, 2)
 	destring industrycat10, replace
-	replace industrycat10 = 1 if industrycat10 < 10
-	replace industrycat10 = 2 if (industrycat10 >= 10 & industrycat10 < 15)
-	replace industrycat10 = 3 if (industrycat10 >= 15 & industrycat10 < 37)
-	replace industrycat10 = 4 if (industrycat10 >= 37 & industrycat10 < 45)
-	replace industrycat10 = 5 if (industrycat10 >= 45 & industrycat10 < 50)
-	replace industrycat10 = 6 if (industrycat10 >= 50 & industrycat10 < 60)
-	replace industrycat10 = 7 if (industrycat10 >= 60 & industrycat10 < 65)
-	replace industrycat10 = 8 if (industrycat10 >= 65 & industrycat10 < 75)
-	replace industrycat10 = 9 if (industrycat10 >= 75 & industrycat10 < 80)
-	replace industrycat10 = 10 if (industrycat10 >= 80 & industrycat10 < 100)
-	recast byte industrycat10
+	replace industrycat10 =  1 if inrange(industrycat10,1,3)
+	replace industrycat10 =  2 if inrange(industrycat10,5,9)
+	replace industrycat10 =  3 if inrange(industrycat10,10,33)
+	replace industrycat10 =  4 if inrange(industrycat10,35,39)
+	replace industrycat10 =  5 if inrange(industrycat10,41,43)
+	replace industrycat10 =  6 if inrange(industrycat10,45,47) | inrange(industrycat10,55,56)
+	replace industrycat10 =  7 if inrange(industrycat10,49,53) | inrange(industrycat10,58,63)
+	replace industrycat10 =  8 if inrange(industrycat10,64,75)
+	replace industrycat10 =  9 if inrange(industrycat10,84,84)
+	replace industrycat10 = 10 if inrange(industrycat10,85,99)
+	recast int industrycat10
+    replace industrycat10 = . if !inrange(industrycat10,1,10)
 	label variable industrycat10 "1 digit industry classification, primary job 7 day recall"
 	label define industrycat10_lab 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utility" 5 "Construction" 6 "Commerce" 7 "Transport and Communications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 industrycat10_lab
@@ -1250,17 +1251,18 @@ and ISCO-88 to ISCO-08 respectively. Kept one off the old matchings just in case
 *<_industrycat10_2_>
 	gen industrycat10_2 = substr((industrycat_isic_2), 1, 2)
 	destring industrycat10_2, replace
-	replace industrycat10_2 = 1 if industrycat10_2 < 10
-	replace industrycat10_2 = 2 if (industrycat10_2 >= 10 & industrycat10_2 < 15)
-	replace industrycat10_2 = 3 if (industrycat10_2 >= 15 & industrycat10_2 < 37)
-	replace industrycat10_2 = 4 if (industrycat10_2 >= 37 & industrycat10_2 < 45)
-	replace industrycat10_2 = 5 if (industrycat10_2 >= 45 & industrycat10_2 < 50)
-	replace industrycat10_2 = 6 if (industrycat10_2 >= 50 & industrycat10_2 < 60)
-	replace industrycat10_2 = 7 if (industrycat10_2 >= 60 & industrycat10_2 < 65)
-	replace industrycat10_2 = 8 if (industrycat10_2 >= 65 & industrycat10_2 < 75)
-	replace industrycat10_2 = 9 if (industrycat10_2 >= 75 & industrycat10_2 < 80)
-	replace industrycat10_2 = 10 if (industrycat10_2 >= 80 & industrycat10_2 < 100)
-	recast byte industrycat10_2
+	replace industrycat10_2 =  1 if inrange(industrycat10_2,1,3)
+	replace industrycat10_2 =  2 if inrange(industrycat10_2,5,9)
+	replace industrycat10_2 =  3 if inrange(industrycat10_2,10,33)
+	replace industrycat10_2 =  4 if inrange(industrycat10_2,35,39)
+	replace industrycat10_2 =  5 if inrange(industrycat10_2,41,43)
+	replace industrycat10_2 =  6 if inrange(industrycat10_2,45,47) | inrange(industrycat10_2,55,56)
+	replace industrycat10_2 =  7 if inrange(industrycat10_2,49,53) | inrange(industrycat10_2,58,63)
+	replace industrycat10_2 =  8 if inrange(industrycat10_2,64,75)
+	replace industrycat10_2 =  9 if inrange(industrycat10_2,84,84)
+	replace industrycat10_2 = 10 if inrange(industrycat10_2,85,99)
+	recast int industrycat10_2
+    replace industrycat10_2 = . if !inrange(industrycat10_2,1,10)
 	label variable industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 industrycat10_lab
 *</_industrycat10_2_>
