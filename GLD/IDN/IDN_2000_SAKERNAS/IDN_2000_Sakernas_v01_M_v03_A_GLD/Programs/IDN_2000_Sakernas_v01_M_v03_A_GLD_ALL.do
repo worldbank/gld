@@ -929,9 +929,20 @@ of unemployment period.
 
 
 *<_occup_>
-	gen cat_code=int(b4p8/10)
-	merge m:1 cat_code using "`input'\isco68_skill_mapping.dta", keep (match master) nogen 
-	gen occup=code
+	gen kji1982 = b4p8
+	merge m:1 kji1982 urban using "`input'\occup.dta", keep (match master) nogen
+	set seed 123
+	gen helper_occup = uniform()
+	gen occup = .
+	replace occup = option_1 if !missing(kji1982) & probs_1 == 1
+	
+	replace occup = option_1 if !missing(kji1982) & probs_1 < 1 & helper_occup <= probs_1 & missing(probs_3)
+	replace occup = option_2 if !missing(kji1982) & probs_1 < 1 & helper_occup > probs_1 & missing(probs_3)
+	
+	replace occup = option_1 if !missing(kji1982) & probs_1 < 1 & helper_occup <= probs_1 & !missing(probs_3)
+	replace occup = option_2 if !missing(kji1982) & probs_1 < 1 & (helper_occup > probs_1 & helper_occup <= (probs_1 + probs_2)) & !missing(probs_3)
+	replace occup = option_3 if !missing(kji1982) & probs_1 < 1 & (helper_occup > (probs_1 + probs_2)) & !missing(probs_3)
+	
 	replace occup = . if lstatus!=1
 	replace occup = . if occup==0
 	label var occup "1 digit occupational classification, primary job 7 day recall"

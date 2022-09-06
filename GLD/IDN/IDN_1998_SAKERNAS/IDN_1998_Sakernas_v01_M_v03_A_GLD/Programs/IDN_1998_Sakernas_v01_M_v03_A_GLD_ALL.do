@@ -920,11 +920,9 @@ of unemployment period.
 
 
 *<_occup_>
-	gen cat_code=b4p7
-	merge m:1 cat_code using "`input'\isco68_skill_mapping.dta", keep (match master) nogen 
-	gen occup=code
-	replace occup = . if lstatus!=1
-	replace occup = . if occup==0
+	gen occup=.
+	replace occup=. if occup==0
+	replace occup=. if lstatus!=1
 	label var occup "1 digit occupational classification, primary job 7 day recall"
   	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians and associate professionals" 4 "Clerical support workers" 5 "Service and market sales workers" 6 "Skilled agricultural, forestry and fishery workers" 7 "Craft and related trades workers" 8 "Plant and machine operators, and assemblers" 9 "Elementary occupations"
 	label values occup lbloccup
