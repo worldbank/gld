@@ -900,15 +900,17 @@ foreach v of local ed_var {
 	tostring industry_orig, replace
 	replace industry_orig = "0" + industry_orig if length(industry_orig) == 3
 	label var industry_orig "Original survey industry code, main job 7 day recall"
-*</_industry_orig_>tan
+*</_industry_orig_>
 
 
 *<_industrycat_isic_>
-
-
 	gen industrycat_isic = industry_orig
+	
+	* There are codes not in ISIC v3 -- set to missing
+	replace industrycat_isic = "" if inlist(industrycat_isic, "1599", "3999", "5299", "9304", "9999")
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
+
 
 
 *<_industrycat10_>
@@ -954,15 +956,15 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_>
-
 	gen occup_isco = occup_orig
+	replace occup_isco = "" if inlist(occup_isco, "1299", "2999", "3999", "9970")
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
 
 *<_occup_skill_>
 
-	gen occup_1d = substr(occup_orig, 1, 1)
+	gen occup_1d = substr(occup_isco, 1, 1)
 	destring occup_1d, replace
 	gen occup_skill = 1 if occup_1d == 9
 	replace occup_skill = 2 if inrange(occup_1d, 4, 8)
@@ -972,7 +974,6 @@ foreach v of local ed_var {
 	label values occup_skill lblskill
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
 *</_occup_skill_>
-
 
 *<_occup_>
 	drop occup

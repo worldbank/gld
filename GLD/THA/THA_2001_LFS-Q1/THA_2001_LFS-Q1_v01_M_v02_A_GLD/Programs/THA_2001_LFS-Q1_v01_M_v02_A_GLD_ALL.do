@@ -908,17 +908,11 @@ foreach v of local ed_var {
 	tostring industry_orig, replace
 	replace industry_orig = "0" + industry_orig if length(industry_orig) == 3
 	label var industry_orig "Original survey industry code, main job 7 day recall"
-*</_industry_orig_>tan
+*</_industry_orig_>
 
 
 
 *<_industrycat_isic_>
-
-/* <_industrycat_isic_note>
-
-Industry code is based on the 1958 ISIC (version 1)
-
-</_industrycat_isic_note>*/	
 
 	gen industrycat_isic = industry_orig
 	label var industrycat_isic "ISIC code of primary job 7 day recall"

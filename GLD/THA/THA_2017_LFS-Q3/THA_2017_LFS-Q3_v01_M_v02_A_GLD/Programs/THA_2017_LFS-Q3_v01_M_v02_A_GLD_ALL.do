@@ -43,7 +43,7 @@ At the second stage, private households and persons in the collective households
 * Date: [2021-12-08] - Prepared initial code
 * Date: [2022-05-30] - Added codes that harmonize data for specific variables, including school attendance, ISCO and ISIC codes, etc...
 * Date: [2022-08-31] - Correct industrycat10 - ISIC conversion
-
+* Date: [2022-09-06] - Set to missing non-existent ISCO codes
 </_Version Control_>
 -------------------------------------------------------------------------*/
 
@@ -993,7 +993,7 @@ foreach v of local ed_var {
 *<_occup_isco_>
 	* This is based on OCCUP 08
 	gen occup_isco = OCCUP_STR
-	replace occup_isco = "" if OCCUP_STR == "9970"
+	replace occup_isco = "" if OCCUP_STR == "9970" | OCCUP_STR == "3441" | OCCUP_STR == "5121"
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
