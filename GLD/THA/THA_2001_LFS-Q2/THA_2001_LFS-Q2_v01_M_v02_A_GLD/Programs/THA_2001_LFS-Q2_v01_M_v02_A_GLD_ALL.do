@@ -919,12 +919,6 @@ foreach v of local ed_var {
 
 *<_industrycat_isic_>
 
-/* <_industrycat_isic_note>
-
-Industry code is based on the 1958 ISIC (version 1)
-
-</_industrycat_isic_note>*/
-
 	gen industrycat_isic = industry_orig
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
