@@ -911,9 +911,7 @@ foreach v of local ed_var {
 *</_industry_orig_>
 
 
-
 *<_industrycat_isic_>
-
 	gen industrycat_isic = industry_orig
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
