@@ -1075,7 +1075,7 @@ This question was only asked to those who are seld-employed.
 
 *<_firmsize_u_>
 	gen byte firmsize_u = b4p10b
-	recode firmsize_l (1=4) (2=19) (3=.)
+	recode firmsize_u (1=4) (2=19) (3=.)
 	replace firmsize_u = . if lstatus!=1
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>
