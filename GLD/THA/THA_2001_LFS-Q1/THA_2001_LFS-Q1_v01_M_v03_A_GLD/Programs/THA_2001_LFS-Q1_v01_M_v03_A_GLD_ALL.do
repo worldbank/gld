@@ -39,6 +39,7 @@ A stratified two-stage sampling was adopted to the survey: Bangkok Metroplois an
 * Date: [2022-01-08] - Prepared initial code
 * Date: [2022-06-15] - Added codes that harmonize data for specific variables, including school attendance, ISCO and ISIC codes, etc...
 * Date: [2022-07-11] - Updated ISCED version
+* Date: [2022-08-31] - Correct industrycat10 - ISIC conversion, ensure that code 0 is set to missing for relationharm, update ICLS
 
 </_Version Control_>
 -------------------------------------------------------------------------*/
@@ -57,7 +58,7 @@ set mem 800m
 
 global path_in "Z:\GLD-Harmonization\510859_AS\THA\THA_2001_LFS-Q1\THA_2001_LFS-Q1_v01_M\Data\Stata"
 
-global path_output "Z:\GLD-Harmonization\510859_AS\THA\THA_2001_LFS-Q1\THA_2001_LFS-Q1_v01_M_v02_A_GLD\Data\Harmonized"
+global path_output "Z:\GLD-Harmonization\510859_AS\THA\THA_2001_LFS-Q1\THA_2001_LFS-Q1_v01_M_v03_A_GLD\Data\Harmonized"
 
 *----------1.3: Database assembly------------------------------*
 
@@ -92,7 +93,7 @@ duplicates drop
 
 
 *<_icls_v_>
-	gen icls_v = "Not stated"
+	gen icls_v = "ICLS-13"
 	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
 
@@ -128,7 +129,7 @@ duplicates drop
 
 
 *<_veralt_>
-	gen veralt = "V02"
+	gen veralt = "V03"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
@@ -282,6 +283,7 @@ duplicates drop
 	label define lblsubnatid1 1 "1 - Bangkok Metropolis" 2 "2 - Central" 3 "3 - North"  4 "4 - Northeast"  5 "5 - South"
 
 	label values subnatid1 lblsubnatid1
+	
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 
@@ -334,8 +336,8 @@ label de lblsubnatid2 10 "10 - Bangkok Metropolis" 11 "11 - Samut Prakan" ///
 
 
 *<_subnatid1_prev_>
-
 	gen subnatid1_prev = subnatid1
+
 	recode subnatid1_prev (3 = 1) (4 = 2) (5 = 3) (2 = 4) (1 = 5)
 	label de lblsubnatid1_prev 1 "1 - North" 2 "2 - Northeast" 3 "3 - South" 4 "4 - Central" 5 "5 - Bangkok Metropolis"
 	label values subnatid1_prev lblsubnatid1_prev
@@ -369,7 +371,15 @@ label de lblsubnatid2 10 "10 - Bangkok Metropolis" 11 "11 - Samut Prakan" ///
 	501 "1 - Bangkok Metropolis"
 
 	label values subnatid2_prev lblsubnatid2_prev
+
+* convert codes to string
+	sdecode subnatid1, replace
+	sdecode subnatid1_prev, replace
+	sdecode subnatid2, replace
+	sdecode subnatid2_prev, replace
+
 *</_subnatid2_prev_>
+
 
 
 
@@ -467,7 +477,7 @@ Hence, leave adm2 and adm3 missing
 	assert tot_head ==  1
 	
 	gen relationharm = rela
-	recode relationharm (3 4 = 3) (7 = 4) (5 6 8= 5) (9 = 6) 
+	recode relationharm (3 4 = 3) (7 = 4) (5 6 8= 5) (9 = 6)  (0 = .)
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm  lblrelationharm
@@ -901,7 +911,6 @@ foreach v of local ed_var {
 	label values ocusec lblocusec
 *</_ocusec_>
 
-
 *<_industry_orig_>
 
 	gen industry_orig = indus
@@ -913,8 +922,12 @@ foreach v of local ed_var {
 
 *<_industrycat_isic_>
 	gen industrycat_isic = industry_orig
+	
+	* There are codes not in ISIC v3 -- set to missing
+	replace industrycat_isic = "" if inlist(industrycat_isic, "1599", "3999", "5299", "9304", "9999")
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
+
 
 
 *<_industrycat10_>
@@ -926,15 +939,15 @@ foreach v of local ed_var {
 	
 	gen byte industrycat10 = .
 	replace industrycat10 = 1 if isic_1d == 0
-	replace industrycat10 = 2 if isic_1d == 1
-	replace industrycat10 = 3 if isic_1d == 2 | isic_1d == 3
-	replace industrycat10 = 4 if isic_1d == 5
-	replace industrycat10 = 5 if isic_1d == 4
-	replace industrycat10 = 6 if isic_1d == 6
-	replace industrycat10 = 7 if isic_1d == 7
-	replace industrycat10 = 10 if inrange(isic_1d, 8, 9)
-	replace industrycat10 = 8 if isic_2d == 83
-	replace industrycat10 = 9 if isic_2d == 81
+	replace industrycat10 = 2 if inrange(isic_2d, 10, 14)
+	replace industrycat10 = 3 if inrange(isic_2d, 15, 37)
+	replace industrycat10 = 4 if inrange(isic_2d, 40, 41)
+	replace industrycat10 = 5 if isic_2d == 45
+	replace industrycat10 = 6 if isic_1d == 5
+	replace industrycat10 = 7 if inrange(isic_2d, 60, 64)
+	replace industrycat10 = 8 if inrange(isic_2d, 65, 74)
+	replace industrycat10 = 9 if isic_2d == 75
+	replace industrycat10 = 10 if inrange(isic_2d, 80, 99)
 	
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
@@ -959,15 +972,15 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_>
-
 	gen occup_isco = occup_orig
+	replace occup_isco = "" if inlist(occup_isco, "1299", "2999", "3999", "9970")
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
 
 *<_occup_skill_>
 
-	gen occup_1d = substr(occup_orig, 1, 1)
+	gen occup_1d = substr(occup_isco, 1, 1)
 	destring occup_1d, replace
 	gen occup_skill = 1 if occup_1d == 9
 	replace occup_skill = 2 if inrange(occup_1d, 4, 8)
@@ -977,7 +990,6 @@ foreach v of local ed_var {
 	label values occup_skill lblskill
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
 *</_occup_skill_>
-
 
 *<_occup_>
 	drop occup
@@ -1757,6 +1769,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "$path_output\THA_2001_LFS-Q1_v01_M_v02_A_GLD_ALL.dta", replace
+save "$path_output\THA_2001_LFS-Q1_v01_M_v03_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>
