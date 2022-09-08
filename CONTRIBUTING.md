@@ -113,7 +113,7 @@ Send an Email to the team
 
 Send an email to the GLD team
 at [gld@worldbank.org](mailto:gld@worldbank.org),
-with the subject "CLA" and the following body:
+with the subject "Acknowledgment of Contribution Rules" and the following body:
 
 ```
 I submitted a pull request to indicate agreement to code of conduct and contribution guidelines.
@@ -134,7 +134,8 @@ Replace the bracketed text as follows:
   contacted.
 * `[your phone number]` with a phone number at which you can be contacted.
 
-## Attribution
+```
+#### Attribution
 
 The information on this page has been adapted from the [GLD contribution template](https://github.com/auth0/open-source-template/blob/master/GENERAL-CONTRIBUTING.md) , and the [sign-in CLA contributing guidelines](https://github.com/Medium/opensource/blob/master/sign-cla.md) from github. 
 
