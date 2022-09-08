@@ -2,9 +2,9 @@
 
 The GLD team created a list of labels to help users find country specific issues and information. 
 
-Below a table and meaning of each label.
+The country labels should be the three letter code corresponding to the country in question following [ISO codes](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3)
 
-Countries
+For example: 
 
 | Label	| Meaning	|
 | :-------	| :--------		| 
