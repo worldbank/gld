@@ -1112,7 +1112,7 @@ To code whours for primary job, we separated people who have one job from those 
 	gen occup_2=substr(occup_isco_2, 1, 1)
 	destring occup_2, replace
 	recode occup_2 (0=10)
-	replace occup=. if q_5_17!=1
+	replace occup_2=. if q_5_17!=1
 	label var occup_2 "1 digit occupational classification secondary job 7 day recall"
 	label values occup_2 lbloccup
 *</_occup_2_>

@@ -1124,7 +1124,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 	gen occup_2=substr(occup_isco_2, 1, 1)
 	destring occup_2, replace
 	recode occup_2 (0=10)
-	replace occup=. if q5_18!=1
+	replace occup_2=. if q5_18!=1
 	label var occup_2 "1 digit occupational classification secondary job 7 day recall"
 	label values occup_2 lbloccup
 *</_occup_2_>

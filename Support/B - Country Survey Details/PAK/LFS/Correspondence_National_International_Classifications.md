@@ -5,7 +5,7 @@ This document describes the methodology used to map national industrial and occu
 
 |**Year**|**# Digit of PSIC**|**PSIC Version**|**ISIC Version**|**# Digit of PSCO**|**PSCO Version**|**ISCO Version**| 
 |:----:|:-:|:----:|:----------:|:-:|:----:|:-------:|  
-| 1992 | 2 | [1970](utilities/PSIC_2007.pdf) | ISIC Rev.2 | 2 | [1994](utilities/PSCO94_to_ISCO88.pdf) | ISCO-88 | 
+| 1992 | 2 | [1970](utilities/PSIC_2007.pdf) | ISIC Rev.2 | 2 | [1994](utilities/PSCO94_to_ISCO88.xlsx) | ISCO-88 | 
 | 1999 | 2 | 1970 | ISIC Rev.2 | 2 | 1994 | ISCO-88 |
 | 2001 | 2 | 1970 | ISIC Rev.2 | 2 | 1994 | ISCO-88 |
 | 2003 | 2 | 1970 | ISIC Rev.2 | 2 | 1994 | ISCO-88 |
@@ -62,3 +62,19 @@ PSIC 2010 is identical to Rev.4 at two-digit level in terms of code and industry
 ## Correspondence in occupation classification
 
 As shown in the first table above, in fact, only two versions of PSCO and ISCO were used when mapping occupation variable. And both of the two pairs (PSCO and ISCO), regardless of version, are identical at the two-digit level. In that sense, links in the first table to ISCO documents can be referred as the complete codelist for occupation. 
+
+One noteworthy data issue is that the number of "Managers" plummets from 2010 to 2012 and stays lows since then. Because this is a `industrycat10` category and `occup_skill` is coded based on this variable, the decrease in "Managers" leads to decrease in the number of highly skilled workers. See the screenshots of original occupation distribution in 2009, 2010, 2012, and 2014:
+
+**2009**
+![PAK 2010](utilities/2009_original_occup.png)
+
+**2010**
+![PAK 2010](utilities/2010_original_occup.png)
+
+**2012**
+![PAK 2010](utilities/2012_original_occup.png)
+
+**2014**
+![PAK 2010](utilities/2014_original_occup.png)
+
+According to the table shown at the beginning of this doc, there is a version change in classification between 2010 and 2012, from PSCO 1994 to 2012. In PSCO 1994, category 13 is "General Managers" whereas in PSCO 2010 it is "Production and specialized services managers" which may narrow down the definition of managers in general. Kindly be aware that this is not a coding error or mistake. 
