@@ -79,11 +79,15 @@ We only used question 9.1 to code unemployment for 2020 considering: 1) being co
 
 The figure below is a comparison among GLD harmonization, BPS reports (*refined activity participation rate* shown in a following screenshot), and WDI:
 
-![lfp_comparison](utilities/LFP_figure.png)
+![lfp_comparison](utilities/LFP_figure_1.png)
 
 ![refined_activity](utilities/refined_activity.png)
 
 The labor force participation rate produced for 2012-2020 using the method described above is almost identical to the estimates in the reports of the BPS, whereas years before 2012 fall below BPS estimates in a parallel way. WDI has higher numbers for all years which highly possibly results from a narrower age restraint. WDI only accounts for people aged 15 to 64 for LFP estimation while GLD and BPS account for 10 and above.
+
+We also have compared GLD estimates to ILO modelled estimates which uses 15 and above age range. In the second LFP comparison figure showing below, in addition to the 10-and-above GLD line, we added a 15-and-above GLD line. The trend of the two lines with 15+ condition is the same in general, which does not show the distinct turning point after 2012. Considering the ILO's coding logic for labor status is the same as GLD's and the differences before 2005 and after 2010 do not follow a certain pattern, we would suggest that the 2012 turnning point in the figure 1 results from change of definition on the PBS's side and our methodology aligns with ILO.       
+
+![lfp_comparison2](utilities/LFP_figure_2.png)
 
 In order to find out the reason for the continuous gaps between GLD and BPS in 1992-2012, we compared other variables such as marital status and literacy. The close results show that the sample size and weight we used should be the same as those reports used. In that sense, sample size and weight should not be the cause.
 

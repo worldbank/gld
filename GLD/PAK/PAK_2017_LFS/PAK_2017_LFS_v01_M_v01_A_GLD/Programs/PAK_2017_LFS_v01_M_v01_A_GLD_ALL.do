@@ -218,7 +218,7 @@ local output "`id_data'"
 *<_urban_>
 	gen str1 urban=substr(Prcode,4,1)
 	destring urban, replace
-	recode urban 2=0 3=.
+	recode urban 1=0 2=1 3=. 
 	label var urban "Location is urban"
 	la de lblurban 1 "Urban" 0 "Rural"
 	label values urban lblurban
@@ -892,7 +892,7 @@ upper and lower bonds are the same.
 
 *<_industrycat10_>
 	gen byte industrycat10=floor(S05C10/100)
-	recode industrycat10 1/3=1 5/9=2 10/33=3 35/39=4 41/43=5 45/47=6 49/63=7 64/82=8 84=9 85/99=10
+	recode industrycat10 (1/3=1) (5/9=2) (10/33=3) (35/39=4) (41/43=5) (45/47 55/56=6) (49/53 58/63=7) (64/82=8) (84=9) (85/99=10)
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
@@ -1134,7 +1134,7 @@ upper and lower bonds are the same.
 	gen occup_2=substr(occup_isco_2, 1, 1)
 	destring occup_2, replace
 	recode occup_2 (0=10)
-	replace occup=. if S05C18!=1
+	replace occup_2=. if S05C18!=1
 	label var occup_2 "1 digit occupational classification secondary job 7 day recall"
 	label values occup_2 lbloccup
 *</_occup_2_>

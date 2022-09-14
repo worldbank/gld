@@ -874,7 +874,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_industrycat10_>
 	gen byte industrycat10=Sec5_5_10
-	recode industrycat10 2 5=1 10/14=2 15/37=3 40 41=4 45=5 50/55=6 60/64=7 65/74=8 75=9 80/99=10
+	recode industrycat10 (2 5=1) (10/14=2) (15/37=3) (40 41=4) (45=5) (50/55=6) (60/64=7) (65/74=8) (75=9) (80/99=10)
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
@@ -1120,7 +1120,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 	gen occup_2=substr(occup_isco_2, 1, 1)
 	destring occup_2, replace
 	recode occup_2 (0=10)
-	replace occup=. if Sec5_5_18!=1
+	replace occup_2=. if Sec5_5_18!=1
 	label var occup_2 "1 digit occupational classification secondary job 7 day recall"
 	label values occup_2 lbloccup
 *</_occup_2_>
