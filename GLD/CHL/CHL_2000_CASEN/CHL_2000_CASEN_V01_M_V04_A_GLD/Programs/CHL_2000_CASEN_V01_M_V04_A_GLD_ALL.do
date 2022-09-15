@@ -741,7 +741,7 @@ la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
 *<_occup_>
 	gen  occup = oficio
 	recode occup 11=.
-	recode occup 0=10
+	recode occup 1=10 2=1 3=2 4=3 5=4 6=5 7=6 8=7 9=8 10=9 
 	replace occup=. if lstatus!=1
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
