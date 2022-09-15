@@ -138,7 +138,7 @@ drop _merge
 
 
 *<_veralt_>
-	gen veralt = ""
+	gen veralt = "V02"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
