@@ -32,7 +32,7 @@ set varabbrev off, permanently
 *----------0.1: Set necessary paths
 
 * Path to harmonized .dta file
-global path_to_harmonization ["Path to harmonized dta file/CCC_YYYY_Survey-Name_V0X_M_V0Z_A_GLD_[ALL].dta"]
+global path_to_harmonization "Z:\GLD-Harmonization\573465_JT\PAK\PAK_1992_LFS\PAK_1992_LFS_v01_M_v01_A_GLD\Data\Harmonized\PAK_1992_LFS_v01_M_v01_A_GLD_ALL.dta"
 
 * Path to other harmonized files for dynamic comparison
 * Leave as `" "' to skip this (no others or to be done later)
@@ -42,16 +42,16 @@ global path_to_other_harmonization `" "'
 
 
 * Survey ID as per CCC_YYYY_[Survey-Name]_v##_M_v##_A_GLD_[ALL] convention
-global survey_id "CCC_YYYY_Survey-Name_V0X_M_V0Z_A_GLD_[ALL]"
+global survey_id "PAK_1992_LFS_v01_M_v01_A_GLD_[ALL]"
 
 
 * Path to folder to hold output
-global path_to_output_folder ["Path to output\Work\Output"]
+global path_to_output_folder "Z:\GLD-Harmonization\573465_JT\PAK\PAK_1992_LFS\PAK_1992_LFS_v01_M_v01_A_GLD\Work\Output"
 
 * Path to folder containing helper files
 * Should be "[*]:\Support and Documentation\Q Checks\Helper Programs"
 * where * is the letter of your mapping to GLD network
-global path_to_helpers ["Path to helpers - recommend use path to local GitHub main branch copy"]
+global path_to_helpers "C:\Users\wb573465\OneDrive - WBG\Documents\GitHub\gld\Support\D - Q Checks\Helper Programs"
 
 
 /*========================    NOTE    ==================================
