@@ -6,7 +6,7 @@
 
 <_Program name_>				COL_2002_GLD_ECH_v01
 <_Application_>					Stata 17
-<_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) Eliana Carranza, Andreas Eberhardt, Alejandro Rueda-Sanz
+<_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) 
 <_Date created_>				2022-05-20
 
 -------------------------------------------------------------------------
