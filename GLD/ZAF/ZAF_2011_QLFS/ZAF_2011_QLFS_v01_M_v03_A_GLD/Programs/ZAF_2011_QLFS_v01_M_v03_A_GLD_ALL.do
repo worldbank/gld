@@ -930,9 +930,9 @@ Q310STARTBUSNS "Start a business if the circumstances have allowed?"
 	gen skill_level=substr(occup_isco, 1, 1)
 	destring skill_level, replace
 	gen occup_skill = .
-	replace occup_skill=1 if inrange(skill_level, 1, 3)
+	replace occup_skill=3 if inrange(skill_level, 1, 3)
 	replace occup_skill=2 if inrange(skill_level, 4, 8)
-	replace occup_skill=3 if inrange(skill_level, 9, 9)	
+	replace occup_skill=1 if inrange(skill_level, 9, 9)	
 	drop skill_level
 	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
 	label values occup_skill lblskill
