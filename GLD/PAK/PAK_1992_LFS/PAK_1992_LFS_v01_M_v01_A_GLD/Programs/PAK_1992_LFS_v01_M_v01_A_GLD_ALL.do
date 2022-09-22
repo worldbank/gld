@@ -862,25 +862,22 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 *</_occup_orig_>
 
 
+/*<_occup_isco_>
+
+Even thouth the official docs show that PAK 1992 uses PSCO 1994, they still use their first set of codes which are based on ISCO 68 instead of ISCO 88. Because we do not have a standard translation of ISCO 68 to the 10 categories occup, here we only kept the original occupation variable q08. 
+
+*<_occup_isco_>*/
+
+
 *<_occup_isco_>
-	gen occup_isco=q08
-	destring occup_isco, replace
-	recode occup_isco (01/10 14/20 26 30 35/40 43/50 53/60 63/70 75/80 84/90 94/99=.)
-	replace occup_isco=occup_isco*100
-	tostring occup_isco, replace format(%04.0f)
-	replace occup_isco="" if lstatus!=1 | occup_isco=="."
+	gen occup_isco=.
+	*replace occup_isco="" if lstatus!=1 | occup_isco=="."
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
 
 *<_occup_skill_>
-	gen skill_level=substr(occup_isco, 1, 1)
-	destring skill_level, replace
 	gen occup_skill=.
-	replace occup_skill=1 if skill_level==9
-	replace occup_skill=2 if inrange(skill_level, 4, 8)
-	replace occup_skill=3 if inrange(skill_level, 1, 3)
-	replace occup_skill=. if skill_level==0 | lstatus!=1
 	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
 	label values occup_skill lblskill
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
@@ -888,7 +885,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_occup_>
-	  gen occup=skill_level
+	  gen occup=.
 	  replace occup=. if lstatus!=1
 	  recode occup (0=10) 
 	  label var occup "1 digit occupational classification, primary job 7 day recall"
