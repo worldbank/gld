@@ -28,8 +28,8 @@
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
-<_ISCO Version_>				ISCO-88 </_ISCO Version_>
-<_OCCUP National_>				PSCO 1994 </_OCCUP National_>
+<_ISCO Version_>				ISCO-68 </_ISCO Version_>
+<_OCCUP National_>				PSCO 1968 </_OCCUP National_>
 <_ISIC Version_>				ISIC Rev.2 </_ISIC Version_>
 <_INDUS National_>				PSIC 1970 </_INDUS National_>
 -----------------------------------------------------------------------
