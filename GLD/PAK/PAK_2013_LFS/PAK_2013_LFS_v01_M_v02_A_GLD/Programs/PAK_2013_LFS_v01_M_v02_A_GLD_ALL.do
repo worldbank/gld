@@ -36,7 +36,7 @@
 
 <_Version Control_>
 
-* Date: [YYYY-MM-DD] File: [As in Program name above] - [Description of changes]
+* Date: [2022-09-22] File: [As in Program name above] - [Recode firm size using the four categories from 2012]
 * Date: [YYYY-MM-DD] File: [As in Program name above] - [Description of changes]
 
 </_Version Control_>
