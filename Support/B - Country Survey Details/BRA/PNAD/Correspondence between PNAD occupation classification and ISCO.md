@@ -18,7 +18,7 @@ Table below shows the CBO versions, the years they are used in PNAD, and where t
 
 # Converting national system to international system
 
-The overall mapping is done in one step. We use three different `.dta` to carry out the harmonization at the 2 digits level. That is to merge in the correspondence table when harmonizing and use matched ISCO codes to generate the GLD `occup_isco` variable. The [`isco_88_cbo_80_DD.dta`](utilities/isco_88_cbo_80_DD.dta) maps 1981-1990 PNADs occupation codes to ISCO-88, while files [`isco_88_cbo_91_DD.dta`](utilities/isco_88_cbo_91_DD.dta), and [`isco_88_cbo_dom_DD.dta`](utilities/isco_88_cbo_dom_DD.dta) do the same for 1992-2001 PNADs and 2002-2011 PNADs, respectively.
+The overall mapping is done in one step. We use three different `.dta` to carry out the harmonization at the 2 digits level. That is to merge in the correspondence table when harmonizing and use matched ISCO codes to generate the GLD `occup_isco` variable. The [`isco_88_cbo_80_DD.dta`](utilities/Additional%20Data/isco_88_cbo_80_DD.dta) maps 1981-1990 PNADs occupation codes to ISCO-88, while files [`isco_88_cbo_91_DD.dta`](utilities/Additional%20Data/isco_88_cbo_91_DD.dta), and [`isco_88_cbo_dom_DD.dta`](utilities/Additional%20Data/isco_88_cbo_dom_DD.dta) do the same for 1992-2001 PNADs and 2002-2011 PNADs, respectively.
 
 # Issues with conversion and definitional changes
 

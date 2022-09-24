@@ -101,3 +101,7 @@ Similarly to the cases above, the occupation variable will be coded
 conditionally based on the round: January will receive one coding based
 on the 1992 PSOC and the rest of the rounds will be coded based on the
 2012 PSOC.
+
+## Correspondence Tables
+
+The data files used to create the conversions between national and international classifications [is available in the Additional Data folder](utilities/Additional%20Data)

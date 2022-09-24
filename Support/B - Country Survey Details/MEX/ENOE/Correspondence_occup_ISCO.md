@@ -17,8 +17,8 @@ The INEGI does provide correspondence tables between different classifications, 
 <br></br>
 ![](utilities/sinco_cmo_start.PNG)
 <br></br>
- 
-This means that we can only map directly to ISCO from 2013. The information from 2005 to 2012 needs first to be mapped to SINCO and then, in a second step, from SINCO to ISCO. 
+
+This means that we can only map directly to ISCO from 2013. The information from 2005 to 2012 needs first to be mapped to SINCO and then, in a second step, from SINCO to ISCO.
 
 ## Creating a map between national and international occupation codes
 
@@ -29,7 +29,7 @@ The logic of the mapping is the same as the one used for converting the national
 <br></br>
 ![](utilities/sinco_isco_overview_difficult.PNG)
 <br></br>
- 
+
 The easiest match is the one in the green box. SINCO code `1526` matches a single code in ISCO, namely `1439`. This match we can make in the first iteration. SINCO code `1521`, in the orange box, is a bit trickier. It matches two different ISCO codes (`1342` and `1343`) so there is no direct match. If we, however, reduce the match to a three digit ISCO codes, both instances start with `134` so we can match SINCO `1521` perfectly to a code `1340`, where the last zero is just padding to make sure all codes are of four digits.
 
 The most difficult case is the case in the red box. Here SINCO code `1524` describes an occupation classification that ISCO essentially views as two completely different occupations. Even if we try to reduce to a single digit we cannot map with certainty: with two categories the algorithm chooses at random between `2000` and `1000`. For a more detailed explanation of the process see [the document on NAICS to ISIC correspondence](Correspondence_NAICS_ISIC.md), the distribution of the quality of matches is shown below in the [section on merging in the correspondence info]( #merging-the-correspondence-with-the-survey-data).
@@ -69,7 +69,7 @@ Merging directly is possible for the years 2013 onwards. As an example here we u
 <br></br>
 ![](utilities/matching_outcome_sinco_isco.png)
 <br></br>
- 
+
 This does not mean, however, that 84 percent of matches are at four digits since, if there is no perfect agreement at ISCO-08 with four digits, the mapping tries to find agreement with fewer digits. In fact, as the image below (left-hand side) shows, in 2014 about half of all matches are at four digits, another 20 percent are respectively at three and two digits, while only 10 percent of matches from SINCO codes are at a one digit ISCO-08 code.
 
 <br></br>
@@ -102,5 +102,4 @@ The likelihood of this happening is low. For example, the most common CMO code, 
 
 The [Excel document containing the correspondences between occupation classifications](utilities/tablas_comparativas.xlsx) is the basis of the mapping. In particular, the first sheet contains the SINCO to ISCO classification, while the second sheet contains the SINCO to CMO classification.
 
-Each are used in the `R` algorithms to [code directly from SINCO to ISCO](utilities/sinco_to_isco_correspondance.R) or to [code from CMO to ISCO via SINCO](utilities/cmo_isco_via_sinco.R). These codes create the `dta` files in the harmonization, namely the [CMO_09_ISCO_08.dta file](utilities/CMO_09_ISCO_08.dta) and the [SINCO_11_ISCO_08.dta file](utilities/SINCO_11_ISCO_08.dta).
-
+Each are used in the `R` algorithms to [code directly from SINCO to ISCO](utilities/sinco_to_isco_correspondance.R) or to [code from CMO to ISCO via SINCO](utilities/cmo_isco_via_sinco.R). These codes create the `dta` files in the harmonization, namely the [CMO_09_ISCO_08.dta file](utilities/Additional%20Data/CMO_09_ISCO_08.dta) and the [SINCO_11_ISCO_08.dta file](utilities/Additional%20Data/SINCO_11_ISCO_08.dta).

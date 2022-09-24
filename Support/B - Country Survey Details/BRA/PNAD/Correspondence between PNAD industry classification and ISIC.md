@@ -20,7 +20,7 @@ Table below summarizes the process, showing the CNAE versions, the years they ar
 
 # Converting national system to international system
 
-For the years using CNAE 1980/1991 the information is first converted to CNAE-DOM 1.0 information, using the file [`Ind_Corresp_198090s.dta`](utilities/Ind_Corresp_198090s.dta).
+For the years using CNAE 1980/1991 the information is first converted to CNAE-DOM 1.0 information, using the file [`Ind_Corresp_198090s.dta`](utilities/Additional%20Data/Ind_Corresp_198090s.dta).
 
 Then information in CNAE-Dom 1.0 is mapped to ISIC Revision 3. This last mapping is nearly perfect except for CNAE-Dom 1.0 category 53 – inexistent in ISIC – needing to be mapped to either 51 or 52.
 
