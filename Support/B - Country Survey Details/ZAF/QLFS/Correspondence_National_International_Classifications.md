@@ -1,6 +1,6 @@
-# Correspondences between national and international classifications
+utilities/Additional%20Data/# Correspondences between national and international classifications
 
-This document describes the methodology used to map information on occupation coded in the survey per the national classification schemes to the international ISIC and ISCO codes. For industrial classification, all QLFS years use [Standard Industrial Classification of All Economic Activities, Fifth Edition (SIC 5)](http://www.statssa.gov.za/additional_services/sic/contents.htm) which corresponds to *International Standard Industrial Classification of all Economic Activities (ISIC Rev. 3)*. For occupational classification, all QLFS years use [South African Standard Classification of Occupations published in 2003 (SASCO 2003)](http://www.statssa.gov.za/classifications/codelists/SASCO_2003.pdf) which corresponds to *International Standard Classification of Occupations (ISCO-88).* This is the  correspondence [dta file](/Support/Country%20Survey%20Details/ZAF/QLFS/utilities/isco88_sasco03_mapping.dta) for mapping SASCO-03 to ISCO-88. 
+This document describes the methodology used to map information on occupation coded in the survey per the national classification schemes to the international ISIC and ISCO codes. For industrial classification, all QLFS years use [Standard Industrial Classification of All Economic Activities, Fifth Edition (SIC 5)](http://www.statssa.gov.za/additional_services/sic/contents.htm) which corresponds to *International Standard Industrial Classification of all Economic Activities (ISIC Rev. 3)*. For occupational classification, all QLFS years use [South African Standard Classification of Occupations published in 2003 (SASCO 2003)](http://www.statssa.gov.za/classifications/codelists/SASCO_2003.pdf) which corresponds to *International Standard Classification of Occupations (ISCO-88).* This is the  correspondence [dta file](/Support/Country%20Survey%20Details/ZAF/QLFS/utilities/Additional%20Data/isco88_sasco03_mapping.dta) for mapping SASCO-03 to ISCO-88.
 
 ## Correspondence in occupation classification
 
@@ -20,7 +20,7 @@ The original variable `Q42OCCUPATION` in QLFS codes occupations is at four-digit
 
 Note that the only exception to the "N.C.E." grouping rule is category "*215 Physical sciences technologists*" in SASCO 2003, as no category 215 in ISCO-88 can be a perfect match for it. The solution is to map "*215 Physical sciences technologists*" to category *"210 Physical, mathematical and engineering science professionals"* in ISCO-88.
 
-In the harmonization code, the correspondence between SASCO 2003 and ISCO-88 is made [using this conversion `.dta` file](utilities/isco88_sasco03_mapping.dta)
+In the harmonization code, the correspondence between SASCO 2003 and ISCO-88 is made [using this conversion `.dta` file](utilities/Additional%20Data/isco88_sasco03_mapping.dta)
 
 ## Correspondence in industry classification
 

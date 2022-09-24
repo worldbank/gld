@@ -1,6 +1,6 @@
 # Changes in Geographic codes
 
-As of August 2022, Thailand has 76 provinces (changwat) and one administrative area representing Bangkok. IThe provinces are grouped by the NSO into 5 regions: Bangkok Metropolis, Central, Northern, Northeastern and Southern. 
+As of August 2022, Thailand has 76 provinces (changwat) and one administrative area representing Bangkok. IThe provinces are grouped by the NSO into 5 regions: Bangkok Metropolis, Central, Northern, Northeastern and Southern.
 
 In GLD the regions are coded under the `subnatid1` variable while provinces are coded as `subnatid2`
 
@@ -13,4 +13,4 @@ Over the years covered, there were changes in the province composition as new pr
 |     1993          |     Nong Bua Lamphu    |     Udon Thani           |
 |     2011          |     Bueng Kan          |     Nong Khai            |
 
-Refer to [this administrative unit repository](http://www.statoids.com/uth.html) for more information on the historical changes in provinces over time.
+Refer to [this administrative unit repository](http://www.statoids.com/uth.html) for more information on the historical changes in provinces over time. Codes used for province correspondence in the harmonization code are available [here under Additional Data](utilities/Additional%20Data/changwad_subnatid2_prev.dta)

@@ -174,3 +174,7 @@ Conceptually, the harmonizer gave priority to internal data validity (e.g. inter
     2.  If the labels are different, then have a human look and manually decide what the label should be.
 
 In many cases, the labels for the same value were virtually the same — so the same label could be used. In the \~15 or so cases where manual labels had to be decided, most of these were due to re-ordering of words that a simple computer matching algorithm can’t see through, but a human can tell with confidence that the Provinces are in fact, the same one.
+
+## Labels file
+
+The data file used in the harmonization to create the admin labels is [available here](utilities/Additional%20Data/GLD_PHL_admin2_labels.dta).
