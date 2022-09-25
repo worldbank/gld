@@ -46,19 +46,11 @@ body:
       label: Relevant erroneus code
       description: Please copy the snippets with the relevant variable(s). Kindly copy with start and end tags.
       placeholder: |
-        *<_educat7_>
-            gen byte educat7 =.
-            replace educat7 = 1 if inrange(general_ed,1,4)
-            replace educat7 = 2 if general_ed == 5
-            replace educat7 = 3 if general_ed == 6
-            replace educat7 = 4 if inrange(general_ed,7,8)
-            replace educat7 = 5 if general_ed == 10
-            replace educat7 = 6 if general_ed == 11
-            replace educat7 = 7 if inrange(general_ed,12,13)
-            label var educat7 "Level of education 1"
-            la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
-            label values educat7 lbleducat7
-        *</_educat7_>
+        *<_industry_orig_year_>
+          gen industry_orig_year = p_industry_code
+          replace industry_orig_year = . if lstatus != 1
+          label var industry_orig_year "Original industry record main job 12 month recall"
+        *</_industry_orig_year_>
       render: shell
     validations:
       required: true
@@ -69,19 +61,11 @@ body:
       label: Udated code
       description: Please copy your proposal of how the variable(s) should be coded
       placeholder: |
-        *<_educat7_>
-            gen byte educat7 =.
-            replace educat7 = 1 if inrange(general_ed,1,4)
-            replace educat7 = 2 if general_ed == 5
-            replace educat7 = 3 if general_ed == 6
-            replace educat7 = 4 if general_ed == 7
-            replace educat7 = 5 if inrange(general_ed,8,10)
-            replace educat7 = 6 if general_ed == 11
-            replace educat7 = 7 if inrange(general_ed,12,13)
-            label var educat7 "Level of education 1"
-            la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
-            label values educat7 lbleducat7
-        *</_educat7_>
+        *<_industry_orig_year_>
+          gen industry_orig_year = p_industry_code
+          replace industry_orig_year = . if lstatus_year != 1
+          label var industry_orig_year "Original industry record main job 12 month recall"
+        *</_industry_orig_year_>
       render: shell
 
   - type: checkboxes
