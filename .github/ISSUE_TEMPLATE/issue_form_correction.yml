@@ -35,7 +35,7 @@ body:
     attributes:
       label: What is the error?
       description: Please let us know in a couple of words, what the error you have notied is about?
-      placeholder: Tell us what went wrong! For example: variable educat7 wrongly attributed for high schoolers.
+      placeholder: Tell us what went wrong! For example --> variable educat7 wrongly attributed for high schoolers.
       value: "A bug happened!"
     validations:
       required: true
