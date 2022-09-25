@@ -4,11 +4,14 @@ title: "[Bug]: "
 labels: ["bug", "triage"]
 assignees:
   - octocat
+
 body:
+
   - type: markdown
     attributes:
       value: |
         Thanks for taking the time to fill out this bug report!
+
   - type: input
     id: contact
     attributes:
@@ -17,6 +20,7 @@ body:
       placeholder: ex. email@example.com
     validations:
       required: false
+
   - type: input
     id: country
     attributes:
@@ -25,6 +29,7 @@ body:
       placeholder: ex. use the iso code name for example COL is the ISO code for Colombia.
     validations:
       required: True
+
   - type: input
     id: Year
     attributes:
@@ -33,6 +38,7 @@ body:
       placeholder: ex. 1990 and 1996.
     validations:
       required: True
+
   - type: textarea
     id: what-happened
     attributes:
@@ -42,12 +48,14 @@ body:
       value: "A bug happened!"
     validations:
       required: true
+
   - type: textarea
     id: logs
     attributes:
       label: Relevant code
       description: Please copy and paste any relevant code output. This will be automatically formatted into code, so no need for backticks.
       render: shell
+      
   - type: checkboxes
     id: terms
     attributes:
