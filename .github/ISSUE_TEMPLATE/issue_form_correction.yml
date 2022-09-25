@@ -25,7 +25,7 @@ body:
     id: survey
     attributes:
       label: Survey Name
-      description: What survey is this referring to? Kindly use the Use the [CCC]_[YYYY]_[SurveyName] structure. For series: [CCC]_[Year_Start]_[SurveyName] - [CCC]_[Year_End]_[SurveyName].
+      description: What survey is this referring to? Kindly use the Use the (CCC)_(YYYY)_(SurveyName) structure. For series: (CCC)_(Year_Start)_(SurveyName) - (CCC)_(Year_End)_(SurveyName).
       placeholder: e.g., IND_2017_PLFS - IND_2019_PLFS
     validations:
       required: True
