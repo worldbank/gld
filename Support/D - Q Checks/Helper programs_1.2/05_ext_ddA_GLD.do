@@ -52,6 +52,8 @@
 			
 			keep  year value ub lb countrycode source
 			order year value ub lb countrycode source
+			
+
 		} 
 	}
 	else {
@@ -62,6 +64,8 @@
 		format value ub lb %14.2gc
 		keep  year value ub lb countrycode source
 		order year value ub lb countrycode source
+		
+
 	} 
 	
 	tempfile pop1
@@ -79,6 +83,9 @@
 	count
 	if `r(N)' == 0 {
 		di "UN population not found"
+		destring value, replace // add this because UNDATA still loads with data populated in string
+		keep value
+	
 	} 
 	
 	else {
@@ -103,6 +110,9 @@
 		format value ub lb %14.2gc
 		keep  year value ub lb countrycode source
 		order year value ub lb countrycode source
+		
+
+		
 	}
 	tempfile pop2
 	save    `pop2'
@@ -137,6 +147,8 @@
 		format value ub lb %14.2gc
 		keep  year value ub lb countrycode source
 		order year value ub lb countrycode source
+		
+		
 	} 
 	tempfile pop3
 	save    `pop3'	
@@ -171,6 +183,8 @@
 		format value ub lb %14.2gc
 		keep  year value ub lb countrycode source
 		order year value ub lb countrycode source
+		
+		
 	} 
 	tempfile pop4
 	save    `pop4'	
@@ -184,6 +198,7 @@
 	gen lb = 0.95*value
 	format value ub lb %14.2gc
 	order year value ub lb countrycode source
+	
 	
 	tempfile pop5
 	save    `pop5'	
