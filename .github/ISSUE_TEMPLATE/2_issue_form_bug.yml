@@ -60,7 +60,7 @@ body:
     id: terms
     attributes:
       label: Code of Conduct
-      description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/worldbank/gld/blob/9b84af121806669dbf4b4e19e6fa5a80fbdf30a2/Support/E%20-%20Community%20Guidelines/CODE_OF_CONDUCT.md)
+      description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/worldbank/gld/blob/main/Support/E%20-%20Community%20Guidelines/CODE_OF_CONDUCT.md)
       options:
         - label: I agree to follow this project's Code of Conduct
           required: true

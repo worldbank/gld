@@ -1,5 +1,5 @@
 name: Code Correction Report
-description: Inform the GLD team on an error in the harmonization you have detected.
+description: Inform the GLD team of an error in the harmonization you have detected.
 title: "[Correction]: "
 labels: ["correct", "improvement"]
 assignees:
@@ -34,9 +34,8 @@ body:
     id: error-describe
     attributes:
       label: What is the error?
-      description: Please let us know in a couple of words, what the error you have notied is about?
+      description: Please let us know, in a couple of words, what the error you have notied is about?
       placeholder: Tell us what went wrong! For example --> variable educat7 wrongly attributed for high schoolers.
-      value: "A bug happened!"
     validations:
       required: true
 
@@ -58,8 +57,8 @@ body:
   - type: textarea
     id: updated-code
     attributes:
-      label: Udated code
-      description: Please copy your proposal of how the variable(s) should be coded
+      label: Updated code
+      description: Please copy your proposal of how the variable(s) should be coded.
       placeholder: |
         *<_industry_orig_year_>
           gen industry_orig_year = p_industry_code
@@ -72,7 +71,7 @@ body:
     id: terms
     attributes:
       label: Code of Conduct
-      description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/worldbank/gld/blob/9b84af121806669dbf4b4e19e6fa5a80fbdf30a2/Support/E%20-%20Community%20Guidelines/CODE_OF_CONDUCT.md)
+      description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/worldbank/gld/blob/main/Support/E%20-%20Community%20Guidelines/CODE_OF_CONDUCT.md)
       options:
         - label: I agree to follow this project's Code of Conduct
           required: true
