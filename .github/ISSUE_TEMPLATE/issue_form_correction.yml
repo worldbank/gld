@@ -1,0 +1,78 @@
+name: Code Correction Report
+description: Inform the GLD team on an error in the harmonization you have detected.
+title: "[Correction]: "
+labels: ["correct", "improvement"]
+assignees:
+  - octocat
+
+body:
+
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to let us know about the issue!
+
+  - type: input
+    id: contact
+    attributes:
+      label: Contact Details
+      description: How can we get in touch with you if we need more info?
+      placeholder: ex. email@example.com
+    validations:
+      required: false
+
+  - type: input
+    id: survey
+    attributes:
+      label: Survey Name
+      description: What survey is this referring to? Kindly use the Use the [CCC]_[YYYY]_[SurveyName] structure. For series --> [CCC]_[Year_Start]_[SurveyName] - [CCC]_[Year_End]_[SurveyName]
+      placeholder: e.g., IND_2017_PLFS - IND_2019_PLFS
+    validations:
+      required: True
+
+  - type: textarea
+    id: error-describe
+    attributes:
+      label: What is the error?
+      description: Please let us know in a couple of words, what the error you have notied is about?
+      placeholder: Tell us what went wrong! For example --> variable educat7 wrongly attributed for high schoolers.
+      value: "A bug happened!"
+    validations:
+      required: true
+
+  - type: textarea
+    id: current-code
+    attributes:
+      label: Relevant erroneus code
+      description: Please copy the snippets with the relevant variable(s). Kindly copy with start and end tags.
+      placeholder: |
+        *<_industry_orig_year_>
+          gen industry_orig_year = p_industry_code
+          replace industry_orig_year = . if lstatus != 1
+          label var industry_orig_year "Original industry record main job 12 month recall"
+        *</_industry_orig_year_>
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: updated-code
+    attributes:
+      label: Udated code
+      description: Please copy your proposal of how the variable(s) should be coded
+      placeholder: |
+        *<_industry_orig_year_>
+          gen industry_orig_year = p_industry_code
+          replace industry_orig_year = . if lstatus_year != 1
+          label var industry_orig_year "Original industry record main job 12 month recall"
+        *</_industry_orig_year_>
+      render: shell
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/worldbank/gld/blob/9b84af121806669dbf4b4e19e6fa5a80fbdf30a2/Support/E%20-%20Community%20Guidelines/CODE_OF_CONDUCT.md)
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true
