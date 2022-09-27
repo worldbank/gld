@@ -1,4 +1,4 @@
-name: Bug Report
+name: Bug Report - Text Based
 description: File a bug report using text and code outputs.
 title: "[Bug]: "
 labels: ["bug", "triage"]
@@ -55,7 +55,7 @@ body:
       label: Relevant code
       description: Please copy and paste any relevant code output. This will be automatically formatted into code, so no need for backticks.
       render: shell
-      
+
   - type: checkboxes
     id: terms
     attributes:
