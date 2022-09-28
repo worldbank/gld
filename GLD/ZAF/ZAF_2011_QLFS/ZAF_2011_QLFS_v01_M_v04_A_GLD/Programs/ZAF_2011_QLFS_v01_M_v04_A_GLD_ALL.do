@@ -35,7 +35,7 @@
 
 * Date: [2022-04-06] File: [As in Program name above] - [Adding wage variable]
 * Date: [2022-07-06] File: [As in Program name above] - [Adding new GLD variables: isced_version/isco_version/isic_version/educat_orig/vocational_field_orig]
-* Date: [2022-09-22] File: [As in Program name above] - [Correcting occupation skill level]
+* Date: [2022-09-22] File: [As in Program name above] - [Correcting occupation skill level; correcting typo (631 to 621 in the ISCO88 code list); coding 5164 to category "Service and market sales workers"]
 
 </_Version Control_>
 
@@ -945,7 +945,6 @@ Q310STARTBUSNS "Start a business if the circumstances have allowed?"
 	  gen occup=Occup
 	  recode occup 10=9
 	  replace occup=. if Q42OCCUPATION==9999
-	  replace occup=10 if Q42OCCUPATION==5164
 	  replace occup=. if lstatus!=1
 	  label var occup "1 digit occupational classification, primary job 7 day recall"
   	  la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
