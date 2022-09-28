@@ -206,3 +206,9 @@ KBJI-1982 was used for most of the years as it constantly exists in the harmoniz
 Same as ISCO 1988, KBJI-2002 also has 0 to 9, 10 major groups in total. At three-digit level, only category 2 "Professionals", categroy 3 "Technicians and associate professionals", and category 0 "Armed forces" have different numbers of subgroups. KBJI-2002 has 19 whereas ISCO has 18 in category 2; and KBJI has 19 compared to 21 in ISCO's category 3; and 5 in KBJI category 0 versus 1 in ISCO. Therefore, we only recoded subgroups in "Professionals", "Technicians and associate professionals", and "Armed forces". 
 
 ![mapping_KBJI02_ISCO](utilities/correspondence_KBJI2002_ISCO88.png)
+
+## Coding of variable `occup` from ISCO-68
+
+The GLD team has not found any satisfactory correspondence table between ISCO-1968 and ISCO-88 or 2008, allowing to then use the first digit of that classification to create the variable `occup`. In the Indonesian context there is a special case that allows such comparison. Namely, in the years 2011 to 2015, the raw data contains occupation information both in KJI 1982 format (equivalent to ISCO-68, at 3-digit level) and KBJI 2002 format (equivalent to ISCO-88, at 1 digit). The raw data from all these years is appended and an intra-Indonesian mapping between both classifications is created to allow us to map the one-digit KBJI 2002 code (equivalent to `occup`) in the years 2000 to 2005, when the raw data only contains KJI1982 data at three digits. This is not done for the years 1994 to 1999 when the KJI1982 information is only at two digits.
+
+The mapping algorithm, which divides between urban and rural assignments for greater accuracy, [can be found here](utilities/IDN_correspondence_KBJI.do), the outputted `.dta` file used to do the mapping [can be downloaded here](utilities/Additional%20Data/occup.dta).
