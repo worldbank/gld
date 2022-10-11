@@ -225,7 +225,6 @@ save "`path_in'/ECH_2004.dta", replace
 	la de lblurban 1 "Urban" 0 "Rural"
 	label values urban lblurban
 *</_urban_>
-*</_urban_>
 
 *<_subnatid1_>
 	gen subnatid1 = ""
@@ -687,7 +686,7 @@ gen lstatus = .
 replace lstatus = 1 if !missing(p24) & inrange(p5,12,9999)
 * Unemployed is looking (p16 == 1) *and* available (p23 == 1)
 replace lstatus = 2 if p16 == 1 & p23 == 1
-* Note that Colombian data treats anyone available (independently of whether looking 	for a job or not as unemployed, we don't)
+* Note that Colombian data treats anyone available (independently of whether looking for a job or not as unemployed, we don't)
 replace lstatus = 3 if missing(lstatus) & inrange(p5,12,9999)
 * In comparing with I2D2 (reduced to months July to September, ages 12 and up)
 * We obtain 10,046 people that are unemployed as looking for a job *and* available
