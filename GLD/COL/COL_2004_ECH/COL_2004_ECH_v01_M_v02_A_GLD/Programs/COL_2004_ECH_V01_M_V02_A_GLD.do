@@ -6,7 +6,7 @@
 
 <_Program name_>				COL_2004_GLD_ECH_v01
 <_Application_>					Stata 17
-<_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) Eliana Carranza, Andreas Eberhardt, Alejandro Rueda-Sanz
+<_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) 
 <_Date created_>				2022-05-20
 
 -------------------------------------------------------------------------
@@ -230,10 +230,10 @@ save "`path_in'/ECH_2004.dta", replace
 *<_subnatid1_>
 	gen subnatid1 = ""
 	replace subnatid1 =" 1 - Atlantica" if dpto == 13 | dpto == 20 | dpto ==23 | dpto == 44 | dpto ==47 | dpto == 70 | dpto ==8
-	replace subnatid1 =" 2 - Oriental" if  dpto == 15 | dpto == 25 | dpto ==50 | dpto == 54 | dpto ==68 
+	replace subnatid1 =" 2 - Oriental" if  dpto == 15 | dpto == 25 | dpto ==50 | dpto == 54 | dpto ==68
 	replace subnatid1 =" 3 - Central" if  dpto == 17 | dpto == 18 | dpto ==41 | dpto == 63 | dpto ==66 | dpto == 73
 	replace subnatid1 =" 4 - Pacifica" if  dpto == 19 | dpto == 27 | dpto ==52 | dpto == 76 | dpto == 5
-	replace subnatid1 =" 5 - Santa Fe de Bogota" if  dpto == 11 
+	replace subnatid1 =" 5 - Santa Fe de Bogota" if  dpto == 11
 
 /* <_subnatid1_note>
 
@@ -247,8 +247,8 @@ save "`path_in'/ECH_2004.dta", replace
 
 *<_subnatid2_>
 	gen subnatid2 = string(dpto)
-	replace subnatid2 = "5 - Antioquia" if subnatid2 == "05"
-	replace subnatid2 = "8 - Atlántico" if subnatid2 == "08"
+	replace subnatid2 = "5 - Antioquia" if subnatid2 == "5"
+	replace subnatid2 = "8 - Atlántico" if subnatid2 == "8"
 	replace subnatid2 = "11 - Bogotá, D.C." if subnatid2 == "11"
 	replace subnatid2 = "13 - Bolívar" if subnatid2 == "13"
 	replace subnatid2 = "15 - Boyacá" if subnatid2 == "15"
@@ -668,7 +668,7 @@ foreach v of local ed_var {
 ==============================================================================================%%*/
 
 *<_minlaborage_>
-	gen byte minlaborage = 10
+	gen byte minlaborage = 12
 	label var minlaborage "Labor module application age"
 *</_minlaborage_>
 
@@ -677,10 +677,26 @@ foreach v of local ed_var {
 
 {
 *<_lstatus_>
-	destring p12, force replace
-	gen byte lstatus = p12
-	recode lstatus 4=3 5=3 6=3
-	replace lstatus = . if age < minlaborage
+destring p24 p16 p5 p23, force replace
+
+* Reduce to months in I2D2 data
+keep if inrange(mes,7,9)
+
+* Generate lstatus
+gen lstatus = .
+replace lstatus = 1 if !missing(p24) & inrange(p5,12,9999)
+* Unemployed is looking (p16 == 1) *and* available (p23 == 1)
+replace lstatus = 2 if p16 == 1 & p23 == 1
+* Note that Colombian data treats anyone available (independently of whether looking 	for a job or not as unemployed, we don't)
+replace lstatus = 3 if missing(lstatus) & inrange(p5,12,9999)
+* In comparing with I2D2 (reduced to months July to September, ages 12 and up)
+* We obtain 10,046 people that are unemployed as looking for a job *and* available
+* I2D2 (based on sedlac) has 10,191 unemployed as looking for a job only
+* DANE has 10,947 answers to unemployment block (p49 not missing) for people available only (independent of whether looking or not)
+* For GLD either looking but not available or not looking but available are "potential labour force"
+
+tab lstatus if inrange(p5,12,9999),m
+
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
@@ -875,7 +891,7 @@ activities of private households
 	replace occup_skill = 3 if inrange(occup, 1, 3)
 	replace occup_skill = 2 if inrange(occup, 4, 8)
 	replace occup_skill = 1 if occup == 9
-	replace occup_skill =. if occup==99 
+	replace occup_skill =. if occup==99
 	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
 	label values occup_skill lblskill
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
