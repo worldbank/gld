@@ -1,6 +1,6 @@
 /*******************************************************************************
 								
-                            GLD CHECKS Version 1.2
+                            GLD CHECKS Version 1.3
                          08. Block 2 - External data
 		    2B.2. Labor force variables 2: Sectors, detail - Output figures
 				  				          		   	   																   

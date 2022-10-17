@@ -1,6 +1,6 @@
 /*******************************************************************************
 								
-                             GLD CHECKS Version 1.2
+                             GLD CHECKS Version 1.3
                           03. Block 2 - External data
                     2B. Labor force variables - data download  	  
 		   	   																   
@@ -823,7 +823,7 @@
 			
 			rename period year 
 			gen source       = "ILO-1"
-			gen countrycode  = "IND" 
+			gen countrycode  = "${ccode3}"  
 			gen ub      = 1.05*value
 			gen lb      = 0.95*value
 			format value ub lb %4.2fc
@@ -870,7 +870,7 @@
 			
 			rename period year 
 			gen source       = "ILO-2"
-			gen countrycode  = "IND" 
+			gen countrycode  = "${ccode3}"  
 			gen ub      = 1.05*value
 			gen lb      = 0.95*value
 			format value ub lb %4.2fc
@@ -973,29 +973,40 @@
 			
 			sum period
 			assert `r(min)' == `r(max)'
-
 			
-			** Continue 
-			keep period value classif1
-			sum value 
-			if `r(N)' == 0 {
-				replace value ="." if value == "NA"
-				destring value, replace
-			}
+			** We should have two values (numerator & denominator)
+			count
+			if `r(N)' == 2 {
 				
-			reshape wide value, i(period) j(classif1) string
-			
-			gen value = 100*valueECO_SECTOR_IND/valueECO_SECTOR_TOTAL
-			drop valueECO_*
-			
-			rename period year 
-			gen source       = "ILO-1"
-			gen countrycode  = "IND" 
-			gen ub      = 1.05*value
-			gen lb      = 0.95*value
-			format value ub lb %4.2fc
-			keep  year value ub lb countrycode source
-			order year value ub lb countrycode source
+				** Continue 
+				keep period value classif1
+				sum value 
+				if `r(N)' == 0 {
+					replace value ="." if value == "NA"
+					destring value, replace
+				}
+					
+				reshape wide value, i(period) j(classif1) string
+				
+				gen value = 100*valueECO_SECTOR_IND/valueECO_SECTOR_TOTAL
+				drop valueECO_*
+				
+				rename period year 
+				gen source       = "ILO-1"
+				gen countrycode  = "${ccode3}"  
+				gen ub      = 1.05*value
+				gen lb      = 0.95*value
+				format value ub lb %4.2fc
+				keep  year value ub lb countrycode source
+				order year value ub lb countrycode source
+			} 
+			else {
+				clear
+				set obs 1
+				gen source = "ILO-1"
+				gen countrycode  = "${ccode3}" 
+			}
+		   
 		} 
 		tempfile ind2
 		save    `ind2'	
@@ -1023,25 +1034,37 @@
 			keep if yeardiff == mindiff
 			sum period
 			keep if period == `r(min) ' // keep earliest
-			count 
-			assert `r(N)' == 2 // ind & total 
-
-			** Continue
-			keep period value classif1
+			// count 
+			// assert `r(N)' == 2 // ind & total 
 			
-			reshape wide value, i(period) j(classif1) string
-			
-			gen value = 100*valueECO_SECTOR_IND/valueECO_SECTOR_TOTAL
-			drop valueECO_*
-			
-			rename period year 
-			gen source       = "ILO-2"
-			gen countrycode  = "IND" 
-			gen ub      = 1.05*value
-			gen lb      = 0.95*value
-			format value ub lb %4.2fc
-			keep  year value ub lb countrycode source
-			order year value ub lb countrycode source
+			** We should have two values (numerator & denominator)
+			count
+			if `r(N)' == 2 {
+				
+				** Continue
+				keep period value classif1
+				
+				reshape wide value, i(period) j(classif1) string
+				
+				gen value = 100*valueECO_SECTOR_IND/valueECO_SECTOR_TOTAL
+				drop valueECO_*
+				
+				rename period year 
+				gen source       = "ILO-2"
+				gen countrycode  = "${ccode3}"  
+				gen ub      = 1.05*value
+				gen lb      = 0.95*value
+				format value ub lb %4.2fc
+				keep  year value ub lb countrycode source
+				order year value ub lb countrycode source
+			} 
+			else {
+				clear
+				set obs 1
+				gen source = "ILO-2"
+				gen countrycode  = "${ccode3}"  
+				
+			}
 		} 	
 		
 		tempfile ind3
@@ -1075,9 +1098,9 @@
 		}
 		
 		encode source, gen(s1)
-		save "Block2_External/01_data/13industry.dta", replace 			
-				
-	}			
+		save "Block2_External/01_data/13industry.dta", replace 						
+	}	
+	
 ********************************************************************************
 *                             14. Services                                     *
 ********************************************************************************
@@ -1136,31 +1159,41 @@
 			sum period
 			keep if period == `r(min) ' // keep earliest 
 			
-			sum period
-			assert `r(min)' == `r(max)'
-
+			// sum period
+			// assert `r(min)' == `r(max)'
 			
-			** Continue 
-			keep period value classif1
-			sum value 
-			if `r(N)' == 0 {
-				replace value ="." if value == "NA"
-				destring value, replace
+			** We should have two values (numerator & denominator)
+			count
+			if `r(N)' == 2 {
+				** Continue 
+				keep period value classif1
+				sum value 
+				if `r(N)' == 0 {
+					replace value ="." if value == "NA"
+					destring value, replace
+				}
+
+				reshape wide value, i(period) j(classif1) string
+				
+				gen value = 100*valueECO_SECTOR_SER/valueECO_SECTOR_TOTAL
+				drop valueECO_*
+				
+				rename period year 
+				gen source       = "ILO-1"
+				gen countrycode  = "${ccode3}"  
+				gen ub      = 1.05*value
+				gen lb      = 0.95*value
+				format value ub lb %4.2fc
+				keep  year value ub lb countrycode source
+				order year value ub lb countrycode source
 			}
-
-			reshape wide value, i(period) j(classif1) string
-			
-			gen value = 100*valueECO_SECTOR_SER/valueECO_SECTOR_TOTAL
-			drop valueECO_*
-			
-			rename period year 
-			gen source       = "ILO-1"
-			gen countrycode  = "IND" 
-			gen ub      = 1.05*value
-			gen lb      = 0.95*value
-			format value ub lb %4.2fc
-			keep  year value ub lb countrycode source
-			order year value ub lb countrycode source
+			else {
+				clear
+				set obs 1
+				gen source = "ILO-1"
+				gen countrycode  = "${ccode3}" 
+				
+			}
 		} 
 		tempfile ser2
 		save    `ser2'	
@@ -1189,25 +1222,37 @@
 			keep if yeardiff == mindiff
 			sum period
 			keep if period == `r(min) ' // keep earliest
-			count 
-			assert `r(N)' == 2 // ser & total  
-
-			** Continue
-			keep period value classif1
+			// count 
+			// assert `r(N)' == 2 // ser & total  
 			
-			reshape wide value, i(period) j(classif1) string
+			** We should have two values (numerator & denominator)
+			count
+			if `r(N)' == 2 {
+				
+				** Continue
+				keep period value classif1
+				
+				reshape wide value, i(period) j(classif1) string
+				
+				gen value = 100*valueECO_SECTOR_SER/valueECO_SECTOR_TOTAL
+				drop valueECO_*
+				
+				rename period year 
+				gen source       = "ILO-2"
+				gen countrycode  = "${ccode3}"  
+				gen ub      = 1.05*value
+				gen lb      = 0.95*value
+				format value ub lb %4.2fc
+				keep  year value ub lb countrycode source
+				order year value ub lb countrycode source
+			} 
+			else {
+				clear
+				set obs 1
+				gen source = "ILO-1"
+				gen countrycode  = "${ccode3}"  
+			}
 			
-			gen value = 100*valueECO_SECTOR_SER/valueECO_SECTOR_TOTAL
-			drop valueECO_*
-			
-			rename period year 
-			gen source       = "ILO-2"
-			gen countrycode  = "IND" 
-			gen ub      = 1.05*value
-			gen lb      = 0.95*value
-			format value ub lb %4.2fc
-			keep  year value ub lb countrycode source
-			order year value ub lb countrycode source
 		} 
 		tempfile ser3
 		save    `ser3'			
@@ -1296,7 +1341,7 @@
 			
 			count if classif12 == "ISIC4"
 			
-			if `r(N)' != 0 {
+			if `r(N)' != 0 {                  // if we have ISIC4 codes
 				keep if classif12 == "ISIC4"
 				
 				gen industrycat10 =.
@@ -1321,33 +1366,46 @@
 				replace industrycat10 = 99 if classif1 == "ECO_ISIC4_TOTAL"
 			} 
 			else {
-				keep if classif12 == "ISIC3"  
-				gen industrycat10 =.
-				replace industrycat10 = 1  if classif1 == "ECO_ISIC3_A" | classif1 == "ECO_ISIC3_B" 
-				replace industrycat10 = 2  if classif1 == "ECO_ISIC3_C" 
-				replace industrycat10 = 3  if classif1 == "ECO_ISIC3_D"
-				replace industrycat10 = 4  if classif1 == "ECO_ISIC3_E" 
-				replace industrycat10 = 5  if classif1 == "ECO_ISIC3_F"
-				replace industrycat10 = 6  if classif1 == "ECO_ISIC3_G" | classif1 == "ECO_ISIC3_H"
-				replace industrycat10 = 7  if classif1 == "ECO_ISIC3_I" 
-				replace industrycat10 = 8  if classif1 == "ECO_ISIC3_J" | classif1 == "ECO_ISIC3_K" 
-				replace industrycat10 = 9  if classif1 == "ECO_ISIC3_L"
-				#delimit ; 
-				replace industrycat10 = 10 if classif1 == "ECO_ISIC3_M" | classif1 == "ECO_ISIC3_N" |
-											  classif1 == "ECO_ISIC3_O" | classif1 == "ECO_ISIC3_P" |
-											  classif1 == "ECO_ISIC3_Q" | classif1 == "ECO_ISIC3_X" ;
-				#delimit cr	
-				replace industrycat10 = 99 if classif1 == "ECO_ISIC3_TOTAL"
+				count if classif12 == "ISIC3"
+				
+				if `r(N)' != 0 {
+				
+					keep if classif12 == "ISIC3"   // if we have ISIC3 codes
+					gen industrycat10 =.
+					replace industrycat10 = 1  if classif1 == "ECO_ISIC3_A" | classif1 == "ECO_ISIC3_B" 
+					replace industrycat10 = 2  if classif1 == "ECO_ISIC3_C" 
+					replace industrycat10 = 3  if classif1 == "ECO_ISIC3_D"
+					replace industrycat10 = 4  if classif1 == "ECO_ISIC3_E" 
+					replace industrycat10 = 5  if classif1 == "ECO_ISIC3_F"
+					replace industrycat10 = 6  if classif1 == "ECO_ISIC3_G" | classif1 == "ECO_ISIC3_H"
+					replace industrycat10 = 7  if classif1 == "ECO_ISIC3_I" 
+					replace industrycat10 = 8  if classif1 == "ECO_ISIC3_J" | classif1 == "ECO_ISIC3_K" 
+					replace industrycat10 = 9  if classif1 == "ECO_ISIC3_L"
+					#delimit ; 
+					replace industrycat10 = 10 if classif1 == "ECO_ISIC3_M" | classif1 == "ECO_ISIC3_N" |
+												  classif1 == "ECO_ISIC3_O" | classif1 == "ECO_ISIC3_P" |
+												  classif1 == "ECO_ISIC3_Q" | classif1 == "ECO_ISIC3_X" ;
+					#delimit cr	
+					replace industrycat10 = 99 if classif1 == "ECO_ISIC3_TOTAL"
+				}	
+				else {                             // if we have don't have ISIC4 nor ISIC3 codes
+					clear 
+					set obs 1
+					gen countrycode  = "${ccode3}"  
+					gen problem = "No ISIC4 nor ISIC3 codes"
+					
+				}
 			}
 			
 			
-			sum value 
+			cap sum value 
 			if `r(N)' == 0 {
-				replace value ="." if value == "NA"
-				destring value, replace
+				cap replace value ="." if value == "NA"
+				cap destring value, replace
 			}
 
 		} 
+		
 		save "Block2_External/01_data/temp_ilosectors1.dta", replace 
 		
 	*-- 02. Find all sectors in ILO (2)
@@ -1402,37 +1460,54 @@
 			
 			replace industrycat10 = 99 if classif1 == "ECO_DETAILS_TOTAL"
 		}
+		
 		save "Block2_External/01_data/temp_ilosectors2.dta", replace
 			
 		
 	*-- 02. Check sector by sector in ILO (1)
-		forvalues j = 1/10 {
+		use "Block2_External/01_data/temp_ilosectors1.dta", clear
+		describe, replace
+		count if name == "problem"
+		if `r(N)' == 0 {
+	
+			forvalues j = 1/10 {
+				
+				use "Block2_External/01_data/temp_ilosectors1.dta", clear
+				keep if industrycat10 == `j' | industrycat10 == 99 
+				
+				collapse (sum) value, by(period industrycat10)
+				
+				keep period value industrycat10
+				reshape wide value, i(period) j(industrycat10) 
+				
+				gen value = 100*value`j'/value99
+				drop value`j' value99
+				
+				rename period year 
+				gen source       = "ILO-1"
+				gen countrycode  = "${ccode3}" 
+				gen ub      = 1.05*value
+				gen lb      = 0.95*value
+				format value ub lb %4.2fc
+				keep  year value ub lb countrycode source
+				order year value ub lb countrycode source
+				
+				tempfile ind1_`j'
+				save    `ind1_`j''	
 			
-			use "Block2_External/01_data/temp_ilosectors1.dta", clear
-			keep if industrycat10 == `j' | industrycat10 == 99 
-			
-			collapse (sum) value, by(period industrycat10)
-			
-			keep period value industrycat10
-			reshape wide value, i(period) j(industrycat10) 
-			
-			gen value = 100*value`j'/value99
-			drop value`j' value99
-			
-			rename period year 
-			gen source       = "ILO-1"
-			gen countrycode  = "IND" 
-			gen ub      = 1.05*value
-			gen lb      = 0.95*value
-			format value ub lb %4.2fc
-			keep  year value ub lb countrycode source
-			order year value ub lb countrycode source
-			
-			tempfile ind1_`j'
-			save    `ind1_`j''	
-		
+			}
+		} 
+		else {
+			di "no sector information available, block skipped"
+			forvalues j = 1/10 {    // saving the temp files so that the code runs 
+				clear 
+				set obs 1 
+				gen countrycode = "${ccode3}" 
+				gen problem     = "no sector information available"
+				tempfile ind1_`j'   
+				save    `ind1_`j''
+			}
 		}
-		
 		
 	*-- 02. Check sector by sector in ILO (2)
 		forvalues j = 1/10 {
@@ -1450,7 +1525,7 @@
 			
 			rename period year 
 			gen source       = "ILO-2"
-			gen countrycode  = "IND" 
+			gen countrycode  = "${ccode3}" 
 			gen ub      = 1.05*value
 			gen lb      = 0.95*value
 			format value ub lb %4.2fc

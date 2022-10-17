@@ -1,6 +1,6 @@
 /*******************************************************************************
 								
-                            GLD CHECKS Version 1.2
+                            GLD CHECKS Version 1.3
                           00. Prepare to run checks  	  
 		   	   																   
 *******************************************************************************/	
@@ -66,6 +66,14 @@
 	global ccode2 `ccode2'
 
 	
+************************   New features in version 1.3  ************************	
+	
+ *- 1. Do-file 06,	13. Industry, 02. ILO   added "if" block for robustness
+ *- 2. Do-file 06,	13. Industry, 03. ILO   added "if" block for robustness
+ *- 3. Do-file 06,	14. Sevices, [multiple] added "if" block for robustness
+ *- 4. Do-file 06,	15. *ndustry category   added "if" block for robustness
+ *- 5. Do-file 06,	Change ccode from string "IND" to global "$ccode3" 
+	
 ************************   New features in version 1.2  ************************
 
  *-  1. Template. Deleted manual installation of necessary modules 
@@ -84,7 +92,6 @@
  *- 14. Do-file 15, line 509. Flag occupations where industry is 0.0
  *- 15. Do-file 15, line 252. Varlist changed to employed-total 
  
-
 **************************   END OF THE DO-FILE  *******************************		
 	
 	

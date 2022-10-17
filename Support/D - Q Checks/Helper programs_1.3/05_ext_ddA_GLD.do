@@ -1,6 +1,6 @@
 /*******************************************************************************
 								
-                          GLD CHECKS Version 1.2
+                          GLD CHECKS Version 1.3
                        02. Block 2 - External data
                    2A. Demographic variables - data download  	  
 		   	   																   
