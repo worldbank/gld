@@ -28,7 +28,8 @@
 	}
 	else {
 		
-		keep if classif1 == "OCU_ISCO88_TOTAL"
+		* Keep only total data (can be, depending on period ISCO 88 or 08)
+		keep if classif1 == "OCU_ISCO88_TOTAL" | classif1 == "OCU_ISCO08_TOTAL"
 		
 		//keep if period  == ${cyear}
 		** Adjustment in case we don't have data for ${cyear}
