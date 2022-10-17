@@ -79,6 +79,12 @@
 	count
 	if `r(N)' == 0 {
 		di "UN population not found"
+		* Small issue is, if data is not found (e.g. with TZ as ${ccode2}, even if series2 is there,
+		* all variables (inlcuding values) become "str2045" format. If this is saved empty and then
+		* united with others, it will give an error, thus destring value
+		destring value, replace
+		keep value
+		
 	} 
 	
 	else {
