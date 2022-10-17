@@ -930,10 +930,10 @@
 		// Employment in industry (% of total employment) (modeled ILO estimate)(SL.IND.EMPL.ZS)
 		
 		cap wbopendata, indicator(SL.IND.EMPL.ZS) country(${ccode3}) year(${cyear}) clear long
-		if _rc {
+		if _rc { // works as "if TRUE", where anything other than _rc code 0 (no error) is TRUE
 			di "data not found in wbopendata"
 		}
-		else {
+		else { // can obtain wbopendata
 			gen source = "WDI"
 			rename sl_ind_empl_zs value
 			gen ub = 1.05*value
@@ -952,6 +952,9 @@
 		dbnomics import, provider(ILO) dataset(EMP_TEMP_SEX_ECO_NB) ref_area(${ccode3}) 
 		frequency(A) sex(SEX_T) clear;
 		#delimit cr 
+		
+		* Check whether a file has been downloaded by checking number of rows
+		* if no series found the "clear" option will leave an empty dataset.
 		count
 		if `r(N)' == 0 {
 			di "Dbnomics data not found"
@@ -1018,6 +1021,8 @@
 		dbnomics import, provider(ILO) dataset(EMP_2EMP_SEX_ECO_NB) ref_area(${ccode3}) 
 		frequency(A) sex(SEX_T) clear;
 		#delimit cr
+		
+		* If nothing found, will have an empty dataset 
 		count
 		if `r(N)' == 0 {
 			di "Dbnomics data not found"
@@ -1118,7 +1123,7 @@
 		// Employment in services (% of total employment) (modeled ILO estimate)(SL.SRV.EMPL.ZS)
 		
 		cap wbopendata, indicator(SL.SRV.EMPL.ZS) country(${ccode3}) year(${cyear}) clear long
-		if _rc {
+		if _rc { // works as "if TRUE", where anything other than _rc code 0 (no error) is TRUE
 			di "data not found in wbopendata"
 		}
 		else {
@@ -1140,6 +1145,8 @@
 		dbnomics import, provider(ILO) dataset(EMP_TEMP_SEX_ECO_NB) ref_area(${ccode3}) 
 		frequency(A) sex(SEX_T) clear;
 		#delimit cr 
+		
+		* If nothing found, will have an empty dataset 
 		count
 		if `r(N)' == 0 {
 			di "Dbnomics data not found"
@@ -1206,6 +1213,8 @@
 		dbnomics import, provider(ILO) dataset(EMP_2EMP_SEX_ECO_NB) ref_area(${ccode3}) 
 		frequency(A) sex(SEX_T) clear;
 		#delimit cr
+		
+		* If nothing found, will have an empty dataset 
 		count
 		if `r(N)' == 0 {
 			di "Dbnomics data not found"
@@ -1312,6 +1321,8 @@
 		dbnomics import, provider(ILO) dataset(EMP_TEMP_SEX_ECO_NB) ref_area(${ccode3}) 
 		frequency(A) sex(SEX_T) clear;
 		#delimit cr 
+		
+		* If nothing found, will have an empty dataset 
 		count
 		if `r(N)' == 0 {
 			di "Dbnomics data not found"
@@ -1415,6 +1426,8 @@
 		dbnomics import, provider(ILO) dataset(EMP_2EMP_SEX_ECO_NB) ref_area(${ccode3}) 
 		frequency(A) sex(SEX_T) clear;
 		#delimit cr 
+		
+		* If nothing found, will have an empty dataset 
 		count
 		if `r(N)' == 0 {
 			di "Dbnomics data not found"
@@ -1600,5 +1613,4 @@
 	
 	}
 	
-**************************   END OF THE DO-FILE  *******************************	
-	
+**************************   END OF THE DO-FILE  *******************************
