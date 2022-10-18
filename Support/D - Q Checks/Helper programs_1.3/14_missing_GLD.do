@@ -20,7 +20,7 @@
 	// TO DO. add occupation & education vars 
 	// education applies to all. occupation to those employed / in a sector 
 	
-	keep countrycode year $myvars
+	keep countrycode year $myvars minlaborage age
 	
 	** Generate share variables 
 	foreach v in $myvars {
@@ -33,75 +33,90 @@
 		replace sh_`v' = 0 if  missing(`v')
 	}
 	
- 	keep countrycode year sh_* lstatus empstat wage_no_compen
+ 	keep countrycode year sh_* lstatus empstat wage_no_compen minlaborage age
 	save "Block3_Missing/01_data/missing_temp.dta", replace	
 	
 *-- 02. Compute share of missing 
 	
 	* Block 1. age, male & lfstatus 	
 	use "Block3_Missing/01_data/missing_temp.dta", clear 
-	keep countrycode year sh_age sh_male sh_lstatus
+	keep countrycode year sh_age sh_male
 	collapse (sum) sh_*, by(countrycode year)
 	rename sh_* sh_*_n
 	save "Block3_Missing/01_data/missing_num_b1.dta", replace  
 	
 	use "Block3_Missing/01_data/missing_temp.dta", clear 
-	keep countrycode year sh_age sh_male sh_lstatus
+	keep countrycode year sh_age sh_male
 	collapse (count) sh_*, by(countrycode year)
 	rename sh_* sh_*_d
-	save "Block3_Missing/01_data/missing_den_b1.dta", replace  
+	save "Block3_Missing/01_data/missing_den_b1.dta", replace 
 	
-	* Block 2. empstat & industrycat4
+	* Block 2. lfstatus
 	use "Block3_Missing/01_data/missing_temp.dta", clear 
-	keep if lstatus == 1 // employed 
-	keep countrycode year sh_empstat sh_industrycat4
+	keep if age>= minlaborage & !missing(age)
+	keep countrycode year sh_lstatus
 	collapse (sum) sh_*, by(countrycode year)
 	rename sh_* sh_*_n
 	save "Block3_Missing/01_data/missing_num_b2.dta", replace  
 	
 	use "Block3_Missing/01_data/missing_temp.dta", clear 
+	keep if age>= minlaborage & !missing(age)
+	keep countrycode year sh_lstatus
+	collapse (count) sh_*, by(countrycode year)
+	rename sh_* sh_*_d
+	save "Block3_Missing/01_data/missing_den_b2.dta", replace 
+	
+	* Block 3. empstat & industrycat4
+	use "Block3_Missing/01_data/missing_temp.dta", clear 
+	keep if lstatus == 1 // employed 
+	keep countrycode year sh_empstat sh_industrycat4
+	collapse (sum) sh_*, by(countrycode year)
+	rename sh_* sh_*_n
+	save "Block3_Missing/01_data/missing_num_b3.dta", replace  
+	
+	use "Block3_Missing/01_data/missing_temp.dta", clear 
 	keep if lstatus == 1 // employed 
 	keep countrycode year sh_empstat sh_industrycat4
 	collapse (count) sh_*, by(countrycode year)
 	rename sh_* sh_*_d
-	save "Block3_Missing/01_data/missing_den_b2.dta", replace  
-
-	* Block 3. wage_no_compen
-	use "Block3_Missing/01_data/missing_temp.dta", clear 
-	keep if empstat == 1 // Paid employee 
-	keep countrycode year sh_wage_no_compen
-	collapse (sum) sh_*, by(countrycode year)
-	rename sh_* sh_*_n
-	save "Block3_Missing/01_data/missing_num_b3.dta", replace  	
-	
-	use "Block3_Missing/01_data/missing_temp.dta", clear 
-	keep if empstat == 1 // Paid employee 
-	keep countrycode year sh_wage_no_compen
-	collapse (count) sh_*, by(countrycode year)
-	rename sh_* sh_*_d
 	save "Block3_Missing/01_data/missing_den_b3.dta", replace  
-	
-	* Block 4. unitwage 
+
+	* Block 4. wage_no_compen
 	use "Block3_Missing/01_data/missing_temp.dta", clear 
-	keep if !missing(wage_no_compen) // has wage data 
-	keep countrycode year sh_unitwage
+	keep if empstat == 1 // Paid employee 
+	keep countrycode year sh_wage_no_compen
 	collapse (sum) sh_*, by(countrycode year)
 	rename sh_* sh_*_n
 	save "Block3_Missing/01_data/missing_num_b4.dta", replace  	
 	
 	use "Block3_Missing/01_data/missing_temp.dta", clear 
-	keep if !missing(wage_no_compen) // has wage data 
-	keep countrycode year sh_unitwage
+	keep if empstat == 1 // Paid employee 
+	keep countrycode year sh_wage_no_compen
 	collapse (count) sh_*, by(countrycode year)
 	rename sh_* sh_*_d
 	save "Block3_Missing/01_data/missing_den_b4.dta", replace  
 	
+	* Block 5. unitwage 
+	use "Block3_Missing/01_data/missing_temp.dta", clear 
+	keep if !missing(wage_no_compen) // has wage data 
+	keep countrycode year sh_unitwage
+	collapse (sum) sh_*, by(countrycode year)
+	rename sh_* sh_*_n
+	save "Block3_Missing/01_data/missing_num_b5.dta", replace  	
+	
+	use "Block3_Missing/01_data/missing_temp.dta", clear 
+	keep if !missing(wage_no_compen) // has wage data 
+	keep countrycode year sh_unitwage
+	collapse (count) sh_*, by(countrycode year)
+	rename sh_* sh_*_d
+	save "Block3_Missing/01_data/missing_den_b5.dta", replace  
+	
 *-- 03. Combine all blocks 	
 	use "Block3_Missing/01_data/missing_num_b1.dta", clear
-	forvalues i = 2/4 {
+	forvalues i = 2/5 {
 		merge 1:1 countrycode year using "Block3_Missing/01_data/missing_num_b`i'.dta", nogen
 	}
-	forvalues i = 1/4 {
+	forvalues i = 1/5 {
 		merge 1:1 countrycode year using "Block3_Missing/01_data/missing_den_b`i'.dta", nogen
 	}
 
@@ -120,7 +135,7 @@
 	export excel using "01_summary/B3_missing_vars.xlsx", firstrow(variables) replace
 
 	erase "Block3_Missing/01_data/missing_temp.dta"
-	forvalues i = 1/4 {
+	forvalues i = 1/5 {
 		erase "Block3_Missing/01_data/missing_num_b`i'.dta"
 		erase "Block3_Missing/01_data/missing_den_b`i'.dta"
 	}	
