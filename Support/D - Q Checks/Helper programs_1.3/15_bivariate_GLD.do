@@ -184,6 +184,8 @@
 	replace correct_4 = 1 if lstatus == 1 & !missing(empstat)
 	replace correct_4 = 1 if lstatus == 2 &  missing(empstat)
 	replace correct_4 = 1 if lstatus == 3 &  missing(empstat)
+	replace correct_4 = 1 if lstatus == 1 & missing(empstat) // this should not be called inconsistent as this is only a case of missing values already reported under the missingness section
+
 	sum correct_4
 	if `r(min)'  == 0  {
 		gen reason_4  = "Empl status and LF status inconsistent" if correct_4 == 0
