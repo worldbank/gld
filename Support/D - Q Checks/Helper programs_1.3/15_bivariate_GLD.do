@@ -131,6 +131,7 @@
 		if isco_version2 == "1988" {
 		
 			gen correct_3 = 0
+			replace correct_3 = 1 if occup == 10 & occup_isco == "0110"
 			replace correct_3 = 1 if occup == 1  & occup_skill == 3 & inrange(occup_isco, "1000", "1319")
 			replace correct_3 = 1 if occup == 2  & occup_skill == 3 & inrange(occup_isco, "2000", "2460")
 			replace correct_3 = 1 if occup == 3  & occup_skill == 3 & inrange(occup_isco, "3000", "3480")
