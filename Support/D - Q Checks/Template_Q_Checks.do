@@ -14,18 +14,13 @@
 *-- 01. User completes this section 
 
 	** Path to "Helper programs" folder 
-	global helper "/Users/elenacasanovas/Documents/03_WB/01_GLD/USER_VERSION/D - Q Checks/Helper programs_1.2" 
+	global helper "[Path file to helpers here]" 
 		
 	** Path to GLD data file 
-	// global mydata "/Users/elenacasanovas/Documents/03_WB/01_GLD/USER_VERSION/IND_2019_PLFS_V01_M_V01_A_GLD_ALL.dta" 
-	// global mydata "/Users/elenacasanovas/Documents/03_WB/01_GLD/USER_VERSION/IND_2011_EUS_V01_M_V01_A_GLD_ALL.dta" 
-	// global mydata "/Users/elenacasanovas/Documents/03_WB/01_GLD/USER_VERSION/MEX_2016_ENOE_V01_M_V02_A_GLD_ALL.dta" 
-	// global mydata "/Users/elenacasanovas/Documents/03_WB/01_GLD/USER_VERSION/MEX_2016_ENOE_V01_M_V02_A_GLD_ALL.dta" 
-	// global mydata "/Users/elenacasanovas/Documents/03_WB/01_GLD/USER_VERSION/ZAF_2019_QLFS_v01_M_v02_A_GLD_ALL.dta"  
-	global mydata "/Users/elenacasanovas/Documents/03_WB/01_GLD/USER_VERSION/TUR_2018_HLFS_V01_M_V01_A_GLD_ALL.dta"
+	global mydata "[Path file to harmonized GLD file here]" 
 	
 	** Choose output folder
-	global output "/Users/elenacasanovas/Documents/03_WB/01_GLD/USER_VERSION/D - Q Checks/Work"
+	global output "[Path file to folder where output to be stored (commonly Work)]" 
 	
 		
 *-- 02. Run checks 
