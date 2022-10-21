@@ -65,16 +65,16 @@
 			
 			** Checks   // FIX CORR W/ INDUSTRYCAT4 == 4 
 			gen correct_2 = 0
-			replace correct_2 = 1 if industrycat10 == 1  & industrycat4 == 1 &   inrange(industrycat_isic, "0100", "0300")
-			replace correct_2 = 1 if industrycat10 == 2  & industrycat4 == 2 &   inrange(industrycat_isic, "0500", "0900")
-			replace correct_2 = 1 if industrycat10 == 3  & industrycat4 == 2 &   inrange(industrycat_isic, "1000", "3300")
-			replace correct_2 = 1 if industrycat10 == 4  & industrycat4 == 2 &   inrange(industrycat_isic, "3500", "3900")
-			replace correct_2 = 1 if industrycat10 == 5  & industrycat4 == 2 &   inrange(industrycat_isic, "4100", "4300")
-			replace correct_2 = 1 if industrycat10 == 6  & industrycat4 == 3 & ( inrange(industrycat_isic, "4500", "4700") | inrange(industrycat_isic, "5500", "5600") )
-			replace correct_2 = 1 if industrycat10 == 7  & industrycat4 == 3 & ( inrange(industrycat_isic, "4900", "5300") | inrange(industrycat_isic, "5800", "6300") ) 
-			replace correct_2 = 1 if industrycat10 == 8  & industrycat4 == 3 &   inrange(industrycat_isic, "6400", "8200")
-			replace correct_2 = 1 if industrycat10 == 9  & industrycat4 == 3 &   inrange(industrycat_isic, "8400", "8400")
-			replace correct_2 = 1 if industrycat10 == 10 & industrycat4 == 3 &   inrange(industrycat_isic, "8500", "9900")  
+			replace correct_2 = 1 if industrycat10 == 1  & industrycat4 == 1 &   inrange(industrycat_isic, "0100", "0399")
+			replace correct_2 = 1 if industrycat10 == 2  & industrycat4 == 2 &   inrange(industrycat_isic, "0500", "0999")
+			replace correct_2 = 1 if industrycat10 == 3  & industrycat4 == 2 &   inrange(industrycat_isic, "1000", "3399")
+			replace correct_2 = 1 if industrycat10 == 4  & industrycat4 == 2 &   inrange(industrycat_isic, "3500", "3999")
+			replace correct_2 = 1 if industrycat10 == 5  & industrycat4 == 2 &   inrange(industrycat_isic, "4100", "4399")
+			replace correct_2 = 1 if industrycat10 == 6  & industrycat4 == 3 & ( inrange(industrycat_isic, "4500", "4799") | inrange(industrycat_isic, "5500", "5699") )
+			replace correct_2 = 1 if industrycat10 == 7  & industrycat4 == 3 & ( inrange(industrycat_isic, "4900", "5399") | inrange(industrycat_isic, "5800", "6399") ) 
+			replace correct_2 = 1 if industrycat10 == 8  & industrycat4 == 3 &   inrange(industrycat_isic, "6400", "8299")
+			replace correct_2 = 1 if industrycat10 == 9  & (industrycat4 == 3 | industrycat4 == 4) &   inrange(industrycat_isic, "8400", "8499")
+			replace correct_2 = 1 if industrycat10 == 10 & (industrycat4 == 3 | industrycat4 == 4) &   inrange(industrycat_isic, "8500", "9999")  
 			sum correct_2
 			if `r(min)'  == 0  {
 				gen reason_2  = "Industry cross-categories inconsistency" if correct_2 == 0
