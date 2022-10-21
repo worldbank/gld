@@ -20,17 +20,36 @@
 	// TO DO. add occupation & education vars 
 	// education applies to all. occupation to those employed / in a sector 
 	
-	keep countrycode year $myvars
+	keep countrycode year $myvars minlaborage
 	
-	** Generate share variables 
+	** Generate missing share variables 
 	foreach v in $myvars {
+	
+		* Vars age, male should not be missing for any
+		if "`v'" == "age" | "`v'" == "male" { 
+
 			gen sh_`v' =.
-	}
+			replace sh_`v' = 1 if !missing(`v')
+			replace sh_`v' = 0 if  missing(`v')
+
+		}
+		* Else if lstatus, only if >= minlaborage supposed to answer
+		else if "`v'" == "lstatus" {
+
+			gen sh_`v' =.
+			replace sh_`v' = 1 if !missing(`v') & age >= minlaborage 
+			replace sh_`v' = 0 if  missing(`v') & age >= minlaborage 	
+
+		}
+		* All others missing is an issue if lstatus == 1
+		else {
+
+			gen sh_`v' =.
+			replace sh_`v' = 1 if !missing(`v') & lstatus == 1
+			replace sh_`v' = 0 if  missing(`v') & lstatus == 1 	
+
+		}
 	
-	** Fill information & save 
-	foreach v in $myvars {
-		replace sh_`v' = 1 if !missing(`v')
-		replace sh_`v' = 0 if  missing(`v')
 	}
 	
  	keep countrycode year sh_* lstatus empstat wage_no_compen
