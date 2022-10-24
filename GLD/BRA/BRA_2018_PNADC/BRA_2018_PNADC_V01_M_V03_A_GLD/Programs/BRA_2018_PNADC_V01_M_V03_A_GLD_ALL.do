@@ -42,7 +42,7 @@ census sectors; tertiary units - domicile units </_Sampling method_>
 * Date: [2022-08-13] - Changed industry, occup info from ISIC Rev 3 to Rev 4 
 and ISCO-88 to ISCO-08 respectively. Kept one off the old matchings just in case.
 
-* Date 2022/10/24 - Update educat7, subnatidsurvey
+* Date 2022/10/24 - Update educat7, subnatidsurvey, industrycat10
 
 </_Version Control_>
  
@@ -1008,7 +1008,7 @@ and ISCO-88 to ISCO-08 respectively. Kept one off the old matchings just in case
 	replace industrycat10 =  5 if inrange(industrycat10,41,43)
 	replace industrycat10 =  6 if inrange(industrycat10,45,47) | inrange(industrycat10,55,56)
 	replace industrycat10 =  7 if inrange(industrycat10,49,53) | inrange(industrycat10,58,63)
-	replace industrycat10 =  8 if inrange(industrycat10,64,75)
+	replace industrycat10 =  8 if inrange(industrycat10,64,82)
 	replace industrycat10 =  9 if inrange(industrycat10,84,84)
 	replace industrycat10 = 10 if inrange(industrycat10,85,99)
 	recast int industrycat10
@@ -1265,7 +1265,7 @@ and ISCO-88 to ISCO-08 respectively. Kept one off the old matchings just in case
 	replace industrycat10_2 =  5 if inrange(industrycat10_2,41,43)
 	replace industrycat10_2 =  6 if inrange(industrycat10_2,45,47) | inrange(industrycat10_2,55,56)
 	replace industrycat10_2 =  7 if inrange(industrycat10_2,49,53) | inrange(industrycat10_2,58,63)
-	replace industrycat10_2 =  8 if inrange(industrycat10_2,64,75)
+	replace industrycat10_2 =  8 if inrange(industrycat10_2,64,82)
 	replace industrycat10_2 =  9 if inrange(industrycat10_2,84,84)
 	replace industrycat10_2 = 10 if inrange(industrycat10_2,85,99)
 	recast int industrycat10_2
