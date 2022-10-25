@@ -4,34 +4,34 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				PAK_2020_LFS_v01_M_v01_A_GLD_ALL.do </_Program name_>
+<_Program name_>				ETH_1999_LFS_v01_M_v01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata MP 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
-<_Date created_>				2022-06-23 </_Date created_>
+<_Date created_>				2022-09-27 </_Date created_>
 -------------------------------------------------------------------------
-<_Country_>						Pakistan(PAK) </_Country_>
-<_Survey Title_>				Labour Force Survey </_Survey Title_>
-<_Survey Year_>					2020 </_Survey Year_>
-<_Study ID_>					PAK_2020_LFS_v01_M </_Study ID_>
-<_Data collection from (M/Y)_>	[July/2020] </_Data collection from (M/Y)_>
-<_Data collection to (M/Y)_>	[June/2021] </_Data collection to (M/Y)_>
-<_Source of dataset_> 			Pakistan Bureau of Statistics </_Source of dataset_>
-								https://www.pbs.gov.pk/content/microdata
-<_Sample size (HH)_> 			96,440 </_Sample size (HH)_>
-<_Sample size (IND)_> 			570,991 </_Sample size (IND)_>
-<_Sampling method_> 			Stratified two-stage cluster sampling method </_Sampling method_>
-<_Geographic coverage_> 		All urban and rural areas of the four provinces 
-								of Pakistan defined as such by 1998 Population Census, 
-								excluding Federally Administered Tribal Areas (FATA), 
-								military restricted areas, and protected areas of K/P. </_Geographic coverage_>
-<_Currency_> 					Pakistann Rupee </_Currency_>
+<_Country_>						Ethiopia(ETH) </_Country_>
+<_Survey Title_>				National Labour Force Survey </_Survey Title_>
+<_Survey Year_>					1999 </_Survey Year_>
+<_Study ID_>					ETH_1999_LFS_v01_M </_Study ID_>
+<_Data collection from (M/Y)_>	[March/1999] </_Data collection from (M/Y)_>
+<_Data collection to (M/Y)_>	[/] </_Data collection to (M/Y)_>
+<_Source of dataset_> 			Central Statistical Agency </_Source of dataset_>
+								Data is not publicly accessible. World Bank internal use only.
+<_Sample size (HH)_> 			366,695 </_Sample size (HH)_>
+<_Sample size (IND)_> 			81,339 </_Sample size (IND)_>
+<_Sampling method_> 			Stratified two-stage ampling method </_Sampling method_>
+<_Geographic coverage_> 		Both urban and rural parts of the country, 
+								except 6 zones in Somali Region and 2 zones
+								in Affar Region. Homeless persons and foreigners
+								were not covered. </_Geographic coverage_>
+<_Currency_> 					Ethiopian Birr </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
 <_ISCO Version_>				ISCO-08 </_ISCO Version_>
-<_OCCUP National_>				PSCO 2015 </_OCCUP National_>
-<_ISIC Version_>				ISIC Rev.4 </_ISIC Version_>
-<_INDUS National_>				PSIC 2010 </_INDUS National_>
+<_OCCUP National_>				NOIC 1994 </_OCCUP National_>
+<_ISIC Version_>				 </_ISIC Version_>
+<_INDUS National_>				 </_INDUS National_>
 -----------------------------------------------------------------------
 
 <_Version Control_>
@@ -57,9 +57,9 @@ set mem 800m
 *----------1.2: Set directories------------------------------*
 
 local 	drive 	`"Z"'
-local 	cty 	`"PAK"'
+local 	cty 	`"ETH"'
 local 	usr		`"573465_JT"'
-local 	surv_yr `"2020"'
+local 	surv_yr `"1999"'
 local 	year 	"`drive':\GLD-Harmonization\\`usr'\\`cty'\\`cty'_`surv_yr'_LFS"
 local 	main	"`year'\\`cty'_`surv_yr'_LFS_v01_M"
 local 	stata	"`main'\data\stata"
@@ -77,7 +77,7 @@ local output "`id_data'"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	use "`input'\LFS2020-21.dta", clear
+	use "`input'\lforce_2.dta", clear
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -86,7 +86,7 @@ local output "`id_data'"
 {
 
 *<_countrycode_>
-	gen str4 countrycode="PAK"
+	gen str4 countrycode="ETH"
 	label var countrycode "Country code"
 *</_countrycode_>
 
@@ -116,19 +116,19 @@ local output "`id_data'"
 
 
 *<_isco_version_>
-	gen isco_version="isco_2008"
+	gen isco_version="isco_1988"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
 
 *<_isic_version_>
-	gen isic_version="isic_4"
+	gen isic_version=""
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
 
 *<_year_>
-	gen int year=2020
+	gen int year=1999
 	label var year "Year of survey"
 *</_year_>
 
@@ -152,13 +152,13 @@ local output "`id_data'"
 
 
 *<_int_year_>
-	gen int_year=2020
+	gen int_year=1999
 	label var int_year "Year of the interview"
 *</_int_year_>
 
 
 *<_int_month_>
-	gen int_month=7
+	gen int_month=3
 	label de lblint_month 1 "January" 2 "February" 3 "March" 4 "April" 5 "May" 6 "June" 7 "July" 8 "August" 9 "September" 10 "October" 11 "November" 12 "December"
 	label value int_month lblint_month
 	label var int_month "Month of the interview"
@@ -166,46 +166,56 @@ local output "`id_data'"
 
 
 *<_hhid_>
-	egen hhid=concat(PCode HHSNo)
+	foreach var of varlist LF01-LF08{
+		tostring `var', gen(str_`var') format(%03.0f)
+	}
+	egen hhid=concat(str_LF01 str_LF02 str_LF03 str_LF04 str_LF05 str_LF06 str_LF07 str_LF08)
+	replace hhid="" if LF08==.
 	label var hhid "Household id"
 *</_hhid_>
 
 
 *<_pid_>
-	gen person_id=SNo
-	tostring person_id, replace format(%02.0f)
-	egen str13 pid=concat(hhid person_id), p("0")
+	tostring LF10, gen(str_LF10) format(%02.0f)    
+	egen pid=concat(hhid str_LF10)
 	label var pid "Individual ID"
 *</_pid_>
 
 
 *<_weight_>
-	gen weight=Weights
+	gen weight=WGTN
 	label var weight "Household sampling weight"
 *</_weight_>
 
 
+/*<_psu_>
+In the official report, the number of total PSU should be 2,334,
+which is 3 more than what we have here.
+*<_psu_>*/
+
+
 *<_psu_>
-	gen str3 psu=EBCode
+	egen psu = group(LF01 LF02 LF03 LF04 LF05 LF06 LF07)	
 	label var psu "Primary sampling units"
 *</_psu_>
 
 
 *<_ssu_>
-	gen str2 ssu=HHSNo
+	gen ssu=hhid
 	label var ssu "Secondary sampling units"
 *</_ssu_>
 
 
 *<_strata_>
-	gen str2 stratum=substr(PCode,2,2)
-	destring stratum, gen(strata)
+	gen stratum=.
+	replace stratum=1 if LF04==8
+	replace stratum=1 if LF04!=8
 	label var strata "Strata"
 *</_strata_>
 
 
 *<_wave_>
-	gen wave=substr(PCode, 5, 1)
+	gen wave=.
 	label var wave "Survey wave"
 *</_wave_>
 
@@ -218,33 +228,39 @@ local output "`id_data'"
 {
 
 *<_urban_>
-	gen urban=Region
-	recode urban 1=0 2=1 3=. 
-	label var urban "Location is urban"
+	gen urban=.
+	replace urban=1 if LF04!=8
+	replace urban=0 if LF04==8
 	la de lblurban 1 "Urban" 0 "Rural"
 	label values urban lblurban
+	label var urban "Location is urban"
 *</_urban_>
 
 
 *<_subnatid1_>
-	gen subnatid1=Province
-	label de lblsubnatid1 1 "1-Khyber/Pakhtoonkhua" 2 "2-Punjab" 3 "3-Sindh" 4 "4-Balochistan" 
+	gen subnatid1=LF01
+	label de lblsubnatid1 1 "1-Tigray" 2 "2-Affar" 3 "3-Amhara" 4 "4-Oromiya" 5 "5-Somali" 6 "6-Benishangul-gumz" 7 "7-SNNP" 12 "12-Gambella" 13 "13-Harari" 14 "14-Addis Ababa" 15 "15-Dire Dawa"
 	label values subnatid1 lblsubnatid1
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 
 
+/*<_subnatid2_>
+Note that some zones do not have name lables but only codes. That is because
+in the offical annual report, they were grouped at their regional level. 
+*<_subnatid2_>*/
+
+
 *<_subnatid2_>
-	gen city_name=proper(District)
-	replace city_name="Karachi West" if city_name=="West"
-	replace city_name="Karachi East" if city_name=="East"
-	merge m:m city_name using "`stata'\PAK_subnatid2_code_2020.dta"
-	drop if _merge!=3
-	egen city_fullname=concat(city_code city_name), punct(-)
-	labmask city_code, values (city_fullname)
-	rename city_code subnatid2
+	gen code_region=LF01
+	recode code_region (12=8) (13=9) (14=10) (15=11)
+	egen code=concat(code_region LF02), punct(".")
+	merge n:n code using "`input'\ETH_zone_name.dta" 
+	replace zone_name=code if _merge==1
+	drop if _merge==2
+	gen subnatid2=zone_name
+	drop _merge code_region code _merge
 	label var subnatid2 "Subnational ID at Second Administrative Level"
-	drop _merge city_name city_fullname
 *</_subnatid2_>
 
 
@@ -257,14 +273,16 @@ local output "`id_data'"
 
 
 *<_subnatidsurvey_>	
-	gen district=proper(District)
-	egen subnatidsurvey=concat(urban district), p(-)
+	decode LF01, gen(region_name)
+	replace region_name=proper(region_name)
+	decode urban, gen(urban_name)
+	egen subnatidsurvey=concat(region_name urban_name)
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
 
 /* <_subnatid1_prev>
-	subnatid1_prev is coded as missing unless the classification used for subnatid1 has changed since the previous survey.
+subnatid1_prev is coded as missing unless the classification used for subnatid1 has changed since the previous survey.
 </_subnatid1_prev> */
 
 
@@ -312,22 +330,20 @@ local output "`id_data'"
 {
 
 *<_hsize_>
-	gen member_count=1 if S4C3<8
-	replace member_count=0 if mi(member_count)
-	bys hhid: egen byte hsize=sum(member_count)
+	bys hhid: egen hsize=max(LF10)
 	label var hsize "Household size"
 *</_hsize_>
 
 
 *<_age_>
-	gen age=S4C6
+	gen age=LF14
 	replace age=98 if age>98 & age!=.
 	label var age "Individual age"
 *</_age_>
 
 
 *<_male_>
-	gen male=S4C5
+	gen male=LF13
 	recode male 2=0
 	label var male "Sex - Ind is male"
 	la de lblmale 1 "Male" 0 "Female"
@@ -336,31 +352,39 @@ local output "`id_data'"
 
 
 *<_relationharm_>
-	gen byte relationharm=S4C3
-	recode relationharm 4=3 5=4 6 7=5 8 9=6
+	gen byte relationharm=LF12
+	recode relationharm (0=1) (1=2) (2/4=3) (5=4) (6/7=5) (8/9=6)
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm lblrelationharm
 	
 	gen head=1 if relationharm==1
 	bys hhid: egen headcount=total(head)
-	gen pid_head=substr(pid, 13, 1)
-	destring pid_head, replace
-	bys hhid: egen pid_min=min(pid_head)
-	replace relationharm=1 if headcount==0 & pid_head==pid_min 
-	replace relationharm=5 if headcount>1 & pid_head!=pid_min & head==1
+	
+	bys hhid: egen age_max=max(age)
+	replace relationharm=1 if headcount==0 & age==age_max
+	drop head headcount
+	gen head=1 if relationharm==1
+	bys hhid: egen headcount=total(head)
+	
+	bys hhid head : gen order=_n if head==1
+	bys hhid: egen order_max=max(order)
+	replace relationharm=5 if headcount>1 & head==1 & order!=order_max
+	drop head headcount
+	gen head=1 if relationharm==1
+	bys hhid: egen headcount=total(head)
 *</_relationharm_>
 
 
 *<_relationcs_>
-	gen relationcs=S4C3
+	gen relationcs=LF12
 	label var relationcs "Relationship to the head of household - Country original"
 *</_relationcs_>
 
 
 *<_marital_>
-	gen byte marital=S4C7
-	recode marital 2=1 1=2 3=5 
+	gen byte marital=LF27
+	recode marital (1=2) (2=1) (3 5=4) (4=5) (9=.) 
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
 	label values marital lblmarital
@@ -368,7 +392,7 @@ local output "`id_data'"
 
 
 *<_eye_dsablty_>
-	gen eye_dsablty=S4C19
+	gen eye_dsablty=.
 	la de lbleye_dsablty 1 "No" 2 "Yes-some" 3 "Yes-a lot" 4 "Cannot at all"
 	label values eye_dsablty lbleye_dsablty
 	label var eye_dsablty "Disability related to eyesight"
@@ -376,7 +400,7 @@ local output "`id_data'"
 
 
 *<_hear_dsablty_>
-	gen hear_dsablty=S4C20
+	gen hear_dsablty=.
 	la de lblhear_dsablty 1 "No" 2 "Yes-some" 3 "Yes-a lot" 4 "Cannot at all"
 	label values hear_dsablty lblhear_dsablty
 	label var hear_dsablty "Disability related to hearing"
@@ -384,7 +408,7 @@ local output "`id_data'"
 
 
 *<_walk_dsablty_>
-	gen walk_dsablty=S4C21
+	gen walk_dsablty=.
 	la de lblwalk_dsablty 1 "No" 2 "Yes-some" 3 "Yes-a lot" 4 "Cannot at all"
 	label values walk_dsablty lblwalk_dsablty
 	label var walk_dsablty "Disability related to walking or climbing stairs"
@@ -392,7 +416,7 @@ local output "`id_data'"
 
 
 *<_conc_dsord_>
-	gen conc_dsord=S4C22
+	gen conc_dsord=.
 	la de lblconc_dsord 1 "No" 2 "Yes-some" 3 "Yes-a lot" 4 "Cannot at all"
 	label values conc_dsord lblconc_dsord
 	label var conc_dsord "Disability related to concentration or remembering"
@@ -400,7 +424,7 @@ local output "`id_data'"
 
 
 *<_slfcre_dsablty_>
-	gen slfcre_dsablty=S4C22
+	gen slfcre_dsablty=.
 	la de lblslfcre_dsablty 1 "No" 2 "Yes-some" 3 "Yes-a lot" 4 "Cannot at all"
 	label values slfcre_dsablty lblslfcre_dsablty
 	label var eye_dsablty "Disability related to selfcare"
@@ -408,7 +432,7 @@ local output "`id_data'"
 
 
 *<_comm_dsablty_>
-	gen comm_dsablty=S4C22
+	gen comm_dsablty=.
 	la de lblcomm_dsablty 1 "No" 2 "Yes-some" 3 "Yes-a lot" 4 "Cannot at all"
 	label values comm_dsablty lblcomm_dsablty
 	label var eye_dsablty "Disability related to communicating"
@@ -423,7 +447,7 @@ local output "`id_data'"
 
 {
 *<_migrated_mod_age_>
-	gen migrated_mod_age=10
+	gen migrated_mod_age=0
 	label var migrated_mod_age "Migration module application age"
 *</_migrated_mod_age_>
 
@@ -435,7 +459,7 @@ local output "`id_data'"
 
 
 *<_migrated_binary_>
-	gen migrated_binary=cond(S4C15==1, 0, 1)
+	gen migrated_binary=cond(LF17==8, 0, 1)
 	label de lblmigrated_binary 0 "No" 1 "Yes"
 	replace migrated_binary=. if age<migrated_mod_age
 	label values migrated_binary lblmigrated_binary
@@ -444,24 +468,27 @@ local output "`id_data'"
 
 
 /* <_migrated_years_note>
-   Information is on years living in current place (which is equal
-   to years since left previous residence). However, info is 
-   code 2 for less than a year,
-   code 3 to 6 for 1 to 4 years,
-   code 7 for 5 to 9 years,
-   code 8 for 10 or more years
+Information is on years living in current place (which is equal
+to years since left previous residence). However, info is 
+   code 0 for less than a year,
+   code 1 to 4 for 1 to 4 years,
+   code 5 for 5 to 6 years,
+   code 6 for 7 to 9 years,
+   code 7 for 10 or more years
+   code 8 is "since birth" (never migrated)
 
-   Code 0.5 for less than a year, half-point for 5-9 window (e.g., 7)
+   Code 0.5 for less than a year, half-point for 5-6 window (e.g., 5.5)
    and code 10 as a lower bound for the 10+ option  
 </_migrated_years_note> */
 
 
 *<_migrated_years_>
    gen migrated_years=.
-   replace migrated_years=0.5 if S4C15==2
-   replace migrated_years =S4C15-2 if inrange(S4C15,3,6)
-   replace migrated_years=7 if S4C15==7
-   replace migrated_years=10 if S4C15==8
+   replace migrated_years=0.5 if LF17==0
+   replace migrated_years =LF17 if inrange(LF17,1,4)
+   replace migrated_years=5.5 if LF17==5
+   replace migrated_years=8 if LF17==6
+   replace migrated_years=10 if LF17==7
    replace migrated_years=. if migrated_binary!=1
    replace migrated_years=. if age<migrated_mod_age
    label var migrated_years "Years since latest migration"
@@ -469,8 +496,8 @@ local output "`id_data'"
 
 
 *<_migrated_from_urban_>
-	gen migrated_from_urban=S4C17
-	recode migrated_from_urban 0=. 1=0 2=1 
+	gen migrated_from_urban=LF20
+	recode migrated_from_urban 9=. 1=0 2=1 
 	replace migrated_from_urban=. if migrated_binary!=1
 	label de lblmigrated_from_urban 0 "Rural" 1 "Urban"
 	replace migrated_from_urban=. if age<migrated_mod_age
@@ -480,9 +507,7 @@ local output "`id_data'"
 
 
 *<_migrated_from_cat_>
-	destring S4C16, gen(city_code)
 	gen migrated_from_cat=2
-	replace migrated_from_cat=5 if city_code>999
 	replace migrated_from_cat=. if migrated_binary!=1
 	replace migrated_from_cat=. if age<migrated_mod_age
 	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country"
@@ -492,28 +517,22 @@ local output "`id_data'"
 
 
 *<_migrated_from_code_>
-	merge m:1 city_code using "`stata'\PAK_migration_code_2020.dta"
-	replace city_code=. if _merge==1
+	gen code_region=LF01
+	recode code_region (12=8) (13=9) (14=10) (15=11)
+	egen code=concat(code_region LF02), punct(".")
+	merge n:n code using "`input'\ETH_zone_name.dta" 
+	replace zone_name=code if _merge==1
 	drop if _merge==2
-	egen migrated_from_code=concat(city_code city_name), p("-")
-	labmask city_code, values(migrated_from_code)
-	drop migrated_from_code
-	rename city_code migrated_from_code
-	gen city_code=migrated_from_code
-	replace migrated_from_code=. if city_code>999
+	gen migrated_from_code=code
+	drop _merge code_region code _merge
 	replace migrated_from_code=. if migrated_binary!=1
 	replace migrated_from_code=. if age<migrated_mod_age
-	drop _merge city_name
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
 *</_migrated_from_code_>
 
 
 *<_migrated_from_country_>
-	merge m:1 city_code using "`stata'\PAK_country_code_2020.dta", gen(_merge_c)
-	drop if _merge_c==2
-	gen migrated_from_country=city_code if country==1&migrated_binary==1
-	gen country_name=iso_code if country==1&migrated_binary==1
-	labmask migrated_from_country, values(country_name)
+	gen migrated_from_country=.
 	replace migrated_from_country=. if migrated_binary!=1
 	replace migrated_from_country=. if age<migrated_mod_age
 	label var migrated_from_country "Code of migration country (ISO 3 Letter Code)"
@@ -521,8 +540,8 @@ local output "`id_data'"
 
 
 *<_migrated_reason_>
-	gen migrated_reason=S4C18
-	recode migrated_reason (1/4 6=3) (5=2) (8/11=1) (14/15=4) (7 12/13 16=5) 
+	gen migrated_reason=LF21
+	recode migrated_reason (1=2) (2/3 7=1) (4/5=3) (6=4) (8/10=5) (99=.)
 	replace migrated_reason=. if migrated_binary!=1
 	replace migrated_reason=. if age<migrated_mod_age
 	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
@@ -546,10 +565,13 @@ local output "`id_data'"
 
 
 *<_school_>
-	gen byte school=.
-	replace school=0 if S4C10<=3
-	replace school=1 if S4C10>3 & S4C10!=.
+	gen everattend=.
+	replace everattend=0 if LF59==3
+	replace everattend=1 if LF59<=2|((LF23>=1 & LF23<=96)|LF58==1
+	gen byte school=1 if LF58==1
+	replace school=0 if LF58==2 | everattend==0
 	replace school=. if age<ed_mod_age & age!=.
+	drop everattend
 	label var school "Attending school"
 	la de lblschool 0 "No" 1 "Yes"
 	label values school  lblschool
@@ -557,9 +579,8 @@ local output "`id_data'"
 
 
 *<_literacy_>
-	gen byte literacy=.
-	replace literacy=1 if S4C81==1 & S4C82==1
-	replace literacy=0 if literacy!=1 & !mi(S4C81) & !mi(S4C82)
+	gen byte literacy=LF22
+	recode literacy (2=0) (9=.)
 	replace literacy=. if age<ed_mod_age & age!=.
 	label var literacy "Individual can read & write"
 	la de lblliteracy 0 "No" 1 "Yes"
@@ -567,32 +588,48 @@ local output "`id_data'"
 *</_literacy_>
 
 
+/*<_educy_>
+
+Education system in Ethiopia is:
+
+1) Primary - Elementary: 8 Years
+2) Secondary - Junior Secondary: 2 Years
+3) Vocational - (TVET) Level III Diploma: 3 Years
+4) Tertiary
+              - Bachelor of Education/Arts/Science: 3 Years (4 years before 1994 and 3 years after 1994)
+			  - Master : 1-3 Years
+			  - PhD: 3-7 Years
+			  
+Answers of "Diploma/Degree not completed" (cat21/22) were counted as 12 years of elementary plus 1 year of diploma or degree. 			  
+*<_educy_>*/		  
+
 *<_educy_>
 	gen byte educy=.
-	replace educy=0 if S4C9<=3
-	replace educy=5 if S4C9==4
-	replace educy=8 if S4C9==5
-	replace educy=10 if S4C9==6
-	replace educy=12 if S4C9==7
-	replace educy=16 if S4C9==8
-	replace educy=17 if S4C9==9
-	replace educy=16 if S4C9==10
-	replace educy=16 if S4C9==11
-	replace educy=16 if S4C9==12
-	replace educy=19 if S4C9==13
-	replace educy=20 if S4C9==14
-	replace educy=22 if S4C9==15
-	replace educy=. if age<5 | !inrange(S4C9, 1, 15)
+	replace educy=LF23 if LF23<=12
+	replace educy=15 if LF23==20 | LF23==23 | LF23==24
+	replace educy=13 if LF23==21 | LF23==22
+	replace educy=18 if LF23==25
+	replace educy=0 if LF22==2
+	replace educy=1 if  LF23==95 | LF23==96
+	replace educy=11 if LF23==20 & LF25==27
+	replace educy=12 if LF23==21 & LF25==27
+	replace educy=13 if LF23==23 & LF25==27
+	replace educy=0 if everattend==0
+	replace educy=. if age<5
 	replace educy=age if educy>age & !mi(educy) & !mi(age)
 	label var educy "Years of education"
 *</_educy_>
 
 
 *<_educat7_>
-	gen byte educat7=S4C9
-	recode educat7 (3=2) (4=3) (5/6=4) (8/15=7) 
-	replace educat7=5 if S4C9==7&S4C10==1
-	replace educat7=7 if S4C9==7&inrange(S4C10,8,15) 
+	gen byte educat7=.
+	replace educat7=1 if everattend==0 | educy==0
+	replace educat7=2 if LF23<8 
+	replace educat7=3 if LF23==8
+	replace educat7=4 if LF23>8 & LF23<12 
+	replace educat7=5 if LF23==12
+	replace educat7=6 if LF23==20
+	replace educat7=7 if LF23>20 & LF23<=25
 	replace educat7=. if age<ed_mod_age
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
@@ -619,15 +656,20 @@ local output "`id_data'"
 
 
 *<_educat_orig_>
-	gen educat_orig=S4C9
+	gen educat_orig=LF23
 	label var educat_orig "Original survey education code"
 *</_educat_orig_>
 
 
 *<_educat_isced_>
-	gen educat_isced=S4C9
-	replace educat_isced=. if !inrange(S4C9, 1, 15)
-	recode educat_isced 1=. 2/3=20 3=100 4/6=244 7=344 8/12=660 13/14=760 15=860
+	gen educat_isced=.
+	replace educat_isced=100 if LF23<=6 
+	replace educat_isced=242 if LF23>6 & LF23<=8
+	replace educat_isced=244 if LF23>8 & LF23<12
+	replace educat_isced=344 if LF23==12
+	replace educat_isced=353 if LF23==20
+	replace educat_isced=344 if LF23>20 & LF23<25
+	replace educat_isced=760 if LF23==25
 	replace educat_isced=. if age<ed_mod_age
 	label var educat_isced "ISCED standardised level of education"
 *</_educat_isced_>
@@ -662,8 +704,8 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 
 {
 *<_vocational_>
-	gen vocational=S4C11
-	recode vocational (10/19=1) (20=0)
+	gen vocational=LF24
+	recode vocational (2=0) (9=.)
 	replace vocational=. if !inrange(vocational, 0, 1)
 	la de vocationallbl 1 "Yes" 0 "No"
 	la values vocational vocationallbl
@@ -672,49 +714,51 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 
 
 *<_vocational_type_>
-	gen vocational_type=S4C11
-	recode vocational_type (10/14=1) (15/19=2)
+	gen vocational_type=.
+	replace vocational_type=1 if LF26==4
+	replace vocational_type=2 if LF26!=4 & LF26!=8 & LF26!=9
 	label de lblvocational_type 1 "Inside Enterprise" 2 "External"
 	label values vocational_type lblvocational_type
 	label var vocational_type "Type of vocational training"
 *</_vocational_type_>
 
 
-/*<_vocational_length_l_>
-
-Vocational training is asked in "weeks" in the questionnaire and it is not answered 
-with a range, but a specific number of weeks. Therefore, the upper and lower limits
-are the same here.
-
-<_vocational_length_l_>*/
-
-
 *<_vocational_length_l_>
-	gen vocational_length_l=S4C13
+	gen vocational_length_l=.
 	label var vocational_length_l "Length of training, lower limit"
 *</_vocational_length_l_>
 
 
 *<_vocational_length_u_>
-	gen vocational_length_u=S4C13
+	gen vocational_length_u=.
 	label var vocational_length_u "Length of training, upper limit"
 *</_vocational_length_u_>
 
 
 *<_vocational_field_orig_>
-	replace S4C12="" if S4C12=="NULL" 
-	destring S4C12, gen(code)
-	merge m:1 code using "`stata'\PAK_training_code_2020.dta"
-	drop if _merge==2
-	gen vocational_field_orig=code
+	gen vocational_field_orig=LF25
+	decode LF25, gen(training_field)
 	labmask vocational_field_orig, values(training_field) 
 	label var vocational_field_orig "Field of training"
 *</_vocational_field_orig_>
 
 
+/*<_vocational_financed_>
+One related variable in the raw dataset is LF26:"Where did you get the training?"
+1.College/University/Institute
+2.Vocational/Technical school
+3.Comprehensive high school
+4.Employer Organization
+5.NGO
+6.Private training organization
+7.Other/Specify
+
+But these do not directly reflect the source of financial support.
+*<_vocational_financed_>*/
+
+
 *<_vocational_financed_>
-	gen vocational_financed=S4C14
-	recode vocational_financed (2=4) (1=2) (3=5)
+	gen vocational_financed=.
  	label de lblvocational_financed 1 "Employer" 2 "Government" 3 "Mixed Employer/Government" 4 "Own funds" 5 "Other"
 	label var vocational_financed "How training was financed"
 *</_vocational_financed_>
@@ -734,24 +778,12 @@ are the same here.
 *----------8.1: 7 day reference overall------------------------------*
 
 {
-	
-/*<_lstatus_note>
-
-Employed if work for profit or in a farm business; 
-Unemployed if seeking (S9C1==1) and available [!mi(S9C5)] and unavailable to work
-only because 
-- illness
-- will take a job within a month
-- temporarily laid off
-- apprentice and not willing to work
-*<_lstatus_note>*/	
-
-	
 *<_lstatus_>
 	gen byte lstatus=.
-	replace lstatus=1 if inlist(1, S5C1, S5C2, S5C3) | inlist(S5C4,1,2)
-	replace lstatus=2 if lstatus!=1 & S9C1==1
-	replace lstatus=3 if lstatus==.
+	replace lstatus=1 if LF30==1 
+	replace lstatus=1 if LF30==2 & LF33==1
+	replace lstatus=2 if LF30==2 & LF46==1 & LF49==1
+	replace lstatus=3 if lstatus==. 
 	replace lstatus=. if age<minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -763,16 +795,16 @@ only because
 Note: var "potential_lf" only takes value if the respondent is not in labor force. (lstatus==3)
 
 "potential_lf"=1 if the person is
-1)available but not searching or S9C1==2 & inrange(S9C6, 1, 6)
-2)searching but not immediately available to work or S9C1==1 & S9C6==7
+1)available but not searching or LF49==1 & LF46==2
+2)searching but not immediately available to work or LF49==2 & LF46==1
 </_potential_lf_>*/
 
 
 *<_potential_lf_>
 	gen byte potential_lf=.
+	replace potential_lf=1 if [LF49==1 & LF46==2] | [LF49==2 & LF46==1]
+	replace potential_lf=1 if [LF49==1 & LF46==1] | [LF49==2 & LF46==2]
 	replace potential_lf=0 if lstatus==3
-	replace potential_lf=1 if [S9C1==2 & inrange(S9C6, 1, 2)] | [S9C1==1 & inrange(S9C6, 3, 4)]
-	replace potential_lf=0 if [S9C1==1 & inrange(S9C6, 1, 2)] | [S9C1==2 & inrange(S9C6, 3, 4)]
 	replace potential_lf=. if age < minlaborage
 	replace potential_lf=. if lstatus!=3
 	label var potential_lf "Potential labour force status"
@@ -783,8 +815,8 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_underemployment_>
 	gen byte underemployment=.
-	replace underemployment=1 if S6C2==1
-	replace underemployment=0 if S6C2==2
+	replace underemployment=1 if LF44==1
+	replace underemployment=0 if LF44==2
 	replace underemployment=. if age < minlaborage
 	replace underemployment=. if lstatus!=1
 	label var underemployment "Underemployment status"
@@ -794,8 +826,8 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_nlfreason_>
-	gen byte nlfreason=S9C5
-	recode nlfreason (9=1) (10=2) (12=4) (1/8 11 13/14=5)
+	gen byte nlfreason=LF51
+	recode nlfreason (0 9=.) (2=1) (1=2) (7=3) (3=4) (4 5 6 8=5)
 	replace nlfreason=. if lstatus!=3
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
@@ -803,25 +835,17 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 *</_nlfreason_>
 
 
-/*<_unempldur_l_>
-
-Unemployment duration in 2020 is a specific number of weeks/months/years. So the 
-upper and lower bonds are the same.
-
-*<_unempldur_l_>*/
-
-
 *<_unempldur_l_>
-	gen byte unempldur_l=S9C3
-	recode unempldur_l (1=0) (2=1) (3=3) (4=6) (5=1)
+	gen byte unempldur_l=LF55
+	recode unempldur_l (96 97 98 99=.)
 	replace unempldur_l=. if lstatus!=2
 	label var unempldur_l "Unemployment duration (months) lower bracket"
 *</_unempldur_l_>
 
 
 *<_unempldur_u_>
-	gen byte unempldur_u=S9C3
-	recode unempldur_u (1=1) (2=3) (3=6) (4=12) (5=.)
+	gen byte unempldur_u=LF55
+	recode unempldur_u (96 97 98 99=.)
 	replace unempldur_u=. if lstatus!=2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
 *</_unempldur_u_>
@@ -832,14 +856,23 @@ upper and lower bonds are the same.
 
 
 {
+/*<_empstat_>
+Definition of "Employees" please refer to the link below:
+
+chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/https://www.ilo.org/wcmsp5/groups/public/---dgreports/---stat/documents/meetingdocument/wcms_648693.pdf
+
+In the case of ETH, they have their own category 09 "Member of Co-operatives(Industrial/Agricultural)", which we 
+treated as "Paid employee".
+*<_empstat_>*/
+
+
 *<_empstat_>
 	gen byte empstat=.
-	replace empstat=1 if S5C7<=4 
-	replace empstat=2 if S5C7==11 | S5C7==12
-	replace empstat=3 if S5C7==5  
-	replace empstat=4 if (S5C7>=6 & S5C7<=10) | S5C7==13
-	replace empstat=5 if S5C7==14
-	replace empstat=. if !inrange(S5C7, 1, 14)
+	replace empstat=1 if LF38<=4 | LF38==8 | LF38==9
+	replace empstat=2 if LF38==7
+	replace empstat=3 if LF38==5
+	replace empstat=4 if LF38==6
+	replace empstat=5 if LF38==10
 	replace empstat=. if lstatus!=1
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
@@ -848,8 +881,10 @@ upper and lower bonds are the same.
 
 
 *<_ocusec_>
-	gen byte ocusec=S5C10
-	recode ocusec (1/3=1) (4=3) (5/9=2) (10=4)
+	gen byte ocusec=.
+	replace ocusec=1 if LF38==1
+	replace ocusec=4 if LF38==3 
+	replace ocusec=2 if LF38>=4 & LF38<=9
 	replace ocusec=. if lstatus!=1
 	label var ocusec "Sector of activity primary job 7 day recall"
 	la de lblocusec 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
@@ -858,14 +893,19 @@ upper and lower bonds are the same.
 
 
 *<_industry_orig_>
-	gen industry_orig=S5C9
+	gen industry_orig=LF36
 	replace industry_orig="" if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
 
 *<_industrycat_isic_>
-	gen industrycat_isic=S5C9
+	gen lf36=LF36*10 if LF36>50
+	replace lf36=LF36*100 if LF36<51
+	replace lf36=. if lf36==.
+	tostring lf36, replace
+	gen industrycat_isic=substr(lf36,1,2)
+	replace industrycat_isic=industrycat_isic*100
 	tostring industrycat_isic, replace format(%04.0f)
 	replace industrycat_isic="" if lstatus!=1 | industrycat_isic=="."
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
@@ -873,10 +913,20 @@ upper and lower bonds are the same.
 
 
 *<_industrycat10_>
-	destring S5C9, replace
-	gen byte industrycat10=floor(S5C9/100)
-	recode industrycat10 (1/3=1) (5/9=2) (10/33=3) (35/39=4) (41/43=5) (45/47 55/56=6) (49/53 58/63=7) (64/82=8) (84=9) (85/99=10)
-	replace industrycat10=. if lstatus!=1
+	gen byte industry=.
+	replace industry = 1 if LF36 >=11 & LF36 <=50
+	replace industry = 2 if LF36 >=101 & LF36<=132
+	replace industry = 3 if LF36 >= 151 & LF36 <=369
+	replace industry = 4 if LF36 >=401 & LF36 <=410
+	replace industry = 5 if LF36 >= 451 & LF36 <=455
+	replace industry = 6 if LF36 >= 501 & LF36 <=552
+	replace industry = 7 if LF36 >=601 & LF36 <=642
+	replace industry = 8 if LF36 >=651 & LF36 >= 749 
+	replace industry = 9 if LF36 >=751 & LF36 <=753
+	replace industry  = 10 if LF36 >= 801 & LF36 <.
+	replace industry = 10 if industry==. & LF36!=.
+	replace industry = . if lstatus !=1
+	replace industry = . if LF36 == 999	
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
@@ -893,15 +943,19 @@ upper and lower bonds are the same.
 
 
 *<_occup_orig_>
-	gen occup_orig=S5C8
+	gen occup_orig=LF35
 	replace occup_orig="" if lstatus!=1
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
 
 *<_occup_isco_>
-	gen occup_isco=S5C8
-	destring occup_isco, replace
+	gen lf35=LF35*10 if LF35>20
+	replace lf35=LF35*100 if LF35<21
+	replace lf35=. if lf35==.
+	tostring lf35, replace
+	gen occup_isco=substr(lf35,1,2)
+	replace occup_isco=occup_isco*100
 	tostring occup_isco, replace format(%04.0f)
 	replace occup_isco="" if lstatus!=1 | occup_isco=="."
 *</_occup_isco_>
@@ -922,23 +976,28 @@ upper and lower bonds are the same.
 
 
 *<_occup_>
-	  gen occup=skill_level
-	  replace occup=. if lstatus!=1
-	  recode occup (0=10) 
-	  label var occup "1 digit occupational classification, primary job 7 day recall"
-  	  la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
-	  label values occup lbloccup
+	 gen byte occup=.
+	 replace occup=1 if LF35>=111 & LF35<=131
+	 replace occup=2 if LF35>=211 & LF35<=246
+	 replace occup=3 if LF35>=311 & LF35<=346
+	 replace occup=4 if LF35>=411 & LF35<=422
+	 replace occup=5 if LF35>=511 & LF35<=524
+	 replace occup=6 if LF35>=611 & LF35<=621
+	 replace occup=7 if LF35>=711 & LF35<=744
+	 replace occup=8 if LF35>=811 & LF35<=834
+	 replace occup=9 if LF35>=911 & LF35<=933
+	 replace occup=10 if LF35==11
+	 replace occup=99 if LF35==999
+	 replace occup=. if lstatus!=1
+	 recode occup (0=10) 
+	 label var occup "1 digit occupational classification, primary job 7 day recall"
+  	 la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
+	 label values occup lbloccup
 *</_occup_>
 
 
 *<_wage_no_compen_>
-	gen last_week=S7C33
-	gen last_month=S7C43
-	foreach v of varlist last_*{
-		replace `v'=0 if S7C33>0 & S7C43>0 & !mi(S7C33) & !mi(S7C43)
-		replace `v'=. if lstatus!=1
-	}
-	egen double wage_no_compen=rowtotal(last_week last_month), missing
+	gen double wage_no_compen=.
 	replace wage_no_compen=0 if empstat==2
 	replace wage_no_compen=. if lstatus!=1
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
@@ -947,9 +1006,6 @@ upper and lower bonds are the same.
 
 *<_unitwage_>
 	gen byte unitwage=.
-	replace unitwage=2 if wage_no_compen==S7C33
-	replace unitwage=5 if wage_no_compen==S7C43
-	replace unitwage=10 if wage_no_compen>S7C33&!mi(wage_no_compen)
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
 	label values unitwage lblunitwage
@@ -957,7 +1013,7 @@ upper and lower bonds are the same.
 
 
 *<_whours_>
-	gen whours=S5C161 
+	gen whours=LF31T
 	replace whours=. if lstatus!=1
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
@@ -1705,6 +1761,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`output'\PAK_2020_LFS_v01_M_v01_A_GLD_ALL.dta", replace
+save "`output'\ETH_1999_LFS_v01_M_v01_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>
