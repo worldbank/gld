@@ -4,26 +4,27 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				ETH_1999_LFS_v01_M_v01_A_GLD_ALL.do </_Program name_>
+<_Program name_>				ETH_2005_LFS_v01_M_v01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata MP 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
-<_Date created_>				2022-09-27 </_Date created_>
+<_Date created_>				2022-10-02 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						Ethiopia(ETH) </_Country_>
 <_Survey Title_>				National Labour Force Survey </_Survey Title_>
-<_Survey Year_>					1999 </_Survey Year_>
-<_Study ID_>					ETH_1999_LFS_v01_M </_Study ID_>
-<_Data collection from (M/Y)_>	[March/1999] </_Data collection from (M/Y)_>
+<_Survey Year_>					2005 </_Survey Year_>
+<_Study ID_>					ETH_2005_LFS_v01_M </_Study ID_>
+<_Data collection from (M/Y)_>	[March/2005] </_Data collection from (M/Y)_>
 <_Data collection to (M/Y)_>	[/] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			Central Statistical Agency </_Source of dataset_>
 								Data is not publicly accessible. World Bank internal use only.
-<_Sample size (HH)_> 			366,695 </_Sample size (HH)_>
-<_Sample size (IND)_> 			81,339 </_Sample size (IND)_>
+<_Sample size (HH)_> 			 </_Sample size (HH)_>
+<_Sample size (IND)_> 			 </_Sample size (IND)_>
 <_Sampling method_> 			Stratified two-stage ampling method </_Sampling method_>
 <_Geographic coverage_> 		Both urban and rural parts of the country, 
-								except 6 zones in Somali Region and 2 zones
-								in Affar Region. Homeless persons and foreigners
-								were not covered. </_Geographic coverage_>
+								except that Gambella region (only the urban parts),
+								Affar region (only zone one and zone three),
+								and Somali reguib (only Shinile, Jijiga and Liben 
+								zones covered). </_Geographic coverage_>
 <_Currency_> 					Ethiopian Birr </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
@@ -59,7 +60,7 @@ set mem 800m
 local 	drive 	`"Z"'
 local 	cty 	`"ETH"'
 local 	usr		`"573465_JT"'
-local 	surv_yr `"1999"'
+local 	surv_yr `"2005"'
 local 	year 	"`drive':\GLD-Harmonization\\`usr'\\`cty'\\`cty'_`surv_yr'_LFS"
 local 	main	"`year'\\`cty'_`surv_yr'_LFS_v01_M"
 local 	stata	"`main'\data\stata"
@@ -128,7 +129,7 @@ local output "`id_data'"
 
 
 *<_year_>
-	gen int year=1999
+	gen int year=2005
 	label var year "Year of survey"
 *</_year_>
 
@@ -152,7 +153,7 @@ local output "`id_data'"
 
 
 *<_int_year_>
-	gen int_year=1999
+	gen int_year=2005
 	label var int_year "Year of the interview"
 *</_int_year_>
 
@@ -1761,6 +1762,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`output'\ETH_1999_LFS_v01_M_v01_A_GLD_ALL.dta", replace
+save "`output'\ETH_2005_LFS_v01_M_v01_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>
