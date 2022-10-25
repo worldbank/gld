@@ -118,7 +118,7 @@ save "`path_in'/ECH_2001.dta", replace
 
 
 *<_isic_version_>
-	gen isic_version = ""
+	gen isic_version = "isic_3"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
@@ -187,7 +187,7 @@ save "`path_in'/ECH_2001.dta", replace
 
 
 *<_weight_>
-	gen weight = fex_c_2011
+	gen weight = (fex_c_2011/6)
 	label var weight "Survey sampling weight"
 *</_weight_>
 
@@ -232,13 +232,13 @@ save "`path_in'/ECH_2001.dta", replace
 *</_urban_>
 
 *<_subnatid1_>
-	
+
 	gen subnatid1 = ""
 	replace subnatid1 = "1 - Atlantica" if dpto == "13" | dpto == "20" | dpto =="23" | dpto == "44" | dpto =="47" | dpto == "70" | dpto =="8"
-	replace subnatid1 = "2 - Oriental" if  dpto == "15" | dpto == "25" | dpto =="50" | dpto == "54" | dpto =="68" 
+	replace subnatid1 = "2 - Oriental" if  dpto == "15" | dpto == "25" | dpto =="50" | dpto == "54" | dpto =="68"
 	replace subnatid1 = "3 - Central" if  dpto == "17" | dpto == "18" | dpto =="41" | dpto == "63" | dpto =="66" | dpto == "73"
 	replace subnatid1 = "4 - Pacifica" if  dpto == "19" | dpto == "27" | dpto =="52" | dpto == "76" | dpto == "5"
-	replace subnatid1 = "5 - Santa Fe de Bogota" if  dpto == "11" 
+	replace subnatid1 = "5 - Santa Fe de Bogota" if  dpto == "11"
 
 /* <_subnatid1_note>
 
@@ -293,7 +293,9 @@ save "`path_in'/ECH_2001.dta", replace
 	See entry in GLD Guidelines (https://github.com/worldbank/gld/blob/main/Support/A%20-%20Guides%20and%20Documentation/GLD_1.0_Guidelines.docx) for more details
 
 </_subnatidsurvey_note> */
-	egen subnatidsurvey = concat(subnatid2 urban), p(" ")
+	gen subnatidsurvey = ""
+replace subnatidsurvey = subnatid2 + " - Urban" if urban == 1
+replace subnatidsurvey = subnatid2 + " - Rural" if urban == 0
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -562,12 +564,17 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat7_>
-	gen p10n = substr(p10,1,1)
-	destring p10n, replace
-	gen byte educat7 = p10n
-	recode educat7 2=1 3=2 4 5=4 6=7 9=.
-	replace educat7=3 if educat7==2 & educy==5
-	replace educat7=5 if educat7==4 & educy==11 //different from questionnaire but in reality secondary is for 6 years (media:10-11), so no change here
+
+*emulating i2d2 logic including the age discrimination
+	gen byte educat7 =.
+	replace educat7=1 if p10=="100" | inrange(p10,"200","201")
+	replace educat7=2 if inrange(p10,"300","304")
+	replace educat7=3 if p10=="305"
+	replace educat7=4 if p10=="400" | inrange(p10,"406","410")
+	replace educat7=5 if p10=="411"
+	replace educat7=5 if p10=="412"
+	replace educat7=5 if p10=="413"
+	replace educat7=7 if inrange(p10,"500","515")
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -683,32 +690,34 @@ foreach v of local ed_var {
 *----------8.1: 7 day reference overall------------------------------*
 
 {
-*<_lstatus_>
-	destring p24 p16 p5 p23, force replace
-	
-	* Reduce to months in I2D2 data
-	keep if inrange(mes,7,9)
+  *<_lstatus_>
 
-	* Generate lstatus
-	gen lstatus = .
-	replace lstatus = 1 if !missing(p24) & inrange(p5,12,9999)
-	* Unemployed is looking (p16 == 1) *and* available (p23 == 1)
-	replace lstatus = 2 if p16 == 1 & p23 == 1
-	* Note that Colombian data treats anyone available (independently of whether looking 	for a job or not as unemployed, we don't)
-	replace lstatus = 3 if missing(lstatus) & inrange(p5,12,9999)
-	* In comparing with I2D2 (reduced to months July to September, ages 12 and up)
-	* We obtain 10,046 people that are unemployed as looking for a job *and* available
-	* I2D2 (based on sedlac) has 10,191 unemployed as looking for a job only
-	* DANE has 10,947 answers to unemployment block (p49 not missing) for people available only (independent of whether looking or not)
-	* For GLD either looking but not available or not looking but available are "potential labour force"
+  destring p24 p16 p23, replace
 
-	tab lstatus if inrange(p5,12,9999),m
-	
-	label var lstatus "Labor status"
-	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
-	label values lstatus lbllstatus
-	
-*</_lstatus_>
+  /* <_lstatus_note>
+       Note that the Colombian survey has different age cut-offs for the employment questions. 10 years for rural areas, 12 for urban areas. Here we use a single cut-off of 12.
+
+       Further note that results may vary somewhat from official results and from results hitherto calculate in I2D2. The numbers for employed should be the same but the concept of unemployment varied.
+
+       For GLD unemployed are those looking for a job *and* available.
+
+       For the NSO all those available (regardless of whether looking or not for a job) are unemployed.
+
+       For the I2D2 coding, using SEDLAC, unemployed where all those looking for a job (regardless of whether available or not).
+  </_lstatus_note> */
+
+       gen lstatus = .
+       * Employed are those who answer questions for employment
+       replace lstatus = 1 if !missing(p24) & inrange(age,12,9999)
+       * Unemployed is looking (p16 == 1) *and* available (p23 == 1)
+       replace lstatus = 2 if p16 == 1 & p23 == 1 & inrange(age,12,9999)
+       * NLF are the rest
+       replace lstatus = 3 if missing(lstatus) & inrange(age,12,9999)
+
+       label var lstatus "Labor status"
+       la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
+       label values lstatus lbllstatus
+  *</_lstatus_>
 
 *<_potential_lf_>
 	gen byte potential_lf = .
@@ -784,33 +793,14 @@ foreach v of local ed_var {
 
 *<_industry_orig_> // NOT IN DATASET: rama4d
 /* <_industry_orig_note>
-	Original information at letter code level for ISIC 3(3.1).
-
-        | #  | A/Z | Name
-        | 1  | A   | Agriculture, hunting and forestry
-        | 2  | B   | Fishing
-        | 3  | C   | Mining and quarrying
-        | 4  | D   | Manufacturing
-        | 5  | E   | Electricity, gas and water supply
-        | 6  | F   | Construction
-        | 7  | G   | Wholesale and retail trade; repair of motor vehicles, motorcycles and
-personal and household goods
-        | 8  | H   | Hotels and restaurants
-        | 9  | I   | Transport, storage and communications
-        | 10 | J   | Financial intermediation
-        | 11 | K   | Real estate, renting and business activities
-        | 12 | L   | Public administration and defence; compulsory social security
-        | 13 | M   | Education
-        | 14 | N   | Health and social work
-        | 15 | O   | Other community, social and personal service activities
-        | 16 | P   | Activities of private households as employers and undifferentiated production
-activities of private households
-        | 17 | Q   | Extra-territorial organizations and bodies
-
-        See https://unstats.un.org/unsd/statcom/doc02/isic.pdf for more details
+	Original information at division level for ISIC 3(3.1) Colombian Adaption.
+	
+	At division level Colombian and International codes are identical
+	(see page 99, paraggraph 4 under 4.1.4 of
+	https://www.dane.gov.co/files/sen/nomenclatura/ciiu/CIIURev3AC.pdf)
 
 </_industry_orig_note> */
-	
+
 	gen industry_orig = p26
 	replace industry_orig="" if lstatus!=1
 	replace industry_orig="" if industry_orig=="00"
@@ -819,26 +809,25 @@ activities of private households
 
 
 *<_industrycat_isic_> // Colombian ISIC rev 3 to ISIC rev. 3, rama4d not in ECH merged dataset given
-	gen industrycat_isic = .
+	gen industrycat_isic = industry_orig + "00" if !missing(industry_orig)
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 
 *</_industrycat_isic_>
 
 
 *<_industrycat10_>
-	rename p26 rama2d
-	destring rama2d, force replace
+	gen rama2d=substr(industrycat_isic,1,2)
 	gen byte industrycat10 = .
-	replace industrycat10 = 1 if rama2d==1 | rama2d==2
-	replace industrycat10 = 2 if rama2d==3
-	replace industrycat10 = 3 if rama2d==4
-	replace industrycat10 = 4 if rama2d==5
-	replace industrycat10 = 5 if rama2d==6
-	replace industrycat10 = 6 if rama2d==7
-	replace industrycat10 = 7 if rama2d==9
-	replace industrycat10 = 8 if rama2d==10 | rama2d==11
-	replace industrycat10 = 9 if rama2d==12 | rama2d==13 | rama2d==14
-	replace industrycat10 = 10 if rama2d==8 | rama2d>=15
+	replace industrycat10 = 1 if inrange(rama2d,"01", "05")
+	replace industrycat10 = 2 if inrange(rama2d,"10", "14")
+	replace industrycat10 = 3 if inrange(rama2d,"15", "37")
+	replace industrycat10 = 4 if inrange(rama2d,"40", "41")
+	replace industrycat10 = 5 if rama2d=="45"
+	replace industrycat10 = 6 if rama2d=="55" | inrange(rama2d,"50","52")
+	replace industrycat10 = 7 if inrange(rama2d,"60","64")
+	replace industrycat10 = 8 if inrange(rama2d,"65","67") | inrange(rama2d,"70","74")
+	replace industrycat10 = 9 if rama2d=="75"
+	replace industrycat10 = 10 if inrange(rama2d,"80","99")
 	replace industrycat10 = . if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
@@ -952,7 +941,7 @@ activities of private households
 	This is done to make it easy to compare earnings in formal and informal sectors.
 
 </_wage_total_note> */
-	
+
 	/*Paid employees
 	gen wage_principal = valor58a
 
@@ -961,8 +950,8 @@ activities of private households
 
 	gen wage_total = (wage_principal+wage_inactive)*12
 	replace wage_total=. if lstatus!=1*/
-	
-	
+
+
 *<_wage_total_>
 /* <_wage_total_note>
 
@@ -1052,9 +1041,9 @@ activities of private households
 	replace wage_total=. if lstatus!=1
 	label var wage_total "Annualized total wage primary job 7 day recall"
 *</_wage_total_>
-	
-	
-	
+
+
+
 	label var wage_total "Annualized total wage primary job 7 day recall"
 *</_wage_total_>
 

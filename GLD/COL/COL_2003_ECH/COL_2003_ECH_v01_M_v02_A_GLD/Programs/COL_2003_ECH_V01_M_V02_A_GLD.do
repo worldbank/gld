@@ -115,7 +115,7 @@ save "`path_in'/ECH_2003.dta", replace
 
 
 *<_isic_version_>
-	gen isic_version = ""
+	gen isic_version = "isic_3"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
@@ -185,7 +185,7 @@ save "`path_in'/ECH_2003.dta", replace
 
 
 *<_weight_>
-	gen weight = fex_c_2011
+	gen weight = (fex_c_2011/12)
 	label var weight "Survey sampling weight"
 *</_weight_>
 
@@ -296,7 +296,9 @@ gen subnatid1 = ""
 	See entry in GLD Guidelines (https://github.com/worldbank/gld/blob/main/Support/A%20-%20Guides%20and%20Documentation/GLD_1.0_Guidelines.docx) for more details
 
 </_subnatidsurvey_note> */
-	egen subnatidsurvey = concat(subnatid2 urban), p(" ")
+	gen subnatidsurvey = ""
+replace subnatidsurvey = subnatid2 + " - Urban" if urban == 1
+replace subnatidsurvey = subnatid2 + " - Rural" if urban == 0
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -534,8 +536,8 @@ Education module is only asked to those XX and older.
 
 </_ed_mod_age_note> */
 
-gen byte ed_mod_age = 5
-label var ed_mod_age "Education module application age"
+	gen byte ed_mod_age = 5
+	label var ed_mod_age "Education module application age"
 
 *</_ed_mod_age_>
 
@@ -567,11 +569,15 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat7_>
-	destring p10n, replace
-	gen byte educat7 = p10n
-	recode educat7 2=1 3=2 4 5=4 6=7 9=.
-	replace educat7=3 if educat7==2 & educy==5
-	replace educat7=5 if educat7==4 & educy==11 //different from questionnaire but in reality secondary is for 6 years (media:10-11), so no change here
+	gen byte educat7 =.
+	replace educat7=1 if p10=="100" | inrange(p10,"200","201")
+	replace educat7=2 if inrange(p10,"300","304")
+	replace educat7=3 if p10=="305"
+	replace educat7=4 if p10=="400" | inrange(p10,"406","410")
+	replace educat7=5 if p10=="411"
+	replace educat7=5 if p10=="412"
+	replace educat7=5 if p10=="413"
+	replace educat7=7 if inrange(p10,"500","515")
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -686,31 +692,33 @@ foreach v of local ed_var {
 *----------8.1: 7 day reference overall------------------------------*
 
 {
-*<_lstatus_>
-destring p24 p16 p5 p23, force replace
+  *<_lstatus_>
+  destring p24 p16 p23, replace
 
-	* Reduce to months in I2D2 data
-	keep if inrange(mes,7,9)
+  /* <_lstatus_note>
+       Note that the Colombian survey has different age cut-offs for the employment questions. 10 years for rural areas, 12 for urban areas. Here we use a single cut-off of 12.
 
-	* Generate lstatus
-	gen lstatus = .
-	replace lstatus = 1 if !missing(p24) & inrange(p5,12,9999)
-	* Unemployed is looking (p16 == 1) *and* available (p23 == 1)
-	replace lstatus = 2 if p16 == 1 & p23 == 1
-	* Note that Colombian data treats anyone available (independently of whether looking 	for a job or not as unemployed, we don't)
-	replace lstatus = 3 if missing(lstatus) & inrange(p5,12,9999)
-	* In comparing with I2D2 (reduced to months July to September, ages 12 and up)
-	* We obtain 10,046 people that are unemployed as looking for a job *and* available
-	* I2D2 (based on sedlac) has 10,191 unemployed as looking for a job only
-	* DANE has 10,947 answers to unemployment block (p49 not missing) for people available only (independent of whether looking or not)
-	* For GLD either looking but not available or not looking but available are "potential labour force"
+       Further note that results may vary somewhat from official results and from results hitherto calculate in I2D2. The numbers for employed should be the same but the concept of unemployment varied.
 
-	tab lstatus if inrange(p5,12,9999),m
+       For GLD unemployed are those looking for a job *and* available.
 
-	label var lstatus "Labor status"
-	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
-	label values lstatus lbllstatus
-*</_lstatus_>
+       For the NSO all those available (regardless of whether looking or not for a job) are unemployed.
+
+       For the I2D2 coding, using SEDLAC, unemployed where all those looking for a job (regardless of whether available or not).
+  </_lstatus_note> */
+
+       gen lstatus = .
+       * Employed are those who answer questions for employment
+       replace lstatus = 1 if !missing(p24) & inrange(age,12,9999)
+       * Unemployed is looking (p16 == 1) *and* available (p23 == 1)
+       replace lstatus = 2 if p16 == 1 & p23 == 1 & inrange(age,12,9999)
+       * NLF are the rest
+       replace lstatus = 3 if missing(lstatus) & inrange(age,12,9999)
+
+       label var lstatus "Labor status"
+       la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
+       label values lstatus lbllstatus
+  *</_lstatus_>
 
 *<_potential_lf_>
 	gen byte potential_lf = .
@@ -818,33 +826,36 @@ activities of private households
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
-
 *<_industrycat_isic_> // Colombian ISIC rev 3 to ISIC rev. 3, rama4d not in ECH merged dataset given
-	gen industrycat_isic = .
+	gen industrycat_isic = substr(industry_orig,1,2)
+	gen industrycat_isic_a=industrycat_isic + "00" if !missing(industry_orig)
+	drop industrycat_isic
+	rename industrycat_isic_a industrycat_isic
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 
 *</_industrycat_isic_>
 
 
 *<_industrycat10_>
-	rename p26 rama2d
-	destring rama2d, force replace
+
+	gen rama2d=substr(industrycat_isic,1,2)
 	gen byte industrycat10 = .
-	replace industrycat10 = 1 if rama2d==1 | rama2d==2
-	replace industrycat10 = 2 if rama2d==3
-	replace industrycat10 = 3 if rama2d==4
-	replace industrycat10 = 4 if rama2d==5
-	replace industrycat10 = 5 if rama2d==6
-	replace industrycat10 = 6 if rama2d==7
-	replace industrycat10 = 7 if rama2d==9
-	replace industrycat10 = 8 if rama2d==10 | rama2d==11
-	replace industrycat10 = 9 if rama2d==12 | rama2d==13 | rama2d==14
-	replace industrycat10 = 10 if rama2d==8 | rama2d>=15
+	replace industrycat10 = 1 if inrange(rama2d,"01", "05")
+	replace industrycat10 = 2 if inrange(rama2d,"10", "14")
+	replace industrycat10 = 3 if inrange(rama2d,"15", "37")
+	replace industrycat10 = 4 if inrange(rama2d,"40", "41")
+	replace industrycat10 = 5 if rama2d=="45"
+	replace industrycat10 = 6 if rama2d=="55" | inrange(rama2d,"50","52")
+	replace industrycat10 = 7 if inrange(rama2d,"60","64")
+	replace industrycat10 = 8 if inrange(rama2d,"65","67")| inrange(rama2d,"70","74")
+	replace industrycat10 = 9 if rama2d=="75"
+	replace industrycat10 = 10 if inrange(rama2d,"80","99")
 	replace industrycat10 = . if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
 *</_industrycat10_>
+
 
 
 *<_industrycat4_>
