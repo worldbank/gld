@@ -63,18 +63,26 @@
 		split isic_version, p(_)
 		if isic_version2 == "4" {
 			
-			** Checks   // FIX CORR W/ INDUSTRYCAT4 == 4 
+			** Checks   
+			* Set by default to error
 			gen correct_2 = 0
-			replace correct_2 = 1 if industrycat10 == 1  & industrycat4 == 1 &   inrange(industrycat_isic, "0100", "0399")
-			replace correct_2 = 1 if industrycat10 == 2  & industrycat4 == 2 &   inrange(industrycat_isic, "0500", "0999")
-			replace correct_2 = 1 if industrycat10 == 3  & industrycat4 == 2 &   inrange(industrycat_isic, "1000", "3399")
-			replace correct_2 = 1 if industrycat10 == 4  & industrycat4 == 2 &   inrange(industrycat_isic, "3500", "3999")
-			replace correct_2 = 1 if industrycat10 == 5  & industrycat4 == 2 &   inrange(industrycat_isic, "4100", "4399")
-			replace correct_2 = 1 if industrycat10 == 6  & industrycat4 == 3 & ( inrange(industrycat_isic, "4500", "4799") | inrange(industrycat_isic, "5500", "5699") )
-			replace correct_2 = 1 if industrycat10 == 7  & industrycat4 == 3 & ( inrange(industrycat_isic, "4900", "5399") | inrange(industrycat_isic, "5800", "6399") ) 
-			replace correct_2 = 1 if industrycat10 == 8  & industrycat4 == 3 &   inrange(industrycat_isic, "6400", "8299")
-			replace correct_2 = 1 if industrycat10 == 9  & (industrycat4 == 3 | industrycat4 == 4) &   inrange(industrycat_isic, "8400", "8499")
-			replace correct_2 = 1 if industrycat10 == 10 & (industrycat4 == 3 | industrycat4 == 4) &   inrange(industrycat_isic, "8500", "9999")  
+			
+			* Generate ind as ISIC 2 digit
+			gen ind_2d = substr(industrycat_isic,1,2)
+			
+			* Set to correct_2 = 1 if in line with expectation
+			replace correct_2 = 1 if industrycat10 == 1  & industrycat4 == 1 &   inrange(ind_2d, "01", "03")
+			replace correct_2 = 1 if industrycat10 == 2  & industrycat4 == 2 &   inrange(ind_2d, "05", "09")
+			replace correct_2 = 1 if industrycat10 == 3  & industrycat4 == 2 &   inrange(ind_2d, "10", "33")
+			replace correct_2 = 1 if industrycat10 == 4  & industrycat4 == 2 &   inrange(ind_2d, "35", "39")
+			replace correct_2 = 1 if industrycat10 == 5  & industrycat4 == 2 &   inrange(ind_2d, "41", "43")
+			replace correct_2 = 1 if industrycat10 == 6  & industrycat4 == 3 & ( inrange(ind_2d, "45", "47") | inrange(ind_2d, "55", "56") )
+			replace correct_2 = 1 if industrycat10 == 7  & industrycat4 == 3 & ( inrange(ind_2d, "49", "53") | inrange(ind_2d, "58", "63") ) 
+			replace correct_2 = 1 if industrycat10 == 8  & industrycat4 == 3 &   inrange(ind_2d, "64", "82")
+			replace correct_2 = 1 if industrycat10 == 9  & industrycat4 == 3 &   inrange(ind_2d, "84", "84")
+			replace correct_2 = 1 if industrycat10 == 10 & industrycat4 == 4 &   inrange(ind_2d, "85", "99")  
+			drop ind_2d
+			
 			sum correct_2
 			if `r(min)'  == 0  {
 				gen reason_2  = "Industry cross-categories inconsistency" if correct_2 == 0
@@ -85,12 +93,54 @@
 			sum correct_2
 			replace problem = "Yes" if  `r(min)' == 0
 			replace problem = "No"  if  `r(min)' == 1
-		}
+		
+		} // close if ISIC Rev 4
+		
+		else if inlist(isic_version2, "3", "3.1") {
+			
+			** Checks   
+			* Set by default to error
+			gen correct_2 = 0
+			
+			* Generate ind as ISIC 2 digit
+			gen ind_2d = substr(industrycat_isic,1,2)
+			
+			* Set to correct_2 = 1 if in line with expectation
+			replace correct_2 = 1 if industrycat10 == 1  & industrycat4 == 1 &   inrange(ind_2d, "01", "05")
+			replace correct_2 = 1 if industrycat10 == 2  & industrycat4 == 2 &   inrange(ind_2d, "10", "14")
+			replace correct_2 = 1 if industrycat10 == 3  & industrycat4 == 2 &   inrange(ind_2d, "15", "37")
+			replace correct_2 = 1 if industrycat10 == 4  & industrycat4 == 2 &   inrange(ind_2d, "40", "41")
+			replace correct_2 = 1 if industrycat10 == 5  & industrycat4 == 2 &   inrange(ind_2d, "45", "45")
+			replace correct_2 = 1 if industrycat10 == 6  & industrycat4 == 3 &   inrange(ind_2d, "50", "55")
+			replace correct_2 = 1 if industrycat10 == 7  & industrycat4 == 3 &   inrange(ind_2d, "60", "64")
+			replace correct_2 = 1 if industrycat10 == 8  & industrycat4 == 3 &   inrange(ind_2d, "65", "74")
+			replace correct_2 = 1 if industrycat10 == 9  & industrycat4 == 3 &   inrange(ind_2d, "75", "75")
+			replace correct_2 = 1 if industrycat10 == 10 & industrycat4 == 4 &   inrange(ind_2d, "80", "99")  
+			drop ind_2d
+			
+			sum correct_2
+			if `r(min)'  == 0  {
+				gen reason_2  = "Industry cross-categories inconsistency" if correct_2 == 0
+			}
+		
+			** Summary 
+			gen problem = ""
+			sum correct_2
+			replace problem = "Yes" if  `r(min)' == 0
+			replace problem = "No"  if  `r(min)' == 1
+			
+			
+			
+		} // close if ISIC Rev 3 or 3.1
+		
 		else { 
-			gen problem = "ISIC version not 4, didn't check"
-		}
+			gen problem = "ISIC version not 4, 3, or 3.1 --> didn't check"
+			
+		} // close ISIC version not 4,3,3.1
+		
 		drop isic_version1 isic_version2
-	} 
+	} // close if ${has_isic} == 1
+	
 	** If ISIC info is not avaialble 
 	if ${has_isic} == 0 { 	
 		
@@ -128,19 +178,30 @@
 		duplicates drop
 		
 		split isco_version, p(_)
-		if isco_version2 == "1988" {
 		
+		* Match of first digit to occup is the same for ISCO-88 and ISCO-08
+		if inlist(isco_version2, "1988", "2008") {
+		
+			* Set by default to error
 			gen correct_3 = 0
+			
+			* Generate occup as ISCO 1 digit
+			gen occ_1d = substr(occup_isco,1,1)
+			
+			* Special case: armed forces
 			replace correct_3 = 1 if occup == 10 & occup_isco == "0110"
-			replace correct_3 = 1 if occup == 1  & occup_skill == 3 & inrange(occup_isco, "1000", "1319")
-			replace correct_3 = 1 if occup == 2  & occup_skill == 3 & inrange(occup_isco, "2000", "2460")
-			replace correct_3 = 1 if occup == 3  & occup_skill == 3 & inrange(occup_isco, "3000", "3480")
-			replace correct_3 = 1 if occup == 4  & occup_skill == 2 & inrange(occup_isco, "4000", "4223")
-			replace correct_3 = 1 if occup == 5  & occup_skill == 2 & inrange(occup_isco, "5000", "5230")
-			replace correct_3 = 1 if occup == 6  & occup_skill == 2 & inrange(occup_isco, "6000", "6210")
-			replace correct_3 = 1 if occup == 7  & occup_skill == 2 & inrange(occup_isco, "7000", "7442")
-			replace correct_3 = 1 if occup == 8  & occup_skill == 2 & inrange(occup_isco, "8000", "8340")
-			replace correct_3 = 1 if occup == 9  & occup_skill == 1 & inrange(occup_isco, "9000", "9333")
+			
+			replace correct_3 = 1 if occup == 1  & occup_skill == 3 & occ_1d == 1
+			replace correct_3 = 1 if occup == 2  & occup_skill == 3 & occ_1d == 2
+			replace correct_3 = 1 if occup == 3  & occup_skill == 3 & occ_1d == 3
+			replace correct_3 = 1 if occup == 4  & occup_skill == 2 & occ_1d == 4
+			replace correct_3 = 1 if occup == 5  & occup_skill == 2 & occ_1d == 5
+			replace correct_3 = 1 if occup == 6  & occup_skill == 2 & occ_1d == 6
+			replace correct_3 = 1 if occup == 7  & occup_skill == 2 & occ_1d == 7
+			replace correct_3 = 1 if occup == 8  & occup_skill == 2 & occ_1d == 8
+			replace correct_3 = 1 if occup == 9  & occup_skill == 1 & occ_1d == 9
+			drop occ_1d
+			
 			sum correct_3
 			if `r(min)'  == 0  {
 				gen reason_3  = "Occupation cross-categories inconsistency" if correct_3 == 0  
@@ -148,13 +209,19 @@
 			gen problem = ""
 			replace problem = "Yes" if  `r(min)' == 0
 			replace problem = "No"  if  `r(min)' == 1
-		}
+			
+		} // close if ISCO is 88 or 08
+		
 		else { 
+		
 			gen problem = "ISCO version not 1988, didn't check"
+		
 		}	
 		
 		drop isco_version1 isco_version2
-	} 
+		
+	} // close if has ISCO is 1
+	
 	if ${has_isco} == 0 { 
 		use "${mydata}", clear	
 	
