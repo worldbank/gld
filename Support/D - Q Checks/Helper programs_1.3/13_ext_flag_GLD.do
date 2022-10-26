@@ -24,61 +24,87 @@
 	global flaggedvars `flaggedvars'
 		
 	local n : word count $flaggedvars
-	forvalues i = 1/`n' {
-		local a : word `i' of $flaggedvars
-		local b = `a' - 10
 	
-		use "Block2_External/01_data/temp1_results.dta", clear 
-		keep if varorder == `b' 
-		count 
-		local c = `r(N)' 
-		encode source, gen(s1)
-	
-		local lvarchecked = varchecked
-		#delimit ;
-		twoway rcap    lb ub s1  if source == "GLD"                   , lcolor(red)                      ||
-			   scatter value s1  if source == "GLD"                   , msymbol(O) mcolor(red)           || 
-			   rcap    lb ub s1  if source != "GLD" & year == ${cyear}, lcolor(blue)                     || 
-		       rcap    lb ub s1  if source != "GLD" & year != ${cyear}, lcolor(blue) lpattern(shortdash) ||
-			   scatter value s1  if source != "GLD" & year == ${cyear}, msymbol(O) mcolor(blue)          ||
-			   scatter value s1  if source != "GLD" & year != ${cyear}, msymbol(T) mcolor(blue)          
-		leg(off) ytitle("") xtitle("")  name(Flag`a', replace)
-		xlabel(1(1)`c', valuelabel angle(45) labs(small))
-		ylabel( , nogrid angle(horizontal) labs(small))
-		scheme(s2mono) graphregion(fcolor(white) color(white))
-		subtitle("`lvarchecked'", position(11) justification(left) size(medsmall));
-		#delimit cr
+	* Check whether there are any cases (n == 0) or not
+	if `n' == 0 {
 		
-	}
+		erase "Block2_External/01_data/temp1_results.dta"
+		
+	} // close if n == 0
+	else {
+		
+		forvalues i = 1/`n' {
+			
+			local a : word `i' of $flaggedvars
+			local b = `a' - 10
 	
-	erase "Block2_External/01_data/temp1_results.dta"
+			use "Block2_External/01_data/temp1_results.dta", clear 
+			keep if varorder == `b' 
+			count 
+			local c = `r(N)' 
+			encode source, gen(s1)
+			
+			local lvarchecked = varchecked
+			#delimit ;
+			twoway	rcap lb ub s1  if source == "GLD",							lcolor(red)                      ||
+					scatter value s1  if source == "GLD",						msymbol(O) mcolor(red)           || 
+					rcap    lb ub s1  if source != "GLD" & year == ${cyear},	lcolor(blue)                     || 
+					rcap    lb ub s1  if source != "GLD" & year != ${cyear},	lcolor(blue) lpattern(shortdash) ||
+					scatter value s1  if source != "GLD" & year == ${cyear},	msymbol(O) mcolor(blue)          ||
+					scatter value s1  if source != "GLD" & year != ${cyear},	msymbol(T) mcolor(blue) 
+			leg(off) ytitle("") xtitle("")  name(Flag`a', replace)
+			xlabel(1(1)`c', valuelabel angle(45) labs(small))
+			ylabel( , nogrid angle(horizontal) labs(small))
+			scheme(s2mono) graphregion(fcolor(white) color(white))
+			subtitle("`lvarchecked'", position(11) justification(left) size(medsmall));
+			#delimit cr
+		
+		} // close for values inside n != 0
+	
+		erase "Block2_External/01_data/temp1_results.dta"
+		
+	} // close else (n != 0)
+
 	
 *-- 03. Make panel
 	clear
 	gen flaggedvars = ""
 	
-	** Exctract file names from global 
+	** Extract file names from global 
 	local n : word count $flaggedvars
-	set obs `n'
-	forvalues i = 1/`n' {
-		local a : word `i' of $flaggedvars
-		// di "`i'st is `a'"
-		replace flaggedvars = "`a'" if _n == `i'
-	}
 	
-	gen prefix  = "Flag"
-	gen figname = prefix + flaggedvars 
+	* Again only if there are any
+	if `n' == 0 {
+		
+		di "No flagged external vars"
+		
+	} // close if n == 0
+	else {
+		
+		set obs `n'
+		forvalues i = 1/`n' {
+			local a : word `i' of $flaggedvars
+			* di "`i'st is `a'"
+			replace flaggedvars = "`a'" if _n == `i'
+		}
 	
-	** Combined figures 
-	count
-	local num = `r(N)'
-	levelsof figname, local(allfigs) clean
-	#delimit;
-	gr combine `allfigs',
-	scheme(s2mono) graphregion(fcolor(white) color(white)) c(3) // altshrink
-	subtitle("Flagged variables (`num'), ${ccode3}-${cyear} ", position(11) justification(left) size(medsmall));
-	#delimit cr
-	graph export "01_summary/B2_external_flags.pdf", replace	
+		gen prefix  = "Flag"
+		gen figname = prefix + flaggedvars 
+		
+		** Combined figures 
+		count
+		local num = `r(N)'
+		levelsof figname, local(allfigs) clean
+		#delimit;
+		gr combine `allfigs',
+		scheme(s2mono) graphregion(fcolor(white) color(white)) c(3) // altshrink
+		subtitle("Flagged variables (`num'), ${ccode3}-${cyear} ", position(11) justification(left) size(medsmall));
+		#delimit cr
+		graph export "01_summary/B2_external_flags.pdf", replace
+		
+	} // close else (n != 0)
+	
+		
 	
 
 *-- 04. Conclude checking 	
