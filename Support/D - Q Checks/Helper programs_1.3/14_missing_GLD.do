@@ -16,7 +16,7 @@
 *-- 01. Prep for missing data table 	
 	use "${mydata}", clear
 	
-	global myvars age male lstatus empstat industrycat4 wage_no_compen unitwage 
+	global myvars age male urban lstatus empstat industrycat4 wage_no_compen unitwage 
 	// TO DO. add occupation & education vars 
 	// education applies to all. occupation to those employed / in a sector 
 	
@@ -25,8 +25,8 @@
 	** Generate missing share variables 
 	foreach v in $myvars {
 	
-		* Vars age, male should not be missing for any
-		if "`v'" == "age" | "`v'" == "male" { 
+		* Vars age, male, urban should not be missing for any
+		if "`v'" == "age" | "`v'" == "male"  | "`v'" == "urban" { 
 
 			gen sh_`v' =.
 			replace sh_`v' = 1 if !missing(`v')
@@ -57,15 +57,15 @@
 	
 *-- 02. Compute share of missing 
 	
-	* Block 1. age, male & lfstatus 	
+	* Block 1. age, male, urban, & lfstatus 	
 	use "Block3_Missing/01_data/missing_temp.dta", clear 
-	keep countrycode year sh_age sh_male sh_lstatus
+	keep countrycode year sh_age sh_male sh_urban sh_lstatus
 	collapse (sum) sh_*, by(countrycode year)
 	rename sh_* sh_*_n
 	save "Block3_Missing/01_data/missing_num_b1.dta", replace  
 	
 	use "Block3_Missing/01_data/missing_temp.dta", clear 
-	keep countrycode year sh_age sh_male sh_lstatus
+	keep countrycode year sh_age sh_male sh_urban sh_lstatus
 	collapse (count) sh_*, by(countrycode year)
 	rename sh_* sh_*_d
 	save "Block3_Missing/01_data/missing_den_b1.dta", replace  
