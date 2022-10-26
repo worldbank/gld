@@ -60,7 +60,7 @@
 	
 	
 *-- 04. Match to 2-digit ccode 
-	import delimited "${helper}/ccodes.csv", varnames(1) clear 
+	import delimited "${helper}/ccodes.csv", varnames(1) encoding(UTF-8) clear
 	keep if cc3 == "$ccode3"
 	levelsof cc2, local(ccode2) clean
 	global ccode2 `ccode2'
