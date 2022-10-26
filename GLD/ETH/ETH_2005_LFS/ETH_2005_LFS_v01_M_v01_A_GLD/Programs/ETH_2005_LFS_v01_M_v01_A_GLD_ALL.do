@@ -17,9 +17,11 @@
 <_Data collection to (M/Y)_>	[/] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			Central Statistical Agency </_Source of dataset_>
 								Data is not publicly accessible. World Bank internal use only.
-<_Sample size (HH)_> 			 </_Sample size (HH)_>
-<_Sample size (IND)_> 			 </_Sample size (IND)_>
-<_Sampling method_> 			Stratified two-stage ampling method </_Sampling method_>
+<_Sample size (HH)_> 			54,443 </_Sample size (HH)_>
+<_Sample size (IND)_> 			230,680 </_Sample size (IND)_>
+<_Sampling method_> 			Stratified two-stage cluster sampling method for
+								rural and major urban selection and strtified three-stage
+								cluster sampling for other urban centers selection. </_Sampling method_>
 <_Geographic coverage_> 		Both urban and rural parts of the country, 
 								except that Gambella region (only the urban parts),
 								Affar region (only zone one and zone three),
@@ -29,10 +31,10 @@
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
-<_ISCO Version_>				ISCO-08 </_ISCO Version_>
-<_OCCUP National_>				NOIC 1994 </_OCCUP National_>
-<_ISIC Version_>				 </_ISIC Version_>
-<_INDUS National_>				 </_INDUS National_>
+<_ISCO Version_>				ISCO-88 </_ISCO Version_>
+<_OCCUP National_>				NOIC </_OCCUP National_>
+<_ISIC Version_>				ISIC Rev.3 </_ISIC Version_>
+<_INDUS National_>				NOIC  </_INDUS National_>
 -----------------------------------------------------------------------
 
 <_Version Control_>
@@ -78,7 +80,7 @@ local output "`id_data'"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	use "`input'\lforce_2.dta", clear
+	use "`input'\LF2005_REC2.dta", clear
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -123,7 +125,7 @@ local output "`id_data'"
 
 
 *<_isic_version_>
-	gen isic_version=""
+	gen isic_version="isic_3"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
@@ -166,37 +168,49 @@ local output "`id_data'"
 *</_int_month_>
 
 
+/*<_hhid_>
+According to the annual report, the total number of households should be 54,484, 
+41 more than what we got here using ID01 to ID08.
+*<_hhid_>*/
+
+
 *<_hhid_>
-	foreach var of varlist LF01-LF08{
+	foreach var of varlist ID01-ID08{
 		tostring `var', gen(str_`var') format(%03.0f)
 	}
-	egen hhid=concat(str_LF01 str_LF02 str_LF03 str_LF04 str_LF05 str_LF06 str_LF07 str_LF08)
-	replace hhid="" if LF08==.
+	egen hhid=concat(str_ID01 str_ID02 str_ID03 str_ID04 str_ID05 str_ID06 str_ID07 str_ID08)
 	label var hhid "Household id"
 *</_hhid_>
+
+
+/*<_pid_>
+The number of observations in the raw dataset is 230,680 with 22 observations having missing
+LF10 information. Additionally, there are 13 couples of observations with the same serial number.  
+*<_pid_>*/
 
 
 *<_pid_>
 	tostring LF10, gen(str_LF10) format(%02.0f)    
 	egen pid=concat(hhid str_LF10)
+	replace pid="" if LF10==.
 	label var pid "Individual ID"
 *</_pid_>
 
 
 *<_weight_>
-	gen weight=WGTN
+	gen weight=WEIGHT
 	label var weight "Household sampling weight"
 *</_weight_>
 
 
 /*<_psu_>
-In the official report, the number of total PSU should be 2,334,
-which is 3 more than what we have here.
+In the official report, the number of total PSU should be 1825,
+which is 10 more than what we got.
 *<_psu_>*/
 
 
 *<_psu_>
-	egen psu = group(LF01 LF02 LF03 LF04 LF05 LF06 LF07)	
+	egen psu=group(ID01 ID02 ID03 ID04 ID05 ID06 ID07)	
 	label var psu "Primary sampling units"
 *</_psu_>
 
@@ -208,9 +222,7 @@ which is 3 more than what we have here.
 
 
 *<_strata_>
-	gen stratum=.
-	replace stratum=1 if LF04==8
-	replace stratum=1 if LF04!=8
+	gen strata=.
 	label var strata "Strata"
 *</_strata_>
 
@@ -229,9 +241,8 @@ which is 3 more than what we have here.
 {
 
 *<_urban_>
-	gen urban=.
-	replace urban=1 if LF04!=8
-	replace urban=0 if LF04==8
+	gen urban=ID04
+	recode urban (2/7=1) (8=0)
 	la de lblurban 1 "Urban" 0 "Rural"
 	label values urban lblurban
 	label var urban "Location is urban"
@@ -239,7 +250,7 @@ which is 3 more than what we have here.
 
 
 *<_subnatid1_>
-	gen subnatid1=LF01
+	gen subnatid1=ID01
 	label de lblsubnatid1 1 "1-Tigray" 2 "2-Affar" 3 "3-Amhara" 4 "4-Oromiya" 5 "5-Somali" 6 "6-Benishangul-gumz" 7 "7-SNNP" 12 "12-Gambella" 13 "13-Harari" 14 "14-Addis Ababa" 15 "15-Dire Dawa"
 	label values subnatid1 lblsubnatid1
 	label var subnatid1 "Subnational ID at First Administrative Level"
@@ -253,14 +264,13 @@ in the offical annual report, they were grouped at their regional level.
 
 
 *<_subnatid2_>
-	gen code_region=LF01
-	recode code_region (12=8) (13=9) (14=10) (15=11)
-	egen code=concat(code_region LF02), punct(".")
-	merge n:n code using "`input'\ETH_zone_name.dta" 
-	replace zone_name=code if _merge==1
+	gen code_region=ID01
+	egen code=concat(code_region ID02), punct(".")
+	merge n:n code using "`input'\ETH_zone_namING_2005.dta" 
 	drop if _merge==2
 	gen subnatid2=zone_name
-	drop _merge code_region code _merge
+	drop if _merge!=3
+	drop _merge code_region code 
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
 
@@ -274,7 +284,7 @@ in the offical annual report, they were grouped at their regional level.
 
 
 *<_subnatidsurvey_>	
-	decode LF01, gen(region_name)
+	decode ID01, gen(region_name)
 	replace region_name=proper(region_name)
 	decode urban, gen(urban_name)
 	egen subnatidsurvey=concat(region_name urban_name)
@@ -354,26 +364,10 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 *<_relationharm_>
 	gen byte relationharm=LF12
-	recode relationharm (0=1) (1=2) (2/4=3) (5=4) (6/7=5) (8/9=6)
+	recode relationharm (0=1) (1=2) (2/4=3) (5=4) (6/7=5) (8=6)
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm lblrelationharm
-	
-	gen head=1 if relationharm==1
-	bys hhid: egen headcount=total(head)
-	
-	bys hhid: egen age_max=max(age)
-	replace relationharm=1 if headcount==0 & age==age_max
-	drop head headcount
-	gen head=1 if relationharm==1
-	bys hhid: egen headcount=total(head)
-	
-	bys hhid head : gen order=_n if head==1
-	bys hhid: egen order_max=max(order)
-	replace relationharm=5 if headcount>1 & head==1 & order!=order_max
-	drop head headcount
-	gen head=1 if relationharm==1
-	bys hhid: egen headcount=total(head)
 *</_relationharm_>
 
 
@@ -384,7 +378,7 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 
 *<_marital_>
-	gen byte marital=LF27
+	gen byte marital=LF25
 	recode marital (1=2) (2=1) (3 5=4) (4=5) (9=.) 
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
@@ -392,8 +386,34 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 *</_marital_>
 
 
+/*<_dsablty_note_>
+
+The disability model has the following 12 options:
+1  Blindness/Both eyes
+2  Blindness/one eye
+3  Deaf/two ears
+4  Deaf/one ear
+5  Inability to speak
+6  Inaility to Listen
+7  Cut off hands/legs
+8  Legs/hands paralized
+9  Mental problem
+10  Mental Retardation
+11  Others
+99  Not Stated
+
+Some of these options do not clearly correspond to one specific kind of disability below, 
+i.e. without knowing whether the legs or the hands are paralized, we cannot knowing
+whether the disability relates to walking. 
+
+*<_dsablty_note_>*/
+
+
 *<_eye_dsablty_>
 	gen eye_dsablty=.
+	replace eye_dsablty=2 if LF19A==2 
+	replace eye_dsablty=3 if LF19A==1 
+	replace eye_dsablty=1 if eye_dsablty==. 
 	la de lbleye_dsablty 1 "No" 2 "Yes-some" 3 "Yes-a lot" 4 "Cannot at all"
 	label values eye_dsablty lbleye_dsablty
 	label var eye_dsablty "Disability related to eyesight"
@@ -402,6 +422,9 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 *<_hear_dsablty_>
 	gen hear_dsablty=.
+	replace hear_dsablty=2 if LF19A==4 
+	replace hear_dsablty=3 if LF19A==3
+	replace hear_dsablty=1 if hear_dsablty==.
 	la de lblhear_dsablty 1 "No" 2 "Yes-some" 3 "Yes-a lot" 4 "Cannot at all"
 	label values hear_dsablty lblhear_dsablty
 	label var hear_dsablty "Disability related to hearing"
@@ -426,6 +449,8 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 *<_slfcre_dsablty_>
 	gen slfcre_dsablty=.
+	replace slfcre_dsablty=2 if inrange(LF19A, 7, 10)
+	replace slfcre_dsablty=1 if slfcre_dsablty==.
 	la de lblslfcre_dsablty 1 "No" 2 "Yes-some" 3 "Yes-a lot" 4 "Cannot at all"
 	label values slfcre_dsablty lblslfcre_dsablty
 	label var eye_dsablty "Disability related to selfcare"
@@ -434,6 +459,8 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 *<_comm_dsablty_>
 	gen comm_dsablty=.
+	replace comm_dsablty=2 if LF19A==5|LF19A==6
+	replace comm_dsablty=1 if comm_dsablty==. 
 	la de lblcomm_dsablty 1 "No" 2 "Yes-some" 3 "Yes-a lot" 4 "Cannot at all"
 	label values comm_dsablty lblcomm_dsablty
 	label var eye_dsablty "Disability related to communicating"
@@ -460,7 +487,8 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 
 *<_migrated_binary_>
-	gen migrated_binary=cond(LF17==8, 0, 1)
+	gen migrated_binary=cond(LF15==8, 0, 1)
+	replace migrated_binary=. if LF15==9
 	label de lblmigrated_binary 0 "No" 1 "Yes"
 	replace migrated_binary=. if age<migrated_mod_age
 	label values migrated_binary lblmigrated_binary
@@ -485,11 +513,11 @@ to years since left previous residence). However, info is
 
 *<_migrated_years_>
    gen migrated_years=.
-   replace migrated_years=0.5 if LF17==0
-   replace migrated_years =LF17 if inrange(LF17,1,4)
-   replace migrated_years=5.5 if LF17==5
-   replace migrated_years=8 if LF17==6
-   replace migrated_years=10 if LF17==7
+   replace migrated_years=0.5 if LF15==0
+   replace migrated_years =LF15 if inrange(LF15,1,4)
+   replace migrated_years=5.5 if LF15==5
+   replace migrated_years=8 if LF15==6
+   replace migrated_years=10 if LF15==7
    replace migrated_years=. if migrated_binary!=1
    replace migrated_years=. if age<migrated_mod_age
    label var migrated_years "Years since latest migration"
@@ -497,8 +525,8 @@ to years since left previous residence). However, info is
 
 
 *<_migrated_from_urban_>
-	gen migrated_from_urban=LF20
-	recode migrated_from_urban 9=. 1=0 2=1 
+	gen migrated_from_urban=LF17
+	recode migrated_from_urban (9 5=.) (4=0) (2 3=1) 
 	replace migrated_from_urban=. if migrated_binary!=1
 	label de lblmigrated_from_urban 0 "Rural" 1 "Urban"
 	replace migrated_from_urban=. if age<migrated_mod_age
@@ -507,8 +535,15 @@ to years since left previous residence). However, info is
 *</_migrated_from_urban_>
 
 
+/*<_migrated_from_cat_>
+Detailed questions like region or zone of precious residence, area of previous 
+residence and reasons for migration were asked only to recent migrants who moved
+our from their original place during the 5 years prior to the date of the interview. 
+*<_migrated_from_cat_>*/
+
+
 *<_migrated_from_cat_>
-	gen migrated_from_cat=2
+	gen migrated_from_cat=.
 	replace migrated_from_cat=. if migrated_binary!=1
 	replace migrated_from_cat=. if age<migrated_mod_age
 	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country"
@@ -517,15 +552,16 @@ to years since left previous residence). However, info is
 *</_migrated_from_cat_>
 
 
+/*<_migrated_from_code_>
+The codelist of "migrated from code" was supposed to be at the zone-level, meaning
+that it should be in the same format of ID02.
+However, LF16 has 80 categories which do not have labels. So we could not created
+a labeled var out of it nor could we use the zone name list used for subnatid2 here.   
+*<_migrated_from_code_>*/
+
+
 *<_migrated_from_code_>
-	gen code_region=LF01
-	recode code_region (12=8) (13=9) (14=10) (15=11)
-	egen code=concat(code_region LF02), punct(".")
-	merge n:n code using "`input'\ETH_zone_name.dta" 
-	replace zone_name=code if _merge==1
-	drop if _merge==2
-	gen migrated_from_code=code
-	drop _merge code_region code _merge
+	gen migrated_from_code=LF16
 	replace migrated_from_code=. if migrated_binary!=1
 	replace migrated_from_code=. if age<migrated_mod_age
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
@@ -540,9 +576,16 @@ to years since left previous residence). However, info is
 *</_migrated_from_country_>
 
 
+/*<_migrated_reason_>
+The questionnaire only provides 12 options for this question with  12-"Other/Specify".
+But the raw dataset has 14 categories with 12 being "To live with relatives", 13 being "others"
+ and 14 being "Not stated".
+*<_migrated_reason_>*/
+
+
 *<_migrated_reason_>
-	gen migrated_reason=LF21
-	recode migrated_reason (1=2) (2/3 7=1) (4/5=3) (6=4) (8/10=5) (99=.)
+	gen migrated_reason=LF18
+	recode migrated_reason (1=2) (2/3 8=1) (4/5 7=3) (6=4) (9/13=5) (99=.)
 	replace migrated_reason=. if migrated_binary!=1
 	replace migrated_reason=. if age<migrated_mod_age
 	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
@@ -566,13 +609,7 @@ to years since left previous residence). However, info is
 
 
 *<_school_>
-	gen everattend=.
-	replace everattend=0 if LF59==3
-	replace everattend=1 if LF59<=2|((LF23>=1 & LF23<=96)|LF58==1
-	gen byte school=1 if LF58==1
-	replace school=0 if LF58==2 | everattend==0
-	replace school=. if age<ed_mod_age & age!=.
-	drop everattend
+	gen school=.
 	label var school "Attending school"
 	la de lblschool 0 "No" 1 "Yes"
 	label values school  lblschool
@@ -580,7 +617,7 @@ to years since left previous residence). However, info is
 
 
 *<_literacy_>
-	gen byte literacy=LF22
+	gen byte literacy=LF20
 	recode literacy (2=0) (9=.)
 	replace literacy=. if age<ed_mod_age & age!=.
 	label var literacy "Individual can read & write"
@@ -606,17 +643,22 @@ Answers of "Diploma/Degree not completed" (cat21/22) were counted as 12 years of
 
 *<_educy_>
 	gen byte educy=.
-	replace educy=LF23 if LF23<=12
-	replace educy=15 if LF23==20 | LF23==23 | LF23==24
-	replace educy=13 if LF23==21 | LF23==22
-	replace educy=18 if LF23==25
-	replace educy=0 if LF22==2
-	replace educy=1 if  LF23==95 | LF23==96
-	replace educy=11 if LF23==20 & LF25==27
-	replace educy=12 if LF23==21 & LF25==27
-	replace educy=13 if LF23==23 & LF25==27
-	replace educy=0 if everattend==0
-	replace educy=. if age<5
+	replace educy=LF21 if LF21<=12
+	replace educy=9 if LF21==13
+	replace educy=10 if LF21==14
+	replace educy=11 if LF21==15
+	replace educy=12 if LF21==16
+	replace educy=(10+1) if LF21==17
+	replace educy=(10+2) if LF21==18 | LF21==19 
+	replace educy=(10+3) if LF21==21 |LF21==20
+	replace educy=(12+3) if LF21==22 | LF21==23
+	replace educy=(12+4) if LF21==24
+	replace educy=(12+7) if LF21==25
+	replace educy=0 if LF20==2
+	replace educy=1 if  LF21==95 | LF21==96
+	replace educy=11 if LF21==20 & LF21==18
+	replace educy=12 if LF21==21 & LF21==18
+	replace educy=13 if LF21==23 & LF21==18	
 	replace educy=age if educy>age & !mi(educy) & !mi(age)
 	label var educy "Years of education"
 *</_educy_>
@@ -624,13 +666,13 @@ Answers of "Diploma/Degree not completed" (cat21/22) were counted as 12 years of
 
 *<_educat7_>
 	gen byte educat7=.
-	replace educat7=1 if everattend==0 | educy==0
-	replace educat7=2 if LF23<8 
-	replace educat7=3 if LF23==8
-	replace educat7=4 if LF23>8 & LF23<12 
-	replace educat7=5 if LF23==12
-	replace educat7=6 if LF23==20
-	replace educat7=7 if LF23>20 & LF23<=25
+	replace educat7=1 if educy==0
+	replace educat7=2 if LF21<=8 
+	replace educat7=3 if LF21==8
+	replace educat7=4 if (LF21>=9 & LF21<12)|(LF21>=13 & LF21<16)
+	replace educat7=5 if LF21==12|LF21==16
+	replace educat7=6 if LF21>=17 & LF21<=20
+	replace educat7=7 if LF21>20 & LF21<=25
 	replace educat7=. if age<ed_mod_age
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
@@ -657,20 +699,20 @@ Answers of "Diploma/Degree not completed" (cat21/22) were counted as 12 years of
 
 
 *<_educat_orig_>
-	gen educat_orig=LF23
+	gen educat_orig=LF21
 	label var educat_orig "Original survey education code"
 *</_educat_orig_>
 
 
 *<_educat_isced_>
 	gen educat_isced=.
-	replace educat_isced=100 if LF23<=6 
-	replace educat_isced=242 if LF23>6 & LF23<=8
-	replace educat_isced=244 if LF23>8 & LF23<12
-	replace educat_isced=344 if LF23==12
-	replace educat_isced=353 if LF23==20
-	replace educat_isced=344 if LF23>20 & LF23<25
-	replace educat_isced=760 if LF23==25
+	replace educat_isced=100 if LF21<=6 
+	replace educat_isced=242 if LF21>6 & LF21<=8
+	replace educat_isced=244 if (LF21>8 & LF21<15)| LF21==17 
+	replace educat_isced=344 if inlist(LF21,12,16,18,19)
+	replace educat_isced=353 if LF21==20
+	replace educat_isced=660 if LF21>20 & LF21<25
+	replace educat_isced=760 if LF21==25
 	replace educat_isced=. if age<ed_mod_age
 	label var educat_isced "ISCED standardised level of education"
 *</_educat_isced_>
@@ -705,7 +747,7 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 
 {
 *<_vocational_>
-	gen vocational=LF24
+	gen vocational=LF22
 	recode vocational (2=0) (9=.)
 	replace vocational=. if !inrange(vocational, 0, 1)
 	la de vocationallbl 1 "Yes" 0 "No"
@@ -716,8 +758,6 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 
 *<_vocational_type_>
 	gen vocational_type=.
-	replace vocational_type=1 if LF26==4
-	replace vocational_type=2 if LF26!=4 & LF26!=8 & LF26!=9
 	label de lblvocational_type 1 "Inside Enterprise" 2 "External"
 	label values vocational_type lblvocational_type
 	label var vocational_type "Type of vocational training"
@@ -737,25 +777,11 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 
 
 *<_vocational_field_orig_>
-	gen vocational_field_orig=LF25
-	decode LF25, gen(training_field)
+	gen vocational_field_orig=LF23
+	decode LF23, gen(training_field)
 	labmask vocational_field_orig, values(training_field) 
 	label var vocational_field_orig "Field of training"
 *</_vocational_field_orig_>
-
-
-/*<_vocational_financed_>
-One related variable in the raw dataset is LF26:"Where did you get the training?"
-1.College/University/Institute
-2.Vocational/Technical school
-3.Comprehensive high school
-4.Employer Organization
-5.NGO
-6.Private training organization
-7.Other/Specify
-
-But these do not directly reflect the source of financial support.
-*<_vocational_financed_>*/
 
 
 *<_vocational_financed_>
@@ -771,7 +797,7 @@ But these do not directly reflect the source of financial support.
 ================================================================================================*/
 
 *<_minlaborage_>
-	gen byte minlaborage=10 
+	gen byte minlaborage=5
 	label var minlaborage "Labor module application age"
 *</_minlaborage_>
 
@@ -781,9 +807,9 @@ But these do not directly reflect the source of financial support.
 {
 *<_lstatus_>
 	gen byte lstatus=.
-	replace lstatus=1 if LF30==1 
-	replace lstatus=1 if LF30==2 & LF33==1
-	replace lstatus=2 if LF30==2 & LF46==1 & LF49==1
+	replace lstatus=1 if LF28==1 | LF34<4
+	replace lstatus=2 if LF28==2 & LF34==4 & LF56==1
+	replace lstatus=3 if LF60==1 | (LF28==2 & LF34==4 & LF56==2)
 	replace lstatus=3 if lstatus==. 
 	replace lstatus=. if age<minlaborage
 	label var lstatus "Labor status"
@@ -796,16 +822,15 @@ But these do not directly reflect the source of financial support.
 Note: var "potential_lf" only takes value if the respondent is not in labor force. (lstatus==3)
 
 "potential_lf"=1 if the person is
-1)available but not searching or LF49==1 & LF46==2
-2)searching but not immediately available to work or LF49==2 & LF46==1
+1)available but not searching or LF59==1 & LF56==2
+2)searching but not immediately available to work or LF59==2 & LF56==1
 </_potential_lf_>*/
 
 
 *<_potential_lf_>
 	gen byte potential_lf=.
-	replace potential_lf=1 if [LF49==1 & LF46==2] | [LF49==2 & LF46==1]
-	replace potential_lf=1 if [LF49==1 & LF46==1] | [LF49==2 & LF46==2]
-	replace potential_lf=0 if lstatus==3
+	replace potential_lf=1 if [LF59==1 & LF56==2] | [LF59==2 & LF56==1]
+	replace potential_lf=0 if [LF59==1 & LF56==1] | [LF59==2 & LF56==2]
 	replace potential_lf=. if age < minlaborage
 	replace potential_lf=. if lstatus!=3
 	label var potential_lf "Potential labour force status"
@@ -816,8 +841,8 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_underemployment_>
 	gen byte underemployment=.
-	replace underemployment=1 if LF44==1
-	replace underemployment=0 if LF44==2
+	replace underemployment=1 if LF53==1
+	replace underemployment=0 if LF53==2
 	replace underemployment=. if age < minlaborage
 	replace underemployment=. if lstatus!=1
 	label var underemployment "Underemployment status"
@@ -836,17 +861,20 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 *</_nlfreason_>
 
 
+/*<_unempldur_l_>
+The duration of being unemployed is a single number. 
+*<_unempldur_l_>*/
+
+
 *<_unempldur_l_>
-	gen byte unempldur_l=LF55
-	recode unempldur_l (96 97 98 99=.)
+	gen byte unempldur_l=LF66
 	replace unempldur_l=. if lstatus!=2
 	label var unempldur_l "Unemployment duration (months) lower bracket"
 *</_unempldur_l_>
 
 
 *<_unempldur_u_>
-	gen byte unempldur_u=LF55
-	recode unempldur_u (96 97 98 99=.)
+	gen byte unempldur_u=LF66
 	replace unempldur_u=. if lstatus!=2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
 *</_unempldur_u_>

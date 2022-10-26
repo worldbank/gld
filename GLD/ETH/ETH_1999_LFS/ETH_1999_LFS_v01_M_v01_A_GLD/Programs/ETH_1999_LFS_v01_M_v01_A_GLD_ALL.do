@@ -19,7 +19,7 @@
 								Data is not publicly accessible. World Bank internal use only.
 <_Sample size (HH)_> 			366,695 </_Sample size (HH)_>
 <_Sample size (IND)_> 			81,339 </_Sample size (IND)_>
-<_Sampling method_> 			Stratified two-stage ampling method </_Sampling method_>
+<_Sampling method_> 			Stratified two-stage sampling method </_Sampling method_>
 <_Geographic coverage_> 		Both urban and rural parts of the country, 
 								except 6 zones in Somali Region and 2 zones
 								in Affar Region. Homeless persons and foreigners
@@ -28,7 +28,7 @@
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
-<_ISCO Version_>				ISCO-08 </_ISCO Version_>
+<_ISCO Version_>				ISCO-88 </_ISCO Version_>
 <_OCCUP National_>				NOIC 1994 </_OCCUP National_>
 <_ISIC Version_>				 </_ISIC Version_>
 <_INDUS National_>				 </_INDUS National_>
@@ -208,8 +208,6 @@ which is 3 more than what we have here.
 
 *<_strata_>
 	gen strata=.
-	replace strata=1 if LF04==8
-	replace strata=1 if LF04!=8
 	label var strata "Strata"
 *</_strata_>
 
@@ -667,7 +665,7 @@ Answers of "Diploma/Degree not completed" (cat21/22) were counted as 12 years of
 	replace educat_isced=244 if LF23>8 & LF23<12
 	replace educat_isced=344 if LF23==12
 	replace educat_isced=353 if LF23==20
-	replace educat_isced=344 if LF23>20 & LF23<25
+	replace educat_isced=660 if LF23>20 & LF23<25
 	replace educat_isced=760 if LF23==25
 	replace educat_isced=. if age<ed_mod_age
 	label var educat_isced "ISCED standardised level of education"
@@ -803,8 +801,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 *<_potential_lf_>
 	gen byte potential_lf=.
 	replace potential_lf=1 if [LF49==1 & LF46==2] | [LF49==2 & LF46==1]
-	replace potential_lf=1 if [LF49==1 & LF46==1] | [LF49==2 & LF46==2]
-	replace potential_lf=0 if lstatus==3
+	replace potential_lf=0 if [LF49==1 & LF46==1] | [LF49==2 & LF46==2]
 	replace potential_lf=. if age < minlaborage
 	replace potential_lf=. if lstatus!=3
 	label var potential_lf "Potential labour force status"
