@@ -247,20 +247,25 @@
 	sort lstatus
 	drop if missing(lstatus) & missing(empstat)
 	
-	gen correct_4 = 0
-	replace correct_4 = 1 if lstatus == 1 & !missing(empstat)
-	replace correct_4 = 1 if lstatus == 2 &  missing(empstat)
-	replace correct_4 = 1 if lstatus == 3 &  missing(empstat)
-	replace correct_4 = 1 if lstatus == 1 & missing(empstat) 
-	sum correct_4
-	if `r(min)'  == 0  {
-		gen reason_4  = "Empl status and LF status inconsistent" if correct_4 == 0
-	}
-	
-	gen problem = ""
-	sum correct_4
-	replace problem = "Yes" if  `r(min)' == 0
-	replace problem = "No"  if  `r(min)' == 1
+	gen correct = .
+
+	* Correct cases
+	replace correct_4 = 0 if lstatus == 1 & !missing(empstat)
+	replace correct_4 = 0 if lstatus == 2 & missing(empstat)
+	replace correct_4 = 0 if lstatus == 3 & missing(empstat)
+
+	* Wrong if is employed (lstatus == 1), misses empstat
+	replace correct_4 = -1 if lstatus == 1 & missing(empstat)
+
+	* Wrong if not employe (lstatus 2 or 3), has empstat
+	replace correct_4 = 1 if inrange(lstatus, 2, 3) & !missing(empstat)
+
+	gen reason_4 = ""
+	replace reason_4 = "There are employees with missing empstat" if correct_4 == -1
+	replace reason_4 = "There are unemployed, NLF with empstat" if correct_4 == 1
+
+	gen problem = "No"
+	replace problem = "Yes" if correct_4 != 0
 	
 	gen bivariate = 4
 	order countrycode year bivariate problem 
