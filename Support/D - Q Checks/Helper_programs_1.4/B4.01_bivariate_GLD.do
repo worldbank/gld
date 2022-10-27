@@ -245,7 +245,7 @@
 	sort lstatus
 	drop if missing(lstatus) & missing(empstat)
 	
-	gen correct = .
+	gen correct_4 = .
 
 	* Correct cases
 	replace correct_4 = 0 if lstatus == 1 & !missing(empstat)

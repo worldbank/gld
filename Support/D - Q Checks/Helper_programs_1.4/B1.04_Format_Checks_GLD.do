@@ -724,36 +724,81 @@ if _rc == 0 { // if pair of vars exists, else captured in 1.1
 }
 
 
-
-
-
 *----------8.13: Hours of work in total across jobs - 7 day ref
 cap confirm variable whours whours_2
 if _rc == 0 { // if pair of vars exists, else captured in 1.1
 	egen whours_check = rowtotal(whours whours_2)
-	qui count if whours_check > 140 // 140 means working 20 hours every day for a week. Odd
+	qui count if whours_check > 168 // 168 means working 24/7
 	if `r(N)' > 0 { // Odd cases
-		post `memhold' ("8. Labour") ("whours whours_2") ("7 day recall - On two jobs working 20 hours+ for 7 days. Not humanly possible (number of cases ->)") (`r(N)') (1)
+		post `memhold' ("8. Labour") ("whours whours_2") ("7 day recall - On two jobs working 24/7 days. Not humanly possible (number of cases ->)") (`r(N)') (1)
 	} // end odd cases
 	drop whours_check
 } // end vars exist
 
 
+*----------8.14: Hours of work in main job - 7 day ref
+cap confirm variable whours weight
+if _rc == 0 { // if pair of vars exists, else captured in 1.1
+	
+	preserve
+	
+	* Create a var to know whether value between 15 and 65 hours
+	gen whours_within_15_65 = 0 if !missing(whours)
+	replace whours_within_15_65 = 1 if !missing(whours) & inrange(whours,15, 65)
+		
+	collapse (mean) whours_within_15_65 [iw = weight]
 
-*----------8.14: Hours of work in total across jobs - 12 month ref
+	if whours_within_15_65 < 0.7 { // Flag if fewer than 70% work these "normal" hours
+		
+		levelsof whours_within_15_65, local(whours_within)
+		post `memhold' ("8. Labour") ("whours") ("7 day recall - Share of people with work hours between 15 and 65 hours smaller than 70% (Actual share is ->)") (`whours_within') (1)
+			
+	} // close if value smaller than 70%
+		
+	restore
+		
+} // end vars exist
+
+
+*----------8.15: Hours of work in total across jobs - 12 month ref
 cap confirm variable whours_year whours_2_year
 if _rc == 0 { // if pair of vars exists, else captured in 1.1
 	egen whours_check = rowtotal(whours_year whours_2_year)
-	qui count if whours_check > 140 // 140 means working 20 hours every day for a week. Odd
+	qui count if whours_check > 168 // 168 means working 24/7
 	if `r(N)' > 0 { // Odd cases
-		post `memhold' ("8. Labour") ("whours whours_2") ("7 day recall - On two jobs working 20 hours+ for 7 days. Not humanly possible (number of cases ->)") (`r(N)') (1)
+		post `memhold' ("8. Labour") ("whours whours_2") ("7 day recall - On two jobs working 24/7 days. Not humanly possible (number of cases ->)") (`r(N)') (1)
 	} // end odd cases
 	drop whours_check
 } // end vars exist
 
 
 
-*----------8.15: Overall income w/o comp cannot be smaller than either 7 day or 12 month w/o comp income
+*----------8.16: Hours of work in main job - 12 month ref
+cap confirm variable whours_year weight
+if _rc == 0 { // if pair of vars exists, else captured in 1.1
+	
+	preserve
+	
+	* Create a var to know whether value between 15 and 65 hours
+	gen whours_within_15_65 = 0 if !missing(whours_year)
+	replace whours_within_15_65 = 1 if !missing(whours_year) & inrange(whours_year,15, 65)
+		
+	collapse (mean) whours_within_15_65 [iw = weight]
+
+	if whours_within_15_65 < 0.7 { // Flag if fewer than 70% work these "normal" hours
+		
+		levelsof whours_within_15_65, local(whours_within)
+		post `memhold' ("8. Labour") ("whours_year") ("7 day recall - Share of people with work hours between 15 and 65 hours smaller than 70% (Actual share is ->)") (`whours_within') (1)
+			
+	} // close if value smaller than 70%
+		
+	restore
+		
+} // end vars exist
+
+
+
+*----------8.17: Overall income w/o comp cannot be smaller than either 7 day or 12 month w/o comp income
 * 7 day
 cap confirm variable t_wage_nocompen_total // if this exists then laborincome needs to exist, both annualized data
 if _rc == 0 {
@@ -786,7 +831,7 @@ if _rc == 0 {
 
 
 
-*----------8.16: Overall income w/ comp cannot be smaller than either 7 day or 12 month w/ comp income
+*----------8.18: Overall income w/ comp cannot be smaller than either 7 day or 12 month w/ comp income
 * 7 day
 cap confirm variable t_wage_total // if this exists then laborincome needs to exist, both annualized data
 if _rc == 0 {
@@ -819,7 +864,7 @@ if _rc == 0 {
 
 
 
-*----------8.17: Check ISIC code is length 1 (Letter) or length 4 (4 digit code)
+*----------8.19: Check ISIC code is length 1 (Letter) or length 4 (4 digit code)
 foreach var of global isic_check {
 	cap confirm string variable `var'
 	if _rc == 0 { // if vars exist, is string (if not , captured in section 1)
@@ -835,7 +880,7 @@ foreach var of global isic_check {
 } // end loop over isic code vars
 
 
-*----------8.18: Check ISCO codes
+*----------8.20: Check ISCO codes
 foreach var of global isco_check {
 	cap confirm string variable `var'
 	if _rc == 0 { // if vars exist, is string (if not , captured in section 1)
@@ -853,7 +898,7 @@ foreach var of global isco_check {
 
 
 
-*----------8.19: Check industry original variables versus industrycat10
+*----------8.21: Check industry original variables versus industrycat10
 * Run them in pairs (global is written to work in pairs)
 foreach token of global industry_alignment{
 	
@@ -879,7 +924,7 @@ foreach token of global industry_alignment{
 }
 
 
-*----------8.20: lstatus has no missing values for 15-65
+*----------8.22: lstatus has no missing values for 15-65
 
 local lstatus_vars "lstatus lstatus_year"
 foreach var of local lstatus_vars {
@@ -899,7 +944,7 @@ foreach var of local lstatus_vars {
 
 
 
-*----------8.21: isic vars are in universe
+*----------8.23: isic vars are in universe
 
 cap confirm variable isic_version
 if _rc == 0 { // if isic version info exists, otherwise cannot know which ISIC version to compare to
@@ -930,7 +975,7 @@ if _rc == 0 { // if isic version info exists, otherwise cannot know which ISIC v
 } // close if isic_version present
 
 
-*----------8.22: isco vars are in universe
+*----------8.24: isco vars are in universe
 
 cap confirm variable isco_version
 if _rc == 0 { // if isic version info exists, otherwise cannot know which ISIC version to compare to
@@ -961,7 +1006,7 @@ if _rc == 0 { // if isic version info exists, otherwise cannot know which ISIC v
 } // close if isic_version present
 
 
-*----------8.23: Check wage info has unit info
+*----------8.25: Check wage info has unit info
 foreach token of global wage_and_unit{
 	
 	* Split the token into its elements
@@ -998,7 +1043,7 @@ foreach token of global wage_and_unit{
 }
 
 
-*----------8.24: ISCO version info present if ISCO vars
+*----------8.26: ISCO version info present if ISCO vars
 local check_8_24 0
 foreach var of global isco_check {	
 	
@@ -1021,7 +1066,7 @@ if `check_8_24' == 1 {
 }
 
 
-*----------8.25: ISIC version info present if ISIC vars
+*----------8.27: ISIC version info present if ISIC vars
 local check_8_25 0
 foreach var of global isic_check {	
 	
