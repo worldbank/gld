@@ -1,6 +1,6 @@
 /*******************************************************************************
 								
-                       GLD CHECKS. Latest verison is 1.3. 
+                       GLD CHECKS. Latest verison is 1.4. 
                               Run All Checks 
 		   	   																   
 *******************************************************************************/
@@ -15,43 +15,45 @@
 
 *-- Step 2 - User defined arguments (Your input is needed in this step) ----------*
 
-	** Path to "Helper programs" folder 
+	** Path to "Helper programs" folder <-- INPUT --
 	global helper "[Path file to helpers here]" 
 		
-	** Path to GLD data file 
+	** Path to GLD data file            <-- INPUT -- 
 	global mydata "[Path file to harmonized GLD file here]" 
 	
-	** Choose output folder
+	** Choose output folder             <-- INPUT --
 	global output "[Path file to folder where output to be stored (commonly Work)]" 
 	
 		
 *-- Step - 3 Run the quality checks -----------------------------------------------*
 
-	do "${helper}/00_prepare_GLD.do"
+	do "${helper}/A1.01_prepare_GLD.do"
 	
 	* Block 1. Format & contents 
-	do "${helper}/01_SubnatID_Hierarchy_GLD.do" 
-	do "${helper}/02_in_range_test_wrapper_GLD.do"   
-	do "${helper}/03_VarLists_GLD.do"  
-	do "${helper}/04_Format_Checks_GLD.do"  
+	do "${helper}/B1.01_SubnatID_Hierarchy_GLD.do" 
+	do "${helper}/B1.02_in_range_test_wrapper_GLD.do"   
+	do "${helper}/B1.03_VarLists_GLD.do"  
+	do "${helper}/B1.04_Format_Checks_GLD.do"  
 	
 	* Block 2. External data  
-	do "${helper}/05_ext_ddA_GLD.do" 
-	do "${helper}/06_ext_ddB_GLD.do"   
-	do "${helper}/07_ext_ddC_GLD.do"   
-
-	do "${helper}/08_ext_num_GLD.do"	 
-	do "${helper}/09_ext_figA_GLD.do"    
-	do "${helper}/10_ext_figB1_GLD.do"   
-	do "${helper}/11_ext_figB2_GLD.do" 
-	do "${helper}/12_ext_figC_GLD.do"  
-	do "${helper}/13_ext_flag_GLD.do"  
+	do "${helper}/B2.01_ext_ddA_GLD.do" 
+	do "${helper}/B2.02_ext_ddB_GLD.do"   
+	do "${helper}/B2.03_ext_ddC_GLD.do"   
+	
+	do "${helper}/B2.04_ext_num_GLD.do"	 
+	
+	do "${helper}/B2.05_ext_figA_GLD.do"    
+	do "${helper}/B2.06_ext_figB1_GLD.do"   
+	do "${helper}/B2.07_ext_figB2_GLD.do" 
+	do "${helper}/B2.08_ext_figC_GLD.do"  
+	
+	do "${helper}/B2.09_ext_flag_GLD.do"  
 	
 	* Block 3. Missing values
-	do "${helper}/14_missing_GLD.do"  
+	do "${helper}/B3.01_missing_GLD.do"  
 	
 	* Block 4. Bivariate data 
-	do "${helper}/15_bivariate_GLD.do" 
+	do "${helper}/B4.01_bivariate_GLD.do" 
 	
 	* Block 5. Wage analysis 
-	do "${helper}/16_wage_GLD.do" 
+	do "${helper}/B5.01_wage_GLD.do" 
