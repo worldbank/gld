@@ -904,11 +904,6 @@ treated as "Paid employee".
 *</_industry_orig_>
 
 
-/*<_industrycat_isic_>
-
-*<_industrycat_isic_>*/
-
-
 *<_industrycat_isic_>
 	gen industrycat_isic=.
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
@@ -954,14 +949,12 @@ treated as "Paid employee".
 
 *<_occup_isco_>
 	gen lf35=LF35*10 if LF35>20
-	replace lf35=3470 if lf35==3450
-	replace lf35=3480 if lf35==3460
-	replace lf35=5160 if lf35==5140
-	replace lf35=9150 if lf35==9140
 	replace lf35=. if lf35==9990
 	tostring lf35, replace
-	gen occup_isco=lf35
-	tostring occup_isco, replace format(%04.0f)
+	gen occup_isco=substr(lf35,1,2)
+	destring occup_isco, replace
+	replace occup_isco=occup_isco*100
+	tostring occup_isco, replace
 	replace occup_isco="" if lstatus!=1 | occup_isco=="."
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
