@@ -188,18 +188,16 @@
 			* Generate occup as ISCO 1 digit
 			gen occ_1d = substr(occup_isco,1,1)
 			
-			* Special case: armed forces
-			replace correct_3 = 1 if occup == 10 & occup_isco == "0110"
-			
-			replace correct_3 = 1 if occup == 1  & occup_skill == 3 & occ_1d == 1
-			replace correct_3 = 1 if occup == 2  & occup_skill == 3 & occ_1d == 2
-			replace correct_3 = 1 if occup == 3  & occup_skill == 3 & occ_1d == 3
-			replace correct_3 = 1 if occup == 4  & occup_skill == 2 & occ_1d == 4
-			replace correct_3 = 1 if occup == 5  & occup_skill == 2 & occ_1d == 5
-			replace correct_3 = 1 if occup == 6  & occup_skill == 2 & occ_1d == 6
-			replace correct_3 = 1 if occup == 7  & occup_skill == 2 & occ_1d == 7
-			replace correct_3 = 1 if occup == 8  & occup_skill == 2 & occ_1d == 8
-			replace correct_3 = 1 if occup == 9  & occup_skill == 1 & occ_1d == 9
+			replace correct_3 = 1 if occup == 10 & 					  occ_1d == "0"
+			replace correct_3 = 1 if occup == 1  & occup_skill == 3 & occ_1d == "1"
+			replace correct_3 = 1 if occup == 2  & occup_skill == 3 & occ_1d == "2"
+			replace correct_3 = 1 if occup == 3  & occup_skill == 3 & occ_1d == "3"
+			replace correct_3 = 1 if occup == 4  & occup_skill == 2 & occ_1d == "4"
+			replace correct_3 = 1 if occup == 5  & occup_skill == 2 & occ_1d == "5"
+			replace correct_3 = 1 if occup == 6  & occup_skill == 2 & occ_1d == "6"
+			replace correct_3 = 1 if occup == 7  & occup_skill == 2 & occ_1d == "7"
+			replace correct_3 = 1 if occup == 8  & occup_skill == 2 & occ_1d == "8"
+			replace correct_3 = 1 if occup == 9  & occup_skill == 1 & occ_1d == "9"
 			drop occ_1d
 			
 			sum correct_3

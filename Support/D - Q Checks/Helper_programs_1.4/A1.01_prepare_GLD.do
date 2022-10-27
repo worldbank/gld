@@ -1,6 +1,6 @@
 /*******************************************************************************
 								
-                            GLD CHECKS Version 1.3
+                            GLD CHECKS Version 1.4
                           00. Prepare to run checks  	  
 		   	   																   
 *******************************************************************************/	
@@ -65,7 +65,17 @@
 	levelsof cc2, local(ccode2) clean
 	global ccode2 `ccode2'
 
-	
+
+************************   New features in version 1.4  ************************	
+ 
+ *- 1. File B2.09: Create summary image only if there are any flags
+ *- 2. File B2.01: Drop urban before creating summary, compare if remainder fits external
+ *- 3. File B3.01: Check lstatus if > minlaborage, labour ones if lstatus == 1, urban
+ *- 4. File B4.01: Expand checks to include ISCO-08 / ISIC 3 & 3.1
+ *- 5. File B4.01: Adapt lstatus <-> empstat check to be more informative
+ *- 6. File A1.01: Ensure UTF-8 enconding when reading ccodes.csv 
+ *- 7. -- ALL -- : Restructure file names to blocks, numbers within blocks
+
 ************************   New features in version 1.3  ************************	
 	
  *- 1. Do-file 06,	13. Industry, 02. ILO   added "if" block for robustness
