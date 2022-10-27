@@ -1,4 +1,4 @@
-# A guide to the GLD quality checks
+# Guide to the GLD quality checks
 
 This is a guide to the quality checks for the Global Labor Database (GLD). After reading it, users should be able to:
 
