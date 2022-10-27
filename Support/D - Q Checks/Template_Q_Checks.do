@@ -5,13 +5,15 @@
 		   	   																   
 *******************************************************************************/
 
+*-- Step 1 - Clean up before start -----------------------------------------------*
+
 	clear all
 	set more off
 	set more off
 	set varabbrev off
 	macro drop  csurvey cyear ccode3 ccode2 mydate output mydata helper
 
-*-- 01. User completes this section 
+*-- Step 2 - User defined arguments (Your input is needed in this step) ----------*
 
 	** Path to "Helper programs" folder 
 	global helper "[Path file to helpers here]" 
@@ -23,7 +25,8 @@
 	global output "[Path file to folder where output to be stored (commonly Work)]" 
 	
 		
-*-- 02. Run checks 
+*-- Step - 3 Run the quality checks -----------------------------------------------*
+
 	do "${helper}/00_prepare_GLD.do"
 	
 	* Block 1. Format & contents 
@@ -52,5 +55,3 @@
 	
 	* Block 5. Wage analysis 
 	do "${helper}/16_wage_GLD.do" 
-
-	
