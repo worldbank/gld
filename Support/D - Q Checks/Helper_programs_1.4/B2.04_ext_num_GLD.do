@@ -1,6 +1,6 @@
 /*******************************************************************************
 								
-                             GLD CHECKS Version 1.3
+                             GLD CHECKS Version 1.4
 						  05. Block 2 - External data
                             Export numerical output   	  
 		   	   																   
