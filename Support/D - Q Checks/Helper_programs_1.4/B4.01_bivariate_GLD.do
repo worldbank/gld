@@ -145,9 +145,7 @@
 	if ${has_isic} == 0 { 	
 		
 		use "${mydata}", clear
-		keep countrycode year industrycat_isic industrycat10 industrycat4    
-		sort industrycat_isic
-		drop if missing(industrycat_isic) & missing(industrycat10) & missing(industrycat4)
+		keep countrycode year 
 		duplicates drop
 		
 		gen problem = "ISIC version not known, didn't check"
@@ -223,9 +221,7 @@
 	if ${has_isco} == 0 { 
 		use "${mydata}", clear	
 	
-		keep countrycode year occup_isco occup_skill occup 
-		sort occup_isco
-		drop if missing(occup_isco) & missing(occup_skill) & missing(occup)
+		keep countrycode year
 		duplicates drop
 		
 		gen problem = "ISCO version not known, didn't check"
