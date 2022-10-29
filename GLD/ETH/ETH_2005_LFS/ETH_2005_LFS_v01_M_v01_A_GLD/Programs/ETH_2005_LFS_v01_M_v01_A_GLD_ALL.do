@@ -239,6 +239,12 @@ which is 10 more than what we got.
 ================================================================================================*/
 
 {
+/*<_urban_>
+The original variable "TOWN" in the raw dataset can be used to differentiate among
+rural, major urban centers and other urban centers, matching categories with area names
+in the annual report. 
+*<_urban_>*/
+
 
 *<_urban_>
 	gen urban=ID04
@@ -657,7 +663,7 @@ Answers of "Diploma/Degree not completed" (cat21/22) were counted as 12 years of
 *<_educat7_>
 	gen byte educat7=.
 	replace educat7=1 if educy==0
-	replace educat7=2 if LF21<=8 
+	replace educat7=2 if LF21<8 
 	replace educat7=3 if LF21==8
 	replace educat7=4 if (LF21>=9 & LF21<12)|(LF21>=13 & LF21<16)
 	replace educat7=5 if LF21==12|LF21==16
@@ -887,7 +893,7 @@ treated as "Paid employee".
 
 *<_empstat_>
 	gen byte empstat=LF39
-	recode empstat (2/7 11=1) (9=2) (10=3) (8=4) (12=5) ( 99=.)
+	recode empstat (2/7=1) (9 11=2) (10=3) (8=4) (12=5) ( 99=.)
 	replace empstat=. if lstatus!=1
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
@@ -928,7 +934,6 @@ treated as "Paid employee".
 	gen long industrycat10=LF38
 	recode industrycat10 (111/500=1) (1000/1429=2) (1500/3720=3) (4000/4100=4) (4500/4550=5) (5000/5526=6) (6000/6420=7) (6510/7499=8) (7500/7530=9) (8000/9902=10) (9999=.)
 	replace industrycat10=. if LF38==9319
-	label var industrycat10 "1 digit industry classification"
 	replace industrycat10=. if lstatus!=1
 	replace industrycat10=. if LF38==999	
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
