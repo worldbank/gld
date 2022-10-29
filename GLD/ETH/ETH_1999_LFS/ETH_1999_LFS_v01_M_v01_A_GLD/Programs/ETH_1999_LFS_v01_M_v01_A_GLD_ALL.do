@@ -873,8 +873,8 @@ treated as "Paid employee".
 
 *<_empstat_>
 	gen byte empstat=.
-	replace empstat=1 if LF38<=4 | LF38==8 | LF38==9
-	replace empstat=2 if LF38==7
+	replace empstat=1 if LF38<=4 
+	replace empstat=2 if inrange(LF38,7,9)
 	replace empstat=3 if LF38==5
 	replace empstat=4 if LF38==6
 	replace empstat=5 if LF38==10
