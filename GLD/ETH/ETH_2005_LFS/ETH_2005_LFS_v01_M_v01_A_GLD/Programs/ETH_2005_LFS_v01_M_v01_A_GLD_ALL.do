@@ -1,3 +1,4 @@
+
  
 /*%%=============================================================================================
 	0: GLD Harmonization Preamble
@@ -925,17 +926,16 @@ treated as "Paid employee".
 	destring industrycat_isic, replace
 	replace industrycat_isic=industrycat_isic*10
 	tostring industrycat_isic, format(%04.0f) replace
-	replace industrycat_isic="" if lstatus!=1 | industrycat_isic=="." | industrycat_isic=="9310"
+	replace industrycat_isic="" if lstatus!=1 | industrycat_isic=="." | industrycat_isic=="9310" | industrycat_isic=="9990"
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
 
 *<_industrycat10_>
 	gen long industrycat10=LF38
-	recode industrycat10 (111/500=1) (1000/1429=2) (1500/3720=3) (4000/4100=4) (4500/4550=5) (5000/5526=6) (6000/6420=7) (6510/7499=8) (7500/7530=9) (8000/9902=10) (9999=.)
+	recode industrycat10 (111/500=1) (1000/1429=2) (1500/3720=3) (4000/4100=4) (4500/4550=5) (5000/5526=6) (6000/6420=7) (6510/7499=8) (7500/7530=9) (8000/9902=10) (9999=10)
 	replace industrycat10=. if LF38==9319
 	replace industrycat10=. if lstatus!=1
-	replace industrycat10=. if LF38==999	
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
@@ -1123,8 +1123,8 @@ treated as "Paid employee".
 
 
 *<_industrycat10_2_>
-	gen byte industrycat10_2=LF51-1 
-	recode industrycat10_2 0=1 7=6 8=9 9=7 10 11=8 12/16=10 98=.
+	gen byte industrycat10_2=LF51
+	recode industrycat10_2 (1/2=1) (3=2) (4=3) (5=4) (6=5) (7 8=6) (10=7) (11/12=8) (13/99=10)
 	replace industrycat10_2=. if LF50!=1
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
@@ -1256,8 +1256,9 @@ treated as "Paid employee".
 
 *<_lstatus_year_>
 	gen byte lstatus_year=LF67
-	recode lstatus_year 2=0 9=.
+	recode lstatus_year 9=.
 	replace lstatus_year=1 if lstatus==1
+	replace lstatus_year=3 if lstatus_year==.
 	replace lstatus_year=. if age<minlaborage & age!=.
 	label var lstatus_year "Labor status during last year"
 	la de lbllstatus_year 1 "Employed" 2 "Unemployed" 3 "Non-LF"

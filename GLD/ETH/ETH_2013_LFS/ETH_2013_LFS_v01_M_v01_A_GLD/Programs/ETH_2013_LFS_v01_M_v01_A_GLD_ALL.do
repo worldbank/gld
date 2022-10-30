@@ -1242,6 +1242,7 @@ According to the annual report, employment status of a person was classified int
 	gen byte lstatus_year=.
 	replace lstatus_year=1 if lstatus==1|LF501==1|LF502==1
 	replace lstatus_year=2 if inlist(LF502,2,3)
+	replace lstatus_year=3 if lstatus_year==.
 	replace lstatus_year=. if age<minlaborage & age!=.
 	label var lstatus_year "Labor status during last year"
 	la de lbllstatus_year 1 "Employed" 2 "Unemployed" 3 "Non-LF"

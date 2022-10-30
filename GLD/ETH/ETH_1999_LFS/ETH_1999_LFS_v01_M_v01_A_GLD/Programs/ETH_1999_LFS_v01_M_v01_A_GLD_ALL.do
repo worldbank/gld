@@ -371,6 +371,7 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 	drop head headcount
 	gen head=1 if relationharm==1
 	bys hhid: egen headcount=total(head)
+	replace relationharm=5 if relationharm==1 & hhid==""
 *</_relationharm_>
 
 
@@ -924,7 +925,7 @@ treated as "Paid employee".
 	replace industrycat10=10 if LF36>=801 & LF36<.
 	replace industrycat10=10 if industrycat10==. & LF36!=.
 	replace industrycat10=. if lstatus!=1
-	replace industrycat10=. if LF36==999	
+	replace industrycat10=10 if LF36==999	
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
@@ -955,7 +956,7 @@ treated as "Paid employee".
 	destring occup_isco, replace
 	replace occup_isco=occup_isco*100
 	tostring occup_isco, replace
-	replace occup_isco="" if lstatus!=1 | occup_isco=="."
+	replace occup_isco="" if lstatus!=1 | occup_isco=="." |occup_isco=="5400"
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
