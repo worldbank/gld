@@ -145,7 +145,7 @@
 	if ${has_isic} == 0 { 	
 		
 		use "${mydata}", clear
-		keep countrycode year 
+		keep countrycode year
 		duplicates drop
 		
 		gen problem = "ISIC version not known, didn't check"
@@ -221,7 +221,7 @@
 	if ${has_isco} == 0 { 
 		use "${mydata}", clear	
 	
-		keep countrycode year
+		keep countrycode year  
 		duplicates drop
 		
 		gen problem = "ISCO version not known, didn't check"
@@ -428,40 +428,36 @@
 	sum educat4 
 	global  maxeducat `r(max)'	
 	
-	if 	${maxeducat} == 99 {
-		reshape wide x, i(age2) j(educat4)
-		egen total = rowtotal(x1 x2 x3 x99)
-		
-		foreach v of varlist x1 - total {
-			replace `v' = 100*`v'/total
-		}
-		
-		rename (x1 x2 x3 x4 x99) (no_ed primary secondary post_sec missing)
-		format no_ed primary secondary post_sec missing total %4.2fc
-	} 
-	if 	${maxeducat} == 4 {
-		reshape wide x, i(age2) j(educat4)
-		egen total = rowtotal(x1 x2 x3)
-		
-		foreach v of varlist x1 - total {
-			replace `v' = 100*`v'/total
-		}
-		
-		rename (x1 x2 x3 x4) (no_ed primary secondary post_sec)
-		format no_ed primary secondary post_sec total %4.2fc
-	} 
+	reshape wide x, i(age2) j(educat4)
+	egen total = rowtotal(x*)
 	
-	foreach v of varlist no_ed - total {
-		replace `v' = 0 if missing(`v')     // teat missing as 0.0
+	foreach v of varlist x* total {
+		replace `v' = 100*`v'/total
+		replace `v' = 0 if missing(`v') 
+	}
+	
+	cap rename x1 no_ed 
+	cap rename x2 primary
+	cap rename x3 secondary
+	cap rename x4 post_sec
+	cap rename x99 missing
+	
+	* Ensure all options exist, create as 0 if not, prettify
+	local educ_checks "no_ed primary secondary post_sec missing total"
+	foreach var of local educ_checks {
+		
+		cap confirm variable `var'
+		if _rc != 0 {
+			gen `var' = 0
+		}
+		
+		format `var' %4.2fc
+		
 	}
 
 	** Check 1. Children should be no_ed & primary > 90%
-	if 	${maxeducat} == 99 {
-		gen temp1    = 100*(no_ed + primary)/(total-missing) if age2 == 1
-	}
-	if 	${maxeducat} == 4 {
-		gen temp1    = 100*(no_ed + primary)/(total) if age2 == 1
-	} 	
+	gen temp1    = 100*(no_ed + primary)/(total-missing) if age2 == 1
+	
 	gen     correct1_6 = 0 if age2 == 1
 	replace correct1_6 = 1 if age2 == 1 & temp1 >= 90
 	drop    temp1
@@ -473,7 +469,7 @@
 	}
 	
 	** Check 2. Primary, secondary  post secondary should no be 0 for youth+ 
-	egen    sharemin   = rowmin(no_ed - post_sec) if inrange(age2, 2,5)
+	egen    sharemin   = rowmin(no_ed primary secondary post_sec) if inrange(age2, 2,5)
 	sum     sharemin
 	gen     correct2_6 = 0 if inrange(age2, 2,4)
 	replace correct2_6 = 1 if `r(min)' > 0 & inrange(age2, 2,4)
@@ -485,7 +481,7 @@
 	
 	
 	** Check 3. For all age groups, no education level should be 100%
-	egen    maxed    = rowmax(no_ed - post_sec)
+	egen    maxed    = rowmax(no_ed primary secondary post_sec)
 	gen     correct3_6 = 0
 	replace correct3_6 = 1 if maxed < 100
 	drop    maxed
@@ -679,47 +675,54 @@
 	
 	
 *-- 08. Occupation x education 
+
+	* Load data
 	use "${mydata}", clear
-	keep countrycode year occup educat4 weight
 	
-	** Create table 
-		// tab occup educat4 [iw = weight],  row nofreq 
+	* Keep only relevant vars, only if working
+	keep countrycode year occup educat4 weight lstatus
+	keep if lstatus == 1 
 	
+	* Generate counter, collapse to get weighted sum
 	gen x = 1 
 	collapse (count) x [iw = weight], by(occup educat4)
-	// drop if missing(occup) | missing(educat4)
 	
+	* Give missing a value (99), necessary for reshaping
 	replace educat4 = 99 if missing(educat4)
-
+	
 	sum educat4 
-	global maxeducat `r(max)'	
+	global  maxeducat `r(max)'	
 	
-	if 	${maxeducat} == 99 {	
-		reshape wide x, i(occup) j(educat4)
-		egen total = rowtotal(x1 x2 x3 x4 x99)
+	* Reshape data wide --> education level in the columns
+	reshape wide x, i(occup) j(educat4)
+	
+	* Calculate row totals (per occupation)
+	egen total = rowtotal(x*)
+	
+	* Convert to a share, set to 0 if missing
+	foreach v of varlist x* total {
+		replace `v' = 100*`v'/total
+		replace `v' = 0 if missing(`v') 
+	}
+	
+	* Rename variables to interpretable names
+	cap rename x1 no_ed 
+	cap rename x2 primary
+	cap rename x3 secondary
+	cap rename x4 post_sec
+	cap rename x99 missing
+	
+	* Ensure all options exist, create as 0 if not, prettify
+	local educ_checks "no_ed primary secondary post_sec missing total"
+	foreach var of local educ_checks {
 		
-		foreach v of varlist x1 - total {
-			replace `v' = 100*`v'/total
+		cap confirm variable `var'
+		if _rc != 0 {
+			gen `var' = 0
 		}
 		
-		rename (x1 x2 x3 x4 x99) (no_ed primary secondary post_sec missing)
-		format no_ed primary secondary post_sec missing total %4.2fc
-	} 
-	if ${maxeducat} == 4 {
-				
-		reshape wide x, i(occup) j(educat4)
-		egen total = rowtotal(x1 x2 x3 x4)
+		format `var' %4.2fc
 		
-		foreach v of varlist x1 - total {
-			replace `v' = 100*`v'/total
-		}
-		
-		rename (x1 x2 x3 x4) (no_ed primary secondary post_sec)
-		format no_ed primary secondary post_sec total %4.2fc	
-	} 	
-	
-	foreach v of varlist no_ed - total {
-		replace `v' = 0 if missing(`v')     // teat missing as 0.0
 	}
 	
 	** Check 1. Professionals with no_edu should be low, <10% 

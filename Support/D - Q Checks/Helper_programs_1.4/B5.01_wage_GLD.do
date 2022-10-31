@@ -13,7 +13,33 @@
 	cap mkdir "Block5_Wage/01_data"
 	cap mkdir "Block5_Wage/02_figures"
 	
-*-- 01. Wage x education  	
+*-- 01. Check whether there is wage info
+	use "${mydata}", clear
+	
+	cap confirm variable wage_no_compen
+	if _rc != 0 { // var not present
+		
+		* If no info at 7 days ref, try to use 12 month one
+		cap rename wage_no_compen_year wage_no_compen
+		cap rename unitwage_year       unitwage
+		
+	}
+	
+	* Check again, this time with a local evaluator
+	local wage_eval = 0
+	cap confirm variable wage_no_compen
+	if _rc == 0 { // wage, either 7d or 12m present
+		local wage_eval = 1
+	}
+
+	
+	********************************************************
+	* Only run the next steps if actually wage info present
+	********************************************************
+	* Only if wage_eval == 1
+	if `wage_eval' == 1 {
+	
+*-- 02. Wage x education  	
 	use "${mydata}", clear
 	
 	** Only for paid employees 
@@ -21,11 +47,18 @@
 	 
 	** Calculate hourly wages 
 	gen weekwage =.
+	replace weekwage = wage_no_compen*7    if unitwage == 1 // (daily)
 	replace weekwage = wage_no_compen      if unitwage == 2 // (weekly)
-	replace weekwage = wage_no_compen/4.2  if unitwage == 5 // (weekly)
+	replace weekwage = wage_no_compen/2    if unitwage == 3 // (every two weeks)
+	replace weekwage = wage_no_compen/8.67 if unitwage == 4 // (bi-monthly)
+	replace weekwage = wage_no_compen/4.33 if unitwage == 5 // (weekly)
+	replace weekwage = wage_no_compen/13   if unitwage == 6 // (Trimester)
+	replace weekwage = wage_no_compen/26   if unitwage == 7 // (Biannual)
+	replace weekwage = wage_no_compen/52   if unitwage == 8 // (Annual)
 	
 	gen hwage = weekwage / whours  // hourly wage
-	
+	replace hwage = wage_no_compen if unitwage == 9 // (Hourly wage)
+			
 	winsor2 hwage, replace cuts(1 99) trim // trimming outliers 
 	
 	** Calculate mean 
@@ -59,7 +92,7 @@
 	subtitle("Wage by education", position(11) justification(left) size(medsmall));
 	#delimit cr 
 
-*-- 02. Wage x occupation
+*-- 03. Wage x occupation
 	use "${mydata}", clear
 	
 	** Only for paid employees 
@@ -67,10 +100,17 @@
 	 
 	** Calculate hourly wages 
 	gen weekwage =.
+	replace weekwage = wage_no_compen*7    if unitwage == 1 // (daily)
 	replace weekwage = wage_no_compen      if unitwage == 2 // (weekly)
-	replace weekwage = wage_no_compen/4.2  if unitwage == 5 // (weekly)
+	replace weekwage = wage_no_compen/2    if unitwage == 3 // (every two weeks)
+	replace weekwage = wage_no_compen/8.67 if unitwage == 4 // (bi-monthly)
+	replace weekwage = wage_no_compen/4.33 if unitwage == 5 // (weekly)
+	replace weekwage = wage_no_compen/13   if unitwage == 6 // (Trimester)
+	replace weekwage = wage_no_compen/26   if unitwage == 7 // (Biannual)
+	replace weekwage = wage_no_compen/52   if unitwage == 8 // (Annual)
 	
 	gen hwage = weekwage / whours  // hourly wage
+	replace hwage = wage_no_compen if unitwage == 9 // (Hourly wage)
 	
 	winsor2 hwage, replace cuts(1 99) trim
 	
@@ -106,19 +146,27 @@
 	#delimit cr 
 
 
-*-- 03. Wage x industry
+*-- 04. Wage x industry
 	use "${mydata}", clear
 	
 	** Only for paid employees 
 	keep if empstat == 1 
-	drop if industrycat4 == 4 // drop "other"
+	* For the purpose of this analysis, treat "other" in indcat4 as services (which they are)
+	replace industrycat4 = 3 if industrycat4 == 4
 	 
 	** Calculate hourly wages 
 	gen weekwage =.
+	replace weekwage = wage_no_compen*7    if unitwage == 1 // (daily)
 	replace weekwage = wage_no_compen      if unitwage == 2 // (weekly)
-	replace weekwage = wage_no_compen/4.2  if unitwage == 5 // (weekly)
+	replace weekwage = wage_no_compen/2    if unitwage == 3 // (every two weeks)
+	replace weekwage = wage_no_compen/8.67 if unitwage == 4 // (bi-monthly)
+	replace weekwage = wage_no_compen/4.33 if unitwage == 5 // (weekly)
+	replace weekwage = wage_no_compen/13   if unitwage == 6 // (Trimester)
+	replace weekwage = wage_no_compen/26   if unitwage == 7 // (Biannual)
+	replace weekwage = wage_no_compen/52   if unitwage == 8 // (Annual)
 	
 	gen hwage = weekwage / whours  // hourly wage
+	replace hwage = wage_no_compen if unitwage == 9 // (Hourly wage)
 	
 	winsor2 hwage, replace cuts(1 99) trim
 	
@@ -154,7 +202,7 @@
 	#delimit cr 
 
 
-*-- 04. Wage x age 
+*-- 05. Wage x age 
 	use "${mydata}", clear
 	
 	** Only for paid employees 
@@ -162,10 +210,17 @@
 	 
 	** Calculate hourly wages 
 	gen weekwage =.
+	replace weekwage = wage_no_compen*7    if unitwage == 1 // (daily)
 	replace weekwage = wage_no_compen      if unitwage == 2 // (weekly)
-	replace weekwage = wage_no_compen/4.2  if unitwage == 5 // (weekly)
+	replace weekwage = wage_no_compen/2    if unitwage == 3 // (every two weeks)
+	replace weekwage = wage_no_compen/8.67 if unitwage == 4 // (bi-monthly)
+	replace weekwage = wage_no_compen/4.33 if unitwage == 5 // (weekly)
+	replace weekwage = wage_no_compen/13   if unitwage == 6 // (Trimester)
+	replace weekwage = wage_no_compen/26   if unitwage == 7 // (Biannual)
+	replace weekwage = wage_no_compen/52   if unitwage == 8 // (Annual)
 	
 	gen hwage = weekwage / whours  // hourly wage
+	replace hwage = wage_no_compen if unitwage == 9 // (Hourly wage)
 	
 	winsor2 hwage, replace cuts(1 99) trim
 
@@ -216,7 +271,7 @@
 	#delimit cr 
 
 
-*-- 05. Combine graphs & export 
+*-- 06. Combine graphs & export 
 	#delimit;
 	gr combine Fig1 Fig2 Fig3 Fig4,
 	scheme(s2mono) graphregion(fcolor(white) color(white)) c(2)
@@ -226,7 +281,7 @@
 	graph export "Block5_Wage/02_figures/wage_analysis.pdf", replace
 	
 	
-*-- 06. Checks & flags	
+*-- 07. Checks & flags	
 	clear
 	forvalues i = 1/4 {
 		append using "Block5_Wage/01_data/wage_`i'.dta"
@@ -242,10 +297,11 @@
 	}
 
 
-*-- 07. Conclude checks	
+*-- 08. Conclude checks	
 	clear
 	cd
 	di "Wage analysis completed for ${ccode3}-${cyear}"
 	
+}
 	
 **************************   END OF THE DO-FILE  *******************************		
