@@ -140,7 +140,7 @@ local output "`id_data'"
 
 
 *<_veralt_>
-	gen str3 veralt = "V01"
+	gen str3 veralt = "V02"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
