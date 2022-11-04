@@ -1,16 +1,10 @@
-/*==================================================
-project:       Perform Static Quality Checks for GLD
-Author:        Mario Gronert 
-E-email:       mgronert@worldbank.org
-url:           
-Dependencies:  distinct, mdesc
-----------------------------------------------------
-Creation Date:    	18 Jan 2021
-Modification Date:	31 Mar 2021   
-Do-file version:    01
-References:          
-Output: Static Overview Postfile
-==================================================*/
+/*******************************************************************************
+								
+                            GLD CHECKS Version 1.4
+                              01. Format checks 
+		   	   																   
+*******************************************************************************/	
+
 
 /*==================================================
               0: Program set up
@@ -18,28 +12,22 @@ Output: Static Overview Postfile
 
 version 16
 
+cd "${output}/${ccode3}_${cyear}_${mydate}"
+	
+cap mkdir "Block1_Format"
+	
 *----------0.1: Set necessary paths
 
-* Find all files in helper folder
-local helper_files : dir "${path_to_helpers}" files "helper_*.do" // only the actual helpers progs
-
 * Define path for postfile .dta
-local postfile_path = "${path_to_output_folder}" + "\" + "${survey_id}" + "_Q_Checks_Static" + ".dta"
+local postfile_path = "Block1_Format/${ccode3}_${cyear}_${csurvey}_Q_Format_Checks.dta"
 
-*----------0.2: Call in helper programmes
-
-foreach helper_file in `helper_files' {
-  local bridge = "${path_to_helpers}" + "\" + "`helper_file'"
-  run "`bridge'"
-}
-
-*----------0.3: Define postfile
+*----------0.2: Define postfile
 
 tempname memhold
 postfile `memhold' str20 Block str45 Var_Name str120 Test_Type Result Flag using "`postfile_path'", replace
 
 *----------0.4: Read in file
-use "${path_to_harmonization}", clear
+use "${mydata}", clear
 
 *----------0.5: Define global of total obs
 
@@ -102,18 +90,26 @@ if _rc == 0 { // if isic version info exists, otherwise cannot know which ISIC v
 
 *----------1.1: Evaluate filename
 local current_filename "`c(filename)'"
-local last_slash = strrpos("`current_filename'", "\")
+* either Mac or Windows environment, use very last slash, no matter the direction
+local last_slash_back = strrpos("`current_filename'", "\")
+local last_slash_forw = strrpos("`current_filename'", "/")
+if `last_slash_back' > `last_slash_forw' {
+	local last_slash `last_slash_back'
+}
+else {
+	local last_slash `last_slash_forw'
+}
 local current_filename = substr("`current_filename'", `last_slash' + 1, .)
 local check = regexm("`current_filename'", "^[a-zA-Z][a-zA-Z][a-zA-Z]_[0-9][0-9][0-9][0-9]_[a-zA-Z0-9-]+_[vV][0-9][0-9]_M_[vV][0-9][0-9]_A_[a-zA-Z][a-zA-Z][a-zA-Z]_[a-zA-Z_]+\.dta")
 if `check' == 0 { // filename does not follow convention
-	post `memhold' ("Overall") ("FileName") ("Filename being checked does not follow naming convention") (.) (1)
+	post `memhold' ("1. Overall") ("FileName") ("Filename being checked does not follow naming convention") (.) (1)
 }
 
 *----------1.2: Variable from dictionary not in the data
 foreach var of global all_vars {
 	cap confirm variable `var'
 	if _rc != 0 {
-		post `memhold' ("Overall") ("`var'") ("Variable not in data") (.) (1)
+		post `memhold' ("1. Overall") ("`var'") ("Variable not in data") (.) (1)
 	}
 }
 
@@ -131,7 +127,7 @@ foreach var of global all_vars {
 qui: describe, varlist
 if `r(k)' > 0 { // there are vars left over after dropping dictionary
 	foreach var in `r(varlist)' {
-		post `memhold' ("Overall") ("`var'") ("Variable not in dictionary") (.) (1)
+		post `memhold' ("1. Overall") ("`var'") ("Variable not in dictionary") (.) (1)
 	}	
 }
 
@@ -143,7 +139,7 @@ foreach var of global all_vars {
 	if _rc == 0 { // if var exists since if not captured in 1.1
 		qui : mdesc `var'
 		if `r(percent)' == 100 { // if all are missing
-			post `memhold' ("Overall") ("`var'") ("All values missing") (.) (99)
+			post `memhold' ("1. Overall") ("`var'") ("All values missing") (.) (99)
 		}		
 	}
 }
@@ -152,7 +148,7 @@ foreach var of global all_vars {
 foreach var of global numeric_vars {
 	cap confirm numeric variable `var'
 	if _rc != 0 & _rc != 111 { // If neither numeric nor absent in the dataset
-		post `memhold' ("Overall") ("`var'") ("A numeric var is not numeric") (.) (1)
+		post `memhold' ("1. Overall") ("`var'") ("A numeric var is not numeric") (.) (1)
 	}
 }
 
@@ -160,7 +156,7 @@ foreach var of global numeric_vars {
 foreach var of global string_vars {
 	cap confirm string variable `var'
 	if _rc != 0 & _rc != 111 { // If neither string nor absent in the dataset
-		post `memhold' ("Overall") ("`var'") ("A string var is not string") (.) (1)
+		post `memhold' ("1. Overall") ("`var'") ("A string var is not string") (.) (1)
 	}
 }
 
@@ -170,7 +166,7 @@ foreach var of global invariant_vars {
 	if _rc == 0 { // if var exists since if not captured in 1.1
 		qui: distinct `var'
 		if `r(ndistinct)' > 1 { // var takes more than one value
-			post `memhold' ("Overall") ("`var'") ("Invariant variable takes 2+ values") (.) (1)
+			post `memhold' ("1. Overall") ("`var'") ("Invariant variable takes 2+ values") (.) (1)
 		}
 	}
 }
@@ -181,7 +177,7 @@ foreach var of global change_should_vars {
 	if _rc == 0 { // if var exists since if not captured in 1.1
 		qui: distinct `var'
 		if `r(ndistinct)' == 1 { // var takes just one value (r(ndistinct) == 1). All missing (r(ndistinct) == 0) is accepted
-			post `memhold' ("Overall") ("`var'") ("Variable is unique in dataset") (.) (99)
+			post `memhold' ("1. Overall") ("`var'") ("Variable is unique in dataset") (.) (99)
 		}
 	}
 
@@ -201,7 +197,7 @@ if _rc == 0 {
 			by hhid (`var'), sort: gen diff = `var'[1] != `var'[_N] // if equal, in group first == last
 			qui : count if diff == 1
 			if `r(N)' > 0 { // there are cases where diff is 1 (condition is true)
-				post `memhold' ("Overall") ("`var'") ("Variable is not unique within HH") (.) (99)
+				post `memhold' ("1. Overall") ("`var'") ("Variable is not unique within HH") (.) (99)
 			* Close if r(N) > 0
 			}
 			drop diff
@@ -235,7 +231,7 @@ foreach list of global cat_list_names { // loop through list of categorical glob
 				local ratio = (`tot_obs' - r(N)) / `tot_obs'
 				if `ratio' > 0 { // issue since some outside of range
 				
-					post `memhold' ("Overall") ("`var'") ("Variable values outside of range `low_lim', `upp_lim' (+ `extra_n') (ratio of cases ->)") (`ratio') (1)
+					post `memhold' ("1. Overall") ("`var'") ("Variable values outside of range `low_lim', `upp_lim' (+ `extra_n') (ratio of cases ->)") (`ratio') (1)
 					
 				} // end if ratio >0
 			} // end if _rc == 0
@@ -256,7 +252,7 @@ foreach list of global cat_list_names { // loop through list of categorical glob
 				local ratio = (`tot_obs' - r(N)) / `tot_obs'
 				if `ratio' > 0 { // issue since some outside of range
 				
-					post `memhold' ("Overall") ("`var'") ("Variable values outside of range `low_lim', `upp_lim' (ratio of cases ->)") (`ratio') (1)
+					post `memhold' ("1. Overall") ("`var'") ("Variable values outside of range `low_lim', `upp_lim' (ratio of cases ->)") (`ratio') (1)
 					
 				} // end if ratio >0 
 			} // end if _rc == 0
@@ -292,7 +288,7 @@ if _rc == 0 { // if var exists since if not captured in 1.1
 	replace vermast = lower(vermast)
 	qui: count if vermast != "`eval_master'"
 	if `r(N)' > 0 { // The version do not agree
-		post `memhold' ("Overall") ("vermast") ("Version of Master per filename unequal to vermast") (.) (1)
+		post `memhold' ("1. Overall") ("vermast") ("Version of Master per filename unequal to vermast") (.) (1)
 	} // end if there are case of disagreement
 } // end if var exists
 
@@ -302,7 +298,7 @@ if _rc == 0 { // if var exists since if not captured in 1.1
 	replace veralt = lower(veralt)
 	qui: count if veralt != "`eval_alter'"
 	if `r(N)' > 0 { // The version do not agree
-		post `memhold' ("Overall") ("veralt") ("Version of Alter per filename unequal to vermalt") (.) (1)
+		post `memhold' ("1. Overall") ("veralt") ("Version of Alter per filename unequal to vermalt") (.) (1)
 	} // end if there are case of disagreement
 } // end if var exists
 
@@ -317,7 +313,7 @@ foreach var of global surv_str3 {
 	if _rc == 0 { // if var exists since if not captured in 1.1
 		cap confirm str3 var `var'
 		if _rc != 0 { // variable is not three letter string
-			post `memhold' ("Survey & ID") ("`var'") ("`var' is not str3 (possible even if all entries are ccc/v## -> gen str3 varName)") (.) (1)
+			post `memhold' ("2. Survey & ID") ("`var'") ("`var' is not str3 (possible even if all entries are ccc/v## -> gen str3 varName)") (.) (1)
 		} // end if not three letter
 	} // end if _rc == 0
 }
@@ -327,7 +323,7 @@ cap confirm variable survname
 if _rc == 0 { // if var exists since if not captured in 1.1
 	qui : count if !regex(survname, "^[a-zA-Z0-9-]+$")
 	if `r(N)' > 0 { // survname is not just alphanumeric or dash
-		post `memhold' ("Survey & ID") ("survname") ("Survey name should only be alphanumeric or contain a dash, no other characters") (.) (1)
+		post `memhold' ("2. Survey & ID") ("survname") ("Survey name should only be alphanumeric or contain a dash, no other characters") (.) (1)
 	} // end if alphanum or dash
 } // end if _rc == 0
 
@@ -336,7 +332,7 @@ cap confirm variable year
 if _rc == 0 { // if var exists since if not captured in 1.1
 	qui : count if year < 1880 | year > 2021
 	if `r(N)' > 0 { // year outside the norm
-		post `memhold' ("Survey & ID") ("year") ("Variable year is not between 1880 and 2021") (.) (1)
+		post `memhold' ("2. Survey & ID") ("year") ("Variable year is not between 1880 and 2021") (.) (1)
 	} // end if year odd
 } // end if _rc == 0
 
@@ -347,7 +343,7 @@ if _rc == 0 { // if var exists since if not captured in 1.1
 	qui : distinct pid
 	if `r(ndistinct)' != `r(N)' { // not unique_value
 		local pid_unique_ratio = `r(ndistinct)' / `r(N)'
-		post `memhold' ("Survey & ID") ("pid") ("pid is not unique. Distinct to total ratio ->") (`pid_unique_ratio') (1)
+		post `memhold' ("2. Survey & ID") ("pid") ("pid is not unique. Distinct to total ratio ->") (`pid_unique_ratio') (1)
 	} // end if pid not unique
 } // end if _rc == 0
 
@@ -357,7 +353,7 @@ foreach var of global int_class_versions {
 	if _rc == 0 { // if var exists since if not captured in 1.1
 		qui : count if !ustrregexm(`var', "^(isco_1968|isco_1988|isco_2008|isic_2|isic_3|isic_3\.1|isic_4|isced_1976|isced_1997|isced_2011)$")
 		if `r(N)' > 0 { // not defined as in the possible options
-			post `memhold' ("Survey & ID") ("`var'") ("Variable `var' is not correctly defined") (.) (1)
+			post `memhold' ("2. Survey & ID") ("`var'") ("Variable `var' is not correctly defined") (.) (1)
 		} // end if not correctly defined
 	} // end if _rc == 0
 }
@@ -371,7 +367,7 @@ foreach var of global int_class_versions {
 foreach three_vars of global subnat_hierarchy {
 	subnat_hierarchy `three_vars' // user generated program
 	if `r(check)' == 1 { // subnat_hierarchy is 1 if error
-		post `memhold' ("Geography") ("`three_vars'") ("Admin ID structure is not hierarchically consistent") (.) (1)
+		post `memhold' ("3. Geography") ("`three_vars'") ("Admin ID structure is not hierarchically consistent") (.) (1)
 	}
 }
 
@@ -386,7 +382,7 @@ if _rc == 0 { // if var exists since if not captured in 1.1
 	qui : count if hh_size_verify != hsize
 	if `r(N)' >0 { // there are cases when it differs
 		local hh_size_error_ratio = `r(N)' / $overall_count
-		post `memhold' ("Demography") ("hsize") ("HHsize differs from number of obs per HH (ratio ->)") (`hh_size_error_ratio') (1)
+		post `memhold' ("4. Demography") ("hsize") ("HHsize differs from number of obs per HH (ratio ->)") (`hh_size_error_ratio') (1)
 		drop hh_size_verify
 	* Close if r(N) > 0
 	}
@@ -403,7 +399,7 @@ if _rc == 0 { // if var exists since if not captured in 1.1
 	qui : count if (age < 0 | age>120) & age<.
 	if `r(N)' > 0 local check_age = `check_age' + `r(N)'
 	if `check_age' > 0 {
-		post `memhold' ("Demography") ("age") ("Age shows unexpected values (# of cases ->)") (`check_age') (1)
+		post `memhold' ("4. Demography") ("age") ("Age shows unexpected values (# of cases ->)") (`check_age') (1)
 	}
 }
 
@@ -417,7 +413,7 @@ if _rc == 0 { // if var exists since if not captured in 1.1
 	if `r(ndistinct)' != `number_heads' { // # of heads and # of HHs differs
 	
 		local hh_heads_ratio = `number_heads' / `r(ndistinct)'
-		post `memhold' ("Demography") ("relationharm") ("Ratio of Heads to HHID is not 1 (ratio ->)") (`hh_heads_ratio') (1)
+		post `memhold' ("4. Demography") ("relationharm") ("Ratio of Heads to HHID is not 1 (ratio ->)") (`hh_heads_ratio') (1)
 	* Close if `r(ndistinct)' != `number_heads'
 	}
 * Close if relationharm hhid exist
@@ -436,7 +432,7 @@ if _rc == 0 { // if var exists, else captured in 1.1
 		if _rc == 0 { // if var exists count if answers when migrated_binary is 0
 			qui : count if !missing(`var') & migrated_binary == 0
 			if `r(N)' >0 { // there are cases with answers
-				post `memhold' ("Training") ("`var'") ("Variable `var' has answers although migrated_binary says neve trained (# of cases ->)") (`r(N)') (1)
+				post `memhold' ("5. Migration") ("`var'") ("Variable `var' has answers although migrated_binary says neve trained (# of cases ->)") (`r(N)') (1)
 		
 			} // end cases with answers
 		} // end var exists
@@ -446,7 +442,7 @@ else {
 	foreach var of global never_migrated {
 		cap confirm variable var'
 		if _rc == 0 { // if var exists but migrated_binary not, error
-			post `memhold' ("Training") ("`var'") ("Variable `var' has migration answers although the initial migrated_binary is missing") (.) (1)
+			post `memhold' ("5. Migration") ("`var'") ("Variable `var' has migration answers although the initial migrated_binary is missing") (.) (1)
 		} // end var exists
 	} // end vars loop
 } // end migrated_binary does not exist
@@ -465,7 +461,7 @@ if _rc == 0 { // if var exists since if not captured in 1.1
 	qui : count if age < educy & (age != . & educy != .)
 	if `r(N)' > 0 local check_educy = `check_educy' + `r(N)'
 	if `check_educy' > 0 {
-		post `memhold' ("Survey & ID") ("educy") ("Years in education shows unexpected values (# of cases ->)") (`check_educy') (1)
+		post `memhold' ("6. Education") ("educy") ("Years in education shows unexpected values (# of cases ->)") (`check_educy') (1)
 	}
 }
 
@@ -476,7 +472,7 @@ cap confirm variable educat7 educat5 educat4
 if _rc == 0 { // if vars exist since if not captured in 1.1
 	subnat_hierarchy educat4 educat5 educat7
 	if `r(check)' == 1 { // hierarchy not respected
-		post `memhold' ("Education") ("educat*") ("Educat 4/5/7 hierarchy not respected") (.) (1)
+		post `memhold' ("6. Education") ("educat*") ("Educat 4/5/7 hierarchy not respected") (.) (1)
 	}
 }
 
@@ -485,7 +481,7 @@ cap confirm variable educat7 educat5
 if _rc == 0 { // if vars exist since if not captured in 1.1
 	qui : count if (educat7 == 1 & educat5 != 1) | (educat7 == 2 & educat5 != 2) | (educat7 == 3 & educat5 != 3) | (educat7 == 4 & educat5 != 3) | (educat7 == 5 & educat5 != 4) | (educat7 == 6 & educat5 !=5 ) | (educat7 == 7 & educat5 != 5)
 	if `r(N)' > 0 { // Correspondance not kept
-		post `memhold' ("Education") ("educat7 vs 5") ("Educat 5 <->7 correspondance not holding (number of cases ->)") (`r(N)') (1)
+		post `memhold' ("6. Education") ("educat7 vs 5") ("Educat 5 <->7 correspondance not holding (number of cases ->)") (`r(N)') (1)
 	}
 }
 
@@ -494,7 +490,7 @@ cap confirm variable educat5 educat4
 if _rc == 0 { // if vars exist since if not captured in 1.1
 	qui : count if (educat5 == 1 & educat4 != 1) | (educat5 == 2 & educat4 != 2) | (educat5 == 3 & educat4 != 2) | (educat5 == 4 & educat4 != 3) | (educat5 == 5 & educat4 != 4)
 	if `r(N)' > 0 { // Correspondance not kept
-		post `memhold' ("Education") ("educat5 vs 4") ("Educat 4 <-> 5 correspondance not holding (number of cases ->)") (`r(N)') (1)
+		post `memhold' ("6. Education") ("educat5 vs 4") ("Educat 4 <-> 5 correspondance not holding (number of cases ->)") (`r(N)') (1)
 	}
 }
 
@@ -504,7 +500,7 @@ cap confirm educat_isced
 if _rc == 0 { // if vars exist, else captured in 1.1
 	qui : count if (educat_isced < 100 | educat_isced > 999) & !missing(educat_isced)
 	if `r(N)' > 0 { // Non missing value of fewer or more than three digits
-		post `memhold' ("Education") ("educat_isced") ("ISCED code is not three digits (number of cases ->)") (`r(N)') (1)
+		post `memhold' ("6. Education") ("educat_isced") ("ISCED code is not three digits (number of cases ->)") (`r(N)') (1)
 	}
 }
 
@@ -520,7 +516,7 @@ if _rc == 0 { // if var exists, else captured in 1.1
 		if _rc == 0 { // if var exists count if answers when vocational is 0
 			qui : count if !missing(`var') & vocational == 0
 			if `r(N)' >0 { // there are cases with answers
-				post `memhold' ("Training") ("`var'") ("Variable `var' has answers although vocational says neve trained (# of cases ->)") (`r(N)') (1)
+				post `memhold' ("7. Training") ("`var'") ("Variable `var' has answers although vocational says neve trained (# of cases ->)") (`r(N)') (1)
 		
 			} // end cases with answers
 		} // end var exists
@@ -530,7 +526,7 @@ else {
 	foreach var of global never_trained {
 		cap confirm variable var'
 		if _rc == 0 { // if var exists but vocational not, error
-			post `memhold' ("Training") ("`var'") ("Variable `var' has vocational answers although the initial vocational is missing") (.) (1)
+			post `memhold' ("7. Training") ("`var'") ("Variable `var' has vocational answers although the initial vocational is missing") (.) (1)
 		} // end var exists
 	} // end vars loop
 } // end vocational does not exist
@@ -548,7 +544,7 @@ foreach var of global not_posed_unemployed_week {
 		qui : count if lstatus == 2 & !missing(`var')
 		if `r(N)' >0 { // there are cases with answers
 			local unemp_7_wrong = `r(N)' / $overall_count
-			post `memhold' ("Labour") ("`var'") ("Variable `var' has labour answers for the 7 day unemployed (ratio ->)") (`unemp_7_wrong') (1)
+			post `memhold' ("8. Labour") ("`var'") ("Variable `var' has labour answers for the 7 day unemployed (ratio ->)") (`unemp_7_wrong') (1)
 		
 		} // end cases with answers
 	} // end var exists
@@ -562,7 +558,7 @@ foreach var of global not_posed_unemployed_year {
 		qui : count if lstatus_year == 2 & !missing(`var')
 		if `r(N)' >0 { // there are cases with answers
 			local unemp_12_wrong = `r(N)' / $overall_count
-			post `memhold' ("Labour") ("`var'") ("Variable `var' has labour answers for the 12 month unemployed (ratio ->)") (`unemp_12_wrong') (1)
+			post `memhold' ("8. Labour") ("`var'") ("Variable `var' has labour answers for the 12 month unemployed (ratio ->)") (`unemp_12_wrong') (1)
 		
 		} // end cases with answers
 	} // end var exists
@@ -576,7 +572,7 @@ if _rc == 0 { // if var exists since if not captured in 1.1
 		local total_nlf = `r(N)'
 		qui : count if lstatus == 3 & missing(nlfreason)
 		if `r(N)' > 0 & `r(N)' < `total_nlf' { // Either all answered or all missing, in between -> error
-			post `memhold' ("Labour") ("nlfreason") ("NLF individuals, some answered why NLF others did not, odd") (.) (1)
+			post `memhold' ("8. Labour") ("nlfreason") ("NLF individuals, some answered why NLF others did not, odd") (.) (1)
 
 		} // end odd cases
 }
@@ -589,7 +585,7 @@ if _rc == 0 { // if var exists since if not captured in 1.1
 		local total_nlf = `r(N)'
 		qui : count if lstatus_year == 3 & missing(nlfreason_year)
 		if `r(N)' > 0 & `r(N)' < `total_nlf' { // Either all answered or all missing, in between -> error
-			post `memhold' ("Labour") ("nlfreason_year") ("NLF individuals, some answered why NLF others did not, odd") (.) (1)
+			post `memhold' ("8. Labour") ("nlfreason_year") ("NLF individuals, some answered why NLF others did not, odd") (.) (1)
 
 		} // end odd cases
 }
@@ -602,7 +598,7 @@ foreach var of global not_posed_nlf_week {
 		qui : count if lstatus == 3 & !missing(`var')
 		if `r(N)' >0 { // there are cases with answers
 			local nlf_7_wrong = `r(N)' / $overall_count
-			post `memhold' ("Labour") ("`var'") ("Variable `var' has labour answers for the 7 day NLF (ratio ->)") (`nlf_7_wrong') (1)
+			post `memhold' ("8. Labour") ("`var'") ("Variable `var' has labour answers for the 7 day NLF (ratio ->)") (`nlf_7_wrong') (1)
 		
 		} // end cases with answers
 	} // end var exists
@@ -616,7 +612,7 @@ foreach var of global not_posed_nlf_year {
 		qui : count if lstatus_year == 3 & !missing(`var')
 		if `r(N)' >0 { // there are cases with answers
 			local nlf_12_wrong = `r(N)' / $overall_count
-			post `memhold' ("Labour") ("`var'") ("Variable `var' has labour answers for the 12 month NLF (ratio ->)") (`nlf_12_wrong') (1)
+			post `memhold' ("8. Labour") ("`var'") ("Variable `var' has labour answers for the 12 month NLF (ratio ->)") (`nlf_12_wrong') (1)
 		
 		} // end cases with answers
 	} // end var exists
@@ -631,7 +627,7 @@ foreach pair of global industry_cat_concordance {
 		local cat_4_var  : word 2 of `pair'
 		qui : count if (`cat_10_var' == 1 & `cat_4_var' != 1) | (`cat_10_var' == 2 & `cat_4_var' != 2) | (`cat_10_var' == 3 & `cat_4_var' != 2) | (`cat_10_var' == 4 & `cat_4_var' != 2) | (`cat_10_var' == 5 & `cat_4_var' != 2) | (`cat_10_var' == 6 & `cat_4_var' != 3) | (`cat_10_var' == 7 & `cat_4_var' != 3) | (`cat_10_var' == 8 & `cat_4_var' != 3) | (`cat_10_var' == 9 & `cat_4_var' != 3) | (`cat_10_var' == 10 & `cat_4_var' != 4)
 		if `r(N)' > 0 { // Correspondance not kept
-			post `memhold' ("Labour") ("`cat_10_var' and `cat_4_var'") ("10 industry cat and 4 industry cat do not correspond (number of cases ->)") (`r(N)') (1)
+			post `memhold' ("8. Labour") ("`cat_10_var' and `cat_4_var'") ("10 industry cat and 4 industry cat do not correspond (number of cases ->)") (`r(N)') (1)
 			
 		} // end correspondance not kept
 	} // end vars exist
@@ -663,7 +659,7 @@ if `counting' > 1{ // if just one var no point in checking
 	} // end case three vars exist
 	
 	if `odd_wage_week' > 0 { // there are odd cases
-		post `memhold' ("Labour") ("wage_total wage_total_2 t_wage_others") ("Total wage sums do not follow primary, secondary, other descendance - 7 day ref (number of cases ->)") (`odd_wage_week') (1)
+		post `memhold' ("8. Labour") ("wage_total wage_total_2 t_wage_others") ("Total wage sums do not follow primary, secondary, other descendance - 7 day ref (number of cases ->)") (`odd_wage_week') (1)
 	} // end odd cases
 } // end Step 2
 
@@ -691,7 +687,7 @@ if `counting' > 1{ // if just one var no point in checking
 	} // end case three vars exist
 	
 	if `odd_wage_week' > 0 { // there are odd cases
-		post `memhold' ("Labour") ("wage_total wage_total_2 t_wage_others") ("Total wage sums do not follow primary, secondary, other descendance - 12 month ref (number of cases ->)") (`odd_wage_week') (1)
+		post `memhold' ("8. Labour") ("wage_total wage_total_2 t_wage_others") ("Total wage sums do not follow primary, secondary, other descendance - 12 month ref (number of cases ->)") (`odd_wage_week') (1)
 	} // end odd cases
 } // end Step 2
 
@@ -702,7 +698,7 @@ cap confirm variable t_wage_nocompen_total t_wage_total
 if _rc == 0 { // if pair of vars exists, else captured in 1.1
 	qui count if t_wage_total < t_wage_nocompen_total & ( !missing(t_wage_total) | !missing(t_wage_nocompen_total) )
 	if `r(N)' > 0 { // there are cases where w/o comp is > than w/ comp
-		post `memhold' ("Labour") ("t_wage_nocompen_total t_wage_total") ("7 day ref - Total wage w/o compensation is larger than w/ compensation (number of cases ->)") (`r(N)') (1)
+		post `memhold' ("8. Labour") ("t_wage_nocompen_total t_wage_total") ("7 day ref - Total wage w/o compensation is larger than w/ compensation (number of cases ->)") (`r(N)') (1)
 	}
 }
 
@@ -713,7 +709,7 @@ cap confirm variable t_wage_nocompen_total_year t_wage_total_year
 if _rc == 0 { // if pair of vars exists, else captured in 1.1
 	qui count if t_wage_total_year < t_wage_nocompen_total_year & ( !missing(t_wage_total_year) | !missing(t_wage_nocompen_total_year) )
 	if `r(N)' > 0 { // there are cases where w/o comp is > than w/ comp
-		post `memhold' ("Labour") ("t_wage_nocompen_total_y t_wage_total_y") ("12 month ref - Total wage w/o compensation is larger than w/ compensation (number of cases ->)") (`r(N)') (1)
+		post `memhold' ("8. Labour") ("t_wage_nocompen_total_y t_wage_total_y") ("12 month ref - Total wage w/o compensation is larger than w/ compensation (number of cases ->)") (`r(N)') (1)
 	}
 }
 
@@ -723,41 +719,86 @@ cap confirm variable linc_nc laborincome
 if _rc == 0 { // if pair of vars exists, else captured in 1.1
 	qui count if laborincome < linc_nc & ( !missing(laborincome) | !missing(linc_nc) )
 	if `r(N)' > 0 { // there are cases where w/o comp is > than w/ comp
-		post `memhold' ("Labour") ("laborincome & linc_nc") ("Overall - Total wage w/o compensation is larger than w/ compensation (number of cases ->)") (`r(N)') (1)
+		post `memhold' ("8. Labour") ("laborincome & linc_nc") ("1. Overall - Total wage w/o compensation is larger than w/ compensation (number of cases ->)") (`r(N)') (1)
 	}
 }
-
-
-
 
 
 *----------8.13: Hours of work in total across jobs - 7 day ref
 cap confirm variable whours whours_2
 if _rc == 0 { // if pair of vars exists, else captured in 1.1
 	egen whours_check = rowtotal(whours whours_2)
-	qui count if whours_check > 140 // 140 means working 20 hours every day for a week. Odd
+	qui count if whours_check > 168 // 168 means working 24/7
 	if `r(N)' > 0 { // Odd cases
-		post `memhold' ("Labour") ("whours whours_2") ("7 day recall - On two jobs working 20 hours+ for 7 days. Not humanly possible (number of cases ->)") (`r(N)') (1)
+		post `memhold' ("8. Labour") ("whours whours_2") ("7 day recall - On two jobs working 24/7 days. Not humanly possible (number of cases ->)") (`r(N)') (1)
 	} // end odd cases
 	drop whours_check
 } // end vars exist
 
 
+*----------8.14: Hours of work in main job - 7 day ref
+cap confirm variable whours weight
+if _rc == 0 { // if pair of vars exists, else captured in 1.1
+	
+	preserve
+	
+	* Create a var to know whether value between 15 and 65 hours
+	gen whours_within_15_65 = 0 if !missing(whours)
+	replace whours_within_15_65 = 1 if !missing(whours) & inrange(whours,15, 65)
+		
+	collapse (mean) whours_within_15_65 [iw = weight]
 
-*----------8.14: Hours of work in total across jobs - 12 month ref
+	if whours_within_15_65 < 0.7 { // Flag if fewer than 70% work these "normal" hours
+		
+		levelsof whours_within_15_65, local(whours_within)
+		post `memhold' ("8. Labour") ("whours") ("7 day recall - Share of people with work hours between 15 and 65 hours smaller than 70% (Actual share is ->)") (`whours_within') (1)
+			
+	} // close if value smaller than 70%
+		
+	restore
+		
+} // end vars exist
+
+
+*----------8.15: Hours of work in total across jobs - 12 month ref
 cap confirm variable whours_year whours_2_year
 if _rc == 0 { // if pair of vars exists, else captured in 1.1
 	egen whours_check = rowtotal(whours_year whours_2_year)
-	qui count if whours_check > 140 // 140 means working 20 hours every day for a week. Odd
+	qui count if whours_check > 168 // 168 means working 24/7
 	if `r(N)' > 0 { // Odd cases
-		post `memhold' ("Labour") ("whours whours_2") ("7 day recall - On two jobs working 20 hours+ for 7 days. Not humanly possible (number of cases ->)") (`r(N)') (1)
+		post `memhold' ("8. Labour") ("whours whours_2") ("7 day recall - On two jobs working 24/7 days. Not humanly possible (number of cases ->)") (`r(N)') (1)
 	} // end odd cases
 	drop whours_check
 } // end vars exist
 
 
 
-*----------8.15: Overall income w/o comp cannot be smaller than either 7 day or 12 month w/o comp income
+*----------8.16: Hours of work in main job - 12 month ref
+cap confirm variable whours_year weight
+if _rc == 0 { // if pair of vars exists, else captured in 1.1
+	
+	preserve
+	
+	* Create a var to know whether value between 15 and 65 hours
+	gen whours_within_15_65 = 0 if !missing(whours_year)
+	replace whours_within_15_65 = 1 if !missing(whours_year) & inrange(whours_year,15, 65)
+		
+	collapse (mean) whours_within_15_65 [iw = weight]
+
+	if whours_within_15_65 < 0.7 { // Flag if fewer than 70% work these "normal" hours
+		
+		levelsof whours_within_15_65, local(whours_within)
+		post `memhold' ("8. Labour") ("whours_year") ("7 day recall - Share of people with work hours between 15 and 65 hours smaller than 70% (Actual share is ->)") (`whours_within') (1)
+			
+	} // close if value smaller than 70%
+		
+	restore
+		
+} // end vars exist
+
+
+
+*----------8.17: Overall income w/o comp cannot be smaller than either 7 day or 12 month w/o comp income
 * 7 day
 cap confirm variable t_wage_nocompen_total // if this exists then laborincome needs to exist, both annualized data
 if _rc == 0 {
@@ -765,11 +806,11 @@ if _rc == 0 {
 	if _rc == 0 {
 		qui : count if linc_nc < t_wage_nocompen_total | (missing(linc_nc) & !missing(t_wage_nocompen_total)) // since if missing byt t_wage_total exists, that does not evaluate true for the first (missing is larger) but would be odd.
 		if `r(N)' > 0 { // Odd cases
-			post `memhold' ("Labour") ("linc_nc & t_wage_nocompen_total") ("7 day recall total income w/o comp is smaller than any total income w/o comp (number of cases ->)") (`r(N)') (1)
+			post `memhold' ("8. Labour") ("linc_nc & t_wage_nocompen_total") ("7 day recall total income w/o comp is smaller than any total income w/o comp (number of cases ->)") (`r(N)') (1)
 		} // end odd case
 	} // end _rc == 0 on linc_nc
 	else {
-		post `memhold' ("Labour") ("linc_nc & t_wage_nocompen_total") ("Variable t_wage_nocompen_total is in data but not linc_nc") (.) (1)
+		post `memhold' ("8. Labour") ("linc_nc & t_wage_nocompen_total") ("Variable t_wage_nocompen_total is in data but not linc_nc") (.) (1)
 	} // end else (linc_nc not there)
 } // end _rc == 0 on t_wage_nocompen_total
 
@@ -780,17 +821,17 @@ if _rc == 0 {
 	if _rc == 0 {
 		qui : count if linc_nc < t_wage_nocompen_total_year | (missing(linc_nc) & !missing(t_wage_nocompen_total_year)) // since if missing byt t_wage_total exists, that does not evaluate true for the first (missing is larger) but would be odd.
 		if `r(N)' > 0 { // Odd cases
-			post `memhold' ("Labour") ("linc_nc & t_wage_nocompen_total_year") ("12 month recall total income w/o comp is smaller than any total income w/o comp (number of cases ->)") (`r(N)') (1)
+			post `memhold' ("8. Labour") ("linc_nc & t_wage_nocompen_total_year") ("12 month recall total income w/o comp is smaller than any total income w/o comp (number of cases ->)") (`r(N)') (1)
 		} // end odd case
 	} // end _rc == 0 on linc_nc
 	else {
-		post `memhold' ("Labour") ("linc_nc & t_wage_nocompen_total") ("Variable t_wage_nocompen_total_year is in data but not linc_nc") (.) (1)
+		post `memhold' ("8. Labour") ("linc_nc & t_wage_nocompen_total") ("Variable t_wage_nocompen_total_year is in data but not linc_nc") (.) (1)
 	} // end else (linc_nc not there)
 } // end _rc == 0 on t_wage_nocompen_total_year
 
 
 
-*----------8.16: Overall income w/ comp cannot be smaller than either 7 day or 12 month w/ comp income
+*----------8.18: Overall income w/ comp cannot be smaller than either 7 day or 12 month w/ comp income
 * 7 day
 cap confirm variable t_wage_total // if this exists then laborincome needs to exist, both annualized data
 if _rc == 0 {
@@ -798,11 +839,11 @@ if _rc == 0 {
 	if _rc == 0 {
 		qui : count if laborincome < t_wage_total | (missing(laborincome) & !missing(t_wage_total)) // since if missing byt t_wage_total exists, that does not evaluate true for the first (missing is larger) but would be odd.
 		if `r(N)' > 0 { // Odd cases
-			post `memhold' ("Labour") ("laborincome & t_wage_total") ("7 day recall total income w/ comp is smaller than any total income w/ comp (number of cases ->)") (`r(N)') (1)
+			post `memhold' ("8. Labour") ("laborincome & t_wage_total") ("7 day recall total income w/ comp is smaller than any total income w/ comp (number of cases ->)") (`r(N)') (1)
 		} // end odd case
 	} // end _rc == 0 on laborincome
 	else {
-		post `memhold' ("Labour") ("laborincome & t_wage_total") ("Variable t_wage_total is in data but not laborincome") (.) (1)
+		post `memhold' ("8. Labour") ("laborincome & t_wage_total") ("Variable t_wage_total is in data but not laborincome") (.) (1)
 	} // end else (laborincome not there)
 } // end _rc == 0 on t_wage_total
 
@@ -813,17 +854,17 @@ if _rc == 0 {
 	if _rc == 0 {
 		qui : count if laborincome < t_wage_total_year | (missing(laborincome) & !missing(t_wage_total_year)) // since if missing byt t_wage_total exists, that does not evaluate true for the first (missing is larger) but would be odd.
 		if `r(N)' > 0 { // Odd cases
-			post `memhold' ("Labour") ("laborincome & t_wage_total_year") ("12 month recall total income w/ comp is smaller than any total income w/ comp (number of cases ->)") (`r(N)') (1)
+			post `memhold' ("8. Labour") ("laborincome & t_wage_total_year") ("12 month recall total income w/ comp is smaller than any total income w/ comp (number of cases ->)") (`r(N)') (1)
 		} // end odd case
 	} // end _rc == 0 on laborincome
 	else {
-		post `memhold' ("Labour") ("laborincome & t_wage_total_year") ("Variable t_wage_total_year is in data but not laborincome") (.) (1)
+		post `memhold' ("8. Labour") ("laborincome & t_wage_total_year") ("Variable t_wage_total_year is in data but not laborincome") (.) (1)
 	} // end else (laborincome not there)
 } // end _rc == 0 on t_wage_total_year
 
 
 
-*----------8.17: Check ISIC code is length 1 (Letter) or length 4 (4 digit code)
+*----------8.19: Check ISIC code is length 1 (Letter) or length 4 (4 digit code)
 foreach var of global isic_check {
 	cap confirm string variable `var'
 	if _rc == 0 { // if vars exist, is string (if not , captured in section 1)
@@ -832,14 +873,14 @@ foreach var of global isic_check {
 		qui : count if !inlist(check_isic_length,1,4,.)
 		if `r(N)' > 0 { // Non missing values other than 1 or 4 exist
 		
-		post `memhold' ("Labour") ("`var'") ("ISIC code is not of length 1 (Letter) or 4 (digits) (number of cases ->)") (`r(N)') (1)
+		post `memhold' ("8. Labour") ("`var'") ("ISIC code is not of length 1 (Letter) or 4 (digits) (number of cases ->)") (`r(N)') (1)
 		} // end recording odd cases
 	drop check_isic_length
 	} // end var exists as string
 } // end loop over isic code vars
 
 
-*----------8.18: Check ISCO codes
+*----------8.20: Check ISCO codes
 foreach var of global isco_check {
 	cap confirm string variable `var'
 	if _rc == 0 { // if vars exist, is string (if not , captured in section 1)
@@ -849,14 +890,15 @@ foreach var of global isco_check {
 		qui : count if check_isco_length != 4 & !missing(check_isco_length)
 		if `r(N)' > 0 { // Non missing values other than 4 exist
 		
-		post `memhold' ("Labour") ("`var'") ("ISC0 code is not of length 4 (digits) (number of cases ->)") (`r(N)') (1)
+		post `memhold' ("8. Labour") ("`var'") ("ISC0 code is not of length 4 (digits) (number of cases ->)") (`r(N)') (1)
 		} // end recording odd cases
 	drop check_isco_length
 	} // end var exists as string
 } // end loop over isco code vars
 
 
-*----------8.19: Check industry original variables versus industrycat10
+
+*----------8.21: Check industry original variables versus industrycat10
 * Run them in pairs (global is written to work in pairs)
 foreach token of global industry_alignment{
 	
@@ -873,7 +915,7 @@ foreach token of global industry_alignment{
 		qui : count if !missing(`1') & missing(`2')
 		if `r(N)' > 0 { // There are cases when indus_orig not missing but induscat is
 		
-		post `memhold' ("Labour") ("`token'") ("indus_orig not missing but induscat10 is (number of cases ->)") (`r(N)') (1)
+		post `memhold' ("8. Labour") ("`token'") ("indus_orig not missing but induscat10 is (number of cases ->)") (`r(N)') (1)
 		
 		} // end recording odd cases
 		
@@ -882,7 +924,7 @@ foreach token of global industry_alignment{
 }
 
 
-*----------8.20: lstatus has no missing values for 15-65
+*----------8.22: lstatus has no missing values for 15-65
 
 local lstatus_vars "lstatus lstatus_year"
 foreach var of local lstatus_vars {
@@ -894,14 +936,15 @@ foreach var of local lstatus_vars {
 		qui : count if missing(`var') & inrange(age,15,65)
 		if `r(N)' > 0 { // There are cases when with missing lstatus in age range
 		
-			post `memhold' ("Labour") ("`var'") ("`var' has missing values (number of cases ->)") (`r(N)') (1)
+			post `memhold' ("8. Labour") ("`var'") ("`var' has missing values (number of cases ->)") (`r(N)') (1)
 			
 		} // end recording odd cases
 	} // end vars exist
 } // end varlist
 
 
-*----------8.21: isic vars are in universe
+
+*----------8.23: isic vars are in universe
 
 cap confirm variable isic_version
 if _rc == 0 { // if isic version info exists, otherwise cannot know which ISIC version to compare to
@@ -919,7 +962,7 @@ if _rc == 0 { // if isic version info exists, otherwise cannot know which ISIC v
 			qui : count if !missing(`var') & _merge == 1
 			if `r(N)' > 0 {
 				
-				post `memhold' ("Labour") ("`var'") ("`var' has ISIC codes not in ISIC universe (number of cases ->)") (`r(N)') (1)
+				post `memhold' ("8. Labour") ("`var'") ("`var' has ISIC codes not in ISIC universe (number of cases ->)") (`r(N)') (1)
 				
 			} // close cases that are concerning
 			
@@ -932,7 +975,7 @@ if _rc == 0 { // if isic version info exists, otherwise cannot know which ISIC v
 } // close if isic_version present
 
 
-*----------8.22: isco vars are in universe
+*----------8.24: isco vars are in universe
 
 cap confirm variable isco_version
 if _rc == 0 { // if isic version info exists, otherwise cannot know which ISIC version to compare to
@@ -950,7 +993,7 @@ if _rc == 0 { // if isic version info exists, otherwise cannot know which ISIC v
 			qui : count if !missing(`var') & _merge == 1
 			if `r(N)' > 0 {
 				
-				post `memhold' ("Labour") ("`var'") ("`var' has ISCO codes not in ISCO universe (number of cases ->)") (`r(N)') (1)
+				post `memhold' ("8. Labour") ("`var'") ("`var' has ISCO codes not in ISCO universe (number of cases ->)") (`r(N)') (1)
 				
 			} // close cases that are concerning
 			
@@ -963,7 +1006,7 @@ if _rc == 0 { // if isic version info exists, otherwise cannot know which ISIC v
 } // close if isic_version present
 
 
-*----------8.23: Check wage info has unit info
+*----------8.25: Check wage info has unit info
 foreach token of global wage_and_unit{
 	
 	* Split the token into its elements
@@ -978,7 +1021,7 @@ foreach token of global wage_and_unit{
 		cap confirm variable `unit'
 		if _rc != 0 { // unit does not exist
 		
-		post `memhold' ("Labour") ("`token'") ("There is `wage' info but no `unit' info") (.) (1)
+		post `memhold' ("8. Labour") ("`token'") ("There is `wage' info but no `unit' info") (.) (1)
 		
 		}
 	
@@ -991,7 +1034,7 @@ foreach token of global wage_and_unit{
 		cap confirm variable `wage'
 		if _rc != 0 { // wage does not exist
 		
-		post `memhold' ("Labour") ("`token'") ("There is `unit' info but no `wage' info") (.) (1)
+		post `memhold' ("8. Labour") ("`token'") ("There is `unit' info but no `wage' info") (.) (1)
 		
 		}
 	
@@ -999,165 +1042,91 @@ foreach token of global wage_and_unit{
 	
 }
 
-/*==================================================
-              9: Consistency compared to WDI
-==================================================*/
-* NOTE: There are two issues with comparins WDI. First, WDI may not have data for that year,
-* that is, the years column is missing altogether. Second, WDI may have a column, but all cases
-* we are interested in are missing. To this end, we create a local called "wdiworks" that is set
-* per default to 1, which represents it works. Through the code, checks are performed to see if
-* the assumption is true. If it does not, "wdiworks" is set to 0 and the checks on WDI are skipped.
-local wdiworks 1
 
-*----------9.1: Create comparison, merge it in
-levelsof countrycode, local(ccode)
-levelsof year, local(survey_year)
-
-tempfile static_check_file
-save `static_check_file'
-
-wbopendata, country(`ccode') clear
-cap confirm variable yr`survey_year'
-if _rc == 0 { // if data for that year exists
-	gen value = yr`survey_year'
-}
-
-* If the year column is not present, the variable "value" has not been created and thus
-* WDI checks do not work. In that case, change the value of "wdiworks"
-cap confirm variable value
-if _rc != 0 { // if value not created
-	local wdiworks 0
-}
-
-* Only if value exists perform info reduction and reshaping
-if `wdiworks' == 1{
-	gen keeper = regexm(indicatorcode, "^SP.URB.TOTL.IN.ZS$|^SL.TLF.ACTI.ZS$|^SP.POP.TOTL$")
-	keep if keeper == 1
-	keep countrycode indicatorcode value
-	replace indicatorcode =  "urbanization_wdi" if indicatorcode == "SP.URB.TOTL.IN.ZS"
-	replace indicatorcode =  "lf_particip_wdi" if indicatorcode == "SL.TLF.ACTI.ZS"
-	replace indicatorcode =  "population_wdi" if indicatorcode == "SP.POP.TOTL"
+*----------8.26: ISCO version info present if ISCO vars
+local check_8_24 0
+foreach var of global isco_check {	
 	
-	* At this point, we may check the second scenario outlined at the start of section 9 - That 
-	* we have that years data, but for what we are interested in, all answers are missing. If so
-	* change the value of "wdiworks"
-	count
-	local all_count_wdi `r(N)'
-	count if missing(value)
-	if `r(N)' == `all_count_wdi'{
-		local wdiworks 0
-	}
+	cap confirm variable `var'
+	if _rc == 0 { // if var exists, else issue captured in 1.1
 	
-	reshape wide value, i(countrycode) j(indicatorcode) string
-	rename value* *
-
-}
-
-* If there is no info, reduce dataset to mere countrycode so merge is essentially not doing anything
-if `wdiworks' == 0{
-	keep countrycode
-	keep in 1
-}
-
-merge 1:m countrycode using `static_check_file', assert(match) nogen
-
-*----------9.2: Compare total population
-* Make comparison if "wdiworks" is set to 1, else inform no data for comparison
-if `wdiworks' == 1{
-	cap confirm variable weight
-	if _rc == 0 { // if vars exist, else captured above
-		summarize weight [aw = weight]
-		local survey_pop `r(sum_w)'
-		summarize population_wdi
-		local wdi_pop `r(mean)'
-
-		local pop_diff = abs((`survey_pop' - `wdi_pop')/`survey_pop')
-		post `memhold' ("WDI Comparison") ("Population") ("Survey population and WDI population for the year differ by ->") (`pop_diff') (1)
-	}
-}
-else {
-	post `memhold' ("WDI Comparison") ("Population") ("No WDI Data available") (.) (1)
+		* Given that isco info var exists, check that ISCO version exists
+		cap confirm variable isco_version
+		if _rc != 0 {
+			
+			local check_8_24 1
+			
+		} // close if isco_version not present
+	} // close if var exists
+} // for each loop
+if `check_8_24' == 1 {
+	
+	post `memhold' ("8. Labour") ("ISCO Info") ("There is an ISCO variable present but isco_version info is missing") (.) (1)
+	
 }
 
 
-
-*----------9.3: Compare urbanization rate
-* Make comparison if "wdiworks" is set to 1, else inform no data for comparison
-if `wdiworks' == 1{
-	cap confirm variable urban weight
-	if _rc == 0 { // if vars exist, else captured above
-		summarize urban [aw = weight]
-		local survey_urb = round(r(mean)*100,0.1)
-		summarize urbanization_wdi
-		local wdi_urb  = round(r(mean),0.1)
-
-		local urb_diff = abs((`survey_urb' - `wdi_urb')/`survey_urb')
-		post `memhold' ("WDI Comparison") ("Urbanization") ("Survey urbanization rate is `survey_urb'% and WDI urb rate for the year is `wdi_urb'%. Difference ->") (`urb_diff') (1)
-	}
-}
-else {
-	post `memhold' ("WDI Comparison") ("Urbanization") ("No WDI Data available") (.) (1)
-}
-
-*----------9.4: Compare 7 day labour force participation rate
-* Make comparison if "wdiworks" is set to 1, else inform no data for comparison
-if `wdiworks' == 1{
-	cap confirm variable lstatus age weight
-	if _rc == 0 { // if vars exist, else captured above
-		gen helper = .
-		replace helper = 0 if lstatus == 3 & inrange(age, 15,64)
-		replace helper = 1 if (lstatus == 1 | lstatus == 2) & inrange(age, 15,64)
-		summarize helper [aw = weight]
-		local survey_lfp = round(r(mean)*100,0.1)
-		drop helper
-		summarize lf_particip_wdi
-		local wdi_lfp = round(r(mean),0.1)
-
-		local lfp_diff = abs((`survey_lfp' - `wdi_lfp')/`survey_lfp')
-		post `memhold' ("WDI Comparison") ("LFP 7 day") ("Survey 7 day LFP is `survey_lfp'% and WDI LFP for the year is `wdi_lfp'%. Difference ->") (`lfp_diff') (1)
-	}
-}
-else {
-	post `memhold' ("WDI Comparison") ("LFP 7 day") ("No WDI Data available") (.) (1)
-}
-
-*----------9.5: Compare 12 month labour force participation rate
-* Make comparison if "wdiworks" is set to 1, else inform no data for comparison
-if `wdiworks' == 1{
-	cap confirm variable lstatus_year age weight
-	if _rc == 0 { // if vars exist, else captured above
-		gen helper = .
-		replace helper = 0 if lstatus_year == 3 & inrange(age, 15,64)
-		replace helper = 1 if (lstatus_year == 1 | lstatus_year == 2) & inrange(age, 15,64)
-		summarize helper [aw = weight]
-		local survey_lfp = round(r(mean)*100,0.1)
-		drop helper
-		summarize lf_particip_wdi
-		local wdi_lfp = round(r(mean),0.1)
-
-		local lfp_diff = abs((`survey_lfp' - `wdi_lfp')/`survey_lfp')
-		post `memhold' ("WDI Comparison") ("LFP 12 month") ("Survey 12 month LFP is `survey_lfp'% and WDI LFP for the year is `wdi_lfp'%. Difference ->") (`lfp_diff') (1)
-	}
-}
-else {
-	post `memhold' ("WDI Comparison") ("LFP 12 month") ("No WDI Data available") (.) (1)
-}
-
-*----------9.6: Clean up vars from comparison
-if `wdiworks' == 1{
-	drop lf_particip_wdi population_wdi urbanization_wdi
+*----------8.27: ISIC version info present if ISIC vars
+local check_8_25 0
+foreach var of global isic_check {	
+	
+	cap confirm variable `var'
+	if _rc == 0 { // if var exists, else issue captured in 1.1
+	
+		* Given that isic info var exists, check that ISIC version exists
+		cap confirm variable isic_version
+		if _rc != 0 {
+			
+			local check_8_25 1
+			
+		} // close if isic_version not present
+	} // close if var exists
+} // for each loop
+if `check_8_25' == 1 {
+	
+	post `memhold' ("8. Labour") ("ISIC Info") ("There is an ISIC variable present but isic_version info is missing") (.) (1)
+	
 }
 
 
 /*==================================================
-              10: End
+              9: End
 ==================================================*/
 
 * Close postfile
 postclose `memhold'
 
+* Open postfile, amend for key variables
+use "`postfile_path'", clear
+
+* Replace info for vars that cannot be missing
+replace Test_Type = "Attention -- Var missing which cannot be missing" if inlist(Var_Name, "countrycode", "survname", "survey", "year", "vermast", "veralt", "harmonization", "pid", "weight")
+
+* Replace info for key vars that *should* not be missing
+replace Test_Type = "Key variable is missing - ensure correctness" if inlist(Var_Name, "male", "lstatus", "empstat", "urban", "educat7", "educat5", "educat4", "industrycat4", "industrycat_isic") | inlist(Var_Name, "industrycat10 unitwage", "occup_isco", "occup_skill", "occup", "wage_no_compen", "whours")
+
+* Sort relevant info to the top
+gen ordering = (Test_Type == "Variable not in data")
+sort ordering Block Test_Type
+drop ordering
+
+
+/*==================================================
+          10: Order & Save data to summary 
+==================================================*/
+
+	use "Block1_Format/${ccode3}_${cyear}_${csurvey}_Q_Format_Checks.dta", clear 
+	
+	** Sort resutls 
+	gen varsorder = 1 
+	replace varsorder = 99 if Test_Type == "Variable not in data"
+	sort varsorder Test_Type
+	drop varsorder
+	
+	save "Block1_Format/${ccode3}_${cyear}_${csurvey}_Q_Format_Checks.dta", replace
+	
+	** Export summary
+	use "Block1_Format/${ccode3}_${cyear}_${csurvey}_Q_Format_Checks.dta", clear 
+	export excel using "01_summary/B1_format_results.xlsx", firstrow(variables) replace	
+
 /* End of do-file */
-
-
-
-
