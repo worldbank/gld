@@ -57,8 +57,26 @@ set mem 800m
 
 *----------1.2: Set directories------------------------------*
 
-local path_in "[Path to CCC_YYYY_SVY_v01_M / Data / Stata]"
-local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
+* Define path sections
+local server  "[Y:/GLD or Z:/GLD-Harmonization/123456_XY]"
+local country "[CCC]"
+local year    "[YYYY]"
+local survey  "[SURV-NAME]"
+local vermast "[v01]"
+local veralt  "[v01]"
+
+* From the definitions, set path chunks
+local level_1      "`country'_`year'_`survey'"
+local level_2_mast "`level_1'_`vermast'_M"
+local level_2_harm "`level_1'_`vermast'_M_`veralt'_A_GLD"
+
+* From chunks, define path_in, path_output folder
+local path_in_stata "`server'/`country'/`level_1'/`level_2_mast'/Data/Stata"
+local path_in_other "`server'/`country'/`level_1'/`level_2_mast'/Data/Original"
+local path_output   "`server'/`country'/`level_1'/`level_2_harm'/Data/Harmonized"
+
+* Define Output file name
+local out_file "`level_2_harm'_ALL.dta"
 
 *----------1.3: Database assembly------------------------------*
 
@@ -121,13 +139,13 @@ local path_output "[Path to CCC_YYYY_SVY_v01_M_v01_A_GLD / Data / Harmonized]"
 
 
 *<_vermast_>
-	gen vermast = ""
+	gen vermast = "`vermast'"
 	label var vermast "Version of master data"
 *</_vermast_>
 
 
 *<_veralt_>
-	gen veralt = ""
+	gen veralt = "`veralt'"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
@@ -1510,6 +1528,6 @@ compress
 
 *<_% SAVE_>
 
-save "`path_output'\[Name of file].dta", replace
+save "`path_output'/`out_file'", replace
 
 *</_% SAVE_>
