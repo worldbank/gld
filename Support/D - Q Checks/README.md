@@ -36,7 +36,7 @@ The quality checks template proceeds in three steps. Step 1 readies Stata by cle
 
 Step 3 simply calls the do files from the helper path running the checks. This step no longer requires user involvement. It does, however, run through all the files that make up the checks. What these cover is the subject of the next section.
 
-### Block 1 - GLD format adherence
+### Block 1 - GLD format checks
 
 This block is concerned with ensuring that the harmonized output conforms to the [GLD data dictionary](../A%20-%20Guides%20and%20Documentation/GLD_Dictionary_v01.xlsx). The [code for the format checks](Helper_programs_1.4/B1.04_Format_Checks_GLD.do) is divided into sections (overall checks, demography checks, education checks, ...) and should be commented enough for users to understand what each step is doing. If you feel more explations are warranted, please [raise and issue](https://github.com/worldbank/gld/issues/new/choose) detailing the part not understood and we will endeavour to expand on it.
 
@@ -62,3 +62,19 @@ As shown, the output has five columns:
 - Column Test_Type describes the kind of test the variable has undergone.
 - Column Result denotes the number or share of cases with the issue (if this can be written).
 - Column Flag guides the reader whether the issue is at odds with the data dictionary (`Flag = 1`) or technically possible, yet odd (`Flag = 99`).
+
+### Block 2 - GLD external checks
+
+To be added.
+
+### Block 3 - GLD missing checks
+
+To be added.
+
+### Block 4 - GLD bivariate checks
+
+To be added.
+
+### Block 5 - GLD wage checks
+
+To be added.
