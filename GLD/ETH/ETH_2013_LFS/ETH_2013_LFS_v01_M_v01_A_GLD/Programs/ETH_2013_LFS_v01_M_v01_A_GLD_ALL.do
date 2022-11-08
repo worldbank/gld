@@ -80,7 +80,6 @@ local output "`id_data'"
 
 	use "`input'\nlfs2013.dta", clear
 
-
 /*%%=============================================================================================
 	2: Survey & ID
 ================================================================================================*/
@@ -137,13 +136,13 @@ local output "`id_data'"
 
 
 *<_vermast_>
-	gen str3 vermast="V01"
+	gen str3 vermast="v01"
 	label var vermast "Version of master data"
 *</_vermast_>
 
 
 *<_veralt_>
-	gen str3 veralt="V01"
+	gen str3 veralt="v01"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
@@ -185,7 +184,7 @@ According to the annual report, the total number of households should be 58396,
 
 /*<_pid_>
 
-Two observations have the same individual ID "00600200500808800500201506".
+Two different observations have the same individual ID "00600200500808800500201506".
 
 *<_pid_>*/
 
@@ -193,6 +192,7 @@ Two observations have the same individual ID "00600200500808800500201506".
 *<_pid_>
 	tostring LF201, gen(str_LF201) format(%02.0f)    
 	egen pid=concat(hhid str_LF201)
+	replace pid="00600200500808800500201507" if pid=="00600200500808800500201506" & age==9
 	label var pid "Individual ID"
 *</_pid_>
 
@@ -249,9 +249,10 @@ As reported, 1950 PSUs in total.
 
 
 *<_subnatid1_>
-	gen subnatid1=reg01
+	gen subnatid1_prep=reg01
 	label de lblsubnatid1 1 "1-Tigray" 2 "2-Affar" 3 "3-Amhara" 4 "4-Oromiya" 5 "5-Somali" 6 "6-Benishangul-gumz" 7 "7-SNNP" 12 "12-Gambella" 13 "13-Harari" 14 "14-Addis Ababa" 15 "15-Dire Dawa"
-	label values subnatid1 lblsubnatid1
+	label values subnatid1_prep lblsubnatid1
+	decode subnatid1_prep, gen(subnatid1)
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 
@@ -466,7 +467,7 @@ whether the disability relates to walking.
 
 
 *<_migrated_ref_time_>
-	gen migrated_ref_time=99
+	gen migrated_ref_time=4
 	label var migrated_ref_time "Reference time applied to migration questions"
 *</_migrated_ref_time_>
 
@@ -509,7 +510,8 @@ our from their original place during the 5 years prior to the date of the interv
 
 *<_migrated_from_cat_>
 	gen migrated_from_cat=.
-	replace migrated_from_cat=. if migrated_binary!=1
+	replace migrated_from_cat=2 if LF207==ID102 & migrated_binary==1
+	replace migrated_from_cat=5 if LF207==96 & migrated_binary==1
 	replace migrated_from_cat=. if age<migrated_mod_age
 	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country"
 	label values migrated_from_cat lblmigrated_from_cat

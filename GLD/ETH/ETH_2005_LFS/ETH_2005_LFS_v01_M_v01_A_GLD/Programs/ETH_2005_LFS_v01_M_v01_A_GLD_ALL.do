@@ -138,13 +138,13 @@ local output "`id_data'"
 
 
 *<_vermast_>
-	gen str3 vermast="V01"
+	gen str3 vermast="v01"
 	label var vermast "Version of master data"
 *</_vermast_>
 
 
 *<_veralt_>
-	gen str3 veralt="V01"
+	gen str3 veralt="v01"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
@@ -191,10 +191,17 @@ LF10 information. Additionally, there are 13 couples of observations with the sa
 
 
 *<_pid_>
-	tostring LF10, gen(str_LF10) format(%02.0f)    
+	gen lf10=LF10	
+	tostring lf10, gen(str_LF10) format(%02.0f)
+  	egen pid0=concat(hhid str_LF10)
+	gsort hhid -LF14
+	bys hhid: gen counter=_n
+	replace lf10=counter if lf10!=counter
+	drop str_LF10
+	tostring lf10, gen(str_LF10) format(%02.0f)	
 	egen pid=concat(hhid str_LF10)
-	replace pid="" if LF10==.
 	label var pid "Individual ID"
+	drop lf10 pid0 counter
 *</_pid_>
 
 
@@ -257,9 +264,11 @@ in the annual report.
 
 
 *<_subnatid1_>
-	gen subnatid1=ID01
+	gen subnatid1_prep=ID01
 	label de lblsubnatid1 1 "1-Tigray" 2 "2-Affar" 3 "3-Amhara" 4 "4-Oromiya" 5 "5-Somali" 6 "6-Benishangul-gumz" 7 "7-SNNP" 12 "12-Gambella" 13 "13-Harari" 14 "14-Addis Ababa" 15 "15-Dire Dawa"
-	label values subnatid1 lblsubnatid1
+	label values subnatid1_prep lblsubnatid1
+	decode subnatid1_prep, gen (subnatid1)
+	drop subnatid1_prep
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 
@@ -478,7 +487,7 @@ whether the disability relates to walking.
 
 
 *<_migrated_ref_time_>
-	gen migrated_ref_time=99
+	gen migrated_ref_time=4
 	label var migrated_ref_time "Reference time applied to migration questions"
 *</_migrated_ref_time_>
 
@@ -541,7 +550,7 @@ our from their original place during the 5 years prior to the date of the interv
 
 *<_migrated_from_cat_>
 	gen migrated_from_cat=.
-	replace migrated_from_cat=. if migrated_binary!=1
+	replace migrated_from_cat=2 if ID02==LF16 & migrated_binary==1
 	replace migrated_from_cat=. if age<migrated_mod_age
 	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country"
 	label values migrated_from_cat lblmigrated_from_cat
@@ -934,7 +943,6 @@ treated as "Paid employee".
 *<_industrycat10_>
 	gen long industrycat10=LF38
 	recode industrycat10 (111/500=1) (1000/1429=2) (1500/3720=3) (4000/4100=4) (4500/4550=5) (5000/5526=6) (6000/6420=7) (6510/7499=8) (7500/7530=9) (8000/9902=10) (9999=10)
-	replace industrycat10=. if LF38==9319
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"

@@ -78,6 +78,9 @@ local output "`id_data'"
 * harmonized output in a single file
 
 	use "`input'\lforce_2.dta", clear
+	duplicates drop 
+	
+*421 (0.114%) observations were dropped because of duplication in terms of all variables.	
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -134,13 +137,13 @@ local output "`id_data'"
 
 
 *<_vermast_>
-	gen str3 vermast="V01"
+	gen str3 vermast="v01"
 	label var vermast "Version of master data"
 *</_vermast_>
 
 
 *<_veralt_>
-	gen str3 veralt="V01"
+	gen str3 veralt="v01"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
@@ -176,9 +179,17 @@ local output "`id_data'"
 
 
 *<_pid_>
-	tostring LF10, gen(str_LF10) format(%02.0f)    
+	gen lf10=LF10	
+	tostring lf10, gen(str_LF10) format(%02.0f)
+	egen pid0=concat(hhid str_LF10)
+	gsort hhid -LF14
+	bys hhid: gen counter=_n
+	replace lf10=counter if lf10!=counter
+	drop str_LF10
+	tostring lf10, gen(str_LF10) format(%02.0f)	
 	egen pid=concat(hhid str_LF10)
 	label var pid "Individual ID"
+	drop lf10 pid0 counter
 *</_pid_>
 
 
@@ -236,9 +247,11 @@ which is 3 more than what we have here.
 
 
 *<_subnatid1_>
-	gen subnatid1=LF01
+	gen subnatid1_prep=LF01
 	label de lblsubnatid1 1 "1-Tigray" 2 "2-Affar" 3 "3-Amhara" 4 "4-Oromiya" 5 "5-Somali" 6 "6-Benishangul-gumz" 7 "7-SNNP" 12 "12-Gambella" 13 "13-Harari" 14 "14-Addis Ababa" 15 "15-Dire Dawa"
-	label values subnatid1 lblsubnatid1
+	label values subnatid1_prep lblsubnatid1
+	decode subnatid1_prep, gen (subnatid1)
+	drop subnatid1_prep
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 
@@ -355,23 +368,6 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm lblrelationharm
-	
-	gen head=1 if relationharm==1
-	bys hhid: egen headcount=total(head)
-	
-	bys hhid: egen age_max=max(age)
-	replace relationharm=1 if headcount==0 & age==age_max
-	drop head headcount
-	gen head=1 if relationharm==1
-	bys hhid: egen headcount=total(head)
-	
-	bys hhid head : gen order=_n if head==1
-	bys hhid: egen order_max=max(order)
-	replace relationharm=5 if headcount>1 & head==1 & order!=order_max
-	drop head headcount
-	gen head=1 if relationharm==1
-	bys hhid: egen headcount=total(head)
-	replace relationharm=5 if relationharm==1 & hhid==""
 *</_relationharm_>
 
 
@@ -452,7 +448,7 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 
 *<_migrated_ref_time_>
-	gen migrated_ref_time=99
+	gen migrated_ref_time=4
 	label var migrated_ref_time "Reference time applied to migration questions"
 *</_migrated_ref_time_>
 
@@ -506,8 +502,9 @@ to years since left previous residence). However, info is
 
 
 *<_migrated_from_cat_>
-	gen migrated_from_cat=2
-	replace migrated_from_cat=. if migrated_binary!=1
+	gen migrated_from_cat=. 
+	replace migrated_from_cat=3 if LF01==LF18 & LF02!=LF19 & migrated_binary==1
+	replace migrated_from_cat=2 if LF02==LF19 & migrated_binary==1
 	replace migrated_from_cat=. if age<migrated_mod_age
 	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country"
 	label values migrated_from_cat lblmigrated_from_cat
