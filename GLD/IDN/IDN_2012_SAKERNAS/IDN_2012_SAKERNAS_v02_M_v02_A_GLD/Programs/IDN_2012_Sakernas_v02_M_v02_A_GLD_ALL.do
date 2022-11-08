@@ -33,8 +33,8 @@
 
 <_Version Control_>
 
-* Date: [2022-05-24] File: [As in Program name above] - [Reducing original indutry and occupation codes digits and remapping those two to ISIC/ISCO & using backcasting data]
-* Date: [2022-08-20] File: [As in Program name above] - [Recode employment status:Agricultural & non-agricultual casual worker recoded to "paid employee"; change path to the intermediate file]
+* Date: [2022-05-24] File: [IDN_2012_Sakernas_v02_M_v01_A_GLD.do] - [Reducing original indutry and occupation codes digits and remapping those two to ISIC/ISCO & using backcasting data]
+* Date: [2022-08-20] File: [IDN_2012_Sakernas_v02_M_v02_A_GLD.do] - [Recode employment status:Agricultural & non-agricultual casual worker recoded to "paid employee"; change path to the intermediate file]
 
 </_Version Control_>
 
@@ -137,7 +137,7 @@ local output "`id_data'"
 
 
 *<_veralt_>
-	gen veralt = "v01"
+	gen veralt = "v02"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
