@@ -16,13 +16,13 @@
 *-- Step 2 - User defined arguments (Your input is needed in this step) ----------*
 
 	** Path to "Helper programs" folder <-- INPUT --
-	global helper "[Path file to helpers here]" 
+	global helper "C:\Users\wb573465\Documents\GitHub\gld\Support\D - Q Checks\Helper_programs_1.4" 
 		
 	** Path to GLD data file            <-- INPUT -- 
-	global mydata "[Path file to harmonized GLD file here]" 
+	global mydata "Z:\GLD-Harmonization\573465_JT\ETH\ETH_2013_LFS\ETH_2013_LFS_v01_M_v01_A_GLD\Data\Harmonized\ETH_2013_LFS_v01_M_v01_A_GLD_ALL.dta" 
 	
 	** Choose output folder             <-- INPUT --
-	global output "[Path file to folder where output to be stored (commonly Work)]" 
+	global output "Z:\GLD-Harmonization\573465_JT\ETH\ETH_2013_LFS\ETH_2013_LFS_v01_M_v01_A_GLD\Work\Output" 
 	
 		
 *-- Step - 3 Run the quality checks -----------------------------------------------*
