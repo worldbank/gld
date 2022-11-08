@@ -57,7 +57,7 @@
 ###  Section ii)    ###
 #######################
 
-# For Support context information, allow Markdown, xlsx, and docx, R and Stata code, and Stata files.
+# For Support context information, allow Markdown, xlsx, csv, and docx, R and Stata code, and Stata files.
 !Support/**/*.md
 !Support/**/*.xlsx
 !Support/**/*.docx
@@ -66,6 +66,7 @@
 !Support/**/*.ado
 !Support/**/*.dta
 !Support/**/*.dct
+!Support/**/*.csv
 
 # Allow also PDF andimages if needed
 !/Support/**/*.pdf
