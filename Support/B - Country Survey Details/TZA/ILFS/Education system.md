@@ -28,7 +28,7 @@ Based on this output, there are more individuals in the pre-reform group. An imp
 
 ## Proposed coding for primary complete
 
-Users who want to capture the distribution following this reform may want to consider the use of age range as proxies. The following lines of code can be added after educat7 in the 2014 and 2020 do files:
+Users who want to capture the distribution following this reform may want to consider the use of age range as proxies. The following lines of code can be added before the closing htlm tag for ```educat7``` in the 2014 and 2020 do files:
 
 ```
 *-----------------------------
@@ -55,7 +55,7 @@ drop s1
 
 To summarize, the GLD harmonization converts the ILFS education codes as follows:
 
-| **ILFS education levels**                | **GLD equivalent (educat7)**                 |
+| **ILFS education levels**                | **GLD equivalent ```(educat7)```**                 |
 |------------------------------------------|----------------------------------------------|
 | Preschool                                | 1 - No education                             |
 | Standards 1 - 6                          | 2 - Primary incomplete                       |
