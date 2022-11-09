@@ -30,7 +30,7 @@ Years between 2011 and 2015 have multiple variables using different versions of 
 
 **KBLI 1997 to ISIC Rev.3**
 
-The KBLI-1997 document has an Indonesian version at three-digit level online for free, as the link attached above in the table. KBLI-1997 has more sub-categories than ISIC Rev.3 at three-digit level. In these cases, we mapped additional sub-categories in KBLI-1997 to their upper level. Below we listed the differences between the two classifications and how we mapped them. The full correspondence table is [here](utilities/Industry correspondences.xlsx) with an English version of KBLI-1997 translated by online software.  
+The KBLI-1997 document has an Indonesian version at three-digit level online for free, as the link attached above in the table. KBLI-1997 has more sub-categories than ISIC Rev.3 at three-digit level. In these cases, we mapped additional sub-categories in KBLI-1997 to their upper level. Below we listed the differences between the two classifications and how we mapped them. The full correspondence table is [here](utilities/Industry_correspondences.xlsx) with an English version of KBLI-1997 translated by online software.  
 
 | **KBLI-1997 Code**	| **KBLI-1997 Industry**	| **ISIC Rev.3 Code**	| **ISIC Rev.3 Industry**	|
 | :-----------------------:	| :---------------------------:	| :-------------:|:----------------:|	 	
@@ -68,7 +68,7 @@ The KBLI-2000 document has an English version available online. At three-digit l
 
 **KBLI 2005 to ISIC Rev.3**
 
-The KBLI-2005 document is in Indonesian but it compares not only between KBLI 2005 and ISIC Rev.3 but also between KBLI-2005 and KBLI-2009. KBLI-2005 follows the same structure as ISIC Rev.3, which has 15 major groups. The differences between KBLI-2005 and ISIC Rev.3 at two-digit level are quite rare. Here is a short list showing the differences when mapping at two-digit level. The full correspondence table is [here](utilities/Industry correspondences.xlsx) with an English version of KBLI-2005 translated by online software.
+The KBLI-2005 document is in Indonesian but it compares not only between KBLI 2005 and ISIC Rev.3 but also between KBLI-2005 and KBLI-2009. KBLI-2005 follows the same structure as ISIC Rev.3, which has 15 major groups. The differences between KBLI-2005 and ISIC Rev.3 at two-digit level are quite rare. Here is a short list showing the differences when mapping at two-digit level. The full correspondence table is [here](utilities/Industry_correspondences.xlsx) with an English version of KBLI-2005 translated by online software.
 
 | **KBLI-2005 Code**	| **KBLI-2005 Industry**	| **ISIC Rev.3 Code**	| **ISIC Rev.3 Industry**	|
 | :-----------------------:	| :---------------------------:	| :-------------:|:----------------:|	 	
