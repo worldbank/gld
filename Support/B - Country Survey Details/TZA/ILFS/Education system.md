@@ -6,6 +6,8 @@ Tanzania's education system is complex. Education policy is decided autonomously
 
 This policy background raises the question on how "primary completed" should be coded in the GLD harmonization, particularly when the raw variable for educational attainment is detailed at the education year level. This is a concern specifically for the 2014 round where individuals in Zanzibar are a mix of the old and new scheme, and for 2020 round where the mix of the two schemes occur in both Zanzibar and Mainland Tanzania. Unfortunately, there is no variable indicating which individuals are on the old and new schemes in any of the ILFS rounds, so coding decisions need to rely on the theoretical age for the affected group to proxy for reform-affected individuals. 
 
+For more information on the Tanzania's education system, refer to this [UNICEF report](Utilities/Tanzania-2018-Global-Initiative-Out-of-School-Children-Country-Report.pdf)
+
 ## Framework
 The logic adopted here is to determine the potentially-affected age group in each of the rounds to determine whether the plurality of the sample are potentially in the old or new scheme. For instance, if there were more people in the 2014 round beyond the potentially-affected age group, then the coding should use Standard 7; otherwise, it should use Standard 6. Bias will result in either way (i.e., Standard 7 as threshold will exert upward bias on primary incomplete, and Standard 6 on primary complete), but the objective of this process is to select the threshold that minimizes it. 
 
@@ -24,9 +26,15 @@ Based on this output, there are more individuals in the pre-reform group. An imp
 
 ## Proposed coding for primary complete
 
-Users who want to capture the distribution following this reform may want to consider the use of age range as proxies. The following lines of code can be added after educat7 in the 2020 do file:
+Users who want to capture the distribution following this reform may want to consider the use of age range as proxies. The following lines of code can be added after educat7 in the 2014 and 2020 do files:
 
 ```
+*-----------------------------
+* For 2014 ZNZ code
+*-----------------------------
+* Q17A_EDUCA  = 6 represents Standard 6
+replace educat7 = 3 if inrange(age, 13, 17) & Q17A_EDUCA == 6 & inrange(s1, 1, 3)
+
 *-----------------------------
 * For 2020 code
 *-----------------------------
@@ -39,11 +47,7 @@ replace educat7 = 3 if inrange(age, 13, 17) & Q11D == 6 & inrange(s1, 1, 3)
 * Recode for Zanzibar
 replace educat7 = 3 if inrange(age, 12, 23) & Q11D == 6 & inrange(s1, 4, 5)
 
-*-----------------------------
-* For 2014 ZNZ code
-*-----------------------------
-* Q17A_EDUCA  = 6 represents Standard 6
-replace educat7 = 3 if inrange(age, 13, 17) & Q17A_EDUCA == 6 & inrange(s1, 1, 3)
+drop s1
 ```
 ## Coding the ILFS education categories in the GLD
 
