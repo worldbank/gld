@@ -4,6 +4,8 @@
 
 Tanzania's education system is complex. Education policy is decided autonomously for Mainland Tanzania and Zanzibar. An education reform in 2006 introduced changes in Zanzibar reducing primary education from 7 years to 6 years, but this has not been implemented until 2010. Mainland Tanzania followed suit and began implementation of a similar scheme in 2016. Along with these changes, and not to be confused with the similarity in numbers, the primary entry age is also reduced from 7 to 6. But before 2010, and for the longest time, both Zanzibar and Mainland Tanzania operate under the same scheme. As an implication, individuals in 2014 and 2020 rounds complete primary education at different year levels: the threshold for primary complete is Standard 7 pre-reform, and Standard 6 post-reform. 
 
+## Coding issue
+
 This policy background raises the question on how "primary completed" should be coded in the GLD harmonization, particularly when the raw variable for educational attainment is detailed at the education year level. This is a concern specifically for the 2014 round where individuals in Zanzibar are a mix of the old and new scheme, and for 2020 round where the mix of the two schemes occur in both Zanzibar and Mainland Tanzania. Unfortunately, there is no variable indicating which individuals are on the old and new schemes in any of the ILFS rounds, so coding decisions need to rely on the theoretical age for the affected group to proxy for reform-affected individuals. 
 
 For more information on the Tanzania's education system, refer to this [UNICEF report](Utilities/Tanzania-2018-Global-Initiative-Out-of-School-Children-Country-Report.pdf)
