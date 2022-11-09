@@ -1,4 +1,4 @@
-# Change in education system in Tanzania
+# Tanzania's education system
 
 ## Introduction
 
