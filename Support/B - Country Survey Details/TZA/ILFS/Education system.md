@@ -32,16 +32,18 @@ Users who want to capture the distribution following this reform may want to con
 
 ```
 *-----------------------------
-* For 2014 ZNZ code
+* For 2014 Zanzibar code
 *-----------------------------
 * Q17A_EDUCA  = 6 represents Standard 6
-replace educat7 = 3 if inrange(age, 13, 17) & Q17A_EDUCA == 6 & inrange(s1, 1, 3)
+replace educat7 = 3 if inrange(age, 13, 17) & Q17A_EDUCA == 6 
 ```
 ```
 *-----------------------------
 * For 2020 code
 *-----------------------------
-encode subnatid1, gen(s1)
+* Since the 2020 round includes samples from both Mainland and Zanzibar, create a variable that allows us to restrict the sample
+encode subnatid1, gen(s1) 
+* S1 values between 1 to 3 cover Mainland Tanzania, while values 4 and 5 cover Zanzibar
 
 * Q11D = 6 represents Standard 6
 * Recode for Mainland Tanzania: 
