@@ -36,7 +36,8 @@ Users who want to capture the distribution following this reform may want to con
 *-----------------------------
 * Q17A_EDUCA  = 6 represents Standard 6
 replace educat7 = 3 if inrange(age, 13, 17) & Q17A_EDUCA == 6 & inrange(s1, 1, 3)
-
+```
+```
 *-----------------------------
 * For 2020 code
 *-----------------------------
