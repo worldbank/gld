@@ -28,7 +28,7 @@ Based on this output, there are more individuals in the pre-reform group. An imp
 
 ## Proposed coding for primary complete
 
-Users who want to capture the distribution following this reform may want to consider the use of age range as proxies. The following lines of code can be added before the closing htlm tag for ```educat7``` in the 2014 and 2020 do files:
+Users who want to capture the distribution following this reform may want to consider the use of age range as proxies. There are limitations to our assumptions (e.g., children may start later than the primary entry age) but doing so may have a reduce the bias from generalizing based on age group plurality. The following lines of code can be added before the closing htlm tag for ```educat7``` in the 2014 and 2020 do files:
 
 ```
 *-----------------------------
