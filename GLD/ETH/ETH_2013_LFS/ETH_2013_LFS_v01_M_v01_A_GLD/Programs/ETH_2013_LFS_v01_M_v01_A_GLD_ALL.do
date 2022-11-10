@@ -167,10 +167,10 @@ local output "`id_data'"
 *</_int_month_>
 
 
-/*<_hhid_>
+/*<_hhid_note_>
 According to the annual report, the total number of households should be 58396, 
 75 more than what we got here using ID01 to ID08.
-*<_hhid_>*/
+*<_hhid_note_>*/
 
 
 *<_hhid_>
@@ -182,11 +182,11 @@ According to the annual report, the total number of households should be 58396,
 *</_hhid_>
 
 
-/*<_pid_>
+/*<_pid_note_>
 
 Two different observations have the same individual ID "00600200500808800500201506".
 
-*<_pid_>*/
+*<_pid_note_>*/
 
 
 *<_pid_>
@@ -203,10 +203,10 @@ Two different observations have the same individual ID "006002005008088005002015
 *</_weight_>
 
 
-/*<_psu_>
+/*<_psu_note_>
 There is already a variable called PSU in the raw dataset.
 As reported, 1950 PSUs in total. 
-*<_psu_>*/
+*<_psu_note_>*/
 
 
 *<_psu_>
@@ -284,9 +284,9 @@ As reported, 1950 PSUs in total.
 *</_subnatidsurvey_>
 
 
-/* <_subnatid1_prev>
+/* <_subnatid1_prev_note_>
 subnatid1_prev is coded as missing unless the classification used for subnatid1 has changed since the previous survey.
-</_subnatid1_prev> */
+</_subnatid1_prev_note_> */
 
 
 *<_subnatid1_prev_>
@@ -501,14 +501,12 @@ whether the disability relates to walking.
 *</_migrated_from_urban_>
 
 
-/*<_migrated_from_cat_>
-Detailed questions like region or zone of precious residence, area of previous 
+/*<_migrated_from_cat_note_>
+Detailed questions like region or zone of previous residence, area of previous 
 residence and reasons for migration were asked only to recent migrants who moved
 our from their original place during the 5 years prior to the date of the interview. 
-*<_migrated_from_cat_>*/
 
-
-*<_migrated_from_cat_>
+Pending confirmation on the codelist. Previous codes:
 	gen migrated_from_cat=.
 	replace migrated_from_cat=2 if LF207==ID102 & migrated_binary==1
 	replace migrated_from_cat=5 if LF207==96 & migrated_binary==1
@@ -516,19 +514,33 @@ our from their original place during the 5 years prior to the date of the interv
 	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country"
 	label values migrated_from_cat lblmigrated_from_cat
 	label var migrated_from_cat "Category of migration area"
+*<_migrated_from_cat_note_>*/
+
+
+*<_migrated_from_cat_>
+	gen migrated_from_cat=.
+	replace migrated_from_cat=. if age<migrated_mod_age
+	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country"
+	label values migrated_from_cat lblmigrated_from_cat
+	label var migrated_from_cat "Category of migration area"
 *</_migrated_from_cat_>
 
 
-/*<_migrated_from_code_>
+/*<_migrated_from_code_note_>
 
 LF207 has labels but not sure whether the codes are the same as ID102(zone),
 Therefore we did not code migrated_from_cat "2-From same admin2 area".
 
-*<_migrated_from_code_>*/
+Previous codes are as follows.Pending confirmation on the codelist:
+	gen migrated_from_code=LF207
+	replace migrated_from_code=. if migrated_binary!=1
+	replace migrated_from_code=. if age<migrated_mod_age
+	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
+*<_migrated_from_code_note_>*/
 
 
 *<_migrated_from_code_>
-	gen migrated_from_code=LF207
+	gen migrated_from_code=.
 	replace migrated_from_code=. if migrated_binary!=1
 	replace migrated_from_code=. if age<migrated_mod_age
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
@@ -543,11 +555,11 @@ Therefore we did not code migrated_from_cat "2-From same admin2 area".
 *</_migrated_from_country_>
 
 
-/*<_migrated_reason_>
+/*<_migrated_reason_note_>
 The questionnaire only provides 12 options for this question with  12-"Other/Specify".
 But the raw dataset has 14 categories with 12 being "To live with relatives", 13 being "others"
  and 14 being "Not stated".
-*<_migrated_reason_>*/
+*<_migrated_reason_note_>*/
 
 
 *<_migrated_reason_>
@@ -596,7 +608,7 @@ But the raw dataset has 14 categories with 12 being "To live with relatives", 13
 *</_literacy_>
 
 
-/*<_educy_>
+/*<_educy_note_>
 
 The old curriculum in Ethiopia follows a 6-2-4 structure:
 6 years of primary education
@@ -609,7 +621,7 @@ The new curriculum follows a 4-4-2-2 structure:
 5-8 general primary education/secondary-cycle primary
 9-10 general secondary education
 11-12 preparatory secondary education	  
-*<_educy_>*/		  
+*<_educy_note_>*/		  
 
 *<_educy_>
 	drop educy 
@@ -710,16 +722,11 @@ foreach v of local ed_var {
 replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 *</_% Correction min age_>
 
-
 }
-
-
 
 /*%%=============================================================================================
 	7: Training
 ================================================================================================*/
-
-
 {
 *<_vocational_>
 	gen vocational=LF215
@@ -793,13 +800,13 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 *</_lstatus_>
 
 
-/*<_potential_lf_>
+/*<_potential_lf_note_>
 Note: var "potential_lf" only takes value if the respondent is not in labor force. (lstatus==3)
 
 "potential_lf"=1 if the person is
 1)available but not searching or LF404==1 & LF401==2
 2)searching but not immediately available to work or LF404==2 & LF401==1
-</_potential_lf_>*/
+</_potential_lf_note_>*/
 
 
 *<_potential_lf_>
@@ -837,9 +844,9 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 *</_nlfreason_>
 
 
-/*<_unempldur_l_>
+/*<_unempldur_l_note_>
 The duration of being unemployed is a single number. 
-*<_unempldur_l_>*/
+*<_unempldur_l_note_>*/
 
 
 *<_unempldur_l_>
@@ -861,7 +868,7 @@ The duration of being unemployed is a single number.
 
 
 {
-/*<_empstat_>
+/*<_empstat_note_>
 According to the annual report, employment status of a person was classified into:
 - employer
 - paid employee
@@ -878,7 +885,7 @@ According to the annual report, employment status of a person was classified int
 - NGO employees
 - domestic employees
 - other paid employees
-*<_empstat_>*/
+*<_empstat_note_>*/
 
 
 *<_empstat_>

@@ -199,10 +199,10 @@ local output "`id_data'"
 *</_weight_>
 
 
-/*<_psu_>
+/*<_psu_note_>
 In the official report, the number of total PSU should be 2,334,
 which is 3 more than what we have here.
-*<_psu_>*/
+*<_psu_note_>*/
 
 
 *<_psu_>
@@ -256,10 +256,10 @@ which is 3 more than what we have here.
 *</_subnatid1_>
 
 
-/*<_subnatid2_>
+/*<_subnatid2_note_>
 Note that some zones do not have name lables but only codes. That is because
 in the offical annual report, they were grouped at their regional level. 
-*<_subnatid2_>*/
+*<_subnatid2_note_>*/
 
 
 *<_subnatid2_>
@@ -292,9 +292,9 @@ in the offical annual report, they were grouped at their regional level.
 *</_subnatidsurvey_>
 
 
-/* <_subnatid1_prev>
+/* <_subnatid1_prev_note_>
 subnatid1_prev is coded as missing unless the classification used for subnatid1 has changed since the previous survey.
-</_subnatid1_prev> */
+</_subnatid1_prev_note_> */
 
 
 *<_subnatid1_prev_>
@@ -462,7 +462,7 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 *</_migrated_binary_>
 
 
-/* <_migrated_years_note>
+/* <_migrated_years_note_>
 Information is on years living in current place (which is equal
 to years since left previous residence). However, info is 
    code 0 for less than a year,
@@ -474,7 +474,7 @@ to years since left previous residence). However, info is
 
    Code 0.5 for less than a year, half-point for 5-6 window (e.g., 5.5)
    and code 10 as a lower bound for the 10+ option  
-</_migrated_years_note> */
+</_migrated_years_note_> */
 
 
 *<_migrated_years_>
@@ -499,6 +499,11 @@ to years since left previous residence). However, info is
 	label values migrated_from_urban lblmigrated_from_urban
 	label var migrated_from_urban "Migrated from area"
 *</_migrated_from_urban_>
+
+
+/*<_migrated_from_cat_note_>
+Still pending on confirmation on the codelist.
+*<_migrated_from_cat_note_>*/
 
 
 *<_migrated_from_cat_>
@@ -583,7 +588,7 @@ to years since left previous residence). However, info is
 *</_literacy_>
 
 
-/*<_educy_>
+/*<_educy_note_>
 
 Education system in Ethiopia is:
 
@@ -596,7 +601,8 @@ Education system in Ethiopia is:
 			  - PhD: 3-7 Years
 			  
 Answers of "Diploma/Degree not completed" (cat21/22) were counted as 12 years of elementary plus 1 year of diploma or degree. 			  
-*<_educy_>*/		  
+*<_educy_note_>*/		  
+
 
 *<_educy_>
 	gen byte educy=.
@@ -687,10 +693,7 @@ foreach v of local ed_var {
 replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 *</_% Correction min age_>
 
-
 }
-
-
 
 /*%%=============================================================================================
 	7: Training
@@ -739,7 +742,7 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 *</_vocational_field_orig_>
 
 
-/*<_vocational_financed_>
+/*<_vocational_financed_note_>
 One related variable in the raw dataset is LF26:"Where did you get the training?"
 1.College/University/Institute
 2.Vocational/Technical school
@@ -750,7 +753,7 @@ One related variable in the raw dataset is LF26:"Where did you get the training?
 7.Other/Specify
 
 But these do not directly reflect the source of financial support.
-*<_vocational_financed_>*/
+*<_vocational_financed_note_>*/
 
 
 *<_vocational_financed_>
@@ -787,13 +790,13 @@ But these do not directly reflect the source of financial support.
 *</_lstatus_>
 
 
-/*<_potential_lf_>
+/*<_potential_lf_note_>
 Note: var "potential_lf" only takes value if the respondent is not in labor force. (lstatus==3)
 
 "potential_lf"=1 if the person is
 1)available but not searching or LF49==1 & LF46==2
 2)searching but not immediately available to work or LF49==2 & LF46==1
-</_potential_lf_>*/
+</_potential_lf_note_>*/
 
 
 *<_potential_lf_>
@@ -830,12 +833,12 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 *</_nlfreason_>
 
 
-/*<_unempldur_>
+/*<_unempldur_note_>
 
 The duration is a single number in the questionnaire not a range.
 Therefore the upper and lower bounds are the same. 
 
-*<_unempldur_>*/
+*<_unempldur_note_>*/
 
 
 *<_unempldur_l_>
@@ -859,14 +862,14 @@ Therefore the upper and lower bounds are the same.
 
 
 {
-/*<_empstat_>
+/*<_empstat_note_>
 Definition of "Employees" please refer to the link below:
 
 chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/https://www.ilo.org/wcmsp5/groups/public/---dgreports/---stat/documents/meetingdocument/wcms_648693.pdf
 
 In the case of ETH, they have their own category 09 "Member of Co-operatives(Industrial/Agricultural)", which we 
 treated as "Paid employee".
-*<_empstat_>*/
+*<_empstat_note_>*/
 
 
 *<_empstat_>
@@ -1063,11 +1066,11 @@ treated as "Paid employee".
 *</_union_>
 
 
-/*<_firmsize_l_>
+/*<_firmsize_l_note_>
 Only two options available for question LF40:
 1. 10 and above
 2. Below 10  
-*<_firmsize_l_>*/
+*<_firmsize_l_note_>*/
 
 
 *<_firmsize_l_>
