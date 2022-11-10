@@ -163,7 +163,7 @@ local output "`id_data'"
 *</_int_month_>
 
 
-/*<_hhid_>
+/*<_hhid_note_>
 
 Note that 136,655 observations' or 40,356 households' number of household member do
 not match the original household size variable "b1r12".
@@ -207,7 +207,7 @@ Following codes given by the "A guide to working with Indonesian survey data":
 // b1r7 = sample code number
 // b1r10 = household sample sequential number
 
-<_hhid_>*/
+<_hhid__note_>*/
 
 
 *<_hhid_>
@@ -218,7 +218,7 @@ Following codes given by the "A guide to working with Indonesian survey data":
 *</_hhid_>
 
 
-/*<_pid_>
+/*<_pid_note_>
 
 	duplicates tag, gen(dup)
 	tab dup
@@ -232,7 +232,7 @@ Following codes given by the "A guide to working with Indonesian survey data":
 
 9 observations were dropped.
 
-<_pid_>*/
+<_pid__note_>*/
 
 
 *<_pid_>
@@ -248,13 +248,13 @@ Following codes given by the "A guide to working with Indonesian survey data":
 *</_weight_>
 
 
-/*<_psu_>
+/*<_psu_note_>
 
 We do know that the primary sampling unit of Sakernas is census block and the
 census block number is in the questionnaire. However this information is not
 provided due to it is part of the confidential information withheld by the NSO.
 
-<_psu_>*/
+<_psu_note_>*/
 
 
 *<_psu_>
@@ -297,7 +297,7 @@ provided due to it is part of the confidential information withheld by the NSO.
 *</_urban_>
 
 
-/*<_subnatid1_>
+/*<_subnatid1_note_>
 
 The original province variable "b1r1" does not have value label for category 54.
 The name of category 54 is from year 1995. The province codelist is the same for
@@ -306,7 +306,7 @@ provinces.
 
 Province 54 - Timur Timor became independent from Indonesia in 2002.
 
-<_subnatid1_>*/
+<_subnatid1_note_>*/
 
 
 *<_subnatid1_>
@@ -319,7 +319,7 @@ Province 54 - Timur Timor became independent from Indonesia in 2002.
 *</_subnatid1_>
 
 
-/*<_subnatid2_>
+/*<_subnatid2_note_>
 
 	Because SAKERNAS 1996 does not have the district name variable as other years, yet it has the same districts surveyed in 2013. Therefore, I used districts' names and codes in 2013 to codify subnatid2 in 1996.
 
@@ -335,7 +335,7 @@ These districts' names were left missing.
 Province 54 - East Timor became indipendent from Indonesia in 2002. All districts in province 54 do not have names as in no year do these districts have name labels.
 
 
-*<_subnatid2_>*/
+*<_subnatid2_note_>*/
 
 
 *<_subnatid2_>
@@ -603,7 +603,7 @@ Education module is only asked to those 10 and older.
 *</_literacy_>
 
 
-/*<_educy_>
+/*<_educy_note_>
 
 Years of education, or "educy" (and all other related variables were left missing)
 because of the unclear mapping for "Not finished primary school yet".
@@ -627,7 +627,7 @@ primary unfinished to those options depends on specific assumptions and research
 needs. Therefore, variable "educy" was left missing and so were educat7, educat5,
 and educat4.
 
-</_educy_>*/
+</_educy_note_>*/
 
 
 *<_educy_>
@@ -759,7 +759,7 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 
 {
 
-/*<_lstatus_>
+/*<_lstatus_note_>
 
 We define the employed as who "worked primarily (b4r3==1)" or
 							  "worked at least for 1 hour last week (b4r4==1)" or
@@ -769,7 +769,7 @@ non-labor force: "who do not have a job/business (b4r5==2)" & not seeking a job 
 
 Labor force participation: 56.21%
 
-<_lstatus_>*/
+<_lstatus_note_>*/
 
 
 *<_lstatus_>
@@ -784,14 +784,14 @@ Labor force participation: 56.21%
 *</_lstatus_>
 
 
-/*<_potential_lf_>
+/*<_potential_lf_note_>
 Note: var "potential_lf" is missing if the respondent is in labor force or unemployed; it only takes value if the respondent is not in labor force. (lstatus==3)
 
 "potential_lf" = 1 if the person is
 1)available but not searching (b4r16==1 & b4r14==2) or
 2)searching but not immediately available to work (b4r14==1 & b4r16==2)
 
-</_potential_lf_>*/
+</_potential_lf_note_>*/
 
 
 *<_potential_lf_>
@@ -814,7 +814,7 @@ Note: var "potential_lf" is missing if the respondent is in labor force or unemp
 *</_underemployment_>
 
 
-/*<_nlfreason_>
+/*<_nlfreason_note_>
 
 The original variable "b4r15 " has 5 non-missing categories:
 	1  Did not need work
@@ -823,7 +823,7 @@ The original variable "b4r15 " has 5 non-missing categories:
 	4  Housekeeping
 	5  Others
 
-<_nlfreason_>*/
+<_nlfreason_note_>*/
 
 
 *<_nlfreason_>
@@ -835,13 +835,13 @@ The original variable "b4r15 " has 5 non-missing categories:
 *</_nlfreason_>
 
 
-/*<_unempldur_l_>
+/*<_unempldur_l_note_>
 
 The original variable "b4r18" is the period of seeking job. Therefore, the lower
 and upper bound of unemploymenmt duration are the same. They are in fact the length
 of unemployment period.
 
-<_unempldur_l_>*/
+<_unempldur_l_note_>*/
 
 
 *<_unempldur_l_>
@@ -884,14 +884,14 @@ of unemployment period.
 *</_ocusec_>
 
 
-/*<_industry_orig_>
+/*<_industry_orig_note_>
 
 Variable "b4r8" has the KJI 1982 codes which is the national occupational
 classifications.
 
 Variable "b4r9" has 48 unique values and seems to also follow the KJI 1982
 industrial classifications.
-<_industry_orig_>*/
+<_industry_orig_note_>*/
 
 
 *<_industry_orig_>
@@ -996,11 +996,11 @@ industrial classifications.
 *</_occup_skill_>
 
 
-/*<_wage_no_compen_>
+/*<_wage_no_compen_note_>
 
 In the raw dataset, question 13 devides into "in cash" and "in-kind". For each observation, I calculated the total income by adding up "in cash" and "in-kind" salary.
 
-<_wage_no_compen_>*/
+<_wage_no_compen_note_>*/
 
 
 *<_wage_no_compen_>
@@ -1032,12 +1032,12 @@ In the raw dataset, question 13 devides into "in cash" and "in-kind". For each o
 *</_wmonths_>
 
 
-/*<_wage_total_>
+/*<_wage_total_note_>
 
 We know the average monthly wage, which is "wage_no_compen". But since we do not know how
 many months each observation works for, we left the annualized total wage missing.
 
-<_wage_total_>*/
+<_wage_total_note_>*/
 
 
 *<_wage_total_>
@@ -1102,11 +1102,12 @@ many months each observation works for, we left the annualized total wage missin
 
 
 {
-/*<_empstat_2_>
+/*<_empstat_2_note_>
 
 We do not have information on the employment status of the main additional job. But we know whether the respondent has a second job. Therefore, for people who have a second job, they were all coded as "Other, unclassified workers."
 
-<_empstat_2_>*/
+<_empstat_2_note_>*/
+
 
 *<_empstat_2_>
 	gen byte empstat_2 = 5 if b4r12==1
@@ -1124,7 +1125,7 @@ We do not have information on the employment status of the main additional job. 
 *</_ocusec_2_>
 
 
-/*<_industry_orig_2_>
+/*<_industry_orig_2_note_>
 
 There are two original variables concerning industrial classification:
 
@@ -1134,7 +1135,7 @@ b4r20 --- Type of industry/activities of job during the previous year
 Variable "b4r13" is not 7-day reference and it does not have value labels.
 It follows KJI 1982 industrial classifications.
 
-<_industry_orig_2_>*/
+<_industry_orig_2_note_>*/
 
 
 *<_industry_orig_2_>
@@ -1580,6 +1581,7 @@ It follows KJI 1982 industrial classifications.
 	gen wage_total_2_year = .
 	label var wage_total_2_year "Annualized total wage secondary job 12 month recall"
 *</_wage_total_2_year_>
+
 
 *<_firmsize_l_2_year_>
 	gen byte firmsize_l_2_year = .

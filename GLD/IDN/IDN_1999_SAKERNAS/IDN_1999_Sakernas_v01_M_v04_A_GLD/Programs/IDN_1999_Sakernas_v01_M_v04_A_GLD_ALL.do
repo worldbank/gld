@@ -163,7 +163,7 @@ local output "`id_data'"
 *</_int_month_>
 
 
-/*<_hhid_>
+/*<_hhid_note_>
 
 Following codes given by the "A guide to working with Indonesian survey data":
 
@@ -177,7 +177,7 @@ Following codes given by the "A guide to working with Indonesian survey data":
 // b1p07= sample code number
 // b1p10= household sample sequential number
 
-<_hhid_>*/
+<_hhid_note_>*/
 
 
 *<_hhid_>
@@ -187,7 +187,7 @@ Following codes given by the "A guide to working with Indonesian survey data":
 *</_hhid_>
 
 
-/*<_pid_>
+/*<_pid_note_>
 
 	duplicates tag, gen(dup)
 	tab dup
@@ -198,7 +198,7 @@ Following codes given by the "A guide to working with Indonesian survey data":
 ------------+-----------------------------------
       Total |    155,572      100.00
 
-<_pid_>*/
+<_pid_note_>*/
 
 
 *<_pid_>
@@ -214,13 +214,13 @@ Following codes given by the "A guide to working with Indonesian survey data":
 *</_weight_>
 
 
-/*<_psu_>
+/*<_psu_note_>
 
 We do know that the primary sampling unit of Sakernas is census block and the
 census block number is in the questionnaire. However this information is not
 provided due to it is part of the confidential information withheld by the NSO.
 
-<_psu_>*/
+<_psu_note_>*/
 
 
 *<_psu_>
@@ -272,13 +272,13 @@ provided due to it is part of the confidential information withheld by the NSO.
 *</_subnatid1_>
 
 
-/*<_subnatid2_>
+/*<_subnatid2_note_>
 
 	Because SAKERNAS 1999 does not have the district name variable as other years, yet it has the same districts surveyed in 2013. Therefore, I used districts' names and codes in 2013 to codify subnatid2 in 1999.
 
 	But note that 17 district codes only appear in 1999 (no district labels) not in 2013: 1171 1472 3218 3219 3220 3273 6271 7271 7319 7320 7321 7371 8208 8209 8210 8211 8212. These districts' names were left missing.
 
-*<_subnatid2_>*/
+*<_subnatid2_note_>*/
 
 
 *<_subnatid2_>
@@ -547,7 +547,7 @@ provided due to it is part of the confidential information withheld by the NSO.
 *</_literacy_>
 
 
-/*<_educy_>
+/*<_educy_note_>
 
 Years of education, or "educy" (and all other related variables were left missing)
 because of the unclear mapping for "Not finished primary school yet".
@@ -573,7 +573,7 @@ Original code list of variable "b4p1a" in the dataset:
 8.Diploma I/II
 9.Diploma III
 
-</_educy_>*/
+</_educy_note_>*/
 
 
 *<_educy_>
@@ -590,7 +590,8 @@ Original code list of variable "b4p1a" in the dataset:
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
-*</_
+*</_educat7_>
+
 
 *<_educat5_>
 	gen byte educat5 = educat7
@@ -703,7 +704,7 @@ replace educat_isced_v = "" if ( age < ed_mod_age & !missing(age) )
 
 {
 
-/*<_lstatus_>
+/*<_lstatus_note_>
 
 We define the employed as who "worked primarily (b4p2b==1)" or
 							  "worked at least 1 hour during the last week (b4p3==1)" or
@@ -716,7 +717,7 @@ labour force participation: 59.44%
 . count if !mi(b4p6a)
   86,863
 
-<_lstatus_>*/
+<_lstatus_note_>*/
 
 
 *<_lstatus_>
@@ -731,14 +732,14 @@ labour force participation: 59.44%
 *</_lstatus_>
 
 
-/*<_potential_lf_>
+/*<_potential_lf_note_>
 Note: var "potential_lf" is missing if the respondent is in labor force or unemployed; it only takes value if the respondent is not in labor force. (lstatus==3)
 
 "potential_lf" = 1 if the person is
 1)available but not searching (b4p19==1 & (b4p13==2)) or
 2)searching but not immediately available to work (b4p13==1) & b4p19==2
 
-</_potential_lf_>*/
+</_potential_lf_note_>*/
 
 
 *<_potential_lf_>
@@ -761,7 +762,7 @@ Note: var "potential_lf" is missing if the respondent is in labor force or unemp
 *</_underemployment_>
 
 
-/*<_nlfreason_>
+/*<_nlfreason_note_>
 
 The original variable "b4p18" has 7 non-missing categories:
 	1 Felt impossible to find a job
@@ -772,7 +773,7 @@ The original variable "b4p18" has 7 non-missing categories:
 	6 Unable to do work
 	7 Other, specify
 
-<_nlfreason_>*/
+<_nlfreason_note_>*/
 
 
 *<_nlfreason_>
@@ -784,13 +785,13 @@ The original variable "b4p18" has 7 non-missing categories:
 *</_nlfreason_>
 
 
-/*<_unempldur_l_>
+/*<_unempldur_l_note_>
 
 The original variable "b4p16" is the period of seeking job. Therefore, the lower
 and upper bound of unemploymenmt duration are the same. They are in fact the length
 of unemployment period.
 
-<_unempldur_l_>*/
+<_unempldur_l_note_>*/
 
 
 *<_unempldur_l_>
@@ -928,11 +929,11 @@ of unemployment period.
 *</_occup_skill_>
 
 
-/*<_wage_no_compen_>
+/*<_wage_no_compen_note_>
 
 In the raw dataset, question 13 devides into "in cash" and "in-kind". For each observation, I calculated the total income by adding up "in cash" and "in-kind" salary.
 
-<_wage_no_compen_>*/
+<_wage_no_compen_note_>*/
 
 
 *<_wage_no_compen_>
@@ -964,12 +965,12 @@ In the raw dataset, question 13 devides into "in cash" and "in-kind". For each o
 *</_wmonths_>
 
 
-/*<_wage_total_>
+/*<_wage_total_note_>
 
 We know the average monthly wage, which is "wage_no_compen". But since we do not know how
 many months each observation works for, we left the annualized total wage missing.
 
-<_wage_total_>*/
+<_wage_total_note_>*/
 
 
 *<_wage_total_>
@@ -996,11 +997,11 @@ many months each observation works for, we left the annualized total wage missin
 *</_healthins_>
 
 
-/*<_socialsec_>
+/*<_socialsec_note_>
 
 We count both "old-age insurance" and "pension insurance" as indicators for having social security or not. A given respondent does not have social security if he/she does not have neither.
 
-<_socialsec_>*/
+<_socialsec_note_>*/
 
 
 *<_socialsec_>
@@ -1020,11 +1021,11 @@ We count both "old-age insurance" and "pension insurance" as indicators for havi
 *</_union_>
 
 
-/*<_firmsize_l_>
+/*<_firmsize_l_note_>
 
 This question was only asked to those who are seld-employed.
 
-<_firmsize_l_>*/
+<_firmsize_l_note_>*/
 
 
 *<_firmsize_l_>
@@ -1046,11 +1047,12 @@ This question was only asked to those who are seld-employed.
 
 
 {
-/*<_empstat_2_>
+/*<_empstat_2_note_>
 
 We do not have information on the employment status of the main additional job. But we know whether the respondent has a second job. Therefore, for people who have a second job, they were all coded as "Other, unclassified workers."
 
-<_empstat_2_>*/
+<_empstat_2_note_>*/
+
 
 *<_empstat_2_>
 	gen byte empstat_2 = 5 if b4p11==1
