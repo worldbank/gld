@@ -4,30 +4,30 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				COL_1999_GLD_ENH_v01
+<_Program name_>				COL_1999_ENH_V01_M_V01_A_GLD.do
 <_Application_>					Stata 17
-<_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) 
+<_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) Eliana Carranza, Andreas Eberhardt, Alejandro Rueda-Sanz
 <_Date created_>				2022-05-29
 
 -------------------------------------------------------------------------
 
 <_Country_>					    Colombia (COL)
 <_Survey Title_>				Encuesta Nacional de Hogares - ENH
-<_Survey Year_>					1999
+<_Survey Year_>					1996
 <_Study ID_>					[Microdata Library ID if present] </_Study ID_>
 <_Data collection from_>			[N/A] </_Data collection from_>
 <_Data collection to_>				[N/A] </_Data collection to_>
 <_Source of dataset_> 				Departamento Administrativo Nacional de Estadistica - DANE
-<_Sample size (HH)_> 				34,822
-<_Sample size (IND)_> 				152,298
+<_Sample size (HH)_> 				31,264
+<_Sample size (IND)_> 				137,423
 <_Sampling method_> 				 </_Sampling method_>
 <_Geographic coverage_> 		National </_Geographic coverage_>
-<_Currency_> 				Colombian Peso (COP) </_Currency_>
+<_Currency_> 				Colombian Peso (COP) </_Currency_
 
 -----------------------------------------------------------------------
 
-_ICLS Version_>		ICLS-13		 </_ICLS Version_>
-<_ISCED Version_>		ISCED 1997		 </_ISCED Version_>
+<_ICLS Version_>		ICLS-13		 </_ICLS Version_>
+<_ISCED Version_>		n/a		 </_ISCED Version_>
 <_ISCO Version_>		ISCO-1968		 </_ISCO Version_>
 <_OCCUP National_>		CNO 1970		 </_OCCUP National_>
 <_ISIC Version_>		ISIC REV 3		</_ISIC Version_>
@@ -55,14 +55,14 @@ set mem 800m
 
 *----------1.2: Set directories------------------------------*
 
-local path_in  "Z:\GLD-Harmonization\582018_AQ\COL\COL_1999_ENH\COL_1999_ENH_v01_M\Data\Stata"
-local path_output "Z:\GLD-Harmonization\582018_AQ\COL\COL_1999_ENH\COL_1999_ENH_v01_M_V02_A_GLD\Data\Harmonized"
+local path_in  "Z:\GLD-Harmonization\582018_AQ\COL\COL_1996_ENH\COL_1996_ENH_v01_M\Data\Stata"
+local path_output "Z:\GLD-Harmonization\582018_AQ\COL\COL_1996_ENH\COL_1996_ENH_v01_M_v01_A_GLD\Data\Harmonized"
 
 *----------1.3: Database assembly------------------------------*
 
-** DATABASE ASSEMBLENT
+** DATABASE ASSEMBLY
 
-use "`path_in'/COL_1999_ENH-FT_BASE.dta"
+use "`path_in'/COL_1996_ENH-FT_BASE.dta"
 
 
 /*%%=============================================================================================
@@ -78,7 +78,7 @@ use "`path_in'/COL_1999_ENH-FT_BASE.dta"
 
 
 *<_survname_>
-	gen survname = "ECH"
+	gen survname = "ENH"
 	label var survname "Survey acronym"
 *</_survname_>
 
@@ -96,7 +96,7 @@ use "`path_in'/COL_1999_ENH-FT_BASE.dta"
 
 
 *<_isced_version_>
-	gen isced_version = "isced_1997"
+	gen isced_version = ""
 	label var isced_version "Version of ISCED used for educat_isced"
 *</_isced_version_>
 
@@ -114,7 +114,7 @@ use "`path_in'/COL_1999_ENH-FT_BASE.dta"
 
 
 *<_year_>
-	gen int year = 1999
+	gen int year = 1996
 	label var year "Year of survey"
 *</_year_>
 
@@ -126,7 +126,7 @@ use "`path_in'/COL_1999_ENH-FT_BASE.dta"
 
 
 *<_veralt_>
-	gen veralt = "V02"
+	gen veralt = "V01"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
@@ -138,7 +138,7 @@ use "`path_in'/COL_1999_ENH-FT_BASE.dta"
 
 
 *<_int_year_>
-	gen int_year = 1999 //instead of intv_year=ano
+	gen int_year = 1996 //instead of intv_year=ano
 	label var int_year "Year of the interview"
 *</_int_year_>
 
@@ -215,7 +215,7 @@ use "`path_in'/COL_1999_ENH-FT_BASE.dta"
 {
 
 *<_urban_>
-	gen byte urban=cabecera
+	gen byte urban=zona
 	replace urban = 0 if urban == 2
 	label var urban "Location is urban"
 	la de lblurban 1 "Urban" 0 "Rural"
@@ -243,31 +243,32 @@ use "`path_in'/COL_1999_ENH-FT_BASE.dta"
 
 
 *<_subnatid2_>
+	* This survey uses a department code from  1 to 24, and DANE doesn't provide the codes for each department. These codes were determined through the comparison of DANE summary statistics to he number of workers and the regions in subnatid1
 	gen subnatid2 = string(depto)
-	replace subnatid2 = "5 - Antioquia" if subnatid2 == "5"
-	replace subnatid2 = "8 - Atlántico" if subnatid2 == "8"
-	replace subnatid2 = "11 - Bogotá, D.C." if subnatid2 == "11"
-	replace subnatid2 = "13 - Bolívar" if subnatid2 == "13"
-	replace subnatid2 = "15 - Boyacá" if subnatid2 == "15"
-	replace subnatid2 = "17 - Caldas" if subnatid2 == "17"
-	replace subnatid2 = "18 - Caquetá" if subnatid2 == "18"
-	replace subnatid2 = "19 - Cauca" if subnatid2 == "19"
-	replace subnatid2 = "20 - Cesar" if subnatid2 == "20"
-	replace subnatid2 = "23 - Córdoba" if subnatid2 == "23"
-	replace subnatid2 = "25 - Cundinamarca" if subnatid2 == "25"
-	replace subnatid2 = "27 - Chocó" if subnatid2 == "27"
-	replace subnatid2 = "41 - Huila" if subnatid2 == "41"
-	replace subnatid2 = "44 - La Guajira" if subnatid2 == "44"
-	replace subnatid2 = "47 - Magdalena" if subnatid2 == "47"
-	replace subnatid2 = "50 - Meta" if subnatid2 == "50"
-	replace subnatid2 = "52 - Nariño" if subnatid2 == "52"
-	replace subnatid2 = "54 - Norte de Santander" if subnatid2 == "54"
-	replace subnatid2 = "63 - Quindío" if subnatid2 == "63"
-	replace subnatid2 = "66 - Risaralda" if subnatid2 == "66"
-	replace subnatid2 = "68 - Santander" if subnatid2 == "68"
-	replace subnatid2 = "70 - Sucre" if subnatid2 == "70"
-	replace subnatid2 = "73 - Tolima" if subnatid2 == "73"
-	replace subnatid2 = "76 - Valle del Cauca" if subnatid2 == "76"
+	replace subnatid2 = "5 - Antioquia" if subnatid2 == "13"
+	replace subnatid2 = "8 - Atlántico" if subnatid2 == "1"
+	replace subnatid2 = "11 - Bogotá, D.C." if subnatid2 == "24"
+	replace subnatid2 = "13 - Bolívar" if subnatid2 == "2"
+	replace subnatid2 = "15 - Boyacá" if subnatid2 == "8"
+	replace subnatid2 = "17 - Caldas" if subnatid2 == "14"
+	replace subnatid2 = "18 - Caquetá" if subnatid2 == "15"
+	replace subnatid2 = "19 - Cauca" if subnatid2 == "20"
+	replace subnatid2 = "20 - Cesar" if subnatid2 == "3"
+	replace subnatid2 = "23 - Córdoba" if subnatid2 == "4"
+	replace subnatid2 = "25 - Cundinamarca" if subnatid2 == "9"
+	replace subnatid2 = "27 - Chocó" if subnatid2 == "21"
+	replace subnatid2 = "41 - Huila" if subnatid2 == "16"
+	replace subnatid2 = "44 - La Guajira" if subnatid2 == "5"
+	replace subnatid2 = "47 - Magdalena" if subnatid2 == "6"
+	replace subnatid2 = "50 - Meta" if subnatid2 == "10"
+	replace subnatid2 = "52 - Nariño" if subnatid2 == "22"
+	replace subnatid2 = "54 - Norte de Santander" if subnatid2 == "11"
+	replace subnatid2 = "63 - Quindío" if subnatid2 == "17"
+	replace subnatid2 = "66 - Risaralda" if subnatid2 == "18"
+	replace subnatid2 = "68 - Santander" if subnatid2 == "12"
+	replace subnatid2 = "70 - Sucre" if subnatid2 == "7"
+	replace subnatid2 = "73 - Tolima" if subnatid2 == "19"
+	replace subnatid2 = "76 - Valle del Cauca" if subnatid2 == "23"
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
 
@@ -364,8 +365,6 @@ use "`path_in'/COL_1999_ENH-FT_BASE.dta"
 *<_relationharm_>
 	gen relationharm = relacion
 	recode relationharm 4=5 15=5 8=6 16/19=6
-	*replace ownhouse=. if head==6
-	*replace hhsize=. if head==6
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm  lblrelationharm
@@ -557,14 +556,12 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat7_>
-	gen byte educat7 = .
-	replace educat7=1 if inrange(niveduc, 100, 299)
-	replace educat7=2 if inrange(niveduc, 300, 304)
-	replace educat7=3 if inrange(niveduc, 305, 305)
-	replace educat7=4 if inrange(niveduc, 400, 410)
-	replace educat7=5 if inrange(niveduc, 411, 413)
-	replace educat7=7 if inrange(niveduc, 500, 599)
-    replace educat7=. if  age<5 & (niveduc == 0 | niveduc == 999)
+	gen byte educat7 = 1 if educy==0
+	replace educat7=2 if (educy>=1 & educy<=4) | niveduc==300
+	replace educat7=3 if educy==5
+	replace educat7=4 if (educy>=6 & educy<=10) | niveduc==400
+	replace educat7=5 if educy==11
+	replace educat7=7 if educy>11 & educy!=. | niveduc==500
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -684,11 +681,10 @@ foreach v of local ed_var {
 
 {
 *<_lstatus_>
-	gen byte lstatus = 1 if fzatrab==1 | actremu==1 | actfamil==1 
-	*| alguneg == 1 
-	replace lstatus=2 if hizodil == 1
-	* deseacon == 1 &  
-	replace lstatus=3 if missing(lstatus) & age >= minlaborage
+	gen byte lstatus=1 if fzatrab==1 | actremu==1 | teniaemp==1
+	replace lstatus=2 if fzatrab==2 & lstatus==.
+	replace lstatus=3 if fzatrab>2 & fzatrab<=9 & lstatus==.
+	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
@@ -696,8 +692,6 @@ foreach v of local ed_var {
 
 *<_potential_lf_>
 	gen byte potential_lf = .
-	replace potential_lf=1 if lstatus==3 & (  hizodil == 1 )
-	*deseacon == 1 |
 	replace potential_lf = . if age < minlaborage & age != .
 	replace potential_lf = . if lstatus != 3
 	label var potential_lf "Potential labour force status"
@@ -741,7 +735,7 @@ foreach v of local ed_var {
 {
 *<_empstat_>
 	gen byte empstat= categ
-	recode empstat (0=.) (1=2) (2/4=1) (7=1)  (5 = 4) (6=3)
+	recode empstat (0=.) (1=2) (2/4 7=1)  (5 = 4) (6=3)
 	replace empstat=. if lstatus!=1
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
@@ -755,7 +749,8 @@ foreach v of local ed_var {
 
 *<_ocusec_>
 	gen byte ocusec = categ
-	recode ocusec 0=. 2=1 1 3 4 5/9=2
+	recode ocusec (0=.) (1=2) (3=1) (4/7=2)
+	replace ocusec=. if lstatus!=1
 	label var ocusec "Sector of activity primary job 7 day recall"
 	la de lblocusec 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec lblocusec
@@ -790,12 +785,11 @@ activities of private households
 
 </_industry_orig_note> */
 	rename rama rama2d
-	tostring rama2d, replace force
+	destring rama2d, replace
 	gen industry_orig = rama2d
-	replace industry_orig="" if lstatus!=1
-	replace industry_orig="" if rama2d=="-1"
-	replace industry_orig="" if rama2d=="99"
-	replace industry_orig="" if industry_orig=="00"
+	replace industry_orig=. if lstatus!=1
+	replace industry_orig=. if rama2d==-1
+	replace industry_orig=. if rama2d==99
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
@@ -809,19 +803,6 @@ activities of private households
 
 *<_industrycat10_>
 	gen byte industrycat10 = .
-	replace industrycat10 = 1 if inrange(rama2d,"11", "13")
-	replace industrycat10 = 2 if inrange(rama2d,"21", "29")
-	replace industrycat10 = 3 if inrange(rama2d,"31", "39")
-	replace industrycat10 = 4 if inrange(rama2d,"41", "42")
-	replace industrycat10 = 5 if rama2d=="50"
-	replace industrycat10 = 6 if inrange(rama2d,"61","63")
-	replace industrycat10 = 7 if inrange(rama2d,"71","72")
-	replace industrycat10 = 8 if inrange(rama2d,"81","83") 
-	replace industrycat10 = 9 if inrange(rama2d,"91","96")
-	replace industrycat10 = 10 if rama2d=="0"
-	replace industrycat10 = . if lstatus!=1
-/*
-	gen byte industrycat10 = .
 	replace industrycat10 = 1 if rama2d>=11 & rama2d<=13
 	replace industrycat10 = 2 if rama2d>=21 & rama2d<=29
 	replace industrycat10 = 3 if rama2d>=31 & rama2d<=39
@@ -832,7 +813,7 @@ activities of private households
 	replace industrycat10 = 8 if rama2d>=81 & rama2d<=83
 	replace industrycat10 = 9 if rama2d>=91 & rama2d<=96
 	replace industrycat10 = 10 if rama2d==0
-	replace industrycat10 = . if lstatus!=1*/
+	replace industrycat10 = . if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
@@ -851,7 +832,8 @@ activities of private households
 *<_occup_orig_>
 	gen occup_orig = ocup
 	replace occup_orig=. if lstatus!=1
-	replace occup_orig=. if ocup==-100
+	replace occup_orig=2 if ocup==25
+	replace occup_orig=6 if ocup==66
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
@@ -860,9 +842,9 @@ activities of private households
 	gen help_isco=string(ocup)
 	gen occup_isco = help_isco + substr("0000", 1, 4 - length(help_isco))
 	replace occup_isco="" if lstatus!=1
-	replace occup_isco="" if occup_isco=="-100"
-label var occup_isco "ISCO code of primary job 7 day recall"
-	
+	replace occup_isco="2000" if occup_isco=="2500"
+	replace occup_isco="6000" if occup_isco=="6600"
+	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
 
@@ -967,12 +949,12 @@ label var occup_isco "ISCO code of primary job 7 day recall"
 
 	*In-kind income
 	*In-kind income (food) QI.16
-	gen wage_food = ingalim if lstatus==1
+	gen wage_food = .
 	gen wage_food_prel = wage_food
 	egen wage_food_mean = median(wage_food_prel)
 	replace wage_food = wage_food_mean
 	*In-kind income (housing) QI.17
-	gen wage_house = ingvivi if lstatus==1
+	gen wage_house = .
 	gen wage_house_prel = wage_house
 	egen wage_house_mean = median(wage_house_prel)
 	*In-kind income (transport) QI.18
@@ -1758,7 +1740,7 @@ compress
 
 *<_% SAVE_>
 
-save "`path_output'/COL_1999_ENH_V01_M_V02_A_GLD_ALL.dta", replace
+save "`path_output'/COL_1996_ENH_V01_M_V01_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>
 }

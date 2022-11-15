@@ -214,7 +214,7 @@ use "`path_in'/COL_2000_ENH-FT_BASE.dta"
 {
 
 *<_urban_>
-	gen byte urban=zona
+	gen byte urban=cabecera
 	replace urban = 0 if urban == 2
 	label var urban "Location is urban"
 	la de lblurban 1 "Urban" 0 "Rural"
@@ -556,12 +556,14 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat7_>
-	gen byte educat7 = 1 if educy==0
-	replace educat7=2 if (educy>=1 & educy<=4) | niveduc==300
-	replace educat7=3 if educy==5
-	replace educat7=4 if (educy>=6 & educy<=10) | niveduc==400
-	replace educat7=5 if educy==11
-	replace educat7=7 if educy>11 & educy!=. | niveduc==500
+	gen byte educat7 = .
+	replace educat7=1 if inrange(niveduc, 100, 299)
+	replace educat7=2 if inrange(niveduc, 300, 304)
+	replace educat7=3 if inrange(niveduc, 305, 305)
+	replace educat7=4 if inrange(niveduc, 400, 410)
+	replace educat7=5 if inrange(niveduc, 411, 413)
+	replace educat7=7 if inrange(niveduc, 500, 599)
+    replace educat7=. if  age<5 & (niveduc == 0 | niveduc == 999)
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -681,10 +683,9 @@ foreach v of local ed_var {
 
 {
 *<_lstatus_>
-	gen byte lstatus = 1 if fzatrab==1 | actremu==1 | actfamil==1
-	replace lstatus=2 if fzatrab==2 & lstatus==.
-	replace lstatus=3 if fzatrab>2 & fzatrab<=9 & lstatus==.
-	replace lstatus = . if age < minlaborage
+	gen byte lstatus = 1 if fzatrab==1 | actremu==1 | actfamil==1 | alguneg == 1 
+	replace lstatus=2 if deseacon == 1 &  hizodil == 1
+	replace lstatus=3 if missing(lstatus) & age >= minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
@@ -692,6 +693,7 @@ foreach v of local ed_var {
 
 *<_potential_lf_>
 	gen byte potential_lf = .
+	replace potential_lf=1 if lstatus==3 & ( deseacon == 1 | hizodil == 1 )
 	replace potential_lf = . if age < minlaborage & age != .
 	replace potential_lf = . if lstatus != 3
 	label var potential_lf "Potential labour force status"
@@ -785,11 +787,12 @@ activities of private households
 
 </_industry_orig_note> */
 	rename rama rama2d
-	destring rama2d, replace
+	tostring rama2d, replace force
 	gen industry_orig = rama2d
-	replace industry_orig=. if lstatus!=1
-	replace industry_orig=. if rama2d==-1
-	replace industry_orig=. if rama2d==99
+	replace industry_orig="" if lstatus!=1
+	replace industry_orig="" if rama2d=="-1"
+	replace industry_orig="" if rama2d=="99"
+	replace industry_orig="" if industry_orig=="00"
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
@@ -802,7 +805,22 @@ activities of private households
 
 
 *<_industrycat10_>
+
 	gen byte industrycat10 = .
+	replace industrycat10 = 1 if inrange(rama2d,"11", "13")
+	replace industrycat10 = 2 if inrange(rama2d,"21", "29")
+	replace industrycat10 = 3 if inrange(rama2d,"31", "39")
+	replace industrycat10 = 4 if inrange(rama2d,"41", "42")
+	replace industrycat10 = 5 if rama2d=="50"
+	replace industrycat10 = 6 if inrange(rama2d,"61","63")
+	replace industrycat10 = 7 if inrange(rama2d,"71","72")
+	replace industrycat10 = 8 if inrange(rama2d,"81","83") 
+	replace industrycat10 = 9 if inrange(rama2d,"91","96")
+	replace industrycat10 = 10 if rama2d=="0"
+	replace industrycat10 = . if lstatus!=1
+
+
+/*	gen byte industrycat10 = .
 	replace industrycat10 = 1 if rama2d>=11 & rama2d<=13
 	replace industrycat10 = 2 if rama2d>=21 & rama2d<=29
 	replace industrycat10 = 3 if rama2d>=31 & rama2d<=39
@@ -813,7 +831,7 @@ activities of private households
 	replace industrycat10 = 8 if rama2d>=81 & rama2d<=83
 	replace industrycat10 = 9 if rama2d>=91 & rama2d<=96
 	replace industrycat10 = 10 if rama2d==0
-	replace industrycat10 = . if lstatus!=1
+	replace industrycat10 = . if lstatus!=1*/
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
