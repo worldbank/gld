@@ -595,7 +595,8 @@ Original code list of variable "b4p1a" in the dataset:
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
-*</_
+*</_educat7_>
+
 
 *<_educat5_>
 	gen byte educat5 = educat7

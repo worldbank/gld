@@ -163,7 +163,7 @@ local output "`id_data'"
 *</_int_month_>
 
 
-/*<_hhid_>
+/*<_hhid_note_>
 
 Following codes given by the "A guide to working with Indonesian survey data":
 
@@ -175,7 +175,7 @@ Following codes given by the "A guide to working with Indonesian survey data":
 // nous = household sample sequential number
 // nour = serial number of households
 
-<_hhid_>*/
+<_hhid_note_>*/
 
 
 *<_hhid_>
@@ -185,7 +185,7 @@ Following codes given by the "A guide to working with Indonesian survey data":
 *</_hhid_>
 
 
-/*<_pid_>
+/*<_pid_note_>
 
 	duplicates tag, gen(dup)
 	tab dup
@@ -196,7 +196,7 @@ Following codes given by the "A guide to working with Indonesian survey data":
 ------------+-----------------------------------
       Total |    291,095      100.00
 
-<_pid_>*/
+<_pid_note_>*/
 
 
 *<_pid_>
@@ -263,7 +263,7 @@ Following codes given by the "A guide to working with Indonesian survey data":
 *</_subnatid1_>
 
 
-/*<_subnatid2_>
+/*<_subnatid2_note_>
 
 	Because SAKERNAS 1990 does not have the district name variable as other years, yet it has the same districts surveyed in 2013. Therefore, I used districts' names and codes in 2013 to codify subnatid2 in 1996.
 
@@ -278,7 +278,7 @@ These districts' names were left missing.
 
 Province 54 - East Timor became indipendent from Indonesia in 2002. All districts in province 54 do not have names as in no year do these districts have name labels.
 
-*<_subnatid2_>*/
+*<_subnatid2_note_>*/
 
 
 *<_subnatid2_>
@@ -519,14 +519,14 @@ Province 54 - East Timor became indipendent from Indonesia in 2002. All district
 *</_ed_mod_age_>
 
 
-/*<_school_>
+/*<_school_note_c>
 
 Note that variable "school" refers to be currently attending school; but the only
 variable viable for "school" is "b4p4", which indicates the primary activity
 during the previous week. Because we are not sure whether people have other primary
 activities are attending school or not, there is no category zero.
 
-<_school_>*/
+<_school_note_>*/
 
 
 *<_school_>
@@ -547,7 +547,7 @@ activities are attending school or not, there is no category zero.
 *</_literacy_>
 
 
-/*<_educy_>
+/*<_educy_note_>
 
 Years of education, or "educy" (and all other related variables were left missing)
 because of the unclear mapping for "Not finished primary school yet".
@@ -570,7 +570,7 @@ kindergarten as pre-primary education before 7 years old. Whether to map
 primary unfinished to those options depends on specific assumptions and research
 needs. Therefore, variable "educy" was left missing.
 
-</_educy_>*/
+</_educy_note_>*/
 
 
 *<_educy_>
@@ -643,12 +643,9 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 
 }
 
-
-
 /*%%=============================================================================================
 	7: Training
 ================================================================================================*/
-
 
 {
 
@@ -702,7 +699,7 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 
 {
 
-/*<_lstatus_>
+/*<_lstatus_note_>
 
 We define the employed as who "worked primarily (b4p4==1)" or
 							  "worked at least for 1 hour last week (b4p5==1)" or
@@ -712,7 +709,7 @@ non-labor force: "who do not have a job/business (b4p6==2)" & not seeking a job 
 
 Labor force participation: 55.37%
 
-<_lstatus_>*/
+<_lstatus_note_>*/
 
 
 *<_lstatus_>
@@ -727,7 +724,7 @@ Labor force participation: 55.37%
 *</_lstatus_>
 
 
-/*<_potential_lf_>
+/*<_potential_lf_note_>
 Note: var "potential_lf" is missing if the respondent is in labor force or unemployed; it only takes value if the respondent is not in labor force. (lstatus==3)
 
 "potential_lf" = 1 if the person is
@@ -748,7 +745,7 @@ satisfies the second requirement.
 -----------+--------------------------------------------+----------
      Total |    55,680    227,464          2      7,949 |   291,095
 
-</_potential_lf_>*/
+</_potential_lf_note_>*/
 
 
 *<_potential_lf_>
@@ -779,12 +776,12 @@ satisfies the second requirement.
 *</_nlfreason_>
 
 
-/*<_unempldur_l_>
+/*<_unempldur_l_note_>
 
 Period of job seeking, or variable "b4p16" is not a range in the raw dataset.
 The unit is month but it is a specific value.
 
-<_unempldur_l_>*/
+<_unempldur_l_note_>*/
 
 
 *<_unempldur_l_>
@@ -827,7 +824,7 @@ The unit is month but it is a specific value.
 *</_ocusec_>
 
 
-/*<_industry_orig_>
+/*<_industry_orig_note_>
 
 The original code list of industry has 18 categories from 00 to 17. But the
 coding in the dataset is not correct. Some of the categories are named in the
@@ -836,7 +833,7 @@ format of two digits, like 00 to 09 whereas the others are in one-digit format.
 So for the variable "industry_orig", I corrected the very original codes and
 use the two-digit format.
 
-<_industry_orig_>*/
+<_industry_orig_note_>*/
 
 
 *<_industry_orig_>
@@ -901,14 +898,14 @@ use the two-digit format.
 *</_occup_>
 
 
-/*<_wage_no_compen_>
+/*<_wage_no_compen_note_>
 
 The raw dataset has two wage-related variables --- b4p11mg, average weekly net salary
 and b4p11bl, average monthly net salary; both refer to the wage received from the main job.
 
 Note that these two variables reflect AVERAGE wage instead of LAST payment.
 
-<_wage_no_compen_>*/
+<_wage_no_compen_note_>*/
 
 
 *<_wage_no_compen_>
@@ -1155,7 +1152,7 @@ Note that these two variables reflect AVERAGE wage instead of LAST payment.
 *----------8.6: 12 month reference overall------------------------------*
 
 {
-/*<_lstatus_year_>
+/*<_lstatus_year_note_>
 
 According to the original variable "b4r19", we only know whether a given respondent
 had a work or not in the last year. We do not know among those who did not have
@@ -1164,7 +1161,7 @@ nor who are non-labor force.
 
 Same reason for leaving "potential_lf_year" missing.
 
-<_lstatus_year_>*/
+<_lstatus_year_note_>*/
 
 
 *<_lstatus_year_>
@@ -1173,6 +1170,7 @@ Same reason for leaving "potential_lf_year" missing.
 	la de lbllstatus_year 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus_year lbllstatus_year
 *</_lstatus_year_>
+
 
 *<_potential_lf_year_>
 	gen byte potential_lf_year = .
