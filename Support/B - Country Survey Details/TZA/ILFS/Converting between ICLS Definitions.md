@@ -30,7 +30,7 @@ Currently, the code used to create the `lstatus` variable (which distinguishes b
 	replace lstatus = 1 if (Q13F == 2 | Q13G == 2 | Q13H == 2) & (inlist(Q13J,1,4))
   
 	* E4 - Did not work but temporarily absent from commercial farming
-	replace lstatus = 1 if (Q13F == 2 | Q13G == 2 | Q13H == 2) & (inlist(Q13J,2,3)) & (inlist(Q13N,1,2))
+   	 replace lstatus = 1 if (Q13F == 2 | Q13G == 2 | Q13H == 2) & (inlist(Q13J,2,3)) & (inlist(Q13N,1,2)) & (Q13K == 1 | (inrange(Q13K,2,5) & Q13M == 1 ) )
 
 
   ***************************
@@ -98,7 +98,7 @@ Thus, to obtain a unique series with the old definition we would need to code:
 	replace lstatus = 1 if (Q13F == 2 | Q13G == 2 | Q13H == 2) & (inlist(Q13J,1,4))
   
 	* E4 - Did not work but temporarily absent from commercial farming
-	replace lstatus = 1 if (Q13F == 2 | Q13G == 2 | Q13H == 2) & (inlist(Q13J,2,3)) & (inlist(Q13N,1,2))
+   	replace lstatus = 1 if (Q13F == 2 | Q13G == 2 | Q13H == 2) & (inlist(Q13J,2,3)) & (inlist(Q13N,1,2)) & (Q13K == 1 | (inrange(Q13K,2,5) & Q13M == 1 ) )
 
 
   ***************************
