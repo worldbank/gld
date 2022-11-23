@@ -276,6 +276,12 @@ In the official annual report, there is supposed to be 1686 EAs (766 major urban
 	tostring ID102, gen(str_ID102)
 	egen subnatid2=concat(str_ID101 str_ID102), punct("-")
 	merge m:m subnatid2 using "`path_in_stata'\ETH_zone_name_2021.dta"
+	replace Zone="Misrak Hararge" if Zone=="Mierak Hararge"
+	replace Zone="Misrak Wollega" if Zone=="Misiraki Wollega"
+	replace Zone="Debub Omo" if Zone=="debub Omo"
+	replace Zone="Gamo Gofa" if Zone=="gamo Gofa"
+	replace Region="Sidama" if Region=="SIDAMA"
+	replace Zone="Basketo Special" if Zone=="basketo Special"
 	egen zonename=concat(Region Zone), punct("-")
 	replace subnatid2=zonename
 	drop Region rcode rcode_str Zone zcode zcode_str _merge zonename
@@ -289,6 +295,11 @@ In the official annual report, there is supposed to be 1686 EAs (766 major urban
 	egen subnatid3=concat(id101str id102str id103str)
 	merge m:m subnatid3 using "`path_in_stata'/ETH_wereda_name_2021.dta"
 	drop if _merge!=3
+	replace wereda_name="Gudeya Bila" if wereda_name=="Gudaya Bila"
+	replace wereda_name="Chencha" if wereda_name=="chencha"
+	replace wereda_name="arbaminch" if wereda_name=="Arba Minch"
+	replace wereda_name="konson" if wereda_name=="Konso"
+	replace wereda_name="Amaro" if wereda_name=="amaro"
 	egen Subnatid3=concat(subnatid3 wereda_name), punct("-") 
 	drop subnatid3 Region rcode Zone zcode wereda_name wcode _merge
 	rename Subnatid3 subnatid3
@@ -783,9 +794,9 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 {
 *<_lstatus_>
 	gen byte lstatus=.
-	replace lstatus=1 if LF301==1 | LF305<4
-	replace lstatus=2 if LF305==4 & LF401==1
-	replace lstatus=3 if LF305==4 & LF401==2
+	replace lstatus=1 if LF301==1 | LF304<4
+	replace lstatus=2 if LF304==4 & LF401==1
+	replace lstatus=3 if LF304==4 & LF401==2
 	replace lstatus=3 if lstatus==. 
 	replace lstatus=. if age<minlaborage
 	label var lstatus "Labor status"
@@ -911,6 +922,9 @@ According to the annual report, employment status of a person was classified int
 *<_industrycat_isic_>
 	gen industrycat_isic=LF307
 	replace industrycat_isic=1079 if LF307==1076|LF307==1077
+	replace industrycat_isic=990 if LF307==999
+	replace industrycat_isic=4799 if LF307==4792
+	replace industrycat_isic=9410 if LF307==9413
 	replace industrycat_isic=. if inrange(LF307, 1105, 1107)
 	tostring industrycat_isic, replace format(%04.0f)
 	replace industrycat_isic="" if lstatus!=1 | industrycat_isic=="." 
@@ -983,7 +997,7 @@ According to the annual report, employment status of a person was classified int
 
 
 *<_wage_no_compen_>
-	gen double wage_no_compen=LF322
+	gen double wage_no_compen=LF321
 	replace wage_no_compen=0 if empstat==2
 	replace wage_no_compen=. if lstatus!=1
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
@@ -1236,6 +1250,7 @@ According to the annual report, employment status of a person was classified int
 	replace lstatus_year=1 if lstatus==1|LF501==1|LF502==1
 	replace lstatus_year=2 if inlist(LF502,2,3)
 	replace lstatus_year=3 if inlist(LF502,4,13)
+	replace lstatus_year=3 if lstatus_year==.
 	replace lstatus_year=. if age<minlaborage & age!=.
 	label var lstatus_year "Labor status during last year"
 	la de lbllstatus_year 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -1320,6 +1335,9 @@ According to the annual report, employment status of a person was classified int
 *<_industrycat_isic_year_>
 	gen industrycat_isic_year=LF505	
 	replace industrycat_isic_year=1079 if LF505==1076|LF505==1077
+	replace industrycat_isic_year=990 if LF505==999
+	replace industrycat_isic_year=4799 if LF505==4792
+	replace industrycat_isic_year=9410 if LF505==9413
 	replace industrycat_isic_year=. if inrange(LF505, 1105, 1107)
 	tostring industrycat_isic_year, replace format(%04.0f)
 	replace industrycat_isic_year="" if lstatus_year!=1
