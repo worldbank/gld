@@ -168,7 +168,7 @@ local output "`id_data'"
 *</_hhid_>
 
 
-/*<_pid_>
+/*<_pid_note_>
 
 	duplicates tag, gen(dup)
 	tab dup
@@ -188,7 +188,7 @@ local output "`id_data'"
 
 Because we do not know the reason for these duplicates and they only account for less than 1% of total sample, I just droppred 3,899 observations.
 
-<_pid_>*/
+<_pid_note_>*/
 
 
 *<_pid_>
@@ -200,11 +200,11 @@ Because we do not know the reason for these duplicates and they only account for
 *</_pid_>
 
 
-/*<_weight_>
+/*<_weight_note_>
 
 The original weight variable is called "weight".
 
-<_weight_>*/
+<_weight_note_>*/
 
 
 *<_weight_>
@@ -213,13 +213,13 @@ The original weight variable is called "weight".
 *</_weight_>
 
 
-/*<_psu_>
+/*<_psu_note_>
 
 We do know that the primary sampling unit of Sakernas is census block and the
 census block number is in the questionnaire. However this information is not
 provided due to it is part of the confidential information withheld by the NSO.
 
-<_psu_>*/
+<_psu_note_>*/
 
 
 *<_psu_>
@@ -533,7 +533,7 @@ provided due to it is part of the confidential information withheld by the NSO.
 *</_literacy_>
 
 
-/*<_educy_>
+/*<_educy_note_>
 
 Years of education, or "educy" (and all other related variables were left missing)
 because of the unclear mapping for "Not finished primary school yet".
@@ -563,7 +563,7 @@ Original code list of variable "B5_R1A" in the dataset:
 13.DIV/S1
 14.S2/S3
 
-</_educy_>*/
+</_educy_note_>*/
 
 
 *<_educy_>
@@ -694,7 +694,7 @@ replace educat_isced_v = "" if ( age < ed_mod_age & !missing(age) )
 
 {
 
-/*<_lstatus_>
+/*<_lstatus_note_>
 
 We define the employed as who "worked primarily (b5_r2a1==1)" or
 							  "has a job but was temporarily out of work (b5_r3==1)";
@@ -703,7 +703,7 @@ non-labor force:  "who do not have a job/business mi(lstatus)" & "not seeking a 
 
 Labour force participation: 66.57%
 
-<_lstatus_>*/
+<_lstatus_note_>*/
 
 
 *<_lstatus_>
@@ -718,14 +718,14 @@ Labour force participation: 66.57%
 *</_lstatus_>
 
 
-/*<_potential_lf_>
+/*<_potential_lf_note_>
 Note: var "potential_lf" is missing if the respondent is in labor force or unemployed; it only takes value if the respondent is not in labor force. (lstatus==3)
 
 "potential_lf" = 1 if the person is
 1)available but not searching (b5_r7==1 & (b5_r4==2) & (b5_r5==2)) or
 2)searching but not immediately available to work [(b5_r4==1) | (b5_r5==1)] & b5_r7==2
 
-</_potential_lf_>*/
+</_potential_lf_note_>*/
 
 
 *<_potential_lf_>
@@ -748,7 +748,7 @@ Note: var "potential_lf" is missing if the respondent is in labor force or unemp
 *</_underemployment_>
 
 
-/*<_nlfreason_>
+/*<_nlfreason_note_>
 
 The original variable "b5_r6" has 8 non-missing categories:
 	1 Discouraged
@@ -760,7 +760,7 @@ The original variable "b5_r6" has 8 non-missing categories:
 	7 Unable to do work
 	8 Other, specify
 
-<_nlfreason_>*/
+<_nlfreason_note_>*/
 
 
 *<_nlfreason_>
@@ -772,13 +772,13 @@ The original variable "b5_r6" has 8 non-missing categories:
 *</_nlfreason_>
 
 
-/*<_unempldur_l_>
+/*<_unempldur_l_note_>
 
 The original variable "b5_r21b" is the period of seeking job. Therefore, the lower
 and upper bound of unemploymenmt duration are the same. They are in fact the length
 of unemployment period.
 
-<_unempldur_l_>*/
+<_unempldur_l_note_>*/
 
 
 *<_unempldur_l_>
@@ -818,7 +818,7 @@ of unemployment period.
 *</_ocusec_>
 
 
-/*<_industry_orig_>
+/*<_industry_orig_note_>
 
 Note that in the raw dataset, two industrial classification variables, "b5_r18" and "kbli2009_2", seem to represent industry of main job and industry of the main additional job respectively. "b5_r18" has 5 digits whereas "kbli2009_2" has 2 digits. Both have no labels.
 
@@ -826,7 +826,7 @@ Note that in the raw dataset, two industrial classification variables, "b5_r18" 
 
 Moreover, most cases are that people only have kbli2009_2 while they do not have b5_r18.
 
-<_industry_orig_>*/
+<_industry_orig_note_>*/
 
 
 *<_industry_orig_>
@@ -902,11 +902,11 @@ Moreover, most cases are that people only have kbli2009_2 while they do not have
 *</_occup_>
 
 
-/*<_wage_no_compen_>
+/*<_wage_no_compen_note_>
 
 In the raw dataset, question 13 devides into "in cash" and "in-kind". For each observation, I calculated the total income by adding up "in cash" and "in-kind" salary.
 
-<_wage_no_compen_>*/
+<_wage_no_compen_note_>*/
 
 
 *<_wage_no_compen_>
@@ -938,12 +938,12 @@ In the raw dataset, question 13 devides into "in cash" and "in-kind". For each o
 *</_wmonths_>
 
 
-/*<_wage_total_>
+/*<_wage_total_note_>
 
 We know the average monthly wage, which is "wage_no_compen". But since we do not know how
 many months each observation works for, we left the annualized total wage missing.
 
-<_wage_total_>*/
+<_wage_total_note_>*/
 
 
 *<_wage_total_>
@@ -970,11 +970,11 @@ many months each observation works for, we left the annualized total wage missin
 *</_healthins_>
 
 
-/*<_socialsec_>
+/*<_socialsec_note_>
 
 We count both "old-age insurance" and "pension insurance" as indicators for having social security or not. A given respondent does not have social security if he/she does not have neither.
 
-<_socialsec_>*/
+<_socialsec_note_>*/
 
 
 *<_socialsec_>
@@ -1015,11 +1015,12 @@ We count both "old-age insurance" and "pension insurance" as indicators for havi
 
 
 {
-/*<_empstat_2_>
+/*<_empstat_2_note_>
 
 We do not have information on the employment status of the main additional job. But we know whether the respondent has a second job. Therefore, for people who have a second job, they were all coded as "Other, unclassified workers."
 
-<_empstat_2_>*/
+<_empstat_2_note_>*/
+
 
 *<_empstat_2_>
 	gen byte empstat_2 = 5 if b5_r17==1

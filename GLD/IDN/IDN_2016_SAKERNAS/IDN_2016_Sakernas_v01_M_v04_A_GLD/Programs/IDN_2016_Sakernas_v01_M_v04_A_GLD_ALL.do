@@ -169,7 +169,7 @@ local output "`id_data'"
 *</_hhid_>
 
 
-/*<_pid_>
+/*<_pid_note_>
 
 	duplicates tag, gen(dup)
 	tab dup
@@ -180,7 +180,7 @@ local output "`id_data'"
 ------------+-----------------------------------
       Total |    131,152      100.00
 
-<_pid_>*/
+<_pid_note_>*/
 
 
 *<_pid_>
@@ -191,11 +191,11 @@ local output "`id_data'"
 *</_pid_>
 
 
-/*<_weight_>
+/*<_weight_note_>
 
 The original weight variable is called "weight".
 
-<_weight_>*/
+<_weight_note_>*/
 
 
 *<_weight_>
@@ -204,13 +204,13 @@ The original weight variable is called "weight".
 *</_weight_>
 
 
-/*<_psu_>
+/*<_psu_note_>
 
 We do know that the primary sampling unit of Sakernas is census block and the
 census block number is in the questionnaire. However this information is not
 provided due to it is part of the confidential information withheld by the NSO.
 
-<_psu_>*/
+<_psu_note_>*/
 
 
 *<_psu_>
@@ -524,7 +524,7 @@ provided due to it is part of the confidential information withheld by the NSO.
 *</_literacy_>
 
 
-/*<_educy_>
+/*<_educy_note_>
 
 Years of education, or "educy" (and all other related variables were left missing)
 because of the unclear mapping for "Not finished primary school yet".
@@ -556,7 +556,7 @@ Original code list of variable "b5_r1a" in the dataset:
 15.Master Degree (S2)
 16.Doctoral Degree (S3)
 
-</_educy_>*/
+</_educy_note_>*/
 
 
 *<_educy_>
@@ -643,6 +643,7 @@ replace educat_isced_v = "" if ( age < ed_mod_age & !missing(age) )
 	label var vocational "Ever received vocational training"
 *</_vocational_>
 
+
 *<_vocational_type_>
 	gen vocational_type = .
 	label de lblvocational_type 1 "Inside Enterprise" 2 "External"
@@ -650,20 +651,24 @@ replace educat_isced_v = "" if ( age < ed_mod_age & !missing(age) )
 	label var vocational_type "Type of vocational training"
 *</_vocational_type_>
 
+
 *<_vocational_length_l_>
 	gen vocational_length_l = .
 	label var vocational_length_l "Length of training, lower limit"
 *</_vocational_length_l_>
+
 
 *<_vocational_length_u_>
 	gen vocational_length_u = .
 	label var vocational_length_u "Length of training, upper limit"
 *</_vocational_length_u_>
 
+
 *<_vocational_field_>
 	gen vocational_field = .
 	label var vocational_field "Field of training"
 *</_vocational_field_>
+
 
 *<_vocational_financed_>
 	gen vocational_financed = .
@@ -700,14 +705,14 @@ replace educat_isced_v = "" if ( age < ed_mod_age & !missing(age) )
 *</_lstatus_>
 
 
-/*<_potential_lf_>
+/*<_potential_lf_note_>
 Note: var "potential_lf" is missing if the respondent is in labor force or unemployed; it only takes value if the respondent is not in labor force. (lstatus==3)
 
 "potential_lf" = 1 if the person is
 1)available but not searching (b5_r17b==1 & (b5_r11==2) & (b5_r12==2)) or
 2)searching but not immediately available to work ((b5_r11==1) | (b5_r12==1)) & (b5_r17a==2 | b5_r17b==2)
 
-</_potential_lf_>*/
+</_potential_lf_note_>*/
 
 
 *<_potential_lf_>
@@ -730,7 +735,7 @@ Note: var "potential_lf" is missing if the respondent is in labor force or unemp
 *</_underemployment_>
 
 
-/*<_nlfreason_>
+/*<_nlfreason_note_>
 
 The original variable "b5_r16a" has 12 non-missing categories:
 	1  Already accepted for work but not yet starting the job
@@ -746,7 +751,7 @@ The original variable "b5_r16a" has 12 non-missing categories:
 	11 Inability to work
 	12 Other, specify
 
-<_nlfreason_>*/
+<_nlfreason_note_>*/
 
 
 *<_nlfreason_>
@@ -758,20 +763,20 @@ The original variable "b5_r16a" has 12 non-missing categories:
 *</_nlfreason_>
 
 
-/*<_unempldur_l_>
+/*<_unempldur_l_note_>
 
 The original variable "b5_r21b" is the period of seeking job. Therefore, the lower
 and upper bound of unemploymenmt duration are the same. They are in fact the length
 of unemployment period.
 
-<_unempldur_l_>*/
+<_unempldur_l_note_>*/
 
 
-*<_unempldur_l_>
+*<_unempldur_l_note_>
 	gen byte unempldur_l = b5_r21b
 	replace unempldur_l = . if lstatus != 2
 	label var unempldur_l "Unemployment duration (months) lower bracket"
-*</_unempldur_l_>
+*</_unempldur_l_note_>
 
 
 *<_unempldur_u_>
@@ -796,7 +801,7 @@ of unemployment period.
 *</_empstat_>
 
 
-/*<_ocusec_>
+/*<_ocusec_note_>
 
 The original variable "b5_r31" has 5 categories:
 
@@ -810,7 +815,7 @@ The original variable "b5_r31" has 5 categories:
 8. Others, specify:
 9. Do not know
 
-<_ocusec_>*/
+<_ocusec_note_>*/
 
 *<_ocusec_>
 	gen byte ocusec = b5_r31
@@ -861,12 +866,12 @@ Note that in the raw dataset variable "b5_r19_17" does not have labels.
 *</_industrycat4_>
 
 
-/*<_occup_orig_>
+/*<_occup_orig_note_>
 
 Variable "b5_r20_201" uses KBJI 2014 and it has one digit and 10 categories in total.
 Note that in the raw dataset variable "b5_r20_201" does not have labels.
 
-<_occup_orig_>*/
+<_occup_orig_note_>*/
 
 
 *<_occup_orig_>
@@ -902,11 +907,11 @@ Note that in the raw dataset variable "b5_r20_201" does not have labels.
 *</_occup_>
 
 
-/*<_wage_no_compen_>
+/*<_wage_no_compen_note_>
 
 In the raw dataset, question 26 devides into "in cash" and "in-kind". For each observation, I calculated the total income by adding up "in cash" and "in-kind" salary.
 
-<_wage_no_compen_>*/
+<_wage_no_compen_note_>*/
 
 
 *<_wage_no_compen_>
@@ -938,12 +943,12 @@ In the raw dataset, question 26 devides into "in cash" and "in-kind". For each o
 *</_wmonths_>
 
 
-/*<_wage_total_>
+/*<_wage_total_note_>
 
 We know the average monthly wage, which is "wage_no_compen". But since we do not know how
 many months each observation works for, we left the annualized total wage missing.
 
-<_wage_total_>*/
+<_wage_total_note_>*/
 
 
 *<_wage_total_>
@@ -952,11 +957,11 @@ many months each observation works for, we left the annualized total wage missin
 *</_wage_total_>
 
 
-/*<_contract_>
+/*<_contract_note_>
 
 We counted  "Verbal agreement" as "having a contract" as well, considering its big magnitude larger than category 1 "employment agreement for unspecified time".
 
-<_contract_>*/
+<_contract_note_>*/
 
 
 *<_contract_>
@@ -979,11 +984,11 @@ We counted  "Verbal agreement" as "having a contract" as well, considering its b
 *</_healthins_>
 
 
-/*<_socialsec_>
+/*<_socialsec_note_>
 
 We count both "old-age insurance" and "pension insurance" as indicators for having social security or not. A given respondent does not have social security if he/she does not have neither.
 
-<_socialsec_>*/
+<_socialsec_note_>*/
 
 
 *<_socialsec_>
@@ -1006,11 +1011,11 @@ We count both "old-age insurance" and "pension insurance" as indicators for havi
 *</_union_>
 
 
-/*<_firmsize_l_>
+/*<_firmsize_l_note_>
 
 This question was only asked to those who are seld-employed.
 
-<_firmsize_l_>*/
+<_firmsize_l_note_>*/
 
 
 *<_firmsize_l_>
