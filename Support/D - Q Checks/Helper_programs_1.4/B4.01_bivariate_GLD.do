@@ -507,7 +507,7 @@
 
 *-- 07. Industry x occupation 	
 	use "${mydata}", clear
-	keep countrycode year industrycat10 industrycat4 occup weight 
+	keep countrycode year industrycat4 occup weight 
 	
 	** Create table 
 		//tab occup industrycat4 [iw = weight], m row nofreq
