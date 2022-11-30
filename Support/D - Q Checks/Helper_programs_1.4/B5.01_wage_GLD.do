@@ -36,8 +36,10 @@
 	********************************************************
 	* Only run the next steps if actually wage info present
 	********************************************************
+	
 	* Only if wage_eval == 1
 	if `wage_eval' == 1 {
+	
 	
 *-- 02. Wage x education  	
 	use "${mydata}", clear
@@ -61,9 +63,13 @@
 			
 	winsor2 hwage, replace cuts(1 99) trim // trimming outliers 
 	
-	** Calculate mean 
+	** Calculate median (used in the graph, evaluates) plus other distribution details (in the dta only, for evaluation) 
+	** plus the sample size
+	
 	drop if missing(educat4)
-	collapse (mean) hwage [iw = weight], by(countrycode year educat4) 
+	gen sample_size = 1 if !missing(hwage)
+	
+	collapse (median) hwage (mean) mean_hwage=hwage (p10) p10_wage=hwage (p25) p25_wage=hwage (p75) p75_wage=hwage (p90) p90_wage=hwage (rawsum) sample_size [iw = weight], by(countrycode year educat4) 
 	
 	** Check: wage should be increasing in education
 	gen wage_inc = hwage[_n] - hwage[_n-1]
@@ -114,9 +120,13 @@
 	
 	winsor2 hwage, replace cuts(1 99) trim
 	
-	** Calculate mean 
+	** Calculate median (used in the graph, evaluates) plus other distribution details (in the dta only, for evaluation) 
+	** plus the sample size
+	
 	drop if missing(occup_skill)
-	collapse (mean) hwage [iw = weight], by(countrycode year occup_skill) 
+	gen sample_size = 1 if !missing(hwage)
+	
+	collapse (median) hwage (mean) mean_hwage=hwage (p10) p10_wage=hwage (p25) p25_wage=hwage (p75) p75_wage=hwage (p90) p90_wage=hwage (rawsum) sample_size [iw = weight], by(countrycode year occup_skill) 
 	
 	** Check: wage should be increasing in skill level
 	gen wage_inc = hwage[_n] - hwage[_n-1]
@@ -170,9 +180,13 @@
 	
 	winsor2 hwage, replace cuts(1 99) trim
 	
-	** Calculate mean 
+	** Calculate median (used in the graph, evaluates) plus other distribution details (in the dta only, for evaluation) 
+	** plus the sample size
+	
 	drop if missing(industrycat4)
-	collapse (mean) hwage [iw = weight], by(countrycode year industrycat4) 
+	gen sample_size = 1 if !missing(hwage)
+	
+	collapse (median) hwage (mean) mean_hwage=hwage (p10) p10_wage=hwage (p25) p25_wage=hwage (p75) p75_wage=hwage (p90) p90_wage=hwage (rawsum) sample_size [iw = weight], by(countrycode year industrycat4) 
 	
 	** Check: wage should be increasing in industry code 
 	gen wage_inc = hwage[_n] - hwage[_n-1]
@@ -235,9 +249,13 @@
 	label define age2l 1 "Child" 2 "Young" 3 "Adult" 4 "Senior" 5 "Retiree"
 	label values age2 age2l
 	
-	** Calculate mean 
+	** Calculate median (used in the graph, evaluates) plus other distribution details (in the dta only, for evaluation) 
+	** plus the sample size
+	
 	drop if missing(age2)
-	collapse (mean) hwage [iw = weight], by(countrycode year age2) 
+	gen sample_size = 1 if !missing(hwage)
+	
+	collapse (median) hwage (mean) mean_hwage=hwage (p10) p10_wage=hwage (p25) p25_wage=hwage (p75) p75_wage=hwage (p90) p90_wage=hwage (rawsum) sample_size [iw = weight], by(countrycode year age2) 
 	
 	** Check: wage should increase until adulthood, decrease for retirees 
 		// we remain agontic about wheter adult >< senior 
