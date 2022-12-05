@@ -4,7 +4,7 @@
 ==============================================================================================%%*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				TUR_2019_HLFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
+<_Program name_>				TUR_2019_HLFS_V01_M_V03_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata 16 <_Application_>
 <_Author(s)_>					World Bank Job's Group </_Author(s)_>
 <_Date created_>				2021-06-23 </_Date created_>
@@ -51,14 +51,33 @@ set mem 800m
 
 *----------1.2: Set directories------------------------------*
 
-local path_in "Z:\GLD-Harmonization\582018_AQ\TUR\TUR_2019_HLFS\TUR_2019_HLFS_V01_M\Data\Stata"
-local path_output "Z:\GLD-Harmonization\582018_AQ\TUR\TUR_2019_HLFS\TUR_2019_HLFS_V01_M_V01_A_GLD\Data\Harmonized"
+
+* Define path sections
+local server  "Z:\GLD-Harmonization\582018_AQ"
+local country "TUR"
+local year    "2019"
+local survey  "HLFS"
+local vermast "V01"
+local veralt  "V03"
+
+* From the definitions, set path chunks
+local level_1      "`country'_`year'_`survey'"
+local level_2_mast "`level_1'_`vermast'_M"
+local level_2_harm "`level_1'_`vermast'_M_`veralt'_A_GLD"
+
+* From chunks, define path_in, path_output folder
+local path_in_stata "`server'/`country'/`level_1'/`level_2_mast'/Data/Stata"
+local path_in_other "`server'/`country'/`level_1'/`level_2_mast'/Data/Original"
+local path_output   "`server'/`country'/`level_1'/`level_2_harm'/Data/Harmonized"
+
+* Define Output file name
+local out_file "`level_2_harm'_ALL.dta"
 
 *----------1.3: Database assembly------------------------------*
 
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
-use "`path_in'\LFS2019_raw.dta"
+use "`path_in_stata'\LFS2019_raw.dta"
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -114,13 +133,13 @@ use "`path_in'\LFS2019_raw.dta"
 
 
 *<_vermast_>
-	gen vermast = "v01"
+	gen vermast = "`vermast'"
 	label var vermast "Version of master data"
 *</_vermast_>
 
 
 *<_veralt_>
-	gen veralt = "v01"
+	gen veralt = "`veralt'"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
@@ -219,56 +238,54 @@ use "`path_in'\LFS2019_raw.dta"
 	First breakdown is NUTS-1 (https://en.wikipedia.org/wiki/NUTS_statistical_regions_of_Turkey), not actual
 	administrative divisions. Same for subnatid2.
 </_subnatid1> */
-	gen subnatid1= .
-	replace subnatid1 = 1 if ibbs_1 == "TR1"
-	replace subnatid1 = 2 if ibbs_1 == "TR2"
-	replace subnatid1 = 3 if ibbs_1 == "TR3"
-	replace subnatid1 = 4 if ibbs_1 == "TR4"
-	replace subnatid1 = 5 if ibbs_1 == "TR5"
-	replace subnatid1 = 6 if ibbs_1 == "TR6"
-	replace subnatid1 = 7 if ibbs_1 == "TR7"
-	replace subnatid1 = 8 if ibbs_1 == "TR8"
-	replace subnatid1 = 9 if ibbs_1 == "TR9"
-	replace subnatid1 = 10 if ibbs_1 == "TRA"
-	replace subnatid1 = 11 if ibbs_1 == "TRB"
-	replace subnatid1 = 12 if ibbs_1 == "TRC"
-	label define lblsubnatid1  1 "1 - Istanbul" 2 "2 - West Marmara" 3 "3 - Aegean" 4 "4 - East Marmara" 5 "5 - West Anatolia" 6 "6 - Mediterranean" 7 "7 - Central Anatolia" 8 "8 - West Black Sea" 9 "9 - East Black Sea" 10 "10 - Northeast Anatolia" 11 "11- Middle East Anatolia" 12 "12 - Southeast Anatolia"
-	label values subnatid1 lblsubnatid1
-	label var subnatid1 "Subnational ID at NUTS 1 Level"
+
+gen subnatid1= ""
+replace subnatid1 = "1 - Istanbul" if ibbs_1 == "TR1"
+replace subnatid1 = "2 - West Marmara" if ibbs_1 == "TR2"
+replace subnatid1 = "3 - Aegean" if ibbs_1 == "TR3"
+replace subnatid1 = "4 - East Marmara" if ibbs_1 == "TR4"
+replace subnatid1 = "5 - West Anatolia" if ibbs_1 == "TR5"
+replace subnatid1 = "6 - Mediterranean" if ibbs_1 == "TR6"
+replace subnatid1 = "7 - Central Anatolia" if ibbs_1 == "TR7"
+replace subnatid1 = "8 - West Black Sea" if ibbs_1 == "TR8"
+replace subnatid1 = "9 - East Black Sea" if ibbs_1 == "TR9"
+replace subnatid1 = "10 - Northeast Anatolia" if ibbs_1 == "TRA"
+replace subnatid1 = "11- Middle East Anatolia" if ibbs_1 == "TRB"
+replace subnatid1 = "12 - Southeast Anatolia" if ibbs_1 == "TRC"
+label var subnatid1 "Subnational ID at NUTS 1 Level"
+
 *</_subnatid1_>
 
 
 *<_subnatid2_>
-	gen subnatid2=.
-	replace subnatid2 = 1 if ibbs_2 == "TR10"
-	replace subnatid2 = 2 if ibbs_2 == "TR21"
-	replace subnatid2 = 3 if ibbs_2 == "TR22"
-	replace subnatid2 = 4 if ibbs_2 == "TR31"
-	replace subnatid2 = 5 if ibbs_2 == "TR32"
-	replace subnatid2 = 6 if ibbs_2 == "TR33"
-	replace subnatid2 = 7 if ibbs_2 == "TR41"
-	replace subnatid2 = 8 if ibbs_2 == "TR42"
-	replace subnatid2 = 9 if ibbs_2 == "TR51"
-	replace subnatid2 = 10 if ibbs_2 == "TR52"
-	replace subnatid2 = 11 if ibbs_2 == "TR61"
-	replace subnatid2 = 12 if ibbs_2 == "TR62"
-	replace subnatid2 = 13 if ibbs_2 == "TR63"
-	replace subnatid2 = 14 if ibbs_2 == "TR71"
-	replace subnatid2 = 15 if ibbs_2 == "TR72"
-	replace subnatid2 = 16 if ibbs_2 == "TR81"
-	replace subnatid2 = 17 if ibbs_2 == "TR82"
-	replace subnatid2 = 18 if ibbs_2 == "TR83"
-	replace subnatid2 = 19 if ibbs_2 == "TR90"
-	replace subnatid2 = 20 if ibbs_2 == "TRA1"
-	replace subnatid2 = 21 if ibbs_2 == "TRA2"
-	replace subnatid2 = 22 if ibbs_2 == "TRB1"
-	replace subnatid2 = 23 if ibbs_2 == "TRB2"
-	replace subnatid2 = 24 if ibbs_2 == "TRC1"
-	replace subnatid2 = 25 if ibbs_2 == "TRC2"
-	replace subnatid2 = 26 if ibbs_2 == "TRC3"
-	label define lblsubnatid2  1 "1 - Istanbul" 2 "2 - Edirne, Tekirdağ, Kırklareli" 3 "3 - Balıkesir, Çanakkale" 4 "4 - İzmir" 5 "5 - Denizli, Aydın, Muğla" 6 "6 - Manisa, Afyonkarahisar, Kütahya, Uşak" 7 "7 - Bursa, Eskişehir, Bilecik" 8 "8 - Kocaeli, Sakarya, Düzce, Bolu, Yalova" 9 "9 - Ankara" 10 "10 - Konya, Karaman" 11 "11 - Antalya, Isparta, Burdur" 12 "12 - Adana, Mersin" 13 "13 - Hatay, Kahramanmaraş, Osmaniye" 14 "14 - Nevşehir, Aksaray, Niğde, Kırıkkale, Kırşehir" 15 "15 - Kayseri, Sivas, Yozgat" 16 "16 - Zonguldak, Karabük, Bartın" 17 "17 - Kastamonu, Çankırı, Sinop" 18 "18 - Samsun, Tokat, Çorum, Amasya" 19 "19 - Trabzon, Ordu, Giresun, Rize, Artvin, Gümüşhane" 20 "20 - Erzurum, Erzincan, Bayburt" 21 "21 - Kars, Ağrı, Iğdır, Ardahan" 22 "22 - Malatya, Elazığ, Bingöl, Tunceli" 23 "23 - Van, Muş, Bitlis, Hakkari" 24 "24 - Gaziantep, Adıyaman, Kilis" 25 "25 - Diyarbakır, Şanlıurfa" 26 "26 - Siirt, Mardin, Batman, Şırnak"
-	label values subnatid2 lblsubnatid2
-	label var subnatid2 "Subnational ID at NUTS 2 Level"
+gen subnatid2=""
+replace subnatid2 = "1 - Istanbul" if ibbs_2 == "TR10"
+replace subnatid2 = "2 - Edirne, Tekirdağ, Kırklareli" if ibbs_2 == "TR21"
+replace subnatid2 = "3 - Balıkesir, Çanakkale" if ibbs_2 == "TR22"
+replace subnatid2 = "4 - İzmir" if ibbs_2 == "TR31"
+replace subnatid2 = "5 - Denizli, Aydın, Muğla" if ibbs_2 == "TR32"
+replace subnatid2 = "6 - Manisa, Afyonkarahisar, Kütahya, Uşak" if ibbs_2 == "TR33"
+replace subnatid2 = "7 - Bursa, Eskişehir, Bilecik" if ibbs_2 == "TR41"
+replace subnatid2 = "8 - Kocaeli, Sakarya, Düzce, Bolu, Yalova" if ibbs_2 == "TR42"
+replace subnatid2 = "9 - Ankara" if ibbs_2 == "TR51"
+replace subnatid2 = "10 - Konya, Karaman" if ibbs_2 == "TR52"
+replace subnatid2 = "11 - Antalya, Isparta, Burdur" if ibbs_2 == "TR61"
+replace subnatid2 = "12 - Adana, Mersin" if ibbs_2 == "TR62"
+replace subnatid2 = "13 - Hatay, Kahramanmaraş, Osmaniye" if ibbs_2 == "TR63"
+replace subnatid2 = "14 - Nevşehir, Aksaray, Niğde, Kırıkkale, Kırşehir" if ibbs_2 == "TR71"
+replace subnatid2 = "15 - Kayseri, Sivas, Yozgat" if ibbs_2 == "TR72"
+replace subnatid2 = "16 - Zonguldak, Karabük, Bartın" if ibbs_2 == "TR81"
+replace subnatid2 = "17 - Kastamonu, Çankırı, Sinop" if ibbs_2 == "TR82"
+replace subnatid2 = "18 - Samsun, Tokat, Çorum, Amasya" if ibbs_2 == "TR83"
+replace subnatid2 = "19 - Trabzon, Ordu, Giresun, Rize, Artvin, Gümüşhane"  if ibbs_2 == "TR90"
+replace subnatid2 = "20 - Erzurum, Erzincan, Bayburt" if ibbs_2 == "TRA1"
+replace subnatid2 = "21 - Kars, Ağrı, Iğdır, Ardahan" if ibbs_2 == "TRA2"
+replace subnatid2 = "22 - Malatya, Elazığ, Bingöl, Tunceli"  if ibbs_2 == "TRB1"
+replace subnatid2 = "23 - Van, Muş, Bitlis, Hakkari" if ibbs_2 == "TRB2"
+replace subnatid2 = "24 - Gaziantep, Adıyaman, Kilis" if ibbs_2 == "TRC1"
+replace subnatid2 = "25 - Diyarbakır, Şanlıurfa"  if ibbs_2 == "TRC2"
+replace subnatid2 = "26 - Siirt, Mardin, Batman, Şırnak" if ibbs_2 == "TRC3"
+label var subnatid2 "Subnational ID at NUTS 2 Level"
 *</_subnatid2_>
 
 
@@ -555,8 +572,7 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat7_>
-	gen byte educat7 = okul_biten_k
-	recode educat7 0=1 1=3 2=4 31=5 32=5 4=7 5=7
+	gen byte educat7 = .
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -573,8 +589,12 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat4_>
-	gen byte educat4 = educat5
-	recode educat4 (3=2) (4=3) (5=4)
+	gen byte educat4 = .
+	replace educat4=1 if okul_biten_k==1
+	replace educat4=2 if okul_biten_k==2
+	replace educat4=3 if okul_biten_k==3
+	replace educat4=3 if okul_biten_k==3
+	replace educat4=4 if okul_biten_k>=4 & okul_biten_k!=.
 	label var educat4 "Level of education 3"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values educat4 lbleducat4
@@ -807,7 +827,7 @@ foreach v of local ed_var {
 	replace occup_skill=3 if inrange(helper_1,11,35)
 	replace occup_skill=. if lstatus!=1
 	drop helper_1
-	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"  4 "Armed Forces"
+	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
 	label values occup_skill lblskill
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
 *</_occup_skill_>
@@ -976,15 +996,13 @@ Non-paid employee |    21,009          0          0 |    21,009
 
 
 *<_industry_orig_2_>
-	gen industry_orig_2 = .
-	tostring industry_orig_2, replace
-	replace industry_orig_2="" if lstatus!=1
+	gen industry_orig_2 = ""
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 
 
 *<_industrycat_isic_2_>
-	gen industrycat_isic_2 = .
+	gen industrycat_isic_2 = ""
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
@@ -997,7 +1015,7 @@ Non-paid employee |    21,009          0          0 |    21,009
 
 
 *<_industrycat4_2_>
-	gen byte industrycat4_2 = nace2_ekis_k
+	gen byte industrycat4_2 =.
 	recode industrycat4_2 (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
 	label var industrycat4_2 "1 digit industry classification (Broad Economic Activities), secondary job 7 day recall"
 	label values industrycat4_2 lblindustrycat4
@@ -1598,6 +1616,6 @@ foreach var of local kept_vars {
 *</_% DELETE MISSING VARIABLES_>
 *<_% SAVE_>
 
-save "`path_output'\TUR_2019_HLFS_V01_M_V01_A_GLD_ALL.dta", replace
+save "`path_output'/`out_file'", replace
 
 *</_% SAVE_>
