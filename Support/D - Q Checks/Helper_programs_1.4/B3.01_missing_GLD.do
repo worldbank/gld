@@ -69,45 +69,53 @@
 	* Block 1. age, male, urban, & lfstatus 
 	use "Block3_Missing/01_data/missing_temp.dta", clear 
 	
-	* Do if all relevant vars present
-	cap confirm variable countrycode year sh_age sh_male sh_urban sh_lstatus
-	if _rc == 0 {
+	* Do for all present vars - 2 Steps
+	
+		* First: find all sh_* vars, store in sh_vars local
+	quietly: des sh_*, varlist
+	local sh_vars `r(varlist)'
+	
+		* Second: find intersection with desired vars
+	local desired_vars_s2_b1 sh_age sh_male sh_urban sh_lstatus
+	local vars_s2_b1 : list sh_vars & desired_vars_s2_b1
+
+	keep countrycode year `vars_s2_b1'
+	collapse (sum) sh_*, by(countrycode year)
+	rename sh_* sh_*_n
+	save "Block3_Missing/01_data/missing_num_b1.dta", replace
 		
-		keep countrycode year sh_age sh_male sh_urban sh_lstatus
-		collapse (sum) sh_*, by(countrycode year)
-		rename sh_* sh_*_n
-		save "Block3_Missing/01_data/missing_num_b1.dta", replace
-		
-		use "Block3_Missing/01_data/missing_temp.dta", clear 
-		keep countrycode year sh_age sh_male sh_urban sh_lstatus
-		collapse (count) sh_*, by(countrycode year)
-		rename sh_* sh_*_d
-		save "Block3_Missing/01_data/missing_den_b1.dta", replace  
-		
-	}
+	use "Block3_Missing/01_data/missing_temp.dta", clear 
+	keep countrycode year `vars_s2_b1'
+	collapse (count) sh_*, by(countrycode year)
+	rename sh_* sh_*_d
+	save "Block3_Missing/01_data/missing_den_b1.dta", replace  
   
 	
 	* Block 2. empstat & industrycat4
 	use "Block3_Missing/01_data/missing_temp.dta", clear 
 	
-	* Do if all relevant vars present
-	cap confirm variable countrycode year sh_empstat sh_industrycat4
-	if _rc == 0 {
-			
-		keep if lstatus == 1 // employed 
-		keep countrycode year sh_empstat sh_industrycat4
-		collapse (sum) sh_*, by(countrycode year)
-		rename sh_* sh_*_n
-		save "Block3_Missing/01_data/missing_num_b2.dta", replace  
+	* Do for all present vars - 2 Steps
+	
+		* First: find all sh_* vars, store in sh_vars local
+	quietly: des sh_*, varlist
+	local sh_vars `r(varlist)'
+	
+		* Second: find intersection with desired vars
+	local desired_vars_s2_b2 sh_empstat sh_industrycat4
+	local vars_s2_b2 : list sh_vars & desired_vars_s2_b2
+	
+	keep if lstatus == 1 // employed 
+	keep countrycode year `vars_s2_b2'
+	collapse (sum) sh_*, by(countrycode year)
+	rename sh_* sh_*_n
+	save "Block3_Missing/01_data/missing_num_b2.dta", replace  
 		
-		use "Block3_Missing/01_data/missing_temp.dta", clear 
-		keep if lstatus == 1 // employed 
-		keep countrycode year sh_empstat sh_industrycat4
-		collapse (count) sh_*, by(countrycode year)
-		rename sh_* sh_*_d
-		save "Block3_Missing/01_data/missing_den_b2.dta", replace  
-
-	}
+	use "Block3_Missing/01_data/missing_temp.dta", clear 
+	keep if lstatus == 1 // employed 
+	keep countrycode year `vars_s2_b2'
+	collapse (count) sh_*, by(countrycode year)
+	rename sh_* sh_*_d
+	save "Block3_Missing/01_data/missing_den_b2.dta", replace  
 	
 	* Block 3. wage_no_compen
 	use "Block3_Missing/01_data/missing_temp.dta", clear 
