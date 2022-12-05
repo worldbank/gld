@@ -556,11 +556,7 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat7_>
-	gen byte educat7 = s9
-	replace educat7=2 if s9==3 & age<10
-	replace educat7=3 if s9==3 & age==10
-	replace educat7=4 if s9==3 & age>10
-	recode educat7 0=. 1=1 2=3 3=4 4=5 5=5 6=7
+	gen byte educat7 = .
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -577,8 +573,12 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat4_>
-	gen byte educat4 = educat5
-	recode educat4 (3=2) (4=3) (5=4)
+	gen byte educat4 = .
+	replace educat4=1 if s9==1
+	replace educat4=2 if s9==2
+	replace educat4=3 if s9==3
+	replace educat4=3 if s9==3
+	replace educat4=4 if s9>=4 & s9!=.
 	label var educat4 "Level of education 3"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values educat4 lbleducat4
@@ -710,14 +710,12 @@ foreach v of local ed_var {
 
 *<_unempldur_l_>
 	gen byte unempldur_l=.
-	*replace unempldur_l = s81 if lstatus==2
 	label var unempldur_l "Unemployment duration (months) lower bracket"
 *</_unempldur_l_>
 
 
 *<_unempldur_u_>
 	gen byte unempldur_u=.
-	*replace unempldur_u = s81 if lstatus==2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
 *</_unempldur_u_>
 }
@@ -729,7 +727,7 @@ foreach v of local ed_var {
 {
 *<_empstat_>
 	gen byte empstat = s23
-	recode empstat 2=5 5=2
+	recode empstat 2=1 5=2
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat lblempstat
@@ -820,7 +818,6 @@ foreach v of local ed_var {
 
 	gen double wage_no_compen =s32c
 	replace wage_no_compen=. if lstatus!=1
-	replace wage_no_compen=. if empstat!=1
 	replace wage_no_compen=. if s32c == 0
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
@@ -1562,6 +1559,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`path_output'\TUR_2003_HLFS_V01_M_V03_A_GLD_ALL.dta", replace
+save "`path_output'/`out_file'", replace
 
 *</_% SAVE_>

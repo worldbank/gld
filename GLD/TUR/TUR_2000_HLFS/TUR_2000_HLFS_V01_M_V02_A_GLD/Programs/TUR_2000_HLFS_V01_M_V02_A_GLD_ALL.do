@@ -331,7 +331,6 @@ ILO webpage says that the version used was isco 88 note that for the bank TUIK s
 
 
 *<_relationharm_>
-
 	gen relationharm =s7
 	recode relationharm 1=1 2=2 3=3 4/7=5 8=6
 	label var relationharm "Relationship to the head of household - Harmonized"

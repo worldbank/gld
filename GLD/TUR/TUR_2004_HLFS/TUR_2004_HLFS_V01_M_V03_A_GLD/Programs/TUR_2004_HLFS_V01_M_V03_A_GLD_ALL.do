@@ -515,8 +515,6 @@ rename*, lower
 
 *<_migrated_from_code_>
 	gen migrated_from_code = .
-	*label de lblmigrated_from_code
-	*label values migrated_from_code lblmigrated_from_code
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
 *</_migrated_from_code_>
 
@@ -584,11 +582,7 @@ rename*, lower
 
 
 *<_educat7_>
-	gen byte educat7 = s10
-	replace educat7=2 if s10==3 & age<10
-	replace educat7=3 if s10==3 & age==10
-	replace educat7=4 if s10==3 & age>10
-	recode educat7 0=. 1=1 2=3 3=4 4=5 5=5 6=7
+	gen byte educat7 = .
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -605,8 +599,12 @@ rename*, lower
 
 
 *<_educat4_>
-	gen byte educat4 = educat5
-	recode educat4 (3=2) (4=3) (5=4)
+	gen byte educat4 = .
+	replace educat4=1 if s10==1
+	replace educat4=2 if s10==2
+	replace educat4=3 if s10==3
+	replace educat4=3 if s10==3
+	replace educat4=4 if s10>=4 & s10!=.
 	label var educat4 "Level of education 3"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values educat4 lbleducat4
@@ -701,7 +699,6 @@ foreach v of local ed_var {
 {
 *<_lstatus_>
 	gen byte lstatus = durum
-	*replace lstatus=. if durum==3 & s24!=.
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
@@ -731,9 +728,6 @@ foreach v of local ed_var {
 *<_nlfreason_>
 	*Not all peple gave a reason for not in labor force so missing yet the origianl answer can be found in s24.
 	gen byte nlfreason =.
-	*recode nlfreason 0=. 1/6=5 7=1 8/10=5
-	*replace nlfreason=. if lstatus!=3
-	*replace nlfreason=. if lstatus==3
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
 	label values nlfreason lblnlfreason
@@ -742,14 +736,12 @@ foreach v of local ed_var {
 
 *<_unempldur_l_>
 	gen byte unempldur_l=.
-	*replace unempldur_l = s81 if lstatus==2
 	label var unempldur_l "Unemployment duration (months) lower bracket"
 *</_unempldur_l_>
 
 
 *<_unempldur_u_>
 	gen byte unempldur_u=.
-	*replace unempldur_u = s81 if lstatus==2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
 *</_unempldur_u_>
 }
@@ -761,7 +753,7 @@ foreach v of local ed_var {
 {
 *<_empstat_>
 	gen byte empstat = s34
-	recode empstat 0=. 2=5 5=2
+	recode empstat 0=. 2=1 5=2
 	replace empstat=. if lstatus!=1
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
@@ -786,7 +778,7 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_>
-  gen industrycat_isic= .
+  gen industrycat_isic= ""
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
@@ -876,7 +868,7 @@ foreach v of local ed_var {
 	gen whours = s56a_top
 	recode whours 0=.
 	replace whours=. if lstatus!=1
-replace whours=. if s56a_top>84
+	replace whours=. if s56a_top>84
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
