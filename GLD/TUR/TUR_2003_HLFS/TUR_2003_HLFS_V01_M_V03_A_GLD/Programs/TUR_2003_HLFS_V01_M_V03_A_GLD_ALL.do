@@ -577,7 +577,6 @@ label var ed_mod_age "Education module application age"
 	replace educat4=1 if s9==1
 	replace educat4=2 if s9==2
 	replace educat4=3 if s9==3
-	replace educat4=3 if s9==3
 	replace educat4=4 if s9>=4 & s9!=.
 	label var educat4 "Level of education 3"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"

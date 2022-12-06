@@ -595,7 +595,6 @@ label var subnatid2 "Subnational ID at NUTS 2 Level"
 	replace educat4=1 if s13==1
 	replace educat4=2 if s13==2
 	replace educat4=3 if s13==3
-	replace educat4=3 if s13==3
 	replace educat4=4 if s13>=4 & s13!=.
 	label var educat4 "Level of education 3"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"

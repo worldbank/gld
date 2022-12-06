@@ -603,7 +603,6 @@ rename*, lower
 	replace educat4=1 if s10==1
 	replace educat4=2 if s10==2
 	replace educat4=3 if s10==3
-	replace educat4=3 if s10==3
 	replace educat4=4 if s10>=4 & s10!=.
 	label var educat4 "Level of education 3"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"

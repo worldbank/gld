@@ -580,7 +580,6 @@ Note the data release we have has only 15 year old and older actual survey cut o
 	replace educat4=1 if s13==1
 	replace educat4=2 if s13==2
 	replace educat4=3 if s13==3
-	replace educat4=3 if s13==3
 	replace educat4=4 if s13>=4 & s13!=.
 	label var educat4 "Level of education 3"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
