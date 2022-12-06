@@ -31,7 +31,7 @@ With the reform in 2012 the age of entrance to formal education changed to 5,5 y
 
 ## Choices made
 
-Initially, the data was harmonized to reflect the most dissagregated level of education according to the ISCED categories. In the harmonization file we call this educat7. As a result of the above the harmonization team decided to take in consideration the changes in the education reform for the years 2000 to 2019. In particular the age of entry to formal education was considered 6 across all the files. The changes coming from the 4+4+4 to the structure of formal education were particularly adress for the primary education group. As a result, files from 2000 to 2013 have a different structure to those from 2014 to 2019 for educat7. the user  can choose to create the category educat7 if they wish using the guidance below. 
+Initially, the data was harmonized to reflect the most disaggregated level of education according to the [ISCED categories](https://ec.europa.eu/eurostat/statistics-explained/index.php?title=International_Standard_Classification_of_Education_(ISCED)). In the harmonization file we called the lower level of disaggregation educat7. The GLD team wanted to capture Turkey education reforms for the years 2000 to 2019. In particular, the changes in the age of entry to formal education which for GLD had been set to 6 years old across all the files. The changes coming from the 4+4+4 to the structure of formal education were particularly addressed for the primary education group. As a result, files from 2000 to 2013 have a different structure to those from 2014 to 2019 for educat7. However, as of December 2022, the team has discontinued the used of educat7 and instead shifted to educat4 to have a more precise variable. However, the user can create the category educat7 if they wish using the guidance below. 
 
 Figure 1 . HLFS 2000 to 2013:
 
@@ -45,10 +45,11 @@ Figure 2 . HLFS 2014 to 2019:
 ![educ2014](Utilities/educ_2014.png)
 <br></br>
 
-However, due to volatility with the observations contained in each category of educat7, the GLD team decided to harmonize the education categories for Turkey at the level of educat4, (see figure 3 below).As a result the user will find that the categories across years are more stable to do compartive analysis if necessary. In addition, with this decision, the users will find that they do not need to account for changes in categories between years as it is the case wit educat7 and educat5.
+As explained above due to volatility with the observations contained in each category of educat7, the GLD team decided to harmonize the education categories for Turkey at the level of educat4, (see figure 3 below).As a result the user will find that the categories across years are more stable to do compartive analysis if necessary. In addition, with this decision, the users will find that they do not need to account for changes in categories between years as it is the case with educat7 and educat5.
 
+Figure 3. HLFS 2000-2019
 <br></br>
-![educ2012](Utilities/educ_2012.png)
+![educ2000](Utilities/education_2000.png)
 <br></br>
 
 ## Nature of the data
