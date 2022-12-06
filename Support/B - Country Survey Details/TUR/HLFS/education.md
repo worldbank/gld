@@ -49,7 +49,7 @@ As explained above due to volatility with the observations contained in each cat
 
 Figure 3. HLFS 2000-2019
 <br></br>
-![educ2000](Utilities/Education_2000.PNG)
+![educ2000](Utilities/education_2000.PNG)
 <br></br>
 
 ## Nature of the data
