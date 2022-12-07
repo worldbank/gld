@@ -31,17 +31,9 @@ With the reform in 2012 the age of entrance to formal education changed to 5,5 y
 
 ## Choices made
 
-Initially, the data was harmonized to reflect the most disaggregated level of education according to the [ISCED categories](https://ec.europa.eu/eurostat/statistics-explained/index.php?title=International_Standard_Classification_of_Education_(ISCED)). 
+Between 2000 and 2019, the turkish education went through reforms. In particular, there were changes to the entry age for primary education. The minimum age of entry was set to six years old, this change came from the 4+4+4 to the formal education structure as described in previous sections. As a result of this change, the turkish surveys changed the age limit for education questions.
 
-In the harmonization file we called the lower level of disaggregation educat7. 
-
-The GLD team wanted to capture Turkey education reforms for the years 2000 to 2019. In particular, the changes in the age of entry to formal education which for GLD had been set to 6 years old across all the files. The changes coming from the 4+4+4 to the structure of formal education were particularly addressed for the primary education group. As a result, files from 2000 to 2013 have a different structure to those from 2014 to 2019 for educat7. 
-
-Due to volatility with the observations contained in each category of educat7, the GLD team decided to harmonize the education categories for Turkey at the level of educat4, (see figure 3 below).As a result the user will find that the categories across years are more stable to do comparative analysis if necessary. In addition, with this decision, the users will find that they do not need to account for changes in categories between years as it is the case with educat7 and educat5.
-
-cambios sistema educacion
-cambios encuesta - cambios de los niveles en la encuesta.
-decisions 
+For the GLD harmonization, the change meant that for certain years the codification for the most dissagregated education variables will follow an structure that was later changed as the years progressed.  As a result, files from 2000 to 2013 have a different structure to those from 2014 to 2019. In Figure 1 and 2 we show how this looks like for the variable educat7 which is the most dissagregated level of education. In practice, educat7 gives the user granular data to work with, but across years it may vary on the quantity of observations per level of education. Thus, the GLD team decided to harmonize the education categories for Turkey at the level of educat4 (see figure 3 below) which is the highest level of dissagregation for levels of education.As a result, the user will find that across years educat4 contains more reliable and stable data to do comparative analysis.
 
 Figure 1 . HLFS 2000 to 2013:
 
