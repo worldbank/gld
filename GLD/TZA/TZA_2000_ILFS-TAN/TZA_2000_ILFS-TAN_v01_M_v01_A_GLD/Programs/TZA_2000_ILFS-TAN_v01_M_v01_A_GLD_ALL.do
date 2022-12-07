@@ -945,28 +945,24 @@ and this is mentioned as well in reports in later year surveys.
 
 
 *<_industrycat_isic_>
+/* <_ industrycat_isic_note>
+
+1)	Different classification for unpaid family helper or self-employed in agricultural sector
+
+Q21 (industry classification) is not asked for individuals reported working as unpaid family helper or self-employed in agricultural sector.
+Instead, they are asked the specific main activity (Q18b), which can be converted to ISIC codes
+
+2)	Finding the correct ISIC classification version
+
+It is not clear what ISIC version is used here. NO information from available documentation. Industry codes in raw data where mapped to ISIC codes from all revisions
+(2, 3 – since 3.1 was released only after the survey (2002), 4 even later). They mapped perfectly to ISIC 2 at two digits and hence this system was used.
+There are differences at more depth (3rd, 4th digit) and since the correspondence between national adaption and international codes is unknown, data is kept at 2D.
+
+</_ industrycat_isic_note> */
 	* Q21 (industry classification) is not asked for individuals reported working as unpaid family helper or self-employed in agricultural sector.
 	* Instead, they are asked the specific main activity (Q18b), which can be converted to ISIC codes
 	
 	gen industryhelper = mind
-	
-	* It is not clear what ISIC version is used here. NO information from available documentation
-	* Check which ISIC version would allow us to match all the codes here.
-	
-
-	preserve
-		gen code2d = substr(industryhelper, 1, 2)
-
-		foreach x in isic2 isic3 isic3_1 isic4{
-		merge m:1 code2d using "`path_in'/`x'.dta"
-		rename _merge _merge_`x'
-		
-		display "`x'"
-		distinct code2d if _merge_`x' == 1
-		
-		}
-		
-	restore
 	
 	* Perfectly matches all 2 digit codes for ISIC 2. Note, however, that on a separate exercise, the 4 digit codes do not perfectly match ISIC 2
 	* The survey guide is clear that the industry codes are an national adaption of the ISIC
@@ -1024,69 +1020,18 @@ and this is mentioned as well in reports in later year surveys.
 
 *<_occup_isco_>
 
-* We only know that it TASCO is based on ISCO'88, but not clear what degree of similarity by digit levels
-
-	gen mtask_4 = mtask
-	gen mtask_3 = substr(mtask, 1, 3)
 	gen mtask_2 = substr(mtask, 1, 2)
-	
-preserve
 
-	use "`path_in'\isco.dta", clear
-	
-	keep if version == "isco_1988"
-	
-	gen mtask_4 = code
-	
-	tempfile mtask_4
-	save `mtask_4'
+	* One discrepancy involves the code "53" in TASCO which does not exist in ISCO
+	* But upon inspection: ISCO code "51" is split between TASCO codes "51" and "52"
+	* And ISCO code "52" is equivalent to TASCO code "53"
 
-restore
+	*tab mtask_2 if _merge == 1 
 
-preserve
-
-	use "`path_in'\isco.dta", clear
-
-	
-	keep if version == "isco_1988"
-	
-	gen mtask_3 = substr(code, 1, 3)
-	duplicates drop mtask_3, force
-	tempfile mtask_3
-	save `mtask_3'
-
-restore
-
-preserve
-
-	use "`path_in'\isco.dta", clear
-
-	
-	keep if version == "isco_1988"
-	
-	gen mtask_2 = substr(code, 1, 2)
-	duplicates drop mtask_2, force
-	tempfile mtask_2
-	save `mtask_2'
-
-restore
-
-*merge m:1 mtask_4 using `mtask_4', nogen
-*merge m:1 mtask_3 using `mtask_3', nogen
-merge m:1 mtask_2 using `mtask_2', nogen keep(master match)
-
-
-* Based on this, we can use the 2 digit TASCO for ISCO
-* One discrepancy involves the code "53" in TASCO which does not exist in ISCO
-* But upon inspection: ISCO code "51" is split between TASCO codes "51" and "52"
-* And ISCO code "52" is equivalent to TASCO code "53"
-
-*tab mtask_2 if _merge == 1 
-
-replace mtask_2 = "51" if mtask_2 == "52"
-replace mtask_2 = "52" if mtask_2 == "53"
- 
-	
+	replace mtask_2 = "51" if mtask_2 == "52"
+	replace mtask_2 = "52" if mtask_2 == "53"
+	 
+		
 	gen occup_isco = mtask_2 + "00" if !missing(mtask_2)
 	replace occup_isco = "0110" if occup_isco == "0100"
 	label var occup_isco "ISCO code of primary job 7 day recall"

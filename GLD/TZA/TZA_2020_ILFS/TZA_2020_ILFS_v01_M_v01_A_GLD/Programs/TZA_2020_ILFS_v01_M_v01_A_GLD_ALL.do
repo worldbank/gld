@@ -1049,6 +1049,21 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_>
+
+/* <_ industrycat_isic_note>
+
+1)	Different classification for unpaid family helper or self-employed in agricultural sector
+
+Q21 (industry classification) is not asked for individuals reported working as unpaid family helper or self-employed in agricultural sector.
+Instead, they are asked the specific main activity (Q18b), which can be converted to ISIC codes
+
+2)	Finding the correct ISIC classification version
+
+It is not clear what ISIC version is used here. NO information from available documentation. Industry codes in raw data where mapped to ISIC codes from all revisions
+(2, 3 – since 3.1 was released only after the survey (2002), 4 even later). They mapped perfectly to ISIC 2 at two digits and hence this system was used.
+There are differences at more depth (3rd, 4th digit) and since the correspondence between national adaption and international codes is unknown, data is kept at 2D.
+
+</_ industrycat_isic_note> */
 	gen industrycat_isic = string(industry_orig, "%04.0f")
 	replace industrycat_isic = "" if industrycat_isic == "."
 	replace industrycat_isic = "" if lstatus != 1
