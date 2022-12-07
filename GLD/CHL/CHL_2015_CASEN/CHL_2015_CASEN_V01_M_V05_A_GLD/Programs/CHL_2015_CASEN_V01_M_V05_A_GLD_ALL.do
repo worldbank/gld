@@ -4,27 +4,27 @@
 ==============================================================================================%%*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				CHL_2013_CASEN_V01_M_V03_A_GLD_ALL.do </_Program name_>
+<_Program name_>				CHL_2015_CASEN_V01_M_V05_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata 16 <_Application_>
 <_Author(s)_>					World Bank Job's Group </_Author(s)_>
 <_Date created_>				2022-01-21 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						CHL </_Country_>
 <_Survey Title_>				CASEN </_Survey Title_>
-<_Survey Year_>					2013 </_Survey Year_>
+<_Survey Year_>					2015 </_Survey Year_>
 <_Study ID_>					N/A </_Study ID_>
-<_Data collection from_> nov 2013 </_Data collection from_>
-<_Data collection to_>		febrero 2014 </_Data collection to_>
+<_Data collection from_> nov 2015 </_Data collection from_>
+<_Data collection to_>		enero 2016 </_Data collection to_>
 <_Source of dataset_> 	CASEN </_Source of dataset_>
-<_Sample size (HH)_> 	66725 </_Sample size (HH)_>
-<_Sample size (IND)_> 	218491 </_Sample size (IND)_>
+<_Sample size (HH)_> 	83.887 </_Sample size (HH)_>
+<_Sample size (IND)_> 	266.968 </_Sample size (IND)_>
 <_Sampling method_> Probabilistic, stratified, by cluster and in multiple stages. The final unit of selection is the dwelling.	 </_Sampling method_>
 <_Geographic coverage_> "The geographic coverage of the study is national." </_Geographic coverage_>
 <_Currency_> 	Chilean Pesos </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>		ICLS-19		</_ICLS Version_>
-<_ISCED Version_>		ISCED 2011		 </_ISCED Version_>
-<_ISCO Version_>		ISOC 1988		 </_ISCO Version_>
+<_ISCED Version_>		ISCED 2013		 </_ISCED Version_>
+<_ISCO Version_>		ISC0 1988		 </_ISCO Version_>
 <_OCCUP National_>		ISCO 1988	 </_OCCUP National_>
 <_ISIC Version_>		 	ISIC REV 3 </_ISIC Version_>
 <_INDUS National_>		ISIC REV 3	 </_INDUS National_>
@@ -48,15 +48,33 @@ set mem 800m
 
 *----------1.2: Set directories------------------------------*
 
-local path_in "Z:\GLD-Harmonization\582018_AQ\CHL\CHL_2013_CASEN\CHL_2013_CASEN_V01_M\Data\Stata"
-local path_output "Z:\GLD-Harmonization\582018_AQ\CHL\CHL_2013_CASEN\CHL_2013_CASEN_V01_M_V03_A_GLD\Data\Harmonized"
+* Define path sections
+local server  "Z:\GLD-Harmonization\582018_AQ"
+local country "CHL"
+local year    "2015"
+local survey  "CASEN"
+local vermast "V01"
+local veralt  "V05"
+
+* From the definitions, set path chunks
+local level_1      "`country'_`year'_`survey'"
+local level_2_mast "`level_1'_`vermast'_M"
+local level_2_harm "`level_1'_`vermast'_M_`veralt'_A_GLD"
+
+* From chunks, define path_in, path_output folder
+local path_in_stata "`server'/`country'/`level_1'/`level_2_mast'/Data/Stata"
+local path_in_other "`server'/`country'/`level_1'/`level_2_mast'/Data/Original"
+local path_output   "`server'/`country'/`level_1'/`level_2_harm'/Data/Harmonized"
+
+* Define Output file name
+local out_file "`level_2_harm'_ALL.dta"
 
 *----------1.3: Database assembly------------------------------*
 
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
-use "`path_in'\casen_2013_mn_b_principal.dta"
-
+use "`path_in_stata'\Casen_2015.dta"
+rename fecha_aņo fecha_ano
 
 
 /*%%=============================================================================================
@@ -89,7 +107,7 @@ use "`path_in'\casen_2013_mn_b_principal.dta"
 *</_icls_v_>
 
 *<_isced_version_>
-	gen isced_version = "isced_2011"
+	gen isced_version = "isced_2013"
 	label var isced_version "Version of ISCED used for educat_isced"
 *</_isced_version_>
 
@@ -108,7 +126,7 @@ use "`path_in'\casen_2013_mn_b_principal.dta"
 
 
 *<_year_>
-	gen int year = 2013
+	gen int year = 2015
 	label var year "Year of survey"
 *</_year_>
 
@@ -120,7 +138,7 @@ use "`path_in'\casen_2013_mn_b_principal.dta"
 
 
 *<_veralt_>
-	gen veralt = "V03"
+	gen veralt = "V04"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
@@ -132,13 +150,13 @@ use "`path_in'\casen_2013_mn_b_principal.dta"
 
 
 *<_int_year_>
-	gen int_year=.
+	gen int_year=fecha_ano
 	label var int_year "Year of the interview"
 *</_int_year_>
 
 
 *<_int_month_>
-	gen  int_month = .
+	gen  int_month = fecha_mes
 	label de lblint_month 1 "January" 2 "February" 3 "March" 4 "April" 5 "May" 6 "June" 7 "July" 8 "August" 9 "September" 10 "October" 11 "November" 12 "December"
 	label value int_month lblint_month
 	label var int_month "Month of the interview"
@@ -210,13 +228,13 @@ use "`path_in'\casen_2013_mn_b_principal.dta"
 
 *<_subnatid1_>
 	gen subnatid1=region
-	la de lblsubnatid1 1 "1 - Tarapacá" 2 "2 - Antofagasta" 3 "3 -  Atacama" 4 "4 - Coquimbo" 5 "5 -  Valparaiso" 6 "6 - O'higgins" 7 "7 -  Maule" 8 "8 -  Bío bío" 9 "9 -  La araucanía" 10 "10 - Los lagos" 11 "11 - Aysén" 12 "12 - Magallanes" 13 "13 - Región Metropolitana" 14 "14 -  Los rios" 15 "15 -  Arica y Parinacota"
+	la de lblsubnatid1 1 "1 - Tarapacá" 2 "2 - Antofagasta" 3 "3 -  Atacama" 4 "4 - Coquimbo" 5 "5 -  Valparaiso" 6 "6 - O'higgins" 7 "7 -  Maule" 8 "8 -  Bío bío" 9 "9 -  La araucanía" 10 "10 - Los lagos" 11 "11 - Aysén" 12 "12 - Magallanes y la antartida" 13 "13 - Región Metropolitana" 14 "14 -  Los rios" 15 "15 -  Arica y Parinacota"
 	label var subnatid1 "Subnational ID at NUTS 1 Level"
 	label values subnatid1 lblsubnatid1
 *</_subnatid1_>
 
 *<_subnatid2_>
-	gen subnatid2=.
+	gen subnatid2=provincia
 	la de lblsubnatid2   1 ""
 	 label var subnatid2 "Subnational ID at NUTS 2 Level"
 	 label values subnatid2 lblsubnatid2
@@ -305,7 +323,7 @@ use "`path_in'\casen_2013_mn_b_principal.dta"
 
 *<_relationharm_>
 	gen relationharm =pco1
-	recode relationharm  4=3 5=3 6=4 7/12=5 13/14=6
+	recode relationharm  3=2 4/6=3 7=4 8/13=5 14/15=6
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm  lblrelationharm
@@ -320,7 +338,7 @@ use "`path_in'\casen_2013_mn_b_principal.dta"
 
 *<_marital_>
 	gen byte marital = ecivil
-	recode marital 2=3 3 4 5=4 6=5 7=2
+	recode marital 2/3=3 4/6=4 7=5 8=2
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
 	label values marital lblmarital
@@ -463,7 +481,7 @@ use "`path_in'\casen_2013_mn_b_principal.dta"
 
 *<_literacy_>
 	gen byte literacy = e1
-	recode literacy 2 3 4=0 9=.
+	recode literacy 2/4=0 9=.
 	label var literacy "Individual can read & write"
 	la de lblliteracy 0 "No" 1 "Yes"
 	label values literacy lblliteracy
@@ -538,8 +556,8 @@ foreach v of local ed_var {
 {
 
 *<_vocational_>
-	gen vocational = o31a
-	recode vocational 1/3=1 4=0 8=. 9=.
+	gen vocational = o30
+	recode vocational 1=1 2=0 8=. 9=.
 	label de lblvocational 0 "No" 1 "Yes"
 	label var vocational "Ever received vocational training"
 *</_vocational_>
@@ -590,6 +608,8 @@ foreach v of local ed_var {
 {
 *<_lstatus_>
 	gen byte lstatus = activ
+	*Note : we include this restriction (below) because there was an input error in the data that shifted one observation to missing eventhough the person worked in an economic sector.
+	replace lstatus=1 if activ!=1 & rama4_sub=="0140"
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
@@ -645,7 +665,7 @@ foreach v of local ed_var {
 {
 *<_empstat_>
 	gen byte empstat = o15
-	recode empstat (1=3) (2=4) (3/5=1) (6=2) ( 6 7=5) (8=5) (9=2)
+	recode empstat (1=3) (2=4) (3/5=1) (6=2) ( 6 7=5) (8=2) (9=5)
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat lblempstat
@@ -674,7 +694,7 @@ foreach v of local ed_var {
 	gen industrycat_isic= rama4
 	replace industrycat_isic ="0" if industrycat_isic=="0000"
 	replace industrycat_isic = "" if industrycat_isic =="."
-	replace industrycat_isic ="" if industrycat_isic=="9999"
+	replace industrycat_isic = "" if industrycat_isic =="9999"
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 
 *</_industrycat_isic_>
@@ -683,16 +703,16 @@ foreach v of local ed_var {
 *<_industrycat10_>
 	destring rama4, gen(rama_help)
 	gen industrycat10=.
-	replace industrycat10=1 if inrange(rama_help,110,500)
+	replace industrycat10=1 if inrange(rama_help,111,500)
 	replace industrycat10=2 if inrange(rama_help,1010,1429)
-	replace industrycat10=3 if inrange(rama_help,1500,3720)
+	replace industrycat10=3 if inrange(rama_help,1511,3720)
 	replace industrycat10=4 if inrange(rama_help,4010,4100)
 	replace industrycat10=5 if inrange(rama_help,4510,4550)
-	replace industrycat10=6 if inrange(rama_help,5000,5520)
+	replace industrycat10=6 if inrange(rama_help,5010,5520)
 	replace industrycat10=7 if inrange(rama_help,6010,6420)
 	replace industrycat10=8 if inrange(rama_help,6511,7499)
 	replace industrycat10=9 if inrange(rama_help,7511,7530)
-	replace industrycat10=10 if inrange(rama_help,8000,9900)
+	replace industrycat10=10 if inrange(rama_help,8010,9900)
 	replace industrycat10=. if rama_help==9999
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
@@ -709,7 +729,6 @@ foreach v of local ed_var {
 	label values industrycat4 lblindustrycat4
 *</_industrycat4_>
 
-
 *<_occup_orig_>
 	*gen occup_orig = string(oficio4)
 	gen occup_orig = oficio4
@@ -725,6 +744,7 @@ foreach v of local ed_var {
 	gen occup_isco = oficio4
 	replace occup_isco="" if oficio4=="."
 	replace occup_isco="" if oficio4=="9999"
+	replace occup_isco="9200" if oficio4=="9251"
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
@@ -734,10 +754,11 @@ foreach v of local ed_var {
 	replace occup_skill=1 if oficio1==9
 	replace occup_skill=2 if inrange(oficio1,4,8)
 	replace occup_skill=3 if inrange(oficio1,1,3)
-	replace occup_skill=4 if oficio1==0
-	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"  4 "Armed Forces"
+	replace occup_skill=. if oficio1==0
+	replace occup_skill=. if oficio1==999
+	replace occup_skill=. if oficio1==9999
+la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
 	label values occup_skill lblskill
-	recode occup_skill 9999=.
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
 *</_occup_skill_>
 
@@ -773,7 +794,7 @@ foreach v of local ed_var {
 	gen whours = o10
 	replace whours=. if lstatus!=1
 	replace whours=. if o10>84
-	recode whours 999=. 0=.
+	recode whours 999=.
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -800,8 +821,9 @@ foreach v of local ed_var {
 
 
 *<_healthins_>
-	gen byte healthins = s15a
-	recode  healthins 2=0 9=.
+*strange question. 7 says non but particular and not clear anymore if the first is none (indigente)
+	gen byte healthins = s12
+	recode  healthins 1/7=1 8=0 9=1 99=.
 	replace healthins=. if lstatus!=1
 	label var healthins "Employment has health insurance primary job 7 day recall"
 	la de lblhealthins 0 "Without health insurance" 1 "With health insurance"
@@ -819,7 +841,8 @@ foreach v of local ed_var {
 
 
 *<_union_>
-	gen byte union = .
+	gen byte union = o24a
+	recode union 2=0 9=.
 	label var union "Union membership at primary job 7 day recall"
 	la de lblunion 0 "Not union member" 1 "Union member"
 	label values union lblunion
@@ -827,8 +850,8 @@ foreach v of local ed_var {
 
 
 *<_firmsize_l_>
-	encode o24, gen(o24_helper)
-	gen firmsize_l=o24_helper
+	encode o23, gen(o23_helper)
+	gen firmsize_l=o23_helper
 	recode firmsize_l 1=1 2=2 3=6 4=10 5=50 6=200 7=.
 	replace firmsize_l=. if lstatus!=1
 	label var firmsize_l "Firm size (lower bracket) primary job 7 day recall"
@@ -836,10 +859,10 @@ foreach v of local ed_var {
 
 
 *<_firmsize_u_>
-	gen firmsize_u=o24_helper
+	gen firmsize_u=o23_helper
 	recode firmsize_u 1=1 2=5 3=9 4=49 5=199 6=. 7=.
 	replace firmsize_u=. if lstatus!=1
-	drop o24_helper
+	drop o23_helper
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>
 
@@ -852,8 +875,8 @@ foreach v of local ed_var {
 
 {
 *<_empstat_2_>
-	gen byte empstat_2 = o28
-	recode empstat_2 (1=3) (2=4) (3/5=1) (6=2) ( 6 7=5) (8=5) (9=2) (99=.)
+	gen byte empstat_2 = o27
+	recode empstat_2 (1=3) (2=4) (3/5=1) (6=2) ( 6 7=5) (8=2) (9=5) (99=.)
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
 	label values empstat_2 lblempstat
 *</_empstat_2_>
@@ -1000,7 +1023,7 @@ foreach v of local ed_var {
 
 
 *<_t_wage_total_>
-	gen t_wage_total = .
+	gen t_wage_total = ytrabajocor
 	label var t_wage_total "Annualized total wage for all jobs 7 day recall"
 *</_t_wage_total_>
 
@@ -1488,6 +1511,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`path_output'\CHL_2013_CASEN_V01_M_V03_A_GLD_ALL.dta", replace
+save "`path_output'/`out_file'", replace
 
 *</_% SAVE_>

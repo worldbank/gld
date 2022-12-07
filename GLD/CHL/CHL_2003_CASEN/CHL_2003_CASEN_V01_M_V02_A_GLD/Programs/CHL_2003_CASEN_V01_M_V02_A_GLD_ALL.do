@@ -89,7 +89,7 @@ use "`path_in'\casen2003.dta"
 *</_icls_v_>
 
 *<_isced_version_>
-	gen isced_version = "ISCED_1997"
+	gen isced_version = "isced_1997"
 	label var isced_version "Version of ISCED used for educat_isced"
 *</_isced_version_>
 

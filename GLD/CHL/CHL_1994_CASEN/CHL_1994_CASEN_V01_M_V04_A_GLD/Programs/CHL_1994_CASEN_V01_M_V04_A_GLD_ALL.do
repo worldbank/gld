@@ -597,8 +597,11 @@ foreach v of local ed_var {
 
 {
 *<_lstatus_>
-*there is like 31,122 missing values , are they inactive? prob not reply
-	gen byte lstatus = o21
+
+	gen byte lstatus = .
+	replace lstatus=1 if (o1==1) | (o1==2 & o2==1)
+	replace lstatus=2 if o3==1
+	replace lstatus=3 if o3==2
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
