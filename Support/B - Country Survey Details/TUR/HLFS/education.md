@@ -31,7 +31,7 @@ With the reform in 2012 the age of entrance to formal education changed to 5,5 y
 
 ## Choices made
 
-Between 2000 and 2019, the turkish education went through reforms. In particular, there were changes to the entry age for primary education. The minimum age of entry was set to six years old, this change came from the 4+4+4 to the formal education structure as described in previous sections. As a result of this change, the turkish surveys changed the age limit for education questions.
+Between 2000 and 2019, the turkish education went through reforms. In particular, there were changes to the entry age for primary education. The minimum age of entry was set to six years old, this change came from the shift to the 4+4+4 model of education as described in previous sections. As a result of this change, the turkish surveys changed the age limit for education questions.
 
 For the GLD harmonization, the change meant that for certain years the codification for the most dissagregated education variables will follow an structure that was later changed as the years progressed.  As a result, files from 2000 to 2013 have a different structure to those from 2014 to 2019. In Figure 1 and 2 we show how this looks like for the variable educat7 which is the most dissagregated level of education. In practice, educat7 gives the user granular data to work with, but across years it may vary on the quantity of observations per level of education. Thus, the GLD team decided to harmonize the education categories for Turkey at the level of educat4 (see figure 3 below) which is the highest level of dissagregation for levels of education.As a result, the user will find that across years educat4 contains more reliable and stable data to do comparative analysis.
 
