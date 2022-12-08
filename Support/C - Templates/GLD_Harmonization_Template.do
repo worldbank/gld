@@ -672,7 +672,7 @@ foreach v of local ed_var {
 *<_underemployment_>
 	gen byte underemployment = .
 	replace underemployment = . if age < minlaborage & age != .
-	replace underemployment = . if lstatus == 1
+	replace underemployment = . if lstatus != 1
 	label var underemployment "Underemployment status"
 	la de lblunderemployment 0 "No" 1 "Yes"
 	label values underemployment lblunderemployment
