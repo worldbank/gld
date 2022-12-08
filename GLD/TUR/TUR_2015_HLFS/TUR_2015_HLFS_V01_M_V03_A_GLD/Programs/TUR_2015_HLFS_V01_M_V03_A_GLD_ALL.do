@@ -579,12 +579,12 @@ label values relationharm  lblrelationharm
 
 *<_educat4_>
 	gen byte educat4 = .
-	replace educat4=1 if s13==1
-	replace educat4=2 if s13==2
-	replace educat4=3 if s13==3
-	replace educat4=4 if s13>=4 & s13!=.
+	replace educat4 = 1 if s13 == 0
+	replace educat4 = 2 if s13 == 1
+	replace educat4 = 3 if inlist(s13, 2, 31, 32)
+	replace educat4 = 4 if inrange(s13, 4, 5)
 	label var educat4 "Level of education 3"
-	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
+	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary", replace
 	label values educat4 lbleducat4
 *</_educat4_>
 

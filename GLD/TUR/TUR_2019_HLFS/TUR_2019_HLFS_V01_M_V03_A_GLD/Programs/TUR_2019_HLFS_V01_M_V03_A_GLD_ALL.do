@@ -590,10 +590,10 @@ label var ed_mod_age "Education module application age"
 
 *<_educat4_>
 	gen byte educat4 = .
-	replace educat4=1 if okul_biten_k==1
-	replace educat4=2 if okul_biten_k==2
-	replace educat4=3 if okul_biten_k==3
-	replace educat4=4 if okul_biten_k>=4 & okul_biten_k!=.
+	replace educat4=1 if okul_biten_k==0
+	replace educat4=2 if okul_biten_k==1
+	replace educat4=3 if inlist(okul_biten_k,2,31,32)
+	replace educat4=4 if inlist(okul_biten_k,4,5)
 	label var educat4 "Level of education 3"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values educat4 lbleducat4
