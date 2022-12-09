@@ -50,7 +50,7 @@ set mem 800m
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-local server  "Y:\GLD-Harmonization\582018_AQ"
+local server  "Z:\GLD-Harmonization\582018_AQ"
 local country "CHL"
 local year    "1998"
 local survey  "CASEN"
@@ -1070,7 +1070,7 @@ la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
 *</_unempldur_u_year_>
 
 }
-s
+
 *----------8.7: 12 month reference main job------------------------------*
 
 {
