@@ -15,7 +15,7 @@ This document describes the methodology used to map information on occupation co
 
 ## Correspondence in occupation classification
 
-The occupation is classified in the EUS using two different code structures. The 1987 through 2005 surveys use the 2005 National Classification of occupations while the latter three surveys from 2007 to 2011 use the 2004 version. In all cases occupation is recorded at the three-digit level.
+The occupation is classified in the EUS using two different code structures. The 1987 through 2005 surveys use the 1968 National Classification of occupations while the latter three surveys from 2007 to 2011 use the 2004 version. In all cases occupation is recorded at the three-digit level.
 
 The harmonization team could not find any correspondence tables on the official website of the Ministry of Statistics and Programme Implementation (MOSPI). Hence the method used was to rely on the correspondence develop by Mses. Saloni Khurana and Kanika Mahajan in their [technical appendix](utilities/NCO_concordance.pdf) to their paper [Evolution of wage inequality in India (1983-2017)](utilities/wp2020-167.pdf). The harmonization team is thankful to them for their research and kindness in sharing their work.
 
