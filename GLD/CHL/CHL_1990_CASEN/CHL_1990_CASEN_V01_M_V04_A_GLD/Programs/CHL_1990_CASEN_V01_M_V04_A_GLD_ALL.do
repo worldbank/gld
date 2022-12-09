@@ -711,7 +711,7 @@ foreach v of local ed_var {
 
 *<_industrycat4_>
 	gen industrycat4 = .
-	replace industrycat4 = 1 if rama == 0 
+	replace industrycat4 = 1 if rama == 0
 	replace industrycat4 = 2 if inrange(rama,1,3) | o6 == 82
 	replace industrycat4 = 3 if inrange(o6,40, 53) | inrange(o6, 80, 81)
 	replace industrycat4 = 4 if !missing(rama)  & missing(industrycat4)
@@ -775,7 +775,6 @@ la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
 *<_whours_>
 	gen whours = jh
 	replace whours=. if lstatus!=1
-	replace whours=. if jh>84
 	recode whours 0=.
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
@@ -867,9 +866,8 @@ la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
 
 
 *<_industry_orig_2_>
-	gen industry_orig_2 = ""
-	tostring industry_orig_2, replace
-	replace industry_orig_2="" if lstatus!=1
+	gen industry_orig_2 = .
+	replace industry_orig_2=. if lstatus!=1
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 

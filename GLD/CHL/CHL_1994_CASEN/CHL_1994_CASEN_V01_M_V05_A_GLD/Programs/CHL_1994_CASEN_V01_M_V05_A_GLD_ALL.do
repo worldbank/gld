@@ -793,7 +793,6 @@ label values occup lbloccup
 *<_whours_>
 	gen whours = o14
 	replace whours=. if lstatus!=1
-	replace whours=. if o14>84
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -887,8 +886,7 @@ label values occup lbloccup
 
 *<_industry_orig_2_>
 	gen industry_orig_2 = .
-	tostring industry_orig_2, replace
-	replace industry_orig_2="" if lstatus!=1
+	replace industry_orig_2=. if lstatus!=1
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 

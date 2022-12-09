@@ -793,9 +793,8 @@ foreach v of local ed_var {
 
 
 *<_whours_>
-	gen whours = o10
+	gen whours = o10/4.33
 	replace whours=. if lstatus!=1
-	replace whours=. if o10>84
 	recode whours 999=. 0=.
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
