@@ -791,7 +791,7 @@ la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
 
 
 *<_whours_>
-	gen whours = o10/4.33
+	gen whours = o10
 	replace whours=. if lstatus!=1
 	recode whours 999=.
 	label var whours "Hours of work in last week primary job 7 day recall"

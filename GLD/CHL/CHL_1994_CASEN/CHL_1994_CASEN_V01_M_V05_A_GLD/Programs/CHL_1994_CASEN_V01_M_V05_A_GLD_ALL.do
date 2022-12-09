@@ -791,7 +791,7 @@ label values occup lbloccup
 
 
 *<_whours_>
-	gen whours = o14/4.33
+	gen whours = o14
 	replace whours=. if lstatus!=1
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
