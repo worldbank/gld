@@ -33,8 +33,10 @@
 <_INDUS National_>				NACE-Rev2 </_INDUS National_>
 -----------------------------------------------------------------------
 <_Version Control_>
-* Date: [YYYY-MM-DD] - [Description of changes]
-* Date: [YYYY-MM-DD] - [Description of changes]
+
+* Date: [2022-09-02] - [Change in variable occup_skill]
+* Date: [2022-12-09] - Correct education, reduc to educat4
+
 </_Version Control_>
 -------------------------------------------------------------------------*/
 

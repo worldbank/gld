@@ -34,8 +34,10 @@
 <_INDUS National_>				 NACE 1.1 </_INDUS National_>
 -----------------------------------------------------------------------
 <_Version Control_>
-* Date: [2022-09-D1] - [Change in variable empstat and occup_skill]
-* Date: [YYYY-MM-DD] - [Description of changes]
+
+* Date: [2022-09-02] - [Change in variable occup_skill]
+* Date: [2022-12-09] - Correct education, reduc to educat4
+
 </_Version Control_>
 -------------------------------------------------------------------------*/
 
@@ -53,7 +55,7 @@ set mem 800m
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-local server  "Z:\GLD-Harmonization\582018_AQ"
+local server  "Y:\GLD-Harmonization\582018_AQ"
 local country "TUR"
 local year    "2004"
 local survey  "HLFS"
@@ -745,7 +747,7 @@ foreach v of local ed_var {
 *</_unempldur_u_>
 }
 
-
+s
 *----------8.2: 7 day reference main job------------------------------*
 
 

@@ -52,7 +52,7 @@ set mem 800m
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-local server  "Z:\GLD-Harmonization\582018_AQ"
+local server  "Y:\GLD-Harmonization\582018_AQ"
 local country "TUR"
 local year    "2003"
 local survey  "HLFS"
@@ -574,19 +574,21 @@ label var ed_mod_age "Education module application age"
 
 *<_educat4_>
 	gen byte educat4 = .
-	replace educat4=1 if s9==1
-	replace educat4=2 if s9==2
-	replace educat4=3 if s9==3
-	replace educat4=4 if s9>=4 & s9!=.
+	replace educat4 = 1 if inlist(s9, 0, 1)
+	replace educat4 = 2 if s9 == 2
+	replace educat4 = 3 if inlist(s9, 3, 4, 5)
+	replace educat4 = 4 if s9 == 6
 	label var educat4 "Level of education 3"
-	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
+	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary", replace
 	label values educat4 lbleducat4
 *</_educat4_>
+
 
 *<_educat_orig_>
 	gen educat_orig = s9
 	label var educat_orig "Original survey education code"
 *</_educat_orig_>
+
 
 *<_educat_isced_>
 	gen educat_isced = .
@@ -1537,13 +1539,6 @@ quietly{
 }
 
 
-*<_% COMPRESS_>
-
-compress
-
-*</_% COMPRESS_>
-
-
 *<_% DELETE MISSING VARIABLES_>
 
 quietly: describe, varlist
@@ -1555,6 +1550,15 @@ foreach var of local kept_vars {
 }
 
 *</_% DELETE MISSING VARIABLES_>
+
+
+
+*<_% COMPRESS_>
+
+compress
+
+*</_% COMPRESS_>
+
 
 *<_% SAVE_>
 
