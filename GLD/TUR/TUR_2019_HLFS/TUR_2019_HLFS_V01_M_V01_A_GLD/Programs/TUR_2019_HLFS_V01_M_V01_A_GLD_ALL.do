@@ -555,7 +555,7 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat7_>
-	gen byte educat7 = s13
+	gen byte educat7 = okul_biten_k
 	recode educat7 0=1 1=3 2=4 31=5 32=5 4=7 5=7
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"

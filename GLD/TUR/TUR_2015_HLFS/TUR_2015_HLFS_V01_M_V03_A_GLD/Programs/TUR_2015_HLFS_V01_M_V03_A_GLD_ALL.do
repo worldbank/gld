@@ -4,37 +4,39 @@
 ==============================================================================================%%*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				TUR_2003_HLFS_V01_M_V02_A_GLD_ALL.do </_Program name_>
+<_Program name_>				TUR_2015_HLFS_V01_M_V02_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata 16 <_Application_>
 <_Author(s)_>					World Bank Job's Group </_Author(s)_>
-<_Date created_>				2021-09-17 </_Date created_>
+<_Date created_>				2021-10-08 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						TUR </_Country_>
 <_Survey Title_>				Household Labour Force Survey[SurveyName] </_Survey Title_>
-<_Survey Year_>					2003 </_Survey Year_>
+<_Survey Year_>					2015 </_Survey Year_>
 <_Study ID_>					Not on MicroData Library </_Study ID_>
 <_Data collection from_>		[MM/YYYY] </_Data collection from_>
 <_Data collection to_>			[MM/YYYY] </_Data collection to_>
 <_Source of dataset_> 			Shared by Turkey Country Office, shareable within World Bank, not to
 								be shared outside. </_Source of dataset_>
-<_Sample size (HH)_> 			78,174 </_Sample size (HH)_>
-<_Sample size (IND)_> 			292,182 </_Sample size (IND)_>
+<_Sample size (HH)_> 			 149615</_Sample size (HH)_>
+<_Sample size (IND)_> 			389035</_Sample size (IND)_>
 <_Sampling method_> 			Two-stage stratified cluster sampling method </_Sampling method_>
-<_Geographic coverage_> 		Urban/Rural , national level
+<_Geographic coverage_> 		NUTS-2 (https://en.wikipedia.org/wiki/NUTS_statistical_regions_of_Turkey) </_Geographic coverage_>
 <_Currency_> 					Turkish Lira </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 13
 								See (opens a download, explains ICLS from 1st Jan 2021): https://data.tuik.gov.tr/Bulten/DownloadFile?p=KWx/ZsAk3TypTRJIEcpUEtTStWGLhpnLGyTbaUSWvh2j3VKcvghQBAUEdXdBNaCselwemJkYsbg56bWA1qEsoRRNKEIzK2rRGmP9VLn9fRM=
 								</_ICLS Version_>
-<_ISCED Version_>				ISCED 97 </_ISCED Version_>
-<_ISCO Version_>				ISCO 88 </_ISCO Version_>
-<_OCCUP National_>				ISCO 88  </_OCCUP National_>
-<_ISIC Version_>				ISIC Rev. 3 </_ISIC Version_>
-<_INDUS National_>				 ISIC Rev. 3 </_INDUS National_>
+<_ISCED Version_>				ISCED 2011 </_ISCED Version_>
+<_ISCO Version_>				ISCO 08 </_ISCO Version_>
+<_OCCUP National_>				ISCO 08  </_OCCUP National_>
+<_ISIC Version_>				ISIC REV 4 </_ISIC Version_>
+<_INDUS National_>				NACE REV 2  </_INDUS National_>
 -----------------------------------------------------------------------
 <_Version Control_>
-* Date: [2022-09-D1] - [Change in variable empstat and occup_skill]
-* Date: [YYYY-MM-DD] - [Description of changes]
+
+* Date: [2022-09-02] - [Change in variable occup_skill]
+* Date: [2022-12-09] - Correct education, reduc to educat4
+
 </_Version Control_>
 -------------------------------------------------------------------------*/
 
@@ -51,14 +53,34 @@ set mem 800m
 
 *----------1.2: Set directories------------------------------*
 
-local path_in "Z:\GLD-Harmonization\582018_AQ\TUR\TUR_2003_HLFS\TUR_2003_HLFS_V01_M\Data\Stata"
-local path_output "Z:\GLD-Harmonization\582018_AQ\TUR\TUR_2003_HLFS\TUR_2003_HLFS_V01_M_V02_A_GLD\Data\Harmonized"
+* Define path sections
+local server  "Z:\GLD-Harmonization\582018_AQ"
+local country "TUR"
+local year    "2015"
+local survey  "HLFS"
+local vermast "V01"
+local veralt  "V03"
+
+* From the definitions, set path chunks
+local level_1      "`country'_`year'_`survey'"
+local level_2_mast "`level_1'_`vermast'_M"
+local level_2_harm "`level_1'_`vermast'_M_`veralt'_A_GLD"
+
+* From chunks, define path_in, path_output folder
+local path_in_stata "`server'/`country'/`level_1'/`level_2_mast'/Data/Stata"
+local path_in_other "`server'/`country'/`level_1'/`level_2_mast'/Data/Original"
+local path_output   "`server'/`country'/`level_1'/`level_2_harm'/Data/Harmonized"
+
+* Define Output file name
+local out_file "`level_2_harm'_ALL.dta"
 
 *----------1.3: Database assembly------------------------------*
 
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
-use "`path_in'\LFS2003-lab.dta"
+use "`path_in_stata'\TUR_2015_HLFS_raw_from_datalibweb.dta "
+rename*, lower
+
 
 
 /*%%=============================================================================================
@@ -84,50 +106,44 @@ use "`path_in'\LFS2003-lab.dta"
 	label var survey "Survey type"
 *</_survey_>
 
+
 *<_icls_v_>
-/*<_icls_v_note>
-https://www.google.com.pe/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&ved=2ahUKEwjE5J29y__zAhULs5UCHQcRBpwQFnoECAYQAQ&url=https%3A%2F%2Funstats.un.org%2Funsd%2Fnationalaccount%2Fworkshops%2F2013%2Fankara%2FA-115.ppt&usg=AOvVaw3T_fzx1C9ZUpp1Rb1FQgxi
-The link above goes to a presentation from TUIK in which they explain that since 1988 ICLS-13 has been applied to HLFS.
-</_icls_v_note>*/
 	gen icls_v = "ICLS-13"
 	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
 
 *<_isced_version_>
-	gen isced_version = "isced_1997"
+	gen isced_version = "isced_2011"
 	label var isced_version "Version of ISCED used for educat_isced"
 *</_isced_version_>
 
 
 *<_isco_version_>
-/*<_isco_version_note>
-ILO webpage says that the version used was isco 88 note that for the bank TUIK shared isco 68 data.
-</_isco_version_note<*/
-	gen isco_version = "isco_1988"
+	gen isco_version = "isco_2008"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
 
 *<_isic_version_>
-	gen isic_version = "isic_3"
+	gen isic_version = "isic_4"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
 
 *<_year_>
-	gen int year = 2003
+	*gen int year = 2015
 	label var year "Year of survey"
 *</_year_>
 
 
 *<_vermast_>
-	gen vermast = "v01"
+	gen vermast = "`vermast'"
 	label var vermast "Version of master data"
 *</_vermast_>
 
 
 *<_veralt_>
-	gen veralt = "v02"
+	gen veralt = "`veralt'"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
@@ -139,7 +155,7 @@ ILO webpage says that the version used was isco 88 note that for the bank TUIK s
 
 
 *<_int_year_>
-	gen int_year= 2003
+	gen int_year= 2015
 	label var int_year "Year of the interview"
 *</_int_year_>
 
@@ -159,27 +175,19 @@ ILO webpage says that the version used was isco 88 note that for the bank TUIK s
 
 
 *<_pid_>
-
-
-	replace s1=26 in 121971
-	replace s1=27 in 121972
-	replace s1=26 in 122132
-	replace s1=27 in 122133
-	replace s1=28 in 122134
-	replace s1=29 in 122135
-
 	tostring s1, gen(s1_helper) format(%02.0f)
 	egen pid=concat(hhid s1_helper)
-	isid hhid pid
 	label var pid "Individual ID"
+	isid hhid pid
 
 *</_pid_>
+
 
 
 *<_weight_>
 /* <_weight_note>
 </_weight_note> */
-	gen weight = fakyil
+	gen weight = faktor*1000
 	label var weight "Household sampling weight"
 *</_weight_>
 
@@ -220,13 +228,7 @@ ILO webpage says that the version used was isco 88 note that for the bank TUIK s
 {
 
 *<_urban_>
-/*<_urban_>
-(Settlements with a population of 20 000 or less are defined as RURAL)
-(Settlements with a population of 20 001 and over are defined as URBAN)
-</_urban_>*/
 	gen byte urban = .
-	replace urban=1 if kirkent=="KENT"
-	replace urban=0 if kirkent=="KIR"
 	label var urban "Location is urban"
 	la de lblurban 1 "Urban" 0 "Rural"
 	label values urban lblurban
@@ -236,17 +238,54 @@ ILO webpage says that the version used was isco 88 note that for the bank TUIK s
 
 *<_subnatid1_>
 /* <_subnatid1>
-	First breakdown is NUTS-1 (https://en.wikipedia.org/wiki/NUTS_statistical_regions_of_Turkey), not actual
-	administrative divisions. Same for subnatid2.
+	First breakdown is NUTS-1 (https://en.wikipedia.org/wiki/NUTS_statistical_regions_of_Turkey), not actual administrative divisions. Same for subnatid2.
 </_subnatid1> */
-	gen subnatid1=.
-	label var subnatid1 "Subnational ID at NUTS 1 Level"
+gen subnatid1=""
+replace subnatid1="1 - Istanbul" if nuts1==1
+replace subnatid1="2 - West Marmara" if nuts1==2
+replace subnatid1="3 - Aegean" if nuts1==3
+replace subnatid1="4 - East Marmara" if nuts1==4
+replace subnatid1="5 - West Anatolia" if nuts1==5
+replace subnatid1="6 - Mediterranean" if nuts1==6
+replace subnatid1="7 - Central Anatolia"  if nuts1==7
+replace subnatid1="8 - West Black Sea"  if nuts1==8
+replace subnatid1="9 - East Black Sea" if nuts1==9
+replace subnatid1="10 - Northeast Anatolia" if nuts1==10
+replace subnatid1="11- Middle East Anatolia" if nuts1==11
+replace subnatid1="12 - Southeast Anatolia" if nuts1==12
+label var subnatid1 "Subnational ID at NUTS 1 Level"
 *</_subnatid1_>
 
 
 *<_subnatid2_>
-	gen subnatid2=.
-	label var subnatid2 "Subnational ID at NUTS 2 Level"
+gen subnatid2=""
+replace subnatid2="1 - Istanbul"  if nuts2==1
+replace subnatid2="2 - Edirne, Tekirdağ, Kırklareli"  if nuts2==2
+replace subnatid2="3 - Balıkesir, Çanakkale"  if nuts2==3
+replace subnatid2="4 - İzmir"  if nuts2==4
+replace subnatid2="5 - Denizli, Aydın, Muğla"  if nuts2==5
+replace subnatid2="6 - Manisa, Afyonkarahisar, Kütahya, Uşak" if nuts2==6
+replace subnatid2="7 - Bursa, Eskişehir, Bilecik" if nuts2==7
+replace subnatid2="8 - Kocaeli, Sakarya, Düzce, Bolu, Yalova" if nuts2==8
+replace subnatid2="9 - Ankara" if nuts2==9
+replace subnatid2="10 - Konya, Karaman" if nuts2==10
+replace subnatid2="11 - Antalya, Isparta, Burdur" if nuts2==11
+replace subnatid2="12 - Adana, Mersin" if nuts2==12
+replace subnatid2="13 - Hatay, Kahramanmaraş, Osmaniye" if nuts2==13
+replace subnatid2="14 - Nevşehir, Aksaray, Niğde, Kırıkkale, Kırşehir" if nuts2==14
+replace subnatid2="15 - Kayseri, Sivas, Yozgat" if nuts2==15
+replace subnatid2="16 - Zonguldak, Karabük, Bartın" if nuts2==16
+replace subnatid2="17 - Kastamonu, Çankırı, Sinop" if nuts2==17
+replace subnatid2="18 - Samsun, Tokat, Çorum, Amasya" if nuts2==18
+replace subnatid2="19 - Trabzon, Ordu, Giresun, Rize, Artvin, Gümüşhane" if nuts2==19
+replace subnatid2="20 - Erzurum, Erzincan, Bayburt" if nuts2==20
+replace subnatid2="21 - Kars, Ağrı, Iğdır, Ardahan" if nuts2==21
+replace subnatid2="22 - Malatya, Elazığ, Bingöl, Tunceli" if nuts2==22
+replace subnatid2="23 - Van, Muş, Bitlis, Hakkari" if nuts2==23
+replace subnatid2="24 - Gaziantep, Adıyaman, Kilis" if nuts2==24
+replace subnatid2="25 - Diyarbakır, Şanlıurfa" if nuts2==25
+replace subnatid2="26 - Siirt, Mardin, Batman, Şırnak" if nuts2==26
+label var subnatid2 "Subnational ID at NUTS 2 Level"
 *</_subnatid2_>
 
 
@@ -259,7 +298,7 @@ ILO webpage says that the version used was isco 88 note that for the bank TUIK s
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = "urban"
+	gen subnatidsurvey = "subnatid2"
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -311,32 +350,19 @@ ILO webpage says that the version used was isco 88 note that for the bank TUIK s
 {
 
 *<_hsize_>
-	sort hhid pid
+sort hhid pid
 	by hhid: generate hsize=_N
 	*bysort hhid: generate hsize = _N
 	*s7 = 8 represent non relatives , I am taking them out. 663 observations
-	replace hsize=. if s7==8
+	replace hsize=. if s11==8
 	label var hsize "Household size"
 *</_hsize_>
 
 
 *<_age_>
-*The lower range needs to be broken down into 1-4, 5-9 and 10-14, we use helpers for this using the income status (s12)
-	gen helper_age=.
-	replace helper_age=1 if s4==1 & s12==.
-	replace helper_age=2 if s4==1 & s12==2
-	replace helper_age=3 if s4==1 & s12==1
 
-*we create the var age using s4 and recode for new groups (12 in total 5 years overlap)
-	gen age=s4
-	recode age 2=15 3=20 4=25 5=30 6=35 7=40 8=45 9=50 10=55 11=60 12=65
-
-	replace age=1 if helper_age==1
-	replace age=5 if helper_age==2
-	replace age=10 if helper_age==3
-
+	gen age=s6
 	label var age "Individual age"
-
 
 *</_age_>
 
@@ -351,23 +377,23 @@ ILO webpage says that the version used was isco 88 note that for the bank TUIK s
 
 
 *<_relationharm_>
-
-	gen relationharm =s7
-	recode relationharm 1=1 2=2 3=3 4/7=5 8=6
-	label var relationharm "Relationship to the head of household - Harmonized"
-	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
-	label values relationharm  lblrelationharm
+gen relationharm =s11
+recode relationharm 11=.
+recode relationharm 1=1 2=2 3=3 4=4 5/9=5 10=6
+label var relationharm "Relationship to the head of household - Harmonized"
+la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
+label values relationharm  lblrelationharm
 *</_relationharm_>
 
 
 *<_relationcs_>
-	gen relationcs = s7
+	gen relationcs = s11
 	label var relationcs "Relationship to the head of household - Country original"
 *</_relationcs_>
 
 
 *<_marital_>
-	gen byte marital = s11
+	gen byte marital = s24
 	recode marital 1=2 2=1 3=4 4=5
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
@@ -427,13 +453,14 @@ ILO webpage says that the version used was isco 88 note that for the bank TUIK s
 
 
 *<_migrated_ref_time_>
-	gen migrated_ref_time = .
+	gen migrated_ref_time = 99
 	label var migrated_ref_time "Reference time applied to migration questions (in years)"
 *</_migrated_ref_time_>
 
 
 *<_migrated_binary_>
-	gen migrated_binary = .
+	gen migrated_binary = s8a
+	recode migrated_binary 2=0
 	label de lblmigrated_binary 0 "No" 1 "Yes"
 	label values migrated_binary lblmigrated_binary
 	label var migrated_binary "Individual has migrated"
@@ -441,17 +468,21 @@ ILO webpage says that the version used was isco 88 note that for the bank TUIK s
 
 
 *<_migrated_years_>
-	gen migrated_years = .
+
+	gen helper_m=(2015-s8b)
+	recode helper_m 0=.
+	gen migrated_years = helper_m
+	drop helper_m
 	label var migrated_years "Years since latest migration"
 *</_migrated_years_>
 
 
 *<_migrated_from_urban_>
+
 	gen migrated_from_urban = .
 	label de lblmigrated_from_urban 0 "Rural" 1 "Urban"
 	label values migrated_from_urban lblmigrated_from_urban
 	label var migrated_from_urban "Migrated from area"
-*</_migrated_from_urban_>
 
 
 *<_migrated_from_cat_>
@@ -496,18 +527,14 @@ ILO webpage says that the version used was isco 88 note that for the bank TUIK s
 
 *<_ed_mod_age_>
 
-/* <_ed_mod_age_note>
-Note the data release we have has only 15 year old and older actual survey cut off is 5. A tad irrelevant but for completeness sake.
-</_ed_mod_age_note> */
-
-gen byte ed_mod_age = 6
-label var ed_mod_age "Education module application age"
+	gen byte ed_mod_age = 6
+	label var ed_mod_age "Education module application age"
 
 *</_ed_mod_age_>
 
 *<_school_>
-	gen byte school = s10
-	recode school 2=0
+	gen byte school = s17
+	recode school 0=. 2=0
 	label var school "Attending school"
 	la de lblschool 0 "No" 1 "Yes"
 	label values school  lblschool
@@ -515,7 +542,7 @@ label var ed_mod_age "Education module application age"
 
 
 *<_literacy_>
-	gen byte literacy = s8
+	gen byte literacy = s14
 	recode literacy (2=0)
 	label var literacy "Individual can read & write"
 	la de lblliteracy 0 "No" 1 "Yes"
@@ -525,27 +552,22 @@ label var ed_mod_age "Education module application age"
 
 *<_educy_>
 	gen byte educy = .
-	replace educy=0 if s9==0
-	replace educy=4 if s9==1
-	replace educy=8 if s9==2
-	replace educy=12 if s9==3
-	replace educy=12 if s9==4
-	replace educy=14 if s9==5
-	replace educy=19 if s9==6
+	replace educy=0 if s13==0
+	replace educy=4 if s13==1
+	replace educy=8 if s13==2
+	replace educy=12 if s13==31
+	replace educy=12 if s13==32
+	replace educy=19 if s13==4
+	replace educy=19 if s13==5
 	label var educy "Years of education"
 *</_educy_>
 
 
 *<_educat7_>
-	gen byte educat7 = s9
-	replace educat7=2 if s9==3 & age<10
-	replace educat7=3 if s9==3 & age==10
-	replace educat7=4 if s9==3 & age>10
-	recode educat7 0=. 1=1 2=3 3=4 4=5 5=5 6=7
+	gen byte educat7 = .
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
-*</_educat7_>
 
 
 *<_educat5_>
@@ -558,15 +580,18 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat4_>
-	gen byte educat4 = educat5
-	recode educat4 (3=2) (4=3) (5=4)
+	gen byte educat4 = .
+	replace educat4 = 1 if s13 == 0
+	replace educat4 = 2 if s13 == 1
+	replace educat4 = 3 if inlist(s13, 2, 31, 32)
+	replace educat4 = 4 if inrange(s13, 4, 5)
 	label var educat4 "Level of education 3"
-	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
+	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary", replace
 	label values educat4 lbleducat4
 *</_educat4_>
 
 *<_educat_orig_>
-	gen educat_orig = s9
+	gen educat_orig = s13
 	label var educat_orig "Original survey education code"
 *</_educat_orig_>
 
@@ -601,7 +626,8 @@ foreach v of local ed_var {
 {
 
 *<_vocational_>
-	gen vocational = .
+	gen vocational = s21
+	recode vocational 0=. 2=0
 	label de lblvocational 0 "No" 1 "Yes"
 	label var vocational "Ever received vocational training"
 *</_vocational_>
@@ -652,6 +678,7 @@ foreach v of local ed_var {
 {
 *<_lstatus_>
 	gen byte lstatus = durum
+	replace lstatus=. if durum==3 & s29!=.
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
@@ -679,10 +706,10 @@ foreach v of local ed_var {
 
 
 *<_nlfreason_>
-	gen byte nlfreason = s37
-	recode nlfreason 0=. 1=5 2=5 3=5 4=5 5=1 6=2 7=4 8=5 9=3 10=5 11=5 12=5 13=5 14=5
+	gen byte nlfreason = s29
+	recode nlfreason 0=.
+	recode nlfreason 1=4 2=3 3=5 4=5 6=5 7=1 8=5 9=3 10=5
 	replace nlfreason=. if lstatus!=3
-	recode nlfreason .=5 if lstatus==3 & missing(nlfreason)
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
 	label values nlfreason lblnlfreason
@@ -709,8 +736,9 @@ foreach v of local ed_var {
 
 {
 *<_empstat_>
-	gen byte empstat = s23
-	recode empstat 2=5 5=2
+	gen byte empstat = s39
+	recode empstat 2=3 4=2 3=4
+	replace empstat=. if lstatus!=1
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat lblempstat
@@ -726,7 +754,7 @@ foreach v of local ed_var {
 
 
 *<_industry_orig_>
-	gen industry_orig = s16kod
+	gen industry_orig = s33kod
 	tostring industry_orig, replace
 	replace industry_orig="" if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
@@ -734,16 +762,33 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_>
-
-  gen industrycat_isic= .
+*1 digit isic code
+	gen helper_1 = string(s33kod,"%02.0f")
+	gen helper_2 = "00"
+	egen industrycat_isic = concat(helper_1 helper_2)
+	replace industrycat_isic = "" if industrycat_isic == ".00"
+	drop helper_1 helper_2
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
 
 *<_industrycat10_>
-*No correspondance table between rev3 and rev 4 https://unstats.un.org/unsd/classifications/Econ/isic
-	gen industrycat10=s16kod
-	replace industrycat10=10 if s16kod==9
+	gen industrycat10=s33kod
+	replace industrycat10=1 if inrange(s33kod,1,3)
+	replace industrycat10=2 if inrange(s33kod,5,9)
+	replace industrycat10=3 if inrange(s33kod,10,33)
+	replace industrycat10=4 if inrange(s33kod,35,39)
+	replace industrycat10=5 if inrange(s33kod,41,43)
+	replace industrycat10=6 if inrange(s33kod,45,47)
+	replace industrycat10=6 if inrange(s33kod,55,56)
+	replace industrycat10=7 if inrange(s33kod,49,53)
+	replace industrycat10=7 if inrange(s33kod,58,63)
+	replace industrycat10=8 if inrange(s33kod,64,66)
+	replace industrycat10=8 if s33kod==68
+	replace industrycat10=9 if s33kod==84
+replace industrycat10=8 if inrange(s33kod,69,82)
+	replace industrycat10=10 if inrange(s33kod,85,99)
+	recode industrycat10  0=.
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
@@ -752,7 +797,6 @@ foreach v of local ed_var {
 
 
 *<_industrycat4_>
-*No correspondance table between rev3 and rev 4 https://unstats.un.org/unsd/classifications/Econ/isic
 	gen byte industrycat4 = industrycat10
 	recode industrycat4 (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
 	label var industrycat4 "1 digit industry classification (Broad Economic Activities), primary job 7 day recall"
@@ -762,35 +806,49 @@ foreach v of local ed_var {
 
 
 *<_occup_orig_>
-	gen str1 occup_orig = string(s22kod)
-	replace occup_orig="" if s22kod==.
+	gen str2 occup_orig = string(s38kod)
+	replace occup_orig="" if s38kod==.
 	replace occup_orig="" if lstatus!=1
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
 
 *<_occup_isco_>
-	gen helper_1 = "000"
-	egen occup_isco=concat(helper_1 occup_orig)
+	gen occup_isco = occup_orig + substr("0000", 1, 4 - length(occup_orig))
 	replace occup_isco="" if lstatus!=1
-	drop helper_1
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
 
 *<_occup_skill_>
-	gen occup_skill = s22kod
-	recode occup_skill 1/3=3 4/8=2 9=1 0=. 99=.
+	gen occup_skill =occup_orig
+	destring occup_skill,replace
+	gen helper_1=occup_skill
+	replace occup_skill=1 if inrange(helper_1,91,96)
+	replace occup_skill=2 if inrange(helper_1,41,83)
+	replace occup_skill=3 if inrange(helper_1,11,35)
 	replace occup_skill=. if lstatus!=1
+	drop helper_1
 	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
 	label values occup_skill lblskill
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
-
 *</_occup_skill_>
 
 
 *<_occup_>
-	gen byte occup = s22kod
+	gen byte occup = s38kod
+	replace occup=. if s38kod==0
+	replace occup=99 if s38kod==99
+	replace occup=10 if s38kod==1
+	replace occup=1 if inrange(s38kod,11,14)
+	replace occup=2 if inrange(s38kod,21,26)
+	replace occup=3 if inrange(s38kod,31,35)
+	replace occup=4 if inrange(s38kod,41,44)
+	replace occup=5 if inrange(s38kod,51,54)
+	replace occup=6 if inrange(s38kod,61,63)
+	replace occup=7 if inrange(s38kod,71,75)
+	replace occup=8 if inrange(s38kod,81,83)
+	replace occup=9 if inrange(s38kod,91,96)
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup
@@ -798,10 +856,11 @@ foreach v of local ed_var {
 
 
 *<_wage_no_compen_>
+/* <_wage_no_compen_note>
 
-	gen double wage_no_compen =s32c
+</_wage_no_compen_note> */
+	gen double wage_no_compen =s69
 	replace wage_no_compen=. if lstatus!=1
-	*replace wage_no_compen=. if empstat!=1
 	replace wage_no_compen=. if wage_no_compen == 0
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
@@ -819,13 +878,11 @@ foreach v of local ed_var {
 *<_whours_>
 /* <_whours_note>
 
-	Survey has two concepts - work usually in a week (s27a) and work the last week (s28a).
-
-
 </_whours_note> */
-	gen whours = s28a
+	gen whours = s56a_top
+	recode whours 0=.
 	replace whours=. if lstatus!=1
-	replace whours=. if s28a>84
+replace whours=. if s56a_top>84
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -862,7 +919,7 @@ foreach v of local ed_var {
 
 
 *<_socialsec_>
-	gen byte socialsec = s25
+	gen byte socialsec = s42
 	recode socialsec (2=0)
 	label var socialsec "Employment has social security insurance primary job 7 day recall"
 	la de lblsocialsec 1 "With social security" 0 "Without social secturity"
@@ -879,16 +936,16 @@ foreach v of local ed_var {
 
 
 *<_firmsize_l_>
-	gen firmsize_l=s21
-	recode firmsize_l 1=1 2=10 3=25 4=50
+	gen firmsize_l=s37a
+	recode firmsize_l 1=1 2=10 3=25 4=50 5=250 6=500
 	replace firmsize_l=. if lstatus!=1
 	label var firmsize_l "Firm size (lower bracket) primary job 7 day recall"
 *</_firmsize_l_>
 
 
 *<_firmsize_u_>
-	gen firmsize_u=s21
-	recode firmsize_u 1=9 2=24 3=49 4=.
+	gen firmsize_u=s37a
+	recode firmsize_u 1=9 2=24 3=49 4=249 5=499 6=.
 	replace firmsize_u=. if lstatus!=1
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>
@@ -916,7 +973,7 @@ foreach v of local ed_var {
 
 
 *<_industry_orig_2_>
-	gen industry_orig_2 = s26kod
+	gen industry_orig_2 = s53kod
 	tostring industry_orig_2, replace
 	replace industry_orig_2="" if lstatus!=1
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
@@ -924,22 +981,22 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_2_>
-	gen  industrycat_isic_2= .
+
+	gen industrycat_isic_2 = ""
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
 
 *<_industrycat10_2_>
-	gen byte industrycat10_2 = s26kod
-	replace industrycat10_2=10 if s26kod==9
-	replace industrycat10_2=. if lstatus!=1
+	gen byte industrycat10_2 =.
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
 *</_industrycat10_2_>
 
 
 *<_industrycat4_2_>
-	gen byte industrycat4_2 = .
+	gen byte industrycat4_2 = industrycat10_2
+	recode industrycat4_2 (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
 	label var industrycat4_2 "1 digit industry classification (Broad Economic Activities), secondary job 7 day recall"
 	label values industrycat4_2 lblindustrycat4
 *</_industrycat4_2_>
@@ -984,9 +1041,10 @@ foreach v of local ed_var {
 
 
 *<_whours_2_>
-	gen whours_2 = s28b
+	gen whours_2 = s56b_top
+	recode whours_2 0=.
+	replace whours_2=. if s56b_top>56
 	replace whours_2=. if lstatus!=1
-	replace whours_2=. if s28b>84
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 
@@ -1125,7 +1183,7 @@ replace t_hours_total=. if helper_totalh>140
 
 *<_ocusec_year_>
 	gen byte ocusec_year = .
-	label var ocusec_year "Sector of activity primary job 12 day recall"
+	label var ocusec_year "Sector of activity primary job 12 month recall"
 	la de lblocusec_year 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec_year lblocusec_year
 *</_ocusec_year_>
@@ -1184,7 +1242,7 @@ replace t_hours_total=. if helper_totalh>140
 *</_occup_year_>
 
 
-*<_wage_no_compen_year_> --- this var has the same name as other and when quoted in the keep and order codes is repeated.
+*<_wage_no_compen_year_>
 	gen double wage_no_compen_year = .
 	label var wage_no_compen_year "Last wage payment primary job 12 month recall"
 *</_wage_no_compen_year_>
@@ -1275,7 +1333,7 @@ replace t_hours_total=. if helper_totalh>140
 
 *<_ocusec_2_year_>
 	gen byte ocusec_2_year = .
-	label var ocusec_2_year "Sector of activity secondary job 12 day recall"
+	label var ocusec_2_year "Sector of activity secondary job 12 month recall"
 	la de lblocusec_2_year 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec_2_year lblocusec_2_year
 *</_ocusec_2_year_>
@@ -1389,7 +1447,7 @@ replace t_hours_total=. if helper_totalh>140
 
 *<_t_wage_nocompen_others_year_>
 	gen t_wage_nocompen_others_year = .
-	label var t_wage_nocompen_others_year "Annualized wage in all but primary & secondary jobs excl. bonuses, etc. 12 month recall)"
+	label var t_wage_nocompen_others_year "Annualized wage in all but primary & secondary jobs excl. bonuses, etc. 12 month recall"
 *</_t_wage_nocompen_others_year_>
 
 *<_t_wage_others_year_>
@@ -1542,6 +1600,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`path_output'\TUR_2003_HLFS_V01_M_V02_A_GLD_ALL.dta", replace
+save "`path_output'/`out_file'", replace
 
 *</_% SAVE_>

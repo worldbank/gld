@@ -4,21 +4,21 @@
 ==============================================================================================%%*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				TUR_2003_HLFS_V01_M_V02_A_GLD_ALL.do </_Program name_>
+<_Program name_>				TUR_2000_HLFS_V01_M_V03_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata 16 <_Application_>
 <_Author(s)_>					World Bank Job's Group </_Author(s)_>
 <_Date created_>				2021-09-17 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						TUR </_Country_>
-<_Survey Title_>				Household Labour Force Survey[SurveyName] </_Survey Title_>
-<_Survey Year_>					2003 </_Survey Year_>
+<_Survey Title_>				Household Labour Force Survey </_Survey Title_>
+<_Survey Year_>					2000 </_Survey Year_>
 <_Study ID_>					Not on MicroData Library </_Study ID_>
-<_Data collection from_>		[MM/YYYY] </_Data collection from_>
-<_Data collection to_>			[MM/YYYY] </_Data collection to_>
+<_Data collection from_>		[N/A] </_Data collection from_>
+<_Data collection to_>			[N/A] </_Data collection to_>
 <_Source of dataset_> 			Shared by Turkey Country Office, shareable within World Bank, not to
 								be shared outside. </_Source of dataset_>
-<_Sample size (HH)_> 			78,174 </_Sample size (HH)_>
-<_Sample size (IND)_> 			292,182 </_Sample size (IND)_>
+<_Sample size (HH)_> 			74,356 </_Sample size (HH)_>
+<_Sample size (IND)_> 			288,735 </_Sample size (IND)_>
 <_Sampling method_> 			Two-stage stratified cluster sampling method </_Sampling method_>
 <_Geographic coverage_> 		Urban/Rural , national level
 <_Currency_> 					Turkish Lira </_Currency_>
@@ -27,14 +27,16 @@
 								See (opens a download, explains ICLS from 1st Jan 2021): https://data.tuik.gov.tr/Bulten/DownloadFile?p=KWx/ZsAk3TypTRJIEcpUEtTStWGLhpnLGyTbaUSWvh2j3VKcvghQBAUEdXdBNaCselwemJkYsbg56bWA1qEsoRRNKEIzK2rRGmP9VLn9fRM=
 								</_ICLS Version_>
 <_ISCED Version_>				ISCED 97 </_ISCED Version_>
-<_ISCO Version_>				ISCO 88 </_ISCO Version_>
-<_OCCUP National_>				ISCO 88  </_OCCUP National_>
+<_ISCO Version_>				ISCO 68 </_ISCO Version_>
+<_OCCUP National_>				ISCO 68  </_OCCUP National_>
 <_ISIC Version_>				ISIC Rev. 3 </_ISIC Version_>
 <_INDUS National_>				 ISIC Rev. 3 </_INDUS National_>
 -----------------------------------------------------------------------
 <_Version Control_>
-* Date: [2022-09-D1] - [Change in variable empstat and occup_skill]
-* Date: [YYYY-MM-DD] - [Description of changes]
+
+* Date: [2022-09-02] - [Change in variable occup_skill]
+* Date: [2022-12-09] - Correct education, reduc to educat4
+
 </_Version Control_>
 -------------------------------------------------------------------------*/
 
@@ -51,14 +53,32 @@ set mem 800m
 
 *----------1.2: Set directories------------------------------*
 
-local path_in "Z:\GLD-Harmonization\582018_AQ\TUR\TUR_2003_HLFS\TUR_2003_HLFS_V01_M\Data\Stata"
-local path_output "Z:\GLD-Harmonization\582018_AQ\TUR\TUR_2003_HLFS\TUR_2003_HLFS_V01_M_V02_A_GLD\Data\Harmonized"
+* Define path sections
+local server  "Y:\GLD-Harmonization\582018_AQ"
+local country "TUR"
+local year    "2000"
+local survey  "HLFS"
+local vermast "V01"
+local veralt  "V03"
+
+* From the definitions, set path chunks
+local level_1      "`country'_`year'_`survey'"
+local level_2_mast "`level_1'_`vermast'_M"
+local level_2_harm "`level_1'_`vermast'_M_`veralt'_A_GLD"
+
+* From chunks, define path_in, path_output folder
+local path_in_stata "`server'/`country'/`level_1'/`level_2_mast'/Data/Stata"
+local path_in_other "`server'/`country'/`level_1'/`level_2_mast'/Data/Original"
+local path_output   "`server'/`country'/`level_1'/`level_2_harm'/Data/Harmonized"
+
+* Define Output file name
+local out_file "`level_2_harm'_ALL.dta"
 
 *----------1.3: Database assembly------------------------------*
 
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
-use "`path_in'\LFS2003-lab.dta"
+use "`path_in_stata'\LFS2000-lab.dta"
 
 
 /*%%=============================================================================================
@@ -84,6 +104,7 @@ use "`path_in'\LFS2003-lab.dta"
 	label var survey "Survey type"
 *</_survey_>
 
+
 *<_icls_v_>
 /*<_icls_v_note>
 https://www.google.com.pe/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&ved=2ahUKEwjE5J29y__zAhULs5UCHQcRBpwQFnoECAYQAQ&url=https%3A%2F%2Funstats.un.org%2Funsd%2Fnationalaccount%2Fworkshops%2F2013%2Fankara%2FA-115.ppt&usg=AOvVaw3T_fzx1C9ZUpp1Rb1FQgxi
@@ -103,31 +124,31 @@ The link above goes to a presentation from TUIK in which they explain that since
 /*<_isco_version_note>
 ILO webpage says that the version used was isco 88 note that for the bank TUIK shared isco 68 data.
 </_isco_version_note<*/
-	gen isco_version = "isco_1988"
+	gen isco_version = ""
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
 
 *<_isic_version_>
-	gen isic_version = "isic_3"
+	gen isic_version = ""
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
 
 *<_year_>
-	gen int year = 2003
+	gen int year = 2000
 	label var year "Year of survey"
 *</_year_>
 
 
 *<_vermast_>
-	gen vermast = "v01"
+	gen vermast = "`vermast'"
 	label var vermast "Version of master data"
 *</_vermast_>
 
 
 *<_veralt_>
-	gen veralt = "v02"
+	gen veralt = "`veralt'"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
@@ -139,7 +160,7 @@ ILO webpage says that the version used was isco 88 note that for the bank TUIK s
 
 
 *<_int_year_>
-	gen int_year= 2003
+	gen int_year= 2000
 	label var int_year "Year of the interview"
 *</_int_year_>
 
@@ -153,21 +174,14 @@ ILO webpage says that the version used was isco 88 note that for the bank TUIK s
 
 
 *<_hhid_>
+	replace formno = formno + 33000 in 217021/217082
+	isid formno s1
 	tostring formno, gen(hhid) format(%05.0f)
 	label var hhid "Household ID"
 *</_hhid_>
 
 
 *<_pid_>
-
-
-	replace s1=26 in 121971
-	replace s1=27 in 121972
-	replace s1=26 in 122132
-	replace s1=27 in 122133
-	replace s1=28 in 122134
-	replace s1=29 in 122135
-
 	tostring s1, gen(s1_helper) format(%02.0f)
 	egen pid=concat(hhid s1_helper)
 	isid hhid pid
@@ -177,8 +191,6 @@ ILO webpage says that the version used was isco 88 note that for the bank TUIK s
 
 
 *<_weight_>
-/* <_weight_note>
-</_weight_note> */
 	gen weight = fakyil
 	label var weight "Household sampling weight"
 *</_weight_>
@@ -220,25 +232,16 @@ ILO webpage says that the version used was isco 88 note that for the bank TUIK s
 {
 
 *<_urban_>
-/*<_urban_>
-(Settlements with a population of 20 000 or less are defined as RURAL)
-(Settlements with a population of 20 001 and over are defined as URBAN)
-</_urban_>*/
 	gen byte urban = .
 	replace urban=1 if kirkent=="KENT"
 	replace urban=0 if kirkent=="KIR"
 	label var urban "Location is urban"
 	la de lblurban 1 "Urban" 0 "Rural"
 	label values urban lblurban
-
 *</_urban_>
 
 
 *<_subnatid1_>
-/* <_subnatid1>
-	First breakdown is NUTS-1 (https://en.wikipedia.org/wiki/NUTS_statistical_regions_of_Turkey), not actual
-	administrative divisions. Same for subnatid2.
-</_subnatid1> */
 	gen subnatid1=.
 	label var subnatid1 "Subnational ID at NUTS 1 Level"
 *</_subnatid1_>
@@ -252,8 +255,6 @@ ILO webpage says that the version used was isco 88 note that for the bank TUIK s
 
 *<_subnatid3_>
 	gen byte subnatid3 = .
-	*label de lblsubnatid3 1 "1 - Name"
-	*label values subnatid3 lblsubnatid3
 	label var subnatid3 "Subnational ID at Third Administrative Level"
 *</_subnatid3_>
 
@@ -265,9 +266,6 @@ ILO webpage says that the version used was isco 88 note that for the bank TUIK s
 
 
 *<_subnatid1_prev_>
-/* <_subnatid1_prev_note>
-	subnatid1_prev is coded as missing unless the classification used for subnatid1 has changed since the previous survey.
-</_subnatid1_prev_note> */
 	gen subnatid1_prev = .
 	label var subnatid1_prev "Classification used for subnatid1 from previous survey"
 *</_subnatid1_prev_>
@@ -311,9 +309,9 @@ ILO webpage says that the version used was isco 88 note that for the bank TUIK s
 {
 
 *<_hsize_>
+
 	sort hhid pid
 	by hhid: generate hsize=_N
-	*bysort hhid: generate hsize = _N
 	*s7 = 8 represent non relatives , I am taking them out. 663 observations
 	replace hsize=. if s7==8
 	label var hsize "Household size"
@@ -321,12 +319,12 @@ ILO webpage says that the version used was isco 88 note that for the bank TUIK s
 
 
 *<_age_>
+
 *The lower range needs to be broken down into 1-4, 5-9 and 10-14, we use helpers for this using the income status (s12)
 	gen helper_age=.
 	replace helper_age=1 if s4==1 & s12==.
 	replace helper_age=2 if s4==1 & s12==2
 	replace helper_age=3 if s4==1 & s12==1
-
 *we create the var age using s4 and recode for new groups (12 in total 5 years overlap)
 	gen age=s4
 	recode age 2=15 3=20 4=25 5=30 6=35 7=40 8=45 9=50 10=55 11=60 12=65
@@ -336,7 +334,6 @@ ILO webpage says that the version used was isco 88 note that for the bank TUIK s
 	replace age=10 if helper_age==3
 
 	label var age "Individual age"
-
 
 *</_age_>
 
@@ -351,7 +348,6 @@ ILO webpage says that the version used was isco 88 note that for the bank TUIK s
 
 
 *<_relationharm_>
-
 	gen relationharm =s7
 	recode relationharm 1=1 2=2 3=3 4/7=5 8=6
 	label var relationharm "Relationship to the head of household - Harmonized"
@@ -464,8 +460,6 @@ ILO webpage says that the version used was isco 88 note that for the bank TUIK s
 
 *<_migrated_from_code_>
 	gen migrated_from_code = .
-	*label de lblmigrated_from_code
-	*label values migrated_from_code lblmigrated_from_code
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
 *</_migrated_from_code_>
 
@@ -500,8 +494,8 @@ ILO webpage says that the version used was isco 88 note that for the bank TUIK s
 Note the data release we have has only 15 year old and older actual survey cut off is 5. A tad irrelevant but for completeness sake.
 </_ed_mod_age_note> */
 
-gen byte ed_mod_age = 6
-label var ed_mod_age "Education module application age"
+	gen byte ed_mod_age = 6
+	label var ed_mod_age "Education module application age"
 
 *</_ed_mod_age_>
 
@@ -524,9 +518,10 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educy_>
+*we chose the highest years of education for each bracket, as such some people may be classified in educy 12 but with lower age than 12 meaning they have not yet completed that education level but started.
 	gen byte educy = .
 	replace educy=0 if s9==0
-	replace educy=4 if s9==1
+	replace educy=6 if s9==1
 	replace educy=8 if s9==2
 	replace educy=12 if s9==3
 	replace educy=12 if s9==4
@@ -537,11 +532,7 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat7_>
-	gen byte educat7 = s9
-	replace educat7=2 if s9==3 & age<10
-	replace educat7=3 if s9==3 & age==10
-	replace educat7=4 if s9==3 & age>10
-	recode educat7 0=. 1=1 2=3 3=4 4=5 5=5 6=7
+	gen byte educat7 = .
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -558,17 +549,22 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat4_>
-	gen byte educat4 = educat5
-	recode educat4 (3=2) (4=3) (5=4)
+	gen byte educat4 = .
+	replace educat4 = 1 if inlist(s9, 0, 1)
+	replace educat4 = 2 if s9 == 2
+	replace educat4 = 3 if inlist(s9, 3, 4, 5)
+	replace educat4 = 4 if s9 == 6
 	label var educat4 "Level of education 3"
-	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
+	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary", replace
 	label values educat4 lbleducat4
 *</_educat4_>
+
 
 *<_educat_orig_>
 	gen educat_orig = s9
 	label var educat_orig "Original survey education code"
 *</_educat_orig_>
+
 
 *<_educat_isced_>
 	gen educat_isced = .
@@ -680,7 +676,7 @@ foreach v of local ed_var {
 
 *<_nlfreason_>
 	gen byte nlfreason = s37
-	recode nlfreason 0=. 1=5 2=5 3=5 4=5 5=1 6=2 7=4 8=5 9=3 10=5 11=5 12=5 13=5 14=5
+	recode nlfreason 1=5 2=5 3=5 4=5 5=1 6=2 7=4 8=5 9=3 10=5 11=5 12=5 13=5
 	replace nlfreason=. if lstatus!=3
 	recode nlfreason .=5 if lstatus==3 & missing(nlfreason)
 	label var nlfreason "Reason not in the labor force"
@@ -691,14 +687,12 @@ foreach v of local ed_var {
 
 *<_unempldur_l_>
 	gen byte unempldur_l=.
-	*replace unempldur_l = s81 if lstatus==2
 	label var unempldur_l "Unemployment duration (months) lower bracket"
 *</_unempldur_l_>
 
 
 *<_unempldur_u_>
 	gen byte unempldur_u=.
-	*replace unempldur_u = s81 if lstatus==2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
 *</_unempldur_u_>
 }
@@ -710,7 +704,7 @@ foreach v of local ed_var {
 {
 *<_empstat_>
 	gen byte empstat = s23
-	recode empstat 2=5 5=2
+	recode empstat 2=1 5=2
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat lblempstat
@@ -734,8 +728,7 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_>
-
-  gen industrycat_isic= .
+  gen industrycat_isic= ""
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
@@ -770,27 +763,22 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_>
-	gen helper_1 = "000"
-	egen occup_isco=concat(helper_1 occup_orig)
-	replace occup_isco="" if lstatus!=1
-	drop helper_1
+	*isco 68 one digit code then not of interest in GLD
+	gen occup_isco=""
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
 
 *<_occup_skill_>
-	gen occup_skill = s22kod
-	recode occup_skill 1/3=3 4/8=2 9=1 0=. 99=.
-	replace occup_skill=. if lstatus!=1
+	gen occup_skill = .
 	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
 	label values occup_skill lblskill
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
-
 *</_occup_skill_>
 
 
 *<_occup_>
-	gen byte occup = s22kod
+	gen byte occup = .
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup
@@ -798,17 +786,13 @@ foreach v of local ed_var {
 
 
 *<_wage_no_compen_>
-
-	gen double wage_no_compen =s32c
-	replace wage_no_compen=. if lstatus!=1
-	*replace wage_no_compen=. if empstat!=1
-	replace wage_no_compen=. if wage_no_compen == 0
+	gen double wage_no_compen =.
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
 
 *<_unitwage_>
-	gen byte unitwage = 5
+	gen byte unitwage = .
 	replace unitwage = . if lstatus != 1
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
@@ -864,6 +848,7 @@ foreach v of local ed_var {
 *<_socialsec_>
 	gen byte socialsec = s25
 	recode socialsec (2=0)
+	replace socialsec=. if lstatus!=1
 	label var socialsec "Employment has social security insurance primary job 7 day recall"
 	la de lblsocialsec 1 "With social security" 0 "Without social secturity"
 	label values socialsec lblsocialsec
@@ -919,12 +904,13 @@ foreach v of local ed_var {
 	gen industry_orig_2 = s26kod
 	tostring industry_orig_2, replace
 	replace industry_orig_2="" if lstatus!=1
+		replace industry_orig_2="" if industry_orig_2=="."
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 
 
 *<_industrycat_isic_2_>
-	gen  industrycat_isic_2= .
+	gen industrycat_isic_2= .
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
@@ -933,6 +919,7 @@ foreach v of local ed_var {
 	gen byte industrycat10_2 = s26kod
 	replace industrycat10_2=10 if s26kod==9
 	replace industrycat10_2=. if lstatus!=1
+	replace industrycat10_2=. if industry_orig_2==""
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
 *</_industrycat10_2_>
@@ -986,7 +973,7 @@ foreach v of local ed_var {
 *<_whours_2_>
 	gen whours_2 = s28b
 	replace whours_2=. if lstatus!=1
-	replace whours_2=. if s28b>84
+	replace whours_2=. if s28b>24
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 
@@ -1042,7 +1029,7 @@ foreach v of local ed_var {
 *<_t_hours_total_>
 	gen helper_totalh=(whours+whours_2)
 	gen t_hours_total = helper_totalh
-replace t_hours_total=. if helper_totalh>140
+	replace t_hours_total=. if helper_totalh>140
 	label var t_hours_total "Annualized hours worked in all jobs 7 day recall"
 *</_t_hours_total_>
 
@@ -1521,13 +1508,6 @@ quietly{
 }
 
 
-*<_% COMPRESS_>
-
-compress
-
-*</_% COMPRESS_>
-
-
 *<_% DELETE MISSING VARIABLES_>
 
 quietly: describe, varlist
@@ -1540,8 +1520,16 @@ foreach var of local kept_vars {
 
 *</_% DELETE MISSING VARIABLES_>
 
+
+*<_% COMPRESS_>
+
+compress
+
+*</_% COMPRESS_>
+
+
 *<_% SAVE_>
 
-save "`path_output'\TUR_2003_HLFS_V01_M_V02_A_GLD_ALL.dta", replace
+save "`path_output'/`out_file'", replace
 
 *</_% SAVE_>

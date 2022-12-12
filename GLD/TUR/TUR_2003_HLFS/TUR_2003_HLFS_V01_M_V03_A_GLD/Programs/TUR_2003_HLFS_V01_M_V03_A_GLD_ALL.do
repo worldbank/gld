@@ -4,7 +4,7 @@
 ==============================================================================================%%*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				TUR_2003_HLFS_V01_M_V02_A_GLD_ALL.do </_Program name_>
+<_Program name_>				TUR_2003_HLFS_V01_M_V03_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata 16 <_Application_>
 <_Author(s)_>					World Bank Job's Group </_Author(s)_>
 <_Date created_>				2021-09-17 </_Date created_>
@@ -51,14 +51,33 @@ set mem 800m
 
 *----------1.2: Set directories------------------------------*
 
-local path_in "Z:\GLD-Harmonization\582018_AQ\TUR\TUR_2003_HLFS\TUR_2003_HLFS_V01_M\Data\Stata"
-local path_output "Z:\GLD-Harmonization\582018_AQ\TUR\TUR_2003_HLFS\TUR_2003_HLFS_V01_M_V02_A_GLD\Data\Harmonized"
+* Define path sections
+local server  "Y:\GLD-Harmonization\582018_AQ"
+local country "TUR"
+local year    "2003"
+local survey  "HLFS"
+local vermast "V01"
+local veralt  "V03"
+
+* From the definitions, set path chunks
+local level_1      "`country'_`year'_`survey'"
+local level_2_mast "`level_1'_`vermast'_M"
+local level_2_harm "`level_1'_`vermast'_M_`veralt'_A_GLD"
+
+* From chunks, define path_in, path_output folder
+local path_in_stata "`server'/`country'/`level_1'/`level_2_mast'/Data/Stata"
+local path_in_other "`server'/`country'/`level_1'/`level_2_mast'/Data/Original"
+local path_output   "`server'/`country'/`level_1'/`level_2_harm'/Data/Harmonized"
+
+* Define Output file name
+local out_file "`level_2_harm'_ALL.dta"
+
 
 *----------1.3: Database assembly------------------------------*
 
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
-use "`path_in'\LFS2003-lab.dta"
+use "`path_in_stata'\LFS2003-lab.dta"
 
 
 /*%%=============================================================================================
@@ -109,7 +128,7 @@ ILO webpage says that the version used was isco 88 note that for the bank TUIK s
 
 
 *<_isic_version_>
-	gen isic_version = "isic_3"
+	gen isic_version = ""
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
@@ -121,13 +140,13 @@ ILO webpage says that the version used was isco 88 note that for the bank TUIK s
 
 
 *<_vermast_>
-	gen vermast = "v01"
+	gen vermast = "`vermast'"
 	label var vermast "Version of master data"
 *</_vermast_>
 
 
 *<_veralt_>
-	gen veralt = "v02"
+	gen veralt =  "`veralt'"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
@@ -537,11 +556,7 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat7_>
-	gen byte educat7 = s9
-	replace educat7=2 if s9==3 & age<10
-	replace educat7=3 if s9==3 & age==10
-	replace educat7=4 if s9==3 & age>10
-	recode educat7 0=. 1=1 2=3 3=4 4=5 5=5 6=7
+	gen byte educat7 = .
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -558,17 +573,22 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat4_>
-	gen byte educat4 = educat5
-	recode educat4 (3=2) (4=3) (5=4)
+	gen byte educat4 = .
+	replace educat4 = 1 if inlist(s9, 0, 1)
+	replace educat4 = 2 if s9 == 2
+	replace educat4 = 3 if inlist(s9, 3, 4, 5)
+	replace educat4 = 4 if s9 == 6
 	label var educat4 "Level of education 3"
-	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
+	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary", replace
 	label values educat4 lbleducat4
 *</_educat4_>
+
 
 *<_educat_orig_>
 	gen educat_orig = s9
 	label var educat_orig "Original survey education code"
 *</_educat_orig_>
+
 
 *<_educat_isced_>
 	gen educat_isced = .
@@ -691,14 +711,12 @@ foreach v of local ed_var {
 
 *<_unempldur_l_>
 	gen byte unempldur_l=.
-	*replace unempldur_l = s81 if lstatus==2
 	label var unempldur_l "Unemployment duration (months) lower bracket"
 *</_unempldur_l_>
 
 
 *<_unempldur_u_>
 	gen byte unempldur_u=.
-	*replace unempldur_u = s81 if lstatus==2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
 *</_unempldur_u_>
 }
@@ -710,7 +728,7 @@ foreach v of local ed_var {
 {
 *<_empstat_>
 	gen byte empstat = s23
-	recode empstat 2=5 5=2
+	recode empstat 2=1 5=2
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat lblempstat
@@ -771,7 +789,7 @@ foreach v of local ed_var {
 
 *<_occup_isco_>
 	gen helper_1 = "000"
-	egen occup_isco=concat(helper_1 occup_orig)
+	egen occup_isco=concat(occup_orig helper_1)
 	replace occup_isco="" if lstatus!=1
 	drop helper_1
 	label var occup_isco "ISCO code of primary job 7 day recall"
@@ -801,8 +819,7 @@ foreach v of local ed_var {
 
 	gen double wage_no_compen =s32c
 	replace wage_no_compen=. if lstatus!=1
-	*replace wage_no_compen=. if empstat!=1
-	replace wage_no_compen=. if wage_no_compen == 0
+	replace wage_no_compen=. if s32c == 0
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
@@ -906,6 +923,7 @@ foreach v of local ed_var {
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
 	label values empstat_2 lblempstat
 *</_empstat_2_>
+
 
 
 *<_ocusec_2_>
@@ -1521,13 +1539,6 @@ quietly{
 }
 
 
-*<_% COMPRESS_>
-
-compress
-
-*</_% COMPRESS_>
-
-
 *<_% DELETE MISSING VARIABLES_>
 
 quietly: describe, varlist
@@ -1540,8 +1551,17 @@ foreach var of local kept_vars {
 
 *</_% DELETE MISSING VARIABLES_>
 
+
+
+*<_% COMPRESS_>
+
+compress
+
+*</_% COMPRESS_>
+
+
 *<_% SAVE_>
 
-save "`path_output'\TUR_2003_HLFS_V01_M_V02_A_GLD_ALL.dta", replace
+save "`path_output'/`out_file'", replace
 
 *</_% SAVE_>

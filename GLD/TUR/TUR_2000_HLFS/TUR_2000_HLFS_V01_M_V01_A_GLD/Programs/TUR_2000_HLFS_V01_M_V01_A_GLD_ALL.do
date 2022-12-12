@@ -504,6 +504,7 @@ Note the data release we have has only 15 year old and older actual survey cut o
 
 
 *<_educy_>
+*we chose the highest years of education for each bracket, as such some people may be classified in educy 12 but with lower age than 12 meaning they have not yet completed that education level but started. 
 	gen byte educy = .
 	replace educy=0 if s9==0
 	replace educy=4 if s9==1
