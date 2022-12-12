@@ -747,7 +747,7 @@ foreach v of local ed_var {
 *</_unempldur_u_>
 }
 
-s
+
 *----------8.2: 7 day reference main job------------------------------*
 
 
