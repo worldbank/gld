@@ -602,12 +602,12 @@ rename*, lower
 
 *<_educat4_>
 	gen byte educat4 = .
-	replace educat4=1 if s10==1
-	replace educat4=2 if s10==2
-	replace educat4=3 if s10==3
-	replace educat4=4 if s10>=4 & s10!=.
+	replace educat4 = 1 if inlist(s10, 0, 1)
+	replace educat4 = 2 if s10 == 2
+	replace educat4 = 3 if inlist(s10, 3, 4, 5)
+	replace educat4 = 4 if s10 == 6
 	label var educat4 "Level of education 3"
-	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
+	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary", replace
 	label values educat4 lbleducat4
 *</_educat4_>
 
