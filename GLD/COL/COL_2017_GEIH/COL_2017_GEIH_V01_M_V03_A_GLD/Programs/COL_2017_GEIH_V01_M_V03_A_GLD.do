@@ -236,7 +236,7 @@ local letters "secuencia_p orden"
 
 
 *<_weight_>
-	gen weight = fex_c_2011
+	gen weight = fex_c_2011/12
 	label var weight "Survey sampling weight"
 *</_weight_>
 
@@ -278,8 +278,17 @@ local letters "secuencia_p orden"
 	replace urban = 0 if urban == 2
 	*san andres urban
 	replace urban=1 if dpto=="88"
+	replace urban=1 if area=="88"
 	*amazonia ? ciudades entonces urbano
-	replace urban=1 if inrange(area,"81","99")
+	*replace urban=1 if inrange(area,"81","99")
+	replace urban=1 if dpto=="Arauca"
+	replace urban=1 if dpto=="Inirida"
+	replace urban=1 if dpto=="Leticia"
+	replace urban=1 if dpto=="Mitu"
+	replace urban=1 if dpto=="Mocoa"
+	replace urban=1 if dpto=="Puerto Carreño"
+	replace urban=1 if dpto=="San Jose de Guaviare"
+	replace urban=1 if dpto=="Yopal"
 	label var urban "Location is urban"
 	la de lblurban 1 "Urban" 0 "Rural"
 	label values urban lblurban
@@ -292,7 +301,7 @@ local letters "secuencia_p orden"
 	replace subnatid1 = "3 - Central" if dpto == "05" | dpto== "17" | dpto == "18" | dpto == "41" | dpto == "63" | dpto == "66" | dpto == "66" | dpto == "73" | area == "05" | area== "17" | area == "18" | area == "41" | area == "63" | area == "66" | area == "66" | area == "73"
 	replace subnatid1 = "4 - Pacifica" if dpto == "19" | dpto == "27" | dpto == "52" | dpto == "76" | area == "19" | area == "27" | area == "52" | area == "76"
 	replace subnatid1 = "5 - Santa Fe de Bogota" if dpto == "11" | area == "11"
-	replace subnatid1 = "6 - Aamazonia y Orinoquía" if area == "81" | area == "85" | area == "86" |area == "91" | area == "94" | area == "95" | area == "97" | area == "99" 
+	replace subnatid1 = "6 - Aamazonia y Orinoquía" if area == "81" | area == "85" | area == "86" |area == "91" | area == "94" | area == "95" | area == "97" | area == "99"
 	replace subnatid1=" 6 - Amazonia y Orinoquia" if subnatid1=="Arauca"
 	replace subnatid1=" 6 - Amazonia y Orinoquia" if subnatid1=="Inirida"
 	replace subnatid1=" 6 - Amazonia y Orinoquia" if subnatid1=="Leticia"
