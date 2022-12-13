@@ -674,7 +674,7 @@ foreach v of local ed_var {
 {
 *<_empstat_>
 	gen byte empstat = o7
-	recode empstat (1=3) (2=4) (3=1) (6=2) (4 5 7=5) (8=.)
+	recode empstat (1=3) (2=4) (3=1) (6=2) (4 5 7=1) (8=.)
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat lblempstat
@@ -783,7 +783,6 @@ label values occup lbloccup
 *<_unitwage_>
 	gen byte unitwage = 5
 	replace unitwage = . if lstatus != 1
-	recode unitwage 1=5 2=3 3=2 4=1 5=7 7=8
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
 	label values unitwage lblunitwage
