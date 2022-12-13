@@ -56,20 +56,26 @@ set mem 800m
 
 *----------1.2: Set directories------------------------------*
 
-local 	drive 	`"Z"'
-local 	cty 	`"ETH"'
-local 	usr		`"573465_JT"'
-local 	surv_yr `"1999"'
-local 	year 	"`drive':\GLD-Harmonization\\`usr'\\`cty'\\`cty'_`surv_yr'_LFS"
-local 	main	"`year'\\`cty'_`surv_yr'_LFS_v01_M"
-local 	stata	"`main'\data\stata"
-local 	gld 	"`year'\\`cty'_`surv_yr'_LFS_v01_M_v01_A_GLD"
-local 	i2d2	"`year'\\`cty'_`surv_yr'_LFS_v01_M_v01_A_I2D2"
-local 	code 	"`gld'\Programs"
-local 	id_data "`gld'\Data\Harmonized"
+* Define path sections
+local server  "Z:\GLD-Harmonization\573465_JT"
+local country "ETH"
+local year    "1999"
+local survey  "LFS"
+local vermast "v01"
+local veralt  "v01"
 
-local input "`stata'"
-local output "`id_data'"
+* From the definitions, set path chunks
+local level_1      "`country'_`year'_`survey'"
+local level_2_mast "`level_1'_`vermast'_M"
+local level_2_harm "`level_1'_`vermast'_M_`veralt'_A_GLD"
+
+* From chunks, define path_in, path_output folder
+local path_in_stata "`server'\\`country'\\`level_1'\\`level_2_mast'\Data\Stata"
+local path_in_other "`server'\\`country'\\`level_1'\\`level_2_mast'\Data\Original"
+local path_output   "`server'\\`country'\\`level_1'\\`level_2_harm'\Data\Harmonized"
+
+* Define Output file name
+local out_file "`level_2_harm'_ALL.dta"
 
 
 *----------1.3: Database assembly------------------------------*
@@ -77,7 +83,7 @@ local output "`id_data'"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	use "`input'\lforce_2.dta", clear
+	use "`path_in_stata'\lforce_2.dta", clear
 	duplicates drop 
 	
 *421 (0.114%) observations were dropped because of duplication in terms of all variables.	
@@ -266,7 +272,7 @@ in the offical annual report, they were grouped at their regional level.
 	gen code_region=LF01
 	recode code_region (12=8) (13=9) (14=10) (15=11)
 	egen code=concat(code_region LF02), punct(".")
-	merge n:n code using "`input'\ETH_zone_name.dta" 
+	merge n:n code using "`path_in_stata'\ETH_zone_name.dta" 
 	replace zone_name=code if _merge==1
 	drop if _merge==2
 	gen subnatid2=zone_name
@@ -521,7 +527,7 @@ Still pending on confirmation on the codelist.
 	gen code_region=LF01
 	recode code_region (12=8) (13=9) (14=10) (15=11)
 	egen code=concat(code_region LF02), punct(".")
-	merge n:n code using "`input'\ETH_zone_name.dta" 
+	merge n:n code using "`path_in_stata'\ETH_zone_name.dta" 
 	replace zone_name=code if _merge==1
 	drop if _merge==2
 	gen migrated_from_code=zone_name
@@ -1737,6 +1743,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`output'\ETH_1999_LFS_v01_M_v01_A_GLD_ALL.dta", replace
+save "`path_output'\ETH_1999_LFS_v01_M_v01_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>

@@ -41,7 +41,21 @@
 </_Version Control_>
 
 -------------------------------------------------------------------------*/
+recode LF206 (2=0), gen(literate)
 
+gen edu=.
+
+replace edu=0 if literate==0|inrange(LF208,36,38)|LF208==44 // preschool or no education
+
+replace edu=1 if inrange(LF208,1,7)|inrange(LF208,39,43)|LF208==96 // less than primary and adult/informal education
+
+replace edu=2 if inrange(LF208,8,11) | inrange(LF208,21,23) | inlist(LF208,13,18, 19, 33) // completed primary but not secondary
+
+replace edu=3 if inlist(LF208,12,14, 15, 16,20,34,24,26,27) // completed secondary but not higher
+
+replace edu=4 if inlist(LF208, 17, 25,35)|inrange(LF208,28,32) //"Completed post-secondary"
+
+replace edu=. if age<5
 
 /*%%=============================================================================================
 	1: Setting up of program environment, dataset
@@ -631,7 +645,7 @@ received education.
 
 *<_educy_>
 	gen byte educy=LF208 if inrange(LF208,1,17)
-	replace educy=0 if inlist(LF208,3,44,96,99)
+	replace educy=0 if inlist(LF208,36/38,44,96,99)
 	replace educy=11 if LF208==18|LF208==19
 	replace educy=12 if LF208==20
 	replace educy=LF208-12 if inrange(LF208,21,24)
@@ -641,7 +655,6 @@ received education.
 	replace educy=17 if LF208==30
 	replace educy=18 if LF208==31
 	replace educy=21 if LF208==32
-	replace educy=LF208-35 if inrange(LF208,36,38)
 	replace educy=LF208-35 if inrange(LF208,39,41)
 	replace educy=LF208-34 if inrange(LF208,42,44)
 	replace educy=. if age<ed_mod_age & age!=.  
@@ -653,8 +666,8 @@ received education.
 *<_educat7_>
 	gen byte educat7=.
 	replace educat7=1 if educy==0
-	replace educat7=2 if educy<6 
-	replace educat7=3 if educy==6
+	replace educat7=2 if educy<8 
+	replace educat7=3 if educy==8
 	replace educat7=4 if educy>=9 & educy <12
 	replace educat7=5 if educy==12
 	replace educat7=6 if educy==13 & LF208!=27
@@ -1005,8 +1018,7 @@ According to the annual report, employment status of a person was classified int
 
 
 *<_unitwage_>
-	gen byte unitwage=LF319 
-	recode unitwage (1=9) (2=1) (3=2) (4=3) (6=8) (7=10)
+	gen byte unitwage=5
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
 	label values unitwage lblunitwage
@@ -1340,7 +1352,7 @@ According to the annual report, employment status of a person was classified int
 	replace industrycat_isic_year=9410 if LF505==9413
 	replace industrycat_isic_year=. if inrange(LF505, 1105, 1107)
 	tostring industrycat_isic_year, replace format(%04.0f)
-	replace industrycat_isic_year="" if lstatus_year!=1
+	replace industrycat_isic_year="" if lstatus_year!=1 | industrycat_isic_year=="."
 	label var industrycat_isic_year "ISIC code of primary job 12 month recall"
 *</_industrycat_isic_year_>
 
