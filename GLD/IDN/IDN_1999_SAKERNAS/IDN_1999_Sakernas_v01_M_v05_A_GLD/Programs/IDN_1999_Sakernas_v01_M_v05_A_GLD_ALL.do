@@ -36,6 +36,7 @@
 * Date: [2022-05-24] File: [IDN_1999_Sakernas_v01_M_v02_A_GLD.do] - [Reducing original indutry and occupation codes digits and remapping those two to ISIC/ISCO.]
 * Date: [2022-08-24] File: [IDN_1999_Sakernas_v01_M_v03_A_GLD.do] - [Recode "occup_skill" and "occup"; change path to the intermediate file]
 * Date: [2022-11-07] File: [IDN_1999_Sakernas_v01_M_v04_A_GLD.do] - [Added occup based on KBJI1982 two digits and KBJI2002 one digit]
+* Date: [2022-12-12] File: [IDN_1999_Sakernas_v01_M_v05_A_GLD.do] - [Educat7 correction & directories update]
 
 </_Version Control_>
 
@@ -54,28 +55,33 @@ set mem 800m
 
 *----------1.2: Set directories------------------------------*
 
-local 	drive 	`"Z"'
-local 	cty 	`"IDN"'
-local 	usr		`"573465_JT"'
-local 	surv_yr `"1999"'
-local 	year 	"`drive':\GLD-Harmonization\\`usr'\\`cty'\\`cty'_`surv_yr'_Sakernas"
-local 	main	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M"
-local 	stata	"`main'\data\stata"
-local 	gld 	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M_v04_A_GLD"
-local 	i2d2	"`year'\\`cty'_`surv_yr'_Sakernas_v01_M_v04_A_I2D2"
-local 	code 	"`gld'\Programs"
-local 	id_data "`gld'\Data\Harmonized"
+* Define path sections
+local server  "Z:\GLD-Harmonization\573465_JT"
+local country "IDN"
+local year    "1999"
+local survey  "SAKERNAS"
+local vermast "v01"
+local veralt  "v05"
 
-local input "`stata'"
-local output "`id_data'"
+* From the definitions, set path chunks
+local level_1      "`country'_`year'_`survey'"
+local level_2_mast "`level_1'_`vermast'_M"
+local level_2_harm "`level_1'_`vermast'_M_`veralt'_A_GLD"
 
+* From chunks, define path_in, path_output folder
+local path_in_stata "`server'\\`country'\\`level_1'\\`level_2_mast'\Data\Stata"
+local path_in_other "`server'\\`country'\\`level_1'\\`level_2_mast'\Data\Original"
+local path_output   "`server'\\`country'\\`level_1'\\`level_2_harm'\Data\Harmonized"
+
+* Define Output file name
+local out_file "`level_2_harm'_ALL.dta"
 
 *----------1.3: Database assembly------------------------------*
 
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	use "`input'\sakernas99.dta", clear
+	use "`path_in_stata'\sakernas99.dta", clear
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -289,7 +295,7 @@ provided due to it is part of the confidential information withheld by the NSO.
 	gen subnatid2_code = code_prop + code_kab
 	drop b1p2
 	rename subnatid2_code b1p2
-	merge n:1 b1p2 using "`input'\district_list_2013.dta"
+	merge n:1 b1p2 using "`path_in_stata'\district_list_2013.dta"
 	drop if _merge==2
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
@@ -562,13 +568,13 @@ needs. Therefore, variable "educy" was left missing.
 "Packet C": an educational level equavalent to the senior seconddary level.
 
 Original code list of variable "b4p1a" in the dataset:
-0.University/D. IV
-1.Did not attend/have not attended school
-2.Did not complete/have not completed primary school
+0.Diploma IV/Bachelor/Postgraduate
+1.No/never in school
+2.No/not yet finish Primary School
 3.Primary school
-4.Public junior high school/TSANAWIYAH
-5.Vocational junior high school
-6.Public senior high school/ALIYAH
+4.Public Junior High School
+5.Vocational Junior High School
+6.Public Senior High School
 7.Vocational senior high school
 8.Diploma I/II
 9.Diploma III
@@ -893,7 +899,7 @@ of unemployment period.
 
 *<_occup_>
 	gen kji1982 = b4p7
-	merge m:1 kji1982 urban using "`input'\kji_2d_corresp.dta", keep(match master) nogen
+	merge m:1 kji1982 urban using "`path_in_stata'\kji_2d_corresp.dta", keep(match master) nogen
 	* set seed so process is reproducible
 	set seed 123
 	gen helper_occup = uniform()
@@ -1697,6 +1703,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`output'\IDN_1999_SAKERNAS_v01_M_v04_A_GLD_ALL.dta", replace
+save "`path_output'\IDN_1999_SAKERNAS_v01_M_v04_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>
