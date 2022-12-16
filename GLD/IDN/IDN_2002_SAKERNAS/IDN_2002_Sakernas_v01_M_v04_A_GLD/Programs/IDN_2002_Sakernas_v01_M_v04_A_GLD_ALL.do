@@ -138,13 +138,13 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_vermast_>
-	gen vermast = "v01"
+	gen vermast = "`vermast'"
 	label var vermast "Version of master data"
 *</_vermast_>
 
 
 *<_veralt_>
-	gen veralt = "v03"
+	gen veralt = "`veralt'"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
@@ -1724,6 +1724,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`path_output'\IDN_2002_SAKERNAS_v01_M_v04_A_GLD_ALL.dta", replace
+save "`path_output'\`level_2_harm'_ALL.dta", replace
 
 *</_% SAVE_>
