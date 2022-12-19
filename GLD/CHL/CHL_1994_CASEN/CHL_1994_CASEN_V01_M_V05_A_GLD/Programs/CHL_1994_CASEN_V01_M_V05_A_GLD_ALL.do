@@ -502,7 +502,7 @@ local letters "r p c z o seg f"
 
 *<_educat7_>
 	gen byte educat7 = e9
-	recode educat7 5=4 6=5 7=6 8=6 9/13=7 14=6 15=1 99=.
+	recode educat7 4=3 5=4 6=5 7=6 8=6 9/13=7 14=6 15=1 99=.
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7

@@ -499,7 +499,7 @@ use "`path_in_stata'\casen2000_Stata.dta"
 
 *<_educat7_>
 	gen byte educat7 = educ
-	recode educat7 4 6=4  5 7=5 8/9=6 10/11=7 99=.
+	recode educat7 6=4 7=5 8/9=6 10/11=7 99=.
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7

@@ -500,7 +500,7 @@ use "`path_in_stata'\casen2006.dta"
 *<_educat7_>
 *no division between institute and uni
 	gen byte educat7 = educ
-	recode educat7 0=1 1=2 2=3 3=4 4=5 5 6=6  7 8=7 99=.
+	recode educat7 0=1 1=2 2=3 3=4 5 6=6 7 8=7 99=.
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -666,7 +666,7 @@ foreach v of local ed_var {
 {
 *<_empstat_>
 	gen byte empstat = o19
-	recode empstat (1=3) (2=4) (3/5=1) (6=2) ( 6 7=5) (8=2) (9=5) (99=.)
+	recode empstat (1=3) (2=4) (3/5=1) (6 7=1) (8=2) (9=1) (99=.)
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat lblempstat
@@ -782,8 +782,7 @@ la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
 *<_whours_>
 	gen whours = o15
 	replace whours=. if lstatus!=1
-	replace whours=. if o15>84
-	recode whours 99=.
+	recode whours 999=.
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -879,8 +878,7 @@ la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
 
 *<_industry_orig_2_>
 	gen industry_orig_2 = c_o27
-	tostring industry_orig_2, replace
-	replace industry_orig_2="" if lstatus!=1
+	replace industry_orig_2=. if lstatus!=1
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 
