@@ -32,13 +32,10 @@
 
 <_Version Control_>
 
-* Date: [2022-06-06] File: [As in Program name above] - [Updated the raw dataset: now using LMDSA 2020 instead of 4 separate quarters in 2020]
-* Date: [2022-07-06] File: [As in Program name above] - [Adding new GLD variables: isced_version/isco_version/isic_version/educat_orig/vocational_field_orig]
-* Date: [2022-09-22] File: [As in Program name above] - [Correcting occupation skill level; correcting typo (631 to 621 in the ISCO88 code list); coding 5164 to category "Service and market sales workers"]
-
-
-* Date 2022/11/03 - Update ICLS V, was excluding non market as employment all along 
-
+* Date: [2022-06-06] File: [ZAF_2020_QLFS_v02_M_v01_A_GLD_ALL.dta] - [Updated the raw dataset: now using LMDSA 2020 instead of 4 separate quarters in 2020]
+* Date: [2022-07-06] File: [ZAF_2020_QLFS_v02_M_v02_A_GLD_ALL.dta] - [Adding new GLD variables: isced_version/isco_version/isic_version/educat_orig/vocational_field_orig]
+* Date: [2022-09-22] File: [ZAF_2020_QLFS_v02_M_v03_A_GLD_ALL.dta] - [Correcting occupation skill level; correcting typo (631 to 621 in the ISCO88 code list); coding 5164 to category "Service and market sales workers"]
+* Date: [2022-09-22] File: [ZAF_2020_QLFS_v02_M_v04_A_GLD_ALL.dta] - [Adding wage information & directories update]
 
 </_Version Control_>
 
@@ -57,63 +54,33 @@ set mem 800m
 
 *----------1.2: Set directories------------------------------*
 
-local 	drive 	`"Y"'
-local 	cty 	`"ZAF"'
-local 	surv_yr `"2020"'
-local 	year 	"`drive':\GLD\\`cty'\\`cty'_`surv_yr'_LFS"
-local 	main	"`year'\\`cty'_`surv_yr'_LFS_v02_M"
-local 	stata	"`main'\data\stata"
-local 	gld 	"`year'\\`cty'_`surv_yr'_LFS_V02_M_V04_A_GLD"
-local 	code 	"`gld'\Programs"
-local 	id_data "`gld'\Data\Harmonized"
+* Define path sections
+local server  "Z:\GLD-Harmonization\573465_JT"
+local country "ZAF"
+local year    "2020"
+local survey  "LFS"
+local vermast "v02"
+local veralt  "v04"
 
-local input "`stata'"
-local output "`id_data'"
-dis "`id_data'"
+* From the definitions, set path chunks
+local level_1      "`country'_`year'_`survey'"
+local level_2_mast "`level_1'_`vermast'_M"
+local level_2_harm "`level_1'_`vermast'_M_`veralt'_A_GLD"
+
+* From chunks, define path_in, path_output folder
+local path_in_stata "`server'\\`country'\\`level_1'\\`level_2_mast'\Data\Stata"
+local path_in_other "`server'\\`country'\\`level_1'\\`level_2_mast'\Data\Original"
+local path_output   "`server'\\`country'\\`level_1'\\`level_2_harm'\Data\Harmonized"
+
+* Define Output file name
+local out_file "`level_2_harm'_ALL.dta"
 
 *----------1.3: Database assembly------------------------------*
 
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-/*
-******DATA ISSUE USING QTR 2 VERSION 2 BEFORE 7.15******
-668 observations or 169 households in Quarter 2 are not uniquely defined by
-household number and person number, even though some of them seem to be
-different respondents. These observations account for 0.32% of total sample size.
-663 were dropped.
-
-Two intermediate work files created:
-1)ZAF_2020_QLFS_v01_M_v01_A_I2D2_DUP.dta:
-  shows basic individual information like gender, age, and population group for
-  duplicated observations
-
-2)ZAF_2020__QLFS_v01_M_v01_A_I2D2_DUP.xls:
-  a full list of all variables of 668 duplicated observations
-
-CODES USED PREVIOUSLY:
-
-  	duplicates drop
-	bysort UQNO PERSONNO Qtr: gen dup=cond(_N==1, 0, _n)
-	preserve
-	keep UQNO PERSONNO Q13GENDER Q15POPULATION Q14AGE Qtr dup
-	keep if dup>0
-	save "`i2d2'\work\ZAF_2020_QLFS_v01_M_v01_A_I2D2_DUP.dta", replace
-	restore
-	preserve
-	keep if dup>0
-	export excel using "`i2d2'\Work\ZAF_2020__QLFS_v01_M_v01_A_I2D2_DUP.xls", sheetreplace firstrow(variables)
-	restore
-	drop if dup>0
-	drop dup
-
-******DATA ISSUE USING QTR 2 VERSION 2 SOLVED ON 7.14******
-
-Instead of using "qlfs-2020-q2-worker-v2.dta", version 2.1 of quarter 2 does not
-have duplicates anymore.
-*/
-
-	use "`input'\lmdsa-2020-v1.dta", clear
+	use "`path_in_stata'\lmdsa-2020-v1.dta", clear
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -170,13 +137,13 @@ have duplicates anymore.
 
 
 *<_vermast_>
-	gen vermast = "V02"
+	gen vermast = "`vermast'"
 	label var vermast "Version of master data"
 *</_vermast_>
 
 
 *<_veralt_>
-	gen veralt = "V04"
+	gen veralt = "`veralt'"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
@@ -388,6 +355,7 @@ the final code list should be
 	label values male lblmale
 *</_male_>
 
+
 /*<_relationharm_>
 
 Not asked, all we know is that the person with personal number equal to 1 is the head, the problem is that in some cases that person is not present, probably because he/she didn't spend four nights or more in this household. In those cases I assigned the eldest adult male (or female absent male) present as the household head.
@@ -471,6 +439,7 @@ because they have two different ages in different quarters, i.e., 51 in one Q an
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm lblrelationharm
 *</_relationharm_>
+
 
 *<_relationcs_>
 	gen relationcs = relationharm
@@ -994,7 +963,7 @@ Q310STARTBUSNS "Start a business if the circumstances have allowed?"
 *<_occup_isco_>
 	tostring Q42OCCUPATION, gen(occup_string)
 	gen occupcat_isco=substr(occup_string, 1, 3)
-	merge m:1 occupcat_isco using "`input'\isco88_sasco03_mapping.dta"
+	merge m:1 occupcat_isco using "`path_in_stata'\isco88_sasco03_mapping.dta"
 	drop if _merge==2
 	destring isco_88, replace
 	gen occup_isco=isco_88*10
@@ -1030,17 +999,18 @@ Q310STARTBUSNS "Start a business if the circumstances have allowed?"
 
 
 *<_wage_no_compen_>
-	gen double wage_no_compen=.
+	gen double wage_no_compen=Q54A_MONTHLY
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
 
 *<_unitwage_>
-	gen byte unitwage=.
+	gen byte unitwage=5
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
 	label values unitwage lblunitwage
 *</_unitwage_>
+
 
 /*<_whours_>
 
@@ -1064,6 +1034,7 @@ The main job was decided based on time spent.
       Total |     49,295      100.00
 
 <_whours_>*/
+
 
 *<_whours_>
 	gen whours=Q418HRSWRK
@@ -1331,6 +1302,7 @@ instead of ".".
 	label values lstatus_year lbllstatus_year
 *</_lstatus_year_>
 
+
 *<_potential_lf_year_>
 	gen byte potential_lf_year=.
 	replace potential_lf_year=. if age < minlaborage & age != .
@@ -1383,12 +1355,14 @@ instead of ".".
 	label values empstat_year lblempstat_year
 *</_empstat_year_>
 
+
 *<_ocusec_year_>
 	gen byte ocusec_year=.
 	label var ocusec_year "Sector of activity primary job 12 day recall"
 	la de lblocusec_year 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec_year lblocusec_year
 *</_ocusec_year_>
+
 
 *<_industry_orig_year_>
 	gen industry_orig_year=.
@@ -1400,6 +1374,7 @@ instead of ".".
 	gen industrycat_isic_year=.
 	label var industrycat_isic_year "ISIC code of primary job 12 month recall"
 *</_industrycat_isic_year_>
+
 
 *<_industrycat10_year_>
 	gen byte industrycat10_year=.
@@ -1811,6 +1786,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`output'\ZAF_2020_QLFS_v02_M_v04_A_GLD_ALL.dta", replace
+save "`path_output'\\`level_2_harm'_ALL.dta", replace
 
 *</_% SAVE_>
