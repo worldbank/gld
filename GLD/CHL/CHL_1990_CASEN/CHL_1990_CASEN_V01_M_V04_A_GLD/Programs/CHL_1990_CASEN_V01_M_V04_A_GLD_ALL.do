@@ -733,16 +733,8 @@ foreach v of local ed_var {
 
 
 *<_occup_skill_>
-*the low skill bracket has a minimum wage larger than medium and high skill. 
+*the data does not follow the questionnaire labels.
 	gen occup_skill = .
-	replace occup_skill=1 if inrange(o5,90,92)
-	replace occup_skill=2 if inrange(o5,4,7)
-	replace occup_skill=2 if inrange(o5,40,80)
-	replace occup_skill=3 if inrange(o5,1,3)
-	replace occup_skill=3 if inrange(o5,10,30)
-	replace occup_skill=1 if o5==0
-	replace occup_skill=. if o5==999
-	replace occup_skill=. if o5==9999
 	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
 	label values occup_skill lblskill
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
@@ -750,8 +742,7 @@ foreach v of local ed_var {
 
 
 *<_occup_>
-	gen  occup = o5
-	recode occup (10/11=1) (20/25=2) (30/34=3) (0=10) (40/48=4) (50/55=5) (60/69=6) (70/79=7) (80=8) (90/92=9)
+	gen  occup = .
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup
@@ -762,10 +753,6 @@ foreach v of local ed_var {
 	gen double wage_no_compen =yopraj
 	replace wage_no_compen=. if lstatus!=1
 	replace wage_no_compen=. if wage_no_compen == 0
-	*outliers
-	replace wage_no_compen=. if o5==40 | yopraj==3960000
-	replace wage_no_compen=. if o5==53 | yopraj==3960000
-	replace wage_no_compen=. if o5==72 | yopraj==3960000
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
