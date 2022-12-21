@@ -740,7 +740,7 @@ foreach v of local ed_var {
 	replace occup_skill=. if oficio==0
 	replace occup_skill=. if oficio==999
 	replace occup_skill=. if oficio==9999
-la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
+	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
 	label values occup_skill lblskill
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
 *</_occup_skill_>
@@ -748,7 +748,8 @@ la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
 
 *<_occup_>
 	gen  occup = oficio
-	recode occup 0=10 9999=.
+	recode occup 9999=.
+	replace occup=1 if oficio==0 | o5==1
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup

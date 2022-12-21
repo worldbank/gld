@@ -520,7 +520,7 @@ local letters "r p c z o seg f"
 
 *<_educat4_>
 	gen byte educat4 = e6
-	recode educat4 (0/1=1) (2=3) (3/4=2) (5/6=3) (7/15=4)
+	recode educat4 (0/1=1) (2=3) (3/4=2) (5/6=3) (7/15=4) (99=.)
 	label var educat4 "Level of education 3"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values educat4 lbleducat4

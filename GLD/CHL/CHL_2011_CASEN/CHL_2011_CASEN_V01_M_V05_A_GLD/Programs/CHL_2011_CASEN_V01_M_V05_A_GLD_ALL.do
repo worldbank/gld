@@ -496,7 +496,7 @@ use "`path_in_stata'\casen2011_octubre2011_enero2012_principal_08032013stata.dta
 
 *<_educat7_>
 	gen byte educat7 = educ
-	recode educat7 (0=1) (1=2) (2=3) (3/4=4) (5/6=5) (7/8 =7)
+	recode educat7 (0=1) (1=2) (2=3) (3=4) (4=6) (5/6=5) (7/8 =7)
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -662,7 +662,7 @@ foreach v of local ed_var {
 {
 *<_empstat_>
 	gen byte empstat = o15
-	recode empstat (1=3) (2=4) (3/5=1) (6 7=1) (8=5) (9=1)
+	recode empstat (1=3) (2=4) (3/8=1) (9=2)
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat lblempstat
