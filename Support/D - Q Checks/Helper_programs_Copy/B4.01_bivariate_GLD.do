@@ -14,18 +14,16 @@
 *-- 01. Education: cross-categories 
 	use "${mydata}", clear
 	
-	keep countrycode year educat5 educat4 
-	drop if missing(educat5) & missing(educat4)
+	keep countrycode year educat4 
+	drop if  missing(educat4)
+	sort educat4
 	duplicates drop
 	
 	gen correct_1 = 0
-	replace correct_1 = 1 if educat5 == 1 & educat4 == 1
-	replace correct_1 = 1 if educat5 == 2 & educat4 == 2
-	replace correct_1 = 1 if educat5 == 3 & educat4 == 2
-	replace correct_1 = 1 if educat5 == 3 & educat4 == 2
-	replace correct_1 = 1 if educat5 == 4 & educat4 == 3
-	replace correct_1 = 1 if educat5 == 5 & educat4 == 4
-	replace correct_1 = 1 if educat5 == 5 & educat4 == 4
+	replace correct_1 = 1 educat4 == 1
+	replace correct_1 = 1 if educat4 == 2
+	replace correct_1 = 1 if educat4 == 3
+	replace correct_1 = 1 if  educat4 == 4
 	sum correct_1
 	if `r(min)'  == 0  {
 		gen reason_1  = "Education cross-categories inconsistency" if correct_1 == 0
