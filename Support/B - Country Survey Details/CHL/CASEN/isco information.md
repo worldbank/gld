@@ -32,7 +32,7 @@ The ISCO classification has three levels. Level 1 has 1 digit and is the highest
 
 ## Important Note
 
-The year 1990 was not harmonized to ISCO codes because the survey questionnaire and data do not match. As a result, the GLD team cannot match the correct data to groups and subgroups. The variables affected are occup_isco, occup and occup_skill. Please see here the CASEN guide for the year 1990 where you can see the details for oficio and o5 the variables related to occupation classifications. 
+The year 1990 was not harmonized to ISCO because there is a mistmatch between the survey questionnaire labels and the data. As a result, the GLD team cannot match the correct data to groups and subgroups for occupation related variables. The variables affected are `occup_isco`  `occup` and `occup_skill`. Please see [here](utilities/chl90otr2.pdf) the CASEN guide for the year 1990 where you can see the details for oficio and o5 the variables related to occupation classifications. 
 
 
 
