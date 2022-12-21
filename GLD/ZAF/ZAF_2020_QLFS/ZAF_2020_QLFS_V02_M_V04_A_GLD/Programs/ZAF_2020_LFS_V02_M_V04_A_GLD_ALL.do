@@ -218,7 +218,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 {
 
-/*<_urban_>
+/*<_urban_note_>
 It is not clear how the three categories are defined because the code list in the
 documentation does not match the raw dataset. According to QLFS documentation and
 urbanization stats from:
@@ -227,7 +227,8 @@ the final code list should be
 1=urban
 2=traditional(rural)
 3=farms/mining areas(rural)
-</_urban_>*/
+</_urban_note_>*/
+
 
 *<_urban_>
 	gen byte urban=Geo_type_code
@@ -285,11 +286,6 @@ the final code list should be
 
 
 *<_subnatid1_prev_>
-/* <_subnatid1_prev>
-
-	subnatid1_prev is coded as missing unless the classification used for subnatid1 has changed since the previous survey.
-
-</_subnatid1_prev> */
 	gen subnatid1_prev = .
 	label var subnatid1_prev "Classification used for subnatid1 from previous survey"
 *</_subnatid1_prev_>
@@ -356,7 +352,7 @@ the final code list should be
 *</_male_>
 
 
-/*<_relationharm_>
+/*<_relationharm_note_>
 
 Not asked, all we know is that the person with personal number equal to 1 is the head, the problem is that in some cases that person is not present, probably because he/she didn't spend four nights or more in this household. In those cases I assigned the eldest adult male (or female absent male) present as the household head.
 27 observations were dropped due to no male memeber or multiple same old male (or female) members.
@@ -393,7 +389,8 @@ because they have two different ages in different quarters, i.e., 51 in one Q an
 96910129000001830102 "unlikely to be the same person: female -> male / 20->15->16"
 96910129000001830102 "unlikely to be the same person: female -> male / 20->15->16"
 
-</_relationharm_>*/
+</_relationharm_note_>*/
+
 
 *<_relationharm_>
 	gen byte relationharm=1 if PERSONNO==1
@@ -574,19 +571,18 @@ because they have two different ages in different quarters, i.e., 51 in one Q an
 
 
 {
-
-*<_ed_mod_age_>
-
 /* <_ed_mod_age_note>
 
 Education module is only asked to those 0 and older.
 
 </_ed_mod_age_note> */
 
+
+*<_ed_mod_age_>
 	gen byte ed_mod_age = 0
 	label var ed_mod_age "Education module application age"
-
 *</_ed_mod_age_>
+
 
 *<_school_>
 	gen byte school = Q19ATTE
@@ -606,7 +602,7 @@ Education module is only asked to those 0 and older.
 *</_literacy_>
 
 
-/*<_educy_>
+/*<_educy_note_>
 
 The National Technical Certificate level 1, 2, and 3 are mapped to grade 10, 11, and 12
 respectively. In South Africa, one option for students is to exit school with GETC
@@ -642,7 +638,7 @@ Individual |     Highest education level
 -----------+---------------------------------+----------
      Total |         1          2          1 |        46 
 
-</_educy_>*/
+</_educy_note_>*/
 
 
 *<_educy_>
@@ -695,7 +691,7 @@ Individual |     Highest education level
 *</_educat_orig_>
 
 
-/*<_educat_isced_>
+/*<_educat_isced_note_>
 
 Var "Q17EDUCATION": What is the highest level of education that... has sucessfully completed?
 
@@ -706,7 +702,7 @@ ISCED codes:http://uis.unesco.org/en/isced-mappings
 Category 24-"Post Higher Diploma (Masters; Doctoral Diploma)" is mapped to the lower
 bound -- "Master's'" in ISCED code.
 
-</_educat_isced_>*/
+</_educat_isced_note_>*/
 
 
 *<_educat_isced_>
@@ -809,7 +805,7 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 *</_lstatus_>
 
 
-/*<_potential_lf_>
+/*<_potential_lf_note_>
 Note: var "potential_lf" is missing if the respondent is in labor force or unemployed; it only takes value if the respondent is not in labor force. (Status==3)
 
 "potential_lf" = 1 if the person is
@@ -824,7 +820,7 @@ Q31ALOOKWRK "looking for any kind of job in the last 4 weeks?"
 Q31BSTARTBUSNS "trying to start a ny kin of business in the last 4 weeks?"
 Q39JOBOFFER "availability if a suitable job were offered in last week"
 Q310STARTBUSNS "Start a business if the circumstances have allowed?"
-</_potential_lf_>*/
+</_potential_lf_note_>*/
 
 
 *<_potential_lf_>
@@ -1012,7 +1008,7 @@ Q310STARTBUSNS "Start a business if the circumstances have allowed?"
 *</_unitwage_>
 
 
-/*<_whours_>
+/*<_whours_note_>
 
 Variable "Q418HRSWRK" is working hours for people who only have one job and it is missing for people who have more than one job.
 
@@ -1033,7 +1029,7 @@ The main job was decided based on time spent.
 ------------+-----------------------------------
       Total |     49,295      100.00
 
-<_whours_>*/
+<_whours_note_>*/
 
 
 *<_whours_>
@@ -1051,13 +1047,13 @@ The main job was decided based on time spent.
 *</_wmonths_>
 
 
-*<_wage_total_>
-/* <_wage_total>
-
+/* <_wage_total_note_>
 	Use gross wages when available and net wages only when gross wages are not available.
 	This is done to make it easy to compare earnings in formal and informal sectors.
+</_wage_total_note_> */
 
-</_wage_total> */
+
+*<_wage_total_>
 	gen wage_total=.
 	label var wage_total "Annualized total wage primary job 7 day recall"
 *</_wage_total_>
@@ -1117,13 +1113,13 @@ The main job was decided based on time spent.
 *</_firmsize_u_>
 
 
-/*<_Labor_status_&_ISIC/ISCO_>
+/*<_Labor_status_&_ISIC/ISCO_note_>
 
 Recode ISIC and ISCO vars to missing if lstatus is not "1-employed". 
 Because ISIC and ISCO are string variables, their missing values should be "" 
 instead of ".". 
 
-<_Labor_status_&_ISIC/ISCO_>*/
+<_Labor_status_&_ISIC/ISCO_note_>*/
 
 
 *<_Labor_status_&_ISIC/ISCO_>

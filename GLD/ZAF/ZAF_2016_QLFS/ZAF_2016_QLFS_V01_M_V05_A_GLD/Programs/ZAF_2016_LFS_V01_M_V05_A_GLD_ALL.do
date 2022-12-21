@@ -4,7 +4,7 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				ZAF_2016_QLFS_v01_M_v04_A_GLD_ALL.do </_Program name_>
+<_Program name_>				ZAF_2016_QLFS_v01_M_v05_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata MP 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
 <_Date created_>				2021-06-30 </_Date created_>
@@ -33,14 +33,10 @@
 
 <_Version Control_>
 
-* Date: [2022-04-14] File: [As in Program name above] - [Adding wage variable]
-* Date: [2022-07-06] File: [As in Program name above] - [Adding new GLD variables: isced_version/isco_version/isic_version/educat_orig/vocational_field_orig]
-* Date: [2022-09-22] File: [As in Program name above] - [Correcting occupation skill level; correcting typo (631 to 621 in the ISCO88 code list); coding 5164 to category "Service and market sales workers"]
-
-
-
-* Date 2022/11/03 - Update ICLS V, was excluding non market as employment all along 
-
+* Date: [2022-04-14] File: [ZAF_2016_QLFS_v01_M_v02_A_GLD_ALL.do] - [Adding wage variable]
+* Date: [2022-07-06] File: [ZAF_2016_QLFS_v01_M_v03_A_GLD_ALL.do] - [Adding new GLD variables: isced_version/isco_version/isic_version/educat_orig/vocational_field_orig]
+* Date: [2022-09-22] File: [ZAF_2016_QLFS_v01_M_v04_A_GLD_ALL.do] - [Correcting occupation skill level; correcting typo (631 to 621 in the ISCO88 code list); coding 5164 to category "Service and market sales workers"]
+* Date: [2022-11-03] File: [ZAF_2016_QLFS_v01_M_v05_A_GLD_ALL.do] - [Update ICLS V, was excluding non market as employment all along ]
 
 </_Version Control_>
 
@@ -59,18 +55,26 @@ set mem 800m
 
 *----------1.2: Set directories------------------------------*
 
-local 	drive 	`"Y"'
-local 	cty 	`"ZAF"'
-local 	surv_yr `"2016"'
-local 	year 	"`drive':\GLD\\`cty'\\`cty'_`surv_yr'_LFS"
-local 	main	"`year'\\`cty'_`surv_yr'_LFS_v01_M"
-local 	stata	"`main'\data\stata"
-local 	gld 	"`year'\\`cty'_`surv_yr'_LFS_v01_M_v05_A_GLD"
-local 	code 	"`gld'\Programs"
-local 	id_data "`gld'\Data\Harmonized"
+* Define path sections
+local server  "Z:\GLD-Harmonization\573465_JT"
+local country "ZAF"
+local year    "2016"
+local survey  "LFS"
+local vermast "v01"
+local veralt  "v05"
 
-local input "`stata'"
-local output "`id_data'"
+* From the definitions, set path chunks
+local level_1      "`country'_`year'_`survey'"
+local level_2_mast "`level_1'_`vermast'_M"
+local level_2_harm "`level_1'_`vermast'_M_`veralt'_A_GLD"
+
+* From chunks, define path_in, path_output folder
+local path_in_stata "`server'\\`country'\\`level_1'\\`level_2_mast'\Data\Stata"
+local path_in_other "`server'\\`country'\\`level_1'\\`level_2_mast'\Data\Original"
+local path_output   "`server'\\`country'\\`level_1'\\`level_2_harm'\Data\Harmonized"
+
+* Define Output file name
+local out_file "`level_2_harm'_ALL.dta"
 
 
 *----------1.3: Database assembly------------------------------*
@@ -78,20 +82,20 @@ local output "`id_data'"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	use "`input'\QLFS 2016_01 Worker 1.0 Stata11.dta", clear
-	append using "`input'\QLFS 2016_2 Worker 1.0 Stata11.dta", gen(Qtr)
+	use "`path_in_stata'\QLFS 2016_01 Worker 1.0 Stata11.dta", clear
+	append using "`path_in_stata'\QLFS 2016_2 Worker 1.0 Stata11.dta", gen(Qtr)
 	recode Qtr 1=2 0=1
-	append using "`input'\QLFS 2016_3 Worker 1.0 Stata11.dta"
+	append using "`path_in_stata'\QLFS 2016_3 Worker 1.0 Stata11.dta"
 	recode Qtr .=3
-	append using "`input'\QLFS 2016_4 Worker 1.0 Stata11.dta"
+	append using "`path_in_stata'\QLFS 2016_4 Worker 1.0 Stata11.dta"
 	recode Qtr .=4
 	gen weight=Weight/4
 	keep UQNO PERSONNO Geo_type Qtr weight
 	rename Geo_type geo
 	la de lblgeo 1 "Urban" 2 "Traditional" 3 "Farms" 4 "Mining"
 	la values geo lblgeo
-	save "`input'\ZAF_2016_QLFS_v01_M_v04_A_GLD_append_GEO.dta", replace
-	use "`input'\lmdsa-2016-1.0-stata11.dta", clear
+	save "`path_in_stata'\ZAF_2016_QLFS_v01_M_v05_A_GLD_append_GEO.dta", replace
+	use "`path_in_stata'\lmdsa-2016-1.0-stata11.dta", clear
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -148,13 +152,13 @@ local output "`id_data'"
 
 
 *<_vermast_>
-	gen vermast = "V01"
+	gen vermast = "`vermst'"
 	label var vermast "Version of master data"
 *</_vermast_>
 
 
 *<_veralt_>
-	gen veralt = "V05"
+	gen veralt = "`veralt'"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
@@ -229,7 +233,7 @@ local output "`id_data'"
 
 {
 
-/*<_urban_>
+/*<_urban_note_>
 Variable "Geo_type" is all missing in the raw dataset. I used "Geo_type" in
 qaurterly survey datasets to fill this part of information.
 Code list:
@@ -237,10 +241,10 @@ Code list:
 2=traditional(rural)
 3=farms(rural)
 4=mining areas(rural)
-</_urban_>*/
+</_urban_note_>*/
 
 *<_urban_>
-	merge m:m PERSONNO UQNO Qtr using "`input'\ZAF_2016_QLFS_v01_M_v04_A_GLD_append_GEO.dta"
+	merge m:m PERSONNO UQNO Qtr using "`path_in_stata'\ZAF_2016_QLFS_v01_M_v05_A_GLD_append_GEO.dta"
 	drop _merge
 	gen byte urban=geo
 	recode urban 1=1 2/4=0
@@ -296,12 +300,14 @@ Code list:
 *</_subnatidsurvey_>
 
 
-*<_subnatid1_prev_>
-/* <_subnatid1_prev>
+/* <_subnatid1_prev_note_>
 
 	subnatid1_prev is coded as missing unless the classification used for subnatid1 has changed since the previous survey.
 
-</_subnatid1_prev> */
+</_subnatid1_prev_note_> */
+
+
+*<_subnatid1_prev_>
 	gen subnatid1_prev = .
 	label var subnatid1_prev "Classification used for subnatid1 from previous survey"
 *</_subnatid1_prev_>
@@ -367,7 +373,7 @@ Code list:
 	label values male lblmale
 *</_male_>
 
-/*<_relationharm_>
+/*<_relationharm_note_>
 
 Not asked, all we know is that the person with personal number equal to 1 is the head, the problem is that in some cases that person is not present, probably because he/she didn't spend four nights or more in this household. In those cases I assigned the eldest adult male (or female absent male) present as the household head.
 104 observations were dropped due to no male memeber or multiple same old male (or female) members.
@@ -403,7 +409,8 @@ are not originally 1 or their ages reach 18. Their pids are:
 66710411000000460102 "unlikely to be the same person"
 97310271000002500102 "turning into 18"
 
-</_relationharm_>*/
+</_relationharm_note_>*/
+
 
 *<_relationharm_>
 	gen byte relationharm=1 if PERSONNO==1
@@ -584,19 +591,19 @@ are not originally 1 or their ages reach 18. Their pids are:
 
 
 {
-
-*<_ed_mod_age_>
-
-/* <_ed_mod_age_note>
+/* <_ed_mod_age_note_>
 
 Education module is only asked to those 0 and older.
 
-</_ed_mod_age_note> */
+</_ed_mod_age_note_> */
 
+
+*<_ed_mod_age_>
 	gen byte ed_mod_age = 0
 	label var ed_mod_age "Education module application age"
 
 *</_ed_mod_age_>
+
 
 *<_school_>
 	gen byte school = Q19ATTE
@@ -616,7 +623,7 @@ Education module is only asked to those 0 and older.
 *</_literacy_>
 
 
-/*<_educy_>
+/*<_educy_note_>
 
 The National Technical Certificate level 1, 2, and 3 are mapped to grade 10, 11, and 12
 respectively. In South Africa, one option for students is to exit school with GETC
@@ -637,7 +644,7 @@ Individual |                                 Highest education level
 -----------+----------------------------------------------------------------------------------------+----------
      Total |         7         21         10         12          6         12          1          1 |        70 
 
-</_educy_>*/
+</_educy_note_>*/
 
 
 *<_educy_>
@@ -690,7 +697,7 @@ Individual |                                 Highest education level
 *</_educat_orig_>
 
 
-/*<_educat_isced_>
+/*<_educat_isced_note_>
 
 Var "Q17EDUCATION": What is the highest level of education that... has sucessfully completed?
 
@@ -701,7 +708,7 @@ ISCED codes:http://uis.unesco.org/en/isced-mappings
 Category 24-"Post Higher Diploma (Masters; Doctoral Diploma)" is mapped to the lower
 bound -- "Master's'" in ISCED code.
 
-</_educat_isced_>*/
+</_educat_isced_note_>*/
 
 
 *<_educat_isced_>
@@ -804,7 +811,7 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 *</_lstatus_>
 
 
-/*<_potential_lf_>
+/*<_potential_lf_note_>
 Note: var "potential_lf" is missing if the respondent is in labor force or unemployed; it only takes value if the respondent is not in labor force. (Status==3)
 
 "potential_lf" = 1 if the person is
@@ -819,7 +826,7 @@ Q31ALOOKWRK "looking for any kind of job in the last 4 weeks?"
 Q31BSTARTBUSNS "trying to start a ny kin of business in the last 4 weeks?"
 Q39JOBOFFER "availability if a suitable job were offered in last week"
 Q310STARTBUSNS "Start a business if the circumstances have allowed?"
-</_potential_lf_>*/
+</_potential_lf_note_>*/
 
 
 *<_potential_lf_>
@@ -958,7 +965,7 @@ Q310STARTBUSNS "Start a business if the circumstances have allowed?"
 *<_occup_isco_>
 	tostring Q42OCCUPATION, gen(occup_string)
 	gen occupcat_isco=substr(occup_string, 1, 3)
-	merge m:1 occupcat_isco using "`input'\isco88_sasco03_mapping.dta"
+	merge m:1 occupcat_isco using "`path_in_stata'\isco88_sasco03_mapping.dta"
 	drop if _merge==2
 	destring isco_88, replace
 	gen occup_isco=isco_88*10
@@ -1007,7 +1014,8 @@ Q310STARTBUSNS "Start a business if the circumstances have allowed?"
 	label values unitwage lblunitwage
 *</_unitwage_>
 
-/*<_whours_>
+
+/*<_whours_note_>
 
 Variable "Q418HRSWRK" is working hours for people who only have one job and it is missing for people who have more than one job.
 
@@ -1028,7 +1036,8 @@ The main job was decided based on time spent.
 ------------+-----------------------------------
       Total |     72,859      100.00
 
-<_whours_>*/
+<_whours_note_>*/
+
 
 *<_whours_>
 	gen whours=Q418HRSWRK
@@ -1045,13 +1054,15 @@ The main job was decided based on time spent.
 *</_wmonths_>
 
 
-*<_wage_total_>
-/* <_wage_total>
+/* <_wage_total_note_>
 
 	Use gross wages when available and net wages only when gross wages are not available.
 	This is done to make it easy to compare earnings in formal and informal sectors.
 
-</_wage_total> */
+</_wage_total_note_> */
+
+
+*<_wage_total_>
 	gen wage_total=.
 	label var wage_total "Annualized total wage primary job 7 day recall"
 *</_wage_total_>
@@ -1111,13 +1122,13 @@ The main job was decided based on time spent.
 *</_firmsize_u_>
 
 
-/*<_Labor_status_&_ISIC/ISCO_>
+/*<_Labor_status_&_ISIC/ISCO_note_>
 
 Recode ISIC and ISCO vars to missing if lstatus is not "1-employed". 
 Because ISIC and ISCO are string variables, their missing values should be "" 
 instead of ".". 
 
-<_Labor_status_&_ISIC/ISCO_>*/
+<_Labor_status_&_ISIC/ISCO_note_>*/
 
 
 *<_Labor_status_&_ISIC/ISCO_>
@@ -1776,6 +1787,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`output'\ZAF_2016_QLFS_v01_M_v05_A_GLD_ALL.dta", replace
+save "`path_output'\\`level_2_harm'_ALL.dta", replace
 
 *</_% SAVE_>
