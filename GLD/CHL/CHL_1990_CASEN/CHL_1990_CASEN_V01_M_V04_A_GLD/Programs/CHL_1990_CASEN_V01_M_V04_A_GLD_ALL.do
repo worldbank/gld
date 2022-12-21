@@ -747,9 +747,8 @@ foreach v of local ed_var {
 
 
 *<_occup_>
-	gen  occup = oficio
-	recode occup 9999=.
-	replace occup=1 if oficio==0 | o5==1
+	gen  occup = o5
+	recode occup (10/11=1) (20/25=2) (30/34=3) (0=10) (40/48=4) (50/55=5) (60/69=6) (70/79=7) (80=8) (90/92=9)
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup
