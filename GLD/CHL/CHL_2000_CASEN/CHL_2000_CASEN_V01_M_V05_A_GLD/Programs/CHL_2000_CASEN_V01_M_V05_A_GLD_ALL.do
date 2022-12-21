@@ -706,8 +706,19 @@ foreach v of local ed_var {
 
 
 *<_industrycat10_>
-	gen industrycat10=rama
-	recode industrycat10 0=10
+	gen industrycat10=.
+	tostring o9_helper, replace force
+	replace industrycat10=1 if inrange(o9_helper,"1000","1399")
+	replace industrycat10=2 if inrange(o9_helper,"2100","2999")
+	replace industrycat10=3 if inrange(o9_helper,"3111","3999")
+	replace industrycat10=4 if inrange(o9_helper,"4100","4200")
+	replace industrycat10=5 if inrange(o9_helper,"5000","5999")
+	replace industrycat10=6 if inrange(o9_helper,"6100","6320")
+	replace industrycat10=7 if inrange(o9_helper,"7111","7200")
+	replace industrycat10=8 if inrange(o9_helper,"8100","8339")
+	replace industrycat10=9 if o9_helper=="9100"
+	replace industrycat10=10 if inrange(o9_helper,"9200","9600")
+	replace industrycat10=10 if o9_helper=="0"
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"

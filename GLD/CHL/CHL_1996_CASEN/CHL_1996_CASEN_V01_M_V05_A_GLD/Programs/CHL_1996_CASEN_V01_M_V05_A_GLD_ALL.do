@@ -501,8 +501,8 @@ local letters "r p c z o seg f"
 *</_educy_>
 
 *<_educat7_>
-	gen byte educat7 = e6
-	recode educat7 0=1 2=5 3/4=3 5/6=5 7/12=6 13/15=7 99=.
+*Questionnaire does not have enough information to create primary incomplete as opposed to other years, it is only named as basic.
+	gen byte educat7 = .
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -510,7 +510,7 @@ local letters "r p c z o seg f"
 
 
 *<_educat5_>
-	gen educat5=educat7
+	gen educat5=.
 	recode educat5 (3 4=3) (5=4) (6 7=5)
 	label var educat5 "Level of education 2"
 	la de lbleducat5 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
@@ -519,8 +519,8 @@ local letters "r p c z o seg f"
 
 
 *<_educat4_>
-	gen byte educat4 = educat5
-	recode educat4 (3=2) (4=3) (5=4)
+	gen byte educat4 = e6
+	recode educat4 (0/1=1) (2=3) (3/4=2) (5/6=3) (7/15=4)
 	label var educat4 "Level of education 3"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values educat4 lbleducat4
@@ -708,8 +708,18 @@ foreach v of local ed_var {
 
 
 *<_industrycat10_>
-	gen industrycat10=rama
-	recode industrycat10 0=10
+	gen industrycat10=.
+	replace industrycat10=1 if inrange(o7_helper,"110","130")
+	replace industrycat10=2 if inrange(o7_helper,"210","290")
+	replace industrycat10=3 if inrange(o7_helper,"310","390")
+	replace industrycat10=4 if inrange(o7_helper,"410","420")
+	replace industrycat10=5 if inrange(o7_helper,"500","503")
+	replace industrycat10=6 if inrange(o7_helper,"610","632")
+	replace industrycat10=7 if inrange(o7_helper,"710","720")
+	replace industrycat10=8 if inrange(o7_helper,"810","833")
+	replace industrycat10=9 if o7_helper=="910"
+	replace industrycat10=10 if inrange(o7_helper,"920","960")
+	replace industrycat10=10 if o7_helper=="0"
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"

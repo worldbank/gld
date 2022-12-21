@@ -1,4 +1,5 @@
 
+
 /*%%=============================================================================================
 	0: GLD Harmonization Preamble
 ==============================================================================================%%*/
@@ -500,7 +501,7 @@ use "`path_in_stata'\casen2006.dta"
 *<_educat7_>
 *no division between institute and uni
 	gen byte educat7 = educ
-	recode educat7 0=1 1=2 2=3 3=4 5 6=6 7 8=7 99=.
+	recode educat7 0=1 1=2 2=3 3=4 4=6 5/6=5 7/8=7 99=.
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -703,8 +704,21 @@ foreach v of local ed_var {
 
 
 *<_industrycat10_>
-	gen industrycat10=rama
-	recode industrycat10 0=10
+	gen industrycat10=.
+	tostring o12_helper, replace force
+	replace industrycat10=1 if inrange(o12_helper,"1000","1399")
+	replace industrycat10=2 if inrange(o12_helper,"2100","2999")
+	replace industrycat10=3 if inrange(o12_helper,"3111","3999")
+	replace industrycat10=4 if inrange(o12_helper,"4100","4200")
+	replace industrycat10=5 if inrange(o12_helper,"5000","5999")
+	replace industrycat10=6 if inrange(o12_helper,"6100","6522")
+	replace industrycat10=7 if inrange(o12_helper,"7111","7499")
+	replace industrycat10=8 if inrange(o12_helper,"8100","8340")
+	replace industrycat10=9 if o12_helper=="9100"
+	replace industrycat10=9 if inrange(o12_helper,"9111","9191")
+	replace industrycat10=10 if inrange(o12_helper,"9200","9600")
+	replace industrycat10=10 if o12_helper=="0"
+	replace industrycat10=. if o12_helper=="9999"
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
