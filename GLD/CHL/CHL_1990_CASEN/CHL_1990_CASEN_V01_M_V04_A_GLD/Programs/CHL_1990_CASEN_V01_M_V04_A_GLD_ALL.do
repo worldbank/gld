@@ -673,7 +673,7 @@ foreach v of local ed_var {
 {
 *<_empstat_>
 	gen byte empstat = o7
-	recode empstat (1=3) (2=4) (3=1) (6=2) (4 5 7=1) (8=.)
+	recode empstat (1=3) (2=4) (3=1) (6=2) (4/5=1) (7=1) (8=.)
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat lblempstat
@@ -733,13 +733,16 @@ foreach v of local ed_var {
 
 
 *<_occup_skill_>
+*the low skill bracket has a minimum wage larger than medium and high skill. 
 	gen occup_skill = .
-	replace occup_skill=1 if oficio==9
-	replace occup_skill=2 if inrange(oficio,4,8)
-	replace occup_skill=3 if inrange(oficio,1,3)
-	replace occup_skill=. if oficio==0
-	replace occup_skill=. if oficio==999
-	replace occup_skill=. if oficio==9999
+	replace occup_skill=1 if inrange(o5,90,92)
+	replace occup_skill=2 if inrange(o5,4,7)
+	replace occup_skill=2 if inrange(o5,40,80)
+	replace occup_skill=3 if inrange(o5,1,3)
+	replace occup_skill=3 if inrange(o5,10,30)
+	replace occup_skill=1 if o5==0
+	replace occup_skill=. if o5==999
+	replace occup_skill=. if o5==9999
 	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
 	label values occup_skill lblskill
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
@@ -759,6 +762,10 @@ foreach v of local ed_var {
 	gen double wage_no_compen =yopraj
 	replace wage_no_compen=. if lstatus!=1
 	replace wage_no_compen=. if wage_no_compen == 0
+	*outliers
+	replace wage_no_compen=. if o5==40 | yopraj==3960000
+	replace wage_no_compen=. if o5==53 | yopraj==3960000
+	replace wage_no_compen=. if o5==72 | yopraj==3960000
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
