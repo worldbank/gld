@@ -30,3 +30,10 @@ ISCO 88 (ILO)	| ISCO 88 (CASEN) |
 
 The ISCO classification has three levels. Level 1 has 1 digit and is the highest level. Level 2 has 2 digits and level 3 has 3 digits.  In the CASEN, though, the first level has three digits the same number of digits as the second level and the third, yet with further attention, one can notice that the first level in CASEN has two zeros next to the first digit, which makes it comparable to the ISCO classification. In the harmonization do-files, the team lists these abnormalities for the user to pay attention to before proceeding with the analysis. 
 
+## Important Note
+
+The year 1990 was not harmonized to ISCO codes because the survey questionnaire and data do not match. As a result, the GLD team cannot match the correct data to groups and subgroups. The variables affected are occup_isco, occup and occup_skill. Please see here the CASEN guide for the year 1990 where you can see the details for oficio and o5 the variables related to occupation classifications. 
+
+
+
+
