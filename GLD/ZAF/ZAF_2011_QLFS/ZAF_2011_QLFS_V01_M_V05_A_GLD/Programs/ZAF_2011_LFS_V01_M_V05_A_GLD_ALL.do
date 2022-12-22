@@ -23,7 +23,7 @@
 <_Geographic coverage_> 		Province </_Geographic coverage_>
 <_Currency_> 					South African Rand </_Currency_>
 -----------------------------------------------------------------------
-<_ICLS Version_>				ICLS 13 </_ICLS Version_>
+<_ICLS Version_>				ICLS 19 </_ICLS Version_>
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
 <_ISCO Version_>				ISCO-88 </_ISCO Version_>
 <_OCCUP National_>				SASCO-2003 </_OCCUP National_>
@@ -36,7 +36,7 @@
 * Date: [2022-04-06] File: [ZAF_2011_QLFS_v01_M_v02_A_GLD_ALL.do] - [Adding wage variable]
 * Date: [2022-07-06] File: [ZAF_2011_QLFS_v01_M_v03_A_GLD_ALL.do] - [Adding new GLD variables: isced_version/isco_version/isic_version/educat_orig/vocational_field_orig]
 * Date: [2022-09-22] File: [ZAF_2011_QLFS_v01_M_v04_A_GLD_ALL.do] - [Correcting occupation skill level; correcting typo (631 to 621 in the ISCO88 code list); coding 5164 to category "Service and market sales workers"]
-* Date: [2022-11-03] File: [ZAF_2011_QLFS_v01_M_v05_A_GLD_ALL.do] - [Update ICLS V, was excluding non market as employment all along]
+* Date: [2022-12-21] File: [ZAF_2011_QLFS_v01_M_v05_A_GLD_ALL.do] - [Update ICLS V, was excluding non market as employment all along; recoding educat7]
 
 </_Version Control_>
 
@@ -628,9 +628,12 @@ Zero observation's years of education exceed their age.
 
 
 *<_educat7_>
-	gen byte educat7 = Education_Status
-	recode educat7 7=.
-	replace educat7=7 if inrange(Q17EDUCATION,21,28)
+	gen byte educat7=.
+	replace educat7=Education_Status if inrange(Education_Status,1,3)
+	replace educat7=4 if Education_Status==4&inrange(Q17EDUCATION,9,18)
+	replace educat7=5 if Education_Status==5&inrange(Q17EDUCATION,9,18)
+	replace educat7=6 if inrange(Q17EDUCATION,19,20)
+	replace educat7=7 if inrange(Q17EDUCATION,21,24)
 	replace educat7=. if age<ed_mod_age & age!=.
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
@@ -893,6 +896,7 @@ Q310STARTBUSNS "Start a business if the circumstances have allowed?"
 	drop industrycat_isic
 	tostring industrycat_isic2, gen(industrycat_isic) format(%04.0f)
 	drop industrycat_isic2
+	replace industrycat_isic="" if lstatus!=1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
@@ -933,6 +937,7 @@ Q310STARTBUSNS "Start a business if the circumstances have allowed?"
 	replace occup_isco=9000 if Q42OCCUPATION==9999
 	tostring occup_isco, replace
 	drop _merge occup_string occupcat_isco sasco_occup isco_88 isco_occup
+	replace occup_isco="" if lstatus!=1
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
@@ -1007,7 +1012,7 @@ NOTE: One outlier who has worked 193 hours in total in the past week has more th
 	gen whours=Q418HRSWRK
 	egen primary=rowmax(Q420FIRSTHRSWRK Q420SECONDHRSWRK)
 	replace whours=primary if Q418HRSWRK==.
-	replace whours=. if lstatus!=1
+	replace whours=. if lstatus!=1|whours==0
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -1084,21 +1089,6 @@ NOTE: One outlier who has worked 193 hours in total in the past week has more th
 	replace firmsize_u=. if lstatus!=1
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>
-
-
-/*<_Labor_status_&_ISIC/ISCO_note_>
-
-Recode ISIC and ISCO vars to missing if lstatus is not "1-employed". 
-Because ISIC and ISCO are string variables, their missing values should be "" 
-instead of ".". 
-
-<_Labor_status_&_ISIC/ISCO_note_>*/
-
-
-*<_Labor_status_&_ISIC/ISCO_>
-	replace industrycat_isic="" if lstatus!=1
-	replace occup_isco="" if lstatus!=1
-*</_Labor_status_&_ISIC/ISCO_>
 }
 
 
