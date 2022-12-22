@@ -57,20 +57,26 @@ set mem 800m
 
 *----------1.2: Set directories------------------------------*
 
-local 	drive 	`"Z"'
-local 	cty 	`"ETH"'
-local 	usr		`"573465_JT"'
-local 	surv_yr `"2013"'
-local 	year 	"`drive':\GLD-Harmonization\\`usr'\\`cty'\\`cty'_`surv_yr'_LFS"
-local 	main	"`year'\\`cty'_`surv_yr'_LFS_v01_M"
-local 	stata	"`main'\data\stata"
-local 	gld 	"`year'\\`cty'_`surv_yr'_LFS_v01_M_v01_A_GLD"
-local 	i2d2	"`year'\\`cty'_`surv_yr'_LFS_v01_M_v01_A_I2D2"
-local 	code 	"`gld'\Programs"
-local 	id_data "`gld'\Data\Harmonized"
+* Define path sections
+local server  "Z:\GLD-Harmonization\573465_JT"
+local country "ETH"
+local year    "2013"
+local survey  "LFS"
+local vermast "v01"
+local veralt  "v01"
 
-local input "`stata'"
-local output "`id_data'"
+* From the definitions, set path chunks
+local level_1      "`country'_`year'_`survey'"
+local level_2_mast "`level_1'_`vermast'_M"
+local level_2_harm "`level_1'_`vermast'_M_`veralt'_A_GLD"
+
+* From chunks, define path_in, path_output folder
+local path_in_stata "`server'\\`country'\\`level_1'\\`level_2_mast'\Data\Stata"
+local path_in_other "`server'\\`country'\\`level_1'\\`level_2_mast'\Data\Original"
+local path_output   "`server'\\`country'\\`level_1'\\`level_2_harm'\Data\Harmonized"
+
+* Define Output file name
+local out_file "`level_2_harm'_ALL.dta"
 
 
 *----------1.3: Database assembly------------------------------*
@@ -78,7 +84,7 @@ local output "`id_data'"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	use "`input'\nlfs2013.dta", clear
+	use "`path_in_stata'\nlfs2013.dta", clear
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -136,13 +142,13 @@ local output "`id_data'"
 
 
 *<_vermast_>
-	gen str3 vermast="v01"
+	gen str3 vermast="`vermst'"
 	label var vermast "Version of master data"
 *</_vermast_>
 
 
 *<_veralt_>
-	gen str3 veralt="v01"
+	gen str3 veralt="`veralt'"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
@@ -650,7 +656,7 @@ The new curriculum follows a 4-4-2-2 structure:
 
 *<_educat7_>
 	gen byte educat7=.
-	replace educat7=1 if educy==0
+	replace educat7=1 if educy==0|age<5
 	replace educat7=2 if LF214<8 
 	replace educat7=3 if LF214==8
 	replace educat7=4 if (LF214>=9 & LF214<12)|(LF214>=21 & LF214<24)
@@ -1015,6 +1021,7 @@ According to the annual report, employment status of a person was classified int
 *<_whours_>
 	gen whours=LF302
 	replace whours=. if lstatus!=1
+	replace whours=. if LF302==0
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -1748,6 +1755,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`output'\ETH_2013_LFS_v01_M_v01_A_GLD_ALL.dta", replace
+save "`path_output'\\`level_2_harm'_ALL.dta", replace
 
 *</_% SAVE_>

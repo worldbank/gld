@@ -41,7 +41,7 @@
 </_Version Control_>
 
 -------------------------------------------------------------------------*/
-recode LF206 (2=0), gen(literate)
+/*recode LF206 (2=0), gen(literate)
 
 gen edu=.
 
@@ -55,7 +55,7 @@ replace edu=3 if inlist(LF208,12,14, 15, 16,20,34,24,26,27) // completed seconda
 
 replace edu=4 if inlist(LF208, 17, 25,35)|inrange(LF208,28,32) //"Completed post-secondary"
 
-replace edu=. if age<5
+replace edu=. if age<5 */
 
 /*%%=============================================================================================
 	1: Setting up of program environment, dataset
@@ -153,13 +153,13 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_vermast_>
-	gen str3 vermast="v01"
+	gen str3 vermast="`vermst'"
 	label var vermast "Version of master data"
 *</_vermast_>
 
 
 *<_veralt_>
-	gen str3 veralt="v01"
+	gen str3 veralt="`veralt'"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
@@ -597,7 +597,7 @@ our from their original place during the 5 years prior to the date of the interv
 {
 
 *<_ed_mod_age_>
-	gen byte ed_mod_age=5
+	gen byte ed_mod_age=3
 	label var ed_mod_age "Education module application age"
 *</_ed_mod_age_>
 
@@ -665,14 +665,14 @@ received education.
 
 *<_educat7_>
 	gen byte educat7=.
-	replace educat7=1 if educy==0
+	/*replace educat7=1 if educy==0
 	replace educat7=2 if educy<8 
 	replace educat7=3 if educy==8
 	replace educat7=4 if educy>=9 & educy <12
 	replace educat7=5 if educy==12
 	replace educat7=6 if educy==13 & LF208!=27
 	replace educat7=7 if educy>13 & !mi(educy)
-	replace educat7=. if age<ed_mod_age
+	replace educat7=. if age<ed_mod_age*/
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -685,12 +685,20 @@ received education.
 	label var educat5 "Level of education 2"
 	la de lbleducat5 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
 	label values educat5 lbleducat5
-*</_educat5_>
+*</_educat5_>*/
 
 
 *<_educat4_>
-	gen byte educat4=educat7
-	recode educat4 (2 3 4=2) (5=3) (6 7=4)
+	recode LF206 (2=0), gen(literate)
+	gen educat4=.
+	replace educat4=1 if literate==0|inrange(LF208,36,38)|LF208==44|age<3 // preschool or no education
+	replace educat4=2 if inrange(LF208,1,7)|inrange(LF208,39,43)|LF208==96 // less than primary and adult/informal education
+	replace educat4=2 if inrange(LF208,8,11) | inrange(LF208,21,23) | inlist(LF208,13,18, 19, 33) // completed primary but not secondary
+	replace educat4=3 if inlist(LF208,12,14, 15, 16,20,34,24,26,27) // completed secondary but not higher
+	replace educat4=4 if inlist(LF208, 17, 25,35)|inrange(LF208,28,32) //"Completed post-secondary"
+
+	/*gen byte educat4=educat7
+	recode educat4 (2 3 4=2) (5=3) (6 7=4)*/
 	label var educat4 "Level of education 3"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values educat4 lbleducat4
@@ -1010,7 +1018,7 @@ According to the annual report, employment status of a person was classified int
 
 
 *<_wage_no_compen_>
-	gen double wage_no_compen=LF321
+	gen double wage_no_compen=LF322
 	replace wage_no_compen=0 if empstat==2
 	replace wage_no_compen=. if lstatus!=1
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
@@ -1781,6 +1789,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`path_output'\ETH_2021_LFS_v01_M_v01_A_GLD_ALL.dta", replace
+save "`path_output'\\`level_2_harm'_ALL.dta", replace
 
 *</_% SAVE_>

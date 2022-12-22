@@ -60,20 +60,26 @@ set mem 800m
 
 *----------1.2: Set directories------------------------------*
 
-local 	drive 	`"Z"'
-local 	cty 	`"ETH"'
-local 	usr		`"573465_JT"'
-local 	surv_yr `"2005"'
-local 	year 	"`drive':\GLD-Harmonization\\`usr'\\`cty'\\`cty'_`surv_yr'_LFS"
-local 	main	"`year'\\`cty'_`surv_yr'_LFS_v01_M"
-local 	stata	"`main'\data\stata"
-local 	gld 	"`year'\\`cty'_`surv_yr'_LFS_v01_M_v01_A_GLD"
-local 	i2d2	"`year'\\`cty'_`surv_yr'_LFS_v01_M_v01_A_I2D2"
-local 	code 	"`gld'\Programs"
-local 	id_data "`gld'\Data\Harmonized"
+* Define path sections
+local server  "Z:\GLD-Harmonization\573465_JT"
+local country "ETH"
+local year    "2005"
+local survey  "LFS"
+local vermast "v01"
+local veralt  "v01"
 
-local input "`stata'"
-local output "`id_data'"
+* From the definitions, set path chunks
+local level_1      "`country'_`year'_`survey'"
+local level_2_mast "`level_1'_`vermast'_M"
+local level_2_harm "`level_1'_`vermast'_M_`veralt'_A_GLD"
+
+* From chunks, define path_in, path_output folder
+local path_in_stata "`server'\\`country'\\`level_1'\\`level_2_mast'\Data\Stata"
+local path_in_other "`server'\\`country'\\`level_1'\\`level_2_mast'\Data\Original"
+local path_output   "`server'\\`country'\\`level_1'\\`level_2_harm'\Data\Harmonized"
+
+* Define Output file name
+local out_file "`level_2_harm'_ALL.dta"
 
 
 *----------1.3: Database assembly------------------------------*
@@ -81,7 +87,7 @@ local output "`id_data'"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	use "`input'\LF2005_REC2.dta", clear
+	use "`path_in_stata'\LF2005_REC2.dta", clear
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -138,13 +144,13 @@ local output "`id_data'"
 
 
 *<_vermast_>
-	gen str3 vermast="v01"
+	gen str3 vermast="`vermst'"
 	label var vermast "Version of master data"
 *</_vermast_>
 
 
 *<_veralt_>
-	gen str3 veralt="v01"
+	gen str3 veralt="`veralt'"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
@@ -282,7 +288,7 @@ in the offical annual report, they were grouped at their regional level.
 *<_subnatid2_>
 	gen code_region=ID01
 	egen code=concat(code_region ID02), punct(".")
-	merge n:n code using "`input'\ETH_zone_namING_2005.dta" 
+	merge n:n code using "`path_in_stata'\ETH_zone_namING_2005.dta" 
 	drop if _merge==2
 	gen subnatid2=zone_name
 	drop if _merge!=3
@@ -1004,7 +1010,7 @@ treated as "Paid employee".
 
 *<_occup_>
 	destring occup, replace
-	recode occup (1110/1310=1) (1210/2460=2) (3111/3480=3) (4111/4223=4) (5111/5250=5) (6111/6251=6) (7111/7442=7) (8111/8334=8) (9111/9333=9) (111=10) (9999=99)
+	recode occup (1110/1310=1) (1210/2460=2) (3111/3480=3) (4111/4223=4) (5111/5250=5) (6111/6251=6) (7111/7442=7) (8111/8334=8) (9111/9333=9) (111=10) (9999=99) (5761=.)
 	 replace occup=. if lstatus!=1
 	 recode occup (0=10) 
 	 label var occup "1 digit occupational classification, primary job 7 day recall"
@@ -1033,6 +1039,7 @@ treated as "Paid employee".
 *<_whours_>
 	gen whours=LF29
 	replace whours=. if lstatus!=1
+	replace whours=. if LF29==0
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -1768,6 +1775,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`output'\ETH_2005_LFS_v01_M_v01_A_GLD_ALL.dta", replace
+save "`path_output'\\`level_2_harm'_ALL.dta", replace
 
 *</_% SAVE_>

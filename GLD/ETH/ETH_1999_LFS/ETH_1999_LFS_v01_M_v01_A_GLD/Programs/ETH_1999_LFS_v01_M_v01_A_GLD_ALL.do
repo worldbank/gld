@@ -143,13 +143,13 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_vermast_>
-	gen str3 vermast="v01"
+	gen str3 vermast="`vermst'"
 	label var vermast "Version of master data"
 *</_vermast_>
 
 
 *<_veralt_>
-	gen str3 veralt="v01"
+	gen str3 veralt="`veralt'"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
@@ -1021,6 +1021,7 @@ treated as "Paid employee".
 *<_whours_>
 	gen whours=LF31T
 	replace whours=. if lstatus!=1
+	replace whours=. if LF31T==0
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -1743,6 +1744,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`path_output'\ETH_1999_LFS_v01_M_v01_A_GLD_ALL.dta", replace
+save "`path_output'\\`level_2_harm'_ALL.dta", replace
 
 *</_% SAVE_>
