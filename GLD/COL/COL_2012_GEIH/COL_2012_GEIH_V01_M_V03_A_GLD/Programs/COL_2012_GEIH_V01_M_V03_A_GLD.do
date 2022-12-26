@@ -205,13 +205,12 @@ save "`path_in_stata'\data_2012_final.dta", replace
 
 
 *<_int_year_>
-	gen int_year = 2012 //instead of intv_year=ano
+	gen int_year = 2012
 	label var int_year "Year of the interview"
 *</_int_year_>
 
 
 *<_int_month_> // Includes all months
-	*destring mes, replace
 	gen  int_month = mes
 	label de lblint_month 1 "January" 2 "February" 3 "March" 4 "April" 5 "May" 6 "June" 7 "July" 8 "August" 9 "September" 10 "October" 11 "November" 12 "December"
 	label value int_month lblint_month
@@ -441,13 +440,13 @@ local letters "secuencia_p mes orden"
 
 
 *<_age_>
-	gen age = p6040  //add
+	gen age = p6040
 	replace age=98 if age>98 & age!=.
 	label var age "Individual age"
 *</_age_>
 
 *<_male_>
-	gen male =(p6020==1)  //add
+	gen male =(p6020==1)
 	gen byte gender=male
 	label var male "Sex - Ind is male"
 	la de lblmale 1 "Male" 0 "Female"
@@ -457,7 +456,7 @@ local letters "secuencia_p mes orden"
 
 *<_relationharm_>
 	gen relationharm = p6050
-	recode relationharm (7=6) (8=6)  (9=6) (4=5) //added
+	recode relationharm (7=6) (8=6)  (9=6) (4=5)
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm  lblrelationharm
@@ -578,8 +577,6 @@ local letters "secuencia_p mes orden"
 
 *<_migrated_from_code_>
 	gen migrated_from_code = .
-	*label de lblmigrated_from_code
-	*label values migrated_from_code lblmigrated_from_code
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
 *</_migrated_from_code_>
 
@@ -830,7 +827,7 @@ foreach v of local ed_var {
 
 *<_unempldur_u_>
 	gen byte unempldur_u=int(p7250/4)  //same variable as unempldur_l?
-	replace unempldur_l=. if lstatus!=2
+	replace unempldur_u=. if lstatus!=2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
 *</_unempldur_u_>
 }
@@ -1403,7 +1400,7 @@ foreach v of local ed_var {
 *<_contract_>
 	gen byte contract = 0
 	replace contract=1 if p6450==2
-	replace contract=. if p6450==9 //instead of replace contract=. if p6450==3
+	replace contract=. if p6450==9
 	label var contract "Employment has contract primary job 7 day recall"
 	la de lblcontract 0 "Without contract" 1 "With contract"
 	replace contract=. if lstatus!=1
@@ -1620,7 +1617,7 @@ foreach v of local ed_var {
 
 {
 
-*<_lstatus_year_> //not creating any variable, should wait for joining datasets with 2010?
+*<_lstatus_year_>
 	gen byte lstatus_year = .
 	replace lstatus_year=. if age < minlaborage & age != .
 	label var lstatus_year "Labor status during last year"
@@ -1673,7 +1670,7 @@ foreach v of local ed_var {
 
 {
 
-*<_empstat_year_> //not creating any variable, should wait for joining datasets with 2010?
+*<_empstat_year_>
 	gen byte empstat_year = .
 	replace empstat_year=. if lstatus_year!=1
 	label var empstat_year "Employment status during past week primary job 12 month recall"
@@ -1745,7 +1742,7 @@ foreach v of local ed_var {
 *</_occup_year_>
 
 
-*<_wage_no_compen_year_> --- this var has the same name as other and when quoted in the keep and order codes is repeated.
+*<_wage_no_compen_year_>
 	gen double wage_no_compen_year = .
 	label var wage_no_compen_year "Last wage payment primary job 12 month recall"
 *</_wage_no_compen_year_>
@@ -1828,7 +1825,7 @@ foreach v of local ed_var {
 
 {
 
-*<_empstat_2_year_> //not creating any variable, should wait for joining datasets with 2010?
+*<_empstat_2_year_>
 	gen byte empstat_2_year = .
 	label var empstat_2_year "Employment status during past week secondary job 12 month recall"
 	label values empstat_2_year lblempstat_year

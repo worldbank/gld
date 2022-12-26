@@ -242,7 +242,7 @@ save "`path_in_stata'/ECH_2001.dta", replace
 {
 
 *<_urban_>
- 	destring clase, gen(urban) //add
+ 	destring clase, gen(urban)
 	replace urban = 0 if urban == 2
 	label var urban "Location is urban"
 	la de lblurban 1 "Urban" 0 "Rural"
@@ -514,8 +514,6 @@ replace subnatidsurvey = subnatid2 + " - Rural" if urban == 0
 
 *<_migrated_from_code_>
 	gen migrated_from_code = .
-	*label de lblmigrated_from_code
-	*label values migrated_from_code lblmigrated_from_code
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
 *</_migrated_from_code_>
 
@@ -1060,11 +1058,6 @@ foreach v of local ed_var {
 *</_wage_total_>
 
 
-
-	label var wage_total "Annualized total wage primary job 7 day recall"
-*</_wage_total_>
-
-
 *<_contract_>
 	gen byte contract = .
 	label var contract "Employment has contract primary job 7 day recall"
@@ -1125,13 +1118,8 @@ foreach v of local ed_var {
 
 {
 *<_empstat_2_>
-	*destring p37, replace
-	*gen byte empstat_2 = p37
 	gen byte empstat_2 = .
-	*recode empstat_2 2=0
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
-	*la de lblempstat2 1 "Yes" 0 "No"
-	*label values empstat_2 lblempstat2
 *</_empstat_2_>
 
 
@@ -1655,13 +1643,6 @@ foreach v of local ed_var {
 
 
 *----------8.11: Overall across reference periods------------------------------*
-
-
-/*<_njobs_> Defined above
-	gen njobs = .
-	label var njobs "Total number of jobs"
-*</_njobs_> */
-
 
 *<_t_hours_annual_>
 	gen t_hours_annual = .

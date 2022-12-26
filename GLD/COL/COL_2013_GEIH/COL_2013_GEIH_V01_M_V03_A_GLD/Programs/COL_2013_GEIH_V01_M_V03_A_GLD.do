@@ -578,8 +578,6 @@ local letters "secuencia_p orden"
 
 *<_migrated_from_code_>
 	gen migrated_from_code = .
-	*label de lblmigrated_from_code
-	*label values migrated_from_code lblmigrated_from_code
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
 *</_migrated_from_code_>
 
@@ -830,8 +828,8 @@ foreach v of local ed_var {
 
 
 *<_unempldur_u_>
-	gen byte unempldur_u=int(p7250/4)  //same variable as unempldur_l?
-	replace unempldur_l=. if lstatus!=2
+	gen byte unempldur_u=int(p7250/4)
+	replace unempldur_u=. if lstatus!=2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
 *</_unempldur_u_>
 }
@@ -1404,7 +1402,7 @@ foreach v of local ed_var {
 *<_contract_>
 	gen byte contract = 0
 	replace contract=1 if p6450==2
-	replace contract=. if p6450==9 //instead of replace contract=. if p6450==3
+	replace contract=. if p6450==9
 	label var contract "Employment has contract primary job 7 day recall"
 	la de lblcontract 0 "Without contract" 1 "With contract"
 	replace contract=. if lstatus!=1
@@ -1621,7 +1619,7 @@ foreach v of local ed_var {
 
 {
 
-*<_lstatus_year_> //not creating any variable, should wait for joining datasets with 2010?
+*<_lstatus_year_>
 	gen byte lstatus_year = .
 	replace lstatus_year=. if age < minlaborage & age != .
 	label var lstatus_year "Labor status during last year"
@@ -1674,7 +1672,7 @@ foreach v of local ed_var {
 
 {
 
-*<_empstat_year_> //not creating any variable, should wait for joining datasets with 2010?
+*<_empstat_year_>
 	gen byte empstat_year = .
 	replace empstat_year=. if lstatus_year!=1
 	label var empstat_year "Employment status during past week primary job 12 month recall"
@@ -1746,7 +1744,7 @@ foreach v of local ed_var {
 *</_occup_year_>
 
 
-*<_wage_no_compen_year_> --- this var has the same name as other and when quoted in the keep and order codes is repeated.
+*<_wage_no_compen_year_>
 	gen double wage_no_compen_year = .
 	label var wage_no_compen_year "Last wage payment primary job 12 month recall"
 *</_wage_no_compen_year_>
@@ -1829,7 +1827,7 @@ foreach v of local ed_var {
 
 {
 
-*<_empstat_2_year_> //not creating any variable, should wait for joining datasets with 2010?
+*<_empstat_2_year_>
 	gen byte empstat_2_year = .
 	label var empstat_2_year "Employment status during past week secondary job 12 month recall"
 	label values empstat_2_year lblempstat_year
@@ -1946,7 +1944,7 @@ foreach v of local ed_var {
 
 *----------8.9: 12 month reference additional jobs------------------------------*
 
-* NUMBER OF ADDITIONAL JOBS LAST YEAR  //not creating any variable, should wait for joining datasets with 2009?
+* NUMBER OF ADDITIONAL JOBS LAST YEAR
 	gen byte njobs_year=.
 	replace njobs_year=. if lstatus_year!=1
 	label var njobs_year "Number of additional jobs during last year"
@@ -1989,13 +1987,6 @@ foreach v of local ed_var {
 
 
 *----------8.11: Overall across reference periods------------------------------*
-
-
-/*<_njobs_> Defined above
-	gen njobs = .
-	label var njobs "Total number of jobs"
-*</_njobs_> */
-
 
 *<_t_hours_annual_>
 	gen t_hours_annual = .

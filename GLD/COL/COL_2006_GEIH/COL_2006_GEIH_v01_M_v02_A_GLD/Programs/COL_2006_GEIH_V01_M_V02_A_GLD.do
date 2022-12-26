@@ -206,7 +206,7 @@ rename directorio_unique directorio
 
 
 *<_int_year_>
-	gen int_year = 2006 //instead of intv_year=ano
+	gen int_year = 2006
 	label var int_year "Year of the interview"
 *</_int_year_>
 
@@ -291,7 +291,6 @@ local letters "secuencia_p orden"
 {
 
 *<_urban_>
- 	*destring clase, gen(urbano) //add
 	gen byte urban=urbano
 	replace urban = 0 if urban == 2
 	label var urban "Location is urban"
@@ -300,7 +299,6 @@ local letters "secuencia_p orden"
 *</_urban_>
 
 *<_subnatid1_>
-	* destring dpto, replace
 	gen subnatid1 = string(region)
 	replace subnatid1 = "1 - Atlantica" if subnatid1 == "1"
 	replace subnatid1 = "2 - Oriental" if subnatid1 == "2"
@@ -559,8 +557,6 @@ local letters "secuencia_p orden"
 
 *<_migrated_from_code_>
 	gen migrated_from_code = .
-	*label de lblmigrated_from_code
-	*label values migrated_from_code lblmigrated_from_code
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
 *</_migrated_from_code_>
 
@@ -1063,7 +1059,7 @@ foreach v of local ed_var {
 *<_contract_>
 	gen byte contract = 0
 	replace contract=1 if p6450==2
-	replace contract=. if p6450==9 //instead of replace contract=. if p6450==3
+	replace contract=. if p6450==9 
 	replace contract=. if lstatus!=1
 	label var contract "Employment has contract primary job 7 day recall"
 	la de lblcontract 0 "Without contract" 1 "With contract"

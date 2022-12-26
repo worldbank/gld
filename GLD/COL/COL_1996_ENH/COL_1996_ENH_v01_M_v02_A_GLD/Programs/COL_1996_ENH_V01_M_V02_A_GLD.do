@@ -155,13 +155,12 @@ use "`path_in_stata'/COL_1996_ENH-FT_BASE.dta"
 
 
 *<_int_year_>
-	gen int_year = 1996 //instead of intv_year=ano
+	gen int_year = 1996
 	label var int_year "Year of the interview"
 *</_int_year_>
 
 
 *<_int_month_>
-	*destring mes, replace
 	gen  int_month = .
 	label de lblint_month 1 "January" 2 "February" 3 "March" 4 "April" 5 "May" 6 "June" 7 "July" 8 "August" 9 "September" 10 "October" 11 "November" 12 "December"
 	label value int_month lblint_month
@@ -240,7 +239,6 @@ use "`path_in_stata'/COL_1996_ENH-FT_BASE.dta"
 *</_urban_>
 
 *<_subnatid1_>
-	* destring dpto, replace
 	gen subnatid1 = string(region)
 	replace subnatid1 = "1 - Atlantica" if subnatid1 == "1"
 	replace subnatid1 = "2 - Oriental" if subnatid1 == "2"
@@ -501,8 +499,6 @@ use "`path_in_stata'/COL_1996_ENH-FT_BASE.dta"
 
 *<_migrated_from_code_>
 	gen migrated_from_code = .
-	*label de lblmigrated_from_code
-	*label values migrated_from_code lblmigrated_from_code
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
 *</_migrated_from_code_>
 
@@ -530,13 +526,6 @@ use "`path_in_stata'/COL_1996_ENH-FT_BASE.dta"
 {
 
 *<_ed_mod_age_>
-
-/* <_ed_mod_age_note>
-
-Education module is only asked to those XX and older.
-
-</_ed_mod_age_note> */
-
 gen byte ed_mod_age = 5
 label var ed_mod_age "Education module application age"
 
@@ -701,9 +690,7 @@ foreach v of local ed_var {
 {
 *<_lstatus_>
 	gen byte lstatus = 1 if fzatrab==1 | actremu==1
-	* actfamil==1 | alguneg == 1
 	replace lstatus=2 if hizodil == 1
-	* deseacon == 1 &
 	replace lstatus=3 if missing(lstatus) & age >= minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -713,7 +700,6 @@ foreach v of local ed_var {
 *<_potential_lf_>
 	gen byte potential_lf = .
 	replace potential_lf=1 if lstatus==3 & (  hizodil == 1 )
-	*deseacon == 1 |
 	replace potential_lf = . if age < minlaborage & age != .
 	replace potential_lf = . if lstatus != 3
 	label var potential_lf "Potential labour force status"
@@ -856,6 +842,7 @@ activities of private households
 	replace occup_orig=. if lstatus!=1
 	replace occup_orig=2 if ocup==25
 	replace occup_orig=6 if ocup==66
+	replace occup_orig=. if ocup==-1
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
@@ -875,17 +862,17 @@ activities of private households
 	* Convert ISCO-68 categories to ISCO-88/ISCO-08 1 digit Major Groups
 
 	gen byte occup = .
-	replace occup = 1 if ocup == 20 | ocup == 21 | ocup == 30 | ocup == 40 | ocup == 41 | ocup == 50 | ocup == 51 | ocup == 60
+	replace occup = 1 if ocup == 20 | ocup == 21 | ocup == 30 | ocup == 40 | ocup == 41 | ocup == 50 | ocup == 51 | ocup == 60 | ocup == 35
 	replace occup = 2 if ocup == 1 | ocup == 2 | ocup == 5 | ocup == 6 | ocup == 8 | ocup == 9 | ocup == 2 | ocup == 11 | ocup == 12 | ocup == 13 | ocup == 14 | ocup == 15 | ocup == 19
 	replace occup = 3 if ocup == 3 | ocup == 4 | ocup == 7 | ocup == 16 | ocup == 17 | ocup == 18 | ocup == 31 | ocup == 34 | ocup == 42 | ocup == 43 | ocup == 44 | ocup == 86
 	replace occup = 4 if ocup == 32 | ocup == 33 | ocup == 37 | ocup == 38 | ocup == 39
-	replace occup = 5 if ocup == 36 | ocup == 45 | ocup == 49 | ocup == 52 | ocup == 53 | ocup == 57 | ocup == 58 | ocup == 59 | ocup == 59
-	replace occup = 6 if ocup == 61 | ocup == 63 | ocup == 64
+	replace occup = 5 if ocup == 36 | ocup == 45 | ocup == 49 | ocup == 52 | ocup == 53 | ocup == 57 | ocup == 58 | ocup == 59
+	replace occup = 6 if ocup == 61 | ocup == 63 | ocup == 64 | ocup == 66
 	replace occup = 7 if ocup == 70 | ocup == 71 | ocup == 76 | ocup == 79 | ocup == 80 | ocup == 81 | ocup == 82 | ocup == 83 | ocup == 84 | ocup == 85 | ocup == 87 | ocup == 88 | ocup == 89 | ocup == 92 | ocup == 93 | ocup == 94 | ocup == 95
 	replace occup = 8 if ocup == 56 | ocup == 72 | ocup == 73 | ocup == 74 | ocup == 75 | ocup == 77 | ocup == 78 | ocup == 90 | ocup == 91 | ocup == 96 | ocup == 98
-	replace occup = 9 if ocup == 54 | ocup == 55 | ocup == 62 | ocup == 97 | ocup == 99
-	replace occup = 99 if ocup == 35 | ocup == 0
-	replace occup=. if lstatus!=1
+	replace occup = 9 if ocup == 54 | ocup == 55 | ocup == 62 | ocup == 97
+	replace occup = 99 if ocup == 99 | ocup == 0 | ocup == 25
+	replace occup=. if lstatus!=1 | ocup == -1
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup
@@ -991,7 +978,7 @@ activities of private households
 	*Bonuses - Not asked in ECH
 	*Q.I22a
 	gen prim_serv = .
-    *Q.I22b
+  *Q.I22b
 	gen prim_christ = .
 	*Q.I22c
 	gen prim_vac = .
@@ -1638,13 +1625,6 @@ activities of private households
 
 
 *----------8.11: Overall across reference periods------------------------------*
-
-
-/*<_njobs_> Defined above
-	gen njobs = .
-	label var njobs "Total number of jobs"
-*</_njobs_> */
-
 
 *<_t_hours_annual_>
 	gen t_hours_annual = .

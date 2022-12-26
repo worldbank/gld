@@ -157,7 +157,7 @@ use "`path_in_stata'/COL_2000_ENH-FT_BASE.dta"
 
 
 *<_int_year_>
-	gen int_year = 2000 //instead of intv_year=ano
+	gen int_year = 2000
 	label var int_year "Year of the interview"
 *</_int_year_>
 
@@ -241,7 +241,6 @@ use "`path_in_stata'/COL_2000_ENH-FT_BASE.dta"
 *</_urban_>
 
 *<_subnatid1_>
-	* destring dpto, replace
 	gen subnatid1 = string(region)
 	replace subnatid1 = "1 - Atlantica" if subnatid1 == "1"
 	replace subnatid1 = "2 - Oriental" if subnatid1 == "2"
@@ -503,8 +502,6 @@ use "`path_in_stata'/COL_2000_ENH-FT_BASE.dta"
 
 *<_migrated_from_code_>
 	gen migrated_from_code = .
-	*label de lblmigrated_from_code
-	*label values migrated_from_code lblmigrated_from_code
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
 *</_migrated_from_code_>
 
@@ -837,20 +834,6 @@ activities of private households
 	replace industrycat10 = 9 if inrange(rama2d,"91","96")
 	replace industrycat10 = 10 if rama2d=="0"
 	replace industrycat10 = . if lstatus!=1
-
-
-/*	gen byte industrycat10 = .
-	replace industrycat10 = 1 if rama2d>=11 & rama2d<=13
-	replace industrycat10 = 2 if rama2d>=21 & rama2d<=29
-	replace industrycat10 = 3 if rama2d>=31 & rama2d<=39
-	replace industrycat10 = 4 if rama2d>=41 & rama2d<=42
-	replace industrycat10 = 5 if rama2d==50
-	replace industrycat10 = 6 if rama2d>=61 & rama2d<=63
-	replace industrycat10 = 7 if rama2d>=71 & rama2d<=72
-	replace industrycat10 = 8 if rama2d>=81 & rama2d<=83
-	replace industrycat10 = 9 if rama2d>=91 & rama2d<=96
-	replace industrycat10 = 10 if rama2d==0
-	replace industrycat10 = . if lstatus!=1*/
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
@@ -1643,13 +1626,6 @@ activities of private households
 
 
 *----------8.11: Overall across reference periods------------------------------*
-
-
-/*<_njobs_> Defined above
-	gen njobs = .
-	label var njobs "Total number of jobs"
-*</_njobs_> */
-
 
 *<_t_hours_annual_>
 	gen t_hours_annual = .

@@ -156,13 +156,12 @@ use "`path_in_stata'/COL_1999_ENH-FT_BASE.dta"
 
 
 *<_int_year_>
-	gen int_year = 1999 //instead of intv_year=ano
+	gen int_year = 1999
 	label var int_year "Year of the interview"
 *</_int_year_>
 
 
 *<_int_month_>
-	*destring mes, replace
 	gen  int_month = .
 	label de lblint_month 1 "January" 2 "February" 3 "March" 4 "April" 5 "May" 6 "June" 7 "July" 8 "August" 9 "September" 10 "October" 11 "November" 12 "December"
 	label value int_month lblint_month
@@ -241,7 +240,6 @@ use "`path_in_stata'/COL_1999_ENH-FT_BASE.dta"
 *</_urban_>
 
 *<_subnatid1_>
-	* destring dpto, replace
 	gen subnatid1 = string(region)
 	replace subnatid1 = "1 - Atlantica" if subnatid1 == "1"
 	replace subnatid1 = "2 - Oriental" if subnatid1 == "2"
@@ -382,8 +380,6 @@ use "`path_in_stata'/COL_1999_ENH-FT_BASE.dta"
 *<_relationharm_>
 	gen relationharm = relacion
 	recode relationharm 4=5 15=5 8=6 16/19=6
-	*replace ownhouse=. if head==6
-	*replace hhsize=. if head==6
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm  lblrelationharm
@@ -503,8 +499,6 @@ use "`path_in_stata'/COL_1999_ENH-FT_BASE.dta"
 
 *<_migrated_from_code_>
 	gen migrated_from_code = .
-	*label de lblmigrated_from_code
-	*label values migrated_from_code lblmigrated_from_code
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
 *</_migrated_from_code_>
 
@@ -703,9 +697,7 @@ foreach v of local ed_var {
 {
 *<_lstatus_>
 	gen byte lstatus = 1 if fzatrab==1 | actremu==1 | actfamil==1
-	*| alguneg == 1
 	replace lstatus=2 if hizodil == 1
-	* deseacon == 1 &
 	replace lstatus=3 if missing(lstatus) & age >= minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -715,7 +707,6 @@ foreach v of local ed_var {
 *<_potential_lf_>
 	gen byte potential_lf = .
 	replace potential_lf=1 if lstatus==3 & (  hizodil == 1 )
-	*deseacon == 1 |
 	replace potential_lf = . if age < minlaborage & age != .
 	replace potential_lf = . if lstatus != 3
 	label var potential_lf "Potential labour force status"
@@ -838,19 +829,6 @@ activities of private households
 	replace industrycat10 = 9 if inrange(rama2d,"91","96")
 	replace industrycat10 = 10 if rama2d=="0"
 	replace industrycat10 = . if lstatus!=1
-/*
-	gen byte industrycat10 = .
-	replace industrycat10 = 1 if rama2d>=11 & rama2d<=13
-	replace industrycat10 = 2 if rama2d>=21 & rama2d<=29
-	replace industrycat10 = 3 if rama2d>=31 & rama2d<=39
-	replace industrycat10 = 4 if rama2d>=41 & rama2d<=42
-	replace industrycat10 = 5 if rama2d==50
-	replace industrycat10 = 6 if rama2d>=61 & rama2d<=63
-	replace industrycat10 = 7 if rama2d>=71 & rama2d<=72
-	replace industrycat10 = 8 if rama2d>=81 & rama2d<=83
-	replace industrycat10 = 9 if rama2d>=91 & rama2d<=96
-	replace industrycat10 = 10 if rama2d==0
-	replace industrycat10 = . if lstatus!=1*/
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
@@ -1200,7 +1178,6 @@ label var occup_isco "ISCO code of primary job 7 day recall"
 
 *<_unitwage_2_>
 	gen byte unitwage_2 = .
-	*replace unitwage_2=. if njobs==0 | njobs==.
 	label var unitwage_2 "Last wages' time unit secondary job 7 day recall"
 	label values unitwage_2 lblunitwage
 *</_unitwage_2_>
@@ -1409,7 +1386,7 @@ label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_year_>
 
 
-*<_wage_no_compen_year_> --- this var has the same name as other and when quoted in the keep and order codes is repeated.
+*<_wage_no_compen_year_>
 	gen double wage_no_compen_year = .
 	label var wage_no_compen_year "Last wage payment primary job 12 month recall"
 *</_wage_no_compen_year_>
@@ -1652,13 +1629,6 @@ label var occup_isco "ISCO code of primary job 7 day recall"
 
 
 *----------8.11: Overall across reference periods------------------------------*
-
-
-/*<_njobs_> Defined above
-	gen njobs = .
-	label var njobs "Total number of jobs"
-*</_njobs_> */
-
 
 *<_t_hours_annual_>
 	gen t_hours_annual = .

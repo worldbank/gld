@@ -571,8 +571,6 @@ local letters "secuencia_p orden"
 
 *<_migrated_from_code_>
 	gen migrated_from_code = .
-	*label de lblmigrated_from_code
-	*label values migrated_from_code lblmigrated_from_code
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
 *</_migrated_from_code_>
 
@@ -808,7 +806,7 @@ foreach v of local ed_var {
 	label values underemployment lblunderemployment
 *</_underemployment_>
 
-*<_nlfreason_> //not creating any variable. p7450 asks reason to leave last job for "inactive" people, should replace?
+*<_nlfreason_>
 	gen byte nlfreason=.
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
@@ -823,8 +821,8 @@ foreach v of local ed_var {
 
 
 *<_unempldur_u_>
-	gen byte unempldur_u=int(p7250/4)  //same variable as unempldur_l?
-	replace unempldur_l=. if lstatus!=2
+	gen byte unempldur_u=int(p7250/4)
+	replace unempldur_u=. if lstatus!=2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
 *</_unempldur_u_>
 }
@@ -1397,7 +1395,7 @@ foreach v of local ed_var {
 *<_contract_>
 	gen byte contract = 0
 	replace contract=1 if p6450==2
-	replace contract=. if p6450==9 //instead of replace contract=. if p6450==3
+	replace contract=. if p6450==9
 	label var contract "Employment has contract primary job 7 day recall"
 	la de lblcontract 0 "Without contract" 1 "With contract"
 	replace contract=. if lstatus!=1
@@ -1461,33 +1459,33 @@ foreach v of local ed_var {
 *</_empstat_2_>
 
 
-*<_ocusec_2_> //not creating any variable, not rama2d rama4d for 2nd job
+*<_ocusec_2_>
 	gen ocusec_2 = .
 	label var ocusec_2 "Sector of activity secondary job 7 day recall"
 	label values ocusec_2 lblocusec
 *</_ocusec_2_>
 
 
-*<_industry_orig_2_> //not creating any variable, not rama2d rama4d for 2nd job
+*<_industry_orig_2_>
 	gen industry_orig_2 = .
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 
 
-*<_industrycat_isic_2_> //not creating any variable, not rama2d rama4d for 2nd job
+*<_industrycat_isic_2_>
 	gen industrycat_isic_2 = .
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
 
-*<_industrycat10_2_> //not creating any variable, not rama2d rama4d for 2nd job
+*<_industrycat10_2_>
 	gen byte industrycat10_2 = .
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
 *</_industrycat10_2_>
 
 
-*<_industrycat4_2_> //not creating any variable, not rama2d rama4d for 2nd job
+*<_industrycat4_2_>
 	gen byte industrycat4_2 = industrycat10_2
 	recode industrycat4_2 (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
 	label var industrycat4_2 "Broad Economic Activities classification, secondary job 7 day recall"
@@ -1495,13 +1493,13 @@ foreach v of local ed_var {
 *</_industrycat4_2_>
 
 
-*<_occup_orig_2_> //not creating any variable, not rama2d rama4d for 2nd job
+*<_occup_orig_2_>
 	gen occup_orig_2 = .
 	label var occup_orig_2 "Original occupation record secondary job 7 day recall"
 *</_occup_orig_2_>
 
 
-*<_occup_isco_2_> //not creating any variable, not rama2d rama4d for 2nd job
+*<_occup_isco_2_>
 	gen occup_isco_2 = ""
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
@@ -1614,7 +1612,7 @@ foreach v of local ed_var {
 
 {
 
-*<_lstatus_year_> //not creating any variable, should wait for joining datasets with 2010?
+*<_lstatus_year_>
 	gen byte lstatus_year = .
 	replace lstatus_year=. if age < minlaborage & age != .
 	label var lstatus_year "Labor status during last year"
@@ -1667,7 +1665,7 @@ foreach v of local ed_var {
 
 {
 
-*<_empstat_year_> //not creating any variable, should wait for joining datasets with 2010?
+*<_empstat_year_>
 	gen byte empstat_year = .
 	replace empstat_year=. if lstatus_year!=1
 	label var empstat_year "Employment status during past week primary job 12 month recall"
@@ -1739,7 +1737,7 @@ foreach v of local ed_var {
 *</_occup_year_>
 
 
-*<_wage_no_compen_year_> --- this var has the same name as other and when quoted in the keep and order codes is repeated.
+*<_wage_no_compen_year_>
 	gen double wage_no_compen_year = .
 	label var wage_no_compen_year "Last wage payment primary job 12 month recall"
 *</_wage_no_compen_year_>
@@ -1822,7 +1820,7 @@ foreach v of local ed_var {
 
 {
 
-*<_empstat_2_year_> //not creating any variable, should wait for joining datasets with 2010?
+*<_empstat_2_year_>
 	gen byte empstat_2_year = .
 	label var empstat_2_year "Employment status during past week secondary job 12 month recall"
 	label values empstat_2_year lblempstat_year
@@ -1939,7 +1937,7 @@ foreach v of local ed_var {
 
 *----------8.9: 12 month reference additional jobs------------------------------*
 
-* NUMBER OF ADDITIONAL JOBS LAST YEAR  //not creating any variable, should wait for joining datasets with 2009?
+* NUMBER OF ADDITIONAL JOBS LAST YEAR
 	gen byte njobs_year=.
 	replace njobs_year=. if lstatus_year!=1
 	label var njobs_year "Number of additional jobs during last year"
@@ -1982,13 +1980,6 @@ foreach v of local ed_var {
 
 
 *----------8.11: Overall across reference periods------------------------------*
-
-
-/*<_njobs_> Defined above
-	gen njobs = .
-	label var njobs "Total number of jobs"
-*</_njobs_> */
-
 
 *<_t_hours_annual_>
 	gen t_hours_annual = .
