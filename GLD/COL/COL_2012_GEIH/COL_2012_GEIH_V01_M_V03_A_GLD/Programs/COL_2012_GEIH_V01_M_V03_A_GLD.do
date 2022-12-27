@@ -1,4 +1,4 @@
-/*%%=============================================================================================
+./*%%=============================================================================================
 	0: GLD Harmonization Preamble
 ==============================================================================================%%*/
 
@@ -677,8 +677,9 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat_isced_>
-	gen educat_isced = p6210
-	recode educat_isced (1 9=.) (2=0) (3=1) (4=2) (5=3)
+
+
+	gen educat_isced = .
 	label var educat_isced "ISCED standardised level of education"
 *</_educat_isced_>
 

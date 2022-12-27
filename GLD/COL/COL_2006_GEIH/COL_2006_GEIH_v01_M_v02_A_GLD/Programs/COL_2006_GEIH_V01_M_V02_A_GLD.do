@@ -662,8 +662,7 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat_isced_>
-	gen educat_isced = p6210
-	recode educat_isced (1 9=.) (2=0) (3=1) (4=2) (5=3)
+	gen educat_isced = .
 	label var educat_isced "ISCED standardised level of education"
 *</_educat_isced_>
 
@@ -1059,7 +1058,7 @@ foreach v of local ed_var {
 *<_contract_>
 	gen byte contract = 0
 	replace contract=1 if p6450==2
-	replace contract=. if p6450==9 
+	replace contract=. if p6450==9
 	replace contract=. if lstatus!=1
 	label var contract "Employment has contract primary job 7 day recall"
 	la de lblcontract 0 "Without contract" 1 "With contract"

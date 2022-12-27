@@ -621,7 +621,7 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat_isced_>
-	gen educat_isced = p10
+	gen educat_isced = .
 	label var educat_isced "ISCED standardised level of education"
 *</_educat_isced_>
 

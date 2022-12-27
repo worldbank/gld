@@ -610,11 +610,7 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat_isced_>
-	tostring niveduc, replace
-	gen pre_isced = substr(niveduc,1,1)
-	destring pre_isced, replace
-	gen educat_isced = pre_isced
-	recode educat_isced (1 9=.) (2=0) (3=1) (4=2) (5=3)
+	gen educat_isced = .
 	label var educat_isced "ISCED standardised level of education"
 *</_educat_isced_>
 
