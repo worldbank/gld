@@ -932,6 +932,9 @@ activities of private households
 *<_wage_no_compen_>
 	gen double wage_no_compen = valor28
 	replace wage_no_compen=. if lstatus!=1
+	replace wage_no_compen=. if wage_no_compen==98
+	replace wage_no_compen=. if wage_no_compen==99
+	replace wage_no_compen=. if wage_no_compen==0
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
@@ -1188,6 +1191,8 @@ activities of private households
 *<_wage_no_compen_2_>
 	gen double wage_no_compen_2 = valor38 if valor38 !=0
 	replace wage_no_compen_2=. if lstatus!=1
+	replace wage_no_compen_2=. if wage_no_compen_2==98
+	replace wage_no_compen_2=. if wage_no_compen_2==99
 	label var wage_no_compen_2 "Last wage payment secondary job 7 day recall"
 *</_wage_no_compen_2_>
 
