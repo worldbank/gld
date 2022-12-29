@@ -1391,7 +1391,7 @@ foreach v of local ed_var {
 	replace industrycat_isic = 9810 if rama4d_r4 == 9810
 	replace industrycat_isic = 9820 if rama4d_r4 == 9820
 	replace industrycat_isic = 9900 if rama4d_r4 == 9900
-
+	replace industrycat_isic=. if rama4d_r4==0
 	gen industrycat_isic_S = string(industrycat_isic, "%04.0f")
 	drop industrycat_isic
 	rename industrycat_isic_S industrycat_isic
@@ -1401,23 +1401,21 @@ foreach v of local ed_var {
 *</_industrycat_isic_>
 
 
-
 *<_industrycat10_>
 	gen byte industrycat10 = .
-	destring rama2d_r4, replace force
-	replace industrycat10 = 1 if inrange(rama2d_r4,1,3)
-	replace industrycat10 = 2 if inrange(rama2d_r4,5,9)
-	replace industrycat10 = 3 if inrange(rama2d_r4,10,33)
-	replace industrycat10 = 4 if inrange(rama2d_r4,35,39)
-	replace industrycat10 = 5 if inrange(rama2d_r4,41,43)
-	replace industrycat10 = 6 if inrange(rama2d_r4,45,47)
-	replace industrycat10 = 6 if inrange(rama2d_r4,55,56)
- 	replace industrycat10 = 7 if inrange(rama2d_r4,49,53)
-	replace industrycat10 = 7 if inrange(rama2d_r4,58,63)
-	replace industrycat10 = 8 if inrange(rama2d_r4,64,68)
-	replace industrycat10 = 9 if rama2d_r4==84
-	replace industrycat10 = 10 if inrange(rama2d_r4,69,82)
-	replace industrycat10 = 10 if inrange(rama2d_r4,85,99)
+	replace industrycat10 = 1 if inrange(industrycat_isic,"0111","0322")
+	replace industrycat10 = 2 if inrange(industrycat_isic,"0510","0990")
+	replace industrycat10 = 3 if inrange(industrycat_isic,"1010","3320")
+	replace industrycat10 = 4 if inrange(industrycat_isic,"3510","3900")
+	replace industrycat10 = 5 if inrange(industrycat_isic,"4100","4390")
+	replace industrycat10 = 6 if inrange(industrycat_isic,"4510","4799")
+	replace industrycat10 = 6 if inrange(industrycat_isic,"5510","5630")
+ 	replace industrycat10 = 7 if inrange(industrycat_isic,"4911","5320")
+	replace industrycat10 = 7 if inrange(industrycat_isic,"5811","6399")
+	replace industrycat10 = 8 if inrange(industrycat_isic,"6411","6820")
+	replace industrycat10 = 9 if inrange(industrycat_isic,"8411","8430")
+	replace industrycat10 = 10 if inrange(industrycat_isic,"6910","8299")
+	replace industrycat10 = 10 if inrange(industrycat_isic,"8510","9900")
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10

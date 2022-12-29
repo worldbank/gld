@@ -196,7 +196,7 @@ use "`path_in_stata'/COL_2000_ENH-FT_BASE.dta"
 
 
 *<_weight_>
-	gen weight = factorex/12
+	gen weight = factorex
 	label var weight "Survey sampling weight"
 *</_weight_>
 
