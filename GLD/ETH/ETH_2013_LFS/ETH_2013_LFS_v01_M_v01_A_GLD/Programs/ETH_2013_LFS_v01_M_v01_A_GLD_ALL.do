@@ -656,9 +656,9 @@ The new curriculum follows a 4-4-2-2 structure:
 
 *<_educat7_>
 	gen byte educat7=.
-	replace educat7=1 if educy==0|age<5
-	replace educat7=2 if LF214<8 
-	replace educat7=3 if LF214==8
+	replace educat7=1 if LF214==0
+	replace educat7=2 if inrange(LF214,1,7)|inlist(LF214,93,94,96) 
+	replace educat7=3 if LF214==8|LF214==95
 	replace educat7=4 if (LF214>=9 & LF214<12)|(LF214>=21 & LF214<24)
 	replace educat7=5 if LF214==12|LF214==13|LF214==24
 	replace educat7=6 if (LF214>13 & LF214<=17) | (LF214>24 & LF214<=30)

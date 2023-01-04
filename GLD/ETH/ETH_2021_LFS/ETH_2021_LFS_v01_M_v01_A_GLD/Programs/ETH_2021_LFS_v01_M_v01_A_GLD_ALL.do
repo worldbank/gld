@@ -41,21 +41,6 @@
 </_Version Control_>
 
 -------------------------------------------------------------------------*/
-/*recode LF206 (2=0), gen(literate)
-
-gen edu=.
-
-replace edu=0 if literate==0|inrange(LF208,36,38)|LF208==44 // preschool or no education
-
-replace edu=1 if inrange(LF208,1,7)|inrange(LF208,39,43)|LF208==96 // less than primary and adult/informal education
-
-replace edu=2 if inrange(LF208,8,11) | inrange(LF208,21,23) | inlist(LF208,13,18, 19, 33) // completed primary but not secondary
-
-replace edu=3 if inlist(LF208,12,14, 15, 16,20,34,24,26,27) // completed secondary but not higher
-
-replace edu=4 if inlist(LF208, 17, 25,35)|inrange(LF208,28,32) //"Completed post-secondary"
-
-replace edu=. if age<5 */
 
 /*%%=============================================================================================
 	1: Setting up of program environment, dataset
@@ -665,23 +650,21 @@ received education.
 
 *<_educat7_>
 	gen byte educat7=.
-	/*replace educat7=1 if educy==0
-	replace educat7=2 if educy<8 
-	replace educat7=3 if educy==8
-	replace educat7=4 if educy>=9 & educy <12
-	replace educat7=5 if educy==12
-	replace educat7=6 if educy==13 & LF208!=27
-	replace educat7=7 if educy>13 & !mi(educy)
-	replace educat7=. if age<ed_mod_age*/
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
 *</_educat7_>
 
 
+/*<_educat5_note_>
+Current codes for educat5 were derived backwards from the numbers in the CSA report for 2021.
+*<_educat5_note_>*/
+
+
 *<_educat5_>
-	gen byte educat5=educat7
-	recode educat5 (4=3) (5=4) (6 7=5)
+	*gen byte educat5=educat7
+	gen byte educat5=LF208
+	recode educat5 (36/38 44=1) (42 43 96=2) (1/8 39/41=3) (9/12 21/24=4) (13/20 25/35=5)
 	label var educat5 "Level of education 2"
 	la de lbleducat5 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
 	label values educat5 lbleducat5
@@ -689,6 +672,7 @@ received education.
 
 
 *<_educat4_>
+	/*
 	recode LF206 (2=0), gen(literate)
 	gen educat4=.
 	replace educat4=1 if literate==0|inrange(LF208,36,38)|LF208==44|age<3 // preschool or no education
@@ -696,9 +680,11 @@ received education.
 	replace educat4=2 if inrange(LF208,8,11) | inrange(LF208,21,23) | inlist(LF208,13,18, 19, 33) // completed primary but not secondary
 	replace educat4=3 if inlist(LF208,12,14, 15, 16,20,34,24,26,27) // completed secondary but not higher
 	replace educat4=4 if inlist(LF208, 17, 25,35)|inrange(LF208,28,32) //"Completed post-secondary"
-
-	/*gen byte educat4=educat7
+	
+	gen byte educat4=educat7
 	recode educat4 (2 3 4=2) (5=3) (6 7=4)*/
+	gen byte educat4=educat5
+	recode educat4 (3=2) (4=3) (5=4)
 	label var educat4 "Level of education 3"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values educat4 lbleducat4
@@ -1358,6 +1344,7 @@ According to the annual report, employment status of a person was classified int
 	replace industrycat_isic_year=990 if LF505==999
 	replace industrycat_isic_year=4799 if LF505==4792
 	replace industrycat_isic_year=9410 if LF505==9413
+	replace industrycat_isic_year=. if LF505==9999
 	replace industrycat_isic_year=. if inrange(LF505, 1105, 1107)
 	tostring industrycat_isic_year, replace format(%04.0f)
 	replace industrycat_isic_year="" if lstatus_year!=1 | industrycat_isic_year=="."
@@ -1391,6 +1378,7 @@ According to the annual report, employment status of a person was classified int
 
 *<_occup_isco_year_>	
 	gen code_o=LF504
+	replace code_o=. if inlist(LF504,0111,0603,3609,5259,6603,9066)
 	merge m:1 code_o using "`path_in_stata'\ETH_2021_occup_isco.dta" 
 	replace code_o=. if code_h=="drop" 
 	tostring code_o,format(%04.0f) replace	
