@@ -151,147 +151,147 @@ Graphically, we will flag the variables where the GLD segment and the imaginary 
 The exact indicators we use to establish the comparisons are the following:
 
 1.	Total population
-  1.	`SP.POP.TOTL`, Total population, WDI
-  2.	`A.N.”CC”.W0.S1.S1._Z.POP._Z._Z._Z.PS._Z.N`, Total population, NA Main Aggregates, UNData
-    *	Unit of measure: “PS” (persons)
-  3.	`POP_2POP_GEO_NB`, Population by rural / urban areas -- UN estimates and projections, Nov. 2020 (thousands), ILO
-    *	Classif1: "GEO_COV_NAT" (national geographic coverage)
-  4.	`POP_2POP_SEX_AGE_NB`, Population by sex and age -- UN estimates and projections, Nov. 2021 (thousands), ILO
-    *	Sex: SEX_T (total)
-    *	Classif1: "AGE_10YRBANDS_TOTAL" (total age, classified in 10 year bands)
+    1. `SP.POP.TOTL`, Total population, WDI
+    2.	`A.N.”CC”.W0.S1.S1._Z.POP._Z._Z._Z.PS._Z.N`, Total population, NA Main Aggregates, UNData
+        *	Unit of measure: “PS” (persons)
+    3.	`POP_2POP_GEO_NB`, Population by rural / urban areas -- UN estimates and projections, Nov. 2020 (thousands), ILO
+        *	Classif1: "GEO_COV_NAT" (national geographic coverage)
+    4.	`POP_2POP_SEX_AGE_NB`, Population by sex and age -- UN estimates and projections, Nov. 2021 (thousands), ILO
+        *	Sex: SEX_T (total)
+        *	Classif1: "AGE_10YRBANDS_TOTAL" (total age, classified in 10 year bands)
 
 2.	Gender split (% of female population)
-  1.	`SP.POP.TOTL.FE.ZS`, Population, female (% of total population), WDI
-  2.	`POP_2POP_SEX_AGE_NB`, Population by sex and age -- UN estimates and projections, Nov. 2021 (thousands), ILO
-    *	Sex: “SEX_F” & “SEX_T” (Female & Total. Female for the numerator, total for the denominator)
-    *	Classif1: AGE_AGGREGATE_TOTAL (total age, classified in aggregates)
-  3.	`POP_2POP_GEO_NB`, Population by rural / urban areas -- UN estimates and projections, Nov. 2020 (thousands), ILO
-    *	Sex: “SEX_F” & “SEX_T” (Female & Total. Female for the numerator, total for the denominator)
-    *	Classif1: “AGE_AGGREGATE_TOTAL” (total age, classified in aggregates)
-    *	Classif2: “GEO_COV_NAT” (national geographic coverage)
+    1.	`SP.POP.TOTL.FE.ZS`, Population, female (% of total population), WDI
+    2.	`POP_2POP_SEX_AGE_NB`, Population by sex and age -- UN estimates and projections, Nov. 2021 (thousands), ILO
+        *	Sex: “SEX_F” & “SEX_T” (Female & Total. Female for the numerator, total for the denominator)
+        *	Classif1: AGE_AGGREGATE_TOTAL (total age, classified in aggregates)
+    3.	`POP_2POP_GEO_NB`, Population by rural / urban areas -- UN estimates and projections, Nov. 2020 (thousands), ILO
+        *	Sex: “SEX_F” & “SEX_T” (Female & Total. Female for the numerator, total for the denominator)
+        *	Classif1: “AGE_AGGREGATE_TOTAL” (total age, classified in aggregates)
+        *	Classif2: “GEO_COV_NAT” (national geographic coverage)
 
 3.	Urban population (% of total)
-  1.	`SP.URB.TOTL.IN.ZS`, Urban population (% of total population), WDI
-  2.	`POP_2POP_GEO_NB`, Population by rural / urban areas -- UN estimates and projections, Nov. 2020 (thousands), ILO
-    *	Classif1: “GEO_COV_NAT” & “GEO_COV_URB (national & urban geographic coverage)
+    1.	`SP.URB.TOTL.IN.ZS`, Urban population (% of total population), WDI
+    2.	`POP_2POP_GEO_NB`, Population by rural / urban areas -- UN estimates and projections, Nov. 2020 (thousands), ILO
+        *	Classif1: “GEO_COV_NAT” & “GEO_COV_URB (national & urban geographic coverage)
 
 4.	Children (0-14 years old, % of total population)
-  1.	`SP.POP.0014.TO.ZS`, Population ages 0-14 (% of total population), WDI
-  2.	`POP_2POP_SEX_AGE_NB`, Population by sex and age -- UN estimates and projections, Nov. 2021 (thousands), ILO
-    *	Sex: SEX_T (total)
-    *	Classif1: “AGE_5YRBANDS_TOTAL”. In particular, we select age groups “AGE_5YRBANDS_Y00-04”, “AGE_5YRBANDS_Y05-09” and “AGE_5YRBANDS_Y10” to compute the numerator.
-  3.	`POP_2POP_GEO_NB`, Population by rural / urban areas -- UN estimates and projections, Nov. 2020 (thousands), ILO
-    *	Sex: SEX_T (total)
-    *	Classif1: "AGE_5YRBANDS_TOTAL". In particular, we select age groups “AGE_5YRBANDS_Y00-04”, “AGE_5YRBANDS_Y05-09” and “AGE_5YRBANDS_Y10” to compute the numerator.
-    *	Classif2: "GEO_COV_NAT"
+    1.	`SP.POP.0014.TO.ZS`, Population ages 0-14 (% of total population), WDI
+    2.	`POP_2POP_SEX_AGE_NB`, Population by sex and age -- UN estimates and projections, Nov. 2021 (thousands), ILO
+        *	Sex: SEX_T (total)
+        *	Classif1: “AGE_5YRBANDS_TOTAL”. In particular, we select age groups “AGE_5YRBANDS_Y00-04”, “AGE_5YRBANDS_Y05-09” and “AGE_5YRBANDS_Y10” to compute the numerator.
+    3.	`POP_2POP_GEO_NB`, Population by rural / urban areas -- UN estimates and projections, Nov. 2020 (thousands), ILO
+        *	Sex: SEX_T (total)
+        *	Classif1: "AGE_5YRBANDS_TOTAL". In particular, we select age groups “AGE_5YRBANDS_Y00-04”, “AGE_5YRBANDS_Y05-09” and “AGE_5YRBANDS_Y10” to compute the numerator.
+        *	Classif2: "GEO_COV_NAT"
 
 5.	Adults (15-64 years old, % of total population)
-  1.	`SP.POP.1564.TO.ZS`, Population ages 15-64 (% of total population), WDI
-  2.	`POP_2POP_SEX_AGE_NB`, Population by sex and age -- UN estimates and projections, Nov. 2021 (thousands), ILO
-    *	Sex: SEX_T (Total)
-    *	Classif1: "AGE_5YRBANDS_TOTAL". In particular, we select age groups "AGE_5YRBANDS_Y15-19" , "AGE_5YRBANDS_Y20-24", "AGE_5YRBANDS_Y25-29", "AGE_5YRBANDS_Y30-34", "AGE_5YRBANDS_Y35-39, "AGE_5YRBANDS_Y40-44", "AGE_5YRBANDS_Y45-49”, "AGE_5YRBANDS_Y50-54", "AGE_5YRBANDS_Y55-59" and "AGE_5YRBANDS_Y60-64" to compute the numerator.
-  3.	`POP_2POP_GEO_NB`, Population by rural / urban areas -- UN estimates and projections, Nov. 2020 (thousands), ILO
-    *	Sex: SEX_T (total)
-    *	Classif1: "AGE_5YRBANDS_TOTAL"". In particular, we select age groups "AGE_5YRBANDS_Y15-19" , "AGE_5YRBANDS_Y20-24", "AGE_5YRBANDS_Y25-29", "AGE_5YRBANDS_Y30-34", "AGE_5YRBANDS_Y35-39, "AGE_5YRBANDS_Y40-44", "AGE_5YRBANDS_Y45-49”, "AGE_5YRBANDS_Y50-54", "AGE_5YRBANDS_Y55-59" and "AGE_5YRBANDS_Y60-64" to compute the numerator.
+    1.	`SP.POP.1564.TO.ZS`, Population ages 15-64 (% of total population), WDI
+    2.	`POP_2POP_SEX_AGE_NB`, Population by sex and age -- UN estimates and projections, Nov. 2021 (thousands), ILO
+        *	Sex: SEX_T (Total)
+        *	Classif1: "AGE_5YRBANDS_TOTAL". In particular, we select age groups "AGE_5YRBANDS_Y15-19" , "AGE_5YRBANDS_Y20-24", "AGE_5YRBANDS_Y25-29", "AGE_5YRBANDS_Y30-34", "AGE_5YRBANDS_Y35-39, "AGE_5YRBANDS_Y40-44", "AGE_5YRBANDS_Y45-49”, "AGE_5YRBANDS_Y50-54", "AGE_5YRBANDS_Y55-59" and "AGE_5YRBANDS_Y60-64" to compute the numerator.
+    3.	`POP_2POP_GEO_NB`, Population by rural / urban areas -- UN estimates and projections, Nov. 2020 (thousands), ILO
+        *	Sex: SEX_T (total)
+        *	Classif1: "AGE_5YRBANDS_TOTAL"". In particular, we select age groups "AGE_5YRBANDS_Y15-19" , "AGE_5YRBANDS_Y20-24", "AGE_5YRBANDS_Y25-29", "AGE_5YRBANDS_Y30-34", "AGE_5YRBANDS_Y35-39, "AGE_5YRBANDS_Y40-44", "AGE_5YRBANDS_Y45-49”, "AGE_5YRBANDS_Y50-54", "AGE_5YRBANDS_Y55-59" and "AGE_5YRBANDS_Y60-64" to compute the numerator.
     *	Classif2: "GEO_COV_NAT" (national geographic coverage)
 
 6.	Seniors (65+ years old, % of total population)
-  1.	`SP.POP.65UP.TO.ZS`, Population ages 65 and above (% of total population), WDI
-  2.	`POP_2POP_SEX_AGE_NB`, Population by sex and age -- UN estimates and projections, Nov. 2021 (thousands), ILO
-    *	Sex: SEX_T (total)
-    *	Classif1: "AGE_5YRBANDS_TOTAL". In particular, we select age group "AGE_5YRBANDS_YGE65" to compute the numerator.
-  3.	`POP_2POP_GEO_NB`, Population by rural / urban areas -- UN estimates and projections, Nov. 2020 (thousands), ILO
-    *	Sex: SEX_T (total)
-    *	Classif1: "AGE_5YRBANDS_TOTAL". In particular, we select age group "AGE_5YRBANDS_YGE65" to compute the numerator.
-    *	Classif2: "GEO_COV_NAT" (national geographic coverage)
+    1.	`SP.POP.65UP.TO.ZS`, Population ages 65 and above (% of total population), WDI
+    2.	`POP_2POP_SEX_AGE_NB`, Population by sex and age -- UN estimates and projections, Nov. 2021 (thousands), ILO
+        *	Sex: SEX_T (total)
+        *	Classif1: "AGE_5YRBANDS_TOTAL". In particular, we select age group "AGE_5YRBANDS_YGE65" to compute the numerator.
+    3.	`POP_2POP_GEO_NB`, Population by rural / urban areas -- UN estimates and projections, Nov. 2020 (thousands), ILO
+        *	Sex: SEX_T (total)
+        *	Classif1: "AGE_5YRBANDS_TOTAL". In particular, we select age group "AGE_5YRBANDS_YGE65" to compute the numerator.
+        *	Classif2: "GEO_COV_NAT" (national geographic coverage)
 
 7.	Labor force size (number)
-  1.	`SL.TLF.TOTL.IN`, Labor force, total, WDI
-  2.	`EAP_TEAP_SEX_AGE_NB`, Labour force by sex and age (thousands), ILO
-    *	Sex: SEX_T (total)
-    *	Classif1: "AGE_10YRBANDS_TOTAL"
-  3.	`EAP_2EAP_SEX_AGE_NB`, Labour force by sex and age -- ILO modelled estimates, Nov. 2021 (thousands), ILO
-    *	Sex: SEX_T (total)
-    *	Classif1: " AGE_YTHADULT_YGE15" (Age +15)
+    1.	`SL.TLF.TOTL.IN`, Labor force, total, WDI
+    2.	`EAP_TEAP_SEX_AGE_NB`, Labour force by sex and age (thousands), ILO
+        *	Sex: SEX_T (total)
+        *	Classif1: "AGE_10YRBANDS_TOTAL"
+    3.	`EAP_2EAP_SEX_AGE_NB`, Labour force by sex and age -- ILO modelled estimates, Nov. 2021 (thousands), ILO
+        *	Sex: SEX_T (total)
+        *	Classif1: " AGE_YTHADULT_YGE15" (Age +15)
 
 8.	Labor force participation rate (labor force/ total population)
-  1.	`SL.TLF.CACT.ZS`, Labor force participation rate, total (% of total population ages 15+) (modeled ILO estimate), WDI
-  2.	`SL.TLF.CACT.NE.ZS`, Labor force participation rate, total (% of total population ages 15+) (national estimate), WDI
-  3.	`SL.TLF.CACT.NE.ZS`, Labor force participation rate, total (% of total population ages 15+) (national estimate), WDI
-  4.	`EAP_DWAP_SEX_AGE_RT`, Labour force participation rate by sex and age (%), ILO
-    *	Sex: SEX_T (total)
-    *	Classif1: " AGE_YTHADULT_YGE15" (Age +15)
-  5.	`EAP_2WAP_SEX_AGE_RT`, Labour force participation rate by sex and age – ILO modelled estimates, Nov. 2021 (%), ILO
-    *	Sex: SEX_T (total)
-    *	Classif1: " AGE_YTHADULT_YGE15" (Age +15)
+    1.	`SL.TLF.CACT.ZS`, Labor force participation rate, total (% of total population ages 15+) (modeled ILO estimate), WDI
+    2.	`SL.TLF.CACT.NE.ZS`, Labor force participation rate, total (% of total population ages 15+) (national estimate), WDI
+    3.	`SL.TLF.CACT.NE.ZS`, Labor force participation rate, total (% of total population ages 15+) (national estimate), WDI
+    4.	`EAP_DWAP_SEX_AGE_RT`, Labour force participation rate by sex and age (%), ILO
+        *	Sex: SEX_T (total)
+        *	Classif1: " AGE_YTHADULT_YGE15" (Age +15)
+    5.	`EAP_2WAP_SEX_AGE_RT`, Labour force participation rate by sex and age – ILO modelled estimates, Nov. 2021 (%), ILO
+        *	Sex: SEX_T (total)
+        *	Classif1: " AGE_YTHADULT_YGE15" (Age +15)
 
 9.	Employment (number)
-  1.	`EMP_TEMP_SEX_AGE_NB`, Employment by sex and age (thousands), ILO
-    *	Sex: SEX_T (total)
-    *	Classif1: " AGE_YTHADULT_YGE15" (Age +15)
-  2.	`EMP_2EMP_SEX_AGE_NB`, Employment by sex and age -- ILO modelled estimates, Nov. 2021 (thousands)
-    *	Sex: SEX_T (total)
-    *	Classif1: " AGE_YTHADULT_YGE15" (Age +15)
+    1.	`EMP_TEMP_SEX_AGE_NB`, Employment by sex and age (thousands), ILO
+        *	Sex: SEX_T (total)
+        *	Classif1: " AGE_YTHADULT_YGE15" (Age +15)
+    2.	`EMP_2EMP_SEX_AGE_NB`, Employment by sex and age -- ILO modelled estimates, Nov. 2021 (thousands)
+        *	Sex: SEX_T (total)
+        *	Classif1: " AGE_YTHADULT_YGE15" (Age +15)
 
 10.	Employment to population ratio (employed/ total population)
-  1.	`SL.EMP.TOTL.SP.ZS`, Employment to population ratio, 15+, total (%) (modeled ILO estimate), WDI
-  2.	`SL.EMP.TOTL.SP.NE.ZS`, Employment to population ratio, 15+, total (%) (national estimate), WDI
-  3.	`EMP_DWAP_SEX_AGE_RT`, Employment-to-population ratio by sex and age (%), ILO
-    *	Sex: SEX_T (total)
-    *	Classif1: " AGE_YTHADULT_YGE15" (Age +15)
-  4.	`EMP_2WAP_SEX_AGE_RT`, Employment-to-population ratio by sex and age -- ILO modelled estimates, Nov. 2021 (%), ILO
-    *	Sex: SEX_T (total)
-    *	Classif1: " AGE_YTHADULT_YGE15" (Age +15)
+    1.	`SL.EMP.TOTL.SP.ZS`, Employment to population ratio, 15+, total (%) (modeled ILO estimate), WDI
+    2.	`SL.EMP.TOTL.SP.NE.ZS`, Employment to population ratio, 15+, total (%) (national estimate), WDI
+    3.	`EMP_DWAP_SEX_AGE_RT`, Employment-to-population ratio by sex and age (%), ILO
+        *	Sex: SEX_T (total)
+        *	Classif1: " AGE_YTHADULT_YGE15" (Age +15)
+    4.	`EMP_2WAP_SEX_AGE_RT`, Employment-to-population ratio by sex and age -- ILO modelled estimates, Nov. 2021 (%), ILO
+        *	Sex: SEX_T (total)
+        *	Classif1: " AGE_YTHADULT_YGE15" (Age +15)
 
 11.	Unemployment rate (unemployed/ labor force)
-  1.	`SL.UEM.TOTL.ZS`, Unemployment, total (% of total labor force) (modeled ILO estimate), WDI
-  2.	`SL.UEM.TOTL.NE.ZS`, Unemployment, total (% of total labor force) (national estimate), WDI
-  3.	`UNE_DEAP_SEX_AGE_RT`, Unemployment rate by sex and age (%), ILO
-    *	Sex: SEX_T (total)
-    *	Classif1: " AGE_AGGREGATE_TOTAL" (Total age)
-  4.	`UNE_2EAP_SEX_AGE_RT`, Unemployment rate by sex and age -- ILO modelled estimates, Nov. 2021 (%), ILO
-    *	Sex: SEX_T (total)
-    *	Classif1: " AGE_YTHADULT_YGE15" (Age +15)
+    1.	`SL.UEM.TOTL.ZS`, Unemployment, total (% of total labor force) (modeled ILO estimate), WDI
+    2.	`SL.UEM.TOTL.NE.ZS`, Unemployment, total (% of total labor force) (national estimate), WDI
+    3.	`UNE_DEAP_SEX_AGE_RT`, Unemployment rate by sex and age (%), ILO
+        *	Sex: SEX_T (total)
+        *	Classif1: " AGE_AGGREGATE_TOTAL" (Total age)
+    4.	`UNE_2EAP_SEX_AGE_RT`, Unemployment rate by sex and age -- ILO modelled estimates, Nov. 2021 (%), ILO
+        *	Sex: SEX_T (total)
+        *	Classif1: " AGE_YTHADULT_YGE15" (Age +15)
 
 12.	Agriculture (% of employment)
-  1.	`SL.AGR.EMPL.ZS`, Employment in agriculture (% of total employment) (modeled ILO estimate), WDI
-  2.	`EMP_TEMP_SEX_ECO_NB`, Employment by sex and economic activity (thousands), ILO
-    *	Sex: SEX_T (total)
-    *	Classif1: " ECO_SECTOR_AGR" and "ECO_SECTOR_TOTAL" (agriculture and total)
-  3.	`EMP_2EMP_SEX_ECO_NB`, Employment by sex and economic activity -- ILO modelled estimates, Nov. 2020 (thousands), ILO
-    *	Sex: SEX_T (total)
-    *	Classif1: " ECO_SECTOR_AGR" and "ECO_SECTOR_TOTAL" (agriculture and total)
+    1.	`SL.AGR.EMPL.ZS`, Employment in agriculture (% of total employment) (modeled ILO estimate), WDI
+    2.	`EMP_TEMP_SEX_ECO_NB`, Employment by sex and economic activity (thousands), ILO
+        *	Sex: SEX_T (total)
+        *	Classif1: " ECO_SECTOR_AGR" and "ECO_SECTOR_TOTAL" (agriculture and total)
+    3.	`EMP_2EMP_SEX_ECO_NB`, Employment by sex and economic activity -- ILO modelled estimates, Nov. 2020 (thousands), ILO
+        *	Sex: SEX_T (total)
+        *	Classif1: " ECO_SECTOR_AGR" and "ECO_SECTOR_TOTAL" (agriculture and total)
 
 13.	Industry (% of employment)
-  1.	`SL.IND.EMPL.ZS`, Employment in industry (% of total employment) (modeled ILO estimate), WDI
-  2.	`EMP_TEMP_SEX_ECO_NB`, Employment by sex and economic activity (thousands), ILO
-    *	Sex: SEX_T (total)
-    *	Classif1: " ECO_SECTOR_IND" and "ECO_SECTOR_TOTAL" (industry and total)
-  3.	`EMP_2EMP_SEX_ECO_NB`, Employment by sex and economic activity -- ILO modelled estimates, Nov. 2020 (thousands), ILO
-    *	Sex: SEX_T (total)
-    *	Classif1: " ECO_SECTOR_IND" and "ECO_SECTOR_TOTAL" (industry and total)
+    1.	`SL.IND.EMPL.ZS`, Employment in industry (% of total employment) (modeled ILO estimate), WDI
+    2.	`EMP_TEMP_SEX_ECO_NB`, Employment by sex and economic activity (thousands), ILO
+        *	Sex: SEX_T (total)
+        *	Classif1: " ECO_SECTOR_IND" and "ECO_SECTOR_TOTAL" (industry and total)
+    3.	`EMP_2EMP_SEX_ECO_NB`, Employment by sex and economic activity -- ILO modelled estimates, Nov. 2020 (thousands), ILO
+        *	Sex: SEX_T (total)
+        *	Classif1: " ECO_SECTOR_IND" and "ECO_SECTOR_TOTAL" (industry and total)
 
 14.	Services (% of employment)
-  1.	`SL.SRV.EMPL.ZS`, Employment in services (% of total employment) (modeled ILO estimate), WDI
-  2.	`EMP_TEMP_SEX_ECO_NB`, Employment by sex and economic activity (thousands), ILO
-    *	Sex: SEX_T (total)
-    *	Classif1: " ECO_SECTOR_SER" and "ECO_SECTOR_TOTAL" (services and total)
-  3.	`EMP_2EMP_SEX_ECO_NB`, Employment by sex and economic activity -- ILO modelled estimates, Nov. 2020 (thousands), ILO
-    *	Sex: SEX_T (total)
-    *	Classif1: " ECO_SECTOR_SER" and "ECO_SECTOR_TOTAL" (services and total)
+    1.	`SL.SRV.EMPL.ZS`, Employment in services (% of total employment) (modeled ILO estimate), WDI
+    2.	`EMP_TEMP_SEX_ECO_NB`, Employment by sex and economic activity (thousands), ILO
+        *	Sex: SEX_T (total)
+        *	Classif1: " ECO_SECTOR_SER" and "ECO_SECTOR_TOTAL" (services and total)
+    3.	`EMP_2EMP_SEX_ECO_NB`, Employment by sex and economic activity -- ILO modelled estimates, Nov. 2020 (thousands), ILO
+        *	Sex: SEX_T (total)
+        *	Classif1: " ECO_SECTOR_SER" and "ECO_SECTOR_TOTAL" (services and total)
 
 15.	Industry category (% of employment)
-  1.	`EMP_TEMP_SEX_ECO_NB`, Employment by sex and economic activity (thousands), ILO
-    *	Sex: SEX_T (total)
-    *	Classif1: ECO_ISIC4_TOTAL & ECO_ISIC4_A - ECO_ISIC4_U or
-    *	ECO_ISIC3_TOTAL and ECO_ISIC3_A - ECO_ISIC3_X
-  2.	`EMP_2EMP_SEX_ECO_NB`, Employment by sex and economic activity -- ILO modelled estimates, Nov. 2020 (thousands), ILO
-    *	Sex: SEX_T (total)
-    *	Classif1: ECO_DETAILS_TOTAL & ECO_ DETAILS _A - ECO_ DETAILS_RSTU
+    1.	`EMP_TEMP_SEX_ECO_NB`, Employment by sex and economic activity (thousands), ILO
+        *	Sex: SEX_T (total)
+        *	Classif1: ECO_ISIC4_TOTAL & ECO_ISIC4_A - ECO_ISIC4_U or
+        *	ECO_ISIC3_TOTAL and ECO_ISIC3_A - ECO_ISIC3_X
+    2.	`EMP_2EMP_SEX_ECO_NB`, Employment by sex and economic activity -- ILO modelled estimates, Nov. 2020 (thousands), ILO
+        *	Sex: SEX_T (total)
+        *	Classif1: ECO_DETAILS_TOTAL & ECO_ DETAILS _A - ECO_ DETAILS_RSTU
 
 16.	Hourly wages
-  1.	`EAR_HEES_SEX_OCU_NB`, Mean nominal hourly earnings of employees by sex and occupation (local currency), ILO
-    *	Sex: SEX_T (total)
-    *	Classif1 == "OCU_ISCO88_TOTAL" (Total occupations)
-  2.	`NY.GDP.PCAP.CN`, GDP per capita (current LCU), ILO
-    *	Times 2/3 (labor share), divided by 2080 (number of full time working-hours in a year, 40h/week*52weeks = 2080 h)
+    1.	`EAR_HEES_SEX_OCU_NB`, Mean nominal hourly earnings of employees by sex and occupation (local currency), ILO
+        *	Sex: SEX_T (total)
+        *	Classif1 == "OCU_ISCO88_TOTAL" (Total occupations)
+    2.	`NY.GDP.PCAP.CN`, GDP per capita (current LCU), ILO
+        *	Times 2/3 (labor share), divided by 2080 (number of full time working-hours in a year, 40h/week*52weeks = 2080 h)
