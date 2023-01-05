@@ -82,7 +82,7 @@ Each figure in the folder “02_figures” is the graphical representation of an
   *	A solid line means that the year of the data is the same as the year of the survey while a dashed line means that we are using data from a different year (as data for the given estimate was not available for the survey year)
   *	Each segment consists of two distinct parts: The first is a central point (dot or triangle) showing the precise estimate for each variable and source. The second are the lines stretching out above and below the central point representing an upper and lower bound of the estimate (commonly 10% above and below the point estimate).
 
-These figures allow us to visually see if the values in GLD are close to the values from external sources. In the [Flags Methodology](##Flags-Methodology)” section we describe precisely the circumstances under which we consider the values to be “too far off”.
+These figures allow us to visually see if the values in GLD are close to the values from external sources. In the [Flags Methodology](##flags-methodology)” section we describe precisely the circumstances under which we consider the values to be “too far off”.
 
 Additionally, the external check process places in the summary folder a PDF file ("B2_external_flags") with all figures that have been flagged. The role of this file is to present a snapshot of the variables whose estimates are clearly different from the external sources we use as comparison, which may indicate a problem in the harmonization or other issues that require our attention.
 
@@ -121,7 +121,7 @@ To conduct this analysis, we need the following elements
 3.	A measure of distance between (1) and (2)
 4.	A threshold above which the distance in (3) is considered too large
 
-For point (1), we use the GLD variables described in [Overview](##Overview).
+For point (1), we use the GLD variables described in [Overview](##overview).
 
 For point (2), we average the external variables listed in the Annex. Note that for each GLD variable we have one or more variables from external sources we wish to compare it to. By averaging all the variables from external sources, we guarantee we have one single benchmark per variable.
 
