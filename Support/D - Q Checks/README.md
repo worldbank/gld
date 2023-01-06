@@ -1,4 +1,4 @@
-# Quality checks
+# GLD quality checks
 
 For the purpose of checking the harmonization of GLD data, we use to processes, each stored here in a separate folder.
 
