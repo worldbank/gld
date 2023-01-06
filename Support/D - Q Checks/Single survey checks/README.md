@@ -1,4 +1,4 @@
-# Guide to the GLD singel survey quality checks
+# Guide to the GLD single survey quality checks
 
 This is a guide to the quality checks for the Global Labor Database (GLD). After reading it, users should be able to:
 
