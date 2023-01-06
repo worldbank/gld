@@ -1,4 +1,4 @@
-# Survey series check
+# Guide to the GLD survey series quality checks
 
 ## Overview
 
