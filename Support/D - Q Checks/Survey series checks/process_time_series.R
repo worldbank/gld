@@ -12,7 +12,7 @@ vars_to_study <- c("empstat", "educat7", "educat4", "industrycat10", "industryca
 # Note that wage will be included by default, no need to include here
 
 # Define the path to the folder holding the series
-path_in <- "[For example: Z:/GLD-Harmonization/573465_JT/ZAF]"
+path_in <- "[For example: Z:/GLD-Harmonization/123456_AZ/CCC]"
 
 # Define the path to the folder where the graphs ought to be stored in
 path_out <- "[Path to output folder]"
