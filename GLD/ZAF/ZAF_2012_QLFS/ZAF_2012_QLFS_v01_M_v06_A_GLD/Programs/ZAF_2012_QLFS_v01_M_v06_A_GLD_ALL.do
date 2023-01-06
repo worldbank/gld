@@ -679,13 +679,8 @@ Individual |           Highest education level
 
 *<_educat7_>
 	gen byte educat7=.
-	replace educat7=1 if inlist(Q17EDUCATION,0,98)
-	replace educat7=2 if inrange(Q17EDUCATION,1,6)
-	replace educat7=3 if Q17EDUCATION==7
-	replace educat7=4 if inrange(Q17EDUCATION,8,11)|inrange(Q17EDUCATION,13,14)
-	replace educat7=5 if inrange(Q17EDUCATION,15,18)|Q17EDUCATION==12
-	replace educat7=Education_Status if inrange(Q17EDUCATION,19,20)
-	replace educat7=6 if inrange(Q17EDUCATION,21,22)
+	replace educat7=Education_Status if inrange(Education_Status,1,5)
+	replace educat7=6 if Education_Status==6&inrange(Q17EDUCATION,16,22)
 	replace educat7=7 if inrange(Q17EDUCATION,23,28)
 	replace educat7=. if age<ed_mod_age & age!=.
 	label var educat7 "Level of education 1"
