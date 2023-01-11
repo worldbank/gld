@@ -37,7 +37,7 @@
 * Date: [2022-07-07] File: [ZAF_2009_QLFS_v01_M_v02_A_GLD_ALL.do] - [Adding new GLD variables: isced_version/isco_version/isic_version/educat_orig/vocational_field_orig]
 * Date: [2022-09-22] File: [ZAF_2009_QLFS_v01_M_v03_A_GLD_ALL.do] - [Correcting occupation skill level; correcting typo (631 to 621 in the ISCO88 code list); coding 5164 to category "Service and market sales workers"]
 * Date: [2022-11-03] File: [ZAF_2009_QLFS_v01_M_v04_A_GLD_ALL.do] - [Update ICLS V, was excluding non market as employment all along]
-* Date: [2022-12-21] File: [ZAF_2009_QLFS_v01_M_v05_A_GLD_ALL.do] - [Recoding educat7]
+* Date: [2023-01-09] File: [ZAF_2009_QLFS_v01_M_v05_A_GLD_ALL.do] - [Recoding educat7]
 
 </_Version Control_>
 
@@ -638,12 +638,16 @@ Individual |         level
 
 
 *<_educat7_>
-	gen byte educat7=.
-	replace educat7=Education_Status if inrange(Education_Status,1,3)
-	replace educat7=4 if Education_Status==4&inrange(Q17EDUCATION,8,17)
-	replace educat7=5 if Education_Status==5&[inrange(Q17EDUCATION,8,17)|inrange(Q17EDUCATION,19,20)]
-	replace educat7=6 if inlist(Q17EDUCATION,18,21,22)
-	replace educat7=7 if inrange(Q17EDUCATION,23,26)
+	gen byte educat7=./*
+	replace educat7=Education_Status if inrange(Q17EDUCATION,1,18)
+	replace educat7=4 if inrange(Q17EDUCATION,19,20)
+	replace educat7=6 if Q17EDUCATION==21
+	replace educat7=7 if inrange(Q17EDUCATION,22,26)*/
+	
+	replace educat7=Education_Status if inrange(Q17EDUCATION,1,18)
+	replace educat7=6 if Q17EDUCATION==19
+	replace educat7=7 if inrange(Q17EDUCATION,20,26)	
+	
 	replace educat7=. if age<ed_mod_age & age!=.
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
