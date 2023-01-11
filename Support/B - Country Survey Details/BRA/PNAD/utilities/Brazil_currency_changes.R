@@ -119,34 +119,3 @@ ggplot(df_w_cpi) +
   scale_x_continuous(breaks = seq(1981,1998,1)) + 
   guides(fill = "none") +
   labs(y = "Mean monthly employee wage", x = "Year") 
-
-
-# Make new plot with unified currency -------------------------------------
-
-unified_df <- df %>%
-  mutate(
-    unified_wage = case_when(
-      year < 1986 ~ wage_no_compen/2750/1000/1000/1000,
-      between(year, 1986, 1988) ~ wage_no_compen/2750/1000/1000,
-      between(year, 1989, 1992) ~ wage_no_compen/2750/1000,
-      year == 1993 ~ wage_no_compen/2750,
-      year > 1993 ~ wage_no_compen
-    ))
-
-
-wage_unif <- 
-  unified_df %>% 
-  filter(empstat == 1) %>%
-  filter(!is.na(wage_no_compen)) %>%
-  filter(year < 1999) %>%
-  group_by(year) %>%
-  summarise(
-    mean_employee_wage = mean(unified_wage)  )
-
-
-
-# Merge it in
-
-
-
-
