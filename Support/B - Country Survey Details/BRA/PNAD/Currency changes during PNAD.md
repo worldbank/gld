@@ -4,7 +4,7 @@
 
 The answers recorded for the wages of employees in the PNAD (and PNAD-C) surveys are in the currency of legal tender at the moment of the survey. In most situations this is not noteworthy, yet for the PNAD data of the 1980’s and early 1990’s it is indeed relevant.
 
-This era was marked by high inflation and a series of changes in the official currency (more details [here](utilities/160223 Paper MFHLA BRAZIL.pdf) and [here](https://www.npr.org/sections/money/2010/10/04/130329523/how-fake-money-saved-brazil)) summarised in the below table based on [publicly available information](https://en.wikipedia.org/wiki/Brazilian_currency):
+This era was marked by high inflation and a series of changes in the official currency (more details [here](utilities/160223%20Paper%20MFHLA%20BRAZIL.pdf) and [here](https://www.npr.org/sections/money/2010/10/04/130329523/how-fake-money-saved-brazil)) summarised in the below table based on [publicly available information](https://en.wikipedia.org/wiki/Brazilian_currency):
 
 | Introduction     | Name                  | Conversion              | Notes                           |
 |------------------|-----------------------|-------------------------|---------------------------------|
