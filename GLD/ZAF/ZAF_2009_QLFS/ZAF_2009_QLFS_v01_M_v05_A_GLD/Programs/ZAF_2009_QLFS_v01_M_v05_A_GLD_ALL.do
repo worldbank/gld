@@ -638,16 +638,10 @@ Individual |         level
 
 
 *<_educat7_>
-	gen byte educat7=./*
-	replace educat7=Education_Status if inrange(Q17EDUCATION,1,18)
-	replace educat7=4 if inrange(Q17EDUCATION,19,20)
-	replace educat7=6 if Q17EDUCATION==21
-	replace educat7=7 if inrange(Q17EDUCATION,22,26)*/
-	
+	gen byte educat7=.
 	replace educat7=Education_Status if inrange(Q17EDUCATION,1,18)
 	replace educat7=6 if Q17EDUCATION==19
 	replace educat7=7 if inrange(Q17EDUCATION,20,26)	
-	
 	replace educat7=. if age<ed_mod_age & age!=.
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
