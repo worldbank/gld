@@ -67,6 +67,7 @@
 !Support/**/*.dta
 !Support/**/*.dct
 !Support/**/*.csv
+!Support/**/*.txt
 
 # Allow also PDF andimages if needed
 !/Support/**/*.pdf
