@@ -244,7 +244,7 @@
 	
 	* Do if all vars present
 	cap keep countrycode year lstatus empstat
-	if_rc == 0 {
+	if _rc == 0 {
 		
 		duplicates drop
 		sort lstatus
