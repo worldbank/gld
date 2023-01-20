@@ -1,6 +1,6 @@
 /*******************************************************************************
 								
-                            GLD CHECKS Version 1.4
+                            GLD CHECKS Version 1.5
                               01. Format checks 
 		   	   																   
 *******************************************************************************/	
@@ -45,7 +45,7 @@ if _rc == 0 { // if isic version info exists, otherwise cannot know which ISIC v
 	* Preserve harmonization file to read in ISIC universe, save
 	preserve
 	set sslrelax on
-	import delimited "https://raw.githubusercontent.com/worldbank/gld/main/Support/D%20-%20Q%20Checks/Single%20survey%20checks/Helper_programs_1.4/isic_codes.txt", delimiter(comma) varnames(1) clear 
+	import delimited "https://raw.githubusercontent.com/worldbank/gld/main/Support/D%20-%20Q%20Checks/Single%20survey%20checks/Helper_programs_1.5/isic_codes.txt", delimiter(comma) varnames(1) clear 
 	set sslrelax off
 	* Reduce to only cases of said version
 	keep if version == "`isic_version'"
@@ -70,7 +70,7 @@ if _rc == 0 { // if isic version info exists, otherwise cannot know which ISIC v
 	* Preserve harmonization file to read in ISIC universe, save
 	preserve
 	set sslrelax on
-	import delimited "https://raw.githubusercontent.com/worldbank/gld/main/Support/D%20-%20Q%20Checks/Single%20survey%20checks/Helper_programs_1.4/isco_codes.txt", delimiter(comma) varnames(1) clear 
+	import delimited "https://raw.githubusercontent.com/worldbank/gld/main/Support/D%20-%20Q%20Checks/Single%20survey%20checks/Helper_programs_1.5/isco_codes.txt", delimiter(comma) varnames(1) clear 
 	set sslrelax off
 	* Reduce to only cases of said version
 	keep if version == "`isco_version'"
