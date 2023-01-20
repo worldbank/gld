@@ -1,6 +1,6 @@
 /*******************************************************************************
 								
-                             GLD CHECKS Version 1.4
+                             GLD CHECKS Version 1.5
                           03. Block 2 - External data
                     2B. Labor force variables - data download  	  
 		   	   																   
@@ -1612,5 +1612,171 @@
 		}
 	
 	}
+	
+
+********************************************************************************
+*                         16. Status in Employment                             *
+********************************************************************************
+
+*-- 00. Determine presence of necessary variables
+	use "${mydata}", clear
+	cap confirm variable empstat age weight countrycode harmonization year
+	if 	_rc != 0 {
+		di "No empstat age weight countrycode harmonization year, empstat category section skipped"	
+		}
+		
+	else {
+		
+	*-- 01. Find empstat info on ILO (1) (only one)
+		// Employment by age and status in employment (thousands)
+		
+		#delimit ;
+		dbnomics import, provider(ILO) dataset(EMP_2EMP_AGE_STE_NB) ref_area(${ccode3}) 
+		classif1(AGE_YTHADULT_YGE15) frequency(A) clear;
+		#delimit cr 
+		
+		* If nothing found, will have an empty dataset 
+		count
+		if `r(N)' == 0 {
+			di "Dbnomics data not found"
+		}
+		else {
+
+			** Use ICSE classification only
+			gen has_ICSE = regexm(series_name, "ICSE")
+			keep if has_ICSE == 1
+		
+			** Find closest year 
+			sort period 
+			gen myyear = ${cyear}
+			gen yeardiff = abs(period - myyear)
+			egen mindiff = min(yeardiff)
+			
+			keep if yeardiff == mindiff
+			
+			sum period
+			keep if period == `r(min) ' // keep earliest 
+			
+			sum period
+			assert `r(min)' == `r(max)'
+
+			
+			** Continue 
+			keep period value classif2
+					
+			sum value 
+			if `r(N)' == 0 {
+				replace value ="." if value == "NA"
+			destring value, replace
+			}
+
+
+			* Change names of classif2 
+			* Keep last character
+			replace classif2 = substr(classif2,-1,.)
+
+			/*
+			Mapping ICSE categories to GLD empstat
+
+			ICSE #	| ICSE Name			| GLD #	| GLD Name
+			 1		| Employees			| 1		| Paid employee
+			 2		| Employers			| 3		| Employer
+			 3		| Own-account		| 4		| Self-employed
+			 4		| Members of coop	| 5		| Other
+			 5		| Family workers	| 2		| Non-paid employee
+			 6		| Other				| 5		| Other
+			*/
+
+			gen empstat = .
+			replace empstat = 1 if classif2 == "1"
+			replace empstat = 2 if classif2 == "5"
+			replace empstat = 3 if classif2 == "2"
+			replace empstat = 4 if classif2 == "3"
+			replace empstat = 5 if inlist(classif2, "4", "6")
+			replace empstat = 9 if classif2 == "L"
+
+			* Convert to shares (total, empstat == 9 is if sorted, last)
+			sort empstat
+			replace value = value/value[_N]
+
+			* Drop total
+			drop if empstat == 9
+
+			* Drop classif2
+			drop classif2
+
+			* Generate lower bound, upper bound, source, s1 to match other
+			rename period year
+			replace value = 100*value
+			gen source       = "ILO-1"
+			gen countrycode  = "${ccode3}" 
+			gen ub      = 1.05*value
+			gen lb      = 0.95*value
+			format value ub lb %4.2fc
+			keep  year empstat value ub lb countrycode source
+			order year empstat value ub lb countrycode source
+
+
+		} 
+		
+		save "Block2_External/01_data/temp_iloempstat1.dta", replace 
+		
+		
+	*-- 02. Survey data for empstat
+		use "${mydata}", clear
+		
+		keep if !missing(empstat)
+		keep if age >= 15 & !missing(age)
+			
+				 
+		collapse (count) weight, by(countrycode harmonization year empstat) 
+
+		egen total_emp = total(weight)
+		gen value = (weight/total_emp)*100
+
+		rename harmonization source 
+		gen ub = 1.05*value
+		gen lb = 0.95*value
+		format value ub lb %4.2fc
+		keep year empstat value ub lb countrycode source
+		order year empstat value ub lb countrycode source
+
+		save "Block2_External/01_data/temp_gldempstat1.dta", replace 
+		
+		
+	*-- 03. Combine (original vs ILO)	
+		
+		use "Block2_External/01_data/temp_iloempstat1.dta", clear
+		append using "Block2_External/01_data/temp_gldempstat1.dta"
+		
+		** Save separately, label each empstat category
+		local empstat_levs 1 2 3 4 5
+		local empstat_labs "Paid_Employee NonPaid_Emp Employer Self_Employed Other"
+		local emps : word count `empstat_labs'
+		
+		forvalues i = 1/`emps' {
+			
+			preserve
+			
+			* Make level specific level, label
+			local emp_lev : word `i' of `empstat_levs'
+			local emp_lab : word `i' of `empstat_labs'
+			
+			* Keep only level, label value 
+			keep if empstat == `emp_lev'
+			label var value  "`emp_lab'"
+			
+			* Drop empstat, convert source into a labelled factor, save
+			drop empstat
+			encode source, gen(s1)
+			save  "Block2_External/01_data/16_empstat_`i'.dta", replace
+			
+			restore
+		}
+
+		cap erase "Block2_External/01_data/temp_iloempstat1.dta" 
+		cap erase "Block2_External/01_data/temp_gldempstat1.dta"
+	
+}	
 	
 **************************   END OF THE DO-FILE  *******************************

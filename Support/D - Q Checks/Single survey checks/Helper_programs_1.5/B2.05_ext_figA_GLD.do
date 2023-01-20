@@ -1,7 +1,7 @@
 /*******************************************************************************
 								
-                            GLD CHECKS Version 1.4
-                        06. Block 2 - External data
+                            GLD CHECKS Version 1.5
+                        05. Block 2 - External data
                   2A. Demographic variables - Output figures
 		   	   																   
 *******************************************************************************/

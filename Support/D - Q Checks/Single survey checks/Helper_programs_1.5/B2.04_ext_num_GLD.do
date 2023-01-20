@@ -1,6 +1,6 @@
 /*******************************************************************************
 								
-                             GLD CHECKS Version 1.4
+                             GLD CHECKS Version 1.5
 						  05. Block 2 - External data
                             Export numerical output   	  
 		   	   																   
@@ -39,8 +39,8 @@
 		
 	gen block =. 
 	replace block = 1 if varorder >= 1  & varorder <= 6
-	replace block = 2 if varorder >= 7  & varorder <= 24 
-	replace block = 3 if varorder >= 25 & varorder <= 25
+	replace block = 2 if varorder >= 7  & varorder <= 29 
+	replace block = 3 if varorder >= 30 & varorder <= 30
 	
 		
 	replace varchecked = "Total population"                           if varchecked == "01totpop.dta"
@@ -49,14 +49,17 @@
 	replace varchecked = "Children 0-14 (%)"                          if varchecked == "04children.dta"
 	replace varchecked = "Working age 15-64 (%)"                      if varchecked == "05workingage.dta"
 	replace varchecked = "Seniors 65+ (%)"                            if varchecked == "06seniors.dta"
+	
 	replace varchecked = "Labor force size"                           if varchecked == "07labforce.dta"
 	replace varchecked = "Labor force participation rate"             if varchecked == "08labfpart.dta"
 	replace varchecked = "Employment (number)"                        if varchecked == "09employment.dta"
 	replace varchecked = "Employment to population ratio"             if varchecked == "10emptopop.dta"
 	replace varchecked = "Unemployment rate"                          if varchecked == "11unemployment.dta"
+	
 	replace varchecked = "Employment in agriculture (%)"              if varchecked == "12agriculture.dta"
 	replace varchecked = "Employment in industry (%)"                 if varchecked == "13industry.dta"
 	replace varchecked = "Employment in services (%)"                 if varchecked == "14services.dta"
+	
 	replace varchecked = "Employment in Agriculture (%)"              if varchecked == "15industry_1.dta"
 	replace varchecked = "Employment in Mining (%)"                   if varchecked == "15industry_2.dta"
 	replace varchecked = "Employment in Manufacturing (%)"            if varchecked == "15industry_3.dta"
@@ -67,8 +70,14 @@
 	replace varchecked = "Employment in Financial (%)"                if varchecked == "15industry_8.dta"
 	replace varchecked = "Employment in Public-Admin (%)"             if varchecked == "15industry_9.dta"
 	replace varchecked = "Employment in Other (%)"                    if varchecked == "15industry_10.dta"
-	replace varchecked = "Average hourly wages"                       if varchecked == "16wages.dta"
+
+	replace varchecked = "Share Paid Employees (%)"                    if varchecked == "16_empstat_1.dta"
+	replace varchecked = "Share Non-Paid Employees (%)"                if varchecked == "16_empstat_2.dta"
+	replace varchecked = "Share Employers (%)"      		           if varchecked == "16_empstat_3.dta"
+	replace varchecked = "Share Self-Employed (%)"	                   if varchecked == "16_empstat_4.dta"
+	replace varchecked = "Share Paid Employees (%)"                    if varchecked == "16_empstat_5.dta"
 	
+	replace varchecked = "Average hourly wages"                       if varchecked == "17wages.dta"
 		
 	erase "Block2_External/01_data/temp_allvars.dta"        
 	save  "Block2_External/01_data/temp2_allvars.dta", replace        

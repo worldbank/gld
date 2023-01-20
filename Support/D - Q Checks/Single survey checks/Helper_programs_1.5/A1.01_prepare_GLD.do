@@ -1,6 +1,6 @@
 /*******************************************************************************
 								
-                            GLD CHECKS Version 1.4
+                            GLD CHECKS Version 1.5
                           00. Prepare to run checks  	  
 		   	   																   
 *******************************************************************************/	
@@ -66,6 +66,13 @@
 	global ccode2 `ccode2'
 
 
+************************   New features in version 1.5  ************************	
+ *- 1. File B2.02: Add check for status in employment
+ *- 2. File B2.03: Amend wage to be check 17
+ *- 3. File B2.08: Newly created, plots employment status
+ *- 4. File B2.09-10: Amend in accordance with new order
+ 
+	
 ************************   New features in version 1.4  ************************	
  
  *- 1. File B2.09: Create summary image only if there are any flags
