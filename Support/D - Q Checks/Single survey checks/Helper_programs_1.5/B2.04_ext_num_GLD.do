@@ -71,11 +71,11 @@
 	replace varchecked = "Employment in Public-Admin (%)"             if varchecked == "15industry_9.dta"
 	replace varchecked = "Employment in Other (%)"                    if varchecked == "15industry_10.dta"
 
-	replace varchecked = "Share Paid Employees (%)"                    if varchecked == "16_empstat_1.dta"
-	replace varchecked = "Share Non-Paid Employees (%)"                if varchecked == "16_empstat_2.dta"
-	replace varchecked = "Share Employers (%)"      		           if varchecked == "16_empstat_3.dta"
-	replace varchecked = "Share Self-Employed (%)"	                   if varchecked == "16_empstat_4.dta"
-	replace varchecked = "Share Paid Employees (%)"                    if varchecked == "16_empstat_5.dta"
+	replace varchecked = "Share Paid Employees (%)"                   if varchecked == "16_empstat_1.dta"
+	replace varchecked = "Share Non-Paid Employees (%)"               if varchecked == "16_empstat_2.dta"
+	replace varchecked = "Share Employers (%)"      		          if varchecked == "16_empstat_3.dta"
+	replace varchecked = "Share Self-Employed (%)"	                  if varchecked == "16_empstat_4.dta"
+	replace varchecked = "Share Other (%)"			                  if varchecked == "16_empstat_5.dta"
 	
 	replace varchecked = "Average hourly wages"                       if varchecked == "17wages.dta"
 		
@@ -89,9 +89,13 @@
 	** Mean values of external variables, lower bound & upper bound 
 	egen meanlb1 = mean(lb)      if source != "GLD", by(varchecked)
 	egen meanlb  = mean(meanlb1)                   , by(varchecked)
+	* If no comparison (can happen in empstat), set GLD
+	replace meanlb = lb if missing(meanlb)
 	
 	egen meanub1 = mean(ub)      if source != "GLD", by(varchecked)
 	egen meanub  = mean(meanub1)                   , by(varchecked)
+	* If no comparison (can happen in empstat), set GLD
+	replace meanub = lb if missing(meanub)
 
 	
 	drop meanlb1 meanub1
@@ -132,6 +136,8 @@
 	** Generate & clean summary file 
 	collapse (mean) value ub lb, by(type varchecked varorder com_cases)
 	reshape wide value lb ub, i(varchecked varorder com_cases) j(type) string
+	* Drop if could not compare
+	drop if com_cases == 0
 	
 	sort varorder
 	gen year    = ${cyear}

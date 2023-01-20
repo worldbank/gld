@@ -1725,6 +1725,7 @@
 	*-- 02. Survey data for empstat
 		use "${mydata}", clear
 		
+		* Keep cases with empstat; ILO data is 15+, emulate
 		keep if !missing(empstat)
 		keep if age >= 15 & !missing(age)
 			
