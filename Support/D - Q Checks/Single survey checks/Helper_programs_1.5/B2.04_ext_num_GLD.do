@@ -95,7 +95,7 @@
 	egen meanub1 = mean(ub)      if source != "GLD", by(varchecked)
 	egen meanub  = mean(meanub1)                   , by(varchecked)
 	* If no comparison (can happen in empstat), set GLD
-	replace meanub = lb if missing(meanub)
+	replace meanub = ub if missing(meanub)
 
 	
 	drop meanlb1 meanub1
