@@ -185,11 +185,6 @@
 	use "${mydata}", clear
 	gen value = 1 
 	
-	* Drop if urban info is missing
-	* Missingness is reported in Block 1 (or 4) here we want to know whether remaining info is 
-	* in line with other sources (e.g., data is missing but not biased)
-	drop if missing(urban)
-	
 	collapse (count) value [iw = weight], by(countrycode harmonization year) 
 	rename harmonization source 
 	gen ub = 1.05*value
@@ -433,6 +428,12 @@
 	*-- 03. Survey data 
 		use "${mydata}", clear
 		gen value = 1 
+
+		* Drop if urban info is missing
+		* Missingness is reported in Block 1 (or 4) here we want to know whether remaining info is 
+		* in line with other sources (e.g., data is missing but not biased)
+		drop if missing(urban)
+		
 		collapse (count) value [iw = weight], by(urban countrycode harmonization year)  
 		
 		reshape wide value, i(year) j(urban) 
