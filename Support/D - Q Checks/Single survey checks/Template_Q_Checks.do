@@ -44,10 +44,11 @@
 	
 	do "${helper}/B2.05_ext_figA_GLD.do"    
 	do "${helper}/B2.06_ext_figB1_GLD.do"   
-	do "${helper}/B2.07_ext_figB2_GLD.do" 
-	do "${helper}/B2.08_ext_figC_GLD.do"  
+	do "${helper}/B2.07_ext_figB2_GLD.do"
+	do "${helper}/B2.08_ext_figB3_GLD.do"
+	do "${helper}/B2.09_ext_figC_GLD.do"  
 	
-	do "${helper}/B2.09_ext_flag_GLD.do"  
+	do "${helper}/B2.10_ext_flag_GLD.do"  
 	
 	* Block 3. Missing values
 	do "${helper}/B3.01_missing_GLD.do"  
