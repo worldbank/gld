@@ -4,7 +4,7 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				IDN_2018_Sakernas_v02_M_v03_A_GLD.do </_Program name_>
+<_Program name_>				IDN_2018_Sakernas_v02_M_v04_A_GLD.do </_Program name_>
 <_Application_>					Stata MP 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
 <_Date created_>				2021-08-18 </_Date created_>
@@ -38,7 +38,7 @@
 * Date: [2022-07-21] File: [IDN_2018_Sakernas_v02_M_v01_A_GLD.do] - [Master dataset switched to backcasted SAKERNAS 2018 August]
 * Date: [2022-08-20] File: [IDN_2018_Sakernas_v02_M_v02_A_GLD.do] - [Recode employment status:Agricultural & non-agricultual casual worker recoded to "paid employee"]
 * Date: [2022-11-08] File: [IDN_2018_Sakernas_v02_M_v03_A_GLD.do] - [Recode "lstatus"and "potential_lf".]
-* Date: [2023-01-12] File: [IDN_2018_Sakernas_v02_M_v04_A_GLD.do] - [Change directories]
+* Date: [2023-01-12] File: [IDN_2018_Sakernas_v02_M_v04_A_GLD.do] - [Change directories; Empstat "self-employed" assisted with non-paid workers were "self-employed"; recoded whours (used to be work days)]
 
 </_Version Control_>
 
@@ -798,8 +798,8 @@ of unemployment period.
 
 {
 *<_empstat_>
-	gen byte empstat = b5_r27a
-	recode empstat (1 2=4) (4/6=1) (6=5) (7=2) (0=5)
+	gen byte empstat = b5_r27a if inrange(b5_r27a, 1, 7)
+	recode empstat (1 2=4) (4/6=1) (7=2) (6=5)
 	replace empstat=. if lstatus!=1
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
@@ -932,11 +932,15 @@ Each of these two variables devides into "in cash" and "in-kind". For each obser
 
 
 *<_wage_no_compen_>
+	
+	gen wageb = b5_r31b1+b5_r31b2
+	gen wagec = b5_r31c1+b5_r31c2
 	gen double wage_no_compen = .
-	gen wagec1 = b5_r31c1
-	replace wagec1 =0 if (b5_r31b1!=0 | b5_r31b2!=0 ) & (b5_r31c1!=0 | b5_r31c2!=0) & b5_r31b1==b5_r31c1
-	replace wage_no_compen = b5_r31b1+b5_r31b2+wagec1+b5_r31c2
+	replace wage_no_compen = wageb if wageb==wagec
+	replace wage_no_compen = wageb if wageb>0 & wagec==0
+	replace wage_no_compen = wagec if wageb==0 & wagec>0
 	replace wage_no_compen = . if lstatus!=1
+	replace wage_no_compen = . if empstat==2
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
@@ -950,9 +954,9 @@ Each of these two variables devides into "in cash" and "in-kind". For each obser
 
 
 *<_whours_>
-	gen whours= b5_r31a1
+	gen whours= b5_r26a8
 	replace whours = . if lstatus!=1
-	replace whours = . if b5_r31a1 == 0
+	replace whours = . if b5_r26a8==0
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 

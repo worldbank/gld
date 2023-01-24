@@ -4,7 +4,7 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				IDN_2003_Sakernas_v01_M_v03_A_GLD.do </_Program name_>
+<_Program name_>				IDN_2003_Sakernas_v01_M_v04_A_GLD.do </_Program name_>
 <_Application_>					Stata MP 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
 <_Date created_>				2021-08-18 </_Date created_>
@@ -35,7 +35,7 @@
 
 * Date: [2022-05-24] File: [IDN_2003_Sakernas_v01_M_v02_A_GLD.do] - [Reducing original indutry and occupation codes digits and remapping those two to ISIC/ISCO.]
 * Date: [2022-08-23] File: [IDN_2003_Sakernas_v01_M_v03_A_GLD.do] - [Recode employment status:Agricultural & non-agricultual casual worker recoded to "paid employee"; recode "occup_skill" and "occup"; change path to the intermediate file]  
-* Date: [2022-12-12] File: [IDN_2003_Sakernas_v01_M_v04_A_GLD.do] - [Educat7 correction & directories update]
+* Date: [2023-01-14] File: [IDN_2003_Sakernas_v01_M_v04_A_GLD.do] - [Educat7 correction & directories update; Empstat "self-employed" assisted with non-paid workers were "self-employed"; added "secondary incomplete to "educat7"]
 
 </_Version Control_>
 
@@ -169,7 +169,7 @@ local out_file "`level_2_harm'_ALL.dta"
 *</_int_month_>
 
 
-/*<_hhid_>
+/*<_hhid_note_>
 
 Following codes given by the "A guide to working with Indonesian survey data":
 
@@ -183,7 +183,7 @@ Following codes given by the "A guide to working with Indonesian survey data":
 // b1p07= sample code number
 // b1p10= household sample sequential number
 
-<_hhid_>*/
+<_hhid_note_>*/
 
 
 *<_hhid_>
@@ -214,11 +214,11 @@ Following codes given by the "A guide to working with Indonesian survey data":
 *</_pid_>
 
 
-/*<_weight_>
+/*<_weight_note_>
 
 The original weight variable is called "weight".
 
-<_weight_>*/
+<_weight_note_>*/
 
 
 *<_weight_>
@@ -227,13 +227,13 @@ The original weight variable is called "weight".
 *</_weight_>
 
 
-/*<_psu_>
+/*<_psu_note_>
 
 We do know that the primary sampling unit of Sakernas is census block and the
 census block number is in the questionnaire. However this information is not
 provided due to it is part of the confidential information withheld by the NSO.
 
-<_psu_>*/
+<_psu_note_>*/
 
 
 *<_psu_>
@@ -285,13 +285,13 @@ provided due to it is part of the confidential information withheld by the NSO.
 *</_subnatid1_>
 
 
-/*<_subnatid2_>
+/*<_subnatid2_note_>
 
 	Because SAKERNAS 2003 does not have the district name variable as other years, yet it has the same districts surveyed in 2013. Therefore, I used districts' names and codes in 2013 to codify subnatid2 in 2003.
 
 	But note that 16 district codes only appear in 2003 (no district labels) not in 2013: 1171 1411 1412 1472 1474 3273 6271 7271 7319 7320 7321 7323 7371 9405 9406 9407 9472. These districts' names were left missing.
 
-*<_subnatid2_>*/
+*<_subnatid2_note_>*/
 
 
 *<_subnatid2_>
@@ -559,7 +559,7 @@ provided due to it is part of the confidential information withheld by the NSO.
 *</_literacy_>
 
 
-/*<_educy_>
+/*<_educy_note_>
 
 Years of education, or "educy" (and all other related variables were left missing)
 because of the unclear mapping for "Not finished primary school yet".
@@ -585,7 +585,7 @@ Original code list of variable "b4p1a" in the dataset:
 9. Academy/Diploma III
 10. Diploma IV/Bachelor/Postgraduate
 
-</_educy_>*/
+</_educy_note_>*/
 
 
 *<_educy_>
@@ -597,7 +597,7 @@ Original code list of variable "b4p1a" in the dataset:
 
 *<_educat7_>
 	gen byte educat7 = b4p1a
-	recode educat7 (4/7=5) (8/9=6) (10=7)
+	recode educat7 (4/5=4) (6/7=5) (8/9=6) (10=7)
 	replace educat7 = . if age < ed_mod_age & age!=.
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
@@ -655,9 +655,7 @@ foreach v of local ed_var {
 replace educat_isced_v = "" if ( age < ed_mod_age & !missing(age) )
 *</_% Correction min age_>
 
-
 }
-
 
 
 /*%%=============================================================================================
@@ -671,6 +669,7 @@ replace educat_isced_v = "" if ( age < ed_mod_age & !missing(age) )
 	label var vocational "Ever received vocational training"
 *</_vocational_>
 
+
 *<_vocational_type_>
 	gen vocational_type = .
 	label de lblvocational_type 1 "Inside Enterprise" 2 "External"
@@ -678,20 +677,24 @@ replace educat_isced_v = "" if ( age < ed_mod_age & !missing(age) )
 	label var vocational_type "Type of vocational training"
 *</_vocational_type_>
 
+
 *<_vocational_length_l_>
 	gen vocational_length_l = .
 	label var vocational_length_l "Length of training, lower limit"
 *</_vocational_length_l_>
+
 
 *<_vocational_length_u_>
 	gen vocational_length_u = .
 	label var vocational_length_u "Length of training, upper limit"
 *</_vocational_length_u_>
 
+
 *<_vocational_field_>
 	gen vocational_field = .
 	label var vocational_field "Field of training"
 *</_vocational_field_>
+
 
 *<_vocational_financed_>
 	gen vocational_financed = .
@@ -716,7 +719,7 @@ replace educat_isced_v = "" if ( age < ed_mod_age & !missing(age) )
 
 {
 
-/*<_lstatus_>
+/*<_lstatus_note_>
 
 We define the employed as who "worked primarily (b4p2a1 ==1)" or
 							  "has a job but was temporarily out of work (b4p3==1)"; (this was defined by the questionnaire)
@@ -747,7 +750,7 @@ labour force participation: 57.32%
 . count if !mi(b4p6a)
   124,697
 
-<_lstatus_>*/
+<_lstatus_note_>*/
 
 
 *<_lstatus_>
@@ -762,14 +765,14 @@ labour force participation: 57.32%
 *</_lstatus_>
 
 
-/*<_potential_lf_>
+/*<_potential_lf_note_>
 Note: var "potential_lf" is missing if the respondent is in labor force or unemployed; it only takes value if the respondent is not in labor force. (lstatus==3)
 
 "potential_lf" = 1 if the person is
 1)available but not searching (b4p22==1 & (b4p4==2) & (b4p5==2)) or
 2)searching but not immediately available to work [(b4p4==1) | (b4p5==1)] & b4p22==2
 
-</_potential_lf_>*/
+</_potential_lf_note_>*/
 
 
 *<_potential_lf_>
@@ -792,7 +795,7 @@ Note: var "potential_lf" is missing if the respondent is in labor force or unemp
 *</_underemployment_>
 
 
-/*<_nlfreason_>
+/*<_nlfreason_note_>
 
 The original variable "b4p21 " has 8 non-missing categories:
 	1 Felt impossible to find a job
@@ -803,7 +806,7 @@ The original variable "b4p21 " has 8 non-missing categories:
 	6 Feel sufficient
 	7 Unable to do work
 	8 Other, specify
-<_nlfreason_>*/
+<_nlfreason_note_>*/
 
 
 *<_nlfreason_>
@@ -815,13 +818,13 @@ The original variable "b4p21 " has 8 non-missing categories:
 *</_nlfreason_>
 
 
-/*<_unempldur_l_>
+/*<_unempldur_l_note_>
 
 The original variable "b4p19" is the period of seeking job. Therefore, the lower
 and upper bound of unemploymenmt duration are the same. They are in fact the length
 of unemployment period.
 
-<_unempldur_l_>*/
+<_unempldur_l_note_>*/
 
 
 *<_unempldur_l_>
@@ -844,8 +847,8 @@ of unemployment period.
 
 {
 *<_empstat_>
-	gen byte empstat = b4p10
-	recode empstat (1 2=4) (4=1) (6=5) (7=2)
+	gen byte empstat = b4p10 if inrange(b4p10 , 1, 7)
+	recode empstat (1 2=4) (4/6=1) (7=2) (6=5)
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat lblempstat
@@ -956,11 +959,11 @@ of unemployment period.
 *</_occup_skill_>
 
 
-/*<_wage_no_compen_>
+/*<_wage_no_compen_note_>
 
 In the raw dataset, question 13 devides into "in cash" and "in-kind". For each observation, I calculated the total income by adding up "in cash" and "in-kind" salary.
 
-<_wage_no_compen_>*/
+<_wage_no_compen_note_>*/
 
 
 *<_wage_no_compen_>
@@ -992,12 +995,12 @@ In the raw dataset, question 13 devides into "in cash" and "in-kind". For each o
 *</_wmonths_>
 
 
-/*<_wage_total_>
+/*<_wage_total_note_>
 
 We know the average monthly wage, which is "wage_no_compen". But since we do not know how
 many months each observation works for, we left the annualized total wage missing.
 
-<_wage_total_>*/
+<_wage_total_note_>*/
 
 
 *<_wage_total_>
@@ -1024,11 +1027,11 @@ many months each observation works for, we left the annualized total wage missin
 *</_healthins_>
 
 
-/*<_socialsec_>
+/*<_socialsec_note_>
 
 We count both "old-age insurance" and "pension insurance" as indicators for having social security or not. A given respondent does not have social security if he/she does not have neither.
 
-<_socialsec_>*/
+<_socialsec_note_>*/
 
 
 *<_socialsec_>
@@ -1048,11 +1051,11 @@ We count both "old-age insurance" and "pension insurance" as indicators for havi
 *</_union_>
 
 
-/*<_firmsize_l_>
+/*<_firmsize_l_note_>
 
 This question was only asked to those who are seld-employed.
 
-<_firmsize_l_>*/
+<_firmsize_l_note_>*/
 
 
 *<_firmsize_l_>
@@ -1078,11 +1081,12 @@ This question was only asked to those who are seld-employed.
 
 
 {
-/*<_empstat_2_>
+/*<_empstat_2_note_>
 
 We do not have information on the employment status of the main additional job. But we know whether the respondent has a second job. Therefore, for people who have a second job, they were all coded as "Other, unclassified workers."
 
-<_empstat_2_>*/
+<_empstat_2_note_>*/
+
 
 *<_empstat_2_>
 	gen byte empstat_2 = 5 if b4p15==1
@@ -1248,6 +1252,7 @@ We do not have information on the employment status of the main additional job. 
 	la de lbllstatus_year 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus_year lbllstatus_year
 *</_lstatus_year_>
+
 
 *<_potential_lf_year_>
 	gen byte potential_lf_year = .
@@ -1727,6 +1732,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`path_output'\`level_2_harm'_ALL.dta", replace
+save "`path_output'\\`level_2_harm'_ALL.dta", replace
 
 *</_% SAVE_>

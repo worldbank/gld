@@ -4,7 +4,7 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				IDN_1997_Sakernas_v01_M_v04_A_GLD.do </_Program name_>
+<_Program name_>				IDN_1997_Sakernas_v01_M_v05_A_GLD.do </_Program name_>
 <_Application_>					Stata MP 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
 <_Date created_>				2021-08-18 </_Date created_>
@@ -27,7 +27,7 @@
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
 <_ISCO Version_>				ISCO 1968 </_ISCO Ver UP National_>
 <_OCCUP National_>				KBJI 1982 </_OCCUP National_>
-<_ISIC Version_>				ISIC Rev.3 </_ISIC Version_>
+<_ISIC Version_>				N/A </_ISIC Version_>
 <_INDUS National_>				KBLI 1997 </_INDUS National_>
 ---------------------------------------------------------------------------------------
 
@@ -36,7 +36,7 @@
 * Date: [2022-05-24] File: [IDN_1997_Sakernas_v01_M_v02_A_GLD.do] - [Reducing original indutry and occupation codes digits and remapping those two to ISIC/ISCO.]
 * Date: [2022-08-24] File: [IDN_1997_Sakernas_v01_M_v03_A_GLD.do] - [Recode "occup_skill" and "occup"; change path to the intermediate file]
 * Date: [2022-11-07] File: [IDN_1997_Sakernas_v01_M_v04_A_GLD.do] - [Recode "occup_skill" and "occup"; change path to the intermediate file] 
-* Date: [2023-01-12] File: [IDN_1997_Sakernas_v01_M_v05_A_GLD.do] - [Change directories; fix "primary school completed" of educat7]
+* Date: [2023-01-12] File: [IDN_1997_Sakernas_v01_M_v05_A_GLD.do] - [Change directories; fix "primary school completed" of educat7; added "secondary incomplete to "educat7"]
 
 </_Version Control_>
 
@@ -612,7 +612,7 @@ Original code list of variable "b4p1" in the dataset:
 	tostring b4p1, gen(educat7_sub)
 	gen educat7_sub1 = substr(educat7_sub, 1, 1)
 	destring educat7_sub1, gen (educat7)
-	recode educat7 (0=1) (1=2) (2=3) (3/6=5) (7/8=6) (9=7)
+	recode educat7 (0=1) (1=2) (2=3) (3/4=4) (5/6=5) (7/8=6) (9=7)
 	replace educat7 = . if age < ed_mod_age & age!=.
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
@@ -840,8 +840,7 @@ of unemployment period.
 
 {
 *<_empstat_>
-	gen byte empstat = b4p13
-	recode empstat (1 2=4) (4=1) (5=2)
+	gen byte empstat = . 
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat lblempstat

@@ -4,7 +4,7 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				IDN_2016_Sakernas_v01_M_v04_A_GLD.do </_Program name_>
+<_Program name_>				IDN_2016_Sakernas_v01_M_v05_A_GLD.do </_Program name_>
 <_Application_>					Stata MP 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
 <_Date created_>				2021-08-18 </_Date created_>
@@ -36,7 +36,8 @@
 * Date: [2022-05-24] File: [IDN_2016_Sakernas_v01_M_v02_A_GLD.do] - [Reducing original indutry and occupation codes digits and remapping those two to ISIC/ISCO.]
 * Date: [2022-07-13] File: [IDN_2016_Sakernas_v01_M_v03_A_GLD.do] - [Adding educat4-educat7]
 * Date: [2022-08-20] File: [IDN_2016_Sakernas_v01_M_v04_A_GLD.do] - [Recode employment status:Agricultural & non-agricultual casual worker recoded to "paid employee"]
-* Date: [2023-01-12] File: [IDN_2016_Sakernas_v01_M_v05_A_GLD.do] - [Change directories; fix "primary school completed" of educat7]
+* Date: [2023-01-12] File: [IDN_2016_Sakernas_v01_M_v05_A_GLD.do] - [Change directories; fix "primary school completed" of educat7; Empstat "self-employed" assisted with non-paid workers were "self-employed"]
+
 </_Version Control_>
 
 -------------------------------------------------------------------------*/
@@ -813,8 +814,8 @@ of unemployment period.
 
 {
 *<_empstat_>
-	gen byte empstat = b5_r23
-	recode empstat (1 2=4) (4/6=1) (7=2)
+	gen byte empstat = b5_r23 if inrange(b5_r23, 1, 7)
+	recode empstat (1 2=4) (4/6=1) (7=2) (6=5)
 	replace empstat=. if lstatus!=1
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"

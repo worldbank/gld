@@ -4,7 +4,7 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				IDN_1999_Sakernas_v01_M_v04_A_GLD.do </_Program name_>
+<_Program name_>				IDN_1999_Sakernas_v01_M_v05_A_GLD.do </_Program name_>
 <_Application_>					Stata MP 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
 <_Date created_>				2021-08-18 </_Date created_>
@@ -27,8 +27,8 @@
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
 <_ISCO Version_>				ISCO 1968 </_ISCO Ver UP National_>
 <_OCCUP National_>				KBJI 1982 </_OCCUP National_>
-<_ISIC Version_>				ISIC Rev.3 </_ISIC Version_>
-<_INDUS National_>				KBLI 1997 </_INDUS National_>
+<_ISIC Version_>				N/A </_ISIC Version_>
+<_INDUS National_>				KBLI 1990 </_INDUS National_>
 ---------------------------------------------------------------------------------------
 
 <_Version Control_>
@@ -36,7 +36,7 @@
 * Date: [2022-05-24] File: [IDN_1999_Sakernas_v01_M_v02_A_GLD.do] - [Reducing original indutry and occupation codes digits and remapping those two to ISIC/ISCO.]
 * Date: [2022-08-24] File: [IDN_1999_Sakernas_v01_M_v03_A_GLD.do] - [Recode "occup_skill" and "occup"; change path to the intermediate file]
 * Date: [2022-11-07] File: [IDN_1999_Sakernas_v01_M_v04_A_GLD.do] - [Added occup based on KBJI1982 two digits and KBJI2002 one digit]
-* Date: [2022-12-12] File: [IDN_1999_Sakernas_v01_M_v05_A_GLD.do] - [Educat7 correction & directories update]
+* Date: [2023-01-12] File: [IDN_1999_Sakernas_v01_M_v05_A_GLD.do] - [Educat7 correction & directories update; Changed directories; industrycat10 updated; ISIC version changed from ISIC Rev.3 to missing; Empstat "self-employed" assisted with non-paid workers were "self-employed"; added "secondary incomplete to "educat7"]
 
 </_Version Control_>
 
@@ -126,7 +126,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_isic_version_>
-	gen isic_version = "isic_3"
+	gen isic_version = ""
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
@@ -591,7 +591,7 @@ Original code list of variable "b4p1a" in the dataset:
 
 *<_educat7_>
 	gen byte educat7 = b4p1a
-	recode educat7 (4/7=5) (8/9=6) (0=7)
+	recode educat7 (4/5=4) (6/7=5) (8/9=6) (0=7)
 	replace educat7 = . if age < ed_mod_age & age!=.
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
@@ -820,7 +820,7 @@ of unemployment period.
 
 {
 *<_empstat_>
-	gen byte empstat = b4p9
+	gen byte empstat = b4p9 if inrange(b4p9, 1, 5)
 	recode empstat (1 2=4) (4=1) (5=2)
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
@@ -838,7 +838,6 @@ of unemployment period.
 
 *<_industry_orig_>
 	gen industry_orig = b4p6
-	replace industry_orig = . if inlist(b4p6, 38,39,42,43,81,82,83,94,96)
 	tostring industry_orig, replace
 	replace industry_orig = "" if industry_orig=="."
 	replace industry_orig = "" if lstatus!=1
@@ -847,22 +846,15 @@ of unemployment period.
 
 
 *<_industrycat_isic_>
-	gen industrycat_isic = b4p6
-	replace industrycat_isic=. if inlist(b4p6, 38,39,42,43,81,82,83,94,96)
-	replace industrycat_isic = industrycat_isic*100
-	tostring industrycat_isic, replace format(%04.0f)
-	replace industrycat_isic = "" if industrycat_isic=="."
+	gen industrycat_isic = ""
 	replace industrycat_isic = "" if lstatus!=1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
 
 *<_industrycat10_>
-	gen industrycat10_str = substr(industrycat_isic, 1, 2)
-	destring industrycat10_str, replace
-	gen byte industrycat10 = industrycat10_str
-	recode industrycat10 (1/5=1) (10/14=2) (15/37=3) (40/41=4) (45=5) (50/55=6) (60/64=7) (65/74=8) (75=9) (75/99=10)
-	replace industrycat10 = . if inlist(b4p6, 38,39,42,43,81,82,83,94,96)
+	gen industrycat10 = floor(b4p6/10)
+	replace industrycat10=10 if inrange(b4p6,92,99) 
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	replace industrycat10 = . if lstatus!=1
