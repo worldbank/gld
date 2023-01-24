@@ -136,9 +136,21 @@
 	** Generate & clean summary file 
 	collapse (mean) value ub lb, by(type varchecked varorder com_cases)
 	reshape wide value lb ub, i(varchecked varorder com_cases) j(type) string
-	* Drop if could not compare
+
+	* Especially for the empstat check two kinds of issues can arise.
+	* Either the group (e.g., "Other") only exists in GLD, no comparison.
+	* In that case, drop if could not compare
 	drop if com_cases == 0
 	
+	* Other option is that there is an ILO category (e.g., Non paid employees)
+	* that does not exists in GLD. In that case, value_GLD is missing,
+	* Assign it value 0
+	gen GLD_no_value = missing(value_GLD)
+	foreach v of varlist *_GLD {
+		replace `v' = 0 if GLD_no_value == 1
+	}
+	drop GLD_no_value
+
 	sort varorder
 	gen year    = ${cyear}
 	gen country = "${ccode3}"
