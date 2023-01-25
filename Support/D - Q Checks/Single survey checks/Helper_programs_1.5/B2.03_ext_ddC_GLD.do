@@ -1,6 +1,6 @@
 /*******************************************************************************
 								
-                            GLD CHECKS Version 1.4
+                            GLD CHECKS Version 1.5
                         04. Block 2 - External data
                      2C. Wage variables - data download  	  
 		   	   																   
@@ -11,7 +11,7 @@
 	cd "${output}/${ccode3}_${cyear}_${mydate}"
 	
 ********************************************************************************
-*                             16. Hourly wages                                 *
+*                             17. Hourly wages                                 *
 ********************************************************************************	
 
 *-- 01. Check whether there is wage info
@@ -167,7 +167,7 @@
 		}
 		
 		encode source, gen(s1)
-		save "Block2_External/01_data/16wages.dta", replace 
+		save "Block2_External/01_data/17wages.dta", replace 
 		
 } // finish if wage_eval == 1
 
