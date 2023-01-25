@@ -4,7 +4,7 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				ZAF_2010_QLFS_v01_M_v05_A_GLD_ALL.do </_Program name_>
+<_Program name_>				ZAF_2010_QLFS_v01_M_v06_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata MP 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
 <_Date created_>				2021-06-20 </_Date created_>
@@ -37,7 +37,7 @@
 * Date: [2022-07-06] File: [ZAF_2010_QLFS_v01_M_v03_A_GLD_ALL.do] - [Adding new GLD variables: isced_version/isco_version/isic_version/educat_orig/vocational_field_orig]
 * Date: [2022-09-22] File: [ZAF_2010_QLFS_v01_M_v04_A_GLD_ALL.do] - [Correcting occupation skill level; correcting typo (631 to 621 in the ISCO88 code list); coding 5164 to category "Service and market sales workers"]
 * Date: [2022-12-21] File: [ZAF_2010_QLFS_v01_M_v05_A_GLD_ALL.do] - [Update ICLS V, was excluding non market as employment all along]
-* Date: [2023-01-09] File: [ZAF_2010_QLFS_v01_M_v06_A_GLD_ALL.do] - [Recoding educat7]
+* Date: [2023-01-23] File: [ZAF_2010_QLFS_v01_M_v06_A_GLD_ALL.do] - [Recoding educat7]
 
 </_Version Control_>
 
@@ -615,8 +615,12 @@ Zero observations' years of education exceed their age.
 
 *<_educat7_>
 	gen byte educat7=.
-	replace educat7=Education_Status if inrange(Q17EDUCATION,1,18)
-	replace educat7=6 if Q17EDUCATION==19
+	replace educat7=1 if inlist(Q17EDUCATION,0,1)
+	replace educat7=2 if inrange(Q17EDUCATION,2,7)
+	replace educat7=3 if inrange(Q17EDUCATION,8,8)
+	replace educat7=4 if inrange(Q17EDUCATION,9,12)|inlist(Q17EDUCATION,14,15,17,18)
+	replace educat7=5 if inrange(Q17EDUCATION,13,13)|inlist(Q17EDUCATION,16)
+	replace educat7=6 if inlist(Q17EDUCATION,19,19)
 	replace educat7=7 if inrange(Q17EDUCATION,20,24)
 	replace educat7=. if age<ed_mod_age & age!=.
 	label var educat7 "Level of education 1"

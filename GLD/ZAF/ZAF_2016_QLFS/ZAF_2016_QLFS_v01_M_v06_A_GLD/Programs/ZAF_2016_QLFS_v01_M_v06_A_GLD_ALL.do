@@ -4,7 +4,7 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				ZAF_2016_QLFS_v01_M_v05_A_GLD_ALL.do </_Program name_>
+<_Program name_>				ZAF_2016_QLFS_v01_M_v06_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata MP 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
 <_Date created_>				2021-06-30 </_Date created_>
@@ -37,7 +37,7 @@
 * Date: [2022-07-06] File: [ZAF_2016_QLFS_v01_M_v03_A_GLD_ALL.do] - [Adding new GLD variables: isced_version/isco_version/isic_version/educat_orig/vocational_field_orig]
 * Date: [2022-09-22] File: [ZAF_2016_QLFS_v01_M_v04_A_GLD_ALL.do] - [Correcting occupation skill level; correcting typo (631 to 621 in the ISCO88 code list); coding 5164 to category "Service and market sales workers"]
 * Date: [2022-11-03] File: [ZAF_2016_QLFS_v01_M_v05_A_GLD_ALL.do] - [Update ICLS V, was excluding non market as employment all along.]
-* Date: [2023-01-09] File: [ZAF_2016_QLFS_v01_M_v06_A_GLD_ALL.do] - [Recoding educat7]	
+* Date: [2023-01-23] File: [ZAF_2016_QLFS_v01_M_v06_A_GLD_ALL.do] - [Recoding educat7]	
 
 </_Version Control_>
 
