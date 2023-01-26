@@ -136,13 +136,13 @@ local out_file "`level_2_harm'_ALL.dta"
 
 *<_year_>
 	drop year month idh idp 
-	gen int year=2013
+	gen int year=`year'
 	label var year "Year of survey"
 *</_year_>
 
 
 *<_vermast_>
-	gen str3 vermast="`vermst'"
+	gen str3 vermast="`vermast'"
 	label var vermast "Version of master data"
 *</_vermast_>
 
@@ -160,7 +160,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_int_year_>
-	gen int_year=2013
+	gen int_year=`year'
 	label var int_year "Year of the interview"
 *</_int_year_>
 
@@ -656,13 +656,13 @@ The new curriculum follows a 4-4-2-2 structure:
 
 *<_educat7_>
 	gen byte educat7=.
-	replace educat7=1 if LF214==0
-	replace educat7=2 if inrange(LF214,1,7)|inlist(LF214,93,94,96) 
-	replace educat7=3 if LF214==8|LF214==95
-	replace educat7=4 if (LF214>=9 & LF214<12)|(LF214>=21 & LF214<24)
-	replace educat7=5 if LF214==12|LF214==13|LF214==24
-	replace educat7=6 if (LF214>13 & LF214<=17) | (LF214>24 & LF214<=30)
-	replace educat7=7 if (LF214>17 & LF214<=20) | (LF214>30 & LF214<=35)
+	replace educat7=1 if inlist(LF214,0,93,94,96,99)
+	replace educat7=2 if inrange(LF214,1,7)|inlist(LF214,95)
+	replace educat7=3 if inlist(LF214,8)
+	replace educat7=4 if inrange(LF214,9,11)|inlist(LF214,21)
+	replace educat7=5 if inlist(LF214,12,22)
+	replace educat7=6 if inlist(LF214,13)|inrange(LF214,15,16)|inlist(LF214,18)|inrange(LF214,23,29)|inrange(LF214,31,33)
+	replace educat7=7 if inlist(LF214,14)|inlist(LF214,17)|inrange(LF214,19,20)|inlist(LF214,30)|inlist(LF214,34,35)
 	replace educat7=. if age<ed_mod_age
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"

@@ -137,13 +137,13 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_year_>
-	gen int year=1999
+	gen int year=`year'
 	label var year "Year of survey"
 *</_year_>
 
 
 *<_vermast_>
-	gen str3 vermast="`vermst'"
+	gen str3 vermast="`vermast'"
 	label var vermast "Version of master data"
 *</_vermast_>
 
@@ -161,7 +161,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_int_year_>
-	gen int_year=1999
+	gen int_year=`year'
 	label var int_year "Year of the interview"
 *</_int_year_>
 
@@ -630,13 +630,13 @@ Answers of "Diploma/Degree not completed" (cat21/22) were counted as 12 years of
 
 *<_educat7_>
 	gen byte educat7=.
-	replace educat7=1 if everattend==0 | educy==0
-	replace educat7=2 if LF23<8 
-	replace educat7=3 if LF23==8
-	replace educat7=4 if LF23>8 & LF23<12 
-	replace educat7=5 if LF23==12
-	replace educat7=6 if LF23==20
-	replace educat7=7 if LF23>20 & LF23<=25
+	replace educat7=1 if inlist(LF23,95,96)
+	replace educat7=2 if inrange(LF23,1,7)
+	replace educat7=3 if inlist(LF23,8)
+	replace educat7=4 if inrange(LF23,9,11)
+	replace educat7=5 if inlist(LF23,12)
+	replace educat7=6 if inrange(LF23,20,22)
+	replace educat7=7 if inrange(LF23,23,25)
 	replace educat7=. if age<ed_mod_age
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
@@ -926,7 +926,7 @@ treated as "Paid employee".
 	replace industrycat10=5 if LF36>=451 & LF36<=455
 	replace industrycat10=6 if LF36>=501 & LF36<=552
 	replace industrycat10=7 if LF36>=601 & LF36<=642
-	replace industrycat10=8 if LF36>=651 & LF36>=749 
+	replace industrycat10=8 if LF36>=651 & LF36<=749 
 	replace industrycat10=9 if LF36>=751 & LF36<=753
 	replace industrycat10=10 if LF36>=801 & LF36<.
 	replace industrycat10=10 if industrycat10==. & LF36!=.

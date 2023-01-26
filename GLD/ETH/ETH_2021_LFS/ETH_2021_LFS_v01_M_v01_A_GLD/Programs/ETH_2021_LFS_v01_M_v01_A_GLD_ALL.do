@@ -132,13 +132,13 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_year_>
-	gen int year=2021
+	gen int year=`year'
 	label var year "Year of survey"
 *</_year_>
 
 
 *<_vermast_>
-	gen str3 vermast="`vermst'"
+	gen str3 vermast="`vermast'"
 	label var vermast "Version of master data"
 *</_vermast_>
 
@@ -156,7 +156,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_int_year_>
-	gen int_year=2021
+	gen int_year=`year'
 	label var int_year "Year of the interview"
 *</_int_year_>
 
@@ -650,6 +650,13 @@ received education.
 
 *<_educat7_>
 	gen byte educat7=.
+	replace educat7=1 if inrange(LF208,36,38)|inrange(LF208,42,44)|inlist(LF208,96,99)
+	replace educat7=2 if inrange(LF208,1,7)|inrange(LF208,39,41)
+	replace educat7=3 if inlist(LF208,8)
+	replace educat7=4 if inlist(LF208,9)|inrange(LF208,21,23)
+	replace educat7=5 if inlist(LF208,10,24)
+	replace educat7=6 if inrange(LF208,11,16)|inrange(LF208,19,20)|inlist(LF208,26,27)|inrange(LF208,33,34)
+	replace educat7=7 if inlist(LF208,17,18)|inlist(LF208,25)|inrange(LF208,28,32)|inlist(LF208,35)
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
