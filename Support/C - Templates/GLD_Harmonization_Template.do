@@ -62,8 +62,8 @@ local server  "[Y:/GLD or Z:/GLD-Harmonization/123456_XY]"
 local country "[CCC]"
 local year    "[YYYY]"
 local survey  "[SURV-NAME]"
-local vermast "[v01]"
-local veralt  "[v01]"
+local vermast "[V01]"
+local veralt  "[V01]"
 
 * From the definitions, set path chunks
 local level_1      "`country'_`year'_`survey'"
