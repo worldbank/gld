@@ -389,7 +389,7 @@ Subnational ID at |
 
 Note: 359 observations are under 18 (or not adult) yet are household heads because
 they are originally asigned as the head --- their PERSONNO is 1.
-						
+
 </_relationharm_note_>*/
 
 
@@ -619,74 +619,63 @@ count if educy>age & !mi(educy) & !mi(age)
 Individual |                      Highest education level
        age | Grade 7/S  Grade 8/S  Grade 9/S  Grade 10/  Grade 11/  Grade 12/ |     Total
 -----------+------------------------------------------------------------------+----------
-         1 |         0          0          0          0          0          0 |         1 
-         2 |         0          0          0          0          0          0 |         1 
-         3 |         0          0          0          0          0          0 |         7 
-         4 |         0          0          0          0          0          0 |         9 
-         5 |         0          0          0          0          0          0 |         8 
-         6 |         4          7          0          2          1          2 |        21 
-         7 |         0          4          2          1          1          0 |        13 
-         8 |         0          0          1          1          1          0 |        12 
-         9 |         0          0          0          3          3          6 |        17 
-        10 |         0          0          0          0          0          2 |        14 
-        11 |         0          0          0          0          0          1 |         8 
-        12 |         0          0          0          0          0          0 |        14 
-        13 |         0          0          0          0          0          0 |        11 
-        14 |         0          0          0          0          0          0 |        11 
-        15 |         0          0          0          0          0          0 |        20 
+         1 |         0          0          0          0          0          0 |         1
+         2 |         0          0          0          0          0          0 |         1
+         3 |         0          0          0          0          0          0 |         7
+         4 |         0          0          0          0          0          0 |         9
+         5 |         0          0          0          0          0          0 |         8
+         6 |         4          7          0          2          1          2 |        21
+         7 |         0          4          2          1          1          0 |        13
+         8 |         0          0          1          1          1          0 |        12
+         9 |         0          0          0          3          3          6 |        17
+        10 |         0          0          0          0          0          2 |        14
+        11 |         0          0          0          0          0          1 |         8
+        12 |         0          0          0          0          0          0 |        14
+        13 |         0          0          0          0          0          0 |        11
+        14 |         0          0          0          0          0          0 |        11
+        15 |         0          0          0          0          0          0 |        20
 -----------+------------------------------------------------------------------+----------
-     Total |         4         11          3          7          6         11 |       167 
-	 
-	 
+     Total |         4         11          3          7          6         11 |       167
+
+
 Individual |           Highest education level
        age | Post High  Bachelors  Bachelors  Higher De |     Total
 -----------+--------------------------------------------+----------
-         1 |         0          0          1          0 |         1 
-         2 |         0          1          0          0 |         1 
-         3 |         0          6          1          0 |         7 
-         4 |         0          9          0          0 |         9 
-         5 |         0          8          0          0 |         8 
-         6 |         0          5          0          0 |        21 
-         7 |         0          5          0          0 |        13 
-         8 |         0          8          1          0 |        12 
-         9 |         1          4          0          0 |        17 
-        10 |         0          9          3          0 |        14 
-        11 |         0          4          3          0 |         8 
-        12 |         0         11          3          0 |        14 
-        13 |         0         10          1          0 |        11 
-        14 |         0          9          1          1 |        11 
-        15 |         0         18          2          0 |        20 
+         1 |         0          0          1          0 |         1
+         2 |         0          1          0          0 |         1
+         3 |         0          6          1          0 |         7
+         4 |         0          9          0          0 |         9
+         5 |         0          8          0          0 |         8
+         6 |         0          5          0          0 |        21
+         7 |         0          5          0          0 |        13
+         8 |         0          8          1          0 |        12
+         9 |         1          4          0          0 |        17
+        10 |         0          9          3          0 |        14
+        11 |         0          4          3          0 |         8
+        12 |         0         11          3          0 |        14
+        13 |         0         10          1          0 |        11
+        14 |         0          9          1          1 |        11
+        15 |         0         18          2          0 |        20
 -----------+--------------------------------------------+----------
-     Total |         1        107         16          1 |       167 
-	 
+     Total |         1        107         16          1 |       167
+
 </_educy_note_>*/
 
 
 *<_educy_>
-	gen byte educy=Q17EDUCATION if inrange(Q17EDUCATION,0,12)
-	replace educy=Q17EDUCATION-3 if inrange(Q17EDUCATION,13,18)
-	replace educy=11 if inrange(Q17EDUCATION,19,20)
-	replace educy=12 if inrange(Q17EDUCATION,21,22)
-	replace educy=16 if inlist(Q17EDUCATION,23,25, 26)
-	replace educy=19 if inlist(Q17EDUCATION,24,27,28)
-	replace educy=. if inlist(Q17EDUCATION,29,30)
-	replace educy=0 if Q17EDUCATION==98
-	replace educy=. if age<ed_mod_age & age!=.
-	replace educy=age if educy>age & !mi(educy) & !mi(age)
+	* In 2012, because of unreliable data, left missing
+	* See https://github.com/worldbank/gld/blob/main/Support/B%20-%20Country%20Survey%20Details/ZAF/QLFS/1.%20Introduction%20to%20QLFS.md
+	* for more details
+	gen byte educy = .
 	label var educy "Years of education"
 *</_educy_>
 
 
 *<_educat7_>
+	* In 2012, because of unreliable data, left missing
+	* See https://github.com/worldbank/gld/blob/main/Support/B%20-%20Country%20Survey%20Details/ZAF/QLFS/1.%20Introduction%20to%20QLFS.md
+	* for more details
 	gen byte educat7=.
-	replace educat7=1 if inlist(Q17EDUCATION,0,98)
-	replace educat7=2 if inrange(Q17EDUCATION,1,6)
-	replace educat7=3 if inrange(Q17EDUCATION,7,7)
-	replace educat7=4 if inrange(Q17EDUCATION,8,11)|inlist(Q17EDUCATION,13,14,19,20)
-	replace educat7=5 if inlist(Q17EDUCATION,12)|inlist(Q17EDUCATION,15)
-	replace educat7=6 if inrange(Q17EDUCATION,16,18)|inlist(Q17EDUCATION,21)
-	replace educat7=7 if inrange(Q17EDUCATION,22,28)
-	replace educat7=. if age<ed_mod_age & age!=.
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -732,6 +721,9 @@ bound -- "Master's'" in ISCED code.
 
 
 *<_educat_isced_>
+	* In 2012, because of unreliable data, left missing
+	* See https://github.com/worldbank/gld/blob/main/Support/B%20-%20Country%20Survey%20Details/ZAF/QLFS/1.%20Introduction%20to%20QLFS.md
+	* for more details
 	gen educat_isced = Q17EDUCATION
 	recode educat_isced 0=020 1/7=100 8/9=244 19/20=. 10/15=344 16=254 17=353 18=454 21=443 22=550 23=660 24=760 25/26=660
 	label var educat_isced "ISCED standardised level of education"
@@ -929,10 +921,10 @@ Q310STARTBUSNS "Start a business if the circumstances have allowed?"
 
 *<_industrycat_isic_>
 	tostring Q43INDUSTRY, gen(indus_string) format(%03.0f)
-	gen industrycat_isic=substr(indus_string, 1, 2) 
+	gen industrycat_isic=substr(indus_string, 1, 2)
 	destring industrycat_isic, replace
-	recode industrycat_isic (01=95) (03=99) (11=01) (12=02) (13=05) (21=10) (22=11) (23=12) (24=13) (25=14) (29=.) (30=15) (31=17) (32=20) (33=23) (34=26) (35=27) (36=31) (37=32) (38=34) (39=36) (41=40) (42=41) (50=45) (61=51) (62=52) (63=50) (64=55) (71=60) (72=61) (73=62) (74=63) (75=64) (81=65) (82=66) (83=67) (84=70) (85=71) (86=72) (87=73) (88=74) (91=75) (92=80) (93=85) (94=90) (95=91) (96=92) (99=93) 
-	
+	recode industrycat_isic (01=95) (03=99) (11=01) (12=02) (13=05) (21=10) (22=11) (23=12) (24=13) (25=14) (29=.) (30=15) (31=17) (32=20) (33=23) (34=26) (35=27) (36=31) (37=32) (38=34) (39=36) (41=40) (42=41) (50=45) (61=51) (62=52) (63=50) (64=55) (71=60) (72=61) (73=62) (74=63) (75=64) (81=65) (82=66) (83=67) (84=70) (85=71) (86=72) (87=73) (88=74) (91=75) (92=80) (93=85) (94=90) (95=91) (96=92) (99=93)
+
 	replace industrycat_isic=16 if Q43INDUSTRY==306
 	replace industrycat_isic=18 if Q43INDUSTRY==314
 	replace industrycat_isic=19 if inrange(Q43INDUSTRY, 316, 317)
@@ -943,7 +935,7 @@ Q310STARTBUSNS "Start a business if the circumstances have allowed?"
 	replace industrycat_isic=28 if inrange(Q43INDUSTRY, 354, 355)
 	replace industrycat_isic=29 if inrange(Q43INDUSTRY, 356, 358)
 	replace industrycat_isic=30 if Q43INDUSTRY==359
-	replace industrycat_isic=33 if inrange(Q43INDUSTRY, 374, 375)	
+	replace industrycat_isic=33 if inrange(Q43INDUSTRY, 374, 375)
 	replace industrycat_isic=35 if inrange(Q43INDUSTRY, 384, 387)
 	replace industrycat_isic=37 if Q43INDUSTRY==395
 	gen industrycat_isic2=industrycat_isic*100
@@ -1002,7 +994,7 @@ Q310STARTBUSNS "Start a business if the circumstances have allowed?"
 	gen occup_skill = .
 	replace occup_skill=3 if inrange(skill_level, 1, 3)
 	replace occup_skill=2 if inrange(skill_level, 4, 8)
-	replace occup_skill=1 if inrange(skill_level, 9, 9)	
+	replace occup_skill=1 if inrange(skill_level, 9, 9)
 	drop skill_level
 	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
 	label values occup_skill lblskill
