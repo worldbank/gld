@@ -37,7 +37,7 @@
 * Date: [2022-07-06] File: [ZAF_2016_QLFS_v01_M_v03_A_GLD_ALL.do] - [Adding new GLD variables: isced_version/isco_version/isic_version/educat_orig/vocational_field_orig]
 * Date: [2022-09-22] File: [ZAF_2016_QLFS_v01_M_v04_A_GLD_ALL.do] - [Correcting occupation skill level; correcting typo (631 to 621 in the ISCO88 code list); coding 5164 to category "Service and market sales workers"]
 * Date: [2022-11-03] File: [ZAF_2016_QLFS_v01_M_v05_A_GLD_ALL.do] - [Update ICLS V, was excluding non market as employment all along.]
-* Date: [2023-01-23] File: [ZAF_2016_QLFS_v01_M_v06_A_GLD_ALL.do] - [Recoding educat7]	
+* Date: [2023-01-26] File: [ZAF_2016_QLFS_v01_M_v06_A_GLD_ALL.do] - [Recoding educat7; re-assembling intermediate files for school attendance]	
 
 </_Version Control_>
 
@@ -82,20 +82,29 @@ local out_file "`level_2_harm'_ALL.dta"
 
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
+* We will overall use the yearly file, but variable GEO_type(urban/rural status) is not in the
+* yearly file, need to pull it in from the quarterly files
+
 
 	use "`path_in_stata'\QLFS 2016_01 Worker 1.0 Stata11.dta", clear
-	append using "`path_in_stata'\QLFS 2016_2 Worker 1.0 Stata11.dta", gen(Qtr)
-	recode Qtr 1=2 0=1
-	append using "`path_in_stata'\QLFS 2016_3 Worker 1.0 Stata11.dta"
-	recode Qtr .=3
-	append using "`path_in_stata'\QLFS 2016_4 Worker 1.0 Stata11.dta"
-	recode Qtr .=4
-	gen weight=Weight/4
-	keep UQNO PERSONNO Geo_type Qtr weight
+	keep UQNO PERSONNO Geo_type
+	gen Qtr=1
+	
+	append using "`path_in_stata'\QLFS 2016_2 Worker 1.0 Stata11.dta", keep(UQNO PERSONNO Geo_type)
+	replace Qtr = 2 if missing(Qtr)
+	
+	append using "`path_in_stata'\QLFS 2016_3 Worker 1.0 Stata11.dta", keep(UQNO PERSONNO Geo_type)
+	replace Qtr = 3 if missing(Qtr)
+	
+	append using "`path_in_stata'\QLFS 2016_4 Worker 1.0 Stata11.dta", keep(UQNO PERSONNO Geo_type)
+	replace Qtr = 4 if missing(Qtr)
+	
 	rename Geo_type geo
 	la de lblgeo 1 "Urban" 2 "Traditional" 3 "Farms" 4 "Mining"
 	la values geo lblgeo
-	save "`path_in_stata'\ZAF_2016_QLFS_v01_M_v05_A_GLD_append_GEO.dta", replace
+	tempfile geo_append
+	save `geo_append'
+
 	use "`path_in_stata'\lmdsa-2016-1.0-stata11.dta", clear
 
 /*%%=============================================================================================
@@ -245,8 +254,7 @@ Code list:
 </_urban_note_>*/
 
 *<_urban_>
-	merge m:m PERSONNO UQNO Qtr using "`path_in_stata'\ZAF_2016_QLFS_v01_M_v05_A_GLD_append_GEO.dta"
-	drop _merge
+	merge 1:1 PERSONNO UQNO Qtr using `geo_append', assert(match) nogen
 	gen byte urban=geo
 	recode urban 1=1 2/4=0
 	label var urban "Location is urban"

@@ -37,7 +37,7 @@
 * Date: [2022-07-06] File: [ZAF_2012_QLFS_v01_M_v03_A_GLD_ALL.do] - [Adding new GLD variables: isced_version/isco_version/isic_version/educat_orig/vocational_field_orig]
 * Date: [2022-09-22] File: [ZAF_2012_QLFS_v01_M_v04_A_GLD_ALL.do] - [Correcting occupation skill level; correcting typo (631 to 621 in the ISCO88 code list); coding 5164 to category "Service and market sales workers"]
 * Date: [2022-11-03] File: [ZAF_2012_QLFS_v01_M_v05_A_GLD_ALL.do] - [Update ICLS V, was excluding non market as employment all along]
-* Date: [2023-01-23] File: [ZAF_2012_QLFS_v01_M_v06_A_GLD_ALL.do] - [Recoding educat7]
+* Date: [2023-01-26] File: [ZAF_2012_QLFS_v01_M_v06_A_GLD_ALL.do] - [Recoding educat7; re-assembling intermediate files for school attendance]
 
 </_Version Control_>
 
@@ -81,19 +81,28 @@ local out_file "`level_2_harm'_ALL.dta"
 *----------1.3: Database assembly------------------------------*
 
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
-* harmonized output in a single file
+* harmonized output in a single file	
+* We will overall use the yearly file, but variable Q19 on school attendance is not in the
+* yearly file, need to pull it in from the quarterly files
 
-	use "`path_in_stata'\QLFS-2012-01-worker-rwt2013-v1.1-20140602.dta", clear
-	append using "`path_in_stata'\QLFS-2012-02-worker-rwt2013-v1.1-20140602.dta", gen(Qtr)
-	recode Qtr 1=2 0=1
-	append using "`path_in_stata'\QLFS-2012-03-worker-rwt2013-v1.1-20140602.dta"
-	recode Qtr .=3
-	append using "`path_in_stata'\QLFS-2012-04-worker-rwt2013-v1.1-20140602.dta"
-	recode Qtr .=4
-	gen WEIGHT=Weight/4
-	keep UQNO PERSONNO Q19ATTE WEIGHT Qtr
-	save "`path_in_stata'\ZAF_2012_QLFS_`vermst'_M_`veralt'_A_GLD_append_Q19ATTE.dta", replace
-	use "`path_in_stata'\lmdsa_2012_v1.1_20150407.dta", clear
+     use "`path_in_stata'\QLFS-2012-01-worker-rwt2013-v1.1-20140602.dta", clear
+     *keep UQNO PERSONNO Q19ATTE
+     keep UQNO PERSONNO 
+     gen Qtr = 1
+     
+     *append using "`path_in_stata'\QLFS-2012-02-worker-rwt2013-v1.1-20140602.dta", keep(UQNO PERSONNO Q19ATTE)
+     append using "`path_in_stata'\QLFS-2012-02-worker-rwt2013-v1.1-20140602.dta", keep(UQNO PERSONNO )
+     replace Qtr = 2 if missing(Qtr)
+     
+     append using "`path_in_stata'\QLFS-2012-03-worker-rwt2013-v1.1-20140602.dta", keep(UQNO PERSONNO Q19ATTE)
+     replace Qtr = 3 if missing(Qtr)
+     
+     append using "`path_in_stata'\QLFS-2012-04-worker-rwt2013-v1.1-20140602.dta", keep(UQNO PERSONNO Q19ATTE)
+     replace Qtr = 4 if missing(Qtr)
+     
+     tempfile school_attendance
+     save `school_attendance'
+	 use "`path_in_stata'\lmdsa_2012_v1.1_20150407.dta", clear
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -363,7 +372,7 @@ local out_file "`level_2_harm'_ALL.dta"
 /*<_relationharm_note_>
 
 Not asked, all we know is that the person with personal number equal to 1 is the head, the problem is that in some cases that person is not present, probably because he/she didn't spend four nights or more in this household. In those cases I assigned the eldest adult male (or female absent male) present as the household head.
-161 observations were dropped due to no male memeber or multiple same old male (or female) members.
+161(0.047%) observations were dropped due to no male memeber or multiple same old male (or female) members.
 Age of majority is 18 in South Africa.
 
 DROPS:
@@ -581,14 +590,13 @@ Education module is only asked to those 0 and older.
 *<_ed_mod_age_>
 	gen byte ed_mod_age = 0
 	label var ed_mod_age "Education module application age"
-
 *</_ed_mod_age_>
 
 
 *<_school_>
-	merge m:m UQNO PERSONNO Qtr using "`path_in_stata'\ZAF_2012_QLFS_v01_M_v04_A_GLD_append_Q19ATTE.dta"
+	merge 1:1 UQNO PERSONNO Qtr using `school_attendance'
 	drop if _merge==2
-	drop _merge WEIGHT
+	drop _merge 
 	gen byte school=Q19ATTE
 	recode school 2=0
 	replace school=. if age<ed_mod_age & age!=.
