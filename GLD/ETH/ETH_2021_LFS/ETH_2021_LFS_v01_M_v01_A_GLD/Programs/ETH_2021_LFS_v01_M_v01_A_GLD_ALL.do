@@ -90,7 +90,7 @@ local out_file "`level_2_harm'_ALL.dta"
 {
 
 *<_countrycode_>
-	gen str4 countrycode="ETH"
+	gen str4 countrycode="`country'"
 	label var countrycode "Country code"
 *</_countrycode_>
 
@@ -262,46 +262,71 @@ In the official annual report, there is supposed to be 1686 EAs (766 major urban
 
 *<_subnatid1_>
 	gen subnatid1_prep=ID101
-	label de lblsubnatid1 2 "2-Affar" 3 "3-Amhara" 4 "4-Oromia" 5 "5-Somalie" 6 "6-Benishangul-Gumuz" 7 "7-SNNPR" 8 "8-Sidama" 12 "12-Gambela" 13 "13-Harari" 14 "14-Addis Ababa" 15 "15-Dire Dawa"
+	label de lblsubnatid1 2 "2-Afar" 3 "3-Amhara" 4 "4-Oromiya" 5 "5-Somali" 6 "6-Benishangul-Gumuz" 7 "7-SNNPR" 8 "8-Sidama" 12 "12-Gambela" 13 "13-Hareri" 14 "14-Addis Ababa" 15 "15-Dire Dawa"
 	label values subnatid1_prep lblsubnatid1
 	decode subnatid1_prep, gen(subnatid1)
+	drop subnatid1_prep
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 
 
 *<_subnatid2_>
-	drop str_ID101 str_ID102
-	tostring ID101, gen(str_ID101)
-	tostring ID102, gen(str_ID102)
-	egen subnatid2=concat(str_ID101 str_ID102), punct("-")
-	merge m:m subnatid2 using "`path_in_stata'\ETH_zone_name_2021.dta"
-	replace Zone="Misrak Hararge" if Zone=="Mierak Hararge"
-	replace Zone="Misrak Wollega" if Zone=="Misiraki Wollega"
-	replace Zone="Debub Omo" if Zone=="debub Omo"
-	replace Zone="Gamo Gofa" if Zone=="gamo Gofa"
-	replace Region="Sidama" if Region=="SIDAMA"
-	replace Zone="Basketo Special" if Zone=="basketo Special"
+	drop str_ID101 str_ID102 str_ID103 str_ID104 str_ID105 str_ID106
+	foreach v of varlist ID101-ID106{
+		tostring `v', gen(str_`v') format(%02.0f)
+	}
+	gen rcode=str_ID101 
+	gen zcode=str_ID102
+	gen wcode=str_ID103
+	gen tcode=str_ID104
+	gen kcode=str_ID106
+	egen subnatid2=concat(rcode zcode wcode tcode kcode)
+	preserve
+	use "`path_in_stata'\ETH_2021_subnatid_codebook.dta", clear
+	keep subnatid2 Zone 
+	duplicates drop
+	tempfile zone
+	save `zone'
+	
+	restore
+	merge m:1 subnatid2 using `zone'
+	drop if _merge==2
+	
+	preserve 
+	use "`path_in_stata'\ETH_2021_subnatid_codebook.dta", clear
+	keep subnatid2 Region
+	duplicates drop
+	tempfile region
+	save `region'
+	
+	restore
+	merge m:1 subnatid2 using `region', keep(match) nogen
 	egen zonename=concat(Region Zone), punct("-")
+	gen zone=subnatid2
 	replace subnatid2=zonename
-	drop Region rcode rcode_str Zone zcode zcode_str _merge zonename
+	drop Region zonename _merge rcode-kcode 
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
 
 
 *<_subnatid3_>
-	gen id101=ID101
-	tostring id101 ID102 ID103, gen(id101str id102str id103str) format(%02.0f) 
-	egen subnatid3=concat(id101str id102str id103str)
-	merge m:m subnatid3 using "`path_in_stata'/ETH_wereda_name_2021.dta"
-	drop if _merge!=3
-	replace wereda_name="Gudeya Bila" if wereda_name=="Gudaya Bila"
-	replace wereda_name="Chencha" if wereda_name=="chencha"
-	replace wereda_name="arbaminch" if wereda_name=="Arba Minch"
-	replace wereda_name="konson" if wereda_name=="Konso"
-	replace wereda_name="Amaro" if wereda_name=="amaro"
-	egen Subnatid3=concat(subnatid3 wereda_name), punct("-") 
-	drop subnatid3 Region rcode Zone zcode wereda_name wcode _merge
-	rename Subnatid3 subnatid3
+	preserve
+	use "`path_in_stata'\ETH_2021_subnatid_codebook.dta", clear
+	keep subnatid2 Wereda EA
+	gen ecode=string(real(EA),"%02.0f")
+	gen subnatid3=subnatid2+ecode
+	keep subnatid3 Wereda
+	duplicates drop
+	tempfile wereda
+	save `wereda'
+	
+	restore
+	tostring ID107, gen(ecode) format(%02.0f)
+	gen subnatid3=zone+ecode
+	merge m:1 subnatid3 using `wereda', keep(match) nogen
+	egen weredaname=concat(Zone Wereda), punct("-") 
+	replace subnatid3=weredaname
+	drop Zone Wereda weredaname ecode zone
 	label var subnatid3 "Subnational ID at Third Administrative Level"
 *</_subnatid3_>
 
@@ -935,11 +960,11 @@ According to the annual report, employment status of a person was classified int
 
 *<_industrycat_isic_>
 	gen industrycat_isic=LF307
-	replace industrycat_isic=1079 if LF307==1076|LF307==1077
 	replace industrycat_isic=990 if LF307==999
+	replace industrycat_isic=1079 if LF307==1076|LF307==1077
 	replace industrycat_isic=4799 if LF307==4792
-	replace industrycat_isic=9410 if LF307==9413
-	replace industrycat_isic=. if inrange(LF307, 1105, 1107)
+	replace industrycat_isic=1100 if inrange(LF307, 1105, 1107)
+	replace industrycat_isic=9410 if inlist(LF307,9413)
 	tostring industrycat_isic, replace format(%04.0f)
 	replace industrycat_isic="" if lstatus!=1 | industrycat_isic=="." 
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
@@ -973,14 +998,12 @@ According to the annual report, employment status of a person was classified int
 
 
 *<_occup_isco_>	
-	gen code_o=LF306
-	merge m:1 code_o using "`path_in_stata'\ETH_2021_occup_isco.dta" 
-	replace code_o=. if code_h=="drop" 
-	tostring code_o,format(%04.0f) replace	
-	replace code_o=code_h if !mi(code_h)&code_h!="drop"
-	replace code_o="" if code_o=="."
-	rename code_o occup_isco
-	drop _merge code_h
+	tostring LF306, format(%04.0f) gen(occup_str)
+	gen occup_str3=substr(occup_str,1,3)
+	replace occup_str3="235" if occup_str3=="361"|occup_str3=="371"
+	replace occup_str3="524" if occup_str3=="525"|occup_str3=="526"|occup_str3=="527"
+	gen occup_isco=occup_str3+"0" if occup_str3!="."	
+	drop occup_str occup_str3 
 	replace occup_isco="" if lstatus!=1 | occup_isco=="."
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
@@ -1347,12 +1370,11 @@ According to the annual report, employment status of a person was classified int
 
 *<_industrycat_isic_year_>
 	gen industrycat_isic_year=LF505	
-	replace industrycat_isic_year=1079 if LF505==1076|LF505==1077
 	replace industrycat_isic_year=990 if LF505==999
+	replace industrycat_isic_year=1079 if LF505==1076|LF505==1077
 	replace industrycat_isic_year=4799 if LF505==4792
-	replace industrycat_isic_year=9410 if LF505==9413
-	replace industrycat_isic_year=. if LF505==9999
-	replace industrycat_isic_year=. if inrange(LF505, 1105, 1107)
+	replace industrycat_isic_year=1100 if inrange(LF505, 1105, 1107)
+	replace industrycat_isic_year=9410 if inlist(LF505,9413)
 	tostring industrycat_isic_year, replace format(%04.0f)
 	replace industrycat_isic_year="" if lstatus_year!=1 | industrycat_isic_year=="."
 	label var industrycat_isic_year "ISIC code of primary job 12 month recall"
@@ -1384,15 +1406,12 @@ According to the annual report, employment status of a person was classified int
 
 
 *<_occup_isco_year_>	
-	gen code_o=LF504
-	replace code_o=. if inlist(LF504,0111,0603,3609,5259,6603,9066)
-	merge m:1 code_o using "`path_in_stata'\ETH_2021_occup_isco.dta" 
-	replace code_o=. if code_h=="drop" 
-	tostring code_o,format(%04.0f) replace	
-	replace code_o=code_h if !mi(code_h)&code_h!="drop"
-	replace code_o="" if code_o=="."
-	drop _merge code_h
-	rename code_o occup_isco_year
+	tostring LF504, format(%04.0f) gen(occup_str)
+	gen occup_str3=substr(occup_str,1,3)
+	replace occup_str3="235" if occup_str3=="361"|occup_str3=="371"
+	replace occup_str3="524" if occup_str3=="525"|occup_str3=="526"|occup_str3=="527"
+	gen occup_isco_year=occup_str3+"0" if occup_str3!="."	
+	drop occup_str occup_str3
 	replace occup_isco_year="" if lstatus_year!=1
 	label var occup_isco_year "ISCO code of primary job 12 month recall"
 *</_occup_isco_year_>
@@ -1416,7 +1435,6 @@ According to the annual report, employment status of a person was classified int
 	gen byte occup_year=floor(LF504/1000)
 	replace occup_year=. if lstatus_year!=1
 	recode occup_year (0=10) 
-
 	label var occup_year "1 digit occupational classification, primary job 12 month recall"
 	la de lbloccup_year 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup_year lbloccup_year
