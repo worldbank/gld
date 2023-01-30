@@ -5,7 +5,7 @@
 
 capture program drop int_classif_universe
 program define int_classif_universe
-{		
+{
 
 
 syntax, var(varname) universe(str)
@@ -35,8 +35,8 @@ if !ustrregexm("`var'", "(_isco|_isic)") {
 *---------- 2: Process for ISIC
 
 if ustrregexm("`universe'", "^(isic|ISIC)$") {
-	
-	
+
+
 	*---------- 2.1: Read in isic universe, save as temp
 
 	* Record what isic version this file has
@@ -44,18 +44,17 @@ if ustrregexm("`universe'", "^(isic|ISIC)$") {
 
 	* Preserve harmonization file to read in ISIC universe, save
 	preserve
-	
+
 	* World Bank VDI has sometimes problems with executing the comand below to read from a website directly
 	* Have reached out to IT, in the works. Workaround found is to relax the SSL encryption. This can be dangerous
 	* if you don't know the site. Here we do. Nonetheless, setting is instantly reverted after executing command.
 	set sslrelax on
-	
-	* Read in ISIC codes
-	import delimited "https://raw.githubusercontent.com/worldbank/gld/main/Support/D%20-%20Q%20Checks/Helper%20Programs/isic_codes.txt", delimiter(comma) varnames(1) clear 
 
+	* Read in ISIC codes
+	import delimited "https://raw.githubusercontent.com/worldbank/gld/main/Support/Z%20-%20Other%20Tools/ISIC%20ISCO%20universe%20check/utilities/isic_codes.txt", delimiter(comma) varnames(1) clear
 
 	set sslrelax off
-	
+
 	* Reduce to only cases of said version
 	keep if version == "`isic_version'"
 
@@ -64,7 +63,7 @@ if ustrregexm("`universe'", "^(isic|ISIC)$") {
 	save `isic_universe'
 
 	restore
-	
+
 	*---------- 2.2: Make comparison, show which cases are problematic
 
 	qui : gen code = `var'
@@ -77,23 +76,23 @@ if ustrregexm("`universe'", "^(isic|ISIC)$") {
 
 	* Count if there are any cases left
 	qui: count
-	
+
 	* If there are none, stop
 	if `r(N)' == 0 {
-	    
+
 		dis _newline
 		dis "{bf:     All good here!}"
 		dis _newline
 		exit, clear
-		
+
 	}
 	else {
-	    
+
 	* Generate variable that counts instances
 	gen instances = 1
-	
+
 	collapse (count) instances (first) countrycode year isic_version, by(`var')
-		
+
 	}
 
 
@@ -102,8 +101,8 @@ if ustrregexm("`universe'", "^(isic|ISIC)$") {
 *---------- 3: Process for ISCO
 
 if ustrregexm("`universe'", "^(isco|ISCO)$") {
-	
-	
+
+
 	*---------- 3.1: Read in isco universe, save as temp
 
 	* Record what isco version this file has
@@ -111,12 +110,12 @@ if ustrregexm("`universe'", "^(isco|ISCO)$") {
 
 	* Preserve harmonization file to read in ISIC universe, save
 	preserve
-	
+
 	* Same SSL process as for ISIC
 	set sslrelax on
 
 	* Read in ISCO codes
-	import delimited "https://raw.githubusercontent.com/worldbank/gld/main/Support/D%20-%20Q%20Checks/Helper%20Programs/isco_codes.txt", delimiter(comma) varnames(1) clear 
+	import delimited "https://raw.githubusercontent.com/worldbank/gld/main/Support/Z%20-%20Other%20Tools/ISIC%20ISCO%20universe%20check/utilities/isco_codes.txt", delimiter(comma) varnames(1) clear 
 
 	set sslrelax off
 
@@ -128,7 +127,7 @@ if ustrregexm("`universe'", "^(isco|ISCO)$") {
 	save `isco_universe'
 
 	restore
-	
+
 	*---------- 3.2: Make comparison, show which cases are problematic
 
 	qui : gen code = `var'
@@ -141,26 +140,26 @@ if ustrregexm("`universe'", "^(isco|ISCO)$") {
 
 	* Count if there are any cases left
 	qui: count
-	
+
 	* If there are none, stop
 	if `r(N)' == 0 {
-	    
+
 		dis _newline
 		dis "{bf:     All good here!}"
 		dis _newline
 		exit, clear
-		
+
 	}
 	else {
-	    
+
 	* Generate variable that counts instances
 	gen instances = 1
-	
+
 	collapse (count) instances (first) countrycode year isco_version, by(`var')
-		
+
 	}
 
-} 
+}
 
 }
 end

@@ -62,8 +62,8 @@ local server  "[Y:/GLD or Z:/GLD-Harmonization/123456_XY]"
 local country "[CCC]"
 local year    "[YYYY]"
 local survey  "[SURV-NAME]"
-local vermast "[v01]"
-local veralt  "[v01]"
+local vermast "[V01]"
+local veralt  "[V01]"
 
 * From the definitions, set path chunks
 local level_1      "`country'_`year'_`survey'"
@@ -672,7 +672,7 @@ foreach v of local ed_var {
 *<_underemployment_>
 	gen byte underemployment = .
 	replace underemployment = . if age < minlaborage & age != .
-	replace underemployment = . if lstatus == 1
+	replace underemployment = . if lstatus != 1
 	label var underemployment "Underemployment status"
 	la de lblunderemployment 0 "No" 1 "Yes"
 	label values underemployment lblunderemployment
@@ -1164,7 +1164,7 @@ foreach v of local ed_var {
 
 
 *<_wage_no_compen_year_> --- this var has the same name as other and when quoted in the keep and order codes is repeated.
-	gen double wage_no_compen_year =
+	gen double wage_no_compen_year = .
 	label var wage_no_compen_year "Last wage payment primary job 12 month recall"
 *</_wage_no_compen_year_>
 
