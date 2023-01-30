@@ -22,9 +22,10 @@ Block 2. Labor Force Variables (file `B2.02`)
 13.	Industry (% of employment)
 14.	Services (% of employment)
 15.	Industry category (% of employment)
+16. Status in Employment (% of employment)
 
 Block 3. Wage variables (file `B2.03`)
-16.	Average hourly wages
+17.	Average hourly wages
 
 ## Variable aggregation in GLD data
 
@@ -289,7 +290,12 @@ The exact indicators we use to establish the comparisons are the following:
         *	Sex: SEX_T (total)
         *	Classif1: ECO_DETAILS_TOTAL & ECO_ DETAILS _A - ECO_ DETAILS_RSTU
 
-16.	Hourly wages
+16. Status in Employment (% of employment)
+    1. `EMP_2EMP_AGE_STE_NB`, Employment by age and status in employment (thousands), ILO
+        * Classf1: AGE_YTHADULT_YGE15
+        * frequency: A       
+
+17.	Hourly wages
     1.	`EAR_HEES_SEX_OCU_NB`, Mean nominal hourly earnings of employees by sex and occupation (local currency), ILO
         *	Sex: SEX_T (total)
         *	Classif1 == "OCU_ISCO88_TOTAL" (Total occupations)
