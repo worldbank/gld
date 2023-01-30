@@ -30,7 +30,7 @@ The overall quality checks template is the only do-file the user needs to intera
 
 The quality checks template proceeds in three steps. Step 1 readies Stata by cleaning up any data that may still be stored in the memory. Step 2 defines the arguments. It is the only section requiring user input. Users need to define three `globals`.
 
-- `helper`: Define the path to the folder that contains all the files that run the quality checks (here, folder [Helper_programs_1.4](Helper_programs_1.4)). It is recommended to have this be a central place so it applies to all surveys and can easily be updated if the quality checks are amended.
+- `helper`: Define the path to the folder that contains all the files that run the quality checks (here, folder [Helper_programs_1.5](Helper_programs_1.5)). It is recommended to have this be a central place so it applies to all surveys and can easily be updated if the quality checks are amended.
 - `mydata`: Define the path to the harmonized data the user wishes to check.
 - `output`: Define the path to the folder the user wants the output to be stored in. It is recommended to make this the `CCC_YYYY_SURV_V0#_M_V0#_A_GLD/Work/Output` folder for consistency so other users may always know where to find the checks output.
 
@@ -38,7 +38,7 @@ Step 3 simply calls the do files from the helper path running the checks. This s
 
 ### Block 1 - GLD format checks
 
-This block (with all files starting with `B1`) is concerned with ensuring that the harmonized output conforms to the [GLD data dictionary](../A%20-%20Guides%20and%20Documentation/GLD_Dictionary_v01.xlsx). The [code for the format checks](Helper_programs_1.4/B1.04_Format_Checks_GLD.do) is divided into sections (overall checks, demography checks, education checks, ...) and should be commented enough for users to understand what each step is doing. If you feel more explations are warranted, please [raise and issue](https://github.com/worldbank/gld/issues/new/choose) detailing the part not understood and we will endeavour to expand on it.
+This block (with all files starting with `B1`) is concerned with ensuring that the harmonized output conforms to the [GLD data dictionary](../A%20-%20Guides%20and%20Documentation/GLD_Dictionary_v01.xlsx). The [code for the format checks](Helper_programs_1.5/B1.04_Format_Checks_GLD.do) is divided into sections (overall checks, demography checks, education checks, ...) and should be commented enough for users to understand what each step is doing. If you feel more explanations are warranted, please [raise and issue](https://github.com/worldbank/gld/issues/new/choose) detailing the part not understood and we will endeavour to expand on it.
 
 Broadly, the checks first evaluate whether the survey is set up correctly: filenames follow the [naming convention](../A%20-%20Guides%20and%20Documentation/WB%20Microdata%20Lib%20Folder%20and%20File%20Naming%20Management.docx) and variables are from the data dictionary.
 
@@ -69,9 +69,9 @@ Block 2 is the most extensive block, covering - at the moment - 9 files, all sta
 
 The first group, files `B2.01` to `B2.04` creates the GLD and external indicators for demography (`B2.01`), labour market (`B2.02`), and wages (`B2.03`). The external indicators are taken from [WDI](https://datatopics.worldbank.org/world-development-indicators/), [ILOSTAT](https://ilostat.ilo.org/data/) via [dbnomics](https://db.nomics.world/), and the [UN](https://data.un.org/), also accessed through dbnomics. File `B2.04` to unites all single indicator based files `B2.01` to `B2.03` created into a single database and creates flags to highlight the cases where the GLD indicators are too far off from what the external sources would predict. "Too far" is measured as not having overlapping 10% bounds around the point estimates. In more detail, first the upper and lower bound as 10% above or below the GLD estimate is created. Subsequently, the mean of all used external estimates is taken and a bound 10% above or below is created. A GLD indicator is flagged if its upper bound is below the external lower bound or the lower bound is above the external upper bound.
 
-The second group of files, files `B2.05` to `B2.09` draws the results for visual inspection. File `B2.05` creates figures for the data from `B2.01`, while `B2.06` and `B2.07` draws the data from `B2.02`. `B2.08` draws the wage data from `B2.03`. Finally, `B2.09` creates a panel of flagged figures, based on the file created by `B2.04`.
+The second group of files, files `B2.05` to `B2.10` draws the results for visual inspection. File `B2.05` creates figures for the data from `B2.01`, while `B2.06`, `B2.07`, and `B2.08` draws the data from `B2.02`. `B2.09` draws the wage data from `B2.03`. Finally, `B2.10` creates a panel of flagged figures, based on the file created by `B2.04`.
 
-The first group files store data in the output's "Block2_External/01_data" folder, while the figures are stored in the "Block2_External/02_figures" folder. Additionally, a panel of all flagged figures is stord in the output's "01_summary" folder, along with an Excel file detailing all checks. A [separate document here](Block_2_detailed_explanation.md) details more fully the process of external checks along codes used for external sources.
+The first group files store data in the output's "Block2_External/01_data" folder, while the figures are stored in the "Block2_External/02_figures" folder. Additionally, a panel of all flagged figures is stored in the output's "01_summary" folder, along with an Excel file detailing all checks. A [separate document here](Block_2_detailed_explanation.md) details more fully the process of external checks along codes used for external sources.
 
 ### Block 3 - GLD missing checks
 
