@@ -15,7 +15,7 @@ vars_to_study <- c("empstat", "educat7", "educat4", "industrycat10", "industryca
 path_in <- "Z:/GLD-Harmonization/573465_JT/ETH"
 
 # Define the path to the folder where the graphs ought to be stored in
-path_out <- "Z:/GLD-Harmonization/529026_MG/Countries/ETH/ETH_plots"
+path_out <- "Z:/GLD-Harmonization/529026_MG/Countries/ETH"
 
 # Define the path to the folder where this code and the other functions of the survey series checks are stored
 dir_w_functions <- "C:/Users/wb573465/Documents/GitHub/gld/Support/D - Q Checks/Survey series checks" 
