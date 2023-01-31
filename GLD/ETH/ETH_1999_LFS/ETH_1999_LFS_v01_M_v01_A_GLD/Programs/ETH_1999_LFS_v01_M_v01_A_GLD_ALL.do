@@ -4,7 +4,7 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				ETH_1999_LFS_v01_M_v01_A_GLD_ALL.do </_Program name_>
+<_Program name_>				ETH_1999_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata MP 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
 <_Date created_>				2022-09-27 </_Date created_>
@@ -30,8 +30,8 @@
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
 <_ISCO Version_>				ISCO-88 </_ISCO Version_>
 <_OCCUP National_>				NOIC 1994 </_OCCUP National_>
-<_ISIC Version_>				 </_ISIC Version_>
-<_INDUS National_>				 </_INDUS National_>
+<_ISIC Version_>				NA </_ISIC Version_>
+<_INDUS National_>				NA </_INDUS National_>
 -----------------------------------------------------------------------
 
 <_Version Control_>
@@ -61,8 +61,8 @@ local server  "Z:\GLD-Harmonization\573465_JT"
 local country "ETH"
 local year    "1999"
 local survey  "LFS"
-local vermast "v01"
-local veralt  "v01"
+local vermast "V01"
+local veralt  "V01"
 
 * From the definitions, set path chunks
 local level_1      "`country'_`year'_`survey'"
@@ -95,7 +95,7 @@ local out_file "`level_2_harm'_ALL.dta"
 {
 
 *<_countrycode_>
-	gen str4 countrycode="ETH"
+	gen str4 countrycode="`country'"
 	label var countrycode "Country code"
 *</_countrycode_>
 
@@ -254,7 +254,7 @@ which is 3 more than what we have here.
 
 *<_subnatid1_>
 	gen subnatid1_prep=LF01
-	label de lblsubnatid1 1 "1-Tigray" 2 "2-Affar" 3 "3-Amhara" 4 "4-Oromiya" 5 "5-Somali" 6 "6-Benishangul-gumz" 7 "7-SNNP" 12 "12-Gambella" 13 "13-Harari" 14 "14-Addis Ababa" 15 "15-Dire Dawa"
+	label de lblsubnatid1 1 "1-Tigray" 2 "2-Afar" 3 "3-Amhara" 4 "4-Oromiya" 5 "5-Somali" 6 "6-Benishangul-Gumuz" 7 "7-SNNPR" 12 "12-Gambela" 13 "13-Hareri" 14 "14-Addis Ababa" 15 "15-Dire Dawa"
 	label values subnatid1_prep lblsubnatid1
 	decode subnatid1_prep, gen (subnatid1)
 	drop subnatid1_prep
@@ -272,7 +272,7 @@ in the offical annual report, they were grouped at their regional level.
 	gen code_region=LF01
 	recode code_region (12=8) (13=9) (14=10) (15=11)
 	egen code=concat(code_region LF02), punct(".")
-	merge n:n code using "`path_in_stata'\ETH_zone_name.dta" 
+	merge m:1 code using "`path_in_stata'\ETH_zone_name.dta" 
 	replace zone_name=code if _merge==1
 	drop if _merge==2
 	gen subnatid2=zone_name
@@ -647,6 +647,7 @@ Answers of "Diploma/Degree not completed" (cat21/22) were counted as 12 years of
 *<_educat5_>
 	gen byte educat5=educat7
 	recode educat5 (4=3) (5=4) (6 7=5)
+	replace educat5=. if age < ed_mod_age & age!=.	
 	label var educat5 "Level of education 2"
 	la de lbleducat5 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
 	label values educat5 lbleducat5
@@ -654,8 +655,9 @@ Answers of "Diploma/Degree not completed" (cat21/22) were counted as 12 years of
 
 
 *<_educat4_>
-	gen byte educat4=educat7
-	recode educat4 (2 3 4=2) (5=3) (6 7=4)
+	gen byte educat4=educat5
+	replace educat4=. if age<ed_mod_age&age!=.
+	recode educat4 (3=2) (4=3) (5=4)
 	label var educat4 "Level of education 3"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values educat4 lbleducat4
@@ -906,7 +908,6 @@ treated as "Paid employee".
 
 *<_industry_orig_>
 	gen industry_orig=LF36
-	replace industry_orig=. if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
@@ -921,7 +922,7 @@ treated as "Paid employee".
 	gen byte industrycat10=.
 	replace industrycat10=1 if LF36>=11 & LF36<=50
 	replace industrycat10=2 if LF36>=101 & LF36<=132
-	replace industrycat10=3 if LF36>= 151 & LF36<=369
+	replace industrycat10=3 if LF36>=151 & LF36<=369
 	replace industrycat10=4 if LF36>=401 & LF36<=410
 	replace industrycat10=5 if LF36>=451 & LF36<=455
 	replace industrycat10=6 if LF36>=501 & LF36<=552
@@ -1746,4 +1747,4 @@ foreach var of local kept_vars {
 
 save "`path_output'\\`level_2_harm'_ALL.dta", replace
 
-*</_% SAVE_>
+0*</_% SAVE_>

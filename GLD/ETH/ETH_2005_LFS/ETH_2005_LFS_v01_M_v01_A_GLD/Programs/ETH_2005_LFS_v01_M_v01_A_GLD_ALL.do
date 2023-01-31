@@ -5,7 +5,7 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				ETH_2005_LFS_v01_M_v01_A_GLD_ALL.do </_Program name_>
+<_Program name_>				ETH_2005_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata MP 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
 <_Date created_>				2022-10-02 </_Date created_>
@@ -65,8 +65,8 @@ local server  "Z:\GLD-Harmonization\573465_JT"
 local country "ETH"
 local year    "2005"
 local survey  "LFS"
-local vermast "v01"
-local veralt  "v01"
+local vermast "V01"
+local veralt  "V01"
 
 * From the definitions, set path chunks
 local level_1      "`country'_`year'_`survey'"
@@ -96,7 +96,7 @@ local out_file "`level_2_harm'_ALL.dta"
 {
 
 *<_countrycode_>
-	gen str4 countrycode="ETH"
+	gen str4 countrycode="`country'"
 	label var countrycode "Country code"
 *</_countrycode_>
 
@@ -271,7 +271,7 @@ in the annual report.
 
 *<_subnatid1_>
 	gen subnatid1_prep=ID01
-	label de lblsubnatid1 1 "1-Tigray" 2 "2-Affar" 3 "3-Amhara" 4 "4-Oromiya" 5 "5-Somali" 6 "6-Benishangul-gumz" 7 "7-SNNP" 12 "12-Gambella" 13 "13-Harari" 14 "14-Addis Ababa" 15 "15-Dire Dawa"
+	label de lblsubnatid1 1 "1-Tigray" 2 "2-Afar" 3 "3-Amhara" 4 "4-Oromiya" 5 "5-Somali" 6 "6-Benishangul-Gumuz" 7 "7-SNNPR" 12 "12-Gambela" 13 "13-Hareri" 14 "14-Addis Ababa" 15 "15-Dire Dawa"
 	label values subnatid1_prep lblsubnatid1
 	decode subnatid1_prep, gen (subnatid1)
 	drop subnatid1_prep
@@ -288,7 +288,7 @@ in the offical annual report, they were grouped at their regional level.
 *<_subnatid2_>
 	gen code_region=ID01
 	egen code=concat(code_region ID02), punct(".")
-	merge n:n code using "`path_in_stata'\ETH_zone_namING_2005.dta" 
+	merge m:1 code using "`path_in_stata'\ETH_zone_namING_2005.dta" 
 	drop if _merge==2
 	gen subnatid2=zone_name
 	drop if _merge!=3
@@ -704,6 +704,7 @@ Answers of "Diploma/Degree not completed" (cat21/22) were counted as 12 years of
 *<_educat5_>
 	gen byte educat5=educat7
 	recode educat5 (4=3) (5=4) (6 7=5)
+	replace educat5=. if age < ed_mod_age & age!=.
 	label var educat5 "Level of education 2"
 	la de lbleducat5 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
 	label values educat5 lbleducat5
@@ -711,8 +712,9 @@ Answers of "Diploma/Degree not completed" (cat21/22) were counted as 12 years of
 
 
 *<_educat4_>
-	gen byte educat4=educat7
-	recode educat4 (2 3 4=2) (5=3) (6 7=4)
+	gen byte educat4=educat5
+	replace educat4=. if age<ed_mod_age&age!=.
+	recode educat4 (3=2) (4=3) (5=4)
 	label var educat4 "Level of education 3"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values educat4 lbleducat4
@@ -828,9 +830,9 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 {
 *<_lstatus_>
 	gen byte lstatus=.
-	replace lstatus=1 if LF28==1 | LF34<4
-	replace lstatus=2 if LF28==2 & LF34==4 & LF56==1
-	replace lstatus=3 if LF60==1 | (LF28==2 & LF34==4 & LF56==2)
+	replace lstatus=1 if LF28==1|LF34<4
+	replace lstatus=2 if LF56==1&LF59==1
+	replace lstatus=3 if LF56==2
 	replace lstatus=3 if lstatus==. 
 	replace lstatus=. if age<minlaborage
 	label var lstatus "Labor status"
@@ -938,7 +940,6 @@ treated as "Paid employee".
 
 *<_industry_orig_>
 	gen industry_orig=LF38
-	replace industry_orig=. if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 

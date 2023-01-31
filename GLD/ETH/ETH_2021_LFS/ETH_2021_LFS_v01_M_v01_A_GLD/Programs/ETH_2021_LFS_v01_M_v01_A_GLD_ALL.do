@@ -4,7 +4,7 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				ETH_2021_LFS_v01_M_v01_A_GLD_ALL.do </_Program name_>
+<_Program name_>				ETH_2021_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata MP 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
 <_Date created_>				2022-11-11 </_Date created_>
@@ -59,8 +59,8 @@ local server  "Z:\GLD-Harmonization\573465_JT"
 local country "ETH"
 local year    "2021"
 local survey  "LFS"
-local vermast "v01"
-local veralt  "v01"
+local vermast "V01"
+local veralt  "V01"
 
 * From the definitions, set path chunks
 local level_1      "`country'_`year'_`survey'"
@@ -688,15 +688,10 @@ received education.
 *</_educat7_>
 
 
-/*<_educat5_note_>
-Current codes for educat5 were derived backwards from the numbers in the CSA report for 2021.
-*<_educat5_note_>*/
-
-
 *<_educat5_>
-	*gen byte educat5=educat7
-	gen byte educat5=LF208
-	recode educat5 (36/38 44=1) (42 43 96=2) (1/8 39/41=3) (9/12 21/24=4) (13/20 25/35=5)
+	gen byte educat5=educat7
+	recode educat5 (4=3) (5=4) (6/7=5)
+	replace educat5=. if age < ed_mod_age & age!=.	
 	label var educat5 "Level of education 2"
 	la de lbleducat5 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
 	label values educat5 lbleducat5
@@ -704,18 +699,8 @@ Current codes for educat5 were derived backwards from the numbers in the CSA rep
 
 
 *<_educat4_>
-	/*
-	recode LF206 (2=0), gen(literate)
-	gen educat4=.
-	replace educat4=1 if literate==0|inrange(LF208,36,38)|LF208==44|age<3 // preschool or no education
-	replace educat4=2 if inrange(LF208,1,7)|inrange(LF208,39,43)|LF208==96 // less than primary and adult/informal education
-	replace educat4=2 if inrange(LF208,8,11) | inrange(LF208,21,23) | inlist(LF208,13,18, 19, 33) // completed primary but not secondary
-	replace educat4=3 if inlist(LF208,12,14, 15, 16,20,34,24,26,27) // completed secondary but not higher
-	replace educat4=4 if inlist(LF208, 17, 25,35)|inrange(LF208,28,32) //"Completed post-secondary"
-	
-	gen byte educat4=educat7
-	recode educat4 (2 3 4=2) (5=3) (6 7=4)*/
 	gen byte educat4=educat5
+	replace educat4=. if age<ed_mod_age&age!=.
 	recode educat4 (3=2) (4=3) (5=4)
 	label var educat4 "Level of education 3"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
@@ -823,7 +808,7 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 ================================================================================================*/
 
 *<_minlaborage_>
-	gen byte minlaborage=5
+	gen byte minlaborage=10
 	label var minlaborage "Labor module application age"
 *</_minlaborage_>
 
@@ -834,8 +819,8 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 *<_lstatus_>
 	gen byte lstatus=.
 	replace lstatus=1 if LF301==1 | LF304<4
-	replace lstatus=2 if LF304==4 & LF401==1
-	replace lstatus=3 if LF304==4 & LF401==2
+	replace lstatus=2 if (LF401==1|LF401==2) & LF404==1
+	replace lstatus=3 if LF401==3
 	replace lstatus=3 if lstatus==. 
 	replace lstatus=. if age<minlaborage
 	label var lstatus "Labor status"
@@ -848,15 +833,15 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 Note: var "potential_lf" only takes value if the respondent is not in labor force. (lstatus==3)
 
 "potential_lf"=1 if the person is
-1)available but not searching or LF405==1 & LF401==2
-2)searching but not immediately available to work or LF405==2 & LF401==1
+1)available but not searching or LF404==1 & LF401==2
+2)searching but not immediately available to work or LF404==2 & LF401==1
 </_potential_lf_note_>*/
 
 
 *<_potential_lf_>
 	gen byte potential_lf=.
-	replace potential_lf=1 if [LF405==1 & LF401==2] | [LF405==2 & LF401==1]
-	replace potential_lf=0 if [LF405==1 & LF401==1] | [LF401==2 & LF405==2]
+	replace potential_lf=1 if [LF404==1 & LF401==2] | [LF404==2 & LF401==1]
+	replace potential_lf=0 if [LF404==1 & LF401==1] | [LF401==2 & LF404==2]
 	replace potential_lf=. if age < minlaborage
 	replace potential_lf=. if lstatus!=3
 	label var potential_lf "Potential labour force status"
@@ -953,7 +938,6 @@ According to the annual report, employment status of a person was classified int
 
 *<_industry_orig_>
 	gen industry_orig=LF307
-	replace industry_orig=. if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
@@ -1375,6 +1359,7 @@ According to the annual report, employment status of a person was classified int
 	replace industrycat_isic_year=4799 if LF505==4792
 	replace industrycat_isic_year=1100 if inrange(LF505, 1105, 1107)
 	replace industrycat_isic_year=9410 if inlist(LF505,9413)
+	replace industrycat_isic_year=9900 if inlist(LF505,9999)
 	tostring industrycat_isic_year, replace format(%04.0f)
 	replace industrycat_isic_year="" if lstatus_year!=1 | industrycat_isic_year=="."
 	label var industrycat_isic_year "ISIC code of primary job 12 month recall"
@@ -1408,8 +1393,10 @@ According to the annual report, employment status of a person was classified int
 *<_occup_isco_year_>	
 	tostring LF504, format(%04.0f) gen(occup_str)
 	gen occup_str3=substr(occup_str,1,3)
-	replace occup_str3="235" if occup_str3=="361"|occup_str3=="371"
+	replace occup_str3="235" if occup_str3=="360"|occup_str3=="361"|occup_str3=="371"
 	replace occup_str3="524" if occup_str3=="525"|occup_str3=="526"|occup_str3=="527"
+	replace occup_str3="900" if occup_str3=="906"
+	replace occup_str3="." if inlist(occup_str3, "060", "660")
 	gen occup_isco_year=occup_str3+"0" if occup_str3!="."	
 	drop occup_str occup_str3
 	replace occup_isco_year="" if lstatus_year!=1

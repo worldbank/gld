@@ -19,10 +19,10 @@
 	global helper "C:/Users/wb573465/Documents/GitHub/gld/Support/D - Q Checks/Single survey checks/Helper_programs_1.5" 
 		
 	** Path to GLD data file            <-- INPUT -- 
-	global mydata "Z:/GLD-Harmonization/573465_JT/ETH/ETH_2021_LFS/ETH_2021_LFS_v01_M_v01_A_GLD/Data/Harmonized/ETH_2021_LFS_v01_M_v01_A_GLD_ALL.dta"  
+	global mydata "Z:/GLD-Harmonization/573465_JT/ETH/ETH_1999_LFS/ETH_1999_LFS_v01_M_v01_A_GLD/Data/Harmonized/ETH_1999_LFS_v01_M_v01_A_GLD_ALL.dta"  
 	
 	** Choose output folder             <-- INPUT --
-	global output "Z:/GLD-Harmonization/573465_JT/ETH/ETH_2021_LFS/ETH_2021_LFS_v01_M_v01_A_GLD/Work" 
+	global output "Z:/GLD-Harmonization/573465_JT/ETH/ETH_1999_LFS/ETH_1999_LFS_v01_M_v01_A_GLD/Work" 
 	
 		
 *-- Step - 3 Run the quality checks -----------------------------------------------*
