@@ -957,7 +957,6 @@ According to the annual report, employment status of a person was classified int
 
 *<_occup_orig_>
 	gen occup_orig=LF308
-	replace occup_orig=. if lstatus!=1
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 

@@ -951,7 +951,8 @@ treated as "Paid employee".
 	destring industrycat_isic, replace
 	replace industrycat_isic=industrycat_isic*10
 	tostring industrycat_isic, format(%04.0f) replace
-	replace industrycat_isic="" if lstatus!=1 | industrycat_isic=="." | industrycat_isic=="9310" | industrycat_isic=="9990"
+	replace industrycat_isic="9300" if industrycat_isic=="9310"
+	replace industrycat_isic="" if lstatus!=1 | industrycat_isic=="." | industrycat_isic=="9990"
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
@@ -977,7 +978,6 @@ treated as "Paid employee".
 
 *<_occup_orig_>
 	gen occup_orig=LF36
-	replace occup_orig=. if lstatus!=1
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 

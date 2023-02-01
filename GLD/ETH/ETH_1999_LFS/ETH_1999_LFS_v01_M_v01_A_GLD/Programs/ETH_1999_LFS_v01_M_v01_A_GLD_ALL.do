@@ -950,7 +950,6 @@ treated as "Paid employee".
 
 *<_occup_orig_>
 	gen occup_orig=LF35
-	replace occup_orig=. if lstatus!=1
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
@@ -1747,4 +1746,4 @@ foreach var of local kept_vars {
 
 save "`path_output'\\`level_2_harm'_ALL.dta", replace
 
-0*</_% SAVE_>
+*</_% SAVE_>
