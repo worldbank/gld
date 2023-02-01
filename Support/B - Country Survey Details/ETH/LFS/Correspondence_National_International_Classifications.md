@@ -38,3 +38,5 @@ We listed all the modifications made in the following sections as they are not l
 | 2013 | LF308 | 3611-3613；3710；9998 | Missing | NA|
 | 2021 | LF306 | 361；371 | 235 | Other teaching professionals|
 | 2021 | LF306 | 525-527 | 524 | Other sales workers|
+
+*NOTE: In the raw datasets, code "999" or "9" usually represents "NR or not stated".*
