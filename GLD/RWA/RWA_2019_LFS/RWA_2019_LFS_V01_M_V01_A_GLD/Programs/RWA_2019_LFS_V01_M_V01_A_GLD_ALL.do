@@ -974,14 +974,14 @@ For those who are looking for work but not available,  fill out using responses 
 *<_industrycat_isic_>
 	gen industrycat_isic = industry_orig
 	replace industrycat_isic = "" if lstatus !=1
-	replace industrycat_isic = "1100" if industrycat_isic == "1122" // no 1120 in ISIC v4, only in previous ones
+	replace industrycat_isic = "1100" if industrycat_isic == "1122" 
 	replace industrycat_isic = "4100" if industrycat_isic == "4110" 
 	replace industrycat_isic = "4100" if industrycat_isic == "4121" 
 	replace industrycat_isic = "4600" if industrycat_isic == "4631" 
-	replace industrycat_isic = "5100" if industrycat_isic == "5111" 
+	replace industrycat_isic = "5110" if industrycat_isic == "5111" 
 	replace industrycat_isic = "5100" if industrycat_isic == "5132" 
 	replace industrycat_isic = "6200" if industrycat_isic == "6210" 
-	replace industrycat_isic = "8800" if industrycat_isic == "8896" 
+	replace industrycat_isic = "8890" if industrycat_isic == "8896" 
 
 	/* The following codes are not in ISIC:
 	

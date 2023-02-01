@@ -899,7 +899,7 @@ For those who are looking for work but not available,  fill out using responses 
 
 *<_industrycat_isic_>
 	gen industrycat_isic = industry_orig
-	replace industrycat_isic = "9400" if industrycat_isic == "9495"
+	replace industrycat_isic = "9490" if industrycat_isic == "9495"
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 

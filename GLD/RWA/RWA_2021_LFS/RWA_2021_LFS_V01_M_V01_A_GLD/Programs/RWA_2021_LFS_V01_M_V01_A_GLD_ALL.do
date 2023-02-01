@@ -905,10 +905,10 @@ For those who are looking for work but not available,  fill out using responses 
 	gen occup_isco = occup_orig
 	
 	* Replace with 2 digit ISCO codes if not in isco 2008
-	replace occup_isco = "2200" if occup_isco == "2213"
+	replace occup_isco = "2210" if occup_isco == "2213"
 	replace occup_isco = "2400" if occup_isco == "2455"
 	replace occup_isco = "3400" if occup_isco == "3449"
-	replace occup_isco = "9500" if occup_isco == "9511"
+	replace occup_isco = "9510" if occup_isco == "9511"
 	replace occup_isco = "" if occup_isco == "." | lstatus !=1
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
