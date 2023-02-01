@@ -18,7 +18,7 @@ We listed all the modifications made in the following sections as they are not l
 | **ETH Year**	| **Original Var Name**	| **Original Code**| **ISIC Counterpart**| **Industry Description**|
 | :-----------:	| :-------------------: | :---------------:|:-------------------:| :----------------------:|
 | 2005 | L38 | 9319 | 9300    | Other service activities|
-| 2005 | L38 | 9990 | Missing | *Unlabled; unsure about its upper level category* |
+| 2005 | L38 | 9990 | Missing | NA |
 | 2013 | LF310 | 0990 | 0999 | Support activities for other mining and quarrying |
 | 2013 | LF310 | 1076；1077 | 1070 | Manufacture of other food products |
 | 2013 | LF310 | 1105-1107 | 1100 | Distilling, rectifying and blending of spirits |
@@ -33,8 +33,8 @@ We listed all the modifications made in the following sections as they are not l
 
 | **ETH Year**	| **Original Var Name**	| **Original Code**| **ISCO Counterpart**| **Occupation Description**|
 | :-----------:	| :-------------------: | :---------------:|:-------------------:| :----------------------:|
-| 1999 | LF35 | 5400；9990 | Missing | NA|
-| 2005 | LF36 | 5700；9900 | Missing | NA|
-| 2013 | LF308 | 3700；3700；9900 | Missing | NA|
+| 1999 | LF35 | 542；999 | Missing | NA|
+| 2005 | LF36 | 5761；9999 | Missing | NA|
+| 2013 | LF308 | 3611-3613；3710；9998 | Missing | NA|
 | 2021 | LF306 | 361；371 | 235 | Other teaching professionals|
 | 2021 | LF306 | 525-527 | 524 | Other sales workers|
