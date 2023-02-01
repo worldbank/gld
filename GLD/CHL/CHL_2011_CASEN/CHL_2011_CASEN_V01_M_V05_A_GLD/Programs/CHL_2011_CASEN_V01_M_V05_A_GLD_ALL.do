@@ -49,7 +49,7 @@ set mem 800m
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-local server  "Z:\GLD-Harmonization\582018_AQ"
+local server  "Y:\GLD-Harmonization\582018_AQ"
 local country "CHL"
 local year    "2011"
 local survey  "CASEN"
@@ -495,8 +495,15 @@ use "`path_in_stata'\casen2011_octubre2011_enero2012_principal_08032013stata.dta
 
 
 *<_educat7_>
-	gen byte educat7 = educ
-	recode educat7 (0=1) (1=2) (2=3) (3=4) (4=6) (5/6=5) (7/8 =7)
+	gen byte educat7 = .
+	replace educat7=1 if educ==0
+	replace educat7=2 if educ==1
+	replace educat7=3 if educ==2
+	replace educat7=4 if inrange(educ,3,4)
+	replace educat7=5 if inrange(educ,5,6)
+	replace educat7=6 if e6a==9
+	replace educat7=6 if e6a==11
+	replace educat7=7 if inrange(e6a,12,13)
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -736,9 +743,6 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_>
-	*gen o9_helper=oficio4
-	*recode o9_helper 9999=.
-	*gen occup_isco = string(o9_helper,"%04.0f")
 	gen occup_isco = oficio4
 	replace occup_isco="" if oficio4=="."
 	replace occup_isco="1239" if oficio4=="7492"
@@ -832,7 +836,8 @@ foreach v of local ed_var {
 
 
 *<_socialsec_>
-	gen byte socialsec = .
+	gen byte socialsec = o29
+	recode socialsec 2=0 9=.
 	replace socialsec=. if lstatus!=1
 	label var socialsec "Employment has social security insurance primary job 7 day recall"
 	la de lblsocialsec 1 "With social security" 0 "Without social secturity"

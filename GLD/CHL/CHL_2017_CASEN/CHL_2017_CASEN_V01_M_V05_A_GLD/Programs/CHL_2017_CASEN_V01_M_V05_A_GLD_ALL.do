@@ -49,7 +49,7 @@ set mem 800m
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-local server  "Z:\GLD-Harmonization\582018_AQ"
+local server  "Y:\GLD-Harmonization\582018_AQ"
 local country "CHL"
 local year    "2017"
 local survey  "CASEN"
@@ -827,7 +827,8 @@ la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
 
 
 *<_socialsec_>
-	gen byte socialsec = .
+	gen byte socialsec = o28
+	recode socialsec 2=0 9=.
 	replace socialsec=. if lstatus!=1
 	label var socialsec "Employment has social security insurance primary job 7 day recall"
 	la de lblsocialsec 1 "With social security" 0 "Without social secturity"

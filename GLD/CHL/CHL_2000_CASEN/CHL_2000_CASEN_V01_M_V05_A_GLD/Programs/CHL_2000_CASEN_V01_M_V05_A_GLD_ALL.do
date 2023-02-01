@@ -50,7 +50,7 @@ set mem 800m
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-local server  "Z:\GLD-Harmonization\582018_AQ"
+local server  "Y:\GLD-Harmonization\582018_AQ"
 local country "CHL"
 local year    "2000"
 local survey  "CASEN"
@@ -498,8 +498,18 @@ use "`path_in_stata'\casen2000_Stata.dta"
 
 
 *<_educat7_>
-	gen byte educat7 = educ
-	recode educat7 6=4 7=5 8/9=6 10/11=7 99=.
+	gen byte educat7 = .
+	replace educat7=1 if educ==1
+	replace educat7=2 if educ==2 
+	replace educat7=3 if educ==3
+	replace educat7=4 if educ==4
+	replace educat7=4 if educ==6
+	replace educat7=5 if educ==5
+	replace educat7=5 if educ==7
+	replace educat7=6 if educ==8
+	replace educat7=6 if educ==9
+	replace educat7=7 if educ==10
+	replace educat7=7 if educ==11
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -833,7 +843,8 @@ la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
 
 
 *<_socialsec_>
-	gen byte socialsec = .
+	gen byte socialsec = o17
+	recode socialsec 8=0 1/7=1 9=.
 	replace socialsec=. if lstatus!=1
 	label var socialsec "Employment has social security insurance primary job 7 day recall"
 	la de lblsocialsec 1 "With social security" 0 "Without social secturity"

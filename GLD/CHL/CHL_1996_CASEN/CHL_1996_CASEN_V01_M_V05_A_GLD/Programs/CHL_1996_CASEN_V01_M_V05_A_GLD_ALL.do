@@ -50,7 +50,7 @@ set mem 800m
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-local server  "Z:\GLD-Harmonization\582018_AQ"
+local server  "Y:\GLD-Harmonization\582018_AQ"
 local country "CHL"
 local year    "1996"
 local survey  "CASEN"
@@ -501,8 +501,19 @@ local letters "r p c z o seg f"
 *</_educy_>
 
 *<_educat7_>
-*Questionnaire does not have enough information to create primary incomplete as opposed to other years, it is only named as basic.
+*Questionnaire does not have enough information to create primary incomplete as opposed to other years, it is only named as basic. For this reason the variables e5 and e6 are used using similar relationships to the 1998 questionnaire
 	gen byte educat7 = .
+	replace educat7=1 if e6==0 | e6==1
+	replace educat7=2 if e6==2 | e6==3 & inrange(e5,1,4)
+	replace educat7=3 if e6==3 & inrange(e5,5,8)
+	replace educat7=3 if e6==4
+	replace educat7=4 if inrange(e6,5,8) & inrange(e5,1,5)
+	replace educat7=5 if inrange(e6,5,8) & inrange(e5,4,6)
+	replace educat7=6 if e6==10 | e6==12 & inrange(e5,1,5)
+	replace educat7=6 if e6==10 | e6==12 & e5==9
+	replace educat7=7 if e6==9 | e6==11 | e6==13 & inrange(e5,1,6)
+	replace educat7=7 if e6==9 | e6==11 | e6==13  & e5==9
+	replace educat7=7 if e6==14 | e6==15 & inrange(e5,1,9)
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -510,7 +521,7 @@ local letters "r p c z o seg f"
 
 
 *<_educat5_>
-	gen educat5=.
+	gen educat5=educat7
 	recode educat5 (3 4=3) (5=4) (6 7=5)
 	label var educat5 "Level of education 2"
 	la de lbleducat5 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
@@ -519,8 +530,8 @@ local letters "r p c z o seg f"
 
 
 *<_educat4_>
-	gen byte educat4 = e6
-	recode educat4 (0/1=1) (2=3) (3/4=2) (5/6=3) (7/15=4) (99=.)
+	gen byte educat4 = educat5
+	recode educat4 (3=2) (4=3) (5=4)
 	label var educat4 "Level of education 3"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values educat4 lbleducat4
@@ -831,7 +842,8 @@ la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
 
 
 *<_socialsec_>
-	gen byte socialsec = .
+	gen byte socialsec = o31
+	recode socialsec 7=0 1/6=1 9=.
 	replace socialsec=. if lstatus!=1
 	label var socialsec "Employment has social security insurance primary job 7 day recall"
 	la de lblsocialsec 1 "With social security" 0 "Without social secturity"

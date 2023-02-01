@@ -51,7 +51,7 @@ set mem 800m
 
 
 * Define path sections
-local server  "Z:\GLD-Harmonization\582018_AQ"
+local server  "Y:\GLD-Harmonization\582018_AQ"
 local country "CHL"
 local year    "1994"
 local survey  "CASEN"
@@ -502,8 +502,21 @@ local letters "r p c z o seg f"
 
 
 *<_educat7_>
-	gen byte educat7 = e9
-	recode educat7 4=3 5=4 6=5 7=6 8=6 9/13=7 14=6 15=1 99=.
+	gen byte educat7 = .
+	replace educat7=1 if e9==1
+	replace educat7=3 if e9==3
+	replace educat7=2 if e9==2
+	replace educat7=4 if e9==5 
+	replace educat7=4 if e9==7
+	replace educat7=5 if e9==6 
+	replace educat7=5 if e9==8
+	replace educat7=6 if e9==11 
+	replace educat7=6 if e9==12
+	replace educat7=7 if e9==9 
+	replace educat7=7 if e9==10 
+	replace educat7=7 if e9==13 
+	replace educat7=7 if e9==14
+	replace educat7=1 if e9==15
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -840,7 +853,8 @@ label values occup lbloccup
 
 
 *<_socialsec_>
-	gen byte socialsec = .
+	gen byte socialsec = o11
+	recode socialsec 5=0 1/4=1 9=.
 	replace socialsec=. if lstatus!=1
 	label var socialsec "Employment has social security insurance primary job 7 day recall"
 	la de lblsocialsec 1 "With social security" 0 "Without social secturity"

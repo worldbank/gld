@@ -49,7 +49,7 @@ set mem 800m
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-local server  "Z:\GLD-Harmonization\582018_AQ"
+local server  "Y:\GLD-Harmonization\582018_AQ"
 local country "CHL"
 local year    "2013"
 local survey  "CASEN"
@@ -495,7 +495,6 @@ use "`path_in_stata'\casen_2013_mn_b_principal.dta"
 
 
 *<_educat7_>
-*no division between institute and uni
 	gen byte educat7 = educ
 	recode educat7 (0=1) (1=2) (2=3) (3/4=4) (5/6=5) (7/8 =6) (9/12=7) (99=.)
 	label var educat7 "Level of education 1"
@@ -729,7 +728,6 @@ foreach v of local ed_var {
 
 
 *<_occup_orig_>
-	*gen occup_orig = string(oficio4)
 	gen occup_orig = oficio4
 	replace occup_orig="" if oficio4=="."
 	label var occup_orig "Original occupation record primary job 7 day recall"
@@ -737,9 +735,6 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_>
-	*gen o9_helper=oficio4
-	*recode o9_helper 9999=.
-	*gen occup_isco = string(o9_helper,"%04.0f")
 	gen occup_isco = oficio4
 	replace occup_isco="" if oficio4=="."
 	replace occup_isco="" if oficio4=="9999"
@@ -828,7 +823,8 @@ la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
 
 
 *<_socialsec_>
-	gen byte socialsec = .
+	gen byte socialsec = o29
+	recode socialsec 2=0 9=.
 	replace socialsec=. if lstatus!=1
 	label var socialsec "Employment has social security insurance primary job 7 day recall"
 	la de lblsocialsec 1 "With social security" 0 "Without social secturity"
