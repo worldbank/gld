@@ -785,6 +785,7 @@ foreach v of local ed_var {
 	replace lstatus = 3 if C19 == 2 & C20 == 2 & C23 == 1 & C25  == 1
 
 	* There is one individual (pid == " 5538640203") claimed to do unpaid work but no other information to allow us to determine true labor status. Unpaid work is not sufficient to be employed
+	replace lstatus = . if age < minlaborage
 	
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"

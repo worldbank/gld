@@ -704,6 +704,7 @@ foreach v of local ed_var {
 
 </_lstatus_note> */
 	gen byte lstatus = status1
+	replace lstatus = . if age < minlaborage
 
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
