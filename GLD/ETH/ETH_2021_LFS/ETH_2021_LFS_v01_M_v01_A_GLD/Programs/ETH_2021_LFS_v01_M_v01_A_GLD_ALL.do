@@ -262,7 +262,7 @@ In the official annual report, there is supposed to be 1686 EAs (766 major urban
 
 *<_subnatid1_>
 	gen subnatid1_prep=ID101
-	label de lblsubnatid1 2 "2-Afar" 3 "3-Amhara" 4 "4-Oromiya" 5 "5-Somali" 6 "6-Benishangul-Gumuz" 7 "7-SNNPR" 8 "8-Sidama" 12 "12-Gambela" 13 "13-Hareri" 14 "14-Addis Ababa" 15 "15-Dire Dawa"
+	label de lblsubnatid1 2 "2 - Afar" 3 "3 - Amhara" 4 "4 - Oromiya" 5 "5 - Somali" 6 "6 - Benishangul-Gumuz" 7 "7 - SNNPR" 8 "8 - Sidama" 12 "12 - Gambela" 13 "13 - Hareri" 14 "14 - Addis Ababa" 15 "15 - Dire Dawa"
 	label values subnatid1_prep lblsubnatid1
 	decode subnatid1_prep, gen(subnatid1)
 	drop subnatid1_prep
@@ -549,7 +549,7 @@ The age restriction of the disability section is 5 years+.
 /*<_migrated_from_cat_note_>
 Detailed questions like region or zone of precious residence, area of previous 
 residence and reasons for migration were asked only to recent migrants who moved
-our from their original place during the 5 years prior to the date of the interview. 
+out from their original place during the 5 years prior to the date of the interview. 
 *<_migrated_from_cat_note_>*/
 
 

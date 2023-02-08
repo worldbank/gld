@@ -57,7 +57,7 @@ set mem 800m
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-local server  "Z:\GLD-Harmonization\573465_JT"
+local server  "Y:\GLD-Harmonization\573465_JT"
 local country "ETH"
 local year    "1999"
 local survey  "LFS"
@@ -254,7 +254,7 @@ which is 3 more than what we have here.
 
 *<_subnatid1_>
 	gen subnatid1_prep=LF01
-	label de lblsubnatid1 1 "1-Tigray" 2 "2-Afar" 3 "3-Amhara" 4 "4-Oromiya" 5 "5-Somali" 6 "6-Benishangul-Gumuz" 7 "7-SNNPR" 12 "12-Gambela" 13 "13-Hareri" 14 "14-Addis Ababa" 15 "15-Dire Dawa"
+	label de lblsubnatid1 1 "1 - Tigray" 2 "2 - Afar" 3 "3 - Amhara" 4 "4 - Oromiya" 5 "5 - Somali" 6 "6 - Benishangul-Gumuz" 7 "7 - SNNPR" 12 "12 - Gambela" 13 "13 - Hareri" 14 "14 - Addis Ababa" 15 "15 - Dire Dawa"
 	label values subnatid1_prep lblsubnatid1
 	decode subnatid1_prep, gen (subnatid1)
 	drop subnatid1_prep
@@ -269,14 +269,50 @@ in the offical annual report, they were grouped at their regional level.
 
 
 *<_subnatid2_>
-	gen code_region=LF01
+	/*gen code_region=LF01
 	recode code_region (12=8) (13=9) (14=10) (15=11)
 	egen code=concat(code_region LF02), punct(".")
 	merge m:1 code using "`path_in_stata'\ETH_zone_name.dta" 
 	replace zone_name=code if _merge==1
 	drop if _merge==2
 	gen subnatid2=zone_name
-	drop _merge code_region code _merge
+	drop _merge code_region code _merge*/
+	
+	preserve
+	decode LF01, gen(subnatid1_proposal)
+	replace subnatid1_proposal = subinstr(subnatid1_proposal,"."," -",1)
+	tab subnatid1_proposal
+	
+	gen subnatid2_proposal=string(LF01) + "." + string(LF02)
+	collapse (first) LF01 LF02, by(subnatid1_proposal subnatid2_proposal)
+	
+	gen mh_lev_1=LF01 
+	gen mh_lev_2=LF02
+	gen mh_s1=subnatid1_proposal
+	gen mh_s2=subnatid2_proposal
+	tempfile subnatid_lev_2
+	save "`subnatid_lev_2'"
+	
+	collapse (first) mh_*, by(subnatid1_proposal)
+	tempfile subnatid_lev_1
+	save "`subnatid_lev_1'"
+	
+	restore
+	merge m:1 LF01 LF02 using "`subnatid_lev_2'", assert(match) keepusing(subnatid1_proposal subnatid2_proposal) nogen
+	gen migrated_from_code_corrected=""
+	gen mh_lev_1=LF18 if migrated_from_cat==4
+	merge m:1 mh_lev_1 using "`subnatid_lev_1'", assert(master match) keepusing(mh_s1) nogen
+	replace migrated_from_code_corrected=mh_s1 if migrated_from_cat==4
+	
+	gen mh_m_code_corr_same_admin1=string(LF18) + "." + string(LF19) if migrated_from_cat==3	
+	replace migrated_from_code_corrected=mh_m_code_corr_same_admin1 if migrated_from_cat==3
+	
+	replace migrated_from_code_corrected=subnatid2_proposal if migrated_from_cat==2
+	drop mh_*
+
+
+
+
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
 
@@ -513,10 +549,19 @@ Still pending on confirmation on the codelist.
 
 
 *<_migrated_from_cat_>
-	gen migrated_from_cat=. 
-	replace migrated_from_cat=3 if LF01==LF18 & LF02!=LF19 & migrated_binary==1
-	replace migrated_from_cat=2 if LF02==LF19 & migrated_binary==1
-	replace migrated_from_cat=. if age<migrated_mod_age
+	gen mh_not_same_admin1=(LF18!=LF01) if !missing(LF18)
+
+	gen migrated_from_cat=.
+	replace migrated_from_cat=5 if mh_not_same_admin1==1 & LF18== 6
+	replace migrated_from_cat=4 if mh_not_same_admin1==1 & inrange(LF18, 1, 15)
+	
+	gen mh_same_admin1=(LF18==LF01) if !missing(LF18)
+	gen mh_same_admin2=(LF19==LF02) if mh_same_admin1==1
+	
+	replace migrated_from_cat=3 if mh_same_admin2==0 & LF19!=99
+	replace migrated_from_cat=2 if mh_same_admin2==1 
+	
+	replace migrated_from_cat=. if age<migrated_mod_age|migrated_binary!=1
 	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country"
 	label values migrated_from_cat lblmigrated_from_cat
 	label var migrated_from_cat "Category of migration area"
@@ -931,8 +976,8 @@ treated as "Paid employee".
 	replace industrycat10=9 if LF36>=751 & LF36<=753
 	replace industrycat10=10 if LF36>=801 & LF36<.
 	replace industrycat10=10 if industrycat10==. & LF36!=.
+	replace industrycat10=10 if LF36==999
 	replace industrycat10=. if lstatus!=1
-	replace industrycat10=10 if LF36==999	
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10

@@ -271,7 +271,7 @@ in the annual report.
 
 *<_subnatid1_>
 	gen subnatid1_prep=ID01
-	label de lblsubnatid1 1 "1-Tigray" 2 "2-Afar" 3 "3-Amhara" 4 "4-Oromiya" 5 "5-Somali" 6 "6-Benishangul-Gumuz" 7 "7-SNNPR" 12 "12-Gambela" 13 "13-Hareri" 14 "14-Addis Ababa" 15 "15-Dire Dawa"
+	label de lblsubnatid1 1 "1 - Tigray" 2 "2 - Afar" 3 "3 - Amhara" 4 "4 - Oromiya" 5 "5 - Somali" 6 "6 - Benishangul-Gumuz" 7 "7 - SNNPR" 12 "12 - Gambela" 13 "13 - Hareri" 14 "14 - Addis Ababa" 15 "15 - Dire Dawa"
 	label values subnatid1_prep lblsubnatid1
 	decode subnatid1_prep, gen (subnatid1)
 	drop subnatid1_prep
