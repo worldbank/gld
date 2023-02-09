@@ -56,7 +56,7 @@ set mem 800m
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-local server  "Z:\GLD-Harmonization\582018_AQ"
+local server  "Y:\GLD-Harmonization\582018_AQ"
 local country "COL"
 local year    "2005"
 local survey  "ECH"
@@ -585,9 +585,10 @@ label var ed_mod_age "Education module application age"
 	replace educat7=2 if inrange(p10,"300","304")
 	replace educat7=3 if p10=="305"
 	replace educat7=4 if p10=="400" | inrange(p10,"406","410")
-	replace educat7=5 if p10=="411"
-	replace educat7=5 if p10=="412"
-	replace educat7=5 if p10=="413"
+	replace educat7=4 if p10=="411"
+	replace educat7=4 if p10=="412"
+	replace educat7=4 if p10=="413"
+	replace educat7=5 if inrange(p10,"610","613")
 	replace educat7=7 if inrange(p10,"500","515")
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
@@ -778,15 +779,39 @@ foreach v of local ed_var {
 
 *----------8.2: 7 day reference main job------------------------------*
 {
+
 *<_empstat_>
-	destring p27, replace
-	gen byte empstat= p27
-	recode empstat 2 3 8=1 5=3 6 7=2 9=5
-	replace empstat=. if lstatus!=1
-	label var empstat "Employment status during past week primary job 7 day recall"
-	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
-	label values empstat lblempstat
+
+/* <_empstat_note>
+
+     In the ECH (2001-2005) the question on the relationship at work (p27)
+     has different answer codes depending on whether the questionnaire was 
+     administered in "cabeceras" and metropolitan areas, then if it was administered
+     in "rural areas". In the former the question has 7 answer codes, in the latter
+     8. The distribution is different.
+	 
+	 In 2005 the difference is between whethe a survey was conducted in an urban , rural
+	 or traditional setting.
+     
+     The first three codes are the same but rural areas have an additional category
+     (4) to represent day labourers. The subsequent codes 5-8 are then the same as
+     4-7 in the other areas.
+     
+     The raw variable "clase" can be used to differentiate between them.
+
+</_empstat_note> */
+
+     destring p27, replace
+	 destring clase, replace
+     gen byte empstat= p27
+     recode empstat (1 2 3 = 1) (4 = 4) (5 = 3) (6 = 2) (7 = 5) if clase == 1
+     recode empstat (1 2 3 4 = 1) (5 = 4) (6 = 3) (7 = 2) (8 = 5) if clase == 2
+     replace empstat=. if lstatus!=1
+     label var empstat "Employment status during past week primary job 7 day recall"
+     la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status", replace
+     label values empstat lblempstat
 *</_empstat_>
+
 
 * NUMBER OF ADDITIONAL JOBS
 	gen byte njobs= .

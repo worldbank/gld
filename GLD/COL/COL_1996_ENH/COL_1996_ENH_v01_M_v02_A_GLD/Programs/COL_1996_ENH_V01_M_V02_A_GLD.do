@@ -55,7 +55,7 @@ set mem 800m
 
 *----------1.2: Set directories------------------------------*
 * Define path sections
-local server  "Z:\GLD-Harmonization\582018_AQ"
+local server  "Y:\GLD-Harmonization\582018_AQ"
 local country "COL"
 local year    "1996"
 local survey  "ENH"
@@ -177,7 +177,6 @@ use "`path_in_stata'/COL_1996_ENH-FT_BASE.dta"
 	002, ..., 160.
 
 </_hhid_note> */
-
 	gen helper_h=string(id_hogar, "%02.0f")
 	gen hhid = helper_h
 	label var hhid "Household ID"
@@ -788,7 +787,7 @@ activities of private households
         See https://unstats.un.org/unsd/statcom/doc02/isic.pdf for more details
 
 </_industry_orig_note> */
-	rename rama rama2d
+	rename ramap rama2d
 	destring rama2d, replace
 	gen industry_orig = rama2d
 	replace industry_orig=. if lstatus!=1
@@ -815,8 +814,11 @@ activities of private households
 	replace industrycat10 = 6 if rama2d>=61 & rama2d<=63
 	replace industrycat10 = 7 if rama2d>=71 & rama2d<=72
 	replace industrycat10 = 8 if rama2d>=81 & rama2d<=83
-	replace industrycat10 = 9 if rama2d>=91 & rama2d<=96
+	replace industrycat10 = 9 if rama2d==91 
+	replace industrycat10 = 10 if rama2d>=92 & rama2d<=96 
 	replace industrycat10 = 10 if rama2d==0
+	replace industrycat10 = . if rama2d==-1
+	replace industrycat10 = . if rama2d==99
 	replace industrycat10 = . if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"

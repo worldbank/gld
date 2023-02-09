@@ -56,7 +56,7 @@ set mem 800m
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-local server  "Z:\GLD-Harmonization\582018_AQ"
+local server  "Y:\GLD-Harmonization\582018_AQ"
 local country "COL"
 local year    "1999"
 local survey  "ENH"
@@ -794,7 +794,7 @@ activities of private households
         See https://unstats.un.org/unsd/statcom/doc02/isic.pdf for more details
 
 </_industry_orig_note> */
-	rename rama rama2d
+	rename ramap rama2d
 	tostring rama2d, replace force
 	gen industry_orig = rama2d
 	replace industry_orig="" if lstatus!=1
@@ -822,8 +822,9 @@ activities of private households
 	replace industrycat10 = 6 if inrange(rama2d,"61","63")
 	replace industrycat10 = 7 if inrange(rama2d,"71","72")
 	replace industrycat10 = 8 if inrange(rama2d,"81","83")
-	replace industrycat10 = 9 if inrange(rama2d,"91","96")
-	replace industrycat10 = 10 if rama2d=="0"
+	replace industrycat10 = 9 if rama2d=="91"
+	replace industrycat10 = 10 if inrange(rama2d,"92","96")
+	replace industrycat10 = . if rama2d=="0"
 	replace industrycat10 = . if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"

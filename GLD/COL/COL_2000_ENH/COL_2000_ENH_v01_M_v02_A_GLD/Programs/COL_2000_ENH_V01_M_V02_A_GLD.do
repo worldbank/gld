@@ -57,7 +57,7 @@ set mem 800m
 
 
 * Define path sections
-local server  "Z:\GLD-Harmonization\582018_AQ"
+local server  "Y:\GLD-Harmonization\582018_AQ"
 local country "COL"
 local year    "2000"
 local survey  "ENH"
@@ -749,7 +749,7 @@ foreach v of local ed_var {
 {
 *<_empstat_>
 	gen byte empstat= categ
-	recode empstat (0=.) (1=2) (2/4=1) (7=1)  (5 = 4) (6=3)
+	recode empstat (0=.) (5=3) (2/3=1) (6=2) (7=5)
 	replace empstat=. if lstatus!=1
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
@@ -763,7 +763,7 @@ foreach v of local ed_var {
 
 *<_ocusec_>
 	gen byte ocusec = categ
-	recode ocusec 0=. 2=1 1 3 4 5/9=2
+	recode ocusec (0=.) (2=1) (1 3 4 5 6 7=2)
 	label var ocusec "Sector of activity primary job 7 day recall"
 	la de lblocusec 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	replace ocusec=. if lstatus!=1
@@ -798,7 +798,7 @@ activities of private households
         See https://unstats.un.org/unsd/statcom/doc02/isic.pdf for more details
 
 </_industry_orig_note> */
-	rename rama rama2d
+	rename ramap rama2d
 	tostring rama2d, replace force
 	gen industry_orig = rama2d
 	replace industry_orig="" if lstatus!=1
@@ -827,8 +827,9 @@ activities of private households
 	replace industrycat10 = 6 if inrange(rama2d,"61","63")
 	replace industrycat10 = 7 if inrange(rama2d,"71","72")
 	replace industrycat10 = 8 if inrange(rama2d,"81","83")
-	replace industrycat10 = 9 if inrange(rama2d,"91","96")
-	replace industrycat10 = 10 if rama2d=="0"
+	replace industrycat10 = 9 if rama2d=="91"
+	replace industrycat10 = 10 if inrange(rama2d,"92","96")
+	replace industrycat10 = . if rama2d=="0"
 	replace industrycat10 = . if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
