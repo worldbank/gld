@@ -215,4 +215,4 @@ The figure below, which is a time series plot of occupation of all years, shows 
 
 ![IDN_occup_time_series](utilities/IDN_occup.png)
 
-The mapping algorithm, which divides between urban and rural assignments for greater accuracy, [can be found here for 2000-2005](utilities/IDN_correspondence_KBJI.do) and [here for 1994-1999](utilities/IDN_correspondence_KBJI_2D.do), the outputted `.dta` file used to do the mapping [can be downloaded here for 2000-2005](utilities/Additional%20Data/occup.dta) and [here for 1994-1999](utilities/Additional%20Data/kji_2d_corresp.dta).
+The mapping algorithm, which divides between urban and rural assignments for greater accuracy, [can be found here for 2000-2006](utilities/IDN_correspondence_KBJI.do) and [here for 1994-1999](utilities/IDN_correspondence_KBJI_2D.do), the outputted `.dta` file used to do the mapping [can be downloaded here for 2000-2006](utilities/Additional%20Data/occup.dta) and [here for 1994-1999](utilities/Additional%20Data/kji_2d_corresp.dta).
