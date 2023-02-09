@@ -676,7 +676,7 @@ foreach v of local ed_var {
 {
 *<_empstat_>
 	gen byte empstat = o9
-	recode empstat (1=3) (2=4) (3/5=1) (6 7 9=1) (8=2) (99=.)
+	recode empstat (1=3) (2=4) (3/5=1) (6 7 9=1) (8=2)
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat lblempstat
