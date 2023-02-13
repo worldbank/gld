@@ -36,7 +36,7 @@
 
 <_Version Control_>
 
-* Date: [2023-01-31] File: [PAK_1992_LFS_V01_M_V02_A_GLD_ALL.do] - [Directories & setting up format update; revise all "original" variables i.e. industrycat_orig; comment title format update]
+* Date: [2023-01-31] File: [PAK_1992_LFS_V01_M_V02_A_GLD_ALL.do] - [Directories & setting up format update; revise all "original" variables i.e. industrycat_orig; comment title format update; modified "industrycat10"]
 * Date: [YYYY-MM-DD] File: [As in Program name above] - [Description of changes]
 
 </_Version Control_>
@@ -841,6 +841,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 *<_industrycat10_>
 	gen byte industrycat10=q09
 	recode industrycat10 11/13=1 21/29 =2 31/39=3 41 42=4 45=4 51/59=5 61/63=6 71/72=7 81/83=8 91=9 92/96 0=10
+	replace industrycat10=. if inlist(q09,70,73,76,77,79,80,84,87,97,98)
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"

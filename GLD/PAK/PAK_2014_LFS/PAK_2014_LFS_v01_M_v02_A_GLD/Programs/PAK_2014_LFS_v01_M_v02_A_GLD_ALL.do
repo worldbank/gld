@@ -33,7 +33,7 @@
 
 <_Version Control_>
 
-* Date: [2023-02-02] File: [PAK_2014_LFS_V01_M_V02_A_GLD_ALL.do] - [Directories & setting up format update; revise all "original" variables i.e. industrycat_orig; comment title format update]
+* Date: [2023-02-02] File: [PAK_2014_LFS_V01_M_V02_A_GLD_ALL.do] - [Directories & setting up format update; revise all "original" variables i.e. industrycat_orig; comment title format update; modified "educat7"]
 * Date: [YYYY-MM-DD] File: [As in Program name above] - [Description of changes]
 
 </_Version Control_>
@@ -609,7 +609,7 @@ Therefore, the ed_mod_age was set to 5 as oppsed to 0.
 
 *<_educat7_>
 	gen byte educat7=SEC4_COL9
-	recode educat7 (3=2) (4=3) (5/6=4) (8/15=7) 
+	recode educat7 (3=2) (4=3) (5/6=4) (8/15=7) (0 16 18 34=.) 
 	replace educat7=5 if SEC4_COL9==7&SEC4_COL10==1
 	replace educat7=7 if SEC4_COL9==7&inrange(SEC4_COL10,8,15) 
 	replace educat7=. if age<ed_mod_age 
