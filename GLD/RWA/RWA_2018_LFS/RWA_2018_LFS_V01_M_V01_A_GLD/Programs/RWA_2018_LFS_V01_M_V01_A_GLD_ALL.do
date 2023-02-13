@@ -1011,6 +1011,7 @@ For those who are looking for work but not available,  fill out using responses 
 *<_wage_no_compen_>
 	gen double wage_no_compen = .
 	replace wage_no_compen = cash
+	replace wage_no_compen = . if lstatus !=1 
 
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 	
@@ -1027,7 +1028,8 @@ For those who are looking for work but not available,  fill out using responses 
 </_unitwage_note> */
 
 	gen byte unitwage = 5 if !missing(wage_no_compen)
-	
+	replace unitwage = . if lstatus !=1 
+
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
 	label values unitwage lblunitwage

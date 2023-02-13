@@ -1,4 +1,4 @@
-
+ th
 /*%%=============================================================================================
 	0: GLD Harmonization Preamble
 ==============================================================================================%%*/
@@ -239,10 +239,6 @@ use "`path_in_stata'/Labour_force_survey_2020_pub.dta", clear
 {
 
 *<_urban_>
-/* <_urban_note>
-
-There is no urban variable in the dataset
-</_urban_note> */
 
 	gen byte urban = (Code_UR == 1)
 	label var urban "Location is urban"
@@ -1038,6 +1034,7 @@ For those who are looking for work but not available,  fill out using responses 
 	replace net_income = 200000 if D18B == 5
   
 	replace wage_no_compen = net_income if missing(wage_no_compen)
+	replace wage_no_compen = . if lstatus !=1 
   
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 	
@@ -1060,7 +1057,7 @@ For those who are looking for work but not available,  fill out using responses 
 	replace unitwage = 1 if D13 == 4 | D16 == 4
 	replace unitwage = 10 if D13 == 5 | D16 == 5
 	replace unitwage = 5 if !missing(impute_wage) | inrange(D18B, 1, 5) | !missing(D18A1)
-	
+	replace unitwage = . if lstatus !=1
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
 	label values unitwage lblunitwage
