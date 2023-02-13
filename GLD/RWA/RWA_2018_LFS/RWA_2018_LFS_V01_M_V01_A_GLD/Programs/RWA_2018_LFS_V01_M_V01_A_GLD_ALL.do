@@ -747,7 +747,7 @@ foreach v of local ed_var {
   * Define those unemployed
   ***************************
 	recode C21* (2 = 0)
-	egen effort = rowtotal(C21A - C21G C21L)
+	egen effort = rowtotal(C21A - C21G C21L C21B)
 	gen didwhatittakes = (effort>=1 & !missing(effort))
 	* U1 - Made an effort to look for a job, and would have started if the job becomes available 
 	replace lstatus = 2 if (C19 == 1 & didwhatittakes==1) & C25 == 1
@@ -784,7 +784,13 @@ foreach v of local ed_var {
 	* N7 - Not looking for work, have not found a job, wants a job and available to work (potential LF)
 	replace lstatus = 3 if C19 == 2 & C20 == 2 & C23 == 1 & C25  == 1
 
-
+	* N8 - All other categories
+	replace lstatus = 3 if missing(lstatus) & age>minlaborage & !missing(age)
+	
+	* There is one inconsistency: one individual did not report any method of job search but also did not report "no method" (C21H == 1)
+	* In this case, we just defer to status1
+	replace lstatus = status1 if status1 == 2 & lstatus == 3
+	
 	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -916,13 +922,12 @@ For those who are looking for work but not available,  fill out using responses 
 *<_empstat_>
 	gen byte empstat=. 
 	replace empstat = 1 if inlist(D05, 1, 2)
+	replace empstat = 2 if D05 == 6
 	replace empstat = 3 if D05 == 3
 	replace empstat = 4 if D05 == 4
-	replace empstat = 5 if inlist(D05, 5, 6, 7)
-	
-	/*
-	* The raw empstat variable does not have a category for nonpaid employee. While there is information on whether the respondent has engaged in unpaid labor in the past 7 days, it is not clear if that activity corresponds to the primary activity or secondary activity as this is in module C. All information relating to primary activity are in module D and Question D05 feeds into that.
-	*/
+	replace empstat = 5 if D05 == 5
+	replace empstat = . if lstatus !=1
+
 	
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
@@ -1134,13 +1139,15 @@ For those who are looking for work but not available,  fill out using responses 
 *<_empstat_2_>
 	gen byte empstat_2 = .
 	replace empstat_2 = 1 if inlist(E04, 1, 2)
+	replace empstat_2 = 2 if E04 == 6
 	replace empstat_2 = 3 if E04 == 3
 	replace empstat_2 = 4 if E04 == 4
-	replace empstat_2 = 5 if inlist(E04, 5, 6, 7)
+	replace empstat_2 = 5 if E04 == 5	
+	replace empstat_2 = . if lstatus != 1
+
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
 	label values empstat_2 lblempstat
 *</_empstat_2_>
-
 
 *<_ocusec_2_>
 	gen byte ocusec_2 = .

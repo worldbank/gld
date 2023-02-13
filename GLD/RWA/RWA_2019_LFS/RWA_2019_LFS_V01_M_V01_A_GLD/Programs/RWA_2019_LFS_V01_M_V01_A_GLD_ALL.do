@@ -941,20 +941,18 @@ For those who are looking for work but not available,  fill out using responses 
 *<_empstat_>
 	gen byte empstat=. 
 	replace empstat = 1 if inlist(D05, 1, 2)
+	replace empstat = 2 if D05 == 6
 	replace empstat = 3 if D05 == 3
 	replace empstat = 4 if D05 == 4
-	replace empstat = 5 if inlist(D05, 5, 6, 7)
+	replace empstat = 5 if D05 == 5
 	replace empstat = . if lstatus !=1
-	
-	
-	/*
-	* The raw empstat variable does not have a category for nonpaid employee. While there is information on whether the respondent has engaged in unpaid labor in the past 7 days, it is not clear if that activity corresponds to the primary activity or secondary activity as this is in module C. All information relating to primary activity are in module D and Question D05 feeds into that.
-	*/
+
 	
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat lblempstat
 *</_empstat_>
+
 
 
 *<_ocusec_>
@@ -1187,10 +1185,12 @@ Total	8	100.00
 *<_empstat_2_>
 	gen byte empstat_2 = .
 	replace empstat_2 = 1 if inlist(E04, 1, 2)
+	replace empstat_2 = 2 if E04 == 6
 	replace empstat_2 = 3 if E04 == 3
 	replace empstat_2 = 4 if E04 == 4
-	replace empstat_2 = 5 if inlist(E04, 5, 6, 7)
+	replace empstat_2 = 5 if E04 == 5	
 	replace empstat_2 = . if lstatus != 1
+
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
 	label values empstat_2 lblempstat
 *</_empstat_2_>

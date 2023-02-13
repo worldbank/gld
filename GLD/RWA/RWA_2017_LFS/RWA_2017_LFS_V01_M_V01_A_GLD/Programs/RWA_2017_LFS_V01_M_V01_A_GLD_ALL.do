@@ -749,7 +749,7 @@ foreach v of local ed_var {
 	* Note that question C21A-D were not asked in the August round
 	
 	* U1 - Made an effort to look for a job, and would have started if the job becomes available 
-	replace lstatus = 2 if (C19 == 1 & didwhatittakes == 1) & C25 == 1
+	replace lstatus = 2 if (C19 == 1 & didwhatittakes == 1 & phase == 1) & C25 == 1
 	replace lstatus = 2 if (C19 == 1 & phase == 2) & C25 == 1
 	
 	* U2 - not looking for work because already found one and available to work
@@ -760,17 +760,18 @@ foreach v of local ed_var {
   * Define those not in the LF
   ***************************
 	* N1 - Made an effort to find a job and not available to work (potential LF)
-	replace lstatus = 3 if (C19==1 & didwhatittakes == 1) & C25 == 2
+	replace lstatus = 3 if (C19==1 & didwhatittakes == 1) & C25 == 2 & phase == 1
 	replace lstatus = 3 if (C19 == 1 & phase == 2) & C25 == 2
+	replace lstatus = 3 if C19 == 1 & phase == 2 & missing(C25) & C23 == 2
 
 	* N2 - Did not make an effort, wants to work, and available to work (potential LF)
-	replace lstatus = 3 if (C19==1 & didwhatittakes == 0) & C23 == 1 & C25 == 1 
-	
+	replace lstatus = 3 if (C19==1 & didwhatittakes == 0) & C23 == 1 & C25 == 1  & phase == 1
+
 	* N3 - Did not make an effort and does not want to work (not in LF)
-	replace lstatus = 3 if (C19==1 & didwhatittakes == 0) & C23 == 2
+	replace lstatus = 3 if (C19==1 & didwhatittakes == 0) & C23 == 2 & phase == 1
 	
 	* N4 - Did not make an effort , wants to work but not available to work (not in LF)
-	replace lstatus = 3 if (C19==1 & didwhatittakes == 0) & C23 == 1 & C25 == 2
+	replace lstatus = 3 if (C19==1 & didwhatittakes == 0) & C23 == 1 & C25 == 2 & phase == 1
 	
 	* N5 - Not looking for work, already found a job, but not available to work (potential LF)
 	replace lstatus = 3 if C19 == 2 & C20 == 1 & C25 == 2
@@ -781,8 +782,12 @@ foreach v of local ed_var {
 	* N7 - Not looking for work, have not found a job, wants a job and not available to work (not in LF)
 	replace lstatus = 3 if C19 == 2 & C20 == 2 & C23 == 1 & C25  == 2
 
-	* N7 - Not looking for work, have not found a job, wants a job and available to work (potential LF)
+	* N8 - Not looking for work, have not found a job, wants a job and available to work (potential LF)
 	replace lstatus = 3 if C19 == 2 & C20 == 2 & C23 == 1 & C25  == 1
+	
+	* For the August round, we defer to the derived variable (status1) bec the dataset is missing information on method of job search (C21)
+	* The group below report looking for job and being available, but not sure if they actively searched 
+	replace lstatus = status1 if lstatus != status1 & phase == 2 & !missing(status1)
 
 	* There is one individual (pid == " 5538640203") claimed to do unpaid work but no other information to allow us to determine true labor status. Unpaid work is not sufficient to be employed
 	replace lstatus = . if age < minlaborage
@@ -798,7 +803,10 @@ foreach v of local ed_var {
 	replace potential_lf = 0 if lstatus == 3
 	
 	* P1 - Made an effort to find a job and not available to work (potential LF)
-	replace potential_lf = 1 if (C19==1 & didwhatittakes == 1) & C25 == 2
+	replace potential_lf = 1 if (C19==1 & didwhatittakes == 1) & C25 == 2 & phase == 1
+	replace potential_lf = 1 if (C19 == 1 & phase == 2) & C25 == 2
+	replace potential_lf = 1 if C19 == 1 & phase == 2 & missing(C25) & C23 == 2
+	
 	* P2 - Did not make an effort, wants to work, and available to work (potential LF)
 	replace potential_lf = 1 if (C19==1 & didwhatittakes == 0) & C23 == 1 & C25 == 1
 	
@@ -917,13 +925,12 @@ For those who are looking for work but not available,  fill out using responses 
 *<_empstat_>
 	gen byte empstat=. 
 	replace empstat = 1 if inlist(D05, 1, 2)
+	replace empstat = 2 if D05 == 6
 	replace empstat = 3 if D05 == 3
 	replace empstat = 4 if D05 == 4
-	replace empstat = 5 if inlist(D05, 5, 6, 7)
-	
-	/*
-	* The raw empstat variable does not have a category for nonpaid employee. While there is information on whether the respondent has engaged in unpaid labor in the past 7 days, it is not clear if that activity corresponds to the primary activity or secondary activity as this is in module C. All information relating to primary activity are in module D and Question D05 feeds into that.
-	*/
+	replace empstat = 5 if D05 == 5
+	replace empstat = . if lstatus !=1
+
 	
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
@@ -1220,9 +1227,12 @@ Other(specify) |         0          0          0          0          0          
 *<_empstat_2_>
 	gen byte empstat_2 = .
 	replace empstat_2 = 1 if inlist(E04, 1, 2)
+	replace empstat_2 = 2 if E04 == 6
 	replace empstat_2 = 3 if E04 == 3
 	replace empstat_2 = 4 if E04 == 4
-	replace empstat_2 = 5 if inlist(E04, 5, 6, 7)
+	replace empstat_2 = 5 if E04 == 5	
+	replace empstat_2 = . if lstatus != 1
+
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
 	label values empstat_2 lblempstat
 *</_empstat_2_>

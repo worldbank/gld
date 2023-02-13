@@ -1,4 +1,4 @@
- th
+
 /*%%=============================================================================================
 	0: GLD Harmonization Preamble
 ==============================================================================================%%*/
@@ -1169,10 +1169,12 @@ For those who are looking for work but not available,  fill out using responses 
 *<_empstat_2_>
 	gen byte empstat_2 = .
 	replace empstat_2 = 1 if inlist(E04, 1, 2)
+	replace empstat_2 = 2 if E04 == 6
 	replace empstat_2 = 3 if E04 == 3
 	replace empstat_2 = 4 if E04 == 4
-	replace empstat_2 = 5 if inlist(E04, 5, 6, 7)
+	replace empstat_2 = 5 if E04 == 5	
 	replace empstat_2 = . if lstatus != 1
+
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
 	label values empstat_2 lblempstat
 *</_empstat_2_>
