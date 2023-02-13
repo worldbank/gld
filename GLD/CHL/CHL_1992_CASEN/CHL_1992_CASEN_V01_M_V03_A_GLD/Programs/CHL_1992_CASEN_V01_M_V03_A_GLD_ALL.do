@@ -31,7 +31,7 @@
 -----------------------------------------------------------------------
 <_Version Control_>
 * Date: [2022-06-10] - [changes in isco]
-* Date: [2022-08-09] - [changes in industrycat_isic]
+* Date: [2022-08-09] - [changes in industry_isic]
 </_Version Control_>
 -------------------------------------------------------------------------*/
 

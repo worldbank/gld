@@ -241,7 +241,12 @@ label values subnatid2 lblsubnatid2
 *</_subnatid3_>
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = subnatid1
+	*gen subnatidsurvey = subnatid1
+	
+	gen urban_text = "Urban" if urban == 1
+	replace urban_text = "Rural" if urban == 0
+	egen subnatidsurvey = concat(subnatid1, urban_text), punct(" - ")
+	drop urban_text
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
