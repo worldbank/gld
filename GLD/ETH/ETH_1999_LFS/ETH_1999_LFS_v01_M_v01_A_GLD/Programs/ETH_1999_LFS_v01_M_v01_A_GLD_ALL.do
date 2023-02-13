@@ -269,50 +269,9 @@ in the offical annual report, they were grouped at their regional level.
 
 
 *<_subnatid2_>
-	/*gen code_region=LF01
-	recode code_region (12=8) (13=9) (14=10) (15=11)
-	egen code=concat(code_region LF02), punct(".")
-	merge m:1 code using "`path_in_stata'\ETH_zone_name.dta" 
-	replace zone_name=code if _merge==1
-	drop if _merge==2
-	gen subnatid2=zone_name
-	drop _merge code_region code _merge*/
-	
-	preserve
 	decode LF01, gen(subnatid1_proposal)
-	replace subnatid1_proposal = subinstr(subnatid1_proposal,"."," -",1)
-	tab subnatid1_proposal
-	
 	gen subnatid2_proposal=string(LF01) + "." + string(LF02)
-	collapse (first) LF01 LF02, by(subnatid1_proposal subnatid2_proposal)
-	
-	gen mh_lev_1=LF01 
-	gen mh_lev_2=LF02
-	gen mh_s1=subnatid1_proposal
-	gen mh_s2=subnatid2_proposal
-	tempfile subnatid_lev_2
-	save "`subnatid_lev_2'"
-	
-	collapse (first) mh_*, by(subnatid1_proposal)
-	tempfile subnatid_lev_1
-	save "`subnatid_lev_1'"
-	
-	restore
-	merge m:1 LF01 LF02 using "`subnatid_lev_2'", assert(match) keepusing(subnatid1_proposal subnatid2_proposal) nogen
-	gen migrated_from_code_corrected=""
-	gen mh_lev_1=LF18 if migrated_from_cat==4
-	merge m:1 mh_lev_1 using "`subnatid_lev_1'", assert(master match) keepusing(mh_s1) nogen
-	replace migrated_from_code_corrected=mh_s1 if migrated_from_cat==4
-	
-	gen mh_m_code_corr_same_admin1=string(LF18) + "." + string(LF19) if migrated_from_cat==3	
-	replace migrated_from_code_corrected=mh_m_code_corr_same_admin1 if migrated_from_cat==3
-	
-	replace migrated_from_code_corrected=subnatid2_proposal if migrated_from_cat==2
-	drop mh_*
-
-
-
-
+	gen subnatid2=subnatid2_proposal
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
 
@@ -326,12 +285,11 @@ in the offical annual report, they were grouped at their regional level.
 
 
 *<_subnatidsurvey_>	
-	decode LF01, gen(region_name)
-	replace region_name=proper(region_name)
+	replace subnatid1_proposal=proper(subnatid1_proposal)
 	decode urban, gen(urban_name)
-	egen subnatidsurvey=concat(region_name urban_name), punct("-")
+	egen subnatidsurvey=concat(subnatid1_proposal urban_name), punct("-")
 	label var subnatidsurvey "Administrative level at which survey is representative"
-*</_subnatidsurvey_>
+*</_subnatidsurvey_>                
 
 
 /* <_subnatid1_prev_note_>
@@ -543,16 +501,11 @@ to years since left previous residence). However, info is
 *</_migrated_from_urban_>
 
 
-/*<_migrated_from_cat_note_>
-Still pending on confirmation on the codelist.
-*<_migrated_from_cat_note_>*/
-
-
 *<_migrated_from_cat_>
 	gen mh_not_same_admin1=(LF18!=LF01) if !missing(LF18)
 
 	gen migrated_from_cat=.
-	replace migrated_from_cat=5 if mh_not_same_admin1==1 & LF18== 6
+	replace migrated_from_cat=5 if mh_not_same_admin1==1 & LF18==16
 	replace migrated_from_cat=4 if mh_not_same_admin1==1 & inrange(LF18, 1, 15)
 	
 	gen mh_same_admin1=(LF18==LF01) if !missing(LF18)
@@ -569,14 +522,32 @@ Still pending on confirmation on the codelist.
 
 
 *<_migrated_from_code_>
-	gen code_region=LF01
-	recode code_region (12=8) (13=9) (14=10) (15=11)
-	egen code=concat(code_region LF02), punct(".")
-	merge n:n code using "`path_in_stata'\ETH_zone_name.dta" 
-	replace zone_name=code if _merge==1
-	drop if _merge==2
-	gen migrated_from_code=zone_name
-	drop _merge code_region code _merge
+	preserve
+	collapse (first) LF01 LF02, by(subnatid1_proposal subnatid2_proposal)
+	gen mh_lev_1=LF01 
+	gen mh_lev_2=LF02
+	gen mh_s1=subnatid1_proposal
+	gen mh_s2=subnatid2_proposal
+	tempfile subnatid_lev_2
+	save "`subnatid_lev_2'"
+	
+	collapse (first) mh_*, by(subnatid1_proposal)
+	tempfile subnatid_lev_1
+	save "`subnatid_lev_1'"
+	
+	restore
+	merge m:1 LF01 LF02 using "`subnatid_lev_2'", assert(match) keepusing(subnatid1_proposal subnatid2_proposal) nogen
+
+	gen migrated_from_code=""
+	gen mh_lev_1=LF18 if migrated_from_cat==4
+	merge m:1 mh_lev_1 using "`subnatid_lev_1'", assert(master match) keepusing(mh_s1) nogen
+	replace migrated_from_code=mh_s1 if migrated_from_cat==4
+	
+	gen mh_m_code_corr_same_admin1=string(LF18) + "." + string(LF19) if migrated_from_cat==3	
+	replace migrated_from_code=mh_m_code_corr_same_admin1 if migrated_from_cat==3
+	
+	replace migrated_from_code=subnatid2_proposal if migrated_from_cat==2
+	drop mh_*
 	replace migrated_from_code="" if migrated_binary!=1
 	replace migrated_from_code="" if age<migrated_mod_age
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
@@ -790,7 +761,6 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 	gen vocational_field_orig=LF25
 	decode LF25, gen(training_field)
 	labmask vocational_field_orig, values(training_field)
-	replace vocational_field_orig=. if vocational_field_orig==99
 	label var vocational_field_orig "Field of training"
 *</_vocational_field_orig_>
 
@@ -1049,7 +1019,6 @@ treated as "Paid employee".
 
 *<_wage_no_compen_>
 	gen double wage_no_compen=.
-	replace wage_no_compen=0 if empstat==2
 	replace wage_no_compen=. if lstatus!=1
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>

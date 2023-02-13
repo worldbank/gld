@@ -61,7 +61,7 @@ set mem 800m
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-local server  "Z:\GLD-Harmonization\573465_JT"
+local server  "Y:\GLD-Harmonization\573465_JT"
 local country "ETH"
 local year    "2005"
 local survey  "LFS"
@@ -288,11 +288,8 @@ in the offical annual report, they were grouped at their regional level.
 *<_subnatid2_>
 	gen code_region=ID01
 	egen code=concat(code_region ID02), punct(".")
-	merge m:1 code using "`path_in_stata'\ETH_zone_namING_2005.dta" 
-	drop if _merge==2
-	gen subnatid2=zone_name
-	drop if _merge!=3
-	drop _merge code_region code 
+	merge m:1 code using "`path_in_stata'\ETH_zone_namING_2005.dta", keep(match) nogen
+	gen subnatid2=code+" "+zone_name
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
 
@@ -306,10 +303,10 @@ in the offical annual report, they were grouped at their regional level.
 
 
 *<_subnatidsurvey_>	
-	decode ID01, gen(region_name)
-	replace region_name=proper(region_name)
+	decode ID01, gen(subnatid1_proposal)
+	replace subnatid1_proposal=proper(subnatid1_proposal)
 	decode urban, gen(urban_name)
-	egen subnatidsurvey=concat(region_name urban_name)
+	egen subnatidsurvey=concat(subnatid1_proposal urban_name), punct("-")
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -547,40 +544,12 @@ to years since left previous residence). However, info is
 *</_migrated_from_urban_>
 
 
-/*<_migrated_from_cat_note_>
-Detailed questions like region or zone of precious residence, area of previous 
-residence and reasons for migration were asked only to recent migrants who moved
-our from their original place during the 5 years prior to the date of the interview. 
-
-Previous coding (now pending confirmation on the codelist):
-
+*<_migrated_from_cat_>
 	gen migrated_from_cat=.
-	replace migrated_from_cat=2 if ID02==LF16 & migrated_binary==1
-	replace migrated_from_cat=. if age<migrated_mod_age
 	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country"
 	label values migrated_from_cat lblmigrated_from_cat
 	label var migrated_from_cat "Category of migration area"
-*<_migrated_from_cat_note_>*/
-
-
-*<_migrated_from_cat_>
-	gen migrated_from_cat=.
-	label var migrated_from_cat "Category of migration area"
 *</_migrated_from_cat_>
-
-
-/*<_migrated_from_code_note_>
-The codelist of "migrated from code" was supposed to be at the zone-level, meaning
-that it should be in the same format of ID02.
-However, LF16 has 80 categories which do not have labels. So we could not created
-a labeled var out of it nor could we use the zone name list used for subnatid2 here.
-
-Previous coding (now pending confirmation on the codelist)
-	gen migrated_from_code=LF16
-	replace migrated_from_code=. if migrated_binary!=1
-	replace migrated_from_code=. if age<migrated_mod_age
-	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"   
-*<_migrated_from_code_note_>*/
 
 
 *<_migrated_from_code_>
@@ -1136,7 +1105,6 @@ treated as "Paid employee".
 
 *<_industry_orig_2_>
 	gen industry_orig_2=LF51
-	replace industry_orig_2=. if LF50!=1
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 

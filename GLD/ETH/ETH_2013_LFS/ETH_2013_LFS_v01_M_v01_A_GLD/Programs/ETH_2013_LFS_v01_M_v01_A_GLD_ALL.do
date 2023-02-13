@@ -58,7 +58,7 @@ set mem 800m
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-local server  "Z:\GLD-Harmonization\573465_JT"
+local server  "Y:\GLD-Harmonization\573465_JT"
 local country "ETH"
 local year    "2013"
 local survey  "LFS"
@@ -256,7 +256,7 @@ As reported, 1950 PSUs in total.
 
 *<_subnatid1_>
 	gen subnatid1_prep=reg01
-	label de lblsubnatid1 1 "1-Tigray" 2 "2-Afar" 3 "3-Amhara" 4 "4-Oromiya" 5 "5-Somali" 6 "6-Benishangul-Gumuz" 7 "7-SNNPR" 12 "12-Gambela" 13 "13-Hareri" 14 "14-Addis Ababa" 15 "15-Dire Dawa"
+	label de lblsubnatid1 1 "1 - Tigray" 2 "2 - Afar" 3 "3 - Amhara" 4 "4 - Oromiya" 5 "5 - Somali" 6 "6 - Benishangul-Gumuz" 7 "7 - SNNPR" 12 "12 - Gambela" 13 "13 - Hareri" 14 "14 - Addis Ababa" 15 "15 - Dire Dawa"
 	label values subnatid1_prep lblsubnatid1
 	decode subnatid1_prep, gen(subnatid1)
 	label var subnatid1 "Subnational ID at First Administrative Level"
@@ -266,9 +266,9 @@ As reported, 1950 PSUs in total.
 *<_subnatid2_>
 	decode reg01, gen(kilil)
 	replace kilil=proper(kilil)
-	replace str_ID102=usubinstr(str_ID102, "0", "", 1)
+	replace str_ID102=subinstr(str_ID102, "0", "", 1)
 	replace str_ID102="Zone"+str_ID102
-	egen subnatid2=concat(kilil str_ID102), punct(".") 
+	egen subnatid2=concat(kilil str_ID102), punct("-") 
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
 
@@ -507,22 +507,6 @@ whether the disability relates to walking.
 *</_migrated_from_urban_>
 
 
-/*<_migrated_from_cat_note_>
-Detailed questions like region or zone of previous residence, area of previous 
-residence and reasons for migration were asked only to recent migrants who moved
-our from their original place during the 5 years prior to the date of the interview. 
-
-Pending confirmation on the codelist. Previous codes:
-	gen migrated_from_cat=.
-	replace migrated_from_cat=2 if LF207==ID102 & migrated_binary==1
-	replace migrated_from_cat=5 if LF207==96 & migrated_binary==1
-	replace migrated_from_cat=. if age<migrated_mod_age
-	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country"
-	label values migrated_from_cat lblmigrated_from_cat
-	label var migrated_from_cat "Category of migration area"
-*<_migrated_from_cat_note_>*/
-
-
 *<_migrated_from_cat_>
 	gen migrated_from_cat=.
 	replace migrated_from_cat=. if age<migrated_mod_age
@@ -530,19 +514,6 @@ Pending confirmation on the codelist. Previous codes:
 	label values migrated_from_cat lblmigrated_from_cat
 	label var migrated_from_cat "Category of migration area"
 *</_migrated_from_cat_>
-
-
-/*<_migrated_from_code_note_>
-
-LF207 has labels but not sure whether the codes are the same as ID102(zone),
-Therefore we did not code migrated_from_cat "2-From same admin2 area".
-
-Previous codes are as follows.Pending confirmation on the codelist:
-	gen migrated_from_code=LF207
-	replace migrated_from_code=. if migrated_binary!=1
-	replace migrated_from_code=. if age<migrated_mod_age
-	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
-*<_migrated_from_code_note_>*/
 
 
 *<_migrated_from_code_>
@@ -1333,7 +1304,6 @@ According to the annual report, employment status of a person was classified int
 
 *<_industry_orig_year_>
 	gen industry_orig_year=LF505
-	replace industry_orig_year=. if lstatus_year!=1
 	label var industry_orig_year "Original industry record main job 12 month recall"
 *</_industry_orig_year_>
 

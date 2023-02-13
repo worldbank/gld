@@ -55,7 +55,7 @@ set mem 800m
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-local server  "Z:\GLD-Harmonization\573465_JT"
+local server  "Y:\GLD-Harmonization\573465_JT"
 local country "ETH"
 local year    "2021"
 local survey  "LFS"
@@ -554,16 +554,22 @@ out from their original place during the 5 years prior to the date of the interv
 
 
 *<_migrated_from_cat_>
-	gen wcode=substr(subnatid3, 1,6)
-	gen zcode=substr(subnatid3, 1,4)
-	gen rcode=substr(subnatid3, 1,2)
 	gen migrated_from_cat=.
-	replace migrated_from_cat=1 if wcode==LF605_WEREDA & migrated_binary==1 & LF604==58
-	replace migrated_from_cat=2 if zcode==LF605_ZONE & migrated_binary==1 & LF604==58 & migrated_from_cat==.
-	replace migrated_from_cat=3 if rcode==LF605_REGION & migrated_binary==1 & LF604==58 & migrated_from_cat==.
-	replace migrated_from_cat=4 if rcode!=LF605_REGION & migrated_binary==1 & LF604==58 & migrated_from_cat==.
-	replace migrated_from_cat=5 if migrated_binary==1 & !mi(LF604) & LF604!=58 & migrated_from_cat==.
-	replace migrated_from_cat=. if age<migrated_mod_age
+	gen not_same_admin1=(LF605_REGION!=str_ID101) if !mi(LF605_REGION)
+	replace migrated_from_cat=5 if migrated_binary==1 & LF604!=58
+	replace migrated_from_cat=4 if not_same_admin1==1 & LF604==58
+	
+	gen same_admin1=(LF605_REGION==str_ID101) if !missing(LF605_REGION)
+	gen admin2=str_ID101+str_ID102
+	gen same_admin2=(LF605_ZONE==admin2) if same_admin1==1
+	
+	replace migrated_from_cat=3 if same_admin2==0
+	replace migrated_from_cat=2 if same_admin2==1 
+	
+	gen admin3=str_ID101+str_ID102+str_ID103
+	gen same_admin3=(LF605_WEREDA==admin3) if same_admin2==1
+	replace migrated_from_cat=1 if same_admin3==1
+	replace migrated_from_cat=. if age<migrated_mod_age|migrated_binary!=1
 	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country"
 	label values migrated_from_cat lblmigrated_from_cat
 	label var migrated_from_cat "Category of migration area"
@@ -572,17 +578,60 @@ out from their original place during the 5 years prior to the date of the interv
 
 *<_migrated_from_code_>
 	destring LF605_REGION LF605_ZONE LF605_WEREDA, replace
-	gen migrated_from_code=cond(LF605_WEREDA<.,LF605_WEREDA,cond(LF605_ZONE<.,LF605_ZONE,cond(LF605_REGION<.,LF605_ZONE,LF604)))
-	replace migrated_from_code=. if migrated_binary!=1
-	replace migrated_from_code=. if age<migrated_mod_age
+	gen migrated_from_code=cond(migrated_from_cat==1,LF605_WEREDA,cond(migrated_from_cat==2,LF605_ZONE,cond(migrated_from_cat==3,LF605_REGION,cond(migrated_from_cat==4,LF605_REGION,.))))
+	
+	preserve
+	use "`path_in_stata'\ETH_2021_subnatid_codebook.dta", clear
+	collapse (first) Region, by(rcode)
+	destring rcode, gen(migrated_from_code)
+	
+	tempfile migrate_r
+	save `migrate_r'
+	restore
+	merge m:1 migrated_from_code using `migrate_r'
+	replace Region="Tigray" if _merge!=3&(migrated_from_cat==3|migrated_from_cat==4)
+	replace rcode="01" if Region=="Tigray"
+	
+	preserve 
+	use "`path_in_stata'\ETH_2021_subnatid_codebook.dta", clear
+	keep Region rcode Zone zcode
+	replace zcode=rcode+zcode
+	gen Zone_name=Region+"-"+Zone
+	collapse (first) Zone_name, by(zcode)
+	destring zcode, gen(migrated_from_code)
+
+	tempfile migrate_z
+	save `migrate_z'
+	restore
+	merge m:1 migrated_from_code using `migrate_z', keep(match master) nogen
+	
+	preserve
+	use "`path_in_stata'\ETH_2021_subnatid_codebook.dta", clear
+	keep Region rcode Zone zcode Wereda wcode
+	replace wcode=rcode+zcode+wcode
+	gen Wereda_name=Region+"-"+Zone+"-"+Wereda
+	collapse (first) Wereda_name, by(wcode)
+	destring wcode, gen(migrated_from_code)
+	tempfile migrate_w
+	save `migrate_w'
+	restore
+	merge m:1 migrated_from_code using `migrate_w', keep(match master) nogen
+	gen from_code=rcode+" "+Region if inlist(migrated_from_cat,3,4)
+	replace from_code=zcode+" "+Zone_name if migrated_from_cat==2
+	replace from_code=wcode+" "+Wereda_name if migrated_from_cat==1
+	drop migrated_from_code
+	rename from_code migrated_from_code
+	replace migrated_from_code="" if age<migrated_mod_age|migrated_binary!=1
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
 *</_migrated_from_code_>
 
 
 *<_migrated_from_country_>
-	gen migrated_from_country=LF604
-	replace migrated_from_country=. if migrated_binary!=1
-	replace migrated_from_country=. if age<migrated_mod_age
+	gen code=LF604
+	merge m:1 code using "`path_in_stata'\migrate_country.dta", assert(match) nogen
+	gen migrated_from_country=iso_name if inrange(LF604,1,195) & migrated_from_cat==5
+	replace migrated_from_country="" if age<migrated_mod_age|migrated_binary!=1
+	drop code country_name iso_name
 	label var migrated_from_country "Code of migration country (ISO 3 Letter Code)"
 *</_migrated_from_country_>
 
@@ -1346,7 +1395,6 @@ According to the annual report, employment status of a person was classified int
 
 *<_industry_orig_year_>
 	gen industry_orig_year=LF505
-	replace industry_orig_year=. if lstatus_year!=1
 	label var industry_orig_year "Original industry record main job 12 month recall"
 *</_industry_orig_year_>
 
