@@ -17,10 +17,10 @@
 
 	** Path to "Helper programs" folder <-- INPUT --
 	global helper "[Path file to helpers here]" 
-
+		
 	** Path to GLD data file            <-- INPUT -- 
 	global mydata "[Path file to harmonized GLD file here]" 
-
+	
 	** Choose output folder             <-- INPUT --
 	global output "[Path file to folder where output to be stored (commonly Work)]"
 	
