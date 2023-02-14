@@ -137,13 +137,13 @@ The size of the subsistence farmers in Rwanda is large, ranging between 33% and 
  
  The tables below show how the indicator values can vary substantially between the two definitions. Because the survey does not ask subsistence farmers about the characteristics of their jobs, the estimates below rely on the assumption that (i) all subsistence farmers belong in agriculture and (ii) they are all self-employed. The first assumption can be accepted wholeheartedly since the question on subsistence farmers explicitly asks for activites in agriculture, although it is possible they engage in activities outside agriculture for their consumption (e.g., construction). Meanwhile, the second assumption is a simplification as they can also be non-paid employees, which we cannot verify without other information, such as wages. 
  
- ![image](utilities/lstatus.png)
+ ![image](utilities/lstatus.PNG)
 
-  ![image](utilities/empstat.png)
+  ![image](utilities/empstat.PNG)
   
-  ![image](utilities/indus.png)
+  ![image](utilities/indus.PNG)
   
-   ![image](utilities/occup.png)
+   ![image](utilities/occup.PNG)
 
 
 
