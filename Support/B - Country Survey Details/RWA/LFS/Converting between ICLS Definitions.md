@@ -106,15 +106,45 @@ Currently, the code used to create the `lstatus` variable (which distinguishes b
 
 # Added lines of code to match the old definition
 
-Thus, to obtain a unique series with the old definition we would first need to identify the subsistence farmers. In the Rwanda LFS, this includes those who reported working mainly for own consumption (variable `H1`) in the last 4 weeks, excluding those who reported working for sale or trade in the past 7 days (codes 1 and 2 in variable `C05`).
+Thus, to obtain a unique series with the old definition we would first need to identify the subsistence farmers. In the Rwanda LFS, this includes those who reported engaging in agriculture mainly for own consumption  (variable `H1`) in the last 4 weeks, excluding those who reported working for sale or trade in the past 7 days (codes 1 and 2 in variable `C05`).
 
-Once the subsistence farmers are identified, all it takes is to recode lstatus to 1. This must be done immediately after the block of code to define the non-participants in the labor force.
+Once the subsistence farmers are identified, all it takes is to recode `lstatus` to 1. This must be done immediately after the block of code to define the non-participants in the labor force.
 
 ```
 	* Identify subsistence farmers
+	
+	** Reported working mainly for own consumption in the past month
 	gen sub_f = H01
+	
+	** Among those, recode to 
 	replace sub_f = 2 if inrange(C05, 1, 2)
 
 	replace lstatus = 1 if sub_f == 1
 
 ```
+
+# Comparing indicators between old and new definition
+
+The size of the subsistence farmers in Rwanda is large, ranging between 33% and 48% of the working age population. For this reason, indicator estimates are very sensitive to the definition used. 
+
+| **Year** | **Subsistence farmers population** | **% of working age** |
+|:---:|:---:|:---:|
+| 2017 | 3,488,359 | 48% |
+| 2018 | 3,417,256 | 45% |
+| 2019 | 3,333,802 | 42% |
+| 2020 | 2,621,935 | 33% |
+| 2021 | 3,048,017 | 36% |
+ 
+ The tables below show how the indicator values can vary substantially between the two definitions. Because the survey does not ask subsistence farmers about the characteristics of their jobs, the estimates below rely on the assumption that (i) all subsistence farmers belong in agriculture and (ii) they are all self-employed. The first assumption can be accepted wholeheartedly since the question on subsistence farmers explicitly asks for activites in agriculture, although it is possible they engage in activities outside agriculture for their consumption (e.g., construction). Meanwhile, the second assumption is a simplification as they can also be non-paid employees, which we cannot verify without other information, such as wages. 
+ 
+ ![image](utilities/lstatus.png)
+
+  ![image](utilities/empstat.png)
+  
+  ![image](utilities/indus.png)
+  
+   ![image](utilities/occup.png)
+
+
+
+ 
