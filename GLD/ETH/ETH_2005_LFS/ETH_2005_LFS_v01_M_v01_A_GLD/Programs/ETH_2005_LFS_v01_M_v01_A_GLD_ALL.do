@@ -289,7 +289,7 @@ in the offical annual report, they were grouped at their regional level.
 	gen code_region=ID01
 	egen code=concat(code_region ID02), punct(".")
 	merge m:1 code using "`path_in_stata'\ETH_zone_namING_2005.dta", keep(match) nogen
-	gen subnatid2=code+" "+zone_name
+	gen subnatid2=code+" - "+zone_name
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
 

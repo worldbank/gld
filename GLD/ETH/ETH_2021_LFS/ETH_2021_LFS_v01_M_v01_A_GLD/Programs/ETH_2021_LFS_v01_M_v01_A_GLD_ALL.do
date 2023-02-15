@@ -289,22 +289,13 @@ In the official annual report, there is supposed to be 1686 EAs (766 major urban
 	save `zone'
 	
 	restore
-	merge m:1 subnatid2 using `zone'
-	drop if _merge==2
-	
-	preserve 
-	use "`path_in_stata'\ETH_2021_subnatid_codebook.dta", clear
-	keep subnatid2 Region
-	duplicates drop
-	tempfile region
-	save `region'
-	
-	restore
-	merge m:1 subnatid2 using `region', keep(match) nogen
-	egen zonename=concat(Region Zone), punct("-")
-	gen zone=subnatid2
-	replace subnatid2=zonename
-	drop Region zonename _merge rcode-kcode 
+	merge m:1 subnatid2 using `zone', keep(match master) nogen
+	decode ID101, gen (region_name)
+	gen subnatid2_code=substr(subnatid2,1,4)
+	gen sub2=subnatid2_code+" - "+region_name+"-"+Zone 
+	drop region_name subnatid2_code rcode-kcode 
+	rename subnatid2 zone
+	rename sub2 subnatid2
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
 
@@ -325,8 +316,9 @@ In the official annual report, there is supposed to be 1686 EAs (766 major urban
 	gen subnatid3=zone+ecode
 	merge m:1 subnatid3 using `wereda', keep(match) nogen
 	egen weredaname=concat(Zone Wereda), punct("-") 
-	replace subnatid3=weredaname
-	drop Zone Wereda weredaname ecode zone
+	gen subnatid3_code=substr(subnatid3,1,6)
+	replace subnatid3=subnatid3_code+" - "+weredaname
+	drop ecode zone Zone Wereda weredaname subnatid3_code
 	label var subnatid3 "Subnational ID at Third Administrative Level"
 *</_subnatid3_>
 
