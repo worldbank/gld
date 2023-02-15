@@ -66,7 +66,7 @@ There are some complications in combining data when there different sources of i
 
   It is worth noting that this approach could potentially result in overestimation of the estimates. However, the number of respondents who reported both in-cash and in-kind earnings at different time frames was minimal. At most, this possibility may occur to only up to 0.9% of wage respondents. 
 
-| **Year** | **# reporting different time frames** | **# reporting wage ** | **% of sample** |
+| **Year** | **# reporting different time frames** | **# reporting wage** | **% of sample** |
 |:---:|:---:|:---:|:---:|
 | 2017 | 136 | 14,880 | 0.9% |
 | 2018 | Data is only available for cash | 14,781 | NA |
