@@ -1,6 +1,6 @@
 # Deriving employment variables
 
-There are cases of variables that were not in the datasets despite being included in the questionnaire or having an estimate reported in NSO reports. It is not clear why these variables were omitted in the datasets. This limits the indicators that can be generated out of the harmonized datasets.
+This section offers a comprehensive overview of the coding process for key employment variables, namely labor status, labor underutilization measures, and wages. It provides detailed explanations for each variable, starting with a description of the characteristics that differentiate the employed, unemployed, and those not in the labor force. The section then goes on to define those who fall into the potential labor force and underemployment categories. Lastly, it delves into the complexities of coding wage information, including the assumptions that underpin this process and how these may impact the accuracy of wage estimates.
 
 ## Labor status
 
@@ -55,7 +55,6 @@ Those in the potential labor force include all individuals who are not in the la
 The underemployed include all individuals who are employed and possess any of the following characteristics
 
 - Looked for other jobs and would take that job if it becomes available
-- 
 - Did not look for other jobs but would want to take more hours if it becomes available
 
 ## Wage
@@ -63,7 +62,29 @@ The underemployed include all individuals who are employed and possess any of th
 Earnings data vary across the datasets. In 2017 and 2020, earnings data are available for both wage earners (cash and in-kind) and self-employed. In 2018 and 2021, data is only avalable for wage earners but only cash earnings are available in the former. And in 2019, there are no earnings data available for any of the employed.
 
 There are some complications in combining data when there different sources of income.
-- When respondent received both earnings in cash and in kind and time frames vary, the time frame for cash is used and in-kind earnings are converted to whatever time frame is used to report cash earnings. For example, if an individual reports receiving cash earnings on a monthly basis and in-kind earnings on a daily basis, the in-kind earnings are imputed in months (i.e., daily in-kind earnings is multiplied by 22).
-- When wage workers were not able to report a specific income value and instead, reported a range of values, a specific value determined by the Rwanda NIS is assigned to the reported range. For more information, refer to page 92 of [this report](utilities/LEBOUR%20FORCE%20SURVEY%20REPORT%20FEB%202017.pdf)
+- In cases where respondents received both cash and in-kind earnings, and the time frames for each varied, the time frame for cash earnings was used as the standard. In-kind earnings were then converted to the same time frame as the cash earnings. For instance, if an individual reported receiving cash earnings on a monthly basis and in-kind earnings on a daily basis, the in-kind earnings were imputed in months by multiplying the daily in-kind earnings by 30.
+
+  It is worth noting that this approach could potentially result in overestimation of the estimates. However, the number of respondents who reported both in-cash and in-kind earnings at different time frames was minimal. At most, this possibility may occur to only up to 0.9% of wage respondents. 
+
+| **Year** | **# reporting different time frames** | **# reporting   wage ** | **% of sample** |
+|:---:|:---:|:---:|:---:|
+| 2017 | 136 | 14,880 | 0.9% |
+| 2018 | Data is only available for cash | 14,781 | NA |
+| 2019 | NA | NA | NA |
+| 2020 | 45 | 11,080 | 0.4% |
+| 2021 | 29 | 13,718 | 0.2% |
+
+- In cases where wage workers were unable to provide an exact income value and instead reported a range of values, the Rwanda National Institute of Statistics (NIS) assigned a specific value to the reported income range. The table below displays the assumed values (highlighted) for each income range indicated by the variable D17.
+
+  It was found that the proportion of respondents with imputed income values, as a percentage of all respondents who reported wage earnings goes as high as 10% in 2018. However, this proportion was cut to half in the more recent surveys (see frequency table below).
+
+| **Year** | **# reporting imputed wage** | **# reporting wages** | **% of sample** |
+|:---:|:---:|:---:|:---:|
+| 2017 | 1,291 | 14,880 | 9% |
+| 2018 | 1,419 | 14,781 | 10% |
+| 2019 | NA | NA | NA |
+| 2020 | 578 | 11,080 | 5% |
+| 2021 | 877 | 13,718 | 6% |
+
 
 
