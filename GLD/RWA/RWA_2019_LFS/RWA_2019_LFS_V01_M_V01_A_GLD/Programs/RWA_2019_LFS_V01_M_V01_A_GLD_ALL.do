@@ -801,6 +801,8 @@ foreach v of local ed_var {
 	
 	* N8 - All other categories
 	replace lstatus = 3 if missing(lstatus) & age>minlaborage & !missing(age)
+	
+	
 	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"

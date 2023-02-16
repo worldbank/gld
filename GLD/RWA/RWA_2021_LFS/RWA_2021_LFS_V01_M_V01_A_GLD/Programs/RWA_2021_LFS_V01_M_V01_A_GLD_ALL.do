@@ -965,13 +965,13 @@ For those who are looking for work but not available,  fill out using responses 
 		 replace tot_inkind = . if D16 == 5
 		 replace tot_inkind = D15A*2 if D13 == 1 & D16== 2
 		 replace tot_inkind = D15A*4 if D13 == 1 & D16==3
-		 replace tot_inkind = D15A*22 if D13 == 1 & D16 == 4
+		 replace tot_inkind = D15A*(30 - 4.33*2) if D13 == 1 & D16 == 4
 		 replace tot_inkind = D15A*2 if D13 == 2 & D16 == 3
-		 replace tot_inkind = D15A*0.25 if D13 == 3 & D16 == 1
+		 replace tot_inkind = D15A*(1/4.33) if D13 == 3 & D16 == 1
 		 replace tot_inkind = D15A*5 if D13 == 3 & D16 == 4
-		 replace tot_inkind = D15A/22 if D13 == 4 & D16 == 1
+		 replace tot_inkind = D15A/(30 - 4.33*2) if D13 == 4 & D16 == 1
 		 replace tot_inkind = D15A/10 if D13 == 4 & D16 == 2
-		 replace tot_inkind = D15A/5 if D13 == 4 & D16 == 4
+		 replace tot_inkind = D15A/5 if D13 == 4 & D16 == 3
 
 
 	
@@ -997,26 +997,20 @@ For those who are looking for work but not available,  fill out using responses 
 
 *<_unitwage_>
 
-/* <_unitwage_note>
-	Unitwage refers to the unit used to record wage_no_compen, *not* the unit of
-	general wage payent. For example, PHL LFS asks about wage periodicity, then
-	asks for basic daily pay. The value of that pay would be wage_no_compen,
-	while unitwage is code 1 ("Daily") for all, regardless of the periodicity.
-</_unitwage_note> */
-
 	gen byte unitwage = .
-	replace unitwage = 5 if D13 == 1 | D16 == 1
-	replace unitwage = 3 if D13 == 2 | D16 == 2
-	replace unitwage = 2 if D13 == 3 | D16 == 3
-	replace unitwage = 1 if D13 == 4 | D16 == 4
-	replace unitwage = 10 if D13 == 5 | D16 == 5
+	replace unitwage = 5 if D13 == 1 
+	replace unitwage = 3 if D13 == 2
+	replace unitwage = 2 if D13 == 3 
+	replace unitwage = 1 if D13 == 4 
+	replace unitwage = 10 if D13 == 5 
 	replace unitwage = 5 if !missing(impute_wage) 
 	replace unitwage = . if missing(wage_no_compen)
+	
+	replace unitwage = . if lstatus != 1
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
 	label values unitwage lblunitwage
 *</_unitwage_>
-
 
 *<_whours_>
 	gen whours = .
