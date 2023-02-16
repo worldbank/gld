@@ -1055,9 +1055,10 @@ Other(specify) |         0          0          0          0          0          
 		 
 		 gen tot_inkind = D15A
 		 replace tot_inkind = . if D16 == 5
-		 replace tot_inkind = D15A*2 if D13 == 1 & D16== 2
+		 replace tot_inkind = D15A*2.167 if D13 == 1 & D16== 2
 		 replace tot_inkind = D15A*4 if D13 == 1 & D16==3
 		 replace tot_inkind = D15A*(30 - 4.33*2) if D13 == 1 & D16 == 4
+		 replace tot_inkind = D15A/2.167 if D13 == 2 & D16 == 1
 		 replace tot_inkind = D15A*2 if D13 == 2 & D16 == 3
 		 replace tot_inkind = D15A*(1/4.33) if D13 == 3 & D16 == 1
 		 replace tot_inkind = D15A*5 if D13 == 3 & D16 == 4
