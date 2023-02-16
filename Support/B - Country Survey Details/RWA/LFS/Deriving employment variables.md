@@ -1,6 +1,6 @@
 # Deriving employment variables
 
-This section offers a comprehensive overview of the coding process for key employment variables, namely labor status, labor underutilization measures, and wages. It provides detailed explanations for each variable, starting with a description of the characteristics that differentiate the employed, unemployed, and those not in the labor force. The section then goes on to define those who fall into the potential labor force and underemployment categories. Lastly, it delves into the complexities of coding wage information, including the assumptions that underpin this process and how these may impact the accuracy of wage estimates.
+This section offers a comprehensive overview of the coding process for key employment variables, namely labor status, labor underutilization measures, and wages. It provides detailed explanations for each variable, starting with a description of the characteristics that differentiate the employed, unemployed, and those not in the labor force. The section then goes on to define those who fall into the potential labor force and underemployment categories. Lastly, it delves into the complexities of coding wage information, including the assumptions that underpin this process and describes the extent it may impact the accuracy of wage estimates.
 
 ## Labor status
 
@@ -59,7 +59,7 @@ The underemployed include all individuals who are employed and possess any of th
 
 ## Wage
 
-Earnings data vary across the datasets. In 2017 and 2020, earnings data are available for both wage earners (cash and in-kind) and self-employed. In 2018 and 2021, data is only avalable for wage earners but only cash earnings are available in the former. And in 2019, there are no earnings data available for any of the employed.
+There underlying earnings variables vary across the surveys. In 2017 and 2020, earnings data are available for both wage earners (cash and in-kind) and self-employed. However, in 2018 and 2021, data is only available for wage earners, and cash earnings are the only type available in 2018. Unfortunately, in 2019, there are no earnings data available for any of the employed.
 
 There are some complications in combining data when there different sources of income.
 - In cases where respondents received both cash and in-kind earnings, and the time frames for each varied, the time frame for cash earnings was used as the standard. In-kind earnings were then converted to the same time frame as the cash earnings. For instance, if an individual reported receiving cash earnings on a monthly basis and in-kind earnings on a daily basis, the in-kind earnings were imputed in months by multiplying the daily in-kind earnings by 30.
@@ -75,6 +75,8 @@ There are some complications in combining data when there different sources of i
 | 2021 | 29 | 13,718 | 0.2% |
 
 - In cases where wage workers were unable to provide an exact income value and instead reported a range of values, the Rwanda National Institute of Statistics (NIS) assigned a specific value to the reported income range. The table below displays the assumed values (highlighted) for each income range indicated by the variable D17.
+
+   ![image](utilities/assumed_values.PNG)
 
   It was found that the proportion of respondents with imputed income values, as a percentage of all respondents who reported wage earnings goes as high as 10% in 2018. However, this proportion was cut to half in the more recent surveys (see frequency table below).
 
