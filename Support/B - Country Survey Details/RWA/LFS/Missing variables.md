@@ -1,7 +1,7 @@
 # Discrepancies between questionnaire and the datasets
 
-There are cases of variables that were not in the datasets despite being included in the questionnaire or having an estimate reported in NSO reports. It is not clear why these variables were omitted in the datasets. This limits the indicators that can be generated out of the harmonized datasets.
+In some instances, variables that were included in the survey questionnaire or had an estimate reported in National Statistical Office (NSO) reports were not found in the datasets. The reason for omitting these variables from the datasets is not clear. However, it is possible that other versions of the datasets are available, in addition to the one that is currently available for download in the Rwanda microdata library. This limitation has implications for analysis and comparisons across all years, as a complete set of indicators is unavailable for certain years.
 
-Below is the list of the recurring variables and those years where they are not available as indicated by the red X marks.
+The table below lists the recurring variables along with the years in which they are not available, indicated by a red X:
 
 ![image](utilities/missing_vars.png)
