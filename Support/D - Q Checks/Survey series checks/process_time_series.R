@@ -12,7 +12,7 @@ vars_to_study <- c("empstat", "educat7", "educat4", "industrycat10", "industryca
 # Note that wage will be included by default, no need to include here
 
 # Define the path to the folder holding the series
-path_in <- "Z:/GLD-Harmonization/582018_AQ/COL"
+path_in <- "Y:/GLD-Harmonization/582018_AQ/COL"
 
 # Define the path to the folder where the graphs ought to be stored in
 path_out <- "C:/Users/wb582018/OneDrive - WBG/Documents/COL do & files/COL_plots"
