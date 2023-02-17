@@ -59,13 +59,20 @@ The underemployed include all individuals who are employed and possess any of th
 
 ## Wage
 
-The underlying earnings variables vary across the surveys. In 2017 and 2020, earnings data are available for both wage earners (cash and in-kind) and self-employed. However, in 2018 and 2021, data is only available for wage earners, and cash earnings are the only type available in 2018. Unfortunately, in 2019, there are no earnings data available for any of the employed.
+The underlying earnings variables vary across the surveys. In 2017 and 2020, earnings data are available for both wage earners (cash and in-kind) and self-employed. However, in 2018 and 2021, data is only available for wage earners, and cash earnings are the only type available in 2018. Unfortunately, in 2019, there are no earnings data available for any of the employed. Table below summarizes the years where each underlying variable is available.
 
-There are some complications in combining data when there different sources of income.
+| **Year** | **Cash** | **In-kind** | **Net business income** |
+|:---:|:---:|:---:|:---:|
+| 2017 | ✔ | ✔ | ✔ |
+| 2018 | ✔ |  |  |
+| 2019 |  |  |  |
+| 2020 | ✔ | ✔ | ✔ |
+| 2021 | ✔ | ✔ |  |
+
 
 ### Cash and in-kind earnings
 
-First, in cases where respondents received both cash and in-kind earnings, and the time frames for each varied, the time frame for cash earnings was used as the standard. In-kind earnings were then converted to the same time frame as the cash earnings. For instance, if an individual reported receiving cash earnings on a monthly basis and in-kind earnings on a daily basis, the in-kind earnings were imputed in months by multiplying the daily in-kind earnings by 30.
+In cases where respondents received both cash and in-kind earnings, and the time frames for each varied, the time frame for cash earnings was used as the standard. In-kind earnings were then converted to the same time frame as the cash earnings. For instance, if an individual reported receiving cash earnings on a monthly basis and in-kind earnings on a daily basis, the in-kind earnings were imputed in months by multiplying the daily in-kind earnings by 30.
 
   It is worth noting that this approach could potentially result in overestimation of the estimates. However, the number of respondents who reported both in-cash and in-kind earnings at different time frames was minimal. At most, this possibility may occur to only up to 0.9% of wage respondents. 
   
