@@ -961,19 +961,20 @@ For those who are looking for work but not available,  fill out using responses 
 
 		 */
 		 
-		 gen tot_inkind = D15A
+	 gen tot_inkind = D15A
 		 replace tot_inkind = . if D16 == 5
 		 replace tot_inkind = D15A*2.167 if D13 == 1 & D16== 2
 		 replace tot_inkind = D15A*4 if D13 == 1 & D16==3
 		 replace tot_inkind = D15A*(30 - 4.33*2) if D13 == 1 & D16 == 4
 		 replace tot_inkind = D15A/2.167 if D13 == 2 & D16 == 1
 		 replace tot_inkind = D15A*2 if D13 == 2 & D16 == 3
+		 replace tot_inkind = D15A*10 if D13 == 2 & D16 == 4
 		 replace tot_inkind = D15A*(1/4.33) if D13 == 3 & D16 == 1
+		replace tot_inkind = D15A/2 if D13 == 3 & D16 == 2
 		 replace tot_inkind = D15A*5 if D13 == 3 & D16 == 4
 		 replace tot_inkind = D15A/(30 - 4.33*2) if D13 == 4 & D16 == 1
 		 replace tot_inkind = D15A/10 if D13 == 4 & D16 == 2
 		 replace tot_inkind = D15A/5 if D13 == 4 & D16 == 3
-
 
 	
 	* W3: For wage workers who reported range of values (only respondents with missing values for cash and inkind payments were asked this question)
@@ -998,12 +999,15 @@ For those who are looking for work but not available,  fill out using responses 
 
 *<_unitwage_>
 
+	count if missing(D12A) & !missing(D15A)
+	* 1 respondent paid in-kind, no cash 
+	
 	gen byte unitwage = .
-	replace unitwage = 5 if D13 == 1 
-	replace unitwage = 3 if D13 == 2
-	replace unitwage = 2 if D13 == 3 
-	replace unitwage = 1 if D13 == 4 
-	replace unitwage = 10 if D13 == 5 
+	replace unitwage = 5 if D13 == 1 | (D16 ==1 & missing(D12A) & !missing(D15A))
+	replace unitwage = 3 if D13 == 2 | (D16 ==2 & missing(D12A) & !missing(D15A))
+	replace unitwage = 2 if D13 == 3  | (D16 ==3 & missing(D12A) & !missing(D15A))
+	replace unitwage = 1 if D13 == 4 | (D16 ==4 & missing(D12A) & !missing(D15A))
+	replace unitwage = 10 if D13 == 5 | (D16 ==5 & missing(D12A) & !missing(D15A))
 	replace unitwage = 5 if !missing(impute_wage) 
 	replace unitwage = . if missing(wage_no_compen)
 	

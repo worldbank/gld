@@ -989,19 +989,20 @@ For those who are looking for work but not available,  fill out using responses 
 
 		 */
 		 
-		 gen tot_inkind = D15A
+		gen tot_inkind = D15A
 		 replace tot_inkind = . if D16 == 5
 		 replace tot_inkind = D15A*2.167 if D13 == 1 & D16== 2
 		 replace tot_inkind = D15A*4 if D13 == 1 & D16==3
 		 replace tot_inkind = D15A*(30 - 4.33*2) if D13 == 1 & D16 == 4
 		 replace tot_inkind = D15A/2.167 if D13 == 2 & D16 == 1
 		 replace tot_inkind = D15A*2 if D13 == 2 & D16 == 3
+		 replace tot_inkind = D15A*10 if D13 == 2 & D16 == 4
 		 replace tot_inkind = D15A*(1/4.33) if D13 == 3 & D16 == 1
+		replace tot_inkind = D15A/2 if D13 == 3 & D16 == 2
 		 replace tot_inkind = D15A*5 if D13 == 3 & D16 == 4
 		 replace tot_inkind = D15A/(30 - 4.33*2) if D13 == 4 & D16 == 1
 		 replace tot_inkind = D15A/10 if D13 == 4 & D16 == 2
 		 replace tot_inkind = D15A/5 if D13 == 4 & D16 == 3
-
 
 
 	
@@ -1046,7 +1047,11 @@ For those who are looking for work but not available,  fill out using responses 
 
 *<_unitwage_>
 
-
+	* Since in-kind earnings are standardized to the time frame used for reporting cash earnings, we only use information for cash earnings.
+	* Also, we don't observe respondents reporting only in-kind.
+	count if missing(D12A) & !missing(D15A)
+	
+	
 	gen byte unitwage = .
 	replace unitwage = 5 if D13 == 1 
 	replace unitwage = 3 if D13 == 2
