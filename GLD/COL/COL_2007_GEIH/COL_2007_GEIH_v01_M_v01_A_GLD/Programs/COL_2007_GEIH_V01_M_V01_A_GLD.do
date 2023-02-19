@@ -177,6 +177,7 @@ merge 1:1 directorio secuencia_p orden using "`general_2007'", force assert(mast
 save "`path_in_stata'\data_2007_final.dta", replace
 
 
+
 /*%%=============================================================================================
 	2: Survey & ID
 ==============================================================================================%%*/
@@ -673,9 +674,15 @@ label var ed_mod_age "Education module application age"
 
 *<_educat7_>
 	gen byte educat7 = p6210
-	recode educat7 2=1 3=2 6=7 9=.
+	replace educat7=1 if p6210==100
+	replace educat7=2 if p6210==200
+	replace educat7=3 if inrange(p6210,300,305)
+	replace educat7=4 if inrange(p6210,400,409)
+	replace educat7=5 if inrange(p6210,510,511)
+	replace educat7=6 if inrange(p6210,600,613)
+	recode educat7 2=1 3=2 4 5=4 6=7 9=.
 	replace educat7=3 if educat7==2 & educy==5
-	*replace educat7=5 if educat7==4 & educy==11 //different from questionnaire but in reality secondary is for 6 years (media:10-11), so no change here
+	replace educat7=5 if educat7==4 & educy==11 //different from questionnaire but in reality secondary is for 6 years (media:10-11), so no change here
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -791,9 +798,10 @@ foreach v of local ed_var {
 
 {
 *<_lstatus_>
-	gen byte lstatus = 1 if oci==1
-	replace lstatus=2 if dsi==1
-	replace lstatus=3 if p7454==2
+	gen byte lstatus = 1 if p6240==1
+	replace lstatus = 1 if p6240==4 & p6500>1000
+	replace lstatus=2 if p7450==0 | p7450==1| p7450==2 | p7450==6 | p7450==7 | p7450==8
+	replace lstatus = 3 if missing(lstatus) & inrange(age,10,9999)
 	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
