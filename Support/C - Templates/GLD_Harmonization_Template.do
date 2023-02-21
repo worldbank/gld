@@ -859,13 +859,13 @@ foreach v of local ed_var {
 
 
 *<_firmsize_l_>
-	gen byte firmsize_l = .
+	gen firmsize_l = .
 	label var firmsize_l "Firm size (lower bracket) primary job 7 day recall"
 *</_firmsize_l_>
 
 
 *<_firmsize_u_>
-	gen byte firmsize_u= .
+	gen firmsize_u= .
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>
 
@@ -980,13 +980,13 @@ foreach v of local ed_var {
 
 
 *<_firmsize_l_2_>
-	gen byte firmsize_l_2 = .
+	gen firmsize_l_2 = .
 	label var firmsize_l_2 "Firm size (lower bracket) secondary job 7 day recall"
 *</_firmsize_l_2_>
 
 
 *<_firmsize_u_2_>
-	gen byte firmsize_u_2 = .
+	gen firmsize_u_2 = .
 	label var firmsize_u_2 "Firm size (upper bracket) secondary job 7 day recall"
 *</_firmsize_u_2_>
 
@@ -1228,13 +1228,13 @@ foreach v of local ed_var {
 
 
 *<_firmsize_l_year_>
-	gen byte firmsize_l_year = .
+	gen firmsize_l_year = .
 	label var firmsize_l_year "Firm size (lower bracket) primary job 12 month recall"
 *</_firmsize_l_year_>
 
 
 *<_firmsize_u_year_>
-	gen byte firmsize_u_year = .
+	gen firmsize_u_year = .
 	label var firmsize_u_year "Firm size (upper bracket) primary job 12 month recall"
 *</_firmsize_u_year_>
 
@@ -1350,13 +1350,13 @@ foreach v of local ed_var {
 *</_wage_total_2_year_>
 
 *<_firmsize_l_2_year_>
-	gen byte firmsize_l_2_year = .
+	gen firmsize_l_2_year = .
 	label var firmsize_l_2_year "Firm size (lower bracket) secondary job 12 month recall"
 *</_firmsize_l_2_year_>
 
 
 *<_firmsize_u_2_year_>
-	gen byte firmsize_u_2_year = .
+	gen firmsize_u_2_year = .
 	label var firmsize_u_2_year "Firm size (upper bracket) secondary job 12 month recall"
 *</_firmsize_u_2_year_>
 
