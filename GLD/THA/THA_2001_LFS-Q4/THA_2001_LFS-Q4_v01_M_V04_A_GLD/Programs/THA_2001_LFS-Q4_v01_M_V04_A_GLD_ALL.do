@@ -3,20 +3,20 @@
 ==============================================================================================%%*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				THA_2001_LFS_v01_M_v01_A_Q1.do </_Program name_>
+<_Program name_>				THA_2001_LFS_v01_M_v01_A_Q4.do </_Program name_>
 <_Application_>					Stata 17 <_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
 <_Date created_>				2022-01-08 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						Thailand (THA) </_Country_>
-<_Survey Title_>				Labor Force Survey 2001 Q1 </_Survey Title_>
+<_Survey Title_>				Labor Force Survey 2001 Q4 </_Survey Title_>
 <_Survey Year_>					2001 </_Survey Year_>
 <_Study ID_>					N.A. </_Study ID_>
 <_Data collection from_>		January 2001 </_Data collection from_>
 <_Data collection to_>			March 2001 </_Data collection to_>
 <_Source of dataset_> 			NSO </_Source of dataset_>
-<_Sample size (HH)_> 			63,038 </_Sample size (HH)_>
-<_Sample size (IND)_> 			215,852 </_Sample size (IND)_>
+<_Sample size (HH)_> 			63,083 </_Sample size (HH)_>
+<_Sample size (IND)_> 			222,991 </_Sample size (IND)_>
 <_Sampling method_> 			
 
 A stratified two-stage sampling was adopted to the survey: Bangkok Metroplois and the  provinces constituted the strata. Each stratum (excluding Bangkok Metropolis) was divided into two parts according to the type of local administration, namely municipal areas and non-municipal areas. The primary and secondary sampling units were enumeration areas (EAs) for municipal areas and non-municipal areas and private households and persons in the collective households respectively.
@@ -39,6 +39,7 @@ A stratified two-stage sampling was adopted to the survey: Bangkok Metroplois an
 * Date: [2022-01-08] - Prepared initial code
 * Date: [2022-06-15] - Added codes that harmonize data for specific variables, including school attendance, ISCO and ISIC codes, etc...
 * Date: [2022-07-11] - Updated ISCED version
+* Date: [2022-08-31] - Correct industrycat10 - ISIC conversion, ensure that code 0 is set to missing for relationharm, update ICLS
 
 </_Version Control_>
 -------------------------------------------------------------------------*/
@@ -55,16 +56,16 @@ set mem 800m
 
 *----------1.2: Set directories------------------------------*
 
-global path_in "Z:\GLD-Harmonization\510859_AS\THA\THA_2001_LFS-Q1\THA_2001_LFS-Q1_v01_M\Data\Stata"
+global path_in "Y:\GLD-Harmonization\510859_AS\THA\THA_2001_LFS-Q4\THA_2001_LFS-Q4_v01_M\Data\Stata"
 
-global path_output "Z:\GLD-Harmonization\510859_AS\THA\THA_2001_LFS-Q1\THA_2001_LFS-Q1_v01_M_v02_A_GLD\Data\Harmonized"
+global path_output "Y:\GLD-Harmonization\510859_AS\THA\THA_2001_LFS-Q4\THA_2001_LFS-Q4_v01_M_V04_A_GLD\Data\Harmonized"
 
 *----------1.3: Database assembly------------------------------*
 
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	use "$path_in\lfs441.dta", clear
+	use "$path_in\lfs444.dta", clear
 /*%%=============================================================================================
 	2: Survey & ID
 ==============================================================================================%%*/
@@ -92,7 +93,7 @@ duplicates drop
 
 
 *<_icls_v_>
-	gen icls_v = "Not stated"
+	gen icls_v = "ICLS-13"
 	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
 
@@ -100,7 +101,6 @@ duplicates drop
 	gen isced_version = "isced_1997"
 	label var isced_version "Version of ISCED used for educat_isced"
 *</_isced_version_>
-
 
 *<_isco_version_>
 	gen isco_version = "isco_1988"
@@ -112,7 +112,6 @@ duplicates drop
 	gen isic_version = "isic_3"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
-
 
 *<_year_>
 	drop year
@@ -128,7 +127,7 @@ duplicates drop
 
 
 *<_veralt_>
-	gen veralt = "V02"
+	gen veralt = "V04"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
@@ -208,6 +207,7 @@ duplicates drop
 
 
 
+
 *<_psu_>
 
 	/*<_psu_note_>
@@ -241,7 +241,7 @@ duplicates drop
 
 
 *<_wave_>
-	gen wave = "Q1"
+	gen wave = "Q4"
 	label var wave "Survey wave"
 *</_wave_>
 
@@ -324,7 +324,6 @@ label de lblsubnatid2 10 "10 - Bangkok Metropolis" 11 "11 - Samut Prakan" ///
 	label var subnatid3 "Subnational ID at Third Administrative Level"
 *</_subnatid3_>
 
-
 *<_subnatidsurvey_>
 
 	gen subnatidsurvey = "subnatid1"
@@ -342,6 +341,7 @@ label de lblsubnatid2 10 "10 - Bangkok Metropolis" 11 "11 - Samut Prakan" ///
 
 	label var subnatid1_prev "Classification used for subnatid1 from previous survey"
 *</_subnatid1_prev_>
+
 
 *<_subnatid2_prev_>
 	merge m:1 subnatid2 using "$path_in\changwad_subnatid2_prev.dta", keep(master match)
@@ -369,6 +369,13 @@ label de lblsubnatid2 10 "10 - Bangkok Metropolis" 11 "11 - Samut Prakan" ///
 	501 "1 - Bangkok Metropolis"
 
 	label values subnatid2_prev lblsubnatid2_prev
+
+* convert codes to string
+	sdecode subnatid1, replace
+	sdecode subnatid1_prev, replace
+	sdecode subnatid2, replace
+	sdecode subnatid2_prev, replace
+
 *</_subnatid2_prev_>
 
 
@@ -409,7 +416,6 @@ Hence, leave adm2 and adm3 missing
 	gen gaul_adm3_code = .
 	label var gaul_adm3_code "Global Administrative Unit Layers (GAUL) Admin 3 code"
 *</_gaul_adm3_code_>
-
 }
 
 /*%%=============================================================================================
@@ -467,7 +473,7 @@ Hence, leave adm2 and adm3 missing
 	assert tot_head ==  1
 	
 	gen relationharm = rela
-	recode relationharm (3 4 = 3) (7 = 4) (5 6 8= 5) (9 = 6) 
+	recode relationharm (3 4 = 3) (7 = 4) (5 6 8= 5) (9 = 6)  (0 = .)
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm  lblrelationharm
@@ -685,6 +691,7 @@ label var ed_mod_age "Education module application age"
 	label var educat_orig "Original survey education code"
 *</_educat_orig_>
 
+
 *<_educat_isced_>
 
 capture confirm variable edcode
@@ -706,6 +713,7 @@ capture confirm variable edcode
 
 	label var educat_isced "ISCED standardised level of education"
 *</_educat_isced_>
+
 
 
 *----------6.1: Education cleanup------------------------------*
@@ -791,6 +799,7 @@ foreach v of local ed_var {
 *----------8.1: 7 day reference overall------------------------------*
 
 {
+
 *<_lstatus_>
 	gen byte lstatus = .
 	replace lstatus = . if age < minlaborage
@@ -822,14 +831,13 @@ foreach v of local ed_var {
 	gen byte underemployment = .
 	replace underemployment = . if age < minlaborage & age != .
 	replace underemployment = . if lstatus != 1
-	replace underemployment = 1 if lstatus == 1 & add_hwk == 1
-	replace underemployment = 0 if lstatus == 1 & add_hwk == 2
+	replace underemployment = 1 if lstatus == 1 & add_hwk== 1
+	replace underemployment = 0 if lstatus == 1 & add_hwk== 2
 	
 	label var underemployment "Underemployment status"
 	la de lblunderemployment 0 "No" 1 "Yes"
 	label values underemployment lblunderemployment
 *</_underemployment_>
-
 
 
 
@@ -844,6 +852,7 @@ foreach v of local ed_var {
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
 	label values nlfreason lblnlfreason
 *</_nlfreason_>
+
 
 *<_unempldur_l_>
 	gen byte unempldur_l= 0 if dr_unem == 1
@@ -867,7 +876,6 @@ foreach v of local ed_var {
 	replace unempldur_u = . if dr_unem == 9 | lstatus!=2 	
 	label var unempldur_u "Unemployment duration (months) upper bracket"
 *</_unempldur_u_>
-
 }
 
 
@@ -901,7 +909,6 @@ foreach v of local ed_var {
 	label values ocusec lblocusec
 *</_ocusec_>
 
-
 *<_industry_orig_>
 
 	gen industry_orig = indus
@@ -911,12 +918,14 @@ foreach v of local ed_var {
 *</_industry_orig_>
 
 
-
 *<_industrycat_isic_>
-
 	gen industrycat_isic = industry_orig
+	
+	* There are codes not in ISIC v3 -- set to missing
+	replace industrycat_isic = "" if inlist(industrycat_isic, "1599", "3999", "5299", "9304", "9999")
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
+
 
 
 *<_industrycat10_>
@@ -928,15 +937,15 @@ foreach v of local ed_var {
 	
 	gen byte industrycat10 = .
 	replace industrycat10 = 1 if isic_1d == 0
-	replace industrycat10 = 2 if isic_1d == 1
-	replace industrycat10 = 3 if isic_1d == 2 | isic_1d == 3
-	replace industrycat10 = 4 if isic_1d == 5
-	replace industrycat10 = 5 if isic_1d == 4
-	replace industrycat10 = 6 if isic_1d == 6
-	replace industrycat10 = 7 if isic_1d == 7
-	replace industrycat10 = 10 if inrange(isic_1d, 8, 9)
-	replace industrycat10 = 8 if isic_2d == 83
-	replace industrycat10 = 9 if isic_2d == 81
+	replace industrycat10 = 2 if inrange(isic_2d, 10, 14)
+	replace industrycat10 = 3 if inrange(isic_2d, 15, 37)
+	replace industrycat10 = 4 if inrange(isic_2d, 40, 41)
+	replace industrycat10 = 5 if isic_2d == 45
+	replace industrycat10 = 6 if isic_1d == 5
+	replace industrycat10 = 7 if inrange(isic_2d, 60, 64)
+	replace industrycat10 = 8 if inrange(isic_2d, 65, 74)
+	replace industrycat10 = 9 if isic_2d == 75
+	replace industrycat10 = 10 if inrange(isic_2d, 80, 99)
 	
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
@@ -961,15 +970,15 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_>
-
 	gen occup_isco = occup_orig
+	replace occup_isco = "" if inlist(occup_isco, "1299", "2999", "3999", "9970")
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
 
 *<_occup_skill_>
 
-	gen occup_1d = substr(occup_orig, 1, 1)
+	gen occup_1d = substr(occup_isco, 1, 1)
 	destring occup_1d, replace
 	gen occup_skill = 1 if occup_1d == 9
 	replace occup_skill = 2 if inrange(occup_1d, 4, 8)
@@ -991,21 +1000,21 @@ foreach v of local ed_var {
 *</_occup_>
 
 *<_wage_no_compen_>
-	gen double wage_no_compen =  baht
-	replace baht = . if baht == 99999
+	gen double wage_no_compen =  approx
+	replace wage_no_compen = . if inlist(approx, 99998, 99999)
 	replace wage_no_compen = . if lstatus!=1
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
 
 *<_unitwage_>
-	gen byte unitwage = .
-	replace unitwage = 1 if wage_type == 2
-	replace unitwage = 2 if wage_type == 3
-	replace unitwage = 5 if wage_type == 4
-	replace unitwage = 6 if wage_type == 5
-	replace unitwage = 9 if wage_type == 1
-	replace unitwage = . if wage_type == 6
+	gen byte unitwage = 5
+	*replace unitwage = 1 if wage_type == 2
+	*replace unitwage = 2 if wage_type == 3
+	*replace unitwage = 5 if wage_type == 4
+	
+	*replace unitwage = 9 if wage_type == 1
+	*replace unitwage = . if wage_type == 6
 	replace unitwage = . if lstatus!=1 
 	replace unitwage = . if missing(wage_no_compen)
 	
@@ -1225,7 +1234,6 @@ foreach v of local ed_var {
 	gen t_hours_others = . 
 	label var t_hours_others "Annualized hours worked in all but primary and secondary jobs 7 day recall"
 *</_t_hours_others_>
-
 
 *<_t_wage_nocompen_others_>
 	gen t_wage_nocompen_others = .
@@ -1664,6 +1672,7 @@ foreach var of varlist ocusec empstat industry_orig industrycat_isic industrycat
 		replace `var' = "" if lstatus !=1
 	}
 }
+
 *<_% Correction min age_>
 
 ** Drop info for cases under the age for which questions to be asked (do not need a variable for this)
@@ -1759,6 +1768,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "$path_output\THA_2001_LFS-Q1_v01_M_v02_A_GLD_ALL.dta", replace
+save "$path_output\THA_2001_LFS-Q4_v01_M_V04_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>
