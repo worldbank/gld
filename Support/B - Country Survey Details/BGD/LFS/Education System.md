@@ -15,8 +15,23 @@ After that, students move on to upper secondary education, which culminates with
 Entry to non-formal trainings, such as a 21-day housekeeping course, requires completion of primary education (Class 5).
 Meanwhile, the formal vocational track is multi-tiered. The *basic training program* is guided by the National Vocational Qualifications Framework. Under this system, there are 5 levels of National Skills Standards, with the most basic
 level requiring completion of junior secondary (Class 8). The *certificate training program* pertains to the vocational training alternative in the secondary and higher secondary curricula. The *diploma courses* are offered as four-year post-secondary diploma courses by polytechnic institutes. 
-The minimum entry requirement at this level is completion of SSC (Class 10). For more information on the Bangladesh's vocational education system, refer to [this report](xxx)
+The minimum entry requirement at this level is completion of SSC (Class 10). For more information on the Bangladesh's vocational education system, refer to [this report.](Utilities/tvet-hrd-south-asia-bangladesh.pdf)
 
 ## Mapping with the GLD education categories
 
+| BGD LFS                              | educat7 |
+|--------------------------------------|---------|
+| 1. no education                      | 1 - No Education            |
+| 2. class i-v                         | 2 - Primary Incomplete      |
+| 3. class vi-viii                     | 4 - Secondary Incomplete    |
+| 4. class ix-x                        | 4 - Secondary Incomplete    |
+| 5. ssc/equivalent                    | 5 - Secondary Complete    |
+| 6. hsc/equivalent                    | 6 - Higher than Secondary   |
+| 7. bachelor degree/equivalent        | 7 - University In/complete   |
+| 8. master degree/equivalent          | 7 - University In/complete     |
+| 9. medical/engineering degree        | 7 - University In/complete     |
+| 10. technical/vocational   education | missing |
+| 11. others                           | missing |
+
+Note that there is no mapping to "3 - Primary Complete". But it is possible to infer that individuals in Classes 6 - 10 completed primary education given that these levels require completion of the PEC. Since these individuals took education beyond PEC, these were coded as "4 - Secondary Incomplete", whereas coding "3 - Primary Complete" suggests that no education beyond PEC has been taken. 
 
