@@ -35,3 +35,4 @@ The minimum entry requirement at this level is completion of SSC (Class 10). For
 
 Note that there is no mapping to "3 - Primary Complete". But it is possible to infer that individuals in Classes 6 - 10 completed primary education given that these levels require completion of the PEC. Since these individuals took education beyond PEC, these were coded as "4 - Secondary Incomplete", whereas coding "3 - Primary Complete" suggests that no education beyond PEC has been taken. 
 
+Also, given the multiple tiers of technical and vocational education training (TVET) in Bangladesh, it is not possible for a 1:1 or many:1 correspondence with the GLD 'educat7' categories. If distinction is made among the different tiers of TVET, it may be possible to do the mappings for specific tiers based on the minimum education requirements. For instance, *diploma courses* can be mapped to "6 - Higher than Secondary". 
