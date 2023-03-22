@@ -9,7 +9,7 @@ The education system in Bangladesh comprise of 5 years in primary, 3 years in ju
 2. **Secondary education** in Bangladesh is divided into two parts: junior secondary (Classes 6 - 8) and upper secondary (Classes 9 - 10). Lower secondary education, known as Junior Secondary School Certificate (JSC), is two years long and starts after the successful completion of primary education. 
 After that, students move on to upper secondary education, which culminates with the Secondary School Certificate (SSC) exam.
 
-3. After successfully completing the Secondary School Certificate (SSC) exam, students move on to **Higher Secondary Education** (Classes 11 - 12) where the completion of the Higher Secondary Certificate (HSC) exam is required to advance to tertiary education.
+3. After successfully completing the SSC exam, students move on to **Higher Secondary Education** (Classes 11 - 12) where the completion of the Higher Secondary Certificate (HSC) exam is required to advance to tertiary education.
 
 **Vocational education** is an alternative to the academic path, and there are different levels of vocational education along with different academic prerequisites. 
 Entry to non-formal trainings, such as a 21-day housekeeping course, requires completion of primary education (Class 5).
