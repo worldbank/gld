@@ -367,6 +367,11 @@ local out_file "`level_2_harm'_ALL.dta"
   * State info in variable ent, is a labelled number
   decode ent,   gen(helper_lbl)
   tostring ent, gen(helper_num)
+  
+  * Name of Mexico's capital was changed in 2016 from Distrito Federal to 
+  * Ciudad de Mexico. In the data (var ent) only from 2020. Correct here.
+  replace helper_lbl = "Ciudad de México" if helper_num == "9"
+  
   gen subnatid1 = helper_num + " - " + helper_lbl
   label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
@@ -399,12 +404,12 @@ rename help_sub2 subnatid2
 
 
 *<_subnatid1_prev_>
-/* <_subnatid1_prev>
+/* <_subnatid1_prev_note>
 
 	subnatid1_prev is coded as missing unless the classification used for subnatid1 has changed since the previous survey.
 
-</_subnatid1_prev> */
-	gen subnatid1_prev = .
+</_subnatid1_prev_note> */
+	gen subnatid1_prev = "9 - Distrito Federal" if subnatid1 == "9 - Ciudad de México"
 	label var subnatid1_prev "Classification used for subnatid1 from previous survey"
 *</_subnatid1_prev_>
 

@@ -365,6 +365,20 @@ local out_file "`level_2_harm'_ALL.dta"
   * State info in variable ent, is a labelled number
   decode ent,   gen(helper_lbl)
   tostring ent, gen(helper_num)
+  
+  * In 2019, for some reason the data does not work with accents, puts "�" instead.
+  * Correct here
+  replace helper_lbl = "México" if helper_num == "15"
+  replace helper_lbl = "Michoacán de Ocampo" if helper_num == "16"
+  replace helper_lbl = "Nuevo León" if helper_num == "19"
+  replace helper_lbl = "Querétaro" if helper_num == "22"
+  replace helper_lbl = "San Luis Potosí" if helper_num == "24"
+  replace helper_lbl = "Yucatán" if helper_num == "31"
+  
+  * Name of Mexico's capital was changed in 2016 from Distrito Federal to 
+  * Ciudad de Mexico. In the data (var ent) only from 2020. Correct here.
+  replace helper_lbl = "Ciudad de México" if helper_num == "9"
+    
   gen subnatid1 = helper_num + " - " + helper_lbl
   label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
@@ -397,11 +411,6 @@ rename help_sub2 subnatid2
 
 
 *<_subnatid1_prev_>
-/* <_subnatid1_prev>
-
-	subnatid1_prev is coded as missing unless the classification used for subnatid1 has changed since the previous survey.
-
-</_subnatid1_prev> */
 	gen subnatid1_prev = .
 	label var subnatid1_prev "Classification used for subnatid1 from previous survey"
 *</_subnatid1_prev_>
