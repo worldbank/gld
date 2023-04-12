@@ -37,7 +37,7 @@
 * Date: [2022-08-24] File: [IDN_2000_Sakernas_v01_M_v03_A_GLD.do] - [Recode employment status:Agricultural & non-agricultual casual worker recoded to "paid employee"; recode "occup_skill" and "occup"; change path to the intermediate file] 
 * Date: [2023-01-11] File: [IDN_2000_Sakernas_v01_M_v04_A_GLD.do] - [Educat7 correction & directories update; Empstat "self-employed" assisted with non-paid workers were "self-employed"; added "secondary incomplete to "educat7"]
 * Date: [2023-03-13] File: [IDN_2000_Sakernas_v01_M_v05_A_GLD.do] - [Recode "industry_orig" & "occup_orig"; change "Z" drive to "Y" drive]
-* Date: [2023-04-04] File: [IDN_2000_Sakernas_v01_M_v06_A_GLD.do] - [Recoding: isco_version & occup_isco as missing; occup took the first digit of the original occupation variable]
+* Date: [2023-04-04] File: [IDN_2000_Sakernas_v01_M_v06_A_GLD.do] - [Recoding: isco_version & occup_isco as missing; occup took the first digit of the original occupation variable; set employed and unemployed observations' non-labor force reason to missing; set "wage_no_compen" to missing for unpaid workers and zero values.]
 
 </_Version Control_>
 
@@ -805,6 +805,7 @@ The original variable "b4p19" has 7 non-missing categories:
 *<_nlfreason_>
 	gen byte nlfreason = b4p19
 	recode nlfreason (2=1) (3=2) (6=4) (1 4 5 7=5)
+	replace nlfreason=. if lstatus!=3
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
 	label values nlfreason lblnlfreason
@@ -939,7 +940,7 @@ In the raw dataset, question 13 devides into "in cash" and "in-kind". For each o
 
 *<_wage_no_compen_>
 	gen double wage_no_compen = b4p11a1 + b4p11a2
-	replace wage_no_compen = . if lstatus!=1
+	replace wage_no_compen = . if lstatus!=1 | empstat==2 | wage_no_compen==0
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
