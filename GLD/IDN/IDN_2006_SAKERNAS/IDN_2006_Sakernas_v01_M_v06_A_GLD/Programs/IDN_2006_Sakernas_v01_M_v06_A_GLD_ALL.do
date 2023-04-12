@@ -944,7 +944,7 @@ In the raw dataset, question 13 devides into "in cash" and "in-kind". For each o
 
 *<_wage_no_compen_>
 	gen double wage_no_compen = b4p12a + b4p12b
-	replace wage_no_compen = . if lstatus!=1|empstat=2|wage_no_compen==0
+	replace wage_no_compen = . if lstatus!=1|empstat==2|wage_no_compen==0
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
