@@ -38,7 +38,7 @@
 * Date: [2022-11-07] File: [IDN_1998_Sakernas_v01_M_v04_A_GLD.do] - [Added occup based on KBJI1982 two digits and KBJI2002 one digit]
 * Date: [2023-01-12] File: [IDN_1998_Sakernas_v01_M_v05_A_GLD.do] - [Change directories; industrycat10 updated; ISIC version changed from ISIC Rev.3 to missing; Empstat "self-employed" assisted with non-paid workers were "self-employed"; added "secondary incomplete to "educat7"]
 * Date: [2023-03-13] File: [IDN_1998_Sakernas_v01_M_v06_A_GLD.do] - [Recode "industry_orig" & "occup_orig"; change "Z" drive to "Y" drive]
-* Date: [2023-04-05] File: [IDN_1998_Sakernas_v01_M_v07_A_GLD.do] - [Set employed and unemployed observations' non-labor force reason to missing; set "wage_no_compen" to missing for unpaid workers and zero values.]
+* Date: [2023-04-05] File: [IDN_1998_Sakernas_v01_M_v07_A_GLD.do] - [Updated "occup" and helper data file； set "industry_orig" to missing as the original variable only has two unknown categories; set employed and unemployed observations' non-labor force reason to missing; set "wage_no_compen" to missing for unpaid workers and zero values.]
 
 </_Version Control_>
 
@@ -923,31 +923,47 @@ of unemployment period.
 
 
 *<_occup_>
-	gen kji1982 = b4p7
-	merge m:1 kji1982 urban using "`path_in_stata'\kji_2d_corresp.dta", keep(match master) nogen
-	* set seed so process is reproducible
-	set seed 123
+
+* Make occup var to match in merge, depends on the year we are looking at
+	gen kji1982_2d = b4p7
+	
+* Merge with 2 digit mapping
+	merge m:1 kji1982_2d educat7 using "`path_in_stata'\kji_corresp_2d.dta", keep(match master) nogen
+	
+* Quick check, which codes where not matched
+	tab kji1982_2d if missing(option_1) 
+	
+* Set seed so process is reproducible
+* Kapuas river, Indonesia's longest stands at 1143 KM (https://en.wikipedia.org/wiki/Kapuas_River)
+	set seed 1143
+	
+* Generate uniform random variable, the logic is, it will lie between 0 and 1 and fall
+* within the cumulation category with the probability from the 2011 to 2015 data
 	gen helper_occup = uniform()
-	* First define cases for shorthand
-	gen cases = .
-	replace cases = 1 if missing(option_2)
-	replace cases = 2 if !missing(cp_2) & missing(cp_3)
-	replace cases = 3 if !missing(cp_3) & missing(cp_4)
-	replace cases = 4 if !missing(cp_4) & missing(cp_5)
-	replace cases = 5 if !missing(cp_5)
-* Assign occup options
+	
+* Assing fix cases
 	gen occup = .
-	replace occup = option_1 if cases == 1
-	replace occup = option_1 if inrange(helper_occup,0,cp_1) & inrange(cases,2,5)
-	replace occup = option_2 if inrange(helper_occup,cp_1, cp_2) & inrange(cases,2,5)
-	replace occup = option_3 if inrange(helper_occup,cp_2, cp_3) & inrange(cases,3,5)
-	replace occup = option_3 if inrange(helper_occup,cp_3, cp_4) & inrange(cases,4,5)
-	replace occup = option_3 if inrange(helper_occup,cp_4, cp_5) & cases == 5
+	replace occup = option_1 if !missing(kji1982_2d) & probs_1 == 1
+	
+* Assigng binary cases based on probability
+	replace occup = option_1 if (!missing(kji1982_2d) & missing(occup) & missing(probs_3)) & helper_occup <= probs_1 
+	replace occup = option_2 if (!missing(kji1982_2d) & missing(occup) & missing(probs_3)) & helper_occup > probs_1
+	
+* Assign three way based on probability
+	replace occup = option_1 if (!missing(kji1982_2d) & missing(occup) & missing(probs_4)) & inrange(helper_occup, 0,	 probs_1)
+	replace occup = option_2 if (!missing(kji1982_2d) & missing(occup) & missing(probs_4)) & inrange(helper_occup, 0, probs_2)
+	replace occup = option_3 if (!missing(kji1982_2d) & missing(occup) & missing(probs_4)) & inrange(helper_occup, 0, probs_3)
+	
+* Assign four way based on probability
+	replace occup = option_1 if (!missing(kji1982_2d) & missing(occup) & !missing(probs_4)) & inrange(helper_occup, 0, probs_1)
+	replace occup = option_2 if (!missing(kji1982_2d) & missing(occup) & !missing(probs_4)) & inrange(helper_occup, 0, probs_2)
+	replace occup = option_3 if (!missing(kji1982_2d) & missing(occup) & !missing(probs_4)) & inrange(helper_occup, 0, probs_3)
+	replace occup = option_4 if (!missing(kji1982_2d) & missing(occup) & !missing(probs_4)) & inrange(helper_occup, 0, probs_4)
+	replace occup = 10 if occup==0	
 	replace occup=. if lstatus!=1
 	label var occup "1 digit occupational classification, primary job 7 day recall"
   	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians and associate professionals" 4 "Clerical support workers" 5 "Service and market sales workers" 6 "Skilled agricultural, forestry and fishery workers" 7 "Craft and related trades workers" 8 "Plant and machine operators, and assemblers" 9 "Elementary occupations" 10 "Armed forces" 99 "Others"
 	label values occup lbloccup
-
 *</_occup_>
 
 

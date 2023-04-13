@@ -37,7 +37,7 @@
 * Date: [2022-08-20] File: [IDN_2015_Sakernas_v01_M_v03_A_GLD.do] - [Recode employment status:Agricultural & non-agricultual casual worker recoded to "paid employee"]
 * Date: [2023-01-17] File: [IDN_2015_Sakernas_v01_M_v04_A_GLD.do] - [Change directories; Empstat "self-employed" assisted with non-paid workers were "self-employed"]
 * Date: [2023-03-12] File: [IDN_2015_Sakernas_v01_M_v05_A_GLD.do] - [Recode "industry_orig" & "occup_orig" & "industry_orig_2" & "occup_orig_2"; change "Z" drive to "Y" drive]
-* Date: [2023-04-07] File: [IDN_2015_Sakernas_v01_M_v06_A_GLD.do] - [Set employed and unemployed observations' non-labor force reason to missing; added variable "empstat"; set "wage_no_compen" to missing for unpaid workers and zero values.]
+* Date: [2023-04-07] File: [IDN_2015_Sakernas_v01_M_v06_A_GLD.do] - [Updated "occup"; set employed and unemployed observations' non-labor force reason to missing; added variable "empstat"; set "wage_no_compen" to missing for unpaid workers and zero values.]
 
 </_Version Control_>
 
@@ -901,10 +901,10 @@ Moreover, most cases are that people only have kbli2009_2 while they do not have
 
 *<_occup_>
 	gen occup = kbji2002
+	replace occup = 10 if occup==0
 	replace occup = . if lstatus!=1
-	replace occup = . if occup==0
 	label var occup "1 digit occupational classification, primary job 7 day recall"
-  	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians and associate professionals" 4 "Clerical support workers" 5 "Service and market sales workers" 6 "Skilled agricultural, forestry and fishery workers" 7 "Craft and related trades workers" 8 "Plant and machine operators, and assemblers" 9 "Elementary occupations"
+  	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians and associate professionals" 4 "Clerical support workers" 5 "Service and market sales workers" 6 "Skilled agricultural, forestry and fishery workers" 7 "Craft and related trades workers" 8 "Plant and machine operators, and assemblers" 9 "Elementary occupations" 10 "Armed forces" 99 "Others"
 	label values occup lbloccup
 *</_occup_>
 

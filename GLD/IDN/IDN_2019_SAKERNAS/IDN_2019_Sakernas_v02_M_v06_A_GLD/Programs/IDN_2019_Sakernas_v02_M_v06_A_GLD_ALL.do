@@ -40,7 +40,7 @@
 * Date: [2022-11-08] File: [IDN_2019_Sakernas_v02_M_v03_A_GLD.do] - [Recode "lstatus"and "potential_lf".]
 * Date: [2023-01-12] File: [IDN_2019_Sakernas_v02_M_v04_A_GLD.do] - [Change directories; Empstat "self-employed" assisted with non-paid workers were "self-employed"]
 * Date: [2023-03-12] File: [IDN_2019_Sakernas_v02_M_v05_A_GLD.do] - [Recode "industry_orig" and "occup_orig"; change "Z" drive to "Y" drive]
-* Date: [2023-04-08] File: [IDN_2019_Sakernas_v02_M_v06_A_GLD.do] - [Set employed and unemployed observations' non-labor force reason to missing; added variable "empstat"; set "wage_no_compen" to missing for unpaid workers and zero values.]
+* Date: [2023-04-08] File: [IDN_2019_Sakernas_v02_M_v06_A_GLD.do] - [Updated "occup"; set employed and unemployed observations' non-labor force reason to missing; added variable "empstat"; set "wage_no_compen" to missing for unpaid workers and zero values.]
 
 </_Version Control_>
 
@@ -908,10 +908,10 @@ Note that in the raw dataset variable "b5_r21_kbj" does not have labels.
 
 *<_occup_>
 	gen occup = b5_r21_kbj
+	replace occup = 10 if occup==0
 	replace occup = . if lstatus!=1
-	replace occup = . if  occup==0
 	label var occup "1 digit occupational classification, primary job 7 day recall"
-  	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians and associate professionals" 4 "Clerical support workers" 5 "Service and market sales workers" 6 "Skilled agricultural, forestry and fishery workers" 7 "Craft and related trades workers" 8 "Plant and machine operators, and assemblers" 9 "Elementary occupations"
+  	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians and associate professionals" 4 "Clerical support workers" 5 "Service and market sales workers" 6 "Skilled agricultural, forestry and fishery workers" 7 "Craft and related trades workers" 8 "Plant and machine operators, and assemblers" 9 "Elementary occupations" 10 "Armed forces" 99 "Others"
 	label values occup lbloccup
 *</_occup_>
 

@@ -903,10 +903,10 @@ We do not have any information on translating KBLI 2005 to ISIC. Therefore, we o
 *<_occup_>
 	gen occup = substr(occup_isco3, 1, 1)
 	destring occup, replace
+	replace occup = 10 if occup==0
 	replace occup = . if lstatus!=1
-	replace occup = . if occup==0
 	label var occup "1 digit occupational classification, primary job 7 day recall"
-  	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians and associate professionals" 4 "Clerical support workers" 5 "Service and market sales workers" 6 "Skilled agricultural, forestry and fishery workers" 7 "Craft and related trades workers" 8 "Plant and machine operators, and assemblers" 9 "Elementary occupations"
+  	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians and associate professionals" 4 "Clerical support workers" 5 "Service and market sales workers" 6 "Skilled agricultural, forestry and fishery workers" 7 "Craft and related trades workers" 8 "Plant and machine operators, and assemblers" 9 "Elementary occupations" 10 "Armed forces" 99 "Others"
 	label values occup lbloccup
 *</_occup_>
 
