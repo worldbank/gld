@@ -215,4 +215,4 @@ The figure below, which is a time series plot of occupation of all years, shows 
 
 ![IDN_occup_time_series](utilities/IDN_occup.png)
 
-The mapping algorithm, which divides between urban and rural assignments for greater accuracy, [can be found here](utilities/Additional%20Data/mapping_idn_occup.do), the outputted `.dta` file used to do the mapping [can be downloaded here for 2001-2006](utilities/Additional%20Data/kji_corresp_3d.dta) and [here for 1994-1999](utilities/Additional%20Data/kji_corresp_2d.dta).
+The mapping algorithm, which divides assignments by education level for greater accuracy, [can be found here](utilities/Additional%20Data/mapping_idn_occup.do), the outputted `.dta` file used to do the mapping [at three digits can be downloaded](utilities/Additional%20Data/kji_corresp_3d.dta) and [here at two digits](utilities/Additional%20Data/kji_corresp_2d.dta).
