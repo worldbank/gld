@@ -3,7 +3,7 @@
 
 The ISIC classification used in the GEIH data follows the general principles of the international industry classification. However, the Colombian NSO decided to create its version of the ISIC classification to better identify industry groups important for the Colombian economic reality. 
 
-## Between 2006 and 2019
+## Between 2007 and 2019
 
 The NSO used the Colombian version of ISIC rev. 3 to classify the economic activities in the GEIH. At the group level (3 digits) the sections mostly correspond to those on the ISIC international rev 3.1 classification yet at the four digit level there are some variations to the 3.1 classification. In the following [link](https://www.dane.gov.co/files/sen/nomenclatura/tablasCorrelativas/TablasCorrelativasCIIURev3_1A_C.pdf), the user can find the detailed explanation to the differences. The files harmonized and available in the GLD server have already considered the differences. 
 
