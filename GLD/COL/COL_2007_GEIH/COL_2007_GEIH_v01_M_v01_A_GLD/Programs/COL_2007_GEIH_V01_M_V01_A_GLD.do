@@ -19,8 +19,8 @@
 <_Data collection from_>			[01/2007] </_Data collection from_>
 <_Data collection to_>				[12/2007] </_Data collection to_>
 <_Source of dataset_> 				Departamento Administrativo Nacional de Estadistica - DANE
-<_Sample size (HH)_> 				220,989 </_Sample size (HH)_>
-<_Sample size (IND)_> 				815,480
+<_Sample size (HH)_> 				221,048 </_Sample size (HH)_>
+<_Sample size (IND)_> 				838,421
 <_Sampling method_> 				 probabilistic, multi-stage, stratified, unequal conglomerate and self-weighted design </_Sampling method_>
 <_Geographic coverage_> 			national </_Geographic coverage_>
 <_Currency_> 					[Colombian Peso (COL)] </_Currency_>
