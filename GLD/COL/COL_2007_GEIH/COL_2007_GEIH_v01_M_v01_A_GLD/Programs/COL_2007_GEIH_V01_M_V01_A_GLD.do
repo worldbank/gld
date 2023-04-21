@@ -80,7 +80,7 @@ local path_output   "`server'/`country'/`level_1'/`level_2_harm'/Data/Harmonized
 * Define Output file name
 local out_file "`level_2_harm'_ALL.dta"
 *----------1.3: Database assembly------------------------------*
-/*
+
 *** append monthly data
 clear all
 use "`path_in_stata'\GEIH_2007_1.dta"
@@ -174,12 +174,7 @@ rename directorio_unique directorio
 
 merge 1:1 directorio secuencia_p orden using "`general_2007'", force assert(master match) keep(match) nogen
 
-save "`path_in_stata'\data_2007_final.dta", replace*/
-
-use "Y:\GLD-Harmonization\582018_AQ\COL\COL_2007_GEIH\COL_2007_GEIH_v01_M\Data\Stata\data_2007_final.dta"
-
-
-
+save "`path_in_stata'\data_2007_final.dta", replace
 
 /*%%=============================================================================================
 	2: Survey & ID
