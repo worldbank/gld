@@ -1730,7 +1730,7 @@
 		keep if age >= 15 & !missing(age)
 			
 				 
-		collapse (count) weight, by(countrycode harmonization year empstat) 
+		collapse (sum) weight, by(countrycode harmonization year empstat) 
 
 		egen total_emp = total(weight)
 		gen value = (weight/total_emp)*100
