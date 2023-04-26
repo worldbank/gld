@@ -1,30 +1,29 @@
+
 /*%%=============================================================================================
 	0: GLD Harmonization Preamble
 ==============================================================================================%%*/
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				COL_2006_GEIH_V01_M_V02_A_GLD_ALL
-<_Application_>					Stata 17
-<_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) Eliana Carranza, Andreas Eberhardt, Alejandro Rueda-Sanz
-<_Date created_>				2022-05-17
+<_Program name_>				COL_2007_GEIH_V01_M_V01_A_GLD
+<_Application_>					Stata 16
+<_Author(s)_>					World Bank Jobs Group (gld@worldbank.org)
+<_Date created_>				2022-04-11
 
 -------------------------------------------------------------------------
 
 <_Country_>					    Colombia (COL)
 <_Survey Title_>				Gran Encuesta Integrada de Hogares - GEIH
-<_Survey Year_>					2006
-<_Study ID_>					[Microdata Library ID if present] </_Study ID_>
-<_Data collection from_>			[08/2006] </_Data collection from_>
-<_Data collection to_>				[12/2006] </_Data collection to_>
+<_Survey Year_>					2007
+<_Study ID_>					DANE GEIH 2007 </_Study ID_>
+<_Data collection from_>			[01/2007] </_Data collection from_>
+<_Data collection to_>				[12/2007] </_Data collection to_>
 <_Source of dataset_> 				Departamento Administrativo Nacional de Estadistica - DANE
-<_Sample size (HH)_> 				316,966
-<_Sample size (IND)_> 				82,530
-<_Sampling method_> 			 </_Sampling method_>
-<_Geographic coverage_> 		National </_Geographic coverage_>
-<_Currency_> 					Colombian Peso (COP) </_Currency_>
-
----------------------------------------------------------------
+<_Sample size (HH)_> 				221,048 </_Sample size (HH)_>
+<_Sample size (IND)_> 				838,421
+<_Sampling method_> 				 probabilistic, multi-stage, stratified, unequal conglomerate and self-weighted design </_Sampling method_>
+<_Geographic coverage_> 			national </_Geographic coverage_>
+<_Currency_> 					[Colombian Peso (COL)] </_Currency_>
 
 -----------------------------------------------------------------------
 
@@ -32,13 +31,14 @@
 <_ISCED Version_>				isced 1997 </_ISCED Version_>
 <_ISCO Version_>				[N/A] </_ISCO Version_>
 <_OCCUP National_>				[CNO 1970] </_OCCUP National_>
-<_ISIC Version_>				[N/A] </_ISIC Version_>
-<_INDUS National_>				[COLOMBIA REV 3.1] </_INDUS National_>
+<_ISIC Version_>				[REV 3.1] </_ISIC Version_>
+<_INDUS National_>				[COLOMBIA REV 3] </_INDUS National_>
 
 -----------------------------------------------------------------------
 <_Version Control_>
 
-* Date: 2022-17-05 - Changes from I2D2 to GLD
+* Date: 2022-15-04 - Changes from I2D2 to GLD
+* Date: 2022-23-08 - Changes in variables veralt, occup_skill
 * Date: 2022-16-12 - Changes to default harmonization information and several variables.
 
 </_Version Control_>
@@ -49,6 +49,7 @@
 	1: Setting up of program environment, dataset
 ==============================================================================================%%*/
 
+
 *----------1.1: Initial commands------------------------------*
 
 clear
@@ -57,13 +58,14 @@ set mem 800m
 
 *----------1.2: Set directories------------------------------*
 
+
 * Define path sections
-local server  "Z:\GLD-Harmonization\582018_AQ"
+local server  "Y:\GLD-Harmonization\582018_AQ"
 local country "COL"
-local year    "2006"
+local year    "2007"
 local survey  "GEIH"
 local vermast "V01"
-local veralt  "V02"
+local veralt  "V01"
 
 * From the definitions, set path chunks
 local level_1      "`country'_`year'_`survey'"
@@ -77,21 +79,20 @@ local path_output   "`server'/`country'/`level_1'/`level_2_harm'/Data/Harmonized
 
 * Define Output file name
 local out_file "`level_2_harm'_ALL.dta"
-
-
 *----------1.3: Database assembly------------------------------*
 
-** DATABASE ASSEMBLENT
+*** append monthly data
+clear all
+use "`path_in_stata'\GEIH_2007_1.dta"
 
-  use "`path_in_stata'/col06_base.dta"
-	rename orden com
-	destring i_dpto, replace
-	merge 1:1 com directorio secuencia_p mes using "`path_in_stata'/col06_cedlas.dta"
-	keep if _merge==3
-	rename com orden
+forvalues i=2/12 {
+    append using "`path_in_stata'\GEIH_2007_`i'.dta", force
+}
 
+drop _merge
+rename *, lower
 
-	** Get rid of duplicates process
+** Get rid of duplicates process
 * Identify duplicates
 duplicates tag directorio secuencia_p orden, gen(dup)
 
@@ -108,9 +109,6 @@ gen latter_five = substr(direct_str,3,.)
 
 * Extract the first two digits
 gen first_two = substr(direct_str,1,2)
-
-
-destring mes, force replace
 
 * Mark the one with the earlier month
 bys directorio : egen min_month = min(mes) if (dup > 0 & !missing(dup))
@@ -130,8 +128,53 @@ destring directorio_unique, replace
 drop directorio
 rename directorio_unique directorio
 
+tempfile general_2007
+save `general_2007'
 
 
+****final dataset with updated weights
+use "`path_in_stata'\Fex proyeccion CNPV_2018.dta"
+rename *, lower
+
+** Get rid of duplicates process
+* Identify duplicates
+duplicates tag directorio secuencia_p orden, gen(dup)
+
+* Households can be identified uniquely by month
+duplicates tag directorio secuencia_p orden mes, gen(asserter)
+assert asserter == 0
+drop asserter
+
+* Convert directorio to a string variable of length 7
+tostring directorio, gen(direct_str) format("%07.0f")
+
+* Extract the latter 5 digits
+gen latter_five = substr(direct_str,3,.)
+
+* Extract the first two digits
+gen first_two = substr(direct_str,1,2)
+
+* Mark the one with the earlier month
+bys directorio : egen min_month = min(mes) if (dup > 0 & !missing(dup))
+
+* Since directorio always starts with either 00, 01, 51, 52, or 53, we can convert the first digits to
+* 99 and make it unique that way.
+replace first_two = "99" if mes == min_month & (dup > 0 & !missing(dup))
+
+* Create a new unique directorio
+egen directorio_unique = concat(first_two latter_five)
+
+* Check it is unique now
+isid directorio_unique secuencia_p orden
+
+* Convert it back to a number, drop the original, replace with unique
+destring directorio_unique, replace
+drop directorio
+rename directorio_unique directorio
+
+merge 1:1 directorio secuencia_p orden using "`general_2007'", force assert(master match) keep(match) nogen
+
+save "`path_in_stata'\data_2007_final.dta", replace
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -152,7 +195,7 @@ rename directorio_unique directorio
 
 
 *<_survey_>
-	gen survey = "GEIH"
+	gen survey = "household survey"
 	label var survey "Survey type"
 *</_survey_>
 
@@ -176,13 +219,13 @@ rename directorio_unique directorio
 
 
 *<_isic_version_>
-	gen isic_version = ""
+	gen isic_version = "isic_3.1"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
 
 *<_year_>
-	gen int year = 2006
+	gen int year = 2007
 	label var year "Year of survey"
 *</_year_>
 
@@ -206,7 +249,7 @@ rename directorio_unique directorio
 
 
 *<_int_year_>
-	gen int_year = 2006
+	gen int_year = 2007
 	label var int_year "Year of the interview"
 *</_int_year_>
 
@@ -219,6 +262,7 @@ rename directorio_unique directorio
 	label var int_month "Month of the interview"
 *</_int_month_>
 
+
 *<_hhid_>
 /* <_hhid_note>
 
@@ -228,6 +272,7 @@ rename directorio_unique directorio
 	002, ..., 160.
 
 </_hhid_note> */
+
 
 local letters "secuencia_p orden"
 
@@ -254,7 +299,7 @@ local letters "secuencia_p orden"
 
 
 *<_weight_>
-	gen weight = pondera
+	gen weight = fex_c_2011/12
 	label var weight "Survey sampling weight"
 *</_weight_>
 
@@ -291,6 +336,7 @@ local letters "secuencia_p orden"
 {
 
 *<_urban_>
+ 	destring clase, gen(urbano) //add
 	gen byte urban=urbano
 	replace urban = 0 if urban == 2
 	label var urban "Location is urban"
@@ -299,12 +345,13 @@ local letters "secuencia_p orden"
 *</_urban_>
 
 *<_subnatid1_>
-	gen subnatid1 = string(region)
-	replace subnatid1 = "1 - Atlantica" if subnatid1 == "1"
-	replace subnatid1 = "2 - Oriental" if subnatid1 == "2"
-	replace subnatid1 = "3 - Central" if subnatid1 == "3"
-	replace subnatid1 = "4 - Pacifica" if subnatid1 == "4"
-	replace subnatid1 = "5 - Santa Fe de Bogota" if subnatid1 == "5"
+	destring dpto, replace
+	gen subnatid1 =string(dpto)
+	replace subnatid1 = "1 - Atlantica" if subnatid1 == "08" | subnatid1 == "13" | subnatid1 == "20" | subnatid1 == "23" | subnatid1 == "44" | subnatid1 == "47" | subnatid1 == "70"
+	replace subnatid1 = "2 - Oriental" if subnatid1 == "15" | subnatid1 == "25" | subnatid1 == "50" | subnatid1 == "54" | subnatid1 == "68"
+	replace subnatid1 = "3 - Central" if subnatid1 == "05" | subnatid1== "17" | subnatid1 == "18" | subnatid1 == "41" | subnatid1 == "63" | subnatid1 == "66" | subnatid1 == "66" | subnatid1 == "73"
+	replace subnatid1 = "4 - Pacifica" if subnatid1 == "19" | subnatid1 == "27" | subnatid1 == "52" | subnatid1 == "76"
+	replace subnatid1 = "5 - Santa Fe de Bogota" if subnatid1 == "11"
 	label var subnatid1 "Subnational ID at First Administrative Level"
 
 /* <_subnatid1_note>
@@ -318,9 +365,9 @@ local letters "secuencia_p orden"
 
 
 *<_subnatid2_>
-	gen subnatid2 = string(i_dpto)
-	replace subnatid2 = "5 - Antioquia" if subnatid2 == "5"
-	replace subnatid2 = "8 - Atlántico" if subnatid2 == "8"
+	gen subnatid2 = string(dpto)
+	replace subnatid2 = "5 - Antioquia" if subnatid2 == "05"
+	replace subnatid2 = "8 - Atlántico" if subnatid2 == "08"
 	replace subnatid2 = "11 - Bogotá, D.C." if subnatid2 == "11"
 	replace subnatid2 = "13 - Bolívar" if subnatid2 == "13"
 	replace subnatid2 = "15 - Boyacá" if subnatid2 == "15"
@@ -414,6 +461,7 @@ local letters "secuencia_p orden"
 {
 
 *<_hsize_>
+*pensionista and trabajador are type of people in the household but it could be the same people referred to as hhead or parent thus taken out of the size calculation.
 	gen a=1 if (p6050!=6 & p6050!=7 & p6050!=8)  //instead of gen a=1 of p6050!=6 (taking out pensionista and trabajador)
 	egen byte hsize=sum(a), by(hhid)
 	label var hsize "Household size"
@@ -437,7 +485,7 @@ local letters "secuencia_p orden"
 
 *<_relationharm_>
 	gen relationharm = p6050
-	recode relationharm (7=6) (8=6)  (9=6)
+	recode relationharm (7=6) (8=6)  (9=6) (4=5)
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm  lblrelationharm
@@ -450,7 +498,7 @@ local letters "secuencia_p orden"
 
 
 *<_marital_>
-	gen byte marital= p6070
+	gen byte marital=p6070
 	recode marital 1 2=3 3=1 6=2
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
@@ -614,21 +662,22 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educy_>
-	gen byte educy = aedu
+	gen byte educy = p6210s1
 	replace educy=. if age<ed_mod_age & age!=.
 	replace educy=. if age < educy & (age != . & educy != .)
 	label var educy "Years of education"
 
 *</_educy_>
 
+
 *<_educat7_>
 	gen byte educat7 = p6210
-	replace educat7=1 if p6210==100
-	replace educat7=2 if p6210==200
-	replace educat7=3 if inrange(p6210,300,305)
-	replace educat7=4 if inrange(p6210,400,409)
-	replace educat7=5 if inrange(p6210,510,511)
-	replace educat7=6 if inrange(p6210,600,613)
+	replace educat7=1 if p6210==1
+	replace educat7=2 if p6210==2
+	replace educat7=3 if p6210==3
+	replace educat7=4 if p6210==4
+	replace educat7=5 if p6210==5
+	replace educat7=6 if p6210==6
 	recode educat7 2=1 3=2 4 5=4 6=7 9=.
 	replace educat7=3 if educat7==2 & educy==5
 	replace educat7=5 if educat7==4 & educy==11 //different from questionnaire but in reality secondary is for 6 years (media:10-11), so no change here
@@ -719,10 +768,10 @@ foreach v of local ed_var {
 	label var vocational_length_u "Length of training in months, upper limit"
 *</_vocational_length_u_>
 
-*<_vocational_field_>
-	gen vocational_field = .
-	label var vocational_field "Field of training"
-*</_vocational_field_>
+*<_vocational_field_orig_>
+	gen vocational_field_orig = .
+	label var vocational_field_orig "Field of training"
+*</_vocational_field_orig_>
 
 *<_vocational_financed_>
 	gen vocational_financed = .
@@ -747,9 +796,11 @@ foreach v of local ed_var {
 
 {
 *<_lstatus_>
-	gen byte lstatus = 1 if ocupado==1
-	replace lstatus=2 if desocupa==1
-	replace lstatus=3 if pea==0
+	gen byte lstatus = .
+	replace lstatus=3 if p7424==2 | p7490 == 2 | inrange(p7458,1,12) | p7500s2==1 | p7450==3 | inrange(p7440,2,5) | p7430==2  | p6320==2 | inrange(p6310,2,15) | p7452==2
+	replace lstatus=1 if inrange(p6430,1,9)
+	*replace lstatus=2 if inrange(p7250,1,258) & lstatus!=1
+	replace lstatus=2 if p6280==1 & lstatus!=1
 	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -776,7 +827,7 @@ foreach v of local ed_var {
 	label values underemployment lblunderemployment
 *</_underemployment_>
 
-*<_nlfreason_> //not creating any variable. p7450 asks reason to leave last job for "inactive" people, should replace?
+*<_nlfreason_> 
 	gen byte nlfreason=.
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
@@ -784,15 +835,13 @@ foreach v of local ed_var {
 *</_nlfreason_>
 
 *<_unempldur_l_>
-	gen byte unempldur_l= int(p7250/4)
-	replace unempldur_l=. if lstatus!=2
+	gen byte unempldur_l=.
 	label var unempldur_l "Unemployment duration (months) lower bracket"
 *</_unempldur_l_>
 
 
 *<_unempldur_u_>
-	gen byte unempldur_u= int(p7250/4)
-	replace unempldur_u=. if lstatus!=2
+	gen byte unempldur_u=.
 	label var unempldur_u "Unemployment duration (months) upper bracket"
 *</_unempldur_u_>
 }
@@ -801,36 +850,346 @@ foreach v of local ed_var {
 *----------8.2: 7 day reference main job------------------------------*
 {
 *<_empstat_>
-	gen byte empstat= p6430
-	recode empstat 2 3 8=1 5=3 6 7=2 9=5
+	gen byte empstat= .
+	replace empstat=1 if p6430==1 | p6430==2 | p6430==3 | p6430==8
+	replace empstat=2 if p6430==6 | p6430==7
+	replace empstat=3 if p6430==5
+	replace empstat=4 if p6430==4
+	replace empstat=1 if p6430==9
 	replace empstat=. if lstatus!=1
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat lblempstat
 *</_empstat_>
 
+
 *<_ocusec_>
 	gen byte ocusec = p6430
 	recode ocusec 2=1 1 3 4 5/9=2
 	label var ocusec "Sector of activity primary job 7 day recall"
 	la de lblocusec 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
-	replace ocusec=. if lstatus!=1
 	label values ocusec lblocusec
 *</_ocusec_>
 
-*<_industry_orig_> // NOT IN DATASET rama4d
-	destring rama2d, replace
-	gen industry_orig = rama2d
-	replace industry_orig=. if rama2d==0
-	replace industry_orig=. if lstatus!=1
+*<_industry_orig_>
+	destring rama2d rama4d, replace
+	gen industry_orig = rama4d
+	replace industry_orig=. if rama4d==0
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
 
-*<_industrycat_isic_> // Colombian ISIC rev 3.1 to ISIC rev. 3.1, rama4d not in dataset
-	gen industrycat_isic = ""
+*<_industrycat_isic_> // Colombian ISIC rev 3.1 to ISIC rev. 3.1
+	gen industrycat_isic = .
+	replace industrycat_isic = 111 if rama4d == 114 | rama4d == 115 | rama4d == 118 | rama4d == 119
+	replace industrycat_isic = 112 if rama4d == 112 | rama4d == 116
+	replace industrycat_isic = 113 if rama4d == 111 | rama4d == 113 | rama4d == 117
+	replace industrycat_isic = 121 if rama4d == 121 | rama4d == 124
+	 replace industrycat_isic = 120 if  rama4d == 129
+	replace industrycat_isic = 122 if rama4d == 122 | rama4d == 123 | rama4d == 125
+	replace industrycat_isic = 130 if rama4d == 130
+	replace industrycat_isic = 140 if rama4d == 140
+	replace industrycat_isic = 150 if rama4d == 150
+	replace industrycat_isic = 200 if rama4d == 201 | rama4d == 202
+	replace industrycat_isic = 501 if rama4d == 501
+	replace industrycat_isic = 502 if rama4d == 502
+	replace industrycat_isic = 1010 if rama4d == 1010
+	replace industrycat_isic = 1020 if rama4d == 1020
+	replace industrycat_isic = 1030 if rama4d == 1030
+	replace industrycat_isic = 1110 if rama4d == 1110
+	replace industrycat_isic = 1120 if rama4d == 1120
+	replace industrycat_isic = 1200 if rama4d == 1200
+	replace industrycat_isic = 1310 if rama4d == 1310
+	replace industrycat_isic = 1320 if rama4d == 1320 | rama4d == 1331 | rama4d == 1339
+	replace industrycat_isic = 1410 if rama4d == 1411 | rama4d == 1412 | rama4d == 1413 | rama4d == 1414 | rama4d == 1415
+	replace industrycat_isic = 1421 if rama4d == 1421
+	replace industrycat_isic = 1422 if rama4d == 1422
+	replace industrycat_isic = 1429 if rama4d == 1431 | rama4d == 1432 | rama4d == 1490
+	replace industrycat_isic = 1511 if rama4d == 1511
+	replace industrycat_isic = 1512 if rama4d == 1512
+	replace industrycat_isic = 1513 if rama4d == 1521
+	replace industrycat_isic = 1514 if rama4d == 1522
+	replace industrycat_isic = 1520 if rama4d == 1530
+	replace industrycat_isic = 1531 if rama4d == 1541
+	replace industrycat_isic = 1532 if rama4d == 1542
+	replace industrycat_isic = 1533 if rama4d == 1543
+	replace industrycat_isic = 1541 if rama4d == 1551
+	replace industrycat_isic = 1542 if rama4d == 1571 | rama4d == 1572
+	replace industrycat_isic = 1544 if rama4d == 1581
+	replace industrycat_isic = 1544 if rama4d == 1552
+	replace industrycat_isic = 1549 if rama4d == 1561 | rama4d == 1562 | rama4d == 1563 | rama4d == 1564 | rama4d == 1589
+	replace industrycat_isic = 1551 if rama4d == 1591
+	replace industrycat_isic = 1552 if rama4d == 1592
+	replace industrycat_isic = 1553 if rama4d == 1593
+	replace industrycat_isic = 1554 if rama4d == 1594
+	replace industrycat_isic = 1600 if rama4d == 1600
+	replace industrycat_isic = 1711 if rama4d == 1710 | rama4d == 1720
+	replace industrycat_isic = 1712 if rama4d == 1730
+	replace industrycat_isic = 1721 if rama4d == 1741
+	replace industrycat_isic = 1722 if rama4d == 1742
+	replace industrycat_isic = 1723 if rama4d == 1743
+	replace industrycat_isic = 1729 if rama4d == 1749
+	replace industrycat_isic = 1730 if rama4d == 1750
+	replace industrycat_isic = 1810 if rama4d == 1810
+	replace industrycat_isic = 1820 if rama4d == 1820
+	replace industrycat_isic = 1911 if rama4d == 1910
+	replace industrycat_isic = 1912 if rama4d == 1931 | rama4d == 1932 | rama4d == 1939
+	replace industrycat_isic = 1920 if rama4d == 1921 | rama4d == 1922 | rama4d == 1923 | rama4d == 1924 | rama4d == 1925 | rama4d == 1926 | rama4d == 1929
+	replace industrycat_isic = 2010 if rama4d == 2010
+	replace industrycat_isic = 2021 if rama4d == 2020
+	replace industrycat_isic = 2022 if rama4d == 2030
+	replace industrycat_isic = 2023 if rama4d == 2040
+	replace industrycat_isic = 2029 if rama4d == 2090
+	replace industrycat_isic = 2101 if rama4d == 2101
+	replace industrycat_isic = 2102 if rama4d == 2102
+	replace industrycat_isic = 2109 if rama4d == 2109
+	replace industrycat_isic = 2211 if rama4d == 2211
+	replace industrycat_isic = 2212 if rama4d == 2212
+	replace industrycat_isic = 2213 if rama4d == 2213
+	replace industrycat_isic = 2219 if rama4d == 2219
+	replace industrycat_isic = 2221 if rama4d == 2220
+	replace industrycat_isic = 2222 if rama4d == 2231 | rama4d == 2232 | rama4d == 2233 | rama4d == 2234 | rama4d == 2239
+	replace industrycat_isic = 2230 if rama4d == 2240
+	replace industrycat_isic = 2310 if rama4d == 2310
+	replace industrycat_isic = 2320 if rama4d == 2321 | rama4d == 2322
+	replace industrycat_isic = 2330 if rama4d == 2330
+	replace industrycat_isic = 2411 if rama4d == 2411
+	replace industrycat_isic = 2412 if rama4d == 2412
+	replace industrycat_isic = 2413 if rama4d == 2413 | rama4d == 2414
+	replace industrycat_isic = 2421 if rama4d == 2421
+	replace industrycat_isic = 2422 if rama4d == 2422
+	replace industrycat_isic = 2423 if rama4d == 2423
+	replace industrycat_isic = 2424 if rama4d == 2424
+	replace industrycat_isic = 2429 if rama4d == 2429
+	replace industrycat_isic = 2430 if rama4d == 2430
+	replace industrycat_isic = 2511 if rama4d == 2511 | rama4d == 2512 | rama4d == 2513 /* included*/
+	replace industrycat_isic = 2520 if rama4d == 2521 | rama4d == 2529
+	*included
+	replace industrycat_isic = 2519 if rama4d == 2519
+	*
+	replace industrycat_isic = 2610 if rama4d == 2610
+	replace industrycat_isic = 2691 if rama4d == 2691
+	replace industrycat_isic = 2692 if rama4d == 2692
+	replace industrycat_isic = 2693 if rama4d == 2693
+	replace industrycat_isic = 2694 if rama4d == 2694
+	replace industrycat_isic = 2695 if rama4d == 2695
+	replace industrycat_isic = 2696 if rama4d == 2696
+	replace industrycat_isic = 2699 if rama4d == 2699
+	replace industrycat_isic = 2710 if rama4d == 2710
+	replace industrycat_isic = 2720 if rama4d == 2721 | rama4d == 2729
+	replace industrycat_isic = 2731 if rama4d == 2731
+	replace industrycat_isic = 2732 if rama4d == 2732
+	replace industrycat_isic = 2811 if rama4d == 2811
+	replace industrycat_isic = 2812 if rama4d == 2812
+	replace industrycat_isic = 2813 if rama4d == 2813
+	replace industrycat_isic = 2891 if rama4d == 2891
+	replace industrycat_isic = 2892 if rama4d == 2892
+	replace industrycat_isic = 2893 if rama4d == 2893
+	replace industrycat_isic = 2899 if rama4d == 2899
+	replace industrycat_isic = 2911 if rama4d == 2911
+	replace industrycat_isic = 2912 if rama4d == 2912
+	replace industrycat_isic = 2913 if rama4d == 2913
+	replace industrycat_isic = 2914 if rama4d == 2914
+	replace industrycat_isic = 2915 if rama4d == 2915
+	replace industrycat_isic = 2919 if rama4d == 2919
+	replace industrycat_isic = 2921 if rama4d == 2921
+	replace industrycat_isic = 2922 if rama4d == 2922
+	replace industrycat_isic = 2923 if rama4d == 2923
+	replace industrycat_isic = 2924 if rama4d == 2924
+	replace industrycat_isic = 2925 if rama4d == 2925
+	replace industrycat_isic = 2926 if rama4d == 2926
+	replace industrycat_isic = 2927 if rama4d == 2927
+	replace industrycat_isic = 2929 if rama4d == 2929
+	replace industrycat_isic = 2930 if rama4d == 2930
+	replace industrycat_isic = 3000 if rama4d == 3000
+	replace industrycat_isic = 3110 if rama4d == 3110
+	replace industrycat_isic = 3120 if rama4d == 3120
+	replace industrycat_isic = 3130 if rama4d == 3130
+	replace industrycat_isic = 3140 if rama4d == 3140
+	replace industrycat_isic = 3150 if rama4d == 3150
+	replace industrycat_isic = 3190 if rama4d == 3190
+	replace industrycat_isic = 3210 if rama4d == 3210
+	replace industrycat_isic = 3220 if rama4d == 3220
+	replace industrycat_isic = 3230 if rama4d == 3230
+	replace industrycat_isic = 3311 if rama4d == 3311
+	replace industrycat_isic = 3312 if rama4d == 3312
+	replace industrycat_isic = 3313 if rama4d == 3313
+	replace industrycat_isic = 3320 if rama4d == 3320
+	replace industrycat_isic = 3330 if rama4d == 3330
+	replace industrycat_isic = 3410 if rama4d == 3410
+	replace industrycat_isic = 3420 if rama4d == 3420
+	replace industrycat_isic = 3430 if rama4d == 3420 | rama4d == 3430 /*included*/
+	replace industrycat_isic = 3511 if rama4d == 3511
+	replace industrycat_isic = 3512 if rama4d == 3512
+	replace industrycat_isic = 3520 if rama4d == 3520
+	replace industrycat_isic = 3530 if rama4d == 3530
+	replace industrycat_isic = 3591 if rama4d == 3591
+	replace industrycat_isic = 3592 if rama4d == 3592
+	replace industrycat_isic = 3599 if rama4d == 3599
+	replace industrycat_isic = 3610 if rama4d == 3611 | rama4d == 3612 | rama4d == 3613 | rama4d == 3614 | rama4d == 3619
+	replace industrycat_isic = 3691 if rama4d == 3691
+	replace industrycat_isic = 3692 if rama4d == 3692
+	replace industrycat_isic = 3693 if rama4d == 3693
+	replace industrycat_isic = 3694 if rama4d == 3694
+	replace industrycat_isic = 3699 if rama4d == 3699
+	replace industrycat_isic = 3710 if rama4d == 3710
+	replace industrycat_isic = 3720 if rama4d == 3720
+	replace industrycat_isic = 4010 if rama4d == 4010
+	replace industrycat_isic = 4020 if rama4d == 4020
+	replace industrycat_isic = 4030 if rama4d == 4030
+	replace industrycat_isic = 4100 if rama4d == 4100
+	replace industrycat_isic = 4510 if rama4d == 4511 | rama4d == 4512
+	replace industrycat_isic = 4520 if rama4d == 4521 | rama4d == 4522 | rama4d == 4530
+	replace industrycat_isic = 4530 if rama4d == 4541 | rama4d == 4542 | rama4d == 4543 | rama4d == 4549
+	replace industrycat_isic = 4540 if rama4d == 4551 | rama4d == 4552 | rama4d == 4559
+	replace industrycat_isic = 4550 if rama4d == 4560
+	replace industrycat_isic = 5010 if rama4d == 5011 | rama4d == 5012
+	replace industrycat_isic = 5020 if rama4d == 5020
+	replace industrycat_isic = 5030 if rama4d == 5030
+	replace industrycat_isic = 5040 if rama4d == 5040
+	replace industrycat_isic = 5050 if rama4d == 5051 | rama4d == 5052
+	replace industrycat_isic = 5110 if rama4d == 5111 | rama4d == 5112 | rama4d == 5113 | rama4d == 5119
+	replace industrycat_isic = 5121 if rama4d == 5121 | rama4d == 5123 | rama4d == 5124
+	replace industrycat_isic = 5122 if rama4d == 5122 | rama4d == 5125 | rama4d == 5126 | rama4d == 5127
+	replace industrycat_isic = 5131 if rama4d == 5131 | rama4d == 5132 | rama4d == 5133
+	replace industrycat_isic = 5139 if rama4d == 5134 | rama4d == 5135 | rama4d == 5136 | rama4d == 5137 | rama4d == 5139
+	replace industrycat_isic = 5143 if rama4d == 5141 | rama4d == 5142
+	replace industrycat_isic = 5149 if rama4d == 5153 | rama4d == 5154 | rama4d == 5155 | rama4d == 5159
+	*included
+	replace industrycat_isic = 5520 if rama4d == 5521 | rama4d == 5522 | rama4d == 5523 |  rama4d == 5524 | rama4d == 5529 | rama4d == 5530
+	*
+	replace industrycat_isic = 5151 if rama4d == 5163 | rama4d == 5151
+	replace industrycat_isic = 5152 if rama4d == 5169 | rama4d == 5152
+	replace industrycat_isic = 5159 if rama4d == 5161 | rama4d == 5162 | rama4d == 5170
+	replace industrycat_isic = 5190 if rama4d == 5190
+	replace industrycat_isic = 5211 if rama4d == 5211
+	replace industrycat_isic = 5219 if rama4d == 5219
+	replace industrycat_isic = 5220 if rama4d == 5221 | rama4d == 5222 | rama4d == 5223 | rama4d == 5224 | rama4d == 5225 | rama4d == 5229
+	replace industrycat_isic = 5231 if rama4d == 5231
+	replace industrycat_isic = 5232 if rama4d == 5232 | rama4d == 5233 | rama4d == 5234
+	replace industrycat_isic = 5233 if rama4d == 5235 | rama4d == 5236 | rama4d == 5237
+	replace industrycat_isic = 5234 if rama4d == 5241 | rama4d == 5242
+	replace industrycat_isic = 5239 if rama4d == 5243 | rama4d == 5244 | rama4d == 5245 | rama4d == 5246 | rama4d == 5249 | rama4d == 5239
+	replace industrycat_isic = 5240 if rama4d == 5251 | rama4d == 5252
+	replace industrycat_isic = 5251 if rama4d == 5261
+	replace industrycat_isic = 5252 if rama4d == 5262
+	replace industrycat_isic = 5259 if rama4d == 5269
+	replace industrycat_isic = 5260 if rama4d == 5271 | rama4d == 5272
+	replace industrycat_isic = 5510 if rama4d == 5511 | rama4d == 5512 | rama4d == 5513 | rama4d == 5519
+	replace industrycat_isic = 6010 if rama4d == 6010
+	replace industrycat_isic = 6021 if rama4d == 6021 | rama4d == 6022 | rama4d == 6023
+	replace industrycat_isic = 6022 if rama4d == 6031 | rama4d == 6032 | rama4d == 6039
+	replace industrycat_isic = 6023 if rama4d == 6041 | rama4d == 6042 | rama4d == 6043 | rama4d == 6044
+	replace industrycat_isic = 6030 if rama4d == 6050
+	replace industrycat_isic = 6110 if rama4d == 6111 | rama4d == 6112
+	replace industrycat_isic = 6120 if rama4d == 6120
+	replace industrycat_isic = 6210 if rama4d == 6211 | rama4d == 6212 | rama4d == 6213 | rama4d == 6214
+	replace industrycat_isic = 6220 if rama4d == 6220
+	replace industrycat_isic = 6301 if rama4d == 6310
+	replace industrycat_isic = 6302 if rama4d == 6320
+	replace industrycat_isic = 6303 if rama4d == 6331 | rama4d == 6332 | rama4d == 6333 | rama4d == 6339
+	replace industrycat_isic = 6304 if rama4d == 6340
+	replace industrycat_isic = 6309 if rama4d == 6390
+	replace industrycat_isic = 6411 if rama4d == 6411
+	replace industrycat_isic = 6412 if rama4d == 6412
+	replace industrycat_isic = 6420 if rama4d == 6421 | rama4d == 6422 | rama4d == 6423 | rama4d == 6424 | rama4d == 6425 | rama4d == 6426
+	replace industrycat_isic = 6511 if rama4d == 6511
+	replace industrycat_isic = 6519 if rama4d == 6512 | rama4d == 6513 | rama4d == 6514 | rama4d == 6515 | rama4d == 6516 | rama4d == 6519
+	replace industrycat_isic = 6591 if rama4d == 6591
+	replace industrycat_isic = 6592 if rama4d == 6593 | rama4d == 6596
+	replace industrycat_isic = 6599 if rama4d == 6594 | rama4d == 6595 | rama4d == 6599
+	replace industrycat_isic = 6601 if rama4d == 6602 | rama4d == 6603
+	replace industrycat_isic = 6602 if rama4d == 6604
+	replace industrycat_isic = 6603 if rama4d == 6601
+	replace industrycat_isic = 6711 if rama4d == 6711 | rama4d == 6712
+	replace industrycat_isic = 6712 if rama4d == 6592 | rama4d == 6713 | rama4d == 6714
+	replace industrycat_isic = 6719 if rama4d == 6715 | rama4d == 6716 | rama4d == 6719
+	replace industrycat_isic = 6720 if rama4d == 6721 | rama4d == 6722
+	replace industrycat_isic = 7010 if rama4d == 7010
+	replace industrycat_isic = 7020 if rama4d == 7020
+	replace industrycat_isic = 7111 if rama4d == 7111
+	replace industrycat_isic = 7112 if rama4d == 7112
+	replace industrycat_isic = 7113 if rama4d == 7113
+	replace industrycat_isic = 7121 if rama4d == 7121
+	replace industrycat_isic = 7122 if rama4d == 7122
+	replace industrycat_isic = 7123 if rama4d == 7123
+	replace industrycat_isic = 7129 if rama4d == 7129
+	replace industrycat_isic = 7130 if rama4d == 7130
+	replace industrycat_isic = 7210 if rama4d == 7210
+	replace industrycat_isic = 7221 if rama4d == 7220
+	replace industrycat_isic = 7230 if rama4d == 7230
+	replace industrycat_isic = 7240 if rama4d == 7240
+	replace industrycat_isic = 7250 if rama4d == 7250
+	replace industrycat_isic = 7290 if rama4d == 7290
+	replace industrycat_isic = 7310 if rama4d == 7310
+	replace industrycat_isic = 7320 if rama4d == 7320
+	replace industrycat_isic = 7411 if rama4d == 7411
+	replace industrycat_isic = 7412 if rama4d == 7412
+	replace industrycat_isic = 7413 if rama4d == 7413
+	replace industrycat_isic = 7414 if rama4d == 7414
+	replace industrycat_isic = 7421 if rama4d == 7421
+	replace industrycat_isic = 7422 if rama4d == 7422
+	replace industrycat_isic = 7430 if rama4d == 7430
+	replace industrycat_isic = 7491 if rama4d == 7491
+	replace industrycat_isic = 7492 if rama4d == 7492
+	replace industrycat_isic = 7493 if rama4d == 7493
+	replace industrycat_isic = 7494 if rama4d == 7494
+	replace industrycat_isic = 7495 if rama4d == 7495
+	replace industrycat_isic = 7499 if rama4d == 7499
+	replace industrycat_isic = 7511 if rama4d == 7511 | rama4d == 7512
+	replace industrycat_isic = 7512 if rama4d == 7513
+	replace industrycat_isic = 7513 if rama4d == 7514
+	replace industrycat_isic = 7514 if rama4d == 7515
+	replace industrycat_isic = 7521 if rama4d == 7521
+	replace industrycat_isic = 7522 if rama4d == 7522
+	replace industrycat_isic = 7523 if rama4d == 7523 | rama4d == 7524
+	replace industrycat_isic = 7530 if rama4d == 7530
+	replace industrycat_isic = 8010 if rama4d == 8011 | rama4d == 8012 | rama4d == 8041 | rama4d == 8042 | rama4d == 8043 | rama4d == 8044 | rama4d == 8045 | rama4d == 8046
+	replace industrycat_isic = 8021 if rama4d == 8021 | rama4d == 8022
+	replace industrycat_isic = 8022 if rama4d == 8030
+	replace industrycat_isic = 8090 if rama4d == 8050
+	replace industrycat_isic = 8090 if rama4d == 8060
+	replace industrycat_isic = 8511 if rama4d == 8511
+	replace industrycat_isic = 8512 if rama4d == 8512 | rama4d == 8513
+	replace industrycat_isic = 8519 if rama4d == 8514 | rama4d == 8515 | rama4d == 8519
+	replace industrycat_isic = 8520 if rama4d == 8520
+	replace industrycat_isic = 8531 if rama4d == 8531
+	replace industrycat_isic = 8532 if rama4d == 8532
+	replace industrycat_isic = 9000 if rama4d == 9000
+	replace industrycat_isic = 9111 if rama4d == 9111
+	replace industrycat_isic = 9112 if rama4d == 9112
+	replace industrycat_isic = 9120 if rama4d == 9120
+	replace industrycat_isic = 9191 if rama4d == 9191
+	replace industrycat_isic = 9192 if rama4d == 9192
+	replace industrycat_isic = 9199 if rama4d == 9199
+	replace industrycat_isic = 9211 if rama4d == 9211
+	replace industrycat_isic = 9212 if rama4d == 9212
+	replace industrycat_isic = 9213 if rama4d == 9213
+	replace industrycat_isic = 9214 if rama4d == 9214
+	replace industrycat_isic = 9219 if rama4d == 9219
+	replace industrycat_isic = 9220 if rama4d == 9220
+	replace industrycat_isic = 9231 if rama4d == 9231
+	replace industrycat_isic = 9232 if rama4d == 9232
+	replace industrycat_isic = 9233 if rama4d == 9233
+	replace industrycat_isic = 9241 if rama4d == 9241
+	replace industrycat_isic = 9249 if rama4d == 9242 | rama4d == 9249
+	replace industrycat_isic = 9301 if rama4d == 9301
+	replace industrycat_isic = 9302 if rama4d == 9302
+	replace industrycat_isic = 9303 if rama4d == 9303
+	*included
+	replace industrycat_isic = 9309 if rama4d == 9309
+	*
+	replace industrycat_isic = 9500 if rama4d == 9500
+	replace industrycat_isic = 9600 if rama4d == 9600
+	replace industrycat_isic = 9700 if rama4d == 9700
+	replace industrycat_isic = 9900 if rama4d == 9900
+	replace industrycat_isic = . if rama4d == 0
+	gen industrycat_isic_S = string(industrycat_isic, "%04.0f")
+	drop industrycat_isic
+	rename industrycat_isic_S industrycat_isic
+	replace industrycat_isic="" if lstatus!=1
+	replace industrycat_isic="" if industrycat_isic=="."
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
-
 *</_industrycat_isic_>
 
 
@@ -846,7 +1205,6 @@ foreach v of local ed_var {
 	replace industrycat10 = 8 if (rama2d>=65 & rama2d<=67)|(rama2d>=70 & rama2d<=74)
 	replace industrycat10 = 9 if rama2d==75
 	replace industrycat10 = 10 if rama2d>=80 & rama2d<=99
-	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
@@ -882,16 +1240,15 @@ foreach v of local ed_var {
 
 	gen byte occup = .
 	replace occup = 1 if oficio == 20 | oficio == 21 | oficio == 30 | oficio == 40 | oficio == 41 | oficio == 50 | oficio == 51 | oficio == 60
-	replace occup = 2 if oficio == 1 | oficio == 2 | oficio == 5 | oficio == 6 | oficio == 8 | oficio == 9 | oficio == 2 | oficio == 11 | oficio == 12 | oficio == 13 | oficio == 14 | oficio == 15 | oficio == 19
+	replace occup = 2 if oficio == 1 | oficio == 2 | oficio == 5 | oficio == 6 | oficio == 8 | oficio == 9 |  oficio == 11 | oficio == 12 | oficio == 13 | oficio == 14 | oficio == 15 | oficio == 19
 	replace occup = 3 if oficio == 3 | oficio == 4 | oficio == 7 | oficio == 16 | oficio == 17 | oficio == 18 | oficio == 31 | oficio == 34 | oficio == 42 | oficio == 43 | oficio == 44 | oficio == 86
 	replace occup = 4 if oficio == 32 | oficio == 33 | oficio == 37 | oficio == 38 | oficio == 39
-	replace occup = 5 if oficio == 36 | oficio == 45 | oficio == 49 | oficio == 52 | oficio == 53 | oficio == 57 | oficio == 58 | oficio == 59 | oficio == 59
-	replace occup = 6 if oficio == 61 | oficio == 63 | oficio == 64
+	replace occup = 5 if oficio == 36 | oficio == 45 | oficio == 49 | oficio == 52 | oficio == 53 | oficio == 57 | oficio == 58 | oficio == 59 
+	replace occup = 6 if oficio == 61 | oficio == 63 | oficio == 64 | oficio == 55
 	replace occup = 7 if oficio == 70 | oficio == 71 | oficio == 76 | oficio == 79 | oficio == 80 | oficio == 81 | oficio == 82 | oficio == 83 | oficio == 84 | oficio == 85 | oficio == 87 | oficio == 88 | oficio == 89 | oficio == 92 | oficio == 93 | oficio == 94 | oficio == 95
 	replace occup = 8 if oficio == 56 | oficio == 72 | oficio == 73 | oficio == 74 | oficio == 75 | oficio == 77 | oficio == 78 | oficio == 90 | oficio == 91 | oficio == 96 | oficio == 98
-	replace occup = 9 if oficio == 54 | oficio == 55 | oficio == 62 | oficio == 97 | oficio == 99
+	replace occup = 9 if oficio == 54  | oficio == 97 | oficio == 99 | oficio == 62
 	replace occup = 99 if oficio == 35 | oficio == 0
-	replace occup=. if lstatus!=1
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup
@@ -902,7 +1259,7 @@ foreach v of local ed_var {
 	replace occup_skill = 3 if inrange(occup, 1, 3)
 	replace occup_skill = 2 if inrange(occup, 4, 8)
 	replace occup_skill = 1 if occup == 9
-	 replace occup_skill = . if occup==99
+  replace occup_skill = . if occup==99
 	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
 	label values occup_skill lblskill
 	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
@@ -911,7 +1268,6 @@ foreach v of local ed_var {
 
 *<_wage_no_compen_>
 	gen double wage_no_compen = p6500
-	replace wage_no_compen=. if lstatus!=1
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
@@ -928,21 +1284,23 @@ foreach v of local ed_var {
 	gen byte unitwage = 5
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
-		replace unitwage=. if lstatus!=1
+	replace unitwage=. if lstatus!=1
 	label values unitwage lblunitwage
 *</_unitwage_>
 
+*<_njobs_>
+	gen njobs = .
+	label var njobs "Total number of jobs"
+*</_njobs_>
 
 *<_whours_>
 	gen whours = p6800
-	replace whours=. if lstatus!=1
-	replace whours=. if whours==0
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
 
 *<_wmonths_>
-	gen wmonths = .
+	gen wmonths = p6790
 	label var wmonths "Months of work in past 12 months primary job 7 day recall"
 *</_wmonths_>
 
@@ -1031,7 +1389,7 @@ foreach v of local ed_var {
 	}
 	replace wage_self = p550/12 if p550!=. & wage_self==.
 
-	*Replace wage for self-employed, employers, others
+	*Replace wage for self-employed, employers, others "Monthly income, including extra hours"
 	replace wage_principal_1 = wage_self if (empstat==3 | empstat==4 | empstat==5 | p550!=.) & wage_self!=.
 	replace wage_principal_1=0 if empstat==2
 	replace wage_principal_1=. if lstatus!=1
@@ -1044,7 +1402,7 @@ foreach v of local ed_var {
 	replace wage_principal_2 = wage_principal_1 + wage_kind if wage_kind!=.
     replace wage_principal_2 = wage_principal_2 + prim_bon if prim_bon!=.
 
-	*Replace wage for self-employed, employers, others
+	*Replace wage for self-employed, employers, others "Monthly income, including extra hours + in-kind payments"
 	replace wage_principal_2 = wage_self if (empstat==3 | empstat==4 | empstat==5 | p550!=.) & wage_self!=.
 	replace wage_principal_2=0 if empstat==2
 	replace wage_principal_2=. if lstatus!=1
@@ -1057,8 +1415,7 @@ foreach v of local ed_var {
 
 *<_contract_>
 	gen byte contract = 0
-	replace contract=1 if p6450==2
-	replace contract=. if p6450==9
+	replace contract=1 if p6440==2
 	replace contract=. if lstatus!=1
 	label var contract "Employment has contract primary job 7 day recall"
 	la de lblcontract 0 "Without contract" 1 "With contract"
@@ -1067,7 +1424,7 @@ foreach v of local ed_var {
 
 
 *<_healthins_>
-	gen byte healthins= dsegsale
+	gen byte healthins=p6990
 	recode healthins 9=. 2=0
 	label var healthins "Employment has health insurance primary job 7 day recall"
 	la de lblhealthins 0 "Without health insurance" 1 "With health insurance"
@@ -1122,33 +1479,33 @@ foreach v of local ed_var {
 *</_empstat_2_>
 
 
-*<_ocusec_2_> //not creating any variable, not rama2d rama4d for 2nd job
+*<_ocusec_2_>
 	gen ocusec_2 = .
 	label var ocusec_2 "Sector of activity secondary job 7 day recall"
 	label values ocusec_2 lblocusec
 *</_ocusec_2_>
 
 
-*<_industry_orig_2_> //not creating any variable, not rama2d rama4d for 2nd job
+*<_industry_orig_2_>
 	gen industry_orig_2 = .
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 
 
-*<_industrycat_isic_2_> //not creating any variable, not rama2d rama4d for 2nd job
+*<_industrycat_isic_2_>
 	gen industrycat_isic_2 = .
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
 
-*<_industrycat10_2_> //not creating any variable, not rama2d rama4d for 2nd job
+*<_industrycat10_2_>
 	gen byte industrycat10_2 = .
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
 *</_industrycat10_2_>
 
 
-*<_industrycat4_2_> //not creating any variable, not rama2d rama4d for 2nd job
+*<_industrycat4_2_>
 	gen byte industrycat4_2 = industrycat10_2
 	recode industrycat4_2 (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
 	label var industrycat4_2 "Broad Economic Activities classification, secondary job 7 day recall"
@@ -1156,13 +1513,13 @@ foreach v of local ed_var {
 *</_industrycat4_2_>
 
 
-*<_occup_orig_2_> //not creating any variable, not rama2d rama4d for 2nd job
+*<_occup_orig_2_>
 	gen occup_orig_2 = .
 	label var occup_orig_2 "Original occupation record secondary job 7 day recall"
 *</_occup_orig_2_>
 
 
-*<_occup_isco_2_> //not creating any variable, not rama2d rama4d for 2nd job
+*<_occup_isco_2_>
 	gen occup_isco_2 = ""
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
@@ -1191,7 +1548,6 @@ foreach v of local ed_var {
 
 *<_unitwage_2_>
 	gen byte unitwage_2 = 5
-	replace unitwage_2=. if lstatus!=1
 	label var unitwage_2 "Last wages' time unit secondary job 7 day recall"
 	label values unitwage_2 lblunitwage
 *</_unitwage_2_>
@@ -1215,13 +1571,13 @@ foreach v of local ed_var {
 *</_wage_total_2_>
 
 
-*<_firmsize_l_2_> //
-	gen byte firmsize_l_2 =.
+*<_firmsize_l_2_>
+	gen byte firmsize_l_2 = .
 	label var firmsize_l_2 "Firm size (lower bracket) secondary job 7 day recall"
 *</_firmsize_l_2_>
 
 
-*<_firmsize_u_2_> //
+*<_firmsize_u_2_>
 	gen byte firmsize_u_2 = .
 	label var firmsize_u_2 "Firm size (upper bracket) secondary job 7 day recall"
 *</_firmsize_u_2_>
@@ -1273,7 +1629,7 @@ foreach v of local ed_var {
 
 {
 
-*<_lstatus_year_> //not creating any variable, should wait for joining datasets with 2010?
+*<_lstatus_year_>
 	gen byte lstatus_year = .
 	replace lstatus_year=. if age < minlaborage & age != .
 	label var lstatus_year "Labor status during last year"
@@ -1326,7 +1682,7 @@ foreach v of local ed_var {
 
 {
 
-*<_empstat_year_> //not creating any variable, should wait for joining datasets with 2010?
+*<_empstat_year_>
 	gen byte empstat_year = .
 	replace empstat_year=. if lstatus_year!=1
 	label var empstat_year "Employment status during past week primary job 12 month recall"
@@ -1398,7 +1754,7 @@ foreach v of local ed_var {
 *</_occup_year_>
 
 
-*<_wage_no_compen_year_> --- this var has the same name as other and when quoted in the keep and order codes is repeated.
+*<_wage_no_compen_year_>
 	gen double wage_no_compen_year = .
 	label var wage_no_compen_year "Last wage payment primary job 12 month recall"
 *</_wage_no_compen_year_>
@@ -1481,7 +1837,9 @@ foreach v of local ed_var {
 
 {
 
-*<_empstat_2_year_> //not creating any variable, should wait for joining datasets with 2010?
+
+
+*<_empstat_2_year_>
 	gen byte empstat_2_year = .
 	label var empstat_2_year "Employment status during past week secondary job 12 month recall"
 	label values empstat_2_year lblempstat_year
@@ -1598,7 +1956,7 @@ foreach v of local ed_var {
 
 *----------8.9: 12 month reference additional jobs------------------------------*
 
-* NUMBER OF ADDITIONAL JOBS LAST YEAR  //not creating any variable, should wait for joining datasets with 2009?
+* NUMBER OF ADDITIONAL JOBS LAST YEAR
 	gen byte njobs_year=.
 	replace njobs_year=. if lstatus_year!=1
 	label var njobs_year "Number of additional jobs during last year"
@@ -1641,13 +1999,6 @@ foreach v of local ed_var {
 
 
 *----------8.11: Overall across reference periods------------------------------*
-
-
-*<_njobs_> Defined above
-	gen njobs = .
-	label var njobs "Total number of jobs"
-*</_njobs_> */
-
 
 *<_t_hours_annual_>
 	gen t_hours_annual = .
@@ -1697,13 +2048,13 @@ quietly{
 
 *<_% KEEP VARIABLES - ALL_>
 
-	keep countrycode survname survey icls_v isced_version isco_version isic_version year vermast veralt harmonization int_year int_month hhid pid weight psu strata wave urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_orig educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
+	keep countrycode survname survey icls_v isced_version isco_version isic_version year vermast veralt harmonization int_year int_month hhid pid weight psu strata wave urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_orig educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field_orig vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
 
 *</_% KEEP VARIABLES - ALL_>
 
 *<_% ORDER VARIABLES_>
 
-	order countrycode survname survey icls_v isced_version isco_version isic_version year vermast veralt harmonization int_year int_month hhid pid weight psu strata wave urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_orig educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
+	order countrycode survname survey icls_v isced_version isco_version isic_version year vermast veralt harmonization int_year int_month hhid pid weight psu strata wave urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_orig educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field_orig vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
 
 *</_% ORDER VARIABLES_>
 
