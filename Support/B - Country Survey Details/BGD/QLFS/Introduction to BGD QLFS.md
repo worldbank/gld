@@ -86,7 +86,7 @@ The Bangladesh QLFS employs its national industry classification system called t
 | 2015-16 | BSIC 2009                | ISIC revision 4         | First two digits          |
 | 2016-17 | BSIC 2009                | ISIC revision 4         | First two digits          |
 
-As of time of writing (April 2023), an update of the BSIC has been released in 2020 to use more detailed categories of industries. While the ISIC version 4 details occupational categories at four digits, the BSIC 2020 is detailed at six digits. Based on the table below, both BSIC 2020 and BSIC 2009 are comparable at most at the single digit level. BSIC is comparable with the ISIC rev. 4 at 2 digits except for an additional two-digit code that is not in ISIC. In both rounds, no individual has reported being in this industry. 
+As of time of writing (April 2023), an update of the BSIC has been released in 2020 to use more detailed categories of industries. While the ISIC version 4 details occupational categories at four digits, the BSIC 2020 is detailed at six digits. Based on the table below, both BSIC 2020 and BSIC 2009 are comparable at most at the single digit level. BSIC is comparable with the ISIC rev. 4 at 2 digits except for an additional two-digit code that is not in ISIC, and neither was it reported as an industry of any individual in either survey. 
 
 <img src="Utilities/isic-bsic-relationship.png" alt="BGD_divisions" width="600" height="200">
 
