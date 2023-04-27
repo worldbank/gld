@@ -25,7 +25,7 @@ The Bangladesh QLFS is a quarterly labor force survey with information on demogr
 | 2015-16 |          121,082  |                      503,756  |
 | 2016-17 |          122,455|                      493,886  |
 
-Unlike its precedessor, the Bangladesh QLFS implements a rotational sampling design, in which households were interviewed for two consecutive quarters before being replaced. In the frequency table above, household and individuals were counted distinctly per round. This means that an individual that is interviewed two consecutive quarters is counted twice in the reported frequency table. 
+Unlike its precedessor, the Bangladesh QLFS implements a rotational sampling design, in which households were interviewed for two consecutive quarters before being replaced. In the frequency table above, household and individuals were counted distinctly per round. This means that an individual interviewed for two consecutive quarters is counted twice in the reported frequency table. 
 
 ## Where can the data be found?
 
@@ -91,10 +91,8 @@ As of time of writing (April 2023), an update of the BSIC has been released in 2
 <img src="Utilities/isic-bsic-relationship.png" alt="BGD_divisions" width="600" height="200">
 
 
-
 ### Employment: Occupation Classification
 
-**Kindly include a table a description as above for industry**
 
 The Bangladesh QLFS employs its national occupational classification system called the Bangladesh Standard Classification of Occupations (BSCO) 2012, which is adapted from the International Standard Classification of Occupations (ISC0) 2008. 
 
