@@ -5,9 +5,9 @@ In short, the ICLS 19 resolution restricts employment to *work performed for oth
 
 The GLD codes the harmonization’s `lstatus` variable based on this concept starting with the 2015-16 QLFS as information becomes available on respondents' intention for economic activity to distinguish between working for pay or own consumption. 
 
-# Current coding for the 2015-16 QLFS
+# Current coding for the QLFS
 
-Currently, the code used to create the `lstatus` variable (which distinguishes between employment, unemployment, and out of the labour force) is the following:
+For both the 2015-16 and 2016-17, the code used to create the `lstatus` variable (which distinguishes between employment, unemployment, and out of the labour force) is the following:
 
 ```
 *<_lstatus_>
@@ -50,10 +50,9 @@ Currently, the code used to create the `lstatus` variable (which distinguishes b
 	replace lstatus = . if age < minlaborage
 ```
 
-The steps U2, N2, and N5 are the ones where people are working on non-market-exchange farm work (the only subsistence activity coded in the survey). These are the codes that need to change to make a time series that is comparable to the old ICLS definition used in the other surveys.
 
 
-# Coding to convert the 2015-16 QLFS to the old definition
+# Coding to convert to the old definition
 
 Thus, to obtain a unique series with the old definition we would need to code:
 
