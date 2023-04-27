@@ -14,17 +14,18 @@
 
 ## What is the BGD QLFS?
 
-The Bangladesh Quarter;y Labor Force Survey (QLFS), initiated by the Bangladesh Bureau of Statistics (BBS) in 1980, has been carried out at irregular intervals over the years. The GLD team has harmonized data for the five most recent rounds: 2005-06, 2010, 2013, 2015-16, and 2016-17. In the latest two rounds (2015-16 and 2016-17), the surveys were renamed as the Quarterly Labor Force Survey (QLFS), providing data on a quarterly basis to offer a more detailed understanding of labor market dynamics. Additionally, the questionnaire was updated to gather information on the own-use production of goods and services, a crucial aspect of the informal labor market and subsistence activities in Bangladesh. Thus, a [separate section](https://github.com/worldbank/gld/tree/BGD/Support/B%20-%20Country%20Survey%20Details/BGD/QLFS) is prepared to provide more details on the QLFS.
+The Bangladesh Quarterly Labor Force Survey (QLFS) succeeds the annual LFS after its first survey was conducted between 2015 and 2016. The QLFS mainly differs from the annual LFS by providing nationally-representative data on a quarterly basis, and offers a more detailed understanding of labor market dynamics. Specifically, the questionnaire is aligned with the ICLS-19, with questions aimed to gather information on the individuals' own-use production of goods and services, a crucial aspect of the informal labor market and subsistence activities in Bangladesh.
 
 ## What does the BGD QLFS cover?
 
-The Bangladesh LFS is a labor force survey with information on demographic characteristics, education, and labor market activities over the past 7 days. The harmonized years and sample sizes used in the GLD harmonization are as follows:
+The Bangladesh QLFS is a quarterly labor force survey with information on demographic characteristics, education, and labor market activities over the past 7 days. The harmonized years and sample sizes used in the GLD harmonization are as follows:
+
 | Year | HH count | Individual count |
 |---|---|---|
 | 2015-16 |          121,082  |                      503,756  |
 | 2016-17 |          122,455|                      493,886  |
 
-During the 2015-16 and 2016-17 rounds, the Bangladesh QLFS implemented a rotational sampling design, in which individuals were interviewed for two consecutive quarters before being replaced. For these two rounds, the table above presents household and individual frequency data distinctively for each quarter.
+Unlike its precedessor, the Bangladesh QLFS implements a rotational sampling design, in which households were interviewed for two consecutive quarters before being replaced. In the frequency table above, household and individuals were counted distinctly per round. This means that an individual that is interviewed two consecutive quarters is counted twice in the reported frequency table. 
 
 ## Where can the data be found?
 
@@ -34,12 +35,9 @@ The datasets are not accessible to the public and researchers have to request th
 
 The Bangladesh QLFS employs a two-stage stratified sampling design to gather representative data on the country's labor force. This sampling methodology involves selecting Primary Sampling Units (PSUs) in the first stage and households within each PSU in the second stage. Both stages employ random selection techniques, ensuring the sample's representativeness. In the 2015-16 and 2016-17 rounds, the QLFS implemented a rotational panel strategy, where some households in each cluster were replaced by new ones every two quarters.
 
-In 2010, the LFS updated its frame to improve the quality and reliability of the estimates. Before then, the LFS utilized the Integrated Multipurpose Sample (IMPS) design, which consisted of 1,000 PSUs covering both rural and urban areas. However, as the IMPS areas became outdated, the LFS transitioned to an updated Master Sampling Frame in 2010. This new design was based on the 2001 Population Census enumeration areas and expanded the number of PSUs to 1,500, increasing the number of surveyed households.
-
-
 ## What is the significance level?
 
-The official reports detail estimates by area of residence (urban or rural), and the first level administrative units, called *divisions* in Bangladesh. 
+The official reports detail estimates by area of residence (urban or rural), and the first level administrative units, called *divisions* in Bangladesh. In contrast to the LFS, the QLFS allows breakdown of estimates at a greater level of detail. Disaggregation is possible at a quarterly basis, and area of residence by divisions. However, the GLD data uses annual weights. Data for quarterly weights is available for the 2016-2017 round, but not for the 2015-2016 round. 
 
 ## Other noteworthy aspects
 
