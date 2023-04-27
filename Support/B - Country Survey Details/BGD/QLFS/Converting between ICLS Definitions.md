@@ -3,7 +3,7 @@ Since the passing of the [resolution concerning statistics of work, employment a
 
 In short, the ICLS 19 resolution restricts employment to *work performed for others in exchange for pay or profit*, meaning that own consumption work (e.g., subsistence agriculture or building housing for oneself) are not counted as employment.
 
-The GLD codes the harmonization’s `lstatus’ variable based on this concept starting with the 2015-16 QLFS as information becomes available on respondents' intention for economic activity to distinguish between working for pay or own consumption. 
+The GLD codes the harmonization’s `lstatus` variable based on this concept starting with the 2015-16 QLFS as information becomes available on respondents' intention for economic activity to distinguish between working for pay or own consumption. 
 
 # Current coding for the 2020 ILFS
 
