@@ -47,7 +47,7 @@ Since the passing of the [resolution concerning statistics of work, employment a
 
 In short, the ICLS 19 resolution restricts employment to *work performed for others in exchange for pay or profit*, meaning that own consumption work (e.g., subsistence agriculture or building housing for oneself) are not counted as employment.
 
-The Bangladesh QLFS reports is consistent with the LFS in defining employment that includes individuals working for their own consumption. Although this definition does not align with international standards, the QLFS series contain information on individuals' intentions for economic activity, whether for sale or own consumption. This information can be used to code employment to exclude individuals whose primary intention for economic activity is own consumption. This approach allows us to adopt a definition of employment that aligns with international standards. However, adopting this break in definition makes it challenging to meaningfully compare data over time. To address this, we provide a code that enables us to identify employment using the previous definition. The precise details can be found in a [separate document here](Converting%20between%20ICLS%20Definitions.md)
+The Bangladesh QLFS survey reports are consistent with the LFS in using a definition for employment that includes individuals working for their own consumption. Although this definition does not align with international standards, the QLFS series contain information on individuals' intentions for economic activity, whether for sale or own consumption. This information can be used to code employment to exclude individuals whose primary intention for economic activity is own consumption. This approach allows us to adopt a definition of employment that aligns with international standards. However, adopting this break in definition makes it challenging to meaningfully compare data over time. To address this, we provide a code that enables us to identify employment using the previous definition. The precise details can be found in a [separate document here](Converting%20between%20ICLS%20Definitions.md)
 
 
 ### Household ID
@@ -62,9 +62,9 @@ As of the time of writing (April 2023) Bangladesh is composed of eight administr
 ![BGD_divisions](Utilities/bgd_divisions.png)
 <br></br>
 
-The table below shows the divisions as of writing and what divisions they belonged to at the earliest survey (currently 2005)
+The table below shows the divisions as of writing and what divisions they belonged to for both 2015-16 and 2016-17 QLFS rounds.
 
-| Divisions as of april 2023    | Divisions in 2005             |
+| Divisions as of April 2023    | Divisions in 2015-2016        |
 |:-----------------------------:|:------------------------------|
 | Barisal                       | Barisal                       |
 | Chittagong                    | Chittagong                    |
@@ -72,40 +72,33 @@ The table below shows the divisions as of writing and what divisions they belong
 | Khulna                        | Khulna                        |
 | Mymenshingh                   | Dhaka                         |
 | Rajshahi                      | Rajshahi                      |
-| Rangpur                       | Rajshahi                      |
+| Rangpur                       | Rangpur                       |
 | Sylhet                        | Sylhet                        |
 
-The division of Rangpur was created in 2010, splitting off Rajshahi, and consists of the districts of Dinajpur, Kurigram, Gaibandha, Lalmonirhat, Nilphamari, Panchagarh, Rangpur, and Thakurgaon.
-
-The division of Mymensingh was created in 2015, splitting off Dhaka, and consists of the districts of Jamalpur. Mymensingh, Netrokona, and Sherpur.
+The division of Mymensingh was created in 2015, splitting off Dhaka, and consists of the districts of Jamalpur, Mymensingh, Netrokona, and Sherpur.
 
 ### Employment: Industry Classification
 
-The Bangladesh Labor Force Survey (QLFS) employs its national industry classification system called the Bangladesh Standards for Industrial Classification (BSIC), which is adapted from the International Standards for Industrial Classification (ISIC).
+The Bangladesh QLFS employs its national industry classification system called the Bangladesh Standards for Industrial Classification (BSIC) 2009, which is adapted from the International Standards for Industrial Classification (ISIC) revision 4.
 
-| Year | Classification in survey | ISIC revision mapped to | How mapped                |
-|:----:|:------------------------:|:-----------------------:|:--------------------------|
-| 2005 | BSIC 2001                | ISIC revision 3         | With correspondence table |
-| 2010 | BSIC 2009                | ISIC revision #         | First two digits          |
-| 2013 | Unknonw                  | ISIC revision #         | First two digits          |
+| Year    | Classification in survey | ISIC revision mapped to | How mapped                |
+|:-------:|:------------------------:|:-----------------------:|:--------------------------|
+| 2015-16 | BSIC 2009                | ISIC revision 4         | First two digits          |
+| 2016-17 | BSIC 2009                | ISIC revision 4         | First two digits          |
 
-For 2005, the correspondence is done at four digits based on [a PDF table](Utilities/BSIC_code.pdf), which we converted into a `.dta` file that is read in the harmonization process. The [file is available here](Utilities/Additional%20Data/bsic_isic_mapping.dta).
-
-For 2009, ##TEXT##
-
-In the case of 2013, the actual version is unkonwn, but a manual review of the codes agrees with the fact the coding is based on ISIC revision #. However, since the full correspondence is unknown, only the first two two digits are mapped to.
-
-** Original text **
-BSIC and ISIC classifications are comparable at the two-digit level. Over the years, the BSIC has been updated, resulting in different versions being used throughout the LFS. For instance, the 2005 LFS utilizes the BSIC 2001, which is comparable to ISIC version 3, while all subsequent rounds employ the BSIC 2009, which is in line with ISIC version 4.
-
-A [correspondence table](Utilities/BSIC_code.pdf) is available for mapping BSIC 2001 codes to ISIC version 3 codes at the four-digit level. However, the team is currently gathering reference materials to determine how to map the BSIC 2009 to ISIC version 4 at the four-digit level. In the meantime, two-digit BSIC codes are used to identify the corresponding ISIC version 4 codes.
-** End original text **
 
 ### Employment: Occupation Classification
 
 **Kindly include a table a description as above for industry**
 
-The Bangladesh Labor Force Survey (LFS) utilizes two different occupational classifications to identify respondents' occupations. According to survey documentation, the International Standard Classification of Occupations (ISCO) was used in the 2005 and 2010 rounds, while the Bangladesh Standard of Occupational Classification (BSOC) 2012 was used in the 2013, 2015, and 2016 rounds.
+The Bangladesh QLFS employs its national occupational classification system called the Bangladesh Standard Classification of Occupations (BSCO) 2012, which is adapted from the International Standard Classification of Occupations (ISC0) 2008. 
 
-Although the survey documentation states that the occupational codes used in the 2005 and 2010 rounds were equivalent to ISCO 1988, some four-digit occupational codes could not be found within the ISCO 1988 list at the same level. Also, we do not possess a correspondence table to map the BSOC 2012 codes to the ISCO 2008 codes. Given the issues mentioned, we recourse to using the two-digit LFS occupational codes to identify the corresponding ISCO codes while continue our efforts to gather more resources for a precise mapping of occupational codes with ISCO.
+| Year    | Classification in survey | ISIC revision mapped to | How mapped                |
+|:-------:|:------------------------:|:-----------------------:|:--------------------------|
+| 2015-16 | BSCO 2012                | ISCO 2008               | First two digits          |
+| 2016-17 | BSCO 2012                | ISCO 2008               | First two digits          |
+
+
+As of time of writing (April 2023), an update of the BSCO has been released in 2020 to use more detailed categories of occupation. While the ISCO 2008 details occupational categories at four digits, the BSCO 2020 is detailed at six digits. Both BSCO 2012 and 2020 are comparable at most at the 3-digit level, and both are comparable with the ISCO at 2 digits.
+
 
