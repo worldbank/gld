@@ -99,6 +99,8 @@ The Bangladesh QLFS employs its national occupational classification system call
 | 2016-17 | BSCO 2012                | ISCO 2008               | First two digits          |
 
 
-As of time of writing (April 2023), an update of the BSCO has been released in 2020 to use more detailed categories of occupation. While the ISCO 2008 details occupational categories at four digits, the BSCO 2020 is detailed at six digits. Both BSCO 2012 and 2020 are comparable at most at the 3-digit level, and both are comparable with the ISCO at 2 digits.
+As of time of writing (April 2023), an update of the BSCO has been released in 2020 to use more detailed categories of occupation. While the ISCO 2008 details occupational categories at four digits, the BSCO 2020 is detailed at six digits. Based on the table below, both BSCO 2012 and 2020 are comparable at most at the 3-digit level, and both are comparable with the ISCO at 2 digits. For more information, refer to this [document](Utilities/3(v)-Bangladesh-18Feb2022.pdf).
+
+<img src="Utilities/isco-bsco-relationship.png" alt="BGD_divisions" width="600" height="200">
 
 
