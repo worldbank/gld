@@ -2,12 +2,6 @@
 
 The employment status categories in the Bangladesh LFS vary over the years. The table below lists down the employment status categories used in each survey, and the check mark ✓ identifies the GLD `empstat` category to which they were mapped. 
 
-There are a few considerations in this mapping. First, unpaid family worker was no longer used beginning in the 2013 survey, and this is replaced by "contributing family worker". 
-By removing the qualifier, "unpaid" for family workers, the mapping in the GLD becomes less obvious. This renaming of status was introduced by the [International Classification of Status of Employment (ICSE)
-1993](Utilities/icse93.pdf). Under ILO's definition (see below), contributing family workers are considered "unpaid"
-
-<img src="Utilities/def_cfw.PNG" alt="BGD_divisions" width="600" height="200">
-
 
 | **BGD LFS employment   status** | **Paid employee** | **Non-paid employee** | **Employer** | **Self-employed** | **Not classificable** |
 |---|:---:|:---:|:---:|:---:|:---:|
@@ -43,3 +37,17 @@ By removing the qualifier, "unpaid" for family workers, the mapping in the GLD b
 | 8. apprentice |  |  |  |  | ✓ |
 | 9. domestic worker | ✓ |  |  |  |  |
 | 99. others |  |  |  |  | ✓ |
+
+
+**Treatment of contributing family workers**. The employment status category, "unpaid family worker" was no longer used beginning in the 2013 survey, and was replaced by "contributing family worker", a category introduced by the [International Classification of Status of Employment (ICSE)
+1993](Utilities/icse93.pdf) as a type of "self-employment" activity where individual may or may not be receiving income as an allocation from the family-based enterprise. However, many institutions treat this category as unpaid work:
+- The WDI considers this as similar to "unpaid family work" (see this [definition](https://databank.worldbank.org/metadataglossary/millennium-development-goals/series/SL.FAM.WORK.MA.ZS)
+- The [Australia Bureau of Statistics](https://www.abs.gov.au/ausstats/abs@.nsf/Lookup/2901.0Chapter27002016) defines this as "a person who works without pay, in an economic enterprise operated by a relative"
+- A [2003 ILO Training Manual](Utilities/ilo_labstat.pdf) explicitly defines this as "persons working without pay", see below:
+
+<img src="Utilities/def_cfw.PNG" width="600" height="500">
+
+In the GLD harmonization, it is decided to treat this as a "non-paid employee". This allows continuity of this `empstat` category over time, and at the same time, it allows for flexibility as users can easily recode this to "self-employed" or "others, not classifiable by status" without altering the do file given the 1:1 correspondence with non-paid employees. 
+
+**Treatment of apprenticeship**. The apprenticeship category is treated differently in two surveys. In the 2005 round, this category is worded as "paid/unpaid apprentice", while in the 2013 round, it is worded simply as "apprenticeship". By capturing both paid and unpaid apprentices, the wording in 2005 round makes it impossible to distinguish between paid and unpaid; thus, it is classified as "Other, workers not classificable by status". Meanwhile, in the 2013 round, all apprentices reported a non-zero income, indicating these were all paid apprentices. For this reason, the 2013 harmonized data codes this as "paid employee". 
+
