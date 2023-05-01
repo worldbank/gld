@@ -1,6 +1,6 @@
-# Coding `empstat` in the BGD LFS
+# Coding `empstat` in the BGD QLFS
 
-The employment status categories in the Bangladesh LFS vary over the years. The table below lists down the employment status categories used in each survey, and the check mark ✓ identifies the GLD `empstat` category to which they were mapped. 
+The table below details how the variable `empstat` is coded in the Global Labor Database given the employment status categories used in the QLFS:
 
 
 | **QLFS status of   employment** | **empstat** |
