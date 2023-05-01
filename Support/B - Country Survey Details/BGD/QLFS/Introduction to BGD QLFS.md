@@ -83,8 +83,8 @@ The Bangladesh QLFS employs its national industry classification system called t
 
 | Year    | Classification in survey | ISIC revision mapped to | How mapped                |
 |:-------:|:------------------------:|:-----------------------:|:--------------------------|
-| 2015-16 | BSIC 2009                | ISIC revision 4         | First two digits          |
-| 2016-17 | BSIC 2009                | ISIC revision 4         | First two digits          |
+| 2015-16 | BSIC 2009                | ISIC revision 4         | First 3 digits; first 2 digits if non-existent at 3 digits          |
+| 2016-17 | BSIC 2009                | ISIC revision 4         | First 3 digits; first 2 digits if non-existent at 3 digits          |
 
 As of time of writing (April 2023), an update of the BSIC has been released in 2020 to use more detailed categories of industries. While the ISIC version 4 details occupational categories at four digits, the BSIC 2020 is detailed at six digits. Based on the table below, both BSIC 2020 and BSIC 2009 are comparable at most at the single digit level. BSIC is comparable with the ISIC rev. 4 at 2 digits except for an additional two-digit code that is not in ISIC, and neither was it reported as an industry of any individual in either survey. 
 
@@ -98,8 +98,8 @@ The Bangladesh QLFS employs its national occupational classification system call
 
 | Year    | Classification in survey | ISIC revision mapped to | How mapped                |
 |:-------:|:------------------------:|:-----------------------:|:--------------------------|
-| 2015-16 | BSCO 2012                | ISCO 2008               | First two digits          |
-| 2016-17 | BSCO 2012                | ISCO 2008               | First two digits          |
+| 2015-16 | BSCO 2012                | ISCO 2008               | First 2 digits; first digit if non-existent at 2 digits         |
+| 2016-17 | BSCO 2012                | ISCO 2008               | First 2 digits; first digit if non-existent at 2 digits           |
 
 
 As of time of writing (April 2023), an update of the BSCO has been released in 2020 to use more detailed categories of occupation. While the ISCO 2008 details occupational categories at four digits, the BSCO 2020 is detailed at six digits. Based on the table below, both BSCO 2012 and 2020 are comparable at most at the 3-digit level, and both are comparable with the ISCO at 2 digits. For more information, refer to this [document](Utilities/3(v)-Bangladesh-18Feb2022.pdf).
