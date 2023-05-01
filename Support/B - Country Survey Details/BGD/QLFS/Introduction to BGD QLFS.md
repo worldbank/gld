@@ -106,4 +106,6 @@ As of time of writing (April 2023), an update of the BSCO has been released in 2
 
 <img src="Utilities/isco-bsco-relationship.png" alt="BGD_divisions" width="600" height="200">
 
+### Employment Status
 
+The precise details on coding the `empstat` variable are covered in a separate document [here](Employment%20status.md).
