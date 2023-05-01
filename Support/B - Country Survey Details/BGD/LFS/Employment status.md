@@ -47,17 +47,7 @@ The employment status categories in the Bangladesh LFS vary over the years. The 
 
 <img src="Utilities/def_cfw.PNG" width="600" height="500">
 
-In the GLD harmonization, it is decided to treat this as a "non-paid employee". This allows continuity of this `empstat` category over time, and at the same time, it allows for flexibility as users can easily recode this to "self-employed" or "others, not classifiable by status" without altering the do file given the 1:1 correspondence with non-paid employees. Moreover, the Bangladesh Bureau of Statistics presented estimates of "unpaid family workers" in their official reports, and the estimates can be replicated by using information from contributing family workers. See example below for 2016:
-
-These are the estimates from the annual report:
-
-
-<img src="Utilities/unpaid_2016_official.PNG" width="800" height="580">
-
-These are the estimates from the GLD harmonized data after adjusting for the old ICLS definition:
-
-<img src="Utilities/unpaid_2016.PNG" width="620" height="300">
-
+In the GLD harmonization, it is decided to treat this as a "non-paid employee". This allows continuity of this `empstat` category over time, and at the same time, it allows for flexibility as users can easily recode this to "self-employed" or "others, not classifiable by status" without altering the do file given the 1:1 correspondence with non-paid employees. 
 
 
 **Treatment of apprenticeship**. The apprenticeship category is treated differently in two surveys. In the 2005 round, this category is worded as "paid/unpaid apprentice", while in the 2013 round, it is worded simply as "apprenticeship". By capturing both paid and unpaid apprentices, the wording in 2005 round makes it impossible to distinguish between paid and unpaid; thus, it is classified as "Other, workers not classificable by status". Meanwhile, in the 2013 round, all apprentices reported a non-zero income, indicating these were all paid apprentices. For this reason, the 2013 harmonized data codes this as "paid employee". 
