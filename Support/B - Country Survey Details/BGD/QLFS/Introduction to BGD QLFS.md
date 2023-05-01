@@ -1,8 +1,8 @@
 
--   [Introduction to Bangladesh Labor Force Survey (BGD
-    QLFS)](#introduction-to-bangladesh-labor-force-survey-bgd-lfs)
-    -   [What is the BGD QLFS?](#what-is-the-bgd-lfs)
-    -   [What does the BGD QLFS cover?](#what-does-the-bgd-lfs-cover)
+-   [Introduction to Bangladesh Quarterly Labor Force Survey (BGD
+    QLFS)](#introduction-to-bangladesh-quarterly-labor-force-survey-bgd-qlfs)
+    -   [What is the BGD QLFS?](#what-is-the-bgd-qlfs)
+    -   [What does the BGD QLFS cover?](#what-does-the-bgd-qlfs-cover)
     -   [Where can the data be found?](#where-can-the-data-be-found)
     -   [What is the sampling
         procedure?](#what-is-the-sampling-procedure)
