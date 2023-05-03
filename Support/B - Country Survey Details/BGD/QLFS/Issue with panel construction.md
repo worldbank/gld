@@ -19,8 +19,16 @@ In particular, such inconsistencies may lead to misrepresentations within the wo
 | Between 3 and 9 | 77,267 | 52,782 |
 | 10 and above | 33,583 | 23,581 |
 
-If the inconsistencies were random, the overall impact on the reliability of the findings might be minimal. Tabulating key results for key indicators on labor status and education with
-and without these observations showing an age difference greater than 1 show that the estimates do not change significantly. 
+If the inconsistencies were random, the overall impact on the reliability of the findings might be minimal. Tabulating for labor status with and without these inconsistent panels show that the estimates do not change significantly. Below, the variable `lstatus_restricted` defines labor status only for individuals with age difference equal to zero or 1.  
+
+<img src="Utilities/lstatus_age.png" alt="issueage" width="350" height="350">
+
+
+Disaggregating labor status by education also shows that results do not vary significantly. 
+
+<img src="Utilities/educ_age.png" alt="issueage" width="500" height="350">
+
+
 
 
 
