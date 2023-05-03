@@ -1,11 +1,11 @@
 # Issues with panel construction in the QLFS
 
-## Overview of the Issues
+## Overview of the issues
 The QLFS employs a rotating panel survey design in which the same household is interviewed for two consecutive quarters before being replaced. Typically, a combination of household information and line numbers serves as the panel identifier to track households and individuals across quarters. However, when comparing variables that should remain relatively stable or unchanged between two rounds, certain logical inconsistencies may arise, indicating potential issues in data entry and/or panel identification.
 
 Here are a few examples illustrating these challenges:
 
-**Age.**  Instances have been observed where the reported age of the same individual drastically changes between two consecutive quarters.
+**Age.**  There were instances where the reported age of the same individual drastically changes between two consecutive quarters.
 One way to examine the scale of this problem is by analyzing the frequency of age differences within the panel identifier across different years.
 While a one-year difference may be tolerable, considering the likelihood that an individual's birth date falls between 
 two survey rounds, the problem becomes more substantial when larger age discrepancies occur. 
@@ -24,12 +24,10 @@ If the inconsistencies were random, the overall impact on the reliability of the
 <img src="Utilities/lstatus_age.png" alt="issueage" width="350" height="350">
 
 
-Disaggregating labor status by education also shows that results do not vary significantly. 
+Disaggregating labor status by education also shows that results do not vary significantly. These support the case that these issues m
 
 <img src="Utilities/educ_age.png" alt="issueage" width="500" height="350">
 
 
+**Names of respondents.** Another direct issue in the data arises from the mismatch of names. There are several instances where the name of the respondent does not uniquely align with the assigned line number within the household. For example, an individual identified by a name variable is assigned to a specific line number in one round, but this same line number in the following round identifies a different name that used a separate line number in the previous round. This indicates that using line numbers as a panel identifier may be problematic. Instead, the variable corresponding to respondent names might serve as a more reliable and unique panel identifier for tracking individuals across rounds.
 
-
-
-## Recommendations
