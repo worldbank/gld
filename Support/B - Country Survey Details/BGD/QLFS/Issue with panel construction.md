@@ -24,7 +24,7 @@ If the inconsistencies were random, the overall impact on the reliability of the
 <img src="Utilities/lstatus_age.png" alt="issueage" width="350" height="350">
 
 
-Disaggregating labor status by education also shows that results do not vary significantly. These support the case that these issues m
+Disaggregating labor status by education also shows that results do not vary significantly. 
 
 <img src="Utilities/educ_age.png" alt="issueage" width="500" height="350">
 
