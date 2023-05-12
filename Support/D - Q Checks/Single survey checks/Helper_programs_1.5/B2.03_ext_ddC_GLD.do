@@ -127,8 +127,8 @@
 	
 		use "${mydata}", clear
 	
-		** Only for paid employees 
-		keep if empstat == 1 
+		** Only for paid employees, 15+
+		keep if empstat == 1 & inrange(age,15,999)
 		 
 		** Calculate hourly wages 
 		gen weekwage =.

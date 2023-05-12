@@ -116,7 +116,7 @@
 *-- 04. Survey data 
 	use "${mydata}", clear
 	
-	gen value = 1 if lstatus == 1 | lstatus == 2
+	gen value = 1 if lstatus == 1 | lstatus == 2 & inrange(age,15,999)
 	 
 	collapse (count) value [iw = weight], by(countrycode harmonization year) 
 	rename harmonization source 
@@ -716,8 +716,8 @@
 *-- 05. Survey data 
 	use "${mydata}", clear
 	
-	gen num = 1 if lstatus == 2  
-	gen den = 1 if lstatus == 1 | lstatus == 2  
+	gen num = 1 if lstatus == 2 & inrange(age,15,999)
+	gen den = 1 if lstatus == 1 | lstatus == 2 & inrange(age,15,999)
 	 
 	collapse (count) num den [iw = weight], by(countrycode harmonization year) 
 	gen value = 100*num/den
@@ -884,8 +884,8 @@
 	*-- 04. Survey data 
 		use "${mydata}", clear
 		
-		gen agri = 1 if lstatus == 1  & industrycat4 == 1
-		gen emp  = 1 if lstatus == 1
+		gen agri = 1 if lstatus == 1  & industrycat4 == 1 & inrange(age,15,999)
+		gen emp  = 1 if lstatus == 1 & inrange(age,15,999)
 		
 		 
 		collapse (count) agri emp [iw = weight], by(countrycode harmonization year) 
@@ -1079,8 +1079,8 @@
 	*-- 04. Survey data 
 		use "${mydata}", clear
 		
-		gen num  = 1 if lstatus == 1  & industrycat4 == 2
-		gen den  = 1 if lstatus == 1
+		gen num  = 1 if lstatus == 1  & industrycat4 == 2 & inrange(age,15,999)
+		gen den  = 1 if lstatus == 1 & inrange(age,15,999)
 		 
 		collapse (count) num den [iw = weight], by(countrycode harmonization year) 
 		gen value = 100*num/den
@@ -1269,8 +1269,8 @@
 	*-- 04. Survey data 
 		use "${mydata}", clear
 		
-		gen num  = 1 if lstatus == 1  & ( industrycat4 == 3 | industrycat4 == 4)  // servies + other
-		gen den  = 1 if lstatus == 1
+		gen num  = 1 if lstatus == 1 & ( industrycat4 == 3 | industrycat4 == 4) & inrange(age,15,999)  // servies + other
+		gen den  = 1 if lstatus == 1 & inrange(age,15,999)
 		
 		 
 		collapse (count) num den [iw = weight], by(countrycode harmonization year) 
@@ -1556,9 +1556,8 @@
 			
 			use "${mydata}", clear
 			
-			gen num  = 1 if industrycat10 == `j'
-			gen den  = 1 if !missing(industrycat10)
-			
+			gen num  = 1 if industrycat10 == `j' & lstatus == 1 & inrange(age,15,999)
+			gen den  = 1 if !missing(industrycat10) & lstatus == 1 & inrange(age,15,999)
 			 
 			collapse (count) num den [iw = weight], by(countrycode harmonization year) 
 			gen value = 100*num/den
