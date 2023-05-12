@@ -5,6 +5,11 @@ In short, the ICLS 19 resolution restricts employment to *work performed for oth
 
 The GLD codes the harmonization’s `lstatus’ variable based on the concept used in the survey. In the case of the Tanzanian LFS this change occurs in 2020/21, when the survey switches to new definition. As a result, [time series data](Utilities/01_A_1_LFP_over_years.png) show a decrease in the size of employed and labor force participants for the 2020-21 round. However, the code can be altered to try to match the previous definition.
 
+# Framework for identifying the employed in the 2020 ILFS
+
+The information on current activity were used to define the employed using Questions 13A - 13N in the questionnaire. The general flow of question involves first asking the individual if he/she engaged in an economic activity, agriculture or non-agriculture, in the past 7 days, and if the individual reports otherwise, he/she would be asked about information regarding temporary absence from employment. 
+
+
 # Current coding for the 2020 ILFS
 
 Currently, the code used to create the `lstatus` variable (which distinguishes between employment, unemployment, and out of the labour force) is the following:
