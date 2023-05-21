@@ -577,7 +577,10 @@ label var ed_mod_age "Education module application age"
 *<_educat7_>
 	gen byte educat7 =.
 	replace educat7 = class
-	recode educat7 (0 = 1) (1 2 3 4 = 2) (5 = 3) (6 7 8 9 = 4) (10 = 5) (11 12 = 6) (13 14 15 16 = 7) (99 = .)
+	recode educat7 (0 = 1) (1 2 3 4 = 2) (5 = 3) (6 7 8 9 = 4) (10 11 = 5) (12 = 6) (13 14 15 16 = 7) (99 = .)
+	
+	replace educat7 = 1 if q26 == 2
+
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -844,7 +847,7 @@ foreach v of local ed_var {
 
 *<_industrycat_isic_>
 	gen bsic2d = substr(industry_orig, 1, 2)
-	gen industrycat_isic = bsic2d + "00""
+	gen industrycat_isic = bsic2d + "00"
 
 	* Recycling (3410 in BSIC) = waste collection, disposal activities
 	replace industrycat_isic = "3800" if industrycat_isic == "3400"  

@@ -5,7 +5,7 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				BGD_2015_LFS_V01_M_V01_A_GLD.do </_Program name_>
+<_Program name_>				BGD_2015_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata 17 <_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
 <_Date created_>				2023-04-03 </_Date created_>
@@ -27,7 +27,7 @@
 
 -----------------------------------------------------------------------
 
-<_ICLS Version_>				ICLS 19 </_ICLS Version_>
+<_ICLS Version_>				ICLS 13 </_ICLS Version_>
 <_ISCED Version_>				ISCED 2011 </_ISCED Version_>
 <_ISCO Version_>				BSC0 2012 </_ISCO Version_>
 <_OCCUP National_>				ISCO 2008 </_OCCUP National_>
@@ -115,7 +115,7 @@ use "`path_in_stata'/Annual QLF2015-16 Final.dta", clear
 
 
 *<_icls_v_>
-	gen icls_v = "ICLS-19"
+	gen icls_v = "ICLS-13"
 	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
 
@@ -748,7 +748,7 @@ foreach v of local ed_var {
 {
 *<_lstatus_>
 	gen byte lstatus = .
-	*------------------------------------------------------------------------
+*------------------------------------------------------------------------
 	* Define the employed
 	*------------------------------------------------------------------------
 	** E1. Worked in the past 7 days
@@ -757,21 +757,19 @@ foreach v of local ed_var {
 	** E2.  Absent from work in the past 7 days
 	replace lstatus = 1 if q32 == 1 & q31 == 2
 	
-	** E3. Worked at least 1 hour to produce goods/services for own consumption with the main intention of selling
-	replace lstatus = 1 if (q33 == 1 & q35 == 1)
+	** E3. Worked at least 1 hour to produce goods/services for own consumption
+	** => Change to remove filter for working for profit
+	replace lstatus = 1 if (q33 == 1)
 	
 	** E4. Absent from work involving activity described in E3
-	replace lstatus = 1 if (q33 == 2 & q34 == 1 & q35 == 1)
+	** => Change to remove filter for working for profit
+	replace lstatus = 1 if (q33 == 2 & q34 == 1)
 
-	** E5. People who reported not engaging in any activity in the past 7 days but emp == 1 and worked mainly for pay or profit
-	replace lstatus = 1 if emp == 1 & q35 == 1
+	** E5. People who reported not engaging in any activity in the past 7 days but emp == 1 
+	** => Change to remove filter for working for profit
+	replace lstatus = 1 if emp == 1
 	
-	** E6. People with primary activity for own consumption but with secondary activity for pay or profit
-	replace lstatus = 1 if q55 == 1 & q56 == 1
-		
-		* These people either had primary activity in subsistence farming or had not enough information to evaluate labor status based on the above categories of employed (e.g., reported producing goods for own consumption but missing value for main intention of selling). While the latter category is suspicious, and the alternative to recode lstatus as missing completely is not a  bad idea, it is 
-	
-	* There are 19,372 people who are tagged as employed by the survey, but not in lstatus simply because they are subsistence farmers.
+
 	
 	*------------------------------------------------------------------------
 	* Define the unemployed
@@ -1144,9 +1142,7 @@ foreach v of local ed_var {
 	recode empstat_2 (1 = 3) (2 = 4) (3 9 = 5) (4 5 6 7 = 1)
 	replace empstat_2 = . if q56 == 2
 	replace empstat_2 = . if lstatus != 1
-	
-	* Empstat from secondary employment should be empstat from primary employment when primary employment is in subsistence farming.
-	replace empstat = empstat_2 if missing(empstat) & q55 == 1 & q56 == 1
+
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
 	label values empstat_2 lblempstat
 *</_empstat_2_>
@@ -1178,11 +1174,6 @@ foreach v of local ed_var {
 	replace industrycat_isic_2 = "9200" if industrycat_isic_2 == "9210"
 	replace industrycat_isic_2 = "" if industrycat_isic_2 == "0000"
 
-	* Replace industrycat_isic if primary activity is subsistence farming and secondary activity is job for profit
-	replace industrycat_isic = industrycat_isic_2 if q55 == 1 & q56 == 1
-	
-	* Then replace industrycat_isic_2 as missing if this condition holds
-	replace industrycat_isic_2 = "" if q55 == 1 & q56 == 1
 
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 	

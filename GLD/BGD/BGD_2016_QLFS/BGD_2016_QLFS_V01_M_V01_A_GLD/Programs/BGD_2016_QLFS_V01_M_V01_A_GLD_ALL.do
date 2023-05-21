@@ -115,7 +115,7 @@ use "`path_in_stata'/Bangladesh QLFS 2016-17 Microdata.dta", clear
 
 
 *<_icls_v_>
-	gen icls_v = "ICLS-19"
+	gen icls_v = "ICLS-13"
 	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
 
@@ -770,21 +770,17 @@ foreach v of local ed_var {
 	** E2.  Absent from work in the past 7 days
 	replace lstatus = 1 if q32 == 1 & q31 == 2
 	
-	** E3. Worked at least 1 hour to produce goods/services for own consumption with the main intention of selling
-	replace lstatus = 1 if (q33 == 1 & q35 == 1)
+	** E3. Worked at least 1 hour to produce goods/services for own consumption
+	replace lstatus = 1 if (q33 == 1)
 	
 	** E4. Absent from work involving activity described in E3
-	replace lstatus = 1 if (q33 == 2 & q34 == 1 & q35 == 1)
+	replace lstatus = 1 if (q33 == 2 & q34 == 1)
 
-	** E5. People who reported not engaging in any activity in the past 7 days but emp == 1 and worked mainly for pay or profit
-	replace lstatus = 1 if emp == 1 & q35 == 1
+	** E5. People who reported not engaging in any activity in the past 7 days but emp == 1 
+	** => Change to remove filter for working for profit
+	replace lstatus = 1 if emp == 1
 	
-	** E6. People with primary activity for own consumption but with secondary activity for pay or profit
-	replace lstatus = 1 if q55 == 1 & q56 == 1
-		
-		* These people either had primary activity in subsistence farming or had not enough information to evaluate labor status based on the above categories of employed (e.g., reported producing goods for own consumption but missing value for main intention of selling). While the latter category is suspicious, and the alternative to recode lstatus as missing completely is not a  bad idea, it is 
-	
-	* Note that there are 886 people who either worked for 1 hour in the past 7 days for pay or profit, or absent from such work, but the emp variable did not tag as employed, and were not asked subsequent questions for employed.
+	* There are 320k+ people who were not tagged as employed by "emp" variable, and 75% of these reported working for pay or profit. This means they should be employed! 
 	
 	*------------------------------------------------------------------------
 	* Define the unemployed
@@ -901,31 +897,31 @@ foreach v of local ed_var {
 	gen isic3d = substr(industry_orig, 1, 3) 
 	gen industrycat_isic = isic3d + "0"
 	replace industrycat_isic = "3800" if industrycat_isic == "3410"  
-replace industrycat_isic = "1700" if industrycat_isic == "1730"
-replace industrycat_isic = "1900" if industrycat_isic == "1990"
-replace industrycat_isic = "2300" if industrycat_isic == "2350"
-replace industrycat_isic = "2900" if industrycat_isic == "2950"
-replace industrycat_isic = "4100" if industrycat_isic == "4130"
-replace industrycat_isic = "4100" if industrycat_isic == "4180"
-replace industrycat_isic = "4200" if industrycat_isic == "4270"
-replace industrycat_isic = "4500" if industrycat_isic == "4580"
-replace industrycat_isic = "4900" if industrycat_isic == "4940"
-replace industrycat_isic = "4900" if industrycat_isic == "4970"
-replace industrycat_isic = "4900" if industrycat_isic == "4980"
-replace industrycat_isic = "6100" if industrycat_isic == "6140"
-replace industrycat_isic = "6400" if industrycat_isic == "6460"
-replace industrycat_isic = "7500" if industrycat_isic == "7510"
-replace industrycat_isic = "7500" if industrycat_isic == "7520"
-replace industrycat_isic = "7500" if industrycat_isic == "7530"
-replace industrycat_isic = "7500" if industrycat_isic == "7550"
-replace industrycat_isic = "7900" if industrycat_isic == "7920"
-replace industrycat_isic = "8100" if industrycat_isic == "8160"
-replace industrycat_isic = "8700" if industrycat_isic == "8780"
-replace industrycat_isic = "9200" if industrycat_isic == "9220"
-replace industrycat_isic = "9600" if industrycat_isic == "9610"
-replace industrycat_isic = "9700" if industrycat_isic == "9710"
-replace industrycat_isic = "9700" if industrycat_isic == "9790"
-replace industrycat_isic = "9900" if industrycat_isic == "9990"
+	replace industrycat_isic = "1700" if industrycat_isic == "1730"
+	replace industrycat_isic = "1900" if industrycat_isic == "1990"
+	replace industrycat_isic = "2300" if industrycat_isic == "2350"
+	replace industrycat_isic = "2900" if industrycat_isic == "2950"
+	replace industrycat_isic = "4100" if industrycat_isic == "4130"
+	replace industrycat_isic = "4100" if industrycat_isic == "4180"
+	replace industrycat_isic = "4200" if industrycat_isic == "4270"
+	replace industrycat_isic = "4500" if industrycat_isic == "4580"
+	replace industrycat_isic = "4900" if industrycat_isic == "4940"
+	replace industrycat_isic = "4900" if industrycat_isic == "4970"
+	replace industrycat_isic = "4900" if industrycat_isic == "4980"
+	replace industrycat_isic = "6100" if industrycat_isic == "6140"
+	replace industrycat_isic = "6400" if industrycat_isic == "6460"
+	replace industrycat_isic = "7500" if industrycat_isic == "7510"
+	replace industrycat_isic = "7500" if industrycat_isic == "7520"
+	replace industrycat_isic = "7500" if industrycat_isic == "7530"
+	replace industrycat_isic = "7500" if industrycat_isic == "7550"
+	replace industrycat_isic = "7900" if industrycat_isic == "7920"
+	replace industrycat_isic = "8100" if industrycat_isic == "8160"
+	replace industrycat_isic = "8700" if industrycat_isic == "8780"
+	replace industrycat_isic = "9200" if industrycat_isic == "9220"
+	replace industrycat_isic = "9600" if industrycat_isic == "9610"
+	replace industrycat_isic = "9700" if industrycat_isic == "9710"
+	replace industrycat_isic = "9700" if industrycat_isic == "9790"
+	replace industrycat_isic = "9900" if industrycat_isic == "9990"
 
 	replace industry_orig = "" if industry_orig == "."
 
@@ -1138,9 +1134,7 @@ replace industrycat_isic = "9900" if industrycat_isic == "9990"
 	recode empstat_2 (1 = 3) (2 = 4) (3 9 = 5) (4 5 6 7 = 1)
 	replace empstat_2 = . if q56 == 2
 	replace empstat_2 = . if lstatus != 1
-	
-	* Empstat from secondary employment should be empstat from primary employment when primary employment is in subsistence farming.
-	replace empstat = empstat_2 if missing(empstat) & q55 == 1 & q56 == 1
+
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
 	label values empstat_2 lblempstat
 *</_empstat_2_>
@@ -1164,11 +1158,6 @@ replace industrycat_isic = "9900" if industrycat_isic == "9990"
 	gen isic3d = substr(industry_orig_2, 1, 3) 
 	gen industrycat_isic_2 = isic3d + "0"
 
-	replace industrycat_isic_2 = "" if industrycat_isic_2 == ".0" | industrycat_isic_2 == "0"
-	replace industrycat_isic_2 = "9900" if industrycat_isic_2 == "9990" 
-
-	replace industrycat_isic = industrycat_isic_2 if q55 == 1 & q56 == 1
-	replace industrycat_isic_2 = "" if q55 == 1 & q56 == 1
 *</_industrycat_isic_2_>
 
 
@@ -1213,10 +1202,6 @@ replace industrycat_isic = "9900" if industrycat_isic == "9990"
 	replace occup_isco_2 = "" if occup_isco_2 == ".00" | occup_isco_2 == "00"
 
 	drop isco2d_s
-	
-	replace occup_isco = occup_isco_2 if q55 == 1 & q56 == 1
-	replace occup_isco_2 = "" if q55 == 1 & q56 == 1
-
 	
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
