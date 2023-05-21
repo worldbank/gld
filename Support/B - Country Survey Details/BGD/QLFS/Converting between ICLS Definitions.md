@@ -3,11 +3,41 @@ Since the passing of the [resolution concerning statistics of work, employment a
 
 In short, the ICLS 19 resolution restricts employment to *work performed for others in exchange for pay or profit*, meaning that own consumption work (e.g., subsistence agriculture or building housing for oneself) are not counted as employment.
 
-The GLD codes the harmonization’s `lstatus` variable based on this concept starting with the 2015-16 QLFS as information becomes available on respondents' intention for economic activity to distinguish between working for pay or own consumption. 
+While the 2015-16 QLFS provides information that would allow harmonizers to distinguish those working for own consumption, the survey still treats these workers as employed and the GLD harmonization process follows this approach. However, users can consider the code below should they want to define the employed exclusively based on work in exchange of pay or profit. 
 
 # Current coding for the QLFS
 
 For both the 2015-16 and 2016-17, the code used to create the `lstatus` variable (which distinguishes between employment, unemployment, and out of the labour force) is the following:
+
+
+```
+	*------------------------------------------------------------------------
+	* Define the employed
+	*------------------------------------------------------------------------
+	** E1. Worked in the past 7 days
+	replace lstatus = 1 if q31 == 1
+	
+	** E2.  Absent from work in the past 7 days
+	replace lstatus = 1 if q32 == 1 & q31 == 2
+	
+	** E3. Worked at least 1 hour to produce goods/services for own consumption
+	replace lstatus = 1 if (q33 == 1)
+	
+	** E4. Absent from work involving activity described in E3
+	replace lstatus = 1 if (q33 == 2 & q34 == 1)
+
+	** E5. People who reported not engaging in any activity in the past 7 days but emp == 1 
+	replace lstatus = 1 if emp == 1
+
+
+```
+
+
+
+
+# Coding to convert to the new definition
+
+Thus, to obtain a unique series with the new definition, i.e., to exclude those working for own consumption, we would need to code:
 
 ```
 *<_lstatus_>
@@ -36,49 +66,6 @@ For both the 2015-16 and 2016-17, the code used to create the `lstatus` variable
 	* These people either had primary activity in subsistence farming or had not enough information to evaluate labor status based on the above categories of employed (e.g., reported producing goods for own consumption but missing value for main intention of selling). While the latter category is suspicious, and the alternative to recode lstatus as missing completely is not a  bad idea, it is 
 	
 	* There are 19,372 people who are tagged as employed by the survey, but not in lstatus simply because they are subsistence farmers.
-	
-	*------------------------------------------------------------------------
-	* Define the unemployed
-	*------------------------------------------------------------------------
-	replace lstatus = 2 if q77 == 1 & q81 == 1
-	
-	*------------------------------------------------------------------------
-	* Define the NLF
-	*------------------------------------------------------------------------
-	replace lstatus = 3 if missing(lstatus)
-	
-	replace lstatus = . if age < minlaborage
-```
-
-
-
-# Coding to convert to the old definition
-
-Thus, to obtain a unique series with the old definition we would need to code:
 
 ```
-	*------------------------------------------------------------------------
-	* Define the employed
-	*------------------------------------------------------------------------
-	** E1. Worked in the past 7 days
-	replace lstatus = 1 if q31 == 1
-	
-	** E2.  Absent from work in the past 7 days
-	replace lstatus = 1 if q32 == 1 & q31 == 2
-	
-	** E3. Worked at least 1 hour to produce goods/services for own consumption
-	** => Change to remove filter for working for profit
-	replace lstatus = 1 if (q33 == 1)
-	
-	** E4. Absent from work involving activity described in E3
-	** => Change to remove filter for working for profit
-	replace lstatus = 1 if (q33 == 2 & q34 == 1)
 
-	** E5. People who reported not engaging in any activity in the past 7 days but emp == 1 
-	** => Change to remove filter for working for profit
-	replace lstatus = 1 if emp == 1
-	
-	** E6. People with primary activity for own consumption but with secondary activity for pay or profit
-	** => If primary activity for own consumption treated as employed, this is no longer necessary
-	**replace lstatus = 1 if q55 == 1 & q56 == 1
-```
