@@ -30,6 +30,7 @@ make_wage_ts <- function(
   # A2) Keep only those with information to make data
   df <- df %>% filter(!is.na(wage_no_compen) & 
                         !is.na(unitwage) & 
+                        !is.na(weight) & 
                         !is.na(whours))
   
   # A3) Drop cases of unitwage 10, which exists as option, but cannot work with
