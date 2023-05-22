@@ -3,11 +3,11 @@ Since the passing of the [resolution concerning statistics of work, employment a
 
 In short, the ICLS 19 resolution restricts employment to *work performed for others in exchange for pay or profit*, meaning that own consumption work (e.g., subsistence agriculture or building housing for oneself) are not counted as employment.
 
-While the 2015-16 QLFS provides information that would allow harmonizers to distinguish those working for own consumption, the survey still treats these workers as employed and the GLD harmonization process follows this approach. However, users can consider the code below should they want to define the employed exclusively based on work in exchange of pay or profit. 
+While the 2015-16 QLFS provides information that would allow harmonizers to identify those working for own consumption, the survey still treats these individuals as employed and the GLD harmonization process retains this approach. However, to redefine employment strictly based on work for pay or profit, users can utilize the code provided below.
 
 # Current coding for the QLFS
 
-For both the 2015-16 and 2016-17, the code used to create the `lstatus` variable (which distinguishes between employment, unemployment, and out of the labour force) is the following:
+For the 2015-16 and 2016-17 rounds, the code used to identify the employed including those engaged in an activity for own consumption is as follows:
 
 
 ```
@@ -37,7 +37,7 @@ For both the 2015-16 and 2016-17, the code used to create the `lstatus` variable
 
 # Coding to convert to the new definition
 
-Thus, to obtain a unique series with the new definition, i.e., to exclude those working for own consumption, we would need to code:
+To exclude individuals engaged in an activity for own consumption, the following code can be used:
 
 ```
 *<_lstatus_>
