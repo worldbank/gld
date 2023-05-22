@@ -3,7 +3,7 @@ Since the passing of the [resolution concerning statistics of work, employment a
 
 In short, the ICLS 19 resolution restricts employment to *work performed for others in exchange for pay or profit*, meaning that own consumption work (e.g., subsistence agriculture or building housing for oneself) are not counted as employment.
 
-While the 2015-16 QLFS provides information that would allow harmonizers to identify those working for own consumption, the survey still treats these individuals as employed and the GLD harmonization process retains this approach. However, to redefine employment strictly based on work for pay or profit, users can utilize the code provided below.
+While the QLFS provides information allowing harmonizers to identify those working for own consumption, the survey still treats these individuals as employed and the GLD harmonization process retains this approach. However, to redefine employment strictly based on work for pay or profit, users can utilize the code provided below.
 
 # Current coding for the QLFS
 
