@@ -29,7 +29,7 @@ These are the estimates from the annual report:
 
 <img src="Utilities/unpaid_2016_official.PNG" width="800" height="580">
 
-These are the estimates from the GLD harmonized data after adjusting for the old ICLS definition:
+These are the estimates from the GLD harmonized data after adjusting for the old ICLS definition (ICLS-13):
 
 <img src="Utilities/unpaid_2016.PNG" width="620" height="300">
 
