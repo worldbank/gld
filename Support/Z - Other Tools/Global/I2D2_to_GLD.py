@@ -1,8 +1,9 @@
 
+
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Thu May 25 20:25:31 2023
+Created on Thu May 25 7:18:31 2023
 
 @author: angelosantos
 """
@@ -15,10 +16,10 @@ base_path = 'C:/Users/wb510859/OneDrive - WBG/Documents/Mongolia'
 pattern = '*/LFS/Processed/MNG_*_I2D2_LFS.do'
 vermast = 'V01'
 veralt = 'V01'
-server = "C:/Users/wb510859/OneDrive - WBG/Documents/MNG"
+server = "C:/Users/wb510859/OneDrive - WBG/Documents"
 GLD_path = "C:/Users/wb510859/OneDrive - WBG/Documents/GitHub/gld/Support/C - Templates/GLD_Harmonization_Template.do"
 
-# Define function to add I2D2 codes to GLD template
+# Define function to add I2D2 code
 def update_GLD(var_name_I2D2, tag_GLD, I2D2, GLD):
     # Determine the end string
     end_str_I2D2 = f"label var {var_name_I2D2}"
@@ -67,7 +68,7 @@ def update_GLD(var_name_I2D2, tag_GLD, I2D2, GLD):
     # Combine lines into new block
     new_block = [line for line in [labelvar_line, labelvalues_line, labeldefine_line] if line is not None]
 
-    end_GLD = GLD.index(f'*</_{tag_GLD}_>\n')  # Update this line to find the correct end index
+    end_GLD = GLD.index(f'*</_{tag_GLD}_>\n')
 
     # Replace the code block in the GLD file with the one from the I2D2 file
     updated_GLD = GLD[:start_GLD] + block_I2D2 + new_block + GLD[end_GLD:]
@@ -156,26 +157,49 @@ for I2D2_path in do_files:
         'veralt': veralt,
     }
 
-    updated_GLD_path = f"{gld_path_details['server']}/{gld_path_details['country']}_{gld_path_details['year']}_{gld_path_details['survey']}/{gld_path_details['country']}_{gld_path_details['year']}_{gld_path_details['survey']}_{gld_path_details['vermast'].lower()}_M_{gld_path_details['veralt'].lower()}_A_GLD/Programs/{gld_path_details['country']}_{gld_path_details['year']}_{gld_path_details['survey']}_{gld_path_details['vermast']}_M_{gld_path_details['veralt']}_A_GLD_ALL.do"
+    updated_GLD_path = f"{gld_path_details['server']}/{gld_path_details['country']}/{gld_path_details['country']}_{gld_path_details['year']}_{gld_path_details['survey']}/{gld_path_details['country']}_{gld_path_details['year']}_{gld_path_details['survey']}_{gld_path_details['vermast'].lower()}_M_{gld_path_details['veralt'].lower()}_A_GLD/Programs/{gld_path_details['country']}_{gld_path_details['year']}_{gld_path_details['survey']}_{gld_path_details['vermast']}_M_{gld_path_details['veralt']}_A_GLD_ALL.do"
 
 
     # Rest of your code, repeated for each .do file
     with open(GLD_path, 'r', encoding='utf-8') as file:
         GLD = file.readlines()
+    
+    # Get I2D2 line by line
+    with open(I2D2_path, 'r') as file:
+        I2D2 = file.readlines()
 
+    # Extract the data file name from the I2D2 file
+    dta_filename = None
+    for i, line in enumerate(I2D2):
+        if "* DATABASE ASSEMBLENT" in line:
+            next_line = I2D2[i+1]
+            start = next_line.rfind("\\") + 1
+            end = next_line.rfind(".dta") + 4
+            dta_filename = next_line[start:end]
+            break
+
+    if not dta_filename:
+        print(f"Could not find data file name in {I2D2_path}")
+        continue
+    
+    
     # Loop through GLD and replace path details
     for i, line in enumerate(GLD):
         for detail in gld_path_details.keys():
             if f'local {detail}' in line:
                 GLD[i] = f'local {detail}  "{gld_path_details[detail]}"\n'
-
-    with open(I2D2_path, 'r') as file:
-        I2D2 = file.readlines()
-
+        if "* harmonized output in a single file" in line:
+            GLD.insert(i+1, f"use \"`path_in_stata'/{dta_filename}\", clear\n")
+    
     # Loop through variable pairs and apply function
     for var_name_I2D2, tag_GLD in var_pairs:
         GLD = update_GLD(var_name_I2D2, tag_GLD, I2D2, GLD)
 
+    # Delete existing GLD file if it exists
+    if os.path.exists(updated_GLD_path):
+        os.remove(updated_GLD_path)
+        print(f"Previous file {updated_GLD_path} has been removed successfully")
+    
     # Write the updated GLD file
     with open(updated_GLD_path, 'w', encoding='utf-8') as file:
         file.writelines(GLD)
