@@ -1,28 +1,24 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Wed May 24 20:46:30 2023
-
-@author: angelosantos
-"""
 
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Tue May 23 11:51:30 2023
+Created on Thu May 25 20:25:31 2023
 
 @author: angelosantos
 """
 
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Tue May 23 08:21:38 2023
+import os
+import glob
 
-@author: angelosantos
-"""
-import os 
+# Define constants
+base_path = 'C:/Users/wb510859/OneDrive - WBG/Documents/Mongolia'
+pattern = '*/LFS/Processed/MNG_*_I2D2_LFS.do'
+vermast = 'V01'
+veralt = 'V01'
+server = "C:/Users/wb510859/OneDrive - WBG/Documents/MNG"
+GLD_path = "C:/Users/wb510859/OneDrive - WBG/Documents/GitHub/gld/Support/C - Templates/GLD_Harmonization_Template.do"
 
+# Define function to add I2D2 codes to GLD template
 def update_GLD(var_name_I2D2, tag_GLD, I2D2, GLD):
     # Determine the end string
     end_str_I2D2 = f"label var {var_name_I2D2}"
@@ -139,54 +135,48 @@ var_pairs = [
     ('njobs', 'njobs')
 ]
 
+do_files = glob.glob(f"{base_path}/{pattern}")
 
-# Define the file paths
-I2D2_path = '/Users/angelosantos/Downloads/MNG_2021_I2D2_LFS.do'
-GLD_path = '/Users/angelosantos/Downloads/GLD_Harmonization_Template.do'
-updated_GLD_path = '/Users/angelosantos/Downloads/updated_GLD.do'
+for I2D2_path in do_files:
+    # Extract details from I2D2 file name
+    I2D2_name = os.path.basename(I2D2_path)
+    I2D2_name = I2D2_name.split(".do")[0]  # remove .do extension
+    components = I2D2_name.split("_")
+    country = components[-4]
+    year = components[-3]
+    survey = components[-1]
 
-# Extract details from I2D2 file name
-I2D2_name = os.path.basename(I2D2_path)
-I2D2_name = os.path.basename(I2D2_path)
-I2D2_name = I2D2_name.split(".do")[0]  # remove .do extension
-components = I2D2_name.split("_")
-country = components[-4]
-year = components[-3]
-survey = components[-1]
+    # Define new GLD path details
+    gld_path_details = {
+        'server': server,
+        'country': country,
+        'year': year,
+        'survey': survey,
+        'vermast': vermast,
+        'veralt': veralt,
+    }
 
-
-
-# Define new GLD path details
-gld_path_details = {
-    'server': "Y:/GLD-Harmonization/510859_AS",
-    'country': country,
-    'year': year,
-    'survey': survey,
-    'vermast': "V01",
-    'veralt': "V01",
-}
+    updated_GLD_path = f"{gld_path_details['server']}/{gld_path_details['country']}_{gld_path_details['year']}_{gld_path_details['survey']}/{gld_path_details['country']}_{gld_path_details['year']}_{gld_path_details['survey']}_{gld_path_details['vermast'].lower()}_M_{gld_path_details['veralt'].lower()}_A_GLD/Programs/{gld_path_details['country']}_{gld_path_details['year']}_{gld_path_details['survey']}_{gld_path_details['vermast']}_M_{gld_path_details['veralt']}_A_GLD_ALL.do"
 
 
-# Read the I2D2 and GLD files
-country, _, year, survey = I2D2_name.split("_")
+    # Rest of your code, repeated for each .do file
+    with open(GLD_path, 'r', encoding='utf-8') as file:
+        GLD = file.readlines()
 
-with open(GLD_path, 'r') as file:
-    GLD = file.readlines()
+    # Loop through GLD and replace path details
+    for i, line in enumerate(GLD):
+        for detail in gld_path_details.keys():
+            if f'local {detail}' in line:
+                GLD[i] = f'local {detail}  "{gld_path_details[detail]}"\n'
 
-# Loop through GLD and replace path details
-for i, line in enumerate(GLD):
-    for detail in gld_path_details.keys():
-        if f'local {detail}' in line:
-            GLD[i] = f'local {detail}  "{gld_path_details[detail]}"\n'
+    with open(I2D2_path, 'r') as file:
+        I2D2 = file.readlines()
 
-with open(I2D2_path, 'r') as file:
-    I2D2 = file.readlines()
+    # Loop through variable pairs and apply function
+    for var_name_I2D2, tag_GLD in var_pairs:
+        GLD = update_GLD(var_name_I2D2, tag_GLD, I2D2, GLD)
 
+    # Write the updated GLD file
+    with open(updated_GLD_path, 'w', encoding='utf-8') as file:
+        file.writelines(GLD)
 
-# Loop through variable pairs and apply function
-for var_name_I2D2, tag_GLD in var_pairs:
-    GLD = update_GLD(var_name_I2D2, tag_GLD, I2D2, GLD)
-
-# Write the updated GLD file
-with open(updated_GLD_path, 'w') as file:
-    file.writelines(GLD)
