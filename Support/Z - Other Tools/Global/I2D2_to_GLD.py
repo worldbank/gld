@@ -3,7 +3,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Thu May 25 7:18:31 2023
+Created on Thu May 25 20:25:31 2023
 
 @author: angelosantos
 """
@@ -111,7 +111,6 @@ var_pairs = [
     ('ocusec', 'ocusec'),
     ('industry_orig', 'industry_orig'),
     ('industry', 'industrycat10'),
-    ('industry1', 'industrycat4'),
     ('occup_orig', 'occup_orig'),
     ('occup', 'occup'),
     ('wage', 'wage_no_compen'),
@@ -126,7 +125,6 @@ var_pairs = [
     ('empstat_2', 'empstat_2'),
     ('industry_orig_2', 'industry_orig_2'),
     ('industry_2', 'industrycat10_2'),
-    ('industry1_2', 'industrycat4_2'),
     ('occup_2', 'occup_2'),
     ('wage_2', 'wage_no_compen_2'),
     ('unitwage_2', 'unitwage_2'),
