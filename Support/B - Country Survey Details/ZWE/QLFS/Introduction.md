@@ -1,1 +1,37 @@
+# Introduction to Zimbabwe (ZWE) Quarterly Labour Force and Child Labour Survey
+
+- [What is the ZWE QLFS survey?](#what-is-the-zwe-qlfs-survey)
+- [What does the ZWE QLFS survey cover?](#what-does-the-zwe-qlfs-survey-cover)
+- [Where can the data be found?](#where-can-the-data-be-found)
+- [What is the sampling procedure?](#what-is-the-sampling-procedure)
+- [What is the significance level?](#what-is-the-geographic-significance-level)
+
+## What is the ZWE QLFS survey?
+
+The Zimbabwe Labour Force Survey (LFS)  provides socioeconomic indicators useful in monitoring living conditions as well as providing in-depth information on the labour force in Zimbabwe. The survey focuses on social and economic characteristics, in particular, status in employment, industry, occupation, place of work and social security. The periodicity of the LFCLS is 5 years.
+
+## What does the ZWE QLFS survey cover?
+
+The ZWE LFS is nationally representative, The sampling frame used for the LFCLS was the Zimbabwe Master Sample developed by the then Central Statistical Office after the 2002 Population Census. With the
+exception of Harare and Bulawayo, each of the other eight provinces was stratified into four strata according to land use: Communal Lands, Large Scale Commercial Farming Areas (LSCFA), Urban and Semi-Urban Areas, and Small Scale Commercial Farming Areas (SSCFA) and Resettlement Areas. Only one urban stratum was formed each in Harare and Bulawayo. This gave a total of 34 strata.
+
+| Year	| # of Households	| # of Individuals|
+| :-------	| :--------		| :--------	|
+| 2021 (Q3-Q4)	| 9359	| 39,798 |
+| 2022 (Q1-Q3)	| 9759	| 40,527 |
+
+*The household data of 2019 is yet to be confirmed by the NSO.
+
+## Where can the data be found?
+
+The microdata from the 2011, 2014 and 2019 LFS is available throught the ILO [data catalog](https://www.ilo.org/surveyLib/index.php/catalog/LFS/?page=1&country%5B%5D=200&ps=15&repo=LFS). Documentation is also available in the data catalog. 
+
+
+## What is the sampling procedure?
+The survey used a two-stage sample design with EAs as the first and households as the second stage sampling units. In total 400 EAs were selected with probability proportional to size (PPS), the measure
+of size being the number of households enumerated in the 2002 Population Census. The selection of the EAs was a systematic, one-stage operation, carried out independently for each of the 34 strata.
+
+## What is the geographic significance level?
+The primary objectives are to provide information on the number of people classified according to their activity status, the size and characteristics of the economically active population, that is, the employed and the unemployed, the informal sector employment and informal employment, retrenchments, the number of working children , the detrimental effects of work on children, and the living conditions in general. Also, information by gender, and urban location is available.
+
 
