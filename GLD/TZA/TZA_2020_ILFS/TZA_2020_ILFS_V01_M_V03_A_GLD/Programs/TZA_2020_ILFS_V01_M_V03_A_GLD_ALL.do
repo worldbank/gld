@@ -4,7 +4,7 @@
 ==============================================================================================%%*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				TZA_2020_ILFS_V01_M_V02_A_GLD_ALL.do </_Program name_>
+<_Program name_> 			TZA_2020_ILFS_V01_M_V03_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata 17 <_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
 <_Date created_>				2022-03-15 </_Date created_>
@@ -40,8 +40,9 @@ https://www.nbs.go.tz/nbs/takwimu/labour/KILM_with_Policy_Brief%202020_21_ILFS%2
 <_INDUS National_>				[Uses ISIC 4 directly] </_INDUS National_>
 -----------------------------------------------------------------------
 <_Version Control_>
-* Date: [2023-05-08] - Update lstatus codes: shift some from unemployed to employed
 
+* Date: [2023-05-08] - Update lstatus codes: shift some from unemployed to employed
+* Date: 2023-05-30 - Update vars educat7
 
 </_Version Control_>
 -------------------------------------------------------------------------*/
@@ -65,7 +66,7 @@ local country "TZA"
 local year    "2020"
 local survey  "ILFS"
 local vermast "V01"
-local veralt  "V02"
+	local veralt "V03"
 
 * From the definitions, set path chunks
 local level_1      "`country'_`year'_`survey'"
@@ -738,9 +739,9 @@ label var ed_mod_age "Education module application age"
 	* Note that we leave out code 10 Adult Education as it is difficult
 	* To assign: It is just 98 people
 	replace educat7 = 4 if inrange(Q11D,11,13)
-	replace educat7 = 5 if Q11D == 14
-	replace educat7 = 6 if inrange(Q11D,15,18)
-	replace educat7 = 7 if inrange(Q11D,19,20)
+	replace educat7 = 5 if inrange(Q11D,14,18)
+	replace educat7 = 6 if Q11D == 19
+	replace educat7 = 7 if Q11D == 20
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
