@@ -589,9 +589,9 @@ use "`path_in'\ILFS-2014 for Sharing.dta", clear
 	* Note that we leave out code 10 Adult Education as it is difficult
 	* To assign: It is just 98 people
 	replace educat7 = 4 if inrange(Q17A_EDUCA,11,13)
-	replace educat7 = 5 if Q17A_EDUCA == 14
-	replace educat7 = 6 if inrange(Q17A_EDUCA,15,18)
-	replace educat7 = 7 if inrange(Q17A_EDUCA,19,20)
+	replace educat7 = 5 if inrange(Q17A_EDUCA,14,17)
+	replace educat7 = 6 if inrange(Q17A_EDUCA,18,19)
+	replace educat7 = 7 if Q17A_EDUCA == 20
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
