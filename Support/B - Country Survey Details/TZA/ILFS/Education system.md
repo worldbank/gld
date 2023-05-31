@@ -58,14 +58,14 @@ drop s1
 
 To summarize, the GLD harmonization converts the ILFS education codes as follows:
 
-| **ILFS education levels**                | **GLD equivalent ```(educat7)```**                 |
+| **ILFS education levels**                | **GLD equivalent ```(educat7)```**           |
 |------------------------------------------|----------------------------------------------|
 | Preschool                                | 1 - No education                             |
 | Standards 1 - 6                          | 2 - Primary incomplete                       |
 | Standards 7 - 8                          | 3 - Primary complete                         |
 | Forms 1 - 3                              | 4 - Secondary incomplete                     |
-| Form 4                                   | 5 - Secondary complete                       |
-| Form 5   and 6, post-secondary trainings | 6 - Higher than secondary but not university |
-| Tertiary level                           | 7 - University complete or incomplete        |
+| Form 4, 5, and 6                         | 5 - Secondary complete                       |
+| Training after A level, Tertiary Non-Uni | 6 - Higher than secondary but not university |
+| Tertiary Uni                             | 7 - University complete or incomplete        |
 
 Note that Tanzania has two levels for secondary education: (1) ordinary level (Forms 1 - 4) and (2) advanced level (Forms 5 and 6). The final year of ordinary level, Form 4, is coded as secondary complete, and while the advanced levels are coded as higher than secondary but not university. This is consistent with our education coding in India where secondary education is split between lower and upper secondary. 
