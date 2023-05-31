@@ -1,38 +1,27 @@
+
 /*%%=============================================================================================
 	0: GLD Harmonization Preamble
 ==============================================================================================%%*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				TZA_2014_ILFS-TAN_v01_M_v01_A_GLD_ALL.do </_Program name_>
+
+<_Program name_> 			TZA_2014_ILFS-ZNZ_V01_M_V02_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata 17 <_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
-<_Date created_>				2022-02-09 </_Date created_>
+<_Date created_>				2922-09-05 </_Date created_>
+
 -------------------------------------------------------------------------
-<_Country_>						TZA </_Country_>
-<_Survey Title_>				Integrated Labour Force Survey </_Survey Title_>
+<_Country_>						Tanzania (TZA) </_Country_>
+<_Survey Title_>				ILFS </_Survey Title_>
 <_Survey Year_>					2014 </_Survey Year_>
-<_Study ID_>					https://microdatalib.worldbank.org/index.php/catalog/10464 </_Study ID_>
-<_Data collection from_>		[MM/YYYY] </_Data collection from_>
-<_Data collection to_>			[MM/YYYY] </_Data collection to_>
-<_Source of dataset_> 			Shared with GLD team with note that ILFS 2014 Tanzania Mainland should be 
-								publicly available, to be uploaded to WB microdata library
-								</_Source of dataset_>
-<_Sample size (HH)_> 			11,472 </_Sample size (HH)_>
-<_Sample size (IND)_> 			47,199 </_Sample size (IND)_>
+<_Study ID_>					[Microdata Library ID if present] </_Study ID_>
+<_Data collection from_>		01/2014 </_Data collection from_>
+<_Data collection to_>			12/2014 </_Data collection to_>
+<_Source of dataset_> 			Tanzania Country Office </_Source of dataset_>
+<_Sample size (HH)_> 			6,947	 </_Sample size (HH)_>
+<_Sample size (IND)_> 			36,764	 </_Sample size (IND)_>
 <_Sampling method_> 			
-								The 2014 ILFS used the sampling frame derived from 2012 Population and Housing Census (PHC). The sample selection methodology for the 2014 ILFS was based on a stratified three-stage sample design.
-							
-The first stage involved systematic sampling of EAs within each stratum with Probability Proportion to Size (PPS) from the ordered list of EAs in the sampling frame. A total of 480 EAs were selected at the first stage whereby 360 EAs were in urban areas and 120 EAs in Rural areas. The second stage involved systematic sampling procedure for selecting households from each selected EA. A total of 24 households were selected from each sampled EA.
 
-The third stage involved selection of respondents for Time Use Module. During data collection, interviewer developed a household register for persons aged 5 years or above in accordance to their sex and age. One household member was selected from the register using KISH grid approach and the time use questionnaire was therefore administered to the selected member of the household in each selected household.
-
-NOTE: Third stage for time use not covered here.
-
-								</_Sampling method_>
-<_Geographic coverage_> 		Strata of Dar-es-Salaam // Other Urban // Rural 
-								Does not include Zanzibar
-								</_Geographic coverage_>
-<_Currency_> 					Tanzanian Shilling </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS-18
 								Questionnaire asks for degree of marketness of production of
@@ -44,12 +33,17 @@ NOTE: Third stage for time use not covered here.
 								At two digits equal to ISCO 88 (not 08 as report says)
 								</_OCCUP National_>
 <_ISIC Version_>				ISIC Rev 4 </_ISIC Version_>
-<_INDUS National_>				Based on ISIC Rev 4 at 2 digits  </_INDUS National_>
+<_INDUS National_>				Based on ISIC Rev 4 at 2 digits </_INDUS National_>
+
 -----------------------------------------------------------------------
 <_Version Control_>
+
 * Date: [YYYY-MM-DD] - [Description of changes]
 * Date: [YYYY-MM-DD] - [Description of changes]
+* Date: 2023-05-31 - Update vars educat7
+
 </_Version Control_>
+
 -------------------------------------------------------------------------*/
 
 
@@ -65,14 +59,33 @@ set mem 800m
 
 *----------1.2: Set directories------------------------------*
 
-local path_in "Z:\GLD-Harmonization\510859_AS\TZA\TZA_2014_ILFS-TAN\TZA_2014_ILFS-TAN_v01_M\Data\Stata"
-local path_output "Z:\GLD-Harmonization\510859_AS\TZA\TZA_2014_ILFS-TAN\TZA_2014_ILFS-TAN_v01_M_v01_A_GLD\Data\Harmonized"
+* Define path sections
+local server  "Y:/GLD"
+local country "TZA"
+local year    "2014"
+local survey  "ILFS-ZNZ"
+local vermast "V01"
+	local veralt "V02"
 
+* From the definitions, set path chunks
+local level_1      "`country'_`year'_`survey'"
+local level_2_mast "`level_1'_`vermast'_M"
+local level_2_harm "`level_1'_`vermast'_M_`veralt'_A_GLD"
+
+* From chunks, define path_in, path_output folder
+local path_in_stata "`server'/`country'/`level_1'/`level_2_mast'/Data/Stata"
+local path_in_other "`server'/`country'/`level_1'/`level_2_mast'/Data/Original"
+local path_output   "`server'/`country'/`level_1'/`level_2_harm'/Data/Harmonized"
+
+* Define Output file name
+local out_file "`level_2_harm'_ALL.dta"
 
 *----------1.3: Database assembly------------------------------*
 
-use "`path_in'\ILFS-2014 for Sharing.dta", clear
+* All steps necessary to merge datasets (if several) to have all elements needed to produce
+* harmonized output in a single file
 
+use "`path_in_stata'\2014ILFSZNZ.dta", clear
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -99,7 +112,7 @@ use "`path_in'\ILFS-2014 for Sharing.dta", clear
 
 
 *<_icls_v_>
-	gen icls_v = "ICLS-18"
+	gen icls_v = "ICLS-13"
 	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
 
@@ -129,13 +142,13 @@ use "`path_in'\ILFS-2014 for Sharing.dta", clear
 
 
 *<_vermast_>
-	gen vermast = "v01"
+	gen vermast = "`vermast'"
 	label var vermast "Version of master data"
 *</_vermast_>
 
 
 *<_veralt_>
-	gen veralt = "v01"
+	gen veralt = "`veralt'"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
@@ -147,13 +160,13 @@ use "`path_in'\ILFS-2014 for Sharing.dta", clear
 
 
 *<_int_year_>
-	gen int_year = YEAR
+	gen int_year= 2014
 	label var int_year "Year of the interview"
 *</_int_year_>
 
 
 *<_int_month_>
-	gen  int_month = MONTH
+	gen  int_month = .
 	label de lblint_month 1 "January" 2 "February" 3 "March" 4 "April" 5 "May" 6 "June" 7 "July" 8 "August" 9 "September" 10 "October" 11 "November" 12 "December"
 	label value int_month lblint_month
 	label var int_month "Month of the interview"
@@ -161,33 +174,48 @@ use "`path_in'\ILFS-2014 for Sharing.dta", clear
 
 
 *<_hhid_>
-
 /* <_hhid_note>
-	Official report states 11,472 HHs, but survey HHID variable has 11,473 distinct values.
-	If you look at household heads, there are 11,472 heads. However, cannot find fault at others
-	(like noticing a sole head who should be part of this.)
-</_hhid_note> */
 
-	gen hhid = string(HHID, "%06.0f")
+	The variable should be a string made up of the elements to define it, that is psu code, ssu, ...
+	Each element should always be as long as needed for the longest element. That is, if there are
+	60 psu coded 1 through 60, codes should be 01, 02, ..., 60. If there are 160 it should be 001,
+	002, ..., 160.
+	
+	
+
+</_hhid_note> */
+	gen region_str = string(REGION, "%02.0f")
+	gen district_str = string(DISTRICT, "%01.0f")
+	gen wardn_str = string(WARDN, "%02.0f")
+	gen wardt_str = string(WARDT, "%01.0f")
+	gen vill_str = string(VILL, "%02.0f")
+	gen ea_str = string(EA, "%03.0f")
+	gen hh_id_str = string(HHNO, "%03.0f")
+	
+	ren hhid hhid_raw
+	
+	egen hhid = concat(region_str district_str wardn_str wardt_str vill_str ea_str hh_id_str)
 	label var hhid "Household ID"
 *</_hhid_>
 
 
 *<_pid_>
-	gen pid = string(HHMID, "%08.0f")
-	label var pid "Individual ID"
+	gen ind_str = string(PERSON2, "%02.0f")
+	egen  pid = concat(hhid ind_str)
 	isid pid
+	label var pid "Individual ID"
 *</_pid_>
 
 
 *<_weight_>
-	gen weight = ADJWT
-	label var weight "Household sampling weight"
+	* Only HH weights are available
+	gen weight = FinalWeight
+	label var weight "Survey sampling weight"
 *</_weight_>
 
 
 *<_psu_>
-	gen psu = CLUSTER
+	gen psu = EAID
 	label var psu "Primary sampling units"
 *</_psu_>
 
@@ -199,7 +227,7 @@ use "`path_in'\ILFS-2014 for Sharing.dta", clear
 
 
 *<_strata_>
-	gen strata = GEOG_1
+	egen strata = concat(REGION urb_rur)
 	label var strata "Strata"
 *</_strata_>
 
@@ -219,8 +247,7 @@ use "`path_in'\ILFS-2014 for Sharing.dta", clear
 {
 
 *<_urban_>
-	gen byte urban = GEOG_2
-	recode urban (2 = 0)
+	gen byte urban = (urb_rur == 2)
 	label var urban "Location is urban"
 	la de lblurban 1 "Urban" 0 "Rural"
 	label values urban lblurban
@@ -228,84 +255,52 @@ use "`path_in'\ILFS-2014 for Sharing.dta", clear
 
 
 *<_subnatid1_>
-/* <_subnatid1_note>
-	Survey report not explicit but information in it only disaggregated by strata of 
-	Dar es Salaam, Other Urban, Rural. Though not an admin area used for setting subnatid1
-</_subnatid1_note> */
-	tostring GEOG_1, gen(subnatid1)
-	replace subnatid1 = "1 - Dar es Salaam" if subnatid1 == "1"
-	replace subnatid1 = "2 - Other Urban" if subnatid1 == "2"
-	replace subnatid1 = "3 - Rural" if subnatid1 == "3"
+
+	gen str subnatid1 = "ZNZ"
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 
 
 *<_subnatid2_>
-	tostring REGION, gen(subnatid2)
-	replace subnatid2 = "1 - Dodoma" if subnatid2 == "1"
-	replace subnatid2 = "2 - Arusha" if subnatid2 == "2"
-	replace subnatid2 = "3 - Kilimanjaro" if subnatid2 == "3"
-	replace subnatid2 = "4 - Tanga" if subnatid2 == "4"
-	replace subnatid2 = "5 - Morogoro" if subnatid2 == "5"
-	replace subnatid2 = "6 - Pwani" if subnatid2 == "6"
-	replace subnatid2 = "7 - Dar es salaam" if subnatid2 == "7"
-	replace subnatid2 = "8 - Lindi" if subnatid2 == "8"
-	replace subnatid2 = "9 - Mtwara" if subnatid2 == "9"
-	replace subnatid2 = "10 - Ruvuma" if subnatid2 == "10"
-	replace subnatid2 = "11 - Iringa" if subnatid2 == "11"
-	replace subnatid2 = "12 - Mbeya" if subnatid2 == "12"
-	replace subnatid2 = "13 - Singida" if subnatid2 == "13"
-	replace subnatid2 = "14 - Tabora" if subnatid2 == "14"
-	replace subnatid2 = "15 - Rukwa" if subnatid2 == "15"
-	replace subnatid2 = "16 - Kigoma" if subnatid2 == "16"
-	replace subnatid2 = "17 - Shinyanga" if subnatid2 == "17"
-	replace subnatid2 = "18 - Kagera" if subnatid2 == "18"
-	replace subnatid2 = "19 - Mwanza" if subnatid2 == "19"
-	replace subnatid2 = "20 - Mara" if subnatid2 == "20"
-	replace subnatid2 = "21 - Manyara" if subnatid2 == "21"
-	replace subnatid2 = "22 - Njombe" if subnatid2 == "22"
-	replace subnatid2 = "23 - Katavi" if subnatid2 == "23"
-	replace subnatid2 = "24 - Simiyu" if subnatid2 == "24"
-	replace subnatid2 = "25 - Geita" if subnatid2 == "25"
+	gen str subnatid2 = "1 - North Unguja" if REGION == 51
+	replace subnatid2 = "2 - South Unguja" if REGION == 52
+	replace subnatid2 = "3 - Urban West" if REGION == 53
+	replace subnatid2 = "4 - North Pemba" if REGION == 54
+	replace subnatid2 = "5 - South Pemba" if REGION == 55
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
 
-
 *<_subnatid3_>
-	tostring REGION, gen(REGION_STR)
-	tostring DISTRICT, gen(DISTRICT_STR)
-	gen subnatid3 = REGION_STR + DISTRICT_STR
-	tostring subnatid3, replace
+	gen str subnatid3 = ""
 	label var subnatid3 "Subnational ID at Third Administrative Level"
 *</_subnatid3_>
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = subnatid1
+/* <_subnatidsurvey_note>
+
+	Variable denoting lowest administrative info to which the survey is still significat.
+	See entry in GLD Guidelines (https://github.com/worldbank/gld/blob/main/Support/A%20-%20Guides%20and%20Documentation/GLD_1.0_Guidelines.docx) for more details
+
+</_subnatidsurvey_note> */
+	gen str subnatidsurvey = "subnatid2"
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
 
 *<_subnatid1_prev_>
+/* <_subnatid1_prev_note>
+
+	subnatid1_prev is coded as missing unless the classification used for subnatid1 has changed since the previous survey.
+
+</_subnatid1_prev_note> */
 	gen subnatid1_prev = .
 	label var subnatid1_prev "Classification used for subnatid1 from previous survey"
 *</_subnatid1_prev_>
 
 
 *<_subnatid2_prev_>
-	gen subnatid2_prev = ""
-	replace subnatid2_prev = "11 - Iringa"    if REGION == 11 | REGION == 22
-	replace subnatid2_prev = "15 - Rukwa"     if REGION == 15 | REGION == 23 
-	
-	replace subnatid2_prev = "17 - Shinyanga" if REGION == 17
-	replace subnatid2_prev = "17 - Shinyanga" if REGION == 24 & inrange(DISTRICT, 1, 4)
-	replace subnatid2_prev = "17 - Shinyanga" if REGION == 25 & inrange(DISTRICT, 1, 4)
-	
-	replace subnatid2_prev = "19 - Mwanza"    if REGION == 19
-	replace subnatid2_prev = "19 - Mwanza"    if REGION == 24 & DISTRICT == 5
-	
-	replace subnatid2_prev = "18 - Kagera"    if REGION == 18
-	replace subnatid2_prev = "18 - Kagera"    if REGION == 25 & DISTRICT == 5
+	gen subnatid2_prev = .
 	label var subnatid2_prev "Classification used for subnatid2 from previous survey"
 *</_subnatid2_prev_>
 
@@ -343,21 +338,19 @@ use "`path_in'\ILFS-2014 for Sharing.dta", clear
 {
 
 *<_hsize_>
-	bys hhid: egen hsize = count(Q03_RELATIONSHIP<=6 | Q03_RELATIONSHIP == 8)
+	gen hsize = hhsize
 	label var hsize "Household size"
 *</_hsize_>
 
 
 *<_age_>
-	gen byte age=Q05B_AGE
-	replace age=. if age>=98
+	gen age = Q05B_AGE
 	label var age "Individual age"
 *</_age_>
 
 
 *<_male_>
-	gen male = Q04_SEX
-	recode male (2 = 0)
+	gen male = (Q04_SEX == 1)
 	label var male "Sex - Ind is male"
 	la de lblmale 1 "Male" 0 "Female"
 	label values male lblmale
@@ -367,10 +360,7 @@ use "`path_in'\ILFS-2014 for Sharing.dta", clear
 *<_relationharm_>
 	gen relationharm = Q03_RELATIONSHIP
 	recode relationharm (4 = 3) (5 = 4) (6 = 5) (7 8 = 6)
-	
-	* There is one HH without a HH Head
-	replace relationharm = 1 if relationharm == 2 & HHID == 381002
-	
+
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm  lblrelationharm
@@ -392,9 +382,9 @@ use "`path_in'\ILFS-2014 for Sharing.dta", clear
 *</_marital_>
 
 
+
 *<_eye_dsablty_>
-	gen eye_dsablty = Q07B
-	recode eye_dsablty (5 = .)
+	gen eye_dsablty = .
 	label define dsablty 1 "No – no difficulty" 2 "Yes – some difficulty" 3 "Yes – a lot of difficulty" 4 "Cannot do at all"
 	label values eye_dsablty dsablty
 	label var eye_dsablty "Disability related to eyesight"
@@ -402,8 +392,7 @@ use "`path_in'\ILFS-2014 for Sharing.dta", clear
 
 
 *<_hear_dsablty_>
-	gen hear_dsablty = Q07C
-	recode hear_dsablty (5 = .)
+	gen hear_dsablty = .
 	label define dsablty 1 "No – no difficulty" 2 "Yes – some difficulty" 3 "Yes – a lot of difficulty" 4 "Cannot do at all", replace
 	label values hear_dsablty dsablty
 	label var hear_dsablty "Disability related to hearing"
@@ -411,8 +400,7 @@ use "`path_in'\ILFS-2014 for Sharing.dta", clear
 
 
 *<_walk_dsablty_>
-	gen walk_dsablty = Q07D
-	recode walk_dsablty (5 = .)
+	gen walk_dsablty = .
 	label define dsablty 1 "No – no difficulty" 2 "Yes – some difficulty" 3 "Yes – a lot of difficulty" 4 "Cannot do at all", replace
 	label values walk_dsablty dsablty
 	label var walk_dsablty "Disability related to walking or climbing stairs"
@@ -420,8 +408,7 @@ use "`path_in'\ILFS-2014 for Sharing.dta", clear
 
 
 *<_conc_dsord_>
-	gen conc_dsord = Q07E
-	recode conc_dsord (5 = .)
+	gen conc_dsord = .
 	label define dsablty 1 "No – no difficulty" 2 "Yes – some difficulty" 3 "Yes – a lot of difficulty" 4 "Cannot do at all", replace
 	label values conc_dsord dsablty
 	label var conc_dsord "Disability related to concentration or remembering"
@@ -429,8 +416,7 @@ use "`path_in'\ILFS-2014 for Sharing.dta", clear
 
 
 *<_slfcre_dsablty_>
-	gen slfcre_dsablty  = Q07F
-	recode slfcre_dsablty (5 = .)
+	gen slfcre_dsablty  = .
 	label define dsablty 1 "No – no difficulty" 2 "Yes – some difficulty" 3 "Yes – a lot of difficulty" 4 "Cannot do at all", replace
 	label values slfcre_dsablty dsablty
 	label var slfcre_dsablty "Disability related to selfcare"
@@ -438,8 +424,7 @@ use "`path_in'\ILFS-2014 for Sharing.dta", clear
 
 
 *<_comm_dsablty_>
-	gen comm_dsablty = Q07G
-	recode comm_dsablty (5 = .)
+	gen comm_dsablty = .
 	label define dsablty 1 "No – no difficulty" 2 "Yes – some difficulty" 3 "Yes – a lot of difficulty" 4 "Cannot do at all", replace
 	label values comm_dsablty dsablty
 	label var comm_dsablty "Disability related to communicating"
@@ -468,8 +453,7 @@ use "`path_in'\ILFS-2014 for Sharing.dta", clear
 
 
 *<_migrated_binary_>
-	gen migrated_binary = Q11_MIGRA1_GRP1
-	recode migrated_binary(2 3 = 1)
+	gen migrated_binary = (Q11_MIGRA1!=0)
 	label de lblmigrated_binary 0 "No" 1 "Yes"
 	label values migrated_binary lblmigrated_binary
 	label var migrated_binary "Individual has migrated"
@@ -477,21 +461,14 @@ use "`path_in'\ILFS-2014 for Sharing.dta", clear
 
 
 *<_migrated_years_>
-	gen migrated_years = Q11_MIGRA1_YR
+	gen migrated_years = int(Q11_MIGRA1/12)
+	replace migrated_years = . if migrated_binary == 0
 	label var migrated_years "Years since latest migration"
 *</_migrated_years_>
 
 
 *<_migrated_from_urban_>
-
-/* <_migrated_from_urban_note>
-	Survey has question of whether coming from village or city, not officially defined 
-	concepts of rural or urban. Additionally, only valid for people coming from within Tanzania.
-</_migrated_from_urban_note> */
-
 	gen migrated_from_urban = .
-	replace migrated_from_urban = 1 if Q12A_MIGRA2 == 2
-	replace migrated_from_urban = 0 if Q12A_MIGRA2 == 1
 	label de lblmigrated_from_urban 0 "Rural" 1 "Urban"
 	label values migrated_from_urban lblmigrated_from_urban
 	label var migrated_from_urban "Migrated from area"
@@ -500,9 +477,10 @@ use "`path_in'\ILFS-2014 for Sharing.dta", clear
 
 *<_migrated_from_cat_>
 	gen migrated_from_cat = .
-	replace migrated_from_cat = 3 if REGION == Q12B_REG
-	replace migrated_from_cat = 4 if REGION != Q12B_REG & !missing(Q12B_REG)
-	replace migrated_from_cat = 5 if inrange(Q12A_MIGRA2,3,7)
+	replace migrated_from_cat = 3 if inrange(Q12A__REG, 51, 55)
+	replace migrated_from_cat = 2 if Q12A__REG == REGION
+	replace migrated_from_cat = 4 if inrange(Q12A__REG, 1, 25)
+	replace migrated_from_cat = 5 if inrange(Q12_MIGRA2, 3, 7)
 	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country"
 	label values migrated_from_cat lblmigrated_from_cat
 	label var migrated_from_cat "Category of migration area"
@@ -510,28 +488,31 @@ use "`path_in'\ILFS-2014 for Sharing.dta", clear
 
 
 *<_migrated_from_code_>
-	gen migrated_from_code = .
-	replace migrated_from_code = Q12B_REG
+	gen migrated_from_code = Q12A__REG
 	label de lblmigrated_from_code 1 "1 - Dodoma" 2 "2 - Arusha" 3 "3 - Kilimanjaro" 4 "4 - Tanga" 5 "5 - Morogoro" 6 "6 - Pwani" 7 "7 - Dar es salaam" 8 "8 - Lindi" 9 "9 - Mtwara" 10 "10 - Ruvuma" 11 "11 - Iringa" 12 "12 - Mbeya" 13 "13 - Singida" 14 "14 - Tabora" 15 "15 - Rukwa" 16 "16 - Kigoma" 17 "17 - Shinyanga" 18 "18 - Kagera" 19 "19 - Mwanza" 20 "20 - Mara" 21 "21 - Manyara" 22 "22 - Njombe" 23 "23 - Katavi" 24 "24 - Simiyu" 25 "25 - Geita" 51 "51 - Kaskazini Unguja" 52 "52 - Kusini Unguja" 53 "53 - Mjini magharibi" 54 "54 - Kaskazini Pemba" 55 "55 - Kusini Pemba"
-	label values migrated_from_code lblmigrated_from_code
+	label values migrated_from_code lblmigrated_from_codex
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
 *</_migrated_from_code_>
 
 
 *<_migrated_from_country_>
 	gen migrated_from_country = ""
-	replace migrated_from_country = "KEN" if Q12A_MIGRA2 == 3
-	replace migrated_from_country = "UGA" if Q12A_MIGRA2 == 4
-	replace migrated_from_country = "RWA" if Q12A_MIGRA2 == 5
-	replace migrated_from_country = "BDI" if Q12A_MIGRA2 == 6
-	replace migrated_from_country = "Other" if Q12A_MIGRA2 == 7
+	replace migrated_from_country = "KEN" if Q12_MIGRA2 == 3
+	replace migrated_from_country = "UGA" if Q12_MIGRA2 == 4
+	replace migrated_from_country = "RWA" if Q12_MIGRA2 == 5
+	replace migrated_from_country = "BDI" if Q12_MIGRA2 == 6
+	replace migrated_from_country = "Other" if Q12_MIGRA2 == 7
+
 	label var migrated_from_country "Code of migration country (ISO 3 Letter Code)"
 *</_migrated_from_country_>
 
 
 *<_migrated_reason_>
-	gen migrated_reason = Q13_MIGRA3 if migrated_binary == 1
-	recode migrated_reason (1/5 = 3) (6 = 1) (7 = 2) (8 = 4) (9 = 5)
+	gen migrated_reason = .
+	replace migrated_reason = 2 if Q13_MIGRA3 == 7
+	replace migrated_reason = 3 if inrange(Q13_MIGRA3, 1, 5)
+	replace migrated_reason = 4 if inlist(Q13_MIGRA3, 6, 8)
+	replace migrated_reason = 5 if Q13_MIGRA3 == 9
 	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
 	label values migrated_reason lblmigrated_reason
 	label var migrated_reason "Reason for migrating"
@@ -550,18 +531,25 @@ use "`path_in'\ILFS-2014 for Sharing.dta", clear
 
 *<_ed_mod_age_>
 
-	gen byte ed_mod_age = 5
-	label var ed_mod_age "Education module application age"
+/* <_ed_mod_age_note>
+
+Education module is only asked to those 5 and older.
+
+</_ed_mod_age_note> */
+
+gen byte ed_mod_age = 5
+label var ed_mod_age "Education module application age"
 
 *</_ed_mod_age_>
 
+
 *<_school_>
-	gen byte school = Q15_EDSTAT1
-	recode school (2 = 0)
+	gen byte school = Q15_EDSTAT == 2
 	label var school "Attending school"
 	la de lblschool 0 "No" 1 "Yes"
 	label values school  lblschool
 *</_school_>
+
 
 
 *<_literacy_>
@@ -571,6 +559,7 @@ use "`path_in'\ILFS-2014 for Sharing.dta", clear
 	la de lblliteracy 0 "No" 1 "Yes"
 	label values literacy lblliteracy
 *</_literacy_>
+
 
 
 *<_educy_>
@@ -589,14 +578,13 @@ use "`path_in'\ILFS-2014 for Sharing.dta", clear
 	* Note that we leave out code 10 Adult Education as it is difficult
 	* To assign: It is just 98 people
 	replace educat7 = 4 if inrange(Q17A_EDUCA,11,13)
-	replace educat7 = 5 if Q17A_EDUCA == 14
-	replace educat7 = 6 if inrange(Q17A_EDUCA,15,18)
-	replace educat7 = 7 if inrange(Q17A_EDUCA,19,20)
+	replace educat7 = 5 if inrange(Q17A_EDUCA,14,17)
+	replace educat7 = 5 if inrange(Q17A_EDUCA,18,19)
+	replace educat7 = 7 if Q17A_EDUCA == 20
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
 *</_educat7_>
-
 
 *<_educat5_>
 	gen byte educat5 = educat7
@@ -620,7 +608,6 @@ use "`path_in'\ILFS-2014 for Sharing.dta", clear
 	gen educat_orig = Q17A_EDUCA
 	label var educat_orig "Original survey education code"
 *</_educat_orig_>
-
 
 *<_educat_isced_>
 /* Here, I use ISCED 2011 with the following codes
@@ -646,7 +633,6 @@ use "`path_in'\ILFS-2014 for Sharing.dta", clear
 
 	label var educat_isced "ISCED standardised level of education"
 *</_educat_isced_>
-
 
 
 *----------6.1: Education cleanup------------------------------*
@@ -704,10 +690,10 @@ foreach v of local ed_var {
 	label var vocational_length_u "Length of training in months, upper limit"
 *</_vocational_length_u_>
 
-*<_vocational_field_>
-	gen vocational_field = .
-	label var vocational_field "Field of training"
-*</_vocational_field_>
+*<_vocational_field_orig_>
+	gen str vocational_field_orig = ""
+	label var vocational_field_orig "Original field of training information"
+*</_vocational_field_orig_>
 
 *<_vocational_financed_>
 	gen vocational_financed = .
@@ -722,40 +708,36 @@ foreach v of local ed_var {
 	8: Labour
 ==============================================================================================%%*/
 
-
 *<_minlaborage_>
 	gen byte minlaborage = 5
 	label var minlaborage "Labor module application age"
 *</_minlaborage_>
 
 
+
 *----------8.1: 7 day reference overall------------------------------*
 
 {
-
 *<_lstatus_>
-
-/* <_lstatus_note>
-	Use the "standard definition" current activity. However, they assign all those
-	who were available for work as unemployed. We use the definition of available and 
-	looking for work. That is variable L2Q12_FINDWORK (any steps to look for work).
-	Amend CECSTAT1 accordingly.
-	
-	lstatus and potential_lf lead you to CECSTAT1
-</_lstatus_note> */
-
-	gen byte lstatus = CECSTAT1
-	replace lstatus = 3 if L2Q12_FINDWORK == 2
-	replace lstatus = . if age < minlaborage	
+	gen byte lstatus = .
+	replace lstatus = 1 if L2Q07_CURRACT == 1 | (L2Q07_CURRACT == 2 & L2Q08A_TEMPABS == 1)
+	replace lstatus = 2 if L2Q07_CURRACT == 2 & L2Q09_AVAILWORK == 1 & L2Q12_FINDWORK == 1
+	replace lstatus = 3 if (L2Q07_CURRACT == 2 & L2Q09_AVAILWORK == 2) 
+	replace lstatus = 3 if (L2Q07_CURRACT == 2 & L2Q09_AVAILWORK == 1 & L2Q12_FINDWORK == 2)
+	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
+	
 *</_lstatus_>
 
 
 *<_potential_lf_>
-	gen byte potential_lf = 0 if lstatus == 3
-	replace potential_lf = 1 if L2Q12_FINDWORK == 2
+	gen byte potential_lf = .
+	replace potential_lf = 0 if lstatus == 3
+	replace potential_lf = 1 if lstatus == 3 & L2Q12_FINDWORK == 2  & L2Q09_AVAILWORK == 1
+	replace potential_lf = . if age < minlaborage & age != .
+	replace potential_lf = . if lstatus != 3
 	label var potential_lf "Potential labour force status"
 	la de lblpotential_lf 0 "No" 1 "Yes"
 	label values potential_lf lblpotential_lf
@@ -763,8 +745,9 @@ foreach v of local ed_var {
 
 
 *<_underemployment_>
-	gen byte underemployment = 0 if lstatus == 1
-	replace underemployment = 1 if L2Q55_CAVAIL == 1
+	gen byte underemployment = .
+	replace underemployment = . if age < minlaborage & age != .
+	replace underemployment = . if lstatus == 1
 	label var underemployment "Underemployment status"
 	la de lblunderemployment 0 "No" 1 "Yes"
 	label values underemployment lblunderemployment
@@ -834,8 +817,10 @@ foreach v of local ed_var {
 
 *<_industry_orig_>
 	gen industry_orig = L2Q22A_MIND
+	replace industry_orig = . if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
+
 
 
 *<_industrycat_isic_>
@@ -854,21 +839,23 @@ There are differences at more depth (3rd, 4th digit) and since the correspondenc
 
 </_ industrycat_isic_note> */
 	gen industrycat_isic = string(L2Q22A_MIND, "%04.0f")
-	replace industrycat_isic = "" if industrycat_isic == "."
-	replace industrycat_isic = "4900" if industrycat_isic == "4929"
-	replace industrycat_isic = "9100" if industrycat_isic == "9199"
+	replace industrycat_isic = "" if industrycat_isic == "." | lstatus!=1 
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 
+	
 *</_industrycat_isic_>
+
 
 
 *<_industrycat10_>
 	gen byte industrycat10 = floor(L2Q22A_MIND/100)
-	recode industrycat10 (1/3=1) (5/9 = 2) (10/33 = 3) (35/39 = 4) (41/43 = 5) (45/47 55/56 = 6) (49/53 58/63 = 7) (64/82 = 8) (84 = 9) (85/99 = 10) 
+	recode industrycat10 (1/3=1) (5/9 = 2) (10/33 = 3) (35/39 = 4) (41/43 = 5) (45/47 55/56 = 6) (49/53 58/63 = 7) (64/82 = 8) (84 = 9) (85/99 = 10)
+	replace industrycat10 = . if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
 *</_industrycat10_>
+
 
 
 *<_industrycat4_>
@@ -881,28 +868,13 @@ There are differences at more depth (3rd, 4th digit) and since the correspondenc
 
 
 *<_occup_orig_>
-	gen occup_orig = L2Q18A_MTASK 
+	gen occup_orig = .
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
 
 *<_occup_isco_>
-
-/* <_occup_isco_note>
-	TASCO codes are equal at two digits to ISCO-88
-	Note further, ISCO 88 has codes:
-		- 5. Service Workers and Shop and Market Sales Workers
-			- 51 – Personal and Protective Services Workers
-			- 52 – Models, Salespersons and Demonstrators
-	while TASCO has 
-		- 5. SERVICE WORKERS AND SHOP SALES WORKERS
-			- 51 PERSONAL SERVICE WORKERS
-			- 52 PROTECTIVE SERVICE WORKERS
-			- 53 SALESPERSONS, DEMONSTRATORS AND MODELS
-	So 52 needs to be changed to 51, 53 to 52. All other cases are the same.
-</_occup_isco_note> */
-
-	gen occup_isco = string(L2Q18A_MTASK)
+	gen occup_isco = string(L2Q18A_MTASK, "%04.0f")
 	replace occup_isco = substr(occup_isco,1,2)
 	replace occup_isco = "" if occup_isco == "."
 	replace occup_isco = occup_isco + "00" if !missing(occup_isco)
@@ -913,21 +885,26 @@ There are differences at more depth (3rd, 4th digit) and since the correspondenc
 *</_occup_isco_>
 
 
-*<_occup_skill_>
-	gen occup_skill = floor(L2Q18A_MTASK/1000)
-	recode occup_skill (1/3 = 3) (4/8 = 2) (9 = 1)
-	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
-	label values occup_skill lblskill
-	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
-*</_occup_skill_>
-
-
 *<_occup_>
 	gen byte occup = floor(L2Q18A_MTASK/1000)
+	recode occup (0 = 10)
+	replace occup = . if lstatus!=1
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup
 *</_occup_>
+
+
+*<_occup_skill_>
+	gen occup_skill = occup
+	replace occup_skill = 3 if inrange(occup, 1, 3)
+	replace occup_skill = 2 if inrange(occup, 4, 8)
+	replace occup_skill = 1 if occup == 9
+	recode occup_skill (10 = .)
+	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
+	label values occup_skill lblskill
+	label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
+*</_occup_skill_>
 
 
 *<_wage_no_compen_>
@@ -948,7 +925,7 @@ There are differences at more depth (3rd, 4th digit) and since the correspondenc
 </_wage_no_compen_note> */
 
 	gen double wage_no_compen = .
-	replace wage_no_compen = L2Q61B_WAGE if empstat == 1
+	replace wage_no_compen = L2Q61B1_EMPINC if empstat == 1
 	replace wage_no_compen = L2Q62D1 if inrange(empstat,3,4) & industrycat10 != 1
 	replace wage_no_compen = L2Q63D1 if inrange(empstat,3,4) & industrycat10 == 1
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
@@ -977,16 +954,7 @@ There are differences at more depth (3rd, 4th digit) and since the correspondenc
 
 *<_whours_>
 	gen whours = L2Q58M_UHOURS
-	replace whours = . if whours == 0
-	* Replace if tothours worked is > 168 (ave of 24 hours per day)
-	egen tothours_helper = rowtotal( L2Q58M_UHOURS L2Q58S_UHOURS )
-	
-	* Check consistency with raw data variable
-	assert tothours_helper == L2Q58T_UHOURS if !missing(L2Q58T_UHOURS)
-
-	replace whours = . if lstatus != 1
-	replace whours = . if tothours_helper > 168 & !missing(tothours_helper)
-	
+	replace whours = . if whours == 0 | lstatus!=1
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -999,8 +967,10 @@ There are differences at more depth (3rd, 4th digit) and since the correspondenc
 
 *<_wage_total_>
 /* <_wage_total_note>
+
 	Use gross wages when available and net wages only when gross wages are not available.
 	This is done to make it easy to compare earnings in formal and informal sectors.
+
 </_wage_total_note> */
 	gen wage_total = .
 	label var wage_total "Annualized total wage primary job 7 day recall"
@@ -1084,12 +1054,12 @@ There are differences at more depth (3rd, 4th digit) and since the correspondenc
 *</_ocusec_2_>
 
 
+
 *<_industry_orig_2_>
 	gen industry_orig_2 = L2Q40A_SIND
 	replace industry_orig_2 = . if missing(empstat_2)
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
-
 
 *<_industrycat_isic_2_>
 	
@@ -1098,7 +1068,6 @@ There are differences at more depth (3rd, 4th digit) and since the correspondenc
 	replace industrycat_isic_2 = "" if missing(empstat_2)
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
-
 
 *<_industrycat10_2_>
 	gen byte industrycat10_2 = floor(L2Q40A_SIND/100)
@@ -1130,7 +1099,7 @@ There are differences at more depth (3rd, 4th digit) and since the correspondenc
 	Tanzanian occupation classification TASCO is equal to ISCO 88 at two digits, reduce
 </_occup_isco_2_note> */
 
-	gen occup_isco_2 = string(L2Q36A_STASK)
+	gen occup_isco_2 = string(L2Q36A_STASK, "%04.0f")
 	replace occup_isco_2 = substr(occup_isco_2,1,2)
 	
 	replace occup_isco_2 = "" if occup_isco_2 == "."
@@ -1141,35 +1110,28 @@ There are differences at more depth (3rd, 4th digit) and since the correspondenc
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
-
-*<_occup_skill_2_>
-	gen occup_skill_2 = floor(L2Q36A_STASK/1000)
-	recode occup_skill_2 (1/3 = 3) (4/8 = 2) (9 = 1)
-	replace occup_skill_2 = . if missing(empstat_2)
-	la de lblskill2 1 "Low skill" 2 "Medium skill" 3 "High skill"
-	label values occup_skill_2 lblskill2
-	label var occup_skill_2 "Skill based on ISCO standard secondary job 7 day recall"
-*</_occup_skill_2_>
-
-
 *<_occup_2_>
 	gen occup_2 = floor(L2Q36A_STASK/1000)
+	recode occup_2 (0 = 10)
 	replace occup_2 = . if missing(empstat_2)
 	label var occup_2 "1 digit occupational classification secondary job 7 day recall"
 	label values occup_2 lbloccup
 *</_occup_2_>
 
 
+
+*<_occup_skill_2_>
+	gen occup_skill_2 = .
+	replace occup_skill_2 = 3 if inrange(occup_2, 1, 3)
+	replace occup_skill_2 = 2 if inrange(occup_2, 4, 8)
+	replace occup_skill_2 = 1 if occup_2 == 9
+	la de lblskill2 1 "Low skill" 2 "Medium skill" 3 "High skill"
+	label values occup_skill_2 lblskill2
+	label var occup_skill_2 "Skill based on ISCO standard secondary job 7 day recall"
+*</_occup_skill_2_>
+
+
 *<_wage_no_compen_2_>
-
-/* <_wage_no_compen_2_note>
-
-	Since the information is not specific to jobs but overall, assumption is that
-	if you have two jobs of the same type, only the main is recorded. Hence second
-	job salaries would be only recordable for those who differ in first and second.
-	This would potentially skew the data and thus information is not provided.
-	
-</_wage_no_compen_2_note> */
 	gen double wage_no_compen_2 = .
 	label var wage_no_compen_2 "Last wage payment secondary job 7 day recall"
 *</_wage_no_compen_2_>
@@ -1185,8 +1147,7 @@ There are differences at more depth (3rd, 4th digit) and since the correspondenc
 *<_whours_2_>
 	gen whours_2 = L2Q58S_UHOURS
 	replace whours_2 = . if whours_2 == 0
-	replace whours_2 = . if tothours_helper > 168 & !missing(tothours_helper)
-	drop tothours_helper
+	
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 
@@ -1223,7 +1184,7 @@ There are differences at more depth (3rd, 4th digit) and since the correspondenc
 }
 
 *----------8.4: 7 day reference additional jobs------------------------------*
-{
+
 *<_t_hours_others_>
 	gen t_hours_others = .
 	label var t_hours_others "Annualized hours worked in all but primary and secondary jobs 7 day recall"
@@ -1261,19 +1222,78 @@ There are differences at more depth (3rd, 4th digit) and since the correspondenc
 	gen t_wage_total = .
 	label var t_wage_total "Annualized total wage for all jobs 7 day recall"
 *</_t_wage_total_>
-}
+
 
 *----------8.6: 12 month reference overall------------------------------*
 
 {
 
 *<_lstatus_year_>
-	gen byte lstatus_year = UECSTAT
+/* <_lstatus_year_note>
+
+	12 months question only has yes no to worked at any time.
+	
+	However Q3(iii) (asked to those who said no to work) asks bout availability. Use this to differentiate between unemployed and NLF.
+	
+</_lstatus_year_note> */
+
+	gen l2q01_us_mod = L2Q01_USACT 
+	
+	replace l2q01_us_mod = 1 if inrange(L2Q04A_UACTA, 1, 12) | inrange(L2Q04B_UACTB, 1, 12) | inrange(L2Q04C_UACTC, 1, 12)
+	
+	egen l2total = rowtotal( L2Q04A_UACTA - L2Q04E_UACTE)
+	count if l2total!=12
+	* there are a substantial number of cases of possible misreporting
+	
+	/* How do we address this? Ignore the rule violation. This is beyond our control. We adapt the following:
+		a. for as long as there a month reported in 12q03a, l2q03b and l2q03c, we tag this person as lstatus_year == 1
+		b. we continue to assign status in whichever more months have been spent 	*/
+		
+	tab l2total if l2total!=12 & l2q01_us_mod == 2
+	* nearly half do not have responses
+
+	gen helper_nlf = .
+	replace helper_nlf = 0 if l2q01_us_mod == 2
+	replace helper_nlf = 1 if L2Q04E_UACTE == 12 & !missing(helper_nlf)
+	
+	gen helper_unemp = 0 if l2q01_us_mod == 2
+	replace helper_unemp = 1 if L2Q04D_UACTD == 12 & !missing(helper_unemp)
+	
+	replace helper_unemp = 1 if inrange(L2Q04D_UACTD, 7, 11) & l2q01_us_mod == 2
+	replace helper_nlf = 1 if inrange(L2Q04E_UACTE, 7, 11) & l2q01_us_mod == 2
+	
+	qui count if L2Q04E_UACTE == 6 & l2q01_us_mod == 2
+	local uacte_6 = r(N)
+	
+	qui count if L2Q04D_UACTD == 6 & l2q01_us_mod == 2
+	local uactd_6 = r(N)
+	
+	assert `uacte_6' == `uactd_6'
+	
+		* Do random assignment: unemp == 1 & nlf == 0
+	
+	set seed 500
+	gen random_unemp = runiform() if L2Q04E_UACTE == 6 & l2q01_us_mod == 2
+	gen random_unemp_int = round(random_unemp)
+	
+	replace helper_unemp = 1 if random_unemp_int == 1
+	
+	gen byte lstatus_year = .
+	
+	replace lstatus_year =  2 if helper_unemp == 1
+	replace lstatus_year =  3 if helper_nlf == 1
+	
+	* Put this as last bec this has the lowest bar. Any indication of work activity should overwrite previous status assigned
+	replace lstatus_year = 1 if l2q01_us_mod == 1
 	replace lstatus_year=. if age < minlaborage & age != .
 	label var lstatus_year "Labor status during last year"
 	la de lbllstatus_year 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus_year lbllstatus_year
+	drop helper_nlf
 *</_lstatus_year_>
+
+
+
 
 *<_potential_lf_year_>
 	gen byte potential_lf_year = .
@@ -1345,25 +1365,23 @@ There are differences at more depth (3rd, 4th digit) and since the correspondenc
 	label values ocusec_year lblocusec_year
 *</_ocusec_year_>
 
+
 *<_industry_orig_year_>
-/* <_industry_orig_year_note>
-	Industry information for 12 oth period only asked to paid employees and apprentices
-	Hence, code the orig but not done for other variables as it may skew information, 
-	info is already there for 7 day recall
-</_industry_orig_year_note> */
-	gen industry_orig_year = L2Q06C_ISIC
+	gen industry_orig_year = L2Q06C_IND
 	replace industry_orig_year = . if lstatus_year != 1
 	label var industry_orig_year "Original industry record main job 12 month recall"
 *</_industry_orig_year_>
 
-
 *<_industrycat_isic_year_>
-	gen industrycat_isic_year = .
+	gen industrycat_isic_year = string(L2Q06C_IND, "%04.0f") if lstatus_year==1
+	replace industrycat_isic_year = "" if industrycat_isic_year == "." | lstatus_year!=1
 	label var industrycat_isic_year "ISIC code of primary job 12 month recall"
 *</_industrycat_isic_year_>
 
 *<_industrycat10_year_>
-	gen byte industrycat10_year = .
+	gen byte industrycat10_year = floor(L2Q06C_IND/100)
+	recode industrycat10_year (1/3=1) (5/9 = 2) (10/33 = 3) (35/39 = 4) (41/43 = 5) (45/47 55/56 = 6) (49/53 58/63 = 7) (64/82 = 8) (84 = 9) (85/99 = 10)
+	replace industrycat10_year = . if lstatus_year!=1
 	label var industrycat10_year "1 digit industry classification, primary job 12 month recall"
 	la de lblindustrycat10_year 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10_year lblindustrycat10_year
@@ -1379,39 +1397,49 @@ There are differences at more depth (3rd, 4th digit) and since the correspondenc
 *</_industrycat4_year_>
 
 
+
 *<_occup_orig_year_>
-/* <_occup_orig_year_note>
-	See note on industry_orig_year
-</_occup_orig_year_note> */
-	gen occup_orig_year = .
+	gen occup_orig_year = L2Q06E_TASCO
 	label var occup_orig_year "Original occupation record primary job 12 month recall"
 *</_occup_orig_year_>
 
 
 *<_occup_isco_year_>
-	gen occup_isco_year = ""
+	gen occup_isco_year = string(L2Q06E_TASCO, "%04.0f")
+	replace occup_isco_year = substr(occup_isco_year,1,2)
+	
+	replace occup_isco_year = "" if occup_isco_year == "."
+	replace occup_isco_year = occup_isco_year + "00" if !missing(occup_isco_year)
+	replace occup_isco_year = "5100" if occup_isco_year == "5200"
+	replace occup_isco_year = "5200" if occup_isco_year == "5300"
+	replace occup_isco_year = "" if missing(empstat_year)
 	label var occup_isco_year "ISCO code of primary job 12 month recall"
 *</_occup_isco_year_>
 
 
-*<_occup_skill_year_>
-	gen occup_skill_year = .
-	la de lblskillyear 1 "Low skill" 2 "Medium skill" 3 "High skill"
-	label values occup_skill_year lblskillyear
-	label var occup_skill_year "Skill based on ISCO standard primary job 12 month recall"
-*</_occup_skill_year_>
-
-
 *<_occup_year_>
-	gen byte occup_year = .
+	gen occup_year = floor(L2Q06E_TASCO/1000)
+	replace occup_year = . if missing(empstat_year)
+	recode occup_year (0 = 10)
 	label var occup_year "1 digit occupational classification, primary job 12 month recall"
 	la de lbloccup_year 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup_year lbloccup_year
 *</_occup_year_>
 
 
-*<_wage_no_compen_year_> 
-	gen double wage_no_compen_year = .
+*<_occup_skill_year_>
+	gen occup_skill_year = .
+	replace occup_skill_year = 3 if inrange(occup_year, 1, 3)
+	replace occup_skill_year = 2 if inrange(occup_year, 4, 8)
+	replace occup_skill_year = 1 if occup_year == 9
+	la de lblskillyear 1 "Low skill" 2 "Medium skill" 3 "High skill"
+	label values occup_skill_year lblskillyear
+	label var occup_skill_year "Skill based on ISCO standard primary job 12 month recall"
+*</_occup_skill_year_>
+
+
+*<_wage_no_compen_year_> --- this var has the same name as other and when quoted in the keep and order codes is repeated.
+	gen double wage_no_compen_year = . 
 	label var wage_no_compen_year "Last wage payment primary job 12 month recall"
 *</_wage_no_compen_year_>
 
@@ -1432,15 +1460,15 @@ There are differences at more depth (3rd, 4th digit) and since the correspondenc
 
 *<_wmonths_year_>
 	* Create helper with at least some part of the month worked
-	gen helper = L2Q04A_A + L2Q04A_B + L2Q04A_C
+	egen helper = rowtotal(L2Q04A_UACTA L2Q04B_UACTB L2Q04C_UACTC)
 	gen wmonths_year = .
 	replace wmonths_year = 12 if L2Q03_WORKALL == 1
 	replace wmonths_year = helper if L2Q03_WORKALL == 2
 	replace wmonths_year = . if lstatus_year != 1
+	replace wmonths_year = . if wmonths_year == 0
 	label var wmonths_year "Months of work in past 12 months primary job 12 month recall"
 	drop helper
 *</_wmonths_year_>
-
 
 *<_wage_total_year_>
 	gen wage_total_year = .
@@ -1554,19 +1582,22 @@ There are differences at more depth (3rd, 4th digit) and since the correspondenc
 *</_occup_isco_2_year_>
 
 
-*<_occup_skill_2_year_>
-	gen occup_skill_2_year = .
-	la de lblskilly2 1 "Low skill" 2 "Medium skill" 3 "High skill"
-	label values occup_skill_2_year lblskilly2
-	label var occup_skill_2_year "Skill based on ISCO standard secondary job 12 month recall"
-*</_occup_skill_2_year_>
-
-
 *<_occup_2_year_>
 	gen byte occup_2_year = .
 	label var occup_2_year "1 digit occupational classification, secondary job 12 month recall"
 	label values occup_2_year lbloccup_year
 *</_occup_2_year_>
+
+
+*<_occup_skill_2_year_>
+	gen occup_skill_2_year = .
+	replace occup_skill_2_year = 3 if inrange(occup_2_year, 1, 3)
+	replace occup_skill_2_year = 2 if inrange(occup_2_year, 4, 8)
+	replace occup_skill_2_year = 1 if occup_2_year == 9
+	la de lblskilly2 1 "Low skill" 2 "Medium skill" 3 "High skill"
+	label values occup_skill_2_year lblskilly2
+	label var occup_skill_2_year "Skill based on ISCO standard secondary job 12 month recall"
+*</_occup_skill_2_year_>
 
 
 *<_wage_no_compen_2_year_>
@@ -1711,13 +1742,13 @@ quietly{
 
 *<_% KEEP VARIABLES - ALL_>
 
-	keep countrycode survname survey icls_v isced_version isco_version isic_version year vermast veralt harmonization int_year int_month hhid pid weight psu strata wave urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_orig educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
+	keep countrycode survname survey icls_v isced_version isco_version isic_version year vermast veralt harmonization int_year int_month hhid pid weight psu strata wave urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_orig educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field_orig vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
 
 *</_% KEEP VARIABLES - ALL_>
 
 *<_% ORDER VARIABLES_>
 
-	order countrycode survname survey icls_v isced_version isco_version isic_version year vermast veralt harmonization int_year int_month hhid pid weight psu strata wave urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_orig educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
+	order countrycode survname survey icls_v isced_version isco_version isic_version year vermast veralt harmonization int_year int_month hhid pid weight psu strata wave urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_orig educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field_orig vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
 
 *</_% ORDER VARIABLES_>
 
@@ -1756,13 +1787,6 @@ quietly{
 }
 
 
-*<_% COMPRESS_>
-
-compress
-
-*</_% COMPRESS_>
-
-
 *<_% DELETE MISSING VARIABLES_>
 
 quietly: describe, varlist
@@ -1776,8 +1800,15 @@ foreach var of local kept_vars {
 *</_% DELETE MISSING VARIABLES_>
 
 
+*<_% COMPRESS_>
+
+compress
+
+*</_% COMPRESS_>
+
+
 *<_% SAVE_>
 
-save "`path_output'\TZA_2014_ILFS-TAN_v01_M_v01_A_GLD_ALL.dta", replace
+save "`path_output'/`out_file'", replace
 
 *</_% SAVE_>

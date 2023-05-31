@@ -4,7 +4,7 @@
 ==============================================================================================%%*/
 
 /* -----------------------------------------------------------------------
-<_Program name_> 			TZA_2020_ILFS_V01_M_V03_A_GLD_ALL.do </_Program name_>
+<_Program name_>				TZA_2020_ILFS_v01_M_v01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata 17 <_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
 <_Date created_>				2022-03-15 </_Date created_>
@@ -41,8 +41,6 @@ https://www.nbs.go.tz/nbs/takwimu/labour/KILM_with_Policy_Brief%202020_21_ILFS%2
 -----------------------------------------------------------------------
 <_Version Control_>
 
-* Date: [2023-05-08] - Update lstatus codes: shift some from unemployed to employed
-* Date: 2023-05-30 - Update vars educat7
 
 </_Version Control_>
 -------------------------------------------------------------------------*/
@@ -60,30 +58,12 @@ set mem 800m
 
 *----------1.2: Set directories------------------------------*
 
-* Define path sections
-local server  "Y:/GLD"
-local country "TZA"
-local year    "2020"
-local survey  "ILFS"
-local vermast "V01"
-	local veralt "V03"
-
-* From the definitions, set path chunks
-local level_1      "`country'_`year'_`survey'"
-local level_2_mast "`level_1'_`vermast'_M"
-local level_2_harm "`level_1'_`vermast'_M_`veralt'_A_GLD"
-
-* From chunks, define path_in, path_output folder
-local path_in_stata "`server'/`country'/`level_1'/`level_2_mast'/Data/Stata"
-local path_in_other "`server'/`country'/`level_1'/`level_2_mast'/Data/Original"
-local path_output   "`server'/`country'/`level_1'/`level_2_harm'/Data/Harmonized"
-
-* Define Output file name
-local out_file "`level_2_harm'_ALL.dta"
+local path_in "Z:\GLD-Harmonization\510859_AS\TZA\TZA_2020_ILFS\TZA_2020_ILFS_v01_M\Data\Stata"
+local path_output "Z:\GLD-Harmonization\510859_AS\TZA\TZA_2020_ILFS\TZA_2020_ILFS_v01_M_v01_A_GLD\Data\Harmonized"
 
 *----------1.3: Database assembly------------------------------*
 
-use "`path_in_stata'\2020_ILFS_DATA_URT ANONYMISED.dta"
+use "`path_in'\2020_ILFS_DATA_URT ANONYMISED.dta"
 
 * Reduce to finished interviews completed (?)
 /*
@@ -156,13 +136,13 @@ drop if RESULT != 1
 
 
 *<_vermast_>
-	gen vermast = "`vermast'"
+	gen vermast = "v01"
 	label var vermast "Version of master data"
 *</_vermast_>
 
 
 *<_veralt_>
-	gen veralt = "`veralt'"
+	gen veralt = "v01"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
@@ -739,9 +719,9 @@ label var ed_mod_age "Education module application age"
 	* Note that we leave out code 10 Adult Education as it is difficult
 	* To assign: It is just 98 people
 	replace educat7 = 4 if inrange(Q11D,11,13)
-	replace educat7 = 5 if inrange(Q11D,14,17)
-	replace educat7 = 6 if inrange(Q11D,18,19)
-	replace educat7 = 7 if Q11D == 20
+	replace educat7 = 5 if Q11D == 14
+	replace educat7 = 6 if inrange(Q11D,15,18)
+	replace educat7 = 7 if inrange(Q11D,19,20)
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -903,8 +883,7 @@ foreach v of local ed_var {
 
 </_lstatus_note> */
 
-
-  ***************************
+	***************************
   * Create Variable
   ***************************
 	gen byte lstatus = .
@@ -914,59 +893,64 @@ foreach v of local ed_var {
   * Define those employed
   ***************************
   
-    * Define the employment options from the questionnaire flow. Q13D asks for nay production form. If yes (range 1-7), asks for 
-	* degree of market exchange (if 50%+, straight to labour), if not joins Q13D == 8 in Q13F, G, and H for employment options.
-	* F, G, and H are flow outs, that is, if F is yes, striaght to labour, only if no goes to G, same relationship to H. Hence,
-	* H == 2 only if F, G, also 2.
-	
-	* Note that the English questionnaire has a typo and if 13H = 2 and 13E is 3 or 4 (which needs to be, otherwise 13H not
-	* asked), then Swahili version says go to 13IB, not 14A like in English. How to get to 13IA I don't know as it seems im-
-	* possible. Does not matter because in either option if absent goes to Q13J so we can chose that.
-	
-	* Absence then can be from job or business (Q13J 1 or 4), which we will accept as employed if out for less than a month
-	* or more than a month but still being paid (Q13M == 1).
-	
-	* Absence from agriculture needs to be for needs to be at less than a month and 50%+ for market exchange.
-	
-	* E1 - Did Ag work for market exchange
-	replace lstatus = 1 if inrange(Q13E, 1, 2)
-	
-	* E2 - Did some other work (paid employment, F, business, G, or helping in business, H)
+	* E1 - Did some work
 	replace lstatus = 1 if Q13F == 1 | Q13G == 1 | Q13H == 1
+  
+	* E2 - Did some work, including farm work and it was 50%+ for sale
+	replace lstatus = 1 if (Q13D <= 7 & Q13E <= 2)
 	
-	* E3 - Did not work in categories defined by E1 or E2 but absent from paid job or business for less than a month
-	replace lstatus = 1 if inlist(Q13J, 1, 4) & Q13K == 1
-	
-	* E4 - Did not work in categories defined by E1 or E2 but absent from paid job or business for over a month, still paid
-	replace lstatus = 1 if inlist(Q13J, 1, 4) & inrange(Q13K, 2, 5) & Q13M == 1
-	
-	* E5 - Did not work in categories defined by E1 or E2 but absent from market farming for less than a month
-	replace lstatus = 1 if inlist(Q13J, 2, 3) & Q13K == 1 & inrange(Q13N, 1, 2)
+	* E3 - Did not work but temporarily absent from paid job
+	replace lstatus = 1 if (Q13F == 2 | Q13G == 2 | Q13H == 2) & (inlist(Q13J,1,4))
+  
+	* E4 - Did not work but temporarily absent from commercial farming
+    replace lstatus = 1 if (Q13F == 2 | Q13G == 2 | Q13H == 2) & (inlist(Q13J,2,3)) & (inlist(Q13N,1,2)) & (Q13K == 1 | (inrange(Q13K,2,5) & Q13M == 1 ) )
 
   ***************************
   * Define those unemployed
   ***************************
   
-	* Unemployment is now defined among those still with no lstatus (for whom lstatus == .)
+	* U1 - Unemployed is no work + took steps to find work and would accept
+	replace lstatus = 2 if (Q13F == 2 & Q13G == 2 & Q13H == 2 & Q13IA == 2) & (Q15A == 1 & Q15D ==1)
   
-	* U1 - Unemployed is no work (lstatus == .) + took steps to find work and would accept
-	replace lstatus = 2 if missing(lstatus) & (Q15A == 1 & Q15D ==1)
+	* U2 - Unemployed is farm work but not for market + steps and willing
+	replace lstatus = 2 if (Q13D <= 7 &  Q13E >= 3) & (Q15A == 1 & Q15D ==1)
+  
+	* U3 - Unemployed is no work, nothing to return to + steps and willing
+	replace lstatus = 2 if (Q13F == 2 | Q13G == 2 | Q13H == 2) & (inlist(Q13J,2,3)) & (inlist(Q13N,3,4)) & (Q15A == 1 & Q15D ==1)
+	
   
   ***************************
   * Define those NLF
   ***************************
   
-	* Not in the labour force is the remainder
-	  
-	* N1 - Not in the labour force (NLF) is: old enough to answer (age >= 5) and lstatus still missing
-	replace lstatus = 3 if missing(lstatus) & inrange(Q05B_AGE, 5, 99)
-	
+	* N1 - Not in the labour force (NLF) is: no work, no steps
+	replace lstatus = 3 if (Q13F == 2 & Q13G == 2 & Q13H == 2 & Q13IA == 2) & (Q15A == 2)
+  
+	* N2 - NLF is: work but not for market and no steps
+	replace lstatus = 3 if (Q13D <= 7 &  Q13E >= 3) & (Q15A == 2)
+  
+	* N3 - NLF is: no work nothing to return + no steps
+	replace lstatus = 3 if (Q13F == 2 | Q13G == 2 | Q13H == 2) & (inlist(Q13J,2,3)) & (inlist(Q13N,3,4)) & (Q15A == 2)
+
+	* N4 - NLF is: no work + took steps to find work but would not accept
+	replace lstatus = 3 if (Q13F == 2 & Q13G == 2 & Q13H == 2 & Q13IA == 2) & (Q15A == 1 & Q15D == 2)
+  
+    * N5 - NLF is: work but not for market + steps yet not willing
+	replace lstatus = 3 if (Q13D <= 7 &  Q13E >= 3) & (Q15A == 1 & Q15D ==2)
+  
+	* N6 - NLF is: no work, nothing to return to + steps yet not willing
+	replace lstatus = 3 if (Q13F == 2 | Q13G == 2 | Q13H == 2) & (inlist(Q13J,2,3)) & (inlist(Q13N,3,4)) & (Q15A == 1 & Q15D ==2)
+
 	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
-*</_lstatus_>
-
+	
+	count if missing(lstatus) & age >4
+	* There are three cases missing. All have code no to 13 F, G, and H, have yes to 15A but 15D is missing.
+	* Given that, of those that have answer codes for both A and D, 94% that say yes to 15A say also
+	* yes to 15D, seems fair to assume this here.
+	replace lstatus = 2 if missing(lstatus) & age >4
 *</_lstatus_>
 
 
@@ -2063,6 +2047,6 @@ compress
 
 *<_% SAVE_>
 
-save "`path_output'/`out_file'", replace
+save "`path_output'\TZA_2020_ILFS_v01_M_v01_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>
