@@ -10,11 +10,12 @@ Individuals who work on their own business if it is not in the field of crop far
 
 ## GLD approach 
 
-For consistency, the GLD team considered the change in definition to the 2019 ICLS definitions to match previous definitions and codify subsistence agriculture workers as employed. The cases where production is for household consumption (AG3 codes 3 and 4) and not for hire (AG4 code 2) are identified whenever they would otherwise be unemployed or out of the labour force by the survey. Individuals who replied as having a main job already and additionally have their consumption production are not recorded as agriculture workers.
+The GLD team considered the change in definition to the 2019 ICLS definitions to match previous definitions and codify subsistence agriculture workers as employed. The cases where production is for household consumption (AG3 codes 3 and 4) and not for hire (AG4 code 2) are identified whenever they would otherwise be unemployed or out of the labour force by the survey. Individuals who replied as having a main job already and additionally have their consumption production are not recorded as agriculture workers.
 
 To fill in the labour variables, the household consumption agriculture workers are assumed to be self-employed (for variable empstat) and to be working in the private sector (for variable ocusec). Codes from AG5 are used to codify the industry, while for occupation individuals are classified with ICSO-08 sub-major group code 63 ("Subsistence Farmers, Fishers, Hunters and Gatherers") (variable occup_isco). Therefore, they are code 6 (“Skilled agriculture workers”) for variable occup and of medium skill level for variable occup_skill. The information from AG7 is used to code the hours worked.
 
-Below we share a code for the users to see how the GLD team would address the change in definition. 
+Below we share a code for the users to see how the GLD team would address the change in definition. However note that the harmonized data for 2019 has not been changed to ressemble other years, this is for the user to decide during their process of analysis. The ICLS-19 is used in all future LFS to date.
+
 ```
 * This section changes the variables on labour for the main job for those working in agricutlure
 * for own production, which is no longer seen as employment according to ICLS 19
