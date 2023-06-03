@@ -18,7 +18,7 @@ The questionnaire gives the possible options for the question of highest level o
 See below descriptions for each education level: 
 
 <br></br>
-![picture](Support/B%-%Country%Survey%Details/ZWE/LFS/utilities/Picture%1.png)
+![picture_1](utilities/Picture_1.png)
 <br></br>
 
 ECD - The first two years of school in Zimbabwe which  are separated into ECD A & B for 1st and 2nd  year respectively with ECD A being 3-4 years and ECD B being 4-5 years, students start Grade 1 at 6 years.
