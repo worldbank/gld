@@ -138,13 +138,13 @@ rename *, lower
 
 
 *<_isco_version_>
-	gen isco_version = "isco_2008"
+	gen isco_version = ""
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
 
 *<_isic_version_>
-	gen isic_version = "isic_4"
+	gen isic_version = ""
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
@@ -852,28 +852,13 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_>
-	gen industrycat_isic = industry_orig
-	tostring(industrycat_isic), replace format("%02.0f")
-	replace industrycat_isic = industrycat_isic + "00" if !missing(industrycat_isic)
-	replace industrycat_isic = "" if industrycat_isic == "00"
+	gen industrycat_isic = ""
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
 
 *<_industrycat10_>
 	gen byte industrycat10 = .
-	destring industry_orig, gen(red_indus)
-	replace industrycat10 = 1 if inrange(red_indus,1,3)
-	replace industrycat10 = 2 if inrange(red_indus,5,9)
-	replace industrycat10 = 3 if inrange(red_indus,10,33)
-	replace industrycat10 = 4 if inrange(red_indus,35,39)
-	replace industrycat10 = 5 if inrange(red_indus,41,43)
-	replace industrycat10 = 6 if inrange(red_indus,45,47) | inrange(red_indus,55,56)
-	replace industrycat10 = 7 if inrange(red_indus,49,53) | inrange(red_indus,58,63)
-	replace industrycat10 = 8 if inrange(red_indus,64,82)
-	replace industrycat10 = 9 if inrange(red_indus,84,84)
-	replace industrycat10 = 10 if inrange(red_indus,85,99)
-	replace industrycat10=. if lstatus != 1 | (age < minlaborage & age != .)
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
@@ -896,18 +881,13 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_>
-	gen occup_isco = occup_orig + substr("0000", 1, 4 - length(occup_orig))
-	replace occup_isco="" if lstatus!=1
+	gen occup_isco = ""
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
 
 *<_occup_>
-	gen code_helper = substr(occup_orig,1,1)
-	destring code_helper, replace
-	gen occup = .
-	replace occup = code_helper if lstatus == 1 & (age >= minlaborage & age != .)
-	replace occup = 99 if occup == 0
+	gen occup= .
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup
@@ -1065,27 +1045,13 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_2_>
-	tostring industry_orig_2, gen(industrycat_isic_2)
-	replace industrycat_isic_2 = "" if industrycat_isic_2 == "."
-	replace industrycat_isic_2 = industrycat_isic_2 + "00" if !missing(industry_orig_2)
+	gen industrycat_isic_2 = ""
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
 
 *<_industrycat10_2_>
-	gen red_indus_2 = industry_orig_2
-	gen byte industrycat10_2 = .
-	replace industrycat10_2 = 1 if inrange(red_indus_2,1,3)
-	replace industrycat10_2 = 2 if inrange(red_indus_2,5,9)
-	replace industrycat10_2 = 3 if inrange(red_indus_2,10,33)
-	replace industrycat10_2 = 4 if inrange(red_indus_2,35,39)
-	replace industrycat10_2 = 5 if inrange(red_indus_2,41,43)
-	replace industrycat10_2 = 6 if inrange(red_indus_2,45,47) | inrange(red_indus,55,56)
-	replace industrycat10_2 = 7 if inrange(red_indus_2,49,53) | inrange(red_indus,58,63)
-	replace industrycat10_2 = 8 if inrange(red_indus_2,64,82)
-	replace industrycat10_2 = 9 if inrange(red_indus_2,84,84)
-	replace industrycat10_2 = 10 if inrange(red_indus_2,85,99)
-	replace industrycat10_2 = . if lstatus != 1 | (age < minlaborage & age != .)
+	gen industrycat10_2 = .
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
 *</_industrycat10_2_>
@@ -1102,24 +1068,18 @@ foreach v of local ed_var {
 *<_occup_orig_2_>
 	gen occup_orig_2 = sj1b
 	replace occup_orig_2 = "" if occup_orig_2 == " "
-	replace occup_orig_2 = "" if lstatus != 1
 	label var occup_orig_2 "Original occupation record secondary job 7 day recall"
 *</_occup_orig_2_>
 
 
 *<_occup_isco_2_>
-	gen occup_isco_2 = occup_orig_2
-	replace occup_isco_2 = occup_isco_2 + "00" if !missing(occup_isco_2)
+	gen occup_isco_2 = ""
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
 
 *<_occup_2_>
-	gen code_helper_2 = substr(occup_orig_2,1,1)
-	destring code_helper_2, replace
-	gen occup_2 = .
-	replace occup_2 = code_helper_2 if lstatus == 1 & (age >= minlaborage & age != .)
-	replace occup_2 = 99 if occup_2 == 0
+	gen  occup_2 = .
 	label var occup_2 "1 digit occupational classification secondary job 7 day recall"
 	label values occup_2 lbloccup
 *</_occup_2_>
