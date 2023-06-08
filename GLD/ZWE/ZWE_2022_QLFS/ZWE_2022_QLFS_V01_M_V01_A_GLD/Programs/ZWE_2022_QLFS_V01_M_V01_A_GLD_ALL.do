@@ -111,7 +111,11 @@ replace quarter=3 if quarter==.
 
 rename *, lower
 
+append using "`path_in_stata'/zwe-qlfs-q4-2022.dta", force
 
+replace quarter=4 if quarter==.
+
+save "`path_in_stata'/qlfs_2022.dta"
 
 /*%%=============================================================================================
 	2: Survey & ID
