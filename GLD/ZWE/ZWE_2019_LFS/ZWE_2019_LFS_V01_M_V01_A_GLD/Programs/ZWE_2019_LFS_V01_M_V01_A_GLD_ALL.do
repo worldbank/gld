@@ -177,7 +177,7 @@ rename *, lower
 
 *<_int_year_>
 	gen int_year = 2019
-	*replace int_year = 2018 if hh6m == 12 
+	*replace int_year = 2018 if hh6m == 12
 	label var int_year "Year of the interview"
 *</_int_year_>
 
@@ -261,8 +261,8 @@ rename *, lower
 *<_subnatid1_>
 /* <_subnatid1_note>
 
-	The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: “1 – Hatay”. That is, the variable itself is to be string, not a labelled numeric vector. 
-	
+	The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: “1 – Hatay”. That is, the variable itself is to be string, not a labelled numeric vector.
+
 	Example of entries would be "1 - Alaska",  "2 - Arkansas", ...
 
 </_subnatid1_note> */
@@ -392,7 +392,7 @@ rename *, lower
 
 *<_marital_>
 	gen byte marital = bc10
-	 recode marital  (1 = 2) (2 = 1)  (3 = 4) (4 = 5) 
+	 recode marital  (1 = 2) (2 = 1)  (3 = 4) (4 = 5)
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
 	label values marital lblmarital
@@ -521,7 +521,7 @@ rename *, lower
 	replace	 migrated_from_code="7 - Midlands" if migrated_from_code == "7"
 	replace	 migrated_from_code="8 - Masvingo" if migrated_from_code == "8"
 	replace	 migrated_from_code="9 - Harare" if migrated_from_code == "9"
-	replace	 migrated_from_code="10 - Bulamayo" if migrated_from_code == "10"
+	replace	 migrated_from_code="10 - Bulamayo" if migrated_from_code == "0"
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
 *</_migrated_from_code_>
 
@@ -566,7 +566,7 @@ label var ed_mod_age "Education module application age"
 
 *<_school_>
 	gen byte school=ed2
-	 recode school (1 = 0) (2 3 = 1) (9 = .) 
+	 recode school (1 = 0) (2 3 = 1) (9 = .)
 	label var school "Attending school"
 	la de lblschool 0 "No" 1 "Yes"
 	label values school  lblschool
@@ -584,15 +584,15 @@ label var ed_mod_age "Education module application age"
 *<_educy_>
 	gen byte educy =.
 	replace educy = ed4b if ed4a == 1 | ed4a == 2
-	
+
 	replace educy = ed4b + 6 if ed4a == 3 & ed4b < 5
 	replace educy = 10 if ed4a == 3 & ed4b > 4
 	replace educy = 7 if ed4a == 3 & educy == 6
-	
+
 	replace educy = ed4b + 10 if ed4a == 4 & ed4b < 3
 	replace educy = 12 if ed4a == 4 & ed4b > 2
 	replace educy = ed4b + 12 if ed4a == 5
-	
+
 	* Correct for education if a person age is not at least 2 more than years in education, set to missing.
 	gen educy_corrector = .
 	replace educy_corrector = 1 if educy > age - 1 & !missing(educy)
@@ -608,7 +608,7 @@ label var ed_mod_age "Education module application age"
 	replace educat7 = 2 if ed4a == 1 & ed5 != 1
 	replace educat7 = 2 if ed4a == 2 & ed5 != 1
 	replace educat7 = 3 if ed4a == 1 & ed5 == 1
-	replace educat7 = 3 if ed4a == 2 & ed5 == 1 
+	replace educat7 = 3 if ed4a == 2 & ed5 == 1
 	replace educat7 = 4 if ed4a == 3
 	replace educat7 = 4 if ed4a == 4 & ed5 != 1
 	replace educat7 = 5 if ed4a == 4 & ed5 == 1
@@ -823,7 +823,7 @@ foreach v of local ed_var {
 	gen byte empstat=.
 	replace empstat = 1 if inlist(mj7, 2, 3, 4)
 	replace empstat = 2 if mj7 == 5
-	replace empstat = 3 if (mj7 == 1 & mj9 == 1) 
+	replace empstat = 3 if (mj7 == 1 & mj9 == 1)
 	replace empstat = 4 if (mj7 == 1 & mj9 == 2)
 	replace empstat = . if lstatus != 1
 	label var empstat "Employment status during past week primary job 7 day recall"
@@ -835,7 +835,7 @@ foreach v of local ed_var {
 *<_ocusec_>
 	gen byte ocusec = .
 		* Any non paid employee working by assumption in private sector
-	replace ocusec = 2 if inrange(empstat,2,4) 
+	replace ocusec = 2 if inrange(empstat,2,4)
 	replace ocusec = 1 if inrange(mj10,1,2)
 	replace ocusec = 3 if inrange(mj10,3,4)
 	replace ocusec = 4 if inrange(mj10,5,96)
@@ -1021,7 +1021,7 @@ foreach v of local ed_var {
 	gen byte empstat_2 = .
 	replace empstat_2 = 1 if inlist(sj5, 2, 3, 4)
 	replace empstat_2 = 2 if sj5 == 5
-	replace empstat_2 = 3 if (sj5 == 1 & sj6 == 1) 
+	replace empstat_2 = 3 if (sj5 == 1 & sj6 == 1)
 	replace empstat_2 = 4 if (sj5 == 1 & sj6 == 2)
 	replace empstat_2 = . if lstatus != 1
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"

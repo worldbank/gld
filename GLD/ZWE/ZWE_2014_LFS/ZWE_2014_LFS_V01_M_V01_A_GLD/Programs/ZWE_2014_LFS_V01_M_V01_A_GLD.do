@@ -21,9 +21,9 @@
 <_Source of dataset_> 				http://nada.zimstat.co.zw/nada/index.php/catalog/77 (not working at the time of writing) </_Source of dataset_>
 <_Sample size (HH)_> 			9,759 </_Sample size (HH)_>
 <_Sample size (IND)_> 			40,527 </_Sample size (IND)_>
-<_Sampling method_> 				
+<_Sampling method_>
 
-A stratified two–stage sample design was used. At the first stage, enumeration areas were selected with probability proportional to size (PPS) sampling method. The measure of size being the number of households enumerated in the 2012 population census. A household listing operation was done to create the second stage sampling frame. The second stage involved the selection of households, which are the ultimate sampling units, using systematic random sampling.	
+A stratified two–stage sample design was used. At the first stage, enumeration areas were selected with probability proportional to size (PPS) sampling method. The measure of size being the number of households enumerated in the 2012 population census. A household listing operation was done to create the second stage sampling frame. The second stage involved the selection of households, which are the ultimate sampling units, using systematic random sampling.
 
 </_Sampling method_>
 <_Geographic coverage_> 		Province or 1st Admin Division </_Geographic coverage_>
@@ -247,8 +247,8 @@ rename male male_1
 *<_subnatid1_>
 /* <_subnatid1_note>
 
-	The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: “1 – Hatay”. That is, the variable itself is to be string, not a labelled numeric vector. 
-	
+	The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: “1 – Hatay”. That is, the variable itself is to be string, not a labelled numeric vector.
+
 	Example of entries would be "1 - Alaska",  "2 - Arkansas", ...
 
 </_subnatid1_note> */
@@ -263,7 +263,7 @@ rename male male_1
 	replace subnatid1="7 - Midlands" if province=="7"
 	replace subnatid1="8 - Masvingo" if province=="8"
 	replace subnatid1="9 - Harare" if province=="9"
-	replace subnatid1="10 - Bulawayo" if province=="0" 
+	replace subnatid1="10 - Bulawayo" if province=="0"
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 
@@ -275,7 +275,7 @@ rename male male_1
 	replace subnatid2="102 - Chimanimani" if subnatid2=="102"
 	replace subnatid2="103 - Chipinge" if subnatid2=="103"
 	replace subnatid2="104 - Makoni" if subnatid2=="104"
-	replace subnatid2="105 - Mutare Rural" if subnatid2=="105" 
+	replace subnatid2="105 - Mutare Rural" if subnatid2=="105"
 	replace subnatid2="106 - Mutasa" if subnatid2=="106"
 	replace subnatid2="107 - Nyanga Rural" if subnatid2=="107"
 	replace subnatid2="121 - Mutare" if subnatid2=="121"
@@ -577,14 +577,14 @@ rename male male_1
 *<_migrated_from_cat_>
 	gen living_prov = substr(geocode,1,1)
 	gen living_dist = substr(geocode,1,3)
-	
+
 	tostring q11, gen(migrated_dist)
 	replace migrated_dist = "" if migrated_dist == "."
 	replace migrated_dist = "021" if migrated_dist == "21"
-	
+
 	gen migrated_prov = substr(migrated_dist,1,1)
 	replace migrated_prov = "X" if inrange(q11,941,999)
-	
+
 	gen     migrated_from_cat = .
 	replace	migrated_from_cat = 2 if migrated_dist == living_dist
 	replace	migrated_from_cat = 3 if migrated_prov == living_prov & missing(migrated_from_cat)
@@ -604,21 +604,21 @@ rename male male_1
 
 *<_migrated_from_code_>
      gen migrated_from_code = ""
-     
+
      * Code for those from same admin3 area (no cases here)
-     
+
      * Code for those from same admin2 area
      replace migrated_from_code = subnatid2 if migrated_from_cat == 2
-     
+
      * Codes for those from same admin1 area
      replace migrated_from_code = subnatid1 if migrated_from_cat == 3
-     
-     * Codes for those migrated different admin1 area 
+
+     * Codes for those migrated different admin1 area
      tostring q11, gen(migrated_dist)
      replace migrated_dist = "" if migrated_dist == "."
      replace migrated_dist = "021" if migrated_dist == "21"
      gen migrated_prov = substr(migrated_dist,1,1)
-           
+
      replace migrated_from_code="1 - Manicaland" if migrated_prov=="1" & migrated_from_cat == 4
      replace migrated_from_code="2 - Mashonaland Central" if migrated_prov=="2" & migrated_from_cat == 4
      replace migrated_from_code="3 - Masholand East" if migrated_prov=="3" & migrated_from_cat == 4
@@ -629,10 +629,10 @@ rename male male_1
      replace migrated_from_code="8 - Masvingo" if migrated_prov=="8" & migrated_from_cat == 4
      replace migrated_from_code="9 - Harare" if migrated_prov=="9" & migrated_from_cat == 4
      replace migrated_from_code="10 - Bulawayo" if migrated_prov=="0"  & migrated_from_cat == 4
-     
+
      * No codes for those migrated from abroad
      replace migrated_from_code = "" if migrated_from_cat == 5
-     
+
      * Label
      label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
 *</_migrated_from_code_>
@@ -833,7 +833,7 @@ foreach v of local ed_var {
 {
 *<_lstatus_>
 	gen byte lstatus = 3
-	replace lstatus = 1 if inrange(q27,1,2) 
+	replace lstatus = 1 if inrange(q27,1,2)
 	replace lstatus = 1 if inrange(q27,4,5)
 	replace lstatus = 2 if inrange(q58b,1,5)
 	replace lstatus = . if age < minlaborage
@@ -846,7 +846,7 @@ foreach v of local ed_var {
 *<_potential_lf_>
 	gen byte potential_lf = .
 	replace potential_lf = 0 if lstatus == 3
-	replace potential_lf = 1 if potential_lf == 0 & q56a == 1 & (q57 != 1 & !missing(q57)) 
+	replace potential_lf = 1 if potential_lf == 0 & q56a == 1 & (q57 != 1 & !missing(q57))
 	replace potential_lf = . if age < minlaborage & age != .
 	replace potential_lf = . if lstatus != 3
 	label var potential_lf "Potential labour force status"
@@ -931,8 +931,8 @@ foreach v of local ed_var {
 
 
 *<_industry_orig_>
-*it is one digit 
-	gen industry_orig = q34
+*it is one digit
+	gen industry_orig = q34mg
 	replace industry_orig = "" if lstatus!= 1
 	replace industry_orig = "" if industry_orig == " "
 	label var industry_orig "Original survey industry code, main job 7 day recall"
@@ -947,11 +947,33 @@ foreach v of local ed_var {
 
 *<_industrycat10_>
 
-/* <_ industrycat10> 
+/* <_ industrycat10>
 these categories are unlabelled and do not seem to match clearly any pattern we can extract.
 </_ industrycat10> */
 
-	gen byte industrycat10 = .
+	gen  industrycat10 = .
+	replace industrycat10=1 if q34mg=="0111-0322"
+	replace industrycat10=2 if q34mg=="0510-0990"
+	replace industrycat10=3 if q34mg=="1010-3320"
+	replace industrycat10=4 if q34mg=="3510-3530"
+	replace industrycat10=4 if q34mg=="3600-3900"
+	replace industrycat10=5 if q34mg=="4100-4390"
+	replace industrycat10=6 if q34mg=="4510-4799"
+	replace industrycat10=7 if q34mg=="4911-5320"
+	replace industrycat10=7 if q34mg=="5811-6399"
+	replace industrycat10=6 if q34mg=="5510-5630"
+	replace industrycat10=8 if q34mg=="6411-6630"
+	replace industrycat10=8 if q34mg=="6810-6820"
+	replace industrycat10=9 if q34mg=="8411-8430"
+	replace industrycat10=10 if q34mg=="6910-7500"
+	replace industrycat10=10 if q34mg=="7710-8299"
+	replace industrycat10=10 if q34mg=="8510-8550"
+	replace industrycat10=10 if q34mg=="8610-8890"
+	replace industrycat10=10 if q34mg=="9000-9329"
+	replace industrycat10=10 if q34mg=="9411-9609"
+	replace industrycat10=10 if q34mg=="9700-9820"
+	replace industrycat10=10 if q34mg=="9900"
+	replace industrycat10=10 if q34mg=="9999"
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
@@ -1254,7 +1276,7 @@ these categories are unlabelled and do not seem to match clearly any pattern we 
 	gen t_hours_others = q46c
 	replace t_hours_others = . if t_hours_others == 999
 	replace t_hours_others = . if t_hours_others == 0
-	replace t_hours_others = . if lstatus != 1	
+	replace t_hours_others = . if lstatus != 1
 	label var t_hours_others "Annualized hours worked in all but primary and secondary jobs 7 day recall"
 *</_t_hours_others_>
 
@@ -1278,7 +1300,7 @@ these categories are unlabelled and do not seem to match clearly any pattern we 
 	gen t_hours_total = q46d
 	replace t_hours_total = . if t_hours_total == 999
 	replace t_hours_total = . if t_hours_total == 0
-	replace t_hours_total = . if lstatus != 1	
+	replace t_hours_total = . if lstatus != 1
 	replace t_hours_total = whours if missing(t_hours_total) & !missing(whours)
 	label var t_hours_total "Annualized hours worked in all jobs 7 day recall"
 *</_t_hours_total_>
@@ -1382,8 +1404,8 @@ these categories are unlabelled and do not seem to match clearly any pattern we 
 	destring q34, gen(industrycat10_year)
 	replace industrycat10_year = . if industrycat10_year == 99
 	replace industrycat10_year = industrycat10_year + 1
-	
-	
+
+
 	label var industrycat10_year "1 digit industry classification, primary job 12 month recall"
 	la de lblindustrycat10_year 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10_year lblindustrycat10_year

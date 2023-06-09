@@ -21,7 +21,7 @@
 <_Source of dataset_> 				http://nada.zimstat.co.zw/nada (not working at the time of writing) </_Source of dataset_>
 <_Sample size (HH)_> 				9359 </_Sample size (HH)_>
 <_Sample size (IND)_> 				39798 </_Sample size (IND)_>
-<_Sampling method_> 				
+<_Sampling method_>
 
 The sampling frame used for the 2011 LFCLS was the 2002 Zimbabwe Master Sample (ZMS02)
 developed by the then Central Statistical Office after the 2002 Population Census. With the
@@ -152,7 +152,7 @@ rename male male_1
 
 
 *<_isco_version_>
-	gen isco_version = ""
+	gen isco_version = "isco_2008"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
@@ -206,7 +206,7 @@ rename male male_1
 
 	Report states there are 400 EAs, 9359 HHs. Cannot recreate EAs to get to 400.
 	There are 9359 household heads, though.
-	
+
 	Can use SERIALNO in each province, but that gets to 9355. Four cases, each in a different province,
 	has the same SERIALNO despite having a different household number. Correct to get to right number
 
@@ -214,25 +214,25 @@ rename male male_1
 	gen help_1 = string(province, "%01.0f")
 	gen help_2 = string(serialno, "%04.0f")
 	gen help_3 = help_1 + help_2
-	
+
 	gen help_4 = 1 if q3 == 1
 	bys help_3: egen help_5 = total(help_4)
-	
+
 	tab help_5
-	
+
 	* 37 cases, 8 households affected.
 	* Change help_3 (a str 5 built as [province-1] + [serial-4])
 	* into [province-1] + ["9999"] for the household with the smaller household number
 	bys help_3: egen help_6 = min(household) if help_5 == 2
 	replace help_3 = help_1 + "9999" if help_5 == 2 & household == help_6
-	
+
 	* Now there should be as many hhid as household heads, namely 9359
 	qui: count if q3 == 1
 	local num_heads `r(N)'
 	qui: distinct help_3
 	local dis_hhid `r(ndistinct)'
 	assert `num_heads' == `dis_hhid'
-	
+
 	gen hhid = help_3
 	label var hhid "Household ID"
 	drop help_*
@@ -268,9 +268,9 @@ rename male male_1
 
 
 *<_strata_>
-	* According to the documentation there are four strate in the non city provinces (ex Bulawayo and Harare), 
-	* namely Communal Lands // Large Scale Commercial Farming Areas (LSCFA) // Urban and Semi-Urban Areas // 
-	* and Small Scale Commercial Farming Areas (SSCFA) and Resettlement Areas. 
+	* According to the documentation there are four strate in the non city provinces (ex Bulawayo and Harare),
+	* namely Communal Lands // Large Scale Commercial Farming Areas (LSCFA) // Urban and Semi-Urban Areas //
+	* and Small Scale Commercial Farming Areas (SSCFA) and Resettlement Areas.
 	* This leads to 8*4 + 2, 34 strata. But data is not there to calculate this.
 	gen strata = .
 	label var strata "Strata"
@@ -303,8 +303,8 @@ rename male male_1
 *<_subnatid1_>
 /* <_subnatid1_note>
 
-	The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: “1 – Hatay”. That is, the variable itself is to be string, not a labelled numeric vector. 
-	
+	The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: “1 – Hatay”. That is, the variable itself is to be string, not a labelled numeric vector.
+
 	Example of entries would be "1 - Alaska",  "2 - Arkansas", ...
 
 </_subnatid1_note> */
@@ -626,19 +626,19 @@ label var ed_mod_age "Education module application age"
 	*			   upper secondary (codes 15, 16)
 	* Treat 1-6 as primary incomplete, 7 as complete.
 	* Treat codes 11-15 as secondary incomplete, 16 as complete.
-	* Questionnnaire has also codes	20 (Diploma after primary), 
+	* Questionnnaire has also codes	20 (Diploma after primary),
 	*								21 (Diploma after secondary), and
 	*								22 (Graduate // Postgraduate)
 	* The data has no codes 20, 21, 22 but a code 1887 people with code 23.
-	* Age for those with code 23 is mean 38.7, min 16, max 93. 
+	* Age for those with code 23 is mean 38.7, min 16, max 93.
 	* Code 23 is labelled "Tertriary" but it represents (weighted)
-	* 10.2% of those 15 and above. The 2014 LFS has 1.9% of the population 15 
-	* and above with graduate degree (codes 20 to 22 are in the actual data, 
+	* 10.2% of those 15 and above. The 2014 LFS has 1.9% of the population 15
+	* and above with graduate degree (codes 20 to 22 are in the actual data,
 	* most are by far code 21). 7% of codes 20, 21, 22 are 20.
 	* Assume 23 is a catch all of 20 to 22, give value of secondary complete.
 </_educat7_note> */
 	gen byte educat7 =q13
-	recode educat7 (0 88 = 1) (1/6 = 2) (7 = 3) (11/14 = 4) (15/16 = 5) (23 = 7) ( 99 = .) 
+	recode educat7 (0 88 = 1) (1/6 = 2) (7 = 3) (11/14 = 4) (15/16 = 5) (23 = 7) ( 99 = .)
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -759,7 +759,7 @@ foreach v of local ed_var {
 {
 *<_lstatus_>
 	gen byte lstatus = .
-	replace lstatus=1 if q21==1 
+	replace lstatus=1 if q21==1
 	replace lstatus=1 if q21==2 & q22==1
 	replace lstatus=2 if q21==2 & q22==2 & q47==1  & q48==1
 	replace lstatus=3 if lstatus==.
@@ -771,7 +771,7 @@ foreach v of local ed_var {
 
 
 *<_potential_lf_>
-	gen byte potential_lf = 0 if lstatus==3 
+	gen byte potential_lf = 0 if lstatus==3
 	replace potential_lf=1 if lstatus==3 & q47==1 & q48==2
 	label var potential_lf "Potential labour force status"
 	la de lblpotential_lf 0 "No" 1 "Yes"
@@ -796,7 +796,7 @@ foreach v of local ed_var {
 	replace nlfreason=1 if q45==10
 	replace nlfreason=2 if q45==9
 	replace nlfreason=4 if q45==7
-	replace nlfreason=5 if inrange(q45,1,6) 
+	replace nlfreason=5 if inrange(q45,1,6)
 	replace nlfreason=5 if q45==8
 	replace nlfreason=5 if inrange(q45,11,12)
 	label var nlfreason "Reason not in the labor force"
@@ -838,7 +838,7 @@ foreach v of local ed_var {
 *<_ocusec_>
 	gen byte ocusec = .
 	replace ocusec=1 if inrange(q31,2,4)
-	replace ocusec=2 if q31==1 
+	replace ocusec=2 if q31==1
 	replace ocusec=2 if inrange(q31,5,7)
 	label var ocusec "Sector of activity primary job 7 day recall"
 	la de lblocusec 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
@@ -905,13 +905,29 @@ replace industrycat10_helper=10 if industrycat10=="85" | industrycat10=="86" | i
 
 
 *<_occup_isco_>
-	gen str4 occup_isco = ""
+	gen occup_isco = occup_orig 
+	replace occup_isco= "0110" if occup_isco=="110"
+	replace occup_isco= "0310" if occup_isco=="310"
+	replace occup_isco= "2000" if occup_isco=="2"
+	replace occup_isco="" if lstatus!=1
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
 
 *<_occup_>
 	gen byte occup = .
+	replace occup=1 if inrange(occup_isco,"1112", "1439" )
+	replace occup=2 if inrange(occup_isco,"2000", "2656" )
+	replace occup=3 if inrange(occup_isco,"3111", "3522" )
+	replace occup=4 if inrange(occup_isco, "4110", "4419" )
+	replace occup=5 if inrange(occup_isco, "5111", "5419" )
+	replace occup=6 if inrange(occup_isco, "6111" , "6340" )
+	replace occup=7 if inrange(occup_isco, "7111" , "7549" )
+	replace occup=8 if inrange(occup_isco,  "8111" , "8344")
+	replace occup=9 if inrange(occup_isco , "9111", "9624")
+	replace occup=10 if occup_isco=="0110" 
+	replace occup=10 if occup_isco=="0310" 
+	replace occup=99 if occup_isco=="9999"
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup
@@ -1069,7 +1085,7 @@ replace industrycat10_helper=10 if industrycat10=="85" | industrycat10=="86" | i
 
 *<_industrycat10_2_>
 
-	
+
 	gen industrycat10_2= substr(industrycat_isic, 1,2)
 gen industrycat10_2_helper=.
 replace industrycat10_2_helper=1 if industrycat10_2=="01" | industrycat10_2=="02" | industrycat10_2=="03"
@@ -1107,7 +1123,7 @@ replace industrycat10_2_helper=10 if industrycat10_2=="85" | industrycat10_2=="8
 
 
 *<_occup_isco_2_>
-	gen str4 occup_isco_2 = occup_orig_2 
+	gen str4 occup_isco_2 = occup_orig_2
 	replace occup_isco_2="" if occup_orig_2=="9999"
 	replace occup_isco_2="" if lstatus!=1
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"

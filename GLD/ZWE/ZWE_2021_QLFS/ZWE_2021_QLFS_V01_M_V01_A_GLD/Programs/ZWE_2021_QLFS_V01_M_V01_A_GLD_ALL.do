@@ -272,8 +272,8 @@ replace quarter=4 if quarter==.
 *<_subnatid1_>
 /* <_subnatid1_note>
 
-	The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: “1 – Hatay”. That is, the variable itself is to be string, not a labelled numeric vector. 
-	
+	The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: “1 – Hatay”. That is, the variable itself is to be string, not a labelled numeric vector.
+
 	Example of entries would be "1 - Alaska",  "2 - Arkansas", ...
 
 </_subnatid1_note> */
@@ -403,7 +403,7 @@ replace quarter=4 if quarter==.
 
 *<_marital_>
 	gen byte marital = bc10
-	 recode marital  (1 = 2) (2 = 1)  (3 = 4) (4 = 5) 
+	 recode marital  (1 = 2) (2 = 1)  (3 = 4) (4 = 5)
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
 	label values marital lblmarital
@@ -479,7 +479,12 @@ replace quarter=4 if quarter==.
 
 
 *<_migrated_ref_time_>
-	gen migrated_ref_time = 5
+*<_note_>
+* 0.25 represents 1/4 which is the value of each quarter in a year. Since this is a consolidated quarterly survey. 2 represents 2 years which is the time since the survey was conducted.
+*<_note_>
+	gen migrated_ref_time = .
+	replace migrated_ref_time = 2 if quarter == 3
+	replace migrated_ref_time = 0.25  if quarter == 4
 	label var migrated_ref_time "Reference time applied to migration questions (in years)"
 *</_migrated_ref_time_>
 
@@ -532,7 +537,7 @@ replace quarter=4 if quarter==.
 	replace	 migrated_from_code="7 - Midlands" if migrated_from_code == "7"
 	replace	 migrated_from_code="8 - Masvingo" if migrated_from_code == "8"
 	replace	 migrated_from_code="9 - Harare" if migrated_from_code == "9"
-	replace	 migrated_from_code="10 - Bulamayo" if migrated_from_code == "10"
+	replace	 migrated_from_code="10 - Bulamayo" if migrated_from_code == "0"
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
 *</_migrated_from_code_>
 
@@ -577,7 +582,7 @@ label var ed_mod_age "Education module application age"
 
 *<_school_>
 	gen byte school=ed2
-	 recode school (1 = 0) (2 3 = 1) (9 = .) 
+	 recode school (1 = 0) (2 3 = 1) (9 = .)
 	label var school "Attending school"
 	la de lblschool 0 "No" 1 "Yes"
 	label values school  lblschool
@@ -595,15 +600,15 @@ label var ed_mod_age "Education module application age"
 *<_educy_>
 	gen byte educy =.
 	replace educy = ed3b if ed3a == 1 | ed3a == 2
-	
+
 	replace educy = ed3b + 6 if ed3a == 3 & ed3b < 5
 	replace educy = 10 if ed3a == 3 & ed3b > 4
 	replace educy = 7 if ed3a == 3 & educy == 6
-	
+
 	replace educy = ed3b + 10 if ed3a == 4 & ed3b < 3
 	replace educy = 12 if ed3a == 4 & ed3b > 2
 	replace educy = ed3b + 12 if ed3a == 5
-	
+
 	* Correct for education if a person age is not at least 2 more than years in education, set to missing.
 	gen educy_corrector = .
 	replace educy_corrector = 1 if educy > age - 1 & !missing(educy)
@@ -619,7 +624,7 @@ label var ed_mod_age "Education module application age"
 	replace educat7 = 2 if ed3a == 1 & ed4 != 1
 	replace educat7 = 2 if ed3a == 2 & ed4 != 1
 	replace educat7 = 3 if ed3a == 1 & ed4 == 1
-	replace educat7 = 3 if ed3a == 2 & ed4 == 1 
+	replace educat7 = 3 if ed3a == 2 & ed4 == 1
 	replace educat7 = 4 if ed3a == 3
 	replace educat7 = 4 if ed3a == 4 & ed4 != 1
 	replace educat7 = 5 if ed3a == 4 & ed4 == 1
@@ -834,7 +839,7 @@ foreach v of local ed_var {
 	gen byte empstat=.
 	replace empstat = 1 if inlist(mj7, 2, 3, 4)
 	replace empstat = 2 if mj7 == 5
-	replace empstat = 3 if (mj7 == 1 & mj8 == 1) 
+	replace empstat = 3 if (mj7 == 1 & mj8 == 1)
 	replace empstat = 4 if (mj7 == 1 & mj8 == 2)
 	replace empstat = . if lstatus != 1
 	label var empstat "Employment status during past week primary job 7 day recall"
@@ -846,7 +851,7 @@ foreach v of local ed_var {
 *<_ocusec_>
 	gen byte ocusec = .
 		* Any non paid employee working by assumption in private sector
-	replace ocusec = 2 if inrange(empstat,2,4) 
+	replace ocusec = 2 if inrange(empstat,2,4)
 	replace ocusec = 1 if inrange(mj10,1,2)
 	replace ocusec = 3 if inrange(mj10,3,4)
 	replace ocusec = 4 if inrange(mj10,5,96)
@@ -1052,7 +1057,7 @@ foreach v of local ed_var {
 	gen byte empstat_2 = .
 	replace empstat_2 = 1 if inlist(sj5, 2, 3, 4)
 	replace empstat_2 = 2 if sj5 == 5
-	replace empstat_2 = 3 if (sj5 == 1 & sj6 == 1) 
+	replace empstat_2 = 3 if (sj5 == 1 & sj6 == 1)
 	replace empstat_2 = 4 if (sj5 == 1 & sj6 == 2)
 	replace empstat_2 = . if lstatus != 1
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
