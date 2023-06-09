@@ -26,8 +26,9 @@ load_df <- function(
   # Need to have a list to store the paths, create
   latest_files_list <- list()
   
-  # Need to establish which surveys are in the top country folder
-  survey_folders <- dir(path_in)
+  # Need to establish which surveys are in the top country folder, only those that are CCC_YYYY_[Something]
+  ptrn_csf <- "^[A-Z]{3}_[0-9]{4}_.+"
+  survey_folders <- dir(path_in, pattern = ptrn_csf)
   
   # Loop through each survey folder (through e.g., VNM_LFS_2000, VNM_LFS_2001, ...)
   for (survey_folder in survey_folders) {
@@ -80,6 +81,9 @@ load_df <- function(
       output <- output %>% filter(age >= 15 & age <= 64)
     }
     
+    # Return output since, if wap_only == F, it won't return anything (not the last item)
+    return(output)
+      
   }
   
   # Read in all files w/ our function
