@@ -780,27 +780,39 @@
 		
 	*-- 02. ILO 1 	
 		// Employment by sex and economic activity (thousands) 
-		
+
 		#delimit ;
 		dbnomics import, provider(ILO) dataset(EMP_TEMP_SEX_ECO_NB) ref_area(${ccode3}) 
 		frequency(A) sex(SEX_T) clear;
-		#delimit cr 
+		#delimit cr 	
+		
 		count
 		if `r(N)' == 0 {
 			di "Dbnomics data not found"
 		}
+		
 		else {
 			
-			keep if classif1 == "ECO_SECTOR_AGR" | classif1 == "ECO_SECTOR_TOTAL"
-			 
-			** Find closest year
+
+		
+			** Find closest year based on ECO_SECTOR_AGR
+			** The assumption is that if the subgroup is present, so will the Total, the other way around
+			** this is not true. Set value for _TOTAL to nonsensical that will always be far away. Can't use
+			** missing cause Stata... 
+			** Set period if total to 1804 so it will always be a bad choice.
+			** 1804 because I am on a Napoleon rabbit hole and it is when he crowns himself emperor
+			** and Beethoven (allegedly) proclaimed, disappointed: He is but a mere man.
+			gen period_eval = 1804
+			replace period_eval = period if classif1 == "ECO_SECTOR_AGR"
 			sort period 
-			gen myyear = ${cyear}
-			gen yeardiff = abs(period - myyear)
+			gen myyear = 2008
+			gen yeardiff_eval = abs(period_eval - myyear)
+			bys period: egen yeardiff = min(yeardiff_eval)
 			egen mindiff = min(yeardiff)
-			
+							
 			keep if yeardiff == mindiff
-			
+
+	
 			sum period
 			keep if period == `r(min) ' // keep earliest 
 			
@@ -818,22 +830,28 @@
 			
 			reshape wide value, i(period) j(classif1) string
 			
-			gen value = 100*valueECO_SECTOR_AGR/valueECO_SECTOR_TOTAL
-			drop valueECO_*
+
+
+				gen value = 100*valueECO_SECTOR_AGR/valueECO_SECTOR_TOTAL
+				drop valueECO_*
+				
+				rename period year 
+				gen source       = "ILO-1"
+				gen countrycode  = "${ccode3}"  
+				gen ub      = 1.05*value
+				gen lb      = 0.95*value
+				format value ub lb %4.2fc
+				keep  year value ub lb countrycode source
+				order year value ub lb countrycode source	
 			
-			rename period year 
-			gen source       = "ILO-1"
-			gen countrycode  = "${ccode3}"  
-			gen ub      = 1.05*value
-			gen lb      = 0.95*value
-			format value ub lb %4.2fc
-			keep  year value ub lb countrycode source
-			order year value ub lb countrycode source	
-		} 
+		
 		tempfile agr2
 		save    `agr2'
 
-
+		}
+		
+	}
+		
 	*-- 03. ILO 2 	
 		// Employment by sex and economic activity -- ILO modelled estimates, Nov. 2020 (thousands)
 
@@ -911,7 +929,7 @@
 		encode source, gen(s1)
 		save "Block2_External/01_data/12agriculture.dta", replace 
 				
-	}
+	
 ********************************************************************************
 *                             13. Industry                                     *
 ********************************************************************************
@@ -1493,6 +1511,8 @@
 				keep period value industrycat10
 				reshape wide value, i(period) j(industrycat10) 
 				
+				capture confirm variable value`j'
+				if !_rc {
 				gen value = 100*value`j'/value99
 				drop value`j' value99
 				
@@ -1504,11 +1524,11 @@
 				format value ub lb %4.2fc
 				keep  year value ub lb countrycode source
 				order year value ub lb countrycode source
-				
+				}
 				tempfile ind1_`j'
 				save    `ind1_`j''	
 			
-			}
+			
 		} 
 		else {
 			di "no sector information available, block skipped"
@@ -1533,6 +1553,8 @@
 			keep period value industrycat10
 			reshape wide value, i(period) j(industrycat10) 
 			
+			capture confirm variable value`i'
+			if !_rc {
 			gen value = 100*value`j'/value99
 			drop value`j' value99
 			
@@ -1544,10 +1566,10 @@
 			format value ub lb %4.2fc
 			keep  year value ub lb countrycode source
 			order year value ub lb countrycode source
-			
+			}
 			tempfile ind2_`j'
 			save    `ind2_`j''	
-		
+			
 		}	
 		
 		
@@ -1612,7 +1634,9 @@
 	
 	}
 	
-
+	}
+	
+	
 ********************************************************************************
 *                         16. Status in Employment                             *
 ********************************************************************************
@@ -1778,5 +1802,7 @@
 		cap erase "Block2_External/01_data/temp_gldempstat1.dta"
 	
 }	
+	
+	
 	
 **************************   END OF THE DO-FILE  *******************************
