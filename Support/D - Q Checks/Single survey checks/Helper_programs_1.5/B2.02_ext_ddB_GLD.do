@@ -792,15 +792,29 @@
 		else {
 			
 			keep if classif1 == "ECO_SECTOR_AGR" | classif1 == "ECO_SECTOR_TOTAL"
-			 
 			** Find closest year
 			sort period 
 			gen myyear = ${cyear}
-			gen yeardiff = abs(period - myyear)
+			
+		
+			** Find closest year based on ECO_SECTOR_AGR
+			** The assumption is that if the subgroup is present, so will the Total, the other way around
+			** this is not true. Set value for _TOTAL to nonsensical that will always be far away. Can't use
+			** missing cause Stata... 
+			** Set period if total to 1804 so it will always be a bad choice.
+			** 1804 because I am on a Napoleon rabbit hole and it is when he crowns himself emperor
+			** and Beethoven (allegedly) proclaimed, disappointed: He is but a mere man.
+			gen period_eval = 1804
+			replace period_eval = period if classif1 == "ECO_SECTOR_AGR"
+			sort period 
+			gen yeardiff_eval = abs(period_eval - myyear)
+			bys period: egen yeardiff = min(yeardiff_eval)
 			egen mindiff = min(yeardiff)
-			
+							
 			keep if yeardiff == mindiff
+
 			
+			* This is how the tie is settled: keep the earlier year 
 			sum period
 			keep if period == `r(min) ' // keep earliest 
 			
@@ -816,9 +830,14 @@
 				destring value, replace
 			}
 			
+			
+			
 			reshape wide value, i(period) j(classif1) string
 			
+	
 			gen value = 100*valueECO_SECTOR_AGR/valueECO_SECTOR_TOTAL
+
+			
 			drop valueECO_*
 			
 			rename period year 
@@ -830,6 +849,7 @@
 			keep  year value ub lb countrycode source
 			order year value ub lb countrycode source	
 		} 
+		}
 		tempfile agr2
 		save    `agr2'
 
@@ -911,7 +931,7 @@
 		encode source, gen(s1)
 		save "Block2_External/01_data/12agriculture.dta", replace 
 				
-	}
+	
 ********************************************************************************
 *                             13. Industry                                     *
 ********************************************************************************
@@ -1348,38 +1368,65 @@
 			keep period value classif1 ref_area provider_code
 			destring value, replace 
 			
-			split classif1, p(_)  
+			* ISIC 4
+			* Check that all industry categories used to create industrycat10 are available
+			local all_exist_isic4 = 1
 			
-			count if classif12 == "ISIC4"
-			
-			if `r(N)' != 0 {                  // if we have ISIC4 codes
-				keep if classif12 == "ISIC4"
-				
-				gen industrycat10 =.
-				replace industrycat10 = 1  if classif1 == "ECO_ISIC4_A"
-				replace industrycat10 = 2  if classif1 == "ECO_ISIC4_B" 
-				replace industrycat10 = 3  if classif1 == "ECO_ISIC4_C" 
-				replace industrycat10 = 4  if classif1 == "ECO_ISIC4_D" | classif1 == "ECO_ISIC4_E"
-				replace industrycat10 = 5  if classif1 == "ECO_ISIC4_F"
-				replace industrycat10 = 6  if classif1 == "ECO_ISIC4_I" | classif1 == "ECO_ISIC4_G"
-				replace industrycat10 = 7  if classif1 == "ECO_ISIC4_H" | classif1 == "ECO_ISIC4_J"
-				#delimit ;
-				replace industrycat10 = 8  if classif1 == "ECO_ISIC4_K" | classif1 == "ECO_ISIC4_L" |
-											  classif1 == "ECO_ISIC4_M" | classif1 == "ECO_ISIC4_N";
-				#delimit cr 
-				replace industrycat10 = 9  if classif1 == "ECO_ISIC4_O"
-				#delimit ; 
-				replace industrycat10 = 10 if classif1 == "ECO_ISIC4_P" | classif1 == "ECO_ISIC4_Q" |
-											  classif1 == "ECO_ISIC4_R" | classif1 == "ECO_ISIC4_S" |
-											  classif1 == "ECO_ISIC4_T" | classif1 == "ECO_ISIC4_U";							  
-				#delimit cr
+			* Use ASCII values to loop over the letters (cleaner way)
+				forval i = 65/85 {
+					local cat = "ECO_"+ "ISIC4" + "_" + char(`i')
+					qui count if classif1 == "`cat'"
+					if `r(N)' == 0 {
+						local all_exist_isic4 = 0
+						di as error "Category `cat' not found in classif1"
+						break
+					}
+				}
+
+				if `all_exist_isic4' == 1 {
+					split classif1, p(_) 
+					keep if classif12 == "ISIC4"
+					
+					gen industrycat10 =.
+					replace industrycat10 = 1  if classif1 == "ECO_ISIC4_A"
+					replace industrycat10 = 2  if classif1 == "ECO_ISIC4_B" 
+					replace industrycat10 = 3  if classif1 == "ECO_ISIC4_C" 
+					replace industrycat10 = 4  if classif1 == "ECO_ISIC4_D" | classif1 == "ECO_ISIC4_E"
+					replace industrycat10 = 5  if classif1 == "ECO_ISIC4_F"
+					replace industrycat10 = 6  if classif1 == "ECO_ISIC4_I" | classif1 == "ECO_ISIC4_G"
+					replace industrycat10 = 7  if classif1 == "ECO_ISIC4_H" | classif1 == "ECO_ISIC4_J"
+					#delimit ;
+					replace industrycat10 = 8  if classif1 == "ECO_ISIC4_K" | classif1 == "ECO_ISIC4_L" |
+												  classif1 == "ECO_ISIC4_M" | classif1 == "ECO_ISIC4_N";
+					#delimit cr 
+					replace industrycat10 = 9  if classif1 == "ECO_ISIC4_O"
+					#delimit ; 
+					replace industrycat10 = 10 if classif1 == "ECO_ISIC4_P" | classif1 == "ECO_ISIC4_Q" |
+												  classif1 == "ECO_ISIC4_R" | classif1 == "ECO_ISIC4_S" |
+												  classif1 == "ECO_ISIC4_T" | classif1 == "ECO_ISIC4_U";							  
+					#delimit cr
 				
 				replace industrycat10 = 99 if classif1 == "ECO_ISIC4_TOTAL"
 			} 
 			else {
-				count if classif12 == "ISIC3"
 				
-				if `r(N)' != 0 {
+			* ISIC 3
+			* Check that all industry categories used to create industrycat10 are available
+			local all_exist_isic3 = 1
+			
+			* Use ASCII values to loop over the letters (cleaner way) -- here only runs until ISIC3_Q
+				forval i = 65/81 {
+					local cat = "ECO_"+ "ISIC3" + "_" + char(`i')
+					qui count if classif1 == "`cat'"
+					if `r(N)' == 0 {
+						local all_exist_isic3 = 0
+						di as error "Category `cat' not found in classif1"
+						break
+					}
+				}
+
+				if `all_exist_isic3' == 1 {  
+					split classif1, p(_) 
 				
 					keep if classif12 == "ISIC3"   // if we have ISIC3 codes
 					gen industrycat10 =.
