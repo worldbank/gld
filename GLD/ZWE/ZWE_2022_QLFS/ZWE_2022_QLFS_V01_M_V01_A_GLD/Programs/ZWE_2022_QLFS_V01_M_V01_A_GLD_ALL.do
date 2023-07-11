@@ -547,7 +547,7 @@ save "`path_in_stata'/qlfs_2022.dta", replace
 	replace	 migrated_from_code="7 - Midlands" if migrated_from_code == "7"
 	replace	 migrated_from_code="8 - Masvingo" if migrated_from_code == "8"
 	replace	 migrated_from_code="9 - Harare" if migrated_from_code == "9"
-	replace	 migrated_from_code="10 - Bulamayo" if migrated_from_code == "0"
+	replace	 migrated_from_code="10 - Bulawayo" if migrated_from_code == "0"
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
 *</_migrated_from_code_>
 
