@@ -34,9 +34,11 @@
 	clear
 	set obs 1
 	gen date   = "${S_DATE}"
+	gen time = "${S_TIME}"
 	split date, p(" ")
+	split time, p(":")
 	gen year   = substr(date3,3,2)
-	gen mydate = date1 + date2 + year
+	gen mydate = date1 + date2 + year + "_" + time1 + time2
 	levelsof mydate, clean
 	global mydate `r(levels)'
 	clear 
