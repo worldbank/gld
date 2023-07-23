@@ -5,20 +5,20 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				ZWE_2011_LFS_V01_M_v02_A_GLD_ALL.do </_Program name_>
+<_Program name_>				ZWE_2014_LFS_V01_M_v02_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata 17 <_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
 <_Date created_>				2023-04-21 </_Date created_>
 
 -------------------------------------------------------------------------
 
-<_Country_>					Zimbabwe (ZWE) </_Country_>
+<_Country_>						Zimbabwe (ZWE) </_Country_>
 <_Survey Title_>				Labour Force and Child Labour Survey (LFCLS) </_Survey Title_>
 <_Survey Year_>					2014 </_Survey Year_>
 <_Study ID_>					ZWE_2014_LFCLS_V01_M </_Study ID_>
-<_Data collection from_>			[MM/YYYY] </_Data collection from_>
-<_Data collection to_>				[MM/YYYY] </_Data collection to_>
-<_Source of dataset_> 				http://nada.zimstat.co.zw/nada/index.php/catalog/77 (not working at the time of writing) </_Source of dataset_>
+<_Data collection from_>		[MM/YYYY] </_Data collection from_>
+<_Data collection to_>			[MM/YYYY] </_Data collection to_>
+<_Source of dataset_> 			http://nada.zimstat.co.zw/nada/index.php/catalog/77 (not working at the time of writing) </_Source of dataset_>
 <_Sample size (HH)_> 			9,759 </_Sample size (HH)_>
 <_Sample size (IND)_> 			40,527 </_Sample size (IND)_>
 <_Sampling method_>
