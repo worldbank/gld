@@ -39,9 +39,10 @@ Graduate/Post Grad - Typical undergrad and post-grad qualifications that are off
 
 ## Raw data issue with tertiary education
 
-As mentioned in the very beginning, people with tertiary degree's share of total sample who have answered the highest level education question (i.e. respondents aged 3 or 5 depending on the year of interest) plunges from 2011 to 2014, with a weighted share from 10.22% to 1.9% of total people who are 15 and above. 
+As mentioned in the very beginning, people with tertiary degree's share of total sample who have answered the highest level education question (i.e. respondents aged 3 or 5 depending on the year of interest) plunges greatly from 2011 to 2014, with a weighted share from 10.22% to 1.9% of total people who are 15 and above. 
 
 ![educat7 tabulation](utilities/tertiary_tabulation_combined.png)
+
 (_*Note that only 2011 and 2014 have `educat7` because other years do not have consistant categorization of post-secondary and tertiary education._)
 
 ![educat7 tabulation](utilities/ZWE_educat7.png)
@@ -61,7 +62,7 @@ The screenshots listed below are from annual report of 2011, 2014, and 2019:
 
 ![2019](utilities/2019_aged_3_and_above_highest_education.png)
 
-People's age won't be substantially affected by the lower bond of age range for education questions when it conmes to tertiary education, so we can compare the population with tertiary education in 2011 to 2014 and 2019 using the tables above. In 2011, the population with tertiary edcuation is 712,138 whereas in 2014 it drops to 125,317. Even though 2014 reports only the proportion of employed population, considering that the unemployment rate is 11.3% according to the same annual report and we assume the same rate amongst the unemployed, the gap is still too big to grasp. Similarly, we have total tertiary population of between 252,000 and 455,000 depending whether "Tertiary-Short Cycle" counts in 2019, which still falls very below the data in 2011. **Therefore, please be advised to be aware of this data inconsistency issue when using tertiary education data.**  
+Age won't be substantially affected by the lower bond of age range for education questions when it conmes to tertiary education, so we can compare the population with tertiary education in 2011 to 2014 and 2019 using the tables above. In 2011, the population with tertiary edcuation is 712,138 whereas in 2014 it drops to 125,317. Even though 2014 reports only the proportion of employed population, considering that the unemployment rate is 11.3% according to the same annual report and we assume the same rate amongst the unemployed, the gap is still too big to grasp. Similarly, we have total tertiary population of between 252,000 and 455,000 depending whether "Tertiary-Short Cycle" counts in 2019, which still falls very below the data in 2011. **Therefore, please be advised to be aware of this data inconsistency issue when using tertiary education data.**  
 
 ## Raw data categorization issue in 2019
 
@@ -69,8 +70,10 @@ In the questionnaire of 2019, there are 12 categories of education level whereas
 ![questionnaire](utilities/2019_questionnaire.png)
 ![dataset](utilities/2019_data_categories.png)
 
+
 Without correct understanding about the mapping from the questionnaire to the dataset, we decided to only code `educat5` and set `educat7` to missing. 
-The two graphs below are the distributions of `educat5' as in number and percentage of each year.
+The two graphs below are the distributions of `educat5` as in number and percentage of each year. Tertiary education population of 2011 looks less off because 2011 does not have category 6 "Higher than secondary but not university" of `educat7` while 2014 has 1,703 observations from category 6 merged into tertiary in `educat5`. 
+
 
 ![bar1](utilities/educat5_distribution_number.png)
 ![bar2](utilities/educat5_distribution_percent.png)
