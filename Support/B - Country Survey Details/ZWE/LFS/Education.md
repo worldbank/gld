@@ -61,5 +61,16 @@ The screenshots listed below are from annual report of 2011, 2014, and 2019:
 
 ![2019](utilities/2019_aged_3_and_above_highest_education.png)
 
-People's age won't be substantially affected by the lower bond of age range for education questions so we can compare the population with tertiary education in 2011 to 2014 and 2019 using the tables above. In 2011, the population with tertiary edcuation is 712,138 whereas in 2014 it drops to 125,317. Even though 2014 reports only the proportion of employed population, considering that the unemployment rate is 11.3% according to the same annual report and we assume the same rate amongst the unemployed, the gap is still too big to grasp. Similarly, we have total tertiary population of between 252,000 and 455,000 depending whether "Tertiary-Short Cycle" counts in 2019, which still falls very below the data in 2011. **Therefore, please be advised to be aware of this data inconsistency issue when using tertiary education data.**  
+People's age won't be substantially affected by the lower bond of age range for education questions when it conmes to tertiary education, so we can compare the population with tertiary education in 2011 to 2014 and 2019 using the tables above. In 2011, the population with tertiary edcuation is 712,138 whereas in 2014 it drops to 125,317. Even though 2014 reports only the proportion of employed population, considering that the unemployment rate is 11.3% according to the same annual report and we assume the same rate amongst the unemployed, the gap is still too big to grasp. Similarly, we have total tertiary population of between 252,000 and 455,000 depending whether "Tertiary-Short Cycle" counts in 2019, which still falls very below the data in 2011. **Therefore, please be advised to be aware of this data inconsistency issue when using tertiary education data.**  
 
+## Raw data categorization issue in 2019
+
+In the questionnaire of 2019, there are 12 categories of education level whereas in the raw data what we can have are only 6 categories. 
+![questionnaire](utilities/2019_questionnaire.png)
+![dataset](utilities/2019_data_categories.png)
+
+Without correct understanding about the mapping from the questionnaire to the dataset, we decided to only code `educat5` and set `educat7` to missing. 
+The two graphs below are the distributions of `educat5' as in number and percentage of each year.
+
+![bar1](utilities/educat5_distribution_number.png)
+![bar2](utilities/educat5_distribution_percent.png)
