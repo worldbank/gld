@@ -37,4 +37,26 @@ Diploma/Certificate after Secondary - These are certificates and diplomas offere
 
 Graduate/Post Grad - Typical undergrad and post-grad qualifications that are offered through normal university channels. 
 
+## Raw data issue with tertiary education
+
+As mentioned in the very beginning, people with tertiary degree's share of total sample who have answered the highest level education question (i.e. respondents aged 3 or 5 depending on the year of interest) plunges from 2011 to 2014, with a weighted share from 10.22% to 1.9% of total people who are 15 and above. 
+
+![educat7 tabulation](utilities/tertiary_tabulation_combined)
+(_*Note that only 2011 and 2014 have `educat7` because other years do not have consistant categorization of post-secondary and tertiary education._)
+
+![educat7 tabulation](utilities/ZWE_educat7)
+
+And this issue results from the raw data itself which is also shown in Zimbabwe's official annual survey reports. 
+The screenshots listed below are from annual report of 2011, 2014, and 2019: 
+
+**2011 Percent Disrtibution of Population Aged 5 Years and Above by Age Group**
+![2011](utilities/2011_aged_5_and_above_highest_education)
+
+**2014 Percent Distribution of Currently Employed Persons Aged 15 Years and Above**
+![2014](utilities/2014_aged_15_and_above_employed_highest_education)
+
+**2019 Percent Distribution of Currently Employed Persons Aged 15 Years and Above**
+![2019](utilities/2019_aged_3_and_above_highest_education)
+
+
 
