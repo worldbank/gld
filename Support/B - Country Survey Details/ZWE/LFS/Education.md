@@ -50,12 +50,16 @@ And this issue results from the raw data itself which is also shown in Zimbabwe'
 The screenshots listed below are from annual report of 2011, 2014, and 2019: 
 
 **2011 Percent Disrtibution of Population Aged 5 Years and Above by Age Group**
+
 ![2011](utilities/2011_aged_5_and_above_highest_education.png)
 
 **2014 Percent Distribution of Currently Employed Persons Aged 15 Years and Above**
+
 ![2014](utilities/2014_aged_15_and_above_employed_highest_education.png)
 
 **2019 Percent Distribution of Currently Employed Persons Aged 15 Years and Above**
+
 ![2019](utilities/2019_aged_3_and_above_highest_education.png)
 
+People's age won't be substantially affected by the lower bond of age range for education questions so we can compare the population with tertiary education in 2011 to 2014 and 2019 using the tables above. In 2011, the population with tertiary edcuation is 712,138 whereas in 2014 it drops to 125,317. Even though 2014 reports only the proportion of employed population, considering that the unemployment rate is 11.3% according to the same annual report and we assume the same rate amongst the unemployed, the gap is still too big to grasp. Similarly, we have total tertiary population of between 252,000 and 455,000 depending whether "Tertiary-Short Cycle" counts in 2019, which still falls very below the data in 2011. **Therefore, please be advised to be aware of this data inconsistency issue when using tertiary education data.**  
 
