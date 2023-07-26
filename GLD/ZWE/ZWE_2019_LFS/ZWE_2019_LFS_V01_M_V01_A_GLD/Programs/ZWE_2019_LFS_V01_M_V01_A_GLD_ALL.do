@@ -5,14 +5,14 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				ZWE_2019_LFCLS_v01_M_v01_A_GLD </_Program name_>
-<_Application_>					Stata 16 <_Application_>
+<_Program name_>				ZWE_2019_LFS_v01_M_v01_A_GLD_ALL.do </_Program name_>
+<_Application_>					Stata SE 16.1 <_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
-<_Date created_>				2021-10-06 </_Date created_>
+<_Date created_>				2023-7-14 </_Date created_>
 
 -------------------------------------------------------------------------
 
-<_Country_>						ZWE </_Country_>
+<_Country_>						Zimbabwe (ZWE) </_Country_>
 <_Survey Title_>				Labour Force and Child Labour Survey (LFCLS) </_Survey Title_>
 <_Survey Year_>					2019 </_Survey Year_>
 <_Study ID_>					ZWE_2019_LFCLS_v01_M </_Study ID_>
@@ -40,7 +40,7 @@ A total of 419 enumeration areas and 10475 households were covered during the su
 -----------------------------------------------------------------------
 <_Version Control_>
 
-* Date: [YYYY-MM-DD] - [Description of changes]
+* Date: [2023-07-14] File: [ZWE_2019_LFCLS_v01_M_v02_A_GLD_ALL.do] - [Coded educat7 to missing considering the mixed educational category in the dataset, different from the categorization in the questionnaire.]
 * Date: [YYYY-MM-DD] - [Description of changes]
 
 </_Version Control_>
@@ -61,7 +61,7 @@ set mem 800m
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-local server  "Y:/GLD-Harmonization/582018_AQ"
+local server  "Y:/GLD-Harmonization/529026_MG/Countries"
 local country "ZWE"
 local year    "2019"
 local survey  "LFS"
@@ -261,7 +261,7 @@ rename *, lower
 *<_subnatid1_>
 /* <_subnatid1_note>
 
-	The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: “1 – Hatay”. That is, the variable itself is to be string, not a labelled numeric vector.
+	The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: "1 – Hatay". That is, the variable itself is to be string, not a labelled numeric vector.
 
 	Example of entries would be "1 - Alaska",  "2 - Arkansas", ...
 
@@ -559,8 +559,8 @@ Education module is only asked to those XX and older.
 
 </_ed_mod_age_note> */
 
-gen byte ed_mod_age = 3
-label var ed_mod_age "Education module application age"
+	gen byte ed_mod_age = 3
+	label var ed_mod_age "Education module application age"
 
 *</_ed_mod_age_>
 
@@ -604,15 +604,6 @@ label var ed_mod_age "Education module application age"
 
 *<_educat7_>
 	gen byte educat7 =.
-	replace educat7 = 1 if ed2 == 1 | ed4a == 0
-	replace educat7 = 2 if ed4a == 1 & ed5 != 1
-	replace educat7 = 2 if ed4a == 2 & ed5 != 1
-	replace educat7 = 3 if ed4a == 1 & ed5 == 1
-	replace educat7 = 3 if ed4a == 2 & ed5 == 1
-	replace educat7 = 4 if ed4a == 3
-	replace educat7 = 4 if ed4a == 4 & ed5 != 1
-	replace educat7 = 5 if ed4a == 4 & ed5 == 1
-	replace educat7 = 6 if ed4a == 5
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -620,8 +611,13 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat5_>
-	gen byte educat5 = educat7
-	recode educat5 4=3 5=4 6 7=5
+	gen byte educat5 = .
+	replace educat5 = 1 if ed2==1 | ed4a==0
+	replace educat5 = 2 if (ed4a==1|ed4a==2)&ed5!=1
+	replace educat5 = 3 if (ed4a==1|ed4a==2)&ed5==1
+	replace educat5 = 3 if ed4a==3 | (ed4a==4 & ed5!=1) 
+	replace educat5 = 4 if ed4a==4 & ed5==1
+	replace educat5 = 5 if ed4a==5 
 	label var educat5 "Level of education 2"
 	la de lbleducat5 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
 	label values educat5 lbleducat5
@@ -629,8 +625,8 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat4_>
-	gen byte educat4 = educat7
-	recode educat4 (2 3 4 = 2) (5=3) (6 7=4)
+	gen byte educat4 = educat5
+	recode educat4 (2 3 = 2) (4=3) (5=4)
 	label var educat4 "Level of education 3"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values educat4 lbleducat4
@@ -645,11 +641,11 @@ label var ed_mod_age "Education module application age"
 
 *<_educat_isced_>
 	gen educat_isced = .
-	replace	educat_isced = 20  if ed4a == 0
-	replace	educat_isced = 100 if ed4a == 1 | ed4a == 2
-	replace	educat_isced = 244 if ed4a == 3
-	replace	educat_isced = 344 if ed4a == 4
-	replace	educat_isced = 453 if ed4a == 5
+	replace educat_isced = 20  if ed4a == 0
+	replace educat_isced = 100 if ed4a == 1 | ed4a == 2
+	replace educat_isced = 244 if ed4a == 3
+	replace educat_isced = 344 if ed4a == 4
+	replace educat_isced = 453 if ed4a == 5
 	label var educat_isced "ISCED standardised level of education"
 *</_educat_isced_>
 

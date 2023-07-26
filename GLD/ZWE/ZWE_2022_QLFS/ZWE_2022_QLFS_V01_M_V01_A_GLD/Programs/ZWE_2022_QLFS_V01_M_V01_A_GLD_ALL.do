@@ -5,7 +5,7 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				ZWE_2022_LFCLS_v01_M_v01_A_GLD </_Program name_>
+<_Program name_>				ZWE_2022_QLFS_v01_M_v01_A_GLD </_Program name_>
 <_Application_>					Stata 16 <_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
 <_Date created_>				2022-10-06 </_Date created_>
@@ -15,11 +15,11 @@
 <_Country_>						ZWE </_Country_>
 <_Survey Title_>				Labour Force and Child Labour Survey (LFCLS) </_Survey Title_>
 <_Survey Year_>					2022 </_Survey Year_>
-<_Study ID_>					ZWE_2022_LFCLS_v01_M </_Study ID_>
+<_Study ID_>					ZWE_2022_QLFS_v01_M </_Study ID_>
 <_Data collection from_>		[MM/YYYY] </_Data collection from_>
 <_Data collection to_>			[MM/YYYY] </_Data collection to_>
 <_Source of dataset_> 			http://nada.zimstat.co.zw/nada/index.php/catalog/82 </_Source of dataset_>
-<_Sample size (HH)_> 			 sampled,  (interviewed) </_Sample size (HH)_>
+<_Sample size (HH)_> 			172,729 </_Sample size (HH)_>
 <_Sample size (IND)_> 			44,442 </_Sample size (IND)_>
 <_Sampling method_> 			A two stage stratified sampling design was used for the 2022 LFCLS. The first involved the selection of enumeration areas using probability proportional to size (PPS) sampling method. The measure of size used for the PPS is the number of households as per 2012 population census. The second stage involved selection of 25 households in each of the selected EAs. The households were the ultimate sampling units and were selected using random systematic sampling.
 
@@ -41,7 +41,6 @@ A total of 419 enumeration areas and 10475 households were covered during the su
 <_Version Control_>
 
 * Date: [YYYY-MM-DD] - [Description of changes]
-* Date: [YYYY-MM-DD] - [Description of changes]
 
 </_Version Control_>
 
@@ -61,7 +60,7 @@ set mem 800m
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-local server  "Y:/GLD-Harmonization/582018_AQ"
+local server  "Y:/GLD-Harmonization/529026_MG/Countries"
 local country "ZWE"
 local year    "2022"
 local survey  "QLFS"
@@ -130,7 +129,7 @@ save "`path_in_stata'/qlfs_2022.dta", replace
 
 
 *<_survname_>
-	gen survname = "LFCLS"
+	gen survname = "QLFS"
 	label var survname "Survey acronym"
 *</_survname_>
 
@@ -281,7 +280,7 @@ save "`path_in_stata'/qlfs_2022.dta", replace
 *<_subnatid1_>
 /* <_subnatid1_note>
 
-	The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: “1 – Hatay”. That is, the variable itself is to be string, not a labelled numeric vector.
+	The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: "1 – Hatay". That is, the variable itself is to be string, not a labelled numeric vector.
 
 	Example of entries would be "1 - Alaska",  "2 - Arkansas", ...
 
@@ -630,15 +629,6 @@ label var ed_mod_age "Education module application age"
 
 *<_educat7_>
 	gen byte educat7 =.
-	replace educat7 = 1 if ed2 == 1 | ed3a == 0
-	replace educat7 = 2 if ed3a == 1 & ed4 != 1
-	replace educat7 = 2 if ed3a == 2 & ed4 != 1
-	replace educat7 = 3 if ed3a == 1 & ed4 == 1
-	replace educat7 = 3 if ed3a == 2 & ed4 == 1
-	replace educat7 = 4 if ed3a == 3
-	replace educat7 = 4 if ed3a == 4 & ed4 != 1
-	replace educat7 = 5 if ed3a == 4 & ed4 == 1
-	replace educat7 = 6 if ed3a == 5
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -646,8 +636,13 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat5_>
-	gen byte educat5 = educat7
-	recode educat5 4=3 5=4 6 7=5
+	gen byte educat5 = .
+	replace educat5 = 1 if ed2 == 1 | ed3a == 0
+	replace educat5 = 2 if (ed3a == 1 | ed3a == 2) & ed4 != 1
+	replace educat5 = 3 if (ed3a == 1 | ed3a == 2) & ed4 == 1
+	replace educat5 = 3 if ed3a == 3 | (ed3a == 4 & ed4 != 1)
+	replace educat5 = 4 if ed3a == 4 & ed4 == 1
+	replace educat5 = 5 if ed3a == 5
 	label var educat5 "Level of education 2"
 	la de lbleducat5 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
 	label values educat5 lbleducat5
