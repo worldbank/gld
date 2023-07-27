@@ -1,79 +1,47 @@
-# Education information in the ZWE LFS
+# Education information in the ZWE LFS / QLFS
+This document describes the coding of education in LFS (years 2011, 2014, and 2019) and the QLFS (from 2021) for ZWE.
 
-The user should note that the highest level of education jumps considerably between 2011 and 2019. The main reason is the categories assigned in the questionnaire and the way the data was recorded in the raw data. 
+## Information at most coded as `educat5` except for 2014
 
-The questionnaire gives the possible options for the question of highest level of education.
+The information in the harmonization is, except for 2014, only coded up to five categories in `educat5`. This is because of the difference between information in the questionnaire and the raw data the GLD team has access to.
 
-```
- What is (name’s) highest level of education completed? 
- 88.None
- 00.ECD
- 01-07.Grade 1 to 7
- 11-16. Form 1 to 6
- 20.Diploma/ Certificate after Primary
- 21.Diploma/ Certificate after Secondary
- 22.Graduate/Postgrad
- ```
-
-See below descriptions for each education level: 
+The image below shows how the education information is requested of respondents in the 2019 questionnaire. It indeed should allow us to code information up to `educat7`.
 
 <br></br>
-![picture_1](utilities/picture_1.png)
+![Image from 2019 questionnaire on education level](utilities/2019_questionnaire.png)
 <br></br>
 
-ECD - The first two years of school in Zimbabwe which  are separated into ECD A & B for 1st and 2nd  year respectively with ECD A being 3-4 years and ECD B being 4-5 years, students start Grade 1 at 6 years.
+However, in the data we have access to (see image below) all nuance from codes 6 to 10 is coalesced into a single code 5 which states the information merely as “tertiary” (except for 2014, where the questionnaire and the data have the same categories).
 
-Grade 1-7 - These are the formal years of primary school, and they span over 7 years with learners writing the Grade 7 national examination which is the primary leaving examination. Dropouts in primary tend to get higher as you move to upper grades with about 8% dropping out during the transition from Grade 6 to 7.
+<br></br>
+![Image from 2019 raw data on education level](utilities/2019_data_categories.png)
+<br></br>
 
-Form 1  to 6 - these are the 6 years of secondary which are split into two phases (1-4 & 5-6). 
+Information is thus coded only as `educat5`. Following the Zimbabwean education system (shown in graphical form below), primary complete covers grades 1 through 6, while grades 7 and Form 1 to 4 are coded as primary complete yet secondary incomplete. Only grades Form 5 and 6, representing upper secondary, are treated as secondary complete. The codes beyond Form 6 can only be coded in the catch-all "tertiary" category.
 
-Form 1 to 4 (Lower Secondary) - This is the lower secondary phase which takes 4 years and finishes with the country's major examination, the Ordinary Level exam, which is a high-stake examination that determines whether one proceeds to upper secondary, college or directly join labour. 
-
-Form 5 - 6 (Upper Secondary) - Transition to Form 5 is very competitive and only students with a minimum of 5 O-level subjects can transition to upper secondary. Learners transition to this phase which completes with public examinations in Form 6, with a pass in these examinations being a pre-requisite for University (undergrad) admission in the country. 
-
-Diploma/Certificate after Primary - These are certificates and diplomas that are offered mostly by Technical and Vocational training centres. For some study areas, secondary education is not a must - but such programs are very few - as such, someone who dropped out at primary can embark on these studies provided they meet the entry age which is normally 16. Subjects covered here examples like carpentry, hairdressing etc. 
-
-Diploma/Certificate after Secondary - These are certificates and diplomas offered by Teachers' Colleges, Polytechnical Colleges and Agricultural colleges. Entry requirements into most of these colleges is a minimum of 5 O-levels, and students who decide not to pursue Form 5 & 6 (A-level) after their Form 4, are the ones who normally pursue this avenue.
-
-Graduate/Post Grad - Typical undergrad and post-grad qualifications that are offered through normal university channels. 
-
-## Raw data issue with tertiary education
-
-As mentioned in the very beginning, people with tertiary degree's share of total sample who have answered the highest level education question (i.e. respondents aged 3 or 5 depending on the year of interest) plunges greatly from 2011 to 2014, with a weighted share from 10.22% to 1.9% of total people who are 15 and above. 
-
-![educat7 tabulation](utilities/tertiary_tabulation_combined.png)
-
-(_*Note that only 2011 and 2014 have `educat7` because other years do not have consistant categorization of post-secondary and tertiary education._)
-
-![educat7 tabulation](utilities/ZWE_educat7.png)
-
-And this issue results from the raw data itself which is also shown in Zimbabwe's official annual survey reports. 
-The screenshots listed below are from annual report of 2011, 2014, and 2019: 
-
-**2011 Percent Disrtibution of Population Aged 5 Years and Above by Age Group**
-
-![2011](utilities/2011_aged_5_and_above_highest_education.png)
-
-**2014 Percent Distribution of Currently Employed Persons Aged 15 Years and Above**
-
-![2014](utilities/2014_aged_15_and_above_employed_highest_education.png)
-
-**2019 Percent Distribution of Currently Employed Persons Aged 15 Years and Above**
-
-![2019](utilities/2019_aged_3_and_above_highest_education.png)
-
-Age won't be substantially affected by the lower bond of age range for education questions when it conmes to tertiary education, so we can compare the population with tertiary education in 2011 to 2014 and 2019 using the tables above. In 2011, the population with tertiary edcuation is 712,138 whereas in 2014 it drops to 125,317. Even though 2014 reports only the proportion of employed population, considering that the unemployment rate is 11.3% according to the same annual report and we assume the same rate amongst the unemployed, the gap is still too big to grasp. Similarly, we have total tertiary population of between 252,000 and 455,000 depending whether "Tertiary-Short Cycle" counts in 2019, which still falls very below the data in 2011. **Therefore, please be advised to be aware of this data inconsistency issue when using tertiary education data.**  
-
-## Raw data categorization issue in 2019
-
-In the questionnaire of 2019, there are 12 categories of education level whereas in the raw data what we can have are only 6 categories. 
-![questionnaire](utilities/2019_questionnaire.png)
-![dataset](utilities/2019_data_categories.png)
+<br></br>
+![Image of ZWE education system](utilities/picture_1.png)
+<br></br>
 
 
-Without correct understanding about the mapping from the questionnaire to the dataset, we decided to only code `educat5` and set `educat7` to missing. 
-The two graphs below are the distributions of `educat5` as in number and percentage of each year. Tertiary education population of 2011 looks less off because 2011 does not have category 6 "Higher than secondary but not university" of `educat7` while 2014 has 1,703 observations from category 6 merged into tertiary in `educat5`. 
+Using `educat5` the information coded seems to be stable (see graph below).
 
+<br></br>
+![Grpah of educat5 over the years](utilities/ZWE_educat5.png)
+<br></br>
 
-![bar1](utilities/educat5_distribution_number.png)
-![bar2](utilities/educat5_distribution_percent.png)
+The reader may find there to be a dip around 2019. Validating this information, without access to the completely disaggregated codes is difficult, especially since the reports (which are written with access to this detail) vary the way they report.
+
+Below are the distribution of employed people aged 5 and above in 2011 by education (first) and the distribution of those aged 3 and above in 2019 by education (second)
+
+<br></br>
+![Education breakdown from 2011 report](utilities/picture_1.png)
+<br></br>
+
+<br></br>
+![ Education breakdown from 2019 report](utilities/picture_1.png)
+<br></br>
+
+In the first instance for 2011, the reported 7% and 712,138 people are the same in the harmonized data. For 2019 we cannot differentiate as deep as the report and only aggregate everything from “Vocational Certificate” to “Doctorate”. That is 5% for men and 4.5% for women – but of a population starting that does include 3 and 4 year olds. Looking at the absolute numbers this represents 619,500 people (311,557 women and 307,943 men). Thus, as far as the GLD team can observe, the information is coded accurately even though it is not to the level the questionnaire and reports would have the user believe is feasible.
+
+The GLD team aims to update the harmonization as soon as newer surveys are available.
