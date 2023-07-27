@@ -16,11 +16,11 @@
 <_Survey Title_>				Labour Force and Child Labour Survey </_Survey Title_>
 <_Survey Year_>					2011 </_Survey Year_>
 <_Study ID_>					https://microdatalib.worldbank.org/index.php/catalog/3312 </_Study ID_>
-<_Data collection from_>			[MM/YYYY] </_Data collection from_>
-<_Data collection to_>				[MM/YYYY] </_Data collection to_>
-<_Source of dataset_> 				http://nada.zimstat.co.zw/nada (not working at the time of writing) </_Source of dataset_>
-<_Sample size (HH)_> 				9359 </_Sample size (HH)_>
-<_Sample size (IND)_> 				39798 </_Sample size (IND)_>
+<_Data collection from_>		[MM/YYYY] </_Data collection from_>
+<_Data collection to_>			[MM/YYYY] </_Data collection to_>
+<_Source of dataset_> 			http://nada.zimstat.co.zw/nada (not working at the time of writing) </_Source of dataset_>
+<_Sample size (HH)_> 			9359 </_Sample size (HH)_>
+<_Sample size (IND)_> 			39798 </_Sample size (IND)_>
 <_Sampling method_>
 
 The sampling frame used for the 2011 LFCLS was the 2002 Zimbabwe Master Sample (ZMS02)
@@ -637,8 +637,7 @@ label var ed_mod_age "Education module application age"
 	* most are by far code 21). 7% of codes 20, 21, 22 are 20.
 	* Assume 23 is a catch all of 20 to 22, give value of secondary complete.
 </_educat7_note> */
-	gen byte educat7 =q13
-	recode educat7 (0 88 = 1) (1/6 = 2) (7 = 3) (11/14 = 4) (15/16 = 5) (23 = 7) ( 99 = .)
+	gen byte educat7 = .
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -646,8 +645,12 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat5_>
-	gen byte educat5 = educat7
-	recode educat5 4=3 5=4 6 7=5
+	gen byte educat5 = .
+	replace educat5 = 1 if q13==0 | q13==88
+	replace educat5 = 2 if inrange(q13,1,6)
+	replace educat5 = 3 if q13==7 | inrange(q13,11,14)
+	replace educat5 = 4 if inrange(q13,15,16)
+	replace educat5 = 5 if q13==23
 	label var educat5 "Level of education 2"
 	la de lbleducat5 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
 	label values educat5 lbleducat5
