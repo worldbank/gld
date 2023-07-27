@@ -203,14 +203,8 @@ local out_file "`level_2_harm'_ALL.dta"
 *</_weight_>
 
 
-/*<_psu_note_>
-In the official report, the number of total PSU should be 2,334,
-which is 3 more than what we have here.
-*<_psu_note_>*/
-
-
 *<_psu_>
-	egen psu = group(LF01 LF02 LF03 LF04 LF05 LF06 LF07)	
+	gen psu=ea_code	
 	label var psu "Primary sampling units"
 *</_psu_>
 
@@ -241,9 +235,7 @@ which is 3 more than what we have here.
 {
 
 *<_urban_>
-	gen urban=.
-	replace urban=1 if LF04!=8
-	replace urban=0 if LF04==8
+	gen urban=cond(Z_5=="1",0,1)
 	la de lblurban 1 "Urban" 0 "Rural"
 	label values urban lblurban
 	label var urban "Location is urban"
@@ -251,8 +243,8 @@ which is 3 more than what we have here.
 
 
 *<_subnatid1_>
-	gen subnatid1_prep=LF01
-	label de lblsubnatid1 1 "1 - Tigray" 2 "2 - Afar" 3 "3 - Amhara" 4 "4 - Oromiya" 5 "5 - Somali" 6 "6 - Benishangul-Gumuz" 7 "7 - SNNPR" 12 "12 - Gambela" 13 "13 - Hareri" 14 "14 - Addis Ababa" 15 "15 - Dire Dawa"
+	gen subnatid1_prep=Z_6
+	label de lblsubnatid1 1 "1 - Eastern" 2 "2 - Northern" 3 "3 - Southern" 4 "4 - Western Area"
 	label values subnatid1_prep lblsubnatid1
 	decode subnatid1_prep, gen (subnatid1)
 	drop subnatid1_prep
@@ -260,16 +252,11 @@ which is 3 more than what we have here.
 *</_subnatid1_>
 
 
-/*<_subnatid2_note_>
-Note that some zones do not have name lables but only codes. That is because
-in the offical annual report, they were grouped at their regional level. 
-*<_subnatid2_note_>*/
-
-
 *<_subnatid2_>
-	decode LF01, gen(subnatid1_proposal)
-	gen subnatid2_proposal=string(LF01) + "." + string(LF02)
-	gen subnatid2=subnatid2_proposal
+	decode Z_7, gen(Z7lbl)
+	replace Z7lbl=subinstr(Z7lbl,".", " -",1)
+	gen subnatid2=Z_7
+	labmask subnatid2, values(Z7lbl)
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
 
