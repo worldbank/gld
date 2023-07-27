@@ -18,21 +18,22 @@
 <_Source of dataset_> 			Survey conducted by Statistics Sierra Leone (SSL) </_Source of dataset_>
 								Microdata is freely available on the public World Bank microdata library:https://microdata.worldbank.org/index.php/catalog/2687;
 								also the file is available on the SLE site: http://www.statistics.sl/index.php/what-we-offer/open-data-free-datasets.html
-<_Sample size (HH)_> 			366,695 </_Sample size (HH)_>
-<_Sample size (IND)_> 			81,339 </_Sample size (IND)_>
-<_Sampling method_> 			Stratified two-stage sampling method </_Sampling method_>
-<_Geographic coverage_> 		Both urban and rural parts of the country, 
-								except 6 zones in Somali Region and 2 zones
-								in Affar Region. Homeless persons and foreigners
-								were not covered. </_Geographic coverage_>
-<_Currency_> 					Ethiopian Birr </_Currency_>
+<_Sample size (HH)_> 			 </_Sample size (HH)_>
+<_Sample size (IND)_> 			 </_Sample size (IND)_>
+<_Sampling method_> 			Stratified cluster sample 
+								with oversampling in urban areas. </_Sampling method_>
+<_Geographic coverage_> 		Nationally representative, covering 
+								280 enumeration areas/clusters from 
+								18 cities/districts in Eastern, 
+								Northern, Southern and Western regions. </_Geographic coverage_>
+<_Currency_> 					Sierra Leonean leone </_Currency_>
 -----------------------------------------------------------------------
-<_ICLS Version_>				ICLS 13 </_ICLS Version_>
+<_ICLS Version_>				ICLS 19 </_ICLS Version_>
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
-<_ISCO Version_>				ISCO-88 </_ISCO Version_>
-<_OCCUP National_>				NOIC 1994 </_OCCUP National_>
-<_ISIC Version_>				NA </_ISIC Version_>
-<_INDUS National_>				NA </_INDUS National_>
+<_ISCO Version_>				ISCO 08 </_ISCO Version_>
+<_OCCUP National_>				</_OCCUP National_>
+<_ISIC Version_>				ISIC Rev.4 </_ISIC Version_>
+<_INDUS National_>				 </_INDUS National_>
 -----------------------------------------------------------------------
 
 <_Version Control_>
@@ -59,8 +60,8 @@ set mem 800m
 
 * Define path sections
 local server  "Y:\GLD-Harmonization\573465_JT"
-local country "ETH"
-local year    "1999"
+local country "SLE"
+local year    "2014"
 local survey  "LFS"
 local vermast "V01"
 local veralt  "V01"
@@ -84,10 +85,8 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	use "`path_in_stata'\lforce_2.dta", clear
-	duplicates drop 
-	
-*421 (0.114%) observations were dropped because of duplication in terms of all variables.	
+	use "`path_in_stata'\merged A to J de-ID.dta", clear
+
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -114,7 +113,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_icls_v_>
-	gen icls_v="ICLS-13"
+	gen icls_v="ICLS-19"
 	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
 
@@ -126,13 +125,13 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_isco_version_>
-	gen isco_version="isco_1988"
+	gen isco_version="isco_2008"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
 
 *<_isic_version_>
-	gen isic_version=""
+	gen isic_version="isic_4"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
@@ -168,40 +167,38 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_int_month_>
-	gen int_month=3
+	gen int_month=Z_1_MONTH
 	label de lblint_month 1 "January" 2 "February" 3 "March" 4 "April" 5 "May" 6 "June" 7 "July" 8 "August" 9 "September" 10 "October" 11 "November" 12 "December"
 	label value int_month lblint_month
 	label var int_month "Month of the interview"
 *</_int_month_>
 
 
+/*<_hhid_>
+
+4,199 households in the actual raw data, compared to 4,200 planned.   
+
+*<_hhid_>*/
+
+
 *<_hhid_>
-	foreach var of varlist LF01-LF08{
-		tostring `var', gen(str_`var') format(%03.0f)
-	}
-	egen hhid=concat(str_LF01 str_LF02 str_LF03 str_LF04 str_LF05 str_LF06 str_LF07 str_LF08)
-	replace hhid="" if LF08==.
+	tostring hh_id, gen(strhh_id) format(%02.0f)
+	egen hhid=concat(strhh_id ea_code), maxlength(12) punct("-")
+	recast str12 hhid
 	label var hhid "Household id"
 *</_hhid_>
 
 
 *<_pid_>
-	gen lf10=LF10	
-	tostring lf10, gen(str_LF10) format(%02.0f)
-	egen pid0=concat(hhid str_LF10)
-	gsort hhid -LF14
-	bys hhid: gen counter=_n
-	replace lf10=counter if lf10!=counter
-	drop str_LF10
-	tostring lf10, gen(str_LF10) format(%02.0f)	
-	egen pid=concat(hhid str_LF10)
+	tostring A_0, gen(strp_id) format(%02.0f)
+	egen pid=concat(hhid strp_id), punct("-")
+	recast str15 pid
 	label var pid "Individual ID"
-	drop lf10 pid0 counter
 *</_pid_>
 
 
 *<_weight_>
-	gen weight=WGTN
+	gen weight=wt_hh
 	label var weight "Household sampling weight"
 *</_weight_>
 
