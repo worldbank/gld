@@ -5,20 +5,20 @@ rm(list=ls())
 #=========================================================================#
 
 # Enter country ISO Alpha 3 code
-country <- "ZWE"
+country <- "[CCC]"
 
 # Enter variables that ought to be analysed (or leave standard variables)
-vars_to_study <- c("empstat", "educat7", "educat5", "educat4", "industrycat10", "industrycat4", "occup", "lstatus")
+vars_to_study <- c("empstat", "educat7", "educat4", "industrycat10", "industrycat4", "occup", "lstatus")
 # Note that wage will be included by default, no need to include here
 
 # Define the path to the folder holding the series
-path_in <- "C:/Users/IrIs_/Downloads/ZWE/Archive/DATA/harmonized"
+path_in <- "[For example: Z:/GLD-Harmonization/123456_AZ/CCC]"
 
 # Define the path to the folder where the graphs ought to be stored in
-path_out <- "C:/Users/IrIs_/Downloads/ZWE/Archive/DATA/harmonized"
+path_out <- "[Path to output folder]"
 
 # Define the path to the folder where this code and the other functions of the survey series checks are stored
-dir_w_functions <- "C:/Users/IrIs_/Documents/WB_gld/Support/D - Q Checks/Survey series checks"
+dir_w_functions <- "[Path to folder with functions]"
 
 
 #=========================================================================#
