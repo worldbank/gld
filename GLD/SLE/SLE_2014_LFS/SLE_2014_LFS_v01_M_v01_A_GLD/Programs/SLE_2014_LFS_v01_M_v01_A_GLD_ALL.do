@@ -216,7 +216,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_strata_>
-	gen strata=.
+	gen strata=Z_7
 	label var strata "Strata"
 *</_strata_>
 
@@ -262,17 +262,18 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_subnatid3_>
-	gen byte subnatid3=.
-	label de lblsubnatid3 1 "1 - Name"
-	label values subnatid3 lblsubnatid3
+	decode Z_8, gen(Z8lbl)
+	replace Z8lbl=subinstr(Z8lbl, ".", " -",1)
+	gen subnatid3=Z_8
+	labmask subnatid3, values(Z8lbl)
 	label var subnatid3 "Subnational ID at Third Administrative Level"
 *</_subnatid3_>
 
 
 *<_subnatidsurvey_>	
-	replace subnatid1_proposal=proper(subnatid1_proposal)
 	decode urban, gen(urban_name)
-	egen subnatidsurvey=concat(subnatid1_proposal urban_name), punct("-")
+	gen districtname=substr(Z7lbl,5,.)
+	egen subnatidsurvey=concat(districtname urban_name), punct("-")
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>                
 
