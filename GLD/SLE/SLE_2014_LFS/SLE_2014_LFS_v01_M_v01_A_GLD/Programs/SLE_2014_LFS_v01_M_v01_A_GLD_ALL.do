@@ -243,11 +243,9 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_subnatid1_>
-	gen subnatid1_prep=Z_6
+	gen subnatid1=Z_6
 	label de lblsubnatid1 1 "1 - Eastern" 2 "2 - Northern" 3 "3 - Southern" 4 "4 - Western Area"
-	label values subnatid1_prep lblsubnatid1
-	decode subnatid1_prep, gen (subnatid1)
-	drop subnatid1_prep
+	label values subnatid1 lblsubnatid1
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 
@@ -327,20 +325,20 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 {
 
 *<_hsize_>
-	bys hhid: egen hsize=max(LF10)
+	bys hhid: egen hsize=max(A_0)
 	label var hsize "Household size"
 *</_hsize_>
 
 
 *<_age_>
-	gen age=LF14
+	gen age=A_6
 	replace age=98 if age>98 & age!=.
 	label var age "Individual age"
 *</_age_>
 
 
 *<_male_>
-	gen male=LF13
+	gen male=A_6
 	recode male 2=0
 	label var male "Sex - Ind is male"
 	la de lblmale 1 "Male" 0 "Female"
@@ -349,8 +347,8 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 
 *<_relationharm_>
-	gen byte relationharm=LF12
-	recode relationharm (0=1) (1=2) (2/4=3) (5=4) (6/7=5) (8/9=6)
+	gen byte relationharm=A_4
+	recode relationharm (3/5=3) (9/10=4) (6/8 11=5) (12/13=6)
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm lblrelationharm
@@ -358,14 +356,14 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 
 *<_relationcs_>
-	gen relationcs=LF12
+	gen relationcs=A_4
 	label var relationcs "Relationship to the head of household - Country original"
 *</_relationcs_>
 
 
 *<_marital_>
-	gen byte marital=LF27
-	recode marital (1=2) (2=1) (3 5=4) (4=5) (9=.) 
+	gen byte marital=A_7
+	recode marital (1/2=1) (5=4) (6=5) (7=2) 
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
 	label values marital lblmarital
@@ -428,19 +426,21 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 {
 *<_migrated_mod_age_>
-	gen migrated_mod_age=0
+	gen migrated_mod_age=12
 	label var migrated_mod_age "Migration module application age"
 *</_migrated_mod_age_>
 
 
 *<_migrated_ref_time_>
-	gen migrated_ref_time=4
+	gen migrated_ref_time=.
 	label var migrated_ref_time "Reference time applied to migration questions"
 *</_migrated_ref_time_>
 
 
 *<_migrated_binary_>
-	gen migrated_binary=cond(LF17==8, 0, 1)
+	gen migrated_binary=.
+	replace migrated_binary=0 if inrange(B_19,11,42)&mi(B_20A)&mi(B_21)&mi(B_22)
+	replace migrated_binary=1 if !mi(B_21)
 	label de lblmigrated_binary 0 "No" 1 "Yes"
 	replace migrated_binary=. if age<migrated_mod_age
 	label values migrated_binary lblmigrated_binary
@@ -448,28 +448,19 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 *</_migrated_binary_>
 
 
-/* <_migrated_years_note_>
-Information is on years living in current place (which is equal
-to years since left previous residence). However, info is 
-   code 0 for less than a year,
-   code 1 to 4 for 1 to 4 years,
-   code 5 for 5 to 6 years,
-   code 6 for 7 to 9 years,
-   code 7 for 10 or more years
-   code 8 is "since birth" (never migrated)
+/* <_migrated_years_note_> 
 
-   Code 0.5 for less than a year, half-point for 5-6 window (e.g., 5.5)
-   and code 10 as a lower bound for the 10+ option  
+In the questionnaire the years of migration is divided into two parts:
+Year and Month. So the var “migrated_years” is a combination of year
+and month converted into year's term.
+
 </_migrated_years_note_> */
 
 
 *<_migrated_years_>
    gen migrated_years=.
-   replace migrated_years=0.5 if LF17==0
-   replace migrated_years =LF17 if inrange(LF17,1,4)
-   replace migrated_years=5.5 if LF17==5
-   replace migrated_years=8 if LF17==6
-   replace migrated_years=10 if LF17==7
+   gen migyear=round(B_20B/12,0.1)
+   replace migrated_years=B_20A+migyear
    replace migrated_years=. if migrated_binary!=1
    replace migrated_years=. if age<migrated_mod_age
    label var migrated_years "Years since latest migration"
@@ -477,10 +468,7 @@ to years since left previous residence). However, info is
 
 
 *<_migrated_from_urban_>
-	gen migrated_from_urban=LF20
-	recode migrated_from_urban 9=. 1=0 2=1 
-	replace migrated_from_urban=. if migrated_binary!=1
-	label de lblmigrated_from_urban 0 "Rural" 1 "Urban"
+	gen migrated_from_urban=.
 	replace migrated_from_urban=. if age<migrated_mod_age
 	label values migrated_from_urban lblmigrated_from_urban
 	label var migrated_from_urban "Migrated from area"
@@ -488,17 +476,21 @@ to years since left previous residence). However, info is
 
 
 *<_migrated_from_cat_>
-	gen mh_not_same_admin1=(LF18!=LF01) if !missing(LF18)
-
 	gen migrated_from_cat=.
-	replace migrated_from_cat=5 if mh_not_same_admin1==1 & LF18==16
-	replace migrated_from_cat=4 if mh_not_same_admin1==1 & inrange(LF18, 1, 15)
+	replace migrated_from_cat=5 if inlist(B_21,2,3,54,55,56,57,58,60,88,90)
 	
-	gen mh_same_admin1=(LF18==LF01) if !missing(LF18)
-	gen mh_same_admin2=(LF19==LF02) if mh_same_admin1==1
+	gen migregion=.
+	replace migregion=1 if inrange(B_21,11,13)
+	replace migregion=2 if inrange(B_21,21,25)
+	replace migregion=3 if inrange(B_21,31,34)
+	replace migregion=4 if inrange(B_21,41,42)
+	replace migrated_from_cat=4 if migregion!=subnatid1&migrated_binary==1&!mi(migregion)
 	
-	replace migrated_from_cat=3 if mh_same_admin2==0 & LF19!=99
-	replace migrated_from_cat=2 if mh_same_admin2==1 
+	gen migdis=.
+	replace migdis=B_21 if inrange(B_21,11,42) 
+	replace migrated_from_cat=3 if migregion==subnatid1&(migdis!=subnatid2&!mi(migdis))
+	
+	replace migrated_from_cat=2 if migdis==subnatid2&!mi(migdis)
 	
 	replace migrated_from_cat=. if age<migrated_mod_age|migrated_binary!=1
 	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country"
