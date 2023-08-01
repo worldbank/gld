@@ -12,7 +12,7 @@ di in red "`section'"
 
 *Raw Classification File
 preserve
-local root "https://raw.githubusercontent.com/worldbank/gld/main/Support/Z - Other Tools/Code/ISIC%20ISCO%20conversion%20tool/Class%20Tables/"
+local root "https://raw.githubusercontent.com/worldbank/gld/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/Code/ISIC%20ISCO%20conversion%20tool/Class%20Tables/"
 import delimited using "`root'`classfrom'.txt", clear delim(";")
 if "`classfrom'" == "isic_rev2" tostring isic_rev2_secdig, replace
 

@@ -33,7 +33,7 @@ local tab_isco_88_isco_08_type direct
 local tab_isco_08_isco_88_type reverse
 
 *Repository
-local root "https://raw.githubusercontent.com/worldbank/gld/main/Support/Z - Other Tools/Code/ISIC%20ISCO%20conversion%20tool/Correspondence%20Tables/"
+local root "https://raw.githubusercontent.com/worldbank/gld/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/Code/ISIC%20ISCO%20conversion%20tool/Correspondence%20Tables/"
 local from_isic_rev2_to_isic_rev31 "from_isic_rev2_to_isic_rev31_direct.txt"
 local from_isic_rev2_to_isic_rev3 "from_isic_rev2_to_isic_rev3_direct.txt"
 local from_isic_rev2_to_isic_rev4 "from_isic_rev2_to_isic_rev4_indirect.txt"
