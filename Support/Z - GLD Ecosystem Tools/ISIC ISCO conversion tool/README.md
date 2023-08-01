@@ -44,7 +44,9 @@ This introduces an element of randomness into the mapping (if run a hundred time
 
 To obtain the latest version through GitHub, from the main window in Stata, run:
 
-``net install GLD-ISCO-ISIC-Correspondence, replace from("https://raw.githubusercontent.com/worldbank/gld/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20conversion%20tool/Code")``
+```
+net install GLD-ISCO-ISIC-Correspondence, replace from("https://raw.githubusercontent.com/worldbank/gld/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20conversion%20tool/Code")
+```
 
 If the download from within Stata fails (e.g. because you are behind a firewall), you can download the files directly from this repository and paste them into the local ado system. More on [`.ado` files here](https://www.stata.com/manuals13/u17.pdf).
 
