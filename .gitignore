@@ -74,6 +74,9 @@
 !Support/**/*.png
 !Support/**/*.svg
 
+# Allow Stata package file
+!/Support/**/*.toc
+!Support/**/*.pkg
 
 #######################
 ###  Section iii)    ###

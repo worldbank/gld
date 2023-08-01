@@ -1,0 +1,5 @@
+v 1
+d Creator: World Bank Jobs Group
+d Authors: Smith, Raimundo; and Jara, Cristian
+d Contributors: Gronert Alvarez, Mario Andres
+p GLD ISCO ISIC Correspondence: A package to allow users to map between versions of ISCO or ISIC from GLD.
