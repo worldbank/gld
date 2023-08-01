@@ -51,7 +51,7 @@ if ustrregexm("`universe'", "^(isic|ISIC)$") {
 	set sslrelax on
 
 	* Read in ISIC codes
-	import delimited "https://raw.githubusercontent.com/worldbank/gld/main/Support/Z%20-%20Other%20Tools/ISIC%20ISCO%20universe%20check/utilities/isic_codes.txt", delimiter(comma) varnames(1) clear
+	import delimited "https://raw.githubusercontent.com/worldbank/gld/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20universe%20check/utilities/isic_codes.txt", delimiter(comma) varnames(1) clear
 
 	set sslrelax off
 
@@ -115,7 +115,7 @@ if ustrregexm("`universe'", "^(isco|ISCO)$") {
 	set sslrelax on
 
 	* Read in ISCO codes
-	import delimited "https://raw.githubusercontent.com/worldbank/gld/main/Support/Z%20-%20Other%20Tools/ISIC%20ISCO%20universe%20check/utilities/isco_codes.txt", delimiter(comma) varnames(1) clear 
+	import delimited "https://raw.githubusercontent.com/worldbank/gld/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20universe%20check/utilities/isco_codes.txt", delimiter(comma) varnames(1) clear 
 
 	set sslrelax off
 
