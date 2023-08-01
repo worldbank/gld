@@ -1,0 +1,14 @@
+v 1
+d GLD ISCO ISIC Correspondence: A package to allow users to map between versions of ISCO or ISIC from GLD.
+d Creator: World Bank Jobs Group
+d Authors: Smith, Raimundo; and Jara, Cristian
+d Contributors: Gronert Alvarez, Mario Andres
+d For any questions, please contact: jobsccsa@worldbankgroup.org
+d Distribution-Date: 20230801
+
+f assignation_rule.ado
+f gld_labels.ado
+f isic_isco_correspondence.ado
+f isic_isco_correspondence.sthlp
+f merge_class.ado
+f merge_correspondence.ado
