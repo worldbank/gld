@@ -64,6 +64,7 @@
 !Support/**/*.R
 !Support/**/*.do
 !Support/**/*.ado
+!Support/**/*.sthlp
 !Support/**/*.dta
 !Support/**/*.dct
 !Support/**/*.csv
