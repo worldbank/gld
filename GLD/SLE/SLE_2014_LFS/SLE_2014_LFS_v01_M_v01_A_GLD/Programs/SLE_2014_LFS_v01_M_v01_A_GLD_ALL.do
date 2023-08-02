@@ -736,9 +736,8 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 
 {
 *<_vocational_>
-	gen vocational=LF24
-	recode vocational (2=0) (9=.)
-	replace vocational=. if !inrange(vocational, 0, 1)
+	gen vocational=B_12
+	recode vocational (2=0) 
 	la de vocationallbl 1 "Yes" 0 "No"
 	la values vocational vocationallbl
 	label var vocational "Ever received vocational training"
@@ -747,8 +746,6 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 
 *<_vocational_type_>
 	gen vocational_type=.
-	replace vocational_type=1 if LF26==4
-	replace vocational_type=2 if LF26!=4 & LF26!=8 & LF26!=9
 	label de lblvocational_type 1 "Inside Enterprise" 2 "External"
 	label values vocational_type lblvocational_type
 	label var vocational_type "Type of vocational training"
@@ -767,26 +764,18 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 *</_vocational_length_u_>
 
 
+/*<_vocational_field_orig_note_>
+
+764 observations answered that they did not compete training (B_12==2)) but they
+answered the area of their trainings. 
+
+*<_vocational_field_orig_note_>*/
+
+
 *<_vocational_field_orig_>
-	gen vocational_field_orig=LF25
-	decode LF25, gen(training_field)
-	labmask vocational_field_orig, values(training_field)
+	gen vocational_field_orig=B_17
 	label var vocational_field_orig "Field of training"
 *</_vocational_field_orig_>
-
-
-/*<_vocational_financed_note_>
-One related variable in the raw dataset is LF26:"Where did you get the training?"
-1.College/University/Institute
-2.Vocational/Technical school
-3.Comprehensive high school
-4.Employer Organization
-5.NGO
-6.Private training organization
-7.Other/Specify
-
-But these do not directly reflect the source of financial support.
-*<_vocational_financed_note_>*/
 
 
 *<_vocational_financed_>
@@ -802,7 +791,7 @@ But these do not directly reflect the source of financial support.
 ================================================================================================*/
 
 *<_minlaborage_>
-	gen byte minlaborage=10 
+	gen byte minlaborage=5
 	label var minlaborage "Labor module application age"
 *</_minlaborage_>
 
@@ -810,10 +799,19 @@ But these do not directly reflect the source of financial support.
 *----------8.1: 7 day reference overall------------------------------*
 
 {
+/*<_lstatus_note_>
+
+Better to use the questions to code variables instead of the "Enumerator CHECK"
+question as the latter have some errors.	
+
+*<_lstatus_note_>*/
+
+	
 *<_lstatus_>
 	gen byte lstatus=.
-	replace lstatus=1 if LF30==1 
-	replace lstatus=1 if LF30==2 & LF33==1
+	gen temp=1 if D_2==1|D_2==2|D_2==3|D_3==1|D_3==2|D_4==1
+	
+	replace lstatus=1 if C_1A==1|C_1B==1|C_1C==1|C_1D==1
 	replace lstatus=2 if LF30==2 & LF46==1 & LF49==1
 	replace lstatus=3 if lstatus==. 
 	replace lstatus=. if age<minlaborage
