@@ -631,7 +631,7 @@ variable B_5 is:
 15	Form 6 Upper and GCE (A) ---> 13 year
 16	College Students  ---> 17 year
 17	University Undergraduate Students  ---> 17 year
-18	Certificates  ---> 17 year
+18	Certificates  ---> 16 year
 19	Diploma  ---> 17 year
 20	Post Graduate Diploma Students ---> 18 year
 21	Bachelors Degree ---> 17 year
@@ -644,7 +644,8 @@ variable B_5 is:
 	replace educy=B_5 if inrange(B_5,1,6)
 	replace educy=B_5-1 if inrange(B_5,7,14)
 	replace educy=13 if B_5==15
-	replace educy=17 if inlist(B_5,16,17,18,19,21)
+	replace educy=16 if B_5==18
+	replace educy=17 if inlist(B_5,16,17,19,21)
 	replace educy=18 if B_5==20|B_5==22
 	replace educy=. if age<5
 	replace educy=. if educy>age & !mi(educy) & !mi(age)
@@ -654,13 +655,13 @@ variable B_5 is:
 
 *<_educat7_>
 	gen byte educat7=.
-	replace educat7=1 if inlist(LF23,95,96)
-	replace educat7=2 if inrange(LF23,1,7)
-	replace educat7=3 if inlist(LF23,8)
-	replace educat7=4 if inrange(LF23,9,11)
-	replace educat7=5 if inlist(LF23,12)
-	replace educat7=6 if inrange(LF23,20,22)
-	replace educat7=7 if inrange(LF23,23,25)
+	replace educat7=1 if B_2==2
+	replace educat7=2 if inrange(B_5,1,5)
+	replace educat7=3 if inrange(B_5,6,7)
+	replace educat7=4 if inrange(B_5,8,13)
+	replace educat7=5 if inrange(B_5,14,15)
+	replace educat7=6 if inrange(B_5,18,19)
+	replace educat7=7 if inlist(B_5,16,17,20,21,22)
 	replace educat7=. if age<ed_mod_age
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
@@ -671,7 +672,7 @@ variable B_5 is:
 *<_educat5_>
 	gen byte educat5=educat7
 	recode educat5 (4=3) (5=4) (6 7=5)
-	replace educat5=. if age < ed_mod_age & age!=.	
+	replace educat5=. if age<ed_mod_age	
 	label var educat5 "Level of education 2"
 	la de lbleducat5 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
 	label values educat5 lbleducat5
@@ -680,7 +681,7 @@ variable B_5 is:
 
 *<_educat4_>
 	gen byte educat4=educat5
-	replace educat4=. if age<ed_mod_age&age!=.
+	replace educat4=. if age<ed_mod_age
 	recode educat4 (3=2) (4=3) (5=4)
 	label var educat4 "Level of education 3"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
@@ -689,20 +690,21 @@ variable B_5 is:
 
 
 *<_educat_orig_>
-	gen educat_orig=LF23
+	gen educat_orig=B_5
 	label var educat_orig "Original survey education code"
 *</_educat_orig_>
 
 
 *<_educat_isced_>
 	gen educat_isced=.
-	replace educat_isced=100 if LF23<=6 
-	replace educat_isced=242 if LF23>6 & LF23<=8
-	replace educat_isced=244 if LF23>8 & LF23<12
-	replace educat_isced=344 if LF23==12
-	replace educat_isced=353 if LF23==20
-	replace educat_isced=660 if LF23>20 & LF23<25
-	replace educat_isced=760 if LF23==25
+	replace educat_isced=100 if inrange(B_5,1,7) 
+	replace educat_isced=244 if inrange(B_5,8,10) 
+	replace educat_isced=344 if inrange(B_5,11,14) 
+	replace educat_isced=344 if inrange(B_5,11,14) 
+	replace educat_isced=354 if B_5==15
+	replace educat_isced=554 if B_5==18
+	replace educat_isced=665 if inlist(B_5,16,17,19,21)
+	replace educat_isced=767 if B_5==22
 	replace educat_isced=. if age<ed_mod_age
 	label var educat_isced "ISCED standardised level of education"
 *</_educat_isced_>
