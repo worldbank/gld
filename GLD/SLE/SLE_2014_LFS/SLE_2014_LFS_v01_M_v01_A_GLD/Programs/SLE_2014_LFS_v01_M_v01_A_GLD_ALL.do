@@ -87,6 +87,15 @@ local out_file "`level_2_harm'_ALL.dta"
 
 	use "`path_in_stata'\merged A to J de-ID.dta", clear
 
+*Note that the original definition of "LFS eligible" in the SLE survey is:
+*1) Age is 5 and above and;
+*2) Spent at least 4 nights in the household during the past 4 weeks
+*The original LFS Eligibility variable A17 has 189 observations wrongly coded
+*The codes below create a "corrected" version of A17  
+
+	gen A17_corrected=1 if A_6!=. & A_6>=5 & A_16==1 
+	replace A17_corrected=2 if A_6<5 | (A_16!=1 & A_16!=.)
+	
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -529,20 +538,33 @@ and month converted into year's term.
 	replace migrated_from_code="" if migrated_binary!=1
 	replace migrated_from_code="" if age<migrated_mod_age
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
+	
+	drop migyear migregion migdis
 *</_migrated_from_code_>
 
 
 *<_migrated_from_country_>
-	gen migrated_from_country=.
-	replace migrated_from_country=. if migrated_binary!=1
-	replace migrated_from_country=. if age<migrated_mod_age
+	decode B_21, gen(migrated_from_country)
+	replace migrated_from_country="" if !inlist(B_21,2,3,54,55,56,57,58,60,88,90)
+	replace migrated_from_country="LBR" if B_21==2
+	replace migrated_from_country="GIN" if B_21==3
+	replace migrated_from_country="GMB" if B_21==54
+	replace migrated_from_country="GHA" if B_21==55
+	replace migrated_from_country="GNB" if B_21==56
+	replace migrated_from_country="CIV" if B_21==57
+	replace migrated_from_country="MLI" if B_21==58
+	replace migrated_from_country="NGA" if B_21==60
+	replace migrated_from_country="Other African countries" if B_21==88
+	replace migrated_from_country="Other non-African countries" if B_21==90
+	replace migrated_from_country="" if migrated_binary!=1
+	replace migrated_from_country="" if age<migrated_mod_age
 	label var migrated_from_country "Code of migration country (ISO 3 Letter Code)"
 *</_migrated_from_country_>
 
 
 *<_migrated_reason_>
-	gen migrated_reason=LF21
-	recode migrated_reason (1 12=2) (2/3 7=1) (4/5=3) (6=4) (8/10=5) (11 13 99=.)
+	gen migrated_reason=B_22
+	recode migrated_reason (1=3) (2=1) (3 7 9=5) (4=2) (5/6 8=4)
 	replace migrated_reason=. if migrated_binary!=1
 	replace migrated_reason=. if age<migrated_mod_age
 	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
@@ -566,21 +588,19 @@ and month converted into year's term.
 
 
 *<_school_>
-	gen everattend=.
-	replace everattend=0 if LF59==3
-	replace everattend=1 if LF59<=2|(LF23>=1 & LF23<=96)|LF58==1
-	gen byte school=1 if LF58==1
-	replace school=0 if LF58==2 | everattend==0
+	gen school=.
+	replace school=0 if B_2==2
+	replace school=1 if B_2==1
 	replace school=. if age<ed_mod_age & age!=.
 	label var school "Attending school"
 	la de lblschool 0 "No" 1 "Yes"
-	label values school  lblschool
+	label values school lblschool
 *</_school_>
 
 
 *<_literacy_>
-	gen byte literacy=LF22
-	recode literacy (2=0) (9=.)
+	gen byte literacy=B_1
+	recode literacy (2/4=0) 
 	replace literacy=. if age<ed_mod_age & age!=.
 	label var literacy "Individual can read & write"
 	la de lblliteracy 0 "No" 1 "Yes"
@@ -590,34 +610,44 @@ and month converted into year's term.
 
 /*<_educy_note_>
 
-Education system in Ethiopia is:
+Original categorization of the highest educational level ever attended of 
+variable B_5 is:
 
-1) Primary - Elementary: 8 Years
-2) Secondary - Junior Secondary: 2 Years
-3) Vocational - (TVET) Level III Diploma: 3 Years
-4) Tertiary
-              - Bachelor of Education/Arts/Science: 3 Years (4 years before 1994 and 3 years after 1994)
-			  - Master : 1-3 Years
-			  - PhD: 3-7 Years
-			  
-Answers of "Diploma/Degree not completed" (cat21/22) were counted as 12 years of elementary plus 1 year of diploma or degree. 			  
+0	(no label)
+1	Sub-Standard A, Grade 1 and Nursery 1 ---> 1 year
+2	Standard 1, Grade 2 and Class 1 ---> 2 year
+3	Standard 2, Grade 3 and Class 2 ---> 3 year
+4	Standard 3, Grade 4 and Class 3 ---> 4 year
+5	Standard 4, Grade 5 and Class 4 ---> 5 year
+6	Standard 5, Grade 6 and Class 5 ---> 6 year
+7	Standard 6, Grade 6 and Class 6 ---> 6 year
+8	Grade 7 and JSS 1 ---> 7 year
+9	Form 1 and JSS 2 ---> 8 year
+10	Form 2 and JSS 3 ---> 9 year
+11	Form 3 and SSS 1 ---> 10 year
+12	Form 4 and SSS 2 ---> 11 year
+13	Form 5 (GCE), Form 6 Lower/SSS 3 ---> 12 year
+14	Form 6 Lower, Form 6 and Form 6 upper/SSS 4 ---> 13 year
+15	Form 6 Upper and GCE (A) ---> 13 year
+16	College Students  ---> 17 year
+17	University Undergraduate Students  ---> 17 year
+18	Certificates  ---> 17 year
+19	Diploma  ---> 17 year
+20	Post Graduate Diploma Students ---> 18 year
+21	Bachelors Degree ---> 17 year
+22	Masters Degree or Higher ---> 18 year
 *<_educy_note_>*/		  
 
 
 *<_educy_>
 	gen byte educy=.
-	replace educy=LF23 if LF23<=12
-	replace educy=15 if LF23==20 | LF23==23 | LF23==24
-	replace educy=13 if LF23==21 | LF23==22
-	replace educy=18 if LF23==25
-	replace educy=0 if LF22==2
-	replace educy=1 if  LF23==95 | LF23==96
-	replace educy=11 if LF23==20 & LF25==27
-	replace educy=12 if LF23==21 & LF25==27
-	replace educy=13 if LF23==23 & LF25==27
-	replace educy=0 if everattend==0
+	replace educy=B_5 if inrange(B_5,1,6)
+	replace educy=B_5-1 if inrange(B_5,7,14)
+	replace educy=13 if B_5==15
+	replace educy=17 if inlist(B_5,16,17,18,19,21)
+	replace educy=18 if B_5==20|B_5==22
 	replace educy=. if age<5
-	replace educy=age if educy>age & !mi(educy) & !mi(age)
+	replace educy=. if educy>age & !mi(educy) & !mi(age)
 	label var educy "Years of education"
 *</_educy_>
 
