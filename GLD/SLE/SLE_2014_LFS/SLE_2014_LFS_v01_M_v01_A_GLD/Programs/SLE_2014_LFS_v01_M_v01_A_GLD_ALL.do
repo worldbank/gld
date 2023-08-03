@@ -18,8 +18,8 @@
 <_Source of dataset_> 			Survey conducted by Statistics Sierra Leone (SSL) </_Source of dataset_>
 								Microdata is freely available on the public World Bank microdata library:https://microdata.worldbank.org/index.php/catalog/2687;
 								also the file is available on the SLE site: http://www.statistics.sl/index.php/what-we-offer/open-data-free-datasets.html
-<_Sample size (HH)_> 			 </_Sample size (HH)_>
-<_Sample size (IND)_> 			 </_Sample size (IND)_>
+<_Sample size (HH)_> 			4,199 </_Sample size (HH)_>
+<_Sample size (IND)_> 			25,645 </_Sample size (IND)_>
 <_Sampling method_> 			Stratified cluster sample 
 								with oversampling in urban areas. </_Sampling method_>
 <_Geographic coverage_> 		Nationally representative, covering 
@@ -259,10 +259,26 @@ local out_file "`level_2_harm'_ALL.dta"
 *</_subnatid1_>
 
 
+/*<_subnatid2_note_>
+
+4 EA codes have duplicates in different districts/cities because of the adjacency
+and therefore the respondents from different districts/cities were mixed up.
+
+We overwrote the mistaken districts. Total 30 observations were overwritten.
+
+*<_subnatid2_note_>*/
+
+
 *<_subnatid2_>
 	decode Z_7, gen(Z7lbl)
+	replace Z7lbl="24. Port Loko" if Z7lbl=="22. Kambia" & ea_code=="240203041"
+	replace Z7lbl="32. Bonthe" if Z7lbl=="31. Bo" & ea_code=="320504031"
+	replace Z7lbl="42. Western Urban" if Z7lbl=="41. Western Rural" & (ea_code=="420805102"|ea_code=="420806142")
 	replace Z7lbl=subinstr(Z7lbl,".", " -",1)
 	gen subnatid2=Z_7
+	replace subnatid2=24 if subnatid2==22&ea_code=="240203041"
+	replace subnatid2=32 if subnatid2==31&ea_code=="320504031"
+	replace subnatid2=42 if subnatid2==41&(ea_code=="420805102"|ea_code=="420806142")
 	labmask subnatid2, values(Z7lbl)
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
@@ -441,7 +457,7 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 
 *<_migrated_ref_time_>
-	gen migrated_ref_time=.
+	gen migrated_ref_time=99
 	label var migrated_ref_time "Reference time applied to migration questions"
 *</_migrated_ref_time_>
 
@@ -810,9 +826,9 @@ question as the latter have some errors.
 *<_lstatus_>
 	gen byte lstatus=.
 	gen temp=1 if D_2==1|D_2==2|D_2==3|D_3==1|D_3==2|D_4==1
-	
 	replace lstatus=1 if C_1A==1|C_1B==1|C_1C==1|C_1D==1
-	replace lstatus=2 if LF30==2 & LF46==1 & LF49==1
+	replace lstatus=1 if lstatus!=1&temp==1
+	replace lstatus=2 if temp!=1&lstatus!=1&D_5==1&D_9==1
 	replace lstatus=3 if lstatus==. 
 	replace lstatus=. if age<minlaborage
 	label var lstatus "Labor status"
@@ -825,15 +841,15 @@ question as the latter have some errors.
 Note: var "potential_lf" only takes value if the respondent is not in labor force. (lstatus==3)
 
 "potential_lf"=1 if the person is
-1)available but not searching or LF49==1 & LF46==2
-2)searching but not immediately available to work or LF49==2 & LF46==1
+1)available but not searching or D_9==1 & D_5==2
+2)searching but not immediately available to work or D_9==2 & D_5==1
 </_potential_lf_note_>*/
 
 
 *<_potential_lf_>
 	gen byte potential_lf=.
-	replace potential_lf=1 if [LF49==1 & LF46==2] | [LF49==2 & LF46==1]
-	replace potential_lf=0 if [LF49==1 & LF46==1] | [LF49==2 & LF46==2]
+	replace potential_lf=1 if [D_9==1 & D_5==2] | [D_9==2 & D_5==1]
+	replace potential_lf=0 if [D_9==1 & D_5==1] | [D_9==2 & D_5==2]
 	replace potential_lf=. if age < minlaborage
 	replace potential_lf=. if lstatus!=3
 	label var potential_lf "Potential labour force status"
@@ -844,9 +860,9 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_underemployment_>
 	gen byte underemployment=.
-	replace underemployment=1 if LF44==1
-	replace underemployment=0 if LF44==2
-	replace underemployment=. if age < minlaborage
+	replace underemployment=1 if I_1==1&inrange(I_7,1,3)
+	replace underemployment=0 if I_1==2
+	replace underemployment=. if age<minlaborage
 	replace underemployment=. if lstatus!=1
 	label var underemployment "Underemployment status"
 	la de lblunderemployment 0 "No" 1 "Yes"
@@ -855,8 +871,8 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_nlfreason_>
-	gen byte nlfreason=LF51
-	recode nlfreason (0 9=.) (2=1) (1=2) (7=3) (3=4) (4 5 6 8=5)
+	gen byte nlfreason=D_6
+	recode nlfreason (1/2=4) (3 6 8/15=5) (4=1) (5=3) (7=2)
 	replace nlfreason=. if lstatus!=3
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
@@ -864,25 +880,17 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 *</_nlfreason_>
 
 
-/*<_unempldur_note_>
-
-The duration is a single number in the questionnaire not a range.
-Therefore the upper and lower bounds are the same. 
-
-*<_unempldur_note_>*/
-
-
 *<_unempldur_l_>
-	gen byte unempldur_l=LF55
-	recode unempldur_l (96 97 98 99=.)
+	gen byte unempldur_l=D_8
+	recode unempldur_l (1=0) (2=1) (4=6) (5=12) (6=24)
 	replace unempldur_l=. if lstatus!=2
 	label var unempldur_l "Unemployment duration (months) lower bracket"
 *</_unempldur_l_>
 
 
 *<_unempldur_u_>
-	gen byte unempldur_u=LF55
-	recode unempldur_u (96 97 98 99=.)
+	gen byte unempldur_u=D_8
+	recode unempldur_u (2=3) (3=6) (4=12) (5=24) (6=.)
 	replace unempldur_u=. if lstatus!=2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
 *</_unempldur_u_>
@@ -893,23 +901,9 @@ Therefore the upper and lower bounds are the same.
 
 
 {
-/*<_empstat_note_>
-Definition of "Employees" please refer to the link below:
-
-chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/https://www.ilo.org/wcmsp5/groups/public/---dgreports/---stat/documents/meetingdocument/wcms_648693.pdf
-
-In the case of ETH, they have their own category 09 "Member of Co-operatives(Industrial/Agricultural)", which we 
-treated as "Paid employee".
-*<_empstat_note_>*/
-
-
 *<_empstat_>
-	gen byte empstat=.
-	replace empstat=1 if LF38<=4 
-	replace empstat=2 if inrange(LF38,7,9)
-	replace empstat=3 if LF38==5
-	replace empstat=4 if LF38==6
-	replace empstat=5 if LF38==10
+	gen byte empstat=E_9
+	recode empstat (2 8=1) (3 5=4) (6/7=5) (9=2)
 	replace empstat=. if lstatus!=1
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
@@ -918,10 +912,8 @@ treated as "Paid employee".
 
 
 *<_ocusec_>
-	gen byte ocusec=.
-	replace ocusec=1 if LF38==1
-	replace ocusec=4 if LF38==3 
-	replace ocusec=2 if LF38>=4 & LF38<=9
+	gen byte ocusec=E_10
+	recode ocusec (1/2=1) (3 8 10=4) (4=3) (5/7 9=2) 
 	replace ocusec=. if lstatus!=1
 	label var ocusec "Sector of activity primary job 7 day recall"
 	la de lblocusec 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
@@ -930,31 +922,23 @@ treated as "Paid employee".
 
 
 *<_industry_orig_>
-	gen industry_orig=LF36
+	gen industry_orig=E_4 
+	replace industry_orig=. if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
 
 *<_industrycat_isic_>
-	gen industrycat_isic=.
+	gen industrycat_isic=E_4 
+	tostring industrycat_isic, format(%04.0f) replace
+	replace industry_isic="" if lstatus!=1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
 
 *<_industrycat10_>
-	gen byte industrycat10=.
-	replace industrycat10=1 if LF36>=11 & LF36<=50
-	replace industrycat10=2 if LF36>=101 & LF36<=132
-	replace industrycat10=3 if LF36>=151 & LF36<=369
-	replace industrycat10=4 if LF36>=401 & LF36<=410
-	replace industrycat10=5 if LF36>=451 & LF36<=455
-	replace industrycat10=6 if LF36>=501 & LF36<=552
-	replace industrycat10=7 if LF36>=601 & LF36<=642
-	replace industrycat10=8 if LF36>=651 & LF36<=749 
-	replace industrycat10=9 if LF36>=751 & LF36<=753
-	replace industrycat10=10 if LF36>=801 & LF36<.
-	replace industrycat10=10 if industrycat10==. & LF36!=.
-	replace industrycat10=10 if LF36==999
+	gen long industrycat10=floor(E_4/100)
+	recode industrycat10 (2/3=1) (5/9=2) (10/33=3) (35/39=4) (41/43=5) (45/47 55/56=6) (49/53 58/63=7) (64/82=8) (84=9) (85/99=10)
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
@@ -972,20 +956,15 @@ treated as "Paid employee".
 
 
 *<_occup_orig_>
-	gen occup_orig=LF35
+	gen occup_orig=E_3
+	replace occup_orig=. if lstatus!=1
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
 
 *<_occup_isco_>
-	gen lf35=LF35*10 if LF35>20
-	replace lf35=. if lf35==9990
-	tostring lf35, replace
-	gen occup_isco=substr(lf35,1,2)
-	destring occup_isco, replace
-	replace occup_isco=occup_isco*100
-	tostring occup_isco, replace
-	replace occup_isco="" if lstatus!=1 | occup_isco=="." |occup_isco=="5400"
+	gen str4 occup_isco=string(E_3, "%04.0f") 
+	replace occup_isco="" if lstatus!=1 | occup_isco=="." 
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
@@ -1012,6 +991,12 @@ treated as "Paid employee".
 	 replace occup=4 if LF35>=411 & LF35<=422
 	 replace occup=5 if LF35>=511 & LF35<=524
 	 replace occup=6 if LF35>=611 & LF35<=621
+	 
+	 
+	 
+	 
+	 
+	 
 	 replace occup=7 if LF35>=711 & LF35<=744
 	 replace occup=8 if LF35>=811 & LF35<=834
 	 replace occup=9 if LF35>=911 & LF35<=933
