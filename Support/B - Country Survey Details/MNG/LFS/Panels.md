@@ -8,7 +8,7 @@ We have validated this approach through our panel analysis, in which we observed
 
 ![image](Utilities/issues_without_yr.png)
 
-It's crucial to incorporate the year as part of the household identifier to distinguish the unique household IDs each year. This addition proves particularly beneficial when forming a  panel, effectively resolving issues with non-consecutive person IDs and significantly decreasing inconsistencies in individual age and sex data.
+It's crucial to incorporate the year as part of the household identifier to distinguish the unique household IDs each year. This addition proves particularly beneficial when forming a  panel, effectively resolving issues with non-consecutive person IDs and significantly decreasing inconsistencies in individual age and sex data. This is also consistent with the approach used by [Donovan, Lu and Schoellman](Utilities/DLS_paper.pdf) in constructing the panel data for the Mongolia LFS. 
 
 ![image](Utilities/issues_with_yr.png)
 
