@@ -1129,6 +1129,7 @@ missing for work hours in the past week.
 {
 *<_empstat_2_>
 	gen byte empstat_2=.
+	replace empstat_2=1
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
 	la de lblempstat_2 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat_2 lblempstat
