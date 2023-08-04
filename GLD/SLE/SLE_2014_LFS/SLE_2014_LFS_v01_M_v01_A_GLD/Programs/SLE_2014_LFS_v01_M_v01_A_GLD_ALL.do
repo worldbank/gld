@@ -1208,7 +1208,9 @@ missing for work hours in the past week.
 
 
 *<_occup_2_>
-	gen occup_2=.
+	gen occup_2=floor(F_4/1000)
+	recode occup_2 (0=10)
+	replace occup_2=. if F_1!=1
 	label var occup_2 "1 digit occupational classification secondary job 7 day recall"
 	label values occup_2 lbloccup
 *</_occup_2_>
