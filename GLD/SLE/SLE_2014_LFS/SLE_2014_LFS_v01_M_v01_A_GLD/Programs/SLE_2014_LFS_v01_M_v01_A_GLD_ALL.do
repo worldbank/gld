@@ -984,34 +984,31 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_occup_>
-	 gen byte occup=.
-	 replace occup=1 if LF35>=111 & LF35<=131
-	 replace occup=2 if LF35>=211 & LF35<=246
-	 replace occup=3 if LF35>=311 & LF35<=346
-	 replace occup=4 if LF35>=411 & LF35<=422
-	 replace occup=5 if LF35>=511 & LF35<=524
-	 replace occup=6 if LF35>=611 & LF35<=621
-	 
-	 
-	 
-	 
-	 
-	 
-	 replace occup=7 if LF35>=711 & LF35<=744
-	 replace occup=8 if LF35>=811 & LF35<=834
-	 replace occup=9 if LF35>=911 & LF35<=933
-	 replace occup=10 if LF35==11
-	 replace occup=99 if LF35==999
+	 gen occup=floor(E_3/1000)
+	 recode occup (0=10)
 	 replace occup=. if lstatus!=1
-	 recode occup (0=10) 
 	 label var occup "1 digit occupational classification, primary job 7 day recall"
   	 la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	 label values occup lbloccup
 *</_occup_>
 
 
+/*<_wage_no_compen_note_>
+
+One observations has answered "000.821.000" to question E_19C, 
+payment in cash and was coded missing.
+
+*<_wage_no_compen_note_>*/
+
+
 *<_wage_no_compen_>
-	gen double wage_no_compen=.
+	destring E_19C, gen(cash_num) ignore(".") 
+	destring E_19D, gen(goods_num) ignore(".")
+	replace cash_num=. if E_19C=="000.821.000"
+	gen double wage_no_compen=cash_num+goods_num
+	replace wage_no_compen=wage_no_compen/E_19B if inlist(E_19A,1,2)
+	replace wage_no_compen=wage_no_compen/E_19B if E_19A==3&!inlist(E_19B,1,2)
+	replace wage_no_compen=wage_no_compen/E_19B if E_19A==4&!inlist(E_19B,1,2,3)
 	replace wage_no_compen=. if lstatus!=1
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
@@ -1019,16 +1016,41 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_unitwage_>
 	gen byte unitwage=.
+	replace unitwage=1 if E_19A==2
+	replace unitwage=2 if E_19A==3&E_19B!=2
+	replace unitwage=3 if E_19A==3&E_19B==2
+	replace unitwage=4 if E_19A==4&E_19B==2
+	replace unitwage=5 if E_19A==4&E_19B!=2&E_19B!=3
+	replace unitwage=6 if E_19A==4&E_19B==3
+	replace unitwage=9 if E_19A==4&E_19B==1
+	replace unitwage=. if lstatus!=1
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
 	label values unitwage lblunitwage
 *</_unitwage_>
 
 
+/*<_whours_note_>
+
+E_5 is the number of DAYs the respondent worked in the past week;
+E_6 is the average work hours per day in the past week. 
+
+90 observations worked more than 20 hours on average in the past week, 7 worked more
+than 24 hours which is impossible;
+and 1 observation worked 8 days in the past week which is also impossible.
+
+People who have already stated that they were temporarily not working were coded 
+missing for work hours in the past week.
+
+*<_whours_note_>*/
+
+
 *<_whours_>
-	gen whours=LF31T
+	gen day=E_5 if inrange(E_5,1,7) 
+	gen hour=E_6 if inrange(E_6,1,24)
+	gen whours=day*hour
+	replace whours=. if temp==1
 	replace whours=. if lstatus!=1
-	replace whours=. if LF31T==0
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -1047,6 +1069,8 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_contract_>
 	gen byte contract=.
+	replace contract=1 if !mi(E_12)
+	replace contract=0 if E_12==.&lstatus==1
 	replace contract=. if lstatus!=1
 	label var contract "Employment has contract primary job 7 day recall"
 	la de lblcontract 0 "Without contract" 1 "With contract"
