@@ -931,7 +931,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 *<_industrycat_isic_>
 	gen industrycat_isic=E_4 
 	tostring industrycat_isic, format(%04.0f) replace
-	replace industry_isic="" if lstatus!=1
+	replace industrycat_isic="" if lstatus!=1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
@@ -1080,6 +1080,8 @@ missing for work hours in the past week.
 
 *<_healthins_>
 	gen byte healthins=.
+	replace healthin=1 if E_18==1
+	replace healthin=0 if E_18==2
 	replace healthins=. if lstatus!=1
 	label var healthins "Employment has health insurance primary job 7 day recall"
 	la de lblhealthins 0 "Without health insurance" 1 "With health insurance"
@@ -1128,8 +1130,9 @@ missing for work hours in the past week.
 
 {
 *<_empstat_2_>
-	gen byte empstat_2=.
-	replace empstat_2=1
+	gen byte empstat_2=F_10 if inrange(F_10,1,9)
+	recode empstat_2 (2 8=1) (3 5=4) (6/7=5) (9=2)
+	replace empstat_2=. if lstatus!=1|F_1!=1
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
 	la de lblempstat_2 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat_2 lblempstat
@@ -1137,7 +1140,9 @@ missing for work hours in the past week.
 
 
 *<_ocusec_2_>
-	gen byte ocusec_2=.
+	gen byte ocusec_2=F_11 if inrange(F_11,1,10)
+	recode ocusec_2 (1/2=1) (3 8 10=4) (4=3) (5/7 9=2) 
+	replace ocusec_2=. if lstatus!=1|F_1!=1
 	label var ocusec_2 "Sector of activity secondary job 7 day recall"
 	la de lblocusec_2 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec_2 lblocusec_2
@@ -1145,19 +1150,24 @@ missing for work hours in the past week.
 
 
 *<_industry_orig_2_>
-	gen industry_orig_2=.
+	gen industry_orig_2=F_5
+	replace industry_orig_2=. if F_1!=1
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 
 
 *<_industrycat_isic_2_>
-	gen industrycat_isic_2=.
+	gen industrycat_isic_2=F_5
+	tostring industrycat_isic_2, format(%04.0f) replace
+	replace industrycat_isic_2="" if F_1!=1
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
 
 *<_industrycat10_2_>
-	gen byte industrycat10_2=.
+	gen long industrycat10_2=floor(F_5/100)
+	recode industrycat10_2 (2/3=1) (5/9=2) (10/33=3) (35/39=4) (41/43=5) (45/47 55/56=6) (49/53 58/63=7) (64/82=8) (84=9) (85/99=10)
+	replace industrycat10_2=. if F_1!=1
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
 *</_industrycat10_2_>
@@ -1172,19 +1182,27 @@ missing for work hours in the past week.
 
 
 *<_occup_orig_2_>
-	gen occup_orig_2=.
+	gen occup_orig_2=F_4
+	replace occup_orig_2=. if F_1!=1
 	label var occup_orig_2 "Original occupation record secondary job 7 day recall"
 *</_occup_orig_2_>
 
 
 *<_occup_isco_2_>
-	gen occup_isco_2=.
+	gen str4 occup_isco_2=string(F_4,"%04.0f")
+	replace occup_isco_2="" if F_1!=1
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
 
 *<_occup_skill_2_>
+	gen skill_level_2=substr(occup_isco_2,1,1)
+	destring skill_level_2, replace 
 	gen occup_skill_2=.
+	replace occup_skill_2=1 if skill_level_2==9
+	replace occup_skill_2=2 if inrange(skill_level_2,4,8)
+	replace occup_skill_2=3 if inrange(skill_level_2,1,3)
+	replace occup_skill_2=. if skill_level_2==0|F_1!=1
 	label var occup_skill_2 "Skill based on ISCO standard secondary job 7 day recall"
 *</_occup_skill_2_>
 
