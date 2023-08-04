@@ -995,8 +995,11 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 /*<_wage_no_compen_note_>
 
-One observations has answered "000.821.000" to question E_19C, 
-payment in cash and was coded missing.
+One observations has answered "000.821.000" to question E_19C, and one 
+"000.000.000" to question E_19D were coded missing.
+
+In the questionnaire, "000,000,088" is an indication of greater than or equal to 
+1 billion Leones whereas zero means no payment.
 
 *<_wage_no_compen_note_>*/
 
@@ -1217,7 +1220,10 @@ missing for work hours in the past week.
 
 
 *<_wage_no_compen_2_>
-	gen double wage_no_compen_2=.
+	destring (F_20C), gen(cash_2)
+	destring (F_20D), gen(goods_2)
+	gen double wage_no_compen_2=cash_2+goods_2
+	replace wage_no_compen_2=. if F_1!=1
 	label var wage_no_compen_2 "Last wage payment secondary job 7 day recall"
 *</_wage_no_compen_2_>
 
