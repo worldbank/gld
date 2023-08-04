@@ -11,7 +11,8 @@ The GLD codes the harmonization’s `lstatus’ variable based on the concept us
 Currently, the code used to create the `lstatus` variable (which distinguishes between employment, unemployment, and out of the labour force) is the following:
 
 ```
-  ************************
+*<_lstatus_>
+  	************************
 	* Define the employed
 	************************
 	* E1: Work for wage
@@ -53,19 +54,19 @@ Currently, the code used to create the `lstatus` variable (which distinguishes b
 
 # Coding to convert the 2019, 2020 and 2021 LFS to the old definition
 
-In converting back to the old definition, the approach adopted here is simply to cast a wide net and include all individuals regardless of whether the intention for economic activity is for sale or for own consumption. The code below allowed us to replicate the estimates of the employed by the ILO for 2019 onwards:
+In converting back to the old definition, the approach adopted here is simply to cast a wide net and include all individuals regardless of whether the intention for economic activity is for sale or for own consumption. The code below would allow us to try to replicate the estimates of the employed by the ILO for 2019 onwards:
 
-``
-  ************************
+```
+ 	************************
 	* Define the employed
 	************************
-  * E1: Engaged in wage employment, or business/support activity in agriculture or non-agriculture
-  gen lstatus = 1 if B04 == 1 | B05 == 1 | B06 == 1
-
-  * E2: Individual continues to get paid despite of absence from work
+	* E1: Engaged in wage employment, or business/support activity in agriculture or non-agriculture
+	gen lstatus = 1 if B04 == 1 | B05 == 1 | B06 == 1
+	
+	* E2: Individual continues to get paid despite of absence from work
 	replace lstatus = 1 if C06 == 1
 
-  * E3: Individual is engaged in agricultural or non-agricultural activities regardless of intention to sell
+	* E3: Individual is engaged in agricultural or non-agricultural activities regardless of intention to sell
 	replace lstatus = 1 if inrange(D01A, 1, 5) | inrange(D01B, 1, 4)
 
 	************************
@@ -83,7 +84,6 @@ In converting back to the old definition, the approach adopted here is simply to
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
-
 ```
 
 
