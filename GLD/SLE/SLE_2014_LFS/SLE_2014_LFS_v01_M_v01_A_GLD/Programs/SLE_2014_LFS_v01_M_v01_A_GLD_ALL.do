@@ -1098,23 +1098,17 @@ missing for work hours in the past week.
 
 *<_union_>
 	gen byte union=.
+	replace union=1 if inrange(H_1,1,3)
+	replace union=0 if H_1==4
+	replace union=. if lstatus!=1
 	label var union "Union membership at primary job 7 day recall"
 	la de lblunion 0 "Not union member" 1 "Union member"
 	label values union lblunion
 *</_union_>
 
 
-/*<_firmsize_l_note_>
-Only two options available for question LF40:
-1. 10 and above
-2. Below 10  
-*<_firmsize_l_note_>*/
-
-
 *<_firmsize_l_>
 	gen byte firmsize_l=.
-	replace firmsize_l=10 if LF40==1
-	replace firmsize_l=0 if LF40==2
 	replace firmsize_l=. if lstatus!=1
 	label var firmsize_l "Firm size (lower bracket) primary job 7 day recall"
 *</_firmsize_l_>
@@ -1122,7 +1116,6 @@ Only two options available for question LF40:
 
 *<_firmsize_u_>
 	gen byte firmsize_u=.
-	replace firmsize_u=9 if LF40==2
 	replace firmsize_u=. if lstatus!=1
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>
