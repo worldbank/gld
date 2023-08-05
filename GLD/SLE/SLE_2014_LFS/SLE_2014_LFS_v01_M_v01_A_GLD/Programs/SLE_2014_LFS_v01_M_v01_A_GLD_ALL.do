@@ -85,8 +85,8 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	use "`path_in_stata'\merged A to J de-ID.dta", clear
-
+	*use "`path_in_stata'\merged A to J de-ID.dta", clear
+use "C:\Users\IrIs_\OneDrive\Desktop\WB\Jobs Group\FY2023\SLE\SLE\SLE_2014_LFS\SLE_2014_LFS_V01_M\Data\Stata\merged A to J de-ID.dta"
 *Note that the original definition of "LFS eligible" in the SLE survey is:
 *1) Age is 5 and above and;
 *2) Spent at least 4 nights in the household during the past 4 weeks
@@ -270,11 +270,13 @@ We overwrote the mistaken districts. Total 30 observations were overwritten.
 
 
 *<_subnatid2_>
-	decode Z_7, gen(Z7lbl)
-	replace Z7lbl="Port Loko" if Z7lbl=="Kambia" & ea_code=="240203041"
-	replace Z7lbl="Bonthe" if Z7lbl=="Bo" & ea_code=="320504031"
-	replace Z7lbl="Western Urban" if Z7lbl=="Western Rural" & (ea_code=="420805102"|ea_code=="420806142")
-	replace Z7lbl=subinstr(Z7lbl,".", " -",1)
+	gen z7code=string(Z_7,"%02.0f")
+	decode Z_7, gen(z7lbl)
+	egen Z7lbl=concat(z7code z7lbl), punct(" - ")
+	replace Z7lbl="24 - Port Loko" if Z7lbl=="22 - Kambia" & ea_code=="240203041"
+	replace Z7lbl="32 - Bonthe" if Z7lbl=="31 - Bo" & ea_code=="320504031"
+	replace Z7lbl="42 - Western Urban" if Z7lbl=="41 - Western Rural" & (ea_code=="420805102"|ea_code=="420806142")
+	
 	gen subnatid2=Z_7
 	replace subnatid2=24 if subnatid2==22&ea_code=="240203041"
 	replace subnatid2=32 if subnatid2==31&ea_code=="320504031"
@@ -548,37 +550,16 @@ and month converted into year's term.
 
 
 *<_migrated_from_code_>
-	preserve
-	collapse (first) LF01 LF02, by(subnatid1_proposal subnatid2_proposal)
-	gen mh_lev_1=LF01 
-	gen mh_lev_2=LF02
-	gen mh_s1=subnatid1_proposal
-	gen mh_s2=subnatid2_proposal
-	tempfile subnatid_lev_2
-	save "`subnatid_lev_2'"
-	
-	collapse (first) mh_*, by(subnatid1_proposal)
-	tempfile subnatid_lev_1
-	save "`subnatid_lev_1'"
-	
-	restore
-	merge m:1 LF01 LF02 using "`subnatid_lev_2'", assert(match) keepusing(subnatid1_proposal subnatid2_proposal) nogen
-
-	gen migrated_from_code=""
-	gen mh_lev_1=LF18 if migrated_from_cat==4
-	merge m:1 mh_lev_1 using "`subnatid_lev_1'", assert(master match) keepusing(mh_s1) nogen
-	replace migrated_from_code=mh_s1 if migrated_from_cat==4
-	
-	gen mh_m_code_corr_same_admin1=string(LF18) + "." + string(LF19) if migrated_from_cat==3	
-	replace migrated_from_code=mh_m_code_corr_same_admin1 if migrated_from_cat==3
-	
-	replace migrated_from_code=subnatid2_proposal if migrated_from_cat==2
-	drop mh_*
-	replace migrated_from_code="" if migrated_binary!=1
-	replace migrated_from_code="" if age<migrated_mod_age
+	gen migrated_from_code=B_21 if migrated_from_cat==2 
+	replace migrated_from_code=migregion if inlist(migrated_from_cat,3,4) 
+	replace migrated_from_code=. if migrated_from_cat==5
+	replace migrated_from_code=. if migrated_binary!=1
+	replace migrated_from_code=. if age<migrated_mod_age
+	label de lblmigcode 1 "1.Eastern" 2 "2.Northern" 3 "3.Southern" 4 "4.Western Area" 12 "12. Kenema" 13 "13. Kono" 21 "21. Bombali" 22 "22. Kambia" 23 "23. Koinadugu" 24 "24. Port Loko" 25 "25. Tonkolili" 31 "31. Bo" 32 "32. Bonthe" 33 "33. Moyamba" 34 "34. Pujehun" 41 "41. Western Rural" 42 "42. Western Urban"
+	label values migrated_from_code lblmigcode
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
 	
-	drop migyear migregion migdis
+	drop migyear migregion migdis 
 *</_migrated_from_code_>
 
 
@@ -619,7 +600,6 @@ and month converted into year's term.
 
 
 {
-
 *<_ed_mod_age_>
 	gen byte ed_mod_age=5
 	label var ed_mod_age "Education module application age"
@@ -1359,7 +1339,7 @@ labor status unemployed and non-labor force, nor potential labor force.
 
 *<_lstatus_year_>
 	gen byte lstatus_year=.
-	replace lstatus_year=. if age < minlaborage & age != .
+	replace lstatus_year=. if age<minlaborage & age!= .
 	label var lstatus_year "Labor status during last year"
 	la de lbllstatus_year 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus_year lbllstatus_year
@@ -1368,8 +1348,8 @@ labor status unemployed and non-labor force, nor potential labor force.
 
 *<_potential_lf_year_>
 	gen byte potential_lf_year=.
-	replace potential_lf_year=. if age < minlaborage & age != .
-	replace potential_lf_year = . if lstatus_year != 3
+	replace potential_lf_year=. if age<minlaborage&age!= .
+	replace potential_lf_year=. if lstatus_year!= 3
 	label var potential_lf_year "Potential labour force status"
 	la de lblpotential_lf_year 0 "No" 1 "Yes"
 	label values potential_lf_year lblpotential_lf_year
@@ -1377,9 +1357,9 @@ labor status unemployed and non-labor force, nor potential labor force.
 
 
 *<_underemployment_year_>
-	gen byte underemployment_year =.
-	replace underemployment_year = . if age < minlaborage & age != .
-	replace underemployment_year = . if lstatus_year == 1
+	gen byte underemployment_year=.
+	replace underemployment_year=. if age<minlaborage&age!=.
+	replace underemployment_year=. if lstatus_year==1
 	label var underemployment_year "Underemployment status"
 	la de lblunderemployment_year 0 "No" 1 "Yes"
 	label values underemployment_year lblunderemployment_year
@@ -1410,7 +1390,6 @@ labor status unemployed and non-labor force, nor potential labor force.
 *----------8.7: 12 month reference main job------------------------------*
 
 {
-
 *<_empstat_year_>
 	gen byte empstat_year=G_10 
 	recode empstat_year (2 8=1) (3 5=4) (6/7=5) (9=2)
@@ -1547,6 +1526,9 @@ labor status unemployed and non-labor force, nor potential labor force.
 
 *<_contract_year_>
 	gen byte contract_year=.
+	replace contract_year=1 if !mi(G_13)
+	replace contract_year=0 if G_1==1&mi(G_13)
+	replace contract_year=. if G_1!=1
 	label var contract_year "Employment has contract primary job 12 month recall"
 	la de lblcontract_year 0 "Without contract" 1 "With contract"
 	label values contract_year lblcontract_year
@@ -1554,7 +1536,9 @@ labor status unemployed and non-labor force, nor potential labor force.
 
 
 *<_healthins_year_>
-	gen byte healthins_year=.
+	gen byte healthins_year=1 if G_19==1
+	replace healthins_year=0 if G_19==2
+	replace healthins_year=. if G_1!=1
 	label var healthins_year "Employment has health insurance primary job 12 month recall"
 	la de lblhealthins_year 0 "Without health insurance" 1 "With health insurance"
 	label values healthins_year lblhealthins_year
@@ -1694,6 +1678,7 @@ labor status unemployed and non-labor force, nor potential labor force.
 	label var wage_total_2_year "Annualized total wage secondary job 12 month recall"
 *</_wage_total_2_year_>
 
+
 *<_firmsize_l_2_year_>
 	gen byte firmsize_l_2_year=.
 	label var firmsize_l_2_year "Firm size (lower bracket) secondary job 12 month recall"
@@ -1716,10 +1701,12 @@ labor status unemployed and non-labor force, nor potential labor force.
 	label var t_hours_others_year "Annualized hours worked in all but primary and secondary jobs 12 month recall"
 *</_t_hours_others_year_>
 
+
 *<_t_wage_nocompen_others_year_>
 	gen t_wage_nocompen_others_year=.
 	label var t_wage_nocompen_others_year "Annualized wage in all but primary & secondary jobs excl. bonuses, etc. 12 month recall)"
 *</_t_wage_nocompen_others_year_>
+
 
 *<_t_wage_others_year_>
 	gen t_wage_others_year=.
@@ -1753,6 +1740,8 @@ labor status unemployed and non-labor force, nor potential labor force.
 
 *<_njobs_>
 	gen njobs=.
+	replace njobs=1 if lstatus==1&F_1!=1
+	replace njobs=2 if lstatus==1&F_1==1
 	replace njobs=. if lstatus!=1
 	label var njobs "Total number of jobs"
 *</_njobs_>
@@ -1874,6 +1863,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`path_output'\\`level_2_harm'_ALL.dta", replace
+*save "`path_output'\\`level_2_harm'_ALL.dta", replace
 
 *</_% SAVE_>
