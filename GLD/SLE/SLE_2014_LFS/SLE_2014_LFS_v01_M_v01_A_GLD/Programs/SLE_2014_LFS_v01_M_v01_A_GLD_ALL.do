@@ -85,8 +85,8 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	*use "`path_in_stata'\merged A to J de-ID.dta", clear
-use "C:\Users\IrIs_\OneDrive\Desktop\WB\Jobs Group\FY2024\SLE\SLE\SLE_2014_LFS\SLE_2014_LFS_V01_M\Data\Stata\merged A to J de-ID.dta"
+	use "`path_in_stata'\merged A to J de-ID.dta", clear
+
 *Note that the original definition of "LFS eligible" in the SLE survey is:
 *1) Age is 5 and above and;
 *2) Spent at least 4 nights in the household during the past 4 weeks
@@ -1878,6 +1878,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-*save "`path_output'\\`level_2_harm'_ALL.dta", replace
+save "`path_output'\\`level_2_harm'_ALL.dta", replace
 
 *</_% SAVE_>
