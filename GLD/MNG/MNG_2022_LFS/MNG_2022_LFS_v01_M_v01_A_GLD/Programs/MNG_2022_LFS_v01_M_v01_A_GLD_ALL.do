@@ -5,7 +5,7 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				MNG_2021_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
+<_Program name_>				MNG_2022_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata 17 <_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
 <_Date created_>				2023-07-11 </_Date created_>
@@ -14,13 +14,13 @@
 
 <_Country_>						MNG </_Country_>
 <_Survey Title_>				Mongolia Labor Force Survey </_Survey Title_>
-<_Survey Year_>					2021 </_Survey Year_>
+<_Survey Year_>					2022 </_Survey Year_>
 <_Study ID_>					[Microdata Library ID if present] </_Study ID_>
-<_Data collection from_>		01/2021 </_Data collection from_>
-<_Data collection to_>			12/2021 </_Data collection to_>
+<_Data collection from_>		01/2022 </_Data collection from_>
+<_Data collection to_>			12/2022 </_Data collection to_>
 <_Source of dataset_> 			Mongolia NSO </_Source of dataset_>
-<_Sample size (HH)_> 			6,157 </_Sample size (HH)_>
-<_Sample size (IND)_> 			21,102 </_Sample size (IND)_>
+<_Sample size (HH)_> 			6,957 </_Sample size (HH)_>
+<_Sample size (IND)_> 			24,120 </_Sample size (IND)_>
 <_Sampling method_> 			2 stage sampling with quarterly sample PSUs rotated. For every new quarter, 25% is replaced and 75% is matched between quarters   </_Sampling method_>
 <_Geographic coverage_> 		National </_Geographic coverage_>
 <_Currency_> 					[Currency used for wages] </_Currency_>
@@ -57,7 +57,7 @@ set mem 800m
 * Define path sections
 local server  "Y:/GLD-Harmonization/510859_AS"
 local country  "MNG"
-local year  "2021"
+local year  "2022"
 local survey  "LFS"
 local vermast  "V01"
 local veralt  "V01"
@@ -79,7 +79,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
-use "`path_in_stata'/LFS_DATA_2021_ENG.dta", clear
+use "`path_in_stata'/2. LFS-2022_data_eng.dta", clear
 
 
 /*%%=============================================================================================
@@ -132,7 +132,7 @@ use "`path_in_stata'/LFS_DATA_2021_ENG.dta", clear
 
 
 *<_year_>
-	gen int year=2021
+	gen int year=2022
 	label var year "Year of survey"
 *</_year_>
 
@@ -156,7 +156,7 @@ use "`path_in_stata'/LFS_DATA_2021_ENG.dta", clear
 
 
 *<_int_year_>
-	gen int int_year= 2021
+	gen int int_year= 2022
 	label var int_year "Year of the interview"
 *</_int_year_>
 
@@ -179,7 +179,7 @@ use "`path_in_stata'/LFS_DATA_2021_ENG.dta", clear
 
 
 *<_pid_>
-	gen ind_str = string(P02, "%02.0f")
+	gen ind_str = string(P01, "%02.0f")
 	gen  pid = hhid + ind_str
 	
 	* A1C asks if individual is eligible to participate in the survey. Drop if ineligible
@@ -187,7 +187,7 @@ use "`path_in_stata'/LFS_DATA_2021_ENG.dta", clear
 	
 	* Also drop if household has missing information
 	duplicates tag pid, gen(tag)
-	drop if tag>=1 & missing(P03) // do not have response in almost every question!
+	drop if tag>=1 & missing(P01) // do not have response in almost every question!
 	
 	* Still there are individuals with tags that are duplicates, but seems that they are actual duplicates
 	* If we check the HH size, it is just two, but we have four with a pair of members with similar individual information
@@ -198,7 +198,7 @@ use "`path_in_stata'/LFS_DATA_2021_ENG.dta", clear
 
 
 *<_weight_>
-	gen weight = WeightY
+	gen weight = weight_years
 	label var weight "Survey sampling weight"
 *</_weight_>
 
@@ -216,7 +216,7 @@ use "`path_in_stata'/LFS_DATA_2021_ENG.dta", clear
 
 
 *<_strata_>
-	gen strata = .
+	gen strata = stratum
 	label var strata "Strata"
 *</_strata_>
 
@@ -245,44 +245,36 @@ use "`path_in_stata'/LFS_DATA_2021_ENG.dta", clear
 
 
 *<_subnatid1_>
-	gen subnatid1= ""
-	replace subnatid1 = "1 - Ulaanbaatar" if AXCAIMAGCODE == 11
-	replace subnatid1 = "2 - Central" if inrange(AXCAIMAGCODE, 41, 48)
-	replace subnatid1 = "3 - East" if inrange(AXCAIMAGCODE, 21, 23)
-	replace subnatid1 = "4 - West" if inrange(AXCAIMAGCODE, 81, 85)
-	replace subnatid1 = "5 -  Highlands" if inrange(AXCAIMAGCODE, 61, 67)
+	recode strata (20 = 21) (21 = 22) (22/29 = 20)
+	gen region=4 if strata ==2 | strata ==5 | strata ==9 | strata ==15 | strata ==16
+	replace region=5 if strata ==1 | strata ==3 | strata ==4 | strata ==10 | strata ==17 | strata ==21
+	replace region=2 if strata ==6 | strata ==8 | strata ==11 | strata ==13 | strata ==14 | strata ==19 | strata ==22
+	replace region=3 if strata ==7 | strata ==12 | strata ==18
+	replace region=1 if strata ==20
+	la de lblreg 1 "Ulaanbaatar" 2 "Central" 3 "East" 4 "West" 5 " Highlands"  
+	label values region lblreg
+	
+	sdecode region, gen(region_str)
+	tostring region, gen(regnum)
 
-	label var subnatid1 "Subnational ID at First Administrative Level"
+	gen subnatid1= regnum + " - " + region_str
+
+	label var subnatid1 "Subnational ID at First administrative Level"
 *</_subnatid1_>
 
 
-
 *<_subnatid2_>
-	gen subnatid2 = ""
-	replace subnatid2 = "20 - Ulaanbaatar" if AXCAIMAGCODE == 11
-	replace subnatid2 = "7 - Dornod" if AXCAIMAGCODE == 21
-	replace subnatid2 = "18 - Hentii" if AXCAIMAGCODE == 23
-	replace subnatid2 = "14 - Tuv" if AXCAIMAGCODE == 41
-	replace subnatid2 = "22 - Govi-sumber" if AXCAIMAGCODE == 42
-	replace subnatid2 = "13 - Selenge" if AXCAIMAGCODE == 43
-	replace subnatid2 = "6 - Dornogovi" if AXCAIMAGCODE == 44
-	replace subnatid2 = "19 - Darhan-Uul" if AXCAIMAGCODE == 45
-	replace subnatid2 = "11 - Umnugovi" if AXCAIMAGCODE == 46
-	replace subnatid2 = "8 - Dundgovi" if AXCAIMAGCODE == 48
-	replace subnatid2 = "21 - Orhon" if AXCAIMAGCODE == 61
-	replace subnatid2 = "10 - Uvurhangai" if AXCAIMAGCODE == 62
-	replace subnatid2 = "4 - Bulgan" if AXCAIMAGCODE == 63
-	replace subnatid2 = "3 - Bayanhongor" if AXCAIMAGCODE == 64
-	replace subnatid2 = "1 - Arhangai" if AXCAIMAGCODE == 65
-	replace subnatid2 = "17 - Huvsgul" if AXCAIMAGCODE == 67
-	replace subnatid2 = "9 - Zavhan" if AXCAIMAGCODE == 81
-	replace subnatid2 = "5 - Govi-Altai" if AXCAIMAGCODE == 82
-	replace subnatid2 = "2 - Bayan-Ulgii" if AXCAIMAGCODE == 83
-	replace subnatid2 = "16 - Hovd" if AXCAIMAGCODE == 84
-	replace subnatid2 = "15 - Uvs" if AXCAIMAGCODE == 85
-
+	la de lblsubnatid2 1 "Arhangai" 2 "Bayan-Ulgii" 3 "Bayanhongor" 4 "Bulgan" 5 "Govi-Altai" 6 "Dornogovi" 7 "Dornod" 8 "Dundgovi" 9 "Zavhan" 10 "Uvurhangai" 11 "Umnugovi" 12 "Suhbaatar" 13 "Selenge" 14 "Tuv" 15 "Uvs" 16 "Hovd" 17 "Huvsgul" 18 "Hentii" 19 "Darhan-Uul" 20 "Ulaanbaatar" 21 "Orhon" 22 "Govi-sumber"
+	label values strata lblsubnatid2
+	
+	
+	sdecode strata, gen(divname_str)
+	tostring strata, gen(divnum)
+	
+	gen subnatid2 = divnum + " - " + divname_str
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
+
 
 
 *<_subnatid3_>
@@ -480,8 +472,8 @@ The official report breaks down the estimates for labor market indicators by pro
 
 *<_migrated_years_>
 * Note here that the code was mistaken! A18A is labelled as "month" of migration, but this is actually the year
-	assert A18A<=2021 if !missing(A18A)
-	gen migrated_years = 2021 - A18A
+	assert A18B<=2022 if !missing(A18B)
+	gen migrated_years = 2022 - A18B
 	label var migrated_years "Years since latest migration"
 *</_migrated_years_>
 
@@ -499,7 +491,35 @@ The official report breaks down the estimates for labor market indicators by pro
 
 *<_migrated_from_cat_>
 	gen migrated_from_cat = .
-	replace migrated_from_cat = 2 if A19B == AXCAIMAGCODE
+	
+	* Make province codes consistent with subnatid2
+	destring A19B, replace
+	gen a19b_rc = ""
+	replace a19b_rc = "20 - Ulaanbaatar" if A19B == 11
+	replace a19b_rc = "7 - Dornod" if A19B == 21
+	replace a19b_rc = "18 - Hentii" if A19B == 23
+	replace a19b_rc = "14 - Tuv" if A19B == 41
+	replace a19b_rc = "22 - Govi-sumber" if A19B == 42
+	replace a19b_rc = "13 - Selenge" if A19B == 43
+	replace a19b_rc = "6 - Dornogovi" if A19B == 44
+	replace a19b_rc = "19 - Darhan-Uul" if A19B == 45
+	replace a19b_rc = "11 - Umnugovi" if A19B == 46
+	replace a19b_rc = "8 - Dundgovi" if A19B == 48
+	replace a19b_rc = "21 - Orhon" if A19B == 61
+	replace a19b_rc = "10 - Uvurhangai" if A19B == 62
+	replace a19b_rc = "4 - Bulgan" if A19B == 63
+	replace a19b_rc = "3 - Bayanhongor" if A19B == 64
+	replace a19b_rc = "1 - Arhangai" if A19B == 65
+	replace a19b_rc = "17 - Huvsgul" if A19B == 67
+	replace a19b_rc = "9 - Zavhan" if A19B == 81
+	replace a19b_rc = "5 - Govi-Altai" if A19B == 82
+	replace a19b_rc = "2 - Bayan-Ulgii" if A19B == 83
+	replace a19b_rc = "16 - Hovd" if A19B == 84
+	replace a19b_rc = "15 - Uvs" if A19B == 85
+	replace a19b_rc = "" if A19B == 99
+	
+	
+	replace migrated_from_cat = 2 if a19b_rc == subnatid2
 	
 	* Need to create a helper variable that identifies the subnatid1 of the province of previous residence
 	gen  subnatid1_pr = ""
@@ -522,52 +542,14 @@ The official report breaks down the estimates for labor market indicators by pro
 
 
 *<_migrated_from_code_>
-	gen migrated_from_code = ""
-	replace migrated_from_code = "20 - Ulaanbaatar" if A19B == 11
-	replace migrated_from_code = "7 - Dornod" if A19B == 21
-	replace migrated_from_code = "18 - Hentii" if A19B == 23
-	replace migrated_from_code = "14 - Tuv" if A19B == 41
-	replace migrated_from_code = "22 - Govi-sumber" if A19B == 42
-	replace migrated_from_code = "13 - Selenge" if A19B == 43
-	replace migrated_from_code = "6 - Dornogovi" if A19B == 44
-	replace migrated_from_code = "19 - Darhan-Uul" if A19B == 45
-	replace migrated_from_code = "11 - Umnugovi" if A19B == 46
-	replace migrated_from_code = "8 - Dundgovi" if A19B == 48
-	replace migrated_from_code = "21 - Orhon" if A19B == 61
-	replace migrated_from_code = "10 - Uvurhangai" if A19B == 62
-	replace migrated_from_code = "4 - Bulgan" if A19B == 63
-	replace migrated_from_code = "3 - Bayanhongor" if A19B == 64
-	replace migrated_from_code = "1 - Arhangai" if A19B == 65
-	replace migrated_from_code = "17 - Huvsgul" if A19B == 67
-	replace migrated_from_code = "9 - Zavhan" if A19B == 81
-	replace migrated_from_code = "5 - Govi-Altai" if A19B == 82
-	replace migrated_from_code = "2 - Bayan-Ulgii" if A19B == 83
-	replace migrated_from_code = "16 - Hovd" if A19B == 84
-	replace migrated_from_code = "15 - Uvs" if A19B == 85
-	replace migrated_from_code = "" if A19B == 99
-
+	gen migrated_from_code = a19b_rc
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
 *</_migrated_from_code_>
 
 
 *<_migrated_from_country_>
-	encode A19A, gen(ccc)
+* Not available for this year
 	gen migrated_from_country = ""
-
-	* Using Google Translate
-	replace migrated_from_country = "USA" if inlist(ccc, 1, 2, 20)
-	replace migrated_from_country = "GBR" if ccc == 3
-	replace migrated_from_country = "RUS" if inlist(ccc, 10, 11, 13, 22, 26, 27)
-	replace migrated_from_country = "KAZ" if inlist(ccc, 5, 6, 7, 8, 9, 23, 24, 25)
-	replace migrated_from_country = "KOR" if inlist(ccc, 14, 17, 28)
-	replace migrated_from_country = "TUR" if inlist(ccc, 18, 19, 29)
-	replace migrated_from_country = "DEU" if ccc == 21
-	replace migrated_from_country = "HUN" if ccc == 30
-	replace migrated_from_country = "CHN" if ccc == 31
-	replace migrated_from_country = "JPN" if inlist(ccc, 32, 33)
-
-	drop ccc
-
 	label var migrated_from_country "Code of migration country (ISO 3 Letter Code)"
 *</_migrated_from_country_>
 
@@ -886,7 +868,7 @@ foreach v of local ed_var {
 
 *<_ocusec_>
 	gen byte ocusec=E24
-	recode ocusec 3=1 4/8=2 1/2=3
+	recode ocusec (11 20/30 76/92 = 2) (69 75 = 1) (10 = 4) (13 14 68 = 3) (93 98 = .) 
 	replace ocusec=. if lstatus!=1
 	label var ocusec "Sector of activity primary job 7 day recall"
 	la de lblocusec 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
@@ -902,26 +884,29 @@ foreach v of local ed_var {
 
 *<_industrycat_isic_>
 	gen industrycat_isic = string(industry_orig, "%04.0f") if !missing(industry_orig)
+
 	* Replace the codes to 3-digit
-	replace industrycat_isic = "5610" if industrycat_isic == "5611"
 	replace industrycat_isic = "3510" if industrycat_isic == "3511"
 	replace industrycat_isic = "8510" if industrycat_isic == "8511"
-	replace industrycat_isic = "5510" if industrycat_isic == "5511"
-	replace industrycat_isic = "3600" if industrycat_isic == "3601"
-	replace industrycat_isic = "7210" if industrycat_isic == "7211"
-	replace industrycat_isic = "6120" if industrycat_isic == "6121"
-	replace industrycat_isic = "0990" if industrycat_isic == "0991"
-	replace industrycat_isic = "0510" if industrycat_isic == "0511"
-	replace industrycat_isic = "3530" if industrycat_isic == "3531"
-	replace industrycat_isic = "9000" if industrycat_isic == "9001"
-	replace industrycat_isic = "6510" if industrycat_isic == "6513"
-	replace industrycat_isic = "4210" if industrycat_isic == "4211"
-	replace industrycat_isic = "4100" if industrycat_isic == "4101"
-	replace industrycat_isic = "4620" if industrycat_isic == "4621"
-	replace industrycat_isic = "1390" if industrycat_isic == "1395"
-	replace industrycat_isic = "4520" if industrycat_isic == "4521"
 	replace industrycat_isic = "1610" if industrycat_isic == "1611"
+	replace industrycat_isic = "4620" if industrycat_isic == "4621"
+	replace industrycat_isic = "5610" if industrycat_isic == "5611"
+	replace industrycat_isic = "4100" if industrycat_isic == "4101"
+	replace industrycat_isic = "4210" if industrycat_isic == "4211"
+	replace industrycat_isic = "0510" if industrycat_isic == "0511"
+	replace industrycat_isic = "1390" if industrycat_isic == "1395"
+	replace industrycat_isic = "0990" if industrycat_isic == "0991"
+	replace industrycat_isic = "7210" if industrycat_isic == "7211"
+	replace industrycat_isic = "9000" if industrycat_isic == "9001"
+	replace industrycat_isic = "6120" if industrycat_isic == "6121"
+	replace industrycat_isic = "5510" if industrycat_isic == "5511"
+	replace industrycat_isic = "1030" if industrycat_isic == "1031"
+	replace industrycat_isic = "6510" if industrycat_isic == "6513"
+	replace industrycat_isic = "3600" if industrycat_isic == "3601"
+	replace industrycat_isic = "5310" if industrycat_isic == "5311"
+	replace industrycat_isic = "3530" if industrycat_isic == "3531"
 	replace industrycat_isic = "7110" if industrycat_isic == "7111"
+	replace industrycat_isic = "4520" if industrycat_isic == "4521"
 	* Replace the codes to 2-digit
 	replace industrycat_isic = "0700" if industrycat_isic == "0730"
 	replace industrycat_isic = "1700" if industrycat_isic == "1710"
@@ -981,21 +966,18 @@ foreach v of local ed_var {
 *<_occup_isco_>
 	gen occup_isco = string(occup_orig, "%04.0f") if !missing(occup_orig)
 	* Replace the codes to 3-digit
-	replace occup_isco = "1120" if occup_isco == "1121"
-	replace occup_isco = "9620" if occup_isco == "9627"
-	replace occup_isco = "0210" if occup_isco == "0212"
-	replace occup_isco = "0110" if occup_isco == "0112"
-	replace occup_isco = "0310" if occup_isco == "0317"
-	replace occup_isco = "0210" if occup_isco == "0211"
-	replace occup_isco = "0110" if occup_isco == "0114"
-	replace occup_isco = "0110" if occup_isco == "0111"
-	replace occup_isco = "0110" if occup_isco == "0113"
-	replace occup_isco = "9120" if occup_isco == "9124"
-	replace occup_isco = "9620" if occup_isco == "9626"
 	replace occup_isco = "0310" if occup_isco == "0311"
-	replace occup_isco = "0310" if occup_isco == "0316"
 	replace occup_isco = "0310" if occup_isco == "0313"
+	replace occup_isco = "0210" if occup_isco == "0212"
+	replace occup_isco = "0110" if occup_isco == "0114"
+	replace occup_isco = "0110" if occup_isco == "0113"
+	replace occup_isco = "1120" if occup_isco == "1121"
+	replace occup_isco = "0210" if occup_isco == "0211"
+	replace occup_isco = "0110" if occup_isco == "0111"
 	replace occup_isco = "0310" if occup_isco == "0312"
+	replace occup_isco = "0310" if occup_isco == "0315"
+	replace occup_isco = "0110" if occup_isco == "0112"
+	replace occup_isco = "0310" if occup_isco == "0316"
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
@@ -1041,7 +1023,7 @@ foreach v of local ed_var {
 
 *<_unitwage_>
 	gen byte unitwage=F03
-	recode unitwage 1 6 7=10 2=1 3=2 4=3 
+	recode unitwage 1 6 99=10 2=1 3=2 4=3 
 	replace unitwage=.  if lstatus!=1 | missing(wage_no_compen)
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
