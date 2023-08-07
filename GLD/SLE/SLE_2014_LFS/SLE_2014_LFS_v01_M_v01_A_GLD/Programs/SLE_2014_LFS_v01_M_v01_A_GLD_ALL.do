@@ -86,7 +86,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * harmonized output in a single file
 
 	*use "`path_in_stata'\merged A to J de-ID.dta", clear
-use "C:\Users\IrIs_\OneDrive\Desktop\WB\Jobs Group\FY2023\SLE\SLE\SLE_2014_LFS\SLE_2014_LFS_V01_M\Data\Stata\merged A to J de-ID.dta"
+use "C:\Users\IrIs_\OneDrive\Desktop\WB\Jobs Group\FY2024\SLE\SLE\SLE_2014_LFS\SLE_2014_LFS_V01_M\Data\Stata\merged A to J de-ID.dta"
 *Note that the original definition of "LFS eligible" in the SLE survey is:
 *1) Age is 5 and above and;
 *2) Spent at least 4 nights in the household during the past 4 weeks
@@ -934,6 +934,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 *<_industrycat_isic_>
 	gen industrycat_isic=E_4 
 	tostring industrycat_isic, format(%04.0f) replace
+	replace industrycat_isic="" if industrycat_isic=="."
 	replace industrycat_isic="" if lstatus!=1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
@@ -1165,6 +1166,7 @@ missing for work hours in the past week.
 *<_industrycat_isic_2_>
 	gen industrycat_isic_2=F_5
 	tostring industrycat_isic_2, format(%04.0f) replace
+	replace industrycat_isic_2="" if industrycat_isic_2=="."
 	replace industrycat_isic_2="" if F_1!=1
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
@@ -1196,6 +1198,7 @@ missing for work hours in the past week.
 
 *<_occup_isco_2_>
 	gen str4 occup_isco_2=string(F_4,"%04.0f")
+	replace occup_isco_2="" if occup_isco_2=="."
 	replace occup_isco_2="" if F_1!=1
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
@@ -1247,6 +1250,17 @@ missing for work hours in the past week.
 	label var unitwage_2 "Last wages' time unit secondary job 7 day recall"
 	label values unitwage_2 lblunitwage
 *</_unitwage_2_>
+
+
+/*<_whours_2_note_>
+
+There are some errors in the reported work hours. 20 observations' main and secondary
+jobs count more than 168 hours in total.
+
+Observation "04-330602292-01", for an instance, has worked 168 hours each for main
+and secondary job. 
+
+*<_whours_2_note_>*/
 
 
 *<_whours_2_>
@@ -1419,6 +1433,7 @@ labor status unemployed and non-labor force, nor potential labor force.
 *<_industrycat_isic_year_>
 	gen industrycat_isic_year=G_7
 	tostring industrycat_isic_year, format(%04.0f) replace
+	replace industrycat_isic_year="" if industrycat_isic_year=="."
 	replace industrycat_isic_year="" if G_1!=1
 	label var industrycat_isic_year "ISIC code of primary job 12 month recall"
 *</_industrycat_isic_year_>
