@@ -16,13 +16,13 @@
 *-- Step 2 - User defined arguments (Your input is needed in this step) ----------*
 
 	** Path to "Helper programs" folder <-- INPUT --
-	global helper "[Path file to helpers here]" 
+	global helper "C:\Users\IrIs_\Documents\WB_gld\Support\D - Q Checks\Single survey checks\Helper_programs_1.5" 
 		
 	** Path to GLD data file            <-- INPUT -- 
-	global mydata "[Path file to harmonized GLD file here]" 
+	global mydata "C:\Users\IrIs_\OneDrive\Desktop\WB\Jobs Group\FY2023\SLE\SLE\SLE_2014_LFS\SLE_2014_LFS_V01_M_V01_A_GLD\Data\Harmonized\SLE_2014_LFS_V01_M_V01_A_GLD_ALL.dta" 
 	
 	** Choose output folder             <-- INPUT --
-	global output "[Path file to folder where output to be stored (commonly Work)]"
+	global output "C:\Users\IrIs_\OneDrive\Desktop\WB\Jobs Group\FY2023\SLE\SLE\SLE_2014_LFS\SLE_2014_LFS_V01_M_V01_A_GLD\Work"
 	
 		
 *-- Step - 3 Run the quality checks -----------------------------------------------*
