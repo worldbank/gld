@@ -4,36 +4,45 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				SLE_2014_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
+<_Program name_>				LKA_1992_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata SE 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
-<_Date created_>				2023-07-24 </_Date created_>
+<_Date created_>				2023-08-07 </_Date created_>
 -------------------------------------------------------------------------
-<_Country_>						Sierra Leone (SLE) </_Country_>
+<_Country_>						Sri Lanka (LKA) </_Country_>
 <_Survey Title_>				National Labour Force Survey </_Survey Title_>
-<_Survey Year_>					2014 </_Survey Year_>
-<_Study ID_>					SLE_2014_LFS_v01_M </_Study ID_>
-<_Data collection from (M/Y)_>	[July/2014] </_Data collection from (M/Y)_>
-<_Data collection to (M/Y)_>	[August/2014] </_Data collection to (M/Y)_>
-<_Source of dataset_> 			Survey conducted by Statistics Sierra Leone (SSL) </_Source of dataset_>
-								Microdata is freely available on the public World Bank microdata library:https://microdata.worldbank.org/index.php/catalog/2687;
-								also the file is available on the SLE site: http://www.statistics.sl/index.php/what-we-offer/open-data-free-datasets.html
-<_Sample size (HH)_> 			4,199 </_Sample size (HH)_>
-<_Sample size (IND)_> 			25,645 </_Sample size (IND)_>
-<_Sampling method_> 			Stratified cluster sample 
-								with oversampling in urban areas. </_Sampling method_>
-<_Geographic coverage_> 		Nationally representative, covering 
-								280 enumeration areas/clusters from 
-								18 cities/districts in Eastern, 
-								Northern, Southern and Western regions. </_Geographic coverage_>
-<_Currency_> 					Sierra Leonean leone </_Currency_>
+<_Survey Year_>					1992 </_Survey Year_>
+<_Study ID_>					LKA_1992_LFS_v01_M </_Study ID_>
+<_Data collection from (M/Y)_>	[Jan/1992] </_Data collection from (M/Y)_>
+<_Data collection to (M/Y)_>	[Dec/1992] </_Data collection to (M/Y)_>
+<_Source of dataset_> 			Survey conducted by LKA Department of 
+								Census and Statistics, 
+								Ministry Policy Planning and Implementation </_Source of dataset_>
+								
+<_Sample size (HH)_> 			 </_Sample size (HH)_>
+<_Sample size (IND)_> 			 </_Sample size (IND)_>
+<_Sampling method_> 			A stratified two-stage probability sample design
+								used with census blocks as PSUs and housing units
+								as secondary and final sampling units. </_Sampling method_>
+<_Geographic coverage_> 		9 provinces devided into urban and rural areas 
+								and the greater colombo area. </_Geographic coverage_>
+								- Greater Colombo (Colombo MC+Dehiwela-Mt.Lavinia MC+Kotte UC)
+								- Western Province (Remainder)
+								- Southern Province
+								- Northern Province
+								- Eastern Province
+								- North Western Province
+								- North Central Province
+								- Uva Province
+								- Sabaragamuwa Province
+<_Currency_> 					Sri Lanka Rupee </_Currency_>
 -----------------------------------------------------------------------
-<_ICLS Version_>				ICLS 19 </_ICLS Version_>
+<_ICLS Version_>				ICLS 13 </_ICLS Version_>
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
-<_ISCO Version_>				ISCO 08 </_ISCO Version_>
-<_OCCUP National_>				</_OCCUP National_>
-<_ISIC Version_>				ISIC Rev.4 </_ISIC Version_>
-<_INDUS National_>				 </_INDUS National_>
+<_ISCO Version_>				ISCO 88 </_ISCO Version_>
+<_OCCUP National_>				N/A </_OCCUP National_>
+<_ISIC Version_>				ISIC Rev.3 </_ISIC Version_>
+<_INDUS National_>				N/A </_INDUS National_>
 -----------------------------------------------------------------------
 
 <_Version Control_>
@@ -60,8 +69,8 @@ set mem 800m
 
 * Define path sections
 local server  "Y:\GLD-Harmonization\573465_JT"
-local country "SLE"
-local year    "2014"
+local country "LKA"
+local year    "1992"
 local survey  "LFS"
 local vermast "V01"
 local veralt  "V01"
@@ -85,17 +94,9 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	use "`path_in_stata'\merged A to J de-ID.dta", clear
+	*use "`path_in_stata'\merged A to J de-ID.dta", clear
+	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_1992_LFS\LKA_1992_LFS_v01_M\Data\Stata\lfsdata.dta"
 
-*Note that the original definition of "LFS eligible" in the SLE survey is:
-*1) Age is 5 and above and;
-*2) Spent at least 4 nights in the household during the past 4 weeks
-*The original LFS Eligibility variable A17 has 189 observations wrongly coded
-*The codes below create a "corrected" version of A17  
-
-	gen A17_corrected=1 if A_6!=. & A_6>=5 & A_16==1 
-	replace A17_corrected=2 if A_6<5 | (A_16!=1 & A_16!=.)
-	
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -122,7 +123,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_icls_v_>
-	gen icls_v="ICLS-19"
+	gen icls_v="ICLS-13"
 	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
 
