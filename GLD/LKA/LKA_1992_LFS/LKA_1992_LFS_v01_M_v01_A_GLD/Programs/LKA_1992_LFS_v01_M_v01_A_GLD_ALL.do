@@ -135,13 +135,13 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_isco_version_>
-	gen isco_version="isco_2008"
+	gen isco_version="isco_1988"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
 
 *<_isic_version_>
-	gen isic_version="isic_4"
+	gen isic_version="isic_3"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
@@ -177,7 +177,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_int_month_>
-	gen int_month=Z_1_MONTH
+	gen int_month=month
 	label de lblint_month 1 "January" 2 "February" 3 "March" 4 "April" 5 "May" 6 "June" 7 "July" 8 "August" 9 "September" 10 "October" 11 "November" 12 "December"
 	label value int_month lblint_month
 	label var int_month "Month of the interview"
@@ -186,14 +186,50 @@ local out_file "`level_2_harm'_ALL.dta"
 
 /*<_hhid_>
 
-4,199 households in the actual raw data, compared to 4,200 planned.   
+According to the questionnaire, total housing units surveyed should be 10,080 in 
+total in a year; 2,520 per quarter (10 HH from each sampling block, 252 blocks per 
+quarter).
+
+Without knowing if household ID changes every month (i.e. same household surveyed 
+consecutively in two months are assigned with the same ID), two ways to try to code
+hhid:
+
+1) A combination with "month":
+
+2) A combination without "month": 
+
+	egen hhid=concat(province sector district block hhid_orig), punct("-")
+	preserve
+	keep quarter month hhid
+	duplicates drop
+	bys quarter hhid: gen hhcount=cond(_N==1,1,_n)
+	replace hhcount=0 if hhcount!=1
+	bys quarter: egen hhcount_ttl=sum(hhcount)
+	
+	. tab quarter hhcount_ttl
+
+           |                 hhcount_ttl
+   quarter |      1789       1810       1827       1839 |     Total
+-----------+--------------------------------------------+----------
+        01 |         0          0          0      4,239 |     4,239 
+        02 |     4,141          0          0          0 |     4,141 
+        03 |         0      4,150          0          0 |     4,150 
+        04 |         0          0      4,203          0 |     4,203 
+-----------+--------------------------------------------+----------
+     Total |     4,141      4,150      4,203      4,239 |    16,733 
+
+This way produces less housing unit per quarter.
 
 *<_hhid_>*/
 
 
 *<_hhid_>
-	tostring hh_id, gen(strhh_id) format(%02.0f)
-	egen hhid=concat(strhh_id ea_code), maxlength(12) punct("-")
+	foreach v of varlist quarter province district sector block{
+		tostring `v', replace format(%02.0f)
+	}
+	tostring hhid, replace format(%03.0f)
+	rename hhid hhid_orig
+	egen hhid=concat(month province sector district block hhid_orig), punct("-")
 	recast str12 hhid
 	label var hhid "Household id"
 *</_hhid_>
