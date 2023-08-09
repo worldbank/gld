@@ -5,7 +5,7 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				[BOL_2017_QLFS_V01_M_V01_A_GLD.do] </_Program name_>
+<_Program name_>				[BOL_2015_ECE_V01_M_V01_A_GLD.do] </_Program name_>
 <_Application_>					[STATA 2017] <_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
 <_Date created_>				2023-07-04 </_Date created_>
@@ -13,14 +13,14 @@
 -------------------------------------------------------------------------
 
 <_Country_>						[BOLIVIA (BOL)] </_Country_>
-<_Survey Title_>				[QUARTERLY LABOUR FORCE SURVEY] </_Survey Title_>
-<_Survey Year_>					[2017] </_Survey Year_>
+<_Survey Title_>				[CONTINOUS EMPLOYMENT SURVEY] </_Survey Title_>
+<_Survey Year_>					[2015] </_Survey Year_>
 <_Study ID_>					[N/A] </_Study ID_>
-<_Data collection from_>		[01/2017] </_Data collection from_>
-<_Data collection to_>			[12/2017] </_Data collection to_>
+<_Data collection from_>		[10/2015] </_Data collection from_>
+<_Data collection to_>			[12/2015] </_Data collection to_>
 <_Source of dataset_> 			[NATIONAL STATISTICS INSTITUTE OF BOLIVA - INE] </_Source of dataset_>
-<_Sample size (HH)_> 			[39840] </_Sample size (HH)_>
-<_Sample size (IND)_> 			[253293] </_Sample size (IND)_>
+<_Sample size (HH)_> 			[18,354] </_Sample size (HH)_>
+<_Sample size (IND)_> 			[69,431] </_Sample size (IND)_>
 <_Sampling method_> 			[Panel design, two stage probabilistic, stratified, by conglomerate] </_Sampling method_>
 <_Geographic coverage_> 		[subnational level, department] </_Geographic coverage_>
 <_Currency_> 					[Bolivian Boliviano] </_Currency_>
@@ -60,8 +60,8 @@ set mem 800m
 * Define path sections
 local server  "Y:/GLD-Harmonization/582018_AQ"
 local country "BOL"
-local year    "2017"
-local survey  "QLFS"
+local year    "2015"
+local survey  "ECE"
 local vermast "V01"
 local veralt  "V01"
 
@@ -83,23 +83,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-use "`path_in_stata'/qlfs-q1-2017.dta", clear 
-
-gen quarter=1
-
-append using "`path_in_stata'/qlfs-q2-2017.dta", force
-
-replace quarter=2 if quarter==.
-
-append using "`path_in_stata'/qlfs-q3-2017.dta", force
-
-replace quarter=3 if quarter==.
-
-append using "`path_in_stata'/qlfs-q4-2017.dta", force
-
-replace quarter=4 if quarter==.
-
-save "`path_in_stata'/qlfs_2017.dta", replace
+use "`path_in_stata'/BOL-qlfs-q4-2015.dta", clear 
 
 
 /*%%=============================================================================================
@@ -115,7 +99,7 @@ save "`path_in_stata'/qlfs_2017.dta", replace
 
 
 *<_survname_>
-	gen survname = "QLFS"
+	gen survname = "ECE"
 	label var survname "Survey acronym"
 *</_survname_>
 
@@ -151,7 +135,7 @@ save "`path_in_stata'/qlfs_2017.dta", replace
 
 
 *<_year_>
-	gen int year = 2017
+	gen int year = 2015
 	label var year "Year of survey"
 *</_year_>
 
@@ -182,18 +166,9 @@ save "`path_in_stata'/qlfs_2017.dta", replace
 
 *<_int_month_>
 	gen  int_month = meses
-	replace int_month=1 if meses==684
-	replace int_month=2 if meses==685
-	replace int_month=3 if meses==686
-	replace int_month=4 if meses==687
-	replace int_month=5 if meses==688
-	replace int_month=6 if meses==689
-	replace int_month=7 if meses==690
-	replace int_month=8 if meses==691
-	replace int_month=9 if meses==692
-	replace int_month=10 if meses==693
-	replace int_month=11 if meses==694
-	replace int_month=12 if meses==695
+	replace int_month=10 if meses==669
+	replace int_month=11 if meses==670
+	replace int_month=12 if meses==671
 	label de lblint_month 1 "January" 2 "February" 3 "March" 4 "April" 5 "May" 6 "June" 7 "July" 8 "August" 9 "September" 10 "October" 11 "November" 12 "December"
 	label value int_month lblint_month
 	label var int_month "Month of the interview"
@@ -211,8 +186,8 @@ save "`path_in_stata'/qlfs_2017.dta", replace
 </_hhid_note> */
 
 	*transform to string
-	tostring id_hog_panel, gen(id_hogar_1)
-	egen hhid = concat( id_hogar_1)
+	tostring id_hog_panel, gen(id_hog)
+	egen hhid = concat( id_hog)
 	label var hhid "Household ID"
 *</_hhid_>
 
@@ -220,16 +195,17 @@ save "`path_in_stata'/qlfs_2017.dta", replace
 *<_pid_>
 
 *transform to string 
-	tostring id_per_panel, gen(id_persona_1)
-	egen  pid = concat(hhid id_persona_1)
+	tostring id_per_panel, gen(id_per)
+	egen  pid = concat(hhid id_per)
 	label var pid "Individual ID"
 *making sure ids are unique
-*isid pid
+isid pid
 *</_pid_>
 
 
 *<_weight_>
-	gen weight = fact_trim/4
+*dividir entre 4 si se usa todos los trimestres.
+	gen weight = fact_trim
 	label var weight "Survey sampling weight"
 *</_weight_>
 
@@ -741,7 +717,6 @@ foreach v of local ed_var {
 	label values lstatus lbllstatus
 *</_lstatus_>
 
-
 *<_potential_lf_>
 	gen byte potential_lf = .
 	replace potential_lf=1 if s2_04==1 & s2_05==2
@@ -798,7 +773,6 @@ foreach v of local ed_var {
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat lblempstat
 *</_empstat_>
-
 
 *<_ocusec_>
 	gen byte ocusec = s2_22
@@ -1463,32 +1437,116 @@ foreach v of local ed_var {
 	replace occup_isco="8340" if s2_15acod=="834"
 	replace occup_isco="9210" if s2_15acod=="921"
 	
-	replace occup_isco="2320" if s2_15acod=="232"	
-	replace occup_isco="3120" if s2_15acod=="312"	
-	replace occup_isco="3520" if s2_15acod=="352"	
-	replace occup_isco="4110" if s2_15acod=="411"	
-	replace occup_isco="4210" if s2_15acod=="421"	
-	replace occup_isco="4410" if s2_15acod=="441"	
+	replace occup_isco="1110" if s2_15acod=="111"
+	replace occup_isco="1120" if s2_15acod=="112"	
+	replace occup_isco="1310" if s2_15acod=="131"	
+	replace occup_isco="1320" if s2_15acod=="132"	
+	replace occup_isco="1340" if s2_15acod=="134"	
+	replace occup_isco="1410" if s2_15acod=="141"	
+	replace occup_isco="2120" if s2_15acod=="212"	
+	replace occup_isco="2160" if s2_15acod=="215"
+	replace occup_isco="2210" if s2_15acod=="221"
+	replace occup_isco="2310" if s2_15acod=="231"
+	replace occup_isco="2320" if s2_15acod=="232"
+	replace occup_isco="2330" if s2_15acod=="233"
+	replace occup_isco="2420" if s2_15acod=="242"
+	replace occup_isco="2430" if s2_15acod=="243"
+	replace occup_isco="2510" if s2_15acod=="251"
+	replace occup_isco="2520" if s2_15acod=="252"
+	replace occup_isco="2610" if s2_15acod=="261"
+	replace occup_isco="2630" if s2_15acod=="263"
+	replace occup_isco="3100" if s2_15acod=="31"
+	replace occup_isco="3120" if s2_15acod=="312"
+	replace occup_isco="3130" if s2_15acod=="313"
+	replace occup_isco="3140" if s2_15acod=="314"
+	replace occup_isco="3150" if s2_15acod=="315"
+	replace occup_isco="3210" if s2_15acod=="321"
+	replace occup_isco="3330" if s2_15acod=="333"
+	replace occup_isco="3340" if s2_15acod=="334"
+	replace occup_isco="3520" if s2_15acod=="352"
+	replace occup_isco="4110" if s2_15acod=="411"
+	replace occup_isco="4210" if s2_15acod=="421"
+	replace occup_isco="4310" if s2_15acod=="431"
+	replace occup_isco="4410" if s2_15acod=="441"
+	
+	replace occup_isco="5110" if s2_15acod=="511"
 	replace occup_isco="5120" if s2_15acod=="512"
-	replace occup_isco="5130" if s2_15acod=="513"
-	replace occup_isco="5200" if s2_15acod=="525"
+	replace occup_isco="5140" if s2_15acod=="514"
+	replace occup_isco="5150" if s2_15acod=="515"
+	replace occup_isco="5210" if s2_15acod=="521"
+	replace occup_isco="5310" if s2_15acod=="531"
 	replace occup_isco="5410" if s2_15acod=="541"
 	replace occup_isco="7110" if s2_15acod=="711"
 	replace occup_isco="7130" if s2_15acod=="713"
-	replace occup_isco="7220" if s2_15acod=="722"
+	replace occup_isco="7310" if s2_15acod=="731"
+	replace occup_isco="7320" if s2_15acod=="734"
+	replace occup_isco="7410" if s2_15acod=="741"
 	replace occup_isco="7420" if s2_15acod=="742"
-	replace occup_isco="7500" if s2_15acod=="755"
-	replace occup_isco="8180" if s2_15acod=="818"
-	replace occup_isco="8300" if s2_15acod=="83299"
-	replace occup_isco="9000" if s2_15acod=="97000"
-	replace occup_isco="9000" if s2_15acod=="99996"
-	replace occup_isco="9000" if s2_15acod=="99999"
 	
+	replace occup_isco="7560" if s2_15acod=="754"
+	replace occup_isco="7530" if s2_15acod=="755"
+	replace occup_isco="8110" if s2_15acod=="811"
+	replace occup_isco="8120" if s2_15acod=="812"
+	replace occup_isco="8130" if s2_15acod=="813"
+	replace occup_isco="8140" if s2_15acod=="814"
+	replace occup_isco="8150" if s2_15acod=="815"
+	replace occup_isco="8180" if s2_15acod=="818"
+	replace occup_isco="8210" if s2_15acod=="821"
+	replace occup_isco="9110" if s2_15acod=="911"
+	replace occup_isco="9120" if s2_15acod=="912"
+	replace occup_isco="9310" if s2_15acod=="931"
+	replace occup_isco="9320" if s2_15acod=="932"
+	replace occup_isco="9330" if s2_15acod=="933"
+	replace occup_isco="9610" if s2_15acod=="961"
+	replace occup_isco="9620" if s2_15acod=="962"
+	replace occup_isco="9000" if s2_15acod=="97000"
+	replace occup_isco="9000" if s2_15acod=="99992"
+	replace occup_isco="9000" if s2_15acod=="99996"
+	
+	replace occup_isco="0100" if s2_15acod=="01"
+	replace occup_isco="1100" if s2_15acod=="11"
 	replace occup_isco="1200" if s2_15acod=="121"
-	replace occup_isco="1340" if s2_15acod=="134"
-	replace occup_isco="2310" if s2_15acod=="231"
+	replace occup_isco="1300" if s2_15acod=="13"
+	replace occup_isco="1330" if s2_15acod=="133"
+	replace occup_isco="2100" if s2_15acod=="21"
+	replace occup_isco="2130" if s2_15acod=="213"
+	replace occup_isco="2220" if s2_15acod=="222"
+	replace occup_isco="2200" if s2_15acod=="224"
+	replace occup_isco="2400" if s2_15acod=="24"
+	replace occup_isco="2500" if s2_15acod=="25"
 	replace occup_isco="2600" if s2_15acod=="26"
+	replace occup_isco="2640" if s2_15acod=="264"
+	replace occup_isco="3000" if s2_15acod=="3"
+	replace occup_isco="3220" if s2_15acod=="322"
+	replace occup_isco="3240" if s2_15acod=="324"
+	replace occup_isco="3300" if s2_15acod=="33"
 	replace occup_isco="3350" if s2_15acod=="335"
+	replace occup_isco="3420" if s2_15acod=="342"
+	replace occup_isco="3500" if s2_15acod=="35"
+	replace occup_isco="3510" if s2_15acod=="351"
+	replace occup_isco="4100" if s2_15acod=="41"
+	replace occup_isco="4300" if s2_15acod=="43"
+	replace occup_isco="4320" if s2_15acod=="432"
+	replace occup_isco="4400" if s2_15acod=="44"
+	replace occup_isco="5100" if s2_15acod=="51"
+	replace occup_isco="5130" if s2_15acod=="513"
+	replace occup_isco="5220" if s2_15acod=="522"
+	replace occup_isco="5230" if s2_15acod=="523"
+	replace occup_isco="5200" if s2_15acod=="525"
+	replace occup_isco="6100" if s2_15acod=="62"
+	replace occup_isco="6210" if s2_15acod=="631"
+	replace occup_isco="6220" if s2_15acod=="632"
+	replace occup_isco="7200" if s2_15acod=="72"
+	replace occup_isco="7220" if s2_15acod=="722"
+	replace occup_isco="7310" if s2_15acod=="732"
+	replace occup_isco="7500" if s2_15acod=="75"
+	replace occup_isco="7520" if s2_15acod=="752"
+	replace occup_isco="7540" if s2_15acod=="756"
+	replace occup_isco="8160" if s2_15acod=="816"
+	replace occup_isco="8170" if s2_15acod=="817"
+	replace occup_isco="8350" if s2_15acod=="835"
+	replace occup_isco="9300" if s2_15acod=="93"
+	replace occup_isco="9410" if s2_15acod=="941"
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
@@ -1675,7 +1733,7 @@ foreach v of local ed_var {
 	gen byte industrycat10_2 = .
 	replace industrycat10_2=1 if inrange(industrycat_isic_2,"0100","0329")
 	replace industrycat10_2=2 if inrange(industrycat_isic_2,"0510","0999")
-	replace industrycat10_2=3 if inrange(industrycat_isic_2,"1000","3329")
+	replace industrycat10_2=3 if inrange(industrycat_isic_2,"1000","3399")
 	replace industrycat10_2=4 if inrange(industrycat_isic_2,"3500","3999")
 	replace industrycat10_2=5 if inrange(industrycat_isic_2,"4100","4399")
 	replace industrycat10_2=6 if inrange(industrycat_isic_2,"4500","4799")
@@ -1713,7 +1771,7 @@ foreach v of local ed_var {
 *</_occup_orig_2_>
 
 
-*<_occup_isco_2_2_>
+*<_occup_isco_2_>
 	gen occup_isco_2=""
 	replace occup_isco_2="0110" if s2_44acod=="01000"
 	replace occup_isco_2="0210" if s2_44acod=="02000"
@@ -2305,31 +2363,87 @@ foreach v of local ed_var {
 	replace occup_isco_2="8340" if s2_44acod=="834"
 	replace occup_isco_2="9210" if s2_44acod=="921"
 	
-	replace occup_isco_2="2320" if s2_44acod=="232"	
-	replace occup_isco_2="3120" if s2_44acod=="312"	
-	replace occup_isco_2="3520" if s2_44acod=="352"	
-	replace occup_isco_2="4110" if s2_44acod=="411"	
-	replace occup_isco_2="4210" if s2_44acod=="421"	
-	replace occup_isco_2="4410" if s2_44acod=="441"	
+	replace occup_isco_2="1110" if s2_44acod=="111"
+	replace occup_isco_2="1120" if s2_44acod=="112"	
+	replace occup_isco_2="1310" if s2_44acod=="131"	
+	replace occup_isco_2="1320" if s2_44acod=="132"	
+	replace occup_isco_2="1340" if s2_44acod=="134"	
+	replace occup_isco_2="1410" if s2_44acod=="141"	
+	replace occup_isco_2="2120" if s2_44acod=="212"	
+	replace occup_isco_2="2160" if s2_44acod=="215"
+	replace occup_isco_2="2210" if s2_44acod=="221"
+	replace occup_isco_2="2310" if s2_44acod=="231"
+	replace occup_isco_2="2320" if s2_44acod=="232"
+	replace occup_isco_2="2330" if s2_44acod=="233"
+	replace occup_isco_2="2420" if s2_44acod=="242"
+	replace occup_isco_2="2430" if s2_44acod=="243"
+	replace occup_isco_2="2510" if s2_44acod=="251"
+	replace occup_isco_2="2520" if s2_44acod=="252"
+	replace occup_isco_2="2610" if s2_44acod=="261"
+	replace occup_isco_2="2630" if s2_44acod=="263"
+	replace occup_isco_2="3100" if s2_44acod=="31"
+	replace occup_isco_2="3120" if s2_44acod=="312"
+	replace occup_isco_2="3130" if s2_44acod=="313"
+	replace occup_isco_2="3140" if s2_44acod=="314"
+	replace occup_isco_2="3150" if s2_44acod=="315"
+	replace occup_isco_2="3210" if s2_44acod=="321"
+	replace occup_isco_2="3330" if s2_44acod=="333"
+	replace occup_isco_2="3340" if s2_44acod=="334"
+	replace occup_isco_2="3520" if s2_44acod=="352"
+	replace occup_isco_2="4110" if s2_44acod=="411"
+	replace occup_isco_2="4210" if s2_44acod=="421"
+	replace occup_isco_2="4310" if s2_44acod=="431"
+	replace occup_isco_2="4410" if s2_44acod=="441"
+	
+	replace occup_isco_2="5110" if s2_44acod=="511"
 	replace occup_isco_2="5120" if s2_44acod=="512"
-	replace occup_isco_2="5130" if s2_44acod=="513"
-	replace occup_isco_2="5200" if s2_44acod=="525"
+	replace occup_isco_2="5140" if s2_44acod=="514"
+	replace occup_isco_2="5150" if s2_44acod=="515"
+	replace occup_isco_2="5210" if s2_44acod=="521"
+	replace occup_isco_2="5310" if s2_44acod=="531"
 	replace occup_isco_2="5410" if s2_44acod=="541"
 	replace occup_isco_2="7110" if s2_44acod=="711"
 	replace occup_isco_2="7130" if s2_44acod=="713"
-	replace occup_isco_2="7220" if s2_44acod=="722"
-	replace occup_isco_2="7420" if s2_44acod=="742"
-	replace occup_isco_2="7500" if s2_44acod=="755"
-	replace occup_isco_2="8180" if s2_44acod=="818"
-	replace occup_isco_2="8300" if s2_44acod=="83299"
-	replace occup_isco_2="8000" if s2_44acod=="87000"
-	replace occup_isco_2="9000" if s2_44acod=="99996"
-	replace occup_isco_2="9000" if s2_44acod=="99999"
-	
-	replace occup_isco_2="6220" if s2_44acod=="632"
 	replace occup_isco_2="7310" if s2_44acod=="731"
+	replace occup_isco_2="7320" if s2_44acod=="734"
+	replace occup_isco_2="7410" if s2_44acod=="741"
+	replace occup_isco_2="7420" if s2_44acod=="742"
+	
+	replace occup_isco_2="7560" if s2_44acod=="754"
+	replace occup_isco_2="7530" if s2_44acod=="755"
+	replace occup_isco_2="8110" if s2_44acod=="811"
+	replace occup_isco_2="8120" if s2_44acod=="812"
+	replace occup_isco_2="8130" if s2_44acod=="813"
+	replace occup_isco_2="8140" if s2_44acod=="814"
+	replace occup_isco_2="8150" if s2_44acod=="815"
+	replace occup_isco_2="8180" if s2_44acod=="818"
+	replace occup_isco_2="8210" if s2_44acod=="821"
+	replace occup_isco_2="9110" if s2_44acod=="911"
+	replace occup_isco_2="9120" if s2_44acod=="912"
+	replace occup_isco_2="9310" if s2_44acod=="931"
+	replace occup_isco_2="9320" if s2_44acod=="932"
+	replace occup_isco_2="9330" if s2_44acod=="933"
 	replace occup_isco_2="9610" if s2_44acod=="961"
-
+	replace occup_isco_2="9620" if s2_44acod=="962"
+	replace occup_isco_2="9000" if s2_44acod=="97000"
+	replace occup_isco_2="9000" if s2_44acod=="99992"
+	replace occup_isco_2="9000" if s2_44acod=="99996"
+	
+	replace occup_isco_2="9000" if s2_44acod=="99999"
+	replace occup_isco_2="7540" if s2_44acod=="756"
+	replace occup_isco_2="7310" if s2_44acod=="732"
+	replace occup_isco_2="6220" if s2_44acod=="632"
+	replace occup_isco_2="6210" if s2_44acod=="631"
+	replace occup_isco_2="6100" if s2_44acod=="62"
+	replace occup_isco_2="5200" if s2_44acod=="525"
+	replace occup_isco_2="5220" if s2_44acod=="522"
+	replace occup_isco_2="5000" if s2_44acod=="5"
+	replace occup_isco_2="3510" if s2_44acod=="351"
+	replace occup_isco_2="3240" if s2_44acod=="324"
+	replace occup_isco_2="2220" if s2_44acod=="222"
+	replace occup_isco_2="1200" if s2_44acod=="121"
+	replace occup_isco_2="5130" if s2_44acod=="513"
+	
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
@@ -2378,7 +2492,6 @@ foreach v of local ed_var {
 	label var unitwage_2 "Last wages' time unit secondary job 7 day recall"
 	label values unitwage_2 lblunitwage
 *</_unitwage_2_>
-
 
 
 *<_whours_2_>

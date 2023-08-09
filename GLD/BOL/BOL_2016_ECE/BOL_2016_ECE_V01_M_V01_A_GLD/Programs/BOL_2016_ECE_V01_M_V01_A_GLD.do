@@ -5,7 +5,7 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				[BOL_2021_QLFS_V01_M_V01_A_GLD.do] </_Program name_>
+<_Program name_>				[BOL_2016_ECE_V01_M_V01_A_GLD.do] </_Program name_>
 <_Application_>					[STATA 2017] <_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
 <_Date created_>				2023-07-04 </_Date created_>
@@ -13,14 +13,14 @@
 -------------------------------------------------------------------------
 
 <_Country_>						[BOLIVIA (BOL)] </_Country_>
-<_Survey Title_>				[QUARTERLY LABOUR FORCE SURVEY] </_Survey Title_>
-<_Survey Year_>					[2021] </_Survey Year_>
+<_Survey Title_>				[CONTINOUS EMPLOYMENT SURVEY] </_Survey Title_>
+<_Survey Year_>					[2016] </_Survey Year_>
 <_Study ID_>					[N/A] </_Study ID_>
-<_Data collection from_>		[01/2021] </_Data collection from_>
-<_Data collection to_>			[12/2021] </_Data collection to_>
+<_Data collection from_>		[01/2016] </_Data collection from_>
+<_Data collection to_>			[12/2016] </_Data collection to_>
 <_Source of dataset_> 			[NATIONAL STATISTICS INSTITUTE OF BOLIVA - INE] </_Source of dataset_>
-<_Sample size (HH)_> 			[39901] </_Sample size (HH)_>
-<_Sample size (IND)_> 			[220,667] </_Sample size (IND)_>
+<_Sample size (HH)_> 			[39939] </_Sample size (HH)_>
+<_Sample size (IND)_> 			[254234] </_Sample size (IND)_>
 <_Sampling method_> 			[Panel design, two stage probabilistic, stratified, by conglomerate] </_Sampling method_>
 <_Geographic coverage_> 		[subnational level, department] </_Geographic coverage_>
 <_Currency_> 					[Bolivian Boliviano] </_Currency_>
@@ -60,8 +60,8 @@ set mem 800m
 * Define path sections
 local server  "Y:/GLD-Harmonization/582018_AQ"
 local country "BOL"
-local year    "2021"
-local survey  "QLFS"
+local year    "2016"
+local survey  "ECE"
 local vermast "V01"
 local veralt  "V01"
 
@@ -83,23 +83,23 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-use "`path_in_stata'/qlfs-q1-2021.dta", clear 
+use "`path_in_stata'/qlfs-q1-2016.dta", clear 
 
 gen quarter=1
 
-append using "`path_in_stata'/qlfs-q2-2021.dta", force
+append using "`path_in_stata'/qlfs-q2-2016.dta", force
 
 replace quarter=2 if quarter==.
 
-append using "`path_in_stata'/qlfs-q3-2021.dta", force
+append using "`path_in_stata'/qlfs-q3-2016.dta", force
 
 replace quarter=3 if quarter==.
 
-append using "`path_in_stata'/qlfs-q4-2021.dta", force
+append using "`path_in_stata'/qlfs-q4-2016.dta", force
 
 replace quarter=4 if quarter==.
 
-save "`path_in_stata'/qlfs_2021.dta", replace
+save "`path_in_stata'/qlfs_2016.dta", replace
 
 
 /*%%=============================================================================================
@@ -115,7 +115,7 @@ save "`path_in_stata'/qlfs_2021.dta", replace
 
 
 *<_survname_>
-	gen survname = "QLFS"
+	gen survname = "ECE"
 	label var survname "Survey acronym"
 *</_survname_>
 
@@ -151,7 +151,7 @@ save "`path_in_stata'/qlfs_2021.dta", replace
 
 
 *<_year_>
-	gen int year = 2021
+	gen int year = 2016
 	label var year "Year of survey"
 *</_year_>
 
@@ -182,18 +182,18 @@ save "`path_in_stata'/qlfs_2021.dta", replace
 
 *<_int_month_>
 	gen  int_month = meses
-	replace int_month=1 if meses==732
-	replace int_month=2 if meses==733
-	replace int_month=3 if meses==734
-	replace int_month=4 if meses==735
-	replace int_month=5 if meses==736
-	replace int_month=6 if meses==737
-	replace int_month=7 if meses==738
-	replace int_month=8 if meses==739
-	replace int_month=9 if meses==740
-	replace int_month=10 if meses==741
-	replace int_month=11 if meses==742
-	replace int_month=12 if meses==743
+	replace int_month=1 if meses==672
+	replace int_month=2 if meses==673
+	replace int_month=3 if meses==674
+	replace int_month=4 if meses==675
+	replace int_month=5 if meses==676
+	replace int_month=6 if meses==677
+	replace int_month=7 if meses==678
+	replace int_month=8 if meses==679
+	replace int_month=9 if meses==680
+	replace int_month=10 if meses==681
+	replace int_month=11 if meses==682
+	replace int_month=12 if meses==683
 	label de lblint_month 1 "January" 2 "February" 3 "March" 4 "April" 5 "May" 6 "June" 7 "July" 8 "August" 9 "September" 10 "October" 11 "November" 12 "December"
 	label value int_month lblint_month
 	label var int_month "Month of the interview"
@@ -257,7 +257,6 @@ save "`path_in_stata'/qlfs_2021.dta", replace
 	label var wave "Survey wave"
 *</_wave_>
 
-
 *<_panel_>
 	*gen panel = panel
 	label var panel "Panel"
@@ -267,7 +266,6 @@ save "`path_in_stata'/qlfs_2021.dta", replace
 	gen visit_no = .
 	label var visit_no "Visit Number"
 *</_visit_no_>
-
 
 }
 
@@ -422,7 +420,7 @@ save "`path_in_stata'/qlfs_2021.dta", replace
 
 
 *<_marital_>
-	gen byte marital = s1_16
+	gen byte marital = s1_09
 	recode marital 1=2 2=1 4/5=4 6=5
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
@@ -577,8 +575,7 @@ label var ed_mod_age "Education module application age"
 *</_ed_mod_age_>
 
 *<_school_>
-	gen byte school=s1_13
-	recode school 2=0
+	gen byte school=.
 	label var school "Attending school"
 	la de lblschool 0 "No" 1 "Yes"
 	label values school  lblschool
@@ -588,7 +585,7 @@ label var ed_mod_age "Education module application age"
 *<_literacy_>
 *assuming from level of education literacy status
 	gen byte literacy = .
-	replace literacy=1 if inrange(s1_07a,11,88)
+	replace literacy=1 if inrange(s1_07a,11,81)
 	replace literacy=0 if s1_07a==10
 	label var literacy "Individual can read & write"
 	la de lblliteracy 0 "No" 1 "Yes"
@@ -597,7 +594,7 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educy_>
-	gen byte educy =aestudio
+	gen byte educy =e
 	label var educy "Years of education"
 *</_educy_>
 
@@ -605,7 +602,7 @@ label var ed_mod_age "Education module application age"
 *<_educat7_>
 	gen byte educat7 =niv_ed
 	recode educat7 0=1 1=2 2=3 3=4 4=5 
-	replace educat7=6 if inrange(s1_07a,78,88)
+	replace educat7=6 if inrange(s1_07a,78,81)
 	replace educat7=6 if s1_07a==71
 	replace educat7=7 if inrange(s1_07a,72,77)
 	label var educat7 "Level of education 1"
@@ -676,7 +673,7 @@ foreach v of local ed_var {
 {
 
 *<_vocational_>
-	gen vocational = .
+	gen vocational = s2_30
 	recode vocational 2=0
 	label de lblvocational 0 "No" 1 "Yes"
 	label var vocational "Ever received vocational training"
@@ -706,7 +703,7 @@ foreach v of local ed_var {
 *</_vocational_field_orig_>
 
 *<_vocational_financed_>
-	gen vocational_financed = .
+	gen vocational_financed = s2_31
 	recode vocational_financed 1=4 2=1 4=2 3=5 5=5 6=5
 	label de lblvocational_financed 1 "Employer" 2 "Government" 3 "Mixed Employer/Government" 4 "Own funds" 5 "Other"
 	label var vocational_financed "How training was financed"
@@ -746,9 +743,6 @@ foreach v of local ed_var {
 
 *<_potential_lf_>
 	gen byte potential_lf = .
-	replace potential_lf=1 if s2_04==1 & s2_05==2
-	replace potential_lf=1 if s2_04==2 & s2_05==1
-	replace potential_lf=0 if missing(potential_lf)
 	replace potential_lf = . if age < minlaborage & age != .
 	replace potential_lf = . if lstatus != 3
 	label var potential_lf "Potential labour force status"
@@ -768,7 +762,7 @@ foreach v of local ed_var {
 
 
 *<_nlfreason_>
-	gen byte nlfreason=s2_06
+	gen byte nlfreason=s2_09
 	recode nlfreason 6=1 11=2 7=3 9=4 1/5=5 8=5 10=5 12=5
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
@@ -794,8 +788,8 @@ foreach v of local ed_var {
 
 {
 *<_empstat_>
-	gen byte empstat=s2_18
-	recode empstat 2=4 4=5 5=2 6=2 7=1
+	gen byte empstat=s2_20
+	recode empstat 1/2=1 3=4 4/5=3 6=5 7=2 8=1
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat lblempstat
@@ -1240,11 +1234,9 @@ foreach v of local ed_var {
 	replace occup_isco="6112" if s2_15acod=="61011"				
 	replace occup_isco="6112" if s2_15acod=="61012"				
 	replace occup_isco="6113" if s2_15acod=="61013"						
-	*Change the code
 	replace occup_isco="6110" if s2_15acod=="61014"	
 	replace occup_isco="6110" if s2_15acod=="61015"
 	replace occup_isco="6110" if s2_15acod=="61099"							
-	*
 	replace occup_isco="6121" if s2_15acod=="62001"				
 	replace occup_isco="6121" if s2_15acod=="62002"				
 	replace occup_isco="6121" if s2_15acod=="62003"				
@@ -1466,6 +1458,96 @@ foreach v of local ed_var {
 	replace occup_isco="8330" if s2_15acod=="833"
 	replace occup_isco="8340" if s2_15acod=="834"
 	replace occup_isco="9210" if s2_15acod=="921"
+	
+	replace occup_isco="1100" if s2_15acod=="111"	
+	replace occup_isco="1310" if s2_15acod=="131"	
+	replace occup_isco="1320" if s2_15acod=="132"	
+	replace occup_isco="1340" if s2_15acod=="134"	
+	replace occup_isco="1410" if s2_15acod=="141"	
+	replace occup_isco="2120" if s2_15acod=="212"	
+	replace occup_isco="2160" if s2_15acod=="215"
+	replace occup_isco="2210" if s2_15acod=="221"
+	replace occup_isco="2310" if s2_15acod=="231"
+	replace occup_isco="2320" if s2_15acod=="232"
+	replace occup_isco="2330" if s2_15acod=="233"
+	replace occup_isco="2420" if s2_15acod=="242"
+	replace occup_isco="2430" if s2_15acod=="243"
+	replace occup_isco="2510" if s2_15acod=="251"
+	replace occup_isco="2520" if s2_15acod=="252"
+	replace occup_isco="2610" if s2_15acod=="261"
+	replace occup_isco="2630" if s2_15acod=="263"
+	replace occup_isco="3100" if s2_15acod=="31"
+	replace occup_isco="3120" if s2_15acod=="312"
+	replace occup_isco="3130" if s2_15acod=="313"
+	replace occup_isco="3140" if s2_15acod=="314"
+	replace occup_isco="3150" if s2_15acod=="315"
+	replace occup_isco="3210" if s2_15acod=="321"
+	replace occup_isco="3330" if s2_15acod=="333"
+	replace occup_isco="3340" if s2_15acod=="334"
+	replace occup_isco="3520" if s2_15acod=="352"
+	replace occup_isco="4110" if s2_15acod=="411"
+	replace occup_isco="4210" if s2_15acod=="421"
+	replace occup_isco="4310" if s2_15acod=="431"
+	replace occup_isco="4410" if s2_15acod=="441"
+	
+	replace occup_isco="5110" if s2_15acod=="511"
+	replace occup_isco="5120" if s2_15acod=="512"
+	replace occup_isco="5140" if s2_15acod=="514"
+	replace occup_isco="5150" if s2_15acod=="515"
+	replace occup_isco="5210" if s2_15acod=="521"
+	replace occup_isco="5310" if s2_15acod=="531"
+	replace occup_isco="5410" if s2_15acod=="541"
+	replace occup_isco="7110" if s2_15acod=="711"
+	replace occup_isco="7130" if s2_15acod=="713"
+	replace occup_isco="7310" if s2_15acod=="731"
+	replace occup_isco="7320" if s2_15acod=="734"
+	replace occup_isco="7410" if s2_15acod=="741"
+	replace occup_isco="7420" if s2_15acod=="742"
+	
+	replace occup_isco="7530" if s2_15acod=="754"
+	replace occup_isco="7530" if s2_15acod=="755"
+	replace occup_isco="8110" if s2_15acod=="811"
+	replace occup_isco="8120" if s2_15acod=="812"
+	replace occup_isco="8130" if s2_15acod=="813"
+	replace occup_isco="8140" if s2_15acod=="814"
+	replace occup_isco="8150" if s2_15acod=="815"
+	replace occup_isco="8180" if s2_15acod=="818"
+	replace occup_isco="8210" if s2_15acod=="821"
+	replace occup_isco="9110" if s2_15acod=="911"
+	replace occup_isco="9120" if s2_15acod=="912"
+	replace occup_isco="9310" if s2_15acod=="931"
+	replace occup_isco="9320" if s2_15acod=="932"
+	replace occup_isco="9330" if s2_15acod=="933"
+	replace occup_isco="9610" if s2_15acod=="961"
+	replace occup_isco="9620" if s2_15acod=="962"
+	replace occup_isco="9000" if s2_15acod=="97000"
+	replace occup_isco="9000" if s2_15acod=="99992"
+	replace occup_isco="9000" if s2_15acod=="99996"
+	
+	replace occup_isco= "1200" if s2_15acod=="12"
+	replace occup_isco= "1200" if s2_15acod=="121"
+	replace occup_isco= "2130" if s2_15acod=="213"
+	replace occup_isco= "2250" if s2_15acod=="224"
+	replace occup_isco= "3220" if s2_15acod=="322"
+	replace occup_isco= "3230" if s2_15acod=="323"
+	replace occup_isco= "3350" if s2_15acod=="335"
+	replace occup_isco= "3420" if s2_15acod=="342"
+	replace occup_isco= "3500" if s2_15acod=="35"
+	replace occup_isco= "3510" if s2_15acod=="351"
+	replace occup_isco= "4100" if s2_15acod=="41"
+	replace occup_isco= "4320" if s2_15acod=="432"
+	replace occup_isco= "5220" if s2_15acod=="522"
+	replace occup_isco= "5200" if s2_15acod=="525"
+	replace occup_isco= "6000" if s2_15acod=="6"
+	replace occup_isco= "6100" if s2_15acod=="62"
+	replace occup_isco= "6220" if s2_15acod=="632"
+	replace occup_isco= "7200" if s2_15acod=="72"
+	replace occup_isco= "7220" if s2_15acod=="722"
+	replace occup_isco= "7400" if s2_15acod=="74"
+	replace occup_isco= "7500" if s2_15acod=="75"
+	replace occup_isco= "7520" if s2_15acod=="752"
+	replace occup_isco= "9100" if s2_15acod=="91"
+	replace occup_isco= "9400" if s2_15acod=="94"
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
@@ -1489,6 +1571,7 @@ foreach v of local ed_var {
 *</_occup_>
 
 
+
 *<_occup_skill_>
 	gen occup_skill = .
 	replace occup_skill = 3 if inrange(occup, 1, 3)
@@ -1501,13 +1584,12 @@ foreach v of local ed_var {
 
 
 *<_wage_no_compen_>
-	order  s2_33_v s2_38_v
-	egen wage_no_compen = rowtotal(s2_33_v - s2_38_v)
+	order  s2_33a s2_38a
+	egen wage_no_compen = rowtotal(s2_33a - s2_38a)
 	replace wage_no_compen=. if lstatus!=1
 	replace wage_no_compen=. if wage_no_compen==0
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
-
 
 
 *<_unitwage_>
@@ -1520,9 +1602,9 @@ foreach v of local ed_var {
 </_unitwage_note> */
 *self employed payments 38 
 
-	gen byte unitwage = s2_33_f
-	replace unitwage = s2_38_f if s2_33_f==.
-	recode unitwage 4=5 5=4  9=.
+	gen byte unitwage = s2_33b
+	replace unitwage = s2_38b if s2_33b==.
+	recode unitwage 4=5 5=4 
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
 	label values unitwage lblunitwage
@@ -1530,10 +1612,10 @@ foreach v of local ed_var {
 
 
 *<_whours_>
-	gen whours = s2_29_h*s2_28
-	replace whours=0.75 if s2_29_m==45
-	replace whours=0.25 if s2_29_m==15
-	replace whours=0.50 if s2_29_m==30
+	gen whours = s2_29a*s2_28
+	replace whours=0.75 if s2_29b==45
+	replace whours=0.25 if s2_29b==15
+	replace whours=0.50 if s2_29b==30
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -1567,7 +1649,7 @@ foreach v of local ed_var {
 
 
 *<_healthins_>
-	gen byte healthins = .
+	gen byte healthins = s2_36a
 	recode healthins 2=0
 	label var healthins "Employment has health insurance primary job 7 day recall"
 	la de lblhealthins 0 "Without health insurance" 1 "With health insurance"
@@ -1576,8 +1658,7 @@ foreach v of local ed_var {
 
 
 *<_socialsec_>
-	gen byte socialsec = s2_64
-	recode socialsec 2=0
+	gen byte socialsec = .
 	label var socialsec "Employment has social security insurance primary job 7 day recall"
 	la de lblsocialsec 1 "With social security" 0 "Without social secturity"
 	label values socialsec lblsocialsec
@@ -1614,7 +1695,7 @@ foreach v of local ed_var {
 
 {
 *<_empstat_2_>
-	gen byte empstat_2 = .
+	gen byte empstat_2 = s2_46
 	recode empstat_2 2=1 3=4 5=3 7=2 8=1 6=5
 	la de lblempstat_2 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
@@ -1630,19 +1711,49 @@ foreach v of local ed_var {
 
 
 *<_industry_orig_2_>
-	gen industry_orig_2 = .
+	gen industry_orig_2 = s2_45acod
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 
 
 *<_industrycat_isic_2_>
-	gen industrycat_isic_2= ""
+
+
+* We are using the three first digits because in the documentation the INE says that from the 4th digit onwards the code is a variation they performed for the Bolivia industries.
+	gen industrycat_isic_2= s2_45acod + substr("00000", 1, 5 - length(s2_45acod))
+	replace industrycat_isic_2 = substr(industrycat_isic_2, 1, length(industrycat_isic_2) - 1) 
+	replace industrycat_isic_2="" if industrycat_isic_2=="0000"
+	replace industrycat_isic_2="4699" if industrycat_isic_2=="G000"
+	replace industrycat_isic_2="4399" if industrycat_isic_2=="F000"
+	replace industrycat_isic_2="3299" if industrycat_isic_2=="C000"
+	replace industrycat_isic_2="7499" if industrycat_isic_2=="M000"
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
 
 *<_industrycat10_2_>
 	gen byte industrycat10_2 = .
+	replace industrycat10_2=1 if inrange(industrycat_isic_2,"0100","0329")
+	replace industrycat10_2=2 if inrange(industrycat_isic_2,"0510","0999")
+	replace industrycat10_2=3 if inrange(industrycat_isic_2,"1000","3329")
+	replace industrycat10_2=4 if inrange(industrycat_isic_2,"3500","3999")
+	replace industrycat10_2=5 if inrange(industrycat_isic_2,"4100","4399")
+	replace industrycat10_2=6 if inrange(industrycat_isic_2,"4500","4799")
+	replace industrycat10_2=7 if inrange(industrycat_isic_2,"4910","5329")
+	replace industrycat10_2=6 if inrange(industrycat_isic_2,"5500","5639")
+	replace industrycat10_2=7 if inrange(industrycat_isic_2,"5810","6399")
+	replace industrycat10_2=8 if inrange(industrycat_isic_2,"6400","6829")
+	replace industrycat10_2=8 if inrange(industrycat_isic_2,"6910","7599")
+	replace industrycat10_2=8 if inrange(industrycat_isic_2,"7710","8299")
+	replace industrycat10_2=9 if inrange(industrycat_isic_2,"8400","8419")
+	replace industrycat10_2=9 if inrange(industrycat_isic_2,"8420", "8439")
+	replace industrycat10_2=10 if inrange(industrycat_isic_2,"8500","8559")
+	replace industrycat10_2=10 if inrange(industrycat_isic_2,"8600","8899")
+	replace industrycat10_2=10 if inrange(industrycat_isic_2,"9000","9329")
+	replace industrycat10_2=10 if inrange(industrycat_isic_2,"9410","9609")
+	replace industrycat10_2=10 if inrange(industrycat_isic_2,"9700","9829")
+	replace industrycat10_2=10 if inrange(industrycat_isic_2,"9900","9999")
+	replace industrycat10_2=. if lstatus!=1
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
 *</_industrycat10_2_>
@@ -1657,23 +1768,700 @@ foreach v of local ed_var {
 
 
 *<_occup_orig_2_>
-	gen occup_orig_2 = .
+	gen occup_orig_2 = s2_44acod
 	label var occup_orig_2 "Original occupation record secondary job 7 day recall"
 *</_occup_orig_2_>
 
 
 *<_occup_isco_2_>
-	gen occup_isco_2 = ""
+	gen occup_isco_2=""
+	replace occup_isco_2="0110" if s2_44acod=="01000"
+	replace occup_isco_2="0210" if s2_44acod=="02000"
+	replace occup_isco_2="0310" if s2_44acod=="03099"
+	replace occup_isco_2="1111" if s2_44acod=="11101"
+	replace occup_isco_2="1111" if s2_44acod=="11102"
+	replace occup_isco_2="2612" if s2_44acod=="11103"
+	replace occup_isco_2="1111" if s2_44acod=="11104"
+	replace occup_isco_2="1112" if s2_44acod=="11105"
+	replace occup_isco_2="1112" if s2_44acod=="11106"
+	replace occup_isco_2="1112" if s2_44acod=="11107"
+	replace occup_isco_2="1113" if s2_44acod=="11108"
+	replace occup_isco_2="1114" if s2_44acod=="11109"
+	replace occup_isco_2="1114" if s2_44acod=="11110"
+	replace occup_isco_2="1114" if s2_44acod=="11111"
+	replace occup_isco_2="1114" if s2_44acod=="11199"
+	replace occup_isco_2="1120" if s2_44acod=="11201"
+	replace occup_isco_2="1120" if s2_44acod=="11202"
+	replace occup_isco_2="1120" if s2_44acod=="11203"
+	replace occup_isco_2="1120" if s2_44acod=="11204"
+	replace occup_isco_2="1120" if s2_44acod=="11205"
+	replace occup_isco_2="1120" if s2_44acod=="11206"
+	replace occup_isco_2="1120" if s2_44acod=="11207"
+	replace occup_isco_2="1120" if s2_44acod=="11208"
+	replace occup_isco_2="1120" if s2_44acod=="11209"
+	replace occup_isco_2="1120" if s2_44acod=="11210"
+	replace occup_isco_2="1120" if s2_44acod=="11211"
+	replace occup_isco_2="1120" if s2_44acod=="11212"
+	replace occup_isco_2="1120" if s2_44acod=="11213"
+	replace occup_isco_2="1120" if s2_44acod=="11214"
+	replace occup_isco_2="1120" if s2_44acod=="11215"
+	replace occup_isco_2="1120" if s2_44acod=="11299"
+	replace occup_isco_2="1211" if s2_44acod=="12101"
+	replace occup_isco_2="1212" if s2_44acod=="12102"
+	replace occup_isco_2="1213" if s2_44acod=="12103"
+	replace occup_isco_2="1221" if s2_44acod=="12104"
+	replace occup_isco_2="1222" if s2_44acod=="12105"
+	replace occup_isco_2="1223" if s2_44acod=="12106"
+	replace occup_isco_2="1324" if s2_44acod=="12107"
+	replace occup_isco_2="1330" if s2_44acod=="12108"
+	replace occup_isco_2="1324" if s2_44acod=="12109"
+	replace occup_isco_2="1349" if s2_44acod=="12110"
+	replace occup_isco_2="1349" if s2_44acod=="12111"
+	replace occup_isco_2="1349" if s2_44acod=="12199"
+	replace occup_isco_2="1311" if s2_44acod=="13101"
+	replace occup_isco_2="1311" if s2_44acod=="13102"
+	replace occup_isco_2="1311" if s2_44acod=="13103"
+	replace occup_isco_2="1311" if s2_44acod=="13104"
+	replace occup_isco_2="1312" if s2_44acod=="13105"
+	replace occup_isco_2="1321" if s2_44acod=="13201"
+	replace occup_isco_2="1322" if s2_44acod=="13202"
+	replace occup_isco_2="1323" if s2_44acod=="13203"
+	replace occup_isco_2="1330" if s2_44acod=="13300"
+	replace occup_isco_2="1344" if s2_44acod=="13401"
+	replace occup_isco_2="1342" if s2_44acod=="13402"
+	replace occup_isco_2="1345" if s2_44acod=="13403"
+	replace occup_isco_2="1346" if s2_44acod=="13404"
+	replace occup_isco_2="1349" if s2_44acod=="13499"
+	replace occup_isco_2="1411" if s2_44acod=="14101"
+	replace occup_isco_2="1412" if s2_44acod=="14102"
+	replace occup_isco_2="1420" if s2_44acod=="14200"
+	replace occup_isco_2="1439" if s2_44acod=="14301"
+	replace occup_isco_2="1439" if s2_44acod=="14302"
+	replace occup_isco_2="1439" if s2_44acod=="14303"
+	replace occup_isco_2="1439" if s2_44acod=="14304"
+	replace occup_isco_2="1439" if s2_44acod=="14305"
+	replace occup_isco_2="1431" if s2_44acod=="14306"
+	replace occup_isco_2="1324" if s2_44acod=="14307"
+	replace occup_isco_2="1349" if s2_44acod=="14308"
+	replace occup_isco_2="1439" if s2_44acod=="14399"
+	replace occup_isco_2="2111" if s2_44acod=="21101"				
+	replace occup_isco_2="2112" if s2_44acod=="21102"				
+	replace occup_isco_2="2113" if s2_44acod=="21103"				
+	replace occup_isco_2="2114" if s2_44acod=="21104"				
+	replace occup_isco_2="2632" if s2_44acod=="21105"				
+	replace occup_isco_2="2120" if s2_44acod=="21201"				
+	replace occup_isco_2="2120" if s2_44acod=="21202"							
+	replace occup_isco_2="2131" if s2_44acod=="21301"				
+	replace occup_isco_2="2131" if s2_44acod=="21302"				
+	replace occup_isco_2="2132" if s2_44acod=="21303"				
+	replace occup_isco_2="2133" if s2_44acod=="21304"				
+	replace occup_isco_2="2130" if s2_44acod=="21399"							
+	replace occup_isco_2="2142" if s2_44acod=="21401"				
+	replace occup_isco_2="2151" if s2_44acod=="21402"				
+	replace occup_isco_2="2152" if s2_44acod=="21403"				
+	replace occup_isco_2="2144" if s2_44acod=="21404"				
+	replace occup_isco_2="2145" if s2_44acod=="21405"				
+	replace occup_isco_2="2146" if s2_44acod=="21406"				
+	replace occup_isco_2="2149" if s2_44acod=="21407"				
+	replace occup_isco_2="2149" if s2_44acod=="21408"	
+	replace occup_isco_2="2149" if s2_44acod=="21409"	
+	replace occup_isco_2="2149" if s2_44acod=="21499"							
+	replace occup_isco_2="2160" if s2_44acod=="21501"							
+	replace occup_isco_2="2165" if s2_44acod=="21502"				
+	replace occup_isco_2="2166" if s2_44acod=="21503"							
+	replace occup_isco_2="2210" if s2_44acod=="22101"							
+	replace occup_isco_2="2269" if s2_44acod=="22102"							
+	replace occup_isco_2="2221" if s2_44acod=="22201"				
+	replace occup_isco_2="2222" if s2_44acod=="22202"							
+	replace occup_isco_2="2230" if s2_44acod=="22300"							
+	replace occup_isco_2="2250" if s2_44acod=="22400"							
+	replace occup_isco_2="2261" if s2_44acod=="22501"				
+	replace occup_isco_2="2262" if s2_44acod=="22502"				
+	replace occup_isco_2="2264" if s2_44acod=="22503"				
+	replace occup_isco_2="2265" if s2_44acod=="22504"				
+	replace occup_isco_2="2266" if s2_44acod=="22505"				
+	replace occup_isco_2="2267" if s2_44acod=="22506"							
+	replace occup_isco_2="2269" if s2_44acod=="22599"							
+	replace occup_isco_2="2310" if s2_44acod=="23101"				
+	replace occup_isco_2="2310" if s2_44acod=="23102"							
+	replace occup_isco_2="2320" if s2_44acod=="23200"							
+	replace occup_isco_2="2330" if s2_44acod=="23300"							
+	replace occup_isco_2="2341" if s2_44acod=="23401"				
+	replace occup_isco_2="2342" if s2_44acod=="23402"							
+	replace occup_isco_2="2351" if s2_44acod=="23501"				
+	replace occup_isco_2="2359" if s2_44acod=="23502"				
+	replace occup_isco_2="2352" if s2_44acod=="23503"				
+	replace occup_isco_2="2353" if s2_44acod=="23504"				
+	replace occup_isco_2="2354" if s2_44acod=="23505"				
+	replace occup_isco_2="2355" if s2_44acod=="23506"				
+	replace occup_isco_2="2355" if s2_44acod=="23507"				
+	replace occup_isco_2="2356" if s2_44acod=="23508"				
+	replace occup_isco_2="5165" if s2_44acod=="23509"				
+	replace occup_isco_2="3423" if s2_44acod=="23510"				
+	replace occup_isco_2="2359" if s2_44acod=="23599"						
+	replace occup_isco_2="2411" if s2_44acod=="24101"				
+	replace occup_isco_2="2411" if s2_44acod=="24102"
+	replace occup_isco_2="2410" if s2_44acod=="24103"
+	replace occup_isco_2="2410" if s2_44acod=="24199"							
+	replace occup_isco_2="2421" if s2_44acod=="24201"							
+	replace occup_isco_2="2420" if s2_44acod=="24299"							
+	replace occup_isco_2="2431" if s2_44acod=="24301"				
+	replace occup_isco_2="2432" if s2_44acod=="24302"				
+	replace occup_isco_2="2433" if s2_44acod=="24303"						
+	replace occup_isco_2="2511" if s2_44acod=="25101"				
+	replace occup_isco_2="2512" if s2_44acod=="25102"				
+	replace occup_isco_2="2513" if s2_44acod=="25103"							
+	replace occup_isco_2="2529" if s2_44acod=="25199"							
+	replace occup_isco_2="2521" if s2_44acod=="25201"				
+	replace occup_isco_2="2522" if s2_44acod=="25202"				
+	replace occup_isco_2="2523" if s2_44acod=="25203"				
+	replace occup_isco_2="2153" if s2_44acod=="25204"				
+	replace occup_isco_2="2520" if s2_44acod=="25299"							
+	replace occup_isco_2="2611" if s2_44acod=="26101"				
+	replace occup_isco_2="2619" if s2_44acod=="26102"				
+	replace occup_isco_2="2612" if s2_44acod=="26103"				
+	replace occup_isco_2="2619" if s2_44acod=="26199"							
+	replace occup_isco_2="2633" if s2_44acod=="26201"				
+	replace occup_isco_2="2633" if s2_44acod=="26203"				
+	replace occup_isco_2="2641" if s2_44acod=="26202"				
+	replace occup_isco_2="2634" if s2_44acod=="26204"				
+	replace occup_isco_2="2600" if s2_44acod=="26205"				
+	replace occup_isco_2="2622" if s2_44acod=="26206"				
+	replace occup_isco_2="2643" if s2_44acod=="26207"				
+	replace occup_isco_2="2643" if s2_44acod=="26208"				
+	replace occup_isco_2="2600" if s2_44acod=="26299"							
+	replace occup_isco_2="2631" if s2_44acod=="26301"				
+	replace occup_isco_2="2632" if s2_44acod=="26302"				
+	replace occup_isco_2="2632" if s2_44acod=="26303"				
+	replace occup_isco_2="2632" if s2_44acod=="26304"				
+	replace occup_isco_2="2635" if s2_44acod=="26305"				
+	replace occup_isco_2="2642" if s2_44acod=="26306"				
+	replace occup_isco_2="2636" if s2_44acod=="26307"				
+	replace occup_isco_2="2630" if s2_44acod=="26399"						
+	replace occup_isco_2="2641" if s2_44acod=="26400"						
+	replace occup_isco_2="2651" if s2_44acod=="26501"				
+	replace occup_isco_2="2652" if s2_44acod=="26502"				
+	replace occup_isco_2="2652" if s2_44acod=="26503"				
+	replace occup_isco_2="2652" if s2_44acod=="26504"				
+	replace occup_isco_2="2652" if s2_44acod=="26505"				
+	replace occup_isco_2="2652" if s2_44acod=="26506"				
+	replace occup_isco_2="2653" if s2_44acod=="26507"				
+	replace occup_isco_2="2654" if s2_44acod=="26508"				
+	replace occup_isco_2="2655" if s2_44acod=="26509"				
+	replace occup_isco_2="2656" if s2_44acod=="26510"				
+	replace occup_isco_2="2659" if s2_44acod=="26599"						
+	replace occup_isco_2="2000" if s2_44acod=="27100"				
+	replace occup_isco_2="3111" if s2_44acod=="31101"				
+	replace occup_isco_2="3111" if s2_44acod=="31102"				
+	replace occup_isco_2="3111" if s2_44acod=="31103"				
+	replace occup_isco_2="3111" if s2_44acod=="31104"				
+	replace occup_isco_2="3119" if s2_44acod=="31105"				
+	replace occup_isco_2="3112" if s2_44acod=="31106"				
+	replace occup_isco_2="3113" if s2_44acod=="31107"				
+	replace occup_isco_2="3114" if s2_44acod=="31108"				
+	replace occup_isco_2="3115" if s2_44acod=="31109"				
+	replace occup_isco_2="3116" if s2_44acod=="31110"				
+	replace occup_isco_2="3117" if s2_44acod=="31111"				
+	replace occup_isco_2="3118" if s2_44acod=="31112"				
+	replace occup_isco_2="3119" if s2_44acod=="31113"				
+	replace occup_isco_2="3119" if s2_44acod=="31114"				
+	replace occup_isco_2="3119" if s2_44acod=="31199"				
+	replace occup_isco_2="3121" if s2_44acod=="31201"				
+	replace occup_isco_2="3122" if s2_44acod=="31202"				
+	replace occup_isco_2="3123" if s2_44acod=="31203"						
+	replace occup_isco_2="3131" if s2_44acod=="31301"				
+	replace occup_isco_2="3132" if s2_44acod=="31302"				
+	replace occup_isco_2="3132" if s2_44acod=="31303"				
+	replace occup_isco_2="3133" if s2_44acod=="31304"				
+	replace occup_isco_2="3134" if s2_44acod=="31305"				
+	replace occup_isco_2="3135" if s2_44acod=="31306"				
+	replace occup_isco_2="3139" if s2_44acod=="31399"							
+	replace occup_isco_2="3141" if s2_44acod=="31401"				
+	replace occup_isco_2="3142" if s2_44acod=="31402"				
+	replace occup_isco_2="3143" if s2_44acod=="31403"				
+	replace occup_isco_2="3141" if s2_44acod=="31499"							
+	replace occup_isco_2="3151" if s2_44acod=="31501"				
+	replace occup_isco_2="3152" if s2_44acod=="31502"				
+	replace occup_isco_2="3153" if s2_44acod=="31503"				
+	replace occup_isco_2="3154" if s2_44acod=="31504"				
+	replace occup_isco_2="3155" if s2_44acod=="31505"				
+	replace occup_isco_2="3153" if s2_44acod=="31599"						
+	replace occup_isco_2="3211" if s2_44acod=="32101"				
+	replace occup_isco_2="3212" if s2_44acod=="32102"				
+	replace occup_isco_2="3214" if s2_44acod=="32103"				
+	replace occup_isco_2="3213" if s2_44acod=="32104"						
+	replace occup_isco_2="3221" if s2_44acod=="32201"				
+	replace occup_isco_2="3222" if s2_44acod=="32202"						
+	replace occup_isco_2="3230" if s2_44acod=="32301"							
+	replace occup_isco_2="3240" if s2_44acod=="32400"							
+	replace occup_isco_2="3251" if s2_44acod=="32501"				
+	replace occup_isco_2="3252" if s2_44acod=="32502"				
+	replace occup_isco_2="3253" if s2_44acod=="32503"				
+	replace occup_isco_2="3254" if s2_44acod=="32504"				
+	replace occup_isco_2="3255" if s2_44acod=="32505"				
+	replace occup_isco_2="3256" if s2_44acod=="32506"				
+	replace occup_isco_2="3257" if s2_44acod=="32507"				
+	replace occup_isco_2="3213" if s2_44acod=="32508"				
+	replace occup_isco_2="3258" if s2_44acod=="32509"				
+	replace occup_isco_2="3259" if s2_44acod=="32510"				
+	replace occup_isco_2="3259" if s2_44acod=="32511"				
+	replace occup_isco_2="3259" if s2_44acod=="32599"							
+	replace occup_isco_2="3311" if s2_44acod=="33101"				
+	replace occup_isco_2="3312" if s2_44acod=="33102"				
+	replace occup_isco_2="3313" if s2_44acod=="33103"				
+	replace occup_isco_2="3314" if s2_44acod=="33104"				
+	replace occup_isco_2="3315" if s2_44acod=="33105"							
+	replace occup_isco_2="3321" if s2_44acod=="33201"				
+	replace occup_isco_2="3322" if s2_44acod=="33202"				
+	replace occup_isco_2="3323" if s2_44acod=="33203"				
+	replace occup_isco_2="3324" if s2_44acod=="33204"				
+	replace occup_isco_2="3320" if s2_44acod=="33299"							
+	replace occup_isco_2="3331" if s2_44acod=="33301"				
+	replace occup_isco_2="3332" if s2_44acod=="33302"				
+	replace occup_isco_2="3333" if s2_44acod=="33303"				
+	replace occup_isco_2="3334" if s2_44acod=="33304"				
+	replace occup_isco_2="3339" if s2_44acod=="33305"				
+	replace occup_isco_2="3339" if s2_44acod=="33399"										
+	replace occup_isco_2="3342" if s2_44acod=="33401"				
+	replace occup_isco_2="3343" if s2_44acod=="33402"				
+	replace occup_isco_2="3344" if s2_44acod=="33403"				
+	replace occup_isco_2="3340" if s2_44acod=="33499"						
+	replace occup_isco_2="3351" if s2_44acod=="33501"				
+	replace occup_isco_2="3352" if s2_44acod=="33502"				
+	replace occup_isco_2="3353" if s2_44acod=="33503"				
+	replace occup_isco_2="3354" if s2_44acod=="33504"				
+	replace occup_isco_2="3355" if s2_44acod=="33505"				
+	replace occup_isco_2="3359" if s2_44acod=="33599"							
+	replace occup_isco_2="3411" if s2_44acod=="34101"				
+	replace occup_isco_2="3412" if s2_44acod=="34102"				
+	replace occup_isco_2="3413" if s2_44acod=="34103"						
+	replace occup_isco_2="3421" if s2_44acod=="34201"				
+	replace occup_isco_2="3422" if s2_44acod=="34202"							
+	replace occup_isco_2="3431" if s2_44acod=="34301"				
+	replace occup_isco_2="3432" if s2_44acod=="34302"				
+	replace occup_isco_2="3118" if s2_44acod=="34303"				
+	replace occup_isco_2="3433" if s2_44acod=="34304"				
+	replace occup_isco_2="3434" if s2_44acod=="34305"				
+	replace occup_isco_2="3435" if s2_44acod=="34306"				
+	replace occup_isco_2="3435" if s2_44acod=="34307"				
+	replace occup_isco_2="3435" if s2_44acod=="34308"				
+	replace occup_isco_2="3435" if s2_44acod=="34309"				
+	replace occup_isco_2="3435" if s2_44acod=="34310"				
+	replace occup_isco_2="3435" if s2_44acod=="34311"				
+	replace occup_isco_2="3435" if s2_44acod=="34312"				
+	replace occup_isco_2="3435" if s2_44acod=="34313"				
+	replace occup_isco_2="3435" if s2_44acod=="34399"							
+	replace occup_isco_2="3511" if s2_44acod=="35101"				
+	replace occup_isco_2="3512" if s2_44acod=="35102"				
+	replace occup_isco_2="3513" if s2_44acod=="35103"				
+	replace occup_isco_2="3514" if s2_44acod=="35104"				
+	replace occup_isco_2="3510" if s2_44acod=="35199"						
+	replace occup_isco_2="3521" if s2_44acod=="35201"				
+	replace occup_isco_2="3522" if s2_44acod=="35202"	
+	replace occup_isco_2="4110" if s2_44acod=="41100"						
+	replace occup_isco_2="4120" if s2_44acod=="41200"					
+	replace occup_isco_2="4211" if s2_44acod=="42101"				
+	replace occup_isco_2="4212" if s2_44acod=="42102"				
+	replace occup_isco_2="4213" if s2_44acod=="42103"				
+	replace occup_isco_2="4214" if s2_44acod=="42104"
+	replace occup_isco_2="4214" if s2_44acod=="42199"
+	replace occup_isco_2="4221" if s2_44acod=="42201"				
+	replace occup_isco_2="4222" if s2_44acod=="42202"				
+	replace occup_isco_2="4223" if s2_44acod=="42203"				
+	replace occup_isco_2="4224" if s2_44acod=="42204"				
+	replace occup_isco_2="4225" if s2_44acod=="42205"				
+	replace occup_isco_2="4226" if s2_44acod=="42206"				
+	replace occup_isco_2="4227" if s2_44acod=="42207"				
+	replace occup_isco_2="4229" if s2_44acod=="42299"							
+	replace occup_isco_2="4311" if s2_44acod=="43101"				
+	replace occup_isco_2="4312" if s2_44acod=="43102"				
+	replace occup_isco_2="4313" if s2_44acod=="43103"							
+	replace occup_isco_2="4321" if s2_44acod=="43201"				
+	replace occup_isco_2="4322" if s2_44acod=="43202"				
+	replace occup_isco_2="4323" if s2_44acod=="43203"						
+	replace occup_isco_2="4411" if s2_44acod=="44101"				
+	replace occup_isco_2="4412" if s2_44acod=="44102"				
+	replace occup_isco_2="4413" if s2_44acod=="44103"				
+	replace occup_isco_2="4414" if s2_44acod=="44104"				
+	replace occup_isco_2="4415" if s2_44acod=="44105"							
+	replace occup_isco_2="4419" if s2_44acod=="44199"				
+	replace occup_isco_2="5111" if s2_44acod=="51101"
+	replace occup_isco_2="5112" if s2_44acod=="51102"
+	replace occup_isco_2="5113" if s2_44acod=="51103"
+	replace occup_isco_2="5120" if s2_44acod=="51200"
+	replace occup_isco_2="5130" if s2_44acod=="51300"
+	replace occup_isco_2="5141" if s2_44acod=="51401"
+	replace occup_isco_2="5142" if s2_44acod=="51402"
+	replace occup_isco_2="5151" if s2_44acod=="51501"
+	replace occup_isco_2="5152" if s2_44acod=="51502"
+	replace occup_isco_2="5153" if s2_44acod=="51503"
+	replace occup_isco_2="5161" if s2_44acod=="51601"
+	replace occup_isco_2="5162" if s2_44acod=="51602"
+	replace occup_isco_2="5163" if s2_44acod=="51603"
+	replace occup_isco_2="5164" if s2_44acod=="51604"
+	replace occup_isco_2="5169" if s2_44acod=="51605"
+	replace occup_isco_2="5169" if s2_44acod=="51699"
+	replace occup_isco_2="5211" if s2_44acod=="52101"
+	replace occup_isco_2="5221" if s2_44acod=="52201"
+	replace occup_isco_2="5222" if s2_44acod=="52202"
+	replace occup_isco_2="5223" if s2_44acod=="52203"
+	replace occup_isco_2="5230" if s2_44acod=="52301"
+	replace occup_isco_2="5241" if s2_44acod=="52401"
+	replace occup_isco_2="5242" if s2_44acod=="52402"
+	replace occup_isco_2="5243" if s2_44acod=="52403"
+	replace occup_isco_2="5244" if s2_44acod=="52404"
+	replace occup_isco_2="5245" if s2_44acod=="52405"
+	replace occup_isco_2="5246" if s2_44acod=="52406"
+	replace occup_isco_2="5249" if s2_44acod=="52407"
+	replace occup_isco_2="5249" if s2_44acod=="52499"
+	replace occup_isco_2="5212" if s2_44acod=="52501"
+	replace occup_isco_2="9520" if s2_44acod=="52502"
+	replace occup_isco_2="5310" if s2_44acod=="53101"
+	replace occup_isco_2="5310" if s2_44acod=="53102"
+	replace occup_isco_2="5321" if s2_44acod=="53201"
+	replace occup_isco_2="5322" if s2_44acod=="53202"
+	replace occup_isco_2="5329" if s2_44acod=="53203"
+	replace occup_isco_2="5411" if s2_44acod=="54101"
+	replace occup_isco_2="5412" if s2_44acod=="54102"
+	replace occup_isco_2="5412" if s2_44acod=="54103"
+	replace occup_isco_2="5413" if s2_44acod=="54104"
+	replace occup_isco_2="5414" if s2_44acod=="54105"
+	replace occup_isco_2="5419" if s2_44acod=="54199"
+	replace occup_isco_2="6111" if s2_44acod=="61001"				
+	replace occup_isco_2="6111" if s2_44acod=="61002"				
+	replace occup_isco_2="6111" if s2_44acod=="61003"				
+	replace occup_isco_2="6111" if s2_44acod=="61004"				
+	replace occup_isco_2="6111" if s2_44acod=="61005"				
+	replace occup_isco_2="6111" if s2_44acod=="61006"				
+	replace occup_isco_2="6111" if s2_44acod=="61007"				
+	replace occup_isco_2="6111" if s2_44acod=="61008"				
+	replace occup_isco_2="6112" if s2_44acod=="61009"				
+	replace occup_isco_2="6112" if s2_44acod=="61010"				
+	replace occup_isco_2="6112" if s2_44acod=="61011"				
+	replace occup_isco_2="6112" if s2_44acod=="61012"				
+	replace occup_isco_2="6113" if s2_44acod=="61013"						
+	replace occup_isco_2="6110" if s2_44acod=="61014"	
+	replace occup_isco_2="6110" if s2_44acod=="61015"
+	replace occup_isco_2="6110" if s2_44acod=="61099"							
+	replace occup_isco_2="6121" if s2_44acod=="62001"				
+	replace occup_isco_2="6121" if s2_44acod=="62002"				
+	replace occup_isco_2="6121" if s2_44acod=="62003"				
+	replace occup_isco_2="6121" if s2_44acod=="62004"				
+	replace occup_isco_2="6122" if s2_44acod=="62005"				
+	replace occup_isco_2="6129" if s2_44acod=="62006"				
+	replace occup_isco_2="6129" if s2_44acod=="62007"				
+	replace occup_isco_2="6129" if s2_44acod=="62008"				
+	replace occup_isco_2="6123" if s2_44acod=="62009"				
+	replace occup_isco_2="6123" if s2_44acod=="62010"				
+	replace occup_isco_2="6121" if s2_44acod=="62011"				
+	replace occup_isco_2="6129" if s2_44acod=="62099"							
+	replace occup_isco_2="6210" if s2_44acod=="63100"							
+	replace occup_isco_2="6221" if s2_44acod=="63201"				
+	replace occup_isco_2="6222" if s2_44acod=="63202"				
+	replace occup_isco_2="6224" if s2_44acod=="63203"				
+	replace occup_isco_2="7111" if s2_44acod=="71102"					
+	replace occup_isco_2="7110" if s2_44acod=="71101"					
+	replace occup_isco_2="7115" if s2_44acod=="71103"					
+	replace occup_isco_2="7119" if s2_44acod=="71199"					
+	replace occup_isco_2="7115" if s2_44acod=="71104"									
+	replace occup_isco_2="7121" if s2_44acod=="71201"					
+	replace occup_isco_2="7122" if s2_44acod=="71202"					
+	replace occup_isco_2="7123" if s2_44acod=="71203"					
+	replace occup_isco_2="7124" if s2_44acod=="71204"					
+	replace occup_isco_2="7125" if s2_44acod=="71205"					
+	replace occup_isco_2="7126" if s2_44acod=="71206"					
+	replace occup_isco_2="7127" if s2_44acod=="71207"					
+	replace occup_isco_2="7210" if s2_44acod=="71299"									
+	replace occup_isco_2="7131" if s2_44acod=="71301"					
+	replace occup_isco_2="7132" if s2_44acod=="71302"					
+	replace occup_isco_2="7133" if s2_44acod=="71303"									
+	replace occup_isco_2="7211" if s2_44acod=="72101"					
+	replace occup_isco_2="7212" if s2_44acod=="72102"					
+	replace occup_isco_2="7213" if s2_44acod=="72103"					
+	replace occup_isco_2="7214" if s2_44acod=="72104"					
+	replace occup_isco_2="7215" if s2_44acod=="72105"									
+	replace occup_isco_2="7221" if s2_44acod=="72201"					
+	replace occup_isco_2="7222" if s2_44acod=="72202"					
+	replace occup_isco_2="7223" if s2_44acod=="72203"					
+	replace occup_isco_2="7224" if s2_44acod=="72204"									
+	replace occup_isco_2="7231" if s2_44acod=="72301"					
+	replace occup_isco_2="7232" if s2_44acod=="72302"					
+	replace occup_isco_2="7233" if s2_44acod=="72303"					
+	replace occup_isco_2="7234" if s2_44acod=="72304"
+	replace occup_isco_2="7230" if s2_44acod=="72305"
+	replace occup_isco_2="7230" if s2_44acod=="72399"								
+	replace occup_isco_2="7311" if s2_44acod=="73101"					
+	replace occup_isco_2="7312" if s2_44acod=="73102"					
+	replace occup_isco_2="7312" if s2_44acod=="73103"					
+	replace occup_isco_2="7312" if s2_44acod=="73104"					
+	replace occup_isco_2="7313" if s2_44acod=="73105"									
+	replace occup_isco_2="7314" if s2_44acod=="73201"					
+	replace occup_isco_2="7315" if s2_44acod=="73202"					
+	replace occup_isco_2="7316" if s2_44acod=="73203"								
+	replace occup_isco_2="7317" if s2_44acod=="73301"					
+	replace occup_isco_2="7318" if s2_44acod=="73302"					
+	replace occup_isco_2="7318" if s2_44acod=="73303"					
+	replace occup_isco_2="7319" if s2_44acod=="73304"					
+	replace occup_isco_2="7314" if s2_44acod=="73305"					
+	replace occup_isco_2="7318" if s2_44acod=="73306"					
+	replace occup_isco_2="7319" if s2_44acod=="73399"								
+	replace occup_isco_2="7321" if s2_44acod=="73401"					
+	replace occup_isco_2="7322" if s2_44acod=="73402"					
+	replace occup_isco_2="7323" if s2_44acod=="73403"					
+	replace occup_isco_2="7323" if s2_44acod=="73499"									
+	replace occup_isco_2="7412" if s2_44acod=="74101"					
+	replace occup_isco_2="7413" if s2_44acod=="74102"									
+	replace occup_isco_2="7421" if s2_44acod=="74201"					
+	replace occup_isco_2="7422" if s2_44acod=="74202"									
+	replace occup_isco_2="7511" if s2_44acod=="75101"					
+	replace occup_isco_2="7512" if s2_44acod=="75102"					
+	replace occup_isco_2="7513" if s2_44acod=="75103"					
+	replace occup_isco_2="7514" if s2_44acod=="75104"					
+	replace occup_isco_2="7515" if s2_44acod=="75105"					
+	replace occup_isco_2="7516" if s2_44acod=="75106"					
+	replace occup_isco_2="7514" if s2_44acod=="75199"									
+	replace occup_isco_2="7521" if s2_44acod=="75201"					
+	replace occup_isco_2="7522" if s2_44acod=="75202"					
+	replace occup_isco_2="7523" if s2_44acod=="75203"					
+	replace occup_isco_2="7520" if s2_44acod=="75299"									
+	replace occup_isco_2="7532" if s2_44acod=="75301"					
+	replace occup_isco_2="7532" if s2_44acod=="75302"					
+	replace occup_isco_2="7531" if s2_44acod=="75303"					
+	replace occup_isco_2="7531" if s2_44acod=="75304"					
+	replace occup_isco_2="7531" if s2_44acod=="75305"					
+	replace occup_isco_2="7532" if s2_44acod=="75306"					
+	replace occup_isco_2="7533" if s2_44acod=="75307"					
+	replace occup_isco_2="7534" if s2_44acod=="75308"					
+	replace occup_isco_2="7530" if s2_44acod=="75399"								
+	replace occup_isco_2="7535" if s2_44acod=="75401"					
+	replace occup_isco_2="7536" if s2_44acod=="75402"					
+	replace occup_isco_2="7530" if s2_44acod=="75403"					
+	replace occup_isco_2="7531" if s2_44acod=="75404"					
+	replace occup_isco_2="7530" if s2_44acod=="75499"								
+	replace occup_isco_2="8111" if s2_44acod=="75501"					
+	replace occup_isco_2="8111" if s2_44acod=="75502"					
+	replace occup_isco_2="7513" if s2_44acod=="75503"					
+	replace occup_isco_2="7542" if s2_44acod=="75504"					
+	replace occup_isco_2="8110" if s2_44acod=="75599"								
+	replace occup_isco_2="7541" if s2_44acod=="75601"								
+	replace occup_isco_2="7543" if s2_44acod=="75602"					
+	replace occup_isco_2="7549" if s2_44acod=="75603"					
+	replace occup_isco_2="7549" if s2_44acod=="75604"					
+	replace occup_isco_2="7549" if s2_44acod=="75699"					
+	replace occup_isco_2="8111" if s2_44acod=="81101"				
+	replace occup_isco_2="8112" if s2_44acod=="81102"				
+	replace occup_isco_2="8113" if s2_44acod=="81103"				
+	replace occup_isco_2="8114" if s2_44acod=="81104"				
+	replace occup_isco_2="8114" if s2_44acod=="81105"					
+	replace occup_isco_2="8121" if s2_44acod=="81201"				
+	replace occup_isco_2="8122" if s2_44acod=="81202"						
+	replace occup_isco_2="8131" if s2_44acod=="81301"				
+	replace occup_isco_2="8132" if s2_44acod=="81302"						
+	replace occup_isco_2="8141" if s2_44acod=="81401"				
+	replace occup_isco_2="8142" if s2_44acod=="81402"				
+	replace occup_isco_2="8143" if s2_44acod=="81403"							
+	replace occup_isco_2="8151" if s2_44acod=="81501"				
+	replace occup_isco_2="8152" if s2_44acod=="81502"				
+	replace occup_isco_2="8153" if s2_44acod=="81503"				
+	replace occup_isco_2="8154" if s2_44acod=="81504"				
+	replace occup_isco_2="8155" if s2_44acod=="81505"				
+	replace occup_isco_2="8156" if s2_44acod=="81506"							
+	replace occup_isco_2="8159" if s2_44acod=="81599"						
+	replace occup_isco_2="8160" if s2_44acod=="81600"							
+	replace occup_isco_2="8171" if s2_44acod=="81701"				
+	replace occup_isco_2="8172" if s2_44acod=="81702"							
+	replace occup_isco_2="8181" if s2_44acod=="81801"				
+	replace occup_isco_2="8182" if s2_44acod=="81802"				
+	replace occup_isco_2="8183" if s2_44acod=="81803"				
+	replace occup_isco_2="8189" if s2_44acod=="81804"				
+	replace occup_isco_2="8189" if s2_44acod=="81899"							
+	replace occup_isco_2="8211" if s2_44acod=="82101"				
+	replace occup_isco_2="8212" if s2_44acod=="82102"				
+	replace occup_isco_2="8219" if s2_44acod=="82199"						
+	replace occup_isco_2="8311" if s2_44acod=="83101"				
+	replace occup_isco_2="8312" if s2_44acod=="83102"							
+	replace occup_isco_2="8321" if s2_44acod=="83201"				
+	replace occup_isco_2="8322" if s2_44acod=="83202"				
+	replace occup_isco_2="8322" if s2_44acod=="83203"				
+	replace occup_isco_2="8322" if s2_44acod=="83209"						
+	replace occup_isco_2="8331" if s2_44acod=="83302"				
+	replace occup_isco_2="8332" if s2_44acod=="83301"				
+	replace occup_isco_2="8332" if s2_44acod=="83399"							
+	replace occup_isco_2="8341" if s2_44acod=="83401"				
+	replace occup_isco_2="8342" if s2_44acod=="83402"				
+	replace occup_isco_2="8343" if s2_44acod=="83403"				
+	replace occup_isco_2="8344" if s2_44acod=="83404"				
+	replace occup_isco_2="8340" if s2_44acod=="83499"						
+	replace occup_isco_2="8350" if s2_44acod=="83500"				
+	replace occup_isco_2="9111" if s2_44acod=="91101"				
+	replace occup_isco_2="9112" if s2_44acod=="91102"						
+	replace occup_isco_2="9121" if s2_44acod=="91201"				
+	replace occup_isco_2="9122" if s2_44acod=="91202"				
+	replace occup_isco_2="9123" if s2_44acod=="91203"				
+	replace occup_isco_2="9129" if s2_44acod=="91299"							
+	replace occup_isco_2="9211" if s2_44acod=="92101"				
+	replace occup_isco_2="9212" if s2_44acod=="92102"				
+	replace occup_isco_2="9213" if s2_44acod=="92103"				
+	replace occup_isco_2="9214" if s2_44acod=="92104"				
+	replace occup_isco_2="9215" if s2_44acod=="92105"				
+	replace occup_isco_2="9216" if s2_44acod=="92106"				
+	replace occup_isco_2="9210" if s2_44acod=="92199"							
+	replace occup_isco_2="9311" if s2_44acod=="93101"				
+	replace occup_isco_2="9312" if s2_44acod=="93102"				
+	replace occup_isco_2="9313" if s2_44acod=="93103"						
+	replace occup_isco_2="9321" if s2_44acod=="93201"				
+	replace occup_isco_2="9329" if s2_44acod=="93299"						
+	replace occup_isco_2="9331" if s2_44acod=="93301"				
+	replace occup_isco_2="9332" if s2_44acod=="93302"				
+	replace occup_isco_2="9333" if s2_44acod=="93303"				
+	replace occup_isco_2="9334" if s2_44acod=="93304"				
+	replace occup_isco_2="9330" if s2_44acod=="93399"							
+	replace occup_isco_2="9412" if s2_44acod=="94100"							
+	replace occup_isco_2="9510" if s2_44acod=="95101"				
+	replace occup_isco_2="9510" if s2_44acod=="95102"				
+	replace occup_isco_2="9510" if s2_44acod=="95103"				
+	replace occup_isco_2="9510" if s2_44acod=="95199"							
+	replace occup_isco_2="9611" if s2_44acod=="96101"				
+	replace occup_isco_2="9612" if s2_44acod=="96102"				
+	replace occup_isco_2="9613" if s2_44acod=="96103"						
+	replace occup_isco_2="9621" if s2_44acod=="96201"							
+	replace occup_isco_2="9629" if s2_44acod=="96202"				
+	replace occup_isco_2="9623" if s2_44acod=="96203"				
+	replace occup_isco_2="9623" if s2_44acod=="96204"				
+	replace occup_isco_2="9624" if s2_44acod=="96205"				
+	replace occup_isco_2="9629" if s2_44acod=="96299"				
+	replace occup_isco_2="1430" if s2_44acod=="143"		
+	replace occup_isco_2="2000" if s2_44acod=="2"	
+	replace occup_isco_2="2110" if s2_44acod=="211"	
+	replace occup_isco_2="2140" if s2_44acod=="214"	
+	replace occup_isco_2="2300" if s2_44acod=="23"	
+	replace occup_isco_2="2340" if s2_44acod=="234"	
+	replace occup_isco_2="2350" if s2_44acod=="235"	
+	replace occup_isco_2="2410" if s2_44acod=="241"	
+	replace occup_isco_2="2620" if s2_44acod=="262"	
+	replace occup_isco_2="3110" if s2_44acod=="311"	
+	replace occup_isco_2="3250" if s2_44acod=="325"	
+	replace occup_isco_2="3310" if s2_44acod=="331"	
+	replace occup_isco_2="3320" if s2_44acod=="332"	
+	replace occup_isco_2="3410" if s2_44acod=="341"	
+	replace occup_isco_2="3430" if s2_44acod=="343"	
+	replace occup_isco_2="4220" if s2_44acod=="422"	
+	replace occup_isco_2="5200" if s2_44acod=="52"	
+	replace occup_isco_2="5240" if s2_44acod=="524"	
+	replace occup_isco_2="6100" if s2_44acod=="61"	
+	replace occup_isco_2="6100" if s2_44acod=="610"	
+	replace occup_isco_2="6200" if s2_44acod=="620"
+	replace occup_isco_2="7100" if s2_44acod=="71"
+	replace occup_isco_2="7120" if s2_44acod=="712"
+	replace occup_isco_2="7210" if s2_44acod=="721"
+	replace occup_isco_2="7230" if s2_44acod=="723"
+	replace occup_isco_2="7330" if s2_44acod=="733"
+	replace occup_isco_2="7510" if s2_44acod=="751"
+	replace occup_isco_2="7530" if s2_44acod=="753"
+	replace occup_isco_2="8100" if s2_44acod=="81"
+	replace occup_isco_2="8300" if s2_44acod=="83"
+	replace occup_isco_2="8320" if s2_44acod=="832"
+	replace occup_isco_2="8330" if s2_44acod=="833"
+	replace occup_isco_2="8340" if s2_44acod=="834"
+	replace occup_isco_2="9210" if s2_44acod=="921"
+	
+	replace occup_isco_2="1100" if s2_44acod=="111"	
+	replace occup_isco_2="1310" if s2_44acod=="131"	
+	replace occup_isco_2="1320" if s2_44acod=="132"	
+	replace occup_isco_2="1340" if s2_44acod=="134"	
+	replace occup_isco_2="1410" if s2_44acod=="141"	
+	replace occup_isco_2="2120" if s2_44acod=="212"	
+	replace occup_isco_2="2160" if s2_44acod=="215"
+	replace occup_isco_2="2210" if s2_44acod=="221"
+	replace occup_isco_2="2310" if s2_44acod=="231"
+	replace occup_isco_2="2320" if s2_44acod=="232"
+	replace occup_isco_2="2330" if s2_44acod=="233"
+	replace occup_isco_2="2420" if s2_44acod=="242"
+	replace occup_isco_2="2430" if s2_44acod=="243"
+	replace occup_isco_2="2510" if s2_44acod=="251"
+	replace occup_isco_2="2520" if s2_44acod=="252"
+	replace occup_isco_2="2610" if s2_44acod=="261"
+	replace occup_isco_2="2630" if s2_44acod=="263"
+	replace occup_isco_2="3100" if s2_44acod=="31"
+	replace occup_isco_2="3120" if s2_44acod=="312"
+	replace occup_isco_2="3130" if s2_44acod=="313"
+	replace occup_isco_2="3140" if s2_44acod=="314"
+	replace occup_isco_2="3150" if s2_44acod=="315"
+	replace occup_isco_2="3210" if s2_44acod=="321"
+	replace occup_isco_2="3330" if s2_44acod=="333"
+	replace occup_isco_2="3340" if s2_44acod=="334"
+	replace occup_isco_2="3520" if s2_44acod=="352"
+	replace occup_isco_2="4110" if s2_44acod=="411"
+	replace occup_isco_2="4210" if s2_44acod=="421"
+	replace occup_isco_2="4310" if s2_44acod=="431"
+	replace occup_isco_2="4410" if s2_44acod=="441"
+	
+	replace occup_isco_2="5110" if s2_44acod=="511"
+	replace occup_isco_2="5120" if s2_44acod=="512"
+	replace occup_isco_2="5140" if s2_44acod=="514"
+	replace occup_isco_2="5150" if s2_44acod=="515"
+	replace occup_isco_2="5210" if s2_44acod=="521"
+	replace occup_isco_2="5310" if s2_44acod=="531"
+	replace occup_isco_2="5410" if s2_44acod=="541"
+	replace occup_isco_2="7110" if s2_44acod=="711"
+	replace occup_isco_2="7130" if s2_44acod=="713"
+	replace occup_isco_2="7310" if s2_44acod=="731"
+	replace occup_isco_2="7320" if s2_44acod=="734"
+	replace occup_isco_2="7410" if s2_44acod=="741"
+	replace occup_isco_2="7420" if s2_44acod=="742"
+	
+	replace occup_isco_2="7530" if s2_44acod=="754"
+	replace occup_isco_2="7530" if s2_44acod=="755"
+	replace occup_isco_2="8110" if s2_44acod=="811"
+	replace occup_isco_2="8120" if s2_44acod=="812"
+	replace occup_isco_2="8130" if s2_44acod=="813"
+	replace occup_isco_2="8140" if s2_44acod=="814"
+	replace occup_isco_2="8150" if s2_44acod=="815"
+	replace occup_isco_2="8180" if s2_44acod=="818"
+	replace occup_isco_2="8210" if s2_44acod=="821"
+	replace occup_isco_2="9110" if s2_44acod=="911"
+	replace occup_isco_2="9120" if s2_44acod=="912"
+	replace occup_isco_2="9310" if s2_44acod=="931"
+	replace occup_isco_2="9320" if s2_44acod=="932"
+	replace occup_isco_2="9330" if s2_44acod=="933"
+	replace occup_isco_2="9610" if s2_44acod=="961"
+	replace occup_isco_2="9620" if s2_44acod=="962"
+	replace occup_isco_2="9000" if s2_44acod=="97000"
+	replace occup_isco_2="9000" if s2_44acod=="99992"
+	replace occup_isco_2="9000" if s2_44acod=="99996"
+	
+	
+	replace occup_isco_2="0100" if s2_44acod=="01"
+	replace occup_isco_2="1200" if s2_44acod=="121"
+	replace occup_isco_2="2130" if s2_44acod=="213"
+	replace occup_isco_2="3220" if s2_44acod=="322"
+	replace occup_isco_2="3420" if s2_44acod=="342"
+	replace occup_isco_2="3510" if s2_44acod=="351"
+	replace occup_isco_2="5100" if s2_44acod=="51"
+	replace occup_isco_2="5200" if s2_44acod=="525"
+	replace occup_isco_2="6210" if s2_44acod=="631"
+	replace occup_isco_2="9000" if s2_44acod=="99999"
+	replace occup_isco_2="6220" if s2_44acod=="632"
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
 
 *<_occup_2_>
 	gen byte occup_2 = .
+	replace occup_2 = 1 if inrange(occup_isco_2, "1000","1430")
+	replace occup_2 = 2 if inrange(occup_isco_2, "2000","2719")
+	replace occup_2 = 3 if inrange(occup_isco_2, "3000","3599")
+	replace occup_2 = 4 if inrange(occup_isco_2, "4000","4499")
+	replace occup_2 = 5 if inrange(occup_isco_2, "5000","5499")
+	replace occup_2 = 6 if inrange(occup_isco_2, "6000","6399")
+	replace occup_2 = 7 if inrange(occup_isco_2, "7000","7599")
+	replace occup_2 = 8 if inrange(occup_isco_2, "8000","8399")
+	replace occup_2 = 9 if inrange(occup_isco_2, "9000","9709")
+	replace occup_2 = 10 if inrange(occup_isco_2,"0100","0399")
+	replace occup_2 = 99 if occup_isco_2=="9999"
 	label var occup_2 "1 digit occupational classification secondary job 7 day recall"
 	label values occup_2 lbloccup
 *</_occup_2_>
-
 
 *<_occup_skill_2_>
 	gen occup_skill_2 = .
@@ -1687,27 +2475,31 @@ foreach v of local ed_var {
 
 
 *<_wage_no_compen_2_>
-	gen double wage_no_compen_2 = .
+	order  s2_50a s2_52a
+	egen wage_no_compen_2 = rowtotal(s2_50a - s2_52a)
 	replace wage_no_compen_2=. if lstatus!=1
 	label var wage_no_compen_2 "Last wage payment secondary job 7 day recall"
 *</_wage_no_compen_2_>
 
 
 *<_unitwage_2_>
-	gen byte unitwage_2 = .
+	gen byte unitwage_2 = s2_50b
+	replace unitwage_2 = s2_52b if s2_50b==.
+	recode unitwage_2 4=5 5=4 
 	label var unitwage_2 "Last wages' time unit secondary job 7 day recall"
 	label values unitwage_2 lblunitwage
 *</_unitwage_2_>
 
 
+
 *<_whours_2_>
-	gen whours_2 = .
+	gen whours_2 = s2_48a
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 
 
 *<_wmonths_2_>
-	gen wmonths_2 = .
+	gen wmonths_2 = 3
 	label var wmonths_2 "Months of work in past 12 months secondary job 7 day recall"
 *</_wmonths_2_>
 
@@ -2206,7 +2998,7 @@ quietly{
 
 *<_% ORDER VARIABLES_>
 
-	order countrycode survname survey icls_v isced_version isco_version isic_version year vermast veralt harmonization int_year int_month hhid pid weight psu strata wave panel visit_no urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_orig educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field_orig vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
+		order countrycode survname survey icls_v isced_version isco_version isic_version year vermast veralt harmonization int_year int_month hhid pid weight psu strata wave panel visit_no urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_orig educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field_orig vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
 
 *</_% ORDER VARIABLES_>
 

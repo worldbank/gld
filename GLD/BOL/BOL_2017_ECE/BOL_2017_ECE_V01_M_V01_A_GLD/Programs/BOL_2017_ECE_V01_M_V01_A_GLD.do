@@ -5,7 +5,7 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				[BOL_2019_QLFS_V01_M_V01_A_GLD.do] </_Program name_>
+<_Program name_>				[BOL_2017_ECE_V01_M_V01_A_GLD.do] </_Program name_>
 <_Application_>					[STATA 2017] <_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
 <_Date created_>				2023-07-04 </_Date created_>
@@ -13,14 +13,14 @@
 -------------------------------------------------------------------------
 
 <_Country_>						[BOLIVIA (BOL)] </_Country_>
-<_Survey Title_>				[QUARTERLY LABOUR FORCE SURVEY] </_Survey Title_>
-<_Survey Year_>					[2019] </_Survey Year_>
+<_Survey Title_>				[CONTINOUS EMPLOYMENT SURVEY] </_Survey Title_>
+<_Survey Year_>					[2017] </_Survey Year_>
 <_Study ID_>					[N/A] </_Study ID_>
-<_Data collection from_>		[01/2019] </_Data collection from_>
-<_Data collection to_>			[12/2019] </_Data collection to_>
+<_Data collection from_>		[01/2017] </_Data collection from_>
+<_Data collection to_>			[12/2017] </_Data collection to_>
 <_Source of dataset_> 			[NATIONAL STATISTICS INSTITUTE OF BOLIVA - INE] </_Source of dataset_>
-<_Sample size (HH)_> 			[40,119] </_Sample size (HH)_>
-<_Sample size (IND)_> 			[228,619] </_Sample size (IND)_>
+<_Sample size (HH)_> 			[39840] </_Sample size (HH)_>
+<_Sample size (IND)_> 			[253293] </_Sample size (IND)_>
 <_Sampling method_> 			[Panel design, two stage probabilistic, stratified, by conglomerate] </_Sampling method_>
 <_Geographic coverage_> 		[subnational level, department] </_Geographic coverage_>
 <_Currency_> 					[Bolivian Boliviano] </_Currency_>
@@ -60,8 +60,8 @@ set mem 800m
 * Define path sections
 local server  "Y:/GLD-Harmonization/582018_AQ"
 local country "BOL"
-local year    "2019"
-local survey  "QLFS"
+local year    "2017"
+local survey  "ECE"
 local vermast "V01"
 local veralt  "V01"
 
@@ -83,23 +83,23 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-use "`path_in_stata'/qlfs-q1-2019.dta", clear 
+use "`path_in_stata'/qlfs-q1-2017.dta", clear 
 
 gen quarter=1
 
-append using "`path_in_stata'/qlfs-q2-2019.dta", force
+append using "`path_in_stata'/qlfs-q2-2017.dta", force
 
 replace quarter=2 if quarter==.
 
-append using "`path_in_stata'/qlfs-q3-2019.dta", force
+append using "`path_in_stata'/qlfs-q3-2017.dta", force
 
 replace quarter=3 if quarter==.
 
-append using "`path_in_stata'/qlfs-q4-2019.dta", force
+append using "`path_in_stata'/qlfs-q4-2017.dta", force
 
 replace quarter=4 if quarter==.
 
-save "`path_in_stata'/qlfs_2019.dta", replace
+save "`path_in_stata'/qlfs_2017.dta", replace
 
 
 /*%%=============================================================================================
@@ -115,7 +115,7 @@ save "`path_in_stata'/qlfs_2019.dta", replace
 
 
 *<_survname_>
-	gen survname = "QLFS"
+	gen survname = "ECE"
 	label var survname "Survey acronym"
 *</_survname_>
 
@@ -151,7 +151,7 @@ save "`path_in_stata'/qlfs_2019.dta", replace
 
 
 *<_year_>
-	gen int year = 2019
+	gen int year = 2017
 	label var year "Year of survey"
 *</_year_>
 
@@ -182,18 +182,18 @@ save "`path_in_stata'/qlfs_2019.dta", replace
 
 *<_int_month_>
 	gen  int_month = meses
-	replace int_month=1 if meses==708
-	replace int_month=2 if meses==709
-	replace int_month=3 if meses==710
-	replace int_month=4 if meses==711
-	replace int_month=5 if meses==712
-	replace int_month=6 if meses==713
-	replace int_month=7 if meses==714
-	replace int_month=8 if meses==715
-	replace int_month=9 if meses==716
-	replace int_month=10 if meses==717
-	replace int_month=11 if meses==718
-	replace int_month=12 if meses==719
+	replace int_month=1 if meses==684
+	replace int_month=2 if meses==685
+	replace int_month=3 if meses==686
+	replace int_month=4 if meses==687
+	replace int_month=5 if meses==688
+	replace int_month=6 if meses==689
+	replace int_month=7 if meses==690
+	replace int_month=8 if meses==691
+	replace int_month=9 if meses==692
+	replace int_month=10 if meses==693
+	replace int_month=11 if meses==694
+	replace int_month=12 if meses==695
 	label de lblint_month 1 "January" 2 "February" 3 "March" 4 "April" 5 "May" 6 "June" 7 "July" 8 "August" 9 "September" 10 "October" 11 "November" 12 "December"
 	label value int_month lblint_month
 	label var int_month "Month of the interview"
@@ -421,7 +421,7 @@ save "`path_in_stata'/qlfs_2019.dta", replace
 
 
 *<_marital_>
-	gen byte marital = s1_16
+	gen byte marital = s1_09
 	recode marital 1=2 2=1 4/5=4 6=5
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
@@ -576,8 +576,7 @@ label var ed_mod_age "Education module application age"
 *</_ed_mod_age_>
 
 *<_school_>
-	gen byte school=s1_13
-	recode school 2=0
+	gen byte school=.
 	label var school "Attending school"
 	la de lblschool 0 "No" 1 "Yes"
 	label values school  lblschool
@@ -587,7 +586,7 @@ label var ed_mod_age "Education module application age"
 *<_literacy_>
 *assuming from level of education literacy status
 	gen byte literacy = .
-	replace literacy=1 if inrange(s1_07a,11,88)
+	replace literacy=1 if inrange(s1_07a,11,81)
 	replace literacy=0 if s1_07a==10
 	label var literacy "Individual can read & write"
 	la de lblliteracy 0 "No" 1 "Yes"
@@ -596,7 +595,7 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educy_>
-	gen byte educy =aestudio
+	gen byte educy =e
 	label var educy "Years of education"
 *</_educy_>
 
@@ -604,7 +603,7 @@ label var ed_mod_age "Education module application age"
 *<_educat7_>
 	gen byte educat7 =niv_ed
 	recode educat7 0=1 1=2 2=3 3=4 4=5 
-	replace educat7=6 if inrange(s1_07a,78,88)
+	replace educat7=6 if inrange(s1_07a,78,81)
 	replace educat7=6 if s1_07a==71
 	replace educat7=7 if inrange(s1_07a,72,77)
 	label var educat7 "Level of education 1"
@@ -767,7 +766,7 @@ foreach v of local ed_var {
 
 
 *<_nlfreason_>
-	gen byte nlfreason=s2_06
+	gen byte nlfreason=s2_09
 	recode nlfreason 6=1 11=2 7=3 9=4 1/5=5 8=5 10=5 12=5
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
@@ -793,8 +792,8 @@ foreach v of local ed_var {
 
 {
 *<_empstat_>
-	gen byte empstat=s2_18
-	recode empstat 2=4 4=5 5=2 6=2 7=1
+	gen byte empstat=s2_20
+	recode empstat 1/2=1 3=4 4/5=3 6=5 7=2 8=1
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat lblempstat
@@ -870,6 +869,7 @@ foreach v of local ed_var {
 	gen occup_orig = s2_15acod
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
+
 
 *<_occup_isco_>
 	gen occup_isco=""
@@ -1463,17 +1463,32 @@ foreach v of local ed_var {
 	replace occup_isco="8340" if s2_15acod=="834"
 	replace occup_isco="9210" if s2_15acod=="921"
 	
-	replace occup_isco="1200" if s2_15acod=="121"	
-	replace occup_isco="2430" if s2_15acod=="243"	
-	replace occup_isco="5210" if s2_15acod=="521"	
-	replace occup_isco="5220" if s2_15acod=="522"
-	*there is not clear correspondence in isco so selected food vendors .
-	replace occup_isco="5200" if s2_15acod=="525"	
-	replace occup_isco="8300" if s2_15acod=="83299"	
+	replace occup_isco="2320" if s2_15acod=="232"	
+	replace occup_isco="3120" if s2_15acod=="312"	
+	replace occup_isco="3520" if s2_15acod=="352"	
+	replace occup_isco="4110" if s2_15acod=="411"	
+	replace occup_isco="4210" if s2_15acod=="421"	
+	replace occup_isco="4410" if s2_15acod=="441"	
+	replace occup_isco="5120" if s2_15acod=="512"
+	replace occup_isco="5130" if s2_15acod=="513"
+	replace occup_isco="5200" if s2_15acod=="525"
+	replace occup_isco="5410" if s2_15acod=="541"
+	replace occup_isco="7110" if s2_15acod=="711"
+	replace occup_isco="7130" if s2_15acod=="713"
+	replace occup_isco="7220" if s2_15acod=="722"
+	replace occup_isco="7420" if s2_15acod=="742"
+	replace occup_isco="7500" if s2_15acod=="755"
+	replace occup_isco="8180" if s2_15acod=="818"
+	replace occup_isco="8300" if s2_15acod=="83299"
 	replace occup_isco="9000" if s2_15acod=="97000"
-	replace occup_isco="4320" if s2_15acod=="432"
-	replace occup_isco="6000" if s2_15acod=="6"
-
+	replace occup_isco="9000" if s2_15acod=="99996"
+	replace occup_isco="9000" if s2_15acod=="99999"
+	
+	replace occup_isco="1200" if s2_15acod=="121"
+	replace occup_isco="1340" if s2_15acod=="134"
+	replace occup_isco="2310" if s2_15acod=="231"
+	replace occup_isco="2600" if s2_15acod=="26"
+	replace occup_isco="3350" if s2_15acod=="335"
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
@@ -1509,8 +1524,8 @@ foreach v of local ed_var {
 
 
 *<_wage_no_compen_>
-	order  s2_33_v s2_38_v
-	egen wage_no_compen = rowtotal(s2_33_v - s2_38_v)
+	order  s2_33a s2_38a
+	egen wage_no_compen = rowtotal(s2_33a - s2_38a)
 	replace wage_no_compen=. if lstatus!=1
 	replace wage_no_compen=. if wage_no_compen==0
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
@@ -1527,9 +1542,9 @@ foreach v of local ed_var {
 </_unitwage_note> */
 *self employed payments 38 
 
-	gen byte unitwage = s2_33_f
-	replace unitwage = s2_38_f if s2_33_f==.
-	recode unitwage 4=5 5=4  9=.
+	gen byte unitwage = s2_33b
+	replace unitwage = s2_38b if s2_33b==.
+	recode unitwage 4=5 5=4 
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
 	label values unitwage lblunitwage
@@ -1537,10 +1552,10 @@ foreach v of local ed_var {
 
 
 *<_whours_>
-	gen whours = s2_29_h*s2_28
-	replace whours=0.75 if s2_29_m==45
-	replace whours=0.25 if s2_29_m==15
-	replace whours=0.50 if s2_29_m==30
+	gen whours = s2_29a*s2_28
+	replace whours=0.75 if s2_29b==45
+	replace whours=0.25 if s2_29b==15
+	replace whours=0.50 if s2_29b==30
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -1621,7 +1636,7 @@ foreach v of local ed_var {
 {
 *<_empstat_2_>
 	gen byte empstat_2 = s2_46
-	recode empstat_2 2=4 4=5 5=2 6=2 7=1
+	recode empstat_2 2=1 3=4 5=3 7=2 8=1 6=5
 	la de lblempstat_2 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
 	label values empstat_2 lblempstat_2
@@ -1698,7 +1713,7 @@ foreach v of local ed_var {
 *</_occup_orig_2_>
 
 
-*<_occup_isco_2_>
+*<_occup_isco_2_2_>
 	gen occup_isco_2=""
 	replace occup_isco_2="0110" if s2_44acod=="01000"
 	replace occup_isco_2="0210" if s2_44acod=="02000"
@@ -2289,7 +2304,32 @@ foreach v of local ed_var {
 	replace occup_isco_2="8330" if s2_44acod=="833"
 	replace occup_isco_2="8340" if s2_44acod=="834"
 	replace occup_isco_2="9210" if s2_44acod=="921"
-	replace occup_isco_2="7500" if s2_44acod=="75"
+	
+	replace occup_isco_2="2320" if s2_44acod=="232"	
+	replace occup_isco_2="3120" if s2_44acod=="312"	
+	replace occup_isco_2="3520" if s2_44acod=="352"	
+	replace occup_isco_2="4110" if s2_44acod=="411"	
+	replace occup_isco_2="4210" if s2_44acod=="421"	
+	replace occup_isco_2="4410" if s2_44acod=="441"	
+	replace occup_isco_2="5120" if s2_44acod=="512"
+	replace occup_isco_2="5130" if s2_44acod=="513"
+	replace occup_isco_2="5200" if s2_44acod=="525"
+	replace occup_isco_2="5410" if s2_44acod=="541"
+	replace occup_isco_2="7110" if s2_44acod=="711"
+	replace occup_isco_2="7130" if s2_44acod=="713"
+	replace occup_isco_2="7220" if s2_44acod=="722"
+	replace occup_isco_2="7420" if s2_44acod=="742"
+	replace occup_isco_2="7500" if s2_44acod=="755"
+	replace occup_isco_2="8180" if s2_44acod=="818"
+	replace occup_isco_2="8300" if s2_44acod=="83299"
+	replace occup_isco_2="8000" if s2_44acod=="87000"
+	replace occup_isco_2="9000" if s2_44acod=="99996"
+	replace occup_isco_2="9000" if s2_44acod=="99999"
+	
+	replace occup_isco_2="6220" if s2_44acod=="632"
+	replace occup_isco_2="7310" if s2_44acod=="731"
+	replace occup_isco_2="9610" if s2_44acod=="961"
+
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
@@ -2312,7 +2352,6 @@ foreach v of local ed_var {
 *</_occup_2_>
 
 
-
 *<_occup_skill_2_>
 	gen occup_skill_2 = .
 	replace occup_skill_2 = 3 if inrange(occup_2, 1, 3)
@@ -2325,16 +2364,16 @@ foreach v of local ed_var {
 
 
 *<_wage_no_compen_2_>
-	order  s2_50_v s2_52_v
-	egen wage_no_compen_2 = rowtotal(s2_50_v - s2_52_v)
+	order  s2_50a s2_52a
+	egen wage_no_compen_2 = rowtotal(s2_50a - s2_52a)
 	replace wage_no_compen_2=. if lstatus!=1
 	label var wage_no_compen_2 "Last wage payment secondary job 7 day recall"
 *</_wage_no_compen_2_>
 
 
 *<_unitwage_2_>
-	gen byte unitwage_2 = s2_50_f
-	replace unitwage_2 = s2_52_f if s2_50_f==.
+	gen byte unitwage_2 = s2_50b
+	replace unitwage_2 = s2_52b if s2_50b==.
 	recode unitwage_2 4=5 5=4 
 	label var unitwage_2 "Last wages' time unit secondary job 7 day recall"
 	label values unitwage_2 lblunitwage
@@ -2343,13 +2382,13 @@ foreach v of local ed_var {
 
 
 *<_whours_2_>
-	gen whours_2 = s2_48a_n
+	gen whours_2 = s2_48a
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 
 
 *<_wmonths_2_>
-	gen wmonths_2 = .
+	gen wmonths_2 = 3
 	label var wmonths_2 "Months of work in past 12 months secondary job 7 day recall"
 *</_wmonths_2_>
 

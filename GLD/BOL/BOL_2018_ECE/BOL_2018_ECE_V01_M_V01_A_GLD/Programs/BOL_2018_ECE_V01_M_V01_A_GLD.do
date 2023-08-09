@@ -5,22 +5,22 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				[BOL_2016_QLFS_V01_M_V01_A_GLD.do] </_Program name_>
-<_Application_>					[STATA 2017] <_Application_>
+<_Program name_>				[BOL_2018_ECE_V01_M_V01_A_GLD.do] </_Program name_>
+<_Application_>					[STATA 2018] <_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
 <_Date created_>				2023-07-04 </_Date created_>
 
 -------------------------------------------------------------------------
 
 <_Country_>						[BOLIVIA (BOL)] </_Country_>
-<_Survey Title_>				[QUARTERLY LABOUR FORCE SURVEY] </_Survey Title_>
-<_Survey Year_>					[2016] </_Survey Year_>
+<_Survey Title_>				[CONTINOUS EMPLOYMENT SURVEY] </_Survey Title_>
+<_Survey Year_>					[2018] </_Survey Year_>
 <_Study ID_>					[N/A] </_Study ID_>
-<_Data collection from_>		[01/2016] </_Data collection from_>
-<_Data collection to_>			[12/2016] </_Data collection to_>
+<_Data collection from_>		[01/2018] </_Data collection from_>
+<_Data collection to_>			[12/2018] </_Data collection to_>
 <_Source of dataset_> 			[NATIONAL STATISTICS INSTITUTE OF BOLIVA - INE] </_Source of dataset_>
-<_Sample size (HH)_> 			[39939] </_Sample size (HH)_>
-<_Sample size (IND)_> 			[254234] </_Sample size (IND)_>
+<_Sample size (HH)_> 			[39,830] </_Sample size (HH)_>
+<_Sample size (IND)_> 			[245,041] </_Sample size (IND)_>
 <_Sampling method_> 			[Panel design, two stage probabilistic, stratified, by conglomerate] </_Sampling method_>
 <_Geographic coverage_> 		[subnational level, department] </_Geographic coverage_>
 <_Currency_> 					[Bolivian Boliviano] </_Currency_>
@@ -33,6 +33,7 @@
 <_OCCUP National_>				[CLASIFICACIÓN DE OCUPACIONES DE BOLIVIA COB 2009] </_OCCUP National_>
 <_ISIC Version_>				[ISIC REV 4] </_ISIC Version_>
 <_INDUS National_>				[N/A] </_INDUS National_>
+
 
 -----------------------------------------------------------------------
 <_Version Control_>
@@ -60,8 +61,8 @@ set mem 800m
 * Define path sections
 local server  "Y:/GLD-Harmonization/582018_AQ"
 local country "BOL"
-local year    "2016"
-local survey  "QLFS"
+local year    "2018"
+local survey  "ECE"
 local vermast "V01"
 local veralt  "V01"
 
@@ -83,23 +84,23 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-use "`path_in_stata'/qlfs-q1-2016.dta", clear 
+use "`path_in_stata'/qlfs-q1-2018.dta", clear 
 
 gen quarter=1
 
-append using "`path_in_stata'/qlfs-q2-2016.dta", force
+append using "`path_in_stata'/qlfs-q2-2018.dta", force
 
 replace quarter=2 if quarter==.
 
-append using "`path_in_stata'/qlfs-q3-2016.dta", force
+append using "`path_in_stata'/qlfs-q3-2018.dta", force
 
 replace quarter=3 if quarter==.
 
-append using "`path_in_stata'/qlfs-q4-2016.dta", force
+append using "`path_in_stata'/qlfs-q4-2018.dta", force
 
 replace quarter=4 if quarter==.
 
-save "`path_in_stata'/qlfs_2016.dta", replace
+save "`path_in_stata'/qlfs_2018.dta", replace
 
 
 /*%%=============================================================================================
@@ -115,7 +116,7 @@ save "`path_in_stata'/qlfs_2016.dta", replace
 
 
 *<_survname_>
-	gen survname = "QLFS"
+	gen survname = "ECE"
 	label var survname "Survey acronym"
 *</_survname_>
 
@@ -151,7 +152,7 @@ save "`path_in_stata'/qlfs_2016.dta", replace
 
 
 *<_year_>
-	gen int year = 2016
+	gen int year = 2018
 	label var year "Year of survey"
 *</_year_>
 
@@ -182,18 +183,18 @@ save "`path_in_stata'/qlfs_2016.dta", replace
 
 *<_int_month_>
 	gen  int_month = meses
-	replace int_month=1 if meses==672
-	replace int_month=2 if meses==673
-	replace int_month=3 if meses==674
-	replace int_month=4 if meses==675
-	replace int_month=5 if meses==676
-	replace int_month=6 if meses==677
-	replace int_month=7 if meses==678
-	replace int_month=8 if meses==679
-	replace int_month=9 if meses==680
-	replace int_month=10 if meses==681
-	replace int_month=11 if meses==682
-	replace int_month=12 if meses==683
+	replace int_month=1 if meses==696
+	replace int_month=2 if meses==697
+	replace int_month=3 if meses==698
+	replace int_month=4 if meses==699
+	replace int_month=5 if meses==700
+	replace int_month=6 if meses==701
+	replace int_month=7 if meses==702
+	replace int_month=8 if meses==703
+	replace int_month=9 if meses==704
+	replace int_month=10 if meses==705
+	replace int_month=11 if meses==706
+	replace int_month=12 if meses==707
 	label de lblint_month 1 "January" 2 "February" 3 "March" 4 "April" 5 "May" 6 "June" 7 "July" 8 "August" 9 "September" 10 "October" 11 "November" 12 "December"
 	label value int_month lblint_month
 	label var int_month "Month of the interview"
@@ -229,7 +230,15 @@ save "`path_in_stata'/qlfs_2016.dta", replace
 
 
 *<_weight_>
-	gen weight = fact_trim/4
+	*gen weight = fact_trim/4
+	* Above is striaght divide by four. Can weight by sample sizes.
+	* Only variable from the data that needs to be there (assume it is) is trim
+	gen counter = 1
+	egen count_all = count(counter)
+	bys trim : egen count_trim = count(counter)
+	gen relative_weight = count_trim/count_all
+	gen weight = fact_trim*relative_weight
+	drop counter count_all count_trim relative_weight
 	label var weight "Survey sampling weight"
 *</_weight_>
 
@@ -605,6 +614,7 @@ label var ed_mod_age "Education module application age"
 	replace educat7=6 if inrange(s1_07a,78,81)
 	replace educat7=6 if s1_07a==71
 	replace educat7=7 if inrange(s1_07a,72,77)
+	replace educat7=. if niv_ed==9
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -743,6 +753,9 @@ foreach v of local ed_var {
 
 *<_potential_lf_>
 	gen byte potential_lf = .
+	replace potential_lf=1 if s2_04==1 & s2_05==2
+	replace potential_lf=1 if s2_04==2 & s2_05==1
+	replace potential_lf=0 if missing(potential_lf)
 	replace potential_lf = . if age < minlaborage & age != .
 	replace potential_lf = . if lstatus != 3
 	label var potential_lf "Potential labour force status"
@@ -1459,95 +1472,27 @@ foreach v of local ed_var {
 	replace occup_isco="8340" if s2_15acod=="834"
 	replace occup_isco="9210" if s2_15acod=="921"
 	
-	replace occup_isco="1100" if s2_15acod=="111"	
-	replace occup_isco="1310" if s2_15acod=="131"	
-	replace occup_isco="1320" if s2_15acod=="132"	
-	replace occup_isco="1340" if s2_15acod=="134"	
-	replace occup_isco="1410" if s2_15acod=="141"	
-	replace occup_isco="2120" if s2_15acod=="212"	
-	replace occup_isco="2160" if s2_15acod=="215"
-	replace occup_isco="2210" if s2_15acod=="221"
-	replace occup_isco="2310" if s2_15acod=="231"
-	replace occup_isco="2320" if s2_15acod=="232"
-	replace occup_isco="2330" if s2_15acod=="233"
-	replace occup_isco="2420" if s2_15acod=="242"
-	replace occup_isco="2430" if s2_15acod=="243"
-	replace occup_isco="2510" if s2_15acod=="251"
-	replace occup_isco="2520" if s2_15acod=="252"
-	replace occup_isco="2610" if s2_15acod=="261"
-	replace occup_isco="2630" if s2_15acod=="263"
-	replace occup_isco="3100" if s2_15acod=="31"
-	replace occup_isco="3120" if s2_15acod=="312"
-	replace occup_isco="3130" if s2_15acod=="313"
-	replace occup_isco="3140" if s2_15acod=="314"
-	replace occup_isco="3150" if s2_15acod=="315"
-	replace occup_isco="3210" if s2_15acod=="321"
-	replace occup_isco="3330" if s2_15acod=="333"
-	replace occup_isco="3340" if s2_15acod=="334"
-	replace occup_isco="3520" if s2_15acod=="352"
-	replace occup_isco="4110" if s2_15acod=="411"
-	replace occup_isco="4210" if s2_15acod=="421"
-	replace occup_isco="4310" if s2_15acod=="431"
-	replace occup_isco="4410" if s2_15acod=="441"
-	
-	replace occup_isco="5110" if s2_15acod=="511"
-	replace occup_isco="5120" if s2_15acod=="512"
-	replace occup_isco="5140" if s2_15acod=="514"
-	replace occup_isco="5150" if s2_15acod=="515"
-	replace occup_isco="5210" if s2_15acod=="521"
-	replace occup_isco="5310" if s2_15acod=="531"
-	replace occup_isco="5410" if s2_15acod=="541"
-	replace occup_isco="7110" if s2_15acod=="711"
+	replace occup_isco="1200" if s2_15acod=="121"	
+	replace occup_isco="2630" if s2_15acod=="263"	
+	replace occup_isco="3140" if s2_15acod=="314"	
+	replace occup_isco="3300" if s2_15acod=="335"	
+	replace occup_isco="4400" if s2_15acod=="44100"	
+	replace occup_isco="5200" if s2_15acod=="525"	
 	replace occup_isco="7130" if s2_15acod=="713"
 	replace occup_isco="7310" if s2_15acod=="731"
 	replace occup_isco="7320" if s2_15acod=="734"
 	replace occup_isco="7410" if s2_15acod=="741"
 	replace occup_isco="7420" if s2_15acod=="742"
-	
-	replace occup_isco="7530" if s2_15acod=="754"
-	replace occup_isco="7530" if s2_15acod=="755"
+	replace occup_isco="7520" if s2_15acod=="752"
 	replace occup_isco="8110" if s2_15acod=="811"
 	replace occup_isco="8120" if s2_15acod=="812"
-	replace occup_isco="8130" if s2_15acod=="813"
 	replace occup_isco="8140" if s2_15acod=="814"
-	replace occup_isco="8150" if s2_15acod=="815"
-	replace occup_isco="8180" if s2_15acod=="818"
 	replace occup_isco="8210" if s2_15acod=="821"
-	replace occup_isco="9110" if s2_15acod=="911"
-	replace occup_isco="9120" if s2_15acod=="912"
-	replace occup_isco="9310" if s2_15acod=="931"
-	replace occup_isco="9320" if s2_15acod=="932"
-	replace occup_isco="9330" if s2_15acod=="933"
-	replace occup_isco="9610" if s2_15acod=="961"
-	replace occup_isco="9620" if s2_15acod=="962"
-	replace occup_isco="9000" if s2_15acod=="97000"
-	replace occup_isco="9000" if s2_15acod=="99992"
-	replace occup_isco="9000" if s2_15acod=="99996"
+	replace occup_isco="8300" if s2_15acod=="83299"
 	
-	replace occup_isco= "1200" if s2_15acod=="12"
-	replace occup_isco= "1200" if s2_15acod=="121"
-	replace occup_isco= "2130" if s2_15acod=="213"
-	replace occup_isco= "2250" if s2_15acod=="224"
-	replace occup_isco= "3220" if s2_15acod=="322"
-	replace occup_isco= "3230" if s2_15acod=="323"
-	replace occup_isco= "3350" if s2_15acod=="335"
-	replace occup_isco= "3420" if s2_15acod=="342"
-	replace occup_isco= "3500" if s2_15acod=="35"
-	replace occup_isco= "3510" if s2_15acod=="351"
-	replace occup_isco= "4100" if s2_15acod=="41"
-	replace occup_isco= "4320" if s2_15acod=="432"
-	replace occup_isco= "5220" if s2_15acod=="522"
-	replace occup_isco= "5200" if s2_15acod=="525"
-	replace occup_isco= "6000" if s2_15acod=="6"
-	replace occup_isco= "6100" if s2_15acod=="62"
-	replace occup_isco= "6220" if s2_15acod=="632"
-	replace occup_isco= "7200" if s2_15acod=="72"
-	replace occup_isco= "7220" if s2_15acod=="722"
-	replace occup_isco= "7400" if s2_15acod=="74"
-	replace occup_isco= "7500" if s2_15acod=="75"
-	replace occup_isco= "7520" if s2_15acod=="752"
-	replace occup_isco= "9100" if s2_15acod=="91"
-	replace occup_isco= "9400" if s2_15acod=="94"
+	replace occup_isco="1120" if s2_15acod=="112"
+	replace occup_isco="2150" if s2_15acod=="215"
+	
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
@@ -1569,7 +1514,6 @@ foreach v of local ed_var {
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup
 *</_occup_>
-
 
 
 *<_occup_skill_>
@@ -2365,83 +2309,24 @@ foreach v of local ed_var {
 	replace occup_isco_2="8340" if s2_44acod=="834"
 	replace occup_isco_2="9210" if s2_44acod=="921"
 	
-	replace occup_isco_2="1100" if s2_44acod=="111"	
-	replace occup_isco_2="1310" if s2_44acod=="131"	
-	replace occup_isco_2="1320" if s2_44acod=="132"	
-	replace occup_isco_2="1340" if s2_44acod=="134"	
-	replace occup_isco_2="1410" if s2_44acod=="141"	
-	replace occup_isco_2="2120" if s2_44acod=="212"	
-	replace occup_isco_2="2160" if s2_44acod=="215"
-	replace occup_isco_2="2210" if s2_44acod=="221"
-	replace occup_isco_2="2310" if s2_44acod=="231"
-	replace occup_isco_2="2320" if s2_44acod=="232"
-	replace occup_isco_2="2330" if s2_44acod=="233"
-	replace occup_isco_2="2420" if s2_44acod=="242"
-	replace occup_isco_2="2430" if s2_44acod=="243"
-	replace occup_isco_2="2510" if s2_44acod=="251"
-	replace occup_isco_2="2520" if s2_44acod=="252"
-	replace occup_isco_2="2610" if s2_44acod=="261"
-	replace occup_isco_2="2630" if s2_44acod=="263"
-	replace occup_isco_2="3100" if s2_44acod=="31"
-	replace occup_isco_2="3120" if s2_44acod=="312"
-	replace occup_isco_2="3130" if s2_44acod=="313"
-	replace occup_isco_2="3140" if s2_44acod=="314"
-	replace occup_isco_2="3150" if s2_44acod=="315"
-	replace occup_isco_2="3210" if s2_44acod=="321"
-	replace occup_isco_2="3330" if s2_44acod=="333"
-	replace occup_isco_2="3340" if s2_44acod=="334"
-	replace occup_isco_2="3520" if s2_44acod=="352"
-	replace occup_isco_2="4110" if s2_44acod=="411"
-	replace occup_isco_2="4210" if s2_44acod=="421"
-	replace occup_isco_2="4310" if s2_44acod=="431"
-	replace occup_isco_2="4410" if s2_44acod=="441"
-	
-	replace occup_isco_2="5110" if s2_44acod=="511"
-	replace occup_isco_2="5120" if s2_44acod=="512"
-	replace occup_isco_2="5140" if s2_44acod=="514"
-	replace occup_isco_2="5150" if s2_44acod=="515"
-	replace occup_isco_2="5210" if s2_44acod=="521"
-	replace occup_isco_2="5310" if s2_44acod=="531"
-	replace occup_isco_2="5410" if s2_44acod=="541"
-	replace occup_isco_2="7110" if s2_44acod=="711"
+	replace occup_isco_2="1200" if s2_44acod=="121"	
+	replace occup_isco_2="2630" if s2_44acod=="263"	
+	replace occup_isco_2="3140" if s2_44acod=="314"	
+	replace occup_isco_2="3300" if s2_44acod=="335"	
+	replace occup_isco_2="4400" if s2_44acod=="44100"	
+	replace occup_isco_2="5200" if s2_44acod=="525"	
 	replace occup_isco_2="7130" if s2_44acod=="713"
 	replace occup_isco_2="7310" if s2_44acod=="731"
 	replace occup_isco_2="7320" if s2_44acod=="734"
 	replace occup_isco_2="7410" if s2_44acod=="741"
 	replace occup_isco_2="7420" if s2_44acod=="742"
-	
-	replace occup_isco_2="7530" if s2_44acod=="754"
-	replace occup_isco_2="7530" if s2_44acod=="755"
+	replace occup_isco_2="7520" if s2_44acod=="752"
 	replace occup_isco_2="8110" if s2_44acod=="811"
 	replace occup_isco_2="8120" if s2_44acod=="812"
-	replace occup_isco_2="8130" if s2_44acod=="813"
 	replace occup_isco_2="8140" if s2_44acod=="814"
-	replace occup_isco_2="8150" if s2_44acod=="815"
-	replace occup_isco_2="8180" if s2_44acod=="818"
 	replace occup_isco_2="8210" if s2_44acod=="821"
-	replace occup_isco_2="9110" if s2_44acod=="911"
-	replace occup_isco_2="9120" if s2_44acod=="912"
-	replace occup_isco_2="9310" if s2_44acod=="931"
-	replace occup_isco_2="9320" if s2_44acod=="932"
-	replace occup_isco_2="9330" if s2_44acod=="933"
-	replace occup_isco_2="9610" if s2_44acod=="961"
-	replace occup_isco_2="9620" if s2_44acod=="962"
-	replace occup_isco_2="9000" if s2_44acod=="97000"
-	replace occup_isco_2="9000" if s2_44acod=="99992"
-	replace occup_isco_2="9000" if s2_44acod=="99996"
-	
-	
-	replace occup_isco_2="0100" if s2_44acod=="01"
-	replace occup_isco_2="1200" if s2_44acod=="121"
-	replace occup_isco_2="2130" if s2_44acod=="213"
-	replace occup_isco_2="3220" if s2_44acod=="322"
-	replace occup_isco_2="3420" if s2_44acod=="342"
+	replace occup_isco_2="8300" if s2_44acod=="83299"
 	replace occup_isco_2="3510" if s2_44acod=="351"
-	replace occup_isco_2="5100" if s2_44acod=="51"
-	replace occup_isco_2="5200" if s2_44acod=="525"
-	replace occup_isco_2="6210" if s2_44acod=="631"
-	replace occup_isco_2="9000" if s2_44acod=="99999"
-	replace occup_isco_2="6220" if s2_44acod=="632"
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
@@ -2462,6 +2347,7 @@ foreach v of local ed_var {
 	label var occup_2 "1 digit occupational classification secondary job 7 day recall"
 	label values occup_2 lbloccup
 *</_occup_2_>
+
 
 *<_occup_skill_2_>
 	gen occup_skill_2 = .
@@ -2998,7 +2884,7 @@ quietly{
 
 *<_% ORDER VARIABLES_>
 
-		order countrycode survname survey icls_v isced_version isco_version isic_version year vermast veralt harmonization int_year int_month hhid pid weight psu strata wave panel visit_no urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_orig educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field_orig vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
+	order countrycode survname survey icls_v isced_version isco_version isic_version year vermast veralt harmonization int_year int_month hhid pid weight psu strata wave panel visit_no urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_orig educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field_orig vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
 
 *</_% ORDER VARIABLES_>
 
