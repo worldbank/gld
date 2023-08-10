@@ -19,8 +19,8 @@
 								Census and Statistics, 
 								Ministry Policy Planning and Implementation </_Source of dataset_>
 								
-<_Sample size (HH)_> 			 </_Sample size (HH)_>
-<_Sample size (IND)_> 			 </_Sample size (IND)_>
+<_Sample size (HH)_> 			16,733 </_Sample size (HH)_>
+<_Sample size (IND)_> 			83,984 </_Sample size (IND)_>
 <_Sampling method_> 			A stratified two-stage probability sample design
 								used with census blocks as PSUs and housing units
 								as secondary and final sampling units. </_Sampling method_>
@@ -195,9 +195,28 @@ consecutively in two months are assigned with the same ID), two ways to try to c
 hhid:
 
 1) A combination with "month":
+	
+	egen hhid=concat(month province sector district block hhid_orig), punct("-")
+	preserve
+	keep quarter hhid
+	duplicates drop
+	
+. tab quarter
+
+    quarter |      Freq.     Percent        Cum.
+------------+-----------------------------------
+         01 |      4,239       25.33       25.33
+         02 |      4,141       24.75       50.08
+         03 |      4,150       24.80       74.88
+         04 |      4,203       25.12      100.00
+------------+-----------------------------------
+      Total |     16,733      100.00
+	  
+This way produces much more than 2,520 housing units per quarter.	  
+
 
 2) A combination without "month": 
-
+	
 	egen hhid=concat(province sector district block hhid_orig), punct("-")
 	preserve
 	keep quarter month hhid
@@ -220,37 +239,90 @@ hhid:
 
 This way produces less housing unit per quarter.
 
+However, coding hhid without month will lead to duplicates of households within the same month.
+
 *<_hhid_>*/
 
 
 *<_hhid_>
-	foreach v of varlist quarter province district sector block{
-		tostring `v', replace format(%02.0f)
+	foreach v of varlist month quarter province sector district block{
+		tostring `v', gen (`v'_str) format(%02.0f)
 	}
 	tostring hhid, replace format(%03.0f)
 	rename hhid hhid_orig
-	egen hhid=concat(month province sector district block hhid_orig), punct("-")
-	recast str12 hhid
+	egen hhid=concat(month_str province_str sector_str district_str block_str hhid_orig)
 	label var hhid "Household id"
 *</_hhid_>
 
 
 *<_pid_>
-	tostring A_0, gen(strp_id) format(%02.0f)
+	tostring p1, gen(strp_id) format(%02.0f)
 	egen pid=concat(hhid strp_id), punct("-")
-	recast str15 pid
 	label var pid "Individual ID"
 *</_pid_>
 
 
 *<_weight_>
-	gen weight=wt_hh
+	*gen weight=wt_hh
 	label var weight "Household sampling weight"
 *</_weight_>
 
 
+/*<_psu_note_>
+
+	egen psu1=concat(quarter_str province_str sector_str district_str block_str)
+	egen psu2=concat(month_str province_str sector_str district_str block_str)
+	egen psu3=concat(province_str sector_str district_str block_str)
+
+Unique counts of PSU per year:
+
+psu1:689
+psu2:1,684
+psu3:174
+	
+. tab quarter psuttl1
+
+           |             psuttl1
+   quarter |       171        173        174 |     Total
+-----------+---------------------------------+----------
+         1 |         0          0     23,053 |    23,053 
+         2 |    22,778          0          0 |    22,778 
+         3 |    22,792          0          0 |    22,792 
+         4 |         0     23,001          0 |    23,001 
+-----------+---------------------------------+----------
+     Total |    45,570     23,001     23,053 |    91,624 
+	 
+	 
+. tab quarter psuttl2
+
+           |             psuttl2
+   quarter |       417        419        424 |     Total
+-----------+---------------------------------+----------
+         1 |         0          0     23,053 |    23,053 
+         2 |    22,778          0          0 |    22,778 
+         3 |         0     22,792          0 |    22,792 
+         4 |         0          0     23,001 |    23,001 
+-----------+---------------------------------+----------
+     Total |    22,778     22,792     46,054 |    91,624 
+
+	 
+. tab quarter psuttl3
+
+           |             psuttl3
+   quarter |       171        173        174 |     Total
+-----------+---------------------------------+----------
+         1 |         0          0     23,053 |    23,053 
+         2 |    22,778          0          0 |    22,778 
+         3 |    22,792          0          0 |    22,792 
+         4 |         0     23,001          0 |    23,001 
+-----------+---------------------------------+----------
+     Total |    45,570     23,001     23,053 |    91,624 
+
+*<_psu_note_>*/
+
+
 *<_psu_>
-	gen psu=ea_code	
+	egen psu=concat(month_str province_str sector_str district_str block_str)
 	label var psu "Primary sampling units"
 *</_psu_>
 
@@ -262,13 +334,13 @@ This way produces less housing unit per quarter.
 
 
 *<_strata_>
-	gen strata=Z_7
+	egen strata=concat(province_str sector_str district_str)
 	label var strata "Strata"
 *</_strata_>
 
 
 *<_wave_>
-	gen wave=.
+	gen wave=quarter
 	label var wave "Survey wave"
 *</_wave_>
 
@@ -281,7 +353,9 @@ This way produces less housing unit per quarter.
 {
 
 *<_urban_>
-	gen urban=cond(Z_5=="1",0,1)
+	gen urban=.
+	replace urban=1 if sector==1
+	replace urban=0 if sector==2|sector==3
 	la de lblurban 1 "Urban" 0 "Rural"
 	label values urban lblurban
 	label var urban "Location is urban"
