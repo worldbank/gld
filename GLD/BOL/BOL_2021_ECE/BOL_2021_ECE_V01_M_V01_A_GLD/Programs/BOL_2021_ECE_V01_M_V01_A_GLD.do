@@ -827,7 +827,7 @@ foreach v of local ed_var {
 	replace industrycat_isic_help="" if s2_16acod=="C"
 	gen industrycat_isic = industrycat_isic_help + substr("0000", 1, 4 - length(industrycat_isic_help))
 	replace industrycat_isic="" if industrycat_isic=="0000"
-	replace industrycat_isic_2="5300" if industrycat_isic_2=="5330"
+	replace industrycat_isic="5300" if industrycat_isic=="5330"
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
