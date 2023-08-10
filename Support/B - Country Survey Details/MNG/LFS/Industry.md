@@ -1,6 +1,6 @@
 # Mapping industry codes
 
-## Logic used to identify appropriate ISIC version
+## Logic used to identify ISIC version
 The Mongolia LFS questionnaires indicate the use of International Standards for Industrial Classification (ISIC) to identify industry of employment, but the exact ISIC version is not specified. We determine the ISIC version by looking at the structure of the codes. As an example, ISIC 3.1 has codes starting with 01 and 02 for agriculture, 05 for fishing and then it skips to codes starting with 10 for mining and quarrying. In ISIC rev 4 agriculture and fishing has codes starting with 01 to 03, with mining and quarrying as codes 05 to 09. Hence codes 06 to 09 exist only in ISIC 4. There is a number of markers like this that allow us to identiy the version. In addition, we run an algorithm to see the number of mismatches at the 2- and 4- digits for each revision (e.g., does code XYZX exists in ISIC revision #?) and plot this over time to identify potential breaks (see below). These result align with the code structure. From 2002 to 2006, the industry codes match most frequently with ISIC version 3.1, while the rounds from 2007 and onwards more often match with ISIC version 4. 
 
 <img src="Utilities/isic_4d.png" width="480"/> <img src="Utilities/isic_2d.png" width="480"/> 
