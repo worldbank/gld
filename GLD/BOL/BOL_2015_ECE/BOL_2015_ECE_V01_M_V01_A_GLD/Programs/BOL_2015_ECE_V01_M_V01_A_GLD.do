@@ -32,7 +32,7 @@
 <_ISCO Version_>				[ISCO 2008] </_ISCO Version_>
 <_OCCUP National_>				[CLASIFICACIÓN DE OCUPACIONES DE BOLIVIA COB 2009] </_OCCUP National_>
 <_ISIC Version_>				[ISIC REV 4] </_ISIC Version_>
-<_INDUS National_>				[N/A] </_INDUS National_>
+<_INDUS National_>				[CLASIFICACION DE ACTIVIDADES ECONOMICAS DE BOLIVIA 2011] </_INDUS National_>
 
 -----------------------------------------------------------------------
 <_Version Control_>
@@ -790,18 +790,24 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_>
-* We are using the three first digits because in the documentation the INE says that from the 4th digit onwards the code is a variation they performed for the Bolivia industries.
-	gen industrycat_isic= s2_16acod + substr("00000", 1, 5 - length(s2_16acod))
-	replace industrycat_isic = substr(industrycat_isic, 1, length(industrycat_isic) - 1) 
+* Note: We are using the three first digits because in the documentation the INE says that from the 4th digit onwards the code is a variation they performed for the Bolivia industries.
+	gen industrycat_isic_help= s2_16acod + substr("00000", 1, 5 - length(s2_16acod))
+	replace industrycat_isic_help = substr(industrycat_isic_help, 1, length(industrycat_isic_help) - 2) 
+*Note: C,F,G correspond to the higher level of industry classification, since there is not more details we leave it to missing in isic but it will be coded in industrycat10
+	replace industrycat_isic_help="" if s2_16acod=="G"
+	replace industrycat_isic_help="" if s2_16acod=="F"
+	replace industrycat_isic_help="" if s2_16acod=="C"
+	gen industrycat_isic = industrycat_isic_help + substr("0000", 1, 4 - length(industrycat_isic_help))
 	replace industrycat_isic="" if industrycat_isic=="0000"
-	replace industrycat_isic="4699" if industrycat_isic=="G000"
-	replace industrycat_isic="4399" if industrycat_isic=="F000"
-	replace industrycat_isic="3299" if industrycat_isic=="C000"
+*there is no corresponding code in isic for 8900
+	replace industrycat_isic="" if industrycat_isic=="8900"
+	replace industrycat_isic="9900" if industrycat_isic=="9990"
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
 
 *<_industrycat10_>
+*the letters in the raw data are included in the corresponding number classification. 
 	gen byte industrycat10 = .
 	replace industrycat10=1 if inrange(industrycat_isic,"0100","0329")
 	replace industrycat10=2 if inrange(industrycat_isic,"0510","0999")
@@ -823,6 +829,9 @@ foreach v of local ed_var {
 	replace industrycat10=10 if inrange(industrycat_isic,"9410","9609")
 	replace industrycat10=10 if inrange(industrycat_isic,"9700","9829")
 	replace industrycat10=10 if inrange(industrycat_isic,"9900","9999")
+	replace industrycat10=6 if s2_16acod=="G"
+	replace industrycat10=5 if s2_16acod=="F"
+	replace industrycat10=3 if s2_16acod=="C"
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
@@ -1715,16 +1724,19 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_2_>
-
-
-* We are using the three first digits because in the documentation the INE says that from the 4th digit onwards the code is a variation they performed for the Bolivia industries.
-	gen industrycat_isic_2= s2_45acod + substr("00000", 1, 5 - length(s2_45acod))
-	replace industrycat_isic_2 = substr(industrycat_isic_2, 1, length(industrycat_isic_2) - 1) 
+	
+	* Note: We are using the three first digits because in the documentation the INE says that from the 4th digit onwards the code is a variation they performed for the Bolivia industries.
+	gen industrycat_isic_help_2= s2_45acod + substr("00000", 1, 5 - length(s2_45acod))
+	replace industrycat_isic_help_2 = substr(industrycat_isic_help_2, 1, length(industrycat_isic_help_2) - 2) 
+*Note: C,F,G correspond to the higher level of industry classification, since there is not more details we leave it to missing in isic but it will be coded in industrycat10
+	replace industrycat_isic_help_2="" if s2_45acod=="G"
+	replace industrycat_isic_help_2="" if s2_45acod=="F"
+	replace industrycat_isic_help_2="" if s2_45acod=="C"
+	replace industrycat_isic_help_2="" if s2_45acod=="M"
+	gen industrycat_isic_2 = industrycat_isic_help_2 + substr("0000", 1, 4 - length(industrycat_isic_help_2))
 	replace industrycat_isic_2="" if industrycat_isic_2=="0000"
-	replace industrycat_isic_2="4699" if industrycat_isic_2=="G000"
-	replace industrycat_isic_2="4399" if industrycat_isic_2=="F000"
-	replace industrycat_isic_2="3299" if industrycat_isic_2=="C000"
-	replace industrycat_isic_2="7499" if industrycat_isic_2=="M000"
+	replace industrycat_isic_2="" if industrycat_isic_2=="8900"
+	replace industrycat_isic_2="9900" if industrycat_isic_2=="9990"
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
@@ -1751,6 +1763,10 @@ foreach v of local ed_var {
 	replace industrycat10_2=10 if inrange(industrycat_isic_2,"9410","9609")
 	replace industrycat10_2=10 if inrange(industrycat_isic_2,"9700","9829")
 	replace industrycat10_2=10 if inrange(industrycat_isic_2,"9900","9999")
+	replace industrycat10_2=6 if s2_45acod=="G"
+	replace industrycat10_2=5 if s2_45acod=="F"
+	replace industrycat10_2=3 if s2_45acod=="C"
+	replace industrycat10_2=8 if s2_45acod=="M"
 	replace industrycat10_2=. if lstatus!=1
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
