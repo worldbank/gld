@@ -27,7 +27,7 @@
 
 -----------------------------------------------------------------------
 
-<_ICLS Version_>				ICLS 13 </_ICLS Version_>
+<_ICLS Version_>				ICLS 19 </_ICLS Version_>
 <_ISCED Version_>				ISCED 2011 </_ISCED Version_>
 <_ISCO Version_>				ISCO 2008 </_ISCO Version_>
 <_OCCUP National_>				ISCO 2008 </_OCCUP National_>
@@ -455,7 +455,7 @@ The official report breaks down the estimates for labor market indicators by pro
 {
 
 *<_migrated_mod_age_>
-	gen migrated_mod_age = 0
+	gen migrated_mod_age = 15
 	label var migrated_mod_age "Migration module application age"
 *</_migrated_mod_age_>
 
@@ -523,7 +523,7 @@ The official report breaks down the estimates for labor market indicators by pro
 
 *<_migrated_from_code_>
 	gen migrated_from_code = ""
-	replace subnatid2 = "20 - Ulaanbaatar" if A19B == 11
+	replace migrated_from_code = "20 - Ulaanbaatar" if A19B == 11
 	replace migrated_from_code = "7 - Dornod" if A19B == 21
 	replace migrated_from_code = "18 - Hentii" if A19B == 23
 	replace migrated_from_code = "14 - Tuv" if A19B == 41
