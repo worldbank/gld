@@ -21,8 +21,8 @@
 								Data was acquired internally through I2D2.</_Source of dataset_>
 								Can be downloaded from http://nada.statistics.gov.lk/index.php/catalog but 
 								with only 25% of the full file through registration. 
-<_Sample size (HH)_> 			16,733 </_Sample size (HH)_>
-<_Sample size (IND)_> 			83,984 </_Sample size (IND)_>
+<_Sample size (HH)_> 			18,828 </_Sample size (HH)_>
+<_Sample size (IND)_> 			91,624 </_Sample size (IND)_>
 <_Sampling method_> 			A stratified two-stage probability sample design
 								used with census blocks as PSUs and housing units
 								as secondary and final sampling units. </_Sampling method_>
@@ -149,7 +149,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_year_>
-	gen int year=`year'
+	*gen int year=`year'
 	label var year "Year of survey"
 *</_year_>
 
@@ -243,16 +243,19 @@ This way produces less housing unit per quarter.
 
 However, coding hhid without month will lead to duplicates of households within the same month.
 
+We included month into hhid coding which will produce 18,828 unique household ids
+per year, accounting for 94.14% of the target of 20,000 households.
+
 *<_hhid_>*/
 
 
 *<_hhid_>
-	foreach v of varlist month quarter province sector district block{
-		tostring `v', gen (`v'_str) format(%02.0f)
-	}
-	tostring hhid, replace format(%03.0f)
+	foreach v of varlist month province sector district{
+		tostring `v', replace format(%02.0f)
+	}	
 	rename hhid hhid_orig
-	egen hhid=concat(month_str province_str sector_str district_str block_str hhid_orig)
+	gen hhno=hh_unit+hhid_orig
+	egen hhid=concat(month province sector subsector district block hhno)
 	label var hhid "Household id"
 *</_hhid_>
 
@@ -324,7 +327,7 @@ psu3:174
 
 
 *<_psu_>
-	egen psu=concat(month_str province_str sector_str district_str block_str)
+	egen psu=concat(month province sector district block)
 	label var psu "Primary sampling units"
 *</_psu_>
 
