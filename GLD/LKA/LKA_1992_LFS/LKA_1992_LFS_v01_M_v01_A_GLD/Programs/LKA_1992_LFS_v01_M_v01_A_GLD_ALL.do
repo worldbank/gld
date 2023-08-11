@@ -17,8 +17,10 @@
 <_Data collection to (M/Y)_>	[Dec/1992] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			Survey conducted by LKA Department of 
 								Census and Statistics, 
-								Ministry Policy Planning and Implementation </_Source of dataset_>
-								
+								Ministry Policy Planning and Implementation;
+								Data was acquired internally through I2D2.</_Source of dataset_>
+								Can be downloaded from http://nada.statistics.gov.lk/index.php/catalog but 
+								with only 25% of the full file through registration. 
 <_Sample size (HH)_> 			16,733 </_Sample size (HH)_>
 <_Sample size (IND)_> 			83,984 </_Sample size (IND)_>
 <_Sampling method_> 			A stratified two-stage probability sample design
@@ -94,7 +96,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	*use "`path_in_stata'\merged A to J de-ID.dta", clear
+	*use "`path_in_stata'\lfsdata.dta", clear
 	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_1992_LFS\LKA_1992_LFS_v01_M\Data\Stata\lfsdata.dta"
 
 
@@ -363,8 +365,8 @@ psu3:174
 
 
 *<_subnatid1_>
-	gen subnatid1=Z_6
-	label de lblsubnatid1 1 "1 - Eastern" 2 "2 - Northern" 3 "3 - Southern" 4 "4 - Western Area"
+	gen subnatid1=province
+	label de lblsubnatid1 1 "1 - Western" 2 "2 - Central" 3 "3 - Southern" 4 "4 - Western Area" 5 "5 - Eastern" 6 "6 - North-western" 7 "7 - North-central" 8 "8 - Uva" 9 "9 - Sabaragamuwa"
 	label values subnatid1 lblsubnatid1
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
