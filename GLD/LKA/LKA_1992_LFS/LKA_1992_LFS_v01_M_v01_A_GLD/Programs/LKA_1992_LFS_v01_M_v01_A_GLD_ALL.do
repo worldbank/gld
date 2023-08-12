@@ -339,7 +339,7 @@ psu3:174
 
 
 *<_strata_>
-	egen strata=concat(province_str sector_str district_str)
+	egen strata=concat(province sector district)
 	label var strata "Strata"
 *</_strata_>
 
@@ -359,61 +359,49 @@ psu3:174
 
 *<_urban_>
 	gen urban=.
-	replace urban=1 if sector==1
-	replace urban=0 if sector==2|sector==3
+	replace urban=1 if subsector=="0"
+	replace urban=0 if subsector=="2"|subsector=="1"
 	la de lblurban 1 "Urban" 0 "Rural"
 	label values urban lblurban
 	label var urban "Location is urban"
 *</_urban_>
 
 
+/*<_subnatid1_note_>
+
+In 1992, Northern and Western provinces were excluded.
+
+*<_subnatid1_note_>*/
+
+
 *<_subnatid1_>
-	gen subnatid1=province
-	label de lblsubnatid1 1 "1 - Western" 2 "2 - Central" 3 "3 - Southern" 4 "4 - Western Area" 5 "5 - Eastern" 6 "6 - North-western" 7 "7 - North-central" 8 "8 - Uva" 9 "9 - Sabaragamuwa"
+	destring province, gen(pronum)
+	gen subnatid1=pronum
+	label de lblsubnatid1 1 "1 - Western" 2 "2 - Central" 3 "3 - Southern" 4 "4 - Northern Area" 5 "5 - Eastern" 6 "6 - North-western" 7 "7 - North-central" 8 "8 - Uva" 9 "9 - Sabaragamuwa"
 	label values subnatid1 lblsubnatid1
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 
 
-/*<_subnatid2_note_>
-
-4 EA codes have duplicates in different districts/cities because of the adjacency
-and therefore the respondents from different districts/cities were mixed up.
-
-We overwrote the mistaken districts. Total 30 observations were overwritten.
-
-*<_subnatid2_note_>*/
-
-
 *<_subnatid2_>
-	gen z7code=string(Z_7,"%02.0f")
-	decode Z_7, gen(z7lbl)
-	egen Z7lbl=concat(z7code z7lbl), punct(" - ")
-	replace Z7lbl="24 - Port Loko" if Z7lbl=="22 - Kambia" & ea_code=="240203041"
-	replace Z7lbl="32 - Bonthe" if Z7lbl=="31 - Bo" & ea_code=="320504031"
-	replace Z7lbl="42 - Western Urban" if Z7lbl=="41 - Western Rural" & (ea_code=="420805102"|ea_code=="420806142")
-	
-	gen subnatid2=Z_7
-	replace subnatid2=24 if subnatid2==22&ea_code=="240203041"
-	replace subnatid2=32 if subnatid2==31&ea_code=="320504031"
-	replace subnatid2=42 if subnatid2==41&(ea_code=="420805102"|ea_code=="420806142")
-	labmask subnatid2, values(Z7lbl)
+	gen subnatid2=province+district
+	destring subnatid2, replace
+	label de lblsubnatid2 11 "11-Colombo" 12 "12-Gampaha" 13 "13-Kalutara" 21 "21-Kandy" 22 "22-Matale" 23 "23-Nuwara Eliya" 31 "31-Galle" 32 "32-Matara" 33 "33-Hambantota" 41 "41-Jaffna" 42 "42-Kilinochchi" 43 "43-Mannar" 51 "51-Batticaloa" 53 "53-Trincomalee" 61 "61-Kurunegala" 62 "62-Puttalam" 71 "71-Anradhapura" 72 "72-Polonnaruwa" 81 "81-Badulla" 82 "82-Moneragala" 91 "91-Ratnapura" 92 "92-Kegalle"
+	label values subnatid2 lblsubnatid2
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
 
 
 *<_subnatid3_>
-	decode Z_8, gen(Z8lbl)
-	replace Z8lbl=subinstr(Z8lbl, ".", " -",1)
-	gen subnatid3=Z_8
-	labmask subnatid3, values(Z8lbl)
+	gen subnatid3=.
 	label var subnatid3 "Subnational ID at Third Administrative Level"
 *</_subnatid3_>
 
 
 *<_subnatidsurvey_>	
 	decode urban, gen(urban_name)
-	egen subnatidsurvey=concat(Z7lbl urban_name), punct("-")
+	decode subnatid2, gen(disname)
+	egen subnatidsurvey=concat(disname urban_name), punct("-")
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>                
 
