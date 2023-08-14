@@ -919,7 +919,7 @@ vocation illness bad weather labor management disputes
 	gen byte lstatus=.
 	replace lstatus=1 if worked==1|q3==1|q6==1
 	replace lstatus=2 if worked==2&q3==2&q4==1&q5==1
-
+	replace lstatus=3 if lstatus==.
 	replace lstatus=. if age<minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -931,16 +931,16 @@ vocation illness bad weather labor management disputes
 Note: var "potential_lf" only takes value if the respondent is not in labor force. (lstatus==3)
 
 "potential_lf"=1 if the person is
-1)available but not searching or D_9==1 & D_5==2
-2)searching but not immediately available to work or D_9==2 & D_5==1
+1)available but not searching or q5==1 & q4==2
+2)searching but not immediately available to work or q5==2 & q4==1
 </_potential_lf_note_>*/
 
 
 *<_potential_lf_>
 	gen byte potential_lf=.
-	replace potential_lf=1 if [D_9==1 & D_5==2] | [D_9==2 & D_5==1]
-	replace potential_lf=0 if [D_9==1 & D_5==1] | [D_9==2 & D_5==2]
-	replace potential_lf=. if age < minlaborage
+	replace potential_lf=1 if [q5==1 & q4==2] | [q5==2 & q4==1]
+	replace potential_lf=0 if [q5==1 & q4==1] | [q5==2 & q4==2]
+	replace potential_lf=. if age<minlaborage
 	replace potential_lf=. if lstatus!=3
 	label var potential_lf "Potential labour force status"
 	la de lblpotential_lf 0 "No" 1 "Yes"
@@ -950,8 +950,6 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_underemployment_>
 	gen byte underemployment=.
-	replace underemployment=1 if I_1==1&inrange(I_7,1,3)
-	replace underemployment=0 if I_1==2
 	replace underemployment=. if age<minlaborage
 	replace underemployment=. if lstatus!=1
 	label var underemployment "Underemployment status"
@@ -961,8 +959,9 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_nlfreason_>
-	gen byte nlfreason=D_6
-	recode nlfreason (1/2=4) (3 6 8/15=5) (4=1) (5=3) (7=2)
+	gen byte nlfreason=q7
+	recode nlfreason (6=5)
+	replace nlfreason=. if age<minlaborage
 	replace nlfreason=. if lstatus!=3
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
@@ -971,16 +970,18 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_unempldur_l_>
-	gen byte unempldur_l=D_8
-	recode unempldur_l (1=0) (2=1) (4=6) (5=12) (6=24)
+	gen byte unempldur_l=q23
+	recode unempldur_l (1=0) (2=1) (4=6) (5=9) (6=12)
+	replace unempldur_l=. if age<minlaborage
 	replace unempldur_l=. if lstatus!=2
 	label var unempldur_l "Unemployment duration (months) lower bracket"
 *</_unempldur_l_>
 
 
 *<_unempldur_u_>
-	gen byte unempldur_u=D_8
-	recode unempldur_u (2=3) (3=6) (4=12) (5=24) (6=.)
+	gen byte unempldur_u=q23
+	recode unempldur_u (2=3) (3=6) (4=9) (5=12) (6=.)
+	replace unempldur_u=. if age<minlaborage
 	replace unempldur_u=. if lstatus!=2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
 *</_unempldur_u_>
@@ -992,19 +993,25 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 {
 *<_empstat_>
-	gen byte empstat=E_9
-	recode empstat (2 8=1) (3 5=4) (6/7=5) (9=2)
-	replace empstat=. if lstatus!=1
+	gen byte empstat=q9D
+	recode empstat (2=3) (3=4) (4=2)
+	replace empstat=. if lstatus!=1|age<minlaborage
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat lblempstat
 *</_empstat_>
 
 
+/*<_ocusec_note_>
+
+Original variable q9C only has two categories: public vs. private
+
+*<_ocusec_note_>*/
+
+
 *<_ocusec_>
-	gen byte ocusec=E_10
-	recode ocusec (1/2=1) (3 8 10=4) (4=3) (5/7 9=2) 
-	replace ocusec=. if lstatus!=1
+	gen byte ocusec=q9C
+	replace ocusec=. if lstatus!=1|age<minlaborage
 	label var ocusec "Sector of activity primary job 7 day recall"
 	la de lblocusec 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec lblocusec
@@ -1012,7 +1019,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_industry_orig_>
-	gen industry_orig=E_4 
+	gen industry_orig=q9A
 	replace industry_orig=. if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
