@@ -746,7 +746,7 @@ variable p11 is:
 	replace educy=13 if p11==5
 	replace educy=18 if p11==6
 	replace educy=19 if p11==7
-	replace educy=. if age<5
+	replace educy=. if age<ed_mod_age
 	replace educy=. if educy>age & !mi(educy) & !mi(age)
 	label var educy "Years of education"
 *</_educy_>
