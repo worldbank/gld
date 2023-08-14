@@ -455,20 +455,20 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 {
 
 *<_hsize_>
-	bys hhid: egen hsize=max(A_0)
+	bys hhid: egen hsize=max(p1)
 	label var hsize "Household size"
 *</_hsize_>
 
 
 *<_age_>
-	gen age=A_6
+	*gen age=.
 	replace age=98 if age>98 & age!=.
 	label var age "Individual age"
 *</_age_>
 
 
 *<_male_>
-	gen male=A_5
+	gen male=sex
 	recode male 2=0
 	label var male "Sex - Ind is male"
 	la de lblmale 1 "Male" 0 "Female"
@@ -478,46 +478,81 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 /*<_relationharm_note_>
 
-26 households have zero or more than 1 household head. 
-11 have zero; 13 have two; 1 have 3 and 1 have 4.
+189 households have no household head; 139 of which do not have household member 
+number one, meaning hh member ID starting from 2 or other numbers. 
 
-Here are the decision rule for reassigning household heads:
-- In the case of no head, pid 1 will be the head but he/she must have non-missing age 18 and above. If pid 1 is below 18, the the second pid that satisfies this condition is the head.
-- In the case of multiple heads, pid other than 1 will be assigned to category 6.
+5 households have only children in the households and the olderest
+are either 15 or 10 years old. These three households were not assigned with household heads. 
+"04910104021"
+"06620104031"
+"12720101071" 
+"10322303061"
+"04620101021"
+
+5 households contain only non-relatives and thus they also stay put without household head assigned.
+02210301041 
+02210301071
+02210301081
+02210301091
+07100113081
+02210301051		
+
+Other households that have multipal household heads are mainly because of reporting error,
+i.e. all household members are reported as the household head. In these situations,
+we only kept member identified as No.1 as the head, others "Other Relatives".
+
+One household "03100102101" is a special case in that its member ID starts from 3 and
+there are only "Other relatives" and "Children" originally in the household. 
+Considering the two children are adults (25 and 22), we coded the 25-year old
+child as the head. 	  
 
 *<_relationharm_note_>*/
 
 
 *<_relationharm_>
-	gen byte relationharm=A_4
-	recode relationharm (3/5=3) (9/10=4) (6/8 11=5) (12/13=6)
+	gen byte relationharm=p3
+	recode relationharm (7/9=6)
 	
 	gen head=1 if relationharm==1
 	bys hhid: egen headsum=total(head)
-	gen headid=substr(pid,-1,2)
-	replace relationharm=1 if headsum==0&headid=="1"&pid!="08-121506041-01"&!mi(age)
-	replace relationharm=1 if pid=="08-121506041-02"
-	replace relationharm=1 if pid=="12-420604032-02"
+	bys hhid: egen olderest=max(age) if !mi(age)&relationharm!=6
+	bys hhid: egen pidmin=min(p1)
+	replace relationharm=1 if relationharm!=6&headsum==0&p1==1&age>17
+	gen relative=1 if inrange(relationharm,1,5)
+	replace relative=0 if relative!=1
+	replace head=1 if relationharm==1
+	bys hhid: egen headsum0=total(head)
+	bys hhid: egen any=total(relative)
 	
-	replace relationharm=6 if headsum==2&head==1&headid!="1"
-	replace relationharm=6 if headsum==3&head==1&headid!="1"
-	replace relationharm=6 if headsum==4&head==1&headid!="1"
+	replace relationharm=1 if headsum0==0&age==olderest&olderest>17
+	replace head=1 if relationharm==1
+	bys hhid: egen headsum1=total(head)
 	
+	replace relationharm=5 if headsum1==2&head==1&age<18&age!=olderest
+	replace relationharm=5 if headsum1==2&head==1&p1!=1
+	replace head=. if relationharm!=1
+	bys hhid: egen headsum2=total(head)
+	
+	replace relationharm=5 if inrange(headsum2,3,6)&p1!=1
+	replace relationharm=1 if pid=="03100102101-06"
+
+
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm lblrelationharm
+	drop head-headsum2 
 *</_relationharm_>
 
 
 *<_relationcs_>
-	gen relationcs=A_4
+	gen relationcs=p3
 	label var relationcs "Relationship to the head of household - Country original"
 *</_relationcs_>
 
 
 *<_marital_>
-	gen byte marital=A_7
-	recode marital (1/2=1) (5=4) (6=5) (7=2) 
+	gen byte marital=maritals 
+	recode marital (1=2) (2=1) (3=5) (5=4)
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
 	label values marital lblmarital
