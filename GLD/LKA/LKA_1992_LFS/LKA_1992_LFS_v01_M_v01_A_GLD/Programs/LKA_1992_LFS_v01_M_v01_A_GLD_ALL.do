@@ -722,28 +722,30 @@ child as the head.
 /*<_educy_note_>
 
 Original categorization of the highest educational level ever attended of 
-variable B_5 is:
+variable p11 is:
 
 0	No schooling 
-1	Passed Grade 0-4/1-5 year
-2	Passed Grade 5-7/6-8 year
-3	Passed Grade 8-9/9-10 year
-4	Passed G.C.E(O/L)N.C.G.E.
-5	Passed G.C.E(A/L)H.N.C.E.
-6	Degree
-7	Post graduate degree/diploma
+1	Passed Grade 0-4/1-5 year --> 5 years
+2	Passed Grade 5-7/6-8 year --> 8 years
+3	Passed Grade 8-9/9-10 year --> 10 years
+4	Passed G.C.E(O/L)N.C.G.E. (senior secondary school graduated) --> 11 years
+5	Passed G.C.E(A/L)H.N.C.E. (collegiate level) --> 13 years
+6	Degree --> 18 years
+7	Post graduate degree/diploma --> 19 years
 
 *<_educy_note_>*/		  
 
 
 *<_educy_>
 	gen byte educy=.
-	replace educy=B_5 if inrange(B_5,1,6)
-	replace educy=B_5-1 if inrange(B_5,7,14)
-	replace educy=13 if B_5==15
-	replace educy=16 if B_5==18
-	replace educy=17 if inlist(B_5,16,17,19,21)
-	replace educy=18 if B_5==20|B_5==22
+	replace educy=0 if p11==0
+	replace educy=5 if p11==1
+	replace educy=8 if p11==2
+	replace educy=10 if p11==3
+	replace educy=11 if p11==4
+	replace educy=13 if p11==5
+	replace educy=18 if p11==6
+	replace educy=19 if p11==7
 	replace educy=. if age<5
 	replace educy=. if educy>age & !mi(educy) & !mi(age)
 	label var educy "Years of education"
