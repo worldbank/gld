@@ -223,7 +223,12 @@ save "`path_in_stata'/qlfs_2021.dta", replace
 
 
 *<_weight_>
-	gen weight = fact_trim/4
+	gen counter = 1
+	egen count_all = count(counter)
+	bys trim : egen count_trim = count(counter)
+	gen relative_weight = count_trim/count_all
+	gen weight = fact_trim*relative_weight
+	drop counter count_all count_trim relative_weight
 	label var weight "Survey sampling weight"
 *</_weight_>
 

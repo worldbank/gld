@@ -22,7 +22,7 @@
 <_Sample size (HH)_> 			[39939] </_Sample size (HH)_>
 <_Sample size (IND)_> 			[254234] </_Sample size (IND)_>
 <_Sampling method_> 			[Panel design, two stage probabilistic, stratified, by conglomerate] </_Sampling method_>
-<_Geographic coverage_> 		[subnational level, department] </_Geographic coverage_>
+<_Geographic coverage_> 		[national, urban/rural] </_Geographic coverage_>
 <_Currency_> 					[Bolivian Boliviano] </_Currency_>
 
 -----------------------------------------------------------------------
@@ -121,7 +121,7 @@ save "`path_in_stata'/qlfs_2016.dta", replace
 
 
 *<_survey_>
-	gen survey = "Quarterly"
+	gen survey = "labour force survey"
 	label var survey "Survey type"
 *</_survey_>
 
@@ -209,8 +209,6 @@ save "`path_in_stata'/qlfs_2016.dta", replace
 	002, ..., 160.
 
 </_hhid_note> */
-
-	*transform to string
 	tostring id_hog_panel, gen(id_hogar_1)
 	egen hhid = concat( id_hogar_1)
 	label var hhid "Household ID"
@@ -218,18 +216,19 @@ save "`path_in_stata'/qlfs_2016.dta", replace
 
 
 *<_pid_>
-
-*transform to string 
 	tostring id_per_panel, gen(id_persona_1)
 	egen  pid = concat(hhid id_persona_1)
 	label var pid "Individual ID"
-*making sure ids are unique
-*isid pid
 *</_pid_>
 
 
 *<_weight_>
-	gen weight = fact_trim/4
+	gen counter = 1
+	egen count_all = count(counter)
+	bys trim : egen count_trim = count(counter)
+	gen relative_weight = count_trim/count_all
+	gen weight = fact_trim*relative_weight
+	drop counter count_all count_trim relative_weight
 	label var weight "Survey sampling weight"
 *</_weight_>
 
@@ -258,6 +257,9 @@ save "`path_in_stata'/qlfs_2016.dta", replace
 *</_wave_>
 
 *<_panel_>
+/*<_panel_note>
+No need to create variable panel because the raw dataset already has one with that name
+*</panel_note>*/
 	*gen panel = panel
 	label var panel "Panel"
 *</_panel_>
@@ -324,9 +326,12 @@ save "`path_in_stata'/qlfs_2016.dta", replace
 
 	Variable denoting lowest administrative info to which the survey is still significat.
 	See entry in GLD Guidelines (https://github.com/worldbank/gld/blob/main/Support/A%20-%20Guides%20and%20Documentation/GLD_1.0_Guidelines.docx) for more details
-
+In this case we are generating a helper to create the variable, the helper uses information from the urban variable.
 </_subnatidsurvey_note> */
-	gen str subnatidsurvey = ""
+	gen urban_1=""
+	replace urban_1=" urban" if urban==1
+	replace urban_1=" rural" if urban==0
+	egen subnatidsurvey=concat(subnatid1 urban_1)
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -485,9 +490,10 @@ save "`path_in_stata'/qlfs_2016.dta", replace
 
 {
 
-
-*the residence information is only for employment during performance of the occupation , last 12 months month question. Not information from further down so not relevant for migration.
 *<_migrated_mod_age_>
+/* <_migrated_mod_age__note>
+the residence information is only for employment during performance of the occupation , last 12 months month question. Not information from further down so not relevant for GLD migration coding.
+</_migrated_mod_age_note> */
 	gen migrated_mod_age = .
 	label var migrated_mod_age "Migration module application age"
 *</_migrated_mod_age_>
@@ -565,7 +571,7 @@ save "`path_in_stata'/qlfs_2016.dta", replace
 
 /* <_ed_mod_age_note>
 
-Education module is only asked to those XX and older.
+Education module is only asked to those 10 and older.
 
 </_ed_mod_age_note> */
 
@@ -583,7 +589,11 @@ label var ed_mod_age "Education module application age"
 
 
 *<_literacy_>
-*assuming from level of education literacy status
+/* <_literacy_note>
+
+We are using the variable of level of education to build the literacy status
+
+</_literacy_note> */
 	gen byte literacy = .
 	replace literacy=1 if inrange(s1_07a,11,81)
 	replace literacy=0 if s1_07a==10
@@ -743,6 +753,9 @@ foreach v of local ed_var {
 
 *<_potential_lf_>
 	gen byte potential_lf = .
+	replace potential_lf=1 if s2_04==1 & s2_05==2
+	replace potential_lf=1 if s2_04==2 & s2_05==1
+	replace potential_lf=0 if missing(potential_lf)
 	replace potential_lf = . if age < minlaborage & age != .
 	replace potential_lf = . if lstatus != 3
 	label var potential_lf "Potential labour force status"
@@ -812,10 +825,15 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_>
-* Note: We are using the three first digits because in the documentation the INE says that from the 4th digit onwards the code is a variation they performed for the Bolivia industries.
+/* <_industrycat_isic_note>
+
+	We are using the three first digits because in the documentation the INE says that from the 4th digit onwards the code is a variation they performed for the Bolivia industries.
+	
+	C,F,G correspond to the higher level of industry classification, since there is not more details we leave it to missing in isic but it will be coded in industrycat10
+
+</_industrycat_isic_note> */
 	gen industrycat_isic_help= s2_16acod + substr("00000", 1, 5 - length(s2_16acod))
 	replace industrycat_isic_help = substr(industrycat_isic_help, 1, length(industrycat_isic_help) - 2) 
-*Note: C,F,G correspond to the higher level of industry classification, since there is not more details we leave it to missing in isic but it will be coded in industrycat10
 	replace industrycat_isic_help="" if s2_16acod=="G"
 	replace industrycat_isic_help="" if s2_16acod=="F"
 	replace industrycat_isic_help="" if s2_16acod=="C"
@@ -1465,7 +1483,6 @@ foreach v of local ed_var {
 	replace occup_isco="8330" if s2_15acod=="833"
 	replace occup_isco="8340" if s2_15acod=="834"
 	replace occup_isco="9210" if s2_15acod=="921"
-	
 	replace occup_isco="1100" if s2_15acod=="111"	
 	replace occup_isco="1310" if s2_15acod=="131"	
 	replace occup_isco="1320" if s2_15acod=="132"	
@@ -1496,7 +1513,6 @@ foreach v of local ed_var {
 	replace occup_isco="4210" if s2_15acod=="421"
 	replace occup_isco="4310" if s2_15acod=="431"
 	replace occup_isco="4410" if s2_15acod=="441"
-	
 	replace occup_isco="5110" if s2_15acod=="511"
 	replace occup_isco="5120" if s2_15acod=="512"
 	replace occup_isco="5140" if s2_15acod=="514"
@@ -1510,7 +1526,6 @@ foreach v of local ed_var {
 	replace occup_isco="7320" if s2_15acod=="734"
 	replace occup_isco="7410" if s2_15acod=="741"
 	replace occup_isco="7420" if s2_15acod=="742"
-	
 	replace occup_isco="7530" if s2_15acod=="754"
 	replace occup_isco="7530" if s2_15acod=="755"
 	replace occup_isco="8110" if s2_15acod=="811"
@@ -1530,7 +1545,6 @@ foreach v of local ed_var {
 	replace occup_isco="9000" if s2_15acod=="97000"
 	replace occup_isco="9000" if s2_15acod=="99992"
 	replace occup_isco="9000" if s2_15acod=="99996"
-	
 	replace occup_isco= "1200" if s2_15acod=="12"
 	replace occup_isco= "1200" if s2_15acod=="121"
 	replace occup_isco= "2130" if s2_15acod=="213"
@@ -1607,8 +1621,6 @@ foreach v of local ed_var {
 	asks for basic daily pay. The value of that pay would be wage_no_compen,
 	while unitwage is code 1 ("Daily") for all, regardless of the periodicity.
 </_unitwage_note> */
-*self employed payments 38 
-
 	gen byte unitwage = s2_33b
 	replace unitwage = s2_38b if s2_33b==.
 	recode unitwage 4=5 5=4 
@@ -1646,7 +1658,11 @@ foreach v of local ed_var {
 
 
 *<_contract_>
-*aggrements are considered as contract
+/* <_contract_note>
+
+	aggrements are considered as contract
+
+</_contract_note> */
 	gen byte contract = s2_21
 	recode contract 2/3=1 4/5=0
 	label var contract "Employment has contract primary job 7 day recall"
@@ -1724,10 +1740,8 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_2_>
-* Note: We are using the three first digits because in the documentation the INE says that from the 4th digit onwards the code is a variation they performed for the Bolivia industries.
 	gen industrycat_isic_help_2= s2_45acod + substr("00000", 1, 5 - length(s2_45acod))
 	replace industrycat_isic_help_2 = substr(industrycat_isic_help_2, 1, length(industrycat_isic_help_2) - 2) 
-*Note: C,F,G correspond to the higher level of industry classification, since there is not more details we leave it to missing in isic but it will be coded in industrycat10
 	replace industrycat_isic_help_2="" if s2_45acod=="G"
 	replace industrycat_isic_help_2="" if s2_45acod=="F"
 	replace industrycat_isic_help_2="" if s2_45acod=="C"

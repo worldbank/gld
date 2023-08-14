@@ -22,7 +22,7 @@
 <_Sample size (HH)_> 			[18,354] </_Sample size (HH)_>
 <_Sample size (IND)_> 			[69,431] </_Sample size (IND)_>
 <_Sampling method_> 			[Panel design, two stage probabilistic, stratified, by conglomerate] </_Sampling method_>
-<_Geographic coverage_> 		[subnational level, department] </_Geographic coverage_>
+<_Geographic coverage_> 		[national, urban/rural] </_Geographic coverage_>
 <_Currency_> 					[Bolivian Boliviano] </_Currency_>
 
 -----------------------------------------------------------------------
@@ -105,7 +105,7 @@ use "`path_in_stata'/BOL-qlfs-q4-2015.dta", clear
 
 
 *<_survey_>
-	gen survey = "Quarterly"
+	gen survey = "labour force survey"
 	label var survey "Survey type"
 *</_survey_>
 
@@ -184,8 +184,6 @@ use "`path_in_stata'/BOL-qlfs-q4-2015.dta", clear
 	002, ..., 160.
 
 </_hhid_note> */
-
-	*transform to string
 	tostring id_hog_panel, gen(id_hog)
 	egen hhid = concat( id_hog)
 	label var hhid "Household ID"
@@ -193,18 +191,13 @@ use "`path_in_stata'/BOL-qlfs-q4-2015.dta", clear
 
 
 *<_pid_>
-
-*transform to string 
 	tostring id_per_panel, gen(id_per)
 	egen  pid = concat(hhid id_per)
 	label var pid "Individual ID"
-*making sure ids are unique
-isid pid
 *</_pid_>
 
 
 *<_weight_>
-*dividir entre 4 si se usa todos los trimestres.
 	gen weight = fact_trim
 	label var weight "Survey sampling weight"
 *</_weight_>
@@ -234,6 +227,9 @@ isid pid
 *</_wave_>
 
 *<_panel_>
+/*<_panel_note>
+No need to create variable panel because the raw dataset already has one with that name
+*</panel_note>*/
 	*gen panel = panel
 	label var panel "Panel"
 *</_panel_>
@@ -302,8 +298,12 @@ isid pid
 	Variable denoting lowest administrative info to which the survey is still significat.
 	See entry in GLD Guidelines (https://github.com/worldbank/gld/blob/main/Support/A%20-%20Guides%20and%20Documentation/GLD_1.0_Guidelines.docx) for more details
 
+In this case we are generating a helper to create the variable, the helper uses information from the urban variable.
 </_subnatidsurvey_note> */
-	gen str subnatidsurvey = ""
+	gen urban_1=""
+	replace urban_1=" urban" if urban==1
+	replace urban_1=" rural" if urban==0
+	egen subnatidsurvey=concat(subnatid1 urban_1)
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -463,7 +463,9 @@ isid pid
 {
 
 
-*the residence information is only for employment during performance of the occupation , last 12 months month question. Not information from further down so not relevant for migration.
+/* <_migrated_mod_age__note>
+the residence information is only for employment during performance of the occupation , last 12 months month question. Not information from further down so not relevant for GLD migration coding.
+</_migrated_mod_age_note> */
 *<_migrated_mod_age_>
 	gen migrated_mod_age = .
 	label var migrated_mod_age "Migration module application age"
@@ -560,7 +562,11 @@ label var ed_mod_age "Education module application age"
 
 
 *<_literacy_>
-*assuming from level of education literacy status
+/* <_literacy_note>
+
+We are using the variable of level of education to build the literacy status
+
+</_literacy_note> */
 	gen byte literacy = .
 	replace literacy=1 if inrange(s1_07a,11,81)
 	replace literacy=0 if s1_07a==10
@@ -790,16 +796,22 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_>
-* Note: We are using the three first digits because in the documentation the INE says that from the 4th digit onwards the code is a variation they performed for the Bolivia industries.
+/* <_industrycat_isic_note>
+
+	We are using the three first digits because in the documentation the INE says that from the 4th digit onwards the code is a variation they performed for the Bolivia industries.
+	
+	C,F,G correspond to the higher level of industry classification, since there is not more details we leave it to missing in isic but it will be coded in industrycat10
+	
+	There is no corresponding code for 8900 in isic.
+
+</_industrycat_isic_note> */
 	gen industrycat_isic_help= s2_16acod + substr("00000", 1, 5 - length(s2_16acod))
 	replace industrycat_isic_help = substr(industrycat_isic_help, 1, length(industrycat_isic_help) - 2) 
-*Note: C,F,G correspond to the higher level of industry classification, since there is not more details we leave it to missing in isic but it will be coded in industrycat10
 	replace industrycat_isic_help="" if s2_16acod=="G"
 	replace industrycat_isic_help="" if s2_16acod=="F"
 	replace industrycat_isic_help="" if s2_16acod=="C"
 	gen industrycat_isic = industrycat_isic_help + substr("0000", 1, 4 - length(industrycat_isic_help))
 	replace industrycat_isic="" if industrycat_isic=="0000"
-*there is no corresponding code in isic for 8900
 	replace industrycat_isic="" if industrycat_isic=="8900"
 	replace industrycat_isic="9900" if industrycat_isic=="9990"
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
@@ -807,7 +819,6 @@ foreach v of local ed_var {
 
 
 *<_industrycat10_>
-*the letters in the raw data are included in the corresponding number classification. 
 	gen byte industrycat10 = .
 	replace industrycat10=1 if inrange(industrycat_isic,"0100","0329")
 	replace industrycat10=2 if inrange(industrycat_isic,"0510","0999")
@@ -1607,8 +1618,6 @@ foreach v of local ed_var {
 	asks for basic daily pay. The value of that pay would be wage_no_compen,
 	while unitwage is code 1 ("Daily") for all, regardless of the periodicity.
 </_unitwage_note> */
-*self employed payments 38 
-
 	gen byte unitwage = s2_33b
 	replace unitwage = s2_38b if s2_33b==.
 	recode unitwage 4=5 5=4 
@@ -1646,7 +1655,11 @@ foreach v of local ed_var {
 
 
 *<_contract_>
-*aggrements are considered as contract
+/* <_contract_note>
+
+	aggrements are considered as contract
+
+</_contract_note> */
 	gen byte contract = s2_21
 	recode contract 2/3=1 4/5=0
 	label var contract "Employment has contract primary job 7 day recall"
@@ -1724,11 +1737,8 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_2_>
-	
-	* Note: We are using the three first digits because in the documentation the INE says that from the 4th digit onwards the code is a variation they performed for the Bolivia industries.
 	gen industrycat_isic_help_2= s2_45acod + substr("00000", 1, 5 - length(s2_45acod))
 	replace industrycat_isic_help_2 = substr(industrycat_isic_help_2, 1, length(industrycat_isic_help_2) - 2) 
-*Note: C,F,G correspond to the higher level of industry classification, since there is not more details we leave it to missing in isic but it will be coded in industrycat10
 	replace industrycat_isic_help_2="" if s2_45acod=="G"
 	replace industrycat_isic_help_2="" if s2_45acod=="F"
 	replace industrycat_isic_help_2="" if s2_45acod=="C"
