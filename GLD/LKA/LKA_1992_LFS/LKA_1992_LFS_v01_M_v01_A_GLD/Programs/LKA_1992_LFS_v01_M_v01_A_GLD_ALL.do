@@ -728,8 +728,8 @@ variable p11 is:
 1	Passed Grade 0-4/1-5 year --> 5 years
 2	Passed Grade 5-7/6-8 year --> 8 years
 3	Passed Grade 8-9/9-10 year --> 10 years
-4	Passed G.C.E(O/L)N.C.G.E. (senior secondary school graduated) --> 11 years
-5	Passed G.C.E(A/L)H.N.C.E. (collegiate level) --> 13 years
+4	Passed G.C.E(O/L)N.C.G.E. (junior secondary graduated) --> 11 years
+5	Passed G.C.E(A/L)H.N.C.E. (senior secondary graduated) --> 13 years
 6	Degree --> 18 years
 7	Post graduate degree/diploma --> 19 years
 
@@ -754,13 +754,11 @@ variable p11 is:
 
 *<_educat7_>
 	gen byte educat7=.
-	replace educat7=1 if B_2==2
-	replace educat7=2 if inrange(B_5,1,5)
-	replace educat7=3 if inrange(B_5,6,7)
-	replace educat7=4 if inrange(B_5,8,13)
-	replace educat7=5 if inrange(B_5,14,15)
-	replace educat7=6 if inrange(B_5,18,19)
-	replace educat7=7 if inlist(B_5,16,17,20,21,22)
+	replace educat7=1 if p11==0
+	replace educat7=3 if p11==1
+	replace educat7=4 if inlist(p11,2,3,4)
+	replace educat7=5 if p11==5
+	replace educat7=7 if inlist(p11,6,7)
 	replace educat7=. if age<ed_mod_age
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
@@ -789,21 +787,19 @@ variable p11 is:
 
 
 *<_educat_orig_>
-	gen educat_orig=B_5
+	gen educat_orig=p11
 	label var educat_orig "Original survey education code"
 *</_educat_orig_>
 
 
 *<_educat_isced_>
 	gen educat_isced=.
-	replace educat_isced=100 if inrange(B_5,1,7) 
-	replace educat_isced=244 if inrange(B_5,8,10) 
-	replace educat_isced=344 if inrange(B_5,11,14) 
-	replace educat_isced=344 if inrange(B_5,11,14) 
-	replace educat_isced=354 if B_5==15
-	replace educat_isced=554 if B_5==18
-	replace educat_isced=665 if inlist(B_5,16,17,19,21)
-	replace educat_isced=767 if B_5==22
+	replace educat_isced=100 if p11==1
+	replace educat_isced=244 if p11==2
+	replace educat_isced=343 if p11==3|p11==4
+	replace educat_isced=344 if p11==5
+	replace educat_isced=660 if p11==6
+	replace educat_isced=760 if p11==7
 	replace educat_isced=. if age<ed_mod_age
 	label var educat_isced "ISCED standardised level of education"
 *</_educat_isced_>
