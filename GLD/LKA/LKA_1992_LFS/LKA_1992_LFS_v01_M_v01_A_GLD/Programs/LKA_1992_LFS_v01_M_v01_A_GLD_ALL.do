@@ -830,9 +830,18 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 
 
 {
+/*<_vocational_note_>
+
+The vocational training section is for people aged 10 and above only.
+
+*<_vocational_note_>*/
+    
+	
 *<_vocational_>
-	gen vocational=B_12
-	recode vocational (2=0) 
+	gen vocational=.
+	replace vocational=1 if p12==1
+	replace vocational=0 if p12==2
+	replace vocational=. if age<10
 	la de vocationallbl 1 "Yes" 0 "No"
 	la values vocational vocationallbl
 	label var vocational "Ever received vocational training"
@@ -847,28 +856,40 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 *</_vocational_type_>
 
 
+/*<_vocational_length_l_note_>
+
+Original variable p16 is the duration of vocational training in terms of month.
+But it is one specific number instead of a range.
+
+*<_vocational_length_l_note_>*/
+
+
 *<_vocational_length_l_>
-	gen vocational_length_l=.
+	gen vocational_length_l=p16
+	replace vocational_length_l=. if age<10|vocational!=1
 	label var vocational_length_l "Length of training, lower limit"
 *</_vocational_length_l_>
 
 
 *<_vocational_length_u_>
-	gen vocational_length_u=.
+	gen vocational_length_u=p16
+	replace vocational_length_u=. if age<10|vocational!=1
 	label var vocational_length_u "Length of training, upper limit"
 *</_vocational_length_u_>
 
 
 /*<_vocational_field_orig_note_>
 
-764 observations answered that they did not compete training (B_12==2)) but they
-answered the area of their trainings. 
+p14 is the original skill code variable in the questionnaire. But it neither matches
+ISCO88 nor ISIC Rev3. And we did not have any relevant documentation of the codelist 
+of this variable.
 
 *<_vocational_field_orig_note_>*/
 
 
 *<_vocational_field_orig_>
-	gen vocational_field_orig=B_17
+	gen vocational_field_orig=p14
+	replace vocational_field_orig=. if age<10|vocational!=1
 	label var vocational_field_orig "Field of training"
 *</_vocational_field_orig_>
 
@@ -886,29 +907,19 @@ answered the area of their trainings.
 ================================================================================================*/
 
 *<_minlaborage_>
-	gen byte minlaborage=5
+	gen byte minlaborage=10
 	label var minlaborage "Labor module application age"
 *</_minlaborage_>
 
 
 *----------8.1: 7 day reference overall------------------------------*
-
+vocation illness bad weather labor management disputes
 {
-/*<_lstatus_note_>
-
-Better to use the questions to code variables instead of the "Enumerator CHECK"
-question as the latter have some errors.	
-
-*<_lstatus_note_>*/
-
-	
 *<_lstatus_>
 	gen byte lstatus=.
-	gen temp=1 if D_2==1|D_2==2|D_2==3|D_3==1|D_3==2|D_4==1
-	replace lstatus=1 if C_1A==1|C_1B==1|C_1C==1|C_1D==1
-	replace lstatus=1 if lstatus!=1&temp==1
-	replace lstatus=2 if temp!=1&lstatus!=1&D_5==1&D_9==1
-	replace lstatus=3 if lstatus==. 
+	replace lstatus=1 if worked==1|q3==1|q6==1
+	replace lstatus=2 if worked==2&q3==2&q4==1&q5==1
+
 	replace lstatus=. if age<minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
