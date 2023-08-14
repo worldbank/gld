@@ -4,25 +4,25 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				LKA_1992_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
+<_Program name_>				LKA_1993_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata SE 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
 <_Date created_>				2023-08-07 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						Sri Lanka (LKA) </_Country_>
 <_Survey Title_>				National Labour Force Survey </_Survey Title_>
-<_Survey Year_>					1992 </_Survey Year_>
-<_Study ID_>					LKA_1992_LFS_v01_M </_Study ID_>
-<_Data collection from (M/Y)_>	[Jan/1992] </_Data collection from (M/Y)_>
-<_Data collection to (M/Y)_>	[Dec/1992] </_Data collection to (M/Y)_>
+<_Survey Year_>					1993 </_Survey Year_>
+<_Study ID_>					LKA_1993_LFS_v01_M </_Study ID_>
+<_Data collection from (M/Y)_>	[Jan/1993] </_Data collection from (M/Y)_>
+<_Data collection to (M/Y)_>	[Dec/1993] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			Survey conducted by LKA Department of 
 								Census and Statistics, 
 								Ministry Policy Planning and Implementation;
 								Data was acquired internally through I2D2.</_Source of dataset_>
 								Can be downloaded from http://nada.statistics.gov.lk/index.php/catalog but 
 								with only 25% of the full file through registration. 
-<_Sample size (HH)_> 			18,828 </_Sample size (HH)_>
-<_Sample size (IND)_> 			91,624 </_Sample size (IND)_>
+<_Sample size (HH)_> 			</_Sample size (HH)_>
+<_Sample size (IND)_> 		    </_Sample size (IND)_>
 <_Sampling method_> 			A stratified two-stage probability sample design
 								used with census blocks as PSUs and housing units
 								as secondary and final sampling units. </_Sampling method_>
@@ -72,7 +72,7 @@ set mem 800m
 * Define path sections
 local server  "Y:\GLD-Harmonization\573465_JT"
 local country "LKA"
-local year    "1992"
+local year    "1993"
 local survey  "LFS"
 local vermast "V01"
 local veralt  "V01"
@@ -97,7 +97,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * harmonized output in a single file
 
 	*use "`path_in_stata'\lfsdata.dta", clear
-	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_1992_LFS\LKA_1992_LFS_v01_M\Data\Stata\lfsdata.dta"
+	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_1993_LFS\LKA_1993_LFS_v01_M\Data\Stata\lfsdata.dta"
 
 
 /*%%=============================================================================================
@@ -188,64 +188,6 @@ local out_file "`level_2_harm'_ALL.dta"
 
 /*<_hhid_>
 
-According to the questionnaire, total housing units surveyed should be 10,080 in 
-total in a year; 2,520 per quarter (10 HH from each sampling block, 252 blocks per 
-quarter).
-
-Without knowing if household ID changes every month (i.e. same household surveyed 
-consecutively in two months are assigned with the same ID), two ways to try to code
-hhid:
-
-1) A combination with "month":
-	
-	egen hhid=concat(month province sector district block hhid_orig), punct("-")
-	preserve
-	keep quarter hhid
-	duplicates drop
-	
-. tab quarter
-
-    quarter |      Freq.     Percent        Cum.
-------------+-----------------------------------
-         01 |      4,239       25.33       25.33
-         02 |      4,141       24.75       50.08
-         03 |      4,150       24.80       74.88
-         04 |      4,203       25.12      100.00
-------------+-----------------------------------
-      Total |     16,733      100.00
-	  
-This way produces much more than 2,520 housing units per quarter.	  
-
-
-2) A combination without "month": 
-	
-	egen hhid=concat(province sector district block hhid_orig), punct("-")
-	preserve
-	keep quarter month hhid
-	duplicates drop
-	bys quarter hhid: gen hhcount=cond(_N==1,1,_n)
-	replace hhcount=0 if hhcount!=1
-	bys quarter: egen hhcount_ttl=sum(hhcount)
-	
-	. tab quarter hhcount_ttl
-
-           |                 hhcount_ttl
-   quarter |      1789       1810       1827       1839 |     Total
------------+--------------------------------------------+----------
-        01 |         0          0          0      4,239 |     4,239 
-        02 |     4,141          0          0          0 |     4,141 
-        03 |         0      4,150          0          0 |     4,150 
-        04 |         0          0      4,203          0 |     4,203 
------------+--------------------------------------------+----------
-     Total |     4,141      4,150      4,203      4,239 |    16,733 
-
-This way produces less housing unit per quarter.
-
-However, coding hhid without month will lead to duplicates of households within the same month.
-
-We included month into hhid coding which will produce 18,828 unique household ids
-per year, accounting for 94.14% of the target of 20,000 households.
-
 *<_hhid_>*/
 
 
@@ -275,53 +217,6 @@ per year, accounting for 94.14% of the target of 20,000 households.
 
 /*<_psu_note_>
 
-	egen psu1=concat(quarter_str province_str sector_str district_str block_str)
-	egen psu2=concat(month_str province_str sector_str district_str block_str)
-	egen psu3=concat(province_str sector_str district_str block_str)
-
-Unique counts of PSU per year:
-
-psu1:689
-psu2:1,684
-psu3:174
-	
-. tab quarter psuttl1
-
-           |             psuttl1
-   quarter |       171        173        174 |     Total
------------+---------------------------------+----------
-         1 |         0          0     23,053 |    23,053 
-         2 |    22,778          0          0 |    22,778 
-         3 |    22,792          0          0 |    22,792 
-         4 |         0     23,001          0 |    23,001 
------------+---------------------------------+----------
-     Total |    45,570     23,001     23,053 |    91,624 
-	 
-	 
-. tab quarter psuttl2
-
-           |             psuttl2
-   quarter |       417        419        424 |     Total
------------+---------------------------------+----------
-         1 |         0          0     23,053 |    23,053 
-         2 |    22,778          0          0 |    22,778 
-         3 |         0     22,792          0 |    22,792 
-         4 |         0          0     23,001 |    23,001 
------------+---------------------------------+----------
-     Total |    22,778     22,792     46,054 |    91,624 
-
-	 
-. tab quarter psuttl3
-
-           |             psuttl3
-   quarter |       171        173        174 |     Total
------------+---------------------------------+----------
-         1 |         0          0     23,053 |    23,053 
-         2 |    22,778          0          0 |    22,778 
-         3 |    22,792          0          0 |    22,792 
-         4 |         0     23,001          0 |    23,001 
------------+---------------------------------+----------
-     Total |    45,570     23,001     23,053 |    91,624 
 
 *<_psu_note_>*/
 
@@ -369,7 +264,7 @@ psu3:174
 
 /*<_subnatid1_note_>
 
-In 1992, Northern and Western provinces were excluded.
+In 1993, Northern and Western provinces were excluded.
 
 *<_subnatid1_note_>*/
 
