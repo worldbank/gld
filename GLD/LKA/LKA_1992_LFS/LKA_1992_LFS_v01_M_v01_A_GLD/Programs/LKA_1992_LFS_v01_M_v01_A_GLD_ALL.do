@@ -39,7 +39,7 @@
 								- Sabaragamuwa Province
 <_Currency_> 					Sri Lanka Rupee </_Currency_>
 -----------------------------------------------------------------------
-<_ICLS Version_>				ICLS 13 </_ICLS Version_>
+<_ICLS Version_>				ICLS 19 </_ICLS Version_>
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
 <_ISCO Version_>				ISCO 88 </_ISCO Version_>
 <_OCCUP National_>				N/A </_OCCUP National_>
@@ -125,7 +125,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_icls_v_>
-	gen icls_v="ICLS-13"
+	gen icls_v="ICLS-19"
 	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
 
@@ -615,21 +615,19 @@ child as the head.
 
 {
 *<_migrated_mod_age_>
-	gen migrated_mod_age=12
+	gen migrated_mod_age=.
 	label var migrated_mod_age "Migration module application age"
 *</_migrated_mod_age_>
 
 
 *<_migrated_ref_time_>
-	gen migrated_ref_time=99
+	gen migrated_ref_time=.
 	label var migrated_ref_time "Reference time applied to migration questions"
 *</_migrated_ref_time_>
 
 
 *<_migrated_binary_>
 	gen migrated_binary=.
-	replace migrated_binary=0 if inrange(B_19,11,42)&mi(B_20A)&mi(B_21)&mi(B_22)
-	replace migrated_binary=1 if !mi(B_21)
 	label de lblmigrated_binary 0 "No" 1 "Yes"
 	replace migrated_binary=. if age<migrated_mod_age
 	label values migrated_binary lblmigrated_binary
@@ -637,19 +635,8 @@ child as the head.
 *</_migrated_binary_>
 
 
-/* <_migrated_years_note_> 
-
-In the questionnaire the years of migration is divided into two parts:
-Year and Month. So the var “migrated_years” is a combination of year
-and month converted into year's term.
-
-</_migrated_years_note_> */
-
-
 *<_migrated_years_>
    gen migrated_years=.
-   gen migyear=round(B_20B/12,0.1)
-   replace migrated_years=B_20A+migyear
    replace migrated_years=. if migrated_binary!=1
    replace migrated_years=. if age<migrated_mod_age
    label var migrated_years "Years since latest migration"
@@ -666,21 +653,6 @@ and month converted into year's term.
 
 *<_migrated_from_cat_>
 	gen migrated_from_cat=.
-	replace migrated_from_cat=5 if inlist(B_21,2,3,54,55,56,57,58,60,88,90)
-	
-	gen migregion=.
-	replace migregion=1 if inrange(B_21,11,13)
-	replace migregion=2 if inrange(B_21,21,25)
-	replace migregion=3 if inrange(B_21,31,34)
-	replace migregion=4 if inrange(B_21,41,42)
-	replace migrated_from_cat=4 if migregion!=subnatid1&migrated_binary==1&!mi(migregion)
-	
-	gen migdis=.
-	replace migdis=B_21 if inrange(B_21,11,42) 
-	replace migrated_from_cat=3 if migregion==subnatid1&(migdis!=subnatid2&!mi(migdis))
-	
-	replace migrated_from_cat=2 if migdis==subnatid2&!mi(migdis)
-	
 	replace migrated_from_cat=. if age<migrated_mod_age|migrated_binary!=1
 	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country"
 	label values migrated_from_cat lblmigrated_from_cat
@@ -689,32 +661,17 @@ and month converted into year's term.
 
 
 *<_migrated_from_code_>
-	gen migrated_from_code=B_21 if migrated_from_cat==2 
-	replace migrated_from_code=migregion if inlist(migrated_from_cat,3,4) 
-	replace migrated_from_code=. if migrated_from_cat==5
+	gen migrated_from_code=.
 	replace migrated_from_code=. if migrated_binary!=1
 	replace migrated_from_code=. if age<migrated_mod_age
 	label de lblmigcode 1 "1.Eastern" 2 "2.Northern" 3 "3.Southern" 4 "4.Western Area" 12 "12. Kenema" 13 "13. Kono" 21 "21. Bombali" 22 "22. Kambia" 23 "23. Koinadugu" 24 "24. Port Loko" 25 "25. Tonkolili" 31 "31. Bo" 32 "32. Bonthe" 33 "33. Moyamba" 34 "34. Pujehun" 41 "41. Western Rural" 42 "42. Western Urban"
 	label values migrated_from_code lblmigcode
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
-	
-	drop migyear migregion migdis 
 *</_migrated_from_code_>
 
 
 *<_migrated_from_country_>
-	decode B_21, gen(migrated_from_country)
-	replace migrated_from_country="" if !inlist(B_21,2,3,54,55,56,57,58,60,88,90)
-	replace migrated_from_country="LBR" if B_21==2
-	replace migrated_from_country="GIN" if B_21==3
-	replace migrated_from_country="GMB" if B_21==54
-	replace migrated_from_country="GHA" if B_21==55
-	replace migrated_from_country="GNB" if B_21==56
-	replace migrated_from_country="CIV" if B_21==57
-	replace migrated_from_country="MLI" if B_21==58
-	replace migrated_from_country="NGA" if B_21==60
-	replace migrated_from_country="Other African countries" if B_21==88
-	replace migrated_from_country="Other non-African countries" if B_21==90
+	gen migrated_from_country=. 
 	replace migrated_from_country="" if migrated_binary!=1
 	replace migrated_from_country="" if age<migrated_mod_age
 	label var migrated_from_country "Code of migration country (ISO 3 Letter Code)"
@@ -722,8 +679,7 @@ and month converted into year's term.
 
 
 *<_migrated_reason_>
-	gen migrated_reason=B_22
-	recode migrated_reason (1=3) (2=1) (3 7 9=5) (4=2) (5/6 8=4)
+	gen migrated_reason=.
 	replace migrated_reason=. if migrated_binary!=1
 	replace migrated_reason=. if age<migrated_mod_age
 	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
@@ -747,8 +703,6 @@ and month converted into year's term.
 
 *<_school_>
 	gen school=.
-	replace school=0 if B_2==2
-	replace school=1 if B_2==1
 	replace school=. if age<ed_mod_age & age!=.
 	label var school "Attending school"
 	la de lblschool 0 "No" 1 "Yes"
@@ -757,8 +711,7 @@ and month converted into year's term.
 
 
 *<_literacy_>
-	gen byte literacy=B_1
-	recode literacy (2/4=0) 
+	gen byte literacy=.
 	replace literacy=. if age<ed_mod_age & age!=.
 	label var literacy "Individual can read & write"
 	la de lblliteracy 0 "No" 1 "Yes"
@@ -771,29 +724,15 @@ and month converted into year's term.
 Original categorization of the highest educational level ever attended of 
 variable B_5 is:
 
-0	(no label)
-1	Sub-Standard A, Grade 1 and Nursery 1 ---> 1 year
-2	Standard 1, Grade 2 and Class 1 ---> 2 year
-3	Standard 2, Grade 3 and Class 2 ---> 3 year
-4	Standard 3, Grade 4 and Class 3 ---> 4 year
-5	Standard 4, Grade 5 and Class 4 ---> 5 year
-6	Standard 5, Grade 6 and Class 5 ---> 6 year
-7	Standard 6, Grade 6 and Class 6 ---> 6 year
-8	Grade 7 and JSS 1 ---> 7 year
-9	Form 1 and JSS 2 ---> 8 year
-10	Form 2 and JSS 3 ---> 9 year
-11	Form 3 and SSS 1 ---> 10 year
-12	Form 4 and SSS 2 ---> 11 year
-13	Form 5 (GCE), Form 6 Lower/SSS 3 ---> 12 year
-14	Form 6 Lower, Form 6 and Form 6 upper/SSS 4 ---> 13 year
-15	Form 6 Upper and GCE (A) ---> 13 year
-16	College Students  ---> 17 year
-17	University Undergraduate Students  ---> 17 year
-18	Certificates  ---> 16 year
-19	Diploma  ---> 17 year
-20	Post Graduate Diploma Students ---> 18 year
-21	Bachelors Degree ---> 17 year
-22	Masters Degree or Higher ---> 18 year
+0	No schooling 
+1	Passed Grade 0-4/1-5 year
+2	Passed Grade 5-7/6-8 year
+3	Passed Grade 8-9/9-10 year
+4	Passed G.C.E(O/L)N.C.G.E.
+5	Passed G.C.E(A/L)H.N.C.E.
+6	Degree
+7	Post graduate degree/diploma
+
 *<_educy_note_>*/		  
 
 
