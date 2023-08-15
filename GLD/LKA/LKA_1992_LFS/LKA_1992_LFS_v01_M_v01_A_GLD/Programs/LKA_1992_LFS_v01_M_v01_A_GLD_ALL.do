@@ -1200,23 +1200,16 @@ Financial and Business Services |        616        0.67       23.18
 
 /*<_wage_no_compen_note_>
 
-One observations has answered "000.821.000" to question E_19C, and one 
-"000.000.000" to question E_19D were coded missing.
-
-In the questionnaire, "000,000,088" is an indication of greater than or equal to 
-1 billion Leones whereas zero means no payment.
+Question 37 asks whether the respondent has in-kind compensation. But it only 
+has answers of yes or no. No numbers of the in-kind value.
 
 *<_wage_no_compen_note_>*/
 
 
 *<_wage_no_compen_>
-	destring E_19C, gen(cash_num) ignore(".") 
-	destring E_19D, gen(goods_num) ignore(".")
-	replace cash_num=. if E_19C=="000.821.000"
-	gen double wage_no_compen=cash_num+goods_num
-	replace wage_no_compen=wage_no_compen/E_19B if inlist(E_19A,1,2)
-	replace wage_no_compen=wage_no_compen/E_19B if E_19A==3&!inlist(E_19B,1,2)
-	replace wage_no_compen=wage_no_compen/E_19B if E_19A==4&!inlist(E_19B,1,2,3)
+	gen double wage_no_compen=earnings
+	replace wage_no_compen=0 if empstat==2
+	recode wage_no_compen==.
 	replace wage_no_compen=. if lstatus!=1
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
