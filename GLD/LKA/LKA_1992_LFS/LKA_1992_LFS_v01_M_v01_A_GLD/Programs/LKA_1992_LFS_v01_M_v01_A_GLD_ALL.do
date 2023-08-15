@@ -1168,7 +1168,7 @@ Financial and Business Services |        616        0.67       23.18
 
 
 *<_occup_isco_>
-	gen str4 occup_isco=string(E_3, "%04.0f") 
+	gen str4 occup_isco=""
 	replace occup_isco="" if lstatus!=1 | occup_isco=="." 
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
@@ -1189,8 +1189,11 @@ Financial and Business Services |        616        0.67       23.18
 
 
 *<_occup_>
-	 gen occup=floor(E_3/1000)
-	 recode occup (0=10)
+	 gen str4 occup_str=string(q9B, "%04.0f")
+	 gen occupnum=substr(occup_str,1,1)
+	 destring occupnum, gen(occup)
+	 replace occup=10 if occup==0
+	 replace occup=. if inlist(q9B,0,9,111,116)
 	 replace occup=. if lstatus!=1
 	 label var occup "1 digit occupational classification, primary job 7 day recall"
   	 la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
@@ -1216,42 +1219,17 @@ has answers of yes or no. No numbers of the in-kind value.
 
 
 *<_unitwage_>
-	gen byte unitwage=.
-	replace unitwage=1 if E_19A==2
-	replace unitwage=2 if E_19A==3&E_19B!=2
-	replace unitwage=3 if E_19A==3&E_19B==2
-	replace unitwage=4 if E_19A==4&E_19B==2
-	replace unitwage=5 if E_19A==4&E_19B!=2&E_19B!=3
-	replace unitwage=6 if E_19A==4&E_19B==3
-	replace unitwage=9 if E_19A==1
-	replace unitwage=. if lstatus!=1
+	gen byte unitwage=5
+	replace unitwage=. if lstatus!=1 | empstat==2
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
 	label values unitwage lblunitwage
 *</_unitwage_>
 
 
-/*<_whours_note_>
-
-E_5 is the number of DAYs the respondent worked in the past week;
-E_6 is the average work hours per day in the past week. 
-
-90 observations worked more than 20 hours on average in the past week, 7 worked more
-than 24 hours which is impossible;
-and 1 observation worked 8 days in the past week which is also impossible.
-
-People who have already stated that they were temporarily not working were coded 
-missing for work hours in the past week.
-
-*<_whours_note_>*/
-
-
 *<_whours_>
-	gen day=E_5 if inrange(E_5,1,7) 
-	gen hour=E_6 if inrange(E_6,1,24)
-	gen whours=day*hour
-	replace whours=. if temp==1
-	replace whours=. if lstatus!=1
+	gen whours=q12
+	replace whours=. if lstatus!=1|q12==0
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -1270,8 +1248,6 @@ missing for work hours in the past week.
 
 *<_contract_>
 	gen byte contract=.
-	replace contract=1 if !mi(E_12)
-	replace contract=0 if E_12==.&lstatus==1
 	replace contract=. if lstatus!=1
 	label var contract "Employment has contract primary job 7 day recall"
 	la de lblcontract 0 "Without contract" 1 "With contract"
@@ -1281,8 +1257,6 @@ missing for work hours in the past week.
 
 *<_healthins_>
 	gen byte healthins=.
-	replace healthin=1 if E_18==1
-	replace healthin=0 if E_18==2
 	replace healthins=. if lstatus!=1
 	label var healthins "Employment has health insurance primary job 7 day recall"
 	la de lblhealthins 0 "Without health insurance" 1 "With health insurance"
@@ -1331,9 +1305,9 @@ missing for work hours in the past week.
 
 {
 *<_empstat_2_>
-	gen byte empstat_2=F_10 if inrange(F_10,1,9)
-	recode empstat_2 (2 8=1) (3 5=4) (6/7=5) (9=2)
-	replace empstat_2=. if lstatus!=1|F_1!=1
+	gen byte empstat_2=q16D if inrange(q16D,1,4)
+	recode empstat_2 (2=3) (3=4) (4=2) 
+	replace empstat_2=. if lstatus!=1|q15!=1
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
 	la de lblempstat_2 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat_2 lblempstat
@@ -1341,9 +1315,8 @@ missing for work hours in the past week.
 
 
 *<_ocusec_2_>
-	gen byte ocusec_2=F_11 if inrange(F_11,1,10)
-	recode ocusec_2 (1/2=1) (3 8 10=4) (4=3) (5/7 9=2) 
-	replace ocusec_2=. if lstatus!=1|F_1!=1
+	gen byte ocusec_2=q16C if inrange(q16C,1,2)  
+	replace ocusec_2=. if lstatus!=1|q15!=1
 	label var ocusec_2 "Sector of activity secondary job 7 day recall"
 	la de lblocusec_2 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec_2 lblocusec_2
@@ -1351,25 +1324,30 @@ missing for work hours in the past week.
 
 
 *<_industry_orig_2_>
-	gen industry_orig_2=F_5
-	replace industry_orig_2=. if F_1!=1
+	gen industry_orig_2=q16A
+	replace industry_orig_2=. if lstatus!=1|q15!=1
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 
 
+/*<_industrycat_isic_2_note_>
+
+Same ISIC & ISCO version issue here.
+
+*<_industrycat_isic_2_note_>*/
+
+
 *<_industrycat_isic_2_>
-	gen industrycat_isic_2=F_5
-	tostring industrycat_isic_2, format(%04.0f) replace
+	gen industrycat_isic_2=""
 	replace industrycat_isic_2="" if industrycat_isic_2=="."
-	replace industrycat_isic_2="" if F_1!=1
+	replace industrycat_isic_2="" if lstatus!=1|q15!=1
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
 
 *<_industrycat10_2_>
-	gen long industrycat10_2=floor(F_5/100)
-	recode industrycat10_2 (2/3=1) (5/9=2) (10/33=3) (35/39=4) (41/43=5) (45/47 55/56=6) (49/53 58/63=7) (64/82=8) (84=9) (85/99=10)
-	replace industrycat10_2=. if F_1!=1
+	gen long industrycat10_2=.
+	replace industrycat10_2=. if lstatus!=1|q15!=1
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
 *</_industrycat10_2_>
@@ -1384,16 +1362,16 @@ missing for work hours in the past week.
 
 
 *<_occup_orig_2_>
-	gen occup_orig_2=F_4
-	replace occup_orig_2=. if F_1!=1
+	gen occup_orig_2=q16B
+	replace occup_orig_2=. if lstatus!=1|q15!=1
 	label var occup_orig_2 "Original occupation record secondary job 7 day recall"
 *</_occup_orig_2_>
 
 
 *<_occup_isco_2_>
-	gen str4 occup_isco_2=string(F_4,"%04.0f")
+	gen str4 occup_isco_2=""
 	replace occup_isco_2="" if occup_isco_2=="."
-	replace occup_isco_2="" if F_1!=1
+	replace occup_isco_2="" if lstatus!=1|q15!=1
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
@@ -1405,63 +1383,40 @@ missing for work hours in the past week.
 	replace occup_skill_2=1 if skill_level_2==9
 	replace occup_skill_2=2 if inrange(skill_level_2,4,8)
 	replace occup_skill_2=3 if inrange(skill_level_2,1,3)
-	replace occup_skill_2=. if skill_level_2==0|F_1!=1
+	replace occup_skill_2=. if skill_level_2==0|lstatus!=1|q15!=1
 	label var occup_skill_2 "Skill based on ISCO standard secondary job 7 day recall"
 *</_occup_skill_2_>
 
 
 *<_occup_2_>
-	gen occup_2=floor(F_4/1000)
+	gen occup_2=int(q16B/1000)
 	recode occup_2 (0=10)
-	replace occup_2=. if F_1!=1
+	replace occup=. if inlist(q16B,0,9,111,116)
+	replace occup_2=. if lstatus!=1|q15!=1
 	label var occup_2 "1 digit occupational classification secondary job 7 day recall"
 	label values occup_2 lbloccup
 *</_occup_2_>
 
 
 *<_wage_no_compen_2_>
-	destring (F_20C), gen(cash_2)
-	destring (F_20D), gen(goods_2)
-	gen double wage_no_compen_2=cash_2+goods_2
-	replace wage_no_compen_2=wage_no_compen_2/F_20B if inlist(F_20,1,2)
-	replace wage_no_compen_2=wage_no_compen_2/F_20B if F_20==3&!inlist(F_20B,1,2)
-	replace wage_no_compen_2=wage_no_compen_2/F_20B if F_20==4&!inlist(F_20B,1,2,3)
-	replace wage_no_compen_2=. if F_1!=1
+	gen double wage_no_compen_2=q38A
+	replace wage_no_compen_2=0 if empstat_2==2
+	replace wage_no_compen_2=. if lstatus!=1|q15!=1
 	label var wage_no_compen_2 "Last wage payment secondary job 7 day recall"
 *</_wage_no_compen_2_>
 
 
 *<_unitwage_2_>
-	gen byte unitwage_2=.
-	replace unitwage_2=1 if F_20==2
-	replace unitwage_2=2 if F_20==3&F_20B!=2
-	replace unitwage_2=3 if F_20==3&F_20B==2
-	replace unitwage_2=4 if F_20==4&F_20B==2
-	replace unitwage_2=5 if F_20==4&F_20B!=2&F_20B!=3
-	replace unitwage_2=6 if F_20==4&F_20B==3
-	replace unitwage_2=9 if F_20==1
-	replace unitwage_2=. if F_1!=1
+	gen byte unitwage_2=5
+	replace unitwage_2=. if lstatus!=1|q15!=1
 	label var unitwage_2 "Last wages' time unit secondary job 7 day recall"
 	label values unitwage_2 lblunitwage
 *</_unitwage_2_>
 
 
-/*<_whours_2_note_>
-
-There are some errors in the reported work hours. 20 observations' main and secondary
-jobs count more than 168 hours in total.
-
-Observation "04-330602292-01", for an instance, has worked 168 hours each for main
-and secondary job. 
-
-*<_whours_2_note_>*/
-
-
 *<_whours_2_>
-	gen day_2=F_6 if inrange(F_6,1,7)
-	gen hour_2=F_7 if inrange(F_7,1,24)
-	gen whours_2=day_2*hour_2
-	replace whours_2=. if F_1!=1
+	gen whours_2=q18
+	replace whours_2=. if lstatus!=1|q15!=1
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 
@@ -1538,9 +1493,10 @@ and secondary job.
 
 /*<_lstatus_year_note_>
 
-The G section actually asks for the economic activities in the last 12 months 
-in stead of the past week. But it does not have questions sufficient for coding 
-labor status unemployed and non-labor force, nor potential labor force.
+The questionnaire has two reference periods:
+
+when aksed with "current", i.e. currently employed -- 7-day reference period
+when aksed with "usually", i.e. hours usually work -- 12-month reference period 
 
 *<_lstatus_year_note_>*/
 
@@ -1949,8 +1905,8 @@ labor status unemployed and non-labor force, nor potential labor force.
 
 *<_njobs_>
 	gen njobs=.
-	replace njobs=1 if lstatus==1&F_1!=1
-	replace njobs=2 if lstatus==1&F_1==1
+	replace njobs=1 if lstatus==1&q15!=1
+	replace njobs=2 if lstatus==1&q15==1
 	replace njobs=. if lstatus!=1
 	label var njobs "Total number of jobs"
 *</_njobs_>
