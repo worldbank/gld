@@ -906,7 +906,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 {
 *<_empstat_>
 	gen byte empstat=E_9
-	recode empstat (2 8=1) (3 5=4) (6/7=5) (9=2)
+	recode empstat (2 8=1) (4=3) (3 5=4) (6 7 9=2)
 	replace empstat=. if lstatus!=1
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
@@ -1022,14 +1022,8 @@ In the questionnaire, "000,000,088" is an indication of greater than or equal to
 
 
 *<_unitwage_>
-	gen byte unitwage=.
-	replace unitwage=1 if E_19A==2
-	replace unitwage=2 if E_19A==3&E_19B!=2
-	replace unitwage=3 if E_19A==3&E_19B==2
-	replace unitwage=4 if E_19A==4&E_19B==2
-	replace unitwage=5 if E_19A==4&E_19B!=2&E_19B!=3
-	replace unitwage=6 if E_19A==4&E_19B==3
-	replace unitwage=9 if E_19A==1
+	gen byte unitwage=E_19A if inrange(E_19A,1,5)
+	recode unitwage (1=9) (2=1) (3=2) (4=5) (5=8)
 	replace unitwage=. if lstatus!=1
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
@@ -1238,14 +1232,8 @@ missing for work hours in the past week.
 
 
 *<_unitwage_2_>
-	gen byte unitwage_2=.
-	replace unitwage_2=1 if F_20==2
-	replace unitwage_2=2 if F_20==3&F_20B!=2
-	replace unitwage_2=3 if F_20==3&F_20B==2
-	replace unitwage_2=4 if F_20==4&F_20B==2
-	replace unitwage_2=5 if F_20==4&F_20B!=2&F_20B!=3
-	replace unitwage_2=6 if F_20==4&F_20B==3
-	replace unitwage_2=9 if F_20==1
+	gen byte unitwage_2=F_20
+	recode unitwage_2 (1=9) (2=1) (3=2) (4=5) (5=8)
 	replace unitwage_2=. if F_1!=1
 	label var unitwage_2 "Last wages' time unit secondary job 7 day recall"
 	label values unitwage_2 lblunitwage
@@ -1506,14 +1494,8 @@ labor status unemployed and non-labor force, nor potential labor force.
 
 
 *<_unitwage_year_>
-	gen byte unitwage_year=.
-	replace unitwage_year=1 if G_20==2
-	replace unitwage_year=2 if G_20==3&G_20B!=2
-	replace unitwage_year=3 if G_20==3&G_20B==2
-	replace unitwage_year=4 if G_20==4&G_20B==2
-	replace unitwage_year=5 if G_20==4&G_20B!=2&G_20B!=3
-	replace unitwage_year=6 if G_20==4&G_20B==3
-	replace unitwage_year=6 if G_20==4&G_20B==1
+	gen byte unitwage_year=G_20
+	recode unitwage_year (1=9) (2=1) (3=2) (4=5) (5=8)
 	replace unitwage_year=. if G_1!=1
 	label var unitwage_year "Last wages' time unit primary job 12 month recall"
 	la de lblunitwage_year 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
