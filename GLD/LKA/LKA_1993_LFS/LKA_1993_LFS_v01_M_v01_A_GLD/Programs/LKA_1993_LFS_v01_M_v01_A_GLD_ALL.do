@@ -7,14 +7,14 @@
 <_Program name_>				LKA_1993_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata SE 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
-<_Date created_>				2023-08-07 </_Date created_>
+<_Date created_>				2023-08-14 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						Sri Lanka (LKA) </_Country_>
 <_Survey Title_>				National Labour Force Survey </_Survey Title_>
 <_Survey Year_>					1993 </_Survey Year_>
 <_Study ID_>					LKA_1993_LFS_v01_M </_Study ID_>
 <_Data collection from (M/Y)_>	[Jan/1993] </_Data collection from (M/Y)_>
-<_Data collection to (M/Y)_>	[Dec/1993] </_Data collection to (M/Y)_>
+<_Data collection to (M/Y)_>	[Oct/1993] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			Survey conducted by LKA Department of 
 								Census and Statistics, 
 								Ministry Policy Planning and Implementation;
@@ -26,13 +26,13 @@
 <_Sampling method_> 			A stratified two-stage probability sample design
 								used with census blocks as PSUs and housing units
 								as secondary and final sampling units. </_Sampling method_>
-<_Geographic coverage_> 		9 provinces devided into urban and rural areas 
-								and the greater colombo area. </_Geographic coverage_>
+<_Geographic coverage_> 		7 provinces devided into urban and rural areas 
+								and the greater colombo area. Northern and Eastern
+								provinces were excluded. </_Geographic coverage_>
+								17 districts:
 								- Greater Colombo (Colombo MC+Dehiwela-Mt.Lavinia MC+Kotte UC)
 								- Western Province (Remainder)
 								- Southern Province
-								- Northern Province
-								- Eastern Province
 								- North Western Province
 								- North Central Province
 								- Uva Province
@@ -186,18 +186,22 @@ local out_file "`level_2_harm'_ALL.dta"
 *</_int_month_>
 
 
-/*<_hhid_>
+/*<_hhid_note_>
 
-*<_hhid_>*/
+1992 has 91,624 obs and 18,828 households in the year. 1993 has only 40% of the
+sample size of 1992's whereas its households are only 36% of 1993's. 
+
+Adding weight to hhid might the number up a bit to 7500.
+
+*<_hhid_note_>*/
 
 
 *<_hhid_>
-	foreach v of varlist month province sector district{
-		tostring `v', replace format(%02.0f)
+	foreach v of varlist month province sector district block{
+		tostring `v', gen(`v'_str) format(%02.0f)
 	}	
 	rename hhid hhid_orig
-	gen hhno=hh_unit+hhid_orig
-	egen hhid=concat(month province sector subsector district block hhno)
+	egen hhid=concat(month_str province_str sector_str district_str block_str hhid_orig)
 	label var hhid "Household id"
 *</_hhid_>
 
@@ -217,12 +221,24 @@ local out_file "`level_2_harm'_ALL.dta"
 
 /*<_psu_note_>
 
+Only 170 blocks per quarter, 82 less than the 252 planned in the annual report.
+
+. tab quarter
+
+    quarter |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |        170       25.00       25.00
+          2 |        170       25.00       50.00
+          3 |        170       25.00       75.00
+          4 |        170       25.00      100.00
+------------+-----------------------------------
+      Total |        680      100.00
 
 *<_psu_note_>*/
 
 
 *<_psu_>
-	egen psu=concat(month province sector district block)
+	egen psu=concat(month_str province_str sector_str district_str block_str)
 	label var psu "Primary sampling units"
 *</_psu_>
 
@@ -234,7 +250,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_strata_>
-	egen strata=concat(province sector district)
+	egen strata=concat(province_str sector_str district_str)
 	label var strata "Strata"
 *</_strata_>
 
@@ -254,8 +270,8 @@ local out_file "`level_2_harm'_ALL.dta"
 
 *<_urban_>
 	gen urban=.
-	replace urban=1 if subsector=="0"
-	replace urban=0 if subsector=="2"|subsector=="1"
+	replace urban=1 if sector==1
+	replace urban=0 if sector==2|sector==3
 	la de lblurban 1 "Urban" 0 "Rural"
 	label values urban lblurban
 	label var urban "Location is urban"
@@ -264,14 +280,13 @@ local out_file "`level_2_harm'_ALL.dta"
 
 /*<_subnatid1_note_>
 
-In 1993, Northern and Western provinces were excluded.
+In 1993, Northern and Eastern provinces were excluded.
 
 *<_subnatid1_note_>*/
 
 
 *<_subnatid1_>
-	destring province, gen(pronum)
-	gen subnatid1=pronum
+	gen subnatid1=province
 	label de lblsubnatid1 1 "1 - Western" 2 "2 - Central" 3 "3 - Southern" 4 "4 - Northern Area" 5 "5 - Eastern" 6 "6 - North-western" 7 "7 - North-central" 8 "8 - Uva" 9 "9 - Sabaragamuwa"
 	label values subnatid1 lblsubnatid1
 	label var subnatid1 "Subnational ID at First Administrative Level"
@@ -279,8 +294,7 @@ In 1993, Northern and Western provinces were excluded.
 
 
 *<_subnatid2_>
-	gen subnatid2=province+district
-	destring subnatid2, replace
+	gen subnatid2=province*10+district
 	label de lblsubnatid2 11 "11-Colombo" 12 "12-Gampaha" 13 "13-Kalutara" 21 "21-Kandy" 22 "22-Matale" 23 "23-Nuwara Eliya" 31 "31-Galle" 32 "32-Matara" 33 "33-Hambantota" 41 "41-Jaffna" 42 "42-Kilinochchi" 43 "43-Mannar" 51 "51-Batticaloa" 53 "53-Trincomalee" 61 "61-Kurunegala" 62 "62-Puttalam" 71 "71-Anradhapura" 72 "72-Polonnaruwa" 81 "81-Badulla" 82 "82-Moneragala" 91 "91-Ratnapura" 92 "92-Kegalle"
 	label values subnatid2 lblsubnatid2
 	label var subnatid2 "Subnational ID at Second Administrative Level"
@@ -410,20 +424,29 @@ child as the head.
 	
 	gen head=1 if relationharm==1
 	bys hhid: egen headsum=total(head)
+	gen relative=1 if inrange(relationharm,1,5)
+	replace relative=0 if relative!=1
+	bys hhid: egen any=total(relative)
 	bys hhid: egen olderest=max(age) if !mi(age)&relationharm!=6
 	bys hhid: egen pidmin=min(p1)
 	replace relationharm=1 if relationharm!=6&headsum==0&p1==1&age>17
-	gen relative=1 if inrange(relationharm,1,5)
-	replace relative=0 if relative!=1
+	
 	replace head=1 if relationharm==1
 	bys hhid: egen headsum0=total(head)
-	bys hhid: egen any=total(relative)
-	
-	replace relationharm=1 if headsum0==0&age==olderest&olderest>17
+	replace relationharm=1 if /// 
+							relationharm!=6&headsum==0&age==olderest ///
+							&!inlist(pid,"040101010881-03", ///
+										 "040601020611-06", ///
+										 "100301020231-06", ///
+										 "100301020231-07") 
+	replace relationharm=1 if pid=="040601020611-02"
+
+
 	replace head=1 if relationharm==1
 	bys hhid: egen headsum1=total(head)
-	
 	replace relationharm=5 if headsum1==2&head==1&age<18&age!=olderest
+	replace relationharm=5 if headsum1==2&head==1&p1!=pidmin
+	
 	replace relationharm=5 if headsum1==2&head==1&p1!=1
 	replace head=. if relationharm!=1
 	bys hhid: egen headsum2=total(head)

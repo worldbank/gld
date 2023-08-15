@@ -26,13 +26,13 @@
 <_Sampling method_> 			A stratified two-stage probability sample design
 								used with census blocks as PSUs and housing units
 								as secondary and final sampling units. </_Sampling method_>
-<_Geographic coverage_> 		9 provinces devided into urban and rural areas 
-								and the greater colombo area. </_Geographic coverage_>
+<_Geographic coverage_> 		7 provinces devided into urban and rural areas 
+								and the greater colombo area. Northern and Eastern
+								provinces were excluded. </_Geographic coverage_>
+								17 districts:
 								- Greater Colombo (Colombo MC+Dehiwela-Mt.Lavinia MC+Kotte UC)
 								- Western Province (Remainder)
 								- Southern Province
-								- Northern Province
-								- Eastern Province
 								- North Western Province
 								- North Central Province
 								- Uva Province
@@ -186,7 +186,7 @@ local out_file "`level_2_harm'_ALL.dta"
 *</_int_month_>
 
 
-/*<_hhid_>
+/*<_hhid_note_>
 
 According to the questionnaire, total housing units surveyed should be 10,080 in 
 total in a year; 2,520 per quarter (10 HH from each sampling block, 252 blocks per 
@@ -246,7 +246,7 @@ However, coding hhid without month will lead to duplicates of households within 
 We included month into hhid coding which will produce 18,828 unique household ids
 per year, accounting for 94.14% of the target of 20,000 households.
 
-*<_hhid_>*/
+*<_hhid_note_>*/
 
 
 *<_hhid_>
@@ -369,7 +369,7 @@ psu3:174
 
 /*<_subnatid1_note_>
 
-In 1992, Northern and Western provinces were excluded.
+In 1992, Northern and Eastern provinces were excluded.
 
 *<_subnatid1_note_>*/
 
