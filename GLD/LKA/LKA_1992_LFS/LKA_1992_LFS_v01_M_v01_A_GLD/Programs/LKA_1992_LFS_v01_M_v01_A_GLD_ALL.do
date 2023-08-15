@@ -1018,6 +1018,81 @@ Original variable q9C only has two categories: public vs. private
 *</_ocusec_>
 
 
+/*<_industry_orig_note_>
+
+Although the database shows that this year uses ISIC Rev.3, 4-digit level, 3-digit 
+level as well as 2-digit level, none of these seem to match the ISIC3 codelist.
+
+184 original industrial codes do not exist in ISIC3.
+
+
+      code3 |      Freq.     Percent        Cum.
+------------+-----------------------------------
+       0000 |          1        2.33        2.33
+       0210 |          1        2.33        4.65
+       0220 |          1        2.33        6.98
+       0300 |          1        2.33        9.30
+       1930 |          1        2.33       11.63
+       1940 |          1        2.33       13.95
+       1980 |          1        2.33       16.28
+       1990 |          1        2.33       18.60
+       2110 |          1        2.33       20.93
+       2120 |          1        2.33       23.26
+       2130 |          1        2.33       25.58
+       2140 |          1        2.33       27.91
+       2240 |          1        2.33       30.23
+       2530 |          1        2.33       32.56
+       2540 |          1        2.33       34.88
+       2550 |          1        2.33       37.21
+       2560 |          1        2.33       39.53
+       2620 |          1        2.33       41.86
+       2820 |          1        2.33       44.19
+       2830 |          1        2.33       46.51
+       2840 |          1        2.33       48.84
+       2850 |          1        2.33       51.16
+       5310 |          1        2.33       53.49
+       5320 |          1        2.33       55.81
+       6130 |          1        2.33       58.14
+       6190 |          1        2.33       60.47
+       7330 |          1        2.33       62.79
+       8100 |          1        2.33       65.12
+       8120 |          1        2.33       67.44
+       8200 |          1        2.33       69.77
+       8310 |          1        2.33       72.09
+       8320 |          1        2.33       74.42
+       8330 |          1        2.33       76.74
+       8340 |          1        2.33       79.07
+       8350 |          1        2.33       81.40
+       8390 |          1        2.33       83.72
+       8410 |          1        2.33       86.05
+       8420 |          1        2.33       88.37
+       8430 |          1        2.33       90.70
+       8490 |          1        2.33       93.02
+       8590 |          1        2.33       95.35
+       8600 |          1        2.33       97.67
+       9150 |          1        2.33      100.00
+------------+-----------------------------------
+      Total |         43      100.00
+
+
+At two-digit level, still there are 8 codes only from the survey unfound in ISIC3.
+
+      code2 |      Freq.     Percent        Cum.
+------------+-----------------------------------
+       0000 |          1       12.50       12.50
+       0003 |          1       12.50       25.00
+       0053 |          1       12.50       37.50
+       0081 |          1       12.50       50.00
+       0082 |          1       12.50       62.50
+       0083 |          1       12.50       75.00
+       0084 |          1       12.50       87.50
+       0086 |          1       12.50      100.00
+------------+-----------------------------------
+      Total |          8      100.00
+
+*<_industry_orig_note_>*/
+
+
 *<_industry_orig_>
 	gen industry_orig=q9A
 	replace industry_orig=. if lstatus!=1
@@ -1026,17 +1101,49 @@ Original variable q9C only has two categories: public vs. private
 
 
 *<_industrycat_isic_>
-	gen industrycat_isic=E_4 
-	tostring industrycat_isic, format(%04.0f) replace
+	gen industrycat_isic=""
 	replace industrycat_isic="" if industrycat_isic=="."
 	replace industrycat_isic="" if lstatus!=1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
 
+/*<_industrycat10_note_>
+The results using I2D2's codes do not look good either.
+               1 digit industry |
+  classification, primary job 7 |
+                     day recall |      Freq.     Percent        Cum.
+--------------------------------+-----------------------------------
+                    Agriculture |      8,688        9.48        9.48
+                         Mining |          5        0.01        9.49
+                  Manufacturing |      4,146        4.53       14.01
+               Public utilities |      1,278        1.39       15.41
+                       Commerce |      5,130        5.60       21.01
+   Transport and Comnunications |      1,380        1.51       22.51
+Financial and Business Services |        616        0.67       23.18
+    Other Services, Unspecified |      7,928        8.65       31.84
+                              . |     62,453       68.16      100.00
+--------------------------------+-----------------------------------
+                          Total |     91,624      100.00
+*<_industrycat10_note_>*/
+
+
 *<_industrycat10_>
-	gen long industrycat10=floor(E_4/100)
-	recode industrycat10 (2/3=1) (5/9=2) (10/33=3) (35/39=4) (41/43=5) (45/47 55/56=6) (49/53 58/63=7) (64/82=8) (84=9) (85/99=10)
+	gen long industrycat10=.
+	/*gen str4 str_q9A=string(q9A, "%04.0f")
+	gen indcode=substr(str_q9A,1,2)
+	
+	destring indcode, gen(indnum)
+	replace industrycat10=1 if inrange(indnum,1,6)
+	replace industrycat10=2 if inrange(indnum,10,14)
+	replace industrycat10=3 if inrange(indnum,15,37)
+	replace industrycat10=4 if inrange(indnum,40,41)
+	replace industrycat10=5 if indnum==45
+	replace industrycat10=6 if inrange(indnum,50,55)
+	replace industrycat10=7 if inrange(indnum,60,64)
+	replace industrycat10=8 if inrange(indnum,65,74)
+	replace industrycat10=9 if indnum==75
+	replace industrycat10=10 if inrange(indnum,80,99)*/
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
@@ -1054,7 +1161,7 @@ Original variable q9C only has two categories: public vs. private
 
 
 *<_occup_orig_>
-	gen occup_orig=E_3
+	gen occup_orig=q9B
 	replace occup_orig=. if lstatus!=1
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
