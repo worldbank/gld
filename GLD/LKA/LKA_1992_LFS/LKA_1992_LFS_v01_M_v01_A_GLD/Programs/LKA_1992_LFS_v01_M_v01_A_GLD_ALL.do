@@ -97,7 +97,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * harmonized output in a single file
 
 	*use "`path_in_stata'\lfsdata.dta", clear
-	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_1992_LFS\LKA_1992_LFS_v01_M\Data\Stata\lfsdata.dta"
+	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_1992_LFS\LKA_1992_LFS_v01_M\Data\Stata\lfsdata.dta", clear
 
 
 /*%%=============================================================================================
@@ -626,8 +626,20 @@ child as the head.
 *</_migrated_ref_time_>
 
 
+/*<_migrated_binary_note_>
+
+The birth district code matching codes are from I2D2. Not able to verify it.
+No age range limitation for migration section.
+
+*<_migrated_binary_note_>*/
+
+
 *<_migrated_binary_>
+	gen birth=p10
+	recode birth (1=11) (2=12) (3=13) (4=21) (5=22) (6=23) (7=31) (8=32) (9=33) (17=61) (18=62) (19=71) (20=72) (21=81) (22=82) (24=91) (23=92) (0 10/16 26 38=.)
 	gen migrated_binary=.
+	replace migrated_binary=1 if birth!=subnatid2
+	replace migrated_binary=0 if birth==subnatid2
 	label de lblmigrated_binary 0 "No" 1 "Yes"
 	replace migrated_binary=. if age<migrated_mod_age
 	label values migrated_binary lblmigrated_binary
@@ -671,7 +683,7 @@ child as the head.
 
 
 *<_migrated_from_country_>
-	gen migrated_from_country=. 
+	gen migrated_from_country=""
 	replace migrated_from_country="" if migrated_binary!=1
 	replace migrated_from_country="" if age<migrated_mod_age
 	label var migrated_from_country "Code of migration country (ISO 3 Letter Code)"
@@ -913,7 +925,6 @@ of this variable.
 
 
 *----------8.1: 7 day reference overall------------------------------*
-vocation illness bad weather labor management disputes
 {
 *<_lstatus_>
 	gen byte lstatus=.
@@ -1498,12 +1509,19 @@ The questionnaire has two reference periods:
 when aksed with "current", i.e. currently employed -- 7-day reference period
 when aksed with "usually", i.e. hours usually work -- 12-month reference period 
 
+And people who reported employed yet worked for less than 26 weeks in the past year
+are classified as unemployed as well. 
+
 *<_lstatus_year_note_>*/
 
 
 *<_lstatus_year_>
 	gen byte lstatus_year=.
-	replace lstatus_year=. if age<minlaborage & age!= .
+	replace lstatus_year=1 if q29==1
+	replace lstatus_year=2 if q29==2&q32==1
+	replace lstatus_year=2 if q29==1&!mi(q32)
+	replace lstatus_year=3 if lstatus_year==.
+	replace lstatus_year=. if age<minlaborage
 	label var lstatus_year "Labor status during last year"
 	la de lbllstatus_year 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus_year lbllstatus_year
@@ -1512,8 +1530,10 @@ when aksed with "usually", i.e. hours usually work -- 12-month reference period
 
 *<_potential_lf_year_>
 	gen byte potential_lf_year=.
-	replace potential_lf_year=. if age<minlaborage&age!= .
-	replace potential_lf_year=. if lstatus_year!= 3
+	replace potential_lf_year=1 if [q29==1 & q32==2] | [q29==2 & q32==1]
+	replace potential_lf_year=0 if [q29==1 & q32==1] | [q29==2 & q32==2]
+	replace potential_lf_year=. if age<minlaborage
+	replace potential_lf_year=. if lstatus_year!=3
 	label var potential_lf_year "Potential labour force status"
 	la de lblpotential_lf_year 0 "No" 1 "Yes"
 	label values potential_lf_year lblpotential_lf_year
@@ -1555,9 +1575,8 @@ when aksed with "usually", i.e. hours usually work -- 12-month reference period
 
 {
 *<_empstat_year_>
-	gen byte empstat_year=G_10 
-	recode empstat_year (2 8=1) (3 5=4) (6/7=5) (9=2)
-	replace empstat_year=. if G_2!=1
+	gen byte empstat_year=.
+	replace empstat_year=. if q29!=1
 	label var empstat_year "Employment status during past week primary job 12 month recall"
 	la de lblempstat_year 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat_year lblempstat_year
@@ -1565,9 +1584,8 @@ when aksed with "usually", i.e. hours usually work -- 12-month reference period
 
 
 *<_ocusec_year_>
-	gen byte ocusec_year=G_11
-	recode ocusec_year (1/2=1) (3 8 10=4) (4=3) (5/7 9=2)
-	replace ocusec_year=. if G_2!=1
+	gen byte ocusec_year=.
+	replace ocusec_year=. if q29!=1
 	label var ocusec_year "Sector of activity primary job 12 day recall"
 	la de lblocusec_year 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec_year lblocusec_year
@@ -1575,24 +1593,22 @@ when aksed with "usually", i.e. hours usually work -- 12-month reference period
 
 
 *<_industry_orig_year_>
-	gen industry_orig_year=G_7
+	gen industry_orig_year=.
 	label var industry_orig_year "Original industry record main job 12 month recall"
 *</_industry_orig_year_>
 
 
 *<_industrycat_isic_year_>
-	gen industrycat_isic_year=G_7
-	tostring industrycat_isic_year, format(%04.0f) replace
+	gen industrycat_isic_year=""
 	replace industrycat_isic_year="" if industrycat_isic_year=="."
-	replace industrycat_isic_year="" if G_1!=1
+	replace industrycat_isic_year="" if q29!=1
 	label var industrycat_isic_year "ISIC code of primary job 12 month recall"
 *</_industrycat_isic_year_>
 
 
 *<_industrycat10_year_>
-	gen byte industrycat10_year=floor(G_7/100)
-	recode industrycat10_year (2/3=1) (5/9=2) (10/33=3) (35/39=4) (41/43=5) (45/47 55/56=6) (49/53 58/63=7) (64/82=8) (84=9) (85/99=10)
-	replace industrycat10_year=. if G_1!=1
+	gen byte industrycat10_year=.
+	replace industrycat10_year=. if q29!=1
 	label var industrycat10_year "1 digit industry classification, primary job 12 month recall"
 	la de lblindustrycat10_year 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10_year lblindustrycat10_year
@@ -1609,15 +1625,15 @@ when aksed with "usually", i.e. hours usually work -- 12-month reference period
 
 
 *<_occup_orig_year_>
-	gen occup_orig_year=G_6
-	replace occup_orig_year=. if G_1!=1
+	gen occup_orig_year=.
+	replace occup_orig_year=. if q29!=1
 	label var occup_orig_year "Original occupation record primary job 12 month recall"
 *</_occup_orig_year_>
 
 
 *<_occup_isco_year_>
-	gen str4 occup_isco_year=string(G_6,"%04.0f")
-	replace occup_isco_year="" if G_1!=1|occup_isco_year=="."
+	gen str4 occup_isco_year=""
+	replace occup_isco_year="" if q29!=1|occup_isco_year=="."
 	label var occup_isco_year "ISCO code of primary job 12 month recall"
 *</_occup_isco_year_>
 
@@ -1629,14 +1645,14 @@ when aksed with "usually", i.e. hours usually work -- 12-month reference period
 	replace occup_skill_year=1 if skill_level_year==9
 	replace occup_skill_year=2 if inrange(skill_level_year,4,8)
 	replace occup_skill_year=3 if inrange(skill_level_year,1,3)
-	replace occup_skill_year=. if skill_level_year==0|G_1!=1
+	replace occup_skill_year=. if skill_level_year==0|q29!=1
 	label var occup_skill_year "Skill based on ISCO standard primary job 12 month recall"
 *</_occup_skill_year_>
 
 
 *<_occup_year_>
-	gen byte occup_year=floor(G_6/1000)
-	replace occup_year=. if G_1!=1
+	gen byte occup_year=.
+	replace occup_year=. if q29!=1
 	label var occup_year "1 digit occupational classification, primary job 12 month recall"
 	la de lbloccup_year 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup_year lbloccup_year
@@ -1644,27 +1660,15 @@ when aksed with "usually", i.e. hours usually work -- 12-month reference period
 
 
 *<_wage_no_compen_year_>
-	destring G_20C, gen (cash_year)
-	destring G_20D, gen(goods_year)
-	gen double wage_no_compen_year=cash_year+goods_year
-	replace wage_no_compen_year=wage_no_compen_year/G_20B if inlist(G_20,1,2)
-	replace wage_no_compen_year=wage_no_compen_year/G_20B if G_20==3&!inlist(G_20,1,2)
-	replace wage_no_compen_year=wage_no_compen_year/G_20B if G_20==4&!inlist(G_20,1,2,3)
-	replace wage_no_compen_year=. if G_1!=1
+	gen double wage_no_compen_year=.
+	replace wage_no_compen_year=. if q29!=1
 	label var wage_no_compen_year "Last wage payment primary job 12 month recall"
 *</_wage_no_compen_year_>
 
 
 *<_unitwage_year_>
 	gen byte unitwage_year=.
-	replace unitwage_year=1 if G_20==2
-	replace unitwage_year=2 if G_20==3&G_20B!=2
-	replace unitwage_year=3 if G_20==3&G_20B==2
-	replace unitwage_year=4 if G_20==4&G_20B==2
-	replace unitwage_year=5 if G_20==4&G_20B!=2&G_20B!=3
-	replace unitwage_year=6 if G_20==4&G_20B==3
-	replace unitwage_year=6 if G_20==4&G_20B==1
-	replace unitwage_year=. if G_1!=1
+	replace unitwage_year=. if q29!=1
 	label var unitwage_year "Last wages' time unit primary job 12 month recall"
 	la de lblunitwage_year 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
 	label values unitwage_year lblunitwage_year
@@ -1691,9 +1695,7 @@ when aksed with "usually", i.e. hours usually work -- 12-month reference period
 
 *<_contract_year_>
 	gen byte contract_year=.
-	replace contract_year=1 if !mi(G_13)
-	replace contract_year=0 if G_1==1&mi(G_13)
-	replace contract_year=. if G_1!=1
+	replace contract_year=. if q29!=1
 	label var contract_year "Employment has contract primary job 12 month recall"
 	la de lblcontract_year 0 "Without contract" 1 "With contract"
 	label values contract_year lblcontract_year
@@ -1701,9 +1703,8 @@ when aksed with "usually", i.e. hours usually work -- 12-month reference period
 
 
 *<_healthins_year_>
-	gen byte healthins_year=1 if G_19==1
-	replace healthins_year=0 if G_19==2
-	replace healthins_year=. if G_1!=1
+	gen byte healthins_year=.
+	replace healthins_year=. if q29!=1
 	label var healthins_year "Employment has health insurance primary job 12 month recall"
 	la de lblhealthins_year 0 "Without health insurance" 1 "With health insurance"
 	label values healthins_year lblhealthins_year
@@ -2028,6 +2029,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`path_output'\\`level_2_harm'_ALL.dta", replace
+*save "`path_output'\\`level_2_harm'_ALL.dta", replace
 
 *</_% SAVE_>
