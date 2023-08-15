@@ -1222,8 +1222,8 @@ has answers of yes or no. No numbers of the in-kind value.
 
 *<_wage_no_compen_>
 	gen double wage_no_compen=earnings
+	recode wage_no_compen 9999=.
 	replace wage_no_compen=0 if empstat==2
-	recode wage_no_compen==.
 	replace wage_no_compen=. if lstatus!=1
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
@@ -1286,8 +1286,6 @@ has answers of yes or no. No numbers of the in-kind value.
 
 *<_union_>
 	gen byte union=.
-	replace union=1 if inrange(H_1,1,3)
-	replace union=0 if H_1==4
 	replace union=. if lstatus!=1
 	label var union "Union membership at primary job 7 day recall"
 	la de lblunion 0 "Not union member" 1 "Union member"
@@ -2030,5 +2028,6 @@ foreach var of local kept_vars {
 *<_% SAVE_>
 
 *save "`path_output'\\`level_2_harm'_ALL.dta", replace
+save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_1992_LFS\LKA_1992_LFS_v01_M_v01_A_GLD\Data\Harmonized\LKA_1992_LFS_v01_M_v01_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>
