@@ -97,8 +97,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * harmonized output in a single file
 
 	use "`path_in_stata'\lfsdata.dta", clear
-
-
+	
 /*%%=============================================================================================
 	2: Survey & ID
 ================================================================================================*/
@@ -1400,7 +1399,7 @@ Same ISIC & ISCO version issue here.
 *<_occup_2_>
 	gen occup_2=int(q16B/1000)
 	recode occup_2 (0=10)
-	replace occup=. if inlist(q16B,0,9,111,116)
+	replace occup=. if inlist(q16B,0,9,116)
 	replace occup_2=. if lstatus!=1|q15!=1
 	label var occup_2 "1 digit occupational classification secondary job 7 day recall"
 	label values occup_2 lbloccup
