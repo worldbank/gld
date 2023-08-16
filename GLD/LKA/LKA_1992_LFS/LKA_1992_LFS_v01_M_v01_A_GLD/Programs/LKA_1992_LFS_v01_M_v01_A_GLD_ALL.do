@@ -1204,7 +1204,7 @@ Financial and Business Services |        616        0.67       23.18
 	 gen occupnum=substr(occup_str,1,1)
 	 destring occupnum, gen(occup)
 	 replace occup=10 if occup==0
-	 replace occup=. if inlist(q9B,0,9,111,116)
+	 replace occup=. if inlist(q9B,0,9,116)
 	 replace occup=. if lstatus!=1
 	 label var occup "1 digit occupational classification, primary job 7 day recall"
   	 la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
