@@ -96,8 +96,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	*use "`path_in_stata'\lfsdata.dta", clear
-	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_1992_LFS\LKA_1992_LFS_v01_M\Data\Stata\lfsdata.dta", clear
+	use "`path_in_stata'\lfsdata.dta", clear
 
 
 /*%%=============================================================================================
@@ -628,18 +627,19 @@ child as the head.
 
 /*<_migrated_binary_note_>
 
-The birth district code matching codes are from I2D2. Not able to verify it.
-No age range limitation for migration section.
+The birth district code matching codes below are from I2D2. Not able to verify it.
+And since there is no age range limitation for migration section, the birth place
+is only a stand-alone question, we did not consider it pertaining to the migration 
+section and therefore did not code this part. 
+
+gen birth=p10
+	recode birth (1=11) (2=12) (3=13) (4=21) (5=22) (6=23) (7=31) (8=32) (9=33) (17=61) (18=62) (19=71) (20=72) (21=81) (22=82) (24=91) (23=92) (0 10/16 26 38=.)
 
 *<_migrated_binary_note_>*/
 
 
 *<_migrated_binary_>
-	gen birth=p10
-	recode birth (1=11) (2=12) (3=13) (4=21) (5=22) (6=23) (7=31) (8=32) (9=33) (17=61) (18=62) (19=71) (20=72) (21=81) (22=82) (24=91) (23=92) (0 10/16 26 38=.)
 	gen migrated_binary=.
-	replace migrated_binary=1 if birth!=subnatid2
-	replace migrated_binary=0 if birth==subnatid2
 	label de lblmigrated_binary 0 "No" 1 "Yes"
 	replace migrated_binary=. if age<migrated_mod_age
 	label values migrated_binary lblmigrated_binary
@@ -879,14 +879,14 @@ But it is one specific number instead of a range.
 *<_vocational_length_l_>
 	gen vocational_length_l=p16
 	replace vocational_length_l=. if age<10|vocational!=1
-	label var vocational_length_l "Length of training, lower limit"
+	label var vocational_length_l "Length of training in month, lower limit"
 *</_vocational_length_l_>
 
 
 *<_vocational_length_u_>
 	gen vocational_length_u=p16
 	replace vocational_length_u=. if age<10|vocational!=1
-	label var vocational_length_u "Length of training, upper limit"
+	label var vocational_length_u "Length of training in month, upper limit"
 *</_vocational_length_u_>
 
 
@@ -2027,7 +2027,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-*save "`path_output'\\`level_2_harm'_ALL.dta", replace
-save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_1992_LFS\LKA_1992_LFS_v01_M_v01_A_GLD\Data\Harmonized\LKA_1992_LFS_v01_M_v01_A_GLD_ALL.dta", replace
+save "`path_output'\\`level_2_harm'_ALL.dta", replace
 
 *</_% SAVE_>
