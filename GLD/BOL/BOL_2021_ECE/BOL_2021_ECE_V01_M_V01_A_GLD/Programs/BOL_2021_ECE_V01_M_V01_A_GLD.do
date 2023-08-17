@@ -139,7 +139,7 @@ save "`path_in_stata'/qlfs_2021.dta", replace
 
 
 *<_isco_version_>
-	gen isco_version = "isco_08"
+	gen isco_version = "isco_2008"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
@@ -851,25 +851,25 @@ foreach v of local ed_var {
 
 *<_industrycat10_>
 	gen byte industrycat10 = .
-	replace industrycat10=1 if inrange(industrycat_isic,"0100","0329")
-	replace industrycat10=2 if inrange(industrycat_isic,"0510","0999")
+	replace industrycat10=1 if inrange(industrycat_isic,"0100","0399")
+	replace industrycat10=2 if inrange(industrycat_isic,"0500","0999")
 	replace industrycat10=3 if inrange(industrycat_isic,"1000","3399")
 	replace industrycat10=4 if inrange(industrycat_isic,"3500","3999")
 	replace industrycat10=5 if inrange(industrycat_isic,"4100","4399")
 	replace industrycat10=6 if inrange(industrycat_isic,"4500","4799")
-	replace industrycat10=7 if inrange(industrycat_isic,"4910","5399")
-	replace industrycat10=6 if inrange(industrycat_isic,"5500","5639")
-	replace industrycat10=7 if inrange(industrycat_isic,"5810","6399")
-	replace industrycat10=8 if inrange(industrycat_isic,"6400","6829")
+	replace industrycat10=7 if inrange(industrycat_isic,"4900","5399")
+	replace industrycat10=6 if inrange(industrycat_isic,"5500","5699")
+	replace industrycat10=7 if inrange(industrycat_isic,"5800","6399")
+	replace industrycat10=8 if inrange(industrycat_isic,"6400","6899")
 	replace industrycat10=8 if inrange(industrycat_isic,"6910","7599")
-	replace industrycat10=8 if inrange(industrycat_isic,"7710","8299")
+	replace industrycat10=8 if inrange(industrycat_isic,"7700","8299")
 	replace industrycat10=9 if inrange(industrycat_isic,"8400","8419")
-	replace industrycat10=9 if inrange(industrycat_isic,"8420", "8439")
-	replace industrycat10=10 if inrange(industrycat_isic,"8500","8559")
+	replace industrycat10=9 if inrange(industrycat_isic,"8420", "8499")
+	replace industrycat10=10 if inrange(industrycat_isic,"8500","8599")
 	replace industrycat10=10 if inrange(industrycat_isic,"8600","8899")
-	replace industrycat10=10 if inrange(industrycat_isic,"9000","9329")
-	replace industrycat10=10 if inrange(industrycat_isic,"9410","9609")
-	replace industrycat10=10 if inrange(industrycat_isic,"9700","9829")
+	replace industrycat10=10 if inrange(industrycat_isic,"9000","9399")
+	replace industrycat10=10 if inrange(industrycat_isic,"9400","9699")
+	replace industrycat10=10 if inrange(industrycat_isic,"9700","9899")
 	replace industrycat10=10 if inrange(industrycat_isic,"9900","9999")
 	replace industrycat10=6 if s2_16acod=="G"
 	replace industrycat10=5 if s2_16acod=="F"
@@ -1478,7 +1478,7 @@ foreach v of local ed_var {
 	replace occup_isco="7120" if s2_15acod=="712"
 	replace occup_isco="7210" if s2_15acod=="721"
 	replace occup_isco="7230" if s2_15acod=="723"
-	replace occup_isco="7330" if s2_15acod=="733"
+	replace occup_isco="7300" if s2_15acod=="733"
 	replace occup_isco="7510" if s2_15acod=="751"
 	replace occup_isco="7530" if s2_15acod=="753"
 	replace occup_isco="8100" if s2_15acod=="81"
