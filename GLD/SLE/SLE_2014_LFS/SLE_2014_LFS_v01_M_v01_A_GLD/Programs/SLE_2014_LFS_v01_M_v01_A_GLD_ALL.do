@@ -86,7 +86,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * harmonized output in a single file
 
 	use "`path_in_stata'\merged A to J de-ID.dta", clear
-
+	
 *Note that the original definition of "LFS eligible" in the SLE survey is:
 *1) Age is 5 and above and;
 *2) Spent at least 4 nights in the household during the past 4 weeks
@@ -235,6 +235,17 @@ local out_file "`level_2_harm'_ALL.dta"
 	label var wave "Survey wave"
 *</_wave_>
 
+
+*<_panel_>
+	gen panel=""
+	label var panel "Panel individual belongs to"
+*</_panel_>
+
+
+*<_visit_no_>
+	gen visit_no=.
+	label var visit_no "Visit number in panel"
+*</_visit_no_>
 }
 
 /*%%=============================================================================================
@@ -252,12 +263,16 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_subnatid1_>
-	gen subnatid1=Z_6
+	gen subnatid1_lbl=Z_6
 	label de lblsubnatid1 1 "1 - Eastern" 2 "2 - Northern" 3 "3 - Southern" 4 "4 - Western Area"
-	label values subnatid1 lblsubnatid1
+	label values subnatid1_lbl lblsubnatid1
+	decode (subnatid1_lbl), gen(subnatid1)
+
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 
+
+*<_subnatid2_>
 
 /*<_subnatid2_note_>
 
@@ -268,8 +283,6 @@ We overwrote the mistaken districts. Total 30 observations were overwritten.
 
 *<_subnatid2_note_>*/
 
-
-*<_subnatid2_>
 	gen z7code=string(Z_7,"%02.0f")
 	decode Z_7, gen(z7lbl)
 	egen Z7lbl=concat(z7code z7lbl), punct(" - ")
@@ -282,6 +295,8 @@ We overwrote the mistaken districts. Total 30 observations were overwritten.
 	replace subnatid2=32 if subnatid2==31&ea_code=="320504031"
 	replace subnatid2=42 if subnatid2==41&(ea_code=="420805102"|ea_code=="420806142")
 	labmask subnatid2, values(Z7lbl)
+	rename subnatid2 subnatid2_lbl
+	decode subnatid2_lbl, gen(subnatid2)
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
 
@@ -291,6 +306,9 @@ We overwrote the mistaken districts. Total 30 observations were overwritten.
 	replace Z8lbl=subinstr(Z8lbl, ".", " -",1)
 	gen subnatid3=Z_8
 	labmask subnatid3, values(Z8lbl)
+	decode subnatid3, gen(subnatid3_str)
+	drop subnatid3
+	rename subnatid3_str subnatid3
 	label var subnatid3 "Subnational ID at Third Administrative Level"
 *</_subnatid3_>
 
@@ -302,12 +320,12 @@ We overwrote the mistaken districts. Total 30 observations were overwritten.
 *</_subnatidsurvey_>                
 
 
+*<_subnatid1_prev_>
+
 /* <_subnatid1_prev_note_>
 subnatid1_prev is coded as missing unless the classification used for subnatid1 has changed since the previous survey.
 </_subnatid1_prev_note_> */
 
-
-*<_subnatid1_prev_>
 	gen subnatid1_prev=.
 	label var subnatid1_prev "Classification used for subnatid1 from previous survey"
 *</_subnatid1_prev_>
@@ -372,6 +390,8 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 *</_male_>
 
 
+*<_relationharm_>
+
 /*<_relationharm_note_>
 
 26 households have zero or more than 1 household head. 
@@ -383,8 +403,6 @@ Here are the decision rule for reassigning household heads:
 
 *<_relationharm_note_>*/
 
-
-*<_relationharm_>
 	gen byte relationharm=A_4
 	recode relationharm (3/5=3) (9/10=4) (6/8 11=5) (12/13=6)
 	
@@ -498,6 +516,8 @@ Here are the decision rule for reassigning household heads:
 *</_migrated_binary_>
 
 
+*<_migrated_years_>
+
 /* <_migrated_years_note_> 
 
 In the questionnaire the years of migration is divided into two parts:
@@ -506,8 +526,6 @@ and month converted into year's term.
 
 </_migrated_years_note_> */
 
-
-*<_migrated_years_>
    gen migrated_years=.
    gen migyear=round(B_20B/12,0.1)
    replace migrated_years=B_20A+migyear
@@ -534,13 +552,13 @@ and month converted into year's term.
 	replace migregion=2 if inrange(B_21,21,25)
 	replace migregion=3 if inrange(B_21,31,34)
 	replace migregion=4 if inrange(B_21,41,42)
-	replace migrated_from_cat=4 if migregion!=subnatid1&migrated_binary==1&!mi(migregion)
+	replace migrated_from_cat=4 if migregion!=subnatid1_lbl&migrated_binary==1&!mi(migregion)
 	
 	gen migdis=.
 	replace migdis=B_21 if inrange(B_21,11,42) 
-	replace migrated_from_cat=3 if migregion==subnatid1&(migdis!=subnatid2&!mi(migdis))
+	replace migrated_from_cat=3 if migregion==subnatid1_lbl&(migdis!=subnatid2_lbl&!mi(migdis))
 	
-	replace migrated_from_cat=2 if migdis==subnatid2&!mi(migdis)
+	replace migrated_from_cat=2 if migdis==subnatid2_lbl&!mi(migdis)
 	
 	replace migrated_from_cat=. if age<migrated_mod_age|migrated_binary!=1
 	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country"
@@ -559,7 +577,7 @@ and month converted into year's term.
 	label values migrated_from_code lblmigcode
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
 	
-	drop migyear migregion migdis 
+	drop migyear migregion migdis subnatid1_lbl subnatid2_lbl
 *</_migrated_from_code_>
 
 
@@ -627,6 +645,8 @@ and month converted into year's term.
 *</_literacy_>
 
 
+*<_educy_>
+
 /*<_educy_note_>
 
 Original categorization of the highest educational level ever attended of 
@@ -657,8 +677,6 @@ variable B_5 is:
 22	Masters Degree or Higher ---> 18 year
 *<_educy_note_>*/		  
 
-
-*<_educy_>
 	gen byte educy=.
 	replace educy=B_5 if inrange(B_5,1,6)
 	replace educy=B_5-1 if inrange(B_5,7,14)
@@ -773,15 +791,17 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 
 *<_vocational_length_l_>
 	gen vocational_length_l=.
-	label var vocational_length_l "Length of training, lower limit"
+	label var vocational_length_l "Length of training in months, lower limit"
 *</_vocational_length_l_>
 
 
 *<_vocational_length_u_>
 	gen vocational_length_u=.
-	label var vocational_length_u "Length of training, upper limit"
+	label var vocational_length_u "Length of training in months, upper limit"
 *</_vocational_length_u_>
 
+
+*<_vocational_field_orig_>
 
 /*<_vocational_field_orig_note_>
 
@@ -790,10 +810,8 @@ answered the area of their trainings.
 
 *<_vocational_field_orig_note_>*/
 
-
-*<_vocational_field_orig_>
 	gen vocational_field_orig=B_17
-	label var vocational_field_orig "Field of training"
+	label var vocational_field_orig "Original field of training information"
 *</_vocational_field_orig_>
 
 
@@ -818,6 +836,8 @@ answered the area of their trainings.
 *----------8.1: 7 day reference overall------------------------------*
 
 {
+*<_lstatus_>
+
 /*<_lstatus_note_>
 
 Better to use the questions to code variables instead of the "Enumerator CHECK"
@@ -825,8 +845,6 @@ question as the latter have some errors.
 
 *<_lstatus_note_>*/
 
-	
-*<_lstatus_>
 	gen byte lstatus=.
 	gen temp=1 if D_2==1|D_2==2|D_2==3|D_3==1|D_3==2|D_4==1
 	replace lstatus=1 if C_1A==1|C_1B==1|C_1C==1|C_1D==1
@@ -840,6 +858,8 @@ question as the latter have some errors.
 *</_lstatus_>
 
 
+*<_potential_lf_>
+
 /*<_potential_lf_note_>
 Note: var "potential_lf" only takes value if the respondent is not in labor force. (lstatus==3)
 
@@ -848,8 +868,6 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 2)searching but not immediately available to work or D_9==2 & D_5==1
 </_potential_lf_note_>*/
 
-
-*<_potential_lf_>
 	gen byte potential_lf=.
 	replace potential_lf=1 if [D_9==1 & D_5==2] | [D_9==2 & D_5==1]
 	replace potential_lf=0 if [D_9==1 & D_5==1] | [D_9==2 & D_5==2]
@@ -997,6 +1015,8 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 *</_occup_>
 
 
+*<_wage_no_compen_>
+
 /*<_wage_no_compen_note_>
 
 One observations has answered "000.821.000" to question E_19C, and one 
@@ -1007,8 +1027,6 @@ In the questionnaire, "000,000,088" is an indication of greater than or equal to
 
 *<_wage_no_compen_note_>*/
 
-
-*<_wage_no_compen_>
 	destring E_19C, gen(cash_num) ignore(".") 
 	destring E_19D, gen(goods_num) ignore(".")
 	replace cash_num=. if E_19C=="000.821.000"
@@ -1031,6 +1049,8 @@ In the questionnaire, "000,000,088" is an indication of greater than or equal to
 *</_unitwage_>
 
 
+*<_whours_>
+
 /*<_whours_note_>
 
 E_5 is the number of DAYs the respondent worked in the past week;
@@ -1045,8 +1065,6 @@ missing for work hours in the past week.
 
 *<_whours_note_>*/
 
-
-*<_whours_>
 	gen day=E_5 if inrange(E_5,1,7) 
 	gen hour=E_6 if inrange(E_6,1,24)
 	gen whours=day*hour
@@ -1240,6 +1258,8 @@ missing for work hours in the past week.
 *</_unitwage_2_>
 
 
+*<_whours_2_>
+
 /*<_whours_2_note_>
 
 There are some errors in the reported work hours. 20 observations' main and secondary
@@ -1250,8 +1270,6 @@ and secondary job.
 
 *<_whours_2_note_>*/
 
-
-*<_whours_2_>
 	gen day_2=F_6 if inrange(F_6,1,7)
 	gen hour_2=F_7 if inrange(F_7,1,24)
 	gen whours_2=day_2*hour_2
@@ -1329,6 +1347,7 @@ and secondary job.
 *----------8.6: 12 month reference overall------------------------------*
 
 {
+*<_lstatus_year_>
 
 /*<_lstatus_year_note_>
 
@@ -1338,8 +1357,6 @@ labor status unemployed and non-labor force, nor potential labor force.
 
 *<_lstatus_year_note_>*/
 
-
-*<_lstatus_year_>
 	gen byte lstatus_year=.
 	replace lstatus_year=. if age<minlaborage & age!= .
 	label var lstatus_year "Labor status during last year"
@@ -1793,13 +1810,13 @@ quietly{
 
 *<_% KEEP VARIABLES - ALL_>
 
-	keep countrycode survname survey icls_v isced_version isco_version isic_version year vermast veralt harmonization int_year int_month hhid pid weight psu strata wave urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_orig educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field_orig vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
+	keep countrycode survname survey icls_v isced_version isco_version isic_version year vermast veralt harmonization int_year int_month hhid pid weight psu strata wave panel visit_no urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_orig educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field_orig vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
 
 *</_% KEEP VARIABLES - ALL_>
 
 *<_% ORDER VARIABLES_>
 
-	order countrycode survname survey icls_v isced_version isco_version isic_version year vermast veralt harmonization int_year int_month hhid pid weight psu strata wave urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_orig educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field_orig vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
+	order countrycode survname survey icls_v isced_version isco_version isic_version year vermast veralt harmonization int_year int_month hhid pid weight psu strata wave panel visit_no urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_orig educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field_orig vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
 
 *</_% ORDER VARIABLES_>
 
@@ -1837,14 +1854,6 @@ quietly{
 
 }
 
-
-*<_% COMPRESS_>
-
-compress
-
-*</_% COMPRESS_>
-
-
 *<_% DELETE MISSING VARIABLES_>
 
 quietly: describe, varlist
@@ -1856,6 +1865,13 @@ foreach var of local kept_vars {
 }
 
 *</_% DELETE MISSING VARIABLES_>
+
+
+*<_% COMPRESS_>
+
+compress
+
+*</_% COMPRESS_>
 
 
 *<_% SAVE_>
