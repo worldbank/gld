@@ -1,3 +1,7 @@
+#=====================================#
+# This code creates the folders for 
+# GLD according to the MDL standard
+#=====================================#
 
 # Define country, root, and survey name
 country <- "[XYZ]"
