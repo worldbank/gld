@@ -140,7 +140,7 @@ save "`path_in_stata'/qlfs_2018.dta", replace
 
 
 *<_isco_version_>
-	gen isco_version = "isco_08"
+	gen isco_version = "isco_2008"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
@@ -852,25 +852,25 @@ foreach v of local ed_var {
 
 *<_industrycat10_>
 	gen byte industrycat10 = .
-	replace industrycat10=1 if inrange(industrycat_isic,"0100","0329")
-	replace industrycat10=2 if inrange(industrycat_isic,"0510","0999")
+	replace industrycat10=1 if inrange(industrycat_isic,"0100","0399")
+	replace industrycat10=2 if inrange(industrycat_isic,"0500","0999")
 	replace industrycat10=3 if inrange(industrycat_isic,"1000","3399")
 	replace industrycat10=4 if inrange(industrycat_isic,"3500","3999")
 	replace industrycat10=5 if inrange(industrycat_isic,"4100","4399")
 	replace industrycat10=6 if inrange(industrycat_isic,"4500","4799")
-	replace industrycat10=7 if inrange(industrycat_isic,"4910","5399")
-	replace industrycat10=6 if inrange(industrycat_isic,"5500","5639")
-	replace industrycat10=7 if inrange(industrycat_isic,"5810","6399")
-	replace industrycat10=8 if inrange(industrycat_isic,"6400","6829")
+	replace industrycat10=7 if inrange(industrycat_isic,"4900","5399")
+	replace industrycat10=6 if inrange(industrycat_isic,"5500","5699")
+	replace industrycat10=7 if inrange(industrycat_isic,"5800","6399")
+	replace industrycat10=8 if inrange(industrycat_isic,"6400","6899")
 	replace industrycat10=8 if inrange(industrycat_isic,"6910","7599")
-	replace industrycat10=8 if inrange(industrycat_isic,"7710","8299")
+	replace industrycat10=8 if inrange(industrycat_isic,"7700","8299")
 	replace industrycat10=9 if inrange(industrycat_isic,"8400","8419")
-	replace industrycat10=9 if inrange(industrycat_isic,"8420", "8439")
-	replace industrycat10=10 if inrange(industrycat_isic,"8500","8559")
+	replace industrycat10=9 if inrange(industrycat_isic,"8420", "8499")
+	replace industrycat10=10 if inrange(industrycat_isic,"8500","8599")
 	replace industrycat10=10 if inrange(industrycat_isic,"8600","8899")
-	replace industrycat10=10 if inrange(industrycat_isic,"9000","9329")
-	replace industrycat10=10 if inrange(industrycat_isic,"9410","9609")
-	replace industrycat10=10 if inrange(industrycat_isic,"9700","9829")
+	replace industrycat10=10 if inrange(industrycat_isic,"9000","9399")
+	replace industrycat10=10 if inrange(industrycat_isic,"9400","9699")
+	replace industrycat10=10 if inrange(industrycat_isic,"9700","9899")
 	replace industrycat10=10 if inrange(industrycat_isic,"9900","9999")
 	replace industrycat10=6 if s2_16acod=="G"
 	replace industrycat10=5 if s2_16acod=="F"
@@ -1479,7 +1479,7 @@ foreach v of local ed_var {
 	replace occup_isco="7120" if s2_15acod=="712"
 	replace occup_isco="7210" if s2_15acod=="721"
 	replace occup_isco="7230" if s2_15acod=="723"
-	replace occup_isco="7330" if s2_15acod=="733"
+	replace occup_isco="7300" if s2_15acod=="733"
 	replace occup_isco="7510" if s2_15acod=="751"
 	replace occup_isco="7530" if s2_15acod=="753"
 	replace occup_isco="8100" if s2_15acod=="81"
@@ -1693,25 +1693,25 @@ foreach v of local ed_var {
 
 *<_industrycat10_2_>
 	gen byte industrycat10_2 = .
-	replace industrycat10_2=1 if inrange(industrycat_isic_2,"0100","0329")
-	replace industrycat10_2=2 if inrange(industrycat_isic_2,"0510","0999")
-	replace industrycat10_2=3 if inrange(industrycat_isic_2,"1000","3329")
+	replace industrycat10_2=1 if inrange(industrycat_isic_2,"0100","0399")
+	replace industrycat10_2=2 if inrange(industrycat_isic_2,"0500","0999")
+	replace industrycat10_2=3 if inrange(industrycat_isic_2,"1000","3399")
 	replace industrycat10_2=4 if inrange(industrycat_isic_2,"3500","3999")
 	replace industrycat10_2=5 if inrange(industrycat_isic_2,"4100","4399")
 	replace industrycat10_2=6 if inrange(industrycat_isic_2,"4500","4799")
-	replace industrycat10_2=7 if inrange(industrycat_isic_2,"4910","5329")
-	replace industrycat10_2=6 if inrange(industrycat_isic_2,"5500","5639")
-	replace industrycat10_2=7 if inrange(industrycat_isic_2,"5810","6399")
-	replace industrycat10_2=8 if inrange(industrycat_isic_2,"6400","6829")
-	replace industrycat10_2=8 if inrange(industrycat_isic_2,"6910","7599")
-	replace industrycat10_2=8 if inrange(industrycat_isic_2,"7710","8299")
+	replace industrycat10_2=7 if inrange(industrycat_isic_2,"4900","5399")
+	replace industrycat10_2=6 if inrange(industrycat_isic_2,"5500","5699")
+	replace industrycat10_2=7 if inrange(industrycat_isic_2,"5800","6399")
+	replace industrycat10_2=8 if inrange(industrycat_isic_2,"6400","6899")
+	replace industrycat10_2=8 if inrange(industrycat_isic_2,"6900","7599")
+	replace industrycat10_2=8 if inrange(industrycat_isic_2,"7700","8299")
 	replace industrycat10_2=9 if inrange(industrycat_isic_2,"8400","8419")
-	replace industrycat10_2=9 if inrange(industrycat_isic_2,"8420", "8439")
+	replace industrycat10_2=9 if inrange(industrycat_isic_2,"8420", "8499")
 	replace industrycat10_2=10 if inrange(industrycat_isic_2,"8500","8559")
 	replace industrycat10_2=10 if inrange(industrycat_isic_2,"8600","8899")
-	replace industrycat10_2=10 if inrange(industrycat_isic_2,"9000","9329")
-	replace industrycat10_2=10 if inrange(industrycat_isic_2,"9410","9609")
-	replace industrycat10_2=10 if inrange(industrycat_isic_2,"9700","9829")
+	replace industrycat10_2=10 if inrange(industrycat_isic_2,"9000","9399")
+	replace industrycat10_2=10 if inrange(industrycat_isic_2,"9400","9609")
+	replace industrycat10_2=10 if inrange(industrycat_isic_2,"9700","9899")
 	replace industrycat10_2=10 if inrange(industrycat_isic_2,"9900","9999")
 	replace industrycat10_2=6 if s2_45acod=="G"
 	replace industrycat10_2=5 if s2_45acod=="F"
@@ -2319,7 +2319,7 @@ foreach v of local ed_var {
 	replace occup_isco_2="7120" if s2_44acod=="712"
 	replace occup_isco_2="7210" if s2_44acod=="721"
 	replace occup_isco_2="7230" if s2_44acod=="723"
-	replace occup_isco_2="7330" if s2_44acod=="733"
+	replace occup_isco_2="7300" if s2_44acod=="733"
 	replace occup_isco_2="7510" if s2_44acod=="751"
 	replace occup_isco_2="7530" if s2_44acod=="753"
 	replace occup_isco_2="8100" if s2_44acod=="81"
@@ -2404,7 +2404,7 @@ foreach v of local ed_var {
 
 
 *<_wmonths_2_>
-	gen wmonths_2 = 3
+	gen wmonths_2 = .
 	label var wmonths_2 "Months of work in past 12 months secondary job 7 day recall"
 *</_wmonths_2_>
 
