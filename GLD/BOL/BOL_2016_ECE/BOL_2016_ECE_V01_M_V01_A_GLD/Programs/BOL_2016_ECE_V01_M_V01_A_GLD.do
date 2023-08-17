@@ -1746,6 +1746,7 @@ foreach v of local ed_var {
 	replace industrycat_isic_help_2="" if s2_45acod=="F"
 	replace industrycat_isic_help_2="" if s2_45acod=="C"
 	replace industrycat_isic_help_2="" if s2_45acod=="M"
+	replace industrycat_isic_help_2="" if s2_45acod=="A"
 	gen industrycat_isic_2 = industrycat_isic_help_2 + substr("0000", 1, 4 - length(industrycat_isic_help_2))
 	replace industrycat_isic_2="" if industrycat_isic_2=="0000"
 	replace industrycat_isic_2="" if industrycat_isic_2=="8900"
@@ -1780,6 +1781,7 @@ foreach v of local ed_var {
 	replace industrycat10_2=5 if s2_45acod=="F"
 	replace industrycat10_2=3 if s2_45acod=="C"
 	replace industrycat10_2=8 if s2_45acod=="M"
+	replace industrycat10_2=1 if s2_45acod=="A"
 	replace industrycat10_2=. if lstatus!=1
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
