@@ -31,9 +31,9 @@
 <_ICLS Version_>				ICLS 19 </_ICLS Version_>
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
 <_ISCO Version_>				ISCO 08 </_ISCO Version_>
-<_OCCUP National_>				</_OCCUP National_>
+<_OCCUP National_>				Following ISCO 08 </_OCCUP National_>
 <_ISIC Version_>				ISIC Rev.4 </_ISIC Version_>
-<_INDUS National_>				 </_INDUS National_>
+<_INDUS National_>				Following ISIC Rev.4 </_INDUS National_>
 -----------------------------------------------------------------------
 
 <_Version Control_>
@@ -183,14 +183,14 @@ local out_file "`level_2_harm'_ALL.dta"
 *</_int_month_>
 
 
+*<_hhid_>
+
 /*<_hhid_>
 
 4,199 households in the actual raw data, compared to 4,200 planned.   
 
 *<_hhid_>*/
 
-
-*<_hhid_>
 	tostring hh_id, gen(strhh_id) format(%02.0f)
 	egen hhid=concat(strhh_id ea_code), maxlength(12) punct("-")
 	recast str12 hhid
