@@ -148,7 +148,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_year_>
-	*gen int year=`year'
+	*gen intyear=`year'
 	label var year "Year of survey"
 *</_year_>
 
@@ -404,6 +404,9 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 *<_relationharm_>
 	gen byte relationharm=p3
 	recode relationharm (7/9=6)
+	label var relationharm "Relationship to the head of household - Harmonized"
+	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
+	label values relationharm lblrelationharm
 	
 	gen head=1 if relationharm==1
 	bys hhid: egen headsum=total(head)
@@ -411,45 +414,29 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 	replace relative=0 if relative!=1
 	bys hhid: egen any=total(relative)
 	bys hhid: egen olderest=max(age) if !mi(age)&relationharm!=6
-	bys hhid: egen pidmin=min(p1)
+	bys hhid: egen pidmin=min(newp1)
 	replace relationharm=1 if relationharm!=6&headsum==0&p1==1&age>17
+	replace relationharm=1 if headsum==0&newp1==pidmin&age>17&relationharm!=5
+	gsort hhid relationharm -age
+	bys hhid: gen count=_n
+	replace relationharm=1 if headsum==0&count==1&age>17
+	replace relationharm=1 if pid=="010101011371-01"
 	
 	replace head=1 if relationharm==1
 	bys hhid: egen headsum0=total(head)
-	replace relationharm=1 if /// 
-							relationharm!=6&headsum==0&age==olderest ///
-							&!inlist(pid,"040101010881-03", ///
-										 "040601020611-06", ///
-										 "100301020231-06", ///
-										 "100301020231-07") 
-	replace relationharm=1 if pid=="040601020611-02"
-
-
-	replace head=1 if relationharm==1
-	bys hhid: egen headsum1=total(head)
-	replace relationharm=5 if headsum1==2&head==1&age<18&age!=olderest
-	bys hhid relationharm: egen headagemax=max(age)
-	bys hhid relationharm: replace relationharm=5 if headsum1==2&head==1&age!=headagemax
-	replace head=. if relationharm!=1
-	bys hhid: egen headsum2=total(head)
+	replace relationharm=5 if headsum0==2&head==1&age<18&age!=olderest
+	bys hhid relationharm: egen headagemax=max(age)	
+	bys hhid relationharm: replace relationharm=5 if headsum0==2&head==1&age!=headagemax
 	bys hhid relationharm: egen headidmin=min(newp1)
-	replace relationharm=5 if headsum2==2&head==1&newp1!=headidmin
-
-	replace head=. if relationharm!=1
-	bys hhid: egen headsum3=total(head)
-	replace relationharm=5 if headsum3==3&head==1&age<18&age!=olderest
-	replace relationharm=5 if headsum3==3&head==1&newp1!=headidmin
+	replace relationharm=5 if headsum0==2&head==1&newp1!=headidmin
 	
 	replace head=. if relationharm!=1
-	bys hhid: egen headsum4=total(head)
-	replace relationharm=5 if headsum4==6&head==1&newp1!=1
+	bys hhid: egen headsum1=total(head)
+	replace relationharm=5 if inrange(headsum1,3,5)&head==1&newp1!=headidmin
 	replace head=. if relationharm!=1
-	bys hhid: egen headsum5=total(head)
+	bys hhid: egen headsum2=total(head)
 
-	label var relationharm "Relationship to the head of household - Harmonized"
-	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
-	label values relationharm lblrelationharm
-	drop head-headsum5
+	drop head-headsum2
 *</_relationharm_>
 
 
@@ -536,27 +523,9 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 
 *<_migrated_binary_>
-
-/*<_migrated_binary_note_>
-
-The birth district code matching codes below are from I2D2. Not able to verify it.
-And since there is no age range limitation for migration section, the birth place
-is only a stand-alone question, we did not consider it pertaining to the migration 
-section and therefore did not code this part. 
-
-	gen birth=p10
-	replace birth=p10+10 if inrange(p10,1,3)
-	replace birth=p10+17 if inrange(p10,4,6)
-	replace birth=p10+24 if inrange(p10,7,9)
-	replace birth=p10+44 if inrange(p10,17,18)
-	replace birth=p10+52 if inrange(p10,19,20)
-	replace birth=p10+60 if inrange(p10,21,22)
-	recode birth (23=92) (24=91) (0 10/16 26 38=.)
-*<_migrated_binary_note_>*/
-
 	gen migrated_binary=.
 	label de lblmigrated_binary 0 "No" 1 "Yes"
-	*replace migrated_binary=. if age<migrated_mod_age
+	replace migrated_binary=. if age<migrated_mod_age
 	label values migrated_binary lblmigrated_binary
 	label var migrated_binary "Individual has migrated"
 *</_migrated_binary_>                                                                                                                                            
@@ -809,8 +778,8 @@ But it is one specific number instead of a range.
 
 /*<_vocational_field_orig_note_>
 
-p14 is the original skill code variable in the questionnaire. But it neither matches
-ISCO88 nor ISIC Rev3. And we did not have any relevant documentation of the codelist 
+p14 seems to use the same occupation codelist as q9B. 
+But we did not have any relevant documentation of the codelist 
 of this variable.
 
 *<_vocational_field_orig_note_>*/
