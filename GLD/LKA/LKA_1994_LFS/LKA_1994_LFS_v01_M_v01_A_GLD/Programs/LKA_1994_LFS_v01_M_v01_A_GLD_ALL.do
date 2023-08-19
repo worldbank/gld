@@ -21,8 +21,8 @@
 								Data was acquired internally through I2D2.</_Source of dataset_>
 								Can be downloaded from http://nada.statistics.gov.lk/index.php/catalog but 
 								with only 25% of the full file through registration. 
-<_Sample size (HH)_> 			 </_Sample size (HH)_>
-<_Sample size (IND)_> 		     </_Sample size (IND)_>
+<_Sample size (HH)_> 			6,548 </_Sample size (HH)_>
+<_Sample size (IND)_> 		    34,997 </_Sample size (IND)_>
 <_Sampling method_> 			A stratified two-stage probability sample design
 								used with census blocks as PSUs and housing units
 								as secondary and final sampling units. </_Sampling method_>
@@ -202,6 +202,25 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_pid_>
+
+/*<_pid_note_>
+
+
+. duplicates report hhid p1
+
+Duplicates in terms of hhid p1
+
+--------------------------------------
+   copies | observations       surplus
+----------+---------------------------
+        1 |        29493             0
+        2 |         5504          2752
+--------------------------------------
+
+Within the same household there are duplicated household IDs
+
+*<_pid_note_>*/
+
 	gsort hhid -age
 	bys hhid: gen newp1=_n
 	tostring newp1, gen(str_pid) format(%02.0f)
@@ -217,12 +236,6 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_psu_>
-
-/*<_psu_note_>
-
-
-*<_psu_note_>*/
-
 	egen psu=concat(month_str province_str sector_str district_str block_str)
 	label var psu "Primary sampling units"
 *</_psu_>
@@ -266,8 +279,8 @@ local out_file "`level_2_harm'_ALL.dta"
 
 *<_urban_>
 	gen urban=.
-	replace urban=1 if sector==1
-	replace urban=0 if sector==2|sector==3
+	*replace urban=1 if sector==1
+	*replace urban=0 if sector==2|sector==3
 	la de lblurban 1 "Urban" 0 "Rural"
 	label values urban lblurban
 	label var urban "Location is urban"
@@ -312,8 +325,8 @@ In 1994, Northern and Eastern provinces were excluded.
 
 
 *<_subnatidsurvey_>	
-	decode urban, gen(urban_name)
-	egen subnatidsurvey=concat(subnatid2 urban_name), punct("-")
+	decode sector, gen(sector_name)
+	egen subnatidsurvey=concat(subnatid2 sector_name), punct("-")
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>                
 
@@ -367,7 +380,7 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 {
 
 *<_hsize_>
-	bys hhid: egen hsize=max(p1)
+	bys hhid: egen hsize=max(newp1)
 	label var hsize "Household size"
 *</_hsize_>
 
@@ -380,7 +393,7 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 
 *<_male_>
-	gen male=sex
+	gen male=sex if inrange(sex,1,2)
 	recode male 2=0
 	label var male "Sex - Ind is male"
 	la de lblmale 1 "Male" 0 "Female"
