@@ -1795,6 +1795,7 @@ compress
 
 *<_% SAVE_>
 
-save "`path_output'\\`level_2_harm'_ALL.dta", replace
+*save "`path_output'\\`level_2_harm'_ALL.dta", replace
+save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_1994_LFS\LKA_1994_LFS_v01_M_v01_A_GLD\Data\Harmonized\LKA_1994_LFS_v01_M_v01_A_GLD_ALL.dta",replace
 
 *</_% SAVE_>
