@@ -186,12 +186,6 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_hhid_>
-
-/*<_hhid_note_>
-
-
-*<_hhid_note_>*/
-
 	foreach v of varlist month province sector district block{
 		tostring `v', gen(`v'_str) format(%02.0f)
 	}	
