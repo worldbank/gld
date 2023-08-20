@@ -4,25 +4,25 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				LKA_1994_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
+<_Program name_>				LKA_1995_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata SE 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
-<_Date created_>				2023-08-16 </_Date created_>
+<_Date created_>				2023-08-19 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						Sri Lanka (LKA) </_Country_>
 <_Survey Title_>				National Labour Force Survey </_Survey Title_>
-<_Survey Year_>					1994 </_Survey Year_>
-<_Study ID_>					LKA_1994_LFS_v01_M </_Study ID_>
-<_Data collection from (M/Y)_>	[Jan/1994] </_Data collection from (M/Y)_>
-<_Data collection to (M/Y)_>	[Oct/1994] </_Data collection to (M/Y)_>
+<_Survey Year_>					1995 </_Survey Year_>
+<_Study ID_>					LKA_1995_LFS_v01_M </_Study ID_>
+<_Data collection from (M/Y)_>	[Jan/1995] </_Data collection from (M/Y)_>
+<_Data collection to (M/Y)_>	[Oct/1995] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			Survey conducted by LKA Department of 
 								Census and Statistics, 
 								Ministry Policy Planning and Implementation;
 								Data was acquired internally through I2D2.</_Source of dataset_>
 								Can be downloaded from http://nada.statistics.gov.lk/index.php/catalog but 
 								with only 25% of the full file through registration. 
-<_Sample size (HH)_> 			6,548 </_Sample size (HH)_>
-<_Sample size (IND)_> 		    34,997 </_Sample size (IND)_>
+<_Sample size (HH)_> 			 </_Sample size (HH)_>
+<_Sample size (IND)_> 		     </_Sample size (IND)_>
 <_Sampling method_> 			A stratified two-stage probability sample design
 								used with census blocks as PSUs and housing units
 								as secondary and final sampling units. </_Sampling method_>
@@ -72,7 +72,7 @@ set mem 800m
 * Define path sections
 local server  "Y:\GLD-Harmonization\573465_JT"
 local country "LKA"
-local year    "1994"
+local year    "1995"
 local survey  "LFS"
 local vermast "V01"
 local veralt  "V01"
@@ -97,7 +97,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * harmonized output in a single file
 
 	*use "`path_in_stata'\lfsdata.dta", clear
-	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_1994_LFS\LKA_1994_LFS_v01_M\Data\Stata\lfsdata.dta", clear
+	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_1995_LFS\LKA_1995_LFS_v01_M\Data\Stata\lfsdata.dta", clear
 	
 /*%%=============================================================================================
 	2: Survey & ID
@@ -186,12 +186,6 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_hhid_>
-
-/*<_hhid_note_>
-
-
-*<_hhid_note_>*/
-
 	foreach v of varlist month province sector district block{
 		tostring `v', gen(`v'_str) format(%02.0f)
 	}	
@@ -205,16 +199,13 @@ local out_file "`level_2_harm'_ALL.dta"
 
 /*<_pid_note_>
 
-
-. duplicates report hhid p1
-
 Duplicates in terms of hhid p1
 
 --------------------------------------
    copies | observations       surplus
 ----------+---------------------------
-        1 |        29493             0
-        2 |         5504          2752
+        1 |        28582             0
+        2 |         5566          2783
 --------------------------------------
 
 Within the same household there are duplicated household IDs
@@ -291,7 +282,7 @@ Within the same household there are duplicated household IDs
 
 /*<_subnatid1_note_>
 
-In 1994, Northern and Eastern provinces were excluded.
+In 1995, Northern and Eastern provinces were excluded.
 
 *<_subnatid1_note_>*/
 	gen subnatid1=""
@@ -1796,6 +1787,6 @@ compress
 *<_% SAVE_>
 
 *save "`path_output'\\`level_2_harm'_ALL.dta", replace
-save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_1994_LFS\LKA_1994_LFS_v01_M_v01_A_GLD\Data\Harmonized\LKA_1994_LFS_v01_M_v01_A_GLD_ALL.dta",replace
+save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_1995_LFS\LKA_1995_LFS_v01_M_v01_A_GLD\Data\Harmonized\LKA_1995_LFS_v01_M_v01_A_GLD_ALL.dta",replace
 
 *</_% SAVE_>
