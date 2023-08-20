@@ -21,8 +21,8 @@
 								Data was acquired internally through I2D2.</_Source of dataset_>
 								Can be downloaded from http://nada.statistics.gov.lk/index.php/catalog but 
 								with only 25% of the full file through registration. 
-<_Sample size (HH)_> 			 </_Sample size (HH)_>
-<_Sample size (IND)_> 		     </_Sample size (IND)_>
+<_Sample size (HH)_> 			6,511 </_Sample size (HH)_>
+<_Sample size (IND)_> 		    34,148 </_Sample size (IND)_>
 <_Sampling method_> 			A stratified two-stage probability sample design
 								used with census blocks as PSUs and housing units
 								as secondary and final sampling units. </_Sampling method_>
@@ -410,19 +410,18 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 	replace relationharm=1 if headsum==0&newp1==pidmin&age>17&relationharm!=5
 	gsort hhid relationharm -age
 	bys hhid: gen count=_n
-	replace relationharm=1 if headsum==0&count==1&age>17
-	replace relationharm=1 if pid=="010101011371-01"
-	
+	replace relationharm=1 if headsum==0&count==1
 	replace head=1 if relationharm==1
 	bys hhid: egen headsum0=total(head)
+	
 	replace relationharm=5 if headsum0==2&head==1&age<18&age!=olderest
 	bys hhid relationharm: egen headagemax=max(age)	
 	bys hhid relationharm: replace relationharm=5 if headsum0==2&head==1&age!=headagemax
 	bys hhid relationharm: egen headidmin=min(newp1)
 	replace relationharm=5 if headsum0==2&head==1&newp1!=headidmin
-	
 	replace head=. if relationharm!=1
 	bys hhid: egen headsum1=total(head)
+	
 	replace relationharm=5 if inrange(headsum1,3,5)&head==1&newp1!=headidmin
 	replace head=. if relationharm!=1
 	bys hhid: egen headsum2=total(head)
