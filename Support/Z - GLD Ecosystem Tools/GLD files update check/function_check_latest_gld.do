@@ -147,7 +147,3 @@ quietly {
 * End program brackets
 }
 end
-
-* Example run
-* gld_check_latest, filepath("C:\Users\wb529026\OneDrive - WBG\Desktop\example_list_surveys.csv")
-* list
