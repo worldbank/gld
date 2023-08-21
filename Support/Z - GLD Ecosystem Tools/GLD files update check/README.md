@@ -25,7 +25,7 @@ Make sure to keep the `replace` option. This is not necessary the first time but
 With the programme installed, you need to create first a CSV file with the files you currently have and wish to check. The file should have a single column (the first) and have a header at the top (the header name does not matter as long as Stata can read it - variable names must start with a letter or an underscore) like the file shown in the screenshot below.
 
 <br></br>
-![Example of CSV list of surveys](utilties/screenshot_csv_list_surveys.PNG)
+![Example of CSV list of surveys](utilities/screenshot_csv_list_surveys.PNG)
 <br></br>
 
 Store the file somewhere on your system and note the path to the file. This is the only argument to be passed to the function. The example file is stored in `"C:\Users\wb529026\OneDrive - WBG\Desktop\example_list_surveys.csv"`, so in the example the code is:
@@ -37,7 +37,7 @@ gld_check_latest, filepath("C:\Users\wb529026\OneDrive - WBG\Desktop\example_lis
 Adding the command `list` so Stata shows the output gives the following:
 
 <br></br>
-![Example of function output](utilties/gld_check_function_output.PNG)
+![Example of function output](utilities/gld_check_function_output.PNG)
 <br></br>
 
 ## How to interpret the results?
