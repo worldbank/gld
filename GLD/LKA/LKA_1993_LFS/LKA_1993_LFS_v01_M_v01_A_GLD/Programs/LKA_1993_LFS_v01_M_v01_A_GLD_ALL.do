@@ -378,7 +378,7 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 {
 
 *<_hsize_>
-	bys hhid: egen hsize=max(p1)
+	bys hhid: egen hsize=max(newp1)
 	label var hsize "Household size"
 *</_hsize_>
 
