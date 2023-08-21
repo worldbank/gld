@@ -1,0 +1,8 @@
+v 1
+d GLD Files Update Check: A package to check whether files submitted are the latest on GLD.
+d Creator: World Bank Jobs Group
+d Author: Gronert Alvarez, Mario Andres
+d For any questions, please contact: gld@worldbankgroup.org
+d Distribution-Date: 20230821
+
+f function_check_latest_gld.ado
