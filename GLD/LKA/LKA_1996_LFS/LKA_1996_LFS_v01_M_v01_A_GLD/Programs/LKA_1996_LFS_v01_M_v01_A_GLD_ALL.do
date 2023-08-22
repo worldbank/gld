@@ -96,8 +96,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	*use "`path_in_stata'\lfsdata.dta", clear
-	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_1996_LFS\LKA_1996_LFS_v01_M\Data\Stata\lfsdata.dta", clear
+	use "`path_in_stata'\lfsdata.dta", clear
 	
 /*%%=============================================================================================
 	2: Survey & ID
@@ -423,7 +422,7 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 	
 	gsort hhid relationharm -age
 	bys hhid: gen count=_n
-	replace relationharm=1 if headsum==0&count==1
+	replace relationharm=1 if headsum0==0&count==1
 	replace head=1 if relationharm==1
 	bys hhid: egen headsum1=total(head)
 	
@@ -1790,7 +1789,6 @@ compress
 
 *<_% SAVE_>
 
-*save "`path_output'\\`level_2_harm'_ALL.dta", replace
-save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_1996_LFS\LKA_1996_LFS_v01_M_v01_A_GLD\Data\Harmonized\LKA_1996_LFS_v01_M_v01_A_GLD_ALL.dta",replace
+save "`path_output'\\`level_2_harm'_ALL.dta", replace
 
 *</_% SAVE_>
