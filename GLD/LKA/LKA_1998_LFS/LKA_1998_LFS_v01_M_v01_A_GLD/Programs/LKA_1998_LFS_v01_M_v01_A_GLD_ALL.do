@@ -402,12 +402,37 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 
 *<_relationharm_>
+
+/*<_relationharm_note>
+
+6 households originally do not have household heads and their olderest hh members 
+are under 18 year old and thus are not assigned household heads.
+
+
+. list hhid olderest if olderest<18
+
+       +-------------------------+
+       |         hhid   olderest |
+       |-------------------------|
+  714. | 010102071005         15 |
+12179. | 020218173050         16 |
+       |-------------------------|
+19189. | 040208160063         14 |
+28035. | 050219077041         12 |
+       |-------------------------|
+33774. | 070204133117         12 |
+35532. | 070218235120         15 |
+       +-------------------------+
+	   
+*<_relationharm_note>*/
+
 	gen byte relationharm=p3
 	recode relationharm (7/9=6)
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm lblrelationharm
 	
+	replace relationharm=5 if pid=="010102071005-01"
 	gen head=1 if relationharm==1
 	bys hhid: egen headsum=total(head)
 	gen relative=1 if inrange(relationharm,1,5)
@@ -422,7 +447,7 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 	
 	gsort hhid relationharm -age
 	bys hhid: gen count=_n
-	replace relationharm=1 if headsum==0&count==1
+	replace relationharm=1 if headsum0==0&count==1&olderest>17&!mi(olderest)
 	replace head=1 if relationharm==1
 	bys hhid: egen headsum1=total(head)
 	
@@ -434,7 +459,7 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 	replace head=. if relationharm!=1
 	bys hhid: egen headsum2=total(head)
 	
-	replace relationharm=5 if headsum2&head==1&newp1!=headidmin
+	replace relationharm=5 if headsum2>2&head==1&newp1!=headidmin
 	drop head-headsum2
 *</_relationharm_>
 
@@ -700,6 +725,15 @@ Attendance at school or other educational institution
 
 
 *<_educat_orig_>
+
+/*<_educat_orig_note_>
+
+Kindly note that the original educat variable educattn only has 18 categorise
+although it actually has 20 categorise in the raw dataset.
+Category 17 and 18 are mistaken.
+
+*<_educat_orig_note_>*/
+
 	gen educat_orig=educattn
 	label var educat_orig "Original survey education code"
 *</_educat_orig_>
