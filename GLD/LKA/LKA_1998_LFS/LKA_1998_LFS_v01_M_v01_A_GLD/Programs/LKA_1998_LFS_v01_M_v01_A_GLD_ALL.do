@@ -7,22 +7,22 @@
 <_Program name_>				LKA_1998_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata SE 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
-<_Date created_>				2023-08-19 </_Date created_>
+<_Date created_>				2023-08-21 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						Sri Lanka (LKA) </_Country_>
 <_Survey Title_>				National Labour Force Survey </_Survey Title_>
 <_Survey Year_>					1998 </_Survey Year_>
 <_Study ID_>					LKA_1998_LFS_v01_M </_Study ID_>
 <_Data collection from (M/Y)_>	[Jan/1998] </_Data collection from (M/Y)_>
-<_Data collection to (M/Y)_>	[Oct/1998] </_Data collection to (M/Y)_>
+<_Data collection to (M/Y)_>	[Nov/1998] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			Survey conducted by LKA Department of 
 								Census and Statistics, 
 								Ministry Policy Planning and Implementation;
 								Data was acquired internally through I2D2.</_Source of dataset_>
 								Can be downloaded from http://nada.statistics.gov.lk/index.php/catalog but 
 								with only 25% of the full file through registration. 
-<_Sample size (HH)_> 			15,115 </_Sample size (HH)_>
-<_Sample size (IND)_> 		    68,485 </_Sample size (IND)_>
+<_Sample size (HH)_> 			 </_Sample size (HH)_>
+<_Sample size (IND)_> 		     </_Sample size (IND)_>
 <_Sampling method_> 			A stratified two-stage probability sample design
 								used with census blocks as PSUs and housing units
 								as secondary and final sampling units. </_Sampling method_>
@@ -206,10 +206,9 @@ Duplicates in terms of hhid p1
 --------------------------------------
    copies | observations       surplus
 ----------+---------------------------
-        1 |        68475             0
-        2 |           10             5
+        1 |        60251             0
+        2 |           12             6
 --------------------------------------
-
 
 Within the same household there are duplicated household IDs
 
@@ -249,10 +248,10 @@ Within the same household there are duplicated household IDs
 
 *<_wave_>
 	gen wave=.
-	replace wave=1 if month==1
-	replace wave=2 if month==3
-	replace wave=3 if month==7
-	replace wave=4 if month==10
+	replace wave=1 if inrange(int_month,1,2)
+	replace wave=2 if inrange(int_month,4,5)
+	replace wave=3 if inrange(int_month,7,8)
+	replace wave=4 if inrange(int_month,10,11)
 	label var wave "Survey wave"
 *</_wave_>
 
