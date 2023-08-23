@@ -389,7 +389,7 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 /*<_relationharm_note>
 
-6 households originally do not have household heads and their olderest hh members 
+8 households originally do not have household heads and their olderest hh members 
 are under 18 year old and thus are not assigned household heads.
 
 
