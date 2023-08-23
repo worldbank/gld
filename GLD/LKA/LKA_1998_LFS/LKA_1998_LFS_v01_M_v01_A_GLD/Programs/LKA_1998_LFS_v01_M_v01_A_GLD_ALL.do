@@ -21,8 +21,8 @@
 								Data was acquired internally through I2D2.</_Source of dataset_>
 								Can be downloaded from http://nada.statistics.gov.lk/index.php/catalog but 
 								with only 25% of the full file through registration. 
-<_Sample size (HH)_> 			 </_Sample size (HH)_>
-<_Sample size (IND)_> 		     </_Sample size (IND)_>
+<_Sample size (HH)_> 			6,763 </_Sample size (HH)_>
+<_Sample size (IND)_> 		    36,693 </_Sample size (IND)_>
 <_Sampling method_> 			A stratified two-stage probability sample design
 								used with census blocks as PSUs and housing units
 								as secondary and final sampling units. </_Sampling method_>
@@ -96,8 +96,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	*use "`path_in_stata'\lfsdata.dta", clear
-	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_1998_LFS\LKA_1998_LFS_v01_M\Data\Stata\lfsdata.dta", clear
+	use "`path_in_stata'\lfsdata.dta", clear
 	
 /*%%=============================================================================================
 	2: Survey & ID
@@ -325,8 +324,9 @@ In 1998, Northern and Eastern provinces were excluded.
 
 
 *<_subnatidsurvey_>	
-	decode sector, gen(sector_name)
-	egen subnatidsurvey=concat(subnatid2 sector_name), punct("-")
+	decode urban, gen(urban_name)
+	egen subnatidsurvey=concat(subnatid2 urban_name), punct("-")
+	replace subnatidsurvey="" if subnatidsurvey=="-"
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>                
 
@@ -895,7 +895,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_unempldur_l_>
-	gen byte unempldur_l=q27 if q27<97
+	gen byte unempldur_l=q27
 	replace unempldur_l=. if age<minlaborage
 	replace unempldur_l=. if lstatus!=2
 	label var unempldur_l "Unemployment duration (months) lower bracket"
@@ -903,7 +903,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_unempldur_u_>
-	gen byte unempldur_u=q27 if q27<97
+	gen byte unempldur_u=q27 
 	replace unempldur_u=. if age<minlaborage
 	replace unempldur_u=. if lstatus!=2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
@@ -1825,7 +1825,6 @@ compress
 
 *<_% SAVE_>
 
-*save "`path_output'\\`level_2_harm'_ALL.dta", replace
-save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_1998_LFS\LKA_1998_LFS_v01_M_v01_A_GLD\Data\Harmonized\LKA_1998_LFS_v01_M_v01_A_GLD_ALL.dta",replace
+save "`path_output'\\`level_2_harm'_ALL.dta", replace
 
 *</_% SAVE_>
