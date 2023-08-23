@@ -22,7 +22,7 @@
 								Can be downloaded from http://nada.statistics.gov.lk/index.php/catalog but 
 								with only 25% of the full file through registration. 
 <_Sample size (HH)_> 			15,116 </_Sample size (HH)_>
-<_Sample size (IND)_> 		    68,485 </_Sample size (IND)_>
+<_Sample size (IND)_> 		    68,489 </_Sample size (IND)_>
 <_Sampling method_> 			A stratified two-stage probability sample design
 								used with census blocks as PSUs and housing units
 								as secondary and final sampling units. </_Sampling method_>
@@ -96,7 +96,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	use "`path_in_stata'\lfsdata.dta", clear
+	use "`path_in_stata'\lfs1996_orig", clear
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -868,7 +868,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_unempldur_l_>
-	gen byte unempldur_l=q27 if q27<97
+	gen byte unempldur_l=q27 
 	replace unempldur_l=. if age<minlaborage
 	replace unempldur_l=. if lstatus!=2
 	label var unempldur_l "Unemployment duration (months) lower bracket"
@@ -876,7 +876,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_unempldur_u_>
-	gen byte unempldur_u=q27 if q27<97
+	gen byte unempldur_u=q27 
 	replace unempldur_u=. if age<minlaborage
 	replace unempldur_u=. if lstatus!=2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
