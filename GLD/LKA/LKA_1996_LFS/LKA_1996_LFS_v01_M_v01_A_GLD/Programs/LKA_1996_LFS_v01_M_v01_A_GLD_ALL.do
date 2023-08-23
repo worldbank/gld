@@ -21,7 +21,7 @@
 								Data was acquired internally through I2D2.</_Source of dataset_>
 								Can be downloaded from http://nada.statistics.gov.lk/index.php/catalog but 
 								with only 25% of the full file through registration. 
-<_Sample size (HH)_> 			15,115 </_Sample size (HH)_>
+<_Sample size (HH)_> 			15,116 </_Sample size (HH)_>
 <_Sample size (IND)_> 		    68,485 </_Sample size (IND)_>
 <_Sampling method_> 			A stratified two-stage probability sample design
 								used with census blocks as PSUs and housing units
@@ -96,7 +96,9 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	use "`path_in_stata'\lfsdata.dta", clear
+	*use "`path_in_stata'\lfsdata.dta", clear
+	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_1996_LFS\LKA_1996_LFS_v01_M\Data\Stata\lfs1996_orig.dta", clear
+
 	
 /*%%=============================================================================================
 	2: Survey & ID
@@ -189,9 +191,9 @@ local out_file "`level_2_harm'_ALL.dta"
 		tostring `v', gen(`v'_str) format(%02.0f)
 	}	
 	tostring hhid, gen(hhid_orig) format(%03.0f)
-	tostring block, gen(block_str) format(%03.0f)
+	tostring psu_no, gen(psu_no_str) format(%03.0f)
 	rename hhid hid
-	egen hhid=concat(month_str sector_str district_str block_str hhid_orig)
+	egen hhid=concat(month_str sector_str district_str psu_no_str hhid_orig)
 	label var hhid "Household id"
 *</_hhid_>
 
@@ -201,14 +203,13 @@ local out_file "`level_2_harm'_ALL.dta"
 /*<_pid_note_>
 
 Duplicates in terms of hhid p1
-
 --------------------------------------
    copies | observations       surplus
 ----------+---------------------------
         1 |        68475             0
         2 |           10             5
+        4 |            4             3
 --------------------------------------
-
 
 Within the same household there are duplicated household IDs
 
@@ -229,7 +230,7 @@ Within the same household there are duplicated household IDs
 
 
 *<_psu_>
-	egen psu=concat(month_str sector_str district_str block_str)
+	egen psu=concat(month_str sector_str district_str psu_no_str)
 	label var psu "Primary sampling units"
 *</_psu_>
 
@@ -249,7 +250,7 @@ Within the same household there are duplicated household IDs
 *<_wave_>
 	gen wave=.
 	replace wave=1 if month==1
-	replace wave=2 if month==3
+	replace wave=2 if month==4
 	replace wave=3 if month==7
 	replace wave=4 if month==10
 	label var wave "Survey wave"
@@ -325,8 +326,9 @@ In 1996, Northern and Eastern provinces were excluded.
 
 
 *<_subnatidsurvey_>	
-	decode sector, gen(sector_name)
-	egen subnatidsurvey=concat(subnatid2 sector_name), punct("-")
+	decode urban, gen(urban_name)
+	egen subnatidsurvey=concat(subnatid2 urban_name), punct("-")
+	replace subnatidsurvey="" if subnatidsurvey=="-"
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>                
 
@@ -446,7 +448,7 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 
 *<_marital_>
-	gen byte marital=maritals 
+	gen byte marital=p8 
 	recode marital (1=2) (2=1) (3=5) (5=4)
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
@@ -745,6 +747,15 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 {
 
 *<_vocational_>
+
+/*<_vocational_note_>
+
+Original variables P13-P17 are supposed to be questions about vocational training.
+However, the categorization of binary questions does not seem right.
+The whole section's variables and their categories see dubious so we did not code this section.
+
+*<_vocational_note_>*/
+
 	gen vocational=.
 	replace vocational=. if age<10
 	la de vocationallbl 1 "Yes" 0 "No"
@@ -1789,6 +1800,7 @@ compress
 
 *<_% SAVE_>
 
-save "`path_output'\\`level_2_harm'_ALL.dta", replace
+*save "`path_output'\\`level_2_harm'_ALL.dta", replace
+save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_1996_LFS\LKA_1996_LFS_v01_M_v01_A_GLD\Data\Harmonized\LKA_1996_LFS_v01_M_v01_A_GLD_ALL.dta",replace
 
 *</_% SAVE_>
