@@ -780,6 +780,8 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 
 *<_vocational_>
 	gen vocational=.
+	replace vocational=1 if p14==1
+	replace vocational=0 if p14==2
 	replace vocational=. if age<10
 	la de vocationallbl 1 "Yes" 0 "No"
 	la values vocational vocationallbl
@@ -796,14 +798,14 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 
 
 *<_vocational_length_l_>
-	gen vocational_length_l=.
+	gen vocational_length_l=p17
 	replace vocational_length_l=. if age<10|vocational!=1
 	label var vocational_length_l "Length of training in months, lower limit"
 *</_vocational_length_l_>
 
 
 *<_vocational_length_u_>
-	gen vocational_length_u=.
+	gen vocational_length_u=p17
 	replace vocational_length_l=. if age<10|vocational!=1
 	label var vocational_length_u "Length of training in months, upper limit"
 *</_vocational_length_u_>
@@ -947,7 +949,7 @@ Original variable q9C only has two categories: public vs. private
 
 
 *<_industrycat_isic_>
-	gen industrycat_isic=""
+	gen industrycat_isic=""	
 	replace industrycat_isic="" if industrycat_isic=="."
 	replace industrycat_isic="" if lstatus!=1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
