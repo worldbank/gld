@@ -395,21 +395,21 @@ are under 18 year old and thus are not assigned household heads.
 
 . list hhid olderest if olderest<18
 
-       +--------------+
-       |         hhid |
-       |--------------|
-14241. | 020324156108 |
-17590. | 040205087047 |
-17873. | 040207037075 |
-20551. | 040223050038 |
-       |--------------|
-22377. | 050101260088 |
-       |--------------|
-22856. | 050105063008 |
-40714. | 080205122064 |
-56810. | 110218399143 |
-       +--------------+
-	   
+       +-------------------------+
+       |         hhid   olderest |
+       |-------------------------|
+14241. | 020324156108         15 |
+17590. | 040205087047         17 |
+17873. | 040207037075         15 |
+20551. | 040223050038         17 |
+       |-------------------------|
+22377. | 050101260088         11 |
+       |-------------------------|
+22856. | 050105063008         13 |
+40714. | 080205122064         17 |
+56810. | 110218399143         16 |
+       +-------------------------+
+
 *<_relationharm_note>*/
 
 	gen byte relationharm=p3
@@ -428,6 +428,8 @@ are under 18 year old and thus are not assigned household heads.
 	bys hhid: egen pidmin=min(newp1)
 	replace relationharm=1 if relationharm!=6&headsum==0&p1==1&age>17
 	replace relationharm=1 if headsum==0&newp1==pidmin&age>17&relationharm!=5
+	gen close_rel=1 if inrange(relationharm,1,4)&headsum==0
+	bys hhid: egen closemin=min(newp1)
 	replace head=1 if relationharm==1
 	bys hhid: egen headsum0=total(head)
 	
@@ -436,6 +438,8 @@ are under 18 year old and thus are not assigned household heads.
 	replace relationharm=1 if headsum0==0&count==1&olderest>17&!mi(olderest)
 	replace head=1 if relationharm==1
 	bys hhid: egen headsum1=to
+	
+
 	
 	gen relationcs=p3
 	label var relationcs "Relationship to the head of household - Country original"
