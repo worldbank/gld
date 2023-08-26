@@ -21,8 +21,8 @@
 								Data was acquired internally through I2D2.</_Source of dataset_>
 								Can be downloaded from http://nada.statistics.gov.lk/index.php/catalog but 
 								with only 25% of the full file through registration. 
-<_Sample size (HH)_> 			 </_Sample size (HH)_>
-<_Sample size (IND)_> 		     </_Sample size (IND)_>
+<_Sample size (HH)_> 			13,402 </_Sample size (HH)_>
+<_Sample size (IND)_> 		    59,480 </_Sample size (IND)_>
 <_Sampling method_> 			A stratified two-stage probability sample design
 								used with census blocks as PSUs and housing units
 								as secondary and final sampling units. </_Sampling method_>
@@ -96,8 +96,8 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	*use "`path_in_stata'\lfsdata.dta", clear
-	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_1999_LFS\LKA_1999_LFS_v01_M\Data\Stata\lfsdata.dta", clear
+	use "`path_in_stata'\lfsdata.dta", clear
+
 /*%%=============================================================================================
 	2: Survey & ID
 ================================================================================================*/
@@ -628,7 +628,7 @@ are under 18 year old and thus are not assigned household heads.
 /*<_educy_note_>
 
 Original categorization of the highest educational level ever attended of 
-variable educattn is:
+variable edu is:
 
 0 Studying Year 1
 1 Passed Year 1
@@ -658,13 +658,13 @@ Attendance at school or other educational institution
 5. Does not attend 
 
 *<_educy_note_>*/
-
+	gen edu=edu if !inlist(edu,17,18,22,51,99)
 	gen byte educy=.
-	replace educy=educattn if inrange(educattn,0,13)
-	replace educy=16 if educattn==14
-	replace educy=18 if educattn==15
-	replace educy=19 if educattn==16
-	replace educy=0 if educattn==19
+	replace educy=edu if inrange(edu,0,13)
+	replace educy=16 if edu==14
+	replace educy=18 if edu==15
+	replace educy=19 if edu==16
+	replace educy=0 if edu==19
 	replace educy=. if age<ed_mod_age
 	replace educy=. if educy>age & !mi(educy) & !mi(age)
 	label var educy "Years of education"
@@ -673,13 +673,13 @@ Attendance at school or other educational institution
 
 *<_educat7_>
 	gen byte educat7=.
-	replace educat7=1 if educattn==19
-	replace educat7=2 if inrange(educattn,0,4)
-	replace educat7=3 if educattn==5
-	replace educat7=4 if inrange(educattn,6,10)
-	replace educat7=5 if educattn==11
-	replace educat7=6 if inrange(educattn,12,14)
-	replace educat7=7 if inlist(educattn,15,16)
+	replace educat7=1 if edu==19
+	replace educat7=2 if inrange(edu,0,4)
+	replace educat7=3 if edu==5
+	replace educat7=4 if inrange(edu,6,10)
+	replace educat7=5 if edu==11
+	replace educat7=6 if inrange(edu,12,14)
+	replace educat7=7 if inlist(edu,15,16)
 	replace educat7=. if age<ed_mod_age
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
@@ -711,25 +711,25 @@ Attendance at school or other educational institution
 
 /*<_educat_orig_note_>
 
-Kindly note that the original educat variable educattn only has 18 categorise
+Kindly note that the original educat variable edu only has 18 categorise
 although it actually has 20 categorise in the raw dataset.
 Category 17 and 18 are mistaken.
 
 *<_educat_orig_note_>*/
 
-	gen educat_orig=educattn
+	gen educat_orig=edu
 	label var educat_orig "Original survey education code"
 *</_educat_orig_>
 
 
 *<_educat_isced_>
 	gen educat_isced=.
-	replace educat_isced=100 if inrange(educattn,0,5)
-	replace educat_isced=244 if inrange(educattn,6,9)
-	replace educat_isced=343 if educattn==10|educattn==11
-	replace educat_isced=344 if educattn==12|educattn==13
-	replace educat_isced=660 if educattn==18
-	replace educat_isced=760 if educattn==19
+	replace educat_isced=100 if inrange(edu,0,5)
+	replace educat_isced=244 if inrange(edu,6,9)
+	replace educat_isced=343 if edu==10|edu==11
+	replace educat_isced=344 if edu==12|edu==13
+	replace educat_isced=660 if edu==18
+	replace educat_isced=760 if edu==19
 	replace educat_isced=. if age<ed_mod_age
 	label var educat_isced "ISCED standardised level of education"
 *</_educat_isced_>
@@ -878,7 +878,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_unempldur_l_>
-	gen byte unempldur_l=q27 if q27<97
+	gen byte unempldur_l=q27 
 	replace unempldur_l=. if age<minlaborage
 	replace unempldur_l=. if lstatus!=2
 	label var unempldur_l "Unemployment duration (months) lower bracket"
@@ -886,7 +886,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_unempldur_u_>
-	gen byte unempldur_u=q27 if q27<97
+	gen byte unempldur_u=q27
 	replace unempldur_u=. if age<minlaborage
 	replace unempldur_u=. if lstatus!=2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
