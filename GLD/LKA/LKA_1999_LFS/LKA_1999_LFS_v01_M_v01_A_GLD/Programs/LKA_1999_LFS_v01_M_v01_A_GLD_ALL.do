@@ -418,7 +418,6 @@ are under 18 year old and thus are not assigned household heads.
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm lblrelationharm
 	
-	replace relationharm=5 if pid=="010102071005-01"
 	gen head=1 if relationharm==1
 	bys hhid: egen headsum=total(head)
 	gen relative=1 if inrange(relationharm,1,5)
@@ -428,19 +427,27 @@ are under 18 year old and thus are not assigned household heads.
 	bys hhid: egen pidmin=min(newp1)
 	replace relationharm=1 if relationharm!=6&headsum==0&p1==1&age>17
 	replace relationharm=1 if headsum==0&newp1==pidmin&age>17&relationharm!=5
-	gen close_rel=1 if inrange(relationharm,1,4)&headsum==0
-	bys hhid: egen closemin=min(newp1)
 	replace head=1 if relationharm==1
 	bys hhid: egen headsum0=total(head)
+
+	gen close_rel=1 if inrange(relationharm,1,4)&headsum0==0
+	bys hhid close_rel: egen closemin=min(relationharm)
+	replace closemin=. if close_rel!=1
+	replace relationharm=1 if headsum0==0&relationharm==closemin&age>17&!inlist(pid,"070125074003-04", "080203156088-03")
+	replace relationharm=1 if inlist(pid, "020221076033-01", "080201279202-01")
 	
-	gsort hhid relationharm -age
-	bys hhid: gen count=_n
-	replace relationharm=1 if headsum0==0&count==1&olderest>17&!mi(olderest)
 	replace head=1 if relationharm==1
-	bys hhid: egen headsum1=to
+	bys hhid: egen headsum1=total(head)
+	bys hhid relationharm: egen headmin=min(newp1)
+	replace relationharm=5 if headsum1>1&head==1&newp1!=headmin
+	replace head=. if relationharm!=1
+	bys hhid: egen headsum2=total(head)
+	replace relationharm=5 if inlist(hhid, "020324156108", "040207037075", "080205122064")
+	drop head-headsum2
+*<_relationharm_>
 	
 
-	
+*<_relationcs_>
 	gen relationcs=p3
 	label var relationcs "Relationship to the head of household - Country original"
 *</_relationcs_>
