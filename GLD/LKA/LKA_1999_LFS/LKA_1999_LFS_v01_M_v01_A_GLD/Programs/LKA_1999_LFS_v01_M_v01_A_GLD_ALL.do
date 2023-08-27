@@ -442,7 +442,7 @@ are under 18 year old and thus are not assigned household heads.
 	replace relationharm=5 if headsum1>1&head==1&newp1!=headmin
 	replace head=. if relationharm!=1
 	bys hhid: egen headsum2=total(head)
-	replace relationharm=5 if inlist(hhid, "020324156108", "040207037075", "080205122064")
+	replace relationharm=5 if inlist(hhid, "020324156108", "040207037075", "080205122064")&relationharm==1
 	drop head-headsum2
 *<_relationharm_>
 	
