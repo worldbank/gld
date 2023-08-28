@@ -4,7 +4,7 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				LKA_1999_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
+<_Program name_>				LKA_2000_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata SE 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
 <_Date created_>				2023-08-22 </_Date created_>
@@ -12,7 +12,7 @@
 <_Country_>						Sri Lanka (LKA) </_Country_>
 <_Survey Title_>				National Labour Force Survey </_Survey Title_>
 <_Survey Year_>					2000 </_Survey Year_>
-<_Study ID_>					LKA_1999_LFS_v01_M </_Study ID_>
+<_Study ID_>					LKA_2000_LFS_v01_M </_Study ID_>
 <_Data collection from (M/Y)_>	[Jan/2000] </_Data collection from (M/Y)_>
 <_Data collection to (M/Y)_>	[Nov/2000] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			Survey conducted by LKA Department of 
