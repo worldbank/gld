@@ -665,7 +665,7 @@ Attendance at school or other educational institution
 5. Does not attend 
 
 *<_educy_note_>*/
-	gen edu=educattn if !inlist(edu,17,18,22,51,99)
+	gen edu=educattn if !inlist(educattn,17,18,22,51,99)
 	gen byte educy=.
 	replace educy=edu if inrange(edu,0,13)
 	replace educy=16 if edu==14

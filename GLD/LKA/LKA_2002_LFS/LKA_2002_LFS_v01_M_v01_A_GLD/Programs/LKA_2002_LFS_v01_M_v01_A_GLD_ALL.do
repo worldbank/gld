@@ -404,16 +404,17 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 /*<_relationharm_note>
 
-4 households originally do not have household heads and their olderest hh members 
+5 households originally do not have household heads and their olderest hh members 
 are under 18 year old and thus are not assigned household heads.
 
 Household id |      Freq.      Olderest
 -------------+-------------------------
-070101025016 |          5        8     
-070207053065 |          2       17     
-100218021057 |          1        7     
-110119034006 |          3       17   
--------------+-------------------------
+010181001002 |          3       13      
+020313024117 |          2       17     
+040281024046 |          2       10      
+080261098064 |          2       10     
+100171070026 |          2       16     
+-------------+---------------------------
 
 *<_relationharm_note>*/
 
@@ -439,7 +440,7 @@ Household id |      Freq.      Olderest
 	bys hhid close_rel: egen closemin=min(relationharm)
 	replace closemin=. if close_rel!=1
 	replace relationharm=1 if headsum0==0&relationharm==closemin&age>17
-	replace relationharm=1 if inlist(pid, "070203186106-01", "070220207071-01", "080204098056-01", "100118196022-01")
+	replace relationharm=1 if inlist(pid, "050111062042-01", "110212154197-01")
 	
 	replace head=1 if relationharm==1
 	bys hhid: egen headsum1=total(head)
@@ -447,7 +448,7 @@ Household id |      Freq.      Olderest
 	replace relationharm=5 if headsum1>1&head==1&newp1!=headmin
 	replace head=. if relationharm!=1
 	bys hhid: egen headsum2=total(head)
-	replace relationharm=5 if hhid=="070207053065"&relationharm==1
+	replace relationharm=5 if inlist(hhid,"020313024117", "080261098064")&relationharm==1
 	drop head-headsum2
 *<_relationharm_>
 	
@@ -459,7 +460,7 @@ Household id |      Freq.      Olderest
 
 
 *<_marital_>
-	gen byte marital=maritals 
+	gen byte marital=maritals if inrange(maritals,1,5)
 	recode marital (1=2) (2=1) (3=5) (5=4)
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
@@ -663,7 +664,7 @@ Attendance at school or other educational institution
 5. Does not attend 
 
 *<_educy_note_>*/
-	gen edu=educattn if !inlist(edu,17,18,45)
+	gen edu=educattn if !inlist(educattn,17,18,21,22,35,55,72,88,99)
 	gen byte educy=.
 	replace educy=edu if inrange(edu,0,13)
 	replace educy=16 if edu==14
