@@ -4,25 +4,25 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				LKA_2001_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
+<_Program name_>				LKA_2002_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata SE 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
-<_Date created_>				2023-08-27 </_Date created_>
+<_Date created_>				2023-08-28 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						Sri Lanka (LKA) </_Country_>
 <_Survey Title_>				National Labour Force Survey </_Survey Title_>
-<_Survey Year_>					2001 </_Survey Year_>
-<_Study ID_>					LKA_2001_LFS_v01_M </_Study ID_>
-<_Data collection from (M/Y)_>	[Jan/2001] </_Data collection from (M/Y)_>
-<_Data collection to (M/Y)_>	[Nov/2001] </_Data collection to (M/Y)_>
+<_Survey Year_>					2002 </_Survey Year_>
+<_Study ID_>					LKA_2002_LFS_v01_M </_Study ID_>
+<_Data collection from (M/Y)_>	[Jan/2002] </_Data collection from (M/Y)_>
+<_Data collection to (M/Y)_>	[Nov/2002] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			Survey conducted by LKA Department of 
 								Census and Statistics, 
 								Ministry Policy Planning and Implementation;
 								Data was acquired internally through I2D2.</_Source of dataset_>
 								Can be downloaded from http://nada.statistics.gov.lk/index.php/catalog but 
 								with only 25% of the full file through registration. 
-<_Sample size (HH)_> 			10,205 </_Sample size (HH)_>
-<_Sample size (IND)_> 		    44,610 </_Sample size (IND)_>
+<_Sample size (HH)_> 			 </_Sample size (HH)_>
+<_Sample size (IND)_> 		     </_Sample size (IND)_>
 <_Sampling method_> 			A stratified two-stage probability sample design
 								used with census blocks as PSUs and housing units
 								as secondary and final sampling units. </_Sampling method_>
@@ -72,7 +72,7 @@ set mem 800m
 * Define path sections
 local server  "Y:\GLD-Harmonization\573465_JT"
 local country "LKA"
-local year    "2001"
+local year    "2002"
 local survey  "LFS"
 local vermast "V01"
 local veralt  "V01"
@@ -97,7 +97,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * harmonized output in a single file
 
 	*use "`path_in_stata'\lfsdata.dta", clear
-	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2001_LFS\LKA_2001_LFS_v01_M\Data\Stata\lfsdata.dta", clear
+	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2002_LFS\LKA_2002_LFS_v01_M\Data\Stata\lfsdata.dta", clear
 
 
 /*%%=============================================================================================
@@ -199,6 +199,20 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_pid_>
+
+/*<_pid_note_>
+
+Duplicates in terms of hhid p1
+
+--------------------------------------
+   copies | observations       surplus
+----------+---------------------------
+        1 |        58592             0
+        2 |           12             6
+--------------------------------------
+
+*<_pid_note_>*/
+
 	gsort hhid -age
 	bys hhid: gen newp1=_n
 	tostring newp1, gen(str_pid) format(%02.0f)
@@ -232,13 +246,6 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_wave_>
-
-/*<_wave_note_>
-
-The raw data does not have quarter 2.
-
-*<_wave_note_>*/
-
 	gen wave=.
 	replace wave=1 if inrange(int_month,1,2)
 	replace wave=2 if inrange(int_month,4,5)
@@ -280,11 +287,11 @@ The raw data does not have quarter 2.
 
 /*<_subnatid1_note_>
 
-In 2001, Northern and Eastern provinces were excluded.
+In 2002, Northern and Eastern provinces were excluded.
 
 *<_subnatid1_note_>*/
 	gen subnatid1_num=district
-	recode subnatid1_num (1/3=1) (4/6=2) (7/9=3) (10/14=4) (15/17=5) (18/19=6) (20/21=7) (22/23=8) (24/25=9)
+	recode subnatid1_num (11/13=1) (21/23=2) (31/33=3) (61/62=4) (71/72=7) (81/82=8) (91/92=9)
 	gen subnatid1=""
 	replace subnatid1="1 - Western" if subnatid1_num==1
 	replace subnatid1="2 - Central" if subnatid1_num==2
@@ -301,7 +308,6 @@ In 2001, Northern and Eastern provinces were excluded.
 
 *<_subnatid2_>
 	gen subnatid2_num=district
-	recode subnatid2_num (1=11) (2=12) (3=13) (4=21) (5=22) (6=23) (7=31) (8=32) (9=33) (18=61) (19=62) (20=71) (21=72) (22=81) (23=82) (24=91) (25=92)
 	label de lblsubnatid2 11 "11-Colombo" 12 "12-Gampaha" 13 "13-Kalutara" 21 "21-Kandy" 22 "22-Matale" 23 "23-Nuwara Eliya" 31 "31-Galle" 32 "32-Matara" 33 "33-Hambantota" 41 "41-Jaffna" 42 "42-Kilinochchi" 43 "43-Mannar" 51 "51-Batticaloa" 53 "53-Trincomalee" 61 "61-Kurunegala" 62 "62-Puttalam" 71 "71-Anradhapura" 72 "72-Polonnaruwa" 81 "81-Badulla" 82 "82-Moneragala" 91 "91-Ratnapura" 92 "92-Kegalle"
 	label values subnatid2_num lblsubnatid2
 	decode (subnatid2_num), gen(subnatid2)
@@ -1808,7 +1814,7 @@ compress
 *<_% SAVE_>
 
 *save "`path_output'\\`level_2_harm'_ALL.dta", replace
-	save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2001_LFS\LKA_2001_LFS_v01_M_v01_A_GLD\Data\Harmonized\LKA_2001_LFS_v01_M_v01_A_GLD_ALL.dta",replace
+	save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2002_LFS\LKA_2002_LFS_v01_M_v01_A_GLD\Data\Harmonized\LKA_2002_LFS_v01_M_v01_A_GLD_ALL.dta",replace
 
 
 *</_% SAVE_>
