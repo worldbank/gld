@@ -4,25 +4,25 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				LKA_1999_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
+<_Program name_>				LKA_2001_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata SE 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
-<_Date created_>				2023-08-22 </_Date created_>
+<_Date created_>				2023-08-27 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						Sri Lanka (LKA) </_Country_>
 <_Survey Title_>				National Labour Force Survey </_Survey Title_>
-<_Survey Year_>					2000 </_Survey Year_>
-<_Study ID_>					LKA_1999_LFS_v01_M </_Study ID_>
-<_Data collection from (M/Y)_>	[Jan/2000] </_Data collection from (M/Y)_>
-<_Data collection to (M/Y)_>	[Nov/2000] </_Data collection to (M/Y)_>
+<_Survey Year_>					2001 </_Survey Year_>
+<_Study ID_>					LKA_2001_LFS_v01_M </_Study ID_>
+<_Data collection from (M/Y)_>	[Jan/2001] </_Data collection from (M/Y)_>
+<_Data collection to (M/Y)_>	[Nov/2001] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			Survey conducted by LKA Department of 
 								Census and Statistics, 
 								Ministry Policy Planning and Implementation;
 								Data was acquired internally through I2D2.</_Source of dataset_>
 								Can be downloaded from http://nada.statistics.gov.lk/index.php/catalog but 
 								with only 25% of the full file through registration. 
-<_Sample size (HH)_> 			13,319 </_Sample size (HH)_>
-<_Sample size (IND)_> 		    58,604 </_Sample size (IND)_>
+<_Sample size (HH)_> 			10,205 </_Sample size (HH)_>
+<_Sample size (IND)_> 		    44,610 </_Sample size (IND)_>
 <_Sampling method_> 			A stratified two-stage probability sample design
 								used with census blocks as PSUs and housing units
 								as secondary and final sampling units. </_Sampling method_>
@@ -72,7 +72,7 @@ set mem 800m
 * Define path sections
 local server  "Y:\GLD-Harmonization\573465_JT"
 local country "LKA"
-local year    "2000"
+local year    "2001"
 local survey  "LFS"
 local vermast "V01"
 local veralt  "V01"
@@ -97,7 +97,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * harmonized output in a single file
 
 	*use "`path_in_stata'\lfsdata.dta", clear
-	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2000_LFS\LKA_2000_LFS_v01_M\Data\Stata\lfsdata.dta", clear
+	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2001_LFS\LKA_2001_LFS_v01_M\Data\Stata\lfsdata.dta", clear
 
 
 /*%%=============================================================================================
@@ -199,21 +199,6 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_pid_>
-
-/*<_pid_note_>
-
-
-Duplicates in terms of hhid p1
-
---------------------------------------
-   copies | observations       surplus
-----------+---------------------------
-        1 |        58592             0
-        2 |           12             6
---------------------------------------
-
-*<_pid_note_>*/
-
 	gsort hhid -age
 	bys hhid: gen newp1=_n
 	tostring newp1, gen(str_pid) format(%02.0f)
@@ -247,6 +232,13 @@ Duplicates in terms of hhid p1
 
 
 *<_wave_>
+
+/*<_wave_note_>
+
+The raw data does not have quarter 2.
+
+*<_wave_note_>*/
+
 	gen wave=.
 	replace wave=1 if inrange(int_month,1,2)
 	replace wave=2 if inrange(int_month,4,5)
@@ -288,7 +280,7 @@ Duplicates in terms of hhid p1
 
 /*<_subnatid1_note_>
 
-In 2000, Northern and Eastern provinces were excluded.
+In 2001, Northern and Eastern provinces were excluded.
 
 *<_subnatid1_note_>*/
 	gen subnatid1_num=district
@@ -406,18 +398,16 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 /*<_relationharm_note>
 
-5 households originally do not have household heads and their olderest hh members 
+4 households originally do not have household heads and their olderest hh members 
 are under 18 year old and thus are not assigned household heads.
 
-
-Household id |      Freq.   olderest
--------------+-----------------------
-020203059046 |          2       17    
-040218360119 |          2       16     
-050306014076 |          2       10      
-070218283098 |          2       17      
-070222176088 |          1       16    
--------------+-----------------------
+Household id |      Freq.      Olderest
+-------------+-------------------------
+070101025016 |          5        8     
+070207053065 |          2       17     
+100218021057 |          1        7     
+110119034006 |          3       17   
+-------------+-------------------------
 
 *<_relationharm_note>*/
 
@@ -443,7 +433,7 @@ Household id |      Freq.   olderest
 	bys hhid close_rel: egen closemin=min(relationharm)
 	replace closemin=. if close_rel!=1
 	replace relationharm=1 if headsum0==0&relationharm==closemin&age>17
-	replace relationharm=1 if inlist(pid, "020101051030-01", "020218420111-01", "040205074037-02")
+	replace relationharm=1 if inlist(pid, "070203186106-01", "070220207071-01", "080204098056-01", "100118196022-01")
 	
 	replace head=1 if relationharm==1
 	bys hhid: egen headsum1=total(head)
@@ -451,7 +441,7 @@ Household id |      Freq.   olderest
 	replace relationharm=5 if headsum1>1&head==1&newp1!=headmin
 	replace head=. if relationharm!=1
 	bys hhid: egen headsum2=total(head)
-	replace relationharm=5 if hhid=="070222176088"&relationharm==1
+	replace relationharm=5 if hhid=="070207053065"&relationharm==1
 	drop head-headsum2
 *<_relationharm_>
 	
@@ -667,7 +657,7 @@ Attendance at school or other educational institution
 5. Does not attend 
 
 *<_educy_note_>*/
-	gen edu=edu if !inlist(edu,17,18,22,51,99)
+	gen edu=educattn if !inlist(edu,17,18,45)
 	gen byte educy=.
 	replace educy=edu if inrange(edu,0,13)
 	replace educy=16 if edu==14
@@ -1818,7 +1808,7 @@ compress
 *<_% SAVE_>
 
 *save "`path_output'\\`level_2_harm'_ALL.dta", replace
-	save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2000_LFS\LKA_2000_LFS_v01_M_v01_A_GLD\Data\Harmonized\LKA_2000_LFS_v01_M_v01_A_GLD_ALL.dta",replace
+	save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2001_LFS\LKA_2001_LFS_v01_M_v01_A_GLD\Data\Harmonized\LKA_2001_LFS_v01_M_v01_A_GLD_ALL.dta",replace
 
 
 *</_% SAVE_>
