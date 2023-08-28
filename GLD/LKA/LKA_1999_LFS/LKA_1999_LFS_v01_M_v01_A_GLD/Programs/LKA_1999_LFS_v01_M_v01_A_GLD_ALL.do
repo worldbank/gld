@@ -16,7 +16,7 @@
 <_Data collection from (M/Y)_>	[Jan/1999] </_Data collection from (M/Y)_>
 <_Data collection to (M/Y)_>	[Nov/1999] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			Survey conducted by LKA Department of 
-								Census and Statistics, 
+								Census and Statistics,
 								Ministry Policy Planning and Implementation;
 								Data was acquired internally through I2D2.</_Source of dataset_>
 								Can be downloaded from http://nada.statistics.gov.lk/index.php/catalog but 
@@ -658,7 +658,7 @@ Attendance at school or other educational institution
 5. Does not attend 
 
 *<_educy_note_>*/
-	gen edu=edu if !inlist(edu,17,18,22,51,99)
+	gen edu=educattn if !inlist(edu,17,18,22,51,99)
 	gen byte educy=.
 	replace educy=edu if inrange(edu,0,13)
 	replace educy=16 if edu==14

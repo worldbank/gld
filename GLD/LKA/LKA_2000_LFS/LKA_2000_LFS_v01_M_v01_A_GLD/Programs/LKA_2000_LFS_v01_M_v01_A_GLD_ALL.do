@@ -7,7 +7,7 @@
 <_Program name_>				LKA_2000_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata SE 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
-<_Date created_>				2023-08-22 </_Date created_>
+<_Date created_>				2023-08-24 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						Sri Lanka (LKA) </_Country_>
 <_Survey Title_>				National Labour Force Survey </_Survey Title_>
@@ -665,7 +665,7 @@ Attendance at school or other educational institution
 5. Does not attend 
 
 *<_educy_note_>*/
-	gen edu=edu if !inlist(edu,17,18,22,51,99)
+	gen edu=educattn if !inlist(edu,17,18,22,51,99)
 	gen byte educy=.
 	replace educy=edu if inrange(edu,0,13)
 	replace educy=16 if edu==14
