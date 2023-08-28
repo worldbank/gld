@@ -1,7 +1,7 @@
 
 ********************************************************************************
 ********************************************************************************
-* GLD checking latest version   											   *
+* GLD checking latest version   					     ***
 ********************************************************************************
 ********************************************************************************
 
@@ -9,8 +9,8 @@
 * The function takes in a path ot a csv file and checks whether the surveys listed 
 * are indeed the latest available
 
-capture program drop gld_check_latest2
-program define gld_check_latest2
+capture program drop gld_check_latest
+program define gld_check_latest
 {
 
 syntax, filepath(str) [countries(str)]
