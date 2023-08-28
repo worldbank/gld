@@ -91,7 +91,7 @@ This output is followed by a blank line (filled with `************`) to symbolis
 Note that if we pass one of the countries in the list of surveys as argument, the list of GLD surveys will not contain the surveys already in the user-provided list. In the below example, where Pakistan was passed as the country argument (`countries(PAK)`), the 2018 LFS survey (green box) is among the ones from the CSV file (noted as "up to date"). The user list also has a made-up 2017 "FAKE" survey. We can see that the function has listed a 2017 GLD survey (red box) as this was not covered by the list.
 
 <br></br>
-![Example of function output 3](utilities/final_output_ccc.PNG)
+![Example of function output 3](utilities/pak_example.PNG)
 <br></br>
 
 
