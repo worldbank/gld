@@ -745,7 +745,7 @@ foreach v of local ed_var {
 	gen byte lstatus = .
 	replace lstatus=1 if s2_01==1
 	replace lstatus=1 if inrange(s2_02,1,6)
-	replace lstatus=1 if inrange(s2_03,1,7)
+	replace lstatus=1 if inrange(s2_03,1,9)
 	replace lstatus=2 if s2_04==1 & s2_05==1
 	replace lstatus=3 if missing(lstatus)
 	replace lstatus = . if age < minlaborage
