@@ -26,13 +26,14 @@
 <_Sampling method_> 			A stratified two-stage probability sample design
 								used with census psus as PSUs and housing units
 								as secondary and final sampling units. </_Sampling method_>
-<_Geographic coverage_> 		7 provinces devided into urban and rural areas 
+<_Geographic coverage_> 		8 provinces devided into urban and rural areas 
 								and the greater colombo area. Northern
 								province was excluded. </_Geographic coverage_>
-								17 districts:
+								20 districts:
 								- Greater Colombo (Colombo MC+Dehiwela-Mt.Lavinia MC+Kotte UC)
 								- Western Province (Remainder)
 								- Southern Province
+								- Eastern Province
 								- North Western Province
 								- North Central Province
 								- Uva Province
