@@ -97,7 +97,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * harmonized output in a single file
 
 	use "`path_in_stata'\lfsdata.dta", clear
-
+	
 /*%%=============================================================================================
 	2: Survey & ID
 ================================================================================================*/
@@ -147,7 +147,8 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_year_>
-	*gen intyear=`year'
+	drop year
+	gen int year=`year'
 	label var year "Year of survey"
 *</_year_>
 
