@@ -14,7 +14,7 @@
 <_Survey Year_>					2004 </_Survey Year_>
 <_Study ID_>					LKA_2004_LFS_v01_M </_Study ID_>
 <_Data collection from (M/Y)_>	[Jan/2004] </_Data collection from (M/Y)_>
-<_Data collection to (M/Y)_>	[Nov/2004] </_Data collection to (M/Y)_>
+<_Data collection to (M/Y)_>	[Dec/2004] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			Survey conducted by LKA Department of 
 								Census and Statistics, 
 								Ministry Policy Planning and Implementation;
