@@ -21,18 +21,20 @@
 								Data was acquired internally through I2D2.</_Source of dataset_>
 								Can be downloaded from http://nada.statistics.gov.lk/index.php/catalog but 
 								with only 25% of the full file through registration. 
-<_Sample size (HH)_> 			 </_Sample size (HH)_>
+<_Sample size (HH)_> 			22,579 </_Sample size (HH)_>
 <_Sample size (IND)_> 		     </_Sample size (IND)_>
 <_Sampling method_> 			A stratified two-stage probability sample design
 								used with census psus as PSUs and housing units
 								as secondary and final sampling units. </_Sampling method_>
 <_Geographic coverage_> 		7 provinces devided into urban and rural areas 
-								and the greater colombo area. Northern
-								province was excluded. </_Geographic coverage_>
-								17 districts:
+								and the greater colombo area. All provinces were
+								covered since 2004. </_Geographic coverage_>
+								25 districts:
 								- Greater Colombo (Colombo MC+Dehiwela-Mt.Lavinia MC+Kotte UC)
 								- Western Province (Remainder)
 								- Southern Province
+								- Northern Province
+								- eASTERN pROVINCE
 								- North Western Province
 								- North Central Province
 								- Uva Province
@@ -96,8 +98,8 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	*use "`path_in_stata'\lfsdata.dta", clear
-	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2004_LFS\LKA_2004_LFS_v01_M\Data\Stata\lfsdata.dta", clear
+	*use "`path_in_stata'\lfsdata_orig.dta", clear
+	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2004_LFS\LKA_2004_LFS_v01_M\Data\Stata\lfsdata_orig.dta", clear
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -136,14 +138,14 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_isco_version_>
-	*gen isco_version="isco_1988"
-	*label var isco_version "Version of ISCO used"
+	gen isco_version=""
+	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
 
 *<_isic_version_>
-	*gen isic_version="isic_3"
-	*label var isic_version "Version of ISIC used"
+	gen isic_version=""
+	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
 
@@ -286,11 +288,12 @@ Duplicates in terms of hhid person
 
 /*<_subnatid1_note_>
 
-In 2004, only Northern province was excluded.
+All provinces, including Northern and Eastern provinces that have been 
+previously excluded were included since 2004.
 
 *<_subnatid1_note_>*/
 	gen subnatid1_num=district
-	recode subnatid1_num (11/13=1) (21/23=2) (31/33=3) (61/62=4) (51/53=5) (71/72=7) (81/82=8) (91/92=9)
+	recode subnatid1_num (11/13=1) (21/23=2) (31/33=3) (41/45=4) (51/53=5) (61/62=6) (71/72=7) (81/82=8) (91/92=9)
 	gen subnatid1=""
 	replace subnatid1="1 - Western" if subnatid1_num==1
 	replace subnatid1="2 - Central" if subnatid1_num==2
@@ -307,7 +310,7 @@ In 2004, only Northern province was excluded.
 
 *<_subnatid2_>
 	gen subnatid2_num=district
-	label de lblsubnatid2 11 "11-Colombo" 12 "12-Gampaha" 13 "13-Kalutara" 21 "21-Kandy" 22 "22-Matale" 23 "23-Nuwara Eliya" 31 "31-Galle" 32 "32-Matara" 33 "33-Hambantota" 41 "41-Jaffna" 42 "42-Kilinochchi" 43 "43-Mannar" 51 "51-Batticaloa" 52 "52-Ampara" 53 "53-Trincomalee" 61 "61-Kurunegala" 62 "62-Puttalam" 71 "71-Anradhapura" 72 "72-Polonnaruwa" 81 "81-Badulla" 82 "82-Moneragala" 91 "91-Ratnapura" 92 "92-Kegalle"
+	label de lblsubnatid2 11 "11-Colombo" 12 "12-Gampaha" 13 "13-Kalutara" 21 "21-Kandy" 22 "22-Matale" 23 "23-Nuwara Eliya" 31 "31-Galle" 32 "32-Matara" 33 "33-Hambantota" 41 "41-Jaffna" 42 "42-Kilinochchi" 43 "43-Mannar" 44 "44-Vavuniya" 45 "45-Mullaituvu" 51 "51-Batticaloa" 52 "52-Ampara" 53 "53-Trincomalee" 61 "61-Kurunegala" 62 "62-Puttalam" 71 "71-Anradhapura" 72 "72-Polonnaruwa" 81 "81-Badulla" 82 "82-Moneragala" 91 "91-Ratnapura" 92 "92-Kegalle"
 	label values subnatid2_num lblsubnatid2
 	decode (subnatid2_num), gen(subnatid2)
 	label var subnatid2 "Subnational ID at Second Administrative Level"
@@ -415,7 +418,7 @@ Household id |      Freq.      Olderest
 080252045030 |          1       16     
 090162075013 |          2       15     
 090212136033 |          2       16       
-090391111111 |          1       4    
+090391111111 |          2       4    
 -------------+---------------------------
 
 *<_relationharm_note>*/
@@ -433,8 +436,12 @@ Household id |      Freq.      Olderest
 	bys hhid: egen any=total(relative)
 	bys hhid: egen olderest=max(age) if !mi(age)&relationharm!=6
 	bys hhid: egen pidmin=min(newp1)
+	gen nohead=1 if inlist(hhid, "020211029104", "050111078087", /// 
+								 "060252036052", "070262062078", ///
+								 "080252045030", "090162075013", ///
+								 "090212136033", "090391111111") 
 	replace relationharm=1 if relationharm!=6&headsum==0&person==1&age>17
-	replace relationharm=1 if headsum==0&newp1==pidmin&age>17&relationharm!=5
+	replace relationharm=1 if headsum==0&newp1==pidmin&age>17&relationharm!=5&nohead!=1
 	replace head=1 if relationharm==1
 	bys hhid: egen headsum0=total(head)
 
@@ -442,7 +449,7 @@ Household id |      Freq.      Olderest
 	bys hhid close_rel: egen closemin=min(relationharm)
 	replace closemin=. if close_rel!=1
 	replace relationharm=1 if headsum0==0&relationharm==closemin&age>17
-	replace relationharm=1 if headsum0==0&newp1==pidmin&!inlist(hhid, "040221039033", "060123039001", "020211029104", "060261090055", "0070161102018", "090162075013", "090261147125")
+	replace relationharm=1 if headsum0==0&newp1==pidmin&olderest>17&nohead!=1
 	
 	replace head=1 if relationharm==1
 	bys hhid: egen headsum1=total(head)
@@ -450,7 +457,7 @@ Household id |      Freq.      Olderest
 	replace relationharm=5 if headsum1>1&head==1&newp1!=headmin
 	replace head=. if relationharm!=1
 	bys hhid: egen headsum2=total(head)
-	replace relationharm=5 if inlist(hhid,"050111078087", "060252036052", "070262062078", "080252045030", "090391111111")&relationharm==1
+	replace relationharm=5 if nohead==1&relationharm==1
 	drop head-headsum2
 *<_relationharm_>
 	
@@ -719,9 +726,9 @@ Attendance at school or other educational institution
 
 /*<_educat_orig_note_>
 
-Kindly note that the original educat variable edu only has 18 categorise
+Kindly note that the original educat variable edu only has 22 categorise
 although it actually has 20 categorise in the raw dataset.
-Category 17 and 18 are mistaken.
+Category 17, 18, 20 and 21 are mistaken.
 
 *<_educat_orig_note_>*/
 
@@ -770,8 +777,8 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 
 *<_vocational_>
 	gen vocational=.
-	*replace vocational=1 if p13==1
-	*replace vocational=0 if p13==2
+	replace vocational=1 if p13==1
+	replace vocational=0 if p13==2
 	replace vocational=. if age<10
 	la de vocationallbl 1 "Yes" 0 "No"
 	la values vocational vocationallbl
@@ -788,14 +795,14 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 
 
 *<_vocational_length_l_>
-	*gen vocational_length_l=p17
+	gen vocational_length_l=p17
 	replace vocational_length_l=. if age<10|vocational!=1
 	label var vocational_length_l "Length of training in months, lower limit"
 *</_vocational_length_l_>
 
 
 *<_vocational_length_u_>
-	*gen vocational_length_u=p17
+	gen vocational_length_u=p17
 	replace vocational_length_l=. if age<10|vocational!=1
 	label var vocational_length_u "Length of training in months, upper limit"
 *</_vocational_length_u_>
@@ -831,8 +838,8 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 {	
 *<_lstatus_>
 	gen byte lstatus=.
-	replace lstatus=1 if q2==1|q3==1|q6==1
-	replace lstatus=2 if q2==2&q3==2&q4==1&q5==1
+	replace lstatus=1 if worked==1|q3==1|q6==1
+	replace lstatus=2 if worked==2&q3==2&q4==1&q5==1
 	replace lstatus=3 if lstatus==. 
 	replace lstatus=. if age<minlaborage
 	label var lstatus "Labor status"
@@ -1028,7 +1035,7 @@ has answers of yes or no. No numbers of the in-kind value.
 
 *<_wage_no_compen_note_>*/
 
-	gen double wage_no_compen=q40a
+	gen double wage_no_compen=earnings
 	recode wage_no_compen 9999=.
 	replace wage_no_compen=0 if empstat==2
 	replace wage_no_compen=. if lstatus!=1
@@ -1121,13 +1128,6 @@ has answers of yes or no. No numbers of the in-kind value.
 
 {
 *<_empstat_2_>
-
-/*<_empstat_2_note_>
-
-The original variable q18d has other mistaken categories such as 0, and 5-8.
-
-*<_empstat_2_note_>*/
-
 	gen byte empstat_2=q18d if inrange(q18d,1,4)
 	recode empstat_2 (2=3) (3=4) (4=2) 
 	replace empstat_2=. if lstatus!=1|q17!=1
