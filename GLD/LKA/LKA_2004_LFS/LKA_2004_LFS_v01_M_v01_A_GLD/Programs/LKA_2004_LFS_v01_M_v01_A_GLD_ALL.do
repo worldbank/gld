@@ -22,7 +22,7 @@
 								Can be downloaded from http://nada.statistics.gov.lk/index.php/catalog but 
 								with only 25% of the full file through registration. 
 <_Sample size (HH)_> 			22,579 </_Sample size (HH)_>
-<_Sample size (IND)_> 		     </_Sample size (IND)_>
+<_Sample size (IND)_> 		    93,252 </_Sample size (IND)_>
 <_Sampling method_> 			A stratified two-stage probability sample design
 								used with census psus as PSUs and housing units
 								as secondary and final sampling units. </_Sampling method_>
@@ -98,8 +98,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	*use "`path_in_stata'\lfsdata_orig.dta", clear
-	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2004_LFS\LKA_2004_LFS_v01_M\Data\Stata\lfsdata_orig.dta", clear
+	use "`path_in_stata'\lfsdata_orig.dta", clear
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -1844,7 +1843,6 @@ compress
 
 *<_% SAVE_>
 
-*save "`path_output'\\`level_2_harm'_ALL.dta", replace
-save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2004_LFS\LKA_2004_LFS_v01_M_v01_A_GLD\Data\Harmonized\LKA_2004_LFS_v01_M_v01_A_GLD_ALL.dta",replace
+save "`path_output'\\`level_2_harm'_ALL.dta", replace
 
 *</_% SAVE_>
