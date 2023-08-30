@@ -4,25 +4,25 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				LKA_2003_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
+<_Program name_>				LKA_2004_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata SE 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
-<_Date created_>				2023-08-28 </_Date created_>
+<_Date created_>				2023-08-29 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						Sri Lanka (LKA) </_Country_>
 <_Survey Title_>				National Labour Force Survey </_Survey Title_>
-<_Survey Year_>					2003 </_Survey Year_>
-<_Study ID_>					LKA_2003_LFS_v01_M </_Study ID_>
-<_Data collection from (M/Y)_>	[Jan/2003] </_Data collection from (M/Y)_>
-<_Data collection to (M/Y)_>	[Nov/2003] </_Data collection to (M/Y)_>
+<_Survey Year_>					2004 </_Survey Year_>
+<_Study ID_>					LKA_2004_LFS_v01_M </_Study ID_>
+<_Data collection from (M/Y)_>	[Jan/2004] </_Data collection from (M/Y)_>
+<_Data collection to (M/Y)_>	[Nov/2004] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			Survey conducted by LKA Department of 
 								Census and Statistics, 
 								Ministry Policy Planning and Implementation;
 								Data was acquired internally through I2D2.</_Source of dataset_>
 								Can be downloaded from http://nada.statistics.gov.lk/index.php/catalog but 
 								with only 25% of the full file through registration. 
-<_Sample size (HH)_> 			16,235 </_Sample size (HH)_>
-<_Sample size (IND)_> 		    67,204 </_Sample size (IND)_>
+<_Sample size (HH)_> 			 </_Sample size (HH)_>
+<_Sample size (IND)_> 		     </_Sample size (IND)_>
 <_Sampling method_> 			A stratified two-stage probability sample design
 								used with census psus as PSUs and housing units
 								as secondary and final sampling units. </_Sampling method_>
@@ -72,7 +72,7 @@ set mem 800m
 * Define path sections
 local server  "Y:\GLD-Harmonization\573465_JT"
 local country "LKA"
-local year    "2003"
+local year    "2004"
 local survey  "LFS"
 local vermast "V01"
 local veralt  "V01"
@@ -96,7 +96,8 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	use "`path_in_stata'\lfsdata.dta", clear
+	*use "`path_in_stata'\lfsdata.dta", clear
+	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2004_LFS\LKA_2004_LFS_v01_M\Data\Stata\lfsdata.dta", clear
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -135,14 +136,14 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_isco_version_>
-	gen isco_version="isco_1988"
-	label var isco_version "Version of ISCO used"
+	*gen isco_version="isco_1988"
+	*label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
 
 *<_isic_version_>
-	gen isic_version="isic_3"
-	label var isic_version "Version of ISIC used"
+	*gen isic_version="isic_3"
+	*label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
 
@@ -189,10 +190,10 @@ local out_file "`level_2_harm'_ALL.dta"
 	foreach v of varlist month sector district {
 		tostring `v', gen(`v'_str) format(%02.0f)
 	}	
-	tostring hhn, gen(hhn_orig) format(%03.0f)
-	tostring psu, gen(psu_str) format(%03.0f)
-	egen hhid=concat(month_str sector_str district_str psu_str hhn_orig)
-	label var hhn "Household id"
+	tostring hhno, gen(hhno_orig) format(%03.0f)
+	tostring blockno, gen(block_str) format(%03.0f)
+	egen hhid=concat(month_str sector_str district_str block_str hhno_orig)
+	label var hhno "Household id"
 *</_hhid_>
 
 
@@ -200,18 +201,18 @@ local out_file "`level_2_harm'_ALL.dta"
 
 /*<_pid_note_>
 
-Duplicates in terms of hhid p1
+Duplicates in terms of hhid person
 
 --------------------------------------
    copies | observations       surplus
 ----------+---------------------------
-        1 |        66868             0
-        2 |          336           168
+        1 |        93239             0
+        2 |           12             6
 --------------------------------------
 
 *<_pid_note_>*/
 
-	gsort hhid -p5
+	gsort hhid -age
 	bys hhid: gen newp1=_n
 	tostring newp1, gen(str_pid) format(%02.0f)
 	egen pid=concat(hhid str_pid), punct("-")
@@ -220,14 +221,13 @@ Duplicates in terms of hhid p1
 
 
 *<_weight_>
-	gen weight=infla
+	*gen weight=.
 	label var weight "Household sampling weight"
 *</_weight_>
 
 
 *<_psu_>
-	rename psu blockn
-	egen psu=concat(month_str sector_str district_str psu_str)
+	egen psu=concat(month_str sector_str district_str block_str)
 	label var psu "Primary sampling units"
 *</_psu_>
 
@@ -246,10 +246,10 @@ Duplicates in terms of hhid p1
 
 *<_wave_>
 	gen wave=.
-	replace wave=1 if inrange(int_month,1,2)
-	replace wave=2 if inrange(int_month,4,5)
-	replace wave=3 if inrange(int_month,7,8)
-	replace wave=4 if inrange(int_month,10,11)
+	replace wave=1 if inrange(int_month,1,3)
+	replace wave=2 if inrange(int_month,4,6)
+	replace wave=3 if inrange(int_month,7,9)
+	replace wave=4 if inrange(int_month,10,12)
 	label var wave "Survey wave"
 *</_wave_>
 
@@ -286,7 +286,7 @@ Duplicates in terms of hhid p1
 
 /*<_subnatid1_note_>
 
-In 2003, only Northern province was excluded.
+In 2004, only Northern province was excluded.
 
 *<_subnatid1_note_>*/
 	gen subnatid1_num=district
@@ -384,14 +384,14 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 
 *<_age_>
-	gen age=p5
+	*gen age=.
 	replace age=98 if age>98 & age!=.
 	label var age "Individual age"
 *</_age_>
 
 
 *<_male_>
-	gen male=p4 if inrange(p4,1,2)
+	gen male=sex if inrange(sex,1,2)
 	recode male 2=0
 	label var male "Sex - Ind is male"
 	la de lblmale 1 "Male" 0 "Female"
@@ -403,21 +403,24 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 /*<_relationharm_note>
 
-5 households originally do not have household heads and their olderest hh members 
+8 households originally do not have household heads and their olderest hh members 
 are under 18 year old and thus are not assigned household heads.
 
 Household id |      Freq.      Olderest
 -------------+-------------------------
-020221027131 |          2         14      
-040251019048 |          1         16      
-050152027007 |          1         16      
-070252040064 |          2         14      
-070253027026 |          2         11     
+020211029104 |          3       15       
+050111078087 |          2       17       
+060252036052 |          1       14       
+070262062078 |          1       12      
+080252045030 |          1       16     
+090162075013 |          2       15     
+090212136033 |          2       16       
+090391111111 |          1       4    
 -------------+---------------------------
 
 *<_relationharm_note>*/
 
-	gen byte relationharm=p3
+	gen byte relationharm=rel
 	recode relationharm (7/9=6)
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
@@ -430,7 +433,7 @@ Household id |      Freq.      Olderest
 	bys hhid: egen any=total(relative)
 	bys hhid: egen olderest=max(age) if !mi(age)&relationharm!=6
 	bys hhid: egen pidmin=min(newp1)
-	replace relationharm=1 if relationharm!=6&headsum==0&p1==1&age>17
+	replace relationharm=1 if relationharm!=6&headsum==0&person==1&age>17
 	replace relationharm=1 if headsum==0&newp1==pidmin&age>17&relationharm!=5
 	replace head=1 if relationharm==1
 	bys hhid: egen headsum0=total(head)
@@ -439,7 +442,7 @@ Household id |      Freq.      Olderest
 	bys hhid close_rel: egen closemin=min(relationharm)
 	replace closemin=. if close_rel!=1
 	replace relationharm=1 if headsum0==0&relationharm==closemin&age>17
-	replace relationharm=1 if headsum0==0&newp1==pidmin&!inlist(hhid, "020221027131", "040251019048", "050152027007", "070252040064", "070253027026")
+	replace relationharm=1 if headsum0==0&newp1==pidmin&!inlist(hhid, "040221039033", "060123039001", "020211029104", "060261090055", "0070161102018", "090162075013", "090261147125")
 	
 	replace head=1 if relationharm==1
 	bys hhid: egen headsum1=total(head)
@@ -447,19 +450,19 @@ Household id |      Freq.      Olderest
 	replace relationharm=5 if headsum1>1&head==1&newp1!=headmin
 	replace head=. if relationharm!=1
 	bys hhid: egen headsum2=total(head)
-	replace relationharm=5 if inlist(hhid,"020221027131", "040251019048", "050152027007", "070252040064", "070253027026")&relationharm==1
+	replace relationharm=5 if inlist(hhid,"050111078087", "060252036052", "070262062078", "080252045030", "090391111111")&relationharm==1
 	drop head-headsum2
 *<_relationharm_>
 	
 
 *<_relationcs_>
-	gen relationcs=p3
+	gen relationcs=rel
 	label var relationcs "Relationship to the head of household - Country original"
 *</_relationcs_>
 
 
 *<_marital_>
-	gen byte marital=p8 if inrange(p8,1,5)
+	gen byte marital=marstat if inrange(marstat,1,5)
 	recode marital (1=2) (2=1) (3=5) (5=4)
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
@@ -610,8 +613,8 @@ Household id |      Freq.      Olderest
 
 *<_school_>
 	gen school=.
-	replace school=0 if p12==5
-	replace school=1 if inrange(p12,1,4)
+	replace school=0 if attendance==5
+	replace school=1 if inrange(attendance,1,4)
 	replace school=. if age<ed_mod_age & age!=.
 	label var school "Attending school"
 	la de lblschool 0 "No" 1 "Yes"
@@ -663,7 +666,7 @@ Attendance at school or other educational institution
 5. Does not attend 
 
 *<_educy_note_>*/
-	gen edu=p11 if !inlist(p11,17,18)
+	gen edu=educ if !inlist(educ,17,18)
 	gen byte educy=.
 	replace educy=edu if inrange(edu,0,13)
 	replace educy=16 if edu==14
@@ -763,13 +766,12 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 	7: Training
 ================================================================================================*/
 
-
 {
 
 *<_vocational_>
 	gen vocational=.
-	replace vocational=1 if p13==1
-	replace vocational=0 if p13==2
+	*replace vocational=1 if p13==1
+	*replace vocational=0 if p13==2
 	replace vocational=. if age<10
 	la de vocationallbl 1 "Yes" 0 "No"
 	la values vocational vocationallbl
@@ -786,14 +788,14 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 
 
 *<_vocational_length_l_>
-	gen vocational_length_l=p17
+	*gen vocational_length_l=p17
 	replace vocational_length_l=. if age<10|vocational!=1
 	label var vocational_length_l "Length of training in months, lower limit"
 *</_vocational_length_l_>
 
 
 *<_vocational_length_u_>
-	gen vocational_length_u=p17
+	*gen vocational_length_u=p17
 	replace vocational_length_l=. if age<10|vocational!=1
 	label var vocational_length_u "Length of training in months, upper limit"
 *</_vocational_length_u_>
@@ -1842,6 +1844,7 @@ compress
 
 *<_% SAVE_>
 
-save "`path_output'\\`level_2_harm'_ALL.dta", replace
+*save "`path_output'\\`level_2_harm'_ALL.dta", replace
+save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2004_LFS\LKA_2004_LFS_v01_M_v01_A_GLD\Data\Harmonized\LKA_2004_LFS_v01_M_v01_A_GLD_ALL.dta",replace
 
 *</_% SAVE_>
