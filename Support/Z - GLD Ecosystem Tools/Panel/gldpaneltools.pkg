@@ -1,5 +1,5 @@
-v 7.2
-d iefieldkit. DIME Analytics iefieldkit public beta
-d DIME Analytics, World Bank Group, Development Economics Research
+v 1.1
+d gldpaneltools World Bank
+d Jobs Group, World Bank
 f /ado/create_panel_var.ado
 f /ado/append_check.ado
