@@ -135,13 +135,13 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_isco_version_>
-	gen isco_version="isco_1988"
+	gen isco_version=""
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
 
 *<_isic_version_>
-	gen isic_version="isic_3"
+	gen isic_version=""
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
@@ -721,7 +721,7 @@ Attendance at school or other educational institution
 
 Kindly note that the original educat variable edu only has 18 categorise
 although it actually has 20 categorise in the raw dataset.
-Category 17 and 18 are mistaken.
+Category 17, 18, and 21 are mistaken.
 
 *<_educat_orig_note_>*/
 
@@ -1108,13 +1108,6 @@ has answers of yes or no. No numbers of the in-kind value.
 
 {
 *<_empstat_2_>
-
-/*<_empstat_2_note_>
-
-The original variable q18D has other mistaken categories such as 0, and 5-8.
-
-*<_empstat_2_note_>*/
-
 	gen byte empstat_2=q18D if inrange(q18D,1,4)
 	recode empstat_2 (2=3) (3=4) (4=2) 
 	replace empstat_2=. if lstatus!=1|q17!=1

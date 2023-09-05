@@ -97,7 +97,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * harmonized output in a single file
 
 	use "`path_in_stata'\lfs1996_orig", clear
-
+	
 /*%%=============================================================================================
 	2: Survey & ID
 ================================================================================================*/
@@ -135,13 +135,13 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_isco_version_>
-	gen isco_version="isco_1988"
+	gen isco_version=""
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
 
 *<_isic_version_>
-	gen isic_version="isic_3"
+	gen isic_version=""
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 

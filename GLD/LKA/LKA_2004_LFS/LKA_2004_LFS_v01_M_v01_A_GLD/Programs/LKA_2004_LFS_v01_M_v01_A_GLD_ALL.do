@@ -726,7 +726,7 @@ Attendance at school or other educational institution
 /*<_educat_orig_note_>
 
 Kindly note that the original educat variable edu only has 22 categorise
-although it actually has 20 categorise in the raw dataset.
+although it actually has 22 categorise in the raw dataset.
 Category 17, 18, 20 and 21 are mistaken.
 
 *<_educat_orig_note_>*/

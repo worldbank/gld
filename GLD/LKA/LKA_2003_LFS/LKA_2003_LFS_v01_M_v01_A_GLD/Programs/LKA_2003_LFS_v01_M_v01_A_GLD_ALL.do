@@ -98,7 +98,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * harmonized output in a single file
 
 	use "`path_in_stata'\lfsdata.dta", clear
-
+	
 /*%%=============================================================================================
 	2: Survey & ID
 ================================================================================================*/
@@ -1120,13 +1120,6 @@ has answers of yes or no. No numbers of the in-kind value.
 
 {
 *<_empstat_2_>
-
-/*<_empstat_2_note_>
-
-The original variable q18d has other mistaken categories such as 0, and 5-8.
-
-*<_empstat_2_note_>*/
-
 	gen byte empstat_2=q18d if inrange(q18d,1,4)
 	recode empstat_2 (2=3) (3=4) (4=2) 
 	replace empstat_2=. if lstatus!=1|q17!=1
