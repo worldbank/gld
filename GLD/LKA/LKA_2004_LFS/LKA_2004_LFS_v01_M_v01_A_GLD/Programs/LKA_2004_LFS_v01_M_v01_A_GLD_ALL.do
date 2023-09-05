@@ -26,15 +26,15 @@
 <_Sampling method_> 			A stratified two-stage probability sample design
 								used with census psus as PSUs and housing units
 								as secondary and final sampling units. </_Sampling method_>
-<_Geographic coverage_> 		7 provinces devided into urban and rural areas 
+<_Geographic coverage_> 		9 provinces devided into urban and rural areas 
 								and the greater colombo area. All provinces were
-								covered since 2004. </_Geographic coverage_>
-								25 districts:
+								covered in 2004. </_Geographic coverage_>
+								25 districts in:
 								- Greater Colombo (Colombo MC+Dehiwela-Mt.Lavinia MC+Kotte UC)
 								- Western Province (Remainder)
 								- Southern Province
 								- Northern Province
-								- eASTERN pROVINCE
+								- Eastern Province
 								- North Western Province
 								- North Central Province
 								- Uva Province
@@ -194,7 +194,7 @@ local out_file "`level_2_harm'_ALL.dta"
 	tostring hhno, gen(hhno_orig) format(%03.0f)
 	tostring blockno, gen(block_str) format(%03.0f)
 	egen hhid=concat(month_str sector_str district_str block_str hhno_orig)
-	label var hhno "Household id"
+	label var hhid "Household id"
 *</_hhid_>
 
 
