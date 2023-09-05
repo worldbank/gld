@@ -19,10 +19,10 @@
 	global helper "C:\Users\IrIs_\Documents\WB_gld\Support\D - Q Checks\Single survey checks\Helper_programs_1.5" 
 		
 	** Path to GLD data file            <-- INPUT -- 
-	global mydata "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2003_LFS\LKA_2003_LFS_v01_M_v01_A_GLD\Data\Harmonized\LKA_2003_LFS_v01_M_v01_A_GLD_ALL" 
+	global mydata "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2004_LFS\LKA_2004_LFS_v01_M_v01_A_GLD\Data\Harmonized\LKA_2004_LFS_v01_M_v01_A_GLD_ALL" 
 	
 	** Choose output folder             <-- INPUT --
-	global output "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2003_LFS\LKA_2003_LFS_v01_M_v01_A_GLD\Work"
+	global output "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2004_LFS\LKA_2004_LFS_v01_M_v01_A_GLD\Work"
 	
 		
 *-- Step - 3 Run the quality checks -----------------------------------------------*
