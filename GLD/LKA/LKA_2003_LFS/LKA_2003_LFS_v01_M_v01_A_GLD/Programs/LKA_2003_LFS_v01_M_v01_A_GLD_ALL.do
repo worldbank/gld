@@ -193,7 +193,7 @@ local out_file "`level_2_harm'_ALL.dta"
 	tostring hhn, gen(hhn_orig) format(%03.0f)
 	tostring psu, gen(psu_str) format(%03.0f)
 	egen hhid=concat(month_str sector_str district_str psu_str hhn_orig)
-	label var hhn "Household id"
+	label var hhid "Household id"
 *</_hhid_>
 
 
