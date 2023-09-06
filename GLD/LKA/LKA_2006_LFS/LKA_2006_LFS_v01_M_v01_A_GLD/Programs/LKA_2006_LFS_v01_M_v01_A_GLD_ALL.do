@@ -96,8 +96,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	*use "`path_in_stata'\lfsdata_orig.dta", clear
-use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2006_LFS\LKA_2006_LFS_v01_M\Data\Stata\DataOrig.dta", clear
+	use "`path_in_stata'\lfsdata_orig.dta", clear
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -416,6 +415,26 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 
 *<_relationharm_>
+
+/*<_relationharm_note_>
+
+8 households originally do not have household heads and their olderest hh members 
+are under 18 year old and thus are not assigned household heads.
+
+Household   ID    |      Freq.      Olderest
+------------------+-------------------------
+01026200410040040 |          1        17
+04022103910041041 |          3        16
+04023302308018018 |          2        15   
+05011206607017017 |          1        16 
+10027107605025025 |          3        16
+11026114101001001 |          4        17
+11026114107007007 |          2        15
+11026115103104104 |          4        17
+------------------+---------------------------
+
+*<_relationharm_note_>*/
+
 	gen byte relationharm=p3
 	recode relationharm (7/9=6)
 	label var relationharm "Relationship to the head of household - Harmonized"
@@ -425,48 +444,31 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 	
 	gen head=1 if relationharm==1
 	bys hhid: egen headsum=total(head)
-	gen relative=1 if inrange(relationharm,1,5)
-	replace relative=0 if relative!=1
-	bys hhid: egen any=total(relative)
 	bys hhid: egen pidmin=min(newp1)
 	bys hhid: egen olderest=max(age) if !mi(age)&relationharm!=6
-	gen changehh=1 if age<18&relationharm==1&age!=olderest
-	bys hhid: egen modify=max(changehh)
 
-	gen nohead=1 if inlist(hhid, "020211029104", "050111078087", /// 
-								 "060252036052", "070262062078", ///
-								 "080252045030", "090162075013", ///
-								 "090212136033", "090391111111") 
-	replace relationharm=1 if relationharm!=6&headsum==0&person==1&age>17
-	replace relationharm=1 if headsum==0&newp1==pidmin&age>17&relationharm!=5&nohead!=1
-	replace head=1 if relationharm==1
-	bys hhid: egen headsum0=total(head)
-
-	gen close_rel=1 if inrange(relationharm,1,4)&headsum0==0
-	bys hhid close_rel: egen closemin=min(relationharm)
-	replace closemin=. if close_rel!=1
-	replace relationharm=1 if headsum0==0&relationharm==closemin&age>17
-	replace relationharm=1 if headsum0==0&newp1==pidmin&olderest>17&nohead!=1
+	gen nohead=1 if inlist(hhid, "01026200410040040", "04022103910041041", /// 
+								 "04023302308018018", "05011206607017017", ///
+								 "10027107605025025", "11026114101001001", ///
+								 "11026114107007007", "11026115103104104") 
 	
-	replace head=1 if relationharm==1
-	bys hhid: egen headsum1=total(head)
 	bys hhid relationharm: egen headmin=min(newp1)
-	replace relationharm=5 if headsum1>1&head==1&newp1!=headmin
+	replace relationharm=5 if headsum>1&head==1&newp1!=headmin
 	replace head=. if relationharm!=1
-	bys hhid: egen headsum2=total(head)
+	bys hhid: egen headsum0=total(head)
 	replace relationharm=5 if nohead==1&relationharm==1
-	drop head-headsum2
+	drop head-headsum0
 *<_relationharm_>
 	
 
 *<_relationcs_>
-	gen relationcs=rel
+	gen relationcs=p3
 	label var relationcs "Relationship to the head of household - Country original"
 *</_relationcs_>
 
 
 *<_marital_>
-	gen byte marital=marstat if inrange(marstat,1,5)
+	gen byte marital=p8 if inrange(p8,1,5)
 	recode marital (1=2) (2=1) (3=5) (5=4)
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
@@ -617,8 +619,8 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 *<_school_>
 	gen school=.
-	replace school=0 if attendance==5
-	replace school=1 if inrange(attendance,1,4)
+	replace school=0 if p10==5
+	replace school=1 if inrange(p10,1,4)
 	replace school=. if age<ed_mod_age & age!=.
 	label var school "Attending school"
 	la de lblschool 0 "No" 1 "Yes"
@@ -628,6 +630,8 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 *<_literacy_>
 	gen byte literacy=.
+	replace literacy=1 if p11==1|p12==1|p13==1
+	replace literacy=0 if p11!=1&p12!=1&p13!=1
 	replace literacy=. if age<ed_mod_age & age!=.
 	label var literacy "Individual can read & write"
 	la de lblliteracy 0 "No" 1 "Yes"
@@ -661,7 +665,7 @@ variable edu is:
 16 Post Graduate Degree/Diploma --- 19 years
 19 No shcooling
 
-The other education-related variable is p12:
+The other education-related variable is p10:
 Attendance at school or other educational institution
 1. School
 2. University
@@ -670,13 +674,12 @@ Attendance at school or other educational institution
 5. Does not attend 
 
 *<_educy_note_>*/
-	gen edu=educ if !inlist(educ,17,18)
-	gen byte educy=.
-	replace educy=edu if inrange(edu,0,13)
-	replace educy=16 if edu==14
-	replace educy=18 if edu==15
-	replace educy=19 if edu==16
-	replace educy=0 if edu==19
+	gen byte educy=p9
+	replace educy=p9 if inrange(p9,0,13)
+	replace educy=16 if p9==14
+	replace educy=18 if p9==15
+	replace educy=19 if p9==16
+	replace educy=0 if p9==19
 	replace educy=. if age<ed_mod_age
 	replace educy=. if educy>age & !mi(educy) & !mi(age)
 	label var educy "Years of education"
@@ -685,13 +688,13 @@ Attendance at school or other educational institution
 
 *<_educat7_>
 	gen byte educat7=.
-	replace educat7=1 if edu==19
-	replace educat7=2 if inrange(edu,0,4)
-	replace educat7=3 if edu==5
-	replace educat7=4 if inrange(edu,6,10)
-	replace educat7=5 if edu==11
-	replace educat7=6 if inrange(edu,12,14)
-	replace educat7=7 if inlist(edu,15,16)
+	replace educat7=1 if p9==19
+	replace educat7=2 if inrange(p9,0,4)
+	replace educat7=3 if p9==5
+	replace educat7=4 if inrange(p9,6,10)
+	replace educat7=5 if p9==11
+	replace educat7=6 if inrange(p9,12,14)
+	replace educat7=7 if inlist(p9,15,16)
 	replace educat7=. if age<ed_mod_age
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
@@ -720,28 +723,19 @@ Attendance at school or other educational institution
 
 
 *<_educat_orig_>
-
-/*<_educat_orig_note_>
-
-Kindly note that the original educat variable edu only has 22 categorise
-although it actually has 22 categorise in the raw dataset.
-Category 17, 18, 20 and 21 are mistaken.
-
-*<_educat_orig_note_>*/
-
-	gen educat_orig=edu
+	gen educat_orig=p9
 	label var educat_orig "Original survey education code"
 *</_educat_orig_>
 
 
 *<_educat_isced_>
 	gen educat_isced=.
-	replace educat_isced=100 if inrange(edu,0,5)
-	replace educat_isced=244 if inrange(edu,6,9)
-	replace educat_isced=343 if edu==10|edu==11
-	replace educat_isced=344 if edu==12|edu==13
-	replace educat_isced=660 if edu==18
-	replace educat_isced=760 if edu==19
+	replace educat_isced=100 if inrange(p9,0,5)
+	replace educat_isced=244 if inrange(p9,6,9)
+	replace educat_isced=343 if p9==10|p9==11
+	replace educat_isced=344 if p9==12|p9==13
+	replace educat_isced=660 if p9==18
+	replace educat_isced=760 if p9==19
 	replace educat_isced=. if age<ed_mod_age
 	label var educat_isced "ISCED standardised level of education"
 *</_educat_isced_>
@@ -774,9 +768,6 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 
 *<_vocational_>
 	gen vocational=.
-	replace vocational=1 if p13==1
-	replace vocational=0 if p13==2
-	replace vocational=. if age<10
 	la de vocationallbl 1 "Yes" 0 "No"
 	la values vocational vocationallbl
 	label var vocational "Ever received vocational training"
@@ -792,22 +783,22 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 
 
 *<_vocational_length_l_>
-	gen vocational_length_l=p17
-	replace vocational_length_l=. if age<10|vocational!=1
+	gen vocational_length_l=.
+	replace vocational_length_l=. if vocational!=1
 	label var vocational_length_l "Length of training in months, lower limit"
 *</_vocational_length_l_>
 
 
 *<_vocational_length_u_>
-	gen vocational_length_u=p17
-	replace vocational_length_l=. if age<10|vocational!=1
+	gen vocational_length_u=.
+	replace vocational_length_l=. if vocational!=1
 	label var vocational_length_u "Length of training in months, upper limit"
 *</_vocational_length_u_>
 
 
 *<_vocational_field_orig_>
 	gen vocational_field_orig=.
-	replace vocational_field_orig=. if age<10|vocational!=1
+	replace vocational_field_orig=. if vocational!=1
 	label var vocational_field_orig "Original field of training information"
 *</_vocational_field_orig_>
 
@@ -835,8 +826,8 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 {	
 *<_lstatus_>
 	gen byte lstatus=.
-	replace lstatus=1 if worked==1|q3==1|q6==1
-	replace lstatus=2 if worked==2&q3==2&q4==1&q5==1
+	replace lstatus=1 if !mi(q7)
+	replace lstatus=2 if (q34==1&q37==1)|q33==3
 	replace lstatus=3 if lstatus==. 
 	replace lstatus=. if age<minlaborage
 	label var lstatus "Labor status"
@@ -851,14 +842,14 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 Note: var "potential_lf" only takes value if the respondent is not in labor force. (lstatus==3)
 
 "potential_lf"=1 if the person is
-1)available but not searching or q5==1 & q4==2
-2)searching but not immediately available to work or q5==2 & q4==1
+1)available but not searching or q37==1 & q34==2
+2)searching but not immediately available to work or q34==2 & q37==1
 
 </_potential_lf_note_>*/
 
 	gen potential_lf=.
-	replace potential_lf=1 if [q5==1 & q4==2] | [q5==2 & q4==1]
-	replace potential_lf=0 if [q5==1 & q4==1] | [q5==2 & q4==2]
+	replace potential_lf=1 if [q37==1 & q34==2] | [q34==2 & q37==1]
+	replace potential_lf=0 if [q37==1 & q34==1] | [q34==2 & q37==2]
 	replace potential_lf=. if age < minlaborage
 	replace potential_lf=. if lstatus!=3
 	label var potential_lf "Potential labour force status"
@@ -869,6 +860,8 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_underemployment_>
 	gen byte underemployment=.
+	replace underemployment=1 if q30==1
+	replace underemployment=0 if q30==2
 	replace underemployment=. if age<minlaborage
 	replace underemployment=. if lstatus!=1
 	label var underemployment "Underemployment status"
@@ -878,8 +871,8 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_nlfreason_>
-	gen byte nlfreason=q7
-	recode nlfreason (6=5)
+	gen byte nlfreason=q36
+	recode nlfreason (1/5 9=5) (6=2) (7=1)
 	replace nlfreason=. if age<minlaborage
 	replace nlfreason=. if lstatus!=3
 	label var nlfreason "Reason not in the labor force"
@@ -889,7 +882,8 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_unempldur_l_>
-	gen byte unempldur_l=q27 
+	gen byte unempldur_l=q44 
+	recode unempldur_l (2=6) (3=13)
 	replace unempldur_l=. if age<minlaborage
 	replace unempldur_l=. if lstatus!=2
 	label var unempldur_l "Unemployment duration (months) lower bracket"
@@ -897,7 +891,8 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_unempldur_u_>
-	gen byte unempldur_u=q27
+	gen byte unempldur_u=q44
+	recode unempldur_u (1=5) (2=12) 
 	replace unempldur_u=. if age<minlaborage
 	replace unempldur_u=. if lstatus!=2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
@@ -910,7 +905,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 {
 *<_empstat_>
-	gen byte empstat=q9d
+	gen byte empstat=q24
 	recode empstat (2=3) (3=4) (4=2)
 	replace empstat=. if lstatus!=1|age<minlaborage
 	label var empstat "Employment status during past week primary job 7 day recall"
@@ -920,14 +915,8 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_ocusec_>
-
-/*<_ocusec_note_>
-
-Original variable q9c only has two categories: public vs. private
-
-*<_ocusec_note_>*/
-
-	gen byte ocusec=q9c
+	gen byte ocusec=q13
+	recode ocusec (2=1) (3=2)
 	replace ocusec=. if lstatus!=1|age<minlaborage
 	label var ocusec "Sector of activity primary job 7 day recall"
 	la de lblocusec 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
@@ -936,7 +925,7 @@ Original variable q9c only has two categories: public vs. private
 
 
 *<_industry_orig_>
-	gen industry_orig=q9a
+	gen industry_orig=q8                                                                   
 	replace industry_orig=. if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
@@ -952,8 +941,8 @@ Original variable q9c only has two categories: public vs. private
 
 *<_industrycat10_>
 	gen long industrycat10=.
-	gen str4 str_q9a=string(q9a, "%04.0f")
-	gen indcode=substr(str_q9a,1,2)
+	gen str4 str_q8=string(q8, "%04.0f")
+	gen indcode=substr(str_q8,1,2)
 	
 	destring indcode, gen(indnum)
 	replace industrycat10=1 if inrange(indnum,1,6)
@@ -983,7 +972,7 @@ Original variable q9c only has two categories: public vs. private
 
 
 *<_occup_orig_>
-	gen occup_orig=q9b
+	gen occup_orig=q7
 	replace occup_orig=. if lstatus!=1
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
@@ -1011,11 +1000,11 @@ Original variable q9c only has two categories: public vs. private
 
 
 *<_occup_>
-	 gen str4 occup_str=string(q9b, "%04.0f")
+	 gen str4 occup_str=string(q7, "%04.0f")
 	 gen occupnum=substr(occup_str,1,1)
 	 destring occupnum, gen(occup)
 	 replace occup=10 if occup==0
-	 replace occup=. if inlist(q9b,0,9,116)
+	 replace occup=. if inlist(q7,0,9,116)
 	 replace occup=. if lstatus!=1
 	 label var occup "1 digit occupational classification, primary job 7 day recall"
   	 la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
@@ -1027,13 +1016,25 @@ Original variable q9c only has two categories: public vs. private
 
 /*<_wage_no_compen_note_>
 
-Question 40 asks whether the respondent has in-kind compensation. But it only 
-has answers of yes or no. No numbers of the in-kind value.
+Question 31 asks about the monthly/daily payment and in-kind payment.
+q31a confirms the employment fact
+q31b1-3 are for monthly salary earners
+q31c1-4 are for daily wage earners
+
+12 observations chose both of monthly and daily earner types which do not make 
+sense and thus these observations' wage were set to missing. 
+In-kind earnings were included for non-missing observations.
 
 *<_wage_no_compen_note_>*/
-
-	gen double wage_no_compen=earnings
-	recode wage_no_compen 9999=.
+	egen monthly=rownonmiss(q31b_1-q31b_3)
+	egen daily=rownonmiss(q31c1-q31c4)
+	replace monthly=1 if monthly>0
+	replace daily=1 if daily>0
+	
+	gen double wage_no_compen=.
+	replace wage_no_compen=q31b_1+q31b_3 if monthly==1
+	replace wage_no_compen=q31c3+q31c4 if daily==1
+	replace wage_no_compen=. if monthly==1&daily==1
 	replace wage_no_compen=0 if empstat==2
 	replace wage_no_compen=. if lstatus!=1
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
@@ -1041,17 +1042,20 @@ has answers of yes or no. No numbers of the in-kind value.
 
 
 *<_unitwage_>
-	gen byte unitwage=5
+	gen byte unitwage=.
+	replace unitwage=1 if daily==1&monthly==0
+	replace unitwage=5 if daily==0&monthly==1
 	replace unitwage=. if lstatus!=1 | empstat==2
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
 	label values unitwage lblunitwage
+	drop monthly daily
 *</_unitwage_>
 
 
 *<_whours_>
-	gen whours=q14
-	replace whours=. if lstatus!=1|q14==0	
+	gen whours=q18
+	replace whours=. if lstatus!=1|q18==0	
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -1088,6 +1092,8 @@ has answers of yes or no. No numbers of the in-kind value.
 
 *<_socialsec_>
 	gen byte socialsec=.
+	replace socialsec=1 if q11==1
+	replace socialsec=1 if q11==2
 	replace socialsec=. if lstatus!=1
 	label var socialsec "Employment has social security insurance primary job 7 day recall"
 	la de lblsocialsec 1 "With social security" 0 "Without social secturity"
@@ -1105,14 +1111,16 @@ has answers of yes or no. No numbers of the in-kind value.
 
 
 *<_firmsize_l_>
-	gen byte firmsize_l=.
+	gen byte firmsize_l=q16 if inrange(q16,1,6)
+	recode firmsize_l (2=5) (3=10) (4=16) (5=50) (6=100)
 	replace firmsize_l=. if lstatus!=1
 	label var firmsize_l "Firm size (lower bracket) primary job 7 day recall"
 *</_firmsize_l_>
 
 
 *<_firmsize_u_>
-	gen byte firmsize_u=.
+	gen byte firmsize_u=q16 if inrange(q16,1,6)
+	recode firmsize_l (1=4) (2=9) (3=15) (4=49) (5=99) (6=.)
 	replace firmsize_u=. if lstatus!=1
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>
@@ -1125,9 +1133,9 @@ has answers of yes or no. No numbers of the in-kind value.
 
 {
 *<_empstat_2_>
-	gen byte empstat_2=q18d if inrange(q18d,1,4)
+	gen byte empstat_2=q24 
 	recode empstat_2 (2=3) (3=4) (4=2) 
-	replace empstat_2=. if lstatus!=1|q17!=1
+	replace empstat_2=. if lstatus!=1|q21!=1
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
 	la de lblempstat_2 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat_2 lblempstat
@@ -1135,8 +1143,8 @@ has answers of yes or no. No numbers of the in-kind value.
 
 
 *<_ocusec_2_>
-	gen byte ocusec_2=q18c if inrange(q18c,1,2)  
-	replace ocusec_2=. if lstatus!=1|q17!=1
+	gen byte ocusec_2=.  
+	replace ocusec_2=. if lstatus!=1|q21!=1
 	label var ocusec_2 "Sector of activity secondary job 7 day recall"
 	la de lblocusec_2 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec_2 lblocusec_2
@@ -1144,8 +1152,8 @@ has answers of yes or no. No numbers of the in-kind value.
 
 
 *<_industry_orig_2_>
-	gen industry_orig_2=q18a
-	replace industry_orig_2=. if lstatus!=1|q17!=1
+	gen industry_orig_2=q23
+	replace industry_orig_2=. if lstatus!=1|q21!=1
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 
@@ -1153,15 +1161,15 @@ has answers of yes or no. No numbers of the in-kind value.
 *<_industrycat_isic_2_>
 	gen industrycat_isic_2=""
 	replace industrycat_isic_2="" if industrycat_isic_2=="."
-	replace industrycat_isic_2="" if lstatus!=1|q17!=1
+	replace industrycat_isic_2="" if lstatus!=1|q21!=1
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
 
 *<_industrycat10_2_>
 	gen long industrycat10_2=.
-	gen str4 str_q18a=string(q18a, "%04.0f")
-	gen indcode_2=substr(str_q18a,1,2)
+	gen str4 str_q23=string(q23, "%04.0f")
+	gen indcode_2=substr(str_q23,1,2)
 	
 	destring indcode_2, gen(indnum_2)
 	replace industrycat10_2=1 if inrange(indnum_2,1,6)
@@ -1175,7 +1183,7 @@ has answers of yes or no. No numbers of the in-kind value.
 	replace industrycat10_2=9 if indnum_2==75
 	replace industrycat10_2=10 if inrange(indnum_2,80,99)
 
-	replace industrycat10_2=. if lstatus!=1|q17!=1
+	replace industrycat10_2=. if lstatus!=1|q21!=1
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
 *</_industrycat10_2_>
@@ -1190,8 +1198,8 @@ has answers of yes or no. No numbers of the in-kind value.
 
 
 *<_occup_orig_2_>
-	gen occup_orig_2=q18b
-	replace occup_orig_2=. if lstatus!=1|q17!=1
+	gen occup_orig_2=q22
+	replace occup_orig_2=. if lstatus!=1|q21!=1
 	label var occup_orig_2 "Original occupation record secondary job 7 day recall"
 *</_occup_orig_2_>
 
@@ -1199,7 +1207,7 @@ has answers of yes or no. No numbers of the in-kind value.
 *<_occup_isco_2_>
 	gen str4 occup_isco_2=""
 	replace occup_isco_2="" if occup_isco_2=="."
-	replace occup_isco_2="" if lstatus!=1|q17!=1
+	replace occup_isco_2="" if lstatus!=1|q21!=1
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
@@ -1211,40 +1219,48 @@ has answers of yes or no. No numbers of the in-kind value.
 	replace occup_skill_2=1 if skill_level_2==9
 	replace occup_skill_2=2 if inrange(skill_level_2,4,8)
 	replace occup_skill_2=3 if inrange(skill_level_2,1,3)
-	replace occup_skill_2=. if skill_level_2==0|lstatus!=1|q17!=1
+	replace occup_skill_2=. if skill_level_2==0|lstatus!=1|q21!=1
 	label var occup_skill_2 "Skill based on ISCO standard secondary job 7 day recall"
 *</_occup_skill_2_>
 
 
 *<_occup_2_>
-	gen occup_2=int(q18b/1000)
+	gen occup_2=int(q22/1000)
 	recode occup_2 (0=10)
-	replace occup=. if inlist(q18b,0,9,116)
-	replace occup_2=. if lstatus!=1|q17!=1
+	replace occup=. if inlist(q22,0,9,116)
+	replace occup_2=. if lstatus!=1|q21!=1
 	label var occup_2 "1 digit occupational classification secondary job 7 day recall"
 	label values occup_2 lbloccup
 *</_occup_2_>
 
 
 *<_wage_no_compen_2_>
-	gen double wage_no_compen_2=q42a
-	replace wage_no_compen_2=0 if empstat_2==2
-	replace wage_no_compen_2=. if lstatus!=1|q17!=1
+	egen monthly2=rownonmiss(q32b_1-q32b_3)
+	egen daily2=rownonmiss(q32c1-q32c4)
+	replace monthly2=1 if monthly2>0
+	replace daily2=1 if daily2>0
+
+	gen double wage_no_compen_2=.
+	replace wage_no_compen_2=q32b_1+q32b_3 if monthly2==1
+	replace wage_no_compen_2=q32c3+q32c4 if daily2==1
+	replace wage_no_compen_2=. if lstatus!=1|q21!=1
 	label var wage_no_compen_2 "Last wage payment secondary job 7 day recall"
 *</_wage_no_compen_2_>
 
 
 *<_unitwage_2_>
-	gen byte unitwage_2=5
-	replace unitwage_2=. if lstatus!=1|q17!=1
+	gen byte unitwage_2=.
+	replace unitwage_2=1 if daily2==1&monthly2==0
+	replace unitwage_2=5 if daily2==0&monthly2==1
+	replace unitwage_2=. if lstatus!=1|q21!=1
 	label var unitwage_2 "Last wages' time unit secondary job 7 day recall"
 	label values unitwage_2 lblunitwage
 *</_unitwage_2_>
 
 
 *<_whours_2_>
-	gen whours_2=q20
-	replace whours_2=. if lstatus!=1|q17!=1
+	gen whours_2=q25
+	replace whours_2=. if lstatus!=1|q21!=1
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 
@@ -1319,23 +1335,7 @@ has answers of yes or no. No numbers of the in-kind value.
 
 {
 *<_lstatus_year_>
-
-/*<_lstatus_year_note_>
-
-The questionnaire has two reference periods:
-
-when aksed with "current", i.e. currently employed -- 7-day reference period
-when aksed with "usually", i.e. hours usually work -- 12-month reference period 
-
-And people who reported employed yet worked for less than 26 weeks in the past year
-are classified as unemployed as well. 
-
-*<_lstatus_year_note_>*/
-
 	gen byte lstatus_year=.
-	replace lstatus_year=1 if q33==1
-	replace lstatus_year=2 if q33==2&q36==1
-	replace lstatus_year=3 if lstatus_year==.
 	replace lstatus_year=. if age<minlaborage
 	label var lstatus_year "Labor status during last year"
 	la de lbllstatus_year 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -1389,7 +1389,6 @@ are classified as unemployed as well.
 {
 *<_empstat_year_>
 	gen byte empstat_year=.
-	replace empstat_year=. if q33!=1
 	label var empstat_year "Employment status during past week primary job 12 month recall"
 	la de lblempstat_year 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat_year lblempstat_year
@@ -1398,7 +1397,6 @@ are classified as unemployed as well.
 
 *<_ocusec_year_>
 	gen byte ocusec_year=.
-	replace ocusec_year=. if q33!=1
 	label var ocusec_year "Sector of activity primary job 12 day recall"
 	la de lblocusec_year 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec_year lblocusec_year
@@ -1421,7 +1419,6 @@ are classified as unemployed as well.
 
 *<_industrycat10_year_>
 	gen byte industrycat10_year=.
-	replace industrycat10_year=. if q33!=1
 	label var industrycat10_year "1 digit industry classification, primary job 12 month recall"
 	la de lblindustrycat10_year 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10_year lblindustrycat10_year
@@ -1439,14 +1436,12 @@ are classified as unemployed as well.
 
 *<_occup_orig_year_>
 	gen occup_orig_year=.
-	replace occup_orig_year=. if q33!=1
 	label var occup_orig_year "Original occupation record primary job 12 month recall"
 *</_occup_orig_year_>
 
 
 *<_occup_isco_year_>
 	gen str4 occup_isco_year=""
-	replace occup_isco_year="" if q33!=1|occup_isco_year=="."
 	label var occup_isco_year "ISCO code of primary job 12 month recall"
 *</_occup_isco_year_>
 
@@ -1458,14 +1453,13 @@ are classified as unemployed as well.
 	replace occup_skill_year=1 if skill_level_year==9
 	replace occup_skill_year=2 if inrange(skill_level_year,4,8)
 	replace occup_skill_year=3 if inrange(skill_level_year,1,3)
-	replace occup_skill_year=. if skill_level_year==0|q33!=1
+	replace occup_skill_year=. if skill_level_year==0
 	label var occup_skill_year "Skill based on ISCO standard primary job 12 month recall"
 *</_occup_skill_year_>
 
 
 *<_occup_year_>
 	gen byte occup_year=.
-	replace occup_year=. if q33!=1
 	label var occup_year "1 digit occupational classification, primary job 12 month recall"
 	la de lbloccup_year 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup_year lbloccup_year
@@ -1474,14 +1468,12 @@ are classified as unemployed as well.
 
 *<_wage_no_compen_year_>
 	gen double wage_no_compen_year=.
-	replace wage_no_compen_year=. if q33!=1
 	label var wage_no_compen_year "Last wage payment primary job 12 month recall"
 *</_wage_no_compen_year_>
 
 
 *<_unitwage_year_>
 	gen byte unitwage_year=.
-	replace unitwage_year=. if q33!=1
 	label var unitwage_year "Last wages' time unit primary job 12 month recall"
 	la de lblunitwage_year 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
 	label values unitwage_year lblunitwage_year
@@ -1508,7 +1500,6 @@ are classified as unemployed as well.
 
 *<_contract_year_>
 	gen byte contract_year=.
-	replace contract_year=. if q33!=1
 	label var contract_year "Employment has contract primary job 12 month recall"
 	la de lblcontract_year 0 "Without contract" 1 "With contract"
 	label values contract_year lblcontract_year
@@ -1517,7 +1508,6 @@ are classified as unemployed as well.
 
 *<_healthins_year_>
 	gen byte healthins_year=.
-	replace healthins_year=. if q33!=1
 	label var healthins_year "Employment has health insurance primary job 12 month recall"
 	la de lblhealthins_year 0 "Without health insurance" 1 "With health insurance"
 	label values healthins_year lblhealthins_year
@@ -1719,8 +1709,8 @@ are classified as unemployed as well.
 
 *<_njobs_>
 	gen njobs=.
-	replace njobs=1 if lstatus==1&q17!=1
-	replace njobs=2 if lstatus==1&q17==1
+	replace njobs=1 if lstatus==1&q21!=1
+	replace njobs=2 if lstatus==1&q21==1
 	replace njobs=. if lstatus!=1
 	label var njobs "Total number of jobs"
 *</_njobs_>
