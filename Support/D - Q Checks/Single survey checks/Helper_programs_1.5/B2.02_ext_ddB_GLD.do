@@ -849,7 +849,7 @@
 			keep  year value ub lb countrycode source
 			order year value ub lb countrycode source	
 		} 
-		}
+
 		tempfile agr2
 		save    `agr2'
 
@@ -930,6 +930,7 @@
 		
 		encode source, gen(s1)
 		save "Block2_External/01_data/12agriculture.dta", replace 
+	}
 				
 	
 ********************************************************************************
