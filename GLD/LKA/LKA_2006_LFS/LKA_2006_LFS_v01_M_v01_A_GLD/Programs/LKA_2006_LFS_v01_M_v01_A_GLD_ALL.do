@@ -96,7 +96,20 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	use "`path_in_stata'\lfsdata_orig.dta", clear
+	*use "`path_in_stata'\DataOrig.dta", clear
+use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2006_LFS\LKA_2006_LFS_v01_M\Data\Stata\DataOrig.dta", clear
+
+/*gen age_gp=.
+replace age_gp=1 if inrange(age,10,19)
+replace age_gp=2 if inrange(age,20,29)
+replace age_gp=3 if inrange(age,30,39)
+replace age_gp=4 if inrange(age,40,49)
+replace age_gp=5 if inrange(age,50,59)
+replace age_gp=6 if inrange(age,60,69)
+replace age_gp=7 if inrange(age,70,79)
+replace age_gp=8 if inrange(age,80,89)
+replace age_gp=9 if inrange(age,90,99)
+*/
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -1038,6 +1051,7 @@ In-kind earnings were included for non-missing observations.
 	replace wage_no_compen=0 if empstat==2
 	replace wage_no_compen=. if lstatus!=1
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
+	*replace wage_no_compen=. if wage_no_compen==124000&age>79
 *</_wage_no_compen_>
 
 
@@ -1831,6 +1845,6 @@ compress
 
 *<_% SAVE_>
 
-save "`path_output'\\`level_2_harm'_ALL.dta", replace
-
+*save "`path_output'\\`level_2_harm'_ALL.dta", replace
+save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2006_LFS\LKA_2006_LFS_v01_M_v01_A_GLD\Data\Harmonized\LKA_2006_LFS_v01_M_v01_A_GLD_ALL.dta",replace
 *</_% SAVE_>
