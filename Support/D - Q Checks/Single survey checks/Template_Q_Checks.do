@@ -19,10 +19,10 @@
 	global helper "C:\Users\IrIs_\Documents\WB_gld\Support\D - Q Checks\Single survey checks\Helper_programs_1.5" 
 		
 	** Path to GLD data file            <-- INPUT -- 
-	global mydata "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2004_LFS\LKA_2004_LFS_v01_M_v01_A_GLD\Data\Harmonized\LKA_2004_LFS_v01_M_v01_A_GLD_ALL" 
+	global mydata "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2006_LFS\LKA_2006_LFS_v01_M_v01_A_GLD\Data\Harmonized\LKA_2006_LFS_v01_M_v01_A_GLD_ALL.dta" 
 	
 	** Choose output folder             <-- INPUT --
-	global output "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2004_LFS\LKA_2004_LFS_v01_M_v01_A_GLD\Work"
+	global output "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2006_LFS\LKA_2006_LFS_v01_M_v01_A_GLD\Work"
 	
 		
 *-- Step - 3 Run the quality checks -----------------------------------------------*
@@ -49,7 +49,6 @@
 	do "${helper}/B2.09_ext_figC_GLD.do"  
 	
 	do "${helper}/B2.10_ext_flag_GLD.do"  
-
 	
 	* Block 3. Missing values
 	do "${helper}/B3.01_missing_GLD.do"  
