@@ -84,8 +84,8 @@ local out_file "`level_2_harm'_ALL.dta"
 
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
-
-	use "`path_in_stata'\merged A to J de-ID.dta", clear
+use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\SLE\SLE\SLE_2014_LFS\SLE_2014_LFS_V01_M\Data\Stata\merged A to J de-ID.dta", clear
+	*use "`path_in_stata'\merged A to J de-ID.dta", clear
 	
 *Note that the original definition of "LFS eligible" in the SLE survey is:
 *1) Age is 5 and above and;
@@ -95,7 +95,10 @@ local out_file "`level_2_harm'_ALL.dta"
 
 	gen A17_corrected=1 if A_6!=. & A_6>=5 & A_16==1 
 	replace A17_corrected=2 if A_6<5 | (A_16!=1 & A_16!=.)
+	rename wt_hh wt_aggregated
 	
+	*merge m:1 ea_code using "`path_in_stata'\weights.dta", nogen
+	merge m:1 ea_code using "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\SLE\SLE\SLE_2014_LFS\SLE_2014_LFS_V01_M\Data\Stata\weights.dta", nogen	
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -225,7 +228,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_strata_>
-	gen strata=Z_7
+	gen strata=.
 	label var strata "Strata"
 *</_strata_>
 
@@ -1876,6 +1879,6 @@ compress
 
 *<_% SAVE_>
 
-save "`path_output'\\`level_2_harm'_ALL.dta", replace
-
+*save "`path_output'\\`level_2_harm'_ALL.dta", replace
+save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\SLE\SLE\SLE_2014_LFS\SLE_2014_LFS_V01_M_V01_A_GLD\Data\Harmonized\SLE_2014_LFS_v01_M_v01_A_GLD_ALL.dta",replace
 *</_% SAVE_>
