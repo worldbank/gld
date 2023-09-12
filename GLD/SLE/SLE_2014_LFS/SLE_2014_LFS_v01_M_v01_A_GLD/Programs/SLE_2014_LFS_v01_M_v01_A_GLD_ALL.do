@@ -84,8 +84,8 @@ local out_file "`level_2_harm'_ALL.dta"
 
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
-use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\SLE\SLE\SLE_2014_LFS\SLE_2014_LFS_V01_M\Data\Stata\merged A to J de-ID.dta", clear
-	*use "`path_in_stata'\merged A to J de-ID.dta", clear
+
+	use "`path_in_stata'\merged A to J de-ID.dta", clear
 	
 *Note that the original definition of "LFS eligible" in the SLE survey is:
 *1) Age is 5 and above and;
@@ -97,8 +97,7 @@ use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\SLE\SLE\SLE_2014_LFS\SL
 	replace A17_corrected=2 if A_6<5 | (A_16!=1 & A_16!=.)
 	rename wt_hh wt_aggregated
 	
-	*merge m:1 ea_code using "`path_in_stata'\weights.dta", nogen
-	merge m:1 ea_code using "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\SLE\SLE\SLE_2014_LFS\SLE_2014_LFS_V01_M\Data\Stata\weights.dta", nogen	
+	merge m:1 ea_code using "`path_in_stata'\weights.dta", nogen
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -1035,8 +1034,8 @@ In the questionnaire, "000,000,088" is an indication of greater than or equal to
 	replace cash_num=. if E_19C=="000.821.000"
 	gen double wage_no_compen=cash_num+goods_num
 	replace wage_no_compen=wage_no_compen/E_19B if inlist(E_19A,1,2)
-	replace wage_no_compen=wage_no_compen/E_19B if E_19A==3&!inlist(E_19B,1,2)
-	replace wage_no_compen=wage_no_compen/E_19B if E_19A==4&!inlist(E_19B,1,2,3)
+	replace wage_no_compen=wage_no_compen/E_19B if E_19A==3&E_19B!=2
+	replace wage_no_compen=wage_no_compen/E_19B if E_19A==4&!inlist(E_19B,2,3)
 	replace wage_no_compen=. if lstatus!=1
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
@@ -1044,7 +1043,13 @@ In the questionnaire, "000,000,088" is an indication of greater than or equal to
 
 *<_unitwage_>
 	gen byte unitwage=E_19A if inrange(E_19A,1,5)
-	recode unitwage (1=9) (2=1) (3=2) (4=5) (5=8)
+	replace unitwage=1 if E_19A==2
+	replace unitwage=2 if E_19A==3&E_19B!=2
+	replace unitwage=3 if E_19A==3&E_19B==2
+	replace unitwage=4 if E_19A==4&E_19B==2
+	replace unitwage=5 if E_19A==4&E_19B==1
+	replace unitwage=6 if E_19A==4&E_19B==3
+	replace unitwage=9 if E_19A==1
 	replace unitwage=. if lstatus!=1
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
@@ -1879,6 +1884,6 @@ compress
 
 *<_% SAVE_>
 
-*save "`path_output'\\`level_2_harm'_ALL.dta", replace
-save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\SLE\SLE\SLE_2014_LFS\SLE_2014_LFS_V01_M_V01_A_GLD\Data\Harmonized\SLE_2014_LFS_v01_M_v01_A_GLD_ALL.dta",replace
+save "`path_output'\\`level_2_harm'_ALL.dta", replace
+
 *</_% SAVE_>
