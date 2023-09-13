@@ -96,8 +96,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	*use "`path_in_stata'\LFS2007.dta", clear
-	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2007_LFS\LKA_2007_LFS_v01_M\Data\Stata\LFS2007.dta", clear
+	use "`path_in_stata'\LFS2007.dta", clear
 	drop C _merge
 
 /*%%=============================================================================================
@@ -1873,6 +1872,6 @@ compress
 
 *<_% SAVE_>
 
-*save "`path_output'\\`level_2_harm'_ALL.dta", replace
-save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2007_LFS\LKA_2007_LFS_v01_M_v01_A_GLD\Data\Harmonized\LKA_2007_LFS_v01_M_v01_A_GLD_ALL.dta",replace
+save "`path_output'\\`level_2_harm'_ALL.dta", replace
+
 *</_% SAVE_>
