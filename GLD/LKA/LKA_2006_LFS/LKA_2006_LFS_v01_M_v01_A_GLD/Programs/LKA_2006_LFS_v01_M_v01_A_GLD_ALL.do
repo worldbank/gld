@@ -1257,9 +1257,7 @@ In-kind earnings were included for non-missing observations.
 
 
 *<_unitwage_2_>
-	gen byte unitwage_2=.
-	replace unitwage_2=1 if daily2==1&monthly2==0
-	replace unitwage_2=5 if daily2==0&monthly2==1
+	gen byte unitwage_2=5
 	replace unitwage_2=. if lstatus!=1|q21!=1
 	label var unitwage_2 "Last wages' time unit secondary job 7 day recall"
 	label values unitwage_2 lblunitwage
