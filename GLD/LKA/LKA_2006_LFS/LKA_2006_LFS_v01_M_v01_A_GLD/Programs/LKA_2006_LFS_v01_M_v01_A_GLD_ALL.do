@@ -825,6 +825,16 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 
 {	
 *<_lstatus_>
+
+/*<_lstatus_note_>
+
+It has been made sure that people whose answer to q1 is 1 all have answered q7;
+and people whose answer to q1 is 2 all have answered q4;
+and people whose answer to q4 is 1 all have answered q5;
+and people who have answered q5 all have answered q7.
+
+*<_lstatus_note_>*/
+
 	gen byte lstatus=.
 	replace lstatus=1 if !mi(q7)
 	replace lstatus=2 if (q34==1&q37==1)|q33==3
