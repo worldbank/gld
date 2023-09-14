@@ -1043,13 +1043,7 @@ In the questionnaire, "000,000,088" is an indication of greater than or equal to
 
 *<_unitwage_>
 	gen byte unitwage=E_19A if inrange(E_19A,1,5)
-	replace unitwage=1 if E_19A==2
-	replace unitwage=2 if E_19A==3&E_19B!=2
-	replace unitwage=3 if E_19A==3&E_19B==2
-	replace unitwage=4 if E_19A==4&E_19B==2
-	replace unitwage=5 if E_19A==4&E_19B==1
-	replace unitwage=6 if E_19A==4&E_19B==3
-	replace unitwage=9 if E_19A==1
+	recode unitwage (1=9) (2=1) (3=2) (4=5) (5=8)
 	replace unitwage=. if lstatus!=1
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
