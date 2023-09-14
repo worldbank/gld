@@ -829,8 +829,8 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 
 /*<_lstatus_note_>
 
-It has been made sure that people whose answer to q1 is 1 all have answered q7;
-and people whose answer to q1 is 2 all have answered q4;
+It has been made sure that people whose answer to q2 is 1 all have answered q7;
+and people whose answer to q2 is 2 all have answered q4;
 and people whose answer to q4 is 1 all have answered q5;
 and people who have answered q5 all have answered q7.
 
