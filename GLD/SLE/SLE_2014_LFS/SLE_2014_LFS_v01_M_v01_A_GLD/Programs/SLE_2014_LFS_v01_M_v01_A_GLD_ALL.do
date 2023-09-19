@@ -85,8 +85,8 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	use "`path_in_stata'\merged A to J de-ID.dta", clear
-	
+	*use "`path_in_stata'\merged A to J de-ID.dta", clear
+	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\SLE\SLE\SLE_2014_LFS\SLE_2014_LFS_v01_M\Data\Stata\merged A to J de-ID.dta", clear
 *Note that the original definition of "LFS eligible" in the SLE survey is:
 *1) Age is 5 and above and;
 *2) Spent at least 4 nights in the household during the past 4 weeks
@@ -97,7 +97,8 @@ local out_file "`level_2_harm'_ALL.dta"
 	replace A17_corrected=2 if A_6<5 | (A_16!=1 & A_16!=.)
 	rename wt_hh wt_aggregated
 	
-	merge m:1 ea_code using "`path_in_stata'\weights.dta", nogen
+	*merge m:1 ea_code using "`path_in_stata'\weights.dta", nogen
+	merge m:1 ea_code using "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\SLE\SLE\SLE_2014_LFS\SLE_2014_LFS_v01_M\Data\Stata\weights.dta", nogen
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -852,8 +853,8 @@ question as the latter have some errors.
 	replace lstatus=1 if C_1A==1|C_1B==1|C_1C==1|C_1D==1
 	replace lstatus=1 if lstatus!=1&temp==1
 	replace lstatus=2 if temp!=1&lstatus!=1&D_5==1&D_9==1
-	replace lstatus=3 if lstatus==. 
-	replace lstatus=. if age<minlaborage
+	replace lstatus=3 if lstatus==.&A17_corrected==1
+	replace lstatus=. if age<minlaborage&A17_corrected!=1
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
@@ -1878,6 +1879,6 @@ compress
 
 *<_% SAVE_>
 
-save "`path_output'\\`level_2_harm'_ALL.dta", replace
-
+*save "`path_output'\\`level_2_harm'_ALL.dta", replace
+save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\SLE\SLE_2014_LFS\SLE_2014_LFS_v01_M_v01_A_GLD\Data\Harmonized\SLE_2014_LFS_v01_M_v01_A_GLD_ALL.dta",replace
 *</_% SAVE_>
