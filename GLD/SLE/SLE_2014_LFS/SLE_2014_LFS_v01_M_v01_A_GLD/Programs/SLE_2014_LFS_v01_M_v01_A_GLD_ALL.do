@@ -85,9 +85,9 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	*use "`path_in_stata'\merged A to J de-ID.dta", clear
-	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\SLE\SLE\SLE_2014_LFS\SLE_2014_LFS_v01_M\Data\Stata\merged A to J de-ID.dta", clear
-*Note that the original definition of "LFS eligible" in the SLE survey is:
+	use "`path_in_stata'\merged A to J de-ID.dta", clear
+
+	*Note that the original definition of "LFS eligible" in the SLE survey is:
 *1) Age is 5 and above and;
 *2) Spent at least 4 nights in the household during the past 4 weeks
 *The original LFS Eligibility variable A17 has 189 observations wrongly coded
@@ -1879,6 +1879,6 @@ compress
 
 *<_% SAVE_>
 
-*save "`path_output'\\`level_2_harm'_ALL.dta", replace
-save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\SLE\SLE_2014_LFS\SLE_2014_LFS_v01_M_v01_A_GLD\Data\Harmonized\SLE_2014_LFS_v01_M_v01_A_GLD_ALL.dta",replace
+save "`path_output'\\`level_2_harm'_ALL.dta", replace
+
 *</_% SAVE_>
