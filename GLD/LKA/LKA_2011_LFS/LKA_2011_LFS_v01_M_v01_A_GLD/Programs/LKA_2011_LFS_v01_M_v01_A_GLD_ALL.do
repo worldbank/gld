@@ -7,32 +7,32 @@
 <_Program name_>				LKA_2011_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata SE 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
-<_Date created_>				2023-09-08 </_Date created_>
+<_Date created_>				2023-09-12 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						Sri Lanka (LKA) </_Country_>
 <_Survey Title_>				National Labour Force Survey </_Survey Title_>
 <_Survey Year_>					2011 </_Survey Year_>
 <_Study ID_>					LKA_2011_LFS_v01_M </_Study ID_>
 <_Data collection from (M/Y)_>	[Jan/2011] </_Data collection from (M/Y)_>
-<_Data collection to (M/Y)_>	[Dec/2011] </_Data collection to (M/Y)_>
+<_Data collection to (M/Y)_>	[Sep/2011] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			Survey conducted by LKA Department of 
 								Census and Statistics, 
 								Ministry Policy Planning and Implementation;
 								Data was acquired internally through I2D2.</_Source of dataset_>
 								Can be downloaded from http://nada.statistics.gov.lk/index.php/catalog but 
 								with only 25% of the full file through registration. 
-<_Sample size (HH)_> 			18,596 </_Sample size (HH)_>
-<_Sample size (IND)_> 		    73,489 </_Sample size (IND)_>
+<_Sample size (HH)_> 			14,414 </_Sample size (HH)_>
+<_Sample size (IND)_> 		    56,191 </_Sample size (IND)_>
 <_Sampling method_> 			A stratified two-stage probability sample design
 								used with census psus as PSUs and housing units
 								as secondary and final sampling units. </_Sampling method_>
 <_Geographic coverage_> 		7 provinces devided into urban and rural areas 
-								and the greater colombo area. Northern
-								province was exlcuded. </_Geographic coverage_>
-								20 districts in:
+								and the greater colombo area. </_Geographic coverage_>
+								25 districts in:
 								- Greater Colombo (Colombo MC+Dehiwela-Mt.Lavinia MC+Kotte UC)
 								- Western Province (Remainder)
 								- Southern Province
+								- Northern Province
 								- Eastern Province
 								- North Western Province
 								- North Central Province
@@ -148,8 +148,8 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_year_>
-	drop year
-	gen int year=`year'
+	*drop year 
+	*gen int year=`year'
 	label var year "Year of survey"
 *</_year_>
 
@@ -221,8 +221,8 @@ Duplicates in terms of hhid p1
 --------------------------------------
    copies | observations       surplus
 ----------+---------------------------
-        1 |        73421             0
-        2 |           68            34
+        1 |        56185             0
+        2 |            6             3
 --------------------------------------
 
 *<_pid_note_>*/
@@ -242,7 +242,6 @@ Duplicates in terms of hhid p1
 
 
 *<_psu_>
-	rename psu psu_orig
 	egen psu=concat(month_str sector_str district_str psu_str)
 	label var psu "Primary sampling units"
 *</_psu_>
@@ -299,13 +298,6 @@ Duplicates in terms of hhid p1
 
 
 *<_subnatid1_>
-
-/*<_subnatid1_note_>
-
-Northern province was excluded in 2011.
-
-*<_subnatid1_note_>*/
-
 	gen subnatid1_num=district
 	recode subnatid1_num (11/13=1) (21/23=2) (31/33=3) (41/45=4) (51/53=5) (61/62=6) (71/72=7) (81/82=8) (91/92=9)
 	gen subnatid1=""
@@ -425,10 +417,7 @@ are under 18 year old and thus are not assigned household heads.
 
 Household   ID    |      Freq.      Olderest
 ------------------+-------------------------
-03021204407117117 |       1            16 
-06023105308029029 |       1            17
-10026206901011011 |       5            17
-12026115904034034 |       1            17
+01024200303027027 |       4            17 
 ------------------+---------------------------
 
 *<_relationharm_note_>*/
@@ -444,9 +433,7 @@ Household   ID    |      Freq.      Olderest
 	bys hhid: egen headsum=total(head)
 	bys hhid: egen pidmin=min(newp1)
 	bys hhid: egen olderest=max(age) if !mi(age)&relationharm!=6
-
-	gen nohead=1 if inlist(hhid, "03021204407117117", "06023105308029029", /// 
-								 "10026206901011011", "12026115904034034") 
+	gen nohead=1 if inlist(hhid, "01024200303027027") 
 	
 	bys hhid relationharm: egen headmin=min(newp1)
 	replace relationharm=5 if headsum>1&head==1&newp1!=headmin
@@ -1030,13 +1017,13 @@ sense and thus these observations' wage were set to missing.
 In-kind earnings were included for non-missing observations.
 
 *<_wage_no_compen_note_>*/
-	egen monthly=rownonmiss(q31b_1-q31b_3)
+	egen monthly=rownonmiss(q31b1-q31b3)
 	egen daily=rownonmiss(q31c1-q31c4)
 	replace monthly=1 if monthly>0
 	replace daily=1 if daily>0
 	
 	gen double wage_no_compen=.
-	replace wage_no_compen=q31b_1+q31b_3 if monthly==1
+	replace wage_no_compen=q31b1+q31b3 if monthly==1
 	replace wage_no_compen=q31c3+q31c4 if daily==1
 	replace wage_no_compen=. if monthly==1&daily==1
 	replace wage_no_compen=0 if empstat==2
@@ -1237,13 +1224,13 @@ In-kind earnings were included for non-missing observations.
 
 
 *<_wage_no_compen_2_>
-	egen monthly2=rownonmiss(q32b_1-q32b_3)
+	egen monthly2=rownonmiss(q32b1-q32b3)
 	egen daily2=rownonmiss(q32c1-q32c4)
 	replace monthly2=1 if monthly2>0
 	replace daily2=1 if daily2>0
 
 	gen double wage_no_compen_2=.
-	replace wage_no_compen_2=q32b_1+q32b_3 if monthly2==1
+	replace wage_no_compen_2=q32b1+q32b3 if monthly2==1
 	replace wage_no_compen_2=q32c3+q32c4 if daily2==1
 	replace wage_no_compen_2=. if lstatus!=1|q21!=1
 	label var wage_no_compen_2 "Last wage payment secondary job 7 day recall"
