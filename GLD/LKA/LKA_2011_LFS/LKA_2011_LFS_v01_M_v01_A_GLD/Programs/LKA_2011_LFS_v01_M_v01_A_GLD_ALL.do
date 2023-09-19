@@ -98,6 +98,9 @@ local out_file "`level_2_harm'_ALL.dta"
 * harmonized output in a single file
 
 	use "`path_in_stata'\LFS2011.dta", clear
+	destring p9-p13 q3 q4 q10-q16 q22-q25 q262 q30, replace
+	replace q31b1="" if q31b1=="*****"
+	destring q31b1-q31c4 q32b1-q32c4 q34-q39 q47 q49, replace
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -199,7 +202,9 @@ hhserno - household serial number
 
  
 *<_hhid_note_>*/
-
+	rename household_sample_no huno
+	rename household_no hhno
+	rename household_serial_no hhserno
 	foreach v of varlist month sector district huno hhno{
 		tostring `v', gen(`v'_str) format(%02.0f)
 	}
