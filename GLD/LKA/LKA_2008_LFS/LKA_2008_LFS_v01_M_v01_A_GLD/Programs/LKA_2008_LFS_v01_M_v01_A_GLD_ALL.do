@@ -98,7 +98,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * harmonized output in a single file
 
 	use "`path_in_stata'\LFS2008.dta", clear
-
+	
 /*%%=============================================================================================
 	2: Survey & ID
 ================================================================================================*/
@@ -1095,7 +1095,7 @@ In-kind earnings were included for non-missing observations.
 *<_socialsec_>
 	gen byte socialsec=.
 	replace socialsec=1 if q11==1
-	replace socialsec=1 if q11==2
+	replace socialsec=0 if q11==2
 	replace socialsec=. if lstatus!=1
 	label var socialsec "Employment has social security insurance primary job 7 day recall"
 	la de lblsocialsec 1 "With social security" 0 "Without social secturity"
