@@ -4,9 +4,12 @@
 #'
 #' @param path_in The string (quoted) path to the folder containing all surveys
 #'   of country X. 
-#' @param wap_only Binary operator deciding whether the harmonizations read in
-#'   shall keep all ages or only WAP. If TRUE (default) data is reduced to WAP,
-#'   if FALSE, all ages are kept.
+#' @param age_min The (numeric) age minimum to be in the data. If, for example,
+#'   a user wants people 15+ or 15-64, the minimum age should be set to 15.
+#'   The default value is 0.
+#' @param age_max The (numeric) age maximum to be the data. For interest in 
+#'   interest in people up to 64 years of age (e.g., for 15-64) age_max would be
+#'   set to 64. Default is 199 - biblical ages.
 #' @param vars_to_study String vector of variables (or single string of variable)
 #'   to be kept and later looked ate. All other variables (other than countrycode, 
 #'   year, vermast, veralt, age, weight, unitwage, whours, and wage_no_compen) 
@@ -14,7 +17,8 @@
 
 load_df <- function(
     path_in, 
-    wap_only = TRUE, 
+    age_min = 0,
+    age_max = 199,
     vars_to_study = NULL) {
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#  
@@ -65,8 +69,8 @@ load_df <- function(
   # Goal:   Go through list of Step 1, loading all files, keeping only needed, bind row-wise
   
   # In order to do things in one step, we built on the haven::read_dta function
-  # Our function (i) reads, (ii) keeps the relevant vars, (iii) keeps only WAP if desired
-  expand_read_dta <- function(path, vars_to_study, wap_only) {
+  # Our function (i) reads, (ii) keeps the relevant vars, (iii) keeps only ages desired
+  expand_read_dta <- function(path, vars_to_study, age_min, age_max) {
     
     # Read in single data set
     output <- haven::read_dta(path)
@@ -76,21 +80,17 @@ load_df <- function(
     cols_to_keep <- names(output) %in% c(vars_to_study, always_vars)
     output <- output[ , cols_to_keep]
     
-    # Reduce to WAP if desired
-    if (wap_only) {
-      output <- output %>% filter(age >= 15 & age <= 64)
-    }
+    # Reduce to desired age range
+    output %>% filter(age >= age_min & age <= age_max)
     
-    # Return output since, if wap_only == F, it won't return anything (not the last item)
-    return(output)
-      
   }
   
   # Read in all files w/ our function
   # purrr::map's first element is what we will loop over, every item of it is passed
   # to the function that makes up the second element (as ".x")
-  harmonized_data <- purrr::map(latest_files_list, 
-                                ~expand_read_dta(path = .x, vars_to_study = vars_to_study, wap_only = wap_only)) 
+  harmonized_data <- 
+    purrr::map(latest_files_list, 
+               ~expand_read_dta(path = .x, vars_to_study = vars_to_study, age_min = age_min, age_max = age_max)) 
   
   
   # Bind rows

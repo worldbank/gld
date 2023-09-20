@@ -7,13 +7,13 @@
 
 
 *-- 01. Install necessary modules to run the checks 
-	/*local modules winsor2 wbopendata dbnomics insheetjson libjson moss distinct
+	local modules winsor2 wbopendata dbnomics insheetjson libjson moss distinct
 	foreach m in `modules' {
 		cap which `m'
 		if _rc {
 			ssc install `m'
 		} 
-	}*/
+	}
 
 *-- 02. Extract relevant info from GLD data 
 	use "$mydata", clear
