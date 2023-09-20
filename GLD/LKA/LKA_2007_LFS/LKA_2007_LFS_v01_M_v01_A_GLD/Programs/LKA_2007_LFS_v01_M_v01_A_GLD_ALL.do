@@ -1122,7 +1122,7 @@ In-kind earnings were included for non-missing observations.
 *<_socialsec_>
 	gen byte socialsec=.
 	replace socialsec=1 if q11_pension_contribution=="1"
-	replace socialsec=1 if q11_pension_contribution=="2"
+	replace socialsec=0 if q11_pension_contribution=="2"
 	replace socialsec=. if lstatus!=1
 	label var socialsec "Employment has social security insurance primary job 7 day recall"
 	la de lblsocialsec 1 "With social security" 0 "Without social secturity"
