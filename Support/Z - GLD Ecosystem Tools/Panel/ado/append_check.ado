@@ -10,7 +10,7 @@ program append_check
     }
 	
 	* Check if dataset is in filelist format
-	capture confirm variable fullname
+	capture confirm variable dirname
 	if _rc {
 		display as error "ERROR: This is a post-command for filelist. Run filelist first!"
 		exit
