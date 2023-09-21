@@ -44,8 +44,8 @@
 <_ISCED Version_>				ISCED-2014 </_ISCED Version_>
 <_ISCO Version_>				ISCO 88 </_ISCO Version_>
 <_OCCUP National_>				N/A </_OCCUP National_>
-<_ISIC Version_>				ISIC Rev.3 </_ISIC Version_>
-<_INDUS National_>				N/A </_INDUS National_>
+<_ISIC Version_>				ISIC Rev.4 </_ISIC Version_>
+<_INDUS National_>				SLSIC Rev.4 </_INDUS National_>
 -----------------------------------------------------------------------
 
 <_Version Control_>
@@ -144,7 +144,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_isic_version_>
-	gen isic_version=""
+	gen isic_version="isic_4"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
