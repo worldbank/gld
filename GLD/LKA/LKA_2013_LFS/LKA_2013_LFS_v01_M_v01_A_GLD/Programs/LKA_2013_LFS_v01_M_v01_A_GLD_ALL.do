@@ -912,8 +912,8 @@ three-digit level.
 	gen indcode=substr(str_q8,1,4)
 	gen industrycat_isic=indcode
 	replace industrycat_isic="0110" if industrycat_isic=="0117"
-	replace industrycat_isic="1395" if industrycat_isic=="1390"
-	replace industrycat_isic="6519" if industrycat_isic=="6510"
+	replace industrycat_isic="1390" if industrycat_isic=="1395"
+	replace industrycat_isic="6510" if industrycat_isic=="6519"
 	replace industrycat_isic="" if industrycat_isic=="."
 	replace industrycat_isic="" if lstatus!=1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
@@ -961,7 +961,6 @@ quietly {
 	replace q7=5300 if q7==5323
 	replace q7=6120 if q7==6124
 	replace q7=7110 if q7==7118
-	replace q7=8180 if q7==8184
 	replace q7=8180 if q7==8184
 	replace q7=9120 if q7==9125
 	replace q7=9620 if inlist(q7,9626, 9627)
@@ -1233,7 +1232,7 @@ In-kind earnings were included for non-missing observations.
 	replace q25=6120 if q25==6124
 	replace q25=7110 if q25==7118
 	replace q25=8180 if q25==8184
-	replace q25=8180 if q25==8184
+	replace q25=8210 if q25==8218
 	replace q25=9120 if q25==9125
 	replace q25=9620 if inlist(q25,9626, 9627)
 	
