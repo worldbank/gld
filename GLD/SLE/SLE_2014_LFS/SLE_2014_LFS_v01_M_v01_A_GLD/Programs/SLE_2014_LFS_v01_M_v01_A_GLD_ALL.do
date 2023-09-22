@@ -91,14 +91,17 @@ local out_file "`level_2_harm'_ALL.dta"
 *1) Age is 5 and above and;
 *2) Spent at least 4 nights in the household during the past 4 weeks
 *The original LFS Eligibility variable A17 has 189 observations wrongly coded
-*The codes below create a "corrected" version of A17  
+*The codes below create a "corrected" version of A17
+*People who are not eligible (A17_corrected!=1) were not dropped from this dataset.
+*They are not included in the larboe force, though. 
+*They still have some information left, such as their age and gender.
+*But they do not have values for variables after the eligibility check(A17_corrected).   
 
 	gen A17_corrected=1 if A_6!=. & A_6>=5 & A_16==1 
 	replace A17_corrected=2 if A_6<5 | (A_16!=1 & A_16!=.)
 	rename wt_hh wt_aggregated
 	
-	*merge m:1 ea_code using "`path_in_stata'\weights.dta", nogen
-	merge m:1 ea_code using "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\SLE\SLE\SLE_2014_LFS\SLE_2014_LFS_v01_M\Data\Stata\weights.dta", nogen
+	merge m:1 ea_code using "`path_in_stata'\weights.dta", nogen
 
 /*%%=============================================================================================
 	2: Survey & ID
