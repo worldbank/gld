@@ -969,20 +969,21 @@ quietly {
 											// the SLSCO-ISCO mapping generally apllicable to all years. 
 	
 	replace q7=q7-1 if inrange(q7,1211,1214)
+	replace q7=3315 if q7==2414
 	replace q7=3340 if q7==3349
 	replace q7=3350 if q7==3360
 	replace q7=3430 if inrange(q7, 3441, 3449)
 	replace q7=5120 if inrange(q7, 5121, 5122)
 	replace q7=5410 if inrange(q7, 5411, 5419)
 	replace q7=6110 if inrange(q7, 6111, 6119)
-	replace q7=6200 if inlist(q7,6222,6224)
-	replace q7=6222 if q7==6223
+	replace q7=6220 if q7==6222
+	replace q7=6222 if inlist(q7,6223,6224)
 	replace q7=6223 if q7==6225
 	replace q7=6224 if q7==6226
 	replace q7=2132 if inrange(q7, 6300, 6330)
-	*replace q7=6300 if q7==6400
 	replace q7=6310 if inrange(q7,6411,6412)
 	replace q7=6320 if q7==6420
+	*replace q7=6300 if q7==6400
 	replace q7=6330 if q7==6430
 	replace q7=6340 if q7==6440
 	replace q7=7110 if q7==7116
@@ -1252,14 +1253,14 @@ In-kind earnings were included for non-missing observations.
 	replace q25=5120 if inrange(q25, 5121, 5122)
 	replace q25=5410 if inrange(q25, 5411, 5419)
 	replace q25=6110 if inrange(q25, 6111, 6119)
-	replace q25=6200 if inlist(q25,6222,6224)
-	replace q25=6222 if q25==6223
+	replace q25=6220 if q25==6222
+	replace q25=6222 if inlist(q25,6223,6224)
 	replace q25=6223 if q25==6225
 	replace q25=6224 if q25==6226
-	replace q25=. if inrange(q25, 6300, 6330)
-	*replace q25=6300 if q25==6400
+	replace q25=2132 if inrange(q25, 6300, 6330)
 	replace q25=6310 if inrange(q25,6411,6412)
 	replace q25=6320 if q25==6420
+	*replace q25=6300 if q25==6400
 	replace q25=6330 if q25==6430
 	replace q25=6340 if q25==6440
 	replace q25=7110 if q25==7116

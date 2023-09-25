@@ -977,14 +977,14 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 	replace q7=5120 if inrange(q7, 5121, 5122)
 	replace q7=5410 if inrange(q7, 5411, 5419)
 	replace q7=6110 if inrange(q7, 6111, 6119)
-	replace q7=6200 if inlist(q7,6222,6224)
-	replace q7=6222 if q7==6223
+	replace q7=6220 if q7==6222
+	replace q7=6222 if inlist(q7,6223,6224)
 	replace q7=6223 if q7==6225
 	*replace q7=6224 if q7==6226
 	replace q7=2132 if inrange(q7, 6300, 6330)
-	*replace q7=6300 if q7==6400
 	replace q7=6310 if inrange(q7,6411,6412)
 	replace q7=6320 if q7==6420
+	*replace q7=6300 if q7==6400
 	replace q7=6330 if q7==6430
 	replace q7=6340 if q7==6440
 	replace q7=7110 if q7==7116
@@ -1038,11 +1038,8 @@ q45a1-3 are for monthly salary earners
 q45b1-4 are for daily wage earners
 q45c1 is monthly income for employers and own account workers
 
-29 observations chose both of monthly and daily earner types; and
-4 observations chose employer and daily.
-The 29 observations' wage were set to missing whereas the 4 observations
-were coded using q45c1 as they all self-identified as "self-employer".
-In-kind earnings were included for non-missing observations.
+2 observations chose both of monthly and daily earner types and
+these 2 observations' wage were set to missing.
 
 *<_wage_no_compen_note_>*/
 	foreach v of varlist q45a1-q45b4{
@@ -1242,14 +1239,14 @@ quietly {
 	replace q25=5120 if inrange(q25, 5121, 5122)
 	replace q25=5410 if inrange(q25, 5411, 5419)
 	replace q25=6110 if inrange(q25, 6111, 6119)
-	replace q25=6200 if inlist(q25,6222,6224)
-	replace q25=6222 if q25==6223
+	replace q25=6220 if q25==6222
+	replace q25=6222 if inlist(q25,6223,6224)
 	*replace q25=6223 if q25==6225
 	*replace q25=6224 if q25==6226
-	replace q25=. if inrange(q25, 6300, 6330)
-	*replace q25=6300 if q25==6400
+	replace q25=2132 if inrange(q25, 6300, 6330)
 	replace q25=6310 if inrange(q25,6411,6412)
 	replace q25=6320 if q25==6420
+	*replace q25=6300 if q25==6400
 	replace q25=6330 if q25==6430
 	*replace q25=6340 if q25==6440
 	replace q25=7110 if q25==7116
@@ -1258,7 +1255,7 @@ quietly {
 	replace q25=8320 if q25==8323
 	replace q25=9210 if inrange(q25,9217,9219)
 	replace q25=9320 if q25==9322
-	replace q25=9330 if q25==9335
+	replace q25=9330 if q25==9335	
 	}
 	tostring q25, format("%04.0f") gen(occup_isco_2)
 	replace occup_isco_2="" if lstatus!=1 | occup_isco_2=="."|q24!=1

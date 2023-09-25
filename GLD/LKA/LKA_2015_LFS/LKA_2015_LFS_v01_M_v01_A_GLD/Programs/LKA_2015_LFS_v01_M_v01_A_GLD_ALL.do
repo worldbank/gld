@@ -4,25 +4,25 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				LKA_2014_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
+<_Program name_>				LKA_2015_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata SE 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
 <_Date created_>				2023-09-15 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						Sri Lanka (LKA) </_Country_>
 <_Survey Title_>				National Labour Force Survey </_Survey Title_>
-<_Survey Year_>					2014 </_Survey Year_>
-<_Study ID_>					LKA_2014_LFS_v01_M </_Study ID_>
-<_Data collection from (M/Y)_>	[Jan/2014] </_Data collection from (M/Y)_>
-<_Data collection to (M/Y)_>	[Dec/2014] </_Data collection to (M/Y)_>
+<_Survey Year_>					2015 </_Survey Year_>
+<_Study ID_>					LKA_2015_LFS_v01_M </_Study ID_>
+<_Data collection from (M/Y)_>	[Jan/2015] </_Data collection from (M/Y)_>
+<_Data collection to (M/Y)_>	[Dec/2015] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			Survey conducted by LKA Department of 
 								Census and Statistics, 
 								Ministry Policy Planning and Implementation;
 								Data was acquired internally through I2D2.</_Source of dataset_>
 								Can be downloaded from http://nada.statistics.gov.lk/index.php/catalog but 
 								with only 25% of the full file through registration. 
-<_Sample size (HH)_> 			21,445 </_Sample size (HH)_>
-<_Sample size (IND)_> 		    81,385 </_Sample size (IND)_>
+<_Sample size (HH)_> 			21,895 </_Sample size (HH)_>
+<_Sample size (IND)_> 		    82,800 </_Sample size (IND)_>
 <_Sampling method_> 			A stratified two-stage probability sample design
 								used with census psus as PSUs and housing units
 								as secondary and final sampling units. </_Sampling method_>
@@ -41,7 +41,7 @@
 <_Currency_> 					Sri Lanka Rupee </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 19 </_ICLS Version_>
-<_ISCED Version_>				ISCED-2014 </_ISCED Version_>
+<_ISCED Version_>				ISCED-2015 </_ISCED Version_>
 <_ISCO Version_>				ISCO 08 </_ISCO Version_>
 <_OCCUP National_>				SLSCO 08 </_OCCUP National_>
 <_ISIC Version_>				ISIC Rev.4 </_ISIC Version_>
@@ -73,7 +73,7 @@ set mem 800m
 * Define path sections
 local server  "Y:\GLD-Harmonization\573465_JT"
 local country "LKA"
-local year    "2014"
+local year    "2015"
 local survey  "LFS"
 local vermast "V01"
 local veralt  "V01"
@@ -97,10 +97,10 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	*use "`path_in_stata'\LFS2014.dta", clear
-	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2014_LFS\LKA_2014_LFS_v01_M\Data\Stata\LFS2014.dta", clear
-	quietly destring p10-p14 q3-q5 q11 q13 q14 q17 q24-q27 q33 q39 q47 q48 q51 q44 q50 q45a1-q45c1 q46a1-q46c1, replace
-
+	*use "`path_in_stata'\LFS2015.dta", clear
+	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2015_LFS\LKA_2015_LFS_v01_M\Data\Stata\LFS2015.dta", clear
+	quietly destring p10-p14 q2-q5 q7-q10 q11-q14 q17 q21 q24-q27 q33 q39 q47 q48 q51 q44 q50 q45a1-q45c1 q46a1-q46c1 q58, replace
+ 
 /*%%=============================================================================================
 	2: Survey & ID
 ================================================================================================*/
@@ -132,7 +132,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_isced_version_>
-	gen isced_version="isced_2014"
+	gen isced_version="isced_2015"
 	label var isced_version "Version of ISCED used for educat_isced"
 *</_isced_version_>
 
@@ -150,13 +150,6 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_year_>
-
-/*<_year_note_>
-
-36 observations have wrong values of 2015 in the original year variable.
-
-*<_year_note_>*/
-
 	rename year year_orig 
 	gen int year=`year'
 	label var year "Year of survey"
@@ -218,29 +211,14 @@ hhserno - household serial number
 
 
 *<_pid_>
-
-/*<_pid_note_>
-
-Duplicates in terms of hhid p1_person_serial_no
-
---------------------------------------
-   copies | observations       surplus
-----------+---------------------------
-        1 |        81381             0
-        2 |            4             2
---------------------------------------
-
-*<_pid_note_>*/
-	gsort hhid -p5y
-	bys hhid: gen newp1=_n
-	tostring newp1, gen(str_pid) format(%02.0f)
+	tostring p1_person_serial_no, gen(str_pid) format(%02.0f)
 	egen pid=concat(hhid str_pid), punct("-")
 	label var pid "Individual ID"
 *</_pid_>
 
 
 *<_weight_>
-	gen weight=factor
+	gen weight=annualfactor 
 	label var weight "Household sampling weight"
 *</_weight_>
 
@@ -392,6 +370,8 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 {
 
 *<_hsize_>
+	gsort hhid -p5y
+	bys hhid: gen newp1=_n
 	bys hhid: egen hsize=max(newp1)
 	label var hsize "Household size"
 *</_hsize_>
@@ -416,7 +396,6 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 *<_relationharm_>
 	gen byte relationharm=p3
 	recode relationharm (7/9=6)
-	replace relationharm=5 if pid=="08022303702002002-03"
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm lblrelationharm
@@ -643,7 +622,7 @@ Attendance at school or other educational institution
 4. Vocational/Technical institution
 5. Does not attend 
 
-Original educational variable p11 has category 17 which is beyond its code list.
+Original educational variable p11 has category 17 (68 observations) which is beyond its code list.
 *<_educy_note_>*/
 	gen byte educy=p10
 	replace educy=p10 if inrange(p10,0,13)
@@ -713,7 +692,7 @@ Original educational variable p11 has category 17 which is beyond its code list.
 
 
 *<_educat_isced_v_>
-	gen educat_isced_v="ISCED-2014"
+	gen educat_isced_v="ISCED-2015"
 	label var educat_isced_v "Version of the ISCED used"
 *</_educat_isced_v_>
 
@@ -919,7 +898,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 	replace industrycat_isic="0110" if industrycat_isic=="0117"
 	replace industrycat_isic="1390" if industrycat_isic=="1395"
 	replace industrycat_isic="6510" if industrycat_isic=="6519"
-	replace industrycat_isic="" if industrycat_isic=="."
+	replace industrycat_isic="" if industrycat_isic=="."|inlist(industrycat_isic,"5111","5624")
 	replace industrycat_isic="" if lstatus!=1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
@@ -962,8 +941,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 	replace q7=. if inlist(q7,210,220,230)
 	replace q7=5300 if q7==5323
 	replace q7=6120 if q7==6124
-	replace q7=8180 if q7==8184
-	replace q7=9120 if q7==9125
+	replace q7=. if q7==7117
 	replace q7=9620 if inlist(q7,9626, 9627) // This first half block is specifically
 											// for codes that do not exist in SLSCO 08
 										    // in this year's data. The second half is 
@@ -977,15 +955,15 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 	replace q7=5120 if inrange(q7, 5121, 5122)
 	replace q7=5410 if inrange(q7, 5411, 5419)
 	replace q7=6110 if inrange(q7, 6111, 6119)
-	replace q7=6200 if inlist(q7,6222,6224)
-	replace q7=6222 if q7==6223
+	replace q7=6220 if q7==6222
+	replace q7=6222 if inlist(q7,6223,6224)
 	replace q7=6223 if q7==6225
-	*replace q7=6224 if q7==6226
+	replace q7=6224 if q7==6226
 	replace q7=2132 if inrange(q7, 6300, 6330)
-	*replace q7=6300 if q7==6400
 	replace q7=6310 if inrange(q7,6411,6412)
 	replace q7=6320 if q7==6420
-	replace q7=6330 if q7==6430
+	*replace q7=6300 if q7==6400
+	*replace q7=6330 if q7==6430
 	replace q7=6340 if q7==6440
 	replace q7=7110 if q7==7116
 	replace q7=7510 if q7==7517
@@ -1038,11 +1016,8 @@ q45a1-3 are for monthly salary earners
 q45b1-4 are for daily wage earners
 q45c1 is monthly income for employers and own account workers
 
-29 observations chose both of monthly and daily earner types; and
-4 observations chose employer and daily.
-The 29 observations' wage were set to missing whereas the 4 observations
-were coded using q45c1 as they all self-identified as "self-employer".
-In-kind earnings were included for non-missing observations.
+2 observations chose both of monthly and daily earner types.
+These 2 observations' wage were set to missing.
 
 *<_wage_no_compen_note_>*/
 	foreach v of varlist q45a1-q45b4{
@@ -1234,31 +1209,31 @@ quietly {
 										      // in this year's data. The second half is 
 											  // the SLSCO-ISCO mapping generally apllicable to all years. 
 											  
-	replace q25=q25-1 if inrange(q25,1211,1214)
+	*replace q25=q25-1 if inrange(q25,1211,1214)
 	replace q25=3315 if q25==2414
 	*replace q25=3340 if q25==3349
-	replace q25=3350 if q25==3360
+	*replace q25=3350 if q25==3360
 	replace q25=3430 if inrange(q25, 3441, 3449)
 	replace q25=5120 if inrange(q25, 5121, 5122)
 	replace q25=5410 if inrange(q25, 5411, 5419)
 	replace q25=6110 if inrange(q25, 6111, 6119)
-	replace q25=6200 if inlist(q25,6222,6224)
-	replace q25=6222 if q25==6223
-	*replace q25=6223 if q25==6225
+	replace q25=6220 if q25==6222
+	replace q25=6222 if inlist(q25,6223,6224)
+	replace q25=6223 if q25==6225
 	*replace q25=6224 if q25==6226
-	replace q25=. if inrange(q25, 6300, 6330)
-	*replace q25=6300 if q25==6400
+	replace q25=2132 if inrange(q25, 6300, 6330)
 	replace q25=6310 if inrange(q25,6411,6412)
 	replace q25=6320 if q25==6420
-	replace q25=6330 if q25==6430
+	*replace q25=6300 if q25==6400
+	*replace q25=6330 if q25==6430
 	*replace q25=6340 if q25==6440
 	replace q25=7110 if q25==7116
 	replace q25=7510 if q25==7517
-	*replace q25=8210 if inrange(q25,8213,8216)
+	replace q25=8210 if inrange(q25,8213,8216)
 	replace q25=8320 if q25==8323
 	replace q25=9210 if inrange(q25,9217,9219)
 	replace q25=9320 if q25==9322
-	replace q25=9330 if q25==9335
+	*replace q25=9330 if q25==9335	
 	}
 	tostring q25, format("%04.0f") gen(occup_isco_2)
 	replace occup_isco_2="" if lstatus!=1 | occup_isco_2=="."|q24!=1
@@ -1888,5 +1863,5 @@ compress
 *<_% SAVE_>
 
 *save "`path_output'\\`level_2_harm'_ALL.dta", replace
-save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2014_LFS\LKA_2014_LFS_v01_M_v01_A_GLD\Data\Harmonized\LKA_2014_LFS_v01_M_v01_A_GLD_ALL.dta",replace
+save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2015_LFS\LKA_2015_LFS_v01_M_v01_A_GLD\Data\Harmonized\LKA_2015_LFS_v01_M_v01_A_GLD_ALL.dta",replace
 *</_% SAVE_>
