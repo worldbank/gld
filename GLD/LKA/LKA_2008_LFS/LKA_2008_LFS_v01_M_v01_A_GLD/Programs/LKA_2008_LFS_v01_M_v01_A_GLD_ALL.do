@@ -98,7 +98,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * harmonized output in a single file
 
 	use "`path_in_stata'\LFS2008.dta", clear
-	
+
 /*%%=============================================================================================
 	2: Survey & ID
 ================================================================================================*/
@@ -1115,6 +1115,7 @@ In-kind earnings were included for non-missing observations.
 *<_firmsize_l_>
 	gen byte firmsize_l=q16 if inrange(q16,1,6)
 	recode firmsize_l (2=5) (3=10) (4=16) (5=50) (6=100)
+	replace firmsize_l=0 if q16==7
 	replace firmsize_l=. if lstatus!=1
 	label var firmsize_l "Firm size (lower bracket) primary job 7 day recall"
 *</_firmsize_l_>
@@ -1122,7 +1123,8 @@ In-kind earnings were included for non-missing observations.
 
 *<_firmsize_u_>
 	gen byte firmsize_u=q16 if inrange(q16,1,6)
-	recode firmsize_l (1=4) (2=9) (3=15) (4=49) (5=99) (6=.)
+	recode firmsize_u (1=4) (2=9) (3=15) (4=49) (5=99) (6=.)
+	replace firmsize_u=0 if q16==7
 	replace firmsize_u=. if lstatus!=1
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>
