@@ -42,8 +42,8 @@
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 19 </_ICLS Version_>
 <_ISCED Version_>				ISCED-2014 </_ISCED Version_>
-<_ISCO Version_>				ISCO 88 </_ISCO Version_>
-<_OCCUP National_>				N/A </_OCCUP National_>
+<_ISCO Version_>				ISCO 08 </_ISCO Version_>
+<_OCCUP National_>				SLSCO 08 </_OCCUP National_>
 <_ISIC Version_>				ISIC Rev.4 </_ISIC Version_>
 <_INDUS National_>				SLSIC Rev.4 </_INDUS National_>
 -----------------------------------------------------------------------
@@ -99,7 +99,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 	*use "`path_in_stata'\LFS2014.dta", clear
 	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2014_LFS\LKA_2014_LFS_v01_M\Data\Stata\LFS2014.dta", clear
-	destring p10-p14 q3-q5 q11 q13 q14 q17 q24-q26 q33 q47 q48 q51 q44 q50 q45a1-q45c1 q46a1-q46c1, replace
+	quietly destring p10-p14 q3-q5 q11 q13 q14 q17 q24-q27 q33 q39 q47 q48 q51 q44 q50 q45a1-q45c1 q46a1-q46c1, replace
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -138,7 +138,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_isco_version_>
-	gen isco_version=""
+	gen isco_version="isco_2008"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
@@ -913,7 +913,12 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_industrycat_isic_>
-	gen industrycat_isic=""	
+	gen str4 str_q8=string(q8, "%05.0f")
+	gen indcode=substr(str_q8,1,4)
+	gen industrycat_isic=indcode
+	replace industrycat_isic="0110" if industrycat_isic=="0117"
+	replace industrycat_isic="1390" if industrycat_isic=="1395"
+	replace industrycat_isic="6510" if industrycat_isic=="6519"
 	replace industrycat_isic="" if industrycat_isic=="."
 	replace industrycat_isic="" if lstatus!=1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
@@ -921,21 +926,11 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_industrycat10_>
-	gen long industrycat10=.
-	gen str4 str_q8=string(q8, "%04.0f")
-	gen indcode=substr(str_q8,1,2)
-	
-	destring indcode, gen(indnum)
-	replace industrycat10=1 if inrange(indnum,1,6)
-	replace industrycat10=2 if inrange(indnum,10,14)
-	replace industrycat10=3 if inrange(indnum,15,37)
-	replace industrycat10=4 if inrange(indnum,40,41)
-	replace industrycat10=5 if indnum==45
-	replace industrycat10=6 if inrange(indnum,50,55)
-	replace industrycat10=7 if inrange(indnum,60,64)
-	replace industrycat10=8 if inrange(indnum,65,74)
-	replace industrycat10=9 if indnum==75
-	replace industrycat10=10 if inrange(indnum,80,99)
+	gen isic2d=substr(industrycat_isic, 1, 2)
+	destring isic2d, replace
+	gen industrycat10=.
+	replace industrycat10=isic2d
+	recode industrycat10 (1/3=1) (5/9=2) (10/33=3) (35/39=4) (41/43=5) (45/47 55/56=6) (49/53 58/63=7) (64/82=8) (84=9) (85/99=10)	
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
@@ -960,7 +955,47 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_occup_isco_>
-	gen str4 occup_isco=""
+	quietly {	
+	replace q7=100 if q7==110
+	replace q7=200 if q7==120
+	replace q7=300 if q7==130
+	replace q7=. if inlist(q7,210,220,230)
+	replace q7=5300 if q7==5323
+	replace q7=6120 if q7==6124
+	replace q7=8180 if q7==8184
+	replace q7=9120 if q7==9125
+	replace q7=9620 if inlist(q7,9626, 9627) // This first half block is specifically
+											// for codes that do not exist in SLSCO 08
+										    // in this year's data. The second half is 
+											// the SLSCO-ISCO mapping generally apllicable to all years. 
+	
+	replace q7=q7-1 if inrange(q7,1211,1214)
+	replace q7=3315 if q7==2414
+	replace q7=3340 if q7==3349
+	replace q7=3350 if q7==3360
+	replace q7=3430 if inrange(q7, 3441, 3449)
+	replace q7=5120 if inrange(q7, 5121, 5122)
+	replace q7=5410 if inrange(q7, 5411, 5419)
+	replace q7=6110 if inrange(q7, 6111, 6119)
+	replace q7=6200 if inlist(q7,6222,6224)
+	replace q7=6222 if q7==6223
+	replace q7=6223 if q7==6225
+	*replace q7=6224 if q7==6226
+	replace q7=2132 if inrange(q7, 6300, 6330)
+	*replace q7=6300 if q7==6400
+	replace q7=6310 if inrange(q7,6411,6412)
+	replace q7=6320 if q7==6420
+	replace q7=6330 if q7==6430
+	replace q7=6340 if q7==6440
+	replace q7=7110 if q7==7116
+	replace q7=7510 if q7==7517
+	replace q7=8210 if inrange(q7,8213,8216)
+	replace q7=8320 if q7==8323
+	replace q7=9210 if inrange(q7,9217,9219)
+	replace q7=9320 if q7==9322
+	replace q7=9330 if q7==9335
+	}
+	tostring q7, format("%04.0f") gen(occup_isco)
 	replace occup_isco="" if lstatus!=1 | occup_isco=="." 
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
@@ -1104,6 +1139,7 @@ In-kind earnings were included for non-missing observations.
 *<_firmsize_l_>
 	gen byte firmsize_l=q17 if inrange(q17,1,6)
 	recode firmsize_l (2=5) (3=10) (4=16) (5=50) (6=100)
+	replace firmsize_l=0 if q17==7
 	replace firmsize_l=. if lstatus!=1
 	label var firmsize_l "Firm size (lower bracket) primary job 7 day recall"
 *</_firmsize_l_>
@@ -1111,7 +1147,8 @@ In-kind earnings were included for non-missing observations.
 
 *<_firmsize_u_>
 	gen byte firmsize_u=q17 if inrange(q17,1,6)
-	recode firmsize_l (1=4) (2=9) (3=15) (4=49) (5=99) (6=.)
+	recode firmsize_u (1=4) (2=9) (3=15) (4=49) (5=99) (6=.)
+	replace firmsize_u=0 if q17==7
 	replace firmsize_u=. if lstatus!=1
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>
@@ -1150,7 +1187,12 @@ In-kind earnings were included for non-missing observations.
 
 
 *<_industrycat_isic_2_>
-	gen industrycat_isic_2=""
+	gen str4 str_q26=string(q26, "%05.0f")
+	gen indcode_2=substr(str_q26,1,4)
+	gen industrycat_isic_2=indcode_2
+	replace industrycat_isic_2="0110" if industrycat_isic_2=="0117"
+	replace industrycat_isic_2="1390" if industrycat_isic_2=="1395"
+	replace industrycat_isic_2="6510" if industrycat_isic_2=="6519"
 	replace industrycat_isic_2="" if industrycat_isic_2=="."
 	replace industrycat_isic_2="" if lstatus!=1|q24!=1
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
@@ -1158,22 +1200,11 @@ In-kind earnings were included for non-missing observations.
 
 
 *<_industrycat10_2_>
+	gen isic2d_2=substr(industrycat_isic_2, 1, 2)
+	destring isic2d_2, replace
 	gen long industrycat10_2=.
-	gen str4 str_q26=string(q26, "%04.0f")
-	gen indcode_2=substr(str_q26,1,2)
-	
-	destring indcode_2, gen(indnum_2)
-	replace industrycat10_2=1 if inrange(indnum_2,1,6)
-	replace industrycat10_2=2 if inrange(indnum_2,10,14)
-	replace industrycat10_2=3 if inrange(indnum_2,15,37)
-	replace industrycat10_2=4 if inrange(indnum_2,40,41)
-	replace industrycat10_2=5 if indnum_2==45
-	replace industrycat10_2=6 if inrange(indnum_2,50,55)
-	replace industrycat10_2=7 if inrange(indnum_2,60,64)
-	replace industrycat10_2=8 if inrange(indnum_2,65,74)
-	replace industrycat10_2=9 if indnum_2==75
-	replace industrycat10_2=10 if inrange(indnum_2,80,99)
-
+	replace industrycat10_2=isic2d_2
+	recode industrycat10_2 (1/3=1) (5/9=2) (10/33=3) (35/39=4) (41/43=5) (45/47 55/56=6) (49/53 58/63=7) (64/82=8) (84=9) (85/99=10)	
 	replace industrycat10_2=. if lstatus!=1|q24!=1
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
@@ -1196,9 +1227,41 @@ In-kind earnings were included for non-missing observations.
 
 
 *<_occup_isco_2_>
-	gen str4 occup_isco_2=""
-	replace occup_isco_2="" if occup_isco_2=="."
-	replace occup_isco_2="" if lstatus!=1|q24!=1
+quietly {	
+	replace q25=. if inlist(q25,210,220,230)
+	replace q25=9620 if inlist(q25,9626, 9627) // This first half block is specifically
+											  // for codes that do not exist in SLSCO 08
+										      // in this year's data. The second half is 
+											  // the SLSCO-ISCO mapping generally apllicable to all years. 
+											  
+	replace q25=q25-1 if inrange(q25,1211,1214)
+	replace q25=3315 if q25==2414
+	*replace q25=3340 if q25==3349
+	replace q25=3350 if q25==3360
+	replace q25=3430 if inrange(q25, 3441, 3449)
+	replace q25=5120 if inrange(q25, 5121, 5122)
+	replace q25=5410 if inrange(q25, 5411, 5419)
+	replace q25=6110 if inrange(q25, 6111, 6119)
+	replace q25=6200 if inlist(q25,6222,6224)
+	replace q25=6222 if q25==6223
+	*replace q25=6223 if q25==6225
+	*replace q25=6224 if q25==6226
+	replace q25=. if inrange(q25, 6300, 6330)
+	*replace q25=6300 if q25==6400
+	replace q25=6310 if inrange(q25,6411,6412)
+	replace q25=6320 if q25==6420
+	replace q25=6330 if q25==6430
+	*replace q25=6340 if q25==6440
+	replace q25=7110 if q25==7116
+	replace q25=7510 if q25==7517
+	*replace q25=8210 if inrange(q25,8213,8216)
+	replace q25=8320 if q25==8323
+	replace q25=9210 if inrange(q25,9217,9219)
+	replace q25=9320 if q25==9322
+	replace q25=9330 if q25==9335
+	}
+	tostring q25, format("%04.0f") gen(occup_isco_2)
+	replace occup_isco_2="" if lstatus!=1 | occup_isco_2=="."|q24!=1
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
@@ -1226,12 +1289,6 @@ In-kind earnings were included for non-missing observations.
 
 
 *<_wage_no_compen_2_>
-
-/*<_wage_no_compen_2_note_>
-21 observations were left as missing as they are both monthly salary earners and 
-daily wage earners.
-*<_wage_no_compen_2_note_>*/
-
 	egen monthly2=rownonmiss(q46a1-q46a3)
 	egen daily2=rownonmiss(q46b1-q46b4)
 	gen employer2=1 if !mi(q46c1)&q46c1>0
