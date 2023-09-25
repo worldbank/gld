@@ -100,7 +100,7 @@ local out_file "`level_2_harm'_ALL.dta"
 	*use "`path_in_stata'\LFS2013.dta", clear
 	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2013_LFS\LKA_2013_LFS_v01_M\Data\Stata\LFS2013.dta", clear
 
-		quietly destring p10-p14 q3-q5 q11 q13 q14 q17 q24-q26 q33 q47 q48 q51 q44 q50 q45a1-q45c1 q46a1-q46c1, replace
+	quietly destring p10-p14 q3-q5 q11 q13 q14 q17 q24-q26 q33 q47 q48 q51 q44 q50 q45a1-q45c1 q46a1-q46c1, replace
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -976,7 +976,7 @@ quietly {
 	replace q7=6222 if q7==6223
 	replace q7=6223 if q7==6225
 	replace q7=6224 if q7==6226
-	replace q7=. if inrange(q7, 6300, 6330)
+	replace q7=2132 if inrange(q7, 6300, 6330)
 	*replace q7=6300 if q7==6400
 	replace q7=6310 if inrange(q7,6411,6412)
 	replace q7=6320 if q7==6420
