@@ -963,7 +963,10 @@ quietly {
 	replace q7=7110 if q7==7118
 	replace q7=8180 if q7==8184
 	replace q7=9120 if q7==9125
-	replace q7=9620 if inlist(q7,9626, 9627)
+	replace q7=9620 if inlist(q7,9626, 9627) // This first half block is specifically
+											// for codes that do not exist in SLSCO 08
+										    // in this year's data. The second half is 
+											// the SLSCO-ISCO mapping generally apllicable to all years. 
 	
 	replace q7=q7-1 if inrange(q7,1211,1214)
 	replace q7=3340 if q7==3349
@@ -1134,6 +1137,7 @@ In-kind earnings were included for non-missing observations.
 *<_firmsize_l_>
 	gen byte firmsize_l=q17 if inrange(q17,1,6)
 	recode firmsize_l (2=5) (3=10) (4=16) (5=50) (6=100)
+	replace firmsize_l=0 if q17==7
 	replace firmsize_l=. if lstatus!=1
 	label var firmsize_l "Firm size (lower bracket) primary job 7 day recall"
 *</_firmsize_l_>
@@ -1141,7 +1145,8 @@ In-kind earnings were included for non-missing observations.
 
 *<_firmsize_u_>
 	gen byte firmsize_u=q17 if inrange(q17,1,6)
-	recode firmsize_l (1=4) (2=9) (3=15) (4=49) (5=99) (6=.)
+	recode firmsize_u (1=4) (2=9) (3=15) (4=49) (5=99) (6=.)
+	replace firmsize_u=0 if q17==7
 	replace firmsize_u=. if lstatus!=1
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>
@@ -1234,9 +1239,13 @@ In-kind earnings were included for non-missing observations.
 	replace q25=8180 if q25==8184
 	replace q25=8210 if q25==8218
 	replace q25=9120 if q25==9125
-	replace q25=9620 if inlist(q25,9626, 9627)
+	replace q25=9620 if inlist(q25,9626, 9627) // This first half block is specifically
+											  // for codes that do not exist in SLSCO 08
+										      // in this year's data. The second half is 
+											  // the SLSCO-ISCO mapping generally apllicable to all years.
 	
 	replace q25=q25-1 if inrange(q25,1211,1214)
+	replace q25=3315 if q25==2414
 	replace q25=3340 if q25==3349
 	replace q25=3350 if q25==3360
 	replace q25=3430 if inrange(q25, 3441, 3449)
