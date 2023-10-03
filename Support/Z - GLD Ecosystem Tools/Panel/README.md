@@ -20,6 +20,7 @@ Ensuring the quality of panels is crucial, and the package offers several progra
 ### Package installation
 
 To install the package, users need to type the following in the Stata command bar:
+
 ```
 net install gld_panel_tools, replace from("https://github.com/worldbank/gld/edit/panels/Support/Z%20-%20GLD%20Ecosystem%20Tools/Panel")
 ```
