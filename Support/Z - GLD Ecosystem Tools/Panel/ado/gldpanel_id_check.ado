@@ -10,7 +10,7 @@ program gldpanel_id_check
 	capture drop id_odd_diff
 	capture drop dup
 	
-	syntax [, hhid(varname) pid(varname) wave(varname) year(varname)  correction]
+	syntax [, hhid(varname) pid(varname) wave(varname) year(varname)]
 
 	
 		* If not specified, default to given variable names
