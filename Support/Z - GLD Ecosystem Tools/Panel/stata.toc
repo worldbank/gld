@@ -2,4 +2,3 @@ v 1
 d Global Labor Database, Jobs Group, World Bank 
 d Author: Santos, Angelo
 p gldpaneltools GLD Team
-
