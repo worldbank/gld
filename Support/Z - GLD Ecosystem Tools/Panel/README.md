@@ -16,3 +16,10 @@ Ensuring the quality of panels is crucial, and the package offers several progra
 - `gldpanel_issue_check` is a visual tool that produces bar charts detailing the size of mismatches by age and/or sex. This can help in quickly pinpointing demographic segments where data might have inconsistencies.
 - `gldpanel_check_source` takes this a step further by generating bar charts that aim to identify potential causes of these mismatches.
 - Lastly, `gldpanel_attrition` aids in the analysis of data attrition. It creates bar charts that present different attrition measures, providing insights into how much data might be lost or overlooked over time and across different survey iterations.
+
+### Package installation
+
+To install the package, users need to type the following in the Stata command bar:
+```
+net install gld_panel_tools, replace from("https://github.com/worldbank/gld/edit/panels/Support/Z%20-%20GLD%20Ecosystem%20Tools/Panel")
+```
