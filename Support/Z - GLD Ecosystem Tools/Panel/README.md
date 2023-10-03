@@ -22,5 +22,5 @@ Ensuring the quality of panels is crucial, and the package offers several progra
 To install the package, users need to type the following in the console:
 
 ```
-net install gldpaneltools, replace from("https://github.com/worldbank/gld/panels/Support/Z%20-%20GLD%20Ecosystem%20Tools/Panel")
+net install gldpaneltools, replace from("https://raw.githubusercontent.com/worldbank/gld/panels/Support/Z%20-%20GLD%20Ecosystem%20Tools/Panel")
 ```
