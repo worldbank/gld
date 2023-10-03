@@ -1,5 +1,6 @@
-## Introduction to Panel Data Analysis Workflow
+## Introduction to GLD Panel Diagnostic Tools
 
+### GLD Panel Construction Workflow
 The process of panel data analysis is a meticulous endeavor, and our package is tailored to streamline this workflow. The journey begins with **appending**, where users can seamlessly extract the most recent versions of surveys from the GLD folder. This step emphasizes ensuring a consistent data format across surveys and promptly flags any variables that reappear in multiple surveys. As the process progresses to the **construction of key variables**, emphasis is placed on generating essential variables such as `panel`, `visit_no`, `hhid_panel`, and `pid_panel`. This stage also warrants checks for internal consistency, for instance, verifying the relationship between variables like `wave` and `visit_no`. Additionally, it's essential to look out for any ID re-usage across non-consecutive survey years. The final phase revolves around **panel quality check**, where the data's integrity is held to the highest standard. It involves a thorough examination of discrepancies in time-invariant variables, assessing the plausible origins of these mismatches, and a comprehensive measurement of attrition.
 
 ### Appending
