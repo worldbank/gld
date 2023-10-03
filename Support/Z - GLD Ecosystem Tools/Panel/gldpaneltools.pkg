@@ -1,7 +1,7 @@
 v 1.1
 d gldpaneltools World Bank
 d Jobs Group, World Bank
-f /ado/gldpanel_age_histo.ado.ado
+f /ado/gldpanel_age_histo.ado
 f /ado/gldpanel_append_check.ado
 f /ado/gldpanel_attrition.ado
 f /ado/gldpanel_check_source.ado
