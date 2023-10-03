@@ -42,7 +42,7 @@ gldpanel_wave_visit_check [, hhid(varname) wave(varname) year(varname) visit_no(
 
 ### Using the `gldpanel_id_check` command in Stata
 
-The gldpanel_id_check command helps identify instances where the same individual ID (PID) appears in non-subsequent years and cases where the same PID is reused within a year across different waves.
+The `gldpanel_id_check` command helps identify instances where the same individual ID (PID) appears in non-subsequent years and cases where the same PID is reused within a year across different waves.
 
 #### How to Use
 
@@ -62,7 +62,7 @@ Ensuring the quality of panels is crucial, and the package offers several progra
 - Lastly, `gldpanel_attrition` aids in the analysis of data attrition. It creates bar charts that present different attrition measures, providing insights into how much data might be lost or overlooked over time and across different survey iterations.
 
 ### Using the `gldpanel_issue_check` command in Stata
-The gldpanel_issue_check command measures the size of inconsistencies in sex and/or age across years and waves for the same person ID. 
+The `gldpanel_issue_check` command measures the size of inconsistencies in sex and/or age across years and waves for the same person ID. 
 
 #### How to Use
 Execute the command as follows:
@@ -74,7 +74,7 @@ gldpanel_issue_check [, hhid(varname) pid(varname) year(varname) age(varname) wa
 <img src="Utilities/age_sex_matches.png" width="480"/>
 
 ### Using the `gldpanel_check_source` command in Stata
-The gldpanel_check_source command aids in identifying potential inconsistencies such as mismatches in rosters and changes in household compositions across survey waves.
+The `gldpanel_check_source` command aids in identifying potential inconsistencies such as mismatches in rosters and changes in household compositions across survey waves.
 
 #### How to Use
 Execute the command as follows:
@@ -87,7 +87,7 @@ gldpanel_check_source [, hhid(varname) pid(varname) age(varname) sex(varname) wa
 <img src="Utilities/source_mismatches.png" width="480"/>
 
 ### Using the `gldpanel_attrition` command in Stata
-The gldpanel_attrition command assists users in assessing attrition rates in a panel dataset. It enables users to measure the attrition between waves, for any subsequent wave or all subsequent waves from the first wave of apeparance. It also distinguishes attrition based on ID, and based on both ID and inconsistent age or sex for the same ID. In the latter case, it would treat as attrition those families that were replaced in the sample but retained the same household ID. 
+The `gldpanel_attrition` command assists users in assessing attrition rates in a panel dataset. It enables users to measure the attrition between waves, for any subsequent wave or all subsequent waves from the first wave of apeparance. It also distinguishes attrition based on ID, and based on both ID and inconsistent age or sex for the same ID. In the latter case, it would treat as attrition those families that were replaced in the sample but retained the same household ID. 
 
 #### How to Use
 Execute the command as follows:
