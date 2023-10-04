@@ -1,4 +1,4 @@
 v 1
 d Global Labor Database, Jobs Group, World Bank 
 d Author: Angelo Santos and Mario Gronert
-p GLD Panel Diagnostic Tools: A package that provides a suite of tools tailored for the meticulous analysis, variable construction, and quality assurance of panel data.
+p GLD Panel Diagnostic Tools: A package that provides a suite of tools tailored for the assembly, analysis, and quality assurance of panel data.
