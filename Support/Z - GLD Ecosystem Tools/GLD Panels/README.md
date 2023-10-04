@@ -87,7 +87,7 @@ gldpanel_check_source [, hhid(varname) pid(varname) age(varname) sex(varname) wa
 <img src="Utilities/source_mismatches.png" width="480"/>
 
 ### Using the `gldpanel_attrition` command in Stata
-The `gldpanel_attrition` command assists users in assessing attrition rates in a panel dataset. It enables users to measure the attrition between waves, for any subsequent wave or all subsequent waves from the first wave of apeparance. It also distinguishes attrition based on ID, and based on both ID and inconsistent age or sex for the same ID. In the latter case, it would treat as attrition those families that were replaced in the sample but retained the same household ID. 
+The `gldpanel_attrition` command assists users in assessing attrition rates in a panel dataset. It enables users to measure the attrition between waves for any subsequent wave or all subsequent waves from the first wave of apeparance. It also distinguishes attrition based on ID, and based on both ID and inconsistent age or sex for the same ID. In the latter case, it would treat as attrition those families that were replaced in the sample but retained the same household ID. 
 
 #### How to Use
 Execute the command as follows:
@@ -97,7 +97,9 @@ gldpanel_attrition [, hhid(varname) pid(varname) wave(varname) year(varname) vis
 ```
 
 - As in the case for the programs above, without specifying the variable names, the command assumes that the dataset uses variable names used in the GLD.
-- After executing the command, a bar chart will be displayed showing the attrition rates for ID only, and ID and age-sex mismatches. See example below, which uses the `consecutive_waves` option:
+- It is required to indicate the method of calculating the attrition rate. The options are: `consecutive_waves` for attrition between consecutive waves; `any_wave` for attrition between the first wave of interview and any subsequent re-interview; and `all_waves` for attrition between the first wave of interview and all subsequent waves (e.g., if an individual is interviewed three times, but not in the last round, he/she will be considered an "attrition")
+- After executing the command, a bar chart will be displayed showing the attrition rates for ID only, and ID and age-sex mismatches. The latter means if the same person ID is re-used for an individual with a completely different age (with allowance of one year) or sex, then that case is treated as an attrition.
+- See example below, which uses the `consecutive_waves` option:
 
 <img src="Utilities/attrition_consecutive_waves.png" width="480"/>
 
