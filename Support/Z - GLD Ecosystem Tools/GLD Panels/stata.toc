@@ -1,4 +1,4 @@
 v 1
 d Global Labor Database, Jobs Group, World Bank 
-d Author: Santos, Angelo
-p gldpaneltools GLD Team
+d Author: Angelo Santos and Mario Gronert
+p GLD Panel Diagnostic Tools: A package that provides a suite of tools tailored for the meticulous analysis, variable construction, and quality assurance of panel data.
