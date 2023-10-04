@@ -3,6 +3,7 @@ d GLD Panel Diagnostic Tools: A package of tools tailored for the assembly, anal
 d Creator: World Bank Jobs Group
 d Author: Angelo Santos
 d Contributor: Gronert Alvarez, Mario Andres
+d Distribution-Date: 2023-10-04
 f /ado/gldpanel_age_histo.ado
 f /ado/gldpanel_append_check.ado
 f /ado/gldpanel_attrition.ado
