@@ -8,7 +8,7 @@ The process of panel data analysis is a meticulous endeavor, and our package is 
 To install the package, users need to type the following in the console:
 
 ```
-net install gldpaneltools, replace from("https://raw.githubusercontent.com/worldbank/gld/panels/Support/Z%20-%20GLD%20Ecosystem%20Tools/GLD Panels")
+net install gldpaneltools, replace from("https://raw.githubusercontent.com/worldbank/gld/panels/Support/Z%20-%20GLD%20Ecosystem%20Tools/GLD%20Panels")
 ```
 
 ## Appending
