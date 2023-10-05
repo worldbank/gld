@@ -21,7 +21,7 @@
 								Data was acquired internally through I2D2.</_Source of dataset_>
 								Can be downloaded from http://nada.statistics.gov.lk/index.php/catalog but 
 								with only 25% of the full file through registration. 
-<_Sample size (HH)_> 			21,445 </_Sample size (HH)_>
+<_Sample size (HH)_> 			21,446 </_Sample size (HH)_>
 <_Sample size (IND)_> 		    81,385 </_Sample size (IND)_>
 <_Sampling method_> 			A stratified two-stage probability sample design
 								used with census psus as PSUs and housing units
@@ -97,9 +97,8 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	*use "`path_in_stata'\LFS2014.dta", clear
-	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2014_LFS\LKA_2014_LFS_v01_M\Data\Stata\LFS2014.dta", clear
-	quietly destring p10-p14 q3-q5 q11 q13 q14 q17 q24-q27 q33 q39 q47 q48 q51 q44 q50 q45a1-q45c1 q46a1-q46c1, replace
+	use "`path_in_stata'\LFS2014.dta", clear
+	quietly destring p10-p14 q3-q5 q11 q13 q14 q17 q24-q27 q33 q39 q47 q48 q51 q44 q50 q45a1-q45c1 q46a1-q46c1 q63a2 q62 q63a5, replace
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -211,8 +210,8 @@ hhserno - household serial number
 		tostring `v', gen(`v'_str) format(%02.0f)
 	}
 	tostring psu, gen(psu_str) format(%03.0f)
-	tostring hhserno, gen(hh_str) format(%03.0f)
-	egen hhid=concat(month_str sector_str district_str psu_str huno_str hh_str hh_str)
+	tostring hhserno, gen(ser_str) format(%03.0f)
+	egen hhid=concat(month_str sector_str district_str psu_str huno_str hhno_str ser_str)
 	label var hhid "Household id"
 *</_hhid_>
 
@@ -739,6 +738,8 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 
 *<_vocational_>
 	gen vocational=.
+	replace vocational=1 if q62==1
+	replace vocational=0 if q62==2
 	la de vocationallbl 1 "Yes" 0 "No"
 	la values vocational vocationallbl
 	label var vocational "Ever received vocational training"
@@ -754,21 +755,21 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 
 
 *<_vocational_length_l_>
-	gen vocational_length_l=.
+	gen vocational_length_l=q63a5
 	replace vocational_length_l=. if vocational!=1
 	label var vocational_length_l "Length of training in months, lower limit"
 *</_vocational_length_l_>
 
 
 *<_vocational_length_u_>
-	gen vocational_length_u=.
+	gen vocational_length_u=q63a5
 	replace vocational_length_l=. if vocational!=1
 	label var vocational_length_u "Length of training in months, upper limit"
 *</_vocational_length_u_>
 
 
 *<_vocational_field_orig_>
-	gen vocational_field_orig=.
+	gen vocational_field_orig=q63a2
 	replace vocational_field_orig=. if vocational!=1
 	label var vocational_field_orig "Original field of training information"
 *</_vocational_field_orig_>
@@ -956,9 +957,6 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_occup_isco_>
 	quietly {	
-	replace q7=100 if q7==110
-	replace q7=200 if q7==120
-	replace q7=300 if q7==130
 	replace q7=. if inlist(q7,210,220,230)
 	replace q7=5300 if q7==5323
 	replace q7=6120 if q7==6124
@@ -968,7 +966,9 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 											// for codes that do not exist in SLSCO 08
 										    // in this year's data. The second half is 
 											// the SLSCO-ISCO mapping generally apllicable to all years. 
-	
+	replace q7=100 if q7==110
+	replace q7=200 if q7==120
+	replace q7=300 if q7==130
 	replace q7=q7-1 if inrange(q7,1211,1214)
 	replace q7=3315 if q7==2414
 	replace q7=3340 if q7==3349
@@ -1051,26 +1051,29 @@ these 2 observations' wage were set to missing.
 	replace monthly=1 if monthly>0
 	replace daily=1 if daily>0
 	replace employer=0 if employer!=1
-	
+		
 	gen double wage_no_compen=.
-	replace wage_no_compen=q45a1+q45a3 if monthly==1
-	replace wage_no_compen=q45b3+q45b4 if daily==1
+	egen monthly_helper=rowtotal(q45a1 q45a3), missing
+	egen daily_helper=rowtotal(q45b3 q45b4), missing
+
+	replace wage_no_compen=daily_helper if daily==1
+	replace wage_no_compen=monthly_helper if monthly==1
 	replace wage_no_compen=q45c1 if employer==1
 	replace wage_no_compen=. if monthly==1&daily==1
-	replace wage_no_compen=q45c1 if employer==1&daily==1
 	replace wage_no_compen=0 if empstat==2
 	replace wage_no_compen=. if lstatus!=1
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
-	drop monthly daily employer
 *</_wage_no_compen_>
 
 
 *<_unitwage_>
 	gen byte unitwage=5
+	replace unitwage=. if monthly==1&daily==1
 	replace unitwage=. if lstatus!=1 | empstat==2
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
 	label values unitwage lblunitwage
+	drop monthly daily employer
 *</_unitwage_>
 
 
@@ -1230,7 +1233,9 @@ quietly {
 											  // for codes that do not exist in SLSCO 08
 										      // in this year's data. The second half is 
 											  // the SLSCO-ISCO mapping generally apllicable to all years. 
-											  
+	*replace q25=100 if q25==110
+	*replace q25=200 if q25==120
+	*replace q25=300 if q25==130								  
 	replace q25=q25-1 if inrange(q25,1211,1214)
 	replace q25=3315 if q25==2414
 	*replace q25=3340 if q25==3349
@@ -1884,6 +1889,6 @@ compress
 
 *<_% SAVE_>
 
-*save "`path_output'\\`level_2_harm'_ALL.dta", replace
-save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2014_LFS\LKA_2014_LFS_v01_M_v01_A_GLD\Data\Harmonized\LKA_2014_LFS_v01_M_v01_A_GLD_ALL.dta",replace
+save "`path_output'\\`level_2_harm'_ALL.dta", replace
+
 *</_% SAVE_>

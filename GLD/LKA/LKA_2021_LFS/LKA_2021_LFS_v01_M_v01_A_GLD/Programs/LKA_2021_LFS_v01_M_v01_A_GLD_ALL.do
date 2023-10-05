@@ -4,25 +4,25 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				LKA_2020_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
+<_Program name_>				LKA_2021_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata SE 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
-<_Date created_>				2023-09-24 </_Date created_>
+<_Date created_>				2023-09-26 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						Sri Lanka (LKA) </_Country_>
 <_Survey Title_>				National Labour Force Survey </_Survey Title_>
-<_Survey Year_>					2020 </_Survey Year_>
-<_Study ID_>					LKA_2020_LFS_v01_M </_Study ID_>
-<_Data collection from (M/Y)_>	[Jan/2020] </_Data collection from (M/Y)_>
-<_Data collection to (M/Y)_>	[Dec/2020] </_Data collection to (M/Y)_>
+<_Survey Year_>					2021 </_Survey Year_>
+<_Study ID_>					LKA_2021_LFS_v01_M </_Study ID_>
+<_Data collection from (M/Y)_>	[Jan/2021] </_Data collection from (M/Y)_>
+<_Data collection to (M/Y)_>	[Dec/2021] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			Survey conducted by LKA Department of 
 								Census and Statistics, 
 								Ministry Policy Planning and Implementation;
 								Data was acquired internally through I2D2.</_Source of dataset_>
 								Can be downloaded from http://nada.statistics.gov.lk/index.php/catalog but 
 								with only 25% of the full file through registration. 
-<_Sample size (HH)_> 			21,149 </_Sample size (HH)_>
-<_Sample size (IND)_> 		    77,251 </_Sample size (IND)_>
+<_Sample size (HH)_> 			21,534 </_Sample size (HH)_>
+<_Sample size (IND)_> 		    77,869 </_Sample size (IND)_>
 <_Sampling method_> 			A stratified two-stage probability sample design
 								used with census psus as PSUs and housing units
 								as secondary and final sampling units. </_Sampling method_>
@@ -41,7 +41,7 @@
 <_Currency_> 					Sri Lanka Rupee </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 19 </_ICLS Version_>
-<_ISCED Version_>				ISCED-2020 </_ISCED Version_>
+<_ISCED Version_>				ISCED-2021 </_ISCED Version_>
 <_ISCO Version_>				ISCO 08 </_ISCO Version_>
 <_OCCUP National_>				SLSCO 08 </_OCCUP National_>
 <_ISIC Version_>				ISIC Rev.4 </_ISIC Version_>
@@ -73,7 +73,7 @@ set mem 800m
 * Define path sections
 local server  "Y:\GLD-Harmonization\573465_JT"
 local country "LKA"
-local year    "2020"
+local year    "2021"
 local survey  "LFS"
 local vermast "V01"
 local veralt  "V01"
@@ -97,8 +97,8 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	*use "`path_in_stata'\LKA_2020_LFS_SARRAW.dta", clear
-	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2020_LFS\LKA_2020_LFS_v01_M\Data\Stata\LKA_2020_LFS_SARRAW.dta", clear
+	*use "`path_in_stata'\LKA_2021_LFS_SARRAW.dta", clear
+	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2021_LFS\LKA_2021_LFS_v01_M\Data\Stata\LKA_2021_LFS_SARRAW.dta", clear
  
 /*%%=============================================================================================
 	2: Survey & ID
@@ -131,7 +131,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_isced_version_>
-	gen isced_version="isced_2020"
+	gen isced_version="isced_2021"
 	label var isced_version "Version of ISCED used for educat_isced"
 *</_isced_version_>
 
@@ -216,7 +216,7 @@ hhold 	- household number
 
 
 *<_weight_>
-	gen weight=wgt 
+	gen weight=annual_factor
 	label var weight "Household sampling weight"
 *</_weight_>
 
@@ -235,7 +235,6 @@ hhold 	- household number
 
 
 *<_strata_>
-	rename strata strata_orig
 	egen strata=concat(sector_str district_str)
 	label var strata "Strata"
 *</_strata_>
@@ -394,7 +393,6 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 *<_relationharm_>
 	gen byte relationharm=rship
 	recode relationharm (7/9=6)
-	replace relationharm=1 if pid=="0102820010901-02" | pid=="0301110430701-02"
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm lblrelationharm
@@ -690,7 +688,7 @@ Original educational variable edu has category 17 (80 observations) which is bey
 
 
 *<_educat_isced_v_>
-	gen educat_isced_v="ISCED-2020"
+	gen educat_isced_v="ISCED-2021"
 	label var educat_isced_v "Version of the ISCED used"
 *</_educat_isced_v_>
 
@@ -782,14 +780,10 @@ It has been made sure that people whose answer to q2 is 1 all have answered q7;
 and people whose answer to q2 is 2 all have answered q4;
 and people whose answer to q4 is 1 all have answered q5;
 and people who have answered q5 all have answered q7.
-
-But only one observation whose answer to q4 is 2 also answered q7. This observations 
-was not coded as "employed".
 *<_lstatus_note_>*/
 
 	gen byte lstatus=.
 	replace lstatus=1 if !mi(q7)
-	replace lstatus=. if !mi(q7)&q4==2
 	replace lstatus=2 if (q48==1&q51==1)|q47==3
 	replace lstatus=3 if lstatus==. 
 	replace lstatus=. if age<minlaborage
@@ -898,7 +892,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 	gen str4 str_q8=string(q8, "%05.0f")
 	gen indcode=substr(str_q8,1,4)
 	gen industrycat_isic=indcode
-	replace industrycat_isic="" if industrycat_isic=="."|industrycat_isic=="4731"
+	replace industrycat_isic="" if industrycat_isic=="."
 	replace industrycat_isic="" if lstatus!=1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
@@ -1010,18 +1004,6 @@ q45 confirms employment in the main occupation
 q45_a_1-3 are for monthly salary earners
 q45_b_1-4 are for daily wage earners
 q45_c_1 is monthly income for employers and own account workers
-
-One observation indicates himslef as both employer and daily wage earner.
-Based on his empstat, he was coded as a monthly salary earner.
-
-. list empstat industrycat10 occup if daily==1&employer==1
-
-       +------------------------------------------------------------------+
-       |       empstat                  industrycat10               occup |
-       |------------------------------------------------------------------|
- 1864. | Self-employed   Transport and Comnunications   Machine operators |
-       +------------------------------------------------------------------+
-
 *<_wage_no_compen_note_>*/
 
 	foreach v of varlist q45_a_1-q45_b_4{
@@ -1033,34 +1015,31 @@ Based on his empstat, he was coded as a monthly salary earner.
 	replace monthly=1 if monthly>0
 	replace daily=1 if daily>0
 	replace employer=0 if employer!=1
-	replace daily=0 if daily==1&employer==1
 	
-	/*gen double wage_no_compen=.
+	gen double wage_no_compen=.
 	replace wage_no_compen=q45_a_1 if monthly==1
 	replace wage_no_compen=q45_b_1 if daily==1
 	replace wage_no_compen=q45_c_1 if employer==1
 	replace wage_no_compen=0 if empstat==2
 	replace wage_no_compen=. if lstatus!=1
-	label var wage_no_compen "Last wage payment primary job 7 day recall"*/
+	label var wage_no_compen "Last wage payment primary job 7 day recall"
 	
-	gen double wage_no_compen=.
+	/*gen double wage_no_compen=.
 	replace wage_no_compen=q45_a_1+q45_a_3 if monthly==1
 	replace wage_no_compen=q45_b_3+q45_b_4 if daily==1
 	replace wage_no_compen=q45_c_1 if employer==1
-	replace wage_no_compen=. if monthly==1&daily==1
-	replace wage_no_compen=q45_c_1 if employer==1&daily==1
 	replace wage_no_compen=0 if empstat==2
 	replace wage_no_compen=. if lstatus!=1
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
-	drop monthly daily employer
+	drop monthly daily employer*/
 *</_wage_no_compen_>
 
 
 *<_unitwage_>
-	gen byte unitwage=5
-	*gen byte unitwage=.
-	*replace unitwage=1 if daily==1
-	*replace unitwage=5 if employer==1|monthly==1
+	*gen byte unitwage=5
+	gen byte unitwage=.
+	replace unitwage=1 if daily==1
+	replace unitwage=5 if employer==1|monthly==1
 	replace unitwage=. if lstatus!=1 | empstat==2
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
@@ -1216,38 +1195,34 @@ Based on his empstat, he was coded as a monthly salary earner.
 
 *<_occup_isco_2_>
 quietly{	
-	replace q25=. if q25==921 // This first half block is specifically
-							  // for codes that do not exist in SLSCO 08
-							  // in this year's data. The second half is 
-							 // the SLSCO-ISCO mapping generally apllicable to all years. 
 	*replace q7=100 if q7==110
 	*replace q7=200 if q7==120
 	*replace q7=300 if q7==130	
 	*replace q25=q25-1 if inrange(q25,1211,1214)
 	*replace q25=3315 if q25==2414
 	*replace q25=3340 if q25==3349
-	replace q25=3350 if q25==3360
+	*replace q25=3350 if q25==3360
 	replace q25=3430 if inrange(q25, 3441, 3449)
-	*replace q25=5120 if inrange(q25, 5121, 5122)
+	replace q25=5120 if inrange(q25, 5121, 5122)
 	replace q25=5410 if inrange(q25, 5411, 5419)
 	replace q25=6110 if inrange(q25, 6111, 6119)
 	replace q25=6220 if q25==6222
 	replace q25=6222 if inlist(q25,6223,6224)
 	replace q25=6223 if q25==6225
-	replace q25=6224 if q25==6226
-	replace q25=2132 if inrange(q25, 6300, 6330)
+	*replace q25=6224 if q25==6226
+	*replace q25=2132 if inrange(q25, 6300, 6330)
 	replace q25=6310 if inrange(q25,6411,6412)
-	replace q25=6320 if q25==6420
-	replace q25=6300 if q25==6400
-	*replace q25=6330 if q25==6430
-	*replace q25=6340 if q25==6440
+	*replace q25=6320 if q25==6420
+	*replace q25=6300 if q25==6400
+	replace q25=6330 if q25==6430
+	replace q25=6340 if q25==6440
 	replace q25=7110 if q25==7116
 	*replace q25=7510 if q25==7517
-	replace q25=8210 if inrange(q25,8213,8216)
+	*replace q25=8210 if inrange(q25,8213,8216)
 	replace q25=8320 if q25==8323
 	replace q25=9210 if inrange(q25,9217,9219)
 	replace q25=9320 if q25==9322
-	*replace q25=9330 if q25==9335	
+	replace q25=9330 if q25==9335	
 }	
 	tostring q25, format("%04.0f") gen(occup_isco_2)
 	replace occup_isco_2="" if lstatus!=1 | occup_isco_2=="."|q24!=1
@@ -1877,5 +1852,5 @@ compress
 *<_% SAVE_>
 
 *save "`path_output'\\`level_2_harm'_ALL.dta", replace
-save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2020_LFS\LKA_2020_LFS_v01_M_v01_A_GLD\Data\Harmonized\LKA_2020_LFS_v01_M_v01_A_GLD_ALL.dta",replace
+save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2021_LFS\LKA_2021_LFS_v01_M_v01_A_GLD\Data\Harmonized\LKA_2021_LFS_v01_M_v01_A_GLD_ALL.dta",replace
 *</_% SAVE_>
