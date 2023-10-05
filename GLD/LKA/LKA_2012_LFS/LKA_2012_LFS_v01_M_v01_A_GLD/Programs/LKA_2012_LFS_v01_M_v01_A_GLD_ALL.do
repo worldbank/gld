@@ -1034,19 +1034,25 @@ sense and thus these observations' wage were set to missing.
 In-kind earnings were included for non-missing observations.
 
 *<_wage_no_compen_note_>*/
+	foreach v of varlist q31b1-q31c4{
+		replace `v'=. if `v'==0
+	}
 	egen monthly=rownonmiss(q31b1-q31b3)
 	egen daily=rownonmiss(q31c1-q31c4)
 	replace monthly=1 if monthly>0
 	replace daily=1 if daily>0
 	
 	gen double wage_no_compen=.
-	replace wage_no_compen=q31b1+q31b3 if monthly==1
-	replace wage_no_compen=q31c3+q31c4 if daily==1
+	egen monthly_helper=rowtotal(q31b1 q31b3), missing
+	egen daily_helper=rowtotal(q31c3 q31c4), missing
+	
+	replace wage_no_compen=monthly_helper if monthly==1
+	replace wage_no_compen=daily_helper if daily==1
 	replace wage_no_compen=. if monthly==1&daily==1
 	replace wage_no_compen=0 if empstat==2
 	replace wage_no_compen=. if lstatus!=1
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
-	drop monthly daily
+	drop monthly daily monthly_helper daily_helper
 *</_wage_no_compen_>
 
 
@@ -1243,14 +1249,20 @@ In-kind earnings were included for non-missing observations.
 
 
 *<_wage_no_compen_2_>
+	foreach v of varlist q32b1-q32c4{
+		replace `v'=. if `v'==0
+	}
 	egen monthly2=rownonmiss(q32b1-q32b3)
 	egen daily2=rownonmiss(q32c1-q32c4)
 	replace monthly2=1 if monthly2>0
 	replace daily2=1 if daily2>0
 
 	gen double wage_no_compen_2=.
-	replace wage_no_compen_2=q32b1+q32b3 if monthly2==1
-	replace wage_no_compen_2=q32c3+q32c4 if daily2==1
+	egen monthly_helper=rowtotal(q32b1 q32b3), missing
+	egen daily_helper=rowtotal(q32c3 q32c4), missing
+	
+	replace wage_no_compen_2=monthly_helper if monthly2==1
+	replace wage_no_compen_2=daily_helper if daily2==1
 	replace wage_no_compen_2=. if lstatus!=1|q21!=1
 	label var wage_no_compen_2 "Last wage payment secondary job 7 day recall"
 *</_wage_no_compen_2_>

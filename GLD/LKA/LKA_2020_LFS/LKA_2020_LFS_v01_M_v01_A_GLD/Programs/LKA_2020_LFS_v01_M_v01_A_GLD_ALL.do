@@ -898,7 +898,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 	gen str4 str_q8=string(q8, "%05.0f")
 	gen indcode=substr(str_q8,1,4)
 	gen industrycat_isic=indcode
-	replace industrycat_isic="" if industrycat_isic=="."|industrycat_isic=="4731"
+	replace industrycat_isic="" if industrycat_isic=="."|industrycat_isic=="4731"|industrycat_isic=="2401"
 	replace industrycat_isic="" if lstatus!=1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
@@ -1035,32 +1035,25 @@ Based on his empstat, he was coded as a monthly salary earner.
 	replace employer=0 if employer!=1
 	replace daily=0 if daily==1&employer==1
 	
-	/*gen double wage_no_compen=.
-	replace wage_no_compen=q45_a_1 if monthly==1
-	replace wage_no_compen=q45_b_1 if daily==1
-	replace wage_no_compen=q45_c_1 if employer==1
-	replace wage_no_compen=0 if empstat==2
-	replace wage_no_compen=. if lstatus!=1
-	label var wage_no_compen "Last wage payment primary job 7 day recall"*/
 	
 	gen double wage_no_compen=.
-	replace wage_no_compen=q45_a_1+q45_a_3 if monthly==1
-	replace wage_no_compen=q45_b_3+q45_b_4 if daily==1
+	egen monthly_helper=rowtotal(q45_a_1 q45_a_3), missing
+	egen daily_helper=rowtotal(q45_b_3 q45_b_4), missing
+	
+	replace wage_no_compen=monthly_helper if monthly==1
+	replace wage_no_compen=daily_helper if daily==1
 	replace wage_no_compen=q45_c_1 if employer==1
 	replace wage_no_compen=. if monthly==1&daily==1
 	replace wage_no_compen=q45_c_1 if employer==1&daily==1
 	replace wage_no_compen=0 if empstat==2
 	replace wage_no_compen=. if lstatus!=1
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
-	drop monthly daily employer
+	drop monthly daily employer monthly_helper daily_helper
 *</_wage_no_compen_>
 
 
 *<_unitwage_>
 	gen byte unitwage=5
-	*gen byte unitwage=.
-	*replace unitwage=1 if daily==1
-	*replace unitwage=5 if employer==1|monthly==1
 	replace unitwage=. if lstatus!=1 | empstat==2
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
@@ -1239,7 +1232,7 @@ quietly{
 	replace q25=6310 if inrange(q25,6411,6412)
 	replace q25=6320 if q25==6420
 	replace q25=6300 if q25==6400
-	*replace q25=6330 if q25==6430
+	replace q25=6330 if q25==6430
 	*replace q25=6340 if q25==6440
 	replace q25=7110 if q25==7116
 	*replace q25=7510 if q25==7517
@@ -1278,6 +1271,9 @@ quietly{
 
 
 *<_wage_no_compen_2_>
+	foreach v of varlist q46_a_1-q46_b_4{
+		replace `v'=. if `v'==0
+	}
 	egen monthly2=rownonmiss(q46_a_1-q46_a_3)
 	egen daily2=rownonmiss(q46_b_1-q46_b_4)
 	gen employer2=1 if !mi(q46_c_1)&q46_c_1>0
@@ -1286,12 +1282,15 @@ quietly{
 	replace employer2=0 if employer2!=1
 
 	gen double wage_no_compen_2=.
-	replace wage_no_compen_2=q46_a_1+q46_a_3 if monthly2==1
-	replace wage_no_compen_2=q46_b_3+q46_b_4 if daily2==1
+	egen monthly_helper=rowtotal(q46_a_1 q46_a_3), missing
+	egen daily_helper=rowtotal(q46_b_3 q46_b_4), missing
+	
+	replace wage_no_compen_2=monthly_helper if monthly2==1
+	replace wage_no_compen_2=daily_helper if daily2==1
 	replace wage_no_compen_2=q46_c_1 if employer2==1
 	replace wage_no_compen_2=. if lstatus!=1|q24!=1
 	label var wage_no_compen_2 "Last wage payment secondary job 7 day recall"
-	drop monthly2 daily2 employer2
+	drop monthly2 daily2 employer2 monthly_helper daily_helper
 *</_wage_no_compen_2_>
 
 

@@ -1017,29 +1017,21 @@ q45_c_1 is monthly income for employers and own account workers
 	replace employer=0 if employer!=1
 	
 	gen double wage_no_compen=.
-	replace wage_no_compen=q45_a_1 if monthly==1
-	replace wage_no_compen=q45_b_1 if daily==1
-	replace wage_no_compen=q45_c_1 if employer==1
-	replace wage_no_compen=0 if empstat==2
-	replace wage_no_compen=. if lstatus!=1
-	label var wage_no_compen "Last wage payment primary job 7 day recall"
+	egen monthly_helper=rowtotal(q45_a_1 q45_a_3), missing
+	egen daily_helper=rowtotal(q45_b_3 q45_b_4), missing
 	
-	/*gen double wage_no_compen=.
-	replace wage_no_compen=q45_a_1+q45_a_3 if monthly==1
-	replace wage_no_compen=q45_b_3+q45_b_4 if daily==1
+	replace wage_no_compen=monthly_helper if monthly==1
+	replace wage_no_compen=daily_helper if daily==1
 	replace wage_no_compen=q45_c_1 if employer==1
 	replace wage_no_compen=0 if empstat==2
 	replace wage_no_compen=. if lstatus!=1
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
-	drop monthly daily employer*/
+	drop monthly daily employer monthly_helper daily_helper
 *</_wage_no_compen_>
 
 
 *<_unitwage_>
-	*gen byte unitwage=5
-	gen byte unitwage=.
-	replace unitwage=1 if daily==1
-	replace unitwage=5 if employer==1|monthly==1
+	gen byte unitwage=5
 	replace unitwage=. if lstatus!=1 | empstat==2
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
@@ -1253,6 +1245,9 @@ quietly{
 
 
 *<_wage_no_compen_2_>
+	foreach v of varlist q46_a_1-q46_b_4{
+		replace `v'=. if `v'==0
+	}
 	egen monthly2=rownonmiss(q46_a_1-q46_a_3)
 	egen daily2=rownonmiss(q46_b_1-q46_b_4)
 	gen employer2=1 if !mi(q46_c_1)&q46_c_1>0
@@ -1261,12 +1256,15 @@ quietly{
 	replace employer2=0 if employer2!=1
 
 	gen double wage_no_compen_2=.
-	replace wage_no_compen_2=q46_a_1+q46_a_3 if monthly2==1
-	replace wage_no_compen_2=q46_b_3+q46_b_4 if daily2==1
+	egen monthly_helper=rowtotal(q46_a_1 q46_a_3), missing
+	egen daily_helper=rowtotal(q46_b_3 q46_b_4), missing
+	
+	replace wage_no_compen_2=monthly_helper if monthly2==1
+	replace wage_no_compen_2=daily_helper if daily2==1
 	replace wage_no_compen_2=q46_c_1 if employer2==1
 	replace wage_no_compen_2=. if lstatus!=1|q24!=1
 	label var wage_no_compen_2 "Last wage payment secondary job 7 day recall"
-	drop monthly2 daily2 employer2
+	drop monthly2 daily2 employer2 monthly_helper daily_helper
 *</_wage_no_compen_2_>
 
 

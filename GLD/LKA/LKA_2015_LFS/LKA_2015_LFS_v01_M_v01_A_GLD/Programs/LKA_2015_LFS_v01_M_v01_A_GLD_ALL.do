@@ -1042,6 +1042,7 @@ These 2 observations' wage were set to missing.
 	replace wage_no_compen=0 if empstat==2
 	replace wage_no_compen=. if lstatus!=1
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
+	drop monthly_helper daily_helper
 *</_wage_no_compen_>
 
 
@@ -1268,6 +1269,9 @@ quietly {
 
 
 *<_wage_no_compen_2_>
+	foreach v of varlist q46a1-q46b4{
+		replace `v'=. if `v'==0
+	}
 	egen monthly2=rownonmiss(q46a1-q46a3)
 	egen daily2=rownonmiss(q46b1-q46b4)
 	gen employer2=1 if !mi(q46c1)&q46c1>0
@@ -1276,15 +1280,15 @@ quietly {
 	replace employer2=0 if employer2!=1
 
 	gen double wage_no_compen_2=.
-	egen monthly_helper_2=rowtotal(q46a1 q46a3), missing
-	egen daily_helper_2=rowtotal(q46b3 q46b4), missing
+	egen monthly_helper=rowtotal(q46a1 q46a3), missing
+	egen daily_helper=rowtotal(q46b3 q46b4), missing
 
-	replace wage_no_compen_2=daily_helper_2 if daily2==1
-	replace wage_no_compen_2=monthly_helper_2 if monthly2==1
+	replace wage_no_compen_2=daily_helper if daily2==1
+	replace wage_no_compen_2=monthly_helper if monthly2==1
 	replace wage_no_compen_2=q46c1 if employer2==1
 	replace wage_no_compen_2=. if lstatus!=1|q24!=1
 	label var wage_no_compen_2 "Last wage payment secondary job 7 day recall"
-	drop monthly2 daily2 employer2 monthly_helper* daily_helper*
+	drop monthly2 daily2 employer2 monthly_helper daily_helper
 *</_wage_no_compen_2_>
 
 
