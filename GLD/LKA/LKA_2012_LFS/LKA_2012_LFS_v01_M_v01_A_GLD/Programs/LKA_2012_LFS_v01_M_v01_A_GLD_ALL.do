@@ -97,7 +97,8 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	use "`path_in_stata'\LFS2012.dta", clear
+	*use "`path_in_stata'\LFS2012.dta", clear
+	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2012_LFS\LKA_2012_LFS_v01_M\Data\Stata\LFS2012.dta", clear
 	quietly destring p9-p13 q3 q4 q10-q16 q22-q25 q262 q30 q31b1-q31c4 q32b1-q32c4 q34-q39 q47 q49, replace
 	
 /*%%=============================================================================================
@@ -1049,8 +1050,7 @@ In-kind earnings were included for non-missing observations.
 	replace wage_no_compen=monthly_helper if monthly==1
 	replace wage_no_compen=daily_helper if daily==1
 	replace wage_no_compen=. if monthly==1&daily==1
-	replace wage_no_compen=0 if empstat==2
-	replace wage_no_compen=. if lstatus!=1
+	replace wage_no_compen=. if lstatus!=1|empstat==2
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 	drop monthly daily monthly_helper daily_helper
 *</_wage_no_compen_>
@@ -1263,7 +1263,7 @@ In-kind earnings were included for non-missing observations.
 	
 	replace wage_no_compen_2=monthly_helper if monthly2==1
 	replace wage_no_compen_2=daily_helper if daily2==1
-	replace wage_no_compen_2=. if lstatus!=1|q21!=1
+	replace wage_no_compen_2=. if lstatus!=1|q21!=1|empstat_2==2
 	label var wage_no_compen_2 "Last wage payment secondary job 7 day recall"
 *</_wage_no_compen_2_>
 
@@ -1849,6 +1849,7 @@ compress
 
 *<_% SAVE_>
 
-save "`path_output'\\`level_2_harm'_ALL.dta", replace
+*save "`path_output'\\`level_2_harm'_ALL.dta", replace
+save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2012_LFS\LKA_2012_LFS_v01_M_v01_A_GLD\Data\Harmonized\LKA_2012_LFS_v01_M_v01_A_GLD_ALL.dta",replace
 
 *</_% SAVE_>

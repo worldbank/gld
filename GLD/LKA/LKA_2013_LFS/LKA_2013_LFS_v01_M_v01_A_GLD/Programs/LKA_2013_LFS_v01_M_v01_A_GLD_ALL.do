@@ -379,7 +379,11 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 
 *<_age_>
-	gen age=p5y
+	gen age=. 
+	gen post2k=p5y+2000 if inrange(p5y,0,13)
+	gen pre2k=p5y+1900 if inrange(p5y,14,99)
+	replace age=int_year-pre2k if inrange(p5y,14,99)
+	replace age=int_year-post2k if inrange(p5y,0,13)
 	replace age=98 if age>98 & age!=.
 	label var age "Individual age"
 *</_age_>
@@ -1075,9 +1079,8 @@ In-kind earnings were included for non-missing observations.
 	replace wage_no_compen=monthly_helper if monthly==1
 	replace wage_no_compen=q45c1 if employer==1
 	replace wage_no_compen=. if monthly==1&daily==1
-	replace wage_no_compen=q45c1 if employer==1&daily==1
-	replace wage_no_compen=0 if empstat==2
-	replace wage_no_compen=. if lstatus!=1
+	replace wage_no_compen=q45c1 if employer==1&daily==1 
+	replace wage_no_compen=. if lstatus!=1|empstat==2
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 	drop monthly_helper daily_helper
 *</_wage_no_compen_>
@@ -1340,7 +1343,7 @@ daily wage earners.
 	replace wage_no_compen_2=monthly_helper if monthly2==1
 	replace wage_no_compen_2=daily_helper if daily2==1
 	replace wage_no_compen_2=q46c1 if employer2==1
-	replace wage_no_compen_2=. if lstatus!=1|q24!=1
+	replace wage_no_compen_2=. if lstatus!=1|q24!=1|empstat_2==2
 	label var wage_no_compen_2 "Last wage payment secondary job 7 day recall"
 	drop monthly2 daily2 employer2 monthly_helper daily_helper
 *</_wage_no_compen_2_>

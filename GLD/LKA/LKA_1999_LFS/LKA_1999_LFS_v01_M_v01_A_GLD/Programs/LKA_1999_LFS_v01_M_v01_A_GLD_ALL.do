@@ -900,7 +900,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 {
 *<_empstat_>
-	gen byte empstat=q9D
+	gen byte empstat=q9D if inrange(q9D,1,4)
 	recode empstat (2=3) (3=4) (4=2)
 	replace empstat=. if lstatus!=1|age<minlaborage
 	label var empstat "Employment status during past week primary job 7 day recall"
