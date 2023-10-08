@@ -97,8 +97,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	*use "`path_in_stata'\LFS2015.dta", clear
-	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2015_LFS\LKA_2015_LFS_v01_M\Data\Stata\LFS2015.dta", clear
+	use "`path_in_stata'\LFS2015.dta", clear
 	quietly destring p10-p14 q2-q5 q7-q10 q11-q14 q17 q21 q24-q27 q33 q39 q47 q48 q51 q44 q50 q45a1-q45c1 q46a1-q46c1 q58 q62 q63a2 q63a5, replace
  
 /*%%=============================================================================================
@@ -370,7 +369,10 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 {
 
 *<_hsize_>
-	gsort hhid -p5y
+	gen byear=.
+	replace byear=p5y+2000 if inrange(p5y,0,15)
+	replace byear=p5y+1900 if inrange(p5y,16,99)
+	gsort hhid byear
 	bys hhid: gen newp1=_n
 	bys hhid: egen hsize=max(newp1)
 	label var hsize "Household size"
@@ -378,7 +380,8 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 
 *<_age_>
-	gen age=p5y
+	gen age=.
+	replace age=int_year-byear
 	replace age=98 if age>98 & age!=.
 	label var age "Individual age"
 *</_age_>
@@ -1039,8 +1042,7 @@ These 2 observations' wage were set to missing.
 	replace wage_no_compen=monthly_helper if monthly==1
 	replace wage_no_compen=q45c1 if employer==1
 	replace wage_no_compen=. if monthly==1&daily==1
-	replace wage_no_compen=0 if empstat==2
-	replace wage_no_compen=. if lstatus!=1
+	replace wage_no_compen=. if lstatus!=1|empstat==2
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 	drop monthly_helper daily_helper
 *</_wage_no_compen_>
@@ -1286,7 +1288,7 @@ quietly {
 	replace wage_no_compen_2=daily_helper if daily2==1
 	replace wage_no_compen_2=monthly_helper if monthly2==1
 	replace wage_no_compen_2=q46c1 if employer2==1
-	replace wage_no_compen_2=. if lstatus!=1|q24!=1
+	replace wage_no_compen_2=. if lstatus!=1|q24!=1|empstat_2==2
 	label var wage_no_compen_2 "Last wage payment secondary job 7 day recall"
 	drop monthly2 daily2 employer2 monthly_helper daily_helper
 *</_wage_no_compen_2_>
@@ -1873,6 +1875,6 @@ compress
 
 *<_% SAVE_>
 
-*save "`path_output'\\`level_2_harm'_ALL.dta", replace
-save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2015_LFS\LKA_2015_LFS_v01_M_v01_A_GLD\Data\Harmonized\LKA_2015_LFS_v01_M_v01_A_GLD_ALL.dta",replace
+save "`path_output'\\`level_2_harm'_ALL.dta", replace
+
 *</_% SAVE_>

@@ -97,8 +97,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	*use "`path_in_stata'\LKA_2021_LFS_SARRAW.dta", clear
-	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2021_LFS\LKA_2021_LFS_v01_M\Data\Stata\LKA_2021_LFS_SARRAW.dta", clear
+	use "`path_in_stata'\LKA_2021_LFS_SARRAW.dta", clear
  
 /*%%=============================================================================================
 	2: Survey & ID
@@ -1023,8 +1022,7 @@ q45_c_1 is monthly income for employers and own account workers
 	replace wage_no_compen=monthly_helper if monthly==1
 	replace wage_no_compen=daily_helper if daily==1
 	replace wage_no_compen=q45_c_1 if employer==1
-	replace wage_no_compen=0 if empstat==2
-	replace wage_no_compen=. if lstatus!=1
+	replace wage_no_compen=. if lstatus!=1|empstat==2
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 	drop monthly daily employer monthly_helper daily_helper
 *</_wage_no_compen_>
@@ -1262,7 +1260,7 @@ quietly{
 	replace wage_no_compen_2=monthly_helper if monthly2==1
 	replace wage_no_compen_2=daily_helper if daily2==1
 	replace wage_no_compen_2=q46_c_1 if employer2==1
-	replace wage_no_compen_2=. if lstatus!=1|q24!=1
+	replace wage_no_compen_2=. if lstatus!=1|q24!=1|empstat_2==2
 	label var wage_no_compen_2 "Last wage payment secondary job 7 day recall"
 	drop monthly2 daily2 employer2 monthly_helper daily_helper
 *</_wage_no_compen_2_>
@@ -1849,6 +1847,6 @@ compress
 
 *<_% SAVE_>
 
-*save "`path_output'\\`level_2_harm'_ALL.dta", replace
-save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2021_LFS\LKA_2021_LFS_v01_M_v01_A_GLD\Data\Harmonized\LKA_2021_LFS_v01_M_v01_A_GLD_ALL.dta",replace
+save "`path_output'\\`level_2_harm'_ALL.dta", replace
+
 *</_% SAVE_>
