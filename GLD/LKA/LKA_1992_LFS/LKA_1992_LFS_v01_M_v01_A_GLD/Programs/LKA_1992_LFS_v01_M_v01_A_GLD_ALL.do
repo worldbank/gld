@@ -798,7 +798,11 @@ variable p11 is:
 
 
 *<_educat4_>
-	gen byte educat4=educat5
+	gen byte educat4=.
+	replace educat4=1 if p11==0
+	replace educat4=2 if inrange(p11,2,4)
+	replace educat4=3 if p11==5
+	replace educat4=4 if inlist(p11,6,7)
 	replace educat4=. if age<ed_mod_age
 	label var educat4 "Level of education 3"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
