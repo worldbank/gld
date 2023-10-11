@@ -96,8 +96,8 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	use "`path_in_stata'\lfsdata.dta", clear
-	
+	 use "`path_in_stata'\lfsdata.dta", clear
+
 /*%%=============================================================================================
 	2: Survey & ID
 ================================================================================================*/
@@ -640,11 +640,6 @@ variable p11 is:
 
 *<_educat7_>
 	gen byte educat7=.
-	replace educat7=1 if p11==0
-	replace educat7=3 if p11==1
-	replace educat7=4 if inlist(p11,2,3,4)
-	replace educat7=5 if p11==5
-	replace educat7=7 if inlist(p11,6,7)
 	replace educat7=. if age<ed_mod_age
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
@@ -653,8 +648,7 @@ variable p11 is:
 
 
 *<_educat5_>
-	gen byte educat5=educat7
-	recode educat5 (4=3) (5=4) (6 7=5)
+	gen byte educat5=.
 	replace educat5=. if age<ed_mod_age	
 	label var educat5 "Level of education 2"
 	la de lbleducat5 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
@@ -663,9 +657,12 @@ variable p11 is:
 
 
 *<_educat4_>
-	gen byte educat4=educat5
+	gen byte educat4=.
+	replace educat4=1 if p11==0
+	replace educat4=2 if inrange(p11,2,4)
+	replace educat4=3 if p11==5
+	replace educat4=4 if inlist(p11,6,7)
 	replace educat4=. if age<ed_mod_age
-	recode educat4 (3=2) (4=3) (5=4)
 	label var educat4 "Level of education 3"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values educat4 lbleducat4
@@ -923,6 +920,20 @@ Original variable q9C only has two categories: public vs. private
 
 *<_industrycat10_>
 	gen long industrycat10=.
+	gen str4 str_q9A=string(q9A, "%04.0f")
+	gen indcode=substr(str_q9A,1,2)
+	
+	destring indcode, gen(indnum)
+	replace industrycat10=1 if inrange(indnum,1,6)
+	replace industrycat10=2 if inrange(indnum,10,14)
+	replace industrycat10=3 if inrange(indnum,15,37)
+	replace industrycat10=4 if inrange(indnum,40,41)
+	replace industrycat10=5 if indnum==45
+	replace industrycat10=6 if inrange(indnum,50,55)
+	replace industrycat10=7 if inrange(indnum,60,64)
+	replace industrycat10=8 if inrange(indnum,65,74)
+	replace industrycat10=9 if indnum==75
+	replace industrycat10=10 if inrange(indnum,80,99)
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
@@ -991,8 +1002,7 @@ has answers of yes or no. No numbers of the in-kind value.
 
 	gen double wage_no_compen=earnings
 	recode wage_no_compen 9999=.
-	replace wage_no_compen=0 if empstat==2
-	replace wage_no_compen=. if lstatus!=1
+	replace wage_no_compen=. if lstatus!=1|empstat==2
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
@@ -1117,6 +1127,20 @@ has answers of yes or no. No numbers of the in-kind value.
 
 *<_industrycat10_2_>
 	gen long industrycat10_2=.
+	gen str4 str_q16A=string(q16A, "%04.0f")
+	gen indcode_2=substr(str_q16A,1,2)
+	
+	destring indcode_2, gen(indnum_2)
+	replace industrycat10_2=1 if inrange(indnum_2,1,6)
+	replace industrycat10_2=2 if inrange(indnum_2,10,14)
+	replace industrycat10_2=3 if inrange(indnum_2,15,37)
+	replace industrycat10_2=4 if inrange(indnum_2,40,41)
+	replace industrycat10_2=5 if indnum_2==45
+	replace industrycat10_2=6 if inrange(indnum_2,50,55)
+	replace industrycat10_2=7 if inrange(indnum_2,60,64)
+	replace industrycat10_2=8 if inrange(indnum_2,65,74)
+	replace industrycat10_2=9 if indnum_2==75
+	replace industrycat10_2=10 if inrange(indnum_2,80,99)
 	replace industrycat10_2=. if lstatus!=1|q15!=1
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10

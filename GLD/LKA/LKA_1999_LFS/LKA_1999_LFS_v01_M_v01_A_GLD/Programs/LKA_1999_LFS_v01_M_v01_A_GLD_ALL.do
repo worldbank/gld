@@ -96,7 +96,8 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	use "`path_in_stata'\lfsdata.dta", clear
+	*use "`path_in_stata'\lfsdata.dta", clear
+	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_1999_LFS\LKA_1999_LFS_v01_M\Data\Stata\lfsdata.dta", clear
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -942,6 +943,20 @@ Original variable q9C only has two categories: public vs. private
 
 *<_industrycat10_>
 	gen long industrycat10=.
+	gen str4 str_q9A=string(q9A, "%04.0f")
+	gen indcode=substr(str_q9A,1,2)
+	
+	destring indcode, gen(indnum)
+	replace industrycat10=1 if inrange(indnum,1,6)
+	replace industrycat10=2 if inrange(indnum,10,14)
+	replace industrycat10=3 if inrange(indnum,15,37)
+	replace industrycat10=4 if inrange(indnum,40,41)
+	replace industrycat10=5 if indnum==45
+	replace industrycat10=6 if inrange(indnum,50,55)
+	replace industrycat10=7 if inrange(indnum,60,64)
+	replace industrycat10=8 if inrange(indnum,65,74)
+	replace industrycat10=9 if indnum==75
+	replace industrycat10=10 if inrange(indnum,80,99)
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
@@ -1010,8 +1025,7 @@ has answers of yes or no. No numbers of the in-kind value.
 
 	gen double wage_no_compen=earnings
 	recode wage_no_compen 9999=.
-	replace wage_no_compen=0 if empstat==2
-	replace wage_no_compen=. if lstatus!=1
+	replace wage_no_compen=. if lstatus!=1|empstat==2
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
@@ -1136,6 +1150,21 @@ has answers of yes or no. No numbers of the in-kind value.
 
 *<_industrycat10_2_>
 	gen long industrycat10_2=.
+	gen str4 str_q18A=string(q18A, "%04.0f")
+	gen indcode_2=substr(str_q18A,1,2)
+	
+	destring indcode_2, gen(indnum_2)
+	replace industrycat10_2=1 if inrange(indnum_2,1,6)
+	replace industrycat10_2=2 if inrange(indnum_2,10,14)
+	replace industrycat10_2=3 if inrange(indnum_2,15,37)
+	replace industrycat10_2=4 if inrange(indnum_2,40,41)
+	replace industrycat10_2=5 if indnum_2==45
+	replace industrycat10_2=6 if inrange(indnum_2,50,55)
+	replace industrycat10_2=7 if inrange(indnum_2,60,64)
+	replace industrycat10_2=8 if inrange(indnum_2,65,74)
+	replace industrycat10_2=9 if indnum_2==75
+	replace industrycat10_2=10 if inrange(indnum_2,80,99)
+	
 	replace industrycat10_2=. if lstatus!=1|q17!=1
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
@@ -1189,8 +1218,7 @@ has answers of yes or no. No numbers of the in-kind value.
 
 *<_wage_no_compen_2_>
 	gen double wage_no_compen_2=q42A
-	replace wage_no_compen_2=0 if empstat_2==2
-	replace wage_no_compen_2=. if lstatus!=1|q17!=1
+	replace wage_no_compen_2=. if lstatus!=1|q17!=1|empstat_2==2
 	label var wage_no_compen_2 "Last wage payment secondary job 7 day recall"
 *</_wage_no_compen_2_>
 
@@ -1802,6 +1830,7 @@ compress
 
 *<_% SAVE_>
 
-save "`path_output'\\`level_2_harm'_ALL.dta", replace
+*save "`path_output'\\`level_2_harm'_ALL.dta", replace
+save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_1999_LFS\LKA_1999_LFS_v01_M_v01_A_GLD\Data\Harmonized\LKA_1999_LFS_v01_M_v01_A_GLD_ALL.dta",replace
 
 *</_% SAVE_>

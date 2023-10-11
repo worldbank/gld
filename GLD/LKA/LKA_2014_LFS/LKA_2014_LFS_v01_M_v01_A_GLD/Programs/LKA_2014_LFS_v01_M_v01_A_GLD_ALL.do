@@ -231,7 +231,10 @@ Duplicates in terms of hhid p1_person_serial_no
 --------------------------------------
 
 *<_pid_note_>*/
-	gsort hhid -p5y
+	gen byear=.
+	replace byear=p5y+2000 if inrange(p5y,0,14)
+	replace byear=p5y+1900 if inrange(p5y,15,99)
+	gsort hhid byear
 	bys hhid: gen newp1=_n
 	tostring newp1, gen(str_pid) format(%02.0f)
 	egen pid=concat(hhid str_pid), punct("-")
@@ -399,10 +402,7 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 *<_age_>
 	gen age=.
-	gen post2k=p5y+2000 if inrange(p5y,0,14)
-	gen pre2k=p5y+1900 if inrange(p5y,15,99)
-	replace age=int_year-pre2k if inrange(p5y,15,99)
-	replace age=int_year-post2k if inrange(p5y,0,14)
+	replace age=int_year-byear
 	replace age=98 if age>98 & age!=.
 	label var age "Individual age"
 *</_age_>

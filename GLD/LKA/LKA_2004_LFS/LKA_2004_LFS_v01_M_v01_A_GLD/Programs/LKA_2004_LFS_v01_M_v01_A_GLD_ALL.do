@@ -1036,8 +1036,7 @@ has answers of yes or no. No numbers of the in-kind value.
 
 	gen double wage_no_compen=earnings
 	recode wage_no_compen 9999=.
-	replace wage_no_compen=0 if empstat==2
-	replace wage_no_compen=. if lstatus!=1
+	replace wage_no_compen=. if lstatus!=1|empstat==2
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
@@ -1230,8 +1229,7 @@ has answers of yes or no. No numbers of the in-kind value.
 
 *<_wage_no_compen_2_>
 	gen double wage_no_compen_2=q42a
-	replace wage_no_compen_2=0 if empstat_2==2
-	replace wage_no_compen_2=. if lstatus!=1|q17!=1
+	replace wage_no_compen_2=. if lstatus!=1|q17!=1|empstat_2==2
 	label var wage_no_compen_2 "Last wage payment secondary job 7 day recall"
 *</_wage_no_compen_2_>
 

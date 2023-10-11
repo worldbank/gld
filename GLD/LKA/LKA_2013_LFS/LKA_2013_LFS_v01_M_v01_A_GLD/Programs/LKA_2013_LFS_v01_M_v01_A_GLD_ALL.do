@@ -97,8 +97,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	*use "`path_in_stata'\LFS2013.dta", clear
-	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2013_LFS\LKA_2013_LFS_v01_M\Data\Stata\LFS2013.dta", clear
+	use "`path_in_stata'\LFS2013.dta", clear
 
 	quietly destring p10-p14 q3-q5 q11 q13 q14 q17 q24-q26 q33 q47 q48 q51 q44 q50 q45a1-q45c1 q46a1-q46c1 q62 q63a2 q63a5, replace
 
@@ -371,7 +370,10 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 {
 
 *<_hsize_>
-	gsort hhid -p5y
+	gen byear=.
+	replace byear=p5y+2000 if inrange(p5y,0,13)
+	replace byear=p5y+1900 if inrange(p5y,14,99)
+	gsort hhid byear
 	bys hhid: gen newp1=_n
 	bys hhid: egen hsize=max(newp1)
 	label var hsize "Household size"
@@ -380,10 +382,7 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 *<_age_>
 	gen age=. 
-	gen post2k=p5y+2000 if inrange(p5y,0,13)
-	gen pre2k=p5y+1900 if inrange(p5y,14,99)
-	replace age=int_year-pre2k if inrange(p5y,14,99)
-	replace age=int_year-post2k if inrange(p5y,0,13)
+	replace age=int_year-byear
 	replace age=98 if age>98 & age!=.
 	label var age "Individual age"
 *</_age_>
@@ -1930,6 +1929,6 @@ compress
 
 *<_% SAVE_>
 
-*save "`path_output'\\`level_2_harm'_ALL.dta", replace
-save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2013_LFS\LKA_2013_LFS_v01_M_v01_A_GLD\Data\Harmonized\LKA_2013_LFS_v01_M_v01_A_GLD_ALL.dta",replace
+save "`path_output'\\`level_2_harm'_ALL.dta", replace
+
 *</_% SAVE_>

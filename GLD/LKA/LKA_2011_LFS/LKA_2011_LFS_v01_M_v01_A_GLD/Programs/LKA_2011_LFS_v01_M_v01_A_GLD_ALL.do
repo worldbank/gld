@@ -98,6 +98,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * harmonized output in a single file
 
 	use "`path_in_stata'\LFS2011.dta", clear
+
 	replace q31b1="" if q31b1=="*****"
 	quietly destring p9-p13 q3 q4 q10-q16 q22-q25 q262 q30 q31b1-q31c4 q32b1-q32c4 q34-q39 q47 q49, replace
 
@@ -1030,8 +1031,7 @@ In-kind earnings were included for non-missing observations.
 	replace wage_no_compen=q31b1+q31b3 if monthly==1
 	replace wage_no_compen=q31c3+q31c4 if daily==1
 	replace wage_no_compen=. if monthly==1&daily==1
-	replace wage_no_compen=0 if empstat==2
-	replace wage_no_compen=. if lstatus!=1
+	replace wage_no_compen=. if lstatus!=1|empstat==2
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 	drop monthly daily
 *</_wage_no_compen_>
@@ -1238,7 +1238,7 @@ In-kind earnings were included for non-missing observations.
 	gen double wage_no_compen_2=.
 	replace wage_no_compen_2=q32b1+q32b3 if monthly2==1
 	replace wage_no_compen_2=q32c3+q32c4 if daily2==1
-	replace wage_no_compen_2=. if lstatus!=1|q21!=1
+	replace wage_no_compen_2=. if lstatus!=1|q21!=1|empstat_2==2
 	label var wage_no_compen_2 "Last wage payment secondary job 7 day recall"
 *</_wage_no_compen_2_>
 

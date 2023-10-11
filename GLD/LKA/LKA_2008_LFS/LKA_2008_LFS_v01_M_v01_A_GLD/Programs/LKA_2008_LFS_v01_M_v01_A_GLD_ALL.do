@@ -98,7 +98,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * harmonized output in a single file
 
 	use "`path_in_stata'\LFS2008.dta", clear
-
+	
 /*%%=============================================================================================
 	2: Survey & ID
 ================================================================================================*/
@@ -1039,8 +1039,7 @@ In-kind earnings were included for non-missing observations.
 	replace wage_no_compen=q31b_1+q31b_3 if monthly==1
 	replace wage_no_compen=q31c3+q31c4 if daily==1
 	replace wage_no_compen=. if monthly==1&daily==1
-	replace wage_no_compen=0 if empstat==2
-	replace wage_no_compen=. if lstatus!=1
+	replace wage_no_compen=. if lstatus!=1|empstat==2
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 	drop monthly daily
 *</_wage_no_compen_>
@@ -1247,7 +1246,7 @@ In-kind earnings were included for non-missing observations.
 	gen double wage_no_compen_2=.
 	replace wage_no_compen_2=q32b_1+q32b_3 if monthly2==1
 	replace wage_no_compen_2=q32c3+q32c4 if daily2==1
-	replace wage_no_compen_2=. if lstatus!=1|q21!=1
+	replace wage_no_compen_2=. if lstatus!=1|q21!=1|empstat_2==2
 	label var wage_no_compen_2 "Last wage payment secondary job 7 day recall"
 *</_wage_no_compen_2_>
 
