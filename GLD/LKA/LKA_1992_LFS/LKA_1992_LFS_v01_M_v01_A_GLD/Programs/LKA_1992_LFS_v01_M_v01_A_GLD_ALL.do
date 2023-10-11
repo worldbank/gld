@@ -1155,20 +1155,6 @@ Financial and Business Services |        616        0.67       23.18
 *<_industrycat10_note_>*/
 
 	gen long industrycat10=.
-	gen str4 str_q9A=string(q9A, "%04.0f")
-	gen indcode=substr(str_q9A,1,2)
-	
-	destring indcode, gen(indnum)
-	replace industrycat10=1 if inrange(indnum,1,6)
-	replace industrycat10=2 if inrange(indnum,10,14)
-	replace industrycat10=3 if inrange(indnum,15,37)
-	replace industrycat10=4 if inrange(indnum,40,41)
-	replace industrycat10=5 if indnum==45
-	replace industrycat10=6 if inrange(indnum,50,55)
-	replace industrycat10=7 if inrange(indnum,60,64)
-	replace industrycat10=8 if inrange(indnum,65,74)
-	replace industrycat10=9 if indnum==75
-	replace industrycat10=10 if inrange(indnum,80,99)
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
@@ -1214,11 +1200,7 @@ Financial and Business Services |        616        0.67       23.18
 
 
 *<_occup_>
-	 gen str4 occup_str=string(q9B, "%04.0f")
-	 gen occupnum=substr(occup_str,1,1)
-	 destring occupnum, gen(occup)
-	 replace occup=10 if occup==0
-	 replace occup=. if inlist(q9B,0,9,116)
+	 gen occup=.
 	 replace occup=. if lstatus!=1
 	 label var occup "1 digit occupational classification, primary job 7 day recall"
   	 la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
