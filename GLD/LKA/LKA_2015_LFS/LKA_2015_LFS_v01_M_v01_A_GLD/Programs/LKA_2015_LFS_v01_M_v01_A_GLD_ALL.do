@@ -610,8 +610,8 @@ variable edu is:
 9 Passed Year 9/Grade 8 --- lower secondary complete
 10 Passed Year 10/Grade 9
 11 Passed Year 11/GCE(O.L)/NCGE --- (upper secondary)
-12 Passed Year 12/Grade 11 
-13 Passed Year 13/GCE(A.L)/HNCE --- (collegiate level)
+12 Passed Year 12/Grade 11 --- (upper secondary)
+13 Passed Year 13/GCE(A.L)/HNCE --- (upper secondary graduated)
 14 Passed GAQ/GSQ --- General Arts Qualification, above secondary but not University 16 years
 15 Degree --- 18 years
 16 Post Graduate Degree/Diploma --- 19 years
@@ -645,8 +645,8 @@ Original educational variable p11 has category 17 (68 observations) which is bey
 	replace educat7=2 if inrange(p10,0,4)
 	replace educat7=3 if p10==5
 	replace educat7=4 if inrange(p10,6,10)
-	replace educat7=5 if p10==11
-	replace educat7=6 if inrange(p10,12,14)
+	replace educat7=5 if inrange(p10,11,13)
+	replace educat7=6 if p10==14
 	replace educat7=7 if inlist(p10,15,16)
 	replace educat7=. if age<ed_mod_age
 	label var educat7 "Level of education 1"

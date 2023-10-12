@@ -98,7 +98,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * harmonized output in a single file
 
 	use "`path_in_stata'\lfsdata.dta", clear
-	
+
 /*%%=============================================================================================
 	2: Survey & ID
 ================================================================================================*/
@@ -648,8 +648,8 @@ variable edu is:
 9 Passed Year 9/Grade 8 --- lower secondary complete
 10 Passed Year 10/Grade 9
 11 Passed Year 11/GCE(O.L)/NCGE --- (upper secondary)
-12 Passed Year 12/Grade 11 
-13 Passed Year 13/GCE(A.L)/HNCE --- (collegiate level)
+12 Passed Year 12/Grade 11 --- (upper secondary)
+13 Passed Year 13/GCE(A.L)/HNCE --- (upper secondary graduated)
 14 Passed GAQ/GSQ --- General Arts Qualification, above secondary but not University 16 years
 15 Degree --- 18 years
 16 Post Graduate Degree/Diploma --- 19 years
@@ -683,8 +683,8 @@ Attendance at school or other educational institution
 	replace educat7=2 if inrange(edu,0,4)
 	replace educat7=3 if edu==5
 	replace educat7=4 if inrange(edu,6,10)
-	replace educat7=5 if edu==11
-	replace educat7=6 if inrange(edu,12,14)
+	replace educat7=5 if inrange(edu,11,13)
+	replace educat7=6 if edu==14
 	replace educat7=7 if inlist(edu,15,16)
 	replace educat7=. if age<ed_mod_age
 	label var educat7 "Level of education 1"
@@ -947,20 +947,6 @@ Original variable q9c only has two categories: public vs. private
 
 *<_industrycat10_>
 	gen long industrycat10=.
-	gen str4 str_q9a=string(q9a, "%04.0f")
-	gen indcode=substr(str_q9a,1,2)
-	
-	destring indcode, gen(indnum)
-	replace industrycat10=1 if inrange(indnum,1,6)
-	replace industrycat10=2 if inrange(indnum,10,14)
-	replace industrycat10=3 if inrange(indnum,15,37)
-	replace industrycat10=4 if inrange(indnum,40,41)
-	replace industrycat10=5 if indnum==45
-	replace industrycat10=6 if inrange(indnum,50,55)
-	replace industrycat10=7 if inrange(indnum,60,64)
-	replace industrycat10=8 if inrange(indnum,65,74)
-	replace industrycat10=9 if indnum==75
-	replace industrycat10=10 if inrange(indnum,80,99)
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
@@ -1006,11 +992,7 @@ Original variable q9c only has two categories: public vs. private
 
 
 *<_occup_>
-	 gen str4 occup_str=string(q9b, "%04.0f")
-	 gen occupnum=substr(occup_str,1,1)
-	 destring occupnum, gen(occup)
-	 replace occup=10 if occup==0
-	 replace occup=. if inlist(q9b,0,9,116)
+	 gen occup=.
 	 replace occup=. if lstatus!=1
 	 label var occup "1 digit occupational classification, primary job 7 day recall"
   	 la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
@@ -1154,21 +1136,6 @@ has answers of yes or no. No numbers of the in-kind value.
 
 *<_industrycat10_2_>
 	gen long industrycat10_2=.
-	gen str4 str_q18a=string(q18a, "%04.0f")
-	gen indcode_2=substr(str_q18a,1,2)
-	
-	destring indcode_2, gen(indnum_2)
-	replace industrycat10_2=1 if inrange(indnum_2,1,6)
-	replace industrycat10_2=2 if inrange(indnum_2,10,14)
-	replace industrycat10_2=3 if inrange(indnum_2,15,37)
-	replace industrycat10_2=4 if inrange(indnum_2,40,41)
-	replace industrycat10_2=5 if indnum_2==45
-	replace industrycat10_2=6 if inrange(indnum_2,50,55)
-	replace industrycat10_2=7 if inrange(indnum_2,60,64)
-	replace industrycat10_2=8 if inrange(indnum_2,65,74)
-	replace industrycat10_2=9 if indnum_2==75
-	replace industrycat10_2=10 if inrange(indnum_2,80,99)
-
 	replace industrycat10_2=. if lstatus!=1|q17!=1
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
@@ -1211,9 +1178,7 @@ has answers of yes or no. No numbers of the in-kind value.
 
 
 *<_occup_2_>
-	gen occup_2=int(q18b/1000)
-	recode occup_2 (0=10)
-	replace occup=. if inlist(q18b,0,9,116)
+	gen occup_2=.
 	replace occup_2=. if lstatus!=1|q17!=1
 	label var occup_2 "1 digit occupational classification secondary job 7 day recall"
 	label values occup_2 lbloccup

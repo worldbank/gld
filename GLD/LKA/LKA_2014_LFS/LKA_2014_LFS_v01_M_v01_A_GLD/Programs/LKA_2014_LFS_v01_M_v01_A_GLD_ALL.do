@@ -97,8 +97,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	*use "`path_in_stata'\LFS2014.dta", clear
-	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2014_LFS\LKA_2014_LFS_v01_M\Data\Stata\LFS2014.dta", clear
+	use "`path_in_stata'\LFS2014.dta", clear
 	quietly destring p10-p14 q3-q5 q11 q13 q14 q17 q24-q27 q33 q39 q47 q48 q51 q44 q50 q45a1-q45c1 q46a1-q46c1 q63a2 q62 q63a5, replace
 
 /*%%=============================================================================================
@@ -632,8 +631,8 @@ variable edu is:
 9 Passed Year 9/Grade 8 --- lower secondary complete
 10 Passed Year 10/Grade 9
 11 Passed Year 11/GCE(O.L)/NCGE --- (upper secondary)
-12 Passed Year 12/Grade 11 
-13 Passed Year 13/GCE(A.L)/HNCE --- (collegiate level)
+12 Passed Year 12/Grade 11 --- (upper secondary)
+13 Passed Year 13/GCE(A.L)/HNCE --- (upper secondary graduated)
 14 Passed GAQ/GSQ --- General Arts Qualification, above secondary but not University 16 years
 15 Degree --- 18 years
 16 Post Graduate Degree/Diploma --- 19 years
@@ -667,8 +666,8 @@ Original educational variable p11 has category 17 which is beyond its code list.
 	replace educat7=2 if inrange(p10,0,4)
 	replace educat7=3 if p10==5
 	replace educat7=4 if inrange(p10,6,10)
-	replace educat7=5 if p10==11
-	replace educat7=6 if inrange(p10,12,14)
+	replace educat7=5 if inrange(p10,11,13)
+	replace educat7=6 if p10==14
 	replace educat7=7 if inlist(p10,15,16)
 	replace educat7=. if age<ed_mod_age
 	label var educat7 "Level of education 1"
@@ -1900,6 +1899,6 @@ compress
 
 *<_% SAVE_>
 
-*save "`path_output'\\`level_2_harm'_ALL.dta", replace
-save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\LKA\LKA_2014_LFS\LKA_2014_LFS_v01_M_v01_A_GLD\Data\Harmonized\LKA_2014_LFS_v01_M_v01_A_GLD_ALL.dta",replace
+save "`path_output'\\`level_2_harm'_ALL.dta", replace
+
 *</_% SAVE_>

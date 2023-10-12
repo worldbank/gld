@@ -98,7 +98,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 	use "`path_in_stata'\DataOrig.dta", clear
 
-	/*%%=============================================================================================
+/*%%=============================================================================================
 	2: Survey & ID
 ================================================================================================*/
 
@@ -658,8 +658,8 @@ variable edu is:
 9 Passed Year 9/Grade 8 --- lower secondary complete
 10 Passed Year 10/Grade 9
 11 Passed Year 11/GCE(O.L)/NCGE --- (upper secondary)
-12 Passed Year 12/Grade 11 
-13 Passed Year 13/GCE(A.L)/HNCE --- (collegiate level)
+12 Passed Year 12/Grade 11 --- (upper secondary)
+13 Passed Year 13/GCE(A.L)/HNCE --- (upper secondary graduated)
 14 Passed GAQ/GSQ --- General Arts Qualification, above secondary but not University 16 years
 15 Degree --- 18 years
 16 Post Graduate Degree/Diploma --- 19 years
@@ -692,8 +692,8 @@ Attendance at school or other educational institution
 	replace educat7=2 if inrange(p9,0,4)
 	replace educat7=3 if p9==5
 	replace educat7=4 if inrange(p9,6,10)
-	replace educat7=5 if p9==11
-	replace educat7=6 if inrange(p9,12,14)
+	replace educat7=5 if inrange(p9,11,13)
+	replace educat7=6 if p9==14
 	replace educat7=7 if inlist(p9,15,16)
 	replace educat7=. if age<ed_mod_age
 	label var educat7 "Level of education 1"
@@ -951,20 +951,6 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_industrycat10_>
 	gen long industrycat10=.
-	gen str4 str_q8=string(q8, "%04.0f")
-	gen indcode=substr(str_q8,1,2)
-	
-	destring indcode, gen(indnum)
-	replace industrycat10=1 if inrange(indnum,1,6)
-	replace industrycat10=2 if inrange(indnum,10,14)
-	replace industrycat10=3 if inrange(indnum,15,37)
-	replace industrycat10=4 if inrange(indnum,40,41)
-	replace industrycat10=5 if indnum==45
-	replace industrycat10=6 if inrange(indnum,50,55)
-	replace industrycat10=7 if inrange(indnum,60,64)
-	replace industrycat10=8 if inrange(indnum,65,74)
-	replace industrycat10=9 if indnum==75
-	replace industrycat10=10 if inrange(indnum,80,99)
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
@@ -1010,11 +996,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_occup_>
-	 gen str4 occup_str=string(q7, "%04.0f")
-	 gen occupnum=substr(occup_str,1,1)
-	 destring occupnum, gen(occup)
-	 replace occup=10 if occup==0
-	 replace occup=. if inlist(q7,0,9,116)
+	 gen occup=.
 	 replace occup=. if lstatus!=1
 	 label var occup "1 digit occupational classification, primary job 7 day recall"
   	 la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
@@ -1036,18 +1018,24 @@ sense and thus these observations' wage were set to missing.
 In-kind earnings were included for non-missing observations.
 
 *<_wage_no_compen_note_>*/
+	foreach v of varlist q31b_1-q31c4{
+		replace `v'=. if `v'==0
+	}
 	egen monthly=rownonmiss(q31b_1-q31b_3)
 	egen daily=rownonmiss(q31c1-q31c4)
 	replace monthly=1 if monthly>0
 	replace daily=1 if daily>0
 	
 	gen double wage_no_compen=.
-	replace wage_no_compen=q31b_1+q31b_3 if monthly==1
-	replace wage_no_compen=q31c3+q31c4 if daily==1
+	egen monthly_helper=rowtotal(q31b_1 q31b_3), missing
+	egen daily_helper=rowtotal(q31c3 q31c4), missing
+	
+	replace wage_no_compen=monthly_helper if monthly==1
+	replace wage_no_compen=daily_helper if daily==1
 	replace wage_no_compen=. if monthly==1&daily==1
 	replace wage_no_compen=. if lstatus!=1|empstat==2
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
-	drop monthly daily
+	drop monthly daily monthly_helper daily_helper
 *</_wage_no_compen_>
 
 
@@ -1177,21 +1165,6 @@ In-kind earnings were included for non-missing observations.
 
 *<_industrycat10_2_>
 	gen long industrycat10_2=.
-	gen str4 str_q23=string(q23, "%04.0f")
-	gen indcode_2=substr(str_q23,1,2)
-	
-	destring indcode_2, gen(indnum_2)
-	replace industrycat10_2=1 if inrange(indnum_2,1,6)
-	replace industrycat10_2=2 if inrange(indnum_2,10,14)
-	replace industrycat10_2=3 if inrange(indnum_2,15,37)
-	replace industrycat10_2=4 if inrange(indnum_2,40,41)
-	replace industrycat10_2=5 if indnum_2==45
-	replace industrycat10_2=6 if inrange(indnum_2,50,55)
-	replace industrycat10_2=7 if inrange(indnum_2,60,64)
-	replace industrycat10_2=8 if inrange(indnum_2,65,74)
-	replace industrycat10_2=9 if indnum_2==75
-	replace industrycat10_2=10 if inrange(indnum_2,80,99)
-
 	replace industrycat10_2=. if lstatus!=1|q21!=1
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
@@ -1234,9 +1207,7 @@ In-kind earnings were included for non-missing observations.
 
 
 *<_occup_2_>
-	gen occup_2=int(q22/1000)
-	recode occup_2 (0=10)
-	replace occup=. if inlist(q22,0,9,116)
+	gen occup_2=.
 	replace occup_2=. if lstatus!=1|q21!=1
 	label var occup_2 "1 digit occupational classification secondary job 7 day recall"
 	label values occup_2 lbloccup
@@ -1244,14 +1215,20 @@ In-kind earnings were included for non-missing observations.
 
 
 *<_wage_no_compen_2_>
+	foreach v of varlist q32b_1-q32c4{
+		replace `v'=. if `v'==0
+	}
 	egen monthly2=rownonmiss(q32b_1-q32b_3)
 	egen daily2=rownonmiss(q32c1-q32c4)
 	replace monthly2=1 if monthly2>0
 	replace daily2=1 if daily2>0
 
 	gen double wage_no_compen_2=.
-	replace wage_no_compen_2=q32b_1+q32b_3 if monthly2==1
-	replace wage_no_compen_2=q32c3+q32c4 if daily2==1
+	egen monthly_helper=rowtotal(q32b_1 q32b_3), missing
+	egen daily_helper=rowtotal(q32c3 q32c4), missing
+	
+	replace wage_no_compen_2=monthly_helper if monthly2==1
+	replace wage_no_compen_2=daily_helper if daily2==1
 	replace wage_no_compen_2=. if lstatus!=1|q21!=1|empstat_2==2
 	label var wage_no_compen_2 "Last wage payment secondary job 7 day recall"
 *</_wage_no_compen_2_>

@@ -754,13 +754,13 @@ Original categorization of the highest educational level ever attended of
 variable p11 is:
 
 0	No schooling 
-1	Passed Grade 0-4/1-5 year --> 5 years
-2	Passed Grade 5-7/6-8 year --> 8 years
-3	Passed Grade 8-9/9-10 year --> 10 years
-4	Passed G.C.E(O/L)N.C.G.E. (junior secondary graduated) --> 11 years
-5	Passed G.C.E(A/L)H.N.C.E. (senior secondary graduated) --> 13 years
-6	Degree --> 18 years
-7	Post graduate degree/diploma --> 19 years
+1	Passed Grade 0-4/1-5 year --> 5 years (primary finished)
+2	Passed Grade 5-7/6-8 year --> 8 years (lower secondary)
+3	Passed Grade 8-9/9-10 year --> 10 years (upper secondary unfinished)
+4	Passed G.C.E(O/L)N.C.G.E. (upper secondary school graduated) --> 11 years
+5	Passed G.C.E(A/L)H.N.C.E. (upper secondary school graduated) --> 13 years
+6	Degree --> 18 years (post secondary)
+7	Post graduate degree/diploma --> 19 years (post secondary)
 
 *<_educy_note_>*/	
 
@@ -1351,21 +1351,6 @@ Same ISIC & ISCO version issue here.
 
 *<_industrycat10_2_>
 	gen long industrycat10_2=.
-	gen str4 str_q16A=string(q16A, "%04.0f")
-	gen indcode_2=substr(str_q16A,1,2)
-	
-	destring indcode_2, gen(indnum_2)
-	replace industrycat10_2=1 if inrange(indnum_2,1,6)
-	replace industrycat10_2=2 if inrange(indnum_2,10,14)
-	replace industrycat10_2=3 if inrange(indnum_2,15,37)
-	replace industrycat10_2=4 if inrange(indnum_2,40,41)
-	replace industrycat10_2=5 if indnum_2==45
-	replace industrycat10_2=6 if inrange(indnum_2,50,55)
-	replace industrycat10_2=7 if inrange(indnum_2,60,64)
-	replace industrycat10_2=8 if inrange(indnum_2,65,74)
-	replace industrycat10_2=9 if indnum_2==75
-	replace industrycat10_2=10 if inrange(indnum_2,80,99)
-
 	replace industrycat10_2=. if lstatus!=1|q15!=1
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
@@ -1408,9 +1393,7 @@ Same ISIC & ISCO version issue here.
 
 
 *<_occup_2_>
-	gen occup_2=int(q16B/1000)
-	recode occup_2 (0=10)
-	replace occup=. if inlist(q16B,0,9,116)
+	gen occup_2=.
 	replace occup_2=. if lstatus!=1|q15!=1
 	label var occup_2 "1 digit occupational classification secondary job 7 day recall"
 	label values occup_2 lbloccup
