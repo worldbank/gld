@@ -2,7 +2,7 @@
 
 This document describes the methodology used to map national industrial and occupational codes to their international counterparts. For industry, five versions of national classification, *Klasifikasi Baku Lapangan Usaha Indonesia (KBLI)*, were mapped to two versions of *International Standard Industrial Classification of all Economic Activities (ISIC)*; regarding occupation, two versions of national classification, *Klasifikasi Baku Jenis Pekerjaan Indonesia (KBJI)*, were mapped to two versions of *International Standard Classification of Occupations (ISCO)*. Specific versions mapped for each year harmonized are summarized in the table below along with internal links to the docs.
 
-![mapping_summary](utilities/mapping_summary.png)
+
 
 
 | **Version of KBJI**	| **Corresponding ISCO**	| 
