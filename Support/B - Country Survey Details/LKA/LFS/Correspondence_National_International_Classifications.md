@@ -42,6 +42,17 @@ Below is the detailed corresponding table that covers all the differences in sub
 | 6224 | Inland Water Fishery Workers (Market -oriented)| 6222 | Inland and coastal waters fishery workers |
 | 6225 | Deep-sea Fishery Workers (Market -oriented) | 6223 | Deep-sea fishery workers |
 | 6226 | Hunters and Trappers (Market -oriented) | 6224 | Hunters and trappers |
+| 6311 | Agricultural Farm Supervisors | 2132 | Farming, forestry and fisheries advisers |
+| 6312 | Forestry Supervisors | 2132 | Farming, forestry and fisheries advisers |
+| 6320 | Fishery Supervisors  | 2132 | Farming, forestry and fisheries advisers |
+| 6330 | Livestock and Dairy Farm Supervisors   | 2132 | Farming, forestry and fisheries advisers |
+| 6411 | Subsistence Crop Farmers | 6310 | Subsistence crop farmers |
+| 6412 | Subsistence Crop Farmers NEC | 6310 | Subsistence crop farmers |
+| 6420 | Subsistence Livestock Farmers | 6320 | Subsistence livestock farmers |
+| 6430 | Subsistence Mixed Crop and Livestock Farmers | 6330 | Subsistence mixed crop and livestock farmers |
+| 6440 | Subsistence Fishers, Hunters, Trappers and Gatherers | 6340 | Subsistence fishers, hunters, trappers and gatherers |
+
+
 
 
 
