@@ -14,6 +14,9 @@ Below is the detailed corresponding table that covers all the differences in sub
 
 | **SLSCO-08 Code**	| **SLSCO-08 Occupation**	| **ISCO-08 Code**	| **ISCO-08 Occupation**	|
 |:----:|:---------:|:----:|:--------------------------:|	 	
+| 0110 | Commissioned Armed Forces Officers | 100 | Commissioned Armed Forces Officers |
+| 0120 | Non-commissioned Armed Forces Officers | 200 | Non-commissioned Armed Forces Officers |
+| 0130 | Armed Forces Occupations Other Ranks | 300 | Armed Forces Occupations, Other Ranks |
 | 2414 | Assessors | 3315 | Valuers and loss assessors |
 | 3349 | Administrative and Specialized Secretaries NEC | 3340 | Administrative and specialized secretaries |
 | 3360 | Other Government Associate Professionals | 3350 | Government regulatory associate professionals |
@@ -57,7 +60,12 @@ Below is the detailed corresponding table that covers all the differences in sub
 | 8214 | Metal, Rubber and Plastic Products Assemblers | 8210 | Assemblers |
 | 8215 | Wood and Related  Products Assemblers| 8210 | Assemblers |
 | 8216 | Paperboard, Textile and Related Products Assemblers| 8210 | Assemblers |
-
+| 8321 | Motor  Cycle Drivers | 8320 | Car, van and motorcycle drivers |
+| 9217 | Garden and Horticultural Labourers | 9210 | Agricultural, forestry and fishery labourers |
+| 9218 | Forestry Labourers | 9210 | Agricultural, forestry and fishery labourers |
+| 9219 | Fishery and Aquaculture Labourers | 9210 | Agricultural, forestry and fishery labourers |
+| 9322 | Other Manufacturing Labourers | 9320 | Manufacturing labourers |
+| 9335 | Transport Labourers | 9330 | Transport and storage labourers |
 
 
 
