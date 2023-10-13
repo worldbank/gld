@@ -3,6 +3,5 @@ d GLD Files Update Check: A package to check whether files submitted are the lat
 d Creator: World Bank Jobs Group
 d Author: Gronert Alvarez, Mario Andres
 d For any questions, please contact: gld@worldbankgroup.org
-d Distribution-Date: 20230821
-
+d Distribution-Date: 2023-08-21
 f gld_check_latest.ado
