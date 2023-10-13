@@ -18,5 +18,31 @@ Below is the detailed corresponding table that covers all the differences in sub
 | 3349 | Administrative and Specialized Secretaries NEC | 3340 | Administrative and specialized secretaries |
 | 3360 | Other Government Associate Professionals | 3350 | Government regulatory associate professionals |
 | 3441 | Artistic and Cultural Associate Professionals | 3430 | Artistic, cultural and culinary associate professionals |
+| 3441 | Artistic and Cultural Associate Professionals | 3430 | Artistic, cultural and culinary associate professionals |
+| 5121 | Chefs | 5120 | Cooks |
+| 5122 | Cooks | 5120 | Cooks |
+| 5411 | Fire Fighters | 5411 | Protective services workers |
+| 5412 | Police Officers | 5411 | Protective services workers |
+| 5413 | Prison Guards | 5411 | Protective services workers |
+| 5414 | Security Guards | 5411 | Protective services workers |
+| 5415 | Home Guards | 5411 | Protective services workers |
+| 5416 | Drivers | 5411 | Protective services workers |
+| 5419 | Protective Service Workers NEC | 5411 | Protective services workers |
+| 6111 | Field Crops and Vegetable Growers  (Excluding Cereal Crops, Estate Crops and Minor Export Crops) - Market -oriented | 6110 | Market gardeners and crop growers |
+| 6112 | Cereal Crop Cultivators (Excluding Paddy) (Market -oriented) | 6110 | Market gardeners and crop growers |
+| 6113 | Paddy Cultivators (Market -oriented) | 6110 | Market gardeners and crop growers |
+| 6114 | Tea Cultivators (Market -oriented) | 6110 | Market gardeners and crop growers |
+| 6115 | Rubber Cultivators (Market -oriented) | 6110 | Market gardeners and crop growers |
+| 6116 | Coconut Cultivators (Market -oriented) | 6110 | Market gardeners and crop growers |
+| 6117 | Minor Export Crops Cultivators (Market -oriented) | 6110 | Market gardeners and crop growers |
+| 6118 | Gardeners, Horticultural and Nursery Growers (Market -oriented)| 6110 | Market gardeners and crop growers |
+| 6119 | Mixed Crops Growers (Market -oriented)| 6110 | Market gardeners and crop growers |
+| 6222 | Ornamental Fish Workers (Market -oriented)| 6220 | Fishery workers, hunters and trappers |
+| 6223 | Inland Water Fishery Workers (Market -oriented)| 6222 | Inland and coastal waters fishery workers |
+| 6224 | Inland Water Fishery Workers (Market -oriented)| 6222 | Inland and coastal waters fishery workers |
+| 6225 | Deep-sea Fishery Workers (Market -oriented) | 6223 | Deep-sea fishery workers |
+| 6226 | Hunters and Trappers (Market -oriented) | 6224 | Hunters and trappers |
+
+
 
 *(We will update this documentation along with LKA GLD if we get more information on correspondence tables for SLSIC and SLSCO in the future for other years. Please feel free to contact the GLD focal point (gld@worldbank.org) if you know anything that might help map Sri Lanka's industrial or occupational codes. Thanks!)*
