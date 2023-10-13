@@ -51,6 +51,13 @@ Below is the detailed corresponding table that covers all the differences in sub
 | 6420 | Subsistence Livestock Farmers | 6320 | Subsistence livestock farmers |
 | 6430 | Subsistence Mixed Crop and Livestock Farmers | 6330 | Subsistence mixed crop and livestock farmers |
 | 6440 | Subsistence Fishers, Hunters, Trappers and Gatherers | 6340 | Subsistence fishers, hunters, trappers and gatherers |
+| 7116 | Masons (General) | 7110 | Building frame and related trades workers |
+| 7517 | Other Products  Makers | 7510 | Food processing and related trades workers |
+| 8213 | Electronic Equipment Assemblers | 8210 | Assemblers |
+| 8214 | Metal, Rubber and Plastic Products Assemblers | 8210 | Assemblers |
+| 8215 | Wood and Related  Products Assemblers| 8210 | Assemblers |
+| 8216 | Paperboard, Textile and Related Products Assemblers| 8210 | Assemblers |
+
 
 
 
