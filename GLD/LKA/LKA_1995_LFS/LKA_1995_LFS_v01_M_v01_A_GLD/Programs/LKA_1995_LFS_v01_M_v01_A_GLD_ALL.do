@@ -97,7 +97,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * harmonized output in a single file
 
 	 use "`path_in_stata'\lfsdata.dta", clear
-
+	 
 /*%%=============================================================================================
 	2: Survey & ID
 ================================================================================================*/
@@ -270,8 +270,8 @@ Within the same household there are duplicated household IDs
 
 *<_urban_>
 	gen urban=.
-	*replace urban=1 if sector==1
-	*replace urban=0 if sector==2|sector==3
+	replace urban=1 if sector==1
+	replace urban=0 if sector==2|sector==3
 	la de lblurban 1 "Urban" 0 "Rural"
 	label values urban lblurban
 	label var urban "Location is urban"
