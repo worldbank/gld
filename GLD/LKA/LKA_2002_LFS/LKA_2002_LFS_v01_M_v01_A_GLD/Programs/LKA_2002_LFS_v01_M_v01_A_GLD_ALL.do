@@ -97,7 +97,9 @@ local out_file "`level_2_harm'_ALL.dta"
 * harmonized output in a single file
 
 	use "`path_in_stata'\lfsdata.dta", clear
-	
+	duplicates drop
+	*One observation dropped
+
 /*%%=============================================================================================
 	2: Survey & ID
 ================================================================================================*/
