@@ -22,7 +22,7 @@
 								Can be downloaded from http://nada.statistics.gov.lk/index.php/catalog but 
 								with only 25% of the full file through registration. 
 <_Sample size (HH)_> 			14,161 </_Sample size (HH)_>
-<_Sample size (IND)_> 		    58,680 </_Sample size (IND)_>
+<_Sample size (IND)_> 		    58,679 </_Sample size (IND)_>
 <_Sampling method_> 			A stratified two-stage probability sample design
 								used with census blocks as PSUs and housing units
 								as secondary and final sampling units. </_Sampling method_>
