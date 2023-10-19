@@ -2,6 +2,10 @@
 * A1: List all the harmonized datasets
 *==============================================================================*/
 
+
+filelist, dir("${path_work}") pat("*.dta")
+
+/*
 * Create an empty master dataset
 clear
 qui gen str filepath = ""
@@ -33,3 +37,4 @@ use "`master'", clear
 
 
 
+*/
