@@ -200,20 +200,6 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_pid_>
-
-/*<_pid_note_>
-
-Duplicates in terms of hhid p1
-
---------------------------------------
-   copies | observations       surplus
-----------+---------------------------
-        1 |        58592             0
-        2 |           12             6
---------------------------------------
-
-*<_pid_note_>*/
-
 	gsort hhid -age
 	bys hhid: gen newp1=_n
 	tostring newp1, gen(str_pid) format(%02.0f)
