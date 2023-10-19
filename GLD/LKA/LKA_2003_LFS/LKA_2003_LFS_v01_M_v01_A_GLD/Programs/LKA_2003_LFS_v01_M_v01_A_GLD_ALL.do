@@ -22,7 +22,7 @@
 								Can be downloaded from http://nada.statistics.gov.lk/index.php/catalog but 
 								with only 25% of the full file through registration. 
 <_Sample size (HH)_> 			16,235 </_Sample size (HH)_>
-<_Sample size (IND)_> 		    67,204 </_Sample size (IND)_>
+<_Sample size (IND)_> 		    67,060 </_Sample size (IND)_>
 <_Sampling method_> 			A stratified two-stage probability sample design
 								used with census psus as PSUs and housing units
 								as secondary and final sampling units. </_Sampling method_>
@@ -98,6 +98,8 @@ local out_file "`level_2_harm'_ALL.dta"
 * harmonized output in a single file
 
 	use "`path_in_stata'\lfsdata.dta", clear
+	duplicates drop
+
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -201,13 +203,15 @@ local out_file "`level_2_harm'_ALL.dta"
 
 /*<_pid_note_>
 
+. duplicates report hhid p1
+
 Duplicates in terms of hhid p1
 
 --------------------------------------
    copies | observations       surplus
 ----------+---------------------------
-        1 |        66868             0
-        2 |          336           168
+        1 |        67012             0
+        2 |           48            24
 --------------------------------------
 
 *<_pid_note_>*/
