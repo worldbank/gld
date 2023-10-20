@@ -43,6 +43,7 @@ called hamlet group/sub-block, was formed </_Sampling method_>
 * Date: 2022-09-24 - Correct educat7, ocusec, change subnatid1 to string, improve subnatidsurvey
 * Date: 2022-11-22 - Updated based on correcting input data that infile as byte was not reading correctly
 * Date: 2022-08-25 - Include code appending household and person revisit data
+
 </_Version Control_>
 
 -------------------------------------------------------------------------*/
@@ -87,9 +88,6 @@ local out_file "`level_2_harm'_ALL.dta"
 
 use "`path_in_stata'\IND_2017_PLFS_raw_IND_Stata.dta", clear
 
-** Append the revisits data
-append using "`path_in_stata'\IND_2017_PLFS_raw_IND_RV_Stata.dta"
-
 gen str1 h_1 = string(sample_sg_b_no,"%01.0f")
 gen str1 h_2 = string(ss_stratum,"%01.0f")
 gen str2 h_3 = string(hh_num,"%02.0f")
@@ -103,8 +101,6 @@ save `ind_file'
 
 use "`path_in_stata'\IND_2017_PLFS_raw_HH_Stata.dta", clear
 
-** Append the revisits data
-append using "`path_in_stata'\IND_2017_PLFS_raw_HH_RV_Stata.dta"
 
 gen str1 h_1 = string(sample_sg_b_no,"%01.0f")
 gen str1 h_2 = string(ss_stratum,"%01.0f")
