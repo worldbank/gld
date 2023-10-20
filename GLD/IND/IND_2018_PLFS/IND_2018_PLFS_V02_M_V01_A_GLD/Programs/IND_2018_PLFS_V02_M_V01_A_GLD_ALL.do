@@ -87,7 +87,6 @@ local out_file "`level_2_harm'_ALL.dta"
 *----------1.3: Database assembly------------------------------*
 
 use "`path_in_stata'\IND_2018_PLFS_raw_IND_Stata.dta", clear
-append using "`path_in_stata'\IND_2018_PLFS_raw_IND_RV_Stata.dta"
 
 gen str1 h_1 = string(sample_sg_b_no,"%01.0f")
 gen str1 h_2 = string(ss_stratum,"%01.0f")
@@ -100,7 +99,6 @@ tempfile ind_file
 save `ind_file'
 
 use "`path_in_stata'\IND_2018_PLFS_raw_HH_Stata.dta", clear
-append using "`path_in_stata'\IND_2018_PLFS_raw_HH_RV_Stata.dta"
 
 gen str1 h_1 = string(sample_sg_b_no,"%01.0f")
 gen str1 h_2 = string(ss_stratum,"%01.0f")
