@@ -29,7 +29,7 @@
 <_Geographic coverage_> 		
 <_Currency_> 					Georgian Lari </_Currency_>
 -----------------------------------------------------------------------
-<_ICLS Version_>				ICLS 19 </_ICLS Version_>
+<_ICLS Version_>				ICLS 13 </_ICLS Version_>
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
 <_ISCO Version_>				ISCO  </_ISCO Version_>
 <_OCCUP National_>					  </_OCCUP National_>
@@ -113,7 +113,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_icls_v_>
-	gen icls_v="ICLS-19"
+	gen icls_v="ICLS-13"
 	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
 
@@ -702,8 +702,6 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 
 *<_vocational_>
 	gen vocational=.
-	replace vocational=1 if q62==1
-	replace vocational=0 if q62==2
 	la de vocationallbl 1 "Yes" 0 "No"
 	la values vocational vocationallbl
 	label var vocational "Ever received vocational training"
@@ -719,21 +717,21 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 
 
 *<_vocational_length_l_>
-	gen vocational_length_l=q63_a_5
+	gen vocational_length_l=.
 	replace vocational_length_l=. if vocational!=1
 	label var vocational_length_l "Length of training in months, lower limit"
 *</_vocational_length_l_>
 
 
 *<_vocational_length_u_>
-	gen vocational_length_u=q63_a_5
+	gen vocational_length_u=.
 	replace vocational_length_l=. if vocational!=1
 	label var vocational_length_u "Length of training in months, upper limit"
 *</_vocational_length_u_>
 
 
 *<_vocational_field_orig_>
-	gen vocational_field_orig=q63_a_22
+	gen vocational_field_orig=.
 	replace vocational_field_orig=. if vocational!=1
 	label var vocational_field_orig "Original field of training information"
 *</_vocational_field_orig_>
@@ -764,15 +762,64 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 
 /*<_lstatus_note_>
 
-It has been made sure that people whose answer to q2 is 1 all have answered q7;
-and people whose answer to q2 is 2 all have answered q4;
-and people whose answer to q4 is 1 all have answered q5;
-and people who have answered q5 all have answered q7.
+In the questionnaire, A1-A6 are the employment status questions to which if 
+answers are all 1 those respondents would be seen as employed and led to 
+question B1. But the raw dataset we can get only has already processed variables
+employed, unemployed, hired, and self-employed.
+
+Regarding umemployed, it has unemployed based on ILO strict definition and soft 
+definition. The unemployed population defined by soft definition has 1,202 fewer 
+observations than the strict definition. However, cross examinition with seeking 
+work and availability to work shows that both definitions align with our definition 
+of unemployment. 
+
+. tab Unemployed Unemployed_soft, m
+
+Unemployed |
+ according |
+    to the |
+Internatio |
+nal Labour | Unemployed according
+Organizati | to the International
+  on (ILO) |  Labour Organization
+    strict |  (ILO) soft criteri
+     crite |     0. No     1. Yes |     Total
+-----------+----------------------+----------
+     0. No |    49,720      1,202 |    50,922 
+    1. Yes |         0      3,902 |     3,902 
+-----------+----------------------+----------
+     Total |    49,720      5,104 |    54,824
+	 
+. tab Unemployed_soft G9_Availability_to_start_working, m
+
+Unemployed |
+ according |
+    to the |
+Internatio |
+nal Labour |
+Organizati |
+  on (ILO) |
+      soft |    Available to start working
+   criteri |    1. Yes      2. No          . |     Total
+-----------+---------------------------------+----------
+     0. No |     1,095        917     47,708 |    49,720 
+    1. Yes |     5,104          0          0 |     5,104 
+-----------+---------------------------------+----------
+     Total |     6,199        917     47,708 |    54,824 
+
+Despite the difference between the two definitions, another mismatch is that if 
+we coded only based from work seeking and availability questions yields only 3,401
+unemployed observations.
+
+Another thing to note is thatthe meployed rate using either the original variable 
+"Employed" or coding from availability and seeking work is the same.  
+ 
 *<_lstatus_note_>*/
 
 	gen byte lstatus=.
-	replace lstatus=1 if !mi(q7)
-	replace lstatus=2 if (q48==1&q51==1)|q47==3
+	egen seeking=rowmin(G2_1_Methods_used_to_find_work-G2_97_Methods_used_to_find_work) 
+	replace lstatus=1 if Employed==1
+	replace lstatus=2 if lstatus==.&seeking==1&G9_Availability_to_start_working==1
 	replace lstatus=3 if lstatus==. 
 	replace lstatus=. if age<minlaborage
 	label var lstatus "Labor status"
@@ -787,14 +834,14 @@ and people who have answered q5 all have answered q7.
 Note: var "potential_lf" only takes value if the respondent is not in labor force. (lstatus==3)
 
 "potential_lf"=1 if the person is
-1)available but not searching or q51==1 & q48==2
-2)searching but not immediately available to work or q51==2 & q48==1
+1)available but not searching or G9_Availability_to_start_working==1 & seeking==2
+2)searching but not immediately available to work or G9_Availability_to_start_working==2 & seeking==1
 
 </_potential_lf_note_>*/
 
 	gen potential_lf=.
-	replace potential_lf=1 if [q51==1 & q48==2] | [q51==2 & q48==1]
-	replace potential_lf=0 if [q51==1 & q48==1] | [q51==2 & q48==2]
+	replace potential_lf=1 if [G9_Availability_to_start_working==1 & seeking==2] | [G9_Availability_to_start_working==2 & seeking==1]
+	replace potential_lf=0 if [G9_Availability_to_start_working==1 & seeking==1] | [G9_Availability_to_start_working==2 & seeking==2]
 	replace potential_lf=. if age < minlaborage
 	replace potential_lf=. if lstatus!=3
 	label var potential_lf "Potential labour force status"
@@ -804,9 +851,15 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_underemployment_>
+
+/*<_underemployment_note_>
+
+The questionnaire actually has questions about "willingness and availability" to work 
+for more hours but they are not in the raw dataset.
+
+*<_underemployment_note_>*/
+
 	gen byte underemployment=.
-	replace underemployment=1 if q44==1
-	replace underemployment=0 if q44==2
 	replace underemployment=. if age<minlaborage
 	replace underemployment=. if lstatus!=1
 	label var underemployment "Underemployment status"
@@ -816,8 +869,12 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_nlfreason_>
-	gen byte nlfreason=q50
-	recode nlfreason (1/5 9=5) (6=2) (7=1)
+	gen byte nlfreason=.
+	replace nlfreason=1 if Inactive_student==1
+	replace nlfreason=2 if Inactive_homemaker==1
+	replace nlfreason=3 if Inactive_pens==1
+    replace nlfreason=4 if Inactive_disabled==1
+	replace nlfreason=4 if Inactive_emp_agency==1|Inactive_discourage==1|Inactive_unwillingness==1|Inactive_other==1
 	replace nlfreason=. if age<minlaborage
 	replace nlfreason=. if lstatus!=3
 	label var nlfreason "Reason not in the labor force"
@@ -827,8 +884,8 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_unempldur_l_>
-	gen byte unempldur_l=q58 
-	recode unempldur_l (2=6) (3=13)
+	gen byte unempldur_l=Unemployment_Spin
+	recode unempldur_l (1=0) (2=1) (3=3) (4=6) (5=12) (6=18) (7=24) (8=48) 
 	replace unempldur_l=. if age<minlaborage
 	replace unempldur_l=. if lstatus!=2
 	label var unempldur_l "Unemployment duration (months) lower bracket"
@@ -836,8 +893,8 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_unempldur_u_>
-	gen byte unempldur_u=q58
-	recode unempldur_u (1=5) (2=12) 
+	gen byte unempldur_u=Unemployment_Spin
+	recode unempldur_u (1=1) (2=2) (3=5) (4=11) (5=17) (6=23) (7=47) (8=.) 
 	replace unempldur_u=. if age<minlaborage
 	replace unempldur_u=. if lstatus!=2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
@@ -850,8 +907,8 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 {
 *<_empstat_>
-	gen byte empstat=q9
-	recode empstat (2=3) (3=4) (4=2)
+	gen byte empstat=B7_Status
+	recode empstat (2=3) (3=4) (5=2) (97=5)
 	replace empstat=. if lstatus!=1|age<minlaborage
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
@@ -860,8 +917,8 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_ocusec_>
-	gen byte ocusec=q14
-	recode ocusec (2=1) (3=2)
+	gen byte ocusec=B6_Sector
+	recode ocusec (1=3) (97=4) (98=.)
 	replace ocusec=. if lstatus!=1|age<minlaborage
 	label var ocusec "Sector of activity primary job 7 day recall"
 	la de lblocusec 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
