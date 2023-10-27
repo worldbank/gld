@@ -16,11 +16,8 @@
 <_Data collection from (M/Y)_>	[Jan/2017] </_Data collection from (M/Y)_>
 <_Data collection to (M/Y)_>	[Dec/2017] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			Survey conducted by National Statistics Office of Georgia.
-								The data for the the Georgian 2017 LFS was downloaded 
-								from the Microdata Library.This dataset is classified 
-								as Official under the Access to Information Classification Policy. Access to 	
-								data is limited to Staff only. </_Source of dataset_>
-								
+								Data from 2017 to 2022 are publicly available on
+								Georgia national stats office website.</_Source of dataset_>
 								*OPENLY ACCESSIBLE: 		 
 								https://www.geostat.ge/en/modules/categories/130/labour-force-survey-databases*
 <_Sample size (HH)_> 			 </_Sample size (HH)_>
@@ -31,9 +28,9 @@
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
-<_ISCO Version_>				ISCO  </_ISCO Version_>
+<_ISCO Version_>				ISCO 08 </_ISCO Version_>
 <_OCCUP National_>					  </_OCCUP National_>
-<_ISIC Version_>				ISIC  </_ISIC Version_>
+<_ISIC Version_>				ISIC Rev.4 </_ISIC Version_>
 <_INDUS National_>				      </_INDUS National_>
 -----------------------------------------------------------------------
 
@@ -125,13 +122,13 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_isco_version_>
-	gen isco_version=""
+	gen isco_version="isco_2008"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
 
 *<_isic_version_>
-	gen isic_version=""
+	gen isic_version="isic_4"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
@@ -908,7 +905,7 @@ for more hours but they are not in the raw dataset.
 {
 *<_empstat_>
 	gen byte empstat=B7_Status
-	recode empstat (2=3) (3=4) (5=2) (97=5)
+	recode empstat (2=3) (3=4) (4=1) (5=2) (97=5)
 	replace empstat=. if lstatus!=1|age<minlaborage
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
@@ -927,16 +924,18 @@ for more hours but they are not in the raw dataset.
 
 
 *<_industry_orig_>
-	gen industry_orig=q8                                                                   
+	gen industry_orig=B4_NACE_2                                                                  
 	replace industry_orig=. if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
 
 *<_industrycat_isic_>
-	gen str4 str_q8=string(q8, "%05.0f")
-	gen indcode=substr(str_q8,1,4)
-	gen industrycat_isic=indcode
+	/*gen industrycat_isic=string(B4_NACE_2, "%04.0f")
+	replace industrycat_isic="" if inlist(B4_NACE_2,6831,9900)
+	replace industrycat_isic="" if inrange(B4_NACE_2,8551,8560)
+	replace industrycat_isic="" if inlist(B4_NACE_2,8891,8899)*/
+	gen industrycat_isic=""
 	replace industrycat_isic="" if industrycat_isic=="."
 	replace industrycat_isic="" if lstatus!=1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
@@ -944,7 +943,8 @@ for more hours but they are not in the raw dataset.
 
 
 *<_industrycat10_>
-	gen isic2d=substr(industrycat_isic, 1, 2)
+	gen industry1=string(B4_NACE_2, "%04.0f")
+	gen isic2d=substr(industry1, 1, 2)
 	destring isic2d, replace
 	gen industrycat10=.
 	replace industrycat10=isic2d
@@ -966,55 +966,25 @@ for more hours but they are not in the raw dataset.
 
 
 *<_occup_orig_>
-	gen occup_orig=q7
+	gen occup_orig=B5_Occupation
 	replace occup_orig=. if lstatus!=1
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
 
 *<_occup_isco_>
-quietly{	
-	replace q7=. if inlist(q7,210,220,230,3356) // This first half block is specifically
-											    // for codes that do not exist in SLSCO 08
-										        // in this year's data. The second half is 
-											    // the SLSCO-ISCO mapping generally apllicable to all years. 
-	replace q7=100 if q7==110
-	replace q7=200 if q7==120
-	replace q7=300 if q7==130
-	replace q7=q7-1 if inrange(q7,1211,1214)
-	*replace q7=3315 if q7==2414
-	replace q7=3340 if q7==3349
-	replace q7=3350 if q7==3360
-	replace q7=3430 if inrange(q7, 3441, 3449)
-	replace q7=5120 if inrange(q7, 5121, 5122)
-	replace q7=5410 if inrange(q7, 5411, 5419)
-	replace q7=6110 if inrange(q7, 6111, 6119)
-	replace q7=6220 if q7==6222
-	replace q7=6222 if inlist(q7,6223,6224)
-	replace q7=6223 if q7==6225
-	*replace q7=6224 if q7==6226
-	replace q7=2132 if inrange(q7, 6300, 6330)
-	replace q7=6310 if inrange(q7,6411,6412)
-	replace q7=6320 if q7==6420
-	*replace q7=6300 if q7==6400
-	replace q7=6330 if q7==6430
-	replace q7=6340 if q7==6440
-	replace q7=7110 if q7==7116
-	replace q7=7510 if q7==7517
-	replace q7=8210 if inrange(q7,8213,8216)
-	replace q7=8320 if q7==8323
-	replace q7=9210 if inrange(q7,9217,9219)
-	replace q7=9320 if q7==9322
-	replace q7=9330 if q7==9335
-}	
-	tostring q7, format("%04.0f") gen(occup_isco)
+	/*gen b5=string(B5_Occupation, "%04.0f")
+	gen occup_isco=substr(b5,1,2)
+	replace occup_isco=occup_isco+"00"*/
+	gen occup_isco=""
 	replace occup_isco="" if lstatus!=1 | occup_isco=="." 
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
 
 *<_occup_skill_>
-	gen skill_level=substr(occup_isco, 1, 1)
+	gen b5=string(B5_Occupation, "%04.0f")
+	gen skill_level=substr(b5, 1, 1)
 	destring skill_level, replace
 	gen occup_skill=.
 	replace occup_skill=1 if skill_level==9
@@ -1028,11 +998,9 @@ quietly{
 
 
 *<_occup_>
-	 gen str4 occup_str=string(q7, "%04.0f")
-	 gen occupnum=substr(occup_str,1,1)
+	 gen occupnum=substr(b5,1,1)
 	 destring occupnum, gen(occup)
 	 replace occup=10 if occup==0
-	 replace occup=. if inlist(q7,0,9,116)
 	 replace occup=. if lstatus!=1
 	 label var occup "1 digit occupational classification, primary job 7 day recall"
   	 la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
@@ -1044,33 +1012,28 @@ quietly{
 
 /*<_wage_no_compen_note_>
 
-Question 45 asks about the monthly/daily payment and in-kind payment.
-q45 confirms employment in the main occupation
-q45_a_1-3 are for monthly salary earners
-q45_b_1-4 are for daily wage earners
-q45_c_1 is monthly income for employers and own account workers
+Question B17 asks the specific amount of earnings whereas B18 asks the brackets of 
+earnings in case that the respondents do not recall the exact amount. 
+However, the raw dataset mixed B17 and B18 together and reports all respondents'
+answers in the form of earning interval in stead of specific amount. 
+
+In this case, I used the mean of each interval to estimate the average income of 
+each bracket.   
+
 *<_wage_no_compen_note_>*/
 
-	foreach v of varlist q45_a_1-q45_b_4{
-		replace `v'=. if `v'==0
-	}
-	egen monthly=rownonmiss(q45_a_1-q45_a_3)
-	egen daily=rownonmiss(q45_b_1-q45_b_4)
-	gen employer=1 if !mi(q45_c_1)&q45_c_1>0
-	replace monthly=1 if monthly>0
-	replace daily=1 if daily>0
-	replace employer=0 if employer!=1
-	
-	gen double wage_no_compen=.
-	egen monthly_helper=rowtotal(q45_a_1 q45_a_3), missing
-	egen daily_helper=rowtotal(q45_b_3 q45_b_4), missing
-	
-	replace wage_no_compen=monthly_helper if monthly==1
-	replace wage_no_compen=daily_helper if daily==1
-	replace wage_no_compen=q45_c_1 if employer==1
+	gen wage_no_compen=.
+	replace wage_no_compen=50 if B17_B18_Net_earnings==1
+	replace wage_no_compen=150 if B17_B18_Net_earnings==2
+	replace wage_no_compen=300 if B17_B18_Net_earnings==3
+	replace wage_no_compen=500 if B17_B18_Net_earnings==4
+	replace wage_no_compen=700 if B17_B18_Net_earnings==5
+	replace wage_no_compen=900 if B17_B18_Net_earnings==6
+	replace wage_no_compen=1250 if B17_B18_Net_earnings==7
+	replace wage_no_compen=1750 if B17_B18_Net_earnings==8
+	replace wage_no_compen=2000 if B17_B18_Net_earnings==9
 	replace wage_no_compen=. if lstatus!=1|empstat==2
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
-	drop monthly daily employer monthly_helper daily_helper
 *</_wage_no_compen_>
 
 
@@ -1084,7 +1047,7 @@ q45_c_1 is monthly income for employers and own account workers
 
 
 *<_whours_>
-	gen whours=q21
+	gen whours=C4_M_Actually_worked
 	replace whours=. if lstatus!=1|q21==0	
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
@@ -1104,8 +1067,8 @@ q45_c_1 is monthly income for employers and own account workers
 
 *<_contract_>
 	gen byte contract=.
-	replace contract=1 if q13==1
-	replace contract=0 if q13==2
+	replace contract=1 if !mi(B11_Agreement_type)
+	replace contract=0 if mi(B11_Agreement_type)
 	replace contract=. if lstatus!=1
 	label var contract "Employment has contract primary job 7 day recall"
 	la de lblcontract 0 "Without contract" 1 "With contract"
@@ -1124,8 +1087,6 @@ q45_c_1 is monthly income for employers and own account workers
 
 *<_socialsec_>
 	gen byte socialsec=.
-	replace socialsec=1 if q11==1
-	replace socialsec=0 if q11==2
 	replace socialsec=. if lstatus!=1
 	label var socialsec "Employment has social security insurance primary job 7 day recall"
 	la de lblsocialsec 1 "With social security" 0 "Without social secturity"
@@ -1143,18 +1104,16 @@ q45_c_1 is monthly income for employers and own account workers
 
 
 *<_firmsize_l_>
-	gen byte firmsize_l=q17 if inrange(q17,1,6)
-	recode firmsize_l (2=5) (3=10) (4=16) (5=50) (6=100)
-	replace firmsize_l=0 if q17==7
+	gen byte firmsize_l=B22__employed_at_local_unit if inrange(B22__employed_at_local_unit,1,4)
+	recode firmsize_l (2=11) (3=20) (4=50)
 	replace firmsize_l=. if lstatus!=1
 	label var firmsize_l "Firm size (lower bracket) primary job 7 day recall"
 *</_firmsize_l_>
 
 
 *<_firmsize_u_>
-	gen byte firmsize_u=q17 if inrange(q17,1,6)
-	recode firmsize_u (1=4) (2=9) (3=15) (4=49) (5=99) (6=.)
-	replace firmsize_u=0 if q17==7
+	gen byte firmsize_u=B22__employed_at_local_unit if inrange(B22__employed_at_local_unit,1,4)
+	recode firmsize_u (1=10) (2=19) (3=49) (4=.)
 	replace firmsize_u=. if lstatus!=1
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>
@@ -1167,9 +1126,9 @@ q45_c_1 is monthly income for employers and own account workers
 
 {
 *<_empstat_2_>
-	gen byte empstat_2=q27
-	recode empstat_2 (2=3) (3=4) (4=2) 
-	replace empstat_2=. if lstatus!=1|q24!=1
+	gen byte empstat_2=D6_Second_Status if inrange(D6_Second_Status,1,5)
+	recode empstat_2 (2=3) (3=4) (4=1) (5=2) 
+	replace empstat_2=. if lstatus!=1|D1_Second_job!=1
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
 	la de lblempstat_2 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat_2 lblempstat
@@ -1177,8 +1136,8 @@ q45_c_1 is monthly income for employers and own account workers
 
 
 *<_ocusec_2_>
-	gen byte ocusec_2=.  
-	replace ocusec_2=. if lstatus!=1|q24!=1
+	gen byte ocusec_2=D5_Second_Sector if inrange(D5_Second_Sector,1,2)
+	replace ocusec_2=. if lstatus!=1|D1_Second_job!=1
 	label var ocusec_2 "Sector of activity secondary job 7 day recall"
 	la de lblocusec_2 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec_2 lblocusec_2
@@ -1186,29 +1145,27 @@ q45_c_1 is monthly income for employers and own account workers
 
 
 *<_industry_orig_2_>
-	gen industry_orig_2=q26
-	replace industry_orig_2=. if lstatus!=1|q24!=1
+	gen industry_orig_2=D3_Second_Brunch_2
+	replace industry_orig_2=. if lstatus!=1|D1_Second_job!=1
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 
 
 *<_industrycat_isic_2_>
-	gen str4 str_q26=string(q26, "%05.0f")
-	gen indcode_2=substr(str_q26,1,4)
-	gen industrycat_isic_2=indcode_2
+	gen industrycat_isic_2=""
 	replace industrycat_isic_2="" if industrycat_isic_2=="."
-	replace industrycat_isic_2="" if lstatus!=1|q24!=1
+	replace industrycat_isic_2="" if lstatus!=1|D1_Second_job!=1
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
 
 *<_industrycat10_2_>
-	gen isic2d_2=substr(industrycat_isic_2, 1, 2)
+	gen industry2=string(D3_Second_Brunch_2, "%04.0f")
+	gen isic2d_2=substr(industry2, 1, 2)
 	destring isic2d_2, replace
-	gen long industrycat10_2=.
-	replace industrycat10_2=isic2d_2
+	gen industrycat10_2=isic2d_2
 	recode industrycat10_2 (1/3=1) (5/9=2) (10/33=3) (35/39=4) (41/43=5) (45/47 55/56=6) (49/53 58/63=7) (64/82=8) (84=9) (85/99=10)	
-	replace industrycat10_2=. if lstatus!=1|q24!=1
+	replace industrycat10_2=. if lstatus!=1|D1_Second_job!=1
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
 *</_industrycat10_2_>
@@ -1223,90 +1180,44 @@ q45_c_1 is monthly income for employers and own account workers
 
 
 *<_occup_orig_2_>
-	gen occup_orig_2=q25
-	replace occup_orig_2=. if lstatus!=1|q24!=1
+	gen occup_orig_2=D4_Second_Ocupation
+	replace occup_orig_2=. if lstatus!=1|D1_Second_job!=1
 	label var occup_orig_2 "Original occupation record secondary job 7 day recall"
 *</_occup_orig_2_>
 
 
 *<_occup_isco_2_>
-quietly{	
-	*replace q7=100 if q7==110
-	*replace q7=200 if q7==120
-	*replace q7=300 if q7==130	
-	*replace q25=q25-1 if inrange(q25,1211,1214)
-	*replace q25=3315 if q25==2414
-	*replace q25=3340 if q25==3349
-	*replace q25=3350 if q25==3360
-	replace q25=3430 if inrange(q25, 3441, 3449)
-	replace q25=5120 if inrange(q25, 5121, 5122)
-	replace q25=5410 if inrange(q25, 5411, 5419)
-	replace q25=6110 if inrange(q25, 6111, 6119)
-	replace q25=6220 if q25==6222
-	replace q25=6222 if inlist(q25,6223,6224)
-	replace q25=6223 if q25==6225
-	*replace q25=6224 if q25==6226
-	*replace q25=2132 if inrange(q25, 6300, 6330)
-	replace q25=6310 if inrange(q25,6411,6412)
-	*replace q25=6320 if q25==6420
-	*replace q25=6300 if q25==6400
-	replace q25=6330 if q25==6430
-	replace q25=6340 if q25==6440
-	replace q25=7110 if q25==7116
-	*replace q25=7510 if q25==7517
-	*replace q25=8210 if inrange(q25,8213,8216)
-	replace q25=8320 if q25==8323
-	replace q25=9210 if inrange(q25,9217,9219)
-	replace q25=9320 if q25==9322
-	replace q25=9330 if q25==9335	
-}	
-	tostring q25, format("%04.0f") gen(occup_isco_2)
-	replace occup_isco_2="" if lstatus!=1 | occup_isco_2=="."|q24!=1
+	gen occup_isco_2=""
+	replace occup_isco_2="" if lstatus!=1 | occup_isco_2=="."|D1_Second_job!=1
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
 
 *<_occup_skill_2_>
-	gen skill_level_2=substr(occup_isco_2,1,1)
+	gen d4=string(D4_Second_Ocupation, "%04.0f")
+	gen skill_level_2=substr(d4,1,1)
 	destring skill_level_2, replace 
 	gen occup_skill_2=.
 	replace occup_skill_2=1 if skill_level_2==9
 	replace occup_skill_2=2 if inrange(skill_level_2,4,8)
 	replace occup_skill_2=3 if inrange(skill_level_2,1,3)
-	replace occup_skill_2=. if skill_level_2==0|lstatus!=1|q24!=1
+	replace occup_skill_2=. if skill_level_2==0|lstatus!=1|D1_Second_job!=1
 	label var occup_skill_2 "Skill based on ISCO standard secondary job 7 day recall"
 *</_occup_skill_2_>
 
 
 *<_occup_2_>
-	gen occup_2=int(q25/1000)
+	gen occup_2=substr(d4,1,2)
 	recode occup_2 (0=10)
-	replace occup=. if inlist(q25,0,9,116)
-	replace occup_2=. if lstatus!=1|q24!=1
+	replace occup_2=. if lstatus!=1|D1_Second_job!=1
 	label var occup_2 "1 digit occupational classification secondary job 7 day recall"
 	label values occup_2 lbloccup
 *</_occup_2_>
 
 
 *<_wage_no_compen_2_>
-	foreach v of varlist q46_a_1-q46_b_4{
-		replace `v'=. if `v'==0
-	}
-	egen monthly2=rownonmiss(q46_a_1-q46_a_3)
-	egen daily2=rownonmiss(q46_b_1-q46_b_4)
-	gen employer2=1 if !mi(q46_c_1)&q46_c_1>0
-	replace monthly2=1 if monthly2>0
-	replace daily2=1 if daily2>0
-	replace employer2=0 if employer2!=1
-
-	gen double wage_no_compen_2=.
-	egen monthly_helper=rowtotal(q46_a_1 q46_a_3), missing
-	egen daily_helper=rowtotal(q46_b_3 q46_b_4), missing
-	
-	replace wage_no_compen_2=monthly_helper if monthly2==1
-	replace wage_no_compen_2=daily_helper if daily2==1
-	replace wage_no_compen_2=q46_c_1 if employer2==1
-	replace wage_no_compen_2=. if lstatus!=1|q24!=1|empstat_2==2
+	gen wage_no_compen_2=.
+	replace wage_no_compen_2=. if lstatus!=1|D1_Second_job!=1|empstat_2==2
 	label var wage_no_compen_2 "Last wage payment secondary job 7 day recall"
 	drop monthly2 daily2 employer2 monthly_helper daily_helper
 *</_wage_no_compen_2_>
@@ -1314,7 +1225,7 @@ quietly{
 
 *<_unitwage_2_>
 	gen byte unitwage_2=5
-	replace unitwage_2=. if lstatus!=1|q24!=1
+	replace unitwage_2=. if lstatus!=1|D1_Second_job!=1
 	label var unitwage_2 "Last wages' time unit secondary job 7 day recall"
 	label values unitwage_2 lblunitwage
 *</_unitwage_2_>
@@ -1322,7 +1233,7 @@ quietly{
 
 *<_whours_2_>
 	gen whours_2=q39
-	replace whours_2=. if lstatus!=1|q24!=1
+	replace whours_2=. if lstatus!=1|D1_Second_job!=1
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 
@@ -1771,8 +1682,8 @@ quietly{
 
 *<_njobs_>
 	gen njobs=.
-	replace njobs=1 if lstatus==1&q24!=1
-	replace njobs=2 if lstatus==1&q24==1
+	replace njobs=1 if lstatus==1&D1_Second_job!=1
+	replace njobs=2 if lstatus==1&D1_Second_job==1
 	replace njobs=. if lstatus!=1
 	label var njobs "Total number of jobs"
 *</_njobs_>
