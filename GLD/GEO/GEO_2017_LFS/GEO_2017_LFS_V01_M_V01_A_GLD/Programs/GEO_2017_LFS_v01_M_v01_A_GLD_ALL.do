@@ -207,7 +207,7 @@ Survey wave |      Freq.     Percent        Cum.
 
 
 *<_psu_>
-	egen psu=.
+	gen psu=.
 	label var psu "Primary sampling units"
 *</_psu_>
 
@@ -219,7 +219,7 @@ Survey wave |      Freq.     Percent        Cum.
 
 
 *<_strata_>
-	egen strata=.
+	gen strata=.
 	label var strata "Strata"
 *</_strata_>
 
@@ -620,9 +620,9 @@ variable I1_Education is:
 	replace educat7=2 if I1_Education==3
 	replace educat7=3 if I1_Education==4
 	replace educat7=4 if inlist(I1_Education,5,7)
-	replace educat7=5 if ininlist(I1_Education,6,8,9)
+	replace educat7=5 if inlist(I1_Education,6,8,9)
 	replace educat7=6 if I1_Education==10
-	replace educat7=7 if ininlist(I1_Education,11,12,13)
+	replace educat7=7 if inlist(I1_Education,11,12,13)
 	replace educat7=. if age<ed_mod_age
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
@@ -1048,7 +1048,7 @@ each bracket.
 
 *<_whours_>
 	gen whours=C4_M_Actually_worked
-	replace whours=. if lstatus!=1|q21==0	
+	replace whours=. if lstatus!=1|C4_M_Actually_worked==0	
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -1208,6 +1208,7 @@ each bracket.
 
 *<_occup_2_>
 	gen occup_2=substr(d4,1,2)
+	destring occup_2, replace
 	recode occup_2 (0=10)
 	replace occup_2=. if lstatus!=1|D1_Second_job!=1
 	label var occup_2 "1 digit occupational classification secondary job 7 day recall"
@@ -1219,12 +1220,11 @@ each bracket.
 	gen wage_no_compen_2=.
 	replace wage_no_compen_2=. if lstatus!=1|D1_Second_job!=1|empstat_2==2
 	label var wage_no_compen_2 "Last wage payment secondary job 7 day recall"
-	drop monthly2 daily2 employer2 monthly_helper daily_helper
 *</_wage_no_compen_2_>
 
 
 *<_unitwage_2_>
-	gen byte unitwage_2=5
+	gen byte unitwage_2=.
 	replace unitwage_2=. if lstatus!=1|D1_Second_job!=1
 	label var unitwage_2 "Last wages' time unit secondary job 7 day recall"
 	label values unitwage_2 lblunitwage
@@ -1232,8 +1232,8 @@ each bracket.
 
 
 *<_whours_2_>
-	gen whours_2=q39
-	replace whours_2=. if lstatus!=1|D1_Second_job!=1
+	gen whours_2=D8_S_Actually_worked
+	replace whours_2=. if lstatus!=1|D1_Second_job!=1|D8_S_Actually_worked==0
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 
@@ -1385,7 +1385,6 @@ each bracket.
 *<_industrycat_isic_year_>
 	gen industrycat_isic_year=""
 	replace industrycat_isic_year="" if industrycat_isic_year=="."
-	replace industrycat_isic_year="" if q33!=1
 	label var industrycat_isic_year "ISIC code of primary job 12 month recall"
 *</_industrycat_isic_year_>
 
@@ -1804,6 +1803,6 @@ compress
 
 *<_% SAVE_>
 
-save "`path_output'\\`level_2_harm'_ALL.dta", replace
-
+*save "`path_output'\\`level_2_harm'_ALL.dta", replace
+save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\GEO\GEO_2017_LFS\GEO_2017_LFS_V01_M_V01_A_GLD\Data\Harmonized\GEO_2017_LFS_v01_M_v01_A_GLD_ALL.dta", replace
 *</_% SAVE_>
