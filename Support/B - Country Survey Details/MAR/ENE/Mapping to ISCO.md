@@ -59,4 +59,4 @@
 | 96            | Transport laborers and handlers                                  | 9300        | labourers in mining, construction, manufacturing and transport |
 | 97            | Occasional laborers for national promotion                       | 9600        | refuse workers and other elementary workers                |
 | 99            | Other laborers and marginal trade workers n.c.a.                 | 9600        | refuse workers and other elementary workers                |
-| 
+
