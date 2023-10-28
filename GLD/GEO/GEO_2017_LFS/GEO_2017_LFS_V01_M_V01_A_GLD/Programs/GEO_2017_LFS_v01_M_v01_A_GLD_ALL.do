@@ -765,7 +765,7 @@ question B1. But the raw dataset we can get only has already processed variables
 employed, unemployed, hired, and self-employed.
 
 Regarding umemployed, it has unemployed based on ILO strict definition and soft 
-definition. The unemployed population defined by soft definition has 1,202 fewer 
+definition. The unemployed population defined by soft definition has 1,202 more 
 observations than the strict definition. However, cross examinition with seeking 
 work and availability to work shows that both definitions align with our definition 
 of unemployment. 
@@ -808,7 +808,7 @@ Despite the difference between the two definitions, another mismatch is that if
 we coded only based from work seeking and availability questions yields only 3,401
 unemployed observations.
 
-Another thing to note is thatthe meployed rate using either the original variable 
+Another thing to note is that the eployed rate using either the original variable 
 "Employed" or coding from availability and seeking work is the same.  
  
 *<_lstatus_note_>*/
