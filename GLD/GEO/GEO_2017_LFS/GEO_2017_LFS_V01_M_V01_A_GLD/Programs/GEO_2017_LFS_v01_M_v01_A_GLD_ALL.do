@@ -20,8 +20,8 @@
 								Georgia national stats office website.</_Source of dataset_>
 								*OPENLY ACCESSIBLE: 		 
 								https://www.geostat.ge/en/modules/categories/130/labour-force-survey-databases*
-<_Sample size (HH)_> 			 </_Sample size (HH)_>
-<_Sample size (IND)_> 		     </_Sample size (IND)_>
+<_Sample size (HH)_> 			20,486 </_Sample size (HH)_>
+<_Sample size (IND)_> 		    54,824 </_Sample size (IND)_>
 <_Sampling method_> 			 </_Sampling method_>
 <_Geographic coverage_> 		
 <_Currency_> 					Georgian Lari </_Currency_>
