@@ -4,24 +4,24 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				GEO_2018_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
+<_Program name_>				GEO_2019_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata SE 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
-<_Date created_>				2023-10-18 </_Date created_>
+<_Date created_>				2023-10-24 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						Georgia (GEO) </_Country_>
 <_Survey Title_>				Labour Force Survey </_Survey Title_>
-<_Survey Year_>					2018 </_Survey Year_>
-<_Study ID_>					GEO_2018_LFS_v01_M </_Study ID_>
-<_Data collection from (M/Y)_>	[Jan/2018] </_Data collection from (M/Y)_>
-<_Data collection to (M/Y)_>	[Dec/2018] </_Data collection to (M/Y)_>
+<_Survey Year_>					2019 </_Survey Year_>
+<_Study ID_>					GEO_2019_LFS_v01_M </_Study ID_>
+<_Data collection from (M/Y)_>	[Jan/2019] </_Data collection from (M/Y)_>
+<_Data collection to (M/Y)_>	[Dec/2019] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			Survey conducted by National Statistics Office of Georgia.
-								Data from 2018 to 2022 are publicly available on
+								Data from 2019 to 2022 are publicly available on
 								Georgia national stats office website.</_Source of dataset_>
 								*OPENLY ACCESSIBLE: 		 
 								https://www.geostat.ge/en/modules/categories/130/labour-force-survey-databases*
-<_Sample size (HH)_> 			20,347 </_Sample size (HH)_>
-<_Sample size (IND)_> 		    58,636 </_Sample size (IND)_>
+<_Sample size (HH)_> 			21,501 </_Sample size (HH)_>
+<_Sample size (IND)_> 		    61,386 </_Sample size (IND)_>
 <_Sampling method_> 			 </_Sampling method_>
 <_Geographic coverage_> 		
 <_Currency_> 					Georgian Lari </_Currency_>
@@ -59,7 +59,7 @@ set mem 800m
 * Define path sections
 local server  "Y:\GLD-Harmonization\573465_JT"
 local country "GEO"
-local year    "2018"
+local year    "2019"
 local survey  "LFS"
 local vermast "V01"
 local veralt  "V01"
@@ -83,8 +83,8 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	*use "`path_in_stata'\GEO_2018_LFS_SARRAW.dta", clear
-	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\GEO\GEO_2018_LFS\GEO_2018_LFS_V01_M\Data\Stata\GEO_LFS_2018.dta"
+	*use "`path_in_stata'\GEO_2019_LFS_SARRAW.dta", clear
+	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\GEO\GEO_2019_LFS\GEO_2019_LFS_V01_M\Data\Stata\GEO_LFS_2019.dta"
 /*%%=============================================================================================
 	2: Survey & ID
 ================================================================================================*/
@@ -181,13 +181,13 @@ Number of household in each quarter:
 
 Survey wave |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          1 |      5,073       24.93       24.93
-          2 |      5,156       25.34       50.27
-          3 |      5,054       24.84       75.11
-          4 |      5,064       24.89      100.00
+          1 |      5,346       24.86       24.86
+          2 |      5,474       25.46       50.32
+          3 |      5,402       25.12       75.45
+          4 |      5,279       24.55      100.00
 ------------+-----------------------------------
-      Total |     20,347      100.00
-
+      Total |     21,501      100.00
+	  
 *<_hhid_note_>*/
 	gen hhid=UID
 	label var hhid "Household id"
@@ -480,7 +480,7 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 *<_migrated_years_>
    gen migrated_years=.
-   replace migrated_years=2018-YYYY_Q15 if inrange(YYYY_Q15,2010,2016)
+   replace migrated_years=2019-YYYY_Q15 if inrange(YYYY_Q15,2010,2016)
    replace migrated_years=(12-MM_Q15)/12
    replace migrated_years=round(migrated_years,0.1) if migrated_years<1
    replace migrated_years=. if migrated_binary!=1
@@ -549,7 +549,14 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 {
 *<_ed_mod_age_>
-	gen byte ed_mod_age=.
+
+/*<_ed_mod_age_note>
+
+15 is actually an application age for the whole survey.
+
+*<_ed_mod_age_note>*/
+
+	gen byte ed_mod_age=15
 	label var ed_mod_age "Education module application age"
 *</_ed_mod_age_>
 
@@ -765,7 +772,7 @@ question B1. But the raw dataset we can get only has already processed variables
 employed, unemployed, hired, and self-employed.
 
 Regarding umemployed, it has unemployed based on ILO strict definition and soft 
-definition. The unemployed population defined by soft definition has 1,198 more 
+definition. The unemployed population defined by soft definition has 1,168 more 
 observations than the strict definition. However, cross examinition with seeking 
 work and availability to work shows that both definitions align with our definition 
 of unemployment. 
@@ -780,14 +787,14 @@ nal Labour | Unemployed according
 Organizati | to the International
   on (ILO) |  Labour Organization
     strict |  (ILO) soft criteri
-     crite |         0          1 |     Total
+     crite |     0. No     1. Yes |     Total
 -----------+----------------------+----------
-         0 |    53,382      1,198 |    54,580 
-         1 |         0      4,056 |     4,056 
+     0. No |    56,494      1,168 |    57,662 
+    1. Yes |         0      3,724 |     3,724 
 -----------+----------------------+----------
-     Total |    53,382      5,254 |    58,636 
+     Total |    56,494      4,892 |    61,386 
 
-	 
+
 . tab Unemployed_soft G9_Availability_to_start_working, m
 
 Unemployed |
@@ -798,16 +805,15 @@ nal Labour |
 Organizati |
   on (ILO) |
       soft |    Available to start working
-   criteri |         1          2          . |     Total
+   criteri |    1. Yes      2. No          . |     Total
 -----------+---------------------------------+----------
-         0 |       771        837     51,774 |    53,382 
-         1 |     5,254          0          0 |     5,254 
+     0. No |       669        998     54,827 |    56,494 
+    1. Yes |     4,892          0          0 |     4,892 
 -----------+---------------------------------+----------
-     Total |     6,025        837     51,774 |    58,636 
-
+     Total |     5,561        998     54,827 |    61,386 
 
 Despite the difference between the two definitions, another mismatch is that if 
-we coded only based from work seeking and availability questions yields only 3,723
+we coded only based from work seeking and availability questions yields only 3,427
 unemployed observations.
 
 *<_lstatus_note_>*/
@@ -1803,5 +1809,5 @@ compress
 *<_% SAVE_>
 
 *save "`path_output'\\`level_2_harm'_ALL.dta", replace
-save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\GEO\GEO_2018_LFS\GEO_2018_LFS_V01_M_V01_A_GLD\Data\Harmonized\GEO_2018_LFS_v01_M_v01_A_GLD_ALL.dta", replace
+save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\GEO\GEO_2019_LFS\GEO_2019_LFS_V01_M_V01_A_GLD\Data\Harmonized\GEO_2019_LFS_v01_M_v01_A_GLD_ALL.dta", replace
 *</_% SAVE_>

@@ -871,7 +871,7 @@ for more hours but they are not in the raw dataset.
 	replace nlfreason=2 if Inactive_homemaker==1
 	replace nlfreason=3 if Inactive_pens==1
     replace nlfreason=4 if Inactive_disabled==1
-	replace nlfreason=4 if Inactive_emp_agency==1|Inactive_discourage==1|Inactive_unwillingness==1|Inactive_other==1
+	replace nlfreason=5 if Inactive_emp_agency==1|Inactive_discourage==1|Inactive_unwillingness==1|Inactive_other==1
 	replace nlfreason=. if age<minlaborage
 	replace nlfreason=. if lstatus!=3
 	label var nlfreason "Reason not in the labor force"

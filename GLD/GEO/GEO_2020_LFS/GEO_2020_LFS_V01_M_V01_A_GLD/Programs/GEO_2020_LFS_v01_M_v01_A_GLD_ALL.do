@@ -4,29 +4,29 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				GEO_2018_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
+<_Program name_>				GEO_2020_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata SE 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
-<_Date created_>				2023-10-18 </_Date created_>
+<_Date created_>				2023-10-25 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						Georgia (GEO) </_Country_>
 <_Survey Title_>				Labour Force Survey </_Survey Title_>
-<_Survey Year_>					2018 </_Survey Year_>
-<_Study ID_>					GEO_2018_LFS_v01_M </_Study ID_>
-<_Data collection from (M/Y)_>	[Jan/2018] </_Data collection from (M/Y)_>
-<_Data collection to (M/Y)_>	[Dec/2018] </_Data collection to (M/Y)_>
+<_Survey Year_>					2020 </_Survey Year_>
+<_Study ID_>					GEO_2020_LFS_v01_M </_Study ID_>
+<_Data collection from (M/Y)_>	[Jan/2020] </_Data collection from (M/Y)_>
+<_Data collection to (M/Y)_>	[Dec/2020] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			Survey conducted by National Statistics Office of Georgia.
-								Data from 2018 to 2022 are publicly available on
+								Data from 2020 to 2022 are publicly available on
 								Georgia national stats office website.</_Source of dataset_>
 								*OPENLY ACCESSIBLE: 		 
 								https://www.geostat.ge/en/modules/categories/130/labour-force-survey-databases*
-<_Sample size (HH)_> 			20,347 </_Sample size (HH)_>
-<_Sample size (IND)_> 		    58,636 </_Sample size (IND)_>
+<_Sample size (HH)_> 			 </_Sample size (HH)_>
+<_Sample size (IND)_> 		     </_Sample size (IND)_>
 <_Sampling method_> 			 </_Sampling method_>
 <_Geographic coverage_> 		
 <_Currency_> 					Georgian Lari </_Currency_>
 -----------------------------------------------------------------------
-<_ICLS Version_>				ICLS 13 </_ICLS Version_>
+<_ICLS Version_>				ICLS 19 </_ICLS Version_>
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
 <_ISCO Version_>				ISCO 08 </_ISCO Version_>
 <_OCCUP National_>					  </_OCCUP National_>
@@ -59,7 +59,7 @@ set mem 800m
 * Define path sections
 local server  "Y:\GLD-Harmonization\573465_JT"
 local country "GEO"
-local year    "2018"
+local year    "2020"
 local survey  "LFS"
 local vermast "V01"
 local veralt  "V01"
@@ -83,8 +83,8 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	*use "`path_in_stata'\GEO_2018_LFS_SARRAW.dta", clear
-	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\GEO\GEO_2018_LFS\GEO_2018_LFS_V01_M\Data\Stata\GEO_LFS_2018.dta"
+	*use "`path_in_stata'\GEO_2020_LFS_SARRAW.dta", clear
+	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\GEO\GEO_2020_LFS\GEO_2020_LFS_V01_M\Data\Stata\GEO_LFS_2020.dta"
 /*%%=============================================================================================
 	2: Survey & ID
 ================================================================================================*/
@@ -110,7 +110,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_icls_v_>
-	gen icls_v="ICLS-13"
+	gen icls_v="ICLS-19"
 	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
 
@@ -181,12 +181,12 @@ Number of household in each quarter:
 
 Survey wave |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          1 |      5,073       24.93       24.93
-          2 |      5,156       25.34       50.27
-          3 |      5,054       24.84       75.11
-          4 |      5,064       24.89      100.00
+          1 |      5,052       24.41       24.41
+          2 |      5,041       24.36       48.77
+          3 |      5,324       25.72       74.49
+          4 |      5,280       25.51      100.00
 ------------+-----------------------------------
-      Total |     20,347      100.00
+      Total |     20,697      100.00
 
 *<_hhid_note_>*/
 	gen hhid=UID
@@ -347,10 +347,8 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 {
 
 *<_hsize_>
-	destring MemberNo, gen(membercount)
-	bys hhid: egen hsize=max(membercount)
+	bys hhid: egen hsize=max(MemberNo)
 	label var hsize "Household size"
-	drop membercount
 *</_hsize_>
 
 
@@ -480,7 +478,7 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 *<_migrated_years_>
    gen migrated_years=.
-   replace migrated_years=2018-YYYY_Q15 if inrange(YYYY_Q15,2010,2016)
+   replace migrated_years=2020-YYYY_Q15 if inrange(YYYY_Q15,2010,2016)
    replace migrated_years=(12-MM_Q15)/12
    replace migrated_years=round(migrated_years,0.1) if migrated_years<1
    replace migrated_years=. if migrated_binary!=1
@@ -549,7 +547,14 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 {
 *<_ed_mod_age_>
-	gen byte ed_mod_age=.
+
+/*<_ed_mod_age_note>
+
+15 is actually an application age for the whole survey.
+
+*<_ed_mod_age_note>*/
+
+	gen byte ed_mod_age=15
 	label var ed_mod_age "Education module application age"
 *</_ed_mod_age_>
 
@@ -565,8 +570,8 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 *<_literacy_>
 	gen byte literacy=.
-	replace literacy=0 if I1_Education==1
-	replace literacy=1 if inrange(I1_Education,2,13)
+	replace literacy=0 if Education==1
+	replace literacy=1 if inrange(Education,2,13)
 	label var literacy "Individual can read & write"
 	la de lblliteracy 0 "No" 1 "Yes"
 	label values literacy lblliteracy
@@ -578,7 +583,7 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 /*<_educy_note_>
 
 Original categorization of the highest educational level ever attended of 
-variable I1_Education is:
+variable Education is:
 
 1. Illiterate 
 2. Has no education but can read and write 
@@ -597,17 +602,17 @@ variable I1_Education is:
 *<_educy_note_>*/
 
 	gen byte educy=.
-	replace educy=0 if inrange(I1_Education,0,1)
-	replace educy=3 if I1_Education==3
-	replace educy=9 if I1_Education==4
-	replace educy=12 if I1_Education==5
-	replace educy=15 if I1_Education==6
-	replace educy=12 if I1_Education==7
-	replace educy=13 if I1_Education==8
-	replace educy=17 if I1_Education==9|I1_Education==10
-	replace educy=19 if I1_Education==11
-	replace educy=21 if I1_Education==12
-	replace educy=24 if I1_Education==12
+	replace educy=0 if inrange(Education,0,1)
+	replace educy=3 if Education==3
+	replace educy=9 if Education==4
+	replace educy=12 if Education==5
+	replace educy=15 if Education==6
+	replace educy=12 if Education==7
+	replace educy=13 if Education==8
+	replace educy=17 if Education==9|Education==10
+	replace educy=19 if Education==11
+	replace educy=21 if Education==12
+	replace educy=24 if Education==12
 	replace educy=. if age<ed_mod_age
 	replace educy=. if educy>age & !mi(educy) & !mi(age)
 	label var educy "Years of education"
@@ -616,13 +621,13 @@ variable I1_Education is:
 
 *<_educat7_>
 	gen byte educat7=.
-	replace educat7=1 if inrange(I1_Education,0,1)
-	replace educat7=2 if I1_Education==3
-	replace educat7=3 if I1_Education==4
-	replace educat7=4 if inlist(I1_Education,5,7)
-	replace educat7=5 if inlist(I1_Education,6,8,9)
-	replace educat7=6 if I1_Education==10
-	replace educat7=7 if inlist(I1_Education,11,12,13)
+	replace educat7=1 if inrange(Education,0,1)
+	replace educat7=2 if Education==3
+	replace educat7=3 if Education==4
+	replace educat7=4 if inlist(Education,5,7)
+	replace educat7=5 if inlist(Education,6,8,9)
+	replace educat7=6 if Education==10
+	replace educat7=7 if inlist(Education,11,12,13)
 	replace educat7=. if age<ed_mod_age
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
@@ -651,22 +656,22 @@ variable I1_Education is:
 
 
 *<_educat_orig_>
-	gen educat_orig=I1_Education
+	gen educat_orig=Education
 	label var educat_orig "Original survey education code"
 *</_educat_orig_>
 
 
 *<_educat_isced_>
 	gen educat_isced=.
-	replace educat_isced=020 if I1_Education==3
-	replace educat_isced=100 if I1_Education==4
-	replace educat_isced=244 if I1_Education==5
-	replace educat_isced=344 if I1_Education==6
-	replace educat_isced=353 if inrange(I1_Education,7,9)
-	replace educat_isced=454 if I1_Education==10
-	replace educat_isced=660 if I1_Education==11
-	replace educat_isced=760 if I1_Education==12
-	replace educat_isced=860 if I1_Education==13
+	replace educat_isced=020 if Education==3
+	replace educat_isced=100 if Education==4
+	replace educat_isced=244 if Education==5
+	replace educat_isced=344 if Education==6
+	replace educat_isced=353 if inrange(Education,7,9)
+	replace educat_isced=454 if Education==10
+	replace educat_isced=660 if Education==11
+	replace educat_isced=760 if Education==12
+	replace educat_isced=860 if Education==13
 	replace educat_isced=. if age<ed_mod_age
 	label var educat_isced "ISCED standardised level of education"
 *</_educat_isced_>
@@ -765,7 +770,7 @@ question B1. But the raw dataset we can get only has already processed variables
 employed, unemployed, hired, and self-employed.
 
 Regarding umemployed, it has unemployed based on ILO strict definition and soft 
-definition. The unemployed population defined by soft definition has 1,198 more 
+definition. The unemployed population defined by soft definition has 4,175 more 
 observations than the strict definition. However, cross examinition with seeking 
 work and availability to work shows that both definitions align with our definition 
 of unemployment. 
@@ -780,15 +785,14 @@ nal Labour | Unemployed according
 Organizati | to the International
   on (ILO) |  Labour Organization
     strict |  (ILO) soft criteri
-     crite |         0          1 |     Total
+     crite |     0. No     1. Yes |     Total
 -----------+----------------------+----------
-         0 |    53,382      1,198 |    54,580 
-         1 |         0      4,056 |     4,056 
+     0. No |    49,528      4,175 |    53,703 
+    1. Yes |         0      5,276 |     5,276 
 -----------+----------------------+----------
-     Total |    53,382      5,254 |    58,636 
+     Total |    49,528      9,451 |    58,979 
 
-	 
-. tab Unemployed_soft G9_Availability_to_start_working, m
+. tab Unemployed_soft _v9, m
 
 Unemployed |
  according |
@@ -798,24 +802,29 @@ nal Labour |
 Organizati |
   on (ILO) |
       soft |    Available to start working
-   criteri |         1          2          . |     Total
+   criteri |    1. Yes      2. No          . |     Total
 -----------+---------------------------------+----------
-         0 |       771        837     51,774 |    53,382 
-         1 |     5,254          0          0 |     5,254 
+     0. No |     5,136     20,078     24,314 |    49,528 
+    1. Yes |     9,451          0          0 |     9,451 
 -----------+---------------------------------+----------
-     Total |     6,025        837     51,774 |    58,636 
+     Total |    14,587     20,078     24,314 |    58,979 
 
 
 Despite the difference between the two definitions, another mismatch is that if 
-we coded only based from work seeking and availability questions yields only 3,723
+we coded only based from work seeking and availability questions yields only 1,824
 unemployed observations.
+
+Different from previous years, questionnaire in 2020 has a newly added question
+G1 "Did you try to find any paid job or start your own business duing the last 4 weeks?"
+The main difference is that it separates unemployed population into those seeking and 
+available for working and those who already found a job (option 2), Hence we can no
+longer code unemployment from original variables based on the questions. 
 
 *<_lstatus_note_>*/
 
 	gen byte lstatus=.
-	egen seeking=rowmin(G2_1_Methods_used_to_find_work-G2_97_Methods_used_to_find_work) 
 	replace lstatus=1 if Employed==1
-	replace lstatus=2 if lstatus==.&seeking==1&G9_Availability_to_start_working==1
+	replace lstatus=2 if Unemployed==1
 	replace lstatus=3 if lstatus==. 
 	replace lstatus=. if age<minlaborage
 	label var lstatus "Labor status"
@@ -830,14 +839,46 @@ unemployed observations.
 Note: var "potential_lf" only takes value if the respondent is not in labor force. (lstatus==3)
 
 "potential_lf"=1 if the person is
-1)available but not searching or G9_Availability_to_start_working==1 & seeking==2
-2)searching but not immediately available to work or G9_Availability_to_start_working==2 & seeking==1
+1)available but not searching
+2)searching but not immediately available to work 
 
-</_potential_lf_note_>*/
+But since we only have the availability variable "_v9" and do not have the seeking variable,
+we have to code PLF using the processed variable "Potential_Labour_Force_PLF" already in the 
+dataset. It seems to be coded following the same rule we have.
+
+. tab PLF_Seeking_not_available Potential_Labour_Force_PLF
+
+ Potential |
+    Labour |
+   Force - |
+   Seeking |   Potential Labour
+       not |         Force
+ available |     0. No     1. Yes |     Total
+-----------+----------------------+----------
+     0. No |    49,617      9,311 |    58,928 
+    1. Yes |         0         51 |        51 
+-----------+----------------------+----------
+     Total |    49,617      9,362 |    58,979 
+	 
+. tab PLF_Available_not_seeking Potential_Labour_Force_PLF
+
+ Potential |
+    Labour |
+   Force - |
+ Available |   Potential Labour
+       not |         Force
+   seeking |     0. No     1. Yes |     Total
+-----------+----------------------+----------
+     0. No |    49,617         51 |    49,668 
+    1. Yes |         0      9,311 |     9,311 
+-----------+----------------------+----------
+     Total |    49,617      9,362 |    58,979 
+	 
+*</_potential_lf_note_>*/
 
 	gen potential_lf=.
-	replace potential_lf=1 if [G9_Availability_to_start_working==1 & seeking==2] | [G9_Availability_to_start_working==2 & seeking==1]
-	replace potential_lf=0 if [G9_Availability_to_start_working==1 & seeking==1] | [G9_Availability_to_start_working==2 & seeking==2]
+	replace potential_lf=1 if Potential_Labour_Force_PLF==1
+	replace potential_lf=0 if Potential_Labour_Force_PLF==0
 	replace potential_lf=. if age < minlaborage
 	replace potential_lf=. if lstatus!=3
 	label var potential_lf "Potential labour force status"
@@ -866,11 +907,11 @@ for more hours but they are not in the raw dataset.
 
 *<_nlfreason_>
 	gen byte nlfreason=.
-	replace nlfreason=1 if Inactive_student==1
-	replace nlfreason=2 if Inactive_homemaker==1
-	replace nlfreason=3 if Inactive_pens==1
-    replace nlfreason=4 if Inactive_disabled==1
-	replace nlfreason=5 if Inactive_emp_agency==1|Inactive_discourage==1|Inactive_unwillingness==1|Inactive_other==1
+	replace nlfreason=1 if OutsidetheLabourForce_student==1
+	replace nlfreason=2 if OutsidetheLabourForce_homemaker==1
+	replace nlfreason=3 if OutsidetheLabourForce_pensioner==1
+    replace nlfreason=4 if OutsidetheLabourForce_disabled==1
+	replace nlfreason=5 if OutsidetheLabourForce_emp_agency==1|OutsidetheLabourForce_discourage==1|OutsidetheLabourForce_other==1
 	replace nlfreason=. if age<minlaborage
 	replace nlfreason=. if lstatus!=3
 	label var nlfreason "Reason not in the labor force"
@@ -880,7 +921,7 @@ for more hours but they are not in the raw dataset.
 
 
 *<_unempldur_l_>
-	gen byte unempldur_l=Unemployment_Spin
+	gen byte unempldur_l=G4_Unemployment_Spin
 	recode unempldur_l (1=0) (2=1) (3=3) (4=6) (5=12) (6=18) (7=24) (8=48) 
 	replace unempldur_l=. if age<minlaborage
 	replace unempldur_l=. if lstatus!=2
@@ -889,7 +930,7 @@ for more hours but they are not in the raw dataset.
 
 
 *<_unempldur_u_>
-	gen byte unempldur_u=Unemployment_Spin
+	gen byte unempldur_u=G4_Unemployment_Spin
 	recode unempldur_u (1=1) (2=2) (3=5) (4=11) (5=17) (6=23) (7=47) (8=.) 
 	replace unempldur_u=. if age<minlaborage
 	replace unempldur_u=. if lstatus!=2
@@ -903,8 +944,8 @@ for more hours but they are not in the raw dataset.
 
 {
 *<_empstat_>
-	gen byte empstat=B7_Status
-	recode empstat (2=3) (3=4) (4=1) (5=2) (97=5)
+	gen byte empstat=Status
+	recode empstat (2=3) (3 4 97=5)
 	replace empstat=. if lstatus!=1|age<minlaborage
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
@@ -913,8 +954,8 @@ for more hours but they are not in the raw dataset.
 
 
 *<_ocusec_>
-	gen byte ocusec=B6_Sector
-	recode ocusec (1=3) (97=4) (98=.)
+	gen byte ocusec=Sector_ownership
+	recode ocusec (1=3) (3=2) (97=4) (98=.)
 	replace ocusec=. if lstatus!=1|age<minlaborage
 	label var ocusec "Sector of activity primary job 7 day recall"
 	la de lblocusec 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
@@ -923,7 +964,7 @@ for more hours but they are not in the raw dataset.
 
 
 *<_industry_orig_>
-	gen industry_orig=B4_NACE_2                                                                  
+	gen industry_orig=Brunch_1                                                                
 	replace industry_orig=. if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
@@ -942,7 +983,7 @@ for more hours but they are not in the raw dataset.
 
 
 *<_industrycat10_>
-	gen industry1=string(B4_NACE_2, "%04.0f")
+	gen industry1=string(Brunch_1, "%04.0f")
 	gen isic2d=substr(industry1, 1, 2)
 	destring isic2d, replace
 	gen industrycat10=.
@@ -965,7 +1006,7 @@ for more hours but they are not in the raw dataset.
 
 
 *<_occup_orig_>
-	gen occup_orig=B5_Occupation
+	gen occup_orig=Occupation
 	replace occup_orig=. if lstatus!=1
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
@@ -982,7 +1023,7 @@ for more hours but they are not in the raw dataset.
 
 
 *<_occup_skill_>
-	gen b5=string(B5_Occupation, "%04.0f")
+	gen b5=string(Occupation, "%04.0f")
 	gen skill_level=substr(b5, 1, 1)
 	destring skill_level, replace
 	gen occup_skill=.
@@ -1022,15 +1063,15 @@ each bracket.
 *<_wage_no_compen_note_>*/
 
 	gen wage_no_compen=.
-	replace wage_no_compen=50 if B17_B18_Net_earnings==1
-	replace wage_no_compen=150 if B17_B18_Net_earnings==2
-	replace wage_no_compen=300 if B17_B18_Net_earnings==3
-	replace wage_no_compen=500 if B17_B18_Net_earnings==4
-	replace wage_no_compen=700 if B17_B18_Net_earnings==5
-	replace wage_no_compen=900 if B17_B18_Net_earnings==6
-	replace wage_no_compen=1250 if B17_B18_Net_earnings==7
-	replace wage_no_compen=1750 if B17_B18_Net_earnings==8
-	replace wage_no_compen=2000 if B17_B18_Net_earnings==9
+	replace wage_no_compen=50 if B24_B25_Net_earnings==1
+	replace wage_no_compen=150 if B24_B25_Net_earnings==2
+	replace wage_no_compen=300 if B24_B25_Net_earnings==3
+	replace wage_no_compen=500 if B24_B25_Net_earnings==4
+	replace wage_no_compen=700 if B24_B25_Net_earnings==5
+	replace wage_no_compen=900 if B24_B25_Net_earnings==6
+	replace wage_no_compen=1250 if B24_B25_Net_earnings==7
+	replace wage_no_compen=1750 if B24_B25_Net_earnings==8
+	replace wage_no_compen=2000 if B24_B25_Net_earnings==9
 	replace wage_no_compen=. if lstatus!=1|empstat==2
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
@@ -1046,8 +1087,8 @@ each bracket.
 
 
 *<_whours_>
-	gen whours=C4_M_Actually_worked
-	replace whours=. if lstatus!=1|C4_M_Actually_worked==0	
+	gen whours=M_Actually_worked
+	replace whours=. if lstatus!=1|M_Actually_worked==0	
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -1066,8 +1107,8 @@ each bracket.
 
 *<_contract_>
 	gen byte contract=.
-	replace contract=1 if !mi(B11_Agreement_type)
-	replace contract=0 if mi(B11_Agreement_type)
+	replace contract=1 if !mi(B12_Agreement_type)
+	replace contract=0 if mi(B12_Agreement_type)
 	replace contract=. if lstatus!=1
 	label var contract "Employment has contract primary job 7 day recall"
 	la de lblcontract 0 "Without contract" 1 "With contract"
@@ -1085,6 +1126,14 @@ each bracket.
 
 
 *<_socialsec_>
+
+/*<_socialsec_note_>
+
+Question B21 in the questionnaire asks the contributions to the pension fund.
+But this question is not in the dataset.
+
+*<_socialsec_note_>*/
+
 	gen byte socialsec=.
 	replace socialsec=. if lstatus!=1
 	label var socialsec "Employment has social security insurance primary job 7 day recall"
@@ -1103,16 +1152,16 @@ each bracket.
 
 
 *<_firmsize_l_>
-	gen byte firmsize_l=B22__employed_at_local_unit if inrange(B22__employed_at_local_unit,1,4)
-	recode firmsize_l (2=11) (3=20) (4=50)
+	gen byte firmsize_l=B26_Employed_at_local_unit if inrange(B26_Employed_at_local_unit,1,6)
+	recode firmsize_l (3=5) (4=11) (5=20) (6=50)
 	replace firmsize_l=. if lstatus!=1
 	label var firmsize_l "Firm size (lower bracket) primary job 7 day recall"
 *</_firmsize_l_>
 
 
 *<_firmsize_u_>
-	gen byte firmsize_u=B22__employed_at_local_unit if inrange(B22__employed_at_local_unit,1,4)
-	recode firmsize_u (1=10) (2=19) (3=49) (4=.)
+	gen byte firmsize_u=B26_Employed_at_local_unit if inrange(B26_Employed_at_local_unit,1,6)
+	recode firmsize_u (2=4) (3=10) (4=19) (5=49) (6=.)
 	replace firmsize_u=. if lstatus!=1
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>
@@ -1125,9 +1174,9 @@ each bracket.
 
 {
 *<_empstat_2_>
-	gen byte empstat_2=D6_Second_Status if inrange(D6_Second_Status,1,5)
-	recode empstat_2 (2=3) (3=4) (4=1) (5=2) 
-	replace empstat_2=. if lstatus!=1|D1_Second_job!=1
+	gen byte empstat_2=Second_Status 
+	recode empstat_2 (2=3) (3 4 97=2) 
+	replace empstat_2=. if lstatus!=1|Second_Job!=1
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
 	la de lblempstat_2 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat_2 lblempstat
@@ -1135,8 +1184,9 @@ each bracket.
 
 
 *<_ocusec_2_>
-	gen byte ocusec_2=D5_Second_Sector if inrange(D5_Second_Sector,1,2)
-	replace ocusec_2=. if lstatus!=1|D1_Second_job!=1
+	gen byte ocusec_2=Second_Sector 
+	recode ocusec_2 (1=3) (3=2)
+	replace ocusec_2=. if lstatus!=1|Second_Job!=1
 	label var ocusec_2 "Sector of activity secondary job 7 day recall"
 	la de lblocusec_2 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec_2 lblocusec_2
@@ -1144,8 +1194,8 @@ each bracket.
 
 
 *<_industry_orig_2_>
-	gen industry_orig_2=D3_Second_Brunch_2
-	replace industry_orig_2=. if lstatus!=1|D1_Second_job!=1
+	gen industry_orig_2=Second_Brunch_2
+	replace industry_orig_2=. if lstatus!=1|Second_Job!=1
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 
@@ -1153,18 +1203,18 @@ each bracket.
 *<_industrycat_isic_2_>
 	gen industrycat_isic_2=""
 	replace industrycat_isic_2="" if industrycat_isic_2=="."
-	replace industrycat_isic_2="" if lstatus!=1|D1_Second_job!=1
+	replace industrycat_isic_2="" if lstatus!=1|Second_Job!=1
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
 
 *<_industrycat10_2_>
-	gen industry2=string(D3_Second_Brunch_2, "%04.0f")
+	gen industry2=string(Second_Brunch_2, "%04.0f")
 	gen isic2d_2=substr(industry2, 1, 2)
 	destring isic2d_2, replace
 	gen industrycat10_2=isic2d_2
 	recode industrycat10_2 (1/3=1) (5/9=2) (10/33=3) (35/39=4) (41/43=5) (45/47 55/56=6) (49/53 58/63=7) (64/82=8) (84=9) (85/99=10)	
-	replace industrycat10_2=. if lstatus!=1|D1_Second_job!=1
+	replace industrycat10_2=. if lstatus!=1|Second_Job!=1
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
 *</_industrycat10_2_>
@@ -1179,28 +1229,28 @@ each bracket.
 
 
 *<_occup_orig_2_>
-	gen occup_orig_2=D4_Second_Ocupation
-	replace occup_orig_2=. if lstatus!=1|D1_Second_job!=1
+	gen occup_orig_2=Second_Ocupation
+	replace occup_orig_2=. if lstatus!=1|Second_Job!=1
 	label var occup_orig_2 "Original occupation record secondary job 7 day recall"
 *</_occup_orig_2_>
 
 
 *<_occup_isco_2_>
 	gen occup_isco_2=""
-	replace occup_isco_2="" if lstatus!=1 | occup_isco_2=="."|D1_Second_job!=1
+	replace occup_isco_2="" if lstatus!=1 | occup_isco_2=="."|Second_Job!=1
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
 
 *<_occup_skill_2_>
-	gen d4=string(D4_Second_Ocupation, "%04.0f")
+	gen d4=string(Second_Ocupation, "%04.0f")
 	gen skill_level_2=substr(d4,1,1)
 	destring skill_level_2, replace 
 	gen occup_skill_2=.
 	replace occup_skill_2=1 if skill_level_2==9
 	replace occup_skill_2=2 if inrange(skill_level_2,4,8)
 	replace occup_skill_2=3 if inrange(skill_level_2,1,3)
-	replace occup_skill_2=. if skill_level_2==0|lstatus!=1|D1_Second_job!=1
+	replace occup_skill_2=. if skill_level_2==0|lstatus!=1|Second_Job!=1
 	label var occup_skill_2 "Skill based on ISCO standard secondary job 7 day recall"
 *</_occup_skill_2_>
 
@@ -1209,7 +1259,7 @@ each bracket.
 	gen occup_2=substr(d4,1,2)
 	destring occup_2, replace
 	recode occup_2 (0=10)
-	replace occup_2=. if lstatus!=1|D1_Second_job!=1
+	replace occup_2=. if lstatus!=1|Second_Job!=1
 	label var occup_2 "1 digit occupational classification secondary job 7 day recall"
 	label values occup_2 lbloccup
 *</_occup_2_>
@@ -1217,22 +1267,22 @@ each bracket.
 
 *<_wage_no_compen_2_>
 	gen wage_no_compen_2=.
-	replace wage_no_compen_2=. if lstatus!=1|D1_Second_job!=1|empstat_2==2
+	replace wage_no_compen_2=. if lstatus!=1|Second_Job!=1|empstat_2==2
 	label var wage_no_compen_2 "Last wage payment secondary job 7 day recall"
 *</_wage_no_compen_2_>
 
 
 *<_unitwage_2_>
 	gen byte unitwage_2=.
-	replace unitwage_2=. if lstatus!=1|D1_Second_job!=1
+	replace unitwage_2=. if lstatus!=1|Second_Job!=1
 	label var unitwage_2 "Last wages' time unit secondary job 7 day recall"
 	label values unitwage_2 lblunitwage
 *</_unitwage_2_>
 
 
 *<_whours_2_>
-	gen whours_2=D8_S_Actually_worked
-	replace whours_2=. if lstatus!=1|D1_Second_job!=1|D8_S_Actually_worked==0
+	gen whours_2=S_Actually_worked
+	replace whours_2=. if lstatus!=1|Second_Job!=1|S_Actually_worked==0
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 
@@ -1680,8 +1730,8 @@ each bracket.
 
 *<_njobs_>
 	gen njobs=.
-	replace njobs=1 if lstatus==1&D1_Second_job!=1
-	replace njobs=2 if lstatus==1&D1_Second_job==1
+	replace njobs=1 if lstatus==1&Second_Job!=1
+	replace njobs=2 if lstatus==1&Second_Job==1
 	replace njobs=. if lstatus!=1
 	label var njobs "Total number of jobs"
 *</_njobs_>
@@ -1803,5 +1853,5 @@ compress
 *<_% SAVE_>
 
 *save "`path_output'\\`level_2_harm'_ALL.dta", replace
-save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\GEO\GEO_2018_LFS\GEO_2018_LFS_V01_M_V01_A_GLD\Data\Harmonized\GEO_2018_LFS_v01_M_v01_A_GLD_ALL.dta", replace
+save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\GEO\GEO_2020_LFS\GEO_2020_LFS_V01_M_V01_A_GLD\Data\Harmonized\GEO_2020_LFS_v01_M_v01_A_GLD_ALL.dta", replace
 *</_% SAVE_>
