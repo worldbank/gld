@@ -4,24 +4,24 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				GEO_2020_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
+<_Program name_>				GEO_2021_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata SE 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
 <_Date created_>				2023-10-25 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						Georgia (GEO) </_Country_>
 <_Survey Title_>				Labour Force Survey </_Survey Title_>
-<_Survey Year_>					2020 </_Survey Year_>
-<_Study ID_>					GEO_2020_LFS_v01_M </_Study ID_>
-<_Data collection from (M/Y)_>	[Jan/2020] </_Data collection from (M/Y)_>
-<_Data collection to (M/Y)_>	[Dec/2020] </_Data collection to (M/Y)_>
+<_Survey Year_>					2021 </_Survey Year_>
+<_Study ID_>					GEO_2021_LFS_v01_M </_Study ID_>
+<_Data collection from (M/Y)_>	[Jan/2021] </_Data collection from (M/Y)_>
+<_Data collection to (M/Y)_>	[Dec/2021] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			Survey conducted by National Statistics Office of Georgia.
-								Data from 2020 to 2022 are publicly available on
+								Data from 2021 to 2022 are publicly available on
 								Georgia national stats office website.</_Source of dataset_>
 								*OPENLY ACCESSIBLE: 		 
 								https://www.geostat.ge/en/modules/categories/130/labour-force-survey-databases*
-<_Sample size (HH)_> 			20,697 </_Sample size (HH)_>
-<_Sample size (IND)_> 		    58,979 </_Sample size (IND)_>
+<_Sample size (HH)_> 			21,367 </_Sample size (HH)_>
+<_Sample size (IND)_> 		    60,837 </_Sample size (IND)_>
 <_Sampling method_> 			 </_Sampling method_>
 <_Geographic coverage_> 		
 <_Currency_> 					Georgian Lari </_Currency_>
@@ -59,7 +59,7 @@ set mem 800m
 * Define path sections
 local server  "Y:\GLD-Harmonization\573465_JT"
 local country "GEO"
-local year    "2020"
+local year    "2021"
 local survey  "LFS"
 local vermast "V01"
 local veralt  "V01"
@@ -83,8 +83,8 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	*use "`path_in_stata'\GEO_2020_LFS_SARRAW.dta", clear
-	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\GEO\GEO_2020_LFS\GEO_2020_LFS_V01_M\Data\Stata\GEO_LFS_2020.dta"
+	*use "`path_in_stata'\GEO_2021_LFS_SARRAW.dta", clear
+	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\GEO\GEO_2021_LFS\GEO_2021_LFS_V01_M\Data\Stata\GEO_LFS_2021.dta"
 /*%%=============================================================================================
 	2: Survey & ID
 ================================================================================================*/
@@ -181,12 +181,12 @@ Number of household in each quarter:
 
 Survey wave |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          1 |      5,052       24.41       24.41
-          2 |      5,041       24.36       48.77
-          3 |      5,324       25.72       74.49
-          4 |      5,280       25.51      100.00
+          1 |      5,291       24.76       24.76
+          2 |      5,386       25.21       49.97
+          3 |      5,327       24.93       74.90
+          4 |      5,363       25.10      100.00
 ------------+-----------------------------------
-      Total |     20,697      100.00
+      Total |     21,367      100.00
 
 *<_hhid_note_>*/
 	gen hhid=UID
@@ -478,7 +478,7 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 *<_migrated_years_>
    gen migrated_years=.
-   replace migrated_years=2020-YYYY_Q15 if inrange(YYYY_Q15,2010,2016)
+   replace migrated_years=2021-YYYY_Q15 if inrange(YYYY_Q15,2010,2016)
    replace migrated_years=(12-MM_Q15)/12
    replace migrated_years=round(migrated_years,0.1) if migrated_years<1
    replace migrated_years=. if migrated_binary!=1
@@ -770,7 +770,7 @@ question B1. But the raw dataset we can get only has already processed variables
 employed, unemployed, hired, and self-employed.
 
 Regarding umemployed, it has unemployed based on ILO strict definition and soft 
-definition. The unemployed population defined by soft definition has 4,175 more 
+definition. The unemployed population defined by soft definition has 4,182 more 
 observations than the strict definition. However, cross examinition with seeking 
 work and availability to work shows that both definitions align with our definition 
 of unemployment. 
@@ -785,12 +785,13 @@ nal Labour | Unemployed according
 Organizati | to the International
   on (ILO) |  Labour Organization
     strict |  (ILO) soft criteri
-     crite |     0. No     1. Yes |     Total
+     crite |        No        Yes |     Total
 -----------+----------------------+----------
-     0. No |    49,528      4,175 |    53,703 
-    1. Yes |         0      5,276 |     5,276 
+        No |    50,709      4,182 |    54,891 
+       Yes |         0      5,946 |     5,946 
 -----------+----------------------+----------
-     Total |    49,528      9,451 |    58,979 
+     Total |    50,709     10,128 |    60,837
+
 
 . tab Unemployed_soft _v9, m
 
@@ -802,19 +803,18 @@ nal Labour |
 Organizati |
   on (ILO) |
       soft |    Available to start working
-   criteri |    1. Yes      2. No          . |     Total
+   criteri |       Yes         No          . |     Total
 -----------+---------------------------------+----------
-     0. No |     5,136     20,078     24,314 |    49,528 
-    1. Yes |     9,451          0          0 |     9,451 
+        No |     4,549     21,392     24,768 |    50,709 
+       Yes |    10,128          0          0 |    10,128 
 -----------+---------------------------------+----------
-     Total |    14,587     20,078     24,314 |    58,979 
-
-
+     Total |    14,677     21,392     24,768 |    60,837 
+ 
 Despite the difference between the two definitions, another mismatch is that if 
 we coded only based from work seeking and availability questions yields only 1,824
 unemployed observations.
 
-Different from previous years, questionnaire in 2020 has a newly added question
+Different from previous years, questionnaire in 2021 has a newly added question
 G1 "Did you try to find any paid job or start your own business duing the last 4 weeks?"
 The main difference is that it separates unemployed population into those seeking and 
 available for working and those who already found a job (option 2), Hence we can no
@@ -847,18 +847,19 @@ we have to code PLF using the processed variable "Potential_Labour_Force_PLF" al
 dataset. It seems to be coded following the same rule we have.
 
 . tab PLF_Seeking_not_available Potential_Labour_Force_PLF
-
+ 
  Potential |
     Labour |
    Force - |
    Seeking |   Potential Labour
        not |         Force
- available |     0. No     1. Yes |     Total
+ available |        No        Yes |     Total
 -----------+----------------------+----------
-     0. No |    49,617      9,311 |    58,928 
-    1. Yes |         0         51 |        51 
+        No |    52,078      8,731 |    60,809 
+       Yes |         0         28 |        28 
 -----------+----------------------+----------
-     Total |    49,617      9,362 |    58,979 
+     Total |    52,078      8,759 |    60,837
+
 	 
 . tab PLF_Available_not_seeking Potential_Labour_Force_PLF
 
@@ -867,12 +868,12 @@ dataset. It seems to be coded following the same rule we have.
    Force - |
  Available |   Potential Labour
        not |         Force
-   seeking |     0. No     1. Yes |     Total
+   seeking |        No        Yes |     Total
 -----------+----------------------+----------
-     0. No |    49,617         51 |    49,668 
-    1. Yes |         0      9,311 |     9,311 
+        No |    52,078         28 |    52,106 
+       Yes |         0      8,731 |     8,731 
 -----------+----------------------+----------
-     Total |    49,617      9,362 |    58,979 
+     Total |    52,078      8,759 |    60,837 
 	 
 *</_potential_lf_note_>*/
 
@@ -964,7 +965,7 @@ for more hours but they are not in the raw dataset.
 
 
 *<_industry_orig_>
-	gen industry_orig=Brunch_1                                                                
+	gen industry_orig=Brunch                                                                
 	replace industry_orig=. if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
@@ -983,7 +984,7 @@ for more hours but they are not in the raw dataset.
 
 
 *<_industrycat10_>
-	gen industry1=string(Brunch_1, "%04.0f")
+	gen industry1=string(Brunch, "%04.0f")
 	gen isic2d=substr(industry1, 1, 2)
 	destring isic2d, replace
 	gen industrycat10=.
@@ -1194,7 +1195,7 @@ But this question is not in the dataset.
 
 
 *<_industry_orig_2_>
-	gen industry_orig_2=Second_Brunch_2
+	gen industry_orig_2=Second_Brunch
 	replace industry_orig_2=. if lstatus!=1|Second_Job!=1
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
@@ -1209,7 +1210,7 @@ But this question is not in the dataset.
 
 
 *<_industrycat10_2_>
-	gen industry2=string(Second_Brunch_2, "%04.0f")
+	gen industry2=string(Second_Brunch, "%04.0f")
 	gen isic2d_2=substr(industry2, 1, 2)
 	destring isic2d_2, replace
 	gen industrycat10_2=isic2d_2
@@ -1853,5 +1854,5 @@ compress
 *<_% SAVE_>
 
 *save "`path_output'\\`level_2_harm'_ALL.dta", replace
-save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\GEO\GEO_2020_LFS\GEO_2020_LFS_V01_M_V01_A_GLD\Data\Harmonized\GEO_2020_LFS_v01_M_v01_A_GLD_ALL.dta", replace
+save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\GEO\GEO_2021_LFS\GEO_2021_LFS_V01_M_V01_A_GLD\Data\Harmonized\GEO_2021_LFS_v01_M_v01_A_GLD_ALL.dta", replace
 *</_% SAVE_>
