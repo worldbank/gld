@@ -6,7 +6,7 @@
 
 <_Program name_>				IND_2017_PLFS_V02_M_V01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata 16 <_Application_>
-<_Author(s)_>					  World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
+<_Author(s)_>					 World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
 <_Date created_>				2023-08-25 </_Date created_>
 
 -------------------------------------------------------------------------
@@ -77,16 +77,15 @@ local level_2_harm "`level_1'_`vermast'_M_`veralt'_A_GLD"
 
 * From chunks, define path_in, path_output folder
 local path_in_stata "`server'/`country'/Updated/`level_1'/`level_2_mast'/Data/Stata"
-local path_in_other "`server'/`country'/Updated/`level_1'/`level_2_mast'/Data/Original"
-local path_output   "`server'/`country'/Updated/`level_1'/`level_2_harm'/Data/Harmonized"
 
 * Define Output file name
 local out_file "`level_2_harm'_ALL.dta"
-
-
 *----------1.3: Database assembly------------------------------*
 
 use "`path_in_stata'\IND_2017_PLFS_raw_IND_Stata.dta", clear
+
+** Append the revisits data
+append using "`path_in_stata'\IND_2017_PLFS_raw_IND_RV_Stata.dta"
 
 gen str1 h_1 = string(sample_sg_b_no,"%01.0f")
 gen str1 h_2 = string(ss_stratum,"%01.0f")
@@ -101,6 +100,8 @@ save `ind_file'
 
 use "`path_in_stata'\IND_2017_PLFS_raw_HH_Stata.dta", clear
 
+** Append the revisits data
+append using "`path_in_stata'\IND_2017_PLFS_raw_HH_RV_Stata.dta"
 
 gen str1 h_1 = string(sample_sg_b_no,"%01.0f")
 gen str1 h_2 = string(ss_stratum,"%01.0f")
@@ -245,17 +246,18 @@ drop _merge hh_key
 /* <_weight_note>
 
 	Instructions say to use the multiplier divided by 100
-	if nss == nsc, otherwise by 200. In addition divide by
-	the number of quarters the area has been in.
+	if nss == nsc, otherwise by 200. To generate quarterly estimates, no need to divide by
+	no_qrt
 
 </_weight_note> */
 	gen weight = .
 	destring mult, gen(mlts)
-	replace weight = (mlts/no_qrt)/100 if nss_code == nsc_code
-	replace weight = (mlts/no_qrt)/200 if nss_code != nsc_code
+	replace weight = (mlts)/100 if nss_code == nsc_code
+	replace weight = (mlts)/200 if nss_code != nsc_code
 	count if missing(weight)
 	label var weight "Household sampling weight"
 *</_weight_>
+
 
 
 *<_psu_>
@@ -1856,6 +1858,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`path_output'/`out_file'", replace
+save "${path_work}/`out_file'", replace
 
 *</_% SAVE_>

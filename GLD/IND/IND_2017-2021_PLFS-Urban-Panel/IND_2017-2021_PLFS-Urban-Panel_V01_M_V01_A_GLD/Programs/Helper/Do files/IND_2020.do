@@ -4,22 +4,22 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				IND_2017_PLFS_V02_M_V01_A_GLD_ALL.do </_Program name_>
-<_Application_>					Stata 16 <_Application_>
-<_Author(s)_>					  World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
-<_Date created_>				2023-08-25 </_Date created_>
+<_Program name_>				IND_2020_PLFS_V01_M_V03_A_GLD_ALL.do </_Program name_>
+<_Application_>					Stata 17 <_Application_>
+<_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
+<_Date created_>				2023-08-08 </_Date created_>
 
 -------------------------------------------------------------------------
 
 <_Country_>						India </_Country_>
 <_Survey Title_>				Periodic Labour Force Survey </_Survey Title_>
-<_Survey Year_>					2017 </_Survey Year_>
-<_Study ID_>					DDI-IND-CSO-PLFS-2017-18 </_Study ID_>
-<_Data collection from_>		07/2017 </_Data collection from_>
-<_Data collection to_>			06/2018 </_Data collection to_>
-<_Source of dataset_> 			http://microdata.gov.in/nada43/index.php/catalog/146 </_Source of dataset_>
-<_Sample size (HH)_> 			[#] </_Sample size (HH)_>
-<_Sample size (IND)_> 			[#] </_Sample size (IND)_>
+<_Survey Year_>					2020 </_Survey Year_>
+<_Study ID_>					DDI-IND-CSO-PLFS-2020-20 </_Study ID_>
+<_Data collection from_>		07/2020 </_Data collection from_>
+<_Data collection to_>			06/2020 </_Data collection to_>
+<_Source of dataset_> 			https://www.mospi.gov.in/web/mospi/download-tables-data/-/reports/view/templateTwo/16201?q=TBDCAT </_Source of dataset_>
+<_Sample size (HH)_> 			100344 </_Sample size (HH)_>
+<_Sample size (IND)_> 			413405 </_Sample size (IND)_>
 <_Sampling method_> 			A stratified multi-stage design was adopted. The first stage units
 (FSU) were the Urban Frame Survey (UFS) blocks in urban areas and 2011 Population Census
 villages (Panchayat wards for Kerala) in rural areas. The ultimate stage units (USU) were
@@ -40,9 +40,6 @@ called hamlet group/sub-block, was formed </_Sampling method_>
 -----------------------------------------------------------------------
 <_Version Control_>
 
-* Date: 2022-09-24 - Correct educat7, ocusec, change subnatid1 to string, improve subnatidsurvey
-* Date: 2022-11-22 - Updated based on correcting input data that infile as byte was not reading correctly
-* Date: 2022-08-25 - Include code appending household and person revisit data
 
 </_Version Control_>
 
@@ -64,10 +61,9 @@ set mem 800m
 * Define path sections
 local server  "Y:/GLD-Harmonization/510859_AS"
 local country "IND"
-local year    "2017"
+local year    "2020"
 local survey  "PLFS"
-local survey_alt  "PLFS-Update"
-local vermast "V02"
+local vermast "V01"
 local veralt  "V01"
 
 * From the definitions, set path chunks
@@ -80,13 +76,14 @@ local path_in_stata "`server'/`country'/Updated/`level_1'/`level_2_mast'/Data/St
 local path_in_other "`server'/`country'/Updated/`level_1'/`level_2_mast'/Data/Original"
 local path_output   "`server'/`country'/Updated/`level_1'/`level_2_harm'/Data/Harmonized"
 
+
 * Define Output file name
 local out_file "`level_2_harm'_ALL.dta"
 
-
 *----------1.3: Database assembly------------------------------*
 
-use "`path_in_stata'\IND_2017_PLFS_raw_IND_Stata.dta", clear
+use "`path_in_stata'\IND_2020_PLFS_raw_IND_Stata.dta", clear
+append using "`path_in_stata'\IND_2020_PLFS_raw_IND_RV_Stata.dta"
 
 gen str1 h_1 = string(sample_sg_b_no,"%01.0f")
 gen str1 h_2 = string(ss_stratum,"%01.0f")
@@ -95,23 +92,25 @@ gen str2 h_3 = string(hh_num,"%02.0f")
 egen str9 hh_key = concat(fsu h_1 h_2 h_3 visit)
 drop h_*
 
-
 tempfile ind_file
 save `ind_file'
 
-use "`path_in_stata'\IND_2017_PLFS_raw_HH_Stata.dta", clear
-
+use "`path_in_stata'\IND_2020_PLFS_raw_HH_Stata.dta", clear
+append using "`path_in_stata'\IND_2020_PLFS_raw_HH_RV_Stata.dta"
 
 gen str1 h_1 = string(sample_sg_b_no,"%01.0f")
 gen str1 h_2 = string(ss_stratum,"%01.0f")
 gen str2 h_3 = string(hh_num,"%02.0f")
-
 
 egen str9 hh_key = concat(fsu h_1 h_2 h_3 visit)
 drop h_*
 
 merge 1:m hh_key using `ind_file', assert(match)
 drop _merge hh_key
+
+* There are "temporary visitors" (N = 2,587) who are included in the survey. These individuals were asked for information relating to their previous place of residence prior to moving in after March 2020. But they were not asked at all other information found in other modules of the survey as they are not considered as part of the household. Hence for cleanliness of the data, they are dropped from the analysis
+
+drop if !missing(ppe_d_lupr_tv)
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -162,7 +161,7 @@ drop _merge hh_key
 
 
 *<_year_>
-	gen int year = 2017
+	gen int year = 2020
 	label var year "Year of survey"
 *</_year_>
 
@@ -187,15 +186,17 @@ drop _merge hh_key
 
 *<_int_year_>
 	gen int_year= .
-	replace int_year = 2017 if inlist(quarter,"Q1","Q2")
-	replace int_year = 2018 if inlist(quarter,"Q3","Q4")
+	replace int_year = 2020 if inlist(quarter,"Q5","Q6")
+	replace int_year = 2021 if inlist(quarter,"Q7","Q8")
 	label var int_year "Year of the interview"
 *</_int_year_>
 
 
 *<_int_month_>
+
 	gen  int_month = month
-	replace int_month = . if month == 0
+	destring int_month, replace force
+	replace int_month = . if !inrange(int_month,1,12)
 	label de lblint_month 1 "January" 2 "February" 3 "March" 4 "April" 5 "May" 6 "June" 7 "July" 8 "August" 9 "September" 10 "October" 11 "November" 12 "December"
 	label value int_month lblint_month
 	label var int_month "Month of the interview"
@@ -205,24 +206,10 @@ drop _merge hh_key
 *<_hhid_>
 /* <_hhid_note>
 
-	* First need to fix FSU codes bec 2017 FSUs cannot be matched with 2018
-	* Thanks to Nils Enevoldsen and Jyotirmoy Bhattacharya for figuring out the mapping for 2017 FSU with 2018
+	Using sample first segment unit, segment block number,
+	second stage stratum, and HH number.
 
 </_hhid_note> */
-
-	destring fsu, replace
-	
-	gen fsu_repaired = 0
-	forvalues i = 0/4 {
-		gen fsu_digit_place`i' = floor(mod(fsu, 10^(`i'+1)) / 10^(`i'))
-		recode fsu_digit_place`i' (0=6) (6=8) (8=9) (9=3) (3=0) (1=4) (4=7) (7=2) (2=5) (5=1)
-		replace fsu_repaired = fsu_repaired + fsu_digit_place`i' * 10^(`i')
-	}
-	
-	replace fsu = fsu_repaired
-	drop fsu_repaired
-	
-	tostring fsu, replace
 
 	gen str1 h_1 = string(sample_sg_b_no,"%01.0f")
 	gen str1 h_2 = string(ss_stratum,"%01.0f")
@@ -232,6 +219,7 @@ drop _merge hh_key
 	label var hhid "Household ID"
 	drop h_1 h_2 h_3
 *</_hhid_>
+
 
 *<_pid_>
 	gen indiv_id = string(person_no,"%02.0f")
@@ -245,17 +233,17 @@ drop _merge hh_key
 /* <_weight_note>
 
 	Instructions say to use the multiplier divided by 100
-	if nss == nsc, otherwise by 200. In addition divide by
-	the number of quarters the area has been in.
+	if nss == nsc, otherwise by 200. To generate quarterly estimates, no need to divide by
+	no_qrt
 
 </_weight_note> */
 	gen weight = .
-	destring mult, gen(mlts)
-	replace weight = (mlts/no_qrt)/100 if nss_code == nsc_code
-	replace weight = (mlts/no_qrt)/200 if nss_code != nsc_code
+	replace weight = (mult)/100 if nss_code == nsc_code
+	replace weight = (mult)/200 if nss_code != nsc_code
 	count if missing(weight)
 	label var weight "Household sampling weight"
 *</_weight_>
+
 
 
 *<_psu_>
@@ -314,7 +302,7 @@ drop _merge hh_key
 	gen byte subnatid1 = state
 	label de lblsubnatid1 28 "28 - Andhra Pradesh" 12 "12 - Arunachal Pradesh" 18 "18 - Assam" 10 "10 - Bihar" 30 "30 - Goa" 24 "24 - Gujrat" 6 "6 - Haryana" 2 "2 - Himachal Pradesh" 1 "1 - Jammu & Kashmir" 29 "29 - Karnataka" 32 "32 - Kerala" 23 "23 - Madhya Pradesh" 27 "27 - Maharastra" 14 "14 - Manipur" 17 "17 - Meghalaya" 15 "15 - Mizoram" 13 "13 - Nagaland" 21 "21 - Odisha" 3 "3 - Punjab" 8 "8 - Rajasthan" 11 "11 - Sikkim" 33 "33 - Tamil Nadu" 16 "16 - Tripura" 9 "9 - Uttar Pradesh" 19 "19 - West Bengal" 35 "35 - Andaman & Nicober" 4 "4 - Chandigarh" 26 "26 - Dadra & Nagar Haveli" 25 "25 - Daman & Diu" 7 "7 - Delhi" 31 "31 - Lakshadweep" 34 "34 - Pondicheri" 22 "22 - Chhattisgarh" 20 "20 - Jharkhand" 5 "5 - Uttaranchal" 36 "36 - Telangana"
 	label values subnatid1 lblsubnatid1
-	
+		
 	* Convert numeric into string
 	decode subnatid1, gen(subnatid1_str)
 	rename subnatid1 subnatid1_num
@@ -324,9 +312,13 @@ drop _merge hh_key
 *</_subnatid1_>
 
 
+
 *<_subnatid2_>
-	gen byte subnatid2 = district
-	label values subnatid2 lblsubnatid2
+* India has 760 +  districts
+	gen strstate = string(state, "%02.0f")
+	gen strdistrict = string(district, "%02.0f")
+
+	egen subnatid2 = concat(strstate strdistrict)
 	label var subnatid2 "District code"
 *</_subnatid2_>
 
@@ -350,11 +342,12 @@ drop _merge hh_key
 *<_subnatid1_prev_>
 /* <_subnatid1_prev_note>
 
-	subnatid1_prev is coded as missing unless the classification used for subnatid1 has changed since the previous survey.
+	Last changes occurred in 2014 (creation of Telangana)
+	EUS 2011 has old, PLFS 2017 has new codes
+	PLFS 2017 has the subnatid1_prev info, here no changes.
 
 </_subnatid1_prev_note> */
 	gen subnatid1_prev = ""
-	replace subnatid1_prev = "28 - Andhra Pradesh" if subnatid1 == "36 - Telangana" | subnatid1 == "28 - Andhra Pradesh"
 	label var subnatid1_prev "Classification used for subnatid1 from previous survey"
 *</_subnatid1_prev_>
 
@@ -403,10 +396,12 @@ drop _merge hh_key
 
 
 *<_age_>
-	* Variable age already exists in original data
-	*gen age = .
+	ren age original_age
+	gen new_age = regexr(original_age, "[^0-9]", "")
+	destring new_age, gen(age)
 	label var age "Individual age"
 *</_age_>
+
 
 
 *<_male_>
@@ -421,9 +416,10 @@ drop _merge hh_key
 
 *<_relationharm_>
 
-	bys hhid: gen one=1 if rel_head == 1
-	bys hhid: egen temp=count(one)
+	bys hhid visit: gen one=1 if rel_head == 1
+	bys hhid visit: egen temp=count(one)
 	tab temp
+	*assert `r(r)' == 1
 	drop temp one
 
 	gen relationharm = rel_head
@@ -494,21 +490,23 @@ drop _merge hh_key
 
 
 {
+* Caveat: based on comparisons with the EUE 2007-08 survey, the migration rate did not change, deviating from the conclusions out of the 2011 Census which found an increase in domestic migration. 
+* Comparability issues lie on selection methodology: in 2020-21, households were selected based on the number of members with secondary education, while in 2007-08, HH were selected based on having an out-migrant, receiving a remittance, and remaining households having at least one other type of migrants for employment purpose. 
 
 *<_migrated_mod_age_>
-	gen migrated_mod_age = .
+	gen migrated_mod_age = 0
 	label var migrated_mod_age "Migration module application age"
 *</_migrated_mod_age_>
 
 
 *<_migrated_ref_time_>
-	gen migrated_ref_time = .
+	gen migrated_ref_time = 99
 	label var migrated_ref_time "Reference time applied to migration questions (in years)"
 *</_migrated_ref_time_>
 
 
 *<_migrated_binary_>
-	gen migrated_binary = .
+	gen migrated_binary = (ppe_d_lupr == 1)
 	label de lblmigrated_binary 0 "No" 1 "Yes"
 	label values migrated_binary lblmigrated_binary
 	label var migrated_binary "Individual has migrated"
@@ -516,6 +514,7 @@ drop _merge hh_key
 
 
 *<_migrated_years_>
+* Unlike in previous years, not availbale for 2020!
 	gen migrated_years = .
 	label var migrated_years "Years since latest migration"
 *</_migrated_years_>
@@ -523,6 +522,8 @@ drop _merge hh_key
 
 *<_migrated_from_urban_>
 	gen migrated_from_urban = .
+	replace migrated_from_urban = 1 if inlist(loc_lupr, 2, 4, 6)
+	replace migrated_from_urban = 0 if inlist(loc_lupr, 1, 3, 5)
 	label de lblmigrated_from_urban 0 "Rural" 1 "Urban"
 	label values migrated_from_urban lblmigrated_from_urban
 	label var migrated_from_urban "Migrated from area"
@@ -531,6 +532,10 @@ drop _merge hh_key
 
 *<_migrated_from_cat_>
 	gen migrated_from_cat = .
+	replace migrated_from_cat = 2 if inlist(loc_lupr, 1, 2)
+	replace migrated_from_cat = 3 if inlist(loc_lupr, 3, 4)
+	replace migrated_from_cat = 4 if inlist(loc_lupr, 5, 6)
+	replace migrated_from_cat = 5 if loc_lupr == 7
 	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country"
 	label values migrated_from_cat lblmigrated_from_cat
 	label var migrated_from_cat "Category of migration area"
@@ -538,7 +543,14 @@ drop _merge hh_key
 
 
 *<_migrated_from_code_>
-	gen migrated_from_code = .
+	gen migrated_from_code = state_lupr
+	
+	label values migrated_from_code lblsubnatid1
+		
+	* Convert numeric into string
+	decode migrated_from_code, gen(migrated_from_code_str)
+	rename migrated_from_code migrated_from_code_num
+	rename migrated_from_code_str migrated_from_code
 	*label de lblmigrated_from_code
 	*label values migrated_from_code lblmigrated_from_code
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
@@ -553,6 +565,13 @@ drop _merge hh_key
 
 *<_migrated_reason_>
 	gen migrated_reason = .
+	replace migrated_reason = 3 if inlist(reason_d_lupr, 1, 2, 3)
+	replace migrated_reason = 1 if inlist(reason_d_lupr, 4, 6)
+	replace migrated_reason = 2 if reason_d_lupr == 5
+	replace migrated_reason = 4 if inlist(reason_d_lupr, 7, 8, 9)
+	replace migrated_reason = 5 if inlist(reason_d_lupr, 10, 11, 12, 13, 19)
+
+
 	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
 	label values migrated_reason lblmigrated_reason
 	label var migrated_reason "Reason for migrating"
@@ -684,7 +703,6 @@ foreach v of local ed_var {
 }
 
 
-
 /*%%=============================================================================================
 	7: Training
 ==============================================================================================%%*/
@@ -733,7 +751,7 @@ foreach v of local ed_var {
 
 
 *<_vocational_field_orig_>
-	gen vocational_field_orig = field_training
+	sdecode field_training, gen(vocational_field_orig)
 	label var vocational_field_orig "Field of training - As in original data"
 *</_vocational_field_orig_>
 
@@ -795,7 +813,7 @@ foreach v of local ed_var {
 
 *<_nlfreason_>
 	gen nlfreason = cws
-	recode nlfreason (11/81 98=.) (91=1) (92 93=2) (94=3) (95=4) (82 96 97=5)
+	recode nlfreason (11/81 98=.) (91=1) (92 93=2) (94=3) (95=4) (82 96 97 98=5)
 	replace nlfreason = . if lstatus != 3 | (age < minlaborage & age != .)
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
@@ -898,7 +916,7 @@ foreach v of local ed_var {
 	replace nco_04 = "0" + nco_04 if length(nco_04) == 2
 	replace nco_04 = "00" + nco_04 if length(nco_04) == 1
 
-	merge m:1 nco_04 using "`path_in_stata'/India_nco_04_to_isco_88.dta", nogen assert(match master)
+	merge m:1 nco_04 using "`path_in_stata'/India_nco_04_to_isco_88.dta"
 
 	* Make isco four digit string
 	tostring isco_88, replace
@@ -915,10 +933,12 @@ foreach v of local ed_var {
 *<_occup_>
 	gen occup = substr(occup_isco, 1,1)
 	destring occup, replace
+	replace occup = 99 if occup == 0
+	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup
-	label var occup "1 digit occupational classification, primary job 7 day recall"
 *</_occup_>
+
 
 
 *<_occup_skill_>
@@ -1259,12 +1279,24 @@ foreach v of local ed_var {
 
 *<_unempldur_l_year_>
 	gen byte unempldur_l_year=.
+	replace unempldur_l_year = 0 if unem_dur == 1
+	replace unempldur_l_year = 7 if unem_dur == 2
+	replace unempldur_l_year = 13 if unem_dur == 3
+	replace unempldur_l_year = 25 if unem_dur == 4
+	replace unempldur_l_year = 37 if unem_dur == 5
+
 	label var unempldur_l_year "Unemployment duration (months) lower bracket"
 *</_unempldur_l_year_>
 
 
 *<_unempldur_u_year_>
 	gen byte unempldur_u_year=.
+	replace unempldur_u_year = 6 if unem_dur == 1
+	replace unempldur_u_year = 12 if unem_dur == 2
+	replace unempldur_u_year = 24 if unem_dur == 3
+	replace unempldur_u_year = 36 if unem_dur == 4
+	replace unempldur_u_year = . if unem_dur == 5
+
 	label var unempldur_u_year "Unemployment duration (months) upper bracket"
 *</_unempldur_u_year_>
 
@@ -1275,18 +1307,17 @@ foreach v of local ed_var {
 {
 
 *<_empstat_year_>
-	gen empstat_y1 = p_status_code
-	recode empstat_y1 (11=4) (12=3) (61 62 21=2) (31 41 42 51 52 71 72=1) (81/99=.)
+	gen empstat_year= p_status_code
+	recode empstat_year (11=4) (12=3) (61 62 21=2) (31 41 42 51 52 71 72=1) (81/99=.)
 	gen empstat_y2 = s_status_code
 	recode empstat_y2 (11=4) (12=3) (61 62 21=2) (31 41 42 51 52 71 72=1) (81/99=.)
 
-	gen empstat_year = empstat_y1
 	replace empstat_year = empstat_y2 if adders == 1
 
 	label var empstat_year "Employment status during past week primary job 12 month recall"
 	la de lblempstat_year 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status", replace
 	label values empstat_year lblempstat_year
-	drop empstat_y1 empstat_y2
+	drop empstat_y2
 *</_empstat_year_>
 
 
@@ -1379,14 +1410,13 @@ foreach v of local ed_var {
 *</_occup_isco_year_>
 
 
-
 *<_occup_year_>
 	gen occup_year = substr(occup_isco_year, 1,1)
 	destring occup_year, replace
-
+	
+	label var occup_year "1 digit occupational classification, secondary job 12 month recall"
 	la de lbloccup_year 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup_year lbloccup_year
-	label var occup_year "1 digit occupational classification, secondary job 12 month recall"
 *</_occup_year_>
 
 
@@ -1609,6 +1639,7 @@ foreach v of local ed_var {
 *<_occup_2_year_>
 	gen occup_2_year = substr(occup_orig_2_year, 1,1)
 	destring occup_2_year, replace
+	
 	label var occup_2_year "1 digit occupational classification, secondary job 12 month recall"
 	la de lbloccup_2_year 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup_2_year lbloccup_2_year
@@ -1659,7 +1690,7 @@ foreach v of local ed_var {
 
 *<_firmsize_l_2_year_>
 	gen help_1 = .
-	replace help_1 = s_no_workrs_ent if seconds == 1
+	replace help_1 = s_no_workrs_ent if !missing(empstat_2_year)
 
 	gen byte firmsize_l_2_year = .
 	replace firmsize_l_2_year = 1 if help_1 == 1
@@ -1674,7 +1705,7 @@ foreach v of local ed_var {
 
 *<_firmsize_u_2_year_>
 	gen help_1 = .
-	replace help_1 = s_no_workrs_ent if seconds == 1
+	replace help_1 = s_no_workrs_ent if !missing(empstat_2_year)
 
 	gen byte firmsize_u_2_year = .
 	replace firmsize_u_2_year = 5 if help_1 == 1
@@ -1856,6 +1887,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`path_output'/`out_file'", replace
+save "${path_work}/`out_file'", replace
 
 *</_% SAVE_>

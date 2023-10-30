@@ -47,17 +47,15 @@
 		display "visit_no is already available in the data. Do not create"
 	}
 		
-
 *</_visit_no_>
 
 *<_hhid_panel_>
-	
 	gen hhid_panel = hhid + panel
-
+	label var hhid_panel "Household ID (panel)"
 *</_hhid_panel_>
 
 
-*<_pid_panel_
+*<_pid_panel_>
 
 * Create PID variable adding panel information
 	* First extract the individual number
@@ -66,6 +64,19 @@
 	drop rosternum
 	
 	isid pid_panel wave
-
+	label var pid_panel "Person ID (panel)"
 *</_pid_panel_>
+
+* Clean up
+
+quietly{
+
+drop quarter_monotonic
+order panel, before(visit_no)
+order hhid_panel, after(hhid)
+order pid_panel, after(pid)
+
+
+
+}
 
