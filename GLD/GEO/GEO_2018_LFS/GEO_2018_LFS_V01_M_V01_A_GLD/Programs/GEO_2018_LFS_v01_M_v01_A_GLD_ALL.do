@@ -201,7 +201,7 @@ Survey wave |      Freq.     Percent        Cum.
 
 
 *<_weight_>
-	gen weight=P_Weights/4
+	gen weight=P_Weights
 	label var weight "Household sampling weight"
 *</_weight_>
 

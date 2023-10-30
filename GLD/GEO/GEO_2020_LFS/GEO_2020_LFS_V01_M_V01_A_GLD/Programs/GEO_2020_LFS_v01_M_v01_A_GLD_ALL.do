@@ -122,13 +122,13 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_isco_version_>
-	gen isco_version="isco_2008"
+	gen isco_version=""
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
 
 *<_isic_version_>
-	gen isic_version="isic_4"
+	gen isic_version=""
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
@@ -201,7 +201,7 @@ Survey wave |      Freq.     Percent        Cum.
 
 
 *<_weight_>
-	gen weight=P_Weights/4
+	gen weight=P_Weights
 	label var weight "Household sampling weight"
 *</_weight_>
 

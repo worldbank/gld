@@ -4,24 +4,24 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				GEO_2021_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
+<_Program name_>				GEO_2022_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata SE 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
-<_Date created_>				2023-10-25 </_Date created_>
+<_Date created_>				2023-10-26 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						Georgia (GEO) </_Country_>
 <_Survey Title_>				Labour Force Survey </_Survey Title_>
-<_Survey Year_>					2021 </_Survey Year_>
-<_Study ID_>					GEO_2021_LFS_v01_M </_Study ID_>
-<_Data collection from (M/Y)_>	[Jan/2021] </_Data collection from (M/Y)_>
-<_Data collection to (M/Y)_>	[Dec/2021] </_Data collection to (M/Y)_>
+<_Survey Year_>					2022 </_Survey Year_>
+<_Study ID_>					GEO_2022_LFS_v01_M </_Study ID_>
+<_Data collection from (M/Y)_>	[Jan/2022] </_Data collection from (M/Y)_>
+<_Data collection to (M/Y)_>	[Dec/2022] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			Survey conducted by National Statistics Office of Georgia.
-								Data from 2021 to 2022 are publicly available on
+								Data from 2022 to 2022 are publicly available on
 								Georgia national stats office website.</_Source of dataset_>
 								*OPENLY ACCESSIBLE: 		 
 								https://www.geostat.ge/en/modules/categories/130/labour-force-survey-databases*
-<_Sample size (HH)_> 			21,367 </_Sample size (HH)_>
-<_Sample size (IND)_> 		    60,837 </_Sample size (IND)_>
+<_Sample size (HH)_> 			21,366 </_Sample size (HH)_>
+<_Sample size (IND)_> 		    60,262  </_Sample size (IND)_>
 <_Sampling method_> 			 </_Sampling method_>
 <_Geographic coverage_> 		
 <_Currency_> 					Georgian Lari </_Currency_>
@@ -59,7 +59,7 @@ set mem 800m
 * Define path sections
 local server  "Y:\GLD-Harmonization\573465_JT"
 local country "GEO"
-local year    "2021"
+local year    "2022"
 local survey  "LFS"
 local vermast "V01"
 local veralt  "V01"
@@ -83,8 +83,8 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	*use "`path_in_stata'\GEO_2021_LFS_SARRAW.dta", clear
-	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\GEO\GEO_2021_LFS\GEO_2021_LFS_V01_M\Data\Stata\GEO_LFS_2021.dta"
+	*use "`path_in_stata'\GEO_2022_LFS_SARRAW.dta", clear
+	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\GEO\GEO_2022_LFS\GEO_2022_LFS_V01_M\Data\Stata\GEO_LFS_2022.dta"
 /*%%=============================================================================================
 	2: Survey & ID
 ================================================================================================*/
@@ -122,13 +122,13 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_isco_version_>
-	gen isco_version="isco_2008"
+	gen isco_version=""
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
 
 *<_isic_version_>
-	gen isic_version="isic_4"
+	gen isic_version=""
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
@@ -181,12 +181,12 @@ Number of household in each quarter:
 
 Survey wave |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          1 |      5,291       24.76       24.76
-          2 |      5,386       25.21       49.97
-          3 |      5,327       24.93       74.90
-          4 |      5,363       25.10      100.00
+          1 |      5,431       25.42       25.42
+          2 |      5,414       25.34       50.76
+          3 |      5,268       24.66       75.41
+          4 |      5,253       24.59      100.00
 ------------+-----------------------------------
-      Total |     21,367      100.00
+      Total |     21,366      100.00
 
 *<_hhid_note_>*/
 	gen hhid=UID
@@ -461,15 +461,13 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 
 *<_migrated_ref_time_>
-	gen migrated_ref_time=7
+	gen migrated_ref_time=.
 	label var migrated_ref_time "Reference time applied to migration questions"
 *</_migrated_ref_time_>
 
 
 *<_migrated_binary_>
 	gen migrated_binary=.
-	replace migrated_binary=1 if !mi(Prev_Region)
-	replace migrated_binary=0 if mi(Prev_Region)
 	label de lblmigrated_binary 0 "No" 1 "Yes"
 	replace migrated_binary=. if age<migrated_mod_age
 	label values migrated_binary lblmigrated_binary
@@ -478,9 +476,6 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 *<_migrated_years_>
    gen migrated_years=.
-   replace migrated_years=2021-YYYY_Q15 if inrange(YYYY_Q15,2010,2016)
-   replace migrated_years=(12-MM_Q15)/12
-   replace migrated_years=round(migrated_years,0.1) if migrated_years<1
    replace migrated_years=. if migrated_binary!=1
    replace migrated_years=. if age<migrated_mod_age
    label var migrated_years "Years since latest migration"
@@ -489,8 +484,6 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 *<_migrated_from_urban_>
 	gen migrated_from_urban=.
-	replace migrated_from_urban=1 if Urban_Rural_Q17==1
-	replace migrated_from_urban=0 if Urban_Rural_Q17==2
 	label de lblmigrated_from_urban 0 "Rural" 1 "Urban"
 	replace migrated_from_urban=. if age<migrated_mod_age
 	label values migrated_from_urban lblmigrated_from_urban
@@ -500,9 +493,6 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 *<_migrated_from_cat_>
 	gen migrated_from_cat=.
-	replace migrated_from_cat=3 if Prev_Region==Region
-	replace migrated_from_cat=4 if Prev_Region!=Region
-	replace migrated_from_cat=5 if Prev_Region==99
 	replace migrated_from_cat=. if age<migrated_mod_age|migrated_binary!=1
 	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country"
 	label values migrated_from_cat lblmigrated_from_cat
@@ -511,7 +501,7 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 
 *<_migrated_from_code_>
-	gen migrated_from_code=Prev_Region
+	gen migrated_from_code=.
 	replace migrated_from_code=. if migrated_binary!=1
 	replace migrated_from_code=. if age<migrated_mod_age
 	label de lblmigcode 11 "11 - Tbilisi" 12 "12 - Abkhazia" 15 "15 - Adjara" 23 "23 - Guria" 26 "26 - Imereti" 29 "29 - Kakheti" 32 "32 - Mtskheta-Mtianeti" 35 "35 - Racha-Lechkhumi & Kvemo Svanet" 38 "38 - Samegrelo-Zemo Svaneti" 41 "41 - Samtskhe-Javaxeti" 44 "44 - Kvemo Kartli" 47 "47 - Shida Kartli" 99 "99 - Other Country" 
@@ -529,8 +519,7 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 
 *<_migrated_reason_>
-	gen migrated_reason=Reason_Q18
-	recode migrated_reason (1 2=3) (3=2) (7 8=1) (4/6 97=5)
+	gen migrated_reason=.
 	replace migrated_reason=. if migrated_binary!=1
 	replace migrated_reason=. if age<migrated_mod_age
 	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
@@ -770,7 +759,7 @@ question B1. But the raw dataset we can get only has already processed variables
 employed, unemployed, hired, and self-employed.
 
 Regarding umemployed, it has unemployed based on ILO strict definition and soft 
-definition. The unemployed population defined by soft definition has 4,182 more 
+definition. The unemployed population defined by soft definition has 3,551 more 
 observations than the strict definition. However, cross examinition with seeking 
 work and availability to work shows that both definitions align with our definition 
 of unemployment. 
@@ -787,10 +776,10 @@ Organizati | to the International
     strict |  (ILO) soft criteri
      crite |        No        Yes |     Total
 -----------+----------------------+----------
-        No |    50,709      4,182 |    54,891 
-       Yes |         0      5,946 |     5,946 
+        No |    51,697      3,551 |    55,248 
+       Yes |         0      5,014 |     5,014 
 -----------+----------------------+----------
-     Total |    50,709     10,128 |    60,837
+     Total |    51,697      8,565 |    60,262 
 
 
 . tab Unemployed_soft _v9, m
@@ -805,16 +794,12 @@ Organizati |
       soft |    Available to start working
    criteri |       Yes         No          . |     Total
 -----------+---------------------------------+----------
-        No |     4,549     21,392     24,768 |    50,709 
-       Yes |    10,128          0          0 |    10,128 
+        No |     4,461     20,996     26,240 |    51,697 
+       Yes |     8,565          0          0 |     8,565 
 -----------+---------------------------------+----------
-     Total |    14,677     21,392     24,768 |    60,837 
+     Total |    13,026     20,996     26,240 |    60,262 
  
-Despite the difference between the two definitions, another mismatch is that if 
-we coded only based from work seeking and availability questions yields only 1,824
-unemployed observations.
-
-Different from previous years, questionnaire in 2021 has a newly added question
+Different from previous years, questionnaire in 2022 has a newly added question
 G1 "Did you try to find any paid job or start your own business duing the last 4 weeks?"
 The main difference is that it separates unemployed population into those seeking and 
 available for working and those who already found a job (option 2), Hence we can no
@@ -855,11 +840,10 @@ dataset. It seems to be coded following the same rule we have.
        not |         Force
  available |        No        Yes |     Total
 -----------+----------------------+----------
-        No |    52,078      8,731 |    60,809 
+        No |    52,222      8,012 |    60,234 
        Yes |         0         28 |        28 
 -----------+----------------------+----------
-     Total |    52,078      8,759 |    60,837
-
+     Total |    52,222      8,040 |    60,262
 	 
 . tab PLF_Available_not_seeking Potential_Labour_Force_PLF
 
@@ -870,10 +854,10 @@ dataset. It seems to be coded following the same rule we have.
        not |         Force
    seeking |        No        Yes |     Total
 -----------+----------------------+----------
-        No |    52,078         28 |    52,106 
-       Yes |         0      8,731 |     8,731 
+        No |    52,222         28 |    52,250 
+       Yes |         0      8,012 |     8,012 
 -----------+----------------------+----------
-     Total |    52,078      8,759 |    60,837 
+     Total |    52,222      8,040 |    60,262
 	 
 *</_potential_lf_note_>*/
 
@@ -1854,5 +1838,5 @@ compress
 *<_% SAVE_>
 
 *save "`path_output'\\`level_2_harm'_ALL.dta", replace
-save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\GEO\GEO_2021_LFS\GEO_2021_LFS_V01_M_V01_A_GLD\Data\Harmonized\GEO_2021_LFS_v01_M_v01_A_GLD_ALL.dta", replace
+save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\GEO\GEO_2022_LFS\GEO_2022_LFS_V01_M_V01_A_GLD\Data\Harmonized\GEO_2022_LFS_v01_M_v01_A_GLD_ALL.dta", replace
 *</_% SAVE_>
