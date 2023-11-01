@@ -347,7 +347,9 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 {
 
 *<_hsize_>
-	bys hhid: egen hsize=max(MemberNo)
+	gsort hhid -age
+	bys hhid: gen count=_n
+	bys hhid: egen hsize=max(count)
 	label var hsize "Household size"
 *</_hsize_>
 
@@ -371,6 +373,11 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 *<_relationharm_>
 	gen byte relationharm=Relationship
 	recode relationharm (4 8=3) (5 6=4) (7 9 10=5) (11=6)
+	
+	gen head=relationharm==1
+	bys hhid: egen headsum=sum(head)
+	replace relationharm=1 if inrange(relationharm,1,5)&headsum==0&count==1
+	
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm lblrelationharm
@@ -989,7 +996,7 @@ for more hours but they are not in the raw dataset.
 	gen industrycat10=.
 	replace industrycat10=isic2d
 	recode industrycat10 (1/3=1) (5/9=2) (10/33=3) (35/39=4) (41/43=5) (45/47 55/56=6) (49/53 58/63=7) (64/82=8) (84=9) (85/99=10)	
-	replace industrycat10=. if lstatus!=1
+	replace industrycat10=. if lstatus!=1|inlist(industrycat10,34,40)
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
@@ -1063,7 +1070,7 @@ each bracket.
 *<_wage_no_compen_note_>*/
 
 	gen wage_no_compen=.
-	replace wage_no_compen=50 if B24_B25_Net_earnings==1
+	/*replace wage_no_compen=50 if B24_B25_Net_earnings==1
 	replace wage_no_compen=150 if B24_B25_Net_earnings==2
 	replace wage_no_compen=300 if B24_B25_Net_earnings==3
 	replace wage_no_compen=500 if B24_B25_Net_earnings==4
@@ -1071,14 +1078,14 @@ each bracket.
 	replace wage_no_compen=900 if B24_B25_Net_earnings==6
 	replace wage_no_compen=1250 if B24_B25_Net_earnings==7
 	replace wage_no_compen=1750 if B24_B25_Net_earnings==8
-	replace wage_no_compen=2000 if B24_B25_Net_earnings==9
+	replace wage_no_compen=2000 if B24_B25_Net_earnings==9*/
 	replace wage_no_compen=. if lstatus!=1|empstat==2
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
 
 *<_unitwage_>
-	gen byte unitwage=5
+	gen byte unitwage=.
 	replace unitwage=. if lstatus!=1 | empstat==2
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
