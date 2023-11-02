@@ -31,7 +31,7 @@
 <_ISCO Version_>				ISCO 08 </_ISCO Version_>
 <_OCCUP National_>					  </_OCCUP National_>
 <_ISIC Version_>				ISIC Rev.4 </_ISIC Version_>
-<_INDUS National_>				      </_INDUS National_>
+<_INDUS National_>				NACE Rev.2 </_INDUS National_>
 -----------------------------------------------------------------------
 
 <_Version Control_>
@@ -128,7 +128,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_isic_version_>
-	gen isic_version=""
+	gen isic_version="isic_4"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
@@ -347,7 +347,9 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 {
 
 *<_hsize_>
-	bys hhid: egen hsize=max(MemberNo)
+	gsort hhid -Age
+	bys hhid: gen count=_n
+	bys hhid: egen hsize=max(count)
 	label var hsize "Household size"
 *</_hsize_>
 
@@ -369,8 +371,21 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 
 *<_relationharm_>
+
+/*<_relationharm_note_>
+
+One household do not have any household head because it is composed of only
+non-relatives. Its hhid is 126440.
+
+*<_relationharm_note_>*/
+
 	gen byte relationharm=Relationship
 	recode relationharm (4 8=3) (5 6=4) (7 9 10=5) (11=6)
+	
+	gen head=relationharm==1
+	bys hhid: egen headsum=sum(head)
+	replace relationharm=1 if inrange(relationharm,1,5)&headsum==0&count==1
+
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm lblrelationharm
@@ -940,7 +955,7 @@ for more hours but they are not in the raw dataset.
 
 *<_ocusec_>
 	gen byte ocusec=Sector_ownership
-	recode ocusec (1=3) (3=2) (97=4) (98=.)
+	recode ocusec (4=1) (1=3) (3=2) (97=4) (98=.)
 	replace ocusec=. if lstatus!=1|age<minlaborage
 	label var ocusec "Sector of activity primary job 7 day recall"
 	la de lblocusec 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
@@ -956,28 +971,24 @@ for more hours but they are not in the raw dataset.
 
 
 *<_industrycat_isic_>
-	/*gen industrycat_isic=string(B4_NACE_2, "%04.0f")
-	replace industrycat_isic="" if inlist(B4_NACE_2,6831,9900)
-	replace industrycat_isic="" if inrange(B4_NACE_2,8551,8560)
-	replace industrycat_isic="" if inlist(B4_NACE_2,8891,8899)*/
-	gen industrycat_isic=""
-	replace industrycat_isic="" if industrycat_isic=="."
-	replace industrycat_isic="" if lstatus!=1
+	tostring Brunch, gen(nace2_code) format(%04.0f)
+	*merge m:1 nace2_code using "`path_in_stata'\NACE2_ISIC4.dta", keep(master match) nogen
+	merge m:1 nace2_code using "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\GEO\GEO_2022_LFS\GEO_2022_LFS_V01_M\Data\Stata\NACE2_ISIC4.dta", keep(master match) nogen
+	gen industrycat_isic=isic4_code
+	replace industrycat_isic="" if lstatus!=1|industrycat_isic=="."
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
 
 *<_industrycat10_>
-	gen industry1=string(Brunch, "%04.0f")
-	gen isic2d=substr(industry1, 1, 2)
-	destring isic2d, replace
-	gen industrycat10=.
-	replace industrycat10=isic2d
+	destring nace2_code, replace
+	gen industrycat10=floor(nace2_code/100)
 	recode industrycat10 (1/3=1) (5/9=2) (10/33=3) (35/39=4) (41/43=5) (45/47 55/56=6) (49/53 58/63=7) (64/82=8) (84=9) (85/99=10)	
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
+	drop nace2_code isic4_code
 *</_industrycat10_>
 
 
@@ -1048,7 +1059,7 @@ each bracket.
 *<_wage_no_compen_note_>*/
 
 	gen wage_no_compen=.
-	replace wage_no_compen=50 if B24_B25_Net_earnings==1
+	/*replace wage_no_compen=50 if B24_B25_Net_earnings==1
 	replace wage_no_compen=150 if B24_B25_Net_earnings==2
 	replace wage_no_compen=300 if B24_B25_Net_earnings==3
 	replace wage_no_compen=500 if B24_B25_Net_earnings==4
@@ -1056,14 +1067,14 @@ each bracket.
 	replace wage_no_compen=900 if B24_B25_Net_earnings==6
 	replace wage_no_compen=1250 if B24_B25_Net_earnings==7
 	replace wage_no_compen=1750 if B24_B25_Net_earnings==8
-	replace wage_no_compen=2000 if B24_B25_Net_earnings==9
+	replace wage_no_compen=2000 if B24_B25_Net_earnings==9*/
 	replace wage_no_compen=. if lstatus!=1|empstat==2
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
 
 *<_unitwage_>
-	gen byte unitwage=5
+	gen byte unitwage=.
 	replace unitwage=. if lstatus!=1 | empstat==2
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
@@ -1170,7 +1181,7 @@ But this question is not in the dataset.
 
 *<_ocusec_2_>
 	gen byte ocusec_2=Second_Sector 
-	recode ocusec_2 (1=3) (3=2)
+	recode ocusec_2 (4=1) (1=3) (3=2)
 	replace ocusec_2=. if lstatus!=1|Second_Job!=1
 	label var ocusec_2 "Sector of activity secondary job 7 day recall"
 	la de lblocusec_2 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
@@ -1186,18 +1197,18 @@ But this question is not in the dataset.
 
 
 *<_industrycat_isic_2_>
-	gen industrycat_isic_2=""
-	replace industrycat_isic_2="" if industrycat_isic_2=="."
-	replace industrycat_isic_2="" if lstatus!=1|Second_Job!=1
+	tostring Second_Brunch, gen(nace2_code) format(%04.0f)
+	*merge m:1 nace2_code using "`path_in_stata'\NACE2_ISIC4.dta", keep(master match) nogen
+	merge m:1 nace2_code using "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\GEO\GEO_2022_LFS\GEO_2022_LFS_V01_M\Data\Stata\NACE2_ISIC4.dta", keep(master match) nogen
+	gen industrycat_isic_2=isic4_code
+	replace industrycat_isic_2="" if lstatus!=1|Second_Job!=1|industrycat_isic_2=="."
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
 
 *<_industrycat10_2_>
-	gen industry2=string(Second_Brunch, "%04.0f")
-	gen isic2d_2=substr(industry2, 1, 2)
-	destring isic2d_2, replace
-	gen industrycat10_2=isic2d_2
+	destring nace2_code, replace
+	gen industrycat10_2=floor(nace2_code/100)
 	recode industrycat10_2 (1/3=1) (5/9=2) (10/33=3) (35/39=4) (41/43=5) (45/47 55/56=6) (49/53 58/63=7) (64/82=8) (84=9) (85/99=10)	
 	replace industrycat10_2=. if lstatus!=1|Second_Job!=1
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"

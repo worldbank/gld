@@ -22,7 +22,7 @@
 								https://www.geostat.ge/en/modules/categories/130/labour-force-survey-databases*
 <_Sample size (HH)_> 			20,697 </_Sample size (HH)_>
 <_Sample size (IND)_> 		    58,979 </_Sample size (IND)_>
-<_Sampling method_> 			 </_Sampling method_>
+<_Sampling method_> 			       </_Sampling method_>
 <_Geographic coverage_> 		
 <_Currency_> 					Georgian Lari </_Currency_>
 -----------------------------------------------------------------------
@@ -31,7 +31,7 @@
 <_ISCO Version_>				ISCO 08 </_ISCO Version_>
 <_OCCUP National_>					  </_OCCUP National_>
 <_ISIC Version_>				ISIC Rev.4 </_ISIC Version_>
-<_INDUS National_>				      </_INDUS National_>
+<_INDUS National_>				NACE Rev.2 </_INDUS National_>
 -----------------------------------------------------------------------
 
 <_Version Control_>
@@ -83,8 +83,8 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	*use "`path_in_stata'\GEO_2020_LFS_SARRAW.dta", clear
-	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\GEO\GEO_2020_LFS\GEO_2020_LFS_V01_M\Data\Stata\GEO_LFS_2020.dta"
+	use "`path_in_stata'\GEO_2020_LFS_SARRAW.dta", clear
+	
 /*%%=============================================================================================
 	2: Survey & ID
 ================================================================================================*/
@@ -128,7 +128,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_isic_version_>
-	gen isic_version=""
+	gen isic_version="isic_4"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
@@ -347,7 +347,7 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 {
 
 *<_hsize_>
-	gsort hhid -age
+	gsort hhid -Age
 	bys hhid: gen count=_n
 	bys hhid: egen hsize=max(count)
 	label var hsize "Household size"
@@ -971,35 +971,30 @@ for more hours but they are not in the raw dataset.
 
 
 *<_industry_orig_>
-	gen industry_orig=Brunch_1                                                                
+	gen industry_orig=Brunch_2                                                               
 	replace industry_orig=. if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
 
 *<_industrycat_isic_>
-	/*gen industrycat_isic=string(B4_NACE_2, "%04.0f")
-	replace industrycat_isic="" if inlist(B4_NACE_2,6831,9900)
-	replace industrycat_isic="" if inrange(B4_NACE_2,8551,8560)
-	replace industrycat_isic="" if inlist(B4_NACE_2,8891,8899)*/
-	gen industrycat_isic=""
-	replace industrycat_isic="" if industrycat_isic=="."
-	replace industrycat_isic="" if lstatus!=1
+	tostring Brunch_2, gen(nace2_code) format(%04.0f)
+	merge m:1 nace2_code using "`path_in_stata'\NACE2_ISIC4.dta", keep(master match) nogen
+	gen industrycat_isic=isic4_code
+	replace industrycat_isic="" if lstatus!=1|industrycat_isic=="."
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
 
 *<_industrycat10_>
-	gen industry1=string(Brunch_1, "%04.0f")
-	gen isic2d=substr(industry1, 1, 2)
-	destring isic2d, replace
-	gen industrycat10=.
-	replace industrycat10=isic2d
-	recode industrycat10 (1/3=1) (5/9=2) (10/33=3) (35/39=4) (41/43=5) (45/47 55/56=6) (49/53 58/63=7) (64/82=8) (84=9) (85/99=10)	
+	destring nace2_code, replace
+	gen industrycat10=floor(nace2_code/100)
+	recode industrycat10 (1/3=1) (5/9=2) (10/33=3) (35/39=4) (41/43=5) (45/47 55/56=6) (49/53 58/63=7) (64/82=8) (84=9) (85/99=10)
 	replace industrycat10=. if lstatus!=1|inlist(industrycat10,34,40)
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
+	drop nace2_code isic4_code
 *</_industrycat10_>
 
 
@@ -1208,19 +1203,18 @@ But this question is not in the dataset.
 
 
 *<_industrycat_isic_2_>
-	gen industrycat_isic_2=""
-	replace industrycat_isic_2="" if industrycat_isic_2=="."
-	replace industrycat_isic_2="" if lstatus!=1|Second_Job!=1
+	tostring Second_Brunch_2, gen(nace2_code) format(%04.0f)
+	merge m:1 nace2_code using "`path_in_stata'\NACE2_ISIC4.dta", keep(master match) nogen
+	gen industrycat_isic_2=isic4_code
+	replace industrycat_isic_2="" if lstatus!=1|Second_Job!=1|industrycat_isic_2=="."
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
 
 *<_industrycat10_2_>
-	gen industry2=string(Second_Brunch_2, "%04.0f")
-	gen isic2d_2=substr(industry2, 1, 2)
-	destring isic2d_2, replace
-	gen industrycat10_2=isic2d_2
-	recode industrycat10_2 (1/3=1) (5/9=2) (10/33=3) (35/39=4) (41/43=5) (45/47 55/56=6) (49/53 58/63=7) (64/82=8) (84=9) (85/99=10)	
+	destring nace2_code, replace
+	gen industrycat10_2=floor(nace2_code/100)
+	recode industrycat10_2 (1/3=1) (5/9=2) (10/33=3) (35/39=4) (41/43=5) (45/47 55/56=6) (49/53 58/63=7) (64/82=8) (84=9) (85/99=10)
 	replace industrycat10_2=. if lstatus!=1|Second_Job!=1
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
@@ -1859,6 +1853,6 @@ compress
 
 *<_% SAVE_>
 
-*save "`path_output'\\`level_2_harm'_ALL.dta", replace
-save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\GEO\GEO_2020_LFS\GEO_2020_LFS_V01_M_V01_A_GLD\Data\Harmonized\GEO_2020_LFS_v01_M_v01_A_GLD_ALL.dta", replace
+save "`path_output'\\`level_2_harm'_ALL.dta", replace
+
 *</_% SAVE_>

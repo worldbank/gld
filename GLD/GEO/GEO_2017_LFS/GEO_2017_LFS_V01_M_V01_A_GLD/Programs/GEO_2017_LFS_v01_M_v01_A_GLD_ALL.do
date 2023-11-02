@@ -347,10 +347,10 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 {
 
 *<_hsize_>
-	destring MemberNo, gen(membercount)
-	bys hhid: egen hsize=max(membercount)
+	gsort hhid -Age
+	bys hhid: gen count=_n
+	bys hhid: egen hsize=max(count)
 	label var hsize "Household size"
-	drop membercount
 *</_hsize_>
 
 
@@ -373,6 +373,12 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 *<_relationharm_>
 	gen byte relationharm=Relationship
 	recode relationharm (4 8=3) (5 6=4) (7 9 10=5) (11=6)
+	
+	gen head=relationharm==1
+	bys hhid: egen headsum=sum(head)
+	replace relationharm=1 if inrange(relationharm,1,5)&headsum==0&count==1
+	replace relationharm=1 if pid=="15323-02"
+	
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm lblrelationharm
@@ -1023,7 +1029,7 @@ each bracket.
 *<_wage_no_compen_note_>*/
 
 	gen wage_no_compen=.
-	replace wage_no_compen=50 if B17_B18_Net_earnings==1
+	/*replace wage_no_compen=50 if B17_B18_Net_earnings==1
 	replace wage_no_compen=150 if B17_B18_Net_earnings==2
 	replace wage_no_compen=300 if B17_B18_Net_earnings==3
 	replace wage_no_compen=500 if B17_B18_Net_earnings==4
@@ -1031,14 +1037,14 @@ each bracket.
 	replace wage_no_compen=900 if B17_B18_Net_earnings==6
 	replace wage_no_compen=1250 if B17_B18_Net_earnings==7
 	replace wage_no_compen=1750 if B17_B18_Net_earnings==8
-	replace wage_no_compen=2000 if B17_B18_Net_earnings==9
+	replace wage_no_compen=2000 if B17_B18_Net_earnings==9*/
 	replace wage_no_compen=. if lstatus!=1|empstat==2
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
 
 *<_unitwage_>
-	gen byte unitwage=5
+	gen byte unitwage=.
 	replace unitwage=. if lstatus!=1 | empstat==2
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
