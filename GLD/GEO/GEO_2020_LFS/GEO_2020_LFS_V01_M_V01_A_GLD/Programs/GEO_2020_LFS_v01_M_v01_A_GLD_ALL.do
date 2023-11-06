@@ -16,7 +16,7 @@
 <_Data collection from (M/Y)_>	[Jan/2020] </_Data collection from (M/Y)_>
 <_Data collection to (M/Y)_>	[Dec/2020] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			Survey conducted by National Statistics Office of Georgia.
-								Data from 2020 to 2022 are publicly available on
+								Data from 2020 to 2020 are publicly available on
 								Georgia national stats office website.</_Source of dataset_>
 								*OPENLY ACCESSIBLE: 		 
 								https://www.geostat.ge/en/modules/categories/130/labour-force-survey-databases*
@@ -83,8 +83,8 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	use "`path_in_stata'\GEO_2020_LFS_SARRAW.dta", clear
-	
+	*use "`path_in_stata'\GEO_2020_LFS_SARRAW.dta", clear
+	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\GEO\GEO_2020_LFS\GEO_2020_LFS_V01_M\Data\Stata\GEO_LFS_2020.dta"
 /*%%=============================================================================================
 	2: Survey & ID
 ================================================================================================*/
@@ -979,7 +979,8 @@ for more hours but they are not in the raw dataset.
 
 *<_industrycat_isic_>
 	tostring Brunch_2, gen(nace2_code) format(%04.0f)
-	merge m:1 nace2_code using "`path_in_stata'\NACE2_ISIC4.dta", keep(master match) nogen
+	*merge m:1 nace2_code using "`path_in_stata'\NACE2_ISIC4.dta", keep(master match) nogen
+	merge m:1 nace2_code using "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\GEO\GEO_2020_LFS\GEO_2020_LFS_V01_M\Data\Stata\NACE2_ISIC4.dta", keep(master match) nogen
 	gen industrycat_isic=isic4_code
 	replace industrycat_isic="" if lstatus!=1|industrycat_isic=="."
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
@@ -1204,7 +1205,8 @@ But this question is not in the dataset.
 
 *<_industrycat_isic_2_>
 	tostring Second_Brunch_2, gen(nace2_code) format(%04.0f)
-	merge m:1 nace2_code using "`path_in_stata'\NACE2_ISIC4.dta", keep(master match) nogen
+	*merge m:1 nace2_code using "`path_in_stata'\NACE2_ISIC4.dta", keep(master match) nogen
+	merge m:1 nace2_code using "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\GEO\GEO_2020_LFS\GEO_2020_LFS_V01_M\Data\Stata\NACE2_ISIC4.dta", keep(master match) nogen
 	gen industrycat_isic_2=isic4_code
 	replace industrycat_isic_2="" if lstatus!=1|Second_Job!=1|industrycat_isic_2=="."
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
@@ -1853,6 +1855,6 @@ compress
 
 *<_% SAVE_>
 
-save "`path_output'\\`level_2_harm'_ALL.dta", replace
-
+*save "`path_output'\\`level_2_harm'_ALL.dta", replace
+save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\GEO\GEO_2020_LFS\GEO_2020_LFS_V01_M_V01_A_GLD\Data\Harmonized\GEO_2020_LFS_v01_M_v01_A_GLD_ALL.dta", replace
 *</_% SAVE_>
