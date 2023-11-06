@@ -775,9 +775,7 @@ employed, unemployed, hired, and self-employed.
 
 Regarding umemployed, it has unemployed based on ILO strict definition and soft 
 definition. The unemployed population defined by soft definition has 3,551 more 
-observations than the strict definition. However, cross examinition with seeking 
-work and availability to work shows that both definitions align with our definition 
-of unemployment. 
+observations than the strict definition. 
 
 . tab Unemployed Unemployed_soft, m
 
@@ -796,29 +794,8 @@ Organizati | to the International
 -----------+----------------------+----------
      Total |    51,697      8,565 |    60,262 
 
-
-. tab Unemployed_soft _v9, m
-
-Unemployed |
- according |
-    to the |
-Internatio |
-nal Labour |
-Organizati |
-  on (ILO) |
-      soft |    Available to start working
-   criteri |       Yes         No          . |     Total
------------+---------------------------------+----------
-        No |     4,461     20,996     26,240 |    51,697 
-       Yes |     8,565          0          0 |     8,565 
------------+---------------------------------+----------
-     Total |    13,026     20,996     26,240 |    60,262 
- 
-Different from previous years, questionnaire in 2022 has a newly added question
-G1 "Did you try to find any paid job or start your own business duing the last 4 weeks?"
-The main difference is that it separates unemployed population into those seeking and 
-available for working and those who already found a job (option 2), Hence we can no
-longer code unemployment from original variables based on the questions. 
+But based on the previous years we know the strict definition of unemployment alligns
+with our definition. We used the original variable "Unemployed" directly.
 
 *<_lstatus_note_>*/
 

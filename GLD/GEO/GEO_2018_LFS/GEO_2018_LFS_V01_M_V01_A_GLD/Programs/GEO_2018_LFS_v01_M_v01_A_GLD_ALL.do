@@ -371,8 +371,26 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 
 *<_relationharm_>
+
+/*<_relationharm_note_>
+
+Three households only have non-relatives so these households do not have household
+head. They are:
+
+22598
+28055
+29182
+
+*<_relationharm_note_>*/
+
 	gen byte relationharm=Relationship
 	recode relationharm (4 8=3) (5 6=4) (7 9 10=5) (11=6)
+	
+	gen head=relationharm==1
+	bys hhid: egen headsum=sum(head)
+	replace relationharm=1 if inrange(relationharm,1,5)&headsum==0&count==1
+	replace relationharm=1 if pid=="35536-03"
+	
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm lblrelationharm
@@ -766,9 +784,7 @@ employed, unemployed, hired, and self-employed.
 
 Regarding umemployed, it has unemployed based on ILO strict definition and soft 
 definition. The unemployed population defined by soft definition has 1,198 more 
-observations than the strict definition. However, cross examinition with seeking 
-work and availability to work shows that both definitions align with our definition 
-of unemployment. 
+observations than the strict definition.
 
 . tab Unemployed Unemployed_soft, m
 
@@ -787,35 +803,22 @@ Organizati | to the International
 -----------+----------------------+----------
      Total |    53,382      5,254 |    58,636 
 
-	 
-. tab Unemployed_soft G9_Availability_to_start_working, m
-
-Unemployed |
- according |
-    to the |
-Internatio |
-nal Labour |
-Organizati |
-  on (ILO) |
-      soft |    Available to start working
-   criteri |         1          2          . |     Total
------------+---------------------------------+----------
-         0 |       771        837     51,774 |    53,382 
-         1 |     5,254          0          0 |     5,254 
------------+---------------------------------+----------
-     Total |     6,025        837     51,774 |    58,636 
-
-
-Despite the difference between the two definitions, another mismatch is that if 
-we coded only based from work seeking and availability questions yields only 3,723
-unemployed observations.
+The strict unemployment definition alligns with our GLD definition, which requires 
+a given respondent is seeking a job and would be availabel to start working if he/she
+was offered one. In this sense, the original variable "Unemployed" is the one our
+harmonization uses. Disassembling this variable into the very original question-based 
+variables, it includes 1) people who answered G1 yes (have an agreement to start a job
+or will start own business within 3 months) and are available for starting a work (yes to G9);
+2) people who are currently seeking jobs and would be able to start working (no to G1; 
+answered either one of G2 and yes to G9). Coding in this way yields the same number of unemployed
+observations as Unemployed does.  
 
 *<_lstatus_note_>*/
 
 	gen byte lstatus=.
 	egen seeking=rowmin(G2_1_Methods_used_to_find_work-G2_97_Methods_used_to_find_work) 
 	replace lstatus=1 if Employed==1
-	replace lstatus=2 if lstatus==.&seeking==1&G9_Availability_to_start_working==1
+	replace lstatus=2 if (G1_agreement_to_start_a_work==1|seeking==1)&G9_Availability_to_start_working==1
 	replace lstatus=3 if lstatus==. 
 	replace lstatus=. if age<minlaborage
 	label var lstatus "Labor status"
@@ -932,7 +935,7 @@ for more hours but they are not in the raw dataset.
 *<_industrycat_isic_>
 	tostring B4_NACE_2, gen(nace2_code) format(%04.0f)
 	*merge m:1 nace2_code using "`path_in_stata'\NACE2_ISIC4.dta", keep(master match) nogen
-	merge m:1 nace2_code using "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\GEO\GEO_2022_LFS\GEO_2022_LFS_V01_M\Data\Stata\NACE2_ISIC4.dta", keep(master match) nogen
+	merge m:1 nace2_code using "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\GEO\GEO_2018_LFS\GEO_2018_LFS_V01_M\Data\Stata\NACE2_ISIC4.dta", keep(master match) nogen
 	gen industrycat_isic=isic4_code
 	replace industrycat_isic="" if lstatus!=1|industrycat_isic=="."
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
@@ -1149,7 +1152,7 @@ each bracket.
 *<_industrycat_isic_2_>
 	tostring D3_Second_Brunch_2, gen(nace2_code) format(%04.0f)
 	*merge m:1 nace2_code using "`path_in_stata'\NACE2_ISIC4.dta", keep(master match) nogen
-	merge m:1 nace2_code using "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\GEO\GEO_2022_LFS\GEO_2022_LFS_V01_M\Data\Stata\NACE2_ISIC4.dta", keep(master match) nogen
+	merge m:1 nace2_code using "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\GEO\GEO_2018_LFS\GEO_2018_LFS_V01_M\Data\Stata\NACE2_ISIC4.dta", keep(master match) nogen
 	gen industrycat_isic_2=isic4_code
 	replace industrycat_isic_2="" if lstatus!=1|D1_Second_job!=1|industrycat_isic_2=="."
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"

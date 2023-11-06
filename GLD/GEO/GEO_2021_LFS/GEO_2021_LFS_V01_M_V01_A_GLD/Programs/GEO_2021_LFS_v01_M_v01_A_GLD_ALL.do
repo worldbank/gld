@@ -789,9 +789,7 @@ employed, unemployed, hired, and self-employed.
 
 Regarding umemployed, it has unemployed based on ILO strict definition and soft 
 definition. The unemployed population defined by soft definition has 4,182 more 
-observations than the strict definition. However, cross examinition with seeking 
-work and availability to work shows that both definitions align with our definition 
-of unemployment. 
+observations than the strict definition. 
 
 . tab Unemployed Unemployed_soft, m
 
@@ -810,33 +808,14 @@ Organizati | to the International
 -----------+----------------------+----------
      Total |    50,709     10,128 |    60,837
 
-
-. tab Unemployed_soft _v9, m
-
-Unemployed |
- according |
-    to the |
-Internatio |
-nal Labour |
-Organizati |
-  on (ILO) |
-      soft |    Available to start working
-   criteri |       Yes         No          . |     Total
------------+---------------------------------+----------
-        No |     4,549     21,392     24,768 |    50,709 
-       Yes |    10,128          0          0 |    10,128 
------------+---------------------------------+----------
-     Total |    14,677     21,392     24,768 |    60,837 
- 
-Despite the difference between the two definitions, another mismatch is that if 
-we coded only based from work seeking and availability questions yields only 1,824
-unemployed observations.
-
 Different from previous years, questionnaire in 2021 has a newly added question
 G1 "Did you try to find any paid job or start your own business duing the last 4 weeks?"
 The main difference is that it separates unemployed population into those seeking and 
 available for working and those who already found a job (option 2), Hence we can no
 longer code unemployment from original variables based on the questions. 
+
+But based on the previous years we know the strict definition of unemployment alligns
+with our definition. We used the original variable "Unemployed" directly.
 
 *<_lstatus_note_>*/
 

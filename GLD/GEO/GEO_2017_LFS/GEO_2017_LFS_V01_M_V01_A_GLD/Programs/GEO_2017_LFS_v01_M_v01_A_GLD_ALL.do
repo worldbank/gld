@@ -772,9 +772,7 @@ employed, unemployed, hired, and self-employed.
 
 Regarding umemployed, it has unemployed based on ILO strict definition and soft 
 definition. The unemployed population defined by soft definition has 1,202 more 
-observations than the strict definition. However, cross examinition with seeking 
-work and availability to work shows that both definitions align with our definition 
-of unemployment. 
+observations than the strict definition. 
 
 . tab Unemployed Unemployed_soft, m
 
@@ -793,36 +791,22 @@ Organizati | to the International
 -----------+----------------------+----------
      Total |    49,720      5,104 |    54,824
 	 
-. tab Unemployed_soft G9_Availability_to_start_working, m
-
-Unemployed |
- according |
-    to the |
-Internatio |
-nal Labour |
-Organizati |
-  on (ILO) |
-      soft |    Available to start working
-   criteri |    1. Yes      2. No          . |     Total
------------+---------------------------------+----------
-     0. No |     1,095        917     47,708 |    49,720 
-    1. Yes |     5,104          0          0 |     5,104 
------------+---------------------------------+----------
-     Total |     6,199        917     47,708 |    54,824 
-
-Despite the difference between the two definitions, another mismatch is that if 
-we coded only based from work seeking and availability questions yields only 3,401
-unemployed observations.
-
-Another thing to note is that the eployed rate using either the original variable 
-"Employed" or coding from availability and seeking work is the same.  
+The strict unemployment definition alligns with our GLD definition, which requires 
+a given respondent is seeking a job and would be availabel to start working if he/she
+was offered one. In this sense, the original variable "Unemployed" is the one our
+harmonization uses. Disassembling this variable into the very original question-based 
+variables, it includes 1) people who answered G1 yes (have an agreement to start a job
+or will start own business within 3 months) and are available for starting a work (yes to G9);
+2) people who are currently seeking jobs and would be able to start working (no to G1; 
+answered either one of G2 and yes to G9). Coding in this way yields the same number of unemployed
+observations as Unemployed does.
  
 *<_lstatus_note_>*/
 
 	gen byte lstatus=.
 	egen seeking=rowmin(G2_1_Methods_used_to_find_work-G2_97_Methods_used_to_find_work) 
 	replace lstatus=1 if Employed==1
-	replace lstatus=2 if lstatus==.&seeking==1&G9_Availability_to_start_working==1
+	replace lstatus=2 if (G1_agreement_to_start_a_work==1|seeking==1)&G9_Availability_to_start_working==1
 	replace lstatus=3 if lstatus==. 
 	replace lstatus=. if age<minlaborage
 	label var lstatus "Labor status"

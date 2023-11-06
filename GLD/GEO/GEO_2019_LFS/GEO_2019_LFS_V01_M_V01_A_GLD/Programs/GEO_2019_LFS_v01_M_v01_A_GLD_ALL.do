@@ -347,10 +347,10 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 {
 
 *<_hsize_>
-	destring MemberNo, gen(membercount)
-	bys hhid: egen hsize=max(membercount)
+	gsort hhid -Age
+	bys hhid: gen count=_n
+	bys hhid: egen hsize=max(count)
 	label var hsize "Household size"
-	drop membercount
 *</_hsize_>
 
 
@@ -373,6 +373,11 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 *<_relationharm_>
 	gen byte relationharm=Relationship
 	recode relationharm (4 8=3) (5 6=4) (7 9 10=5) (11=6)
+	
+	gen head=relationharm==1
+	bys hhid: egen headsum=sum(head)
+	replace relationharm=1 if inrange(relationharm,1,5)&headsum==0&count==1
+	
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm lblrelationharm
@@ -821,7 +826,7 @@ unemployed observations.
 	gen byte lstatus=.
 	egen seeking=rowmin(G2_1_Methods_used_to_find_work-G2_97_Methods_used_to_find_work) 
 	replace lstatus=1 if Employed==1
-	replace lstatus=2 if lstatus==.&seeking==1&G9_Availability_to_start_working==1
+	replace lstatus=2 if (G1_agreement_to_start_a_work==1|seeking==1)&G9_Availability_to_start_working==1
 	replace lstatus=3 if lstatus==. 
 	replace lstatus=. if age<minlaborage
 	label var lstatus "Labor status"
@@ -936,28 +941,24 @@ for more hours but they are not in the raw dataset.
 
 
 *<_industrycat_isic_>
-	/*gen industrycat_isic=string(B4_NACE_2, "%04.0f")
-	replace industrycat_isic="" if inlist(B4_NACE_2,6831,9900)
-	replace industrycat_isic="" if inrange(B4_NACE_2,8551,8560)
-	replace industrycat_isic="" if inlist(B4_NACE_2,8891,8899)*/
-	gen industrycat_isic=""
-	replace industrycat_isic="" if industrycat_isic=="."
-	replace industrycat_isic="" if lstatus!=1
+	tostring B4_NACE_2, gen(nace2_code) format(%04.0f)
+	*merge m:1 nace2_code using "`path_in_stata'\NACE2_ISIC4.dta", keep(master match) nogen
+	merge m:1 nace2_code using "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\GEO\GEO_2019_LFS\GEO_2019_LFS_V01_M\Data\Stata\NACE2_ISIC4.dta", keep(master match) nogen
+	gen industrycat_isic=isic4_code
+	replace industrycat_isic="" if industrycat_isic=="."|lstatus!=1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
 
 *<_industrycat10_>
-	gen industry1=string(B4_NACE_2, "%04.0f")
-	gen isic2d=substr(industry1, 1, 2)
-	destring isic2d, replace
-	gen industrycat10=.
-	replace industrycat10=isic2d
+	destring nace2_code, replace
+	gen industrycat10=floor(nace2_code/100)
 	recode industrycat10 (1/3=1) (5/9=2) (10/33=3) (35/39=4) (41/43=5) (45/47 55/56=6) (49/53 58/63=7) (64/82=8) (84=9) (85/99=10)	
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
+	drop nace2_code isic4_code
 *</_industrycat10_>
 
 
@@ -1028,7 +1029,7 @@ each bracket.
 *<_wage_no_compen_note_>*/
 
 	gen wage_no_compen=.
-	replace wage_no_compen=50 if B17_B18_Net_earnings==1
+	/*replace wage_no_compen=50 if B17_B18_Net_earnings==1
 	replace wage_no_compen=150 if B17_B18_Net_earnings==2
 	replace wage_no_compen=300 if B17_B18_Net_earnings==3
 	replace wage_no_compen=500 if B17_B18_Net_earnings==4
@@ -1036,14 +1037,14 @@ each bracket.
 	replace wage_no_compen=900 if B17_B18_Net_earnings==6
 	replace wage_no_compen=1250 if B17_B18_Net_earnings==7
 	replace wage_no_compen=1750 if B17_B18_Net_earnings==8
-	replace wage_no_compen=2000 if B17_B18_Net_earnings==9
+	replace wage_no_compen=2000 if B17_B18_Net_earnings==9*/
 	replace wage_no_compen=. if lstatus!=1|empstat==2
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
 
 *<_unitwage_>
-	gen byte unitwage=5
+	gen byte unitwage=.
 	replace unitwage=. if lstatus!=1 | empstat==2
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
@@ -1157,18 +1158,18 @@ each bracket.
 
 
 *<_industrycat_isic_2_>
-	gen industrycat_isic_2=""
-	replace industrycat_isic_2="" if industrycat_isic_2=="."
-	replace industrycat_isic_2="" if lstatus!=1|D1_Second_job!=1
+	tostring D3_Second_Brunch_2, gen(nace2_code) format(%04.0f)
+	*merge m:1 nace2_code using "`path_in_stata'\NACE2_ISIC4.dta", keep(master match) nogen
+	merge m:1 nace2_code using "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\GEO\GEO_2019_LFS\GEO_2019_LFS_V01_M\Data\Stata\NACE2_ISIC4.dta", keep(master match) nogen
+	gen industrycat_isic_2=isic4_code
+	replace industrycat_isic_2="" if lstatus!=1|D1_Second_job!=1|industrycat_isic_2=="."
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
 
 *<_industrycat10_2_>
-	gen industry2=string(D3_Second_Brunch_2, "%04.0f")
-	gen isic2d_2=substr(industry2, 1, 2)
-	destring isic2d_2, replace
-	gen industrycat10_2=isic2d_2
+	destring nace2_code, replace
+	gen industrycat10_2=floor(nace2_code/100)
 	recode industrycat10_2 (1/3=1) (5/9=2) (10/33=3) (35/39=4) (41/43=5) (45/47 55/56=6) (49/53 58/63=7) (64/82=8) (84=9) (85/99=10)	
 	replace industrycat10_2=. if lstatus!=1|D1_Second_job!=1
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
