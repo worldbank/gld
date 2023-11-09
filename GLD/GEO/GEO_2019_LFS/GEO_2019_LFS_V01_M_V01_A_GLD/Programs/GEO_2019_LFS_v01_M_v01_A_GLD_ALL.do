@@ -122,7 +122,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_isco_version_>
-	gen isco_version="isco_2008"
+	gen isco_version=""
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
