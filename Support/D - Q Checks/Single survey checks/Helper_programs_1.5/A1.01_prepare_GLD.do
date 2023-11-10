@@ -40,6 +40,8 @@
 	gen year   = substr(date3,3,2)
 	gen mydate = date1 + date2 + year + "_" + time1 + time2
 	levelsof mydate, clean
+	levelsof date3, local(currentyear)
+	global currentyear `currentyear'
 	global mydate `r(levels)'
 	clear 
 
