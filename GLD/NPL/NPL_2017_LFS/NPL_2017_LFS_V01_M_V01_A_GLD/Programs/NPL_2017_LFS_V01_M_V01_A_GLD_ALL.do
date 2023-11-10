@@ -97,9 +97,15 @@ local out_file "`level_2_harm'_ALL.dta"
 
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
+* 858 observations were dropped due to their missing information on all variables 
+* except their IDs. And in the national annual report, these observations were 
+* excluded too. 
 
 	*use "`path_in_stata'\NPL_LFS_2017_raw.dta", clear
 	 use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\NPL\NPL_2017_LFS\NPL_2017_LFS_v01_M\Data\Stata\NPL_LFS_2017_raw.dta", clear
+	 drop if s03_noinfo==1
+	 drop s03_noinfo
+	 
 /*%%=============================================================================================
 	2: Survey & ID
 ================================================================================================*/
@@ -227,10 +233,6 @@ local out_file "`level_2_harm'_ALL.dta"
 
 *<_wave_>
 	gen wave=.
-	replace wave=1 if inrange(int_month,1,3)
-	replace wave=2 if inrange(int_month,4,6)
-	replace wave=3 if inrange(int_month,7,9)
-	replace wave=4 if inrange(int_month,10,12)
 	label var wave "Survey wave"
 *</_wave_>
 
@@ -264,42 +266,36 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_subnatid1_>
-	gen subnatid1_num=district
-	recode subnatid1_num (11/13=1) (21/23=2) (31/33=3) (41/45=4) (51/53=5) (61/62=6) (71/72=7) (81/82=8) (91/92=9)
 	gen subnatid1=""
-	replace subnatid1="1 - Western" if subnatid1_num==1
-	replace subnatid1="2 - Central" if subnatid1_num==2
-	replace subnatid1="3 - Southern" if subnatid1_num==3
-	replace subnatid1="4 - Northern Area" if subnatid1_num==4
-	replace subnatid1="5 - Eastern" if subnatid1_num==5
-	replace subnatid1="6 - North-western" if subnatid1_num==6
-	replace subnatid1="7 - North-central" if subnatid1_num==7
-	replace subnatid1="8 - Uva" if subnatid1_num==8
-	replace subnatid1="9 - Sabaragamuwa" if subnatid1_num==9
+	replace subnatid1=string(province)+" - "+"Province" if inlist(province,1,2,3,5)
+	replace subnatid1=string(province)+" - "+"Gandaki" if province==4
+	replace subnatid1=string(province)+" - "+"Karnali" if province==6
+	replace subnatid1=string(province)+" - "+"Sudurpashchim" if province==7
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 
 
 *<_subnatid2_>
-	gen subnatid2_num=district
-	label de lblsubnatid2 11 "11-Colombo" 12 "12-Gampaha" 13 "13-Kalutara" 21 "21-Kandy" 22 "22-Matale" 23 "23-Nuwara Eliya" 31 "31-Galle" 32 "32-Matara" 33 "33-Hambantota" 41 "41-Jaffna" 42 "42-Kilinochchi" 43 "43-Mannar" 44 "44-Vavuniya" 45 "45-Mullaituvu" 51 "51-Batticaloa" 52 "52-Ampara" 53 "53-Trincomalee" 61 "61-Kurunegala" 62 "62-Puttalam" 71 "71-Anradhapura" 72 "72-Polonnaruwa" 81 "81-Badulla" 82 "82-Moneragala" 91 "91-Ratnapura" 92 "92-Kegalle"
-	label values subnatid2_num lblsubnatid2
-	decode (subnatid2_num), gen(subnatid2)
+	tostring dist, gen(dist_code)
+	decode (dist), ge(dist_name)
+	egen subnatid2=concat(dist_code dist_name), punct(" - ")
+	replace subnatid2="" if mi(dist)
 	label var subnatid2 "Subnational ID at Second Administrative Level"
-	drop subnatid2_num
+	drop dist_*
 *</_subnatid2_>
 
 
 *<_subnatid3_>
-	gen subnatid3=""
+	gen subnatid3=subnatid2+" - "+"VDC/Municipality "+string(vdcmun)
+	replace subnatid3="" if mi(subnatid2)
 	label var subnatid3 "Subnational ID at Third Administrative Level"
 *</_subnatid3_>
 
 
 *<_subnatidsurvey_>	
 	decode urban, gen(urban_name)
-	egen subnatidsurvey=concat(subnatid2 urban_name), punct("-")
-	replace subnatidsurvey="" if subnatidsurvey=="-"
+	egen subnatidsurvey=concat(subnatid1 urban_name), punct("-")
+	replace subnatidsurvey="" if mi(subnatid1)
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>                
 
@@ -354,8 +350,8 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 *<_hsize_>
 	gsort hhid -age
-	bys hhid: gen newp1=_n
-	bys hhid: egen hsize=max(newp1)
+	bys hhid: gen count=_n
+	bys hhid: egen hsize=max(count)
 	label var hsize "Household size"
 *</_hsize_>
 
@@ -376,9 +372,9 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 
 *<_relationharm_>
-	gen byte relationharm=rship
-	recode relationharm (7/9=6)
-	replace relationharm=1 if pid=="0102820010901-02" | pid=="0301110430701-02"
+	gen byte relationharm=rel_hhh
+	recode relationharm (4=3) (5 7=4) (6 8 9=5) (10 11=6)
+
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm lblrelationharm
@@ -386,13 +382,13 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 	
 
 *<_relationcs_>
-	gen relationcs=rship
+	gen relationcs=rel_hhh
 	label var relationcs "Relationship to the head of household - Country original"
 *</_relationcs_>
 
 
 *<_marital_>
-	recode marital (1=2) (2=1) (3=5) (5=4)
+	recode marital (1 3=2) (2=1) (5=4)
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
 	label values marital lblmarital
@@ -455,7 +451,7 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 {
 *<_migrated_mod_age_>
-	gen migrated_mod_age=.
+	gen migrated_mod_age=14
 	label var migrated_mod_age "Migration module application age"
 *</_migrated_mod_age_>
 
@@ -468,6 +464,8 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 *<_migrated_binary_>
 	gen migrated_binary=.
+	replace migrated_binary=1 if last_res==2
+	replace migrated_binary=0 if last_res==1
 	label de lblmigrated_binary 0 "No" 1 "Yes"
 	replace migrated_binary=. if age<migrated_mod_age
 	label values migrated_binary lblmigrated_binary
@@ -475,7 +473,7 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 *</_migrated_binary_>                                                                                                                                            
 
 *<_migrated_years_>
-   gen migrated_years=.
+   gen migrated_years=years_here
    replace migrated_years=. if migrated_binary!=1
    replace migrated_years=. if age<migrated_mod_age
    label var migrated_years "Years since latest migration"
