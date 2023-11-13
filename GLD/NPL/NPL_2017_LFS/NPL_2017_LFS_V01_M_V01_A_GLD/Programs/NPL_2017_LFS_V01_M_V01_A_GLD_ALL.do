@@ -27,18 +27,18 @@
 								code on it. It cannot be shared freely with colleagues.
 								</_Source of dataset_>
 <_Sample size (HH)_> 			18,000 </_Sample size (HH)_>
-<_Sample size (IND)_> 		    78,496 </_Sample size (IND)_>
+<_Sample size (IND)_> 		    77,638 </_Sample size (IND)_>
 <_Sampling method_> 			A stratified two-stage probability sample design
 								with 14 domains as the primary strata and 18,000 
 								households as the SSU.</_Sampling method_>
-<_Geographic coverage_> 		900 PSUs stratified from 7 domains:
-								Province 1
-								Province 2
-								Province 3
-								Gandaki
-								Province 5
-								Karnali
-								Sudurpashchim </_Geographic coverage_>
+<_NPLgraphic coverage_> 		900 PSUs stratified from 7 domains:
+								- Province 1
+								- Province 2
+								- Province 3
+								- Gandaki
+								- Province 5
+								- Karnali
+								- Sudurpashchim </_NPLgraphic coverage_>
 <_Currency_> 					Nepalese Rupee </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 19 </_ICLS Version_>
@@ -102,7 +102,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * excluded too. 
 
 	*use "`path_in_stata'\NPL_LFS_2017_raw.dta", clear
-	 use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\NPL\NPL_2017_LFS\NPL_2017_LFS_v01_M\Data\Stata\NPL_LFS_2017_raw.dta", clear
+	 use "C:\Users\IrIs_\OneDrive - NPLrgetown University\GLD\NPL\NPL_2017_LFS\NPL_2017_LFS_v01_M\Data\Stata\NPL_LFS_2017_raw.dta", clear
 	 drop if s03_noinfo==1
 	 drop s03_noinfo
 	 
@@ -250,7 +250,7 @@ local out_file "`level_2_harm'_ALL.dta"
 }
 
 /*%%=============================================================================================
-	3: Geography
+	3: NPLgraphy
 ================================================================================================*/
 
 {
@@ -267,6 +267,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 *<_subnatid1_>
 	gen subnatid1=""
+	replace province=3 if dist==27
 	replace subnatid1=string(province)+" - "+"Province" if inlist(province,1,2,3,5)
 	replace subnatid1=string(province)+" - "+"Gandaki" if province==4
 	replace subnatid1=string(province)+" - "+"Karnali" if province==6
@@ -277,7 +278,8 @@ local out_file "`level_2_harm'_ALL.dta"
 
 *<_subnatid2_>
 	tostring dist, gen(dist_code)
-	decode (dist), ge(dist_name)
+	decode (dist), gen(dist_str)
+	gen dist_name=substr(dist_str,4,.)
 	egen subnatid2=concat(dist_code dist_name), punct(" - ")
 	replace subnatid2="" if mi(dist)
 	label var subnatid2 "Subnational ID at Second Administrative Level"
@@ -373,7 +375,7 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 *<_relationharm_>
 	gen byte relationharm=rel_hhh
-	recode relationharm (4=3) (5 7=4) (6 8 9=5) (10 11=6)
+	recode relationharm (4 8=3) (5 7=4) (6 9=5) (10 11=6)
 
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
@@ -482,14 +484,56 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 *<_migrated_from_urban_>
 	gen migrated_from_urban=.
+	replace migrated_from_urban=1 if last_urbrur==1
+	replace migrated_from_urban=0 if last_urbrur==2
 	replace migrated_from_urban=. if age<migrated_mod_age
+	label de lblmigrated_from_urban 0 "Rural" 1 "Urban"
 	label values migrated_from_urban lblmigrated_from_urban
 	label var migrated_from_urban "Migrated from area"
 *</_migrated_from_urban_>
 
 
 *<_migrated_from_cat_>
+
+/*<_migrated_from_cat_note_>
+
+The variable "last_dist" has one category that does not exist in "dist"(subnatid2):
+41-Manang (Province 4 - Gandaki)
+
+Two districts have split parts in different provinces:
+
+48 - Nawalparasi: Gandaki Province + Lumbini Province 
+split into Parasi District and Nawalpur District in 2015
+
+51 - Rukum District: Lumbini Province + Karnali Province
+split into Western Rukum and Eastern Rukum in 2017
+
+And since we could not decide how people migrated within each of these two districts,
+we excluded these two districts from migrated_from_cat.
+
+*<_migrated_from_cat_note_>*/
+
+	gen migrated_from_dist=last_dist if inrange(last_dist,1,75)
+	gen samedist=cond(migrated_from_dist==dist,1,0)
+quietly{
+	gen migrated_from_pro=.
+	replace migrated_from_pro=1 if inrange(last_dist,1,14)
+	replace migrated_from_pro=2 if inrange(last_dist,15,19)
+	replace migrated_from_pro=2 if inrange(last_dist,32,34)
+	replace migrated_from_pro=3 if inrange(last_dist,20,31)
+	replace migrated_from_pro=3 if last_dist==35
+	replace migrated_from_pro=4 if inrange(last_dist,36,45)
+	replace migrated_from_pro=5 if inlist(last_dist,46,47,49,50,51,52,53,56,57,58)
+	replace migrated_from_pro=6 if last_dist==55
+	replace migrated_from_pro=6 if inrange(last_dist,59,66)
+	replace migrated_from_pro=7 if inrange(last_dist,67,75)
+}	
+	
 	gen migrated_from_cat=.
+	replace migrated_from_cat=5 if inrange(last_dist,101,235)
+	replace migrated_from_cat=4 if samedist==0
+	replace migrated_from_cat=3 if province==migrated_from_pro&samedist==0
+	replace migrated_from_cat=2 if samedist==1
 	replace migrated_from_cat=. if age<migrated_mod_age|migrated_binary!=1
 	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country"
 	label values migrated_from_cat lblmigrated_from_cat
@@ -499,16 +543,68 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 *<_migrated_from_code_>
 	gen migrated_from_code=.
+quietly{
+	tostring(migrated_from_pro), replace
+	replace migrated_from_pro="1 - Province" if migrated_from_pro=="1"
+	replace migrated_from_pro="2 - Province" if migrated_from_pro=="2"
+	replace migrated_from_pro="3 - Province" if migrated_from_pro=="3"
+	replace migrated_from_pro="4 - Gandaki" if migrated_from_pro=="4"
+	replace migrated_from_pro="5 - Province" if migrated_from_pro=="5"
+	replace migrated_from_pro="6 - Karnali" if migrated_from_pro=="6"
+	replace migrated_from_pro="7 - Sudurpashchim" if migrated_from_pro=="7"
+}	
+	decode (last_dist), gen(last_distname) 
+	replace last_distname="" if last_dist>100
+	gen last_distcat=substr(last_distname,4,.)
+	gen last_distfull=string(last_dist)+" - "+last_distcat if !mi(last_distcat)
+
+	replace migrated_from_code=migrated_from_pro if migrated_from_cat==3
+	replace migrated_from_code=last_distfull if migrated_from_cat==2
+
 	replace migrated_from_code=. if migrated_binary!=1
 	replace migrated_from_code=. if age<migrated_mod_age
-	label de lblmigcode 1 "1.Eastern" 2 "2.Northern" 3 "3.Southern" 4 "4.Western Area" 12 "12. Kenema" 13 "13. Kono" 21 "21. Bombali" 22 "22. Kambia" 23 "23. Koinadugu" 24 "24. Port Loko" 25 "25. Tonkolili" 31 "31. Bo" 32 "32. Bonthe" 33 "33. Moyamba" 34 "34. Pujehun" 41 "41. Western Rural" 42 "42. Western Urban"
-	label values migrated_from_code lblmigcode
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
 *</_migrated_from_code_>
 
 
 *<_migrated_from_country_>
 	gen migrated_from_country=""
+quietly{
+	replace migrated_from_country="IDN" if last_dist==101
+	replace migrated_from_country="CHN" if last_dist==102
+	replace migrated_from_country="AFG" if last_dist==103
+	replace migrated_from_country="AUS" if last_dist==109
+	replace migrated_from_country="AZE" if last_dist==111
+	replace migrated_from_country="BHR" if last_dist==112
+	replace migrated_from_country="BGD" if last_dist==113
+	replace migrated_from_country="BTN" if last_dist==116
+	replace migrated_from_country="BRN" if last_dist==120
+	replace migrated_from_country="HKG" if last_dist==128
+	replace migrated_from_country="MAC" if last_dist==129
+	replace migrated_from_country="EGY" if last_dist==139
+	replace migrated_from_country="SLV" if last_dist==140
+	replace migrated_from_country="DEU" if last_dist==147
+	replace migrated_from_country="IRQ" if last_dist==156
+	replace migrated_from_country="JPN" if last_dist==161
+	replace migrated_from_country="JOR" if last_dist==162
+	replace migrated_from_country="KOR" if last_dist==166
+	replace migrated_from_country="KWT" if last_dist==167
+	replace migrated_from_country="LBN" if last_dist==170
+	replace migrated_from_country="LBY" if last_dist==171
+	replace migrated_from_country="MYS" if last_dist==173
+	replace migrated_from_country="MDV" if last_dist==174
+	replace migrated_from_country="MMR" if last_dist==180
+	replace migrated_from_country="OMN" if last_dist==187
+	replace migrated_from_country="PHL" if last_dist==194
+	replace migrated_from_country="QAT" if last_dist==197
+	replace migrated_from_country="SAU" if last_dist==201
+	replace migrated_from_country="SGP" if last_dist==205
+	replace migrated_from_country="TKM" if last_dist==223
+	replace migrated_from_country="ARE" if last_dist==226
+	replace migrated_from_country="GBR" if last_dist==227
+	replace migrated_from_country="USA" if last_dist==228
+	replace migrated_from_country="ZWE" if last_dist==235
+}
 	replace migrated_from_country="" if migrated_binary!=1
 	replace migrated_from_country="" if age<migrated_mod_age
 	label var migrated_from_country "Code of migration country (ISO 3 Letter Code)"
@@ -516,12 +612,14 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 
 *<_migrated_reason_>
-	gen migrated_reason=.
+	gen migrated_reason=reason_here
+	recode migrated_reason (2=1) (4 5 7=3) (6=2) (9 10=4) (11=5)
 	replace migrated_reason=. if migrated_binary!=1
 	replace migrated_reason=. if age<migrated_mod_age
 	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
 	label values migrated_reason lblmigrated_reason
 	label var migrated_reason "Reason for migrating"
+	drop  migrated_from_dist samedist migrated_from_pro last_distname last_distcat last_distfull
 *</_migrated_reason_>
 }
 
@@ -533,16 +631,22 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 {
 *<_ed_mod_age_>
-	gen byte ed_mod_age=5
+	gen byte ed_mod_age=14
 	label var ed_mod_age "Education module application age"
 *</_ed_mod_age_>
 
 
 *<_school_>
-	gen school=.
-	replace school=0 if cuedu==5
-	replace school=1 if inrange(cuedu,1,4)
-	replace school=. if age<ed_mod_age & age!=.
+
+/*<_school_note_>
+
+Literacy and school questions are not subject to the age limitation of 14.
+
+*<_school_note_>*/
+
+	gen school=current_school
+	recode school (2=0)
+	*replace school=. if age<ed_mod_age & age!=.
 	label var school "Attending school"
 	la de lblschool 0 "No" 1 "Yes"
 	label values school lblschool
@@ -550,18 +654,9 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 
 *<_literacy_>
-
-/*<_literacy_note_>
-
-The literacy questions are note subject to the same age restriction as 
-current education status and highest educational achievement. This question
-has an age restriction of 10 
-
-*<_literacy_note_>*/
 	gen byte literacy=.
-	replace literacy=1 if sin==1|tamil==1|eng==1
-	replace literacy=0 if sin!=1&tamil!=1&eng!=1
-	replace literacy=. if age<10 &!mi(literacy)
+	replace literacy=1 if can_read==1&can_write==1
+	replace literacy=0 if literacy==.
 	label var literacy "Individual can read & write"
 	la de lblliteracy 0 "No" 1 "Yes"
 	label values literacy lblliteracy
@@ -573,43 +668,36 @@ has an age restriction of 10
 /*<_educy_note_>
 
 Original categorization of the highest educational level ever attended of 
-variable edu is:
+variable grade_comp is:
 
-0 Studying Year 1
-1 Passed Year 1
-2 Passed Year 2/Grade 1
-3 Passed Year 3/Grade 2
-4 Passed Year 4/Grade 3
-5 Passed Year 5/Grade 4 --- primary education complete
-6 Passed Year 6/Grade 5
-7 Passed Year 7/Grade 6
-8 Passed Year 8/Grade 7
-9 Passed Year 9/Grade 8 --- lower secondary complete
-10 Passed Year 10/Grade 9
-11 Passed Year 11/GCE(O.L)/NCGE --- (upper secondary)
-12 Passed Year 12/Grade 11 --- (upper secondary)
-13 Passed Year 13/GCE(A.L)/HNCE --- (upper secondary graduated)
-14 Passed GAQ/GSQ --- General Arts Qualification, above secondary but not University 16 years
-15 Degree --- 18 years
-16 Post Graduate Degree/Diploma --- 19 years
-19 No shcooling
+0. Nursery/LKG/UKG --> 2 years
+1. Class 1 --> 3 years
+2. Class 2 --> 4 years
+3. Class 3 --> 5 years
+4. Class 4 --> 6 years 
+5. Class 5 --> 7 years [Lower Basic Complete]
+6. Class 6 --> 8 years
+7. Class 7 --> 9 years
+8. Class 8 --> 10 years [Upper Basic Complete]
+9. Class 9 --> 11 years
+10. Class 10 --> 12 years [Lower Secondary Complete]
+11. SLC and equiv. --> 14 years [Upper Secondary Complete]
+12. Class 12 and Intermediate --> 14 years [Upper Secondary Complete]
+13. Bachelor Level and equiv. --> 17 years 
+14. Master Level and above --> 19 years
+15. Professional degree --> 22 years
+16. Literate (Levelless) --> 0 year
+17. Illiterate --> 0 year
 
-The other education-related variable is edu:
-Attendance at school or other educational institution
-1. School
-2. University
-3. Other educational institution
-4. Vocational/Technical institution
-5. Does not attend 
-
-Original educational variable edu has category 17 (80 observations) which is beyond its code list.
 *<_educy_note_>*/
-	gen byte educy=edu
-	replace educy=edu if inrange(edu,0,13)
-	replace educy=16 if edu==14
-	replace educy=18 if edu==15
-	replace educy=19 if edu==16
-	replace educy=0 if edu==19
+
+	gen byte educy=grade_comp
+	replace educy=educy+2 if inrange(grade_comp,0,12)
+	replace educy=14 if grade_comp==1
+	replace educy=17 if grade_comp==13
+	replace educy=19 if grade_comp==14
+	replace educy=22 if grade_comp==15
+	replace educy=0 if inlist(grade_comp,16,17)
 	replace educy=. if age<ed_mod_age
 	replace educy=. if educy>age & !mi(educy) & !mi(age)
 	label var educy "Years of education"
@@ -618,13 +706,13 @@ Original educational variable edu has category 17 (80 observations) which is bey
 
 *<_educat7_>
 	gen byte educat7=.
-	replace educat7=1 if edu==19
-	replace educat7=2 if inrange(edu,0,4)
-	replace educat7=3 if edu==5
-	replace educat7=4 if inrange(edu,6,10)
-	replace educat7=5 if inrange(edu,11,13)
-	replace educat7=6 if edu==14
-	replace educat7=7 if inlist(edu,15,16)
+	replace educat7=1 if inlist(grade_comp,16,17)
+	replace educat7=2 if inrange(grade_comp,0,7)
+	replace educat7=3 if grade_comp==8
+	replace educat7=4 if inlist(grade_comp,9,10)
+	replace educat7=5 if grade_comp==12
+	replace educat7=6 if grade_comp==11
+	replace educat7=7 if inrange(grade_comp,13,15)
 	replace educat7=. if age<ed_mod_age
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
@@ -653,26 +741,28 @@ Original educational variable edu has category 17 (80 observations) which is bey
 
 
 *<_educat_orig_>
-	gen educat_orig=edu
+	gen educat_orig=grade_comp
 	label var educat_orig "Original survey education code"
 *</_educat_orig_>
 
 
 *<_educat_isced_>
 	gen educat_isced=.
-	replace educat_isced=100 if inrange(edu,0,5)
-	replace educat_isced=244 if inrange(edu,6,9)
-	replace educat_isced=343 if edu==10|edu==11
-	replace educat_isced=344 if edu==12|edu==13
-	replace educat_isced=660 if edu==18
-	replace educat_isced=760 if edu==19
+	replace educat_isced=20 if grade_comp==0
+	replace educat_isced=100 if inrange(grade_comp,1,5)
+	replace educat_isced=244 if inrange(grade_comp,6,10)
+	replace educat_isced=344 if inrange(grade_comp,11,12)
+	replace educat_isced=244 if inrange(grade_comp,6,10)
+	replace educat_isced=660 if grade_comp==13
+	replace educat_isced=760 if grade_comp==14
+	replace educat_isced=860 if grade_comp==15
 	replace educat_isced=. if age<ed_mod_age
 	label var educat_isced "ISCED standardised level of education"
 *</_educat_isced_>
 
 
 *<_educat_isced_v_>
-	gen educat_isced_v="ISCED-2017"
+	gen educat_isced_v="ISCED-2011"
 	label var educat_isced_v "Version of the ISCED used"
 *</_educat_isced_v_>
 
@@ -697,9 +787,8 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 {
 
 *<_vocational_>
-	gen vocational=.
-	replace vocational=1 if q62==1
-	replace vocational=0 if q62==2
+	gen vocational=tec_voc_training
+	recode vocational (2=0)
 	la de vocationallbl 1 "Yes" 0 "No"
 	la values vocational vocationallbl
 	label var vocational "Ever received vocational training"
@@ -715,21 +804,21 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 
 
 *<_vocational_length_l_>
-	gen vocational_length_l=q63_a_5
+	gen vocational_length_l=period_training
 	replace vocational_length_l=. if vocational!=1
 	label var vocational_length_l "Length of training in months, lower limit"
 *</_vocational_length_l_>
 
 
 *<_vocational_length_u_>
-	gen vocational_length_u=q63_a_5
-	replace vocational_length_l=. if vocational!=1
+	gen vocational_length_u=period_training
+	replace vocational_length_u=. if vocational!=1
 	label var vocational_length_u "Length of training in months, upper limit"
 *</_vocational_length_u_>
 
 
 *<_vocational_field_orig_>
-	gen vocational_field_orig=q63_a_22
+	gen vocational_field_orig=subject_training
 	replace vocational_field_orig=. if vocational!=1
 	label var vocational_field_orig "Original field of training information"
 *</_vocational_field_orig_>
@@ -748,6 +837,17 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 ================================================================================================*/
 
 *<_minlaborage_>
+
+/*<_minlaborage_note_>
+
+In section C and D of the questionnaire, some questionare were only asked to people
+aged 14 and above whereas some questions were also asked to 5 and above.
+
+But to align our emstimates to NPL's national report, we used 15 following the 
+report's definition.
+
+*<_minlaborage_note_>*/
+
 	gen byte minlaborage=15
 	label var minlaborage "Labor module application age"
 *</_minlaborage_>
@@ -757,19 +857,9 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 
 {	
 *<_lstatus_>
-
-/*<_lstatus_note_>
-
-It has been made sure that people whose answer to q2 is 1 all have answered q7;
-and people whose answer to q2 is 2 all have answered q4;
-and people whose answer to q4 is 1 all have answered q5;
-and people who have answered q5 all have answered q7.
-
-*<_lstatus_note_>*/
-
 	gen byte lstatus=.
-	replace lstatus=1 if !mi(q7)
-	replace lstatus=2 if (q48==1&q51==1)|q47==3
+	replace lstatus=1 if wrk_paid==1|wrk_agri_sect==1|wrk_agri_sect==2|inlist(purp_agripdct,1,2)|inrange(rsn_absent,1,4)|return_prd==1|paidleave==1
+	replace lstatus=2 if (seek30==1|jobfixed==1)&inlist(avail_time,1,2)
 	replace lstatus=3 if lstatus==. 
 	replace lstatus=. if age<minlaborage
 	label var lstatus "Labor status"
@@ -784,14 +874,14 @@ and people who have answered q5 all have answered q7.
 Note: var "potential_lf" only takes value if the respondent is not in labor force. (lstatus==3)
 
 "potential_lf"=1 if the person is
-1)available but not searching or q51==1 & q48==2
-2)searching but not immediately available to work or q51==2 & q48==1
+1)available but not searching or (avail_time,1,2) & (seek30==2)
+2)searching but not immediately available to work or avail_time==3 & (seek30==1)
 
 </_potential_lf_note_>*/
 
 	gen potential_lf=.
-	replace potential_lf=1 if [q51==1 & q48==2] | [q51==2 & q48==1]
-	replace potential_lf=0 if [q51==1 & q48==1] | [q51==2 & q48==2]
+	replace potential_lf=1 if [inlist(avail_time,1,2) & (seek30==2)] | [avail_time==3 & (seek30==1)]
+	replace potential_lf=0 if [avail_time==3 & seek30==2] | [seek30==1 & inlist(avail_time,1,2)]
 	replace potential_lf=. if age < minlaborage
 	replace potential_lf=. if lstatus!=3
 	label var potential_lf "Potential labour force status"
@@ -1842,6 +1932,6 @@ compress
 
 *<_% SAVE_>
 
-save "`path_output'\\`level_2_harm'_ALL.dta", replace
-
+*save "`path_output'\\`level_2_harm'_ALL.dta", replace
+save "C:\Users\IrIs_\OneDrive - NPLrgetown University\GLD\NPL\NPL_2017_LFS\NPL_2017_LFS_V01_M_V01_A_GLD\Data\Harmonized\NPL_2017_LFS_v01_M_v01_A_GLD_ALL.dta", replace
 *</_% SAVE_>
