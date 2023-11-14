@@ -957,7 +957,7 @@ The value lables in the dataset of "q51" is wrong. They are actually labels for
 *<_industrycat_isic_>
 	gen indcode=q63*100 
 	replace indcode=9900 if indcode==9800
-	tostring (indcode), gen(industrycat_isic) format("%04.0f")
+	tostring indcode, gen(industrycat_isic) format("%04.0f")
 	replace industrycat_isic="" if industrycat_isic=="."|lstatus!=1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
@@ -986,18 +986,16 @@ The value lables in the dataset of "q51" is wrong. They are actually labels for
 
 
 *<_occup_orig_>
-	gen occup_orig=mwrk_nsco4
+	gen occup_orig=q21
 	replace occup_orig=. if lstatus!=1
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
 
 *<_occup_isco_>
-	gen occupcode=mwrk_nsco4
-	replace occupcode=100 if occupcode==110
-	replace occupcode=200 if occupcode==210
-	replace occupcode=300 if occupcode==310
-	tostring occupcode, format("%04.0f") gen(occup_isco) 
+	gen occupcode=q21*10
+	recode occupcode (7450=7400) (7460=7433) (9220 9340=9000) 
+	tostring occupcode, gen(occup_isco) format("%04.0f")
 	replace occup_isco="" if lstatus!=1 | occup_isco=="." 
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
@@ -1028,15 +1026,21 @@ The value lables in the dataset of "q51" is wrong. They are actually labels for
 
 
 *<_wage_no_compen_>
-	gen double wage_no_compen=amt_cashrs
+
+/*<_wage_no_compen_note_>
+
+92.2% of employed of observations in the raw dataset do not have information on
+wage.
+
+*<_wage_no_compen_note_>*/
+	egen double wage_no_compen=rowtotal(q30cash q30kind), missing
 	replace wage_no_compen=. if lstatus!=1|empstat==2
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
 
 *<_unitwage_>
-	gen byte unitwage=prd_remu
-	recode unitwage (3=5) (4 5=.)
+	gen byte unitwage=5
 	replace unitwage=. if lstatus!=1 | empstat==2
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
@@ -1045,8 +1049,8 @@ The value lables in the dataset of "q51" is wrong. They are actually labels for
 
 
 *<_whours_>
-	gen whours=acthr_mwrk
-	replace whours=. if lstatus!=1|acthr_mwrk==0	
+	gen whours=q32
+	replace whours=. if lstatus!=1|q32==0	
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -1065,8 +1069,6 @@ The value lables in the dataset of "q51" is wrong. They are actually labels for
 
 *<_contract_>
 	gen byte contract=.
-	replace contract=1 if !mi(mwrk_cnrt_basis)
-	replace contract=0 if mi(mwrk_cnrt_basis)
 	replace contract=. if lstatus!=1
 	label var contract "Employment has contract primary job 7 day recall"
 	la de lblcontract 0 "Without contract" 1 "With contract"
@@ -1084,8 +1086,7 @@ The value lables in the dataset of "q51" is wrong. They are actually labels for
 
 
 *<_socialsec_>
-	gen byte socialsec=mwrk_soc_secu
-	recode socialsec (2=0) (3=.)
+	gen byte socialsec=.
 	replace socialsec=. if lstatus!=1
 	label var socialsec "Employment has social security insurance primary job 7 day recall"
 	la de lblsocialsec 1 "With social security" 0 "Without social secturity"
@@ -1103,16 +1104,16 @@ The value lables in the dataset of "q51" is wrong. They are actually labels for
 
 
 *<_firmsize_l_>
-	gen byte firmsize_l=mwrk_empnum
-	recode firmsize_l (1=1) (3=5) (4=10) (5=20)
+	gen byte firmsize_l=q26
+	recode firmsize_l (1=0) (2=1) (3=15) (4=10)
 	replace firmsize_l=. if lstatus!=1
 	label var firmsize_l "Firm size (lower bracket) primary job 7 day recall"
 *</_firmsize_l_>
 
 
 *<_firmsize_u_>
-	gen byte firmsize_u=mwrk_empnum
-	recode firmsize_u (1=1) (2=4) (3=9) (4=19) (5=.) 
+	gen byte firmsize_u=q26
+	recode firmsize_u (1=0) (2=4) (3=9) (4=.) 
 	replace firmsize_u=. if lstatus!=1
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>
@@ -1125,9 +1126,9 @@ The value lables in the dataset of "q51" is wrong. They are actually labels for
 
 {
 *<_empstat_2_>
-	gen byte empstat_2=swrk_status
-	recode empstat_2 (2=1) (5=2) (6=5)
-	replace empstat_2=. if lstatus!=1|swrk_activity!=1
+	gen byte empstat_2=q36
+	recode empstat_2 (2=3) (3=4) (4=2)
+	replace empstat_2=. if lstatus!=1|q33!=1
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
 	la de lblempstat_2 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat_2 lblempstat
@@ -1136,7 +1137,7 @@ The value lables in the dataset of "q51" is wrong. They are actually labels for
 
 *<_ocusec_2_>
 	gen byte ocusec_2=.  
-	replace ocusec_2=. if lstatus!=1|swrk_activity!=1
+	replace ocusec_2=. if lstatus!=1|q33!=1
 	label var ocusec_2 "Sector of activity secondary job 7 day recall"
 	la de lblocusec_2 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec_2 lblocusec_2
@@ -1144,16 +1145,17 @@ The value lables in the dataset of "q51" is wrong. They are actually labels for
 
 
 *<_industry_orig_2_>	
-	gen industry_orig_2=swrk_nsic4
-	replace industry_orig_2=. if lstatus!=1|swrk_activity!=1
+	gen industry_orig_2=q35
+	replace industry_orig_2=. if lstatus!=1|q33!=1
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 
 
 *<_industrycat_isic_2_>
-	gen indcode2=swrk_nsic4
+	gen indcode2=q35*100
+	replace indcode2=9900 if indcode2==9800
 	tostring indcode2, gen(industrycat_isic_2) format("%04.0f")
-	replace industrycat_isic_2="" if industrycat_isic_2=="."|swrk_activity!=1
+	replace industrycat_isic_2="" if industrycat_isic_2=="."|q33!=1
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
@@ -1163,8 +1165,8 @@ The value lables in the dataset of "q51" is wrong. They are actually labels for
 	destring isic2d_2, replace
 	gen long industrycat10_2=.
 	replace industrycat10_2=isic2d_2
-	recode industrycat10_2 (1/3=1) (5/9=2) (10/33=3) (35/39=4) (41/43=5) (45/47 55/56=6) (49/53 58/63=7) (64/82=8) (84=9) (85/99=10)	
-	replace industrycat10_2=. if lstatus!=1|swrk_activity!=1
+	recode industrycat10_2 (1/5=1) (10/14=2) (15/37=3) (40/41=4) (45=5) (50/55=6) (60/64=7) (65/74=8) (75=9) (80/99=10)
+	replace industrycat10_2=. if lstatus!=1|q33!=1
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
 *</_industrycat10_2_>
@@ -1180,16 +1182,17 @@ The value lables in the dataset of "q51" is wrong. They are actually labels for
 
 
 *<_occup_orig_2_>
-	gen occup_orig_2=swrk_nsco4
-	replace occup_orig_2=. if lstatus!=1|swrk_activity!=1
+	gen occup_orig_2=q34
+	replace occup_orig_2=. if lstatus!=1|q33!=1
 	label var occup_orig_2 "Original occupation record secondary job 7 day recall"
 *</_occup_orig_2_>
 
 
 *<_occup_isco_2_>
-	gen occupcode2=swrk_nsco4
+	gen occupcode2=q34*10
+	recode occupcode2 (7450=7400) (7460=7433) (9220 9340=9000) 
 	tostring occupcode2, format("%04.0f") gen(occup_isco_2)
-	replace occup_isco_2="" if lstatus!=1 | occup_isco_2=="."|swrk_activity!=1
+	replace occup_isco_2="" if lstatus!=1 | occup_isco_2=="."|q33!=1
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
@@ -1201,7 +1204,7 @@ The value lables in the dataset of "q51" is wrong. They are actually labels for
 	replace occup_skill_2=1 if skill_level_2==9
 	replace occup_skill_2=2 if inrange(skill_level_2,4,8)
 	replace occup_skill_2=3 if inrange(skill_level_2,1,3)
-	replace occup_skill_2=. if skill_level_2==0|lstatus!=1|swrk_activity!=1
+	replace occup_skill_2=. if skill_level_2==0|lstatus!=1|q33!=1
 	label var occup_skill_2 "Skill based on ISCO standard secondary job 7 day recall"
 *</_occup_skill_2_>
 
@@ -1209,7 +1212,7 @@ The value lables in the dataset of "q51" is wrong. They are actually labels for
 *<_occup_2_>
 	gen occup_2=skill_level_2
 	recode occup_2 (0=10)
-	replace occup_2=. if lstatus!=1|swrk_activity!=1
+	replace occup_2=. if lstatus!=1|q33!=1
 	label var occup_2 "1 digit occupational classification secondary job 7 day recall"
 	label values occup_2 lbloccup
 	drop skill_level*
@@ -1218,22 +1221,22 @@ The value lables in the dataset of "q51" is wrong. They are actually labels for
 
 *<_wage_no_compen_2_>
 	gen double wage_no_compen_2=.
-	replace wage_no_compen_2=. if lstatus!=1|swrk_activity!=1|empstat_2==2
+	replace wage_no_compen_2=. if lstatus!=1|q33!=1|empstat_2==2
 	label var wage_no_compen_2 "Last wage payment secondary job 7 day recall"
 *</_wage_no_compen_2_>
 
 
 *<_unitwage_2_>
 	gen byte unitwage_2=.
-	replace unitwage_2=. if lstatus!=1|swrk_activity!=1
+	replace unitwage_2=. if lstatus!=1|q33!=1
 	label var unitwage_2 "Last wages' time unit secondary job 7 day recall"
 	label values unitwage_2 lblunitwage
 *</_unitwage_2_>
 
 
 *<_whours_2_>
-	gen whours_2=acthr_swrk
-	replace whours_2=. if acthr_swrk==0|swrk_activity!=1
+	gen whours_2=.
+	replace whours_2=. if q33!=1
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 
@@ -1681,8 +1684,8 @@ The value lables in the dataset of "q51" is wrong. They are actually labels for
 
 *<_njobs_>
 	gen njobs=.
-	replace njobs=1 if lstatus==1&swrk_activity!=1
-	replace njobs=2 if lstatus==1&swrk_activity==1
+	replace njobs=1 if lstatus==1&q33!=1
+	replace njobs=2 if lstatus==1&q33==1
 	replace njobs=. if lstatus!=1
 	label var njobs "Total number of jobs"
 *</_njobs_>
