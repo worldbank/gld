@@ -742,7 +742,7 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 {
 
 *<_vocational_>
-	gen vocational=tec_voc_training
+	gen vocational=q13
 	recode vocational (2=0)
 	la de vocationallbl 1 "Yes" 0 "No"
 	la values vocational vocationallbl
@@ -759,21 +759,23 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 
 
 *<_vocational_length_l_>
-	gen vocational_length_l=period_training
+	gen vocational_length_l=q15
+	recode vocational_length_l (0=.) (2=1) (3=6) (4=12) (5=24)
 	replace vocational_length_l=. if vocational!=1
 	label var vocational_length_l "Length of training in months, lower limit"
 *</_vocational_length_l_>
 
 
 *<_vocational_length_u_>
-	gen vocational_length_u=period_training
+	gen vocational_length_u=q15
+	recode vocational_length_u (0 5=.) (2=6) (3=12) (4=24)
 	replace vocational_length_u=. if vocational!=1
 	label var vocational_length_u "Length of training in months, upper limit"
 *</_vocational_length_u_>
 
 
 *<_vocational_field_orig_>
-	gen vocational_field_orig=subject_training
+	gen vocational_field_orig=q14
 	replace vocational_field_orig=. if vocational!=1
 	label var vocational_field_orig "Original field of training information"
 *</_vocational_field_orig_>
