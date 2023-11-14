@@ -41,11 +41,11 @@
 								- Sudurpashchim </_NPLgraphic coverage_>
 <_Currency_> 					Nepalese Rupee </_Currency_>
 -----------------------------------------------------------------------
-<_ICLS Version_>				ICLS 19 </_ICLS Version_>
+<_ICLS Version_>				ICLS 13 </_ICLS Version_>
 <_ISCED Version_>				ISCED-1998 </_ISCED Version_>
 <_ISCO Version_>				ISCO 08 </_ISCO Version_>
 <_OCCUP National_>				NSCO  </_OCCUP National_>
-<_ISIC Version_>				ISIC Rev.4 </_ISIC Version_>
+<_ISIC Version_>				ISIC Rev.3 </_ISIC Version_>
 <_INDUS National_>				NSIC  </_INDUS National_>
 -----------------------------------------------------------------------
 
@@ -126,7 +126,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_icls_v_>
-	gen icls_v="ICLS-19"
+	gen icls_v="ICLS-13"
 	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
 
@@ -138,13 +138,13 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_isco_version_>
-	gen isco_version="isco_2008"
+	gen isco_version="isco_1988"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
 
 *<_isic_version_>
-	gen isic_version="isic_4"
+	gen isic_version="isic_3"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
@@ -797,10 +797,9 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 
 /*<_minlaborage_note_>
 
-In section C and D of the questionnaire, some questionare were only asked to people
-aged 14 and above whereas some questions were also asked to 5 and above.
+There is no clear age limitation to labor questions in the questionnaire.
 
-But to align our emstimates to NPL's national report, we used 15 following the 
+To align our emstimates to NPL's national report, we used 15 following the 
 report's definition.
 
 *<_minlaborage_note_>*/
@@ -814,9 +813,19 @@ report's definition.
 
 {	
 *<_lstatus_>
+
+/*<_lstatus_note>
+
+We made sure that people who have nonmissing q21 answers are equal to people who
+1)did not work in the past week but have a work to return to;
+2)and receive pay while not working;
+3)or have been away from work without pay for less than 2 months. 
+
+*<_lstatus_note>*/
+
 	gen byte lstatus=.
-	replace lstatus=1 if wrk_paid==1|wrk_agri_sect==1|wrk_agri_sect==2|inlist(purp_agripdct,1,2)|inrange(rsn_absent,1,4)|return_prd==1|paidleave==1
-	replace lstatus=2 if (seek30==1|jobfixed==1)&inlist(avail_time,1,2)
+	replace lstatus=1 if q16>0&!mi(q16)|!mi(q21)
+	replace lstatus=2 if mi(lstatus)&q45==1&q46==1
 	replace lstatus=3 if lstatus==. 
 	replace lstatus=. if age<minlaborage
 	label var lstatus "Labor status"
@@ -831,14 +840,14 @@ report's definition.
 Note: var "potential_lf" only takes value if the respondent is not in labor force. (lstatus==3)
 
 "potential_lf"=1 if the person is
-1)available but not searching or (avail_time,1,2) & (seek30==2)
-2)searching but not immediately available to work or avail_time==3 & (seek30==1)
+1)available but not searching or q45==1 & q46==2
+2)searching but not immediately available to work or q45==2 & q46==1
 
 </_potential_lf_note_>*/
 
 	gen potential_lf=.
-	replace potential_lf=1 if [inlist(avail_time,1,2) & (seek30==2)] | [avail_time==3 & (seek30==1)]
-	replace potential_lf=0 if [avail_time==3 & seek30==2] | [seek30==1 & inlist(avail_time,1,2)]
+	replace potential_lf=1 if [q45==1 & q46==2] | [q45==2 & q46==1]
+	replace potential_lf=0 if [q45==1 & q46==1] | [q45==2 & q46==2]
 	replace potential_lf=. if age < minlaborage
 	replace potential_lf=. if lstatus!=3
 	label var potential_lf "Potential labour force status"
@@ -848,9 +857,18 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_underemployment_>
+
+/*<_underemployment_note>
+
+Note that there is no availability question concerning more hours of work in the
+questionnaire. We used q38 do indentify if the respondent wanted to work for more 
+hours and q39 to proxy if the respondent was available.
+
+*<_underemployment_note>*/
+
 	gen byte underemployment=.
-	replace underemployment=1 if want_wrkmorehr==1&start_wrk15==1
-	replace underemployment=0 if want_wrkmorehr==2|start_wrk15==2
+	replace underemployment=1 if !mi(q38)&q39==1
+	replace underemployment=0 if mi(q38)|q39==2
 	replace underemployment=. if age<minlaborage
 	replace underemployment=. if lstatus!=1
 	label var underemployment "Underemployment status"
@@ -860,12 +878,28 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_nlfreason_>
-	gen byte nlfreason=rsn_nteffort
-	recode nlfreason (8=1) (9=2) (13=4) (1/7 10/12 14=5)
-	replace nlfreason=3 if rsn_ntavail==4
-	replace nlfreason=2 if rsn_ntavail==2&rsn_nteffort==10
-	replace nlfreason=. if age<minlaborage
-	replace nlfreason=. if lstatus!=3
+
+/*<_nlfreason_note_>
+
+The value lables in the dataset of "q51" is wrong. They are actually labels for 
+"q52". The true labels for "q51" are:
+
+1. Thought no work availabel
+2. Awaiting reply to earlier enquiries
+3. Business
+4. Off season
+5. Not available
+6.Other reason (specify)
+
+*<_nlfreason_note_>*/
+
+	gen byte nlfreason=.
+	replace nlfreason=5 if inlist(q51,1,2,3,4,6)|q53==5
+	replace nlfreason=4 if q53==4
+	replace nlfreason=3 if q53==3
+	replace nlfreason=2 if q53==2
+	replace nlfreason=1 if q53==1
+	replace nlfreason=. if lstatus!=3|age<minlaborage
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
 	label values nlfreason lblnlfreason
@@ -873,19 +907,17 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_unempldur_l_>
-	gen byte unempldur_l=seek_dur
+	gen byte unempldur_l=q52
 	recode unempldur_l (1=0) (2=1) (3=3) (4=6) (5=12) (6=24)
-	replace unempldur_l=. if age<minlaborage
-	replace unempldur_l=. if lstatus!=2
+	replace unempldur_l=. if lstatus!=2|age<minlaborage
 	label var unempldur_l "Unemployment duration (months) lower bracket"
 *</_unempldur_l_>
 
 
 *<_unempldur_u_>
-	gen byte unempldur_u=seek_dur
+	gen byte unempldur_u=q52
 	recode unempldur_u (1=1) (2=3) (3=6) (4=12) (5=24) (6=.)
-	replace unempldur_u=. if age<minlaborage
-	replace unempldur_u=. if lstatus!=2
+	replace unempldur_u=. if lstatus!=2|age<minlaborage
 	label var unempldur_u "Unemployment duration (months) upper bracket"
 *</_unempldur_u_>
 }
@@ -896,8 +928,8 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 {
 *<_empstat_>
-	gen byte empstat=mwrk_status
-	recode empstat (2=1) (5=2) (6=5)
+	gen byte empstat=q64
+	recode empstat (2=3) (3=4) (4=2) 
 	replace empstat=. if lstatus!=1|age<minlaborage
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
@@ -906,8 +938,8 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_ocusec_>
-	gen byte ocusec=mwrk_orgtype
-	recode ocusec (5=1) (2=3) (3 4 6=2) (7=4)
+	gen byte ocusec=q67
+	recode ocusec (2=1) (3 4 5=2) (6=4)
 	replace ocusec=. if lstatus!=1|age<minlaborage
 	label var ocusec "Sector of activity primary job 7 day recall"
 	la de lblocusec 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
@@ -916,16 +948,16 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_industry_orig_>
-	gen industry_orig=mwrk_nsic4                                                                  
+	gen industry_orig=q63                                                             
 	replace industry_orig=. if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
 
 *<_industrycat_isic_>
-	gen indcode=mwrk_nsic4
-	replace indcode=. if inlist(mwrk_nsic4,2119,4331,7272)
-	tostring indcode, gen(industrycat_isic) format("%04.0f")
+	gen indcode=q63*100 
+	replace indcode=9900 if indcode==9800
+	tostring (indcode), gen(industrycat_isic) format("%04.0f")
 	replace industrycat_isic="" if industrycat_isic=="."|lstatus!=1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
@@ -936,7 +968,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 	destring isic2d, replace
 	gen industrycat10=.
 	replace industrycat10=isic2d
-	recode industrycat10 (1/3=1) (5/9=2) (10/33=3) (35/39=4) (41/43=5) (45/47 55/56=6) (49/53 58/63=7) (64/82=8) (84=9) (85/99=10)	
+	recode industrycat10 (1/5=1) (10/14=2) (15/37=3) (40/41=4) (45=5) (50/55=6) (60/64=7) (65/74=8) (75=9) (80/99=10)	
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
@@ -946,7 +978,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_industrycat4_>
 	gen byte industrycat4=industrycat10
-	recode industrycat4 (1=1)(2 3 4 5=2)(6 7 8 9=3)(10=4)
+	recode industrycat4 (1=1) (2 3 4 5=2) (6 7 8 9=3) (10=4)
 	label var industrycat4 "1 digit industry classification (Broad Economic Activities), primary job 7 day recall"
 	la de lblindustrycat4 1 "Agriculture" 2 "Industry" 3 "Services" 4 "Other"
 	label values industrycat4 lblindustrycat4
