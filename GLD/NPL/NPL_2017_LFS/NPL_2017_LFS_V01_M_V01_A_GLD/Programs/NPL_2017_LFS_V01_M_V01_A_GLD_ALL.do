@@ -102,7 +102,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * excluded too. 
 
 	*use "`path_in_stata'\NPL_LFS_2017_raw.dta", clear
-	 use "C:\Users\IrIs_\OneDrive - NPLrgetown University\GLD\NPL\NPL_2017_LFS\NPL_2017_LFS_v01_M\Data\Stata\NPL_LFS_2017_raw.dta", clear
+	 use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\NPL\NPL_2017_LFS\NPL_2017_LFS_v01_M\Data\Stata\NPL_LFS_2017_raw.dta", clear
 	 drop if s03_noinfo==1
 	 drop s03_noinfo
 	 
@@ -1029,12 +1029,9 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_occup_>
-	 gen str4 occup_str=string(q7, "%04.0f")
-	 gen occupnum=substr(occup_str,1,1)
-	 destring occupnum, gen(occup)
-	 replace occup=10 if occup==0
-	 replace occup=. if inlist(q7,0,9,116)
+	 gen occup=skill_level
 	 replace occup=. if lstatus!=1
+	 recode occup (0=10)
 	 label var occup "1 digit occupational classification, primary job 7 day recall"
   	 la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	 label values occup lbloccup
@@ -1042,42 +1039,15 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_wage_no_compen_>
-
-/*<_wage_no_compen_note_>
-
-Question 45 asks about the monthly/daily payment and in-kind payment.
-q45 confirms employment in the main occupation
-q45_a_1-3 are for monthly salary earners
-q45_b_1-4 are for daily wage earners
-q45_c_1 is monthly income for employers and own account workers
-*<_wage_no_compen_note_>*/
-
-	foreach v of varlist q45_a_1-q45_c_1{
-		replace `v'=. if `v'==0
-	}
-	egen monthly=rownonmiss(q45_a_1-q45_a_3)
-	egen daily=rownonmiss(q45_b_1-q45_b_4)
-	gen employer=1 if !mi(q45_c_1)&q45_c_1>0
-	replace monthly=1 if monthly>0
-	replace daily=1 if daily>0
-	replace employer=0 if employer!=1
-	
-	gen double wage_no_compen=.
-	egen monthly_helper=rowtotal(q45_a_1 q45_a_3), missing
-	egen daily_helper=rowtotal(q45_b_3 q45_b_4), missing
-	
-	replace wage_no_compen=monthly_helper if monthly==1
-	replace wage_no_compen=daily_helper if daily==1
-	replace wage_no_compen=q45_c_1 if employer==1
+	gen double wage_no_compen=amt_cashrs
 	replace wage_no_compen=. if lstatus!=1|empstat==2
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
-	drop monthly_helper daily_helper
 *</_wage_no_compen_>
 
 
 *<_unitwage_>
-	gen byte unitwage=5
-	replace unitwage=. if monthly==1&daily==1
+	gen byte unitwage=prd_remu
+	recode unitwage (3=5) (4 5=.)
 	replace unitwage=. if lstatus!=1 | empstat==2
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
@@ -1107,8 +1077,8 @@ q45_c_1 is monthly income for employers and own account workers
 
 *<_contract_>
 	gen byte contract=.
-	replace contract=1 if q13==1
-	replace contract=0 if q13==2
+	replace contract=1 if !mi(mwrk_cnrt_basis)
+	replace contract=0 if mi(mwrk_cnrt_basis)
 	replace contract=. if lstatus!=1
 	label var contract "Employment has contract primary job 7 day recall"
 	la de lblcontract 0 "Without contract" 1 "With contract"
@@ -1126,9 +1096,8 @@ q45_c_1 is monthly income for employers and own account workers
 
 
 *<_socialsec_>
-	gen byte socialsec=.
-	replace socialsec=1 if q11==1
-	replace socialsec=0 if q11==2
+	gen byte socialsec=mwrk_soc_secu
+	recode socialsec (2=0) (3=.)
 	replace socialsec=. if lstatus!=1
 	label var socialsec "Employment has social security insurance primary job 7 day recall"
 	la de lblsocialsec 1 "With social security" 0 "Without social secturity"
