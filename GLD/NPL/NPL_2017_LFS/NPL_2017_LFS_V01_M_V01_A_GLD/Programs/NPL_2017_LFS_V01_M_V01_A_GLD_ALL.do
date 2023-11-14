@@ -43,9 +43,9 @@
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 19 </_ICLS Version_>
 <_ISCED Version_>				ISCED-2017 </_ISCED Version_>
-<_ISCO Version_>				ISCO 88 </_ISCO Version_>
+<_ISCO Version_>				ISCO 08 </_ISCO Version_>
 <_OCCUP National_>				NSCO  </_OCCUP National_>
-<_ISIC Version_>				ISIC Rev.3 </_ISIC Version_>
+<_ISIC Version_>				ISIC Rev.4 </_ISIC Version_>
 <_INDUS National_>				NSIC  </_INDUS National_>
 -----------------------------------------------------------------------
 
@@ -143,13 +143,13 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_isco_version_>
-	gen isco_version="isco_1988"
+	gen isco_version="isco_2008"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
 
 *<_isic_version_>
-	gen isic_version="isic_3"
+	gen isic_version="isic_4"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
@@ -892,8 +892,8 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_underemployment_>
 	gen byte underemployment=.
-	replace underemployment=1 if q44==1
-	replace underemployment=0 if q44==2
+	replace underemployment=1 if want_wrkmorehr==1&start_wrk15==1
+	replace underemployment=0 if want_wrkmorehr==2|start_wrk15==2
 	replace underemployment=. if age<minlaborage
 	replace underemployment=. if lstatus!=1
 	label var underemployment "Underemployment status"
@@ -903,8 +903,10 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_nlfreason_>
-	gen byte nlfreason=q50
-	recode nlfreason (1/5 9=5) (6=2) (7=1)
+	gen byte nlfreason=rsn_nteffort
+	recode nlfreason (8=1) (9=2) (13=4) (1/7 10/12 14=5)
+	replace nlfreason=3 if rsn_ntavail==4
+	replace nlfreason=2 if rsn_ntavail==2&rsn_nteffort==10
 	replace nlfreason=. if age<minlaborage
 	replace nlfreason=. if lstatus!=3
 	label var nlfreason "Reason not in the labor force"
@@ -914,8 +916,8 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_unempldur_l_>
-	gen byte unempldur_l=q58 
-	recode unempldur_l (2=6) (3=13)
+	gen byte unempldur_l=seek_dur
+	recode unempldur_l (1=0) (2=1) (3=3) (4=6) (5=12) (6=24)
 	replace unempldur_l=. if age<minlaborage
 	replace unempldur_l=. if lstatus!=2
 	label var unempldur_l "Unemployment duration (months) lower bracket"
@@ -923,8 +925,8 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_unempldur_u_>
-	gen byte unempldur_u=q58
-	recode unempldur_u (1=5) (2=12) 
+	gen byte unempldur_u=seek_dur
+	recode unempldur_u (1=1) (2=3) (3=6) (4=12) (5=24) (6=.)
 	replace unempldur_u=. if age<minlaborage
 	replace unempldur_u=. if lstatus!=2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
@@ -937,8 +939,8 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 {
 *<_empstat_>
-	gen byte empstat=q9
-	recode empstat (2=3) (3=4) (4=2)
+	gen byte empstat=mwrk_status
+	recode empstat (2=1) (5=2) (6=5)
 	replace empstat=. if lstatus!=1|age<minlaborage
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
@@ -947,8 +949,8 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_ocusec_>
-	gen byte ocusec=q14
-	recode ocusec (2=1) (3=2)
+	gen byte ocusec=mwrk_orgtype
+	recode ocusec (5=1) (2=3) (3 4 6=2) (7=4)
 	replace ocusec=. if lstatus!=1|age<minlaborage
 	label var ocusec "Sector of activity primary job 7 day recall"
 	la de lblocusec 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
@@ -964,14 +966,10 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_industrycat_isic_>
-	gen str4 str_q8=string(q8, "%05.0f")
-	gen indcode=substr(str_q8,1,4)
-	gen industrycat_isic=indcode
-	replace industrycat_isic="0110" if industrycat_isic=="0117"
-	replace industrycat_isic="1390" if industrycat_isic=="1395"
-	replace industrycat_isic="6510" if industrycat_isic=="6519"
-	replace industrycat_isic="" if industrycat_isic=="."|industrycat_isic=="2401"
-	replace industrycat_isic="" if lstatus!=1
+	gen indcode=mwrk_nsic4
+	replace indcode=. if inlist(mwrk_nsic4,2119,4331,7272)
+	tostring indcode, gen(industrycat_isic) format("%04.0f")
+	replace industrycat_isic="" if industrycat_isic=="."|lstatus!=1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
@@ -999,49 +997,18 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_occup_orig_>
-	gen occup_orig=q7
+	gen occup_orig=mwrk_nsco4
 	replace occup_orig=. if lstatus!=1
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
 
 *<_occup_isco_>
-quietly{	
-	replace q7=100 if q7==110
-	replace q7=200 if q7==120
-	replace q7=300 if q7==130
-	replace q7=. if inlist(q7,210,220,230)  // This first half block is specifically
-											// for codes that do not exist in SLSCO 08
-										    // in this year's data. The second half is 
-											// the SLSCO-ISCO mapping generally apllicable to all years. 
-	
-	replace q7=q7-1 if inrange(q7,1211,1214)
-	replace q7=3315 if q7==2414
-	*replace q7=3340 if q7==3349
-	replace q7=3350 if q7==3360
-	replace q7=3430 if inrange(q7, 3441, 3449)
-	replace q7=5120 if inrange(q7, 5121, 5122)
-	replace q7=5410 if inrange(q7, 5411, 5419)
-	replace q7=6110 if inrange(q7, 6111, 6119)
-	replace q7=6220 if q7==6222
-	replace q7=6222 if inlist(q7,6223,6224)
-	replace q7=6223 if q7==6225
-	replace q7=6224 if q7==6226
-	replace q7=2132 if inrange(q7, 6300, 6330)
-	replace q7=6310 if inrange(q7,6411,6412)
-	replace q7=6320 if q7==6420
-	*replace q7=6300 if q7==6400
-	replace q7=6330 if q7==6430
-	replace q7=6340 if q7==6440
-	replace q7=7110 if q7==7116
-	replace q7=7510 if q7==7517
-	replace q7=8210 if inrange(q7,8213,8216)
-	replace q7=8320 if q7==8323
-	replace q7=9210 if inrange(q7,9217,9219)
-	replace q7=9320 if q7==9322
-	replace q7=9330 if q7==9335
-}	
-	tostring q7, format("%04.0f") gen(occup_isco)
+	gen occupcode=mwrk_nsco4
+	replace occupcode=100 if occupcode==110
+	replace occupcode=200 if occupcode==210
+	replace occupcode=300 if occupcode==310
+	tostring occupcode, format("%04.0f") gen(occup_isco) 
 	replace occup_isco="" if lstatus!=1 | occup_isco=="." 
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
