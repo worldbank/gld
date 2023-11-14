@@ -185,7 +185,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_int_month_>
-	gen int_month=month
+	gen int_month=.
 	label de lblint_month 1 "January" 2 "February" 3 "March" 4 "April" 5 "May" 6 "June" 7 "July" 8 "August" 9 "September" 10 "October" 11 "November" 12 "December"
 	label value int_month lblint_month
 	label var int_month "Month of the interview"
@@ -542,7 +542,7 @@ quietly{
 
 
 *<_migrated_from_code_>
-	gen migrated_from_code=.
+	gen migrated_from_code=""
 quietly{
 	tostring(migrated_from_pro), replace
 	replace migrated_from_pro="1 - Province" if migrated_from_pro=="1"
@@ -560,9 +560,7 @@ quietly{
 
 	replace migrated_from_code=migrated_from_pro if migrated_from_cat==3
 	replace migrated_from_code=last_distfull if migrated_from_cat==2
-
-	replace migrated_from_code=. if migrated_binary!=1
-	replace migrated_from_code=. if age<migrated_mod_age
+	replace migrated_from_code="" if age<migrated_mod_age|migrated_binary!=1
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
 *</_migrated_from_code_>
 
@@ -959,7 +957,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 
 *<_industry_orig_>
-	gen industry_orig=q8                                                                   
+	gen industry_orig=mwrk_nsic4                                                                  
 	replace industry_orig=. if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
@@ -1052,7 +1050,6 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
 	label values unitwage lblunitwage
-	drop monthly daily employer
 *</_unitwage_>
 
 
@@ -1230,20 +1227,13 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_wage_no_compen_2_>
 	gen double wage_no_compen_2=.
-	egen monthly_helper=rowtotal(q46_a_1 q46_a_3), missing
-	egen daily_helper=rowtotal(q46_b_3 q46_b_4), missing
-	
-	replace wage_no_compen_2=monthly_helper if monthly2==1
-	replace wage_no_compen_2=daily_helper if daily2==1
-	replace wage_no_compen_2=q46_c_1 if employer2==1
 	replace wage_no_compen_2=. if lstatus!=1|swrk_activity!=1|empstat_2==2
 	label var wage_no_compen_2 "Last wage payment secondary job 7 day recall"
-	drop monthly2 daily2 employer2 monthly_helper daily_helper
 *</_wage_no_compen_2_>
 
 
 *<_unitwage_2_>
-	gen byte unitwage_2=5
+	gen byte unitwage_2=.
 	replace unitwage_2=. if lstatus!=1|swrk_activity!=1
 	label var unitwage_2 "Last wages' time unit secondary job 7 day recall"
 	label values unitwage_2 lblunitwage
@@ -1404,7 +1394,6 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 *<_industrycat_isic_year_>
 	gen industrycat_isic_year=""
 	replace industrycat_isic_year="" if industrycat_isic_year=="."
-	replace industrycat_isic_year="" if q33!=1
 	label var industrycat_isic_year "ISIC code of primary job 12 month recall"
 *</_industrycat_isic_year_>
 
@@ -1824,5 +1813,5 @@ compress
 *<_% SAVE_>
 
 *save "`path_output'\\`level_2_harm'_ALL.dta", replace
-save "C:\Users\IrIs_\OneDrive - NPLrgetown University\GLD\NPL\NPL_2017_LFS\NPL_2017_LFS_V01_M_V01_A_GLD\Data\Harmonized\NPL_2017_LFS_v01_M_v01_A_GLD_ALL.dta", replace
+save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\NPL\NPL_2017_LFS\NPL_2017_LFS_V01_M_V01_A_GLD\Data\Harmonized\NPL_2017_LFS_v01_M_v01_A_GLD_ALL.dta", replace
 *</_% SAVE_>
