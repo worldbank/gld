@@ -1379,8 +1379,9 @@ wage.
 *</_ocusec_year_>
 
 
-*<_industry_orig_year_>
-	gen industry_orig_year=.
+*<_industry_orig_year_> 
+	gen industry_orig_year=q63
+	
 	label var industry_orig_year "Original industry record main job 12 month recall"
 *</_industry_orig_year_>
 
