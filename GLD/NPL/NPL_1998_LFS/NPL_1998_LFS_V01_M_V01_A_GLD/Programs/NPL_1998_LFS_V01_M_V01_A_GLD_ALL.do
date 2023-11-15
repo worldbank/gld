@@ -1314,8 +1314,13 @@ wage.
 
 {
 *<_lstatus_year_>
+	gen lbfratio=q58/q57
+	gen empratio=q54/q58
+	
 	gen byte lstatus_year=.
-	replace lstatus_year=1 if lstatus==1
+	replace lstatus_year=1 if empratio>0.5|emprati==0.5
+	replace lstatus_year=2 if lstatus_year!=1&lbfratio>0.5|lbfratio==0.5
+	replace lstatus_year=3 if lbfratio<0.5
 	replace lstatus_year=. if age<minlaborage
 	label var lstatus_year "Labor status during last year"
 	la de lbllstatus_year 1 "Employed" 2 "Unemployed" 3 "Non-LF"
