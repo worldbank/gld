@@ -249,6 +249,7 @@ local out_file "`level_2_harm'_ALL.dta"
 {
 
 *<_urban_>
+	rename urban urban_orig
 	gen urban=.
 	replace urban=1 if psuurb==1|psuurb==2
 	replace urban=0 if psuurb==3
@@ -546,8 +547,6 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 *<_migrated_from_urban_>
 	gen migrated_from_urban=.
-	replace migrated_from_urban=1 if last_urbrur==1
-	replace migrated_from_urban=0 if last_urbrur==2
 	replace migrated_from_urban=. if age<migrated_mod_age
 	label de lblmigrated_from_urban 0 "Rural" 1 "Urban"
 	label values migrated_from_urban lblmigrated_from_urban
@@ -566,7 +565,6 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 *<_migrated_from_code_>
 	gen migrated_from_code=""
-	replace migrated_from_code=last_distfull if migrated_from_cat==2
 	replace migrated_from_code="" if age<migrated_mod_age|migrated_binary!=1
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
 *</_migrated_from_code_>
@@ -1362,9 +1360,10 @@ wage.
 
 *----------8.7: 12 month reference main job------------------------------*
 
-{
+
 *<_empstat_year_>
-	gen byte empstat_year=.
+	gen byte empstat_year=q64
+	recode empstat_year (2=3) (3=4) (4=2)
 	label var empstat_year "Employment status during past week primary job 12 month recall"
 	la de lblempstat_year 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat_year lblempstat_year
@@ -1372,7 +1371,8 @@ wage.
 
 
 *<_ocusec_year_>
-	gen byte ocusec_year=.
+	gen byte ocusec_year=q67
+	recode ocusec_year (3/5=2) (6=4)
 	label var ocusec_year "Sector of activity primary job 12 day recall"
 	la de lblocusec_year 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec_year lblocusec_year
@@ -1381,20 +1381,24 @@ wage.
 
 *<_industry_orig_year_> 
 	gen industry_orig_year=q63
-	
 	label var industry_orig_year "Original industry record main job 12 month recall"
 *</_industry_orig_year_>
 
 
 *<_industrycat_isic_year_>
-	gen industrycat_isic_year=""
+	gen industrycat_isic_year=q63*100
+	replace industrycat_isic_year=9900 if industrycat_isic_year==9800
+	tostring industrycat_isic_year, replace format(%04.0f)
 	replace industrycat_isic_year="" if industrycat_isic_year=="."
 	label var industrycat_isic_year "ISIC code of primary job 12 month recall"
 *</_industrycat_isic_year_>
 
 
 *<_industrycat10_year_>
-	gen byte industrycat10_year=.
+	gen isic2dyear=substr(industrycat_isic_year, 1, 2)
+	destring isic2dyear, replace
+	gen industrycat10_year=isic2dyear
+	recode industrycat10_year (1/5=1) (10/14=2) (15/37=3) (40/41=4) (45=5) (50/55=6) (60/64=7) (65/74=8) (75=9) (80/99=10)	
 	label var industrycat10_year "1 digit industry classification, primary job 12 month recall"
 	la de lblindustrycat10_year 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10_year lblindustrycat10_year
@@ -1411,13 +1415,15 @@ wage.
 
 
 *<_occup_orig_year_>
-	gen occup_orig_year=.
+	gen occup_orig_year=q60
 	label var occup_orig_year "Original occupation record primary job 12 month recall"
 *</_occup_orig_year_>
 
 
 *<_occup_isco_year_>
-	gen str4 occup_isco_year=""
+	gen occup_isco_year=q60*10
+	recode occup_isco_year (7450=7400) (7460=7433) (9220 9340=9000)
+	tostring occup_isco_year, replace format("%04.0f")
 	label var occup_isco_year "ISCO code of primary job 12 month recall"
 *</_occup_isco_year_>
 
@@ -1435,7 +1441,8 @@ wage.
 
 
 *<_occup_year_>
-	gen byte occup_year=.
+	gen byte occup_year=skill_level_year
+	recode occup_year (0=10)
 	label var occup_year "1 digit occupational classification, primary job 12 month recall"
 	la de lbloccup_year 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup_year lbloccup_year
@@ -1507,17 +1514,17 @@ wage.
 
 
 *<_firmsize_l_year_>
-	gen byte firmsize_l_year=.
+	gen byte firmsize_l_year=q68
+	recode firmsize_l_year (1=0) (2=1) (3=15) (4=10)
 	label var firmsize_l_year "Firm size (lower bracket) primary job 12 month recall"
 *</_firmsize_l_year_>
 
 
 *<_firmsize_u_year_>
-	gen byte firmsize_u_year=.
+	gen byte firmsize_u_year=q68
+	recode firmsize_u_year (1=0) (2=4) (3=9) (4=.) 
 	label var firmsize_u_year "Firm size (upper bracket) primary job 12 month recall"
 *</_firmsize_u_year_>
-
-}
 
 
 *----------8.8: 12 month reference secondary job------------------------------*
