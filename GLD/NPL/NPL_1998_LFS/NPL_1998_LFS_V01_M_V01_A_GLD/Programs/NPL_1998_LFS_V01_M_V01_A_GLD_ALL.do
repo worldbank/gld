@@ -1421,9 +1421,20 @@ wage.
 
 
 *<_occup_isco_year_>
+
+/*<_occup_isco_year_note_>
+
+The original variable q60 has two occupation categories beyond the NSCO codelist:
+
+998 - 19,835 instances
+999 - 1 instance
+
+*<_occup_isco_year_note_>*/
+
 	gen occup_isco_year=q60*10
-	recode occup_isco_year (7450=7400) (7460=7433) (9220 9340=9000)
+	recode occup_isco_year (7450=7400) (7460=7433) (9220 9340=9000) (9980 9990=.)
 	tostring occup_isco_year, replace format("%04.0f")
+	replace occup_isco_year="" if occup_isco_year=="."
 	label var occup_isco_year "ISCO code of primary job 12 month recall"
 *</_occup_isco_year_>
 
