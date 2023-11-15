@@ -43,7 +43,7 @@
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
 <_ISCED Version_>				ISCED-1998 </_ISCED Version_>
-<_ISCO Version_>				ISCO 08 </_ISCO Version_>
+<_ISCO Version_>				ISCO 88 </_ISCO Version_>
 <_OCCUP National_>				NSCO  </_OCCUP National_>
 <_ISIC Version_>				ISIC Rev.3 </_ISIC Version_>
 <_INDUS National_>				NSIC  </_INDUS National_>
