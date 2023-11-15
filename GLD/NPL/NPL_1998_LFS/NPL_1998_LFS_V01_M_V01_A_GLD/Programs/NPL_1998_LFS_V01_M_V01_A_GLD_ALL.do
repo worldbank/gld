@@ -243,7 +243,7 @@ local out_file "`level_2_harm'_ALL.dta"
 }
 
 /*%%=============================================================================================
-	3: NPLgraphy
+	3: Geography
 ================================================================================================*/
 
 {
@@ -859,14 +859,19 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 /*<_underemployment_note>
 
 Note that there is no availability question concerning more hours of work in the
-questionnaire. We used q38 do indentify if the respondent wanted to work for more 
-hours and q39 to proxy if the respondent was available.
+questionnaire. Questions 39 to 43 ask if the correspondent looked for more work 
+and if they do, how they searched.
+
+Question 37 ask employed respondents who work less 40 hours why they did not work 
+for more hours, i.e., cannot find more work or off season. But we did not define
+underemployment based on the reason that they did not work for more hours.
+So we only used q39 here.
 
 *<_underemployment_note>*/
 
 	gen byte underemployment=.
-	replace underemployment=1 if !mi(q38)&q39==1
-	replace underemployment=0 if mi(q38)|q39==2
+	replace underemployment=1 if q39==1
+	replace underemployment=0 if q39==2
 	replace underemployment=. if age<minlaborage
 	replace underemployment=. if lstatus!=1
 	label var underemployment "Underemployment status"
@@ -992,7 +997,7 @@ The value lables in the dataset of "q51" is wrong. They are actually labels for
 
 *<_occup_isco_>
 	gen occupcode=q21*10
-	recode occupcode (7450=7400) (7460=7433) (9220 9340=9000) 
+	recode occupcode (7450=7400) (7460=7430) (9220 9340=9200) 
 	tostring occupcode, gen(occup_isco) format("%04.0f")
 	replace occup_isco="" if lstatus!=1 | occup_isco=="." 
 	label var occup_isco "ISCO code of primary job 7 day recall"
@@ -1188,7 +1193,7 @@ wage.
 
 *<_occup_isco_2_>
 	gen occupcode2=q34*10
-	recode occupcode2 (7450=7400) (7460=7433) (9220 9340=9000) 
+	recode occupcode2 (7450=7400) (7460=7430) (9220 9340=9200) 
 	tostring occupcode2, format("%04.0f") gen(occup_isco_2)
 	replace occup_isco_2="" if lstatus!=1 | occup_isco_2=="."|q33!=1
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
@@ -1310,6 +1315,7 @@ wage.
 {
 *<_lstatus_year_>
 	gen byte lstatus_year=.
+	replace lstatus_year=1 if lstatus==1
 	replace lstatus_year=. if age<minlaborage
 	label var lstatus_year "Labor status during last year"
 	la de lbllstatus_year 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -1325,6 +1331,7 @@ wage.
 	la de lblpotential_lf_year 0 "No" 1 "Yes"
 	label values potential_lf_year lblpotential_lf_year
 *</_potential_lf_year_>
+
 
 
 *<_underemployment_year_>
@@ -1432,7 +1439,7 @@ The original variable q60 has two occupation categories beyond the NSCO codelist
 *<_occup_isco_year_note_>*/
 
 	gen occup_isco_year=q60*10
-	recode occup_isco_year (7450=7400) (7460=7433) (9220 9340=9000) (9980 9990=.)
+	recode occup_isco_year (7450=7400) (7460=74330) (9220 9340=9200) (9980 9990=.)
 	tostring occup_isco_year, replace format("%04.0f")
 	replace occup_isco_year="" if occup_isco_year=="."
 	label var occup_isco_year "ISCO code of primary job 12 month recall"
