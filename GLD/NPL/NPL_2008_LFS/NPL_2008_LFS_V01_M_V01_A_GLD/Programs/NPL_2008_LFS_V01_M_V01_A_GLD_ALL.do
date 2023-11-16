@@ -28,9 +28,9 @@
 								</_Source of dataset_>
 <_Sample size (HH)_> 			15,976 </_Sample size (HH)_>
 <_Sample size (IND)_> 		    76,208 </_Sample size (IND)_>
-<_Sampling method_> 			A stratified two-stage probability sample design
-								with 14 domains as the primary strata and 16,000 
-								households as the SSU.</_Sampling method_>
+<_Sampling method_> 			A stratified two-stage probability sample design.
+								The country was stratified into 6 strata comprising
+								3 urban and 3 rural areas. </_Sampling method_>
 <_NPLgraphic coverage_> 		799 PSUs stratified from 7 domains:
 								- Province 1
 								- Province 2
@@ -209,7 +209,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_psu_>
-	gen psu=psun0
+	*gen psu=.
 	label var psu "Primary sampling units"
 *</_psu_>
 
@@ -221,7 +221,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_strata_>
-	gen strata=.
+	gen strata=stratum 
 	label var strata "Strata"
 *</_strata_>
 
@@ -251,10 +251,8 @@ local out_file "`level_2_harm'_ALL.dta"
 {
 
 *<_urban_>
-	rename urban urban_orig
-	gen urban=.
-	replace urban=1 if psuurb==1|psuurb==2
-	replace urban=0 if psuurb==3
+	gen urban=urbrurl 
+	recode urban (2=0)
 	la de lblurban 1 "Urban" 0 "Rural"
 	label values urban lblurban
 	label var urban "Location is urban"
@@ -271,86 +269,8 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_subnatid2_>
-	tostring dist, gen(distcode)
-quietly{
-	gen distname="Taplejung" if district==1	
-	replace distname="Panchathar" if district==2
-	replace distname="Ilam" if district==3
-	replace distname="Jhapa" if district==4
-	replace distname="Morang" if district==5
-	replace distname="Sunsari" if district==6	
-	replace distname="Dhankuta" if district==7
-	replace distname="Terhathum" if district==8
-	replace distname="Sankhuwasabha" if district==9	
-	replace distname="Bhojpur" if district==10
-	replace distname="Solukhumbu" if district==11
-	replace distname="Okhaldhunga" if district==12
-	replace distname="Khotang" if district==13
-	replace distname="Udayapur" if district==14
-	replace distname="Saptari" if district==15
-	replace distname="Siraha" if district==16
-	replace distname="Dhanusha" if district==17
-	replace distname="Mahottari" if district==18
-	replace distname="Sarlahi" if district==19
-	replace distname="Sindhuli" if district==20
-	replace distname="Ramechhap" if district==21
-	replace distname="Dolakha" if district==22
-	replace distname="Sindhupalchok" if district==23
-	replace distname="Kabhrepalanchok" if district==24
-	replace distname="Lalitpur" if district==25
-	replace distname="Bhaktapur" if district==26
-	replace distname="Kathmandu" if district==27
-	replace distname="Nuwakot" if district==28
-	replace distname="Rasuwa" if district==29
-	replace distname="Dhading" if district==30
-	replace distname="Makawanpur" if district==31
-	replace distname="Rautahat" if district==32
-	replace distname="Bara" if district==33
-	replace distname="Parsa" if district==34
-	replace distname="Chitwan" if district==35
-	replace distname="Gorkha" if district==36
-	replace distname="Lamjung" if district==37
-	replace distname="Tanahu" if district==38
-	replace distname="Syangja" if district==39
-	replace distname="Kaski" if district==40
-	replace distname="Manang" if district==41
-	replace distname="Mustang" if district==42
-	replace distname="Myagdi" if district==43
-	replace distname="Parbat" if district==44
-	replace distname="Baglung" if district==45
-	replace distname="Gulmi" if district==46
-	replace distname="Palpa" if district==47
-	replace distname="Nawal Parasi" if district==48
-	replace distname="Rupandehi" if district==49
-	replace distname="Kapilbastu" if district==50
-	replace distname="Arghakhanchi" if district==51
-	replace distname="Pyuthan" if district==52
-	replace distname="Rolpa" if district==53
-	replace distname="Rukum" if district==54
-	replace distname="Salyan" if district==55
-	replace distname="Dang" if district==56
-	replace distname="Banke" if district==57
-	replace distname="Bardiya" if district==58	
-	replace distname="Surkhet" if district==59
-	replace distname="Dailekh" if district==60
-	replace distname="Jajarkot" if district==61
-	replace distname="Dolpa" if district==62
-	replace distname="Jumla" if district==63
-	replace distname="Kalikot" if district==64
-	replace distname="Mugu" if district==65
-	replace distname="Humla" if district==66
-	replace distname="Bajura" if district==67
-	replace distname="Bajhang" if district==68
-	replace distname="Achham" if district==69
-	replace distname="Doti" if district==70
-	replace distname="Kailali" if district==71
-	replace distname="Kanchanpur" if district==72
-	replace distname="Dadeldhura" if district==73
-	replace distname="Baitadi" if district==74
-	replace distname="Darchula" if district==75
-}
-
-	gen subnatid2=rname+" - "+distcode+"."+distname
+	decode dcode, gen(distcode)
+	gen subnatid2=rname+" - "+distcode
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
 
@@ -418,7 +338,7 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 {
 
 *<_hsize_>
-	gsort hhid -age
+	gsort hhid -q10
 	bys hhid: gen count=_n
 	bys hhid: egen hsize=max(count)
 	label var hsize "Household size"
@@ -426,6 +346,7 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 
 *<_age_>
+	gen age=q10
 	replace age=98 if age>98 & age!=.
 	label var age "Individual age"
 *</_age_>
@@ -441,8 +362,8 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 
 *<_relationharm_>
-	gen byte relationharm=q03
-	recode relationharm (4 6 9=3) (5 7=4) (8 10 11=5) (12 13=6)
+	gen byte relationharm=q12
+	recode relationharm (4 8=3) (5 7=4) (6 9=5) (10 11=6)
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm lblrelationharm
@@ -450,14 +371,14 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 	
 
 *<_relationcs_>
-	gen relationcs=q03
+	gen relationcs=q12
 	label var relationcs "Relationship to the head of household - Country original"
 *</_relationcs_>
 
 
 *<_marital_>
-	gen marital=q04
-	recode marital (1=2) (2=1) (3=5) (5=4) (9=.)
+	gen marital=q13
+	recode marital (1=2) (2=1) (3=5) (5=4) 
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
 	label values marital lblmarital
@@ -520,7 +441,7 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 {
 *<_migrated_mod_age_>
-	gen migrated_mod_age=.
+	gen migrated_mod_age=14
 	label var migrated_mod_age "Migration module application age"
 *</_migrated_mod_age_>
 
@@ -533,6 +454,8 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 *<_migrated_binary_>
 	gen migrated_binary=.
+	replace migrated_binary=1 if q21==2
+	replace migrated_binary=0 if q21==1
 	label de lblmigrated_binary 0 "No" 1 "Yes"
 	replace migrated_binary=. if age<migrated_mod_age
 	label values migrated_binary lblmigrated_binary
@@ -540,7 +463,7 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 *</_migrated_binary_>                                                                                                                                            
 
 *<_migrated_years_>
-   gen migrated_years=.
+   gen migrated_years=q24
    replace migrated_years=. if migrated_binary!=1
    replace migrated_years=. if age<migrated_mod_age
    label var migrated_years "Years since latest migration"
