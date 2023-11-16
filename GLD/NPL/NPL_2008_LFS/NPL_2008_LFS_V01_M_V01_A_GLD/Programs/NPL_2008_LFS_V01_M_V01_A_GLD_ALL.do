@@ -353,7 +353,7 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 
 *<_male_>
-	gen male=sex
+	gen male=q27
 	recode male 2=0
 	label var male "Sex - Ind is male"
 	la de lblmale 1 "Male" 0 "Female"
@@ -362,7 +362,7 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 
 *<_relationharm_>
-	gen byte relationharm=q12
+	gen byte relationharm=q30
 	recode relationharm (4 8=3) (5 7=4) (6 9=5) (10 11=6)
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
@@ -371,7 +371,7 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 	
 
 *<_relationcs_>
-	gen relationcs=q12
+	gen relationcs=q30
 	label var relationcs "Relationship to the head of household - Country original"
 *</_relationcs_>
 
@@ -441,7 +441,7 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 {
 *<_migrated_mod_age_>
-	gen migrated_mod_age=14
+	gen migrated_mod_age=.
 	label var migrated_mod_age "Migration module application age"
 *</_migrated_mod_age_>
 
@@ -471,7 +471,8 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 
 *<_migrated_from_urban_>
-	gen migrated_from_urban=.
+	gen migrated_from_urban=q23
+	recode migrated_from_urban (2=0)
 	replace migrated_from_urban=. if age<migrated_mod_age
 	label de lblmigrated_from_urban 0 "Rural" 1 "Urban"
 	label values migrated_from_urban lblmigrated_from_urban
@@ -481,6 +482,17 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 *<_migrated_from_cat_>
 	gen migrated_from_cat=.
+quietly{
+	gen preregion=1 if inrange(q22,1,16)
+	replace preregion=2 if inrange(q22,17,35)
+	replace preregion=3 if inrange(q22,36,51)
+	replace preregion=4 if inrange(q22,52,66)
+	replace preregion=5 if inrange(q22,67,75)
+}
+	replace migrated_from_cat=4 if preregion!=region&!mi(preregion)
+	replace migrated_from_cat=3 if preregion==region&q22!=dcode
+	replace migrated_from_cat=2 if q22==dcode
+	replace migrated_from_cat=5 if inrange(q22,81,95)
 	replace migrated_from_cat=. if age<migrated_mod_age|migrated_binary!=1
 	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country"
 	label values migrated_from_cat lblmigrated_from_cat
@@ -490,6 +502,19 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 *<_migrated_from_code_>
 	gen migrated_from_code=""
+	replace migrated_from_code="1 - Eastern" if preregion==1
+	replace migrated_from_code="2 - Central" if preregion==2
+	replace migrated_from_code="3 - Western" if preregion==3
+	replace migrated_from_code="4 - Mid-Western" if preregion==4
+	replace migrated_from_code="5 - Far-Western" if preregion==5
+	
+	decode q22, gen(migdist)
+	gen migregion="Eastern" if preregion==1
+	replace migregion="Central" if preregion==2
+	replace migregion="Western" if preregion==3
+	replace migregion="Mid-Western" if preregion==4
+	replace migregion="Far-Western" if preregion==5
+	replace migrated_from_code=migregion+" - "+migdist if migrated_from_code==""&inrange(q22,1,75)
 	replace migrated_from_code="" if age<migrated_mod_age|migrated_binary!=1
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
 *</_migrated_from_code_>
@@ -497,13 +522,32 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 *<_migrated_from_country_>
 	gen migrated_from_country=""
+quietly{
+	replace migrated_from_country="IDN" if q22==81
+	replace migrated_from_country="BTN" if q22==82
+	replace migrated_from_country="CHN" if q22==83
+	replace migrated_from_country="BGD" if q22==84
+	replace migrated_from_country="HKG" if q22==85
+	replace migrated_from_country="MYS" if q22==86
+	replace migrated_from_country="JPN" if q22==87
+	replace migrated_from_country="SAU" if q22==88
+	replace migrated_from_country="QAT" if q22==89
+	replace migrated_from_country="ARE" if q22==90
+	replace migrated_from_country="GBR" if q22==91
+	replace migrated_from_country="ARE" if q22==92
+	replace migrated_from_country="KOR" if q22==93
+	replace migrated_from_country="AUS" if q22==94
+	replace migrated_from_country="" if q22==95
+	
+}
 	replace migrated_from_country="" if age<migrated_mod_age|migrated_binary!=1
 	label var migrated_from_country "Code of migration country (ISO 3 Letter Code)"
 *</_migrated_from_country_>
 
 
 *<_migrated_reason_>
-	gen migrated_reason=.
+	gen migrated_reason=q25
+	recode migrated_reason (2=1) (4 5 7=3) (6=2) (9 10=4) (8 11=5)
 	replace migrated_reason=. if age<migrated_mod_age|migrated_binary!=1
 	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
 	label values migrated_reason lblmigrated_reason
@@ -519,15 +563,15 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 {
 *<_ed_mod_age_>
-	gen byte ed_mod_age=14
+	gen byte ed_mod_age=5
 	label var ed_mod_age "Education module application age"
 *</_ed_mod_age_>
 
 
 *<_school_>
-	gen school=q10
+	gen school=q28
 	recode school (2=0)
-	*replace school=. if age<ed_mod_age & age!=.
+	replace school=. if age<ed_mod_age & age!=.
 	label var school "Attending school"
 	la de lblschool 0 "No" 1 "Yes"
 	label values school lblschool
@@ -536,8 +580,9 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 *<_literacy_>
 	gen byte literacy=.
-	replace literacy=1 if q08==1&q09==1
-	replace literacy=0 if q08==2|q09==2
+	replace literacy=1 if q26==1&q27==1
+	replace literacy=0 if q26==2|q27==2
+	replace literacy=. if age<ed_mod_age & age!=.
 	label var literacy "Individual can read & write"
 	la de lblliteracy 0 "No" 1 "Yes"
 	label values literacy lblliteracy
@@ -549,7 +594,7 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 /*<_educy_note_>
 
 Original categorization of the highest educational level ever attended of 
-variable q12 is:
+variable q30 is:
 
 0. Pre-school/Kindergarten --> 2 years
 1. Class 1 --> 3 years
@@ -562,22 +607,24 @@ variable q12 is:
 8. Class 8 --> 10 years [Upper Basic Complete]
 9. Class 9 --> 11 years
 10. Class 10 --> 12 years [Lower Secondary Complete]
-11. Intermediate if Class 11 --> 13 years
-12. Intermediate if Class 12 --> 14 years [Upper Secondary Complete]
+11. SLC --> 13 years
+12. CLASS 12/INTERMEDIATE LEVEL --> 14 years [Upper Secondary Complete]
 13. Bachelor Level and equiv. --> 17 years 
 14. Master Level and above --> 19 years
 15. Professional degree --> 22 years
-16. Other
+16. LITERATE (Non-formal Education) --> 0 year
+17. Illeterate
 
 *<_educy_note_>*/
 
-	gen byte educy=q12
-	replace educy=educy+2 if inrange(q12,0,12)
-	replace educy=14 if q12==1
-	replace educy=17 if q12==13
-	replace educy=19 if q12==14
-	replace educy=22 if q12==15
-	replace educy=. if age<ed_mod_age|q12==16
+	gen byte educy=q30
+	replace educy=educy+2 if inrange(q30,0,12)
+	replace educy=14 if q30==1
+	replace educy=17 if q30==13
+	replace educy=19 if q30==14
+	replace educy=22 if q30==15
+	replace educy=0 if inlist(q30,16,17)
+	replace educy=. if age<ed_mod_age
 	replace educy=. if educy>age & !mi(educy) & !mi(age)
 	label var educy "Years of education"
 *</_educy_>
@@ -585,12 +632,13 @@ variable q12 is:
 
 *<_educat7_>
 	gen byte educat7=.
-	replace educat7=1 if q12==16
-	replace educat7=2 if inrange(q12,0,7)
-	replace educat7=3 if q12==8
-	replace educat7=4 if inlist(q12,9,11)
-	replace educat7=5 if q12==12
-	replace educat7=7 if inrange(q12,13,15)
+	replace educat7=1 if inlist(q30,16,17)
+	replace educat7=2 if inrange(q30,0,7)
+	replace educat7=3 if q30==8
+	replace educat7=4 if inlist(q30,9,10)
+	replace educat7=5 if q30==12
+	replace educat7=6 if q30==11
+	replace educat7=7 if inrange(q30,13,15)	
 	replace educat7=. if age<ed_mod_age
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
@@ -619,21 +667,21 @@ variable q12 is:
 
 
 *<_educat_orig_>
-	gen educat_orig=q12
+	gen educat_orig=q30
 	label var educat_orig "Original survey education code"
 *</_educat_orig_>
 
 
 *<_educat_isced_>
 	gen educat_isced=.
-	replace educat_isced=20 if q12==0
-	replace educat_isced=100 if inrange(q12,1,5)
-	replace educat_isced=244 if inrange(q12,6,10)
-	replace educat_isced=344 if inrange(q12,11,12)
-	replace educat_isced=244 if inrange(q12,6,10)
-	replace educat_isced=660 if q12==13
-	replace educat_isced=760 if q12==14
-	replace educat_isced=860 if q12==15
+	replace educat_isced=20 if q30==0
+	replace educat_isced=100 if inrange(q30,1,5)
+	replace educat_isced=244 if inrange(q30,6,10)
+	replace educat_isced=344 if inrange(q30,11,12)
+	replace educat_isced=244 if inrange(q30,6,10)
+	replace educat_isced=660 if q30==13
+	replace educat_isced=760 if q30==14
+	replace educat_isced=860 if q30==15
 	replace educat_isced=. if age<ed_mod_age
 	label var educat_isced "ISCED standardised level of education"
 *</_educat_isced_>
@@ -665,7 +713,7 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 {
 
 *<_vocational_>
-	gen vocational=q13
+	gen vocational=q31
 	recode vocational (2=0)
 	la de vocationallbl 1 "Yes" 0 "No"
 	la values vocational vocationallbl
@@ -682,23 +730,21 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 
 
 *<_vocational_length_l_>
-	gen vocational_length_l=q15
-	recode vocational_length_l (0=.) (2=1) (3=6) (4=12) (5=24)
+	gen vocational_length_l=q33
 	replace vocational_length_l=. if vocational!=1
 	label var vocational_length_l "Length of training in months, lower limit"
 *</_vocational_length_l_>
 
 
 *<_vocational_length_u_>
-	gen vocational_length_u=q15
-	recode vocational_length_u (0 5=.) (2=6) (3=12) (4=24)
+	gen vocational_length_u=q33
 	replace vocational_length_u=. if vocational!=1
 	label var vocational_length_u "Length of training in months, upper limit"
 *</_vocational_length_u_>
 
 
 *<_vocational_field_orig_>
-	gen vocational_field_orig=q14
+	gen vocational_field_orig=q32
 	replace vocational_field_orig=. if vocational!=1
 	label var vocational_field_orig "Original field of training information"
 *</_vocational_field_orig_>
@@ -739,7 +785,7 @@ report's definition.
 
 /*<_lstatus_note>
 
-We made sure that people who have nonmissing q21 answers are equal to people who
+We made sure that people who have nonmissing q41 answers are equal to people who
 1)did not work in the past week but have a work to return to;
 2)and receive pay while not working;
 3)or have been away from work without pay for less than 2 months. 
@@ -747,8 +793,8 @@ We made sure that people who have nonmissing q21 answers are equal to people who
 *<_lstatus_note>*/
 
 	gen byte lstatus=.
-	replace lstatus=1 if q16>0&!mi(q16)|!mi(q21)
-	replace lstatus=2 if mi(lstatus)&q45==1&q46==1
+	replace lstatus=1 if q36tot>0&!mi(q36tot)|!mi(q41)
+	replace lstatus=2 if mi(lstatus)&q76==1&q77==1
 	replace lstatus=3 if lstatus==. 
 	replace lstatus=. if age<minlaborage
 	label var lstatus "Labor status"
@@ -763,14 +809,14 @@ We made sure that people who have nonmissing q21 answers are equal to people who
 Note: var "potential_lf" only takes value if the respondent is not in labor force. (lstatus==3)
 
 "potential_lf"=1 if the person is
-1)available but not searching or q45==1 & q46==2
-2)searching but not immediately available to work or q45==2 & q46==1
+1)available but not searching or q76==1 & q77==2
+2)searching but not immediately available to work or q76==2 & q77==1
 
 </_potential_lf_note_>*/
 
 	gen potential_lf=.
-	replace potential_lf=1 if [q45==1 & q46==2] | [q45==2 & q46==1]
-	replace potential_lf=0 if [q45==1 & q46==1] | [q45==2 & q46==2]
+	replace potential_lf=1 if [q76==1 & q77==2] | [q76==2 & q77==1]
+	replace potential_lf=0 if [q76==1 & q77==1] | [q76==2 & q77==2]
 	replace potential_lf=. if age < minlaborage
 	replace potential_lf=. if lstatus!=3
 	label var potential_lf "Potential labour force status"
@@ -790,13 +836,13 @@ and if they do, how they searched.
 Question 37 ask employed respondents who work less 40 hours why they did not work 
 for more hours, i.e., cannot find more work or off season. But we did not define
 underemployment based on the reason that they did not work for more hours.
-So we only used q39 here.
+So we only used q70 here.
 
 *<_underemployment_note>*/
 
 	gen byte underemployment=.
-	replace underemployment=1 if q39==1
-	replace underemployment=0 if q39==2
+	replace underemployment=1 if q70==1
+	replace underemployment=0 if q70==2
 	replace underemployment=. if age<minlaborage
 	replace underemployment=. if lstatus!=1
 	label var underemployment "Underemployment status"
@@ -809,8 +855,8 @@ So we only used q39 here.
 
 /*<_nlfreason_note_>
 
-The value lables in the dataset of "q51" is wrong. They are actually labels for 
-"q52". The true labels for "q51" are:
+The value lables in the dataset of "q82" is wrong. They are actually labels for 
+"q52". The true labels for "q82" are:
 
 1. Thought no work availabel
 2. Awaiting reply to earlier enquiries
@@ -822,11 +868,11 @@ The value lables in the dataset of "q51" is wrong. They are actually labels for
 *<_nlfreason_note_>*/
 
 	gen byte nlfreason=.
-	replace nlfreason=5 if inlist(q51,1,2,3,4,6)|q53==5
-	replace nlfreason=4 if q53==4
-	replace nlfreason=3 if q53==3
-	replace nlfreason=2 if q53==2
-	replace nlfreason=1 if q53==1
+	replace nlfreason=5 if inlist(q82,1,2,3,4,6)|q84==5
+	replace nlfreason=4 if q84==4
+	replace nlfreason=3 if q84==3
+	replace nlfreason=2 if q84==2
+	replace nlfreason=1 if q84==1
 	replace nlfreason=. if lstatus!=3|age<minlaborage
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"

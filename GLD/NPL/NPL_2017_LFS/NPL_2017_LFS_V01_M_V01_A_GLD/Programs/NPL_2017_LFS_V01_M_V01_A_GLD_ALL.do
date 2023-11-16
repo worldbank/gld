@@ -611,7 +611,7 @@ quietly{
 
 *<_migrated_reason_>
 	gen migrated_reason=reason_here
-	recode migrated_reason (2=1) (4 5 7=3) (6=2) (9 10=4) (11=5)
+	recode migrated_reason (2=1) (4 5 7=3) (6=2) (9 10=4) (8 11=5)
 	replace migrated_reason=. if migrated_binary!=1
 	replace migrated_reason=. if age<migrated_mod_age
 	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
