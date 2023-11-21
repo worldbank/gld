@@ -41,6 +41,9 @@
 	gen mydate = date1 + date2 + year + "_" + time1 + time2
 	levelsof mydate, clean
 	global mydate `r(levels)'
+	
+	levelsof date3, local(currentyear)
+	global currentyear `currentyear'
 	clear 
 
 	if `"`c(os)'"' == "MacOSX" {                                 // for mac

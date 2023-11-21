@@ -330,7 +330,7 @@ if _rc == 0 { // if var exists since if not captured in 1.1
 *----------2.3: year is four digit
 cap confirm variable year
 if _rc == 0 { // if var exists since if not captured in 1.1
-	qui : count if year < 1880 | year > 2021
+	qui : count if year < 1880 | year > ${currentyear}
 	if `r(N)' > 0 { // year outside the norm
 		post `memhold' ("2. Survey & ID") ("year") ("Variable year is not between 1880 and 2021") (.) (1)
 	} // end if year odd

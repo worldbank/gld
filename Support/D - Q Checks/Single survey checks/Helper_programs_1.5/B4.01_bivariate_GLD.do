@@ -552,14 +552,16 @@
 		}
 		
 		rename (x1 x2 x3 x4) (agric industry services other)
+		
+			foreach v of varlist agric - other {
+			replace `v' = 0 if missing(`v')     // teat missing as 0.0
+		}
+
 		gen serv2 = 100*services/(agric+industry+services)
 		gen ind2 = 100*industry/(agric+industry+services)
 		order occup - services ind2  serv2
 		format agric ind* serv* other total %4.2fc
 		
-		foreach v of varlist agric - other {
-			replace `v' = 0 if missing(`v')     // teat missing as 0.0
-		}
 
 		
 		** Check 1. Managers should be not be prevalent in agriculture, <20%
