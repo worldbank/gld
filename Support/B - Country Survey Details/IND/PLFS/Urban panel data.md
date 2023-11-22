@@ -1,7 +1,16 @@
 # Urban panel data from the PLFS
 
 ## Overview
-The Periodic Labour Force Survey (PLFS) employs a two-stage sampling design to gather employment data across India. For urban areas, respondents were visited for four consecutive waves prior to replacement to form a so-called "in-for-4" rotation panel scheme, while for rural regions were only visited once; thus, the rural data is cross-sectional. When the urban rotation panel data is combined with the single-visit cross-sectional data from rural areas, it facilitates users to generate nuanced labor estimates on a quarterly basis for each state, segmented by urban and rural demographics.
+The Periodic Labour Force Survey (PLFS) employs a two-stage sampling design to gather employment data across India. For urban areas, respondents were visited for four consecutive waves prior to replacement to form a so-called "in-for-4" rotation panel scheme, while for rural regions were only visited once. The first visit to urban households plus the “one-off” visits to rural areas make up the cross-sectional dataset. This allows to calculate annual as well as quarterly estimates for each state.
+
+The full urban dataset (first visit plus revisits) forms the basis of the urban panel. Urban areas are differentiated from rural ones based on the definition in the 2011 Indian census, namely that urban areas are:
+
+a. any location with a municipality, corporation, cantonment board, or a designated town area committee, or
+
+b. any place meeting three criteria concurrently:
+- A minimum population of 5,000;
+- At least 75% of the male working-age population engaged in non-agricultural activities;
+- A population density of at least 400 per sq. km (or 1,000 per sq. mile).
 
 The PLFS adopts a strategic rotational design for its urban samples, ensuring consistent data capture throughout the year. The starting point in this rotational system is the P<sub>11</sub> panel, designated as the "first" panel in the survey cycle. Representing 25% of the annual urban allocation, this panel sets the pace for the year-long survey, which spans four quarters. As each quarter unfolds, new panels are successively introduced, while the earlier ones, like the P<sub>11</sub>, are revisited. It's essential to highlight that the initial household listings remain unchanged during revisits, even if there are declinations in participation or a change in dwelling occupants.
 
