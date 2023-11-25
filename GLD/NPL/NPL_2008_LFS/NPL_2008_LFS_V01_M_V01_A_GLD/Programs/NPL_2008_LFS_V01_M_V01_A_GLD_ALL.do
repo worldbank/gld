@@ -351,7 +351,7 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 
 *<_male_>
-	gen male=q27
+	gen male=q09
 	recode male 2=0
 	label var male "Sex - Ind is male"
 	la de lblmale 1 "Male" 0 "Female"
@@ -429,7 +429,6 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 	label values comm_dsablty lblcomm_dsablty
 	label var eye_dsablty "Disability related to communicating"
 *</_comm_dsablty_>
-
 }
 
 
@@ -997,14 +996,102 @@ The value lables in the dataset of "q82" is wrong. They are actually labels for
 
 
 *<_wage_no_compen_>
-	egen double wage_no_compen=rowtotal(q54a q54b), missing
-	replace wage_no_compen=. if lstatus!=1|empstat==2
+
+/*<_wage_no_compen_note_>
+
+. count if !mi(wage_other)
+  3,477
+
+. count if !mi(wage_month)
+  4,800
+
+Number of observations that have reported wage is 8,277 in total.
+
+. tab q52 if wagereported==1,m
+
+  Q.52 What |
+     is the |
+ basis that |
+is/was paid |      Freq.     Percent        Cum.
+------------+-----------------------------------
+   Contract |      5,340       64.52       64.52
+ Piece-rate |        845       10.21       74.73
+          . |      2,092       25.27      100.00
+------------+-----------------------------------
+      Total |      8,277      100.00
+	  
+
+. tab q44 if wagereported==1,m
+
+  Q.44 How is/was involved in this main |
+                                    job |      Freq.     Percent        Cum.
+----------------------------------------+-----------------------------------
+                          Paid employee |      8,234       99.48       99.48
+Operating own business/farm with regula |         23        0.28       99.76
+Contributing family support without pay |          4        0.05       99.81
+                                 Others |         16        0.19      100.00
+----------------------------------------+-----------------------------------
+                                  Total |      8,277      100.00
+
+
+. tab q44 if mi(q52)&wagereported==1
+
+  Q.44 How is/was involved in this main |
+                                    job |      Freq.     Percent        Cum.
+----------------------------------------+-----------------------------------
+                          Paid employee |      2,091       99.95       99.95
+Contributing family support without pay |          1        0.05      100.00
+----------------------------------------+-----------------------------------
+                                  Total |      2,092      100.00
+
+2,091 observations are paid employees but they did not report their pay type. 
+Nonetheless, they still reported their actual payment.
+
+. tab q52 q53,m
+
+ Q.52 What |
+    is the |
+basis that | Q.53 What is the periodicity of the payment at his/her
+    is/was |                         main 
+      paid |     Daily     Weekly    Monthly     Others          . |     Total
+-----------+-------------------------------------------------------+----------
+  Contract |     2,147        340      2,833         20          0 |     5,340 
+Piece-rate |         0          0          0          0        845 |       845 
+         . |        67         42      1,966         16     67,932 |    70,023 
+-----------+-------------------------------------------------------+----------
+     Total |     2,214        382      4,799         36     68,777 |    76,208 
+
+Excluding those zero-wages, 8,011 observations have reported wage.	 
+But only 7,311 of 8,011 have unitwage. 
+- 32 observations hreported "Others" for unitwage;
+- 799 observations have missing unitwage.	
+
+
+           |   Last wages' time unit primary job 7 day
+     Labor |                   recall
+    status |     Daily     Weekly    Monthly          . |     Total
+-----------+--------------------------------------------+----------
+  Employed |     2,124        372      4,684     28,474 |    35,654 
+           |      5.96       1.04      13.14      79.86 |    100.00 
+-----------+--------------------------------------------+----------
+     Total |     2,124        372      4,684     28,474 |    35,654 
+           |      5.96       1.04      13.14      79.86 |    100.00 
+
+*<_wage_no_compen_note_>*/
+
+	egen wage_other=rowtotal(q54a q54b), missing
+	egen wage_month=rowtotal(q55a q55b), missing
+	*gen wagereported=1 if !mi(wage_month)|!mi(wage_other)
+
+	egen double wage_no_compen=rowtotal(wage_other wage_month), missing
+	replace wage_no_compen=. if lstatus!=1|empstat==2|wage_no_compen==0
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
 
 *<_unitwage_>
-	gen byte unitwage=5
+	gen byte unitwage=5 if wage_month!=0&!mi(wage_month)
+	replace unitwage=2 if wage_other!=0&!mi(wage_other)
 	replace unitwage=. if lstatus!=1 | empstat==2
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
