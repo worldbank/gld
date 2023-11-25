@@ -931,7 +931,7 @@ The value lables in the dataset of "q51" is wrong. They are actually labels for
 
 {
 *<_empstat_>
-	gen byte empstat=q64
+	gen byte empstat=q24
 	recode empstat (2=3) (3=4) (4=2) 
 	replace empstat=. if lstatus!=1|age<minlaborage
 	label var empstat "Employment status during past week primary job 7 day recall"
@@ -941,7 +941,7 @@ The value lables in the dataset of "q51" is wrong. They are actually labels for
 
 
 *<_ocusec_>
-	gen byte ocusec=q67
+	gen byte ocusec=q25
 	recode ocusec (2=1) (3 4 5=2) (6=4)
 	replace ocusec=. if lstatus!=1|age<minlaborage
 	label var ocusec "Sector of activity primary job 7 day recall"
@@ -958,7 +958,7 @@ The value lables in the dataset of "q51" is wrong. They are actually labels for
 
 
 *<_industrycat_isic_>
-	gen indcode=q63*100 
+	gen indcode=q35*100 
 	replace indcode=9900 if indcode==9800
 	tostring indcode, gen(industrycat_isic) format("%04.0f")
 	replace industrycat_isic="" if industrycat_isic=="."|lstatus!=1
@@ -1032,18 +1032,87 @@ The value lables in the dataset of "q51" is wrong. They are actually labels for
 
 /*<_wage_no_compen_note_>
 
-92.2% of employed of observations in the raw dataset do not have information on
+Only 21.4% of employed observations in the raw dataset have information on
 wage.
 
+- 2,186 paid employees do not have answers for payment time base  
+. tab q24 q28, m
+
+   Type of |
+Employment |                  Pay Basis
+    at job |     0time     0piece       n.s.          . |     Total
+-----------+--------------------------------------------+----------
+      paid |     4,756        607          9      2,186 |     7,558 
+  own busw |         0          0          0        519 |       519 
+ ownbus wo |         0          0          0     13,122 |    13,122 
+  fam w0op |         0          0          0     17,916 |    17,916 
+     other |         0          0          0        117 |       117 
+         . |         0          0          0     35,390 |    35,390 
+-----------+--------------------------------------------+----------
+     Total |     4,756        607          9     69,250 |    74,622 
+
+	 
+- 11 observations have both nonmissing and nonzero wage reported on daily and 
+monthly basis; two of which have the same number for daily and monthly
+
+
+. tab q28 if wagereported==1, m
+
+  Pay Basis |      Freq.     Percent        Cum.
+------------+-----------------------------------
+   1. 0time |      4,756       63.00       63.00
+  2. 0piece |        607        8.04       71.04
+          . |      2,186       28.96      100.00
+------------+-----------------------------------
+      Total |      7,549      100.00
+
+
+. tab q29 if wagereported==1, m
+
+  Frequency |
+     of Pay |      Freq.     Percent        Cum.
+------------+-----------------------------------
+      daily |      2,170       28.75       28.75
+     weekly |        366        4.85       33.59
+    monthly |      4,302       56.99       90.58
+     others |        104        1.38       91.96
+          . |        607        8.04      100.00
+------------+-----------------------------------
+      Total |      7,549      100.00
+
+	  
+. tab q29 if mi(unitwage)&!mi(wage_no_compen), m
+
+  Frequency |
+     of Pay |      Freq.     Percent        Cum.
+------------+-----------------------------------
+  4. others |         96       15.00       15.00
+          . |        544       85.00      100.00
+------------+-----------------------------------
+      Total |        640      100.00
+
+640 observations reported wage but they don't have unitwage. 96 of which chose "others"
+whereas 544 had missing values. 
+
 *<_wage_no_compen_note_>*/
-	egen double wage_no_compen=rowtotal(q30cash q30kind), missing
-	replace wage_no_compen=. if lstatus!=1|empstat==2
+
+	egen wage_other=rowtotal(q30cash q30kind), missing
+	egen wage_month=rowtotal(q31cash q31kind), missing
+	replace wage_other=. if wage_other==0
+	replace wage_month=. if wage_month==0
+	gen overlap=1 if !mi(wage_other)&!mi(wage_month)
+	replace wage_month=. if overlap==1 // According to the skip pattern of the questionnaire, all 11 observations should go to question 30
+	*gen wagereported=1 if !mi(wage_month)|!mi(wage_other)
+	
+	egen double wage_no_compen=rowtotal(wage_other wage_month), missing
+	replace wage_no_compen=. if lstatus!=1|empstat==2|wage_no_compen==0
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
 
 *<_unitwage_>
-	gen byte unitwage=5
+	gen byte unitwage=5 if !mi(wage_month)
+	replace unitwage=2 if !mi(wage_other)
 	replace unitwage=. if lstatus!=1 | empstat==2
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
