@@ -32,13 +32,14 @@
 								with 14 domains as the primary strata and 18,000 
 								households as the SSU.</_Sampling method_>
 <_NPLgraphic coverage_> 		900 PSUs stratified from 7 domains:
-								- Province 1
-								- Province 2
-								- Province 3
+								- Province 1 (Koshi)
+								- Province 2 (Madhesh)
+								- Province 3 (Bagmati)
 								- Gandaki
-								- Province 5
-								- Karnali
-								- Sudurpashchim </_NPLgraphic coverage_>
+								- Province 5 (Lumbini)
+								- Karnali 
+								- Sudurpashchim 
+								                       </_NPLgraphic coverage_>
 <_Currency_> 					Nepalese Rupee </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 19 </_ICLS Version_>
@@ -268,8 +269,11 @@ local out_file "`level_2_harm'_ALL.dta"
 *<_subnatid1_>
 	gen subnatid1=""
 	replace province=3 if dist==27
-	replace subnatid1=string(province)+" - "+"Province" if inlist(province,1,2,3,5)
+	replace subnatid1=string(province)+" - "+"Koshi" if province==1
+	replace subnatid1=string(province)+" - "+"Madhesh" if province==2
+	replace subnatid1=string(province)+" - "+"Bagmati" if province==3
 	replace subnatid1=string(province)+" - "+"Gandaki" if province==4
+	replace subnatid1=string(province)+" - "+"Lumbini" if province==5
 	replace subnatid1=string(province)+" - "+"Karnali" if province==6
 	replace subnatid1=string(province)+" - "+"Sudurpashchim" if province==7
 	label var subnatid1 "Subnational ID at First Administrative Level"
@@ -279,8 +283,13 @@ local out_file "`level_2_harm'_ALL.dta"
 *<_subnatid2_>
 	tostring dist, gen(dist_code)
 	decode (dist), gen(dist_str)
-	gen dist_name=substr(dist_str,4,.)
-	egen subnatid2=concat(dist_code dist_name), punct(" - ")
+	replace dist_str="Parasi" if dist==48&province==4
+	replace dist_str="Nawalpur" if dist==48&province==5
+	replace dist_str="Western Rukum" if dist==54&province==5
+	replace dist_str="Eastern Rukum" if dist==54&province==6
+	replace dist_code="76" if dist_str=="Parasi"
+	replace dist_code="77" if dist_str=="Eastern Rukum"
+	gen subnatid2=dist_code+" - "+dist_str
 	replace subnatid2="" if mi(dist)
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 	drop dist_*
@@ -453,7 +462,7 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 {
 *<_migrated_mod_age_>
-	gen migrated_mod_age=14
+	gen migrated_mod_age=5
 	label var migrated_mod_age "Migration module application age"
 *</_migrated_mod_age_>
 
@@ -466,8 +475,8 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 *<_migrated_binary_>
 	gen migrated_binary=.
-	replace migrated_binary=1 if last_res==2
-	replace migrated_binary=0 if last_res==1
+	replace migrated_binary=1 if birth_same==2
+	replace migrated_binary=0 if birth_same==1
 	label de lblmigrated_binary 0 "No" 1 "Yes"
 	replace migrated_binary=. if age<migrated_mod_age
 	label values migrated_binary lblmigrated_binary

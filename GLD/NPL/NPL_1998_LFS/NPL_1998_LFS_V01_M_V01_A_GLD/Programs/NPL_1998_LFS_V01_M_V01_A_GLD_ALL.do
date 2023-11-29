@@ -32,13 +32,14 @@
 								with 14 domains as the primary strata and 18,000 
 								households as the SSU.</_Sampling method_>
 <_NPLgraphic coverage_> 		719 PSUs stratified from 7 domains:
-								- Province 1
-								- Province 2
-								- Province 3
+								- Province 1 (Koshi)
+								- Province 2 (Madhesh)
+								- Province 3 (Bagmati)
 								- Gandaki
-								- Province 5
-								- Karnali
-								- Sudurpashchim </_NPLgraphic coverage_>
+								- Province 5 (Lumbini)
+								- Karnali 
+								- Sudurpashchim 
+								                       </_NPLgraphic coverage_>						
 <_Currency_> 					Nepalese Rupee </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
@@ -951,7 +952,7 @@ The value lables in the dataset of "q51" is wrong. They are actually labels for
 
 
 *<_industry_orig_>
-	gen industry_orig=q63                                                             
+	gen industry_orig=q35                                                             
 	replace industry_orig=. if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
@@ -1445,6 +1446,7 @@ whereas 544 had missing values.
 *<_empstat_year_>
 	gen byte empstat_year=q64
 	recode empstat_year (2=3) (3=4) (4=2)
+	replace empstat_year=. if lstatus_year!=1
 	label var empstat_year "Employment status during past week primary job 12 month recall"
 	la de lblempstat_year 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat_year lblempstat_year
@@ -1454,6 +1456,7 @@ whereas 544 had missing values.
 *<_ocusec_year_>
 	gen byte ocusec_year=q67
 	recode ocusec_year (3/5=2) (6=4)
+	replace ocusec_year=. if lstatus_year!=1
 	label var ocusec_year "Sector of activity primary job 12 day recall"
 	la de lblocusec_year 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec_year lblocusec_year
@@ -1462,6 +1465,7 @@ whereas 544 had missing values.
 
 *<_industry_orig_year_> 
 	gen industry_orig_year=q63
+	replace industry_orig_year=. if lstatus_year!=1
 	label var industry_orig_year "Original industry record main job 12 month recall"
 *</_industry_orig_year_>
 
@@ -1470,7 +1474,7 @@ whereas 544 had missing values.
 	gen industrycat_isic_year=q63*100
 	replace industrycat_isic_year=9900 if industrycat_isic_year==9800
 	tostring industrycat_isic_year, replace format(%04.0f)
-	replace industrycat_isic_year="" if industrycat_isic_year=="."
+	replace industrycat_isic_year="" if industrycat_isic_year=="."|lstatus_year!=1
 	label var industrycat_isic_year "ISIC code of primary job 12 month recall"
 *</_industrycat_isic_year_>
 
@@ -1497,6 +1501,7 @@ whereas 544 had missing values.
 
 *<_occup_orig_year_>
 	gen occup_orig_year=q60
+	replace occup_orig_year=. if lstatus_year!=1
 	label var occup_orig_year "Original occupation record primary job 12 month recall"
 *</_occup_orig_year_>
 
@@ -1513,9 +1518,9 @@ The original variable q60 has two occupation categories beyond the NSCO codelist
 *<_occup_isco_year_note_>*/
 
 	gen occup_isco_year=q60*10
-	recode occup_isco_year (7450=7400) (7460=74330) (9220 9340=9200) (9980 9990=.)
+	recode occup_isco_year (7450=7400) (7460=7430) (9220 9340=9200) (9980 9990=.)
 	tostring occup_isco_year, replace format("%04.0f")
-	replace occup_isco_year="" if occup_isco_year=="."
+	replace occup_isco_year="" if occup_isco_year=="."|lstatus_year!=1
 	label var occup_isco_year "ISCO code of primary job 12 month recall"
 *</_occup_isco_year_>
 
@@ -1608,6 +1613,7 @@ The original variable q60 has two occupation categories beyond the NSCO codelist
 *<_firmsize_l_year_>
 	gen byte firmsize_l_year=q68
 	recode firmsize_l_year (1=0) (2=1) (3=15) (4=10)
+	replace firmsize_l_year=. if lstatus_year!=1
 	label var firmsize_l_year "Firm size (lower bracket) primary job 12 month recall"
 *</_firmsize_l_year_>
 
@@ -1615,6 +1621,7 @@ The original variable q60 has two occupation categories beyond the NSCO codelist
 *<_firmsize_u_year_>
 	gen byte firmsize_u_year=q68
 	recode firmsize_u_year (1=0) (2=4) (3=9) (4=.) 
+	replace firmsize_u_year=. if lstatus_year!=1
 	label var firmsize_u_year "Firm size (upper bracket) primary job 12 month recall"
 *</_firmsize_u_year_>
 
@@ -1808,7 +1815,7 @@ The original variable q60 has two occupation categories beyond the NSCO codelist
 	label var laborincome "Total annual individual labor income in all jobs, incl. bonuses, etc."
 *</_laborincome_>
 
-
+/*
 *----------8.13: Labour cleanup------------------------------*
 
 {

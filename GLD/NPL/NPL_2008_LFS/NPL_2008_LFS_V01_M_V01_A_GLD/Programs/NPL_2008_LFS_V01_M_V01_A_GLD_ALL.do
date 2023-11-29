@@ -32,13 +32,14 @@
 								The country was stratified into 6 strata comprising
 								3 urban and 3 rural areas. </_Sampling method_>
 <_NPLgraphic coverage_> 		799 PSUs stratified from 7 domains:
-								- Province 1
-								- Province 2
-								- Province 3
+								- Province 1 (Koshi)
+								- Province 2 (Madhesh)
+								- Province 3 (Bagmati)
 								- Gandaki
-								- Province 5
-								- Karnali
-								- Sudurpashchim </_NPLgraphic coverage_>
+								- Province 5 (Lumbini)
+								- Karnali 
+								- Sudurpashchim 
+								                       </_NPLgraphic coverage_>
 <_Currency_> 					Nepalese Rupee </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
@@ -438,7 +439,7 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 {
 *<_migrated_mod_age_>
-	gen migrated_mod_age=.
+	gen migrated_mod_age=5
 	label var migrated_mod_age "Migration module application age"
 *</_migrated_mod_age_>
 
@@ -451,8 +452,8 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 *<_migrated_binary_>
 	gen migrated_binary=.
-	replace migrated_binary=1 if q21==2
-	replace migrated_binary=0 if q21==1
+	replace migrated_binary=1 if q17==2
+	replace migrated_binary=0 if q17==1
 	label de lblmigrated_binary 0 "No" 1 "Yes"
 	replace migrated_binary=. if age<migrated_mod_age
 	label values migrated_binary lblmigrated_binary
