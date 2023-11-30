@@ -99,8 +99,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	*use "`path_in_stata'\NPL_LFS_1998_raw.dta", clear
-	 use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\NPL\NPL_1998_LFS\NPL_1998_LFS_v01_M\Data\Stata\nlfs.dta", clear
+	use "`path_in_stata'\NPL_LFS_1998_raw.dta", clear
 	 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -262,8 +261,8 @@ local out_file "`level_2_harm'_ALL.dta"
 
 *<_subnatid1_>
 	tostring(region), gen(rcode)
-	decode(region), gen(regionname)
-	gen rname=substr(regionname,4,.)
+	decode(region), gen(rname)
+	replace rname=proper(rname)
 	gen subnatid1=rcode+" - "+rname
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
@@ -1815,7 +1814,7 @@ The original variable q60 has two occupation categories beyond the NSCO codelist
 	label var laborincome "Total annual individual labor income in all jobs, incl. bonuses, etc."
 *</_laborincome_>
 
-/*
+
 *----------8.13: Labour cleanup------------------------------*
 
 {
@@ -1913,6 +1912,6 @@ compress
 
 *<_% SAVE_>
 
-*save "`path_output'\\`level_2_harm'_ALL.dta", replace
-save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\NPL\NPL_1998_LFS\NPL_1998_LFS_V01_M_V01_A_GLD\Data\Harmonized\NPL_1998_LFS_v01_M_v01_A_GLD_ALL.dta", replace
+save "`path_output'\\`level_2_harm'_ALL.dta", replace
+
 *</_% SAVE_>
