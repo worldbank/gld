@@ -102,8 +102,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * except their IDs. And in the national annual report, these observations were 
 * excluded too. 
 
-	*use "`path_in_stata'\NPL_LFS_2017_raw.dta", clear
-	 use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\NPL\NPL_2017_LFS\NPL_2017_LFS_v01_M\Data\Stata\NPL_LFS_2017_raw.dta", clear
+	 use "`path_in_stata'\NPL_LFS_2017_raw.dta", clear
 	 drop if s03_noinfo==1
 	 drop s03_noinfo
 	 
@@ -462,13 +461,13 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 {
 *<_migrated_mod_age_>
-	gen migrated_mod_age=5
+	gen migrated_mod_age=14
 	label var migrated_mod_age "Migration module application age"
 *</_migrated_mod_age_>
 
 
 *<_migrated_ref_time_>
-	gen migrated_ref_time=.
+	gen migrated_ref_time=99
 	label var migrated_ref_time "Reference time applied to migration questions"
 *</_migrated_ref_time_>
 
@@ -476,7 +475,8 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 *<_migrated_binary_>
 	gen migrated_binary=.
 	replace migrated_binary=1 if birth_same==2
-	replace migrated_binary=0 if birth_same==1
+	replace migrated_binary=1 if birth_same==1&last_res==2
+	replace migrated_binary=0 if birth_same==1&last_res==1
 	label de lblmigrated_binary 0 "No" 1 "Yes"
 	replace migrated_binary=. if age<migrated_mod_age
 	label values migrated_binary lblmigrated_binary
@@ -621,6 +621,11 @@ quietly{
 *<_migrated_reason_>
 	gen migrated_reason=reason_here
 	recode migrated_reason (2=1) (4 5 7=3) (6=2) (9 10=4) (8 11=5)
+	
+	gen lifemig=1 if migrated_binary==1&mi(migrated_reason)
+	replace migrated_reason=why_leave if lifemig==1
+	recode migrated_reason (2=1) (4 5 7=3) (6=2) (8 11=5) (9 10=4) if lifemig==1
+	
 	replace migrated_reason=. if migrated_binary!=1
 	replace migrated_reason=. if age<migrated_mod_age
 	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
@@ -1012,9 +1017,6 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_occup_isco_>
 	gen occupcode=mwrk_nsco4
-	replace occupcode=100 if occupcode==110
-	replace occupcode=200 if occupcode==210
-	replace occupcode=300 if occupcode==310
 	tostring occupcode, format("%04.0f") gen(occup_isco) 
 	replace occup_isco="" if lstatus!=1 | occup_isco=="." 
 	label var occup_isco "ISCO code of primary job 7 day recall"
@@ -1821,6 +1823,6 @@ compress
 
 *<_% SAVE_>
 
-*save "`path_output'\\`level_2_harm'_ALL.dta", replace
-save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\NPL\NPL_2017_LFS\NPL_2017_LFS_V01_M_V01_A_GLD\Data\Harmonized\NPL_2017_LFS_v01_M_v01_A_GLD_ALL.dta", replace
+save "`path_output'\\`level_2_harm'_ALL.dta", replace
+
 *</_% SAVE_>
