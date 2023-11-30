@@ -31,14 +31,12 @@
 <_Sampling method_> 			A stratified two-stage probability sample design.
 								The country was stratified into 6 strata comprising
 								3 urban and 3 rural areas. </_Sampling method_>
-<_NPLgraphic coverage_> 		799 PSUs stratified from 7 domains:
-								- Province 1 (Koshi)
-								- Province 2 (Madhesh)
-								- Province 3 (Bagmati)
-								- Gandaki
-								- Province 5 (Lumbini)
-								- Karnali 
-								- Sudurpashchim 
+<_NPLgraphic coverage_> 		799 PSUs stratified from 5 regions:
+								- 1-Eastern
+								- 2-Central 
+								- 3-Western 
+								- 4-Mid Western
+								- 5-FarWestern
 								                       </_NPLgraphic coverage_>
 <_Currency_> 					Nepalese Rupee </_Currency_>
 -----------------------------------------------------------------------
@@ -99,8 +97,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	*use "`path_in_stata'\NPL_LFS_2008_raw.dta", clear
-	 use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\NPL\NPL_2008_LFS\NPL_2008_LFS_v01_M\Data\Stata\NPL_LFS_2008_raw.dta", clear
+	use "`path_in_stata'\NPL_LFS_2008_raw.dta", clear
 	 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -439,13 +436,13 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 {
 *<_migrated_mod_age_>
-	gen migrated_mod_age=5
+	gen migrated_mod_age=14
 	label var migrated_mod_age "Migration module application age"
 *</_migrated_mod_age_>
 
 
 *<_migrated_ref_time_>
-	gen migrated_ref_time=.
+	gen migrated_ref_time=99
 	label var migrated_ref_time "Reference time applied to migration questions"
 *</_migrated_ref_time_>
 
@@ -453,12 +450,14 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 *<_migrated_binary_>
 	gen migrated_binary=.
 	replace migrated_binary=1 if q17==2
-	replace migrated_binary=0 if q17==1
+	replace migrated_binary=1 if q17==1&q21==2
+	replace migrated_binary=0 if q17==1&q21==1
 	label de lblmigrated_binary 0 "No" 1 "Yes"
 	replace migrated_binary=. if age<migrated_mod_age
 	label values migrated_binary lblmigrated_binary
 	label var migrated_binary "Individual has migrated"
-*</_migrated_binary_>                                                                                                                                            
+*</_migrated_binary_>                                        
+
 
 *<_migrated_years_>
    gen migrated_years=q24
@@ -546,6 +545,11 @@ quietly{
 *<_migrated_reason_>
 	gen migrated_reason=q25
 	recode migrated_reason (2=1) (4 5 7=3) (6=2) (9 10=4) (8 11=5)
+	
+	gen lifemig=1 if migrated_binary==1&mi(migrated_reason)
+	replace migrated_reason=q20 if lifemig==1
+	recode migrated_reason (2=1) (4 5 7=3) (6=2) (8 11=5) (9 10=4) if lifemig==1
+	
 	replace migrated_reason=. if age<migrated_mod_age|migrated_binary!=1
 	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
 	label values migrated_reason lblmigrated_reason
