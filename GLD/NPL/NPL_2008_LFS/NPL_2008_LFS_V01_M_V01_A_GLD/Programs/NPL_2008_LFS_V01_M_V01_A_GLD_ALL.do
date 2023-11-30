@@ -260,8 +260,8 @@ local out_file "`level_2_harm'_ALL.dta"
 
 *<_subnatid1_>
 	tostring(region), gen(rcode)
-	decode(region), gen(regionname)
-	gen rname=substr(regionname,4,.)
+	decode(region), gen(rname)
+	replace rname=proper(rname)
 	gen subnatid1=rcode+" - "+rname
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
@@ -1894,6 +1894,6 @@ compress
 
 *<_% SAVE_>
 
-*save "`path_output'\\`level_2_harm'_ALL.dta", replace
-save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\NPL\NPL_2008_LFS\NPL_2008_LFS_V01_M_V01_A_GLD\Data\Harmonized\NPL_2008_LFS_v01_M_v01_A_GLD_ALL.dta", replace
+save "`path_output'\\`level_2_harm'_ALL.dta", replace
+
 *</_% SAVE_>
