@@ -36,4 +36,12 @@ The NSCO used in NPL 1998 and 2008 is at three-digit level. It has four categori
 | 922 | Fetching water | 920 | Agricultural, fishery and related labourers |
 | 934 | Collecting firewood | 920 | Agricultural, fishery and related labourers |
 
+**NSCO 2017 VS.ISCO 88**
 
+The NSCO used in NPL 2017 is at three-digit level and it has three categories that need to be re-mapped to ISCO-08.
+
+| **NSCO-2017 Code**	| **NSCO-2017 Occupation**	| **ISCO 08 Code**	| **ISCO 08 Occupation**	|
+| :-----------------:	| :-----------------------------:	| :----------------:|:-----------------------:|	 	
+| 110 | Commissioned armed forces officer  | 100 | commissioned armed forces officers |
+| 210 | Non-commissioned armed forces officer | 200 | non-commissioned armed forces officers |
+| 310 | Armed forces occupations, other ranks | 300 | Armed forces occupations, other ranks |
