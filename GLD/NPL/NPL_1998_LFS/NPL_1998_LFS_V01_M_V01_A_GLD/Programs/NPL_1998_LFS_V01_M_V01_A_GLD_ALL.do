@@ -31,14 +31,12 @@
 <_Sampling method_> 			A stratified two-stage probability sample design
 								with 14 domains as the primary strata and 18,000 
 								households as the SSU.</_Sampling method_>
-<_NPLgraphic coverage_> 		719 PSUs stratified from 7 domains:
-								- Province 1 (Koshi)
-								- Province 2 (Madhesh)
-								- Province 3 (Bagmati)
-								- Gandaki
-								- Province 5 (Lumbini)
-								- Karnali 
-								- Sudurpashchim 
+<_NPLgraphic coverage_> 		719 PSUs stratified from 5 regions:
+								- 1-Eastern
+								- 2-Central 
+								- 3-Western 
+								- 4-Mid Western
+								- 5-FarWestern
 								                       </_NPLgraphic coverage_>						
 <_Currency_> 					Nepalese Rupee </_Currency_>
 -----------------------------------------------------------------------
