@@ -7,6 +7,7 @@
 
 Household surveys may vary greatly not only from one country to the next, but also within a country over time. Recall periods may change. Similarly, concepts like the categories of unemployment duration can be coded as “*less than a week // more than a week but less than a month // between one month and two months // …*” in one country and simply “*less than a month // more than a month but fewer than three // …*” in another. Thus, a unified standard is necessary to make them comparable.
 Moreover, even in cases where the data is harmonized, the harmonization may not serve your particular purpose as you would have needed to add some variables and change the definition of the harmonization slightly to fit your purposes. Yet if the harmonized data is a finished data file, there is little to be done.
+
 Consequently, you may well need to redo the whole harmonization yourself. That is a big investment, one that is inefficient for large projects and potentially prohibitive for smaller ones.
 
 ## How does this repository help with this?
@@ -19,6 +20,8 @@ The support documentation provides context information on the survey like the sa
 ## How do you use repository?
 
 The repository has three folders containing the harmonization codes (folder GLD), the support information (folder Support), and the [contents for the GLD website](https://worldbank.github.io/gld/) (folder docs). It contains many branches on which the team works, but the **main** branch represents the most up to date version for public use.
+
+Please note that this repository contains all the relevant information to understand and create harmonized datasets with the exception of the underlying raw data. We cannot share microdata through GitHub. In the [Country Survey Details](Support/B%20-%20Country%20Survey%20Details) there should be an explanation on where to find - if public - the raw data. 
 
 ### Finding the harmonization code
 
