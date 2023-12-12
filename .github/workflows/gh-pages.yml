@@ -18,7 +18,7 @@ jobs:
           if [ -f docs/requirements.txt ]; then pip install -r docs/requirements.txt; fi
       - name: Dynamically Generate Script Page
         run: |
-          python docs/scripts/script_structure.py
+          python ../docs/scripts/script_structure.py
       - name: Build Jupyter Book
         run: |
           jupyter-book build . --config docs/_config.yml --toc docs/_toc.yml
