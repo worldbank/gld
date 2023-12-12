@@ -35,9 +35,6 @@
 # Jupyter Book
 _build/
 
-# ignore the script structure file
-docs/script_structure.md
-
 #######################
 # We only want to publish three kinds of things:
 # i) harmonization files in Stata or R (potentially others),
