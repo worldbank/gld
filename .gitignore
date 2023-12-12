@@ -36,7 +36,7 @@
 _build/
 
 # ignore the script structure file
-docs/script_structure.md
+!docs/script_structure.md
 
 
 #######################
