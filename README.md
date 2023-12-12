@@ -1,9 +1,9 @@
-<img src="/docs/assets/images/WB_Jobs_logo_color.svg" alt="drawing" align="right" width="200"/>
+<img src="/docs/images/WB_Jobs_logo_color.svg" alt="drawing" align="right" width="200"/>
 <br>
 
-# Welcome to the Global Labor Database Repository 
+# Welcome to the Global Labor Database Repository
 
-## What is the problem we are addressing? 
+## What is the problem we are addressing?
 
 Household surveys may vary greatly not only from one country to the next, but also within a country over time. Recall periods may change. Similarly, concepts like the categories of unemployment duration can be coded as “*less than a week // more than a week but less than a month // between one month and two months // …*” in one country and simply “*less than a month // more than a month but fewer than three // …*” in another. Thus, a unified standard is necessary to make them comparable.
 Moreover, even in cases where the data is harmonized, the harmonization may not serve your particular purpose as you would have needed to add some variables and change the definition of the harmonization slightly to fit your purposes. Yet if the harmonized data is a finished data file, there is little to be done.
@@ -21,7 +21,7 @@ The support documentation provides context information on the survey like the sa
 
 The repository has three folders containing the harmonization codes (folder GLD), the support information (folder Support), and the [contents for the GLD website](https://worldbank.github.io/gld/) (folder docs). It contains many branches on which the team works, but the **main** branch represents the most up to date version for public use.
 
-Please note that this repository contains all the relevant information to understand and create harmonized datasets with the exception of the underlying raw data. We cannot share microdata through GitHub. In the [Country Survey Details](Support/B%20-%20Country%20Survey%20Details) there should be an explanation on where to find - if public - the raw data. 
+Please note that this repository contains all the relevant information to understand and create harmonized datasets with the exception of the underlying raw data. We cannot share microdata through GitHub. In the [Country Survey Details](Support/B%20-%20Country%20Survey%20Details) there should be an explanation on where to find - if public - the raw data.
 
 ### Finding the harmonization code
 
@@ -30,7 +30,7 @@ Note that this represents the structure as it is stored on the World Bank server
 
 Figure 1. Example of contents of GLD/IND folder
 <br></br>
-![](/docs/assets/images/ind_code_example.png)
+![](/docs/images/ind_code_example.png)
 <br></br>
 
 Here you can see two folders are jumped to directly get to the *Programs* folder where the harmonization code is stored.
@@ -43,7 +43,7 @@ The second type of information is the survey context information. This can be fo
 
 Figure 2. Example of contents of Indian EUS country survey details folder
 <br></br>
-![](/docs/assets/images/ind_csd_example.png)
+![](/docs/images/ind_csd_example.png)
 <br></br>
 
 In this case, in addition to `1. Introduction to EUS.md` we have three other markdown files that explain other aspects of the survey. However, these will be referenced first in the introduction document. The introduction is always numbered with a one to be on top of the list for easier access as it is the gateway document.
@@ -62,10 +62,10 @@ The simplest way is to just tell us about your experience. Did you find everythi
 
 In addition to reporting on your experience, as you run and use the harmonization you may spot errors in the code. We harmonize conscientiously and run our harmonization through a set of checks, yet some errors we cannot spot. If you spot any of those please either write to the [GLD Focal Point](mailto:gld@worldbank.org) or, even better, raise an issue we can all see, if possible with a link to [particular section of the code in question](https://docs.github.com/en/github/writing-on-github/working-with-advanced-formatting/creating-a-permanent-link-to-a-code-snippet).
 
-### Harmonize a new survey yourself 
+### Harmonize a new survey yourself
 
 Finally, if you are working on a project that needs a harmonization, please feel free to do it to our standard, we’d be excited to host your contribution. You may find the [data dictionary](https://github.com/worldbank/gld/blob/main/Support/A%20-%20Guides%20and%20Documentation/GLD_Dictionary_v01.xlsx) on our site as well as [the GLD harmonization template](/Support/C%20-%20Templates/GLD_Harmonization_Template.do). You may fork our repository, run through [the quality checks](/Support/D%20-%20Q%20Checks) and create a pull request and we will review it to add it to the collection.
 
 ### Other support
 
-We would welcome any other support you may be able to give, such as improvements to the quality checks, the documentation of the survey details, or other documents – even this very same Readme. 
+We would welcome any other support you may be able to give, such as improvements to the quality checks, the documentation of the survey details, or other documents – even this very same Readme.
