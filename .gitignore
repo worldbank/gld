@@ -32,6 +32,12 @@
 !LICENSE*
 !CODE_OF_CONDUCT.md
 
+# Jupyter Book
+_build/
+
+# ignore the script structure file
+docs/script_structure.md
+
 
 #######################
 # We only want to publish three kinds of things:
