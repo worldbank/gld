@@ -23,7 +23,7 @@
 <_Sample size (HH)_> 			20,697 </_Sample size (HH)_>
 <_Sample size (IND)_> 		    58,979 </_Sample size (IND)_>
 <_Sampling method_> 			Stratified random sampling </_Sampling method_>
-<_Geographic coverage_> 		Whole country
+<_Geographic coverage_> 		Whole country </_Geographic coverage_>
 <_Currency_> 					Georgian Lari </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
@@ -930,7 +930,8 @@ for more hours but they are not in the raw dataset.
 {
 *<_empstat_>
 	gen byte empstat=Status
-	recode empstat (2=3) (3 4 97=5)
+	recode empstat (2=3) (3=2) (4=1) (97=5)
+	replace empstat=4 if empstat==3&B26_Employed_at_local_unit==1
 	replace empstat=. if lstatus!=1|age<minlaborage
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
@@ -1146,7 +1147,7 @@ But this question is not in the dataset.
 {
 *<_empstat_2_>
 	gen byte empstat_2=Second_Status 
-	recode empstat_2 (2=3) (3 4 97=2) 
+	recode empstat_2 (2=3) (3=2) (4=1) (97=5)
 	replace empstat_2=. if lstatus!=1|Second_Job!=1
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
 	la de lblempstat_2 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
