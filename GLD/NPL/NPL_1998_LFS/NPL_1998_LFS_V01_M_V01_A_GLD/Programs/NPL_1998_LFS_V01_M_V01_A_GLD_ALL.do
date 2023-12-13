@@ -953,14 +953,14 @@ The value lables in the dataset of "q51" is wrong. They are actually labels for
 
 
 *<_industry_orig_>
-	gen industry_orig=q35                                                             
+	gen industry_orig=q23                                                             
 	replace industry_orig=. if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
 
 *<_industrycat_isic_>
-	gen indcode=q35*100 
+	gen indcode=q23*100 
 	replace indcode=9900 if indcode==9800
 	tostring indcode, gen(industrycat_isic) format("%04.0f")
 	replace industrycat_isic="" if industrycat_isic=="."|lstatus!=1
