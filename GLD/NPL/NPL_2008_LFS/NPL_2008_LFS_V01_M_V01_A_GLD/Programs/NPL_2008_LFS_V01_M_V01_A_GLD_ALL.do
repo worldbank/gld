@@ -97,8 +97,8 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	use "`path_in_stata'\NPL_LFS_2008_raw.dta", clear
-	 
+	*use "`path_in_stata'\NPL_LFS_2008_raw.dta", clear
+	  use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\NPL\NPL_2008_LFS\NPL_2008_LFS_v01_M\Data\Stata\NPL_LFS_2008_raw.dta", clear
 /*%%=============================================================================================
 	2: Survey & ID
 ================================================================================================*/
@@ -565,7 +565,7 @@ quietly{
 
 {
 *<_ed_mod_age_>
-	gen byte ed_mod_age=5
+	gen byte ed_mod_age=4
 	label var ed_mod_age "Education module application age"
 *</_ed_mod_age_>
 
@@ -598,34 +598,34 @@ quietly{
 Original categorization of the highest educational level ever attended of 
 variable q30 is:
 
-0. Pre-school/Kindergarten --> 2 years
-1. Class 1 --> 3 years
-2. Class 2 --> 4 years
-3. Class 3 --> 5 years
-4. Class 4 --> 6 years 
-5. Class 5 --> 7 years [Lower Basic Complete]
-6. Class 6 --> 8 years
-7. Class 7 --> 9 years
-8. Class 8 --> 10 years [Upper Basic Complete]
-9. Class 9 --> 11 years
-10. Class 10 --> 12 years [Lower Secondary Complete]
-11. SLC --> 13 years
+0. Pre-school/Kindergarten --> 2 years [Less than primary]
+1. Class 1 --> 3 years [Less than primary]
+2. Class 2 --> 4 years [Less than primary]
+3. Class 3 --> 5 years [Less than primary]
+4. Class 4 --> 6 years [Less than primary]
+5. Class 5 --> 7 years [Primary]
+6. Class 6 --> 8 years [Primary]
+7. Class 7 --> 9 years [Primary]
+8. Class 8 --> 10 years [Lower secondary]
+9. Class 9 --> 11 years [Lower secondary]
+10. Class 10 --> 12 years [Secondary]
+11. SLC --> 13 years [Secondary]
 12. CLASS 12/INTERMEDIATE LEVEL --> 14 years [Upper Secondary Complete]
-13. Bachelor Level and equiv. --> 17 years 
-14. Master Level and above --> 19 years
-15. Professional degree --> 22 years
+13. Bachelor Level and equiv. --> 17 years [Degree]
+14. Master Level and above --> 19 years [Degree]
+15. Professional degree --> 22 years [Degree]
 16. LITERATE (Non-formal Education) --> 0 year
 17. Illeterate
 
 *<_educy_note_>*/
 
 	gen byte educy=q30
+	replace educy=0 if q29==2
 	replace educy=educy+2 if inrange(q30,0,12)
 	replace educy=14 if q30==1
 	replace educy=17 if q30==13
 	replace educy=19 if q30==14
 	replace educy=22 if q30==15
-	replace educy=0 if inlist(q30,16,17)
 	replace educy=. if age<ed_mod_age
 	replace educy=. if educy>age & !mi(educy) & !mi(age)
 	label var educy "Years of education"
@@ -634,12 +634,12 @@ variable q30 is:
 
 *<_educat7_>
 	gen byte educat7=.
-	replace educat7=1 if inlist(q30,16,17)
-	replace educat7=2 if inrange(q30,0,7)
-	replace educat7=3 if q30==8
-	replace educat7=4 if inlist(q30,9,10)
-	replace educat7=5 if q30==12
-	replace educat7=6 if q30==11
+	replace educat7=1 if q29==2
+	replace educat7=2 if inrange(q30,0,4)
+	replace educat7=3 if inrange(q30,5,7)
+	replace educat7=4 if inlist(q30,8,9)
+	replace educat7=5 if inlist(q30,10,11)
+	replace educat7=6 if q30==12
 	replace educat7=7 if inrange(q30,13,15)	
 	replace educat7=. if age<ed_mod_age
 	label var educat7 "Level of education 1"
@@ -1898,6 +1898,6 @@ compress
 
 *<_% SAVE_>
 
-save "`path_output'\\`level_2_harm'_ALL.dta", replace
-
+*save "`path_output'\\`level_2_harm'_ALL.dta", replace
+save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\NPL\NPL_2008_LFS\NPL_2008_LFS_V01_M_V01_A_GLD\Data\Harmonized\NPL_2008_LFS_v01_M_v01_A_GLD_ALL.dta", replace
 *</_% SAVE_>

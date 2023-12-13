@@ -102,7 +102,9 @@ local out_file "`level_2_harm'_ALL.dta"
 * except their IDs. And in the national annual report, these observations were 
 * excluded too. 
 
-	 use "`path_in_stata'\NPL_LFS_2017_raw.dta", clear
+	 *use "`path_in_stata'\NPL_LFS_2017_raw.dta", clear
+	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\NPL\NPL_2017_LFS\NPL_2017_LFS_v01_M\Data\Stata\NPL_LFS_2017_raw.dta", clear
+
 	 drop if s03_noinfo==1
 	 drop s03_noinfo
 	 
@@ -682,34 +684,34 @@ Literacy and school questions are not subject to the age limitation of 14.
 Original categorization of the highest educational level ever attended of 
 variable grade_comp is:
 
-0. Nursery/LKG/UKG --> 2 years
-1. Class 1 --> 3 years
-2. Class 2 --> 4 years
-3. Class 3 --> 5 years
-4. Class 4 --> 6 years 
-5. Class 5 --> 7 years [Lower Basic Complete]
-6. Class 6 --> 8 years
-7. Class 7 --> 9 years
-8. Class 8 --> 10 years [Upper Basic Complete]
-9. Class 9 --> 11 years
-10. Class 10 --> 12 years [Lower Secondary Complete]
-11. SLC and equiv. --> 14 years [Upper Secondary Complete]
+0. Nursery/LKG/UKG --> 2 years [Less than primary]
+1. Class 1 --> 3 years [Less than primary]
+2. Class 2 --> 4 years [Less than primary]
+3. Class 3 --> 5 years [Less than primary]
+4. Class 4 --> 6 years [Less than primary]
+5. Class 5 --> 7 years [Primary]
+6. Class 6 --> 8 years [Primary]
+7. Class 7 --> 9 years [Primary]
+8. Class 8 --> 10 years [Lower secondary]
+9. Class 9 --> 11 years [Lower secondary]
+10. Class 10 --> 12 years [Secondary]
+11. SLC and equiv. --> 14 years [Secondary]
 12. Class 12 and Intermediate --> 14 years [Upper Secondary Complete]
-13. Bachelor Level and equiv. --> 17 years 
-14. Master Level and above --> 19 years
-15. Professional degree --> 22 years
+13. Bachelor Level and equiv. --> 17 years [Degree]
+14. Master Level and above --> 19 years [Degree]
+15. Professional degree --> 22 years [Degree]
 16. Literate (Levelless) --> 0 year
 17. Illiterate --> 0 year
 
 *<_educy_note_>*/
 
 	gen byte educy=grade_comp
+	replace educy=0 if ever_school==2
 	replace educy=educy+2 if inrange(grade_comp,0,12)
 	replace educy=14 if grade_comp==1
 	replace educy=17 if grade_comp==13
 	replace educy=19 if grade_comp==14
 	replace educy=22 if grade_comp==15
-	replace educy=0 if inlist(grade_comp,16,17)
 	replace educy=. if age<ed_mod_age
 	replace educy=. if educy>age & !mi(educy) & !mi(age)
 	label var educy "Years of education"
@@ -718,12 +720,12 @@ variable grade_comp is:
 
 *<_educat7_>
 	gen byte educat7=.
-	replace educat7=1 if inlist(grade_comp,16,17)
-	replace educat7=2 if inrange(grade_comp,0,7)
-	replace educat7=3 if grade_comp==8
-	replace educat7=4 if inlist(grade_comp,9,10)
-	replace educat7=5 if grade_comp==12
-	replace educat7=6 if grade_comp==11
+	replace educat7=1 if ever_school==2
+	replace educat7=2 if inrange(grade_comp,0,4)
+	replace educat7=3 if inrange(grade_comp,5,7)
+	replace educat7=4 if inlist(grade_comp,8,9)
+	replace educat7=5 if inrange(grade_comp,10,11)
+	replace educat7=6 if grade_comp==12
 	replace educat7=7 if inrange(grade_comp,13,15)
 	replace educat7=. if age<ed_mod_age
 	label var educat7 "Level of education 1"
@@ -1823,6 +1825,7 @@ compress
 
 *<_% SAVE_>
 
-save "`path_output'\\`level_2_harm'_ALL.dta", replace
+*save "`path_output'\\`level_2_harm'_ALL.dta", replace
+save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\NPL\NPL_2017_LFS\NPL_2017_LFS_V01_M_V01_A_GLD\Data\Harmonized\NPL_2017_LFS_v01_M_v01_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>
