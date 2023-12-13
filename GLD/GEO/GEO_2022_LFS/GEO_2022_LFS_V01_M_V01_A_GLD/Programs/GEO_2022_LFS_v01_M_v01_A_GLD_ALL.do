@@ -22,16 +22,16 @@
 								https://www.geostat.ge/en/modules/categories/130/labour-force-survey-databases*
 <_Sample size (HH)_> 			21,366 </_Sample size (HH)_>
 <_Sample size (IND)_> 		    60,262  </_Sample size (IND)_>
-<_Sampling method_> 			 </_Sampling method_>
-<_Geographic coverage_> 		
+<_Sampling method_> 			Stratified random sampling </_Sampling method_>
+<_Geographic coverage_> 		Whole country
 <_Currency_> 					Georgian Lari </_Currency_>
 -----------------------------------------------------------------------
-<_ICLS Version_>				ICLS 19 </_ICLS Version_>
+<_ICLS Version_>				ICLS 13 </_ICLS Version_>
 <_ISCED Version_>				ISCED-2011 </_ISCED Version_>
 <_ISCO Version_>				ISCO 08 </_ISCO Version_>
-<_OCCUP National_>					  </_OCCUP National_>
+<_OCCUP National_>				ISCO 08 (used directly in the raw data set)	 </_OCCUP National_>
 <_ISIC Version_>				ISIC Rev.4 </_ISIC Version_>
-<_INDUS National_>				NACE Rev.2 </_INDUS National_>
+<_INDUS National_>				NACE Rev.2 (NACE Rev.1 also provided in the raw data set) </_INDUS National_>
 -----------------------------------------------------------------------
 
 <_Version Control_>
@@ -85,6 +85,8 @@ local out_file "`level_2_harm'_ALL.dta"
 
 	*use "`path_in_stata'\GEO_2022_LFS_SARRAW.dta", clear
 	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\GEO\GEO_2022_LFS\GEO_2022_LFS_V01_M\Data\Stata\GEO_LFS_2022.dta"
+	drop _merge	
+		
 /*%%=============================================================================================
 	2: Survey & ID
 ================================================================================================*/
@@ -122,7 +124,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_isco_version_>
-	gen isco_version=""
+	gen isco_version="isco_2008"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
@@ -768,11 +770,6 @@ replace educat_isced_v="." if ( age < ed_mod_age & !missing(age) )
 
 /*<_lstatus_note_>
 
-In the questionnaire, A1-A6 are the employment status questions to which if 
-answers are all 1 those respondents would be seen as employed and led to 
-question B1. But the raw dataset we can get only has already processed variables
-employed, unemployed, hired, and self-employed.
-
 Regarding umemployed, it has unemployed based on ILO strict definition and soft 
 definition. The unemployed population defined by soft definition has 3,551 more 
 observations than the strict definition. 
@@ -800,8 +797,12 @@ with our definition. We used the original variable "Unemployed" directly.
 *<_lstatus_note_>*/
 
 	gen byte lstatus=.
-	replace lstatus=1 if Employed==1
-	replace lstatus=2 if Unemployed==1
+	egen seeking=rowtotal(G3_1_Methods_used_to_find_work-G3_97_Methods_used_to_find_work), missing
+	replace seeking=0 if seeking==.
+	replace seeking=1 if seeking>0
+
+	replace lstatus=1 if inlist(A1_5,1,2)| inlist(A1_6,1,2)|A2==1|A3==1|A4==1|inrange(A6,6,9)|A7==1|A8==1|A9==1
+	replace lstatus=2 if seeking==1&_v9==1&lstatus!=1
 	replace lstatus=3 if lstatus==. 
 	replace lstatus=. if age<minlaborage
 	label var lstatus "Labor status"
@@ -854,8 +855,9 @@ dataset. It seems to be coded following the same rule we have.
 *</_potential_lf_note_>*/
 
 	gen potential_lf=.
-	replace potential_lf=1 if Potential_Labour_Force_PLF==1
-	replace potential_lf=0 if Potential_Labour_Force_PLF==0
+	replace potential_lf=1 if (seeking==1&_v9==2)|(seeking==0&_v9==1)
+	replace potential_lf=0 if (seeking==1&_v9==1)|(seeking==0&_v9==2)
+	
 	replace potential_lf=. if age < minlaborage
 	replace potential_lf=. if lstatus!=3
 	label var potential_lf "Potential labour force status"
@@ -949,9 +951,11 @@ for more hours but they are not in the raw dataset.
 
 *<_industrycat_isic_>
 	tostring Brunch, gen(nace2_code) format(%04.0f)
-	*merge m:1 nace2_code using "`path_in_stata'\NACE2_ISIC4.dta", keep(master match) nogen
-	merge m:1 nace2_code using "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\GEO\GEO_2022_LFS\GEO_2022_LFS_V01_M\Data\Stata\NACE2_ISIC4.dta", keep(master match) nogen
-	gen industrycat_isic=isic4_code
+	gen industrycat_isic=nace2_code
+	*merge m:1 nace2_code using "`path_in_stata'\nace2_isic4_crosswalk.dta"
+	merge m:1 nace2_code using "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\GEO\GEO_2022_LFS\GEO_2022_LFS_V01_M\Data\Stata\nace2_isic4_crosswalk.dta"
+
+	replace industrycat_isic=isic4 if _merge==3&!mi(isic4)
 	replace industrycat_isic="" if lstatus!=1|industrycat_isic=="."
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
@@ -965,7 +969,7 @@ for more hours but they are not in the raw dataset.
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
-	drop nace2_code isic4_code
+	drop nace2_code isic4 _merge
 *</_industrycat10_>
 
 
@@ -986,10 +990,7 @@ for more hours but they are not in the raw dataset.
 
 
 *<_occup_isco_>
-	/*gen b5=string(B5_Occupation, "%04.0f")
-	gen occup_isco=substr(b5,1,2)
-	replace occup_isco=occup_isco+"00"*/
-	gen occup_isco=""
+	tostring Occupation, gen(occup_isco) format(%04.0f)
 	replace occup_isco="" if lstatus!=1 | occup_isco=="." 
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
@@ -1025,33 +1026,23 @@ for more hours but they are not in the raw dataset.
 
 /*<_wage_no_compen_note_>
 
-Question B17 asks the specific amount of earnings whereas B18 asks the brackets of 
+Question B24 asks the specific amount of earnings whereas B25 asks the brackets of 
 earnings in case that the respondents do not recall the exact amount. 
-However, the raw dataset mixed B17 and B18 together and reports all respondents'
-answers in the form of earning interval in stead of specific amount. 
 
-In this case, I used the mean of each interval to estimate the average income of 
-each bracket.   
-
+We only coded wage_no_compen for people who answered B24_2, meaning that they have the 
+exact number of their incomes. 11,278 observations out of 16,361 paid observations 
+satisfy thie requirement, which gives 68.93% of paid employees values for wage.  
 *<_wage_no_compen_note_>*/
 
 	gen wage_no_compen=.
-	/*replace wage_no_compen=50 if B24_B25_Net_earnings==1
-	replace wage_no_compen=150 if B24_B25_Net_earnings==2
-	replace wage_no_compen=300 if B24_B25_Net_earnings==3
-	replace wage_no_compen=500 if B24_B25_Net_earnings==4
-	replace wage_no_compen=700 if B24_B25_Net_earnings==5
-	replace wage_no_compen=900 if B24_B25_Net_earnings==6
-	replace wage_no_compen=1250 if B24_B25_Net_earnings==7
-	replace wage_no_compen=1750 if B24_B25_Net_earnings==8
-	replace wage_no_compen=2000 if B24_B25_Net_earnings==9*/
+	replace wage_no_compen=B24_2 if B24_1==1&B24_2!=0
 	replace wage_no_compen=. if lstatus!=1|empstat==2
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
 
 *<_unitwage_>
-	gen byte unitwage=.
+	gen byte unitwage=5
 	replace unitwage=. if lstatus!=1 | empstat==2
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
@@ -1175,9 +1166,11 @@ But this question is not in the dataset.
 
 *<_industrycat_isic_2_>
 	tostring Second_Brunch, gen(nace2_code) format(%04.0f)
-	*merge m:1 nace2_code using "`path_in_stata'\NACE2_ISIC4.dta", keep(master match) nogen
-	merge m:1 nace2_code using "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\GEO\GEO_2022_LFS\GEO_2022_LFS_V01_M\Data\Stata\NACE2_ISIC4.dta", keep(master match) nogen
-	gen industrycat_isic_2=isic4_code
+	gen industrycat_isic_2=nace2_code
+	*merge m:1 nace2_code using "`path_in_stata'\nace2_isic4_crosswalk.dta"
+	merge m:1 nace2_code using "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\GEO\GEO_2022_LFS\GEO_2022_LFS_V01_M\Data\Stata\nace2_isic4_crosswalk.dta"
+	
+	replace industrycat_isic_2=isic4 if _merge==3&!mi(isic4)
 	replace industrycat_isic_2="" if lstatus!=1|Second_Job!=1|industrycat_isic_2=="."
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
@@ -1209,7 +1202,7 @@ But this question is not in the dataset.
 
 
 *<_occup_isco_2_>
-	gen occup_isco_2=""
+	tostring Second_Ocupation, gen(occup_isco_2) format(%04.0f)
 	replace occup_isco_2="" if lstatus!=1 | occup_isco_2=="."|Second_Job!=1
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>

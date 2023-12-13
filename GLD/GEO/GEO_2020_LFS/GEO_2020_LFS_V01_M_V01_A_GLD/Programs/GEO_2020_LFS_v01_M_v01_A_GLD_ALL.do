@@ -22,8 +22,8 @@
 								https://www.geostat.ge/en/modules/categories/130/labour-force-survey-databases*
 <_Sample size (HH)_> 			20,697 </_Sample size (HH)_>
 <_Sample size (IND)_> 		    58,979 </_Sample size (IND)_>
-<_Sampling method_> 			       </_Sampling method_>
-<_Geographic coverage_> 		
+<_Sampling method_> 			Stratified random sampling </_Sampling method_>
+<_Geographic coverage_> 		Whole country
 <_Currency_> 					Georgian Lari </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
@@ -1034,8 +1034,6 @@ for more hours but they are not in the raw dataset.
 
 Question B24 asks the specific amount of earnings whereas B25 asks the brackets of 
 earnings in case that the respondents do not recall the exact amount. 
-However, the raw dataset mixed B and B18 together and reports all respondents'
-answers in the form of earning interval in stead of specific amount. 
 
 We only coded wage_no_compen for people who answered B24_2, meaning that they have the 
 exact number of their incomes. 11,173 observations out of 14,957 paid observations 

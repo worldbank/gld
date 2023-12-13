@@ -22,8 +22,8 @@
 								https://www.geostat.ge/en/modules/categories/130/labour-force-survey-databases*
 <_Sample size (HH)_> 			21,501 </_Sample size (HH)_>
 <_Sample size (IND)_> 		    61,386 </_Sample size (IND)_>
-<_Sampling method_> 			 </_Sampling method_>
-<_Geographic coverage_> 		
+<_Sampling method_> 			Stratified random sampling </_Sampling method_>
+<_Geographic coverage_> 		Whole country </_Geographic coverage_>
 <_Currency_> 					Georgian Lari </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
