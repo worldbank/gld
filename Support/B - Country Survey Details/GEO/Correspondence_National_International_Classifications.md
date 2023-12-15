@@ -6,7 +6,7 @@ Regarding occupation, the GEO LFS used International Standard Classification of 
 
 Therefore, this document only shows the correspondence between NACE rev.2 and ISIC rev.4.  
 
-## Correspondence in industry classification
+## Correspondence in industrial classification
 
 **NACE rev.2 vs. ISIC rev.4**
 
