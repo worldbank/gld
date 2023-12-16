@@ -1,134 +1,105 @@
-> Jobs Group
->
-> Social Protection and Jobs
->
-> The World Bank
+# Global Labor Database Harmonization Guidelines
 
-Contents {#contents .TOC-Heading}
-========
+Jobs Group
 
-[1. Introduction 4](#introduction)
+Social Protection and Jobs
 
-[1.1. Global Labor Database (GLD) Project
-4](#global-labor-database-gld-project)
+The World Bank
 
-[1.2. File Organization 4](#file-organization)
+Table of Contents
+=================
 
-[1.3. Do-file Organization and Guidelines
-5](#do-file-organization-and-guidelines)
+[](manual:introduction)
 
-[2. Survey & ID module 9](#survey-id-module)
+&nbsp;&nbsp;&nbsp;&nbsp;[](manual:global-labor-database-gld-project)
 
-[2.1. ID Guidelines 9](#id-guidelines)
+&nbsp;&nbsp;&nbsp;&nbsp;[](manual:file-organization)
 
-[2.2. Mapping and Description of Variables
-9](#mapping-and-description-of-variables)
+&nbsp;&nbsp;&nbsp;&nbsp;[](manual:do-file-organization-and-guidelines)
 
-[2.3. Lessons Learned and Challenges
-13](#lessons-learned-and-challenges)
+[](manual:survey-id-module)
 
-[2.4. Tabular Overview of Variables 15](#tabular-overview-of-variables)
+&nbsp;&nbsp;&nbsp;&nbsp;[](manual:id-guidelines)
 
-[3. Geography 16](#geography)
+&nbsp;&nbsp;&nbsp;&nbsp;[](manual:mapping-and-description-of-variables)
 
-[3.1. Mapping and Description of Variables
-16](#mapping-and-description-of-variables-1)
+&nbsp;&nbsp;&nbsp;&nbsp;[](manual:lessons-learned-and-challenges)
 
-[3.2. Lessons Learned and Challenges
-19](#lessons-learned-and-challenges-1)
+&nbsp;&nbsp;&nbsp;&nbsp;[](manual:tabular-overview-of-variables)
 
-[3.3. Tabular Overview of Variables
-20](#tabular-overview-of-variables-1)
+[](manual:geography)
 
-[4. Demography 21](#demography)
+&nbsp;&nbsp;&nbsp;&nbsp;[](manual:geography-guidelines)
 
-[4.1. Mapping and Description of Variables
-21](#mapping-and-description-of-variables-2)
+&nbsp;&nbsp;&nbsp;&nbsp;[](manual:geo-lessons-learned-and-challenges)
 
-[4.2. Lessons Learned and Challenges
-23](#lessons-learned-and-challenges-2)
+&nbsp;&nbsp;&nbsp;&nbsp;[](manual:geo-tabular-overview-of-variables)
 
-[4.3. Tabular Overview of Variables
-25](#tabular-overview-of-variables-2)
+[](manual:household)
 
-[5. Migration 26](#migration)
+&nbsp;&nbsp;&nbsp;&nbsp;[](manual:household-guidelines)
 
-[5.1. Mapping and Description of Variables
-26](#mapping-and-description-of-variables-3)
+&nbsp;&nbsp;&nbsp;&nbsp;[](manual:household-lessons-learned-and-challenges)
 
-[5.2. Lessons Learned and Challenges
-27](#lessons-learned-and-challenges-3)
+&nbsp;&nbsp;&nbsp;&nbsp;[](manual:household-tabular-overview-of-variables)
 
-[5.3. Tabular Overview of Variables
-30](#tabular-overview-of-variables-3)
+[](manual:migration)
 
-[6. Education 31](#education)
+&nbsp;&nbsp;&nbsp;&nbsp;[](manual:migration-guidelines)
 
-[6.1. Mapping and Description of Variables
-31](#mapping-and-description-of-variables-4)
+&nbsp;&nbsp;&nbsp;&nbsp;[](manual:migration-lessons-learned-and-challenges)
 
-[6.2. Lessons Learned and Challenges
-33](#lessons-learned-and-challenges-4)
+&nbsp;&nbsp;&nbsp;&nbsp;[](manual:migration-tabular-overview-of-variables)
 
-[6.3. Tabular Overview of Variables
-34](#tabular-overview-of-variables-4)
+[](manual:education)
 
-[7. Training 35](#training)
+&nbsp;&nbsp;&nbsp;&nbsp;[](manual:education-guidelines)
 
-[7.1. Mapping and Description of Variables
-35](#mapping-and-description-of-variables-5)
+&nbsp;&nbsp;&nbsp;&nbsp;[](manual:education-lessons-learned-and-challenges)
 
-[7.2. Lessons Learned and Challenges
-35](#lessons-learned-and-challenges-5)
+&nbsp;&nbsp;&nbsp;&nbsp;[](manual:education-tabular-overview-of-variables)
 
-[7.3. Tabular Overview of Variables
-36](#tabular-overview-of-variables-5)
+[](manual:training)
 
-[8. Labour 37](#labour)
+&nbsp;&nbsp;&nbsp;&nbsp;[](manual:training-guidelines)
 
-[8.1. Mapping and Description of Variables
-37](#mapping-and-description-of-variables-6)
+&nbsp;&nbsp;&nbsp;&nbsp;[](manual:training-lessons-learned-and-challenges)
 
-[8.1.1. Labour status, 7-day reference period
-37](#labour-status-7-day-reference-period)
+&nbsp;&nbsp;&nbsp;&nbsp;[](manual:training-tabular-overview-of-variables)
 
-[8.1.2. Primary Employment, 7-day reference period
-39](#primary-employment-7-day-reference-period)
+[](manual:labour)
 
-[8.1.3. Secondary Employment, 7-day reference period
-50](#secondary-employment-7-day-reference-period)
+&nbsp;&nbsp;&nbsp;&nbsp;[](manual:labour-guidelines)
 
-[8.1.4. Other Employment, 7-day reference period
-56](#other-employment-7-day-reference-period)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[](manual:labour-status)
 
-[8.1.5. Total Employment Earnings, 7-day reference period
-56](#total-employment-earnings-7-day-reference-period)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[](manual:labour-employment)
 
-[8.1.6. Labor status, 12-month reference period
-56](#labor-status-12-month-reference-period)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[](manual:labour-employment-2)
 
-[8.1.7. Primary Employment, 12-month reference period
-58](#primary-employment-12-month-reference-period)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[](manual:labour-employment-3)
 
-[8.1.8. Secondary Employment, 12-month reference period
-65](#secondary-employment-12-month-reference-period)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[](manual:labour-employment-4)
 
-[8.1.9. Other Employment, 12-month reference period
-70](#other-employment-12-month-reference-period)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[](manual:labour-employment-5)
 
-[8.1.10. Total Employment Earnings, 12-month reference period
-71](#total-employment-earnings-12-month-reference-period)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[](manual:labour-employment-6)
 
-[8.1.11. Total Labor Income 71](#total-labor-income)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[](manual:labour-employment-7)
 
-[8.2. Lessons Learned and Challenges
-72](#lessons-learned-and-challenges-6)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[](manual:labour-employment-8)
 
-[8.3. Tabular Overview of Variables
-74](#tabular-overview-of-variables-6)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[](manual:labour-employment-9)
 
-Introduction
-============
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[](manual:labour-employment-10)
+
+&nbsp;&nbsp;&nbsp;&nbsp;[](manual:labour-employment-11)
+
+&nbsp;&nbsp;&nbsp;&nbsp;[](manual:labour-employment-12)
+
+
+(manual:introduction)=
+# 1. Introduction
 
 This document serves as a guideline on the harmonization of the Global
 Labor Database (GLD), explaining what the GLD is, what it harmonizes and
@@ -137,8 +108,9 @@ aimed interoperability, borrows heavily from it (e.g., the description
 of variables that are both in GMD and GLD are identical in both
 documents).
 
-Global Labor Database (GLD) Project
------------------------------------
+(manual:global-labor-database-gld-project)=
+1.1 Global Labor Database (GLD) Project
+---------------------------------------
 
 The GLD project harmonizes official, nationally representative household
 surveys with significant labour market information to a common
@@ -156,8 +128,9 @@ Distribution Database (I2D2) which was the World Bank's earlier effort
 at creating a single large database of surveys with a common variable
 standard.
 
-File Organization
------------------
+(manual:file-organization)=
+1.2 File Organization
+---------------------
 
 Since GLD is a collaborative effort where different individuals work on
 the harmonization of different surveys, it is essential that everyone
@@ -248,8 +221,9 @@ Table
 |                      | HH.                  |                      |
 +----------------------+----------------------+----------------------+
 
-Do-file Organization and Guidelines
------------------------------------
+(manual:do-file-organization-and-guidelines)=
+1.3 Do-file Organization and Guidelines
+---------------------------------------
 
 ### Do-files: header guidelines
 
@@ -467,18 +441,20 @@ basic users in the Microdata Library.
 Tagging should be done for one variable at a time, not a group of
 variables.
 
-1.  Survey & ID module
-    ==================
+(manual:survey-id-module)=
+# 2. Survey & ID module
 
-    1.  ID Guidelines
-        -------------
+(manual:id-guidelines)=
+2.1 ID Guidelines
+-----------------
 
 The Survey & ID module is a file at individual level with basic
 household and individual identifiers. The household identifier is hhid,
 and the individual identifier is pid.
 
-Mapping and Description of Variables
-------------------------------------
+(manual:mapping-and-description-of-variables)=
+2.2 Mapping and Description of Variables
+----------------------------------------
 
 ### countrycode
 
@@ -657,8 +633,9 @@ A numeric variable denoting the visit number (e.g., first visit coded as
 1, second visit as 2, ...) within a panel. This variable is only to be
 coded if the concept is present in the raw data already.
 
-Lessons Learned and Challenges
-------------------------------
+(manual:lessons-learned-and-challenges)=
+2.3 Lessons Learned and Challenges
+----------------------------------
 
 ### Creating and checking IDs
 
@@ -757,10 +734,9 @@ current year (assumed here to be 2020).
 | > assert missing(hhid) |
 +------------------------+
 
-4.  
-
-5.  Tabular Overview of Variables
-    -----------------------------
+(manual:tabular-overview-of-variables)=
+2.4 Tabular Overview of Variables
+---------------------------------
 
 +-------------+-----------------+-----------------+-----------------+
 | Module Code | Variable label  | > Variable name | > Notes         |
@@ -866,11 +842,12 @@ current year (assumed here to be 2020).
 |             |                 |                 | > survey        |
 +-------------+-----------------+-----------------+-----------------+
 
-2.  Geography
-    =========
+(manual:geography)=
+# 3. Geography
 
-    1.  Mapping and Description of Variables
-        ------------------------------------
+(manual:geography-guidelines)=
+3.1 Mapping and Description of Variables
+----------------------------------------
 
 ### urban
 
@@ -1041,8 +1018,9 @@ database. It should be taken from the same data in the GAUL database
 where the geographical area can be identified in the survey based on the
 name of the location/area.
 
-Lessons Learned and Challenges
-------------------------------
+(manual:geo-lessons-learned-and-challenges)=
+3.2 Lessons Learned and Challenges
+----------------------------------
 
 -   subnatid codes should reflect the most recent codes that pertain to
     that survey. subnatid\_prev codes can be used to track splits and
@@ -1063,8 +1041,9 @@ Lessons Learned and Challenges
   urban!= 1 & urban!= 0
   -----------------------
 
-Tabular Overview of Variables
------------------------------
+(manual:geo-tabular-overview-of-variables)=
+3.3 Tabular Overview of Variables
+---------------------------------
 
 +-------------+-----------------+-----------------+-----------------+
 | Module Code | Variable name   | > Variable      | > Notes         |
@@ -1128,11 +1107,12 @@ Tabular Overview of Variables
 |             |                 |                 | e\_Unit\_Layers |
 +-------------+-----------------+-----------------+-----------------+
 
-3.  Demography
-    ==========
+(manual:household)=
+# 4. Demography
 
-    1.  Mapping and Description of Variables
-        ------------------------------------
+(manual:household-guidelines)=
+4.1 Mapping and Description of Variables
+----------------------------------------
 
 ### hsize
 
@@ -1326,8 +1306,9 @@ individual has any difficulty communicating or understanding usual
 
 4 = Cannot do at all
 
-Lessons Learned and Challenges
-------------------------------
+(manual:household-lessons-learned-and-challenges)=
+4.2 Lessons Learned and Challenges
+----------------------------------
 
 Data sets that are harmonized incorrectly can lead to skewed and/or
 incorrect data analysis. Harmonizers should run a series of checks to
@@ -1383,8 +1364,9 @@ the EU-SILC survey, a household contains the current member, but also
 the members of the previous survey who have left the household for
 reasons such as death or migration.
 
-Tabular Overview of Variables
------------------------------
+(manual:household-tabular-overview-of-variables)=
+4.3 Tabular Overview of Variables
+---------------------------------
 
 +-------------+-----------------+-----------------+-----------------+
 | Module Code | Variable name   | > Variable      | > Notes         |
@@ -1443,13 +1425,12 @@ Tabular Overview of Variables
 |             |                 | > communicating |                 |
 +-------------+-----------------+-----------------+-----------------+
 
-4.  
+(manual:migration)=
+# 5. Migration
 
-5.  Migration
-    =========
-
-    1.  Mapping and Description of Variables
-        ------------------------------------
+(manual:migration-guidelines)=
+5.1 Mapping and Description of Variables
+----------------------------------------
 
 ### migrated\_mod\_age
 
@@ -1553,8 +1534,9 @@ Codifies the reason why a person migrated. The codes are:
 >
 > 5 = Other reasons
 
-Lessons Learned and Challenges
-------------------------------
+(manual:migration-lessons-learned-and-challenges)=
+5.2 Lessons Learned and Challenges
+----------------------------------
 
 ### Codifying *migrated\_from\_\* questions*
 
@@ -1766,8 +1748,9 @@ following way:
 | \</\_migrated\_from\_country\_\> |                                  |
 +----------------------------------+----------------------------------+
 
-Tabular Overview of Variables
------------------------------
+(manual:migration-tabular-overview-of-variables)=
+5.3 Tabular Overview of Variables
+---------------------------------
 
 +-------------+-----------------+-----------------+-----------------+
 | Module Code | Variable name   | > Variable      | > Notes         |
@@ -1819,13 +1802,12 @@ Tabular Overview of Variables
 |             | igrated\_reason | > migrating     |                 |
 +-------------+-----------------+-----------------+-----------------+
 
-6.  
+(manual:education)=
+# 6. Education
 
-7.  Education
-    =========
-
-    1.  Mapping and Description of Variables
-        ------------------------------------
+(manual:education-guidelines)=
+6.1 Mapping and Description of Variables
+----------------------------------------
 
 ### ed\_mod\_age
 
@@ -1943,15 +1925,17 @@ code should be three digits long. If we only know the level (here 2) add
 two zeroes after it (here: 200). If we only have the category
 information (here 24) add a zero to reach three digits (here 240).
 
-Lessons Learned and Challenges
-------------------------------
+(manual:education-lessons-learned-and-challenges)=
+6.2 Lessons Learned and Challenges
+----------------------------------
 
-Text
+```{note}
+To be completed.
+```
 
-3.  
-
-4.  Tabular Overview of Variables
-    -----------------------------
+(manual:education-tabular-overview-of-variables)=
+6.3 Tabular Overview of Variables
+---------------------------------
 
 +-------------+---------------+------------------+------------------+
 | Module Code | Variable name | > Variable label | > Notes          |
@@ -2018,13 +2002,12 @@ Text
 |             |               |                  | respectively.    |
 +-------------+---------------+------------------+------------------+
 
-8.  
+(manual:training)=
+# 7. Training
 
-9.  Training
-    ========
-
-    1.  Mapping and Description of Variables
-        ------------------------------------
+(manual:training-guidelines)=
+7.1 Mapping and Description of Variables
+----------------------------------------
 
 ### vocational
 
@@ -2075,13 +2058,17 @@ Text. The codes are:
 
 5 = Other
 
-Lessons Learned and Challenges
-------------------------------
+(manual:training-lessons-learned-and-challenges)=
+7.2 Lessons Learned and Challenges
+----------------------------------
 
-Text
+```{note}
+To be completed.
+```
 
-Tabular Overview of Variables
------------------------------
+(manual:training-tabular-overview-of-variables)=
+7.3 Tabular Overview of Variables
+---------------------------------
 
 +-------------+-----------------+-----------------+-----------------+
 | Module Code | Variable name   | > Variable      | > Notes         |
@@ -2114,11 +2101,12 @@ Tabular Overview of Variables
 |             |                 |                 | main source     |
 +-------------+-----------------+-----------------+-----------------+
 
-10. Labour
-    ======
+(manual:labour)=
+# 8. Labour
 
-    1.  Mapping and Description of Variables
-        ------------------------------------
+(manual:labour-guidelines)=
+8.1 Mapping and Description of Variables
+----------------------------------------
 
 ### minlaborage
 
@@ -2127,8 +2115,9 @@ survey or the minimum working age in the country. For this reason, the
 lower age cutoff at which information is collected will vary from
 country to country.
 
-Labour status, 7-day reference period
--------------------------------------
+(manual:labour-status)=
+8.1.1 Labour status, 7-day reference period
+-------------------------------------------
 
 ### lstatus
 
@@ -2257,8 +2246,9 @@ reported as a range, but as continuous variables, the unempldur\_l and
 unempldur\_u variables will have the same value. If the high range is
 open-ended the unempldur\_u variable will be missing.
 
-Primary Employment, 7-day reference period
-------------------------------------------
+(manual:labour-employment)=
+8.1.2 Primary Employment, 7-day reference period
+------------------------------------------------
 
 ### empstat
 
@@ -2866,8 +2856,9 @@ working for the same employer. If the variable is categorical, it
 records the upper boundary of the bracket. If the right bracket is open,
 this variable should be missing.
 
-Secondary Employment, 7-day reference period
---------------------------------------------
+(manual:labour-employment-2)=
+8.1.3 Secondary Employment, 7-day reference period
+--------------------------------------------------
 
 ### empstat\_2
 
@@ -3260,8 +3251,9 @@ employer. If the variable is categorical, it records the upper boundary
 of the bracket. If the right bracket is open, a missing value should be
 inputted.
 
-Other Employment, 7-day reference period
-----------------------------------------
+(manual:labour-employment-3)=
+8.1.4 Other Employment, 7-day reference period
+----------------------------------------------
 
 ### t\_hours\_others
 
@@ -3289,8 +3281,9 @@ other payments. wage\_others should be equal to wage\_nocompen\_ others
 in case there are no bonuses, tips etc. offered as part of any of the
 jobs.
 
-Total Employment Earnings, 7-day reference period
--------------------------------------------------
+(manual:labour-employment-4)=
+8.1.5 Total Employment Earnings, 7-day reference period
+-------------------------------------------------------
 
 ### t\_hours\_total
 
@@ -3320,8 +3313,9 @@ offered as part of any of the jobs. If the number of months worked in
 this job is missing the harmonizer could assumed that the person worked
 the whole year in this job.
 
-Labor status, 12-month reference period
----------------------------------------
+(manual:labour-employment-5)=
+8.1.6 Labor status, 12-month reference period
+---------------------------------------------
 
 ### lstatus\_year
 
@@ -3439,8 +3433,9 @@ reported as a range, but as continuous variables, the unempldur\_l\_year
 and unempldur\_u\_year variables will have the same value. If the high
 range is open- ended the unempldur\_u\_year variable will be missing.
 
-Primary Employment, 12-month reference period
----------------------------------------------
+(manual:labour-employment-6)=
+8.1.7 Primary Employment, 12-month reference period
+---------------------------------------------------
 
 ### empstat\_year
 
@@ -3887,8 +3882,9 @@ people working for the same employer. If the variable is categorical, it
 records the upper boundary of the bracket. If the right bracket is open,
 this variable should be missing.
 
-Secondary Employment, 12-month reference period
------------------------------------------------
+(manual:labour-employment-7)=
+8.1.8 Secondary Employment, 12-month reference period
+-----------------------------------------------------
 
 ### empstat\_2\_year
 
@@ -4283,8 +4279,9 @@ employer. If the variable is categorical, it records the upper boundary
 of the bracket. If the right bracket is open, a missing value should be
 inputted.
 
-Other Employment, 12-month reference period
--------------------------------------------
+(manual:labour-employment-8)=
+8.1.9 Other Employment, 12-month reference period
+-------------------------------------------------
 
 ### t\_hours\_others\_year
 
@@ -4312,8 +4309,9 @@ other payments. t\_wage\_others should be equal to t\_wage\_nocompen\_
 others in case there are no bonuses, tips etc. offered as part of any of
 the jobs.
 
-Total Employment Earnings, 12-month reference period
-----------------------------------------------------
+(manual:labour-employment-9)=
+8.1.10 Total Employment Earnings, 12-month reference period
+-----------------------------------------------------------
 
 ### t\_hours\_total\_year
 
@@ -4341,8 +4339,9 @@ dwellings or clothes, and other payments. t\_wage\_total should be equal
 to t\_wage\_nocompen\_total in case there are no bonuses, tips etc.
 offered as part of any of the jobs.
 
-Total Labor Income
-------------------
+(manual:labour-employment-10)=
+8.1.11 Total Labor Income
+-------------------------
 
 ### njobs
 
@@ -4374,8 +4373,9 @@ tips, compensations such as bonuses, dwellings or clothes, and other
 payments. This variable should be used as the total annual labor income
 of an individual.
 
-Lessons Learned and Challenges
-------------------------------
+(manual:labour-employment-11)=
+8.2 Lessons Learned and Challenges
+----------------------------------
 
 For any variable not collected in a country, the variable should be
 created and left as missing (.) in the final harmonized file.
@@ -4439,8 +4439,9 @@ firmsize\_u should not be lower than firmsize\_l
 
 firmsize\_u \< firmsize\_l
 
-Tabular Overview of Variables
------------------------------
+(manual:labour-employment-12)=
+8.3 Tabular Overview of Variables
+---------------------------------
 
 +--------+-----------------+------------------+------------------+
 | Module | Variable name   | > Variable label | > Notes          |
