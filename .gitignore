@@ -109,6 +109,9 @@ _build/
 !docs/**/*.yml
 !docs/**/*.yaml
 
+# docs requirements
+!docs/requirements.txt
+
 #  Other files for github pages
 !docs/**/*.gem
 !.bundle
