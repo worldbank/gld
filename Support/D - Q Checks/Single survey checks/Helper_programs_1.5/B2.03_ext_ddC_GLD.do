@@ -136,7 +136,7 @@
 		replace weekwage = wage_no_compen      if unitwage == 2 // (weekly)
 		replace weekwage = wage_no_compen/2    if unitwage == 3 // (every two weeks)
 		replace weekwage = wage_no_compen/8.67 if unitwage == 4 // (bi-monthly)
-		replace weekwage = wage_no_compen/4.33 if unitwage == 5 // (weekly)
+		replace weekwage = wage_no_compen/4.33 if unitwage == 5 // (monthly)
 		replace weekwage = wage_no_compen/13   if unitwage == 6 // (Trimester)
 		replace weekwage = wage_no_compen/26   if unitwage == 7 // (Biannual)
 		replace weekwage = wage_no_compen/52   if unitwage == 8 // (Annual)
