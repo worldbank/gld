@@ -15,7 +15,7 @@ jobs:
           python-version: "3.10"
       - name: Dependencies
         run: |
-          if [ -f docs/requirements.txt ]; then pip install -r docs/requirements.txt; fi
+          pip install -r docs/requirements.txt
       - name: Dynamically Generate Script Page
         run: |
           python docs/scripts/script_structure.py
