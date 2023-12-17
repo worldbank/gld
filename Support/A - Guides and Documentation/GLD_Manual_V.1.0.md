@@ -471,7 +471,7 @@ LFS, where any yes answer will skip to questions on main employment
 (Q25). As highlighted, work for a wage is treated in the same than work
 on any agricultural holding. This survey follows ICLS-13.
 
-> ![](media/image1.png){width="3.6972222222222224in" height="5.025in"}
+> ![](img/img01.png)
 
 Five years later, the Zimbabwean statistics office, ZimStat, switched to
 ICLS-19. In ICLS-19, only work for market exchange is considered
@@ -486,7 +486,7 @@ their first main job (MJ1). If agricultural production is only or mainly
 for own consumption, then the questionnaire continues, here asking
 whether they work for others for hire.
 
-> ![](media/image2.png){width="4.770833333333333in" height="4.7in"}
+> ![](img/img02.png)
 
 If the survey asks questions to understand what kind of farming takes
 place (subsistence or market exchange) and defines a skip pattern to
@@ -1929,8 +1929,7 @@ education is both a grade (part 1 of question 13) and the number of
 years spent in that grade (part 2). In such a case *educat\_orig* is to
 be left missing.
 
-![](media/image3.png){width="6.416666666666667in"
-height="3.1145833333333335in"}
+![](img/img03.png)
 
 ### educat\_isced
 
@@ -2180,8 +2179,7 @@ here](https://ilostat.ilo.org/persons-outside-the-labour-force-how-inactive-are-
 shows the different definitions.
 
 > ![Labour force status of the working-age
-> population](media/image4.png){width="5.458333333333333in"
-> height="3.1666666666666665in"}
+> population](img/img04.png)
 
 The variable potential\_lf thus codifies whether the person is not in
 the labour force over the past 7 days (lstatus=3, missing otherwise) but
@@ -2377,8 +2375,7 @@ by the public sector.
 The following is an example of the relevant question in the 2010
 Pakistani LFS:
 
-![](media/image5.png){width="2.142649825021872in"
-height="5.491666666666666in"}
+![](img/img05.png)
 
 Here code 4 represents a public enterprise (explicitly mentioned as a
 corporation created by a legislative body) and code 6 a public limited
@@ -2435,8 +2432,7 @@ containing one and three *classes* respectively.
 
 Figure 1 - Example of ISIC classification
 
-![](media/image6.png){width="6.488194444444445in"
-height="2.8256944444444443in"}
+![](img/img06.png)
 
 A single section will often cover several divisions. While D has only
 one division (35 -- electricity, gas, steam and air conditioning supply)
@@ -2474,7 +2470,7 @@ and dyeing of fur" (green box) we would code "1511".
 
 Figure 2 - Examples of different ISIC codes
 
-![](media/image7.png){width="6.5in" height="4.1in"}
+![](img/img07.png)
 
 ### industrycat10
 
@@ -2525,7 +2521,7 @@ Ten categories after harmonization:
     > Revision 2. The below table shows how to classify the different
     > ISIC revision codes into industrycat10.
 
-### ![](media/image8.png){width="10.560740376202975in" height="4.566929133858268in"}
+![](img/img08.png)
 
 ### industrycat4
 
@@ -2578,7 +2574,7 @@ possible values that can be taken on.
 
 Figure 3 - Example of values for ISCO-08
 
-![](media/image9.png){width="6.46875in" height="1.8020833333333333in"}
+![](img/img09.png)
 
 If we only had information at Major Group level, a person working as a
 Services and Sales Worker ought to be coded as the number 5000. If the
@@ -2598,7 +2594,7 @@ otherwise. It follows from the ISCO classification as shown in Figure 4.
 
 Figure 4 - ISCO broad skill level classification
 
-![](media/image10.png){width="6.5in" height="3.535416666666667in"}
+![](img/img10.png)
 
 Thus, the codes are:
 
