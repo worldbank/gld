@@ -202,7 +202,7 @@ PHL\_2016\_LFS\_v01\_M\_v01\_A\_GLD\_ALL.dta
 ### Do-files: header guidelines
 
 Each do file should have a header that gives relevant context
-information (see Box 1, next page) that helps understand the
+information (see Box 1) that helps understand the
 harmonization process not only for other users but for the harmonizers
 themselves at later points in time. It contains four blocks:
 
@@ -459,7 +459,7 @@ and
 employment](http://documents1.worldbank.org/curated/en/468881598538973944/pdf/Who-Is-Employed-Evidence-from-Sub-Saharan-Africa-on-Redefining-Employment.pdf).
 
 Most commonly, surveys harmonized to GLD will either follow ICLS-13 or
-ICLS-19, that is, the directives set out during the 13^th^ or the 19^th^
+ICLS-19, that is, the directives set out during the 13th or the 19th
 conference, especially pertaining employment.
 
 In ICLS-13 all work -- other than household work -- is seen as
@@ -603,9 +603,11 @@ panel is defined as all individuals who entered a survey at the same
 time (e.g., Q3 of 2020) and are scheduled to exit at the same time after
 a fixed number of survey waves (e.g., after four quarters).
 
-Note that due to attrition not all intakes may exit at the same time.
+```{note}
+Due to attrition not all intakes may exit at the same time.
 This variable is only to be coded if the concept is present in the raw
 data already.
+```
 
 ### visit\_no
 
@@ -860,9 +862,9 @@ to classify such categories as "urban."
 
 Urban categories:
 
-1 = Urban
-
-0 = Rural
+> 1 = Urban
+>
+> 0 = Rural
 
 ### subnatid1
 
@@ -1201,10 +1203,12 @@ Relationship to head of household, six categories after harmonization:
 >
 > 6=non-relatives
 
-Note: In cases where head is missing or a migrant, we assign spouse as
+```{note}
+In cases where head is missing or a migrant, we assign spouse as
 the head of the household. If spouse is also not available, then we will
 use oldest member of the household as the head and recode all the
 relations to head accordingly.
+```
 
 ### relationcs
 
@@ -1243,15 +1247,15 @@ other numeric characters should be excluded from the values of the
 
 Marital status, five categories after harmonization:
 
-> 1=married
+> 1 = married
 >
-> 2=never married
+> 2 = never married
 >
-> 3=living together
+> 3 = living together
 >
-> 4=divorced/separated
+> 4 = divorced/separated
 >
-> 5=widowed
+> 5 = widowed
 
 ### eye\_dsablty
 
@@ -1301,13 +1305,13 @@ conc\_dsord is a numerical variable that indicates whether an individual
 has any difficulty concentrating or remembering. Categories after
 harmonization:
 
-1 = No -- no difficulty
-
-2 = Yes -- some difficulty
-
-3 = Yes -- a lot of difficulty
-
-4 = Cannot do at all
+> 1 = No -- no difficulty
+>
+> 2 = Yes -- some difficulty
+>
+> 3 = Yes -- a lot of difficulty
+>
+> 4 = Cannot do at all
 
 ### slfcre\_dsablty
 
@@ -1315,13 +1319,13 @@ slfcre\_dsablty is a numerical variable that indicates whether an
 individual has any difficulty with self-care such as washing all over or
 dressing. Categories after harmonization:
 
-1 = No -- no difficulty
-
-2 = Yes -- some difficulty
-
-3 = Yes -- a lot of difficulty
-
-4 = Cannot do at all
+> 1 = No -- no difficulty
+>
+> 2 = Yes -- some difficulty
+>
+> 3 = Yes -- a lot of difficulty
+>
+> 4 = Cannot do at all
 
 ### comm\_dsablty
 
@@ -1329,13 +1333,13 @@ comm\_dsablty is a numerical variable that indicates whether an
 individual has any difficulty communicating or understanding usual
 (customary) language. Categories after harmonization:
 
-1 = No -- no difficulty
-
-2 = Yes -- some difficulty
-
-3 = Yes -- a lot of difficulty
-
-4 = Cannot do at all
+> 1 = No -- no difficulty
+>
+> 2 = Yes -- some difficulty
+>
+> 3 = Yes -- a lot of difficulty
+>
+> 4 = Cannot do at all
 
 (manual:household-lessons-learned-and-challenges)=
 4.2 Lessons Learned and Challenges
@@ -1347,46 +1351,66 @@ ensure data is harmonized properly, including the following:
 
 Check to make sure that age is an integer since 5 years old.
 
+```do
 age/int(age)!= 1 & age!= . & age \> 5
+```
 
 age cannot have negative or extreme values (\>120)
 
+```do
 (age \< 0 \| age\>120) & age\<.
+```
 
 Age cannot be missing
 
+```do
 age==.
+```
 
 Male variable can only take one of two values 0 or 1 (or missing).
 
+```do
 male!=. & male!= 1 & male!= 0
+```
 
 Check if male is missing.
 
+```do
 male==.
+```
 
 Check to make sure that there is variation in male
 
+```do
 egen sdmale = sd(male) // sdmale should be 0
+```
 
 relationharm must be an integer in the range \[1,6\].
 
+```do
 relationharm\<1 & relationharm\>6 & mod(relationharm, 1) == 1
+```
 
 marital must be an integer in the range \[1,5\].
 
+```do
 marital\<0 & marital\>5 & mod(marital, 1) == 1
+```
 
 Children are "Never married" and should be coded as so even though it
 may be perceived as obvious. The marital status of individuals should be
 harmonized for all individuals. Harmonizers should check to make sure
 children are not systematically left with missing values for marital.
 
+```do
 tab age marital, missing
+```
 
 weight cannot be missing
 
+```do
 weight==.
+```
 
 Additionally, harmonizers should ensure that the household size variable
 is calculated correctly. Not all the individuals reported in a household
@@ -1539,10 +1563,12 @@ current residence (which is codified in subnatid1).
 This only codifies information within the country. Set to missing if
 migrated\_from\_cat is 5.
 
-Note that most surveys will only provide information of last residence
+```{note}
+Most surveys will only provide information of last residence
 to a higher administrative level (e.g., admin1 level). Codify the
 information up to the highest level possible. See an example in 5.2
 below.
+```
 
 ### migrated\_from\_country
 
@@ -1580,7 +1606,7 @@ Question 15 of Block 4 asks interviewer to enter the "location code" for
 the kind of migration the interviewees claim to have made. The codes
 are:
 
-> *[location of last usual residence]{.underline}: same district:
+> *__location of last usual residence__: same district:
 > rural-1, urban-2; same state but another district: rural-3, urban-4;
 > another state: rural-5, urban-6; another country-7*
 
@@ -1857,8 +1883,8 @@ Codifies whether person can read and write in at least one language. The
 codes are:
 
 > 0 = No
-
-1 = Yes
+>
+> 1 = Yes
 
 ### educy
 
@@ -1870,18 +1896,18 @@ Classifies the highest level of education attained by the respondent to
 seven levels. The codes are:
 
 > 1 = No education
-
-2 = Primary incomplete
-
-3 = Primary complete
-
-4 = Secondary incomplete
-
-5 = Secondary complete
-
-6 = Higher than secondary but not university
-
-7 = University incomplete or complete
+>
+> 2 = Primary incomplete
+>
+> 3 = Primary complete
+>
+> 4 = Secondary incomplete
+>
+> 5 = Secondary complete
+>
+> 6 = Higher than secondary but not university
+>
+> 7 = University incomplete or complete
 
 ### educat5
 
@@ -1889,14 +1915,14 @@ Classifies the highest level of education attained by the respondent to
 five levels. The codes are:
 
 > 1 = No education
-
-2 = Primary incomplete
-
-3 = Primary complete but secondary incomplete
-
-4 = Secondary complete
-
-5 = Some tertiary/post-secondary
+>
+> 2 = Primary incomplete
+>
+> 3 = Primary complete but secondary incomplete
+>
+> 4 = Secondary complete
+>
+> 5 = Some tertiary/post-secondary
 
 ### educat4
 
@@ -1904,15 +1930,17 @@ Classifies the highest level of education attained by the respondent to
 four levels. The codes are:
 
 > 1 = No education
+>
+> 2 = Primary (complete or incomplete)
+>
+> 3 = Secondary (complete)
+>
+> 4 = Tertiary (complete or incomplete)
 
-2 = Primary (complete or incomplete)
-
-3 = Secondary (complete)
-
-4 = Tertiary (complete or incomplete)
-
-[Note]{.underline}: Code as primary education anyone who has undergone
+```{note}
+Code as primary education anyone who has undergone
 some schooling but has not finished secondary education.
+```
 
 ### educat\_orig
 
@@ -1934,9 +1962,11 @@ be left missing.
 ### educat\_isced
 
 Code of the highest educational level attained as per the International
-Standard Classification of Education (ISCED). Note that the preamble to
-the harmonization code should record what version of ISCED is being
-used.
+Standard Classification of Education (ISCED).
+
+```{note}
+The preamble to the harmonization code should record what version of ISCED is being used.
+```
 
 Moreover, the code should always be as long as the longest depth
 available for the ISCED version. For example, the latest version at the
@@ -2021,8 +2051,8 @@ Codifies whether the person ever attended vocational training. The codes
 are:
 
 > 0 = No
-
-1 = Yes
+>
+> 1 = Yes
 
 ### vocational\_type
 
@@ -2052,17 +2082,21 @@ while preserving its original structure.
 
 ### vocational\_financed
 
-Text. The codes are:
+```{note}
+To be completed.
+```
 
-1 = Employer
+The codes are:
 
-2 = Government
-
-3 = Mixed Employer-Government
-
-4 = Own funds
-
-5 = Other
+> 1 = Employer
+>
+> 2 = Government
+>
+> 3 = Mixed Employer-Government
+>
+> 4 = Own funds
+>
+> 5 = Other
 
 (manual:training-lessons-learned-and-challenges)=
 7.2 Lessons Learned and Challenges
@@ -2145,7 +2179,7 @@ All persons are considered active in the labor force if they presently
 have a job (formal or informal, i.e., employed) or do not have a job but
 are actively seeking work (i.e., unemployed).
 
-1 = Employed
+> 1 = Employed
 
 Employed is defined as anyone who worked during the last 7 days or
 reference week, regardless of whether the employment was formal or
@@ -2153,7 +2187,7 @@ informal, paid or unpaid, for a minimum of 1 hour. Individuals who had a
 job, but for any reason did not work in the last 7 days are considered
 employed.
 
-2 = Unemployed
+> 2 = Unemployed
 
 A person is defined as unemployed if he or she is, presently not working
 but is actively seeking a job. The formal definition of unemployed
@@ -2162,7 +2196,7 @@ asked in a minority of surveys and is, thus, not incorporated in the
 present definition. A person presently not working but waiting for the
 start of a new job is considered unemployed.
 
-3 = Not-in-labor force
+> 3 = Not-in-labor force
 
 A person is defined as not-in-labor force if he or she is, presently not
 working and it is not actively seeking a job during the last 7 days or
@@ -2197,8 +2231,8 @@ past 7 days (lstatus=1, missing otherwise) but would take on more jobs
 or more hours at their job if possible/available. The codes are:
 
 > 0 = No (not underemployed)
-
-1 = Yes
+>
+> 1 = Yes
 
 ### nlfreason
 
@@ -2209,12 +2243,12 @@ otherwise.
 
 Five categories after harmonization:
 
-> 1= Student (a person currently studying.)
+> 1 = Student (a person currently studying.)
 >
-> 2= Housekeeper (a person who takes care of the house, older people, or
+> 2 = Housekeeper (a person who takes care of the house, older people, or
 > children)
 >
-> 3= Retired
+> 3 = Retired
 >
 > 4 = Disabled (a person who cannot work due to physical conditions)
 >
@@ -2281,7 +2315,7 @@ Five categories after harmonization:
 >
 > 5 = Other, workers not classifiable by status
 
-1 = Paid Employee
+> 1 = Paid Employee
 
 Paid employee includes anyone whose basic remuneration is not directly
 dependent on the revenue of the unit they work for, typically
@@ -2289,7 +2323,7 @@ remunerated by wages and salaries but may be paid for piece work or
 in-kind. The 'continuous' criteria used in the ILO definition is not
 used here as data are often absent and due to country specificity.
 
-2 = Non-Paid Employee
+> 2 = Non-Paid Employee
 
 Non-paid employee includes contributing family workers who hold a
 self-employment job in a market-oriented establishment operated by a
@@ -2299,14 +2333,14 @@ establishment, in terms of working time or other factors, is not at a
 level comparable to that of the head of the establishment. All
 apprentices should be mapped as 'non-paid employee'
 
-3 = Employer
+> 3 = Employer
 
 An employer is a business owner (whether alone or in partnership) with
 employees. If the only people working in the business are the owner and
 contributing family workers, the person is not considered an employer
 (as has no employees) and is, instead classified as self-employed.
 
-4 = Self-employed
+> 4 = Self-employed
 
 Own account or self-employment includes jobs where remuneration is
 directly dependent from the goods and service produced (where home
@@ -2321,7 +2355,7 @@ determining the organization of production, sales and/or other work of
 the establishment, the investments and the distribution of the proceeds
 of the establishment amongst the members.
 
-5 = Other, workers not classifiable by status
+> 5 = Other, workers not classifiable by status
 
 Other, workers not classifiable by status include those for whom
 insufficient relevant information is available and/or who cannot be
@@ -2345,23 +2379,23 @@ Four categories after harmonization:
 >
 > 4 = Public or State-owned, but cannot distinguish
 
-1 = Public Sector, Central Government, Army (including armed forces)
+> 1 = Public Sector, Central Government, Army (including armed forces)
 Public sector
 
 The part of economy run by the government.
 
-2 = Private, NGO
+> 2 = Private, NGO
 
 Private sector is that part of the economy which is both run for private
 profit and is not controlled by the state, it also includes
 non-governmental organizations
 
-3 = State-owned enterprises
+> 3 = State-owned enterprises
 
 State-owned includes para-state firms and all others in which the
 government has control (participation over 50%).
 
-4 = Public or State-owned, but cannot distinguish
+> 4 = Public or State-owned, but cannot distinguish
 
 Select this option is the questionnaire does not ask for State-owned
 enterprises, and only for Public sector.
@@ -2396,8 +2430,9 @@ var\_sector):
 >
 > replace ocusec = 4 if var\_sector == 10
 
-*[Notes]{.underline}*: Do not code basis of occupation (ISCO) or
-industry (ISIC) codes.
+```{note}
+Do not code basis of occupation (ISCO) or industry (ISIC) codes.
+```
 
 ### industry\_orig
 
@@ -2414,8 +2449,10 @@ otherwise
 Code (string variable) of the industry according to the International
 Standard Industry Classification (ISIC) in the last 7 days for the main
 job of any individual with a job (lstatus=1) and is missing otherwise.
-Note that the preamble to the harmonization code should record what
-version of ISIC is being used.
+
+```{note}
+The preamble to the harmonization code should record what version of ISIC is being used.
+```
 
 The code should always be as long as the longest depth available for the
 ISIC version. For example, the latest version at the time of writing
@@ -2449,8 +2486,11 @@ case, the codification should be a string of four digits with a zero
 padding before for division 1 through 9 (i.e., 01, to 09).
 
 As an example, Figure 2, puts together a few excerpts from ISIC Rev.4.
-Note that, if we do not codify correctly, group 14 (Animal production)
+
+```{note}
+If we do not codify correctly, group 14 (Animal production)
 may be misunderstood for division 14 (Manufacture of wearing apparel).
+```
 
 If we only have information up to the group label, fill out the reminder
 of the digits with zeros. Hence the purple box in Figure 2 would be
@@ -2503,9 +2543,8 @@ Ten categories after harmonization:
 > 9 = Public Administration
 >
 > 10 = Other Services, Unspecified
->
-> Notes:
 
+```{note}
 -   In the case of different classifications (former Soviet Union
     > republics, for example), recoding has been done to best match the
     > ISIC codes.
@@ -2520,6 +2559,7 @@ Ten categories after harmonization:
     > original industrycat10 categories are largely based on ISIC
     > Revision 2. The below table shows how to classify the different
     > ISIC revision codes into industrycat10.
+```
 
 ![](img/img08.png)
 
@@ -2535,7 +2575,7 @@ Four categories after harmonization:
 
 > 1 = Agriculture
 >
-> 2= Industry
+> 2 = Industry
 >
 > 3 = Services
 >
@@ -2556,8 +2596,11 @@ whatever is in the original file with no recoding.
 Code (string variable) of the occupation according to the International
 Standard Classification of Occupations (ISCO) in the last 7 days for the
 main job of any individual with a job (lstatus=1) and is missing
-otherwise. Note that the preamble to the harmonization code should
-record what version of ISCO is being used.
+otherwise.
+
+```{note}
+The preamble to the harmonization code should record what version of ISCO is being used.
+```
 
 The code should always be as long as the longest depth available for the
 ISCO) version. For example, the latest version at the time of writing
@@ -2658,7 +2701,7 @@ for all persons administered this module in each questionnaire. For this
 reason, the lower age cutoff (and perhaps upper age cutoff) will vary
 from country to country.
 
-Notes:
+```{note}
 
 -   For all those with self-employment or owners of own businesses, this
     should be net revenues (net of all costs EXCEPT for tax payments) or
@@ -2670,6 +2713,8 @@ Notes:
 
 -   The reference period of the wage\_no\_compen will be recorded in the
     unitwage variable.
+
+```
 
 ### unitwage
 
@@ -2707,8 +2752,7 @@ person dedicated more time to over the past week. The variable is
 constructed for all persons administered this module in each
 questionnaire.
 
-Notes:
-
+```{note}
 -   If the respondent was absent from the job in the week preceeding the
     survey due to holidays, vacation, or sick leave, then record the
     time worked in the previous 7 days that the person worked.
@@ -2722,6 +2766,7 @@ Notes:
 
 -   In the case of a question that has hours worked per month, divide by
     4.3 to get weekly hours.
+```
 
 ### wmonths
 
@@ -2786,9 +2831,11 @@ Box 4 - Example of wage\_total creation
 +----------------------------------------------------------------------+
 ```
 
-Note: Use gross wages when available and net wages only when gross wages
+```{note}
+Use gross wages when available and net wages only when gross wages
 are not available. This is done to make it easy to compare earnings in
 formal and informal sectors.
+```
 
 ### contract
 
@@ -2892,7 +2939,7 @@ Five categories after harmonization:
 >
 > 5 = Other, workers not classifiable by status
 
-1 = Paid Employee
+> 1 = Paid Employee
 
 Paid employee includes anyone whose basic remuneration is not directly
 dependent on the revenue of the unit they work for, typically
@@ -2900,7 +2947,7 @@ remunerated by wages and salaries but may be paid for piece work or
 in-kind. The 'continuous' criteria used in the ILO definition is not
 used here as data are often absent and due to country specificity.
 
-2 = Non-Paid Employee
+> 2 = Non-Paid Employee
 
 Non-paid employee includes contributing family workers who hold a
 self-employment job in a market-oriented establishment operated by a
@@ -2910,14 +2957,14 @@ establishment, in terms of working time or other factors, is not at a
 level comparable to that of the head of the establishment. All
 apprentices should be mapped as non-paid employee.
 
-3 = Employer
+> 3 = Employer
 
 Employer is a business owner (whether alone or in partnership) with
 employees. If the only people working in the business are the owner and
 'contributing family workers, the person is not considered an employer
 (as has no employees) and is, instead classified as own account.
 
-4 = Self-employed
+> 4 = Self-employed
 
 Own account or self-employment includes jobs are those where
 remuneration is directly dependent from the goods and service produced
@@ -2932,7 +2979,7 @@ determining the organization of production, sales and/or other work of
 the establishment, the investments and the distribution of the proceeds
 of the establishment amongst the members.
 
-5 = Other, workers not classifiable by status
+> 5 = Other, workers not classifiable by status
 
 Other, workers not classifiable by status include those for whom
 insufficient relevant information is available and/or who cannot be
@@ -2956,26 +3003,28 @@ Four categories after harmonization:
 >
 > 4 = Public or State-owned, but cannot distinguish
 
-1 = Public Sector, Central Government, Army (including armed forces)
+> 1 = Public Sector, Central Government, Army (including armed forces)
 Public sector is the part of economy run by the government.
 
-2 = Private, NGO
+> 2 = Private, NGO
 
 Private sector is that part of the economy which is both run for private
 profit and is not controlled by the state, it also includes
 non-governmental organizations
 
-3 = State-owned enterprises
+> 3 = State-owned enterprises
 
 State-owned includes para-state firms and all others in which the
 government has control (participation over 50%).
 
-4 = Public or State-owned, but cannot distinguish
+> 4 = Public or State-owned, but cannot distinguish
 
 Select this option is the questionnaire does not ask for State-owned
 enterprises, and only for Public sector.
 
-Notes: Do not code basis of occupation (ISCO) or industry (ISIC) codes.
+```{note}
+Do not code basis of occupation (ISCO) or industry (ISIC) codes.
+```
 
 ### industry\_orig\_2
 
@@ -3027,7 +3076,7 @@ Ten categories after harmonization:
 >
 > 10 = Other Services, Unspecified
 
-Notes:
+```{note}
 
 -   In the case of different classifications (former Soviet Union
     republics, for example), recoding has been done to best match the
@@ -3037,6 +3086,7 @@ Notes:
 
 -   For details on how to code different ISIC versions to
     industrycat10\_2 see the industrycat10 entry.
+```
 
 ### industrycat4\_2
 
@@ -3132,7 +3182,7 @@ for all persons administered this module in each questionnaire. For this
 reason, the lower age cutoff (and perhaps upper age cutoff) will vary
 from country to country.
 
-Notes:
+```{note}
 
 -   For all those with self-employment or owners of own businesses, this
     should be net revenues (net of all costs EXCEPT for tax payments) or
@@ -3148,6 +3198,8 @@ Notes:
 -   Use gross wages when available and net wages only when gross wages
     are not available. This is done to make it easy to compare earnings
     in formal and informal sectors.
+
+```
 
 ### unitwage\_2
 
@@ -3190,7 +3242,7 @@ constructed for all persons administered this module in each
 questionnaire. The lower age cutoff (and perhaps upper age cutoff) at
 which information is collected will vary from country to country.
 
-Notes:
+```{note}
 
 -   If the respondent was absent from the job in the week preceeding the
     survey due to holidays, vacation, or sick leave, then record the
@@ -3205,6 +3257,8 @@ Notes:
 
 -   In the case of a question that has hours worked per month, divide by
     4.3 to get weekly hours.
+
+```
 
 ### wmonths\_2
 
@@ -3230,7 +3284,7 @@ variable is constructed for all persons administered this module in each
 questionnaire. For this reason, the lower age cutoff (and perhaps upper
 age cutoff) will vary from country to country.
 
-Notes:
+```{note}
 
 -   The annualization of the wage\_total\_2 should consider the number
     of months/weeks the persons have been working and receiving this
@@ -3240,6 +3294,8 @@ Notes:
 -   For an example on how to annualize wage see 5.2.2 Primary Employment
     last 7-days variable wage\_total (Example: Creation of wage\_total
     when there are no bonuses nor other compensations).
+
+```
 
 ### firmsize\_l\_2
 
@@ -3275,9 +3331,11 @@ annualized wage in all jobs excluding the primary and secondary ones.
 This excludes tips, bonuses, other compensation such as dwellings or
 clothes, and other payments.
 
-Note: Use gross wages when available and net wages only when gross wages
+```{note}
+Use gross wages when available and net wages only when gross wages
 are not available. This is done to make it easy to compare earnings in
 formal and informal sectors.
+```
 
 ### t\_wage\_others
 
@@ -3305,9 +3363,11 @@ total annualized wage income in all jobs including primary, secondary
 and others. This excludes tips, bonuses, other compensation such as
 dwellings or clothes, and other payments.
 
-Note: Use gross wages when available and net wages only when gross wages
+```{note}
+Use gross wages when available and net wages only when gross wages
 are not available. This is done to make it easy to compare earnings in
 formal and informal sectors.
+```
 
 ### t\_wage\_total
 
@@ -3342,7 +3402,7 @@ All persons are considered active in the labor force if they presently
 have a job (formal or informal, i.e., employed) or do not have a job but
 are actively seeking work (i.e., unemployed).
 
-1 = Employed
+> 1 = Employed
 
 Employed is defined as anyone who worked during the last 12 months or
 reference week, regardless of whether the employment was formal or
@@ -3350,7 +3410,7 @@ informal, paid or unpaid, for a minimum of 1 hour. Individuals who had a
 job, but for any reason did not work in the last 7 days are considered
 employed.
 
-2 = Unemployed
+> 2 = Unemployed
 
 A person is defined as unemployed if he or she is, presently not working
 but is actively seeking a job. The formal definition of unemployed
@@ -3359,7 +3419,7 @@ asked in a minority of surveys and is, thus, not incorporated in the
 present definition. A person presently not working but waiting for the
 start of a new job is considered unemployed.
 
-3 = Not-in-labor force
+> 3 = Not-in-labor force
 
 A person is defined as not-in-labor force if he or she is, presently not
 working and it is not actively seeking a job during the last 12 months
@@ -3384,8 +3444,8 @@ more jobs or more hours at their job if possible/available. The codes
 are:
 
 > 0 = No (not underemployed)
-
-1 = Yes
+>
+> 1 = Yes
 
 ### nlfreason\_year
 
@@ -3469,7 +3529,7 @@ Five categories after harmonization:
 >
 > 5 = Other, workers not classifiable by status
 
-1 = Paid Employee
+> 1 = Paid Employee
 
 Paid employee includes anyone whose basic remuneration is not directly
 dependent on the revenue of the unit they work for, typically
@@ -3477,7 +3537,7 @@ remunerated by wages and salaries but may be paid for piece work or
 in-kind. The 'continuous' criteria used in the ILO definition is not
 used here as data are often absent and due to country specificity.
 
-2 = Non-Paid Employee
+> 2 = Non-Paid Employee
 
 Non-paid employee includes contributing family workers who hold a
 self-employment job in a market-oriented establishment operated by a
@@ -3487,14 +3547,14 @@ establishment, in terms of working time or other factors, is not at a
 level comparable to that of the head of the establishment. All
 apprentices should be mapped as 'non-paid employee'
 
-3 = Employer
+> 3 = Employer
 
 An employer is a business owner (whether alone or in partnership) with
 employees. If the only people working in the business are the owner and
 contributing family workers, the person is not considered an employer
 (as has no employees) and is, instead classified as self-employed.
 
-4 = Self-employed
+> 4 = Self-employed
 
 Own account or self-employment includes jobs where remuneration is
 directly dependent from the goods and service produced (where home
@@ -3509,7 +3569,7 @@ determining the organization of production, sales and/or other work of
 the establishment, the investments and the distribution of the proceeds
 of the establishment amongst the members.
 
-5 = Other, workers not classifiable by status
+> 5 = Other, workers not classifiable by status
 
 Other, workers not classifiable by status include those for whom
 insufficient relevant information is available and/or who cannot be
@@ -3533,27 +3593,29 @@ Four categories after harmonization:
 >
 > 4 = Public or State-owned, but cannot distinguish
 
-1 = Public Sector, Central Government, Army (including armed forces)
+> 1 = Public Sector, Central Government, Army (including armed forces)
 
 Public sector is the part of economy run by the government.
 
-2 = Private, NGO
+> 2 = Private, NGO
 
 Private sector is that part of the economy which is both run for private
 profit and is not controlled by the state, it also includes
 non-governmental organizations
 
-3 = State-owned enterprises
+> 3 = State-owned enterprises
 
 State-owned includes para-state firms and all others in which the
 government has control (participation over 50%).
 
-4 = Public or State-owned, but cannot distinguish
+> 4 = Public or State-owned, but cannot distinguish
 
 Select this option is the questionnaire does not ask for State-owned
 enterprises, and only for Public sector.
 
-Notes: Do not code basis of occupation (ISCO) or industry (ISIC) codes.
+```{note}
+Do not code basis of occupation (ISCO) or industry (ISIC) codes.
+```
 
 ### industry\_orig\_year
 
@@ -3607,7 +3669,7 @@ Ten categories after harmonization:
 >
 > 10 = Other Services, Unspecified Notes:
 
-Notes:
+```{note}
 
 -   In the case of different classifications (former Soviet Union
     republics, for example), recoding has been done to best match the
@@ -3622,6 +3684,8 @@ Notes:
 -   For details on how to code different ISIC versions to
     industrycat10\_year see the industrycat10 entry.
 
+```
+
 ### industrycat4\_year
 
 industrycat4\_year is a categorical variable that specifies the 1-digit
@@ -3634,7 +3698,7 @@ Four categories after harmonization:
 
 > 1 = Agriculture
 >
-> 2= Industry
+> 2 = Industry
 >
 > 3 = Services
 >
@@ -3719,7 +3783,7 @@ payments. The variable is constructed for all persons administered this
 module in each questionnaire. For this reason, the lower age cutoff (and
 perhaps upper age cutoff) will vary from country to country.
 
-Notes:
+```{note}
 
 -   For all those with self-employment or owners of own businesses, this
     should be net revenues (net of all costs EXCEPT for tax payments) or
@@ -3736,6 +3800,8 @@ Notes:
 -   Use gross wages when available and net wages only when gross wages
     are not available. This is done to make it easy to compare earnings
     in formal and informal sectors.
+
+```
 
 ### unitwage\_year
 
@@ -3774,7 +3840,7 @@ that the person dedicated more time to over the past 12 months. The
 variable is constructed for all persons administered this module in each
 questionnaire.
 
-Notes:
+```{note}
 
 -   Sometimes the questions are phrased as, "on average, how many hours
     a week do you work?".
@@ -3785,6 +3851,8 @@ Notes:
 
 -   In the case of a question that has hours worked per month, divide by
     4.3 to get weekly hours.
+
+```
 
 ### wmonths\_year
 
@@ -3918,7 +3986,7 @@ Five categories after harmonization:
 >
 > 5 = Other, workers not classifiable by status
 
-1 = Paid Employee
+> 1 = Paid Employee
 
 Paid employee includes anyone whose basic remuneration is not directly
 dependent on the revenue of the unit they work for, typically
@@ -3926,7 +3994,7 @@ remunerated by wages and salaries but may be paid for piece work or
 in-kind. The 'continuous' criteria used in the ILO definition is not
 used here as data are often absent and due to country specificity.
 
-2 = Non-Paid Employee
+> 2 = Non-Paid Employee
 
 Non-paid employee includes contributing family workers who hold a
 self-employment job in a market-oriented establishment operated by a
@@ -3936,14 +4004,14 @@ establishment, in terms of working time or other factors, is not at a
 level comparable to that of the head of the establishment. All
 apprentices should be mapped as non-paid employee.
 
-3 = Employer
+> 3 = Employer
 
 Employer is a business owner (whether alone or in partnership) with
 employees. If the only people working in the business are the owner and
 'contributing family workers, the person is not considered an employer
 (as has no employees) and is, instead classified as own account.
 
-4 = Self-employed
+> 4 = Self-employed
 
 Own account or self-employment includes jobs are those where
 remuneration is directly dependent from the goods and service produced
@@ -3958,7 +4026,7 @@ determining the organization of production, sales and/or other work of
 the establishment, the investments and the distribution of the proceeds
 of the establishment amongst the members.
 
-5 = Other, workers not classifiable by status
+> 5 = Other, workers not classifiable by status
 
 Other, workers not classifiable by status include those for whom
 insufficient relevant information is available and/or who cannot be
@@ -3982,27 +4050,31 @@ Four categories after harmonization:
 >
 > 4 = Public or State-owned, but cannot distinguish
 
-1 = Public Sector, Central Government, Army (including armed forces)
+> 1 = Public Sector, Central Government, Army (including armed forces)
 
 Public sector is the part of economy run by the government.
 
-2 = Private, NGO
+> 2 = Private, NGO
 
 Private sector is that part of the economy which is both run for private
 profit and is not controlled by the state, it also includes
 non-governmental organizations
 
-3 = State-owned enterprises
+> 3 = State-owned enterprises
 
 State-owned includes para-state firms and all others in which the
 government has control (participation over 50%).
 
-4 = Public or State-owned, but cannot distinguish
+> 4 = Public or State-owned, but cannot distinguish
 
 Select this option is the questionnaire does not ask for State-owned
 enterprises, and only for Public sector.
 
-Notes: Do not code basis of occupation (ISCO) or industry (ISIC) codes.
+```{note}
+
+Do not code basis of occupation (ISCO) or industry (ISIC) codes.
+
+```
 
 ### industry\_orig\_2\_year
 
@@ -4034,27 +4106,27 @@ Standard Industrial Classification.
 
 Ten categories after harmonization:
 
-1 = Agriculture, Hunting, Fishing, etc.
+> 1 = Agriculture, Hunting, Fishing, etc.
+>
+> 2 = Mining
+>
+> 3 = Manufacturing
+>
+> 4 = Public Utility Services
+>
+> 5 = Construction
+>
+> 6 = Commerce
+>
+> 7 = Transport and Communications
+>
+> 8 = Financial and Business Services
+>
+> 9 = Public Administration
+>
+> 10 = Other Services, Unspecified
 
-2 = Mining
-
-3 = Manufacturing
-
-4 = Public Utility Services
-
-5 = Construction
-
-6 = Commerce
-
-7 = Transport and Communications
-
-8 = Financial and Business Services
-
-9 = Public Administration
-
-10 = Other Services, Unspecified
-
-Notes:
+```{note}
 
 -   In the case of different classifications (former Soviet Union
     republics, for example), recoding has been done to best match the
@@ -4064,6 +4136,8 @@ Notes:
 
 -   For details on how to code different ISIC versions to
     industrycat10\_2\_year see the industrycat10 entry.
+
+```
 
 ### industrycat4\_2\_year
 
@@ -4161,7 +4235,7 @@ constructed for all persons administered this module in each
 questionnaire. For this reason, the lower age cutoff (and perhaps upper
 age cutoff) will vary from country to country.
 
-Notes:
+```{note}
 
 -   For all those with self-employment or owners of own businesses, this
     should be net revenues (net of all costs EXCEPT for tax payments) or
@@ -4178,6 +4252,8 @@ Notes:
 -   Use gross wages when available and net wages only when gross wages
     are not available. This is done to make it easy to compare earnings
     in formal and informal sectors.
+
+```
 
 ### unitwage\_2\_year
 
@@ -4220,7 +4296,7 @@ variable is constructed for all persons administered this module in each
 questionnaire. The lower age cutoff (and perhaps upper age cutoff) at
 which information is collected will vary from country to country.
 
-Notes:
+```{note}
 
 -   Sometimes the questions are phrased as, "on average, how many hours
     a week do you work?".
@@ -4231,6 +4307,8 @@ Notes:
 
 -   In the case of a question that has hours worked per month, divide by
     4.3 to get weekly hours.
+
+```
 
 ### wmonths\_2\_year
 
@@ -4258,7 +4336,7 @@ variable is constructed for all persons administered this module in each
 questionnaire. For this reason, the lower age cutoff (and perhaps upper
 age cutoff) will vary from country to country.
 
-Notes:
+```{note}
 
 -   The annualization of the wage\_total\_2\_year should consider the
     number of months/weeks the persons have been working and receiving
@@ -4268,6 +4346,9 @@ Notes:
 -   For an example on how to annualize wage see 5.2.2 Primary Employment
     last 7-days variable wage\_total (Example: Creation of wage\_total
     when there are no bonuses nor other compensations).
+
+
+```
 
 ### firmsize\_l\_2\_year
 
@@ -4303,9 +4384,11 @@ annual wage in all jobs excluding the primary and secondary ones. This
 excludes tips, bonuses, other compensation such as dwellings or clothes,
 and other payments.
 
-Note: Use gross wages when available and net wages only when gross wages
+```{note}
+Use gross wages when available and net wages only when gross wages
 are not available. This is done to make it easy to compare earnings in
 formal and informal sectors.
+```
 
 ### t\_wage\_others\_year
 
@@ -4333,9 +4416,11 @@ the total annualized wage income in all jobs including primary,
 secondary and others. This excludes tips, bonuses, other compensation
 such as dwellings or clothes, and other payments.
 
-Note: Use gross wages when available and net wages only when gross wages
+```{note}
+Use gross wages when available and net wages only when gross wages
 are not available. This is done to make it easy to compare earnings in
 formal and informal sectors.
+```
 
 ### t\_wage\_total\_year
 
@@ -4367,9 +4452,11 @@ wage income in all the jobs including primary, secondary and others
 regardless of their period of reference. This excludes tips, bonuses,
 other compensation such as dwellings or clothes, and other payments.
 
-Note: Use gross wages when available and net wages only when gross wages
+```{note}
+Use gross wages when available and net wages only when gross wages
 are not available. This is done to make it easy to compare earnings in
 formal and informal sectors.
+```
 
 ### laborincome
 
@@ -4403,48 +4490,68 @@ variable.
 Several checks should be conducted to ensure that the data is harmonized
 correctly. lstatus should be an integer in the range \[1,3\].
 
+```do
 lstatus\<0 & lstatus\>3 & mod(lstatus, 1) == 1
+```
 
 If lstatus is classified as employed then the employment type needs to
 be defined.
 
+```do
 lstatus==1 & empstat\>5
+```
 
 minlaborage should be an integer.
 
+```do
 mod(minlaborage,1)==1
+```
 
 The minimum age for employment should not be higher than 20.
 
+```do
 minlaborage \>20 & minlaborage \<.
+```
 
 empstat should be an integer in the range \[1,5\].
 
+```do
 mod(empstat, 1) != 0 & empstat\<1 & empstat\>5
+```
 
 If employment type is defined then labor force status should be
 employed.
 
+```do
 empstat\<=5 & lstatus!=1
+```
 
 industrycat10 should be an integer in the range \[1,10\].
 
+```do
 industrycat10\<0 & industrycat10\>10 & mod(industrycat10, 1) == 1
+```
 
 industrycat4 should be an integer in the range \[1,4\].
 
+```do
 industrycat4\<0 & industrycat4\>4 & mod(industrycat4, 1) == 1
+```
 
 There should not be a mismatch between industry and industrycat4.
 
+```do
 > ((industrycat4==1 & industrycat10!=1 ) \| (industrycat4==2 &
 > (industrycat10 \<2 \| industrycat10 \>5)) \| (industrycat4==3 &
 > (industrycat10 \<6 \| industrycat10 \>9)) \| (industrycat4==1 &
 > industrycat10 !=1 ) ) & industrycat10 !=.
+```
 
 firmsize\_u should not be lower than firmsize\_l
 
+```do
 firmsize\_u \< firmsize\_l
+```
 
 (manual:labour-employment-12)=
 8.3 Tabular Overview of Variables
