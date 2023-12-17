@@ -223,6 +223,7 @@ themselves at later points in time. It contains four blocks:
 
 Box 1 - GLD Harmonization Template Preamble
 
+```do
 +----------------------------------------------------------------------+
 | /\                                                                   |
 | *%%================================================================= |
@@ -314,6 +315,7 @@ Box 1 - GLD Harmonization Template Preamble
 | \-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\- |
 | \-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\--\*/ |
 +----------------------------------------------------------------------+
+```
 
 ### Do-files: variable and variable note tagging guidelines
 
@@ -334,6 +336,7 @@ example in Box 2):
 
 Box 2 - Section header example
 
+```do
 +----------------------------------------------------------------------+
 | /\*%%====                                                            |
 | ==================================================================== |
@@ -343,6 +346,7 @@ Box 2 - Section header example
 | =========                                                            |
 | ===============================================================%%\*/ |
 +----------------------------------------------------------------------+
+```
 
 All harmonized variables in the in each section in the data will be
 tagged according to the following convention (see example in Box 3 -
@@ -373,6 +377,7 @@ Variable tagging example):
 
 Box 3 - Variable tagging example
 
+```do
 +----------------------------------------------------------------------+
 | \*\<\_hhid\_\>                                                       |
 |                                                                      |
@@ -402,6 +407,7 @@ Box 3 - Variable tagging example
 |                                                                      |
 | \*\</\_pid\_\>                                                       |
 +----------------------------------------------------------------------+
+```
 
 There are two useful purposes of tagging the harmonization variables:
 (1) tagging is useful when cross checking the definitions of harmonized
@@ -618,6 +624,7 @@ hhid = \_n). This is dangerous as the order of each observation may be
 different, even across vintages of the same file sorted by to different
 variables.
 
+```do
 +------------------------------+
 | > \* Create hhid like this:  |
 | >                            |
@@ -627,6 +634,7 @@ variables.
 | >                            |
 | > gen hhid = \_n             |
 +------------------------------+
+```
 
 When creating hhid and pid, especially from string variables or from
 group(varlist) or concat(varlist) functions, users should try to create
@@ -671,9 +679,11 @@ for each quarter.
 hhid should never be missing and if there is any missing this variable
 should be checked.
 
+```do
 +------------------------+
 | > assert missing(hhid) |
 +------------------------+
+```
 
 It is recommended to check the uniqueness level of the data files with
 identifier variables at the corresponding level of the data (i.e.
@@ -681,6 +691,7 @@ household vs individual level data).
 
 hhid and pid need to be unique in the database.
 
+```do
 +----------------------------------------------------------------------+
 | > isid hhid pid                                                      |
 | >                                                                    |
@@ -689,20 +700,24 @@ hhid and pid need to be unique in the database.
 | >                                                                    |
 | > \`N\'!= \`n\'                                                      |
 +----------------------------------------------------------------------+
+```
 
 ### Checks on the country code and year
 
 Ensure that country is a three-letter country code.
 
+```do
 +----------------------------------------+
 | > cap confirm str3 var country \_rc!=0 |
 +----------------------------------------+
+```
 
 Harmonizers should also ensure that country codes are updated according
 to the [ISO country
 codes](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3). Some common
 adjustments include the following:
 
+```do
 +-------------------------------------------------------+
 | > replace countrycode=\"XKX\" if countrycode==\"KSV\" |
 | >                                                     |
@@ -712,6 +727,7 @@ adjustments include the following:
 | >                                                     |
 | > replace countrycode=\"COD\" if countrycode==\"ZAR\" |
 +-------------------------------------------------------+
+```
 
 Furthermore, harmonizers should check that the years used are in an
 appropriate range.
@@ -719,9 +735,11 @@ appropriate range.
 The year needs to be a four-digit number in the range of 1980 to the
 current year (assumed here to be 2020).
 
+```do
 +------------------------+
 | > assert missing(hhid) |
 +------------------------+
+```
 
 (manual:tabular-overview-of-variables)=
 2.4 Tabular Overview of Variables
@@ -1077,9 +1095,11 @@ name of the location/area.
 
 -   The urban variable cannot be different from zero or one.
 
+```do
   -----------------------
   urban!= 1 & urban!= 0
   -----------------------
+```
 
 (manual:geo-tabular-overview-of-variables)=
 3.3 Tabular Overview of Variables
@@ -1571,6 +1591,7 @@ people commonly migrated into India.
 With these two questions we can harmonize the two variables in the
 following way:
 
+```do
 +----------------------------------+----------------------------------+
 | \*\<\_migrated\_from\_urban\_\>  |                                  |
 +==================================+==================================+
@@ -1758,6 +1779,7 @@ following way:
 | \*                               |                                  |
 | \</\_migrated\_from\_country\_\> |                                  |
 +----------------------------------+----------------------------------+
+```
 
 (manual:migration-tabular-overview-of-variables)=
 5.3 Tabular Overview of Variables
@@ -2733,6 +2755,7 @@ wage\_total when there are no bonuses nor other compensations.
 
 Box 4 - Example of wage\_total creation
 
+```do
 +----------------------------------------------------------------------+
 | > gen double wage\_total=.                                           |
 | >                                                                    |
@@ -2765,6 +2788,7 @@ Box 4 - Example of wage\_total creation
 | > replace wage\_total=(wage\_no\_compen\*whours\*4.3)\*wmonths if    |
 | > unitwage==9 //Wage in hourly unit                                  |
 +----------------------------------------------------------------------+
+```
 
 Note: Use gross wages when available and net wages only when gross wages
 are not available. This is done to make it easy to compare earnings in
