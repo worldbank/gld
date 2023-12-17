@@ -141,12 +141,12 @@ easy access and understanding.
 
 The first step for each harmonization is to obtain the original raw data
 files. The original data files used for the GLD harmonization should be
-stored on the GLD server ([\\\\wbntpcifs\\gld](file:///\\wbntpcifs\gld))
+stored on the GLD server (\\wbntpcifs\gld)
 cataloged according to the rules of the Microdata Library folder and
 file naming structure. We assume further that the raw survey data
 fulfills all relevant data sharing and data custody arrangements. We aim
 to publish all information on the central Microdata Library catalog
-([[http://microdatalib/]{.underline}](http://microdatalib/)). We assume
+([http://microdatalib/](http://microdatalib/)). We assume
 that the depositing of the original microdata in the Microdata Library
 is a collective responsibility shared by all World Bank staff working in
 all the World Bank's regions, irrespective of global practice, since the
@@ -165,61 +165,35 @@ harmonization using the 2016 Philippines Labor Force Survey.
 PHL\_2016\_LFS\_v01\_M\_v01\_A\_GLD\_ALL.do\
 PHL\_2016\_LFS\_v01\_M\_v01\_A\_GLD\_ALL.dta
 
-Table
+```{list-table} Table
+:header-rows: 2
+:name: example-table
 
-+----------------------+----------------------+----------------------+
-| **Generic Structure: |                      |                      |
-| CCC\_YYYY            |                      |                      |
-| \_SurveyName\_vnn\_M |                      |                      |
-| \_vmm\_A\_GLD\_mod** |                      |                      |
-+======================+======================+======================+
-| **Component**        | **Description**      | **Values**           |
-+----------------------+----------------------+----------------------+
-| CCC                  | Country Code         | Example: KAZ, GEO,   |
-|                      |                      | TJK                  |
-+----------------------+----------------------+----------------------+
-| YYYY                 | Year of the Survey   | The                  |
-|                      |                      | *[st                 |
-|                      |                      | arting]{.underline}* |
-|                      |                      | year of the survey   |
-+----------------------+----------------------+----------------------+
-| SurveyName           | Abbreviation of the  | Example: HBS, KIHS,  |
-|                      | survey               | LFS, EUSILC          |
-|                      |                      |                      |
-|                      |                      | Character length can |
-|                      |                      | vary.                |
-+----------------------+----------------------+----------------------+
-| v*nn*                | stands for the       | *nn*=01, 02, ...     |
-|                      | version of the       |                      |
-|                      |                      |                      |
-|                      | master file          |                      |
-+----------------------+----------------------+----------------------+
-| v*mm*                | stands for the       | *mm*=01, 02, ...     |
-|                      | version of the       |                      |
-|                      | harmonization, as    |                      |
-|                      | there can be         |                      |
-|                      |                      |                      |
-|                      | revisions after the  |                      |
-|                      | first release        |                      |
-+----------------------+----------------------+----------------------+
-| mod                  | Stands for the       | *mod = ALL, HH.*     |
-|                      | modules of           |                      |
-|                      | information captured |                      |
-|                      | in the survey.       |                      |
-|                      | Except for special   |                      |
-|                      | cases that would be  |                      |
-|                      | specifically         |                      |
-|                      | instructed the       |                      |
-|                      | harmonization should |                      |
-|                      | aim to cover all     |                      |
-|                      | modules and thus     |                      |
-|                      | will be "ALL".       |                      |
-|                      |                      |                      |
-|                      | A special case may   |                      |
-|                      | be only information  |                      |
-|                      | at HH level called   |                      |
-|                      | HH.                  |                      |
-+----------------------+----------------------+----------------------+
+* - Generic Structure: CCC\_YYYY\_SurveyName\_vnn\_M\_vmm\_A\_GLD\_mod
+  -
+  -
+* - Component
+  - Description
+  - Values
+* - CCC
+  - Country Code
+  - Example: KAZ, GEO, TJK
+* - YYYY
+  - Year of the Survey
+  - The __starting__ year of the survey
+* - SurveyName
+  - Abbreviation of the survey
+  - Example: HBS, KIHS, LFS, EUSIL; Character length can vary.
+* - vnn
+  - stands for the version of the master file
+  - nn=01, 02, ...
+* - vmm
+  - stands for the version of the harmonization, as there can be revisions after the first release
+  - mm=01, 02, ...
+* - mod
+  - Stands for the modules of information captured in the survey. Except for special cases that would be specifically instructed the harmonization should aim to cover all modules and thus will be "ALL". A special case may be only information at HH level called HH.
+  - mod = ALL, HH.
+```
 
 (manual:do-file-organization-and-guidelines)=
 1.3 Do-file Organization and Guidelines
@@ -674,10 +648,25 @@ case the household ID can remain as is. However, if you want to use the
 data as cross-sectional, then new HHIDs can be constructed for each HH
 for each quarter.
 
-  **Quarter**   **Quarter 1**   **Quarter 2**   **Quarter 3**   **Quarter 4**
-  ------------- --------------- --------------- --------------- ---------------
-  hhid\_orig    hhid=1          hhid=1          hhid=1          hhid=1
-  hhid          hhid=1Q1        hhid=1Q2        hhid=1Q3        hhid=1Q4
+```{list-table}
+:header-rows: 1
+
+* - Quarter
+  - Quarter 1
+  - Quarter 2
+  - Quarter 3
+  - Quarter 4
+* - hhid_orig
+  - hhid=1
+  - hhid=1
+  - hhid=1
+  - hhid=1
+* - hhid
+  - hhid=1Q1
+  - hhid=1Q2
+  - hhid=1Q3
+  - hhid=1Q4
+```
 
 hhid should never be missing and if there is any missing this variable
 should be checked.
@@ -738,109 +727,102 @@ current year (assumed here to be 2020).
 2.4 Tabular Overview of Variables
 ---------------------------------
 
-+-------------+-----------------+-----------------+-----------------+
-| Module Code | Variable label  | > Variable name | > Notes         |
-+=============+=================+=================+=================+
-| Survey & ID | ISO 3 Letter    | > countrycode   |                 |
-|             | country code    |                 |                 |
-+-------------+-----------------+-----------------+-----------------+
-| Survey & ID | Survey acronym  | > survname      | No spaces, no   |
-|             |                 |                 | underscores,    |
-|             |                 |                 | split sections  |
-|             |                 |                 | by \"-\" (e.g.  |
-|             |                 |                 | \"ETC-II\")     |
-+-------------+-----------------+-----------------+-----------------+
-| Survey & ID | Survey long     | > survey        | Possible names  |
-|             | name            |                 | are: LFS, LSMS, |
-|             |                 |                 | ... \[I am      |
-|             |                 |                 | unsure of this  |
-|             |                 |                 | difference,     |
-|             |                 |                 | some surveys    |
-|             |                 |                 | contain either  |
-|             |                 |                 | this or the     |
-|             |                 |                 | previous        |
-|             |                 |                 | variable, have  |
-|             |                 |                 | yet to see one  |
-|             |                 |                 | with both\]     |
-+-------------+-----------------+-----------------+-----------------+
-| Survey & ID | Version of the  | > icls\_v       | Defines the     |
-|             | ICLS followed   |                 | labor force     |
-|             |                 |                 | definitions     |
-|             |                 |                 | used according  |
-|             |                 |                 | to the rules    |
-|             |                 |                 | set out by the  |
-|             |                 |                 | nth             |
-|             |                 |                 | International   |
-|             |                 |                 | Conference of   |
-|             |                 |                 | Labour          |
-|             |                 |                 | Statisticians.  |
-+-------------+-----------------+-----------------+-----------------+
-| Survey & ID | Version of      | >               |                 |
-|             | ISCED used      |  isced\_version |                 |
-+-------------+-----------------+-----------------+-----------------+
-| Survey & ID | Version of ISCO | > isco\_version |                 |
-|             | used            |                 |                 |
-+-------------+-----------------+-----------------+-----------------+
-| Survey & ID | Verstion of     | > isic\_version |                 |
-|             | ISIC used       |                 |                 |
-+-------------+-----------------+-----------------+-----------------+
-| Survey & ID | Year of survey  | > year          |                 |
-|             | start           |                 |                 |
-+-------------+-----------------+-----------------+-----------------+
-| Survey & ID | Master (Source) | > vermast       |                 |
-|             | data version    |                 |                 |
-+-------------+-----------------+-----------------+-----------------+
-| Survey & ID | Alternate       | > veralt        |                 |
-|             | (Harmonized)    |                 |                 |
-|             | data version    |                 |                 |
-+-------------+-----------------+-----------------+-----------------+
-| Survey & ID | Kind of         | > harmonization |                 |
-|             | harmonization   |                 |                 |
-+-------------+-----------------+-----------------+-----------------+
-| Survey & ID | Year of         | > int\_year     | For HH and      |
-|             | interview start |                 | Individual      |
-|             |                 |                 | interviews in   |
-|             |                 |                 | that HH         |
-|             |                 |                 | earliest        |
-|             |                 |                 | possible date   |
-+-------------+-----------------+-----------------+-----------------+
-| Survey & ID | Month of        | > int\_month    | For HH and      |
-|             | interview start |                 | Individual      |
-|             |                 |                 | interviews in   |
-|             |                 |                 | that HH         |
-|             |                 |                 | earliest        |
-|             |                 |                 | possible date   |
-+-------------+-----------------+-----------------+-----------------+
-| Survey & ID | Household ID    | > hhid          |                 |
-+-------------+-----------------+-----------------+-----------------+
-| Survey & ID | Personal ID     | > pid           |                 |
-+-------------+-----------------+-----------------+-----------------+
-| Survey & ID | Survey weights  | > weight        |                 |
-+-------------+-----------------+-----------------+-----------------+
-| Survey & ID | Primary         | > psu           |                 |
-|             | sampling unit   |                 |                 |
-+-------------+-----------------+-----------------+-----------------+
-| Survey & ID | Secondary       | > ssu           |                 |
-|             | sampling unit   |                 |                 |
-+-------------+-----------------+-----------------+-----------------+
-| Survey & ID | Stratification  | > strata        |                 |
-|             | (of PSU)        |                 |                 |
-+-------------+-----------------+-----------------+-----------------+
-| Survey & ID | Wave of the     | > wave          |                 |
-|             | survey (e.g.,   |                 |                 |
-|             | Q1 for quarter  |                 |                 |
-|             | 1)              |                 |                 |
-+-------------+-----------------+-----------------+-----------------+
-| Survey & ID | Panel the       | > panel         | > Only code if  |
-|             | individual      |                 | > concept       |
-|             | belongs to      |                 | > already in    |
-|             |                 |                 | > survey        |
-+-------------+-----------------+-----------------+-----------------+
-| Survey & ID | Visit number in | > visit\_no     | > Only code if  |
-|             | panel order     |                 | > concept       |
-|             |                 |                 | > already in    |
-|             |                 |                 | > survey        |
-+-------------+-----------------+-----------------+-----------------+
+```{list-table}
+:header-rows: 1
+
+* - Module Code
+  - Variable label
+  - Variable name
+  - Notes
+* - Survey & ID
+  - ISO 3 Letter country code
+  - countrycode
+  -
+* - Survey & ID
+  - Survey acronym
+  - survname
+  - No spaces, no underscores, split sections by "-" (e.g. "ETC-II")
+* - Survey & ID
+  - Survey long name
+  - survey
+  - Possible names are: LFS, LSMS, ... [I am unsure of this difference, some surveys contain either this or the previous variable, have yet to see one with both]
+* - Survey & ID
+  - Version of the ICLS followed
+  - icls\_v
+  - Defines the labor force definitions used according to the rules set out by the nth International Conference of Labour Statisticians.
+* - Survey & ID
+  - Version of the ISCED used
+  - isced\_version
+  -
+* - Survey & ID
+  - Version of the ISCO used
+  - isco\_version
+  -
+* - Survey & ID
+  - Version of the ISIC used
+  - isic\_version
+  -
+* - Survey & ID
+  - Year of survey
+  - year
+  -
+* - Survey & ID
+  - Master (Source) data version
+  - vermast
+  -
+* - Survey & ID
+  - Harmonization version
+  - veralt
+  -
+* - Survey & ID
+  - Kind of harmonization
+  - harmonization
+  -
+* - Survey & ID
+  - Year of interview start
+  - int\_year
+  - For HH and Individual interviews in that HH earliest possible date
+* - Survey & ID
+  - Month of interview start
+  - int\_month
+  - For HH and Individual interviews in that HH earliest possible date
+* - Survey & ID
+  - Household ID
+  - hhid
+  -
+* - Survey & ID
+  - Personal ID
+  - pid
+  -
+* - Survey & ID
+  - Survey weights
+  - weight
+  -
+* - Survey & ID
+  - Primary sampling unit
+  - psu
+  -
+* - Survey & ID
+  - Secondary sampling unit
+  - ssu
+  -
+* - Survey & ID
+  - Stratification (of PSU)
+  - strata
+  -
+* - Survey & ID
+  - Wave of the survey (e.g., Q1 for quarter 1)
+  - wave
+  -
+* - Survey & ID
+  - Panel the individual belongs to
+  - panel
+  - Only code if concept already in survey
+* - Survey & ID
+  - Visit number in panel order
+  - visit\_no
+  - Only code if concept already in survey
+```
 
 (manual:geography)=
 # 3. Geography
@@ -914,38 +896,96 @@ The below example shows how to code *subnatidsurvey* for a survey that
 is representative at the rural/urban level of the province
 (*subnatid1*).
 
-  subnatid1           urban   subnatidsurvey
-  ------------------- ------- -------------------------
-  "1 -- Province A"   1       "1 -- Province A urban"
-  "1 -- Province A"   1       "1 -- Province A urban"
-  "1 -- Province A"   1       "1 -- Province A urban"
-  "1 -- Province A"   1       "1 -- Province A urban"
-  "1 -- Province A"   0       "1 -- Province A rural"
-  ...                 ...     ...
-  "2 -- Province B"   0       "2 -- Province B rural"
-  "2 -- Province B"   0       "2 -- Province B rural"
-  "2 -- Province B"   0       "2 -- Province B rural"
-  "2 -- Province B"   0       "2 -- Province B rural"
-  "2 -- Province B"   1       "2 -- Province B urban"
-  "2 -- Province B"   1       "2 -- Province B urban"
+```{list-table}
+:header-rows: 1
+
+* - subnatid1
+  - urban
+  - subnatidsurvey
+* - "1 -- Province A"
+  - 1
+  - "1 -- Province A urban"
+* - "1 -- Province A"
+  - 1
+  - "1 -- Province A urban"
+* - "1 -- Province A"
+  - 1
+  - "1 -- Province A urban"
+* - "1 -- Province A"
+  - 1
+  - "1 -- Province A urban"
+* - "1 -- Province A"
+  - 0
+  - "1 -- Province A rural"
+* - ...
+  - ...
+  - ...
+* - "2 -- Province B"
+  - 0
+  - "2 -- Province B rural"
+* - "2 -- Province B"
+  - 0
+  - "2 -- Province B rural"
+* - "2 -- Province B"
+  - 0
+  - "2 -- Province B rural"
+* - "2 -- Province B"
+  - 0
+  - "2 -- Province B rural"
+* - "2 -- Province B"
+  - 1
+  - "2 -- Province B urban"
+* - "2 -- Province B"
+  - 1
+  - "2 -- Province B urban"
+```
 
 While the below is the example of a survey representative nationally,
 nationally at urban / rural level and at province level.
 
-  subnatid1           urban   subnatidsurvey
-  ------------------- ------- -------------------
-  "1 -- Province A"   1       "1 -- Province A"
-  "1 -- Province A"   1       "1 -- Province A"
-  "1 -- Province A"   1       "1 -- Province A"
-  "1 -- Province A"   1       "1 -- Province A"
-  "1 -- Province A"   0       "1 -- Province A"
-  ...                 ...     ...
-  "2 -- Province B"   0       "2 -- Province B"
-  "2 -- Province B"   0       "2 -- Province B"
-  "2 -- Province B"   0       "2 -- Province B"
-  "2 -- Province B"   0       "2 -- Province B"
-  "2 -- Province B"   1       "2 -- Province B"
-  "2 -- Province B"   1       "2 -- Province B"
+```{list-table}
+:header-rows: 1
+
+* - subnatid1
+  - urban
+  - subnatidsurvey
+* - "1 -- Province A"
+  - 1
+  - "1 -- Province A"
+* - "1 -- Province A"
+  - 1
+  - "1 -- Province A"
+* - "1 -- Province A"
+  - 1
+  - "1 -- Province A"
+* - "1 -- Province A"
+  - 1
+  - "1 -- Province A"
+* - "1 -- Province A"
+  - 0
+  - "1 -- Province A"
+* - ...
+  - ...
+  - ...
+* - "2 -- Province B"
+  - 0
+  - "2 -- Province B"
+* - "2 -- Province B"
+  - 0
+  - "2 -- Province B"
+* - "2 -- Province B"
+  - 0
+  - "2 -- Province B"
+* - "2 -- Province B"
+  - 0
+  - "2 -- Province B"
+* - "2 -- Province B"
+  - 1
+  - "2 -- Province B"
+* - "2 -- Province B"
+  - 1
+  - "2 -- Province B"
+```
 
 The variable would contain survey representation at lowest level
 irrespective of its mapping to subnatids.
@@ -1045,67 +1085,38 @@ name of the location/area.
 3.3 Tabular Overview of Variables
 ---------------------------------
 
-+-------------+-----------------+-----------------+-----------------+
-| Module Code | Variable name   | > Variable      | > Notes         |
-|             |                 | > label         |                 |
-+=============+=================+=================+=================+
-| Geography   | urban           | > Binary -      | >               |
-|             |                 | > Individual in |                 |
-|             |                 | > urban area    |                 |
-+-------------+-----------------+-----------------+-----------------+
-| Geography   | subnatid\[i\]   | > Subnational   | Subnational ID  |
-|             |                 | > ID - \[ith\]  | at the ith      |
-|             |                 | > level         | level, listing  |
-|             |                 |                 | as many as      |
-|             |                 |                 | available       |
-+-------------+-----------------+-----------------+-----------------+
-| Geography   | subnatidsurvey  | > Lowest level  | subnatidsurvey  |
-|             |                 | > of            | is a string     |
-|             |                 | > Subnational   | variable that   |
-|             |                 | > ID            | refers to the   |
-|             |                 |                 | lowest level of |
-|             |                 |                 | the             |
-|             |                 |                 | administrative  |
-|             |                 |                 | level at which  |
-|             |                 |                 | the survey is   |
-|             |                 |                 | representative. |
-|             |                 |                 | In most cases   |
-|             |                 |                 | this will be    |
-|             |                 |                 | equal to        |
-|             |                 |                 | "subnatid1" or  |
-|             |                 |                 | "subnatid2".    |
-|             |                 |                 | However, in     |
-|             |                 |                 | some cases the  |
-|             |                 |                 | lowest level is |
-|             |                 |                 | classified in   |
-|             |                 |                 | terms of urban, |
-|             |                 |                 | rural or any    |
-|             |                 |                 | other regional  |
-|             |                 |                 | categorization  |
-|             |                 |                 | cannot be       |
-|             |                 |                 | mapped to       |
-|             |                 |                 | subnatids. The  |
-|             |                 |                 | variable would  |
-|             |                 |                 | contain survey  |
-|             |                 |                 | representation  |
-|             |                 |                 | at lowest level |
-|             |                 |                 | irrespective of |
-|             |                 |                 | its mapping to  |
-|             |                 |                 | subnatids.      |
-+-------------+-----------------+-----------------+-----------------+
-| Geography   | subn            | > Subnatid      | Previous        |
-|             | atid\[i\]\_prev | > previous -    | subnatid if     |
-|             |                 | > \[ith\] level | changed since   |
-|             |                 |                 | last survey     |
-+-------------+-----------------+-----------------+-----------------+
-| Geography   | strata          | > Strata        |                 |
-+-------------+-----------------+-----------------+-----------------+
-| Geography   | gaul\           | > GAUL ADM\[i\] | See             |
-|             | _adm\[i\]\_code | > code          | en.wikipedia.   |
-|             |                 |                 | org/wiki/Global |
-|             |                 |                 | \_Administrativ |
-|             |                 |                 | e\_Unit\_Layers |
-+-------------+-----------------+-----------------+-----------------+
+```{list-table}
+:header-rows: 1
+
+* - Module Code
+  - Variable name
+  - Variable label
+  - Notes
+* - Geography
+  - urban
+  - Binary - Individual in urban area
+  -
+* - Geography
+  - subnatid\[i\]
+  - Subnational ID - \[ith\] level
+  - Subnational ID at the ith level, listing as many as available
+* - Geography
+  - subnatidsurvey
+  - Lowest level of Subnational ID
+  - subnatidsurvey is a string variable that refers to the lowest level of the administrative level at which the survey is representative. In most cases this will be equal to variable "subnatid1" or "subnatid2". However, in some cases the lowest level is classified in terms of urban, rural or any other regional categorization cannot be mapped to subnatids. The variable would contain survey representation at lowest level irrespective of its mapping to subnatids.
+* - Geography
+  - subnatid\[i\]\_prev
+  - Subnatid previous - \[ith\] level
+  - Previous subnatid if changed since last survey
+* - Geography
+  - strata
+  - Strata
+  -
+* - Geography
+  - gaul\
+  - GAUL ADM\[i\] code
+  - See en.wikipedia.org/wiki/Global\_Administrative\_Unit\_Layers
+```
 
 (manual:household)=
 # 4. Demography
@@ -1368,62 +1379,62 @@ reasons such as death or migration.
 4.3 Tabular Overview of Variables
 ---------------------------------
 
-+-------------+-----------------+-----------------+-----------------+
-| Module Code | Variable name   | > Variable      | > Notes         |
-|             |                 | > label         |                 |
-+=============+=================+=================+=================+
-| Demography  | hsize           | > Household     |                 |
-|             |                 | > size          |                 |
-+-------------+-----------------+-----------------+-----------------+
-| Demography  | age             | > Age in years  |                 |
-+-------------+-----------------+-----------------+-----------------+
-| Demography  | male            | > Binary -      |                 |
-|             |                 | > Individual is |                 |
-|             |                 | > male          |                 |
-+-------------+-----------------+-----------------+-----------------+
-| Demography  | relationharm    | > Relationship  | GMD -           |
-|             |                 | > to head of    | Harmonized      |
-|             |                 | > household     | categories      |
-|             |                 | > harmonized    | across all      |
-|             |                 | > across all    | regions. Same   |
-|             |                 | > regions       | as I2D2         |
-|             |                 |                 | categories.     |
-+-------------+-----------------+-----------------+-----------------+
-| Demography  | relationcs      | > Relationship  | country or      |
-|             |                 | > to head of    | regionally      |
-|             |                 | > household     | specific        |
-|             |                 | >               | categories      |
-|             |                 |  country/region |                 |
-|             |                 | > specific      |                 |
-+-------------+-----------------+-----------------+-----------------+
-| Demography  | marital         | > Marital       |                 |
-|             |                 | > status        |                 |
-+-------------+-----------------+-----------------+-----------------+
-| Demography  | eye\_dsablty    | > Difficulty    | See             |
-|             |                 | > seeing        | \"Recommended   |
-|             |                 |                 | Short Set of    |
-|             |                 |                 | Questions\" on  |
-|             |                 |                 | https://www.cdc |
-|             |                 |                 | .gov/nchs/washi |
-|             |                 |                 | ngton\_group/wg |
-|             |                 |                 | \_questions.htm |
-+-------------+-----------------+-----------------+-----------------+
-| Demography  | hear\_dsablty   | > Difficulty    |                 |
-|             |                 | > hearing       |                 |
-+-------------+-----------------+-----------------+-----------------+
-| Demography  | walk\_dsablty   | > Difficulty    |                 |
-|             |                 | > walking /     |                 |
-|             |                 | > steps         |                 |
-+-------------+-----------------+-----------------+-----------------+
-| Demography  | conc\_dsord     | > Difficulty    |                 |
-|             |                 | > concentrating |                 |
-+-------------+-----------------+-----------------+-----------------+
-| Demography  | slfcre\_dsablty | > Difficulty w/ |                 |
-|             |                 | > selfcare      |                 |
-+-------------+-----------------+-----------------+-----------------+
-| Demography  | comm\_dsablty   | > Difficulty    |                 |
-|             |                 | > communicating |                 |
-+-------------+-----------------+-----------------+-----------------+
+```{list-table}
+:header-rows: 1
+
+* - Module Code
+  - Variable name
+  - Variable label
+  - Notes
+* - Demography
+  - hsize
+  - Household size
+  -
+* - Demography
+  - age
+  - Age in years
+  -
+* - Demography
+  - male
+  - Binary - Individual is male
+  -
+* - Demography
+  - relationharm
+  - Relationship to head of household harmonized across all regions
+  - GMD - Harmonized categories across all regions. Same as I2D2 categories.
+* - Demography
+  - relationcs
+  - Relationship to head of household country, country/region specific
+  - country or regionally specific categories
+* - Demography
+  - marital
+  - Marital status
+  -
+* - Demography
+  - eye\_dsablty
+  - Difficulty seeing
+  - See "Recommended Short Set of Questions" on https://www.cdc.gov/nchs/washington\_group/wg\_questions.htm
+* - Demography
+  - hear\_dsablty
+  - Difficulty hearing
+  -
+* - Demography
+  - walk\_dsablty
+  - Difficulty walking
+  -
+* - Demography
+  - conc\_dsord
+  - Difficulty concentrating
+  -
+* - Demography
+  - slfcre\_dsablty
+  - Difficulty with self-care
+  -
+* - Demography
+  - comm\_dsablty
+  - Difficulty communicating
+  -
+```
 
 (manual:migration)=
 # 5. Migration
@@ -1752,55 +1763,49 @@ following way:
 5.3 Tabular Overview of Variables
 ---------------------------------
 
-+-------------+-----------------+-----------------+-----------------+
-| Module Code | Variable name   | > Variable      | > Notes         |
-|             |                 | > label         |                 |
-+=============+=================+=================+=================+
-| Migration   | mig             | > Migration     | >               |
-|             | rated\_mod\_age | > module        |                 |
-|             |                 | > application   |                 |
-|             |                 | > age           |                 |
-+-------------+-----------------+-----------------+-----------------+
-| Migration   | migr            | > Reference     | If              |
-|             | ated\_ref\_time | > time applied  | migr            |
-|             |                 | > to migration  | ated\_ref\_time |
-|             |                 | > questions     | = 5 means       |
-|             |                 |                 | questions about |
-|             |                 |                 | migration refer |
-|             |                 |                 | to any          |
-|             |                 |                 | migration in    |
-|             |                 |                 | the last 5      |
-|             |                 |                 | years           |
-+-------------+-----------------+-----------------+-----------------+
-| Migration   | m               | > Individual    |                 |
-|             | igrated\_binary | > has migrated  |                 |
-+-------------+-----------------+-----------------+-----------------+
-| Migration   | migrated\_years | > Years since   | Years since     |
-|             |                 | > latest        | last migration  |
-|             |                 | > migration     | is the same as  |
-|             |                 |                 | how long lived  |
-|             |                 |                 | at current      |
-|             |                 |                 | location        |
-+-------------+-----------------+-----------------+-----------------+
-| Migration   | migrat          | > Migrated from | No means        |
-|             | ed\_from\_urban | > area          | migrated from   |
-|             |                 |                 | rural area      |
-+-------------+-----------------+-----------------+-----------------+
-| Migration   | migr            | > Category of   |                 |
-|             | ated\_from\_cat | > migration     |                 |
-|             |                 | > area          |                 |
-+-------------+-----------------+-----------------+-----------------+
-| Migration   | migra           | > Code of       |                 |
-|             | ted\_from\_code | > migration     |                 |
-|             |                 | > area          |                 |
-+-------------+-----------------+-----------------+-----------------+
-| Migration   | migrated        | > Code of       |                 |
-|             | \_from\_country | > migration     |                 |
-|             |                 | > country       |                 |
-+-------------+-----------------+-----------------+-----------------+
-| Migration   | m               | > Reason for    |                 |
-|             | igrated\_reason | > migrating     |                 |
-+-------------+-----------------+-----------------+-----------------+
+```{list-table}
+:header-rows: 1
+* - Module Code
+  - Variable name
+  - Variable label
+  - Notes
+* - Migration
+  - migrated\_mod\_age
+  - Migration module appliation age
+  -
+* - Migration
+  - migrated\_ref\_time
+  - Reference time applied to migration questions
+  - If migrated\_ref\_time = 5 means questions about migration refer to any migration in the last 5 years
+* - Migration
+  - migrated\_binary
+  - Binary - Individual has migrated
+  -
+* - Migration
+  - migrated\_years
+  - Years since last migration
+  - Years since last migration is the same as how long lived at current location
+* - Migration
+  - migrated\_from\_urban
+  - Binary - Individual migrated from urban area
+  - No means migrated from rural area
+* - Migration
+  - migrated\_from\_cat
+  - Category of migration area
+  -
+* - Migration
+  - migrated\_from\_code
+  - Code of migration area
+  -
+* - Migration
+  - migrated\_from\_country
+  - Code of migration country
+  -
+* - Migration
+  - migrated\_reason
+  - Reason for migration
+  -
+```
 
 (manual:education)=
 # 6. Education
@@ -1937,70 +1942,50 @@ To be completed.
 6.3 Tabular Overview of Variables
 ---------------------------------
 
-+-------------+---------------+------------------+------------------+
-| Module Code | Variable name | > Variable label | > Notes          |
-+=============+===============+==================+==================+
-| Education   | ed\_mod\_age  | > Education      | >                |
-|             |               | > module minumum |                  |
-|             |               | > age            |                  |
-+-------------+---------------+------------------+------------------+
-| Education   | school        | > Currently in   |                  |
-|             |               | > school         |                  |
-+-------------+---------------+------------------+------------------+
-| Education   | literacy      | > Individual can |                  |
-|             |               | > read and write |                  |
-+-------------+---------------+------------------+------------------+
-| Education   | educy         | > Years of       |                  |
-|             |               | > education      |                  |
-+-------------+---------------+------------------+------------------+
-| Education   | educat7       | > Level of       | No option for    |
-|             |               | > education 7    | \"Other\", as    |
-|             |               | > categories     | opposed to I2D2, |
-|             |               |                  | anything not in  |
-|             |               |                  | these categories |
-|             |               |                  | is to be set to  |
-|             |               |                  | missing          |
-+-------------+---------------+------------------+------------------+
-| Education   | educat5       | > Level of       |                  |
-|             |               | > education 5    |                  |
-|             |               | > categories     |                  |
-+-------------+---------------+------------------+------------------+
-| Education   | educat4       | > Level of       |                  |
-|             |               | > education 4    |                  |
-|             |               | > categories     |                  |
-+-------------+---------------+------------------+------------------+
-| Education   | educat\_orig  | > Original       | Code if there is |
-|             |               | > education code | a single         |
-|             |               |                  | original         |
-|             |               |                  | education        |
-|             |               |                  | variable (as is  |
-|             |               |                  | in most cases).  |
-|             |               |                  | If there are two |
-|             |               |                  | or more          |
-|             |               |                  | variables, leave |
-|             |               |                  | missing, make a  |
-|             |               |                  | note of it.      |
-+-------------+---------------+------------------+------------------+
-| Education   | educat\_isced | > International  | Codes are for    |
-|             |               | > Standard       | example:\        |
-|             |               | > Classification | \                |
-|             |               | > of Education   | 2 Lower          |
-|             |               | > (ISCED A)      | secondary        |
-|             |               |                  | education\       |
-|             |               |                  | 24 General\      |
-|             |               |                  | 242 Partial      |
-|             |               |                  | level            |
-|             |               |                  | completion,      |
-|             |               |                  | without direct   |
-|             |               |                  | access to upper  |
-|             |               |                  | secondary        |
-|             |               |                  | education\       |
-|             |               |                  | \                |
-|             |               |                  | Should be coded  |
-|             |               |                  | as 200, 240, and |
-|             |               |                  | 242              |
-|             |               |                  | respectively.    |
-+-------------+---------------+------------------+------------------+
+```{list-table}
+:header-rows: 1
+
+* - Module Code
+  - Variable name
+  - Variable label
+  - Notes
+* - Education
+  - ed\_mod\_age
+  - Education module minimum age
+  -
+* - Education
+  - school
+  - Currently in school
+  -
+* - Education
+  - literacy
+  - Individual can read and write
+  -
+* - Education
+  - educy
+  - Years of education
+  -
+* - Education
+  - educat7
+  - Level of education 7 categories
+  - No option for \"Other\", as opposed to I2D2, anything not in these categories is to be set to missing
+* - Education
+  - educat5
+  - Level of education 5 categories
+  -
+* - Education
+  - educat4
+  - Level of education 4 categories
+  -
+* - Education
+  - educat\_orig
+  - Original education code
+  - Code if there is a single original education variable (as is in most cases). If there are two or more variables, leave missing, make a note of it.
+* - Education
+  - educat\_isced
+  - International Standard Classification of Education (ISCED)
+  - Codes are for example: 2 Lower secondary education 24 Lower secondary general education 242 Sufficient for partial level completion, without direct access to upper secondary education Should be coded as 200, 240, and 242 respectively.
+```
 
 (manual:training)=
 # 7. Training
@@ -2070,36 +2055,38 @@ To be completed.
 7.3 Tabular Overview of Variables
 ---------------------------------
 
-+-------------+-----------------+-----------------+-----------------+
-| Module Code | Variable name   | > Variable      | > Notes         |
-|             |                 | > label         |                 |
-+=============+=================+=================+=================+
-| Education   | vocational      | > Ever received | >               |
-|             |                 | > vocational    |                 |
-|             |                 | > training      |                 |
-+-------------+-----------------+-----------------+-----------------+
-| Education   | v               | > Type of       |                 |
-|             | ocational\_type | > vocational    |                 |
-|             |                 | > training      |                 |
-+-------------+-----------------+-----------------+-----------------+
-| Education   | vocati          | > Length of     |                 |
-|             | onal\_length\_l | > training,     |                 |
-|             |                 | > lower limit   |                 |
-+-------------+-----------------+-----------------+-----------------+
-| Education   | vocati          | > Length of     |                 |
-|             | onal\_length\_u | > training,     |                 |
-|             |                 | > upper limit   |                 |
-+-------------+-----------------+-----------------+-----------------+
-| Education   | vocation        | > Original      |                 |
-|             | al\_field\_orig | > field of      |                 |
-|             |                 | > training      |                 |
-|             |                 | > information   |                 |
-+-------------+-----------------+-----------------+-----------------+
-| Education   | vocat           | > How training  | If funded with  |
-|             | ional\_financed | > was financed  | different       |
-|             |                 |                 | sources, chose  |
-|             |                 |                 | main source     |
-+-------------+-----------------+-----------------+-----------------+
+```{list-table}
+:header-rows: 1
+
+* - Module Code
+  - Variable name
+  - Variable label
+  - Notes
+* - Education
+  - vocational
+  - Ever received vocational training
+  -
+* - Education
+  - vocational\_type
+  - Type of vocational training
+  -
+* - Education
+  - vocational\_length\_l
+  - Length of training, lower limit
+  -
+* - Education
+  - vocational\_length\_u
+  - Length of training, upper limit
+  -
+* - Education
+  - vocational\_field\_orig
+  - Original field of vocational training
+  -
+* - Education
+  - vocational\_financed
+  - How vocational training was financed
+  - If financed by different sources, choose main source
+```
 
 (manual:labour)=
 # 8. Labour
@@ -4443,883 +4430,508 @@ firmsize\_u \< firmsize\_l
 8.3 Tabular Overview of Variables
 ---------------------------------
 
-+--------+-----------------+------------------+------------------+
-| Module | Variable name   | > Variable label | > Notes          |
-+========+=================+==================+==================+
-| Labor  | minlaborage     | > Labor module   | >                |
-|        |                 | > application    |                  |
-|        |                 | > age            |                  |
-+--------+-----------------+------------------+------------------+
-| Labor  | lstatus         | > Labor status   | In some GMD      |
-|        |                 | > (7-day ref     | harmonizations   |
-|        |                 | > period)        | (not in their    |
-|        |                 |                  | dictionaries)    |
-|        |                 |                  | this is given as |
-|        |                 |                  | lstatus\_7. In   |
-|        |                 |                  | general, the 7   |
-|        |                 |                  | day reference    |
-|        |                 |                  | ones are then    |
-|        |                 |                  | for example      |
-|        |                 |                  | ocusec\_7 and    |
-|        |                 |                  | ocusec\_2. This  |
-|        |                 |                  | is then not neat |
-|        |                 |                  | with             |
-|        |                 |                  | ocusec\_year,    |
-|        |                 |                  | ocusec\_year\_2. |
-|        |                 |                  | Either           |
-|        |                 |                  | ocusec\_week,    |
-|        |                 |                  | ocusec\_year or  |
-|        |                 |                  | ocusec\_7,       |
-|        |                 |                  | ocusec\_365.     |
-+--------+-----------------+------------------+------------------+
-| Labor  | potential\_lf   | > Potential      | A binary         |
-|        |                 | > labour force\  | indicator taking |
-|        |                 | > (7-day ref     | a value only if  |
-|        |                 | > period)        | the person is    |
-|        |                 |                  | not in the       |
-|        |                 |                  | labour force     |
-|        |                 |                  | (missing if in   |
-|        |                 |                  | LF or            |
-|        |                 |                  | unemployed).     |
-|        |                 |                  | Codes 1 if i)    |
-|        |                 |                  | available but    |
-|        |                 |                  | not searching or |
-|        |                 |                  | ii) searching    |
-|        |                 |                  | but not          |
-|        |                 |                  | immediately      |
-|        |                 |                  | available to     |
-|        |                 |                  | work. Codes 0    |
-|        |                 |                  | otherwise.       |
-+--------+-----------------+------------------+------------------+
-| Labor  | underemployment | >                | A binary         |
-|        |                 | Underemployment\ | indicator taking |
-|        |                 | > (7-day ref     | value only if    |
-|        |                 | > period)        | the person is in |
-|        |                 |                  | the labour force |
-|        |                 |                  | and working      |
-|        |                 |                  | (missing if not  |
-|        |                 |                  | or unemployed).  |
-|        |                 |                  | Codes 1 if       |
-|        |                 |                  | person would     |
-|        |                 |                  | take on more     |
-|        |                 |                  | jobs or more     |
-|        |                 |                  | hours at their   |
-|        |                 |                  | job if           |
-|        |                 |                  | pos              |
-|        |                 |                  | sible/available, |
-|        |                 |                  | 0 otherwise.     |
-+--------+-----------------+------------------+------------------+
-| Labor  | nlfreason       | > Reason not in  |                  |
-|        |                 | > the labor      |                  |
-|        |                 | > force\         |                  |
-|        |                 | > (7-day ref     |                  |
-|        |                 | > period)        |                  |
-+--------+-----------------+------------------+------------------+
-| Labor  | unempldur\_l    | > Unemployment   |                  |
-|        |                 | > duration       |                  |
-|        |                 | > (months)\      |                  |
-|        |                 | > lower bracket  |                  |
-|        |                 | > (7-day ref     |                  |
-|        |                 | > period)        |                  |
-+--------+-----------------+------------------+------------------+
-| Labor  | unempldur\_u    | > Unemployment   |                  |
-|        |                 | > duration       |                  |
-|        |                 | > (months)\      |                  |
-|        |                 | > upper bracket  |                  |
-|        |                 | > (7-day ref     |                  |
-|        |                 | > period)        |                  |
-+--------+-----------------+------------------+------------------+
+```{list-table}
+:header-rows: 1
 
-+--------+------------------+------------------+------------------+
-| Module | Variable name    | > Variable label | > Notes          |
-+========+==================+==================+==================+
-| Labor  | empstat          | > Employment     | >                |
-|        |                  | > status,        |                  |
-|        |                  | > primary job\   |                  |
-|        |                  | > (7-day ref     |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | ocusec           | > Sector of      | NGOs were        |
-|        |                  | > activity,      | classified in    |
-|        |                  | > primary job\   | I2D2 as public   |
-|        |                  | > (7-day ref     | sector, switched |
-|        |                  | > period)        | to private.      |
-+--------+------------------+------------------+------------------+
-| Labor  | industry\_orig   | > Original       |                  |
-|        |                  | > industry code, |                  |
-|        |                  | > primary\       |                  |
-|        |                  | > job (7-day ref |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | i                | > ISIC code of   | Code of ISIC - 4 |
-|        | ndustrycat\_isic | > the            | for example is\  |
-|        |                  | >                | \                |
-|        |                  | classification,\ | Q - Human health |
-|        |                  | > primary job    | and social work  |
-|        |                  | > (7-day ref     | activities\      |
-|        |                  | > period)        | 86 Human health  |
-|        |                  |                  | activities\      |
-|        |                  |                  | 861\             |
-|        |                  |                  | 8610 Hospital    |
-|        |                  |                  | activities\      |
-|        |                  |                  | 8620 Medical     |
-|        |                  |                  | dental practice  |
-|        |                  |                  | activities\      |
-|        |                  |                  | \                |
-|        |                  |                  | The four options |
-|        |                  |                  | would be coded   |
-|        |                  |                  | as \"Q\", 8600,  |
-|        |                  |                  | 8610, 8620       |
-|        |                  |                  | respectively.    |
-+--------+------------------+------------------+------------------+
-| Labor  | industrycat10    | > 1-digit        |                  |
-|        |                  | > industry       |                  |
-|        |                  | >                |                  |
-|        |                  | classification,\ |                  |
-|        |                  | > primary job    |                  |
-|        |                  | > (7-day ref     |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | industrycat4     | > 4-category     |                  |
-|        |                  | > industry       |                  |
-|        |                  | >                |                  |
-|        |                  | classification,\ |                  |
-|        |                  | > primary job    |                  |
-|        |                  | > (7-day ref     |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | occup\_orig      | > Original       |                  |
-|        |                  | > occupational   |                  |
-|        |                  | >                |                  |
-|        |                  | classification,\ |                  |
-|        |                  | > primary job    |                  |
-|        |                  | > (7-day ref     |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | occup\_isco      | > ISCO code of   | ISCO-08 codes    |
-|        |                  | > the            | are\             |
-|        |                  | >                | \                |
-|        |                  | classification,\ | 8 Plant and      |
-|        |                  | > primary job    | machine          |
-|        |                  | > (7-day ref     | operators, and   |
-|        |                  | > period)        | assemblers\      |
-|        |                  |                  | 81 Stationary    |
-|        |                  |                  | plant machine    |
-|        |                  |                  | operators\       |
-|        |                  |                  | 811 Mining and   |
-|        |                  |                  | mineral          |
-|        |                  |                  | processing plant |
-|        |                  |                  | operators\       |
-|        |                  |                  | 8111 Miners and  |
-|        |                  |                  | quarriers\       |
-|        |                  |                  | \                |
-|        |                  |                  | Given the level  |
-|        |                  |                  | of detail        |
-|        |                  |                  | available, this  |
-|        |                  |                  | are to be coded  |
-|        |                  |                  | as 8000, 8100,   |
-|        |                  |                  | 8110, and 8111   |
-|        |                  |                  | respectively.    |
-+--------+------------------+------------------+------------------+
-| Labor  | occup\_skill     | > Skill level    | https            |
-|        |                  | > based on ISCO  | ://ilostat.ilo.o |
-|        |                  | > standard       | rg/resources/con |
-|        |                  |                  | cepts-and-defini |
-|        |                  |                  | tions/classifica |
-|        |                  |                  | tion-occupation/ |
-+--------+------------------+------------------+------------------+
-| Labor  | occup            | > 1 digit        |                  |
-|        |                  | > occupational   |                  |
-|        |                  | >                |                  |
-|        |                  | classification,\ |                  |
-|        |                  | > primary job    |                  |
-|        |                  | > (7-day ref     |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | wage\_no\_compen | > Last wage      |                  |
-|        |                  | > payment,\      |                  |
-|        |                  | > primary job,   |                  |
-|        |                  | > excl. bonuses, |                  |
-|        |                  | > etc.\          |                  |
-|        |                  | > (7-day ref     |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | unitwage         | > Time unit of   |                  |
-|        |                  | > last wages\    |                  |
-|        |                  | > payment,       |                  |
-|        |                  | > primary job\   |                  |
-|        |                  | > (7-day ref     |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | whours           | > Hours of work  |                  |
-|        |                  | > in last week,\ |                  |
-|        |                  | > primary job    |                  |
-|        |                  | > (7-day ref     |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | wmonths          | > Months worked  | This definition  |
-|        |                  | > in the last 12 | may appear       |
-|        |                  | > months,\       | confusing since  |
-|        |                  | > primary job    | it is months out |
-|        |                  | > (7-day ref     | of the past 12   |
-|        |                  | > period)        | months of work   |
-|        |                  |                  | for the 7 day    |
-|        |                  |                  | recall and there |
-|        |                  |                  | is a             |
-|        |                  |                  | wmonths\_year    |
-|        |                  |                  | variable for the |
-|        |                  |                  | 12 month recall. |
-|        |                  |                  | It is not        |
-|        |                  |                  | clearly defined  |
-|        |                  |                  | in the           |
-|        |                  |                  | guidelines, yet  |
-|        |                  |                  | I would read it  |
-|        |                  |                  | as the number of |
-|        |                  |                  | months in the    |
-|        |                  |                  | main job for the |
-|        |                  |                  | 7 day recall     |
-|        |                  |                  | job, which would |
-|        |                  |                  | be fewer than    |
-|        |                  |                  | the              |
-|        |                  |                  | wmonths\_year    |
-|        |                  |                  | number if the    |
-|        |                  |                  | person switched  |
-|        |                  |                  | jobs say 2       |
-|        |                  |                  | months ago, had  |
-|        |                  |                  | the previous one |
-|        |                  |                  | since over a     |
-|        |                  |                  | year.            |
-+--------+------------------+------------------+------------------+
-| Labor  | wage\_total      | > Annualized     |                  |
-|        |                  | > total wage,\   |                  |
-|        |                  | > primary job    |                  |
-|        |                  | > (7-day ref     |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | contract         | > Contract       |                  |
-|        |                  | > (7-day ref     |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | healthins        | > Health         |                  |
-|        |                  | > insurance\     |                  |
-|        |                  | > (7-day ref     |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | socialsec        | > Social         |                  |
-|        |                  | > security       |                  |
-|        |                  | > (7-day ref     |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | union            | > Union          |                  |
-|        |                  | > membership\    |                  |
-|        |                  | > (7-day ref     |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | firmsize\_l      | > Firm size      |                  |
-|        |                  | > (lower         |                  |
-|        |                  | > bracket),\     |                  |
-|        |                  | > primary job    |                  |
-|        |                  | > (7-day ref     |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | firmsize\_u      | > Firm size      |                  |
-|        |                  | > (upper         |                  |
-|        |                  | > bracket),\     |                  |
-|        |                  | > primary job    |                  |
-|        |                  | > (7-day ref     |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
+* - Module
+  - Variable name
+  - Variable label
+  - Notes
+* - Labor
+  - minlaborage
+  - Labor module application age
+  -
+* - Labor
+  - lstatus
+  - Labor status (7-day ref period)
+  - In some GMD harmonizations (not in their dictionaries) this is given as lstatus_7. In general, the 7 day reference ones are then for example ocusec_7 and ocusec_2. This is then not neat with ocusec_year, ocusec_year_2. Either ocusec_week, ocusec_year or ocusec_7, ocusec_365.
+* - Labor
+  - potential\_lf
+  - Potential labor force (7-day ref period)
+  - A binary indicator taking a value only if the person is not in the labor force (missing if in LF or unemployed). Codes 1 if i) available but not searching or ii) searching but not immediately available to work. Codes 0 otherwise.
+* - Labor
+  - underemployment
+  - Underemployment (7-day ref period)
+  - A binary indicator taking value only if the person is in the labor force and working (missing if not or unemployed). Codes 1 if person would take on more jobs or more hours at their job if possible/available, 0 otherwise.
+* - Labor
+  - nlfsreason
+  - Reason not in the labor force (7-day ref period)
+  -
+* - Labor
+  - unempldur\_l
+  - Unemployment duration (months) lower bracket (7-day ref period)
+  -
+* - Labor
+  - unempldur\_u
+  - Unemployment duration (months) upper bracket (7-day ref period)
+  -
+```
 
-+--------+------------------+------------------+------------------+
-| Module | Variable name    | > Variable label | > Notes          |
-+========+==================+==================+==================+
-| Labor  | empstat\_2       | > Employment     |                  |
-|        |                  | > status,\       |                  |
-|        |                  | > secondary job  |                  |
-|        |                  | > (7-day ref     |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | ocusec\_2        | > Sector of      |                  |
-|        |                  | > activity,\     |                  |
-|        |                  | > secondary job  |                  |
-|        |                  | > (7-day ref     |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | i                | > Original       |                  |
-|        | ndustry\_orig\_2 | > industry       |                  |
-|        |                  | > code,\         |                  |
-|        |                  | > secondary job  |                  |
-|        |                  | > (7-day ref     |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | indu             | > ISIC code of   | See              |
-|        | strycat\_isic\_2 | > the            | i                |
-|        |                  | >                | ndustrycat\_isic |
-|        |                  |  classification, |                  |
-|        |                  | > secondary job  |                  |
-|        |                  | > (7-day ref     |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | industrycat10\_2 | > 1 digit        |                  |
-|        |                  | > industry       |                  |
-|        |                  | >                |                  |
-|        |                  | classification,\ |                  |
-|        |                  | > secondary job  |                  |
-|        |                  | > (7-day ref     |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | industrycat4\_2  | > 4-category     |                  |
-|        |                  | > industry       |                  |
-|        |                  | >                |                  |
-|        |                  | classification,\ |                  |
-|        |                  | > secondary job  |                  |
-|        |                  | > (7-day ref     |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | occup\_orig\_2   | > Original       |                  |
-|        |                  | > occupational   |                  |
-|        |                  | >                |                  |
-|        |                  | classification,\ |                  |
-|        |                  | > secondary job  |                  |
-|        |                  | > (7-day ref     |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | occup\_isco\_2   | > ISCO code of   | See occup\_isco  |
-|        |                  | > the            |                  |
-|        |                  | >                |                  |
-|        |                  |  classification, |                  |
-|        |                  | > secondary job  |                  |
-|        |                  | > (7-day ref     |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | occup\_skill\_2  | > Skill level    | https            |
-|        |                  | > based on ISCO  | ://ilostat.ilo.o |
-|        |                  | > standard       | rg/resources/con |
-|        |                  |                  | cepts-and-defini |
-|        |                  |                  | tions/classifica |
-|        |                  |                  | tion-occupation/ |
-+--------+------------------+------------------+------------------+
-| Labor  | occup\_2         | > 1 digit        |                  |
-|        |                  | > occupational   |                  |
-|        |                  | >                |                  |
-|        |                  | classification,\ |                  |
-|        |                  | > secondary job  |                  |
-|        |                  | > (7-day ref     |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | wag              | > wage payment,\ |                  |
-|        | e\_no\_compen\_2 | > secondary job, |                  |
-|        |                  | > excl. bonuses, |                  |
-|        |                  | > etc.\          |                  |
-|        |                  | > (7-day ref     |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | unitwage\_2      | > Time unit of   |                  |
-|        |                  | > last wages     |                  |
-|        |                  | > payment,\      |                  |
-|        |                  | > secondary job  |                  |
-|        |                  | > (7-day ref     |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | whours\_2        | > Hours of work  |                  |
-|        |                  | > in last week,\ |                  |
-|        |                  | > secondary job  |                  |
-|        |                  | > (7-day ref     |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | wmonths\_2       | > Months worked  | See note on      |
-|        |                  | > in the last 12 | wmonths          |
-|        |                  | > months,\       |                  |
-|        |                  | > secondary job  |                  |
-|        |                  | > (7-day ref     |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | wage\_total\_2   | > Annualized     |                  |
-|        |                  | > total wage,\   |                  |
-|        |                  | > secondary job\ |                  |
-|        |                  | > (7-day ref     |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | firmsize\_l\_2   | > Firm size      |                  |
-|        |                  | > (lower         |                  |
-|        |                  | > bracket),\     |                  |
-|        |                  | > secondary job\ |                  |
-|        |                  | > (7-day ref     |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | firmsize\_u\_2   | > Firm size      |                  |
-|        |                  | > (upper         |                  |
-|        |                  | > bracket),\     |                  |
-|        |                  | > secondary job\ |                  |
-|        |                  | > (7-day ref     |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
+```{list-table}
+:header-rows: 1
 
-+--------+-----------------------+-----------------------+---------+
-| Module | Variable name         | > Variable label      | > Notes |
-+========+=======================+=======================+=========+
-| Labor  | t\_hours\_others      | > Total hours of work |         |
-|        |                       | > in the last 12      |         |
-|        |                       | > months in other     |         |
-|        |                       | > jobs excluding the  |         |
-|        |                       | > primary and         |         |
-|        |                       | > secondary ones      |         |
-+--------+-----------------------+-----------------------+---------+
-| Labor  | t\_w                  | > Annualized wage in  |         |
-|        | age\_nocompen\_others | > all jobs excluding  |         |
-|        |                       | > the primary and     |         |
-|        |                       | > secondary ones      |         |
-|        |                       | > (excluding tips,    |         |
-|        |                       | > bonuses, etc.).     |         |
-+--------+-----------------------+-----------------------+---------+
-| Labor  | t\_wage\_others       | > Annualized wage     |         |
-|        |                       | > (including tips,    |         |
-|        |                       | > bonuses, etc.) in   |         |
-|        |                       | > all other jobs      |         |
-|        |                       | > excluding the       |         |
-|        |                       | > primary and         |         |
-|        |                       | > secondary ones. (7  |         |
-|        |                       | > day ref).           |         |
-+--------+-----------------------+-----------------------+---------+
+* - Module
+  - Variable name
+  - Variable label
+  - Notes
+* - Labor
+  - empstat
+  - Employment status, primary job (7-day ref period)
+  -
+* - Labor
+  - ocusec
+  - Sector of activity, primary job (7-day ref period)
+  - NGOs were classified in I2D2 as public sector, switched to private.
+* - Labor
+  - industry\_orig
+  - Original industry code, primary job (7-day ref period)
+  -
+* - Labor
+  - industrycat\_isic
+  - ISIC code of the industry, primary job (7-day ref period)
+  - Code of ISIC - 4 for example is Q - Human health and social work activities 86 Human health activities 861 8610 Hospital activities 8620 Medical dental practice activities. The four options would be coded as "Q", 8600, 8610, 8620 respectively.
+* - Labor
+  - industrycat10
+  - 1-digit industry classification, primary job (7-day ref period)
+  -
+* - Labor
+  - industrycat4
+  - 4-category industry classification, primary job (7-day ref period)
+  -
+* - Labor
+  - occup\_orig
+  - Original occupational code, primary job (7-day ref period)
+  -
+* - Labor
+  - occup\_isco
+  - ISCO code of the occupation, primary job (7-day ref period)
+  - ISCO-08 codes are 8 Plant and machine operators, and assemblers 81 Stationary plant and machine operators 811 Mining and mineral processing plant operators 8111 Miners and quarriers Given the level of detail available, this are to be coded as 8000, 8100, 8110, and 8111 respectively.
+* - Labor
+  - occup\_skill
+  - Skill level based on ISCO standard, primary job (7-day ref period)
+  - https://ilostat.ilo.org/resources/concepts-and-definitions/classification-occupation/
+* - Labor
+  - occup
+  - 1-digit occupation classification, primary job (7-day ref period)
+  -
+* - Labor
+  - wage\_no\_compen
+  - Last wage payment, primary job (7-day ref period)
+  -
+* - Labor
+  - unitwage
+  - Time unit of last wages, primary job (7-day ref period)
+  -
+* - Labor
+  - whours
+  - Hours of work in last week, primary job (7-day ref period)
+  -
+* - Labor
+  - wmonths
+  - Months worked in the last 12 months, primary job (7-day ref period)
+  - This definition may appear confusing since it is months out of the past 12 months of work for the 7 day recall and there is a wmonths_year variable for the 12 month recall. It is not clearly defined in the guidelines, yet I would read it as the number of months in the main job for the 7 day recall job, which would be fewer than the wmonths_year number if the person switched jobs say 2 months ago, had the previous one since over a year.
+* - Labor
+  - wage\_total
+  - Annualized wage payment, primary job (7-day ref period)
+  -
+* - Labor
+  - contract
+  - Contract (7-day ref period)
+  -
+* - Labor
+  - healthins
+  - Health insurance (7-day ref period)
+  -
+* - Labor
+  - socialsec
+  - Social security (7-day ref period)
+  -
+* - Labor
+  - union
+  - Union membership (7-day ref period)
+  -
+* - Labor
+  - firmsize\_l
+  - Firm size (lower bracket), primary job (7-day ref period)
+  -
+* - Labor
+  - firmsize\_u
+  - Firm size (upper bracket), primary job (7-day ref period)
+  -
+```
 
-+--------+-----------------------+-----------------------+---------+
-| Module | Variable name         | > Variable label      | > Notes |
-+========+=======================+=======================+=========+
-| Labor  | t\_hours\_total       | > Annualized hours    |         |
-|        |                       | > worked in all jobs\ |         |
-|        |                       | > (7-day ref period)  |         |
-+--------+-----------------------+-----------------------+---------+
-| Labor  | t\_                   | > Annualized wage in  |         |
-|        | wage\_nocompen\_total | > all jobs excl.      |         |
-|        |                       | > bonuses, etc.\      |         |
-|        |                       | > (7-day ref period)  |         |
-+--------+-----------------------+-----------------------+---------+
-| Labor  | t\_wage\_total        | > Annualized total    |         |
-|        |                       | > wage for all jobs\  |         |
-|        |                       | > (7-day ref period)  |         |
-+--------+-----------------------+-----------------------+---------+
+```{list-table}
+:header-rows: 1
 
-+--------+------------------+------------------+------------------+
-| Module | Variable name    | > Variable label | > Notes          |
-+========+==================+==================+==================+
-| Labor  | lstatus\_year    | > Labor status   |                  |
-|        |                  | > (12-mon ref    |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | pot              | > Potential      | A binary         |
-|        | ential\_lf\_year | > labour force\  | indicator taking |
-|        |                  | > (12-mon ref    | a value only if  |
-|        |                  | > period)        | the person is    |
-|        |                  |                  | not in the       |
-|        |                  |                  | labour force     |
-|        |                  |                  | (missing if in   |
-|        |                  |                  | LF or            |
-|        |                  |                  | unemployed).     |
-|        |                  |                  | Codes 1 if i)    |
-|        |                  |                  | available but    |
-|        |                  |                  | not searching or |
-|        |                  |                  | ii) searching    |
-|        |                  |                  | but not          |
-|        |                  |                  | immediately      |
-|        |                  |                  | available to     |
-|        |                  |                  | work. Codes 0    |
-|        |                  |                  | otherwise.       |
-+--------+------------------+------------------+------------------+
-| Labor  | under            | >                | A binary         |
-|        | employment\_year | Underemployment\ | indicator taking |
-|        |                  | > (12-mon ref    | value only if    |
-|        |                  | > period)        | the person is in |
-|        |                  |                  | the labour force |
-|        |                  |                  | and working      |
-|        |                  |                  | (missing if not  |
-|        |                  |                  | or unemployed).  |
-|        |                  |                  | Codes 1 if       |
-|        |                  |                  | person would     |
-|        |                  |                  | take on more     |
-|        |                  |                  | jobs or more     |
-|        |                  |                  | hours at their   |
-|        |                  |                  | job if           |
-|        |                  |                  | pos              |
-|        |                  |                  | sible/available, |
-|        |                  |                  | 0 otherwise.     |
-+--------+------------------+------------------+------------------+
-| Labor  | nlfreason\_year  | > Reason not in  |                  |
-|        |                  | > the labor      |                  |
-|        |                  | > force\         |                  |
-|        |                  | > (12-mon ref    |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | un               | > Unemployment   |                  |
-|        | empldur\_l\_year | > duration       |                  |
-|        |                  | > (months)\      |                  |
-|        |                  | > lower bracket  |                  |
-|        |                  | > (12-mon ref    |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | un               | > Unemployment   |                  |
-|        | empldur\_u\_year | > duration       |                  |
-|        |                  | > (months)\      |                  |
-|        |                  | > upper bracket  |                  |
-|        |                  | > (12-mon ref    |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | empstat\_year    | > Employment     |                  |
-|        |                  | > status,        |                  |
-|        |                  | > primary job\   |                  |
-|        |                  | > (12-mon ref    |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | ocusec\_year     | > Sector of      |                  |
-|        |                  | > activity,      |                  |
-|        |                  | > primary job\   |                  |
-|        |                  | > (12-mon ref    |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | indu             | > Original       |                  |
-|        | stry\_orig\_year | > industry       |                  |
-|        |                  | > code,\         |                  |
-|        |                  | > primary job\   |                  |
-|        |                  | > (12-mon ref    |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | industr          | > ISIC code of   | See              |
-|        | ycat\_isic\_year | > the            | i                |
-|        |                  | >                | ndustrycat\_isic |
-|        |                  |  classification, |                  |
-|        |                  | > primary job    |                  |
-|        |                  | > (12 month ref  |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | ind              | > 1 digit        |                  |
-|        | ustrycat10\_year | > industry       |                  |
-|        |                  | >                |                  |
-|        |                  | classification,\ |                  |
-|        |                  | > primary job    |                  |
-|        |                  | > (12-mon ref    |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | in               | > 4-category     |                  |
-|        | dustrycat4\_year | > industry       |                  |
-|        |                  | >                |                  |
-|        |                  |  classification\ |                  |
-|        |                  | > primary job    |                  |
-|        |                  | > (12-mon ref    |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | o                | > Original       |                  |
-|        | ccup\_orig\_year | > occupational\  |                  |
-|        |                  | >                |                  |
-|        |                  |  classification, |                  |
-|        |                  | > primary job\   |                  |
-|        |                  | > (12-mon ref    |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | o                | > ISCO code of   | See occup\_isco  |
-|        | ccup\_isco\_year | > the            |                  |
-|        |                  | >                |                  |
-|        |                  |  classification, |                  |
-|        |                  | > primary job    |                  |
-|        |                  | > (12 month ref  |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | oc               | > Skill level    | https            |
-|        | cup\_skill\_year | > based on ISCO  | ://ilostat.ilo.o |
-|        |                  | > standard       | rg/resources/con |
-|        |                  |                  | cepts-and-defini |
-|        |                  |                  | tions/classifica |
-|        |                  |                  | tion-occupation/ |
-+--------+------------------+------------------+------------------+
-| Labor  | occup\_year      | > 1 digit        |                  |
-|        |                  | > occupational   |                  |
-|        |                  | >                |                  |
-|        |                  | classification,\ |                  |
-|        |                  | > primary job    |                  |
-|        |                  | > (12-mon ref    |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | wage\_           | > Last wage      |                  |
-|        | no\_compen\_year | > payment,       |                  |
-|        |                  | > primary job,\  |                  |
-|        |                  | > excl. bonuses, |                  |
-|        |                  | > etc.\          |                  |
-|        |                  | > (12-mon ref    |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | unitwage\_year   | > Time unit of   |                  |
-|        |                  | > last wages     |                  |
-|        |                  | > payment,\      |                  |
-|        |                  | > primary job    |                  |
-|        |                  | > (12-mon ref    |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | whours\_year     | > Hours of work  |                  |
-|        |                  | > in last week,\ |                  |
-|        |                  | > primary job    |                  |
-|        |                  | > (12-mon ref    |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | wmonths\_year    | > Months worked  |                  |
-|        |                  | > in the last 12 |                  |
-|        |                  | > months,\       |                  |
-|        |                  | > primary job    |                  |
-|        |                  | > (12-mon ref    |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | w                | > Annualized     |                  |
-|        | age\_total\_year | > total wage,\   |                  |
-|        |                  | > primary job    |                  |
-|        |                  | > (12-mon ref    |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | contract\_year   | > Contract       |                  |
-|        |                  | > (12-mon ref    |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | healthins\_year  | > Health         |                  |
-|        |                  | > insurance\     |                  |
-|        |                  | > (12-mon ref    |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | socialsec\_year  | > Social         |                  |
-|        |                  | > security\      |                  |
-|        |                  | > (12-mon ref    |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | union\_year      | > Union          |                  |
-|        |                  | > membership\    |                  |
-|        |                  | > (12-mon ref    |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | f                | > Firm size      |                  |
-|        | irmsize\_l\_year | > (lower         |                  |
-|        |                  | > bracket),\     |                  |
-|        |                  | > primary job    |                  |
-|        |                  | > (12-mon ref    |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | f                | > Firm size      |                  |
-|        | irmsize\_u\_year | > (upper         |                  |
-|        |                  | > bracket),\     |                  |
-|        |                  | > primary job    |                  |
-|        |                  | > (12-mon ref    |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
+* - Module
+  - Variable name
+  - Variable label
+  - Notes
+* - Labor
+  - empstat\_2
+  - Employment status, secondary job (7-day ref period)
+  -
+* - Labor
+  - ocusec\_2
+  - Sector of activity, secondary job (7-day ref period)
+  -
+* - Labor
+  - industry\_orig\_2
+  - Original industry code, secondary job (7-day ref period)
+  -
+* - Labor
+  - industry\_isic\_2
+  - ISIC code of the industry, secondary job (7-day ref period)
+  - See industrycat_isic
+* - Labor
+  - industrycat10\_2
+  - 1-digit industry classification, secondary job (7-day ref period)
+  -
+* - Labor
+  - industrycat4\_2
+  - 4-category industry classification, secondary job (7-day ref period)
+  -
+* - Labor
+  - occup\_orig\_2
+  - Original occupational code, secondary job (7-day ref period)
+  -
+* - Labor
+  - occup\_isco\_2
+  - ISCO code of the occupation, secondary job (7-day ref period)
+  - See occup_isco
+* - Labor
+  - occup\_skill\_2
+  - Skill level based on ISCO standard, secondary job (7-day ref period)
+  - https://ilostat.ilo.org/resources/concepts-and-definitions/classification-occupation/
+* - Labor
+  - occup\_2
+  - 1-digit occupation classification, secondary job (7-day ref period)
+  -
+* - Labor
+  - wage\_no\_compen\_2
+  - wage payment, secondary job, excl. bonuses, etc. (7-day ref period)
+  -
+* - Labor
+  - unitwage\_2
+  - Time unit of last wages, secondary job (7-day ref period)
+  -
+* - Labor
+  - whours\_2
+  - Hours of work in last week, secondary job (7-day ref period)
+  -
+* - Labor
+  - wmonths\_2
+  - Months worked in the last 12 months, secondary job (7-day ref period)
+  - See note on wmonths
+* - Labor
+  - wage\_total\_2
+  - Annualized total wage, secondary job (7-day ref period)
+  -
+* - Labor
+  - firmsize\_l\_2
+  - Firm size (lower bracket), secondary job (7-day ref period)
+  -
+* - Labor
+  - firmsize\_u\_2
+  - Firm size (upper bracket), secondary job (7-day ref period)
+  -
+```
 
-+--------+------------------+------------------+------------------+
-| Module | Variable name    | > Variable label | > Notes          |
-+========+==================+==================+==================+
-| Labor  | empstat\_2\_year | > Employment     | >                |
-|        |                  | > status,\       |                  |
-|        |                  | > secondary job\ |                  |
-|        |                  | > (12-mon ref    |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | ocusec\_2\_year  | > Sector of      |                  |
-|        |                  | > activity,      |                  |
-|        |                  | > secondary job\ |                  |
-|        |                  | > (12-mon ref    |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | industr          | > Original       |                  |
-|        | y\_orig\_2\_year | > industry       |                  |
-|        |                  | > code,\         |                  |
-|        |                  | > secondary job\ |                  |
-|        |                  | > (12-mon ref    |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | industryca       | > ISIC code of   | See              |
-|        | t\_isic\_2\_year | > the            | i                |
-|        |                  | >                | ndustrycat\_isic |
-|        |                  |  classification, |                  |
-|        |                  | > secondary job  |                  |
-|        |                  | > (12 month ref  |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | indust           | > 1 digit        |                  |
-|        | rycat10\_2\_year | > industry       |                  |
-|        |                  | >                |                  |
-|        |                  | classification,\ |                  |
-|        |                  | > secondary job\ |                  |
-|        |                  | > (12-mon ref    |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | indus            | > 4-category     |                  |
-|        | trycat4\_2\_year | > industry       |                  |
-|        |                  | >                |                  |
-|        |                  | classification,\ |                  |
-|        |                  | > secondary job\ |                  |
-|        |                  | > (12-mon ref    |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | occu             | > Original       |                  |
-|        | p\_orig\_2\_year | > occupational   |                  |
-|        |                  | >                |                  |
-|        |                  |  classification, |                  |
-|        |                  | > secondary job  |                  |
-|        |                  | > (12-mon ref    |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | occu             | > ISCO code of   | See occup\_isco  |
-|        | p\_isco\_2\_year | > the            |                  |
-|        |                  | >                |                  |
-|        |                  |  classification, |                  |
-|        |                  | > seconddary job |                  |
-|        |                  | > (12 month ref  |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | occup            | > Skill level    | https            |
-|        | \_skill\_2\_year | > based on ISCO  | ://ilostat.ilo.o |
-|        |                  | > standard       | rg/resources/con |
-|        |                  |                  | cepts-and-defini |
-|        |                  |                  | tions/classifica |
-|        |                  |                  | tion-occupation/ |
-+--------+------------------+------------------+------------------+
-| Labor  | occup\_2\_year   | > 1 digit        |                  |
-|        |                  | > occupational   |                  |
-|        |                  | >                |                  |
-|        |                  | classification,\ |                  |
-|        |                  | > secondary job\ |                  |
-|        |                  | > (12-mon ref    |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | wage\_no\        | > last wage      |                  |
-|        | _compen\_2\_year | > payment,       |                  |
-|        |                  | > secondary      |                  |
-|        |                  | > job,\          |                  |
-|        |                  | > excl. bonuses, |                  |
-|        |                  | > etc.\          |                  |
-|        |                  | > (12-mon ref    |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | u                | > Time unit of   |                  |
-|        | nitwage\_2\_year | > last wages     |                  |
-|        |                  | > payment,\      |                  |
-|        |                  | > secondary job\ |                  |
-|        |                  | > (12-mon ref    |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | whours\_2\_year  | > Hours of work  |                  |
-|        |                  | > in last week,\ |                  |
-|        |                  | > secondary job\ |                  |
-|        |                  | > (12-mon ref    |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | wmonths\_2\_year | > Months worked  |                  |
-|        |                  | > in the last 12 |                  |
-|        |                  | > months,\       |                  |
-|        |                  | > secondary job\ |                  |
-|        |                  | > (12-mon ref    |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | wage             | > Annualized     |                  |
-|        | \_total\_2\_year | > total wage,\   |                  |
-|        |                  | > secondary job\ |                  |
-|        |                  | > (12-mon ref    |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | firm             | > Firm size      |                  |
-|        | size\_l\_2\_year | > (lower         |                  |
-|        |                  | > bracket),\     |                  |
-|        |                  | > secondary job\ |                  |
-|        |                  | > (12-mon ref    |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | firm             | > Firm size      |                  |
-|        | size\_u\_2\_year | > (upper         |                  |
-|        |                  | > bracket),\     |                  |
-|        |                  | > secondary job\ |                  |
-|        |                  | > (12-mon ref    |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
+```{list-table}
+:header-rows: 1
 
-+--------+-----------------------+-----------------------+---------+
-| Module | Variable name         | > Variable label      | > Notes |
-+========+=======================+=======================+=========+
-| Labor  | t                     | > Annualized hours    | >       |
-|        | \_hours\_others\_year | > worked\             |         |
-|        |                       | > in all but primary  |         |
-|        |                       | > and secondary jobs\ |         |
-|        |                       | > (12-mon ref period) |         |
-+--------+-----------------------+-----------------------+---------+
-| Labor  | t\_wage\_n            | > Annualized wage in  |         |
-|        | ocompen\_others\_year | > all\                |         |
-|        |                       | > but primary &       |         |
-|        |                       | > secondary jobs\     |         |
-|        |                       | > excl. bonuses,      |         |
-|        |                       | > etc.\               |         |
-|        |                       | > (12-mon ref period) |         |
-+--------+-----------------------+-----------------------+---------+
-| Labor  | t\_wage\_others\_year | > Annualized wage in  |         |
-|        |                       | > all\                |         |
-|        |                       | > but primary and     |         |
-|        |                       | > secondary jobs\     |         |
-|        |                       | > (12-mon ref period) |         |
-+--------+-----------------------+-----------------------+---------+
+* - Module
+  - Variable name
+  - Variable label
+  - Notes
+* - Labor
+  - t\_hours\_others
+  - Total hours of work in the last 12 months in other jobs excluding the primary and secondary ones
+  -
+* - Labor
+  - t\_wage\_nocompen\_others
+  - Annualized wage in all jobs excluding the primary and secondary ones (excluding tips, bonuses, etc.)
+  -
+* - Labor
+  - t\_wage\_others
+  - Annualized wage (including tips, bonuses, etc.) in all other jobs excluding the primary and secondary ones. (7 day ref).
+  -
+```
 
-+--------+------------------+------------------+------------------+
-| Module | Variable name    | > Variable label | > Notes          |
-+========+==================+==================+==================+
-| Labor  | t\_ho            | > Annualized     | > t\_ho          |
-|        | urs\_total\_year | > hours worked   | urs\_total\_year |
-|        |                  | > in all jobs\   |                  |
-|        |                  | > (12-mon ref    |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | t\_wage\_nocom   | > Annualized     | t\_wage\_nocom   |
-|        | pen\_total\_year | > wage in all    | pen\_total\_year |
-|        |                  | > jobs\          |                  |
-|        |                  | > excl. bonuses, |                  |
-|        |                  | > etc.\          |                  |
-|        |                  | > (12-mon ref    |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | t\_w             | > Annualized     | t\_w             |
-|        | age\_total\_year | > total wage for | age\_total\_year |
-|        |                  | > all jobs\      |                  |
-|        |                  | > (12-mon ref    |                  |
-|        |                  | > period)        |                  |
-+--------+------------------+------------------+------------------+
+```{list-table}
+:header-rows: 1
 
-+--------+------------------+------------------+------------------+
-| Module | Variable name    | > Variable label | > Notes          |
-+========+==================+==================+==================+
-| Labor  | njobs            | > Total number   | > Total Labor    |
-|        |                  | > of jobs        | > income will be |
-|        |                  |                  | > created based  |
-|        |                  |                  | > on either the  |
-|        |                  |                  | > 7 days or 12   |
-|        |                  |                  | > months         |
-|        |                  |                  | > reference      |
-|        |                  |                  | > period         |
-|        |                  |                  | > variables or a |
-|        |                  |                  | > combination of |
-|        |                  |                  | > both.          |
-|        |                  |                  | > Harmonizers    |
-|        |                  |                  | > should make    |
-|        |                  |                  | > sure that all  |
-|        |                  |                  | > jobs are       |
-|        |                  |                  | > included and   |
-|        |                  |                  | > none of them   |
-|        |                  |                  | > are double     |
-|        |                  |                  | > counted.       |
-+--------+------------------+------------------+------------------+
-| Labor  | t\_hours\_annual | > Total hours    |                  |
-|        |                  | > worked in all  |                  |
-|        |                  | > jobs\          |                  |
-|        |                  | > in the         |                  |
-|        |                  | > previous 12    |                  |
-|        |                  | > months         |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | linc\_nc         | > Total annual   | Difference to    |
-|        |                  | > wage income in | t\_wage\_nocomp  |
-|        |                  | > all\           | en\_total\_year? |
-|        |                  | > jobs, excl.    |                  |
-|        |                  | > bonuses, etc.  |                  |
-+--------+------------------+------------------+------------------+
-| Labor  | laborincome      | > Total annual   | Difference to    |
-|        |                  | > individual     | t\_wa            |
-|        |                  | > labor income\  | ge\_total\_year? |
-|        |                  | > in all jobs,   |                  |
-|        |                  | > incl. bonuses, |                  |
-|        |                  | > etc.           |                  |
-+--------+------------------+------------------+------------------+
+* - Module
+  - Variable name
+  - Variable label
+  - Notes
+* - Labor
+  - t\_hours\_total
+  - Annualized hours worked in all jobs (7-day ref period)
+  -
+* - Labor
+  - t\_wage\_nocompen\_total
+  - Annualized wage in all jobs excl. bonuses, etc. (7-day ref period)
+  -
+```
+
+```{list-table}
+:header-rows: 1
+
+* - Module
+  - Variable name
+  - Variable label
+  - Notes
+* - Labor
+  - lstaus\_year
+  - Labor status (12-mon ref period)
+  -
+* - Labor
+  - potential\_lf\_year
+  - Potential labor force (12-mon ref period)
+  - A binary indicator taking a value only if the person is not in the labor force (missing if in LF or unemployed). Codes 1 if i) available but not searching or ii) searching but not immediately available to work. Codes 0 otherwise.
+* - Labor
+  - underemployment\_year
+  - Underemployment (12-mon ref period)
+  - A binary indicator taking value only if the person is in the labor force and working (missing if not or unemployed). Codes 1 if person would take on more jobs or more hours at their job if possible/available, 0 otherwise.
+* - Labor
+  - nlfsreason\_year
+  - Reason not in the labor force (12-mon ref period)
+  -
+* - Labor
+  - unempldur\_l\_year
+  - Unemployment duration (months) lower bracket (12-mon ref period)
+  -
+* - Labor
+  - unempldur\_u\_year
+  - Unemployment duration (months) upper bracket (12-mon ref period)
+  -
+* - Labor
+  - empstat\_year
+  - Employment status, primary job (12-mon ref period)
+  -
+* - Labor
+  - ocusec\_year
+  - Sector of activity, primary job (12-mon ref period)
+  -
+* - Labor
+  - industry\_orig\_year
+  - Original industry code, primary job (12-mon ref period)
+  -
+* - Labor
+  - industry\_isic\_year
+  - ISIC code of the industry, primary job (12-mon ref period)
+  - See industrycat_isic
+* - Labor
+  - industrycat10\_year
+  - 1-digit industry classification, primary job (12-mon ref period)
+  -
+* - Labor
+  - industrycat4\_year
+  - 4-category industry classification, primary job (12-mon ref period)
+  -
+* - Labor
+  - occup\_orig\_year
+  - Original occupational code, primary job (12-mon ref period)
+  -
+* - Labor
+  - occup\_isco\_year
+  - ISCO code of the occupation, primary job (12-mon ref period)
+  - See occup_isco
+* - Labor
+  - occup\_skill\_year
+  - Skill level based on ISCO standard, primary job (12-mon ref period)
+  - https://ilostat.ilo.org/resources/concepts-and-definitions/classification-occupation/
+* - Labor
+  - occup\_year
+  - 1-digit occupation classification, primary job (12-mon ref period)
+  -
+* - Labor
+  - wage\_no\_compen\_year
+  - Last wage payment, primary job, excl. bonuses, etc. (12-mon ref period)
+  -
+* - Labor
+  - unitwage\_year
+  - Time unit of last wages, primary job (12-mon ref period)
+  -
+* - Labor
+  - whours\_year
+  - Hours of work in last week, primary job (12-mon ref period)
+  -
+* - Labor
+  - wmonths\_year
+  - Months worked in the last 12 months, primary job (12-mon ref period)
+  -
+* - Labor
+  - wage\_total\_year
+  - Annualized wage payment, primary job (12-mon ref period)
+  -
+* - Labor
+  - contract\_year
+  - Contract (12-mon ref period)
+  -
+* - Labor
+  - healthins\_year
+  - Health insurance (12-mon ref period)
+  -
+* - Labor
+  - socialsec\_year
+  - Social security (12-mon ref period)
+  -
+* - Labor
+  - union\_year
+  - Union membership (12-mon ref period)
+  -
+* - Labor
+  - firmsize\_l\_year
+  - Firm size (lower bracket), primary job (12-mon ref period)
+  -
+* - Labor
+  - firmsize\_u\_year
+  - Firm size (upper bracket), primary job (12-mon ref period)
+  -
+```
+
+```{list-table}
+:header-rows: 1
+
+* - Module
+  - Variable name
+  - Variable label
+  - Notes
+* - Labor
+  - empstat\_2\_year
+  - Employment status, secondary job (12-mon ref period)
+  -
+* - Labor
+  - ocusec\_2\_year
+  - Sector of activity, secondary job (12-mon ref period)
+  -
+* - Labor
+  - industry\_orig\_2\_year
+  - Original industry code, secondary job (12-mon ref period)
+  -
+* - Labor
+  - industry\_isic\_2\_year
+  - ISIC code of the industry, secondary job (12-mon ref period)
+  - See industrycat_isic
+* - Labor
+  - industrycat10\_2\_year
+  - 1-digit industry classification, secondary job (12-mon ref period)
+  -
+* - Labor
+  - industrycat4\_2\_year
+  - 4-category industry classification, secondary job (12-mon ref period)
+  -
+* - Labor
+  - occup\_orig\_2\_year
+  - Original occupational code, secondary job (12-mon ref period)
+  -
+* - Labor
+  - occup\_isco\_2\_year
+  - ISCO code of the occupation, secondary job (12-mon ref period)
+  - See occup_isco
+* - Labor
+  - occup\_skill\_2\_year
+  - Skill level based on ISCO standard, secondary job (12-mon ref period)
+  - https://ilostat.ilo.org/resources/concepts-and-definitions/classification-occupation/
+* - Labor
+  - occup\_2\_year
+  - 1-digit occupation classification, secondary job (12-mon ref period)
+  -
+* - Labor
+  - wage\_no\_compen\_2\_year
+  - Last wage payment, secondary job, excl. bonuses, etc. (12-mon ref period)
+  -
+* - Labor
+  - unitwage\_2\_year
+  - Time unit of last wages, secondary job (12-mon ref period)
+  -
+* - Labor
+  - whours\_2\_year
+  - Hours of work in last week, secondary job (12-mon ref period)
+  -
+* - Labor
+  - wmonths\_2\_year
+  - Months worked in the last 12 months, secondary job (12-mon ref period)
+  -
+* - Labor
+  - wage\_total\_2\_year
+  - Annualized wage payment, secondary job (12-mon ref period)
+  -
+* - Labor
+  - firmsize\_l\_2\_year
+  - Firm size (lower bracket), secondary job (12-mon ref period)
+  -
+* - Labor
+  - firmsize\_u\_2\_year
+  - Firm size (upper bracket), secondary job (12-mon ref period)
+  -
+```
+
+```{list-table}
+:header-rows: 1
+
+* - Module
+  - Variable name
+  - Variable label
+  - Notes
+* - Labor
+  - t\_hours\_others\_year
+  - Annualized hours worked in all jobs excluding the primary and secondary ones (12-mon ref period)
+  -
+* - Labor
+  - t\_wage\_nocompen\_others\_year
+  - Annualized wage in all jobs excluding the primary and secondary ones (excluding tips, bonuses, etc.) (12-mon ref period)
+  -
+* - Labor
+  - t\_wage\_others\_year
+  - Annualized wage (including tips, bonuses, etc.) in all other jobs excluding the primary and secondary ones (12-mon ref period)
+  -
+```
+
+```{list-table}
+:header-rows: 1
+
+* - Module
+  - Variable name
+  - Variable label
+  - Notes
+* - Labor
+  - t\_hours\_total\_year
+  - Annualized hours worked in all jobs (12-mon ref period)
+  - t\_hours\_total\_year
+* - Labor
+  - t\_wage\_nocompen\_total\_year
+  - Annualized wage in all jobs excl. bonuses, etc. (12-mon ref period)
+  - t\_wage\_nocompen\_total\_year
+* - Labor
+  - t\_wage\_total\_year
+  - Annualized wage in all jobs (12-mon ref period)
+  - t\_wage\_total\_year
+```
+
+```{list-table}
+:header-rows: 1
+
+* - Module
+  - Variable name
+  - Variable label
+  - Notes
+* - Labor
+  - njobs
+  - Total number of jobs
+  - Total Labor income will be created based on either the 7 days or 12 months reference period variables or a combination of both. Harmonizers should make sure that all jobs are included and none of them are double counted.
+* - Labor
+  - t\_hours\_annual
+  - Total hours worked in all jobs in the previous 12 months
+  -
+* - Labor
+  - linc\_nc
+  - Total annual wage income in all jobs, excl. bonuses, etc.
+  - Difference to t_wage_nocompen_total_year
+* - Labor
+  - laborincome
+  - Total annual individual labor income in all jobs, incl. bonuses, etc.
+  - Difference to t_wage_total_year
+```
