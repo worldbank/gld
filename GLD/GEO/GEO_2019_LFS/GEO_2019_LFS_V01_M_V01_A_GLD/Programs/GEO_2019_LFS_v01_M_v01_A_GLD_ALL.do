@@ -609,7 +609,7 @@ variable I1_Education is:
 *<_educy_note_>*/
 
 	gen byte educy=.
-	replace educy=0 if inrange(I1_Education,0,1)
+	replace educy=0 if inrange(I1_Education,1,2)
 	replace educy=3 if I1_Education==3
 	replace educy=9 if I1_Education==4
 	replace educy=12 if I1_Education==5
@@ -619,7 +619,7 @@ variable I1_Education is:
 	replace educy=17 if I1_Education==9|I1_Education==10
 	replace educy=19 if I1_Education==11
 	replace educy=21 if I1_Education==12
-	replace educy=24 if I1_Education==12
+	replace educy=24 if I1_Education==13
 	replace educy=. if age<ed_mod_age
 	replace educy=. if educy>age & !mi(educy) & !mi(age)
 	label var educy "Years of education"
@@ -628,7 +628,7 @@ variable I1_Education is:
 
 *<_educat7_>
 	gen byte educat7=.
-	replace educat7=1 if inrange(I1_Education,0,1)
+	replace educat7=1 if inrange(I1_Education,1,2)
 	replace educat7=2 if I1_Education==3
 	replace educat7=3 if I1_Education==4
 	replace educat7=4 if inlist(I1_Education,5,7)

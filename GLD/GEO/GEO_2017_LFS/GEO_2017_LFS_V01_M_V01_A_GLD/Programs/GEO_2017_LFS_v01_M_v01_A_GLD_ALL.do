@@ -16,7 +16,7 @@
 <_Data collection from (M/Y)_>	[Jan/2017] </_Data collection from (M/Y)_>
 <_Data collection to (M/Y)_>	[Dec/2017] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			Survey conducted by National Statistics Office of Georgia.
-								Data from 2017 to 2017 are publicly available on
+								Data from 2017 to 2022 are publicly available on
 								Georgia national stats office website.</_Source of dataset_>
 								*OPENLY ACCESSIBLE: 		 
 								https://www.geostat.ge/en/modules/categories/130/labour-force-survey-databases*
@@ -555,7 +555,7 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 {
 *<_ed_mod_age_>
-	gen byte ed_mod_age=.
+	gen byte ed_mod_age=15
 	label var ed_mod_age "Education module application age"
 *</_ed_mod_age_>
 
@@ -603,7 +603,7 @@ variable I1_Education is:
 *<_educy_note_>*/
 
 	gen byte educy=.
-	replace educy=0 if inrange(I1_Education,0,1)
+	replace educy=0 if inrange(I1_Education,1,2)
 	replace educy=3 if I1_Education==3
 	replace educy=9 if I1_Education==4
 	replace educy=12 if I1_Education==5
@@ -613,7 +613,7 @@ variable I1_Education is:
 	replace educy=17 if I1_Education==9|I1_Education==10
 	replace educy=19 if I1_Education==11
 	replace educy=21 if I1_Education==12
-	replace educy=24 if I1_Education==12
+	replace educy=24 if I1_Education==13
 	replace educy=. if age<ed_mod_age
 	replace educy=. if educy>age & !mi(educy) & !mi(age)
 	label var educy "Years of education"
@@ -622,7 +622,7 @@ variable I1_Education is:
 
 *<_educat7_>
 	gen byte educat7=.
-	replace educat7=1 if inrange(I1_Education,0,1)
+	replace educat7=1 if inrange(I1_Education,1,2)
 	replace educat7=2 if I1_Education==3
 	replace educat7=3 if I1_Education==4
 	replace educat7=4 if inlist(I1_Education,5,7)
