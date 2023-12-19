@@ -84,7 +84,8 @@ local out_file "`level_2_harm'_ALL.dta"
 * harmonized output in a single file
 
 	*use "`path_in_stata'\GEO_2018_LFS_SARRAW.dta", clear
-	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\GEO\GEO_2018_LFS\GEO_2018_LFS_V01_M\Data\Stata\GEO_LFS_2018.dta"
+	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\GEO\GEO_2018_LFS\GEO_2018_LFS_V01_M\Data\Stata\GEO_LFS_2018.dta", clear
+	
 /*%%=============================================================================================
 	2: Survey & ID
 ================================================================================================*/
@@ -1007,16 +1008,69 @@ for more hours but they are not in the raw dataset.
 Question B17 asks the specific amount of earnings whereas B18 asks the brackets of 
 earnings in case that the respondents do not recall the exact amount. 
 
-We only coded wage_no_compen for people who answered B17_2, meaning that they have the 
-exact number of their incomes. 11,771 observations out of 15,050 paid observations 
-satisfy thie requirement, which gives 78.2% of paid employees values for wage.   
+- 11,771 observations out of 15,050 paid observations answered B17_2 with a specific
+number of their income, which gives 78.2% of paid employees values for wage. 
+- 3,251 observations out of 15,050 paid observations have missing values for B17_2
+whereas 28 observations answered B17_2 zero. 
+
+The idea here is classify those with codes into salary groups as per B18, then obtain the
+average wage of them by (1) sex, (2) urb/rur area, (3) occupation, and (4) industry.
 
 *<_wage_no_compen_note_>*/
 
-	gen wage_no_compen=.
-	replace wage_no_compen=B17_2 if B17_1==1&B17_2!=0
-	replace wage_no_compen=. if lstatus!=1|empstat==2
-	label var wage_no_compen "Last wage payment primary job 7 day recall"
+     * Overall --> wage info (here the variable, for us it should be wage_no_compen)
+     * to missing if value is 0. Should be 63 changes in 2017.
+
+     gen B17_2_help=B17_2
+     replace B17_2_help=. if B17_2_help==0
+
+     * First replace outliers by
+     winsor2 B17_2_help, suffix(_w) cuts(1 99)
+
+     * Create salary categories based on winsor values
+     gen salary_cat=.
+     replace salary_cat=1 if inrange(B17_2_help_w, 1, 100)
+     replace salary_cat=2 if inrange(B17_2_help_w, 101, 200)
+     replace salary_cat=3 if inrange(B17_2_help_w, 201, 400)
+     replace salary_cat=4 if inrange(B17_2_help_w, 401, 600)
+     replace salary_cat=5 if inrange(B17_2_help_w, 601, 800)
+     replace salary_cat=6 if inrange(B17_2_help_w, 801, 1000)
+     replace salary_cat=7 if inrange(B17_2_help_w, 1001, 1500)
+     replace salary_cat=8 if inrange(B17_2_help_w, 1501, 2000)
+     replace salary_cat=9 if inrange(B17_2_help_w, 2001, 99999999)
+
+     * PReserve to collapse, so we can merge the info in
+     preserve
+
+     * Collpase by industry, sex, and salary categories
+     collapse (mean)B17_2_help_w[iw=weight], by(industrycat10 occup male urban salary_cat)
+
+     * Rename variable, otherwise when merging in, master version of an equally name one will be kept
+     rename B17_2_help_w wage_group_estimate
+
+     * Rename salary_cat to B18 since this is what we want the info to latch on to
+     rename salary_cat B18
+     tempfile salary_helper
+     save "`salary_helper'"
+     list
+     
+	 * Restore, merge in
+     restore
+     merge m:1 industrycat10 occup male urban B18 using "`salary_helper'", nogen
+
+     * Create wage variable
+     gen wage_no_compen=.
+
+     * Fill it first with values that are accurate
+     replace wage_no_compen=B17_2 if B17_1==1 & B17_2!=0
+
+     * Now add the categorised means
+     replace wage_no_compen=wage_group_estimate if B17_1==77&!missing(wage_group_estimate)
+
+     * Keep only for employed employees, label
+     replace wage_no_compen=. if lstatus!=1 & empstat!=1
+     label var wage_no_compen "Last wage payment primary job 7 day recall"
+
 *</_wage_no_compen_>
 
 
