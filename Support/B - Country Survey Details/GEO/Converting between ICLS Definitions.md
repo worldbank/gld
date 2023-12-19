@@ -27,7 +27,7 @@ The current coding for 2020-2022 is fairly straightforward:
 <br>
 in which the all observations whose answers lead them to section B, "Main Job", were coded as employed, namely category 1 to all the variables in the code block above. 
 
-Even though this line of code restricts production for own consumption by restricting answers to `A1_5` and `A1_6`, the questionnaire's structure still allows for dual employment. For example, following the logic of the questions shown in the screenshot below, observations whose 
+Even though this line of code restricts production for own consumption by restricting answers to `A1_5` and `A1_6`, the questionnaire's structure still allows for dual employment. For example, following the logic of the questions shown in the screenshot below, observations who worked for domestic production mainly for own consumption (`A1_5==3`), worked for non-zero days and hours in the last 7 days (`!missing(A1_7)&!missing(A1_8)`), answered A1.9 and also worked for at least one hour in order to get paid (`A2==1`).  
 
 ![2020_questionnaire3](utilities/2020_questionnaire_B_module.png)
 
