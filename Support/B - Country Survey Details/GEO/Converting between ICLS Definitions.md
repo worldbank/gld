@@ -23,8 +23,14 @@ In 2020-2022, two separate questions (A1.5 and A1.6) were added to confirm wheth
 
 The current coding for 2020-2022 is fairly straightforward:
 <br>
-<ins>replace lstatus=1 if inlist(A1_5,1,2)| inlist(A1_6,1,2)|A2==1|A3==1|A4==1|inrange(A6,6,9)|A7==1|A8==1|A9==1</ins>
+<ins>`replace lstatus=1 if inlist(A1_5,1,2)|inlist(A1_6,1,2)|A2==1|A3==1|A4==1|inrange(A6,6,9)|A7==1|A8==1|A9==1`</ins>
 <br>
+in which the all observations whose answers lead them to section B, "Main Job", were coded as employed, namely category 1 to all the variables in the code block above. 
+
+Even though this line of code restricts production for own consumption by restricting answers to `A1_5` and `A1_6`, the questionnaire's structure still allows for dual employment. For example, following the logic of the questions shown in the screenshot below, observations whose 
+
+![2020_questionnaire3](utilities/2020_questionnaire_B_module.png)
+
 
 
 
