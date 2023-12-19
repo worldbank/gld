@@ -998,7 +998,21 @@ earnings in case that the respondents do not recall the exact amount.
 We only coded wage_no_compen for people who answered B17_2, meaning that they have the 
 exact number of their incomes. 
 
-*<_wage_no_compen_note_>*/
+- 10,854 observations out of 13,064 paid observations answered B17_2 with a specific
+number of their income, which gives 83.1% of paid employees values for wage.
+- 2,148 observations out of 13,064 paid observations have missing values for B17_2
+whereas 62 observations answered B17_2 zero. 1 observation who answered B17_2 zero
+has empstat of "Other".  
+
+The idea here is classify those with codes into salary groups as per B18, then obtain the
+average wage of them by (1) sex, (2) urb/rur area, (3) occupation, and (4) industry.
+
+For example, the weighted mean salary of (1) women in (2) rural areas in (3) elementary
+occupations in (4) Financial Services among those in B18 bracket 3 (earning 201 to 400)
+is 293.35.
+
+Hence, for those among the people who responded by bracket who match these
+characteristics, their value is assigned to be 293.35.
 
 *<_wage_no_compen_note_>*/
 	
