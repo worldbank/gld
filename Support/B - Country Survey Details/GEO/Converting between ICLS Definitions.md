@@ -3,82 +3,26 @@ Since the passing of the [resolution concerning statistics of work, employment a
 
 In short, the ICLS 19 resolution restricts employment to *work performed for others in exchange for pay or profit*, meaning that own consumption work (e.g., subsistence agriculture or building housing for oneself) are not counted as employment.
 
-The GLD codes the harmonization’s `lstatus’ variable based on the concept used in the survey. In the case of the Tanzanian LFS this change occurs in 2020/21, when the survey switches to new definition. As a result, [time series data](Utilities/01_A_1_LFP_over_years.png) show a decrease in the size of employed and labor force participants for the 2020-21 round. However, the code can be altered to try to match the previous definition.
+The GLD codes the harmonization’s `lstatus` variable based on the concept used in the survey. In the case of the Georgian LFS this change occurs after 2019, when the survey switches to new definition. As a result, [time series data](utilities/GEO_lstatus.png) show a decrease in the size of employed and labor force participants for the 2020-2022 round. However, the code can be altered to try to match the previous definition. And this operation can be done conveniently taking advantage of the questionnaire's structure. 
 
-# Framework for identifying the employed in the 2020 ILFS
+# Framework for identifying the employed in the 2020-2022 GEO LFS
 
-The information on current activity were used to define the employed using Questions 13A - 13N in the questionnaire. The general flow of question involves first asking the individual if he/she engaged in an economic activity, agriculture or non-agriculture, in the past 7 days, and if the individual reports otherwise, he/she would be asked about information regarding temporary absence from employment. 
+The information on current activity were used to define the employed using Questions A1-A9 in the questionnaire. The general flow of section A involves first asking the individual if he/she engaged in any activity to produce agricultural or fishery products in the past 7 days, for pay or for own use/consumption, if no agricultural activities then any non-agricultural activities, and lastly if no activities engaged what was the reason; if the individual reports otherwise, he/she would be asked about information regarding temporary absence from employment. 
 
 
-# Current coding for the 2020 ILFS
+# Current coding for the GEO LFS
 
-Currently, the code used to create the `lstatus` variable (which distinguishes between employment, unemployment, and out of the labour force) is the following:
+In 2017-2019, the respondents who indicate that they either worked for salary (A1 is Yes) or engaged in activities for own consumption (A2 is Yes) are employed (B1 is only for employed respondents).
 
-```
-  ***************************
-  * Create Variable
-  ***************************
-	gen byte lstatus = .
-  
-  
-  ***************************
-  * Define those employed
-  ***************************
-  
-    * Define the employment options from the questionnaire flow. Q13D asks for nay production form. If yes (range 1-7), asks for 
-	* degree of market exchange (if 50%+, straight to labour), if not joins Q13D == 8 in Q13F, G, and H for employment options.
-	* F, G, and H are flow outs, that is, if F is yes, striaght to labour, only if no goes to G, same relationship to H. Hence,
-	* H == 2 only if F, G, also 2.
-	
-	* Note that the English questionnaire has a typo and if 13H = 2 and 13E is 3 or 4 (which needs to be, otherwise 13H not
-	* asked), then Swahili version says go to 13IB, not 14A like in English. How to get to 13IA I don't know as it seems im-
-	* possible. Does not matter because in either option if absent goes to Q13J so we can chose that.
-	
-	* Absence then can be from job or business (Q13J 1 or 4), which we will accept as employed if out for less than a month
-	* or more than a month but still being paid (Q13M == 1).
-	
-	* Absence from agriculture needs to be for needs to be at less than a month and 50%+ for market exchange.
-	
-	* E1 - Did Ag work for market exchange
-	replace lstatus = 1 if inrange(Q13E, 1, 2)
-	
-	* E2 - Did some other work (paid employment, F, business, G, or helping in business, H)
-	replace lstatus = 1 if Q13F == 1 | Q13G == 1 | Q13H == 1
-	
-	* E3 - Did not work in categories defined by E1 or E2 but absent from paid job or business for less than a month
-	replace lstatus = 1 if inlist(Q13J, 1, 4) & Q13K == 1
-	
-	* E4 - Did not work in categories defined by E1 or E2 but absent from paid job or business for over a month, still paid
-	replace lstatus = 1 if inlist(Q13J, 1, 4) & inrange(Q13K, 2, 5) & Q13M == 1
-	
-	* E5 - Did not work in categories defined by E1 or E2 but absent from market farming for less than a month
-	replace lstatus = 1 if inlist(Q13J, 2, 3) & Q13K == 1 & inrange(Q13N, 1, 2)
+![2017_questionnaire](utilities/2017_icls.png)
 
-  ***************************
-  * Define those unemployed
-  ***************************
-  
-	* Unemployment is now defined among those still with no lstatus (for whom lstatus == .)
-  
-	* U1 - Unemployed is no work (lstatus == .) + took steps to find work and would accept
-	replace lstatus = 2 if missing(lstatus) & (Q15A == 1 & Q15D ==1)
-  
-  ***************************
-  * Define those NLF
-  ***************************
-  
-	* Not in the labour force is the remainder
-	  
-	* N1 - Not in the labour force (NLF) is: old enough to answer (age >= 5) and lstatus still missing
-	replace lstatus = 3 if missing(lstatus) & inrange(Q05B_AGE, 5, 99)
-	
-	replace lstatus = . if age < minlaborage
-	label var lstatus "Labor status"
-	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
-	label values lstatus lbllstatus
-*</_lstatus_>
+In 2020-2022, two separate questions (A1.5 and A1.6) were added to confirm whether the production from your main activity (from A1) was for profit or for own use.
 
-```
+![2020_questionnaire1](utilities/2020_icls_1.png)
+![2020_questionnaire2](utilities/2020_icls_2.png)
+
+These two questions allow users to change `lstatus` between the old and the new definitions by adding observations who chose category 3 or category 4 in question A1.5 and A1.6.
+
 
 
 # Coding to convert the 2020 ILFS to the old definition
