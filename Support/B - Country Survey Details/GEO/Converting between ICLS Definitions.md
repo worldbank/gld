@@ -27,10 +27,15 @@ The current coding for 2020-2022 is fairly straightforward:
 <br>
 in which the all observations whose answers lead them to section B, "Main Job", were coded as employed, namely category 1 to all the variables in the code block above. 
 
-Even though this line of code restricts production for own consumption by restricting answers to `A1_5` and `A1_6`, the questionnaire's structure still allows for dual employment. For example, following the logic of the questions shown in the screenshot below, observations who worked for domestic production mainly for own consumption (`A1_5==3`), worked for non-zero days and hours in the last 7 days (`!missing(A1_7)&!missing(A1_8)`), answered A1.9 and also worked for at least one hour in order to get paid (`A2==1`).  
+Even though this line of code restricts production for own consumption by restricting answers to `A1_5` and `A1_6`, the questionnaire's structure still allows for dual employment. For example, following the logic of the questions shown in the screenshot below, observations who worked for domestic production mainly for own consumption (`A1_5==3`), worked for non-zero days and hours in the last 7 days (`!missing(A1_7)&!missing(A1_8)`), answered A1.9 and also worked for at least one hour in order to get paid (`A2==1`) were employed according to our code.  
 
 ![2020_questionnaire3](utilities/2020_questionnaire_B_module.png)
 
+Therefore, the code below follows the previous line of code to make sure for-own-production workers entering into question A2 and moving forward will not be coded as employed.  
+<br>
+<ins>`replace lstatus=. if lstatus==1&[inlist(A1_5,3,4)|inlist(A1_6,3,4)]&[A5==2|A6==12|A7==2|A9==2]`</ins>
+<br>
+But this line of code only excludes observations who worked for own consumption and did not work for pay at all. It fulfilled that purpose by replacing observations with missing values if they were mistakenly coded as employed but their answers to A5, A6, A7 and A9 lead them to section F, "Previous Work Experience".
 
 
 
@@ -39,5 +44,4 @@ Even though this line of code restricts production for own consumption by restri
 # Coding to convert the 2020 ILFS to the old definition
 
 In converting back to the old definition, the approach adopted here is to create a variable that identifies those that are engaged in non-market farming, and those who were absent for less than a month from non-market farming. The code below should be pasted after the code creating the `lstatus` variable based on the 2020 definition. 
-
 
