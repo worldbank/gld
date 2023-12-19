@@ -21,21 +21,21 @@ In 2020-2022, two separate questions (A1.5 and A1.6) were added to confirm wheth
 ![2020_questionnaire1](utilities/2020_icls_1.png)
 ![2020_questionnaire2](utilities/2020_icls_2.png)
 
-The current coding for 2020-2022 is fairly straightforward:
+The current coding for 2020-2022 is straightforward:
 <br>
 <ins>`replace lstatus=1 if inlist(A1_5,1,2)|inlist(A1_6,1,2)|A2==1|A3==1|A4==1|inrange(A6,6,9)|A7==1|A8==1|A9==1`</ins>
 <br>
-in which the all observations whose answers lead them to section B, "Main Job", were coded as employed, namely category 1 to all the variables in the code block above. 
+in which all observations whose answers lead them to section B, "Main Job", were coded as employed, namely category 1 to all the variables in the code block above. 
 
 Even though this line of code restricts production for own consumption by restricting answers to `A1_5` and `A1_6`, the questionnaire's structure still allows for dual employment. For example, following the logic of the questions shown in the screenshot below, observations who worked for domestic production mainly for own consumption (`A1_5==3`), worked for non-zero days and hours in the last 7 days (`!missing(A1_7)&!missing(A1_8)`), answered A1.9 and also worked for at least one hour in order to get paid (`A2==1`) were employed according to our code.  
 
 ![2020_questionnaire3](utilities/2020_questionnaire_B_module.png)
 
-Therefore, the code below follows the previous line of code to make sure for-own-production workers entering into question A2 and moving forward will not be coded as employed.  
+Therefore, the code below follows the previous line of code to make sure for-own-production workers entering question A2 and moving forward will not be coded as employed.  
 <br>
 <ins>`replace lstatus=. if lstatus==1&[inlist(A1_5,3,4)|inlist(A1_6,3,4)]&[A5==2|A6==12|A7==2|A9==2]`</ins>
 <br>
-But this line of code only excludes observations who worked for own consumption and did not work for pay at all. It fulfilled that purpose by replacing observations with missing values if they were mistakenly coded as employed but their answers to A5, A6, A7 and A9 lead them to section F, "Previous Work Experience". The GLD harmonization did not further differentiate between main job and side job for dual employment workers. We followed the National Statistics Office's definition and classify them as employed.
+But this line of code only excludes observations who worked for own consumption and did not work for pay at all. It fulfilled that purpose by replacing observations with missing values if they were mistakenly coded as employed but their answers to A5, A6, A7 and A9 lead them to section F, "Previous Work Experience". The GLD harmonization did not further differentiate between main job and side job for dual employment workers. We followed the National Statistics Office's definition and classified them as employed.
 
 Nonetheless, the information of time spent on own-consumption production in terms of days (A1.7) and hours (A1.8) allows users flexibility to make their own rules and decide how they want to define dual employment workers based on their time spent on own-consumption production.
 
