@@ -809,6 +809,7 @@ with our definition. We used the original variable "Unemployed" directly.
 	replace seeking=1 if seeking>0
 
 	replace lstatus=1 if inlist(A1_5,1,2)| inlist(A1_6,1,2)|A2==1|A3==1|A4==1|inrange(A6,6,9)|A7==1|A8==1|A9==1
+	replace lstatus=. if lstatus==1&[inlist(A1_5,3,4)|inlist(A1_6,3,4)]
 	replace lstatus=2 if seeking==1&_v9==1&lstatus!=1
 	replace lstatus=3 if lstatus==. 
 	replace lstatus=. if age<minlaborage
