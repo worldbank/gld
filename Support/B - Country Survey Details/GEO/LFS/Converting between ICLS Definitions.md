@@ -37,9 +37,10 @@ Even though this line of code restricts production for own consumption by restri
 ![2020_questionnaire3](utilities/2020_questionnaire_B_module.png)
 
 Therefore, the code below follows the previous line of code to make sure for-own-production workers entering question A2 and moving forward will not be coded as employed.  
-<br>
-<ins>`replace lstatus=. if lstatus==1&[inlist(A1_5,3,4)|inlist(A1_6,3,4)]&[A5==2|A6==12|A7==2|A9==2]`</ins>
-<br>
+```
+replace lstatus=. if lstatus==1&[inlist(A1_5,3,4)|inlist(A1_6,3,4)]&[A5==2|A6==12|A7==2|A9==2]
+```
+
 But this line of code only excludes observations who worked for own consumption and did not work for pay at all. It fulfilled that purpose by replacing observations with missing values if they were mistakenly coded as employed but their answers to A5, A6, A7 and A9 lead them to section F, "Previous Work Experience". The GLD harmonization did not further differentiate between main job and side job for dual employment workers. We followed the National Statistics Office's definition and classified them as employed.
 
 Nonetheless, the information of time spent on own-consumption production in terms of days (A1.7) and hours (A1.8) allows users flexibility to make their own rules and decide how they want to define dual employment workers based on their time spent on own-consumption production.
