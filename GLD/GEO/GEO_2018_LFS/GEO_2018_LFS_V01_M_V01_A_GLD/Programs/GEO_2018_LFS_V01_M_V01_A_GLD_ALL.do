@@ -83,8 +83,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	*use "`path_in_stata'\GEO_2018_LFS_SARRAW.dta", clear
-	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\GEO\GEO_2018_LFS\GEO_2018_LFS_V01_M\Data\Stata\GEO_LFS_2018.dta", clear
+	use "`path_in_stata'\GEO_2018_LFS_SARRAW.dta", clear
 	
 /*%%=============================================================================================
 	2: Survey & ID
@@ -931,8 +930,7 @@ for more hours but they are not in the raw dataset.
 *<_industrycat_isic_>
 	tostring B4_NACE_2, gen(nace2_code) format(%04.0f)
 	gen industrycat_isic=nace2_code
-	*merge m:1 nace2_code using "`path_in_stata'\nace2_isic4_crosswalk.dta"
-	merge m:1 nace2_code using "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\GEO\GEO_2018_LFS\GEO_2018_LFS_V01_M\Data\Stata\nace2_isic4_crosswalk.dta"
+	merge m:1 nace2_code using "`path_in_stata'\nace2_isic4_crosswalk.dta"
 	
 	replace industrycat_isic=isic4 if _merge==3&!mi(isic4)
 	replace industrycat_isic="" if lstatus!=1|industrycat_isic=="."
@@ -1191,9 +1189,8 @@ average wage of them by (1) sex, (2) urb/rur area, (3) occupation, and (4) indus
 *<_industrycat_isic_2_>
 	tostring D3_Second_Brunch_2, gen(nace2_code) format(%04.0f)
 	gen industrycat_isic_2=nace2_code
-	*merge m:1 nace2_code using "`path_in_stata'\nace2_isic4_crosswalk.dta"
-	merge m:1 nace2_code using "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\GEO\GEO_2018_LFS\GEO_2018_LFS_V01_M\Data\Stata\nace2_isic4_crosswalk.dta"
-	
+	merge m:1 nace2_code using "`path_in_stata'\nace2_isic4_crosswalk.dta"
+		
 	replace industrycat_isic_2=isic4 if _merge==3&!mi(isic4)
 	replace industrycat_isic_2="" if lstatus!=1|D1_Second_job!=1|industrycat_isic_2=="."
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
@@ -1843,6 +1840,6 @@ compress
 
 *<_% SAVE_>
 
-*save "`path_output'\\`level_2_harm'_ALL.dta", replace
-save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\GEO\GEO_2018_LFS\GEO_2018_LFS_V01_M_V01_A_GLD\Data\Harmonized\GEO_2018_LFS_v01_M_v01_A_GLD_ALL.dta", replace
+save "`path_output'\\`level_2_harm'_ALL.dta", replace
+
 *</_% SAVE_>
