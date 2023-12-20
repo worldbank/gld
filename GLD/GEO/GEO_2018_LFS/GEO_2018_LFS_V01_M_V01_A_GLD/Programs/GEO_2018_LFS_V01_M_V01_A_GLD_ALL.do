@@ -83,7 +83,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	use "`path_in_stata'\GEO_2018_LFS_SARRAW.dta", clear
+	use "`path_in_stata'\GEO_2018_LFS.dta", clear
 	
 /*%%=============================================================================================
 	2: Survey & ID
