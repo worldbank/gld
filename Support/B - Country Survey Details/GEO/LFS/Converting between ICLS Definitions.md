@@ -12,16 +12,21 @@ The information on current activity were used to define the employed using Quest
 
 # Current coding for the GEO LFS
 
-In 2017-2019, the respondents who indicate that they either worked for salary (A1 is Yes) or engaged in activities for own consumption (A2 is Yes) are employed (B1 is only for employed respondents).
+In 2017-2019, the respondents who indicate that they either worked for salary (A1 is Yes) or engaged in activities for own consumption (A2 is Yes) are employed (B1 is only for employed respondents - see image below).
 
 ![2017_questionnaire](utilities/2017_icls.png)
 
-In 2020-2022, two separate questions (A1.5 and A1.6) were added to confirm whether the production from your main activity (from A1) was for profit or for own use. These two questions allow users to change `lstatus` between the old and the new definitions by adding observations who chose category 3 or category 4 in question A1.5 and A1.6.
+In 2020-2022, two separate questions (A1.5 and A1.6 - see image below) were added to confirm whether the production from the respondent's main activity (from A1) was for profit or for own use. These two questions allow users to change `lstatus` between the old and the new definitions by adding observations who chose category 3 or category 4 in question A1.5 and A1.6 (underlined red below).
 
 ![2020_questionnaire1](utilities/2020_icls_1.png)
 ![2020_questionnaire2](utilities/2020_icls_2.png)
 
 The current coding for 2020-2022 is straightforward:
+
+```
+replace lstatus=1 if inlist(A1_5,1,2)|inlist(A1_6,1,2)|A2==1|A3==1|A4==1|inrange(A6,6,9)|A7==1|A8==1|A9==1
+```
+
 <br>
 <ins>`replace lstatus=1 if inlist(A1_5,1,2)|inlist(A1_6,1,2)|A2==1|A3==1|A4==1|inrange(A6,6,9)|A7==1|A8==1|A9==1`</ins>
 <br>
@@ -42,10 +47,16 @@ Nonetheless, the information of time spent on own-consumption production in term
 # Coding to convert the 2020 ILFS to the old definition
 
 In converting back to the old definition, the approach adopted here is simply to remove all the restrictions on `A1_5` and `A1_6`, and instead, to code respondents who have answered question A1.5 to A1.9 as employed regardless of their answers to question A2 and questions forward. The revised codes would be:
-<br>
-<ins>`replace lstatus=1 if inlist A2==1|A3==1|A4==1|inrange(A6,6,9)|A7==1|A8==1|A9==1`</ins>
-<br>
-<ins>`replace lstatus=1 if [inrange(A1_5,3,4)|inrange(A1_6,3,4)]&!mi(A1_9)`</ins>
-<br>
 
-Own consumption workers are by definition self-employed and in the private sector. Regarding their industry and occupation, question A1.9 directly provides their industrial classification codes in NACE rev.2. And in 2020-2022, own-consumption workers' industry ranges from NACE rev.2 111 to 322, which are all in "Agriculture". As for occupation, users could refer to for-salary workers' occupations with the same industry codes. The data shows that own-consumption workers' industrial codes are mostly in "Elementary Occupations".  
+```
+* Generate empty variable first
+gen lstatus_old_iscls = .
+
+* Code employed as per ICLS-19 (only for market exchange)
+replace lstatus_old_icls = 1 if inlist(A1_5,1,2) | inlist(A1_6,1,2) | A2==1 | A3==1 | A4==1 | inrange(A6,6,9) | A7==1 | A8==1 | A9==1
+
+* Add those left out but covered by ICLS-13
+replace lstatus_old_icls = 1 if (inrange(A1_5,3,4) | inrange(A1_6,3,4)) & mi(lstatus_old_icls)
+```
+
+Note that the above only covers the employment status. These added workers should also have information on their occupation sector, employment sector, industry, occupation, ... Own consumption workers are by definition self-employed and in the private sector. Regarding their industry and occupation, question A1.9 directly provides their industrial classification codes in NACE rev.2. And in 2020-2022, own-consumption workers' industry ranges from NACE rev.2 111 to 322, which are all in "Agriculture". As for occupation, users could refer to for-salary workers' occupations with the same industry codes. The data shows that own-consumption workers' industrial codes are mostly in "Elementary Occupations".  
