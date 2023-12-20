@@ -13,8 +13,8 @@ gen survey_core = regexs(1) if regexm(filename, "(^[a-zA-Z][a-zA-Z][a-zA-Z]_[0-9
 replace filename = upper(filename)
  
 sort filename
-bys survey_core: gen survey_number = _n
-bys survey_core: egen survey_numb_max = max(survey_number)
+egen survey_number = seq(), by(survey_core)
+egen survey_numb_max = max(survey_number), by(survey_core)
 quietly: keep if survey_numb_max == survey_number
 		
 * Create relevant variables to match
