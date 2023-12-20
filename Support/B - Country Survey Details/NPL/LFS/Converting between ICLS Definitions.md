@@ -27,11 +27,11 @@ In 2017, the respondents who indicate that they either:
 are employed. All these answers will lead respondents to question D01 which is only for employed respondents.
 
 The current coding for 2017 is straightforward:
-<br>
-`replace lstatus=1 if wrk_paid==1|wrk_agri_sect==2|inlist(purp_agripdct,1,2)|inrange(rsn_absent,1,4)|return_prd==1|paidleave==1`
-<br>
-`replace lstatus if lstatus==1&inlist(purp_agripdct,3,4)`
-<br>
+```
+replace lstatus=1 if wrk_paid==1|wrk_agri_sect==2|inlist(purp_agripdct,1,2)|inrange(rsn_absent,1,4)|return_prd==1|paidleave==1
+replace lstatus=1 if lstatus==1&inlist(purp_agripdct,3,4)
+
+```
 
 in which all observations whose answers lead them to section B, "Main Job", were coded as employed, namely category 1 to all the variables in the code block above. 
 
