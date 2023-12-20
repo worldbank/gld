@@ -6,14 +6,24 @@ In short, the ICLS 19 resolution restricts employment to *work performed for oth
 The GLD codes the harmonization’s `lstatus` variable based on the concept used in the survey. In the case of the NPL LFS this change occurs between 2008 and 2017, when the survey switches to new definition. As a result, [time series data](utilities/NPL_lstatus.png) show a decrease in the size of employed and labor force participants between 2008 and 2017. However, the code can be altered to try to match the previous definition. And this operation can be done conveniently taking advantage of the questionnaire's structure. 
 
 
-# Framework for identifying the employed in the 2020-2022 GEO LFS
+# Framework for identifying the employed in the 2017 NPL LFS
 
 The information on current activity were used to define the employed using Questions C01-C09 in the questionnaire. The general flow of section C, "Definition of Employment", involves first asking the individual if he/she engaged in any paid or unpaid activities in the past 7 days, the purpose of the activity (i.e., for sale or for family use), if no agricultural activities then any non-agricultural activities, and lastly if no activities engaged what was the reason; if the individual reports otherwise, he/she would be asked about information regarding temporary absence from employment (i.e. whether it is a paid leave or not). 
 
 
-# Current coding for the GEO LFS
+# Current coding for the 2017 NPL LFS
 
-In 2017-2019, the respondents who indicate that they either worked for salary (A1 is Yes) or engaged in activities for own consumption (A2 is Yes) are employed (B1 is only for employed respondents).
+In 2017, the respondents who indicate that they either:
+<br>
+1) worked for salary (C01 is Yes) or
+<br>
+2) engaged in paid non-agricultural activities (C04 is No) or
+<br>
+3) agricultural activities (mainly) for sale/barter (C05 is either 1 or 2) or
+<br>
+4) were temporarily absent from work with wage/specific reasons (i.e., vacation, maternity leave, sickness/illness/accident, or shift work/variable timetable)
+<br>
+are employed. All these answers will lead respondents to question D01 which is only for employed respondents.
 
 ![2017_questionnaire](utilities/2017_icls.png)
 
