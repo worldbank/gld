@@ -34,7 +34,7 @@ replace lstatus=1 if lstatus==1&inlist(purp_agripdct,3,4)
 ``` 
 in which the variables correspond to all four conditions previously mentioned for a given respondent to be defined employed. We added the second line to make sure that no observations will be mistakenly coded as employed if their products were mainly for own consumption, which helped exclude two observations who wrongly answered the questions in the raw data set. 
 
-# Coding to convert the 2020 ILFS to the old definition
+# Coding to convert the 2017 NPL LFS to the old definition
 
 In converting back to the old definition, the approach adopted here is simply to remove all the restrictions on `A1_5` and `A1_6`, and instead, to code respondents who have answered question A1.5 to A1.9 as employed regardless of their answers to question A2 and questions forward. The revised codes would be:
 <br>
