@@ -14,6 +14,7 @@ The information on current activity were used to define the employed using Quest
 # Current coding for the 2017 NPL LFS
 
 In 2017, the respondents who indicate that they either:
+
 <br>
 1) worked for salary (C01 is Yes) or
 <br>
@@ -25,17 +26,13 @@ In 2017, the respondents who indicate that they either:
 <br>
 are employed. All these answers will lead respondents to question D01 which is only for employed respondents.
 
-![2017_questionnaire](utilities/2017_icls.png)
-
-In 2020-2022, two separate questions (A1.5 and A1.6) were added to confirm whether the production from your main activity (from A1) was for profit or for own use. These two questions allow users to change `lstatus` between the old and the new definitions by adding observations who chose category 3 or category 4 in question A1.5 and A1.6.
-
-![2020_questionnaire1](utilities/2020_icls_1.png)
-![2020_questionnaire2](utilities/2020_icls_2.png)
-
-The current coding for 2020-2022 is straightforward:
+The current coding for 2017 is straightforward:
 <br>
-<ins>`replace lstatus=1 if inlist(A1_5,1,2)|inlist(A1_6,1,2)|A2==1|A3==1|A4==1|inrange(A6,6,9)|A7==1|A8==1|A9==1`</ins>
+`replace lstatus=1 if wrk_paid==1|wrk_agri_sect==2|inlist(purp_agripdct,1,2)|inrange(rsn_absent,1,4)|return_prd==1|paidleave==1`
 <br>
+`replace lstatus if lstatus==1&inlist(purp_agripdct,3,4)`
+<br>
+
 in which all observations whose answers lead them to section B, "Main Job", were coded as employed, namely category 1 to all the variables in the code block above. 
 
 Even though this line of code restricts production for own consumption by restricting answers to `A1_5` and `A1_6`, the questionnaire's structure still allows for dual employment. For example, following the logic of the questions shown in the screenshot below, observations who worked for domestic production mainly for own consumption (`A1_5==3`), worked for non-zero days and hours in the last 7 days (`!missing(A1_7)&!missing(A1_8)`), answered A1.9 and also worked for at least one hour in order to get paid (`A2==1`) were employed according to our code.  
