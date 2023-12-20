@@ -1,5 +1,17 @@
 # Correspondences between national and international classifications
 
+Table to add
+
+| **Year**	| **National Classification**	| **International Classification**	|
+| :------:	| :-------:		        | :-------:	        	|
+| 2017      |  NACE Rev. **1**        | ISIC Rev. **3**         | 
+| 2018      |  NACE Rev. **1**        | ISIC Rev. **3**        |
+| 2019      |  NACE Rev. **1**        | ISIC Rev. **3**         |
+| 2020      |  NACE Rev. **2**        | ISIC Rev. **4**         |
+| 2021      |  NACE Rev. **2**        | ISIC Rev. **4**         | 
+| 2022      |  NACE Rev. **2**        | ISIC Rev. **4**         | 
+
+
 This document describes the methodology used to map national industrial and occupational codes to their international counterparts. As mentioned in the main introduction page, two versions of national and international classifications of industry were used throughout the six years: Statistical classification of Economic Activities in the European Community (NACE) rev.1 and rev.2 for national classification, and International Standard Industrial Classification (ISIC) rev.3 and rev.4 for international classification. However, for all six years, we did a mapping between NACE rev.2 and ISIC rev.4 only as the original industry variable was coded in both NACE rev.1 and rev.2 in all years. The mapping was more difficult to conduct between NACE rev.1 and ISIC rev.3 because of the considerable amount of re-codings and the difficulty of converting correspondence documents from a PDF format to an EXCEL format.   
 
 Regarding occupation, the GEO LFS used International Standard Classification of Occupation (ISCO) 1998 and 2008 directly. So the classification of occupation does not need to be mapped from a national classification to an international classification.  
