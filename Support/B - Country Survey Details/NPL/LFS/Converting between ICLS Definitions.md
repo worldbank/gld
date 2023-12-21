@@ -75,3 +75,7 @@ Below are the distributions of own-consumption workers' activities in 2017. Agri
 |![2017_agriwork](utilities/NPL_2017_agriwork.png)|![2017_unpaidwork](utilities/NPL_2017_unpaidwork.png)|
 |:-----------------------------------------------:|:---------------------------------------------------:|
 
+|**CATEGORY**|**Agricultural Work**|**Non-Agricultural Work**|
+|:----------:|:-------------------:|:-----------------------:|
+|**Industry**|     Agriculture     | 1) Collecting Firewood/Fetching Water - Skilled Agricultural Worker; 2) Crafting/House Construction - Craft Workers; 3) Foodstuff Preparation -  Service and Market Sales Worker|
+
