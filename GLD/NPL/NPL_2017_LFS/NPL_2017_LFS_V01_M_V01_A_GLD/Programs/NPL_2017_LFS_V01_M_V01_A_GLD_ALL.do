@@ -872,7 +872,8 @@ report's definition.
 {	
 *<_lstatus_>
 	gen byte lstatus=.
-	replace lstatus=1 if wrk_paid==1|wrk_agri_sect==1|wrk_agri_sect==2|inlist(purp_agripdct,1,2)|inrange(rsn_absent,1,4)|return_prd==1|paidleave==1
+	replace lstatus=1 if wrk_paid==1|wrk_agri_sect==2|inlist(purp_agripdct,1,2)|inrange(rsn_absent,1,4)|return_prd==1|paidleave==1
+	replace lstatus=1 if lstatus==1&inlist(purp_agripdct,3,4)
 	replace lstatus=2 if (seek30==1|jobfixed==1)&inlist(avail_time,1,2)
 	replace lstatus=3 if lstatus==. 
 	replace lstatus=. if age<minlaborage
@@ -1809,6 +1810,7 @@ quietly: describe, varlist
 local kept_vars `r(varlist)'
 
 foreach var of local kept_vars {
+	
    capture assert missing(`var')
    if !_rc drop `var'
 }
