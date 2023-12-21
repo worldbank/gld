@@ -41,6 +41,7 @@ Dual employment here refers to observations who not only have an unpaid job, wor
 
 ![2017_sectionc_continued](utilities/2017_sectionC_employed.png)
 
+For instance, following the highlighted choices in the questionnaire screenshots shown above, a dual employment worker will go to Question D01 which is about occupation title. In the case of NPL 2017, only two observations followed this "route". And since we did not further differentiate dual employment workers based on which job is the main job, we coded such dual employment workers **employed**.   
 
 
 # Coding to convert the 2017 NPL LFS to the old definition
