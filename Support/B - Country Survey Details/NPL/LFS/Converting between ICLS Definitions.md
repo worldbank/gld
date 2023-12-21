@@ -77,5 +77,6 @@ Below are the distributions of own-consumption workers' activities in 2017. Agri
 
 |**CATEGORY**|**Agricultural Work**|**Non-Agricultural Work**|
 |:----------:|:-------------------:|:-----------------------:|
-|**Industry**|     Agriculture     | 1) Collecting Firewood/Fetching Water - Skilled Agricultural Worker; 2) Crafting/House Construction - Craft Workers; 3) Foodstuff Preparation -  Service and Market Sales Worker|
+|**Industry**|     Agriculture     | 1) Collecting Firewood/Fetching Water - Agriculture; 2) Crafting - Manufacture; 3) House Construction - Construction ; 4) Foodstuff Preparation - Agriculture|
+|**Occupation**| Elementry Occupation/Skilled Agricultural Worker| 1) Collecting Firewood/Fetching Water - Skilled Agricultural Worker; 2) Crafting/House Construction - Craft Workers; 3) Foodstuff Preparation -  Service and Market Sales Worker|
 
