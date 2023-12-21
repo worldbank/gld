@@ -56,9 +56,11 @@ replace lstatus=1 if wrk_paid==1|wrk_agri_sect==2|inlist(purp_agripdct,1,2)|inra
 **New code using purp_agripdct and Section I to identify people working for own consumption only**
 replace lstatus=1 if inlist(purp_agripdct,3,4)& temp_absent==2
 
-NOTE: the new code should yield 888 observations in 2017, meaning that 888 individuals only worked unpaid for family consumption. And following the questions in Section C, they were directed to Section G, "Job Search and Availability" first, and then were directed to Section I to describe the type of work they engaged in and the time they spent accordingly. 
+NOTE: the new code should yield 888 observations in 2017, meaning that 888 individuals only worked unpaid for family consumption. And following the questions in Section C, they were directed to Section G, "Job Search and Availability" first, and then were directed to Section I to describe the type of work they engaged in and the time they spent accordingly. For reference, 898 observations answered either category 3 or 4 to Question C05. The gap, 10 observations, includes 2 dual employment workers and 8 missing values for Question C06 (variable "temp_absent").
 
 ``` 
+
+
 
 |![2017_unpaidwork](utilities/NPL_2017_unpaidwork.png)|![2017_agriwork](utilities/NPL_2017_agriwork.png)|
 |:---------------------------------------------------:|:-----------------------------------------------:|
