@@ -68,8 +68,10 @@ Own-consumption workers are by definition self-employed and in the private secto
 ![2017_sectionI_01](utilities/2017_sectionI_1.png)
 ![2017_sectionI_02](utilities/2017_sectionI_2.png)
 
-The yellow highlights are agricultural work whereas the blue ones are non-agricultural. Kindly note that Section J, "Own-use Production of Services", also includes work for family consumption, such as unpaid care/help/assistance to family members. But we did not consider Section J as firstly, these unpaid services were not trated as types of "work" for own-consumption; and secondly, Section I and Section J are not mutually exclusive. Observations who were engaing in farm work for family consumption, for example, might also provide unpaid care to family members, causing a problem to industry and occupation assignments. 
+The yellow highlights are agricultural work whereas the blue ones are non-agricultural. Kindly note that Section J, "Own-use Production of Services", also includes work for family consumption, such as unpaid care/help/assistance to family members. But we did not consider Section J as firstly, these unpaid services were not treated as types of "work" for own-consumption; and secondly, Section I and Section J are not mutually exclusive. Observations who were engaging in farm work for family consumption, for example, might also provide unpaid care to family members, causing a problem to industry and occupation assignments. 
 
-|![2017_unpaidwork](utilities/NPL_2017_unpaidwork.png)|![2017_agriwork](utilities/NPL_2017_agriwork.png)|
-|:---------------------------------------------------:|:-----------------------------------------------:|
+Below are the distributions of own-consumption workers' activities in 2017. Agricultural work includes: farm work, fishing/hunting, and livestock tending. Non-agricultural work includes: collecting firewood, crafting, fetching water, house construction, and foodstuff preparation. 
+
+|![2017_agriwork](utilities/NPL_2017_agriwork.png)|![2017_unpaidwork](utilities/NPL_2017_unpaidwork.png)|
+|:-----------------------------------------------:|:---------------------------------------------------:|
 
