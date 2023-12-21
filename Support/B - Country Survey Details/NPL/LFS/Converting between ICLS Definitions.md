@@ -46,14 +46,21 @@ For instance, following the highlighted choices in the questionnaire screenshots
 
 # Coding to convert the 2017 NPL LFS to the old definition
 
+In converting back to the old definition, the approach adopted here is adding people who chose category 3 and 4 for Question C05 to the employed population, and assigning industries and occupations for them. Based on the current code we used to identify paid employees or workers who produce for sale/barter, we will use Section C and Section I, "Production of Goods for Household or Family Use", to identify people who were only working unpaid for own consumption and thus were excluded in the new definition.
+
+The revised codes would be:
+```
+**Current Code**
+replace lstatus=1 if wrk_paid==1|wrk_agri_sect==2|inlist(purp_agripdct,1,2)|inrange(rsn_absent,1,4)|return_prd==1|paidleave==1
+
+**New code using purp_agripdct and Section I to identify people working for own consumption only**
+replace lstatus=1 if inlist(purp_agripdct,3,4)& temp_absent==2
+
+NOTE: the new code should yield 888 observations in 2017, meaning that 888 individuals only worked unpaid for family consumption. And following the questions in Section C, they were directed to Section G, "Job Search and Availability" first, and then were directed to Section I to describe the type of work they engaged in and the time they spent accordingly. 
+
+``` 
+
 |![2017_unpaidwork](utilities/NPL_2017_unpaidwork.png)|![2017_agriwork](utilities/NPL_2017_agriwork.png)|
 |:---------------------------------------------------:|:-----------------------------------------------:|
-
-In converting back to the old definition, the approach adopted here is simply to remove all the restrictions on `A1_5` and `A1_6`, and instead, to code respondents who have answered question A1.5 to A1.9 as employed regardless of their answers to question A2 and questions forward. The revised codes would be:
-<br>
-<ins>`replace lstatus=1 if inlist A2==1|A3==1|A4==1|inrange(A6,6,9)|A7==1|A8==1|A9==1`</ins>
-<br>
-<ins>`replace lstatus=1 if [inrange(A1_5,3,4)|inrange(A1_6,3,4)]&!mi(A1_9)`</ins>
-<br>
 
 Own consumption workers are by definition self-employed and in the private sector. Regarding their industry and occupation, question A1.9 directly provides their industrial classification codes in NACE rev.2. And in 2020-2022, own-consumption workers' industry ranges from NACE rev.2 111 to 322, which are all in "Agriculture". As for occupation, users could refer to for-salary workers' occupations with the same industry codes. The data shows that own-consumption workers' industrial codes are mostly in "Elementary Occupations".  
