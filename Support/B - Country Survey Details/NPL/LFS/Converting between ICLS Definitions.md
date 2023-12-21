@@ -46,8 +46,8 @@ For instance, following the highlighted choices in the questionnaire screenshots
 
 # Coding to convert the 2017 NPL LFS to the old definition
 
-![2017_unpaidwork](utilities/NPL_2017_unpaidwork.png)
-![2017_agriwork](utilities/NPL_2017_agriwork.png)
+|![2017_unpaidwork](utilities/NPL_2017_unpaidwork.png)|![2017_agriwork](utilities/NPL_2017_agriwork.png)|
+|:---------------------------------------------------:|:-----------------------------------------------:|
 
 In converting back to the old definition, the approach adopted here is simply to remove all the restrictions on `A1_5` and `A1_6`, and instead, to code respondents who have answered question A1.5 to A1.9 as employed regardless of their answers to question A2 and questions forward. The revised codes would be:
 <br>
