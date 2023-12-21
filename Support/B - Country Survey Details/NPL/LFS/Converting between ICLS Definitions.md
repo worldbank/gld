@@ -37,9 +37,9 @@ in which the variables correspond to all four conditions previously mentioned fo
 
 Dual employment here refers to observations who not only have an unpaid job, working only or mainly for family consumption, but also have a paid job. Following the questions in Section C, "Identification of Employment", dual employment workers will also be directed to Section D, meaning that they are treated as the employed.
 
-![2017_sectionc](utilities/NPL_2017_sectionC.png)
+![2017_sectionc](utilities/2017_sectionC.png)
 
-![2017_sectionc_continued](utilities/NPL_2017_sectionC_employed.png)
+![2017_sectionc_continued](utilities/2017_sectionC_employed.png)
 
 
 
