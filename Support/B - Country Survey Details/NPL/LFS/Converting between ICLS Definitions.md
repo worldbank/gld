@@ -46,7 +46,8 @@ For instance, following the highlighted choices in the questionnaire screenshots
 
 # Coding to convert the 2017 NPL LFS to the old definition
 
-In converting back to the old definition, the approach adopted here is adding people who chose category 3 and 4 for Question C05 to the employed population, and assigning industries and occupations for them. Based on the current code we used to identify paid employees or workers who produce for sale/barter, we will use Section C and Section I, "Production of Goods for Household or Family Use", to identify people who were only working unpaid for own consumption and thus were excluded in the new definition.
+## Identifying own-consumption workers 
+In converting back to the old definition, the approach adopted here is adding people who chose category 3 and 4 for Question C05 to the employed population, and assigning industries and occupations for them based on earlier years' records. Based on the current code we used to identify paid employees or workers who produce for sale/barter, we will use Section C and Section I, "Production of Goods for Household or Family Use", to identify people who were only working unpaid for own consumption and thus were excluded in the new definition.
 
 The revised codes would be:
 ```
@@ -60,9 +61,15 @@ NOTE: the new code should yield 888 observations in 2017, meaning that 888 indiv
 
 ``` 
 
+## Assigning industries and occupations
 
+Own-consumption workers are by definition self-employed and in the private sector. In Section I, the questions are generally categorized into agricultural work and non-agricultural work. The questions are shown below:
+
+![2017_sectionI_01](utilities/2017_sectionI_1.png)
+![2017_sectionI_01](utilities/2017_sectionI_1.png)
+
+The yellow highlights are agricultural work whereas the blue ones are non-agricultural. Kindly note that Section J, "Own-use Production of Services", also includes work for family consumption, such as unpaid care/help/assistance to family members. But we did not consider Section J as firstly, these unpaid services were not trated as types of "work" for own-consumption; and secondly, Section I and Section J are not mutually exclusive.  
 
 |![2017_unpaidwork](utilities/NPL_2017_unpaidwork.png)|![2017_agriwork](utilities/NPL_2017_agriwork.png)|
 |:---------------------------------------------------:|:-----------------------------------------------:|
 
-Own consumption workers are by definition self-employed and in the private sector. Regarding their industry and occupation, question A1.9 directly provides their industrial classification codes in NACE rev.2. And in 2020-2022, own-consumption workers' industry ranges from NACE rev.2 111 to 322, which are all in "Agriculture". As for occupation, users could refer to for-salary workers' occupations with the same industry codes. The data shows that own-consumption workers' industrial codes are mostly in "Elementary Occupations".  
