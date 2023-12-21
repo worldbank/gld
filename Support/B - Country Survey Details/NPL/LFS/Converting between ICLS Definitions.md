@@ -68,7 +68,7 @@ Own-consumption workers are by definition self-employed and in the private secto
 ![2017_sectionI_01](utilities/2017_sectionI_1.png)
 ![2017_sectionI_01](utilities/2017_sectionI_1.png)
 
-The yellow highlights are agricultural work whereas the blue ones are non-agricultural. Kindly note that Section J, "Own-use Production of Services", also includes work for family consumption, such as unpaid care/help/assistance to family members. But we did not consider Section J as firstly, these unpaid services were not trated as types of "work" for own-consumption; and secondly, Section I and Section J are not mutually exclusive.  
+The yellow highlights are agricultural work whereas the blue ones are non-agricultural. Kindly note that Section J, "Own-use Production of Services", also includes work for family consumption, such as unpaid care/help/assistance to family members. But we did not consider Section J as firstly, these unpaid services were not trated as types of "work" for own-consumption; and secondly, Section I and Section J are not mutually exclusive. Observations who were engaing in farm work for family consumption, for example, might also provide unpaid care to family members, causing a problem to industry and occupation assignments. 
 
 |![2017_unpaidwork](utilities/NPL_2017_unpaidwork.png)|![2017_agriwork](utilities/NPL_2017_agriwork.png)|
 |:---------------------------------------------------:|:-----------------------------------------------:|
