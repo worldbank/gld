@@ -66,7 +66,7 @@ NOTE: the new code should yield 888 observations in 2017, meaning that 888 indiv
 Own-consumption workers are by definition self-employed and in the private sector. In Section I, the questions are generally categorized into agricultural work and non-agricultural work. The questions are shown below:
 
 ![2017_sectionI_01](utilities/2017_sectionI_1.png)
-![2017_sectionI_01](utilities/2017_sectionI_1.png)
+![2017_sectionI_02](utilities/2017_sectionI_2.png)
 
 The yellow highlights are agricultural work whereas the blue ones are non-agricultural. Kindly note that Section J, "Own-use Production of Services", also includes work for family consumption, such as unpaid care/help/assistance to family members. But we did not consider Section J as firstly, these unpaid services were not trated as types of "work" for own-consumption; and secondly, Section I and Section J are not mutually exclusive. Observations who were engaing in farm work for family consumption, for example, might also provide unpaid care to family members, causing a problem to industry and occupation assignments. 
 
