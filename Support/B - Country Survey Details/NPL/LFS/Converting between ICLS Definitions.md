@@ -35,13 +35,18 @@ in which the variables correspond to all four conditions previously mentioned fo
 
 # Dual Employment Workers
 
-Dual employment here refers to observations who not only have an unpaid job, working only or mainly for family consumption, but also have a paid job. Following the questions in Section C, "Identification of Employment", dual employment workers will also be directed to Section D, meaning that they are treated as the employed.     
+Dual employment here refers to observations who not only have an unpaid job, working only or mainly for family consumption, but also have a paid job. Following the questions in Section C, "Identification of Employment", dual employment workers will also be directed to Section D, meaning that they are treated as the employed.
+
+![2017_sectionc](utilities/NPL_2017_sectionC.png)
+
+![2017_sectionc_continued](utilities/NPL_2017_sectionC_employed.png)
+
 
 
 # Coding to convert the 2017 NPL LFS to the old definition
 
 ![2017_unpaidwork](utilities/NPL_2017_unpaidwork.png)
-![2017_agriwork](utilities/NPL_2017_agriworkwork.png)
+![2017_agriwork](utilities/NPL_2017_agriwork.png)
 
 In converting back to the old definition, the approach adopted here is simply to remove all the restrictions on `A1_5` and `A1_6`, and instead, to code respondents who have answered question A1.5 to A1.9 as employed regardless of their answers to question A2 and questions forward. The revised codes would be:
 <br>
