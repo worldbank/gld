@@ -75,6 +75,8 @@ Below are the distributions of own-consumption workers' activities in 2017. Agri
 |![2017_agriwork](utilities/NPL_2017_agriwork.png)|![2017_unpaidwork](utilities/NPL_2017_unpaidwork.png)|
 |:-----------------------------------------------:|:---------------------------------------------------:|
 
+According to the distribution of own-consumption workers' major industries and occupations in 1998 and 2008, the table below shows the options of industries and occupations for each type of work.  
+
 |**CATEGORY**|**Agricultural Work**|**Non-Agricultural Work**|
 |:----------:|:-------------------:|:-----------------------:|
 |**Industry**|     Agriculture     | 1) Collecting Firewood/Fetching Water - Agriculture; 2) Crafting - Manufacture; 3) House Construction - Construction ; 4) Foodstuff Preparation - Agriculture|
