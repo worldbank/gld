@@ -79,6 +79,6 @@ According to the distribution of own-consumption workers' major industries and o
 
 |**CATEGORY**|**Agricultural Work**|**Non-Agricultural Work**|
 |:----------:|:-------------------:|:-----------------------:|
-|**Industry**|     Agriculture     | 1) Collecting Firewood/Fetching Water - Agriculture; 2) Crafting - Manufacture; 3) House Construction - Construction ; 4) Foodstuff Preparation - Agriculture|
+|**Industry**|     Agriculture     | 1) Collecting Firewood/Fetching Water/Foodstuff Preparation - Agriculture; 2) Crafting - Manufacture; 3) House Construction - Construction|
 |**Occupation**| Elementry Occupation/Skilled Agricultural Worker| 1) Collecting Firewood/Fetching Water - Skilled Agricultural Worker; 2) Crafting/House Construction - Craft Workers; 3) Foodstuff Preparation -  Service and Market Sales Worker|
 
