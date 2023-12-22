@@ -11,7 +11,7 @@ The GLD codes the harmonization’s `lstatus` variable based on the concept used
 The information on current activity was used to define the employed using Questions C01-C09 in the questionnaire. The general flow of section C, "Definition of Employment", involves first asking the individual if he/she engaged in any paid or unpaid activities in the past 7 days, the purpose of the activity (i.e., for sale or for family use), if no agricultural activities then any non-agricultural activities, and lastly if no activities engaged what was the reason; if the individual reports otherwise, he/she would be asked about information regarding temporary absence from employment (i.e. whether it is a paid leave or not). 
 
 
-# Current coding for the 2017 NPL LFS
+## Current coding for the 2017 NPL LFS
 
 In 2017, the respondents who indicate that they either:
 
@@ -33,7 +33,7 @@ replace lstatus=1 if wrk_paid==1|wrk_agri_sect==2|inlist(purp_agripdct,1,2)|inra
 ``` 
 in which the variables correspond to all four conditions previously mentioned for a given respondent to be defined employed. 
 
-# Dual Employment Workers
+## Dual Employment Workers
 
 Dual employment here refers to observations who not only have an unpaid job, working only or mainly for family consumption, but also have a paid job. Following the questions in Section C, "Identification of Employment", dual employment workers will also be directed to Section D, meaning that they are treated as employed.
 
