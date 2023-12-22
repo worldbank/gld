@@ -75,10 +75,10 @@ Below are the distributions of own-consumption workers' activities in 2017. Agri
 |![2017_agriwork](utilities/NPL_2017_agriwork.png)|![2017_unpaidwork](utilities/NPL_2017_unpaidwork.png)|
 |:-----------------------------------------------:|:---------------------------------------------------:|
 
-According to the distribution of own-consumption workers' major industries and occupations in 1998 and 2008, the table below provides the options of industries and occupations for each type of work.  
+According to the distribution of own-consumption workers' major industries and occupations in 1998 and 2008, the table below provides the options of industries and occupations for each type of work. It's worth mentioning that "Foodstuff Preparation" was named "Foodstuff Processing" in 2008, and the workers in 2008 were previously classified as "Skilled Agricultural Workers". We provide three options for "Foodstuff Preparation" based on 2008's distribution and ISCO-08. Both "Service and Market Sales Workers" and "Elementry Occupations" have sub-categories concerning food services and food sales. For example, "5212-Street Food Salespersons" of "Service and Market Sales Workers" and "9410-Food Preparation Assistants" of "Elementary Occupations".   
 
 |**CATEGORY**|**Agricultural Work**|**Non-Agricultural Work**|
 |:----------:|:-------------------:|:-----------------------:|
 |**Industry**|     Agriculture     | 1) Collecting Firewood/Fetching Water/Foodstuff Preparation - Agriculture; 2) Crafting - Manufacture; 3) House Construction - Construction|
-|**Occupation**| Elementry Occupation/Skilled Agricultural Worker| 1) Collecting Firewood/Fetching Water - Skilled Agricultural Worker; 2) Crafting/House Construction - Craft Workers; 3) Foodstuff Preparation -  Service and Market Sales Worker|
+|**Occupation**| Elementry Occupation/Skilled Agricultural Worker| 1) Collecting Firewood/Fetching Water - Skilled Agricultural Worker; 2) Crafting/House Construction - Craft Workers; 3) Foodstuff Preparation -  Skilled Agricultural Workers/Service and Market Sales Worker/Elementary Occupations|
 
