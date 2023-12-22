@@ -7,4 +7,6 @@ nav_order: 2
 
 # Dynamic Checks
 
-How to use them, how to read them.
+```{warning}
+This is a stub page that needs to be completed.
+```

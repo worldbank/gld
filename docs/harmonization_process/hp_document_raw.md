@@ -5,6 +5,8 @@ parent: Harmonization Process
 nav_order: 4
 ---
 
-## What to document
+# Document raw data
 
-## How to document
+```{warning}
+This is a stub page that needs to be completed.
+```

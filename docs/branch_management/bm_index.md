@@ -3,7 +3,7 @@ layout: default
 title: Git Branch Management
 nav_order: 6
 ---
-
+(branch-management)=
 # GLD GitHub Repository Branching Guidelines
 
 ## What is this document?
@@ -12,12 +12,12 @@ This document sets the guidelines on how to create, name, and manage branches on
 
 ## What are branches and why do we need them?
 
-A Git is a bifurcation of the state of code that creates a new path for the evolution of it. It can be parallel to other Git branches that you can generate (see [here a tutorial on Git branches]( https://www.hostinger.com/tutorials/how-to-use-git-branches/), from where this explanation is from). Two of the main advantages are:
+A Git is a bifurcation of the state of code that creates a new path for the evolution of it. It can be parallel to other Git branches that you can generate (see [here a tutorial on Git branches](https://www.hostinger.com/tutorials/how-to-use-git-branches/), from where this explanation is from). Two of the main advantages are:
 
 - It is possible to develop new features for our application without hindering the development in the main branch.
 - With Git branches it is possible to create different development branches that can converge in the same repository. For example, a stable branch, a test branch, and an unstable branch.
 
-In the context of GLD, we need a main branch as the place where users can find the code for the validated harmonizations that have been added to the database. In addition, we need a place to store code that we are working on and want to discuss with others, e.g., a new survey we wish to harmonize. The development, however, should not appear on the main branch to not provide users with unfinished code. We need a branch to work on the new survey and incorporate it only once we are finished. 
+In the context of GLD, we need a main branch as the place where users can find the code for the validated harmonizations that have been added to the database. In addition, we need a place to store code that we are working on and want to discuss with others, e.g., a new survey we wish to harmonize. The development, however, should not appear on the main branch to not provide users with unfinished code. We need a branch to work on the new survey and incorporate it only once we are finished.
 
 ## When is new information created?
 
@@ -33,7 +33,7 @@ We then develop new content by:
 
 The three-tier branching system is based on the GitFlow Workflow. The image below explains the general idea (find more information in the source for this image: [Part 2 of this DIME presentation on Git]( https://github.com/worldbank/DIME-Resources/blob/master/git-3-flow.pdf)).
 
-![image]({{site.baseurl}}/assets/images/gitflow_dime_image.png)
+![image](../images/gitflow_dime_image.png)
 
 ### GLD implementation
 

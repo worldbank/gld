@@ -4,6 +4,7 @@ title: Raise an Issue
 nav_order: 8
 ---
 
-## What is it, how does it help?
+# Raise an Issue
 
-For anything else, contact the GLD Focal Point.
+If you see a typo, bug, or other error in the repository, or want to discuss a proposed feature or improvement, please open an [issue](https://github.com/worldbank/template/issues).
+There are issue templates to help you format your issue based on whether it is a bug report or a feature request.

@@ -6,15 +6,8 @@ nav_order: 1
 ---
 
 # Survey & ID
-{: .no_toc }
 
 ## Table of contents
-{: .no_toc .text-delta }
-
-1. TOC
-{:toc}
-
----
 
 ## ID guidelines
 
@@ -23,3 +16,7 @@ nav_order: 1
 ## Lessons Learned
 
 ## Tabular Overview
+
+```{warning}
+This is a stub page that needs to be completed.
+```

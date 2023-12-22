@@ -4,6 +4,8 @@ title: Harmonization Template
 nav_order: 4
 ---
 
-## Harmonization Template
+# Harmonization Template
 
-What it is, where to find it, how to use.
+```{warning}
+This is a stub page that needs to be completed.
+```

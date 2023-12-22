@@ -6,6 +6,8 @@ Social Protection and Jobs
 
 The World Bank
 
+<br>
+
 Table of Contents
 =================
 
@@ -97,6 +99,7 @@ Table of Contents
 
 &nbsp;&nbsp;&nbsp;&nbsp;[](manual:labour-employment-12)
 
+<br>
 
 (manual:introduction)=
 # 1. Introduction

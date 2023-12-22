@@ -6,6 +6,8 @@ has_children: true
 permalink: /docs/data-checks
 ---
 
-# Data checks overview
+# Data Checks
 
-Text
+```{warning}
+This is a stub page that needs to be completed.
+```

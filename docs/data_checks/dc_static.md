@@ -7,4 +7,6 @@ nav_order: 1
 
 # Static Checks
 
-How to use them, how to read them.
+```{warning}
+This is a stub page that needs to be completed.
+```

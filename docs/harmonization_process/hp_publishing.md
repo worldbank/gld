@@ -5,6 +5,8 @@ parent: Harmonization Process
 nav_order: 5
 ---
 
-## What to publish
+# Publish harmonization
 
-## How to publish
+```{warning}
+This is a stub page that needs to be completed.
+```

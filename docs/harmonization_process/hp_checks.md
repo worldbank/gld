@@ -5,6 +5,8 @@ parent: Harmonization Process
 nav_order: 3
 ---
 
-## What to check
+# Check harmonization
 
-## How to check
+```{warning}
+This is a stub page that needs to be completed.
+```
