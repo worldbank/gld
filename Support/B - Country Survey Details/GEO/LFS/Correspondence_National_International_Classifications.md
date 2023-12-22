@@ -1,6 +1,4 @@
-# Correspondences between national and international classifications
-
-Table to add
+# Merging Extra Data and Coding Labour Variables for 2017-2022
 
 | **Year**	| **National Classification**	| **International Classification**	|
 | :------:	| :-------:		        | :-------:	        	|
