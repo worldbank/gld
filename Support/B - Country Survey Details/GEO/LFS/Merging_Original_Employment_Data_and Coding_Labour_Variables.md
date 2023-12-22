@@ -8,10 +8,14 @@ Before harmonization, for each year, we merged the confidential labour data from
 
 In the public raw data set, `Employed`, `Unemployed`, `Unemployed_soft`, `Inactive` and `Inactive_soft` are the derived labour variables. The main issue with derived variables is that there is no way to validate the estimates to ensure the definition applied aligns with ours. Especially in Georgia's case, both unemployment and non-labour force have two variables each following a "strict" or a "soft" ILO standard, which we did not fully understand. The exact definition was not explained in any documentation.
 
-Using the extra data from NSO, WE  
+Using the extra data from NSO, we were able to code employed population using questions from A1 to A10. The current coding is demonstrated below, in which all the answers that lead to section B are coded as employed. The employed estimate yielded by these codes is the same as the derived variable `Employed`, `Unemployed`, and `Inactive`. Disassembling the unemployment variable into the very original question-based 
+variables, it includes 1) people who answered G1 yes (have an agreement to start a job
+or will start own business within 3 months) and are available for starting a work (yes to G9);
+2) people who are currently seeking jobs and would be able to start working (no to G1; 
+answered either one of G2 and yes to G9). Therefore, we are sure that the "strict" definitions of unemployment and non-labour force align with our definition.  
 
 ```
- gen byte lstatus=.
+        gen byte lstatus=.
 	egen seeking=rowmin(G2_1_Methods_used_to_find_work-G2_97_Methods_used_to_find_work)
 	replace lstatus=1 if A1==1|A2==1|A3==1|A4==1|A5==1|A6==1|A9==1|A10==1|A10==3
 	replace lstatus=2 if (G1_agreement_to_start_a_work==1|seeking==1)&G9_Availability_to_start_working==1
