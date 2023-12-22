@@ -26,3 +26,11 @@ answered either one of G2 and yes to G9). Therefore, we are sure that the "stric
 	label values lstatus lbllstatus
 ```
 
+# Coding Wage Variables
+
+The GEO LFS asks paid employees for their wages in two steps. It first asks them to reply with their precise salary. If they are unable to give a true estimate, they are requested to reply in what kind of range their salary lies in (see screenshot of questionnaire below).
+
+![wage_questionnaire](utilities/wage.png)
+
+On average, about 80% of paid employees can name their precise salary in 2017-2022, while about a fifth give a range value answer. In order to use the information, we imputed their salary. To do so, first the wage information of those who know their precise salary was trimmed of outliers (i.e., the lowest and highest percentile were replaced with the mean value). Next, the mean salary was calculated by (i) sex, (ii) urban/rural area, (iii) industry, and (iv) occupation within the range values of the responses from the questionnaire. This mean, for example, we calculated the mean salary of women, in urban areas, who worked in manufacturing as clerks and earn between 800 and 1000 GEL. Then all urban women in the same sector and occupation who claimed to have earned between 800 and 1000 GEL are assigned that salary.
+
