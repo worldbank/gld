@@ -31,7 +31,7 @@
 <_Sampling method_> 			A stratified two-stage probability sample design
 								with 14 domains as the primary strata and 18,000 
 								households as the SSU.</_Sampling method_>
-<_NPLgraphic coverage_> 		900 PSUs stratified from 7 domains:
+<_Geographic coverage_> 		900 PSUs stratified from 7 domains:
 								- Province 1 (Koshi)
 								- Province 2 (Madhesh)
 								- Province 3 (Bagmati)
@@ -39,7 +39,7 @@
 								- Province 5 (Lumbini)
 								- Karnali 
 								- Sudurpashchim 
-								                       </_NPLgraphic coverage_>
+								                       </_Geographic coverage_>
 <_Currency_> 					Nepalese Rupee </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 19 </_ICLS Version_>

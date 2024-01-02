@@ -31,13 +31,13 @@
 <_Sampling method_> 			A stratified two-stage probability sample design.
 								The country was stratified into 6 strata comprising
 								3 urban and 3 rural areas. </_Sampling method_>
-<_NPLgraphic coverage_> 		799 PSUs stratified from 5 regions:
+<_Geographic coverage_> 		799 PSUs stratified from 5 regions:
 								- 1-Eastern
 								- 2-Central 
 								- 3-Western 
 								- 4-Mid Western
 								- 5-FarWestern
-								                       </_NPLgraphic coverage_>
+								                       </_Geographic coverage_>
 <_Currency_> 					Nepalese Rupee </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
