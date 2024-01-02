@@ -24,8 +24,7 @@
 <_Sampling method_> 			A stratified two-stage probability sample design
 								with 14 domains as the primary strata and 18,000 
 								households as the SSU.</_Sampling method_>
-<_Geographic coverage_> 		
-								                       </_Geographic coverage_>
+<_Geographic coverage_> 		All 11 regions/marzes. </_Geographic coverage_>
 <_Currency_> 					Armenian Dram </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 19 </_ICLS Version_>
@@ -374,7 +373,7 @@ Their household IDs are:
 007438 
 
 During the harmonization, we did not assign household heads to these households. 
-But users cam assign household heads based on their relationship to the head and 
+But users can assign household heads based on their relationship to the head and 
 other characteristics such as gender and age.
 
 *<_relationharm_note_>*/
@@ -819,7 +818,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 *<_ocusec_>
 	gen byte ocusec=D11
 	recode ocusec (3 4=2)
-	replace ocusec=. if lstatus!=1|age<minlaborage|[age>75&!mi(age)]
+	replace ocusec=. if lstatus!=1|age<minlaborage
 	label var ocusec "Sector of activity primary job 7 day recall"
 	la de lblocusec 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec lblocusec
@@ -828,7 +827,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_industry_orig_>
 	gen industry_orig=D6_21group                                                              
-	replace industry_orig=. if lstatus!=1|[age>75&!mi(age)]
+	replace industry_orig=. if lstatus!=1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
@@ -842,8 +841,8 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_industrycat10_>
 	gen industrycat10=D6_21group
-	recode industrycat10 (4 5=3) (6=4) (7 8=6) (9 10=7) (11/14=8) (15=9) (16/21=10)
-	replace industrycat10=. if lstatus!=1|[age>75&!mi(age)]
+	recode industrycat10 (5=4) (6=5) (7 8=6) (9 10=7) (11/14=8) (15=9) (16/21=10)
+	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
@@ -1097,7 +1096,7 @@ wether an employed respondent had a contract or not.
 
 *<_industrycat10_2_>
 	gen industrycat10_2=E26_21group
-	recode industrycat10_2 (4 5=3) (6=4) (7 8=6) (9 10=7) (11/14=8) (15=9) (16/21=10)
+	recode industrycat10_2 (5=4) (6=5) (7 8=6) (9 10=7) (11/14=8) (15=9) (16/21=10)
 	replace industrycat10_2=. if lstatus!=1|E24!=1
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
