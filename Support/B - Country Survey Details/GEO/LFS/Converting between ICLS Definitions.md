@@ -12,7 +12,7 @@ The information on current activity were used to define the employed using Quest
 
 # Current coding for the GEO LFS
 
-In 2017-2019, the respondents who indicate that they either worked for salary (A1 is Yes) or engaged in activities for own consumption (A2 is Yes) are employed (B1 is only for employed respondents - see image below).
+In 2017-2019, the respondents who indicate that they either worked for salary (A1 is Yes) or engaged in activities for own consumption (A2 is Yes) are employed. The skip pattern leads such respondents to the first question in the section B on employment details (skip to B1 in the image below).
 
 ![2017_questionnaire](utilities/2017_icls.png)
 
@@ -21,30 +21,25 @@ In 2020-2022, two separate questions (A1.5 and A1.6 - see image below) were adde
 ![2020_questionnaire1](utilities/2020_icls_1.png)
 ![2020_questionnaire2](utilities/2020_icls_2.png)
 
-The current coding for 2020-2022 is straightforward:
+The coding for identifying employed respondents (`lstatus == 1`) in 2020-2022 is thus:
 
 ```
-replace lstatus=1 if inlist(A1_5,1,2)|inlist(A1_6,1,2)|A2==1|A3==1|A4==1|inrange(A6,6,9)|A7==1|A8==1|A9==1
+replace lstatus = 1 inlist(A1_5,1,2) | inlist(A1_6,1,2) | A2==1 | A3==1 | A4==1 | inrange(A6,6,9) | A7==1 | A8==1 | A9==1
 ```
 
-in which all observations whose answers lead them to section B, "Main Job", were coded as employed, namely category 1 to all the variables in the code block above. 
+so that all answers that lead to section B ("Main Job") were coded as employed. 
 
-Even though this line of code restricts production for own consumption by restricting answers to `A1_5` and `A1_6`, the questionnaire's structure still allows for dual employment. Dual employment here refers to observations who not only have an unpaid job, working only or mainly for family consumption, but also have a paid job. For example, following the logic of the questions shown in the screenshot below, observations who worked for domestic production mainly for own consumption (`A1_5==3`), worked for non-zero days and hours in the last 7 days (`!missing(A1_7)&!missing(A1_8)`), answered A1.9 and also worked for at least one hour in order to get paid (`A2==1`) were employed according to our code.  
+## Dual employment of own-consumption workers
+
+While prior to 2019 respondents with own consumption work would directly skip to section B, now they are asked further questions (skip pattern leads them to A1_7) and details of this own consumption work, followed by a question on work for compensation (question A2, see screenshot below).
 
 ![2020_questionnaire3](utilities/2020_questionnaire_B_module.png)
 
-Therefore, the code below follows the previous line of code to make sure for-own-production workers entering question A2 and moving forward will not be coded as employed.  
-```
-replace lstatus=. if lstatus==1&[inlist(A1_5,3,4)|inlist(A1_6,3,4)]&[A5==2|A6==12|A7==2|A9==2]
-```
-
-But this line of code only excludes observations who worked for own consumption and did not work for pay at all. It fulfilled that purpose by replacing observations with missing values if they were mistakenly coded as employed but their answers to A5, A6, A7 and A9 lead them to section F, "Previous Work Experience". The GLD harmonization did not further differentiate between main job and side job for dual employment workers. We followed the National Statistics Office's definition and classified them as employed.
-
-Nonetheless, the information of time spent on own-consumption production in terms of days (A1.7) and hours (A1.8) allows users flexibility to make their own rules and decide how they want to define dual employment workers based on their time spent on own-consumption production.
+Therefore, the respondents with own consumption work can be coded as employed on the basis of other work which is for market exchange.
 
 # Coding to convert the 2020 ILFS to the old definition
 
-In converting back to the old definition, the approach adopted here is simply to remove all the restrictions on `A1_5` and `A1_6`, and instead, to code respondents who have answered question A1.5 to A1.9 as employed regardless of their answers to question A2 and questions forward. The revised codes would be:
+In converting back to the old definition (ICLS-13), the approach adopted here is simply to remove all the restrictions on `A1_5` and `A1_6`, and instead, to code respondents who have answered question A1.5 to A1.9 as employed regardless of their answers to question A2 and questions forward. The revised codes would be:
 
 ```
 * Generate empty variable first
@@ -57,4 +52,8 @@ replace lstatus_old_icls = 1 if inlist(A1_5,1,2) | inlist(A1_6,1,2) | A2==1 | A3
 replace lstatus_old_icls = 1 if (inrange(A1_5,3,4) | inrange(A1_6,3,4)) & mi(lstatus_old_icls)
 ```
 
-Note that the above only covers the employment status. These added workers should also have information on their occupation sector, employment sector, industry, occupation, ... Own consumption workers are by definition self-employed and in the private sector. Regarding their industry and occupation, question A1.9 directly provides their industrial classification codes in NACE rev.2. And in 2020-2022, own-consumption workers' industry ranges from NACE rev.2 111 to 322, which are all in "Agriculture". As for occupation, users could refer to for-salary workers' occupations with the same industry codes. The data shows that own-consumption workers' industrial codes are mostly in "Elementary Occupations".  
+Note that the above only covers the employment status. These added workers should also have information on their occupation sector, employment sector, industry, occupation, ... 
+
+Own consumption workers are by definition self-employed and in the private sector. Regarding their industry and occupation, question A1.9 directly provides their industrial classification codes in NACE rev.2. And in 2020-2022, own-consumption workers' industry ranges from NACE rev.2 111 to 322, which are all in "Agriculture". As for occupation, users could refer to for-salary workers' occupations with the same industry codes. The data shows that own-consumption workers' industrial codes are mostly in "Elementary Occupations".  
+
+Finally, it may be worthwhile for the above mentioned "dual employment workers" to evaluate their labour status. For example, someone working on own-consumption agriculture and a small shoe repair business who spends most of their work time in agriculture. On both definitions they are employed. However, by the ICLS-19 definition they are employed in manufacturing (shoe repair), while by ICLS-13 they are employed in agriculture. The data replacement above would only add agriculture workers not doing other work. The GLD team has no standard way of "re-assigning" labour status but has commonly advocated for evaluating the work time to judge what is the "main job". That is, if our example worker spends 10 hours a week on shoe repair when the average worker spends 45 hours at their main job and 75% of them work 20 or more hours, it would be reasonable to assume shoe repair is not the main job and that information should be overwritten with agriculture information (self-employed, ISCO code 63, ...).
