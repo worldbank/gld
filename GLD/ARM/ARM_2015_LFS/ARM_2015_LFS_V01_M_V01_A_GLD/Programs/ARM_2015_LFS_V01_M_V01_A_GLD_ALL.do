@@ -19,8 +19,8 @@
 								the website of Statistical Committee of the 
 								Republic of Armenia:https://armstat.am/en/?nid=212
 								The data is publicly available.</_Source of dataset_>
-<_Sample size (HH)_> 			7,788 (vs 7,680 planned) </_Sample size (HH)_>
-<_Sample size (IND)_> 		     </_Sample size (IND)_>
+<_Sample size (HH)_> 			7,788  </_Sample size (HH)_>
+<_Sample size (IND)_> 		    29,662 </_Sample size (IND)_>
 <_Sampling method_> 			A stratified two-stage probability sample design
 								with 14 domains as the primary strata and 18,000 
 								households as the SSU.</_Sampling method_>
@@ -191,7 +191,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_weight_>
-	gen weight=Weigths_Year
+	gen weight=Weights_year
 	label var weight "Household sampling weight"
 *</_weight_>
 
@@ -556,9 +556,21 @@ other characteristics such as gender and age.
 
 /*<_educy_note_>
 
-Original categorization of the highest educational level ever attended doesn't
-need remapping.
+Original categorization of the highest educational level is:
 
+1. Illiterate
+2. No primary 
+3. Primary 
+4. Basic 
+5. Secondary 
+6. Vocational 
+7. Secondary specialized (bachelor, master course)
+8. Tertiary (internship, doctoral or equivalent)
+9. Post-graduate 
+
+The 2015 categorization is a bit different from the previous year. "Tertiary" was
+"University" in 2014. Since 2014 and 2015 have the same educational distribution,
+tertiary should mean university.
 *<_educy_note_>*/
 
 	gen byte educy=.
@@ -566,8 +578,8 @@ need remapping.
 	replace educy=3 if B15==2
 	replace educy=7 if B15==3
 	replace educy=12 if B15==4
-	replace educy=15 if B15==5|B15==6
-	replace educy=16 if B15==7
+	replace educy=15 if B15==5
+	replace educy=16 if B15==6|B15==7
 	replace educy=19 if B15==8
 	replace educy=21 if B15==9
 	replace educy=. if age<ed_mod_age
@@ -578,7 +590,7 @@ need remapping.
 
 *<_educat7_>
 	gen byte educat7=B15
-	recode educat7 (6=5) (7=6) (8 9=7) 
+	recode educat7 (8 9=7) 
 	replace educat7=. if age<ed_mod_age
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
@@ -619,9 +631,8 @@ need remapping.
 	replace educat_isced=244 if B15==4
 	replace educat_isced=344 if B15==5
 	replace educat_isced=354 if B15==6
-	replace educat_isced=550 if B15==7
-	replace educat_isced=660 if B15==8
-	replace educat_isced=860 if B15==9
+	replace educat_isced=660 if B15==7
+	replace educat_isced=860 if B15==8|B15==9
 	replace educat_isced=. if age<ed_mod_age
 	label var educat_isced "ISCED standardised level of education"
 *</_educat_isced_>
@@ -718,11 +729,26 @@ The age range for the labor section is 15-75.
 
 {	
 *<_lstatus_>
+
+/*<_lstatus_note>
+
+According to the national definition of Armenia, the economically inavtive population 
+includes 
+
+1)full-time pupils and students
+2)housekeepers
+3)pensioners
+4)other jobless peope including conscripts
+
+And the economically inavtive population also needs to be within the age range of 
+15 and 75.
+*<_lstatus_note>*/
+
 	gen byte lstatus=.
 	replace lstatus=1 if G1==1|inrange(G3,1,5)|inrange(G4,1,2)
-	replace lstatus=2 if lstatus==.&inrange(E45,1,3)&inrange(Z57,1,2)
-	replace lstatus=3 if lstatus==. 
-	replace lstatus=. if age<minlaborage|[age>75&!mi(age)]
+	replace lstatus=2 if lstatus==.&inrange(Z57,1,2)
+	replace lstatus=3 if !mi(Z49_4groups)&lstatus==.
+	replace lstatus=. if !inrange(age,15,75)
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
@@ -843,7 +869,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_industrycat4_>
 	gen byte industrycat4=industrycat10
-	recode industrycat4 (1=1)(2 3 4 5=2)(6 7 8 9=3)(10=4)
+	recode industrycat4 (3/5=2)(6/9=3)(10=4)
 	label var industrycat4 "1 digit industry classification (Broad Economic Activities), primary job 7 day recall"
 	la de lblindustrycat4 1 "Agriculture" 2 "Industry" 3 "Services" 4 "Other"
 	label values industrycat4 lblindustrycat4
@@ -1097,7 +1123,7 @@ wether an employed respondent had a contract or not.
 
 *<_industrycat4_2_>
 	gen byte industrycat4_2=industrycat10_2
-	recode industrycat4_2 (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
+	recode industrycat4_2 (3/5=2)(6/9=3)(10=4)
 	label var industrycat4_2 "1 digit industry classification (Broad Economic Activities), secondary job 7 day recall"
 	label values industrycat4_2 lblindustrycat4
 *</_industrycat4_2_>

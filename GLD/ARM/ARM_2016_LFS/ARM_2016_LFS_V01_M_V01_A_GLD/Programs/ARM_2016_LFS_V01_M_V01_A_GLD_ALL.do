@@ -4,23 +4,23 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				ARM_2014_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
+<_Program name_>				ARM_2015_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata SE 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
-<_Date created_>				2023-12-16 </_Date created_>
+<_Date created_>				2023-12-20 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						Armenia (ARM) </_Country_>
 <_Survey Title_>				National Labour Force Survey </_Survey Title_>
-<_Survey Year_>					2014 </_Survey Year_>
-<_Study ID_>					ARM_2014_LFS_v01_M </_Study ID_>
-<_Data collection from (M/Y)_>	[01/2014] </_Data collection from (M/Y)_>
-<_Data collection to (M/Y)_>	[12/2014] </_Data collection to (M/Y)_>
-<_Source of dataset_> 			The Armenian 2014 to 2021 data is downloaded from 
+<_Survey Year_>					2015 </_Survey Year_>
+<_Study ID_>					ARM_2015_LFS_v01_M </_Study ID_>
+<_Data collection from (M/Y)_>	[01/2015] </_Data collection from (M/Y)_>
+<_Data collection to (M/Y)_>	[12/2015] </_Data collection to (M/Y)_>
+<_Source of dataset_> 			The Armenian 2015 to 2021 data is downloaded from 
 								the website of Statistical Committee of the 
 								Republic of Armenia:https://armstat.am/en/?nid=212
 								The data is publicly available.</_Source of dataset_>
-<_Sample size (HH)_> 			7,679 (vs 7,680 planned) </_Sample size (HH)_>
-<_Sample size (IND)_> 		    29,453 </_Sample size (IND)_>
+<_Sample size (HH)_> 			7,788 (vs 7,680 planned) </_Sample size (HH)_>
+<_Sample size (IND)_> 		    29,662 </_Sample size (IND)_>
 <_Sampling method_> 			A stratified two-stage probability sample design
 								with 14 domains as the primary strata and 18,000 
 								households as the SSU.</_Sampling method_>
@@ -28,7 +28,7 @@
 <_Currency_> 					Armenian Dram </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 19 </_ICLS Version_>
-<_ISCED Version_>				ISCED-2014 </_ISCED Version_>
+<_ISCED Version_>				ISCED-2015 </_ISCED Version_>
 <_ISCO Version_>				ISCO 08 </_ISCO Version_>
 <_OCCUP National_>				NSCO  </_OCCUP National_>
 <_ISIC Version_>				ISIC Rev.4 </_ISIC Version_>
@@ -60,7 +60,7 @@ set mem 800m
 * Define path sections
 local server  "Y:\GLD-Harmonization\573465_JT"
 local country "ARM"
-local year    "2014"
+local year    "2015"
 local survey  "LFS"
 local vermast "V01"
 local veralt  "V01"
@@ -84,8 +84,8 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	 *use "`path_in_stata'\ARM_LFS_2014.dta", clear
-	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\ARM\ARM_2014_LFS\ARM_2014_LFS_v01_M\Data\Stata\ARM_LFS_2014_raw.dta", clear
+	 *use "`path_in_stata'\ARM_LFS_2015.dta", clear
+	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\ARM\ARM_2015_LFS\ARM_2015_LFS_v01_M\Data\Stata\ARM_LFS_2015_raw.dta", clear
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -191,7 +191,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_weight_>
-	gen weight=Weigths_Year
+	gen weight=Weights_year
 	label var weight "Household sampling weight"
 *</_weight_>
 
@@ -362,17 +362,9 @@ They were coded as missing values in the harmonization.
 
 /*<_relationharm_note_>
 
-6 households (18 observations) in the raw data set do not have household heads. 
-Their household IDs are:
+1 household (3 observations) in the raw data set does not have household head: 004318 
 
-001376
-002376
-003502
-004083
-006371
-007438 
-
-During the harmonization, we did not assign household heads to these households. 
+During the harmonization, we did not assign household head to the household. 
 But users can assign household heads based on their relationship to the head and 
 other characteristics such as gender and age.
 
@@ -564,9 +556,21 @@ other characteristics such as gender and age.
 
 /*<_educy_note_>
 
-Original categorization of the highest educational level ever attended doesn't
-need remapping.
+Original categorization of the highest educational level is:
 
+1. Illiterate
+2. No primary 
+3. Primary 
+4. Basic 
+5. Secondary 
+6. Vocational 
+7. Secondary specialized (bachelor, master course)
+8. Tertiary (internship, doctoral or equivalent)
+9. Post-graduate 
+
+The 2015 categorization is a bit different from the previous year. "Tertiary" was
+"University" in 2014. Since 2014 and 2015 have the same educational distribution,
+tertiary should mean university.
 *<_educy_note_>*/
 
 	gen byte educy=.
@@ -627,9 +631,8 @@ need remapping.
 	replace educat_isced=244 if B15==4
 	replace educat_isced=344 if B15==5
 	replace educat_isced=354 if B15==6
-	replace educat_isced=550 if B15==7
-	replace educat_isced=660 if B15==8
-	replace educat_isced=860 if B15==9
+	replace educat_isced=660 if B15==7
+	replace educat_isced=860 if B15==8|B15==9
 	replace educat_isced=. if age<ed_mod_age
 	label var educat_isced "ISCED standardised level of education"
 *</_educat_isced_>
@@ -726,11 +729,26 @@ The age range for the labor section is 15-75.
 
 {	
 *<_lstatus_>
+
+/*<_lstatus_note>
+
+According to the national definition of Armenia, the economically inavtive population 
+includes 
+
+1)full-time pupils and students
+2)housekeepers
+3)pensioners
+4)other jobless peope including conscripts
+
+And the economically inavtive population also needs to be within the age range of 
+15 and 75.
+*<_lstatus_note>*/
+
 	gen byte lstatus=.
 	replace lstatus=1 if G1==1|inrange(G3,1,5)|inrange(G4,1,2)
-	replace lstatus=2 if lstatus==.&inrange(Z57,1,2)
-	replace lstatus=3 if !mi(Z49_4group)
-	replace lstatus=. if age<minlaborage|[age>75&!mi(age)]
+	replace lstatus=2 if lstatus==.&inrange(E45,1,3)&inrange(Z57,1,2)
+	replace lstatus=3 if !mi(Z49_4groups)
+	replace lstatus=. if !inrange(age,15,75)
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
@@ -1775,6 +1793,6 @@ compress
 *<_% SAVE_>
 
 *save "`path_output'\\`level_2_harm'_ALL.dta", replace
-save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\ARM\ARM_2014_LFS\ARM_2014_LFS_V01_M_V01_A_GLD\Data\Harmonized\ARM_2014_LFS_v01_M_v01_A_GLD_ALL.dta", replace
+save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\ARM\ARM_2015_LFS\ARM_2015_LFS_V01_M_V01_A_GLD\Data\Harmonized\ARM_2015_LFS_v01_M_v01_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>
