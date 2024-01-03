@@ -4,23 +4,23 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				ARM_2015_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
+<_Program name_>				ARM_2016_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata SE 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
 <_Date created_>				2023-12-20 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						Armenia (ARM) </_Country_>
 <_Survey Title_>				National Labour Force Survey </_Survey Title_>
-<_Survey Year_>					2015 </_Survey Year_>
-<_Study ID_>					ARM_2015_LFS_v01_M </_Study ID_>
-<_Data collection from (M/Y)_>	[01/2015] </_Data collection from (M/Y)_>
-<_Data collection to (M/Y)_>	[12/2015] </_Data collection to (M/Y)_>
-<_Source of dataset_> 			The Armenian 2015 to 2021 data is downloaded from 
+<_Survey Year_>					2016 </_Survey Year_>
+<_Study ID_>					ARM_2016_LFS_v01_M </_Study ID_>
+<_Data collection from (M/Y)_>	[01/2016] </_Data collection from (M/Y)_>
+<_Data collection to (M/Y)_>	[12/2016] </_Data collection to (M/Y)_>
+<_Source of dataset_> 			The Armenian 2016 to 2021 data is downloaded from 
 								the website of Statistical Committee of the 
 								Republic of Armenia:https://armstat.am/en/?nid=212
 								The data is publicly available.</_Source of dataset_>
-<_Sample size (HH)_> 			7,788 (vs 7,680 planned) </_Sample size (HH)_>
-<_Sample size (IND)_> 		    29,662 </_Sample size (IND)_>
+<_Sample size (HH)_> 			7,788 </_Sample size (HH)_>
+<_Sample size (IND)_> 		    28,516 </_Sample size (IND)_>
 <_Sampling method_> 			A stratified two-stage probability sample design
 								with 14 domains as the primary strata and 18,000 
 								households as the SSU.</_Sampling method_>
@@ -28,7 +28,7 @@
 <_Currency_> 					Armenian Dram </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 19 </_ICLS Version_>
-<_ISCED Version_>				ISCED-2015 </_ISCED Version_>
+<_ISCED Version_>				ISCED-2016 </_ISCED Version_>
 <_ISCO Version_>				ISCO 08 </_ISCO Version_>
 <_OCCUP National_>				NSCO  </_OCCUP National_>
 <_ISIC Version_>				ISIC Rev.4 </_ISIC Version_>
@@ -51,7 +51,7 @@
 
 *----------1.1: Initial commands------------------------------*
 
-clear
+		clear
 set more off
 set mem 800m
 
@@ -60,7 +60,7 @@ set mem 800m
 * Define path sections
 local server  "Y:\GLD-Harmonization\573465_JT"
 local country "ARM"
-local year    "2015"
+local year    "2016"
 local survey  "LFS"
 local vermast "V01"
 local veralt  "V01"
@@ -84,8 +84,8 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	 *use "`path_in_stata'\ARM_LFS_2015.dta", clear
-	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\ARM\ARM_2015_LFS\ARM_2015_LFS_v01_M\Data\Stata\ARM_LFS_2015_raw.dta", clear
+	 *use "`path_in_stata'\ARM_LFS_2016.dta", clear
+	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\ARM\ARM_2016_LFS\ARM_2016_LFS_v01_M\Data\Stata\ARM_LFS_2016_raw.dta", clear
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -191,7 +191,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_weight_>
-	gen weight=Weights_year
+	gen weight=Weights_Year
 	label var weight "Household sampling weight"
 *</_weight_>
 
@@ -362,7 +362,10 @@ They were coded as missing values in the harmonization.
 
 /*<_relationharm_note_>
 
-1 household (3 observations) in the raw data set does not have household head: 004318 
+3 household (12 observations) in the raw data set do not have household heads: 
+012217
+012247
+012355
 
 During the harmonization, we did not assign household head to the household. 
 But users can assign household heads based on their relationship to the head and 
@@ -568,9 +571,6 @@ Original categorization of the highest educational level is:
 8. Tertiary (internship, doctoral or equivalent)
 9. Post-graduate 
 
-The 2015 categorization is a bit different from the previous year. "Tertiary" was
-"University" in 2014. Since 2014 and 2015 have the same educational distribution,
-tertiary should mean university.
 *<_educy_note_>*/
 
 	gen byte educy=.
@@ -746,8 +746,8 @@ And the economically inavtive population also needs to be within the age range o
 
 	gen byte lstatus=.
 	replace lstatus=1 if G1==1|inrange(G3,1,5)|inrange(G4,1,2)
-	replace lstatus=2 if lstatus==.&inrange(E45,1,3)&inrange(Z57,1,2)
-	replace lstatus=3 if !mi(Z49_4groups)
+	replace lstatus=2 if lstatus==.&inrange(Z57,1,2)
+	replace lstatus=3 if !mi(Z49_4group)&lstatus==.
 	replace lstatus=. if !inrange(age,15,75)
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -1793,6 +1793,6 @@ compress
 *<_% SAVE_>
 
 *save "`path_output'\\`level_2_harm'_ALL.dta", replace
-save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\ARM\ARM_2015_LFS\ARM_2015_LFS_V01_M_V01_A_GLD\Data\Harmonized\ARM_2015_LFS_v01_M_v01_A_GLD_ALL.dta", replace
+save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\ARM\ARM_2016_LFS\ARM_2016_LFS_V01_M_V01_A_GLD\Data\Harmonized\ARM_2016_LFS_v01_M_v01_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>
