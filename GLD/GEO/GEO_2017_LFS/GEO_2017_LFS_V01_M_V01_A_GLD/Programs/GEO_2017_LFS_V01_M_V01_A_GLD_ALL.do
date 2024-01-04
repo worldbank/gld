@@ -1188,8 +1188,7 @@ characteristics, their value is assigned to be 293.35.
 *<_industrycat_isic_2_>
 	tostring D3_Second_Brunch_2, gen(nace2_code) format(%04.0f)
 	gen industrycat_isic_2=nace2_code
-	*merge m:1 nace2_code using "`path_in_stata'\nace2_isic4_crosswalk.dta"
-	merge m:1 nace2_code using "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\GEO\GEO_2017_LFS\GEO_2017_LFS_V01_M\Data\Stata\nace2_isic4_crosswalk.dta"
+	merge m:1 nace2_code using "`path_in_stata'\nace2_isic4_crosswalk.dta"
 		
 	replace industrycat_isic_2=isic4 if _merge==3&!mi(isic4)
 	replace industrycat_isic_2="" if lstatus!=1|D1_Second_job!=1|industrycat_isic_2=="."
