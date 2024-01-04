@@ -15,7 +15,7 @@ This document describes the methodology used to map national industrial and occu
 
 The NSIC used in NPL 1998 and NPL 2008 is at two-digit level and matches ISIC Rev.3 except only one category – *98 Extra-territorial organizations and bodies*.    
 
-| **NSIC-1998 & 2008 Code**	| **KBLI-1997 Industry**	| **ISIC Rev.3 Code**	| **ISIC Rev.3 Industry**	|
+| **NSIC-1998 & 2008 Code**	| **NSIC-1998 & 2008 Industry**	| **ISIC Rev.3 Code**	| **ISIC Rev.3 Industry**	|
 | :-----------------------:	| :---------------------:	| :------------------:|:-----------------------:|	 	
 | 98 | Extra-territorial organizations and bodies | 99 | Extra-territorial organizations and bodies |
 
