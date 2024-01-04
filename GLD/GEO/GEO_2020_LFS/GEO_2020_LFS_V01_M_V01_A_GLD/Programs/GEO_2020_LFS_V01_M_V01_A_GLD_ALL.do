@@ -83,7 +83,8 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-use "`path_in_stata'\GEO_2020_LFS.dta", clear
+	use "`path_in_stata'\GEO_LFS_2020.dta", clear
+	drop _merge
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -1083,7 +1084,7 @@ average wage of them by (1) sex, (2) urb/rur area, (3) occupation, and (4) indus
      
 	 * Restore, merge in
      restore
-     merge m:1 industrycat10 occup male urban B25 using "`salary_helper'", nogen
+     merge m:1 industrycat10 occup male urban B25 using "`salary_helper'", keep(master matched) nogen
 
      * Create wage variable
      gen wage_no_compen=.
@@ -1876,6 +1877,6 @@ compress
 
 *<_% SAVE_>
 
-	save "`path_output'\\`level_2_harm'_ALL.dta", replace
+save "`path_output'\\`level_2_harm'_ALL.dta", replace
 
 *</_% SAVE_>

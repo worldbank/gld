@@ -83,8 +83,8 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	use "`path_in_stata'\GEO_2018_LFS.dta", clear
-	
+	use "`path_in_stata'\GEO_LFS_2018.dta", clear
+
 /*%%=============================================================================================
 	2: Survey & ID
 ================================================================================================*/
@@ -931,7 +931,7 @@ for more hours but they are not in the raw dataset.
 	tostring B4_NACE_2, gen(nace2_code) format(%04.0f)
 	gen industrycat_isic=nace2_code
 	merge m:1 nace2_code using "`path_in_stata'\nace2_isic4_crosswalk.dta"
-	
+
 	replace industrycat_isic=isic4 if _merge==3&!mi(isic4)
 	replace industrycat_isic="" if lstatus!=1|industrycat_isic=="."
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
@@ -1054,7 +1054,7 @@ average wage of them by (1) sex, (2) urb/rur area, (3) occupation, and (4) indus
      
 	 * Restore, merge in
      restore
-     merge m:1 industrycat10 occup male urban B18 using "`salary_helper'", nogen
+     merge m:1 industrycat10 occup male urban B18 using "`salary_helper'", keep(master matched) nogen
 
      * Create wage variable
      gen wage_no_compen=.
@@ -1190,7 +1190,7 @@ average wage of them by (1) sex, (2) urb/rur area, (3) occupation, and (4) indus
 	tostring D3_Second_Brunch_2, gen(nace2_code) format(%04.0f)
 	gen industrycat_isic_2=nace2_code
 	merge m:1 nace2_code using "`path_in_stata'\nace2_isic4_crosswalk.dta"
-		
+	
 	replace industrycat_isic_2=isic4 if _merge==3&!mi(isic4)
 	replace industrycat_isic_2="" if lstatus!=1|D1_Second_job!=1|industrycat_isic_2=="."
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
