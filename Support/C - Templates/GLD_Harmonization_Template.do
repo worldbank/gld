@@ -617,6 +617,7 @@ foreach v of local ed_var {
 	label var vocational "Ever received vocational training"
 *</_vocational_>
 
+
 *<_vocational_type_>
 	gen vocational_type = .
 	label de lblvocational_type 1 "Inside Enterprise" 2 "External"
@@ -624,20 +625,24 @@ foreach v of local ed_var {
 	label var vocational_type "Type of vocational training"
 *</_vocational_type_>
 
+
 *<_vocational_length_l_>
 	gen vocational_length_l = .
 	label var vocational_length_l "Length of training in months, lower limit"
 *</_vocational_length_l_>
+
 
 *<_vocational_length_u_>
 	gen vocational_length_u = .
 	label var vocational_length_u "Length of training in months, upper limit"
 *</_vocational_length_u_>
 
+
 *<_vocational_field_orig_>
 	gen str vocational_field_orig = .
 	label var vocational_field_orig "Original field of training information"
 *</_vocational_field_orig_>
+
 
 *<_vocational_financed_>
 	gen vocational_financed = .
@@ -740,6 +745,17 @@ foreach v of local ed_var {
 
 *<_industrycat_isic_>
 	gen industrycat_isic = .
+
+	* Check that no errors --> using our universe check function, count should be 0 (no obs wrong)
+	* https://github.com/worldbank/gld/tree/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20universe%20check
+	preserve 
+	*drop if missing(industrycat_isic)
+	*int_classif_universe, var(industrycat_isic) universe(ISIC)
+	count
+	*list
+	*assert `r(N)' == 0
+	restore 
+
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
@@ -769,6 +785,17 @@ foreach v of local ed_var {
 
 *<_occup_isco_>
 	gen occup_isco = ""
+
+	* Check that no errors --> using our universe check function, count should be 0 (no obs wrong)
+	* https://github.com/worldbank/gld/tree/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20universe%20check
+	preserve 
+	*drop if missing(occup_isco)
+	*int_classif_universe, var(occup_isco) universe(ISCO)
+	count
+	*list
+	*assert `r(N)' == 0
+	restore
+
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
@@ -1124,6 +1151,17 @@ foreach v of local ed_var {
 
 *<_industrycat_isic_year_>
 	gen industrycat_isic_year = .
+
+	* Check that no errors --> using our universe check function, count should be 0 (no obs wrong)
+	* https://github.com/worldbank/gld/tree/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20universe%20check
+	preserve 
+	*drop if missing(industrycat_isic_year)
+	*int_classif_universe, var(industrycat_isic_year) universe(ISIC)
+	count
+	*list
+	*assert `r(N)' == 0
+	restore 
+
 	label var industrycat_isic_year "ISIC code of primary job 12 month recall"
 *</_industrycat_isic_year_>
 
@@ -1152,6 +1190,17 @@ foreach v of local ed_var {
 
 *<_occup_isco_year_>
 	gen occup_isco_year = ""
+
+	* Check that no errors --> using our universe check function, count should be 0 (no obs wrong)
+	* https://github.com/worldbank/gld/tree/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20universe%20check
+	preserve 
+	*drop if missing(occup_isco_year)
+	*int_classif_universe, var(occup_isco_year) universe(ISCO)
+	count
+	*list
+	*assert `r(N)' == 0
+	restore
+
 	label var occup_isco_year "ISCO code of primary job 12 month recall"
 *</_occup_isco_year_>
 
