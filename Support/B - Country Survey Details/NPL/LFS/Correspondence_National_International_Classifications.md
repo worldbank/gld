@@ -19,7 +19,7 @@ The NSIC used in NPL 1998 and NPL 2008 is at two-digit level and matches ISIC Re
 | :-----------------------:	| :---------------------:	| :------------------:|:-----------------------:|	 	
 | 98 | Extra-territorial organizations and bodies | 99 | Extra-territorial organizations and bodies |
 
-**NSIC 2017 VS.ISIC Rev.3**
+**NSIC 2017 VS.ISIC Rev.4**
 
 The NSIC used in NPL 2017 is at four-digit level and is identical to ISIC Rev.4, so there is no revision to NSIC 2017.
 
