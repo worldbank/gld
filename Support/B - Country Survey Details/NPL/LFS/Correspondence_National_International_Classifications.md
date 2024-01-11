@@ -21,7 +21,7 @@ The NSIC used in NPL 1998 and NPL 2008 is at two-digit level and matches ISIC Re
 
 **NSIC 2017 VS.ISIC Rev.3**
 
-The NSIC used in NPL 2017 is at two-digit level and is identical to ISIC Rev.3, so there is no revision to NSIC 2017.
+The NSIC used in NPL 2017 is at four-digit level and is identical to ISIC Rev.4, so there is no revision to NSIC 2017.
 
 ## Correspondence in the classification of occupations
 
