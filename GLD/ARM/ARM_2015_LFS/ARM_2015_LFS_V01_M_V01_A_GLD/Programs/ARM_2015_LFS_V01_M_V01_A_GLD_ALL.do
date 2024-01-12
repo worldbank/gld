@@ -779,8 +779,8 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_underemployment_>
 	gen byte underemployment=E41
-	replace underemployment=1 if inlist(E41,2,3)
-	replace underemployment=0 if underemployment==4
+	replace underemployment=1 if inrange(E41,1,3)
+	replace underemployment=0 if E41==4
 	replace underemployment=. if age<minlaborage|[age>75&!mi(age)]
 	replace underemployment=. if lstatus!=1
 	label var underemployment "Underemployment status"
@@ -852,6 +852,31 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_industrycat_isic_>
 	gen industrycat_isic=""
+quietly
+{	
+	replace industrycat_isic="A-Agriculture" if D6_21group==1
+	replace industrycat_isic="B-Mining and quarrying" if D6_21group==2
+	replace industrycat_isic="C-Manufacturing" if D6_21group==3
+	replace industrycat_isic="D-Electricity" if D6_21group==4
+	replace industrycat_isic="E-Water supply" if D6_21group==5
+	replace industrycat_isic="F-Construction" if D6_21group==6
+	replace industrycat_isic="G-Wholesale and retale trade" if D6_21group==7
+	replace industrycat_isic="H-Transportation and storage" if D6_21group==8
+	replace industrycat_isic="I-Accommodation and food service activities" if D6_21group==9
+	replace industrycat_isic="J-Information and communication" if D6_21group==10
+	replace industrycat_isic="K-Financial and insurance activities" if D6_21group==11
+	replace industrycat_isic="L-Real estate activities" if D6_21group==12
+	replace industrycat_isic="M-Professional, scientific and technical activities" if D6_21group==13
+	replace industrycat_isic="N-Administrative and support service activities" if D6_21group==14
+	replace industrycat_isic="O-Public administration and defence; compulsory social security" if D6_21group==15
+	replace industrycat_isic="P-Education" if D6_21group==16
+	replace industrycat_isic="Q-Human health and social work activities" if D6_21group==17
+	replace industrycat_isic="R-Arts, entertainment and recreation" if D6_21group==18
+	replace industrycat_isic="S-Other service activites" if D6_21group==19
+	replace industrycat_isic="T-Activities of HH as employers" if D6_21group==20
+	replace industrycat_isic="U-Activities of extraterritorial organizations and bodies" if D6_21group==21
+}
+
 	replace industrycat_isic="" if industrycat_isic=="."|lstatus!=1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
@@ -924,6 +949,8 @@ The general logic here is to impute wage values for people who only answered an 
 range. We used industry, occupation, income categories and gender to estimate their
 specific income values. 
 
+15.16% of total non-missing wage values were imputed using this method.
+
 *<_wage_no_compen_note_>*/
 
 	* Overall --> wage info (here the variable, for us it should be wage_no_compen)
@@ -978,7 +1005,7 @@ specific income values.
      label var wage_no_compen "Last wage payment primary job 7 day recall"
 
 *</_wage_no_compen_>
-s
+
 
 *<_unitwage_>
 	gen byte unitwage=D16
@@ -1108,6 +1135,31 @@ wether an employed respondent had a contract or not.
 
 *<_industrycat_isic_2_>
 	gen industrycat_isic_2=""
+quietly
+{	
+	replace industrycat_isic_2="A-Agriculture" if E26_21group==1
+	replace industrycat_isic_2="B-Mining and quarrying" if E26_21group==2
+	replace industrycat_isic_2="C-Manufacturing" if E26_21group==3
+	replace industrycat_isic_2="D-Electricity" if E26_21group==4
+	replace industrycat_isic_2="E-Water supply" if E26_21group==5
+	replace industrycat_isic_2="F-Construction" if E26_21group==6
+	replace industrycat_isic_2="G-Wholesale and retale trade" if E26_21group==7
+	replace industrycat_isic_2="H-Transportation and storage" if E26_21group==8
+	replace industrycat_isic_2="I-Accommodation and food service activities" if E26_21group==9
+	replace industrycat_isic_2="J-Information and communication" if E26_21group==10
+	replace industrycat_isic_2="K-Financial and insurance activities" if E26_21group==11
+	replace industrycat_isic_2="L-Real estate activities" if E26_21group==12
+	replace industrycat_isic_2="M-Professional, scientific and technical activities" if E26_21group==13
+	replace industrycat_isic_2="N-Administrative and support service activities" if E26_21group==14
+	replace industrycat_isic_2="O-Public administration and defence; compulsory social security" if E26_21group==15
+	replace industrycat_isic_2="P-Education" if E26_21group==16
+	replace industrycat_isic_2="Q-Human health and social work activities" if E26_21group==17
+	replace industrycat_isic_2="R-Arts, entertainment and recreation" if E26_21group==18
+	replace industrycat_isic_2="S-Other service activites" if E26_21group==19
+	replace industrycat_isic_2="T-Activities of HH as employers" if E26_21group==20
+	replace industrycat_isic_2="U-Activities of extraterritorial organizations and bodies" if E26_21group==21
+}
+
 	replace industrycat_isic_2="" if industrycat_isic_2=="."|E24!=1
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
@@ -1194,7 +1246,7 @@ wether an employed respondent had a contract or not.
 
 	 * Restore, merge in
      restore
-     merge m:1 industrycat10_2 occup_2 male urban E33 using "`salary_helper2'", nogen
+     merge m:1 industrycat10_2 occup_2 male urban E33 using "`salary_helper2'", keep(matched master) nogen
 
      * Create wage variable
      gen wage_no_compen_2=.
