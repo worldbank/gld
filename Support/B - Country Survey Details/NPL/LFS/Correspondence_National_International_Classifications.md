@@ -19,9 +19,9 @@ The NSIC used in NPL 1998 and NPL 2008 is at two-digit level and matches ISIC Re
 | :-----------------------:	| :---------------------:	| :------------------:|:-----------------------:|	 	
 | 98 | Extra-territorial organizations and bodies | 99 | Extra-territorial organizations and bodies |
 
-**NSIC 2017 VS.ISIC Rev.3**
+**NSIC 2017 VS.ISIC Rev.4**
 
-The NSIC used in NPL 2017 is at two-digit level and is identical to ISIC Rev.3, so there is no revision to NSIC 2017.
+The NSIC used in NPL 2017 is at four-digit level and is identical to ISIC Rev.4, so there is no revision to NSIC 2017.
 
 ## Correspondence in the classification of occupations
 
@@ -36,6 +36,6 @@ The NSCO used in NPL 1998 and 2008 is at three-digit level. It has four categori
 | 922 | Fetching water | 920 | Agricultural, fishery and related labourers |
 | 934 | Collecting firewood | 920 | Agricultural, fishery and related labourers |
 
-**NSCO 2017 VS.ISCO 88**
+**NSCO 2017 VS.ISCO 08**
 
-The NSCO used in NPL 2017 is at three-digit level and it is identical to ISCO-08, so there is no revision to NSCO 2017.
+The NSCO used in the NPL 2017 data set is at four-digit level, however, the only document we were able to find about NSCO in 2017 shows only three digits and it is identical to ISCO-08. We conducted an additional test which revealed that the four-digit occupation codes in the raw data set were identical to ISCO-08. Therefore, we kept the original codes and used them as `occup_isco` without revision. Nonetheless, users should be reminded that there is uncertainty about this variable.  
