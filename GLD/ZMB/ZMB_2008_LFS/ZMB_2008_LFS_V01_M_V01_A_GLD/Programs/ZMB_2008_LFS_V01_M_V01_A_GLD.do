@@ -1578,8 +1578,7 @@ foreach v of local ed_var {
 	preserve 
 	int_classif_universe, var(occup_isco_year) universe(ISCO)
 	count
-	sort instances
-	list
+	*list
 	assert `r(N)' == 0
 	restore 
 
