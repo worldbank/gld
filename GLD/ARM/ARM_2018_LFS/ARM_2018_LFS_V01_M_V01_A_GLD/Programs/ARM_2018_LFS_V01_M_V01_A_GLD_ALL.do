@@ -444,8 +444,8 @@ They were coded as missing values in the harmonization.
 
 
 *<_migrated_ref_time_>
-	gen migrated_ref_time=24
-	label var migrated_ref_time "Reference time applied to migration questions"
+	gen migrated_ref_time=2
+	label var migrated_ref_time "Reference time applied to migration questions (in years)"
 *</_migrated_ref_time_>
 
 
@@ -461,7 +461,8 @@ They were coded as missing values in the harmonization.
 
 *<_migrated_years_>
 	gen migmonth=.
-	replace migmonth=12-C6+int_month
+	replace migmonth=12-C6+int_month if C7==2017
+	replace migmonth=int_month-C6 if C7==2018
     
 	gen migrated_years=.
 	replace migrated_years=round(migmonth/12,0.1)
@@ -482,7 +483,7 @@ They were coded as missing values in the harmonization.
 
 *<_migrated_from_cat_>
 	gen migrated_from_cat=.
-	replace migrated_from_cat=5 if inrange(C9,13,17)
+	replace migrated_from_cat=5 if inrange(C9,12,17)
 	replace migrated_from_cat=3 if C9!=A3&inrange(C9,1,11)
 	replace migrated_from_cat=. if age<migrated_mod_age|migrated_binary!=1
 	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country"
@@ -512,6 +513,7 @@ codes.
 *<_migrated_from_country_note>*/
 
 	gen migrated_from_country=""
+	replace migrated_from_country="AZE" if C9==12
 	replace migrated_from_country="RUS" if C9==13
 	replace migrated_from_country="" if migrated_binary!=1
 	replace migrated_from_country="" if age<migrated_mod_age
@@ -596,18 +598,23 @@ However, the categorization in the questionnaire does not match the one in the d
 10. Certified specialist
 11. Post-graduate (Ph.D, doctorate, internship, residency)
 
+We checked with previous years' education distribution and found that the 
+categorization labels in the data set is correct. The categorization in the 
+questionnaire matched the distribution in previous years.  
+
 *<_educy_note_>*/
 
 	gen byte educy=.
-	replace educy=7 if B7==1
-	replace educy=12 if B7==2
-	replace educy=15 if B7==3
-	replace educy=17 if B7==4
-	replace educy=19 if B7==5
-	replace educy=20 if B7==10
-	replace educy=21 if B7==6
-	replace educy=24 if B7==7
-	replace educy=27 if B7==11 
+	replace educy=0 if B7==1
+	replace educy=3 if B7==2
+	replace educy=7 if B7==3
+	replace educy=12 if B7==4
+	replace educy=15 if B7==5
+	replace educy=16 if B7==6|B7==7
+	replace educy=19 if B7==8
+	replace educy=20 if B7==9
+	replace educy=24 if B7==10
+	replace educy=27 if B7==11
 	replace educy=. if age<ed_mod_age
 	replace educy=. if educy>age & !mi(educy) & !mi(age)
 	label var educy "Years of education"
@@ -616,7 +623,7 @@ However, the categorization in the questionnaire does not match the one in the d
 
 *<_educat7_>
 	gen byte educat7=B7
-	recode educat7 (1=3) (2=4) (3=5) (4 10=6) (5 6 11=7) (8 9=.) 
+	recode educat7 (8/11=7)  
 	replace educat7=. if age<ed_mod_age
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
@@ -652,13 +659,14 @@ However, the categorization in the questionnaire does not match the one in the d
 
 *<_educat_isced_>
 	gen educat_isced=.
-	replace educat_isced=100 if B7==1
-	replace educat_isced=244 if B7==2
-	replace educat_isced=344 if B7==3
-	replace educat_isced=354 if B7==4
-	replace educat_isced=660 if B7==5
-	replace educat_isced=760 if B7==6|B7==10
-	replace educat_isced=860 if B7==7|B7==11
+	replace educat_isced=20 if B7==2
+	replace educat_isced=100 if B7==3
+	replace educat_isced=244 if B7==4
+	replace educat_isced=344 if B7==5
+	replace educat_isced=354 if B7==6
+	replace educat_isced=660 if B7==7|B7==8
+	replace educat_isced=760 if B7==9|B7==10
+	replace educat_isced=860 if B7==11
 	replace educat_isced=. if age<ed_mod_age
 	label var educat_isced "ISCED standardised level of education"
 *</_educat_isced_>

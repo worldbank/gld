@@ -464,7 +464,7 @@ other characteristics such as gender and age.
 
 *<_migrated_ref_time_>
 	gen migrated_ref_time=.
-	label var migrated_ref_time "Reference time applied to migration questions"
+	label var migrated_ref_time "Reference time applied to migration questions (in years)"
 *</_migrated_ref_time_>
 
 
