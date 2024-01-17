@@ -88,31 +88,7 @@ local out_file "`level_2_harm'_ALL.dta"
 */
 
 ***merge
-use "`path_in_stata'/hh_level_file.dta"
-
-merge 1:m id using "`path_in_stata'/Section_9_Working_Conditions.dta", nogenerate
-merge 1:m id using "`path_in_stata'/Section_8_Occupational_Health.dta", nogenerate
-merge 1:m id using "`path_in_stata'/Section_7_Skills_Training_01.dta", nogenerate
-merge 1:m id using "`path_in_stata'/Section_7_Skills_Training.dta", nogenerate
-merge 1:m id using "`path_in_stata'/Section_6_Unemployment.dta", nogenerate
-merge 1:m id using "`path_in_stata'/Section_5_Income_Earnings.dta", nogenerate
-merge 1:m id using "`path_in_stata'/Section_4_Usual_Employment_2.dta", nogenerate
-merge 1:m id using "`path_in_stata'/Section_4_Usual_Employment_1.dta", nogenerate
-merge 1:m id using "`path_in_stata'/Section_3_Employment.dta", nogenerate
-merge 1:m id using "`path_in_stata'/Section_2_Education_characteristics.dta", nogenerate
-merge 1:m id using "`path_in_stata'/Section_1_Demographic_characteristics_02.dta", nogenerate
-merge 1:m id using "`path_in_stata'/hh_heads_file.dta", nogenerate
-merge 1:m id using "`path_in_stata'/economically_active_inactive.dta", nogenerate
-
-*household level
-merge m:1 hhid using "`path_in_stata'/household_size.dta", nogenerate
-merge m:1 hhid using "`path_in_stata'/cover_page_1.dta", nogenerate
-merge m:1 hhid using "`path_in_stata'/15av02.dta", nogenerate
-merge m:1 hhid using "`path_in_stata'/15av.dta", nogenerate
-
-drop hhid id
-
-save "`path_in_stata'/final_2008.dta", replace
+use "`path_in_stata'/zmb_raw_2008_lfs.dta"
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -397,7 +373,7 @@ save "`path_in_stata'/final_2008.dta", replace
 {
 
 *<_hsize_>
-	gen hsize = hhsize
+	bys hhid : gen hsize = _N
 	label var hsize "Household size"
 *</_hsize_>
 
@@ -613,7 +589,7 @@ Education module is only asked to those 5 and older.
 
 
 *<_literacy_>
-	rename literacy literacy_1
+	*rename literacy literacy_1
 	gen byte literacy = s2q1
 	recode literacy 0=. 2=0
 	label var literacy "Individual can read & write"
@@ -758,9 +734,9 @@ foreach v of local ed_var {
 *<_lstatus_>
 	
 	gen byte lstatus = .
-	replace lstatus=1 if s3q8!=. | s4q8!=. | s3q1==2 | s3q1==3 | s3q1==6 | s3q1==1 | s4q1==2 | s4q1==3 | s4q1==6 | s4q1==1
-	replace lstatus=2 if s3q1==4 | s4q1==4 | s6q1==1 | s6q3==1 
-	replace lstatus=3 if s3q1==5 | inrange(s3q1,7,11) 
+	replace lstatus=1 if s3q1 < 4 | s3q2 == 1 | s3q3 == 1 | s3q4 == 1 | s3q5 == 1 | s3q6 == 1
+	replace lstatus=2 if s6q1 == 1 & s6q3 == 1 & mi(lstatus)
+	replace lstatus=3 if mi(lstatus)
 	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -769,10 +745,9 @@ foreach v of local ed_var {
 
 
 *<_potential_lf_>
-	gen byte potential_lf = s6q6
-	recode potential_lf 1/2=0 3/5=1
-	replace potential_lf = . if age < minlaborage & age != .
-	replace potential_lf=0 if potential_lf!=1
+	gen byte potential_lf = 0
+	replace potential_lf = 1 if (s6q1 == 2 & s6q3 == 1) | (s6q1 == 1 & s6q3 == 2)
+	replace potential_lf = . if age < minlaborage 
 	replace potential_lf = . if lstatus != 3
 	label var potential_lf "Potential labour force status"
 	la de lblpotential_lf 0 "No" 1 "Yes"
@@ -801,6 +776,7 @@ foreach v of local ed_var {
 *<_unempldur_l_>
 	gen byte unempldur_l=s6q6
 	recode unempldur_l 1=0 2=3 3=6 4=12 5=36
+	replace unempldur_l = . if lstatus != 2
 	label var unempldur_l "Unemployment duration (months) lower bracket"
 *</_unempldur_l_>
 
@@ -808,6 +784,7 @@ foreach v of local ed_var {
 *<_unempldur_u_>
 	gen byte unempldur_u=s6q6
 	recode unempldur_u 1=2 2=5 3=11 4=35 5=.
+	replace unempldur_u = . if lstatus != 2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
 *</_unempldur_u_>
 }
@@ -842,384 +819,84 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_>
-	tostring s3q9, gen(s3q9_2) force
-	replace s3q9_2="0111" if s3q9_2=="111"
-	replace s3q9_2="0112" if s3q9_2=="112"
-	replace s3q9_2="0113" if s3q9_2=="113"
-	replace s3q9_2="0114" if s3q9_2=="114"
-	replace s3q9_2="0115" if s3q9_2=="115"
-	replace s3q9_2="0116" if s3q9_2=="116"
-	replace s3q9_2="0118" if s3q9_2=="118"
-	replace s3q9_2="0119" if s3q9_2=="119"
-	replace s3q9_2="1200" if s3q9_2=="120"
-	replace s3q9_2="0121" if s3q9_2=="121"
-	replace s3q9_2="0122" if s3q9_2=="122"
-	replace s3q9_2="0123" if s3q9_2=="123"
-	replace s3q9_2="0124" if s3q9_2=="124"
-	replace s3q9_2="0125" if s3q9_2=="125"
-	replace s3q9_2="0126" if s3q9_2=="126"
-	replace s3q9_2="0127" if s3q9_2=="127"
-	replace s3q9_2="0128" if s3q9_2=="128"
-	replace s3q9_2="0129" if s3q9_2=="129"
-	replace s3q9_2="0130" if s3q9_2=="130"
-	replace s3q9_2="1300" if s3q9_2=="132"
-	replace s3q9_2="1300" if s3q9_2=="133"
-	replace s3q9_2="0141" if s3q9_2=="141"
-	replace s3q9_2="0142" if s3q9_2=="142"
-	replace s3q9_2="0144" if s3q9_2=="144"
-	replace s3q9_2="0145" if s3q9_2=="145"
-	replace s3q9_2="0146" if s3q9_2=="146"
-	replace s3q9_2="0149" if s3q9_2=="149"
-	replace s3q9_2="0150" if s3q9_2=="150"
-	replace s3q9_2="0150" if s3q9_2=="151"
-	replace s3q9_2="0150" if s3q9_2=="152"
-	replace s3q9_2="0150" if s3q9_2=="155"
-	replace s3q9_2="0150" if s3q9_2=="158"
-	replace s3q9_2="0150" if s3q9_2=="159"
-	replace s3q9_2="0160" if s3q9_2=="160"
-	replace s3q9_2="0161" if s3q9_2=="161"
-	replace s3q9_2="0162" if s3q9_2=="162"
-	replace s3q9_2="0163" if s3q9_2=="163"
-	replace s3q9_2="0164" if s3q9_2=="164"
-	replace s3q9_2="0170" if s3q9_2=="170"
-	replace s3q9_2="1700" if s3q9_2=="171"
-	replace s3q9_2="1700" if s3q9_2=="172"
-	replace s3q9_2="1700" if s3q9_2=="173"
-	replace s3q9_2="1810" if s3q9_2=="181"
-	replace s3q9_2="1820" if s3q9_2=="182"
-	replace s3q9_2="1910" if s3q9_2=="191"
-	replace s3q9_2="1920" if s3q9_2=="192"
-	replace s3q9_2="0200" if s3q9_2=="200"
-	replace s3q9_2="0200" if s3q9_2=="201"
-	replace s3q9_2="0200" if s3q9_2=="202"
-	replace s3q9_2="0210" if s3q9_2=="210"
-	replace s3q9_2="0200" if s3q9_2=="211"
-	replace s3q9_2="0220" if s3q9_2=="220"
-	replace s3q9_2="0200" if s3q9_2=="222"
-	replace s3q9_2="0200" if s3q9_2=="229"
-	replace s3q9_2="0230" if s3q9_2=="230"
-	replace s3q9_2="2300" if s3q9_2=="232"
-	replace s3q9_2="0240" if s3q9_2=="240"
-	replace s3q9_2="2500" if s3q9_2=="250"
-	replace s3q9_2="2590" if s3q9_2=="259"
-	replace s3q9_2="2790" if s3q9_2=="279"
-	replace s3q9_2="0300" if s3q9_2=="301"
-	replace s3q9_2="0310" if s3q9_2=="310"
-	replace s3q9_2="0311" if s3q9_2=="311"
-	replace s3q9_2="0312" if s3q9_2=="312"
-	replace s3q9_2="0321" if s3q9_2=="321"
-	replace s3q9_2="0322" if s3q9_2=="322"
-	replace s3q9_2="0300" if s3q9_2=="371"
-	replace s3q9_2="4100" if s3q9_2=="401"
-	replace s3q9_2="4100" if s3q9_2=="411"
-	replace s3q9_2="4210" if s3q9_2=="421"
-	replace s3q9_2="4710" if s3q9_2=="471"
-	replace s3q9_2="4720" if s3q9_2=="472"
-	replace s3q9_2="4780" if s3q9_2=="478"
-	replace s3q9_2="4790" if s3q9_2=="479"
-	replace s3q9_2="4630" if s3q9_2=="481"
-	replace s3q9_2="4900" if s3q9_2=="490"
-	replace s3q9_2="4920" if s3q9_2=="492"
-	replace s3q9_2="5010" if s3q9_2=="501"
-	replace s3q9_2="0510" if s3q9_2=="510"
-	replace s3q9_2="0520" if s3q9_2=="520"
-	replace s3q9_2="5200" if s3q9_2=="522"
-	replace s3q9_2="5000" if s3q9_2=="530"
-	replace s3q9_2="0562" if s3q9_2=="562"
-	replace s3q9_2="5000" if s3q9_2=="571"
-	replace s3q9_2="5000" if s3q9_2=="574"
-	replace s3q9_2="6010" if s3q9_2=="601"
-	replace s3q9_2="0610" if s3q9_2=="610"
-	replace s3q9_2="0620" if s3q9_2=="620"
-	replace s3q9_2="0620" if s3q9_2=="622"
-	replace s3q9_2="6310" if s3q9_2=="631"
-	replace s3q9_2="6610" if s3q9_2=="661"
-	replace s3q9_2="7000" if s3q9_2=="700"
-	replace s3q9_2="7010" if s3q9_2=="701"
-	replace s3q9_2="7020" if s3q9_2=="702"
-	replace s3q9_2="7000" if s3q9_2=="703"
-	replace s3q9_2="0710" if s3q9_2=="710"
-	replace s3q9_2="0710" if s3q9_2=="711"
-	replace s3q9_2="0720" if s3q9_2=="720"
-	replace s3q9_2="0727" if s3q9_2=="727"
-	replace s3q9_2="0729" if s3q9_2=="729"
-	replace s3q9_2="0700" if s3q9_2=="730"
-	replace s3q9_2="7320" if s3q9_2=="732"
-	replace s3q9_2="7000" if s3q9_2=="759"
-	replace s3q9_2="7720" if s3q9_2=="772"
-	replace s3q9_2="7000" if s3q9_2=="780"
-	replace s3q9_2="8010" if s3q9_2=="801"
-	replace s3q9_2="8020" if s3q9_2=="810"
-	replace s3q9_2="8120" if s3q9_2=="812"
-	replace s3q9_2="8500" if s3q9_2=="852"
-	replace s3q9_2="0893" if s3q9_2=="893"
-	replace s3q9_2="0899" if s3q9_2=="899"
-	replace s3q9_2="9100" if s3q9_2=="902"
-	replace s3q9_2="0910" if s3q9_2=="910"
-	replace s3q9_2="9600" if s3q9_2=="911"
-	replace s3q9_2="9600" if s3q9_2=="929"
-	replace s3q9_2="9600" if s3q9_2=="933"
-	replace s3q9_2="9600" if s3q9_2=="969"
-	replace s3q9_2="0990" if s3q9_2=="990"
-	replace s3q9_2="0100" if s3q9_2=="0118"
-	replace s3q9_2="0500" if s3q9_2=="0562"
-	replace s3q9_2="0700" if s3q9_2=="0727"
-	replace s3q9_2="1000" if s3q9_2=="1001"
-	replace s3q9_2="1000" if s3q9_2=="1011"
-	replace s3q9_2="1000" if s3q9_2=="1016"
-	replace s3q9_2="1000" if s3q9_2=="1017"
-	replace s3q9_2="1000" if s3q9_2=="1021"
-	replace s3q9_2="1000" if s3q9_2=="1029"
-	replace s3q9_2="1000" if s3q9_2=="1051"
-	replace s3q9_2="1100" if s3q9_2=="1108"
-	replace s3q9_2="1100" if s3q9_2=="1110"
-	replace s3q9_2="1100" if s3q9_2=="1111"
-	replace s3q9_2="1100" if s3q9_2=="1112"
-	replace s3q9_2="1100" if s3q9_2=="1113"
-	replace s3q9_2="1100" if s3q9_2=="1115"
-	replace s3q9_2="1100" if s3q9_2=="1117"
-	replace s3q9_2="1100" if s3q9_2=="1119"
-	replace s3q9_2="1100" if s3q9_2=="1132"
-	replace s3q9_2="1100" if s3q9_2=="1135"
-	replace s3q9_2="1100" if s3q9_2=="1157"
-	replace s3q9_2="1200" if s3q9_2=="1221"
-	replace s3q9_2="1200" if s3q9_2=="1226"
-	replace s3q9_2="1200" if s3q9_2=="1291"
-	replace s3q9_2="1200" if s3q9_2=="1295"
-	replace s3q9_2="1400" if s3q9_2=="1472"
-	replace s3q9_2="1400" if s3q9_2=="1499"
-	replace s3q9_2="1500" if s3q9_2=="1501"
-	replace s3q9_2="1500" if s3q9_2=="1505"
-	replace s3q9_2="1500" if s3q9_2=="1541"
-	replace s3q9_2="1600" if s3q9_2=="1624"
-	replace s3q9_2="1600" if s3q9_2=="1626"
-	replace s3q9_2="1600" if s3q9_2=="1628"
-	replace s3q9_2="1600" if s3q9_2=="1642"
-	replace s3q9_2="1600" if s3q9_2=="1659"
-	replace s3q9_2="1700" if s3q9_2=="1712"
-	replace s3q9_2="1700" if s3q9_2=="1749"
-	replace s3q9_2="1800" if s3q9_2=="1821"
-	replace s3q9_2="2000" if s3q9_2=="2015"
-	replace s3q9_2="2000" if s3q9_2=="2032"
-	replace s3q9_2="2100" if s3q9_2=="2104"
-	replace s3q9_2="2100" if s3q9_2=="2122"
-	replace s3q9_2="2100" if s3q9_2=="2131"
-	replace s3q9_2="2100" if s3q9_2=="2143"
-	replace s3q9_2="2200" if s3q9_2=="2214"
-	replace s3q9_2="2200" if s3q9_2=="2224"
-	replace s3q9_2="2300" if s3q9_2=="2312"
-	replace s3q9_2="2300" if s3q9_2=="2319"
-	replace s3q9_2="2300" if s3q9_2=="2321"
-	replace s3q9_2="2300" if s3q9_2=="2331"
-	replace s3q9_2="2300" if s3q9_2=="2332"
-	replace s3q9_2="2400" if s3q9_2=="2411"
-	replace s3q9_2="2400" if s3q9_2=="2412"
-	replace s3q9_2="2400" if s3q9_2=="2419"
-	replace s3q9_2="2400" if s3q9_2=="2422"
-	replace s3q9_2="2400" if s3q9_2=="2460"
-	replace s3q9_2="2400" if s3q9_2=="2479"
-	replace s3q9_2="2500" if s3q9_2=="2515"
-	replace s3q9_2="3100" if s3q9_2=="3114"
-	replace s3q9_2="3100" if s3q9_2=="3120"
-	replace s3q9_2="3100" if s3q9_2=="3152"
-	replace s3q9_2="3200" if s3q9_2=="3231"
-	replace s3q9_2="3200" if s3q9_2=="3241"
-	replace s3q9_2="3300" if s3q9_2=="3317"
-	replace s3q9_2="3300" if s3q9_2=="3340"
-	replace s3q9_2="3000" if s3q9_2=="3411"
-	replace s3q9_2="3000" if s3q9_2=="3413"
-	replace s3q9_2="3000" if s3q9_2=="3419"
-	replace s3q9_2="3000" if s3q9_2=="3421"
-	replace s3q9_2="3000" if s3q9_2=="3423"
-	replace s3q9_2="3000" if s3q9_2=="3429"
-	replace s3q9_2="3000" if s3q9_2=="3432"
-	replace s3q9_2="3000" if s3q9_2=="3434"
-	replace s3q9_2="3000" if s3q9_2=="3439"
-	replace s3q9_2="3000" if s3q9_2=="3443"
-	replace s3q9_2="3000" if s3q9_2=="3449"
-	replace s3q9_2="3600" if s3q9_2=="3610"
-	*4000 is replaced to 4300 because no 4000
-	replace s3q9_2="4300" if s3q9_2=="4000"
-	replace s3q9_2="4100" if s3q9_2=="4101"
-	replace s3q9_2="4100" if s3q9_2=="4110"
-	replace s3q9_2="4100" if s3q9_2=="4111"
-	replace s3q9_2="4100" if s3q9_2=="4119"
-	replace s3q9_2="4100" if s3q9_2=="4121"
-	replace s3q9_2="4100" if s3q9_2=="4137"
-	replace s3q9_2="4100" if s3q9_2=="4142"
-	replace s3q9_2="4100" if s3q9_2=="4153"
-	replace s3q9_2="4100" if s3q9_2=="4162"
-	replace s3q9_2="4200" if s3q9_2=="4215"
-	replace s3q9_2="4200" if s3q9_2=="4222"
-	replace s3q9_2="4200" if s3q9_2=="4231"
-	replace s3q9_2="4200" if s3q9_2=="4281"
-	replace s3q9_2="4200" if s3q9_2=="4292"
-	replace s3q9_2="4200" if s3q9_2=="4299"
-	replace s3q9_2="4300" if s3q9_2=="4333"
-	*changed to 43 from 44
-	replace s3q9_2="4300" if s3q9_2=="4422"
-	replace s3q9_2="4500" if s3q9_2=="4521"
-	replace s3q9_2="4500" if s3q9_2=="4550"
-	replace s3q9_2="4600" if s3q9_2=="4602"
-	replace s3q9_2="4600" if s3q9_2=="4619"
-	replace s3q9_2="4600" if s3q9_2=="4646"
-	replace s3q9_2="4700" if s3q9_2=="4701"
-	replace s3q9_2="4700" if s3q9_2=="4709"
-	replace s3q9_2="4700" if s3q9_2=="4712"
-	replace s3q9_2="4700" if s3q9_2=="4714"
-	replace s3q9_2="4700" if s3q9_2=="4717"
-	replace s3q9_2="4700" if s3q9_2=="4718"
-	replace s3q9_2="4700" if s3q9_2=="4731"
-	replace s3q9_2="4700" if s3q9_2=="4733"
-	replace s3q9_2="4700" if s3q9_2=="4749"
-	replace s3q9_2="4700" if s3q9_2=="4757"
-	replace s3q9_2="4700" if s3q9_2=="4775"
-	replace s3q9_2="4700" if s3q9_2=="4779"
-	replace s3q9_2="4700" if s3q9_2=="4786"
-	replace s3q9_2="4700" if s3q9_2=="4787"
-	replace s3q9_2="4700" if s3q9_2=="4788"
-	replace s3q9_2="4700" if s3q9_2=="4792"
-	replace s3q9_2="4700" if s3q9_2=="4794"
-	*it was 4800 and I changed to 4300 because there is no 4000
-	replace s3q9_2="4300" if s3q9_2=="4820"
-	replace s3q9_2="4900" if s3q9_2=="4919"
-	replace s3q9_2="4900" if s3q9_2=="4971"
-	replace s3q9_2="4900" if s3q9_2=="4974"
-	replace s3q9_2="4900" if s3q9_2=="4977"
-	replace s3q9_2="4900" if s3q9_2=="4989"
-	replace s3q9_2="4900" if s3q9_2=="4999"
-	replace s3q9_2="5100" if s3q9_2=="5101"
-	replace s3q9_2="5100" if s3q9_2=="5111"
-	replace s3q9_2="5100" if s3q9_2=="5112"
-	replace s3q9_2="5100" if s3q9_2=="5114"
-	replace s3q9_2="5100" if s3q9_2=="5121"
-	replace s3q9_2="5100" if s3q9_2=="5122"
-	replace s3q9_2="5100" if s3q9_2=="5123"
-	replace s3q9_2="5100" if s3q9_2=="5129"
-	replace s3q9_2="5100" if s3q9_2=="5131"
-	replace s3q9_2="5100" if s3q9_2=="5133"
-	replace s3q9_2="5100" if s3q9_2=="5141"
-	replace s3q9_2="5100" if s3q9_2=="5149"
-	replace s3q9_2="5100" if s3q9_2=="5163"
-	replace s3q9_2="5100" if s3q9_2=="5169"
-	replace s3q9_2="5100" if s3q9_2=="5190"
-	replace s3q9_2="5200" if s3q9_2=="5211"
-	replace s3q9_2="5200" if s3q9_2=="5230"
-	replace s3q9_2="5200" if s3q9_2=="5232"
-	replace s3q9_2="5200" if s3q9_2=="5252"
-	replace s3q9_2="5200" if s3q9_2=="5259"
-	replace s3q9_2="5300" if s3q9_2=="5325"
-	replace s3q9_2="5000" if s3q9_2=="5411"
-	replace s3q9_2="5000" if s3q9_2=="5412"
-	replace s3q9_2="5600" if s3q9_2=="5623"
-	replace s3q9_2="5600" if s3q9_2=="5627"
-	replace s3q9_2="5000" if s3q9_2=="5721"
-	replace s3q9_2="5000" if s3q9_2=="5773"
-	replace s3q9_2="5800" if s3q9_2=="5815"
-	replace s3q9_2="5800" if s3q9_2=="5830"
-	replace s3q9_2="5900" if s3q9_2=="5929"
-	replace s3q9_2="5900" if s3q9_2=="5930"
-	replace s3q9_2="6000" if s3q9_2=="6022"
-	replace s3q9_2="6000" if s3q9_2=="6023"
-	replace s3q9_2="6100" if s3q9_2=="6111"
-	replace s3q9_2="6100" if s3q9_2=="6112"
-	replace s3q9_2="6100" if s3q9_2=="6113"
-	replace s3q9_2="6100" if s3q9_2=="6114"
-	replace s3q9_2="6100" if s3q9_2=="6121"
-	replace s3q9_2="6100" if s3q9_2=="6122"
-	replace s3q9_2="6100" if s3q9_2=="6123"
-	replace s3q9_2="6100" if s3q9_2=="6132"
-	replace s3q9_2="6100" if s3q9_2=="6142"
-	replace s3q9_2="6100" if s3q9_2=="6151"
-	replace s3q9_2="6100" if s3q9_2=="6154"
-	replace s3q9_2="6200" if s3q9_2=="6210"
-	replace s3q9_2="6200" if s3q9_2=="6211"
-	replace s3q9_2="6200" if s3q9_2=="6212"
-	replace s3q9_2="6200" if s3q9_2=="6222"
-	replace s3q9_2="6400" if s3q9_2=="6479"
-	replace s3q9_2="6500" if s3q9_2=="6549"
-	replace s3q9_2="6000" if s3q9_2=="6712"
-	replace s3q9_2="6900" if s3q9_2=="6909"
-	replace s3q9_2="6900" if s3q9_2=="6921"
-	replace s3q9_2="7100" if s3q9_2=="7111"
-	replace s3q9_2="7100" if s3q9_2=="7112"
-	replace s3q9_2="7100" if s3q9_2=="7121"
-	replace s3q9_2="7100" if s3q9_2=="7122"
-	replace s3q9_2="7100" if s3q9_2=="7124"
-	replace s3q9_2="7100" if s3q9_2=="7129"
-	replace s3q9_2="7100" if s3q9_2=="7131"
-	replace s3q9_2="7100" if s3q9_2=="7136"
-	replace s3q9_2="7100" if s3q9_2=="7141"
-	replace s3q9_2="7200" if s3q9_2=="7211"
-	replace s3q9_2="7200" if s3q9_2=="7212"
-	replace s3q9_2="7200" if s3q9_2=="7221"
-	replace s3q9_2="7200" if s3q9_2=="7223"
-	replace s3q9_2="7200" if s3q9_2=="7229"
-	replace s3q9_2="7200" if s3q9_2=="7230"
-	replace s3q9_2="7200" if s3q9_2=="7231"
-	replace s3q9_2="7200" if s3q9_2=="7240"
-	replace s3q9_2="7200" if s3q9_2=="7245"
-	replace s3q9_2="7200" if s3q9_2=="7292"
-	replace s3q9_2="7300" if s3q9_2=="7331"
-	replace s3q9_2="7300" if s3q9_2=="7341"
-	replace s3q9_2="7400" if s3q9_2=="7411"
-	replace s3q9_2="7400" if s3q9_2=="7412"
-	replace s3q9_2="7400" if s3q9_2=="7413"
-	replace s3q9_2="7400" if s3q9_2=="7415"
-	replace s3q9_2="7400" if s3q9_2=="7419"
-	replace s3q9_2="7400" if s3q9_2=="7422"
-	replace s3q9_2="7400" if s3q9_2=="7423"
-	replace s3q9_2="7400" if s3q9_2=="7432"
-	replace s3q9_2="7400" if s3q9_2=="7433"
-	replace s3q9_2="7400" if s3q9_2=="7435"
-	replace s3q9_2="7400" if s3q9_2=="7444"
-	replace s3q9_2="7400" if s3q9_2=="7482"
-	replace s3q9_2="7400" if s3q9_2=="7499"
-	replace s3q9_2="7500" if s3q9_2=="7511"
-	replace s3q9_2="7500" if s3q9_2=="7520"
-	replace s3q9_2="7500" if s3q9_2=="7523"
-	replace s3q9_2="7000" if s3q9_2=="7601"
-	replace s3q9_2="8000" if s3q9_2=="8050"
-	replace s3q9_2="8000" if s3q9_2=="8052"
-	replace s3q9_2="8000" if s3q9_2=="8090"
-	replace s3q9_2="8100" if s3q9_2=="8113"
-	replace s3q9_2="8200" if s3q9_2=="8222"
-	replace s3q9_2="8000" if s3q9_2=="8322"
-	replace s3q9_2="8000" if s3q9_2=="8330"
-	replace s3q9_2="8400" if s3q9_2=="8424"
-	replace s3q9_2="8400" if s3q9_2=="8433"
-	replace s3q9_2="8400" if s3q9_2=="8490"
-	replace s3q9_2="8500" if s3q9_2=="8511"
-	replace s3q9_2="8500" if s3q9_2=="8512"
-	replace s3q9_2="8500" if s3q9_2=="8519"
-	replace s3q9_2="8500" if s3q9_2=="8531"
-	replace s3q9_2="8500" if s3q9_2=="8532"
-	replace s3q9_2="8700" if s3q9_2=="8741"
-	replace s3q9_2="8800" if s3q9_2=="8821"
-	replace s3q9_2="8800" if s3q9_2=="8850"
-	replace s3q9_2="8800" if s3q9_2=="8899"
-	replace s3q9_2="8000" if s3q9_2=="8920"
-	replace s3q9_2="9000" if s3q9_2=="9009"
-	replace s3q9_2="9100" if s3q9_2=="9113"
-	replace s3q9_2="9100" if s3q9_2=="9121"
-	replace s3q9_2="9100" if s3q9_2=="9162"
-	replace s3q9_2="9100" if s3q9_2=="9191"
-	replace s3q9_2="9100" if s3q9_2=="9199"
-	replace s3q9_2="9200" if s3q9_2=="9221"
-	replace s3q9_2="9300" if s3q9_2=="9302"
-	replace s3q9_2="9500" if s3q9_2=="9502"
-	replace s3q9_2="9500" if s3q9_2=="9528"
-	replace s3q9_2="9500" if s3q9_2=="9574"
-	replace s3q9_2="9600" if s3q9_2=="9606"
-	replace s3q9_2="9600" if s3q9_2=="9607"
-	replace s3q9_2="9600" if s3q9_2=="9620"
-	replace s3q9_2="9600" if s3q9_2=="9662"
-	replace s3q9_2="9700" if s3q9_2=="9799"
-	replace s3q9_2="9800" if s3q9_2=="9850"
-	replace s3q9_2="9900" if s3q9_2=="9902"
-	gen industrycat_isic = substr(4 * "0", 1, 4 - length( s3q9_2 )) + s3q9_2
-	replace industrycat_isic="" if industrycat_isic=="000."
+
+	gen str industrycat_isic     = string(s3q9, "%04.0f")
+	replace industrycat_isic = "" if industrycat_isic == "."
+	
+	* Corrections - based on the ISIC Code and looking at the ISCO for consistency
+	replace industrycat_isic = "0110" if s3q9 == 101
+	replace industrycat_isic = "0720" if s3q9 == 702
+	replace industrycat_isic = "0100" if s3q9 == 6210 & inlist(s3q8,6210,6211)
+	replace industrycat_isic = ""     if s3q9 == 6210 & !inlist(s3q8,6210,6211)
+	replace industrycat_isic = "0110" if s3q9 == 1111
+	replace industrycat_isic = "0110" if s3q9 == 151
+	replace industrycat_isic = "0810" if s3q9 == 801
+	replace industrycat_isic = "0100" if s3q9 == 6114 & inrange(s3q8, 6114,6210)
+	replace industrycat_isic = ""     if s3q9 == 6114 & !inrange(s3q8, 6114,6210)
+	replace industrycat_isic = "0150" if s3q9 == 1505
+	replace industrycat_isic = "0100" if s3q9 == 6111 &  inrange(s3q8, 6111,6210)
+	replace industrycat_isic = ""     if s3q9 == 6111 & !inrange(s3q8, 6111,6210)
+	replace industrycat_isic = "0113" if s3q9 == 1113
+	replace industrycat_isic = "9600" if s3q9 == 9606
+	replace industrycat_isic = "0150" if s3q9 == 1501
+	replace industrycat_isic = "0100" if inrange(s3q9,102,107) & inrange(s3q8, 6100,6299)
+	replace industrycat_isic = ""     if inrange(s3q9,102,107) & !inrange(s3q8, 6100,6299)
+	replace industrycat_isic = "0100" if s3q9 == 1115 & inrange(s3q8, 6100,6299)
+	replace industrycat_isic = "4920" if s3q9 == 492
+	
+	* Other cases cannot assess. Set to missing.
+	replace industrycat_isic = "" if inlist(s3q9,902, 5230, 2419, 211, 812, 5149, 191, 152)
+	replace industrycat_isic = "" if inlist(s3q9, 5121, 1110, 2331, 6142, 5121)
+	replace industrycat_isic = "" if inlist(s3q9,11, 56, 118, 132, 133, 154, 155, 158, 159)
+	replace industrycat_isic = "" if inlist(s3q9,171, 172, 173, 181, 182, 192, 201, 202, 219)
+	replace industrycat_isic = "" if inlist(s3q9,222, 229, 232, 250, 259, 279, 280, 301, 371)
+	replace industrycat_isic = "" if inlist(s3q9,401, 410, 411, 421, 471, 472, 478, 479, 481)
+	replace industrycat_isic = "" if inlist(s3q9,490, 501, 522, 530, 562, 571, 574, 601, 622)
+	replace industrycat_isic = "" if inlist(s3q9,631, 661, 701, 703, 711, 727, 730, 732, 759)
+	replace industrycat_isic = "" if inlist(s3q9,772, 780, 852, 911, 929, 933, 969, 1001, 1011)
+	replace industrycat_isic = "" if inlist(s3q9,1016, 1017, 1021, 1029, 1051, 1108, 1112, 1117, 1119)
+	replace industrycat_isic = "" if inlist(s3q9,1132, 1134, 1135, 1141, 1157, 1221, 1226, 1291, 1295)
+	replace industrycat_isic = "" if inlist(s3q9,1319, 1412, 1472, 1499, 1502, 1504, 1541, 1609, 1624)
+	replace industrycat_isic = "" if inlist(s3q9,1626, 1628, 1642, 1659, 1712, 1749, 1821, 2015, 2032)
+	replace industrycat_isic = "" if inlist(s3q9,2104, 2122, 2131, 2143, 2214, 2224, 2312, 2319, 2321)
+	replace industrycat_isic = "" if inlist(s3q9,2332, 2411, 2412, 2422, 2460, 2479, 2515, 3114, 3118)
+	replace industrycat_isic = "" if inlist(s3q9,3120, 3122, 3124, 3152, 3231, 3241, 3317, 3340, 3411)
+	replace industrycat_isic = "" if inlist(s3q9,3413, 3419, 3421, 3423, 3429, 3432, 3434, 3439, 3443)
+	replace industrycat_isic = "" if inlist(s3q9,3449, 3610, 4000, 4101, 4110, 4111, 4119, 4121, 4137)
+	replace industrycat_isic = "" if inlist(s3q9,4142, 4153, 4162, 4215, 4222, 4231, 4281, 4292, 4299)
+	replace industrycat_isic = "" if inlist(s3q9,4333, 4422, 4521, 4550, 4602, 4619, 4646, 4701, 4709)
+	replace industrycat_isic = "" if inlist(s3q9,4712, 4714, 4717, 4718, 4731, 4733, 4749, 4757, 4775)
+	replace industrycat_isic = "" if inlist(s3q9,4779, 4786, 4787, 4788, 4792, 4794, 4820, 4919, 4971)
+	replace industrycat_isic = "" if inlist(s3q9,4974, 4977, 4989, 4999, 5029, 5101, 5111, 5112, 5114)
+	replace industrycat_isic = "" if inlist(s3q9,5122, 5123, 5129, 5131, 5133, 5141, 5151, 5163, 5169)
+	replace industrycat_isic = "" if inlist(s3q9,5190, 5211, 5232, 5252, 5259, 5325, 5411, 5412, 5623)
+	replace industrycat_isic = "" if inlist(s3q9,5627, 5721, 5773, 5815, 5830, 5929, 5930, 6021, 6022)
+	replace industrycat_isic = "" if inlist(s3q9,6023, 6112, 6113, 6121, 6122, 6123, 6132, 6151, 6154)
+	replace industrycat_isic = "" if inlist(s3q9,6211, 6212, 6222, 6230, 6479, 6549, 6712, 6909, 6921)
+	replace industrycat_isic = "" if inlist(s3q9,7111, 7112, 7121, 7122, 7124, 7129, 7131, 7136, 7141)
+	replace industrycat_isic = "" if inlist(s3q9,7211, 7212, 7221, 7223, 7229, 7230, 7231, 7240, 7245)
+	replace industrycat_isic = "" if inlist(s3q9,7292, 7331, 7341, 7411, 7412, 7413, 7415, 7419, 7422)
+	replace industrycat_isic = "" if inlist(s3q9,7423, 7432, 7433, 7435, 7436, 7444, 7482, 7499, 7511)
+	replace industrycat_isic = "" if inlist(s3q9,7520, 7523, 7601, 8050, 8052, 8090, 8103, 8105, 8113)
+	replace industrycat_isic = "" if inlist(s3q9,8222, 8322, 8330, 8424, 8433, 8490, 8511, 8512, 8519)
+	replace industrycat_isic = "" if inlist(s3q9,8531, 8532, 8741, 8821, 8850, 8899, 8920, 8991, 9009)
+	replace industrycat_isic = "" if inlist(s3q9,9113, 9121, 9162, 9191, 9199, 9221, 9302, 9419, 9441)
+	replace industrycat_isic = "" if inlist(s3q9,9502, 9528, 9574, 9607, 9608, 9610, 9620, 9662, 9799)
+	replace industrycat_isic = "" if inlist(s3q9,9812, 9826, 9830, 9850, 9902)
+	
+	* Check that no errors --> using our universe check function, count should be 0 (no obs wrong)
+	* https://github.com/worldbank/gld/tree/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20universe%20check
+	
+	preserve 
+	int_classif_universe, var(industrycat_isic) universe(ISIC)
+	count
+	*list
+	assert `r(N)' == 0
+	restore 
+
+	replace industrycat_isic = "" if lstatus != 1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
+	
 *</_industrycat_isic_>
 
 
@@ -1228,23 +905,15 @@ foreach v of local ed_var {
 	replace industrycat10=1 if inrange(industrycat_isic,"0100","0399")
 	replace industrycat10=2 if inrange(industrycat_isic,"0500","0999")
 	replace industrycat10=3 if inrange(industrycat_isic,"1000","3399")
-	replace industrycat10=4 if inrange(industrycat_isic,"3400","3999")
-	replace industrycat10=5 if inrange(industrycat_isic,"4000","4399")
-	replace industrycat10=6 if inrange(industrycat_isic,"4400","4799")
-	replace industrycat10=7 if inrange(industrycat_isic,"4800","5399")
-	replace industrycat10=6 if inrange(industrycat_isic,"5400","5699")
-	replace industrycat10=7 if inrange(industrycat_isic,"5700","6399")
-	replace industrycat10=8 if inrange(industrycat_isic,"6400","6899")
-	replace industrycat10=8 if inrange(industrycat_isic,"6900","7599")
-	replace industrycat10=8 if inrange(industrycat_isic,"7600","8299")
-	replace industrycat10=9 if inrange(industrycat_isic,"8300","8419")
-	replace industrycat10=9 if inrange(industrycat_isic,"8420", "8499")
-	replace industrycat10=10 if inrange(industrycat_isic,"8500","8599")
-	replace industrycat10=10 if inrange(industrycat_isic,"8600","8999")
-	replace industrycat10=10 if inrange(industrycat_isic,"9000","9399")
-	replace industrycat10=10 if inrange(industrycat_isic,"9400","9699")
-	replace industrycat10=10 if inrange(industrycat_isic,"9700","9899")
-	replace industrycat10=10 if inrange(industrycat_isic,"9900","9999")
+	replace industrycat10=4 if inrange(industrycat_isic,"3500","3999")
+	replace industrycat10=5 if inrange(industrycat_isic,"4100","4399")
+	replace industrycat10=6 if inrange(industrycat_isic,"4500","4799")
+	replace industrycat10=6 if inrange(industrycat_isic,"5500","5699")
+	replace industrycat10=7 if inrange(industrycat_isic,"4900","5399")
+	replace industrycat10=7 if inrange(industrycat_isic,"5800","6399")
+	replace industrycat10=8 if inrange(industrycat_isic,"6400","8299")
+	replace industrycat10=9 if inrange(industrycat_isic,"8400", "8499")
+	replace industrycat10=10 if inrange(industrycat_isic,"8500","9999")
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
@@ -1267,273 +936,69 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_>
-	tostring s3q8, gen(s3q8_2)
-	replace s3q8_2="2300" if s3q8_2=="23"
-	replace s3q8_2="1000" if s3q8_2=="101"
-	replace s3q8_2="1000" if s3q8_2=="102"
-	replace s3q8_2="1000" if s3q8_2=="103"
-	replace s3q8_2="1000" if s3q8_2=="107"
-	replace s3q8_2="1130" if s3q8_2=="113"
-	replace s3q8_2="1140" if s3q8_2=="114"
-	replace s3q8_2="1310" if s3q8_2=="131"
-	replace s3q8_2="1000" if s3q8_2=="146"
-	replace s3q8_2="4100" if s3q8_2=="410"
-	replace s3q8_2="4110" if s3q8_2=="411"
-	replace s3q8_2="4200" if s3q8_2=="429"
-	replace s3q8_2="4000" if s3q8_2=="432"
-	replace s3q8_2="4000" if s3q8_2=="452"
-	replace s3q8_2="4000" if s3q8_2=="471"
-	replace s3q8_2="5200" if s3q8_2=="520"
-	replace s3q8_2="6110" if s3q8_2=="611"
-	replace s3q8_2="6000" if s3q8_2=="692"
-	replace s3q8_2="7000" if s3q8_2=="702"
-	replace s3q8_2="7110" if s3q8_2=="711"
-	replace s3q8_2="7200" if s3q8_2=="729"
-	replace s3q8_2="7320" if s3q8_2=="732"
-	replace s3q8_2="8000" if s3q8_2=="801"
-	replace s3q8_2="8000" if s3q8_2=="802"
-	replace s3q8_2="8000" if s3q8_2=="899"
-	replace s3q8_2="9000" if s3q8_2=="990"
-	replace s3q8_2="1000" if s3q8_2=="1016"
-	replace s3q8_2="1000" if s3q8_2=="1017"
-	replace s3q8_2="1000" if s3q8_2=="1061"
-	replace s3q8_2="1000" if s3q8_2=="1079"
-	replace s3q8_2="1100" if s3q8_2=="1101"
-	replace s3q8_2="1100" if s3q8_2=="1103"
-	replace s3q8_2="1110" if s3q8_2=="1114"
-	replace s3q8_2="1120" if s3q8_2=="1122"
-	replace s3q8_2="1210" if s3q8_2=="1219"
-	replace s3q8_2="1200" if s3q8_2=="1240"
-	replace s3q8_2="1300" if s3q8_2=="1341"
-	replace s3q8_2="1000" if s3q8_2=="1415"
-	replace s3q8_2="1000" if s3q8_2=="1510"
-	replace s3q8_2="1000" if s3q8_2=="1514"
-	replace s3q8_2="1000" if s3q8_2=="1520"
-	replace s3q8_2="1000" if s3q8_2=="1551"
-	replace s3q8_2="1000" if s3q8_2=="1620"
-	replace s3q8_2="1000" if s3q8_2=="1622"
-	replace s3q8_2="1000" if s3q8_2=="1629"
-	replace s3q8_2="1000" if s3q8_2=="1711"
-	replace s3q8_2="1000" if s3q8_2=="1811"
-	replace s3q8_2="1000" if s3q8_2=="1814"
-	replace s3q8_2="2110" if s3q8_2=="2119"
-	replace s3q8_2="2120" if s3q8_2=="2124"
-	replace s3q8_2="2120" if s3q8_2=="2129"
-	replace s3q8_2="2210" if s3q8_2=="2216"
-	replace s3q8_2="2310" if s3q8_2=="2312"
-	replace s3q8_2="2310" if s3q8_2=="2318"
-	replace s3q8_2="2320" if s3q8_2=="2321"
-	replace s3q8_2="2330" if s3q8_2=="2333"
-	replace s3q8_2="2330" if s3q8_2=="2334"
-	replace s3q8_2="2342" if s3q8_2=="2342"
-	replace s3q8_2="2410" if s3q8_2=="2414"
-	replace s3q8_2="2410" if s3q8_2=="2418"
-	replace s3q8_2="2430" if s3q8_2=="2433"
-	replace s3q8_2="2430" if s3q8_2=="2435"
-	replace s3q8_2="2430" if s3q8_2=="2439"
-	replace s3q8_2="2000" if s3q8_2=="2599"
-	replace s3q8_2="2000" if s3q8_2=="2610"
-	replace s3q8_2="2000" if s3q8_2=="2821"
-	replace s3q8_2="2000" if s3q8_2=="2957"
-	replace s3q8_2="3100" if s3q8_2=="3163"
-	replace s3q8_2="3210" if s3q8_2=="3216"
-	replace s3q8_2="3210" if s3q8_2=="3218"
-	replace s3q8_2="3310" if s3q8_2=="3311"
-	replace s3q8_2="3310" if s3q8_2=="3312"
-	replace s3q8_2="3310" if s3q8_2=="3319"
-	replace s3q8_2="3320" if s3q8_2=="3323"
-	replace s3q8_2="3420" if s3q8_2=="3427"
-	replace s3q8_2="3430" if s3q8_2=="3437"
-	replace s3q8_2="3000" if s3q8_2=="3510"
-	replace s3q8_2="3000" if s3q8_2=="3811"
-	replace s3q8_2="3000" if s3q8_2=="3812"
-	replace s3q8_2="4100" if s3q8_2=="4151"
-	replace s3q8_2="4100" if s3q8_2=="4162"
-	replace s3q8_2="4220" if s3q8_2=="4226"
-	replace s3q8_2="4200" if s3q8_2=="4245"
-	replace s3q8_2="4200" if s3q8_2=="4290"
-	replace s3q8_2="4000" if s3q8_2=="4311"
-	replace s3q8_2="4000" if s3q8_2=="4322"
-	replace s3q8_2="4000" if s3q8_2=="4330"
-	replace s3q8_2="4000" if s3q8_2=="4520"
-	replace s3q8_2="4000" if s3q8_2=="4551"
-	replace s3q8_2="4000" if s3q8_2=="4661"
-	replace s3q8_2="4000" if s3q8_2=="4711"
-	replace s3q8_2="4000" if s3q8_2=="4715"
-	replace s3q8_2="4000" if s3q8_2=="4719"
-	replace s3q8_2="4000" if s3q8_2=="4721"
-	replace s3q8_2="4000" if s3q8_2=="4722"
-	replace s3q8_2="4000" if s3q8_2=="4733"
-	replace s3q8_2="4000" if s3q8_2=="4751"
-	replace s3q8_2="4000" if s3q8_2=="4759"
-	replace s3q8_2="4000" if s3q8_2=="4771"
-	replace s3q8_2="4000" if s3q8_2=="4772"
-	replace s3q8_2="4000" if s3q8_2=="4774"
-	replace s3q8_2="4000" if s3q8_2=="4779"
-	replace s3q8_2="4000" if s3q8_2=="4781"
-	replace s3q8_2="4000" if s3q8_2=="4789"
-	replace s3q8_2="4000" if s3q8_2=="4799"
-	replace s3q8_2="4000" if s3q8_2=="4921"
-	replace s3q8_2="4000" if s3q8_2=="4922"
-	replace s3q8_2="4000" if s3q8_2=="4923"
-	replace s3q8_2="5000" if s3q8_2=="5010"
-	replace s3q8_2="5100" if s3q8_2=="5102"
-	replace s3q8_2="5100" if s3q8_2=="5109"
-	replace s3q8_2="5110" if s3q8_2=="5114"
-	replace s3q8_2="5110" if s3q8_2=="5115"
-	replace s3q8_2="5110" if s3q8_2=="5116"
-	replace s3q8_2="5120" if s3q8_2=="5124"
-	replace s3q8_2="5120" if s3q8_2=="5128"
-	replace s3q8_2="5120" if s3q8_2=="5129"
-	replace s3q8_2="5120" if s3q8_2=="5144"
-	replace s3q8_2="5140" if s3q8_2=="5145"
-	replace s3q8_2="5140" if s3q8_2=="5147"
-	replace s3q8_2="5150" if s3q8_2=="5159"
-	replace s3q8_2="5160" if s3q8_2=="5164"
-	replace s3q8_2="5160" if s3q8_2=="5168"
-	replace s3q8_2="5170" if s3q8_2=="5171"
-	replace s3q8_2="5170" if s3q8_2=="5172"
-	replace s3q8_2="5190" if s3q8_2=="5191"
-	replace s3q8_2="5190" if s3q8_2=="5196"
-	replace s3q8_2="5190" if s3q8_2=="5198"
-	replace s3q8_2="5200" if s3q8_2=="5204"
-	replace s3q8_2="5210" if s3q8_2=="5212"
-	replace s3q8_2="5210" if s3q8_2=="5214"
-	replace s3q8_2="5220" if s3q8_2=="5221"
-	replace s3q8_2="5220" if s3q8_2=="5222"
-	replace s3q8_2="5220" if s3q8_2=="5223"
-	replace s3q8_2="5220" if s3q8_2=="5225"
-	replace s3q8_2="5220" if s3q8_2=="5229"
-	replace s3q8_2="5230" if s3q8_2=="5232"
-	replace s3q8_2="5230" if s3q8_2=="5234"
-	replace s3q8_2="5200" if s3q8_2=="5250"
-	replace s3q8_2="5200" if s3q8_2=="5253"
-	replace s3q8_2="5200" if s3q8_2=="5259"
-	replace s3q8_2="5200" if s3q8_2=="5260"
-	replace s3q8_2="5200" if s3q8_2=="5262"
-	replace s3q8_2="5200" if s3q8_2=="5270"
-	replace s3q8_2="5200" if s3q8_2=="5280"
-	replace s3q8_2="5000" if s3q8_2=="5320"
-	replace s3q8_2="5000" if s3q8_2=="5330"
-	replace s3q8_2="5000" if s3q8_2=="5419"
-	replace s3q8_2="5000" if s3q8_2=="5441"
-	replace s3q8_2="5000" if s3q8_2=="5520"
-	replace s3q8_2="5000" if s3q8_2=="5613"
-	replace s3q8_2="5000" if s3q8_2=="5629"
-	replace s3q8_2="5000" if s3q8_2=="5721"
-	replace s3q8_2="5000" if s3q8_2=="5811"
-	replace s3q8_2="5000" if s3q8_2=="5920"
-	replace s3q8_2="5000" if s3q8_2=="5969"
-	replace s3q8_2="6110" if s3q8_2=="6116"
-	replace s3q8_2="6130" if s3q8_2=="6131"
-	replace s3q8_2="6130" if s3q8_2=="6132"
-	replace s3q8_2="6130" if s3q8_2=="6133"
-	replace s3q8_2="6130" if s3q8_2=="6134"
-	replace s3q8_2="6130" if s3q8_2=="6136"
-	replace s3q8_2="6140" if s3q8_2=="6145"
-	replace s3q8_2="6140" if s3q8_2=="6149"
-	replace s3q8_2="6100" if s3q8_2=="6171"
-	replace s3q8_2="6100" if s3q8_2=="6174"
-	replace s3q8_2="6100" if s3q8_2=="6190"
-	replace s3q8_2="6200" if s3q8_2=="6201"
-	replace s3q8_2="6210" if s3q8_2=="6211"
-	replace s3q8_2="6210" if s3q8_2=="6212"
-	replace s3q8_2="6210" if s3q8_2=="6214"
-	replace s3q8_2="6210" if s3q8_2=="6216"
-	replace s3q8_2="6200" if s3q8_2=="6221"
-	replace s3q8_2="6200" if s3q8_2=="6230"
-	replace s3q8_2="6230" if s3q8_2=="6231"
-	replace s3q8_2="6230" if s3q8_2=="6232"
-	replace s3q8_2="6200" if s3q8_2=="6240"
-	replace s3q8_2="6200" if s3q8_2=="6242"
-	replace s3q8_2="6200" if s3q8_2=="6250"
-	replace s3q8_2="6200" if s3q8_2=="6251"
-	replace s3q8_2="6200" if s3q8_2=="6252"
-	replace s3q8_2="6200" if s3q8_2=="6269"
-	replace s3q8_2="6000" if s3q8_2=="6311"
-	replace s3q8_2="6000" if s3q8_2=="6321"
-	replace s3q8_2="6000" if s3q8_2=="6415"
-	replace s3q8_2="6000" if s3q8_2=="6420"
-	replace s3q8_2="6000" if s3q8_2=="6510"
-	replace s3q8_2="6000" if s3q8_2=="6621"
-	replace s3q8_2="6000" if s3q8_2=="6710"
-	replace s3q8_2="6000" if s3q8_2=="6820"
-	replace s3q8_2="6000" if s3q8_2=="6920"
-	replace s3q8_2="6000" if s3q8_2=="6921"
-	replace s3q8_2="7110" if s3q8_2=="7114"
-	replace s3q8_2="7110" if s3q8_2=="7115"
-	replace s3q8_2="7110" if s3q8_2=="7126"
-	replace s3q8_2="7120" if s3q8_2=="7127"
-	replace s3q8_2="7100" if s3q8_2=="7151"
-	replace s3q8_2="7100" if s3q8_2=="7152"
-	replace s3q8_2="7100" if s3q8_2=="7159"
-	replace s3q8_2="7100" if s3q8_2=="7162"
-	replace s3q8_2="7100" if s3q8_2=="7181"
-	replace s3q8_2="7100" if s3q8_2=="7196"
-	replace s3q8_2="7210" if s3q8_2=="7217"
-	replace s3q8_2="7210" if s3q8_2=="7219"
-	replace s3q8_2="7230" if s3q8_2=="7234"
-	replace s3q8_2="7330" if s3q8_2=="7334"
-	replace s3q8_2="7400" if s3q8_2=="7403"
-	replace s3q8_2="7420" if s3q8_2=="7426"
-	replace s3q8_2="7440" if s3q8_2=="7444"
-	replace s3q8_2="7400" if s3q8_2=="7451"
-	replace s3q8_2="7400" if s3q8_2=="7452"
-	replace s3q8_2="7400" if s3q8_2=="7455"
-	replace s3q8_2="7400" if s3q8_2=="7490"
-	replace s3q8_2="7000" if s3q8_2=="7510"
-	replace s3q8_2="7000" if s3q8_2=="7515"
-	replace s3q8_2="7000" if s3q8_2=="7520"
-	replace s3q8_2="7000" if s3q8_2=="7522"
-	replace s3q8_2="7000" if s3q8_2=="7535"
-	replace s3q8_2="7000" if s3q8_2=="7729"
-	replace s3q8_2="7000" if s3q8_2=="7845"
-	replace s3q8_2="7000" if s3q8_2=="7911"
-	replace s3q8_2="8000" if s3q8_2=="8010"
-	replace s3q8_2="8000" if s3q8_2=="8020"
-	replace s3q8_2="8110" if s3q8_2=="8114"
-	replace s3q8_2="8120" if s3q8_2=="8129"
-	replace s3q8_2="8230" if s3q8_2=="8233"
-	replace s3q8_2="8290" if s3q8_2=="8292"
-	replace s3q8_2="8000" if s3q8_2=="8412"
-	replace s3q8_2="8000" if s3q8_2=="8422"
-	replace s3q8_2="8000" if s3q8_2=="8423"
-	replace s3q8_2="8000" if s3q8_2=="8425"
-	replace s3q8_2="8000" if s3q8_2=="8430"
-	replace s3q8_2="8000" if s3q8_2=="8510"
-	replace s3q8_2="8000" if s3q8_2=="8521"
-	replace s3q8_2="8000" if s3q8_2=="8549"
-	replace s3q8_2="8000" if s3q8_2=="8610"
-	replace s3q8_2="8000" if s3q8_2=="8620"
-	replace s3q8_2="8000" if s3q8_2=="8890"
-	replace s3q8_2="8000" if s3q8_2=="8922"
-	replace s3q8_2="9100" if s3q8_2=="9123"
-	replace s3q8_2="9130" if s3q8_2=="9134"
-	replace s3q8_2="9130" if s3q8_2=="9139"
-	replace s3q8_2="9100" if s3q8_2=="9191"
-	replace s3q8_2="9200" if s3q8_2=="9220"
-	replace s3q8_2="9300" if s3q8_2=="9309"
-	replace s3q8_2="9000" if s3q8_2=="9521"
-	replace s3q8_2="9000" if s3q8_2=="9522"
-	replace s3q8_2="9000" if s3q8_2=="9602"
-	replace s3q8_2="9000" if s3q8_2=="9609"
-	replace s3q8_2="9000" if s3q8_2=="9621"
-	replace s3q8_2="9000" if s3q8_2=="9700"
-	replace s3q8_2="9000" if s3q8_2=="9810"
+	gen str occup_isco = string(s3q8,     "%04.0f")
+	replace occup_isco = "" if occup_isco == "." 
+	
+	* Corrections - based on the ISIC Code and looking at the ISCO for consistency
+	replace occup_isco = "6130" if s3q8 == 6132
+	replace occup_isco = "2300" if s3q8 == 2321 &  inrange(s3q9, 8500,8599)
+	replace occup_isco = ""     if s3q8 == 2321 & !inrange(s3q9, 8500,8599)
+	replace occup_isco = "6100" if s3q8 == 6133 &  inrange(s3q9,  101, 161)
+	replace occup_isco = ""     if s3q8 == 6133 & !inrange(s3q9,  101, 161)
+	replace occup_isco = "6100" if s3q8 == 6211
+	replace occup_isco = "7200" if s3q8 == 7234
+	replace occup_isco = "2400" if s3q8 == 2418
+	replace occup_isco = "5100" if s3q8 == 5114
+	replace occup_isco = "9300" if s3q8 == 9309
+	
+	* Set to missing cases we cannot sensibly re-code 
+	replace occup_isco = "" if inlist(s3q8, 7510, 7520, 4711, 4799, 1240, 8510)
+	replace occup_isco = "" if inlist(s3q8,23, 101, 102, 103, 107, 112, 113, 114, 131)
+	replace occup_isco = "" if inlist(s3q8,146, 162, 410, 411, 429, 432, 452, 471, 520)
+	replace occup_isco = "" if inlist(s3q8,611, 692, 702, 711, 729, 732, 801, 802, 899)
+	replace occup_isco = "" if inlist(s3q8,990, 1016, 1017, 1061, 1079, 1101, 1103, 1114, 1122)
+	replace occup_isco = "" if inlist(s3q8,1219, 1341, 1391, 1415, 1510, 1514, 1520, 1551, 1620)
+	replace occup_isco = "" if inlist(s3q8,1622, 1629, 1711, 1811, 1814, 2119, 2124, 2129, 2214)
+	replace occup_isco = "" if inlist(s3q8,2216, 2312, 2318, 2333, 2334, 2342, 2414, 2433, 2435)
+	replace occup_isco = "" if inlist(s3q8,2439, 2499, 2599, 2610, 2821, 2957, 3163, 3216, 3218)
+	replace occup_isco = "" if inlist(s3q8,3311, 3312, 3319, 3323, 3427, 3437, 3510, 3811, 3812)
+	replace occup_isco = "" if inlist(s3q8,4151, 4162, 4226, 4245, 4290, 4311, 4322, 4330, 4520)
+	replace occup_isco = "" if inlist(s3q8,4551, 4661, 4715, 4719, 4721, 4722, 4733, 4751, 4759)
+	replace occup_isco = "" if inlist(s3q8,4771, 4772, 4774, 4779, 4781, 4782, 4789, 4921, 4922)
+	replace occup_isco = "" if inlist(s3q8,4923, 5010, 5102, 5109, 5115, 5116, 5124, 5128, 5129)
+	replace occup_isco = "" if inlist(s3q8,5144, 5145, 5147, 5159, 5164, 5168, 5171, 5172, 5182)
+	replace occup_isco = "" if inlist(s3q8,5191, 5196, 5198, 5201, 5204, 5212, 5214, 5221, 5222)
+	replace occup_isco = "" if inlist(s3q8,5223, 5225, 5229, 5232, 5233, 5234, 5250, 5253, 5259)
+	replace occup_isco = "" if inlist(s3q8,5260, 5262, 5270, 5280, 5320, 5330, 5419, 5441, 5520)
+	replace occup_isco = "" if inlist(s3q8,5613, 5629, 5721, 5811, 5920, 5969, 6101, 6115, 6116)
+	replace occup_isco = "" if inlist(s3q8,6119, 6131, 6134, 6136, 6137, 6144, 6145, 6149, 6169)
+	replace occup_isco = "" if inlist(s3q8,6171, 6174, 6190, 6201, 6212, 6213, 6214, 6216, 6221)
+	replace occup_isco = "" if inlist(s3q8,6230, 6231, 6232, 6240, 6242, 6250, 6251, 6252, 6269)
+	replace occup_isco = "" if inlist(s3q8,6311, 6321, 6415, 6420, 6510, 6621, 6710, 6820, 6920)
+	replace occup_isco = "" if inlist(s3q8,6921, 7114, 7115, 7126, 7127, 7151, 7152, 7159, 7162)
+	replace occup_isco = "" if inlist(s3q8,7181, 7196, 7217, 7219, 7334, 7403, 7426, 7444, 7451)
+	replace occup_isco = "" if inlist(s3q8,7452, 7455, 7490, 7515, 7522, 7535, 7729, 7845, 7911)
+	replace occup_isco = "" if inlist(s3q8,8010, 8020, 8114, 8129, 8233, 8292, 8412, 8422, 8423)
+	replace occup_isco = "" if inlist(s3q8,8425, 8430, 8521, 8549, 8610, 8620, 8790, 8890, 8922)
+	replace occup_isco = "" if inlist(s3q8,9123, 9134, 9139, 9191, 9220, 9521, 9522, 9602, 9609)
+	replace occup_isco = "" if inlist(s3q8,9621, 9700, 9731, 9810)
 
-	replace s3q8_2="2340" if s3q8_2=="2342"
-	replace s3q8_2="5100" if s3q8_2=="5170"
-	replace s3q8_2="5100" if s3q8_2=="5190"
-	replace s3q8_2="6200" if s3q8_2=="6230"
-
-	gen occup_isco = s3q8_2 + substr("0000", 1, 4 - length(s3q8_2))
-	replace occup_isco="" if occup_isco==".000"
+	* Check that no errors --> using our universe check function, count should be 0 (no obs wrong)
+	* https://github.com/worldbank/gld/tree/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20universe%20check
+	
+	preserve 
+	int_classif_universe, var(occup_isco) universe(ISCO)
+	count
+	*list
+	assert `r(N)' == 0
+	restore 
+	
+	replace occup_isco = "" if lstatus != 1
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
 
 *<_occup_>
-	rename occup occup_a
 	gen byte occup = .
 	replace occup=1 if inrange(occup_isco,"1000","1399")
 	replace occup=2 if inrange(occup_isco,"2000","2499")
@@ -1585,7 +1050,10 @@ foreach v of local ed_var {
 
 
 *<_whours_>
-	gen whours = s3q17
+	* Info in survey is at day level, we want week. Reduce to missing values > 24
+	* Assume 5 days per week 
+	gen whours = s3q17*5 if s3q17 <= 24
+	replace whours = . if lstatus != 1
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -1610,8 +1078,6 @@ foreach v of local ed_var {
 
 *<_contract_>
 	gen byte contract = .
-	replace contract=1 if inrange(s3q10,1,5) & lstatus==1
-	replace contract=0 if s3q10==. & lstatus==1
 	label var contract "Employment has contract primary job 7 day recall"
 	la de lblcontract 0 "Without contract" 1 "With contract"
 	label values contract lblcontract
@@ -1823,14 +1289,9 @@ foreach v of local ed_var {
 {
 
 *<_lstatus_year_>
-	gen byte lstatus_year = s4q1
-	recode lstatus_year 1/3=1 4/5=2 6=1 7/11=3
-	replace lstatus_year=1 if s4q2==1
-	replace lstatus_year=1 if s4q3==1
-	replace lstatus_year=1 if s4q4==1
-	replace lstatus_year=1 if s4q5==1
-	replace lstatus_year=1 if s4q6==1
-	replace lstatus_year=1 if s4q7==1
+	* There is no information on unemployment at 12 months. Can only state it employed.
+	gen byte lstatus_year = .
+	replace lstatus_year  = 1 if s3q1 < 4 | s3q2 == 1 | s3q3 == 1 | s3q4 == 1 | s3q5 == 1 | s3q6 == 1
 	replace lstatus_year=. if age < minlaborage & age != .
 	label var lstatus_year "Labor status during last year"
 	la de lbllstatus_year 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -1885,6 +1346,7 @@ foreach v of local ed_var {
 *<_empstat_year_>
 	gen byte empstat_year = s4q12
 	recode empstat_year 1=4 2=3 3=1 4=2
+	replace empstat_year = . if lstatus_year != 1
 	label var empstat_year "Employment status during past week primary job 12 month recall"
 	la de lblempstat_year 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat_year lblempstat_year
@@ -1893,6 +1355,7 @@ foreach v of local ed_var {
 *<_ocusec_year_>
 	gen byte ocusec_year = s4q11
 	recode ocusec_year 2=1 4=2 5=2 6=2 7=2
+	replace ocusec_year = . if lstatus_year != 1
 	label var ocusec_year "Sector of activity primary job 12 month recall"
 	la de lblocusec_year 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec_year lblocusec_year
@@ -1905,543 +1368,103 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_year_>
-	tostring s4q9, gen(s4q9_2) force
-	replace s4q9_2="0110" if s4q9_2=="11"
-	replace s4q9_2="0120" if s4q9_2=="12"
-	replace s4q9_2="0310" if s4q9_2=="31"
-	replace s4q9_2="1000" if s4q9_2=="100"
-	replace s4q9_2="1010" if s4q9_2=="101"
-	replace s4q9_2="1020" if s4q9_2=="102"
-	replace s4q9_2="1030" if s4q9_2=="103"
-	replace s4q9_2="1040" if s4q9_2=="104"
-	replace s4q9_2="0110" if s4q9_2=="110"
-	replace s4q9_2="0111" if s4q9_2=="111"
-	replace s4q9_2="0112" if s4q9_2=="112"
-	replace s4q9_2="0113" if s4q9_2=="113"
-	replace s4q9_2="0114" if s4q9_2=="114"
-	replace s4q9_2="0115" if s4q9_2=="115"
-	replace s4q9_2="0116" if s4q9_2=="116"
-	replace s4q9_2="0119" if s4q9_2=="119"
-	replace s4q9_2="0120" if s4q9_2=="120"
-	replace s4q9_2="0121" if s4q9_2=="121"
-	replace s4q9_2="0122" if s4q9_2=="122"
-	replace s4q9_2="0123" if s4q9_2=="123"
-	replace s4q9_2="0124" if s4q9_2=="124"
-	replace s4q9_2="0125" if s4q9_2=="125"
-	replace s4q9_2="0126" if s4q9_2=="126"
-	replace s4q9_2="0127" if s4q9_2=="127"
-	replace s4q9_2="0128" if s4q9_2=="128"
-	replace s4q9_2="0129" if s4q9_2=="129"
-	replace s4q9_2="1300" if s4q9_2=="130"
-	replace s4q9_2="1310" if s4q9_2=="131"
-	replace s4q9_2="1300" if s4q9_2=="132"
-	replace s4q9_2="1300" if s4q9_2=="133"
-	replace s4q9_2="0140" if s4q9_2=="140"
-	replace s4q9_2="0141" if s4q9_2=="141"
-	replace s4q9_2="0142" if s4q9_2=="142"
-	replace s4q9_2="0143" if s4q9_2=="143"
-	replace s4q9_2="0144" if s4q9_2=="144"
-	replace s4q9_2="0145" if s4q9_2=="145"
-	replace s4q9_2="0146" if s4q9_2=="146"
-	replace s4q9_2="0149" if s4q9_2=="149"
-	replace s4q9_2="0150" if s4q9_2=="150"
-	replace s4q9_2="0150" if s4q9_2=="151"
-	replace s4q9_2="0150" if s4q9_2=="152"
-	replace s4q9_2="0150" if s4q9_2=="156"
-	replace s4q9_2="0150" if s4q9_2=="157"
-	replace s4q9_2="0160" if s4q9_2=="160"
-	replace s4q9_2="0160" if s4q9_2=="161"
-	replace s4q9_2="0162" if s4q9_2=="162"
-	replace s4q9_2="0163" if s4q9_2=="163"
-	replace s4q9_2="0164" if s4q9_2=="164"
-	replace s4q9_2="0160" if s4q9_2=="165"
-	replace s4q9_2="0160" if s4q9_2=="167"
-	replace s4q9_2="0170" if s4q9_2=="170"
-	replace s4q9_2="0170" if s4q9_2=="171"
-	replace s4q9_2="0170" if s4q9_2=="172"
-	replace s4q9_2="0170" if s4q9_2=="174"
-	replace s4q9_2="1810" if s4q9_2=="181"
-	replace s4q9_2="1910" if s4q9_2=="191"
-	replace s4q9_2="1920" if s4q9_2=="192"
-	replace s4q9_2="0200" if s4q9_2=="200"
-	replace s4q9_2="0200" if s4q9_2=="201"
-	replace s4q9_2="0200" if s4q9_2=="202"
-	replace s4q9_2="0210" if s4q9_2=="210"
-	replace s4q9_2="0210" if s4q9_2=="211"
-	replace s4q9_2="0220" if s4q9_2=="220"
-	replace s4q9_2="0220" if s4q9_2=="221"
-	replace s4q9_2="0220" if s4q9_2=="222"
-	replace s4q9_2="0220" if s4q9_2=="229"
-	replace s4q9_2="0230" if s4q9_2=="230"
-	replace s4q9_2="0230" if s4q9_2=="232"
-	replace s4q9_2="0240" if s4q9_2=="240"
-	replace s4q9_2="0240" if s4q9_2=="243"
-	replace s4q9_2="2590" if s4q9_2=="259"
-	replace s4q9_2="2790" if s4q9_2=="279"
-	replace s4q9_2="0300" if s4q9_2=="301"
-	replace s4q9_2="0310" if s4q9_2=="310"
-	replace s4q9_2="0311" if s4q9_2=="311"
-	replace s4q9_2="0312" if s4q9_2=="312"
-	replace s4q9_2="0310" if s4q9_2=="313"
-	replace s4q9_2="0321" if s4q9_2=="321"
-	replace s4q9_2="0322" if s4q9_2=="322"
-	replace s4q9_2="0300" if s4q9_2=="343"
-	replace s4q9_2="0300" if s4q9_2=="350"
-	replace s4q9_2="4100" if s4q9_2=="401"
-	replace s4q9_2="4200" if s4q9_2=="423"
-	replace s4q9_2="4330" if s4q9_2=="433"
-	replace s4q9_2="4100" if s4q9_2=="443"
-	replace s4q9_2="4710" if s4q9_2=="471"
-	replace s4q9_2="4720" if s4q9_2=="472"
-	replace s4q9_2="4780" if s4q9_2=="478"
-	replace s4q9_2="4920" if s4q9_2=="492"
-	replace s4q9_2="5010" if s4q9_2=="501"
-	replace s4q9_2="5100" if s4q9_2=="510"
-	replace s4q9_2="5120" if s4q9_2=="512"
-	replace s4q9_2="5200" if s4q9_2=="520"
-	replace s4q9_2="5220" if s4q9_2=="522"
-	replace s4q9_2="5300" if s4q9_2=="530"
-	replace s4q9_2="5620" if s4q9_2=="562"
-	replace s4q9_2="5900" if s4q9_2=="599"
-	replace s4q9_2="6010" if s4q9_2=="601"
-	replace s4q9_2="6020" if s4q9_2=="602"
-	replace s4q9_2="6100" if s4q9_2=="610"
-	replace s4q9_2="6120" if s4q9_2=="612"
-	replace s4q9_2="6200" if s4q9_2=="620"
-	replace s4q9_2="6610" if s4q9_2=="661"
-	replace s4q9_2="7010" if s4q9_2=="701"
-	replace s4q9_2="7020" if s4q9_2=="702"
-	replace s4q9_2="7000" if s4q9_2=="703"
-	replace s4q9_2="7000" if s4q9_2=="707"
-	replace s4q9_2="7100" if s4q9_2=="710"
-	replace s4q9_2="7120" if s4q9_2=="712"
-	replace s4q9_2="7200" if s4q9_2=="720"
-	replace s4q9_2="0721" if s4q9_2=="721"
-	replace s4q9_2="7220" if s4q9_2=="722"
-	replace s4q9_2="7200" if s4q9_2=="726"
-	replace s4q9_2="7200" if s4q9_2=="727"
-	replace s4q9_2="7200" if s4q9_2=="728"
-	replace s4q9_2="0729" if s4q9_2=="729"
-	replace s4q9_2="7720" if s4q9_2=="772"
-	replace s4q9_2="7900" if s4q9_2=="792"
-	replace s4q9_2="8010" if s4q9_2=="801"
-	replace s4q9_2="8100" if s4q9_2=="810"
-	replace s4q9_2="8120" if s4q9_2=="812"
-	replace s4q9_2="8130" if s4q9_2=="813"
-	replace s4q9_2="8100" if s4q9_2=="818"
-	replace s4q9_2="8100" if s4q9_2=="819"
-	replace s4q9_2="8200" if s4q9_2=="820"
-	replace s4q9_2="8210" if s4q9_2=="821"
-	replace s4q9_2="8510" if s4q9_2=="851"
-	replace s4q9_2="8520" if s4q9_2=="852"
-	replace s4q9_2="8530" if s4q9_2=="853"
-	replace s4q9_2="0890" if s4q9_2=="890"
-	replace s4q9_2="0893" if s4q9_2=="893"
-	replace s4q9_2="0899" if s4q9_2=="899"
-	replace s4q9_2="9000" if s4q9_2=="902"
-	replace s4q9_2="9100" if s4q9_2=="911"
-	replace s4q9_2="9300" if s4q9_2=="933"
-	replace s4q9_2="0990" if s4q9_2=="990"
-	replace s4q9_2="1000" if s4q9_2=="1014"
-	replace s4q9_2="1100" if s4q9_2=="1105"
-	replace s4q9_2="1100" if s4q9_2=="1106"
-	replace s4q9_2="1100" if s4q9_2=="1125"
-	replace s4q9_2="1100" if s4q9_2=="1131"
-	replace s4q9_2="1100" if s4q9_2=="1195"
-	replace s4q9_2="1200" if s4q9_2=="1231"
-	replace s4q9_2="1300" if s4q9_2=="1372"
-	replace s4q9_2="1400" if s4q9_2=="1436"
-	replace s4q9_2="1500" if s4q9_2=="1503"
-	replace s4q9_2="1500" if s4q9_2=="1563"
-	replace s4q9_2="1600" if s4q9_2=="1619"
-	replace s4q9_2="1700" if s4q9_2=="1719"
-	replace s4q9_2="1700" if s4q9_2=="1789"
-	replace s4q9_2="1900" if s4q9_2=="1903"
-	replace s4q9_2="1900" if s4q9_2=="1921"
-	replace s4q9_2="2000" if s4q9_2=="2005"
-	replace s4q9_2="2000" if s4q9_2=="2025"
-	replace s4q9_2="2200" if s4q9_2=="2223"
-	replace s4q9_2="2200" if s4q9_2=="2229"
-	replace s4q9_2="2300" if s4q9_2=="2315"
-	replace s4q9_2="2300" if s4q9_2=="2320"
-	replace s4q9_2="2300" if s4q9_2=="2340"
-	replace s4q9_2="2400" if s4q9_2=="2446"
-	replace s4q9_2="2400" if s4q9_2=="2492"
-	replace s4q9_2="2500" if s4q9_2=="2594"
-	replace s4q9_2="2700" if s4q9_2=="2799"
-	replace s4q9_2="2800" if s4q9_2=="2869"
-	replace s4q9_2="3100" if s4q9_2=="3121"
-	replace s4q9_2="3100" if s4q9_2=="3122"
-	replace s4q9_2="3100" if s4q9_2=="3123"
-	replace s4q9_2="3200" if s4q9_2=="3221"
-	replace s4q9_2="3200" if s4q9_2=="3229"
-	replace s4q9_2="3000" if s4q9_2=="3410"
-	replace s4q9_2="3600" if s4q9_2=="3609"
-	replace s4q9_2="3700" if s4q9_2=="3741"
-	replace s4q9_2="4300" if s4q9_2=="4020"
-	replace s4q9_2="4300" if s4q9_2=="4030"
-	replace s4q9_2="4100" if s4q9_2=="4106"
-	replace s4q9_2="4100" if s4q9_2=="4190"
-	replace s4q9_2="4100" if s4q9_2=="4199"
-	replace s4q9_2="4200" if s4q9_2=="4221"
-	replace s4q9_2="4200" if s4q9_2=="4230"
-	replace s4q9_2="4200" if s4q9_2=="4289"
-	replace s4q9_2="4300" if s4q9_2=="4331"
-	replace s4q9_2="4300" if s4q9_2=="4474"
-	replace s4q9_2="4300" if s4q9_2=="4499"
-	replace s4q9_2="4600" if s4q9_2=="4642"
-	replace s4q9_2="4700" if s4q9_2=="4713"
-	replace s4q9_2="4700" if s4q9_2=="4732"
-	replace s4q9_2="4700" if s4q9_2=="4739"
-	replace s4q9_2="4700" if s4q9_2=="4744"
-	replace s4q9_2="4700" if s4q9_2=="4754"
-	replace s4q9_2="4700" if s4q9_2=="4755"
-	replace s4q9_2="4700" if s4q9_2=="4777"
-	replace s4q9_2="4700" if s4q9_2=="4784"
-	replace s4q9_2="4700" if s4q9_2=="4785"
-	replace s4q9_2="4700" if s4q9_2=="4797"
-	replace s4q9_2="4700" if s4q9_2=="4852"
-	replace s4q9_2="4700" if s4q9_2=="4899"
-	replace s4q9_2="4900" if s4q9_2=="4914"
-	replace s4q9_2="4900" if s4q9_2=="4925"
-	replace s4q9_2="4900" if s4q9_2=="4929"
-	replace s4q9_2="4900" if s4q9_2=="4942"
-	replace s4q9_2="4900" if s4q9_2=="4944"
-	replace s4q9_2="4900" if s4q9_2=="4952"
-	replace s4q9_2="4900" if s4q9_2=="4959"
-	replace s4q9_2="4900" if s4q9_2=="4969"
-	replace s4q9_2="5200" if s4q9_2=="5219"
-	replace s4q9_2="5200" if s4q9_2=="5225"
-	replace s4q9_2="5300" if s4q9_2=="5331"
-	replace s4q9_2="5000" if s4q9_2=="5429"
-	replace s4q9_2="5000" if s4q9_2=="5430"
-	replace s4q9_2="5600" if s4q9_2=="5612"
-	replace s4q9_2="5600" if s4q9_2=="5624"
-	replace s4q9_2="5600" if s4q9_2=="5632"
-	replace s4q9_2="5600" if s4q9_2=="5680"
-	replace s4q9_2="5600" if s4q9_2=="5710"
-	replace s4q9_2="5600" if s4q9_2=="5711"
-	replace s4q9_2="5600" if s4q9_2=="5752"
-	replace s4q9_2="5800" if s4q9_2=="5852"
-	replace s4q9_2="5900" if s4q9_2=="5952"
-	replace s4q9_2="6000" if s4q9_2=="6016"
-	replace s4q9_2="6000" if s4q9_2=="6021"
-	replace s4q9_2="6100" if s4q9_2=="6129"
-	replace s4q9_2="6100" if s4q9_2=="6140"
-	replace s4q9_2="6100" if s4q9_2=="6141"
-	replace s4q9_2="6100" if s4q9_2=="6149"
-	replace s4q9_2="6100" if s4q9_2=="6162"
-	replace s4q9_2="6300" if s4q9_2=="6304"
-	replace s4q9_2="6400" if s4q9_2=="6424"
-	replace s4q9_2="6400" if s4q9_2=="6466"
-	replace s4q9_2="6400" if s4q9_2=="6496"
-	replace s4q9_2="6600" if s4q9_2=="6710"
-	replace s4q9_2="6600" if s4q9_2=="6771"
-	replace s4q9_2="6900" if s4q9_2=="6905"
-	replace s4q9_2="7100" if s4q9_2=="7123"
-	replace s4q9_2="7100" if s4q9_2=="7130"
-	replace s4q9_2="7100" if s4q9_2=="7181"
-	replace s4q9_2="7200" if s4q9_2=="7291"
-	replace s4q9_2="7400" if s4q9_2=="7421"
-	replace s4q9_2="7400" if s4q9_2=="7442"
-	replace s4q9_2="7400" if s4q9_2=="7474"
-	replace s4q9_2="7400" if s4q9_2=="7481"
-	replace s4q9_2="7400" if s4q9_2=="7489"
-	replace s4q9_2="7400" if s4q9_2=="7491"
-	replace s4q9_2="8100" if s4q9_2=="8101"
-	replace s4q9_2="8200" if s4q9_2=="8251"
-	replace s4q9_2="8200" if s4q9_2=="8310"
-	replace s4q9_2="8400" if s4q9_2=="8425"
-	replace s4q9_2="8400" if s4q9_2=="8432"
-	replace s4q9_2="8400" if s4q9_2=="8449"
-	replace s4q9_2="8400" if s4q9_2=="8450"
-	replace s4q9_2="8500" if s4q9_2=="8554"
-	replace s4q9_2="8600" if s4q9_2=="8621"
-	replace s4q9_2="8600" if s4q9_2=="8640"
-	replace s4q9_2="8700" if s4q9_2=="8723"
-	replace s4q9_2="8700" if s4q9_2=="8749"
-	replace s4q9_2="8700" if s4q9_2=="8791"
-	replace s4q9_2="8800" if s4q9_2=="8811"
-	replace s4q9_2="8800" if s4q9_2=="8990"
-	replace s4q9_2="8800" if s4q9_2=="8992"
-	replace s4q9_2="9100" if s4q9_2=="9111"
-	replace s4q9_2="9100" if s4q9_2=="9131"
-	replace s4q9_2="9200" if s4q9_2=="9202"
-	replace s4q9_2="9200" if s4q9_2=="9219"
-	replace s4q9_2="9200" if s4q9_2=="9233"
-	replace s4q9_2="9200" if s4q9_2=="9291"
-	replace s4q9_2="9300" if s4q9_2=="9323"
-	replace s4q9_2="9400" if s4q9_2=="9406"
-	replace s4q9_2="9400" if s4q9_2=="9461"
-	replace s4q9_2="9500" if s4q9_2=="9527"
-	replace s4q9_2="9500" if s4q9_2=="9539"
-	replace s4q9_2="9600" if s4q9_2=="9608"
-	replace s4q9_2="9600" if s4q9_2=="9610"
-	replace s4q9_2="9700" if s4q9_2=="9702"
-	replace s4q9_2="9700" if s4q9_2=="9710"
-	replace s4q9_2="9800" if s4q9_2=="9821"
-	replace s4q9_2="9800" if s4q9_2=="9822"
-	replace s4q9_2="9800" if s4q9_2=="9892"
-	replace s4q9_2="0100" if s4q9_2=="0118"
-	replace s4q9_2="0500" if s4q9_2=="0562"
-	replace s4q9_2="0700" if s4q9_2=="0727"
-	replace s4q9_2="1000" if s4q9_2=="1001"
-	replace s4q9_2="1000" if s4q9_2=="1011"
-	replace s4q9_2="1000" if s4q9_2=="1016"
-	replace s4q9_2="1000" if s4q9_2=="1017"
-	replace s4q9_2="1000" if s4q9_2=="1021"
-	replace s4q9_2="1000" if s4q9_2=="1029"
-	replace s4q9_2="1000" if s4q9_2=="1051"
-	replace s4q9_2="1100" if s4q9_2=="1108"
-	replace s4q9_2="1100" if s4q9_2=="1110"
-	replace s4q9_2="1100" if s4q9_2=="1111"
-	replace s4q9_2="1100" if s4q9_2=="1112"
-	replace s4q9_2="1100" if s4q9_2=="1113"
-	replace s4q9_2="1100" if s4q9_2=="1115"
-	replace s4q9_2="1100" if s4q9_2=="1117"
-	replace s4q9_2="1100" if s4q9_2=="1119"
-	replace s4q9_2="1100" if s4q9_2=="1132"
-	replace s4q9_2="1100" if s4q9_2=="1135"
-	replace s4q9_2="1100" if s4q9_2=="1157"
-	replace s4q9_2="1200" if s4q9_2=="1221"
-	replace s4q9_2="1200" if s4q9_2=="1226"
-	replace s4q9_2="1200" if s4q9_2=="1291"
-	replace s4q9_2="1200" if s4q9_2=="1295"
-	replace s4q9_2="1400" if s4q9_2=="1472"
-	replace s4q9_2="1400" if s4q9_2=="1499"
-	replace s4q9_2="1500" if s4q9_2=="1501"
-	replace s4q9_2="1500" if s4q9_2=="1505"
-	replace s4q9_2="1500" if s4q9_2=="1541"
-	replace s4q9_2="1600" if s4q9_2=="1624"
-	replace s4q9_2="1600" if s4q9_2=="1626"
-	replace s4q9_2="1600" if s4q9_2=="1628"
-	replace s4q9_2="1600" if s4q9_2=="1642"
-	replace s4q9_2="1600" if s4q9_2=="1659"
-	replace s4q9_2="1700" if s4q9_2=="1712"
-	replace s4q9_2="1700" if s4q9_2=="1749"
-	replace s4q9_2="1800" if s4q9_2=="1821"
-	replace s4q9_2="2000" if s4q9_2=="2015"
-	replace s4q9_2="2000" if s4q9_2=="2032"
-	replace s4q9_2="2100" if s4q9_2=="2104"
-	replace s4q9_2="2100" if s4q9_2=="2122"
-	replace s4q9_2="2100" if s4q9_2=="2131"
-	replace s4q9_2="2100" if s4q9_2=="2143"
-	replace s4q9_2="2200" if s4q9_2=="2214"
-	replace s4q9_2="2200" if s4q9_2=="2224"
-	replace s4q9_2="2300" if s4q9_2=="2312"
-	replace s4q9_2="2300" if s4q9_2=="2319"
-	replace s4q9_2="2300" if s4q9_2=="2321"
-	replace s4q9_2="2300" if s4q9_2=="2331"
-	replace s4q9_2="2300" if s4q9_2=="2332"
-	replace s4q9_2="2400" if s4q9_2=="2411"
-	replace s4q9_2="2400" if s4q9_2=="2412"
-	replace s4q9_2="2400" if s4q9_2=="2419"
-	replace s4q9_2="2400" if s4q9_2=="2422"
-	replace s4q9_2="2400" if s4q9_2=="2460"
-	replace s4q9_2="2400" if s4q9_2=="2479"
-	replace s4q9_2="2500" if s4q9_2=="2515"
-	replace s4q9_2="3100" if s4q9_2=="3114"
-	replace s4q9_2="3100" if s4q9_2=="3120"
-	replace s4q9_2="3100" if s4q9_2=="3152"
-	replace s4q9_2="3200" if s4q9_2=="3231"
-	replace s4q9_2="3200" if s4q9_2=="3241"
-	replace s4q9_2="3300" if s4q9_2=="3317"
-	replace s4q9_2="3300" if s4q9_2=="3340"
-	replace s4q9_2="3000" if s4q9_2=="3411"
-	replace s4q9_2="3000" if s4q9_2=="3413"
-	replace s4q9_2="3000" if s4q9_2=="3419"
-	replace s4q9_2="3000" if s4q9_2=="3421"
-	replace s4q9_2="3000" if s4q9_2=="3423"
-	replace s4q9_2="3000" if s4q9_2=="3429"
-	replace s4q9_2="3000" if s4q9_2=="3432"
-	replace s4q9_2="3000" if s4q9_2=="3434"
-	replace s4q9_2="3000" if s4q9_2=="3439"
-	replace s4q9_2="3000" if s4q9_2=="3443"
-	replace s4q9_2="3000" if s4q9_2=="3449"
-	replace s4q9_2="3600" if s4q9_2=="3610"
-	*4000 is replaced to 4300 because no 4000
-	replace s4q9_2="4300" if s4q9_2=="4000"
-	replace s4q9_2="4100" if s4q9_2=="4101"
-	replace s4q9_2="4100" if s4q9_2=="4110"
-	replace s4q9_2="4100" if s4q9_2=="4111"
-	replace s4q9_2="4100" if s4q9_2=="4119"
-	replace s4q9_2="4100" if s4q9_2=="4121"
-	replace s4q9_2="4100" if s4q9_2=="4137"
-	replace s4q9_2="4100" if s4q9_2=="4142"
-	replace s4q9_2="4100" if s4q9_2=="4153"
-	replace s4q9_2="4100" if s4q9_2=="4162"
-	replace s4q9_2="4200" if s4q9_2=="4215"
-	replace s4q9_2="4200" if s4q9_2=="4222"
-	replace s4q9_2="4200" if s4q9_2=="4231"
-	replace s4q9_2="4200" if s4q9_2=="4281"
-	replace s4q9_2="4200" if s4q9_2=="4292"
-	replace s4q9_2="4200" if s4q9_2=="4299"
-	replace s4q9_2="4300" if s4q9_2=="4333"
-	*changed to 43 from 44
-	replace s4q9_2="4300" if s4q9_2=="4422"
-	replace s4q9_2="4500" if s4q9_2=="4521"
-	replace s4q9_2="4500" if s4q9_2=="4550"
-	replace s4q9_2="4600" if s4q9_2=="4602"
-	replace s4q9_2="4600" if s4q9_2=="4619"
-	replace s4q9_2="4600" if s4q9_2=="4646"
-	replace s4q9_2="4700" if s4q9_2=="4701"
-	replace s4q9_2="4700" if s4q9_2=="4709"
-	replace s4q9_2="4700" if s4q9_2=="4712"
-	replace s4q9_2="4700" if s4q9_2=="4714"
-	replace s4q9_2="4700" if s4q9_2=="4717"
-	replace s4q9_2="4700" if s4q9_2=="4718"
-	replace s4q9_2="4700" if s4q9_2=="4731"
-	replace s4q9_2="4700" if s4q9_2=="4733"
-	replace s4q9_2="4700" if s4q9_2=="4749"
-	replace s4q9_2="4700" if s4q9_2=="4757"
-	replace s4q9_2="4700" if s4q9_2=="4775"
-	replace s4q9_2="4700" if s4q9_2=="4779"
-	replace s4q9_2="4700" if s4q9_2=="4786"
-	replace s4q9_2="4700" if s4q9_2=="4787"
-	replace s4q9_2="4700" if s4q9_2=="4788"
-	replace s4q9_2="4700" if s4q9_2=="4792"
-	replace s4q9_2="4700" if s4q9_2=="4794"
-	*it was 4800 and I changed to 4300 because there is no 4000
-	replace s4q9_2="4300" if s4q9_2=="4820"
-	replace s4q9_2="4900" if s4q9_2=="4919"
-	replace s4q9_2="4900" if s4q9_2=="4971"
-	replace s4q9_2="4900" if s4q9_2=="4974"
-	replace s4q9_2="4900" if s4q9_2=="4977"
-	replace s4q9_2="4900" if s4q9_2=="4989"
-	replace s4q9_2="4900" if s4q9_2=="4999"
-	replace s4q9_2="5100" if s4q9_2=="5101"
-	replace s4q9_2="5100" if s4q9_2=="5111"
-	replace s4q9_2="5100" if s4q9_2=="5112"
-	replace s4q9_2="5100" if s4q9_2=="5114"
-	replace s4q9_2="5100" if s4q9_2=="5121"
-	replace s4q9_2="5100" if s4q9_2=="5122"
-	replace s4q9_2="5100" if s4q9_2=="5123"
-	replace s4q9_2="5100" if s4q9_2=="5129"
-	replace s4q9_2="5100" if s4q9_2=="5131"
-	replace s4q9_2="5100" if s4q9_2=="5133"
-	replace s4q9_2="5100" if s4q9_2=="5141"
-	replace s4q9_2="5100" if s4q9_2=="5149"
-	replace s4q9_2="5100" if s4q9_2=="5163"
-	replace s4q9_2="5100" if s4q9_2=="5169"
-	replace s4q9_2="5100" if s4q9_2=="5190"
-	replace s4q9_2="5200" if s4q9_2=="5211"
-	replace s4q9_2="5200" if s4q9_2=="5230"
-	replace s4q9_2="5200" if s4q9_2=="5232"
-	replace s4q9_2="5200" if s4q9_2=="5252"
-	replace s4q9_2="5200" if s4q9_2=="5259"
-	replace s4q9_2="5300" if s4q9_2=="5325"
-	replace s4q9_2="5000" if s4q9_2=="5411"
-	replace s4q9_2="5000" if s4q9_2=="5412"
-	replace s4q9_2="5600" if s4q9_2=="5623"
-	replace s4q9_2="5600" if s4q9_2=="5627"
-	replace s4q9_2="5000" if s4q9_2=="5721"
-	replace s4q9_2="5000" if s4q9_2=="5773"
-	replace s4q9_2="5800" if s4q9_2=="5815"
-	replace s4q9_2="5800" if s4q9_2=="5830"
-	replace s4q9_2="5900" if s4q9_2=="5929"
-	replace s4q9_2="5900" if s4q9_2=="5930"
-	replace s4q9_2="6000" if s4q9_2=="6022"
-	replace s4q9_2="6000" if s4q9_2=="6023"
-	replace s4q9_2="6100" if s4q9_2=="6111"
-	replace s4q9_2="6100" if s4q9_2=="6112"
-	replace s4q9_2="6100" if s4q9_2=="6113"
-	replace s4q9_2="6100" if s4q9_2=="6114"
-	replace s4q9_2="6100" if s4q9_2=="6121"
-	replace s4q9_2="6100" if s4q9_2=="6122"
-	replace s4q9_2="6100" if s4q9_2=="6123"
-	replace s4q9_2="6100" if s4q9_2=="6132"
-	replace s4q9_2="6100" if s4q9_2=="6142"
-	replace s4q9_2="6100" if s4q9_2=="6151"
-	replace s4q9_2="6100" if s4q9_2=="6154"
-	replace s4q9_2="6200" if s4q9_2=="6210"
-	replace s4q9_2="6200" if s4q9_2=="6211"
-	replace s4q9_2="6200" if s4q9_2=="6212"
-	replace s4q9_2="6200" if s4q9_2=="6222"
-	replace s4q9_2="6400" if s4q9_2=="6479"
-	replace s4q9_2="6500" if s4q9_2=="6549"
-	replace s4q9_2="6000" if s4q9_2=="6712"
-	replace s4q9_2="6900" if s4q9_2=="6909"
-	replace s4q9_2="6900" if s4q9_2=="6921"
-	replace s4q9_2="7100" if s4q9_2=="7111"
-	replace s4q9_2="7100" if s4q9_2=="7112"
-	replace s4q9_2="7100" if s4q9_2=="7121"
-	replace s4q9_2="7100" if s4q9_2=="7122"
-	replace s4q9_2="7100" if s4q9_2=="7124"
-	replace s4q9_2="7100" if s4q9_2=="7129"
-	replace s4q9_2="7100" if s4q9_2=="7131"
-	replace s4q9_2="7100" if s4q9_2=="7136"
-	replace s4q9_2="7100" if s4q9_2=="7141"
-	replace s4q9_2="7200" if s4q9_2=="7211"
-	replace s4q9_2="7200" if s4q9_2=="7212"
-	replace s4q9_2="7200" if s4q9_2=="7221"
-	replace s4q9_2="7200" if s4q9_2=="7223"
-	replace s4q9_2="7200" if s4q9_2=="7229"
-	replace s4q9_2="7200" if s4q9_2=="7230"
-	replace s4q9_2="7200" if s4q9_2=="7231"
-	replace s4q9_2="7200" if s4q9_2=="7240"
-	replace s4q9_2="7200" if s4q9_2=="7245"
-	replace s4q9_2="7200" if s4q9_2=="7292"
-	replace s4q9_2="7300" if s4q9_2=="7331"
-	replace s4q9_2="7300" if s4q9_2=="7341"
-	replace s4q9_2="7400" if s4q9_2=="7411"
-	replace s4q9_2="7400" if s4q9_2=="7412"
-	replace s4q9_2="7400" if s4q9_2=="7413"
-	replace s4q9_2="7400" if s4q9_2=="7415"
-	replace s4q9_2="7400" if s4q9_2=="7419"
-	replace s4q9_2="7400" if s4q9_2=="7422"
-	replace s4q9_2="7400" if s4q9_2=="7423"
-	replace s4q9_2="7400" if s4q9_2=="7432"
-	replace s4q9_2="7400" if s4q9_2=="7433"
-	replace s4q9_2="7400" if s4q9_2=="7435"
-	replace s4q9_2="7400" if s4q9_2=="7444"
-	replace s4q9_2="7400" if s4q9_2=="7482"
-	replace s4q9_2="7400" if s4q9_2=="7499"
-	replace s4q9_2="7500" if s4q9_2=="7511"
-	replace s4q9_2="7500" if s4q9_2=="7520"
-	replace s4q9_2="7500" if s4q9_2=="7523"
-	replace s4q9_2="7000" if s4q9_2=="7601"
-	replace s4q9_2="8000" if s4q9_2=="8050"
-	replace s4q9_2="8000" if s4q9_2=="8052"
-	replace s4q9_2="8000" if s4q9_2=="8090"
-	replace s4q9_2="8100" if s4q9_2=="8113"
-	replace s4q9_2="8200" if s4q9_2=="8222"
-	replace s4q9_2="8000" if s4q9_2=="8322"
-	replace s4q9_2="8000" if s4q9_2=="8330"
-	replace s4q9_2="8400" if s4q9_2=="8424"
-	replace s4q9_2="8400" if s4q9_2=="8433"
-	replace s4q9_2="8400" if s4q9_2=="8490"
-	replace s4q9_2="8500" if s4q9_2=="8511"
-	replace s4q9_2="8500" if s4q9_2=="8512"
-	replace s4q9_2="8500" if s4q9_2=="8519"
-	replace s4q9_2="8500" if s4q9_2=="8531"
-	replace s4q9_2="8500" if s4q9_2=="8532"
-	replace s4q9_2="8700" if s4q9_2=="8741"
-	replace s4q9_2="8800" if s4q9_2=="8821"
-	replace s4q9_2="8800" if s4q9_2=="8850"
-	replace s4q9_2="8800" if s4q9_2=="8899"
-	replace s4q9_2="8000" if s4q9_2=="8920"
-	replace s4q9_2="9000" if s4q9_2=="9009"
-	replace s4q9_2="9100" if s4q9_2=="9113"
-	replace s4q9_2="9100" if s4q9_2=="9121"
-	replace s4q9_2="9100" if s4q9_2=="9162"
-	replace s4q9_2="9100" if s4q9_2=="9191"
-	replace s4q9_2="9100" if s4q9_2=="9199"
-	replace s4q9_2="9200" if s4q9_2=="9221"
-	replace s4q9_2="9300" if s4q9_2=="9302"
-	replace s4q9_2="9500" if s4q9_2=="9502"
-	replace s4q9_2="9500" if s4q9_2=="9528"
-	replace s4q9_2="9500" if s4q9_2=="9574"
-	replace s4q9_2="9600" if s4q9_2=="9606"
-	replace s4q9_2="9600" if s4q9_2=="9607"
-	replace s4q9_2="9600" if s4q9_2=="9620"
-	replace s4q9_2="9600" if s4q9_2=="9662"
-	replace s4q9_2="9700" if s4q9_2=="9799"
-	replace s4q9_2="9800" if s4q9_2=="9850"
-	replace s4q9_2="9900" if s4q9_2=="9902"
-	gen industrycat_isic_year = substr(4 * "0", 1, 4 - length( s4q9_2 )) + s4q9_2
-	replace industrycat_isic_year="" if industrycat_isic_year=="000."
+	gen str industrycat_isic_year     = string(s4q9, "%04.0f")
+	replace industrycat_isic_year = "" if industrycat_isic_year == "."
+	
+	* Corrections - based on the ISIC Code and looking at the ISCO for consistency
+	replace industrycat_isic_year = "0110" if s4q9 == 101
+	replace industrycat_isic_year = "0720" if s4q9 == 702
+	replace industrycat_isic_year = "0100" if s4q9 == 6210 & inlist(s4q8,6210,6211)
+	replace industrycat_isic_year = ""     if s4q9 == 6210 & !inlist(s4q8,6210,6211)
+	replace industrycat_isic_year = "0110" if s4q9 == 1111
+	replace industrycat_isic_year = "0110" if s4q9 == 151
+	replace industrycat_isic_year = "0810" if s4q9 == 801
+	replace industrycat_isic_year = "0100" if s4q9 == 6114 & inrange(s4q8, 6114,6210)
+	replace industrycat_isic_year = ""     if s4q9 == 6114 & !inrange(s4q8, 6114,6210)
+	replace industrycat_isic_year = "0150" if s4q9 == 1505
+	replace industrycat_isic_year = "0100" if s4q9 == 6111 &  inrange(s4q8, 6111,6210)
+	replace industrycat_isic_year = ""     if s4q9 == 6111 & !inrange(s4q8, 6111,6210)
+	replace industrycat_isic_year = "0113" if s4q9 == 1113
+	replace industrycat_isic_year = "9600" if s4q9 == 9606
+	replace industrycat_isic_year = "0150" if s4q9 == 1501
+	replace industrycat_isic_year = "0100" if inrange(s4q9,102,107) & inrange(s4q8, 6100,6299)
+	replace industrycat_isic_year = ""     if inrange(s4q9,102,107) & !inrange(s4q8, 6100,6299)
+	replace industrycat_isic_year = "0100" if s4q9 == 1115 & inrange(s4q8, 6100,6299)
+	replace industrycat_isic_year = "4920" if s4q9 == 492
+	
+	* Other cases cannot assess. Set to missing.
+	replace industrycat_isic_year = "" if inlist(s4q9,902, 5230, 2419, 211, 812, 5149, 191, 152)
+	replace industrycat_isic_year = "" if inlist(s4q9, 5121, 1110, 2331, 6142, 5121)
+	replace industrycat_isic_year = "" if inlist(s4q9,11, 56, 118, 132, 133, 154, 155, 158, 159)
+	replace industrycat_isic_year = "" if inlist(s4q9,171, 172, 173, 181, 182, 192, 201, 202, 219)
+	replace industrycat_isic_year = "" if inlist(s4q9,222, 229, 232, 250, 259, 279, 280, 301, 371)
+	replace industrycat_isic_year = "" if inlist(s4q9,401, 410, 411, 421, 471, 472, 478, 479, 481)
+	replace industrycat_isic_year = "" if inlist(s4q9,490, 501, 522, 530, 562, 571, 574, 601, 622)
+	replace industrycat_isic_year = "" if inlist(s4q9,631, 661, 701, 703, 711, 727, 730, 732, 759)
+	replace industrycat_isic_year = "" if inlist(s4q9,772, 780, 852, 911, 929, 933, 969, 1001, 1011)
+	replace industrycat_isic_year = "" if inlist(s4q9,1016, 1017, 1021, 1029, 1051, 1108, 1112, 1117, 1119)
+	replace industrycat_isic_year = "" if inlist(s4q9,1132, 1134, 1135, 1141, 1157, 1221, 1226, 1291, 1295)
+	replace industrycat_isic_year = "" if inlist(s4q9,1319, 1412, 1472, 1499, 1502, 1504, 1541, 1609, 1624)
+	replace industrycat_isic_year = "" if inlist(s4q9,1626, 1628, 1642, 1659, 1712, 1749, 1821, 2015, 2032)
+	replace industrycat_isic_year = "" if inlist(s4q9,2104, 2122, 2131, 2143, 2214, 2224, 2312, 2319, 2321)
+	replace industrycat_isic_year = "" if inlist(s4q9,2332, 2411, 2412, 2422, 2460, 2479, 2515, 3114, 3118)
+	replace industrycat_isic_year = "" if inlist(s4q9,3120, 3122, 3124, 3152, 3231, 3241, 3317, 3340, 3411)
+	replace industrycat_isic_year = "" if inlist(s4q9,3413, 3419, 3421, 3423, 3429, 3432, 3434, 3439, 3443)
+	replace industrycat_isic_year = "" if inlist(s4q9,3449, 3610, 4000, 4101, 4110, 4111, 4119, 4121, 4137)
+	replace industrycat_isic_year = "" if inlist(s4q9,4142, 4153, 4162, 4215, 4222, 4231, 4281, 4292, 4299)
+	replace industrycat_isic_year = "" if inlist(s4q9,4333, 4422, 4521, 4550, 4602, 4619, 4646, 4701, 4709)
+	replace industrycat_isic_year = "" if inlist(s4q9,4712, 4714, 4717, 4718, 4731, 4733, 4749, 4757, 4775)
+	replace industrycat_isic_year = "" if inlist(s4q9,4779, 4786, 4787, 4788, 4792, 4794, 4820, 4919, 4971)
+	replace industrycat_isic_year = "" if inlist(s4q9,4974, 4977, 4989, 4999, 5029, 5101, 5111, 5112, 5114)
+	replace industrycat_isic_year = "" if inlist(s4q9,5122, 5123, 5129, 5131, 5133, 5141, 5151, 5163, 5169)
+	replace industrycat_isic_year = "" if inlist(s4q9,5190, 5211, 5232, 5252, 5259, 5325, 5411, 5412, 5623)
+	replace industrycat_isic_year = "" if inlist(s4q9,5627, 5721, 5773, 5815, 5830, 5929, 5930, 6021, 6022)
+	replace industrycat_isic_year = "" if inlist(s4q9,6023, 6112, 6113, 6121, 6122, 6123, 6132, 6151, 6154)
+	replace industrycat_isic_year = "" if inlist(s4q9,6211, 6212, 6222, 6230, 6479, 6549, 6712, 6909, 6921)
+	replace industrycat_isic_year = "" if inlist(s4q9,7111, 7112, 7121, 7122, 7124, 7129, 7131, 7136, 7141)
+	replace industrycat_isic_year = "" if inlist(s4q9,7211, 7212, 7221, 7223, 7229, 7230, 7231, 7240, 7245)
+	replace industrycat_isic_year = "" if inlist(s4q9,7292, 7331, 7341, 7411, 7412, 7413, 7415, 7419, 7422)
+	replace industrycat_isic_year = "" if inlist(s4q9,7423, 7432, 7433, 7435, 7436, 7444, 7482, 7499, 7511)
+	replace industrycat_isic_year = "" if inlist(s4q9,7520, 7523, 7601, 8050, 8052, 8090, 8103, 8105, 8113)
+	replace industrycat_isic_year = "" if inlist(s4q9,8222, 8322, 8330, 8424, 8433, 8490, 8511, 8512, 8519)
+	replace industrycat_isic_year = "" if inlist(s4q9,8531, 8532, 8741, 8821, 8850, 8899, 8920, 8991, 9009)
+	replace industrycat_isic_year = "" if inlist(s4q9,9113, 9121, 9162, 9191, 9199, 9221, 9302, 9419, 9441)
+	replace industrycat_isic_year = "" if inlist(s4q9,9502, 9528, 9574, 9607, 9608, 9610, 9620, 9662, 9799)
+	replace industrycat_isic_year = "" if inlist(s4q9,9812, 9826, 9830, 9850, 9902)
+	replace industrycat_isic_year = "" if inlist(s4q9,12, 31, 131, 156, 157, 165, 167, 174, 221)
+	replace industrycat_isic_year = "" if inlist(s4q9,243, 313, 343, 350, 423, 433, 443, 512, 599)
+	replace industrycat_isic_year = "" if inlist(s4q9,602, 612, 707, 712, 722, 726, 728, 792, 813)
+	replace industrycat_isic_year = "" if inlist(s4q9,818, 819, 820, 821, 851, 853, 1014, 1105, 1106)
+	replace industrycat_isic_year = "" if inlist(s4q9,1125, 1131, 1195, 1231, 1372, 1411, 1436, 1503, 1563)
+	replace industrycat_isic_year = "" if inlist(s4q9,1619, 1719, 1789, 1903, 1921, 2005, 2025, 2223, 2229)
+	replace industrycat_isic_year = "" if inlist(s4q9,2315, 2320, 2340, 2446, 2492, 2594, 2799, 2869, 3121)
+	replace industrycat_isic_year = "" if inlist(s4q9,3123, 3221, 3229, 3410, 3609, 3741, 4020, 4030, 4106)
+	replace industrycat_isic_year = "" if inlist(s4q9,4190, 4199, 4221, 4230, 4289, 4331, 4474, 4499, 4642)
+	replace industrycat_isic_year = "" if inlist(s4q9,4713, 4732, 4739, 4744, 4754, 4755, 4777, 4784, 4785)
+	replace industrycat_isic_year = "" if inlist(s4q9,4797, 4852, 4899, 4914, 4925, 4929, 4942, 4944, 4952)
+	replace industrycat_isic_year = "" if inlist(s4q9,4959, 4969, 5219, 5225, 5331, 5429, 5430, 5612, 5624)
+	replace industrycat_isic_year = "" if inlist(s4q9,5632, 5680, 5710, 5711, 5752, 5852, 5952, 6016, 6128)
+	replace industrycat_isic_year = "" if inlist(s4q9,6129, 6140, 6141, 6149, 6162, 6304, 6424, 6466, 6496)
+	replace industrycat_isic_year = "" if inlist(s4q9,6710, 6771, 6905, 7123, 7130, 7181, 7291, 7421, 7442)
+	replace industrycat_isic_year = "" if inlist(s4q9,7474, 7481, 7489, 7491, 8101, 8251, 8310, 8425, 8432)
+	replace industrycat_isic_year = "" if inlist(s4q9,8449, 8450, 8554, 8621, 8640, 8723, 8749, 8791, 8811)
+	replace industrycat_isic_year = "" if inlist(s4q9,8990, 8992, 9111, 9131, 9202, 9219, 9233, 9291, 9323)
+	replace industrycat_isic_year = "" if inlist(s4q9,9406, 9461, 9527, 9539, 9702, 9710, 9821, 9822, 9892)
+
+	* Check that no errors --> using our universe check function, count should be 0 (no obs wrong)
+	* https://github.com/worldbank/gld/tree/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20universe%20check
+	
+	preserve 
+	int_classif_universe, var(industrycat_isic_year) universe(ISIC)
+	count
+	*list
+	assert `r(N)' == 0
+	restore 
+	
+	replace industrycat_isic_year = "" if lstatus_year != 1
 	label var industrycat_isic_year "ISIC code of primary job 12 month recall"
 *</_industrycat_isic_year_>
+
 
 *<_industrycat10_year_>
 	gen byte industrycat10_year = .
@@ -2487,267 +1510,81 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_year_>
-	tostring s3q8, gen(s4q8_2)
-	replace s4q8_2="2300" if s4q8_2=="23"
-	replace s4q8_2="1000" if s4q8_2=="101"
-	replace s4q8_2="1000" if s4q8_2=="102"
-	replace s4q8_2="1000" if s4q8_2=="103"
-	replace s4q8_2="1000" if s4q8_2=="107"
-	replace s4q8_2="1130" if s4q8_2=="113"
-	replace s4q8_2="1140" if s4q8_2=="114"
-	replace s4q8_2="1310" if s4q8_2=="131"
-	replace s4q8_2="1000" if s4q8_2=="146"
-	replace s4q8_2="4100" if s4q8_2=="410"
-	replace s4q8_2="4110" if s4q8_2=="411"
-	replace s4q8_2="4200" if s4q8_2=="429"
-	replace s4q8_2="4000" if s4q8_2=="432"
-	replace s4q8_2="4000" if s4q8_2=="452"
-	replace s4q8_2="4000" if s4q8_2=="471"
-	replace s4q8_2="5200" if s4q8_2=="520"
-	replace s4q8_2="6110" if s4q8_2=="611"
-	replace s4q8_2="6000" if s4q8_2=="692"
-	replace s4q8_2="7000" if s4q8_2=="702"
-	replace s4q8_2="7110" if s4q8_2=="711"
-	replace s4q8_2="7200" if s4q8_2=="729"
-	replace s4q8_2="7320" if s4q8_2=="732"
-	replace s4q8_2="8000" if s4q8_2=="801"
-	replace s4q8_2="8000" if s4q8_2=="802"
-	replace s4q8_2="8000" if s4q8_2=="899"
-	replace s4q8_2="9000" if s4q8_2=="990"
-	replace s4q8_2="1000" if s4q8_2=="1016"
-	replace s4q8_2="1000" if s4q8_2=="1017"
-	replace s4q8_2="1000" if s4q8_2=="1061"
-	replace s4q8_2="1000" if s4q8_2=="1079"
-	replace s4q8_2="1100" if s4q8_2=="1101"
-	replace s4q8_2="1100" if s4q8_2=="1103"
-	replace s4q8_2="1110" if s4q8_2=="1114"
-	replace s4q8_2="1120" if s4q8_2=="1122"
-	replace s4q8_2="1210" if s4q8_2=="1219"
-	replace s4q8_2="1200" if s4q8_2=="1240"
-	replace s4q8_2="1300" if s4q8_2=="1341"
-	replace s4q8_2="1000" if s4q8_2=="1415"
-	replace s4q8_2="1000" if s4q8_2=="1510"
-	replace s4q8_2="1000" if s4q8_2=="1514"
-	replace s4q8_2="1000" if s4q8_2=="1520"
-	replace s4q8_2="1000" if s4q8_2=="1551"
-	replace s4q8_2="1000" if s4q8_2=="1620"
-	replace s4q8_2="1000" if s4q8_2=="1622"
-	replace s4q8_2="1000" if s4q8_2=="1629"
-	replace s4q8_2="1000" if s4q8_2=="1711"
-	replace s4q8_2="1000" if s4q8_2=="1811"
-	replace s4q8_2="1000" if s4q8_2=="1814"
-	replace s4q8_2="2110" if s4q8_2=="2119"
-	replace s4q8_2="2120" if s4q8_2=="2124"
-	replace s4q8_2="2120" if s4q8_2=="2129"
-	replace s4q8_2="2210" if s4q8_2=="2216"
-	replace s4q8_2="2310" if s4q8_2=="2312"
-	replace s4q8_2="2310" if s4q8_2=="2318"
-	replace s4q8_2="2320" if s4q8_2=="2321"
-	replace s4q8_2="2330" if s4q8_2=="2333"
-	replace s4q8_2="2330" if s4q8_2=="2334"
-	replace s4q8_2="2342" if s4q8_2=="2342"
-	replace s4q8_2="2410" if s4q8_2=="2414"
-	replace s4q8_2="2410" if s4q8_2=="2418"
-	replace s4q8_2="2430" if s4q8_2=="2433"
-	replace s4q8_2="2430" if s4q8_2=="2435"
-	replace s4q8_2="2430" if s4q8_2=="2439"
-	replace s4q8_2="2000" if s4q8_2=="2599"
-	replace s4q8_2="2000" if s4q8_2=="2610"
-	replace s4q8_2="2000" if s4q8_2=="2821"
-	replace s4q8_2="2000" if s4q8_2=="2957"
-	replace s4q8_2="3100" if s4q8_2=="3163"
-	replace s4q8_2="3210" if s4q8_2=="3216"
-	replace s4q8_2="3210" if s4q8_2=="3218"
-	replace s4q8_2="3310" if s4q8_2=="3311"
-	replace s4q8_2="3310" if s4q8_2=="3312"
-	replace s4q8_2="3310" if s4q8_2=="3319"
-	replace s4q8_2="3320" if s4q8_2=="3323"
-	replace s4q8_2="3420" if s4q8_2=="3427"
-	replace s4q8_2="3430" if s4q8_2=="3437"
-	replace s4q8_2="3000" if s4q8_2=="3510"
-	replace s4q8_2="3000" if s4q8_2=="3811"
-	replace s4q8_2="3000" if s4q8_2=="3812"
-	replace s4q8_2="4100" if s4q8_2=="4151"
-	replace s4q8_2="4100" if s4q8_2=="4162"
-	replace s4q8_2="4220" if s4q8_2=="4226"
-	replace s4q8_2="4200" if s4q8_2=="4245"
-	replace s4q8_2="4200" if s4q8_2=="4290"
-	replace s4q8_2="4000" if s4q8_2=="4311"
-	replace s4q8_2="4000" if s4q8_2=="4322"
-	replace s4q8_2="4000" if s4q8_2=="4330"
-	replace s4q8_2="4000" if s4q8_2=="4520"
-	replace s4q8_2="4000" if s4q8_2=="4551"
-	replace s4q8_2="4000" if s4q8_2=="4661"
-	replace s4q8_2="4000" if s4q8_2=="4711"
-	replace s4q8_2="4000" if s4q8_2=="4715"
-	replace s4q8_2="4000" if s4q8_2=="4719"
-	replace s4q8_2="4000" if s4q8_2=="4721"
-	replace s4q8_2="4000" if s4q8_2=="4722"
-	replace s4q8_2="4000" if s4q8_2=="4733"
-	replace s4q8_2="4000" if s4q8_2=="4751"
-	replace s4q8_2="4000" if s4q8_2=="4759"
-	replace s4q8_2="4000" if s4q8_2=="4771"
-	replace s4q8_2="4000" if s4q8_2=="4772"
-	replace s4q8_2="4000" if s4q8_2=="4774"
-	replace s4q8_2="4000" if s4q8_2=="4779"
-	replace s4q8_2="4000" if s4q8_2=="4781"
-	replace s4q8_2="4000" if s4q8_2=="4789"
-	replace s4q8_2="4000" if s4q8_2=="4799"
-	replace s4q8_2="4000" if s4q8_2=="4921"
-	replace s4q8_2="4000" if s4q8_2=="4922"
-	replace s4q8_2="4000" if s4q8_2=="4923"
-	replace s4q8_2="5000" if s4q8_2=="5010"
-	replace s4q8_2="5100" if s4q8_2=="5102"
-	replace s4q8_2="5100" if s4q8_2=="5109"
-	replace s4q8_2="5110" if s4q8_2=="5114"
-	replace s4q8_2="5110" if s4q8_2=="5115"
-	replace s4q8_2="5110" if s4q8_2=="5116"
-	replace s4q8_2="5120" if s4q8_2=="5124"
-	replace s4q8_2="5120" if s4q8_2=="5128"
-	replace s4q8_2="5120" if s4q8_2=="5129"
-	replace s4q8_2="5120" if s4q8_2=="5144"
-	replace s4q8_2="5140" if s4q8_2=="5145"
-	replace s4q8_2="5140" if s4q8_2=="5147"
-	replace s4q8_2="5150" if s4q8_2=="5159"
-	replace s4q8_2="5160" if s4q8_2=="5164"
-	replace s4q8_2="5160" if s4q8_2=="5168"
-	replace s4q8_2="5170" if s4q8_2=="5171"
-	replace s4q8_2="5170" if s4q8_2=="5172"
-	replace s4q8_2="5190" if s4q8_2=="5191"
-	replace s4q8_2="5190" if s4q8_2=="5196"
-	replace s4q8_2="5190" if s4q8_2=="5198"
-	replace s4q8_2="5200" if s4q8_2=="5204"
-	replace s4q8_2="5210" if s4q8_2=="5212"
-	replace s4q8_2="5210" if s4q8_2=="5214"
-	replace s4q8_2="5220" if s4q8_2=="5221"
-	replace s4q8_2="5220" if s4q8_2=="5222"
-	replace s4q8_2="5220" if s4q8_2=="5223"
-	replace s4q8_2="5220" if s4q8_2=="5225"
-	replace s4q8_2="5220" if s4q8_2=="5229"
-	replace s4q8_2="5230" if s4q8_2=="5232"
-	replace s4q8_2="5230" if s4q8_2=="5234"
-	replace s4q8_2="5200" if s4q8_2=="5250"
-	replace s4q8_2="5200" if s4q8_2=="5253"
-	replace s4q8_2="5200" if s4q8_2=="5259"
-	replace s4q8_2="5200" if s4q8_2=="5260"
-	replace s4q8_2="5200" if s4q8_2=="5262"
-	replace s4q8_2="5200" if s4q8_2=="5270"
-	replace s4q8_2="5200" if s4q8_2=="5280"
-	replace s4q8_2="5000" if s4q8_2=="5320"
-	replace s4q8_2="5000" if s4q8_2=="5330"
-	replace s4q8_2="5000" if s4q8_2=="5419"
-	replace s4q8_2="5000" if s4q8_2=="5441"
-	replace s4q8_2="5000" if s4q8_2=="5520"
-	replace s4q8_2="5000" if s4q8_2=="5613"
-	replace s4q8_2="5000" if s4q8_2=="5629"
-	replace s4q8_2="5000" if s4q8_2=="5721"
-	replace s4q8_2="5000" if s4q8_2=="5811"
-	replace s4q8_2="5000" if s4q8_2=="5920"
-	replace s4q8_2="5000" if s4q8_2=="5969"
-	replace s4q8_2="6110" if s4q8_2=="6116"
-	replace s4q8_2="6130" if s4q8_2=="6131"
-	replace s4q8_2="6130" if s4q8_2=="6132"
-	replace s4q8_2="6130" if s4q8_2=="6133"
-	replace s4q8_2="6130" if s4q8_2=="6134"
-	replace s4q8_2="6130" if s4q8_2=="6136"
-	replace s4q8_2="6140" if s4q8_2=="6145"
-	replace s4q8_2="6140" if s4q8_2=="6149"
-	replace s4q8_2="6100" if s4q8_2=="6171"
-	replace s4q8_2="6100" if s4q8_2=="6174"
-	replace s4q8_2="6100" if s4q8_2=="6190"
-	replace s4q8_2="6200" if s4q8_2=="6201"
-	replace s4q8_2="6210" if s4q8_2=="6211"
-	replace s4q8_2="6210" if s4q8_2=="6212"
-	replace s4q8_2="6210" if s4q8_2=="6214"
-	replace s4q8_2="6210" if s4q8_2=="6216"
-	replace s4q8_2="6200" if s4q8_2=="6221"
-	replace s4q8_2="6200" if s4q8_2=="6230"
-	replace s4q8_2="6230" if s4q8_2=="6231"
-	replace s4q8_2="6230" if s4q8_2=="6232"
-	replace s4q8_2="6200" if s4q8_2=="6240"
-	replace s4q8_2="6200" if s4q8_2=="6242"
-	replace s4q8_2="6200" if s4q8_2=="6250"
-	replace s4q8_2="6200" if s4q8_2=="6251"
-	replace s4q8_2="6200" if s4q8_2=="6252"
-	replace s4q8_2="6200" if s4q8_2=="6269"
-	replace s4q8_2="6000" if s4q8_2=="6311"
-	replace s4q8_2="6000" if s4q8_2=="6321"
-	replace s4q8_2="6000" if s4q8_2=="6415"
-	replace s4q8_2="6000" if s4q8_2=="6420"
-	replace s4q8_2="6000" if s4q8_2=="6510"
-	replace s4q8_2="6000" if s4q8_2=="6621"
-	replace s4q8_2="6000" if s4q8_2=="6710"
-	replace s4q8_2="6000" if s4q8_2=="6820"
-	replace s4q8_2="6000" if s4q8_2=="6920"
-	replace s4q8_2="6000" if s4q8_2=="6921"
-	replace s4q8_2="7110" if s4q8_2=="7114"
-	replace s4q8_2="7110" if s4q8_2=="7115"
-	replace s4q8_2="7110" if s4q8_2=="7126"
-	replace s4q8_2="7120" if s4q8_2=="7127"
-	replace s4q8_2="7100" if s4q8_2=="7151"
-	replace s4q8_2="7100" if s4q8_2=="7152"
-	replace s4q8_2="7100" if s4q8_2=="7159"
-	replace s4q8_2="7100" if s4q8_2=="7162"
-	replace s4q8_2="7100" if s4q8_2=="7181"
-	replace s4q8_2="7100" if s4q8_2=="7196"
-	replace s4q8_2="7210" if s4q8_2=="7217"
-	replace s4q8_2="7210" if s4q8_2=="7219"
-	replace s4q8_2="7230" if s4q8_2=="7234"
-	replace s4q8_2="7330" if s4q8_2=="7334"
-	replace s4q8_2="7400" if s4q8_2=="7403"
-	replace s4q8_2="7420" if s4q8_2=="7426"
-	replace s4q8_2="7440" if s4q8_2=="7444"
-	replace s4q8_2="7400" if s4q8_2=="7451"
-	replace s4q8_2="7400" if s4q8_2=="7452"
-	replace s4q8_2="7400" if s4q8_2=="7455"
-	replace s4q8_2="7400" if s4q8_2=="7490"
-	replace s4q8_2="7000" if s4q8_2=="7510"
-	replace s4q8_2="7000" if s4q8_2=="7515"
-	replace s4q8_2="7000" if s4q8_2=="7520"
-	replace s4q8_2="7000" if s4q8_2=="7522"
-	replace s4q8_2="7000" if s4q8_2=="7535"
-	replace s4q8_2="7000" if s4q8_2=="7729"
-	replace s4q8_2="7000" if s4q8_2=="7845"
-	replace s4q8_2="7000" if s4q8_2=="7911"
-	replace s4q8_2="8000" if s4q8_2=="8010"
-	replace s4q8_2="8000" if s4q8_2=="8020"
-	replace s4q8_2="8110" if s4q8_2=="8114"
-	replace s4q8_2="8120" if s4q8_2=="8129"
-	replace s4q8_2="8230" if s4q8_2=="8233"
-	replace s4q8_2="8290" if s4q8_2=="8292"
-	replace s4q8_2="8000" if s4q8_2=="8412"
-	replace s4q8_2="8000" if s4q8_2=="8422"
-	replace s4q8_2="8000" if s4q8_2=="8423"
-	replace s4q8_2="8000" if s4q8_2=="8425"
-	replace s4q8_2="8000" if s4q8_2=="8430"
-	replace s4q8_2="8000" if s4q8_2=="8510"
-	replace s4q8_2="8000" if s4q8_2=="8521"
-	replace s4q8_2="8000" if s4q8_2=="8549"
-	replace s4q8_2="8000" if s4q8_2=="8610"
-	replace s4q8_2="8000" if s4q8_2=="8620"
-	replace s4q8_2="8000" if s4q8_2=="8890"
-	replace s4q8_2="8000" if s4q8_2=="8922"
-	replace s4q8_2="9100" if s4q8_2=="9123"
-	replace s4q8_2="9130" if s4q8_2=="9134"
-	replace s4q8_2="9130" if s4q8_2=="9139"
-	replace s4q8_2="9100" if s4q8_2=="9191"
-	replace s4q8_2="9200" if s4q8_2=="9220"
-	replace s4q8_2="9300" if s4q8_2=="9309"
-	replace s4q8_2="9000" if s4q8_2=="9521"
-	replace s4q8_2="9000" if s4q8_2=="9522"
-	replace s4q8_2="9000" if s4q8_2=="9602"
-	replace s4q8_2="9000" if s4q8_2=="9609"
-	replace s4q8_2="9000" if s4q8_2=="9621"
-	replace s4q8_2="9000" if s4q8_2=="9700"
-	replace s4q8_2="9000" if s4q8_2=="9810"
+	gen str occup_isco_year = string(s4q8,     "%04.0f")
+	replace occup_isco_year = "" if occup_isco_year == "." 
+	
+	* Corrections - based on the ISIC Code and looking at the ISCO for consistency
+	replace occup_isco_year = "6130" if s4q8 == 6132
+	replace occup_isco_year = "2300" if s4q8 == 2321 &  inrange(s4q9, 8500,8599)
+	replace occup_isco_year = ""     if s4q8 == 2321 & !inrange(s4q9, 8500,8599)
+	replace occup_isco_year = "6100" if s4q8 == 6133 &  inrange(s4q9,  101, 161)
+	replace occup_isco_year = ""     if s4q8 == 6133 & !inrange(s4q9,  101, 161)
+	replace occup_isco_year = "6100" if s4q8 == 6211
+	replace occup_isco_year = "7200" if s4q8 == 7234
+	replace occup_isco_year = "2400" if s4q8 == 2418
+	replace occup_isco_year = "5100" if s4q8 == 5114
+	replace occup_isco_year = "9300" if s4q8 == 9309
+	
+	* Set to missing cases we cannot sensibly re-code 
+	replace occup_isco_year = "" if inlist(s4q8, 7510, 7520, 4711, 4799, 1240, 8510)
+	replace occup_isco_year = "" if inlist(s4q8,23, 101, 102, 103, 107, 112, 113, 114, 131)
+	replace occup_isco_year = "" if inlist(s4q8,146, 162, 410, 411, 429, 432, 452, 471, 520)
+	replace occup_isco_year = "" if inlist(s4q8,611, 692, 702, 711, 729, 732, 801, 802, 899)
+	replace occup_isco_year = "" if inlist(s4q8,990, 1016, 1017, 1061, 1079, 1101, 1103, 1114, 1122)
+	replace occup_isco_year = "" if inlist(s4q8,1219, 1341, 1391, 1415, 1510, 1514, 1520, 1551, 1620)
+	replace occup_isco_year = "" if inlist(s4q8,1622, 1629, 1711, 1811, 1814, 2119, 2124, 2129, 2214)
+	replace occup_isco_year = "" if inlist(s4q8,2216, 2312, 2318, 2333, 2334, 2342, 2414, 2433, 2435)
+	replace occup_isco_year = "" if inlist(s4q8,2439, 2499, 2599, 2610, 2821, 2957, 3163, 3216, 3218)
+	replace occup_isco_year = "" if inlist(s4q8,3311, 3312, 3319, 3323, 3427, 3437, 3510, 3811, 3812)
+	replace occup_isco_year = "" if inlist(s4q8,4151, 4162, 4226, 4245, 4290, 4311, 4322, 4330, 4520)
+	replace occup_isco_year = "" if inlist(s4q8,4551, 4661, 4715, 4719, 4721, 4722, 4733, 4751, 4759)
+	replace occup_isco_year = "" if inlist(s4q8,4771, 4772, 4774, 4779, 4781, 4782, 4789, 4921, 4922)
+	replace occup_isco_year = "" if inlist(s4q8,4923, 5010, 5102, 5109, 5115, 5116, 5124, 5128, 5129)
+	replace occup_isco_year = "" if inlist(s4q8,5144, 5145, 5147, 5159, 5164, 5168, 5171, 5172, 5182)
+	replace occup_isco_year = "" if inlist(s4q8,5191, 5196, 5198, 5201, 5204, 5212, 5214, 5221, 5222)
+	replace occup_isco_year = "" if inlist(s4q8,5223, 5225, 5229, 5232, 5233, 5234, 5250, 5253, 5259)
+	replace occup_isco_year = "" if inlist(s4q8,5260, 5262, 5270, 5280, 5320, 5330, 5419, 5441, 5520)
+	replace occup_isco_year = "" if inlist(s4q8,5613, 5629, 5721, 5811, 5920, 5969, 6101, 6115, 6116)
+	replace occup_isco_year = "" if inlist(s4q8,6119, 6131, 6134, 6136, 6137, 6144, 6145, 6149, 6169)
+	replace occup_isco_year = "" if inlist(s4q8,6171, 6174, 6190, 6201, 6212, 6213, 6214, 6216, 6221)
+	replace occup_isco_year = "" if inlist(s4q8,6230, 6231, 6232, 6240, 6242, 6250, 6251, 6252, 6269)
+	replace occup_isco_year = "" if inlist(s4q8,6311, 6321, 6415, 6420, 6510, 6621, 6710, 6820, 6920)
+	replace occup_isco_year = "" if inlist(s4q8,6921, 7114, 7115, 7126, 7127, 7151, 7152, 7159, 7162)
+	replace occup_isco_year = "" if inlist(s4q8,7181, 7196, 7217, 7219, 7334, 7403, 7426, 7444, 7451)
+	replace occup_isco_year = "" if inlist(s4q8,7452, 7455, 7490, 7515, 7522, 7535, 7729, 7845, 7911)
+	replace occup_isco_year = "" if inlist(s4q8,8010, 8020, 8114, 8129, 8233, 8292, 8412, 8422, 8423)
+	replace occup_isco_year = "" if inlist(s4q8,8425, 8430, 8521, 8549, 8610, 8620, 8790, 8890, 8922)
+	replace occup_isco_year = "" if inlist(s4q8,9123, 9134, 9139, 9191, 9220, 9521, 9522, 9602, 9609)
+	replace occup_isco_year = "" if inlist(s4q8,9621, 9700, 9731, 9810)
+	replace occup_isco_year = "" if inlist(s4q8,111, 115, 149, 150, 152, 210, 220, 221, 240)
+	replace occup_isco_year = "" if inlist(s4q8,312, 472, 477, 478, 563, 691, 713, 771, 941)
+	replace occup_isco_year = "" if inlist(s4q8,949, 1020, 1050, 1072, 1304, 1321, 1399, 1410, 1412)
+	replace occup_isco_year = "" if inlist(s4q8,1414, 1432, 1433, 1553, 1610, 1614, 1623, 1642, 1652)
+	replace occup_isco_year = "" if inlist(s4q8,2011, 2030, 2311, 2349, 2593, 2640, 2721, 2814, 2824)
+	replace occup_isco_year = "" if inlist(s4q8,3252, 3281, 3322, 3359, 3390, 3580, 3952, 4123, 4183)
+	replace occup_isco_year = "" if inlist(s4q8,4230, 4433, 4522, 4641, 4730, 4788, 4919, 4999, 5020)
+	replace occup_isco_year = "" if inlist(s4q8,5069, 5106, 5125, 5148, 5211, 5215, 5231, 5236, 5269)
+	replace occup_isco_year = "" if inlist(s4q8,5300, 5311, 5321, 5331, 5411, 5422, 5530, 5590, 5610)
+	replace occup_isco_year = "" if inlist(s4q8,5611, 5662, 5769, 6117, 6118, 6127, 6147, 6159, 6162)
+	replace occup_isco_year = "" if inlist(s4q8,6220, 6223, 6253, 6310, 6414, 6425, 6432, 6441, 6450)
+	replace occup_isco_year = "" if inlist(s4q8,6452, 6521, 6771, 6910, 7011, 7239, 7249, 7281, 7381)
+	replace occup_isco_year = "" if inlist(s4q8,7438, 7453, 7476, 7830, 8132, 8362, 8424, 8511, 8512)
+	replace occup_isco_year = "" if inlist(s4q8,8690, 8710, 8822, 9121, 9122, 9129, 9411, 9414, 9610)
+	replace occup_isco_year = "" if inlist(s4q8,9723, 9999)
 
-	replace s4q8_2="2340" if s4q8_2=="2342"
-	replace s4q8_2="5100" if s4q8_2=="5170"
-	replace s4q8_2="5100" if s4q8_2=="5190"
-	replace s4q8_2="6200" if s4q8_2=="6230"
-	gen occup_isco_year = s4q8_2 + substr("0000", 1, 4 - length(s4q8_2))
-	replace occup_isco_year="" if occup_isco_year==".000"
-	label var occup_isco_year "ISCO code of primary job 12 month recall"
+	* Check that no errors --> using our universe check function, count should be 0 (no obs wrong)
+	* https://github.com/worldbank/gld/tree/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20universe%20check
+	
+	preserve 
+	int_classif_universe, var(occup_isco_year) universe(ISCO)
+	count
+	sort instances
+	list
+	assert `r(N)' == 0
+	restore 
+
+	replace occup_isco_year = "" if lstatus_year != 1
+	label var occup_isco_year "ISCO code of primary job 7 day recall"
 *</_occup_isco_year_>
 
 
@@ -2795,7 +1632,10 @@ foreach v of local ed_var {
 
 
 *<_whours_year_>
-	gen whours_year = s4q17
+	* Info in survey is at day level, we want week. Reduce to missing values > 24
+	* Assume 5 days per week 
+	gen whours_year = s4q17*5 if s4q17 <= 24
+	replace whours_year = . if lstatus_year != 1
 	label var whours_year "Hours of work in last week primary job 12 month recall"
 *</_whours_year_>
 
@@ -2814,8 +1654,6 @@ foreach v of local ed_var {
 
 *<_contract_year_>
 	gen byte contract_year = .
-	replace contract_year=1 if inrange(s4q10,1,5) & lstatus==1
-	replace contract_year=0 if s4q10==. & lstatus==1
 	label var contract_year "Employment has contract primary job 12 month recall"
 	la de lblcontract_year 0 "Without contract" 1 "With contract"
 	label values contract_year lblcontract_year
