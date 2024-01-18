@@ -54,6 +54,7 @@
 clear
 set more off
 set mem 800m
+set varabbrev off
 
 *----------1.2: Set directories------------------------------*
 
