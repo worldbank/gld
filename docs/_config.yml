@@ -19,7 +19,7 @@ html:
   baseurl: https://worldbank.github.io/gld/
   extra_footer: |
     <div>
-        <b>All content (unless otherwise specified) is subject to the <a href="https://raw.githubusercontent.com/worldbank/template/main/LICENSE">World Bank Master Community License Agreement.</a></b>
+        <b>All content (unless otherwise specified) is subject to the <a href="https://opensource.org/license/mit/">MIT License.</a></b>
     </div>
 
 #######################################################################################
@@ -42,7 +42,7 @@ sphinx:
 #######################################################################################
 # Parse and render settings
 parse:
-  myst_enable_extensions:  # default extensions to enable in the myst parser. See https://myst-parser.readthedocs.io/en/latest/using/syntax-optional.html
+  myst_enable_extensions: # default extensions to enable in the myst parser. See https://myst-parser.readthedocs.io/en/latest/using/syntax-optional.html
     # - amsmath
     - colon_fence
     # - deflist
@@ -55,4 +55,4 @@ parse:
     - substitution
     - tasklist
   myst_url_schemes: [mailto, http, https] # URI schemes that will be recognised as external URLs in Markdown links
-  myst_dmath_double_inline: true  # Allow display math ($$) within an inline context
+  myst_dmath_double_inline: true # Allow display math ($$) within an inline context
