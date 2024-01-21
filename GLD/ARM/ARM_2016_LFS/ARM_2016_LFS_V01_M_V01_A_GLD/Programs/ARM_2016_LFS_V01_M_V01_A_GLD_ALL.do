@@ -579,9 +579,10 @@ Original categorization of the highest educational level is:
 	replace educy=7 if B15==3
 	replace educy=12 if B15==4
 	replace educy=15 if B15==5
-	replace educy=16 if B15==6|B15==7
+	replace educy=17 if B15==6
+	replace educy=14 if B15==7
 	replace educy=19 if B15==8
-	replace educy=21 if B15==9
+	replace educy=24 if B15==9
 	replace educy=. if age<ed_mod_age
 	replace educy=. if educy>age & !mi(educy) & !mi(age)
 	label var educy "Years of education"
@@ -590,7 +591,7 @@ Original categorization of the highest educational level is:
 
 *<_educat7_>
 	gen byte educat7=B15
-	recode educat7 (8 9=7) 
+	recode educat7 (7=5) (8 9=7) 
 	replace educat7=. if age<ed_mod_age
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
@@ -630,9 +631,9 @@ Original categorization of the highest educational level is:
 	replace educat_isced=100 if B15==3
 	replace educat_isced=244 if B15==4
 	replace educat_isced=344 if B15==5
-	replace educat_isced=354 if B15==6
-	replace educat_isced=660 if B15==7
-	replace educat_isced=860 if B15==8|B15==9
+	replace educat_isced=354 if B15==6|B15==7
+	replace educat_isced=660 if B15==8
+	replace educat_isced=860 if B15==9
 	replace educat_isced=. if age<ed_mod_age
 	label var educat_isced "ISCED standardised level of education"
 *</_educat_isced_>
@@ -854,27 +855,27 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 	gen industrycat_isic=""
 quietly
 {	
-	replace industrycat_isic="A-Agriculture" if D6_21group==1
-	replace industrycat_isic="B-Mining and quarrying" if D6_21group==2
-	replace industrycat_isic="C-Manufacturing" if D6_21group==3
-	replace industrycat_isic="D-Electricity" if D6_21group==4
-	replace industrycat_isic="E-Water supply" if D6_21group==5
-	replace industrycat_isic="F-Construction" if D6_21group==6
-	replace industrycat_isic="G-Wholesale and retale trade" if D6_21group==7
-	replace industrycat_isic="H-Transportation and storage" if D6_21group==8
-	replace industrycat_isic="I-Accommodation and food service activities" if D6_21group==9
-	replace industrycat_isic="J-Information and communication" if D6_21group==10
-	replace industrycat_isic="K-Financial and insurance activities" if D6_21group==11
-	replace industrycat_isic="L-Real estate activities" if D6_21group==12
-	replace industrycat_isic="M-Professional, scientific and technical activities" if D6_21group==13
-	replace industrycat_isic="N-Administrative and support service activities" if D6_21group==14
-	replace industrycat_isic="O-Public administration and defence; compulsory social security" if D6_21group==15
-	replace industrycat_isic="P-Education" if D6_21group==16
-	replace industrycat_isic="Q-Human health and social work activities" if D6_21group==17
-	replace industrycat_isic="R-Arts, entertainment and recreation" if D6_21group==18
-	replace industrycat_isic="S-Other service activites" if D6_21group==19
-	replace industrycat_isic="T-Activities of HH as employers" if D6_21group==20
-	replace industrycat_isic="U-Activities of extraterritorial organizations and bodies" if D6_21group==21
+	replace industrycat_isic="A" if D6_21group==1
+	replace industrycat_isic="B" if D6_21group==2
+	replace industrycat_isic="C" if D6_21group==3
+	replace industrycat_isic="D" if D6_21group==4
+	replace industrycat_isic="E" if D6_21group==5
+	replace industrycat_isic="F" if D6_21group==6
+	replace industrycat_isic="G" if D6_21group==7
+	replace industrycat_isic="H" if D6_21group==8
+	replace industrycat_isic="I" if D6_21group==9
+	replace industrycat_isic="J" if D6_21group==10
+	replace industrycat_isic="K" if D6_21group==11
+	replace industrycat_isic="L" if D6_21group==12
+	replace industrycat_isic="M" if D6_21group==13
+	replace industrycat_isic="N" if D6_21group==14
+	replace industrycat_isic="O" if D6_21group==15
+	replace industrycat_isic="P" if D6_21group==16
+	replace industrycat_isic="Q" if D6_21group==17
+	replace industrycat_isic="R" if D6_21group==18
+	replace industrycat_isic="S" if D6_21group==19
+	replace industrycat_isic="T" if D6_21group==20
+	replace industrycat_isic="U" if D6_21group==21
 }
 
 	replace industrycat_isic="" if industrycat_isic=="."|lstatus!=1
@@ -1138,27 +1139,27 @@ wether an employed respondent had a contract or not.
 	gen industrycat_isic_2=""
 quietly
 {	
-	replace industrycat_isic_2="A-Agriculture" if E26_21group==1
-	replace industrycat_isic_2="B-Mining and quarrying" if E26_21group==2
-	replace industrycat_isic_2="C-Manufacturing" if E26_21group==3
-	replace industrycat_isic_2="D-Electricity" if E26_21group==4
-	replace industrycat_isic_2="E-Water supply" if E26_21group==5
-	replace industrycat_isic_2="F-Construction" if E26_21group==6
-	replace industrycat_isic_2="G-Wholesale and retale trade" if E26_21group==7
-	replace industrycat_isic_2="H-Transportation and storage" if E26_21group==8
-	replace industrycat_isic_2="I-Accommodation and food service activities" if E26_21group==9
-	replace industrycat_isic_2="J-Information and communication" if E26_21group==10
-	replace industrycat_isic_2="K-Financial and insurance activities" if E26_21group==11
-	replace industrycat_isic_2="L-Real estate activities" if E26_21group==12
-	replace industrycat_isic_2="M-Professional, scientific and technical activities" if E26_21group==13
-	replace industrycat_isic_2="N-Administrative and support service activities" if E26_21group==14
-	replace industrycat_isic_2="O-Public administration and defence; compulsory social security" if E26_21group==15
-	replace industrycat_isic_2="P-Education" if E26_21group==16
-	replace industrycat_isic_2="Q-Human health and social work activities" if E26_21group==17
-	replace industrycat_isic_2="R-Arts, entertainment and recreation" if E26_21group==18
-	replace industrycat_isic_2="S-Other service activites" if E26_21group==19
-	replace industrycat_isic_2="T-Activities of HH as employers" if E26_21group==20
-	replace industrycat_isic_2="U-Activities of extraterritorial organizations and bodies" if E26_21group==21
+	replace industrycat_isic_2="A" if E26_21group==1
+	replace industrycat_isic_2="B" if E26_21group==2
+	replace industrycat_isic_2="C" if E26_21group==3
+	replace industrycat_isic_2="D" if E26_21group==4
+	replace industrycat_isic_2="E" if E26_21group==5
+	replace industrycat_isic_2="F" if E26_21group==6
+	replace industrycat_isic_2="G" if E26_21group==7
+	replace industrycat_isic_2="H" if E26_21group==8
+	replace industrycat_isic_2="I" if E26_21group==9
+	replace industrycat_isic_2="J" if E26_21group==10
+	replace industrycat_isic_2="K" if E26_21group==11
+	replace industrycat_isic_2="L" if E26_21group==12
+	replace industrycat_isic_2="M" if E26_21group==13
+	replace industrycat_isic_2="N" if E26_21group==14
+	replace industrycat_isic_2="O" if E26_21group==15
+	replace industrycat_isic_2="P" if E26_21group==16
+	replace industrycat_isic_2="Q" if E26_21group==17
+	replace industrycat_isic_2="R" if E26_21group==18
+	replace industrycat_isic_2="S" if E26_21group==19
+	replace industrycat_isic_2="T" if E26_21group==20
+	replace industrycat_isic_2="U" if E26_21group==21
 }
 
 	replace industrycat_isic_2="" if industrycat_isic_2=="."|E24!=1
