@@ -558,7 +558,7 @@ codes.
 *<_literacy_>
 	gen byte literacy=.
 	replace literacy=0 if B7==1
-	replace literacy=1 if inrange(B7,2,9)
+	replace literacy=1 if inrange(B7,2,11)
 	replace literacy=. if age<ed_mod_age
 	label var literacy "Individual can read & write"
 	la de lblliteracy 0 "No" 1 "Yes"

@@ -458,8 +458,7 @@ other characteristics such as gender and age.
 
 *<_migrated_binary_>
 	gen migrated_binary=.
-	replace migrated_binary=1 if C3==3
-	replace migrated_binary=0 if inlist(C3,1,2)
+	replace migrated_binary=0 if C3==2
 	label de lblmigrated_binary 0 "No" 1 "Yes"
 	replace migrated_binary=. if age<migrated_mod_age
 	label values migrated_binary lblmigrated_binary
@@ -565,7 +564,7 @@ codes.
 *<_literacy_>
 	gen byte literacy=.
 	replace literacy=0 if B7==1
-	replace literacy=1 if inrange(B7,2,9)
+	replace literacy=1 if inrange(B7,2,11)
 	replace literacy=. if age<ed_mod_age
 	label var literacy "Individual can read & write"
 	la de lblliteracy 0 "No" 1 "Yes"
@@ -966,7 +965,7 @@ The general logic here is to impute wage values for people who only answered an 
 range. We used industry, occupation, income categories and gender to estimate their
 specific income values. 
 
-17.33% of total non-missing wage values were imputed using this method.
+18.04% of total non-missing wage values were imputed using this method.
 *<_wage_no_compen_note_>*/
 
 	* Overall --> wage info (here the variable, for us it should be wage_no_compen)

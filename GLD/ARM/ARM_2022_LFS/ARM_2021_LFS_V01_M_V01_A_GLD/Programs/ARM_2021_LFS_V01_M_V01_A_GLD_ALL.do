@@ -4,23 +4,23 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				ARM_2019_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
+<_Program name_>				ARM_2021_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata SE 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
-<_Date created_>				2024-1-05 </_Date created_>
+<_Date created_>				2024-1-10 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						Armenia (ARM) </_Country_>
 <_Survey Title_>				National Labour Force Survey </_Survey Title_>
-<_Survey Year_>					2019 </_Survey Year_>
-<_Study ID_>					ARM_2019_LFS_v01_M </_Study ID_>
-<_Data collection from (M/Y)_>	[01/2019] </_Data collection from (M/Y)_>
-<_Data collection to (M/Y)_>	[12/2019] </_Data collection to (M/Y)_>
-<_Source of dataset_> 			The Armenian 2019 to 2021 data is downloaded from 
+<_Survey Year_>					2021 </_Survey Year_>
+<_Study ID_>					ARM_2021_LFS_v01_M </_Study ID_>
+<_Data collection from (M/Y)_>	[01/2021] </_Data collection from (M/Y)_>
+<_Data collection to (M/Y)_>	[12/2021] </_Data collection to (M/Y)_>
+<_Source of dataset_> 			The Armenian 2021 to 2021 data is downloaded from 
 								the website of Statistical Committee of the 
 								Republic of Armenia:https://armstat.am/en/?nid=212
 								The data is publicly available.</_Source of dataset_>
-<_Sample size (HH)_> 			7,768 </_Sample size (HH)_>
-<_Sample size (IND)_> 		    27,854 </_Sample size (IND)_>
+<_Sample size (HH)_> 			7,776 </_Sample size (HH)_>
+<_Sample size (IND)_> 		    26,923 </_Sample size (IND)_>
 <_Sampling method_> 			A stratified two-stage probability sample design
 								with 14 domains as the primary strata and 18,000 
 								households as the SSU.</_Sampling method_>
@@ -28,7 +28,7 @@
 <_Currency_> 					Armenian Dram </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 19 </_ICLS Version_>
-<_ISCED Version_>				ISCED-2019 </_ISCED Version_>
+<_ISCED Version_>				ISCED-2021 </_ISCED Version_>
 <_ISCO Version_>				ISCO 08 </_ISCO Version_>
 <_OCCUP National_>				NSCO  </_OCCUP National_>
 <_ISIC Version_>				ISIC Rev.4 </_ISIC Version_>
@@ -60,7 +60,7 @@ set mem 800m
 * Define path sections
 local server  "Y:\GLD-Harmonization\573465_JT"
 local country "ARM"
-local year    "2019"
+local year    "2021"
 local survey  "LFS"
 local vermast "V01"
 local veralt  "V01"
@@ -84,8 +84,9 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	 *use "`path_in_stata'\ARM_LFS_2019.dta", clear
-	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\ARM\ARM_2019_LFS\ARM_2019_LFS_v01_M\Data\Stata\ARM_LFS_2019_raw.dta", clear
+	 *use "`path_in_stata'\ARM_LFS_2021.dta", clear
+	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\ARM\ARM_2021_LFS\ARM_2021_LFS_v01_M\Data\Stata\ARM_LFS_2021_raw.dta", clear
+	rename (E2_9groups_ISCO_88 _v1 F2_9groups_ISCO_88 _v2) (E2_9group E4_21group F2_9group F3_21group)
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -191,7 +192,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_weight_>
-	gen weight=Weights_year
+	gen weight=WeightsCalib_year
 	label var weight "Household sampling weight"
 *</_weight_>
 
@@ -334,7 +335,7 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 
 *<_age_>
-	gen age=Age
+	gen age=.
 	replace age=. if Age<0
 	replace age=98 if age>98 & age!=.
 	label var age "Individual age"
@@ -354,14 +355,12 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 /*<_relationharm_note_>
 
-21 households (70 observations) in the raw data set do not have household heads. 
+7 households (27 observations) in the raw data set do not have household heads. 
 Their household IDs are:
 
-001125  001258  001645  002341  002371 
-002389  002391  003182  003346  003368  
-003476  004351  005046  005355  006637
-007039  007188  007295  007570  009403
-012496 
+003331 004606 007502 
+009139 009481 012302 
+012648
 
 During the harmonization, we did not assign household heads to these households. 
 But users can assign household heads based on their relationship to the head and 
@@ -370,7 +369,8 @@ other characteristics such as gender and age.
 *<_relationharm_note_>*/
 
 	gen byte relationharm=B4
-	recode relationharm (6 9=3) (7 8=4) (10=5) (11=6)	
+	recode relationharm (6 9=3) (7 8=4) (10=5) (11=6)
+	replace relationharm=5 if pid=="009002-02"
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm lblrelationharm
@@ -463,27 +463,24 @@ other characteristics such as gender and age.
 	gen migrated_binary=.
 	replace migrated_binary=0 if C3==2
 	label de lblmigrated_binary 0 "No" 1 "Yes"
-	replace migrated_binary=. if age<migrated_mod_age
 	label values migrated_binary lblmigrated_binary
 	label var migrated_binary "Individual has migrated"
 *</_migrated_binary_>                                                                                                                                            
 
 *<_migrated_years_>
 	gen migmonth=.
-	replace migmonth=12-C6+int_month if C7==2018
-	replace migmonth=int_month-C6 if C7==2019
+	replace migmonth=12-C6+int_month if C7==2020
+	replace migmonth=int_month-C6 if C7==2021
     
 	gen migrated_years=.
 	replace migrated_years=round(migmonth/12,0.1)
     replace migrated_years=. if migrated_binary!=1
-    replace migrated_years=. if age<migrated_mod_age
     label var migrated_years "Years since latest migration"
 *</_migrated_years_>
 
 
 *<_migrated_from_urban_>
 	gen migrated_from_urban=.
-	replace migrated_from_urban=. if age<migrated_mod_age
 	label de lblmigrated_from_urban 0 "Rural" 1 "Urban"
 	label values migrated_from_urban lblmigrated_from_urban
 	label var migrated_from_urban "Migrated from area"
@@ -494,7 +491,7 @@ other characteristics such as gender and age.
 	gen migrated_from_cat=.
 	replace migrated_from_cat=5 if inrange(C9,12,17)
 	replace migrated_from_cat=3 if C9!=A3&inrange(C9,1,11)
-	replace migrated_from_cat=. if age<migrated_mod_age|migrated_binary!=1
+	replace migrated_from_cat=. if migrated_binary!=1
 	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country"
 	label values migrated_from_cat lblmigrated_from_cat
 	label var migrated_from_cat "Category of migration area"
@@ -505,7 +502,7 @@ other characteristics such as gender and age.
 	gen migrated_from_code=""
 	decode C9, gen(codehelper)
 	replace migrated_from_code=codehelper if inrange(C9,1,11)
-	replace migrated_from_code="" if age<migrated_mod_age|migrated_binary!=1
+	replace migrated_from_code="" if migrated_binary!=1
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
 *</_migrated_from_code_>
 
@@ -525,16 +522,14 @@ codes.
 	replace migrated_from_country="AZE" if C9==12
 	replace migrated_from_country="RUS" if C9==13
 	replace migrated_from_country="" if migrated_binary!=1
-	replace migrated_from_country="" if age<migrated_mod_age
 	label var migrated_from_country "Code of migration country (ISO 3 Letter Code)"
 *</_migrated_from_country_>
 
 
 *<_migrated_reason_>
 	gen migrated_reason=C8
-	recode migrated_reason (1 2=3) (4=1) (6=2) (8/11=5) 
+	recode migrated_reason (1 2 11=3) (4=1) (6=2) (7=4) (9 10 12=5) 
 	replace migrated_reason=. if migrated_binary!=1
-	replace migrated_reason=. if age<migrated_mod_age
 	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
 	label values migrated_reason lblmigrated_reason
 	label var migrated_reason "Reason for migrating"
@@ -557,7 +552,7 @@ codes.
 *<_school_>
 	gen school=B9
 	recode school (2=0) (3/5=.)
-	replace school=. if age<ed_mod_age & age!=.
+	replace school=. if !inrange(Age_16groups,2,16)
 	label var school "Attending school"
 	la de lblschool 0 "No" 1 "Yes"
 	label values school lblschool
@@ -568,7 +563,7 @@ codes.
 	gen byte literacy=.
 	replace literacy=0 if B7==1
 	replace literacy=1 if inrange(B7,2,11)
-	replace literacy=. if age<ed_mod_age
+	replace literacy=. if !inrange(Age_16groups,2,16)
 	label var literacy "Individual can read & write"
 	la de lblliteracy 0 "No" 1 "Yes"
 	label values literacy lblliteracy
@@ -607,7 +602,7 @@ Original categorization of the highest educational level in the questionnaire is
 	replace educy=21 if B7==9 
 	replace educy=20 if B7==10 
 	replace educy=24 if B7==11
-	replace educy=. if age<ed_mod_age
+	replace educy=. if !inrange(Age_16groups,2,16)
 	replace educy=. if educy>age & !mi(educy) & !mi(age)
 	label var educy "Years of education"
 *</_educy_>
@@ -616,7 +611,7 @@ Original categorization of the highest educational level in the questionnaire is
 *<_educat7_>
 	gen byte educat7=B7
 	recode educat7 (7=5) (8/11=7) 
-	replace educat7=. if age<ed_mod_age
+	replace educat7=. if !inrange(Age_16groups,2,16)
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -626,7 +621,7 @@ Original categorization of the highest educational level in the questionnaire is
 *<_educat5_>
 	gen byte educat5=educat7
 	recode educat5 (4=3) (5=4) (6 7=5)
-	replace educat5=. if age<ed_mod_age	
+	replace educat5=. if !inrange(Age_16groups,2,16)	
 	label var educat5 "Level of education 2"
 	la de lbleducat5 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
 	label values educat5 lbleducat5 
@@ -635,7 +630,7 @@ Original categorization of the highest educational level in the questionnaire is
 
 *<_educat4_>
 	gen byte educat4=educat5
-	replace educat4=. if age<ed_mod_age
+	replace educat4=. if !inrange(Age_16groups,2,16)
 	recode educat4 (3=2) (4=3) (5=4)
 	label var educat4 "Level of education 3"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
@@ -659,7 +654,7 @@ Original categorization of the highest educational level in the questionnaire is
 	replace educat_isced=660 if B7==8
 	replace educat_isced=760 if B7==9|B7==10
 	replace educat_isced=860 if B7==11
-	replace educat_isced=. if age<ed_mod_age
+	replace educat_isced=. if !inrange(Age_16groups,2,16)
 	label var educat_isced "ISCED standardised level of education"
 *</_educat_isced_>
 
@@ -766,8 +761,8 @@ The economically inavtive population also needs to be within the age range of
 	gen byte lstatus=.
 	replace lstatus=1 if D1==1|inrange(D3,1,5)|D4==1|D5==1
 	replace lstatus=2 if lstatus==.&inrange(J9,1,3)
-	replace lstatus=3 if !mi(J1_4group)&lstatus==.
-	replace lstatus=. if !inrange(age,15,75)
+	replace lstatus=3 if !mi(J1_4groups)&lstatus==.
+	replace lstatus=. if !inrange(Age_16groups,4,16)
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
@@ -788,7 +783,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 	gen potential_lf=.
 	replace potential_lf=1 if [(J16==1)&J9==4] | [inrange(J9,1,3)&J16==2]
 	replace potential_lf=0 if [(J16==1)&inrange(J9,1,3)] | [inrange(J9,1,3)&J16==1]
-	replace potential_lf=. if age<minlaborage|[age>75&!mi(age)]
+	replace potential_lf=. if !inrange(Age_16groups,4,16)
 	replace potential_lf=. if lstatus!=3
 	label var potential_lf "Potential labour force status"
 	la de lblpotential_lf 0 "No" 1 "Yes"
@@ -800,7 +795,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 	gen byte underemployment=G4
 	replace underemployment=1 if inrange(G4,1,3)
 	replace underemployment=0 if G4==4
-	replace underemployment=. if age<minlaborage|[age>75&!mi(age)]
+	replace underemployment=. if !inrange(Age_16groups,4,16)
 	replace underemployment=. if lstatus!=1
 	label var underemployment "Underemployment status"
 	la de lblunderemployment 0 "No" 1 "Yes"
@@ -811,7 +806,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 *<_nlfreason_>
 	gen byte nlfreason=J1_4group
 	recode nlfreason (4=5)
-	replace nlfreason=. if age<minlaborage|[age>75&!mi(age)]
+	replace nlfreason=. if !inrange(Age_16groups,4,16)
 	replace nlfreason=. if lstatus!=3
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
@@ -822,7 +817,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 *<_unempldur_l_>
 	gen byte unempldur_l=J4
 	recode unempldur_l (1=0) (2=3) (3=6) (4=9) (5=12) (6=24) (7=36)
-	replace unempldur_l=. if age<minlaborage|[age>75&!mi(age)]
+	replace unempldur_l=. if !inrange(Age_16groups,4,16)
 	replace unempldur_l=. if lstatus!=2
 	label var unempldur_l "Unemployment duration (months) lower bracket"
 *</_unempldur_l_>
@@ -830,8 +825,8 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_unempldur_u_>
 	gen byte unempldur_u=J4
-	recode unempldur_u (1=3) (2=6) (3=9) (4=12) (5=24) (6=36) (7=.)
-	replace unempldur_u=. if age<minlaborage|[age>75&!mi(age)]
+	recode unempldur_u (1=3) (2=6) (3=9) (4=12) (5=24) (6=36) (7 10=.)
+	replace unempldur_u=. if !inrange(Age_16groups,4,16)
 	replace unempldur_u=. if lstatus!=2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
 *</_unempldur_u_>
@@ -844,7 +839,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 {
 *<_empstat_>
 	gen byte empstat=E7
-	recode empstat (2=1) (5=2) 
+	recode empstat (2 6=1) (5=2) 
 	replace empstat=. if lstatus!=1|age<minlaborage
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
@@ -968,11 +963,11 @@ The general logic here is to impute wage values for people who only answered an 
 range. We used industry, occupation, income categories and gender to estimate their
 specific income values. 
 
-17.33% of total non-missing wage values were imputed using this method.
+21.86% of total non-missing wage values were imputed using this method.
 *<_wage_no_compen_note_>*/
 
 	* Overall --> wage info (here the variable, for us it should be wage_no_compen)
-    * to missing if value is 0. Should be 1,521 changes in 2019.
+    * to missing if value is 0. Should be 1,521 changes in 2021.
 	 gen wage14=E14_1+E14_2
      replace wage14=. if wage14==0
 
@@ -1827,6 +1822,6 @@ compress
 *<_% SAVE_>
 
 *save "`path_output'\\`level_2_harm'_ALL.dta", replace
-save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\ARM\ARM_2019_LFS\ARM_2019_LFS_V01_M_V01_A_GLD\Data\Harmonized\ARM_2019_LFS_v01_M_v01_A_GLD_ALL.dta", replace
+save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\ARM\ARM_2021_LFS\ARM_2021_LFS_V01_M_V01_A_GLD\Data\Harmonized\ARM_2021_LFS_v01_M_v01_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>
