@@ -4,23 +4,23 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				ARM_2021_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
+<_Program name_>				ARM_2022_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata SE 16.1 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
-<_Date created_>				2024-1-10 </_Date created_>
+<_Date created_>				2024-1-16 </_Date created_>
 -------------------------------------------------------------------------
 <_Country_>						Armenia (ARM) </_Country_>
 <_Survey Title_>				National Labour Force Survey </_Survey Title_>
-<_Survey Year_>					2021 </_Survey Year_>
-<_Study ID_>					ARM_2021_LFS_v01_M </_Study ID_>
-<_Data collection from (M/Y)_>	[01/2021] </_Data collection from (M/Y)_>
-<_Data collection to (M/Y)_>	[12/2021] </_Data collection to (M/Y)_>
-<_Source of dataset_> 			The Armenian 2021 to 2021 data is downloaded from 
+<_Survey Year_>					2022 </_Survey Year_>
+<_Study ID_>					ARM_2022_LFS_v01_M </_Study ID_>
+<_Data collection from (M/Y)_>	[01/2022] </_Data collection from (M/Y)_>
+<_Data collection to (M/Y)_>	[12/2022] </_Data collection to (M/Y)_>
+<_Source of dataset_> 			The Armenian 2022 to 2022 data is downloaded from 
 								the website of Statistical Committee of the 
 								Republic of Armenia:https://armstat.am/en/?nid=212
 								The data is publicly available.</_Source of dataset_>
-<_Sample size (HH)_> 			7,776 </_Sample size (HH)_>
-<_Sample size (IND)_> 		    26,923 </_Sample size (IND)_>
+<_Sample size (HH)_> 			 </_Sample size (HH)_>
+<_Sample size (IND)_> 		     </_Sample size (IND)_>
 <_Sampling method_> 			A stratified two-stage probability sample design
 								with 14 domains as the primary strata and 18,000 
 								households as the SSU.</_Sampling method_>
@@ -28,7 +28,7 @@
 <_Currency_> 					Armenian Dram </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 19 </_ICLS Version_>
-<_ISCED Version_>				ISCED-2021 </_ISCED Version_>
+<_ISCED Version_>				ISCED-2022 </_ISCED Version_>
 <_ISCO Version_>				ISCO 08 </_ISCO Version_>
 <_OCCUP National_>				NSCO  </_OCCUP National_>
 <_ISIC Version_>				ISIC Rev.4 </_ISIC Version_>
@@ -60,7 +60,7 @@ set mem 800m
 * Define path sections
 local server  "Y:\GLD-Harmonization\573465_JT"
 local country "ARM"
-local year    "2021"
+local year    "2022"
 local survey  "LFS"
 local vermast "V01"
 local veralt  "V01"
@@ -84,9 +84,9 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	 *use "`path_in_stata'\ARM_LFS_2021.dta", clear
-	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\ARM\ARM_2021_LFS\ARM_2021_LFS_v01_M\Data\Stata\ARM_LFS_2021_raw.dta", clear
-	rename (E2_9groups_ISCO_88 _v1 F2_9groups_ISCO_88 _v2) (E2_9group E4_21group F2_9group F3_21group)
+	 *use "`path_in_stata'\ARM_LFS_2022.dta", clear
+	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\ARM\ARM_2022_LFS\ARM_2022_LFS_v01_M\Data\Stata\ARM_LFS_2022_raw.dta", clear
+	rename (_v1 _v2) (E4_21group F3_21group)
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -183,7 +183,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_pid_>
-	sort hhid B12
+	sort hhid B4
 	bys hhid: gen memberid=_n
 	tostring memberid, gen(id_str) format(%02.0f)
 	egen pid=concat(hhid id_str), punct("-")
@@ -470,7 +470,7 @@ other characteristics such as gender and age.
 *<_migrated_years_>
 	gen migmonth=.
 	replace migmonth=12-C6+int_month if C7==2020
-	replace migmonth=int_month-C6 if C7==2021
+	replace migmonth=int_month-C6 if C7==2022
     
 	gen migrated_years=.
 	replace migrated_years=round(migmonth/12,0.1)
@@ -967,7 +967,7 @@ specific income values.
 *<_wage_no_compen_note_>*/
 
 	* Overall --> wage info (here the variable, for us it should be wage_no_compen)
-    * to missing if value is 0. Should be 1,521 changes in 2021.
+    * to missing if value is 0. Should be 1,521 changes in 2022.
 	 gen wage14=E14_1+E14_2
      replace wage14=. if wage14==0
 
@@ -1822,6 +1822,6 @@ compress
 *<_% SAVE_>
 
 *save "`path_output'\\`level_2_harm'_ALL.dta", replace
-save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\ARM\ARM_2021_LFS\ARM_2021_LFS_V01_M_V01_A_GLD\Data\Harmonized\ARM_2021_LFS_v01_M_v01_A_GLD_ALL.dta", replace
+save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\ARM\ARM_2022_LFS\ARM_2022_LFS_V01_M_V01_A_GLD\Data\Harmonized\ARM_2022_LFS_v01_M_v01_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>
