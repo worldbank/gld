@@ -182,7 +182,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_pid_>
-	sort hhid B12
+	sort hhid B4
 	bys hhid: gen memberid=_n
 	tostring memberid, gen(id_str) format(%02.0f)
 	egen pid=concat(hhid id_str), punct("-")

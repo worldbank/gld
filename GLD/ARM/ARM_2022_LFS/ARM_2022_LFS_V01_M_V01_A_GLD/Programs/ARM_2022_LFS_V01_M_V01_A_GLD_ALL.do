@@ -19,8 +19,8 @@
 								the website of Statistical Committee of the 
 								Republic of Armenia:https://armstat.am/en/?nid=212
 								The data is publicly available.</_Source of dataset_>
-<_Sample size (HH)_> 			 </_Sample size (HH)_>
-<_Sample size (IND)_> 		     </_Sample size (IND)_>
+<_Sample size (HH)_> 			7,760 </_Sample size (HH)_>
+<_Sample size (IND)_> 		    27,218 </_Sample size (IND)_>
 <_Sampling method_> 			A stratified two-stage probability sample design
 								with 14 domains as the primary strata and 18,000 
 								households as the SSU.</_Sampling method_>
@@ -336,7 +336,6 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 *<_age_>
 	gen age=.
-	replace age=. if Age<0
 	replace age=98 if age>98 & age!=.
 	label var age "Individual age"
 *</_age_>
@@ -355,12 +354,12 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 /*<_relationharm_note_>
 
-7 households (27 observations) in the raw data set do not have household heads. 
+11 households (27 observations) in the raw data set do not have household heads. 
 Their household IDs are:
 
-003331 004606 007502 
-009139 009481 012302 
-012648
+002302 003209 004284 004374 005174
+006051 006649 011184 011479 011481
+012402
 
 During the harmonization, we did not assign household heads to these households. 
 But users can assign household heads based on their relationship to the head and 
@@ -370,7 +369,6 @@ other characteristics such as gender and age.
 
 	gen byte relationharm=B4
 	recode relationharm (6 9=3) (7 8=4) (10=5) (11=6)
-	replace relationharm=5 if pid=="009002-02"
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm lblrelationharm
@@ -469,7 +467,7 @@ other characteristics such as gender and age.
 
 *<_migrated_years_>
 	gen migmonth=.
-	replace migmonth=12-C6+int_month if C7==2020
+	replace migmonth=12-C6+int_month if C7==2021
 	replace migmonth=int_month-C6 if C7==2022
     
 	gen migrated_years=.
@@ -528,7 +526,7 @@ codes.
 
 *<_migrated_reason_>
 	gen migrated_reason=C8
-	recode migrated_reason (1 2 11=3) (4=1) (6=2) (7=4) (9 10 12=5) 
+	recode migrated_reason (1 2 11=3) (4=1) (6=2) (7=4) (9 10=5) 
 	replace migrated_reason=. if migrated_binary!=1
 	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
 	label values migrated_reason lblmigrated_reason
@@ -761,7 +759,7 @@ The economically inavtive population also needs to be within the age range of
 	gen byte lstatus=.
 	replace lstatus=1 if D1==1|inrange(D3,1,5)|D4==1|D5==1
 	replace lstatus=2 if lstatus==.&inrange(J9,1,3)
-	replace lstatus=3 if !mi(J1_4groups)&lstatus==.
+	replace lstatus=3 if !mi(J1_4group)&lstatus==.
 	replace lstatus=. if !inrange(Age_16groups,4,16)
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -825,7 +823,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 
 *<_unempldur_u_>
 	gen byte unempldur_u=J4
-	recode unempldur_u (1=3) (2=6) (3=9) (4=12) (5=24) (6=36) (7 10=.)
+	recode unempldur_u (1=3) (2=6) (3=9) (4=12) (5=24) (6=36) (7=.)
 	replace unempldur_u=. if !inrange(Age_16groups,4,16)
 	replace unempldur_u=. if lstatus!=2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
@@ -840,7 +838,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 *<_empstat_>
 	gen byte empstat=E7
 	recode empstat (2 6=1) (5=2) 
-	replace empstat=. if lstatus!=1|age<minlaborage
+	replace empstat=. if lstatus!=1|!inrange(Age_16groups,4,16)
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat lblempstat
@@ -850,7 +848,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 *<_ocusec_>
 	gen byte ocusec=E10
 	recode ocusec (3 4=2)
-	replace ocusec=. if lstatus!=1|age<minlaborage
+	replace ocusec=. if lstatus!=1|!inrange(Age_16groups,4,16)
 	label var ocusec "Sector of activity primary job 7 day recall"
 	la de lblocusec 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec lblocusec
@@ -917,7 +915,7 @@ quietly
 
 *<_occup_orig_>
 	gen occup_orig=E2_9group
-	replace occup_orig=. if lstatus!=1|[age>75&!mi(age)]
+	replace occup_orig=. if lstatus!=1|!inrange(Age_16groups,4,16)
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
@@ -943,7 +941,7 @@ quietly
 
 *<_occup_>
 	 gen occup=E2_9group
-	 replace occup=. if lstatus!=1|[age>75&!mi(age)]
+	 replace occup=. if lstatus!=1|!inrange(Age_16groups,4,16)
 	 label var occup "1 digit occupational classification, primary job 7 day recall"
   	 la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	 label values occup lbloccup
@@ -963,7 +961,7 @@ The general logic here is to impute wage values for people who only answered an 
 range. We used industry, occupation, income categories and gender to estimate their
 specific income values. 
 
-21.86% of total non-missing wage values were imputed using this method.
+26.35% of total non-missing wage values were imputed using this method.
 *<_wage_no_compen_note_>*/
 
 	* Overall --> wage info (here the variable, for us it should be wage_no_compen)
@@ -1326,7 +1324,7 @@ main job. However, the data set does not have the variables.
 {
 *<_lstatus_year_>
 	gen byte lstatus_year=.
-	replace lstatus_year=. if age<minlaborage
+	replace lstatus_year=. if !inrange(Age_16groups,4,16)
 	label var lstatus_year "Labor status during last year"
 	la de lbllstatus_year 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus_year lbllstatus_year
@@ -1335,7 +1333,7 @@ main job. However, the data set does not have the variables.
 
 *<_potential_lf_year_>
 	gen byte potential_lf_year=.
-	replace potential_lf_year=. if age<minlaborage
+	replace potential_lf_year=. if !inrange(Age_16groups,4,16)
 	replace potential_lf_year=. if lstatus_year!=3
 	label var potential_lf_year "Potential labour force status"
 	la de lblpotential_lf_year 0 "No" 1 "Yes"
@@ -1345,7 +1343,7 @@ main job. However, the data set does not have the variables.
 
 *<_underemployment_year_>
 	gen byte underemployment_year=.
-	replace underemployment_year=. if age<minlaborage&age!=.
+	replace underemployment_year=. if !inrange(Age_16groups,4,16)
 	replace underemployment_year=. if lstatus_year==1
 	label var underemployment_year "Underemployment status"
 	la de lblunderemployment_year 0 "No" 1 "Yes"

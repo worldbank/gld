@@ -183,7 +183,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_pid_>
-	sort hhid B12
+	sort hhid B4
 	bys hhid: gen memberid=_n
 	tostring memberid, gen(id_str) format(%02.0f)
 	egen pid=concat(hhid id_str), punct("-")
@@ -840,7 +840,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 *<_empstat_>
 	gen byte empstat=E7
 	recode empstat (2 6=1) (5=2) 
-	replace empstat=. if lstatus!=1|age<minlaborage
+	replace empstat=. if lstatus!=1|!inrange(Age_16groups,4,16)
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat lblempstat
@@ -850,7 +850,7 @@ Note: var "potential_lf" only takes value if the respondent is not in labor forc
 *<_ocusec_>
 	gen byte ocusec=E10
 	recode ocusec (3 4=2)
-	replace ocusec=. if lstatus!=1|age<minlaborage
+	replace ocusec=. if lstatus!=1|!inrange(Age_16groups,4,16)
 	label var ocusec "Sector of activity primary job 7 day recall"
 	la de lblocusec 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec lblocusec
@@ -917,7 +917,7 @@ quietly
 
 *<_occup_orig_>
 	gen occup_orig=E2_9group
-	replace occup_orig=. if lstatus!=1|[age>75&!mi(age)]
+	replace occup_orig=. if lstatus!=1|!inrange(Age_16groups,4,16)
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
@@ -943,7 +943,7 @@ quietly
 
 *<_occup_>
 	 gen occup=E2_9group
-	 replace occup=. if lstatus!=1|[age>75&!mi(age)]
+	 replace occup=. if lstatus!=1|!inrange(Age_16groups,4,16)
 	 label var occup "1 digit occupational classification, primary job 7 day recall"
   	 la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	 label values occup lbloccup
@@ -1326,7 +1326,7 @@ main job. However, the data set does not have the variables.
 {
 *<_lstatus_year_>
 	gen byte lstatus_year=.
-	replace lstatus_year=. if age<minlaborage
+	replace lstatus_year=. if !inrange(Age_16groups,4,16)
 	label var lstatus_year "Labor status during last year"
 	la de lbllstatus_year 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus_year lbllstatus_year
@@ -1335,7 +1335,7 @@ main job. However, the data set does not have the variables.
 
 *<_potential_lf_year_>
 	gen byte potential_lf_year=.
-	replace potential_lf_year=. if age<minlaborage
+	replace potential_lf_year=. if !inrange(Age_16groups,4,16)
 	replace potential_lf_year=. if lstatus_year!=3
 	label var potential_lf_year "Potential labour force status"
 	la de lblpotential_lf_year 0 "No" 1 "Yes"
@@ -1345,7 +1345,7 @@ main job. However, the data set does not have the variables.
 
 *<_underemployment_year_>
 	gen byte underemployment_year=.
-	replace underemployment_year=. if age<minlaborage&age!=.
+	replace underemployment_year=. if !inrange(Age_16groups,4,16)&age!=.
 	replace underemployment_year=. if lstatus_year==1
 	label var underemployment_year "Underemployment status"
 	la de lblunderemployment_year 0 "No" 1 "Yes"
