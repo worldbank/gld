@@ -729,7 +729,7 @@ The age range for the labor section is 15-75.
 	gen byte lstatus=.
 	replace lstatus=1 if G1==1|inrange(G3,1,5)|inrange(G4,1,2)
 	replace lstatus=2 if lstatus==.&inrange(Z57,1,2)
-	replace lstatus=3 if !mi(Z49_4group)
+	replace lstatus=3 if lstatus==.&!mi(Z49_4group)
 	replace lstatus=. if age<minlaborage|[age>75&!mi(age)]
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
