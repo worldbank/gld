@@ -335,8 +335,18 @@ subnatid1_prev is coded as missing unless the classification used for subnatid1 
 
 
 *<_age_>
+
+/*<_age_note_>
+
+Because the raw data in 2021 and 2022 do not have each observation's actual age, 
+and instead, they only have age in age groups. Here we coded age using the mean of 
+each age group to proceed with other variables and our quality checks. Therefore,
+the age variable only represents the age group the observation is in.   
+
+*<_age_note_>*/
+
 	gen age=.
-	replace age=. if Age<0
+	replace age=(Age_16groups-1)*5+2
 	replace age=98 if age>98 & age!=.
 	label var age "Individual age"
 *</_age_>
