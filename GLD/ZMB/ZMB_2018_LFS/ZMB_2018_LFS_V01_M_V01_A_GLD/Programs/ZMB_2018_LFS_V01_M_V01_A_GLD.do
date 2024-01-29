@@ -281,16 +281,16 @@ use "`path_in_stata'/2018LFS.dta", clear
 
 </_subnatid1_note> */
 	gen str subnatid1 = ""
-	replace subnatid1 = " 1 - Central" if prov==1
-	replace subnatid1 = " 2 - Copperbelt" if prov==2
-	replace subnatid1 = " 3 - Eastern" if prov==3
-	replace subnatid1 = " 4 - Luapula" if prov==4
-	replace subnatid1 = " 5 - Lusaka" if prov==5
-	replace subnatid1 = " 6 - Muchinga" if prov==6
-	replace subnatid1 = " 7 - Northern" if prov==7
-	replace subnatid1 = " 8 - North Western" if prov==8
-	replace subnatid1 = " 9 - Southern" if prov==9
-	replace subnatid1 = " 10 - Western" if prov==10
+	replace subnatid1 = "1 - Central" if prov==1
+	replace subnatid1 = "2 - Copperbelt" if prov==2
+	replace subnatid1 = "3 - Eastern" if prov==3
+	replace subnatid1 = "4 - Luapula" if prov==4
+	replace subnatid1 = "5 - Lusaka" if prov==5
+	replace subnatid1 = "6 - Muchinga" if prov==6
+	replace subnatid1 = "7 - Northern" if prov==7
+	replace subnatid1 = "8 - North Western" if prov==8
+	replace subnatid1 = "9 - Southern" if prov==9
+	replace subnatid1 = "10 - Western" if prov==10
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 
@@ -750,17 +750,20 @@ foreach v of local ed_var {
 	* Then add those in farming or agriculture with 50%+ market exchange
 	replace lstatus = 1 if inlist(c3c,1,2)
 	
-	* Additionally, there are 755 respondents that are not employed by the
+	* Additionally, there are 738 respondents that are not employed by the
 	* above yet have answers to section D. The raw data has variable emp
 	* for employed. Oddly, there seems to be no rhyme or reason to why
-	* about half of these 755 are employed, half are not. Urban respondents 
-	* are more likley, but that is about it. For example, all but 8 of
-	* these has answers to the empstat question (d7). We use a more expansive 
-	* definition here. Will have higher employment than report (about 150K more)
+	* about half of these (376) are employed. 
 	
-	gen odd_employees = missing(lstatus) & !missing(d7) & !inrange(c3c,3,4) & age > 14
-	replace lstatus = 1 if odd_employees == 1
+	* Below the code if one would like to add them to the employed (all)
+	*gen odd_employees = missing(lstatus) & !missing(d7) & !inrange(c3c,3,4) & age > 14
+	*replace lstatus = 1 if odd_employees == 1
+	
+	* Below the code if one would like to add only the ones the stats office coded
+	* tab odd_employees emp,m 
+	* replace lstatus = 1 if emp == 1 & mi(lstatus)
 
+	* We proceed with purely the survey
 	replace lstatus = 2 if g1==1 & inrange(g4,1,2) & missing(lstatus)
 	replace lstatus = 3 if missing(lstatus)
 	replace lstatus = . if age < minlaborage
