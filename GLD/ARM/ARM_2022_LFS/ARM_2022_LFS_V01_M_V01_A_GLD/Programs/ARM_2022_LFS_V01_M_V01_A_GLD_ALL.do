@@ -907,7 +907,7 @@ quietly
 
 *<_industrycat10_>
 	gen industrycat10=E4_21group
-	recode industrycat10 (5=4) (6=5) (7 8=6) (9 10=7) (11/14=8) (15=9) (16/21=10)
+	recode industrycat10 (5=4) (6=5) (7 9=6) (8 10=7) (11/14=8) (15=9) (16/21=10)
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
@@ -1188,7 +1188,7 @@ quietly
 
 *<_industrycat10_2_>
 	gen industrycat10_2=F3_21group
-	recode industrycat10_2 (5=4) (6=5) (7 8=6) (9 10=7) (11/14=8) (15=9) (16/21=10)
+	recode industrycat10_2 (5=4) (6=5) (7 9=6) (8 10=7) (11/14=8) (15=9) (16/21=10)
 	replace industrycat10_2=. if lstatus!=1|F1!=1
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
