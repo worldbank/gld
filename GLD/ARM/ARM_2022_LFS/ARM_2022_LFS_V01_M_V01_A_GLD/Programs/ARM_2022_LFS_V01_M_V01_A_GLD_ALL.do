@@ -84,9 +84,8 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	 *use "`path_in_stata'\ARM_LFS_2022.dta", clear
-	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\ARM\ARM_2022_LFS\ARM_2022_LFS_v01_M\Data\Stata\ARM_LFS_2022_raw.dta", clear
-	rename (_v1 _v2) (E4_21group F3_21group)
+	 use "`path_in_stata'\ARM_LFS_2022.dta", clear
+     rename (_v1 _v2) (E4_21group F3_21group)
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -1830,7 +1829,6 @@ compress
 
 *<_% SAVE_>
 
-*save "`path_output'\\`level_2_harm'_ALL.dta", replace
-save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\ARM\ARM_2022_LFS\ARM_2022_LFS_V01_M_V01_A_GLD\Data\Harmonized\ARM_2022_LFS_v01_M_v01_A_GLD_ALL.dta", replace
+save "`path_output'\\`level_2_harm'_ALL.dta", replace
 
 *</_% SAVE_>

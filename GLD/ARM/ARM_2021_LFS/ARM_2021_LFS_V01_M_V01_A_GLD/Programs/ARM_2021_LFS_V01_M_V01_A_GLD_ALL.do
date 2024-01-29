@@ -84,8 +84,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	 *use "`path_in_stata'\ARM_LFS_2021.dta", clear
-	use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\ARM\ARM_2021_LFS\ARM_2021_LFS_v01_M\Data\Stata\ARM_LFS_2021_raw.dta", clear
+	use "`path_in_stata'\ARM_LFS_2021.dta", clear
 	rename (E2_9groups_ISCO_88 _v1 F2_9groups_ISCO_88 _v2) (E2_9group E4_21group F2_9group F3_21group)
 
 /*%%=============================================================================================
@@ -908,7 +907,7 @@ quietly
 
 *<_industrycat10_>
 	gen industrycat10=E4_21group
-	recode industrycat10 (5=4) (6=5) (7 8=6) (9 10=7) (11/14=8) (15=9) (16/21=10)
+	recode industrycat10 (5=4) (6=5) (7 9=6) (8 10=7) (11/14=8) (15=9) (16/21=10)
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
@@ -1189,7 +1188,7 @@ quietly
 
 *<_industrycat10_2_>
 	gen industrycat10_2=F3_21group
-	recode industrycat10_2 (5=4) (6=5) (7 8=6) (9 10=7) (11/14=8) (15=9) (16/21=10)
+	recode industrycat10_2 (5=4) (6=5) (7 9=6) (8 10=7) (11/14=8) (15=9) (16/21=10)
 	replace industrycat10_2=. if lstatus!=1|F1!=1
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
@@ -1831,7 +1830,6 @@ compress
 
 *<_% SAVE_>
 
-*save "`path_output'\\`level_2_harm'_ALL.dta", replace
-save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\ARM\ARM_2021_LFS\ARM_2021_LFS_V01_M_V01_A_GLD\Data\Harmonized\ARM_2021_LFS_v01_M_v01_A_GLD_ALL.dta", replace
+save "`path_output'\\`level_2_harm'_ALL.dta", replace
 
 *</_% SAVE_>
