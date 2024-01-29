@@ -293,16 +293,16 @@ use "`path_in_stata'/2021LFS.dta", clear
 
 </_subnatid1_note> */
 	gen str subnatid1 = ""
-	replace subnatid1 = " 1 - Central" if prov==1
-	replace subnatid1 = " 2 - Copperbelt" if prov==2
-	replace subnatid1 = " 3 - Eastern" if prov==3
-	replace subnatid1 = " 4 - Luapula" if prov==4
-	replace subnatid1 = " 5 - Lusaka" if prov==5
-	replace subnatid1 = " 6 - Muchinga" if prov==6
-	replace subnatid1 = " 7 - Northern" if prov==7
-	replace subnatid1 = " 8 - North Western" if prov==8
-	replace subnatid1 = " 9 - Southern" if prov==9
-	replace subnatid1 = " 10 - Western" if prov==10
+	replace subnatid1 = "1 - Central" if prov==1
+	replace subnatid1 = "2 - Copperbelt" if prov==2
+	replace subnatid1 = "3 - Eastern" if prov==3
+	replace subnatid1 = "4 - Luapula" if prov==4
+	replace subnatid1 = "5 - Lusaka" if prov==5
+	replace subnatid1 = "6 - Muchinga" if prov==6
+	replace subnatid1 = "7 - Northern" if prov==7
+	replace subnatid1 = "8 - North Western" if prov==8
+	replace subnatid1 = "9 - Southern" if prov==9
+	replace subnatid1 = "10 - Western" if prov==10
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 
