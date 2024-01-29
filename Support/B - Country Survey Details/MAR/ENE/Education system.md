@@ -23,3 +23,4 @@ For all the rounds, people without diploma (*sans diplôme*) are mapped to "no e
 
 The implication of this switch from a detailed to a broad classification system is the inability to determine "secondary incomplete". As shown in the chart below, "secondary incomplete" is absorbed by the category "primary complete" in the rounds 2014 onwards. For consistency in the breakdown, users are advised to use `educat5` or `educat4`.
 
+![Screenshot of educat7](Utilities/MAR_educat7.png)
