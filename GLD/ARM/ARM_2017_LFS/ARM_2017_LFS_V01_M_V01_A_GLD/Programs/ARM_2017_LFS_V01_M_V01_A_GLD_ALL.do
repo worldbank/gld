@@ -27,7 +27,7 @@
 <_Geographic coverage_> 		All 11 regions/marzes. </_Geographic coverage_>
 <_Currency_> 					Armenian Dram </_Currency_>
 -----------------------------------------------------------------------
-<_ICLS Version_>				ICLS 19 </_ICLS Version_>
+<_ICLS Version_>				ICLS 13 </_ICLS Version_>
 <_ISCED Version_>				ISCED-2017 </_ISCED Version_>
 <_ISCO Version_>				ISCO 08 </_ISCO Version_>
 <_OCCUP National_>				NSCO  </_OCCUP National_>
@@ -112,7 +112,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_icls_v_>
-	gen icls_v="ICLS-19"
+	gen icls_v="ICLS-13"
 	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
 
