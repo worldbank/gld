@@ -9,26 +9,26 @@ All years used ISIC Rev.4 in the raw datasets. Hence, all of their original indu
 | **Major Group Letter**	| **Industry Name**	| **10-Group Categorization**	| **4-Group Categorization**	|
 |:-----------------------:|:-----------------:|:---------------------------:|:---------------------------:|	 	
 | A | A-Agriculture | Agriculture | Agriculture |
-| B | B-Mining and quarrying | Mining | Agriculture |
-| c | C-Manufacturing | Manufacturing | Agriculture |
-| D | D-Electricity | Public Utilities | Agriculture |
-| E | E-Water supply | Public Utilities | Agriculture |
-| F | F-Construction | Construction | Agriculture |
-| G | G-Wholesale and retale trade | Commerce | Agriculture |
-| H | H-Transportation and storage | Transport & Communication | Agriculture |
-| I | I-Accommodation and food service activities | Commerce | Agriculture |
-| J | J-Information and communication | Transport & Communication | Agriculture |
-| K | K-Financial and insurance activities | Financial & Business Services | Agriculture |
-| L | L-Real estate activities | Financial & Business Services | Agriculture |
-| M | M-Professional, scientific and technical activities | Financial & Business Services | Agriculture |
-| N | N-Administrative and support service activities | Financial & Business Services | Agriculture |
-| O | O-Public administration and defence; compulsory social security | Public Administration | Agriculture |
-| P | P-Education | Other | Agriculture |
-| Q | Q-Human health and social work activities | Other | Agriculture |
-| R | R-Arts, entertainment and recreation | Other | Agriculture |
-| S | S-Other service activites | Other | Agriculture |
-| T | T-Activities of HH as employers | Other | Agriculture |
-| U | U-Activities of extraterritorial organizations and bodies | Other | Agriculture |
+| B | B-Mining and quarrying | Mining | Industry |
+| C | C-Manufacturing | Manufacturing | Industry |
+| D | D-Electricity | Public Utilities | Industry |
+| E | E-Water supply | Public Utilities | Industry |
+| F | F-Construction | Construction | Industry |
+| G | G-Wholesale and retale trade | Commerce | Services |
+| H | H-Transportation and storage | Transport & Communication | Services |
+| I | I-Accommodation and food service activities | Commerce | Services |
+| J | J-Information and communication | Transport & Communication | Services |
+| K | K-Financial and insurance activities | Financial & Business Services | Services |
+| L | L-Real estate activities | Financial & Business Services | Services |
+| M | M-Professional, scientific and technical activities | Financial & Business Services | Services |
+| N | N-Administrative and support service activities | Financial & Business Services | Services |
+| O | O-Public administration and defence; compulsory social security | Public Administration | Services|
+| P | P-Education | Other | Other |
+| Q | Q-Human health and social work activities | Other | Other |
+| R | R-Arts, entertainment and recreation | Other | Other |
+| S | S-Other service activites | Other | Other |
+| T | T-Activities of HH as employers | Other | Other |
+| U | U-Activities of extraterritorial organizations and bodies | Other | Other |
 
 **Occupation**
 
