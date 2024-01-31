@@ -30,6 +30,8 @@ All years used ISIC Rev.4 in the raw datasets. Hence, all of their original indu
 | T | T-Activities of HH as employers | Other | Other |
 | U | U-Activities of extraterritorial organizations and bodies | Other | Other |
 
+The "Major Group Letter" column is the only infomation contained in the original industry variables; "Industry Name" is from ISIC Rev.4 to match the letters in the raw datasets; "10-Group Categorization" shows how we mapped the letters in the raw datasets to our GLD variable `industrycat10` whereas "4-Group Categorization" shows mapping from 10-group to a broader level categorization. 
+
 **Occupation**
 
 Mapping occupational codes takes longer since SLSCO-08 and ISCO-08 have more discrepancies than industry dose. SLSCO-08 has very similar structure and classification at the major group, or the three-digit level. SLSCO-08 is mainly different from ISCO in that below each four-digit subgroup where five-digit minor groups should represent more narrowly defined occupation, the four-digit subgroup codes are repeated attached with different occupation labels. This might be an intention to include all specific occupations and keep their original occupation description that belong to a known subgroup. Although this is a significant difference from ISCO's structure, this difference in fact does not affect our mapping, as the upper-level subgroup stays unchanged.
