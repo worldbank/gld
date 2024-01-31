@@ -4,7 +4,7 @@ As mentioned in the introduction page, the classifications of industry and occup
 
 **Industry ISIC Rev.4**
 
-All years used ISIC Rev.4 in the raw datasets. Hence, all of their original industry variables contain the same categories as follows:
+All years used ISIC Rev.4 in the raw datasets. Hence, all their original industry variables contain the same categories as follows:
 
 | **Major Group Letter**	| **Industry Name**	| **10-Group Categorization**	| **4-Group Categorization**	|
 |:-----------------------:|:-----------------:|:---------------------------:|:---------------------------:|	 	
@@ -30,7 +30,7 @@ All years used ISIC Rev.4 in the raw datasets. Hence, all of their original indu
 | T | T-Activities of HH as employers | Other | Other |
 | U | U-Activities of extraterritorial organizations and bodies | Other | Other |
 
-The "Major Group Letter" column is the only infomation contained in the original industry variables; "Industry Name" is from ISIC Rev.4 to match the letters in the raw datasets; "10-Group Categorization" shows how we mapped the letters in the raw datasets to our GLD variable `industrycat10` whereas "4-Group Categorization" shows mapping from 10-group to a broader level categorization. 
+The "Major Group Letter" column is the only information contained in the original industry variables; "Industry Name" is from ISIC Rev.4 to match the letters in the raw datasets; "10-Group Categorization" shows how we mapped the letters in the raw datasets to our GLD variable `industrycat10` whereas "4-Group Categorization" shows mapping from 10-group to a broader level categorization. 
 
 **Occupation**
 
