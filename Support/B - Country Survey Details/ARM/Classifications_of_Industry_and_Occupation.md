@@ -30,28 +30,22 @@ All years used ISIC Rev.4 in the raw datasets. Hence, all their original industr
 | T | T-Activities of HH as employers | Other | Other |
 | U | U-Activities of extraterritorial organizations and bodies | Other | Other |
 
-The "Major Group Letter" column is the only information contained in the original industry variables; "Industry Name" is from ISIC Rev.4 to match the letters in the raw datasets; "10-Group Categorization" shows how we mapped the letters in the raw datasets to our GLD variable `industrycat10` whereas "4-Group Categorization" shows mapping from 10-group to a broader level categorization. 
+The "Major Group Letter" column is the only information contained in the original industry variables; "Industry Name" is from ISIC Rev.4 to match the letters in the raw datasets; "10-Group Categorization" shows how we mapped the letters in the raw datasets to our GLD variable `industrycat10` whereas "4-Group Categorization" shows mapping from 10-group to a broader level categorization, `industrycat4`. 
 
-**Occupation**
+**Occupation ISCO-08**
 
-Mapping occupational codes takes longer since SLSCO-08 and ISCO-08 have more discrepancies than industry dose. SLSCO-08 has very similar structure and classification at the major group, or the three-digit level. SLSCO-08 is mainly different from ISCO in that below each four-digit subgroup where five-digit minor groups should represent more narrowly defined occupation, the four-digit subgroup codes are repeated attached with different occupation labels. This might be an intention to include all specific occupations and keep their original occupation description that belong to a known subgroup. Although this is a significant difference from ISCO's structure, this difference in fact does not affect our mapping, as the upper-level subgroup stays unchanged.
+In the same sense as industry, all years used ISCO-08 for occupation in the raw datasets. Hence, all their original occupation variables contain the same categories as follows:
 
-Below is the detailed corresponding table that covers all the differences in subgroups' codes. 
+| **Major Group Number**	| **Occupation Name**	| **Skill Level**	|
+|:-----------------------:|:-------------------:|:-----------------:|
+| 1 | 1. Managers | Skill Level 3 and 4 (high)|
+| 2 | 2. Professionals | Skill Level 3 and 4 (high)|
+| 3 | 3. Technicians and associate professionals | Skill Level 3 and 4 (high)|
+| 4 | 4. Clerical support workers | Skill Level 2 (medium)|
+| 5 | 5. Service and sales workers | Skill Level 2 (medium)|
+| 6 | 6. Skilled agricultural, forestry and fishery workers | Skill Level 2 (medium)|
+| 7 | 7. Craft and related trades workers | Skill Level 2 (medium)|
+| 8 | 8. Plant and machine operators, and assemblers | Skill Level 2 (medium)|
+| 9 | 9. Elementry occupations | Skill Level 1 (low)|
 
-| **SLSCO-08 Code**	| **SLSCO-08 Occupation**	| **ISCO-08 Code**	| **ISCO-08 Occupation**	|
-|:----:|:---------:|:----:|:--------------------------:|	 	
-| 0110 | Commissioned Armed Forces Officers | 100 | Commissioned Armed Forces Officers |
-| 0120 | Non-commissioned Armed Forces Officers | 200 | Non-commissioned Armed Forces Officers |
-| 0130 | Armed Forces Occupations Other Ranks | 300 | Armed Forces Occupations, Other Ranks |
-| 2414 | Assessors | 3315 | Valuers and loss assessors |
-| 3349 | Administrative and Specialized Secretaries NEC | 3340 | Administrative and specialized secretaries |
-| 3360 | Other Government Associate Professionals | 3350 | Government regulatory associate professionals |
-| 3441 | Artistic and Cultural Associate Professionals | 3430 | Artistic, cultural and culinary associate professionals |
-| 3441 | Artistic and Cultural Associate Professionals | 3430 | Artistic, cultural and culinary associate professionals |
-| 5121 | Chefs | 5120 | Cooks |
-| 5122 | Cooks | 5120 | Cooks |
-| 5411 | Fire Fighters | 5411 | Protective services workers |
-| 5412 | Police Officers | 5411 | Protective services workers |
-| 5413 | Prison Guards | 5411 | Protective services workers |
-
-*(We will update this documentation along with LKA GLD if we get more information on correspondence tables for SLSIC and SLSCO in the future for other years. Please feel free to contact the GLD focal point (gld@worldbank.org) if you know anything that might help map Sri Lanka's industrial or occupational codes. Thanks!)*
+Unlike industry for which we harmonized `industrycat10` and `industrycat4`, we only coded `occup_skill` for occupation. And the last column "Skill Level" shows the correspondence. 
