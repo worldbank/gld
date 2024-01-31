@@ -28,7 +28,7 @@
 <_Currency_> 					Armenian Dram </_Currency_>
 -----------------------------------------------------------------------
 <_ICLS Version_>				ICLS 19 </_ICLS Version_>
-<_ISCED Version_>				ISCED-2021 </_ISCED Version_>
+<_ISCED Version_>				ISCED-2011 </_ISCED Version_>
 <_ISCO Version_>				ISCO 08 </_ISCO Version_>
 <_OCCUP National_>				NSCO  </_OCCUP National_>
 <_ISIC Version_>				ISIC Rev.4 </_ISIC Version_>
@@ -84,7 +84,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	use "`path_in_stata'\ARM_LFS_2021.dta", clear
+	use "`path_in_stata'\ARM_LFS_2021_raw.dta", clear
 	rename (E2_9groups_ISCO_88 _v1 F2_9groups_ISCO_88 _v2) (E2_9group E4_21group F2_9group F3_21group)
 
 /*%%=============================================================================================
