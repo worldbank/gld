@@ -196,9 +196,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_psu_>
-	decode A3, gen(marzname)
-	decode A5, gen(urbanstat)
-	gen psu=marzname+" "+urbanstat
+	gen psu=.
 	label var psu "Primary sampling units"
 *</_psu_>
 
@@ -210,7 +208,9 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_strata_>
-	gen strata=.
+	decode A3, gen(marzname)
+	decode A5, gen(urbanstat)
+	gen strata=marzname+" "+urbanstat
 	label var strata "Strata"
 *</_strata_>
 
@@ -971,7 +971,7 @@ specific income values.
 *<_wage_no_compen_note_>*/
 
 	* Overall --> wage info (here the variable, for us it should be wage_no_compen)
-    * to missing if value is 0. Should be 1,521 changes in 2019.
+    * to missing if value is 0.
 	 gen wage14=E14_1+E14_2
      replace wage14=. if wage14==0
 
