@@ -32,8 +32,8 @@ With sampling frames changing over time, an important intermediate step involved
 | Survey Years            | Sampling Frame Year                          |
 |-------------------------|----------------------------------------------|
 | 2000 - 2005             | 1995 Sampling Frame                          |
-| 2006 - 2014             | 2005 Sampling Frame                          |
-| 2015 - 2018             | 2015 Sampling Frame                          |
+| 2006 - 2016             | 2005 Sampling Frame                          |
+| 2016 - 2018             | 2015 Sampling Frame                          |
 
 However, the regions identified by this process may not be consistent with the region variable when it is available in the survey data (see screenshot below as an example from the 2007 ENE). Since our goal was to provide region information using a consistent source in as many surveys as possible, we decided to keep the information from the PSU-level data. 
 
