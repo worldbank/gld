@@ -27,7 +27,7 @@ Below is a summary table of the new regions as discussed [here](http://www.stato
 ## Constructing region variable (`subnatid1`) in the dataset
 The region variable is not available in all the raw survey data we received. We used a set of separate datasets that map each primary sampling unit (PSU) to their respective regions. With the PSU information available in all the raw survey data, merging this PSU-level data to the raw dataset allowed us to construct the region variable. 
 
-With sampling frames changing over time, an important step in our approach involved identifying the correct sampling frame used for each survey round. Each sampling frame is characterized by a unique set of Primary Sampling Unit (PSU) codes. We leveraged this uniqueness by comparing the PSU codes  in each survey round against the list of PSU codes of each sampling frame. This comparison allowed us to determine which sampling frame was utilized for a given survey, as outlined in the table below:
+With sampling frames changing over time, an important step in our approach involved identifying the correct sampling frame used for each survey round. Each sampling frame is characterized by a unique set of Primary Sampling Unit (PSU) codes. We leveraged this uniqueness by comparing the PSU codes in each survey round against the list of PSU codes of each sampling frame. This comparison allowed us to determine which sampling frame was utilized for a given survey, as outlined in the table below:
 
 | Survey Years            | Sampling Frame Year                          |
 |-------------------------|----------------------------------------------|
