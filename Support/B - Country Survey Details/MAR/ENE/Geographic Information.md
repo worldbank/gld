@@ -1,18 +1,11 @@
-# Geographic Information on Morocco's Regional Reorganization in 2015
+# Geographic Information
 
-In 2015, Morocco underwent a comprehensive reorganization of its regional boundaries, changing from 16 to 12 regions. This reorganization was not a mere adjustment of a few regions but a complete overhaul, affecting the entire country with the exception of the Ed Dakhla-Oued ed Dahab region, which retained its original provincial composition. This significant change was proposed by the Commission consultative de la régionalisation in 2010, aiming to foster decentralization and enhance regional autonomy across Morocco.
+## Region changes
+In 2015, Morocco underwent a comprehensive reorganization of its regional boundaries, changing from 16 to 12 regions (see map below). This reorganization was not a mere adjustment of a few regions but a complete overhaul, affecting the entire country with the exception of the Ed Dakhla-Oued ed Dahab region, which retained its provincial composition. This significant change was proposed by the Commission consultative de la régionalisation in 2010, aiming to foster decentralization and enhance regional autonomy across Morocco.
 
-## Understanding the Changes
+![Map](Utilities/Morocco_map.PNG)
 
-The reorganization had profound implications for geographic and administrative divisions within the country:
-
-- **Complete Overhaul vs. Partial Adjustments:** Unlike regional changes in other countries that might involve only a few regions, Morocco's approach was holistic, affecting all regions with substantial restructuring.
-  
-- **Implications for Labor Force Data:** For researchers, policymakers, and anyone utilizing Morocco's labor force data, it is crucial to note that region codes have been altered. A region labeled as "Region 1" prior to the reorganization may not correspond to the same geographic area in the new system. This change is pivotal when analyzing data or trends over time, ensuring accurate interpretations of regional dynamics.
-
-![Map](UtilitiMorocco_map.PNG)
-
-- **2015 Labor Force Survey Data:** These administrative changes are reflected in the labor force survey data starting from 2015. It is essential for data users to reference the new regional classifications to obtain accurate and relevant insights.
+In the Morocco ENE survey data, the region codes have been altered significantly with no relation to the prior codes. To ensure comparability over time, users are advised to use the `subnatid1_prev` variable beginning with the 2015 data when the new regional classification was adopted. 
 
 Below is a summary table of the new regions, highlighting their source regions or provinces and the specific changes made:
 
@@ -30,3 +23,20 @@ Below is a summary table of the new regions, highlighting their source regions o
 | Guelmim-Oued Noun        | Guelmim-Es-Semara, Sidi Ifni                        | Annexed Sidi Ifni province to Guelmim-Es-Semara region.                                                              |
 | Laâyoune-Saguia al Hamra | Laâyoune-Boujdour-Sakia El Hamra, Es-Semara          | Annexed Es-Semara province to Laâyoune-Boujdour-Sakia El Hamra region.                                               |
 | Ed Dakhla-Oued ed Dahab  | Equivalent to former Oued Ed-Dahab-Lagouira region   | No change, equivalent to the former Oued Ed-Dahab-Lagouira region.                                                   |
+
+## Constructing region variable (`subnatid1`) in the dataset
+The region variable is not available in all the raw survey data we received. We used a set of separate datasets that map each primary sampling unit (PSU) to their regions. With the PSU information available in all the raw survey data, merging this PSU-level data to the raw dataset allowed us to construct the region variable. 
+
+With sampling frames changing over time, an important intermediate step involved identifying the correct sampling frame used for each survey. The set of PSU codes for each sampling frame is unique, and by using this information, we can determine the sampling frame used in the survey by examining the matches in a sampling frame's list of PSU and that in a given survey round. Following this process, we were able to determine the sampling frame used in each survey as follows:
+
+| Survey Years            | Sampling Frame Year                          |
+|-------------------------|----------------------------------------------|
+| 2000 - 2005             | 1995 Sampling Frame                          |
+| 2006 - 2014             | 2005 Sampling Frame                          |
+| 2015 - 2018             | 2015 Sampling Frame                          |
+
+However, the regions identified by this process may not be consistent with the region variable when it is available in the survey data (see screenshot below as an example from the 2007 ENE). Since our goal was to provide region information using a consistent source in as many surveys as possible, we decided to keep the information from the PSU-level data. 
+
+![Map](Utilities/region_mismatch.png)
+
+
