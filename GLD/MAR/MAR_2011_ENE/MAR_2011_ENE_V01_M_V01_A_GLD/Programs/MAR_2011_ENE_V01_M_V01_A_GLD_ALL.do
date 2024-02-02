@@ -29,10 +29,10 @@
 
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
 <_ISCED Version_>				ISCED 2011 </_ISCED Version_>
-<_ISCO Version_>				Assigned to ISCO 08 </_ISCO Version_>
+<_ISCO Version_>				Not compatible to ISCO </_ISCO Version_>
 <_OCCUP National_>				La nomenclature analytique des professions, NAP 2001 </_OCCUP National_>
-<_ISIC Version_>				ISIC revision 4 </_ISIC Version_>
-<_INDUS National_>				Nomenclature marocaine des activités, NMA 2010 </_INDUS National_>
+<_ISIC Version_>				Not applicable </_ISIC Version_>
+<_INDUS National_>				Only aggregated industry info available </_INDUS National_>
 
 -----------------------------------------------------------------------
 <_Version Control_>
@@ -135,17 +135,18 @@ tab up if missing(Region16)
 *</_isced_version_>
 
 
+
 *<_isco_version_>
-	gen isco_version = "isco_2008"
+	gen isco_version = ""
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
 
+
 *<_isic_version_>
-	gen isic_version = "isic_4"
+	gen isic_version = ""
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
-
 
 *<_year_>
 	label var year "Year of survey"
@@ -223,8 +224,9 @@ tab up if missing(Region16)
 *</_psu_>
 
 
+
 *<_ssu_>
-	gen ssu = v__3
+	gen ssu = hhid
 	label var ssu "Secondary sampling units"
 *</_ssu_>
 
@@ -803,26 +805,8 @@ foreach v of local ed_var {
 
 
 *<_industrycat_isic_>
+* Only aggregate industry categories are available. Info is too aggregated even for ISIC letters
 	gen industrycat_isic = ""
-	replace industrycat_isic = "A" if v__317 == 1
-	replace industrycat_isic = "B" if v__317 == 2
-	replace industrycat_isic = "C" if v__317 == 3 | v__317 == 4 | v__317 == 5
-	replace industrycat_isic = "D" if v__317 == 6
-	replace industrycat_isic = "E" if v__317 == 6
-	replace industrycat_isic = "F" if v__317 == 7
-	replace industrycat_isic = "G" if v__317 == 8 | v__317 == 9
-	replace industrycat_isic = "I" if v__317 == 10
-	replace industrycat_isic = "H" if v__317 == 11
-	replace industrycat_isic = "J" if v__317 == 11
-	replace industrycat_isic = "K" if v__317 == 12
-	replace industrycat_isic = "L" if v__317 == 12
-	replace industrycat_isic = "S" if v__317 == 13
-	replace industrycat_isic = "T" if v__317 == 13
-	replace industrycat_isic = "Q" if v__317 == 14
-	replace industrycat_isic = "O" if v__317 == 15
-	replace industrycat_isic = "S" if v__317 == 16
-	replace industrycat_isic = "" if lstatus != 1
-
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
@@ -857,21 +841,8 @@ foreach v of local ed_var {
 
 *<_occup_isco_>
 	gen occup_isco = ""
-	replace occup_isco = "1000" if inlist(v__119, 0, 1, 2, 3)
-	replace occup_isco = "2000" if v__119 == 1
-	replace occup_isco = "3000" if v__119 == 2
-	replace occup_isco = "4000" if v__119 == 3
-	replace occup_isco = "5000" if v__119 == 4
-	replace occup_isco = "6000" if v__119 == 5
-	replace occup_isco = "7000" if v__119 == 6
-	replace occup_isco = "8000" if v__119 == 8
-	replace occup_isco = "9000" if inlist(v__119, 7, 9)
-	replace occup_isco = "" if inlist(v__119, 10, 11, 12) | lstatus != 1
-
-	replace occup_isco = "" if lstatus != 1
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
-
 
 *<_occup_>
 	gen occup = .

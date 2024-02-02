@@ -29,7 +29,7 @@
 
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
 <_ISCED Version_>				ISCED 1997 </_ISCED Version_>
-<_ISCO Version_>				Assigned to ISCO 08 </_ISCO Version_>
+<_ISCO Version_>				Not compatible to ISCO </_ISCO Version_>
 <_OCCUP National_>				La nomenclature analytique des professions, NAP 2001 </_OCCUP National_>
 <_ISIC Version_>				ISIC revision 3 </_ISIC Version_>
 <_INDUS National_>				Nomenclature marocaine des activités, NMA 1999 </_INDUS National_>
@@ -132,10 +132,12 @@ merge m:1 up using `upregion2005', keep(master match)
 *</_isced_version_>
 
 
+
 *<_isco_version_>
-	gen isco_version = "isco_2008"
+	gen isco_version = ""
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
+
 
 
 *<_isic_version_>
@@ -221,8 +223,10 @@ merge m:1 up using `upregion2005', keep(master match)
 *</_psu_>
 
 
+
+
 *<_ssu_>
-	gen ssu = v3
+	gen ssu = hhid
 	label var ssu "Secondary sampling units"
 *</_ssu_>
 
@@ -811,7 +815,7 @@ foreach v of local ed_var {
 	replace helper_string = substr(helper_string, 1, 2) + "00"
 	
 	gen industrycat_isic = helper_string
-	replace industrycat_isic = "" if lstatus != 1
+	replace industrycat_isic = "" if lstatus != 1 | industrycat_isic == ".00"
 
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
@@ -850,29 +854,18 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_>
-	gen occhelper = string(v425, "%04.0f")
-	gen occ2d = substr(occhelper, 1, 2)
-	destring occ2d, replace
-	
 	gen occup_isco = ""
-	replace occup_isco = "1000" if inrange(occ2d, 1, 8)
-	replace occup_isco = "2000" if inrange(occ2d, 11, 18)
-	replace occup_isco = "3000" if inrange(occ2d, 21, 29)
-	replace occup_isco = "4000" if inrange(occ2d, 31, 32)
-	replace occup_isco = "5000" if inrange(occ2d, 33, 44)
-	replace occup_isco = "6000" if inrange(occ2d, 51, 53)
-	replace occup_isco = "7000" if inrange(occ2d, 60, 69)
-	replace occup_isco = "9000" if inrange(occ2d, 71, 74)  | inrange(occ2d, 91, 99)
-	replace occup_isco = "8000" if inrange(occ2d, 81, 83)
-	replace occup_isco = "" if lstatus != 1
-
-	replace occup_isco = "" if lstatus != 1
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
 
 *<_occup_>
 	gen occup = .
+	
+	gen occhelper = string(v4212, "%04.0f")
+	gen occ2d = substr(occhelper, 1, 2)
+	destring occ2d, replace
+	
 	replace occup = 1 if inrange(occ2d, 1, 8)
 	replace occup = 2 if inrange(occ2d, 11, 18)
 	replace occup = 3 if inrange(occ2d, 21, 29)
