@@ -7,7 +7,7 @@ In 2015, Morocco underwent a comprehensive reorganization of its regional bounda
 
 In the Morocco ENE survey data, the region codes have been changed entirely and bear no relation to the prior codes. In the map above, for instance, the region *Ed Dakhla-Oued ed Dahab*, while maintaining the same land area, was recoded from "12" to "1". To ensure comparability over time, users are advised to use the `subnatid1_prev` variable beginning with the 2015 data when the new regional classification was adopted. 
 
-Below is a summary table of the new regions, highlighting their source regions or provinces and the specific changes made:
+Below is a summary table of the new regions as discussed [here](http://www.statoids.com/uma.html), highlighting their source regions or provinces and the specific changes made:
 
 | New Region               | Source Regions/Provinces                            | Changes Made                                                                                                         |
 |--------------------------|-----------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|
