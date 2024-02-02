@@ -1,11 +1,11 @@
 # Geographic Information
 
 ## Region changes
-In 2015, Morocco underwent a comprehensive reorganization of its regional boundaries, changing from 16 to 12 regions (see map below). This reorganization was not a mere adjustment of a few regions but a complete overhaul, affecting the entire country with the exception of the Ed Dakhla-Oued ed Dahab region, which retained its provincial composition. This significant change was proposed by the Commission consultative de la régionalisation in 2010, aiming to foster decentralization and enhance regional autonomy across Morocco.
+In 2015, Morocco underwent a comprehensive reorganization of its regional boundaries, changing from 16 to 12 regions (see maps below). This reorganization was not a mere adjustment of a few regions but a complete overhaul, affecting the entire country with the exception of the *Oued Ed-Dahab-Lagouira* region, which retained its provincial composition but switched its region name to *Ed Dakhla-Oued ed Dahab*. This significant change was proposed by the Commission consultative de la régionalisation in 2010, aiming to foster decentralization and enhance regional autonomy across Morocco.
 
 ![Map](Utilities/Morocco_map.PNG)
 
-In the Morocco ENE survey data, the region codes have been altered significantly with no relation to the prior codes. To ensure comparability over time, users are advised to use the `subnatid1_prev` variable beginning with the 2015 data when the new regional classification was adopted. 
+In the Morocco ENE survey data, the region codes have been altered significantly and have no relation to the prior codes. In the map above, for instance, the region *Ed Dakhla-Oued ed Dahab*, while keeping the same area coverage, was recoded from "12" to "1". To ensure comparability over time, users are advised to use the `subnatid1_prev` variable beginning with the 2015 data when the new regional classification was adopted. 
 
 Below is a summary table of the new regions, highlighting their source regions or provinces and the specific changes made:
 
