@@ -1,20 +1,13 @@
-# Geographic Information on Morocco's Regional Reorganization in 2015
+# Geographic Information
 
-In 2015, Morocco underwent a comprehensive reorganization of its regional boundaries, changing from 16 to 12 regions. This reorganization was not a mere adjustment of a few regions but a complete overhaul, affecting the entire country with the exception of the Ed Dakhla-Oued ed Dahab region, which retained its original provincial composition. This significant change was proposed by the Commission consultative de la régionalisation in 2010, aiming to foster decentralization and enhance regional autonomy across Morocco.
+## Region changes
+In 2015, Morocco underwent a comprehensive reorganization of its regional boundaries, changing from 16 to 12 regions (see maps below). This reorganization was not a mere adjustment of a few regions but a complete overhaul, affecting the entire country with the exception of the *Oued Ed-Dahab-Lagouira* region, which retained its provincial composition but switched its region name to *Ed Dakhla-Oued ed Dahab*. This significant change, proposed by the Commission Consultative de la Régionalisation in 2010, aimed to foster decentralization and enhance regional autonomy across Morocco.
 
-## Understanding the Changes
+![Map](Utilities/Morocco_map.PNG)
 
-The reorganization had profound implications for geographic and administrative divisions within the country:
+In the Morocco ENE survey data, the region codes have been changed entirely and bear no relation to the prior codes. In the map above, for instance, the region *Ed Dakhla-Oued ed Dahab*, while maintaining the same land area, was recoded from "12" to "1". To ensure comparability over time, users are advised to use the `subnatid1_prev` variable beginning with the 2015 data when the new regional classification was adopted. 
 
-- **Complete Overhaul vs. Partial Adjustments:** Unlike regional changes in other countries that might involve only a few regions, Morocco's approach was holistic, affecting all regions with substantial restructuring.
-  
-- **Implications for Labor Force Data:** For researchers, policymakers, and anyone utilizing Morocco's labor force data, it is crucial to note that region codes have been altered. A region labeled as "Region 1" prior to the reorganization may not correspond to the same geographic area in the new system. This change is pivotal when analyzing data or trends over time, ensuring accurate interpretations of regional dynamics.
-
-![Map](UtilitiMorocco_map.PNG)
-
-- **2015 Labor Force Survey Data:** These administrative changes are reflected in the labor force survey data starting from 2015. It is essential for data users to reference the new regional classifications to obtain accurate and relevant insights.
-
-Below is a summary table of the new regions, highlighting their source regions or provinces and the specific changes made:
+Below is a summary table of the new regions as discussed [here](http://www.statoids.com/uma.html), highlighting their source regions or provinces and the specific changes made:
 
 | New Region               | Source Regions/Provinces                            | Changes Made                                                                                                         |
 |--------------------------|-----------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|
@@ -30,3 +23,20 @@ Below is a summary table of the new regions, highlighting their source regions o
 | Guelmim-Oued Noun        | Guelmim-Es-Semara, Sidi Ifni                        | Annexed Sidi Ifni province to Guelmim-Es-Semara region.                                                              |
 | Laâyoune-Saguia al Hamra | Laâyoune-Boujdour-Sakia El Hamra, Es-Semara          | Annexed Es-Semara province to Laâyoune-Boujdour-Sakia El Hamra region.                                               |
 | Ed Dakhla-Oued ed Dahab  | Equivalent to former Oued Ed-Dahab-Lagouira region   | No change, equivalent to the former Oued Ed-Dahab-Lagouira region.                                                   |
+
+## Constructing region variable (`subnatid1`) in the dataset
+The region variable is not available in all the raw survey data we received. We used a set of separate datasets that map each primary sampling unit (PSU) to their respective regions. With the PSU information available in all the raw survey data, merging this PSU-level data to the raw dataset allowed us to construct the region variable. 
+
+With sampling frames changing over time, an important step in our approach involved identifying the correct sampling frame used for each survey round. Each sampling frame is characterized by a unique set of Primary Sampling Unit (PSU) codes. We leveraged this uniqueness by comparing the PSU codes in each survey round against the list of PSU codes of each sampling frame. This comparison allowed us to determine which sampling frame was utilized for a given survey, as outlined in the table below:
+
+| Survey Years            | Sampling Frame Year                          |
+|-------------------------|----------------------------------------------|
+| 2000 - 2005             | [1995 Sampling Frame](Utilities/Additional%20Files/up_region_1995.dta)                          |
+| 2006 - 2016             | [2005 Sampling Frame](Utilities/Additional%20Files/up_region_2005.dta)                            |
+| 2016 - 2018             | [2015 Sampling Frame](Utilities/Additional%20Files/up_region_2015.dta)                            |
+
+However, it's important to note that the regions identified through this PSU-based process might not always align with the region variable available in the select years. This discrepancy is highlighted in the screenshot below, taken from the 2007 ENE, as an example. Since our goal was to provide region information using a consistent source in as many surveys as possible, we decided to retain the information from the PSU-level data. 
+
+![Map](Utilities/region_mismatch.png)
+
+
