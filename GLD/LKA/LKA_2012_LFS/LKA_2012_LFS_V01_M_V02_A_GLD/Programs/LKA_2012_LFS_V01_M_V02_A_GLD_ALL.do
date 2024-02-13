@@ -4,8 +4,8 @@
 ================================================================================================*/
 
 /* -----------------------------------------------------------------------
-<_Program name_>				LKA_2012_LFS_V01_M_V01_A_GLD_ALL.do </_Program name_>
-<_Application_>					Stata SE 16.1 <_Application_>
+<_Program name_>				LKA_2012_LFS_V01_M_V02_A_GLD_ALL.do </_Program name_>
+<_Application_>					Stata SE 17 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
 <_Date created_>				2023-09-15 </_Date created_>
 -------------------------------------------------------------------------
@@ -71,7 +71,7 @@ set mem 800m
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-local server  "Y:\GLD-Harmonization\573465_JT"
+local server  "Y:\GLD"
 local country "LKA"
 local year    "2012"
 local survey  "LFS"
@@ -205,7 +205,7 @@ hhserno - household serial number
 	foreach v of varlist month sector district huno hhno{
 		tostring `v', gen(`v'_str) format(%02.0f)
 	}
-	tostring psu, gen(psu_str) format(%03.0f)
+	tostring psuno, gen(psu_str) format(%03.0f)
 	tostring hhserno, gen(hh_str) format(%03.0f)
 	egen hhid=concat(month_str sector_str district_str psu_str huno_str hh_str hh_str)
 	label var hhid "Household id"
