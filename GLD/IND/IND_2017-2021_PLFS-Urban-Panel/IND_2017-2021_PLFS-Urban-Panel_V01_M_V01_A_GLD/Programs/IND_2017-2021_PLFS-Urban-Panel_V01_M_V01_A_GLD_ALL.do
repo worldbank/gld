@@ -47,8 +47,8 @@ global veralt  	"V01"
 
 
 *------------------------------------------------------------*
-local first_year = word("$years", 1)
-local last_year = word("$years", -1)
+global first_year = word("$years", 1)
+global last_year = word("$years", -1)
 global panel_years "`first_year'-`last_year'"
 
 global level_1	 "${country}_${panel_years}_${survey_p}"
@@ -123,7 +123,7 @@ do "${path_helper}/B1_Create_Panel.do"
 erase "${path_output}/paneldata_${country}.dta"
 
 * Save the file (use of the macros!)
-save "${path_output}/IND_2017-2021_PLFS-Urban-Panel_V01_M_V01_A_GLD_ALL.dta", replace
+save "${path_output}/${country}_${panel_years}_${survey_p}_${vermast}_M_${veralt}_A_GLD_ALL.dta", replace
 
 /*%%=============================================================================================
 	4: Assess panel quality
