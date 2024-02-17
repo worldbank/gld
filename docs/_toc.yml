@@ -1,0 +1,29 @@
+format: jb-book
+root: README
+
+parts:
+  - caption: Global Labor Database Harmonization Guidelines
+    chapters:
+      - file: Support/A - Guides and Documentation/GLD_Manual_V.1.0
+  - caption: Harmonization Process
+    chapters:
+      - glob: docs/harmonization_process/*
+      - glob: docs/harmonization_template/*
+  - caption: Data Dictionary
+    chapters:
+      - glob: docs/data_dictionary/*
+  - caption: Harmonization Scripts
+    chapters:
+      - file: docs/script_structure
+  - caption: Data Checks
+    chapters:
+      - glob: docs/data_checks/*
+  - caption: Contribution Guidelines
+    chapters:
+      - glob: docs/branch_management/*
+      - glob: docs/pull_request/*
+      - glob: docs/raise_issue/*
+      - glob: Support/E - Contribution Guidelines/*
+  - caption: Contact
+    chapters:
+      - file: docs/contact
