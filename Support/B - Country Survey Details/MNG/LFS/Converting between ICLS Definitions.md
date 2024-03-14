@@ -6,7 +6,7 @@ In short, the ICLS 19 resolution restricts employment to *work performed for oth
 The GLD codes the harmonization’s `lstatus’ variable based on the concept used in the survey. In the case of the Mongolia LFS this change occurs in 2019, when the survey switches to new definition. As a result, [time series data](Utilities/ts_employed.png) show a decrease in the size of employed in 2019 round. However, the code can be altered to try to match the previous definition.
 
 
-# Current coding for the 2019, 2020 and 2021 LFS
+# Current coding for the 2019 - 2022 LFS
 
 Currently, the code used to create the `lstatus` variable (which distinguishes between employment, unemployment, and out of the labour force) is the following:
 
@@ -52,7 +52,7 @@ Currently, the code used to create the `lstatus` variable (which distinguishes b
 ```
 
 
-# Coding to convert the 2019, 2020 and 2021 LFS to the old definition
+# Coding to convert the 2019 - 2022 LFS to the old definition
 
 In converting back to the old definition, the approach adopted here is simply to cast a wide net and include all individuals regardless of whether the intention for economic activity is for sale or for own consumption. The code below would allow us to try to replicate the estimates of the employed by the ILO for 2019 onwards:
 
