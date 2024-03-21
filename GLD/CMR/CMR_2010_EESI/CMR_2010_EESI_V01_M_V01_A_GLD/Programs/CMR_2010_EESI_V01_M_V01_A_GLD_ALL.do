@@ -82,7 +82,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-	 *use "`path_in_stata'\CMR_LFS_2010_raw.dta", clear
+	 *use "`path_in_stata'\eesi2ind.dta", clear
 	 use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\CMR\CMR_2010_EESI\CMR_2010_EESI_V01_M\Data\Stata\eesi2ind.dta", clear
 
 /*%%=============================================================================================
@@ -398,7 +398,7 @@ here we used g12 for hsize.
 /*<_relationharm_note_>
 
 Again, since the household id and personal id are not unique, 686 households have 
-zero or multipal households.  
+zero or multipal household heads.  
 
 *<_relationharm_note_>*/
 
