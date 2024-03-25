@@ -16,7 +16,7 @@
 <_Data collection from (M/Y)_>	[01/2021] </_Data collection from (M/Y)_>
 <_Data collection to (M/Y)_>	[09/2021] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			</_Source of dataset_>
-<_Sample size (HH)_> 			8,723 ( 10,788as planned in the report) </_Sample size (HH)_>
+<_Sample size (HH)_> 			8,723 ( 10,788 as planned in the report) </_Sample size (HH)_>
 <_Sample size (IND)_> 		    27,378 </_Sample size (IND)_>
 <_Sampling method_> 			Two-phase statistical operation combined with a 
 								two-stage stratified random design. </_Sampling method_>
@@ -380,6 +380,7 @@ dataset.
 
 
 *<_age_>
+	rename age age_group
 	gen age=m5
 	replace age=98 if age>98 & age!=.
 	label var age "Individual age"
@@ -966,12 +967,7 @@ c1m is the month a given respondent was unemployed.
 
 
 *<_occup_skill_>
-	tostring ap1, gen(ap1_str)
-	gen occup1dig=substr(ap1_str,1,1)
-	destring occup1dig,replace
 	gen occup_skill=.
-	replace occup_skill=1 if inrange(occup1dig,2,4) 
-	replace occup_skill=2 if inlist(occup1dig,1,5,6,7)
 	replace occup_skill=. if lstatus!=1
 	la de lblskill 1 "Low skill" 2 "Medium skill" 3 "High skill"
 	label values occup_skill lblskill
@@ -985,7 +981,6 @@ c1m is the month a given respondent was unemployed.
 	 label var occup "1 digit occupational classification, primary job 7 day recall"
   	 la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	 label values occup lbloccup
-	 drop occup1dig ap1_str
 *</_occup_>
 
 
@@ -1002,7 +997,7 @@ The general logic here is to impute wage values for people who only answered an 
 range. We used industry, occupation, income categories and gender to estimate their
 specific income values. 
 
-10.48% of total non-missing wage values were imputed using this method.
+23.28% of total non-missing wage values were imputed using this method.
 *<_wage_no_compen_note_>*/
 
 	* Overall --> wage info (here the variable, for us it should be wage_no_compen)
@@ -1018,13 +1013,13 @@ specific income values.
 
      * Create salary categories based on winsor values
      gen salary_catm=.
-     replace salary_catm=1 if inrange(wage13m_w, 1, 28499)
-     replace salary_catm=2 if inrange(wage13m_w, 28500, 46999)
-     replace salary_catm=3 if inrange(wage13m_w, 47000, 93999)
-     replace salary_catm=4 if inrange(wage13m_w, 94000, 187999)
-     replace salary_catm=5 if inrange(wage13m_w, 188000, 375999)
-     replace salary_catm=6 if inrange(wage13m_w, 376000, 751999)
-     replace salary_catm=7 if inrange(wage13m_w, 752000, 99999999)
+     replace salary_catm=1 if inrange(wage13m_w, 1, 36270)
+     replace salary_catm=2 if inrange(wage13m_w, 36270, 49999)
+     replace salary_catm=3 if inrange(wage13m_w, 50000, 99999)
+     replace salary_catm=4 if inrange(wage13m_w, 100000, 199999)
+     replace salary_catm=5 if inrange(wage13m_w, 200000, 399999)
+     replace salary_catm=6 if inrange(wage13m_w, 400000, 799999)
+     replace salary_catm=7 if inrange(wage13m_w, 800000, 99999999)
 	 
 	 gen salary_cata=.
      replace salary_cata=1 if inrange(wage13a_w, 1, 199999)
@@ -1039,7 +1034,7 @@ specific income values.
      preserve
 
      * Collpase by industry, sex, and salary categories
-     collapse (mean)wage13m_w[iw=weight], by(industrycat10 occup_skill  male urban salary_catm)
+     collapse (mean)wage13m_w[iw=weight], by(ap1 ap2 male urban salary_catm)
 
      * Rename variable, otherwise when merging in, master version of an equally name one will be kept
      rename wage13m_w mwage_group_estimate
@@ -1051,17 +1046,17 @@ specific income values.
 
 	 * Restore, merge in
      restore
-     merge m:1 industrycat10 occup_skill male urban ap13b using "`salary_helper'", keep(matched master) nogen
+     merge m:1 ap1 ap2 male urban ap13b using "`salary_helper'", keep(matched master) nogen
 	
 	 * Same process for annual estimates
 	 preserve
-	 collapse (mean)wage13a_w[iw=weight], by(industrycat10 occup_skill  male urban salary_cata)
+	 collapse (mean)wage13a_w[iw=weight], by(ap1 ap2  male urban salary_cata)
      rename wage13a_w awage_group_estimate
      rename salary_cata ap13b
      tempfile salary_helper2
      save "`salary_helper2'"
 	 restore
-     merge m:1 industrycat10 occup_skill male urban ap13b using "`salary_helper2'", keep(matched master) nogen
+     merge m:1 ap1 ap2 male urban ap13b using "`salary_helper2'", keep(matched master) nogen
 
      * Create wage variable
      gen wage_no_compen=.
@@ -1077,6 +1072,7 @@ specific income values.
      * Keep only for employed employees, label
      replace wage_no_compen=. if lstatus!=1|empstat==2
      label var wage_no_compen "Last wage payment primary job 7 day recall"
+	 drop wage13m wage13a wage13m_w wage13a_w mwage_group_estimate awage_group_estimate 
 *</_wage_no_compen_>
 
 
@@ -1121,7 +1117,7 @@ wether an employed respondent had a contract or not.
 *<_contract_note_>*/
 
 	gen byte contract=ap8d2
-	recode contract (2 3=1) (4=0) (9=.)
+	recode contract (2/4=1) (5=0) 
 	replace contract=. if lstatus!=1
 	label var contract "Employment has contract primary job 7 day recall"
 	la de lblcontract 0 "Without contract" 1 "With contract"
@@ -1131,7 +1127,7 @@ wether an employed respondent had a contract or not.
 
 *<_healthins_>
 	gen byte healthins=ap15e
-	recode healthins (2=0) (9=.)
+	recode healthins (2=0) 
 	replace healthins=. if lstatus!=1
 	label var healthins "Employment has health insurance primary job 7 day recall"
 	la de lblhealthins 0 "Without health insurance" 1 "With health insurance"
@@ -1141,7 +1137,7 @@ wether an employed respondent had a contract or not.
 
 *<_socialsec_>
 	gen byte socialsec=ap15f
-	recode socialsec (2=0) (9=.)
+	recode socialsec (2=0) 
 	replace socialsec=. if lstatus!=1
 	label var socialsec "Employment has social security insurance primary job 7 day recall"
 	la de lblsocialsec 1 "With social security" 0 "Without social secturity"
@@ -1181,8 +1177,8 @@ wether an employed respondent had a contract or not.
 
 {
 *<_empstat_2_>
-	gen byte empstat_2=as4
-	recode empstat_2 (1/5=3) (6 7=4) (8=2) (10=5) (99=.) 
+	gen byte empstat_2=as3
+	recode empstat_2 (1/5=3) (6 7=4) (8=2) (9/11=5)
 	replace empstat_2=. if lstatus!=1|as1a!=1
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
 	la de lblempstat_2 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
@@ -1191,8 +1187,8 @@ wether an employed respondent had a contract or not.
 
 
 *<_ocusec_2_>
-	gen byte ocusec_2=as5
-	recode ocusec_2 (2=1) (3/6=2) (7=4)
+	gen byte ocusec_2=as4
+	recode ocusec_2 (2=1) (3/4 6 7 8=2) (5=4)
 	replace ocusec_2=. if lstatus!=1|as1a!=1
 	label var ocusec_2 "Sector of activity secondary job 7 day recall"
 	la de lblocusec_2 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
@@ -1201,7 +1197,7 @@ wether an employed respondent had a contract or not.
 
 
 *<_industry_orig_2_>	
-	gen industry_orig_2=as3
+	gen industry_orig_2=as2
 	replace industry_orig_2=. if lstatus!=1|as1a!=1
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
@@ -1215,10 +1211,8 @@ wether an employed respondent had a contract or not.
 
 
 *<_industrycat10_2_>
-	gen as3_1dig=floor(as3/10)
-	gen industrycat10_2=as3_1dig
-	recode industrycat10_2 (2/5=1) (6=2) (7/28=3) (29/30=4) (31=5) (32 33=6) (34 35=7) (36/38=8) (39=9) (40/44=10)
-	replace industrycat10_2=. if lstatus!=1|as1a!=1
+	gen industrycat10_2=.
+	replace industrycat10_2=. if lstatus!=1
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
 *</_industrycat10_2_>
@@ -1233,34 +1227,28 @@ wether an employed respondent had a contract or not.
 
 
 *<_occup_orig_2_>
-	gen occup_orig_2=as2
-	replace occup_orig_2=. if lstatus!=1|as1a!=1
+	gen occup_orig_2=as1
+	replace occup_orig_2=. if lstatus!=1
 	label var occup_orig_2 "Original occupation record secondary job 7 day recall"
 *</_occup_orig_2_>
 
 
 *<_occup_isco_2_>
 	gen occup_isco_2=""
-	replace occup_isco_2="" if lstatus!=1 | occup_isco_2=="."|as1a!=1
+	replace occup_isco_2="" if lstatus!=1 | occup_isco_2=="."
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
 
 *<_occup_skill_2_>
-	tostring as2, gen(as2_str)
-	gen occup1dig_2=substr(as2_str,1,1)
-	destring occup1dig_2,replace
 	gen occup_skill_2=.
-	replace occup_skill_2=1 if inrange(occup1dig_2,2,4) 
-	replace occup_skill_2=2 if inlist(occup1dig_2,1,5,6,7)
-	replace occup_skill_2=. if as2==0|lstatus!=1|as1a!=1
 	label var occup_skill_2 "Skill based on ISCO standard secondary job 7 day recall"
 *</_occup_skill_2_>
 
 
 *<_occup_2_>
 	gen occup_2=.
-	replace occup_2=. if lstatus!=1|as1a!=1
+	replace occup_2=. if lstatus!=1
 	label var occup_2 "1 digit occupational classification secondary job 7 day recall"
 	label values occup_2 lbloccup
 *</_occup_2_>
@@ -1270,71 +1258,73 @@ wether an employed respondent had a contract or not.
 
 	* Overall --> wage info (here the variable, for us it should be wage_no_compen)
     * to missing if value is 0.
-	 gen wage10m=as10a if as10a==1 
-	 gen wage10a=as10a if as10a==2 
-     replace wage10m=. if wage10m==0
-	 replace wage10a=. if wage10a==0
+	 gen wage13m=as13a if as13a==1 
+	 gen wage13a=as13a if as13a==2 
+     replace wage13m=. if wage13m==0
+	 replace wage13a=. if wage13a==0
 
      * First replace outliers by
-     winsor2 wage10m, suffix(_w) cuts(1 99)
-	 winsor2 wage10a, suffix(_w) cuts(1 99)
+     winsor2 wage13m, suffix(_w) cuts(1 99)
+	 winsor2 wage13a, suffix(_w) cuts(1 99)
 
-     * Create salary categories based on winsor values
-     gen salary_catm2=.
-     replace salary_catm2=1 if inrange(wage10m_w, 1, 28499)
-     replace salary_catm2=2 if inrange(wage10m_w, 28500, 46999)
-     replace salary_catm2=3 if inrange(wage10m_w, 47000, 93999)
-     replace salary_catm2=4 if inrange(wage10m_w, 94000, 187999)
-     replace salary_catm2=5 if inrange(wage10m_w, 188000, 375999)
-     replace salary_catm2=6 if inrange(wage10m_w, 376000, 752000)
+     * Create salary categories based on winsor values	 
+	 gen salary_catm2=.
+	 replace salary_catm2=1 if inrange(wage13m_w, 1, 36270)
+     replace salary_catm2=2 if inrange(wage13m_w, 36270, 49999)
+     replace salary_catm2=3 if inrange(wage13m_w, 50000, 99999)
+     replace salary_catm2=4 if inrange(wage13m_w, 100000, 199999)
+     replace salary_catm2=5 if inrange(wage13m_w, 200000, 399999)
+     replace salary_catm2=6 if inrange(wage13m_w, 400000, 799999)
+     replace salary_catm2=7 if inrange(wage13m_w, 800000, 99999999)
 	 
 	 gen salary_cata2=.
-     replace salary_cata2=1 if inrange(wage10a_w, 1, 199999)
-     replace salary_cata2=2 if inrange(wage10a_w, 200000, 399999)
-     replace salary_cata2=3 if inrange(wage10a_w, 400000, 799999)
-     replace salary_cata2=4 if inrange(wage10a_w, 800000, 1499999)
-     replace salary_cata2=5 if inrange(wage10a_w, 1500000, 2999999)
-     replace salary_cata2=6 if inrange(wage10a_w, 3000000, 4999999)
-     replace salary_cata2=7 if inrange(wage10a_w, 5000000, 99999999)
+     replace salary_cata2=1 if inrange(wage13a_w, 1, 199999)
+     replace salary_cata2=2 if inrange(wage13a_w, 200000, 399999)
+     replace salary_cata2=3 if inrange(wage13a_w, 400000, 799999)
+     replace salary_cata2=4 if inrange(wage13a_w, 800000, 1499999)
+     replace salary_cata2=5 if inrange(wage13a_w, 1500000, 2999999)
+     replace salary_cata2=6 if inrange(wage13a_w, 3000000, 4999999)
+     replace salary_cata2=7 if inrange(wage13a_w, 5000000, 99999999)
+
 
      * Preserve to collapse, so we can merge the info in
      preserve
 
      * Collpase by industry, sex, and salary categories
-     collapse (mean)wage10m_w[iw=weight], by(industrycat10_2 occup_skill_2 male urban salary_catm2)
+     collapse (mean)wage13m_w[iw=weight], by(as1 as2 male urban salary_catm2)
 
      * Rename variable, otherwise when merging in, master version of an equally name one will be kept
-     rename wage10m_w mwage_group_estimate2
+     rename wage13m_w mwage_group_estimate2
 
-     * Rename salary_cat to ap13b since this is what we want the info to latch on to
-     rename salary_catm2 as10b
+     * Rename salary_cat to as13b since this is what we want the info to latch on to
+     rename salary_catm2 as13b
      tempfile salary_helper3
      save "`salary_helper3'"
 
 	 * Restore, merge in
      restore
-     merge m:1 industrycat10_2 occup_skill_2 male urban as10b using "`salary_helper3'", keep(matched master) nogen
+     merge m:1 as1 as2 male urban as13b using "`salary_helper3'", keep(matched master) nogen
 	
 	 * Same process for annual estimates
 	 preserve
-	 collapse (mean)wage10a_w[iw=weight], by(industrycat10_2 occup_skill_2 male urban salary_cata2)
-     rename wage10a_w awage_group_estimate2
-     rename salary_cata2 as10b
+	 collapse (mean)wage13a_w[iw=weight], by(as1 as2 male urban salary_cata2)
+     rename wage13a_w awage_group_estimate2
+     rename salary_cata2 as13b
      tempfile salary_helper4
      save "`salary_helper4'"
 	 restore
-     merge m:1 industrycat10_2 occup_skill_2 male urban as10b using "`salary_helper4'", keep(matched master) nogen
+     merge m:1 as1 as2 male urban as13b using "`salary_helper4'", keep(matched master) nogen
 
      * Create wage variable
      gen wage_no_compen_2=.
 
      * Fill it first with values that are accurate
-     replace wage_no_compen_2=wage10m if as10a==1 
-	 replace wage_no_compen_2=wage10a if as10a==2
+     replace wage_no_compen_2=wage13m if as13a==1 
+	 replace wage_no_compen_2=wage13a if as13a==2
 
      * Now add the categorised means
-     replace wage_no_compen_2=mwage_group_estimate2 if inrange(as10b,1,7)&!mi(mwage_group_estimate2)
-	 replace wage_no_compen_2=awage_group_estimate2 if inrange(as10b,8,14)&!mi(awage_group_estimate2)
+     replace wage_no_compen_2=mwage_group_estimate2 if inrange(as13b,1,7)&!mi(mwage_group_estimate2)
+	 replace wage_no_compen_2=awage_group_estimate2 if inrange(as13b,8,14)&!mi(awage_group_estimate2)
 
      * Keep only for employed employees, label
      replace wage_no_compen_2=. if as1a!=1!=1|empstat_2==2
@@ -1344,8 +1334,8 @@ wether an employed respondent had a contract or not.
 
 *<_unitwage_2_>
 	gen byte unitwage_2=.
-	replace unitwage_2=5 if as10a==1|inrange(as10b,1,7)
-	replace unitwage_2=8 if as10a==2|inrange(as10b,8,14)
+	replace unitwage_2=5 if as13a==1|inrange(as13b,1,7)
+	replace unitwage_2=8 if as13a==2|inrange(as13b,8,14)
 	replace unitwage_2=. if empstat_2==2|as1a!=1
 	label var unitwage_2 "Last wages' time unit secondary job 7 day recall"
 	label values unitwage_2 lblunitwage
@@ -1353,8 +1343,8 @@ wether an employed respondent had a contract or not.
 
 
 *<_whours_2_>
-	gen whours_2=as9b
-	replace whours_2=. if as9b==0|as1a!=1
+	gen whours_2=as10c
+	replace whours_2=. if as10c==0|as1a!=1
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 
@@ -1372,15 +1362,15 @@ wether an employed respondent had a contract or not.
 
 
 *<_firmsize_l_2_>
-	gen byte firmsize_l_2=as6
+	gen byte firmsize_l_2=as5
 	recode firmsize_l_2 (4=6) (5=11) (6=21) (7=51) (8=101) (9=501)
 	label var firmsize_l_2 "Firm size (lower bracket) secondary job 7 day recall"
 *</_firmsize_l_2_>
 
 
 *<_firmsize_u_2_>
-	gen byte firmsize_u_2=as6
-	recode firmsize_u_2 (4=6) (5=11) (6=21) (7=51) (8=101) (9=501)
+	gen byte firmsize_u_2=as5
+	recode firmsize_u_2 (3=5) (4=10) (5=20) (6=50) (7=100) (8=500) (9=.)
 	label var firmsize_u_2 "Firm size (upper bracket) secondary job 7 day recall"
 *</_firmsize_u_2_>
 
@@ -1925,5 +1915,5 @@ compress
 *<_% SAVE_>
 
 *save "`path_output'\\`level_2_harm'_ALL.dta", replace
-save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\CMR\CMR_2010_EESI\CMR_2010_EESI_V01_M_V01_A_GLD\Data\Harmonized\CMR_2010_EESI_v01_M_v01_A_GLD_ALL.dta", replace
+save "C:\Users\IrIs_\OneDrive - Georgetown University\World Bank\GLD\CMR\CMR_2021_EESI\CMR_2021_EESI_V01_M_V01_A_GLD\Data\Harmonized\CMR_2021_EESI_v01_M_v01_A_GLD_ALL.dta", replace
 *</_% SAVE_>
