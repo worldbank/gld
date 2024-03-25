@@ -83,7 +83,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * harmonized output in a single file
 
 	 *use "`path_in_stata'\eesi2ind.dta", clear
-	 use "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\CMR\CMR_2010_EESI\CMR_2010_EESI_V01_M\Data\Stata\eesi2ind.dta", clear
+	 use "C:\Users\IrIs_\OneDrive - Georgetown University\World Bank\GLD\CMR\CMR_2010_EESI\CMR_2010_EESI_V01_M\Data\Stata\eesi2ind.dta", clear
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -1321,7 +1321,7 @@ wether an employed respondent had a contract or not.
      * Rename variable, otherwise when merging in, master version of an equally name one will be kept
      rename wage10m_w mwage_group_estimate2
 
-     * Rename salary_cat to ap13b since this is what we want the info to latch on to
+     * Rename salary_cat to as10b since this is what we want the info to latch on to
      rename salary_catm2 as10b
      tempfile salary_helper3
      save "`salary_helper3'"
@@ -1395,7 +1395,7 @@ wether an employed respondent had a contract or not.
 
 *<_firmsize_u_2_>
 	gen byte firmsize_u_2=as6
-	recode firmsize_u_2 (4=6) (5=11) (6=21) (7=51) (8=101) (9=501)
+	recode firmsize_u_2 (3=5) (4=10) (5=20) (6=50) (7=100) (8=500) (9=.)
 	label var firmsize_u_2 "Firm size (upper bracket) secondary job 7 day recall"
 *</_firmsize_u_2_>
 
@@ -1940,5 +1940,5 @@ compress
 *<_% SAVE_>
 
 *save "`path_output'\\`level_2_harm'_ALL.dta", replace
-save "C:\Users\IrIs_\OneDrive - Georgetown University\GLD\CMR\CMR_2010_EESI\CMR_2010_EESI_V01_M_V01_A_GLD\Data\Harmonized\CMR_2010_EESI_v01_M_v01_A_GLD_ALL.dta", replace
+save "C:\Users\IrIs_\OneDrive - Georgetown University\World Bank\GLD\CMR\CMR_2010_EESI\CMR_2010_EESI_V01_M_V01_A_GLD\Data\Harmonized\CMR_2010_EESI_v01_M_v01_A_GLD_ALL.dta", replace
 *</_% SAVE_>
