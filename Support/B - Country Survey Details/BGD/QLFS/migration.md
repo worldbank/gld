@@ -2,7 +2,7 @@
 
 This page only applies for the migration code in the 2022 GLD harmonization. 
 
-The raw microdata contains separate files for questionnaire sections. The migration section is separated in quarterly files that need to be combined. However, unique identifiers of each file are not easy to match because the migration section has a different unique identifier that has not been documented to our knowledge. 
+The raw microdata contains separate files for questionnaire sections. The migration section is separated in quarterly files that need to be combined. However, unique identifiers of each file are not easy to match because the migration section has a different unique identifier that has not been documented. 
 
 As the data is, the individuals that migrated in each household are identified with an ID code that differs to the ID code from the rest of the files. A feasible way to identify the individuals in the household that informed about their migration patterns is to match them through other individual characteristic such as age and gender, unfortunately this could lead to imprecise matching when ae or gender are the same within household. 
 
