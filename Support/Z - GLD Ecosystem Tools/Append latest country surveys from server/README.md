@@ -17,7 +17,7 @@ The Micro Data Library (MDL) folder and file naming convention ensures that the 
 The first thing is to install the programme. This can be done directly from the internet by typing the following into the console:
 
 ```
-net install GLD-latest-file-check, replace from("https://raw.githubusercontent.com/worldbank/gld/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/Append%20latest%20coutry%20surveys%20from%20server")
+net install gld_append_country_latest, replace from("https://raw.githubusercontent.com/worldbank/gld/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/Append%20latest%20country%20surveys%20from%20server")
 ```
 
 Make sure to keep the `replace` option. This is not necessary the first time but will allow Stata to overwrite the code if we update this function (and now you would need alert for those updates, technically. It never ends... Sorry! Much less likely, though).
