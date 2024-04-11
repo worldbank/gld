@@ -17,9 +17,9 @@ This document describes the methodology used to map national industrial and occu
 | 2012 | 2 | 2010 | ISIC Rev.4 | 2 | 2012 | ISCO-08 |
 | 2013 | 2 | [2010](utilities/PSIC_2010.pdf) | ISIC Rev.4 | 2 | 2015 | ISCO-08 |
 | 2014 | 2 | 2010 | ISIC Rev.4 | 2 | [2015](utilities/PSCO_2015.pdf) | ISCO-08 |
-| 2017 | 4 | 2010 | ISIC Rev.4 | 4 | 2015 | ISCO-88 |
-| 2018 | 4 | 2010 | ISIC Rev.4 | 4 | 2015 | ISCO-88 |
-| 2020 | 4 | 2010 | ISIC Rev.4 | 2 | 2015 | ISCO-88 |
+| 2017 | 4 | 2010 | ISIC Rev.4 | 4 | 2015 | ISCO-08 |
+| 2018 | 4 | 2010 | ISIC Rev.4 | 4 | 2015 | ISCO-08 |
+| 2020 | 4 | 2010 | ISIC Rev.4 | 2 | 2015 | ISCO-08 |
 
 Note that in the annual report of LFS 2012, PSCO 2012 is said to be used for occupation classification. However, PSCO 2012 is a PSCO draft that is in fact the same as PSCO 2015 which is the latest version, according to the FOREWORD page of PSCO 2015 manual.
 
