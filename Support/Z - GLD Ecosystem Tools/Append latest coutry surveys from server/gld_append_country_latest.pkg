@@ -1,0 +1,7 @@
+v 1
+d GLD Append Latest : A package with a function to append latest surveys from GLD server for each country.
+d Creator: World Bank Jobs Group
+d Author: Gronert Alvarez, Mario Andres
+d For any questions, please contact: gld@worldbankgroup.org
+d Distribution-Date: 2024-04-11
+f gld_append_country_latest.ado
