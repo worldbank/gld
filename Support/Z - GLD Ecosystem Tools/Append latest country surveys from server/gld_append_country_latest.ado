@@ -13,7 +13,7 @@ capture program drop gld_append_country_latest
 program define gld_append_country_latest
 {
 
-syntax, folder_path(str) [start_year(integer -1) end_year(9999)]
+syntax, folder_path(str) [start_year(integer -1) end_year(integer 9999)]
 
 ********************************************************************************
 *---------- 1: Evaluate input on folder_path
