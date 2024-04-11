@@ -56,7 +56,7 @@ if `end_year' != 9999 & `end_year' < `start_year' {
 
 clear
 * Read in list of surveys from GLD
-filelist, dir("`path_to_GLD_country_folder_system'") pat("*.dta")
+filelist, dir("`folder_path'") pat("*.dta")
 
 * Create check to only look at files in the harmonized data folder of GLD server
 gen check = regexm(dirname, "Data/Harmonized")
