@@ -19,8 +19,9 @@ syntax, folder_path(str) [start_year(integer -1) end_year(integer 9999)]
 *---------- 1: Evaluate input on folder_path
 ********************************************************************************
 
-
-if !fileexists("`folder_path'"){
+* Try to make it the CD, if throws error it does not exist
+capture cd "`folder_path'"
+if _rc != 0 {
 	dis as error "No folder seems to exist for the folder path given"
 	dis as error "`folder_path'"
 	exit 198
