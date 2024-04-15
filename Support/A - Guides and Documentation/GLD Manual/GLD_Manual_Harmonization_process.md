@@ -1,4 +1,6 @@
-# How does the harmonization process work? What are the steps?
+# GLD Harmonization Process Overview
+
+## How does the harmonization process work? What are the steps?
 
 The harmonization process involves several key steps to ensure that data collected from various sources is standardized and ready for analysis. The first step in the harmonization process is to acquire the necessary data. This data can be obtained through downloading from official sources or it may be shared by colleagues. However, it is imperative to assess the data rights and ensure compliance with any relevant regulations or agreements.
 Once the data is obtained, the next step is to organize it effectively. Survey folders are created, and documentation is stored in the correct folders to maintain clarity and accessibility. If additional documentation is required, efforts are made to acquire it promptly.
