@@ -1,4 +1,4 @@
-## How do I read the harmonization code template?
+## How to read the harmonization code
 
 Each harmonization do file starts with a header that gives relevant context information (see Box 1, next page) that helps understand the harmonization process not only for other users but for the harmonizers themselves at later points in time. It contains four blocks:
 
