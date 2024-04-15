@@ -9,3 +9,9 @@ parts:
       - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_Intro.md
         sections:
         - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S2.md
+        - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S3.md
+        - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S4.md
+        - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S5.md
+        - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S6.md
+        - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S7.md
+        - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S8.md
