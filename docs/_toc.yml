@@ -2,22 +2,27 @@ format: jb-book
 root: README
 
 parts:
-  - caption: Global Labor Database Harmonization Guidelines
+  - caption: Global Labor Database Manual
     chapters:
-      - file: Support/A - Guides and Documentation/GLD_Manual_V.1.0
-  - caption: Harmonization Process
-    chapters:
-      - glob: docs/harmonization_process/*
-      - glob: docs/harmonization_template/*
-  - caption: Data Dictionary
-    chapters:
-      - glob: docs/data_dictionary/*
-  - caption: Harmonization Scripts
-    chapters:
-      - file: docs/script_structure
-  - caption: Data Checks
-    chapters:
-      - glob: docs/data_checks/*
+      - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Introduction.md
+      - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Overview.md
+      - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_Intro.md
+        sections:
+        - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S2.md
+        - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S3.md
+        - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S4.md
+        - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S5.md
+        - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S6.md
+        - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S7.md
+        - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S8.md
+      - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_process.md
+      - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_read_code.md
+      - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Validation.md
+        sections:
+        - file: Support/D - Q Checks/Single survey checks/README.md
+        - file: Support/D - Q Checks/Survey series checks/Readme.md
+      - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Use.md
+      - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Expand.md
   - caption: Contribution Guidelines
     chapters:
       - glob: docs/branch_management/*
