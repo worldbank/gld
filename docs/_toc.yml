@@ -16,4 +16,4 @@ parts:
         - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S7.md
         - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S8.md
       - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_process.md
-
+      title: GLD Harmonization Process Overview
