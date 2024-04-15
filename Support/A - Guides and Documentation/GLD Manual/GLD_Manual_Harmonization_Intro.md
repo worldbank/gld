@@ -1,0 +1,27 @@
+# Harmonization of GLD
+
+## What is being harmonized?
+
+The Global Labor Database harmonizes a standard set of variables with the aim of providing users with a (a) ready to use, (b) interactive, and (c) interoperable harmonization. By ready to use we mean that the output can be used directly to calculate the most common indicators and/or statistics. GLD is interactive as the harmonization code is designed to be leveraged by users to add to it or tweak it to include non-standard variables. Finally, GLD is interoperable with the Global Monitoring Database, the other big ongoing household survey harmonization process, since it uses (largely) the same variable names and definitions. It is, to a lesser extent, interoperable with the older I2D2 collection. Some variable names change yet the concepts are largely the same.
+
+The [GLD Data Dictionary available here](https://github.com/worldbank/gld/blob/main/Support/A%20-%20Guides%20and%20Documentation/GLD_Dictionary_v01.xlsx) gives an overview of all included variables, the logical structure of the variables, and their I2D2 equivalents.
+
+The GLD differs from the GMD in that it is designed to focus more heavily on labor variables. As a consequence, household income or assets are not covered (and most often not present in labor force surveys, the main source of GLD). Instead it offers much deeper occupation and industry information, by coding the international [ISCO](https://ilostat.ilo.org/resources/concepts-and-definitions/classification-occupation/) and [ISIC](https://unstats.un.org/unsd/classifications/Econ/isic) classifications to as many digits as is possible.
+
+In trying to strike a balance between harmonization and staying true to the raw data, the GLD also offers more “original” variables, that is, variables that directly provide users with the information as is to be found in the survey. For example, in addition to `occup` and `occup_isco` (occupation information by 10 main categories or the ISCO codes), `occup_orig` contains the occupation information found in the survey. Thus users can deviate from our codes without need to redo the harmonization and evaluate how the mapping from raw to harmonized variable was done directly.
+
+## What is the harmonization *not* doing / offering?
+
+There are two guiding principles that determine what the GLD harmonization may **not** offer. These can be summarized as “no (hu)man is an island, but surveys are” and “users make the biggest leaps”.
+
+By the first, we mean that GLD harmonizes only to the standard and realities present at the time of survey collection and processing, independently of what was done in a previous a subsequent version of the survey. That is, GLD harmonizes individual surveys but does not unify them across a series. For example, India created three new states in the year 2000 (Jharkhand, Chhattisgarh and, at the time, Uttaranchal now Uttarakhand). The change in states also led to a change in the official number codes each state was assigned. GLD surveys prior to 2000 will not contain these states and no effort is made to re-assign the areas to new states – states that may be subject to further changes in the future.
+
+Similarly, Pakistan changed its national occupation classification from one based on ISCO-88 to one based on ISCO-08 in 2012. Versions prior to 2012 thus have a different classification. The GLD team provides context information on this and explains the specific effects on the data and how to think about these changes (as shown [here for the change in occupation in Pakistan](https://github.com/worldbank/gld/blob/main/Support/B%20-%20Country%20Survey%20Details/PAK/LFS/Correspondence_National_International_Classifications.md)). 
+
+GLD also provides information on how to potentially handle changes and help users in unifying, like our description of the aforementioned changes to states in India, [available here](https://github.com/worldbank/gld/blob/main/Support/B%20-%20Country%20Survey%20Details/IND/EUS/Changes_States_And_State_Codes_Over_Time.md) or a detailed explanation of how to handle a change in the definition of employment ([example from Tanzania here](https://github.com/worldbank/gld/blob/main/Support/B%20-%20Country%20Survey%20Details/TZA/ILFS/Converting%20between%20ICLS%20Definitions.md)).
+
+Handling the changes also ties in to the second idea of letting “users make the biggest leaps”. Unifying classifications across different versions creates potentially a lot of noise in the data. It introduces uncertainty about the classifications and makes assignments much less accurate. Beyond detailed information we offer tools to help users, like our tool to check whether an [ISCO or ISIC universe is correctly covered](https://github.com/worldbank/gld/tree/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20universe%20check) as well as a tool to make (mechanical) [conversions between difference versions of the classifications](https://github.com/worldbank/gld/tree/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20conversion%20tool). The tools are there, to help and empower the user, but overall the GLD harmonization is conservative in its choices, making as few assumptions as possible and deferring in bigger decisions to the user.
+
+## How are the variables defined
+
+The next subsections define, variable by variable, how each concept is defined, in addition to provinding some lessons learned from the process of 
