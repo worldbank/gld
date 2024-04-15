@@ -29,3 +29,6 @@ parts:
       - glob: docs/pull_request/*
       - glob: docs/raise_issue/*
       - glob: Support/E - Contribution Guidelines/*
+  - caption: Contact
+    chapters:
+      - file: docs/contact
