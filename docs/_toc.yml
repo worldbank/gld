@@ -4,27 +4,27 @@ root: README
 parts:
   - caption: Global Labor Database Manual
     chapters:
-      - file: Support/A%20-%20Guides%20and%20Documentation/GLD%20Manual/GLD_Manual_Introduction.md
-      - file: Support/A%20-%20Guides%20and%20Documentation/GLD%20Manual/GLD_Manual_Overview.md
-      - file: Support/A%20-%20Guides%20and%20Documentation/GLD%20Manual/GLD_Manual_Harmonization_Intro.md
+      - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Introduction.md
+      - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Overview.md
+      - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_Intro.md
       sections:
-        - file: Support/A%20-%20Guides%20and%20Documentation/GLD%20Manual/GLD_Manual_Harmonization_S2.md
-        - file: Support/A%20-%20Guides%20and%20Documentation/GLD%20Manual/GLD_Manual_Harmonization_S3.md
-        - file: Support/A%20-%20Guides%20and%20Documentation/GLD%20Manual/GLD_Manual_Harmonization_S4.md
-        - file: Support/A%20-%20Guides%20and%20Documentation/GLD%20Manual/GLD_Manual_Harmonization_S5.md
-        - file: Support/A%20-%20Guides%20and%20Documentation/GLD%20Manual/GLD_Manual_Harmonization_S6.md
-        - file: Support/A%20-%20Guides%20and%20Documentation/GLD%20Manual/GLD_Manual_Harmonization_S7.md
-        - file: Support/A%20-%20Guides%20and%20Documentation/GLD%20Manual/GLD_Manual_Harmonization_S8.md
-      - file: Support/A%20-%20Guides%20and%20Documentation/GLD%20Manual/GLD_Manual_Harmonization_process.md
+        - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S2.md
+        - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S3.md
+        - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S4.md
+        - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S5.md
+        - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S6.md
+        - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S7.md
+        - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S8.md
+      - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_process.md
       title: GLD Harmonization Process Overview
-      - file: Support/A%20-%20Guides%20and%20Documentation/GLD%20Manual/GLD_Manual_Harmonization_read_code.md
+      - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_read_code.md
       title: How to read the harmonization code
-      - file: Support/A%20-%20Guides%20and%20Documentation/GLD%20Manual/GLD_Manual_Validation.md
+      - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Validation.md
       sections:
-        - file: Support/D%20-%20Q%20Checks/Single%20survey%20checks/README.md
-        - file: Support/D%20-%20Q%20Checks/Survey%20series%20checks/Readme.md
-      - file: Support/A%20-%20Guides%20and%20Documentation/GLD%20Manual/GLD_Manual_Use.md
-      - file: Support/A%20-%20Guides%20and%20Documentation/GLD%20Manual/GLD_Manual_Expand.md
+        - file: Support/D - Q Checks/Single survey checks/README.md
+        - file: Support/D - Q Checks/Survey series checks/Readme.md
+      - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Use.md
+      - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Expand.md
   - caption: Contribution Guidelines
     chapters:
       - glob: docs/branch_management/*
