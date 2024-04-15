@@ -32,6 +32,8 @@
 !LICENSE*
 !CODE_OF_CONDUCT.md
 
+# Jupyter Book
+_build/
 
 #######################
 # We only want to publish three kinds of things:
@@ -106,6 +108,9 @@
 # the "#" below after you checked your .yml/.yaml files for sensitive content
 !docs/**/*.yml
 !docs/**/*.yaml
+
+# docs requirements
+!docs/requirements.txt
 
 #  Other files for github pages
 !docs/**/*.gem
