@@ -1,0 +1,642 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>GLD GitHub Repository Branching Guidelines &#8212; Global Labor Database</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'docs/branch_management/bm_index';</script>
+    <link rel="canonical" href="https://worldbank.github.io/gld/docs/branch_management/bm_index.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Make a Pull Request" href="../pull_request/pr_index.html" />
+    <link rel="prev" title="Static Checks" href="../data_checks/dc_static.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+    <meta name="docbuild:last-update" content="Apr 15, 2024"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../README.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/WB_Jobs_logo_color.svg" class="logo__image only-light" alt="Global Labor Database - Home"/>
+    <script>document.write(`<img src="../../_static/WB_Jobs_logo_color.svg" class="logo__image only-dark" alt="Global Labor Database - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../README.html">
+                    Welcome to the Global Labor Database Repository
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Global Labor Database Harmonization Guidelines</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Support/A%20-%20Guides%20and%20Documentation/GLD_Manual_V.1.0.html">Global Labor Database Harmonization Guidelines</a></li>
+
+
+
+
+
+
+
+
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Harmonization Process</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../harmonization_process/hp_checks.html">Check harmonization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../harmonization_process/hp_document_raw.html">Document raw data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../harmonization_process/hp_harmonize_raw.html">Harmonize raw data to GLD standard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../harmonization_process/hp_index.html">Harmonization process</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../harmonization_process/hp_obtain_data.html">Obtain and store raw data and information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../harmonization_process/hp_publishing.html">Publish harmonization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../harmonization_template/ht_index.html">Harmonization Template</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Data Dictionary</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../data_dictionary/dd_geography.html">Geography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_dictionary/dd_index.html">Data Dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_dictionary/dd_survey_id.html">Survey &amp; ID</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Harmonization Scripts</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../script_structure.html">GLD Harmonization Script Structure</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Data Checks</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../data_checks/dc_dynamic.html">Dynamic Checks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_checks/dc_index.html">Data Checks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_checks/dc_static.html">Static Checks</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Contribution Guidelines</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">GLD GitHub Repository Branching Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pull_request/pr_index.html">Make a Pull Request</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../raise_issue/ri_index.html">Raise an Issue</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Contact</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Any remaining questions?</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/worldbank/gld" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/worldbank/gld/edit/main/docs/branch_management/bm_index.md" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/worldbank/gld/issues/new?title=Issue%20on%20page%20%2Fdocs/branch_management/bm_index.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/docs/branch_management/bm_index.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>GLD GitHub Repository Branching Guidelines</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-this-document">What is this document?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-are-branches-and-why-do-we-need-them">What are branches and why do we need them?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-is-new-information-created">When is new information created?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-three-tier-branching-system">The three-tier branching system</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gld-implementation">GLD implementation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#when-to-create-a-feature-branch-versus-committing-to-the-develop-branch-directly">When to create a feature branch versus committing to the develop branch directly</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#naming-rules-for-branches">Naming rules for branches</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="gld-github-repository-branching-guidelines">
+<span id="branch-management"></span><h1>GLD GitHub Repository Branching Guidelines<a class="headerlink" href="#gld-github-repository-branching-guidelines" title="Permalink to this heading">#</a></h1>
+<section id="what-is-this-document">
+<h2>What is this document?<a class="headerlink" href="#what-is-this-document" title="Permalink to this heading">#</a></h2>
+<p>This document sets the guidelines on how to create, name, and manage branches on the GLD repository. It is aimed at both individuals developing new code on the repository and users of the repository who only consume code. Upon reading, users should be able to understand how the branches structure the code and at what stage each project is. Developers should, in addition, implement their code in the outlined manner to ensure consistency across projects and developers.</p>
+</section>
+<section id="what-are-branches-and-why-do-we-need-them">
+<h2>What are branches and why do we need them?<a class="headerlink" href="#what-are-branches-and-why-do-we-need-them" title="Permalink to this heading">#</a></h2>
+<p>A Git is a bifurcation of the state of code that creates a new path for the evolution of it. It can be parallel to other Git branches that you can generate (see <a class="reference external" href="https://www.hostinger.com/tutorials/how-to-use-git-branches/">here a tutorial on Git branches</a>, from where this explanation is from). Two of the main advantages are:</p>
+<ul class="simple">
+<li><p>It is possible to develop new features for our application without hindering the development in the main branch.</p></li>
+<li><p>With Git branches it is possible to create different development branches that can converge in the same repository. For example, a stable branch, a test branch, and an unstable branch.</p></li>
+</ul>
+<p>In the context of GLD, we need a main branch as the place where users can find the code for the validated harmonizations that have been added to the database. In addition, we need a place to store code that we are working on and want to discuss with others, e.g., a new survey we wish to harmonize. The development, however, should not appear on the main branch to not provide users with unfinished code. We need a branch to work on the new survey and incorporate it only once we are finished.</p>
+</section>
+<section id="when-is-new-information-created">
+<h2>When is new information created?<a class="headerlink" href="#when-is-new-information-created" title="Permalink to this heading">#</a></h2>
+<p>We then develop new content by:</p>
+<ul class="simple">
+<li><p>Creating harmonization code for a country, survey, year;</p></li>
+<li><p>Creating support documentation for a country, survey, year;</p></li>
+<li><p>Creating general support documentation (templates, q-checks, …).</p></li>
+</ul>
+</section>
+<section id="the-three-tier-branching-system">
+<h2>The three-tier branching system<a class="headerlink" href="#the-three-tier-branching-system" title="Permalink to this heading">#</a></h2>
+<section id="overview">
+<h3>Overview<a class="headerlink" href="#overview" title="Permalink to this heading">#</a></h3>
+<p>The three-tier branching system is based on the GitFlow Workflow. The image below explains the general idea (find more information in the source for this image: <a class="reference external" href="https://github.com/worldbank/DIME-Resources/blob/master/git-3-flow.pdf">Part 2 of this DIME presentation on Git</a>).</p>
+<p><img alt="image" src="../../_images/gitflow_dime_image.png" /></p>
+</section>
+<section id="gld-implementation">
+<h3>GLD implementation<a class="headerlink" href="#gld-implementation" title="Permalink to this heading">#</a></h3>
+<p>In the GLD context, the <strong>main</strong> (or master) <strong>branch contains all the code for validated harmonizations</strong> as well as the latest stable version of any support information (e.g., coding templates, quality checks, and data dictionary). It represents the public record of the project.</p>
+<p>The <strong>develop branch represents the work done on a standalone code expansion</strong> (e.g., by adding a new survey). It is created at the start of the project and will only be merged once it is completed and validated (e.g., after all quality checks have passed).</p>
+<p>Inside each develop branch <strong>a feature branch progresses a substantial piece of project work</strong> (e.g. the creation or revision of unique household identifiers). This reduces the number of commits to the develop branch and allows developers to try approaches without compromising the project’s develop branch.</p>
+</section>
+<section id="when-to-create-a-feature-branch-versus-committing-to-the-develop-branch-directly">
+<h3>When to create a feature branch versus committing to the develop branch directly<a class="headerlink" href="#when-to-create-a-feature-branch-versus-committing-to-the-develop-branch-directly" title="Permalink to this heading">#</a></h3>
+<p>The distinction between the main and the develop branch is that the latter is an ongoing project that will be added to the former only at its conclusion. The distinction between the develop branch and the feature branch is not as clear. This is a guideline and not prescriptive. It depends on the developer and the circumstances. The developer may commit advances directly to the develop branch or create a feature branch that will be merged in later in the way that best suits their workflow. However, as rule of thumb, one should:</p>
+<ul class="simple">
+<li><p>Commit small advances (e.g., corrected a typo like “Wolrd Bank” to “World Bank” in one year’s code) directly to the develop branch;</p></li>
+<li><p>Create a feature branch for any major piece of work (e.g., trialling a system to convert a national occupation classification system to ISCO);</p></li>
+<li><p>Discuss with a colleague how to handle feature branches if there is more than one person working on a particular project and develop branch.</p></li>
+</ul>
+</section>
+<section id="naming-rules-for-branches">
+<h3>Naming rules for branches<a class="headerlink" href="#naming-rules-for-branches" title="Permalink to this heading">#</a></h3>
+<p>There are two kinds of projects that merit a develop branch. Either a new survey is being added and the branch will contain the harmonization code relating to it, or general GLD support operations are amended or added (e.g., changes to the quality checks).</p>
+<p>In the case of the former, the branch should simply have the <a class="reference external" href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3">ISO alpha-3 letter code</a> of the country covered (e.g., <strong>THA</strong> for Thailand). Only if a country develop branch already exists should the name include the survey acronym, separated by a dash from the country three letter code (e.g., <strong>THA-lfs</strong> for the Thailand Labour Force Survey).</p>
+<p>If the project is not a country survey, the name of the develop branch should be a shorthand description of the process, e.g., <strong>expnd-Qcheck</strong> for a project expanding the quality checks.</p>
+<p>Any feature branch of a develop branch should contain the develop branch name and add a shorthand description of the feature, separated from the original name by a dash. For example, for a feature reviewing consistency of household identifiers in Thailand, this would be: <strong>THA-hhid-review</strong> (or <strong>THA-lfs-hhid-review</strong> if there already was a different <strong>THA</strong> develop branch). For the case of adding a feature to the exporting of the information of the quality checks in a new Excel table which may be more informative, the feature branch could be named: <strong>expnd-Qcheck-export-xlsx</strong>.</p>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./docs/branch_management"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../data_checks/dc_static.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Static Checks</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../pull_request/pr_index.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Make a Pull Request</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-this-document">What is this document?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-are-branches-and-why-do-we-need-them">What are branches and why do we need them?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-is-new-information-created">When is new information created?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-three-tier-branching-system">The three-tier branching system</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gld-implementation">GLD implementation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#when-to-create-a-feature-branch-versus-committing-to-the-develop-branch-directly">When to create a feature branch versus committing to the develop branch directly</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#naming-rules-for-branches">Naming rules for branches</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By World Bank Jobs Group
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on Apr 15, 2024.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+<div class="extra_footer">
+  <div>
+    <b>All content (unless otherwise specified) is subject to the <a href="https://opensource.org/license/mit/">MIT License.</a></b>
+</div>
+
+</div>
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

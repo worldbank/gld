@@ -1,0 +1,662 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Welcome to the Global Labor Database Repository &#8212; Global Labor Database</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'README';</script>
+    <link rel="canonical" href="https://worldbank.github.io/gld/README.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Global Labor Database Harmonization Guidelines" href="Support/A%20-%20Guides%20and%20Documentation/GLD_Manual_V.1.0.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+    <meta name="docbuild:last-update" content="Apr 15, 2024"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="#">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/WB_Jobs_logo_color.svg" class="logo__image only-light" alt="Global Labor Database - Home"/>
+    <script>document.write(`<img src="_static/WB_Jobs_logo_color.svg" class="logo__image only-dark" alt="Global Labor Database - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1 current active">
+                <a class="reference internal" href="#">
+                    Welcome to the Global Labor Database Repository
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Global Labor Database Harmonization Guidelines</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="Support/A%20-%20Guides%20and%20Documentation/GLD_Manual_V.1.0.html">Global Labor Database Harmonization Guidelines</a></li>
+
+
+
+
+
+
+
+
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Harmonization Process</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="docs/harmonization_process/hp_checks.html">Check harmonization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/harmonization_process/hp_document_raw.html">Document raw data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/harmonization_process/hp_harmonize_raw.html">Harmonize raw data to GLD standard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/harmonization_process/hp_index.html">Harmonization process</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/harmonization_process/hp_obtain_data.html">Obtain and store raw data and information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/harmonization_process/hp_publishing.html">Publish harmonization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/harmonization_template/ht_index.html">Harmonization Template</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Data Dictionary</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="docs/data_dictionary/dd_geography.html">Geography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/data_dictionary/dd_index.html">Data Dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/data_dictionary/dd_survey_id.html">Survey &amp; ID</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Harmonization Scripts</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="docs/script_structure.html">GLD Harmonization Script Structure</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Data Checks</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="docs/data_checks/dc_dynamic.html">Dynamic Checks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/data_checks/dc_index.html">Data Checks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/data_checks/dc_static.html">Static Checks</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Contribution Guidelines</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="docs/branch_management/bm_index.html">GLD GitHub Repository Branching Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/pull_request/pr_index.html">Make a Pull Request</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/raise_issue/ri_index.html">Raise an Issue</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Contact</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="docs/contact.html">Any remaining questions?</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/worldbank/gld" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/worldbank/gld/edit/main/README.md" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/worldbank/gld/issues/new?title=Issue%20on%20page%20%2FREADME.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/README.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Welcome to the Global Labor Database Repository</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-the-problem-we-are-addressing">What is the problem we are addressing?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-does-this-repository-help-with-this">How does this repository help with this?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-do-you-use-repository">How do you use repository?</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#finding-the-harmonization-code">Finding the harmonization code</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#finding-the-context-information">Finding the context information</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-can-you-help-with-this-repository">How can you help with this repository?</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#report-your-experience">Report your experience</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#report-errors-you-spotted">Report errors you spotted</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#harmonize-a-new-survey-yourself">Harmonize a new survey yourself</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#other-support">Other support</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="welcome-to-the-global-labor-database-repository">
+<h1>Welcome to the Global Labor Database Repository<a class="headerlink" href="#welcome-to-the-global-labor-database-repository" title="Permalink to this heading">#</a></h1>
+<section id="what-is-the-problem-we-are-addressing">
+<h2>What is the problem we are addressing?<a class="headerlink" href="#what-is-the-problem-we-are-addressing" title="Permalink to this heading">#</a></h2>
+<p>Household surveys may vary greatly not only from one country to the next, but also within a country over time. Recall periods may change. Similarly, concepts like the categories of unemployment duration can be coded as “<em>less than a week // more than a week but less than a month // between one month and two months // …</em>” in one country and simply “<em>less than a month // more than a month but fewer than three // …</em>” in another. Thus, a unified standard is necessary to make them comparable.
+Moreover, even in cases where the data is harmonized, the harmonization may not serve your particular purpose as you would have needed to add some variables and change the definition of the harmonization slightly to fit your purposes. Yet if the harmonized data is a finished data file, there is little to be done.</p>
+<p>Consequently, you may well need to redo the whole harmonization yourself. That is a big investment, one that is inefficient for large projects and potentially prohibitive for smaller ones.</p>
+</section>
+<section id="how-does-this-repository-help-with-this">
+<h2>How does this repository help with this?<a class="headerlink" href="#how-does-this-repository-help-with-this" title="Permalink to this heading">#</a></h2>
+<p>This repository provides you with the codes for the surveys we harmonized to the standard, comparable data dictionary of the <em>Global Labor Database</em> (GLD). It is based on the data dictionary developed for the World Bank’s Global Monitoring Database (GMD).
+This repository does not provide you with the data but rather with the codes so you can run the harmonization yourself and amend and adjust it to your needs without needing to redo the whole process.</p>
+<p>The support documentation provides context information on the survey like the sampling strategy followed or which industrial classification was used to identify employment sectors and how these were converted to ISIC codes if the original used a difference classification scheme.</p>
+</section>
+<section id="how-do-you-use-repository">
+<h2>How do you use repository?<a class="headerlink" href="#how-do-you-use-repository" title="Permalink to this heading">#</a></h2>
+<p>The repository has three folders containing the harmonization codes (folder GLD), the support information (folder Support), and the <a class="reference external" href="https://worldbank.github.io/gld/">contents for the GLD website</a> (folder docs). It contains many branches on which the team works, but the <strong>main</strong> branch represents the most up to date version for public use.</p>
+<p>Please note that this repository contains all the relevant information to understand and create harmonized datasets with the exception of the underlying raw data. We cannot share microdata through GitHub. In the <span class="xref myst">Country Survey Details</span> there should be an explanation on where to find - if public - the raw data.</p>
+<section id="finding-the-harmonization-code">
+<h3>Finding the harmonization code<a class="headerlink" href="#finding-the-harmonization-code" title="Permalink to this heading">#</a></h3>
+<p>You may find the harmonization code in the <a class="reference external" href="https://github.com/worldbank/gld/tree/main/GLD">GLD folder</a>. Inside, the folders are structured according to <a class="reference external" href="https://github.com/worldbank/gld/blob/main/Support/A%20-%20Guides%20and%20Documentation/WB%20Microdata%20Lib%20Folder%20and%20File%20Naming%20Management.docx">the World Bank Microdata Library naming convention</a>. That is, at the first level the countries, identified by their <a class="reference external" href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3">ISO three letter codes</a>. Inside each country it is organized by denoting the year of survey start and the acronym of the survey. Inside this is the GLD harmonization, wherein finally, under <em>Programs</em> you may find the harmonization.
+Note that this represents the structure as it is stored on the World Bank server. On the repository we only place the harmonization code and GitHub will jump or overlook any folders it ignores. That is, inside the folder it may look like this:</p>
+<p>Figure 1. Example of contents of GLD/IND folder
+<br></br>
+<img alt="" src="_images/ind_code_example.png" />
+<br></br></p>
+<p>Here you can see two folders are jumped to directly get to the <em>Programs</em> folder where the harmonization code is stored.</p>
+</section>
+<section id="finding-the-context-information">
+<h3>Finding the context information<a class="headerlink" href="#finding-the-context-information" title="Permalink to this heading">#</a></h3>
+<p>There are two types of support information. The first are guides and documentation. This includes the GLD guide and its data dictionary. These are stored in the <span class="xref myst">Guides and Documentation folder</span>.</p>
+<p>The second type of information is the survey context information. This can be found in the <span class="xref myst">Country Survey Details folder</span>. This folder is structured similarly to the GLD folder by the three letter country code followed by, within country, the survey acronym. Inside each country and survey folder you may find the <em>Introduction</em> text. The below is an example of the folder for the Indian EUS survey.</p>
+<p>Figure 2. Example of contents of Indian EUS country survey details folder
+<br></br>
+<img alt="" src="_images/ind_csd_example.png" />
+<br></br></p>
+<p>In this case, in addition to <code class="docutils literal notranslate"><span class="pre">1.</span> <span class="pre">Introduction</span> <span class="pre">to</span> <span class="pre">EUS.md</span></code> we have three other markdown files that explain other aspects of the survey. However, these will be referenced first in the introduction document. The introduction is always numbered with a one to be on top of the list for easier access as it is the gateway document.</p>
+<p>The utilities folder contains all the files (e.g., images, code, tables) referenced in the markdown files.</p>
+</section>
+</section>
+<section id="how-can-you-help-with-this-repository">
+<h2>How can you help with this repository?<a class="headerlink" href="#how-can-you-help-with-this-repository" title="Permalink to this heading">#</a></h2>
+<p>If you wish to help improve this repository, you are more than welcome to – and we’d greatly appreciate it. There are three major ways to help us out.</p>
+<section id="report-your-experience">
+<h3>Report your experience<a class="headerlink" href="#report-your-experience" title="Permalink to this heading">#</a></h3>
+<p>The simplest way is to just tell us about your experience. Did you find everything you needed? Were you able to run all the files? Was the process comprehensible to you? Feedback on your experience interacting with the repository helps us improve it, so please feel free to get in touch with the <a class="reference external" href="mailto:gld&#37;&#52;&#48;worldbank&#46;org">GLD Focal Point</a>.</p>
+</section>
+<section id="report-errors-you-spotted">
+<h3>Report errors you spotted<a class="headerlink" href="#report-errors-you-spotted" title="Permalink to this heading">#</a></h3>
+<p>In addition to reporting on your experience, as you run and use the harmonization you may spot errors in the code. We harmonize conscientiously and run our harmonization through a set of checks, yet some errors we cannot spot. If you spot any of those please either write to the <a class="reference external" href="mailto:gld&#37;&#52;&#48;worldbank&#46;org">GLD Focal Point</a> or, even better, raise an issue we can all see, if possible with a link to <a class="reference external" href="https://docs.github.com/en/github/writing-on-github/working-with-advanced-formatting/creating-a-permanent-link-to-a-code-snippet">particular section of the code in question</a>.</p>
+</section>
+<section id="harmonize-a-new-survey-yourself">
+<h3>Harmonize a new survey yourself<a class="headerlink" href="#harmonize-a-new-survey-yourself" title="Permalink to this heading">#</a></h3>
+<p>Finally, if you are working on a project that needs a harmonization, please feel free to do it to our standard, we’d be excited to host your contribution. You may find the <a class="reference external" href="https://github.com/worldbank/gld/blob/main/Support/A%20-%20Guides%20and%20Documentation/GLD_Dictionary_v01.xlsx">data dictionary</a> on our site as well as <span class="xref myst">the GLD harmonization template</span>. You may fork our repository, run through <span class="xref myst">the quality checks</span> and create a pull request and we will review it to add it to the collection.</p>
+</section>
+<section id="other-support">
+<h3>Other support<a class="headerlink" href="#other-support" title="Permalink to this heading">#</a></h3>
+<p>We would welcome any other support you may be able to give, such as improvements to the quality checks, the documentation of the survey details, or other documents – even this very same Readme.</p>
+</section>
+</section>
+<div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="right-next"
+       href="Support/A%20-%20Guides%20and%20Documentation/GLD_Manual_V.1.0.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Global Labor Database Harmonization Guidelines</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-the-problem-we-are-addressing">What is the problem we are addressing?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-does-this-repository-help-with-this">How does this repository help with this?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-do-you-use-repository">How do you use repository?</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#finding-the-harmonization-code">Finding the harmonization code</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#finding-the-context-information">Finding the context information</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-can-you-help-with-this-repository">How can you help with this repository?</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#report-your-experience">Report your experience</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#report-errors-you-spotted">Report errors you spotted</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#harmonize-a-new-survey-yourself">Harmonize a new survey yourself</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#other-support">Other support</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By World Bank Jobs Group
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on Apr 15, 2024.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+<div class="extra_footer">
+  <div>
+    <b>All content (unless otherwise specified) is subject to the <a href="https://opensource.org/license/mit/">MIT License.</a></b>
+</div>
+
+</div>
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
