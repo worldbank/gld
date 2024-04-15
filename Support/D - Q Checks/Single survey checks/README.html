@@ -1,0 +1,822 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Guide to the GLD single survey quality checks &#8212; Global Labor Database</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/clipboard.min.js"></script>
+    <script src="../../../_static/copybutton.js"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'Support/D - Q Checks/Single survey checks/README';</script>
+    <link rel="canonical" href="https://worldbank.github.io/gld/Support/D - Q Checks/Single survey checks/README.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Guide to the GLD survey series quality checks" href="../Survey%20series%20checks/Readme.html" />
+    <link rel="prev" title="Validation" href="../../A%20-%20Guides%20and%20Documentation/GLD%20Manual/GLD_Manual_Validation.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+    <meta name="docbuild:last-update" content="Apr 15, 2024"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../README.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/WB_Jobs_logo_color.svg" class="logo__image only-light" alt="Global Labor Database - Home"/>
+    <script>document.write(`<img src="../../../_static/WB_Jobs_logo_color.svg" class="logo__image only-dark" alt="Global Labor Database - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../README.html">
+                    Welcome to the Global Labor Database Repository
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Global Labor Database Manual</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../A%20-%20Guides%20and%20Documentation/GLD%20Manual/GLD_Manual_Introduction.html">Introduction to the GLD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../A%20-%20Guides%20and%20Documentation/GLD%20Manual/GLD_Manual_Overview.html">Overview to the GLD</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../A%20-%20Guides%20and%20Documentation/GLD%20Manual/GLD_Manual_Harmonization_Intro.html">Harmonization of GLD</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../A%20-%20Guides%20and%20Documentation/GLD%20Manual/GLD_Manual_Harmonization_S2.html">Survey &amp; ID module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../A%20-%20Guides%20and%20Documentation/GLD%20Manual/GLD_Manual_Harmonization_S3.html">Geography</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../A%20-%20Guides%20and%20Documentation/GLD%20Manual/GLD_Manual_Harmonization_S4.html">Demography</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../A%20-%20Guides%20and%20Documentation/GLD%20Manual/GLD_Manual_Harmonization_S5.html">Migration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../A%20-%20Guides%20and%20Documentation/GLD%20Manual/GLD_Manual_Harmonization_S6.html">Education</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../A%20-%20Guides%20and%20Documentation/GLD%20Manual/GLD_Manual_Harmonization_S7.html">Training</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../A%20-%20Guides%20and%20Documentation/GLD%20Manual/GLD_Manual_Harmonization_S8.html">Labor</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../A%20-%20Guides%20and%20Documentation/GLD%20Manual/GLD_Manual_Harmonization_process.html">GLD Harmonization Process Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../A%20-%20Guides%20and%20Documentation/GLD%20Manual/GLD_Manual_Harmonization_read_code.html">How to read the harmonization code</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../../A%20-%20Guides%20and%20Documentation/GLD%20Manual/GLD_Manual_Validation.html">Validation</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Guide to the GLD single survey quality checks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Survey%20series%20checks/Readme.html">Guide to the GLD survey series quality checks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../A%20-%20Guides%20and%20Documentation/GLD%20Manual/GLD_Manual_Use.html">Using and leveraging the GLD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../A%20-%20Guides%20and%20Documentation/GLD%20Manual/GLD_Manual_Expand.html">Improving the GLD</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Contribution Guidelines</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../docs/branch_management/bm_index.html">GLD GitHub Repository Branching Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../docs/pull_request/pr_index.html">Make a Pull Request</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../docs/raise_issue/ri_index.html">Raise an Issue</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Contact</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../docs/contact.html">Any remaining questions?</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/worldbank/gld" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/worldbank/gld/edit/main/Support/D - Q Checks/Single survey checks/README.md" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/worldbank/gld/issues/new?title=Issue%20on%20page%20%2FSupport/D - Q Checks/Single survey checks/README.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../../_sources/Support/D - Q Checks/Single survey checks/README.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Guide to the GLD single survey quality checks</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#understanding-the-quality-checks">Understanding the quality checks</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#overall-quality-checks-template">Overall quality checks template</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#block-1-gld-format-checks">Block 1 - GLD format checks</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#block-2-gld-external-checks">Block 2 - GLD external checks</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#block-3-gld-missing-checks">Block 3 - GLD missing checks</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#block-4-gld-bivariate-checks">Block 4 - GLD bivariate checks</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#combinations-of-gld-variables-checked">Combinations of GLD variables checked</a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#education-cross-categories">Education: cross-categories</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#industry-cross-categories">Industry: cross-categories</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#occupation-cross-categories">Occupation: cross categories</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#labor-force-versus-employment">Labor force versus employment</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#lstatus-versus-age">lstatus versus age</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#education-versus-age">Education versus age</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#industry-versus-occupation">Industry versus occupation</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#occupation-versus-education">Occupation versus education</a></li>
+</ul>
+</li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#output-produced">Output produced</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#block-5-gld-wage-checks">Block 5 - GLD wage checks</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#wage-series-checks">Wage series &amp; checks</a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#wage-by-education">Wage by education</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#wage-by-occupation">Wage by occupation</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#wage-by-industry">Wage by industry</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#wage-by-age">Wage by age</a></li>
+</ul>
+</li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Output produced</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="guide-to-the-gld-single-survey-quality-checks">
+<h1>Guide to the GLD single survey quality checks<a class="headerlink" href="#guide-to-the-gld-single-survey-quality-checks" title="Permalink to this heading">#</a></h1>
+<p>This is a guide to the quality checks for the Global Labor Database (GLD). After reading it, users should be able to:</p>
+<ul class="simple">
+<li><p>understand what the quality checks evaluate and how they work</p></li>
+<li><p>run the checks by themselves on a newly harmonized file, and</p></li>
+<li><p>read and interpret the output</p></li>
+</ul>
+<p>The guide is divided itself in three major sections, one for each learning objective.</p>
+<section id="understanding-the-quality-checks">
+<h2>Understanding the quality checks<a class="headerlink" href="#understanding-the-quality-checks" title="Permalink to this heading">#</a></h2>
+<p>The GLD quality checks intend to make sure that the GLD harmonized output is of sufficient quality to include the evaluated harmonized survey into the database. This is done in five blocks:</p>
+<ul class="simple">
+<li><p>Block 1 checks adherence of the survey data to the GLD formatting requirements (e.g., binary 0/1 variables have no responses outside 0 and 1).</p></li>
+<li><p>Block 2 compares key indicators from the harmonization to the same indicators from external sources (e.g., ILO, UN), to ensure external consistency.</p></li>
+<li><p>Block 3 assesses whether major variables are missing.</p></li>
+<li><p>Block 4 evaluates whether key relationships between pairs of variables align with ex-ante expectations (e.g., individuals occupied as professionals - <code class="docutils literal notranslate"><span class="pre">occup</span> <span class="pre">==</span> <span class="pre">2</span></code> - chiefly have post-secondary education).</p></li>
+<li><p>Block 5 analyses central aspects of wages to ensure wage/earnings information agrees with stylized facts on wage behaviour (e.g., lower skilled workers’ wages are, on average, lower than those of high skilled workers).</p></li>
+</ul>
+<p>The next subsections discuss each block in more detail. We start, however, with the overall quality checks template.</p>
+<section id="overall-quality-checks-template">
+<h3>Overall quality checks template<a class="headerlink" href="#overall-quality-checks-template" title="Permalink to this heading">#</a></h3>
+<p>The overall quality checks template is the only do-file the user needs to interact with regularly. It defines al relevant arguments and calls the do-files that run blocks 1 through 5. The code is <a class="reference download internal" download="" href="../../../_downloads/6adeae939317603405ac15598a9bd7bc/Template_Q_Checks.do"><span class="xref download myst">accessible here</span></a> and shown below:</p>
+<p><br></br>
+<img alt="screenshot of checks template" src="../../../_images/template_pic.png" />
+<br></br></p>
+<p>The quality checks template proceeds in three steps. Step 1 readies Stata by cleaning up any data that may still be stored in the memory. Step 2 defines the arguments. It is the only section requiring user input. Users need to define three <code class="docutils literal notranslate"><span class="pre">globals</span></code>.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">helper</span></code>: Define the path to the folder that contains all the files that run the quality checks (here, folder <span class="xref myst">Helper_programs_1.5</span>). It is recommended to have this be a central place so it applies to all surveys and can easily be updated if the quality checks are amended.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mydata</span></code>: Define the path to the harmonized data the user wishes to check.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">output</span></code>: Define the path to the folder the user wants the output to be stored in. It is recommended to make this the <code class="docutils literal notranslate"><span class="pre">CCC_YYYY_SURV_V0#_M_V0#_A_GLD/Work/Output</span></code> folder for consistency so other users may always know where to find the checks output.</p></li>
+</ul>
+<p>Step 3 simply calls the do files from the helper path running the checks. This step no longer requires user involvement. It does, however, run through all the files that make up the checks. What these cover is the subject of the next section.</p>
+</section>
+<section id="block-1-gld-format-checks">
+<h3>Block 1 - GLD format checks<a class="headerlink" href="#block-1-gld-format-checks" title="Permalink to this heading">#</a></h3>
+<p>This block (with all files starting with <code class="docutils literal notranslate"><span class="pre">B1</span></code>) is concerned with ensuring that the harmonized output conforms to the <span class="xref myst">GLD data dictionary</span>. The <a class="reference download internal" download="" href="../../../_downloads/4317b404754f10505e634a6e180ed7e4/B1.04_Format_Checks_GLD.do"><span class="xref download myst">code for the format checks</span></a> is divided into sections (overall checks, demography checks, education checks, …) and should be commented enough for users to understand what each step is doing. If you feel more explanations are warranted, please <a class="reference external" href="https://github.com/worldbank/gld/issues/new/choose">raise and issue</a> detailing the part not understood and we will endeavour to expand on it.</p>
+<p>Broadly, the checks first evaluate whether the survey is set up correctly: filenames follow the <span class="xref myst">naming convention</span> and variables are from the data dictionary.</p>
+<p>Once this is established, the checks go through variables and, if they are in teh data, investigates whether they are in line with formatting rules. Some examples are:</p>
+<ul class="simple">
+<li><p>Check if vintages of survey (<code class="docutils literal notranslate"><span class="pre">vermast</span></code>/<code class="docutils literal notranslate"><span class="pre">veralt</span></code>) agree with the filename vintages (e.g., if file is <code class="docutils literal notranslate"><span class="pre">CCC_YYYY_SURV_V01_M_V02_A_GLD</span></code> <code class="docutils literal notranslate"><span class="pre">veralt</span></code> needs to be <code class="docutils literal notranslate"><span class="pre">&quot;02&quot;</span></code>).</p></li>
+<li><p>Check there is a single household head per household.</p></li>
+<li><p>Check that categorical variables have answers exclusively within the realm of feasible answers.</p></li>
+<li><p>Check that ISCO/ISIC codes are in the universe of possible codes for the pertinent classification (e.g., in ISIC 3 codes starting with <code class="docutils literal notranslate"><span class="pre">45</span></code> may only have either <code class="docutils literal notranslate"><span class="pre">0</span></code> or <code class="docutils literal notranslate"><span class="pre">1</span></code> through <code class="docutils literal notranslate"><span class="pre">5</span></code> as third digit; anything else would be outside the possible universe and flagged).</p></li>
+</ul>
+<p>The format checks creates a list of flagged issues. It is stored as a <code class="docutils literal notranslate"><span class="pre">.dta</span></code> file in the <code class="docutils literal notranslate"><span class="pre">Block1_Format</span></code> folder (file <code class="docutils literal notranslate"><span class="pre">CCC_YYYY_Other</span> <span class="pre">Household</span> <span class="pre">Survey_Q_Format_Checks.dta</span></code>), and as an Excel spreadsheet in the <code class="docutils literal notranslate"><span class="pre">01_summary</span></code> folder (file <code class="docutils literal notranslate"><span class="pre">B1_format_results.xlsx</span></code>). Below is a screenshot of the spreadsheet output:</p>
+<p><br></br>
+<img alt="screenshot of checks template" src="../../../_images/b1_output.png" />
+<br></br></p>
+<p>As shown, the output has five columns:</p>
+<ul class="simple">
+<li><p>Column Block describes the data dictionary block the variable causing the flag belongs to (demography, education, …).</p></li>
+<li><p>Column Var_Name denotes the name of the variable flagged.</p></li>
+<li><p>Column Test_Type describes the kind of test the variable has undergone.</p></li>
+<li><p>Column Result denotes the number or share of cases with the issue (if this can be written).</p></li>
+<li><p>Column Flag guides the reader whether the issue is at odds with the data dictionary (<code class="docutils literal notranslate"><span class="pre">Flag</span> <span class="pre">=</span> <span class="pre">1</span></code>) or technically possible, yet odd (<code class="docutils literal notranslate"><span class="pre">Flag</span> <span class="pre">=</span> <span class="pre">99</span></code>).</p></li>
+</ul>
+</section>
+<section id="block-2-gld-external-checks">
+<h3>Block 2 - GLD external checks<a class="headerlink" href="#block-2-gld-external-checks" title="Permalink to this heading">#</a></h3>
+<p>Block 2 is the most extensive block, covering - at the moment - 9 files, all starting with <code class="docutils literal notranslate"><span class="pre">B2</span></code>. These can be further subdivided into two groups.</p>
+<p>The first group, files <code class="docutils literal notranslate"><span class="pre">B2.01</span></code> to <code class="docutils literal notranslate"><span class="pre">B2.04</span></code> creates the GLD and external indicators for demography (<code class="docutils literal notranslate"><span class="pre">B2.01</span></code>), labour market (<code class="docutils literal notranslate"><span class="pre">B2.02</span></code>), and wages (<code class="docutils literal notranslate"><span class="pre">B2.03</span></code>). The external indicators are taken from <a class="reference external" href="https://datatopics.worldbank.org/world-development-indicators/">WDI</a>, <a class="reference external" href="https://ilostat.ilo.org/data/">ILOSTAT</a> via <a class="reference external" href="https://db.nomics.world/">dbnomics</a>, and the <a class="reference external" href="https://data.un.org/">UN</a>, also accessed through dbnomics. File <code class="docutils literal notranslate"><span class="pre">B2.04</span></code> to unites all single indicator based files <code class="docutils literal notranslate"><span class="pre">B2.01</span></code> to <code class="docutils literal notranslate"><span class="pre">B2.03</span></code> created into a single database and creates flags to highlight the cases where the GLD indicators are too far off from what the external sources would predict. “Too far” is measured as not having overlapping 10% bounds around the point estimates. In more detail, first the upper and lower bound as 10% above or below the GLD estimate is created. Subsequently, the mean of all used external estimates is taken and a bound 10% above or below is created. A GLD indicator is flagged if its upper bound is below the external lower bound or the lower bound is above the external upper bound.</p>
+<p>The second group of files, files <code class="docutils literal notranslate"><span class="pre">B2.05</span></code> to <code class="docutils literal notranslate"><span class="pre">B2.10</span></code> draws the results for visual inspection. File <code class="docutils literal notranslate"><span class="pre">B2.05</span></code> creates figures for the data from <code class="docutils literal notranslate"><span class="pre">B2.01</span></code>, while <code class="docutils literal notranslate"><span class="pre">B2.06</span></code>, <code class="docutils literal notranslate"><span class="pre">B2.07</span></code>, and <code class="docutils literal notranslate"><span class="pre">B2.08</span></code> draws the data from <code class="docutils literal notranslate"><span class="pre">B2.02</span></code>. <code class="docutils literal notranslate"><span class="pre">B2.09</span></code> draws the wage data from <code class="docutils literal notranslate"><span class="pre">B2.03</span></code>. Finally, <code class="docutils literal notranslate"><span class="pre">B2.10</span></code> creates a panel of flagged figures, based on the file created by <code class="docutils literal notranslate"><span class="pre">B2.04</span></code>.</p>
+<p>The first group files store data in the output’s “Block2_External/01_data” folder, while the figures are stored in the “Block2_External/02_figures” folder. Additionally, a panel of all flagged figures is stored in the output’s “01_summary” folder, along with an Excel file detailing all checks. A <span class="xref myst">separate document here</span> details more fully the process of external checks along codes used for external sources.</p>
+</section>
+<section id="block-3-gld-missing-checks">
+<h3>Block 3 - GLD missing checks<a class="headerlink" href="#block-3-gld-missing-checks" title="Permalink to this heading">#</a></h3>
+<p>Block 3 records the share of responses that are missing for a series of variables. For variables <code class="docutils literal notranslate"><span class="pre">age</span></code>, <code class="docutils literal notranslate"><span class="pre">male</span></code>, and <code class="docutils literal notranslate"><span class="pre">urban</span></code>, the code evaluates if any answers are missing. For variable <code class="docutils literal notranslate"><span class="pre">lstatus</span></code> it is evaluated whether there any responses missing for those above the minimum age to respond to the labour module (variable <code class="docutils literal notranslate"><span class="pre">minlaborage</span></code>). Finally, variables <code class="docutils literal notranslate"><span class="pre">empstat</span></code>, <code class="docutils literal notranslate"><span class="pre">industrycat4</span></code>, <code class="docutils literal notranslate"><span class="pre">wage_no_compen</span></code>, and <code class="docutils literal notranslate"><span class="pre">unitwage</span></code> are checked for missing answers only for those employed (i.e., with <code class="docutils literal notranslate"><span class="pre">lstatus</span> <span class="pre">==</span> <span class="pre">1</span></code>).</p>
+<p>The code outputs the data in “Block3_Missing/01_data” and places the figure directly in the “01_summary” folder in the user designated output folder.</p>
+</section>
+<section id="block-4-gld-bivariate-checks">
+<h3>Block 4 - GLD bivariate checks<a class="headerlink" href="#block-4-gld-bivariate-checks" title="Permalink to this heading">#</a></h3>
+<p>The bivariate data checks look at combinations of two or more variables and raise a flag when the expected behavior of the data under these combinations is violated.</p>
+<p>There are two groups of bivariate checks. The first group consists of three checks and looks at the conversions of a certain variables. The idea behind these three checks is that we have different versions of a particular variable (say “education” is a categorical variable that can present 4 levels, 5 levels and 7 levels), and we want to make sure that the correspondences are correct. This should be true mechanically, and these checks will confirm that it is the case.</p>
+<p>The second group of bivariate checks look at relationships between two variables and raise a flag with the relationship is different from what we expect. Consider, for instance the variables education and age. Common sense tells us that we should expect the number of children under 12 years old with postgraduate education to be very low. Hence, there is a check that computes this share, and flags it if it is above certain threshold. If many children appeared in our data with post-secondary education, we would need to make sure that the variables are correctly harmonized. Therefore, bivariate checks can be useful to identify potential errors in the harmonization process.</p>
+<p>In the next section, we list 8 groups of variables. The first three sections explain the <em>cross-categories</em> consistency checks while the latter five sections explain the <em>bivariate</em> checks conducted on pairs of variables.</p>
+<section id="combinations-of-gld-variables-checked">
+<h4>Combinations of GLD variables checked<a class="headerlink" href="#combinations-of-gld-variables-checked" title="Permalink to this heading">#</a></h4>
+<section id="education-cross-categories">
+<h5>Education: cross-categories<a class="headerlink" href="#education-cross-categories" title="Permalink to this heading">#</a></h5>
+<p>The GLD data includes three different education variables: educat7, educat5 and educat4. These are categorical variables with different number of levels: educat4 classifies education in 4 groups, educat5 does so in 5 groups, and educat7 in 7 groups.</p>
+<p>We expect these three variables to be coherent. That is, if an individual has completed primary education, all three variables should reflect this information.</p>
+<p>Hence we construct a table with the equivalences between these variables (in the Appendix), and raise a flag when the data deviates from them.</p>
+</section>
+<section id="industry-cross-categories">
+<h5>Industry: cross-categories<a class="headerlink" href="#industry-cross-categories" title="Permalink to this heading">#</a></h5>
+<p>This check follows the same structure as the “Education: cross-categories” check, with the variables industrycat_isic, industrycat10 and industrycat4.</p>
+<p>The appendix contains a table with the correspondences that the code checks for. Notice that these follow the Version 4 of ISIC. Whenever the GLD data follows a different version, or the version is not indicated in the GLD database, this check is skipped.</p>
+</section>
+<section id="occupation-cross-categories">
+<h5>Occupation: cross categories<a class="headerlink" href="#occupation-cross-categories" title="Permalink to this heading">#</a></h5>
+<p>This check looks at the conversion of the occup_isco, occup_skill and occup variables.</p>
+<p>The correspondence between these variables follows the ISCO version 1988, listed in the appendix.</p>
+<p>Whenever the data presents a different conversion, a flag is raised. If the data follows a different ISCO version, or if the version is not known, the check is skipped.</p>
+</section>
+<section id="labor-force-versus-employment">
+<h5>Labor force versus employment<a class="headerlink" href="#labor-force-versus-employment" title="Permalink to this heading">#</a></h5>
+<p>This check looks at the joint distribution of the variables lstatus and empstat. By definition, when lstatus equals “Employed”, empstat should contain information. If lstatus is either “Unemployed” or “Not in LF”, then empstat should be missing.</p>
+<p>Whenever this rule is not followed in the data, a flag is raised.</p>
+</section>
+<section id="lstatus-versus-age">
+<h5>lstatus versus age<a class="headerlink" href="#lstatus-versus-age" title="Permalink to this heading">#</a></h5>
+<p>This check looks at the joint distribution of lstatus and age. To make the check easier, we recode the variable age into a categorical variable with 5 groups, defined as follows:</p>
+<ul class="simple">
+<li><p>Child, if an individual is between 0 and 14 years old</p></li>
+<li><p>Youth, if an individual is between 15 and 24 years old</p></li>
+<li><p>Adult, if an individual is between 25 and 54 years old</p></li>
+<li><p>Senior, if an individual is between 55 and 70 years old</p></li>
+<li><p>Retiree, if an individual is between 71 and 120 years old</p></li>
+</ul>
+<p>We compute the join distribution of age and lstatus, and raise a flag whenever the data violates one of the following 6 conditions:</p>
+<ol class="arabic simple">
+<li><p>Child must be &gt; 90% non_lf + missing</p></li>
+<li><p>Youth must be mostly &gt;50% non_lf</p></li>
+<li><p>Adults must be mostly &gt;50% in lf</p></li>
+<li><p>Seniors must be in the lf at a lower rate than adults</p></li>
+<li><p>Retirees must be non_lf &gt;80%</p></li>
+<li><p>All empstat groups should be &gt;0 for working age people</p></li>
+</ol>
+</section>
+<section id="education-versus-age">
+<h5>Education versus age<a class="headerlink" href="#education-versus-age" title="Permalink to this heading">#</a></h5>
+<p>This check looks at the joint distribution of education (as defined by educat4) and age (as re-defined in section 2.5), and raise a flag whenever one of following 3 conditions are not met in the GLD data:</p>
+<ol class="arabic simple">
+<li><p>Children should be no_ed &amp; primary &gt; 90%</p></li>
+<li><p>Primary, secondary and  post secondary should no be 0 for youth+</p></li>
+<li><p>For all age groups, no education level should be 100%</p></li>
+</ol>
+</section>
+<section id="industry-versus-occupation">
+<h5>Industry versus occupation<a class="headerlink" href="#industry-versus-occupation" title="Permalink to this heading">#</a></h5>
+<p>This check considers the join distribution of industrycat4 and occup, and raises a flag when any of the following 15 conditions is violated:</p>
+<ol class="arabic simple">
+<li><p>Managers should be not be prevalent in agriculture, &lt;20%</p></li>
+<li><p>Professionals should be low in agriculture, &lt;10%</p></li>
+<li><p>Professionals should be mainly in services, &gt;60%</p></li>
+<li><p>Technicians should be low in agriculture, &lt;10%</p></li>
+<li><p>Clerks should be low in agriculture, &lt;10%</p></li>
+<li><p>Clerks should be mainly in services, &gt;60%</p></li>
+<li><p>Service and market should be low in agriculture, &lt;10%</p></li>
+<li><p>Service and market should be almost only in services, &gt;80%</p></li>
+<li><p>Skilled agricultural should be almost only in agriculture, &gt;80%</p></li>
+<li><p>Craft workers should be low in agriculture, &lt;10%</p></li>
+<li><p>Craft workers should be mainly in industry, &gt;60%</p></li>
+<li><p>Machine operators should be low in agriculture, &lt;10%</p></li>
+<li><p>In all ocupp, other should be low, &lt;25%</p></li>
+<li><p>In any ocupp, no industry should be exclusive, 100%</p></li>
+<li><p>In any occup, not all industries should not be missing, (.)</p></li>
+</ol>
+</section>
+<section id="occupation-versus-education">
+<h5>Occupation versus education<a class="headerlink" href="#occupation-versus-education" title="Permalink to this heading">#</a></h5>
+<p>This check looks at the joint distribution of occupation and education, as measured by occup and educat4.</p>
+<p>A flag is raised whenever one of the following 6 conditions is not met:</p>
+<ol class="arabic simple">
+<li><p>Professionals with no_edu should be low, &lt;10%</p></li>
+<li><p>Professionals should manily have post_sec, &gt;60%</p></li>
+<li><p>Technicians with no_edu should be low, &lt;10%</p></li>
+<li><p>Clerks with no_edu should be low, &lt;10%</p></li>
+<li><p>Machine operators with post sec should not be prevalent, &lt;20%</p></li>
+<li><p>Elementary occupations with post sec should be low, &lt;10%</p></li>
+</ol>
+</section>
+</section>
+<section id="output-produced">
+<h4>Output produced<a class="headerlink" href="#output-produced" title="Permalink to this heading">#</a></h4>
+<p>Each of the 8 checks described above produces a file with the key data used to conduct a check (a list of correspondences or a joint bivariate distribution), as well as a sequence of 0s and 1s indicating if the conditions are met. If any of the required conditions is not met, a string variable explaining the reason behind the flag is created. Additionally, a file is created listing all flagged issues. All files are stored under “Block4_Bivariate/01_data”</p>
+<p>The code stores in the “01_summary” folder, an extra file called “B4_bivariave_results.xlsx” “bivariave_results.xlsx”. This file contains a list of cases in which a flag has been raised, and will be empty when the data does not raise any flags.</p>
+</section>
+</section>
+<section id="block-5-gld-wage-checks">
+<h3>Block 5 - GLD wage checks<a class="headerlink" href="#block-5-gld-wage-checks" title="Permalink to this heading">#</a></h3>
+<p>The goal of this section is to look at the GLD wage data (<code class="docutils literal notranslate"><span class="pre">wage_no_compen</span></code> variable for those with <code class="docutils literal notranslate"><span class="pre">empstat</span> <span class="pre">==</span> <span class="pre">1</span></code>), and to use this information to detect potential harmonization errors.</p>
+<p>We compute 4 series of wages: by education, by occupation, by industry and by age, and flag a series whenever the wage behaves differently than expected. Note than in all cases, we convert the wages to hourly wages.</p>
+<section id="wage-series-checks">
+<h4>Wage series &amp; checks<a class="headerlink" href="#wage-series-checks" title="Permalink to this heading">#</a></h4>
+<section id="wage-by-education">
+<h5>Wage by education<a class="headerlink" href="#wage-by-education" title="Permalink to this heading">#</a></h5>
+<p>To compute wage by education, we use the education variable educat4, a categorical variable that takes 4 values. We expect wages to be increasing in education, and we flag the series when this is not the case.</p>
+</section>
+<section id="wage-by-occupation">
+<h5>Wage by occupation<a class="headerlink" href="#wage-by-occupation" title="Permalink to this heading">#</a></h5>
+<p>To compute wage by occupation, we use the education variable occup_skill, a categorical variable that takes 3 values. We expect wages to be increasing in skill level, and we flag the series when this is not the case.</p>
+</section>
+<section id="wage-by-industry">
+<h5>Wage by industry<a class="headerlink" href="#wage-by-industry" title="Permalink to this heading">#</a></h5>
+<p>To compute wage by industry, we use the education variable industrycat4 skill, a categorical variable that takes 4 values, of which we consider 3: agriculture, industry and services. We expect wages to be highest in services, followed by industry and finally agriculture. We flag the series when this is not the case.</p>
+</section>
+<section id="wage-by-age">
+<h5>Wage by age<a class="headerlink" href="#wage-by-age" title="Permalink to this heading">#</a></h5>
+<p>To compute wage by age, we use a re-coded version of the age variable, which classifies population in 5 groups: child (0 to 14 years old), young (15 to 24 years old), adult (25 to 54 years old), senior (55 to 70 years old) and retiree (71 to 120 years old). We expect wages to increase until adulthood, and we expect wages of retirees to be lower than wages of senior people. We remain agnostic about how wages for adults and for seniors compare. We flag the series when these rules are violated.</p>
+</section>
+</section>
+<section id="id1">
+<h4>Output produced<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h4>
+<p>Regardless of the results of the checks, we produce the following two pieces out output:</p>
+<ul class="simple">
+<li><p>A small database for each wage series, with a binary variable indicating if any condition is violated. These are stored in “Block5_Wage/01_data”.</p></li>
+<li><p>A pdf image consisting on four figures, one for each series. This file can be found in “Block5_Wage/02_figures” and “01_summary”. The graphs are colour coded. When the series is depicted in blue it conforms with our ex-ante expectations. If the line is drawn red, the series raises at least one flag.</p></li>
+</ul>
+</section>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./Support/D - Q Checks/Single survey checks"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../../A%20-%20Guides%20and%20Documentation/GLD%20Manual/GLD_Manual_Validation.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Validation</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../Survey%20series%20checks/Readme.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Guide to the GLD survey series quality checks</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#understanding-the-quality-checks">Understanding the quality checks</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#overall-quality-checks-template">Overall quality checks template</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#block-1-gld-format-checks">Block 1 - GLD format checks</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#block-2-gld-external-checks">Block 2 - GLD external checks</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#block-3-gld-missing-checks">Block 3 - GLD missing checks</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#block-4-gld-bivariate-checks">Block 4 - GLD bivariate checks</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#combinations-of-gld-variables-checked">Combinations of GLD variables checked</a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#education-cross-categories">Education: cross-categories</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#industry-cross-categories">Industry: cross-categories</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#occupation-cross-categories">Occupation: cross categories</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#labor-force-versus-employment">Labor force versus employment</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#lstatus-versus-age">lstatus versus age</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#education-versus-age">Education versus age</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#industry-versus-occupation">Industry versus occupation</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#occupation-versus-education">Occupation versus education</a></li>
+</ul>
+</li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#output-produced">Output produced</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#block-5-gld-wage-checks">Block 5 - GLD wage checks</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#wage-series-checks">Wage series &amp; checks</a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#wage-by-education">Wage by education</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#wage-by-occupation">Wage by occupation</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#wage-by-industry">Wage by industry</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#wage-by-age">Wage by age</a></li>
+</ul>
+</li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Output produced</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By World Bank Jobs Group
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on Apr 15, 2024.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+<div class="extra_footer">
+  <div>
+    <b>All content (unless otherwise specified) is subject to the <a href="https://opensource.org/license/mit/">MIT License.</a></b>
+</div>
+
+</div>
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

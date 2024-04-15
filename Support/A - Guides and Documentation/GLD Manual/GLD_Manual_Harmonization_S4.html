@@ -1,0 +1,800 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Demography &#8212; Global Labor Database</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/clipboard.min.js"></script>
+    <script src="../../../_static/copybutton.js"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S4';</script>
+    <link rel="canonical" href="https://worldbank.github.io/gld/Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S4.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Migration" href="GLD_Manual_Harmonization_S5.html" />
+    <link rel="prev" title="Geography" href="GLD_Manual_Harmonization_S3.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+    <meta name="docbuild:last-update" content="Apr 15, 2024"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../README.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/WB_Jobs_logo_color.svg" class="logo__image only-light" alt="Global Labor Database - Home"/>
+    <script>document.write(`<img src="../../../_static/WB_Jobs_logo_color.svg" class="logo__image only-dark" alt="Global Labor Database - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../README.html">
+                    Welcome to the Global Labor Database Repository
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Global Labor Database Manual</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="GLD_Manual_Introduction.html">Introduction to the GLD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GLD_Manual_Overview.html">Overview to the GLD</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="GLD_Manual_Harmonization_Intro.html">Harmonization of GLD</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="GLD_Manual_Harmonization_S2.html">Survey &amp; ID module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GLD_Manual_Harmonization_S3.html">Geography</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Demography</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GLD_Manual_Harmonization_S5.html">Migration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GLD_Manual_Harmonization_S6.html">Education</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GLD_Manual_Harmonization_S7.html">Training</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GLD_Manual_Harmonization_S8.html">Labor</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="GLD_Manual_Harmonization_process.html">GLD Harmonization Process Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GLD_Manual_Harmonization_read_code.html">How to read the harmonization code</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="GLD_Manual_Validation.html">Validation</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../D%20-%20Q%20Checks/Single%20survey%20checks/README.html">Guide to the GLD single survey quality checks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../D%20-%20Q%20Checks/Survey%20series%20checks/Readme.html">Guide to the GLD survey series quality checks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="GLD_Manual_Use.html">Using and leveraging the GLD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GLD_Manual_Expand.html">Improving the GLD</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Contribution Guidelines</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../docs/branch_management/bm_index.html">GLD GitHub Repository Branching Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../docs/pull_request/pr_index.html">Make a Pull Request</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../docs/raise_issue/ri_index.html">Raise an Issue</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Contact</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../docs/contact.html">Any remaining questions?</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/worldbank/gld" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/worldbank/gld/edit/main/Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S4.md" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/worldbank/gld/issues/new?title=Issue%20on%20page%20%2FSupport/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S4.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../../_sources/Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S4.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Demography</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mapping-and-description-of-variables">Mapping and Description of Variables</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hsize">hsize</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#age">age</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#male">male</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#relationharm">relationharm</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#relationcs">relationcs</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#marital">marital</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#eye-dsablty">eye_dsablty</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hear-dsablty">hear_dsablty</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#walk-dsablty">walk_dsablty</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#conc-dsord">conc_dsord</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#slfcre-dsablty">slfcre_dsablty</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#comm-dsablty">comm_dsablty</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lessons-learned-and-challenges">Lessons Learned and Challenges</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tabular-overview-of-variables">Tabular Overview of Variables</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="demography">
+<h1>Demography<a class="headerlink" href="#demography" title="Permalink to this heading">#</a></h1>
+<section id="mapping-and-description-of-variables">
+<h2>Mapping and Description of Variables<a class="headerlink" href="#mapping-and-description-of-variables" title="Permalink to this heading">#</a></h2>
+<section id="hsize">
+<h3>hsize<a class="headerlink" href="#hsize" title="Permalink to this heading">#</a></h3>
+<p>hsize codes the size of the household. This should not include individuals who may be living in the household but do not form an economic unit with the other household members (e.g., a live-in maid is not part of the household).</p>
+</section>
+<section id="age">
+<h3>age<a class="headerlink" href="#age" title="Permalink to this heading">#</a></h3>
+<p>age refers to the interval of time between the date of birth and the date of the survey. Every effort should be made to determine the precise and accurate age of each person, particularly of children and older persons. Information on age may be secured either by obtaining the date (year, month, and day) of birth or by asking directly for age at the person’s last birthday. In addition, in the case of children aged less than or equal to 60 months, variable age should be expressed in the number of completed years and months in decimals. For example, If the interview of a 4 years old was in December and he was born in June, his age should be recorded as 4.5. Lastly, if the information on age is not available, it should be coded as missing rather than some other value such as “99” or “999”.</p>
+</section>
+<section id="male">
+<h3>male<a class="headerlink" href="#male" title="Permalink to this heading">#</a></h3>
+<p>male is a dummy variable that specifies the sex – male or female – of an individual within a household. While constructing this variable, it is important to make sure that all relevant values are included. Variable values coded as ‘98’ or other numeric characters should be excluded from the values of the `male’ variable. Sex of household member, two categories after harmonization:</p>
+<p>1 = male</p>
+<p>0 = female</p>
+</section>
+<section id="relationharm">
+<h3>relationharm<a class="headerlink" href="#relationharm" title="Permalink to this heading">#</a></h3>
+<p>relationharm is a string variable that indicates a relationship to the reference person of household (usually the head of household). Variable values coded as ‘98’ or other numeric characters should be excluded from the values of relationharm variable.</p>
+<p>Relationship to head of household, six categories after harmonization:</p>
+<p>1=head</p>
+<p>2=spouse</p>
+<p>3=children</p>
+<p>4=parents</p>
+<p>5=other relatives</p>
+<p>6=non-relatives</p>
+<p>Note: In cases where head is missing or a migrant, we assign spouse as the head of the household. If spouse is also not available, then we will use oldest member of the household as the head and recode all the relations to head accordingly.</p>
+</section>
+<section id="relationcs">
+<h3>relationcs<a class="headerlink" href="#relationcs" title="Permalink to this heading">#</a></h3>
+<p>relationcs is a country-specific categorical variable that indicates the relationship to the head of the household. The categories for relationship to the head of the household are defined according to the region or country requirements.</p>
+</section>
+<section id="marital">
+<h3>marital<a class="headerlink" href="#marital" title="Permalink to this heading">#</a></h3>
+<p>Marital is a categorical variable that refers to the personal status of each individual in relation to the marriage laws or customs of the country. The categories of marital status to be identified should include at least the following: (a) single (in other words, never married); (b) married; (c) married but separated;</p>
+<p>(d) windowed and remarried; (e) divorced and not remarried. In some countries, category (b) may require a subcategory of persons who are contractually married but not yet living as man and wife. In all countries, category (c) should comprise both the legally and the de facto separated, who may be shown as separate subcategories if desired. The marital variable should not be imputed but rather calculated only for those to whom the question was asked (in other words, the youngest age at which information is collected may differ depending on the survey). The consistency between age and marital needs to be cross-checked. In most countries, there are also likely to be persons who were permitted to marry below the legal minimum age because of special circumstances. To permit international comparisons of data on marital status, however, any tabulations of marital status not cross-classified by exact age should at least distinguish between persons under 15 years of age and over. If it is not possible to distinguish between married and living together, then it should be assumed that the individual is married. Variable values coded as ‘98’ or other numeric characters should be excluded from the values of the ‘marital’ variable.</p>
+<p>Marital status, five categories after harmonization:</p>
+<p>1=married</p>
+<p>2=never married</p>
+<p>3=living together</p>
+<p>4=divorced/separated</p>
+<p>5=widowed</p>
+</section>
+<section id="eye-dsablty">
+<h3>eye_dsablty<a class="headerlink" href="#eye-dsablty" title="Permalink to this heading">#</a></h3>
+<p>eye_dsablty is a numerical variable that indicates whether an individual has any difficulty in seeing, even when wearing glasses. Categories after harmonization:</p>
+<p>1 = No – no difficulty</p>
+<p>2 = Yes – some difficulty</p>
+<p>3 = Yes – a lot of difficulty</p>
+<p>4 = Cannot do at all</p>
+</section>
+<section id="hear-dsablty">
+<h3>hear_dsablty<a class="headerlink" href="#hear-dsablty" title="Permalink to this heading">#</a></h3>
+<p>hear_dsablty is a numerical variable that indicates whether an individual has any difficulty in hearing even when using a hearing aid. Categories after harmonization:</p>
+<p>1 = No – no difficulty</p>
+<p>2 = Yes – some difficulty</p>
+<p>3 = Yes – a lot of difficulty</p>
+<p>4 = Cannot do at all</p>
+</section>
+<section id="walk-dsablty">
+<h3>walk_dsablty<a class="headerlink" href="#walk-dsablty" title="Permalink to this heading">#</a></h3>
+<p>walk_dsablty is a numerical variable that indicates whether an individual has any difficulty in walking or climbing steps. Categories after harmonization:</p>
+<p>1 = No – no difficulty</p>
+<p>2 = Yes – some difficulty</p>
+<p>3 = Yes – a lot of difficulty</p>
+<p>4 = Cannot do at all</p>
+</section>
+<section id="conc-dsord">
+<h3>conc_dsord<a class="headerlink" href="#conc-dsord" title="Permalink to this heading">#</a></h3>
+<p>conc_dsord is a numerical variable that indicates whether an individual has any difficulty concentrating or remembering. Categories after harmonization:</p>
+<p>1 = No – no difficulty</p>
+<p>2 = Yes – some difficulty</p>
+<p>3 = Yes – a lot of difficulty</p>
+<p>4 = Cannot do at all</p>
+</section>
+<section id="slfcre-dsablty">
+<h3>slfcre_dsablty<a class="headerlink" href="#slfcre-dsablty" title="Permalink to this heading">#</a></h3>
+<p>slfcre_dsablty is a numerical variable that indicates whether an individual has any difficulty with self-care such as washing all over or dressing. Categories after harmonization:</p>
+<p>1 = No – no difficulty</p>
+<p>2 = Yes – some difficulty</p>
+<p>3 = Yes – a lot of difficulty</p>
+<p>4 = Cannot do at all</p>
+</section>
+<section id="comm-dsablty">
+<h3>comm_dsablty<a class="headerlink" href="#comm-dsablty" title="Permalink to this heading">#</a></h3>
+<p>comm_dsablty is a numerical variable that indicates whether an individual has any difficulty communicating or understanding usual (customary) language. Categories after harmonization:</p>
+<p>1 = No – no difficulty</p>
+<p>2 = Yes – some difficulty</p>
+<p>3 = Yes – a lot of difficulty</p>
+<p>4 = Cannot do at all</p>
+</section>
+</section>
+<section id="lessons-learned-and-challenges">
+<h2>Lessons Learned and Challenges<a class="headerlink" href="#lessons-learned-and-challenges" title="Permalink to this heading">#</a></h2>
+<p>Data sets that are harmonized incorrectly can lead to skewed and/or incorrect data analysis. Harmonizers should run a series of checks to ensure data is harmonized properly, including the following:</p>
+<p>Check to make sure that age is an integer since 5 years old.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">age</span><span class="o">/</span><span class="nb">int</span><span class="p">(</span><span class="n">age</span><span class="p">)</span><span class="o">!=</span> <span class="mi">1</span> <span class="o">&amp;</span> <span class="n">age</span><span class="o">!=</span> <span class="o">.</span> <span class="o">&amp;</span> <span class="n">age</span> <span class="o">&gt;</span> <span class="mi">5</span>
+</pre></div>
+</div>
+<p>age cannot have negative or extreme values (&gt;120)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">age</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span> <span class="mi">0</span> <span class="o">|</span> <span class="n">age</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span><span class="mi">120</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">age</span><span class="o">&lt;.</span>
+</pre></div>
+</div>
+<p>Age cannot be missing</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">age</span><span class="o">==.</span>
+</pre></div>
+</div>
+<p>Male variable can only take one of two values 0 or 1 (or missing).</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">male</span><span class="o">!=.</span> <span class="o">&amp;</span> <span class="n">male</span><span class="o">!=</span> <span class="mi">1</span> <span class="o">&amp;</span> <span class="n">male</span><span class="o">!=</span> <span class="mi">0</span>
+</pre></div>
+</div>
+<p>Check if male is missing.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">male</span><span class="o">==.</span>
+</pre></div>
+</div>
+<p>Check to make sure that there is variation in male</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">egen</span> <span class="n">sdmale</span> <span class="o">=</span> <span class="n">sd</span><span class="p">(</span><span class="n">male</span><span class="p">)</span> <span class="o">//</span> <span class="n">sdmale</span> <span class="n">should</span> <span class="ow">not</span> <span class="n">be</span> <span class="mi">0</span>
+</pre></div>
+</div>
+<p>relationharm must be an integer in the range [1,6].</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">relationharm</span><span class="o">&lt;</span><span class="mi">1</span> <span class="o">&amp;</span> <span class="n">relationharm</span><span class="o">&gt;</span><span class="mi">6</span> <span class="o">&amp;</span> <span class="n">mod</span><span class="p">(</span><span class="n">relationharm</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<p>marital must be an integer in the range [1,5].</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mMarital</span><span class="o">&lt;</span><span class="mi">0</span> <span class="o">&amp;</span> <span class="n">marital</span><span class="o">&gt;</span><span class="mi">5</span> <span class="o">&amp;</span> <span class="n">mod</span><span class="p">(</span><span class="n">marital</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<p>Children are “Never married” and should be coded as so even though it may be perceived as obvious. The marital status of individuals should be harmonized for all individuals. Harmonizers should check to make sure children are not systematically left with missing values for marital.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tab</span> <span class="n">age</span> <span class="n">marital</span><span class="p">,</span> <span class="n">missing</span>
+</pre></div>
+</div>
+<p>weight cannot be missing</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">weight</span><span class="o">==.</span>
+</pre></div>
+</div>
+<p>Additionally, harmonizers should ensure that the household size variable is calculated correctly. Not all the individuals reported in a household that form the raw data are current household members. For example, for the EU-SILC survey, a household contains the current member, but also the members of the previous survey who have left the household for reasons such as death or migration.</p>
+</section>
+<section id="tabular-overview-of-variables">
+<h2>Tabular Overview of Variables<a class="headerlink" href="#tabular-overview-of-variables" title="Permalink to this heading">#</a></h2>
+<table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Module Code</p></th>
+<th class="head"><p>Variable name</p></th>
+<th class="head"><p>Variable label</p></th>
+<th class="head"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Demography</p></td>
+<td><p>hsize</p></td>
+<td><p>Household size</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>Demography</p></td>
+<td><p>age</p></td>
+<td><p>Age in years</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>Demography</p></td>
+<td><p>male</p></td>
+<td><p>Binary - Individual is male</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>Demography</p></td>
+<td><p>relationharm</p></td>
+<td><p>Relationship to head of household harmonized across all regions</p></td>
+<td><p>GMD - Harmonized categories across all regions. Same as I2D2 categories.</p></td>
+</tr>
+<tr class="row-even"><td><p>Demography</p></td>
+<td><p>relationcs</p></td>
+<td><p>Relationship to head of household country/region specific</p></td>
+<td><p>country or regionally specific categories</p></td>
+</tr>
+<tr class="row-odd"><td><p>Demography</p></td>
+<td><p>marital</p></td>
+<td><p>Marital status</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>Demography</p></td>
+<td><p>eye_dsablty</p></td>
+<td><p>Difficulty seeing</p></td>
+<td><p>See “Recommended Short Set of Questions” on <a class="reference external" href="https://www.cdc.gov/nchs/washington_group/wg_questions.htm">https://www.cdc.gov/nchs/washington_group/wg_questions.htm</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Demography</p></td>
+<td><p>hear_dsablty</p></td>
+<td><p>Difficulty hearing</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>Demography</p></td>
+<td><p>walk_dsablty</p></td>
+<td><p>Difficulty walking / steps</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>Demography</p></td>
+<td><p>conc_dsord</p></td>
+<td><p>Difficulty concentrating</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>Demography</p></td>
+<td><p>slfcre_dsablty</p></td>
+<td><p>Difficulty w/ selfcare</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>Demography</p></td>
+<td><p>comm_dsablty</p></td>
+<td><p>Difficulty communicating</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./Support/A - Guides and Documentation/GLD Manual"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="GLD_Manual_Harmonization_S3.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Geography</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="GLD_Manual_Harmonization_S5.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Migration</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mapping-and-description-of-variables">Mapping and Description of Variables</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hsize">hsize</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#age">age</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#male">male</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#relationharm">relationharm</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#relationcs">relationcs</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#marital">marital</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#eye-dsablty">eye_dsablty</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hear-dsablty">hear_dsablty</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#walk-dsablty">walk_dsablty</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#conc-dsord">conc_dsord</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#slfcre-dsablty">slfcre_dsablty</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#comm-dsablty">comm_dsablty</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lessons-learned-and-challenges">Lessons Learned and Challenges</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tabular-overview-of-variables">Tabular Overview of Variables</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By World Bank Jobs Group
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on Apr 15, 2024.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+<div class="extra_footer">
+  <div>
+    <b>All content (unless otherwise specified) is subject to the <a href="https://opensource.org/license/mit/">MIT License.</a></b>
+</div>
+
+</div>
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

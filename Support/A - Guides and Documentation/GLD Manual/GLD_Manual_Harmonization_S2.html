@@ -1,0 +1,930 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Survey &amp; ID module &#8212; Global Labor Database</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/clipboard.min.js"></script>
+    <script src="../../../_static/copybutton.js"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S2';</script>
+    <link rel="canonical" href="https://worldbank.github.io/gld/Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S2.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Geography" href="GLD_Manual_Harmonization_S3.html" />
+    <link rel="prev" title="Harmonization of GLD" href="GLD_Manual_Harmonization_Intro.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+    <meta name="docbuild:last-update" content="Apr 15, 2024"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../README.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/WB_Jobs_logo_color.svg" class="logo__image only-light" alt="Global Labor Database - Home"/>
+    <script>document.write(`<img src="../../../_static/WB_Jobs_logo_color.svg" class="logo__image only-dark" alt="Global Labor Database - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../README.html">
+                    Welcome to the Global Labor Database Repository
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Global Labor Database Manual</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="GLD_Manual_Introduction.html">Introduction to the GLD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GLD_Manual_Overview.html">Overview to the GLD</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="GLD_Manual_Harmonization_Intro.html">Harmonization of GLD</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Survey &amp; ID module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GLD_Manual_Harmonization_S3.html">Geography</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GLD_Manual_Harmonization_S4.html">Demography</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GLD_Manual_Harmonization_S5.html">Migration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GLD_Manual_Harmonization_S6.html">Education</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GLD_Manual_Harmonization_S7.html">Training</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GLD_Manual_Harmonization_S8.html">Labor</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="GLD_Manual_Harmonization_process.html">GLD Harmonization Process Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GLD_Manual_Harmonization_read_code.html">How to read the harmonization code</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="GLD_Manual_Validation.html">Validation</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../D%20-%20Q%20Checks/Single%20survey%20checks/README.html">Guide to the GLD single survey quality checks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../D%20-%20Q%20Checks/Survey%20series%20checks/Readme.html">Guide to the GLD survey series quality checks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="GLD_Manual_Use.html">Using and leveraging the GLD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GLD_Manual_Expand.html">Improving the GLD</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Contribution Guidelines</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../docs/branch_management/bm_index.html">GLD GitHub Repository Branching Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../docs/pull_request/pr_index.html">Make a Pull Request</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../docs/raise_issue/ri_index.html">Raise an Issue</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Contact</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../docs/contact.html">Any remaining questions?</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/worldbank/gld" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/worldbank/gld/edit/main/Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S2.md" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/worldbank/gld/issues/new?title=Issue%20on%20page%20%2FSupport/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S2.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../../_sources/Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S2.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Survey & ID module</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id-guidelines">ID Guidelines</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mapping-and-description-of-variables">Mapping and Description of Variables</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#countrycode">countrycode</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#survname">survname</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#survey">survey</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icls-v">icls_v</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#isced-version">isced_version</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#isco-version">isco_version</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#isic-version">isic_version</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#year">year</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vermast">vermast</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#veralt">veralt</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#harmonization">harmonization</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#int-year">int_year</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#int-month">int_month</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hhid">hhid</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pid">pid</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#weight">weight</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#weight-m">weight_m</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#weight-q">weight_q</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#psu">psu</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ssu">ssu</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#strata">strata</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#wave">wave</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#panel">panel</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#visit-no">visit_no</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lessons-learned-and-challenges">Lessons Learned and Challenges</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-and-checking-ids">Creating and checking IDs</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#checks-on-the-country-code-and-year">Checks on the country code and year</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tabular-overview-of-variables">Tabular Overview of Variables</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="survey-id-module">
+<h1>Survey &amp; ID module<a class="headerlink" href="#survey-id-module" title="Permalink to this heading">#</a></h1>
+<section id="id-guidelines">
+<h2>ID Guidelines<a class="headerlink" href="#id-guidelines" title="Permalink to this heading">#</a></h2>
+<p>The Survey &amp; ID module is a file at individual level with basic household and individual identifiers. The household identifier is hhid, and the individual identifier is pid.</p>
+</section>
+<section id="mapping-and-description-of-variables">
+<h2>Mapping and Description of Variables<a class="headerlink" href="#mapping-and-description-of-variables" title="Permalink to this heading">#</a></h2>
+<section id="countrycode">
+<h3>countrycode<a class="headerlink" href="#countrycode" title="Permalink to this heading">#</a></h3>
+<p>countrycode is a string variable that specifies the 3-character country code used by the World Bank to identify each country. Although there are different naming conventions, it is necessary to use those specified to ensure that the data for each country is appropriately labeled.</p>
+</section>
+<section id="survname">
+<h3>survname<a class="headerlink" href="#survname" title="Permalink to this heading">#</a></h3>
+<p>survname codes the acronym of the survey.</p>
+</section>
+<section id="survey">
+<h3>survey<a class="headerlink" href="#survey" title="Permalink to this heading">#</a></h3>
+<p>survey codes the type of survey (e.g., LFS for Labor Force Survey).</p>
+</section>
+<section id="icls-v">
+<h3>icls_v<a class="headerlink" href="#icls-v" title="Permalink to this heading">#</a></h3>
+<p>Underlying version of the International Conference of Labour Statisticians that is being used in the survey to code <a class="reference external" href="http://documents1.worldbank.org/curated/en/468881598538973944/pdf/Who-Is-Employed-Evidence-from-Sub-Saharan-Africa-on-Redefining-Employment.pdf">concepts of work and employment</a>.</p>
+<p>Most commonly, surveys harmonized to GLD will either follow ICLS-13 or ICLS-19, that is, the directives set out during the 13<sup>th</sup> or the 19<sup>th</sup> conference, especially pertaining employment.</p>
+<p>In ICLS-13 all work – other than household work – is seen as employment. Thus, subsistence farmers are as employed as the CEO of an international conglomerate.</p>
+<p>The below screenshot is from the questionnaire of the Zimbabwean 2014 LFS, where any yes answer will skip to questions on main employment (Q25). As highlighted, work for a wage is treated in the same than work on any agricultural holding. This survey follows ICLS-13.</p>
+<p><br></br>
+<img alt="Previous lstatus ZWE question" src="../../../_images/vars_s2_icls_v_1.png" />
+<br></br></p>
+<p>Five years later, the Zimbabwean statistics office, ZimStat, switched to ICLS-19. In ICLS-19, only work for market exchange is considered employment (treating subsistence farming in the same way as household labour). Thus, an additional question is added to differentiate what kind of farming is taking place.</p>
+<p>The below screenshot is part of the set of agriculture questions. If the agricultural work on the own agricultural holding is only or mostly for market exchange (codes 1 and 2) the individual should be asked about their first main job (MJ1). If agricultural production is only or mainly for own consumption, then the questionnaire continues, here asking whether they work for others for hire.</p>
+<p><br></br>
+<img alt="Newer lstatus ZWE question" src="../../../_images/vars_s2_icls_v_2.png" />
+<br></br></p>
+<p>If the survey asks questions to understand what kind of farming takes place (subsistence or market exchange) and defines a skip pattern to lead to employment questions based on that, the survey questionnaire follows ICLS-19, otherwise it follows ICLS-13.</p>
+</section>
+<section id="isced-version">
+<h3>isced_version<a class="headerlink" href="#isced-version" title="Permalink to this heading">#</a></h3>
+<p>Underlying version of the <a class="reference external" href="http://uis.unesco.org/en/isced-mappings">International Standard Classification of Education</a> (ISCED) used in the survey. Acceptable values are either isced_1997 or isced_2011.</p>
+</section>
+<section id="isco-version">
+<h3>isco_version<a class="headerlink" href="#isco-version" title="Permalink to this heading">#</a></h3>
+<p>Underlying version of the <a class="reference external" href="https://ilostat.ilo.org/resources/concepts-and-definitions/classification-occupation/">International Standard Classification of Occupations</a> (ISCO) used in the survey. Acceptable values are either isco_1988 or isco_2008</p>
+</section>
+<section id="isic-version">
+<h3>isic_version<a class="headerlink" href="#isic-version" title="Permalink to this heading">#</a></h3>
+<p>Underlying version of the <a class="reference external" href="https://unstats.un.org/unsd/classifications/Econ/isic">International Standard Industrial Classification of All Economic Activities</a> (ISIC) used in the survey. Acceptable values are either isic_2, isic_3, isic_3.1, or isic_4.</p>
+</section>
+<section id="year">
+<h3>year<a class="headerlink" href="#year" title="Permalink to this heading">#</a></h3>
+<p>year is a numeric variable that denotes the year in which the implementation of the household survey was begun. For example, if a survey was implemented during October 2018 and September 2019, the year would be 2018.</p>
+</section>
+<section id="vermast">
+<h3>vermast<a class="headerlink" href="#vermast" title="Permalink to this heading">#</a></h3>
+<p>vermast codes the version of the master file (original data) being used in the harmonization.</p>
+</section>
+<section id="veralt">
+<h3>veralt<a class="headerlink" href="#veralt" title="Permalink to this heading">#</a></h3>
+<p>veralt codes the version of the harmonization.</p>
+</section>
+<section id="harmonization">
+<h3>harmonization<a class="headerlink" href="#harmonization" title="Permalink to this heading">#</a></h3>
+<p>harmonization codes the kind of harmonization (GLD or GMD). For GLD surveys this will always be GLD.</p>
+</section>
+<section id="int-year">
+<h3>int_year<a class="headerlink" href="#int-year" title="Permalink to this heading">#</a></h3>
+<p>int_year is a numeric variable that specifies the year when the survey questionnaire was administered to the household.</p>
+</section>
+<section id="int-month">
+<h3>int_month<a class="headerlink" href="#int-month" title="Permalink to this heading">#</a></h3>
+<p>int_month is a numeric variable that specifies the month when the survey questionnaire was administered to the household.</p>
+</section>
+<section id="hhid">
+<h3>hhid<a class="headerlink" href="#hhid" title="Permalink to this heading">#</a></h3>
+<p>hhid specifies the unique household identification number in the data file. The original format, string or numeric, of original data should be kept. If there is Household ID in the original data, hhid and hhid_orig should be the same. If hhid_orig is missing, it is constructed by “variable names in raw data” variables.</p>
+</section>
+<section id="pid">
+<h3>pid<a class="headerlink" href="#pid" title="Permalink to this heading">#</a></h3>
+<p>This variable allows identification of individuals. Variable will vary in length depending on how the identification code was constructed in each country. Depending on individual countries, this variable may be a concatenation of several variables in the raw data file. Keep format (string or numeric) of original data. If there is Personal ID in the original data, pid and pid_orig should be the same. If pid_orig is missing, it is constructed by “variable names in raw data” variables.</p>
+</section>
+<section id="weight">
+<h3>weight<a class="headerlink" href="#weight" title="Permalink to this heading">#</a></h3>
+<p>weight contains household weights, typically inversely proportional to the probability of the household being selected for the sample, that should be applied to all analysis to make the results representative of the population.</p>
+</section>
+<section id="weight-m">
+<h3>weight_m<a class="headerlink" href="#weight-m" title="Permalink to this heading">#</a></h3>
+<p>weight contains household weights, typically inversely proportional to the probability of the household being selected for the sample, that should be applied to all analysis to make the results representative of the population for each month. To be added only if present in the raw data and survey reports estimate results per month.</p>
+</section>
+<section id="weight-q">
+<h3>weight_q<a class="headerlink" href="#weight-q" title="Permalink to this heading">#</a></h3>
+<p>weight contains household weights, typically inversely proportional to the probability of the household being selected for the sample, that should be applied to all analysis to make the results representative of the population for each quarter. To be added only if present in the raw data and survey reports estimate results per quarter.</p>
+</section>
+<section id="psu">
+<h3>psu<a class="headerlink" href="#psu" title="Permalink to this heading">#</a></h3>
+<p>Primary sampling unit (psu) refers to sampling units that are selected in the first (primary) stage of multi- stage sample design. These sampling units typically correspond to a number of large aggregate units (clusters), each of which contains sub-units. For example, a primary sampling unit can represent the set of all housing units contained in a well-defined geographic area, such as a municipality or a group of contiguous municipalities. Primary sampling units are numeric and country-specific. A unique identifier is created for each primary sampling unit. In Stata, users are advised to specify the primary sampling unit through the svyset command.</p>
+</section>
+<section id="ssu">
+<h3>ssu<a class="headerlink" href="#ssu" title="Permalink to this heading">#</a></h3>
+<p>Secondary sampling unit code (if present).</p>
+</section>
+<section id="strata">
+<h3>strata<a class="headerlink" href="#strata" title="Permalink to this heading">#</a></h3>
+<p>Unit defining the first stage stratification strategy.</p>
+</section>
+<section id="wave">
+<h3>wave<a class="headerlink" href="#wave" title="Permalink to this heading">#</a></h3>
+<p>In case of the survey being rolled out over several waves (e.g. quarterly), codes the information of the iteration of the survey.</p>
+</section>
+<section id="panel">
+<h3>panel<a class="headerlink" href="#panel" title="Permalink to this heading">#</a></h3>
+<p>A string variable denoting which panel the individual belongs to. A panel is defined as all individuals who entered a survey at the same time (e.g., Q3 of 2020) and are scheduled to exit at the same time after a fixed number of survey waves (e.g., after four quarters).</p>
+<p>Note that due to attrition not all intakes may exit at the same time. This variable is only to be coded if the concept is present in the raw data already.</p>
+</section>
+<section id="visit-no">
+<h3>visit_no<a class="headerlink" href="#visit-no" title="Permalink to this heading">#</a></h3>
+<p>A numeric variable denoting the visit number (e.g., first visit coded as 1, second visit as 2, …) within a panel. This variable is only to be coded if the concept is present in the raw data already.</p>
+</section>
+</section>
+<section id="lessons-learned-and-challenges">
+<h2>Lessons Learned and Challenges<a class="headerlink" href="#lessons-learned-and-challenges" title="Permalink to this heading">#</a></h2>
+<section id="creating-and-checking-ids">
+<h3>Creating and checking IDs<a class="headerlink" href="#creating-and-checking-ids" title="Permalink to this heading">#</a></h3>
+<p>Avoid using the sequential index of the observation as the ID (i.e. gen hhid = _n). This is dangerous as the order of each observation may be different, even across vintages of the same file sorted by to different variables.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="n">Create</span> <span class="n">hhid</span> <span class="n">like</span> <span class="n">this</span><span class="p">:</span>
+<span class="n">gen</span> <span class="n">hhid</span> <span class="o">=</span> <span class="n">psu</span> \<span class="o">*</span> <span class="mi">100</span> <span class="o">+</span> <span class="n">hh</span>
+
+<span class="o">*</span> <span class="n">Note</span> <span class="n">like</span> <span class="n">this</span><span class="p">:</span>
+<span class="n">gen</span> <span class="n">hhid</span> <span class="o">=</span> \<span class="n">_n</span>
+</pre></div>
+</div>
+<p>When creating hhid and pid, especially from string variables or from group(varlist) or concat(varlist) functions, users should try to create them from roster data files first where all information or observations are available. In addition, the order of the variables in the varlist option above must be the same across the files. Across the data files, the order and the sort on the variables in the varlist must be done in the same way across files.</p>
+<p>When the hhid and pid are in numeric format but less precision, it is recommended to bring them the accurate precision level so it can be used in the merging correctly. For example, the value of the hhid for an observation might be 100021210121 (a long number), users should format the variable by “format %15.0g hh”.</p>
+<p>In case a household survey is conducted more than once per year – e.g. quarterly HH surveys – you may want to use this as panel data, in which case the household ID can remain as is. However, if you want to use the data as cross-sectional, then new HHIDs can be constructed for each HH for each quarter.</p>
+<table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>Quarter</strong></p></th>
+<th class="head"><p><strong>Quarter 1</strong></p></th>
+<th class="head"><p><strong>Quarter 2</strong></p></th>
+<th class="head"><p><strong>Quarter 3</strong></p></th>
+<th class="head"><p><strong>Quarter 4</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>hhid_orig</p></td>
+<td><p>hhid=1</p></td>
+<td><p>hhid=1</p></td>
+<td><p>hhid=1</p></td>
+<td><p>hhid=1</p></td>
+</tr>
+<tr class="row-odd"><td><p>hhid</p></td>
+<td><p>hhid=1Q1</p></td>
+<td><p>hhid=1Q2</p></td>
+<td><p>hhid=1Q3</p></td>
+<td><p>hhid=1Q4</p></td>
+</tr>
+</tbody>
+</table>
+<p>hhid should never be missing and if there is any missing this variable should be checked.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="n">missing</span><span class="p">(</span><span class="n">hhid</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>It is recommended to check the uniqueness level of the data files with identifier variables at the corresponding level of the data (i.e. household vs individual level data).</p>
+<p>hhid and pid need to be unique in the database.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>isid hhid pid
+cap destring pid, replace 
+duplicates report hhid pid 
+assert `r(unique_value)’ == `r(N)’
+</pre></div>
+</div>
+</section>
+<section id="checks-on-the-country-code-and-year">
+<h3>Checks on the country code and year<a class="headerlink" href="#checks-on-the-country-code-and-year" title="Permalink to this heading">#</a></h3>
+<p>Ensure that country is a three-letter country code.</p>
+<p>cap confirm str3 var country _rc!=0</p>
+<p>Harmonizers should also ensure that country codes are updated according to the <a class="reference external" href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3">ISO country codes</a>. Some common adjustments include the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">replace</span> <span class="n">countrycode</span><span class="o">=</span><span class="s2">&quot;XKX&quot;</span> <span class="k">if</span> <span class="n">countrycode</span><span class="o">==</span><span class="s2">&quot;KSV&quot;</span>
+<span class="n">replace</span> <span class="n">countrycode</span><span class="o">=</span><span class="s2">&quot;TLS&quot;</span> <span class="k">if</span> <span class="n">countrycode</span><span class="o">==</span><span class="s2">&quot;TMP&quot;</span>
+<span class="n">replace</span> <span class="n">countrycode</span><span class="o">=</span><span class="s2">&quot;PSE&quot;</span> <span class="k">if</span> <span class="n">countrycode</span><span class="o">==</span><span class="s2">&quot;WBG&quot;</span>
+<span class="n">replace</span> <span class="n">countrycode</span><span class="o">=</span><span class="s2">&quot;COD&quot;</span> <span class="k">if</span> <span class="n">countrycode</span><span class="o">==</span><span class="s2">&quot;ZAR&quot;</span>
+</pre></div>
+</div>
+<p>Furthermore, harmonizers should check that the years used are in an appropriate range.</p>
+<p>The year needs to be a four-digit number in the range of 1980 to the current year (assumed here to be 2020).</p>
+</section>
+</section>
+<section id="tabular-overview-of-variables">
+<h2>Tabular Overview of Variables<a class="headerlink" href="#tabular-overview-of-variables" title="Permalink to this heading">#</a></h2>
+<table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Module Code</p></th>
+<th class="head"><p>Variable label</p></th>
+<th class="head"><p>Variable name</p></th>
+<th class="head"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Survey &amp; ID</p></td>
+<td><p>ISO 3 Letter country code</p></td>
+<td><p>countrycode</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>Survey &amp; ID</p></td>
+<td><p>Survey acronym</p></td>
+<td><p>survname</p></td>
+<td><p>No spaces, no underscores, split sections by “-” (e.g. “ETC-II”)</p></td>
+</tr>
+<tr class="row-even"><td><p>Survey &amp; ID</p></td>
+<td><p>Survey long name</p></td>
+<td><p>survey</p></td>
+<td><p>Possible names are: LFS, LSMS, … [I am unsure of this difference, some surveys contain either this or the previous variable, have yet to see one with both]</p></td>
+</tr>
+<tr class="row-odd"><td><p>Survey &amp; ID</p></td>
+<td><p>Version of the ICLS followed</p></td>
+<td><p>icls_v</p></td>
+<td><p>Defines the labor force definitions used according to the rules set out by the nth International Conference of Labour Statisticians.</p></td>
+</tr>
+<tr class="row-even"><td><p>Survey &amp; ID</p></td>
+<td><p>Version of ISCED used</p></td>
+<td><p>isced_version</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>Survey &amp; ID</p></td>
+<td><p>Version of ISCO used</p></td>
+<td><p>isco_version</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>Survey &amp; ID</p></td>
+<td><p>Verstion of ISIC used</p></td>
+<td><p>isic_version</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>Survey &amp; ID</p></td>
+<td><p>Year of survey start</p></td>
+<td><p>year</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>Survey &amp; ID</p></td>
+<td><p>Master (Source) data version</p></td>
+<td><p>vermast</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>Survey &amp; ID</p></td>
+<td><p>Alternate (Harmonized) data version</p></td>
+<td><p>veralt</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>Survey &amp; ID</p></td>
+<td><p>Kind of harmonization</p></td>
+<td><p>harmonization</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>Survey &amp; ID</p></td>
+<td><p>Year of interview start</p></td>
+<td><p>int_year</p></td>
+<td><p>For HH and Individual interviews in that HH earliest possible date</p></td>
+</tr>
+<tr class="row-even"><td><p>Survey &amp; ID</p></td>
+<td><p>Month of interview start</p></td>
+<td><p>int_month</p></td>
+<td><p>For HH and Individual interviews in that HH earliest possible date</p></td>
+</tr>
+<tr class="row-odd"><td><p>Survey &amp; ID</p></td>
+<td><p>Household ID</p></td>
+<td><p>hhid</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>Survey &amp; ID</p></td>
+<td><p>Personal ID</p></td>
+<td><p>pid</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>Survey &amp; ID</p></td>
+<td><p>Survey weights</p></td>
+<td><p>weight</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>Survey &amp; ID</p></td>
+<td><p>Primary sampling unit</p></td>
+<td><p>psu</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>Survey &amp; ID</p></td>
+<td><p>Secondary sampling unit</p></td>
+<td><p>ssu</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>Survey &amp; ID</p></td>
+<td><p>Stratification (of PSU)</p></td>
+<td><p>strata</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>Survey &amp; ID</p></td>
+<td><p>Wave of the survey (e.g., Q1 for quarter 1)</p></td>
+<td><p>wave</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>Survey &amp; ID</p></td>
+<td><p>Panel the individual belongs to</p></td>
+<td><p>panel</p></td>
+<td><p>Only code if concept already in survey</p></td>
+</tr>
+<tr class="row-odd"><td><p>Survey &amp; ID</p></td>
+<td><p>Visit number in panel order</p></td>
+<td><p>visit_no</p></td>
+<td><p>Only code if concept already in survey</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./Support/A - Guides and Documentation/GLD Manual"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="GLD_Manual_Harmonization_Intro.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Harmonization of GLD</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="GLD_Manual_Harmonization_S3.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Geography</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id-guidelines">ID Guidelines</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mapping-and-description-of-variables">Mapping and Description of Variables</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#countrycode">countrycode</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#survname">survname</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#survey">survey</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icls-v">icls_v</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#isced-version">isced_version</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#isco-version">isco_version</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#isic-version">isic_version</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#year">year</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vermast">vermast</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#veralt">veralt</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#harmonization">harmonization</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#int-year">int_year</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#int-month">int_month</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hhid">hhid</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pid">pid</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#weight">weight</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#weight-m">weight_m</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#weight-q">weight_q</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#psu">psu</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ssu">ssu</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#strata">strata</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#wave">wave</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#panel">panel</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#visit-no">visit_no</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lessons-learned-and-challenges">Lessons Learned and Challenges</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-and-checking-ids">Creating and checking IDs</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#checks-on-the-country-code-and-year">Checks on the country code and year</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tabular-overview-of-variables">Tabular Overview of Variables</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By World Bank Jobs Group
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on Apr 15, 2024.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+<div class="extra_footer">
+  <div>
+    <b>All content (unless otherwise specified) is subject to the <a href="https://opensource.org/license/mit/">MIT License.</a></b>
+</div>
+
+</div>
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
