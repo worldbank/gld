@@ -7,3 +7,5 @@ parts:
       - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Introduction.md
       - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Overview.md
       - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_Intro.md
+        sections:
+        - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S2.md
