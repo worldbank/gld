@@ -21,3 +21,5 @@ parts:
         sections:
         - file: Support/D - Q Checks/Single survey checks/README.md
         - file: Support/D - Q Checks/Survey series checks/Readme.md
+      - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Use.md
+      - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Expand.md
