@@ -4,4 +4,4 @@ root: README
 parts:
   - caption: Global Labor Database Manual
     chapters:
-      - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Introduction
+      - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Introduction.md
