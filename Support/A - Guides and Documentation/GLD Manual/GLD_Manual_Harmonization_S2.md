@@ -1,9 +1,5 @@
 # Survey & ID module
 
-## ID Guidelines
-
-The Survey & ID module is a file at individual level with basic household and individual identifiers. The household identifier is hhid, and the individual identifier is pid.
-
 ## Mapping and Description of Variables
 
 ### countrycode
