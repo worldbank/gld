@@ -95,10 +95,6 @@ Moreover, the code should always be as long as the longest depth available for t
 
 As an example, level 2 codifies “Lower secondary education”, 24 “Lower secondary general education”, and 242 “Sufficient for partial level completion, without direct access to upper secondary education”. Every code should be three digits long. If we only know the level (here 2) add two zeroes after it (here: 200). If we only have the category information (here 24) add a zero to reach three digits (here 240).
 
-## Lessons Learned and Challenges
-
-Text
-
 ## Tabular Overview of Variables
 
 | Module Code | Variable name | Variable label | Notes |
