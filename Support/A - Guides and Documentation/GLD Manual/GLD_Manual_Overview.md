@@ -18,11 +18,11 @@ The fifth section discusses how users can help improve GLD and make it an open c
 
 First step is to obtain the raw data and the documentation as well as establishing the access rights to the data. Access rights can range from publicly accessible data (e.g., downloadable on the National Statistical Office – NSO – website) to restricted information (e.g., shared for a particular project, can only be used for it, nothing else). The documentation can come from the initial data share but is often expanded by checking microdata databases (e.g., ILO survey library) and through research done when harmonizing (e.g., looking for a national industry classification document when trying to code industry variables).
 
-Once it is clear we have all the information to begin we create the relevant survey variables on our internal server. The folders follow the World Bank microdata archiving standard, consisting of a top folder of the type CCC_YYYY_\[SurveyName\], where CCC is the ISO three letter code for the country, YYYY the year of survey start (e.g., for a survey spanning from July 2017 to June 2018 YYYY is 2017), and [SurveyName] is the survey name (e.g., ENPE, LFS, …). Inside each is a folder for the raw data and one for the harmonized. [MORE: SEE RELEVANT SECTION].
+Once it is clear we have all the information to begin we create the relevant survey variables on our internal server. The folders follow the World Bank microdata archiving standard, consisting of a top folder of the type CCC_YYYY_\[SurveyName\], where CCC is the ISO three letter code for the country, YYYY the year of survey start (e.g., for a survey spanning from July 2017 to June 2018 YYYY is 2017), and [SurveyName] is the survey name (e.g., ENPE, LFS, …). Inside each is a folder for the raw data and one for the harmonized. More on the organization of files and folders [at the end of this section](#how-is-the-information-I-access-organized?).
 
 The folder with the data is placed in the working folder for the person working on it so that, while assigned to them, it is accessible to all GLD harmonizers, to be able to access it, act on it even if the person is not working. The harmonizer in charge then will get to work and get acquainted with the survey and start harmonizing. Most often, during the harmonization process the harmonizer reaches out to either the NSO or country office colleagues (or both) to understand further details of the survey (e.g., how changes in administrative boundaries took place).  
 
-Once the harmonizer has finished coding all possible variables for all years, they will run tow kinds of quality checks. 1) Within year checks that evaluate whether the survey is coherent with itself (correct variable definitions, sensible coding (most people with a professional occupation (doctors, lawyers) have above secondary education)) and with external data (e.g., compare the labor force participation (LFP) calculated from the harmonized data with that from WDI or ILOSTAT). 2) Across years checks that evaluate whether there are any unexpected jumps in the time series (e.g., LFP has an abrupt fall from one year to the next).
+Once the harmonizer has finished coding all possible variables for all years, they will run two kinds of quality checks. 1) Within year checks that evaluate whether the survey is coherent with itself (correct variable definitions, sensible coding (most people with a professional occupation (doctors, lawyers) have above secondary education)) and with external data (e.g., compare the labor force participation (LFP) calculated from the harmonized data with that from WDI or ILOSTAT). 2) Across years checks that evaluate whether there are any unexpected jumps in the time series (e.g., LFP has an abrupt fall from one year to the next).
 
 The results are discussed with the GLD focal point and case-by-case decisions are taken. For example, even if the harmonized data LFP is different from that of the WDI or ILOSTAT, the “divergent” information will be kept if the coding adheres to the GLD standard and is equal to the one reported by the NSO. An abrupt fall in the LFP may be warranted if a change in the definition of employment was introduced during the years covered.
 
@@ -32,7 +32,7 @@ Finally, the harmonizer will write the “Country Survey Details” (CSD). This 
 
 This section describes where GLD information is stored, how to access it and how information is organized.
 
-## Where is the information stored?
+### Where is the information stored?
 
 Data, that is raw survey data, harmonization codes and outputted harmonized data, as well as survey documentation (questionnaires, reports) are stored on a dedicated server the Jobs Group controls. This includes both the finalized versions of the harmonization and the intermediate work as the teams harmonize data. 
 
@@ -40,7 +40,7 @@ The datalibweb team have access to the finalized GLD and thus information is aut
 
 Lastly, the contextual information on the survey (e.g., denoting changes to the currency or the administrative units over time) are stored, along with the harmonization codes, the data quality check codes, and any other software in the GLD ecosystem on the GLD GitHub repository. What GitHub is and how to interact with it is covered by the next point.
 
-## What is GitHub? How do I interact with it? 
+### What is GitHub? How do I interact with it? 
 
 GitHub is a web-based platform that allows developers and programmers to store, manage, and collaborate on software projects. It is a central hub where people can upload, download, and work on code files, as well as track changes, report issues, and discuss ideas. GitHub is built on the Git version control system, which lets multiple people work on the same project simultaneously without overwriting each other's work.
 The core feature of GitHub is the "repository," which is essentially an online folder that contains all the files and revision history for a particular software project. Users can create their own repositories to store their code, or contribute to existing repositories created by others. GitHub provides a user-friendly web interface, as well as desktop and mobile apps, to make it easy for people to access and manage their repositories.
@@ -49,7 +49,7 @@ When you interact with a GitHub repository, you have the ability to "clone" it, 
 
 Beyond just code storage and version control, GitHub enables collaboration by allowing users to report bugs, suggest improvements, and discuss the direction of a project through the repository's online tools. This collaborative nature has made GitHub an essential platform for open-source software development, as well as a valuable resource for teams working on a project concurrently.
 
-## How do I access GLD information, gain access to it?
+### How do I access GLD information, gain access to it?
 
 Access to the GLD information depends on which source is being accessed to use and the precise access rights.
 
@@ -66,17 +66,17 @@ XXXXX Add a screenshot with boxes marking where to login, how the navigation pan
 
 The [GLD GitHub repository](https://github.com/worldbank/gld) is open to all users, both from the World Bank and external. All harmonization codes, CSD, and tools can be found here. More details on what GitHub is and how to interact with it are in [the relevant sub-section](link to it).
 
-## In what format is the information I access?
+### In what format is the information I access?
 
 Information can be broadly classified in three categories: raw and harmonized data, harmonization code, and other information. Raw data can be in any number of formats, depending on how it was published by the NSO or shared with the GLD team. Inside the GLD folder system
 
-## When can I access information, when not?
+### When can I access information, when not?
 
 Access to information generated by the GLD team on the GitHub repository is free and accessible at any moment. Access to the harmonized and raw data depends on the access rights of the raw data. While the GLD team endeavors to make them accessible to all, this cannot be assured.
 
 Raw and harmonized data, even if in the public domain, can only be shared internally within the World Bank. Surveys not present on the public server (public here meaning: accessible to all staff) or not directly downloadable on datalibweb or on the Microdata Library are understood to be not accessible. Note that access rights might change over time (i.e., a survey which was restricted can be made open to all – and vice-versa). Please note that the introduction to the Country Survey Details of the survey should denote the nature of the data and thus access. It should also be updated if there are any changes.
 
-## How do I obtain access for what is not accessible initially?
+### How do I obtain access for what is not accessible initially?
 
 There are two routes to obtain access to GLD information that is not freely accessible to World Bank staff. On datalibweb, via the datalibweb intranet site you can select the surveys that are not public you wish to access. This has the added advantage that a user can request access for others while making theirs. For access to the server you may contact the GLD focal point (gld@worldbank.org). Access to the surveys on the Microdata Library are limited via the restrictions imposed on the site. There is no direct redress option unless one is specifically stated in the survey entry.
 
