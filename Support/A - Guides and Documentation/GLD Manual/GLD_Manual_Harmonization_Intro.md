@@ -24,4 +24,4 @@ Handling the changes also ties in to the second idea of letting “users make th
 
 ## How are the variables defined
 
-The next subsections define, variable by variable, how each concept is defined, in addition to provinding some lessons learned from the process of 
+The next subsections define, variable by variable, how each concept is defined, in addition to providing some lessons learned from the process of harmonizing.

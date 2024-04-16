@@ -9,12 +9,16 @@ The GLD aims to be open, meaning that as much information should be accessible t
 ## What issue is GLD solving?
 The GLD is solving the issue of the time-consuming process of harmonization, which requires reading both data files and survey materials in detail to understand what to code and how, as well as many steps of validation. This effort only needs to be done once and well to serve as the springboard for all users. Most harmonization efforts provide users with a "take it or leave it" option, but the GLD's open and transparent approach allows users to trace and deviate from the standard harmonization at any point, giving them a head start regardless of where they wish to jump in.
 
-Moreover, the ecosystem built around the GLD harmonization, with the ability for users to provide feedback to the GLD team, allows for the correction of the harmonization or the improvement of the documentation. This, in turn, supports evidence generation and monitoring and evaluation (M&E) by providing better data that informs evidence-based policy lending and the monitoring of jobs outcomes. The standard approach of the GLD further allows the building of tools and automated processes on top of the harmonized outputs to deepen analysis.^ In turn, a good harmonization makes for better data that informs evidence-based policy lending as well as monitoring of jobs outcomes. Its standard approach further allows the building of tools and automated processes on top of it to deepen analysis based on the harmonized outputs. It thus supports evidence generation and monitoring and evaluation (M&E).
+Moreover, the ecosystem built around the GLD harmonization, with the ability for users to provide feedback to the GLD team, allows for the correction of the harmonization or the improvement of the documentation. This, in turn, supports evidence generation and monitoring and evaluation (M&E) by providing better data that informs evidence-based policy lending and the monitoring of jobs outcomes. The standard approach of the GLD further allows the building of tools and automated processes on top of the harmonized outputs to deepen analysis.
+
+In turn, a good harmonization makes for better data that informs evidence-based policy lending as well as monitoring of jobs outcomes. Its standard approach further allows the building of tools and automated processes on top of it to deepen analysis based on the harmonized outputs. It thus supports evidence generation and monitoring and evaluation (M&E).
 
 ## Who is the GLD for? Who is the intended audience?
 
-GLD is for any person, member of the World Bank or not, who wishes to use the harmonization for their own projects. We distinguish between two uses (the same user may only want one or need both of the uses). 
+GLD is for any person, member of the World Bank or not, who wishes to use the harmonization for their own projects. We distinguish between two uses (the same user may only want one or need both uses). 
+
 The first use is the “as-is” harmonization. This refers to the user taking the harmonized data files as prepared by the data team and using those variables (or combinations thereof) for their analysis.
+
 The second use is the “amended” or “hacked” harmonization. This refers to the user wanting to go beyond the prepared harmonization. This may be, for example, because they are interested in another specific variable from the survey, present in the questionnaire but not harmonized as not common in most surveys.
 
 In this case, the user can still utilize the harmonization do file to standardize most variables (as concepts like education level or labour status are likely still going to be relevant) but in addition add other ones. This use entails editing the harmonization code and/or adding to it at specific points to serve the users purpose without them needing to process the survey entirely.
@@ -27,7 +31,7 @@ The initial funding for the GLD was provided for a flagship report catalyzed by 
 
 The GLD aims to be a global database. Across the income levels low, lower middle, and upper middle income (LIC, LC, and UMC), GLD should contain a roughly equal percentage of countries. High income countries are less of a focus of GLD. 
 
-- **Example:** There are currently 29 countries classified as low income, 50 as lower middle income, and 56 as upper middle income. If GLD contained 10 countries of the first group (34%), 11 of the second group (22%), and 20 of the third group (35%), the next countries to be selected should be lower middle income countries. 
+- **Example:** There are currently 29 countries classified as low income, 50 as lower middle income, and 56 as upper middle income. If GLD contained 10 countries of the first group (34%), 11 of the second group (22%), and 20 of the third group (35%), the next countries to be selected should be lower middle-income countries. 
 
 ### 2. Ensure topicality of surveys within income level groups
 Within each group and for the calculation of ratios for point 1) a country is considered as being present in the database if there is at least one survey from the last four years. 
@@ -79,7 +83,7 @@ The other alternative is to redo the harmonization from scratch to include the v
 
 **Interoperability:** The GLD data dictionary is modelled after the second version of the Global Monitoring Database (GMD) data dictionary. While there are variables in GMD not in GLD and vice versa, due to the specific nature of the surveys, about 80% of the variables in GLD exist as well in GMD. These variables have the same names and definitions, ensuring that (survey methodology permitting it) a GMD from country C1 in year Y1 can be used to compare it to a GLD survey from C2 at time Y2.
 
-ISCO/ISIC information: From the start GLD has set out to try to extract information on industry and occupation in a more detailed manner. The comparable databases usually obtain industry and occupation as categorical variables with at most 10 categories.
+**ISCO/ISIC information:** From the start GLD has set out to try to extract information on industry and occupation in a more detailed manner. The comparable databases usually obtain industry and occupation as categorical variables with at most 10 categories.
 
 GLD strives to extract ISCO and ISIC variables to the most accurate level possible. In surveys that classify the information already originally following international classifications this is straightforward. 
 
@@ -93,7 +97,7 @@ An example is explaining the process of correspondence used between national and
 
 **Preference for integrated household budget surveys:** In many settings the only survey performed is an integrated household income and expenditure survey with a labour market module. This survey would commonly fall under the purview of GMD. 
 
-GLD can, if available, harmonize a labour force survey from the same country and year. However – and despite the ISCO/ISIC information – it seems safe to assume that most researchers would prefer to use the integrated budget survey as it offers generally the same information and allows to exploit consumption patterns, allowing a richer investigation. In this sense, GLD is a second best option.
+GLD can, if available, harmonize a labour force survey from the same country and year. However – and despite the ISCO/ISIC information – it seems safe to assume that most researchers would prefer to use the integrated budget survey as it offers generally the same information and allows to exploit consumption patterns, allowing a richer investigation. In this sense, GLD is a second-best option.
 
 GLD tries to, in its logic of inclusion of new surveys, take this factor into account by aiming to create complementarity with GMD. There is nonetheless a risk of users, expecting the full GMD suite, to be disillusioned or disappointed with the GLD offerings.
 
