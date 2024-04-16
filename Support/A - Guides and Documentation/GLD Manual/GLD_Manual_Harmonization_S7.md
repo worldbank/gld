@@ -44,10 +44,6 @@ Text. The codes are:
 
 5 = Other
 
-## Lessons Learned and Challenges
-
-Text
-
 ## Tabular Overview of Variables
 
 | Module Code | Variable name | Variable label | Notes |
