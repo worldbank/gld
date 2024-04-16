@@ -42,7 +42,7 @@ The harmonization code is designed for users to exploit it by amending and addin
 For the first part, users need to evaluate the paths and overwrite the ones laid out in subsection `1.2` (see example below of the section for the Brazilian 2020 PNADC) to ensure the files are read from and stored in the folders they wish to use. 
 
 <br></br>
-![Example Step 1 of code](images/hc_step1_paths.png.png)
+![Example Step 1 of code](images/hc_step1_paths.png)
 <br></br>
 
 When adding or amending variables, users could add the variable at any point after assembly (i.e., after section 1) and before the final steps. The GLD team recommends adding variables at the end of the section or subsection to which the variable belongs to. That is, if the user is adding an education variable, to do so after the last education variable. If the variable concerns the secondary job over the 12-month recall to add it after the last variable for that section. 
