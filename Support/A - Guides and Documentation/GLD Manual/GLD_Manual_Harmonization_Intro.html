@@ -184,10 +184,9 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l2"><a class="reference internal" href="GLD_Manual_Harmonization_S6.html">Education</a></li>
 <li class="toctree-l2"><a class="reference internal" href="GLD_Manual_Harmonization_S7.html">Training</a></li>
 <li class="toctree-l2"><a class="reference internal" href="GLD_Manual_Harmonization_S8.html">Labor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GLD_Manual_Harmonization_read_code.html">How to read the harmonization code</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="GLD_Manual_Harmonization_process.html">GLD Harmonization Process Overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="GLD_Manual_Harmonization_read_code.html">How to read the harmonization code</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="GLD_Manual_Validation.html">Validation</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../D%20-%20Q%20Checks/Single%20survey%20checks/README.html">Guide to the GLD single survey quality checks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../D%20-%20Q%20Checks/Survey%20series%20checks/Readme.html">Guide to the GLD survey series quality checks</a></li>
@@ -413,7 +412,8 @@ document.write(`
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-being-harmonized">What is being harmonized?</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-the-harmonization-not-doing-offering">What is the harmonization <em>not</em> doing / offering?</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-are-the-variables-defined">How are the variables defined</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-does-the-harmonization-process-work-what-are-the-steps">How does the harmonization process work? What are the steps?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-do-i-read-the-harmonoization-code-how-are-the-variables-defined">How do I read the harmonoization code? How are the variables defined?</a></li>
 </ul>
             </nav>
         </div>
@@ -442,9 +442,17 @@ document.write(`
 <p>GLD also provides information on how to potentially handle changes and help users in unifying, like our description of the aforementioned changes to states in India, <a class="reference external" href="https://github.com/worldbank/gld/blob/main/Support/B%20-%20Country%20Survey%20Details/IND/EUS/Changes_States_And_State_Codes_Over_Time.md">available here</a> or a detailed explanation of how to handle a change in the definition of employment (<a class="reference external" href="https://github.com/worldbank/gld/blob/main/Support/B%20-%20Country%20Survey%20Details/TZA/ILFS/Converting%20between%20ICLS%20Definitions.md">example from Tanzania here</a>).</p>
 <p>Handling the changes also ties in to the second idea of letting “users make the biggest leaps”. Unifying classifications across different versions creates potentially a lot of noise in the data. It introduces uncertainty about the classifications and makes assignments much less accurate. Beyond detailed information we offer tools to help users, like our tool to check whether an <a class="reference external" href="https://github.com/worldbank/gld/tree/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20universe%20check">ISCO or ISIC universe is correctly covered</a> as well as a tool to make (mechanical) <a class="reference external" href="https://github.com/worldbank/gld/tree/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20conversion%20tool">conversions between difference versions of the classifications</a>. The tools are there, to help and empower the user, but overall the GLD harmonization is conservative in its choices, making as few assumptions as possible and deferring in bigger decisions to the user.</p>
 </section>
-<section id="how-are-the-variables-defined">
-<h2>How are the variables defined<a class="headerlink" href="#how-are-the-variables-defined" title="Permalink to this heading">#</a></h2>
-<p>The next subsections define, variable by variable, how each concept is defined, in addition to providing some lessons learned from the process of harmonizing.</p>
+<section id="how-does-the-harmonization-process-work-what-are-the-steps">
+<h2>How does the harmonization process work? What are the steps?<a class="headerlink" href="#how-does-the-harmonization-process-work-what-are-the-steps" title="Permalink to this heading">#</a></h2>
+<p>The harmonization process involves several key steps to ensure that data collected from various sources is standardized and ready for analysis. The first step in the harmonization process is to acquire the necessary data. This data can be obtained through downloading from official sources or it may be shared by colleagues. However, it is imperative to assess the data rights and ensure compliance with any relevant regulations or agreements.
+Once the data is obtained, the next step is to organize it effectively. Survey folders are created, and documentation is stored in the correct folders to maintain clarity and accessibility. If additional documentation is required, efforts are made to acquire it promptly.</p>
+<p>With the data organized, the harmonization process begins. Careful attention is paid to the existing results as the process unfolds. Evaluation is continuous, with a particular focus on ensuring that external parties, such as colleagues or NSO (National Statistical Office) staff, are consulted as needed. Sufficient time is allotted for their input, allowing for thorough collaboration while balancing other tasks.
+Validation is the next stage in the harmonization process. Beyond internal validation with colleagues, external staff with domain knowledge, such as experts in education, are consulted. Additionally, all GLD quality checks are conducted, and the data is compared with relevant reports. Internal discussions further refine the validation process.</p>
+<p>Once the data has been validated, Country Survey Details are documented. This documentation reflects all the knowledge acquired during the harmonization process, ensuring transparency and accuracy. Finally, the harmonized data is published to the GLD server and GitHub repository for wider access. If the data is designated for “official use,” it is added to the GLD-Public server.</p>
+</section>
+<section id="how-do-i-read-the-harmonoization-code-how-are-the-variables-defined">
+<h2>How do I read the harmonoization code? How are the variables defined?<a class="headerlink" href="#how-do-i-read-the-harmonoization-code-how-are-the-variables-defined" title="Permalink to this heading">#</a></h2>
+<p>The next subsection describe, first, how to read the harmonization code, how it is structured. Thereafter, we explain how each variable is defined, in addition to providing some lessons learned from the process of harmonizing.</p>
 </section>
 <div class="toctree-wrapper compound">
 </div>
@@ -516,7 +524,8 @@ document.write(`
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-being-harmonized">What is being harmonized?</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-the-harmonization-not-doing-offering">What is the harmonization <em>not</em> doing / offering?</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-are-the-variables-defined">How are the variables defined</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-does-the-harmonization-process-work-what-are-the-steps">How does the harmonization process work? What are the steps?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-do-i-read-the-harmonoization-code-how-are-the-variables-defined">How do I read the harmonoization code? How are the variables defined?</a></li>
 </ul>
   </nav></div>
 
