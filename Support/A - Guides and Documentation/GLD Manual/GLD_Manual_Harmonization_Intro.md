@@ -22,6 +22,16 @@ GLD also provides information on how to potentially handle changes and help user
 
 Handling the changes also ties in to the second idea of letting “users make the biggest leaps”. Unifying classifications across different versions creates potentially a lot of noise in the data. It introduces uncertainty about the classifications and makes assignments much less accurate. Beyond detailed information we offer tools to help users, like our tool to check whether an [ISCO or ISIC universe is correctly covered](https://github.com/worldbank/gld/tree/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20universe%20check) as well as a tool to make (mechanical) [conversions between difference versions of the classifications](https://github.com/worldbank/gld/tree/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20conversion%20tool). The tools are there, to help and empower the user, but overall the GLD harmonization is conservative in its choices, making as few assumptions as possible and deferring in bigger decisions to the user.
 
-## How are the variables defined
+## How does the harmonization process work? What are the steps?
 
-The next subsections define, variable by variable, how each concept is defined, in addition to providing some lessons learned from the process of harmonizing.
+The harmonization process involves several key steps to ensure that data collected from various sources is standardized and ready for analysis. The first step in the harmonization process is to acquire the necessary data. This data can be obtained through downloading from official sources or it may be shared by colleagues. However, it is imperative to assess the data rights and ensure compliance with any relevant regulations or agreements.
+Once the data is obtained, the next step is to organize it effectively. Survey folders are created, and documentation is stored in the correct folders to maintain clarity and accessibility. If additional documentation is required, efforts are made to acquire it promptly.
+
+With the data organized, the harmonization process begins. Careful attention is paid to the existing results as the process unfolds. Evaluation is continuous, with a particular focus on ensuring that external parties, such as colleagues or NSO (National Statistical Office) staff, are consulted as needed. Sufficient time is allotted for their input, allowing for thorough collaboration while balancing other tasks.
+Validation is the next stage in the harmonization process. Beyond internal validation with colleagues, external staff with domain knowledge, such as experts in education, are consulted. Additionally, all GLD quality checks are conducted, and the data is compared with relevant reports. Internal discussions further refine the validation process.
+
+Once the data has been validated, Country Survey Details are documented. This documentation reflects all the knowledge acquired during the harmonization process, ensuring transparency and accuracy. Finally, the harmonized data is published to the GLD server and GitHub repository for wider access. If the data is designated for "official use," it is added to the GLD-Public server.
+
+## How do I read the harmonoization code? How are the variables defined?
+
+The next subsection describe, first, how to read the harmonization code, how it is structured. Thereafter, we explain how each variable is defined, in addition to providing some lessons learned from the process of harmonizing.

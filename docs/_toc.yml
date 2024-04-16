@@ -15,8 +15,7 @@ parts:
         - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S6.md
         - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S7.md
         - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S8.md
-      - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_process.md
-      - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_read_code.md
+        - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_read_code.md
       - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Validation.md
         sections:
         - file: Support/D - Q Checks/Single survey checks/README.md
