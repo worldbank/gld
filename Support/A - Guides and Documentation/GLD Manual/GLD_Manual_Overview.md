@@ -69,7 +69,7 @@ The images below show, in the first image the homepage of the MDL and where to l
 <br></br>
 
 <br></br>
-![survey navigation of MDL](images/mdl_navigation.png)
+![survey navigation of MDL](images/mdl-navigation.png)
 <br></br>
 
 The [GLD GitHub repository](https://github.com/worldbank/gld) is open to all users, both from the World Bank and external. All harmonization codes, CSD, and tools can be found here. More details on what GitHub is and how to interact with it are in [the relevant sub-section](link to it).
@@ -147,7 +147,7 @@ The subfolder *B – Country Survey Details* contains the metainformation on sur
 * B – Country Survey Details
   * CCA
     * Survey-1
-      * 1. Introduction to CCA Survey-1.md
+      * 1\. Introduction to CCA Survey-1\.md
       * \[Other_issue_in_detail.md\]
       * \[utilities\]
     * Survey-2
@@ -160,6 +160,6 @@ If the introduction contains images or references some document, these are store
 
 The subfolder *C - Templates* contains the GLD templates. Currently, there are three. The harmonization code template, the code to create new GLD structured folders, and the template for the CSD introduction. These should allow new harmonizers to create new harmonizations using the same structures.
 
-The subfolder *D – Q Checks* contains the GLD quality checks. There are two types of checks. The checks to be done to each survey (e.g., the 2019 Indian PLFS) and the checks to be done (once all are ready) to a series of years of surveys (e.g., years 2017 to 2022 of the Indian PLFS). The former are in the *Single survey checks* folder, while the latter are in the *Survey series checks* folder. The details of how the checks work is contained in the [Validation section](../GLD Manual/ GLD_Manual_Validation.md).
+The subfolder *D – Q Checks* contains the GLD quality checks. There are two types of checks. The checks to be done to each survey (e.g., the 2019 Indian PLFS) and the checks to be done (once all are ready) to a series of years of surveys (e.g., years 2017 to 2022 of the Indian PLFS). The former are in the *Single survey checks* folder, while the latter are in the *Survey series checks* folder. The details of how the checks work is contained in the [Validation section](GLD_Manual_Validation.md).
 
-The subfolder *E – Community Guidelines* contains the guidelines to interact with the GLD team on GitHub. This refers to the conduct we expect from users as well as checklists to ensure any action is as impactful as possible. Further details of how interact with the team are contained in the [Collaborating with GLD section](../GLD Manual/ GLD_Manual_Collaboration.md).
+The subfolder *E – Community Guidelines* contains the guidelines to interact with the GLD team on GitHub. This refers to the conduct we expect from users as well as checklists to ensure any action is as impactful as possible. Further details of how interact with the team are contained in the [Collaborating with GLD section](GLD_Manual_Collaboration.md).
