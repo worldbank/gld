@@ -23,12 +23,7 @@ parts:
         - file: Support/D - Q Checks/Survey series checks/Readme.md
       - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Use.md
       - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Expand.md
-  - caption: Contribution Guidelines
-    chapters:
-      - glob: docs/branch_management/*
-      - glob: docs/pull_request/*
-      - glob: docs/raise_issue/*
-      - glob: Support/E - Contribution Guidelines/*
+      - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Collaboration.md
   - caption: Contact
     chapters:
       - file: docs/contact
