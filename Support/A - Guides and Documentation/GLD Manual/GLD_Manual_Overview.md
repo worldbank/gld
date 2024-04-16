@@ -62,7 +62,15 @@ Generally, datalibweb allows, on Stata, either a click-and-select option to obta
 
 Access to the World Bank Micro Data Library (MDL) requires access to the World Bank intranet. Note that there is the public library (microdata.worldbank.org) and the internal (microdatalib.worldbank.org). The GLD collection is only accessible on the latter [link here](https://microdatalib.worldbank.org/index.php/catalog/gld/?page=1&ps=15&repo=gld). Users only need to login and can use the navigation pane to find the individual surveys.
 
-XXXXX Add a screenshot with boxes marking where to login, how the navigation pane looks like. XXXXX
+The images below show, in the first image the homepage of the MDL and where to login (red box). The second image shows the navigation of the list of surveys on the MDL. Users can search via keywords (green box) or using the filters on the right had side like the year (red box) or the country (yellow box).
+
+<br></br>
+![Hopmepage of MDL](images/mdl_login.png)
+<br></br>
+
+<br></br>
+![survey navigation of MDL](images/mdl_navigation.png)
+<br></br>
 
 The [GLD GitHub repository](https://github.com/worldbank/gld) is open to all users, both from the World Bank and external. All harmonization codes, CSD, and tools can be found here. More details on what GitHub is and how to interact with it are in [the relevant sub-section](link to it).
 
