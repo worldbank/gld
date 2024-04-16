@@ -13,7 +13,8 @@ Certainly IBGE has done the bulk of the work and ought to be named first. What w
 | …       | …             | …                |  …  | 
 | 2014 | TZA         | 28,463      |  9.34  | 
 | 2015 | TZA         | 28,296      |  8.57  | 
- **Source : ** BRA PNADC, IBGE; …; TZA LFS, NBS via World Bank Global Labor Database
+
+ **Source :** BRA PNADC, IBGE; …; TZA LFS, NBS via World Bank Global Labor Database
 
 In the bibliography we propose the following citation:
 
