@@ -132,9 +132,11 @@ The *Doc* folder contains any other documentation necessary to describe and unde
 
 The *Work* folder contains any output created during the harmonization that is not the final harmonization. For example, if you needed to create a subfile of the survey containing only households from a certain region for inspection or any other process you may need during your work, these outputs should be stored here. *Data/Harmonized* should only contain finalized files, here you may store any intermediate results.
 
-The organization of the information on GitHub follows a similar, yet different pattern. On the landing page there are two relevant folders where information is contained: *GLD* and *Support*. The former contains the harmonization codes for the GLD surveys while the latter contains all additional information to understand and leverage both the GLD surveys and the GLD ecosystem. The other folders contain information to make the repository work and are not further discussed here.
+The organization of the information on GitHub follows a similar, yet different pattern. On the landing page (shown below) there are two relevant folders where information is contained: *GLD* (red box) and *Support* folder (green box). The former contains the harmonization codes for the GLD surveys while the latter contains all additional information to understand and leverage both the GLD surveys and the GLD ecosystem. The other folders contain information to make the repository work and are not further discussed here.
 
-[ IMAGE of the landing site with the two folders highlighted  ]
+<br></br>
+![Hompepage of GLD repository](images/gld_landing.png)
+<br></br>
 
 The *GLD* folder follows the logic described above, with a `CCC/CCC_YYYY_Survey-Name/CCC …` structure. The only difference is that it only contains the harmonized folder (i.e., `_V##_M_V##_A_GLD`) and in there only the *Programs* folder.
 
