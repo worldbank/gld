@@ -11,4 +11,6 @@ We hope, in turn, you will also contribute to GLD, from pointing out issues with
 
 <br></br>
 ![Turner's Fighting Temeraire](/docs/images/fighting_temeraire.jpg)
+
+*[The Fighting Temeraire](https://www.nationalgallery.org.uk/paintings/joseph-mallord-william-turner-the-fighting-temeraire)* - Joseph Mallord William Turner
 <br></br>
