@@ -1120,7 +1120,7 @@ foreach v of local ed_var {
 *<_nlfreason_year_>
 	gen byte nlfreason_year=.
 	label var nlfreason_year "Reason not in the labor force"
-	la de lblnlfreason_year 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disable" 5 "Other"
+	la de lblnlfreason_year 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
 	label values nlfreason_year lblnlfreason_year
 *</_nlfreason_year_>
 
