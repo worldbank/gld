@@ -1939,7 +1939,7 @@ foreach v of local ed_var {
 	recode nlfreason_year 11/82=. 91=1 92 93=2 94=3 95=4 96/99=5
 	replace nlfreason_year = . if lstatus_year != 3 | (age < minlaborage & age != .)
 	label var nlfreason_year "Reason not in the labor force - 12 month recall"
-	la de lblnlfreason_year 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disable" 5 "Other"
+	la de lblnlfreason_year 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
 	label values nlfreason_year lblnlfreason_year
 *</_nlfreason_year_>
 
