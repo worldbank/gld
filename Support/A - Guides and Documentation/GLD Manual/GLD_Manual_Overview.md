@@ -53,7 +53,7 @@ Beyond just code storage and version control, GitHub enables collaboration by al
 
 Access to the GLD information depends on which source is being accessed to use and the precise access rights.
 
-Directly on the GLD server there are two versions of the GLD. One is the finalized harmonization for all surveys, one the finalized harmonization for all server that are “for official use”, that is: that can be accessed by any World Bank staff member. Access to the folder containing the latter can be granted to any staff member (with a working World Bank email address and at least a virtual desktop). You may reach out to the GLD Focal point (gld@worldbank.org) to be granted access. Once granted you may [follow these instructions](link to the document with instructions) to map your computer to the network drive. 
+Directly on the GLD server there are two versions of the GLD. One is the finalized harmonization for all surveys, one the finalized harmonization for all server that are “for official use”, that is: that can be accessed by any World Bank staff member. Access to the folder containing the latter can be granted to any staff member (with a working World Bank email address and at least a virtual desktop). You may reach out to the GLD Focal point (gld@worldbank.org) to be granted access. Once granted you may [follow these instructions](https://github.com/worldbank/gld/blob/main/Support/A%20-%20Guides%20and%20Documentation/How%20Map%20Network%20Server.docx) to map your computer to the network drive. 
 
 Access to the full GLD is limited to the members of the Jobs Group. Specific access to files can be discussed on a case-by-case basis but would require reaching out to the GLD Focal Point.
 
