@@ -28,7 +28,7 @@ The results are discussed with the GLD focal point and case-by-case decisions ar
 
 Finally, the harmonizer will write the “Country Survey Details” (CSD). This represents meta information that cannot be coded into the data nor properly explained in the comments to the harmonization code. This may be notes on changes to the employment definition over time and how to potentially try to code by an older definition. The CSD starts with a document called “1. Introduction to [Survey Name]” for which there is a common template. Additional, more detailed information is covered by ad-hoc documents.
 
-## Accessing GLD information (covers all: codes, documentation, etc.)
+## Accessing GLD information
 
 This section describes where GLD information is stored, how to access it and how information is organized.
 
