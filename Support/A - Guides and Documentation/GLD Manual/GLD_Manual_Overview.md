@@ -76,7 +76,11 @@ The [GLD GitHub repository](https://github.com/worldbank/gld) is open to all use
 
 ### In what format is the information I access?
 
-Information can be broadly classified in three categories: raw and harmonized data, harmonization code, and other information. Raw data can be in any number of formats, depending on how it was published by the NSO or shared with the GLD team. Inside the GLD folder system
+Information can be broadly classified in three categories: raw and harmonized data, harmonization code, and other information. Raw data can be in any number of formats, depending on how it was published by the NSO or shared with the GLD team.
+
+The harmonization code is a Stata `.do` file and the outputted harmonized dataset is a Stata `.dta` file.
+
+Background information posted on the GitHub repository are text files that may include or link to images and reports (most commonly in PDF format).
 
 ### When can I access information, when not?
 
