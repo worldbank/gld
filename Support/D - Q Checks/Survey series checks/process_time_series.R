@@ -18,7 +18,7 @@ path_in <- "Y:/GLD-Harmonization/582018_AQ/BGD"
 path_out <- "Y:/GLD-Harmonization/582018_AQ/Countries/plots"
 
 # Define the path to the folder where this code and the other functions of the survey series checks are stored
-dir_w_functions <- "Y:/GLD-Harmonization/582018_AQ/D - Q Checks/Survey series checks"
+dir_w_functions <- "C:/WBG/gld/Support/D - Q Checks/Survey series checks"
 
 
 #=========================================================================#

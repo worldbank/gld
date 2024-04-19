@@ -88,22 +88,177 @@ rename q36 q36_b
 rename q48 q48_str
 rename q57 q57_b
 rename q58b q58b_b
+rename q64a q64a_3_int
 gen file = "16-q1"
-append using  "`path_in_stata'/qlfs_q2_2016.dta" 
-*replace quarter=4 if quarter!=3
+append using  "`path_in_stata'/qlfs_q3_2015.dta"
+rename q36 q36_3_str
+rename q64a q64a_3_str
+replace file = "15-q3" if mi(file)
+append using  "`path_in_stata'/qlfs_q4_2015.dta"
+replace file = "15-q4" if mi(file)
+rename q36 q36_3_by
 rename q48 q48_2_str
 rename q57 q57_2_b
 rename q58b q58b_2_str
 rename q64 q64_2_b
 rename q64a q64a_2_str
-tostring visit, replace
+rename visit visit_str
+
+
+
+
+rename q22 q16
+rename q26 q20
+rename q27old q21
+rename q28old q22
+rename q29old q23
+rename q30old q24
+
+rename q27 q27old
+rename q28 q28old
+rename q29 q29old
+rename q30 q30old
+rename q25 q25old
+
+rename q31 q25
+rename q32 q26
+rename q33 q27
+rename q34 q28 
+rename q35 q29
+rename q37 q31
+rename q38 q32
+rename q39 q33
+rename q40 q34
+rename q41 q35
+rename q42 q36
+rename q43a q37a
+rename q43b q37b
+rename q44 q38
+rename q45 q39
+rename q46 q40
+rename q47 q41
+rename q49a q43a
+rename q50 q44
+rename q51 q45
+rename q52a q46a
+rename q52b q46b
+rename q52c q46c
+rename q52d q46d
+rename q52e q46e
+rename q52f q46f
+rename q52g q46g
+rename q53a q47a
+rename q53b q47b
+rename q53c q47c
+rename q53d q47d
+rename q53e q47e
+rename q53f q47f
+rename q53g q47g
+rename q54 q48
+rename q55 q49
+rename q56 q50
+rename q58a q52a
+rename q58c q52c
+rename q58d q52d
+rename q58e q52e
+rename q58f q52f
+rename q58g q52g
+rename q58h q52h
+rename q59 q53
+rename q60a q54a
+rename q60b q54b
+rename q60cr q54c
+rename q61 q55
+rename q62 q56
+rename q63a q57
+rename q63b q57a
+rename q63c q57bsic
+rename q65 q59
+rename q66 q60
+rename q67 q61
+rename q68a q62a
+rename q68b q62b
+rename q68c q62c
+rename q69 q63
+rename q70 q64
+rename q71 q65
+rename q72 q66
+rename q73 q67
+rename q74a q68a
+rename q74b q68b
+rename q74c q68c
+rename q74d q68d
+rename q74e q68e
+rename q74f q68f
+rename q74g q68g
+rename q74h q68h
+rename q74i q68i
+rename q75a q69a
+rename q75b q69b
+rename q75c q69c
+rename q75d q69d
+rename q76 q70
+rename q77 q71
+rename q78 q72
+rename q79 q73
+rename q80 q74
+rename q81 q75
+rename q82 q76
+rename q83 q77
+rename q84 q78
+rename q85 q79
+rename q86 q80
+rename q87 q81
+rename q88 q82
+rename q89 q83
+rename q90a q84a
+rename q90b q84b
+rename q90c q84c
+rename q90d q84d
+rename q90e q84e
+rename q90f q84f
+rename q90g q84g
+rename q91a q85a
+rename q91b q85b
+rename q91c q85c
+rename q91d q85d
+rename q91e q85e
+rename q91f q85f
+rename q92 q86
+rename q93 q87
+rename q94 q88
+rename q95 q89
+rename q96 q90
+rename q97a q91a
+rename q97b q91b
+rename q97c q91c
+rename q97d q91d
+rename q97e q91e
+rename q97f q91f
+rename q97g q91g
+rename q97h q91h
+rename q97i q91i
+rename q97j q91j
+rename q97k q91k
+rename q97l q91l
+rename q98 q92
+rename q99 q93
+rename q100 q94
+rename q101 q95
+rename q102a q96a
+rename q102b q96b
+rename q103 q97
+rename q104 q98
+rename q105a q99a
+rename q105b q99b
+rename q106 q100
+rename q107 q101
+rename q108 q102
+
+append using  "`path_in_stata'/qlfs_q2_2016.dta" 
+*replace quarter=4 if quarter!=3
+
 replace file = "16-q2" if mi(file)
-append using  "`path_in_stata'/qlfs_q3_2015.dta"
-rename q36 q36_3_str
-rename q64a q64a_3_int
-replace file = "15-q3" if mi(file)
-append using  "`path_in_stata'/qlfs_q4_2015.dta"
-replace file = "15-q4" if mi(file)
 
 *only keeping completed, partially completed or temporarily absent answers
 keep if inrange(completed, 1,3)
@@ -598,7 +753,8 @@ keep if inrange(completed, 1,3)
 
 *<_migrated_from_urban_>
 	gen migrated_from_urban = .
-	replace migrated_from_urban = q103
+	replace migrated_from_urban = q97 if file == "15-q3"| file == "15-q4" | file == "16-q1"
+	replace migrated_from_urban = q100 if file == "16-q2"
 	recode migrated_from_urban  1=0 2=1 3=.
 	label de lblmigrated_from_urban 0 "Rural" 1 "Urban"
 	label values migrated_from_urban lblmigrated_from_urban
@@ -608,13 +764,13 @@ keep if inrange(completed, 1,3)
 
 *<_migrated_from_cat_>
 	gen migrated_from_cat = .
-	replace migrated_from_cat = 2 if q101 == 2
+	replace migrated_from_cat = 2 if q95 == 2
 	
 * Note here that we cannot really distinguish if another district from the same division, or from a different one -- so maybe set this to missing
 
 * IF we have information on the district code, we can determine with certainty. 
-	replace migrated_from_cat = . if q101 == 3  
-	replace migrated_from_cat = 5 if q101 == 4
+	replace migrated_from_cat = . if q95 == 3  
+	replace migrated_from_cat = 5 if q95 == 4
 	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country"
 	label values migrated_from_cat lblmigrated_from_cat
 	label var migrated_from_cat "Category of migration area"
@@ -631,27 +787,28 @@ keep if inrange(completed, 1,3)
 
 *<_migrated_from_country_>
 	gen migrated_from_country = ""
-	replace migrated_from_country = "USA" if q102a == "USA" 
-	replace migrated_from_country = "MMR" if q102a == "BARMA" | q102a == "BARMA"
-	replace migrated_from_country = "BRN" if q102a == "BHURANAI"
-	replace migrated_from_country = "IND" if q102a == "INDA" | q102a == "INDEA" | q102a == "INDIA" | q102a == "INDIA`" | q102a == "INDIOA" | q102a == "INDIZ" | q102a == "INDIa" | q102a == "india" | q102a == "INDIA `" | q102a == "BHAROT" | q102a == "VAROT" | q102a == "VRAOT"
-	replace migrated_from_country = "ARE" if q102a == "DUBAI" | q102a == "DUBAI`"
-	replace migrated_from_country = "IDN" if q102a == "INDONESIA" | q102a == "INDONISA"
-	replace migrated_from_country = "KWT" if q102a == "KUATE" | q102a == "KUET" | q102a == "KUYET" | q102a == "KWYET" | q102a == "QWET"
-	replace migrated_from_country = "LBY" if q102a == "LIBIA" | q102a == "LIBIYA"
-	replace migrated_from_country = "GBR" if q102a == "LONDON"
-	replace migrated_from_country = "MMR" if q102a == "MAYANMAR" | q102a == "MIANMAR" | q102a == "MIYANMAR" | q102a == "MYANMAR"
-	replace migrated_from_country = "OMN" if q102a == "OMAN"
-	replace migrated_from_country = "PAK" if q102a == "PAKISTAN"
-	replace migrated_from_country = "SAU" if q102a == "SAUDI" | q102a == "SAUDI ARAB" | q102a == "SOUDI" | q102a == "SOUDI ARAB" | q102a == "SOUDI ARABIA" | q102a == "SOUDI AROB"
-	replace migrated_from_country = "THA" if q102a == "THAILAND"
+	replace migrated_from_country = "USA" if q96a == "USA" 
+	replace migrated_from_country = "MMR" if q96a == "BARMA" | q96a == "BARMA"
+	replace migrated_from_country = "BRN" if q96a == "BHURANAI"
+	replace migrated_from_country = "IND" if q96a == "INDA" | q96a == "INDEA" | q96a == "INDIA" | q96a == "INDIA`" | q96a == "INDIOA" | q96a == "INDIZ" | q96a == "INDIa" | q96a == "india" | q96a == "INDIA `" | q96a == "BHAROT" | q96a == "VAROT" | q96a == "VRAOT"
+	replace migrated_from_country = "ARE" if q96a == "DUBAI" | q96a == "DUBAI`"
+	replace migrated_from_country = "IDN" if q96a == "INDONESIA" | q96a == "INDONISA"
+	replace migrated_from_country = "KWT" if q96a == "KUATE" | q96a == "KUET" | q96a == "KUYET" | q96a == "KWYET" | q96a == "QWET"
+	replace migrated_from_country = "LBY" if q96a == "LIBIA" | q96a == "LIBIYA"
+	replace migrated_from_country = "GBR" if q96a == "LONDON"
+	replace migrated_from_country = "MMR" if q96a == "MAYANMAR" | q96a == "MIANMAR" | q96a == "MIYANMAR" | q96a == "MYANMAR"
+	replace migrated_from_country = "OMN" if q96a == "OMAN"
+	replace migrated_from_country = "PAK" if q96a == "PAKISTAN"
+	replace migrated_from_country = "SAU" if q96a == "SAUDI" | q96a == "SAUDI ARAB" | q96a == "SOUDI" | q96a == "SOUDI ARAB" | q96a == "SOUDI ARABIA" | q96a == "SOUDI AROB"
+	replace migrated_from_country = "THA" if q96a == "THAILAND"
 
 	label var migrated_from_country "Code of migration country (ISO 3 Letter Code)"
 *</_migrated_from_country_>
 
 
 *<_migrated_reason_>
-	gen migrated_reason = .
+	gen migrated_reason = 102
+	recode migrated_reason 3=1 4=2 1=3 2=3 5=1 6/8=4 9=5
 	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
 	label values migrated_reason lblmigrated_reason
 	label var migrated_reason "Reason for migrating"
@@ -683,7 +840,8 @@ label var ed_mod_age "Education module application age"
 
 *<_school_>
 	gen byte school=.
-	replace school = q28
+	replace school = q27old if file=="15-q3" | file=="15-q4" | file=="16-q1"
+	replace school = q21 if file=="16-q2"
 	recode school (2 3 4 5 9 = 0)
 	label var school "Attending school"
 	la de lblschool 0 "No" 1 "Yes"
@@ -707,7 +865,8 @@ label var ed_mod_age "Education module application age"
 
 *<_educat7_>
 	gen byte educat7 =.
-	replace educat7 = q24
+	replace educat7 = q30old if file=="15-q3" | file=="15-q4" | file=="16-q1"
+	replace educat7 = q24 if file=="16-q2"
 	recode educat7 (0 = 1) (1 2 3 4 = 2) (5 = 3) (6 7 8 9 = 4) (10 = 5) (11 12 = 6) (13 14 15 = 7) (99 = .)
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
@@ -734,7 +893,8 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat_orig_>
-	gen educat_orig = q24
+	gen educat_orig = q24 if file=="16-q2"
+	replace educat_orig = q30old if file=="15-q3" | file=="15-q4" | file=="16-q1"
 	label var educat_orig "Original survey education code"
 *</_educat_orig_>
 
@@ -779,7 +939,7 @@ foreach v of local ed_var {
 
 *<_vocational_>
 	gen vocational = .
-	replace vocational = q31
+	replace vocational = q25
 	recode vocational (2 = 0)
 	label de lblvocational 0 "No" 1 "Yes"
 	label var vocational "Ever received vocational training"
@@ -836,18 +996,18 @@ foreach v of local ed_var {
 	* Define the employed
 	*------------------------------------------------------------------------
 	** E1. Worked in the past 7 days
-	replace lstatus = 1 if q37 == 1
+	replace lstatus = 1 if q31 == 1
 	
 	** E2.  Absent from work in the past 7 days
-	replace lstatus = 1 if q38 == 1 & q37 == 2
+	replace lstatus = 1 if q32 == 1 & q31 == 2
 	
 	** E3. Worked at least 1 hour to produce goods/services for own consumption
 	** => Change to remove filter for working for profit
-	replace lstatus = 1 if (q39 == 1)
+	replace lstatus = 1 if (q33 == 1)
 	
 	** E4. Absent from work involving activity described in E3
 	** => Change to remove filter for working for profit
-	replace lstatus = 1 if (q39 == 2 & q40 == 1)
+	replace lstatus = 1 if (q33 == 2 & q34 == 1)
 
 	** E5. People who reported not engaging in any activity in the past 7 days but emp == 1 
 	** => Change to remove filter for working for profit
@@ -856,8 +1016,8 @@ foreach v of local ed_var {
 	*------------------------------------------------------------------------
 	* Define the unemployed
 	*------------------------------------------------------------------------
-	replace lstatus = 2 if (q83 == 1 & q87==1) & lstatus!=1
-	replace lstatus = 2 if (q84 == 1) & lstatus!=1
+	replace lstatus = 2 if (q77 == 1 & q81==1) & lstatus!=1
+	replace lstatus = 2 if (q78 == 1) & lstatus!=1
 	*------------------------------------------------------------------------
 	* Define the NLF
 	*------------------------------------------------------------------------
@@ -873,7 +1033,7 @@ foreach v of local ed_var {
 *<_potential_lf_>
 	gen byte potential_lf = .
 	replace potential_lf = 0 if lstatus == 3
-	replace potential_lf = 1 if (q83 == 1 & q87 == 2) | (q87 == 1 & q83 == 2)
+	replace potential_lf = 1 if (q77 == 1 & q81 == 2) | (q81 == 1 & q77 == 2)
 	replace potential_lf = . if age < minlaborage & age != .
 	replace potential_lf = . if lstatus != 3
 	label var potential_lf "Potential labour force status"
@@ -894,7 +1054,7 @@ foreach v of local ed_var {
 
 *<_nlfreason_>
 	gen byte nlfreason=.
-	replace nlfreason = q82 if lstatus == 3
+	replace nlfreason = q76 if lstatus == 3
 	recode nlfreason (1 2 3 4 = 5) (5 = 1) (6 = 2) (7 = 4) (9=5)
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
@@ -1099,7 +1259,7 @@ foreach v of local ed_var {
 
 
 *<_whours_>
-	gen whours = q54
+	gen whours = q59
 	replace whours = . if whours == 0 | whours == 99
 	replace whours = . if lstatus != 1
 	label var whours "Hours of work in last week primary job 7 day recall"
@@ -1143,7 +1303,7 @@ foreach v of local ed_var {
 
 
 *<_socialsec_>
-	gen byte socialsec = (q97f == 1)
+	gen byte socialsec = (q91f == 1)
 	replace socialsec = . if lstatus != 1
 	label var socialsec "Employment has social security insurance primary job 7 day recall"
 	la de lblsocialsec 1 "With social security" 0 "Without social secturity"
@@ -1161,13 +1321,13 @@ foreach v of local ed_var {
 
 *<_firmsize_l_>
 	gen firmsize_l = .
-	replace firmsize_l = 1 if q44 == 1
-	replace firmsize_l = 2 if q44 == 2
-	replace firmsize_l = 5 if q44 == 3
-	replace firmsize_l = 10 if q44 == 4
-	replace firmsize_l = 25 if q44 == 5
-	replace firmsize_l = 100 if q44 == 6
-	replace firmsize_l = 250 if q44 == 7
+	replace firmsize_l = 1 if q38 == 1
+	replace firmsize_l = 2 if q38 == 2
+	replace firmsize_l = 5 if q38 == 3
+	replace firmsize_l = 10 if q38 == 4
+	replace firmsize_l = 25 if q38 == 5
+	replace firmsize_l = 100 if q38 == 6
+	replace firmsize_l = 250 if q38 == 7
 
 	replace firmsize_l = . if lstatus != 1
 	label var firmsize_l "Firm size (lower bracket) primary job 7 day recall"
@@ -1176,13 +1336,13 @@ foreach v of local ed_var {
 
 *<_firmsize_u_>
 	gen firmsize_u= .
-	replace firmsize_u = 1 if q44 == 1
-	replace firmsize_u = 4 if q44 == 2
-	replace firmsize_u = 9 if q44 == 3
-	replace firmsize_u = 24 if q44 == 4
-	replace firmsize_u = 99 if q44 == 5
-	replace firmsize_u = 249 if q44 == 6
-	replace firmsize_u = . if q44 == 7
+	replace firmsize_u = 1 if q38 == 1
+	replace firmsize_u = 4 if q38 == 2
+	replace firmsize_u = 9 if q38 == 3
+	replace firmsize_u = 24 if q38 == 4
+	replace firmsize_u = 99 if q38 == 5
+	replace firmsize_u = 249 if q38 == 6
+	replace firmsize_u = . if q38 == 7
 
 	replace firmsize_u = . if lstatus != 1
 
