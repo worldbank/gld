@@ -392,7 +392,7 @@
 			gen reason5_5  = "Retirees must be non_lf >80%" if correct5_5 == 0   
 		}
 		
-		** Check 6. All empstat groups should be >0 for working age pople 
+		** Check 6. All lstatus groups should be >0 for working age pople 
 		egen    sharemin   = rowmin(employed unemployed non_lf) if inrange(age2, 2,4)
 		sum     sharemin
 		gen     correct6_5 = 0 if inrange(age2, 2,4)
@@ -400,7 +400,7 @@
 		drop    sharemin
 		sum correct6_5
 		if `r(min)'  == 0  {
-			gen reason6_5  = "All empstat groups should be >0 for working age pople" if correct6_5 == 0   
+			gen reason6_5  = "All lstatus groups should be >0 for working age pople" if correct6_5 == 0   
 		}
 		
 		** Summary of results & save 
