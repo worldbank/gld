@@ -141,7 +141,7 @@ merge 1:1 v1 using "`path_in_stata'/occ00p3.dta", keep(master match) nogen
 
 
 *<_isic_version_>
-	gen isic_version = "isic_3"
+	gen isic_version = ""
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
@@ -328,7 +328,7 @@ merge 1:1 v1 using "`path_in_stata'/occ00p3.dta", keep(master match) nogen
 /* <_subnatidsurvey_note>
 
 </_subnatidsurvey_note> */
-	gen str subnatidsurvey = ""
+	gen str subnatidsurvey = "TUN"
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -861,26 +861,6 @@ foreach v of local ed_var {
               (982 = 98)
 			  
 	gen industrycat_isic = ""
-	replace industrycat_isic = "A" if industry_orig_helper == 0
-	replace industrycat_isic = "B" if industry_orig_helper == 65
-	replace industrycat_isic = "C" if inlist(industry_orig_helper, 10, 20, 30, 40, 50, 60, 66)
-	replace industrycat_isic = "E" if inlist(industry_orig_helper, 67) //Electricity
-	replace industrycat_isic = "E" if inlist(industry_orig_helper, 68) //Water
-	replace industrycat_isic = "F" if industry_orig_helper == 69 //Public works
-	replace industrycat_isic = "G" if inlist(industry_orig_helper, 72)
-	replace industrycat_isic = "I" if industry_orig_helper == 76 |  industry_orig_helper == 77 //Transport and Comm
-	replace industrycat_isic = "H" if industry_orig_helper == 79 //Accommodation and food service
-	replace industrycat_isic = "J" if inlist(industry_orig_helper, 82) //Finance
-	replace industrycat_isic = "K" if inlist(industry_orig_helper, 85) //Real estate
-	replace industrycat_isic = "N" if inlist(industry_orig_helper, 89) //Human Health
-	replace industrycat_isic = "L" if inlist(industry_orig_helper, 93) //Public Administration
-	replace industrycat_isic = "Q" if inlist(industry_orig_helper, 98) //Extraterritorial
-	replace industrycat_isic = "" if lstatus != 1
-* For other categories not specified in the mapping, you can add additional lines as needed
-*preserve
-	*int_classif_universe, var(industrycat_isic) universe(ISIC)
-	*list
-*restore
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 

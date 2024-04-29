@@ -129,7 +129,7 @@ use "`path_in_stata'/individu_2007.dta", clear
 
 
 *<_isic_version_>
-	gen isic_version = "isic_3"
+	gen isic_version = ""
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
@@ -218,8 +218,7 @@ use "`path_in_stata'/individu_2007.dta", clear
 
 
 *<_wave_>
-	* The raw data available is only for second quarter
-	gen wave = "Q2"
+	gen wave = .
 	label var wave "Survey wave"
 *</_wave_>
 
@@ -309,7 +308,7 @@ use "`path_in_stata'/individu_2007.dta", clear
 	See entry in GLD Guidelines (https://github.com/worldbank/gld/blob/main/Support/A%20-%20Guides%20and%20Documentation/GLD_1.0_Guidelines.docx) for more details
 
 </_subnatidsurvey_note> */
-	gen str subnatidsurvey = ""
+	gen str subnatidsurvey = subnatid2
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -639,11 +638,8 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat_isced_>
+* Not compatible with ISCED
 	gen educat_isced = .
-	replace educat_isced = 100 if V_244 == 2
-	replace educat_isced = 344 if V_244 == 3
-	* Difficult to map "superieur" ( V_244 == 4) because it can mean multiple ISCED categories
-
 	label var educat_isced "ISCED standardised level of education"
 *</_educat_isced_>
 
@@ -822,27 +818,6 @@ foreach v of local ed_var {
 
 *<_industrycat_isic_>
 	gen industrycat_isic = ""
-
-	replace industrycat_isic = "A" if industry_orig == 0
-	replace industrycat_isic = "B" if industry_orig == 65
-	replace industrycat_isic = "C" if inlist(industry_orig, 10, 20, 30, 40, 50, 60, 66)
-	replace industrycat_isic = "E" if inlist(industry_orig, 67) //Electricity
-	replace industrycat_isic = "E" if inlist(industry_orig, 68) //Water
-	replace industrycat_isic = "F" if industry_orig == 69 //Public works
-	replace industrycat_isic = "G" if inlist(industry_orig, 72)
-	replace industrycat_isic = "I" if industry_orig == 76 |  industry_orig == 77 //Transport and Comm
-	replace industrycat_isic = "H" if industry_orig == 79 //Accommodation and food service
-	replace industrycat_isic = "J" if inlist(industry_orig, 82) //Finance
-	replace industrycat_isic = "K" if inlist(industry_orig, 85) //Real estate
-	replace industrycat_isic = "N" if inlist(industry_orig, 89) //Human Health
-	replace industrycat_isic = "L" if inlist(industry_orig, 93) //Public Administration
-	replace industrycat_isic = "Q" if inlist(industry_orig, 98) //Extraterritorial
-	replace industrycat_isic = "" if lstatus != 1
-* For other categories not specified in the mapping, you can add additional lines as needed
-*preserve
-	*int_classif_universe, var(industrycat_isic) universe(ISIC)
-	*list
-*restore
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 

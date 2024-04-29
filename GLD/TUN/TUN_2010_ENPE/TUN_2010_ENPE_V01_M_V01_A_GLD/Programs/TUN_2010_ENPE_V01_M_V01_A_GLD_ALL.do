@@ -133,7 +133,7 @@ drop x
 
 
 *<_isic_version_>
-	gen isic_version = "isic_3"
+	gen isic_version = ""
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
@@ -224,7 +224,7 @@ drop x
 
 
 *<_psu_>
-	gen psu = str_psu
+	gen psu = .
 	label var psu "Primary sampling units"
 *</_psu_>
 
@@ -242,8 +242,7 @@ drop x
 
 
 *<_wave_>
-	* The raw data available is only for second quarter
-	gen wave = "Q2"
+	gen wave = .
 	label var wave "Survey wave"
 *</_wave_>
 
@@ -313,7 +312,7 @@ drop x
 	See entry in GLD Guidelines (https://github.com/worldbank/gld/blob/main/Support/A%20-%20Guides%20and%20Documentation/GLD_1.0_Guidelines.docx) for more details
 
 </_subnatidsurvey_note> */
-	gen str subnatidsurvey = ""
+	gen str subnatidsurvey = subnatid2
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -643,11 +642,8 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat_isced_>
+* Not compatible with ISCED
 	gen educat_isced = .
-	replace educat_isced = 100 if V_240 == 2
-	replace educat_isced = 344 if V_240 == 3
-	* Difficult to map "superieur" ( V_244 == 4) because it can mean multiple ISCED categories
-
 	label var educat_isced "ISCED standardised level of education"
 *</_educat_isced_>
 
@@ -780,6 +776,10 @@ foreach v of local ed_var {
 
 
 *<_unempldur_l_>
+* From the questionnaire (module 3, Q6): asks how many months looking for work
+* Not sure what 9 stands for? Maybe more than 6 months? Not clear
+* If this is integer months, unlikely to see values: 1 2 3 4 5 9
+* For this reason I leave this missing
 	gen byte unempldur_l= .
 	replace unempldur_l = . if lstatus != 2
 	label var unempldur_l "Unemployment duration (months) lower bracket"
@@ -828,27 +828,6 @@ foreach v of local ed_var {
 
 *<_industrycat_isic_>
 	gen industrycat_isic = ""
-
-	replace industrycat_isic = "A" if industry_orig == 0
-	replace industrycat_isic = "B" if industry_orig == 65
-	replace industrycat_isic = "C" if inlist(industry_orig, 10, 20, 30, 40, 50, 60, 66)
-	replace industrycat_isic = "E" if inlist(industry_orig, 67) //Electricity
-	replace industrycat_isic = "E" if inlist(industry_orig, 68) //Water
-	replace industrycat_isic = "F" if industry_orig == 69 //Public works
-	replace industrycat_isic = "G" if inlist(industry_orig, 72)
-	replace industrycat_isic = "I" if industry_orig == 76 |  industry_orig == 77 //Transport and Comm
-	replace industrycat_isic = "H" if industry_orig == 79 //Accommodation and food service
-	replace industrycat_isic = "J" if inlist(industry_orig, 82) //Finance
-	replace industrycat_isic = "K" if inlist(industry_orig, 85) //Real estate
-	replace industrycat_isic = "N" if inlist(industry_orig, 89) //Human Health
-	replace industrycat_isic = "L" if inlist(industry_orig, 93) //Public Administration
-	replace industrycat_isic = "Q" if inlist(industry_orig, 98) //Extraterritorial
-	replace industrycat_isic = "" if lstatus != 1
-* For other categories not specified in the mapping, you can add additional lines as needed
-*preserve
-	*int_classif_universe, var(industrycat_isic) universe(ISIC)
-	*list
-*restore
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
@@ -935,7 +914,7 @@ foreach v of local ed_var {
 
 
 *<_whours_>
-	gen whours = .
+	gen whours = V_282
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -1032,21 +1011,6 @@ foreach v of local ed_var {
 
 *<_industrycat_isic_2_>
 	gen industrycat_isic_2 = ""
-	replace industrycat_isic_2 = "A" if industry_orig_2 == 0
-	replace industrycat_isic_2 = "B" if industry_orig_2 == 65
-	replace industrycat_isic_2 = "C" if inlist(industry_orig_2, 10, 20, 30, 40, 50, 60, 66)
-	replace industrycat_isic_2 = "E" if inlist(industry_orig_2, 67) //Electricity
-	replace industrycat_isic_2 = "E" if inlist(industry_orig_2, 68) //Water
-	replace industrycat_isic_2 = "F" if industry_orig_2 == 69 //Public works
-	replace industrycat_isic_2 = "G" if inlist(industry_orig_2, 72)
-	replace industrycat_isic_2 = "I" if industry_orig_2 == 76 |  industry_orig_2 == 77 //Transport and Comm
-	replace industrycat_isic_2 = "H" if industry_orig_2 == 79 //Accommodation and food service
-	replace industrycat_isic_2 = "J" if inlist(industry_orig_2, 82) //Finance
-	replace industrycat_isic_2 = "K" if inlist(industry_orig_2, 85) //Real estate
-	replace industrycat_isic_2 = "N" if inlist(industry_orig_2, 89) //Human Health
-	replace industrycat_isic_2 = "L" if inlist(industry_orig_2, 93) //Public Administration
-	replace industrycat_isic_2 = "Q" if inlist(industry_orig_2, 98) //Extraterritorial
-	replace industrycat_isic_2 = "" if lstatus != 1
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
