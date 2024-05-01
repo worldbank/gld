@@ -289,7 +289,7 @@ use "`path_in_stata'/Individu_emploi_2005.dta", clear
 	See entry in GLD Guidelines (https://github.com/worldbank/gld/blob/main/Support/A%20-%20Guides%20and%20Documentation/GLD_1.0_Guidelines.docx) for more details
 
 </_subnatidsurvey_note> */
-	gen str subnatidsurvey = subnatid
+	gen str subnatidsurvey = subnatid1
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
