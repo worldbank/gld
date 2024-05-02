@@ -2,7 +2,7 @@
 
 # Industry classification
 The Tunisia ENPE uses the Nomenclature des Activitées Tunisiennes (NAT) to classify industries. However, the industry codes 
-in the raw datasets use two-digit classification that does not align with the NAT, except for the 2001 survey, which only had the 
+in the raw datasets denote a two-digit classification that does not align with the NAT, except for the 2001 survey, which only had the 
 3 digit NAT codes available. We use the correspondence table below recreated from other years when both 
 3 digit NAT codes and two-digit aggregated classification are available. 
 
