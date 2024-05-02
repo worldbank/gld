@@ -1,7 +1,7 @@
 #
 
 # Industry classification
-In Tunisia, the ENPE surveys use the Nomenclature des Activités Tunisiennes (NAT) to classify industries. Notably, the 2001 data provided NAT industries at a three-digit level. In contrast, all other survey years represented the industries as aggregared groups using with two digit values that do not correspond to the first two digits of NAT. Below, we provide a correspondence table between the three-digit NAT codes used in 2001, the aggregate industry groups used in other years, and their mappings to the `industrycat10` classification system.
+In Tunisia, the ENPE surveys use the Nomenclature des Activités Tunisiennes (NAT) to classify industries. Notably, the 2001 data provided NAT industries at a three-digit level. In contrast, all other survey years represented the industries as aggregared groups using two-digit values that do not correspond to the first two digits of NAT. Below, we provide a correspondence table between the three-digit NAT codes used in 2001, the aggregate industry groups used in other years, and their mappings to the `industrycat10` classification system.
 
 | NAT Codes (2001) - 3-digit | Aggregated industry groups           | English Translation                                 | `industrycat10` mapping |
 |-------------|--------------------------------|-----------------------------------------------------|-----------------------|
