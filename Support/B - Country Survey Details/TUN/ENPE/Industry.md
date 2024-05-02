@@ -3,7 +3,7 @@
 # Industry classification
 In Tunisia, the ENPE surveys use the Nomenclature des Activités Tunisiennes (NAT) to classify industries. Notably, the 2001 survey utilized the NAT at a three-digit level, providing a more detailed industry classifications. In contrast, all other survey years employed a standardized two-digit industry code system, which does not correspond directly to the initial digits of the NAT codes. Below, we provide a correspondence table between the three-digit NAT codes used in 2001, the standardized two-digit industry codes used in other years, and their mappings to the `industrycat10` classification system.
 
-| Three digit NAT (2001)  | Broad industry codes used in all other years                    | English Translation                                 | `industrycat10` mapping |
+| NAT Codes (2001) - 3-digit | Standard Industry Codes                | English Translation                                 | `industrycat10` mapping |
 |-------------|--------------------------------|-----------------------------------------------------|-----------------------|
 | 011 - 081   | 0. Ag/For/Fish                 | Agriculture, Hunting, and Fishing                   |           1 - Agriculture           |
 | 111 - 191   | 10. Agro industry              | Agricultural and Food Industries                    |           3 - Manufacturing           |
