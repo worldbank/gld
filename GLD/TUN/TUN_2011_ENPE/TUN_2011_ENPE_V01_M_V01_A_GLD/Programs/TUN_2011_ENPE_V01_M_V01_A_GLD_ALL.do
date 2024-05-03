@@ -5,10 +5,10 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				[Name of your do file] </_Program name_>
+<_Program name_>				TUN_2011_ENPE_V01_M_V01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata 17 <_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
-<_Date created_>				2024-02-29 </_Date created_>
+<_Date created_>				2024-04-29 </_Date created_>
 
 -------------------------------------------------------------------------
 
@@ -19,20 +19,20 @@
 <_Data collection from_>		04/2011 </_Data collection from_>
 <_Data collection to_>			06/2011 </_Data collection to_>
 <_Source of dataset_> 			African Development Bank </_Source of dataset_>
-<_Sample size (HH)_> 				[#] </_Sample size (HH)_>
-<_Sample size (IND)_> 				[#] </_Sample size (IND)_>
-<_Sampling method_> 				[Brief description] </_Sampling method_>
-<_Geographic coverage_> 			[To what level is data significant] </_Geographic coverage_>
-<_Currency_> 					[Currency used for wages] </_Currency_>
+<_Sample size (HH)_> 			40102 </_Sample size (HH)_>
+<_Sample size (IND)_> 			163683 </_Sample size (IND)_>
+<_Sampling method_> 			Two-stage sampling design </_Sampling method_>
+<_Geographic coverage_> 		National </_Geographic coverage_>
+<_Currency_> 					Not available </_Currency_>
+
 
 -----------------------------------------------------------------------
-
-<_ICLS Version_>				[Version of ICLS for Labor Questions] </_ICLS Version_>
-<_ISCED Version_>				[Version of ICLS for Labor Questions] </_ISCED Version_>
-<_ISCO Version_>				[Version of ICLS for Labor Questions] </_ISCO Version_>
-<_OCCUP National_>				[Version of ICLS for Labor Questions] </_OCCUP National_>
-<_ISIC Version_>				[Version of ICLS for Labor Questions] </_ISIC Version_>
-<_INDUS National_>				[Version of ICLS for Labor Questions] </_INDUS National_>
+<_ICLS Version_>				ICLS-13 </_ICLS Version_>
+<_ISCED Version_>				Not compatible </_ISCED Version_>
+<_ISCO Version_>				ISCO 1988 </_ISCO Version_>
+<_OCCUP National_>				Based on ISCO 1988 </_OCCUP National_>
+<_ISIC Version_>				Not available </_ISIC Version_>
+<_INDUS National_>				Only aggregate industry codes provided </_INDUS National_>
 
 -----------------------------------------------------------------------
 <_Version Control_>
