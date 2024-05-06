@@ -864,6 +864,7 @@ foreach v of local ed_var {
 	gen industrycat_isic = isic3d + "0"
 	replace industrycat_isic = "" if industrycat_isic == "0000"
 	replace industrycat_isic = "3830" if industrycat_isic == "3410"
+	*Note: Because the code in the isic version of the survey is not present in the ISIC rev 4 international classification, I assume the codes correspond to the second level of ISIC.
 	replace industrycat_isic = "0300"  if industrycat_isic == "0330"
 	replace industrycat_isic = "0300" if industrycat_isic == "0370"
 	replace industrycat_isic = "1200" if industrycat_isic == "1210"
@@ -1161,6 +1162,7 @@ foreach v of local ed_var {
 	replace industrycat_isic_2 = "" if industrycat_isic_2 == ".0"
 	replace industrycat_isic_2 = "3830" if industrycat_isic_2 == "3410"
 	replace industrycat_isic_2 = "" if inlist(industrycat_isic_2, ".0", "0")
+	*Note: Because the code in the isic version of the survey is not present in the ISIC rev 4 international classification, I assume the codes correspond to the second level of ISIC.
 	replace industrycat_isic_2 = "4900" if industrycat_isic_2 == "4940"
 	replace industrycat_isic_2 = "6200" if industrycat_isic_2 == "6210"
 	replace industrycat_isic_2 = "8600" if industrycat_isic_2 == "8630"

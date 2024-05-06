@@ -196,7 +196,8 @@ save "`path_in_stata'/final_merged_2022.dta", replace
 
 
 *<_year_>
-	*gen int year =.
+	rename year year_raw
+	gen int year =2022
 	label var year "Year of survey"
 *</_year_>
 
@@ -323,7 +324,7 @@ save "`path_in_stata'/final_merged_2022.dta", replace
 
 *<_urban_>
 	gen byte urban=ru
-	recode urban 3=1
+	recode urban 3=1 2=0
 	label var urban "Location is urban"
 	la de lblurban 1 "Urban" 0 "Rural"
 	label values urban lblurban
@@ -842,7 +843,7 @@ foreach v of local ed_var {
 	gen byte lstatus = .
 	replace lstatus = 1 if emp_01==1 | emp_02==1 | inrange(emp_05, 1, 4) | inrange(emp_07, 1, 5) | emp_08==1 | emp_09==1
 	replace lstatus = 2 if (jsa_01==1 & jsa_06==1 | jsa_02==1 & jsa_06==1 ) & lstatus != 1
-	replace lstatus = 3 if  lstatus != 1 & lstatus != 2
+	replace lstatus = 3 if  missing(lstatus)
 	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -903,7 +904,7 @@ foreach v of local ed_var {
 {
 *<_empstat_>
 	gen byte empstat=mj_05
-	recode empstat 2=1 3=1 4=1 5=3 6=4 7=2 8=5
+	recode empstat 2=1 3=1 4=1 5=3 6=4 7=2 8=5 99=.
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat lblempstat
@@ -930,6 +931,7 @@ foreach v of local ed_var {
 	gen isic3d = substr(industry_orig, 1, 3) 
 	replace isic3d="200" if isic3d=="000"
 	gen industrycat_isic = isic3d + "0"
+	*Note: Because the code in the isic version of the survey is not present in the ISIC rev 4 international classification, I assume the codes correspond to the second level of ISIC.
 	replace industrycat_isic= "1100" if industrycat_isic=="1110"
 	replace industrycat_isic= "1100" if industrycat_isic=="1120"
 	replace industrycat_isic= "1100" if industrycat_isic=="1130"

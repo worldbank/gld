@@ -82,185 +82,49 @@ local out_file "`level_2_harm'_ALL.dta"
 *----------1.3: Database assembly------------------------------*
 
 
+* Load Quarter 1 data
 use "`path_in_stata'/qlfs_q1_2016.dta", clear
-*the two variables are different 
-rename q36 q36_b
-rename q48 q48_str
-rename q57 q57_b
-rename q58b q58b_b
-rename q64a q64a_3_int
+
+* Rename Quarter 1 variables
+rename (q36 q48 q57 q58b q64a) (q36_b q48_str q57_b q58b_b q64a_3_int)
+
+* Create a variable to indicate the file
 gen file = "16-q1"
-append using  "`path_in_stata'/qlfs_q3_2015.dta"
+
+
+* Append Quarter 3 data
+append using "`path_in_stata'/qlfs_q3_2015.dta"
+
+* Rename Quarter 3 variables
 rename q36 q36_3_str
 rename q64a q64a_3_str
-replace file = "15-q3" if mi(file)
-append using  "`path_in_stata'/qlfs_q4_2015.dta"
-replace file = "15-q4" if mi(file)
-rename q36 q36_3_by
-rename q48 q48_2_str
-rename q57 q57_2_b
-rename q58b q58b_2_str
-rename q64 q64_2_b
-rename q64a q64a_2_str
-rename visit visit_str
+
+* Update file indicator for Quarter 3 data
+replace file = "15-q3" if missing(file)
 
 
+* Append Quarter 4 data
+append using "`path_in_stata'/qlfs_q4_2015.dta"
+
+* Update file indicator for Quarter 4 data
+replace file = "15-q4" if missing(file)
+
+* Rename Quarter 4 variables
+rename (q36 q48 q57 q58b q64) (q36_3_by q48_2_str q57_2_b q58b_2_str q64_2_b)
+rename (q64a visit q22 q26 q27old) (q64a_2_str visit_str q16 q20 q21)
+
+rename (q28old q28 q29old q30old q27 q29 q30 q25 q31 q32 q33 q34 q35 q37 q38 q39 q40 )(q22 q28old q23 q24 q27old q29old q30old q25old q25 q26 q27 q28 q29 q31 q32 q33 q34)
+
+rename (q41 q42 q43a q43b q44 q45 q46 q47 q49a q50 q51 q52a q52b q52c q52d q52e q52f q52g q53a q53b q53c q53d q53e q53f q53g q54 q55 q56 q58a q58c q58d q58e q58f q58g q58h q59 q60a q60b q60cr q61 q62 q63a q63b q63c q65 q66 q67 q68a q68b q68c q69 q70 q71 q72 q73 q74a q74b q74c q74d q74e q74f q74g q74h q74i q75a q75b q75c q75d q76 q77 q78 q79 q80 q81 q82 q83 q84 q85 q86 q87 q88 q89 q90a q90b q90c q90d q90e q90f q90g q91a q91b q91c q91d q91e q91f q92 q93 q94 q95 q96 q97a q97b q97c q97d q97e q97f q97g q97h q97i q97j q97k q97l q98 q99 q100 q101 q102a q102b q103 q104 q105a q105b q106 q107 q108) (q35 q36 q37a q37b q38 q39 q40 q41 q43a q44 q45 q46a q46b q46c q46d q46e q46f q46g q47a q47b q47c q47d q47e q47f q47g q48 q49 q50 q52a q52c q52d q52e q52f q52g q52h q53 q54a q54b q54c q55 q56 q57 q57a q57bsic q59 q60 q61 q62a q62b q62c q63 q64 q65 q66 q67 q68a q68b q68c q68d q68e q68f q68g q68h q68i q69a q69b q69c q69d q70 q71 q72 q73 q74 q75 q76 q77 q78 q79 q80 q81 q82 q83 q84a q84b q84c q84d q84e q84f q84g q85a q85b q85c q85d q85e q85f q86 q87 q88 q89 q90 q91a q91b q91c q91d q91e q91f q91g q91h q91i q91j q91k q91l q92 q93 q94 q95 q96a q96b q97 q98 q99a q99b q100 q101 q102)
 
 
-rename q22 q16
-rename q26 q20
-rename q27old q21
-rename q28old q22
-rename q29old q23
-rename q30old q24
+* Append Quarter 2 data
+append using "`path_in_stata'/qlfs_q2_2016.dta" 
 
-rename q27 q27old
-rename q28 q28old
-rename q29 q29old
-rename q30 q30old
-rename q25 q25old
+* Update file indicator for Quarter 2 data
+replace file = "16-q2" if missing(file)
 
-rename q31 q25
-rename q32 q26
-rename q33 q27
-rename q34 q28 
-rename q35 q29
-rename q37 q31
-rename q38 q32
-rename q39 q33
-rename q40 q34
-rename q41 q35
-rename q42 q36
-rename q43a q37a
-rename q43b q37b
-rename q44 q38
-rename q45 q39
-rename q46 q40
-rename q47 q41
-rename q49a q43a
-rename q50 q44
-rename q51 q45
-rename q52a q46a
-rename q52b q46b
-rename q52c q46c
-rename q52d q46d
-rename q52e q46e
-rename q52f q46f
-rename q52g q46g
-rename q53a q47a
-rename q53b q47b
-rename q53c q47c
-rename q53d q47d
-rename q53e q47e
-rename q53f q47f
-rename q53g q47g
-rename q54 q48
-rename q55 q49
-rename q56 q50
-rename q58a q52a
-rename q58c q52c
-rename q58d q52d
-rename q58e q52e
-rename q58f q52f
-rename q58g q52g
-rename q58h q52h
-rename q59 q53
-rename q60a q54a
-rename q60b q54b
-rename q60cr q54c
-rename q61 q55
-rename q62 q56
-rename q63a q57
-rename q63b q57a
-rename q63c q57bsic
-rename q65 q59
-rename q66 q60
-rename q67 q61
-rename q68a q62a
-rename q68b q62b
-rename q68c q62c
-rename q69 q63
-rename q70 q64
-rename q71 q65
-rename q72 q66
-rename q73 q67
-rename q74a q68a
-rename q74b q68b
-rename q74c q68c
-rename q74d q68d
-rename q74e q68e
-rename q74f q68f
-rename q74g q68g
-rename q74h q68h
-rename q74i q68i
-rename q75a q69a
-rename q75b q69b
-rename q75c q69c
-rename q75d q69d
-rename q76 q70
-rename q77 q71
-rename q78 q72
-rename q79 q73
-rename q80 q74
-rename q81 q75
-rename q82 q76
-rename q83 q77
-rename q84 q78
-rename q85 q79
-rename q86 q80
-rename q87 q81
-rename q88 q82
-rename q89 q83
-rename q90a q84a
-rename q90b q84b
-rename q90c q84c
-rename q90d q84d
-rename q90e q84e
-rename q90f q84f
-rename q90g q84g
-rename q91a q85a
-rename q91b q85b
-rename q91c q85c
-rename q91d q85d
-rename q91e q85e
-rename q91f q85f
-rename q92 q86
-rename q93 q87
-rename q94 q88
-rename q95 q89
-rename q96 q90
-rename q97a q91a
-rename q97b q91b
-rename q97c q91c
-rename q97d q91d
-rename q97e q91e
-rename q97f q91f
-rename q97g q91g
-rename q97h q91h
-rename q97i q91i
-rename q97j q91j
-rename q97k q91k
-rename q97l q91l
-rename q98 q92
-rename q99 q93
-rename q100 q94
-rename q101 q95
-rename q102a q96a
-rename q102b q96b
-rename q103 q97
-rename q104 q98
-rename q105a q99a
-rename q105b q99b
-rename q106 q100
-rename q107 q101
-rename q108 q102
-
-append using  "`path_in_stata'/qlfs_q2_2016.dta" 
-*replace quarter=4 if quarter!=3
-
-replace file = "16-q2" if mi(file)
-
-*only keeping completed, partially completed or temporarily absent answers
+* Keep only completed, partially completed, or temporarily absent answers
 keep if inrange(completed, 1,3)
 
 ** What about dropping when age is missing, seems all other variables (except a few generic ones)
@@ -1110,6 +974,7 @@ foreach v of local ed_var {
 	gen industrycat_isic = isic3d + "0"
 	replace industrycat_isic = "" if industrycat_isic == "0000"
 	replace industrycat_isic = "3830" if industrycat_isic == "3410"
+	*Note: Because the code in the isic version of the survey is not present in the ISIC rev 4 international classification, I assume the codes correspond to the second level of ISIC.
 	replace industrycat_isic = "0300"  if industrycat_isic == "0330"
 	replace industrycat_isic = "0300" if industrycat_isic == "0370"
 	replace industrycat_isic = "1200" if industrycat_isic == "1210"
@@ -1259,7 +1124,7 @@ foreach v of local ed_var {
 
 
 *<_whours_>
-	gen whours = q59
+	gen whours = q48
 	replace whours = . if whours == 0 | whours == 99
 	replace whours = . if lstatus != 1
 	label var whours "Hours of work in last week primary job 7 day recall"
@@ -1389,6 +1254,7 @@ foreach v of local ed_var {
 	replace industrycat_isic_2 = "" if industrycat_isic_2 == ".0"
 	replace industrycat_isic_2 = "3830" if industrycat_isic_2 == "3410"
 	replace industrycat_isic_2 = "" if inlist(industrycat_isic_2, ".0", "0")
+	*Note: Because the code in the isic version of the survey is not present in the ISIC rev 4 international classification, I assume the codes correspond to the second level of ISIC.
 	replace industrycat_isic_2 = "4900" if industrycat_isic_2 == "4940"
 	replace industrycat_isic_2 = "6200" if industrycat_isic_2 == "6210"
 	replace industrycat_isic_2 = "8600" if industrycat_isic_2 == "8630"
@@ -1459,7 +1325,7 @@ foreach v of local ed_var {
 
 
 *<_unitwage_2_>
-	gen byte unitwage_2 = .
+	gen byte unitwage_2 = 5
 	replace unitwage_2 = 5 if !missing(wage_no_compen_2)
 	label var unitwage_2 "Last wages' time unit secondary job 7 day recall"
 	label values unitwage_2 lblunitwage
@@ -1467,7 +1333,7 @@ foreach v of local ed_var {
 
 
 *<_whours_2_>
-	gen whours_2 = .
+	gen whours_2 = q59
 *	replace whours_2 = . if whours_2 == 0 | whours_2 == 99
 *	replace whours_2 = . if missing(empstat_2)
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
