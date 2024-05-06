@@ -4,13 +4,11 @@
 
 This document describes (1) the general change in employment definition enacted by the International Labour Organisation’s (ILO) International Conference of Labour Statisticians (ICLS) and details the changes in the formulation of the questions to determine the identification of (2) the employed as well as (3) the unemployed. Additionally, it explains (4) how these choices impacted the harmonization and provides (5) an alternative to coding surveys since 2014 according to the older employment definition.
 
-## Change to the ICLS definition of employment
+## What is the ICLS definition of employment and how did it change
 
-Since the passing of the [resolution concerning statistics of work, employment and labour underutilization](https://www.ilo.org/global/statistics-and-databases/standards-and-guidelines/resolutions-adopted-by-international-conferences-of-labour-statisticians/WCMS_230304/lang--en/index.htm) in 2013 at the 19th International Conference of Labour Statisticians (ICLS) surveys are at risk of a series break due to the change in the concept of employment.
+The International Conference of Labour Statisticians (ICLS) is a vehicle for standard-setting in labour statistics, hosted by the Interational Labour Organisation (ILO) every five years. During the 19th ICLS in 2013 the conference passed the [resolution concerning statistics of work, employment and labour underutilization](https://www.ilo.org/global/statistics-and-databases/standards-and-guidelines/resolutions-adopted-by-international-conferences-of-labour-statisticians/WCMS_230304/lang--en/index.htm). In short, the ICLS-19 resolution restricts employment to *work performed for others in exchange for pay or profit*, meaning that own consumption work (e.g., subsistence agriculture or building housing for oneself) are not counted as employment. Previously this kind of work was seen as employment.
 
-In short, the ICLS 19 resolution restricts employment to *work performed for others in exchange for pay or profit*, meaning that own consumption work (e.g., subsistence agriculture or building housing for oneself) are not counted as employment.
-
-The GLD codes the harmonization’s `lstatus’ variable based on the concept used in the survey. In the case of the Zambian LFS this change occurs in 2017, when the survey switches to new definition.
+The GLD codes the harmonization’s `lstatus’ variable based on the concept each survey was designed for. In the case of the Zambian LFS this change occurs in 2017, when the survey switches to new definition.
 
 ## Identification of the employed
 
@@ -24,7 +22,12 @@ The 2008 questionnaire, shown below in Figure 1, sends anyone who has answered Q
 ![Questionnaire 2008 ZMB](utilities/q_2008_econ_id.png)
 <br></br>
 
-The 2012 questionnaire (Figure 2, below) has kept the first two questions the same, though dropped the direct skip pattern for those in school to go around further labor questions. What were questions 3 to 7 in 2008 has been summarized into a single question in 2012. The results should be roughly the same except for the inclusion of people in education who work on the side.
+The 2012 questionnaire (Figure 2, below) has the following changes:
+
+* Kept the first two questions the same but dropped the direct skip pattern for those in school (in C1) so they are still asked C2.
+* Questions 3-7 in 2008 are summarised into C3.
+
+The results should (ex-ante) be roughly the same except for the inclusion of people in education who work on the side.
 
 <br></br>
 *<small>Figure 2 - Employment identification in 2012 questionnaire</small>*
@@ -33,7 +36,11 @@ The 2012 questionnaire (Figure 2, below) has kept the first two questions the sa
 <br></br>
 
 
-The 2014 questionnaire (Figure 3 - below) seems on first sight to be equal to 2012, but there is a major change in the third question. While those who replied yes to any of the activities in 2012 are treated as employed, in 2014 none of the options leads to employment, but rather all options are regarded as not employment. Note that this aiming at the ICLS 19 concept of coding employment only as work for market exchange, but there is no evaluation of the degree of market exchange. The question predefines the activities as “for household use” instead of probing whether most is for household consumption or for exchange. 
+The 2014 questionnaire (Figure 3 - below) seems on first sight to be equal to 2012, but there is a major change:
+
+* Activities summarised in C3, treated as employed in 2012 are no longer employment in 2014 (skip on either yes or no).
+
+Note that this aiming at the ICLS 19 concept of coding employment only as work for market exchange, but there is no evaluation of the degree of market exchange. The question predefines the activities as “for household use” instead of probing whether most is for household consumption or for exchange. 2014 is thus at an intermediate stage between the old ICLS and the new ICLS definition.
 
 <br></br>
 *<small>Figure 3 - Employment identification in 2014 questionnaire</small>*
@@ -52,7 +59,7 @@ From 2017 onwards, the questionnaire follows the ICLS guidelines more strictly. 
 
 ## Identification of the unemployed
 
-Unfortunately, it is not possible to determine the unemployment status over the 7-day recall period in 2008. Even though section VI of the questionnaire asks about this (see Figure 5 below), the section is only answered by those who are not in employment over the 12-month recall (section IV and section V). Thus, the recall periods do not align.
+Unfortunately, it is not possible to determine the unemployment status over the 7-day recall period in 2008. This is because, even though section VI of the questionnaire asks about unemployment (see Figure 5 below), the section is only answered by those who are not in employment over the 12-month recall (section IV and section V). Individuals not in employment over the 7-day recall period but employed over the 12-month period are not asked about unemployment over the 7-day recall period. Thus, the recall periods do not align.
 
 <br></br>
 *<small>Figure 5 - Unemployment identification in 2008 questionnaire</small>*
@@ -102,7 +109,7 @@ Since 2017 the trend stabilizes. The ICLS-19 compliant questions lead to a furth
 
 ## Alternative coding since 2014 to emulate old employment definition
 
-If users wish to update the coding to include own-consumption workers according to the older employment definition (ICLS-13), the GLD team proposes the following coding options. Note that the additional lines (compared to the standard harmonization) are between lines starting and ending with `//-->`.
+If users wish to update the coding of the labour status variable `lstatus` to include own-consumption workers according to the older employment definition (ICLS-13), the GLD team proposes the following coding options. Note that the additional lines (compared to the standard harmonization) are between lines starting and ending with `//-->`.
 Recoding of 2014 harmonization to include own consumption workers as employed
 ```
 *<_lstatus_>
