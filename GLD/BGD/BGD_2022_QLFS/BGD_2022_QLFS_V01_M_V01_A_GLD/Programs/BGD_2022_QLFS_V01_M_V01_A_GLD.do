@@ -278,6 +278,20 @@ save "`path_in_stata'/final_merged_2022.dta", replace
 *</_weight_>
 
 
+
+*<_weight_m_>
+	gen weight_m = .
+	label var weight_m "Survey sampling weight to obtain national estimates for each month"
+*</_weight_m_>
+
+
+*<_weight_q_>
+	gen weight_q = .
+	label var weight_q "Survey sampling weight to obtain national estimates for each quarter"
+*</_weight_q_>
+
+
+
 *<_psu_>
 	*gen psu = .
 	label var psu "Primary sampling units"

@@ -188,11 +188,9 @@ use "`path_in_stata'/bgd_qlfs_2016_17_sarraw.dta", clear
 
 *<_pid_>
 	gen lineno_str = string(ln, "%02.0f")
-	egen  pid = concat(hhid lineno_str)
-	
-	*bys pid: gen runner = _n
-	
-	*distinct hhid runner, joint
+	gen qtr_str=string(qtr, "%02.0f")
+	egen  pid = concat(hhid qtr_str lineno_str)
+
 	label var pid "Individual ID"
 *</_pid_>
 
@@ -202,6 +200,18 @@ use "`path_in_stata'/bgd_qlfs_2016_17_sarraw.dta", clear
 	
 	label var weight "Survey sampling weight"
 *</_weight_>
+
+*<_weight_m_>
+	gen weight_m = .
+	label var weight_m "Survey sampling weight to obtain national estimates for each month"
+*</_weight_m_>
+
+
+*<_weight_q_>
+	gen weight_q = .
+	label var weight_q "Survey sampling weight to obtain national estimates for each quarter"
+*</_weight_q_>
+
 
 
 *<_psu_>
@@ -226,8 +236,27 @@ use "`path_in_stata'/bgd_qlfs_2016_17_sarraw.dta", clear
 
 *<_wave_>
 	gen wave = .
+	replace wave = 1 if qtr == 1
+	replace wave = 2 if qtr == 2
+	replace wave = 3 if qtr == 3
+	replace wave = 4 if qtr == 4
 	label var wave "Survey wave"
+
 *</_wave_>
+
+
+*<_panel_>
+	gen panel = ""
+	label var panel "Panel individual belongs to"
+*</_panel_>
+
+
+*<_visit_no_>
+	gen visit_no = .
+	label var visit_no "Visit number in panel"
+*</_visit_no_>
+
+
 
 }
 
@@ -807,7 +836,7 @@ foreach v of local ed_var {
 
 *<_nlfreason_>
 	gen byte nlfreason=.
-	replace nlfreason = q82 if lstatus == 3
+	replace nlfreason = q83 if lstatus == 3
 	recode nlfreason (1 2 3 4 = 5) (5 = 1) (6 = 2) (7 = 4) (9=5)
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
@@ -928,7 +957,15 @@ foreach v of local ed_var {
 	replace industrycat_isic = "" if inlist(industrycat_isic, ".0", "0")
 	drop isic3d
 
-	
+	* Check that no errors --> using our universe check function, count should be 0 (no obs wrong)
+	* https://github.com/worldbank/gld/tree/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20universe%20check
+	preserve 
+	drop if missing(industrycat_isic)
+	int_classif_universe, var(industrycat_isic) universe(ISIC)
+	count
+	list
+	assert `r(N)' == 0
+	restore 
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
@@ -977,9 +1014,18 @@ foreach v of local ed_var {
 	replace occup_isco = "9000" if occup_isco == "9900"
 
 	replace occup_isco = "" if occup_isco == ".00" | occup_isco == "00"
-
+		label var occup_isco "ISCO code of primary job 7 day recall"
+* Check that no errors --> using our universe check function, count should be 0 (no obs wrong)
+	* https://github.com/worldbank/gld/tree/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20universe%20check
+	preserve 
+	drop if missing(occup_isco)
+	int_classif_universe, var(occup_isco) universe(ISCO)
+	count
+	list
+	assert `r(N)' == 0
+	restore
 	
-	label var occup_isco "ISCO code of primary job 7 day recall"
+
 *</_occup_isco_>
 
 
@@ -1167,12 +1213,55 @@ foreach v of local ed_var {
 	replace industrycat_isic_2 = "6200" if industrycat_isic_2 == "6210"
 	replace industrycat_isic_2 = "8600" if industrycat_isic_2 == "8630"
 	replace industrycat_isic_2 = "9200" if industrycat_isic_2 == "9210"
+	
+	replace industrycat_isic_2 = "1100" if industrycat_isic_2 == "1110"
+	replace industrycat_isic_2 = "1100" if industrycat_isic_2 == "1120"
+	replace industrycat_isic_2 = "1100" if industrycat_isic_2 == "1130"
+	replace industrycat_isic_2 = "1100" if industrycat_isic_2 == "1140"
+	
+	replace industrycat_isic_2 = "1100" if industrycat_isic_2 == "1150"
+	replace industrycat_isic_2 = "1100" if industrycat_isic_2 == "1160"
+	replace industrycat_isic_2 = "1100" if industrycat_isic_2 == "1170"
+	replace industrycat_isic_2 = "1100" if industrycat_isic_2 == "1190"
+	
+	
+	replace industrycat_isic_2 = "1200" if industrycat_isic_2 == "1210"
+	replace industrycat_isic_2 = "1200" if industrycat_isic_2 == "1220"
+	replace industrycat_isic_2 = "1200" if industrycat_isic_2 == "1230"
+	replace industrycat_isic_2 = "1200" if industrycat_isic_2 == "1240"
+	
+	replace industrycat_isic_2 = "1200" if industrycat_isic_2 == "1250"
+	replace industrycat_isic_2 = "1200" if industrycat_isic_2 == "1280"
+	replace industrycat_isic_2 = "1400" if industrycat_isic_2 == "1440"
+	replace industrycat_isic_2 = "1400" if industrycat_isic_2 == "1460"
+	
+	replace industrycat_isic_2 = "1400" if industrycat_isic_2 == "1490"
+	replace industrycat_isic_2 = "1600" if industrycat_isic_2 == "1630"
+	replace industrycat_isic_2 = "1600" if industrycat_isic_2 == "1640"
+	replace industrycat_isic_2 = "3100" if industrycat_isic_2 == "3110"
+	
+	replace industrycat_isic_2 = "3100" if industrycat_isic_2 == "3120"
+	replace industrycat_isic_2 = "3100" if industrycat_isic_2 == "3130"
+	
+	
 	replace industrycat_isic_2 = "" if industrycat_isic_2 == "0000"
 
 
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 	
 	drop  isic3d_s
+	
+	
+	* Check that no errors --> using our universe check function, count should be 0 (no obs wrong)
+	* https://github.com/worldbank/gld/tree/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20universe%20check
+	preserve 
+	drop if missing(industrycat_isic_2)
+	int_classif_universe, var(industrycat_isic_2) universe(ISIC)
+	count
+	list
+	assert `r(N)' == 0
+	restore 
+	
 *</_industrycat_isic_2_>
 
 

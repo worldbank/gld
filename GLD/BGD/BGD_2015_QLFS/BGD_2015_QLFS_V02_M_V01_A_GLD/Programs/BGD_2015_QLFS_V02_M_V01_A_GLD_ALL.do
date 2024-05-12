@@ -278,12 +278,18 @@ keep if inrange(completed, 1,3)
 
 
 *<_pid_>
+
+	gen quartr = 1 if file == "15-q3"
+	replace quartr = 2 if file == "15-q4"
+	replace quartr = 3 if file == "16-q1"
+	replace quartr = 4 if file == "16-q2"
+	
 	gen lineno_str = string(ln, "%02.0f")
-	egen  pid = concat(hhid lineno_str)
+	gen qtr_str =string(qtr, "%02.0f" )
 	
-	*bys pid: gen runner = _n
 	
-	*distinct hhid runner, joint
+	egen  pid = concat(hhid qtr_str lineno_str)
+	
 	label var pid "Individual ID"
 *</_pid_>
 
@@ -303,6 +309,19 @@ keep if inrange(completed, 1,3)
 	
 	label var weight "Survey sampling weight"
 *</_weight_>
+
+
+*<_weight_m_>
+	gen weight_m = .
+	label var weight_m "Survey sampling weight to obtain national estimates for each month"
+*</_weight_m_>
+
+
+*<_weight_q_>
+	gen weight_q = .
+	label var weight_q "Survey sampling weight to obtain national estimates for each quarter"
+*</_weight_q_>
+
 
 
 *<_psu_>
@@ -334,6 +353,21 @@ keep if inrange(completed, 1,3)
 	replace wave = 4 if file == "16-q2"
 	label var wave "Survey wave"
 *</_wave_>
+
+*<_panel_>
+	gen panel = ""
+	label var panel "Panel individual belongs to"
+*</_panel_>
+
+
+*<_visit_no_>
+	gen visit_no = .
+	label var visit_no "Visit number in panel"
+*</_visit_no_>
+
+
+
+
 
 }
 
@@ -671,7 +705,7 @@ keep if inrange(completed, 1,3)
 
 
 *<_migrated_reason_>
-	gen migrated_reason = 102
+	gen migrated_reason = q102
 	recode migrated_reason 3=1 4=2 1=3 2=3 5=1 6/8=4 9=5
 	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
 	label values migrated_reason lblmigrated_reason
@@ -1023,6 +1057,16 @@ foreach v of local ed_var {
 	replace industrycat_isic = "" if inlist(industrycat_isic, ".0", "0")
 	drop isic3d
 
+	* Check that no errors --> using our universe check function, count should be 0 (no obs wrong)
+	* https://github.com/worldbank/gld/tree/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20universe%20check
+	preserve 
+	drop if missing(industrycat_isic)
+	int_classif_universe, var(industrycat_isic) universe(ISIC)
+	count
+	list
+	assert `r(N)' == 0
+	restore 
+	
 	
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
@@ -1265,6 +1309,19 @@ foreach v of local ed_var {
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 	
 	drop  isic3d_s
+	
+	
+	* Check that no errors --> using our universe check function, count should be 0 (no obs wrong)
+	* https://github.com/worldbank/gld/tree/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20universe%20check
+	preserve 
+	drop if missing(industrycat_isic_2)
+	int_classif_universe, var(industrycat_isic_2) universe(ISIC)
+	count
+	list
+	assert `r(N)' == 0
+	restore 
+	
+	
 *</_industrycat_isic_2_>
 
 
