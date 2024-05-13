@@ -43,7 +43,18 @@ The methodology used in GLFS 2018 to determine the unemployed population and tho
 GLFS 2018 defines unemployment as all those persons of working age who were not in employment, carried out activities to seek employment during a specified recent period, and were currently available to take up employment given a job opportunity.
 
 The questionnaire considers as unemployed (apply unemployment block) a not working or unpaid family worker in a subsistence business, available for work and looking for work. In other words **EMP13 == yes**. 
- 
+
+
+**EXAMPLE OF HOW TO ADD THE CAPTION**
+
+<figure>
+  <figcaption><b>Fig. 1</b><i> This is my caption text.</i></figcaption>
+  <img src= utilities/unemployment_questions_2018a.png alt=unemployment_questions_2018a>
+</figure>
+
+
+**How it was before** 
+
  <img src= utilities/unemployment_questions_2018a.png alt=unemployment_questions_2018a>
 
 On the other hand, in GLFS 2022-23, the unemployment rate conforms to the definition by ILO. (see document The Gambia Labour Force Survey (GLFS 2022-23) Analytical Report): 
