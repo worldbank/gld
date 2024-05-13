@@ -31,7 +31,7 @@ Another posibility is to only choose responses from family members, however the 
 A final way could be to consider 2 and 3 as a No migrants, howver as stated above , these are assumptions not backed by definitions in the survey design as such it was desistimated for the harmonization.
 
 <br></br>
-![BGD_h15](Utilities/bgd_4.png)
+![BGD_h15](Utilities/bgd4.png)
 <br></br>
 
 In either choice, the process of merging with other survey sections was complex. We tried to identify individuals in the household that informed about their migration patterns and match them through other individual characteristic such as age and gender, unfortunately this could lead to imprecise matching when age or gender are the same within household. Also, we could be assuming that the informant of the survey is the migrant when the question H15 does not ask directly to the person if they mugrated , instead the question targets migration in the household (of any member). 
