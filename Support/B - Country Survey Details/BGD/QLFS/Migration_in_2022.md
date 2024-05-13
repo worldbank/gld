@@ -10,13 +10,33 @@ The migration section has four files , one per quarter. We combined the four qua
 ![BGD_h15](Utilities/h15.PNG)
 <br></br>
 
-In the harmonisation we considered a different logic variations.
+In the harmonisation we considered a different logic variations. For instance, we could identify only the households with responsens for 1 (see image below), but that would leave information from other migration in the family. It is important to note that the survey design does not identify families directly.
 
-One way to identify individuals in the household that informed about their migration patterns is to match them through other individual characteristic such as age and gender, unfortunately this could lead to imprecise matching when age or gender are the same within household. 
+<br></br>
+![BGD_h15](Utilities/bgd_1.png)
+<br></br>
 
+Another way could be considering responses for 1 and 2 (see image below). This could howver include unprecise information when matched. Since the responses are per household, we cannot identify if the responses correspond to household migration or other family members. The definitions for the difference between these two questions is not clear in the questionnaire or documentation.
 
+<br></br>
+![BGD_h15](Utilities/bgd_2.png)
+<br></br>
 
-The GLD team tried to include the information from the migration section into the GLD harmonized version through matching with age and gender and household ID. We ended up with around 800 observations added to the master file. However, in the absence of documentation about the reason for different IDs, made us drop the code below from the harmonization. 
+Another posibility is to only choose responses from family members, however the same caveat applies as in the previous case.
+
+<br></br>
+![BGD_h15](Utilities/bgd_3.png)
+<br></br>
+
+A final way could be to consider 2 and 3 as a No migrants, howver as stated above , these are assumptions not backed by definitions in the survey design as such it was desistimated for the harmonization.
+
+<br></br>
+![BGD_h15](Utilities/bgd_4.png)
+<br></br>
+
+In either choice, the process of merging with other survey sections was complex. We tried to identify individuals in the household that informed about their migration patterns and match them through other individual characteristic such as age and gender, unfortunately this could lead to imprecise matching when age or gender are the same within household. Also, we could be assuming that the informant of the survey is the migrant when the question H15 does not ask directly to the person if they mugrated , instead the question targets migration in the household (of any member). 
+
+When we tried to match, we ended up with around 800 observations added to the harmonization master file. However, in the absence of clarity about differences in identifiers across survey files, we decided to drop the code for the migration section . The user can see the code below and use it at their own discretion.
 
 Comments and/or suggestions are welcomed. 
 
