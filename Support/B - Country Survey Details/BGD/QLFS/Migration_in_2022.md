@@ -6,8 +6,11 @@ The raw microdata is composed of separate files for each questionnaire section.
 
 The migration section has four files , one per quarter. We combined the four quarters by household ID, however, we noticed that the household IDs in the final combined dataset did not match with IDs in other survey files. The migration section has household identifiers. The identifiers correspond to responses from  past migrant workers within the household (see image below). Question HI_15 helps in identifying migrant workers. The question asks if the respondent lives in a household where another member or him/herself has been a migrant worker in the last four years.
 
+<br></br>
+![BGD_h15](Utilities/h15.PNG)
+<br></br>
 
-
+In the harmonisation we considered a different logic variations.
 
 One way to identify individuals in the household that informed about their migration patterns is to match them through other individual characteristic such as age and gender, unfortunately this could lead to imprecise matching when age or gender are the same within household. 
 
