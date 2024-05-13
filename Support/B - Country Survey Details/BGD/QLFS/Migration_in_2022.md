@@ -2,9 +2,18 @@
 
 This page only applies for the migration code in the 2022 GLD harmonization. 
 
-The raw microdata contains separate files for questionnaire sections. The migration section is separated in quarterly files that need to be combined. However, they do not share the within household running ID, but rather have a separate "migration ID". This is because the QLFS asks also but former members of the housheold who migrated. As a result, the individuals that migrated in each household are identified with an ID code that differs to the ID code from the rest of the files. A feasible way to identify the individuals in the household that informed about their migration patterns is to match them through other individual characteristic such as age and gender, unfortunately this could lead to imprecise matching when age or gender are the same within household. 
+The raw microdata is composed of separate files for each questionnaire section. 
 
-The GLD team tried to include the information from the migration section into the GLD harmonized version through matching with age and gender and household ID. We ended up with around 800 observations added to the master file. However, the absence of documentation about the reason behind having different IDs led us to decide dropping this code from the harmonization. The alternate version is available below. 
+The migration section has four files , one per quarter. We combined the four quarters by household ID, however, we noticed that the household IDs in the final combined dataset did not match with IDs in other survey files. The migration section has household identifiers. The identifiers correspond to responses from  past migrant workers within the household (see image below). Question HI_15 helps in identifying migrant workers. The question asks if the respondent lives in a household where another member or him/herself has been a migrant worker in the last four years.
+
+
+
+
+One way to identify individuals in the household that informed about their migration patterns is to match them through other individual characteristic such as age and gender, unfortunately this could lead to imprecise matching when age or gender are the same within household. 
+
+
+
+The GLD team tried to include the information from the migration section into the GLD harmonized version through matching with age and gender and household ID. We ended up with around 800 observations added to the master file. However, in the absence of documentation about the reason for different IDs, made us drop the code below from the harmonization. 
 
 Comments and/or suggestions are welcomed. 
 
@@ -232,4 +241,8 @@ save "`path_in_stata'/final_merged_2022.dta", replace
 
 
 ```
+
+
+
+
 
