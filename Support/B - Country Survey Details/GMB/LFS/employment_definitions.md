@@ -1,76 +1,120 @@
 # Introduction
 
-Due to the changes in employment definitions in GLFS 2022-23 aimed at incorporating the latest international statistical standards on labor, the ```lstatus```  variable is not comparable. 
+Due to the changes in employment definitions in **GLFS 2022-23** aimed at incorporating the latest international statistical standards on labor, the ```lstatus```  variable is not comparable with **GLFS 2018**. 
 
 It is not possible to match both definitions due to the lack of information in the questionnaires.
 
-The following subsections will outline the main differences between the two surveys.
-
-# Framework for identifying the employed in the GLFS
+# Framework for identifying employment in the GLFS
 
 Both questionnaires used information on current activity to define employment through the ***Employment last 7 days*** block. Questions EMP1 to EMP17 (EMP18 for GLFS 2022-23).
 
-# Employed
+# Employment definitions
 
-Respondents considered as employed in GLFS 2018 under ```lstatus``` are not the same as those in GLFS 2022-23.
+Respondents considered as employed in **GLFS 2018** under ```lstatus```variable are not identical to those in GLFS **2022-23**. This discrepancy arises because the ```lstatus``` and ```empstat``` definitions are not consistent between the two surveys
 
-GLFS 2018 only considers Paid Employees, self-employed individuals, and employers as being in the employed status. Remember that ```empstat != . if lstatus == 1```.
+The definition of ```lstatus``` for **GLFS 2018** is:
+``` 
+According to the international definition, the employed population includes all persons above a specified age who did some work in the reference period either for pay in cash or in kind (paid employees) or who were in self-emp loyment for profit, plus persons temporarily absent from their work. Self- employment includes persons working on their own farms selling most or all their produce or doing any other income generating activities. This report uses the international definition of employment.
 
-<img src= utilities/empstat.png alt=Empstatus width=750 height=650>
+``` 
 
-This arises from the fact that the questionnaire's structure did not account for this type of population. As shown in the images below, individuals who respond to ```EMP5 >= 5``` and do not have any other type of employment are assigned questions related to job search and availability.
+The definition of ```lstatus``` for **GLFS 2022-23** is:
 
-<img src= utilities/employment_questions_2018a.png alt=employment_questions_2018a>
-<img src= utilities/employment_questions_2018b.png alt=employment_questions_2018b>
+``` 
+The employed are all those persons of working age who, during the previous week, were engaged in any activity to produce goods or provide services in exchange for pay or to generate profit (in cash or in kind). 
+They comprise: 
+  - employed persons 'at work', i.e. who worked in a job for at least one hour; 
+  - employed persons 'not at work' due to temporary absence from a job, or to working-time arrangements (such as shift work, flexitime and compensatory leave for overtime). 
 
-(Note: There is another question for unpaid farmers which asks about the destination of the produced goods but is not related to this subsection.)
+``` 
 
-Consequently, populations such as unpaid workers (e.g., Homemakers working on non-farm family businesses) who do not have any other type of employment, are classified within the spectrum of unemployment or considered outside the labor force.
+The definition of ```empstat``` for **GLFS 2018** is:   
 
-<img src= utilities/unpaid_workers.png alt=Unpaid_workers>
+``` 
+Status in employment is distinguished by the following categories: Employees, Employers, Own-account  workers,  Contributing  family  workers  and  Members  of  producers' cooperatives. However, this report used the following categories: 
+  - Paid employees are persons who perform work for a wage or salary in cash or kind. It includes permanent, 
+    temporary and casual paid employees.
+  - The self-employed (non-agriculture) are persons who perform work for profit or family gain in their own  
+    non-agricultural  enterprise. This  includes small and  large  business persons working on their own enterprises. The category is sub-divided into those with employees and those without employees.
+  - The employers are workers who, working as own-account or with a few partners, hold a 'self-employment job', 
+    and, in this capacity, on a continuous basis have engaged one or more persons to work for them in their business as employee(s).
 
-GLFS 2022-23, on the other hand, incorporates new questions that involve non-paid employees in the categorization of employment.
+```
+The definition of ```empstat``` for **GLFS 2022-23** is: 
 
-The questionnaire applies the **CM** block to employed individuals, beginning with question **CM1**.
+```
+Status in employment refers to the type of work relationship a person has in his/her job, taking into account the kind of economic risk and degree of authority that the person experiences in their job. The survey data distinguish four statuses in employment: employee, employer, own-account worker and contributing family worker.
 
-<img src= utilities/employment_questions_2022a.png alt=employment_questions_2022a>
-<img src= utilities/employment_questions_2022b.png alt=employment_questions_2022b>
+```
 
-# Unemployed and Non-LF
+while **GLFS 2018** solely considers Paid Employees, self-employed individuals, and employers as being categorized as employed, **GLFS 2022-23** additionally includes Non-paid employees
 
-The methodology used in GLFS 2018 to determine the unemployed population and those outside the labor force differs from that in 2022-23.
+### Questionnaries
 
-GLFS 2018 defines unemployment as all those persons of working age who were not in employment, carried out activities to seek employment during a specified recent period, and were currently available to take up employment given a job opportunity.
-
-The questionnaire considers as unemployed (apply unemployment block) a not working or unpaid family worker in a subsistence business, available for work and looking for work. In other words **EMP13 == yes**. 
-
-
-**EXAMPLE OF HOW TO ADD THE CAPTION**
+The **GLFS 2018** questionnaire determines the labor status based on this questions:
 
 <figure>
-  <figcaption><b>Fig. 1</b><i> This is my caption text.</i></figcaption>
-  <img src= utilities/unemployment_questions_2018a.png alt=unemployment_questions_2018a>
+  <figcaption><b>Fig. 1</b><i> Employment question - GLFS 2018 </i></figcaption>
+  <img src= utilities/emp_questions_2018a.png alt=emp_questions_2018a>
+  <img src= utilities/emp_questions_2018b.png alt=emp_questions_2018b>
+  
+</figure>
+
+The **GLFS 2022-23** questionnaire determines the labor status based this questions:
+
+<figure>
+  <figcaption><b>Fig. 2</b><i> Employment question - GLFS 2022-23 </i></figcaption>
+  <img src= utilities/employment_questions_2022a.png alt=employment_questions_2022a>
+  <img src= utilities/employment_questions_2022b.png alt=employment_questions_2022b>
+  
+</figure>
+
+(Note: The questionnaire applies the **CM** block to employed individuals, beginning with question **CM1**.)
+
+### Survey comparison
+
+
+The questions of **GLFS 2018** are targeted towards the type of work the respondent does, whereas those of **2022-23** focus on more general questions about workplace actions that encompass various types of employment.
+
+**GLFS 2018** structure does not consider as employed the unpaid workers (e.g., Homemakers working on non-farm family businesses) or another job not considered in ```EMP5``` question as employed. As shown in the images above, individuals who respond to ```EMP5 >= 5``` and do not have any other type of employment are assigned questions related to job search and availability.
+
+
+<figure>
+  <figcaption><b>Fig. 3</b><i> Unemployment questions - GLFS 2018 </i></figcaption>
+  <img src= utilities/unemployment_question_2018.png alt=unemployment_question_2018>
+  
+</figure>
+
+(Note: There is another question for unpaid farmers which asks about the destination of the produced goods, The labour status depends of their answer.)
+
+Consequently, thus type of population who do not have any other type of employment, are classified within the spectrum of unemployment or considered outside the labor force.
+
+<figure>
+  <figcaption><b>Fig. 4</b><i> Unpaid workers and none of above labour status - GLFS 2018 </i></figcaption>
+  <img src= utilities/unpaid_workers.png alt=Unpaid_workers>
+  
 </figure>
 
 
-**How it was before** 
+On the other hand, **GLFS 2022-23** with broader questions, involve non-paid employees in the categorization of employment.
 
- <img src= utilities/unemployment_questions_2018a.png alt=unemployment_questions_2018a>
+<figure>
+  <figcaption><b>Fig. 5</b><i> Employment status - 2018 vs 2022-23 </i></figcaption>
+  <img src= utilities/empstat.png alt=Empstatus width=750 height=650>
+  
+</figure>
 
-On the other hand, in GLFS 2022-23, the unemployment rate conforms to the definition by ILO. (see document The Gambia Labour Force Survey (GLFS 2022-23) Analytical Report): 
 
-```
-The unemployment rate in this survey conforms to the definition by ILO, which is defined as persons of working age unemployed who meet the following three conditions:
- -  Not been employed, i.e., not to have worked for pay or profit during the reference period. A person can be unemployed while being
-    engaged in other forms of work such as own-use production work, volunteer work or unpaid trainee work. The distinction between
-    employment and own-use production of goods is based on the main intended destination of the production. Production of goods mainly intended for sale or exchange are included in employment.
- -  To have actively looked for a paid job or to start a business in the past four weeks.
- -  To have been available for a job during the reference period or in the two coming weeks.  
-However, persons who have already found a job and who will start their new job within three months are considered as unemployed.
-```
+### Match employment definitions
 
-Although the two definitions may seem similar, the unemployed population in 2018, if the methodology of 2023 is used, would be much smaller.
+It is not possible to unify the definitions of employed population due to the lack of information in the questionnaires: 
 
-<img src= utilities/lstatus_2018vs2022.png alt=lstatus_2018vs2022>
+**Change Labour of 2018: unpaid workers ```EMP5 == 5``` and none of above population ```EMP5 == 7```  to ```lstatus == employed```**
 
-Even though it's possible to adapt the methodology from 2022-23 to 2018, achieving a perfect match isn't possible due to the mentioned **employed** population issue.
+There are no questions available to ascertain their employment status. For instance, there are no questions about their interaction within the business market or whether they have been hired by someone.
+
+**Change Labour of 2022-23: ```empstat == Non-paid employees```  to ```lstatus == unemployed```**
+
+No job search questions were assigned to them. We do not know whether they are unemployed or Non-LF.
+
+

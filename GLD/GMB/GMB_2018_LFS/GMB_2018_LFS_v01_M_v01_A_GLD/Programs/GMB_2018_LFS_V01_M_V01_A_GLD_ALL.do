@@ -85,7 +85,6 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 use "`path_in_stata'/LFS_Final.dta", clear
-
 /*%%=============================================================================================
 	2: Survey & ID
 ==============================================================================================%%*/
@@ -181,7 +180,6 @@ use "`path_in_stata'/LFS_Final.dta", clear
 	002, ..., 160.
 	
 	One household was incorrectly coded. The cluster to which it was assigned is from another region. Therefore, this household does not belong to the cluster and hid has duplicates. Drop the household id for this case:
-	
 	preserve
 		duplicates drop hh8 hid, force
 		duplicates tag hid, gen(tag)
@@ -189,15 +187,27 @@ use "`path_in_stata'/LFS_Final.dta", clear
 		tab hh8 if tag != 0 // KUNTAUR and BASSE
 	restore
 	
+	tab hh8 hh1 if hh7 == 2 & hh8 == 6 // KUNTAUR
+	tab hh8 hh1 if hh7 == 2 & hh8 == 8 // BASSE
+	
+	The HH of KUNTAUR was incorrectly coded. Put it in a cluster of the correct region, put a new household number that does not duplicate with other HH: Cluster(hh1) 196 does not have obs of household number(hh2) == 1
+	
+
 </_hhid_note> */
 	gen hhid = hid
-	drop if hid == "30502" // 7 obs, two households
+	replace hhid = "19601" if hh7 == 2 & hh8 == 6 & hid == "30502" // 4 obs, one household
 	label var hhid "Household ID"
 *</_hhid_>
 
 
 *<_pid_>
+/* <_hhid_note>
+
+	Change code of household corrected above
+
+</_hhid_note> */
 	gen  pid = uid
+	replace pid = subinstr(uid,"30502","19601",.) if hhid == "19601" & hh7 == 2 & hh8 == 6
 	label var pid "Individual ID"
 *</_pid_>
 
@@ -319,12 +329,9 @@ By urban and rural, there was a total of 14 sampling strata in the 8 LGAs
 	Variable denoting lowest administrative info to which the survey is still significat.
 	See entry in GLD Guidelines (https://github.com/worldbank/gld/blob/main/Support/A%20-%20Guides%20and%20Documentation/GLD_1.0_Guidelines.docx)
 	for more details
-	
-	EAs in this case is the lowest administrative info to which the survey is still significat
 
 </_subnatidsurvey_note> */
-	decode urban, gen(area)
-	egen subnatidsurvey = concat(subnatid1 area), punct(" ")
+	gen subnatidsurvey = subnatid1
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -911,11 +918,6 @@ foreach v of local ed_var {
 *<_lstatus_>
 /* <_lstatus_note>
 
-	the questionnarie considers as unemployed (apply unemployment block): a not working or unpaid family worker in subsistence business, available for work and looking for work. In other words: if **emp13 == 1**
-	
-		(emp13 != .) if [inlist(emp5,5,6,7) OR inlist(emp12,3,4)] OR [emp9 == 1]
-		
-	In the questionnarie does not appear an specific question. It could be an dummy variable.
 	
 	The Gambian report says that Discouraged job seeker are consider as unemployed: It represents the proportion of unemployed persons who are not seeking job for reasons such as feeling that they lack proper qualifications, they do not know where or how to look for work; or they feel that no suitable work is available.
 	
@@ -941,7 +943,15 @@ foreach v of local ed_var {
 		3 MAINLY FOR OWN CONSUMPTION, BUT ALSO FOR SALE/BARTER
 		4 ONLY FOR OWN CONSUMPTION
 			
-	*** unemployed *** aviable and looking for job
+	*** unemployed *** 
+	
+	aviable and looking for job
+		the questionnarie considers as unemployed (apply unemployment block): a not working or unpaid family worker in subsistence business, available for work and looking for work. In other words: if **emp13 == 1**
+	
+		(emp13 != .) if [inlist(emp5,5,6,7) OR inlist(emp12,3,4)] OR [emp9 == 1]
+		
+	In the questionnarie does not appear an specific question. It could be an dummy variable.
+	However codify as unemployed using the following variables 
 	
 	emp8 -- Is (name) available to start a job
 		1 NO
@@ -960,11 +970,11 @@ foreach v of local ed_var {
 		1 YES
 		2 NO
 	
-
+	*After harmonization: There are missing values, there are not info about labor questions for the respondent
 </_lstatus_note> */
 	gen byte lstatus = .
 	replace lstatus = 1 if inlist(emp5,1,2,3,4) | (inlist(emp5,5,6,7) & emp6 == 1) | inlist(emp12,1,2) 
-	replace lstatus = 2 if emp13 == 1
+	replace lstatus = 2 if inlist(emp8,2,3) & emp9 == 1
 	replace lstatus = 3 if lstatus == . & emp5 != . // These are neither persons who were neither employed nor unemployed in the reference period (one week). This includes persons doing solely unpaid domestic work in their own houses; those engaged in full time studies and persons not working because they were sick, retired or did not want to work
 	
 	replace lstatus = . if age < minlaborage
@@ -1520,7 +1530,7 @@ IF HW4C=7|8|9|10|11|12|96 go to HW5
 
 	gen byte lstatus_year = .
 	replace lstatus_year = 1 if inlist(em5,1,2,3,4) | (inlist(em5,5,6,7) & em6 == 1) | em17 != .
-	replace lstatus_year = 2 if em13 == 1
+	replace lstatus_year = 2 if inlist(em8,2,3) & em9 == 1 & inlist(emp12,3,4,.)
 	replace lstatus_year = 3 if lstatus_year == . & em5 != .
 
 	replace lstatus_year=. if age < minlaborage & age != .
@@ -2077,6 +2087,6 @@ compress
 *<_% SAVE_>
 
 *save "`path_output'/`out_file'", replace
+save "C:\Users\User\Dropbox\WB_consultant\work\625372_DB\GMB\GMB_2018_LFS\GMB_2018_LFS_v01_M_v01_A_GLD\Data\Harmonized/`level_2_harm'_ALL.dta", replace
 
 *</_% SAVE_>
-
