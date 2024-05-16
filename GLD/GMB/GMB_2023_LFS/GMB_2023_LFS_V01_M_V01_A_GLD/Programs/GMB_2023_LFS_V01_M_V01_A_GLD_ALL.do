@@ -61,7 +61,7 @@ set varabbrev off
 * Define path sections
 local server  "Y:/GLD-Harmonization/625372_DB"
 local country "GMB"
-local year    "2022"
+local year    "2023"
 local survey  "LFS"
 local vermast "V01"
 local veralt  "V01"
@@ -85,6 +85,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * harmonized output in a single file
 
 use "`path_in_stata'/The 2022-23 GLFS DATASET.dta", clear
+
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -182,13 +183,16 @@ use "`path_in_stata'/The 2022-23 GLFS DATASET.dta", clear
 	002, ..., 160.
 
 </_hhid_note> */
-	gen hhid = ilo_hh
+	gen hlp_hh1 = string(hh1, "%05.0f")
+    gen hlp_hh2 = string(hh2, "%02.0f")
+    egen hhid = concat(hlp_*)
 	label var hhid "Household ID"
 *</_hhid_>
 
 
 *<_pid_>
-	gen  pid = ilo_key
+	gen hlp_hl1 = string(hl1, "%03.0f")
+    egen pid = concat(hhid hlp_hl1)
 	label var pid "Individual ID"
 *</_pid_>
 
@@ -298,8 +302,7 @@ use "`path_in_stata'/The 2022-23 GLFS DATASET.dta", clear
 	See entry in GLD Guidelines (https://github.com/worldbank/gld/blob/main/Support/A%20-%20Guides%20and%20Documentation/GLD_1.0_Guidelines.docx) for more details
 
 </_subnatidsurvey_note> */
-	decode urban, gen(area)
-	egen subnatidsurvey = concat(subnatid1 area), punct(" ")
+	gen subnatidsurvey = subnatid1
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -847,62 +850,89 @@ foreach v of local ed_var {
 /* <_lstatus_note>
 	
 	*** Employed ***
-	The questions that determine whether a person is employed (in the questionnaire, they lead to the section CM: "Characteristics of the Current Main Job/Business Activity") are:
-	
-	(emp4) Last week, from last (Monday) up to (Sunday), did (you/NAME) work for someone else for pay, for one or more hours? 
-		1 YES -- *Go to CM section*
-		2 NO
-		
-	(emp13) Was this work that you mentioned in…? 
-		A FARMING   
-		B REARING FARM ANIMALS  
-		C [FISHING OR FISH FARMING]  
-		D ANOTHER TYPE OF JOB OR BUSINESS -- *Go to CM section*
-		
-	(emp14) Thinking about the work in (farming, rearing animals [and/or fishing]) (you/NAME) (do/does), are the products intended…… ?  
-		1 ONLY FOR SALE/EXCHANGE -- *Go to CM section*
-		2 MAINLY FOR SALE/EXCHANGE -- *Go to CM section*
-		3 MAINLY FOR FAMILY USE 
-		4 ONLY FOR FAMILY USE
-		
-	(emp15) (Were/Was) (you/NAME) hired by someone else to do this work? 
-		1 YES -- *Go to CM section*
-		2 NO
 
-	
-	*** Unemployed ***  aviable and looking for job
-	
-	 Job Search section only asked to: EMP12='D' OR EMP15=2
+	There are four events that lead to question CM1 (first question of the employed)
+
+    1) Yes to EMP4 (Code 1)
+
+    2) Code "D" in EMP13
+
+    3) Ag work is only for sale (1) or mainly (2) in EMP14
+
+    4) Ag work was hired by someone else (code 1 in EMP15)
+
+ 
+
+    *** Unemployed ***
+
+    Union of active search (yes to js1 or js2) and passive search (yes to js4 or js7 or js7b)
+
+    
+
+    *** Out of labour force ***
+
+    All others
+
+    
+
+    *** Exceptions ***
 	 
-	(emp12) Last week, did (you/NAME) do any work in… ? Read and mark all that apply
-		A FARMING   
-		B REARING FARM ANIMALS 
-		C FISHING OR FISH FARMING 
-		D NONE OF THE ABOVE  
-		
-	(emp15) Above
-	 
-	(js1) During the last 4 weeks, that is from [DATE] up to last week, did you look for a job or try to start a business?
-	(js2) Or did you try  to do anything to find any kind of work to generate  income, even if small or casual jobs?
-	(js3) What did you do in the last 4 weeks to find a job or try to start a business? (11)NO METHOD (CONFIRMS NO JOB SEARCH)  
-	(js4) Even  though you did not look for work in the last 4 weeks, do you want to work for pay or profit?
-	(js5) What was the Main reason why you did not seek work or try to start a business during the last 4 weeks? (1) found work but waiting to start
-	(js7) If a job or business opportunity had been available, could (you/NAME) have started working last week?
-	(js7b) Could (you/NAME) start working within the next two weeks? 
-	
-	*** After the Harmonization ***
-	tab ii8 lstatus if age >= 5, miss
-	lstatus == . either because the person was not in the household or did not want to answer them.
+	1) Respondents who answer (11) No method (confirms no job search) in js3 are considered Out of labour force, despite their answer in js1 or js2.
+
+    2) There are 4607 people 15 and over who were not interviewed (var ii8 is code 2)
+
+    Sending them all to lstatus 3 would lopside the data. Keep them as missing.
+
+    
+
+    This may bias the data. While in Banjul only 1.4% of women and 4.5% of men were not interviewed,
+
+    the number is about 15% of women in Mansakonko and Kuntaur and about a quarter (~25%) of men in
+
+    Brikama, Mansakonko, and Kuntaur. Users beware.
+
+    
+
+          preserve
+
+ 
+
+          gen all = inrange(age,15,999)
+
+          gen cases = inrange(age,15,999) & ii8 == 2
+
+          collapse (sum) all cases, by(male hh8)
+
+          bys male : gen shr = cases/all
+
+          list
+
+ 
+
+          restore
 
 </_lstatus_note> */
 
 	gen byte lstatus = .
-	replace lstatus = 1 if emp4 == 1 | [emp13 == "D" | inlist(emp14,1,2) | emp15 == 1] 
-	replace lstatus = 2 if [emp12 == "D" | emp15 == 2] & [js5 == 1 | [(js1 == 1 | js2 == 1) & (js3 != 11 & js3 != .) & (js7 == 1 | js7b == 1)]]
 	
-	replace lstatus = 3 if [emp12 == "D" | emp15 == 2] & [(js1 == 1 | js2 == 1) & (js7 ==2 & js7b ==2)] & [js5 != 1] // not aviable and looking
-	replace lstatus = 3 if [emp12 == "D" | emp15 == 2] & [((js1 == 2 & js2 == 2) | js3 == 11) & (js7 ==1 | js7b ==1)] & [js5 != 1] // aviable and not looking 
-	replace lstatus = 3 if [emp12 == "D" | emp15 == 2] & [[(js1 == 2 & js2 == 2 & js7 ==2 & js7b == 2) & (js5 != 1)] | [js1 == 2 & js2 == 2 & js4 == 2]]  // not aviable and not looking
+	* Code employed
+    replace lstatus = 1 if (emp4 == 1) | (emp13 == "D") | (inlist(emp14,1,2)) | (emp15 == 1)
+
+    
+    * Code unemployed
+    gen active = js1 == 1 | js2 == 1
+    gen passive = js4 == 1 | (js7 == 1 | js7b == 1)
+
+    replace lstatus = 2 if active == 1 & passive == 1 & mi(lstatus)
+
+    * Rest is NLF
+    replace lstatus = 3 if mi(lstatus)
+
+	* Exception for those who answered (11) to js3
+	replace lstatus = 3 if js3 == 11
+	
+    * Exception for those who have not answered
+    replace lstatus = . if ii8 == 2
 	
 	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
@@ -913,8 +943,8 @@ foreach v of local ed_var {
 
 *<_potential_lf_>
 	gen byte potential_lf = 0
-	replace potential_lf = 1 if [emp12 == "D" | emp15 == 2] & [(js1 == 1 | js2 == 1) & (js7 ==2 & js7b ==2)] & [js5 != 1] // not aviable and looking
-	replace potential_lf = 1 if [emp12 == "D" | emp15 == 2] & [((js1 == 2 & js2 == 2) | js3 == 11) & (js7 ==1 | js7b ==1)] & [js5 != 1] // aviable and not looking 
+	replace potential_lf = 1 if active == 1 | passive == 1
+	
 	replace potential_lf = . if age < minlaborage & age != .
 	replace potential_lf = . if lstatus != 3
 	label var potential_lf "Potential labour force status"
@@ -1016,48 +1046,75 @@ foreach v of local ed_var {
 *<_empstat_>
 /* <_empstat_note>
 
-	(cm5) (Do/does) (you/NAME) work…?
-		1 AS AN [EMPLOYEE]  ->  cm10
-		2 IN (YOUR/HIS/HER) OWN BUSINESS ACTIVITY  -> cm7
-		3 HELPING IN A FAMILY OR HOUSEHOLD BUSINESS  -> cm6
-		4 AS AN APPRENTICE, INTERN  -> cm10
-		5 HELPING A FAMILY MEMBER WHO WORKS FOR SOMEONE ELSE  -> cm10
+	(CM5) (Do/does) (you/NAME) work…?
+
+          1 AS AN [EMPLOYEE] 
+
+          2 IN (YOUR/HIS/HER) OWN BUSINESS ACTIVITY 
+
+          3 HELPING IN A FAMILY OR HOUSEHOLD BUSINESS
+
+          4 AS AN APPRENTICE, INTERN 
+
+          5 HELPING A FAMILY MEMBER WHO WORKS FOR SOMEONE ELSE 
+
+          
+
+    for those in their own business (CM5 == 2), to differentiate between SO and Employer use:
+
+    (CM7) Does the business hire any paid employees on a regular basis?
+
+          1 YES 
+
+          2 NO
+		  
+	*** Exception ***
+	
+	(CM6) Who usually makes the decisions about the running of the family business?
+	
+	1 YOU/NAME
+	
+	2 YOU/NAME TOGETHER WITH OTHERS  
+	
+	3 OTHER FAMILY MEMBER(S) ONLY 
+	
+	4 OTHER (NON-RELATED) PERSON(S) ONLY        
+	
+	
+	
+	If the respondent answer (3) to CM5 and (1 or 2) to CM6. Code them as:
+	
+		(Employer) If answer 1 to CM7
 		
-	(cm6) Who usually makes the decisions about the running of the family business?
-		1 (YOU/NAME)               
-		2 (YOU/NAME) TOGETHER WITH OTHERS   
-		3 OTHER FAMILY MEMBER(S) ONLY       -> CM11
-		4 OTHER (NON-RELATED) PERSON(S) ONLY    -> CM11
-		
-	(cm7) Does the business hire any paid employees on a regular basis?
-		1 YES   -> CM25
-		2 NO           
-		
-	(cm10) In this job (are/is) (you/he/she) working in….? 
-		Not relevant for this variable
-		
-	(cm11) Which of the following types of pay (do/does) (you/NAME) receive for this work?
-		A WAGE OR SALARY  (A)
-		PAYMENT BY PIECE OF WORK COMPLETED  (B)
-		COMMISSIONS  (C)
-		TIPS  (D)
-		FEES FOR SERVICES PROVIDED  (E)
-		PAYMENT WITH MEALS OR ACCOMMODATION  (F) 
-		PAYMENT IN PRODUCTS  (G)
-		OTHER CASH PAYMENT (SPECIFY) (H)
-		NOT PAID (I)  -> CM25
+		(Self-employed) If answer 2 to CM7
+		  
 </_empstat_note> */
 
+
 	gen byte empstat = .
-	replace empstat = 1 if (inlist(cm5,1,4) | inlist(cm6,3,4)) & (cm11i == 2) 				
-	replace empstat = 2 if [(inlist(cm5,1,4) | inlist(cm6,3,4)) & (cm11i == 1)] | cm5 == 5
-	replace empstat = 3 if (cm5 == 2 & cm7 == 1) | (inlist(cm6,1,2) & cm7 == 1)
-	replace empstat = 4 if (cm5 == 2 & cm7 == 2) | (inlist(cm6,1,2) & cm7 == 2) 
-	replace empstat = 5 if (empstat == . & lstatus == 1) // missing info , 3 obs
+
+    replace empstat = 1 if inlist(cm5,1,4)
+
+    replace empstat = 2 if cm5 == 3
+
+    replace empstat = 3 if cm5 == 2 & cm7 == 1
+
+    replace empstat = 4 if cm5 == 2 & cm7 == 2
+
+    replace empstat = 5 if cm5 == 5
+	
+	*Exception for those who answer (3) to CM5 and (1 or 2) to CM6
+	replace empstat = 3 if cm5 == 3 & inlist(cm6,1,2) & cm7 == 1
+	
+	replace empstat = 4 if cm5 == 3 & inlist(cm6,1,2) & cm7 == 2
+	
 	
 	replace empstat = . if lstatus != 1
+	
 	label var empstat "Employment status during past week primary job 7 day recall"
+	
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
+	
 	label values empstat lblempstat
 *</_empstat_>
 
@@ -1225,21 +1282,25 @@ foreach v of local ed_var {
 	job     
 	
 		* Use WKT1 If the respondent was absent from the job in the week preceeding the survey 
-	
-	** Non-paid employees **
-	(emp17) Last week, on how many days did (you/NAME) do this work?
-	(emp18) How many hours per day did (you/NAME) spend doing this last week?
-	(opg*) Look for the activity on which they have worked most of the week
-	
+		
 </_whours_note> */
 
 	gen whours = .
-	replace whours = wkt2 // there are decimals 
-	replace whours = . if  whours == 997
-	replace whours = wkt1 if wkt2 == 0 // there are decimals 
-	replace whours = . if  whours == 997
-	replace whours = . if lstatus == 1 & whours == 0 // 47 obs
-	label var whours "Hours of work in last week primary job 7 day recall"
+
+    * Start with wkt2
+    replace whours = wkt2 // there are decimals
+
+    * Replace with missing if 0 or unknown
+    replace whours = . if  whours == 997 | whours == 0
+
+    * Fill with wkt1 when possible
+    replace whours = wkt1 if mi(whours) & !mi(wkt1) & !inlist(wkt1, 997, 0)
+
+    * whours only for employed
+    replace whours = . if lstatus != 1
+
+    label var whours "Hours of work in last week primary job 7 day recall"
+	 
 *</_whours_>
 
 
@@ -1320,8 +1381,6 @@ foreach v of local ed_var {
 
 *----------8.3: 7 day reference secondary job------------------------------*
 * Since labels are the same as main job, values are labelled using main job labels
-
-**# Bookmark #1
 
 {
 *<_empstat_2_>
@@ -2052,6 +2111,5 @@ compress
 *<_% SAVE_>
 
 save "`path_output'/`out_file'", replace
-
 
 *</_% SAVE_>

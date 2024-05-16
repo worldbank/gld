@@ -1505,34 +1505,23 @@ IF HW4C=7|8|9|10|11|12|96 go to HW5
 
 *----------8.6: 12 month reference overall------------------------------*
 
+/* <*_year_note>
+
+Despite there being questions related to employment for the last 12 months of reference, they are only applied to individuals who did not work in the 7 days of reference.
+
+	tab emp5 em5 if inrange(age,15,999), m
+	tab emp5 em5 if inrange(age,15,999), m row nofreq
+
+Consequently, the variables *_year cannot be coded over 12 months because the questions are only asked to a subgroup of the sample; therefore, the results are biased towards the total population level.
+
+
+<*_year_note> */
+
 {
 
-
 *<_lstatus_year_>
-/* <_lstatus_note>
-
-	Survey did not apply 12 months questions to all individuals
-	
-	*** employed ***
-	
-	em5 -- In the last 12 months, did (name) do any work for pay or profit, even for just one hour, as ...
-	em6 -- Does (name) have a permanent/long term job (even though (name) did not work in the last 12 months) from which (name) were temporarily absent?
-	em12 (all obs are missing) -- Are the products produced on the HH farm or non-farm business enterprise? Instead of this var, use em17 to identify them
-			
-	*** unemployed: aviable and looking for job ***
-	
-	em8 -- Is (name) available to start a job
-	em9 -- During the last 4 weeks, has (name) tried in any way to find a job or start (her/his) own business
-	em13 -- Is (EMP 12 = 3/4, EMP12=2/3|, EMP9=1,.
-			(i.e. not working or unpaid family worker in subsistence business, available for work and looking for work)
-
-</_lstatus_note> */
 
 	gen byte lstatus_year = .
-	replace lstatus_year = 1 if inlist(em5,1,2,3,4) | (inlist(em5,5,6,7) & em6 == 1) | em17 != .
-	replace lstatus_year = 2 if inlist(em8,2,3) & em9 == 1 & inlist(emp12,3,4,.)
-	replace lstatus_year = 3 if lstatus_year == . & em5 != .
-
 	replace lstatus_year=. if age < minlaborage & age != .
 	label var lstatus_year "Labor status during last year"
 	la de lbllstatus_year 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -1540,11 +1529,7 @@ IF HW4C=7|8|9|10|11|12|96 go to HW5
 *</_lstatus_year_>
 
 *<_potential_lf_year_>
-	gen byte potential_lf_year = 0
-	replace potential_lf_year = 1 if inlist(em8,1,4,5,6) & em9 == 1 // not aviable and looking
-	replace potential_lf_year = 1 if inlist(em8,2,3) & em9 == 2 // aviable and not looking
-	replace potential_lf_year=. if age < minlaborage & age != .
-	replace potential_lf_year = . if lstatus_year != 3
+	gen byte potential_lf_year = .
 	label var potential_lf_year "Potential labour force status"
 	la de lblpotential_lf_year 0 "No" 1 "Yes"
 	label values potential_lf_year lblpotential_lf_year
@@ -1562,8 +1547,7 @@ IF HW4C=7|8|9|10|11|12|96 go to HW5
 
 
 *<_nlfreason_year_>
-	gen byte nlfreason_year= em11
-	recode nlfreason_year (7 8 9 96 10= 5)
+	gen byte nlfreason_year= .
 	replace nlfreason_year = . if lstatus_year != 3
 	label var nlfreason_year "Reason not in the labor force"
 	la de lblnlfreason_year 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disable" 5 "Other"
@@ -1586,23 +1570,11 @@ IF HW4C=7|8|9|10|11|12|96 go to HW5
 
 *----------8.7: 12 month reference main job------------------------------*
 
+
 {
 
 *<_empstat_year_>
-/* </_empstat_year_note>
-	
-	This survey does not consider non-paid employees. If em5 == UNPAID WORKERS (E.G. HOMEMAKER, WORKING ON NON-FARM FAMILY BUSINESS), then the survey asks them about job search or job absenteeism instead of delving into their current work.
-
-	em17 -- Can I just check in this job were working as:
-</_empstat_year_note> */
-
 	gen byte empstat_year = .
-	replace empstat_year = 1 if inlist(em17,1,2)
-	replace empstat_year = 3 if em17 == 3
-	replace empstat_year = 4 if em17 == 4
-	replace empstat_year = 5 if empstat_year == . & lstatus_year == 1 //zero changes
-
-	replace empstat_year = . if lstatus_year != 1
 	label var empstat_year "Employment status during past week primary job 12 month recall"
 	la de lblempstat_year 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat_year lblempstat_year
@@ -1616,15 +1588,13 @@ IF HW4C=7|8|9|10|11|12|96 go to HW5
 *</_ocusec_year_>
 
 *<_industry_orig_year_>
-	gen industry_orig_year = em16
-	replace industry_orig_year = "" if age<minlaborage
-	replace industry_orig_year = "" if lstatus_year != 1
+	gen industry_orig_year = .
 	label var industry_orig_year "Original industry record main job 12 month recall"
 *</_industry_orig_year_>
 
 
 *<_industrycat_isic_year_>
-	gen industrycat_isic_year = industry_orig_year
+	gen industrycat_isic_year = .
 
 	* Check that no errors --> using our universe check function, count should be 0 (no obs wrong)
 	* https://github.com/worldbank/gld/tree/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20universe%20check
@@ -1641,17 +1611,6 @@ IF HW4C=7|8|9|10|11|12|96 go to HW5
 
 *<_industrycat10_year_>
 	gen byte industrycat10_year = .
-	replace industrycat10_year = 1 if industrycat_isic_year == "A"
-	replace industrycat10_year = 2 if industrycat_isic_year == "B"
-	replace industrycat10_year = 3 if industrycat_isic_year == "C"
-	replace industrycat10_year = 4 if inlist(industrycat_isic_year,"D","E")
-	replace industrycat10_year = 5 if industrycat_isic_year == "F"
-	replace industrycat10_year = 6 if inlist(industrycat_isic_year,"G","I")
-	replace industrycat10_year = 7 if inlist(industrycat_isic_year,"H","J")
-	replace industrycat10_year = 8 if inlist(industrycat_isic_year,"K","L","M","N")
-	replace industrycat10_year = 9 if industrycat_isic_year == "O"
-	replace industrycat10_year = 10 if inlist(industrycat_isic_year,"P","Q","R","S","T","U")
-	
 	label var industrycat10_year "1 digit industry classification, primary job 12 month recall"
 	la de lblindustrycat10_year 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10_year lblindustrycat10_year
@@ -1668,22 +1627,13 @@ IF HW4C=7|8|9|10|11|12|96 go to HW5
 
 
 *<_occup_orig_year_>
-	gen occup_orig_year = em15
-	replace occup_orig_year = . if lstatus_year != 1
+	gen occup_orig_year = .
 	label var occup_orig_year "Original occupation record primary job 12 month recall"
 *</_occup_orig_year_>
 
+
 *<_occup_isco_year_>
-	gen occup_isco_year = em15
-	* tab em14 if em15 == 0
-	replace occup_isco_year = 9 if em14 == "i"
-	replace occup_isco_year = . if inlist(occup_isco_year,0,98)
-	replace occup_isco_year = 0 if occup_isco_year == 10 // armed forces
-	replace occup_isco_year = occup_isco_year * 1000
-	tostring occup_isco_year, replace
-	replace occup_isco_year = "0000" if occup_isco_year == "0" // armed forces
-	replace occup_isco_year = "" if occup_isco_year == "."
-	replace occup_isco_year = "" if lstatus_year != 1
+	gen occup_isco_year = ""
 
 	* Check that no errors --> using our universe check function, count should be 0 (no obs wrong)
 	* https://github.com/worldbank/gld/tree/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20universe%20check
@@ -1700,10 +1650,7 @@ IF HW4C=7|8|9|10|11|12|96 go to HW5
 
 
 *<_occup_year_>
-	gen occup_year = occup_isco_year
-	destring occup_year, replace
-	replace occup_year = occup_year/1000
-	recode occup_year (0 = 10)
+	gen byte occup_year = .
 	label var occup_year "1 digit occupational classification, primary job 12 month recall"
 	la de lbloccup_year 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup_year lbloccup_year
@@ -1961,6 +1908,8 @@ IF HW4C=7|8|9|10|11|12|96 go to HW5
 *</_t_wage_total_year_>
 
 
+
+
 *----------8.11: Overall across reference periods------------------------------*
 
 
@@ -2086,7 +2035,6 @@ compress
 
 *<_% SAVE_>
 
-*save "`path_output'/`out_file'", replace
-save "C:\Users\User\Dropbox\WB_consultant\work\625372_DB\GMB\GMB_2018_LFS\GMB_2018_LFS_v01_M_v01_A_GLD\Data\Harmonized/`level_2_harm'_ALL.dta", replace
+save "`path_output'/`out_file'", replace
 
 *</_% SAVE_>
