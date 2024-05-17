@@ -6,7 +6,7 @@ It is not possible to match both definitions due to the lack of information in t
 
 # Framework for identifying employment in the GLFS
 
-Both questionnaires used information on current activity to define employment through the ***Employment last 7 days*** block. Questions EMP1 to EMP17 (EMP18 for GLFS 2022-23).
+Both questionnaires used information on current activity to define employment through the ***Employment last 7 days*** block. Questions EMP1 to EMP17 (EMP18 for GLFS 2023).
 
 # Employment definitions
 
@@ -18,7 +18,7 @@ According to the international definition, the employed population includes all 
 
 ``` 
 
-The definition of ```lstatus``` for **GLFS 2022-23** is:
+The definition of ```lstatus``` for **GLFS 2023** is:
 
 ``` 
 The employed are all those persons of working age who, during the previous week, were engaged in any activity to produce goods or provide services in exchange for pay or to generate profit (in cash or in kind). 
@@ -40,7 +40,7 @@ Status in employment is distinguished by the following categories: Employees, Em
     and, in this capacity, on a continuous basis have engaged one or more persons to work for them in their business as employee(s).
 
 ```
-The definition of ```empstat``` for **GLFS 2022-23** is: 
+The definition of ```empstat``` for **GLFS 2023** is: 
 
 ```
 Status in employment refers to the type of work relationship a person has in his/her job, taking into account the kind of economic risk and degree of authority that the person experiences in their job. The survey data distinguish four statuses in employment: employee, employer, own-account worker and contributing family worker.
@@ -56,7 +56,7 @@ The **GLFS 2018** questionnaire determines the labor status based on this questi
 <figure>
   <figcaption><b>Fig. 1</b><i> Employment question - GLFS 2018 </i></figcaption>
   <img src= utilities/emp_questions_2018a.png alt=emp_questions_2018a>
-  <img src= utilities/emp_questions_2018b.png alt=emp_questions_2018b>
+  <img src= utilities/emp_questions_2018b.PNG alt=emp_questions_2018b>
   
 </figure>
 
@@ -81,7 +81,7 @@ The questions of **GLFS 2018** are targeted towards the type of work the respond
 
 <figure>
   <figcaption><b>Fig. 3</b><i> Unemployment questions - GLFS 2018 </i></figcaption>
-  <img src= utilities/unemployment_question_2018.png alt=unemployment_question_2018>
+  <img src= utilities/unemployment_question_2018.PNG alt=unemployment_question_2018>
   
 </figure>
 
@@ -96,7 +96,7 @@ Consequently, thus type of population who do not have any other type of employme
 </figure>
 
 
-On the other hand, **GLFS 2022-23** with broader questions, involve non-paid employees in the categorization of employment.
+On the other hand, **GLFS 2023** with broader questions, involve non-paid employees in the categorization of employment.
 
 <figure>
   <figcaption><b>Fig. 5</b><i> Employment status - 2018 vs 2022-23 </i></figcaption>
@@ -113,7 +113,7 @@ It is not possible to unify the definitions of employed population due to the la
 
 There are no questions available to ascertain their employment status. For instance, there are no questions about their interaction within the business market or whether they have been hired by someone.
 
-**Change Labour of 2022-23: ```empstat == Non-paid employees```  to ```lstatus == unemployed```**
+**Change Labour of 2023: ```empstat == Non-paid employees```  to ```lstatus == unemployed```**
 
 No job search questions were assigned to them. We do not know whether they are unemployed or Non-LF.
 
