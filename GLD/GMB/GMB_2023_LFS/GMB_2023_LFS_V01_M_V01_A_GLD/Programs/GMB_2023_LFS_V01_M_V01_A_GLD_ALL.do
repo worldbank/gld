@@ -4,7 +4,7 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				GMB_2022_LFS_V01_M_V01_A_GLD_ALL </_Program name_>
+<_Program name_>				GMB_2023_LFS_V01_M_V01_A_GLD_ALL </_Program name_>
 <_Application_>					Stata SE 18.0 <_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
 <_Date created_>				2024-04-24 </_Date created_>
@@ -184,15 +184,15 @@ use "`path_in_stata'/The 2022-23 GLFS DATASET.dta", clear
 
 </_hhid_note> */
 	gen hlp_hh1 = string(hh1, "%05.0f")
-    gen hlp_hh2 = string(hh2, "%02.0f")
-    egen hhid = concat(hlp_*)
+    	gen hlp_hh2 = string(hh2, "%02.0f")
+    	egen hhid = concat(hlp_*)
 	label var hhid "Household ID"
 *</_hhid_>
 
 
 *<_pid_>
 	gen hlp_hl1 = string(hl1, "%03.0f")
-    egen pid = concat(hhid hlp_hl1)
+    	egen pid = concat(hhid hlp_hl1)
 	label var pid "Individual ID"
 *</_pid_>
 
@@ -917,21 +917,19 @@ foreach v of local ed_var {
 	
 	* Code employed
     replace lstatus = 1 if (emp4 == 1) | (emp13 == "D") | (inlist(emp14,1,2)) | (emp15 == 1)
-
     
     * Code unemployed
     gen active = js1 == 1 | js2 == 1
     gen passive = js4 == 1 | (js7 == 1 | js7b == 1)
-
     replace lstatus = 2 if active == 1 & passive == 1 & mi(lstatus)
+
+    * Exception for those who answered (11) to js3
+    replace lstatus = 3 if js3 == 11 & lstatus == 2
 
     * Rest is NLF
     replace lstatus = 3 if mi(lstatus)
-
-	* Exception for those who answered (11) to js3
-	replace lstatus = 3 if js3 == 11
 	
-    * Exception for those who have not answered
+    * Exception to NLF for those who have not answered
     replace lstatus = . if ii8 == 2
 	
 	replace lstatus = . if age < minlaborage
@@ -1091,31 +1089,22 @@ foreach v of local ed_var {
 </_empstat_note> */
 
 
-	gen byte empstat = .
-
+    gen byte empstat = .
     replace empstat = 1 if inlist(cm5,1,4)
-
     replace empstat = 2 if cm5 == 3
-
     replace empstat = 3 if cm5 == 2 & cm7 == 1
-
     replace empstat = 4 if cm5 == 2 & cm7 == 2
-
     replace empstat = 5 if cm5 == 5
 	
-	*Exception for those who answer (3) to CM5 and (1 or 2) to CM6
-	replace empstat = 3 if cm5 == 3 & inlist(cm6,1,2) & cm7 == 1
+    *Exception for those who answer 3 to CM5 (Helper) yet 1/2 to CM6 (they are decision makers)
+    replace empstat = 3 if cm5 == 3 & inlist(cm6,1,2) & cm7 == 1
+    replace empstat = 4 if cm5 == 3 & inlist(cm6,1,2) & cm7 == 2
 	
-	replace empstat = 4 if cm5 == 3 & inlist(cm6,1,2) & cm7 == 2
 	
-	
-	replace empstat = . if lstatus != 1
-	
-	label var empstat "Employment status during past week primary job 7 day recall"
-	
-	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
-	
-	label values empstat lblempstat
+    replace empstat = . if lstatus != 1
+    label var empstat "Employment status during past week primary job 7 day recall"
+    la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
+    label values empstat lblempstat
 *</_empstat_>
 
 
