@@ -136,7 +136,7 @@ Consequently, individuals of this population who do not have any other form of e
 
 <figure>
   <figcaption><b>Fig. 4</b><i> Unpaid workers and none of above labour status - GLFS 2018 </i></figcaption>
-  <img src= utilities/unpaid_workers.PNG alt=Unpaid_workers>
+  <img src= utilities/unpaid_workers.png alt=Unpaid_workers>
   
 </figure>
 
@@ -144,12 +144,12 @@ Hence, there are not Non-paid employees in **GLFS 2018**
 
 <figure>
   <figcaption><b>Fig. 5</b><i> Employment status - 2018 vs 2023 </i></figcaption>
-  <img src= utilities/empstat.PNG alt=Empstatus width=750 height=650>
+  <img src= utilities/empstat.png alt=Empstatus width=750 height=650>
   
 </figure>
 
 
-## Harmonice ```empstat``` between both surveys
+## Harmonize ```empstat``` between both surveys
 
 It is not possible to unify the definitions of ```empstat``` due to the lack of information in both questionnaires.
 
