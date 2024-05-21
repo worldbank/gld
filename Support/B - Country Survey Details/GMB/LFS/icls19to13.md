@@ -74,7 +74,7 @@ The variable ```lstatus``` in 2018 is defined as:
 *</_lstatus_>
 ```
 
-### Current coding the 2018 GLFS to the ICLS-13 definition
+### (Re)Coding the 2018 GLFS to fit the ICLS-13 definition
 
 In converting back to the old definition, the approach adopted here is to create a variable that identifies those that are engaged in non-market farming. The code below should be pasted after the code creating the ```lstatus``` variable based on the 2018 definition.
 
@@ -190,7 +190,7 @@ The variable ```lstatus``` in 2023 is defined as:
   *</_lstatus_>
 ```
 
-### Current coding the 2023 GLFS to the ICLS-13 definition
+### (Re)Coding the 2023 GLFS to fit the ICLS-13 definition
 
 In converting back to the old definition, the approach adopted here is to create a variable that identifies those that are engaged in non-market farming. The code below should be pasted after the code creating the ```lstatus``` variable based on the 2023 definition.
 
