@@ -144,7 +144,7 @@ ren *, lower
 * Note that result is missing in Q1, cannot keep if result == 1
 tab result,m
 
-save "`path_in_stata'/final_merged_2022.dta", replace
+*save "`path_in_stata'/final_merged_2022.dta", replace
 
 
 /*%%=============================================================================================
@@ -935,7 +935,6 @@ foreach v of local ed_var {
 
 
 *<_industry_orig_>
-	
 	gen industry_orig = string(mj_04c, "%05.0f")
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
@@ -946,6 +945,7 @@ foreach v of local ed_var {
 	replace isic3d="200" if isic3d=="000"
 	gen industrycat_isic = isic3d + "0"
 	*Note: Because the code in the isic version of the survey is not present in the ISIC rev 4 international classification, I assume the codes correspond to the second level of ISIC.
+	* These are 50~odd changes that affect 87 individuals only.
 	replace industrycat_isic= "1100" if industrycat_isic=="1110"
 	replace industrycat_isic= "1100" if industrycat_isic=="1120"
 	replace industrycat_isic= "1100" if industrycat_isic=="1130"
@@ -1203,7 +1203,11 @@ foreach v of local ed_var {
 
 
 *<_occup_>
-	gen byte occup = bsco_prof_struc if lstatus==1
+	gen isco2d = substr(occup_isco, 1, 2)
+	destring isco2d, replace
+	gen  occup = isco2d
+	recode occup (1/3=10) (11/14=1) (21/26=2) (31/35=3) (41/44=4) (51/54=5) (61/63=6) (71/75=7) (81/83=8) (91/96=9)
+	drop isco2d
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup
