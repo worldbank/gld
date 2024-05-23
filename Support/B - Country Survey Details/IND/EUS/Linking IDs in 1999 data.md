@@ -31,3 +31,5 @@ replace hhold_help = "16" if hhold_help== "36" &  State=="32" & Stratum == "10" 
 replace hhold_help = "18" if hhold_help== "38" &  State=="32" & Stratum == "10" & inlist(sub_round, "2", "4")
 replace hhold_help = "20" if hhold_help== "40" &  State=="32" & Stratum == "10" & inlist(sub_round, "2", "4")
 ```
+To check whether the code results in correct matches, we check if the individual age information in Block 5 are consistent with those in Block 4, and found perfect matches. 
+
