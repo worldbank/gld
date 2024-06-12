@@ -28,7 +28,7 @@ The results are discussed with the GLD focal point and case-by-case decisions ar
 
 Finally, the harmonizer will write the “Country Survey Details” (CSD). This represents meta information that cannot be coded into the data nor properly explained in the comments to the harmonization code. This may be notes on changes to the employment definition over time and how to potentially try to code by an older definition. The CSD starts with a document called “1. Introduction to [Survey Name]” for which there is a common template. Additional, more detailed information is covered by ad-hoc documents.
 
-## Accessing GLD information (covers all: codes, documentation, etc.)
+## Accessing GLD information
 
 This section describes where GLD information is stored, how to access it and how information is organized.
 
@@ -53,7 +53,7 @@ Beyond just code storage and version control, GitHub enables collaboration by al
 
 Access to the GLD information depends on which source is being accessed to use and the precise access rights.
 
-Directly on the GLD server there are two versions of the GLD. One is the finalized harmonization for all surveys, one the finalized harmonization for all server that are “for official use”, that is: that can be accessed by any World Bank staff member. Access to the folder containing the latter can be granted to any staff member (with a working World Bank email address and at least a virtual desktop). You may reach out to the GLD Focal point (gld@worldbank.org) to be granted access. Once granted you may [follow these instructions](link to the document with instructions) to map your computer to the network drive. 
+Directly on the GLD server there are two versions of the GLD. One is the finalized harmonization for all surveys, one the finalized harmonization for all server that are “for official use”, that is: that can be accessed by any World Bank staff member. Access to the folder containing the latter can be granted to any staff member (with a working World Bank email address and at least a virtual desktop). You may reach out to the GLD Focal point (gld@worldbank.org) to be granted access. Once granted you may [follow these instructions](https://github.com/worldbank/gld/blob/main/Support/A%20-%20Guides%20and%20Documentation/How%20Map%20Network%20Server.docx) to map your computer to the network drive. 
 
 Access to the full GLD is limited to the members of the Jobs Group. Specific access to files can be discussed on a case-by-case basis but would require reaching out to the GLD Focal Point.
 
@@ -76,7 +76,11 @@ The [GLD GitHub repository](https://github.com/worldbank/gld) is open to all use
 
 ### In what format is the information I access?
 
-Information can be broadly classified in three categories: raw and harmonized data, harmonization code, and other information. Raw data can be in any number of formats, depending on how it was published by the NSO or shared with the GLD team. Inside the GLD folder system
+Information can be broadly classified in three categories: raw and harmonized data, harmonization code, and other information. Raw data can be in any number of formats, depending on how it was published by the NSO or shared with the GLD team.
+
+The harmonization code is a Stata `.do` file and the outputted harmonized dataset is a Stata `.dta` file.
+
+Background information posted on the GitHub repository are text files that may include or link to images and reports (most commonly in PDF format).
 
 ### When can I access information, when not?
 
