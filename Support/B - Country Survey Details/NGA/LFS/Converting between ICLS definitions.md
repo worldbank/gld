@@ -93,10 +93,9 @@ identified in "N1"; thus, deleting the lines of code under this category will au
  
 ```
 
+# Size of subsistence farmers population in Nigeria
 
-# Comparing indicators between old and new definition
-
-The size of the subsistence farmers in Rwanda is large, ranging between 33% and 48% of the working age population. For this reason, indicator estimates are very sensitive to the definition used. 
+The size of the subsistence farmers is not as significant in other countries (e.g., Rwanda is over 30% of working age population), covering only ~4% of the working age population.  
 
 | **Year** | **% of working age** |
 |:---:|:---:|
