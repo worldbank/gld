@@ -100,8 +100,8 @@ The size of the subsistence farmers in Rwanda is large, ranging between 33% and 
 
 | **Year** | **% of working age** |
 |:---:|:---:|
-| 2022 Q4 | 48% |
-| 2023 Q1-Q3 |45% |
+| 2022 Q4 | 4.6% |
+| 2023 Q1-Q3 |3.8% |
 
  
  
