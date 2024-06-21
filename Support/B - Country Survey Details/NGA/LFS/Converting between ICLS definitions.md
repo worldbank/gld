@@ -3,7 +3,7 @@ Since the passing of the [resolution concerning statistics of work, employment a
 
 In short, the ICLS 19 resolution restricts employment to *work performed for others in exchange for pay or profit*, meaning that own consumption work (e.g., subsistence agriculture or building housing for oneself) are not counted as employment.
 
-The GLD codes the harmonization’s `lstatus’ variable based on the concept used in the survey. This has been the case for all years in the Rwanda LFS. Nonetheless, it possible to alter the code so that it matches the previous definition.
+The GLD codes the harmonization’s `lstatus` variable based on the concept used in the survey. This has been the case for all years in the Nigeria LFS. Nonetheless, it possible to alter the code so that it matches the previous definition by simply delete two lines of code to define "N1" as shown below. 
 
 # Current coding for the each survey of the Nigeria ILFS
 
@@ -48,12 +48,10 @@ Currently, the code used to create the `lstatus` variable (which distinguishes b
  
 ```
 
+# Removed the lines of code to match the old definition
 
-
-# Removed lines of code to match the old definition
-
-Thus, to obtain a unique series with the old definition we would first need to identify the subsistence farmers, specifically those whose majority (>50%) of agricultral produce are meant for household consumption. These are easily
-identified in "N1"; thus, deleting the lines of code under this category will automatically classify the subsistence farmers as employed.
+To obstain a unique series with the old definition, we would first need to identify the subsistence farmers, specifically those whose majority (>50%) of agricultral produce are meant for household consumption. These are easily
+identified under "N1"; thus, deleting the lines of code under this category will automatically classify the subsistence farmers as employed.
 
 ```
  *<_lstatus_>
