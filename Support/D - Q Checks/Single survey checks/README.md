@@ -213,4 +213,8 @@ To compute wage by age, we use a re-coded version of the age variable, which cla
 
 Regardless of the results of the checks, we produce the following two pieces out output:
 *	A small database for each wage series, with a binary variable indicating if any condition is violated. These are stored in "Block5_Wage/01_data".
-* A pdf image consisting on four figures, one for each series. This file can be found in "Block5_Wage/02_figures" and "01_summary". The graphs are colour coded. When the series is depicted in blue it conforms with our ex-ante expectations. If the line is drawn red, the series raises at least one flag.
+* A pdf image consisting on four figures, one for each series. This file can be found in "Block5_Wage/02_figures" and "01_summary". The graphs are colour coded. When the series is depicted in blue it conforms with our ex-ante expectations. If the line is drawn red, the series raises at least one flag. An example of the output produced, for the case of the 2016 Bangladesh LFS is shown below.
+
+<br></br>
+![Example of the wage analysis checks](utilities/wage_analysis_example.png)
+<br></br>
