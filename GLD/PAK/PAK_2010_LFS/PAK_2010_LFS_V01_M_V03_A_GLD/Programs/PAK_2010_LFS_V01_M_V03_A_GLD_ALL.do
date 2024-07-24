@@ -61,7 +61,7 @@ local country "PAK"
 local year    "2010"
 local survey  "LFS"
 local vermast "V01"
-local veralt  "V02"
+local veralt  "V03"
 
 * From the definitions, set path chunks
 local level_1      "`country'_`year'_`survey'"
