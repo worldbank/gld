@@ -4,24 +4,18 @@ root: README
 parts:
   - caption: Global Labor Database Manual
     chapters:
-      - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Introduction.md
-      - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Overview.md
-      - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_Intro.md
-        sections:
-        - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_read_code.md
-        - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S2.md
-        - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S3.md
-        - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S4.md
-        - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S5.md
-        - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S6.md
-        - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S7.md
-        - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Harmonization_S8.md
-      - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Validation.md
+      - file: Support/A - Guides and Documentation/GLD Manual/GLD Manual Files/Introduction to the GLD.md
+      - file: Support/A - Guides and Documentation/GLD Manual/GLD Manual Files/GLD content, storage, and access.md
+      - file: Support/A - Guides and Documentation/GLD Manual/GLD Manual Files/The GLD harmonization methodology.md
+      - file: Support/A - Guides and Documentation/GLD Manual/GLD Manual Files/Validation and quality checks.md
         sections:
         - file: Support/D - Q Checks/Single survey checks/README.md
+          sections:
+          - file: Support/D - Q Checks/Single survey checks/Block_2_detailed_explanation.md
         - file: Support/D - Q Checks/Survey series checks/Readme.md
-      - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Use.md
-      - file: Support/A - Guides and Documentation/GLD Manual/GLD_Manual_Collaboration.md
-  - caption: Contact
+      - file: Support/A - Guides and Documentation/GLD Manual/GLD Manual Files/Using the GLD.md
+      - file: Support/A - Guides and Documentation/GLD Manual/GLD Manual Files/Contributing to GLD’s quality and expansion.md
+  - caption: Acknowledgements & Contact 
     chapters:
+      - file: Support/A - Guides and Documentation/GLD Manual/GLD Manual Files/Acknowledgements.md
       - file: docs/contact
