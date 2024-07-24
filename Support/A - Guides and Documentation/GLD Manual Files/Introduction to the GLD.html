@@ -1,0 +1,744 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Introduction to the GLD &#8212; Global Labor Database</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/clipboard.min.js"></script>
+    <script src="../../../_static/copybutton.js"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'Support/A - Guides and Documentation/GLD Manual Files/Introduction to the GLD';</script>
+    <link rel="canonical" href="https://worldbank.github.io/gld/Support/A - Guides and Documentation/GLD Manual Files/Introduction to the GLD.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="GLD content, storage, and access" href="GLD%20content%2C%20storage%2C%20and%20access.html" />
+    <link rel="prev" title="Welcome to the Global Labor Database Repository" href="../../../README.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+    <meta name="docbuild:last-update" content="Jul 24, 2024"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../README.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/WB_Jobs_logo_color.svg" class="logo__image only-light" alt="Global Labor Database - Home"/>
+    <script>document.write(`<img src="../../../_static/WB_Jobs_logo_color.svg" class="logo__image only-dark" alt="Global Labor Database - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../README.html">
+                    Welcome to the Global Labor Database Repository
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Global Labor Database Manual</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Introduction to the GLD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GLD%20content%2C%20storage%2C%20and%20access.html">GLD content, storage, and access</a></li>
+<li class="toctree-l1"><a class="reference internal" href="The%20GLD%20harmonization%20methodology.html">The GLD harmonization methodology</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="Validation%20and%20quality%20checks.html">Validation and quality checks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../D%20-%20Q%20Checks/Single%20survey%20checks/README.html">Guide to the GLD single survey quality checks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../D%20-%20Q%20Checks/Single%20survey%20checks/Block_2_detailed_explanation.html">GLD single survey external checks - Detailed description</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../D%20-%20Q%20Checks/Survey%20series%20checks/Readme.html">Guide to the GLD survey series quality checks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="Using%20the%20GLD.html">Using the GLD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Contributing%20to%20GLD%E2%80%99s%20quality%20and%20expansion.html">Contributing to GLD’s quality and expansion</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Acknowledgements &amp; Contact</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="Acknowledgements.html">Acknowledgements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../docs/contact.html">Any remaining questions?</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/worldbank/gld" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/worldbank/gld/edit/main/Support/A - Guides and Documentation/GLD Manual Files/Introduction to the GLD.md" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/worldbank/gld/issues/new?title=Issue%20on%20page%20%2FSupport/A - Guides and Documentation/GLD Manual Files/Introduction to the GLD.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../../_sources/Support/A - Guides and Documentation/GLD Manual Files/Introduction to the GLD.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Introduction to the GLD</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-gld">What is GLD?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-the-objective-of-gld">What is the objective of GLD?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#who-is-the-intended-audience">Who is the intended audience?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-are-the-principles-guiding-gld">What are the principles guiding GLD?</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gld-coverage-and-expansion">GLD coverage and expansion</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#transparency-and-data-access">Transparency and data access</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-quality-and-validation">Data quality and validation</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#complementarities-with-similar-data-efforts">Complementarities with similar data efforts</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sustainability">Sustainability</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="introduction-to-the-gld">
+<h1>Introduction to the GLD<a class="headerlink" href="#introduction-to-the-gld" title="Permalink to this heading">#</a></h1>
+<section id="what-is-gld">
+<h2>What is GLD?<a class="headerlink" href="#what-is-gld" title="Permalink to this heading">#</a></h2>
+<p>The Global Labor Database (GLD) is part of the World Bank initiatives to harmonize labor force surveys and household surveys with a relevant labor module. Its mission is to create an open and transparent harmonization with sufficient background information to allow data analysts to use, alter, and expand the harmonization. In this sense, background information goes beyond code, questionnaires, and reports, and includes documenting survey details learned during harmonization which are not recorded elsewhere. An example of this documenting changes to the currency or the administrative divisions.</p>
+<p>The GLD aims to be an open-source database, meaning that as much information should be accessible to as many people as possible. It also strives to be transparent, making all steps that create the harmonization traceable, from raw data acquisition to harmonized variable coding. Hence, all steps of the harmonization process are documented and made available, including the survey documentation, code and notes that allow users to fully comprehend the survey design and the choices made in the harmonization. The availability of the codes and documentation enables users to customize and add variables not in the GLD harmonization. Most harmonization efforts provide users with a “take it or leave it” option, but the GLD’s open and transparent approach allows users to trace and deviate from the standard harmonization at any point, giving them a head start regardless of where they wish to jump in.</p>
+<p>Finally, the GLD follows up and expands on the previous initiative to harmonized household surveys, the International Income Distribution Database (I2D2). The I2D2 was superseded by the Global Monitoring Database (GMD), which however focused on household budget surveys and did not harmonize labor force surveys. The GLD was created to remedy this gap in the survey type coverage and complement it, with a stronger focus on labor market information through an expanded dictionary and more rigorous validation of labor indicators.</p>
+</section>
+<section id="what-is-the-objective-of-gld">
+<h2>What is the objective of GLD?<a class="headerlink" href="#what-is-the-objective-of-gld" title="Permalink to this heading">#</a></h2>
+<p>Labor force surveys represent a critical data source to generate key labor market indicators disaggregated by individual characteristics that policy makers monitor, target, and evaluate. Appended across time and space, they are used for comparison and benchmarking. The objective of GLD is to make the process of producing these estimates easier, traceable, and reproducible for World Bank staff and researchers worldwide.</p>
+<p>One major issue when generating survey-based indicators is the cross-country comparability and the time-consuming process of harmonization, which requires reading both data files and survey materials in detail to understand what to code and how, a structured and consistent harmonization methodology as well as many steps of validation.</p>
+<p>The first objective of GLD is thus to create a database of harmonized surveys with comprehensive and reliable labor market information that can be used in analytical work for cross-country and over time comparisons. By creating a harmonized output, this database can be fed into other products that automate analytical processes like country level jobs diagnostics.</p>
+<p>The second objective of GLD is to allow users to go beyond the standard dataset, to support them in delving deeper into their analyses and comparisons to find deeper insights. GLD empowers such a customized approach by providing all codes and technical reports, as well as documenting all intricacies of the survey discovered during harmonization so that users can focus on answering the questions they need answering, not on figuring out in what year an administrative boundary was changed and how the sample size was thus affected.</p>
+</section>
+<section id="who-is-the-intended-audience">
+<h2>Who is the intended audience?<a class="headerlink" href="#who-is-the-intended-audience" title="Permalink to this heading">#</a></h2>
+<p>Target users of GLD include researchers, data analysts and practitioners in the international development community, statistical offices, ministries of labor, of economy and planning and other relevant government agencies analyzing labor market data to monitor and analyze labor market outcomes, and to inform the design of labor policies. These users can exploit two kinds of uses of the GLD.</p>
+<p>The first use is the “as-is” harmonization. This refers to the user taking the harmonized data files as prepared by the data team and using those variables (or combinations thereof) for their analysis.</p>
+<p>The second use is the “amended” or “hacked” harmonization. This refers to the user wanting to go beyond the prepared harmonization. This may be, for example, because they are interested in another specific variable from the survey, present in the questionnaire but not harmonized as not common in most surveys. In this case, the user can still utilize the harmonization do file to standardize most variables (as concepts like education level or labor status are likely still going to be relevant) but in addition add other ones. This use entails editing the harmonization code and/or adding to it at specific points to serve the users purpose without them needing to process the survey entirely.</p>
+</section>
+<section id="what-are-the-principles-guiding-gld">
+<h2>What are the principles guiding GLD?<a class="headerlink" href="#what-are-the-principles-guiding-gld" title="Permalink to this heading">#</a></h2>
+<p>GLD follows a set of principles to guide its development and maintenance. In this introduction we focus on (a) GLD coverage and expansion, (b) transparency and data access, (c) data quality and validation.</p>
+<section id="gld-coverage-and-expansion">
+<h3>GLD coverage and expansion<a class="headerlink" href="#gld-coverage-and-expansion" title="Permalink to this heading">#</a></h3>
+<p>As of April 2024, the GLD holds 345 surveys from 24 countries (1 high-income countries, 9 upper medium-income, 11 lower middle-income, and 9 low-income countries). Table 1, gives an overview of the countries (by <a class="reference external" href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3">three digit ISO code</a>), the number of surveys and years covered in GLD. Figure 1, below the table, shows the location of the countries in GLD.</p>
+<p>Table 1 - GLD coverage by country, number of surveys, and time range (April 2024)</p>
+<p>Here’s the data converted into a markdown table with centered alignment:</p>
+<div class="pst-scrollable-table-container"><table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="text-center head"><p>Country</p></th>
+<th class="text-center head"><p>Number of surveys</p></th>
+<th class="text-center head"><p>Range of years</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-center"><p>ARM</p></td>
+<td class="text-center"><p>9</p></td>
+<td class="text-center"><p>2014 - 2022</p></td>
+</tr>
+<tr class="row-odd"><td class="text-center"><p>BGD</p></td>
+<td class="text-center"><p>5</p></td>
+<td class="text-center"><p>2005 - 2016</p></td>
+</tr>
+<tr class="row-even"><td class="text-center"><p>BOL</p></td>
+<td class="text-center"><p>6</p></td>
+<td class="text-center"><p>2015 - 2021</p></td>
+</tr>
+<tr class="row-odd"><td class="text-center"><p>BRA</p></td>
+<td class="text-center"><p>37</p></td>
+<td class="text-center"><p>1981 - 2022</p></td>
+</tr>
+<tr class="row-even"><td class="text-center"><p>CHL</p></td>
+<td class="text-center"><p>13</p></td>
+<td class="text-center"><p>1990 - 2017</p></td>
+</tr>
+<tr class="row-odd"><td class="text-center"><p>COL</p></td>
+<td class="text-center"><p>23</p></td>
+<td class="text-center"><p>1996 - 2021</p></td>
+</tr>
+<tr class="row-even"><td class="text-center"><p>EGY</p></td>
+<td class="text-center"><p>14</p></td>
+<td class="text-center"><p>2006 - 2019</p></td>
+</tr>
+<tr class="row-odd"><td class="text-center"><p>ETH</p></td>
+<td class="text-center"><p>4</p></td>
+<td class="text-center"><p>1999 - 2021</p></td>
+</tr>
+<tr class="row-even"><td class="text-center"><p>GEO</p></td>
+<td class="text-center"><p>6</p></td>
+<td class="text-center"><p>2017 - 2022</p></td>
+</tr>
+<tr class="row-odd"><td class="text-center"><p>IDN</p></td>
+<td class="text-center"><p>30</p></td>
+<td class="text-center"><p>1989 - 2019</p></td>
+</tr>
+<tr class="row-even"><td class="text-center"><p>IND</p></td>
+<td class="text-center"><p>15</p></td>
+<td class="text-center"><p>1983 - 2022</p></td>
+</tr>
+<tr class="row-odd"><td class="text-center"><p>LKA</p></td>
+<td class="text-center"><p>23</p></td>
+<td class="text-center"><p>1992 - 2021</p></td>
+</tr>
+<tr class="row-even"><td class="text-center"><p>MEX</p></td>
+<td class="text-center"><p>16</p></td>
+<td class="text-center"><p>2005 - 2020</p></td>
+</tr>
+<tr class="row-odd"><td class="text-center"><p>MNG</p></td>
+<td class="text-center"><p>17</p></td>
+<td class="text-center"><p>2002 - 2022</p></td>
+</tr>
+<tr class="row-even"><td class="text-center"><p>NPL</p></td>
+<td class="text-center"><p>3</p></td>
+<td class="text-center"><p>1998 - 2017</p></td>
+</tr>
+<tr class="row-odd"><td class="text-center"><p>PAK</p></td>
+<td class="text-center"><p>15</p></td>
+<td class="text-center"><p>1992 - 2020</p></td>
+</tr>
+<tr class="row-even"><td class="text-center"><p>PHL</p></td>
+<td class="text-center"><p>23</p></td>
+<td class="text-center"><p>1997 - 2019</p></td>
+</tr>
+<tr class="row-odd"><td class="text-center"><p>RWA</p></td>
+<td class="text-center"><p>5</p></td>
+<td class="text-center"><p>2017 - 2021</p></td>
+</tr>
+<tr class="row-even"><td class="text-center"><p>SLE</p></td>
+<td class="text-center"><p>1</p></td>
+<td class="text-center"><p>2014 - 2014</p></td>
+</tr>
+<tr class="row-odd"><td class="text-center"><p>THA</p></td>
+<td class="text-center"><p>36</p></td>
+<td class="text-center"><p>1985 - 2021</p></td>
+</tr>
+<tr class="row-even"><td class="text-center"><p>TUR</p></td>
+<td class="text-center"><p>20</p></td>
+<td class="text-center"><p>2000 - 2019</p></td>
+</tr>
+<tr class="row-odd"><td class="text-center"><p>TUN</p></td>
+<td class="text-center"><p>15</p></td>
+<td class="text-center"><p>1997 - 2017</p></td>
+</tr>
+<tr class="row-even"><td class="text-center"><p>TZA</p></td>
+<td class="text-center"><p>6</p></td>
+<td class="text-center"><p>2000 - 2020</p></td>
+</tr>
+<tr class="row-odd"><td class="text-center"><p>ZAF</p></td>
+<td class="text-center"><p>13</p></td>
+<td class="text-center"><p>2008 - 2020</p></td>
+</tr>
+<tr class="row-even"><td class="text-center"><p>ZMB</p></td>
+<td class="text-center"><p>9</p></td>
+<td class="text-center"><p>2008 - 2022</p></td>
+</tr>
+<tr class="row-odd"><td class="text-center"><p>ZWE</p></td>
+<td class="text-center"><p>5</p></td>
+<td class="text-center"><p>2011 - 2022</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><br></br>
+Figure 1 - Map of the world with the GLD countries highlighted (april 2024)
+<img alt="Map of GLD countries" src="../../../_images/GLD2.png" />
+Note: Boundaries shown on this map are not authoritative and should not be considered as an endorsement by The World Bank.
+<br></br></p>
+<p>The initial choice of countries was driven by the availability of multiple LFS over time for the same countries. Thereafter, the GLD team has established selection guidelines to try to balance the GLD country coverage across income groups and regions, and to keep the GLD updated with the latest surveys.</p>
+<p>Ensuring that the GLD is updated means to harmonize latest surveys once they become available for each country in the GLD. In general, we view a survey as in date if it is from the previous four years (e.g., from at least 2020 in 2024). Thus, both between regions and within regions, the choice in surveys to add to GLD should reflect an effort to not just be present at all income levels but to have up to date surveys for all.</p>
+<p>However, acquiring new surveys is mostly determined by data availability, that is, whether it is possible to obtain new data or whether the National Statistical Office (NSO) of countries do not permit the sharing of survey data. Hence, if NSOs of a region share very little of their data, the GLD’s imbalance due to a lack of surveys would not be correctable. Similarly, if NSOs do not run or only seldomly run a labor force survey, their countries’ GLD entry would missing or small despite our best efforts.</p>
+</section>
+<section id="transparency-and-data-access">
+<h3>Transparency and data access<a class="headerlink" href="#transparency-and-data-access" title="Permalink to this heading">#</a></h3>
+<p>GLD is designed to be as accessible and transparent as possible. Every step of our harmonization should be transparent and traceable. In addition, all the outputs produced by the GLD team (harmonization code and documentation of survey details, choices made during harmonization) are shared freely to all on <a class="reference external" href="https://github.com/worldbank/gld/tree/main">GitHub</a>, a web platform for collaborative software development and version control.</p>
+<p>Access to the raw and harmonized microdata is restricted on a survey-by-survey basis in accordance with data license regulations. These limitations stem primarily from data privacy mandates issued by the National Statistics Offices, alongside other pertinent considerations. Such restrictions are imperative to ensure compliance with legal frameworks governing the confidentiality and usage of sensitive survey data. Adherence to these protocols not only upholds ethical standards but also safeguards the integrity and confidentiality of the information contained within the database.</p>
+<p>GLD data is stored on a server managed by the GLD team. The team aims to use data sources we can share at least with World Bank colleagues whenever possible. Data is also accessible via datalibweb and the microdata library. Currently all GLD surveys are accessible to all World Bank staff except for data from Egypt, where the publisher of the data has requested that raw data (and thus harmonized data) be only accessed via their portal. More details on this in section 2.2 Data storage platforms and access rules section.</p>
+</section>
+<section id="data-quality-and-validation">
+<h3>Data quality and validation<a class="headerlink" href="#data-quality-and-validation" title="Permalink to this heading">#</a></h3>
+<p>Central to the GLD objective of being a reliable source for cross country comparisons and benchmarking is ensuring data are of the highest quality. Only then is it possible to leverage large datasets and use GLD as an input into automated analytical workflows.</p>
+<p>To validate the harmonization, the GLD team has three main tools. The first is the validation done with country office colleagues and NSO staff when harmonizing. GLD harmonizers are in touch with relevant colleagues with domain knowledge to understand the survey (knowledge they can then document and share) and ensure their mapping of variables from the raw data to the harmonized variables is sensible.</p>
+<p>Once the harmonization is finalized, there are two automated quality check procedures. The first checks the survey for integrity and coherence with external sources (e.g., is the calculated labor force participation in line with what ILO, WDI report). The second checks a series of surveys in a country over time to detect any unexpected jumps in the series.</p>
+<p>Finally, via direct exchange with the GLD team or on the online GitHub platform, users can alert the team of issues in the harmonization that had made it through, nonetheless. A process of updating the harmonization then kicks in to try to correct any issues as quickly as possible. For a more detailed description of all quality checks see section 4. Validation and quality checks.</p>
+</section>
+</section>
+<section id="complementarities-with-similar-data-efforts">
+<h2>Complementarities with similar data efforts<a class="headerlink" href="#complementarities-with-similar-data-efforts" title="Permalink to this heading">#</a></h2>
+<p>Within the World Bank, there are other two harmonization initiatives: (1) the I2D2 harmonization of both LFS and household surveys which has been active for more than a decade and has been recently discontinued; and (2) the Global Monitoring Database (GMD) which is harmonizing only household budget surveys used for poverty and inequality analysis primarily.</p>
+<p>The GMD thus includes variables on household consumption and calculates certain income and consumption aggregates that are not present in GLD. On the other hand, GLD has more detailed labor variables, especially providing (wherever possible) industry and occupation information using <a class="reference external" href="https://unstats.un.org/unsd/classifications/Econ/isic">ISIC</a> and <a class="reference external" href="https://ilostat.ilo.org/resources/concepts-and-definitions/classification-occupation/">ISCO</a> codes to the fullest depth possible. As both use a common set of variables, both can be used as inputs to automated analytical tools. This is the case, for example for the Jobs Indicators database (<a class="reference external" href="https://datacatalog.worldbank.org/int/search/dataset/0037526/global_jobs_indicators_database">JOIN</a>), which reads in data from GMD, GLD, and I2D2 to create country indicators. Moreover, the GLD offers a larger set of migration variables in its data dictionary than the GMD.</p>
+<p>Finally, in trying to strike a balance between harmonization and information in the raw data, the GLD also stores more “original” variables from the raw data than GMD (or I2D2). That is, there are more variables that directly provide users with the information as is to be found in the survey. For example, in addition to <code class="docutils literal notranslate"><span class="pre">occup</span></code> and <code class="docutils literal notranslate"><span class="pre">occup_isco</span></code> (occupation information by 10 main categories or the ISCO codes), <code class="docutils literal notranslate"><span class="pre">occup_orig</span></code> contains the occupation information found in the survey. Thus, users can deviate from our codes without need to redo the harmonization and evaluate how the mapping from raw to harmonized variable was done directly.</p>
+<p>Similarly, the ILO harmonizes LFSs to generate indicators published on the <a class="reference external" href="https://ilostat.ilo.org/data/">ILOSTAT data platform</a>, though the underlying harmonized microdata and relative codes are not made public as in GLD. The ILOSTAT platform provides users with an extensive set of indicators, not just on labor markets, but also on other socioeconomic and sociodemographic information for more than 180 countries accessible in the <a class="reference external" href="https://www.ilo.org/surveyLib/index.php/home">ILO Survey Catalogue</a>.  However, the microdata are only accessible to ILO staff. Moreover, no harmonization codes are made available and thus what the user can access are indicators at the national level. Hence, while ILOSTAT is a great resource to obtain country level indicators for the most common topics, GLD can complement this via allowing users going deeper and leveraging the full microdata, running regressions, or calculating indicators at sub-national level.</p>
+</section>
+<section id="sustainability">
+<h2>Sustainability<a class="headerlink" href="#sustainability" title="Permalink to this heading">#</a></h2>
+<p>Maintaining the level of detail provided by the GLD is a significant undertaking that requires a serious investment of resources. The World Bank is the right organization to house such an effort due to the externalities generated by a public effort to create accessible data.</p>
+<p>To maintain the costs of the effort low and ensure the sustainability of the project as it scales and requires more management, two things are necessary: 1) a strong collaboration with regional data teams  and 2) the creation of a community of users on GitHub, a web platform for collaborative software development and version control, initially among World Bank staff with the objective to expand to all users through a collaborative yet still curated approach.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./Support/A - Guides and Documentation/GLD Manual Files"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../../../README.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Welcome to the Global Labor Database Repository</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="GLD%20content%2C%20storage%2C%20and%20access.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">GLD content, storage, and access</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-gld">What is GLD?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-the-objective-of-gld">What is the objective of GLD?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#who-is-the-intended-audience">Who is the intended audience?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-are-the-principles-guiding-gld">What are the principles guiding GLD?</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gld-coverage-and-expansion">GLD coverage and expansion</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#transparency-and-data-access">Transparency and data access</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-quality-and-validation">Data quality and validation</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#complementarities-with-similar-data-efforts">Complementarities with similar data efforts</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sustainability">Sustainability</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By World Bank Jobs Group
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on Jul 24, 2024.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+<div class="extra_footer">
+  <div>
+    <b>All content (unless otherwise specified) is subject to the <a href="https://opensource.org/license/mit/">MIT License.</a></b>
+</div>
+
+</div>
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
