@@ -6,7 +6,7 @@ This section covers a description of how to collaborate with the GLD team, eithe
 
 The GLD team is open to any contribution or collaboration and appreciates your help. From pointing out a typo in a harmonization (Rio de Jane**i**ro, not Rio de Janero) to providing us with a fully worked out harmonization your team had worked on anyway. 
 
-The only rules are, firstly, to be mindful of each other’s timelines and workstreams so that we set out the right expectations about when a product can be delivered, and, secondly, to adhere – if you interact on our GitHub repository – by our [Community Code of Conduct](https://github.com/worldbank/gld/blob/main/Support/E - Community Guidelines/CODE_OF_CONDUCT.md).
+The only rules are, firstly, to be mindful of each other’s timelines and workstreams so that we set out the right expectations about when a product can be delivered, and, secondly, to adhere – if you interact on our GitHub repository – by our [Community Code of Conduct](https://github.com/worldbank/gld/blob/main/Support/E%20-%20Community%20Guidelines/CODE_OF_CONDUCT.md).
 
 ## How to share new raw data with GLD
 
