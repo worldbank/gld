@@ -7,6 +7,7 @@ parts:
       - file: Support/A - Guides and Documentation/GLD Manual Files/Introduction to the GLD.md
       - file: Support/A - Guides and Documentation/GLD Manual Files/GLD content, storage, and access.md
       - file: Support/A - Guides and Documentation/GLD Manual Files/GLD harmonization methodology.md
+      - file: Support/A - Guides and Documentation/GLD Manual Files/GLD data dictionary.md
         sections:
         - file: Support/A - Guides and Documentation/GLD Manual Files/Survey & ID module.md
         - file: Support/A - Guides and Documentation/GLD Manual Files/Geography.md
