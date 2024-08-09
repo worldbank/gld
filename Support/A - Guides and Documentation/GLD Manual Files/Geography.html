@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Validation and quality checks &#8212; Global Labor Database</title>
+    <title>Geography &#8212; Global Labor Database</title>
   
   
   
@@ -62,12 +62,10 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="../../../_static/sphinx-thebe.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'Support/A - Guides and Documentation/GLD Manual Files/Validation and quality checks';</script>
-    <link rel="canonical" href="https://worldbank.github.io/gld/Support/A - Guides and Documentation/GLD Manual Files/Validation and quality checks.html" />
+    <script>DOCUMENTATION_OPTIONS.pagename = 'Support/A - Guides and Documentation/GLD Manual Files/Geography';</script>
+    <link rel="canonical" href="https://worldbank.github.io/gld/Support/A - Guides and Documentation/GLD Manual Files/Geography.html" />
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="Guide to the GLD single survey quality checks" href="../../D%20-%20Q%20Checks/Single%20survey%20checks/README.html" />
-    <link rel="prev" title="GLD content, storage, and access" href="GLD%20content%2C%20storage%2C%20and%20access.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
     <meta name="docbuild:last-update" content="Aug 09, 2024"/>
@@ -131,6 +129,8 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
+        
+      
       <div class="bd-sidebar-primary bd-sidebar">
         
 
@@ -176,10 +176,10 @@ const thebe_selector_output = ".output, .cell_output"
             </li>
         </ul>
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Global Labor Database Manual</span></p>
-<ul class="current nav bd-sidenav">
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="Introduction%20to%20the%20GLD.html">Introduction to the GLD</a></li>
 <li class="toctree-l1"><a class="reference internal" href="GLD%20content%2C%20storage%2C%20and%20access.html">GLD content, storage, and access</a></li>
-<li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">Validation and quality checks</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="Validation%20and%20quality%20checks.html">Validation and quality checks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../D%20-%20Q%20Checks/Single%20survey%20checks/README.html">Guide to the GLD single survey quality checks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../D%20-%20Q%20Checks/Single%20survey%20checks/Block_2_detailed_explanation.html">GLD single survey external checks - Detailed description</a></li>
 </ul>
@@ -265,7 +265,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="https://github.com/worldbank/gld/edit/main/Support/A - Guides and Documentation/GLD Manual Files/Validation and quality checks.md" target="_blank"
+      <li><a href="https://github.com/worldbank/gld/edit/main/Support/A - Guides and Documentation/GLD Manual Files/Geography.md" target="_blank"
    class="btn btn-sm btn-source-edit-button dropdown-item"
    title="Suggest edit"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -282,7 +282,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="https://github.com/worldbank/gld/issues/new?title=Issue%20on%20page%20%2FSupport/A - Guides and Documentation/GLD Manual Files/Validation and quality checks.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/worldbank/gld/issues/new?title=Issue%20on%20page%20%2FSupport/A - Guides and Documentation/GLD Manual Files/Geography.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -312,7 +312,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="../../../_sources/Support/A - Guides and Documentation/GLD Manual Files/Validation and quality checks.md" target="_blank"
+      <li><a href="../../../_sources/Support/A - Guides and Documentation/GLD Manual Files/Geography.md" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -396,7 +396,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Validation and quality checks</h1>
+    <h1>Geography</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -406,7 +406,9 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-is-the-harmonization-validated">How is the harmonization validated?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#variables">Variables</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lessons-learned-and-challenges">Lessons Learned and Challenges</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview-of-variables">Overview of Variables</a></li>
 </ul>
             </nav>
         </div>
@@ -418,20 +420,219 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="validation-and-quality-checks">
-<h1>Validation and quality checks<a class="headerlink" href="#validation-and-quality-checks" title="Permalink to this heading">#</a></h1>
-<section id="how-is-the-harmonization-validated">
-<h2>How is the harmonization validated?<a class="headerlink" href="#how-is-the-harmonization-validated" title="Permalink to this heading">#</a></h2>
-<p>The harmonization is checked thoroughly and continuously, to ensure the output is the most accurate and reliable. There are three main processes. Chronologically the first are the checks performed during the harmonization. As the code is developed, the harmonizers evaluate the results they are getting on an ongoing basis. Moreover, they try to confirm at early stages some of the more difficult mappings, like the conversion of survey education codes to the categories of the harmonized education variables. This process includes reaching out to World Bank colleagues in country offices and partners at the statistical offices to validate choices.</p>
-<p>The second process are the automated quality checks, made up of a standard code that uses the harmonization as input and it for internal and external consistency, as well as checking a series over surveys over time. They are the main source of validation and are discussed further in detail in the remainder of the section.</p>
-<p>The third process starts after the harmonization is published by collecting users’ feedback. GLD encourages users to review the harmonization and the codes and alert the team of any issues that may still have slipped previous processes. Users can raise issues on GitHub (see How to communicate on any other issue section) or reach out to the <a class="reference external" href="mailto:gld&#37;&#52;&#48;worldbank&#46;org">GLD Focal Point</a>. The GLD Team has set up code pipelines to try to update harmonizations to respond to user feedback as quickly as possible. Your feedback is an integral part of GLD!</p>
-<p>The automated quality checks are two sets of functions, one in <code class="docutils literal notranslate"><span class="pre">Stata</span></code> one in <code class="docutils literal notranslate"><span class="pre">R</span></code> to evaluate the output of the harmonization. The <code class="docutils literal notranslate"><span class="pre">Stata</span></code> code evaluates each survey individually, that is we check the particular “IND_2018_PLFS” harmonization for coherence and consistency, both internally (e.g., is the urban/rural variables only codes urban or rural; do people classified as professionals have, on average, the education level we expect them to have) and externally (is the labor force participation from the survey in line with ILO, WDI?).</p>
-<p>To interpret the results, users should differentiate between errors and flags. By errors we mean things in the harmonization that can be evaluated and are seen as wrong. An example would be an observation with value <code class="docutils literal notranslate"><span class="pre">3</span></code> in the <code class="docutils literal notranslate"><span class="pre">urban</span></code> variable, when the only possible values are <code class="docutils literal notranslate"><span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">1</span></code>, or <code class="docutils literal notranslate"><span class="pre">NA</span></code> if the information is not available.</p>
-<p>Flags are issues with the data that hint at an issue. For example, if the variable <code class="docutils literal notranslate"><span class="pre">urban</span></code> has a high share of missing (i.e., <code class="docutils literal notranslate"><span class="pre">NA</span></code>) answers. This is uncommon and thus points to an issue, but it need not be incorrect: the underlying raw data may have an issue and the data are truly not available. For such cases, it is advisable to include the issue in the Country Survey Details, but no further correction of the harmonization code would be warranted.</p>
-<p>The quality checks do not specifically name issues as errors or flags. This is for the user to evaluate, based on what the checks do, which is covered in the next two subsections.</p>
-</section>
-<div class="toctree-wrapper compound">
+  <section class="tex2jax_ignore mathjax_ignore" id="geography">
+<h1>Geography<a class="headerlink" href="#geography" title="Permalink to this heading">#</a></h1>
+<section id="variables">
+<h2>Variables<a class="headerlink" href="#variables" title="Permalink to this heading">#</a></h2>
+<p><strong>urban</strong></p>
+<p>urban is a dummy variable that specifies the location type – urban or rural - of the household. This variable is country specific as each country uses its own criterion to distinguish urban from rural areas. In many cases there is no clear division between urban and rural areas, and areas are classified as “semi-urban” or “mixed”. Harmonizers are advised to classify such categories as “urban.”</p>
+<p>Urban categories:
+1 = Urban
+0 = Rural</p>
+<p><strong>subnatid1</strong></p>
+<p>subnatid1 refers to a subnational identifier at the highest level within the country’s administrative structure. This is typically a province or state. The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: “1 – Hatay”. That is, the variable itself is to be string, not a labelled numeric vector.</p>
+<p><strong>subnatid2</strong></p>
+<p>subnatid2 refers to a subnational identifier at which survey is representative at the second highest level within the country’s administrative structure. This is typically a district. The variable is string and country- specific categorical. Numeric entries are coded in string format using the following naming convention: “1 – Hatay”. That is, the variable itself is to be string, not a labelled numeric vector.</p>
+<p><strong>subnatid3</strong></p>
+<p>subnatid3 refers to a sub-national identifier at which survey is representative at the third level within the country’s administrative structure. This is typically a sub-district. The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: “1 – Hatay”. That is, the variable itself is to be string, not a labelled numeric vector.</p>
+<p><strong>subnatid4</strong></p>
+<p>subnatid4 refers to a sub-national identifier at which survey is representative at the lowest level within the country’s administrative structure. In some countries, this is effectively a village. The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: “1 – Hatay”. That is, the variable itself is to be string, not a labelled numeric vector.</p>
+<p><strong>subnatidsurvey</strong></p>
+<p>subnatidsurvey is a string variable that refers to the lowest level of the administrative level at which the survey is representative. In most cases this will be equal to variable subnatid1 or subnatid2. However, in some cases the lowest level is classified in terms of urban, rural (i.e., variable urban) or any other regional categorization cannot be mapped to subnatid#.</p>
+<p>The below example (Table 3) shows how to code subnatidsurvey for a survey that is representative at the rural/urban level of the province (subnatid1).</p>
+<p>Table 3 - Example of a survey significant at subnatid1 and urban/rural level</p>
+<div class="pst-scrollable-table-container"><table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>subnatid1</p></th>
+<th class="head"><p>urban</p></th>
+<th class="head"><p>subnatidsurvey</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>“1 – Province A”</p></td>
+<td><p>1</p></td>
+<td><p>“1 – Province A urban”</p></td>
+</tr>
+<tr class="row-odd"><td><p>“1 – Province A”</p></td>
+<td><p>1</p></td>
+<td><p>“1 – Province A urban”</p></td>
+</tr>
+<tr class="row-even"><td><p>“1 – Province A”</p></td>
+<td><p>1</p></td>
+<td><p>“1 – Province A urban”</p></td>
+</tr>
+<tr class="row-odd"><td><p>“1 – Province A”</p></td>
+<td><p>1</p></td>
+<td><p>“1 – Province A urban”</p></td>
+</tr>
+<tr class="row-even"><td><p>“1 – Province A”</p></td>
+<td><p>0</p></td>
+<td><p>“1 – Province A rural”</p></td>
+</tr>
+<tr class="row-odd"><td><p>…</p></td>
+<td><p>…</p></td>
+<td><p>…</p></td>
+</tr>
+<tr class="row-even"><td><p>“2 – Province B”</p></td>
+<td><p>0</p></td>
+<td><p>“2 – Province B rural”</p></td>
+</tr>
+<tr class="row-odd"><td><p>“2 – Province B”</p></td>
+<td><p>0</p></td>
+<td><p>“2 – Province B rural”</p></td>
+</tr>
+<tr class="row-even"><td><p>“2 – Province B”</p></td>
+<td><p>0</p></td>
+<td><p>“2 – Province B rural”</p></td>
+</tr>
+<tr class="row-odd"><td><p>“2 – Province B”</p></td>
+<td><p>0</p></td>
+<td><p>“2 – Province B rural”</p></td>
+</tr>
+<tr class="row-even"><td><p>“2 – Province B”</p></td>
+<td><p>1</p></td>
+<td><p>“2 – Province B urban”</p></td>
+</tr>
+<tr class="row-odd"><td><p>“2 – Province B”</p></td>
+<td><p>1</p></td>
+<td><p>“2 – Province B urban”</p></td>
+</tr>
+</tbody>
+</table>
 </div>
+<p>While the below (Table 4) is the example of a survey representative nationally, nationally at urban / rural level and at province level.</p>
+<p>Table 4 - Example of a survey significant at subnatid1 level</p>
+<div class="pst-scrollable-table-container"><table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>subnatid1</p></th>
+<th class="head"><p>urban</p></th>
+<th class="head"><p>subnatidsurvey</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>“1 – Province A”</p></td>
+<td><p>1</p></td>
+<td><p>“1 – Province A”</p></td>
+</tr>
+<tr class="row-odd"><td><p>“1 – Province A”</p></td>
+<td><p>1</p></td>
+<td><p>“1 – Province A”</p></td>
+</tr>
+<tr class="row-even"><td><p>“1 – Province A”</p></td>
+<td><p>1</p></td>
+<td><p>“1 – Province A”</p></td>
+</tr>
+<tr class="row-odd"><td><p>“1 – Province A”</p></td>
+<td><p>1</p></td>
+<td><p>“1 – Province A”</p></td>
+</tr>
+<tr class="row-even"><td><p>“1 – Province A”</p></td>
+<td><p>0</p></td>
+<td><p>“1 – Province A”</p></td>
+</tr>
+<tr class="row-odd"><td><p>…</p></td>
+<td><p>…</p></td>
+<td><p>…</p></td>
+</tr>
+<tr class="row-even"><td><p>“2 – Province B”</p></td>
+<td><p>0</p></td>
+<td><p>“2 – Province B”</p></td>
+</tr>
+<tr class="row-odd"><td><p>“2 – Province B”</p></td>
+<td><p>0</p></td>
+<td><p>“2 – Province B”</p></td>
+</tr>
+<tr class="row-even"><td><p>“2 – Province B”</p></td>
+<td><p>0</p></td>
+<td><p>“2 – Province B”</p></td>
+</tr>
+<tr class="row-odd"><td><p>“2 – Province B”</p></td>
+<td><p>0</p></td>
+<td><p>“2 – Province B”</p></td>
+</tr>
+<tr class="row-even"><td><p>“2 – Province B”</p></td>
+<td><p>1</p></td>
+<td><p>“2 – Province B”</p></td>
+</tr>
+<tr class="row-odd"><td><p>“2 – Province B”</p></td>
+<td><p>1</p></td>
+<td><p>“2 – Province B”</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The variable would contain survey representation at lowest level irrespective of its mapping to subnatids.</p>
+<p><strong>subnatid1_prev</strong></p>
+<p>subnatid1_prev is coded as missing unless the classification used for subnatid1 has changed since the previous survey. In that case, it refers to the subnatid1 code used in the previous survey. This provides a way of tracking splits. For example, if province “32 – West Java” split into province “32 – West Java” and “36 – Banten” since the most recent survey, subnatid1_prev would be “32 – West Java” for cases when subnatid1 is either “32 – West Java” or “36 – Banten”.</p>
+<p><strong>subnatid2_prev</strong></p>
+<p>subnatid2_prev is coded as missing unless the classification used for subnatid2 has changed since the previous survey. In that case, it refers to the subnatid2 code used in the previous survey.</p>
+<p><strong>subnatid3_prev</strong></p>
+<p>subnatid3_prev is coded as missing unless the classification used for subnatid3 has changed since the previous survey. In that case, it refers to the subnatid3 code used in the previous survey.</p>
+<p><strong>subnatid4_prev</strong></p>
+<p>subnatid4_prev is coded as missing unless the classification used for subnatid4 has changed since the previous survey. In that case, it refers to the subnatid4 code used in the previous survey.</p>
+<p><strong>strata</strong></p>
+<p>strata refer to the division of the target population – typically the census sample frame – into subpopulations based on auxiliary information that is known about the full population. Sampling is conducted separately for each stratum. The strata should be mutually exclusive: every element in the population must be assigned to only one stratum. The strata should also be collectively exhaustive: no population element can be excluded. Sampling strata need to be considered when constructing the variance (or confidence intervals) of population estimates. The strata variable is needed for the correct calculation of standard deviation for each sample design. Strata is numeric and country specific. A unique identifier is created for each stratum. In STATA, users are advised to specify strata through the svyset command. The variable is in string format with the following naming convention “code of stratum – stratum name”, for example: “1 – Dar-es-salaam”.</p>
+<p><strong>gaul_adm1_code</strong></p>
+<p>gaul_adm1_code is numeric and country-specific based on the GAUL database. It should be taken from the same data in the <a class="reference external" href="https://datacatalog.worldbank.org/int/search/dataset/0043635">GAUL database</a> where the geographical area can be identified in the survey based on the name of the location/area. The number of unique values from the subnatid1 and the gaul_adm1_code could be different or the same. For example, in the case of a fictional country, if the highest-level representation is the state level (53 states) and Gaul also has 53 states, it is the same in this case. In a different example, the survey is representative at the level of statistical regions (7) while the identifiable GAUL code is at state level (53 states); with this setup, one can know how the seven statistical regions are constructed.</p>
+<p><strong>gaul_adm2_code</strong></p>
+<p>gaul_adm2_code is numeric and country-specific based on the GAUL database. It should be taken from the same data in the GAUL database where the geographical area can be identified in the survey based on the name of the location/area.</p>
+</section>
+<section id="lessons-learned-and-challenges">
+<h2>Lessons Learned and Challenges<a class="headerlink" href="#lessons-learned-and-challenges" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p>subnatid codes should reflect the most recent codes that pertain to that survey. subnatid_prev codes can be used to track splits and new administrative units that have been introduced since the previous survey. It is important to ensure there is consistency in geographic variables across time. Sub- nationally representative units may be added in later additions of surveys, so names of subnational units must be consistent across time. This will allow analysts to make the current administrative units “backwards-compatible” with little additional effort.</p></li>
+<li><p>Harmonizers should ensure the subnatid1 through subnatid4 are string variables NOT categorical.</p></li>
+<li><p>The urban variable cannot be different from zero or one.</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">urban</span><span class="o">!=</span> <span class="mi">1</span> <span class="o">&amp;</span> <span class="n">urban</span><span class="o">!=</span> <span class="mi">0</span>
+</pre></div>
+</div>
+</section>
+<section id="overview-of-variables">
+<h2>Overview of Variables<a class="headerlink" href="#overview-of-variables" title="Permalink to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Module Code</p></th>
+<th class="head"><p>Variable name</p></th>
+<th class="head"><p>Variable label</p></th>
+<th class="head"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Geography</p></td>
+<td><p>urban</p></td>
+<td><p>Binary - Individual in urban area</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>Geography</p></td>
+<td><p>subnatid[i]</p></td>
+<td><p>Subnational ID - [ith] level</p></td>
+<td><p>Subnational ID at the ith level, listing as many as available</p></td>
+</tr>
+<tr class="row-even"><td><p>Geography</p></td>
+<td><p>subnatidsurvey</p></td>
+<td><p>Lowest level of Subnational ID</p></td>
+<td><p>subnatidsurvey is a string variable that refers to the lowest level of the administrative level at which the survey is representative. In most cases this will be equal to “subnatid1” or “subnatid2”. However, in some cases the lowest level is classified in terms of urban, rural or any other regional categorization cannot be mapped to subnatids. The variable would contain survey representation at lowest level irrespective of its mapping to subnatids.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Geography</p></td>
+<td><p>subnatid[i]_prev</p></td>
+<td><p>Subnatid previous - [ith] level</p></td>
+<td><p>Previous subnatid if changed since last survey</p></td>
+</tr>
+<tr class="row-even"><td><p>Geography</p></td>
+<td><p>strata</p></td>
+<td><p>Strata</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>Geography</p></td>
+<td><p>gaul_adm[i]_code</p></td>
+<td><p>GAUL ADM[i] code</p></td>
+<td><p>See <a class="reference external" href="http://en.wikipedia.org/wiki/Global_Administrative_Unit_Layers">en.wikipedia.org/wiki/Global_Administrative_Unit_Layers</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -464,24 +665,6 @@ document.write(`
                 <footer class="prev-next-footer d-print-none">
                   
 <div class="prev-next-area">
-    <a class="left-prev"
-       href="GLD%20content%2C%20storage%2C%20and%20access.html"
-       title="previous page">
-      <i class="fa-solid fa-angle-left"></i>
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">GLD content, storage, and access</p>
-      </div>
-    </a>
-    <a class="right-next"
-       href="../../D%20-%20Q%20Checks/Single%20survey%20checks/README.html"
-       title="next page">
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Guide to the GLD single survey quality checks</p>
-      </div>
-      <i class="fa-solid fa-angle-right"></i>
-    </a>
 </div>
                 </footer>
               
@@ -498,7 +681,9 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-is-the-harmonization-validated">How is the harmonization validated?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#variables">Variables</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lessons-learned-and-challenges">Lessons Learned and Challenges</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview-of-variables">Overview of Variables</a></li>
 </ul>
   </nav></div>
 
