@@ -7,6 +7,14 @@ parts:
       - file: Support/A - Guides and Documentation/GLD Manual Files/Introduction to the GLD.md
       - file: Support/A - Guides and Documentation/GLD Manual Files/GLD content, storage, and access.md
       - file: Support/A - Guides and Documentation/GLD Manual Files/The GLD harmonization methodology.md
+        sections:
+        - file: Support/A - Guides and Documentation/GLD Manual Files/Survey & ID module.md
+        - file: Support/A - Guides and Documentation/GLD Manual Files/Geography.md
+        - file: Support/A - Guides and Documentation/GLD Manual Files/Demography.md
+        - file: Support/A - Guides and Documentation/GLD Manual Files/Migration.md
+        - file: Support/A - Guides and Documentation/GLD Manual Files/Education.md
+        - file: Support/A - Guides and Documentation/GLD Manual Files/Training.md
+        - file: Support/A - Guides and Documentation/GLD Manual Files/Labor.md
       - file: Support/A - Guides and Documentation/GLD Manual Files/Validation and quality checks.md
         sections:
         - file: Support/D - Q Checks/Single survey checks/README.md
