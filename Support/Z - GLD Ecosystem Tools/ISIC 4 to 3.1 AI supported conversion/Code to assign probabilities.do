@@ -56,7 +56,7 @@ if isic_version != "isic_4" {
 
 preserve 
 
-	*import delimited "C:\Users\wb529026\OneDrive - WBG\Documents\GLD\Collaboration\UC ISIC\code\test\ai_isic_4_to_31_corr.txt", stringcols(1/57) clear 
+	import delimited "https://raw.githubusercontent.com/worldbank/gld/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%204%20to%203.1%20AI%20supported%20conversion/ai_isic_4_to_31_corr.txt", stringcols(1/57) clear 
 	tempfile test
 	save "`test'"
 
