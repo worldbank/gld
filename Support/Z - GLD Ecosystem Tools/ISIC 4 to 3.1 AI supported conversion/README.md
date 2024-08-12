@@ -16,7 +16,7 @@ However, on reading the descriptions, it becomes evident that the activity cover
 
 ## AI supported approach
 
-The advent of accessible artificial intelligence (AI) allows us to leverage AI models to read the code descriptions and make inferences on our behalf. A team of four students from the California Polytechnic State University, San Luis Obispo, has been working on a pilot to leverage this process. The details of their work can be seen in their paper on classification systems](Advancing%20Job%20Classification%20Systems%20-%20Leveraging%20AI%20to%20Enhance%20Historical%20Mapping%20Between%20ISIC%20revisions.pdf) and the GLD team is thanful for their dedication in creating the pilot. The code to run the AI supported along with instructions can be found in the `AI Code` folder.
+The advent of accessible artificial intelligence (AI) allows us to leverage AI models to read the code descriptions and make inferences on our behalf. A team of four students from the California Polytechnic State University, San Luis Obispo, has been working on a pilot to leverage this process. The details of [their work can be seen in their paper on classification systems](Advancing%20Job%20Classification%20Systems%20-%20Leveraging%20AI%20to%20Enhance%20Historical%20Mapping%20Between%20ISIC%20revisions.pdf) and the GLD team is thanful for their dedication in creating the pilot. The code to run the AI supported along with instructions can be found in the `AI Code` folder.
 
 ## Example implementation
 
