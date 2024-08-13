@@ -70,7 +70,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="prev" title="Training" href="Training.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="Aug 12, 2024"/>
+    <meta name="docbuild:last-update" content="Aug 13, 2024"/>
   </head>
   
   
@@ -452,9 +452,9 @@ document.write(`
 <p><strong>lstatus</strong></p>
 <p>lstatus is an individual’s labor status in the last 7 days. The value must be missing for individuals less than the required age (minlaborage).</p>
 <p>Three categories are used after harmonization:</p>
-<p>1 = Employed
-2 = Unemployed
-3 = Not-in-labor force</p>
+<p>1 = Employed</p>
+<p>2 = Unemployed</p>
+<p>3 = Not-in-labor force</p>
 <p>All persons are considered active in the labor force if they presently have a job (formal or informal, i.e., employed) or do not have a job but are actively seeking work (i.e., unemployed).</p>
 <p>1 = Employed</p>
 <p>Employed is defined as anyone who worked during the last 7 days or reference week, regardless of whether the employment was formal or informal, paid or unpaid, for a minimum of 1 hour. Individuals who had a job, but for any reason did not work in the last 7 days are considered employed.</p>
@@ -473,12 +473,13 @@ Figure 17 - Definition of different labor force status
 <img alt="Definition of different labor force status" src="../../../_images/vars_potential_lf.png" />
 <br></br></p>
 <p>The variable potential_lf thus codifies whether the person is not in the labour force over the past 7 days (lstatus=3, missing otherwise) but could potentially be they are i) available but not searching or ii) searching but not immediately available to work. The codes are:</p>
-<p>0 = No (not potentially in the labour force)
-1 = Yes</p>
+<p>0 = No (not potentially in the labour force)</p>
+<p>1 = Yes</p>
 <p><strong>underemployment</strong></p>
 <p>Codifies whether the person is in the labour force and working over the past 7 days (lstatus=1, missing otherwise) but would take on more jobs or more hours at their job if possible/available. The codes are:</p>
-<p>0 = No (not underemployed)
-1 = Yes</p>
+<p>0 = No (not underemployed)</p>
+<p>1 = Yes</p>
+<p>Note that <a class="reference external" href="https://ilostat.ilo.org/methods/concepts-and-definitions/description-labour-force-statistics/">ILO guidelines (see chapter 9)</a> defines “time-related” underemployment additionally as a person who has <em>worked less than a threshold relating to working time</em>, where the threshold is determined nationally. This is not done here. Users may add that using the <code class="docutils literal notranslate"><span class="pre">whours</span></code> variable.</p>
 <p><strong>nlfreason</strong></p>
 <p>nlfreason is the reason an individual was not in the labor force in the last 7 days. This variable is constructed for all those who are not presently employed and are not looking for work (lstatus=3) and missing otherwise.</p>
 <p>Five categories after harmonization:</p>
@@ -870,9 +871,9 @@ Figure 23 - ISCO broad skill level classification
 <p><strong>lstatus_year</strong></p>
 <p>lstatus_year is an individual’s labor status in the last 12 months. The Value must be missing for individuals less than the required age (minlaborage).</p>
 <p>Three categories are used after harmonization:</p>
-<p>1 = Employed
-2 = Unemployed
-3 = Not-in-labor force</p>
+<p>1 = Employed</p>
+<p>2 = Unemployed</p>
+<p>3 = Not-in-labor force</p>
 <p>All persons are considered active in the labor force if they presently have a job (formal or informal, i.e., employed) or do not have a job but are actively seeking work (i.e., unemployed).</p>
 <p>1 = Employed</p>
 <p>Employed is defined as anyone who worked during the last 12 months or reference week, regardless of whether the employment was formal or informal, paid or unpaid, for a minimum of 1 hour. Individuals who had a job, but for any reason did not work in the last 7 days are considered employed.</p>
@@ -882,12 +883,13 @@ Figure 23 - ISCO broad skill level classification
 <p>A person is defined as not-in-labor force if he or she is, presently not working and it is not actively seeking a job during the last 12 months or reference week.</p>
 <p><strong>potential_lf_year</strong></p>
 <p>Codifies whether the person is not in the labour force over the past year (lstatus_year=3, missing otherwise) but could potentially be they are i) available but not searching or ii) searching but not immediately available to work. The codes are:</p>
-<p>0 = No (not potentially in the labour force)
-1 = Yes</p>
+<p>0 = No (not potentially in the labour force)</p>
+<p>1 = Yes</p>
 <p><strong>underemployment_year</strong></p>
 <p>Codifies whether the person was in the labour force and working in the past 12 months (lstatus_year=1, missing otherwise) but would take on more jobs or more hours at their job if possible/available. The codes are:</p>
-<p>0 = No (not underemployed)
-1 = Yes</p>
+<p>0 = No (not underemployed)</p>
+<p>1 = Yes</p>
+<p>See details under <code class="docutils literal notranslate"><span class="pre">underemployment</span></code> (7 day recall) for more details.</p>
 <p><strong>nlfreason_year</strong></p>
 <p>nlfreason_year is the reason an individual was not in the labor force in the last 12 months. This variable is constructed for all those who are not presently employed and are not looking for work (lstatus_year=3) and missing otherwise.</p>
 <p>Five categories after harmonization:</p>
@@ -2016,7 +2018,7 @@ By World Bank Jobs Group
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Aug 12, 2024.
+  Last updated on Aug 13, 2024.
   <br/>
 </p>
   </div>
