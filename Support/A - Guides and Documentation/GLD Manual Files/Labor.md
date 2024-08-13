@@ -15,7 +15,9 @@ lstatus is an individual’s labor status in the last 7 days. The value must be 
 Three categories are used after harmonization:
 
 1 = Employed
+
 2 = Unemployed
+
 3 = Not-in-labor force
 
 All persons are considered active in the labor force if they presently have a job (formal or informal, i.e., employed) or do not have a job but are actively seeking work (i.e., unemployed).
@@ -52,6 +54,7 @@ Figure 17 - Definition of different labor force status
 The variable potential_lf thus codifies whether the person is not in the labour force over the past 7 days (lstatus=3, missing otherwise) but could potentially be they are i) available but not searching or ii) searching but not immediately available to work. The codes are:
 
 0 = No (not potentially in the labour force)
+
 1 = Yes
 
 **underemployment**
@@ -59,7 +62,10 @@ The variable potential_lf thus codifies whether the person is not in the labour 
 Codifies whether the person is in the labour force and working over the past 7 days (lstatus=1, missing otherwise) but would take on more jobs or more hours at their job if possible/available. The codes are:
 
 0 = No (not underemployed)
+
 1 = Yes
+
+Note that [ILO guidelines (see chapter 9)](https://ilostat.ilo.org/methods/concepts-and-definitions/description-labour-force-statistics/) defines "time-related" underemployment additionally as a person who has *worked less than a threshold relating to working time*, where the threshold is determined nationally. This is not done here. Users may add that using the `whours` variable.
 
 **nlfreason**
 
@@ -654,7 +660,9 @@ lstatus_year is an individual’s labor status in the last 12 months. The Value 
 Three categories are used after harmonization:
 
 1 = Employed
+
 2 = Unemployed
+
 3 = Not-in-labor force
 
 All persons are considered active in the labor force if they presently have a job (formal or informal, i.e., employed) or do not have a job but are actively seeking work (i.e., unemployed).
@@ -676,6 +684,7 @@ A person is defined as not-in-labor force if he or she is, presently not working
 Codifies whether the person is not in the labour force over the past year (lstatus_year=3, missing otherwise) but could potentially be they are i) available but not searching or ii) searching but not immediately available to work. The codes are:
 
 0 = No (not potentially in the labour force)
+
 1 = Yes
 
 **underemployment_year**
@@ -683,7 +692,10 @@ Codifies whether the person is not in the labour force over the past year (lstat
 Codifies whether the person was in the labour force and working in the past 12 months (lstatus_year=1, missing otherwise) but would take on more jobs or more hours at their job if possible/available. The codes are:
 
 0 = No (not underemployed)
+
 1 = Yes
+
+See details under `underemployment` (7 day recall) for more details.
 
 **nlfreason_year**
 
