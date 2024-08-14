@@ -14,23 +14,21 @@ lstatus is an individual’s labor status in the last 7 days. The value must be 
 
 Three categories are used after harmonization:
 
-1 = Employed
-
-2 = Unemployed
-
-3 = Not-in-labor force
+- 1 = Employed
+- 2 = Unemployed
+- 3 = Not-in-labor force
 
 All persons are considered active in the labor force if they presently have a job (formal or informal, i.e., employed) or do not have a job but are actively seeking work (i.e., unemployed).
 
-1 = Employed
+- 1 = Employed
 
 Employed is defined as anyone who worked during the last 7 days or reference week, regardless of whether the employment was formal or informal, paid or unpaid, for a minimum of 1 hour. Individuals who had a job, but for any reason did not work in the last 7 days are considered employed.
 
-2 = Unemployed
+- 2 = Unemployed
 
 A person is defined as unemployed if he or she is, presently not working but is actively seeking a job. The formal definition of unemployed usually includes being ‘able to accept a job’ (i.e., passively seeking a job). This last question is not asked in all surveys but should be included if present. A person presently not working but waiting for the start of a new job is considered unemployed.
 
-3 = Not-in-labor force
+- 3 = Not-in-labor force
 
 A person is defined as not-in-labor force if he or she is, presently not working and it is not actively seeking a job during the last 7 days or reference week.
 
@@ -53,17 +51,15 @@ Figure 17 - Definition of different labor force status
  
 The variable potential_lf thus codifies whether the person is not in the labour force over the past 7 days (lstatus=3, missing otherwise) but could potentially be they are i) available but not searching or ii) searching but not immediately available to work. The codes are:
 
-0 = No (not potentially in the labour force)
-
-1 = Yes
+- 0 = No (not potentially in the labour force)
+- 1 = Yes
 
 **underemployment**
 
 Codifies whether the person is in the labour force and working over the past 7 days (lstatus=1, missing otherwise) but would take on more jobs or more hours at their job if possible/available. The codes are:
 
-0 = No (not underemployed)
-
-1 = Yes
+- 0 = No (not underemployed)
+- 1 = Yes
 
 Note that [ILO guidelines (see chapter 9)](https://ilostat.ilo.org/methods/concepts-and-definitions/description-labour-force-statistics/) defines "time-related" underemployment additionally as a person who has *worked less than a threshold relating to working time*, where the threshold is determined nationally. This is not done here. Users may add that using the `whours` variable.
 
@@ -73,11 +69,12 @@ nlfreason is the reason an individual was not in the labor force in the last 7 d
 
 Five categories after harmonization:
 
-1= Student (a person currently studying.)
-2= Housekeeper (a person who takes care of the house, older people, or children) 
-3= Retired
-4 = Disabled (a person who cannot work due to physical conditions) 
-5 = Other (a person does not work for any other reason)
+- 1 = Student (a person currently studying.)
+- 2 = Housekeeper (a person who takes care of the house, older people, or children) 
+- 3 = Retired
+- 4 = Disabled (a person who cannot work due to physical conditions) 
+- 5 = Other (a person does not work for any other reason)
+  
 Fill this information for all people interviewed in the labor section of the questionnaire regardless of their age.
 
 **unempldur_l**
@@ -96,7 +93,7 @@ The variable is constructed for all unemployed persons (lstatus=2, otherwise mis
 
 Missing values are allowed for everyone who is not unemployed. Other missing values are also allowed. If the duration of unemployment is not reported as a range, but as continuous variables, the unempldur_l and unempldur_u variables will have the same value. If the high range is open-ended the unempldur_u variable will be missing.
 
-*Primary Employment, 7-day reference period*
+### Primary Employment, 7-day reference period
 
 **empstat**
 
@@ -106,31 +103,31 @@ The definitions are taken from the International Labor Organization’s Classifi
 
 Five categories after harmonization:
 
-1 = Paid Employee
-2 = Non-Paid Employee 
-3 = Employer
-4 = Self-employed
-5 = Other, workers not classifiable by status
+- 1 = Paid Employee
+- 2 = Non-Paid Employee 
+- 3 = Employer
+- 4 = Self-employed (or own-account)
+- 5 = Other, workers not classifiable by status
 
-1 = Paid Employee
+- 1 = Paid Employee
 
 Paid employee includes anyone whose basic remuneration is not directly dependent on the revenue of the unit they work for, typically remunerated by wages and salaries but may be paid for piece work or in-kind. The ‘continuous’ criteria used in the ILO definition is not used here as data are often absent and due to country specificity.
 
-2 = Non-Paid Employee
+- 2 = Non-Paid Employee
 
 Non-paid employee includes contributing family workers who hold a self-employment job in a market-oriented establishment operated by a related person living in the same households who cannot be regarded as a partner because of their degree of commitment to the operation of the establishment, in terms of working time or other factors, is not at a level comparable to that of the head of the establishment. All apprentices should be mapped as ‘non-paid employee’
 
-3 = Employer
+- 3 = Employer
 
 An employer is a business owner (whether alone or in partnership) with employees. If the only people working in the business are the owner and contributing family workers, the person is not considered an employer (as has no employees) and is, instead classified as self-employed.
 
-4 = Self-employed
+- 4 = Self-employed
 
 Own account or self-employment includes jobs where remuneration is directly dependent from the goods and service produced (where home consumption is considered to be part of the profits) and where one has not engaged any permanent employees to work for them on a continuous basis during the reference period.
 
 Members of producers’ cooperatives are workers who hold a self-employment job in a cooperative producing goods and services, in which each member takes part on an equal footing with other members in determining the organization of production, sales and/or other work of the establishment, the investments and the distribution of the proceeds of the establishment amongst the members.
 
-5 = Other, workers not classifiable by status
+- 5 = Other, workers not classifiable by status
 
 Other, workers not classifiable by status include those for whom insufficient relevant information is available and/or who cannot be included in any of the above categories.
 
@@ -140,24 +137,24 @@ ocusec is a categorical variable that specifies the sector of activity in the la
 
 Four categories after harmonization:
 
-1 = Public sector, Central Government, Army (including armed forces) 
-2 = Private, NGO
-3 = State-owned
-4 = Public or State-owned, but cannot distinguish
+- 1 = Public sector, Central Government, Army (including armed forces) 
+- 2 = Private, NGO
+- 3 = State-owned
+- 4 = Public or State-owned, but cannot distinguish
 
-1 = Public Sector, Central Government, Army (including armed forces) Public sector 
+- 1 = Public Sector, Central Government, Army (including armed forces) Public sector 
 
 The part of economy run by the government.
 
-2 = Private, NGO
+- 2 = Private, NGO
 
 Private sector is that part of the economy which is both run for private profit and is not controlled by the state, it also includes non-governmental organizations.
 
-3 = State-owned enterprises
+- 3 = State-owned enterprises
 
 State-owned includes para-state firms and all others in which the government has control (participation over 50%).
 
-4 = Public or State-owned, but cannot distinguish
+- 4 = Public or State-owned, but cannot distinguish
 
 Select this option is the questionnaire does not ask for State-owned enterprises, and only for Public sector.
 
@@ -224,16 +221,16 @@ industrycat10 is a categorical variable that specifies the 1-digit industry clas
 
 Ten categories after harmonization:
 
-1 = Agriculture, Hunting, Fishing, etc. 
-2 = Mining
-3 = Manufacturing
-4 = Public Utility Services 
-5 = Construction
-6 = Commerce
-7 = Transport and Communications 
-8 = Financial and Business Services 
-9 = Public Administration
-10 = Other Services, Unspecified 
+- 1 = Agriculture, Hunting, Fishing, etc. 
+- 2 = Mining
+- 3 = Manufacturing
+- 4 = Public Utility Services 
+- 5 = Construction
+- 6 = Commerce
+- 7 = Transport and Communications 
+- 8 = Financial and Business Services 
+- 9 = Public Administration
+- 10 = Other Services, Unspecified 
  
 Notes: 
 - In the case of different classifications (former Soviet Union republics, for example), recoding has been done to best match the ISIC codes.
@@ -252,10 +249,10 @@ industrycat4 is a categorical variable that specifies the 1-digit industry class
 
 Four categories after harmonization:
 
-1 = Agriculture
-2= Industry
-3 = Services
-4 = Other
+- 1 = Agriculture
+- 2 = Industry
+- 3 = Services
+- 4 = Other
 
 This variable is either created directly from the data (if industry classification does not exist for ten categories) or created from industrycat10.
 
@@ -291,9 +288,9 @@ Figure 23 - ISCO broad skill level classification
 
 Thus, the codes are:
 
-3 = High
-2 = Medium
-1 = Low 
+- 3 = High
+- 2 = Medium
+- 1 = Low 
 . = Armed Forces and not elsewhere classified
 
 **occup**
@@ -302,17 +299,17 @@ occup is a categorical variable that specifies the 1-digit occupational classifi
 
 Eleven categories after harmonization:
 
-1 = Managers
-2 = Professionals
-3 = Technicians and associate professionals 
-4 = Clerical support workers
-5 = Service and sales workers
-6 = Skilled agricultural, forestry and fishery workers 
-7 = Craft and related trades workers
-8 = Plant and machine operators, and assemblers 
-9 = Elementary occupations
-10 = Armed forces occupations 
-99 = Other/unspecified
+- 1 = Managers
+- 2 = Professionals
+- 3 = Technicians and associate professionals 
+- 4 = Clerical support workers
+- 5 = Service and sales workers
+- 6 = Skilled agricultural, forestry and fishery workers 
+- 7 = Craft and related trades workers
+- 8 = Plant and machine operators, and assemblers 
+- 9 = Elementary occupations
+- 10 = Armed forces occupations 
+- 99 = Other/unspecified
 
 **wage_no_compen**
 
@@ -328,16 +325,16 @@ Notes:
 
 unitwage is a categorical variable that specifies the time reference for the wage_no_compen variable. It specifies the time unit measurement for the wages of any individual (lstatus=1 & empstat=1) and it is missing otherwise. Acceptable values include:
 
-1 = Daily
-2 = Weekly
-3 = Every two weeks 
-4 = Every two months
-5 = Monthly
-6 = Quarterly
-7 = Every six months 
-8 = Annually
-9 = Hourly
-10 = Other
+- 1 = Daily
+- 2 = Weekly
+- 3 = Every two weeks 
+- 4 = Twice monthly
+- 5 = Monthly
+- 6 = Quarterly
+- 7 = Every six months 
+- 8 = Annually
+- 9 = Hourly
+- 10 = Other
 
 **whours**
 
@@ -381,28 +378,28 @@ Note: Use gross wages when available and net wages only when gross wages are not
 
 contract is a dummy variable that classifies the contract status (yes/no) of any individual with a job (lstatus=1) and is missing otherwise. It indicates whether a person has a signed (formal and written – not verbal) contract, regardless of duration. The variable is constructed for all persons administered this module in each questionnaire. Two categories after harmonization:
 
-0 = No
-1 = Yes
+- 0 = No
+- 1 = Yes
 
 **healthins**
 
 healthins is a dummy variable that classifies the health insurance status (yes/no) of any individual with a job (lstatus=1) and is missing otherwise. Variable is constructed for all persons administered this module in each questionnaire. However, this variable is only constructed if there is an explicit question about health insurance provided by the job. Two categories after harmonization:
-0 = No
-1 = Yes
+- 0 = No
+- 1 = Yes
 
 **socialsec**
 
 socialsec is a dummy variable that classifies the social security status (yes/no) of any individual with a job (lstatus=1) and is missing otherwise. Variable is constructed for all persons administered this module in each questionnaire. For this reason, the lower age cutoff (and perhaps upper age cutoff) at which information is collected will vary from country to country. However, this variable is only constructed if there is an explicit question about pension plans or social security. Two categories after harmonization:
 
-0 = No
-1 = Yes
+- 0 = No
+- 1 = Yes
 
 **union**
 
 union is a dummy variable that classifies the union membership status (yes/no) of any individual with a job (lstatus=1) and is missing otherwise. Variable is constructed for all persons administered this module in each questionnaire. For this reason, the lower age cutoff (and perhaps upper age cutoff) at which information is collected will vary from country to country. However, this variable is only constructed if there is an explicit question about trade unions. Two categories after harmonization:
 
-0 = No
-1 = Yes
+- 0 = No
+- 1 = Yes
 
 **firmsize_l**
 
@@ -420,31 +417,31 @@ empstat_2 is a categorical variable that specifies employment status of the seco
 
 The definitions are taken from the International Labor Organization’s Classification of Status in Employment with some revisions to take into account the data available. Five categories after harmonization:
 
-1 = Paid Employee
-2 = Non-Paid Employee
-3 = Employer
-4 = Self-employed
-5 = Other, workers not classifiable by status
+- 1 = Paid Employee
+- 2 = Non-Paid Employee
+- 3 = Employer
+- 4 = Self-employed
+- 5 = Other, workers not classifiable by status
 
-1 = Paid Employee
+- 1 = Paid Employee
 
 Paid employee includes anyone whose basic remuneration is not directly dependent on the revenue of the unit they work for, typically remunerated by wages and salaries but may be paid for piece work or in-kind. The ‘continuous’ criteria used in the ILO definition is not used here as data are often absent and due to country specificity.
 
-2 = Non-Paid Employee
+- 2 = Non-Paid Employee
 
 Non-paid employee includes contributing family workers who hold a self-employment job in a market-oriented establishment operated by a related person living in the same households who cannot be regarded as a partner because of their degree of commitment to the operation of the establishment, in terms of working time or other factors, is not at a level comparable to that of the head of the establishment. All apprentices should be mapped as non-paid employee.
 
-3 = Employer
+- 3 = Employer
 
 Employer is a business owner (whether alone or in partnership) with employees. If the only people working in the business are the owner and ‘contributing family workers, the person is not considered an employer (as has no employees) and is, instead classified as own account.
 
-4 = Self-employed
+- 4 = Self-employed
 
 Own account or self-employment includes jobs are those where remuneration is directly dependent from the goods and service produced (where home consumption is considered to be part of the profits) and have not engaged any permanent employees to work for them on a continuous basis during the reference period.
 
 Members of producers’ cooperatives are workers who hold a self-employment job in a cooperative producing goods and services in which each member takes part on an equal footing with other members in determining the organization of production, sales and/or other work of the establishment, the investments and the distribution of the proceeds of the establishment amongst the members.
 
-5 = Other, workers not classifiable by status
+- 5 = Other, workers not classifiable by status
 
 Other, workers not classifiable by status include those for whom insufficient relevant information is available and/or who cannot be included in any of the above categories.
 
@@ -454,24 +451,24 @@ ocusec_2 is a categorical variable that specifies the sector of activity in the 
 
 Four categories after harmonization:
 
-1 = Public sector, Central Government, Army (including armed forces) 
-2 = Private, NGO
-3 = State-owned
-4 = Public or State-owned, but cannot distinguish
+- 1 = Public sector, Central Government, Army (including armed forces) 
+- 2 = Private, NGO
+- 3 = State-owned
+- 4 = Public or State-owned, but cannot distinguish
 
-1 = Public Sector, Central Government, Army (including armed forces) 
+- 1 = Public Sector, Central Government, Army (including armed forces) 
 
 Public sector is the part of economy run by the government.
 
-2 = Private, NGO
+- 2 = Private, NGO
 
 Private sector is that part of the economy which is both run for private profit and is not controlled by the state, it also includes non-governmental organizations
 
-3 = State-owned enterprises
+- 3 = State-owned enterprises
 
 State-owned includes para-state firms and all others in which the government has control (participation over 50%).
 
-4 = Public or State-owned, but cannot distinguish
+- 4 = Public or State-owned, but cannot distinguish
 
 Select this option is the questionnaire does not ask for State-owned enterprises, and only for Public sector.
 
@@ -493,16 +490,16 @@ industrycat10_2 is a categorical variable that specifies the 1-digit industry cl
 
 Ten categories after harmonization:
 
-1 = Agriculture, Hunting, Fishing, etc. 
-2 = Mining
-3 = Manufacturing
-4 = Public Utility Services 
-5 = Construction
-6 = Commerce
-7 = Transport and Communications
-8 = Financial and Business Services 
-9 = Public Administration
-10 = Other Services, Unspecified 
+- 1 = Agriculture, Hunting, Fishing, etc. 
+- 2 = Mining
+- 3 = Manufacturing
+- 4 = Public Utility Services 
+- 5 = Construction
+- 6 = Commerce
+- 7 = Transport and Communications
+- 8 = Financial and Business Services 
+- 9 = Public Administration
+- 10 = Other Services, Unspecified 
 
 Notes:
 
@@ -516,10 +513,10 @@ industrycat4_2 is a categorical variable that specifies the 1-digit industry cla
 
 Four categories after harmonization:
 
-1 = Agriculture
-2= Industry
-3 = Services
-4 = Other
+- 1 = Agriculture
+- 2 = Industry
+- 3 = Services
+- 4 = Other
 
 This variable is either created directly from the data (if industry classification does not exist for 10 categories) or created from industrycat10.
 
@@ -545,17 +542,17 @@ occup_2 is a categorical variable that specifies the 1-digit occupation classifi
 
 Eleven categories after harmonization:
 
-1 = Managers
-2 = Professionals
-3 = Technicians and associate professionals 
-4 = Clerical support workers
-5 = Service and sales workers
-6 = Skilled agricultural, forestry and fishery workers 
-7 = Craft and related trades workers
-8 = Plant and machine operators, and assemblers 
-9 = Elementary occupations
-10 = Armed forces occupations 
-99 = Other/unspecified
+- 1 = Managers
+- 2 = Professionals
+- 3 = Technicians and associate professionals 
+- 4 = Clerical support workers
+- 5 = Service and sales workers
+- 6 = Skilled agricultural, forestry and fishery workers 
+- 7 = Craft and related trades workers
+- 8 = Plant and machine operators, and assemblers 
+- 9 = Elementary occupations
+- 10 = Armed forces occupations 
+- 99 = Other/unspecified
 
 **wage_no_compen_2**
 
@@ -574,16 +571,16 @@ unitwage_2 is a categorical variable that specifies the time reference for the w
 
 Ten categories after harmonization:
 
-1 = Daily
-2 = Weekly
-3 = Every two weeks 
-4 = Every two months 
-5 = Monthly
-6 = Quarterly
-7 = Every six months 
-8 = Annually
-9 = Hourly
-10 = Other
+- 1 = Daily
+- 2 = Weekly
+- 3 = Every two weeks 
+- 4 = Twice monthly 
+- 5 = Monthly
+- 6 = Quarterly
+- 7 = Every six months 
+- 8 = Annually
+- 9 = Hourly
+- 10 = Other
 
 **whours_2**
 
@@ -659,23 +656,21 @@ lstatus_year is an individual’s labor status in the last 12 months. The Value 
 
 Three categories are used after harmonization:
 
-1 = Employed
-
-2 = Unemployed
-
-3 = Not-in-labor force
+- 1 = Employed
+- 2 = Unemployed
+- 3 = Not-in-labor force
 
 All persons are considered active in the labor force if they presently have a job (formal or informal, i.e., employed) or do not have a job but are actively seeking work (i.e., unemployed).
 
-1 = Employed
+- 1 = Employed
 
 Employed is defined as anyone who worked during the last 12 months or reference week, regardless of whether the employment was formal or informal, paid or unpaid, for a minimum of 1 hour. Individuals who had a job, but for any reason did not work in the last 7 days are considered employed.
 
-2 = Unemployed
+- 2 = Unemployed
 
 A person is defined as unemployed if he or she is, presently not working but is actively seeking a job. The formal definition of unemployed usually includes being ‘able to accept a job.’ This last question was asked in a minority of surveys and is, thus, not incorporated in the present definition. A person presently not working but waiting for the start of a new job is considered unemployed.
 
-3 = Not-in-labor force
+- 3 = Not-in-labor force
 
 A person is defined as not-in-labor force if he or she is, presently not working and it is not actively seeking a job during the last 12 months or reference week.
 
@@ -683,17 +678,15 @@ A person is defined as not-in-labor force if he or she is, presently not working
 
 Codifies whether the person is not in the labour force over the past year (lstatus_year=3, missing otherwise) but could potentially be they are i) available but not searching or ii) searching but not immediately available to work. The codes are:
 
-0 = No (not potentially in the labour force)
-
-1 = Yes
+- 0 = No (not potentially in the labour force)
+- 1 = Yes
 
 **underemployment_year**
 
 Codifies whether the person was in the labour force and working in the past 12 months (lstatus_year=1, missing otherwise) but would take on more jobs or more hours at their job if possible/available. The codes are:
 
-0 = No (not underemployed)
-
-1 = Yes
+- 0 = No (not underemployed)
+- 1 = Yes
 
 See details under `underemployment` (7 day recall) for more details.
 
@@ -703,11 +696,11 @@ nlfreason_year is the reason an individual was not in the labor force in the las
 
 Five categories after harmonization:
 
-1= Student (a person currently studying.)
-2= Housewife (a person who takes care of the house, older people, or children) 
-3= Retired
-4 = Disabled (a person who cannot work due to physical conditions) 
-5 = Other (a person does not work for any other reason)
+- 1 = Student (a person currently studying.)
+- 2 = Housewife (a person who takes care of the house, older people, or children) 
+- 3 = Retired
+- 4 = Disabled (a person who cannot work due to physical conditions) 
+- 5 = Other (a person does not work for any other reason)
 
 Do not put missing values for people below the working age, employed, and unemployed. Other missing values allowed.
 
@@ -727,7 +720,7 @@ The variable is constructed for all unemployed persons (lstatus_year=2, otherwis
 
 Missing values are allowed for everyone who is not unemployed. Other missing values are also allowed. If the duration of unemployment is not reported as a range, but as continuous variables, the unempldur_l_year and unempldur_u_year variables will have the same value. If the high range is open- ended the unempldur_u_year variable will be missing.
 
-*Primary Employment, 12-month reference period*
+### Primary Employment, 12-month reference period
 
 **empstat_year**
 
@@ -735,31 +728,31 @@ empstat is a categorical variable that specifies the main employment status in t
 
 The definitions are taken from the International Labor Organization’s Classification of Status in Employment with some revisions to take into account the data available. Five categories after harmonization:
 
-1 = Paid Employee
-2 = Non-Paid Employee 
-3 = Employer
-4 = Self-employed
-5 = Other, workers not classifiable by status
+- 1 = Paid Employee
+- 2 = Non-Paid Employee 
+- 3 = Employer
+- 4 = Self-employed
+- 5 = Other, workers not classifiable by status
 
-1 = Paid Employee
+- 1 = Paid Employee
 
 Paid employee includes anyone whose basic remuneration is not directly dependent on the revenue of the unit they work for, typically remunerated by wages and salaries but may be paid for piece work or in-kind. The ‘continuous’ criteria used in the ILO definition is not used here as data are often absent and due to country specificity.
 
-2 = Non-Paid Employee
+- 2 = Non-Paid Employee
 
 Non-paid employee includes contributing family workers who hold a self-employment job in a market-oriented establishment operated by a related person living in the same households who cannot be regarded as a partner because of their degree of commitment to the operation of the establishment, in terms of working time or other factors, is not at a level comparable to that of the head of the establishment. All apprentices should be mapped as ‘non-paid employee’.
 
-3 = Employer
+- 3 = Employer
 
 An employer is a business owner (whether alone or in partnership) with employees. If the only people working in the business are the owner and contributing family workers, the person is not considered an employer (as has no employees) and is, instead classified as self-employed.
 
-4 = Self-employed
+- 4 = Self-employed
 
 Own account or self-employment includes jobs where remuneration is directly dependent from the goods and service produced (where home consumption is considered to be part of the profits) and where one has not engaged any permanent employees to work for them on a continuous basis during the reference period.
 
 Members of producers’ cooperatives are workers who hold a self-employment job in a cooperative producing goods and services, in which each member takes part on an equal footing with other members in determining the organization of production, sales and/or other work of the establishment, the investments and the distribution of the proceeds of the establishment amongst the members.
 
-5 = Other, workers not classifiable by status
+- 5 = Other, workers not classifiable by status
 
 Other, workers not classifiable by status include those for whom insufficient relevant information is available and/or who cannot be included in any of the above categories.
 
@@ -769,24 +762,24 @@ ocusec_year is a categorical variable that specifies the sector of activity in t
 
 Four categories after harmonization:
 
-1 = Public sector, Central Government, Army (including armed forces) 
-2 = Private, NGO
-3 = State-owned
-4 = Public or State-owned, but cannot distinguish
+- 1 = Public sector, Central Government, Army (including armed forces) 
+- 2 = Private, NGO
+- 3 = State-owned
+- 4 = Public or State-owned, but cannot distinguish
 
-1 = Public Sector, Central Government, Army (including armed forces) 
+- 1 = Public Sector, Central Government, Army (including armed forces) 
 
 Public sector is the part of economy run by the government.
 
-2 = Private, NGO
+- 2 = Private, NGO
 
 Private sector is that part of the economy which is both run for private profit and is not controlled by the state, it also includes non-governmental organizations
 
-3 = State-owned enterprises
+- 3 = State-owned enterprises
 
 State-owned includes para-state firms and all others in which the government has control (participation over 50%).
 
-4 = Public or State-owned, but cannot distinguish
+- 4 = Public or State-owned, but cannot distinguish
 
 Select this option is the questionnaire does not ask for State-owned enterprises, and only for Public sector.
 
@@ -808,16 +801,16 @@ industrycat10_year is a categorical variable that specifies the 1-digit industry
 
 Ten categories after harmonization:
 
-1 = Agriculture, Hunting, Fishing, etc. 
-2 = Mining
-3 = Manufacturing
-4 = Public Utility Services
-5 = Construction
-6 = Commerce
-7 = Transport and Communications 
-8 = Financial and Business Services 
-9 = Public Administration
-10 = Other Services, Unspecified Notes:
+- 1 = Agriculture, Hunting, Fishing, etc. 
+- 2 = Mining
+- 3 = Manufacturing
+- 4 = Public Utility Services
+- 5 = Construction
+- 6 = Commerce
+- 7 = Transport and Communications 
+- 8 = Financial and Business Services 
+- 9 = Public Administration
+- 10 = Other Services, Unspecified Notes:
 
 Notes:
 
@@ -832,10 +825,10 @@ industrycat4_year is a categorical variable that specifies the 1-digit industry 
 
 Four categories after harmonization:
 
-1 = Agriculture
-2= Industry
-3 = Services
-4 = Other
+- 1 = Agriculture
+- 2 = Industry
+- 3 = Services
+- 4 = Other
 
 This variable is either created directly from the data (if industry classification does not exist for ten categories) or created from industrycat10_year.
 
@@ -861,17 +854,17 @@ occup_year is a categorical variable that specifies the 1-digit occupational cla
 
 Eleven categories after harmonization:
 
-1 = Managers
-2 = Professionals
-3 = Technicians and associate professionals 
-4 = Clerical support workers
-5 = Service and sales workers
-6 = Skilled agricultural, forestry and fishery workers 
-7 = Craft and related trades workers
-8 = Plant and machine operators, and assemblers 
-9 = Elementary occupations
-10 = Armed forces occupations 
-99 = Other/unspecified
+- 1 = Managers
+- 2 = Professionals
+- 3 = Technicians and associate professionals 
+- 4 = Clerical support workers
+- 5 = Service and sales workers
+- 6 = Skilled agricultural, forestry and fishery workers 
+- 7 = Craft and related trades workers
+- 8 = Plant and machine operators, and assemblers 
+- 9 = Elementary occupations
+- 10 = Armed forces occupations 
+- 99 = Other/unspecified
 
 **wage_no_compen_year**
 
@@ -888,16 +881,16 @@ Notes:
 
 unitwage_year is a categorical variable that specifies the time reference for the wage_no_compen_year variable. It specifies the time unit measurement for the wages of any individual (lstatus_year =1 & empstat_year =1) and it is missing otherwise. Acceptable values include:
 
-1 = Daily
-2 = Weekly
-3 = Every two weeks 
-4 = Every two months 
-5 = Monthly
-6 = Quarterly
-7 = Every six months 
-8 = Annually
-9 = Hourly
-10 = Other
+- 1 = Daily
+- 2 = Weekly
+- 3 = Every two weeks 
+- 4 = Twice monthly 
+- 5 = Monthly
+- 6 = Quarterly
+- 7 = Every six months 
+- 8 = Annually
+- 9 = Hourly
+- 10 = Other
 
 **whours_year**
 
@@ -923,29 +916,29 @@ For an example on how to annualize wage see 5.2.2 Primary Employment last 7-days
 
 contract_year is a dummy variable that classifies the contract status (yes/no) of any individual with a job (lstatus_year =1) and is missing otherwise. It indicates whether a person has a signed (formal) contract, regardless of duration. The variable is constructed for all persons administered this module in each questionnaire. Two categories after harmonization:
 
-0 = No
-1 = Yes
+- 0 = No
+- 1 = Yes
 
 **healthins_year**
 
 healthins_year is a dummy variable that classifies the health insurance status (yes/no) of any individual with a job (lstatus_year =1) and is missing otherwise. Variable is constructed for all persons administered this module in each questionnaire. However, this variable is only constructed if there is an explicit question about health insurance provided by the job. Two categories after harmonization:
 
-0 = No
-1 = Yes
+- 0 = No
+- 1 = Yes
 
 **socialsec_year**
 
 socialsec_year is a dummy variable that classifies the social security status (yes/no) of any individual with a job (lstatus_year =1) and is missing otherwise. Variable is constructed for all persons administered this module in each questionnaire. For this reason, the lower age cutoff (and perhaps upper age cutoff) at which information is collected will vary from country to country. However, this variable is only constructed if there is an explicit question about pension plans or social security. Two categories after harmonization:
 
-0 = No
-1 = Yes
+- 0 = No
+- 1 = Yes
 
 **union_year**
 
 union_year is a dummy variable that classifies the union membership status (yes/no) of any individual with a job (lstatus_year =1) and is missing otherwise. Variable is constructed for all persons administered this module in each questionnaire. For this reason, the lower age cutoff (and perhaps upper age cutoff) at which information is collected will vary from country to country. However, this variable is only constructed if there is an explicit question about trade unions. Two categories after harmonization:
 
-0 = No
-1 = Yes
+- 0 = No
+- 1 = Yes
 
 **firmsize_l_year**
 
@@ -963,30 +956,31 @@ empstat_2_year is a categorical variable that specifies employment status of the
 
 The definitions are taken from the International Labor Organization’s Classification of Status in Employment with some revisions to take into account the data available. Five categories after harmonization:
 
-1 = Paid Employee
-2 = Non-Paid Employee 
-3 = Employer
-4 = Self-employed
-5 = Other, workers not classifiable by status
+- 1 = Paid Employee
+- 2 = Non-Paid Employee 
+- 3 = Employer
+- 4 = Self-employed
+- 5 = Other, workers not classifiable by status
 
-1 = Paid Employee
+- 1 = Paid Employee
 
 Paid employee includes anyone whose basic remuneration is not directly dependent on the revenue of the unit they work for, typically remunerated by wages and salaries but may be paid for piece work or in-kind. The ‘continuous’ criteria used in the ILO definition is not used here as data are often absent and due to country specificity.
 
-2 = Non-Paid Employee
+- 2 = Non-Paid Employee
 
 Non-paid employee includes contributing family workers who hold a self-employment job in a market-oriented establishment operated by a related person living in the same households who cannot be regarded as a partner because of their degree of commitment to the operation of the establishment, in terms of working time or other factors, is not at a level comparable to that of the head of the establishment. All apprentices should be mapped as non-paid employee.
-3 = Employer
+
+- 3 = Employer
 
 Employer is a business owner (whether alone or in partnership) with employees. If the only people working in the business are the owner and ‘contributing family workers, the person is not considered an employer (as has no employees) and is, instead classified as own account.
 
-4 = Self-employed
+- 4 = Self-employed
 
 Own account or self-employment includes jobs are those where remuneration is directly dependent from the goods and service produced (where home consumption is considered to be part of the profits) and have not engaged any permanent employees to work for them on a continuous basis during the reference period.
 
 Members of producers’ cooperatives are workers who hold a self-employment job in a cooperative producing goods and services in which each member takes part on an equal footing with other members in determining the organization of production, sales and/or other work of the establishment, the investments and the distribution of the proceeds of the establishment amongst the members.
 
-5 = Other, workers not classifiable by status
+- 5 = Other, workers not classifiable by status
 
 Other, workers not classifiable by status include those for whom insufficient relevant information is available and/or who cannot be included in any of the above categories.
 
@@ -996,24 +990,24 @@ ocusec_2_year is a categorical variable that specifies the sector of activity in
 
 Four categories after harmonization:
 
-1 = Public sector, Central Government, Army (including armed forces) 
-2 = Private, NGO
-3 = State-owned
-4 = Public or State-owned, but cannot distinguish
+- 1 = Public sector, Central Government, Army (including armed forces) 
+- 2 = Private, NGO
+- 3 = State-owned
+- 4 = Public or State-owned, but cannot distinguish
 
-1 = Public Sector, Central Government, Army (including armed forces) 
+- 1 = Public Sector, Central Government, Army (including armed forces) 
 
 Public sector is the part of economy run by the government.
 
-2 = Private, NGO
+- 2 = Private, NGO
 
 Private sector is that part of the economy which is both run for private profit and is not controlled by the state, it also includes non-governmental organizations
 
-3 = State-owned enterprises
+- 3 = State-owned enterprises
 
 State-owned includes para-state firms and all others in which the government has control (participation over 50%).
 
-4 = Public or State-owned, but cannot distinguish
+- 4 = Public or State-owned, but cannot distinguish
 
 Select this option is the questionnaire does not ask for State-owned enterprises, and only for Public sector.
 
@@ -1035,16 +1029,16 @@ industrycat10_2_year is a categorical variable that specifies the 1-digit indust
 
 Ten categories after harmonization:
 
-1 = Agriculture, Hunting, Fishing, etc. 
-2 = Mining
-3 = Manufacturing
-4 = Public Utility Services 
-5 = Construction
-6 = Commerce
-7 = Transport and Communications 
-8 = Financial and Business Services 
-9 = Public Administration
-10 = Other Services, Unspecified 
+- 1 = Agriculture, Hunting, Fishing, etc. 
+- 2 = Mining
+- 3 = Manufacturing
+- 4 = Public Utility Services 
+- 5 = Construction
+- 6 = Commerce
+- 7 = Transport and Communications 
+- 8 = Financial and Business Services 
+- 9 = Public Administration
+- 10 = Other Services, Unspecified 
 
 Notes:
 
@@ -1058,10 +1052,10 @@ industrycat4_2_year is a categorical variable that specifies the 1-digit industr
 
 Four categories after harmonization:
 
-1 = Agriculture
-2= Industry
-3 = Services
-4 = Other
+- 1 = Agriculture
+- 2 = Industry
+- 3 = Services
+- 4 = Other
 
 This variable is either created directly from the data (if industry classification does not exist for 10 categories) or created from industrycat10_2_year.
 
@@ -1087,17 +1081,17 @@ occup_2_year is a categorical variable that specifies the 1-digit occupation cla
 
 Eleven categories after harmonization:
 
-1 = Managers
-2 = Professionals
-3 = Technicians and associate professionals 
-4 = Clerical support workers
-5 = Service and sales workers
-6 = Skilled agricultural, forestry and fishery workers 
-7 = Craft and related trades workers
-8 = Plant and machine operators, and assemblers 
-9 = Elementary occupations
-10 = Armed forces occupations 
-99 = Other/unspecified
+- 1 = Managers
+- 2 = Professionals
+- 3 = Technicians and associate professionals 
+- 4 = Clerical support workers
+- 5 = Service and sales workers
+- 6 = Skilled agricultural, forestry and fishery workers 
+- 7 = Craft and related trades workers
+- 8 = Plant and machine operators, and assemblers 
+- 9 = Elementary occupations
+- 10 = Armed forces occupations 
+- 99 = Other/unspecified
 
 **wage_no_compen_2_year**
 
@@ -1116,16 +1110,16 @@ unitwage_2_year is a categorical variable that specifies the time reference for 
 
 Ten categories after harmonization:
 
-1 = Daily
-2 = Weekly
-3 = Every two weeks 
-4 = Every two months 
-5 = Monthly
-6 = Quarterly
-7 = Every six months 
-8 = Annually
-9 = Hourly
-10 = Other
+- 1 = Daily
+- 2 = Weekly
+- 3 = Every two weeks 
+- 4 = Twice monthly
+- 5 = Monthly
+- 6 = Quarterly
+- 7 = Every six months 
+- 8 = Annually
+- 9 = Hourly
+- 10 = Other
 
 **whours_2_year**
 
