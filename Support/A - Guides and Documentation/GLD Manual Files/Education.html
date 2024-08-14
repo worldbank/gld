@@ -70,7 +70,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="prev" title="Migration" href="Migration.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="Aug 13, 2024"/>
+    <meta name="docbuild:last-update" content="Aug 14, 2024"/>
   </head>
   
   
@@ -438,23 +438,29 @@ document.write(`
 <p>Codifies the minimum age for which education questions are asked. For example, if education information is only requested from those 4 years and older the variable should be set to 4.</p>
 <p><strong>school</strong></p>
 <p>Codifies whether the person is currently (i.e., at the time of the survey) attending formal education. The codes are:</p>
-<p>0 = No
-1 = Yes</p>
+<ul class="simple">
+<li><p>0 = No</p></li>
+<li><p>1 = Yes</p></li>
+</ul>
 <p><strong>literacy</strong></p>
-<p>Codifies whether person can read and write in at least one language. The codes are:
-0 = No
-1 = Yes</p>
+<p>Codifies whether person can read and write in at least one language. The codes are:</p>
+<ul class="simple">
+<li><p>0 = No</p></li>
+<li><p>1 = Yes</p></li>
+</ul>
 <p><strong>educy</strong></p>
 <p>Codifies the number of years spent in education.</p>
 <p><strong>educat7</strong></p>
 <p>Classifies the highest level of education attained by the respondent to seven levels. The codes are:</p>
-<p>1 = No education
-2 = Primary incomplete
-3 = Primary complete
-4 = Secondary incomplete
-5 = Secondary complete
-6 = Higher than secondary but not university
-7 = University incomplete or complete</p>
+<ul class="simple">
+<li><p>1 = No education</p></li>
+<li><p>2 = Primary incomplete</p></li>
+<li><p>3 = Primary complete</p></li>
+<li><p>4 = Secondary incomplete</p></li>
+<li><p>5 = Secondary complete</p></li>
+<li><p>6 = Higher than secondary but not university</p></li>
+<li><p>7 = University incomplete or complete</p></li>
+</ul>
 <p>The concept of secondary complete includes all students who have had attended at least one year (complete or incomplete) of upper secondary education (as defined in the ISCED Mappings of UNESCO). That is attendance and completion of “junior high” shall be coded as secondary incomplete while attendance to “senior high school” even if for one year, will be coded as secondary complete.</p>
 <p><strong>educat5</strong></p>
 <p>Classifies the highest level of education attained by the respondent to five levels. The codes are:</p>
@@ -464,11 +470,13 @@ document.write(`
 4 = Secondary complete
 5 = Some tertiary/post-secondary</p>
 <p><strong>educat4</strong></p>
-<p>Classifies the highest level of education attained by the respondent to four levels. The codes are:
-1 = No education
-2 = Primary (complete or incomplete)
-3 = Secondary (complete)
-4 = Tertiary (complete or incomplete)</p>
+<p>Classifies the highest level of education attained by the respondent to four levels. The codes are:</p>
+<ul class="simple">
+<li><p>1 = No education</p></li>
+<li><p>2 = Primary (complete or incomplete)</p></li>
+<li><p>3 = Secondary (complete)</p></li>
+<li><p>4 = Tertiary (complete or incomplete)</p></li>
+</ul>
 <p>Note: Code as primary education anyone who has undergone some schooling but has not finished secondary education.</p>
 <p><strong>educat_orig</strong></p>
 <p>Original education code as in the raw survey data. If the original survey has a single variable coding the education information, simply copy (<code class="docutils literal notranslate"><span class="pre">gen</span> <span class="pre">educat_orig</span> <span class="pre">=</span> <span class="pre">survey_education_var</span></code>).</p>
@@ -663,7 +671,7 @@ By World Bank Jobs Group
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Aug 13, 2024.
+  Last updated on Aug 14, 2024.
   <br/>
 </p>
   </div>

@@ -70,7 +70,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="prev" title="Training" href="Training.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="Aug 13, 2024"/>
+    <meta name="docbuild:last-update" content="Aug 14, 2024"/>
   </head>
   
   
@@ -419,10 +419,12 @@ document.write(`
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#variables">Variables</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#labour-status-7-day-reference-period">Labour status, 7-day reference period</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#primary-employment-7-day-reference-period">Primary Employment, 7-day reference period</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#secondary-employment-7-day-reference-period">Secondary Employment, 7-day reference period</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#other-employment-7-day-reference-period">Other Employment, 7-day reference period</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#total-employment-earnings-7-day-reference-period">Total Employment Earnings, 7-day reference period</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#labor-status-12-month-reference-period">Labor status, 12-month reference period</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#primary-employment-12-month-reference-period">Primary Employment, 12-month reference period</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#secondary-employment-12-month-reference-period">Secondary Employment, 12-month reference period</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#other-employment-12-month-reference-period">Other Employment, 12-month reference period</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#total-employment-earnings-12-month-reference-period">Total Employment Earnings, 12-month reference period</a></li>
@@ -452,15 +454,23 @@ document.write(`
 <p><strong>lstatus</strong></p>
 <p>lstatus is an individual’s labor status in the last 7 days. The value must be missing for individuals less than the required age (minlaborage).</p>
 <p>Three categories are used after harmonization:</p>
-<p>1 = Employed</p>
-<p>2 = Unemployed</p>
-<p>3 = Not-in-labor force</p>
+<ul class="simple">
+<li><p>1 = Employed</p></li>
+<li><p>2 = Unemployed</p></li>
+<li><p>3 = Not-in-labor force</p></li>
+</ul>
 <p>All persons are considered active in the labor force if they presently have a job (formal or informal, i.e., employed) or do not have a job but are actively seeking work (i.e., unemployed).</p>
-<p>1 = Employed</p>
+<ul class="simple">
+<li><p>1 = Employed</p></li>
+</ul>
 <p>Employed is defined as anyone who worked during the last 7 days or reference week, regardless of whether the employment was formal or informal, paid or unpaid, for a minimum of 1 hour. Individuals who had a job, but for any reason did not work in the last 7 days are considered employed.</p>
-<p>2 = Unemployed</p>
+<ul class="simple">
+<li><p>2 = Unemployed</p></li>
+</ul>
 <p>A person is defined as unemployed if he or she is, presently not working but is actively seeking a job. The formal definition of unemployed usually includes being ‘able to accept a job’ (i.e., passively seeking a job). This last question is not asked in all surveys but should be included if present. A person presently not working but waiting for the start of a new job is considered unemployed.</p>
-<p>3 = Not-in-labor force</p>
+<ul class="simple">
+<li><p>3 = Not-in-labor force</p></li>
+</ul>
 <p>A person is defined as not-in-labor force if he or she is, presently not working and it is not actively seeking a job during the last 7 days or reference week.</p>
 <p>Over the past decade, a significant alteration has occurred in survey methodologies regarding the definition of employment, specifically affecting labor status. This change stems from the deliberations of the International Conference of Labour Statisticians (ICLS), a forum for standardization in labor statistics convened by the International Labour Organization (ILO) every five years. During the 19th session of the ICLS in 2013, delegates passed a <a class="reference external" href="https://www.ilo.org/global/statistics-and-databases/standards-and-guidelines/resolutions-adopted-by-international-conferences-of-labour-statisticians/WCMS_230304/lang--en/index.htm">resolution pertaining to the categorization of work, employment, and labor underutilization</a>.</p>
 <p>In essence, the ICLS-19 resolution redefines employment as work performed for others in exchange for pay or profit, excluding activities such as subsistence agriculture or self-housing construction, which were previously classified as employment. This revision necessitates a careful adjustment in coding practices for variables associated with labor status, such as the “lstatus” variable.</p>
@@ -473,22 +483,28 @@ Figure 17 - Definition of different labor force status
 <img alt="Definition of different labor force status" src="../../../_images/vars_potential_lf.png" />
 <br></br></p>
 <p>The variable potential_lf thus codifies whether the person is not in the labour force over the past 7 days (lstatus=3, missing otherwise) but could potentially be they are i) available but not searching or ii) searching but not immediately available to work. The codes are:</p>
-<p>0 = No (not potentially in the labour force)</p>
-<p>1 = Yes</p>
+<ul class="simple">
+<li><p>0 = No (not potentially in the labour force)</p></li>
+<li><p>1 = Yes</p></li>
+</ul>
 <p><strong>underemployment</strong></p>
 <p>Codifies whether the person is in the labour force and working over the past 7 days (lstatus=1, missing otherwise) but would take on more jobs or more hours at their job if possible/available. The codes are:</p>
-<p>0 = No (not underemployed)</p>
-<p>1 = Yes</p>
+<ul class="simple">
+<li><p>0 = No (not underemployed)</p></li>
+<li><p>1 = Yes</p></li>
+</ul>
 <p>Note that <a class="reference external" href="https://ilostat.ilo.org/methods/concepts-and-definitions/description-labour-force-statistics/">ILO guidelines (see chapter 9)</a> defines “time-related” underemployment additionally as a person who has <em>worked less than a threshold relating to working time</em>, where the threshold is determined nationally. This is not done here. Users may add that using the <code class="docutils literal notranslate"><span class="pre">whours</span></code> variable.</p>
 <p><strong>nlfreason</strong></p>
 <p>nlfreason is the reason an individual was not in the labor force in the last 7 days. This variable is constructed for all those who are not presently employed and are not looking for work (lstatus=3) and missing otherwise.</p>
 <p>Five categories after harmonization:</p>
-<p>1= Student (a person currently studying.)
-2= Housekeeper (a person who takes care of the house, older people, or children)
-3= Retired
-4 = Disabled (a person who cannot work due to physical conditions)
-5 = Other (a person does not work for any other reason)
-Fill this information for all people interviewed in the labor section of the questionnaire regardless of their age.</p>
+<ul class="simple">
+<li><p>1 = Student (a person currently studying.)</p></li>
+<li><p>2 = Housekeeper (a person who takes care of the house, older people, or children)</p></li>
+<li><p>3 = Retired</p></li>
+<li><p>4 = Disabled (a person who cannot work due to physical conditions)</p></li>
+<li><p>5 = Other (a person does not work for any other reason)</p></li>
+</ul>
+<p>Fill this information for all people interviewed in the labor section of the questionnaire regardless of their age.</p>
 <p><strong>unempldur_l</strong></p>
 <p>unempldur_l is a continuous variable specifying the duration of unemployment in months (lower bracket).</p>
 <p>The variable is constructed for all unemployed persons (lstatus=2, otherwise missing). If it is specified as continuous in the survey, it records the numbers of months in unemployment. If the variable is categorical it records the lower boundary of the bracket.</p>
@@ -497,41 +513,61 @@ Fill this information for all people interviewed in the labor section of the que
 <p>unempldur_u is a continuous variable specifying the duration of unemployment in months (upper bracket).</p>
 <p>The variable is constructed for all unemployed persons (lstatus=2, otherwise missing). If it is specified as continuous in the survey, it records the numbers of months in unemployment. If the variable is categorical it records the upper boundary of the bracket. If the right bracket is open a missing value should be inputted.</p>
 <p>Missing values are allowed for everyone who is not unemployed. Other missing values are also allowed. If the duration of unemployment is not reported as a range, but as continuous variables, the unempldur_l and unempldur_u variables will have the same value. If the high range is open-ended the unempldur_u variable will be missing.</p>
-<p><em>Primary Employment, 7-day reference period</em></p>
+</section>
+<section id="primary-employment-7-day-reference-period">
+<h3>Primary Employment, 7-day reference period<a class="headerlink" href="#primary-employment-7-day-reference-period" title="Permalink to this heading">#</a></h3>
 <p><strong>empstat</strong></p>
 <p>empstat is a categorical variable that specifies the main employment status in the last 7 days of any individual with a job (lstatus=1) and is missing otherwise. The variable is constructed for all individuals. For this reason, the lower age cutoff (and perhaps upper age cutoff) at which information is collected will vary from country to country.</p>
 <p>The definitions are taken from the International Labor Organization’s Classification of Status in Employment with some revisions to take into account the data available.</p>
 <p>Five categories after harmonization:</p>
-<p>1 = Paid Employee
-2 = Non-Paid Employee
-3 = Employer
-4 = Self-employed
-5 = Other, workers not classifiable by status</p>
-<p>1 = Paid Employee</p>
+<ul class="simple">
+<li><p>1 = Paid Employee</p></li>
+<li><p>2 = Non-Paid Employee</p></li>
+<li><p>3 = Employer</p></li>
+<li><p>4 = Self-employed (or own-account)</p></li>
+<li><p>5 = Other, workers not classifiable by status</p></li>
+<li><p>1 = Paid Employee</p></li>
+</ul>
 <p>Paid employee includes anyone whose basic remuneration is not directly dependent on the revenue of the unit they work for, typically remunerated by wages and salaries but may be paid for piece work or in-kind. The ‘continuous’ criteria used in the ILO definition is not used here as data are often absent and due to country specificity.</p>
-<p>2 = Non-Paid Employee</p>
+<ul class="simple">
+<li><p>2 = Non-Paid Employee</p></li>
+</ul>
 <p>Non-paid employee includes contributing family workers who hold a self-employment job in a market-oriented establishment operated by a related person living in the same households who cannot be regarded as a partner because of their degree of commitment to the operation of the establishment, in terms of working time or other factors, is not at a level comparable to that of the head of the establishment. All apprentices should be mapped as ‘non-paid employee’</p>
-<p>3 = Employer</p>
+<ul class="simple">
+<li><p>3 = Employer</p></li>
+</ul>
 <p>An employer is a business owner (whether alone or in partnership) with employees. If the only people working in the business are the owner and contributing family workers, the person is not considered an employer (as has no employees) and is, instead classified as self-employed.</p>
-<p>4 = Self-employed</p>
+<ul class="simple">
+<li><p>4 = Self-employed</p></li>
+</ul>
 <p>Own account or self-employment includes jobs where remuneration is directly dependent from the goods and service produced (where home consumption is considered to be part of the profits) and where one has not engaged any permanent employees to work for them on a continuous basis during the reference period.</p>
 <p>Members of producers’ cooperatives are workers who hold a self-employment job in a cooperative producing goods and services, in which each member takes part on an equal footing with other members in determining the organization of production, sales and/or other work of the establishment, the investments and the distribution of the proceeds of the establishment amongst the members.</p>
-<p>5 = Other, workers not classifiable by status</p>
+<ul class="simple">
+<li><p>5 = Other, workers not classifiable by status</p></li>
+</ul>
 <p>Other, workers not classifiable by status include those for whom insufficient relevant information is available and/or who cannot be included in any of the above categories.</p>
 <p><strong>ocusec</strong></p>
 <p>ocusec is a categorical variable that specifies the sector of activity in the last 7 days. It classifies the main job’s sector of activity of any individual with a job (lstatus=1) and is missing otherwise. The variable is constructed for all persons administered this module in each questionnaire.</p>
 <p>Four categories after harmonization:</p>
-<p>1 = Public sector, Central Government, Army (including armed forces)
-2 = Private, NGO
-3 = State-owned
-4 = Public or State-owned, but cannot distinguish</p>
-<p>1 = Public Sector, Central Government, Army (including armed forces) Public sector</p>
+<ul class="simple">
+<li><p>1 = Public sector, Central Government, Army (including armed forces)</p></li>
+<li><p>2 = Private, NGO</p></li>
+<li><p>3 = State-owned</p></li>
+<li><p>4 = Public or State-owned, but cannot distinguish</p></li>
+<li><p>1 = Public Sector, Central Government, Army (including armed forces) Public sector</p></li>
+</ul>
 <p>The part of economy run by the government.</p>
-<p>2 = Private, NGO</p>
+<ul class="simple">
+<li><p>2 = Private, NGO</p></li>
+</ul>
 <p>Private sector is that part of the economy which is both run for private profit and is not controlled by the state, it also includes non-governmental organizations.</p>
-<p>3 = State-owned enterprises</p>
+<ul class="simple">
+<li><p>3 = State-owned enterprises</p></li>
+</ul>
 <p>State-owned includes para-state firms and all others in which the government has control (participation over 50%).</p>
-<p>4 = Public or State-owned, but cannot distinguish</p>
+<ul class="simple">
+<li><p>4 = Public or State-owned, but cannot distinguish</p></li>
+</ul>
 <p>Select this option is the questionnaire does not ask for State-owned enterprises, and only for Public sector.</p>
 <p>Additionally, recall the fact that, in common English usage, a public company (often denoted as public limited company or PLC) are private companies in the private sector but whose ownership is organized via stocks tradeable in a public market, i.e., accessible to all, not run by the public sector. Figure 18 below is an example of the relevant question in the 2010 Pakistani LFS:</p>
 <p><br></br>
@@ -572,16 +608,18 @@ Figure 20 - Examples of different ISIC codes
 <p><strong>industrycat10</strong></p>
 <p>industrycat10 is a categorical variable that specifies the 1-digit industry classification in the last 7 days for the main job of any individual with a job (lstatus=1) and is missing otherwise. The variable is constructed for all persons administered this module in each questionnaire. The codes for the main job are given here based on the UN International Standard Industrial Classification. It classifies the main job of any individual with a job (lstatus=1) and is missing otherwise</p>
 <p>Ten categories after harmonization:</p>
-<p>1 = Agriculture, Hunting, Fishing, etc.
-2 = Mining
-3 = Manufacturing
-4 = Public Utility Services
-5 = Construction
-6 = Commerce
-7 = Transport and Communications
-8 = Financial and Business Services
-9 = Public Administration
-10 = Other Services, Unspecified</p>
+<ul class="simple">
+<li><p>1 = Agriculture, Hunting, Fishing, etc.</p></li>
+<li><p>2 = Mining</p></li>
+<li><p>3 = Manufacturing</p></li>
+<li><p>4 = Public Utility Services</p></li>
+<li><p>5 = Construction</p></li>
+<li><p>6 = Commerce</p></li>
+<li><p>7 = Transport and Communications</p></li>
+<li><p>8 = Financial and Business Services</p></li>
+<li><p>9 = Public Administration</p></li>
+<li><p>10 = Other Services, Unspecified</p></li>
+</ul>
 <p>Notes:</p>
 <ul class="simple">
 <li><p>In the case of different classifications (former Soviet Union republics, for example), recoding has been done to best match the ISIC codes.</p></li>
@@ -596,10 +634,12 @@ Figure 21 - Overview of coding of industrycat based on different ISIC revisions
 <p><strong>industrycat4</strong></p>
 <p>industrycat4 is a categorical variable that specifies the 1-digit industry classification in the last 7 days for the main job for Broad Economic Activities. This variable is either created directly from the data (if industry classification does not exist for ten categories) or created from industrycat10.</p>
 <p>Four categories after harmonization:</p>
-<p>1 = Agriculture
-2= Industry
-3 = Services
-4 = Other</p>
+<ul class="simple">
+<li><p>1 = Agriculture</p></li>
+<li><p>2 = Industry</p></li>
+<li><p>3 = Services</p></li>
+<li><p>4 = Other</p></li>
+</ul>
 <p>This variable is either created directly from the data (if industry classification does not exist for ten categories) or created from industrycat10.</p>
 <p><strong>occup_orig</strong></p>
 <p>occup_orig is a string variable that specifies the original occupation code in the last 7 days for the main job. This variable corresponds to whatever is in the original file with no recoding.</p>
@@ -620,24 +660,28 @@ Figure 23 - ISCO broad skill level classification
 <img alt="ISCO broad skill level classification" src="../../../_images/vars_occup_skill.png" />
 <br></br></p>
 <p>Thus, the codes are:</p>
-<p>3 = High
-2 = Medium
-1 = Low
-. = Armed Forces and not elsewhere classified</p>
+<ul class="simple">
+<li><p>3 = High</p></li>
+<li><p>2 = Medium</p></li>
+<li><p>1 = Low
+. = Armed Forces and not elsewhere classified</p></li>
+</ul>
 <p><strong>occup</strong></p>
 <p>occup is a categorical variable that specifies the 1-digit occupational classification for the main job in the last 7 days of any individual with a job (lstatus=1) and is missing otherwise. This variable is constructed for all persons administered this module in each questionnaire. For this reason, the lower age cutoff (and perhaps upper age cutoff) at which information is collected will vary from country to country. Most surveys collect detailed information and then code it, without keeping the original data, no attempt has been made to correct or check the original coding. The classification is based on the International Standard Classification of Occupations (ISCO). It classifies the main job of any individual with a job (lstatus=1) and is missing otherwise.</p>
 <p>Eleven categories after harmonization:</p>
-<p>1 = Managers
-2 = Professionals
-3 = Technicians and associate professionals
-4 = Clerical support workers
-5 = Service and sales workers
-6 = Skilled agricultural, forestry and fishery workers
-7 = Craft and related trades workers
-8 = Plant and machine operators, and assemblers
-9 = Elementary occupations
-10 = Armed forces occupations
-99 = Other/unspecified</p>
+<ul class="simple">
+<li><p>1 = Managers</p></li>
+<li><p>2 = Professionals</p></li>
+<li><p>3 = Technicians and associate professionals</p></li>
+<li><p>4 = Clerical support workers</p></li>
+<li><p>5 = Service and sales workers</p></li>
+<li><p>6 = Skilled agricultural, forestry and fishery workers</p></li>
+<li><p>7 = Craft and related trades workers</p></li>
+<li><p>8 = Plant and machine operators, and assemblers</p></li>
+<li><p>9 = Elementary occupations</p></li>
+<li><p>10 = Armed forces occupations</p></li>
+<li><p>99 = Other/unspecified</p></li>
+</ul>
 <p><strong>wage_no_compen</strong></p>
 <p>wage_no_compen is a continuous variable that specifies the last wage payment in local currency of any employed individual (lstatus=1) in its primary occupation at the reference period reported in the survey and it is missing otherwise. The wage should come from the main job, in other words, the job that the person dedicated most time in the week preceding the survey. This excludes tips, bonuses, other compensation such as dwellings or clothes, and other payments. The variable is constructed for all persons administered this module in each questionnaire. For this reason, the lower age cutoff (and perhaps upper age cutoff) will vary from country to country.</p>
 <p>Notes:</p>
@@ -648,16 +692,18 @@ Figure 23 - ISCO broad skill level classification
 </ul>
 <p><strong>unitwage</strong></p>
 <p>unitwage is a categorical variable that specifies the time reference for the wage_no_compen variable. It specifies the time unit measurement for the wages of any individual (lstatus=1 &amp; empstat=1) and it is missing otherwise. Acceptable values include:</p>
-<p>1 = Daily
-2 = Weekly
-3 = Every two weeks
-4 = Every two months
-5 = Monthly
-6 = Quarterly
-7 = Every six months
-8 = Annually
-9 = Hourly
-10 = Other</p>
+<ul class="simple">
+<li><p>1 = Daily</p></li>
+<li><p>2 = Weekly</p></li>
+<li><p>3 = Every two weeks</p></li>
+<li><p>4 = Twice monthly</p></li>
+<li><p>5 = Monthly</p></li>
+<li><p>6 = Quarterly</p></li>
+<li><p>7 = Every six months</p></li>
+<li><p>8 = Annually</p></li>
+<li><p>9 = Hourly</p></li>
+<li><p>10 = Other</p></li>
+</ul>
 <p><strong>whours</strong></p>
 <p>whours is a continuous variable that specifies the hours of work last week for the main job of any individual with a job (lstatus=1) and is missing otherwise. The main job defined as that occupation that the person dedicated more time to over the past week. The variable is constructed for all persons administered this module in each questionnaire.</p>
 <p>Notes:</p>
@@ -690,20 +736,28 @@ Figure 23 - ISCO broad skill level classification
 <p>Note: Use gross wages when available and net wages only when gross wages are not available. This is done to make it easy to compare earnings in formal and informal sectors.</p>
 <p><strong>contract</strong></p>
 <p>contract is a dummy variable that classifies the contract status (yes/no) of any individual with a job (lstatus=1) and is missing otherwise. It indicates whether a person has a signed (formal and written – not verbal) contract, regardless of duration. The variable is constructed for all persons administered this module in each questionnaire. Two categories after harmonization:</p>
-<p>0 = No
-1 = Yes</p>
+<ul class="simple">
+<li><p>0 = No</p></li>
+<li><p>1 = Yes</p></li>
+</ul>
 <p><strong>healthins</strong></p>
-<p>healthins is a dummy variable that classifies the health insurance status (yes/no) of any individual with a job (lstatus=1) and is missing otherwise. Variable is constructed for all persons administered this module in each questionnaire. However, this variable is only constructed if there is an explicit question about health insurance provided by the job. Two categories after harmonization:
-0 = No
-1 = Yes</p>
+<p>healthins is a dummy variable that classifies the health insurance status (yes/no) of any individual with a job (lstatus=1) and is missing otherwise. Variable is constructed for all persons administered this module in each questionnaire. However, this variable is only constructed if there is an explicit question about health insurance provided by the job. Two categories after harmonization:</p>
+<ul class="simple">
+<li><p>0 = No</p></li>
+<li><p>1 = Yes</p></li>
+</ul>
 <p><strong>socialsec</strong></p>
 <p>socialsec is a dummy variable that classifies the social security status (yes/no) of any individual with a job (lstatus=1) and is missing otherwise. Variable is constructed for all persons administered this module in each questionnaire. For this reason, the lower age cutoff (and perhaps upper age cutoff) at which information is collected will vary from country to country. However, this variable is only constructed if there is an explicit question about pension plans or social security. Two categories after harmonization:</p>
-<p>0 = No
-1 = Yes</p>
+<ul class="simple">
+<li><p>0 = No</p></li>
+<li><p>1 = Yes</p></li>
+</ul>
 <p><strong>union</strong></p>
 <p>union is a dummy variable that classifies the union membership status (yes/no) of any individual with a job (lstatus=1) and is missing otherwise. Variable is constructed for all persons administered this module in each questionnaire. For this reason, the lower age cutoff (and perhaps upper age cutoff) at which information is collected will vary from country to country. However, this variable is only constructed if there is an explicit question about trade unions. Two categories after harmonization:</p>
-<p>0 = No
-1 = Yes</p>
+<ul class="simple">
+<li><p>0 = No</p></li>
+<li><p>1 = Yes</p></li>
+</ul>
 <p><strong>firmsize_l</strong></p>
 <p>firmsize_l specifies the lower bracket of the firm size. The variable is constructed for all persons who are employed in the last 7 days for the main job. If it is continuous, it records the number of people working for the same employer. If the variable is categorical, it records the lower boundary of the bracket.</p>
 <p><strong>firmsize_u</strong></p>
@@ -714,36 +768,54 @@ Figure 23 - ISCO broad skill level classification
 <p><strong>empstat_2</strong></p>
 <p>empstat_2 is a categorical variable that specifies employment status of the secondary job with reference period of last 7 days of any individual with a job (lstatus=1) and is missing otherwise. The variable is constructed for all individuals. For this reason, the lower age cutoff (and perhaps upper age cutoff) at which information is collected will vary from country to country.</p>
 <p>The definitions are taken from the International Labor Organization’s Classification of Status in Employment with some revisions to take into account the data available. Five categories after harmonization:</p>
-<p>1 = Paid Employee
-2 = Non-Paid Employee
-3 = Employer
-4 = Self-employed
-5 = Other, workers not classifiable by status</p>
-<p>1 = Paid Employee</p>
+<ul class="simple">
+<li><p>1 = Paid Employee</p></li>
+<li><p>2 = Non-Paid Employee</p></li>
+<li><p>3 = Employer</p></li>
+<li><p>4 = Self-employed</p></li>
+<li><p>5 = Other, workers not classifiable by status</p></li>
+<li><p>1 = Paid Employee</p></li>
+</ul>
 <p>Paid employee includes anyone whose basic remuneration is not directly dependent on the revenue of the unit they work for, typically remunerated by wages and salaries but may be paid for piece work or in-kind. The ‘continuous’ criteria used in the ILO definition is not used here as data are often absent and due to country specificity.</p>
-<p>2 = Non-Paid Employee</p>
+<ul class="simple">
+<li><p>2 = Non-Paid Employee</p></li>
+</ul>
 <p>Non-paid employee includes contributing family workers who hold a self-employment job in a market-oriented establishment operated by a related person living in the same households who cannot be regarded as a partner because of their degree of commitment to the operation of the establishment, in terms of working time or other factors, is not at a level comparable to that of the head of the establishment. All apprentices should be mapped as non-paid employee.</p>
-<p>3 = Employer</p>
+<ul class="simple">
+<li><p>3 = Employer</p></li>
+</ul>
 <p>Employer is a business owner (whether alone or in partnership) with employees. If the only people working in the business are the owner and ‘contributing family workers, the person is not considered an employer (as has no employees) and is, instead classified as own account.</p>
-<p>4 = Self-employed</p>
+<ul class="simple">
+<li><p>4 = Self-employed</p></li>
+</ul>
 <p>Own account or self-employment includes jobs are those where remuneration is directly dependent from the goods and service produced (where home consumption is considered to be part of the profits) and have not engaged any permanent employees to work for them on a continuous basis during the reference period.</p>
 <p>Members of producers’ cooperatives are workers who hold a self-employment job in a cooperative producing goods and services in which each member takes part on an equal footing with other members in determining the organization of production, sales and/or other work of the establishment, the investments and the distribution of the proceeds of the establishment amongst the members.</p>
-<p>5 = Other, workers not classifiable by status</p>
+<ul class="simple">
+<li><p>5 = Other, workers not classifiable by status</p></li>
+</ul>
 <p>Other, workers not classifiable by status include those for whom insufficient relevant information is available and/or who cannot be included in any of the above categories.</p>
 <p><strong>ocusec_2</strong></p>
 <p>ocusec_2 is a categorical variable that specifies the sector of activity in the last 7 days. It classifies the secondary job’s sector of activity of any individual with a job (lstatus=1) and is missing otherwise. The variable is constructed for all persons administered this module in each questionnaire.</p>
 <p>Four categories after harmonization:</p>
-<p>1 = Public sector, Central Government, Army (including armed forces)
-2 = Private, NGO
-3 = State-owned
-4 = Public or State-owned, but cannot distinguish</p>
-<p>1 = Public Sector, Central Government, Army (including armed forces)</p>
+<ul class="simple">
+<li><p>1 = Public sector, Central Government, Army (including armed forces)</p></li>
+<li><p>2 = Private, NGO</p></li>
+<li><p>3 = State-owned</p></li>
+<li><p>4 = Public or State-owned, but cannot distinguish</p></li>
+<li><p>1 = Public Sector, Central Government, Army (including armed forces)</p></li>
+</ul>
 <p>Public sector is the part of economy run by the government.</p>
-<p>2 = Private, NGO</p>
+<ul class="simple">
+<li><p>2 = Private, NGO</p></li>
+</ul>
 <p>Private sector is that part of the economy which is both run for private profit and is not controlled by the state, it also includes non-governmental organizations</p>
-<p>3 = State-owned enterprises</p>
+<ul class="simple">
+<li><p>3 = State-owned enterprises</p></li>
+</ul>
 <p>State-owned includes para-state firms and all others in which the government has control (participation over 50%).</p>
-<p>4 = Public or State-owned, but cannot distinguish</p>
+<ul class="simple">
+<li><p>4 = Public or State-owned, but cannot distinguish</p></li>
+</ul>
 <p>Select this option is the questionnaire does not ask for State-owned enterprises, and only for Public sector.</p>
 <p>Notes: Do not code basis of occupation (ISCO) or industry (ISIC) codes.</p>
 <p><strong>industry_orig_2</strong></p>
@@ -754,16 +826,18 @@ Figure 23 - ISCO broad skill level classification
 <p><strong>industrycat10_2</strong></p>
 <p>industrycat10_2 is a categorical variable that specifies the 1-digit industry classification that classifies the second job with reference period of the last 7 days of any individual with a job (lstatus=1) and is missing otherwise. The variable is constructed for all persons administered this module in each questionnaire. The codes for the second job are given here based on the UN International Standard Industrial Classification.</p>
 <p>Ten categories after harmonization:</p>
-<p>1 = Agriculture, Hunting, Fishing, etc.
-2 = Mining
-3 = Manufacturing
-4 = Public Utility Services
-5 = Construction
-6 = Commerce
-7 = Transport and Communications
-8 = Financial and Business Services
-9 = Public Administration
-10 = Other Services, Unspecified</p>
+<ul class="simple">
+<li><p>1 = Agriculture, Hunting, Fishing, etc.</p></li>
+<li><p>2 = Mining</p></li>
+<li><p>3 = Manufacturing</p></li>
+<li><p>4 = Public Utility Services</p></li>
+<li><p>5 = Construction</p></li>
+<li><p>6 = Commerce</p></li>
+<li><p>7 = Transport and Communications</p></li>
+<li><p>8 = Financial and Business Services</p></li>
+<li><p>9 = Public Administration</p></li>
+<li><p>10 = Other Services, Unspecified</p></li>
+</ul>
 <p>Notes:</p>
 <ul class="simple">
 <li><p>In the case of different classifications (former Soviet Union republics, for example), recoding has been done to best match the ISIC codes.</p></li>
@@ -773,10 +847,12 @@ Figure 23 - ISCO broad skill level classification
 <p><strong>industrycat4_2</strong></p>
 <p>industrycat4_2 is a categorical variable that specifies the 1-digit industry classification for Broad Economic Activities for the second job with reference period of the last 7 days. This variable is either created directly from the data (if industry classification does not exist for 10 categories) or created from industrycat10_2.</p>
 <p>Four categories after harmonization:</p>
-<p>1 = Agriculture
-2= Industry
-3 = Services
-4 = Other</p>
+<ul class="simple">
+<li><p>1 = Agriculture</p></li>
+<li><p>2 = Industry</p></li>
+<li><p>3 = Services</p></li>
+<li><p>4 = Other</p></li>
+</ul>
 <p>This variable is either created directly from the data (if industry classification does not exist for 10 categories) or created from industrycat10.</p>
 <p><strong>occup_orig_2</strong></p>
 <p>occup_orig_2 is a string variable that specifies the original occupation code in the last 7 days for the secondary job. This variable corresponds to whatever is in the original file with no recoding.</p>
@@ -789,17 +865,19 @@ Figure 23 - ISCO broad skill level classification
 <p><strong>occup_2</strong></p>
 <p>occup_2 is a categorical variable that specifies the 1-digit occupation classification. It classifies the second job of any individual with a job (lstatus=1) and is missing otherwise. This variable is constructed for all persons administered this module in each questionnaire. Most surveys collect detailed information and then code it, without keeping the original data. No attempt has been made to correct or check the original coding. The classification is based on the International Standard Classification of Occupations (ISCO). In the case of different classifications, re-coding has been done to best match the ISCO.</p>
 <p>Eleven categories after harmonization:</p>
-<p>1 = Managers
-2 = Professionals
-3 = Technicians and associate professionals
-4 = Clerical support workers
-5 = Service and sales workers
-6 = Skilled agricultural, forestry and fishery workers
-7 = Craft and related trades workers
-8 = Plant and machine operators, and assemblers
-9 = Elementary occupations
-10 = Armed forces occupations
-99 = Other/unspecified</p>
+<ul class="simple">
+<li><p>1 = Managers</p></li>
+<li><p>2 = Professionals</p></li>
+<li><p>3 = Technicians and associate professionals</p></li>
+<li><p>4 = Clerical support workers</p></li>
+<li><p>5 = Service and sales workers</p></li>
+<li><p>6 = Skilled agricultural, forestry and fishery workers</p></li>
+<li><p>7 = Craft and related trades workers</p></li>
+<li><p>8 = Plant and machine operators, and assemblers</p></li>
+<li><p>9 = Elementary occupations</p></li>
+<li><p>10 = Armed forces occupations</p></li>
+<li><p>99 = Other/unspecified</p></li>
+</ul>
 <p><strong>wage_no_compen_2</strong></p>
 <p>wage_no_compen_2 is a continuous variable that specifies the last wage payment in local currency of any individual (lstatus=1 &amp; empstat=1) in its secondary occupation and is missing otherwise. The wage should come from the second job, in other words, the job that the person dedicated the second most amount of time in the week preceding the survey. This excludes tips, bonuses, other compensation such as dwellings or clothes, and other payments. The variable is constructed for all persons administered this module in each questionnaire. For this reason, the lower age cutoff (and perhaps upper age cutoff) will vary from country to country.</p>
 <p>Notes:</p>
@@ -812,16 +890,18 @@ Figure 23 - ISCO broad skill level classification
 <p><strong>unitwage_2</strong></p>
 <p>unitwage_2 is a categorical variable that specifies the time reference for the wage_no_compen_2 variable. It specifies the time unit measurement for the wages for the secondary job of any individual (lstatus=1 &amp; empstat=1) and is missing otherwise.</p>
 <p>Ten categories after harmonization:</p>
-<p>1 = Daily
-2 = Weekly
-3 = Every two weeks
-4 = Every two months
-5 = Monthly
-6 = Quarterly
-7 = Every six months
-8 = Annually
-9 = Hourly
-10 = Other</p>
+<ul class="simple">
+<li><p>1 = Daily</p></li>
+<li><p>2 = Weekly</p></li>
+<li><p>3 = Every two weeks</p></li>
+<li><p>4 = Twice monthly</p></li>
+<li><p>5 = Monthly</p></li>
+<li><p>6 = Quarterly</p></li>
+<li><p>7 = Every six months</p></li>
+<li><p>8 = Annually</p></li>
+<li><p>9 = Hourly</p></li>
+<li><p>10 = Other</p></li>
+</ul>
 <p><strong>whours_2</strong></p>
 <p>whours_2 is a continuous variable that specifies the hours of work in last week for the second job with reference period of the last 7 days of any individual with a job (lstatus=1) and is missing otherwise.</p>
 <p>The second job defined as that occupation that the person dedicated the second most amount of time to over the past week. The variable is constructed for all persons administered this module in each questionnaire. The lower age cutoff (and perhaps upper age cutoff) at which information is collected will vary from country to country.</p>
@@ -871,33 +951,47 @@ Figure 23 - ISCO broad skill level classification
 <p><strong>lstatus_year</strong></p>
 <p>lstatus_year is an individual’s labor status in the last 12 months. The Value must be missing for individuals less than the required age (minlaborage).</p>
 <p>Three categories are used after harmonization:</p>
-<p>1 = Employed</p>
-<p>2 = Unemployed</p>
-<p>3 = Not-in-labor force</p>
+<ul class="simple">
+<li><p>1 = Employed</p></li>
+<li><p>2 = Unemployed</p></li>
+<li><p>3 = Not-in-labor force</p></li>
+</ul>
 <p>All persons are considered active in the labor force if they presently have a job (formal or informal, i.e., employed) or do not have a job but are actively seeking work (i.e., unemployed).</p>
-<p>1 = Employed</p>
+<ul class="simple">
+<li><p>1 = Employed</p></li>
+</ul>
 <p>Employed is defined as anyone who worked during the last 12 months or reference week, regardless of whether the employment was formal or informal, paid or unpaid, for a minimum of 1 hour. Individuals who had a job, but for any reason did not work in the last 7 days are considered employed.</p>
-<p>2 = Unemployed</p>
+<ul class="simple">
+<li><p>2 = Unemployed</p></li>
+</ul>
 <p>A person is defined as unemployed if he or she is, presently not working but is actively seeking a job. The formal definition of unemployed usually includes being ‘able to accept a job.’ This last question was asked in a minority of surveys and is, thus, not incorporated in the present definition. A person presently not working but waiting for the start of a new job is considered unemployed.</p>
-<p>3 = Not-in-labor force</p>
+<ul class="simple">
+<li><p>3 = Not-in-labor force</p></li>
+</ul>
 <p>A person is defined as not-in-labor force if he or she is, presently not working and it is not actively seeking a job during the last 12 months or reference week.</p>
 <p><strong>potential_lf_year</strong></p>
 <p>Codifies whether the person is not in the labour force over the past year (lstatus_year=3, missing otherwise) but could potentially be they are i) available but not searching or ii) searching but not immediately available to work. The codes are:</p>
-<p>0 = No (not potentially in the labour force)</p>
-<p>1 = Yes</p>
+<ul class="simple">
+<li><p>0 = No (not potentially in the labour force)</p></li>
+<li><p>1 = Yes</p></li>
+</ul>
 <p><strong>underemployment_year</strong></p>
 <p>Codifies whether the person was in the labour force and working in the past 12 months (lstatus_year=1, missing otherwise) but would take on more jobs or more hours at their job if possible/available. The codes are:</p>
-<p>0 = No (not underemployed)</p>
-<p>1 = Yes</p>
+<ul class="simple">
+<li><p>0 = No (not underemployed)</p></li>
+<li><p>1 = Yes</p></li>
+</ul>
 <p>See details under <code class="docutils literal notranslate"><span class="pre">underemployment</span></code> (7 day recall) for more details.</p>
 <p><strong>nlfreason_year</strong></p>
 <p>nlfreason_year is the reason an individual was not in the labor force in the last 12 months. This variable is constructed for all those who are not presently employed and are not looking for work (lstatus_year=3) and missing otherwise.</p>
 <p>Five categories after harmonization:</p>
-<p>1= Student (a person currently studying.)
-2= Housewife (a person who takes care of the house, older people, or children)
-3= Retired
-4 = Disabled (a person who cannot work due to physical conditions)
-5 = Other (a person does not work for any other reason)</p>
+<ul class="simple">
+<li><p>1 = Student (a person currently studying.)</p></li>
+<li><p>2 = Housewife (a person who takes care of the house, older people, or children)</p></li>
+<li><p>3 = Retired</p></li>
+<li><p>4 = Disabled (a person who cannot work due to physical conditions)</p></li>
+<li><p>5 = Other (a person does not work for any other reason)</p></li>
+</ul>
 <p>Do not put missing values for people below the working age, employed, and unemployed. Other missing values allowed.</p>
 <p><strong>unempldur_l_year</strong></p>
 <p>unempldur_l_year is a continuous variable specifying the duration of unemployment in months (lower bracket).</p>
@@ -907,40 +1001,60 @@ Figure 23 - ISCO broad skill level classification
 <p>unempldur_u_year is a continuous variable specifying the duration of unemployment in months (upper bracket).</p>
 <p>The variable is constructed for all unemployed persons (lstatus_year=2, otherwise missing). If it is specified as continuous in the survey, it records the numbers of months in unemployment. If the variable is categorical it records the upper boundary of the bracket. If the right bracket is open a missing value should be inputted.</p>
 <p>Missing values are allowed for everyone who is not unemployed. Other missing values are also allowed. If the duration of unemployment is not reported as a range, but as continuous variables, the unempldur_l_year and unempldur_u_year variables will have the same value. If the high range is open- ended the unempldur_u_year variable will be missing.</p>
-<p><em>Primary Employment, 12-month reference period</em></p>
+</section>
+<section id="primary-employment-12-month-reference-period">
+<h3>Primary Employment, 12-month reference period<a class="headerlink" href="#primary-employment-12-month-reference-period" title="Permalink to this heading">#</a></h3>
 <p><strong>empstat_year</strong></p>
 <p>empstat is a categorical variable that specifies the main employment status in the last 12 months of any individual with a job (lstatus_year =1) and is missing otherwise. The variable is constructed for all individuals. For this reason, the lower age cutoff (and perhaps upper age cutoff) at which information is collected will vary from country to country.</p>
 <p>The definitions are taken from the International Labor Organization’s Classification of Status in Employment with some revisions to take into account the data available. Five categories after harmonization:</p>
-<p>1 = Paid Employee
-2 = Non-Paid Employee
-3 = Employer
-4 = Self-employed
-5 = Other, workers not classifiable by status</p>
-<p>1 = Paid Employee</p>
+<ul class="simple">
+<li><p>1 = Paid Employee</p></li>
+<li><p>2 = Non-Paid Employee</p></li>
+<li><p>3 = Employer</p></li>
+<li><p>4 = Self-employed</p></li>
+<li><p>5 = Other, workers not classifiable by status</p></li>
+<li><p>1 = Paid Employee</p></li>
+</ul>
 <p>Paid employee includes anyone whose basic remuneration is not directly dependent on the revenue of the unit they work for, typically remunerated by wages and salaries but may be paid for piece work or in-kind. The ‘continuous’ criteria used in the ILO definition is not used here as data are often absent and due to country specificity.</p>
-<p>2 = Non-Paid Employee</p>
+<ul class="simple">
+<li><p>2 = Non-Paid Employee</p></li>
+</ul>
 <p>Non-paid employee includes contributing family workers who hold a self-employment job in a market-oriented establishment operated by a related person living in the same households who cannot be regarded as a partner because of their degree of commitment to the operation of the establishment, in terms of working time or other factors, is not at a level comparable to that of the head of the establishment. All apprentices should be mapped as ‘non-paid employee’.</p>
-<p>3 = Employer</p>
+<ul class="simple">
+<li><p>3 = Employer</p></li>
+</ul>
 <p>An employer is a business owner (whether alone or in partnership) with employees. If the only people working in the business are the owner and contributing family workers, the person is not considered an employer (as has no employees) and is, instead classified as self-employed.</p>
-<p>4 = Self-employed</p>
+<ul class="simple">
+<li><p>4 = Self-employed</p></li>
+</ul>
 <p>Own account or self-employment includes jobs where remuneration is directly dependent from the goods and service produced (where home consumption is considered to be part of the profits) and where one has not engaged any permanent employees to work for them on a continuous basis during the reference period.</p>
 <p>Members of producers’ cooperatives are workers who hold a self-employment job in a cooperative producing goods and services, in which each member takes part on an equal footing with other members in determining the organization of production, sales and/or other work of the establishment, the investments and the distribution of the proceeds of the establishment amongst the members.</p>
-<p>5 = Other, workers not classifiable by status</p>
+<ul class="simple">
+<li><p>5 = Other, workers not classifiable by status</p></li>
+</ul>
 <p>Other, workers not classifiable by status include those for whom insufficient relevant information is available and/or who cannot be included in any of the above categories.</p>
 <p><strong>ocusec_year</strong></p>
 <p>ocusec_year is a categorical variable that specifies the sector of activity in the last 12 months. It classifies the main job’s sector of activity of any individual with a job (lstatus_year =1) and is missing otherwise. The variable is constructed for all persons administered this module in each questionnaire.</p>
 <p>Four categories after harmonization:</p>
-<p>1 = Public sector, Central Government, Army (including armed forces)
-2 = Private, NGO
-3 = State-owned
-4 = Public or State-owned, but cannot distinguish</p>
-<p>1 = Public Sector, Central Government, Army (including armed forces)</p>
+<ul class="simple">
+<li><p>1 = Public sector, Central Government, Army (including armed forces)</p></li>
+<li><p>2 = Private, NGO</p></li>
+<li><p>3 = State-owned</p></li>
+<li><p>4 = Public or State-owned, but cannot distinguish</p></li>
+<li><p>1 = Public Sector, Central Government, Army (including armed forces)</p></li>
+</ul>
 <p>Public sector is the part of economy run by the government.</p>
-<p>2 = Private, NGO</p>
+<ul class="simple">
+<li><p>2 = Private, NGO</p></li>
+</ul>
 <p>Private sector is that part of the economy which is both run for private profit and is not controlled by the state, it also includes non-governmental organizations</p>
-<p>3 = State-owned enterprises</p>
+<ul class="simple">
+<li><p>3 = State-owned enterprises</p></li>
+</ul>
 <p>State-owned includes para-state firms and all others in which the government has control (participation over 50%).</p>
-<p>4 = Public or State-owned, but cannot distinguish</p>
+<ul class="simple">
+<li><p>4 = Public or State-owned, but cannot distinguish</p></li>
+</ul>
 <p>Select this option is the questionnaire does not ask for State-owned enterprises, and only for Public sector.</p>
 <p>Notes: Do not code basis of occupation (ISCO) or industry (ISIC) codes.</p>
 <p><strong>industry_orig_year</strong></p>
@@ -951,16 +1065,18 @@ Figure 23 - ISCO broad skill level classification
 <p><strong>industrycat10_year</strong></p>
 <p>industrycat10_year is a categorical variable that specifies the 1-digit industry classification in the last 12 months for the main job of any individual with a job (lstatus_year =1) and is missing otherwise. The variable is constructed for all persons administered this module in each questionnaire. The codes for the main job are given here based on the UN International Standard Industrial Classification. It classifies the main job of any individual with a job (lstatus_year =1) and is missing otherwise</p>
 <p>Ten categories after harmonization:</p>
-<p>1 = Agriculture, Hunting, Fishing, etc.
-2 = Mining
-3 = Manufacturing
-4 = Public Utility Services
-5 = Construction
-6 = Commerce
-7 = Transport and Communications
-8 = Financial and Business Services
-9 = Public Administration
-10 = Other Services, Unspecified Notes:</p>
+<ul class="simple">
+<li><p>1 = Agriculture, Hunting, Fishing, etc.</p></li>
+<li><p>2 = Mining</p></li>
+<li><p>3 = Manufacturing</p></li>
+<li><p>4 = Public Utility Services</p></li>
+<li><p>5 = Construction</p></li>
+<li><p>6 = Commerce</p></li>
+<li><p>7 = Transport and Communications</p></li>
+<li><p>8 = Financial and Business Services</p></li>
+<li><p>9 = Public Administration</p></li>
+<li><p>10 = Other Services, Unspecified Notes:</p></li>
+</ul>
 <p>Notes:</p>
 <ul class="simple">
 <li><p>In the case of different classifications (former Soviet Union republics, for example), recoding has been done to best match the ISIC codes.</p></li>
@@ -971,10 +1087,12 @@ Figure 23 - ISCO broad skill level classification
 <p><strong>industrycat4_year</strong></p>
 <p>industrycat4_year is a categorical variable that specifies the 1-digit industry classification in the last 12 months for the main job for Broad Economic Activities. This variable is either created directly from the data (if industry classification does not exist for ten categories) or created from industrycat10_year.</p>
 <p>Four categories after harmonization:</p>
-<p>1 = Agriculture
-2= Industry
-3 = Services
-4 = Other</p>
+<ul class="simple">
+<li><p>1 = Agriculture</p></li>
+<li><p>2 = Industry</p></li>
+<li><p>3 = Services</p></li>
+<li><p>4 = Other</p></li>
+</ul>
 <p>This variable is either created directly from the data (if industry classification does not exist for ten categories) or created from industrycat10_year.</p>
 <p><strong>occup_orig_year</strong></p>
 <p>occup_orig_year is a string variable that specifies the original occupation code in the last 12 months for the main job. This variable corresponds to whatever is in the original file with no recoding.</p>
@@ -987,17 +1105,19 @@ Figure 23 - ISCO broad skill level classification
 <p><strong>occup_year</strong></p>
 <p>occup_year is a categorical variable that specifies the 1-digit occupational classification for the main job in the last 12 months of any individual with a job (lstatus_year =1) and is missing otherwise. This variable is constructed for all persons administered this module in each questionnaire. For this reason, the lower age cutoff (and perhaps upper age cutoff) at which information is collected will vary from country to country. Most surveys collect detailed information and then code it, without keeping the original data, no attempt has been made to correct or check the original coding. The classification is based on the International Standard Classification of Occupations (ISCO). It classifies the main job of any individual with a job (lstatus_year=1) and is missing otherwise.</p>
 <p>Eleven categories after harmonization:</p>
-<p>1 = Managers
-2 = Professionals
-3 = Technicians and associate professionals
-4 = Clerical support workers
-5 = Service and sales workers
-6 = Skilled agricultural, forestry and fishery workers
-7 = Craft and related trades workers
-8 = Plant and machine operators, and assemblers
-9 = Elementary occupations
-10 = Armed forces occupations
-99 = Other/unspecified</p>
+<ul class="simple">
+<li><p>1 = Managers</p></li>
+<li><p>2 = Professionals</p></li>
+<li><p>3 = Technicians and associate professionals</p></li>
+<li><p>4 = Clerical support workers</p></li>
+<li><p>5 = Service and sales workers</p></li>
+<li><p>6 = Skilled agricultural, forestry and fishery workers</p></li>
+<li><p>7 = Craft and related trades workers</p></li>
+<li><p>8 = Plant and machine operators, and assemblers</p></li>
+<li><p>9 = Elementary occupations</p></li>
+<li><p>10 = Armed forces occupations</p></li>
+<li><p>99 = Other/unspecified</p></li>
+</ul>
 <p><strong>wage_no_compen_year</strong></p>
 <p>wage_no_compen_year is a continuous variable that specifies the last wage payment in local currency of any individual (lstatus_year =1 &amp; empstat_year =1) in its primary occupation at the reference period reported in the survey and it is missing otherwise. The wage should come from the main job, in other words, the job that the person dedicated most time in the 12 months preceding the survey. This excludes tips, bonuses, other compensation such as dwellings or clothes, and other payments. The variable is constructed for all persons administered this module in each questionnaire. For this reason, the lower age cutoff (and perhaps upper age cutoff) will vary from country to country.</p>
 <p>Notes:</p>
@@ -1009,16 +1129,18 @@ Figure 23 - ISCO broad skill level classification
 </ul>
 <p><strong>unitwage_year</strong></p>
 <p>unitwage_year is a categorical variable that specifies the time reference for the wage_no_compen_year variable. It specifies the time unit measurement for the wages of any individual (lstatus_year =1 &amp; empstat_year =1) and it is missing otherwise. Acceptable values include:</p>
-<p>1 = Daily
-2 = Weekly
-3 = Every two weeks
-4 = Every two months
-5 = Monthly
-6 = Quarterly
-7 = Every six months
-8 = Annually
-9 = Hourly
-10 = Other</p>
+<ul class="simple">
+<li><p>1 = Daily</p></li>
+<li><p>2 = Weekly</p></li>
+<li><p>3 = Every two weeks</p></li>
+<li><p>4 = Twice monthly</p></li>
+<li><p>5 = Monthly</p></li>
+<li><p>6 = Quarterly</p></li>
+<li><p>7 = Every six months</p></li>
+<li><p>8 = Annually</p></li>
+<li><p>9 = Hourly</p></li>
+<li><p>10 = Other</p></li>
+</ul>
 <p><strong>whours_year</strong></p>
 <p>whours_year is a continuous variable that specifies the hours of work last week for the main job of any individual with a job (lstatus_year =1) and is missing otherwise. The main job defined as that occupation that the person dedicated more time to over the past 12 months. The variable is constructed for all persons administered this module in each questionnaire.</p>
 <p>Notes:</p>
@@ -1034,20 +1156,28 @@ Figure 23 - ISCO broad skill level classification
 <p>For an example on how to annualize wage see 5.2.2 Primary Employment last 7-days variable wage_total (Example: Creation of wage_total when there are no bonuses nor other compensations).</p>
 <p><strong>contract_year</strong></p>
 <p>contract_year is a dummy variable that classifies the contract status (yes/no) of any individual with a job (lstatus_year =1) and is missing otherwise. It indicates whether a person has a signed (formal) contract, regardless of duration. The variable is constructed for all persons administered this module in each questionnaire. Two categories after harmonization:</p>
-<p>0 = No
-1 = Yes</p>
+<ul class="simple">
+<li><p>0 = No</p></li>
+<li><p>1 = Yes</p></li>
+</ul>
 <p><strong>healthins_year</strong></p>
 <p>healthins_year is a dummy variable that classifies the health insurance status (yes/no) of any individual with a job (lstatus_year =1) and is missing otherwise. Variable is constructed for all persons administered this module in each questionnaire. However, this variable is only constructed if there is an explicit question about health insurance provided by the job. Two categories after harmonization:</p>
-<p>0 = No
-1 = Yes</p>
+<ul class="simple">
+<li><p>0 = No</p></li>
+<li><p>1 = Yes</p></li>
+</ul>
 <p><strong>socialsec_year</strong></p>
 <p>socialsec_year is a dummy variable that classifies the social security status (yes/no) of any individual with a job (lstatus_year =1) and is missing otherwise. Variable is constructed for all persons administered this module in each questionnaire. For this reason, the lower age cutoff (and perhaps upper age cutoff) at which information is collected will vary from country to country. However, this variable is only constructed if there is an explicit question about pension plans or social security. Two categories after harmonization:</p>
-<p>0 = No
-1 = Yes</p>
+<ul class="simple">
+<li><p>0 = No</p></li>
+<li><p>1 = Yes</p></li>
+</ul>
 <p><strong>union_year</strong></p>
 <p>union_year is a dummy variable that classifies the union membership status (yes/no) of any individual with a job (lstatus_year =1) and is missing otherwise. Variable is constructed for all persons administered this module in each questionnaire. For this reason, the lower age cutoff (and perhaps upper age cutoff) at which information is collected will vary from country to country. However, this variable is only constructed if there is an explicit question about trade unions. Two categories after harmonization:</p>
-<p>0 = No
-1 = Yes</p>
+<ul class="simple">
+<li><p>0 = No</p></li>
+<li><p>1 = Yes</p></li>
+</ul>
 <p><strong>firmsize_l_year</strong></p>
 <p>firmsize_l_year specifies the lower bracket of the firm size. The variable is constructed for all persons who are employed in the last 12 months for the main job. If it is continuous, it records the number of people working for the same employer. If the variable is categorical, it records the lower boundary of the bracket.</p>
 <p><strong>firmsize_u_year</strong></p>
@@ -1058,36 +1188,54 @@ Figure 23 - ISCO broad skill level classification
 <p><strong>empstat_2_year</strong></p>
 <p>empstat_2_year is a categorical variable that specifies employment status of the secondary job with reference period of last 12 months of any individual with a job (lstatus_year =1) and is missing otherwise. The variable is constructed for all individuals. For this reason, the lower age cutoff (and perhaps upper age cutoff) at which information is collected will vary from country to country.</p>
 <p>The definitions are taken from the International Labor Organization’s Classification of Status in Employment with some revisions to take into account the data available. Five categories after harmonization:</p>
-<p>1 = Paid Employee
-2 = Non-Paid Employee
-3 = Employer
-4 = Self-employed
-5 = Other, workers not classifiable by status</p>
-<p>1 = Paid Employee</p>
+<ul class="simple">
+<li><p>1 = Paid Employee</p></li>
+<li><p>2 = Non-Paid Employee</p></li>
+<li><p>3 = Employer</p></li>
+<li><p>4 = Self-employed</p></li>
+<li><p>5 = Other, workers not classifiable by status</p></li>
+<li><p>1 = Paid Employee</p></li>
+</ul>
 <p>Paid employee includes anyone whose basic remuneration is not directly dependent on the revenue of the unit they work for, typically remunerated by wages and salaries but may be paid for piece work or in-kind. The ‘continuous’ criteria used in the ILO definition is not used here as data are often absent and due to country specificity.</p>
-<p>2 = Non-Paid Employee</p>
-<p>Non-paid employee includes contributing family workers who hold a self-employment job in a market-oriented establishment operated by a related person living in the same households who cannot be regarded as a partner because of their degree of commitment to the operation of the establishment, in terms of working time or other factors, is not at a level comparable to that of the head of the establishment. All apprentices should be mapped as non-paid employee.
-3 = Employer</p>
+<ul class="simple">
+<li><p>2 = Non-Paid Employee</p></li>
+</ul>
+<p>Non-paid employee includes contributing family workers who hold a self-employment job in a market-oriented establishment operated by a related person living in the same households who cannot be regarded as a partner because of their degree of commitment to the operation of the establishment, in terms of working time or other factors, is not at a level comparable to that of the head of the establishment. All apprentices should be mapped as non-paid employee.</p>
+<ul class="simple">
+<li><p>3 = Employer</p></li>
+</ul>
 <p>Employer is a business owner (whether alone or in partnership) with employees. If the only people working in the business are the owner and ‘contributing family workers, the person is not considered an employer (as has no employees) and is, instead classified as own account.</p>
-<p>4 = Self-employed</p>
+<ul class="simple">
+<li><p>4 = Self-employed</p></li>
+</ul>
 <p>Own account or self-employment includes jobs are those where remuneration is directly dependent from the goods and service produced (where home consumption is considered to be part of the profits) and have not engaged any permanent employees to work for them on a continuous basis during the reference period.</p>
 <p>Members of producers’ cooperatives are workers who hold a self-employment job in a cooperative producing goods and services in which each member takes part on an equal footing with other members in determining the organization of production, sales and/or other work of the establishment, the investments and the distribution of the proceeds of the establishment amongst the members.</p>
-<p>5 = Other, workers not classifiable by status</p>
+<ul class="simple">
+<li><p>5 = Other, workers not classifiable by status</p></li>
+</ul>
 <p>Other, workers not classifiable by status include those for whom insufficient relevant information is available and/or who cannot be included in any of the above categories.</p>
 <p><strong>ocusec_2_year</strong></p>
 <p>ocusec_2_year is a categorical variable that specifies the sector of activity in the last 12 months. It classifies the secondary job’s sector of activity of any individual with a job (lstatus_year =1) and is missing otherwise. The variable is constructed for all persons administered this module in each questionnaire.</p>
 <p>Four categories after harmonization:</p>
-<p>1 = Public sector, Central Government, Army (including armed forces)
-2 = Private, NGO
-3 = State-owned
-4 = Public or State-owned, but cannot distinguish</p>
-<p>1 = Public Sector, Central Government, Army (including armed forces)</p>
+<ul class="simple">
+<li><p>1 = Public sector, Central Government, Army (including armed forces)</p></li>
+<li><p>2 = Private, NGO</p></li>
+<li><p>3 = State-owned</p></li>
+<li><p>4 = Public or State-owned, but cannot distinguish</p></li>
+<li><p>1 = Public Sector, Central Government, Army (including armed forces)</p></li>
+</ul>
 <p>Public sector is the part of economy run by the government.</p>
-<p>2 = Private, NGO</p>
+<ul class="simple">
+<li><p>2 = Private, NGO</p></li>
+</ul>
 <p>Private sector is that part of the economy which is both run for private profit and is not controlled by the state, it also includes non-governmental organizations</p>
-<p>3 = State-owned enterprises</p>
+<ul class="simple">
+<li><p>3 = State-owned enterprises</p></li>
+</ul>
 <p>State-owned includes para-state firms and all others in which the government has control (participation over 50%).</p>
-<p>4 = Public or State-owned, but cannot distinguish</p>
+<ul class="simple">
+<li><p>4 = Public or State-owned, but cannot distinguish</p></li>
+</ul>
 <p>Select this option is the questionnaire does not ask for State-owned enterprises, and only for Public sector.</p>
 <p>Notes: Do not code basis of occupation (ISCO) or industry (ISIC) codes.</p>
 <p><strong>industry_orig_2_year</strong></p>
@@ -1098,16 +1246,18 @@ Figure 23 - ISCO broad skill level classification
 <p><strong>industrycat10_2_year</strong></p>
 <p>industrycat10_2_year is a categorical variable that specifies the 1-digit industry classification that classifies the second job with reference period of the last 12 months of any individual with a job (lstatus_year =1) and is missing otherwise. The variable is constructed for all persons administered this module in each questionnaire. The codes for the second job are given here based on the UN International Standard Industrial Classification.</p>
 <p>Ten categories after harmonization:</p>
-<p>1 = Agriculture, Hunting, Fishing, etc.
-2 = Mining
-3 = Manufacturing
-4 = Public Utility Services
-5 = Construction
-6 = Commerce
-7 = Transport and Communications
-8 = Financial and Business Services
-9 = Public Administration
-10 = Other Services, Unspecified</p>
+<ul class="simple">
+<li><p>1 = Agriculture, Hunting, Fishing, etc.</p></li>
+<li><p>2 = Mining</p></li>
+<li><p>3 = Manufacturing</p></li>
+<li><p>4 = Public Utility Services</p></li>
+<li><p>5 = Construction</p></li>
+<li><p>6 = Commerce</p></li>
+<li><p>7 = Transport and Communications</p></li>
+<li><p>8 = Financial and Business Services</p></li>
+<li><p>9 = Public Administration</p></li>
+<li><p>10 = Other Services, Unspecified</p></li>
+</ul>
 <p>Notes:</p>
 <ul class="simple">
 <li><p>In the case of different classifications (former Soviet Union republics, for example), recoding has been done to best match the ISIC codes.</p></li>
@@ -1117,10 +1267,12 @@ Figure 23 - ISCO broad skill level classification
 <p><strong>industrycat4_2_year</strong></p>
 <p>industrycat4_2_year is a categorical variable that specifies the 1-digit industry classification for Broad Economic Activities for the second job with reference period of the last 12 months. This variable is either created directly from the data (if industry classification does not exist for 10 categories) or created from industrycat10_year.</p>
 <p>Four categories after harmonization:</p>
-<p>1 = Agriculture
-2= Industry
-3 = Services
-4 = Other</p>
+<ul class="simple">
+<li><p>1 = Agriculture</p></li>
+<li><p>2 = Industry</p></li>
+<li><p>3 = Services</p></li>
+<li><p>4 = Other</p></li>
+</ul>
 <p>This variable is either created directly from the data (if industry classification does not exist for 10 categories) or created from industrycat10_2_year.</p>
 <p><strong>occup_orig_2_year</strong></p>
 <p>occup_orig_2_year is a string variable that specifies the original occupation code in the last 12 months for the secondary job. This variable corresponds to whatever is in the original file with no recoding.</p>
@@ -1133,17 +1285,19 @@ Figure 23 - ISCO broad skill level classification
 <p><strong>occup_2_year</strong></p>
 <p>occup_2_year is a categorical variable that specifies the 1-digit occupation classification. It classifies the second job of any individual with a job (lstatus_year =1) and is missing otherwise. This variable is constructed for all persons administered this module in each questionnaire. Most surveys collect detailed information and then code it, without keeping the original data. No attempt has been made to correct or check the original coding. The classification is based on the International Standard Classification of Occupations (ISCO). In the case of different classifications, re-coding has been done to best match the ISCO.</p>
 <p>Eleven categories after harmonization:</p>
-<p>1 = Managers
-2 = Professionals
-3 = Technicians and associate professionals
-4 = Clerical support workers
-5 = Service and sales workers
-6 = Skilled agricultural, forestry and fishery workers
-7 = Craft and related trades workers
-8 = Plant and machine operators, and assemblers
-9 = Elementary occupations
-10 = Armed forces occupations
-99 = Other/unspecified</p>
+<ul class="simple">
+<li><p>1 = Managers</p></li>
+<li><p>2 = Professionals</p></li>
+<li><p>3 = Technicians and associate professionals</p></li>
+<li><p>4 = Clerical support workers</p></li>
+<li><p>5 = Service and sales workers</p></li>
+<li><p>6 = Skilled agricultural, forestry and fishery workers</p></li>
+<li><p>7 = Craft and related trades workers</p></li>
+<li><p>8 = Plant and machine operators, and assemblers</p></li>
+<li><p>9 = Elementary occupations</p></li>
+<li><p>10 = Armed forces occupations</p></li>
+<li><p>99 = Other/unspecified</p></li>
+</ul>
 <p><strong>wage_no_compen_2_year</strong></p>
 <p>wage_no_compen_2_year is a continuous variable that specifies the last wage payment in local currency of any individual (lstatus_year =1 &amp; empstat_year =1) in its secondary occupation and is missing otherwise. The wage should come from the second job, in other words, the job that the person dedicated the second most amount of time in the week preceding the survey. This excludes tips, bonuses, other compensation such as dwellings or clothes, and other payments. The variable is constructed for all persons administered this module in each questionnaire. For this reason, the lower age cutoff (and perhaps upper age cutoff) will vary from country to country.</p>
 <p>Notes:</p>
@@ -1156,16 +1310,18 @@ Figure 23 - ISCO broad skill level classification
 <p><strong>unitwage_2_year</strong></p>
 <p>unitwage_2_year is a categorical variable that specifies the time reference for the wage_no_compen_2_year variable. It specifies the time unit measurement for the wages for the secondary job of any individual (lstatus_year =1 &amp; empstat_year =1) and is missing otherwise.</p>
 <p>Ten categories after harmonization:</p>
-<p>1 = Daily
-2 = Weekly
-3 = Every two weeks
-4 = Every two months
-5 = Monthly
-6 = Quarterly
-7 = Every six months
-8 = Annually
-9 = Hourly
-10 = Other</p>
+<ul class="simple">
+<li><p>1 = Daily</p></li>
+<li><p>2 = Weekly</p></li>
+<li><p>3 = Every two weeks</p></li>
+<li><p>4 = Twice monthly</p></li>
+<li><p>5 = Monthly</p></li>
+<li><p>6 = Quarterly</p></li>
+<li><p>7 = Every six months</p></li>
+<li><p>8 = Annually</p></li>
+<li><p>9 = Hourly</p></li>
+<li><p>10 = Other</p></li>
+</ul>
 <p><strong>whours_2_year</strong></p>
 <p>whours_2_year is a continuous variable that specifies the hours of work in last week for the second job with reference period of the last 12 months of any individual with a job (lstatus_year =1) and is missing otherwise. The second job defined as that occupation that the person dedicated the second most amount of time to over the past year. The variable is constructed for all persons administered this module in each questionnaire. The lower age cutoff (and perhaps upper age cutoff) at which information is collected will vary from country to country.</p>
 <p>Notes:</p>
@@ -1981,10 +2137,12 @@ Labor status during last 12 months only reflects if the person has worked during
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#variables">Variables</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#labour-status-7-day-reference-period">Labour status, 7-day reference period</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#primary-employment-7-day-reference-period">Primary Employment, 7-day reference period</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#secondary-employment-7-day-reference-period">Secondary Employment, 7-day reference period</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#other-employment-7-day-reference-period">Other Employment, 7-day reference period</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#total-employment-earnings-7-day-reference-period">Total Employment Earnings, 7-day reference period</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#labor-status-12-month-reference-period">Labor status, 12-month reference period</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#primary-employment-12-month-reference-period">Primary Employment, 12-month reference period</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#secondary-employment-12-month-reference-period">Secondary Employment, 12-month reference period</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#other-employment-12-month-reference-period">Other Employment, 12-month reference period</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#total-employment-earnings-12-month-reference-period">Total Employment Earnings, 12-month reference period</a></li>
@@ -2018,7 +2176,7 @@ By World Bank Jobs Group
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Aug 13, 2024.
+  Last updated on Aug 14, 2024.
   <br/>
 </p>
   </div>
