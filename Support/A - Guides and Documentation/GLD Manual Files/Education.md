@@ -10,14 +10,15 @@ Codifies the minimum age for which education questions are asked. For example, i
 
 Codifies whether the person is currently (i.e., at the time of the survey) attending formal education. The codes are: 
 
-0 = No
-1 = Yes
+- 0 = No
+- 1 = Yes
 
 **literacy**
 
 Codifies whether person can read and write in at least one language. The codes are: 
-0 = No
-1 = Yes
+
+- 0 = No
+- 1 = Yes
 
 **educy**
 
@@ -27,13 +28,13 @@ Codifies the number of years spent in education.
 
 Classifies the highest level of education attained by the respondent to seven levels. The codes are: 
 
-1 = No education
-2 = Primary incomplete
-3 = Primary complete
-4 = Secondary incomplete
-5 = Secondary complete
-6 = Higher than secondary but not university 
-7 = University incomplete or complete
+- 1 = No education
+- 2 = Primary incomplete
+- 3 = Primary complete
+- 4 = Secondary incomplete
+- 5 = Secondary complete
+- 6 = Higher than secondary but not university 
+- 7 = University incomplete or complete
 
 The concept of secondary complete includes all students who have had attended at least one year (complete or incomplete) of upper secondary education (as defined in the ISCED Mappings of UNESCO). That is attendance and completion of “junior high” shall be coded as secondary incomplete while attendance to “senior high school” even if for one year, will be coded as secondary complete.
 
@@ -50,10 +51,11 @@ Classifies the highest level of education attained by the respondent to five lev
 **educat4**
 
 Classifies the highest level of education attained by the respondent to four levels. The codes are: 
-1 = No education
-2 = Primary (complete or incomplete)
-3 = Secondary (complete)
-4 = Tertiary (complete or incomplete)
+
+- 1 = No education
+- 2 = Primary (complete or incomplete)
+- 3 = Secondary (complete)
+- 4 = Tertiary (complete or incomplete)
 
 Note: Code as primary education anyone who has undergone some schooling but has not finished secondary education.
 
