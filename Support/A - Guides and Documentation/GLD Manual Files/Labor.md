@@ -93,7 +93,7 @@ The variable is constructed for all unemployed persons (lstatus=2, otherwise mis
 
 Missing values are allowed for everyone who is not unemployed. Other missing values are also allowed. If the duration of unemployment is not reported as a range, but as continuous variables, the unempldur_l and unempldur_u variables will have the same value. If the high range is open-ended the unempldur_u variable will be missing.
 
-*Primary Employment, 7-day reference period*
+### Primary Employment, 7-day reference period
 
 **empstat**
 
@@ -720,7 +720,7 @@ The variable is constructed for all unemployed persons (lstatus_year=2, otherwis
 
 Missing values are allowed for everyone who is not unemployed. Other missing values are also allowed. If the duration of unemployment is not reported as a range, but as continuous variables, the unempldur_l_year and unempldur_u_year variables will have the same value. If the high range is open- ended the unempldur_u_year variable will be missing.
 
-*Primary Employment, 12-month reference period*
+### Primary Employment, 12-month reference period
 
 **empstat_year**
 
