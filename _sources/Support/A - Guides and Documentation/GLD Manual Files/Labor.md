@@ -38,7 +38,9 @@ In essence, the ICLS-19 resolution redefines employment as work performed for ot
 
 To ensure accurate coding, harmonizers should discern the underlying ICLS version utilized in each survey through thorough examination of questionnaire text, skip patterns, and survey reports. Consequently, harmonizers must code the "lstatus" variable in accordance with the pertinent ICLS version (and annotate the version used via the "icls_v" variable).
 
-It is imperative to emphasize that each survey undergoes independent harmonization as explained in section Defining the boundaries of GLD harmonization. Therefore, any disparities arising from the adoption of different employment definitions in previous surveys should not impede the harmonization process for the current survey under consideration.
+It is imperative to emphasize that each survey undergoes independent harmonization. Therefore, any disparities arising from the adoption of different employment definitions in previous surveys should not impede the harmonization process for the current survey under consideration.
+
+Finally, when it comes to finer distinctions of employment (where finer means less common or affecting fewer individuals), like whether people on parental leave for more than 3 months can still be counted as employed, users should follow the skip pattern of the questionnaire, unless there are strong arguments against it. The guiding principle should be the logic of the [ILO Model LFS Questionnaire](https://www.ilo.org/resource/other/ilo-model-lfs-questionnaire-papi-job-type-start-2024-edition).
 
 **potential_lf**
 
@@ -673,6 +675,8 @@ A person is defined as unemployed if he or she is, presently not working but is 
 - 3 = Not-in-labor force
 
 A person is defined as not-in-labor force if he or she is, presently not working and it is not actively seeking a job during the last 12 months or reference week.
+
+For further details, please see the definition of `lstatus` (7 day recall).
 
 **potential_lf_year**
 
