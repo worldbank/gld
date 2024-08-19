@@ -81,6 +81,10 @@ _build/
 !/Support/**/*.toc
 !Support/**/*.pkg
 
+# Allow Python and batch files
+!/Support/**/*.bat
+!Support/**/*.py
+
 #######################
 ###  Section iii)    ###
 #######################
