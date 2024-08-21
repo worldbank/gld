@@ -1,0 +1,10 @@
+v 1
+d GLD Add Wage: A function to add hourly and monthly wage to GLD.
+d Creator: World Bank
+d Author: Gronert Alvarez, Mario Andres
+d For any questions, please contact: gld@worldbankgroup.org
+d Distribution-Date: 2024-08
+f gld_add_wage.ado
+f gld_add_wage.sthlp
+f gld_help_thresh.ado
+f gld_help_wage_calc.ado
