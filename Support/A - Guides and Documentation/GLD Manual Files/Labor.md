@@ -179,7 +179,9 @@ replace ocusec = 3 if var_sector == 4
 replace ocusec = 4 if var_sector == 10
 ```
 
-Notes: Do not code basis of occupation (ISCO) or industry (ISIC) codes.
+Note to not code basis of occupation (ISCO) or industry (ISIC) codes.
+
+Finally, in case that the information is only asked to wage employees (i.e., own account workers are excluded), assume that workers other than wage employees work in the private sector. 
 
 **industry_orig**
 
