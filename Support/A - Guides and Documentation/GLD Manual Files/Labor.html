@@ -584,7 +584,8 @@ Figure 18 - Excerpt of PAK LFS questionnaire
 <span class="n">replace</span> <span class="n">ocusec</span> <span class="o">=</span> <span class="mi">4</span> <span class="k">if</span> <span class="n">var_sector</span> <span class="o">==</span> <span class="mi">10</span>
 </pre></div>
 </div>
-<p>Notes: Do not code basis of occupation (ISCO) or industry (ISIC) codes.</p>
+<p>Note to not code basis of occupation (ISCO) or industry (ISIC) codes.</p>
+<p>Finally, in case that the information is only asked to wage employees (i.e., own account workers are excluded), assume that workers other than wage employees work in the private sector.</p>
 <p><strong>industry_orig</strong></p>
 <p>industry_orig is a string variable that specifies the original industry codes in the last 7 days for the main job provided in the survey (the actual question) and should correspond to whatever is in the original file with no recoding. It will contain missing values for people below the working age. Other missing values are allowed. It classifies the main job of any individual with a job (lstatus=1) and is missing otherwise</p>
 <p><strong>industrycat_isic</strong></p>
