@@ -4,7 +4,7 @@
 
 The Global Labor Database (GLD) is a live database that is updated constantly. No only do we add new surveys, but we also update already published surveys if we spot or are notified of an error and correct it. If you spot something, please reach out by either [creating an issue](https://github.com/worldbank/gld/issues/new/choose) or writing to <gld@worldbank.org>.
 
-Moreover, you probably want to have all surveys for a country loaded into one neat file at once. How to make sure you have this and be certain they are the latest? If you ahve access to the GLD server, run our `gld_append_country_latest` function!
+Moreover, you probably want to have all surveys for a country loaded into one neat file at once. How to make sure you have this and be certain they are the latest? If you have access to the GLD server, run our `gld_append_country_latest` function!
 
 ## How is it addressed?
 
