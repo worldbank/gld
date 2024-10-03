@@ -257,6 +257,14 @@ local out_file "`level_2_harm'_ALL.dta"
 	gen subnatid1=A3
 	tostring subnatid1, replace
 	replace subnatid1=subnatid1+" - "+marzname
+	
+	* Unite names to entire series
+	replace subnatid1 = "5 - Gegharkunik" if subnatid1 == "5 - Gegharquniq"
+	replace subnatid1 = "6 - Lori" if subnatid1 == "6 - Lory"
+	replace subnatid1 = "7 - Kotayk" if subnatid1 == "7 - Kotayq"
+	replace subnatid1 = "9 - Syunik" if subnatid1 == "9 - Sjuniq"
+	replace subnatid1 = "10 - Vayoc Dzor" if subnatid1 == "10 - Vajoc Dzor"
+	
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 
