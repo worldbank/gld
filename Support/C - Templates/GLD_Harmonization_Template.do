@@ -134,7 +134,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_year_>
-	gen int year =
+	gen int year = .
 	label var year "Year of survey"
 *</_year_>
 
@@ -158,7 +158,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_int_year_>
-	gen int_year=.
+	gen int_year = .
 	label var int_year "Year of the interview"
 *</_int_year_>
 
@@ -254,7 +254,7 @@ local out_file "`level_2_harm'_ALL.dta"
 {
 
 *<_urban_>
-	gen byte urban
+	gen byte urban = .
 	label var urban "Location is urban"
 	la de lblurban 1 "Urban" 0 "Rural"
 	label values urban lblurban
@@ -264,7 +264,7 @@ local out_file "`level_2_harm'_ALL.dta"
 *<_subnatid1_>
 /* <_subnatid1_note>
 
-	The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: “1 – Hatay”. That is, the variable itself is to be string, not a labelled numeric vector. 
+	The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: "1 – Hatay". That is, the variable itself is to be string, not a labelled numeric vector. 
 	
 	Example of entries would be "1 - Alaska",  "2 - Arkansas", ...
 
@@ -534,7 +534,7 @@ label var ed_mod_age "Education module application age"
 *</_ed_mod_age_>
 
 *<_school_>
-	gen byte school=.
+	gen byte school = .
 	label var school "Attending school"
 	la de lblschool 0 "No" 1 "Yes"
 	label values school  lblschool
@@ -550,13 +550,13 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educy_>
-	gen byte educy =.
+	gen byte educy = .
 	label var educy "Years of education"
 *</_educy_>
 
 
 *<_educat7_>
-	gen byte educat7 =.
+	gen byte educat7 = .
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -565,7 +565,7 @@ label var ed_mod_age "Education module application age"
 
 *<_educat5_>
 	gen byte educat5 = educat7
-	recode educat5 4=3 5=4 6 7=5
+	recode educat5 (4 = 3) (5 = 4) (6 7 = 5)
 	label var educat5 "Level of education 2"
 	la de lbleducat5 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
 	label values educat5 lbleducat5
@@ -574,7 +574,7 @@ label var ed_mod_age "Education module application age"
 
 *<_educat4_>
 	gen byte educat4 = educat7
-	recode educat4 (2 3 4 = 2) (5=3) (6 7=4)
+	recode educat4 (2 3 4 = 2) (5 = 3) (6 7 = 4)
 	label var educat4 "Level of education 3"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values educat4 lbleducat4
@@ -598,15 +598,15 @@ label var ed_mod_age "Education module application age"
 *<_% Correction min age_>
 
 ** Drop info for cases under the age for which questions to be asked (do not need a variable for this)
-local ed_var "school literacy educy educat7 educat5 educat4 educat_orig educat_isced"
+local ed_vars "school literacy educy educat7 educat5 educat4 educat_orig educat_isced"
 
-foreach v of local ed_var {
-	cap confirm numeric variable `v'
+foreach ed_var of local ed_vars {
+	cap confirm numeric variable `ed_var'
 	if _rc == 0 { // is indeed numeric
-		replace `v'=. if ( age < ed_mod_age & !missing(age) )
+		replace `ed_var' = . if ( age < ed_mod_age & !missing(age) )
 	}
 	else { // is not
-		replace `v'= "" if ( age < ed_mod_age & !missing(age) )
+		replace `ed_var' = "" if ( age < ed_mod_age & !missing(age) )
 	}
 }
 
@@ -652,7 +652,7 @@ foreach v of local ed_var {
 
 
 *<_vocational_field_orig_>
-	gen str vocational_field_orig = .
+	gen str vocational_field_orig = ""
 	label var vocational_field_orig "Original field of training information"
 *</_vocational_field_orig_>
 
@@ -672,7 +672,7 @@ foreach v of local ed_var {
 
 
 *<_minlaborage_>
-	gen byte minlaborage =.
+	gen byte minlaborage = .
 	label var minlaborage "Labor module application age"
 *</_minlaborage_>
 
@@ -691,7 +691,7 @@ foreach v of local ed_var {
 
 *<_potential_lf_>
 	gen byte potential_lf = .
-	replace potential_lf = . if age < minlaborage & age != .
+	replace potential_lf = . if age < minlaborage & !missing(age)
 	replace potential_lf = . if lstatus != 3
 	label var potential_lf "Potential labour force status"
 	la de lblpotential_lf 0 "No" 1 "Yes"
@@ -701,7 +701,7 @@ foreach v of local ed_var {
 
 *<_underemployment_>
 	gen byte underemployment = .
-	replace underemployment = . if age < minlaborage & age != .
+	replace underemployment = . if age < minlaborage & !missing(age)
 	replace underemployment = . if lstatus != 1
 	label var underemployment "Underemployment status"
 	la de lblunderemployment 0 "No" 1 "Yes"
@@ -710,7 +710,7 @@ foreach v of local ed_var {
 
 
 *<_nlfreason_>
-	gen byte nlfreason=.
+	gen byte nlfreason = .
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
 	label values nlfreason lblnlfreason
@@ -718,13 +718,13 @@ foreach v of local ed_var {
 
 
 *<_unempldur_l_>
-	gen byte unempldur_l=.
+	gen byte unempldur_l = .
 	label var unempldur_l "Unemployment duration (months) lower bracket"
 *</_unempldur_l_>
 
 
 *<_unempldur_u_>
-	gen byte unempldur_u=.
+	gen byte unempldur_u = .
 	label var unempldur_u "Unemployment duration (months) upper bracket"
 *</_unempldur_u_>
 }
@@ -735,7 +735,7 @@ foreach v of local ed_var {
 
 {
 *<_empstat_>
-	gen byte empstat=.
+	gen byte empstat = .
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat lblempstat
@@ -783,7 +783,7 @@ foreach v of local ed_var {
 
 *<_industrycat4_>
 	gen byte industrycat4 = industrycat10
-	recode industrycat4 (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
+	recode industrycat4 (1 = 1) (2 3 4 5 = 2) (6 7 8 9 = 3) (10 = 4)
 	label var industrycat4 "Broad Economic Activities classification, primary job 7 day recall"
 	la de lblindustrycat4 1 "Agriculture" 2 "Industry" 3 "Services" 4 "Other"
 	label values industrycat4 lblindustrycat4
@@ -917,7 +917,7 @@ foreach v of local ed_var {
 
 
 *<_firmsize_u_>
-	gen firmsize_u= .
+	gen firmsize_u = .
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>
 
@@ -964,7 +964,7 @@ foreach v of local ed_var {
 
 *<_industrycat4_2_>
 	gen byte industrycat4_2 = industrycat10_2
-	recode industrycat4_2 (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
+	recode industrycat4_2 (1 = 1) (2 3 4 5 = 2) (6 7 8 9 = 3) (10 = 4)
 	label var industrycat4_2 "Broad Economic Activities classification, secondary job 7 day recall"
 	label values industrycat4_2 lblindustrycat4
 *</_industrycat4_2_>
@@ -1091,7 +1091,7 @@ foreach v of local ed_var {
 
 *<_lstatus_year_>
 	gen byte lstatus_year = .
-	replace lstatus_year=. if age < minlaborage & age != .
+	replace lstatus_year = . if age < minlaborage & !missing(age)
 	label var lstatus_year "Labor status during last year"
 	la de lbllstatus_year 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus_year lbllstatus_year
@@ -1099,7 +1099,7 @@ foreach v of local ed_var {
 
 *<_potential_lf_year_>
 	gen byte potential_lf_year = .
-	replace potential_lf_year=. if age < minlaborage & age != .
+	replace potential_lf_year = . if age < minlaborage & !missing(age)
 	replace potential_lf_year = . if lstatus_year != 3
 	label var potential_lf_year "Potential labour force status"
 	la de lblpotential_lf_year 0 "No" 1 "Yes"
@@ -1109,7 +1109,7 @@ foreach v of local ed_var {
 
 *<_underemployment_year_>
 	gen byte underemployment_year = .
-	replace underemployment_year = . if age < minlaborage & age != .
+	replace underemployment_year = . if age < minlaborage & !missing(age)
 	replace underemployment_year = . if lstatus_year == 1
 	label var underemployment_year "Underemployment status"
 	la de lblunderemployment_year 0 "No" 1 "Yes"
@@ -1118,7 +1118,7 @@ foreach v of local ed_var {
 
 
 *<_nlfreason_year_>
-	gen byte nlfreason_year=.
+	gen byte nlfreason_year = .
 	label var nlfreason_year "Reason not in the labor force"
 	la de lblnlfreason_year 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
 	label values nlfreason_year lblnlfreason_year
@@ -1126,13 +1126,13 @@ foreach v of local ed_var {
 
 
 *<_unempldur_l_year_>
-	gen byte unempldur_l_year=.
+	gen byte unempldur_l_year = .
 	label var unempldur_l_year "Unemployment duration (months) lower bracket"
 *</_unempldur_l_year_>
 
 
 *<_unempldur_u_year_>
-	gen byte unempldur_u_year=.
+	gen byte unempldur_u_year = .
 	label var unempldur_u_year "Unemployment duration (months) upper bracket"
 *</_unempldur_u_year_>
 
@@ -1187,8 +1187,8 @@ foreach v of local ed_var {
 
 
 *<_industrycat4_year_>
-	gen byte industrycat4_year=industrycat10_year
-	recode industrycat4_year (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
+	gen byte industrycat4_year = industrycat10_year
+	recode industrycat4_year (1 = 1) (2 3 4 5 = 2) (6 7 8 9 = 3) (10 = 4)
 	label var industrycat4_year "Broad Economic Activities classification, primary job 12 month recall"
 	la de lblindustrycat4_year 1 "Agriculture" 2 "Industry" 3 "Services" 4 "Other"
 	label values industrycat4_year lblindustrycat4_year
@@ -1356,8 +1356,8 @@ foreach v of local ed_var {
 
 
 *<_industrycat4_2_year_>
-	gen byte industrycat4_2_year=industrycat10_2_year
-	recode industrycat4_2_year (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
+	gen byte industrycat4_2_year = industrycat10_2_year
+	recode industrycat4_2_year (1 = 1) (2 3 4 5 = 2) (6 7 8 9 = 3) (10 = 4)
 	label var industrycat4_2_year "Broad Economic Activities classification, secondary job 12 month recall"
 	label values industrycat4_2_year lblindustrycat4_year
 *</_industrycat4_2_year_>
@@ -1510,15 +1510,15 @@ foreach v of local ed_var {
 *<_% Correction min age_>
 
 ** Drop info for cases under the age for which questions to be asked (do not need a variable for this)
-	local lab_var "minlaborage lstatus nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome"
+	local lab_vars "minlaborage lstatus nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome"
 
-	foreach v of local lab_var {
-		cap confirm numeric variable `v'
+	foreach lab_var of local lab_vars {
+		cap confirm numeric variable `lab_var'
 		if _rc == 0 { // is indeed numeric
-			replace `v'=. if ( age < minlaborage & !missing(age) )
+			replace `lab_var' = . if ( age < minlaborage & !missing(age) )
 		}
 		else { // is not
-			replace `v'= "" if ( age < minlaborage & !missing(age) )
+			replace `lab_var' = "" if ( age < minlaborage & !missing(age) )
 		}
 
 	}
@@ -1585,9 +1585,11 @@ quietly{
 quietly: describe, varlist
 local kept_vars `r(varlist)'
 
-foreach var of local kept_vars {
-   capture assert missing(`var')
-   if !_rc drop `var'
+foreach kept_var of local kept_vars {
+	
+	capture assert missing(`kept_var')
+	if !_rc drop `kept_var'
+   
 }
 
 *</_% DELETE MISSING VARIABLES_>
