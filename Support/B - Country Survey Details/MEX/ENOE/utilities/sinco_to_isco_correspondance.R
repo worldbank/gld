@@ -51,6 +51,20 @@ df <- df[!(df$...1 < 1000 & !is.na(df$...1)),]
 
 # Fill ISCO description down, Drop when SINCO has no correspondence with ISCO
 df <- df %>% fill(...4, .direction = "down") 
+
+# There are odd cases that require manual treatment, set them aside
+
+# First when there is a note instead of a correspondence code
+odd_nota <- df[(df$...4 %in% c("Nota: clasifica a los supervisores junto a los trabajadores que supervisa")),] %>%
+  # Keep only four digit codes, three digit ones should go
+  filter(...1 > 999)
+
+# Then for cases defined as "without correspondence"
+odd_no_correspond <- df[(df$...4 %in% c("No tiene correspondencia")),] %>%
+  # Keep only four digit codes
+  filter(...1 > 999)
+
+# Once saved, focus df only on what has correspondence
 df <- df[!(df$...4 %in% c("No tiene correspondencia", 
                           "Nota: clasifica a los supervisores junto a los trabajadores que supervisa")),]
 
@@ -175,5 +189,66 @@ concord <- bind_rows(match_1, match_2, match_3, match_4) %>%
   mutate(sinco = str_pad(sinco, 4, pad = "0", side = "right"),
          isco  = str_pad(isco, 4, pad = "0", side = "right"))
 
+
+#=========================================================================#
+# Step 7 - Add manual matches ---------------------------------------------
+#=========================================================================#
+
+# We manually assign codes to the codes present in SINCO but for which the
+# correspondence table gives us no information. This is based on SINCO 
+# descriptions (1) and ISCO 08 ones (2)
+
+# Links below as of 2024/11/06
+# (1) http://internet.contenidos.inegi.org.mx/contenidos/productos/prod_serv/contenidos/espanol/bvinegi/productos/metodologias/est/sinco_2011.pdf
+# (2) https://www.ilo.org/sites/default/files/wcmsp5/groups/public/@dgreports/@dcomm/@publ/documents/publication/wcms_172572.pdf
+
+orphan_sinco_codes <- as.character(c(odd_nota$...1, odd_no_correspond$...1))
+orphan_isco_codes <- c("5152", # Supervisors of housework, same as workers
+                       "5410", # Supervisors of protective service workers (psw) as psw
+                       "6100", # Agro/fish supervisor as market ag workers
+                       "6200", # Fish/aquaculture supervisor as market forest, fish
+                       "7200", # Metalwork supervisors as metalworkers
+                       "",     # Don't have a good one, should be few people
+                       "7510", # Food process (fp) supervisors as fp workers
+                       "7310", # Handicraft supervisors as handicraft
+                       "",     # Don't have a good one, should be few people
+                       "1100", # Other presidents, CEO as Chie Executives
+                       "1300", # Public utilities Managers as Production Managers
+                       "1300", # Coordinator public utilities as Production Managers
+                       "1300", # Other coordinators as Production Managers
+                       "1300", # Other coordinators in ITC PM
+                       "",     # Other directors, no code, should be few
+                       "2654", # Set designers
+                       "2300", # Alphabetisers as teachers
+                       "2300", # Bilingual (indigenous) teacher as teacher
+                       "2300", # Other teachers n.e.c. as teacher
+                       "2200", # Biomedical engineers as health professionals
+                       "",     # Don't have a good one, should be few people
+                       "3130", # Electrical technician supervisors as process control techs
+                       "7400", # Electrical tecs n.e.c.as Eletrical Workers
+                       "5312", # Auxiliary teaching as teachers' aides
+                       "",     # Too vague
+                       "",     # Too vague
+                       "5249", # Mobile goods rental as sales n.e.c. (example is rental salesperson)
+                       "5200", # Other sales workers as generic sales workers
+                       "6100", # Other ag workers as market ag workers
+                       "6100", # Other ag workers as market ag workers
+                       "6100", # Other ag workers as market ag workers
+                       "6200", # Other fish sector workers as market fishery
+                       "6200", # Other fishery, water workers as market fishery
+                       "",     # Too vague
+                       "8300", # Other drivers as drivers, mobile plant operators
+                       "9100", # Car handler on tips as cleaners and helpers
+                       "",     # Unclear
+                       "")     # Too vague
+
+orphan_df <- data.frame(sinco = orphan_sinco_codes, isco = orphan_isco_codes, match = 999) %>%
+  filter(isco != "")
+
+#=========================================================================#
+# Step 8 - Combine manual, save -------------------------------------------
+#=========================================================================#
+
+concord <- bind_rows(concord, orphan_df)
 
 write_dta(concord, path_out) 
