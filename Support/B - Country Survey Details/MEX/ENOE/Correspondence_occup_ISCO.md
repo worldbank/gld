@@ -36,11 +36,13 @@ The most difficult case is the case in the red box. Here SINCO code `1524` descr
 
 ### Direct SINCO to ISCO mapping
 
-In the easiest case, we use the SINCO to ISCO correspondence and create a map for every four-digit SINCO code, following the logic outlined above. Note that not all SINCO codes appear to have a correspondence. The case of SINCO code `2421` of biomedical engineers (red box in the image below) is described by INEGI as having no correspondence in ISCO. This code is therefore not mapped.
+In the easiest case, we use the SINCO to ISCO correspondence and create a map for every four-digit SINCO code, following the logic outlined above. Note that not all SINCO codes appear to have a correspondence. The case of SINCO code `2421` of biomedical engineers (red box in the image below) is described by INEGI as having no correspondence in ISCO. 
 
 <br></br>
 ![](utilities/sinco_isco_ing_biomed.png)
 <br></br>
+
+For these codes (38 instances) there is a manual mapping (in the [correspondence R code](utilities/sinco_to_isco_correspondance.R)) whenever feasible (29 instances).
 
 ### Indirect CMO to ISCO mapping
 
