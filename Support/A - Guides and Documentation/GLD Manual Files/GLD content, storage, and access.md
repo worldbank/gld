@@ -36,7 +36,7 @@ In addition to the harmonization code and the bulk of the GLD code, various othe
 - Raw Microdata Conversion Code: Code written to convert raw microdata, not in Stata .dta format, into this format.
 - GLD Quality Check Code: Code responsible for conducting quality checks on GLD data. For more details on these quality checks, refer to the Validation and quality checks section.
 - Code Templates: Predefined code structures or templates to facilitate coding tasks within the GLD framework.
-- GLD Ecosystem Tools Code: Code that builds the "GLD Ecosystem Tools," which are small software programs designed to address tasks commonly performed by GLD users on the GLD data. An example includes a tool supporting the conversion of ISIC and ISCO codes (classifications for industries and occupations) across different revisions of the classifications. All [GLD tools can be found here](https://github.com/worldbank/gld/tree/gronert-m-patch-1/Support/Z%20-%20GLD%20Ecosystem%20Tools).
+- GLD Ecosystem Tools Code: Code that builds the "GLD Ecosystem Tools," which are small software programs designed to address tasks commonly performed by GLD users on the GLD data. An example includes a tool supporting the conversion of ISIC and ISCO codes (classifications for industries and occupations) across different revisions of the classifications. All [GLD tools can be found here](https://github.com/worldbank/gld/tree/main/Support/Z%20-%20GLD%20Ecosystem%20Tools).
 
 All code of each category, like the harmonization code, is shared under an MIT License free of charge. The code may be written using any software program. Please refer to the individual tools to determine the software type used. Additionally, requests for modifications to existing tools or new tool suggestions can be made (see the How to correct and expand the GLD tools section)
 
@@ -48,7 +48,7 @@ Background or contextual information refers to the information the GLD team has 
 
 A common occurrence is the change of the employment definition. In its 19th session the International Conference of Labour Statisticians (ICLS), under the auspices of the International Labour Organization (ILO) changed the definition ([more information here](https://www.ilo.org/global/statistics-and-databases/standards-and-guidelines/resolutions-adopted-by-international-conferences-of-labour-statisticians/WCMS_230304/lang--en/index.htm)). Therefore, work for own consumption (for example subsistence agriculture) was no longer considered employment. This change has been implemented differently at different times by different countries. Per the rules of the GLD harmonization each survey will be harmonized using the definition of employment that was applied to each survey and not unified (see the Defining the boundaries of GLD harmonization section for more details). To help users understand these changes, its implication, and – if possible – try to align definitions with earlier ones, the GLD team prepares documentation to detail the changes, show the relevant questionnaire passages and propose alternative coding. Information like this is collectively referred to as *Country Survey Details*.
 
-The Country Survey Details are text files that accessible to all and may be freely shared. You may see them [here online](https://github.com/worldbank/gld/tree/main/Support/B - Country Survey Details).
+The Country Survey Details are text files that accessible to all and may be freely shared. You may see them [here online](https://github.com/worldbank/gld/tree/main/Support/B%20-%20Country%20Survey%20Details).
 
 ## Data storage platforms and access rules
 
@@ -93,7 +93,7 @@ This reduces space on the server and ensures users are using the latest files ar
 
 Other than these two differences, the GLD WB Staff Server is organized like the full GLD server. Access to the GLD Staff Server can be requested and granted by the GLD Focal Point (please reach out to [gld@worldbank.org](mailto:gld@worldbank.org?subject=Requesting%20GLD%20Server%20Access)). 
 
-Access is available to any staff member with an active World Bank email address and access to a World Bank laptop or Virtual Desktop. Once a user has mapped the server (see [instructions here on mapping](https://github.com/worldbank/gld/blob/gronert-m-patch-1/Support/A%20-%20Guides%20and%20Documentation/How%20Map%20Network%20Server.docx)) they do not need to take further steps as the GLD team updates the GLD WB staff server. What is present on the server should always represent the latest vintage of any harmonization available.
+Access is available to any staff member with an active World Bank email address and access to a World Bank laptop or Virtual Desktop. Once a user has mapped the server (see [instructions here on mapping](https://github.com/worldbank/gld/blob/main/Support/A%20-%20Guides%20and%20Documentation/How%20Map%20Network%20Server.docx)) they do not need to take further steps as the GLD team updates the GLD WB staff server. What is present on the server should always represent the latest vintage of any harmonization available.
 
 ### Datalibweb
 
