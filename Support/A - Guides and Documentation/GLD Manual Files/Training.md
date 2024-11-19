@@ -1,4 +1,4 @@
-# Training
+# Training module
 
 ## Variables
 

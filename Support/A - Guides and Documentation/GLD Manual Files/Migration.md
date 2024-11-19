@@ -1,4 +1,4 @@
-# Migration
+# Migration module
 
 ## Variables
 

@@ -1,4 +1,4 @@
-# Labor
+# Labor module
 
 ## Variables 
 
