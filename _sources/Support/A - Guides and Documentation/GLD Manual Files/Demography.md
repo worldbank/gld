@@ -1,4 +1,4 @@
-# Demography
+# Demography module
 
 ## Variables
 
