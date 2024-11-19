@@ -1,4 +1,4 @@
-# Geography
+# Geography module
 
 ## Variables
 
