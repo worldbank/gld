@@ -34,7 +34,7 @@ gen diff_`age' = !(inlist(`age'_d, 0, 1))
 bys `hhid' `pid': egen id_diff_`age' = max(diff_`age')
 
 * Check if odd_diff is zero, but people have different characteristics
-bys `hhid' `pid': egen diff_sex x= sd(`sex')
+bys `hhid' `pid': egen diff_sex = sd(`sex')
 replace diff_sex = (diff_sex > 0 & !missing(diff_sex))
 bys `hhid' `pid': egen id_diff_sex = max(diff_sex)
 
