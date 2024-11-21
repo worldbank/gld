@@ -177,11 +177,13 @@ program gldpanel_issue_check, rclass
 	}
 
 	graph hbar (sum) issue non_issue if total != 0 & labels>1, over(labels) ///
-bar(1, color(maroon) lcolor(maroon)) bar(2, color(none) lcolor(maroon)) stack title("Issues across years: ${country}") subtitle("") graphregion(color(white)) text(`total' 89  " `case2'%", place(east) color(maroon)) text(`total' 63 " `case3'%", place(east) color(maroon)) text(`total' 38  " `case4'%", place(east) color(maroon))  text(`total' 11 " `case5'%", place(east) color(maroon)) ylabel(, nogrid) legend( label (1 "Issue") label (2 "Non-issue"))
+	bar(1, color(maroon) lcolor(maroon)) bar(2, color(none) lcolor(maroon)) ///
+	stack title("Issues across years: ${country}") subtitle("") graphregion(color(white)) ///
+	text(`total' 89  " `case2'%", place(east) color(maroon)) text(`total' 63 " `case3'%", ///
+	place(east) color(maroon)) text(`total' 38  " `case4'%", place(east) color(maroon))  ///
+	text(`total' 11 " `case5'%", place(east) color(maroon)) ylabel(, nogrid) ///
+	legend( label (1 "Issue") label (2 "Non-issue") position(6) cols(2)) graphregion(margin(r=12))
 		
-	
-	
-
 	
 	restore
 	}

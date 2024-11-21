@@ -92,7 +92,7 @@ qui merge 1:1 `year' `wave' using `a1'
 
 
 graph bar (sum) `attrition_rate' `attrition_rate_matches', over(`wave') over(`year') ///
- title("Attrition between waves") subtitle("") graphregion(color(white)) ylabel(, nogrid) ytitle("% attrition relative to previous wave") legend( label (1 "Full data") label (2 "Age and sex matches only"))
+ title("Attrition between waves") subtitle("") graphregion(color(white)) ylabel(, nogrid) ytitle("% attrition relative to previous wave") legend( label (1 "Full data") label (2 "Age and sex matches only") position(6) cols(2))
  
 restore
 
@@ -135,7 +135,7 @@ qui merge 1:1 `year' `wave' using `a2'
 
 
 graph bar (sum) `attrition_rate' `attrition_rate_matches', over(`wave') over(`year') ///
- title("Attrition rate: any subsequent wave") subtitle("") graphregion(color(white)) ylabel(, nogrid) ytitle("% attrition relative to first appearance") legend( label (1 "Full data") label (2 "Age and sex matches only"))
+ title("Attrition rate: any subsequent wave") subtitle("") graphregion(color(white)) ylabel(, nogrid) ytitle("% attrition relative to first appearance") legend( label (1 "Full data") label (2 "Age and sex matches only") position(6) cols(2))
  
 restore
 
@@ -176,7 +176,7 @@ qui keep `year' `wave' `attrition_rate_matches'
 qui merge 1:1 `year' `wave' using `a3'
 
 graph bar (sum) `attrition_rate' `attrition_rate_matches', over(`wave') over(`year') ///
- title("Attrition rate: all subsequent waves") subtitle("") graphregion(color(white)) ylabel(, nogrid) ytitle("% attrition relative to first appearance") legend( label (1 "Full data") label (2 "Age and sex matches only"))
+ title("Attrition rate: all subsequent waves") subtitle("") graphregion(color(white)) ylabel(, nogrid) ytitle("% attrition relative to first appearance") legend( label (1 "Full data") label (2 "Age and sex matches only") position(6) cols(2))
  
  restore
 }
