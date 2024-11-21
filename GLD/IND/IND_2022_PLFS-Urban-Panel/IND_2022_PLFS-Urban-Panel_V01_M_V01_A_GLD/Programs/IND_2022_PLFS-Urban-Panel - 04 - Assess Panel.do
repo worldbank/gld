@@ -29,3 +29,5 @@ graph export "${path_work}/attrition_any_wave.png", replace
 
 gldpanel_attrition, hhid(hhid_panel) pid(pid_panel) wave(tempwave) all_waves
 graph export "${path_work}/attrition_all_waves.png", replace
+
+cap drop tempwave
