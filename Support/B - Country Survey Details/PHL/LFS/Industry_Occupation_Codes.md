@@ -27,7 +27,7 @@ The codes for the industry classification of the main job, `industrycat10`, are 
 
 ### Schemas Covered in Raw Data
 
-The raw data naturally spans different categorization schemes over time. Principally, there are the 1994 PSCIC and the [2009 PSCIC](http://psa.gov.ph/content/philippine-standard-industrial-classification-psic); the latter went into effect in January 2012. Since these codes are available on the PSA website and are quite detailed, a the most useful overview here is a short table that summarizes the changes in the metadata. A detailed version of this table, along with individual
+The raw data naturally spans different categorization schemes over time. Principally, there are the [1994 PSCIC](utilities/PSA_PSIC_1994.pdf) and the [2009 PSCIC](utilities/PSA_PSIC_2009.pdf); the latter went into effect in January 2012. Since these codes are available on the PSA website and are quite detailed, a the most useful overview here is a short table that summarizes the changes in the metadata. A detailed version of this table, along with individual
 labels, can be found by running `label_tools.R`.
 
 | Scheme | PSCIC Version    | Years Applicable  | Characteristics | Coding methodology                                 |
