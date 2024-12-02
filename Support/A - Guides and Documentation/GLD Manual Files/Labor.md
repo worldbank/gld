@@ -642,6 +642,8 @@ t_wage_others is a continuous variable that specifies the annualized wage in all
 
 t_hours_total is a continuous variable that specifies the hours of work in last 12 months in all jobs including primary, secondary and others.
 
+If the number of months worked is missing, the harmonizer may assume that the person worked the whole year inputting the “average, commonly hours worked” (i.e., using usually worked hours instead of actual). Moreover, the harmonizer may assume that the person worked the whole year in this job (multiply monthly data by 12, weekly data by 48). Thus, the variable functions as an upper bound.
+
 **t_wage_nocompen_total**
 
 t_wage_nocompen_total is a continuous variable that specifies the total annualized wage income in all jobs including primary, secondary and others. This excludes tips, bonuses, other compensation such as dwellings or clothes, and other payments.
@@ -650,7 +652,9 @@ Note: Use gross wages when available and net wages only when gross wages are not
 
 **t_wage_total**
 
-t_wage_total is a continuous variable that specifies the total annualized wage income in all jobs including primary, secondary and others. This income includes tips, compensations such as bonuses, dwellings or clothes, and other payments. t_wage_total should be equal to t_wage_nocompen_total in case there are no bonuses, tips etc. offered as part of any of the jobs. If the number of months worked in this job is missing the harmonizer could assumed that the person worked the whole year in this job.
+t_wage_total is a continuous variable that specifies the total annualized wage income in all jobs including primary, secondary and others. This income includes tips, compensations such as bonuses, dwellings or clothes, and other payments. t_wage_total should be equal to t_wage_nocompen_total in case there are no bonuses, tips etc. offered as part of any of the jobs. 
+
+If the number of months worked in this job is missing the harmonizer may assume that the person worked the whole year in this job (multiply monthly data by 12, weekly data by 48). Thus, the variable functions as an upper bound.
 
 ### Labor status, 12-month reference period
 
@@ -1180,6 +1184,8 @@ t_wage_others_year is a continuous variable that specifies the annual wage in al
 
 t_hours_total_year is a continuous variable that specifies the hours of work in last 12 months in all jobs including primary, secondary and others.
 
+If the number of months worked is missing, the harmonizer may assume that the person worked the whole year inputting the “average, commonly hours worked” (i.e., using usually worked hours instead of actual). Moreover, the harmonizer may assume that the person worked the whole year in this job (multiply monthly data by 12, weekly data by 48). Thus, the variable functions as an upper bound.
+
 **t_wage_nocompen_total_year**
 
 t_wage_nocompen_total_year is a continuous variable that specifies the total annualized wage income in all jobs including primary, secondary and others. This excludes tips, bonuses, other compensation such as dwellings or clothes, and other payments.
@@ -1189,6 +1195,8 @@ Note: Use gross wages when available and net wages only when gross wages are not
 **t_wage_total_year**
 
 t_wage_total_year is a continuous variable that specifies the total annualized wage income in all jobs including primary, secondary and others. This income includes tips, compensations such as bonuses, dwellings or clothes, and other payments. t_wage_total should be equal to t_wage_nocompen_total in case there are no bonuses, tips etc. offered as part of any of the jobs.
+
+If the number of months worked in this job is missing the harmonizer may assume that the person worked the whole year in this job (multiply monthly data by 12, weekly data by 48). Thus, the variable functions as an upper bound.
 
 **njobs**
 
