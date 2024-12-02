@@ -70,7 +70,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="prev" title="Training module" href="Training.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="Nov 27, 2024"/>
+    <meta name="docbuild:last-update" content="Dec 02, 2024"/>
   </head>
   
   
@@ -942,11 +942,13 @@ Figure 23 - ISCO broad skill level classification
 <h3>Total Employment Earnings, 7-day reference period<a class="headerlink" href="#total-employment-earnings-7-day-reference-period" title="Permalink to this heading">#</a></h3>
 <p><strong>t_hours_total</strong></p>
 <p>t_hours_total is a continuous variable that specifies the hours of work in last 12 months in all jobs including primary, secondary and others.</p>
+<p>If the number of months worked is missing, the harmonizer may assume that the person worked the whole year inputting the “average, commonly hours worked” (i.e., using usually worked hours instead of actual). Moreover, the harmonizer may assume that the person worked the whole year in this job (multiply monthly data by 12, weekly data by 48). Thus, the variable functions as an upper bound.</p>
 <p><strong>t_wage_nocompen_total</strong></p>
 <p>t_wage_nocompen_total is a continuous variable that specifies the total annualized wage income in all jobs including primary, secondary and others. This excludes tips, bonuses, other compensation such as dwellings or clothes, and other payments.</p>
 <p>Note: Use gross wages when available and net wages only when gross wages are not available. This is done to make it easy to compare earnings in formal and informal sectors.</p>
 <p><strong>t_wage_total</strong></p>
-<p>t_wage_total is a continuous variable that specifies the total annualized wage income in all jobs including primary, secondary and others. This income includes tips, compensations such as bonuses, dwellings or clothes, and other payments. t_wage_total should be equal to t_wage_nocompen_total in case there are no bonuses, tips etc. offered as part of any of the jobs. If the number of months worked in this job is missing the harmonizer could assumed that the person worked the whole year in this job.</p>
+<p>t_wage_total is a continuous variable that specifies the total annualized wage income in all jobs including primary, secondary and others. This income includes tips, compensations such as bonuses, dwellings or clothes, and other payments. t_wage_total should be equal to t_wage_nocompen_total in case there are no bonuses, tips etc. offered as part of any of the jobs.</p>
+<p>If the number of months worked in this job is missing the harmonizer may assume that the person worked the whole year in this job (multiply monthly data by 12, weekly data by 48). Thus, the variable functions as an upper bound.</p>
 </section>
 <section id="labor-status-12-month-reference-period">
 <h3>Labor status, 12-month reference period<a class="headerlink" href="#labor-status-12-month-reference-period" title="Permalink to this heading">#</a></h3>
@@ -1361,11 +1363,13 @@ Figure 23 - ISCO broad skill level classification
 <h3>Total Employment Earnings, 12-month reference period<a class="headerlink" href="#total-employment-earnings-12-month-reference-period" title="Permalink to this heading">#</a></h3>
 <p><strong>t_hours_total_year</strong></p>
 <p>t_hours_total_year is a continuous variable that specifies the hours of work in last 12 months in all jobs including primary, secondary and others.</p>
+<p>If the number of months worked is missing, the harmonizer may assume that the person worked the whole year inputting the “average, commonly hours worked” (i.e., using usually worked hours instead of actual). Moreover, the harmonizer may assume that the person worked the whole year in this job (multiply monthly data by 12, weekly data by 48). Thus, the variable functions as an upper bound.</p>
 <p><strong>t_wage_nocompen_total_year</strong></p>
 <p>t_wage_nocompen_total_year is a continuous variable that specifies the total annualized wage income in all jobs including primary, secondary and others. This excludes tips, bonuses, other compensation such as dwellings or clothes, and other payments.</p>
 <p>Note: Use gross wages when available and net wages only when gross wages are not available. This is done to make it easy to compare earnings in formal and informal sectors.</p>
 <p><strong>t_wage_total_year</strong></p>
 <p>t_wage_total_year is a continuous variable that specifies the total annualized wage income in all jobs including primary, secondary and others. This income includes tips, compensations such as bonuses, dwellings or clothes, and other payments. t_wage_total should be equal to t_wage_nocompen_total in case there are no bonuses, tips etc. offered as part of any of the jobs.</p>
+<p>If the number of months worked in this job is missing the harmonizer may assume that the person worked the whole year in this job (multiply monthly data by 12, weekly data by 48). Thus, the variable functions as an upper bound.</p>
 <p><strong>njobs</strong></p>
 <p>njobs is a numeric variable that specifies the total number of jobs.</p>
 <p><strong>t_hours_annual</strong></p>
@@ -2179,7 +2183,7 @@ By World Bank Jobs Group
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Nov 27, 2024.
+  Last updated on Dec 02, 2024.
   <br/>
 </p>
   </div>
