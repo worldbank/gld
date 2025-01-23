@@ -64,13 +64,13 @@ global cat_1_3 lstatus lstatus_year occup_skill occup_skill_2 occup_skill_year o
 global cat_1_4 eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty educat4 ocusec industrycat4 ocusec_2 industrycat4_2 ocusec_year industrycat4_year ocusec_2_year industrycat4_2_year
 
 *----------7.4: Categorical - 1 / 5
-global cat_1_5 marital migrated_from_cat migrated_reason educat5 vocational_financed nlfreason empstat empstat_2 nlfreason_year empstat_year empstat_2_year
+global cat_1_5 marital migrated_reason educat5 vocational_financed nlfreason empstat empstat_2 nlfreason_year empstat_year empstat_2_year
 
 *----------7.5: Categorical - 1 / 6
 global cat_1_6 relationharm
 
 *----------7.6: Categorical - 1 / 7
-global cat_1_7 educat7
+global cat_1_7 educat7 migrated_from_cat
 
 *----------7.7: Categorical - 1 / 10
 global cat_1_10 industrycat10 unitwage industrycat10_2 unitwage_2 industrycat10_year unitwage_year industrycat10_2_year unitwage_2_year

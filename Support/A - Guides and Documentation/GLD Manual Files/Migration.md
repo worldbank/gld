@@ -22,18 +22,20 @@ Number of full years since the last migration. Often surveys ask how long a pers
 
 Codes whether the individual migrated to their current domicile from an urban area.
 
-1 = Yes (i.e., came from urban area)
-0 = No (i.e., came from rural area)
+- 1 = Yes (i.e., came from urban area)
+- 0 = No (i.e., came from rural area)
 
 **migrated_from_cat**
 
 If the survey contains information on the area from where the person migrated, use the [concept of administrative division](https://en.wikipedia.org/wiki/Administrative_division) to inform the migration pattern. The codes are: 
 
-1 = From same admin3 area
-2 = From same admin2 area
-3 = From same admin1 area
-4 = From other admin1 area
-5 = From other country
+- 1 = From same admin3 area
+- 2 = From same admin2 area
+- 3 = From same admin1 area
+- 4 = From other admin1 area
+- 5 = From other country
+- 6 = Within country, admin unknown
+- 7 = Wholly unknow
 
 To exemplify the use, Spain is divided into Communities (admin1 level), Provinces (admin2 level) and municipalities (names change within provinces, but rough concept holds – admin3 level). A person moving within the municipality, for example, from one village to the next, codes 1. A person moving within the province, say from a rural municipality to the province capital codes 2. A person moving within the same community yet leaving their province codes 3. A person moving from one community to another, say from [Andalusia](https://en.wikipedia.org/wiki/Andalusia) to [Galicia](https://en.wikipedia.org/wiki/Galicia_(Spain)), codes 4. If the person moved from outside the country (regardless of their nationality) codes 5.
 
@@ -53,11 +55,11 @@ Codes the country (if migrated_from_cat is 5) from where the person migrated fro
 
 Codifies the reason why a person migrated. The codes are: 
 
-1 = Family reasons
-2 = Educational reasons
-3 = Employment
-4 = Forced (political reasons, natural disaster, …)
-5 = Other reasons
+- 1 = Family reasons
+- 2 = Educational reasons
+- 3 = Employment
+- 4 = Forced (political reasons, natural disaster, …)
+- 5 = Other reasons
 
 ## Lessons Learned and Challenges
 
