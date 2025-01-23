@@ -70,7 +70,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="prev" title="Demography module" href="Demography.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="Jan 21, 2025"/>
+    <meta name="docbuild:last-update" content="Jan 23, 2025"/>
   </head>
   
   
@@ -445,15 +445,21 @@ document.write(`
 <p>Number of full years since the last migration. Often surveys ask how long a person has lived at their current domicile since the last migration. Both questions cover the same information.</p>
 <p><strong>migrated_from_urban</strong></p>
 <p>Codes whether the individual migrated to their current domicile from an urban area.</p>
-<p>1 = Yes (i.e., came from urban area)
-0 = No (i.e., came from rural area)</p>
+<ul class="simple">
+<li><p>1 = Yes (i.e., came from urban area)</p></li>
+<li><p>0 = No (i.e., came from rural area)</p></li>
+</ul>
 <p><strong>migrated_from_cat</strong></p>
 <p>If the survey contains information on the area from where the person migrated, use the <a class="reference external" href="https://en.wikipedia.org/wiki/Administrative_division">concept of administrative division</a> to inform the migration pattern. The codes are:</p>
-<p>1 = From same admin3 area
-2 = From same admin2 area
-3 = From same admin1 area
-4 = From other admin1 area
-5 = From other country</p>
+<ul class="simple">
+<li><p>1 = From same admin3 area</p></li>
+<li><p>2 = From same admin2 area</p></li>
+<li><p>3 = From same admin1 area</p></li>
+<li><p>4 = From other admin1 area</p></li>
+<li><p>5 = From other country</p></li>
+<li><p>6 = Within country, admin unknown</p></li>
+<li><p>7 = Wholly unknow</p></li>
+</ul>
 <p>To exemplify the use, Spain is divided into Communities (admin1 level), Provinces (admin2 level) and municipalities (names change within provinces, but rough concept holds – admin3 level). A person moving within the municipality, for example, from one village to the next, codes 1. A person moving within the province, say from a rural municipality to the province capital codes 2. A person moving within the same community yet leaving their province codes 3. A person moving from one community to another, say from <a class="reference external" href="https://en.wikipedia.org/wiki/Andalusia">Andalusia</a> to <a class="reference external" href="https://en.wikipedia.org/wiki/Galicia_(Spain)">Galicia</a>, codes 4. If the person moved from outside the country (regardless of their nationality) codes 5.</p>
 <p><strong>migrated_from_code</strong></p>
 <p>Based on the logic set out in the <code class="docutils literal notranslate"><span class="pre">migrated_from_cat</span></code> variable, codify the areas of migration using the survey subnation id classification. For example, if a person migrated from one admin1 area to another, use the subnatid1 codes to inform from which admin1 area they migrated to their current residence (which is codified in subnatid1).</p>
@@ -463,11 +469,13 @@ document.write(`
 <p>Codes the country (if migrated_from_cat is 5) from where the person migrated from as a <a class="reference external" href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3">three letter ISO country code</a> or a clear string for regions (“Other Europe”, “Other World”, …)</p>
 <p><strong>migrated_reason</strong></p>
 <p>Codifies the reason why a person migrated. The codes are:</p>
-<p>1 = Family reasons
-2 = Educational reasons
-3 = Employment
-4 = Forced (political reasons, natural disaster, …)
-5 = Other reasons</p>
+<ul class="simple">
+<li><p>1 = Family reasons</p></li>
+<li><p>2 = Educational reasons</p></li>
+<li><p>3 = Employment</p></li>
+<li><p>4 = Forced (political reasons, natural disaster, …)</p></li>
+<li><p>5 = Other reasons</p></li>
+</ul>
 </section>
 <section id="lessons-learned-and-challenges">
 <h2>Lessons Learned and Challenges<a class="headerlink" href="#lessons-learned-and-challenges" title="Permalink to this heading">#</a></h2>
@@ -708,7 +716,7 @@ By World Bank Jobs Group
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Jan 21, 2025.
+  Last updated on Jan 23, 2025.
   <br/>
 </p>
   </div>
