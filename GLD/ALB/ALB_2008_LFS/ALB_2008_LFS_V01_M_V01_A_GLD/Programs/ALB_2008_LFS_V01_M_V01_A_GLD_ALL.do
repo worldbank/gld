@@ -483,14 +483,14 @@ use "`path_in_stata'/english_version_lfs_2008.dta", clear
 
 
 *<_migrated_ref_time_>
-	gen migrated_ref_time = 99
+	gen migrated_ref_time = 1
 	label var migrated_ref_time "Reference time applied to migration questions (in years)"
 *</_migrated_ref_time_>
 
 
 *<_migrated_binary_>
 	gen migrated_binary = .
-	replace migrated_binary = 1 if q17 != "00" | inrange(yearesid,1,99)
+	replace migrated_binary = 1 if q17 != "00"
 	replace migrated_binary = 0 if missing(migrated_binary)
 	label de lblmigrated_binary 0 "No" 1 "Yes"
 	label values migrated_binary lblmigrated_binary
@@ -499,13 +499,7 @@ use "`path_in_stata'/english_version_lfs_2008.dta", clear
 
 
 *<_migrated_years_>
-/* <_migrated_years_note>
-
-	There are people from ALB who their residence one year ago was outside ALB
-
-</_migrated_years_note> */
 	gen migrated_years = 1 if q17 != "00"
-	replace migrated_years = yearesid if missing(migrated_years) 
 	replace migrated_years = . if migrated_binary != 1
 	label var migrated_years "Years since latest migration"
 *</_migrated_years_>
@@ -521,9 +515,9 @@ use "`path_in_stata'/english_version_lfs_2008.dta", clear
 
 *<_migrated_from_cat_>
 	gen migrated_from_cat = .
-	replace migrated_from_cat = 4 if q17 == "AL" //national level
-	replace migrated_from_cat = 5 if (q17 != "AL" & q17 != "00") | (inrange(yearesid,1,99) & migrated_from_cat == .)
-	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country"
+	replace migrated_from_cat = 6 if q17 == "AL" //national level
+	replace migrated_from_cat = 5 if (q17 != "AL" & q17 != "00")  & migrated_from_cat == .
+	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country" 6 "Within country, admin unknown" 7 "Wholly unknow"
 	label values migrated_from_cat lblmigrated_from_cat
 	label var migrated_from_cat "Category of migration area"
 *</_migrated_from_cat_>
@@ -544,7 +538,7 @@ use "`path_in_stata'/english_version_lfs_2008.dta", clear
 
 *<_migrated_from_country_>
 	gen migrated_from_country = ""
-	replace migrated_from_country = "GRC" if (countryb == "GR" | q17 == "GR") & migrated_from_cat == 5
+	replace migrated_from_country = "GRC" if q17 == "GR" & migrated_from_cat == 5
 	replace migrated_from_country = "ITA" if q17 == "IT" & migrated_from_cat == 5
 	label var migrated_from_country "Code of migration country (ISO 3 Letter Code)"
 *</_migrated_from_country_>

@@ -500,14 +500,14 @@ use "`path_in_stata'/LFS 2010_English.dta", clear
 
 
 *<_migrated_ref_time_>
-	gen migrated_ref_time = 99
+	gen migrated_ref_time = 1
 	label var migrated_ref_time "Reference time applied to migration questions (in years)"
 *</_migrated_ref_time_>
 
 
 *<_migrated_binary_>
 	gen migrated_binary = .
-	replace migrated_binary = 1 if (Q17 != "00" & Q17 != "0" & Q17 != "0.") | inrange(YEARESID,1,99)
+	replace migrated_binary = 1 if (Q17 != "00" & Q17 != "0" & Q17 != "0." & !missing(Q17))
 	replace migrated_binary = 0 if missing(migrated_binary)
 	label de lblmigrated_binary 0 "No" 1 "Yes"
 	label values migrated_binary lblmigrated_binary
@@ -516,13 +516,7 @@ use "`path_in_stata'/LFS 2010_English.dta", clear
 
 
 *<_migrated_years_>
-/* <_migrated_years_note>
-
-	There are people from ALB who their residence one year ago was outside ALB
-
-</_migrated_years_note> */
-	gen migrated_years = 1 if (Q17 != "00" & Q17 != "0" & Q17 != "0.")
-	replace migrated_years = YEARESID if missing(migrated_years) 
+	gen migrated_years = 1 if (Q17 != "00" & Q17 != "0" & Q17 != "0." & !missing(Q17))
 	replace migrated_years = . if migrated_binary != 1
 	label var migrated_years "Years since latest migration"
 *</_migrated_years_>
@@ -539,8 +533,8 @@ use "`path_in_stata'/LFS 2010_English.dta", clear
 *<_migrated_from_cat_>
 	gen migrated_from_cat = .
 	replace migrated_from_cat = 4 if Q17 == "12"  //national level
-	replace migrated_from_cat = 5 if Q17 == "EG" | (inrange(YEARESID,1,99) & migrated_from_cat == .)
-	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country"
+	replace migrated_from_cat = 5 if Q17 == "EG" & migrated_from_cat == .
+	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country" 6 "Within country, admin unknown" 7 "Wholly unknow"
 	label values migrated_from_cat lblmigrated_from_cat
 	label var migrated_from_cat "Category of migration area"
 *</_migrated_from_cat_>
@@ -1116,16 +1110,16 @@ foreach ed_var of local ed_vars {
 	replace wage_no_compen = . if inrange(Q56,9999999,99999999) // Refuses
 	
 	*Sales
-	egen sales = rowtotal(Q66)
-	egen costs = rowtotal(Q67_1 Q67_2 Q67_4 Q67_5 Q67_6 Q67_7)
+	egen sales = rowtotal(Q66), missing
+	egen costs = rowtotal(Q67_1 Q67_2 Q67_4 Q67_5 Q67_6 Q67_7), missing
 	replace wage_no_compen = sales - costs if inlist(empstat,3,4)
-	replace wage_no_compen = 0 if wage_no_compen < 0 & !missing(wage_no_compen)
+	replace wage_no_compen = . if wage_no_compen < 0 & !missing(wage_no_compen)
 	
-	replace wage_no_compen = 0 if inlist(empstat,3,4) & Q55 == 1 // own consumption
+	replace wage_no_compen = . if inlist(empstat,3,4) & Q55 == 1 // own consumption
 	replace wage_no_compen = . if Q66 == . & inlist(empstat,3,4)
 	
 	
-	replace wage_no_compen = 0 if empstat == 2 //unpaid workers
+	replace wage_no_compen = . if empstat == 2 //unpaid workers
 	
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>

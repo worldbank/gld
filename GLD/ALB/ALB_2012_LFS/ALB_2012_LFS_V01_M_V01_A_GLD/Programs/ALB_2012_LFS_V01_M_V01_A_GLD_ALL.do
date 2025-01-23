@@ -243,13 +243,11 @@ drop if missing(quarter)
 	label var wave "Survey wave"
 *</_wave_>
 
-**# Bookmark #1
 *<_panel_>
 	gen panel = ""
 	label var panel "Panel individual belongs to"
 *</_panel_>
 
-**# Bookmark #2
 *<_visit_no_>
 	gen visit_no = .
 	label var visit_no "Visit number in panel"
@@ -500,14 +498,14 @@ drop if missing(quarter)
 
 
 *<_migrated_ref_time_>
-	gen migrated_ref_time = 99
+	gen migrated_ref_time = 1
 	label var migrated_ref_time "Reference time applied to migration questions (in years)"
 *</_migrated_ref_time_>
 
 
 *<_migrated_binary_>
 	gen migrated_binary = .
-	replace migrated_binary = 1 if inrange(Q18,2,3) | !inlist(yearesid,.,0)
+	replace migrated_binary = 1 if inrange(Q18,2,3)
 	replace migrated_binary = 0 if missing(migrated_binary)
 	label de lblmigrated_binary 0 "No" 1 "Yes"
 	label values migrated_binary lblmigrated_binary
@@ -517,8 +515,6 @@ drop if missing(quarter)
 
 *<_migrated_years_>
 	gen migrated_years = 1 if inrange(Q18,2,3)
-	gen years_bornoutside = 2012 - yearesid if !inlist(yearesid,.,0)
-	replace migrated_years = years_bornoutside if missing(migrated_years) 
 	replace migrated_years = . if migrated_binary != 1
 	label var migrated_years "Years since latest migration"
 *</_migrated_years_>
@@ -535,18 +531,18 @@ drop if missing(quarter)
 *<_migrated_from_cat_>
 /* <_migrated_from_country_note>
 
-	* The raw data has no information of the subnatid. If the individual has migrated inside the country, code him as: From same admin1 area
-	* there is one exception, two persons said thet were abroad but when asked about the country they answered albania. Code migrated_from_cat == 4
+	* The raw data has no information of the subnatid. If the individual has migrated inside the country, code him as: Code migrated_from_cat == 6
+	* there is one exception, 2 persons said thet were abroad but when asked about the country they answered albania. Code migrated_from_cat == 7
                                                                            
 </_migrated_from_country_note> */
 	gen migrated_from_cat = .
-	replace migrated_from_cat = 4 if Q18 == 2 
-	replace migrated_from_cat = 5 if (Q18 == 3 | !inlist(yearesid,.,0)) & migrated_from_cat == .
+	replace migrated_from_cat = 6 if Q18 == 2 
+	replace migrated_from_cat = 5 if Q18 == 3 & migrated_from_cat == .
 	
 	*exception
-	replace migrated_from_cat = 4 if migrated_from_cat == 5 & Q20 == 1
+	replace migrated_from_cat = 7 if migrated_from_cat == 5 & Q20 == 1
 	
-	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country"
+	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country" 6 "Within country, admin unknown" 7 "Wholly unknow"
 	label values migrated_from_cat lblmigrated_from_cat
 	label var migrated_from_cat "Category of migration area"
 *</_migrated_from_cat_>
@@ -570,7 +566,6 @@ drop if missing(quarter)
 	gen migrated_from_country = ""
 	replace migrated_from_country = "GRC" if Q20 == 5 & migrated_from_cat == 5
 	replace migrated_from_country = "ITA" if Q20 == 9 & migrated_from_cat == 5
-	replace migrated_from_country = "Other World" if Q16 == 2 & migrated_from_cat == 5 & missing(migrated_from_country)
 	replace migrated_from_country = "Other World" if migrated_from_country == "" & migrated_from_cat == 5
 	
 	label var migrated_from_country "Code of migration country (ISO 3 Letter Code)"
@@ -1136,16 +1131,17 @@ foreach ed_var of local ed_vars {
 	replace wage_no_compen = Q65 if empstat == 1
 	
 	*Sales
-	egen sales = rowtotal(Q74)
-	egen costs = rowtotal(Q75_1 Q75_2 Q75_4 Q75_5 Q75_6 Q75_7)
+	egen sales = rowtotal(Q74),missing
+	egen costs = rowtotal(Q75_1 Q75_2 Q75_4 Q75_5 Q75_6 Q75_7), missing
 	replace wage_no_compen = sales - costs if inlist(empstat,3,4)
-	replace wage_no_compen = 0 if wage_no_compen < 0 & !missing(wage_no_compen)
+	replace wage_no_compen = . if wage_no_compen < 0 & !missing(wage_no_compen)
 	
 	replace wage_no_compen = . if Q74 == . & inlist(empstat,3,4)
-	replace wage_no_compen = 0 if empstat == 2 | (Q21 == 5) // unpaid or self-employed which production id for own consumption
+	replace wage_no_compen = . if empstat == 2 | (Q21 == 5) // unpaid or self-employed which production is for own consumption
 	
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
+
 
 
 *<_unitwage_>

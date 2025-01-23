@@ -509,7 +509,7 @@ use "`path_in_stata'/lfs2009 english.dta", clear
 
 *<_migrated_binary_>
 	gen migrated_binary = .
-	replace migrated_binary = 1 if (Q17 != "00" & Q17 != "0" & Q17 != "0.") | inrange(yearesid,1,99)
+	replace migrated_binary = 1 if (Q17 != "00" & Q17 != "0" & Q17 != "0." & !missing(Q17))
 	replace migrated_binary = 0 if missing(migrated_binary)
 	label de lblmigrated_binary 0 "No" 1 "Yes"
 	label values migrated_binary lblmigrated_binary
@@ -518,12 +518,7 @@ use "`path_in_stata'/lfs2009 english.dta", clear
 
 
 *<_migrated_years_>
-/* <_migrated_years_note>
-
-	There are people from ALB who their residence one year ago was outside ALB
-
-</_migrated_years_note> */
-	gen migrated_years = 1 if (Q17 != "00" & Q17 != "0" & Q17 != "0.")
+	gen migrated_years = 1 if (Q17 != "00" & Q17 != "0" & Q17 != "0." & !missing(Q17))
 	replace migrated_years = yearesid if missing(migrated_years) 
 	replace migrated_years = . if migrated_binary != 1
 	label var migrated_years "Years since latest migration"
@@ -541,8 +536,8 @@ use "`path_in_stata'/lfs2009 english.dta", clear
 *<_migrated_from_cat_>
 	gen migrated_from_cat = .
 	replace migrated_from_cat = 4 if Q17 == "1" | Q17 == "12" | Q17 == "3" //national level
-	replace migrated_from_cat = 5 if Q17 == "GR" | Q17 == "IT" | (inrange(yearesid,1,99) & migrated_from_cat == .)
-	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country"
+	replace migrated_from_cat = 5 if Q17 == "GR" | Q17 == "IT" & migrated_from_cat == .
+	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country" 6 "Within country, admin unknown" 7 "Wholly unknow"
 	label values migrated_from_cat lblmigrated_from_cat
 	label var migrated_from_cat "Category of migration area"
 *</_migrated_from_cat_>
@@ -1096,19 +1091,19 @@ foreach ed_var of local ed_vars {
 
 	*Paid Employee Employer and Self-Employed
 	gen double wage_no_compen = .
-	replace wage_no_compen = Q56 if inlist(empstat,1,3,4)  //Two missing obs
+	replace wage_no_compen = Q56 if inlist(empstat,1)  //Two missing obs
 	
 	*Sales
-	egen sales = rowtotal(Q66)
-	egen costs = rowtotal(Q67_1 Q67_2 Q67_4 Q67_5 Q67_6 Q67_7)
+	egen sales = rowtotal(Q66), missing
+	egen costs = rowtotal(Q67_1 Q67_2 Q67_4 Q67_5 Q67_6 Q67_7), missing
 	replace wage_no_compen = sales - costs if inlist(empstat,3,4)
-	replace wage_no_compen = 0 if wage_no_compen < 0 & !missing(wage_no_compen)
+	replace wage_no_compen = . if wage_no_compen < 0 & !missing(wage_no_compen)
 	
-	replace wage_no_compen = 0 if inlist(empstat,3,4) & Q55 == 1 // own consumption
+	replace wage_no_compen = . if inlist(empstat,3,4) & Q55 == 1 // own consumption
 	replace wage_no_compen = . if Q66 == . & inlist(empstat,3,4)
 	
 	*Non-Paid Employee 
-	replace wage_no_compen = 0 if empstat == 2 
+	replace wage_no_compen = . if empstat == 2 
 
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
