@@ -17,6 +17,16 @@
 	cap wbopendata, indicator(SL.TLF.TOTL.IN) country(${ccode3}) year(${cyear}) clear long
 	if _rc {
 			di "data not found in wbopendata"
+			clear 
+			
+			* Still need to create an empty husk
+			gen year = .
+			gen value = .
+			gen ub = .
+			gen lb = .
+			gen countrycode = ""
+			gen source = ""
+
 		}
 	else {
 		gen source = "WDI"
@@ -151,6 +161,16 @@
 	cap wbopendata, indicator(SL.TLF.CACT.ZS) country(${ccode3}) year(${cyear}) clear long
 	if _rc {
 			di "data not found in wbopendata"
+			clear 
+			
+			* Still need to create an empty husk
+			gen year = .
+			gen value = .
+			gen ub = .
+			gen lb = .
+			gen countrycode = ""
+			gen source = ""
+
 		}
 	else {
 		gen source = "WDI-1"
@@ -457,6 +477,16 @@
 	cap wbopendata, indicator(SL.EMP.TOTL.SP.NE.ZS) country(${ccode3}) year(${cyear}) clear long
 	if _rc {
 			di "data not found in wbopendata"
+			clear 
+			
+			* Still need to create an empty husk
+			gen year = .
+			gen value = .
+			gen ub = .
+			gen lb = .
+			gen countrycode = ""
+			gen source = ""
+
 		}
 	else {
 		gen source = "WDI-2"
@@ -594,6 +624,16 @@
 	cap wbopendata, indicator(SL.UEM.TOTL.ZS) country(${ccode3}) year(${cyear}) clear long
 	if _rc {
 			di "data not found in wbopendata"
+			clear 
+			
+			* Still need to create an empty husk
+			gen year = .
+			gen value = .
+			gen ub = .
+			gen lb = .
+			gen countrycode = ""
+			gen source = ""
+
 		}
 	else {
 		gen source = "WDI-1"
@@ -764,6 +804,16 @@
 		cap wbopendata, indicator(SL.AGR.EMPL.ZS) country(${ccode3}) year(${cyear}) clear long 
 		if _rc {
 			di "data not found in wbopendata"
+			clear 
+			
+			* Still need to create an empty husk
+			gen year = .
+			gen value = .
+			gen ub = .
+			gen lb = .
+			gen countrycode = ""
+			gen source = ""
+
 		}
 		else {
 			gen source = "WDI"
@@ -953,6 +1003,16 @@
 		cap wbopendata, indicator(SL.IND.EMPL.ZS) country(${ccode3}) year(${cyear}) clear long
 		if _rc { // works as "if TRUE", where anything other than _rc code 0 (no error) is TRUE
 			di "data not found in wbopendata"
+			clear 
+			
+			* Still need to create an empty husk
+			gen year = .
+			gen value = .
+			gen ub = .
+			gen lb = .
+			gen countrycode = ""
+			gen source = ""
+
 		}
 		else { // can obtain wbopendata
 			gen source = "WDI"
@@ -1146,6 +1206,16 @@
 		cap wbopendata, indicator(SL.SRV.EMPL.ZS) country(${ccode3}) year(${cyear}) clear long
 		if _rc { // works as "if TRUE", where anything other than _rc code 0 (no error) is TRUE
 			di "data not found in wbopendata"
+			clear 
+			
+			* Still need to create an empty husk
+			gen year = .
+			gen value = .
+			gen ub = .
+			gen lb = .
+			gen countrycode = ""
+			gen source = ""
+
 		}
 		else {
 			gen source = "WDI"
