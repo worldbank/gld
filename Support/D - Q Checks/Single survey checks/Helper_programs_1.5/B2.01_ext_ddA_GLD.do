@@ -41,6 +41,13 @@
 		count
 		if 	`r(N)' == 0 {
 			di "WDI population not found"
+
+			* Even if nothing loaded, varnames loaded, value is string by default
+			rename (period country dataset_code) (year countrycode source)
+			cap destring value, replace
+			keep  year value countrycode source
+			order year value countrycode source
+
 		}
 
 		else {
@@ -224,6 +231,15 @@
 		if _rc {
 			di "data not found in wbopendata"
 			clear
+
+			* Still need to create an empty husk
+			gen year = .
+			gen value = .
+			gen ub = .
+			gen lb = .
+			gen countrycode = ""
+			gen source = ""
+
 		}
 		else {
 			gen source = "WDI"
@@ -368,7 +384,16 @@
 		cap wbopendata, indicator(SP.URB.TOTL.IN.ZS) country(${ccode3}) year(${cyear}) clear long
 		if _rc {
 			di "data not found in wbopendata"
-			clear
+			clear 
+			
+			* Still need to create an empty husk
+			gen year = .
+			gen value = .
+			gen ub = .
+			gen lb = .
+			gen countrycode = ""
+			gen source = ""
+
 		}
 		else {
 			gen source = "WDI"
@@ -477,6 +502,16 @@
 		cap wbopendata, indicator(SP.POP.0014.TO.ZS) country(${ccode3}) year(${cyear}) clear long
 		if _rc {
 			di "data not found in wbopendata"
+			clear 
+			
+			* Still need to create an empty husk
+			gen year = .
+			gen value = .
+			gen ub = .
+			gen lb = .
+			gen countrycode = ""
+			gen source = ""
+
 		}
 		else {
 			gen source = "WDI"
@@ -707,6 +742,16 @@
 	cap wbopendata, indicator(SP.POP.1564.TO.ZS) country(${ccode3}) year(${cyear}) clear long
 	if _rc {
 			di "data not found in wbopendata"
+			clear 
+			
+			* Still need to create an empty husk
+			gen year = .
+			gen value = .
+			gen ub = .
+			gen lb = .
+			gen countrycode = ""
+			gen source = ""
+
 		}
 	else {
 		gen source = "WDI"
@@ -937,6 +982,16 @@
 	cap wbopendata, indicator(SP.POP.65UP.TO.ZS) country(${ccode3}) year(${cyear}) clear long
 	if _rc {
 			di "data not found in wbopendata"
+			clear 
+			
+			* Still need to create an empty husk
+			gen year = .
+			gen value = .
+			gen ub = .
+			gen lb = .
+			gen countrycode = ""
+			gen source = ""
+
 		}
 	else {
 		gen source = "WDI"
