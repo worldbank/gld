@@ -104,6 +104,16 @@
 		cap wbopendata, indicator(NY.GDP.PCAP.CN) country(${ccode3}) year(${cyear}) clear long
 		if _rc {
 				di "data not found in wbopendata"
+				clear 
+			
+				* Still need to create an empty husk
+				gen year = .
+				gen value = .
+				gen ub = .
+				gen lb = .
+				gen countrycode = ""
+				gen source = ""
+
 			}
 		else {
 
