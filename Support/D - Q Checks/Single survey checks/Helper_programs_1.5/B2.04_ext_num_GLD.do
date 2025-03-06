@@ -78,6 +78,7 @@
 	replace varchecked = "Share Other (%)"			                  if varchecked == "16_empstat_5.dta"
 	
 	replace varchecked = "Average hourly wages"                       if varchecked == "17wages.dta"
+	replace varchecked = "Average monthly wages"                      if varchecked == "18_m_wages.dta"
 		
 	erase "Block2_External/01_data/temp_allvars.dta"        
 	save  "Block2_External/01_data/temp2_allvars.dta", replace        

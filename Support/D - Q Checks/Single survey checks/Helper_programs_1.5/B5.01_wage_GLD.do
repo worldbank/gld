@@ -16,18 +16,19 @@
 *-- 01. Check whether there is wage info
 	use "${mydata}", clear
 	
-	cap confirm variable wage_no_compen
+	cap confirm variable wage_no_compen whours
 	if _rc != 0 { // var not present
 		
 		* If no info at 7 days ref, try to use 12 month one
 		cap rename wage_no_compen_year wage_no_compen
 		cap rename unitwage_year       unitwage
+		cap rename whours_year         whours
 		
 	}
 	
 	* Check again, this time with a local evaluator
 	local wage_eval = 0
-	cap confirm variable wage_no_compen
+	cap confirm variable wage_no_compen whours
 	if _rc == 0 { // wage, either 7d or 12m present
 		local wage_eval = 1
 	}

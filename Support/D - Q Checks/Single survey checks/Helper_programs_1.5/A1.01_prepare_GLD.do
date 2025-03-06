@@ -17,7 +17,7 @@
 
 *-- 02. Extract relevant info from GLD data 
 	use "$mydata", clear
-	keep countrycode year survey
+	keep countrycode year survname
 	duplicates drop
 	
 	levelsof countrycode, local(ccode3) clean
@@ -26,7 +26,7 @@
 	levelsof year, local(cyear) clean
 	global cyear `cyear'
 	
-	levelsof survey, local(csurvey) clean
+	levelsof survname, local(csurvey) clean
 	global csurvey `csurvey'
 	
 	
