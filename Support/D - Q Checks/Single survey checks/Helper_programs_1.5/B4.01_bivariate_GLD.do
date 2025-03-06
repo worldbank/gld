@@ -851,16 +851,21 @@
 
 	keep  countrycode year bivariate problem reason* 
     order countrycode year bivariate problem reason*  
-	duplicates drop
+	cap duplicates drop
 	
 	gen note = ""
 	tostring bivariate, gen(number)
 	replace note = "See file biv_"+ number + ".dta"  
 	drop number
 		
-	** Save & export 
-	save "Block4_Bivariate/01_data/biv_results.dta", replace 
-	export excel using "01_summary/B4_bivariave_results.xlsx", firstrow(variables) replace	
+	** Save & export if something there
+	count
+	if `r(N)' > 0 {
+		
+		save "Block4_Bivariate/01_data/biv_results.dta", replace 
+		export excel using "01_summary/B4_bivariave_results.xlsx", firstrow(variables) replace
+			
+	}
 	
 	
 *-- 10. Conclude checks	
