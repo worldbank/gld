@@ -12,14 +12,12 @@
 
 version 16
 
-cd "${output}/${ccode3}_${cyear}_${mydate}"
-	
-cap mkdir "Block1_Format"
+cap mkdir "${output}/${ccode3}_${cyear}_${mydate}/Block1_Format"
 	
 *----------0.1: Set necessary paths
 
 * Define path for postfile .dta
-local postfile_path = "Block1_Format/${ccode3}_${cyear}_${csurvey}_Q_Format_Checks.dta"
+local postfile_path = "${output}/${ccode3}_${cyear}_${mydate}/Block1_Format/${ccode3}_${cyear}_${csurvey}_Q_Format_Checks.dta"
 
 *----------0.2: Define postfile
 
@@ -1115,7 +1113,7 @@ drop ordering
           10: Order & Save data to summary 
 ==================================================*/
 
-	use "Block1_Format/${ccode3}_${cyear}_${csurvey}_Q_Format_Checks.dta", clear 
+	use "${output}/${ccode3}_${cyear}_${mydate}/Block1_Format/${ccode3}_${cyear}_${csurvey}_Q_Format_Checks.dta", clear 
 	
 	** Sort resutls 
 	gen varsorder = 1 
@@ -1123,10 +1121,10 @@ drop ordering
 	sort varsorder Test_Type
 	drop varsorder
 	
-	save "Block1_Format/${ccode3}_${cyear}_${csurvey}_Q_Format_Checks.dta", replace
+	save "${output}/${ccode3}_${cyear}_${mydate}/Block1_Format/${ccode3}_${cyear}_${csurvey}_Q_Format_Checks.dta", replace
 	
 	** Export summary
-	use "Block1_Format/${ccode3}_${cyear}_${csurvey}_Q_Format_Checks.dta", clear 
-	export excel using "01_summary/B1_format_results.xlsx", firstrow(variables) replace	
+	use "${output}/${ccode3}_${cyear}_${mydate}/Block1_Format/${ccode3}_${cyear}_${csurvey}_Q_Format_Checks.dta", clear 
+	export excel using "${output}/${ccode3}_${cyear}_${mydate}/01_summary/B1_format_results.xlsx", firstrow(variables) replace	
 
 /* End of do-file */
