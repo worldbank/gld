@@ -6,4 +6,4 @@ The changes in the occupational and industrial classification systems have occur
 
 While the NSO reports that the LFS data between 1985 and 2000 are based on the ISCO 1958, there is a substantial number of codes that could not be mapped to the ISCO 1958 codes. We are not able to find a table that identifies the occupation titles that correspond to these localized ISCO 1958 codes, so we leave the occupation variables as missing.
 
-You may find n unsuccessful attempt at mapping ISCO 58 as well as the files for converting TSIC to ISIC Rev. 3 [here under Additional Data](utilities/Additional%20Data/).
+You may find our unsuccessful attempt at mapping ISCO 58 as well as the files for converting TSIC to ISIC Rev. 3 [here under Additional Data](utilities/Additional%20Data/).
