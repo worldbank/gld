@@ -3,7 +3,7 @@
 
 This is repository and homepage of the Jobs Group’s Global Labor Database (GLD) at the World Bank. Here you will find all the information to understand, recreate, and edit the GLD.
 
-The GLD aims to cover all household surveys with a labor market module worldwide, with a focus on lower income countries, though on occasion the GLD team may cover other household surveys with a sufficient labor module.
+The GLD aims to cover all household surveys with a labor market module worldwide, with a focus on lower income countries.
 
 Around the harmonization the GLD team aims to create an open and collaborative ecosystem of contextual information and tools that helps users more quickly understand the data and leverage it. When it comes to working with labor microdata you should not start at square one and you shouldn’t have to travel alone: the GLD team is there to assist.
 
