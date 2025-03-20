@@ -468,12 +468,14 @@ local out_file "`level_2_harm'_ALL.dta"
 
 *<_migrated_years_>
 	gen migrated_years = .
+	replace migrated_years = . if migrated_binary != 1
 	label var migrated_years "Years since latest migration"
 *</_migrated_years_>
 
 
 *<_migrated_from_urban_>
 	gen migrated_from_urban = .
+	replace migrated_from_urban = . if migrated_binary != 1
 	label de lblmigrated_from_urban 0 "Rural" 1 "Urban"
 	label values migrated_from_urban lblmigrated_from_urban
 	label var migrated_from_urban "Migrated from area"
@@ -482,6 +484,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 *<_migrated_from_cat_>
 	gen migrated_from_cat = .
+	replace migrated_from_cat = . if migrated_binary != 1
 	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country" 6 "Within country, admin unknown" 7 "Wholly unknow"
 	label values migrated_from_cat lblmigrated_from_cat
 	label var migrated_from_cat "Category of migration area"
@@ -489,21 +492,22 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_migrated_from_code_>
-	gen migrated_from_code = .
-	*label de lblmigrated_from_code
-	*label values migrated_from_code lblmigrated_from_code
+	gen migrated_from_code = ""
+	replace migrated_from_code = . if migrated_binary != 1
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
 *</_migrated_from_code_>
 
 
 *<_migrated_from_country_>
-	gen migrated_from_country = .
+	gen migrated_from_country = ""
+	replace migrated_from_country = . if migrated_binary != 1
 	label var migrated_from_country "Code of migration country (ISO 3 Letter Code)"
 *</_migrated_from_country_>
 
 
 *<_migrated_reason_>
 	gen migrated_reason = .
+	replace migrated_reason = . if migrated_binary != 1
 	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
 	label values migrated_reason lblmigrated_reason
 	label var migrated_reason "Reason for migrating"
