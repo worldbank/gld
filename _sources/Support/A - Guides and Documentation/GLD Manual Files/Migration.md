@@ -8,7 +8,7 @@ Codes the minimum age the migration module questions of the survey apply to (e.g
 
 **migrated_ref_time**
 
-Codes the reference period the migration questions cover. If the migration questions only apply after an introductory time window questions (e.g., have you moved in the past five years) and then questions are only asked for those who fall within the time window, code the length of that window (e.g., 5 in the example). If migration questions are posed regardless of time (i.e., no time window) code 99.
+Codes the reference period the migration questions cover in years. If the migration questions only apply after an introductory time window questions (e.g., have you moved in the past five years) and then questions are only asked for those who fall within the time window, code the length of that window (e.g., 5 in the example). If migration questions are posed regardless of time (i.e., no time window) code 99.
 
 **migrated_binary**
 
