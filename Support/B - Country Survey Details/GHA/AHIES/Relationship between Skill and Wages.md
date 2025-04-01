@@ -1,4 +1,4 @@
-# Skill and Wages
+# Relationship between Skill and Wages
 
 ## Overview
 In analyzing AHIES, a noticeable shift has emerged in the salary patterns for different skill levels. Both 2022 and 2023 reveal unusual trends, where workers in low-skill occupations are earning more than their counterparts in middle-skill occupations. This reversal of expectations raises important questions about the labor market dynamics and the factors influencing these wage disparities.
