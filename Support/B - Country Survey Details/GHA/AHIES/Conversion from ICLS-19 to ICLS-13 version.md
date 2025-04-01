@@ -1,4 +1,4 @@
-# ICLS version
+# Conversion from ICLS-19 to ICLS-13 version
 
 ## Overview
 
@@ -6,15 +6,16 @@ At the 19th ICLS in 2013, a significant development emerged with the adoption of
 
 In essence, the ICLS-19 resolution delineates **employment** only as work conducted for pay or profit. Activities performed not in exchange for remuneration, like own-use production work, volunteer work, and unpaid trainee work, are classified as **other forms of work**.
 
-Therefore, in order to compare AHIES 2022 and 2023 with GLD ICLS-13 surveys it is necessary to modify the coding of  variable `lstatus` using the nuances of the questionnaire.
+The GLD harmonizes data to the standard used in the design and reporting of the survey. Therefore, the 2022 and 2023 AHIES 
+are coded using ICLS-19. To compare AHIES 2022 and 2023 with GLD ICLS-13 surveys it is necessary to modify the coding of  variable `lstatus` using the nuances of the questionnaire.
 
 ## Framework for identifying employment in the AHIES
 
 All questionnaires used information on current activity to define employment through the ***Economic Activity*** section in part A ***Current Economic Activity Status and Characteristics of Main Job***.
 
-## Current coding to the ICLS-13 definition
+## From current coding to the ICLS-13 definition
 
-In converting to the old definition, the approach adopted here is to create a variable that identifies those that are engaged in non-market and market activities. See the Figure 1 below for the relevant parts in the questionnaire.
+In converting to the old definition, the approach adopted here is to create a variable that identifies those that are engaged in activities for market exchange as well as those that work without (or mostly without) market exchange. Figure 1 below shows an example of one of the relevant building blocks in the questionnaire for the employment definition.
 
 <figure>
 
@@ -26,7 +27,7 @@ In converting to the old definition, the approach adopted here is to create a va
 
 In this case, if we code 1 to 4 for question 10 (or code 1 to question 7), we can capture the employees according to the ICLS-13 definition. This strategy should be applied to all relevant questions in this section (question 1 to 37, part A - section 4)
 
-The code below should be pasted after the code creating the ```lstatus``` variable. 
+The code below applies this procedure to all relevant questions. It should be pasted *after* the code creating the ```lstatus``` variable as coded in the 2022 and 2023 harmonization code file. 
 
 ```     
   *Create an indicator "emp_diff" that identifies the difference between definitions (emp_diff)
