@@ -1,4 +1,4 @@
-# Employment concepts in Ghana
+# Employment concepts in the GLSS
 
 ## Overview
 
