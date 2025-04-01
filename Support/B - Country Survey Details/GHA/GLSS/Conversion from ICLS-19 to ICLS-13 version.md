@@ -1,4 +1,4 @@
-# ICLS version
+# Conversion from ICLS-19 to ICLS-13 version
 
 ## Overview
 
@@ -6,7 +6,7 @@ At the 19th ICLS in 2013, a significant development emerged with the adoption of
 
 In essence, the ICLS-19 resolution delineates **employment** only as work conducted for pay or profit. Activities performed not in exchange for remuneration, like own-use production work, volunteer work, and unpaid trainee work, are classified as **other forms of work**.
 
-Therefore, in order to compare GLSS 2012 (ICLS-13) with 2013 (ICLS-19) surveys it is necessary to modify the coding of  variable `lstatus` using the nuances of the questionnaire.
+The GLD harmonizes data to the standard used in the design and reporting of the survey. Therefore, the 2012 GLSS is coded using ICLS-13 and the 2016 uses ICLS-19 (see variable `icls_v` in each survey). To compare GLSS 2012 (ICLS-13) with 2013 (ICLS-19) directly it is necessary to modify the coding of  variable `lstatus` using the nuances of the questionnaire.
 
 ## Framework for identifying employment in the GLSS
 
