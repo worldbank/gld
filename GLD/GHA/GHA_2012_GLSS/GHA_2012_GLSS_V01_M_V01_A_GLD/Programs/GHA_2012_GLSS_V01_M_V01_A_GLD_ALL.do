@@ -59,7 +59,7 @@ set varabbrev off
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-local server  "Y:/GLD-Harmonization/625372_DB"
+local server  "Y:/GLD"
 local country "GHA"
 local year    "2012"
 local survey  "GLSS"
@@ -112,14 +112,12 @@ foreach v of local files {
 
 */
 
-use "`path_in_stata'/PARTA/g6loc_edt.dta", clear
-merge 1:1 HID using "`path_in_stata'/PARTA/SEC0.dta", nogenerate
-merge 1:m HID using "`path_in_stata'/PARTA/SEC1.dta", nogenerate
+use "`path_in_stata'/g6loc_edt.dta", clear
+merge 1:1 HID using "`path_in_stata'/SEC0.dta", nogenerate
+merge 1:m HID using "`path_in_stata'/SEC1.dta", nogenerate
 foreach sec in SEC2a SEC2b SEC2c SEC3a SEC3b SEC3c SEC3d SEC3e SEC4a SEC4b SEC4c SEC4d SEC4e SEC4f SEC4g SEC4h SEC4hs SEC5a {
-	merge 1:1 HID PID using "`path_in_stata'/PARTA/`sec'.dta", nogenerate assert(master match)
+	merge 1:1 HID PID using "`path_in_stata'/`sec'.dta", nogenerate assert(master match)
 }
-
-
 
 
 /*%%=============================================================================================
