@@ -55,12 +55,12 @@ set mem 800m
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-local server  "Y:\GLD-Harmonization\573465_JT"
+local server  "Y:/GLD"
 local country "PAK"
 local year    "2017"
 local survey  "LFS"
 local vermast "V01"
-local veralt  "V04"
+local veralt  "V05"
 
 * From the definitions, set path chunks
 local level_1      "`country'_`year'_`survey'"
@@ -68,19 +68,12 @@ local level_2_mast "`level_1'_`vermast'_M"
 local level_2_harm "`level_1'_`vermast'_M_`veralt'_A_GLD"
 
 * From chunks, define path_in, path_output folder
-local path_in_stata "`server'\\`country'\\`level_1'\\`level_2_mast'\Data\Stata"
-local path_in_other "`server'\\`country'\\`level_1'\\`level_2_mast'\Data\Original"
-local path_output   "`server'\\`country'\\`level_1'\\`level_2_harm'\Data\Harmonized"
+local path_in_stata "`server'/`country'/`level_1'/`level_2_mast'/Data/Stata"
+local path_in_other "`server'/`country'/`level_1'/`level_2_mast'/Data/Original"
+local path_output   "`server'/`country'/`level_1'/`level_2_harm'/Data/Harmonized"
 
 * Define Output file name
 local out_file "`level_2_harm'_ALL.dta"
-
-*----------1.3: Database assembly------------------------------*
-
-* All steps necessary to merge datasets (if several) to have all elements needed to produce
-* harmonized output in a single file
-
-	use "`path_in_stata'\LFS 2017-18 (original).dta", clear
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -730,7 +723,7 @@ are the same here.
 
 *<_vocational_field_orig_>
 	gen code=S04C12
-	merge m:1 code using "`path_in_stata'\PAK_training_code.dta", gen(_merge1)
+	merge m:1 code using "`path_in_stata'/PAK_training_code.dta", gen(_merge1)
 	drop if _merge1==2
 	gen vocational_field_orig=code
 	label var vocational_field_orig "Field of training"
@@ -1732,6 +1725,6 @@ foreach var of local kept_vars {
 
 *<_% SAVE_>
 
-save "`path_output'\\`level_2_harm'_ALL.dta", replace
+save "`path_output'/`level_2_harm'_ALL.dta", replace
 
 *</_% SAVE_>
