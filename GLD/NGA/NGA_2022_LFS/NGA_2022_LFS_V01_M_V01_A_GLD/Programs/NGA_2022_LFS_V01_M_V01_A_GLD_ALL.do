@@ -19,8 +19,8 @@
 <_Data collection from_>		10/2022 </_Data collection from_>
 <_Data collection to_>			12/2022 </_Data collection to_>
 <_Source of dataset_> 			Nigeria National Bureau of Statistics </_Source of dataset_>
-<_Sample size (HH)_> 				[#] </_Sample size (HH)_>
-<_Sample size (IND)_> 				[#] </_Sample size (IND)_>
+<_Sample size (HH)_> 			35,235	[#] </_Sample size (HH)_>
+<_Sample size (IND)_> 			185,250	[#] </_Sample size (IND)_>
 <_Sampling method_> 				[Brief description] </_Sampling method_>
 <_Geographic coverage_> 		Two-stage cluster sampling design </_Geographic coverage_>
 <_Currency_> 					Nigerian Naira </_Currency_>
@@ -60,10 +60,10 @@ set varabbrev off
 
 * Define path sections
 local server  "Y:/GLD-Harmonization/510859_AS"
-local country  "NGA"
-local year  "2022"
+local country "NGA"
+local year    "2022"
 local survey  "LFS"
-local vermast  "V01"
+local vermast "V01"
 local veralt  "V01"
 
 
@@ -86,8 +86,34 @@ local out_file "`level_2_harm'_ALL.dta"
 * harmonized output in a single file
 
 * No need to use household data because all variables can be determined from individual data
-use "NLFS_2022Q4_HOUSEHOLD IDENTIFICATION.dta", clear
+use "`path_in_stata'/NLFS_2022Q4_HOUSEHOLD IDENTIFICATION.dta", clear
 merge 1:m interview_key using "`path_in_stata'/NLFS_2022Q4_INDIVIDUAL.dta", nogen
+gen qtr = 4
+
+tempfile base
+save `base'
+
+* No need to use household data because all variables can be determined from individual data
+use "`path_in_stata'/NLFS_2023Q1_HOUSEHOLD IDENTIFICATION.dta", clear
+merge 1:m interview_key using "`path_in_stata'/NLFS_2023Q1_INDIVIDUAL.dta", nogen
+gen qtr = 1
+
+append using `base'
+save `base', replace
+
+use "`path_in_stata'/NLFS_2023Q2_HOUSEHOLD IDENTIFICATION.dta", clear
+merge 1:m interview_key using "`path_in_stata'/NLFS_2023Q2_INDIVIDUAL.dta", keep(match) nogen
+* 5 cases cannot match : Empty HHs?
+gen qtr = 2
+
+append using `base'
+save `base', replace
+
+use "`path_in_stata'/NLFS_2023Q3_HOUSEHOLD IDENTIFICATION.dta", clear
+merge 1:m interview_key using "`path_in_stata'/NLFS_2023Q3_INDIVIDUAL.dta", nogen
+gen qtr = 3
+
+append using `base'
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -162,7 +188,7 @@ merge 1:m interview_key using "`path_in_stata'/NLFS_2022Q4_INDIVIDUAL.dta", noge
 
 
 *<_int_year_>
-	gen int_year= year(interviewdate)
+	gen int_year = year(interviewdate)
 	label var int_year "Year of the interview"
 *</_int_year_>
 
@@ -201,7 +227,23 @@ merge 1:m interview_key using "`path_in_stata'/NLFS_2022Q4_INDIVIDUAL.dta", noge
 
 
 *<_weight_>
+
+	* Create relative weight for quarter to make quarter to annual weight
+	count
+	gen count_all = `r(N)'
+	gen count_qtr = .
+	levelsof qtr, local(ql)
+	foreach q of local ql {
+		count if qtr == `q'
+		replace count_qtr = `r(N)' if qtr == `q'
+	}
+	gen count_w = count_qtr/count_all
+	
 	gen weight = weightnlfsq1
+	replace weight = weightnlfsq2 if missing(weight) & !mi(weightnlfsq2)
+	replace weight = weightnlfsq3 if missing(weight) & !mi(weightnlfsq3)
+	replace weight = weight_nlfs_q4 if missing(weight) & !mi(weight_nlfs_q4)
+	replace weight = weight * count_w 
 	label var weight "Survey sampling weight"
 *</_weight_>
 
@@ -213,7 +255,8 @@ merge 1:m interview_key using "`path_in_stata'/NLFS_2022Q4_INDIVIDUAL.dta", noge
 
 
 *<_weight_q_>
-	gen weight_q = .
+	* Can use weight since these are relative weights
+	gen weight_q = weight
 	label var weight_q "Survey sampling weight to obtain national estimates for each quarter"
 *</_weight_q_>
 
@@ -237,7 +280,7 @@ merge 1:m interview_key using "`path_in_stata'/NLFS_2022Q4_INDIVIDUAL.dta", noge
 
 
 *<_wave_>
-	gen wave = 4
+	gen wave = qtr
 	label var wave "Survey wave"
 *</_wave_>
 
@@ -272,51 +315,63 @@ merge 1:m interview_key using "`path_in_stata'/NLFS_2022Q4_INDIVIDUAL.dta", noge
 
 *<_subnatid1_>
 	gen str subnatid1 = ""
-	replace subnatid1 = "1 - Sokoto" if id2_state == 1
-	replace subnatid1 = "2 - Zamfara" if id2_state == 2
-	replace subnatid1 = "3 - Katsina" if id2_state == 3
-	replace subnatid1 = "4 - Jigawa" if id2_state == 4
-	replace subnatid1 = "5 - Yobe" if id2_state == 5
-	replace subnatid1 = "6 - Borno" if id2_state == 6
-	replace subnatid1 = "7 - Adamawa" if id2_state == 7
-	replace subnatid1 = "8 - Gombe" if id2_state == 8
-	replace subnatid1 = "9 - Bauchi" if id2_state == 9
-	replace subnatid1 = "10 - Kano" if id2_state == 10
-	replace subnatid1 = "11 - Kaduna" if id2_state == 11
-	replace subnatid1 = "12 - Kebbi" if id2_state == 12
-	replace subnatid1 = "13 - Niger" if id2_state == 13
-	replace subnatid1 = "14 - FCT" if id2_state == 14
-	replace subnatid1 = "15 - Nasarawa" if id2_state == 15
-	replace subnatid1 = "16 - Plateau" if id2_state == 16
-	replace subnatid1 = "17 - Taraba" if id2_state == 17
-	replace subnatid1 = "18 - Benue" if id2_state == 18
-	replace subnatid1 = "19 - Kogi" if id2_state == 19
-	replace subnatid1 = "20 - Kwara" if id2_state == 20
-	replace subnatid1 = "21 - Oyo" if id2_state == 21
-	replace subnatid1 = "22 - Osun" if id2_state == 22
-	replace subnatid1 = "23 - Ekiti" if id2_state == 23
-	replace subnatid1 = "24 - Ondo" if id2_state == 24
-	replace subnatid1 = "25 - Edo" if id2_state == 25
-	replace subnatid1 = "26 - Anambra" if id2_state == 26
-	replace subnatid1 = "27 - Enugu" if id2_state == 27
-	replace subnatid1 = "28 - Ebonyi" if id2_state == 28
-	replace subnatid1 = "29 - Cross River" if id2_state == 29
-	replace subnatid1 = "30 - Akwa Ibom" if id2_state == 30
-	replace subnatid1 = "31 - Abia" if id2_state == 31
-	replace subnatid1 = "32 - Imo" if id2_state == 32
-	replace subnatid1 = "33 - Rivers" if id2_state == 33
-	replace subnatid1 = "34 - Bayelsa" if id2_state == 34
-	replace subnatid1 = "35 - Delta" if id2_state == 35
-	replace subnatid1 = "36 - Lagos" if id2_state == 36
-	replace subnatid1 = "37 - Ogun" if id2_state == 37
-
+	replace subnatid1 = "1 - North Central" if id1_zone == 1
+	replace subnatid1 = "2 - North East" if id1_zone == 2
+	replace subnatid1 = "3 - North West" if id1_zone == 3
+	replace subnatid1 = "4 - South East" if id1_zone == 4
+	replace subnatid1 = "5 - South South" if id1_zone == 5
+	replace subnatid1 = "6 - South West" if id1_zone == 6
+	
+	* There are a few odd cases States Anambra (26), Enugu (27), Ebonyi (28),
+	* Abia (31) and Imo (32) are coded at times as South East, at times as North
+	* East. They are squarely in the South East 
+	replace subnatid1 = "4 - South East" if inlist(id2_state, 26,27,28,31,32)
+	
+	* There are cases when Gombe (8) is also SE and NE, it is NE
+	replace subnatid1 = "2 - North East" if id2_state == 8
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 
 
 *<_subnatid2_>
 	gen str subnatid2 = ""
-
+	replace subnatid2 = "1 - Sokoto" if id2_state == 1
+	replace subnatid2 = "2 - Zamfara" if id2_state == 2
+	replace subnatid2 = "3 - Katsina" if id2_state == 3
+	replace subnatid2 = "4 - Jigawa" if id2_state == 4
+	replace subnatid2 = "5 - Yobe" if id2_state == 5
+	replace subnatid2 = "6 - Borno" if id2_state == 6
+	replace subnatid2 = "7 - Adamawa" if id2_state == 7
+	replace subnatid2 = "8 - Gombe" if id2_state == 8
+	replace subnatid2 = "9 - Bauchi" if id2_state == 9
+	replace subnatid2 = "10 - Kano" if id2_state == 10
+	replace subnatid2 = "11 - Kaduna" if id2_state == 11
+	replace subnatid2 = "12 - Kebbi" if id2_state == 12
+	replace subnatid2 = "13 - Niger" if id2_state == 13
+	replace subnatid2 = "14 - FCT" if id2_state == 14
+	replace subnatid2 = "15 - Nasarawa" if id2_state == 15
+	replace subnatid2 = "16 - Plateau" if id2_state == 16
+	replace subnatid2 = "17 - Taraba" if id2_state == 17
+	replace subnatid2 = "18 - Benue" if id2_state == 18
+	replace subnatid2 = "19 - Kogi" if id2_state == 19
+	replace subnatid2 = "20 - Kwara" if id2_state == 20
+	replace subnatid2 = "21 - Oyo" if id2_state == 21
+	replace subnatid2 = "22 - Osun" if id2_state == 22
+	replace subnatid2 = "23 - Ekiti" if id2_state == 23
+	replace subnatid2 = "24 - Ondo" if id2_state == 24
+	replace subnatid2 = "25 - Edo" if id2_state == 25
+	replace subnatid2 = "26 - Anambra" if id2_state == 26
+	replace subnatid2 = "27 - Enugu" if id2_state == 27
+	replace subnatid2 = "28 - Ebonyi" if id2_state == 28
+	replace subnatid2 = "29 - Cross River" if id2_state == 29
+	replace subnatid2 = "30 - Akwa Ibom" if id2_state == 30
+	replace subnatid2 = "31 - Abia" if id2_state == 31
+	replace subnatid2 = "32 - Imo" if id2_state == 32
+	replace subnatid2 = "33 - Rivers" if id2_state == 33
+	replace subnatid2 = "34 - Bayelsa" if id2_state == 34
+	replace subnatid2 = "35 - Delta" if id2_state == 35
+	replace subnatid2 = "36 - Lagos" if id2_state == 36
+	replace subnatid2 = "37 - Ogun" if id2_state == 37
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
 
@@ -330,11 +385,11 @@ merge 1:m interview_key using "`path_in_stata'/NLFS_2022Q4_INDIVIDUAL.dta", noge
 *<_subnatidsurvey_>
 /* <_subnatidsurvey_note>
 
-	Variable denoting lowest administrative info to which the survey is still significat.
-	See entry in GLD Guidelines (https://github.com/worldbank/gld/blob/main/Support/A%20-%20Guides%20and%20Documentation/GLD_1.0_Guidelines.docx) for more details
+	As per the information from the documents and country contacts, four quarters put
+	together are significant at state level.
 
 </_subnatidsurvey_note> */
-	gen str subnatidsurvey = subnatid1
+	gen str subnatidsurvey = subnatid2
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -525,7 +580,7 @@ merge 1:m interview_key using "`path_in_stata'/NLFS_2022Q4_INDIVIDUAL.dta", noge
 
 *<_migrated_from_cat_>
 	gen migrated_from_cat = .
-	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country"
+	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country" 6 "Within country, admin unknown" 7 "Wholly unknow"
 	label values migrated_from_cat lblmigrated_from_cat
 	label var migrated_from_cat "Category of migration area"
 *</_migrated_from_cat_>
@@ -571,8 +626,8 @@ Education module is only asked to those XX and older.
 
 </_ed_mod_age_note> */
 
-gen byte ed_mod_age = 3
-label var ed_mod_age "Education module application age"
+	gen byte ed_mod_age = 3
+	label var ed_mod_age "Education module application age"
 
 *</_ed_mod_age_>
 
@@ -593,14 +648,15 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educy_>
-	gen byte educy =.
+	gen byte educy = .
 	label var educy "Years of education"
 *</_educy_>
 
 
 *<_educat7_>
-	gen byte educat7 = ed10
-	recode ed10 ()
+	gen byte educat7 = ed7
+	recode educat7 (1 = 1) (2 = 3) (3 5 = 4) (6 = 5) (7 8 10 41 42 = 6) (9 11 12 = 7) (96 = .)
+
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -626,7 +682,7 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat_orig_>
-	gen educat_orig = .
+	gen educat_orig = ed7
 	label var educat_orig "Original survey education code"
 *</_educat_orig_>
 
@@ -696,7 +752,7 @@ foreach v of local ed_var {
 
 
 *<_vocational_field_orig_>
-	gen str vocational_field_orig = .
+	gen str vocational_field_orig = ""
 	label var vocational_field_orig "Original field of training information"
 *</_vocational_field_orig_>
 
@@ -716,7 +772,7 @@ foreach v of local ed_var {
 
 
 *<_minlaborage_>
-	gen byte minlaborage =.
+	gen byte minlaborage = 15
 	label var minlaborage "Labor module application age"
 *</_minlaborage_>
 
@@ -726,6 +782,25 @@ foreach v of local ed_var {
 {
 *<_lstatus_>
 	gen byte lstatus = .
+	
+	*E: Assign employed for any of the options that lead to MJJ1
+	replace lstatus = 1 if atw1 == 1
+	replace lstatus = 1 if agf1b_4 == 1
+	replace lstatus = 1 if agf2a == 1 
+	replace lstatus = 1 if agf2b == 4
+	replace lstatus = 1 if agf2b == 5
+	replace lstatus = 1 if agf2c == 1
+	replace lstatus = 1 if agf2c == 3
+	replace lstatus = 1 if agf2d == 1
+
+	*U: Looking for work/to do business in the past month, and available to work in the past week
+	* Wanted to work: only asked for people who did not look for a job
+	replace lstatus = 2 if (um1_1 == 1 | um1_2 == 1)  & um10a == 1
+	
+	*N: All others
+	replace lstatus = 3 if missing(lstatus) & age>=minlaborage
+	
+	
 	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -734,7 +809,11 @@ foreach v of local ed_var {
 
 
 *<_potential_lf_>
-	gen byte potential_lf = .
+	gen byte potential_lf = 0 if lstatus == 3
+	replace potential_lf = 1 if (um1_1 == 1 | um1_2 == 1)  & inrange(um10a, 2, 3)
+	replace potential_lf = 1 if um10a == 1 & um1_1 == 0
+	replace potential_lf = 1 if um10a == 1 & um1_2 == 0
+	
 	replace potential_lf = . if age < minlaborage & age != .
 	replace potential_lf = . if lstatus != 3
 	label var potential_lf "Potential labour force status"
@@ -744,7 +823,26 @@ foreach v of local ed_var {
 
 
 *<_underemployment_>
-	gen byte underemployment = .
+
+/* <_underemployment_note>
+
+	ILO guidelines (see chapter 9) defines "time-related" underemployment as a 
+	person who wants more hours and has worked less than a threshold relating to 
+	working time, where the threshold is determined nationally. 
+	
+	The estimate is done with a limit of 40 hours in Nigeria. This gives 10.9 and
+	9.2% in Q1 and Q2 respectively. 
+	
+	For the GLD harmonization we do not do this but yous the (more easily comparable)
+	option of wanting to work more hours.
+	
+	Users may add the additional national concepts using the whours variable.
+
+</_underemployment_note> */
+* This variable estimates it at 13.5%, the report is at 13.7%. Small but wonder why?
+	gen byte underemployment = 0 if lstatus == 1
+	replace underemployment = 1 if sjj7 == 1
+
 	replace underemployment = . if age < minlaborage & age != .
 	replace underemployment = . if lstatus != 1
 	label var underemployment "Underemployment status"
@@ -754,7 +852,13 @@ foreach v of local ed_var {
 
 
 *<_nlfreason_>
-	gen byte nlfreason=.
+	gen byte nlfreason= um7
+	recode nlfreason (3 6 7 9 10= 5) (4 = 3) (8 = 4)
+	
+	* People who answer yes to UM6 (liked to have worked, though no to both 
+	* UM1s) skip UM7
+	
+	replace nlfreason = . if lstatus != 3
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
 	label values nlfreason lblnlfreason
@@ -762,13 +866,31 @@ foreach v of local ed_var {
 
 
 *<_unempldur_l_>
-	gen byte unempldur_l=.
+	gen byte unempldur_l= .
+	replace unempldur_l = 0 if um8 == 1
+	replace unempldur_l = 3 if um8 == 2
+	replace unempldur_l = 6 if um8 == 3
+	replace unempldur_l = 9 if um8 == 4
+	replace unempldur_l = 12 if um8 == 5
+	replace unempldur_l = 36 if um8 == 6
+	replace unempldur_l = 60 if um8 == 7
+	replace unempldur_l = . if lstatus != 2
+
 	label var unempldur_l "Unemployment duration (months) lower bracket"
 *</_unempldur_l_>
 
 
 *<_unempldur_u_>
 	gen byte unempldur_u=.
+	replace unempldur_u = 3 if um8 == 1
+	replace unempldur_u = 5 if um8 == 2
+	replace unempldur_u = 8 if um8 == 3
+	replace unempldur_u = 11 if um8 == 4
+	replace unempldur_u = 35 if um8 == 5
+	replace unempldur_u = 59 if um8 == 6
+	replace unempldur_u = . if um8 == 7
+	replace unempldur_u = . if lstatus != 2
+
 	label var unempldur_u "Unemployment duration (months) upper bracket"
 *</_unempldur_u_>
 }
@@ -779,7 +901,16 @@ foreach v of local ed_var {
 
 {
 *<_empstat_>
-	gen byte empstat=.
+	* All contributing family workers classified under non-paid employee
+	* No distinction 
+	gen byte empstat = mjj4
+	recode empstat (3 = 2) (2 = 4) (4 = 5)
+	* Convert self-employed to employer if claim to hire people regularly
+	replace empstat = 3 if empstat == 4 & mjj6 == 1
+	* Convert apprentices from other to paid employees if claim to be paid
+	replace empstat = 1 if mjj4 == 4 & mjj8b_9 == 0
+	replace empstat = . if lstatus != 1
+	
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat lblempstat
@@ -787,7 +918,12 @@ foreach v of local ed_var {
 
 
 *<_ocusec_>
-	gen byte ocusec = .
+	* Use MJJ8A, but note, that is only answered by those identified as employees,
+	* apprentice, or helping a hh member who themselves work for someone else.
+	gen byte ocusec = mjj8a
+	recode ocusec (2 3 = 1) (4 = 3) (5 6 7 8 9 10 11 = 2) (12 = 4)
+	replace ocusec = 2 if mi(ocusec) & inrange(empstat, 2, 4)
+	replace ocusec = . if lstatus != 1
 	label var ocusec "Sector of activity primary job 7 day recall"
 	la de lblocusec 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec lblocusec
@@ -795,34 +931,60 @@ foreach v of local ed_var {
 
 
 *<_industry_orig_>
-	gen industry_orig = .
+	gen industry_orig = mjj3cclean
+	replace industry_orig = . if lstatus != 1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
 
 *<_industrycat_isic_>
-	gen industrycat_isic = .
-
+	gen industrycat_isic = string(industry_orig, "%04.0f")
+	replace industrycat_isic = "" if industrycat_isic == "."
+	
+	* Some cases where industrycat_isic does not match with ISIC. Code to the first two digits
+	replace industrycat_isic = "4100" if industrycat_isic == "4131"
+	replace industrycat_isic = "5200" if industrycat_isic == "5211"
+	
 	* Check that no errors --> using our universe check function, count should be 0 (no obs wrong)
 	* https://github.com/worldbank/gld/tree/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20universe%20check
 	preserve 
-	*drop if missing(industrycat_isic)
-	*int_classif_universe, var(industrycat_isic) universe(ISIC)
+	drop if missing(industrycat_isic)
+	int_classif_universe, var(industrycat_isic) universe(ISIC)
 	count
 	*list
-	*assert `r(N)' == 0
+	assert `r(N)' == 0
 	restore 
 
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
 
+
+
 *<_industrycat10_>
 	gen byte industrycat10 = .
+	count if industrycat_isic != ""
+	local nonmissing_count = r(N)
+
+	if `nonmissing_count' >= 1 {
+	gen isic_1d = substr(industrycat_isic, 1, 1)
+	gen isic_2d = substr(industrycat_isic, 1, 2)
+	
+	destring isic_1d, replace
+	destring isic_2d, replace
+
+	replace industrycat10 = isic_2d
+	recode industrycat10 (1/3=1) (5/9 = 2) (10/33 = 3) (35/39 = 4) (41/43 = 5) (45/47 55/56 = 6) (49/53 58/63 = 7) (64/82 = 8) (84 = 9) (85/99 = 10)	
+	replace industrycat10=. if (lstatus!=1)
+	
+	drop isic_1d isic_2d
+	}
+	
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
-	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
+	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Communications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
 *</_industrycat10_>
+
 
 
 *<_industrycat4_>
@@ -835,22 +997,27 @@ foreach v of local ed_var {
 
 
 *<_occup_orig_>
-	gen occup_orig = .
+	gen occup_orig = mjj2cclean
+	replace occup_orig = . if lstatus!=1
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
 
 *<_occup_isco_>
-	gen occup_isco = ""
+	gen occup_isco = string(occup_orig,"%04.0f")
+	replace occup_isco = "" if occup_isco == "."
 
+	* Correction on the basis of the check done below
+	replace occup_isco = "0110" if occup_isco == "0113"
+	
 	* Check that no errors --> using our universe check function, count should be 0 (no obs wrong)
 	* https://github.com/worldbank/gld/tree/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20universe%20check
 	preserve 
-	*drop if missing(occup_isco)
-	*int_classif_universe, var(occup_isco) universe(ISCO)
+	drop if missing(occup_isco)
+	int_classif_universe, var(occup_isco) universe(ISCO)
 	count
 	*list
-	*assert `r(N)' == 0
+	assert `r(N)' == 0
 	restore
 
 	label var occup_isco "ISCO code of primary job 7 day recall"
@@ -859,6 +1026,13 @@ foreach v of local ed_var {
 
 *<_occup_>
 	gen byte occup = .
+	gen occup1d = substr(occup_isco, 1, 1)
+	destring occup1d, replace
+	
+	replace occup = occup1d
+	replace occup = 10 if occup1d == 0
+	
+	drop occup1d
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup
@@ -877,6 +1051,8 @@ foreach v of local ed_var {
 
 
 *<_wage_no_compen_>
+* wages are provided as range of values, without specific reference to the primary job
+* Leave this as missing. 
 	gen double wage_no_compen = .
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
@@ -899,7 +1075,9 @@ foreach v of local ed_var {
 
 
 *<_whours_>
-	gen whours = .
+	* Caveat: usual work hours only reported
+	gen whours = mjj12
+	replace whours = . if lstatus != 1
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -923,7 +1101,8 @@ foreach v of local ed_var {
 
 
 *<_contract_>
-	gen byte contract = .
+	gen byte contract = inlist(mjj8c, 1, 2)
+	replace contract = . if lstatus!=1
 	label var contract "Employment has contract primary job 7 day recall"
 	la de lblcontract 0 "Without contract" 1 "With contract"
 	label values contract lblcontract
@@ -931,7 +1110,8 @@ foreach v of local ed_var {
 
 
 *<_healthins_>
-	gen byte healthins = .
+	gen byte healthins = mjj8l_2 == 1
+	replace healthins = . if lstatus!=1
 	label var healthins "Employment has health insurance primary job 7 day recall"
 	la de lblhealthins 0 "Without health insurance" 1 "With health insurance"
 	label values healthins lblhealthins
@@ -939,7 +1119,9 @@ foreach v of local ed_var {
 
 
 *<_socialsec_>
-	gen byte socialsec = .
+	gen byte socialsec = mjj8l_1 == 1
+	replace socialsec = . if lstatus != 1
+	
 	label var socialsec "Employment has social security insurance primary job 7 day recall"
 	la de lblsocialsec 1 "With social security" 0 "Without social secturity"
 	label values socialsec lblsocialsec
@@ -973,8 +1155,13 @@ foreach v of local ed_var {
 
 
 {
+	
 *<_empstat_2_>
-	gen byte empstat_2 = .
+	gen byte empstat_2 = sjj3
+	recode empstat_2 (3 = 2) (2 = 4) (4 = 5)
+	replace empstat_2 = 3 if empstat == 4 & sjj3 == 1
+	replace empstat_2 = . if lstatus != 1
+
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
 	label values empstat_2 lblempstat
 *</_empstat_2_>
@@ -988,24 +1175,57 @@ foreach v of local ed_var {
 
 
 *<_industry_orig_2_>
-	gen industry_orig_2 = .
+	gen industry_orig_2 = sjj2cclean
+	replace industry_orig_2 = . if lstatus != 1
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 
 
 *<_industrycat_isic_2_>
-	gen industrycat_isic_2 = .
+	gen industrycat_isic_2 = string(industry_orig_2, "%04.0f")
+	replace industrycat_isic_2 = "" if industrycat_isic_2 == "."
+	
+	* Corrections based on the check below
+	replace industrycat_isic_2 = "5210" if industrycat_isic_2 == "5211"
+	
+	* Check for errors in code	
+	preserve 
+	drop if missing(industrycat_isic_2)
+	int_classif_universe, var(industrycat_isic_2) universe(ISIC)
+	count
+	*list
+	assert `r(N)' == 0
+	restore
+	
+	
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
 
 *<_industrycat10_2_>
 	gen byte industrycat10_2 = .
+	count if industrycat_isic_2 != ""
+	local nonmissing_count = r(N)
+
+	if `nonmissing_count' >= 1 {
+	gen isic_1d = substr(industrycat_isic_2, 1, 1)
+	gen isic_2d = substr(industrycat_isic_2, 1, 2)
+	
+	destring isic_1d, replace
+	destring isic_2d, replace
+
+	replace industrycat10_2 = isic_2d 
+	recode industrycat10_2 (1/3=1) (5/9 = 2) (10/33 = 3) (35/39 = 4) (41/43 = 5) (45/47 55/56 = 6) (49/53 58/63 = 7) (64/82 = 8) (84 = 9) (85/99 = 10)	
+	replace industrycat10_2=. if (lstatus!=1)
+	
+	drop isic_1d isic_2d
+	}
+	
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
 *</_industrycat10_2_>
 
-
+	
 *<_industrycat4_2_>
 	gen byte industrycat4_2 = industrycat10_2
 	recode industrycat4_2 (1=1)(2 3 4 5 =2)(6 7 8 9=3)(10=4)
@@ -1015,19 +1235,40 @@ foreach v of local ed_var {
 
 
 *<_occup_orig_2_>
-	gen occup_orig_2 = .
+	gen occup_orig_2 = sjj1cclean
+	replace occup_orig_2 = . if lstatus != 1
 	label var occup_orig_2 "Original occupation record secondary job 7 day recall"
 *</_occup_orig_2_>
 
 
 *<_occup_isco_2_>
-	gen occup_isco_2 = ""
+	gen occup_isco_2 = string(occup_orig_2, "%04.0f")
+	replace occup_isco_2 = "" if occup_isco_2 == "."
+
+	* Corrections based on the check below
+	replace occup_isco_2 = "0110" if occup_isco_2 == "0113"
+	
+	* Check for errors in code	
+	preserve 
+	drop if missing(occup_isco_2)
+	int_classif_universe, var(occup_isco_2) universe(ISCO)
+	count
+	*list
+	assert `r(N)' == 0
+	restore	
+	
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
 
 *<_occup_2_>
 	gen byte occup_2 = .
+	
+	gen occup1d = substr(occup_isco_2, 1, 1)
+	destring occup1d, replace
+	
+	replace occup_2 = occup1d
+	replace occup_2 = 10 if occup1d == 0
 	label var occup_2 "1 digit occupational classification secondary job 7 day recall"
 	label values occup_2 lbloccup
 *</_occup_2_>
@@ -1058,7 +1299,8 @@ foreach v of local ed_var {
 
 
 *<_whours_2_>
-	gen whours_2 = .
+	gen whours_2 = sjj4
+	replace whours_2 = . if lstatus != 1
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 
