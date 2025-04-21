@@ -1,0 +1,5 @@
+v 1
+d GLD ISIC ISCO universe check: A package to check whether ISIC or ISCO codes in harmonized data are in the ISIC/ISCO universe.
+d Creator: World Bank Jobs Group
+d Author: Gronert Alvarez, Mario Andres
+d Distribution-Date: 2025-04-21
