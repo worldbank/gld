@@ -198,14 +198,14 @@ foreach sec in  g7sec6a g7sec6b g7sec6q10 {
 	002, ..., 160.
 
 </_hhid_note> */
-	gen hhid = hid
+	gen hhid = subinstr(hid, "/", "", 1)
 	label var hhid "Household ID"
 *</_hhid_>
 
 
 *<_pid_>
 	drop pid
-	gen  pid = phid
+	gen pid = subinstr(phid, "/", "", 2)
 	label var pid "Individual ID"
 *</_pid_>
 
