@@ -22,13 +22,15 @@ The quality checks have been updated to spot whether there are values outside of
 
 ## Installing and using the `int_classif_universe` command
 
-This is what the `int_classif_universe.ado` file helps users with. To make it work, users only need to install it in the `ado/plus/i` folder, where Stata user-written programs are stored. The below is an example of the folder in Windows.
+ The installation can be done directly from the internet by typing the following into the console:
 
-<br></br>
-![Stata ado folder in Windows](utilities/store_in_ado_plus.png)
-<br></br>
+```
+net install GLD-isic-isco-universe-check, replace from("https://raw.githubusercontent.com/worldbank/gld/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20universe%20check")
+```
 
-Once it is installed, the user needs to open the harmonized filed with the out-of-universe ISIC or ISCO values. Then they need to run the command, with the name of the industrycat_isic or occup_isco version of interest as an argument to the `var([varname])` option and `isic` or `isco` (or all caps version) as argument to the `universe([isco/isic])` option.
+Make sure to keep the `replace` option. This is not necessary the first time but will allow Stata to overwrite the code if the GLD team updates the function
+
+Once it is installed, the user needs to have the harmonized filed that may contain the out-of-universe ISIC or ISCO values loaded. Then they need to run the command, with the name of the industrycat_isic or occup_isco version of interest as an argument to the `var([varname])` option and `isic` or `isco` (or all caps version) as argument to the `universe([isco/isic])` option.
 
 For example, for `industrycat_isic` this is
 ```
