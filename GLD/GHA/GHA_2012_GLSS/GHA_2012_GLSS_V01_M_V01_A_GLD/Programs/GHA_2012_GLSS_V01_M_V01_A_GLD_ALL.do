@@ -209,7 +209,7 @@ foreach sec in SEC2a SEC2b SEC2c SEC3a SEC3b SEC3c SEC3d SEC3e SEC4a SEC4b SEC4c
 	
 	*There are some cases that the date is not within the fieldwork interval (18/10/2012 to 17/10/2013): 57 observations, compare the dates with hh of the same enumeration area.
 	gen wrong_date = (int_month>10 & int_year==2013) | (int_month==10 & int_year==2013 & ddatesup > 17)
-	fre clust if wrong_date == 1
+	* fre clust if wrong_date == 1
 	bys clust: egen correct_month = mode(int_month)
 	bys clust: replace int_month = correct_month if wrong_date == 1 & int_month != correct_month
 	* The remaining 2 obs have int_day issues
@@ -222,7 +222,7 @@ foreach sec in SEC2a SEC2b SEC2c SEC3a SEC3b SEC3c SEC3d SEC3e SEC4a SEC4b SEC4c
 	Raw data has Household ID
 	
 </_hhid_note> */
-	gen hhid = HID
+	gen hhid = subinstr(HID, "/", "", 1)
 	label var hhid "Household ID"
 *</_hhid_>
 
