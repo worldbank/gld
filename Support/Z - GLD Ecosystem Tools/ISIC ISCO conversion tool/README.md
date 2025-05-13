@@ -72,7 +72,7 @@ The options are to enter:
 * Under `origvar` the name of the variable to that has the classification codes (e.g., `industrycat_isic`, `industrycat_isic_year`, or `occup_isco`).
 * Under `classfrom` the version of the classification used in the data. This information is contained in the variable `isic_version` or `isco_version` and needs to conform to the GLD nomenclature for these variables (e.g., `isic_2` or `isic_3` is accepted but `ISIC 2` or `isic-3` is not).
 * Under `classto` the version of the classification to be mapped to. This, like `classfrom` needs to conform to GLD standard naming.
-* Under `fullcorr` write `yes` or `no` depending on whether you wish to have the full correspondence details (all intermediate steps) or not. Option `no` is recommended for simplicity.
+* Under `fullcorr` write `yes` or `no` depending on whether you wish to have the full correspondence details (all digit options) or not (only top level 4 digits).
 * Under `seed` enter an integer to set the seed for the random process in order to make the mapping reproducible.
 
 The function will check the most common errors of input and alert the user what the mistake was, in order to help them correct the issue. Below are examples of, first, a wrongly entered `classfrom` argument (`isic2` instead of `isic_2`) and, second, a case where the mandatory `fullcorr` option was not included.
