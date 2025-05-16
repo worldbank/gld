@@ -4,9 +4,16 @@ This document first describes the logic of the process and then provides users w
 
 ## Occupation codes used in Mexico’s ENOE
 
-The Mexican *Encuesta de Ocupación y Empleo* uses two different classification systems between 2005 and 2020. Between 2005 and the second quarter of 2012 the National Statistics Office [INEGI]( https://www.inegi.org.mx) uses the *Clasificación Mexicana de Ocupaciones* (CMO) while after that it uses the *Sistema Nacional de Clasificación de Ocupaciones* (SINCO).
+The Mexican *Encuesta de Ocupación y Empleo* uses different classification systems over the years. The below table shows the classifications used at different points in time in the ENOE survey to code the occupation workers hold.
 
-Since for this harmonization only the first quarter is used (see [further details why here](www.link.com)), the information coded as `occup_isco` is mapped from CMO for 2005 to 2012 and from SINCO from 2013 to 2020.
+| From     | To      | Survey | Version Used | Notes                                         |
+| -------- | ------- | ------ | -------------| --------------------------------------------- |
+| Q1 2005  | Q2 2012 | ENOE   | CMO (09?)    | Exact version of CMO unknown                  |
+| Q3 2005  | Q4 2022 | ENOE   | SINCO 11     | ENOE de facto not run from Q2 2020 to Q4 2022 |
+| Q3 2020  | Q2 2021 | ENOE-N | SINCO 11     |                                               |
+| Q3 2021  | Q4 2022 | ENOE-N | SINCO 19     |                                               |
+| Q1 2023  | Current | ENOE   | SINCO 19     |                                               |
+
 
 ## Correspondence information available
 
