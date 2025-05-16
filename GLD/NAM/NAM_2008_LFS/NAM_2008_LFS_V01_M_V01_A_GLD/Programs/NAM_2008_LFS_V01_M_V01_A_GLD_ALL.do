@@ -56,7 +56,7 @@ set varabbrev off
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-local server "Y:\GLD-Harmonization\625372_DB"
+local server "C:\Users\wb625372\OneDrive - WBG\GLD - 625372_DB"
 local country "NAM"
 local year    "2008"
 local survey  "LFS"

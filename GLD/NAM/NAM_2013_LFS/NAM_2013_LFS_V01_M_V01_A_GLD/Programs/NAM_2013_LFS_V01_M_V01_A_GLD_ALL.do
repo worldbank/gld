@@ -57,7 +57,7 @@ set varabbrev off
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-local server "Y:\GLD-Harmonization\625372_DB"
+local server "C:\Users\wb625372\OneDrive - WBG\GLD - 625372_DB"
 local country "NAM"
 local year    "2013"
 local survey  "LFS"
@@ -997,14 +997,13 @@ foreach ed_var of local ed_vars {
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
-**# Bookmark #1
 *<_occup_isco_>	
-	tostring E02Occup, gen(occup_isco) format(%04.0f)
+	gen occup_isco = string(floor(E02Occup/100)*100, "%04.0f")
 	replace occup_isco = "" if occup_isco == "."
 
 	* Check that no errors --> using our universe check function, count should be 0 (no obs wrong)
 	* https://github.com/worldbank/gld/tree/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20universe%20check
-	/*
+	
 	preserve 
 	drop if missing(occup_isco)
 	int_classif_universe, var(occup_isco) universe(ISCO)

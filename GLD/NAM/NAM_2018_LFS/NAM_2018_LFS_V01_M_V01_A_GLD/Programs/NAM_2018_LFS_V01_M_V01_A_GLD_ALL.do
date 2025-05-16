@@ -53,7 +53,7 @@ set varabbrev off
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-local server "Y:\GLD-Harmonization\625372_DB"
+local server "C:\Users\wb625372\OneDrive - WBG\GLD - 625372_DB"
 local country "NAM"
 local year    "2018"
 local survey  "LFS"
@@ -984,9 +984,8 @@ foreach ed_var of local ed_vars {
 *</_occup_orig_>
 
 
-**# Bookmark #1
 *<_occup_isco_>	
-	tostring OCCUPATION_MINOR, gen(occup_isco) format(%04.0f)
+	gen occup_isco = string(floor(OCCUPATION_MINOR/100)*100, "%04.0f")
 	replace occup_isco = "" if occup_isco == "."
 
 	* Check that no errors --> using our universe check function, count should be 0 (no obs wrong)
@@ -1004,7 +1003,8 @@ foreach ed_var of local ed_vars {
 
 
 *<_occup_>
-	gen byte occup = .
+	gen occup = real(substr(occup_isco, 1, 1))
+	recode occup (0 = 10)
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup

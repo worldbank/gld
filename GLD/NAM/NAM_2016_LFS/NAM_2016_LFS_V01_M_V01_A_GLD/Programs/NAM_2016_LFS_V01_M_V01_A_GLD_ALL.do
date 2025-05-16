@@ -56,7 +56,7 @@ set varabbrev off
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-local server "Y:\GLD-Harmonization\625372_DB"
+local server "C:\Users\wb625372\OneDrive - WBG\GLD - 625372_DB"
 local country "NAM"
 local year    "2016"
 local survey  "LFS"
@@ -934,9 +934,8 @@ foreach ed_var of local ed_vars {
 *</_occup_orig_>
 
 
-**# Bookmark #1
 *<_occup_isco_>	
-	tostring OCCUPATION_MINOR, gen(occup_isco) format(%04.0f)
+	gen occup_isco = string(floor(OCCUPATION_MINOR/100)*100, "%04.0f")
 	replace occup_isco = "" if occup_isco == "."
 
 	* Check that no errors --> using our universe check function, count should be 0 (no obs wrong)

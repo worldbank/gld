@@ -56,7 +56,7 @@ set varabbrev off
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-local server "Y:\GLD-Harmonization\625372_DB"
+local server "C:\Users\wb625372\OneDrive - WBG\GLD - 625372_DB"
 local country "NAM"
 local year    "2014"
 local survey  "LFS"
@@ -381,7 +381,50 @@ drop _merge
 
 **# PENDING #1
 *<_relationharm_>
-	gen relationharm = .
+	gen relationharm_aux = B03Relation
+	
+	recode relationharm_aux (4 = 3) (6 = 4) (7 = 5) (8 9 = 6)
+	
+	gen count_heads = (relationharm_aux == 1)
+	bys hhid : egen total_heads = total(count_heads)
+	
+	// unique hhid if total_heads == 0 : 123
+	// unique hhid if total_heads == 1 : 9628
+	// unique hhid if inrange(total_heads,2,99) : 21
+	
+	*More than one head
+	bysort hhid (age): gen oldest = (_n == _N)
+	bysort hhid oldest : gen  hh_oldest = 1 if _n == _N & oldest == 1
+	bys hhid (age) : replace relationharm_aux = 5 if inrange(total_heads,2,99) & relationharm_aux == 1 & hh_oldest != 1
+	
+	drop count_heads total_heads oldest hh_oldest
+	
+	*if not head , code spouse as head
+	gen count_heads = (relationharm_aux == 1)
+	bys hhid : egen total_heads = total(count_heads)
+	
+	gen new_head = 1 if total_heads == 0 & relationharm_aux == 2 
+	bys hhid : egen hh_new_head = count(new_head)
+	
+	gen count_spouses = (new_head == 1)
+	bys hhid : egen total_spouses = total(count_spouses)
+	bysort hhid relationharm_aux (age): gen spouse_oldest = (_n == _N) & relationharm_aux == 2
+	bysort hhid spouse_oldest : gen  hh_spouse_oldest = 1 if _n == _N & spouse_oldest == 1
+	bys hhid (age) : replace relationharm_aux = 5 if inrange(total_spouses,2,99) & relationharm_aux == 2 & hh_spouse_oldest != 1
+
+	*oldest member
+	bysort hhid (age): gen oldest = (_n == _N) if total_heads == 0 & hh_new_head == 0
+	replace new_head = 2 if oldest == 1 & missing(new_head)
+	bysort hhid (age) : gen hh_oldest = 1 if oldest[_N] == 1
+	
+	replace relationharm_aux = 1 if new_head == 1 & relationharm_aux == 2
+	replace relationharm_aux = 5 if new_head == 1 & relationharm_aux == 4
+	replace relationharm_aux = 1 if new_head == 2
+	replace relationharm_aux = 5 if hh_oldest == 1 & relationharm_aux != 1
+	replace relationharm_aux = 6 if missing(relationharm_aux)
+	
+	gen relationharm = relationharm_aux
+	
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm  lblrelationharm
@@ -924,7 +967,7 @@ foreach ed_var of local ed_vars {
 
 **# Bookmark #1
 *<_occup_isco_>	
-	tostring E02Occup, gen(occup_isco) format(%04.0f)
+	gen occup_isco = string(floor(E02Occup/100)*100, "%04.0f")
 	replace occup_isco = "" if occup_isco == "."
 
 	* Check that no errors --> using our universe check function, count should be 0 (no obs wrong)
