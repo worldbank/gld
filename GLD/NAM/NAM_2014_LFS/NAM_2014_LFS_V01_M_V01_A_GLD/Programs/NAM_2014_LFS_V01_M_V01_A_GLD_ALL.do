@@ -379,7 +379,6 @@ drop _merge
 	label values male lblmale
 *</_male_>
 
-**# PENDING #1
 *<_relationharm_>
 	gen relationharm_aux = B03Relation
 	
@@ -965,10 +964,11 @@ foreach ed_var of local ed_vars {
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
-**# Bookmark #1
+
 *<_occup_isco_>	
 	gen occup_isco = string(floor(E02Occup/100)*100, "%04.0f")
 	replace occup_isco = "" if occup_isco == "."
+	replace occup_isco = "" if occup_isco == "7900"
 
 	* Check that no errors --> using our universe check function, count should be 0 (no obs wrong)
 	* https://github.com/worldbank/gld/tree/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20universe%20check
