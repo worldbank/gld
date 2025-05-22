@@ -42,8 +42,7 @@ program gldpanel_issue_check, rclass
     replace `diff_relharm' = (`diff_relharm' > 0 & !missing(`diff_relharm'))
     bys `hhid' `pid': egen `id_diff_relharm' = max(`diff_relharm')
 
-    bys `hhid' `pid' `year': gen `first_wave_year' = `wave' if _n == 1
-    replace `first_wave_year' = `first_wave_year'[_n-1] if missing(`first_wave_year')
+    bys `hhid' `pid' `year': egen first_wave_year = min(wave)
 
     gen `agetag' = `age' if `year' == `earliest_year' & `wave' == `first_wave_year'
     bys `hhid' `pid': egen `minage' = min(`agetag')
