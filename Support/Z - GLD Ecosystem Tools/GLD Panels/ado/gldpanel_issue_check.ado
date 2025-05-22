@@ -16,6 +16,12 @@ program gldpanel_issue_check, rclass
     if "`male'" == "" local male male
 	if "`countrycode'" == "" local countrycode countrycode
 
+    * Var 'wave' needs to be numeric for this to work, check and alert user if not
+    capture confirm numeric variable `wave'
+    if _rc != 0 {
+    	display as error "Error: Variable 'wave' must be numeric. If Q1 --> 1"
+    	error 198 
+    }
 
     * Temporary variable declarations
     tempvar earliest_year actual_diff odd_diff id_odd_diff diff_sex id_diff_sex
