@@ -505,7 +505,7 @@ use "`path_in_stata'/NAM_LFS_2018_PUBLIC.dta", clear
 	gen migrated_from_cat = .
 	replace migrated_from_cat = 4 if inrange(MOVED_FROM_REGION,1,14) & MOVED_FROM_REGION != REGION
 	replace migrated_from_cat = 5 if inrange(MOVED_FROM_REGION,100,700)
-	replace migrated_from_cat = 6 if inrange(MOVED_FROM_REGION,1,14) & MOVED_FROM_REGION == REGION
+	replace migrated_from_cat = 3 if inrange(MOVED_FROM_REGION,1,14) & MOVED_FROM_REGION == REGION
 	replace migrated_from_cat = 7 if migrated_binary == 1 &  missing(MOVED_FROM_REGION) 
 	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country" 6 "Within country, admin unknown" 7 "Wholly unknow"
 	label values migrated_from_cat lblmigrated_from_cat
