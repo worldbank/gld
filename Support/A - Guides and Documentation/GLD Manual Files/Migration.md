@@ -41,9 +41,9 @@ To exemplify the use, Spain is divided into Communities (admin1 level), Province
 
 **migrated_from_code**
 
-Based on the logic set out in the `migrated_from_cat` variable, codify the areas of migration using the survey subnation id classification. For example, if a person migrated from one admin1 area to another, use the subnatid1 codes to inform from which admin1 area they migrated to their current residence (which is codified in subnatid1).
+Based on the logic set out in the `migrated_from_cat` variable, codify the areas of migration using the survey subnation id classification. For example, if a person migrated from one admin1 area to another (code 4 in `migrated_from_cat`), use the subnatid1 codes to inform from which admin1 area they migrated to their current residence (which is codified in subnatid1).
 
-This only codifies information within the country. Set to missing if migrated_from_cat is 5.
+This only codifies information within the country. Set to missing if migrated_from_cat is 5 or higher.
 
 Note that most surveys will only provide information of last residence to a higher administrative level (e.g., admin1 level). Codify the information up to the highest level possible. See an example in lessons learned below.
 
