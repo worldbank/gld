@@ -70,7 +70,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="prev" title="Demography module" href="Demography.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="May 22, 2025"/>
+    <meta name="docbuild:last-update" content="Jun 04, 2025"/>
   </head>
   
   
@@ -462,8 +462,8 @@ document.write(`
 </ul>
 <p>To exemplify the use, Spain is divided into Communities (admin1 level), Provinces (admin2 level) and municipalities (names change within provinces, but rough concept holds – admin3 level). A person moving within the municipality, for example, from one village to the next, codes 1. A person moving within the province, say from a rural municipality to the province capital codes 2. A person moving within the same community yet leaving their province codes 3. A person moving from one community to another, say from <a class="reference external" href="https://en.wikipedia.org/wiki/Andalusia">Andalusia</a> to <a class="reference external" href="https://en.wikipedia.org/wiki/Galicia_(Spain)">Galicia</a>, codes 4. If the person moved from outside the country (regardless of their nationality) codes 5.</p>
 <p><strong>migrated_from_code</strong></p>
-<p>Based on the logic set out in the <code class="docutils literal notranslate"><span class="pre">migrated_from_cat</span></code> variable, codify the areas of migration using the survey subnation id classification. For example, if a person migrated from one admin1 area to another, use the subnatid1 codes to inform from which admin1 area they migrated to their current residence (which is codified in subnatid1).</p>
-<p>This only codifies information within the country. Set to missing if migrated_from_cat is 5.</p>
+<p>Based on the logic set out in the <code class="docutils literal notranslate"><span class="pre">migrated_from_cat</span></code> variable, codify the areas of migration using the survey subnation id classification. For example, if a person migrated from one admin1 area to another (code 4 in <code class="docutils literal notranslate"><span class="pre">migrated_from_cat</span></code>), use the subnatid1 codes to inform from which admin1 area they migrated to their current residence (which is codified in subnatid1).</p>
+<p>This only codifies information within the country. Set to missing if migrated_from_cat is 5 or higher.</p>
 <p>Note that most surveys will only provide information of last residence to a higher administrative level (e.g., admin1 level). Codify the information up to the highest level possible. See an example in lessons learned below.</p>
 <p><strong>migrated_from_country</strong></p>
 <p>Codes the country (if migrated_from_cat is 5) from where the person migrated from as a <a class="reference external" href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3">three letter ISO country code</a> or a clear string for regions (“Other Europe”, “Other World”, …)</p>
@@ -716,7 +716,7 @@ By World Bank Jobs Group
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on May 22, 2025.
+  Last updated on Jun 04, 2025.
   <br/>
 </p>
   </div>
