@@ -35,11 +35,7 @@ The data are **not publicly accessible** and have **strict access restrictions**
 
 ## What is the sampling procedure?
 
-A two-stage stratified sampling design is **assumed** for the LFS, at least for years **2012 and 2013**, although this is **not explicitly confirmed** in the survey documentation. Based on comparable Central Statistics Division (CSD) practices:
-1. **Primary Sampling Units (PSUs)** (e.g., census tracts or enumeration areas) are selected in the first stage.
-2. **Households** are selected within PSUs using systematic or simple random sampling.
-
-No official **methodology reports** were provided alongside the datasets, limiting detailed knowledge of sampling procedures for earlier years. So we cannot confirm the exact sampling methodology.
+The data appear to have been collected using a two-stage sampling design, although this has not been confirmed. The PSU variable is available for years 2012 and 2013.
 
 ## What is the geographic significance level?
 
