@@ -29,7 +29,7 @@
 
 <_ICLS Version_>				ICLS 13 </_ICLS Version_>
 <_ISCED Version_>				[Version of ICLS for Labor Questions] </_ISCED Version_>
-<_ISCO Version_>				[Version of ICLS for Labor Questions] </_ISCO Version_>
+<_ISCO Version_>				ISCO 2008 </_ISCO Version_>
 <_OCCUP National_>				[Version of ICLS for Labor Questions] </_OCCUP National_>
 <_ISIC Version_>				ISIC 3.1 </_ISIC Version_>
 <_INDUS National_>				[Version of ICLS for Labor Questions] </_INDUS National_>
@@ -278,7 +278,7 @@ label variable ef302 "Personal factor (Involved in the calculations of output ta
 
 *<_isco_version_>
 * There is no occupation variable here
-	gen isco_version = ""
+	gen isco_version = "isco_2008"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
@@ -1036,34 +1036,29 @@ foreach ed_var of local ed_vars {
 
 
 *<_occup_orig_>
-	gen occup_orig = .
+	gen occup_orig = vopr_46
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
 
 *<_occup_isco_>
-	gen occup_isco = ""
-
-	* Check that no errors --> using our universe check function, count should be 0 (no obs wrong)
-	* https://github.com/worldbank/gld/tree/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20universe%20check
-	preserve 
-	*drop if missing(occup_isco)
-	*int_classif_universe, var(occup_isco) universe(ISCO)
-	count
-	*list
-	*assert `r(N)' == 0
-	restore
+	gen occup_isco = substr(vopr_46, 1, 2) + "00" if vopr_46!="0"
+	replace occup_isco = "5000" if occup_isco == "5500"
+	replace occup_isco = "7000" if occup_isco == "7600"
+	replace occup_isco = "" if occup_isco == "0" | lstatus != 1
 
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
 
 *<_occup_>
-	gen byte occup = .
+	gen occup = substr(occup_isco, 1, 1)
+	destring occup, replace
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup
 *</_occup_>
+
 
 
 *<_occup_skill_>
