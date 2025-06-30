@@ -8,14 +8,15 @@ Tertiary education includes bachelor's, master's, and doctoral degree programs. 
 
 The table below summarizes how each of these levels aligns with the raw education codes from the Kazakhstan Labor Force Survey:
 
-| Raw Code (`vopr_24`) | Description in Kazakhstan Context                     |
-|----------------------|--------------------------------------------------------|
-| 1 – No initial        | No formal schooling                                   |
-| 2 – Primary general   | Began primary education but did not complete it       |
-| 3 – Basic general     | Completed Grades 1–9 (primary and basic general)      |
-| 4 – Average total     | Completed Grades 10–11/12 in the academic track       |
-| 5 – Initial vocational| Short-term vocational training after Grade 9         |
-| 6 – Secondary professional | Combined academic and vocational education     |
-| 7 – Incomplete higher | Attended university but did not complete a degree     |
-| 8 – Higher            | Completed university (bachelor’s, master’s, or PhD)   |
-| 9 – DegreePhD         | Completed postgraduate education                      |
+| Raw Code (`vopr_24`)     | Description in Kazakhstan Context                                | `educat7` Label                                  |
+|--------------------------|------------------------------------------------------------------|--------------------------------------------------|
+| 1 – No initial           | No formal schooling                                              | 1 – No education                                |
+| 2 – Primary general      | Began primary education but did not complete it                 | 2 – Primary incomplete                          |
+| 3 – Basic general        | Completed Grades 1–9 (primary and basic general)                | 3 – Primary complete                            |
+| 5 – Initial vocational   | Short-term vocational training after Grade 9                    | 4 – Secondary incomplete                        |
+| 4 – Average total        | Completed Grades 10–11/12 in the academic track                 | 5 – Secondary complete                          |
+| 6 – Secondary professional | Combined academic and vocational education                   | 5 – Secondary complete                          |
+| 7 – Incomplete higher    | Attended university but did not complete a degree               | 6 – Higher than secondary but not university    |
+| 8 – Higher               | Completed university (bachelor’s, master’s, or PhD)             | 7 – University incomplete or complete           |
+| 9 – DegreePhD            | Completed postgraduate education                                | 7 – University incomplete or complete           |
+
