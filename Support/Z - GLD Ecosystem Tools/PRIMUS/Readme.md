@@ -49,7 +49,7 @@ The `Tasks` folder contains the `.do` files that execute the main stages of the 
 - **Task 2 – Approve:** Automatically reviews the uploaded and confirmed transactions in PRIMUS and submits them for final approval, making the datasets visible and accessible in Datalibweb.
 - **Task 3 – Reconciliation Report:** Generates diagnostic reports comparing GLD and Datalibweb holdings, flags inconsistencies, and informs the Task 1 logic about which surveys require uploads, version updates, or no action.
 
-### [Do files folder](./Do%20files/)
+### [Helpers folder](./Helpers/)
 
 The `Do files` folder contains reusable subroutines and helper scripts used by the main tasks. These include:
 
