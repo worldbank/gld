@@ -43,9 +43,11 @@
 
 *-- 02. ILO (1), EAP_TEAP_SEX_AGE_NB	
 	#delimit ;
-	dbnomics import, provider(ILO) dataset(EAP_TEAP_SEX_AGE_NB) ref_area(${ccode3}) 
+	dbnomics import, provider(ILO) dataset(EAP_TEAP_SEX_AGE_NB)
 	sex(SEX_T)  classif1(AGE_10YRBANDS_TOTAL) frequency(A) clear;
-	#delimit cr 
+	#delimit cr
+	keep if ref_area == "${ccode3}"
+
 	count
 	if `r(N)' == 0 {
 		di "Dbnomics data not found"
