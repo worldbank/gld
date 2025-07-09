@@ -33,10 +33,10 @@ After reconciliation, each unmatched or inconsistent survey is classified into o
 
 | Case Type | Description |
 |-----------|-------------|
-| **Case 1 – New upload** | The survey is present in GLD but not yet in Datalibweb. Both raw and harmonized data need to be uploaded. |
-| **Case 2 – Update harmonized data only** | The survey exists in both sources with the same master version (raw data), but the harmonized (alternative) version is newer in GLD. Only the harmonized file needs to be updated. |
-| **Case 3 – Update raw and harmonized data** | The survey exists in both sources, but both the raw (master) and harmonized (alternative) versions differ. A full re-upload of both components is required. |
-| **Case 4 – New upload of multiple versions** | A special variation of case 1 where upload is required for multiple versions of harmonized and/or raw folders. Example is when the latest in GLD is V02_M_V02_A_GLD, but first upload has not yet taken place.
+| **1 – New upload** | The survey is present in GLD but not yet in Datalibweb. Both raw and harmonized data need to be uploaded. |
+| **2 – Update harmonized data only** | The survey exists in both sources with the same master version (raw data), but the harmonized (alternative) version is newer in GLD. Only the harmonized file needs to be updated. |
+| **3 – Update raw and harmonized data** | The survey exists in both sources, but both the raw (master) and harmonized (alternative) versions differ. A full re-upload of both components is required. |
+| **4 – New upload of multiple versions** | A special variation of case 1 where upload is required for multiple versions of harmonized and/or raw folders. Example is when the latest in GLD is V02_M_V02_A_GLD, but first upload has not yet taken place.
 
 
 ### D. Excel Output
@@ -64,11 +64,11 @@ primus_xml_gld [if] [in], xmlout(string) country(string) year(string) ///
 ```
 
 where:
-- xmlout is the full file location where the xml file will be stored (this is defined in the next do file)
-- country is the three-digit country code of the survey, which can be extracted from the surveyid
-- year is the year of the survey in string format
-- surveyid is the name of the survey following the World Bank naming convention (e.g., CMR_2010_EESI_V01_M_V01_A_GLD)
-- filename is the full file location of the harmonized dataset from which the labor indicatirs will be calculated
+- `xmlout` is the full file location where the xml file will be stored (this is defined in the next do file)
+- `country` is the three-digit country code of the survey, which can be extracted from the surveyid
+- `year` is the year of the survey in string format
+- `surveyid` is the name of the survey following the World Bank naming convention (e.g., CMR_2010_EESI_V01_M_V01_A_GLD)
+- `filename` is the full file location of the harmonized dataset from which the labor indicatirs will be calculated
 
 ## `upload sequence.do`: Uploading into PRIMUS
 
@@ -81,9 +81,9 @@ This Stata script automates the preparation and upload of Global Labor Database 
 #### 1. Initialize Log File and Load Reconciliation Results
 
 - A new CSV log file is created using a timestamped filename (`tranxids_YYYYMMDD_HHMMSS.csv`).
-- The script locates the most recent reconciliation Excel file (`gld_dlw_reconcile*.xlsx`) in the `${primusfolder}` directory and loads the "Main" sheet containing the upload plan.
+- The script locates the most recent reconciliation Excel file (`gld_dlw_reconcile_[Date].xlsx`) in the `${primusfolder}` directory and loads the "Main" sheet containing the upload plan.
 
-### 2. Handle Version Gaps (Intermediate Version Logic)
+#### 2. Handle Version Gaps (Intermediate Version Logic)
 
 PRIMUS requires all sequential versions to be uploaded. This section fills in gaps the vintages. For example, if V01_M_V01_A_GLD is the latest in DLW and V01_M_V03_A_GLD for GLD, this expands the metadata to fill in the intermediate vintage V01_M_V02_A_GLD). It performs the following:
 
@@ -103,7 +103,7 @@ PRIMUS requires all sequential versions to be uploaded. This section fills in ga
 - Creates folders for storing XML and ZIP files.
 - Iterates over each row (survey) to:
   - Generate XML metadata files using the `primus_xml_gld` program
-  - Use `robocopy` and `tar.exe` to selectively copy and compress allowed folders (i.e., `Data`, `Doc`, `Programs` are included, but GLD's `Work` folder is not). In PRIMUS, it is more convenient to upload zipped files. 
+  - Use `robocopy` and `tar.exe` to selectively copy and compress allowed folders (i.e., `Data`, `Doc`, `Programs` are included, but GLD's `Work` folder is not). PRIMUS allows for expedient upload of a single zip file. 
   - Measure folder size using PowerShell to ensure it meets the 1.5 GB file size limit enforced by PRIMUS.
   - If over the limit:
     - Generates a Word file with instructions for users to request access via email.
@@ -134,12 +134,12 @@ This section executes the actual uploads via the PRIMUS Stata API.
 
 #### 3. Logging Outcomes
 
-Every upload attempt, success, or failure is recorded in the log file:
+Every upload attempt (success or failure) is recorded in the log file with the following logic:
 
 | Condition                                       | Log Action                                                        |
 |------------------------------------------------|--------------------------------------------------------------------|
 | Successful upload (harm + raw)                 | Both transaction IDs logged with a success message                 |
-| Case 2 (harm only)                             | Logs only harmonized transaction ID; marks raw as `NA`             |
+| Successful upload (harm only)                  | Logs only harmonized transaction ID; marks raw as `NA`             |
 | File too large (raw or harm)                   | Logs file size with explanatory note                               |
 | Missing `.dta` or upload error                 | Logs as failed and continues processing other surveys              |
 
