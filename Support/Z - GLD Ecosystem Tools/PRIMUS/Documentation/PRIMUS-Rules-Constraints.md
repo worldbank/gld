@@ -9,8 +9,8 @@ PRIMUS has a set of rules and constraints that users need to consider when uploa
 | Rule | Description |
 |------|-------------|
 | **1. Draft mode** | • All data uploads are initially stored in draft mode. <br> • They must be confirmed before reviewers can see them. |
-| **2. Two-step workflow** | • Uploading is followed by an explicit confirm step (`primus action, decision(confirm)`). <br> • Then, a separate approval step is required. |
-| **3. Separate processes** | • Harmonized and raw data must be uploaded under different process IDs. <br> • In the GLD, process ID 14 is for harmonized files and 15 is for raw. |
+| **2. Two-step workflow** | • Uploading is followed by an explicit confirm step (`primus action, decision(confirm)`). <br> • Then, a separate approval step is required. (`primus action, decision(approve)`) |
+| **3. Separate processes** | • Harmonized and raw data must be uploaded under different process IDs. <br> • For GLD, process ID 14 is for harmonized files and 15 is for raw. |
 | **4. XML file required for harmonized uploads** | • An XML file containing the values of pre-selected indicators is required for each vintage of the harmonized file, even if indicator values did not change. |
 
 
@@ -25,7 +25,7 @@ PRIMUS has a set of rules and constraints that users need to consider when uploa
 
 | Rule | Description |
 |------|-------------|
-| **1. Sequential versions required** | • PRIMUS enforces sequential version uploads. <br> • If version 3 for the harmonized is available but earlier versions were not uploaded, users are required to backfill earlier vintages (e.g., upload not only v03, but also v01 and v02) despite being out of date. |
+| **1. Sequential versions required** | • PRIMUS enforces sequential version uploads. <br> • If version 3 for the harmonized is available but earlier versions were not uploaded, users are required to backfill earlier vintages (e.g., upload of V03, requires V01 and V02) despite being out of date. |
 | **2. Master version sequencing** | • A slightly different rule applies to the sequencing of the master version. <br> • Uploading the raw file for version 1 (e.g., `V01_M`) is not required when uploading its harmonized counterpart. <br> • However, if the harmonized file is based on version 2 of the master (e.g., `V02_M_V01_A_GLD`), then both version 1 and version 2 of the master (`V01_M` and `V02_M`) must be uploaded first, in order, before uploading the harmonized file. |
 
 ## D. Folder Size and Structure
