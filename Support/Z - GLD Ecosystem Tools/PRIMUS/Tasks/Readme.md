@@ -1,6 +1,6 @@
 # Tasks
 
-The integration process is organized into three separate tasks stored as Stata `.do` files, each corresponding to a scheduled task. These will be executed automatically using a task scheduler on different dates or triggers, depending on the workflow. 
+The PRIMUS integration process is organized into three separate tasks stored as Stata `.do` files, each corresponding to a scheduled task. These will be executed automatically using a task scheduler on different dates or triggers, depending on the workflow. 
 
 ### Task 1 – Upload and Confirm
 
@@ -10,7 +10,7 @@ This task is responsible for identifying GLD surveys that have not yet been uplo
 The first step involves comparing the set of harmonized surveys available on the GLD server with those already available on Datalibweb. This reconciliation identifies any missing surveys or surveys that have been updated in GLD but not yet uploaded to PRIMUS, and flags them for upload.
 
 **b. Preparing data for upload**  
-This sub-task ensures that each dataset meets PRIMUS’s technical requirements. This includes validating version sequencing (e.g., a version 2 cannot be uploaded if version 1 is missing), filtering out non-compliant folders (e.g., GLD’s internal `work` folder is excluded), and ensuring the total file size does not exceed 1.5 GB. In addition, an XML file is generated for each dataset, containing summary indicators of the harmonized microdata and key metadata required by PRIMUS. The process also includes automated checks for missing data, upload errors, and other flags, all of which are documented in a log file along with the transaction IDs assigned by PRIMUS for traceability.
+This sub-task ensures that each dataset meets PRIMUS’s technical requirements. This includes validating version sequencing (e.g., a version 2 cannot be uploaded if version 1 is missing), filtering out non-compliant folders (e.g., GLD’s internal `work` folder is excluded), and ensuring the total file size does not exceed 1.5 GB. In addition, an XML file is generated for each harmonized dataset, containing summary indicators of the harmonized microdata and key metadata required by PRIMUS. The process also includes automated checks for missing data, upload errors, and other potential issues, all of which are documented in a log file along with the transaction IDs assigned by PRIMUS for traceability.
 
 **c. Confirming the data in PRIMUS**  
 In the PRIMUS workflow, each uploaded dataset must go through two stages of clearance: **confirmation** and **approval**. According to PRIMUS documentation, confirmation is the first step in the vetting process and signifies that the data upload is complete and technically sound. While in most workflows this is done by designated reviewers, in the case of GLD, this step is embedded in the harmonization and validation process itself. Therefore, confirmation in PRIMUS is treated as a formal registration of a dataset that is already validated.
