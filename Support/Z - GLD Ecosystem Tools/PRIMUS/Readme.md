@@ -66,6 +66,18 @@ The `Do files` folder contains reusable subroutines and helper scripts used by t
 
 These modular scripts ensure flexibility, traceability, and maintainability of the PRIMUS automation process.
 
+### [Batch Code folder](./Batch-Code)
+
+This folder contains Windows batch files (`.bat`) designed to automate the execution of Stata scripts without requiring manual intervention. Batch processing is especially useful for routine operations such as scheduled uploads to PRIMUS, daily reconciliation checks, or large-batch metadata generation.
+
+Each `.bat` file includes a command-line call to `StataMP` or `StataSE`, pointing to a specific `.do` file located in the `Tasks` or `Helpers` folders. 
+
+When run, this command opens Stata in batch mode (i.e., without the GUI), executes the specified script, and closes automatically after execution. This setup enables the upload pipeline to run entirely in the background—no user input required.
+
+To further streamline operations, these batch files are linked to the **Windows Task Scheduler**, which allows us to automate the workflow by specifying exactly when the code should run. For instance, we can schedule Task 1 (Upload and Confirm) to execute every Monday at 2:00 AM, and Task 2 (Approve) to run the following day. This ensures minimal manual intervention, regular and timely uploads, and better alignment with PRIMUS system availability and clearance cycles
+
+
+
 ### [Documentation folder](./Documentation)
 
 #### [PRIMUS Rules and Constraints](./Documentation/PRIMUS-Rules-Constraints.md)
