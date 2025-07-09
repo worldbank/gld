@@ -10,7 +10,7 @@ version 18
 global primusfolder "C:\Users\\`c(username)'\WBG\GLD - Current Contributors\510859_AS\PRIMUS"
 global gldfolder "C:\Users\\`c(username)'\WBG\GLD - GLD"
 global logfolder "C:\Users\\`c(username)'\WBG\GLD - Current Contributors\510859_AS\PRIMUS\log files"
-* == > End user input  <== * (from here is all should work automatically if all paths correct
+* == > End user input  <== * (from here is all should work automatically if all paths correct)
 
 display "${primusfolder}"
 
