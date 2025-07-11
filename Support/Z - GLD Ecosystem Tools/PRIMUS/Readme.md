@@ -74,7 +74,7 @@ Each `.bat` file includes a command-line call to `StataMP` or `StataSE`, pointin
 
 When run, this command opens Stata in batch mode (i.e., without the GUI), executes the specified script, and closes automatically after execution. This setup enables the upload pipeline to run entirely in the background—no user input required.
 
-To further streamline operations, these batch files are linked to the **Windows Task Scheduler**, which allows us to automate the workflow by specifying exactly when the code should run. For instance, we can schedule Task 1 (Upload and Confirm) to execute every Monday at 2:00 AM, and Task 2 (Approve) to run the following day. This ensures minimal manual intervention, regular and timely uploads, and better alignment with PRIMUS system availability and clearance cycles
+To further streamline operations, these batch files are linked to the **Windows Task Scheduler** [more details on it here](https://web.archive.org/web/20250711151548/https://geekchamp.com/how-to-create-an-automated-task-using-task-scheduler-in-windows-11-10/), which allows us to automate the workflow by specifying exactly when the code should run. For instance, we can schedule Task 1 (Upload and Confirm) to execute every Monday at 2:00 AM, and Task 2 (Approve) to run the following day. This ensures minimal manual intervention, regular and timely uploads, and better alignment with PRIMUS system availability and clearance cycles
 
 
 
