@@ -1,7 +1,7 @@
 # Relationship between Skill and Wages
 
 ### Overview – Unexpected Wage Trends Across Groups
-In reviewing the HBS harmonization, a noticeable inversion of expected salary patterns. Both 2021 and 2022 reveal unusual trends (Figure 1). First, wages increase with education level, peaking at the secondary level, but decline slightly among those with post-secondary education—challenging the conventional expectation of steady returns to higher education. Second, while medium-skill occupations show the highest average wages, high-skill occupations appear to earn less than medium-skill ones. Third, wages by industry reveal that the industry sector commands the highest earnings, significantly above both agriculture and services. Additionally, the age gradient shows a clear decline in wages with age after youth: younger workers earn more on average than adults, seniors, and retirees
+In reviewing the HBS harmonization, a noticeable inversion of expected salary patterns. Both 2021 and 2022 reveal unusual trends (Figure 1). First, wages increase with education level, peaking at the secondary level, but decline slightly among those with post-secondary education—challenging the conventional expectation of steady returns to higher education. Second, while medium-skill occupations show the highest average wages, high-skill occupations appear to earn less than medium-skill ones. Third, wages by sector reveal that the industry sector commands the highest earnings, significantly above both agriculture and services. Additionally, the age gradient shows a clear decline in wages with age after youth: younger workers earn more on average than adults, seniors, and retirees
 
 <div align="center"><strong>Figure 1: HBS Wage Analysis</strong></div>
 
