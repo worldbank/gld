@@ -15,6 +15,7 @@ The EGEP 2017 official report presents 26% while citing an ILO-consistent defini
 | WB GLD data               | Looking in the past 30 days and available within the next 2 weeks| 11%         |                                                                    |
 | WB GLD data               | Looking in past 30 days                                          | 14.0%       |          |
 
-We have derived the unemployed as follows:
+We have derived the unemployed below by classifying the working age population by their main economic activity:
 
+<img src="Utilities/waterfall.png" width="1200" height="600">
 
