@@ -785,7 +785,7 @@ foreach ed_var of local ed_vars {
 
 	* Unemployed: looked for work in past 7 or 30 days & available immediately or in the next 2 weeks (based on ILO standard)
 	* We can include those avialable more than 2 weeks, but just minimal additional observations
-	replace lstatus = 2 if (s04a_09 == 1 | s04a_10 == 1) &  inlist(s04a_12, 1,2)
+	replace lstatus = 2 if (s04a_09 == 1 | s04a_10 == 1) &  inlist(s04a_12, 1,2) & lstatus != 1
 
 	* Not in the labor force
 	replace lstatus = 3 if missing(lstatus) & age >= minlaborage & !missing(s04a_00)
