@@ -49,7 +49,11 @@ gen byte lstatus = .
 	replace lstatus_alt = 3 if missing(lstatus_alt) & age >= minlaborage & !missing(s04a_00)
 ```
 
-We have derived the unemployed below by classifying the working age population by their main economic activity:
+**Here is the breakdown by labor status using the ILO definition of unemployment:**
 
 <img src="Utilities/waterfall.png" width="1200" height="600">
+
+**Here is the breakdown by labor status using the national definition of unemployment:**
+
+<img src="Utilities/waterfall_alt.png" width="1300" height="600">
 
