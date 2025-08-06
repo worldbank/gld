@@ -783,8 +783,6 @@ foreach ed_var of local ed_vars {
 	replace lstatus = 1 if s04a_01_1==1 | s04a_01_2==1 | s04a_02_1==1 | s04a_02_2==1 | s04a_02_3==1 | s04a_02_4==1 | s04a_02_5==1 | s04a_03_1==1 | s04a_03_2 ==1 ///
 	| s04a_03_3==1 | s04a_04==1 | s04a_05==1 | s04a_06==1
 
-	* Asks about whether production is for own consumption or sale (if own consumption, not tag as employed)
-	*replace lstatus = . if s04b_34f == 1
 	* Unemployed: looked for work in past 7 or 30 days & available immediately or in the next 2 weeks (based on ILO standard)
 	* We can include those avialable more than 2 weeks, but just minimal additional observations
 	replace lstatus = 2 if (s04a_09 == 1 | s04a_10 == 1) &  inlist(s04a_12, 1,2)
@@ -798,27 +796,27 @@ foreach ed_var of local ed_vars {
 *</_lstatus_>
 
 /*
-NOTE: Alternative definition of unemployed based on national definition
-- The national definition for unemployed includes the hidden unemployed, i.e., workers who are discouraged due to lack of jobs or do not know how to look for work
-	gen byte lstatus_2 = .
+*NOTE: Alternative definition of unemployed based on national definition
+*- The national definition for unemployed includes the hidden unemployed, i.e., workers who are discouraged due to lack of jobs or do not know how to look for work
+	gen byte lstatus_alt = .
 	
 	* Employed: engaged in economic activity in past 7 days or absent
-	* s04a_05 is supposedly a catch-all variable for all hours worked in activities in s04a_01 to s04a_04 but there are some that were not covered; thus I include all activites on top of the catch-all so all bases are covered
-	replace lstatus_2 = 1 if s04a_01_1==1 | s04a_01_2==1 | s04a_02_1==1 | s04a_02_2==1 | s04a_02_3==1 | s04a_02_4==1 | s04a_02_5==1 | s04a_03_1==1 | s04a_03_2 ==1 ///
+	replace lstatus_alt = 1 if s04a_01_1==1 | s04a_01_2==1 | s04a_02_1==1 | s04a_02_2==1 | s04a_02_3==1 | s04a_02_4==1 | s04a_02_5==1 | s04a_03_1==1 | s04a_03_2 ==1 ///
 	| s04a_03_3==1 | s04a_04==1 | s04a_05==1 | s04a_06==1
 
-	* Asks about whether production is for own consumption or sale (if own consumption, not tag as employed)
-	*replace lstatus = . if s04b_34f == 1
-	* Unemployed: looked for work in past 7 or 30 days & available immediately or in the next 2 weeks (based on ILO standard)
-	* We can include those avialable more than 2 weeks, but just minimal additional observations
-	replace lstatus_2 = 2 if (s04a_09 == 1 | s04a_10 == 1) | inlist(s04a_11, 11, 12)
-
+	* Unemployed: looked for work in past 7 or 30 days
+	replace lstatus_alt = 2 if (s04a_09 == 1 | s04a_10 == 1) & lstatus_alt != 1
+	
+	* Define hidden unemployed: those not know how to search for job and discouraged due to lack of opportunities
+	replace lstatus_alt = 2 if inlist(s04a_11, 11, 12) & lstatus_alt != 1
+	
 	* Not in the labor force
-	replace lstatus_2 = 3 if missing(lstatus_2) & age >= minlaborage & !missing(s04a_00)
-	replace lstatus_2 = . if age < minlaborage
-	label var lstatus_2 "Labor status"
-	label values lstatus_2 lbllstatus
-*</_lstatus_2_>
+	replace lstatus_alt = 3 if missing(lstatus_alt) & age >= minlaborage & !missing(s04a_00)
+	replace lstatus_alt = . if age < minlaborage
+	label var lstatus_alt "Labor status"
+	label values lstatus_alt lbllstatus
+*</_lstatus_alt_>
+
 
 */
 
