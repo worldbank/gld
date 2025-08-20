@@ -909,13 +909,197 @@ foreach ed_var of local ed_vars {
 
 	They use OKVED (the Russian Classification of Economic Activities), which is aligned with NACE Rev. 1.1 at the 4-digit level
 	
-	NACE Rev. 1.1 is the classification of economic activities corresponding to ISIC Rev.3.1 at European level. It is totally in line with ISIC Rev.3.1 and can thus be regarded as its European counterpart.	
-	                                                                     	  
+	NACE Rev. 1.1 is the classification of economic activities corresponding to ISIC Rev.3.1 at European level. It is  in line with ISIC Rev.3.1 at 2 digits level.	For the rest, we have to make the replaces
+	
 </_industrycat_isic_note> */
 	gen industry_adapted = floor(vd_osn/ 10)
 	tostring industry_adapted,  gen(str_industry_adpted) format(%04.0f)
 	replace str_industry_adpted = "" if str_industry_adpted == "." | lstatus != 1
-	replace str_industry_adpted = "0140" if str_industry_adpted == "0141"
+	replace str_industry_adpted = "0122" if inlist(str_industry_adpted,"0121","0123","0124","0125")
+	replace str_industry_adpted = "0140" if inlist(str_industry_adpted,"0141","0142")
+	replace str_industry_adpted = "0200" if inlist(str_industry_adpted,"0201","0202")
+	replace str_industry_adpted = "1410" if inlist(str_industry_adpted,"1411","1412","1413")
+	replace str_industry_adpted = "1410" if inlist(str_industry_adpted,"1421","1422")
+	replace str_industry_adpted = "1422" if str_industry_adpted == "1424"
+	replace str_industry_adpted = "1429" if str_industry_adpted == "1450"
+	replace str_industry_adpted = "1511" if inlist(str_industry_adpted,"1511","1512","1513")
+	replace str_industry_adpted = "1512" if inlist(str_industry_adpted,"1520","1521")
+	replace str_industry_adpted = "1513" if inlist(str_industry_adpted,"1531","1532","1533")
+	replace str_industry_adpted = "1514" if inlist(str_industry_adpted,"1541","1542","1543")
+	replace str_industry_adpted = "1520" if inlist(str_industry_adpted,"1551","1552")
+	replace str_industry_adpted = "1541" if inlist(str_industry_adpted,"1581","1582")
+	replace str_industry_adpted = "1542" if str_industry_adpted == "1583"
+	replace str_industry_adpted = "1543" if str_industry_adpted == "1584"
+	replace str_industry_adpted = "1544" if str_industry_adpted == "1585"
+	replace str_industry_adpted = "1549" if inlist(str_industry_adpted,"1586","1587","1588","1589")
+	replace str_industry_adpted = "1551" if inlist(str_industry_adpted,"1591","1592")
+	replace str_industry_adpted = "1552" if inlist(str_industry_adpted,"1593","1594")
+	replace str_industry_adpted = "1553" if inlist(str_industry_adpted,"1595","1596","1597")
+	replace str_industry_adpted = "1554" if str_industry_adpted == "1598"
+	replace str_industry_adpted = "1600" if str_industry_adpted == "1600"
+	replace str_industry_adpted = "1711" if inlist(str_industry_adpted,"1711","1712","1713","1714","1715","1716","1717")
+	replace str_industry_adpted = "1711"  if inlist(str_industry_adpted,"1721","1722","1723","1724","1725","1730")
+	replace str_industry_adpted = "1721" if str_industry_adpted == "1741"
+	replace str_industry_adpted = "1722" if str_industry_adpted == "1740"
+	replace str_industry_adpted = "1722" if str_industry_adpted == "1751"
+	replace str_industry_adpted = "1729" if inlist(str_industry_adpted,"1752","1753","1760","1771")
+	replace str_industry_adpted = "1730" if str_industry_adpted == "1772"
+	replace str_industry_adpted = "1810" if inlist(str_industry_adpted,"1811","1812","1813","1814","1815","1816","1817","1818") ///
+    | inlist(str_industry_adpted,"1821","1822","1823","1824")
+	replace str_industry_adpted = "1820" if str_industry_adpted == "1830"
+	replace str_industry_adpted = "1911" if str_industry_adpted == "1910"
+	replace str_industry_adpted = "1912" if str_industry_adpted == "1920"
+	replace str_industry_adpted = "2010" if inlist(str_industry_adpted,"2011","2012")
+	replace str_industry_adpted = "2021" if str_industry_adpted == "2020"
+	replace str_industry_adpted = "2022" if str_industry_adpted == "2030"
+	replace str_industry_adpted = "2023" if str_industry_adpted == "2040"
+	replace str_industry_adpted = "2029" if inlist(str_industry_adpted,"2050","2051","2052")
+	replace str_industry_adpted = "2101" if inlist(str_industry_adpted,"2111","2112")
+	replace str_industry_adpted = "2102" if str_industry_adpted == "2121"
+	replace str_industry_adpted = "2109" if inlist(str_industry_adpted,"2122","2123","2124","2125")
+	replace str_industry_adpted = "2212" if inlist(str_industry_adpted,"2213")
+	replace str_industry_adpted = "2213" if inlist(str_industry_adpted,"2214")
+	replace str_industry_adpted = "2219" if inlist(str_industry_adpted,"2215")
+	replace str_industry_adpted = "2221" if inlist(str_industry_adpted,"2222")
+	replace str_industry_adpted = "2222" if inlist(str_industry_adpted,"2223","2224","2225")
+	replace str_industry_adpted = "2230" if inlist(str_industry_adpted,"2231","2232","2233")
+	replace str_industry_adpted = "2411" if inlist(str_industry_adpted,"2412","2413","2414")
+	replace str_industry_adpted = "2413" if inlist(str_industry_adpted,"2416","2417")
+	replace str_industry_adpted = "2421" if inlist(str_industry_adpted,"242","2420")
+	replace str_industry_adpted = "2422" if inlist(str_industry_adpted,"243","2430")
+	replace str_industry_adpted = "2423" if inlist(str_industry_adpted,"2441","2442")
+	replace str_industry_adpted = "2424" if inlist(str_industry_adpted,"2451","2452")
+	replace str_industry_adpted = "2429" if inlist(str_industry_adpted,"2461","2462","2463","2464")
+	replace str_industry_adpted = "2511" if inlist(str_industry_adpted,"2511","2512","2513")
+	replace str_industry_adpted = "2519" if str_industry_adpted == "2513"
+	replace str_industry_adpted = "2520" if inlist(str_industry_adpted,"2521","2522","2523","2524")
+	replace str_industry_adpted = "2610" if inlist(str_industry_adpted,"2611","2612","2613","2614","2615")
+	replace str_industry_adpted = "2691" if inlist(str_industry_adpted,"2621","2622","2623","2624","2625","2626")
+	replace str_industry_adpted = "2693" if inlist(str_industry_adpted,"2630","2640")
+	replace str_industry_adpted = "2694" if str_industry_adpted == "2650"
+	replace str_industry_adpted = "2695" if inlist(str_industry_adpted,"2661","2662","2663","2664","2665","2666")
+	replace str_industry_adpted = "2696" if str_industry_adpted == "2670"
+	replace str_industry_adpted = "2699" if inlist(str_industry_adpted,"2681","2682")
+	replace str_industry_adpted = "2710" if inlist(str_industry_adpted,"2711","2712","2713","2714","2715","2716","2717","2718","2719") ///
+		| inlist(str_industry_adpted,"2721","2722","2731","2732","2733","2734")
+	replace str_industry_adpted = "2720" if inlist(str_industry_adpted,"2741","2742","2743","2744","2745")
+	replace str_industry_adpted = "2731" if str_industry_adpted == "2751"
+	replace str_industry_adpted = "2731" if str_industry_adpted == "2752"
+	replace str_industry_adpted = "2732" if str_industry_adpted == "2753"
+	replace str_industry_adpted = "2732" if str_industry_adpted == "2754"
+	replace str_industry_adpted = "2811" if inlist(str_industry_adpted,"28111","28112")
+	replace str_industry_adpted = "2812" if inlist(str_industry_adpted,"28121","28122")
+	replace str_industry_adpted = "2813" if str_industry_adpted == "2830"
+	replace str_industry_adpted = "2891" if str_industry_adpted == "2840"
+	replace str_industry_adpted = "2892" if inlist(str_industry_adpted,"2851","2852")
+	replace str_industry_adpted = "2893" if inlist(str_industry_adpted,"2861","2862","2863")
+	replace str_industry_adpted = "2899" if inlist(str_industry_adpted,"2871","2872","2873","2874","2875")
+	replace str_industry_adpted = "2912" if str_industry_adpted == "2913"
+	replace str_industry_adpted = "2913" if str_industry_adpted == "2914"
+	replace str_industry_adpted = "2914" if str_industry_adpted == "2921"
+	replace str_industry_adpted = "2915" if str_industry_adpted == "2922"
+	replace str_industry_adpted = "2919" if inlist(str_industry_adpted,"2923","2924")
+	replace str_industry_adpted = "2921" if inlist(str_industry_adpted,"2931","2932")
+	replace str_industry_adpted = "2922" if inlist(str_industry_adpted,"2941","2942","2943")
+	replace str_industry_adpted = "2923" if str_industry_adpted == "2951"
+	replace str_industry_adpted = "2924" if str_industry_adpted == "2952"
+	replace str_industry_adpted = "2925" if str_industry_adpted == "2953"
+	replace str_industry_adpted = "2926" if str_industry_adpted == "2954"
+	replace str_industry_adpted = "2929" if inlist(str_industry_adpted,"2955","2956")
+	replace str_industry_adpted = "2927" if str_industry_adpted == "2960"
+	replace str_industry_adpted = "2930" if inlist(str_industry_adpted,"2971","2972")
+	replace str_industry_adpted = "3000" if inlist(str_industry_adpted,"3001","3002")
+	replace str_industry_adpted = "3190" if inlist(str_industry_adpted,"3161","3162")
+	replace str_industry_adpted = "3311" if str_industry_adpted == "3310"
+	replace str_industry_adpted = "3312" if str_industry_adpted == "3320"
+	replace str_industry_adpted = "3313" if str_industry_adpted == "3330"
+	replace str_industry_adpted = "3591" if str_industry_adpted == "3541"
+	replace str_industry_adpted = "3592" if inlist(str_industry_adpted,"3542","3543")
+	replace str_industry_adpted = "3599" if str_industry_adpted == "3550"
+	replace str_industry_adpted = "3610" if inlist(str_industry_adpted,"3611","3612","3613","3614","3615")
+	replace str_industry_adpted = "3691" if inlist(str_industry_adpted,"3621","3622")
+	replace str_industry_adpted = "3699" if inlist(str_industry_adpted,"3661","3662","3663")
+	replace str_industry_adpted = "4010" if inlist(str_industry_adpted,"4011","4013")
+	replace str_industry_adpted = "4020" if inlist(str_industry_adpted,"4021","4022")
+	replace str_industry_adpted = "4510" if inlist(str_industry_adpted,"4511","4512")
+	replace str_industry_adpted = "4520" if inlist(str_industry_adpted,"4521","4522","4523","4524")
+	replace str_industry_adpted = "4520" if inlist(str_industry_adpted,"4521","4522","4523","4524","4525")
+	replace str_industry_adpted = "4530" if inlist(str_industry_adpted,"4531","4532","4533","4534")
+	replace str_industry_adpted = "4540" if inlist(str_industry_adpted,"4541","4542","4543","4544","4545")
+	replace str_industry_adpted = "5110" if inlist(str_industry_adpted,"5111","5112","5113","5114","5115","5116","5117","5118")
+	replace str_industry_adpted = "5121" if str_industry_adpted == "51211"
+	replace str_industry_adpted = "5122" if str_industry_adpted == "51221"
+	replace str_industry_adpted = "5123" if str_industry_adpted == "51231"
+	replace str_industry_adpted = "5122" if inlist(str_industry_adpted,"5132","5133","5134","5135","5136","5137","5138","5139")
+	replace str_industry_adpted = "5131" if str_industry_adpted == "5130"
+	replace str_industry_adpted = "5139" if inlist(str_industry_adpted,"5144","5145","5146","5147")
+	replace str_industry_adpted = "5143" if str_industry_adpted == "5153"
+	replace str_industry_adpted = "5149" if inlist(str_industry_adpted,"5155","5156","5157")
+	replace str_industry_adpted = "5159" if inlist(str_industry_adpted,"5182","5183","5187","5188")
+	replace str_industry_adpted = "5190" if str_industry_adpted == "5190"
+	replace str_industry_adpted = "5220" if inlist(str_industry_adpted,"5221","5222","5223","5224")
+	replace str_industry_adpted = "5220" if inlist(str_industry_adpted,"5225","5226","5227")
+	replace str_industry_adpted = "5231" if inlist(str_industry_adpted,"5232","5233")
+	replace str_industry_adpted = "5232" if inlist(str_industry_adpted,"5241","5242","5243","5244")
+	replace str_industry_adpted = "5233" if str_industry_adpted == "5245"
+	replace str_industry_adpted = "5239" if inlist(str_industry_adpted,"5247","5248")
+	replace str_industry_adpted = "5260" if inlist(str_industry_adpted,"5271","5272","5273","5274")
+	replace str_industry_adpted = "5510" if inlist(str_industry_adpted,"5511","5521","5522","5523")
+	replace str_industry_adpted = "5520" if inlist(str_industry_adpted,"5530","5540","5551","5552")
+	replace str_industry_adpted = "6022" if str_industry_adpted == "6021"
+	replace str_industry_adpted = "6023" if str_industry_adpted == "6022"
+	replace str_industry_adpted = "6023" if str_industry_adpted == "6023"
+	replace str_industry_adpted = "6220" if inlist(str_industry_adpted,"6221","6222")
+	replace str_industry_adpted = "6230" if str_industry_adpted == "6223"
+	replace str_industry_adpted = "6301" if str_industry_adpted == "6311"
+	replace str_industry_adpted = "6302" if str_industry_adpted == "6312"
+	replace str_industry_adpted = "6303" if inlist(str_industry_adpted,"6321","6322","6323")
+	replace str_industry_adpted = "6304" if str_industry_adpted == "6330"
+	replace str_industry_adpted = "6309" if str_industry_adpted == "6340"
+	replace str_industry_adpted = "6519" if str_industry_adpted == "6512"
+	replace str_industry_adpted = "6591" if str_industry_adpted == "6521"
+	replace str_industry_adpted = "6592" if str_industry_adpted == "6522"
+	replace str_industry_adpted = "6599" if str_industry_adpted == "6523"
+	replace str_industry_adpted = "6719" if str_industry_adpted == "6713"
+	replace str_industry_adpted = "7010" if inlist(str_industry_adpted,"7011","7012","7020")
+	replace str_industry_adpted = "7020" if inlist(str_industry_adpted,"7031","7032")
+	replace str_industry_adpted = "7110" if str_industry_adpted == "7111"
+	replace str_industry_adpted = "7111" if inlist(str_industry_adpted,"7121","7122","7123")
+	replace str_industry_adpted = "7129" if inlist(str_industry_adpted,"7131","7133","7134")
+	replace str_industry_adpted = "7229" if str_industry_adpted == "7222"
+	replace str_industry_adpted = "7290" if str_industry_adpted == "7260"
+	replace str_industry_adpted = "7411" if str_industry_adpted == "7412"
+	replace str_industry_adpted = "7413" if str_industry_adpted == "7413"
+	replace str_industry_adpted = "7414" if inlist(str_industry_adpted,"7414","7415")
+	replace str_industry_adpted = "7421" if str_industry_adpted == "7420"
+	replace str_industry_adpted = "7422" if str_industry_adpted == "7430"
+	replace str_industry_adpted = "7491" if str_industry_adpted == "7450"
+	replace str_industry_adpted = "7492" if str_industry_adpted == "7460"
+	replace str_industry_adpted = "7493" if str_industry_adpted == "7470"
+	replace str_industry_adpted = "7494" if str_industry_adpted == "7481"
+	replace str_industry_adpted = "7495" if str_industry_adpted == "7482"
+	replace str_industry_adpted = "7499" if inlist(str_industry_adpted,"7485","7486","7487")
+	replace str_industry_adpted = "7523" if inlist(str_industry_adpted,"7524","7525")
+	replace str_industry_adpted = "8512" if str_industry_adpted == "8513"
+	replace str_industry_adpted = "8519" if str_industry_adpted == "8514"
+	replace str_industry_adpted = "9000" if inlist(str_industry_adpted,"9001","9002","9003")
+	replace str_industry_adpted = "9190" if str_industry_adpted == "9130"
+	replace str_industry_adpted = "9191" if str_industry_adpted == "9131"
+	replace str_industry_adpted = "9192" if str_industry_adpted == "9132"
+	replace str_industry_adpted = "9199" if str_industry_adpted == "9133"
+	replace str_industry_adpted = "9211" if str_industry_adpted == "9212"
+	replace str_industry_adpted = "9212" if str_industry_adpted == "9213"
+	replace str_industry_adpted = "9213" if str_industry_adpted == "9220"
+	replace str_industry_adpted = "9214" if inlist(str_industry_adpted,"9231","9232")
+	replace str_industry_adpted = "9219" if inlist(str_industry_adpted,"9233","9234")
+	replace str_industry_adpted = "9220" if str_industry_adpted == "9240"
+	replace str_industry_adpted = "9231" if str_industry_adpted == "9251"
+	replace str_industry_adpted = "9232" if str_industry_adpted == "9252"
+	replace str_industry_adpted = "9233" if str_industry_adpted == "9253"
+	replace str_industry_adpted = "9241" if str_industry_adpted == "9261"
+	replace str_industry_adpted = "9249" if inlist(str_industry_adpted,"9262","9271","9272")
+	replace str_industry_adpted = "9309" if inlist(str_industry_adpted,"9304","9305")
+
 	replace str_industry_adpted = "7100" if str_industry_adpted == "7150"
 	
 	gen industrycat_isic = str_industry_adpted
@@ -1195,7 +1379,231 @@ foreach ed_var of local ed_vars {
 	gen industry_adapted_2 = floor(vd_vt/ 10)
 	tostring industry_adapted_2,  gen(str_industry_adpted_2) format(%04.0f)
 	replace str_industry_adpted_2 = "" if str_industry_adpted_2 == "." | lstatus != 1
-	replace str_industry_adpted_2 = "0140" if str_industry_adpted_2 == "0141"
+
+	replace str_industry_adpted_2 = "0122" if inlist(str_industry_adpted_2,"0121","0123","0124","0125")
+	replace str_industry_adpted_2 = "0140" if inlist(str_industry_adpted_2,"0141","0142")
+	replace str_industry_adpted_2 = "0200" if inlist(str_industry_adpted_2,"0201","0202")
+
+	replace str_industry_adpted_2 = "1410" if inlist(str_industry_adpted_2,"1411","1412","1413")
+	replace str_industry_adpted_2 = "1410" if inlist(str_industry_adpted_2,"1421","1422")
+	replace str_industry_adpted_2 = "1422" if str_industry_adpted_2 == "1424"
+	replace str_industry_adpted_2 = "1429" if str_industry_adpted_2 == "1450"
+
+	replace str_industry_adpted_2 = "1511" if inlist(str_industry_adpted_2,"1511","1512","1513")
+	replace str_industry_adpted_2 = "1512" if inlist(str_industry_adpted_2,"1520","1521")
+	replace str_industry_adpted_2 = "1513" if inlist(str_industry_adpted_2,"1531","1532","1533")
+	replace str_industry_adpted_2 = "1514" if inlist(str_industry_adpted_2,"1541","1542","1543")
+	replace str_industry_adpted_2 = "1520" if inlist(str_industry_adpted_2,"1551","1552")
+
+	replace str_industry_adpted_2 = "1541" if inlist(str_industry_adpted_2,"1581","1582")
+	replace str_industry_adpted_2 = "1542" if str_industry_adpted_2 == "1583"
+	replace str_industry_adpted_2 = "1543" if str_industry_adpted_2 == "1584"
+	replace str_industry_adpted_2 = "1544" if str_industry_adpted_2 == "1585"
+	replace str_industry_adpted_2 = "1549" if inlist(str_industry_adpted_2,"1586","1587","1588","1589")
+	replace str_industry_adpted_2 = "1551" if inlist(str_industry_adpted_2,"1591","1592")
+	replace str_industry_adpted_2 = "1552" if inlist(str_industry_adpted_2,"1593","1594")
+	replace str_industry_adpted_2 = "1553" if inlist(str_industry_adpted_2,"1595","1596","1597")
+	replace str_industry_adpted_2 = "1554" if str_industry_adpted_2 == "1598"
+
+	replace str_industry_adpted_2 = "1711" if inlist(str_industry_adpted_2,"1711","1712","1713","1714","1715","1716","1717")
+	replace str_industry_adpted_2 = "1711" if inlist(str_industry_adpted_2,"1721","1722","1723","1724","1725","1730")
+	replace str_industry_adpted_2 = "1721" if str_industry_adpted_2 == "1741"
+	replace str_industry_adpted_2 = "1722" if str_industry_adpted_2 == "1740"
+	replace str_industry_adpted_2 = "1722" if str_industry_adpted_2 == "1751"
+	replace str_industry_adpted_2 = "1729" if inlist(str_industry_adpted_2,"1752","1753","1760","1771")
+	replace str_industry_adpted_2 = "1730" if str_industry_adpted_2 == "1772"
+
+	replace str_industry_adpted_2 = "1810" if inlist(str_industry_adpted_2,"1811","1812","1813","1814","1815","1816") | inlist(str_industry_adpted_2,"1817","1818","1821","1822","1823","1824")
+	replace str_industry_adpted_2 = "1820" if str_industry_adpted_2 == "1830"
+
+	replace str_industry_adpted_2 = "1911" if str_industry_adpted_2 == "1910"
+	replace str_industry_adpted_2 = "1912" if str_industry_adpted_2 == "1920"
+
+	replace str_industry_adpted_2 = "2010" if inlist(str_industry_adpted_2,"2011","2012")
+	replace str_industry_adpted_2 = "2021" if str_industry_adpted_2 == "2020"
+	replace str_industry_adpted_2 = "2022" if str_industry_adpted_2 == "2030"
+	replace str_industry_adpted_2 = "2023" if str_industry_adpted_2 == "2040"
+	replace str_industry_adpted_2 = "2029" if inlist(str_industry_adpted_2,"2050","2051","2052")
+
+	replace str_industry_adpted_2 = "2101" if inlist(str_industry_adpted_2,"2111","2112")
+	replace str_industry_adpted_2 = "2102" if str_industry_adpted_2 == "2121"
+	replace str_industry_adpted_2 = "2109" if inlist(str_industry_adpted_2,"2122","2123","2124","2125")
+
+	replace str_industry_adpted_2 = "2212" if inlist(str_industry_adpted_2,"2213")
+	replace str_industry_adpted_2 = "2213" if inlist(str_industry_adpted_2,"2214")
+	replace str_industry_adpted_2 = "2219" if inlist(str_industry_adpted_2,"2215")
+
+	replace str_industry_adpted_2 = "2221" if inlist(str_industry_adpted_2,"2222")
+	replace str_industry_adpted_2 = "2222" if inlist(str_industry_adpted_2,"2223","2224","2225")
+
+	replace str_industry_adpted_2 = "2230" if inlist(str_industry_adpted_2,"2231","2232","2233")
+
+	replace str_industry_adpted_2 = "2411" if inlist(str_industry_adpted_2,"2412","2413","2414")
+	replace str_industry_adpted_2 = "2413" if inlist(str_industry_adpted_2,"2416","2417")
+
+	replace str_industry_adpted_2 = "2421" if inlist(str_industry_adpted_2,"242","2420")
+	replace str_industry_adpted_2 = "2422" if inlist(str_industry_adpted_2,"243","2430")
+	replace str_industry_adpted_2 = "2423" if inlist(str_industry_adpted_2,"2441","2442")
+	replace str_industry_adpted_2 = "2424" if inlist(str_industry_adpted_2,"2451","2452")
+	replace str_industry_adpted_2 = "2429" if inlist(str_industry_adpted_2,"2461","2462","2463","2464")
+
+	replace str_industry_adpted_2 = "2511" if inlist(str_industry_adpted_2,"2511","2512","2513")
+	replace str_industry_adpted_2 = "2519" if str_industry_adpted_2 == "2513"
+	replace str_industry_adpted_2 = "2520" if inlist(str_industry_adpted_2,"2521","2522","2523","2524")
+
+	replace str_industry_adpted_2 = "2610" if inlist(str_industry_adpted_2,"2611","2612","2613","2614","2615")
+	replace str_industry_adpted_2 = "2691" if inlist(str_industry_adpted_2,"2621","2622","2623","2624","2625","2626")
+	replace str_industry_adpted_2 = "2693" if inlist(str_industry_adpted_2,"2630","2640")
+	replace str_industry_adpted_2 = "2694" if str_industry_adpted_2 == "2650"
+	replace str_industry_adpted_2 = "2695" if inlist(str_industry_adpted_2,"2661","2662","2663","2664","2665","2666")
+	replace str_industry_adpted_2 = "2696" if str_industry_adpted_2 == "2670"
+	replace str_industry_adpted_2 = "2699" if inlist(str_industry_adpted_2,"2681","2682")
+
+	replace str_industry_adpted_2 = "2710" if inlist(str_industry_adpted_2,"2711","2712","2713","2714","2715","2716","2717") | inlist(str_industry_adpted_2,"2718","2719","2721","2722","2731","2732","2733","2734")
+	replace str_industry_adpted_2 = "2720" if inlist(str_industry_adpted_2,"2741","2742","2743","2744","2745")
+	replace str_industry_adpted_2 = "2731" if str_industry_adpted_2 == "2751"
+	replace str_industry_adpted_2 = "2731" if str_industry_adpted_2 == "2752"
+	replace str_industry_adpted_2 = "2732" if str_industry_adpted_2 == "2753"
+	replace str_industry_adpted_2 = "2732" if str_industry_adpted_2 == "2754"
+
+	replace str_industry_adpted_2 = "2811" if inlist(str_industry_adpted_2,"28111","28112")
+	replace str_industry_adpted_2 = "2812" if inlist(str_industry_adpted_2,"28121","28122")
+	replace str_industry_adpted_2 = "2813" if str_industry_adpted_2 == "2830"
+
+	replace str_industry_adpted_2 = "2891" if str_industry_adpted_2 == "2840"
+	replace str_industry_adpted_2 = "2892" if inlist(str_industry_adpted_2,"2851","2852")
+	replace str_industry_adpted_2 = "2893" if inlist(str_industry_adpted_2,"2861","2862","2863")
+	replace str_industry_adpted_2 = "2899" if inlist(str_industry_adpted_2,"2871","2872","2873","2874","2875")
+
+	replace str_industry_adpted_2 = "2912" if str_industry_adpted_2 == "2913"
+	replace str_industry_adpted_2 = "2913" if str_industry_adpted_2 == "2914"
+	replace str_industry_adpted_2 = "2914" if str_industry_adpted_2 == "2921"
+	replace str_industry_adpted_2 = "2915" if str_industry_adpted_2 == "2922"
+	replace str_industry_adpted_2 = "2919" if inlist(str_industry_adpted_2,"2923","2924")
+	replace str_industry_adpted_2 = "2921" if inlist(str_industry_adpted_2,"2931","2932")
+	replace str_industry_adpted_2 = "2922" if inlist(str_industry_adpted_2,"2941","2942","2943")
+	replace str_industry_adpted_2 = "2923" if str_industry_adpted_2 == "2951"
+	replace str_industry_adpted_2 = "2924" if str_industry_adpted_2 == "2952"
+	replace str_industry_adpted_2 = "2925" if str_industry_adpted_2 == "2953"
+	replace str_industry_adpted_2 = "2926" if str_industry_adpted_2 == "2954"
+	replace str_industry_adpted_2 = "2929" if inlist(str_industry_adpted_2,"2955","2956")
+	replace str_industry_adpted_2 = "2927" if str_industry_adpted_2 == "2960"
+	replace str_industry_adpted_2 = "2930" if inlist(str_industry_adpted_2,"2971","2972")
+	replace str_industry_adpted_2 = "3000" if inlist(str_industry_adpted_2,"3001","3002")
+	replace str_industry_adpted_2 = "3190" if inlist(str_industry_adpted_2,"3161","3162")
+
+	replace str_industry_adpted_2 = "3311" if str_industry_adpted_2 == "3310"
+	replace str_industry_adpted_2 = "3312" if str_industry_adpted_2 == "3320"
+	replace str_industry_adpted_2 = "3313" if str_industry_adpted_2 == "3330"
+	replace str_industry_adpted_2 = "3591" if str_industry_adpted_2 == "3541"
+	replace str_industry_adpted_2 = "3592" if inlist(str_industry_adpted_2,"3542","3543")
+	replace str_industry_adpted_2 = "3599" if str_industry_adpted_2 == "3550"
+
+	replace str_industry_adpted_2 = "3610" if inlist(str_industry_adpted_2,"3611","3612","3613","3614","3615")
+	replace str_industry_adpted_2 = "3691" if inlist(str_industry_adpted_2,"3621","3622")
+	replace str_industry_adpted_2 = "3699" if inlist(str_industry_adpted_2,"3661","3662","3663")
+
+	replace str_industry_adpted_2 = "4010" if inlist(str_industry_adpted_2,"4011","4013")
+	replace str_industry_adpted_2 = "4020" if inlist(str_industry_adpted_2,"4021","4022")
+
+	replace str_industry_adpted_2 = "4510" if inlist(str_industry_adpted_2,"4511","4512")
+	replace str_industry_adpted_2 = "4520" if inlist(str_industry_adpted_2,"4521","4522","4523","4524")
+	replace str_industry_adpted_2 = "4520" if inlist(str_industry_adpted_2,"4521","4522","4523","4524","4525")
+	replace str_industry_adpted_2 = "4530" if inlist(str_industry_adpted_2,"4531","4532","4533","4534")
+	replace str_industry_adpted_2 = "4540" if inlist(str_industry_adpted_2,"4541","4542","4543","4544","4545")
+
+	replace str_industry_adpted_2 = "5110" if inlist(str_industry_adpted_2,"5111","5112","5113","5114","5115","5116","5117","5118")
+	replace str_industry_adpted_2 = "5121" if str_industry_adpted_2 == "51211"
+	replace str_industry_adpted_2 = "5122" if str_industry_adpted_2 == "51221"
+	replace str_industry_adpted_2 = "5123" if str_industry_adpted_2 == "51231"
+	replace str_industry_adpted_2 = "5122" if inlist(str_industry_adpted_2,"5132","5133","5134","5135","5136","5137","5138","5139")
+	replace str_industry_adpted_2 = "5131" if str_industry_adpted_2 == "5130"
+	replace str_industry_adpted_2 = "5139" if inlist(str_industry_adpted_2,"5144","5145","5146","5147")
+	replace str_industry_adpted_2 = "5143" if str_industry_adpted_2 == "5153"
+	replace str_industry_adpted_2 = "5149" if inlist(str_industry_adpted_2,"5155","5156","5157")
+	replace str_industry_adpted_2 = "5159" if inlist(str_industry_adpted_2,"5182","5183","5187","5188")
+	replace str_industry_adpted_2 = "5190" if str_industry_adpted_2 == "5190"
+
+	replace str_industry_adpted_2 = "5220" if inlist(str_industry_adpted_2,"5221","5222","5223","5224")
+	replace str_industry_adpted_2 = "5220" if inlist(str_industry_adpted_2,"5225","5226","5227")
+	replace str_industry_adpted_2 = "5231" if inlist(str_industry_adpted_2,"5232","5233")
+	replace str_industry_adpted_2 = "5232" if inlist(str_industry_adpted_2,"5241","5242","5243","5244")
+	replace str_industry_adpted_2 = "5233" if str_industry_adpted_2 == "5245"
+	replace str_industry_adpted_2 = "5239" if inlist(str_industry_adpted_2,"5247","5248")
+	replace str_industry_adpted_2 = "5260" if inlist(str_industry_adpted_2,"5271","5272","5273","5274")
+
+	replace str_industry_adpted_2 = "5510" if inlist(str_industry_adpted_2,"5511","5521","5522","5523")
+	replace str_industry_adpted_2 = "5520" if inlist(str_industry_adpted_2,"5530","5540","5551","5552")
+
+	replace str_industry_adpted_2 = "6022" if str_industry_adpted_2 == "6021"
+	replace str_industry_adpted_2 = "6023" if str_industry_adpted_2 == "6022"
+	replace str_industry_adpted_2 = "6023" if str_industry_adpted_2 == "6023"
+
+	replace str_industry_adpted_2 = "6220" if inlist(str_industry_adpted_2,"6221","6222")
+	replace str_industry_adpted_2 = "6230" if str_industry_adpted_2 == "6223"
+
+	replace str_industry_adpted_2 = "6301" if str_industry_adpted_2 == "6311"
+	replace str_industry_adpted_2 = "6302" if str_industry_adpted_2 == "6312"
+	replace str_industry_adpted_2 = "6303" if inlist(str_industry_adpted_2,"6321","6322","6323")
+	replace str_industry_adpted_2 = "6304" if str_industry_adpted_2 == "6330"
+	replace str_industry_adpted_2 = "6309" if str_industry_adpted_2 == "6340"
+
+	replace str_industry_adpted_2 = "6519" if str_industry_adpted_2 == "6512"
+	replace str_industry_adpted_2 = "6591" if str_industry_adpted_2 == "6521"
+	replace str_industry_adpted_2 = "6592" if str_industry_adpted_2 == "6522"
+	replace str_industry_adpted_2 = "6599" if str_industry_adpted_2 == "6523"
+
+	replace str_industry_adpted_2 = "6719" if str_industry_adpted_2 == "6713"
+
+	replace str_industry_adpted_2 = "7010" if inlist(str_industry_adpted_2,"7011","7012","7020")
+	replace str_industry_adpted_2 = "7020" if inlist(str_industry_adpted_2,"7031","7032")
+
+	replace str_industry_adpted_2 = "7110" if str_industry_adpted_2 == "7111"
+	replace str_industry_adpted_2 = "7111" if inlist(str_industry_adpted_2,"7121","7122","7123")
+	replace str_industry_adpted_2 = "7129" if inlist(str_industry_adpted_2,"7131","7133","7134")
+
+	replace str_industry_adpted_2 = "7229" if str_industry_adpted_2 == "7222"
+	replace str_industry_adpted_2 = "7290" if str_industry_adpted_2 == "7260"
+
+	replace str_industry_adpted_2 = "7411" if str_industry_adpted_2 == "7412"
+	replace str_industry_adpted_2 = "7413" if str_industry_adpted_2 == "7413"
+	replace str_industry_adpted_2 = "7414" if inlist(str_industry_adpted_2,"7414","7415")
+	replace str_industry_adpted_2 = "7421" if str_industry_adpted_2 == "7420"
+	replace str_industry_adpted_2 = "7422" if str_industry_adpted_2 == "7430"
+
+	replace str_industry_adpted_2 = "7491" if str_industry_adpted_2 == "7450"
+	replace str_industry_adpted_2 = "7492" if str_industry_adpted_2 == "7460"
+	replace str_industry_adpted_2 = "7493" if str_industry_adpted_2 == "7470"
+	replace str_industry_adpted_2 = "7494" if str_industry_adpted_2 == "7481"
+	replace str_industry_adpted_2 = "7495" if str_industry_adpted_2 == "7482"
+	replace str_industry_adpted_2 = "7499" if inlist(str_industry_adpted_2,"7485","7486","7487")
+
+	replace str_industry_adpted_2 = "7523" if inlist(str_industry_adpted_2,"7524","7525")
+	replace str_industry_adpted_2 = "8512" if str_industry_adpted_2 == "8513"
+	replace str_industry_adpted_2 = "8519" if str_industry_adpted_2 == "8514"
+
+	replace str_industry_adpted_2 = "9000" if inlist(str_industry_adpted_2,"9001","9002","9003")
+
+	replace str_industry_adpted_2 = "9190" if str_industry_adpted_2 == "9130"
+	replace str_industry_adpted_2 = "9191" if str_industry_adpted_2 == "9131"
+	replace str_industry_adpted_2 = "9192" if str_industry_adpted_2 == "9132"
+	replace str_industry_adpted_2 = "9199" if str_industry_adpted_2 == "9133"
+
+	replace str_industry_adpted_2 = "9211" if str_industry_adpted_2 == "9212"
+	replace str_industry_adpted_2 = "9212" if str_industry_adpted_2 == "9213"
+	replace str_industry_adpted_2 = "9213" if str_industry_adpted_2 == "9220"
+	replace str_industry_adpted_2 = "9214" if inlist(str_industry_adpted_2,"9231","9232")
+	replace str_industry_adpted_2 = "9219" if inlist(str_industry_adpted_2,"9233","9234")
+
+	replace str_industry_adpted_2 = "9220" if str_industry_adpted_2 == "9240"
+	replace str_industry_adpted_2 = "9231" if str_industry_adpted_2 == "9251"
+	replace str_industry_adpted_2 = "9232" if str_industry_adpted_2 == "9252"
+	replace str_industry_adpted_2 = "9233" if str_industry_adpted_2 == "9253"
+	replace str_industry_adpted_2 = "9241" if str_industry_adpted_2 == "9261"
+	replace str_industry_adpted_2 = "9249" if inlist(str_industry_adpted_2,"9262","9271","9272")
+
+	replace str_industry_adpted_2 = "9309" if inlist(str_industry_adpted_2,"9304","9305")
+
 	replace str_industry_adpted_2 = "7100" if str_industry_adpted_2 == "7150"
 	
 	gen industrycat_isic_2 = str_industry_adpted_2

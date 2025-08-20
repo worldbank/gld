@@ -77,7 +77,7 @@ Finally, do the last bits of cleaning up to ensure the other labour variables ar
   replace firmsize_u = . if emp_diff == 1
 ```
 
-The table below shows the changes observed in `lstatus` variable after implementing the code adjustments.
+The table below shows the changes observed in `lstatus` variable after implementing the code adjustments. The number of employed individuals and those not in the labor force is now more comparable across rounds; however, the number of unemployed individuals has increased.
 
 | Before ICLS Adjustment          | After ICLS Adjustment  |
 |:-------------------------:|:-------------------------:|
