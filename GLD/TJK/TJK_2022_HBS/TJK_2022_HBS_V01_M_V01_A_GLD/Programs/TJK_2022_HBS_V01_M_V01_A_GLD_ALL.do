@@ -145,6 +145,9 @@ drop _merge
 
 */
 
+*Drop Individuals who were away from home the last 3 months and said they are living abroad
+drop if away == 12 | emigrant == 1
+
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -862,7 +865,7 @@ foreach ed_var of local ed_vars {
 {
 *<_empstat_>
 	gen byte empstat = emp_type
-	recode empstat (2 = 1) (5 = 4) (6 = 2) (96 = 5)
+	recode empstat (2 = 1) (6 = 2) (96 = 5)
 	replace empstat = . if lstatus != 1
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
@@ -1121,13 +1124,6 @@ foreach ed_var of local ed_vars {
 	label values contract lblcontract
 *</_contract_>
 
-*<_firm_regis_>
-	gen byte firm_regis = emp_formal if inlist(empstat,3,4)
-	recode firm_regis (2 = 1) (3 4 = 0) (99 = .)
-	label var firm_regis "Business is registered primary job 7 day recall"
-	la de lblfirm_regis 0 "Without registration" 1 "With registration"
-	label values firm_regis lblfirm_regis
-*</_firm_regis_>
 
 *<_healthins_>
 	gen byte healthins = .
