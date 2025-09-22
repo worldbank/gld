@@ -6,7 +6,7 @@
 
 # Define country, root, and survey name
 country <- "[XYZ]"
-root <- "Y:/GLD-Harmonization/DDDDDD_LL"
+root <- "C:/Users/wb529026/WBG/GLD - Current Contributors/DDDDDD_LL"
 survey_name <- "[SURVNAME]"
 
 # Set country root as wd, make folder if it doesn't exists
@@ -40,6 +40,8 @@ for (year in years){
       dir.create(paste0(second, "/", "Data"))
       dir.create(paste0(second, "/", "Data/Harmonized"))
       dir.create(paste0(second, "/", "Doc"))
+      dir.create(paste0(second, "/", "Doc/Questionnaires"))
+      dir.create(paste0(second, "/", "Doc/Technical"))
       dir.create(paste0(second, "/", "Programs"))
       dir.create(paste0(second, "/", "Work"))
 
@@ -49,6 +51,8 @@ for (year in years){
       dir.create(paste0(second, "/", "Data/Original"))
       dir.create(paste0(second, "/", "Data/Stata"))
       dir.create(paste0(second, "/", "Doc"))
+      dir.create(paste0(second, "/", "Doc/Questionnaires"))
+      dir.create(paste0(second, "/", "Doc/Technical"))
       dir.create(paste0(second, "/", "Programs"))
 
     }
