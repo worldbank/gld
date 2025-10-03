@@ -715,6 +715,7 @@ foreach ed_var of local ed_vars {
 
 *<_nlfreason_>
 	gen byte nlfreason = .
+	replace nlfreason = . if lstatus != 3
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
 	label values nlfreason lblnlfreason
@@ -723,12 +724,14 @@ foreach ed_var of local ed_vars {
 
 *<_unempldur_l_>
 	gen byte unempldur_l = .
+	replace unempldur_l = . if lstatus != 2
 	label var unempldur_l "Unemployment duration (months) lower bracket"
 *</_unempldur_l_>
 
 
 *<_unempldur_u_>
 	gen byte unempldur_u = .
+	replace unempldur_u = . if lstatus != 2
 	label var unempldur_u "Unemployment duration (months) upper bracket"
 *</_unempldur_u_>
 }
@@ -740,6 +743,7 @@ foreach ed_var of local ed_vars {
 {
 *<_empstat_>
 	gen byte empstat = .
+	replace empstat = . if lstatus != 1
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat lblempstat
@@ -748,6 +752,7 @@ foreach ed_var of local ed_vars {
 
 *<_ocusec_>
 	gen byte ocusec = .
+	replace ocusec = . if lstatus != 1
 	label var ocusec "Sector of activity primary job 7 day recall"
 	la de lblocusec 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec lblocusec
@@ -762,7 +767,7 @@ foreach ed_var of local ed_vars {
 
 *<_industrycat_isic_>
 	gen industrycat_isic = .
-
+	replace industrycat_isic = . if lstatus != 1
 	* Check that no errors --> using our universe check function, count should be 0 (no obs wrong)
 	* https://github.com/worldbank/gld/tree/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20universe%20check
 	preserve 
@@ -779,6 +784,7 @@ foreach ed_var of local ed_vars {
 
 *<_industrycat10_>
 	gen byte industrycat10 = .
+	replace industrycat10 = . if lstatus != 1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
@@ -802,7 +808,7 @@ foreach ed_var of local ed_vars {
 
 *<_occup_isco_>
 	gen occup_isco = ""
-
+	replace occup_isco = . if lstatus != 1
 	* Check that no errors --> using our universe check function, count should be 0 (no obs wrong)
 	* https://github.com/worldbank/gld/tree/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20universe%20check
 	preserve 
@@ -819,6 +825,7 @@ foreach ed_var of local ed_vars {
 
 *<_occup_>
 	gen byte occup = .
+	replace occup = . if lstatus != 1
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup
@@ -838,6 +845,7 @@ foreach ed_var of local ed_vars {
 
 *<_wage_no_compen_>
 	gen double wage_no_compen = .
+	replace wage_no_compen = . if lstatus != 1
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
@@ -860,12 +868,14 @@ foreach ed_var of local ed_vars {
 
 *<_whours_>
 	gen whours = .
+	replace whours = . if lstatus != 1
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
 
 *<_wmonths_>
 	gen wmonths = .
+	replace wmonths = . if lstatus != 1
 	label var wmonths "Months of work in past 12 months primary job 7 day recall"
 *</_wmonths_>
 
@@ -884,6 +894,7 @@ foreach ed_var of local ed_vars {
 
 *<_contract_>
 	gen byte contract = .
+	replace contract = . if lstatus != 1
 	label var contract "Employment has contract primary job 7 day recall"
 	la de lblcontract 0 "Without contract" 1 "With contract"
 	label values contract lblcontract
@@ -892,6 +903,7 @@ foreach ed_var of local ed_vars {
 
 *<_healthins_>
 	gen byte healthins = .
+	replace healthins = . if lstatus != 1
 	label var healthins "Employment has health insurance primary job 7 day recall"
 	la de lblhealthins 0 "Without health insurance" 1 "With health insurance"
 	label values healthins lblhealthins
@@ -908,6 +920,7 @@ foreach ed_var of local ed_vars {
 
 *<_union_>
 	gen byte union = .
+	replace union = . if lstatus != 1
 	label var union "Union membership at primary job 7 day recall"
 	la de lblunion 0 "Not union member" 1 "Union member"
 	label values union lblunion
@@ -916,12 +929,14 @@ foreach ed_var of local ed_vars {
 
 *<_firmsize_l_>
 	gen firmsize_l = .
+	replace firmsize_l = . if lstatus != 1
 	label var firmsize_l "Firm size (lower bracket) primary job 7 day recall"
 *</_firmsize_l_>
 
 
 *<_firmsize_u_>
 	gen firmsize_u = .
+	replace firmsize_u = . if lstatus != 1
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>
 
