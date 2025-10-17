@@ -26,7 +26,9 @@ Employed is defined as anyone who worked during the last 7 days or reference wee
 
 - 2 = Unemployed
 
-A person is defined as unemployed if he or she is, presently not working but is actively seeking a job. The formal definition of unemployed usually includes being ‘able to accept a job’ (i.e., passively seeking a job). This last question is not asked in all surveys but should be included if present. A person presently not working but waiting for the start of a new job (a so called *future starter*) is considered unemployed if the employment is starting within 3 months and the person is available to work.
+A person is defined as unemployed if he or she is, presently not working but is actively seeking a job. The formal definition of unemployed usually includes being ‘able to accept a job’ (i.e., passively seeking a job). This last question is not asked in all surveys but should be included if present. 
+
+A person presently not working but waiting for the start of a new job (a so called *future starter*) is considered unemployed if the employment starts within 3 months and the person is available to work.
 
 - 3 = Not-in-labor force
 
