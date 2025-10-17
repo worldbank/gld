@@ -1,0 +1,49 @@
+# Introduction to Serbia Labour Force Survey (SRB LFS)
+
+- [What is the SRB LFS?](#what-is-the-srb-lfs)
+- [What does the SRB LFS cover?](#what-does-the-srb-lfs-cover)
+- [Where can the data be found?](#where-can-the-data-be-found)
+- [What is the sampling procedure?](#what-is-the-sampling-procedure)
+- [What is the geographic significance level?](#what-is-the-geographic-significance-level)
+- [Other noteworthy aspects](#other-noteworthy-aspects)
+
+## What is the SRB LFS?
+The Serbia Labour Force Survey (LFS) is the official household-based survey conducted by the Statistical Office of the Republic of Serbia (SORS). The survey was piloted in 1994 and conducted annually from 1995; in 2008 it was fielded twice a year (April and October). In 2014 it moved to quarterly enumeration, and since 2015 it has been implemented as a continuous quarterly survey aligned with EU-LFS/ILO standards. 
+
+## What does the SRB LFS cover?
+The survey collects information on demographics, education, and labour market activities in the reference week (employment, unemployment, inactivity), alongside standard labour topics such as occupation, industry, status in employment, hours, multiple jobholding and job search. Content follows EU-LFS/ILO concepts and has been implemented on a quarterly basis since 2014.
+
+| Year | # Persons | # Households |
+|------|------------|--------------|
+| 2008 | 42,592     | 13,946       |
+| 2009 | 43,316     | 14,224       |
+| 2010 | 43,139     | 14,974       |
+| 2011 | 23,029     | 8,104        |
+| 2013 | 47,844     | 47,844       |
+| 2014 | 95,026     | 95,026       |
+| 2015 | 113,890    | 113,890      |
+| 2016 | 133,704    | 133,704      |
+| 2017 | 130,284    | 130,284      |
+| 2018 | 66,258     | 66,258       |
+| 2019 | 123,647    | 29,744       |
+| 2020 | 110,971    | 28,663       |
+| 2021 | 109,060    | 44,919       |
+| 2022 | 104,816    | 43,146       |
+| 2023 | 113,113    | 45,771       |
+| 2024 | 128,022    | 47,960       |
+
+
+## Where can the data be found?
+The microdata are not publicly available. The datasets are provided to the World Bank by the Statistical Office of the Republic of Serbia (SORS). For World Bank users, access can be requested through the Jobs Group at gld@worldbank.org.
+
+## What is the sampling procedure?
+The SRB LFS uses a stratified two-stage cluster design. Primary sampling units are enumeration districts, stratified by type of settlement (urban/other) and the 25 districts. In the second stage, households are sampled within each selected ED. Since 2014 the survey has been run quarterly; since 2015 it has been continuous with a rotation scheme that keeps overlap between quarters (four rotation groups per quarter). 
+The survey produces statistically representative estimates at the national level, with standard disaggregations by region and urban/rural 
+
+
+## Other noteworthy aspects
+
+### Household ID
+Household identifiers in the LFS are constructed from sample and geographic identifiers (e.g., ED and household number) provided in the raw files; individuals are linked through person numbers within household.
+
+### Industry and occupation classifications
