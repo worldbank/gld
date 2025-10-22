@@ -34,35 +34,50 @@ GLD follows a set of principles to guide its development and maintenance. In thi
 
 As of April 2024, the GLD holds 345 surveys from 24 countries (1 high-income countries, 9 upper medium-income, 11 lower middle-income, and 9 low-income countries). Table 1, gives an overview of the countries (by [three digit ISO code](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3)), the number of surveys and years covered in GLD. Figure 1, below the table, shows the location of the countries in GLD.
 
-Table 1 - GLD coverage by country, number of surveys, and time range (April 2024)
+Table 1 - GLD coverage by country, number of surveys, and time range (September 2025)
 
 Here's the data converted into a markdown table with centered alignment:
 
 | Country | Number of surveys | Range of years |
 |:-------:|:-----------------:|:--------------:|
-|   ARM   |         9         |   2014 - 2022  |
-|   BGD   |         5         |   2005 - 2016  |
+|   ALB   |         7         |   2007 - 2013  |
+|   ARM   |        16         |   2008 - 2023  |
+|   BGD   |         6         |   2005 - 2022  |
+|   BIH   |        19         |   2006 - 2024  |
 |   BOL   |         6         |   2015 - 2021  |
-|   BRA   |        37         |   1981 - 2022  |
+|   BRA   |        39         |   1981 - 2022  |
 |   CHL   |        13         |   1990 - 2017  |
-|   COL   |        23         |   1996 - 2021  |
-|   EGY   |        14         |   2006 - 2019  |
+|   CMR   |         3         |   2005 - 2021  |
+|   COL   |        25         |   1996 - 2021  |
+|   EGY   |        17         |   2006 - 2022  |
 |   ETH   |         4         |   1999 - 2021  |
-|   GEO   |         6         |   2017 - 2022  |
-|   IDN   |        30         |   1989 - 2019  |
-|   IND   |        15         |   1983 - 2022  |
-|   LKA   |        23         |   1992 - 2021  |
-|   MEX   |        16         |   2005 - 2020  |
+|   GAB   |         2         |   2017 - 2024  |
+|   GEO   |        14         |   2010 - 2023  |
+|   GHA   |         4         |   2012 - 2023  |
+|   GMB   |         2         |   2018 - 2023  |
+|   IDN   |        31         |   1989 - 2019  |
+|   IND   |        16         |   1983 - 2022  |
+|   KAZ   |         5         |   2009 - 2013  |
+|   LKA   |        29         |   1992 - 2023  |
+|   MAR   |        19         |   2000 - 2018  |
+|   MEX   |        23         |   2005 - 2023  |
+|   MKD   |        21         |   2003 - 2023  |
 |   MNG   |        17         |   2002 - 2022  |
+|   NAM   |         6         |   2008 - 2018  |
 |   NPL   |         3         |   1998 - 2017  |
-|   PAK   |        15         |   1992 - 2020  |
-|   PHL   |        23         |   1997 - 2019  |
+|   PAK   |        16         |   1992 - 2020  |
+|   PHL   |        26         |   1997 - 2022  |
+|   PSE   |         9         |   2015 - 2023  |
 |   RWA   |         5         |   2017 - 2021  |
 |   SLE   |         1         |   2014 - 2014  |
+|   SOM   |         2         |   2019 - 2022  |
 |   THA   |        36         |   1985 - 2021  |
+|   TJK   |         5         |   2009 - 2023  |
+|   TON   |         2         |   2018 - 2023  |
+|   TUN   |        17         |   1997 - 2017  |
 |   TUR   |        20         |   2000 - 2019  |
-|   TUN   |        15         |   1997 - 2017  |
 |   TZA   |         6         |   2000 - 2020  |
+|   XKX   |        14         |   2002 - 2022  |
 |   ZAF   |        13         |   2008 - 2020  |
 |   ZMB   |         9         |   2008 - 2022  |
 |   ZWE   |         5         |   2011 - 2022  |
