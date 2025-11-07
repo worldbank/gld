@@ -12,7 +12,7 @@ The GLD harmonizes data following the standards used in each survey’s design a
 
 All questionnaires used information on current activity to define employment through the ***Employment status*** section.
 
-## From current coding to the ICLS-13 definition
+## From ICLS-19 coding to the ICLS-13 definition
 
 In converting to the old definition, the approach adopted here is to create a variable that identifies those that are engaged in activities for market exchange as well as those that work without (or mostly without) market exchange. Figure 1 below shows an example of one of the relevant building blocks in the questionnaire for the employment definition.
 
