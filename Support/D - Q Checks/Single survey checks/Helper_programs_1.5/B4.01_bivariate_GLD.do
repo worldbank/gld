@@ -77,16 +77,16 @@
 			gen ind_2d = substr(industrycat_isic,1,2)
 			
 			* Set to correct_2 = 1 if in line with expectation
-			replace correct_2 = 1 if industrycat10 == 1  & industrycat4 == 1 &   inrange(ind_2d, "01", "03")
-			replace correct_2 = 1 if industrycat10 == 2  & industrycat4 == 2 &   inrange(ind_2d, "05", "09")
-			replace correct_2 = 1 if industrycat10 == 3  & industrycat4 == 2 &   inrange(ind_2d, "10", "33")
-			replace correct_2 = 1 if industrycat10 == 4  & industrycat4 == 2 &   inrange(ind_2d, "35", "39")
-			replace correct_2 = 1 if industrycat10 == 5  & industrycat4 == 2 &   inrange(ind_2d, "41", "43")
-			replace correct_2 = 1 if industrycat10 == 6  & industrycat4 == 3 & ( inrange(ind_2d, "45", "47") | inrange(ind_2d, "55", "56") )
-			replace correct_2 = 1 if industrycat10 == 7  & industrycat4 == 3 & ( inrange(ind_2d, "49", "53") | inrange(ind_2d, "58", "63") ) 
-			replace correct_2 = 1 if industrycat10 == 8  & industrycat4 == 3 &   inrange(ind_2d, "64", "82")
-			replace correct_2 = 1 if industrycat10 == 9  & industrycat4 == 3 &   inrange(ind_2d, "84", "84")
-			replace correct_2 = 1 if industrycat10 == 10 & industrycat4 == 4 &   inrange(ind_2d, "85", "99")  
+			replace correct_2 = 1 if industrycat10 == 1  & industrycat4 == 1 & ( inrange(ind_2d, "01", "03") | ind_2d == "A" )
+			replace correct_2 = 1 if industrycat10 == 2  & industrycat4 == 2 & ( inrange(ind_2d, "05", "09") | ind_2d == "B" )
+			replace correct_2 = 1 if industrycat10 == 3  & industrycat4 == 2 & ( inrange(ind_2d, "10", "33") | ind_2d == "C" )
+			replace correct_2 = 1 if industrycat10 == 4  & industrycat4 == 2 & ( inrange(ind_2d, "35", "39") | inlist(ind_2d, "D", "E") )
+			replace correct_2 = 1 if industrycat10 == 5  & industrycat4 == 2 & ( inrange(ind_2d, "41", "43") | ind_2d == "F" )
+			replace correct_2 = 1 if industrycat10 == 6  & industrycat4 == 3 & ( inrange(ind_2d, "45", "47") | inrange(ind_2d, "55", "56") | inlist(ind_2d, "G", "I") )
+			replace correct_2 = 1 if industrycat10 == 7  & industrycat4 == 3 & ( inrange(ind_2d, "49", "53") | inrange(ind_2d, "58", "63") | inlist(ind_2d, "H", "J") ) 
+			replace correct_2 = 1 if industrycat10 == 8  & industrycat4 == 3 & ( inrange(ind_2d, "64", "82") | inlist(ind_2d, "K", "L", "M", "N") )
+			replace correct_2 = 1 if industrycat10 == 9  & industrycat4 == 3 & ( inrange(ind_2d, "84", "84") | ind_2d == "O" )
+			replace correct_2 = 1 if industrycat10 == 10 & industrycat4 == 4 & ( inrange(ind_2d, "85", "99") | inlist(ind_2d, "P", "Q", "R", "S", "T", "U") )
 			drop ind_2d
 			
 			sum correct_2
@@ -112,16 +112,16 @@
 			gen ind_2d = substr(industrycat_isic,1,2)
 			
 			* Set to correct_2 = 1 if in line with expectation
-			replace correct_2 = 1 if industrycat10 == 1  & industrycat4 == 1 &   inrange(ind_2d, "01", "05")
-			replace correct_2 = 1 if industrycat10 == 2  & industrycat4 == 2 &   inrange(ind_2d, "10", "14")
-			replace correct_2 = 1 if industrycat10 == 3  & industrycat4 == 2 &   inrange(ind_2d, "15", "37")
-			replace correct_2 = 1 if industrycat10 == 4  & industrycat4 == 2 &   inrange(ind_2d, "40", "41")
-			replace correct_2 = 1 if industrycat10 == 5  & industrycat4 == 2 &   inrange(ind_2d, "45", "45")
-			replace correct_2 = 1 if industrycat10 == 6  & industrycat4 == 3 &   inrange(ind_2d, "50", "55")
-			replace correct_2 = 1 if industrycat10 == 7  & industrycat4 == 3 &   inrange(ind_2d, "60", "64")
-			replace correct_2 = 1 if industrycat10 == 8  & industrycat4 == 3 &   inrange(ind_2d, "65", "74")
-			replace correct_2 = 1 if industrycat10 == 9  & industrycat4 == 3 &   inrange(ind_2d, "75", "75")
-			replace correct_2 = 1 if industrycat10 == 10 & industrycat4 == 4 &   inrange(ind_2d, "80", "99")  
+			replace correct_2 = 1 if industrycat10 == 1  & industrycat4 == 1 & ( inrange(ind_2d, "01", "05") | inlist(ind_2d, "A", "B") )
+			replace correct_2 = 1 if industrycat10 == 2  & industrycat4 == 2 & ( inrange(ind_2d, "10", "14") | ind_2d == "C" )
+			replace correct_2 = 1 if industrycat10 == 3  & industrycat4 == 2 & ( inrange(ind_2d, "15", "37") | ind_2d == "D" )
+			replace correct_2 = 1 if industrycat10 == 4  & industrycat4 == 2 & ( inrange(ind_2d, "40", "41") | ind_2d == "E" )
+			replace correct_2 = 1 if industrycat10 == 5  & industrycat4 == 2 & ( inrange(ind_2d, "45", "45") | ind_2d == "F" )
+			replace correct_2 = 1 if industrycat10 == 6  & industrycat4 == 3 & ( inrange(ind_2d, "50", "55") | inlist(ind_2d, "G", "H") )
+			replace correct_2 = 1 if industrycat10 == 7  & industrycat4 == 3 & ( inrange(ind_2d, "60", "64") | ind_2d == "I" )
+			replace correct_2 = 1 if industrycat10 == 8  & industrycat4 == 3 & ( inrange(ind_2d, "65", "74") | inlist(ind_2d, "J", "K") )
+			replace correct_2 = 1 if industrycat10 == 9  & industrycat4 == 3 & ( inrange(ind_2d, "75", "75") | ind_2d == "L" )
+			replace correct_2 = 1 if industrycat10 == 10 & industrycat4 == 4 & ( inrange(ind_2d, "80", "99") | inlist(ind_2d, "M", "N", "O", "P", "Q") )
 			drop ind_2d
 			
 			sum correct_2
