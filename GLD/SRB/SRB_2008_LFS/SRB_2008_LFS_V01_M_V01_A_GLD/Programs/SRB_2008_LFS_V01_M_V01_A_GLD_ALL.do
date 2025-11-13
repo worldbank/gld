@@ -846,6 +846,8 @@ foreach ed_var of local ed_vars {
 	gen byte empstat=STATUS
 	recode empstat (1 2 = 3) (3 5 = 1) (6 = 2)
 	recode empstat (0 9 = .)
+	replace empstat = 3 if  ZAPDRRAD == 1
+	replace empstat = 4 if  ZAPDRRAD == 2
 	replace empstat=. if lstatus!=1
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
@@ -1000,22 +1002,7 @@ foreach ed_var of local ed_vars {
 
 *<_wage_no_compen_>
 	gen double wage_no_compen= INCMON
-	replace wage_no_compen =  2500   if INCMON == 1   // < 5,000
-	replace wage_no_compen =  7500   if INCMON == 2   // 5,000 – 10,000
-	replace wage_no_compen = 12500   if INCMON == 3   // 10,000 – 15,000
-	replace wage_no_compen = 17500   if INCMON == 4   // 15,000 – 20,000
-	replace wage_no_compen = 25000   if INCMON == 5   // 20,000 – 30,000
-	replace wage_no_compen = 35000   if INCMON == 6   // 30,000 – 40,000
-	replace wage_no_compen = 45000   if INCMON == 7   // 40,000 – 50,000
-	replace wage_no_compen = 60000   if INCMON == 8   // 50,000 – 70,000
-	replace wage_no_compen = 80000   if INCMON == 9   // 70,000 – 90,000
-	replace wage_no_compen =105000   if INCMON == 10  // 90,000 – 120,000
-	replace wage_no_compen =135000   if INCMON == 11  // 120,000 – 150,000
-	replace wage_no_compen =175000   if INCMON == 12  // 150,000 – 200,000
-	replace wage_no_compen =250000   if INCMON == 13  // 200,000 – 300,000
-	replace wage_no_compen =400000   if INCMON == 14  // 300,000 – 500,000
-
-	replace wage_no_compen = .       if INCMON == 99 | INCMON == 0  // no answer
+	replace wage_no_compen = .  if INCMON == 999999 | INCMON == 0  // no answer
 	replace wage_no_compen=. if empstat==2
 	replace wage_no_compen=. if lstatus!= 1
 	label var wage_no_compen "Last wage payment primary job 7 day recall"

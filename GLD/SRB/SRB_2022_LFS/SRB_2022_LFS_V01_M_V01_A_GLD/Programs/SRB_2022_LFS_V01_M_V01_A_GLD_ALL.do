@@ -27,7 +27,7 @@
 
 -----------------------------------------------------------------------
 
-<_ICLS Version_>				ICLS-19 </_ICLS Version_>
+<_ICLS Version_>				ICLS-13 </_ICLS Version_>
 <_ISCED Version_>				ISCED-11 </_ISCED Version_>
 <_ISCO Version_>				Not compatible </_ISCO Version_>
 <_OCCUP National_>				Unknown </_OCCUP National_>
@@ -115,7 +115,7 @@ use "`path_in_stata'/lfs_2022.dta", clear
 
 
 *<_icls_v_>
-	gen icls_v = "ICLS-19"
+	gen icls_v = "ICLS-13"
 	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
 
@@ -372,11 +372,6 @@ use "`path_in_stata'/lfs_2022.dta", clear
 *<_relationharm_>
 	gen relationharm = hhlink
 	recode relationharm (4 7 8 9 10= 5) (6 = 4) (11 = 6)
-    gen neg_male = -male
-
-    bys hhid (relationharm neg_male neg_age): gen runner_hh = _n
-    replace relationharm = 1 if runner_hh == 1
-    replace relationharm = 5 if runner_hh != 1 & relationharm == 1
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm  lblrelationharm
@@ -928,14 +923,13 @@ foreach ed_var of local ed_vars {
 	label values unitwage lblunitwage
 *</_unitwage_>
 
+
 *<_whours_>
-	gen whours = hwactual_a
-	replace whours = . if whours == 0
+	gen whours = hwactual_a/10
 	replace whours=. if lstatus!=1
-	replace whours = hwusual_a if missing(whours) & !missing(wage_no_compen)
-	replace whours = . if whours == 0
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
+
 
 *<_wmonths_>
 	gen wmonths = .

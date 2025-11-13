@@ -59,7 +59,7 @@ set varabbrev off
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-local server  "C:/Users/`c(username)'/WBG/GLD - Current Contributors/999999_ZW/Western Balkans"
+local server  "C:/Users/`c(username)'/WBG/GLD - Current Contributors/999999_ZW"
 local country  "SRB"
 local year  "2013"
 local survey  "LFS"
@@ -798,6 +798,8 @@ foreach ed_var of local ed_vars {
 *<_empstat_>
 	gen byte empstat=stapro
 	recode empstat 3 7=1 8=2 1 2=3 4 5 6=4
+	replace empstat = 3 if  zapdrrad == 1
+	replace empstat = 4 if  zapdrrad == 2
 	replace empstat=. if lstatus!=1
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
@@ -913,8 +915,9 @@ foreach ed_var of local ed_vars {
 
 
 *<_wage_no_compen_>
-	gen double wage_no_compen= incdecil
-	recode wage_no_compen 1=8500 2=21000 3=30000 4=40000 5=52500 6=70000 7=90000 8=125000 9=175000 10=200000 99=.
+	*The questionnarie has info of the exact amount if the individuals is willing to declare it, however the raw data does not have this variable
+	gen double wage_no_compen= incdecil 
+	recode wage_no_compen 1=8500 2=21000 3=30000 4=40000 5=52500 6=70000 7=90000 8=125000 9=175000 10=200000 98 99=.
 	replace wage_no_compen=. if empstat==2
 	replace wage_no_compen=. if lstatus!= 1
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
@@ -931,9 +934,7 @@ foreach ed_var of local ed_vars {
 
 *<_whours_>
 	gen whours= hwactual if wage_no_compen!=.
-	replace whours = . if whours == 0
 	replace whours = hwusual if missing(whours) & !missing(wage_no_compen)
-	replace whours = . if whours == 0
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 

@@ -14,7 +14,9 @@ All questionnaires used information on current activity to define employment thr
 
 ## From ICLS-19 coding to the ICLS-13 definition
 
-In converting to the old definition, the approach adopted here is to create a variable that identifies those that are engaged in activities for market exchange as well as those that work without (or mostly without) market exchange. Figure 1 below shows an example of one of the relevant building blocks in the questionnaire for the employment definition.
+In converting to the old definition, the approach adopted here is to create a variable that identifies those that are engaged in activities for market exchange as well as those that work without (or mostly without) market exchange. This step is necessary to align the newer conceptual structure with earlier surveys that did not distinguish between these forms of work.
+
+Starting in 2021, the questionnaire incorporates the ICLS-19 framework, which allows us to identify subsistence workers explicitly. Earlier questionnaires do not differentiate this group, and therefore we cannot isolate them when applying the ICLS-19 logic backward. Because of this structural asymmetry, we convert the ICLS-19 classification into the ICLS-13 definition rather than the reverse. Figure 1 below illustrates one of the key building blocks in the questionnaire for the employment definition.
 
 <figure>
 

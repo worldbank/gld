@@ -31,7 +31,7 @@
 <_ISCED Version_>				ISCED 1997 </_ISCED Version_>
 <_ISCO Version_>				ISCO 1988 </_ISCO Version_>
 <_OCCUP National_>				[Version of ICLS for Labor Questions] </_OCCUP National_>
-<_ISIC Version_>				ISIC REV 3 </_ISIC Version_>
+<_ISIC Version_>				ISIC REV 4 </_ISIC Version_>
 <_INDUS National_>				[Version of ICLS for Labor Questions] </_INDUS National_>
 
 
@@ -83,9 +83,37 @@ local out_file "`level_2_harm'_ALL.dta"
 *----------1.3: Database assembly------------------------------*
 
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
+* harmonized output in a single file
+/*
+* Load first dataset
+use "`path_in_stata'/lfs_april_2010.dta", clear
+foreach v of varlist _all {
+    capture confirm numeric variable `v'
+    if _rc {                               // only if not numeric
+        quietly destring `v', replace ignore(" ,") force
+    }
+}
 
+tempfile april
+save `april'
+
+
+* Load second dataset
+use "`path_in_stata'/lfs_october_2010.dta", clear
+foreach v of varlist _all {
+    capture confirm numeric variable `v'
+    if _rc {                               // only if not numeric
+        quietly destring `v', replace ignore(" ,") force
+    }
+}
+
+
+append using `april'
+
+save "`path_in_stata'/lfs_2010.dta", replace
+*/
 use "`path_in_stata'/Super-dataset_2011.dta", clear
-drop if PERIOD == "201104"
+keep if PERIOD == "201004" | PERIOD == "201010"
 /*%%=============================================================================================
 	2: Survey & ID
 ==============================================================================================%%*/
@@ -189,10 +217,8 @@ drop if PERIOD == "201104"
 
 
 *<_weight_>
-	gen weight = POPW_PAN
-	/*bys quarter: gen pop_q = _N
-	gen pop_t = _N
-	gen double weight=(pop_q*POPW)/(pop_t)*/
+* This is quarterly weight. Divide by two for annual
+	gen double weight=POPW/2
 	label var weight "Survey sampling weight"
 *</_weight_>
 
@@ -841,6 +867,8 @@ foreach ed_var of local ed_vars {
 *<_empstat_>
 	gen byte empstat=STATUS
 	recode empstat 3 7=1 8=2 1 2=3 4 5 6=4
+	replace empstat = 3 if  ZAPDRRAD == 1
+	replace empstat = 4 if  ZAPDRRAD == 2
 	replace empstat=. if lstatus!=1
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
@@ -858,27 +886,24 @@ foreach ed_var of local ed_vars {
 
 
 *<_industry_orig_>
-	gen industry_orig= string(NACE3D)
-	replace industry_orig = NACE3D_A if missing(industry_orig)
+	gen industry_orig= string(NACE3D) 
+	replace industry_orig = NACE3D_S if int_month == 10
 	replace industry_orig = "" if industry_orig == "."            
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
 
 *<_industrycat_isic_>
-
-	gen industrycat_isic = string(NACE3D*10, "%04.0f")
-	replace industrycat_isic = string(NACE3D*10, "%04.0f")
+	gen industrycat_isic = string(real(industry_orig)*10, "%04.0f")
 	
-	replace industrycat_isic = string(floor(NACE3D/10)*100, "%04.0f") if inrange(NACE3D,10,999)
-	replace industrycat_isic = substr(trim(NACE3D_S), 1, 2) + "00" if missing(NACE3D)
+	replace industrycat_isic = string(floor(real(industry_orig)/10)*100, "%04.0f") if inrange(real(industry_orig),10,999)
+	*replace industrycat_isic = substr(NACE3D_A,1,2) + "00" if missing(NACE3D)
 	replace industrycat_isic = "" if industrycat_isic == "00"
 	
 	
 	replace industrycat_isic = "" if lstatus != 1 | industrycat_isic == "."
-
 	replace industrycat_isic = "4100" if industrycat_isic == "0300" //Collection, purification and distribution of water
-	replace industrycat_isic = "9200" if industrycat_isic == "8800" //Sporting and other recreational activities
+	replace industrycat_isic = "9200" if industrycat_isic == "8800" //Recreational, cultural and sporting activities.
 		
 	* Check that no errors --> using our universe check function, count should be 0 (no obs wrong)
 	* https://github.com/worldbank/gld/tree/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20universe%20check
@@ -898,7 +923,7 @@ foreach ed_var of local ed_vars {
 
 *<_industrycat10_>
 	gen byte industrycat10=real(substr(industrycat_isic,1,2))
-	recode industrycat10 (1/5 = 1) (10/14 = 2) (15/37 = 3) (40/41 = 4) (45 = 5) (50/52 55 = 6) (60/64 = 7) (65/67 70/74 = 8) (75 = 9) (80/99 = 10)
+	recode industrycat10 (1/5 = 1) (10/14 = 2) (15/37 = 3) (40/41 = 4) (45 = 5) (50/52 55 = 6) (60/64 = 7) (65/67 70/74 = 8) (75=9) (80/99 = 10)
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
@@ -966,6 +991,7 @@ foreach ed_var of local ed_vars {
 
 
 *<_wage_no_compen_>
+	*The questionnarie has info of the exact amount if the individuals is willing to declare it, however the raw data does not have this variable
 	gen double wage_no_compen= INCMON
 	replace wage_no_compen =  2500   if INCMON == 1   // < 5,000
 	replace wage_no_compen =  7500   if INCMON == 2   // 5,000 – 10,000
@@ -999,9 +1025,7 @@ foreach ed_var of local ed_vars {
 
 *<_whours_>
 	gen whours= HWACTUAL if wage_no_compen!=.
-	replace whours = . if whours == 0
 	replace whours = HWUSUAL if missing(whours) & !missing(wage_no_compen)
-	replace whours = . if whours == 0
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -1099,24 +1123,88 @@ foreach ed_var of local ed_vars {
 
 
 *<_industry_orig_2_>
-	gen industry_orig_2= string(NACE2J2D) if !missing(empstat_2)
+	gen industry_orig_2= ""
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 
 
 *<_industrycat_isic_2_>
-	gen industrycat_isic_2 = string(NACE2J2D, "%02.0f")   // convierte a string con al menos 2 dígitos
-replace industrycat_isic_2 = substr(industrycat_isic_2,1,2) + "00"
-	replace industrycat_isic_2="" if lstatus != 1 | industrycat_isic_2 == ".00" | industrycat_isic_2 == "0000"
-	replace industrycat_isic_2 = "3000" if industrycat_isic_2 == "3400"
-	replace industrycat_isic_2 = "6400" if industrycat_isic_2 == "6700"
+		*------------------------------------------------------------*
+	* Create ISIC Rev.3.1 (2-digit + "00") variable from text    *
+	* Source variable: NACE2J_B                                  *
+	* New variable: industrycat_isic_2 (string, 4 characters)    *
+	*------------------------------------------------------------*
+
+	gen str4 industrycat_isic_2 = ""
+
+	* --- Agriculture, forestry and fishing ---
+	replace industrycat_isic_2 = "0100" if regexm(NACE2J_B, "Poljoprivreda") | regexm(NACE2J_B, "agric") | regexm(NACE2J_B, "lov")
+	replace industrycat_isic_2 = "0200" if regexm(NACE2J_B, "suma") | regexm(NACE2J_B, "forest") | regexm(NACE2J_B, "šumar") | regexm(NACE2J_B, "seea drve")
+	replace industrycat_isic_2 = "0500" if regexm(NACE2J_B, "Ribarstvo") | regexm(NACE2J_B, "fish") | regexm(NACE2J_B, "akvakultur")
+
+	* --- Mining and quarrying ---
+	replace industrycat_isic_2 = "1000" if regexm(NACE2J_B, "uglja") | regexm(NACE2J_B, "coal")
+	replace industrycat_isic_2 = "1100" if regexm(NACE2J_B, "naft") | regexm(NACE2J_B, "oil") | regexm(NACE2J_B, "gas")
+	replace industrycat_isic_2 = "1300" if regexm(NACE2J_B, "ruda metala") | regexm(NACE2J_B, "metal")
+	replace industrycat_isic_2 = "1400" if regexm(NACE2J_B, "Eksploatacija") | regexm(NACE2J_B, "Vadjenje") | regexm(NACE2J_B, "quarr")
+
+	* --- Manufacturing ---
+	replace industrycat_isic_2 = "1500" if regexm(NACE2J_B, "Proizvodnja") | regexm(NACE2J_B, "Prerada") | regexm(NACE2J_B, "manufact")
+
+	* --- Energy, water supply, waste management ---
+	replace industrycat_isic_2 = "4000" if regexm(NACE2J_B, "Snabdevanje elektr") | regexm(NACE2J_B, "gasom") | regexm(NACE2J_B, "parom") | regexm(NACE2J_B, "electric")
+	replace industrycat_isic_2 = "4100" if regexm(NACE2J_B, "Vodoprivreda") | regexm(NACE2J_B, "skupljanje") | regexm(NACE2J_B, "prečiš") | regexm(NACE2J_B, "water")
+	replace industrycat_isic_2 = "9000" if regexm(NACE2J_B, "otpad") | regexm(NACE2J_B, "sme") | regexm(NACE2J_B, "odlaganj") | regexm(NACE2J_B, "waste")
+
+	* --- Construction ---
+	replace industrycat_isic_2 = "4500" if regexm(NACE2J_B, "Gradjevinarstvo") | regexm(NACE2J_B, "Izgradnja") | regexm(NACE2J_B, "construct")
+
+	* --- Trade (wholesale and retail), repair of vehicles ---
+	replace industrycat_isic_2 = "5000" if regexm(NACE2J_B, "vozila") | regexm(NACE2J_B, "vehicles")
+	replace industrycat_isic_2 = "5100" if regexm(NACE2J_B, "Trgovina na veliko") | regexm(NACE2J_B, "wholesale")
+	replace industrycat_isic_2 = "5200" if regexm(NACE2J_B, "Trgovina na malo") | regexm(NACE2J_B, "retail") | regexm(NACE2J_B, "TRGOVINA")
+
+	* --- Transport and storage ---
+	replace industrycat_isic_2 = "6000" if regexm(NACE2J_B, "saobracaj") | regexm(NACE2J_B, "transport") | regexm(NACE2J_B, "Skladi") | regexm(NACE2J_B, "storage")
+	replace industrycat_isic_2 = "6200" if regexm(NACE2J_B, "Vazdu") | regexm(NACE2J_B, "air")
+	replace industrycat_isic_2 = "6300" if regexm(NACE2J_B, "Zeleznick") | regexm(NACE2J_B, "rail")
+
+	* --- Hotels and restaurants ---
+	replace industrycat_isic_2 = "5500" if regexm(NACE2J_B, "Hoteli") | regexm(NACE2J_B, "restoran") | regexm(NACE2J_B, "Smeštaj") | regexm(NACE2J_B, "accommodation")
+
+	* --- Information, computer and communication activities ---
+	replace industrycat_isic_2 = "7200" if regexm(NACE2J_B, "Izdava") | regexm(NACE2J_B, "publishing") | regexm(NACE2J_B, "Kompjuterske") | regexm(NACE2J_B, "computer")
+
+	* --- Financial and insurance activities ---
+	replace industrycat_isic_2 = "6500" if regexm(NACE2J_B, "Finansij") | regexm(NACE2J_B, "finance") | regexm(NACE2J_B, "osigur") | regexm(NACE2J_B, "insurance") | regexm(NACE2J_B, "penz")
+
+	* --- Real estate, professional and technical activities ---
+	replace industrycat_isic_2 = "7000" if regexm(NACE2J_B, "nekretnin") | regexm(NACE2J_B, "real estate")
+	replace industrycat_isic_2 = "7100" if regexm(NACE2J_B, "Pravni") | regexm(NACE2J_B, "account") | regexm(NACE2J_B, "istraž") | regexm(NACE2J_B, "technical") | regexm(NACE2J_B, "poslovn") | regexm(NACE2J_B, "research")
+
+	* --- Public administration, education and health ---
+	replace industrycat_isic_2 = "7500" if regexm(NACE2J_B, "Javna uprava") | regexm(NACE2J_B, "Državna uprava") | regexm(NACE2J_B, "socijalno osiguranje") | regexm(NACE2J_B, "public admin")
+	replace industrycat_isic_2 = "8000" if regexm(NACE2J_B, "Obrazov") | regexm(NACE2J_B, "education")
+	replace industrycat_isic_2 = "8500" if regexm(NACE2J_B, "Zdravstven") | regexm(NACE2J_B, "Socijaln") | regexm(NACE2J_B, "health") | regexm(NACE2J_B, "social")
+
+	* --- Culture, sports and recreation ---
+	replace industrycat_isic_2 = "9200" if regexm(NACE2J_B, "Sportske") | regexm(NACE2J_B, "kulturne") | regexm(NACE2J_B, "umetnič") | regexm(NACE2J_B, "recreation") | regexm(NACE2J_B, "entertainment")
+
+	* --- Households and extraterritorial organizations ---
+	replace industrycat_isic_2 = "9500" if regexm(NACE2J_B, "Domaćinstva") | regexm(NACE2J_B, "Domacinstva") | regexm(NACE2J_B, "household")
+	replace industrycat_isic_2 = "9900" if regexm(NACE2J_B, "Eksteritorijalnih") | regexm(NACE2J_B, "organizacij") | regexm(NACE2J_B, "extraterr")
+
+	* --- Assign "" if no match ---
+	replace industrycat_isic_2 = "" if missing(industrycat_isic_2)
+
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
 
 *<_industrycat10_2_>
 	gen byte industrycat10_2=real(substr(industrycat_isic_2,1,2))
-	recode industrycat10_2 (1/3 = 1) (5/9 = 2) (10/33 = 3) (35/39 = 4) (41/43 = 5) (45/47 55/56 = 6) (49/53 58/63 = 7) (64/82 = 8) (84 = 9) (85/99 = 10)
+	recode industrycat10_2 (1/5 = 1) (10/14 = 2) (15/37 = 3) (40/41 = 4) (45 = 5) (50/52 55 = 6) (60/64 = 7) (65/67 70/74 = 8) (75=9) (80/99 = 10)
+
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
 *</_industrycat10_2_>

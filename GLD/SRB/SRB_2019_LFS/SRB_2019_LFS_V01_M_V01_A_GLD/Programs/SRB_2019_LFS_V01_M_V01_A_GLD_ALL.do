@@ -370,12 +370,6 @@ use "`path_in_stata'/SRB_LFS_2019_FULL.dta", clear
 
 *<_relationharm_>
 	gen relationharm = hhlink
-    gen neg_male = -male
-
-    bys hhid (relationharm neg_male neg_age): gen runner_hh = _n
-    replace relationharm = 1 if runner_hh == 1
-    replace relationharm = 5 if runner_hh != 1 & relationharm == 1
-	
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm  lblrelationharm
@@ -882,30 +876,11 @@ foreach ed_var of local ed_vars {
 
 {
 *<_empstat_>
-	gen empstat = .
-	* 1 Owner/co-owner -> Employer
-	replace empstat = 3 if stapro==1
-
-	* 2 Sole-proprietor/partner -> Self-employed
-	replace empstat = 4 if stapro==2
-
-	* 3 Outworkers - employed with a contract -> Paid employee
-	replace empstat = 1 if stapro==3
-
-	* 4 Pro sportsmen / performing artists / etc. -> Self-employed
-	replace empstat = 4 if stapro==4
-
-	* 5 Other types of self-employment -> Self-employed
-	replace empstat = 4 if stapro==5
-
-	* 6 Individual farmer -> Self-employed (own-account)
-	replace empstat = 4 if stapro==6
-
-	* 7 Employee -> Paid employee
-	replace empstat = 1 if stapro==7
-
-	* 8 Unpaid family worker -> Non-paid employee (contributing family worker)
-	replace empstat = 2 if stapro==8
+	gen byte empstat=stapro
+	recode empstat 3 7=1 8=2 1 2=3 4 5 6=4
+	replace empstat = 3 if  zapdrrad == 1
+	replace empstat = 4 if  zapdrrad == 2
+	replace empstat=. if lstatus!=1
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat lblempstat
@@ -1014,10 +989,7 @@ foreach ed_var of local ed_vars {
 
 *<_whours_>
 	gen whours = hwactual
-	replace whours = . if whours == 0
 	replace whours=. if lstatus!=1
-	replace whours = hwusual if missing(whours) & !missing(wage_no_compen)
-	replace whours = . if whours == 0
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 

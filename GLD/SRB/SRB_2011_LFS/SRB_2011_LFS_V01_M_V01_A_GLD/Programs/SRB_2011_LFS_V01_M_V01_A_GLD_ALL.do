@@ -838,6 +838,8 @@ foreach ed_var of local ed_vars {
 *<_empstat_>
 	gen byte empstat=STATUS
 	recode empstat 3 7=1 8=2 1 2=3 4 5 6=4
+	replace empstat = 3 if  ZAPDRRAD == 1
+	replace empstat = 4 if  ZAPDRRAD == 2
 	replace empstat=. if lstatus!=1
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
@@ -961,6 +963,7 @@ foreach ed_var of local ed_vars {
 
 
 *<_wage_no_compen_>
+	*The questionnarie has info of the exact amount if the individuals is willing to declare it, however the raw data does not have this variable
 	gen double wage_no_compen= INCMON
 	replace wage_no_compen =  2500   if INCMON == 1   // < 5,000
 	replace wage_no_compen =  7500   if INCMON == 2   // 5,000 – 10,000
@@ -994,9 +997,7 @@ foreach ed_var of local ed_vars {
 
 *<_whours_>
 	gen whours= HWACTUAL if wage_no_compen!=.
-	replace whours = . if whours == 0
 	replace whours = HWUSUAL if missing(whours) & !missing(wage_no_compen)
-	replace whours = . if whours == 0
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
