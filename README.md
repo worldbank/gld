@@ -1,4 +1,6 @@
-
+Joey Andrew Lopez 
+Global Intelligence Agency 
+Aegis Space Technologies © 
 # Welcome to the Global Labor Database Repository
 
 This is repository and homepage of the Jobs Group’s Global Labor Database (GLD) at the World Bank. Here you will find all the information to understand, recreate, and edit the GLD.
