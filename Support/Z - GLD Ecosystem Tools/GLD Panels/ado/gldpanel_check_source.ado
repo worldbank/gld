@@ -27,7 +27,7 @@ bys `hhid' `pid' `year': gen first_wave_year = `wave' if _n == 1
 replace first_wave_year = first_wave_year[_n-1] if missing(first_wave_year)
 
 bys `hhid' `pid' : egen earliest_`year' = min(`year')
-gen `age'tag = `age' if `year' == earliest_`year' & `wave' == first_`wave'_`year'
+gen `age'tag = `age' if `year' == earliest_`year' & `wave' == first_wave_year
 bys `hhid' `pid': egen min`age' = min(`age'tag)
 gen `age'_d = `age' - min`age'
 gen diff_`age' = !(inlist(`age'_d, 0, 1))
