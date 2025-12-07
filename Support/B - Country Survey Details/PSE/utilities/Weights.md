@@ -1,1 +1,68 @@
+# Constructing Population-Expanded Survey Weights Using WDI-Based 10+ Population
 
+## Goal: 
+Convert relative survey weights (wfinal) in the main dataset into population‑expanded weights that reflect the estimated number of people aged 10 and above in Palestine (country codes PSE/PS) for years 1998–2014.
+
+## Approach:
+Estimate the population aged 10+ for each year from World Development Indicators (WDI) by subtracting ages 0–4 and 5–9 from total population, using sex-specific age shares.
+Use the estimated 10+ population count as the expansion target and scale the relative weights (wfinal) so that their sum matches the 10+ population.
+
+## Outcome:
+
+A new variable weight labeled “Survey sampling weight” that is the scaled version of wfinal.
+
+### Data Sources and Indicators
+
+- Total population: SP.POP.TOTL
+- Female share of total population: SP.POP.TOTL.FE.ZS
+- Age 0–4 shares by sex: SP.POP.0004.FE.5Y and SP.POP.0004.MA.5Y
+- Age 5–9 shares by sex: SP.POP.0509.FE.5Y and SP.POP.0509.MA.5Y
+- Country filter: PSE and PS
+- Years: 1998–2014
+  
+## Rationale
+The main survey dataset contains relative weights (wfinal). Relative weights scale observations to sum to an arbitrary constant; they do not necessarily sum to the population of interest. To obtain population‑expanded weights, we need the target population size corresponding to the survey universe. Because the survey covers individuals aged 10 years and above, we estimate the 10+ population for each year using official WDI indicators. We compute sex shares first, apply sex‑specific age shares for 0–4 and 5–9, then subtract these from total population to obtain 10+. This aligns the weight expansion to the actual population the survey represents.
+
+## Step-by-Step Procedure
+
+1. Pull WDI indicators and prepare per‑year variables
+   
+- Retrieve Total population (SP.POP.TOTL) for PSE/PS and rename yearly columns to TOT_y.
+- Retrieve Female share of total population (SP.POP.TOTL.FE.ZS) and rename to FE_ZS_y.
+- Retrieve age 0–4 shares for females (SP.POP.0004.FE.5Y) and males (SP.POP.0004.MA.5Y), rename to FE0004_ZS_y and MA0004_ZS_y.
+- Retrieve age 5–9 shares for females (SP.POP.0509.FE.5Y) and males (SP.POP.0509.MA.5Y), rename to FE0509_ZS_y and MA0509_ZS_y.
+- Keep country codes PSE/PS and years 1998–2014 throughout.
+  
+2. Merge all indicators
+- Merge the above datasets 1:1 on countrycode to obtain a single wide dataset containing, for each year y, TOT_y, FE_ZS_y, FE0004_ZS_y, MA0004_ZS_y, FE0509_ZS_y, MA0509_ZS_y.
+
+3. Compute the 10+ population by year
+- Compute female and male shares:
+  - fe_share_y = FE_ZS_y/100
+  - ma_share_y = 1 − fe_share_y
+- Compute aggregate shares of ages 0–4 and 5–9 combining sex shares:
+  - sh0004_y = fe_share_y × (FE0004_ZS_y/100) + ma_share_y × (MA0004_ZS_y/100)
+  - sh0509_y = fe_share_y × (FE0509_ZS_y/100) + ma_share_y × (MA0509_ZS_y/100)
+- Compute share of 10+:
+  - share10plus_y = 1 − (sh0004_y + sh0509_y)
+- Compute population aged 10+:
+  - pop10plus_y = TOT_y × share10plus_y
+    
+4. Reshape and export
+- Reshape the wide data to long (year as j), keeping key variables: TOT, pop10plus, sh0004, sh0509, share10plus.
+- Optionally export to CSV for use in weight scaling.
+
+5. Scale relative weights to population‑expanded weights in the survey data
+- In the survey dataset, compute the sum of wfinal over non‑missing cases:
+    - quietly summarize wfinal if !missing(wfinal), meanonly
+- local k = 1809116 / r(sum)
+  - Note: 1,809,116 is the chosen expansion total (e.g., the pop10plus for the specific survey year or the relevant target population). Ensure this constant corresponds to the correct     year and universe of the survey.
+- Create population‑expanded weight:
+  - generate double weight = wfinal * `k'
+  - label var weight "Survey sampling weight"
+- Interpretation: weight is a scaling of wfinal so that the sum of weights equals the expansion target (here 1,809,116). This converts relative weights into population‑expanded weights suitable for producing level estimates.
+
+## Code Used (Stata)
+
+###  Population construction from WDI:
+- The code blocks below implement steps (1)–(4) for 1998–2014 and PSE/PS, including pulling indicators via wbopendata, renaming, merging, and computing pop10plus.
