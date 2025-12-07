@@ -72,4 +72,4 @@ The main survey dataset contains relative weights (wfinal). Relative weights sca
 ###  Population construction from WDI:
 - The code blocks below implement steps (1)–(4) for 1998–2014 and PSE/PS, including pulling indicators via wbopendata, renaming, merging, and computing pop10plus.
 
-1. Stata code for WDI transformation. [file](utilities/)
+1. Stata code for WDI transformation. [file](utilities/codeforpop.do)
