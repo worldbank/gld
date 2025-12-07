@@ -62,7 +62,14 @@ The main survey dataset contains relative weights (wfinal). Relative weights sca
   - label var weight "Survey sampling weight"
 - Interpretation: weight is a scaling of wfinal so that the sum of weights equals the expansion target (here 1,809,116). This converts relative weights into population‑expanded weights suitable for producing level estimates.
 
+  ```
+ 	quietly summarize wfinal if !missing(wfinal), meanonly
+    local k =1809116/ r(sum)
+    generate double weight = wfinal * `k'
+
 ## Code Used (Stata)
 
 ###  Population construction from WDI:
 - The code blocks below implement steps (1)–(4) for 1998–2014 and PSE/PS, including pulling indicators via wbopendata, renaming, merging, and computing pop10plus.
+
+1. Stata code for WDI transformation.
