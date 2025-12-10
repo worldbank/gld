@@ -18,13 +18,12 @@
 <_Study ID_>					</_Study ID_>
 <_Data collection from_>		11/2016 </_Data collection from_>
 <_Data collection to_>			07/2017 </_Data collection to_>
-<_Source of dataset_> 			[Source of data, e.g. NSO] </_Source of dataset_>
-<_Sample size (HH)_> 			[#] </_Sample size (HH)_>
-<_Sample size (IND)_> 			[#] </_Sample size (IND)_>
-<_Sampling method_> 			[Brief description] </_Sampling method_>
-<_Geographic coverage_> 		[To what level is data significant] </_Geographic coverage_>
-<_Currency_> 					[Currency used for wages] </_Currency_>
-
+<_Source of dataset_> 			Uganda Bureau of Statistics </_Source of dataset_>
+<_Sample size (HH)_> 			4,829 </_Sample size (HH)_>
+<_Sample size (IND)_> 			20,795 </_Sample size (IND)_>
+<_Sampling method_> 			Two-stage sampling design </_Sampling method_>
+<_Geographic coverage_> 		National </_Geographic coverage_>
+<_Currency_> 					Uganda Shilling </_Currency_>
 -----------------------------------------------------------------------
 
 <_ICLS Version_>				ICLS 19 </_ICLS Version_>
@@ -59,7 +58,7 @@ set varabbrev off
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-local server  "C:/Users/wb510859/WBG/GLD - Current Contributors\510859_AS"
+local server  "C:/Users/`c(username)'/WBG/GLD - Current Contributors/510859_AS"
 local country "UGA"
 local year    "2016"
 local survey  "NLFS"
@@ -1100,7 +1099,7 @@ foreach ed_var of local ed_vars {
 *<_whours_>
 * Asked for each day of the week
 	egen whours = rowtotal(f2a f2c f2e f2g f2i f2k f2m)
-	replace whours = . if lstatus != 1
+	replace whours = . if lstatus != 1 | whours == 0
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -1306,7 +1305,7 @@ foreach ed_var of local ed_vars {
 
 *<_whours_2_>
 	egen whours_2 = rowtotal(f2b f2d f2f f2h f2j f2l f2n)
-	replace whours_2 = . if missing(empstat_2)
+	replace whours_2 = . if missing(empstat_2) | whours_2 == 0
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 

@@ -18,21 +18,21 @@
 <_Study ID_>					</_Study ID_>
 <_Data collection from_>		11/2021 </_Data collection from_>
 <_Data collection to_>			07/2021 </_Data collection to_>
-<_Source of dataset_> 			[Source of data, e.g. NSO] </_Source of dataset_>
-<_Sample size (HH)_> 			[#] </_Sample size (HH)_>
-<_Sample size (IND)_> 			[#] </_Sample size (IND)_>
-<_Sampling method_> 			[Brief description] </_Sampling method_>
-<_Geographic coverage_> 		[To what level is data significant] </_Geographic coverage_>
-<_Currency_> 					[Currency used for wages] </_Currency_>
+<_Source of dataset_> 			Uganda Bureau of Statistics </_Source of dataset_>
+<_Sample size (HH)_> 			9,659 </_Sample size (HH)_>
+<_Sample size (IND)_> 			48,418  </_Sample size (IND)_>
+<_Sampling method_> 			Two-stage sampling design </_Sampling method_>
+<_Geographic coverage_> 		National </_Geographic coverage_>
+<_Currency_> 					Uganda Shilling </_Currency_>
 
 -----------------------------------------------------------------------
 
 <_ICLS Version_>				ICLS 19 </_ICLS Version_>
-<_ISCED Version_>				[Version of ICLS for Labor Questions] </_ISCED Version_>
+<_ISCED Version_>				Unknown</_ISCED Version_>
 <_ISCO Version_>				ISCO 2008 </_ISCO Version_>
-<_OCCUP National_>				[Version of ICLS for Labor Questions] </_OCCUP National_>
+<_OCCUP National_>				Unknown </_OCCUP National_>
 <_ISIC Version_>				ISIC rev 4 </_ISIC Version_>
-<_INDUS National_>				[Version of ICLS for Labor Questions] </_INDUS National_>
+<_INDUS National_>				Unknown </_INDUS National_>
 
 -----------------------------------------------------------------------
 <_Version Control_>
@@ -60,7 +60,7 @@ set varabbrev off
 
 * De
 * Define path sections
-local server  "C:/Users/wb510859/WBG/GLD - Current Contributors\510859_AS"
+local server  "C:/Users/`c(username)'/WBG/GLD - Current Contributors/510859_AS"
 local country "UGA"
 local year    "2021"
 local survey  "NLFS"
@@ -305,6 +305,8 @@ keep if Response_V1 == 1
 
 *<_subnatid3_>
 	gen str subnatid3 = ""
+	tostring District_code, gen(districtnum)
+	replace subnatid3 = districtnum + " - " + District_name
 	label var subnatid3 "Subnational ID at Third Administrative Level"
 *</_subnatid3_>
 
@@ -314,7 +316,8 @@ keep if Response_V1 == 1
 Disaggregated using 7 domains: Kampala, Peri-Urban Kampala, Eastern, CEntral, Northern, Karamoja and Western
 
 </_subnatidsurvey_note> */
-	gen str subnatidsurvey = subnatid2
+	gen str subnatidsurvey = subnatid2 + " urban" if urban == 1
+	replace subnatidsurvey = subnatid2 + " rural" if urban == 0
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -826,7 +829,7 @@ foreach ed_var of local ed_vars {
 
 	* ---------- E3: Family farm/fishery — market-linked ----------
 	* Worked in own/family farming/fishing and it is market-linked:
-	* (B4 in {1,2} => at least partly for sale) OR (B7a==1 => hired labour used),
+	* (B4 in {1,2} => at least mainly for sale) 
 	* AND actually did this work last week (B6 != 97)
 	replace lstatus = 1 if inlist(B4,1,2) ///
 		& (B6 != 97)
@@ -865,7 +868,7 @@ foreach ed_var of local ed_vars {
 	
 	count if (lstatus != 1 & !missing(B16) & inlist(B1, 10, 12) & B10 == 2 & B13A!= 1 & B14!= 1) | (lstatus != 1 & !missing(B16) & !inlist(B4, 1, 2) & B8 != 1 & B9 != 1)
 
-	* Unemployed: looking for a job in last 4 weeks and available to start if it had been offered last week
+	* Unemployed: looking for a job in last 4 weeks or found a job to start at a later date and available to start in the next 2 weeks
 	replace lstatus = 2 if (L1 == 1 | L3A == 1) & inrange(L8, 1, 2) & lstatus != 1
 	* All others NLF
 	replace lstatus = 3 if missing(lstatus) &  age>=minlaborage
@@ -873,8 +876,6 @@ foreach ed_var of local ed_vars {
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
 *</_lstatus_>
-
-
 
 
 *<_potential_lf_>
@@ -1133,7 +1134,8 @@ foreach ed_var of local ed_vars {
 *<_whours_>
 * Asked for each day of the week
 	egen whours = rowtotal(E2a_1 E2a_2 E2a_3 E2a_4 E2a_5 E2a_6 E2a_7)
-	replace whours = . if lstatus != 1
+	replace whours = . if lstatus != 1 | whours == 0
+
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -1380,7 +1382,7 @@ foreach ed_var of local ed_vars {
 *<_whours_2_>
 	egen whours_2 = rowtotal(E2b_1 E2b_2 E2b_3 E2b_4 E2b_5 E2b_6 E2b_7)
 
-	replace whours_2 = . if missing(empstat_2)
+	replace whours_2 = . if missing(empstat_2) | whours_2 == 0
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 
