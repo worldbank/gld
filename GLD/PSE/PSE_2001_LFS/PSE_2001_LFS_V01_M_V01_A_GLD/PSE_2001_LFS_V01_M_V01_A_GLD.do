@@ -2,13 +2,12 @@
 /*%%=============================================================================================
 	0: GLD Harmonization Preamble
 ==============================================================================================%%*/
-
 /* -----------------------------------------------------------------------
 
 <_Program name_>				[PSE_2001_LFS_V01_M_V01_A_GLD] </_Program name_>
 <_Application_>					[Stata 18] <_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
-<_Date created_>				YYYY-MM-DD </_Date created_>
+<_Date created_>				2025-12-16 </_Date created_>
 
 -------------------------------------------------------------------------
 
@@ -16,22 +15,22 @@
 <_Survey Title_>				[LFS] </_Survey Title_>
 <_Survey Year_>					[2001] </_Survey Year_>
 <_Study ID_>					[n/a] </_Study ID_>
-<_Data collection from_>			[MM/YYYY] </_Data collection from_>
-<_Data collection to_>				[MM/YYYY] </_Data collection to_>
-<_Source of dataset_> 				[NSO] </_Source of dataset_>
-<_Sample size (HH)_> 				[#] </_Sample size (HH)_>
-<_Sample size (IND)_> 				[#] </_Sample size (IND)_>
-<_Sampling method_> 				[Brief description] </_Sampling method_>
+<_Data collection from_>			[01/2001] </_Data collection from_>
+<_Data collection to_>				[12/2001] </_Data collection to_>
+<_Source of dataset_> 				[PCBS] </_Source of dataset_>
+<_Sample size (HH)_> 				[15,114] </_Sample size (HH)_>
+<_Sample size (IND)_> 				[67,114] </_Sample size (IND)_>
+<_Sampling method_> 				[Two stage stratified cluster random sample] </_Sampling method_>
 <_Geographic coverage_> 			[National] </_Geographic coverage_>
 <_Currency_> 					[Israel Sheilings ] </_Currency_>
 
 -----------------------------------------------------------------------
 
-<_ICLS Version_>				[Version of ICLS for Labor Questions] </_ICLS Version_>
+<_ICLS Version_>				[Version 13] </_ICLS Version_>
 <_ISCED Version_>				[Version of ICLS for Labor Questions] </_ISCED Version_>
-<_ISCO Version_>				[Version of ICLS for Labor Questions] </_ISCO Version_>
+<_ISCO Version_>				[ISCO 1988] </_ISCO Version_>
 <_OCCUP National_>				[Version of ICLS for Labor Questions] </_OCCUP National_>
-<_ISIC Version_>				[Version of ICLS for Labor Questions] </_ISIC Version_>
+<_ISIC Version_>				[ISIC REV 3] </_ISIC Version_>
 <_INDUS National_>				[Version of ICLS for Labor Questions] </_INDUS National_>
 
 -----------------------------------------------------------------------

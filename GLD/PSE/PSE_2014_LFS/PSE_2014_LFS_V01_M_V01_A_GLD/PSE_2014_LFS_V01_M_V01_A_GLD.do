@@ -5,7 +5,7 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				[PSE_2000_LFS_V01_M_V01_A_GLD] </_Program name_>
+<_Program name_>				[PSE_2014_LFS_V01_M_V01_A_GLD] </_Program name_>
 <_Application_>					[Stata 18] <_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
 <_Date created_>				2025-12-16 </_Date created_>
@@ -14,13 +14,13 @@
 
 <_Country_>					[Palestinian State (PSE)] </_Country_>
 <_Survey Title_>				[LFS] </_Survey Title_>
-<_Survey Year_>					[2000] </_Survey Year_>
+<_Survey Year_>					[2014] </_Survey Year_>
 <_Study ID_>					[n/a] </_Study ID_>
-<_Data collection from_>			[01/2000] </_Data collection from_>
-<_Data collection to_>				[12/2000] </_Data collection to_>
+<_Data collection from_>			[01/2014] </_Data collection from_>
+<_Data collection to_>				[12/2014] </_Data collection to_>
 <_Source of dataset_> 				[PCBS] </_Source of dataset_>
-<_Sample size (HH)_> 				[15,757] </_Sample size (HH)_>
-<_Sample size (IND)_> 				[69,074] </_Sample size (IND)_>
+<_Sample size (HH)_> 				[15,297] </_Sample size (HH)_>
+<_Sample size (IND)_> 				[61,657] </_Sample size (IND)_>
 <_Sampling method_> 				[Two stage stratified cluster random sample] </_Sampling method_>
 <_Geographic coverage_> 			[National] </_Geographic coverage_>
 <_Currency_> 					[Israel Sheilings ] </_Currency_>
@@ -29,10 +29,11 @@
 
 <_ICLS Version_>				[Version 13] </_ICLS Version_>
 <_ISCED Version_>				[Version of ICLS for Labor Questions] </_ISCED Version_>
-<_ISCO Version_>				[ISCO 1988] </_ISCO Version_>
+<_ISCO Version_>				[ISCO 2008] </_ISCO Version_>
 <_OCCUP National_>				[Version of ICLS for Labor Questions] </_OCCUP National_>
-<_ISIC Version_>				[ISIC REV 3] </_ISIC Version_>
+<_ISIC Version_>				[ISIC REV 4] </_ISIC Version_>
 <_INDUS National_>				[Version of ICLS for Labor Questions] </_INDUS National_>
+
 -----------------------------------------------------------------------
 <_Version Control_>
 
@@ -65,7 +66,7 @@ else {
     local server "C:/Users/`c(username)'/WBG/GLD - Current Contributors/582018_AQ"
 }
 local country "PSE"
-local year    "2000"
+local year    "2014"
 local survey  "LFS"
 local vermast "V01"
 local veralt  "V01"
@@ -89,14 +90,52 @@ local out_file "`level_2_harm'_ALL.dta"
 * harmonized output in a single file
 
 
-use "`path_in_stata'/LFS00Q1.dta", clear
-gen quarter=1
-append using  "`path_in_stata'/LFS00Q2.dta"
+use "`path_in_stata'/LFS14Q1.dta", clear
+rename _all, lower
+save "`path_in_stata'/LFS14Q1_lower.dta", replace
+
+use "`path_in_stata'/LFS14Q2.dta", clear
+rename _all, lower
+save "`path_in_stata'/LFS14Q2_lower.dta", replace
+
+use "`path_in_stata'/LFS14Q3.dta", clear
+rename _all, lower
+save "`path_in_stata'/LFS14Q3_lower.dta", replace
+
+use "`path_in_stata'/LFS14Q4.dta", clear
+rename _all, lower
+save "`path_in_stata'/LFS14Q4_lower.dta", replace
+
+* Annual file 
+use "`path_in_stata'/LFS14-Y.dta", clear
+* Keep only one district per household (no differences)
+bys IDSAM : egen sd = sd(ID6)
+quietly : summ sd
+assert `r(mean)' == 0
+bys IDSAM :  gen runner = _n 
+keep if runner == 1
+decode ID6, gen(oldvar_label)
+gen governorate = string(ID6) + " - " + oldvar_label
+keep IDSAM governorate
+rename _all, lower
+tempfile governorate
+save `governorate'
+
+* Now append the standardized datasets
+use "`path_in_stata'/LFS14Q1_lower.dta", clear
+gen quarter=1 
+append using "`path_in_stata'/LFS14Q2_lower.dta"
 replace quarter=2 if quarter==.
-append using  "`path_in_stata'/LFS00Q3.dta"
+append using "`path_in_stata'/LFS14Q3_lower.dta"
 replace quarter=3 if quarter==.
-append using  "`path_in_stata'/LFS00Q4.dta"
+append using "`path_in_stata'/LFS14Q4_lower.dta"
 replace quarter=4 if quarter==.
+
+
+merge m:1 idsam using "`governorate'", assert(match)
+
+drop _merge 
+
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -117,7 +156,7 @@ replace quarter=4 if quarter==.
 
 
 *<_survey_>
-	gen survey = "Labour"
+	gen survey = "LFS"
 	label var survey "Survey type"
 *</_survey_>
 
@@ -135,19 +174,19 @@ replace quarter=4 if quarter==.
 
 
 *<_isco_version_>
-	gen isco_version = "isco_1988"
+	gen isco_version = "isco_2008"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
 
 *<_isic_version_>
-	gen isic_version = "isic_3"
+	gen isic_version = "isic_4"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
 
 *<_year_>
-	gen int year = 2000
+	gen int year = 2014
 	label var year "Year of survey"
 *</_year_>
 
@@ -193,21 +232,31 @@ replace quarter=4 if quarter==.
 	002, ..., 160.
 
 </_hhid_note> */
-	gen hhid = string(idsam, "%07.0f") 
-	label var hhid "Household ID"
+
+
+gen hhid = string(idsam, "%07.0f")
+label var hhid "Household ID"
+
+
 *</_hhid_>
 
 
 *<_pid_>
+
 	gen  pid_1 = string(hr0a, "%03.0f")
-	egen pid = concat(hhid pid_1) 
+	egen pid = concat(hhid pid_1)
+	*one person duplicate
+	drop if pid=="1481748002" & quarter==3
 	label var pid "Individual ID"
 *</_pid_>
 
+
 *<_weight_>
-			quietly summarize wfinal if !missing(wfinal), meanonly
-local k =1929553/ r(sum)
-generate double weight = wfinal * `k'
+* Scale rw so that its sum equals 2,979,258 (all observations)
+quietly summarize rw if !missing(rw), meanonly
+local k = 2979258 / r(sum)
+generate double weight = rw * `k'
+
 	label var weight "Survey sampling weight"
 *</_weight_>
 
@@ -219,7 +268,7 @@ generate double weight = wfinal * `k'
 
 
 *<_weight_q_>
-	gen weight_q = wfinal
+	gen weight_q = rw
 	label var weight_q "Survey sampling weight to obtain national estimates for each quarter"
 *</_weight_q_>
 
@@ -271,7 +320,7 @@ generate double weight = wfinal * `k'
 
 *<_urban_>
 *refugee areas are missing 
-	gen byte urban =id07
+	gen byte urban =id7
 	recode urban 2=0 3=.a
 	label var urban "Location is urban"
 	la de lblurban 1 "Urban" 0 "Rural"
@@ -295,26 +344,7 @@ generate double weight = wfinal * `k'
 
 
 *<_subnatid2_>
-	gen str20 subnatid2 = ""
-
-replace subnatid2 = "1- Jenin"           if id06 == 1
-replace subnatid2 = "5- Tubas"           if id06 == 5
-replace subnatid2 = "10- Tulkarem"       if id06 == 10
-replace subnatid2 = "15- Nablus"         if id06 == 15
-replace subnatid2 = "20- Qalqilia"       if id06 == 20
-replace subnatid2 = "25- Salfeet"        if id06 == 25
-replace subnatid2 = "30- Ramallah"       if id06 == 30
-replace subnatid2 = "35- Jericho"        if id06 == 35
-replace subnatid2 = "40- Jerusalem"      if id06 == 40
-replace subnatid2 = "41- Unlabeled 41"   if id06 == 41
-replace subnatid2 = "45- Bethlahim"      if id06 == 45
-replace subnatid2 = "50- Hebron"         if id06 == 50
-replace subnatid2 = "55- GS-North"       if id06 == 55
-replace subnatid2 = "60- Gaza City"      if id06 == 60
-replace subnatid2 = "65- Deir Albalah"   if id06 == 65
-replace subnatid2 = "70- Khan Younis"    if id06 == 70
-replace subnatid2 = "75- Rafah"          if id06 == 75
-
+	gen str20 subnatid2 = governorate
 label var subnatid2 "Subnational ID at Second Administrative Level"
 
 *</_subnatid2_>
@@ -402,7 +432,7 @@ label var subnatid2 "Subnational ID at Second Administrative Level"
 
 *<_male_>2
 *i2d2 var called sex 
-	gen male = HR2
+	gen male = hr2
 	recode male 2=0
 	label var male "Sex - Ind is male"
 	la de lblmale 1 "Male" 0 "Female"
@@ -411,103 +441,25 @@ label var subnatid2 "Subnational ID at Second Administrative Level"
 
 
 *<_relationharm_>
-	gen relationharm =hr04
+	gen relationharm =hr4
 	recode relationharm 5/9=5 10=6
-	
-/*		bysort hhid: egen nheads = total(relationharm == 1)
-	count if nheads == 0
-	* 1. Create a variable that flags heads if their PID contains "-002-"
-gen headflag = (strpos(pid, "-002-") > 0)
-
-* 2. Now, for households that currently have no head (nheads == 0), 
-*    assign relationharm = 1 if headflag == 1
-bysort hhid: replace relationharm = 1 if nheads == 0 & headflag == 1
-
-* 3. Recalculate number of heads per household to verify
-bysort hhid: egen nheads2 = total(relationharm == 1)
-
-* 4. Check if the correction worked
-count if nheads2 == 0
-
-drop nheads nheads2 headflag
-
-	bysort hhid: egen nheads = total(relationharm == 1)
-	count if nheads == 0
-	* 1. Create a variable that flags heads if their PID contains "-002-"
-gen headflag = (strpos(pid, "-003-") > 0)
-
-* 2. Now, for households that currently have no head (nheads == 0), 
-*    assign relationharm = 1 if headflag == 1
-bysort hhid: replace relationharm = 1 if nheads == 0 & headflag == 1
-
-* 3. Recalculate number of heads per household to verify
-bysort hhid: egen nheads2 = total(relationharm == 1)
-
-* 4. Check if the correction worked
-count if nheads2 == 0
-
-drop nheads nheads2 headflag
-
-bysort hhid: egen nheads = total(relationharm == 1)
-	count if nheads == 0
-	* 1. Create a variable that flags heads if their PID contains "-002-"
-gen headflag = (strpos(pid, "-004-") > 0)
-
-* 2. Now, for households that currently have no head (nheads == 0), 
-*    assign relationharm = 1 if headflag == 1
-bysort hhid: replace relationharm = 1 if nheads == 0 & headflag == 1
-
-* 3. Recalculate number of heads per household to verify
-bysort hhid: egen nheads2 = total(relationharm == 1)
-
-* 4. Check if the correction worked
-count if nheads2 == 0
-
-drop nheads nheads2
-
-		bysort hhid: egen nheads = total(relationharm == 1)
-count if nheads > 1
-	
-	* 1. Identify the main head (the one with -001- in the PID)
-gen mainhead = (strpos(pid, "-001-") > 0)
-
-* 2. For households with more than one head (nheads > 1),
-*    change any head who is NOT the mainhead to relationharm = 5
-bysort hhid: replace relationharm = 5 if nheads > 1 & relationharm == 1 & mainhead == 0
-
-* 3. Recalculate number of heads per household to check correction
-bysort hhid: egen nheads2 = total(relationharm == 1)
-
-* 4. Verify that no household now has more than one head
-count if nheads2 > 1
-	
-	replace relationharm=1 if pid=="0122213-011-1" & relationharm==4
-	replace relationharm=1 if pid=="0122213-011-2" & relationharm==4
-	
-	replace relationharm=1 if pid=="0122710-007-1" & relationharm==4
-	replace relationharm=1 if pid=="0122710-007-2" & relationharm==4
-	
-	replace relationharm=1 if pid=="0125419-012-1" & relationharm==3
-	replace relationharm=1 if pid=="0131179-007-2" & relationharm==4
-	replace relationharm=1 if pid=="0131179-007-3" & relationharm==4
-	replace relationharm=1 if pid=="0131635-007-3" & relationharm==4
-	
-	replace relationharm=1 if pid=="0131776-010-2" & relationharm==5
-	replace relationharm=1 if pid=="0131776-010-3" & relationharm==5
-	replace relationharm=1 if pid=="0143459-005-3" & relationharm==4
-	replace relationharm=1 if pid=="0143459-005-4" & relationharm==4
-	
-	replace relationharm=1 if pid=="0145912-009-3" & relationharm==2
-	replace relationharm=1 if pid=="0145912-009-4" & relationharm==2
-	replace relationharm=1 if pid=="0147436-013-4" & relationharm==4
-	replace relationharm=1 if pid=="0150293-001-4" & relationharm==5
-	
-	replace relationharm=1 if pid=="0150536-008-4" & relationharm==4
-	replace relationharm=1 if pid=="0151611-005-1" & relationharm==3
-	replace relationharm=1 if pid=="0151611-005-4" & relationharm==3
-	replace relationharm=1 if pid=="0151960-001-1" & relationharm==3
-*/
-	
+	/*
+	replace relationharm = 1 if relationharm==2 & pid=="1382682-002-3"
+	replace relationharm = 2 if relationharm==1 & pid=="1381866-002-2"
+    replace relationharm = 2 if relationharm==1 & pid=="1381866-002-3"
+	replace relationharm = 2 if relationharm==1 & pid=="1382580-002-2"
+	replace relationharm = 2 if relationharm==1 & pid=="1382580-002-3"
+	replace relationharm = 5 if relationharm==1 & pid=="1383246-006-3"
+	replace relationharm = 5 if relationharm==1 & pid=="1383246-006-2"
+	replace relationharm = 3 if relationharm==1 & pid=="1423722-003-1"
+	replace relationharm = 3 if relationharm==1 & pid=="1423722-003-4"
+	replace relationharm = 3 if relationharm==1 & pid=="1441778-002-1"
+	replace relationharm = 3 if relationharm==1 & pid=="1441778-002-2"
+	replace relationharm = 2 if relationharm==1 & pid=="1463610-002-2"
+	replace relationharm = 2 if relationharm==1 & pid=="1463610-002-3"
+	replace relationharm = 2 if relationharm==1 & pid=="1481718-002-3"
+	replace relationharm = 2 if relationharm==1 & pid=="1481718-002-4"
+	*/
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm  lblrelationharm
@@ -515,7 +467,7 @@ count if nheads2 > 1
 
 
 *<_relationcs_>
-	gen relationcs = hr04
+	gen relationcs = hr4
 	label var relationcs "Relationship to the head of household - Country original"
 *</_relationcs_>
 
@@ -699,9 +651,8 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educy_>
+*i2d2 called yers 
 	gen byte educy = pr3
-	replace educy=0 if educy==.
-	replace educy=0 if educy==70 & age==42
 	label var educy "Years of education"
 *</_educy_>
 
@@ -737,7 +688,6 @@ label var ed_mod_age "Education module application age"
 	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
 	label values educat4 lbleducat4
 *</_educat4_>
-
 
 
 *<_educat_orig_>
@@ -842,7 +792,7 @@ foreach ed_var of local ed_vars {
 *<_lstatus_>
 	gen byte lstatus = .
 	replace lstatus = 1 if pw01==1 | pw02==1 | pw03==1
-	replace lstatus=2 if ((inrange(pw01, 2, 4) | pw02 == 2 | pw03 == 2) & (pw14 == 1 & pw11==1)) & missing(lstatus)
+	replace lstatus=2 if ((inrange(pw01, 2, 5) | pw02 == 2 | pw03 == 2) & (pw14 == 1 & pw11==1)) & missing(lstatus)
     replace lstatus = 3 if  missing(lstatus)
 	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
@@ -931,6 +881,8 @@ foreach ed_var of local ed_vars {
 *<_industrycat_isic_>
 	gen industrycat_isic = industry_orig + "00"
 	replace industrycat_isic="" if industrycat_isic==".00"
+	*replace industrycat_isic="" if industrycat_isic=="0600"
+	replace industrycat_isic="" if industrycat_isic=="8300"
 	replace industrycat_isic="" if industrycat_isic=="00"
 	replace industrycat_isic="" if lstatus!=1
 	* Check that no errors --> using our universe check function, count should be 0 (no obs wrong)
@@ -949,16 +901,16 @@ foreach ed_var of local ed_vars {
 
 *<_industrycat10_>
 	gen byte industrycat10 = .
-	replace industrycat10=1 if inrange(industrycat_isic,"0100","0200") | (industrycat_isic=="0500")
-	replace industrycat10=2 if inrange(industrycat_isic,"1000","1400")
-	replace industrycat10=3 if inrange(industrycat_isic,"1500","3700")
-	replace industrycat10=4 if inrange(industrycat_isic,"4000","4100")
-	replace industrycat10=5 if inrange(industrycat_isic,"4500","4500")
-	replace industrycat10=6 if inrange(industrycat_isic,"5000","5200") | (industrycat_isic=="5500")
-	replace industrycat10=7 if inrange(industrycat_isic,"6000","6400") 
-	replace industrycat10=8 if inrange(industrycat_isic,"6500","6700") | inrange(industrycat_isic,"7000","7400") 
-	replace industrycat10=9 if industrycat_isic=="7500"
-	replace industrycat10=10 if inrange(industrycat_isic,"8000","9990")
+replace industrycat10 = 1 if inrange(industrycat_isic, "0100", "0322")
+replace industrycat10 = 2 if inrange(industrycat_isic, "0500", "0990")
+replace industrycat10 = 3 if inrange(industrycat_isic, "1000", "3320")
+replace industrycat10 = 4 if inrange(industrycat_isic, "3500", "3900")
+replace industrycat10 = 5 if inrange(industrycat_isic, "4100", "4390")
+replace industrycat10 = 6 if inrange(industrycat_isic, "4500", "4799") | inrange(industrycat_isic, "5500", "5690")
+replace industrycat10 = 7 if inrange(industrycat_isic, "4900", "5390") | inrange(industrycat_isic, "5800", "6390")
+replace industrycat10 = 8 if inrange(industrycat_isic, "6400", "8290")
+replace industrycat10 = 9 if inrange(industrycat_isic, "8400", "8490")
+replace industrycat10 = 10 if inrange(industrycat_isic, "8500", "9900")
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
@@ -977,7 +929,7 @@ foreach ed_var of local ed_vars {
 
 
 *<_occup_orig_>
-	gen occup_orig =  string(pw22, "%02.0f")
+	gen occup_orig =  string(pw22) + "0"
 	replace occup_orig= "" if lstatus!=1
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
@@ -985,11 +937,15 @@ foreach ed_var of local ed_vars {
 
 *<_occup_isco_>
 
-gen occup_isco = occup_orig + "00"
+gen occup_isco = occup_orig + "0"
 replace occup_isco="" if lstatus!=1
-replace occup_isco="" if occup_isco==".00"
+replace occup_isco="" if occup_isco==".0"
 replace occup_isco="" if occup_isco=="9900"
-
+replace occup_isco="9000" if occup_isco=="9600"
+replace occup_isco="5000" if occup_isco=="0500"
+replace occup_isco="1000" if occup_isco=="100"
+replace occup_isco="2000" if occup_isco=="200"
+replace occup_isco="3000" if occup_isco=="300"
 	* Check that no errors --> using our universe check function, count should be 0 (no obs wrong)
 	* https://github.com/worldbank/gld/tree/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20universe%20check
 	preserve 
@@ -1032,8 +988,8 @@ replace occup_isco="" if occup_isco=="9900"
 
 
 *<_wage_no_compen_>
-*Note: we dont have the daily wage variable from which this one was created
 	gen double wage_no_compen = dwage
+	replace wage_no_compen=. if lstatus!=1
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
@@ -1081,7 +1037,8 @@ replace occup_isco="" if occup_isco=="9900"
 
 
 *<_contract_>
-	gen byte contract = .
+	gen byte contract = pw23h_a
+	recode contract (1 2=1) (3 4=.) (5=0)
 	label var contract "Employment has contract primary job 7 day recall"
 	la de lblcontract 0 "Without contract" 1 "With contract"
 	label values contract lblcontract
@@ -1097,7 +1054,8 @@ replace occup_isco="" if occup_isco=="9900"
 
 
 *<_socialsec_>
-	gen byte socialsec = .
+	gen byte socialsec = pw23i_m1
+	recode socialsec 2=0 3=.
 	label var socialsec "Employment has social security insurance primary job 7 day recall"
 	la de lblsocialsec 1 "With social security" 0 "Without social secturity"
 	label values socialsec lblsocialsec
@@ -1132,7 +1090,8 @@ replace occup_isco="" if occup_isco=="9900"
 
 {
 *<_empstat_2_>
-	gen byte empstat_2 = .
+	gen byte empstat_2 = pw23b_b
+	recode empstat_2 (1 2=3) (3 4=4) (5=2) (6/12=1)
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
 	label values empstat_2 lblempstat
 *</_empstat_2_>
@@ -1147,17 +1106,21 @@ replace occup_isco="" if occup_isco=="9900"
 
 
 *<_industry_orig_2_>
-	gen industry_orig_2 = ""
+*all the codes fail in rev 4 , perhaps they are lettters, since the codes dont match missing.
+	gen industry_orig_2 = string(pw5a,"%02.0f")
 	replace industry_orig_2="" if lstatus!=1
+	replace industry_orig_2="" if industry_orig_2=="."
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 
 
 *<_industrycat_isic_2_>
-	gen industrycat_isic_2 = ""
+	gen industrycat_isic_2 = industry_orig_2 + "00"
+	replace industrycat_isic_2="" if industrycat_isic_2==".00"
+		replace industrycat_isic_2="" if industrycat_isic_2=="00"
 	* Check that no errors --> using our universe check function, count should be 0 (no obs wrong)
 	*https://github.com/worldbank/gld/tree/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20universe%20check
-	/*preserve 
+	preserve 
 	drop if missing(industrycat_isic_2)
 	int_classif_universe, var(industrycat_isic_2) universe(ISIC)
 	count
@@ -1165,12 +1128,25 @@ replace occup_isco="" if occup_isco=="9900"
 	assert `r(N)' == 0
 	restore 
 	*/
+	replace industrycat_isic_2="" if lstatus!=1
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
 
 *<_industrycat10_2_>
 	gen byte industrycat10_2 = .
+replace industrycat10_2 = 1 if inrange(industrycat_isic_2, "0100", "0322")
+replace industrycat10_2 = 2 if inrange(industrycat_isic_2, "0500", "0990")
+replace industrycat10_2 = 3 if inrange(industrycat_isic_2, "1000", "3320")
+replace industrycat10_2 = 4 if inrange(industrycat_isic_2, "3500", "3900")
+replace industrycat10_2 = 5 if inrange(industrycat_isic_2, "4100", "4390")
+replace industrycat10_2 = 6 if inrange(industrycat_isic_2, "4500", "4799") | inrange(industrycat_isic_2, "5500", "5690")
+replace industrycat10_2 = 7 if inrange(industrycat_isic_2, "4900", "5390") | inrange(industrycat_isic_2, "5800", "6390")
+replace industrycat10_2 = 8 if inrange(industrycat_isic_2, "6400", "8290")
+replace industrycat10_2 = 9 if inrange(industrycat_isic_2, "8400", "8490")
+replace industrycat10_2 = 10 if inrange(industrycat_isic_2, "8500", "9900")
+	replace industrycat10_2=. if lstatus!=1
+	*/
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
 *</_industrycat10_2_>
