@@ -212,6 +212,7 @@ rename _all, lower
 
 
 *<_weight_>
+	*reference in CSD, scaling to match WDI population 10 plus.
 		quietly summarize wfinal if !missing(wfinal), meanonly
 local k =1994806/ r(sum)
 generate double weight = wfinal * `k'
@@ -277,7 +278,6 @@ generate double weight = wfinal * `k'
 {
 
 *<_urban_>
-*refugee areas are missing 
 	gen byte urban =id07
 	recode urban 2=0 3=.a
 	label var urban "Location is urban"
@@ -401,14 +401,12 @@ label var subnatid2 "Subnational ID at Second Administrative Level"
 
 
 *<_age_>
-*i2d2 had age already 
 	gen age = pr1
 	label var age "Individual age"
 *</_age_>
 
 
-*<_male_>2
-*i2d2 var called sex 
+*<_male_>
 	gen male = hr2
 	recode male 2=0
 	label var male "Sex - Ind is male"
@@ -418,58 +416,9 @@ label var subnatid2 "Subnational ID at Second Administrative Level"
 
 
 *<_relationharm_>
+*Note: the user should be aware that 194 households have been identified with no household head on this year
 	gen relationharm =hr04
 	recode relationharm 5/9=5 10=6 .=10
-	/*
-	bysort hhid: egen nheads = total(relationharm == 1)
-	count if nheads == 0
-	* 1. Create a variable that flags heads if their PID contains "-002-"
-gen headflag = (strpos(pid, "-002-") > 0)
-
-* 2. Now, for households that currently have no head (nheads == 0), 
-*    assign relationharm = 1 if headflag == 1
-bysort hhid: replace relationharm = 1 if nheads == 0 & headflag == 1
-
-* 3. Recalculate number of heads per household to verify
-bysort hhid: egen nheads2 = total(relationharm == 1)
-
-* 4. Check if the correction worked
-count if nheads2 == 0
-
-drop nheads nheads2
-
-	replace relationharm=1 if pid=="0150536-008-1" & relationharm==4
-	replace relationharm=1 if pid=="0150586-003-1" & relationharm==5
-	replace relationharm=1 if pid=="0150668-003-1" & relationharm==3
-	replace relationharm=1 if pid=="0160190-003-1" & relationharm==3
-	replace relationharm=1 if pid=="0160190-003-2" & relationharm==3
-	replace relationharm=1 if pid=="0161461-006-1" & relationharm==4
-	replace relationharm=1 if pid=="0161461-006-2" & relationharm==4
-	
-	replace relationharm=1 if pid=="0170155-005-3" & relationharm==4
-	replace relationharm=1 if pid=="0170409-003-2" & relationharm==4
-	replace relationharm=1 if pid=="0170409-003-3" & relationharm==4
-	replace relationharm=1 if pid=="0171304-003-2" & relationharm==3
-	replace relationharm=1 if pid=="0171304-003-3" & relationharm==3
-	replace relationharm=1 if pid=="0222038-001-4" & relationharm==2
-	
-	bysort hhid: egen nheads = total(relationharm == 1)
-count if nheads > 1
-	
-	* 1. Identify the main head (the one with -001- in the PID)
-gen mainhead = (strpos(pid, "-001-") > 0)
-
-* 2. For households with more than one head (nheads > 1),
-*    change any head who is NOT the mainhead to relationharm = 5
-bysort hhid: replace relationharm = 5 if nheads > 1 & relationharm == 1 & mainhead == 0
-
-* 3. Recalculate number of heads per household to check correction
-bysort hhid: egen nheads2 = total(relationharm == 1)
-
-* 4. Verify that no household now has more than one head
-count if nheads2 > 1
-
-*/
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm  lblrelationharm
@@ -485,7 +434,6 @@ count if nheads2 > 1
 *<_marital_>
 	gen byte marital = maritals
 	recode marital 1=2 3=1 
-	*engaged as a category 
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
 	label values marital lblmarital
@@ -641,7 +589,6 @@ label var ed_mod_age "Education module application age"
 *</_ed_mod_age_>
 
 *<_school_>
-*i2d2 called atten 
 	gen byte school = pr2
 	recode school 2/4=0
 	label var school "Attending school"
@@ -661,7 +608,6 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educy_>
-*i2d2 called yers 
 	gen byte educy = pr3
 	label var educy "Years of education"
 *</_educy_>
@@ -801,7 +747,7 @@ foreach ed_var of local ed_vars {
 
 {
 *<_lstatus_>
-*Note: unusual number of unemployed people or people looking for a job that do not have other job.
+*Note: unusual number of unemployed people or people looking for a job that do not have other job. The reason is because of coding of the raw data as detained when they presumably responded no, questionnaire and codes for the variable pw01 are not the same. The NSO is being consulted but for now GLD has confirmed the labour force numbers.
 	gen byte lstatus = .
 	replace lstatus = 1 if pw01==1 | pw02==1 | pw03==1
 	replace lstatus=2 if ((inrange(pw01, 2, 4) | pw02 == 2 | pw03 == 2) & (pw14 == 1 & pw11==1)) & missing(lstatus)
@@ -836,8 +782,7 @@ foreach ed_var of local ed_vars {
 *</_underemployment_>
 
 
-*<_nlfreason_>
-*old and ill are put in the same category but are not differentiated as retired so I kept them in disabled. 
+*<_nlfreason_> 
 	gen byte nlfreason = pw12
 	recode nlfreason 1=. 2=1 3=2 
 	replace nlfreason=5 if (nlfreason==. & lstatus==3)
@@ -929,7 +874,6 @@ foreach ed_var of local ed_vars {
 
 
 *<_industrycat4_
-*the variable of sector is not well disaggregated.
 	gen byte industrycat4 = industrycat10
 	recode industrycat4 (1 = 1) (2 3 4 5 = 2) (6 7 8 9 = 3) (10 = 4)
 	label var industrycat4 "Broad Economic Activities classification, primary job 7 day recall"
@@ -994,7 +938,6 @@ replace occup_isco="" if occup_isco=="9900"
 
 
 *<_wage_no_compen_>
-*Note: we dont have the daily wage variable from which this one was created
 	gen double wage_no_compen = dwage
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
@@ -1101,7 +1044,6 @@ replace occup_isco="" if occup_isco=="9900"
 
 
 *<_ocusec_2_>
-*are UN agencies private ? there is no option for foregin 
 	gen byte ocusec_2 =.
 	label var ocusec_2 "Sector of activity secondary job 7 day recall"
 	label values ocusec_2 lblocusec

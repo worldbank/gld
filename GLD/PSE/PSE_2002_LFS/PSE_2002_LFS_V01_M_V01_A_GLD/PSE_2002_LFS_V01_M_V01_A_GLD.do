@@ -231,6 +231,7 @@ egen pid = concat(hhid_new pid_1)
 *</_pid_>
 
 *<_weight_>
+*reference in CSD, scaling to match WDI population 10 plus.
 		quietly summarize wfinal if !missing(wfinal), meanonly
 local k =2064110/ r(sum)
 generate double weight = wfinal * `k'
@@ -439,23 +440,6 @@ label var subnatid2 "Subnational ID at Second Administrative Level"
 *<_relationharm_>
 	gen relationharm =hr04
 	recode relationharm 5/9=5 10/33=6 .=6
-	/*
-bysort hhid: egen nheads = total(relationharm == 1)
-count if nheads > 1
-	
-	* 1. Identify the main head (the one with -001- in the PID)
-gen mainhead = (strpos(pid, "-001-") > 0)
-
-* 2. For households with more than one head (nheads > 1),
-*    change any head who is NOT the mainhead to relationharm = 5
-bysort hhid: replace relationharm = 5 if nheads > 1 & relationharm == 1 & mainhead == 0
-
-* 3. Recalculate number of heads per household to check correction
-bysort hhid: egen nheads2 = total(relationharm == 1)
-
-* 4. Verify that no household now has more than one head
-count if nheads2 > 1
-	*/
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm  lblrelationharm
@@ -627,7 +611,6 @@ label var ed_mod_age "Education module application age"
 *</_ed_mod_age_>
 
 *<_school_>
-*i2d2 called atten 
 	gen byte school = pr2
 	recode school 2/4=0
 	label var school "Attending school"
@@ -647,7 +630,6 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educy_>
-*i2d2 called yers 
 	gen byte educy = pr3
 	label var educy "Years of education"
 *</_educy_>
@@ -914,7 +896,6 @@ foreach ed_var of local ed_vars {
 
 
 *<_industrycat4_
-*the variable of sector is not well disaggregated.
 	gen byte industrycat4 = industrycat10
 	recode industrycat4 (1 = 1) (2 3 4 5 = 2) (6 7 8 9 = 3) (10 = 4)
 	label var industrycat4 "Broad Economic Activities classification, primary job 7 day recall"
@@ -981,7 +962,6 @@ replace occup_isco="1000" if occup_isco=="100"
 
 
 *<_wage_no_compen_>
-*Note: we dont have the daily wage variable from which this one was created
 	gen double wage_no_compen = dwage
 	replace wage_no_compen=. if lstatus!=1
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
@@ -1006,7 +986,6 @@ replace occup_isco="1000" if occup_isco=="100"
 
 
 *<_whours_>
-*we only have hours worked in all jobs
 	gen whours = .
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
@@ -1089,7 +1068,6 @@ replace occup_isco="1000" if occup_isco=="100"
 
 
 *<_ocusec_2_>
-*are UN agencies private ? there is no option for foregin 
 	gen byte ocusec_2 =.
 	label var ocusec_2 "Sector of activity secondary job 7 day recall"
 	label values ocusec_2 lblocusec

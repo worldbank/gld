@@ -87,8 +87,6 @@ local out_file "`level_2_harm'_ALL.dta"
 
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
-
-
 use "`path_in_stata'/LFS00Q1.dta", clear
 gen quarter=1
 append using  "`path_in_stata'/LFS00Q2.dta"
@@ -205,9 +203,10 @@ replace quarter=4 if quarter==.
 *</_pid_>
 
 *<_weight_>
-			quietly summarize wfinal if !missing(wfinal), meanonly
-local k =1929553/ r(sum)
-generate double weight = wfinal * `k'
+	*reference in CSD, scaling to match WDI population 10 plus.
+	quietly summarize wfinal if !missing(wfinal), meanonly
+	local k =1929553/ r(sum)
+	generate double weight = wfinal * `k'
 	label var weight "Survey sampling weight"
 *</_weight_>
 
@@ -270,7 +269,6 @@ generate double weight = wfinal * `k'
 {
 
 *<_urban_>
-*refugee areas are missing 
 	gen byte urban =id07
 	recode urban 2=0 3=.a
 	label var urban "Location is urban"
@@ -394,14 +392,12 @@ label var subnatid2 "Subnational ID at Second Administrative Level"
 
 
 *<_age_>
-*i2d2 had age already 
 	gen age = pr1
 	label var age "Individual age"
 *</_age_>
 
 
 *<_male_>2
-*i2d2 var called sex 
 	gen male = HR2
 	recode male 2=0
 	label var male "Sex - Ind is male"
@@ -411,103 +407,9 @@ label var subnatid2 "Subnational ID at Second Administrative Level"
 
 
 *<_relationharm_>
+*Note: the user should be aware that 200 households have been identified with no household head on this year.
 	gen relationharm =hr04
 	recode relationharm 5/9=5 10=6
-	
-/*		bysort hhid: egen nheads = total(relationharm == 1)
-	count if nheads == 0
-	* 1. Create a variable that flags heads if their PID contains "-002-"
-gen headflag = (strpos(pid, "-002-") > 0)
-
-* 2. Now, for households that currently have no head (nheads == 0), 
-*    assign relationharm = 1 if headflag == 1
-bysort hhid: replace relationharm = 1 if nheads == 0 & headflag == 1
-
-* 3. Recalculate number of heads per household to verify
-bysort hhid: egen nheads2 = total(relationharm == 1)
-
-* 4. Check if the correction worked
-count if nheads2 == 0
-
-drop nheads nheads2 headflag
-
-	bysort hhid: egen nheads = total(relationharm == 1)
-	count if nheads == 0
-	* 1. Create a variable that flags heads if their PID contains "-002-"
-gen headflag = (strpos(pid, "-003-") > 0)
-
-* 2. Now, for households that currently have no head (nheads == 0), 
-*    assign relationharm = 1 if headflag == 1
-bysort hhid: replace relationharm = 1 if nheads == 0 & headflag == 1
-
-* 3. Recalculate number of heads per household to verify
-bysort hhid: egen nheads2 = total(relationharm == 1)
-
-* 4. Check if the correction worked
-count if nheads2 == 0
-
-drop nheads nheads2 headflag
-
-bysort hhid: egen nheads = total(relationharm == 1)
-	count if nheads == 0
-	* 1. Create a variable that flags heads if their PID contains "-002-"
-gen headflag = (strpos(pid, "-004-") > 0)
-
-* 2. Now, for households that currently have no head (nheads == 0), 
-*    assign relationharm = 1 if headflag == 1
-bysort hhid: replace relationharm = 1 if nheads == 0 & headflag == 1
-
-* 3. Recalculate number of heads per household to verify
-bysort hhid: egen nheads2 = total(relationharm == 1)
-
-* 4. Check if the correction worked
-count if nheads2 == 0
-
-drop nheads nheads2
-
-		bysort hhid: egen nheads = total(relationharm == 1)
-count if nheads > 1
-	
-	* 1. Identify the main head (the one with -001- in the PID)
-gen mainhead = (strpos(pid, "-001-") > 0)
-
-* 2. For households with more than one head (nheads > 1),
-*    change any head who is NOT the mainhead to relationharm = 5
-bysort hhid: replace relationharm = 5 if nheads > 1 & relationharm == 1 & mainhead == 0
-
-* 3. Recalculate number of heads per household to check correction
-bysort hhid: egen nheads2 = total(relationharm == 1)
-
-* 4. Verify that no household now has more than one head
-count if nheads2 > 1
-	
-	replace relationharm=1 if pid=="0122213-011-1" & relationharm==4
-	replace relationharm=1 if pid=="0122213-011-2" & relationharm==4
-	
-	replace relationharm=1 if pid=="0122710-007-1" & relationharm==4
-	replace relationharm=1 if pid=="0122710-007-2" & relationharm==4
-	
-	replace relationharm=1 if pid=="0125419-012-1" & relationharm==3
-	replace relationharm=1 if pid=="0131179-007-2" & relationharm==4
-	replace relationharm=1 if pid=="0131179-007-3" & relationharm==4
-	replace relationharm=1 if pid=="0131635-007-3" & relationharm==4
-	
-	replace relationharm=1 if pid=="0131776-010-2" & relationharm==5
-	replace relationharm=1 if pid=="0131776-010-3" & relationharm==5
-	replace relationharm=1 if pid=="0143459-005-3" & relationharm==4
-	replace relationharm=1 if pid=="0143459-005-4" & relationharm==4
-	
-	replace relationharm=1 if pid=="0145912-009-3" & relationharm==2
-	replace relationharm=1 if pid=="0145912-009-4" & relationharm==2
-	replace relationharm=1 if pid=="0147436-013-4" & relationharm==4
-	replace relationharm=1 if pid=="0150293-001-4" & relationharm==5
-	
-	replace relationharm=1 if pid=="0150536-008-4" & relationharm==4
-	replace relationharm=1 if pid=="0151611-005-1" & relationharm==3
-	replace relationharm=1 if pid=="0151611-005-4" & relationharm==3
-	replace relationharm=1 if pid=="0151960-001-1" & relationharm==3
-*/
-	
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm  lblrelationharm
@@ -523,7 +425,6 @@ count if nheads2 > 1
 *<_marital_>
 	gen byte marital = maritals
 	recode marital 1=2 3=1 
-	*engaged as a category 
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
 	label values marital lblmarital
@@ -679,7 +580,6 @@ label var ed_mod_age "Education module application age"
 *</_ed_mod_age_>
 
 *<_school_>
-*i2d2 called atten 
 	gen byte school = pr2
 	recode school 2/4=0
 	label var school "Attending school"
@@ -875,7 +775,6 @@ foreach ed_var of local ed_vars {
 
 
 *<_nlfreason_>
-*old and ill are put in the same category but are not differentiated as retired so I kept them in disabled. 
 	gen byte nlfreason = pw12
 	recode nlfreason 1=. 2=1 3=2 
 	replace nlfreason=5 if (nlfreason==. & lstatus==3)
@@ -967,7 +866,6 @@ foreach ed_var of local ed_vars {
 
 
 *<_industrycat4_
-*the variable of sector is not well disaggregated.
 	gen byte industrycat4 = industrycat10
 	recode industrycat4 (1 = 1) (2 3 4 5 = 2) (6 7 8 9 = 3) (10 = 4)
 	label var industrycat4 "Broad Economic Activities classification, primary job 7 day recall"
@@ -1032,7 +930,6 @@ replace occup_isco="" if occup_isco=="9900"
 
 
 *<_wage_no_compen_>
-*Note: we dont have the daily wage variable from which this one was created
 	gen double wage_no_compen = dwage
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>

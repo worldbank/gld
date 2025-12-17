@@ -260,7 +260,6 @@ rename new_idsam idsam
 
 
 *<_pid_>
-*do not delete, works on i2d2 version 
 	gen  pid_1 = string(hr0a, "%02.0f")
 	egen pid=concat(hhid pid_1)
 	label var pid "Individual ID"
@@ -271,8 +270,8 @@ rename new_idsam idsam
 *<_weight_>
 *reference in CSD, scaling to match WDI population 10 plus.
 	quietly summarize wfinal if !missing(wfinal), meanonly
-local k =1809116/ r(sum)
-generate double weight = wfinal * `k'
+	local k =1809116/ r(sum)
+	generate double weight = wfinal * `k'
 	label var weight "Survey sampling weight"
 *</_weight_>
 
@@ -335,7 +334,6 @@ generate double weight = wfinal * `k'
 {
 
 *<_urban_>
-*refugee areas are missing 
 	gen byte urban =id07
 	recode urban 2=0 3=.a
 	label var urban "Location is urban"
@@ -453,14 +451,12 @@ label var subnatid2 "Subnational ID at Second Administrative Level"
 
 
 *<_age_>
-*i2d2 had age already 
 	gen age = pr1
 	label var age "Individual age"
 *</_age_>
 
 
 *<_male_>2
-*i2d2 var called sex 
 	gen male = HR2
 	recode male 2=0
 	label var male "Sex - Ind is male"
@@ -487,7 +483,6 @@ label var subnatid2 "Subnational ID at Second Administrative Level"
 *<_marital_>
 	gen byte marital = maritals
 	recode marital 1=2 3=1 
-	*engaged as a category 
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
 	label values marital lblmarital
@@ -643,7 +638,6 @@ label var ed_mod_age "Education module application age"
 *</_ed_mod_age_>
 
 *<_school_>
-*i2d2 called atten 
 	gen byte school = pr2
 	recode school 2=0
 	label var school "Attending school"
@@ -663,7 +657,6 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educy_>
-*i2d2 called yers 
 	gen byte educy = pr3
 	label var educy "Years of education"
 *</_educy_>
@@ -831,8 +824,6 @@ foreach ed_var of local ed_vars {
 
 
 *<_nlfreason_>
-*old and ill are put in the same category but are not differentiated as retired so I kept them in disabled. 
-*little amount of responses yes reason 
 	gen byte nlfreason = pw12
 	recode nlfreason 1=. 2=1 3=2 
 	replace nlfreason=. if lstatus!=3
@@ -925,7 +916,6 @@ foreach ed_var of local ed_vars {
 
 
 *<_industrycat4_
-*the variable of sector is not well disaggregated.
 	gen byte industrycat4 = industrycat10
 	recode industrycat4 (1 = 1) (2 3 4 5 = 2) (6 7 8 9 = 3) (10 = 4)
 	label var industrycat4 "Broad Economic Activities classification, primary job 7 day recall"
@@ -1096,7 +1086,6 @@ replace occup_isco="" if occup_isco=="9900"
 
 
 *<_ocusec_2_>
-*are UN agencies private ? there is no option for foregin 
 	gen byte ocusec_2 =.
 	label var ocusec_2 "Sector of activity secondary job 7 day recall"
 	label values ocusec_2 lblocusec

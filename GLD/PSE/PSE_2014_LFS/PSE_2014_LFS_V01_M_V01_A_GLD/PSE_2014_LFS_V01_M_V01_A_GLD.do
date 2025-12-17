@@ -252,7 +252,7 @@ label var hhid "Household ID"
 
 
 *<_weight_>
-* Scale rw so that its sum equals 2,979,258 (all observations)
+*reference in CSD, scaling to match WDI population 10 plus.
 quietly summarize rw if !missing(rw), meanonly
 local k = 2979258 / r(sum)
 generate double weight = rw * `k'
@@ -319,7 +319,6 @@ generate double weight = rw * `k'
 {
 
 *<_urban_>
-*refugee areas are missing 
 	gen byte urban =id7
 	recode urban 2=0 3=.a
 	label var urban "Location is urban"
@@ -424,14 +423,12 @@ label var subnatid2 "Subnational ID at Second Administrative Level"
 
 
 *<_age_>
-*i2d2 had age already 
 	gen age = pr1
 	label var age "Individual age"
 *</_age_>
 
 
-*<_male_>2
-*i2d2 var called sex 
+*<_male_>
 	gen male = hr2
 	recode male 2=0
 	label var male "Sex - Ind is male"
@@ -443,23 +440,6 @@ label var subnatid2 "Subnational ID at Second Administrative Level"
 *<_relationharm_>
 	gen relationharm =hr4
 	recode relationharm 5/9=5 10=6
-	/*
-	replace relationharm = 1 if relationharm==2 & pid=="1382682-002-3"
-	replace relationharm = 2 if relationharm==1 & pid=="1381866-002-2"
-    replace relationharm = 2 if relationharm==1 & pid=="1381866-002-3"
-	replace relationharm = 2 if relationharm==1 & pid=="1382580-002-2"
-	replace relationharm = 2 if relationharm==1 & pid=="1382580-002-3"
-	replace relationharm = 5 if relationharm==1 & pid=="1383246-006-3"
-	replace relationharm = 5 if relationharm==1 & pid=="1383246-006-2"
-	replace relationharm = 3 if relationharm==1 & pid=="1423722-003-1"
-	replace relationharm = 3 if relationharm==1 & pid=="1423722-003-4"
-	replace relationharm = 3 if relationharm==1 & pid=="1441778-002-1"
-	replace relationharm = 3 if relationharm==1 & pid=="1441778-002-2"
-	replace relationharm = 2 if relationharm==1 & pid=="1463610-002-2"
-	replace relationharm = 2 if relationharm==1 & pid=="1463610-002-3"
-	replace relationharm = 2 if relationharm==1 & pid=="1481718-002-3"
-	replace relationharm = 2 if relationharm==1 & pid=="1481718-002-4"
-	*/
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm  lblrelationharm
@@ -475,7 +455,6 @@ label var subnatid2 "Subnational ID at Second Administrative Level"
 *<_marital_>
 	gen byte marital = maritals
 	recode marital 1=2 3=1 
-	*engaged as a category 
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
 	label values marital lblmarital
@@ -631,7 +610,6 @@ label var ed_mod_age "Education module application age"
 *</_ed_mod_age_>
 
 *<_school_>
-*i2d2 called atten 
 	gen byte school = pr2
 	recode school 2/4=0
 	label var school "Attending school"
@@ -651,7 +629,6 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educy_>
-*i2d2 called yers 
 	gen byte educy = pr3
 	label var educy "Years of education"
 *</_educy_>
@@ -824,8 +801,7 @@ foreach ed_var of local ed_vars {
 *</_underemployment_>
 
 
-*<_nlfreason_>
-*old and ill are put in the same category but are not differentiated as retired so I kept them in disabled. 
+*<_nlfreason_> 
 	gen byte nlfreason = pw12
 	recode nlfreason 1=. 2=1 3=2 
 	replace nlfreason=5 if (nlfreason==. & lstatus==3)
@@ -881,7 +857,6 @@ foreach ed_var of local ed_vars {
 *<_industrycat_isic_>
 	gen industrycat_isic = industry_orig + "00"
 	replace industrycat_isic="" if industrycat_isic==".00"
-	*replace industrycat_isic="" if industrycat_isic=="0600"
 	replace industrycat_isic="" if industrycat_isic=="8300"
 	replace industrycat_isic="" if industrycat_isic=="00"
 	replace industrycat_isic="" if lstatus!=1
@@ -919,7 +894,6 @@ replace industrycat10 = 10 if inrange(industrycat_isic, "8500", "9900")
 
 
 *<_industrycat4_
-*the variable of sector is not well disaggregated.
 	gen byte industrycat4 = industrycat10
 	recode industrycat4 (1 = 1) (2 3 4 5 = 2) (6 7 8 9 = 3) (10 = 4)
 	label var industrycat4 "Broad Economic Activities classification, primary job 7 day recall"
@@ -1098,7 +1072,6 @@ replace occup_isco="3000" if occup_isco=="300"
 
 
 *<_ocusec_2_>
-*are UN agencies private ? there is no option for foregin 
 	gen byte ocusec_2 =.
 	label var ocusec_2 "Sector of activity secondary job 7 day recall"
 	label values ocusec_2 lblocusec
@@ -1106,7 +1079,6 @@ replace occup_isco="3000" if occup_isco=="300"
 
 
 *<_industry_orig_2_>
-*all the codes fail in rev 4 , perhaps they are lettters, since the codes dont match missing.
 	gen industry_orig_2 = string(pw5a,"%02.0f")
 	replace industry_orig_2="" if lstatus!=1
 	replace industry_orig_2="" if industry_orig_2=="."
