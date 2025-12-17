@@ -255,15 +255,12 @@ drop _merge
 
 
 *<_weight_>
-	* Make quarterly weight annual based on obs per quarter
-	gen help_w_1 = 1
-	egen help_w_2 = total(help_w_1)
-	egen help_w_3 = total(help_w_1), by(quarter)
-	gen help_w_4 = help_w_3/help_w_2
-	
-	gen weight = FWP*help_w_4
+*scaling to population 10 plus using WDI, consult CSD.
+	quietly summarize FWP if !missing(FWP), meanonly
+local k = 3474674 / r(sum)
+generate double weight = FWP * `k'
 	label var weight "Survey sampling weight"
-	drop help_w_*
+	*drop help_w_*
 *</_weight_>
 
 
@@ -326,7 +323,6 @@ drop _merge
 {
 
 *<_urban_>
-*refugee areas are missing 
 	gen byte urban = ID7
 	recode urban 2=0 3=.a
 	label var urban "Location is urban"
@@ -617,7 +613,6 @@ label var ed_mod_age "Education module application age"
 *</_ed_mod_age_>
 
 *<_school_>
-*how about the graduates???
 	gen byte school = Pr2
 	recode school 2=0 3=0 4=0
 	label var school "Attending school"
@@ -778,7 +773,7 @@ foreach ed_var of local ed_vars {
 *<_lstatus_>
 	gen byte lstatus = .
 	replace lstatus = 1 if PW01==1 | PW02==1 | PW03==1
-	replace lstatus=2 if ((inrange(PW01, 2, 3) | PW02 == 2 | PW03 == 2) & (PW16 == 1) & (PW21 == 1) ) 
+	replace lstatus=2 if ((inrange(PW01, 2, 3) | PW02 == 2 | PW03 == 2) & (PW16 == 1) & (PW19 == 1) ) 
     replace lstatus = 3 if  missing(lstatus)
 	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
