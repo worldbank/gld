@@ -109,6 +109,9 @@ says it belongs: `Central Luzon`.
 After these two recoding decisions were completed in the code, all four rounds share the same values and value labels – the same as those found
 in 2004 and subsequent years.
 
+### Coding 2023 regions
+Beginning in August 2023, the Philippine LFS changed the region code for the Bangsamoro Autonomous Region of Muslim Mindanao (BARMM), previously known as the Autonomous Region of Muslim Mindanao (ARMM) **from 15 to 19**. To maintain consistency when appending all 2023 rounds, code 19 is assigned to BARMM for the full 2023 dataset and created a variable `subnatid1_prev` that preserves the old coding system (i.e., setting it to code 15 for BARMM). 
+
 ## Final Region Labels
 
 The resulting coding and labeling schema looks like this, after the above recoding takes place:
