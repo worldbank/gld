@@ -394,8 +394,10 @@ rename v0005 census_area
 
 
 *<_subnatidsurvey_>
-	* States if not in the four smaller northern ones
-	gen subnatidsurvey = subnatid2
+	* Hierarchy from smaller to larger:
+	* 9 metropolitan areas, if not states but for the four smaller nothern ones
+	gen     subnatidsurvey = subnatid3 
+	replace subnatidsurvey = subnatid2 if mi(subnatidsurvey)
 	replace subnatidsurvey = subnatid1 if inlist(subnatid2, "11 - Rondonia", "12 - Acre", "14 - Roraima", "16 - Amapa")
 	label variable subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
