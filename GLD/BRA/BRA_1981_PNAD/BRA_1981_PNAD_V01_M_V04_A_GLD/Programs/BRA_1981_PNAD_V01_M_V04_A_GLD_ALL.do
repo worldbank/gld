@@ -394,11 +394,17 @@ rename v0005 census_area
 	label variable subnatid3 "Subnational ID at Third Administrative Level"
 *</_subnatid3_>
 
+
 *<_subnatidsurvey_>
-	* Until 1984 only states
-	gen subnatidsurvey = subnatid2
+	* Hierarchy from smaller to larger:
+	* 9 metropolitan areas, if not one of the 10 states, other region
+	gen     subnatidsurvey = subnatid3 
+	replace subnatidsurvey = subnatid2 if inlist(subnatid2, "33 - Rio de Janeiro", "35 - Sao Paulo", "53 - Distrito Federal", "23 - Ceara") & mi(subnatidsurvey)
+	replace subnatidsurvey = subnatid2 if inlist(subnatid2, "52 - Goias", "43 - Rio Grande do Sul", "41 - Parana", "26 - Pernambuco", "29 - Bahia", "31 - Minas Gerais")  & mi(subnatidsurvey)
+	replace subnatidsurvey = subnatid1 if mi(subnatidsurvey)
 	label variable subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
+
 
 *<_subnatid1_prev_>
 	gen subnatid1_prev = .
