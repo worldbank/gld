@@ -392,11 +392,14 @@ rename v0005 census_area
 	label variable subnatid3 "Subnational ID at Third Administrative Level"
 *</_subnatid3_>
 
+
 *<_subnatidsurvey_>
-	* Until 1984 only states
+	* States if not in the four smaller northern ones
 	gen subnatidsurvey = subnatid2
+	replace subnatidsurvey = subnatid1 if inlist(subnatid2, "11 - Rondonia", "12 - Acre", "14 - Roraima", "16 - Amapa")
 	label variable subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
+
 
 *<_subnatid1_prev_>
 	gen subnatid1_prev = .
