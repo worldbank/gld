@@ -5,34 +5,34 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				[Name of your do file] </_Program name_>
-<_Application_>					[Name of your software (STATA) and version] <_Application_>
+<_Program name_>				COL_2022_GLD_GEIH_V02 </_Program name_>
+<_Application_>					Stata 19 <_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
-<_Date created_>				YYYY-MM-DD </_Date created_>
+<_Date created_>				2025-12-16  </_Date created_>
 
 -------------------------------------------------------------------------
 
-<_Country_>					[Country_Name (CCC)] </_Country_>
-<_Survey Title_>				[SurveyName] </_Survey Title_>
-<_Survey Year_>					[Year of start of the survey] </_Survey Year_>
+<_Country_>					COL </_Country_>
+<_Survey Title_>				Gran Encuesta Integrada de Hogares - GEIH </_Survey Title_>
+<_Survey Year_>					2022 </_Survey Year_>
 <_Study ID_>					[Microdata Library ID if present] </_Study ID_>
-<_Data collection from_>			[MM/YYYY] </_Data collection from_>
-<_Data collection to_>				[MM/YYYY] </_Data collection to_>
-<_Source of dataset_> 				[Source of data, e.g. NSO] </_Source of dataset_>
-<_Sample size (HH)_> 				[#] </_Sample size (HH)_>
-<_Sample size (IND)_> 				[#] </_Sample size (IND)_>
-<_Sampling method_> 				[Brief description] </_Sampling method_>
-<_Geographic coverage_> 			[To what level is data significant] </_Geographic coverage_>
-<_Currency_> 					[Currency used for wages] </_Currency_>
+<_Data collection from_>			[01/2022] </_Data collection from_>
+<_Data collection to_>				[12/2022] </_Data collection to_>
+<_Source of dataset_> 				Departamento Administrativo Nacional de Estadistica - DANE </_Source of dataset_>
+<_Sample size (HH)_> 				919,459 </_Sample size (HH)_>
+<_Sample size (IND)_> 				304,459 </_Sample size (IND)_>
+<_Sampling method_> 				probabilistic, multi-stage, stratified, unequal conglomerate and self-weighted design </_Sampling method_>
+<_Geographic coverage_> 			national </_Geographic coverage_>
+<_Currency_> 					COP </_Currency_>
 
 -----------------------------------------------------------------------
 
-<_ICLS Version_>				[Version of ICLS for Labor Questions] </_ICLS Version_>
-<_ISCED Version_>				[Version of ICLS for Labor Questions] </_ISCED Version_>
-<_ISCO Version_>				[Version of ICLS for Labor Questions] </_ISCO Version_>
-<_OCCUP National_>				[Version of ICLS for Labor Questions] </_OCCUP National_>
-<_ISIC Version_>				[Version of ICLS for Labor Questions] </_ISIC Version_>
-<_INDUS National_>				[Version of ICLS for Labor Questions] </_INDUS National_>
+<_ICLS Version_>				ICLS-13 </_ICLS Version_>
+<_ISCED Version_>				isced_2011 </_ISCED Version_>
+<_ISCO Version_>				ISCO 2008</_ISCO Version_>
+<_OCCUP National_>				ISCO 2008 COLOMBIA </_OCCUP National_>
+<_ISIC Version_>				ISIC REV 4 </_ISIC Version_>
+<_INDUS National_>				ISIC REV 4 COLOMBIA </_INDUS National_>
 
 -----------------------------------------------------------------------
 <_Version Control_>
