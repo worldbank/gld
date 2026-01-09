@@ -584,14 +584,27 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educy_>
+	destring q19, replace
 	gen byte educy=.
+	replace educy = 3  if q19 == 1   // No formal education or <6 years
+	replace educy = 6  if q19 == 2   // At least 6 years, not completed basic
+	replace educy = 8  if q19 == 3   // Basic education
+	replace educy = 9  if q19 == 4   // Vocational <2 years
+	replace educy = 10 if q19 == 5   // Vocational ≥2 years
+	replace educy = 12 if q19 == 6   // Secondary general
+	replace educy = 12 if q19 == 7   // Secondary vocational
+	replace educy = 10 if q19 == 8   // After basic education, vocational ≥2 years
+	replace educy = 13 if q19 == 9   // Vocational after secondary
+	replace educy = 14 if q19 == 10  // College (2 years)
+	replace educy = 16 if q19 == 11  // University / Faculty
+	replace educy = 18 if q19 == 12  // Master's
+	replace educy = 21 if q19 == 13  // Doctorate
 	label var educy "Years of education"
 *</_educy_>
 
 
 *<_educat7_>
 	gen byte educat7=.
-	destring q19, replace
 	replace educat7 = 1 if q19 == 1
 	replace educat7 = 2 if q19 == 2  
 	replace educat7 = 3 if q19 == 3   

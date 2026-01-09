@@ -14,13 +14,13 @@
 
 <_Country_>						MNE </_Country_>
 <_Survey Title_>				Labor Force Survey </_Survey Title_>
-<_Survey Year_>					2019 </_Survey Year_>
+<_Survey Year_>					20122 </_Survey Year_>
 <_Study ID_>					[Microdata Library ID if present] </_Study ID_>
-<_Data collection from_>		01/2019 </_Data collection from_>
-<_Data collection to_>			12/2019 </_Data collection to_>
+<_Data collection from_>		01/2022 </_Data collection from_>
+<_Data collection to_>			12/2022 </_Data collection to_>
 <_Source of dataset_> 			Statistical Office of Montenegro </_Source of dataset_>
-<_Sample size (HH)_> 			7,989 </_Sample size (HH)_>
-<_Sample size (IND)_> 			28,268 </_Sample size (IND)_>
+<_Sample size (HH)_> 			7,700 </_Sample size (HH)_>
+<_Sample size (IND)_> 			20,022 </_Sample size (IND)_>
 <_Sampling method_> 			Two stage stratified sampling </_Sampling method_>
 <_Geographic coverage_> 		National </_Geographic coverage_>
 <_Currency_> 					NA </_Currency_>
@@ -61,7 +61,7 @@ set varabbrev off
 * Define path sections
 local server  "C:/Users/`c(username)'/WBG/GLD - Current Contributors/999999_ZW"
 local country  "MNE"
-local year  "2019"
+local year  "2022"
 local survey  "LFS"
 local vermast  "V01"
 local veralt  "V01"
@@ -85,7 +85,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * harmonized output in a single file
 
 
-use "`path_in_stata'/raw_data_mne.dta", clear
+use "`path_in_stata'/MNE_LFS_2022.dta", clear
 
 
 
@@ -139,7 +139,7 @@ use "`path_in_stata'/raw_data_mne.dta", clear
 
 
 *<_year_>
-	gen int year=2019
+	gen int year=2022
 	label var year "Year of survey"
 *</_year_>
 
@@ -163,13 +163,13 @@ use "`path_in_stata'/raw_data_mne.dta", clear
 
 
 *<_int_year_>
-	gen int int_year=2019
+	gen int int_year=2022
 	label var int_year "Year of the interview"
 *</_int_year_>
 
 
 *<_int_month_>
-	gen int_month = .
+	gen int_month = refmonth_eu
 	la de lblint_month 1 "January" 2 "February" 3 "March" 4 "April" 5 "May" 6 "June" 7 "July" 8 "August" 9 "September" 10 "October" 11 "November" 12 "December"
 	label value int_month lblint_month
 	label var int_month "Month of the interview"
@@ -177,13 +177,14 @@ use "`path_in_stata'/raw_data_mne.dta", clear
 
 
 *<_hhid_>
-	gen hhid = id + "Q" + quarter
+	gen hhid = id + "Q" + string(quarter)
 	label var hhid "Household ID"
 *</_hhid_>
 
 
 *<_pid_>
-	gen pid = hhid + q1 
+	gen q1_str = string(q1, "%02.0f")
+	gen pid = hhid + q1_str 
 	label var pid "Individual ID"
 *</_pid_>
 
@@ -226,7 +227,7 @@ use "`path_in_stata'/raw_data_mne.dta", clear
 
 *<_wave_>
 * There is quarter data but the weights are for annual estimates
-	gen wave = "Q" + quarter
+	gen wave = "Q" + string(quarter)
 	label var wave "Survey wave"
 *</_wave_>
 
@@ -351,7 +352,7 @@ use "`path_in_stata'/raw_data_mne.dta", clear
 
 
 *<_age_>
-	gen age = age_group
+	gen age = agegroup
 	recode age ///
     (1=2)   (2=7)   (3=12)  (4=17)  (5=22)  (6=27)  (7=32)  (8=37)  (9=42) ///
     (10=47) (11=52) (12=57) (13=62) (14=67) (15=72) (16=77) (17=82) (18=87) ///
@@ -361,7 +362,7 @@ use "`path_in_stata'/raw_data_mne.dta", clear
 
 
 *<_male_>
-	gen byte male= q12 == "1"
+	gen byte male= q12 == 1
 	label var male "Sex - Ind is male"
 	la de lblmale 1 "Male" 0 "Female"
 	label values male lblmale
@@ -369,12 +370,29 @@ use "`path_in_stata'/raw_data_mne.dta", clear
 
 
 *<_relationharm_>
-	destring q8, replace
+
+	/*
+
+	01 Reference person
+	02 Partner of reference person
+	03 Son/daughter of reference person
+	04 Son/daughter-in-law of reference person
+	05 Grandchild of reference person
+	06 Parent of reference person
+	07 Parent-in-law of reference person
+	08 Grandparent of reference person
+	09 Brother/sister of reference person
+	10 Other relative
+	11 Other non-relativ
+
+
+	*/
 	** Each household must have exactly one head **
 	
 	*Priority: 
 	*(1) respondent originally coded `head'
 	gen byte relationharm=q8
+	recode relationharm (4 = 3) (6 7 = 4) (8 9 10 = 5) (11 = 6)
 	
 	gen head = 1 if relationharm == 1
 	bys hhid : egen number_heads = total(head)
@@ -395,7 +413,7 @@ use "`path_in_stata'/raw_data_mne.dta", clear
 
 *<_marital_>
 	* Here they combined divorced and widowed, but in the questionnaire its separate.. weird!
-	destring marstat, gen(marital)
+	gen marital = marstat
 	recode marital (1 = 2) (2 = 1) (3 = 4)
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
@@ -555,14 +573,14 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educy_>
-	destring hatlevel, replace
 	gen byte educy = .
 	replace educy = 0 if hatlevel == 0
 	replace educy = 5 if hatlevel == 100
 	replace educy = 9 if hatlevel == 200
-	replace educy = 12 if inlist(hatlevel,302, 303, 304)
-	replace educy = 14 if hatlevel == 400
-	replace educy = 15 if hatlevel == 500
+	replace educy = 11 if inlist(hatlevel,352,353)
+	replace educy = 12 if inlist(hatlevel,344,354)
+	replace educy = 14 if hatlevel == 450
+	replace educy = 15 if hatlevel == 550
 	replace educy = 16 if hatlevel == 600
 	replace educy = 18 if hatlevel == 700
 	replace educy = 21 if hatlevel == 800
@@ -576,9 +594,9 @@ label var ed_mod_age "Education module application age"
     (0 = 1) /// No education
     (100 = 3) /// Primary ed
 	(200 = 4) /// Lower secondary
-	(302 303 304 = 5) /// Upper secondary
-	(400 = 6) ///
-	(500 600 700 800 =  7) ///
+	(344 352 353 354 = 5) /// Upper secondary
+	(450 = 6) ///
+	(550 600 700 800 =  7) ///
 	(999 = .)
 	replace educat7=. if age<ed_mod_age & age!=.
 	label var educat7 "Level of education 1"
@@ -612,7 +630,7 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat_isced_>
-	gen educat_isced = .
+	gen educat_isced = hatlevel if !missing(educat7)
 	label var educat_isced "ISCED standardised level of education"
 *</_educat_isced_>
 
@@ -706,25 +724,20 @@ foreach ed_var of local ed_vars {
 {
 *<_lstatus_>
 	* Choose ulogars variable because this is consistent with the definition and this is used in the official reports
-	gen lstatus = 1 if e == 1
-	replace lstatus = 2 if u == 1
+	gen lstatus = ilostat
 	replace lstatus = 3 if missing(lstatus) & age>= minlaborage & !missing(age)
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
 *</_lstatus_>
 
-
 *<_potential_lf_>
 	gen byte potential_lf = 0 if lstatus == 3
-	
-	* available non-seekers
-	destring preseek, replace
-	destring availble, replace
-	replace potential_lf = 1 if availble == 1 & preseek > 5 & lstatus == 3
+
+	replace potential_lf = 1 if availble == 1 & seekwork > 5 & lstatus == 3
 	
 	* unavailable jobseekers
-	replace potential_lf = 1 if availble != 1 & inrange(preseek, 1, 4) & lstatus == 3
+	replace potential_lf = 1 if availble != 1 & inrange(seekwork, 1, 4) & lstatus == 3
 
 	replace potential_lf = . if age < minlaborage & !missing(age)
 	replace potential_lf = . if lstatus != 3
@@ -736,7 +749,6 @@ foreach ed_var of local ed_vars {
 
 *<_underemployment_>
 	gen byte underemployment = 0 if lstatus == 1
-	destring wishmore, replace
 	replace underemployment = wishmore == 1 if lstatus == 1
 	replace underemployment = . if lstatus != 1 & age<minlaborage
 	label var underemployment "Underemployment status"
@@ -746,7 +758,6 @@ foreach ed_var of local ed_vars {
 
 
 *<_nlfreason_>
-	destring mainstat, replace
 	gen nlfreason = .
 	replace nlfreason = 1 if mainstat == 5 & lstatus == 3
 	replace nlfreason = 2 if mainstat == 6 & lstatus == 3
@@ -760,7 +771,6 @@ foreach ed_var of local ed_vars {
 
 
 *<_unempldur_l_>
-	* We cannot use this because there are months in the year variable and years in the month variable!
 	gen byte unempldur_l=.
 	replace unempldur_l=. if lstatus!=2
 	label var unempldur_l "Unemployment duration (months) lower bracket"
@@ -780,7 +790,8 @@ foreach ed_var of local ed_vars {
 
 {
 *<_empstat_>
-	destring stapro, gen(empstat)
+	drop empstat // drop org var that says wheter is employed or not
+	gen empstat = stapron
 	recode empstat (1 = 4) (2 = 1) (3 = 2) (9 = .)
 	* To distinguish employers from self-employed, identify those with non-missing responses to firm size because in the questionnaire, self-employed were not asked for the number of persons in their company
 	replace empstat = 3 if empstat == 4 & inrange(sizefirm, 10, 15)
@@ -887,7 +898,7 @@ foreach ed_var of local ed_vars {
 
 
 *<_occup_orig_>
-	gen occup_orig= isco2d
+	gen occup_orig = string(isco2d, "%02.0f")
 	replace occup_orig= "" if lstatus!=1 | occup_orig == "."
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
@@ -951,9 +962,10 @@ foreach ed_var of local ed_vars {
 
 
 *<_whours_>
-	destring hwactual, gen(whours)
-	replace whours = . if hwactual == "99"
+	gen whours = hwactual/10
+	replace whours = . if hwactual == 999
 	replace whours=. if lstatus!=1
+	replace whours = hwusual/10 if inlist(whours,.,0) & lstatus == 1 & hwusual != 999
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
@@ -1040,7 +1052,7 @@ foreach ed_var of local ed_vars {
 
 {
 *<_empstat_2_>
-	destring stapro2j, gen(empstat_2)
+	gen empstat_2 = stapro2jn
 	recode empstat_2 (1 = 4) (2 = 1) (3 = 2) (9 = .)
 	replace empstat_2 = . if lstatus != 1
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
@@ -1058,7 +1070,7 @@ foreach ed_var of local ed_vars {
 
 
 *<_industry_orig_2_>
-	destring nace2j1d, gen(industry_orig_2)
+	gen industry_orig_2 = nace2j1d
 	replace industry_orig_2= . if lstatus!=1 | missing(nace2j1d) | industry_orig_2 == 0
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
@@ -1186,8 +1198,8 @@ foreach ed_var of local ed_vars {
 
 
 *<_whours_2_>
-	destring hwactua2, gen(whours_2)
-	replace whours_2 = . if lstatus!=1
+	gen whours_2 = hwactu2j / 10
+	replace whours_2 = . if lstatus!=1 | hwactu2j == 999
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 

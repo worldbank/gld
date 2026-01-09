@@ -548,6 +548,16 @@ label var ed_mod_age "Education module application age"
 
 *<_educy_>
 	gen byte educy = .
+	replace educy = 0 if hatlevel == 0
+	replace educy = 5 if hatlevel == 100
+	replace educy = 9 if hatlevel == 200
+	replace educy = 11 if inlist(hatlevel,352,353)
+	replace educy = 12 if inlist(hatlevel,344,354)
+	replace educy = 14 if hatlevel == 450
+	replace educy = 15 if hatlevel == 550
+	replace educy = 16 if hatlevel == 600
+	replace educy = 18 if hatlevel == 700
+	replace educy = 21 if hatlevel == 800
 	label var educy "Years of education"
 *</_educy_>
 
