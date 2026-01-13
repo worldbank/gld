@@ -5,22 +5,22 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				XKX_2022_LFS_V01_M_V01_A_GLD_ALL </_Program name_>
-<_Application_>					Stata 18 <_Application_>
+<_Program name_>				XKX_2023_LFS_V01_M_V01_A_GLD_ALL </_Program name_>
+<_Application_>					Stata 19 <_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
-<_Date created_>				2025-10-01 </_Date created_>
+<_Date created_>				2026-01-12 </_Date created_>
 
 -------------------------------------------------------------------------
 
 <_Country_>						XKX </_Country_>
 <_Survey Title_>				Labor Force Survey  </_Survey Title_>
-<_Survey Year_>					2022 </_Survey Year_>
+<_Survey Year_>					2023 </_Survey Year_>
 <_Study ID_>					[Microdata Library ID if present] </_Study ID_>
-<_Data collection from_>		01/2022 </_Data collection from_>
-<_Data collection to_>			12/2022 </_Data collection to_>
+<_Data collection from_>		01/2023 </_Data collection from_>
+<_Data collection to_>			12/2023 </_Data collection to_>
 <_Source of dataset_> 			Kosovo Agency of Statistics </_Source of dataset_>
-<_Sample size (HH)_> 			12,414 </_Sample size (HH)_>
-<_Sample size (IND)_> 			58,583 </_Sample size (IND)_>
+<_Sample size (HH)_> 			12,665 </_Sample size (HH)_>
+<_Sample size (IND)_> 			59,412 </_Sample size (IND)_>
 <_Sampling method_> 			Two-stage cluster sampling </_Sampling method_>
 <_Geographic coverage_> 		National </_Geographic coverage_>
 <_Currency_> 					EURO </_Currency_>
@@ -36,8 +36,6 @@
 -----------------------------------------------------------------------
 <_Version Control_>
 
-* Date: [YYYY-MM-DD] - [Description of changes]
-* Date: [YYYY-MM-DD] - [Description of changes]
 
 </_Version Control_>
 
@@ -61,7 +59,7 @@ set varabbrev off
 local server  "C:/Users/`c(username)'/WBG/GLD - Current Contributors/999999_ZW"
 dis "`server'"
 local country "XKX"
-local year    "2022"
+local year    "2023"
 local survey  "LFS"
 local vermast "V01"
 local veralt  "V01"
@@ -83,7 +81,12 @@ local out_file "`level_2_harm'_ALL.dta"
 
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
-use "`path_in_stata'/LFS_2022_translated.dta", clear
+/*
+import spss using "`path_in_other'\Kosovo_LFS_2023_For_WB.sav", case(upper)
+save "`path_in_stata'/Kosovo_LFS_2023_For_WB.dta",replace
+*/
+
+use "`path_in_stata'/Kosovo_LFS_2023_For_WB.dta", clear
 
 
 /*%%=============================================================================================
@@ -134,7 +137,7 @@ use "`path_in_stata'/LFS_2022_translated.dta", clear
 
 
 *<_year_>
-	gen int year = 2022
+	gen int year = 2023
 	label var year "Year of survey"
 *</_year_>
 
@@ -158,7 +161,7 @@ use "`path_in_stata'/LFS_2022_translated.dta", clear
 
 
 *<_int_year_>
-	gen int_year = 2022
+	gen int_year = 2023
 	label var int_year "Year of the interview"
 *</_int_year_>
 
@@ -206,7 +209,7 @@ use "`path_in_stata'/LFS_2022_translated.dta", clear
 
 
 *<_weight_>
-	gen weight = ADJ_ANNUAL
+	gen weight = WEIGHTS_ADJ_ANNUAL
 	label var weight "Survey sampling weight"
 *</_weight_>
 
@@ -224,7 +227,7 @@ use "`path_in_stata'/LFS_2022_translated.dta", clear
 
 
 *<_psu_>
-	gen psu = EA
+	gen psu = .
 	label var psu "Primary sampling units"
 *</_psu_>
 
@@ -236,7 +239,7 @@ use "`path_in_stata'/LFS_2022_translated.dta", clear
 
 
 *<_strata_>
-	gen strata = Stratum_Strata
+	gen strata = .
 	label var strata "Strata"
 *</_strata_>
 
@@ -283,16 +286,7 @@ use "`path_in_stata'/LFS_2022_translated.dta", clear
 	Example of entries would be "1 - Alaska",  "2 - Arkansas", ...
 
 </_subnatid1_note> */
-	gen regioncode = substr(Stratum_Strata, 1, 1)
-	destring regioncode, replace
 	gen subnatid1 = ""
-	replace subnatid1 = "1 - Gjakova"   if regioncode == 1
-	replace subnatid1 = "2 - Gjilani"   if regioncode == 2
-	replace subnatid1 = "3 - Mitrovica" if regioncode == 3
-	replace subnatid1 = "4 - Peja"      if regioncode == 4
-	replace subnatid1 = "5 - Prizreni"  if regioncode == 5
-	replace subnatid1 = "6 - Prishtina" if regioncode == 6
-	replace subnatid1 = "7 - Ferizaji"  if regioncode == 7
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 
@@ -410,29 +404,29 @@ use "`path_in_stata'/LFS_2022_translated.dta", clear
 	
 	number_heads
 	-----------------------------------------------------------
-                  |      Freq.    Percent      Valid       Cum.
+				  |      Freq.    Percent      Valid       Cum.
 	--------------+--------------------------------------------
-	Valid   0     |       1495       2.55       2.55       2.55
-			1     |      56949      97.21      97.21      99.76
-			2     |        133       0.23       0.23      99.99
-			3     |          6       0.01       0.01     100.00
-			Total |      58583     100.00     100.00           
+	Valid   0     |       1574       2.65       2.65       2.65
+			1     |      57628      97.00      97.00      99.65
+			2     |        195       0.33       0.33      99.97
+			3     |          6       0.01       0.01      99.98
+			5     |          9       0.02       0.02     100.00
+			Total |      59412     100.00     100.00           
 	-----------------------------------------------------------
 
 
-
 	unique hhid if number_heads == 0
-		Number of unique values of hhid is  370
-		Number of records is  1495
+		Number of unique values of hhid is  389
+		Number of records is  1574
 
 
-	There are 370 households (1495 individuals) with no household head
+	There are 389 households (1574 individuals) with no household head
 	
 	unique hhid if inrange(number_heads,2,999)
-		Number of unique values of hhid is  26
-		Number of records is  139
+		Number of unique values of hhid is  36
+		Number of records is  210
 		
-	There are 26 households (139 individuals) with more than one head
+	There are 36 households (210 individuals) with more than one head
 	
 	*/
 	
@@ -459,6 +453,9 @@ use "`path_in_stata'/LFS_2022_translated.dta", clear
 	bys hhid : egen number_heads = total(head)
 	
 	assert number_heads == 1
+	
+	*There is one individual with a missing value in the orig_relationharm variable; code as 5
+	replace relationharm = 5 if PPF_P4 == .
 	
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
@@ -605,7 +602,7 @@ use "`path_in_stata'/LFS_2022_translated.dta", clear
 	replace migrated_from_country = "KWT" if PPF_P18 == "KW"
 	replace migrated_from_country = "MNE" if PPF_P18 == "ME"
 	replace migrated_from_country = "MKD" if PPF_P18 == "MK"
-	replace migrated_from_country = "ZWE" if PPF_P18 == "ZW"
+	replace migrated_from_country = "CHE" if PPF_P18 == "CH"
 
 	replace migrated_from_country = "" if migrated_binary != 1
 	label var migrated_from_country "Code of migration country (ISO 3 Letter Code)"
@@ -837,7 +834,7 @@ foreach ed_var of local ed_vars {
 	*** employed ***
 	replace lstatus = 1 if inlist(P21,"1","2","3","4","5A")
 	replace lstatus = 1 if inlist(P27,1,2) | P28 == 1 | P29 == 1 //absent
-	replace lstatus = 1 if inlist(P23,8,9) // absent because: Maternity  leave or Own illness, injury or temporary 
+	replace lstatus = 1 if inlist(P23,8,9) // absent because: Maternity  leave or Own illness, injury or temporary disability 
 	
 	*** umeployed ***
 	*seeking work
@@ -988,9 +985,11 @@ foreach ed_var of local ed_vars {
 
 
 *<_occup_isco_>
-	gen occup_isco = P42_A_CODE
+	gen occup_isco = string(round(P42_A_CODE), "%4.0f")
 	replace occup_isco = "" if lstatus != 1
-	replace occup_isco = "3350" if occup_isco == "3358"
+	replace occup_isco = "5140" if occup_isco == "5149"
+	replace occup_isco = "5300" if occup_isco == "5332"
+	replace occup_isco = "8320" if occup_isco == "8323"
 
 
 	* Check that no errors --> using our universe check function, count should be 0 (no obs wrong)

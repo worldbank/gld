@@ -854,6 +854,7 @@ foreach ed_var of local ed_vars {
 	*** employed ***
 	replace lstatus = 1 if inlist(P21,"1","2","3","4","5A")
 	replace lstatus = 1 if inlist(P27,1,2) | P28 == 1 | P29 == 1 //absent
+	replace lstatus = 1 if inlist(P23,8,9) // absent because: Maternity  leave or Own illness, injury or temporary 
 	
 	*** umeployed ***
 	*seeking work

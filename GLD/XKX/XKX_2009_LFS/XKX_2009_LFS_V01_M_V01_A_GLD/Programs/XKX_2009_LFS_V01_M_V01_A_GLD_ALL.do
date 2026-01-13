@@ -831,6 +831,9 @@ foreach ed_var of local ed_vars {
 	* absent from work for more than three months and will continue to receive wages (this is our indication of job attachment)
 	replace lstatus = 1 if q21 == 1 & q23 == 1 & q24 == 1
 	
+	* absent because: Maternity  leave or Own illness, injury or temporary or education related with the job
+	replace lstatus = 1 if inlist(q25,1,2,3)
+	
 	******************
 	*** Unemployed ***
 	******************

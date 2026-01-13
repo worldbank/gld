@@ -749,7 +749,7 @@ foreach ed_var of local ed_vars {
 	* p15 is if engaged in 15 hours + in own conusmption; we exclude this for comparability
 	replace lstatus = 1 if p13 == 1 | p14 == 1
 	
-	* absent from work in the past week but cannot confirm job attachment
+	* absent from work in the past week and confirm job attachment
 	replace lstatus = 1 if p16 == 1
 	
 	
