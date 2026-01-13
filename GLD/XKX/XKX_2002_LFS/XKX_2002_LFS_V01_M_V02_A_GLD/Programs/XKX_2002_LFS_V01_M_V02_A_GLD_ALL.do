@@ -5,7 +5,7 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				XKX_2003_LFS_V01_M_V01_A_GLD_ALL </_Program name_>
+<_Program name_>				XKX_2002_LFS_V01_M_V02_A_GLD_ALL </_Program name_>
 <_Application_>					Stata 18 <_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
 <_Date created_>				2025-10-01 </_Date created_>
@@ -14,13 +14,13 @@
 
 <_Country_>						XKX </_Country_>
 <_Survey Title_>				Labor Force Survey  </_Survey Title_>
-<_Survey Year_>					2003 </_Survey Year_>
+<_Survey Year_>					2002 </_Survey Year_>
 <_Study ID_>					[Microdata Library ID if present] </_Study ID_>
-<_Data collection from_>		09/2003 </_Data collection from_>
-<_Data collection to_>			10/2003 </_Data collection to_>
+<_Data collection from_>		09/2002 </_Data collection from_>
+<_Data collection to_>			10/2002 </_Data collection to_>
 <_Source of dataset_> 			Kosovo Agency of Statistics </_Source of dataset_>
-<_Sample size (HH)_> 			3,167 </_Sample size (HH)_>
-<_Sample size (IND)_> 			19,510 </_Sample size (IND)_>
+<_Sample size (HH)_> 			Cannot be determined </_Sample size (HH)_>
+<_Sample size (IND)_> 			19,361 </_Sample size (IND)_>
 <_Sampling method_> 			Two-stage cluster sampling </_Sampling method_>
 <_Geographic coverage_> 		National </_Geographic coverage_>
 <_Currency_> 					EURO </_Currency_>
@@ -36,8 +36,7 @@
 -----------------------------------------------------------------------
 <_Version Control_>
 
-* Date: [YYYY-MM-DD] - [Description of changes]
-* Date: [YYYY-MM-DD] - [Description of changes]
+* Date: 2026-01-13 update lstatus var
 
 </_Version Control_>
 
@@ -61,10 +60,10 @@ set varabbrev off
 local server  "C:/Users/`c(username)'/WBG/GLD - Current Contributors/999999_ZW"
 dis "`server'"
 local country "XKX"
-local year    "2003"
+local year    "2002"
 local survey  "LFS"
 local vermast "V01"
-local veralt  "V01"
+local veralt  "V02"
 
 * From the definitions, set path chunks
 local level_1      "`country'_`year'_`survey'"
@@ -83,7 +82,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
-use "`path_in_stata'/LFS_2003.dta", clear
+use "`path_in_stata'/LFS_2002.dta", clear
 
 
 /*%%=============================================================================================
@@ -134,7 +133,7 @@ use "`path_in_stata'/LFS_2003.dta", clear
 
 
 *<_year_>
-	gen year = 2003
+	gen year = 2002
 	label var year "Year of survey"
 *</_year_>
 
@@ -158,13 +157,13 @@ use "`path_in_stata'/LFS_2003.dta", clear
 
 
 *<_int_year_>
-	gen int_year = 2003
+	gen int_year = 2002
 	label var int_year "Year of the interview"
 *</_int_year_>
 
 
 *<_int_month_>
-* Not provided in 2003
+* Not provided in 2002
 	gen  int_month = .
 	label de lblint_month 1 "January" 2 "February" 3 "March" 4 "April" 5 "May" 6 "June" 7 "July" 8 "August" 9 "September" 10 "October" 11 "November" 12 "December"
 	label value int_month lblint_month
@@ -191,7 +190,7 @@ use "`path_in_stata'/LFS_2003.dta", clear
 </_hhid_note> */
 	* In the data, variable ea is the same as the combination of municipality, town, enum area and housing unit
 
-	gen hhid = survno
+	gen hhid = ""
 
 	label var hhid "Household ID"
 *</_hhid_>
@@ -199,14 +198,13 @@ use "`path_in_stata'/LFS_2003.dta", clear
 
 *<_pid_>
 	* Note that not all individuals completed the questionnaire: 6 -- drop them since missing anyway
-	egen  pid = concat(hhid indno)
-	isid pid
+	gen runner = _n
+	gen pid = string(runner, "%05.0f")
 
 	label var pid "Individual ID"
 *</_pid_>
 
 *<_weight_>
-	gen weight = weights
 	label var weight "Survey sampling weight"
 *</_weight_>
 
@@ -268,7 +266,7 @@ use "`path_in_stata'/LFS_2003.dta", clear
 {
 
 *<_urban_>
-	gen byte urban = .
+	gen byte urban = residenc == 1
 	label var urban "Location is urban"
 	la de lblurban 1 "Urban" 0 "Rural"
 	label values urban lblurban
@@ -277,8 +275,8 @@ use "`path_in_stata'/LFS_2003.dta", clear
 
 *<_subnatid1_>
 /* <_subnatid1_note>
+Not available for 2002
 
-	Not available for 2003
 </_subnatid1_note> */
 	gen subnatid1 = ""
 	label var subnatid1 "Subnational ID at First Administrative Level"
@@ -360,21 +358,19 @@ use "`path_in_stata'/LFS_2003.dta", clear
 {
 
 *<_hsize_>
-	bys hhid : gen hsize = _N
+	gen hsize = .
 	label var hsize "Household size"
 *</_hsize_>
 
 
 *<_age_>
 	*gen age = .
-	* Checking the birthdates, these are all in Q4 2003!
-	recode age (-1 = 0)
 	label var age "Individual age"
 *</_age_>
 
 
 *<_male_>
-	gen male = gender
+	gen male = sex
 	recode male (2 = 0)
 	label var male "Sex - Ind is male"
 	la de lblmale 1 "Male" 0 "Female"
@@ -383,34 +379,7 @@ use "`path_in_stata'/LFS_2003.dta", clear
 
 
 *<_relationharm_>
-
-	** Each household must have exactly one head **
-
-	*Priority: 
-	*(1) respondent originally coded `head
-	gen relationharm = relation2hh
-	
-	* two cases of relation2hh = 10; recode to others = 6
-	recode relationharm (10 = 6)
-	
-	*If household has no head or more than one head:
-	gen head = 1 if relationharm == 1
-	bys hhid : egen number_heads = total(head)
-	
-	* Create runner (oldest, male, HH head)
-	gen neg_age = -age
-	bys hhid (relationharm gender age): gen hhrunner = _n
-	
-	* When no hh head
-	replace relationharm = 1 if number_heads == 0 & hhrunner == 1
-
-	* When multiple hh head
-	replace relationharm = 5 if relationharm == 1 & hhrunner != 1  & number_heads>1
-	drop head number_heads
-
-	gen head = 1 if relationharm == 1
-	bys hhid : egen number_heads = total(head)
-	
+	gen relationharm = .
 
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
@@ -419,14 +388,13 @@ use "`path_in_stata'/LFS_2003.dta", clear
 
 
 *<_relationcs_>
-	gen relationcs = relation2hh
+	gen relationcs = .
 	label var relationcs "Relationship to the head of household - Country original"
 *</_relationcs_>
 
 
 *<_marital_>
-	gen byte marital = maritalstatus
-	recode marital (1 = 2) (2 = 1) (3 = 5)
+	gen byte marital = .
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
 	label values marital lblmarital
@@ -612,8 +580,8 @@ label var ed_mod_age "Education module application age"
 
 *<_educat7_>
 * There is secondary and high school (upper secondary) but the numbers seem odd
-	gen byte educat7 = schoollevel
-	recode educat7  (3 = 2) (4 =3) (5 6 = 5) (7 8 9 = 7) (0 = .)
+	gen byte educat7 = education
+	recode educat7  (3 = 2) (4 =3) (5 6 = 5) (7 8 9 10 11 = 7) (0 = .)
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
@@ -639,7 +607,7 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat_orig_>
-	gen educat_orig = schoollevel
+	gen educat_orig = education
 	label var educat_orig "Original survey education code"
 *</_educat_orig_>
 
@@ -738,32 +706,7 @@ foreach ed_var of local ed_vars {
 
 {
 *<_lstatus_>
-	gen byte lstatus = .
-	
-	*They used ICLS-13 definitions
-	
-	******************
-	**** Employed ****
-	******************
-	* worked in the past 7 days
-	* p15 is if engaged in 15 hours + in own conusmption; we exclude this for comparability
-	replace lstatus = 1 if p13 == 1 | p14 == 1
-	
-	* absent from work in the past week and confirm job attachment
-	replace lstatus = 1 if p16 == 1
-	
-	
-	******************
-	*** Unemployed ***
-	******************
-	* Traditional unemployed: looking and available to start
-	replace lstatus = 2 if (p51 == 1 &  p57 == 1) & lstatus != 1
-
-	******************
-	**** Not in LF ***
-	******************
-	replace lstatus = 3 if missing(lstatus)
-	
+	gen byte lstatus = workstatus
 	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -773,13 +716,6 @@ foreach ed_var of local ed_vars {
 
 *<_potential_lf_>
 	gen byte potential_lf = .
-	
-	* Job seekers who are unavailable
-	replace potential_lf = 1 if p51 == 1 & p57 == 2 & lstatus == 3
-	
-	* Available non-jobseekers/discouraged workers
-	replace potential_lf = 1 if p51 == 2 & p57 == 1 & lstatus == 3
-	
 	replace potential_lf = . if age < minlaborage & !missing(age)
 	replace potential_lf = . if lstatus != 3
 	label var potential_lf "Potential labour force status"
@@ -789,10 +725,7 @@ foreach ed_var of local ed_vars {
 
 
 *<_underemployment_>
-	gen byte underemployment = 0 if lstatus == 1
-	
-	* want to work more hours (leave it up to data user to impose restrictions on hours)
-	replace underemployment = 1 if p46 == 1
+	gen byte underemployment = .
 	replace underemployment = . if age < minlaborage & !missing(age)
 	replace underemployment = . if lstatus != 1
 	label var underemployment "Underemployment status"
@@ -802,8 +735,7 @@ foreach ed_var of local ed_vars {
 
 
 *<_nlfreason_>
-	gen byte nlfreason = p56
-	recode nlfreason (1 = 2) (2 = 1) (3 = 4) (4 = 3) (5/12 = 5) (0 = .)
+	gen byte nlfreason = .
 	replace nlfreason = . if lstatus != 3
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
@@ -813,13 +745,13 @@ foreach ed_var of local ed_vars {
 
 *<_unempldur_l_>
 * not provided
-    gen byte unempldur_l = p53n
+    gen byte unempldur_l = .
     label var unempldur_l "Unemployment duration (months) lower bracket"
 *</_unempldur_l_>
 
 
 *<_unempldur_u_>
-    gen byte unempldur_u = p53n
+    gen byte unempldur_u = .
     label var unempldur_u "Unemployment duration (months) upper bracket"
 *</_unempldur_u_>
 }
@@ -830,9 +762,12 @@ foreach ed_var of local ed_vars {
 
 {
 *<_empstat_>
-	gen byte empstat = p24 if lstatus == 1
-	recode empstat (1 2 = 1) (5 = 2) (6 = 5) (0 = .)
-	label var empstat "Employment status during past week primary job 7 day recall"
+* They only have for paid employee and employer
+	gen byte empstat = .
+	/*
+	replace empstat = 1 if emploffice == 1
+	replace empstat = 3 if employer == 1
+	*/
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat lblempstat
 *</_empstat_>
@@ -840,8 +775,6 @@ foreach ed_var of local ed_vars {
 
 *<_ocusec_>
 	gen byte ocusec = .
-	replace ocusec = 2 if inlist(p24, 2, 3, 4, 5, 6)
-	replace ocusec = 4 if p24 == 1
 	label var ocusec "Sector of activity primary job 7 day recall"
 	la de lblocusec 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec lblocusec
@@ -849,7 +782,7 @@ foreach ed_var of local ed_vars {
 
 
 *<_industry_orig_>
-	gen industry_orig = string(p19, "%04.0f") if lstatus == 1
+	gen industry_orig = string(naceempl, "%04.0f") if lstatus == 1
 	replace industry_orig = "" if industry_orig == "." | industry_orig == "0000"
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
@@ -905,7 +838,7 @@ foreach ed_var of local ed_vars {
 
 
 *<_occup_orig_>
-	gen occup_orig = string(p22, "%04.0f") if lstatus == 1 & p22 != 0
+	gen occup_orig = string(iscoempl, "%04.0f") if lstatus == 1 & iscoempl != 0
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
@@ -960,9 +893,7 @@ foreach ed_var of local ed_vars {
 
 
 *<_whours_>
-	gen whours = p441 if p441 != 0
-	replace whours = p41n if missing(whours)
-	replace whours = . if lstatus != 1
+	gen whours = usualhours
 	replace whours = . if whours == 0
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
@@ -987,9 +918,8 @@ foreach ed_var of local ed_vars {
 
 
 *<_contract_>
+* Not asked in 2002
 	gen byte contract = .
-	replace contract = 0 if lstatus == 1
-	replace contract = 1 if p25 == 1
 	label var contract "Employment has contract primary job 7 day recall"
 	la de lblcontract 0 "Without contract" 1 "With contract"
 	label values contract lblcontract
@@ -1022,26 +952,12 @@ foreach ed_var of local ed_vars {
 
 *<_firmsize_l_>
     gen firmsize_l = .
-    replace firmsize_l = 1           if p20p == 1   // Exact number if 1–10 reported
-    replace firmsize_l = 11             if p20p == 2   // 11–19
-    replace firmsize_l = 20             if p20p == 3   // 20–49
-    replace firmsize_l = 50             if p20p == 4   // 50+
-    replace firmsize_l = 1              if p20p == 5   // Don't know but <11 → assume min 1
-    replace firmsize_l = 11             if p20p == 6   // Don't know but >10 → assume min 11
-    replace firmsize_l = 500            if p20p == 7   // 500+
     label var firmsize_l "Firm size (lower bracket) primary job 7 day recall"
 *</_firmsize_l_>
 
 
 *<_firmsize_u_>
     gen firmsize_u = .
-    replace firmsize_u = 10           if p20p == 1   // Exact number if 1–10 reported
-    replace firmsize_u = 19             if p20p == 2   // 11–19
-    replace firmsize_u = 49             if p20p == 3   // 20–49
-    replace firmsize_u = .              if p20p == 4   // 50+ open-ended
-    replace firmsize_u = 10             if p20p == 5   // Don't know but <11 → assume max 10
-    replace firmsize_u = .              if p20p == 6   // Don't know but >10 → no upper bound
-    replace firmsize_u = .              if p20p == 7   // 500+ open-ended
     label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>
 
@@ -1055,59 +971,34 @@ foreach ed_var of local ed_vars {
 {
 *<_empstat_2_>
 
-	gen byte empstat_2 = p37
-	recode empstat_2 (1 2 = 1) (5 = 2) (6 = 5) (0 = .)
+	gen byte empstat_2 = .
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
 	label values empstat_2 lblempstat
 *</_empstat_2_>
 
 
 *<_ocusec_2_>
-	gen byte ocusec_2 = 2 if p31 == 1
-	replace ocusec_2 = 4 if p37 == 1
+	gen byte ocusec_2 = .
 	label var ocusec_2 "Sector of activity secondary job 7 day recall"
 	label values ocusec_2 lblocusec
 *</_ocusec_2_>
 
 
 *<_industry_orig_2_>
-	gen industry_orig_2 = string(p33, "%04.0f") if p31 == 1
-	replace industry_orig_2 = "" if industry_orig_2 == "." | industry_orig_2 == "0000"
+	gen industry_orig_2 = ""
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 
 
 *<_industrycat_isic_2_>
 	*They use NACE 2 which is in line with ISIC rev 4 at 2 digits level
-	gen industrycat_isic_2 = substr(industry_orig_2, 1, 2) + "00" if !missing(industry_orig_2)
-	replace industrycat_isic_2 = "" if p31 != 1
-	
-	* There is 8300 which is not ISIC. Only for 1 obs, recode to missing
-	replace industrycat_isic_2 = "" if industrycat_isic_2 == "8300"
+	gen industrycat_isic_2 = .
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
 
 *<_industrycat10_2_>
-	gen isic_1d = substr(industrycat_isic_2, 1, 1)
-	gen isic_2d = substr(industrycat_isic_2, 1, 2)
-	
-	destring isic_1d, replace
-	destring isic_2d, replace
-	
 	gen byte industrycat10_2 = .
-	replace industrycat10_2 = 1 if isic_1d == 0
-	replace industrycat10_2 = 2 if inrange(isic_2d, 10, 14)
-	replace industrycat10_2 = 3 if inrange(isic_2d, 15, 37)
-	replace industrycat10_2 = 4 if inrange(isic_2d, 40, 41)
-	replace industrycat10_2 = 5 if isic_2d == 45
-	replace industrycat10_2 = 6 if isic_1d == 5
-	replace industrycat10_2 = 7 if inrange(isic_2d, 60, 64)
-	replace industrycat10_2 = 8 if inrange(isic_2d, 65, 74)
-	replace industrycat10_2 = 9 if isic_2d == 75
-	replace industrycat10_2 = 10 if inrange(isic_2d, 80, 99)
-	
-	drop isic_1d isic_2d
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
 *</_industrycat10_2_>
@@ -1122,20 +1013,19 @@ foreach ed_var of local ed_vars {
 
 
 *<_occup_orig_2_>
-	gen occup_orig_2 = string(p36, "%04.0f") if p31 == 1
+	gen occup_orig_2 = ""
 	label var occup_orig_2 "Original occupation record secondary job 7 day recall"
 *</_occup_orig_2_>
 
 
 *<_occup_isco_2_>
-	gen occup_isco_2 = substr(occup_orig_2, 1, 2) + "00" if !missing(occup_orig_2) & p31 == 1
+	gen occup_isco_2 = ""
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
 
 *<_occup_2_>
-	gen byte occup_2 = real(substr(occup_isco_2,1,1))
-	recode occup_2 (0 = 10)
+	gen byte occup_2 = .
 	label var occup_2 "1 digit occupational classification secondary job 7 day recall"
 	label values occup_2 lbloccup
 *</_occup_2_>
@@ -1166,8 +1056,7 @@ foreach ed_var of local ed_vars {
 
 
 *<_whours_2_>
-	gen whours_2 = p442 if p31 == 1
-	replace whours_2 = . if whours_2 == 0
+	gen whours_2 = .
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 
@@ -1186,26 +1075,12 @@ foreach ed_var of local ed_vars {
 
 *<_firmsize_l_2_>
     gen firmsize_l_2 = .
-    replace firmsize_l_2 = 1           if p34p == 1   // Exact number if 1–10 reported
-    replace firmsize_l_2 = 11             if p34p == 2   // 11–19
-    replace firmsize_l_2 = 20             if p34p == 3   // 20–49
-    replace firmsize_l_2 = 50             if p34p == 4   // 50+
-    replace firmsize_l_2 = 1              if p34p == 5   // Don't know but <11 → assume min 1
-    replace firmsize_l_2 = 11             if p34p == 6   // Don't know but >10 → assume min 11
-    replace firmsize_l_2 = 500            if p34p == 7   // 500+
 	label var firmsize_l_2 "Firm size (lower bracket) secondary job 7 day recall"
 *</_firmsize_l_2_>
 
 
 *<_firmsize_u_2_>
     gen firmsize_u_2 = .
-    replace firmsize_u_2 = 10           if p34p == 1   // Exact number if 1–10 reported
-    replace firmsize_u_2 = 19             if p34p == 2   // 11–19
-    replace firmsize_u_2 = 49             if p34p == 3   // 20–49
-    replace firmsize_u_2 = .              if p34p == 4   // 50+ open-ended
-    replace firmsize_u_2 = 10             if p34p == 5   // Don't know but <11 → assume max 10
-    replace firmsize_u_2 = .              if p34p == 6   // Don't know but >10 → no upper bound
-    replace firmsize_u_2 = .              if p34p == 7   // 500+ open-ended
 	label var firmsize_u_2 "Firm size (upper bracket) secondary job 7 day recall"
 *</_firmsize_u_2_>
 
@@ -1239,8 +1114,7 @@ foreach ed_var of local ed_vars {
 
 **If the number of months worked is missing, the harmonizer may assume that the person worked the whole year inputting the "average, commonly hours worked" (i.e., using usually worked hours instead of actual). Moreover, the harmonizer may assume that the person worked the whole year in this job (multiply monthly data by 12, weekly data by 48). Thus, the variable functions as an upper bound.
 
-	egen t_hours_total = rowtotal(whours whours_2), missing
-	replace t_hours_total = t_hours_total * 48
+	gen t_hours_total = .
 	replace t_hours_total = . if lstatus != 1
 	label var t_hours_total "Annualized hours worked in all jobs 7 day recall"
 *</_t_hours_total_>
@@ -1650,9 +1524,6 @@ foreach ed_var of local ed_vars {
 
 *<_njobs_>
 	gen njobs = .
-	replace njobs = 1 if lstatus == 1
-	replace njobs = 2 if !missing(empstat_2)
-	replace njobs = . if lstatus != 1
 	label var njobs "Total number of jobs"
 *</_njobs_>
 
