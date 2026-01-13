@@ -5,7 +5,7 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				XKX_2020_LFS_V01_M_V01_A_GLD_ALL </_Program name_>
+<_Program name_>				XKX_2009_LFS_V01_M_V02_A_GLD_ALL </_Program name_>
 <_Application_>					Stata 18 <_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
 <_Date created_>				2025-10-01 </_Date created_>
@@ -14,13 +14,13 @@
 
 <_Country_>						XKX </_Country_>
 <_Survey Title_>				Labor Force Survey  </_Survey Title_>
-<_Survey Year_>					2020 </_Survey Year_>
+<_Survey Year_>					2009 </_Survey Year_>
 <_Study ID_>					[Microdata Library ID if present] </_Study ID_>
-<_Data collection from_>		10/2020 </_Data collection from_>
-<_Data collection to_>			10/2020 </_Data collection to_>
+<_Data collection from_>		10/2009 </_Data collection from_>
+<_Data collection to_>			10/2009 </_Data collection to_>
 <_Source of dataset_> 			Kosovo Agency of Statistics </_Source of dataset_>
-<_Sample size (HH)_> 			4,000 </_Sample size (HH)_>
-<_Sample size (IND)_> 			24,470 </_Sample size (IND)_>
+<_Sample size (HH)_> 			3,849 </_Sample size (HH)_>
+<_Sample size (IND)_> 			23,523 </_Sample size (IND)_>
 <_Sampling method_> 			Two-stage cluster sampling </_Sampling method_>
 <_Geographic coverage_> 		National </_Geographic coverage_>
 <_Currency_> 					EURO </_Currency_>
@@ -36,12 +36,12 @@
 -----------------------------------------------------------------------
 <_Version Control_>
 
-* Date: [YYYY-MM-DD] - [Description of changes]
-* Date: [YYYY-MM-DD] - [Description of changes]
+* Date: 2026-01-13 update lstatus var
 
 </_Version Control_>
 
 -------------------------------------------------------------------------*/
+
 
 
 /*%%=============================================================================================
@@ -61,10 +61,10 @@ set varabbrev off
 local server  "C:/Users/`c(username)'/WBG/GLD - Current Contributors/999999_ZW"
 dis "`server'"
 local country "XKX"
-local year    "2008"
+local year    "2009"
 local survey  "LFS"
 local vermast "V01"
-local veralt  "V01"
+local veralt  "V02"
 
 * From the definitions, set path chunks
 local level_1      "`country'_`year'_`survey'"
@@ -83,7 +83,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
-use "`path_in_stata'/LFS_2008.dta", clear
+use "`path_in_stata'/LFS_2009_original.dta", clear
 
 
 /*%%=============================================================================================
@@ -134,6 +134,7 @@ use "`path_in_stata'/LFS_2008.dta", clear
 
 
 *<_year_>
+	gen int year = 2009
 	label var year "Year of survey"
 *</_year_>
 
@@ -157,13 +158,13 @@ use "`path_in_stata'/LFS_2008.dta", clear
 
 
 *<_int_year_>
-	gen int_year = 2008
+	gen int_year = 2009
 	label var int_year "Year of the interview"
 *</_int_year_>
 
 
 *<_int_month_>
-	gen doi = string(b1_a_1, "%06.0f")
+	gen doi = string(b1_a1, "%06.0f")
 	gen  int_month = substr(doi, 3, 2)
 	destring int_month, replace
 	label de lblint_month 1 "January" 2 "February" 3 "March" 4 "April" 5 "May" 6 "June" 7 "July" 8 "August" 9 "September" 10 "October" 11 "November" 12 "December"
@@ -190,10 +191,10 @@ use "`path_in_stata'/LFS_2008.dta", clear
 
 </_hhid_note> */
 	* In the data, variable ea is the same as the combination of municipality, town, enum area and housing unit
-	gen a1_str = string(a1, "%02.0f")
-	gen a2_str = string(a2, "%04.0f")
-	gen a3_str = string(a3, "%03.0f")
-	gen a4_str = string(a4, "%03.0f")
+	gen a1_str = string(basic_afp_2009_a1, "%02.0f")
+	gen a2_str = string(basic_afp_2009_a2, "%04.0f")
+	gen a3_str = string(basic_afp_2009_a3, "%03.0f")
+	gen a4_str = string(basic_afp_2009_a4, "%03.0f")
 	
 	gen hhid = a1_str + a2_str + a3_str + a4_str
 
@@ -205,7 +206,7 @@ use "`path_in_stata'/LFS_2008.dta", clear
 	* Note that not all individuals completed the questionnaire: 6 -- drop them since missing anyway
 	drop if missing(b4)
 	gen q01_str = string(q01, "%02.0f")
-	gen q08_str = string(q8, "%07.0f")
+	gen q08_str = string(q08, "%07.0f")
 	egen  pid = concat(hhid q01_str q08_str)
 	*hhid and pid need to be unique in the database.
 	drop if pid == "2719050760320113101964" & q39 == 0
@@ -216,7 +217,7 @@ use "`path_in_stata'/LFS_2008.dta", clear
 *</_pid_>
 
 *<_weight_>
-	gen weight = weights
+	gen weight = weights_lfs
 	label var weight "Survey sampling weight"
 *</_weight_>
 
@@ -252,7 +253,7 @@ use "`path_in_stata'/LFS_2008.dta", clear
 
 
 *<_wave_>
-* Just one wave for 2008
+* Just one wave for 2009
 	gen wave = .
 	label var wave "Survey wave"
 *</_wave_>
@@ -287,6 +288,7 @@ use "`path_in_stata'/LFS_2008.dta", clear
 *</_urban_>
 
 
+
 *<_subnatid1_>
 	gen regioncode = region
 	destring regioncode, replace
@@ -305,14 +307,14 @@ use "`path_in_stata'/LFS_2008.dta", clear
 
 *<_subnatid2_>
 	*just info of code of municipality, no name
-	gen str subnatid2 = string(a1)
+	gen str subnatid2 = string(basic_afp_2009_a1)
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
 
 
 *<_subnatid3_>
 	*just info of code of Town/Village (Settlement), no name
-	gen str subnatid3 = string(a2)
+	gen str subnatid3 = string(basic_afp_2009_a2)
 	label var subnatid3 "Subnational ID at Third Administrative Level"
 *</_subnatid3_>
 
@@ -387,12 +389,12 @@ use "`path_in_stata'/LFS_2008.dta", clear
 
 
 *<_age_>
-	* --- 1. Interview date (b1_a1 is numeric like 51009 = 5 Oct 2008) ---
+	* --- 1. Interview date (b1_a1 is numeric like 51009 = 5 Oct 2009) ---
 
 	* split into day, month, year
-	gen day_int = floor(b1_a_1/10000)
-	gen month_int = floor((b1_a_1 - day_int*10000)/100)
-	gen year_int = 2000 + mod(b1_a_1,100)
+	gen day_int = floor(b1_a1/10000)
+	gen month_int = floor((b1_a1 - day_int*10000)/100)
+	gen year_int = 2000 + mod(b1_a1,100)
 
 	* create Stata date
 	gen interview_date = mdy(month_int, day_int, year_int)
@@ -410,7 +412,7 @@ use "`path_in_stata'/LFS_2008.dta", clear
 	gen age = floor((interview_date - birth_date) / 365.25)
 	
 	* if missing calculate only whit birth year
-	replace age = 2008 - year_int if missing(age)
+	replace age = 2009 - year_int if missing(age)
 	
 	*** 5 obs with missings, they do not have Birth date info
 
@@ -418,7 +420,7 @@ use "`path_in_stata'/LFS_2008.dta", clear
 
 
 *<_male_>
-	gen male = q07
+	gen male = sex
 	recode male (2 = 0)
 	label var male "Sex - Ind is male"
 	la de lblmale 1 "Male" 0 "Female"
@@ -440,7 +442,7 @@ use "`path_in_stata'/LFS_2008.dta", clear
 	
 	* Create runner (oldest, male, HH head)
 	gen neg_age = -age
-	bys hhid (q03 q07 age): gen hhrunner = _n
+	bys hhid (q03 sex age): gen hhrunner = _n
 	
 	* When no hh head
 	replace relationharm = 1 if number_heads == 0 & hhrunner == 1
@@ -665,21 +667,21 @@ label var ed_mod_age "Education module application age"
 	replace educy = 17 if q90 == 6 // master incomplete
 	replace educy = 19 if q90 == 7 // PhD incomplete
 	
-	replace educy = 0 if q94 == 1 & missing(q90) & missing(educy) // no education
-	replace educy = 5 if q94 == 2 & missing(q90) & missing(educy) // primary complete
-	replace educy = 9 if q94 == 3 & missing(q90) & missing(educy) // lower secondary complete
-	replace educy = 11 if q94 == 4 & missing(q90) & missing(educy) // upper secondary vocational 2-3 complete
-	replace educy = 12 if inlist(q94,5,6,7) & missing(q90) & missing(educy) // upper secondary -gymnasium- complete and vocational 4-5
-	replace educy = 16 if q94 == 8 & missing(q90) & missing(educy) // university complete
-	replace educy = 18 if q94 == 9 & missing(q90) & missing(educy) // master complete
-	replace educy = 21 if q94 == 10 & missing(q90) & missing(educy) // PhD complete
+	replace educy = 0 if education == 1 & missing(q90) & missing(educy) // no education
+	replace educy = 5 if education == 2 & missing(q90) & missing(educy) // primary complete
+	replace educy = 9 if education == 3 & missing(q90) & missing(educy) // lower secondary complete
+	replace educy = 11 if education == 4 & missing(q90) & missing(educy) // upper secondary vocational 2-3 complete
+	replace educy = 12 if inlist(education,5,6,7) & missing(q90) & missing(educy) // upper secondary -gymnasium- complete and vocational 4-5
+	replace educy = 16 if education == 8 & missing(q90) & missing(educy) // university complete
+	replace educy = 18 if education == 9 & missing(q90) & missing(educy) // master complete
+	replace educy = 21 if education == 10 & missing(q90) & missing(educy) // PhD complete
 	
 	label var educy "Years of education"
 *</_educy_>
 
 
 *<_educat7_>
-	gen byte educat7 = q94
+	gen byte educat7 = education
 	recode educat7 (5 6 7 = 5) (8 9 10 = 7) (0 = .)
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
@@ -706,19 +708,20 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat_orig_>
-	gen educat_orig = q94
+	gen educat_orig = education
+	replace educat_orig = q90 if missing(education)
 	label var educat_orig "Original survey education code"
 *</_educat_orig_>
 
 
 *<_educat_isced_>
 	gen educat_isced = .
-	replace educat_isced = 100 if q94 == 2
-	replace educat_isced = 200 if q94 == 3
-	replace educat_isced = 300 if inlist(q94,4,5,6,7)
-	replace educat_isced = 600 if q94 == 8
-	replace educat_isced = 700 if q94 == 9
-	replace educat_isced = 800 if q94 == 10
+	replace educat_isced = 100 if education == 2
+	replace educat_isced = 200 if education == 3
+	replace educat_isced = 300 if inlist(education,4,5,6,7)
+	replace educat_isced = 600 if education == 8
+	replace educat_isced = 700 if education == 9
+	replace educat_isced = 800 if education == 10
 	label var educat_isced "ISCED standardised level of education"
 *</_educat_isced_>
 
@@ -825,7 +828,10 @@ foreach ed_var of local ed_vars {
 	replace lstatus = 1 if q21 == 1 & q23 == 1 
 	
 	* absent from work for more than three months and will continue to receive wages (this is our indication of job attachment)
-	replace lstatus = 1 if q21 == 1 & q23 == 2 & q24 == 1
+	replace lstatus = 1 if q21 == 1 & q23 == 1 & q24 == 1
+	
+	* absent because: Maternity  leave or Own illness, injury or temporary or education related with the job
+	replace lstatus = 1 if inlist(q25,1,2,3)
 	
 	******************
 	*** Unemployed ***
@@ -882,6 +888,10 @@ foreach ed_var of local ed_vars {
 	gen byte nlfreason = q76
 	recode nlfreason (1 = 2) (2 = 4) (3 6 7 8 9 = 5) (4 = 1) (0 = .)
 	
+	* Not employed (but not working more than 3 months and unpaid -- qualifies as NLF)
+	replace nlfreason = 4 if q22 == 10
+	
+	
 	replace nlfreason = . if lstatus != 3
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
@@ -909,7 +919,7 @@ foreach ed_var of local ed_vars {
 
 {
 *<_empstat_>
-	gen byte empstat = q30 if lstatus == 1
+	gen byte empstat = icseempl if lstatus == 1
 	recode empstat (2 = 3) (3 = 4) (4 = 2) (0 = .)
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
@@ -927,7 +937,7 @@ foreach ed_var of local ed_vars {
 
 
 *<_industry_orig_>
-	gen industry_orig = string(q40_b_code, "%02.0f") if lstatus == 1
+	gen industry_orig = string(naceempl, "%02.0f") if lstatus == 1
 	replace industry_orig = "" if industry_orig == "." | industry_orig == "00"
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
@@ -962,7 +972,7 @@ foreach ed_var of local ed_vars {
 
 
 *<_occup_orig_>
-	gen occup_orig = string(q42_a_code, "%02.0f") if lstatus == 1 & q42_a_code != 0
+	gen occup_orig = string(iscoempl, "%02.0f") if lstatus == 1 & iscoempl != 0
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
@@ -1015,7 +1025,7 @@ foreach ed_var of local ed_vars {
 
 *<_whours_>
 	gen whours = q47 
-	replace whours = q46 if missing(whours) | whours == 0  // usually work
+	replace whours = hours if missing(whours) | whours == 0  // usually work
 	replace whours = . if lstatus != 1
 	replace whours = . if whours == 0
 	label var whours "Hours of work in last week primary job 7 day recall"

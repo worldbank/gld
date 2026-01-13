@@ -5,7 +5,7 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				XKX_2020_LFS_V01_M_V01_A_GLD_ALL </_Program name_>
+<_Program name_>				XKX_2020_LFS_V01_M_V02_A_GLD_ALL </_Program name_>
 <_Application_>					Stata 18 <_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
 <_Date created_>				2025-10-01 </_Date created_>
@@ -36,8 +36,7 @@
 -----------------------------------------------------------------------
 <_Version Control_>
 
-* Date: [YYYY-MM-DD] - [Description of changes]
-* Date: [YYYY-MM-DD] - [Description of changes]
+* Date: 2026-01-13 update lstatus var
 
 </_Version Control_>
 
@@ -64,7 +63,7 @@ local country "XKX"
 local year    "2008"
 local survey  "LFS"
 local vermast "V01"
-local veralt  "V01"
+local veralt  "V02"
 
 * From the definitions, set path chunks
 local level_1      "`country'_`year'_`survey'"
@@ -826,6 +825,9 @@ foreach ed_var of local ed_vars {
 	
 	* absent from work for more than three months and will continue to receive wages (this is our indication of job attachment)
 	replace lstatus = 1 if q21 == 1 & q23 == 2 & q24 == 1
+	
+	* absent because: Maternity  leave or Own illness, injury or temporary or education related with the job
+	replace lstatus = 1 if inlist(q25,1,2,3)
 	
 	******************
 	*** Unemployed ***
