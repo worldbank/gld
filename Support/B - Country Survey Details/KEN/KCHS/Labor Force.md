@@ -14,9 +14,13 @@ We classify a person as **employed** if they indicate **any economic activity** 
 
 We then extend employment to people with **job attachment via temporary absence**, based on the survey’s skip logic. A person is classified as employed if they report being absent from work and the **absence duration is less than 3 months**. The code treats this duration threshold as the practical job-attachment cutoff implied by the questionnaire flow (absence beyond that is not treated as attached in the absence of usable earnings-retention detail in the dataset).
 
-## Alignment with ICLS-19
-[paragarph about ICLS 19
-While the questionnaire collects information on whether household agricultural production is mainly for sale or for own consumption, the instrument does not operationally treat respondents whose production is mainly for own use as outside employment in the core labour-force derivations. Accordingly, the baseline employment flag used for lstatus retains these respondents as employed under the survey’s operational definition. For users who wish to align more closely with international statistical standards that define employment as work performed for pay or profit (and treat production mainly for own final use as a separate form of work), we provide an alternate employment flag that excludes subsistence (own-use) producers using the market-orientation variable (code below).
+###  Alignment with ICLS-19
+Since the passing of the [resolution concerning statistics of work, employment and labour underutilization](https://www.ilo.org/global/statistics-and-databases/standards-and-guidelines/resolutions-adopted-by-international-conferences-of-labour-statisticians/WCMS_230304/lang--en/index.htm) in 2013 at the 19th International Conference of Labour Statisticians (ICLS) surveys are at risk of a series break due to the change in the concept of employment.
+
+In short, the ICLS 19 resolution restricts employment to *work performed for others in exchange for pay or profit*, meaning that own consumption work (e.g., subsistence agriculture or building housing for oneself) are not counted as employment.
+
+While the questionnaire collects information on whether household agricultural production is mainly for sale or for own consumption, the instrument does not operationally treat respondents whose production is mainly for own use as outside employment in the core labour-force derivations. Accordingly, the baseline employment flag used for lstatus retains these respondents as employed under the survey’s operational definition. For users who wish to align more closely with the ICLS-19, we provide an alternate employment flag that excludes subsistence (own-use) producers using the code below:
+
 ## 2. Unemployed
 
 We classify a person as **unemployed** if they meet two conditions:
