@@ -1,3 +1,4 @@
+# Defining the labor force
 
 KCHS defines labor force status using the standard ILO-style logic (worked or had a job attachment in the reference week; otherwise unemployed if actively seeking and available). That said, the questionnaire structure forces a few practical choices in implementation. In particular, (i) employment is inferred from a set of activity-status flags plus a duration-based “temporary absence” rule, and (ii) job search is not asked directly, so we infer it from reported search methods. Below is the exact logic used in the code.
 
@@ -19,7 +20,14 @@ Since the passing of the [resolution concerning statistics of work, employment a
 
 In short, the ICLS 19 resolution restricts employment to *work performed for others in exchange for pay or profit*, meaning that own consumption work (e.g., subsistence agriculture or building housing for oneself) are not counted as employment.
 
-While the questionnaire collects information on whether household agricultural production is mainly for sale or for own consumption, the instrument does not operationally treat respondents whose production is mainly for own use as outside employment in the core labour-force derivations. Accordingly, the baseline employment flag used for lstatus retains these respondents as employed under the survey’s operational definition. For users who wish to align more closely with the ICLS-19, we provide an alternate employment flag that excludes subsistence (own-use) producers using the code below:
+While the questionnaire collects information on whether household agricultural production is mainly for sale or for own consumption, the instrument does not operationally treat respondents whose production is mainly for own use as outside employment in the core labour-force derivations. Accordingly, the baseline employment flag used for lstatus retains these respondents as employed under the survey’s operational definition. For users who wish to align more closely with the ICLS-19, we provide an alternate employment recode that excludes subsistence (own-use) producers using the code below:
+
+```
+* Define subsistence farmers
+	gen subsistence_farmers = inlist(d10, 3, 4)
+	replace lstatus = . if lstatus == 1 & subsistence_farmers == 1
+
+```
 
 ## 2. Unemployed
 
