@@ -56,6 +56,3 @@ Responses implying a longer start horizon (for example, more than 2 weeks) or �
 
 The code also classifies some respondents as unemployed even if they did not report search methods, if they indicate they have **already found a job and will start in the future** (“future starters”). These respondents are counted as unemployed **only if** they also satisfy the same **two-week availability** condition.
 
-Putting it together, unemployment is defined as:
-- (Seeking work **or** future starter) **and** available within two weeks,
-- and only assigned among those not already classified as employed.
