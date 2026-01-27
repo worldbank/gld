@@ -5,34 +5,34 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				[Name of your do file] </_Program name_>
-<_Application_>					[Name of your software (STATA) and version] <_Application_>
+<_Program name_>				KEN_2020_KCHS_V01_M_V01_A_GLD_ALL.do </_Program name_>
+<_Application_>					Stata 18 <_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
-<_Date created_>				YYYY-MM-DD </_Date created_>
+<_Date created_>				2026-01-06 </_Date created_>
 
 -------------------------------------------------------------------------
 
-<_Country_>					[Country_Name (CCC)] </_Country_>
-<_Survey Title_>				[SurveyName] </_Survey Title_>
-<_Survey Year_>					[Year of start of the survey] </_Survey Year_>
+<_Country_>						KEN </_Country_>
+<_Survey Title_>				KCHS </_Survey Title_>
+<_Survey Year_>					2020 </_Survey Year_>
 <_Study ID_>					[Microdata Library ID if present] </_Study ID_>
-<_Data collection from_>			[MM/YYYY] </_Data collection from_>
-<_Data collection to_>				[MM/YYYY] </_Data collection to_>
-<_Source of dataset_> 				[Source of data, e.g. NSO] </_Source of dataset_>
-<_Sample size (HH)_> 				[#] </_Sample size (HH)_>
-<_Sample size (IND)_> 				[#] </_Sample size (IND)_>
-<_Sampling method_> 			Cluster sampling </_Sampling method_>
-<_Geographic coverage_> 			[To what level is data significant] </_Geographic coverage_>
-<_Currency_> 					[Currency used for wages] </_Currency_>
+<_Data collection from_>		01/2020 </_Data collection from_>
+<_Data collection to_>			12/2020 </_Data collection to_>
+<_Source of dataset_> 			Kenya National Bureau of Statistics </_Source of dataset_>
+<_Sample size (HH)_> 			19884 </_Sample size (HH)_>
+<_Sample size (IND)_> 			84859 </_Sample size (IND)_>
+<_Sampling method_> 			Cluster sampling design </_Sampling method_>
+<_Geographic coverage_> 		National </_Geographic coverage_>
+<_Currency_> 					Kenyan Shilling </_Currency_>	
 
 -----------------------------------------------------------------------
 
 <_ICLS Version_>				[Version of ICLS for Labor Questions] </_ICLS Version_>
 <_ISCED Version_>				[Version of ICLS for Labor Questions] </_ISCED Version_>
-<_ISCO Version_>				[Version of ICLS for Labor Questions] </_ISCO Version_>
-<_OCCUP National_>				[Version of ICLS for Labor Questions] </_OCCUP National_>
-<_ISIC Version_>				[Version of ICLS for Labor Questions] </_ISIC Version_>
-<_INDUS National_>				[Version of ICLS for Labor Questions] </_INDUS National_>
+<_ISCO Version_>				ISCO 1988 </_ISCO Version_>
+<_OCCUP National_>				Kenya National Occupational Classification System (KNOCS) 2000 </_OCCUP National_>
+<_ISIC Version_>				ISIC version 4 </_ISIC Version_>
+<_INDUS National_>				ISIC version 4 </_INDUS National_>
 
 -----------------------------------------------------------------------
 <_Version Control_>
@@ -59,7 +59,7 @@ set varabbrev off
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-local server  "/Users/angelosantos/Downloads"
+local server  "C:/Users/wb510859/WBG/GLD - Current Contributors\510859_AS"
 local country "KEN"
 local year    "2020"
 local survey  "KCHS"
@@ -1157,7 +1157,7 @@ foreach ed_var of local ed_vars {
 	* Other
 	replace empstat = 5 if inlist(d13_primary, 7, 8, 96)
 	
-	
+	replace empstat = . if lstatus != 1
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat lblempstat
@@ -1175,6 +1175,7 @@ foreach ed_var of local ed_vars {
 
 	* Private/NGO/households/self-employed/agriculture/informal
 	replace ocusec = 2 if inlist(d24, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19)
+	replace ocusec = . if lstatus != 1
 
 	label var ocusec "Sector of activity primary job 7 day recall"
 	la de lblocusec 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
@@ -1184,6 +1185,8 @@ foreach ed_var of local ed_vars {
 
 *<_industry_orig_>
 	gen industry_orig = string(d23_isic, "%04.0f")
+	replace industry_orig = "" if lstatus != 1
+
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
@@ -1192,7 +1195,7 @@ foreach ed_var of local ed_vars {
 	gen industrycat_isic = industry_orig
 	* This is consistent with ISIC 4, except for one code : 9130 (possibly a typo for 9103). It's only one obs, I will code to 9100
 	replace industrycat_isic = "9100" if industrycat_isic == "9130"
-	replace industrycat_isic = "" if lstatus != 1
+	replace industrycat_isic = "" if lstatus != 1 | industrycat_isic == "."
 	
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
@@ -1204,6 +1207,8 @@ foreach ed_var of local ed_vars {
 	destring isic2d, replace
 	replace industrycat10 = isic2d
 	recode industrycat10 (1/3=1) (5/9 = 2) (10/33 = 3) (35/39 = 4) (41/43 = 5) (45/47 55/56 = 6) (49/53 58/63 = 7) (64/82 = 8) (84 = 9) (85/99 = 10)	
+	replace industrycat10 = . if lstatus != 1
+
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
@@ -1223,6 +1228,8 @@ foreach ed_var of local ed_vars {
 	gen occup_orig = string(d22_knocs) if !missing(d22_knocs)
 	replace occup_orig = occup_orig + "0" if length(occup_orig) == 3 & !missing(d22_knocs)
 	replace occup_orig = occup_orig + "00" if length(occup_orig) == 2 & !missing(d22_knocs)
+	replace occup_orig = "" if lstatus != 1
+
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
@@ -1290,7 +1297,8 @@ foreach ed_var of local ed_vars {
 	gen byte flag_isco88_2d_unmapped = missing(isco88_2d) & !missing(knocs2)
 	assert flag_isco88_2d_unmapped == 0 
 	replace occup_isco = string(isco88_2d, "%02.0f") + "00" if !missing(isco88_2d) & lstatus == 1 & age>= minlaborage
-	
+	replace occup_isco = "" if lstatus != 1
+
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
@@ -1299,6 +1307,8 @@ foreach ed_var of local ed_vars {
 	gen occup_str = substr(occup_isco, 1, 1)
 	destring occup_str, gen(occup)
 	recode occup  (0 = 10)
+	replace occup = . if lstatus != 1
+
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup
@@ -1362,6 +1372,8 @@ foreach ed_var of local ed_vars {
 </_unitwage_note> */
 
 	gen byte unitwage = 5 if !missing(wage_no_compen)
+	replace unitwage = . if lstatus != 1
+
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
 	label values unitwage lblunitwage
@@ -1370,12 +1382,14 @@ foreach ed_var of local ed_vars {
 
 *<_whours_>
 	gen whours = d29 if lstatus == 1
+	replace whours = . if whours == 0
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
 
 
 *<_wmonths_>
 	gen wmonths = d31 if lstatus == 1
+	replace wmonths = . if wmonths == 0
 	label var wmonths "Months of work in past 12 months primary job 7 day recall"
 *</_wmonths_>
 
@@ -1501,6 +1515,7 @@ foreach ed_var of local ed_vars {
 
 	* Private/NGO/households/self-employed/agriculture/informal
 	replace ocusec_2 = 2 if inlist(d57, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19)
+	replace ocusec_2 = . if missing(empstat_2)
 
 	label var ocusec_2 "Sector of activity secondary job 7 day recall"
 	label values ocusec_2 lblocusec
@@ -1509,6 +1524,7 @@ foreach ed_var of local ed_vars {
 
 *<_industry_orig_2_>
 	gen industry_orig_2 = string(d56_code, "%04.0f")
+	replace industry_orig_2 = "" if missing(empstat_2)
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_*>
 
@@ -1528,7 +1544,8 @@ foreach ed_var of local ed_vars {
 	gen isic2d_2 = substr(industrycat_isic_2, 1, 2)
 	destring isic2d_2, replace
 	replace industrycat10_2 = isic2d_2
-	recode industrycat10_2 (1/3=1) (5/9 = 2) (10/33 = 3) (35/39 = 4) (41/43 = 5) (45/47 55/56 = 6) (49/53 58/63 = 7) (64/82 = 8) (84 = 9) (85/99 = 10)	
+	recode industrycat10_2 (1/3=1) (5/9 = 2) (10/33 = 3) (35/39 = 4) (41/43 = 5) (45/47 55/56 = 6) (49/53 58/63 = 7) (64/82 = 8) (84 = 9) (85/99 = 10)
+	
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
 *</_industrycat10_2_*>
@@ -1546,6 +1563,8 @@ foreach ed_var of local ed_vars {
 	gen occup_orig_2 = string(d55_code) if !missing(d55_code)
 	replace occup_orig_2 = occup_orig_2 + "0" if length(occup_orig_2) == 3 & !missing(d55_code)
 	replace occup_orig_2 = occup_orig_2 + "00" if length(occup_orig_2) == 2 & !missing(d55_code)
+	replace occup_orig_2 =  "" if missing(empstat_2)
+
 	label var occup_orig_2 "Original occupation record secondary job 7 day recall"
 *</_occup_orig_2_*>
 
@@ -1614,7 +1633,7 @@ foreach ed_var of local ed_vars {
 	assert flag_isco88_2d_unmapped_2 == 0
 
 	replace occup_isco_2 = string(isco88_2d_2, "%02.0f") + "00" if !missing(isco88_2d_2) & lstatus == 1 & age>= minlaborage
-	
+	replace occup_isco_2 = "" if missing(empstat_2)
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_*>
 
@@ -1623,6 +1642,8 @@ foreach ed_var of local ed_vars {
 	gen occup_str_2 = substr(occup_isco_2, 1, 1)
 	destring occup_str_2, gen(occup_2)
 	recode occup_2 (0 = 10)
+	replace occup_2 = . if missing(empstat_2)
+
 	label var occup_2 "1 digit occupational classification, secondary job 7 day recall"
 	label values occup_2 lbloccup
 *</_occup_2_*>
@@ -1646,6 +1667,8 @@ foreach ed_var of local ed_vars {
 
 *<_unitwage_2_>
 	gen byte unitwage_2 = 5 if !missing(wage_no_compen_2)
+	replace unitwage_2 = . if missing(empstat_2)
+
 	label var unitwage_2 "Last wages' time unit secondary job 7 day recall"
 	label values unitwage_2 lblunitwage
 *</_unitwage_2_>
@@ -1653,12 +1676,14 @@ foreach ed_var of local ed_vars {
 
 *<_whours_2_>
 	gen whours_2 = d61 if !missing(empstat_2)
+	replace whours_2 = . if whours_2 == 0
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 
 
 *<_wmonths_2_>
 	gen wmonths_2 = d62 if !missing(empstat_2)
+	replace wmonths_2 = . if wmonths_2 == 0
 	label var wmonths_2 "Months of work in past 12 months secondary job 7 day recall"
 *</_wmonths_2_>
 
@@ -2120,7 +2145,8 @@ foreach ed_var of local ed_vars {
 
 
 *<_njobs_>
-	gen njobs = .
+	gen njobs = 1 if lstatus == 1
+	replace njobs = 2 if lstatus == 1 & !missing(empstat_2)
 	label var njobs "Total number of jobs"
 *</_njobs_>
 
