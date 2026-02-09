@@ -44,7 +44,13 @@ The employment classification does not restrict attention to respondents whose s
 
 ## Defining the unemployed
 
-An individual is classified as unemployed if three conditions are met. First, they do not satisfy any of the criteria for employment described above, that is, they did not work in the reference week and do not have a job or business from which they are temporarily absent. Second, they have demonstrated active labour market attachment either by looking for work or by setting up a future job or business. In the survey this includes respondents who, during the past four weeks, report that they looked for a job, tried to start a business, already found a job that will start at a later date, or have taken all necessary steps to start a business that will begin in the future. Third, they are available to start work, which is captured by questions asking whether they could have started a job or a business during the reference week if an opportunity had been offered. Only individuals who are not employed, who have engaged in recent job search or have a concrete future job or business arrangement, and who state that they could have started work in the reference week are classified as unemployed. All remaining respondents are considered to be outside the labour force.
+An individual is classified as unemployed if three conditions are met. 
+
+First, they do not satisfy any of the criteria for employment described above, that is, they did not work in the reference week and do not have a job or business from which they are temporarily absent. 
+
+Second, they have demonstrated active labour market attachment either by looking for work or by setting up a future job or business. In the survey this includes respondents who, during the past four weeks, report that they looked for a job, tried to start a business, already found a job that will start at a later date, or have taken all necessary steps to start a business that will begin in the future. 
+
+Third, they are available to start work, which is captured by questions asking whether they could have started a job or a business during the reference week if an opportunity had been offered. Only individuals who are not employed, who have engaged in recent job search or have a concrete future job or business arrangement, and who state that they could have started work in the reference week are classified as unemployed. All remaining respondents are considered to be outside the labour force.
 
 ## Labor status definitions across NLFS rounds
 
