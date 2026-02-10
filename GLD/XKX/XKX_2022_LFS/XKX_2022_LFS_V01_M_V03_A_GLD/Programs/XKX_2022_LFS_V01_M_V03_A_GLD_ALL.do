@@ -5,7 +5,7 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				XKX_2002_LFS_V01_M_V02_A_GLD_ALL </_Program name_>
+<_Program name_>				XKX_2022_LFS_V01_M_V02_A_GLD_ALL </_Program name_>
 <_Application_>					Stata 18 <_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
 <_Date created_>				2025-10-01 </_Date created_>
@@ -14,13 +14,13 @@
 
 <_Country_>						XKX </_Country_>
 <_Survey Title_>				Labor Force Survey  </_Survey Title_>
-<_Survey Year_>					2002 </_Survey Year_>
+<_Survey Year_>					2022 </_Survey Year_>
 <_Study ID_>					[Microdata Library ID if present] </_Study ID_>
-<_Data collection from_>		09/2002 </_Data collection from_>
-<_Data collection to_>			10/2002 </_Data collection to_>
+<_Data collection from_>		01/2022 </_Data collection from_>
+<_Data collection to_>			12/2022 </_Data collection to_>
 <_Source of dataset_> 			Kosovo Agency of Statistics </_Source of dataset_>
-<_Sample size (HH)_> 			Cannot be determined </_Sample size (HH)_>
-<_Sample size (IND)_> 			19,361 </_Sample size (IND)_>
+<_Sample size (HH)_> 			12,414 </_Sample size (HH)_>
+<_Sample size (IND)_> 			58,583 </_Sample size (IND)_>
 <_Sampling method_> 			Two-stage cluster sampling </_Sampling method_>
 <_Geographic coverage_> 		National </_Geographic coverage_>
 <_Currency_> 					EURO </_Currency_>
@@ -29,10 +29,10 @@
 
 <_ICLS Version_>				ICLS-13 </_ICLS Version_>
 <_ISCED Version_>				ISCED-11 </_ISCED Version_>
-<_ISCO Version_>				ISCO 1988 </_ISCO Version_>
+<_ISCO Version_>				ISCO 2008 </_ISCO Version_>
 <_OCCUP National_>				Unknown </_OCCUP National_>
-<_ISIC Version_>				ISIC 3 </_ISIC Version_>
-<_INDUS National_>				NACE rev 1 </_INDUS National_>
+<_ISIC Version_>				ISIC 4 </_ISIC Version_>
+<_INDUS National_>				NACE rev 2 </_INDUS National_>
 -----------------------------------------------------------------------
 <_Version Control_>
 
@@ -60,10 +60,10 @@ set varabbrev off
 local server  "C:/Users/`c(username)'/WBG/GLD - Current Contributors/999999_ZW"
 dis "`server'"
 local country "XKX"
-local year    "2002"
+local year    "2022"
 local survey  "LFS"
 local vermast "V01"
-local veralt  "V02"
+local veralt  "V03"
 
 * From the definitions, set path chunks
 local level_1      "`country'_`year'_`survey'"
@@ -82,7 +82,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
-use "`path_in_stata'/LFS_2002.dta", clear
+use "`path_in_stata'/LFS_2022_translated.dta", clear
 
 
 /*%%=============================================================================================
@@ -121,19 +121,19 @@ use "`path_in_stata'/LFS_2002.dta", clear
 *</_isced_version_>
 
 *<_isco_version_>
-	gen isco_version = "isco_1988"
+	gen isco_version = "isco_2008"
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
 
 *<_isic_version_>
-	gen isic_version = "isic_3"
+	gen isic_version = "isic_4"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
 
 *<_year_>
-	gen year = 2002
+	gen int year = 2022
 	label var year "Year of survey"
 *</_year_>
 
@@ -157,13 +157,12 @@ use "`path_in_stata'/LFS_2002.dta", clear
 
 
 *<_int_year_>
-	gen int_year = 2002
+	gen int_year = 2022
 	label var int_year "Year of the interview"
 *</_int_year_>
 
 
 *<_int_month_>
-* Not provided in 2002
 	gen  int_month = .
 	label de lblint_month 1 "January" 2 "February" 3 "March" 4 "April" 5 "May" 6 "June" 7 "July" 8 "August" 9 "September" 10 "October" 11 "November" 12 "December"
 	label value int_month lblint_month
@@ -188,23 +187,25 @@ use "`path_in_stata'/LFS_2002.dta", clear
 **** A household is not repeated in the following quarters. ****
 
 </_hhid_note> */
-	* In the data, variable ea is the same as the combination of municipality, town, enum area and housing unit
-
-	gen hhid = ""
-
+	gen hhid = HHNUM
 	label var hhid "Household ID"
 *</_hhid_>
 
 
 *<_pid_>
-	* Note that not all individuals completed the questionnaire: 6 -- drop them since missing anyway
-	gen runner = _n
-	gen pid = string(runner, "%05.0f")
+	gen ind_str = string(C7,"%02.0f")
+	egen  pid = concat(hhid ind_str)
+	*hhid and pid need to be unique in the database.
+	
+	isid hhid pid
+	duplicates report hhid pid 
 
 	label var pid "Individual ID"
 *</_pid_>
 
+
 *<_weight_>
+	gen weight = ADJ_ANNUAL
 	label var weight "Survey sampling weight"
 *</_weight_>
 
@@ -222,25 +223,25 @@ use "`path_in_stata'/LFS_2002.dta", clear
 
 
 *<_psu_>
-	gen psu = ""
+	gen psu = EA
 	label var psu "Primary sampling units"
 *</_psu_>
 
 
 *<_ssu_>
-	gen ssu = ""
+	gen ssu = hhid
 	label var ssu "Secondary sampling units"
 *</_ssu_>
 
 
 *<_strata_>
-	gen strata = .
+	gen strata = Stratum_Strata
 	label var strata "Strata"
 *</_strata_>
 
 
 *<_wave_>
-	gen wave = .
+	gen wave = "Q" + string(KUARTALI)
 	label var wave "Survey wave"
 *</_wave_>
 
@@ -266,7 +267,7 @@ use "`path_in_stata'/LFS_2002.dta", clear
 {
 
 *<_urban_>
-	gen byte urban = residenc == 1
+	gen byte urban = .
 	label var urban "Location is urban"
 	la de lblurban 1 "Urban" 0 "Rural"
 	label values urban lblurban
@@ -275,21 +276,35 @@ use "`path_in_stata'/LFS_2002.dta", clear
 
 *<_subnatid1_>
 /* <_subnatid1_note>
-Not available for 2002
+
+	The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: "1 – Hatay". That is, the variable itself is to be string, not a labelled numeric vector. 
+	
+	Example of entries would be "1 - Alaska",  "2 - Arkansas", ...
 
 </_subnatid1_note> */
+	gen regioncode = substr(Stratum_Strata, 1, 1)
+	destring regioncode, replace
 	gen subnatid1 = ""
+	replace subnatid1 = "1 - Gjakova"   if regioncode == 1
+	replace subnatid1 = "2 - Gjilani"   if regioncode == 2
+	replace subnatid1 = "3 - Mitrovica" if regioncode == 3
+	replace subnatid1 = "4 - Peja"      if regioncode == 4
+	replace subnatid1 = "5 - Prizreni"  if regioncode == 5
+	replace subnatid1 = "6 - Prishtina" if regioncode == 6
+	replace subnatid1 = "7 - Ferizaji"  if regioncode == 7
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 
 
 *<_subnatid2_>
+	*just info of code of municipality, no name
 	gen str subnatid2 = ""
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
 
 
 *<_subnatid3_>
+	*just info of code of Town/Village (Settlement), no name
 	gen str subnatid3 = ""
 	label var subnatid3 "Subnational ID at Third Administrative Level"
 *</_subnatid3_>
@@ -302,7 +317,7 @@ Not available for 2002
 	See entry in GLD Guidelines (https://github.com/worldbank/gld/blob/main/Support/A%20-%20Guides%20and%20Documentation/GLD_1.0_Guidelines.docx) for more details
 
 </_subnatidsurvey_note> */
-	
+
 	gen str subnatidsurvey = ""
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
@@ -358,19 +373,19 @@ Not available for 2002
 {
 
 *<_hsize_>
-	gen hsize = .
+	bys hhid : gen hsize = _N
 	label var hsize "Household size"
 *</_hsize_>
 
 
 *<_age_>
-	*gen age = .
+	gen age = AGE
 	label var age "Individual age"
 *</_age_>
 
 
 *<_male_>
-	gen male = sex
+	gen male = PPF_P8
 	recode male (2 = 0)
 	label var male "Sex - Ind is male"
 	la de lblmale 1 "Male" 0 "Female"
@@ -379,8 +394,71 @@ Not available for 2002
 
 
 *<_relationharm_>
-	gen relationharm = .
 
+	** Each household must have exactly one head **
+
+	*Priority: 
+	*(1) respondent originally coded `head
+	gen relationharm = PPF_P4
+	
+	*If household has no head or more than one head:
+	gen head = 1 if relationharm == 1
+	bys hhid : egen number_heads = total(head)
+	
+	/*
+	
+	number_heads
+	-----------------------------------------------------------
+                  |      Freq.    Percent      Valid       Cum.
+	--------------+--------------------------------------------
+	Valid   0     |       1495       2.55       2.55       2.55
+			1     |      56949      97.21      97.21      99.76
+			2     |        133       0.23       0.23      99.99
+			3     |          6       0.01       0.01     100.00
+			Total |      58583     100.00     100.00           
+	-----------------------------------------------------------
+
+
+
+	unique hhid if number_heads == 0
+		Number of unique values of hhid is  370
+		Number of records is  1495
+
+
+	There are 370 households (1495 individuals) with no household head
+	
+	unique hhid if inrange(number_heads,2,999)
+		Number of unique values of hhid is  26
+		Number of records is  139
+		
+	There are 26 households (139 individuals) with more than one head
+	
+	*/
+	
+	*(2) spouse if no head
+	bys hhid: replace relationharm = 1 if relationharm == 2 & number_heads == 0
+	drop head number_heads
+	
+	*(3) oldest member if still no head
+	gen head = relationharm == 1
+	bys hhid : egen number_heads = total(head)
+	
+	bys hhid (age) : gen oldest = 1 if (_n == _N)
+	bys hhid: replace relationharm = 1 if relationharm != 1 & number_heads == 0 & oldest == 1
+	bys hhid: replace relationharm = 5 if relationharm != 1 & number_heads == 0 & oldest != 1
+	
+	*(4) If there is more than one head, keep the oldest
+	bys hhid (head age) : gen oldest_head = 1 if (_n == _N)
+	bys hhid: replace relationharm = 1 if relationharm == 1 & inrange(number_heads,2,99) & oldest_head == 1
+	bys hhid: replace relationharm = 5 if inrange(number_heads,2,99) & oldest_head != 1
+	
+	*Prove that number_heads is now equal to 1 for all households
+	drop head number_heads
+	gen head = 1 if relationharm == 1
+	bys hhid : egen number_heads = total(head)
+	
+	assert number_heads == 1
+	
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 	label values relationharm  lblrelationharm
@@ -388,13 +466,14 @@ Not available for 2002
 
 
 *<_relationcs_>
-	gen relationcs = .
+	decode PPF_P4, gen(relationcs)
 	label var relationcs "Relationship to the head of household - Country original"
 *</_relationcs_>
 
 
 *<_marital_>
-	gen byte marital = .
+	gen byte marital = PPF_P12
+	recode marital (1 = 2) (2 = 1) (3 = 5)
 	label var marital "Marital status"
 	la de lblmarital 1 "Married" 2 "Never Married" 3 "Living together" 4 "Divorced/Separated" 5 "Widowed"
 	label values marital lblmarital
@@ -458,22 +537,22 @@ Not available for 2002
 
 {
 
-*missing values for mig variables
-* variable q17 provides information on residence in the past year but all obs report 0
 *<_migrated_mod_age_>
-	gen migrated_mod_age = .
+	gen migrated_mod_age = 0
 	label var migrated_mod_age "Migration module application age"
 *</_migrated_mod_age_>
 
 
 *<_migrated_ref_time_>
-	gen migrated_ref_time = .
+	gen migrated_ref_time = 1
 	label var migrated_ref_time "Reference time applied to migration questions (in years)"
 *</_migrated_ref_time_>
 
 
 *<_migrated_binary_>
 	gen migrated_binary = .
+	replace migrated_binary = !inlist(PPF_P18,"00")
+	replace migrated_binary = . if missing(PPF_P18)
 	label de lblmigrated_binary 0 "No" 1 "Yes"
 	label values migrated_binary lblmigrated_binary
 	label var migrated_binary "Individual has migrated"
@@ -481,7 +560,7 @@ Not available for 2002
 
 
 *<_migrated_years_>
-	gen migrated_years = .
+	gen migrated_years = 1
 	replace migrated_years = . if migrated_binary != 1
 	label var migrated_years "Years since latest migration"
 *</_migrated_years_>
@@ -497,7 +576,12 @@ Not available for 2002
 
 
 *<_migrated_from_cat_>
+
+*The raw data does not include information on the respondents' sub-national place of residence
+
 	gen migrated_from_cat = .
+	replace migrated_from_cat = 6 if !missing(PPF_P20) | !missing(PPF_P19)
+	replace migrated_from_cat = 5 if !inlist(PPF_P18,"00","KS","") & missing(migrated_from_cat)
 	
 	replace migrated_from_cat = . if migrated_binary != 1
 	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country" 6 "Within country, admin unknown" 7 "Wholly unknow"
@@ -516,6 +600,11 @@ Not available for 2002
 
 *<_migrated_from_country_>
 	gen migrated_from_country = ""
+	replace migrated_from_country = "DEU" if PPF_P18 == "DE"
+	replace migrated_from_country = "KWT" if PPF_P18 == "KW"
+	replace migrated_from_country = "MNE" if PPF_P18 == "ME"
+	replace migrated_from_country = "MKD" if PPF_P18 == "MK"
+	replace migrated_from_country = "ZWE" if PPF_P18 == "ZW"
 
 	replace migrated_from_country = "" if migrated_binary != 1
 	label var migrated_from_country "Code of migration country (ISO 3 Letter Code)"
@@ -555,9 +644,8 @@ label var ed_mod_age "Education module application age"
 *</_ed_mod_age_>
 
 *<_school_>
-* asked if a student in the past 4 weeks
-* missing for some
-	gen byte school = .
+	gen byte school = P90
+	recode school (2 = 1) (3 = 0)
 	label var school "Attending school"
 	la de lblschool 0 "No" 1 "Yes"
 	label values school  lblschool
@@ -573,19 +661,38 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educy_>
-	gen byte educy = . 
+	*for more information see: https://masht.rks-gov.net/wp-content/uploads/2022/09/isced-eng-2022.pdf
+
+	gen byte educy = .
+	
+	replace educy = 3 if P91 == 1 // primary incomplete
+	replace educy = 7 if P91 == 2 // lower secondary incomplete
+	replace educy = 10 if inlist(P91,3,4) // upper secondary incomplete
+	replace educy = 14 if P91 == 5 // university incomplete
+	replace educy = 17 if P91 == 6 // master incomplete
+	replace educy = 19 if P91 == 7 // PhD incomplete
+	
+	replace educy = 0 if P96 == 1 & missing(P91) & missing(educy) // no education
+	replace educy = 5 if P96 == 2 & missing(P91) & missing(educy) // primary complete
+	replace educy = 9 if P96 == 3 & missing(P91) & missing(educy) // lower secondary complete
+	replace educy = 11 if P96 == 4 & missing(P91) & missing(educy) // upper secondary vocational 2-3 complete
+	replace educy = 12 if inlist(P96,5,6,7) & missing(P91) & missing(educy) // upper secondary -gymnasium- complete and vocational 4-5
+	replace educy = 16 if P96 == 8 & missing(P91) & missing(educy) // university complete
+	replace educy = 18 if P96 == 9 & missing(P91) & missing(educy) // master complete
+	replace educy = 21 if P96 == 10 & missing(P91) & missing(educy) // PhD complete
+	
 	label var educy "Years of education"
 *</_educy_>
 
 
 *<_educat7_>
-* There is secondary and high school (upper secondary) but the numbers seem odd
-	gen byte educat7 = education
-	recode educat7  (3 = 2) (4 =3) (5 6 7 = 5) (8 9 10 11 = 7) (0 = .)
+	gen byte educat7 = P96
+	recode educat7 (5 6 7 = 5) (8 9 10 = 7) (0 = .)
 	label var educat7 "Level of education 1"
 	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
 	label values educat7 lbleducat7
 *</_educat7_>
+
 
 
 *<_educat5_>
@@ -607,13 +714,22 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat_orig_>
-	gen educat_orig = education
+	decode P91, gen(current_educ)
+	decode P96, gen(high_educ)
+	gen educat_orig = current_educ
+	replace educat_orig = high_educ if missing(educat_orig)
 	label var educat_orig "Original survey education code"
 *</_educat_orig_>
 
 
 *<_educat_isced_>
 	gen educat_isced = .
+	replace educat_isced = 100 if P96 == 2
+	replace educat_isced = 200 if P96 == 3
+	replace educat_isced = 300 if inlist(P96,4,5,6,7)
+	replace educat_isced = 600 if P96 == 8
+	replace educat_isced = 700 if P96 == 9
+	replace educat_isced = 800 if P96 == 10
 	label var educat_isced "ISCED standardised level of education"
 *</_educat_isced_>
 
@@ -706,7 +822,31 @@ foreach ed_var of local ed_vars {
 
 {
 *<_lstatus_>
-	gen byte lstatus = workstatus
+	gen byte lstatus = .
+	
+	*They used ICLS-13 definitions
+	
+	*** employed ***
+	replace lstatus = 1 if inlist(P21,"1","2","3","4","5A")
+	replace lstatus = 1 if inlist(P27,1,2) | P28 == 1 | P29 == 1 //absent
+	replace lstatus = 1 if inlist(P23,8,9) // absent because: Maternity  leave or Own illness, injury or temporary 
+	
+	*** umeployed ***
+	*seeking work
+	gen active = P76 == 1
+	
+	*Available for work
+	gen passive = P85 == 1
+	
+	*Future starters: Have found a job which will start in no more than 3 months
+	gen future_starter = P75 == 1
+	
+	replace lstatus = 2 if (passive == 1 & active == 1) & missing(lstatus)
+	replace lstatus = 2 if (future_starter == 1) & missing(lstatus)
+	
+	*** NLF ***
+	replace lstatus = 3 if missing(lstatus)
+	
 	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
@@ -715,7 +855,7 @@ foreach ed_var of local ed_vars {
 
 
 *<_potential_lf_>
-	gen byte potential_lf = .
+	gen byte potential_lf = (passive == 1 | active == 1)
 	replace potential_lf = . if age < minlaborage & !missing(age)
 	replace potential_lf = . if lstatus != 3
 	label var potential_lf "Potential labour force status"
@@ -735,24 +875,29 @@ foreach ed_var of local ed_vars {
 
 
 *<_nlfreason_>
-	gen byte nlfreason = .
+	gen byte nlfreason = P77
+	recode nlfreason (1 = 2) (2 = 4) (3 6 7 8 9 = 5) (4 = 1)
+	gen nlreason2 = P86 
+	recode nlreason2 (2 3 6 = 5)
+	replace nlfreason = nlreason2 if missing(nlfreason)
 	replace nlfreason = . if lstatus != 3
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
-	label values nlfreason lblnlfreasonx
+	label values nlfreason lblnlfreason
 *</_nlfreason_>
 
 
 *<_unempldur_l_>
-* not provided
-    gen byte unempldur_l = .
-    label var unempldur_l "Unemployment duration (months) lower bracket"
+	gen byte unempldur_l = P80 if lstatus == 2
+	recode unempldur_l (1 2 = 0) (3 = 1) (4 = 3) (5 = 6) (6 = 12) (7 = 18) (8 = 24) (9 = 48)
+	label var unempldur_l "Unemployment duration (months) lower bracket"
 *</_unempldur_l_>
 
 
 *<_unempldur_u_>
-    gen byte unempldur_u = .
-    label var unempldur_u "Unemployment duration (months) upper bracket"
+	gen byte unempldur_u = P80 if lstatus == 2
+	recode unempldur_u (1 = 0) (2 = 1) (3 = 2) (4 = 5) (5 = 11) (6 = 17) (7 = 23) (8 = 47) (9 = .)
+	label var unempldur_u "Unemployment duration (months) upper bracket"
 *</_unempldur_u_>
 }
 
@@ -762,19 +907,17 @@ foreach ed_var of local ed_vars {
 
 {
 *<_empstat_>
-* They only have for paid employee and employer
-	gen byte empstat = .
-	/*
-	replace empstat = 1 if emploffice == 1
-	replace empstat = 3 if employer == 1
-	*/
+	gen byte empstat = P30 if lstatus == 1
+	recode empstat (2 = 3) (3 = 4) (4 = 2)
+	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat lblempstat
 *</_empstat_>
 
 
 *<_ocusec_>
-	gen byte ocusec = .
+	gen byte ocusec = P36 if lstatus == 1
+	recode ocusec (2 = 3) (3 4 5 6 = 2)
 	label var ocusec "Sector of activity primary job 7 day recall"
 	la de lblocusec 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish"
 	label values ocusec lblocusec
@@ -782,8 +925,8 @@ foreach ed_var of local ed_vars {
 
 
 *<_industry_orig_>
-	gen industry_orig = string(naceempl, "%04.0f") if lstatus == 1
-	replace industry_orig = "" if industry_orig == "." | industry_orig == "0000"
+	gen industry_orig = P40_B_CODE if lstatus == 1
+	replace industry_orig = "" if industry_orig == "."
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
@@ -791,37 +934,30 @@ foreach ed_var of local ed_vars {
 *<_industrycat_isic_>
 
 *They use NACE 2 which is in line with ISIC rev 4 at 2 digits level
-	gen industrycat_isic = substr(industry_orig, 1, 2) + "00" if !missing(industry_orig)
+	gen industrycat_isic = substr(P40_B_CODE, 1, 2) + "00" + substr(P40_B_CODE, 4, .) if !missing(P40_B_CODE)
 	replace industrycat_isic = "" if lstatus != 1
 	
-	* There is 8300 which is not ISIC. Only for 1 obs, recode to missing
-	replace industrycat_isic = "" if industrycat_isic == "8300"
+	
+
+	* Check that no errors --> using our universe check function, count should be 0 (no obs wrong)
+	* https://github.com/worldbank/gld/tree/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20universe%20check
+	/*
+	preserve 
+	drop if missing(industrycat_isic)
+	int_classif_universe, var(industrycat_isic) universe(ISIC)
+	count
+	list
+	assert `r(N)' == 0
+	restore 
+	*/
 
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
 
 *<_industrycat10_>
-	gen isic_1d = substr(industrycat_isic, 1, 1)
-	gen isic_2d = substr(industrycat_isic, 1, 2)
-	
-	destring isic_1d, replace
-	destring isic_2d, replace
-	
-	gen byte industrycat10 = .
-	replace industrycat10 = 1 if isic_1d == 0
-	replace industrycat10 = 2 if inrange(isic_2d, 10, 14)
-	replace industrycat10 = 3 if inrange(isic_2d, 15, 37)
-	replace industrycat10 = 4 if inrange(isic_2d, 40, 41)
-	replace industrycat10 = 5 if isic_2d == 45
-	replace industrycat10 = 6 if isic_1d == 5
-	replace industrycat10 = 7 if inrange(isic_2d, 60, 64)
-	replace industrycat10 = 8 if inrange(isic_2d, 65, 74)
-	replace industrycat10 = 9 if isic_2d == 75
-	replace industrycat10 = 10 if inrange(isic_2d, 80, 99)
-	
-	drop isic_1d isic_2d
-	
+	gen byte industrycat10 = real(substr(industrycat_isic,1,2))
+	recode industrycat10 (1/3 = 1) (5/9 = 2) (10/33 = 3) (35/39 = 4) (41/43 = 5) (45/47 55/56 = 6) (49/53 58/63 = 7) (64/82 = 8) (84 = 9) (85/99 = 10)
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
@@ -838,18 +974,28 @@ foreach ed_var of local ed_vars {
 
 
 *<_occup_orig_>
-	gen occup_orig = string(iscoempl, "%04.0f") if lstatus == 1 & iscoempl != 0
+	gen occup_orig = P42_A_CODE if lstatus == 1
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
 
 *<_occup_isco_>
-	gen occup_isco = substr(occup_orig, 1, 2) + "00" if !missing(occup_orig)
-	replace occup_isco = "" if inlist(occup_isco, ".00")
-	replace occup_isco = "2000" if occup_isco == "2500"
-	replace occup_isco = "9800" if occup_isco == "9000"
-	replace occup_isco = "7000" if occup_isco == "7600"
+	gen occup_isco = P42_A_CODE
+	replace occup_isco = "" if lstatus != 1
+	replace occup_isco = "3350" if occup_isco == "3358"
 
+
+	* Check that no errors --> using our universe check function, count should be 0 (no obs wrong)
+	* https://github.com/worldbank/gld/tree/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20universe%20check
+	/*
+	preserve 
+	drop if missing(occup_isco)
+	int_classif_universe, var(occup_isco) universe(ISCO)
+	count
+	list
+	assert `r(N)' == 0
+	restore
+	*/
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
@@ -875,8 +1021,44 @@ foreach ed_var of local ed_vars {
 
 
 *<_wage_no_compen_>
-* wage asked in q11, but not available in the data
-	gen double wage_no_compen = .
+
+/*
+1. under 50 Euro
+2. 50-100 Euro
+3. 100-150 Euro
+4. 150-200 Euro
+5. 200-250 Euro
+6. 250-300 Euro
+7. 300-400 Euro
+8. 400-500 Euro
+9. 500-600 Euro
+10. 600-800 Euro
+11. 800-1000 Euro
+12. 1000-1500 Euro
+13. 1500-2000 Euro
+14. 2000-3000 Euro
+15. 3000 Euro or more
+
+*Use mid-points
+*/
+	gen double wage_no_compen = P102
+	 recode wage_no_compen ///
+	(1 = 25)    /// under 50
+    (2 = 75)    /// 50-100
+    (3 = 125)   /// 100-150
+    (4 = 175)   /// 150-200
+    (5 = 225)   /// 200-250
+    (6 = 275)   /// 250-300
+    (7 = 350)   /// 300-400
+    (8 = 450)   /// 400-500
+    (9 = 550)   /// 500-600
+    (10 = 700)  /// 600-800
+    (11 = 900)  /// 800-1000
+    (12 = 1250) /// 1000-1500
+    (13 = 1750) /// 1500-2000
+    (14 = 2500) /// 2000-3000
+    (15 = 3000) /// 3000+
+	
 	replace wage_no_compen = . if lstatus != 1
 	replace wage_no_compen = . if empstat == 2
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
@@ -885,7 +1067,14 @@ foreach ed_var of local ed_vars {
 
 *<_unitwage_>
 
-	gen byte unitwage = .
+/* <_unitwage_note>
+	Unitwage refers to the unit used to record wage_no_compen, *not* the unit of
+	general wage payent. For example, PHL LFS asks about wage periodicity, then
+	asks for basic daily pay. The value of that pay would be wage_no_compen,
+	while unitwage is code 1 ("Daily") for all, regardless of the periodicity.
+</_unitwage_note> */
+
+	gen byte unitwage = 5 if !missing(wage_no_compen)
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
 	label values unitwage lblunitwage
@@ -893,7 +1082,9 @@ foreach ed_var of local ed_vars {
 
 
 *<_whours_>
-	gen whours = usualhours
+	gen whours = P47 // Hours of work in last week
+	replace whours = P46 if missing(whours) | whours == 0  // usually work
+	replace whours = . if lstatus != 1
 	replace whours = . if whours == 0
 	label var whours "Hours of work in last week primary job 7 day recall"
 *</_whours_>
@@ -918,8 +1109,8 @@ foreach ed_var of local ed_vars {
 
 
 *<_contract_>
-* Not asked in 2002
-	gen byte contract = .
+	gen byte contract = inlist(P35,1,2,3,4)
+	replace contract = . if lstatus != 1
 	label var contract "Employment has contract primary job 7 day recall"
 	la de lblcontract 0 "Without contract" 1 "With contract"
 	label values contract lblcontract
@@ -935,7 +1126,8 @@ foreach ed_var of local ed_vars {
 
 
 *<_socialsec_>
-	gen byte socialsec = .
+	gen byte socialsec = P37 if lstatus == 1
+	recode socialsec (2 = 0)
 	label var socialsec "Employment has social security insurance primary job 7 day recall"
 	la de lblsocialsec 1 "With social security" 0 "Without social secturity"
 	label values socialsec lblsocialsec
@@ -951,14 +1143,16 @@ foreach ed_var of local ed_vars {
 
 
 *<_firmsize_l_>
-    gen firmsize_l = .
-    label var firmsize_l "Firm size (lower bracket) primary job 7 day recall"
+	gen firmsize_l = P41 if lstatus == 1
+	recode firmsize_l (2 = 11) (3 = 20) (4 = 50) (5 = .) (6 = 10)
+	label var firmsize_l "Firm size (lower bracket) primary job 7 day recall"
 *</_firmsize_l_>
 
 
 *<_firmsize_u_>
-    gen firmsize_u = .
-    label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
+	gen firmsize_u = P41 if lstatus == 1
+	recode firmsize_u (1 = 10) (2 = 19) (3 = 49) (4 = .) (5 = 11) (6 = .)
+	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>
 
 }
@@ -970,8 +1164,8 @@ foreach ed_var of local ed_vars {
 
 {
 *<_empstat_2_>
-
-	gen byte empstat_2 = .
+	gen byte empstat_2 = P57 if lstatus == 1
+	recode empstat_2 (2 = 3) (3 = 4) (4 = 2)
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
 	label values empstat_2 lblempstat
 *</_empstat_2_>
@@ -985,20 +1179,33 @@ foreach ed_var of local ed_vars {
 
 
 *<_industry_orig_2_>
-	gen industry_orig_2 = ""
+	gen industry_orig_2 = P56_B_CODE if lstatus == 1
+	replace industry_orig_2 = "" if industry_orig_2 == "."
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 
 
 *<_industrycat_isic_2_>
 	*They use NACE 2 which is in line with ISIC rev 4 at 2 digits level
-	gen industrycat_isic_2 = .
+	gen industrycat_isic_2 = substr(P56_B_CODE, 1, 2) + "00" + substr(P56_B_CODE, 4, .) if !missing(P56_B_CODE)
+	replace industrycat_isic_2 = "" if lstatus != 1
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
+	/*
+	preserve 
+	drop if missing(industrycat_isic_2)
+	int_classif_universe, var(industrycat_isic_2) universe(ISIC)
+	count
+	list
+	assert `r(N)' == 0
+	restore 
+	*/
 *</_industrycat_isic_2_>
 
 
 *<_industrycat10_2_>
-	gen byte industrycat10_2 = .
+	gen byte industrycat10_2 = real(substr(industrycat_isic_2,1,2))
+	recode industrycat10_2 (1/3 = 1) (5/9 = 2) (10/33 = 3) (35/39 = 4) (41/43 = 5) (45/47 55/56 = 6) (49/53 58/63 = 7) (64/82 = 8) (84 = 9) (85/99 = 10)
+
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
 *</_industrycat10_2_>
@@ -1013,7 +1220,7 @@ foreach ed_var of local ed_vars {
 
 
 *<_occup_orig_2_>
-	gen occup_orig_2 = ""
+	gen occup_orig_2 = .
 	label var occup_orig_2 "Original occupation record secondary job 7 day recall"
 *</_occup_orig_2_>
 
@@ -1056,7 +1263,7 @@ foreach ed_var of local ed_vars {
 
 
 *<_whours_2_>
-	gen whours_2 = .
+	gen whours_2 = P58 if !missing(empstat_2) & lstatus == 1
 	label var whours_2 "Hours of work in last week secondary job 7 day recall"
 *</_whours_2_>
 
@@ -1074,16 +1281,15 @@ foreach ed_var of local ed_vars {
 
 
 *<_firmsize_l_2_>
-    gen firmsize_l_2 = .
+	gen firmsize_l_2 = .
 	label var firmsize_l_2 "Firm size (lower bracket) secondary job 7 day recall"
 *</_firmsize_l_2_>
 
 
 *<_firmsize_u_2_>
-    gen firmsize_u_2 = .
+	gen firmsize_u_2 = .
 	label var firmsize_u_2 "Firm size (upper bracket) secondary job 7 day recall"
 *</_firmsize_u_2_>
-
 
 }
 
@@ -1114,20 +1320,23 @@ foreach ed_var of local ed_vars {
 
 **If the number of months worked is missing, the harmonizer may assume that the person worked the whole year inputting the "average, commonly hours worked" (i.e., using usually worked hours instead of actual). Moreover, the harmonizer may assume that the person worked the whole year in this job (multiply monthly data by 12, weekly data by 48). Thus, the variable functions as an upper bound.
 
-	gen t_hours_total = .
+	egen t_hours_total = rowtotal(whours whours_2), missing
+	replace t_hours_total = t_hours_total * 48
 	replace t_hours_total = . if lstatus != 1
 	label var t_hours_total "Annualized hours worked in all jobs 7 day recall"
 *</_t_hours_total_>
 
 
 *<_t_wage_nocompen_total_>
-	gen t_wage_nocompen_total = .
+
+	*just info of main job
+	gen t_wage_nocompen_total = wage_no_compen * 12
 	label var t_wage_nocompen_total "Annualized wage in all jobs excl. bonuses, etc. 7 day recall"
 *</_t_wage_nocompen_total_>
 
 
 *<_t_wage_total_>
-	gen t_wage_total = .
+	gen t_wage_total = t_wage_nocompen_total
 	label var t_wage_total "Annualized total wage for all jobs 7 day recall"
 *</_t_wage_total_>
 
@@ -1139,6 +1348,15 @@ foreach ed_var of local ed_vars {
 *<_lstatus_year_>
 	*They ask an auto report status one year ago: WHAT WAS YOUR ACTIVITY STATUS ONE YEAR BEFORE SURVEY? 
 	gen byte lstatus_year = .
+	
+	*** employed ***
+	replace lstatus_year = 1 if P99 == 1
+	
+	*** unemployed ***
+	replace lstatus_year = 2 if P99 == 2
+	
+	*** NLF ***
+	replace lstatus_year = 3 if inlist(P99,3,4,5,6,7)
 	
 	replace lstatus_year = . if age < minlaborage & !missing(age)
 	label var lstatus_year "Labor status during last year"
@@ -1192,7 +1410,8 @@ foreach ed_var of local ed_vars {
 {
 
 *<_empstat_year_>
-	gen byte empstat_year = .
+	gen byte empstat_year = P100 if lstatus_year == 1
+	recode empstat_year (2 = 3) (3 = 4) (4 = 2)
 	label var empstat_year "Employment status during past week primary job 12 month recall"
 	la de lblempstat_year 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat_year lblempstat_year
@@ -1205,22 +1424,38 @@ foreach ed_var of local ed_vars {
 	label values ocusec_year lblocusec_year
 *</_ocusec_year_>
 
-
-
 *<_industry_orig_year_>
-	gen industry_orig_year = ""
-	replace industry_orig_year = "" if industry_orig_year == "." | industry_orig_year == "00"
+	gen industry_orig_year = P101_B_CODE if lstatus_year == 1
+	replace industry_orig_year = "" if industry_orig_year == "."
 	label var industry_orig_year "Original industry record main job 12 month recall"
 *</_industry_orig_year_>
 
 
 *<_industrycat_isic_year_>
-	gen industrycat_isic_year = ""
+	gen industrycat_isic_year = substr(P101_B_CODE, 1, 2) + "00" + substr(P101_B_CODE, 4, .) if !missing(P101_B_CODE)
+	replace industrycat_isic_year = "" if lstatus_year != 1
+	replace industrycat_isic_year = "" if industrycat_isic_year == "4800"
+
+
+	* Check that no errors --> using our universe check function, count should be 0 (no obs wrong)
+	* https://github.com/worldbank/gld/tree/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20universe%20check
+	/*
+	preserve 
+	drop if missing(industrycat_isic_year)
+	int_classif_universe, var(industrycat_isic_year) universe(ISIC)
+	count
+	list
+	assert `r(N)' == 0
+	restore 
+	*/
+
 	label var industrycat_isic_year "ISIC code of primary job 12 month recall"
 *</_industrycat_isic_year_>
 
 *<_industrycat10_year_>
-	gen byte industrycat10_year = .
+	gen byte industrycat10_year = real(substr(industrycat_isic_year,1,2))
+	recode industrycat10_year (1/3 = 1) (5/9 = 2) (10/33 = 3) (35/39 = 4) (41/43 = 5) (45/47 55/56 = 6) (49/53 58/63 = 7) (64/82 = 8) (84 = 9) (85/99 = 10)
+
 	label var industrycat10_year "1 digit industry classification, primary job 12 month recall"
 	la de lblindustrycat10_year 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10_year lblindustrycat10_year
@@ -1237,7 +1472,6 @@ foreach ed_var of local ed_vars {
 
 
 *<_occup_orig_year_>
-* Occupation texts only provided
 	gen occup_orig_year = .
 	label var occup_orig_year "Original occupation record primary job 12 month recall"
 *</_occup_orig_year_>
@@ -1524,6 +1758,9 @@ foreach ed_var of local ed_vars {
 
 *<_njobs_>
 	gen njobs = .
+	replace njobs = 1 if lstatus == 1
+	replace njobs = 2 if !missing(empstat_2)
+	replace njobs = . if lstatus != 1
 	label var njobs "Total number of jobs"
 *</_njobs_>
 
