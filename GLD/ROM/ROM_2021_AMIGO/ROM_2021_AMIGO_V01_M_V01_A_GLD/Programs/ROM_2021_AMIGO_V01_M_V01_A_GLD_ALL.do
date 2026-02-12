@@ -184,7 +184,8 @@ use "`path_in_stata'/amigo_2021.dta",clear
 
 </_hhid_note> */
 	gen quarter_gld_str = "Q" + string(quarter) 
-	egen hhid = concat(hhnum quarter_gld_str)
+	tostring hhnum, gen (hhnum_str)
+	egen hhid = concat(hhnum_str quarter_gld_str)
 	label var hhid "Household ID"
 *</_hhid_>
 
@@ -1066,8 +1067,8 @@ foreach ed_var of local ed_vars {
 
 
 *<_wage_no_compen_>
-	gen double wage_no_compen = .
-	replace wage_no_compen = . if lstatus != 1
+	gen double wage_no_compen = incgross
+	replace wage_no_compen = . if lstatus != 1 | incgross == 99999999
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
@@ -1081,7 +1082,7 @@ foreach ed_var of local ed_vars {
 	while unitwage is code 1 ("Daily") for all, regardless of the periodicity.
 </_unitwage_note> */
 
-	gen byte unitwage = .
+	gen byte unitwage = 5
 	replace unitwage = . if mi(wage_no_compen)
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
