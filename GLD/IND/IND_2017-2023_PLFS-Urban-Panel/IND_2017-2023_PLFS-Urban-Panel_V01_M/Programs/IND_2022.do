@@ -60,7 +60,7 @@ set mem 800m
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-local server	"Y:/GLD"
+local server  "C:/Users/wb529026/WBG/GLD - GLD Official Use"
 local country	"IND"
 local year		"2022"
 local survey	"PLFS"
@@ -75,7 +75,7 @@ local level_2_harm "`level_1'_`vermast'_M_`veralt'_A_GLD"
 * From chunks, define path_in, path_output folder
 
 local path_in_stata "`server'/`country'/`level_1'/`level_2_mast'/Data/Stata"
-local path_output   "Y:/GLD-Harmonization/529026_MG/IND/IND_2022_PLFS-Urban-Panel/IND_2022_PLFS-Urban-Panel_V01_M/Data/Stata"
+local path_output   "C:/Users/wb529026/WBG/GLD - Current Contributors/637898_JR/IND/IND_2017-2023_PLFS-Urban-Panel/IND_2017-2023_PLFS-Urban-Panel_V01_M/Data/Stata"
 
 
 * Define Output file name
@@ -86,11 +86,12 @@ local out_file "`level_2_harm'_ALL.dta"
 use "`path_in_stata'\IND_2022_PLFS_raw_IND_Stata.dta", clear
 append using "`path_in_stata'\IND_2022_PLFS_raw_IND_RV_Stata.dta"
 
+gen str1 h_0 = string(stratum,"%01.0f")
 gen str1 h_1 = string(sample_sg_b_no,"%01.0f")
 gen str1 h_2 = string(ss_stratum,"%01.0f")
 gen str2 h_3 = string(hh_num,"%02.0f")
 
-egen str9 hh_key = concat(fsu h_1 h_2 h_3 visit quarter)
+egen str9 hh_key = concat(fsu h_* visit quarter)
 drop h_*
 
 tempfile ind_file
@@ -99,11 +100,12 @@ save `ind_file'
 use "`path_in_stata'\IND_2022_PLFS_raw_HH_Stata.dta", clear
 append using "`path_in_stata'\IND_2022_PLFS_raw_HH_RV_Stata.dta"
 
+gen str1 h_0 = string(stratum,"%01.0f")
 gen str1 h_1 = string(sample_sg_b_no,"%01.0f")
 gen str1 h_2 = string(ss_stratum,"%01.0f")
 gen str2 h_3 = string(hh_num,"%02.0f")
 
-egen str9 hh_key = concat(fsu h_1 h_2 h_3 visit quarter)
+egen str9 hh_key = concat(fsu h_* visit quarter)
 drop h_*
 
 merge 1:m hh_key using `ind_file', assert(match)
@@ -208,13 +210,14 @@ drop _merge hh_key
 
 </_hhid_note> */
 
+	gen str1 h_0 = string(stratum,"%01.0f")
 	gen str1 h_1 = string(sample_sg_b_no,"%01.0f")
 	gen str1 h_2 = string(ss_stratum,"%01.0f")
 	gen str2 h_3 = string(hh_num,"%02.0f")
 
-	egen hhid = concat(fsu h_1 h_2 h_3)
+	egen hhid = concat(fsu h_*)
 	label var hhid "Household ID"
-	drop h_1 h_2 h_3
+	drop h_*
 *</_hhid_>
 
 
