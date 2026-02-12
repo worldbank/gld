@@ -41,10 +41,7 @@ It is common practice for research works that use panel surveys to identify exte
 
 ### Attrition
 
-We also examine three measures of attrition: between waves, between the first visit and any subsequent wave, and between the first visit and all subsequent waves. The attrition rates for each measure are shown below, separating calculations for attrition in terms of ID only, and both ID and age-sex matches. 
-
-#### Attrition between two consecutive waves
-![attrition1](utilities/attrition_consecutive_waves.png)
+We also examine three measures of attrition: between the first visit and any subsequent wave and between the first visit and all subsequent waves. The attrition rates for each measure are shown below, separating calculations for attrition in terms of ID only, and both ID and age-sex matches. 
 
 #### Attrition between the first visit and any subsquent wave
 ![attrition2](utilities/attrition_any_wave.png)

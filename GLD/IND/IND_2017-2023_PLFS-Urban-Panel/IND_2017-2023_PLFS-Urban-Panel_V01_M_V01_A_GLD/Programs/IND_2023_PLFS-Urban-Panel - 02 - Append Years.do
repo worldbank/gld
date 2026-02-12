@@ -56,7 +56,7 @@ if _rc == 0 {
 	
 }
 		
-* Here there are 141,000 cases of individual-waves where the household-wave info is mapped to more than one visit_no. There are two possibilities: (1) visit is assigned based on individual appearance not the household's; (2) the hhid is  not unique for a given round-year. 
+* Here there are 329,076 cases of individual-waves where the household-wave info is mapped to more than one visit_no. There are two possibilities: (1) visit is assigned based on individual appearance not the household's; (2) the hhid is  not unique for a given round-year. 
 
 * Diagnostic: Check for re-use of HHID outside panel
 gldpanel_id_check

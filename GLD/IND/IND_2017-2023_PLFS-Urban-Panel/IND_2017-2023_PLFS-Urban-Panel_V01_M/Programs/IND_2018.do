@@ -4,22 +4,22 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				IND_2020_PLFS_V01_M_V03_A_GLD_ALL.do </_Program name_>
-<_Application_>					Stata 17 <_Application_>
+<_Program name_>				IND_2018_PLFS_V02_M_V01_A_GLD_ALL.do </_Program name_>
+<_Application_>					Stata 16 <_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
-<_Date created_>				2023-08-08 </_Date created_>
+<_Date created_>				2023-08-25 </_Date created_>
 
 -------------------------------------------------------------------------
 
 <_Country_>						India </_Country_>
 <_Survey Title_>				Periodic Labour Force Survey </_Survey Title_>
-<_Survey Year_>					2020 </_Survey Year_>
-<_Study ID_>					DDI-IND-CSO-PLFS-2020-20 </_Study ID_>
-<_Data collection from_>		07/2020 </_Data collection from_>
-<_Data collection to_>			06/2020 </_Data collection to_>
+<_Survey Year_>					2018 </_Survey Year_>
+<_Study ID_>					DDI-IND-CSO-PLFS-2018-19 </_Study ID_>
+<_Data collection from_>		07/2018 </_Data collection from_>
+<_Data collection to_>			06/2019 </_Data collection to_>
 <_Source of dataset_> 			https://www.mospi.gov.in/web/mospi/download-tables-data/-/reports/view/templateTwo/16201?q=TBDCAT </_Source of dataset_>
-<_Sample size (HH)_> 			100344 </_Sample size (HH)_>
-<_Sample size (IND)_> 			413405 </_Sample size (IND)_>
+<_Sample size (HH)_> 			[#] </_Sample size (HH)_>
+<_Sample size (IND)_> 			[#] </_Sample size (IND)_>
 <_Sampling method_> 			A stratified multi-stage design was adopted. The first stage units
 (FSU) were the Urban Frame Survey (UFS) blocks in urban areas and 2011 Population Census
 villages (Panchayat wards for Kerala) in rural areas. The ultimate stage units (USU) were
@@ -40,9 +40,9 @@ called hamlet group/sub-block, was formed </_Sampling method_>
 -----------------------------------------------------------------------
 <_Version Control_>
 
-* Date: 2024-01-05 - Update vars subnatid2, subnatid3
-* Date: 2024-02-07 - Update vars subnatid2, subnatid3
-* Date: 2024-04-17 - Update vars subnatid1
+* Date: 2022-09-24 - Correct educat7, ocusec, change subnatid1 to string, improve subnatidsurvey
+* Date: 2022-11-22 - Updated based on correcting input data that infile as byte was not reading correctly
+* Date: 2022-08-25 - Include code appending household and person revisit data
 
 </_Version Control_>
 
@@ -64,10 +64,10 @@ set mem 800m
 * Define path sections
 local server  "Y:/GLD"
 local country "IND"
-local year    "2020"
+local year    "2018"
 local survey  "PLFS"
-local vermast "V01"
-local veralt  "V04"
+local vermast "V02"
+local veralt  "V01"
 
 * From the definitions, set path chunks
 local level_1	   "`country'_`year'_`survey'"
@@ -76,43 +76,43 @@ local level_2_harm "`level_1'_`vermast'_M_`veralt'_A_GLD"
 
 * From chunks, define path_in, path_output folder
 local path_in_stata "`server'/`country'/`level_1'/`level_2_mast'/Data/Stata"
-local path_output   "Y:/GLD-Harmonization/529026_MG/IND/IND_2022_PLFS-Urban-Panel/IND_2022_PLFS-Urban-Panel_V01_M/Data/Stata"
+local path_in_other "`server'/`country'/`level_1'/`level_2_mast'/Data/Original"
+local path_output   "C:/Users/wb529026/WBG/GLD - Current Contributors/637898_JR/IND/IND_2017-2023_PLFS-Urban-Panel/IND_2017-2023_PLFS-Urban-Panel_V01_M/Data/Stata"
 
 
 * Define Output file name
 local out_file "`level_2_harm'_ALL.dta"
 
+
 *----------1.3: Database assembly------------------------------*
 
-use "`path_in_stata'\IND_2020_PLFS_raw_IND_Stata.dta", clear
-append using "`path_in_stata'\IND_2020_PLFS_raw_IND_RV_Stata.dta"
+use "`path_in_stata'\IND_2018_PLFS_raw_IND_Stata.dta", clear
+append using "`path_in_stata'\IND_2018_PLFS_raw_IND_RV_Stata.dta"
 
+gen str1 h_0 = string(stratum,"%01.0f")
 gen str1 h_1 = string(sample_sg_b_no,"%01.0f")
 gen str1 h_2 = string(ss_stratum,"%01.0f")
 gen str2 h_3 = string(hh_num,"%02.0f")
 
-egen str9 hh_key = concat(fsu h_1 h_2 h_3 visit)
+egen str9 hh_key = concat(fsu h_* visit quarter)
 drop h_*
 
 tempfile ind_file
 save `ind_file'
 
-use "`path_in_stata'\IND_2020_PLFS_raw_HH_Stata.dta", clear
-append using "`path_in_stata'\IND_2020_PLFS_raw_HH_RV_Stata.dta"
+use "`path_in_stata'\IND_2018_PLFS_raw_HH_Stata.dta", clear
+append using "`path_in_stata'\IND_2018_PLFS_raw_HH_RV_Stata.dta"
 
+gen str1 h_0 = string(stratum,"%01.0f")
 gen str1 h_1 = string(sample_sg_b_no,"%01.0f")
 gen str1 h_2 = string(ss_stratum,"%01.0f")
 gen str2 h_3 = string(hh_num,"%02.0f")
 
-egen str9 hh_key = concat(fsu h_1 h_2 h_3 visit)
+egen str9 hh_key = concat(fsu h_* visit quarter)
 drop h_*
 
-merge 1:m hh_key using `ind_file', assert(match)
+merge 1:m hh_key using `ind_file', keep(using match)
 drop _merge hh_key
-
-* There are "temporary visitors" (N = 2,587) who are included in the survey. These individuals were asked for information relating to their previous place of residence prior to moving in after March 2020. But they were not asked at all other information found in other modules of the survey as they are not considered as part of the household. Hence for cleanliness of the data, they are dropped from the analysis
-
-drop if !missing(ppe_d_lupr_tv)
 
 
 /*%%=============================================================================================
@@ -164,7 +164,7 @@ drop if !missing(ppe_d_lupr_tv)
 
 
 *<_year_>
-	gen int year = 2020
+	gen int year = 2018
 	label var year "Year of survey"
 *</_year_>
 
@@ -189,8 +189,8 @@ drop if !missing(ppe_d_lupr_tv)
 
 *<_int_year_>
 	gen int_year= .
-	replace int_year = 2020 if inlist(quarter,"Q5","Q6")
-	replace int_year = 2021 if inlist(quarter,"Q7","Q8")
+	replace int_year = 2018 if inlist(quarter,"Q5","Q6")
+	replace int_year = 2019 if inlist(quarter,"Q7","Q8")
 	label var int_year "Year of the interview"
 *</_int_year_>
 
@@ -198,8 +198,7 @@ drop if !missing(ppe_d_lupr_tv)
 *<_int_month_>
 
 	gen  int_month = month
-	destring int_month, replace force
-	replace int_month = . if !inrange(int_month,1,12)
+	replace int_month = . if month == 0
 	label de lblint_month 1 "January" 2 "February" 3 "March" 4 "April" 5 "May" 6 "June" 7 "July" 8 "August" 9 "September" 10 "October" 11 "November" 12 "December"
 	label value int_month lblint_month
 	label var int_month "Month of the interview"
@@ -238,6 +237,8 @@ drop if !missing(ppe_d_lupr_tv)
 	Instructions say to use the multiplier divided by 100
 	if nss == nsc, otherwise by 200. In addition divide by
 	the number of quarters the area has been in.
+	
+	For quarterly weights, don't divide multiplier by no_qrt
 
 </_weight_note> */
 	gen weight = .
@@ -312,19 +313,23 @@ drop if !missing(ppe_d_lupr_tv)
 *</_subnatid1_>
 
 
-
 *<_subnatid2_>
 	gen hlp_state = string(state, "%02.0f")
 	gen hlp_dist = string(district, "%02.0f")
 	egen subnatid2 = concat(hlp_state hlp_dist), punct(-)
 	label var subnatid2 "Admin 2 - District"
-	replace subnatid2 = "01-01 - Kupwara" if subnatid2 == "01-01"
-	replace subnatid2 = "01-02 - Badgam" if subnatid2 == "01-02"
-	replace subnatid2 = "01-03 - Leh" if subnatid2 == "01-03"
-	replace subnatid2 = "01-04 - Kargil" if subnatid2 == "01-04"
+	replace subnatid2 = "01-07 - Kathua" if subnatid2 == "01-07"
+	replace subnatid2 = "01-21 - Jammu" if subnatid2 == "01-21"
+	replace subnatid2 = "01-22 - Samba" if subnatid2 == "01-22"
 	replace subnatid2 = "01-05 - Punch" if subnatid2 == "01-05"
 	replace subnatid2 = "01-06 - Rajouri" if subnatid2 == "01-06"
-	replace subnatid2 = "01-07 - Kathua" if subnatid2 == "01-07"
+	replace subnatid2 = "01-16 - Doda" if subnatid2 == "01-16"
+	replace subnatid2 = "01-17 - Ramban" if subnatid2 == "01-17"
+	replace subnatid2 = "01-18 - Kishtwar" if subnatid2 == "01-18"
+	replace subnatid2 = "01-19 - Udhampur" if subnatid2 == "01-19"
+	replace subnatid2 = "01-20 - Reasi" if subnatid2 == "01-20"
+	replace subnatid2 = "01-01 - Kupwara" if subnatid2 == "01-01"
+	replace subnatid2 = "01-02 - Badgam" if subnatid2 == "01-02"
 	replace subnatid2 = "01-08 - Baramula" if subnatid2 == "01-08"
 	replace subnatid2 = "01-09 - Bandipore" if subnatid2 == "01-09"
 	replace subnatid2 = "01-10 - Srinagar" if subnatid2 == "01-10"
@@ -333,20 +338,15 @@ drop if !missing(ppe_d_lupr_tv)
 	replace subnatid2 = "01-13 - Shupiyan" if subnatid2 == "01-13"
 	replace subnatid2 = "01-14 - Anantnag" if subnatid2 == "01-14"
 	replace subnatid2 = "01-15 - Kulgam" if subnatid2 == "01-15"
-	replace subnatid2 = "01-16 - Doda" if subnatid2 == "01-16"
-	replace subnatid2 = "01-17 - Ramban" if subnatid2 == "01-17"
-	replace subnatid2 = "01-18 - Kishtwar" if subnatid2 == "01-18"
-	replace subnatid2 = "01-19 - Udhampur" if subnatid2 == "01-19"
-	replace subnatid2 = "01-20 - Reasi" if subnatid2 == "01-20"
-	replace subnatid2 = "01-21 - Jammu" if subnatid2 == "01-21"
-	replace subnatid2 = "01-22 - Samba" if subnatid2 == "01-22"
-	replace subnatid2 = "02-01 - Chamba" if subnatid2 == "02-01"
+	replace subnatid2 = "01-03 - Leh (Ladakh)" if subnatid2 == "01-03"
+	replace subnatid2 = "01-04 - Kargil" if subnatid2 == "01-04"
 	replace subnatid2 = "02-02 - Kangra" if subnatid2 == "02-02"
-	replace subnatid2 = "02-03 - Lahul & Spiti" if subnatid2 == "02-03"
 	replace subnatid2 = "02-04 - Kullu" if subnatid2 == "02-04"
 	replace subnatid2 = "02-05 - Mandi" if subnatid2 == "02-05"
 	replace subnatid2 = "02-06 - Hamirpur" if subnatid2 == "02-06"
 	replace subnatid2 = "02-07 - Una" if subnatid2 == "02-07"
+	replace subnatid2 = "02-01 - Chamba" if subnatid2 == "02-01"
+	replace subnatid2 = "02-03 - Lahul & Spiti" if subnatid2 == "02-03"
 	replace subnatid2 = "02-08 - Bilaspur" if subnatid2 == "02-08"
 	replace subnatid2 = "02-09 - Solan" if subnatid2 == "02-09"
 	replace subnatid2 = "02-10 - Sirmaur" if subnatid2 == "02-10"
@@ -357,6 +357,11 @@ drop if !missing(ppe_d_lupr_tv)
 	replace subnatid2 = "03-03 - Jalandhar" if subnatid2 == "03-03"
 	replace subnatid2 = "03-04 - Hoshiarpur" if subnatid2 == "03-04"
 	replace subnatid2 = "03-05 - Shahid Bhagat Singh Nagar" if subnatid2 == "03-05"
+	replace subnatid2 = "03-15 - Amritsar" if subnatid2 == "03-15"
+	replace subnatid2 = "03-16 - Tarn Taran" if subnatid2 == "03-16"
+	replace subnatid2 = "03-17 - Rupnagar" if subnatid2 == "03-17"
+	replace subnatid2 = "03-18 - Sahibzada Ajit Singh Nagar" if subnatid2 == "03-18"
+	replace subnatid2 = "03-21 - Pathankot" if subnatid2 == "03-21"
 	replace subnatid2 = "03-06 - Fatehgarh Sahib" if subnatid2 == "03-06"
 	replace subnatid2 = "03-07 - Ludhiana" if subnatid2 == "03-07"
 	replace subnatid2 = "03-08 - Moga" if subnatid2 == "03-08"
@@ -366,13 +371,8 @@ drop if !missing(ppe_d_lupr_tv)
 	replace subnatid2 = "03-12 - Bathinda" if subnatid2 == "03-12"
 	replace subnatid2 = "03-13 - Mansa" if subnatid2 == "03-13"
 	replace subnatid2 = "03-14 - Patiala" if subnatid2 == "03-14"
-	replace subnatid2 = "03-15 - Amritsar" if subnatid2 == "03-15"
-	replace subnatid2 = "03-16 - Tarn Taran" if subnatid2 == "03-16"
-	replace subnatid2 = "03-17 - Rupnagar" if subnatid2 == "03-17"
-	replace subnatid2 = "03-18 - Sahibzada Ajit Singh Nagar" if subnatid2 == "03-18"
 	replace subnatid2 = "03-19 - Sangrur" if subnatid2 == "03-19"
 	replace subnatid2 = "03-20 - Barnala" if subnatid2 == "03-20"
-	replace subnatid2 = "03-21 - Pathankot" if subnatid2 == "03-21"
 	replace subnatid2 = "03-22 - Fazilka" if subnatid2 == "03-22"
 	replace subnatid2 = "04-01 - Chandigarh" if subnatid2 == "04-01"
 	replace subnatid2 = "05-01 - Uttarkashi" if subnatid2 == "05-01"
@@ -396,19 +396,19 @@ drop if !missing(ppe_d_lupr_tv)
 	replace subnatid2 = "06-06 - Karnal" if subnatid2 == "06-06"
 	replace subnatid2 = "06-07 - Panipat" if subnatid2 == "06-07"
 	replace subnatid2 = "06-08 - Sonipat" if subnatid2 == "06-08"
+	replace subnatid2 = "06-14 - Rohtak" if subnatid2 == "06-14"
+	replace subnatid2 = "06-15 - Jhajjar" if subnatid2 == "06-15"
+	replace subnatid2 = "06-18 - Gurgaon" if subnatid2 == "06-18"
+	replace subnatid2 = "06-19 - Mewat" if subnatid2 == "06-19"
+	replace subnatid2 = "06-20 - Faridabad" if subnatid2 == "06-20"
+	replace subnatid2 = "06-21 - Palwal" if subnatid2 == "06-21"
 	replace subnatid2 = "06-09 - Jind" if subnatid2 == "06-09"
 	replace subnatid2 = "06-10 - Fatehabad" if subnatid2 == "06-10"
 	replace subnatid2 = "06-11 - Sirsa" if subnatid2 == "06-11"
 	replace subnatid2 = "06-12 - Hisar" if subnatid2 == "06-12"
 	replace subnatid2 = "06-13 - Bhiwani" if subnatid2 == "06-13"
-	replace subnatid2 = "06-14 - Rohtak" if subnatid2 == "06-14"
-	replace subnatid2 = "06-15 - Jhajjar" if subnatid2 == "06-15"
 	replace subnatid2 = "06-16 - Mahendragarh" if subnatid2 == "06-16"
 	replace subnatid2 = "06-17 - Rewari" if subnatid2 == "06-17"
-	replace subnatid2 = "06-18 - Gurgaon" if subnatid2 == "06-18"
-	replace subnatid2 = "06-19 - Mewat" if subnatid2 == "06-19"
-	replace subnatid2 = "06-20 - Faridabad" if subnatid2 == "06-20"
-	replace subnatid2 = "06-21 - Palwal" if subnatid2 == "06-21"
 	replace subnatid2 = "07-01 - North West Delhi" if subnatid2 == "07-01"
 	replace subnatid2 = "07-02 - North Delhi" if subnatid2 == "07-02"
 	replace subnatid2 = "07-03 - North East Delhi" if subnatid2 == "07-03"
@@ -418,11 +418,13 @@ drop if !missing(ppe_d_lupr_tv)
 	replace subnatid2 = "07-07 - West Delhi" if subnatid2 == "07-07"
 	replace subnatid2 = "07-08 - South West Delhi" if subnatid2 == "07-08"
 	replace subnatid2 = "07-09 - South Delhi" if subnatid2 == "07-09"
-	replace subnatid2 = "08-01 - Sri Ganganagar" if subnatid2 == "08-01"
-	replace subnatid2 = "08-02 - Hanumangarh" if subnatid2 == "08-02"
 	replace subnatid2 = "08-03 - Bikaner" if subnatid2 == "08-03"
-	replace subnatid2 = "08-04 - Churu" if subnatid2 == "08-04"
-	replace subnatid2 = "08-05 - Jhunjhunun" if subnatid2 == "08-05"
+	replace subnatid2 = "08-15 - Jodhpur" if subnatid2 == "08-15"
+	replace subnatid2 = "08-16 - Jaisalmer" if subnatid2 == "08-16"
+	replace subnatid2 = "08-17 - Barmer" if subnatid2 == "08-17"
+	replace subnatid2 = "08-18 - Jalor" if subnatid2 == "08-18"
+	replace subnatid2 = "08-19 - Sirohi" if subnatid2 == "08-19"
+	replace subnatid2 = "08-20 - Pali" if subnatid2 == "08-20"
 	replace subnatid2 = "08-06 - Alwar" if subnatid2 == "08-06"
 	replace subnatid2 = "08-07 - Bharatpur" if subnatid2 == "08-07"
 	replace subnatid2 = "08-08 - Dhaulpur" if subnatid2 == "08-08"
@@ -430,27 +432,25 @@ drop if !missing(ppe_d_lupr_tv)
 	replace subnatid2 = "08-10 - Sawai Madhopur" if subnatid2 == "08-10"
 	replace subnatid2 = "08-11 - Dausa" if subnatid2 == "08-11"
 	replace subnatid2 = "08-12 - Jaipur" if subnatid2 == "08-12"
-	replace subnatid2 = "08-13 - Sikar" if subnatid2 == "08-13"
-	replace subnatid2 = "08-14 - Nagaur" if subnatid2 == "08-14"
-	replace subnatid2 = "08-15 - Jodhpur" if subnatid2 == "08-15"
-	replace subnatid2 = "08-16 - Jaisalmer" if subnatid2 == "08-16"
-	replace subnatid2 = "08-17 - Barmer" if subnatid2 == "08-17"
-	replace subnatid2 = "08-18 - Jalor" if subnatid2 == "08-18"
-	replace subnatid2 = "08-19 - Sirohi" if subnatid2 == "08-19"
-	replace subnatid2 = "08-20 - Pali" if subnatid2 == "08-20"
 	replace subnatid2 = "08-21 - Ajmer" if subnatid2 == "08-21"
 	replace subnatid2 = "08-22 - Tonk" if subnatid2 == "08-22"
-	replace subnatid2 = "08-23 - Bundi" if subnatid2 == "08-23"
 	replace subnatid2 = "08-24 - Bhilwara" if subnatid2 == "08-24"
 	replace subnatid2 = "08-25 - Rajsamand" if subnatid2 == "08-25"
 	replace subnatid2 = "08-26 - Dungarpur" if subnatid2 == "08-26"
 	replace subnatid2 = "08-27 - Banswara" if subnatid2 == "08-27"
+	replace subnatid2 = "08-32 - Udaipur" if subnatid2 == "08-32"
+	replace subnatid2 = "08-23 - Bundi" if subnatid2 == "08-23"
 	replace subnatid2 = "08-28 - Chittaurgarh" if subnatid2 == "08-28"
 	replace subnatid2 = "08-29 - Kota" if subnatid2 == "08-29"
 	replace subnatid2 = "08-30 - Baran" if subnatid2 == "08-30"
 	replace subnatid2 = "08-31 - Jhalawar" if subnatid2 == "08-31"
-	replace subnatid2 = "08-32 - Udaipur" if subnatid2 == "08-32"
 	replace subnatid2 = "08-33 - Pratapgarh" if subnatid2 == "08-33"
+	replace subnatid2 = "08-01 - Ganganagar" if subnatid2 == "08-01"
+	replace subnatid2 = "08-02 - Hanumangarh" if subnatid2 == "08-02"
+	replace subnatid2 = "08-04 - Churu" if subnatid2 == "08-04"
+	replace subnatid2 = "08-05 - Jhunjhunun" if subnatid2 == "08-05"
+	replace subnatid2 = "08-13 - Sikar" if subnatid2 == "08-13"
+	replace subnatid2 = "08-14 - Nagaur" if subnatid2 == "08-14"
 	replace subnatid2 = "09-01 - Saharanpur" if subnatid2 == "09-01"
 	replace subnatid2 = "09-02 - Muzaffarnagar" if subnatid2 == "09-02"
 	replace subnatid2 = "09-03 - Bijnor" if subnatid2 == "09-03"
@@ -461,41 +461,18 @@ drop if !missing(ppe_d_lupr_tv)
 	replace subnatid2 = "09-08 - Baghpat" if subnatid2 == "09-08"
 	replace subnatid2 = "09-09 - Ghaziabad" if subnatid2 == "09-09"
 	replace subnatid2 = "09-10 - Gautam Buddha Nagar" if subnatid2 == "09-10"
-	replace subnatid2 = "09-11 - Bulandshahr" if subnatid2 == "09-11"
-	replace subnatid2 = "09-12 - Aligarh" if subnatid2 == "09-12"
-	replace subnatid2 = "09-13 - Mahamaya Nagar" if subnatid2 == "09-13"
-	replace subnatid2 = "09-14 - Mathura" if subnatid2 == "09-14"
-	replace subnatid2 = "09-15 - Agra" if subnatid2 == "09-15"
-	replace subnatid2 = "09-16 - Firozabad" if subnatid2 == "09-16"
-	replace subnatid2 = "09-17 - Mainpuri" if subnatid2 == "09-17"
-	replace subnatid2 = "09-18 - Budaun" if subnatid2 == "09-18"
-	replace subnatid2 = "09-19 - Bareilly" if subnatid2 == "09-19"
-	replace subnatid2 = "09-20 - Pilibhit" if subnatid2 == "09-20"
-	replace subnatid2 = "09-21 - Shahjahanpur" if subnatid2 == "09-21"
-	replace subnatid2 = "09-22 - Kheri" if subnatid2 == "09-22"
 	replace subnatid2 = "09-23 - Sitapur" if subnatid2 == "09-23"
 	replace subnatid2 = "09-24 - Hardoi" if subnatid2 == "09-24"
 	replace subnatid2 = "09-25 - Unnao" if subnatid2 == "09-25"
 	replace subnatid2 = "09-26 - Lucknow" if subnatid2 == "09-26"
 	replace subnatid2 = "09-27 - Rae Bareli" if subnatid2 == "09-27"
-	replace subnatid2 = "09-28 - Farrukhabad" if subnatid2 == "09-28"
-	replace subnatid2 = "09-29 - Kannauj" if subnatid2 == "09-29"
-	replace subnatid2 = "09-30 - Etawah" if subnatid2 == "09-30"
-	replace subnatid2 = "09-31 - Auraiya" if subnatid2 == "09-31"
 	replace subnatid2 = "09-32 - Kanpur Dehat" if subnatid2 == "09-32"
 	replace subnatid2 = "09-33 - Kanpur Nagar" if subnatid2 == "09-33"
-	replace subnatid2 = "09-34 - Jalaun" if subnatid2 == "09-34"
-	replace subnatid2 = "09-35 - Jhansi" if subnatid2 == "09-35"
-	replace subnatid2 = "09-36 - Lalitpur" if subnatid2 == "09-36"
-	replace subnatid2 = "09-37 - Hamirpur" if subnatid2 == "09-37"
-	replace subnatid2 = "09-38 - Mahoba" if subnatid2 == "09-38"
-	replace subnatid2 = "09-39 - Banda" if subnatid2 == "09-39"
-	replace subnatid2 = "09-40 - Chitrakoot" if subnatid2 == "09-40"
 	replace subnatid2 = "09-41 - Fatehpur" if subnatid2 == "09-41"
+	replace subnatid2 = "09-45 - Bara Banki" if subnatid2 == "09-45"
 	replace subnatid2 = "09-42 - Pratapgarh" if subnatid2 == "09-42"
 	replace subnatid2 = "09-43 - Kaushambi" if subnatid2 == "09-43"
 	replace subnatid2 = "09-44 - Allahabad" if subnatid2 == "09-44"
-	replace subnatid2 = "09-45 - Bara Banki" if subnatid2 == "09-45"
 	replace subnatid2 = "09-46 - Faizabad" if subnatid2 == "09-46"
 	replace subnatid2 = "09-47 - Ambedkar Nagar" if subnatid2 == "09-47"
 	replace subnatid2 = "09-48 - Sultanpur" if subnatid2 == "09-48"
@@ -520,6 +497,29 @@ drop if !missing(ppe_d_lupr_tv)
 	replace subnatid2 = "09-67 - Sant Ravidas Nagar (Bhadohi)" if subnatid2 == "09-67"
 	replace subnatid2 = "09-68 - Mirzapur" if subnatid2 == "09-68"
 	replace subnatid2 = "09-69 - Sonbhadra" if subnatid2 == "09-69"
+	replace subnatid2 = "09-34 - Jalaun" if subnatid2 == "09-34"
+	replace subnatid2 = "09-35 - Jhansi" if subnatid2 == "09-35"
+	replace subnatid2 = "09-36 - Lalitpur" if subnatid2 == "09-36"
+	replace subnatid2 = "09-37 - Hamirpur" if subnatid2 == "09-37"
+	replace subnatid2 = "09-38 - Mahoba" if subnatid2 == "09-38"
+	replace subnatid2 = "09-39 - Banda" if subnatid2 == "09-39"
+	replace subnatid2 = "09-40 - Chitrakoot" if subnatid2 == "09-40"
+	replace subnatid2 = "09-11 - Bulandshahr" if subnatid2 == "09-11"
+	replace subnatid2 = "09-12 - Aligarh" if subnatid2 == "09-12"
+	replace subnatid2 = "09-13 - Mahamaya Nagar" if subnatid2 == "09-13"
+	replace subnatid2 = "09-14 - Mathura" if subnatid2 == "09-14"
+	replace subnatid2 = "09-15 - Agra" if subnatid2 == "09-15"
+	replace subnatid2 = "09-16 - Firozabad" if subnatid2 == "09-16"
+	replace subnatid2 = "09-17 - Mainpuri" if subnatid2 == "09-17"
+	replace subnatid2 = "09-18 - Budaun" if subnatid2 == "09-18"
+	replace subnatid2 = "09-19 - Bareilly" if subnatid2 == "09-19"
+	replace subnatid2 = "09-20 - Pilibhit" if subnatid2 == "09-20"
+	replace subnatid2 = "09-21 - Shahjahanpur" if subnatid2 == "09-21"
+	replace subnatid2 = "09-22 - Kheri" if subnatid2 == "09-22"
+	replace subnatid2 = "09-28 - Farrukhabad" if subnatid2 == "09-28"
+	replace subnatid2 = "09-29 - Kannauj" if subnatid2 == "09-29"
+	replace subnatid2 = "09-30 - Etawah" if subnatid2 == "09-30"
+	replace subnatid2 = "09-31 - Auraiya" if subnatid2 == "09-31"
 	replace subnatid2 = "09-70 - Etah" if subnatid2 == "09-70"
 	replace subnatid2 = "09-71 - Kanshiram Nagar" if subnatid2 == "09-71"
 	replace subnatid2 = "10-01 - Pashchim Champaran" if subnatid2 == "10-01"
@@ -591,13 +591,13 @@ drop if !missing(ppe_d_lupr_tv)
 	replace subnatid2 = "13-09 - Kiphire" if subnatid2 == "13-09"
 	replace subnatid2 = "13-10 - Kohima" if subnatid2 == "13-10"
 	replace subnatid2 = "13-11 - Peren" if subnatid2 == "13-11"
-	replace subnatid2 = "14-01 - Senapati" if subnatid2 == "14-01"
-	replace subnatid2 = "14-02 - Tamenglong" if subnatid2 == "14-02"
-	replace subnatid2 = "14-03 - Churachandpur" if subnatid2 == "14-03"
 	replace subnatid2 = "14-04 - Bishnupur" if subnatid2 == "14-04"
 	replace subnatid2 = "14-05 - Thoubal" if subnatid2 == "14-05"
 	replace subnatid2 = "14-06 - Imphal West" if subnatid2 == "14-06"
 	replace subnatid2 = "14-07 - Imphal East" if subnatid2 == "14-07"
+	replace subnatid2 = "14-01 - Senapati" if subnatid2 == "14-01"
+	replace subnatid2 = "14-02 - Tamenglong" if subnatid2 == "14-02"
+	replace subnatid2 = "14-03 - Churachandpur" if subnatid2 == "14-03"
 	replace subnatid2 = "14-08 - Ukhrul" if subnatid2 == "14-08"
 	replace subnatid2 = "14-09 - Chandel" if subnatid2 == "14-09"
 	replace subnatid2 = "15-01 - Mamit" if subnatid2 == "15-01"
@@ -619,13 +619,6 @@ drop if !missing(ppe_d_lupr_tv)
 	replace subnatid2 = "17-05 - Ribhoi" if subnatid2 == "17-05"
 	replace subnatid2 = "17-06 - East Khasi Hills" if subnatid2 == "17-06"
 	replace subnatid2 = "17-07 - Jaintia Hills" if subnatid2 == "17-07"
-	replace subnatid2 = "18-01 - Kokrajhar" if subnatid2 == "18-01"
-	replace subnatid2 = "18-02 - Dhubri" if subnatid2 == "18-02"
-	replace subnatid2 = "18-03 - Goalpara" if subnatid2 == "18-03"
-	replace subnatid2 = "18-04 - Barpeta" if subnatid2 == "18-04"
-	replace subnatid2 = "18-05 - Morigaon" if subnatid2 == "18-05"
-	replace subnatid2 = "18-06 - Nagaon" if subnatid2 == "18-06"
-	replace subnatid2 = "18-07 - Sonitpur" if subnatid2 == "18-07"
 	replace subnatid2 = "18-08 - Lakhimpur" if subnatid2 == "18-08"
 	replace subnatid2 = "18-09 - Dhemaji" if subnatid2 == "18-09"
 	replace subnatid2 = "18-10 - Tinsukia" if subnatid2 == "18-10"
@@ -633,17 +626,24 @@ drop if !missing(ppe_d_lupr_tv)
 	replace subnatid2 = "18-12 - Sivasagar" if subnatid2 == "18-12"
 	replace subnatid2 = "18-13 - Jorhat" if subnatid2 == "18-13"
 	replace subnatid2 = "18-14 - Golaghat" if subnatid2 == "18-14"
-	replace subnatid2 = "18-15 - Karbi Anglong" if subnatid2 == "18-15"
-	replace subnatid2 = "18-16 - Dima Hasao" if subnatid2 == "18-16"
-	replace subnatid2 = "18-17 - Cachar" if subnatid2 == "18-17"
-	replace subnatid2 = "18-18 - Karimganj" if subnatid2 == "18-18"
-	replace subnatid2 = "18-19 - Hailakandi" if subnatid2 == "18-19"
+	replace subnatid2 = "18-01 - Kokrajhar" if subnatid2 == "18-01"
+	replace subnatid2 = "18-02 - Dhubri" if subnatid2 == "18-02"
+	replace subnatid2 = "18-03 - Goalpara" if subnatid2 == "18-03"
+	replace subnatid2 = "18-04 - Barpeta" if subnatid2 == "18-04"
 	replace subnatid2 = "18-20 - Bongaigaon" if subnatid2 == "18-20"
 	replace subnatid2 = "18-21 - Chirang" if subnatid2 == "18-21"
 	replace subnatid2 = "18-22 - Kamrup" if subnatid2 == "18-22"
 	replace subnatid2 = "18-23 - Kamrup Metropolitan" if subnatid2 == "18-23"
 	replace subnatid2 = "18-24 - Nalbari" if subnatid2 == "18-24"
 	replace subnatid2 = "18-25 - Baksa" if subnatid2 == "18-25"
+	replace subnatid2 = "18-15 - Karbi Anglong" if subnatid2 == "18-15"
+	replace subnatid2 = "18-16 - Dima Hasao" if subnatid2 == "18-16"
+	replace subnatid2 = "18-17 - Cachar" if subnatid2 == "18-17"
+	replace subnatid2 = "18-18 - Karimganj" if subnatid2 == "18-18"
+	replace subnatid2 = "18-19 - Hailakandi" if subnatid2 == "18-19"
+	replace subnatid2 = "18-05 - Morigaon" if subnatid2 == "18-05"
+	replace subnatid2 = "18-06 - Nagaon" if subnatid2 == "18-06"
+	replace subnatid2 = "18-07 - Sonitpur" if subnatid2 == "18-07"
 	replace subnatid2 = "18-26 - Darrang" if subnatid2 == "18-26"
 	replace subnatid2 = "18-27 - Udalguri" if subnatid2 == "18-27"
 	replace subnatid2 = "19-01 - Darjiling" if subnatid2 == "19-01"
@@ -654,22 +654,28 @@ drop if !missing(ppe_d_lupr_tv)
 	replace subnatid2 = "19-06 - Maldah" if subnatid2 == "19-06"
 	replace subnatid2 = "19-07 - Murshidabad" if subnatid2 == "19-07"
 	replace subnatid2 = "19-08 - Birbhum" if subnatid2 == "19-08"
-	replace subnatid2 = "19-09 - Purba Barddhaman" if subnatid2 == "19-09"
 	replace subnatid2 = "19-10 - Nadia" if subnatid2 == "19-10"
 	replace subnatid2 = "19-11 - North Twenty Four Parganas" if subnatid2 == "19-11"
-	replace subnatid2 = "19-12 - Hugli" if subnatid2 == "19-12"
-	replace subnatid2 = "19-13 - Bankura" if subnatid2 == "19-13"
-	replace subnatid2 = "19-14 - Puruliya" if subnatid2 == "19-14"
-	replace subnatid2 = "19-15 - Haora" if subnatid2 == "19-15"
 	replace subnatid2 = "19-16 - Kolkata" if subnatid2 == "19-16"
 	replace subnatid2 = "19-17 - South Twenty Four Parganas" if subnatid2 == "19-17"
+	replace subnatid2 = "19-09 - Barddhaman" if subnatid2 == "19-09"
+	replace subnatid2 = "19-12 - Hugli" if subnatid2 == "19-12"
+	replace subnatid2 = "19-15 - Haora" if subnatid2 == "19-15"
+	replace subnatid2 = "19-13 - Bankura" if subnatid2 == "19-13"
+	replace subnatid2 = "19-14 - Puruliya" if subnatid2 == "19-14"
 	replace subnatid2 = "19-18 - Paschim Medinipur" if subnatid2 == "19-18"
 	replace subnatid2 = "19-19 - Purba Medinipur" if subnatid2 == "19-19"
-	replace subnatid2 = "19-20 - Alipurduar" if subnatid2 == "19-20"
-	replace subnatid2 = "19-21 - Kalimpong" if subnatid2 == "19-21"
-	replace subnatid2 = "19-22 - Jhargram" if subnatid2 == "19-22"
-	replace subnatid2 = "19-23 - Paschim Barddhaman" if subnatid2 == "19-23"
 	replace subnatid2 = "20-01 - Garhwa" if subnatid2 == "20-01"
+	replace subnatid2 = "20-11 - Lohardaga" if subnatid2 == "20-11"
+	replace subnatid2 = "20-12 - Purbi Singhbhum" if subnatid2 == "20-12"
+	replace subnatid2 = "20-13 - Palamu" if subnatid2 == "20-13"
+	replace subnatid2 = "20-14 - Latehar" if subnatid2 == "20-14"
+	replace subnatid2 = "20-19 - Ranchi" if subnatid2 == "20-19"
+	replace subnatid2 = "20-20 - Khunti" if subnatid2 == "20-20"
+	replace subnatid2 = "20-21 - Gumla" if subnatid2 == "20-21"
+	replace subnatid2 = "20-22 - Simdega" if subnatid2 == "20-22"
+	replace subnatid2 = "20-23 - Pashchimi Singhbhum" if subnatid2 == "20-23"
+	replace subnatid2 = "20-24 - Saraikela-Kharsawan" if subnatid2 == "20-24"
 	replace subnatid2 = "20-02 - Chatra" if subnatid2 == "20-02"
 	replace subnatid2 = "20-03 - Kodarma" if subnatid2 == "20-03"
 	replace subnatid2 = "20-04 - Giridih" if subnatid2 == "20-04"
@@ -679,35 +685,16 @@ drop if !missing(ppe_d_lupr_tv)
 	replace subnatid2 = "20-08 - Pakur" if subnatid2 == "20-08"
 	replace subnatid2 = "20-09 - Dhanbad" if subnatid2 == "20-09"
 	replace subnatid2 = "20-10 - Bokaro" if subnatid2 == "20-10"
-	replace subnatid2 = "20-11 - Lohardaga" if subnatid2 == "20-11"
-	replace subnatid2 = "20-12 - Purbi Singhbhum" if subnatid2 == "20-12"
-	replace subnatid2 = "20-13 - Palamu" if subnatid2 == "20-13"
-	replace subnatid2 = "20-14 - Latehar" if subnatid2 == "20-14"
 	replace subnatid2 = "20-15 - Hazaribagh" if subnatid2 == "20-15"
 	replace subnatid2 = "20-16 - Ramgarh" if subnatid2 == "20-16"
 	replace subnatid2 = "20-17 - Dumka" if subnatid2 == "20-17"
 	replace subnatid2 = "20-18 - Jamtara" if subnatid2 == "20-18"
-	replace subnatid2 = "20-19 - Ranchi" if subnatid2 == "20-19"
-	replace subnatid2 = "20-20 - Khunti" if subnatid2 == "20-20"
-	replace subnatid2 = "20-21 - Gumla" if subnatid2 == "20-21"
-	replace subnatid2 = "20-22 - Simdega" if subnatid2 == "20-22"
-	replace subnatid2 = "20-23 - Pashchimi Singhbhum" if subnatid2 == "20-23"
-	replace subnatid2 = "20-24 - Saraikela-Kharsawan" if subnatid2 == "20-24"
-	replace subnatid2 = "21-01 - Bargarh" if subnatid2 == "21-01"
-	replace subnatid2 = "21-02 - Jharsuguda" if subnatid2 == "21-02"
-	replace subnatid2 = "21-03 - Sambalpur" if subnatid2 == "21-03"
-	replace subnatid2 = "21-04 - Debagarh" if subnatid2 == "21-04"
-	replace subnatid2 = "21-05 - Sundargarh" if subnatid2 == "21-05"
-	replace subnatid2 = "21-06 - Kendujhar" if subnatid2 == "21-06"
-	replace subnatid2 = "21-07 - Mayurbhanj" if subnatid2 == "21-07"
 	replace subnatid2 = "21-08 - Baleshwar" if subnatid2 == "21-08"
 	replace subnatid2 = "21-09 - Bhadrak" if subnatid2 == "21-09"
 	replace subnatid2 = "21-10 - Kendrapara" if subnatid2 == "21-10"
 	replace subnatid2 = "21-11 - Jagatsinghapur" if subnatid2 == "21-11"
 	replace subnatid2 = "21-12 - Cuttack" if subnatid2 == "21-12"
 	replace subnatid2 = "21-13 - Jajapur" if subnatid2 == "21-13"
-	replace subnatid2 = "21-14 - Dhenkanal" if subnatid2 == "21-14"
-	replace subnatid2 = "21-15 - Anugul" if subnatid2 == "21-15"
 	replace subnatid2 = "21-16 - Nayagarh" if subnatid2 == "21-16"
 	replace subnatid2 = "21-17 - Khordha" if subnatid2 == "21-17"
 	replace subnatid2 = "21-18 - Puri" if subnatid2 == "21-18"
@@ -723,8 +710,19 @@ drop if !missing(ppe_d_lupr_tv)
 	replace subnatid2 = "21-28 - Nabarangapur" if subnatid2 == "21-28"
 	replace subnatid2 = "21-29 - Koraput" if subnatid2 == "21-29"
 	replace subnatid2 = "21-30 - Malkangiri" if subnatid2 == "21-30"
+	replace subnatid2 = "21-01 - Bargarh" if subnatid2 == "21-01"
+	replace subnatid2 = "21-02 - Jharsuguda" if subnatid2 == "21-02"
+	replace subnatid2 = "21-03 - Sambalpur" if subnatid2 == "21-03"
+	replace subnatid2 = "21-04 - Debagarh" if subnatid2 == "21-04"
+	replace subnatid2 = "21-05 - Sundargarh" if subnatid2 == "21-05"
+	replace subnatid2 = "21-06 - Kendujhar" if subnatid2 == "21-06"
+	replace subnatid2 = "21-07 - Mayurbhanj" if subnatid2 == "21-07"
+	replace subnatid2 = "21-14 - Dhenkanal" if subnatid2 == "21-14"
+	replace subnatid2 = "21-15 - Anugul" if subnatid2 == "21-15"
 	replace subnatid2 = "22-01 - Koriya" if subnatid2 == "22-01"
 	replace subnatid2 = "22-02 - Surguja" if subnatid2 == "22-02"
+	replace subnatid2 = "22-26 - Surajpur" if subnatid2 == "22-26"
+	replace subnatid2 = "22-27 - Balrampur" if subnatid2 == "22-27"
 	replace subnatid2 = "22-03 - Jashpur" if subnatid2 == "22-03"
 	replace subnatid2 = "22-04 - Raigarh" if subnatid2 == "22-04"
 	replace subnatid2 = "22-05 - Korba" if subnatid2 == "22-05"
@@ -736,34 +734,34 @@ drop if !missing(ppe_d_lupr_tv)
 	replace subnatid2 = "22-11 - Raipur" if subnatid2 == "22-11"
 	replace subnatid2 = "22-12 - Mahasamund" if subnatid2 == "22-12"
 	replace subnatid2 = "22-13 - Dhamtari" if subnatid2 == "22-13"
+	replace subnatid2 = "22-19 - Balodabazar" if subnatid2 == "22-19"
+	replace subnatid2 = "22-20 - Gariyaband" if subnatid2 == "22-20"
+	replace subnatid2 = "22-23 - Bemetara" if subnatid2 == "22-23"
+	replace subnatid2 = "22-24 - Balod" if subnatid2 == "22-24"
+	replace subnatid2 = "22-25 - Mungeli" if subnatid2 == "22-25"
 	replace subnatid2 = "22-14 - Uttar Bastar Kanker" if subnatid2 == "22-14"
 	replace subnatid2 = "22-15 - Bastar" if subnatid2 == "22-15"
 	replace subnatid2 = "22-16 - Narayanpur" if subnatid2 == "22-16"
 	replace subnatid2 = "22-17 - Dakshin Bastar Dantewada" if subnatid2 == "22-17"
 	replace subnatid2 = "22-18 - Bijapur" if subnatid2 == "22-18"
-	replace subnatid2 = "22-19 - Balodabazar" if subnatid2 == "22-19"
-	replace subnatid2 = "22-20 - Gariyaband" if subnatid2 == "22-20"
 	replace subnatid2 = "22-21 - Kondagaon" if subnatid2 == "22-21"
 	replace subnatid2 = "22-22 - Sukama" if subnatid2 == "22-22"
-	replace subnatid2 = "22-23 - Bemetara" if subnatid2 == "22-23"
-	replace subnatid2 = "22-24 - Balod" if subnatid2 == "22-24"
-	replace subnatid2 = "22-25 - Mungeli" if subnatid2 == "22-25"
-	replace subnatid2 = "22-26 - Surajpur" if subnatid2 == "22-26"
-	replace subnatid2 = "22-27 - Balrampur" if subnatid2 == "22-27"
-	replace subnatid2 = "23-01 - Sheopur" if subnatid2 == "23-01"
-	replace subnatid2 = "23-02 - Morena" if subnatid2 == "23-02"
-	replace subnatid2 = "23-03 - Bhind" if subnatid2 == "23-03"
-	replace subnatid2 = "23-04 - Gwalior" if subnatid2 == "23-04"
-	replace subnatid2 = "23-05 - Datia" if subnatid2 == "23-05"
-	replace subnatid2 = "23-06 - Shivpuri" if subnatid2 == "23-06"
 	replace subnatid2 = "23-07 - Tikamgarh" if subnatid2 == "23-07"
 	replace subnatid2 = "23-08 - Chhatarpur" if subnatid2 == "23-08"
 	replace subnatid2 = "23-09 - Panna" if subnatid2 == "23-09"
-	replace subnatid2 = "23-10 - Sagar" if subnatid2 == "23-10"
-	replace subnatid2 = "23-11 - Damoh" if subnatid2 == "23-11"
 	replace subnatid2 = "23-12 - Satna" if subnatid2 == "23-12"
 	replace subnatid2 = "23-13 - Rewa" if subnatid2 == "23-13"
 	replace subnatid2 = "23-14 - Umaria" if subnatid2 == "23-14"
+	replace subnatid2 = "23-43 - Shahdol" if subnatid2 == "23-43"
+	replace subnatid2 = "23-44 - Anuppur" if subnatid2 == "23-44"
+	replace subnatid2 = "23-45 - Sidhi" if subnatid2 == "23-45"
+	replace subnatid2 = "23-46 - Singrauli" if subnatid2 == "23-46"
+	replace subnatid2 = "23-10 - Sagar" if subnatid2 == "23-10"
+	replace subnatid2 = "23-11 - Damoh" if subnatid2 == "23-11"
+	replace subnatid2 = "23-26 - Vidisha" if subnatid2 == "23-26"
+	replace subnatid2 = "23-27 - Bhopal" if subnatid2 == "23-27"
+	replace subnatid2 = "23-28 - Sehore" if subnatid2 == "23-28"
+	replace subnatid2 = "23-29 - Raisen" if subnatid2 == "23-29"
 	replace subnatid2 = "23-15 - Neemuch" if subnatid2 == "23-15"
 	replace subnatid2 = "23-16 - Mandsaur" if subnatid2 == "23-16"
 	replace subnatid2 = "23-17 - Ratlam" if subnatid2 == "23-17"
@@ -772,16 +770,9 @@ drop if !missing(ppe_d_lupr_tv)
 	replace subnatid2 = "23-20 - Dewas" if subnatid2 == "23-20"
 	replace subnatid2 = "23-21 - Dhar" if subnatid2 == "23-21"
 	replace subnatid2 = "23-22 - Indore" if subnatid2 == "23-22"
-	replace subnatid2 = "23-23 - Khargone (West Nimar)" if subnatid2 == "23-23"
-	replace subnatid2 = "23-24 - Barwani" if subnatid2 == "23-24"
 	replace subnatid2 = "23-25 - Rajgarh" if subnatid2 == "23-25"
-	replace subnatid2 = "23-26 - Vidisha" if subnatid2 == "23-26"
-	replace subnatid2 = "23-27 - Bhopal" if subnatid2 == "23-27"
-	replace subnatid2 = "23-28 - Sehore" if subnatid2 == "23-28"
-	replace subnatid2 = "23-29 - Raisen" if subnatid2 == "23-29"
-	replace subnatid2 = "23-30 - Betul" if subnatid2 == "23-30"
-	replace subnatid2 = "23-31 - Harda" if subnatid2 == "23-31"
-	replace subnatid2 = "23-32 - Hoshangabad" if subnatid2 == "23-32"
+	replace subnatid2 = "23-47 - Jhabua" if subnatid2 == "23-47"
+	replace subnatid2 = "23-48 - Alirajpur" if subnatid2 == "23-48"
 	replace subnatid2 = "23-33 - Katni" if subnatid2 == "23-33"
 	replace subnatid2 = "23-34 - Jabalpur" if subnatid2 == "23-34"
 	replace subnatid2 = "23-35 - Narsimhapur" if subnatid2 == "23-35"
@@ -790,32 +781,21 @@ drop if !missing(ppe_d_lupr_tv)
 	replace subnatid2 = "23-38 - Chhindwara" if subnatid2 == "23-38"
 	replace subnatid2 = "23-39 - Seoni" if subnatid2 == "23-39"
 	replace subnatid2 = "23-40 - Balaghat" if subnatid2 == "23-40"
-	replace subnatid2 = "23-41 - Guna" if subnatid2 == "23-41"
-	replace subnatid2 = "23-42 - Ashoknagar" if subnatid2 == "23-42"
-	replace subnatid2 = "23-43 - Shahdol" if subnatid2 == "23-43"
-	replace subnatid2 = "23-44 - Anuppur" if subnatid2 == "23-44"
-	replace subnatid2 = "23-45 - Sidhi" if subnatid2 == "23-45"
-	replace subnatid2 = "23-46 - Singrauli" if subnatid2 == "23-46"
-	replace subnatid2 = "23-47 - Jhabua" if subnatid2 == "23-47"
-	replace subnatid2 = "23-48 - Alirajpur" if subnatid2 == "23-48"
+	replace subnatid2 = "23-23 - Khargone (West Nimar)" if subnatid2 == "23-23"
+	replace subnatid2 = "23-24 - Barwani" if subnatid2 == "23-24"
+	replace subnatid2 = "23-30 - Betul" if subnatid2 == "23-30"
+	replace subnatid2 = "23-31 - Harda" if subnatid2 == "23-31"
+	replace subnatid2 = "23-32 - Hoshangabad" if subnatid2 == "23-32"
 	replace subnatid2 = "23-49 - Khandwa (East Nimar)" if subnatid2 == "23-49"
 	replace subnatid2 = "23-50 - Burhanpur" if subnatid2 == "23-50"
-	replace subnatid2 = "24-01 - Kachchh" if subnatid2 == "24-01"
-	replace subnatid2 = "24-02 - Banas Kantha" if subnatid2 == "24-02"
-	replace subnatid2 = "24-03 - Patan" if subnatid2 == "24-03"
-	replace subnatid2 = "24-04 - Mahesana" if subnatid2 == "24-04"
-	replace subnatid2 = "24-05 - Sabar Kantha" if subnatid2 == "24-05"
-	replace subnatid2 = "24-06 - Gandhinagar" if subnatid2 == "24-06"
-	replace subnatid2 = "24-07 - Ahmedabad" if subnatid2 == "24-07"
-	replace subnatid2 = "24-08 - Surendranagar" if subnatid2 == "24-08"
-	replace subnatid2 = "24-09 - Rajkot" if subnatid2 == "24-09"
-	replace subnatid2 = "24-10 - Jamnagar" if subnatid2 == "24-10"
-	replace subnatid2 = "24-11 - Porbandar" if subnatid2 == "24-11"
-	replace subnatid2 = "24-12 - Junagadh" if subnatid2 == "24-12"
-	replace subnatid2 = "24-13 - Amreli" if subnatid2 == "24-13"
-	replace subnatid2 = "24-14 - Bhavnagar" if subnatid2 == "24-14"
-	replace subnatid2 = "24-15 - Anand" if subnatid2 == "24-15"
-	replace subnatid2 = "24-16 - Kheda" if subnatid2 == "24-16"
+	replace subnatid2 = "23-01 - Sheopur" if subnatid2 == "23-01"
+	replace subnatid2 = "23-02 - Morena" if subnatid2 == "23-02"
+	replace subnatid2 = "23-03 - Bhind" if subnatid2 == "23-03"
+	replace subnatid2 = "23-04 - Gwalior" if subnatid2 == "23-04"
+	replace subnatid2 = "23-05 - Datia" if subnatid2 == "23-05"
+	replace subnatid2 = "23-06 - Shivpuri" if subnatid2 == "23-06"
+	replace subnatid2 = "23-41 - Guna" if subnatid2 == "23-41"
+	replace subnatid2 = "23-42 - Ashoknagar" if subnatid2 == "23-42"
 	replace subnatid2 = "24-17 - Panch Mahals" if subnatid2 == "24-17"
 	replace subnatid2 = "24-18 - Dohad" if subnatid2 == "24-18"
 	replace subnatid2 = "24-19 - Vadodara" if subnatid2 == "24-19"
@@ -826,51 +806,60 @@ drop if !missing(ppe_d_lupr_tv)
 	replace subnatid2 = "24-24 - Valsad" if subnatid2 == "24-24"
 	replace subnatid2 = "24-25 - Surat" if subnatid2 == "24-25"
 	replace subnatid2 = "24-26 - Tapi" if subnatid2 == "24-26"
-	replace subnatid2 = "24-27 - Arvalli" if subnatid2 == "24-27"
-	replace subnatid2 = "24-28 - Botad" if subnatid2 == "24-28"
-	replace subnatid2 = "24-29 - Chhota Udepur" if subnatid2 == "24-29"
-	replace subnatid2 = "24-30 - DevBhumi-Dwarka" if subnatid2 == "24-30"
-	replace subnatid2 = "24-31 - Gir Somnath" if subnatid2 == "24-31"
-	replace subnatid2 = "24-32 - Mahisagar" if subnatid2 == "24-32"
-	replace subnatid2 = "24-33 - Morbi" if subnatid2 == "24-33"
+	replace subnatid2 = "24-04 - Mahesana" if subnatid2 == "24-04"
+	replace subnatid2 = "24-05 - Sabar Kantha" if subnatid2 == "24-05"
+	replace subnatid2 = "24-06 - Gandhinagar" if subnatid2 == "24-06"
+	replace subnatid2 = "24-07 - Ahmedabad" if subnatid2 == "24-07"
+	replace subnatid2 = "24-15 - Anand" if subnatid2 == "24-15"
+	replace subnatid2 = "24-16 - Kheda" if subnatid2 == "24-16"
+	replace subnatid2 = "24-02 - Banas Kantha" if subnatid2 == "24-02"
+	replace subnatid2 = "24-03 - Patan" if subnatid2 == "24-03"
+	replace subnatid2 = "24-01 - Kachchh" if subnatid2 == "24-01"
+	replace subnatid2 = "24-08 - Surendranagar" if subnatid2 == "24-08"
+	replace subnatid2 = "24-09 - Rajkot" if subnatid2 == "24-09"
+	replace subnatid2 = "24-10 - Jamnagar" if subnatid2 == "24-10"
+	replace subnatid2 = "24-11 - Porbandar" if subnatid2 == "24-11"
+	replace subnatid2 = "24-12 - Junagadh" if subnatid2 == "24-12"
+	replace subnatid2 = "24-13 - Amreli" if subnatid2 == "24-13"
+	replace subnatid2 = "24-14 - Bhavnagar" if subnatid2 == "24-14"
 	replace subnatid2 = "25-01 - Diu" if subnatid2 == "25-01"
 	replace subnatid2 = "25-02 - Daman" if subnatid2 == "25-02"
 	replace subnatid2 = "26-01 - Dadra & Nagar Haveli" if subnatid2 == "26-01"
+	replace subnatid2 = "27-21 - Thane" if subnatid2 == "27-21"
+	replace subnatid2 = "27-22 - Mumbai Suburban" if subnatid2 == "27-22"
+	replace subnatid2 = "27-23 - Mumbai" if subnatid2 == "27-23"
+	replace subnatid2 = "27-24 - Raigarh" if subnatid2 == "27-24"
+	replace subnatid2 = "27-32 - Ratnagiri" if subnatid2 == "27-32"
+	replace subnatid2 = "27-33 - Sindhudurg" if subnatid2 == "27-33"
+	replace subnatid2 = "27-25 - Pune" if subnatid2 == "27-25"
+	replace subnatid2 = "27-26 - Ahmadnagar" if subnatid2 == "27-26"
+	replace subnatid2 = "27-30 - Solapur" if subnatid2 == "27-30"
+	replace subnatid2 = "27-31 - Satara" if subnatid2 == "27-31"
+	replace subnatid2 = "27-34 - Kolhapur" if subnatid2 == "27-34"
+	replace subnatid2 = "27-35 - Sangli" if subnatid2 == "27-35"
 	replace subnatid2 = "27-01 - Nandurbar" if subnatid2 == "27-01"
 	replace subnatid2 = "27-02 - Dhule" if subnatid2 == "27-02"
 	replace subnatid2 = "27-03 - Jalgaon" if subnatid2 == "27-03"
+	replace subnatid2 = "27-20 - Nashik" if subnatid2 == "27-20"
+	replace subnatid2 = "27-15 - Nanded" if subnatid2 == "27-15"
+	replace subnatid2 = "27-16 - Hingoli" if subnatid2 == "27-16"
+	replace subnatid2 = "27-17 - Parbhani" if subnatid2 == "27-17"
+	replace subnatid2 = "27-18 - Jalna" if subnatid2 == "27-18"
+	replace subnatid2 = "27-19 - Aurangabad" if subnatid2 == "27-19"
+	replace subnatid2 = "27-27 - Bid" if subnatid2 == "27-27"
+	replace subnatid2 = "27-28 - Latur" if subnatid2 == "27-28"
+	replace subnatid2 = "27-29 - Osmanabad" if subnatid2 == "27-29"
 	replace subnatid2 = "27-04 - Buldana" if subnatid2 == "27-04"
 	replace subnatid2 = "27-05 - Akola" if subnatid2 == "27-05"
 	replace subnatid2 = "27-06 - Washim" if subnatid2 == "27-06"
 	replace subnatid2 = "27-07 - Amravati" if subnatid2 == "27-07"
 	replace subnatid2 = "27-08 - Wardha" if subnatid2 == "27-08"
 	replace subnatid2 = "27-09 - Nagpur" if subnatid2 == "27-09"
+	replace subnatid2 = "27-14 - Yavatmal" if subnatid2 == "27-14"
 	replace subnatid2 = "27-10 - Bhandara" if subnatid2 == "27-10"
 	replace subnatid2 = "27-11 - Gondiya" if subnatid2 == "27-11"
 	replace subnatid2 = "27-12 - Gadchiroli" if subnatid2 == "27-12"
 	replace subnatid2 = "27-13 - Chandrapur" if subnatid2 == "27-13"
-	replace subnatid2 = "27-14 - Yavatmal" if subnatid2 == "27-14"
-	replace subnatid2 = "27-15 - Nanded" if subnatid2 == "27-15"
-	replace subnatid2 = "27-16 - Hingoli" if subnatid2 == "27-16"
-	replace subnatid2 = "27-17 - Parbhani" if subnatid2 == "27-17"
-	replace subnatid2 = "27-18 - Jalna" if subnatid2 == "27-18"
-	replace subnatid2 = "27-19 - Aurangabad" if subnatid2 == "27-19"
-	replace subnatid2 = "27-20 - Nashik" if subnatid2 == "27-20"
-	replace subnatid2 = "27-21 - Thane" if subnatid2 == "27-21"
-	replace subnatid2 = "27-22 - Mumbai Suburban" if subnatid2 == "27-22"
-	replace subnatid2 = "27-23 - Mumbai" if subnatid2 == "27-23"
-	replace subnatid2 = "27-24 - Raigarh" if subnatid2 == "27-24"
-	replace subnatid2 = "27-25 - Pune" if subnatid2 == "27-25"
-	replace subnatid2 = "27-26 - Ahmadnagar" if subnatid2 == "27-26"
-	replace subnatid2 = "27-27 - Bid" if subnatid2 == "27-27"
-	replace subnatid2 = "27-28 - Latur" if subnatid2 == "27-28"
-	replace subnatid2 = "27-29 - Osmanabad" if subnatid2 == "27-29"
-	replace subnatid2 = "27-30 - Solapur" if subnatid2 == "27-30"
-	replace subnatid2 = "27-31 - Satara" if subnatid2 == "27-31"
-	replace subnatid2 = "27-32 - Ratnagiri" if subnatid2 == "27-32"
-	replace subnatid2 = "27-33 - Sindhudurg" if subnatid2 == "27-33"
-	replace subnatid2 = "27-34 - Kolhapur" if subnatid2 == "27-34"
-	replace subnatid2 = "27-35 - Sangli" if subnatid2 == "27-35"
 	replace subnatid2 = "28-01 - Srikakulam" if subnatid2 == "28-01"
 	replace subnatid2 = "28-02 - Vizianagaram" if subnatid2 == "28-02"
 	replace subnatid2 = "28-03 - Visakhapatnam" if subnatid2 == "28-03"
@@ -884,6 +873,22 @@ drop if !missing(ppe_d_lupr_tv)
 	replace subnatid2 = "28-11 - Kurnool" if subnatid2 == "28-11"
 	replace subnatid2 = "28-12 - Anantapur" if subnatid2 == "28-12"
 	replace subnatid2 = "28-13 - Chittoor" if subnatid2 == "28-13"
+	replace subnatid2 = "29-09 - Uttara Kannada" if subnatid2 == "29-09"
+	replace subnatid2 = "29-15 - Udupi" if subnatid2 == "29-15"
+	replace subnatid2 = "29-21 - Dakshina Kannada" if subnatid2 == "29-21"
+	replace subnatid2 = "29-14 - Shimoga" if subnatid2 == "29-14"
+	replace subnatid2 = "29-16 - Chikmagalur" if subnatid2 == "29-16"
+	replace subnatid2 = "29-20 - Hassan" if subnatid2 == "29-20"
+	replace subnatid2 = "29-22 - Kodagu" if subnatid2 == "29-22"
+	replace subnatid2 = "29-17 - Tumkur" if subnatid2 == "29-17"
+	replace subnatid2 = "29-18 - Bangalore" if subnatid2 == "29-18"
+	replace subnatid2 = "29-19 - Mandya" if subnatid2 == "29-19"
+	replace subnatid2 = "29-23 - Mysore" if subnatid2 == "29-23"
+	replace subnatid2 = "29-24 - Chamarajanagar" if subnatid2 == "29-24"
+	replace subnatid2 = "29-27 - Kolar" if subnatid2 == "29-27"
+	replace subnatid2 = "29-28 - Chikkaballapura" if subnatid2 == "29-28"
+	replace subnatid2 = "29-29 - Bangalore (Rural)" if subnatid2 == "29-29"
+	replace subnatid2 = "29-30 - Ramanagara" if subnatid2 == "29-30"
 	replace subnatid2 = "29-01 - Belgaum" if subnatid2 == "29-01"
 	replace subnatid2 = "29-02 - Bagalkot" if subnatid2 == "29-02"
 	replace subnatid2 = "29-03 - Bijapur" if subnatid2 == "29-03"
@@ -892,28 +897,12 @@ drop if !missing(ppe_d_lupr_tv)
 	replace subnatid2 = "29-06 - Koppal" if subnatid2 == "29-06"
 	replace subnatid2 = "29-07 - Gadag" if subnatid2 == "29-07"
 	replace subnatid2 = "29-08 - Dharwad" if subnatid2 == "29-08"
-	replace subnatid2 = "29-09 - Uttara Kannada" if subnatid2 == "29-09"
 	replace subnatid2 = "29-10 - Haveri" if subnatid2 == "29-10"
 	replace subnatid2 = "29-11 - Bellary" if subnatid2 == "29-11"
 	replace subnatid2 = "29-12 - Chitradurga" if subnatid2 == "29-12"
 	replace subnatid2 = "29-13 - Davanagere" if subnatid2 == "29-13"
-	replace subnatid2 = "29-14 - Shimoga" if subnatid2 == "29-14"
-	replace subnatid2 = "29-15 - Udupi" if subnatid2 == "29-15"
-	replace subnatid2 = "29-16 - Chikmagalur" if subnatid2 == "29-16"
-	replace subnatid2 = "29-17 - Tumkur" if subnatid2 == "29-17"
-	replace subnatid2 = "29-18 - Bangalore" if subnatid2 == "29-18"
-	replace subnatid2 = "29-19 - Mandya" if subnatid2 == "29-19"
-	replace subnatid2 = "29-20 - Hassan" if subnatid2 == "29-20"
-	replace subnatid2 = "29-21 - Dakshina Kannada" if subnatid2 == "29-21"
-	replace subnatid2 = "29-22 - Kodagu" if subnatid2 == "29-22"
-	replace subnatid2 = "29-23 - Mysore" if subnatid2 == "29-23"
-	replace subnatid2 = "29-24 - Chamarajanagar" if subnatid2 == "29-24"
 	replace subnatid2 = "29-25 - Gulbarga" if subnatid2 == "29-25"
 	replace subnatid2 = "29-26 - Yadgir" if subnatid2 == "29-26"
-	replace subnatid2 = "29-27 - Kolar" if subnatid2 == "29-27"
-	replace subnatid2 = "29-28 - Chikkaballapura" if subnatid2 == "29-28"
-	replace subnatid2 = "29-29 - Bangalore (Rural)" if subnatid2 == "29-29"
-	replace subnatid2 = "29-30 - Ramanagara" if subnatid2 == "29-30"
 	replace subnatid2 = "30-01 - North Goa" if subnatid2 == "30-01"
 	replace subnatid2 = "30-02 - South Goa" if subnatid2 == "30-02"
 	replace subnatid2 = "31-01 - Lakshadweep" if subnatid2 == "31-01"
@@ -937,20 +926,16 @@ drop if !missing(ppe_d_lupr_tv)
 	replace subnatid2 = "33-04 - Vellore" if subnatid2 == "33-04"
 	replace subnatid2 = "33-05 - Tiruvannamalai" if subnatid2 == "33-05"
 	replace subnatid2 = "33-06 - Viluppuram" if subnatid2 == "33-06"
-	replace subnatid2 = "33-07 - Salem" if subnatid2 == "33-07"
-	replace subnatid2 = "33-08 - Namakkal" if subnatid2 == "33-08"
-	replace subnatid2 = "33-09 - Erode" if subnatid2 == "33-09"
-	replace subnatid2 = "33-10 - The Nilgiris" if subnatid2 == "33-10"
-	replace subnatid2 = "33-11 - Dindigul" if subnatid2 == "33-11"
+	replace subnatid2 = "33-16 - Cuddalore" if subnatid2 == "33-16"
 	replace subnatid2 = "33-12 - Karur" if subnatid2 == "33-12"
 	replace subnatid2 = "33-13 - Tiruchirappalli" if subnatid2 == "33-13"
 	replace subnatid2 = "33-14 - Perambalur" if subnatid2 == "33-14"
 	replace subnatid2 = "33-15 - Ariyalur" if subnatid2 == "33-15"
-	replace subnatid2 = "33-16 - Cuddalore" if subnatid2 == "33-16"
 	replace subnatid2 = "33-17 - Nagapattinam" if subnatid2 == "33-17"
 	replace subnatid2 = "33-18 - Thiruvarur" if subnatid2 == "33-18"
 	replace subnatid2 = "33-19 - Thanjavur" if subnatid2 == "33-19"
 	replace subnatid2 = "33-20 - Pudukkottai" if subnatid2 == "33-20"
+	replace subnatid2 = "33-11 - Dindigul" if subnatid2 == "33-11"
 	replace subnatid2 = "33-21 - Sivaganga" if subnatid2 == "33-21"
 	replace subnatid2 = "33-22 - Madurai" if subnatid2 == "33-22"
 	replace subnatid2 = "33-23 - Theni" if subnatid2 == "33-23"
@@ -959,6 +944,10 @@ drop if !missing(ppe_d_lupr_tv)
 	replace subnatid2 = "33-26 - Thoothukkudi" if subnatid2 == "33-26"
 	replace subnatid2 = "33-27 - Tirunelveli" if subnatid2 == "33-27"
 	replace subnatid2 = "33-28 - Kanniyakumari" if subnatid2 == "33-28"
+	replace subnatid2 = "33-07 - Salem" if subnatid2 == "33-07"
+	replace subnatid2 = "33-08 - Namakkal" if subnatid2 == "33-08"
+	replace subnatid2 = "33-09 - Erode" if subnatid2 == "33-09"
+	replace subnatid2 = "33-10 - The Nilgiris" if subnatid2 == "33-10"
 	replace subnatid2 = "33-29 - Dharmapuri" if subnatid2 == "33-29"
 	replace subnatid2 = "33-30 - Krishnagiri" if subnatid2 == "33-30"
 	replace subnatid2 = "33-31 - Coimbatore" if subnatid2 == "33-31"
@@ -971,36 +960,15 @@ drop if !missing(ppe_d_lupr_tv)
 	replace subnatid2 = "35-02 - North & Middle Andaman" if subnatid2 == "35-02"
 	replace subnatid2 = "35-03 - South Andaman" if subnatid2 == "35-03"
 	replace subnatid2 = "36-01 - Adilabad" if subnatid2 == "36-01"
-	replace subnatid2 = "36-02 - Komaram Bheem" if subnatid2 == "36-02"
-	replace subnatid2 = "36-03 - Mancherial" if subnatid2 == "36-03"
-	replace subnatid2 = "36-04 - Nirmal" if subnatid2 == "36-04"
-	replace subnatid2 = "36-05 - Nizamabad" if subnatid2 == "36-05"
-	replace subnatid2 = "36-06 - Jagtial" if subnatid2 == "36-06"
-	replace subnatid2 = "36-07 - Peddapalli" if subnatid2 == "36-07"
-	replace subnatid2 = "36-08 - Jayashankar" if subnatid2 == "36-08"
-	replace subnatid2 = "36-09 - Bhadradri" if subnatid2 == "36-09"
-	replace subnatid2 = "36-10 - Mahabubabad" if subnatid2 == "36-10"
-	replace subnatid2 = "36-11 - Warangal Rural" if subnatid2 == "36-11"
-	replace subnatid2 = "36-12 - Warangal Urban" if subnatid2 == "36-12"
-	replace subnatid2 = "36-13 - Karimnagar" if subnatid2 == "36-13"
-	replace subnatid2 = "36-14 - Rajanna" if subnatid2 == "36-14"
-	replace subnatid2 = "36-15 - Kamareddy" if subnatid2 == "36-15"
-	replace subnatid2 = "36-16 - Sangareddy" if subnatid2 == "36-16"
-	replace subnatid2 = "36-17 - Medak" if subnatid2 == "36-17"
-	replace subnatid2 = "36-18 - Siddipet" if subnatid2 == "36-18"
-	replace subnatid2 = "36-19 - Jangaon" if subnatid2 == "36-19"
-	replace subnatid2 = "36-20 - Yadadri" if subnatid2 == "36-20"
-	replace subnatid2 = "36-21 - Medchal-Malkajgiri" if subnatid2 == "36-21"
-	replace subnatid2 = "36-22 - Hyderabad" if subnatid2 == "36-22"
-	replace subnatid2 = "36-23 - Rangareddy" if subnatid2 == "36-23"
-	replace subnatid2 = "36-24 - Vikarabad" if subnatid2 == "36-24"
-	replace subnatid2 = "36-25 - Mahbubnagar" if subnatid2 == "36-25"
-	replace subnatid2 = "36-26 - Jogulamba" if subnatid2 == "36-26"
-	replace subnatid2 = "36-27 - Wanaparthy" if subnatid2 == "36-27"
-	replace subnatid2 = "36-28 - Nagarkurnool" if subnatid2 == "36-28"
-	replace subnatid2 = "36-29 - Nalgonda" if subnatid2 == "36-29"
-	replace subnatid2 = "36-30 - Suryapet" if subnatid2 == "36-30"
-	replace subnatid2 = "36-31 - Khammam" if subnatid2 == "36-31"
+	replace subnatid2 = "36-02 - Nizamabad" if subnatid2 == "36-02"
+	replace subnatid2 = "36-04 - Medak" if subnatid2 == "36-04"
+	replace subnatid2 = "36-05 - Hyderabad" if subnatid2 == "36-05"
+	replace subnatid2 = "36-06 - Rangareddy" if subnatid2 == "36-06"
+	replace subnatid2 = "36-07 - Mahbubnagar" if subnatid2 == "36-07"
+	replace subnatid2 = "36-03 - Karimnagar" if subnatid2 == "36-03"
+	replace subnatid2 = "36-08 - Nalgonda" if subnatid2 == "36-08"
+	replace subnatid2 = "36-09 - Warangal" if subnatid2 == "36-09"
+	replace subnatid2 = "36-10 - Khammam" if subnatid2 == "36-10"
 *</_subnatid2_>
 
 
@@ -1075,12 +1043,10 @@ drop if !missing(ppe_d_lupr_tv)
 
 
 *<_age_>
-	ren age original_age
-	gen new_age = regexr(original_age, "[^0-9]", "")
-	destring new_age, gen(age)
+	* Variable age already exists in original data
+	*gen age = .
 	label var age "Individual age"
 *</_age_>
-
 
 
 *<_male_>
@@ -1098,7 +1064,6 @@ drop if !missing(ppe_d_lupr_tv)
 	bys hhid visit: gen one=1 if rel_head == 1
 	bys hhid visit: egen temp=count(one)
 	tab temp
-	*assert `r(r)' == 1
 	drop temp one
 
 	gen relationharm = rel_head
@@ -1169,23 +1134,21 @@ drop if !missing(ppe_d_lupr_tv)
 
 
 {
-* Caveat: based on comparisons with the EUE 2007-08 survey, the migration rate did not change, deviating from the conclusions out of the 2011 Census which found an increase in domestic migration. 
-* Comparability issues lie on selection methodology: in 2020-21, households were selected based on the number of members with secondary education, while in 2007-08, HH were selected based on having an out-migrant, receiving a remittance, and remaining households having at least one other type of migrants for employment purpose. 
 
 *<_migrated_mod_age_>
-	gen migrated_mod_age = 0
+	gen migrated_mod_age = .
 	label var migrated_mod_age "Migration module application age"
 *</_migrated_mod_age_>
 
 
 *<_migrated_ref_time_>
-	gen migrated_ref_time = 99
+	gen migrated_ref_time = .
 	label var migrated_ref_time "Reference time applied to migration questions (in years)"
 *</_migrated_ref_time_>
 
 
 *<_migrated_binary_>
-	gen migrated_binary = (ppe_d_lupr == 1)
+	gen migrated_binary = .
 	label de lblmigrated_binary 0 "No" 1 "Yes"
 	label values migrated_binary lblmigrated_binary
 	label var migrated_binary "Individual has migrated"
@@ -1193,7 +1156,6 @@ drop if !missing(ppe_d_lupr_tv)
 
 
 *<_migrated_years_>
-* Unlike in previous years, not availbale for 2020!
 	gen migrated_years = .
 	label var migrated_years "Years since latest migration"
 *</_migrated_years_>
@@ -1201,8 +1163,6 @@ drop if !missing(ppe_d_lupr_tv)
 
 *<_migrated_from_urban_>
 	gen migrated_from_urban = .
-	replace migrated_from_urban = 1 if inlist(loc_lupr, 2, 4, 6)
-	replace migrated_from_urban = 0 if inlist(loc_lupr, 1, 3, 5)
 	label de lblmigrated_from_urban 0 "Rural" 1 "Urban"
 	label values migrated_from_urban lblmigrated_from_urban
 	label var migrated_from_urban "Migrated from area"
@@ -1211,10 +1171,6 @@ drop if !missing(ppe_d_lupr_tv)
 
 *<_migrated_from_cat_>
 	gen migrated_from_cat = .
-	replace migrated_from_cat = 2 if inlist(loc_lupr, 1, 2)
-	replace migrated_from_cat = 3 if inlist(loc_lupr, 3, 4)
-	replace migrated_from_cat = 4 if inlist(loc_lupr, 5, 6)
-	replace migrated_from_cat = 5 if loc_lupr == 7
 	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country"
 	label values migrated_from_cat lblmigrated_from_cat
 	label var migrated_from_cat "Category of migration area"
@@ -1222,14 +1178,7 @@ drop if !missing(ppe_d_lupr_tv)
 
 
 *<_migrated_from_code_>
-	gen migrated_from_code = state_lupr
-	
-	label values migrated_from_code lblsubnatid1
-		
-	* Convert numeric into string
-	decode migrated_from_code, gen(migrated_from_code_str)
-	rename migrated_from_code migrated_from_code_num
-	rename migrated_from_code_str migrated_from_code
+	gen migrated_from_code = .
 	*label de lblmigrated_from_code
 	*label values migrated_from_code lblmigrated_from_code
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
@@ -1244,13 +1193,6 @@ drop if !missing(ppe_d_lupr_tv)
 
 *<_migrated_reason_>
 	gen migrated_reason = .
-	replace migrated_reason = 3 if inlist(reason_d_lupr, 1, 2, 3)
-	replace migrated_reason = 1 if inlist(reason_d_lupr, 4, 6)
-	replace migrated_reason = 2 if reason_d_lupr == 5
-	replace migrated_reason = 4 if inlist(reason_d_lupr, 7, 8, 9)
-	replace migrated_reason = 5 if inlist(reason_d_lupr, 10, 11, 12, 13, 19)
-
-
 	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
 	label values migrated_reason lblmigrated_reason
 	label var migrated_reason "Reason for migrating"
@@ -1382,6 +1324,7 @@ foreach v of local ed_var {
 }
 
 
+
 /*%%=============================================================================================
 	7: Training
 ==============================================================================================%%*/
@@ -1430,7 +1373,7 @@ foreach v of local ed_var {
 
 
 *<_vocational_field_orig_>
-	sdecode field_training, gen(vocational_field_orig)
+	gen vocational_field_orig = field_training
 	label var vocational_field_orig "Field of training - As in original data"
 *</_vocational_field_orig_>
 
@@ -1492,7 +1435,7 @@ foreach v of local ed_var {
 
 *<_nlfreason_>
 	gen nlfreason = cws
-	recode nlfreason (11/81 98=.) (91=1) (92 93=2) (94=3) (95=4) (82 96 97 98=5)
+	recode nlfreason (11/81 98=.) (91=1) (92 93=2) (94=3) (95=4) (82 96 97=5)
 	replace nlfreason = . if lstatus != 3 | (age < minlaborage & age != .)
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
@@ -1589,13 +1532,13 @@ foreach v of local ed_var {
 
 
 *<_occup_isco_>
-	gen nco_04 = occup_orig
+	tostring occup_orig, gen(nco_04)
 	gen x_indic = regexm(nco_04, "x|X|y|y")
 	replace nco_04 = "099" if x_indic == 1
 	replace nco_04 = "0" + nco_04 if length(nco_04) == 2
 	replace nco_04 = "00" + nco_04 if length(nco_04) == 1
 
-	merge m:1 nco_04 using "`path_in_stata'/India_nco_04_to_isco_88.dta"
+	merge m:1 nco_04 using "`path_in_stata'/India_nco_04_to_isco_88.dta", nogen assert(match master)
 
 	* Make isco four digit string
 	tostring isco_88, replace
@@ -1610,14 +1553,12 @@ foreach v of local ed_var {
 
 
 *<_occup_>
-	gen occup = substr(occup_isco, 1,1)
-	destring occup, replace
-	replace occup = 99 if occup == 0
+	gen occup = .
+	replace occup = floor(occup_orig/100) if lstatus == 1 & (age >= minlaborage & age != .)
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup
 *</_occup_>
-
 
 
 *<_occup_skill_>
@@ -1958,24 +1899,12 @@ foreach v of local ed_var {
 
 *<_unempldur_l_year_>
 	gen byte unempldur_l_year=.
-	replace unempldur_l_year = 0 if unem_dur == 1
-	replace unempldur_l_year = 7 if unem_dur == 2
-	replace unempldur_l_year = 13 if unem_dur == 3
-	replace unempldur_l_year = 25 if unem_dur == 4
-	replace unempldur_l_year = 37 if unem_dur == 5
-
 	label var unempldur_l_year "Unemployment duration (months) lower bracket"
 *</_unempldur_l_year_>
 
 
 *<_unempldur_u_year_>
 	gen byte unempldur_u_year=.
-	replace unempldur_u_year = 6 if unem_dur == 1
-	replace unempldur_u_year = 12 if unem_dur == 2
-	replace unempldur_u_year = 24 if unem_dur == 3
-	replace unempldur_u_year = 36 if unem_dur == 4
-	replace unempldur_u_year = . if unem_dur == 5
-
 	label var unempldur_u_year "Unemployment duration (months) upper bracket"
 *</_unempldur_u_year_>
 
@@ -1986,17 +1915,18 @@ foreach v of local ed_var {
 {
 
 *<_empstat_year_>
-	gen empstat_year= p_status_code
-	recode empstat_year (11=4) (12=3) (61 62 21=2) (31 41 42 51 52 71 72=1) (81/99=.)
+	gen empstat_y1 = p_status_code
+	recode empstat_y1 (11=4) (12=3) (61 62 21=2) (31 41 42 51 52 71 72=1) (81/99=.)
 	gen empstat_y2 = s_status_code
 	recode empstat_y2 (11=4) (12=3) (61 62 21=2) (31 41 42 51 52 71 72=1) (81/99=.)
 
+	gen empstat_year = empstat_y1
 	replace empstat_year = empstat_y2 if adders == 1
 
 	label var empstat_year "Employment status during past week primary job 12 month recall"
 	la de lblempstat_year 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status", replace
 	label values empstat_year lblempstat_year
-	drop empstat_y2
+	drop empstat_y1 empstat_y2
 *</_empstat_year_>
 
 
@@ -2222,20 +2152,22 @@ foreach v of local ed_var {
 {
 
 *<_empstat_2_year_>
+	gen has_job_primary = inlist(p_status_code,11,12,21,31,41,51)
 	gen empstat_2_year = s_status_code
 	recode empstat_2_year (11=4) (12=3) (61 62 21=2) (31 41 42 51 52 71 72=1) (81/99=.)
 	replace empstat_2_year = . if lstatus_year != 1
-	replace empstat_2_year = . if seconds != 1
+	replace empstat_2_year = . if has_job_primary == 0 & !missing(empstat_2_year)
 	label var empstat_2_year "Employment status during past week secondary job 12 month recall"
 	la de lblempstat_2_year 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat_2_year lblempstat_2_year
+	drop has_job_primary
 *</_empstat_2_year_>
 
 
 *<_ocusec_2_year_>
 	gen byte ocusec_2_year = .
 	replace ocusec_2_year=1 if s_ent_type_code ==5
-	replace ocusec_2_year=2 if inlist(s_ent_type_code,1,2,3,4,8,10,11,12)
+	replace ocusec_2_year=2 if inlist(s_ent_type_code ,1,2,3,4,8,10,11,12)
 	replace ocusec_2_year=3 if inlist(s_ent_type_code ,6,7)
 	replace ocusec_2_year=. if s_ent_type_code==19
 	replace ocusec_2_year = . if missing(empstat_2_year)
@@ -2246,7 +2178,7 @@ foreach v of local ed_var {
 
 
 *<_industry_orig_2_year_>
-	gen industry_orig_2_year = s_industry_nic_code if seconds == 1
+	gen industry_orig_2_year = s_industry_nic_code
 	replace industry_orig_2_year = "" if missing(empstat_2_year)
 	label var industry_orig_2_year "Original survey industry code, secondary job 12 month recall"
 *</_industry_orig_2_year_>
@@ -2293,7 +2225,7 @@ foreach v of local ed_var {
 
 
 *<_occup_orig_2_year_>
-	gen occup_orig_2_year = s_occupation_nco_code if seconds == 1
+	gen occup_orig_2_year = s_occupation_nco_code
 	replace occup_orig_2_year = "" if missing(empstat_2_year)
 	label var occup_orig_2_year "Original occupation record secondary job 12 month recall"
 *</_occup_orig_2_year_>
@@ -2318,7 +2250,6 @@ foreach v of local ed_var {
 *<_occup_2_year_>
 	gen occup_2_year = substr(occup_orig_2_year, 1,1)
 	destring occup_2_year, replace
-	
 	label var occup_2_year "1 digit occupational classification, secondary job 12 month recall"
 	la de lbloccup_2_year 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup_2_year lbloccup_2_year
