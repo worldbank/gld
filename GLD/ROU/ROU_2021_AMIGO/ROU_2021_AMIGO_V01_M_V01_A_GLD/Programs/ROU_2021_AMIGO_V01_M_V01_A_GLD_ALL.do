@@ -5,14 +5,14 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				ROM_2021_AMIGO_V01_M_V01_A_GLD_ALL </_Program name_>
+<_Program name_>				ROU_2021_AMIGO_V01_M_V01_A_GLD_ALL </_Program name_>
 <_Application_>					Stata 19 <_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
 <_Date created_>				2026-01-15 </_Date created_>
 
 -------------------------------------------------------------------------
 
-<_Country_>					ROM </_Country_>
+<_Country_>					ROU </_Country_>
 <_Survey Title_>				AMIGO </_Survey Title_>
 <_Survey Year_>					2021 </_Survey Year_>
 <_Study ID_>					[Microdata Library ID if present] </_Study ID_>
@@ -59,7 +59,7 @@ set varabbrev off
 * Define path sections
 local server  "C:/Users/`c(username)'/WBG/GLD - Current Contributors/625372_DB"
 dis "`server'"
-local country "ROM"
+local country "ROU"
 local year    "2021"
 local survey  "AMIGO"
 local vermast "V01"
@@ -98,7 +98,7 @@ use "`path_in_stata'/amigo_2021.dta",clear
 {
 
 *<_countrycode_>
-	gen str4 countrycode = "ROM"
+	gen str4 countrycode = "ROU"
 	label var countrycode "Country code"
 *</_countrycode_>
 
@@ -509,7 +509,7 @@ use "`path_in_stata'/amigo_2021.dta",clear
 	5: Migration
 ==============================================================================================%%*/
 
-*Just for people that one year ago were living outside ROM
+*Just for people that one year ago were living outside ROU
 {
 
 *<_migrated_mod_age_>
