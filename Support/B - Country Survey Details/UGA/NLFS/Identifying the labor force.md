@@ -1,5 +1,10 @@
 # Identifying the labor force in the UGA NLFS
 
+- [Defining the employed](#defining-the-employed)
+- [Defining the unemployed](#defining-the-unemployed)
+- [Labor status definitions across NLFS rounds](#labor-status-definitions-across-nlfs-rounds)
+- [Differences between the 2016-17 and 2021 survey rounds](#differences-between-the-2016-17-and-2021-survey-rounds)
+
 ## Defining the employed
 
 In the Uganda National Labour Force Survey, individuals are classified as employed if, during the seven days preceding the interview, they either performed at least one hour of work in a market oriented activity or had a job or business from which they were temporarily absent. This approach follows the spirit of the [19th International Conference of Labour Statisticians definition](https://ilostat.ilo.org/methods/concepts-and-definitions/description-work-statistics-icls19/) of employment in market oriented production and is applied consistently across the main work modules of the questionnaire.
