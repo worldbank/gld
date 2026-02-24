@@ -69,7 +69,7 @@ Question 9.6 (1-4): unavailable for certain reasons that still belong to unemplo
 
 2020 is slightly different from years before in availability question. Compared to years between 2012 and 2018, question 9.6 in 2020 asks about availability after answering the questionnaire. In previous years, availability is about whether being available in the past week not in the next week. 
 
-We only used question 9.1 to code unemployment for 2020 considering: 1) being consistent with previous years; 2) following the time restraint of seeking work during **last week**.
+To maintain consistency, the unemployed is coded if a person is active (`S9C1 == 1`) and willing to work in the short term (`inlist(S9C6,1,2)`).
 
 ![labor_2020_1](utilities/labor_2020_1.png)
 ![labor_2020_2](utilities/labor_2020_2.png)
