@@ -49,3 +49,25 @@ First, they do not satisfy any of the criteria for employment described above, t
 Second, they have demonstrated active labour market attachment either by looking for work or by setting up a future job or business. In the survey, this includes respondents who, during the past four weeks, report that they looked for a job, tried to start a business, already found a job that will start at a later date, or have taken all necessary steps to start a business that will begin in the future.
 
 Third, they are available to start work, which is captured by questions asking whether they could have started a job or a business during the reference week if an opportunity had been offered. Only individuals who are not employed, who have engaged in recent job search or have a concrete future job or business arrangement, and who state that they could have started work in the reference week are classified as unemployed. All remaining respondents are considered to be outside the labour force.
+
+## Harmonization code
+
+We use the following harmonization code to classify the employed in the UNHS 2023/24:
+
+```
+	* Engaged in paid employment, helped family business, apprentice, volunteer
+	replace lstatus = 1 if  inlist(lf08, 1, 3, 4, 5)
+	
+	* Absent from work in the past 7 days but reason indicates job attachment
+	replace lstatus = 1 if lf08 == 2 & !inlist(lf09, 11, 12, 96, .)
+	
+	* Engaged in agriculture (wit most produce for sale)
+	replace lstatus = 1 if  lstatus==. & inrange(lf03,1,2)
+	
+	* Unemployed: looking for a job in last 4 weeks and available to start if it had been offered last week
+	replace lstatus = 2 if lstatus == . & inlist(lf84, 1, 2) & inlist(lf86, 1, 2) 
+
+	* All others NLF
+	replace lstatus = 3 if lstatus == . & age>=minlaborage
+
+```
