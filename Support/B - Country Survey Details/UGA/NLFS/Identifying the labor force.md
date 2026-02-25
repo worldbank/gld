@@ -75,4 +75,61 @@ When comparing employment and unemployment measures across the two NLFS rounds, 
 3.	Availability to work. For unemployment, both rounds use the standard definition of being either actively looking for work in the last four weeks or being a future starter, and being available to work. The main difference is the reference period for availability. In 2016, respondents were asked if they were available to work in the past week, while in 2021 they were asked if they were available to start work in the next two weeks.
 <img width="468" height="457" alt="image" src="https://github.com/user-attachments/assets/94b40084-67d7-4cb0-800d-cf76a707d8cd" />
 
+## Harmoniztion code
+
+We use the following code to harmonize NLFS 2021
+
+```
+	gen lstatus = .
+		
+	* ---------- E1 & E2: Worked last 7 days (paid employee OR own-account/business) ----------
+	* B1 main activity is paid job (10) or non-ag business (12) AND B10=1 (worked last 7 days)
+	replace lstatus = 1 if inlist(B1,10,12) & B10==1
+
+	* ---------- E3: Family farm/fishery — market-linked ----------
+	* Worked in own/family farming/fishing and it is market-linked:
+	* (B4 in {1,2} => at least mainly for sale) 
+	* AND actually did this work last week (B6 != 97)
+	replace lstatus = 1 if inlist(B4,1,2) ///
+		& (B6 != 97)
+
+	* ---------- E4: Temporarily absent because: 
+	replace lstatus = 1 if ///
+    (   ( B13A == 1 & inlist(B13B, 1, 2) )  /// return in <3 months & paid/partially paid
+        | ( inlist(B13A, 1, 2, 8) & B14 == 1 )  /// return >3 months or don't know & formal agreement
+        | inlist(B12, 12, 13, 14)  /// direct short-term reasons
+        | (B12 == 11 & B15 == 1)   /// attached seasonal worker
+    )
+
+	* ---------- E5: Non-working main status but did non-agricultural economic activity ----------
+	* Any other income work (B8==1) OR helped in a family business producing for market (B9==1)
+	replace lstatus = 1 if B8==1 | B9==1
+
+	* ---------- E6: Agricultural helpers from non-working main statuses (market-linked) ----------
+	* Main status is non-work (B1 in {13,14,15,17,18,19,96}), BUT did family agri/fish help (B3 A/B/C/D),
+	* AND production is market-linked (B4 in {1,2} OR B7a==1),
+	* AND actually did this work last week (B6 != 97)
+	gen byte B3_any_agri = inlist(B3__1, 1) | inlist(B3__2, 1) | inlist(B3__3, 1) | inlist(B3__4, 1)
+	replace lstatus = 1 if inlist(B1,13,14,15,16,17,18,19,96) ///
+		& B3_any_agri==1 ///
+		& inlist(B4,1,2)  ///
+		& (B6 != 97)
+	drop B3_any_agri
+	
+	tab lstatus B16, mi
+	* Total of 351 people with respnse to B16 but not employed based on definition above
+	
+	* 351 people who were engaged in subsistence farming but did not do any other work
+	count if lstatus != 1 & !missing(B16) & !inlist(B4, 1, 2) & B8 != 1 & B9 != 1
+
+	* 123 People whose main activity is workoing for pay or any kind of business but did not work in the past 7 days and not pass attachment test
+	count if lstatus != 1 & !missing(B16) & inlist(B1, 10, 12) & B10 == 2 & B13A!= 1 & B14!= 1
+	
+	count if (lstatus != 1 & !missing(B16) & inlist(B1, 10, 12) & B10 == 2 & B13A!= 1 & B14!= 1) | (lstatus != 1 & !missing(B16) & !inlist(B4, 1, 2) & B8 != 1 & B9 != 1)
+
+	* Unemployed: looking for a job in last 4 weeks or found a job to start at a later date and available to start in the next 2 weeks
+	replace lstatus = 2 if (L1 == 1 | L3A == 1) & inrange(L8, 1, 2) & lstatus != 1
+	* All others NLF
+	replace lstatus = 3 if missing(lstatus) &  age>=minlaborage
+```
 
