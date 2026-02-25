@@ -1,13 +1,6 @@
-## Occupation
+## KNOCS 2000 to ISCO 1988 Crosswalk
 
-The **Kenya National Occupational Classification Standard (KNOCS)** is Kenya’s official occupational classification used for producing and analyzing labour market statistics. Kenya has released more than one version of KNOCS, including KNOCS-2000 (aligns with ISCO-88) and the newer KNOCS-2022 (which is more closely aligned with ISCO-08). However, the KCHS 2020–2022 records occupations using KNOCS-2000, so this documentation and any harmonization work for those waves should treat KNOCS-2000 as the source classification.
-
-In KNOCS-2000, occupations are coded using a five-digit hierarchical structure: the 1st digit is the major group, the 2nd the sub-major group, the 3rd the minor group, and the 4th–5th digits provide more detailed occupational titles. KNOCS-2000 follows the general logic of the International Standard Classification of Occupations (ISCO) in grouping jobs by the type of work performed and the skills required, but it is not a one-to-one match with ISCO-88 at detailed levels due to Kenya-specific adaptations in how occupations are split, grouped, and defined. As a result, comparability is typically strongest at higher aggregation levels, and mapping to ISCO should be done using an explicit crosswalk rather than assuming direct equivalence.
-
-
-## KNOCS–ISCO crosswalk
-For harmonization, we map KNOCS-2000 to ISCO-88 at the two-digit level using the best information available and a conservative, structure-based approach. To our knowledge, there is no official or publicly available KNOCS-2000 to ISCO-88 crosswalk, so the mapping should be interpreted as a best-effort approximation intended to preserve comparability at higher aggregation levels rather than a definitive one-to-one correspondence at detailed occupational titles.
-
+Kenya’s official occupational classification is the **Kenya National Occupational Classification Standard (KNOCS)**. The KCHS 2020–2022 records occupations using the earlier KNOCS 200, which aligns reasonably well with ISCO-88 at the two-digit level, but there are several exceptions where KNOCS splits or combines groups differently (see the crosswalk below). To our knowledge, there is no official, publicly available KNOCS 2000 to ISCO-88 crosswalk. The mapping presented here should therefore be treated as a best-effort approximation designed to preserve comparability at higher aggregation levels, not as a definitive one-to-one correspondence for detailed occupational titles.
 
 | KNOCS code | KNOCS name | ISCO-88 code | ISCO-88 name | Notes |
 |---:|---|---:|---|---|
