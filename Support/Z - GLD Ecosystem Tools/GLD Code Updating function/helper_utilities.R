@@ -249,6 +249,29 @@ update_program_name <- function(code_lines, new_do_filename) {
   )
 }
 
+#' Update the local server line to the base_path used in R
+#'
+#' Finds any line matching `local <whitespace> server <whitespace> "..."` and
+#' replaces the path inside the quotes with the base_path value supplied from
+#' the R orchestration script.
+#'
+#' @param code_lines Character vector of lines from a .do file
+#' @param base_path  Character. The base_path as defined in example_usage.R,
+#'   e.g. "C:/Users/wb529026/WBG/GLD - Focal Point/Countries"
+#' @return Updated character vector
+update_server_path <- function(code_lines, base_path) {
+
+  # Normalise separators to forward slashes (Stata convention)
+  base_path_clean <- gsub("\\\\", "/", base_path)
+
+  gsub(
+    pattern     = "^(\\s*local\\s+server\\s+\").*?(\".*)",
+    replacement = paste0("\\1", base_path_clean, "\\2"),
+    x           = code_lines,
+    perl        = TRUE
+  )
+}
+
 # --------------------------------------------------------------------------#
 # Version control block
 # --------------------------------------------------------------------------#
