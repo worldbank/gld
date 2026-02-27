@@ -169,6 +169,22 @@ execute_survey_updates <- function(country, year, survey,
   if (length(errors) > 0) return(list(passed = FALSE, errors = errors))
 
   # ------------------------------------------------------------------------#
+  # Step 3c: Update local server path to base_path
+  # ------------------------------------------------------------------------#
+
+  tryCatch(
+    {
+      do_code <- update_server_path(do_code, base_path)
+      message("  \u2713 Updated local server to: ", base_path)
+    },
+    error = function(e) {
+      errors <<- c(errors, glue::glue("Failed to update local server path: {e$message}"))
+    }
+  )
+
+  if (length(errors) > 0) return(list(passed = FALSE, errors = errors))
+
+  # ------------------------------------------------------------------------#
   # Step 4: Apply variable-block updates
   # ------------------------------------------------------------------------#
   
