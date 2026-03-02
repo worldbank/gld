@@ -5,14 +5,14 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				[Name of your do file] </_Program name_>
-<_Application_>					[Name of your software (STATA) and version] <_Application_>
+<_Program name_>				SEN_2019_ENES_V01_M_V01_A_GLD.do </_Program name_>
+<_Application_>					Stata 18 <_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
-<_Date created_>				YYYY-MM-DD </_Date created_>
+<_Date created_>				2026-02-15 </_Date created_>
 
 -------------------------------------------------------------------------
 
-<_Country_>					[Country_Name (CCC)] </_Country_>
+<_Country_>						[Country_Name (CCC)] </_Country_>
 <_Survey Title_>				[SurveyName] </_Survey Title_>
 <_Survey Year_>					[Year of start of the survey] </_Survey Year_>
 <_Study ID_>					[Microdata Library ID if present] </_Study ID_>
@@ -81,7 +81,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
-/*
+
 use "`path_in_stata'/T1_2019_an.dta"
 gen wav=1
 
@@ -92,9 +92,9 @@ replace wav=3 if missing(wav)
 merge 1:m idpers using "`path_in_stata'/ENES_T4_2019_an.dta" , nogen
 replace wav=4 if missing(wav)
 
-save "`path_in_stata'/SEN_2019_ENES_workingdata.dta", replace
-*/
-use "`path_in_stata'/SEN_2019_ENES_workingdata.dta", clear
+*save "`path_in_stata'/SEN_2019_ENES_workingdata.dta", replace
+
+*use "`path_in_stata'/SEN_2019_ENES_workingdata.dta", clear
 
 
 /*%%=============================================================================================
@@ -193,13 +193,13 @@ use "`path_in_stata'/SEN_2019_ENES_workingdata.dta", clear
 
 </_hhid_note> */
 	
-	gen hhid = idmng + "Q" + string(wav)
+	gen hhid = idmng
 	label var hhid "Household ID"
 *</_hhid_>
 
 
 *<_pid_>
-	gen pid= hhid + substr(idpers, strlen(idpers)-1, 2)
+	gen pid = idpers
 	isid pid hhid
 	label var pid "Individual ID"
 *</_pid_>
@@ -208,11 +208,12 @@ use "`path_in_stata'/SEN_2019_ENES_workingdata.dta", clear
 *<_weight_>
 	gen weight = .
 	replace weight = poids_a_t1_2019/4 if wav==1
-	replace weight = poids_ind_t2/4 if wav==2
-	replace weight = poids_t3_2019/4 if wav==3
-	replace weight = poids_t4_2019/4 if wav==4
+	replace weight = poids_ind_t2/4    if wav==2
+	replace weight = poids_t3_2019/4   if wav==3
+	replace weight = poids_t4_2019/4   if wav==4
 	label var weight "Survey sampling weight"
 *</_weight_>
+
 
 *<_weight_m_>
 	gen weight_m = .
@@ -231,7 +232,7 @@ use "`path_in_stata'/SEN_2019_ENES_workingdata.dta", clear
 
 
 *<_psu_>
-	gen psu = .
+	gen psu = substr(idmng,1,3)
 	label var psu "Primary sampling units"
 *</_psu_>
 
@@ -242,7 +243,7 @@ use "`path_in_stata'/SEN_2019_ENES_workingdata.dta", clear
 
 
 *<_strata_>
-	gen strata = .
+	gen strata = milieu
 	label var strata "Strata"
 *</_strata_>
 
@@ -273,7 +274,7 @@ use "`path_in_stata'/SEN_2019_ENES_workingdata.dta", clear
 {
 
 *<_urban_>
-	gen byte urban =milieu
+	gen byte urban = milieu
 	recode urban 2=0 
 	label var urban "Location is urban"
 	la de lblurban 1 "Urban" 0 "Rural"
@@ -290,20 +291,20 @@ use "`path_in_stata'/SEN_2019_ENES_workingdata.dta", clear
 
 </_subnatid1_note> */
 	gen str subnatid1 = ""
-	replace subnatid1 = " 1 - Fatick" if ba3==1
-	replace subnatid1 = " 2 - Kolda" if ba3==2
-	replace subnatid1 = " 3 - Matam" if ba3==3
-	replace subnatid1 = " 4 - Kaffrine" if ba3==4
-	replace subnatid1 = " 5 - Kedougou" if ba3==5
-	replace subnatid1 = " 6 - Sedhiou" if ba3==6
-	replace subnatid1 = " 7 - Dakar" if ba3==7
-	replace subnatid1 = " 8 - Ziguinchor" if ba3==8
-	replace subnatid1 = " 9 - Diourbel" if ba3==9
-	replace subnatid1 = " 10 - Saint-Louis" if ba3==10
-	replace subnatid1 = " 11 - Tambacounda" if ba3==11
-	replace subnatid1 = " 12 - Kaolack" if ba3==12
-	replace subnatid1 = " 13 - Thies" if ba3==13
-	replace subnatid1 = " 14 - Louga" if ba3==14
+	replace subnatid1 = "1 - Fatick" if ba3==1
+	replace subnatid1 = "2 - Kolda" if ba3==2
+	replace subnatid1 = "3 - Matam" if ba3==3
+	replace subnatid1 = "4 - Kaffrine" if ba3==4
+	replace subnatid1 = "5 - Kedougou" if ba3==5
+	replace subnatid1 = "6 - Sedhiou" if ba3==6
+	replace subnatid1 = "7 - Dakar" if ba3==7
+	replace subnatid1 = "8 - Ziguinchor" if ba3==8
+	replace subnatid1 = "9 - Diourbel" if ba3==9
+	replace subnatid1 = "10 - Saint-Louis" if ba3==10
+	replace subnatid1 = "11 - Tambacounda" if ba3==11
+	replace subnatid1 = "12 - Kaolack" if ba3==12
+	replace subnatid1 = "13 - Thies" if ba3==13
+	replace subnatid1 = "14 - Louga" if ba3==14
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 

@@ -5,10 +5,10 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				[Name of your do file] </_Program name_>
-<_Application_>					[Name of your software (STATA) and version] <_Application_>
+<_Program name_>				SEN_2017_ENES_V01_M_V01_A_GLD.do </_Program name_>
+<_Application_>					Stata 18 <_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
-<_Date created_>				YYYY-MM-DD </_Date created_>
+<_Date created_>				2026-02-15 </_Date created_>
 
 -------------------------------------------------------------------------
 
@@ -81,7 +81,6 @@ local out_file "`level_2_harm'_ALL.dta"
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-/*
 use "`path_in_stata'/ENES_1_2017 ano.dta"
 gen wav=1
 
@@ -90,11 +89,9 @@ replace wav=3 if wav!=1
 merge 1:m ID_pers using "`path_in_stata'/ENES_trim4__2017 ano.dta" , nogen
 replace wav=4 if missing(wav)
 *T2 is not available for download and the documentation implies that is has not been used for development of indicators, however there is a report for Q2, we are in conversation with senegal to figure out where and how can we access the data.
-save "`path_in_stata'/SEN_2017_ENES_workingdata.dta", replace
 
-*/
-
-use "`path_in_stata'/SEN_2017_ENES_workingdata.dta", clear
+*save "`path_in_stata'/SEN_2017_ENES_workingdata.dta", replace
+*use "`path_in_stata'/SEN_2017_ENES_workingdata.dta", clear
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -192,14 +189,13 @@ use "`path_in_stata'/SEN_2017_ENES_workingdata.dta", clear
 
 </_hhid_note> */
 
-	gen hhid = ID_Menage + "Q" + string(wav)
-	
+	gen hhid = ID_Menage
 	label var hhid "Household ID"
 *</_hhid_>
 
 
 *<_pid_>
-	gen pid= hhid + substr(ID_pers, strlen(ID_pers)-1, 2)
+	gen pid = ID_pers
 	isid pid hhid
 	label var pid "Individual ID"
 *</_pid_>
@@ -230,19 +226,19 @@ use "`path_in_stata'/SEN_2017_ENES_workingdata.dta", clear
 
 
 *<_psu_>
-	gen psu = .
+	gen psu = DR
 	label var psu "Primary sampling units"
 *</_psu_>
 
 
 *<_ssu_>
-	gen ssu = .
+	gen ssu = hhid
 	label var ssu "Secondary sampling units"
 *</_ssu_>
 
 
 *<_strata_>
-	gen strata = .
+	gen strata = ba1
 	label var strata "Strata"
 *</_strata_>
 
@@ -274,7 +270,7 @@ use "`path_in_stata'/SEN_2017_ENES_workingdata.dta", clear
 {
 
 *<_urban_>
-	gen byte urban =ba1
+	gen byte urban = ba1
 	recode urban 2=0 
 	label var urban "Location is urban"
 	la de lblurban 1 "Urban" 0 "Rural"

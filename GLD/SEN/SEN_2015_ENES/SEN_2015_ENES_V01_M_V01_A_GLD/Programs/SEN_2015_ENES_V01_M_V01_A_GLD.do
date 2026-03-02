@@ -5,7 +5,7 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				SEN_2015_ENES_V01_M_V02_A_GLD </_Program name_>
+<_Program name_>				SEN_2015_ENES_V01_M_V01_A_GLD </_Program name_>
 <_Application_>					Stata-19 <_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
 <_Date created_>				2026-01-27 </_Date created_>
@@ -198,7 +198,7 @@ use "`path_in_stata'/SEN_2015_ENES_workingdata.dta", clear
 
 
 *<_weight_>
-	* Weight is not in data for people uner 7. However, the weight is the same within the HH
+	* Weight is not in data for people under 7. However, the weight is the same within the HH
 	* For 90% of the HHs this is literally true. For the others there are cases where a single
 	* individual has a different value (like a 8 people HH, 7 have the same, one different -
 	* why this is I do not understand)
@@ -284,20 +284,20 @@ use "`path_in_stata'/SEN_2015_ENES_workingdata.dta", clear
 
 </_subnatid1_note> */
 	gen str subnatid1 = ""
-	replace subnatid1 = " 1 - Fatick" if ba3==1
-	replace subnatid1 = " 2 - Kolda" if ba3==2
-	replace subnatid1 = " 3 - Matam" if ba3==3
-	replace subnatid1 = " 4 - Kaffrine" if ba3==4
-	replace subnatid1 = " 5 - Kedougou" if ba3==5
-	replace subnatid1 = " 6 - Sedhiou" if ba3==6
-	replace subnatid1 = " 7 - Dakar" if ba3==7
-	replace subnatid1 = " 8 - Ziguinchor" if ba3==8
-	replace subnatid1 = " 9 - Diourbel" if ba3==9
-	replace subnatid1 = " 10 - Saint-Louis" if ba3==10
-	replace subnatid1 = " 11 - Tambacounda" if ba3==11
-	replace subnatid1 = " 12 - Kaolack" if ba3==12
-	replace subnatid1 = " 13 - Thies" if ba3==13
-	replace subnatid1 = " 14 - Louga" if ba3==14
+	replace subnatid1 = "1 - Fatick" if ba3==1
+	replace subnatid1 = "2 - Kolda" if ba3==2
+	replace subnatid1 = "3 - Matam" if ba3==3
+	replace subnatid1 = "4 - Kaffrine" if ba3==4
+	replace subnatid1 = "5 - Kedougou" if ba3==5
+	replace subnatid1 = "6 - Sedhiou" if ba3==6
+	replace subnatid1 = "7 - Dakar" if ba3==7
+	replace subnatid1 = "8 - Ziguinchor" if ba3==8
+	replace subnatid1 = "9 - Diourbel" if ba3==9
+	replace subnatid1 = "10 - Saint-Louis" if ba3==10
+	replace subnatid1 = "11 - Tambacounda" if ba3==11
+	replace subnatid1 = "12 - Kaolack" if ba3==12
+	replace subnatid1 = "13 - Thies" if ba3==13
+	replace subnatid1 = "14 - Louga" if ba3==14
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 
