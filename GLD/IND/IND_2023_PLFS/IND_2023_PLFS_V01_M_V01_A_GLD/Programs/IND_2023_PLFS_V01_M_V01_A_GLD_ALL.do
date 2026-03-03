@@ -30,12 +30,12 @@ called hamlet group/sub-block, was formed </_Sampling method_>
 
 -----------------------------------------------------------------------
 
-<_ICLS Version_>				</_ICLS Version_>
-<_ISCED Version_>				</_ISCED Version_>
-<_ISCO Version_>				</_ISCO Version_>
-<_OCCUP National_>				</_OCCUP National_>
-<_ISIC Version_>				</_ISIC Version_> 
-<_INDUS National_>				</_INDUS National_>
+<_ICLS Version_>				ICLS 15 </_ICLS Version_>
+<_ISCED Version_>				ISCED 2011 </_ISCED Version_>
+<_ISCO Version_>				ISCO 2008 </_ISCO Version_>
+<_OCCUP National_>				NCO 2015 </_OCCUP National_>
+<_ISIC Version_>				ISIC 4 </_ISIC Version_> 
+<_INDUS National_>				NIC 2008 </_INDUS National_>
 
 -----------------------------------------------------------------------
 <_Version Control_>
