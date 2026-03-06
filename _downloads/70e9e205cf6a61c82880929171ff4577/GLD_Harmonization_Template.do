@@ -493,7 +493,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 *<_migrated_from_code_>
 	gen migrated_from_code = ""
-	replace migrated_from_code = . if migrated_binary != 1
+	replace migrated_from_code = "" if migrated_binary != 1
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
 *</_migrated_from_code_>
 
