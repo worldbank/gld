@@ -1,0 +1,54 @@
+# Mauritius - Continuous Multi-Purpose Household Survey (CMPHS)
+
+## What is the CMPHS?
+
+The **Continuous Multi-Purpose Household Survey (CMPHS)** is a continuous household survey conducted in Mauritius by the Central Statistics Office (CSO), now Statistics Mauritius. It serves as a standing platform for collecting socio-economic information and is the official source used for labour market statistics such as labour force, employment, and unemployment. The first CMPHS was conducted in 1999, and it was followed in 2001 when it began to be consistently conducted annually. 
+
+## What does it cover?
+
+The CMPHS covers demographic and health characteristics, labour force, education and training, environment, household conditions, and individual income. 
+| Year | # Households | # Persons |
+|---|---:|---:|
+| 2001 |  |  |
+| 2002 |  |  |
+| 2003 |  |  |
+| 2004 |  |  |
+| 2005 |  |  |
+| 2006 |  |  |
+| 2007 |  |  |
+| 2008 |  |  |
+| 2009 |  |  |
+| 2010 |  |  |
+| 2011 |  |  |
+| 2012 |  |  |
+
+## Where can data be found?
+
+The World Bank has been granted access to the datasets, if you work for the World Bank Group, kindly contact the Jobs Group with a formal request for access to gld@worldbank.org.
+
+
+## What is the sampling procedure?
+
+The Mauritius CMPHS adopts a stratified two-stage sampling design: at the first stage, PSUs are selected with probability proportional to size; while at the second stage, a fixed number of households is selected within PSUs.
+
+There were design changes over time in the enumeration process. Before 2005, about **525 households** were surveyed each month, resulting to a total of **6,300 households per year**. Enumeration was based on the 1999 Master Sample, and coverage was designed to represent private non-institutional households in urban, semi-urban, and rural areas in the the islands of Mauritius and Rodrigues
+
+From 2005 onward, annual sample size increased to 11,280 households. The Relative Development Index (RDI) is used as the spatial stratification factor. This RDI is based on 12 variables encompassing housing and living conditions, literacy and education, and employment derived from the 2011 Housing and Population Census to rank PSUs. Also, starting from 2005, these rounds followed a 2-2-2 rotation sampling design where 50% of households in one quarter were re-interviewed in the following quarter to generate reliable quarterly estimates. In the microdata available to us, however, we seem to have only the first interview for each household, which supports annual estimates but does not keep the quarter-to-quarter follow-up interviews.
+
+## What is the geographic significance level?
+
+The official reports detail estimates for urban and rural areas. 
+
+## Other noteworthy aspects
+
+### Labour force definition
+There is an important age-threshold issue across years. In the **2001** metadata, labour-force questions are described for persons aged **12 years and over**. Later methodology notes state that, **from 2007 onward**, labour-force estimates are based on the population aged **16 years and above**, following the amendment to the Labour Act in December 2006 and subsequent ILO alignment. This means cross-year labour indicators need care around the **2007 break**.
+
+### Geography
+Public documentation for 2012 notes that Mauritius does **not** use a standard urban-rural classification in the way some harmonized systems expect. The metadata specifically warns that the harmonized urban variable is effectively mapped as all urban, split between **Port Louis** and **other urban**. This is a country-specific comparability issue worth flagging in harmonization notes.
+
+### Industry and occupation
+For our files, use **ISCO-1988** for occupation and **ISIC Rev. 3** for industry. These should be treated as the working classifications for the 2001-2012 harmonization series.
+
+### Survey structure
+The questionnaire is modular. Later official descriptions state that the CMPHS has a **basic module** on population characteristics, a **labour-force module** with a core set of questions kept stable across rounds, and an **additional module** for other topics of interest. This helps explain why some non-labour variables may appear or disappear across years while labour-force content remains comparatively stable. 
