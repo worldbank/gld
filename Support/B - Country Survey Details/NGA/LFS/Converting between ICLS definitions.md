@@ -3,102 +3,113 @@ Since the passing of the [resolution concerning statistics of work, employment a
 
 In short, the ICLS 19 resolution restricts employment to *work performed for others in exchange for pay or profit*, meaning that own consumption work (e.g., subsistence agriculture or building housing for oneself) are not counted as employment.
 
-The GLD codes the harmonization’s `lstatus` variable based on the concept used in the survey. This has been the case for all years in the Nigeria LFS. Nonetheless, it possible to alter the code so that it matches the previous definition by simply delete two lines of code to define "N1" as shown below. 
+The GLD codes the harmonization's `lstatus` variable based on the concept used in the survey. This applies to all years of the Nigeria LFS (2022 and 2024). This document describes the current coding approach and explains how to adapt it to match the pre-ICLS 19 definition, covering all variables affected.
 
-# Current coding for the each survey of the Nigeria ILFS
+# Current coding for each survey of the Nigeria LFS
 
-Currently, the code used to create the `lstatus` variable (which distinguishes between employment, unemployment, and out of the labour force) is the following:
+The current code identifies subsistence farmers — those whose agricultural produce is mainly for own consumption — and excludes them from employment at source. The `agf2*` variables only route respondents into employment when produce is primarily market-oriented (`agf2b == 4` or `5`, `agf2c == 1` or `3`, `agf2d == 1`). Those who farm mainly for own consumption never receive `lstatus = 1` and fall through to not-in-labour-force (N). The key steps for `lstatus` are:
 
-```
- *<_lstatus_>
+```stata
+*<_lstatus_>
 	gen byte lstatus = .
-	
-	*E1: Worked for someone else for pay
-	replace lstatus = 1 if atw1 == 1
-	
-	*E2: Ran or did any kind of business or farming
-	replace lstatus = 1 if atw2 == 1
-	
-	*E3: Helped in a household business
-	replace lstatus = 1 if atw3 == 1
-	
-	*E4: Absent from paid job or income generating activity
-	replace lstatus = 1 if abs1a == 1
-	
-	*E5: Absent from unpaid job or income generating activity
-	replace lstatus = 1 if abs1b == 1
-	
-	*U1: Looking for work/to do business in the past month, and available to work in the past week
-	* Wanted to work: only asked for people who did not look for a job
-	replace lstatus = 2 if (um1_1 == 1 | um1_2 == 1)  & (um10a == 1 | um10b == 1)
 
-	*N1: NLF if worked but activity is mainly non-market (when <50 % of produce for own consumption)
-	replace lstatus = 3 if lstatus == 1 & (atw2 == 1 | atw3 == 1) & (agf2a == 3 | (agf2a == 2 & inrange(agf2b, 1, 2)))
-	
-	*N2: All others
-	replace lstatus = 3 if missing(lstatus) & age>=minlaborage
-	
-	
+	*E: Assign employed for any of the options that lead to MJJ1
+	replace lstatus = 1 if atw1 == 1
+	replace lstatus = 1 if agf1b_4 == 1
+	replace lstatus = 1 if agf2a == 1
+	replace lstatus = 1 if agf2b == 4
+	replace lstatus = 1 if agf2b == 5
+	replace lstatus = 1 if agf2c == 1
+	replace lstatus = 1 if agf2c == 3
+	replace lstatus = 1 if agf2d == 1
+
+	*U: Looking for work/to do business in the past month, and available to work in the past week
+	replace lstatus = 2 if (um1_1 == 1 | um1_2 == 1) & um10a == 1
+
+	*N: All others
+	replace lstatus = 3 if missing(lstatus) & age >= minlaborage
+
 	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
 *</_lstatus_>
-
- 
 ```
 
-# Removed the lines of code to match the old definition
+# Coding for the Old ICLS definition
 
-To obstain a unique series with the old definition, we would first need to identify the subsistence farmers, specifically those whose majority (>50%) of agricultral produce are meant for household consumption. These are easily
-identified under "N1"; thus, deleting the lines of code under this category will automatically classify the subsistence farmers as employed.
+To match the pre-ICLS 19 definition, subsistence farmers must be counted as employed. The approach used is to identify them via the `agf3*` section of the questionnaire: all subsistence farmers answer this section (specifically `agf3bclean` captures the type of agricultural activity), and non-respondents to this section are not subsistence farmers. A helper indicator `emp_old_icls` is constructed and used to add these individuals to employment, as well as to fill in all downstream labour market variables. The same approach applies to both 2022 and 2024.
 
+## `lstatus`
+
+```stata
+	* Incorporate all that reply to agf3bclean
+	gen emp_old_icls = !missing(agf3bclean)
+	replace lstatus = 1 if emp_old_icls == 1
+
+	*U: Guard unemployment to those not already employed
+	replace lstatus = 2 if (um1_1 == 1 | um1_2 == 1) & um10a == 1 & missing(lstatus)
 ```
- *<_lstatus_>
-	gen byte lstatus = .
-	
-	*E1: Worked for someone else for pay
-	replace lstatus = 1 if atw1 == 1
-	
-	*E2: Ran or did any kind of business or farming
-	replace lstatus = 1 if atw2 == 1
-	
-	*E3: Helped in a household business
-	replace lstatus = 1 if atw3 == 1
-	
-	*E4: Absent from paid job or income generating activity
-	replace lstatus = 1 if abs1a == 1
-	
-	*E5: Absent from unpaid job or income generating activity
-	replace lstatus = 1 if abs1b == 1
-	
-	*U1: Looking for work/to do business in the past month, and available to work in the past week
-	* Wanted to work: only asked for people who did not look for a job
-	replace lstatus = 2 if (um1_1 == 1 | um1_2 == 1)  & (um10a == 1 | um10b == 1)
 
-	* Delete N1
+Two changes relative to the current code: (1) subsistence farmers are added to employment via `emp_old_icls`; (2) the unemployment condition gains a `missing(lstatus)` guard to prevent overwriting the newly employed.
 
-	*N2: All others
-	replace lstatus = 3 if missing(lstatus) & age>=minlaborage
-	
-	
-	replace lstatus = . if age < minlaborage
-	label var lstatus "Labor status"
-	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
-	label values lstatus lbllstatus
-*</_lstatus_>
+## `empstat`
 
- 
+Subsistence farmers are self-employed with no employees, so they are assigned category 4:
+
+```stata
+	* Add self-employed for own account ag
+	replace empstat = 4 if emp_old_icls == 1
 ```
+
+## `ocusec`
+
+They are assigned to the private/NGO sector (category 2):
+
+```stata
+	* Add own account
+	replace ocusec = 2 if emp_old_icls == 1
+```
+
+## `industrycat_isic`
+
+Their ISIC code is drawn directly from `agf3bclean`, which records the type of agricultural activity:
+
+```stata
+	* Add own account
+	gen isic_own_acount_help = string(agf3bclean, "%04.0f")
+	replace industrycat_isic = isic_own_acount_help if emp_old_icls == 1
+```
+
+## `occup_isco`
+
+They are assigned ISCO 6300 (subsistence farmers and fishers):
+
+```stata
+	* Add own account
+	replace occup_isco = "6300" if emp_old_icls == 1
+```
+
+## `whours`
+
+Hours are constructed from `agf4` (days worked per week) multiplied by `agf5` (hours worked per day):
+
+```stata
+	* Add own account
+	gen oa_hours_help = agf4 * agf5 if inrange(agf4, 1, 7)
+	replace whours = oa_hours_help if emp_old_icls == 1
+```
+
+All other variables (e.g., `wage_no_compen`, `unitwage`, `contract`) remain missing for this group, as the questionnaire does not collect that information for subsistence farmers.
 
 # Size of subsistence farmers population in Nigeria
 
-The size of the subsistence farmers is not as significant in other countries (e.g., Rwanda is over 30% of working age population), covering only ~4% of the working age population.  
+The size of the subsistence farmers is not as significant as in other countries (e.g., Rwanda is over 30% of working age population), covering only ~4% of the working age population.
 
 | **Year** | **% of working age** |
 |:---:|:---:|
 | 2022 Q4 | 4.6% |
-| 2023 Q1-Q3 |3.8% |
+| 2023 Q1-Q3 | 3.8% |
 
- 
- 
+
+
