@@ -25,8 +25,8 @@ The qualification variable is used only to identify post-secondary attainment. C
 
 | Code | ISCED level | Description | Qualification example | GLD harmonized category |
 |:----:|:-----------:|:------------|:----------------------|:------------------------|
-| 0 | 0 | Pre-primary |  | No education / below primary |
-| 1 | 1 | Primary | CPE | Primary complete |
+| 0 | 0 | Pre-primary |  |  Not used in harmonization |
+| 1 | 1 | Primary | CPE |  Not used in harmonization |
 | 2 | 2 | Lower secondary | Pre-Voc (Yr I - IIII) | Not used in harmonization|
 | 3 | 3 | Upper secondary | NTC Level 3, Certificate |  Not used in harmonization |
 | 4 | 4 | Post-secondary | NTC Level 2, Certificate | Higher than secondary but not university |
@@ -63,3 +63,10 @@ Below is an illustration of the coding logic used to harmonize the qualification
 ```
 
 ## Field of study information
+
+## Field of study information
+
+Users interested in the post-secondary field of study information can refer to the variable `educat_orig`, which retains the original education coding from the survey. This variable contains both the raw education information up to secondary level and the more detailed field of study or qualification information for post-secondary education. They can be distinguished by the number of digits: the raw education information are informed stored in two digits (three digits in 2012), while the field of study are in three digits (four digits in 2012)
+
+However, the meaning of the detailed field of study codes is not fully documented in the materials available to the GLD team. In addition, these codes are not fully compatible with ISCED categories. 
+
