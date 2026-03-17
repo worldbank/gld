@@ -4,7 +4,7 @@
 
 In the Mauritius CMPHS, educational attainment is primarily recorded by year level. The raw education attainment variable does not identify levels beyond secondary schooling in a way that is sufficient for GLD harmonization.
 
-To identify post-secondary attainment, the harmonization relies on a separate variable that records the respondent's field of study or qualification. This variable follows an international education classification and is used to distinguish higher levels of education.
+To identify post-secondary attainment, the harmonization relies on a separate variable that records the respondent's field of study or qualification. This variable follows an education classification system based on the Internationa and is used to distinguish higher levels of education.
 
 ## Classification used in the qualification variable
 
@@ -17,14 +17,18 @@ The qualification variable is based on ISCED 1976 in most years and on ISCED 199
 
 ## Mapping of qualification codes to GLD education categories
 
-The harmonization relies on the first digit of the qualification code to identify the broad education level. The table below summarizes the interpretation used in the GLD harmonization.
+The harmonization relies on the first digit of the qualification code to identify the broad education level.
+
+The qualification variable is used only to identify post-secondary attainment. Codes `0` to `3` are not used to construct `educat7`, since levels up to secondary are already identified from the main raw education variable. The qualification variable is used only for codes `4` to `8`, which distinguish post-secondary and university education.
+
+ The table below summarizes the interpretation used in the GLD harmonization.
 
 | Code | ISCED level | Description | Qualification example | GLD harmonized category |
 |:----:|:-----------:|:------------|:----------------------|:------------------------|
 | 0 | 0 | Pre-primary |  | No education / below primary |
 | 1 | 1 | Primary | CPE | Primary complete |
-| 2 | 2 | Lower secondary | Pre-Voc (Yr I - IIII) | Secondary incomplete |
-| 3 | 3 | Upper secondary | NTC Level 3, Certificate | Secondary complete |
+| 2 | 2 | Lower secondary | Pre-Voc (Yr I - IIII) | Not used in harmonization|
+| 3 | 3 | Upper secondary | NTC Level 3, Certificate |  Not used in harmonization |
 | 4 | 4 | Post-secondary | NTC Level 2, Certificate | Higher than secondary but not university |
 | 5 | 5 | First stage of tertiary education | Diploma | Higher than secondary but not university |
 | 6 | 5 | First stage of tertiary education | Degree (BSc) | University incomplete or complete |
@@ -57,3 +61,5 @@ Below is an illustration of the coding logic used to harmonize the qualification
 	label values educat7 lbleducat7
 *</_educat7_>
 ```
+
+## Field of study information
