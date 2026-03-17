@@ -38,6 +38,7 @@
 
 Unitwage was coded as per payment period not wage_non_compen timeframe
 * Date: [2022-08-24] File: [As in Program name above] - [Update PSIC-ISIC 09 key; occup_skill only keeps three categories and others were recoded to missing]
+* Date: [2026-03-17] File: [As in Program name above] - [Update educat7 to recode bachelor's degree codes from the 500s and 600s out of post-secondary/non-university to university level]
 
 </_Version Control_>
 
@@ -751,8 +752,8 @@ label var ed_mod_age "Education module application age"
 	replace educat7=3 if j12c09_grade==280						// "Elementary Graduate" to "Primary Complete"
 	replace educat7=4 if j12c09_grade>=310 &  j12c09_grade<=340 	// First-Fourth year in High school -> "secondary incomplete"
 	replace educat7=5 if j12c09_grade==350						// "High school graduate" -> "secondary complete"
-	replace educat7=6 if j12c09_grade>=410 &  j12c09_grade<=501 	// Post secondary + Basic Programs -> "Higher secondary not uni"
-	replace educat7=6 if j12c09_grade>=502 & 	j12c09_grade<=699	// Basic Program degrees to "Higher secondary not uni"
+	replace educat7=6 if j12c09_grade>=410 &  j12c09_grade<=499 	// Post secondary + Basic Programs below university -> "Higher secondary not uni"
+	replace educat7=7 if j12c09_grade>=500 & 	j12c09_grade<=699	// 500s and 600s recoded to "University"
 	replace educat7=7 if j12c09_grade>= 810 & j12c09_grade <= . // all labelled uni levels Advanced Degree" -> "University"
 
 

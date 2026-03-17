@@ -39,6 +39,7 @@
 Unitwage was coded as per payment period not wage_non_compen timeframe
 * Date: [2022-08-26] File: [As in Program name above] - [Update PSIC-ISIC 09 key; occup_skill only keeps three categories and others were recoded to missing]
 * Date 2023-03-06 - Update subnatid1 
+* Date: 2026-03-17 - Update educat7 to recode bachelor's degree codes from the 500s and 600s out of post-secondary/non-university to university level
 
 </_Version Control_>
 
@@ -774,8 +775,8 @@ label var ed_mod_age "Education module application age"
 	replace 	educat7=3 if pufc07_grade==280 & int_month == 4						// "Elementary Graduate" to "Primary Complete"
 	replace 	educat7=4 if (pufc07_grade>=310 & pufc07_grade<=340) & int_month == 4 	// First-Fourth year in High school -> "secondary incomplete"
 	replace 	educat7=5 if pufc07_grade==350 & int_month == 4						// "High school graduate" -> "secondary complete"
-	replace 	educat7=6 if (pufc07_grade>=410 & pufc07_grade<=501) & int_month == 4 	// Post secondary + Basic Programs -> "Higher secondary not uni"
-	replace 	educat7=6 if (pufc07_grade>=502 & pufc07_grade<=699) & int_month == 4	// Basic Program degrees to "Higher secondary not uni"
+	replace 	educat7=6 if (pufc07_grade>=410 & pufc07_grade<=499) & int_month == 4 	// Post secondary + Basic Programs below university -> "Higher secondary not uni"
+	replace 	educat7=7 if (pufc07_grade>=500 & pufc07_grade<=699) & int_month == 4	// 500s and 600s recoded to "University"
 	replace 	educat7=7 if (pufc07_grade>= 810 & pufc07_grade <= .) & int_month == 4 // all labelled uni levels*
 		
 	label var educat7 "Level of education 1"
