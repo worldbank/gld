@@ -81,7 +81,7 @@ local user_commands ietoolkit scores missings mdesc iefieldkit  //Fill this list
 
 	local 	main		"`year'\\`cty3'_`surv_yr'_LFS_v01_M"
 	local 	 stata		"`main'\Data\Stata"
-	local 	gld 		"`year'\\`cty3'_`surv_yr'_LFS_v01_M_v04_A_GLD"
+	local 	gld 		"`year'\\`cty3'_`surv_yr'_LFS_V01_M_V04_A_GLD"
 	local 	 code 		"`gld'\Programs"
 	local 	 gld_data 	"`gld'\Data\Harmonized"
 
@@ -106,7 +106,7 @@ local user_commands ietoolkit scores missings mdesc iefieldkit  //Fill this list
 
 	
 * ouput
-	local path_output `"`gld_data'\\`cty3'_`surv_yr'_LFS_v01_M_v04_A_GLD_ALL.dta"'
+	local path_output `"`gld_data'\\`cty3'_`surv_yr'_LFS_V01_M_V04_A_GLD_ALL.dta"'
 
 	
 ** VALUES
@@ -180,13 +180,13 @@ local user_commands ietoolkit scores missings mdesc iefieldkit  //Fill this list
 
 
 *<_vermast_>
-	gen vermast = "v01"
+	gen vermast = "V01"
 	label var vermast "Version of master data"
 *</_vermast_>
 
 
 *<_veralt_>
-	gen veralt = "v04"
+	gen veralt = "V04"
 	label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 

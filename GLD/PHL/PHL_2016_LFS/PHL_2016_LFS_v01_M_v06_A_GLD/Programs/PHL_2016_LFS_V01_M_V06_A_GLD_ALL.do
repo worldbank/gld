@@ -82,7 +82,7 @@ local user_commands ietoolkit scores missings mdesc iefieldkit  //Fill this list
 
 	local 	main		"`year'\\`cty3'_`surv_yr'_LFS_v01_M"
 	local 	 stata		"`main'\Data\Stata"
-	local 	gld 		"`year'\\`cty3'_`surv_yr'_LFS_v01_M_v06_A_GLD"
+	local 	gld 		"`year'\\`cty3'_`surv_yr'_LFS_V01_M_V06_A_GLD"
 	local 	 code 		"`gld'\Programs"
 	local 	 gld_data 	"`gld'\Data\Harmonized"
 
