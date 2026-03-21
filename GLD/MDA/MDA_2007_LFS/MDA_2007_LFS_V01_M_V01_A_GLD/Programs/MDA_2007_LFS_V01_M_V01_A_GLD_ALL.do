@@ -5,40 +5,38 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				[Name of your do file] </_Program name_>
-<_Application_>					[Name of your software (STATA) and version] <_Application_>
+<_Program name_>				MDA_2007_LFS_V01_M_V01_A_GLD_ALL</_Program name_>
+<_Application_>					Stata SE 19.0 <_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
-<_Date created_>				YYYY-MM-DD </_Date created_>
+<_Date created_>				2026-02-16 </_Date created_>
 
 -------------------------------------------------------------------------
 
-<_Country_>					[Country_Name (CCC)] </_Country_>
-<_Survey Title_>				[SurveyName] </_Survey Title_>
-<_Survey Year_>					[Year of start of the survey] </_Survey Year_>
-<_Study ID_>					[Microdata Library ID if present] </_Study ID_>
-<_Data collection from_>			[MM/YYYY] </_Data collection from_>
-<_Data collection to_>				[MM/YYYY] </_Data collection to_>
-<_Source of dataset_> 				[Source of data, e.g. NSO] </_Source of dataset_>
-<_Sample size (HH)_> 				[#] </_Sample size (HH)_>
-<_Sample size (IND)_> 				[#] </_Sample size (IND)_>
-<_Sampling method_> 				[Brief description] </_Sampling method_>
-<_Geographic coverage_> 			[To what level is data significant] </_Geographic coverage_>
-<_Currency_> 					[Currency used for wages] </_Currency_>
+<_Country_>					MDA</_Country_>
+<_Survey Title_>				LFS </_Survey Title_>
+<_Survey Year_>					2007</_Survey Year_>
+<_Study ID_>					MDA_2007_LFS_V01_M </_Study ID_>
+<_Data collection from_>			[01/2007] </_Data collection from_>
+<_Data collection to_>				[12/2007] </_Data collection to_>
+<_Source of dataset_> 				National Bureau of Statistics of the Republic of Moldova </_Source of dataset_>
+<_Sample size (HH)_> 				38,916 </_Sample size (HH)_>
+<_Sample size (IND)_> 				111,540 </_Sample size (IND)_>
+<_Sampling method_> 				the NBS implemented the LFS as a continuous quarterly survey using a two-stage probabilistic sample. </_Sampling method_>
+<_Geographic coverage_> 			national level, with standard disaggregations by region and urban/rural  </_Geographic coverage_>
+<_Currency_> 					N/A </_Currency_>
 
 -----------------------------------------------------------------------
 
-<_ICLS Version_>				[Version of ICLS for Labor Questions] </_ICLS Version_>
-<_ISCED Version_>				[Version of ICLS for Labor Questions] </_ISCED Version_>
-<_ISCO Version_>				[Version of ICLS for Labor Questions] </_ISCO Version_>
-<_OCCUP National_>				[Version of ICLS for Labor Questions] </_OCCUP National_>
-<_ISIC Version_>				[Version of ICLS for Labor Questions] </_ISIC Version_>
-<_INDUS National_>				[Version of ICLS for Labor Questions] </_INDUS National_>
+<_ICLS Version_>			 	ICLS-13 </_ICLS Version_>
+<_ISCED Version_>				isced_1997 </_ISCED Version_>
+<_ISCO Version_>				isco_1988 </_ISCO Version_>
+<_OCCUP National_>			    isco_1988 </_OCCUP National_>
+<_ISIC Version_>				isic_3 </_ISIC Version_>
+<_INDUS National_>				NACE 1.1 </_INDUS National_>
 
 -----------------------------------------------------------------------
 <_Version Control_>
 
-* Date: [YYYY-MM-DD] - [Description of changes]
-* Date: [YYYY-MM-DD] - [Description of changes]
 
 </_Version Control_>
 
@@ -280,6 +278,10 @@ use "`path_in_stata'/lfs2007.dta",clear
 
 </_subnatid1_note> */
 	gen str subnatid1 = ""
+	replace subnatid1="1 - North"  if strat==10011 | strat== 10012  | strat== 11000 |strat==11100
+	replace subnatid1="2 - Center"  if strat== 20011 | strat== 20012  | strat== 21000 
+	replace subnatid1="3 - South" if strat==30011 | strat==30012  | strat== 31000
+	replace subnatid1="4 - Cisinau" if strat== 40100 | strat== 41000
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 
@@ -303,7 +305,7 @@ use "`path_in_stata'/lfs2007.dta",clear
 	See entry in GLD Guidelines (https://github.com/worldbank/gld/blob/main/Support/A%20-%20Guides%20and%20Documentation/GLD_1.0_Guidelines.docx) for more details
 
 </_subnatidsurvey_note> */
-	gen str subnatidsurvey = ""
+	gen str subnatidsurvey = subnatid1
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
