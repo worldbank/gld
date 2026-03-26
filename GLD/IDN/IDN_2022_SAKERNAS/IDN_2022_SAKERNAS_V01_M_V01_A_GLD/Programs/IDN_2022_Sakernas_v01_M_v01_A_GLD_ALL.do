@@ -624,7 +624,8 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = "subnatid2"
+	gen subnatidsurvey = subnatid1 + " urban" if urban == 1
+	replace subnatidsurvey = subnatid1 if urban == 0
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 

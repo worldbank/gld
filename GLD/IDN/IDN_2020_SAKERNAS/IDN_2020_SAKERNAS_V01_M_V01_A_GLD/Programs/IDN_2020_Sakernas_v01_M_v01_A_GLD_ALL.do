@@ -55,8 +55,8 @@ local server  "C:\Users\wb611670\WBG\GLD - 611670_SF"
 local country "IDN"
 local year    "2020"
 local survey  "SAKERNAS"
-local vermast "v01"
-local veralt  "v01"
+local vermast "V01"
+local veralt  "V01"
 
 * From the definitions, set path chunks
 local level_1      "`country'_`year'_`survey'"
@@ -77,6 +77,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * harmonized output in a single file
 
 	use "`path_in_stata'\sak20aug_coding.dta", clear
+// 	use "/Users/sizhen/Desktop/GLD/IDN/IDN_2020_SAKERNAS/IDN_2020_SAKERNAS_V01_M/Data/Stata/sak20aug_coding.dta", clear
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -651,7 +652,8 @@ provided due to it is part of the confidential information withheld by the NSO.
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = "subnatid2"
+	gen subnatidsurvey = subnatid1 + " urban" if urban == 1
+	replace subnatidsurvey = subnatid1 if urban == 0
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -1995,5 +1997,6 @@ foreach var of local kept_vars {
 *<_% SAVE_>
 
 save "`path_output'\\`level_2_harm'_ALL.dta", replace
+// save "/Users/sizhen/Desktop/GLD/IDN/IDN_2020_SAKERNAS/IDN_2020_SAKERNAS_V01_M_V01_A_GLD/Data/Harmonized/IDN_2020_SAKERNAS_v01_M_v01_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>

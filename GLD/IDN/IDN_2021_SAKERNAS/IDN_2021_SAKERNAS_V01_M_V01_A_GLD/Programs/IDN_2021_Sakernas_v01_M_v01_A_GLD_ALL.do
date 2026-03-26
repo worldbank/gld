@@ -77,6 +77,7 @@ local out_file "`level_2_harm'_ALL.dta"
 * harmonized output in a single file
 
 	use "`path_in_stata'\sak21aug_coding.dta", clear
+// 	use "/Users/sizhen/Desktop/GLD/IDN/IDN_2021_SAKERNAS/IDN_2021_SAKERNAS_V01_M/Data/Stata/sak21aug_coding.dta", clear
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -630,7 +631,8 @@ provided due to it is part of the confidential information withheld by the NSO.
 
 
 *<_subnatidsurvey_>
-	gen subnatidsurvey = "subnatid2"
+	gen subnatidsurvey = subnatid1 + " urban" if urban == 1
+	replace subnatidsurvey = subnatid1 if urban == 0
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -1978,5 +1980,6 @@ foreach var of local kept_vars {
 *<_% SAVE_>
 
 save "`path_output'\\`level_2_harm'_ALL.dta", replace
+// save "/Users/sizhen/Desktop/GLD/IDN/IDN_2021_SAKERNAS/IDN_2021_SAKERNAS_V01_M_V01_A_GLD/Data/Harmonized/IDN_2021_SAKERNAS_V01_M_V01_A_GLD_ALL.dta", replace
 
 *</_% SAVE_>
