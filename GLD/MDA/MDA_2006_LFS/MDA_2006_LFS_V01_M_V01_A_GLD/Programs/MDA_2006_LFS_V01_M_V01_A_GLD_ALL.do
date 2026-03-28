@@ -785,7 +785,7 @@ foreach ed_var of local ed_vars {
 
 
 *<_potential_lf_>
-	gen byte potential_lf = (passive == 1 | active == 1)
+	gen byte potential_lf = [(passive == 1 | dor == 1)| active == 1]
 	replace potential_lf = . if age < minlaborage & !missing(age)
 	replace potential_lf = . if lstatus != 3
 	label var potential_lf "Potential labour force status"
@@ -803,10 +803,14 @@ foreach ed_var of local ed_vars {
 	label values underemployment lblunderemployment
 *</_underemployment_>
 
-
 *<_nlfreason_>
-	gen byte nlfreason = moncaut
-	recode nlfreason (2 3 4 5 6 10 11 12 13 14 = 5) (7 = 1) (8 = 2) (9 = 4) (1 0 = .)
+	gen nlfreason_1 = mondisp
+	replace nlfreason_1 = mondispd if nlfreason_1 == 0
+	recode nlfreason_1 (3 = 2) (5 = 3) (5 = 4) (2 6 7 = 5) (0 = .)
+	gen byte nlfreason_2 = moncaut
+	recode nlfreason_2 (2 3 4 5 6 10 11 12 13 14 = 5) (7 = 1) (8 = 2) (9 = 4) (1 0 = .)
+	gen nlfreason = nlfreason_1
+	replace nlfreason = nlfreason_2 if missing(nlfreason)
 	replace nlfreason = . if lstatus != 3
 	label var nlfreason "Reason not in the labor force"
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
@@ -859,6 +863,7 @@ foreach ed_var of local ed_vars {
 
 *<_industry_orig_>
 	gen industry_orig = string(act_orig)
+	replace industry_orig = "" if industry_orig == "."
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
