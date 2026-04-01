@@ -1,16 +1,13 @@
 
 # Employment Status
 
-## Main takeaway
-
-The Mongolia LFS `empstat` series is broadly comparable over time because the
-main status-in-employment question remains stable. The main recent complication
-is in 2024, when the questionnaire reorganizes the employee payment block. The
-GLD resolves this by keeping the same broad mapping from the main status
-question `E04` and using the 2024 payment-type question `E18` only to
-separate remunerated employee or apprentice cases from explicitly unpaid ones.
-
-## Historical mapping
+The discussion below continues to apply to the Mongolia LFS over time. For the
+recent rounds, the main status-in-employment question remains broadly
+comparable. The main new issue is in 2024, when the questionnaire reorganizes
+the employee payment block. To approximate the previous rounds as closely as
+possible, the GLD continues to derive `empstat` from the main status question
+and uses the 2024 payment-type question `E18` only to separate remunerated
+employee or apprentice cases from explicitly unpaid ones.
 
 The table below summarizes the mapping between the harmonized employment
 categories in `empstat` and the categories in the raw dataset. These mappings
@@ -24,8 +21,6 @@ employment categories.
 | Paid employee | As an employee for someone else, As an apprentice, intern, Paid employee, Paid employee on contract, Paid employee under civil law |
 | Non-paid employee | Helping a family member who works for someone else, Unpaid family worker |
 | Other, workers not classifiable by status | Member of cooperative, Other |
-
-## Long-run complication
 
 When examining the mappings, several noteworthy trends emerge. The figure below
 shows a significant decrease in *non-paid employees*, especially during
@@ -86,8 +81,6 @@ The recent harmonized rounds contain the following numbers of observations:
 | 2023 | 49,903 | 6,582 | 19,988 |
 | 2024 | 49,654 | 6,584 | 19,334 |
 
-## Recent-round mapping
-
 The mapping used in the recent rounds is summarized below.
 
 | Raw status category | 2022 GLD mapping | 2023 GLD mapping | 2024 GLD mapping |
@@ -97,8 +90,6 @@ The mapping used in the recent rounds is summarized below.
 | `E04 = 3` As an employee for someone else | Paid employee | Paid employee if `E11 = 1`, non-paid employee if `E11 = 2` | Paid employee if `E18 = 1/7`, non-paid employee if `E18 = 8` |
 | `E04 = 4` As an apprentice, intern | Paid employee | Paid employee if `E11 = 1`, non-paid employee if `E11 = 2` | Paid employee if `E18 = 1/7`, non-paid employee if `E18 = 8` |
 | `E04 = 5` Helping a family member who works for someone else | Non-paid employee | Non-paid employee | Non-paid employee |
-
-## 2024 complication
 
 The most important recent difference is in 2024. The questionnaire is not
 entirely inconsistent with the 2022 and 2023 rounds, because the broad
@@ -114,8 +105,6 @@ report the type of payment in `E18`, with the relevant categories:
 - `6` meals or accommodation
 - `7` payment with products
 - `8` none of the above, including unpaid
-
-## Resolution in GLD
 
 For this reason, the 2024 GLD keeps the same broad mapping from `E04` and uses
 `E18` only to separate remunerated employee or apprentice cases from
