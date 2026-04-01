@@ -13,11 +13,11 @@ separate remunerated employee or apprentice cases from explicitly unpaid ones.
 ## Historical mapping
 
 The table below summarizes the mapping between the harmonized employment
-categories (`harmvar`) and the categories in the raw dataset (`rawvar`). These
-mappings generate estimates consistent with the ILO for each of the ICSE-93
-status of employment categories.
+categories in `empstat` and the categories in the raw dataset. These mappings
+generate estimates consistent with the ILO for each of the ICSE-93 status of
+employment categories.
 
-| `harmvar` | `rawvar` |
+| `empstat` | Raw employment-status categories |
 |--------------------------------------------------|-------------------------------------------------------------------------------------------|
 | Employer | In his/her own business activity or ina business operated by a household or family member **and** regularly hires workers, Employer |
 | Self-employed | In a business operated by a household or family member, Employed in animal husbandry, Own account worker, Self employer [sic] |
