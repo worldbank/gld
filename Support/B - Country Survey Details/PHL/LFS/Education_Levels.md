@@ -22,7 +22,7 @@ Education Levels: Philippines GLD
 
 The following discussion explains the codification from raw survey education labels to GLD categories. The main organizing principle is that different groups of survey years rely on different evidence. In some periods the raw values can be read directly from labelled survey categories, while in others the harmonization relies on comparisons across rounds and adjacent years. Note that, according to the 2017 Philippine Standard Classification of Education document, the education system was adjusted in 2018 in accordance with new legislation, linked [here](http://www.unesco.org/education/edurights/media/docs/e119986abbd26ebda9c3d8c18929b4487205d4d6.pdf).
 
-It appears both in the 2017 PSCED and the data labels that this change did not occur until the 2018 year, meaning that data for 2017 is still classified under the old system.
+The labeled 2018 rounds make the later K-12 structure explicit. In practice, the 2017 harmonization uses that same later structure as the closest labeled reference, since the 2017 values line up closely with the 2018 patterns even though the labels are less complete.
 
 ## Survey Years 1997 - 2011 (PSCED 1997)
 
@@ -194,11 +194,11 @@ The big unknown is K-12 Programs. The 2017 PSCED doesn’t have any explicit inf
 | IPed / SPED (higher value)                                   | Primary Incomplete                | No info on completion                   |
 | Elementary Graduate                                          | Primary Complete                  |                                         |
 | Grade 7 - 9 / First - Third Year High School                 | Secondary Incomplete              |                                         |
-| Grade 10 / High School Graduate                              | Secondary Incomplete              |                                         |
+| Grade 10 / High School Graduate                              | Secondary Complete                |                                         |
 | Grade 11, \[x\] Track                                        | Secondary Incomplete              |                                         |
 | Grade 12, \[x\] Track                                        | Secondary Complete                | In new schema, Secondary is 6 years     |
-| Basic Programs, Certificates, 40000- and 50000-level degrees | Post-Secondary, Non-University    |                                         |
-| Undergraduate, Basic Programs or Equivalent                  | University Incomplete or Complete |                                         |
+| Basic Programs, Certificates, 40000- and 50000-level degrees | Post-Secondary, Non-University    | Includes post-secondary non-tertiary and short-cycle tertiary |
+| Undergraduate, bachelor-level or equivalent, 60000 level     | University Incomplete or Complete |                                         |
 | Masters, 70000 level                                         | University Incomplete or Complete |                                         |
 | Doctorate, 80000 level                                       | University Incomplete or Complete |                                         |
 
