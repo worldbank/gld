@@ -840,7 +840,7 @@ foreach ed_var of local ed_vars {
 	gen occup_isco = occup_orig + "00" if !missing(occup_orig) & lstatus == 1
 	
 	* THese are codes that are not in ISCO 88. Suspected to be typos because only 1 case each.
-	replace occup_isco = "" if inlist(q406eoccupation, 45, 63, 85, 99)
+	replace occup_isco = "" if inlist(q406eoccupation, 45, 56, 57, 63, 76, 77, 80, 85, 99)
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
@@ -848,6 +848,7 @@ foreach ed_var of local ed_vars {
 *<_occup_>
 	gen byte occup=q406eoccupation if lstatus==1
 	recode occup (11/13=1) (21/24=2) (31/34=3) (41/45=4) (51/54=5) (60/63=6) (71/75=7) (81/85=8) (91/95=9) (99=.)
+	replace occup = . if inlist(q406eoccupation, 56, 57, 76, 77, 80)
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
 	label values occup lbloccup
