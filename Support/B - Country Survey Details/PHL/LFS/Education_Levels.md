@@ -7,6 +7,10 @@ Education Levels: Philippines GLD
     -   [Notes Specific to PSCED 1997](#notes-specific-to-psced-1997)
 -   [Survey Years 2012 - 2018
     (PSCED 2008)](#survey-years-2012---2018-psced-2008)
+    -   [Survey Years 2012 to April
+        2016](#survey-years-2012-to-april-2016)
+    -   [Survey Years July 2016 to
+        2018](#survey-years-july-2016-to-2018)
     -   [Education levels](#education-levels)
     -   [Values specific to the 2008
         PSCED](#values-specific-to-the-2008-psced)
@@ -16,7 +20,7 @@ Education Levels: Philippines GLD
     -   [Notes specific to the 2017 PSCED
         Classification](#notes-specific-to-the-2017-psced-classification)
 
-The following label classification explain the codification from raw survey label levels to GLD categories. Note that, according to the 2017 Philippine Standard Classification of Education document, the education system was adjusted in 2018 in accordance with new legislation, linked [here](http://www.unesco.org/education/edurights/media/docs/e119986abbd26ebda9c3d8c18929b4487205d4d6.pdf).
+The following discussion explains the codification from raw survey education labels to GLD categories. The main organizing principle is that different groups of survey years rely on different evidence. In some periods the raw values can be read directly from labelled survey categories, while in others the harmonization relies on comparisons across rounds and adjacent years. Note that, according to the 2017 Philippine Standard Classification of Education document, the education system was adjusted in 2018 in accordance with new legislation, linked [here](http://www.unesco.org/education/edurights/media/docs/e119986abbd26ebda9c3d8c18929b4487205d4d6.pdf).
 
 It appears both in the 2017 PSCED and the data labels that this change did not occur until the 2018 year, meaning that data for 2017 is still classified under the old system.
 
@@ -43,7 +47,56 @@ It seems that “College” usually refers to Post-secondary/Tertiary University
 
 ## Survey Years 2012 - 2018 (PSCED 2008)
 
-These survey years appear to be coded according to the 2008 Philippine Statistical Classification of Education Document, accessible [here](https://psa.gov.ph/content/philippine-standard-classification-education-psced).
+These survey years are documented by the PSA under the 2008 Philippine Standard Classification of Education (PSCED), accessible [here](utilities/433680126-PSCEd-2008.pdf). However, the raw survey values are not consistent with PSCED 2008 at the first digit. The official PSCED 2008 structure uses the first digit to represent the level of education, with `1xx` for primary, `2xx` for secondary, `4xx` for post-secondary non-tertiary, `5xx` for first-stage tertiary or baccalaureate, and `6xx` for second-stage tertiary or post-graduate education. The raw survey files instead use two different survey-specific coding structures over this period.
+
+### Survey Years 2012 to April 2016
+
+For 2012 to April 2016, the raw survey files use a compressed attainment ladder in which `2xx` values correspond to primary grades, `3xx` values correspond to secondary grades, and `4xx` values correspond to post-secondary education. For this reason, the harmonization uses the raw survey labels and within-survey value patterns rather than applying the official PSCED 2008 first-digit rule mechanically.
+
+The raw variables used for this earlier period are not fully uniform across years. For 2012 and 2013 the detailed education variable is `j12c09_grade`. For 2014 and 2015 both `c09_grd` and `j12c09_grade` appear in the raw data, but the harmonization relies on the more detailed `j12c09_grade`. In 2016, the January round also contains both variables and again relies on `j12c09_grade`, while the April round uses `pufc07_grade`.
+
+The basis for this cluster is the raw labeled education categories themselves. The labels for primary, secondary, post-secondary, college, and post-baccalaureate are sufficiently stable across these rounds to support a direct mapping into GLD, even though the first digit does not line up with PSCED 2008.
+
+The tables below summarize the main inconsistency between the official PSCED 2008 first-digit rules and the education values observed in the raw survey variables used for harmonization in 2012 to April 2016.
+
+| PSCED 2008 first digit | Official PSCED 2008 level name |
+|------------------------|--------------------------------|
+| `1xx`                  | Primary / elementary |
+| `2xx`                  | Secondary / high school |
+| `4xx`                  | Post-secondary non-tertiary |
+| `5xx`                  | First-stage tertiary / baccalaureate |
+| `6xx`                  | Second-stage tertiary / post-graduate |
+
+| Raw survey value range, 2012 to April 2016 | Typical raw labels | Meaning in raw survey files |
+|---------------------------------------------|--------------------|-----------------------------|
+| `2xx`                             | Grade 1 to Grade 6 | Primary grades |
+| `280`                             | Elementary Graduate | Primary complete |
+| `3xx`                             | First Year to Fourth Year High School | Secondary grades |
+| `350`                             | High School Graduate | Secondary complete |
+| `4xx`                             | First Year Post-Secondary, Second Year Post-Secondary | Post-secondary education |
+| `5xx`                             | Basic Programs, field-specific programs | Higher-education field groups in the raw survey data, but not a clean literal PSCED level marker |
+| `6xx`                             | Field-specific programs | Higher-education field groups in the raw survey data, but not a clean literal PSCED level marker |
+| `8xx`, `900`                      | First Year College to Post-Baccalaureate | Explicit college years and post-baccalaureate |
+
+### Survey Years July 2016 to 2018
+
+Beginning in July 2016, the raw survey values shift to a later structure tied to the K-12 transition. The July and October 2016 rounds, and then all rounds in 2017 and 2018, follow this later structure. These later rounds also deviate from PSCED 2008 at the first digit, because the `4xx` series no longer refers to post-secondary non-tertiary education. Instead, the `400` series refers to basic-school grades.
+
+The basis for this cluster is slightly different by year. For July and October 2016, the values are unlabeled, so the mapping relies on the internal pattern of the code ladder and its continuity with 2017 and the labelled 2018 data. For 2017, the rounds are also effectively interpreted using the same later structure, with 2018 serving as the main labelled reference year. For 2018, the labels are explicit and confirm the interpretation of the `400`, `500`, `600`, and `700+` ranges.
+
+In this later structure, the broad pattern is:
+
+| Raw survey value range, July 2016 to 2018 | Typical raw labels | Meaning in raw survey files |
+|-------------------------------------------|--------------------|-----------------------------|
+| `<=110`                                   | No Grade Completed, Preschool | No education |
+| `110` to `160`                            | Grade 1 to Grade 6 | Primary incomplete |
+| `170`, `180`, `191`, `460`                | Grade 6 or Grade 7 graduate, SPED undergraduate, Grade 6 - K to 12 Program | Primary complete |
+| `210` to `240`, `470` to `490`            | First Year to Fourth Year High School, Grade 7 to Grade 9 - K to 12 Program | Secondary incomplete |
+| `250`, `192`, `500`                       | High School Graduate, SPED graduate, Grade 10 - K to 12 Program | Secondary complete |
+| `410` to `450`                            | Grade 1 to Grade 5 - K to 12 Program | Primary incomplete in the K-12 ladder, despite the `4xx` prefix |
+| `510` to `520`                            | Grade 11 to Grade 12 - K to 12 Program | Post-secondary / higher secondary bridge in GLD terms |
+| `601` to `699`                            | First Year Post Secondary, Second Year Post Secondary, Post Secondary Courses Non-Tertiary Education | Post-secondary, not university |
+| `701` to `950`                            | First Year College to post-baccalaureate degrees | University or above |
 
 ### Education levels
 
@@ -85,20 +138,19 @@ These survey years appear to be coded according to the 2008 Philippine Statistic
 
 ### Values specific to the 2008 PSCED
 
-Note that PSA documentation for [other years in the same schema](http://psada.psa.gov.ph/index.php/catalog/175/datafile/F1) lists values between `502` and `689` as various completed degrees for associate-level, pre-professional programs. I will assume these values refer to these same programs, and code them as `Post-Secondary, not University`.
+Note that PSA documentation for [other years in the same schema](http://psada.psa.gov.ph/index.php/catalog/175/datafile/F1) lists values between `502` and `689` as various completed degrees for associate-level, pre-professional programs. In practice, these values need to be interpreted using the raw survey labels and surrounding value structure rather than the official PSCED first digit alone.
 
 ### Notes specific to 2008 PSCED
 
-Some years contain two education grade variables that appear to correspond to the grade level under the 1997 and 2008 classification schemas – ie, two variable in the same survey round or data file. Sometimes this varible is called `c09_grd` for the old schema and usually the variable for the new schema is called `j12c09_grade`. While
-it may be convenient to use the 1997-schema variable, I decided to use the 2008-year one (usually the `j12c09_grade`) because it wasn’t clear that all years contained the 1997 year cognate variable and because, in theory, these years should be classified under the new schema anyway.
+Some years contain two education grade variables that appear to correspond to the old and new classification schemas, that is, two education variables within the same survey round or data file. Sometimes this variable is called `c09_grd` for the old schema and the variable for the newer schema is called `j12c09_grade`. While it may be convenient to use the older variable, the harmonization generally relies on the newer, more detailed variable because it aligns more closely with the labels actually used in the 2012-2016 files.
 
-Furthermore, some years, such as 2016, have various names for the “highest grade completed” variable for within-year rounds, but *usually* only one variable in each file, but not always. We have to be very mindful of the variable names that refer to the new, 2008 coding schema and the old coding schema. An easy way to distinguish is the new coding schema variable has far more numeric or factor levels. In 2016, we want to use `j12c09_grade` in the January round, (not `c09_grd`), `pufc07_grade` in April, July, and October rounds.
+Furthermore, some years, such as 2016, use different variable names for the highest grade completed across rounds. We therefore need to be careful about which variable carries the more detailed education ladder. In 2016, the harmonization uses `j12c09_grade` in the January round, rather than the coarser `c09_grd`, and `pufc07_grade` in the April, July, and October rounds.
 
 #### Additional Notes for survey year 2016
 
-Once the variable names for 2016 have been harmonized, the values themselves differ across rounds/months within 2016. (A small caveat is that the January values are labelled factors whereas the following three rounds are unlabeled integers, but the January values have integer values behind the labels, and these numeric values are the values to which I’m referring.)
+Once the variable names for 2016 have been harmonized, the values themselves still differ across rounds. The January values are labelled factors, while the following three rounds are unlabeled integers. January and April follow one numeric pattern, while July and October follow a later pattern that is also used in 2017 and, with labels, in 2018.
 
-The numeric values for January and April coincide; values for July and October coincide, but these two groups of values differ from each other. The January/April group most closely aligns with the 2016 survey published by the PSA. Since the July/October values have no value labels and there’s no reasonable inference to classify the values, I’m only going to categorize education for the first two rounds and leave the observations for July and October as missing for the time being.
+For this reason, the harmonization uses different within-year mappings for 2016. January is standardized from `j12c09_grade`, not the coarser `c09_grd`. January and April are coded using the earlier 2012-2015 style attainment structure, while July and October are coded using the later structure that continues through 2017 and, with labels, 2018. In that later structure, the `400` series corresponds to basic-school grades under the K-12 system rather than post-secondary education, which is another way in which these rounds depart from the official PSCED 2008 first-digit logic.
 
 #### Additional Notes for survey year 2017
 
@@ -110,7 +162,9 @@ All relevant raw “grade” variables are in labelled factor form, so no cross-
 
 ## Survey Years 2019 +
 
-These survey years follow the newest PSA classification for [2017](https://psa.gov.ph/content/philippine-standard-classification-education-psced). The biggest difference in these years is the inclusion of two additional years in secondary school.
+These survey years follow the newer PSA classification introduced under the 2017 PSCED. In contrast to the earlier periods, the 2019 raw values are broadly consistent with the PSCED 2017 first-digit structure: `0` for early childhood, `1` for primary, `2` for lower secondary, `3` for upper secondary, `4` for post-secondary non-tertiary, `5` for short-cycle tertiary, `6` for bachelor level, `7` for master level, and `8` for doctoral level. The biggest difference in these years is the inclusion of two additional years in secondary school.
+
+The basis for this cluster is therefore different again. For January and April 2019, the labelled values themselves already line up closely with the PSCED 2017 ladder. For July and October 2019, the values are numeric and unlabeled, so the interpretation relies on the broad continuity of the same prefix structure rather than on complete value labels.
 
 ### Education Levels
 
@@ -154,15 +208,8 @@ Similar to some of the years in the 2008 PSCED Classification above, some survey
 
 #### Additional Notes for survey year 2019
 
-The first two rounds of 2019, January and April, are factor labelled data types and the second two, July and October, are integer, without labels. The underlying value labels for all may, in theory, be the same. However, the underlying values for the first two rounds are slightly different than those of the second two. The PSCED 2017 codebooks is uite extensive and clear that the values and labels for the first two rounds are *almost* exactly correct, expect for a few exception in early school year groupings: it appears that the some education categories have been grouped and the resulting grouping has been formed into a numeric value that does not appear in the codebook.
+The first two rounds of 2019, January and April, are factor labelled data types and the second two, July and October, are integer, without labels. The underlying values for the first two rounds are slightly different from those of the second two, but the broad prefix structure is the same and follows the PSCED 2017 ladder much more closely than in earlier years.
 
-For example, instead of listing out the “raw” values for grade 1, grade 2, grade 3, grade 4, and grade 5 – and making labels for each – the data has been constructed with a “new” value `y` that represents “grades 1-5” with a label such as “Grades 1-5”. Neither this value nor label appear in the 2017 PSCED, nor the numeric versions of the variables in other rounds. The original values that represent grades 1, grades 2, grades 3, etc do not appear in the factor labelled data variables, nor is there an
-“original” integer variable available.
+The first two rounds use grouped values that do not appear literally in the PSCED 2017 codebook. For example, the data use grouped values such as `10010` for grades 1 to 5 and `24010` for grades 7 to 9, rather than listing each detailed school grade separately. The later two rounds then use a more detailed unlabeled version of the same broad structure, with values such as `10011` to `10018`, `24011` to `24015`, `40001` to `40003`, `50001` to `50003`, and `60001` to `60006`.
 
-This “grouping” appears to have been constructed for: - grades 1 - 5 - grades 7 - 9
-
-Furthermore, there are key non-grouped levels that, similarly, do not appear in the 2017 PSCED codebook, including those for: - Grade 10, but whose value *does not* appear in the integer data for other rounds - Grade 11, and whose value *does* appear in the integer data for other rounds - Grade 12, and whose value *does* appear in the integer data for other rounds
-
-Additionally, for the integer-labelled data (July and October rounds), there are a number of numeric values that do not appear in the PSCED 2017 Codebook, similarly to the 2008 Schema situation. While many of these values could be inferred based on patterns and counts from previous years (ie, clusters of digits that end in 1, 2, and 3 refer to primary grades 1, 2, and 3), there’s no way to confirm these inferences – they are merely guesses without some sort of documentation evidence.
-
-For the time being, I am simply going to leave the education levels missing for the final two rounds until more information can be gathered, which seems the safest choice for now. Thus, I will only code based on the labelled factor/January and April rounds initially.
+For this reason, the harmonization treats January and April as the labelled reference rounds and extends the same broad ladder to July and October. The main basis is that the first digit remains stable and informative across all four rounds: `0` for early childhood, `1` for primary, `2` for lower secondary, `3` for upper secondary, `4` for post-secondary non-tertiary, `5` for short-cycle tertiary, `6` for bachelor level, `7` for master level, and `8` for doctoral level. The later-quarter detailed codes are therefore mapped back to the same GLD education ladder rather than being left missing.
