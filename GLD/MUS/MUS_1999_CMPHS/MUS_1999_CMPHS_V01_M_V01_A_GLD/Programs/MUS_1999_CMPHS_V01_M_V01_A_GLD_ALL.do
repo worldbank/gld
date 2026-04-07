@@ -296,6 +296,8 @@ use "`path_in_stata'/CMHS1999.dta", clear
 
 </_subnatidsurvey_note> */
 	gen str subnatidsurvey = ""
+	replace subnatidsurvey = "1 - Urban" if urban == 1
+	replace subnatidsurvey = "0 - Rural" if urban == 0
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
