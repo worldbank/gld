@@ -55,7 +55,7 @@ set varabbrev off
 
 *----------1.2: Set directories------------------------------*
 
-local server  "Y:/GLD-Harmonization/510859_AS"
+local server  "C:/Users/wb510859/WBG/GLD - Current Contributors/510859_AS"
 local country  "AFG"
 local year  "2016"
 local survey  "LCS"
