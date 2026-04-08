@@ -930,8 +930,10 @@ Non-labour force:
 
 	The auxiliary main-job activity file provides detailed ISIC Rev. 4 class information in `Classe`,
 	but the delivered class codes are not fully defensible as exact 4-digit ISIC for every record.
-	Following the GLD industry guidance, we therefore code `industrycat_isic` consistently at the
-	2-digit-plus-`00` level for defensible nonmissing main-job cases and leave the rest missing.
+	We therefore code `industrycat_isic` consistently from the first two digits and store it as
+	`XX00` rather than mixing detailed values with fallback values. After that uniform fallback, 20
+	employed cases with nonmissing raw industry do not have a defensible ISIC Rev. 4 match and are
+	left missing.
 
 </_industrycat_isic_note> */
 	gen str4 industrycat_isic = ""
@@ -947,13 +949,10 @@ Non-labour force:
 	replace classe_str = "0" + classe_str if length(classe_str) == 3
 	replace classe_str = "00" + classe_str if length(classe_str) == 2
 	replace classe_str = "000" + classe_str if length(classe_str) == 1
-	gen ind2 = real(substr(classe_str, 1, 2))
-	replace industrycat_isic = substr(classe_str, 1, 2) + "00" if lstatus == 1 & classe_str != "" & ///
-		(ind2 == 1 | ind2 == 2 | ind2 == 3 | inrange(ind2, 5, 9) | inrange(ind2, 10, 33) | inrange(ind2, 35, 39) | ///
-		inrange(ind2, 41, 43) | inrange(ind2, 45, 47) | inrange(ind2, 49, 53) | inrange(ind2, 55, 56) | ///
-		inrange(ind2, 58, 66) | ind2 == 68 | inrange(ind2, 69, 75) | inrange(ind2, 77, 82) | inrange(ind2, 84, 88) | ///
-		inrange(ind2, 90, 99))
-	drop classe_str ind2
+	replace industrycat_isic = substr(classe_str, 1, 2) + "00" if lstatus == 1 & classe_str != ""
+	replace industrycat_isic = "" if inlist(industrycat_isic, "0400", "4400")
+	replace industrycat_isic = "" if lstatus != 1 | industrycat_isic == "0000"
+	drop classe_str
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
@@ -1002,13 +1001,14 @@ Non-labour force:
 	The delivered main-job variable `ap1` contains grouped 3-digit occupation codes. Comparing the
 	full code list to the shared GLD helper shows that the observed scheme aligns with ISCO-88 rather
 	than ISCO-08: codes such as 344, 345, 346, 347, 614, and 615 are valid grouped ISCO-88 classes
-	but not ISCO-08 classes. We therefore preserve the grouped detail by zero-padding and appending a
-	trailing zero for 38,578 matched nonmissing `ap1` cases. The single unmatched code `999` is left
-	missing rather than forced into ISCO.
+	but not ISCO-08 classes. As in AFG IELFS, because the grouped 3-digit scheme is defensible, we
+	preserve that detail by zero-padding and appending a trailing zero. The single unmatched code
+	`999` is left missing rather than forced into ISCO.
 
 </_occup_isco_note> */
 	gen str4 occup_isco = ""
-	replace occup_isco = string(ap1, "%03.0f") + "0" if lstatus == 1 & !missing(ap1) & ap1 != 999
+	replace occup_isco = string(ap1, "%03.0f") + "0" if lstatus == 1 & !missing(ap1)
+	replace occup_isco = "" if occup_isco == "9990"
 	replace occup_isco = "" if lstatus != 1
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
@@ -1017,7 +1017,7 @@ Non-labour force:
 *<_occup_>
 	gen occup = .
 	replace occup = real(substr(string(ap1, "%03.0f"), 1, 1)) if lstatus == 1 & !missing(ap1) & ap1 != 999
-	replace occup = 10 if lstatus == 1 & !missing(ap1) & substr(string(ap1, "%03.0f"), 1, 1) == "0"
+	replace occup = 10 if lstatus == 1 & !missing(ap1) & ap1 != 999 & substr(string(ap1, "%03.0f"), 1, 1) == "0"
 	replace occup = . if lstatus != 1
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	label define lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others", replace
@@ -1318,7 +1318,7 @@ Non-labour force:
 /* <_occup_isco_2_note>
 
 	The secondary-job variable `as2` follows the same grouped 3-digit occupation scheme as `ap1` and
-	aligns with ISCO-88. We therefore format nonmissing `as2` values as 4-digit grouped ISCO strings
+	aligns with ISCO-88. We therefore format nonmissing `as2` values as grouped 4-digit ISCO strings
 	by appending a trailing zero.
 
 </_occup_isco_2_note> */

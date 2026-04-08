@@ -902,19 +902,19 @@ Non-labour force:
 /* <_industrycat_isic_note>
 
 	The delivered main-job industry code is close to ISIC Rev. 3.1 but not exact for every category.
-	To avoid overstating detail, we code `industrycat_isic` consistently at the 2-digit-plus-`00`
-	level for all defensible nonmissing cases. Six main-job observations remain missing because even
-	the first two digits are not defensible against the helper file.
+	We therefore code `industrycat_isic` consistently from the first two digits and store it as
+	`XX00` rather than mixing detailed values with fallback values. After that uniform fallback, 8
+	employed cases with nonmissing raw industry do not have a defensible ISIC Rev. 3.1 match and are
+	left missing.
 
 </_industrycat_isic_note> */
 	gen str4 industrycat_isic = ""
 	replace industrycat_isic = "" if lstatus != 1
 	tostring ap2_bran, gen(ap2_bran_str) format(%04.0f)
-	gen ind2 = real(substr(ap2_bran_str, 1, 2))
-	replace industrycat_isic = substr(ap2_bran_str, 1, 2) + "00" if lstatus == 1 & ap2_bran_str != "" & ///
-		(ind2 == 1 | ind2 == 2 | ind2 == 5 | ind2 == 40 | ind2 == 41 | ind2 == 45 | ind2 == 75 | ind2 == 80 | ind2 == 85 | ///
-		ind2 == 90 | ind2 == 91 | ind2 == 92 | ind2 == 93 | ind2 == 95 | ind2 == 99 | inrange(ind2, 10, 37) | inrange(ind2, 50, 74))
-	drop ap2_bran_str ind2
+	replace industrycat_isic = substr(ap2_bran_str, 1, 2) + "00" if lstatus == 1 & ap2_bran_str != ""
+	replace industrycat_isic = "" if inlist(industrycat_isic, "0600", "0800", "0900", "7800", "8300")
+	replace industrycat_isic = "" if lstatus != 1 | industrycat_isic == "0000"
+	drop ap2_bran_str
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
@@ -959,21 +959,19 @@ Non-labour force:
 *<_occup_isco_>
 /* <_occup_isco_note>
 
-	The main-job occupation code is close to ISCO-88 at the 3-digit level, but the full scheme is
-	not completely defensible as exact 4-digit ISCO. We therefore code `occup_isco` consistently as
-	the first two digits plus `00` for all defensible nonmissing cases. Twelve main-job cases remain
-	missing because even the 2-digit fallback is not supported by the helper file.
+	The main-job occupation code is close to ISCO-88 at the 3-digit level, but the full scheme is not
+	completely defensible as exact 4-digit ISCO. For consistency, all nonmissing occupied cases are
+	therefore coded to the first two digits plus `00` rather than mixing detailed values with
+	fallback values. After that uniform fallback, 46 employed cases with nonmissing raw occupation do
+	not have a defensible ISCO-88 match and are left missing.
 
 </_occup_isco_note> */
+	gen strL occup_raw_str = string(ap1_nom, "%03.0f")
 	gen str4 occup_isco = ""
-	replace occup_isco = "" if lstatus != 1
-	tostring ap1_nom, gen(ap1_nom_str) format(%03.0f)
-	gen occ2 = real(substr(ap1_nom_str, 1, 2))
-	replace occup_isco = substr(ap1_nom_str, 1, 2) + "00" if lstatus == 1 & ap1_nom_str != "" & ///
-		(inrange(occ2, 1, 3) | inrange(occ2, 11, 13) | inrange(occ2, 21, 24) | inrange(occ2, 31, 34) | ///
-		inrange(occ2, 41, 42) | inrange(occ2, 51, 52) | inrange(occ2, 61, 62) | inrange(occ2, 71, 78) | ///
-		inrange(occ2, 81, 83) | inrange(occ2, 91, 93))
-	drop ap1_nom_str occ2
+	replace occup_isco = substr(occup_raw_str, 1, 2) + "00" if lstatus == 1 & occup_raw_str != ""
+	replace occup_isco = "" if inlist(occup_isco, "0100", "0200", "1500", "3500", "5900", "7500", "8000", "9500")
+	replace occup_isco = "" if lstatus != 1 | occup_isco == "0000"
+	drop occup_raw_str
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
@@ -1206,19 +1204,20 @@ Non-labour force:
 *<_industrycat_isic_2_>
 /* <_industrycat_isic_2_note>
 
-	The same ISIC Rev. 3.1 logic is applied to the secondary-job industry code. This yields 631
-	two-digit fallbacks and leaves 2 observations missing because the code is not defensible.
+	The same ISIC Rev. 3.1 logic is applied to the secondary-job industry code. We therefore code
+	`industrycat_isic_2` from the first two digits and store it as `XX00`. After that uniform
+	fallback, 2 employed second-job cases with nonmissing raw industry do not have a defensible ISIC
+	Rev. 3.1 match and are left missing.
 
 </_industrycat_isic_2_note> */
 	gen str4 industrycat_isic_2 = ""
 	replace industrycat_isic_2 = "" if mi(empstat_2)
 	tostring as3_bran, gen(as3_bran_str) format(%04.0f)
-	gen ind2_2 = real(substr(as3_bran_str, 1, 2))
-	replace industrycat_isic_2 = substr(as3_bran_str, 1, 2) + "00" if lstatus == 1 & as1c_aut == 1 & as3_bran_str != "" & ///
-		(ind2_2 == 1 | ind2_2 == 2 | ind2_2 == 5 | ind2_2 == 40 | ind2_2 == 41 | ind2_2 == 45 | ind2_2 == 75 | ind2_2 == 80 | ind2_2 == 85 | ///
-		ind2_2 == 90 | ind2_2 == 91 | ind2_2 == 92 | ind2_2 == 93 | ind2_2 == 95 | ind2_2 == 99 | inrange(ind2_2, 10, 37) | inrange(ind2_2, 50, 74))
+	replace industrycat_isic_2 = substr(as3_bran_str, 1, 2) + "00" if lstatus == 1 & as1c_aut == 1 & as3_bran_str != ""
+	replace industrycat_isic_2 = "" if inlist(industrycat_isic_2, "0300", "0700")
 	replace industrycat_isic_2 = "" if mi(empstat_2)
-	drop as3_bran_str ind2_2
+	replace industrycat_isic_2 = "" if industrycat_isic_2 == "0000"
+	drop as3_bran_str
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
@@ -1261,20 +1260,19 @@ Non-labour force:
 *<_occup_isco_2_>
 /* <_occup_isco_2_note>
 
-	The secondary-job occupation code is treated the same way as the main-job code: a consistent
-	2-digit ISCO-88 fallback for defensible codes, with 9 cases left missing.
+	The secondary-job occupation code is treated the same way as the main-job code: all nonmissing
+	occupied second-job cases are coded to the first two digits plus `00` rather than mixing
+	detailed values with fallback values. After that uniform fallback, 7 employed second-job cases
+	with nonmissing raw occupation do not have a defensible ISCO-88 match and are left missing.
 
 </_occup_isco_2_note> */
+	gen strL occup_raw_str_2 = string(as2_prof, "%03.0f")
 	gen str4 occup_isco_2 = ""
+	replace occup_isco_2 = substr(occup_raw_str_2, 1, 2) + "00" if lstatus == 1 & as1c_aut == 1 & occup_raw_str_2 != ""
+	replace occup_isco_2 = "" if inlist(occup_isco_2, "0100", "0200", "0400", "0500", "0700", "0900", "1500", "3600", "5500", "7800")
 	replace occup_isco_2 = "" if mi(empstat_2)
-	tostring as2_prof, gen(as2_prof_str) format(%03.0f)
-	gen occ2_2 = real(substr(as2_prof_str, 1, 2))
-	replace occup_isco_2 = substr(as2_prof_str, 1, 2) + "00" if lstatus == 1 & as1c_aut == 1 & as2_prof_str != "" & ///
-		(inrange(occ2_2, 1, 3) | inrange(occ2_2, 11, 13) | inrange(occ2_2, 21, 24) | inrange(occ2_2, 31, 34) | ///
-		inrange(occ2_2, 41, 42) | inrange(occ2_2, 51, 52) | inrange(occ2_2, 61, 62) | inrange(occ2_2, 71, 78) | ///
-		inrange(occ2_2, 81, 83) | inrange(occ2_2, 91, 93))
-	replace occup_isco_2 = "" if mi(empstat_2)
-	drop as2_prof_str occ2_2
+	replace occup_isco_2 = "" if occup_isco_2 == "0000"
+	drop occup_raw_str_2
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
