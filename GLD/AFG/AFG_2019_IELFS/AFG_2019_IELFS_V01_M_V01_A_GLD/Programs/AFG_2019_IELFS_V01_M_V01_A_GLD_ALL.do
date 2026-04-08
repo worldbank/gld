@@ -27,7 +27,7 @@
 -----------------------------------------------------------------------
 
 <_ICLS Version_>				ICLS-19 </_ICLS Version_>
-<_ISCED Version_>				[Version of ISCED used for education questions] </_ISCED Version_>
+<_ISCED Version_>				Not identified from the available documentation </_ISCED Version_>
 <_ISCO Version_>				ISCO-08 grouped survey coding </_ISCO Version_>
 <_OCCUP National_>				[National occupation classification] </_OCCUP National_>
 <_ISIC Version_>				ISIC Rev. 4 grouped survey coding </_ISIC Version_>
@@ -959,14 +959,30 @@ foreach ed_var of local ed_vars {
 
 
 *<_wage_no_compen_>
+/* <_wage_no_compen_note>
+
+	The 7-day labour block records work status, days worked, and hours worked, but
+	does not collect a current wage amount for the main job. The earnings questions
+	appear only in the retrospective 12-month branch (`q324`-`q334_2`). For this
+	reason, the GLD leaves `wage_no_compen` missing for the 7-day recall rather than
+	retaining a misleading mix of structural zeroes for unpaid family workers only.
+
+</_wage_no_compen_note> */
 	gen double wage_no_compen=.
-	replace wage_no_compen=0 if empstat==2
 	replace wage_no_compen=.  if (lstatus!=1)
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
 
 *<_unitwage_>
+/* <_unitwage_note>
+
+	Because the questionnaire does not collect a current 7-day wage amount for the
+	main job, the corresponding wage time unit cannot be identified for the 7-day
+	recall either. The retrospective 12-month earnings module is harmonized in the
+	`*_year` wage variables instead.
+
+</_unitwage_note> */
 	gen byte unitwage=.
 	replace unitwage=.  if lstatus!=1
 	label var unitwage "Last wages' time unit primary job 7 day recall"

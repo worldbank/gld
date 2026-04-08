@@ -26,18 +26,17 @@
 
 -----------------------------------------------------------------------
 
-<_ICLS Version_>				[Version of ICLS for Labor Questions] </_ICLS Version_>
-<_ISCED Version_>				[Version of ISCED used for education questions] </_ISCED Version_>
-<_ISCO Version_>				[Version of ISCO used for occupation questions] </_ISCO Version_>
-<_OCCUP National_>				[National occupation classification] </_OCCUP National_>
-<_ISIC Version_>				[Version of ISIC used for industry questions] </_ISIC Version_>
-<_INDUS National_>				[National industry classification] </_INDUS National_>
+<_ICLS Version_>				ICLS-13 </_ICLS Version_>
+<_ISCED Version_>				Not identified from the available documentation </_ISCED Version_>
+<_ISCO Version_>				ISCO-08 </_ISCO Version_>
+<_OCCUP National_>				Not identified from the available documentation </_OCCUP National_>
+<_ISIC Version_>				ISIC Revision 2 </_ISIC Version_>
+<_INDUS National_>				Not identified from the available documentation </_INDUS National_>
 
 -----------------------------------------------------------------------
 <_Version Control_>
 
-* Date: [YYYY-MM-DD] - [Description of changes]
-* Date: [YYYY-MM-DD] - [Description of changes]
+* Date: 2026-04-07 - Filled ICLS metadata and documented education and wage limitations.
 
 </_Version Control_>
 
@@ -143,7 +142,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_icls_v_>
-	gen strL icls_v = ""
+	gen strL icls_v = "ICLS-13"
 	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
 
@@ -719,6 +718,14 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educat_isced_>
+/* <_educat_isced_note>
+
+	The questionnaire uses survey-specific schooling tracks, including Islamic
+	school, but the available documentation does not identify a defensible ISCED
+	version or provide a direct ISCED crosswalk. For this reason, `educat_isced`
+	is left missing in the GLD harmonization.
+
+</_educat_isced_note> */
 	gen educat_isced = .
 	label var educat_isced "ISCED standardised level of education"
 *</_educat_isced_>
@@ -1003,6 +1010,15 @@ foreach ed_var of local ed_vars {
 
 
 *<_wage_no_compen_>
+/* <_wage_no_compen_note>
+
+	The labour questionnaire records employment status, industry, occupation, hours,
+	and related labour characteristics, but it does not collect an individual wage
+	amount for the main job. Household income is captured elsewhere at the household
+	level and cannot be mapped defensibly to person-level `wage_no_compen`.
+	For this reason, the GLD leaves `wage_no_compen` missing in 2016-17.
+
+</_wage_no_compen_note> */
 	gen wage_no_compen = .
 	replace wage_no_compen=. if lstatus!=1
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
@@ -1010,6 +1026,13 @@ foreach ed_var of local ed_vars {
 
 
 *<_unitwage_>
+/* <_unitwage_note>
+
+	Because the questionnaire does not collect an individual current wage amount for
+	the main job, there is no corresponding time unit to harmonize for the 7-day
+	recall. `unitwage` is therefore left missing.
+
+</_unitwage_note> */
 	gen byte unitwage=.
 	replace unitwage=. if lstatus!=1
 	label var unitwage "Last wages' time unit primary job 7 day recall"
