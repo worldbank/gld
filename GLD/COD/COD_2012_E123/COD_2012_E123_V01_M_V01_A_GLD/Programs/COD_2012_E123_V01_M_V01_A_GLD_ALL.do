@@ -1047,35 +1047,35 @@ Non-labour force:
 	profits, and in-kind remuneration, this monthly earnings question is used for all paid
 	remuneration modes `1-6`, leaving only unpaid workers (`7`) missing. Exact reported amounts are
 	used directly. For bracket-only respondents, the harmonized monthly earnings are imputed from the
-	mean exact earnings of comparable workers in the same wage bracket, sex, area, occupation, and
-	broad industry group, with conservative fallback to simpler cells when donor cells are sparse.
-	The separately monetized `ap16*` benefit items are not added here to avoid double-counting.
+	weighted mean exact earnings of comparable workers in the same wage bracket, sex, area,
+	occupation, and broad industry group. The separately monetized `ap16*` benefit items are not
+	added here to avoid double-counting.
 
 </_wage_no_compen_note> */
-	gen wage_no_compen = .
+	gen double wage_no_compen = .
+	gen double wage1 = ap13a1 if lstatus == 1 & inlist(ap12, 1, 2, 3, 4, 5, 6) & ap13a == 1
+	replace wage1 = . if wage1 == 0
+	winsor2 wage1, suffix(_w) cuts(1 99)
+	gen byte salary_cat = .
+	replace salary_cat = 1 if wage1_w < 30000 & !missing(wage1_w)
+	replace salary_cat = 2 if inrange(wage1_w, 30000, 79999.999999)
+	replace salary_cat = 3 if inrange(wage1_w, 80000, 129999.999999)
+	replace salary_cat = 4 if inrange(wage1_w, 130000, 149999.999999)
+	replace salary_cat = 5 if inrange(wage1_w, 150000, 179999.999999)
+	replace salary_cat = 6 if inrange(wage1_w, 180000, 229999.999999)
+	replace salary_cat = 7 if wage1_w >= 230000 & !missing(wage1_w)
+	preserve
+		collapse (mean) wage1_w [iw=weight] if !missing(wage1_w), by(industrycat10 occup male urban salary_cat)
+		rename wage1_w wage_group_estimate
+		rename salary_cat ap13b
+		tempfile salary_helper
+		save `salary_helper'
+	restore
+	merge m:1 industrycat10 occup male urban ap13b using `salary_helper', keep(master match) nogen
+	replace wage_no_compen = wage1 if !missing(wage1)
+	replace wage_no_compen = wage_group_estimate if lstatus == 1 & inlist(ap12, 1, 2, 3, 4, 5, 6) & ap13a == 2 & missing(wage1) & inrange(ap13b, 1, 7) & !missing(wage_group_estimate)
+	drop wage1 wage1_w salary_cat wage_group_estimate
 	replace wage_no_compen = . if lstatus != 1
-	replace wage_no_compen = ap13a1 if lstatus == 1 & inlist(ap12, 1, 2, 3, 4, 5, 6) & ap13a == 1 & !missing(ap13a1)
-	tempvar exact_bracket donor_full donor_ind donor_occ donor_area donor_sex donor_br
-	gen byte `exact_bracket' = .
-	replace `exact_bracket' = 1 if lstatus == 1 & inlist(ap12, 1, 2, 3, 4, 5, 6) & ap13a == 1 & !missing(ap13a1) & ap13a1 < 30000
-	replace `exact_bracket' = 2 if lstatus == 1 & inlist(ap12, 1, 2, 3, 4, 5, 6) & ap13a == 1 & !missing(ap13a1) & inrange(ap13a1, 30000, 79999.999999)
-	replace `exact_bracket' = 3 if lstatus == 1 & inlist(ap12, 1, 2, 3, 4, 5, 6) & ap13a == 1 & !missing(ap13a1) & inrange(ap13a1, 80000, 129999.999999)
-	replace `exact_bracket' = 4 if lstatus == 1 & inlist(ap12, 1, 2, 3, 4, 5, 6) & ap13a == 1 & !missing(ap13a1) & inrange(ap13a1, 130000, 149999.999999)
-	replace `exact_bracket' = 5 if lstatus == 1 & inlist(ap12, 1, 2, 3, 4, 5, 6) & ap13a == 1 & !missing(ap13a1) & inrange(ap13a1, 150000, 179999.999999)
-	replace `exact_bracket' = 6 if lstatus == 1 & inlist(ap12, 1, 2, 3, 4, 5, 6) & ap13a == 1 & !missing(ap13a1) & inrange(ap13a1, 180000, 229999.999999)
-	replace `exact_bracket' = 7 if lstatus == 1 & inlist(ap12, 1, 2, 3, 4, 5, 6) & ap13a == 1 & !missing(ap13a1) & ap13a1 >= 230000
-	egen `donor_full' = mean(ap13a1) if lstatus == 1 & inlist(ap12, 1, 2, 3, 4, 5, 6) & ap13a == 1 & !missing(ap13a1), by(`exact_bracket' male urban occup industrycat10)
-	egen `donor_ind' = mean(ap13a1) if lstatus == 1 & inlist(ap12, 1, 2, 3, 4, 5, 6) & ap13a == 1 & !missing(ap13a1), by(`exact_bracket' male urban industrycat10)
-	egen `donor_occ' = mean(ap13a1) if lstatus == 1 & inlist(ap12, 1, 2, 3, 4, 5, 6) & ap13a == 1 & !missing(ap13a1), by(`exact_bracket' male urban occup)
-	egen `donor_area' = mean(ap13a1) if lstatus == 1 & inlist(ap12, 1, 2, 3, 4, 5, 6) & ap13a == 1 & !missing(ap13a1), by(`exact_bracket' urban)
-	egen `donor_sex' = mean(ap13a1) if lstatus == 1 & inlist(ap12, 1, 2, 3, 4, 5, 6) & ap13a == 1 & !missing(ap13a1), by(`exact_bracket' male)
-	egen `donor_br' = mean(ap13a1) if lstatus == 1 & inlist(ap12, 1, 2, 3, 4, 5, 6) & ap13a == 1 & !missing(ap13a1), by(`exact_bracket')
-	replace wage_no_compen = `donor_full' if lstatus == 1 & inlist(ap12, 1, 2, 3, 4, 5, 6) & ap13a == 2 & ap13b == `exact_bracket'
-	replace wage_no_compen = `donor_ind' if lstatus == 1 & inlist(ap12, 1, 2, 3, 4, 5, 6) & missing(wage_no_compen) & ap13a == 2 & ap13b == `exact_bracket'
-	replace wage_no_compen = `donor_occ' if lstatus == 1 & inlist(ap12, 1, 2, 3, 4, 5, 6) & missing(wage_no_compen) & ap13a == 2 & ap13b == `exact_bracket'
-	replace wage_no_compen = `donor_area' if lstatus == 1 & inlist(ap12, 1, 2, 3, 4, 5, 6) & missing(wage_no_compen) & ap13a == 2 & ap13b == `exact_bracket'
-	replace wage_no_compen = `donor_sex' if lstatus == 1 & inlist(ap12, 1, 2, 3, 4, 5, 6) & missing(wage_no_compen) & ap13a == 2 & ap13b == `exact_bracket'
-	replace wage_no_compen = `donor_br' if lstatus == 1 & inlist(ap12, 1, 2, 3, 4, 5, 6) & missing(wage_no_compen) & ap13a == 2 & ap13b == `exact_bracket'
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
@@ -1358,35 +1358,34 @@ Non-labour force:
 	monetary value itself is stored in `as10am`. When the respondent cannot provide an amount, the
 	fallback bracket is recorded in `as10b`. Because the secondary-job question asks for income from
 	the job rather than only wage salary, nonmissing secondary-job earnings are retained for all paid
-	secondary-job statuses, while non-paid workers remain missing. Closed brackets are converted to
-	monthly earnings are imputed from the mean exact earnings of comparable workers in the same wage
-	bracket, sex, area, occupation, and broad industry group, with conservative fallback to simpler
-	cells when donor cells are sparse.
+	secondary-job statuses, while non-paid workers remain missing. For bracket-only respondents,
+	monthly earnings are imputed from the weighted mean exact earnings of comparable workers in the
+	same wage bracket, sex, area, occupation, and broad industry group.
 
 </_wage_no_compen_2_note> */
-	gen wage_no_compen_2 = .
-	replace wage_no_compen_2 = as10am if lstatus == 1 & inlist(empstat_2, 1, 3, 4) & as10a == 1 & !missing(as10am)
-	tempvar exact_bracket_2 donor_full_2 donor_ind_2 donor_occ_2 donor_area_2 donor_sex_2 donor_br_2
-	gen byte `exact_bracket_2' = .
-	replace `exact_bracket_2' = 1 if lstatus == 1 & inlist(empstat_2, 1, 3, 4) & as10a == 1 & !missing(as10am) & as10am < 30000
-	replace `exact_bracket_2' = 2 if lstatus == 1 & inlist(empstat_2, 1, 3, 4) & as10a == 1 & !missing(as10am) & inrange(as10am, 30000, 79999.999999)
-	replace `exact_bracket_2' = 3 if lstatus == 1 & inlist(empstat_2, 1, 3, 4) & as10a == 1 & !missing(as10am) & inrange(as10am, 80000, 129999.999999)
-	replace `exact_bracket_2' = 4 if lstatus == 1 & inlist(empstat_2, 1, 3, 4) & as10a == 1 & !missing(as10am) & inrange(as10am, 130000, 149999.999999)
-	replace `exact_bracket_2' = 5 if lstatus == 1 & inlist(empstat_2, 1, 3, 4) & as10a == 1 & !missing(as10am) & inrange(as10am, 150000, 179999.999999)
-	replace `exact_bracket_2' = 6 if lstatus == 1 & inlist(empstat_2, 1, 3, 4) & as10a == 1 & !missing(as10am) & inrange(as10am, 180000, 229999.999999)
-	replace `exact_bracket_2' = 7 if lstatus == 1 & inlist(empstat_2, 1, 3, 4) & as10a == 1 & !missing(as10am) & as10am >= 230000
-	egen `donor_full_2' = mean(as10am) if lstatus == 1 & inlist(empstat_2, 1, 3, 4) & as10a == 1 & !missing(as10am), by(`exact_bracket_2' male urban occup_2 industrycat10_2)
-	egen `donor_ind_2' = mean(as10am) if lstatus == 1 & inlist(empstat_2, 1, 3, 4) & as10a == 1 & !missing(as10am), by(`exact_bracket_2' male urban industrycat10_2)
-	egen `donor_occ_2' = mean(as10am) if lstatus == 1 & inlist(empstat_2, 1, 3, 4) & as10a == 1 & !missing(as10am), by(`exact_bracket_2' male urban occup_2)
-	egen `donor_area_2' = mean(as10am) if lstatus == 1 & inlist(empstat_2, 1, 3, 4) & as10a == 1 & !missing(as10am), by(`exact_bracket_2' urban)
-	egen `donor_sex_2' = mean(as10am) if lstatus == 1 & inlist(empstat_2, 1, 3, 4) & as10a == 1 & !missing(as10am), by(`exact_bracket_2' male)
-	egen `donor_br_2' = mean(as10am) if lstatus == 1 & inlist(empstat_2, 1, 3, 4) & as10a == 1 & !missing(as10am), by(`exact_bracket_2')
-	replace wage_no_compen_2 = `donor_full_2' if lstatus == 1 & inlist(empstat_2, 1, 3, 4) & as10a == 2 & as10b == `exact_bracket_2'
-	replace wage_no_compen_2 = `donor_ind_2' if lstatus == 1 & inlist(empstat_2, 1, 3, 4) & missing(wage_no_compen_2) & as10a == 2 & as10b == `exact_bracket_2'
-	replace wage_no_compen_2 = `donor_occ_2' if lstatus == 1 & inlist(empstat_2, 1, 3, 4) & missing(wage_no_compen_2) & as10a == 2 & as10b == `exact_bracket_2'
-	replace wage_no_compen_2 = `donor_area_2' if lstatus == 1 & inlist(empstat_2, 1, 3, 4) & missing(wage_no_compen_2) & as10a == 2 & as10b == `exact_bracket_2'
-	replace wage_no_compen_2 = `donor_sex_2' if lstatus == 1 & inlist(empstat_2, 1, 3, 4) & missing(wage_no_compen_2) & as10a == 2 & as10b == `exact_bracket_2'
-	replace wage_no_compen_2 = `donor_br_2' if lstatus == 1 & inlist(empstat_2, 1, 3, 4) & missing(wage_no_compen_2) & as10a == 2 & as10b == `exact_bracket_2'
+	gen double wage_no_compen_2 = .
+	gen double wage2 = as10am if lstatus == 1 & inlist(empstat_2, 1, 3, 4) & as10a == 1
+	replace wage2 = . if wage2 == 0
+	winsor2 wage2, suffix(_w) cuts(1 99)
+	gen byte salary_cat_2 = .
+	replace salary_cat_2 = 1 if wage2_w < 30000 & !missing(wage2_w)
+	replace salary_cat_2 = 2 if inrange(wage2_w, 30000, 79999.999999)
+	replace salary_cat_2 = 3 if inrange(wage2_w, 80000, 129999.999999)
+	replace salary_cat_2 = 4 if inrange(wage2_w, 130000, 149999.999999)
+	replace salary_cat_2 = 5 if inrange(wage2_w, 150000, 179999.999999)
+	replace salary_cat_2 = 6 if inrange(wage2_w, 180000, 229999.999999)
+	replace salary_cat_2 = 7 if wage2_w >= 230000 & !missing(wage2_w)
+	preserve
+		collapse (mean) wage2_w [iw=weight] if !missing(wage2_w), by(industrycat10_2 occup_2 male urban salary_cat_2)
+		rename wage2_w wage_group_estimate_2
+		rename salary_cat_2 as10b
+		tempfile salary_helper_2
+		save `salary_helper_2'
+	restore
+	merge m:1 industrycat10_2 occup_2 male urban as10b using `salary_helper_2', keep(master match) nogen
+	replace wage_no_compen_2 = wage2 if !missing(wage2)
+	replace wage_no_compen_2 = wage_group_estimate_2 if lstatus == 1 & inlist(empstat_2, 1, 3, 4) & as10a == 2 & missing(wage2) & inrange(as10b, 1, 7) & !missing(wage_group_estimate_2)
+	drop wage2 wage2_w salary_cat_2 wage_group_estimate_2
 	replace wage_no_compen_2 = . if mi(empstat_2)
 	label var wage_no_compen_2 "Last wage payment secondary job 7 day recall"
 *</_wage_no_compen_2_>
