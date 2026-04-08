@@ -902,19 +902,26 @@ Non-labour force:
 /* <_industrycat_isic_note>
 
 	The delivered main-job industry code is close to ISIC Rev. 3.1 but not exact for every category.
-	To avoid overstating detail, we code `industrycat_isic` consistently at the 2-digit-plus-`00`
-	level for all defensible nonmissing cases. Six main-job observations remain missing because even
-	the first two digits are not defensible against the helper file.
+	To avoid hardcoding valid ranges, the first two digits are compared to the shared GLD ISIC Rev.
+	3.1 helper file. Matched codes are retained as a consistent 2-digit-plus-`00` fallback, and
+	unmatched codes are left missing.
 
 </_industrycat_isic_note> */
 	gen str4 industrycat_isic = ""
 	replace industrycat_isic = "" if lstatus != 1
 	tostring ap2_bran, gen(ap2_bran_str) format(%04.0f)
-	gen ind2 = real(substr(ap2_bran_str, 1, 2))
-	replace industrycat_isic = substr(ap2_bran_str, 1, 2) + "00" if lstatus == 1 & ap2_bran_str != "" & ///
-		(ind2 == 1 | ind2 == 2 | ind2 == 5 | ind2 == 40 | ind2 == 41 | ind2 == 45 | ind2 == 75 | ind2 == 80 | ind2 == 85 | ///
-		ind2 == 90 | ind2 == 91 | ind2 == 92 | ind2 == 93 | ind2 == 95 | ind2 == 99 | inrange(ind2, 10, 37) | inrange(ind2, 50, 74))
-	drop ap2_bran_str ind2
+	gen ind2 = real(substr(ap2_bran_str, 1, 2)) if lstatus == 1 & ap2_bran_str != ""
+	tempfile isic31_2dig_helper
+	preserve
+		use "/Users/angelosantos/Documents/GitHub/gld/Support/Z - GLD Ecosystem Tools/ISIC ISCO conversion tool/Labels/isic_rev31_2dig.dta", clear
+		rename isic_rev31_2dig ind2
+		gen byte ind2_match = 1
+		keep ind2 ind2_match
+		save `isic31_2dig_helper'
+	restore
+	merge m:1 ind2 using `isic31_2dig_helper', keep(master match) nogen
+	replace industrycat_isic = string(ind2, "%02.0f") + "00" if lstatus == 1 & !missing(ind2) & ind2_match == 1
+	drop ap2_bran_str ind2 ind2_match
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
@@ -960,20 +967,26 @@ Non-labour force:
 /* <_occup_isco_note>
 
 	The main-job occupation code is close to ISCO-88 at the 3-digit level, but the full scheme is
-	not completely defensible as exact 4-digit ISCO. We therefore code `occup_isco` consistently as
-	the first two digits plus `00` for all defensible nonmissing cases. Twelve main-job cases remain
-	missing because even the 2-digit fallback is not supported by the helper file.
+	not completely defensible as exact 4-digit ISCO. To avoid hardcoding valid ranges, the first two
+	digits are compared to the shared GLD ISCO-88 helper file. Matched codes are retained as a
+	consistent 2-digit-plus-`00` fallback, and unmatched codes are left missing.
 
 </_occup_isco_note> */
 	gen str4 occup_isco = ""
 	replace occup_isco = "" if lstatus != 1
 	tostring ap1_nom, gen(ap1_nom_str) format(%03.0f)
-	gen occ2 = real(substr(ap1_nom_str, 1, 2))
-	replace occup_isco = substr(ap1_nom_str, 1, 2) + "00" if lstatus == 1 & ap1_nom_str != "" & ///
-		(inrange(occ2, 1, 3) | inrange(occ2, 11, 13) | inrange(occ2, 21, 24) | inrange(occ2, 31, 34) | ///
-		inrange(occ2, 41, 42) | inrange(occ2, 51, 52) | inrange(occ2, 61, 62) | inrange(occ2, 71, 78) | ///
-		inrange(occ2, 81, 83) | inrange(occ2, 91, 93))
-	drop ap1_nom_str occ2
+	gen occ2 = real(substr(ap1_nom_str, 1, 2)) if lstatus == 1 & ap1_nom_str != ""
+	tempfile isco88_2dig_helper
+	preserve
+		use "/Users/angelosantos/Documents/GitHub/gld/Support/Z - GLD Ecosystem Tools/ISIC ISCO conversion tool/Labels/isco_88_2dig.dta", clear
+		rename isco_88_2dig occ2
+		gen byte occ2_match = 1
+		keep occ2 occ2_match
+		save `isco88_2dig_helper'
+	restore
+	merge m:1 occ2 using `isco88_2dig_helper', keep(master match) nogen
+	replace occup_isco = string(occ2, "%02.0f") + "00" if lstatus == 1 & !missing(occ2) & occ2_match == 1
+	drop ap1_nom_str occ2 occ2_match
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
@@ -1206,19 +1219,27 @@ Non-labour force:
 *<_industrycat_isic_2_>
 /* <_industrycat_isic_2_note>
 
-	The same ISIC Rev. 3.1 logic is applied to the secondary-job industry code. This yields 631
-	two-digit fallbacks and leaves 2 observations missing because the code is not defensible.
+	The same ISIC Rev. 3.1 logic is applied to the secondary-job industry code. The first two digits
+	are compared to the shared GLD helper file, matched codes are kept as 2-digit-plus-`00`
+	fallbacks, and unmatched codes are left missing.
 
 </_industrycat_isic_2_note> */
 	gen str4 industrycat_isic_2 = ""
 	replace industrycat_isic_2 = "" if mi(empstat_2)
 	tostring as3_bran, gen(as3_bran_str) format(%04.0f)
-	gen ind2_2 = real(substr(as3_bran_str, 1, 2))
-	replace industrycat_isic_2 = substr(as3_bran_str, 1, 2) + "00" if lstatus == 1 & as1c_aut == 1 & as3_bran_str != "" & ///
-		(ind2_2 == 1 | ind2_2 == 2 | ind2_2 == 5 | ind2_2 == 40 | ind2_2 == 41 | ind2_2 == 45 | ind2_2 == 75 | ind2_2 == 80 | ind2_2 == 85 | ///
-		ind2_2 == 90 | ind2_2 == 91 | ind2_2 == 92 | ind2_2 == 93 | ind2_2 == 95 | ind2_2 == 99 | inrange(ind2_2, 10, 37) | inrange(ind2_2, 50, 74))
+	gen ind2_2 = real(substr(as3_bran_str, 1, 2)) if lstatus == 1 & as1c_aut == 1 & as3_bran_str != ""
+	tempfile isic31_2dig_helper_2
+	preserve
+		use "/Users/angelosantos/Documents/GitHub/gld/Support/Z - GLD Ecosystem Tools/ISIC ISCO conversion tool/Labels/isic_rev31_2dig.dta", clear
+		rename isic_rev31_2dig ind2_2
+		gen byte ind2_2_match = 1
+		keep ind2_2 ind2_2_match
+		save `isic31_2dig_helper_2'
+	restore
+	merge m:1 ind2_2 using `isic31_2dig_helper_2', keep(master match) nogen
+	replace industrycat_isic_2 = string(ind2_2, "%02.0f") + "00" if lstatus == 1 & as1c_aut == 1 & !missing(ind2_2) & ind2_2_match == 1
 	replace industrycat_isic_2 = "" if mi(empstat_2)
-	drop as3_bran_str ind2_2
+	drop as3_bran_str ind2_2 ind2_2_match
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
@@ -1261,20 +1282,27 @@ Non-labour force:
 *<_occup_isco_2_>
 /* <_occup_isco_2_note>
 
-	The secondary-job occupation code is treated the same way as the main-job code: a consistent
-	2-digit ISCO-88 fallback for defensible codes, with 9 cases left missing.
+	The secondary-job occupation code is treated the same way as the main-job code: the first two
+	digits are compared to the shared GLD ISCO-88 helper file, matched codes are retained as a
+	consistent 2-digit-plus-`00` fallback, and unmatched codes are left missing.
 
 </_occup_isco_2_note> */
 	gen str4 occup_isco_2 = ""
 	replace occup_isco_2 = "" if mi(empstat_2)
 	tostring as2_prof, gen(as2_prof_str) format(%03.0f)
-	gen occ2_2 = real(substr(as2_prof_str, 1, 2))
-	replace occup_isco_2 = substr(as2_prof_str, 1, 2) + "00" if lstatus == 1 & as1c_aut == 1 & as2_prof_str != "" & ///
-		(inrange(occ2_2, 1, 3) | inrange(occ2_2, 11, 13) | inrange(occ2_2, 21, 24) | inrange(occ2_2, 31, 34) | ///
-		inrange(occ2_2, 41, 42) | inrange(occ2_2, 51, 52) | inrange(occ2_2, 61, 62) | inrange(occ2_2, 71, 78) | ///
-		inrange(occ2_2, 81, 83) | inrange(occ2_2, 91, 93))
+	gen occ2_2 = real(substr(as2_prof_str, 1, 2)) if lstatus == 1 & as1c_aut == 1 & as2_prof_str != ""
+	tempfile isco88_2dig_helper_2
+	preserve
+		use "/Users/angelosantos/Documents/GitHub/gld/Support/Z - GLD Ecosystem Tools/ISIC ISCO conversion tool/Labels/isco_88_2dig.dta", clear
+		rename isco_88_2dig occ2_2
+		gen byte occ2_2_match = 1
+		keep occ2_2 occ2_2_match
+		save `isco88_2dig_helper_2'
+	restore
+	merge m:1 occ2_2 using `isco88_2dig_helper_2', keep(master match) nogen
+	replace occup_isco_2 = string(occ2_2, "%02.0f") + "00" if lstatus == 1 & as1c_aut == 1 & !missing(occ2_2) & occ2_2_match == 1
 	replace occup_isco_2 = "" if mi(empstat_2)
-	drop as2_prof_str occ2_2
+	drop as2_prof_str occ2_2 occ2_2_match
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
