@@ -55,7 +55,7 @@ set varabbrev off
 
 *----------1.2: Set directories------------------------------*
 
-local server  "/Users/angelosantos/Downloads"
+local server  "Y:/GLD-Harmonization/510859_AS"
 local country  "AFG"
 local year  "2013"
 local survey  "LCS"
