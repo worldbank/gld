@@ -58,12 +58,12 @@ set mem 800m
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-local server  "Y:\GLD-Harmonization\573465_JT"
+local server  "C:\Users\wb611670\WBG\GLD - 611670_SF"
 local country "IDN"
 local year    "2002"
 local survey  "SAKERNAS"
-local vermast "v01"
-local veralt  "v06"
+local vermast "V01"
+local veralt  "V07"
 
 * From the definitions, set path chunks
 local level_1      "`country'_`year'_`survey'"
