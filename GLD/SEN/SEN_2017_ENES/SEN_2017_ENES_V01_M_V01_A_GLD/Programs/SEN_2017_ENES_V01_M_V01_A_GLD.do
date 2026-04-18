@@ -188,15 +188,21 @@ save "`path_in_stata'/SEN_2017_ENES_workingdata.dta", replace
 	60 psu coded 1 through 60, codes should be 01, 02, ..., 60. If there are 160 it should be 001,
 	002, ..., 160.
 
-</_hhid_note> */
+	There are some duplicates household and person ids across quarters, thus we add quarter numbers in hhid and pid
 
-	gen hhid = ID_Menage
+</_hhid_note> */
+	gen qtr = "Q1" if wav == 1
+	replace qtr = "Q2" if wav == 2
+	replace qtr = "Q3" if wav == 3
+	replace qtr = "Q4" if wav == 4
+
+	gen hhid = ID_Menage + qtr
 	label var hhid "Household ID"
 *</_hhid_>
 
 
 *<_pid_>
-	gen pid = ID_pers
+	gen pid = ID_pers + qtr
 	isid pid hhid
 	label var pid "Individual ID"
 *</_pid_>
