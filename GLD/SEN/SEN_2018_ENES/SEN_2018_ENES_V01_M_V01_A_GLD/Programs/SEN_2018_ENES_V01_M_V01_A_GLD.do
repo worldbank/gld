@@ -86,15 +86,14 @@ local out_file "`level_2_harm'_ALL.dta"
 use "`path_in_stata'/T1_2018_an_version2.dta"
 gen wav=1
 
-merge 1:m idpers using "`path_in_stata'/T2_2018_an_version2.dta" , nogen
+append using "`path_in_stata'/T2_2018_an_version2.dta"
 replace wav=2 if wav!=1
-merge 1:m idpers using "`path_in_stata'/T3_2018_an_version2.dta" , nogen
+append using "`path_in_stata'/T3_2018_an_version2.dta"
 replace wav=3 if missing(wav)
-merge 1:m idpers using "`path_in_stata'/T4_2018_an_version2.dta" , nogen
+append using "`path_in_stata'/T4_2018_an_version2.dta"
 replace wav=4 if missing(wav)
 
-*save "`path_in_stata'/SEN_2018_ENES_workingdata.dta", replace
-*use "`path_in_stata'/SEN_2018_ENES_workingdata.dta", clear
+save "`path_in_stata'/SEN_2018_ENES_workingdata.dta", replace
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -133,13 +132,13 @@ replace wav=4 if missing(wav)
 
 
 *<_isco_version_>
-	gen isco_version = "isco_2008"
+	gen isco_version = ""
 	label var isco_version "Version of ISCO used"
 *</_isco_version_>
 
 
 *<_isic_version_>
-	gen isic_version = "isic_4"
+	gen isic_version = ""
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
