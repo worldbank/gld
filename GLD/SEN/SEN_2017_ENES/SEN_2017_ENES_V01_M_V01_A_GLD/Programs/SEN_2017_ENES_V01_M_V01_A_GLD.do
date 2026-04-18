@@ -84,14 +84,15 @@ local out_file "`level_2_harm'_ALL.dta"
 use "`path_in_stata'/ENES_1_2017 ano.dta"
 gen wav=1
 
-merge 1:m ID_pers using "`path_in_stata'/ENES_3_2017 ano.dta" , nogen
+append using "`path_in_stata'/ENES_3_2017 ano.dta"
 replace wav=3 if wav!=1
-merge 1:m ID_pers using "`path_in_stata'/ENES_trim4__2017 ano.dta" , nogen
+append using "`path_in_stata'/ENES_trim4__2017 ano.dta"
 replace wav=4 if missing(wav)
 *T2 is not available for download and the documentation implies that is has not been used for development of indicators, however there is a report for Q2, we are in conversation with senegal to figure out where and how can we access the data.
 
-*save "`path_in_stata'/SEN_2017_ENES_workingdata.dta", replace
+save "`path_in_stata'/SEN_2017_ENES_workingdata.dta", replace
 *use "`path_in_stata'/SEN_2017_ENES_workingdata.dta", clear
+
 
 /*%%=============================================================================================
 	2: Survey & ID
