@@ -82,14 +82,16 @@ local out_file "`level_2_harm'_ALL.dta"
 use "`path_in_stata'/glob_sect_rapT1_2024.dta"
 gen wav=1
 
-merge 1:m idpers using "`path_in_stata'/glob_sect_rapT2_2024.dta" , nogen
+append using "`path_in_stata'/glob_sect_rapT2_2024.dta"
 replace wav=2 if wav!=1
-merge 1:m idpers using "`path_in_stata'/glob_sect_rap_T3_2024.dta" , nogen force
-replace wav=3 if missing(wav)
-drop _merge
-// merge 1:m idpers using "`path_in_stata'/glob_sect_rap_T4_2024.dta" , nogen
-// replace wav=4 if missing(wav)
+destring(b38_l3_reg),replace
 
+append using "`path_in_stata'/glob_sect_rap_T3_2024.dta"
+replace wav=3 if missing(wav)
+
+// append using "`path_in_stata'/glob_sect_rap_T4_2024.dta"
+// replace wav=4 if missing(wav)
+drop _merge
 save "`path_in_stata'/SEN_2024_ENES_workingdata.dta", replace
 
 
