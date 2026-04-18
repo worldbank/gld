@@ -85,16 +85,15 @@ local out_file "`level_2_harm'_ALL.dta"
 use "`path_in_stata'/T1_2019_an.dta"
 gen wav=1
 
-merge 1:m idpers using "`path_in_stata'/ENES_T2_2019_an.dta" , nogen
+append using "`path_in_stata'/ENES_T2_2019_an.dta"
 replace wav=2 if wav!=1
-merge 1:m idpers using "`path_in_stata'/ENES_T3_2019_an.dta" , nogen
+append using "`path_in_stata'/ENES_T3_2019_an.dta"
 replace wav=3 if missing(wav)
-merge 1:m idpers using "`path_in_stata'/ENES_T4_2019_an.dta" , nogen
+append using "`path_in_stata'/ENES_T4_2019_an.dta"
 replace wav=4 if missing(wav)
 
-*save "`path_in_stata'/SEN_2019_ENES_workingdata.dta", replace
+save "`path_in_stata'/SEN_2019_ENES_workingdata.dta", replace
 
-*use "`path_in_stata'/SEN_2019_ENES_workingdata.dta", clear
 
 
 /*%%=============================================================================================
