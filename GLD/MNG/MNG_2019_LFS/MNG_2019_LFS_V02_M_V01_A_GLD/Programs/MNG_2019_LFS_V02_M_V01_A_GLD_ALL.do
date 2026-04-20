@@ -36,14 +36,6 @@
 
 -----------------------------------------------------------------------
 <_Version Control_>
-2026-04-08
-- First harmonization built on raw-data update V02_M.
-- First harmonization built on raw-data update V02_M.
-- Added a raw-folder conversion program in V02_M/Programs and updated harmonization to load `LFS_2019_eng.dta` from V02_M/Data/Stata.
-- Started from the 2020 V02_M_V01_A_GLD program because the questionnaire and raw structure are close to the 2020 round.
-- The NADA 2019 V02_M source file has 44,240 observations and 208 variables. Compared with 2020 V02_M, it lacks `LOCATION`, `AXCSOUMCODE`, `STRATUM`, `SURCODE`, `REASON`, `Q17`, `P4`, `J01`, and split migration fields `A17A/A17B`, `A18A/A18B`, `A19A/A19B`.
-- The raw conversion program recovers `LOCATION` from the matched 2019 V01 raw file. V01 and V02 match one-to-one on `PSU SSU QUARTER P2` for all 44,240 records, and checked core person variables are unchanged, so `urban` is coded from recovered `LOCATION` rather than extrapolated from province.
-- The setup and migration blocks were adjusted for 2019: `P2` is renamed to `P01`; `A22Y` is used for year of last move; `A20` is used for previous province/country; and `strata` and `migrated_from_country` are left missing where the raw data do not support the 2020 detail.
 
 </_Version Control_>
 
