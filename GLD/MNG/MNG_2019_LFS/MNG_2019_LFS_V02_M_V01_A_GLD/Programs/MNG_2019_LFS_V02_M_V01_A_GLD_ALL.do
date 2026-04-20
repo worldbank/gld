@@ -5,7 +5,7 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				MNG_2020_LFS_V02_M_V01_A_GLD_ALL.do </_Program name_>
+<_Program name_>				MNG_2019_LFS_V02_M_V01_A_GLD_ALL.do </_Program name_>
 <_Application_>					Stata 17 <_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
 <_Date created_>				2026-04-08 </_Date created_>
@@ -14,13 +14,13 @@
 
 <_Country_>						MNG </_Country_>
 <_Survey Title_>				Mongolia Labor Force Survey </_Survey Title_>
-<_Survey Year_>					2020 </_Survey Year_>
+<_Survey Year_>					2019 </_Survey Year_>
 <_Study ID_>					[Microdata Library ID if present] </_Study ID_>
-<_Data collection from_>		01/2020 </_Data collection from_>
-<_Data collection to_>			12/2020 </_Data collection to_>
+<_Data collection from_>		01/2019 </_Data collection from_>
+<_Data collection to_>			12/2019 </_Data collection to_>
 <_Source of dataset_> 			Mongolia NSO </_Source of dataset_>
-<_Sample size (HH)_> 			6,219 unique households in the harmonized file </_Sample size (HH)_>
-<_Sample size (IND)_> 			46,934 person-quarter records in the harmonized file </_Sample size (IND)_>
+<_Sample size (HH)_> 			5,922 unique households in the harmonized file </_Sample size (HH)_>
+<_Sample size (IND)_> 			44,240 person-quarter records in the harmonized file </_Sample size (IND)_>
 <_Sampling method_> 			2 stage sampling with quarterly sample PSUs rotated. For every new quarter, 25% is replaced and 75% is matched between quarters   </_Sampling method_>
 <_Geographic coverage_> 		National </_Geographic coverage_>
 <_Currency_> 					[Currency used for wages] </_Currency_>
@@ -38,10 +38,12 @@
 <_Version Control_>
 2026-04-08
 - First harmonization built on raw-data update V02_M.
-- Added a raw-folder conversion program in V02_M/Programs and updated harmonization to load `LFS_2020_eng.dta` from V02_M/Data/Stata.
-- Compared V01_M and V02_M raw files: observation count is unchanged at 46,934, while the variable count rises from 212 to 218.
-- V02_M standardizes geography and weight fields from `AD`, `WEIGHTQ`, and `weight` to `AXCAIMAGCODE`, `AXCSOUMCODE`, `STRATUM`, `WEIGHT_CAL_Q`, and `WEIGHT_CAL_Y`, and also adds `MONTH`, `REASON`, `J01`, and `P4`.
-- V02_M still uses `P2` rather than `P01` for the person identity number, so the setup block renames `P2` to `P01` for compatibility with the 2023-based GLD logic.
+- First harmonization built on raw-data update V02_M.
+- Added a raw-folder conversion program in V02_M/Programs and updated harmonization to load `LFS_2019_eng.dta` from V02_M/Data/Stata.
+- Started from the 2020 V02_M_V01_A_GLD program because the questionnaire and raw structure are close to the 2020 round.
+- The NADA 2019 V02_M source file has 44,240 observations and 208 variables. Compared with 2020 V02_M, it lacks `LOCATION`, `AXCSOUMCODE`, `STRATUM`, `SURCODE`, `REASON`, `Q17`, `P4`, `J01`, and split migration fields `A17A/A17B`, `A18A/A18B`, `A19A/A19B`.
+- The raw conversion program recovers `LOCATION` from the matched 2019 V01 raw file. V01 and V02 match one-to-one on `PSU SSU QUARTER P2` for all 44,240 records, and checked core person variables are unchanged, so `urban` is coded from recovered `LOCATION` rather than extrapolated from province.
+- The setup and migration blocks were adjusted for 2019: `P2` is renamed to `P01`; `A22Y` is used for year of last move; `A20` is used for previous province/country; and `strata` and `migrated_from_country` are left missing where the raw data do not support the 2020 detail.
 
 </_Version Control_>
 
@@ -68,7 +70,7 @@ else {
 	local server "C:/Users/`c(username)'/WBG/GLD - Current Contributors/510859_AS"
 }
 local country  "MNG"
-local year  "2020"
+local year  "2019"
 local survey  "LFS"
 local vermast  "V02"
 local veralt  "V01"
@@ -90,7 +92,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
-use "`path_in_stata'/LFS_2020_eng.dta", clear
+use "`path_in_stata'/LFS_2019_eng.dta", clear
 rename *, upper
 
 * Restore 2022-compatible raw names after importing the SPSS file.
@@ -98,6 +100,10 @@ capture rename P2 P01
 capture rename LOCATION AXCLOCATION
 capture rename WEIGHT_CAL_Q WEIGHT_Q
 capture rename WEIGHT_CAL_Y WEIGHT_YEARS
+capture confirm variable AXCLOCATION
+if _rc gen AXCLOCATION = .
+capture confirm variable STRATUM
+if _rc gen STRATUM = .
 
 
 /*%%=============================================================================================
@@ -150,7 +156,7 @@ capture rename WEIGHT_CAL_Y WEIGHT_YEARS
 
 
 *<_year_>
-	gen int year=2020
+	gen int year=2019
 	label var year "Year of survey"
 *</_year_>
 
@@ -174,7 +180,7 @@ capture rename WEIGHT_CAL_Y WEIGHT_YEARS
 
 
 *<_int_year_>
-	gen int int_year= 2020
+	gen int int_year= 2019
 	label var int_year "Year of the interview"
 *</_int_year_>
 
@@ -256,6 +262,9 @@ QUARTER. Ineligible roster members are dropped before the uniqueness check.
 {
 
 *<_urban_>
+	* LOCATION is recovered in the raw conversion program from the matched 2019
+	* V01 raw file for all 44,240 records. This preserves the survey settlement
+	* type and avoids approximating urban status from province codes.
 	gen byte urban=AXCLOCATION
 	recode urban 1/3=1 4/5=0
 	label var urban "Location is urban"
@@ -298,7 +307,7 @@ QUARTER. Ineligible roster members are dropped before the uniqueness check.
 *<_subnatidsurvey_>
 /* <_subnatidsurvey_note>
 
-The 2020 V02_M raw file identifies the province or capital city directly through
+The 2019 V02_M raw file identifies the province or capital city directly through
 AXCAIMAGCODE, so GLD codes the representative geographic level as province or
 capital city.
 
@@ -484,11 +493,11 @@ capital city.
 
 
 *<_migrated_binary_>
-* Here A16 asks if person lives in the same place since birth, moved out then came back, or moved out from residence at birth
-* I consider those who (a) moved out then came back, and (b)moved out as migrants. In the Q, these respondents were asked about the years since last migration
+* Here A18 asks if the person has ever lived in another province or country.
+* I consider those who answered yes as migrants. These respondents were asked about the year since last migration in A22Y.
 	gen migrated_binary = .
-	replace migrated_binary = A16
-	recode migrated_binary (1 = 0) (2 3 = 1)
+	replace migrated_binary = A18
+	recode migrated_binary (1 2 = 1) (3 = 0)
 	label de lblmigrated_binary 0 "No" 1 "Yes"
 	label values migrated_binary lblmigrated_binary
 	label var migrated_binary "Individual has migrated"
@@ -496,17 +505,16 @@ capital city.
 
 
 *<_migrated_years_>
-* In the 2020 questionnaire the year of migration is stored in A18A even though
-* the label suggests month.
-	assert A18A<=2020 if !missing(A18A)
-	gen migrated_years = 2020 - A18A
+* In 2019 the year of migration is stored in A22Y.
+	assert A22Y<=2019 if !missing(A22Y)
+	gen migrated_years = 2019 - A22Y
 	label var migrated_years "Years since latest migration"
 *</_migrated_years_>
 
 
 *<_migrated_from_urban_>
 	gen migrated_from_urban = .
-	replace migrated_from_urban = A20
+	replace migrated_from_urban = A19
 	recode migrated_from_urban (2 = 0)
 
 	label de lblmigrated_from_urban 0 "Rural" 1 "Urban"
@@ -517,19 +525,19 @@ capital city.
 
 *<_migrated_from_cat_>
 	gen migrated_from_cat = .
-	replace migrated_from_cat = 2 if A19A == AXCAIMAGCODE
+	replace migrated_from_cat = 2 if A20 == AXCAIMAGCODE
 	
 	* Need to create a helper variable that identifies the subnatid1 of the province of previous residence
 	gen  subnatid1_pr = ""
-	replace subnatid1_pr = "1 - Ulaanbaatar" if A19A == 1
-	replace subnatid1_pr = "2 - Central" if inrange(A19A, 41, 48)
-	replace subnatid1_pr = "3 - East" if inrange(A19A, 21, 23)
-	replace subnatid1_pr = "4 - West" if inrange(A19A, 81, 85)
-	replace subnatid1_pr = "5 -  Highlands" if inrange(A19A, 61, 67)
+	replace subnatid1_pr = "1 - Ulaanbaatar" if A20 == 1
+	replace subnatid1_pr = "2 - Central" if inrange(A20, 41, 48)
+	replace subnatid1_pr = "3 - East" if inrange(A20, 21, 23)
+	replace subnatid1_pr = "4 - West" if inrange(A20, 81, 85)
+	replace subnatid1_pr = "5 -  Highlands" if inrange(A20, 61, 67)
 	
-	replace migrated_from_cat = 3 if subnatid1_pr == subnatid1 & !missing(A19A)
-	replace migrated_from_cat = 4 if subnatid1_pr != subnatid1 & !missing(A19A)
-	replace migrated_from_cat = 5 if A19A == 99
+	replace migrated_from_cat = 3 if subnatid1_pr == subnatid1 & !missing(A20)
+	replace migrated_from_cat = 4 if subnatid1_pr != subnatid1 & !missing(A20)
+	replace migrated_from_cat = 5 if A20 == 99
 
 	drop subnatid1_pr
 	
@@ -541,53 +549,41 @@ capital city.
 
 *<_migrated_from_code_>
 	gen migrated_from_code = ""
-	replace migrated_from_code = "20 - Ulaanbaatar" if A19A == 11
-	replace migrated_from_code = "7 - Dornod" if A19A == 21
-	replace migrated_from_code = "18 - Hentii" if A19A == 23
-	replace migrated_from_code = "14 - Tuv" if A19A == 41
-	replace migrated_from_code = "22 - Govi-sumber" if A19A == 42
-	replace migrated_from_code = "13 - Selenge" if A19A == 43
-	replace migrated_from_code = "6 - Dornogovi" if A19A == 44
-	replace migrated_from_code = "19 - Darhan-Uul" if A19A == 45
-	replace migrated_from_code = "11 - Umnugovi" if A19A == 46
-	replace migrated_from_code = "8 - Dundgovi" if A19A == 48
-	replace migrated_from_code = "21 - Orhon" if A19A == 61
-	replace migrated_from_code = "10 - Uvurhangai" if A19A == 62
-	replace migrated_from_code = "4 - Bulgan" if A19A == 63
-	replace migrated_from_code = "3 - Bayanhongor" if A19A == 64
-	replace migrated_from_code = "1 - Arhangai" if A19A == 65
-	replace migrated_from_code = "17 - Huvsgul" if A19A == 67
-	replace migrated_from_code = "9 - Zavhan" if A19A == 81
-	replace migrated_from_code = "5 - Govi-Altai" if A19A == 82
-	replace migrated_from_code = "2 - Bayan-Ulgii" if A19A == 83
-	replace migrated_from_code = "16 - Hovd" if A19A == 84
-	replace migrated_from_code = "15 - Uvs" if A19A == 85
-	replace migrated_from_code = "" if A19A == 99
+	replace migrated_from_code = "20 - Ulaanbaatar" if A20 == 11
+	replace migrated_from_code = "7 - Dornod" if A20 == 21
+	replace migrated_from_code = "18 - Hentii" if A20 == 23
+	replace migrated_from_code = "14 - Tuv" if A20 == 41
+	replace migrated_from_code = "22 - Govi-sumber" if A20 == 42
+	replace migrated_from_code = "13 - Selenge" if A20 == 43
+	replace migrated_from_code = "6 - Dornogovi" if A20 == 44
+	replace migrated_from_code = "19 - Darhan-Uul" if A20 == 45
+	replace migrated_from_code = "11 - Umnugovi" if A20 == 46
+	replace migrated_from_code = "8 - Dundgovi" if A20 == 48
+	replace migrated_from_code = "21 - Orhon" if A20 == 61
+	replace migrated_from_code = "10 - Uvurhangai" if A20 == 62
+	replace migrated_from_code = "4 - Bulgan" if A20 == 63
+	replace migrated_from_code = "3 - Bayanhongor" if A20 == 64
+	replace migrated_from_code = "1 - Arhangai" if A20 == 65
+	replace migrated_from_code = "17 - Huvsgul" if A20 == 67
+	replace migrated_from_code = "9 - Zavhan" if A20 == 81
+	replace migrated_from_code = "5 - Govi-Altai" if A20 == 82
+	replace migrated_from_code = "2 - Bayan-Ulgii" if A20 == 83
+	replace migrated_from_code = "16 - Hovd" if A20 == 84
+	replace migrated_from_code = "15 - Uvs" if A20 == 85
+	replace migrated_from_code = "" if A20 == 99
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
 *</_migrated_from_code_>
 
 
 *<_migrated_from_country_>
-	encode A19B, gen(ccc)
+/* <_migrated_from_country_note>
+
+The 2019 V02_M file identifies whether the previous residence was another
+country, but it does not provide the country string available in the 2020
+split migration fields. GLD therefore leaves migrated_from_country missing.
+
+</_migrated_from_country_note> */
 	gen migrated_from_country = ""
-
-	replace migrated_from_country = "BGR" if inlist(ccc, 1)
-	replace migrated_from_country = "RUS" if inlist(ccc, 2, 6, 13, 15, 16, 32, 33, 34)
-	replace migrated_from_country = "DEU" if inlist(ccc, 3, 4, 29)
-	replace migrated_from_country = "NLD" if ccc == 5
-	replace migrated_from_country = "KAZ" if inlist(ccc, 7, 8, 9, 10, 11, 30, 39)
-	replace migrated_from_country = "NOR" if ccc == 12
-	replace migrated_from_country = "KOR" if inlist(ccc, 18, 20, 21, 35, 36, 37, 38)
-	replace migrated_from_country = "SDN" if ccc == 19
-	replace migrated_from_country = "TWN" if ccc == 22
-	replace migrated_from_country = "TUR" if ccc == 23
-	replace migrated_from_country = "CHN" if inlist(ccc, 24, 42, 45)
-	replace migrated_from_country = "CZE" if inlist(ccc, 25, 43)
-	replace migrated_from_country = "JPN" if inlist(ccc, 26, 27, 28, 44)
-	replace migrated_from_country = "CAN" if ccc == 31
-	replace migrated_from_country = "FRA" if ccc == 40
-
-	drop ccc
 	label var migrated_from_country "Code of migration country (ISO 3 Letter Code)"
 *</_migrated_from_country_>
 
@@ -935,7 +931,7 @@ Non-labour force:
 /* <_industrycat_isic_note>
 
 The questionnaire identifies the detailed main-job industry as ISIC Rev. 4.
-The raw 2020 V02_M code list is almost entirely ISIC-4 compliant but still contains
+The raw 2019 V02_M code list is almost entirely ISIC-4 compliant but still contains
 a small number of non-standard detailed values. To avoid mixing exact 4-digit
 and fallback codes, GLD keeps the first two ISIC digits and appends 00 for all
 nonmissing main-job industry codes.
@@ -1001,7 +997,7 @@ nonmissing main-job industry codes.
 *<_occup_isco_>
 /* <_occup_isco_note>
 
-The questionnaire identifies occupation as ISCO-08, but the raw 2020 V02_M code list
+The questionnaire identifies occupation as ISCO-08, but the raw 2019 V02_M code list
 contains several non-standard detailed values such as 0111, 0212, and 9319.
 To avoid overstating precision, GLD codes occup_isco uniformly at the two-digit
 family level plus 00 for all nonmissing main-job occupations.

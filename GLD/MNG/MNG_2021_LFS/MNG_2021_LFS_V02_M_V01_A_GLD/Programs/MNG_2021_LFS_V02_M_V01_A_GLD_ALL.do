@@ -41,7 +41,7 @@
 - Added a raw-folder conversion program in V02_M/Programs and updated harmonization to load `LFS_2021_eng.dta` from V02_M/Data/Stata.
 - Compared V01_M and V02_M raw files: observations fall from 47,196 to 46,875 and variables fall from 254 to 217.
 - V02_M removes many auxiliary `_OTHER` fields and repeated visit-date fields (`V2_*`, `V3_*`, `V4_*`) and standardizes `AXCLOCATION`, `WEIGHTQ`, and `WEIGHTY` into `LOCATION`, `STRATUM`, `WEIGHT_CAL_Q`, and `WEIGHT_CAL_Y`.
-- V02_M no longer carries `HHSIZE` or `SURCODE` from V01_M. Because the 2023-based GLD template expects `HHSIZE`, the setup block generates it as missing unless a defensible derivation is later introduced.
+- V02_M no longer carries `HHSIZE` or `SURCODE` from V01_M. The raw conversion program recovers `HHSIZE` from the V01 raw file at the `PSU SSU QUARTER` household-quarter level. In V01, `HHSIZE` is constant within household-quarter and represents total household roster size for the quarter, including non-relatives. Two V02 records from one household-quarter do not match V01, so their `HHSIZE` is set to the observed V02 household-quarter roster count.
 
 </_Version Control_>
 
@@ -61,7 +61,12 @@ set mem 800m
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-local server  "C:/Users/`c(username)'/WBG/GLD - Current Contributors/510859_AS"
+if "`c(username)'" == "wb510859" {
+	local server "C:/Users/`c(username)'/OneDrive - WBG/GLD - Current Contributors/510859_AS"
+}
+else {
+	local server "C:/Users/`c(username)'/WBG/GLD - Current Contributors/510859_AS"
+}
 local country  "MNG"
 local year  "2021"
 local survey  "LFS"
