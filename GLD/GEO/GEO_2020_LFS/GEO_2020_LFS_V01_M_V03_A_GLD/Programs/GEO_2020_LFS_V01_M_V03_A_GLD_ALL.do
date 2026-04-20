@@ -1001,15 +1001,18 @@ for more hours but they are not in the raw dataset.
 
 {
 *<_empstat_>
-	gen byte empstat=Status
-	recode empstat (2=3) (3=2) (4=1) (97=5)
-	replace empstat=4 if empstat==3&B26_Employed_at_local_unit==1
-	replace empstat=. if lstatus!=1|age<minlaborage
+	gen byte empstat = .
+	replace empstat = 1 if Status == 1
+	replace empstat = 3 if Status == 2 & _v4 == 1
+	replace empstat = 4 if Status == 2 & _v4 == 2
+	replace empstat = 2 if Status == 3
+	replace empstat = 2 if Status == 5
+	replace empstat = 5 if inlist(Status, 4, 97)
+	replace empstat = . if lstatus != 1
 	label var empstat "Employment status during past week primary job 7 day recall"
-	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
+	label define lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status", replace
 	label values empstat lblempstat
 *</_empstat_>
-
 
 *<_ocusec_>
 	gen byte ocusec=Sector_ownership
@@ -1284,7 +1287,7 @@ But this question is not in the dataset.
 
 
 *<_ocusec_2_>
-	gen byte ocusec_2=Second_Sector 
+	gen byte ocusec_2=Second_Sector_ownership
 	recode ocusec_2 (1=3) (3=2)
 	replace ocusec_2=. if lstatus!=1|Second_Job!=1
 	label var ocusec_2 "Sector of activity secondary job 7 day recall"

@@ -36,7 +36,7 @@
 <_Version Control_>
 
 * Date: 2025-06-06: Update industrycat_nace2 - 99 should be ohter not household
-* Date: 2026-04-07 - Update lstatus to use raw Unemployed and retain inferred future starters
+* Date: 2026-04-07 - Update lstatus to use raw Unemployed and retain inferred future starters; use of B26_Employed_at_local_unit to identify the self-employed; corrected ocusec
 
 </_Version Control_>
 
@@ -56,7 +56,12 @@ set mem 800m
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-local server  "C:/Users/wb510859/WBG/GLD - Current Contributors/510859_AS"
+if "`c(username)'" == "wb510859" {
+	local server "C:/Users/`c(username)'/OneDrive - WBG/GLD - Current Contributors/510859_AS"
+}
+else {
+	local server "C:/Users/`c(username)'/WBG/GLD - Current Contributors/510859_AS"
+}
 local country "GEO"
 local year    "2023"
 local survey  "LFS"
@@ -998,24 +1003,30 @@ for more hours but they are not in the raw dataset.
 
 {
 *<_empstat_>
-	gen byte empstat=Status
-	recode empstat (2=3) (3=2) (4=1) (97=5)
-	replace empstat=4 if empstat==3&B26_Employed_at_local_unit==1
-	replace empstat=. if lstatus!=1|age<minlaborage
+	gen byte empstat = .
+	replace empstat = 1 if Status == 1
+	replace empstat = 3 if Status == 2 & _v3 == 1
+	replace empstat = 4 if Status == 2 & _v3 == 2
+	replace empstat = 2 if Status == 3
+	replace empstat = 2 if Status == 5
+	replace empstat = 5 if inlist(Status, 4, 97)
+	replace empstat = . if lstatus != 1
 	label var empstat "Employment status during past week primary job 7 day recall"
-	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
+	label define lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status", replace
 	label values empstat lblempstat
 *</_empstat_>
 
 
 *<_ocusec_>
-	gen byte ocusec=Sector_ownership
-	recode ocusec (1 3 4 =1) (2=2) (97 98=.)
-	replace ocusec=. if lstatus!=1|age<minlaborage
-	la de lblocusec 1 "State-owned" 2 "Private-owned"
+	gen byte ocusec = .
+	replace ocusec = 3 if Sector_ownership == 1
+	replace ocusec = 2 if inlist(Sector_ownership, 2, 3, 4, 97, 98)
+	replace ocusec = . if lstatus != 1
+	label var ocusec "Sector of activity primary job 7 day recall"
+	label define lblocusec 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish", replace
 	label values ocusec lblocusec
-	
 *</_ocusec_>
+
 
 
 *<_industry_orig_>
