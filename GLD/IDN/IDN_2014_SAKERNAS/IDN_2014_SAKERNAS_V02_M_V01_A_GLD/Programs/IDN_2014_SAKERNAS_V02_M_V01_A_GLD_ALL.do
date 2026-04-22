@@ -37,7 +37,7 @@
 * Date: [2023-01-17] File: [IDN_2014_Sakernas_v01_M_v04_A_GLD.do] - [Change directories; educat7 added category 4; Empstat "self-employed" assisted with non-paid workers were "self-employed"]
 * Date: [2023-03-12] File: [IDN_2014_Sakernas_v01_M_v05_A_GLD.do] - [Recode "industry_orig" & "occup_orig" & "industry_orig_2" & "occup_orig_2"; correct a typo in the "lstatus" condition of "industrycat10"; change "Z" drive to "Y" drive]
 * Date: [2023-04-08] File: [IDN_2014_Sakernas_v01_M_v06_A_GLD.do] - [Updated "occup"; set employed and unemployed observations' non-labor force reason to missing; added variable "empstat"; set "wage_no_compen" to missing for unpaid workers and zero values.]
-* Date: [2026-3-12] File: [IDN_2014_Sakernas_v02_M_v01_A_GLD.do] - [add new data on 4 digit isco code, update occup_orig and occup based on the new data; revise subnatidsurvey]
+* Date: [2026-04-22] File: [IDN_2014_Sakernas_v02_M_v01_A_GLD.do] - [add new data on 4 digit isco code, update occup_orig and occup based on the new data; revise subnatidsurvey; new template]
 
 </_Version Control_>
 
