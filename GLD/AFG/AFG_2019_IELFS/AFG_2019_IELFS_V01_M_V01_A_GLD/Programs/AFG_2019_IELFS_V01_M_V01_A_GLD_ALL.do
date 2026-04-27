@@ -133,7 +133,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_isic_version_>
-	gen strL isic_version = "isic_4"
+	gen strL isic_version = "isic_2"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
@@ -833,6 +833,15 @@ foreach ed_var of local ed_vars {
 
 {
 *<_empstat_>
+/* <_empstat_note>
+
+	The questionnaire and raw data indicate that respondents classified as employed
+	through temporary absence (`q310==1`) were generally not asked the downstream
+	main-job detail questions, including status in employment (`q316`). As a result,
+	temporarily absent workers remain employed in `lstatus` but may legitimately have
+	missing `empstat`.
+
+</_empstat_note> */
 	gen empstat=q316
 	recode empstat 1/3=1 6=2 5=3 4=4
 	replace empstat=. if lstatus!=1
@@ -862,35 +871,53 @@ foreach ed_var of local ed_vars {
 *<_industrycat_isic_>
 /* <_industrycat_isic_note>
 
+	The questionnaire skip pattern and raw data indicate that respondents classified
+	as employed through temporary absence (`q310==1`) were generally not asked the
+	main-job industry question (`q319`). For that reason, some employed cases remain
+	missing in `industry_orig`, `industrycat_isic`, `industrycat10`, and `industrycat4`
+	without this implying a contradiction in `lstatus`.
+
 	The raw industry coding is a grouped survey classification rather than an exact
 	4-digit standard code. We use ISIC Rev. 4 because the first two digits align
 	more cleanly with that version than with the older ISIC families. `industrycat_isic`
-	is therefore built from the first two digits and stored as `XX00`. After that
-	fallback, 243 employed cases with nonmissing raw industry remain without a
-	defensible ISIC Rev. 4 match and are left missing.
+	is therefore built from the first two digits and stored as `XX00`, but only when
+	that 2-digit prefix is a valid ISIC Rev. 4 division. Cases whose first two digits
+	do not map to a valid ISIC Rev. 4 division are left missing rather than being
+	forced into an invalid padded detailed code.
 
 </_industrycat_isic_note> */
 	gen strL industry_raw_str = strtrim(q319)
-	gen str4 industrycat_isic = substr(industry_raw_str,1,2) + "00" if industry_raw_str != ""
-	replace industrycat_isic = "" if inlist(industrycat_isic,"8300","3400","4400","5400")
-	replace industrycat_isic = "" if lstatus != 1 | industrycat_isic == "000"
+	gen str2 industry_prefix = substr(industry_raw_str,1,2) if industry_raw_str != ""
+	gen byte industry_prefix_num = real(industry_prefix)
+	gen str4 industrycat_isic = ""
+	replace industrycat_isic = industry_prefix + "00" if ///
+		inrange(industry_prefix_num,1,3)  | ///
+		inrange(industry_prefix_num,5,33) | ///
+		inrange(industry_prefix_num,35,43) | ///
+		inrange(industry_prefix_num,45,53) | ///
+		inrange(industry_prefix_num,55,66) | ///
+		inrange(industry_prefix_num,68,75) | ///
+		inrange(industry_prefix_num,77,82) | ///
+		inrange(industry_prefix_num,84,99)
+	replace industrycat_isic = "" if lstatus != 1
 	drop industry_raw_str
+	drop industry_prefix
+	drop industry_prefix_num
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
 
 *<_industrycat10_>
 	gen byte industrycat10 = .
-	replace industrycat10 = 1 if inrange(real(substr(industrycat_isic,1,2)),1,3)
-	replace industrycat10 = 2 if inrange(real(substr(industrycat_isic,1,2)),5,9)
-	replace industrycat10 = 3 if inrange(real(substr(industrycat_isic,1,2)),10,33)
-	replace industrycat10 = 4 if inrange(real(substr(industrycat_isic,1,2)),35,39)
-	replace industrycat10 = 5 if inrange(real(substr(industrycat_isic,1,2)),41,43)
-	replace industrycat10 = 6 if inrange(real(substr(industrycat_isic,1,2)),45,47)
-	replace industrycat10 = 7 if inrange(real(substr(industrycat_isic,1,2)),49,53)
-	replace industrycat10 = 8 if inrange(real(substr(industrycat_isic,1,2)),55,82)
-	replace industrycat10 = 9 if real(substr(industrycat_isic,1,2)) == 84
-	replace industrycat10 = 10 if inrange(real(substr(industrycat_isic,1,2)),85,99)
+	replace industrycat10 = 1 if substr(strtrim(q319),1,1) == "1"
+	replace industrycat10 = 2 if substr(strtrim(q319),1,1) == "2"
+	replace industrycat10 = 3 if substr(strtrim(q319),1,1) == "3"
+	replace industrycat10 = 4 if substr(strtrim(q319),1,1) == "4"
+	replace industrycat10 = 5 if substr(strtrim(q319),1,1) == "5"
+	replace industrycat10 = 6 if substr(strtrim(q319),1,1) == "6"
+	replace industrycat10 = 7 if substr(strtrim(q319),1,1) == "7"
+	replace industrycat10 = 8 if substr(strtrim(q319),1,1) == "8"
+	replace industrycat10 = 10 if substr(strtrim(q319),1,1) == "9"
 	replace industrycat10=. if (lstatus!=1)
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	label define lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Communications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified", replace
@@ -918,21 +945,43 @@ foreach ed_var of local ed_vars {
 *<_occup_isco_>
 /* <_occup_isco_note>
 
+	The questionnaire skip pattern and raw data indicate that respondents classified
+	as employed through temporary absence (`q310==1`) were generally not asked the
+	main-job occupation question (`q320`). For that reason, some employed cases remain
+	missing in `occup_orig`, `occup_isco`, `occup`, and `occup_skill` without this
+	implying a contradiction in `lstatus`.
+
 	The raw occupation coding broadly follows ISCO-08, but the survey classification
 	is not fully defensible at the detailed 4-digit level. For consistency, all
-	nonmissing occupied cases are therefore coded to the first two digits plus `00`
-	rather than mixing detailed 4-digit values with fallback values. After that
-	uniform fallback, 229 employed cases with nonmissing raw occupation still do not
-	have a defensible ISCO-08 match and are left missing. Most of those unresolved
-	cases are survey code 999.
+	nonmissing occupied cases are therefore coded to the first two digits plus `00`,
+	but only when those first two digits correspond to a valid ISCO-08 sub-major
+	group. The survey also uses `01`, `02`, and `03` for armed forces sub-major
+	groups, so those are retained as valid prefixes. After that fallback, 229 employed
+	cases with nonmissing raw occupation still do not have a defensible ISCO-08 match
+	and are left missing. Most of those unresolved cases are survey code 999.
 
 </_occup_isco_note> */
 	gen strL occup_raw_str = strtrim(q320)
+	gen str2 occup_prefix = ""
+	replace occup_prefix = substr(occup_raw_str,1,2) if strlen(occup_raw_str) >= 2
+	replace occup_prefix = "0" + occup_raw_str if strlen(occup_raw_str) == 1
+	gen byte occup_prefix_num = real(occup_prefix)
 	gen str4 occup_isco = ""
-	replace occup_isco = substr(occup_raw_str,1,2) + "00" if occup_raw_str != ""
-	replace occup_isco = "" if inlist(occup_isco,"9900","0500","2900","0800","0900","5700","6400","8600")
+	replace occup_isco = occup_prefix + "00" if ///
+		inrange(occup_prefix_num,1,3) | ///
+		inrange(occup_prefix_num,11,14) | ///
+		inrange(occup_prefix_num,21,26) | ///
+		inrange(occup_prefix_num,31,35) | ///
+		inrange(occup_prefix_num,41,44) | ///
+		inrange(occup_prefix_num,51,54) | ///
+		inrange(occup_prefix_num,61,63) | ///
+		inrange(occup_prefix_num,71,75) | ///
+		inrange(occup_prefix_num,81,83) | ///
+		inrange(occup_prefix_num,91,96)
 	replace occup_isco = "" if lstatus != 1
 	drop occup_raw_str
+	drop occup_prefix
+	drop occup_prefix_num
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
@@ -1108,33 +1157,46 @@ foreach ed_var of local ed_vars {
 *<_industrycat_isic_2_>
 /* <_industrycat_isic_2_note>
 
-	The raw second-job industry coding is a grouped survey classification rather than
-	an exact 4-digit standard code. We therefore code `industrycat_isic_2` from the
-	first two digits and store it as `XX00`. After that fallback, 9 employed second-job
-	cases with nonmissing raw industry do not have a defensible ISIC Rev. 4 match and
-	are left missing.
+	The raw second-job industry coding follows the same grouped survey classification
+	used for the main job. We therefore apply the same ISIC Rev. 4 approach used in
+	`industrycat_isic`: code the first two digits plus `00` only when that 2-digit
+	prefix corresponds to a valid ISIC Rev. 4 division, and leave the remaining
+	cases missing rather than forcing invalid padded detailed codes.
 
 </_industrycat_isic_2_note> */
-	gen str4 industrycat_isic_2 = substr(strtrim(q322e),1,2) + "00" if strtrim(q322e) != ""
-	replace industrycat_isic_2 = "" if inlist(industrycat_isic_2,"8300","3400")
+	gen strL industry_raw_str_2 = strtrim(q322e)
+	gen str2 industry_prefix_2 = substr(industry_raw_str_2,1,2) if industry_raw_str_2 != ""
+	gen byte industry_prefix_num_2 = real(industry_prefix_2)
+	gen str4 industrycat_isic_2 = ""
+	replace industrycat_isic_2 = industry_prefix_2 + "00" if ///
+		inrange(industry_prefix_num_2,1,3)  | ///
+		inrange(industry_prefix_num_2,5,33) | ///
+		inrange(industry_prefix_num_2,35,43) | ///
+		inrange(industry_prefix_num_2,45,53) | ///
+		inrange(industry_prefix_num_2,55,66) | ///
+		inrange(industry_prefix_num_2,68,75) | ///
+		inrange(industry_prefix_num_2,77,82) | ///
+		inrange(industry_prefix_num_2,84,99)
 	replace industrycat_isic_2 = "" if q322a != 1
 	replace industrycat_isic_2 = "" if lstatus != 1
+	drop industry_raw_str_2
+	drop industry_prefix_2
+	drop industry_prefix_num_2
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
 
 *<_industrycat10_2_>
 	gen byte industrycat10_2 = .
-	replace industrycat10_2 = 1 if inrange(real(substr(industrycat_isic_2,1,2)),1,3)
-	replace industrycat10_2 = 2 if inrange(real(substr(industrycat_isic_2,1,2)),5,9)
-	replace industrycat10_2 = 3 if inrange(real(substr(industrycat_isic_2,1,2)),10,33)
-	replace industrycat10_2 = 4 if inrange(real(substr(industrycat_isic_2,1,2)),35,39)
-	replace industrycat10_2 = 5 if inrange(real(substr(industrycat_isic_2,1,2)),41,43)
-	replace industrycat10_2 = 6 if inrange(real(substr(industrycat_isic_2,1,2)),45,47)
-	replace industrycat10_2 = 7 if inrange(real(substr(industrycat_isic_2,1,2)),49,53)
-	replace industrycat10_2 = 8 if inrange(real(substr(industrycat_isic_2,1,2)),55,82)
-	replace industrycat10_2 = 9 if real(substr(industrycat_isic_2,1,2)) == 84
-	replace industrycat10_2 = 10 if inrange(real(substr(industrycat_isic_2,1,2)),85,99)
+	replace industrycat10_2 = 1 if substr(strtrim(q322e),1,1) == "1"
+	replace industrycat10_2 = 2 if substr(strtrim(q322e),1,1) == "2"
+	replace industrycat10_2 = 3 if substr(strtrim(q322e),1,1) == "3"
+	replace industrycat10_2 = 4 if substr(strtrim(q322e),1,1) == "4"
+	replace industrycat10_2 = 5 if substr(strtrim(q322e),1,1) == "5"
+	replace industrycat10_2 = 6 if substr(strtrim(q322e),1,1) == "6"
+	replace industrycat10_2 = 7 if substr(strtrim(q322e),1,1) == "7"
+	replace industrycat10_2 = 8 if substr(strtrim(q322e),1,1) == "8"
+	replace industrycat10_2 = 10 if substr(strtrim(q322e),1,1) == "9"
 	replace industrycat10_2 = . if q322a != 1
 	replace industrycat10_2 = . if lstatus != 1
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
@@ -1165,15 +1227,35 @@ foreach ed_var of local ed_vars {
 	The raw second-job occupation coding broadly follows ISCO-08, but the survey
 	classification is not fully defensible at the detailed 4-digit level. For
 	consistency, all nonmissing occupied second-job cases are coded to the first
-	two digits plus `00`. After that fallback, 38 employed second-job cases with
-	nonmissing raw occupation remain unresolved and are left missing. Most of those
-	unresolved cases are survey code 999.
+	two digits plus `00`, but only when those first two digits correspond to a valid
+	ISCO-08 sub-major group. The survey also uses `01`, `02`, and `03` for armed
+	forces sub-major groups, so those are retained as valid prefixes. The remaining
+	unresolved cases are left missing rather than being forced into invalid padded
+	detailed codes.
 
 </_occup_isco_2_note> */
-	gen str4 occup_isco_2 = substr(strtrim(q322f),1,2) + "00" if strtrim(q322f) != ""
-	replace occup_isco_2 = "" if inlist(occup_isco_2,"0600","9900")
+	gen strL occup_raw_str_2 = strtrim(q322f)
+	gen str2 occup_prefix_2 = ""
+	replace occup_prefix_2 = substr(occup_raw_str_2,1,2) if strlen(occup_raw_str_2) >= 2
+	replace occup_prefix_2 = "0" + occup_raw_str_2 if strlen(occup_raw_str_2) == 1
+	gen byte occup_prefix_num_2 = real(occup_prefix_2)
+	gen str4 occup_isco_2 = ""
+	replace occup_isco_2 = occup_prefix_2 + "00" if ///
+		inrange(occup_prefix_num_2,1,3) | ///
+		inrange(occup_prefix_num_2,11,14) | ///
+		inrange(occup_prefix_num_2,21,26) | ///
+		inrange(occup_prefix_num_2,31,35) | ///
+		inrange(occup_prefix_num_2,41,44) | ///
+		inrange(occup_prefix_num_2,51,54) | ///
+		inrange(occup_prefix_num_2,61,63) | ///
+		inrange(occup_prefix_num_2,71,75) | ///
+		inrange(occup_prefix_num_2,81,83) | ///
+		inrange(occup_prefix_num_2,91,96)
 	replace occup_isco_2 = "" if q322a != 1
 	replace occup_isco_2 = "" if lstatus != 1
+	drop occup_raw_str_2
+	drop occup_prefix_2
+	drop occup_prefix_num_2
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
 
