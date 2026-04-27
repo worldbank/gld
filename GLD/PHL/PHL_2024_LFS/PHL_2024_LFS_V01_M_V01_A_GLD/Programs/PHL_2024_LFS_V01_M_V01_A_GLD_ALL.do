@@ -58,7 +58,12 @@ set varabbrev off
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-local root    "/Users/angelosantos/Downloads/PHL/PHL_2024_LFS"
+if "`c(username)'" == "wb510859" {
+	local server "C:/Users/`c(username)'/OneDrive - WBG/GLD - Current Contributors/510859_AS"
+}
+else {
+	local server "C:/Users/`c(username)'/WBG/GLD - Current Contributors/510859_AS"
+}
 local country "PHL"
 local year    "2024"
 local survey  "LFS"
@@ -70,9 +75,9 @@ local level_2_mast "`level_1'_`vermast'_M"
 local level_2_harm "`level_1'_`vermast'_M_`veralt'_A_GLD"
 
 * From chunks, define path_in, path_output folder
-local path_in_stata "`root'/`level_2_mast'/Data/Stata"
-local path_in_other "`root'/`level_2_mast'/Data/Original"
-local path_output   "`root'/`level_2_harm'/Data/Harmonized"
+local path_in_stata "`server'/`country'/`level_1'/`level_2_mast'/Data/Stata"
+local path_in_other "`server'/`country'/`level_1'/`level_2_mast'/Data/Original"
+local path_output   "`server'/`country'/`level_1'/`level_2_harm'/Data/Harmonized"
 
 
 * Define Output file name
