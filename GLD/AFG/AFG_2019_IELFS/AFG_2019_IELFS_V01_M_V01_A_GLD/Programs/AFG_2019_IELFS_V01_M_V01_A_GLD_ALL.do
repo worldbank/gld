@@ -133,7 +133,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_isic_version_>
-	gen strL isic_version = "isic_2"
+	gen strL isic_version = "isic_4"
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
