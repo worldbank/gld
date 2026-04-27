@@ -77,7 +77,13 @@ local user_commands ietoolkit scores missings mdesc iefieldkit  //Fill this list
 	local 	drop 	 = 1 		// 1 to drop variables with all missing values, 0 otherwise
 
 
-	local 	year 		"/Users/angelosantos/Downloads/PHL/`cty3'_`surv_yr'_LFS" // top data folder
+	if "`c(username)'" == "wb510859" {
+		local server "C:/Users/`c(username)'/OneDrive - WBG/GLD - Current Contributors/510859_AS"
+	}
+	else {
+		local server "C:/Users/`c(username)'/WBG/GLD - Current Contributors/510859_AS"
+	}
+	local 	year 		"`server'/`cty3'/`cty3'_`surv_yr'_LFS" // top data folder
 
 	local 	main		"`year'/`cty3'_`surv_yr'_LFS_V01_M"
 	local 	 stata		"`main'/Data/Stata"
