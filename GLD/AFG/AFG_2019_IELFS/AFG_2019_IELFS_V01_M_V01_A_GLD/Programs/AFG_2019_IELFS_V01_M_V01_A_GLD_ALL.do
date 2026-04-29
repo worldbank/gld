@@ -368,6 +368,16 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_relationharm_>
+/* <_relationharm_note>
+
+	The delivered file does not yield exactly one household head in all households.
+	GLD house style is therefore applied to reconcile headship. The fallback uses
+	the eldest male in the household, otherwise the eldest female. In zero-head
+	households, one head is assigned using that rule. In multiple-head households,
+	only the top-ranked reported head is kept as head and the extra reported heads
+	are recoded to `5` (Other relatives).
+
+</_relationharm_note> */
 	gen byte relationharm = .
 	replace relationharm = 1 if q201r == 1
 	replace relationharm = 2 if q201r == 2
@@ -375,6 +385,18 @@ local out_file "`level_2_harm'_ALL.dta"
 	replace relationharm = 4 if q201r == 6
 	replace relationharm = 5 if inlist(q201r,4,5,7,8,9,10)
 	replace relationharm = 6 if q201r == 11
+
+	* Apply GLD fallback only in households without exactly one reported head.
+	gen byte reported_head = relationharm == 1 if !missing(relationharm)
+	bys hhid: egen byte nheads = total(reported_head)
+	gen byte head_priority = reported_head
+	gsort hhid -head_priority -male -age
+	by hhid: gen long hh_rank = _n
+	replace relationharm = 1 if nheads == 0 & hh_rank == 1
+	replace relationharm = 5 if nheads > 1 & reported_head == 1
+	replace relationharm = 1 if nheads > 1 & hh_rank == 1
+	sort hhid pid
+	drop reported_head nheads head_priority hh_rank
 	label var relationharm "Relationship to the head of household - Harmonized"
 	label define lblrelationharm 1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives", replace
 	label values relationharm lblrelationharm
@@ -410,7 +432,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 *<_hear_dsablty_>
 	gen hear_dsablty = q2209
-	recode hear_dsablty 5=.
+	replace hear_dsablty = . if !inrange(hear_dsablty,1,4)
 	label define dsablty 1 "No - no difficulty" 2 "Yes - some difficulty" 3 "Yes - a lot of difficulty" 4 "Cannot do at all", replace
 	label values hear_dsablty dsablty
 	label var hear_dsablty "Disability related to hearing"
@@ -564,8 +586,7 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educy_>
-	gen byte educy=q215g
-	replace educy=0 if q214==2
+	gen byte educy=.
 	replace educy=. if age<ed_mod_age
 	label var educy "Years of education"
 *</_educy_>
@@ -1287,8 +1308,15 @@ foreach ed_var of local ed_vars {
 
 
 *<_wage_no_compen_2_>
+/* <_wage_no_compen_2_note>
+
+	The 7-day second-job block records participation, status, days, hours, industry,
+	and occupation, but it does not collect a current wage amount for the second job.
+	For this reason, `wage_no_compen_2` is left missing rather than mixing structural
+	zeroes for unpaid family workers with non-observed wage information.
+
+</_wage_no_compen_2_note> */
 	gen double wage_no_compen_2 = .
-	replace wage_no_compen_2 = 0 if empstat_2 == 2
 	replace wage_no_compen_2 = . if q322a != 1
 	replace wage_no_compen_2 = . if lstatus != 1
 	label var wage_no_compen_2 "Last wage payment secondary job 7 day recall"
@@ -1615,6 +1643,7 @@ foreach ed_var of local ed_vars {
 	replace wmonths_year = q330 if q329 == 1
 	replace wmonths_year = q333 if q332 == 1 & missing(wmonths_year)
 	replace wmonths_year = q324 if q324 > 0 & missing(wmonths_year)
+	replace wmonths_year = . if !inrange(wmonths_year,1,12)
 	replace wmonths_year = . if lstatus_year != 1
 	label var wmonths_year "Months of work in past 12 months primary job 12 month recall"
 *</_wmonths_year_>
