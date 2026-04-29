@@ -45,7 +45,7 @@ label var occup_old "Occupation - 13th ICLS definition"
 | Before (13th ICLS) | After (19th ICLS) |
 |:------------------:|:-----------------:|
 | ![Description](utilities/lstatus13.png) | ![Description](utilities/lstatus19.png) |
-| ![Description](utilities/empstats13.png) | ![Description](utilities/empstat19.png) |
+| ![Description](utilities/empstat13.png) | ![Description](utilities/empstat19.png) |
 | ![Description](utilities/industry13.png) | ![Description](utilities/industry19.png) |
 | ![Description](utilities/occup13.png) | ![Description](utilities/occup19.png) |
 
