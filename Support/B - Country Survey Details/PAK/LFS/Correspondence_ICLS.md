@@ -42,4 +42,8 @@ replace occup_old = . if lstatus_old != 1
 label var occup_old "Occupation - 13th ICLS definition"
 
 ```
+| Before (13th ICLS) | After (19th ICLS) |
+|:------------------:|:-----------------:|
+| ![Description](image1.png) | ![Description](image2.png) |
+
 
