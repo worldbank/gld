@@ -5,8 +5,7 @@ In short, the ICLS 19 resolution restricts employment to *work performed for oth
 
 # Coding to convert the 2024 ILFS to the old definition
 
-In converting back to the 13th ICLS definition, the approach adopted here is to identify workers engaged in subsistence or own-use agricultural production who are excluded from employment under the 19th ICLS. In the 2024 PAK LFS, these workers are precisely identified by S5C10 = 3 (products mainly for family use) or S5C10 = 4 (products only for family use) — the skip pattern that routes them out of the employment module entirely and into Section 9. Since these workers never reach the employment questions (S5C11–S5C13), their industry, occupation, and employment status must be imputed: they are assigned to agriculture (industrycat10 = 1), skilled agricultural occupations (occup = 6), and self-employment (empstat = 4), consistent with their activity type. The code below should be pasted after the code creating the lstatus variable based on the 2024 definition.
-
+In converting back to the 13th ICLS definition, the approach adopted here is to identify workers engaged in subsistence or own-use agricultural production who are excluded from employment under the 19th ICLS. In the 2024 PAK LFS, these workers are precisely identified by whether they produce mainly or solely for family use — the skip pattern that routes them out of the employment module entirely. Since these workers never reach the employment questions, their industry, occupation, and employment status must be imputed: they are assigned to agriculture (industrycat10 = 1), skilled agricultural occupations (occup = 6), and self-employment (empstat = 4), consistent with their activity type. The code below is suggested to conduct comparision analysis with surveys that use the old ICLS definition. 
 ```
 * ------------------------------------------------------------------
 * ICLS 13th BRIDGE CODE — PAK LFS 2024
