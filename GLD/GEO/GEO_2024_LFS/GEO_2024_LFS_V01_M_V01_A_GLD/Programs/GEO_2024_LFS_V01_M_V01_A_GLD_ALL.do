@@ -14,7 +14,7 @@
 <_Country_>						GEO </_Country_>
 <_Survey Title_>				Georgia Labour Force Survey </_Survey Title_>
 <_Survey Year_>					2024 </_Survey Year_>
-<_Study ID_>					 </_Study ID_>
+<_Study ID_>					GEO_2024_LFS_v01_M </_Study ID_>
 <_Data collection from_>		01/2024 </_Data collection from_>
 <_Data collection to_>			12/2024 </_Data collection to_>
 <_Source of dataset_> 			National Statistics Office of Georgia (Geostat) </_Source of dataset_>
@@ -25,15 +25,16 @@
 <_Currency_> 					GEL </_Currency_>
 
 -----------------------------------------------------------------------
-<_ICLS Version_>				ICLS 13 </_ICLS Version_>
-<_ISCED Version_>				ISCED-2011 </_ISCED Version_>
-<_ISCO Version_>				ISCO 08 </_ISCO Version_>
-<_OCCUP National_>				ISCO 08 (used directly in the raw data set)	 </_OCCUP National_>
-<_ISIC Version_>				ISIC Rev.4 </_ISIC Version_>
-<_INDUS National_>				NACE Rev.2 (NACE Rev.1 also provided in the raw data set) </_INDUS National_>
+
+<_ICLS Version_>				ICLS-19 </_ICLS Version_>
+<_ISCED Version_>				ISCED 2011 </_ISCED Version_>
+<_ISCO Version_>				ISCO-08 </_ISCO Version_>
+<_OCCUP National_>				ISCO-08 four-digit and major-group derivatives provided in source </_OCCUP National_>
+<_ISIC Version_>				ISIC Rev.4 proxy via NACE Rev.2 source classification </_ISIC Version_>
+<_INDUS National_>				NACE Rev.2 four-digit and section-level derivatives provided in source </_INDUS National_>
+
 -----------------------------------------------------------------------
 <_Version Control_>
-
 
 </_Version Control_>
 
@@ -76,7 +77,19 @@ local out_file "`level_2_harm'_ALL.dta"
 
 *----------1.3: Database assembly------------------------------*
 
-use "`path_in_stata'/LFS_Demographic_ENG_2024.dta", clear
+* Open demographic roster first so the harmonized file retains all household members,
+* then merge the labour module for ages 15+ following the GEO 2023 workflow.
+	tempfile ecstat
+
+	import spss using "`path_in_other'/LFS_ECSTAT_ENG_2024.sav", clear
+	save `ecstat'
+
+	import spss using "`path_in_other'/LFS_Demographic_ENG_2024.sav", clear
+	merge 1:1 UID DiaryID MemberNo using `ecstat', nogen keep(match)
+
+* The non-public auxiliary modules used in GEO 2023 (`add_1` for extra labour items
+* and `add_2` for migration items) were not delivered with the 2024 raw bundle, so
+* migration variables and other auxiliary concepts cannot be reproduced here.
 
 
 /*%%=============================================================================================
@@ -104,7 +117,7 @@ use "`path_in_stata'/LFS_Demographic_ENG_2024.dta", clear
 
 
 *<_icls_v_>
-	gen strL icls_v = "ICLS-13"
+	gen strL icls_v = "ICLS-19"
 	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
 
@@ -627,59 +640,21 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educy_>
-
-/*<_educy_note_>
-
-Original categorization of the highest educational level ever attended of 
-variable Education is:
-
-1. Illiterate 
-2. Has no education but can read and write 
-3. Pre-primary education 
-4. Primary education 
-5. Basic general education (lower secondary)
-6. Secondary general education (upper secondary)
-7. Vocational education without secondary general education
-8. Vocational education on the base of lower secondary education with secondary general education certificate 
-9. Vocational education on the base of secondary general education (except higher professional education)
-10. Higher professional education or equivalent
-11. Bachelor or equivalent 
-12. Master or equivalent
-13. Doctor or equivalent
-
-*<_educy_note_>*/
-
-	gen byte educy=.
-	replace educy=0 if inrange(Education,0,1)
-	replace educy=3 if Education==3
-	replace educy=9 if Education==4
-	replace educy=12 if Education==5
-	replace educy=15 if Education==6
-	replace educy=12 if Education==7
-	replace educy=13 if Education==8
-	replace educy=17 if Education==9|Education==10
-	replace educy=19 if Education==11
-	replace educy=21 if Education==12
-	replace educy=24 if Education==12
-	replace educy=. if age<ed_mod_age
-	replace educy=. if educy>age & !mi(educy) & !mi(age)
+	gen educy = .
 	label var educy "Years of education"
 *</_educy_>
 
 
-
 *<_educat7_>
-	gen byte educat7=.
-	replace educat7=1 if inrange(Education,0,1)
-	replace educat7=2 if Education==3
-	replace educat7=3 if Education==4
-	replace educat7=4 if inlist(Education,5,7)
-	replace educat7=5 if inlist(Education,6,8,9)
-	replace educat7=6 if Education==10
-	replace educat7=7 if inlist(Education,11,12,13)
-	replace educat7=. if age<ed_mod_age
+	gen byte educat7 = .
+	replace educat7 = 1 if inlist(Education, 1, 2, 3)
+	replace educat7 = 3 if Education == 4
+	replace educat7 = 4 if Education == 5
+	replace educat7 = 5 if Education == 6
+	replace educat7 = 6 if inrange(Education, 7, 10)
+	replace educat7 = 7 if inrange(Education, 11, 13)
 	label var educat7 "Level of education 1"
-	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
+	label define lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete", replace
 	label values educat7 lbleducat7
 *</_educat7_>
 
@@ -922,11 +897,12 @@ foreach ed_var of local ed_vars {
 
 *<_ocusec_>
 	gen byte ocusec = .
-	replace ocusec = 3 if Sector_ownership == 1
-	replace ocusec = 2 if inlist(Sector_ownership, 2, 3, 4, 97, 98)
+	replace ocusec = 1 if Sector_ownership == 1
+	replace ocusec = 2 if inlist(Sector_ownership, 2, 3, 4)
+	replace ocusec = . if inlist(Sector_ownership, 97, 98)
 	replace ocusec = . if lstatus != 1
 	label var ocusec "Sector of activity primary job 7 day recall"
-	label define lblocusec 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish", replace
+	label define lblocusec 1 "State-owned/Public sector" 2 "Private/Non-state", replace
 	label values ocusec lblocusec
 *</_ocusec_>
 
@@ -939,28 +915,33 @@ foreach ed_var of local ed_vars {
 
 
 *<_industrycat_isic_>
-	* We use NACE2. Bring in with the crosswalk cases when NACE2 != ISIC, 
-	* otherwise use NACE2
-	tostring Brunch, gen(nace2_code) format(%04.0f)
-	replace nace2_code = "" if nace2_code == "."
-
-	merge m:1 nace2_code using "`path_in_stata'/nace2_isic4_crosswalk.dta", keepusing(isic4) keep(master match) nogen
-	replace isic4 = nace2_code if mi(isic4) & !mi(nace2_code)
-	
-	rename isic4 industrycat_isic
-	replace industrycat_isic = "" if lstatus!=1 
+/* <_industrycat_isic_note>
+	The source industry variable is coded in NACE Rev.2. Comparison against the GLD ISIC helper
+	shows only a partial exact four-digit match, so this first pass retains a conservative grouped
+	two-digit mapping with trailing zeros rather than forcing a potentially incorrect detailed ISIC code.
+</_industrycat_isic_note> */
+	gen str4 industrycat_isic = ""
+	replace industrycat_isic = substr(string(Brunch, "%04.0f"), 1, 2) + "00" if lstatus == 1 & !missing(Brunch)
+	replace industrycat_isic = "" if lstatus != 1
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
 
-
 *<_industrycat10_>
-	destring nace2_code, replace
-	gen industrycat10=floor(nace2_code/100)
-	recode industrycat10 (1/3=1) (5/9=2) (10/33=3) (35/39=4) (41/43=5) (45/47 55/56=6) (49/53 58/63=7) (64/82=8) (84=9) (85/99=10)	
-	replace industrycat10=. if lstatus!=1
+	gen byte industrycat10 = .
+	replace industrycat10 = 1 if Brunch_converted == 1
+	replace industrycat10 = 2 if Brunch_converted == 2
+	replace industrycat10 = 3 if Brunch_converted == 3
+	replace industrycat10 = 4 if inlist(Brunch_converted, 4, 5)
+	replace industrycat10 = 5 if Brunch_converted == 6
+	replace industrycat10 = 6 if Brunch_converted == 7
+	replace industrycat10 = 7 if inlist(Brunch_converted, 8, 10)
+	replace industrycat10 = 8 if inlist(Brunch_converted, 11, 12, 13, 14)
+	replace industrycat10 = 9 if inlist(Brunch_converted, 15, 16, 17)
+	replace industrycat10 = 10 if inlist(Brunch_converted, 9, 18, 19, 20, 21)
+	replace industrycat10 = . if lstatus != 1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
-	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
+	label define lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Communications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified", replace
 	label values industrycat10 lblindustrycat10
 *</_industrycat10_>
 
@@ -1188,8 +1169,11 @@ foreach ed_var of local ed_vars {
 
 
 *<_ocusec_2_>
-	gen ocusec_2 = .
-	replace ocusec_2 = . if lstatus != 1
+	gen byte ocusec_2 = .
+	replace ocusec_2 = 1 if Second_Sector_ownership == 1
+	replace ocusec_2 = 2 if inlist(Second_Sector_ownership, 2, 3, 4)
+	replace ocusec_2 = . if inlist(Second_Sector_ownership, 97, 98)
+	replace ocusec_2 = . if lstatus != 1 | Second_Job != 1
 	label var ocusec_2 "Sector of activity secondary job 7 day recall"
 	label values ocusec_2 lblocusec
 *</_ocusec_2_>

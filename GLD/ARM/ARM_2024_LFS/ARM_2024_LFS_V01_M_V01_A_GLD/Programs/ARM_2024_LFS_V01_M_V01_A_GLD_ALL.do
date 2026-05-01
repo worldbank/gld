@@ -26,7 +26,7 @@
 
 -----------------------------------------------------------------------
 
-<_ICLS Version_>				ICLS-13 </_ICLS Version_>
+<_ICLS Version_>				ICLS-19 </_ICLS Version_>
 <_ISCED Version_>				ISCED 2011 </_ISCED Version_>
 <_ISCO Version_>				ISCO-88 major groups </_ISCO Version_>
 <_OCCUP National_>				Delivered as 9-group ISCO-88 major groups </_OCCUP National_>
@@ -56,7 +56,7 @@ set varabbrev off
 
 *----------1.2: Set directories------------------------------*
 
-local server  "C:\Users\wb510859\WBG\GLD - Current Contributors\510859_AS"
+local server  "C:/Users/`c(username)'/WBG/GLD - Current Contributors/510859_AS"
 local country "ARM"
 local year    "2024"
 local survey  "LFS"
@@ -77,7 +77,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
-use  "`path_in_stata'/LFS_2024_for web (residents).dta", clear
+use "`path_in_stata'/LFS_2024_for web (residents).dta", clear
 
 
 /*%%=============================================================================================
@@ -294,7 +294,9 @@ documentation sufficient to reconstruct PSU/SSU/strata variables faithfully.
 	See entry in GLD Guidelines (https://github.com/worldbank/gld/blob/main/Support/A%20-%20Guides%20and%20Documentation/GLD_1.0_Guidelines.docx) for more details
 
 </_subnatidsurvey_note> */
-	gen strL subnatidsurvey = subnatid1
+	decode A5, gen(urbanstat)
+	gen strL subnatidsurvey = subnatid1 + " " + urbanstat
+	drop urbanstat
 	label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
@@ -355,22 +357,30 @@ documentation sufficient to reconstruct PSU/SSU/strata variables faithfully.
 
 
 *<_age_>
-
-/*<_age_note_>
-
-Because the raw data do not have each observation's actual age, 
-and instead, they only have age in age groups. Here we coded age using the mean of 
-each age group to proceed with other variables and our quality checks. Therefore,
-the age variable only represents the age group the observation is in.   
-
-*<_age_note_>*/
-
-	gen age=.
-	replace age= (Age_16groups-1) *5+2
-	replace age = 98 if age > 98 & age != .
+/* <_age_note>
+The delivered microdata include age only in 16 grouped bands rather than completed years.
+To preserve an age variable for GLD while staying conservative, age is coded as the lower
+bound of each delivered age band.
+</_age_note> */
+	gen byte age = .
+	replace age = 0  if Age_16groups == 1
+	replace age = 5  if Age_16groups == 2
+	replace age = 10 if Age_16groups == 3
+	replace age = 15 if Age_16groups == 4
+	replace age = 20 if Age_16groups == 5
+	replace age = 25 if Age_16groups == 6
+	replace age = 30 if Age_16groups == 7
+	replace age = 35 if Age_16groups == 8
+	replace age = 40 if Age_16groups == 9
+	replace age = 45 if Age_16groups == 10
+	replace age = 50 if Age_16groups == 11
+	replace age = 55 if Age_16groups == 12
+	replace age = 60 if Age_16groups == 13
+	replace age = 65 if Age_16groups == 14
+	replace age = 70 if Age_16groups == 15
+	replace age = 75 if Age_16groups == 16
 	label var age "Individual age"
 *</_age_>
-
 
 
 *<_male_>
@@ -578,9 +588,15 @@ domains. The GLD disability variables are therefore left uncoded.
 {
 
 *<_ed_mod_age_>
-	
-	gen ed_mod_age = 6
-	label var ed_mod_age "Education module application age"
+
+/* <_ed_mod_age_note>
+
+Education module is only asked to those XX and older.
+
+</_ed_mod_age_note> */
+
+gen ed_mod_age = 5
+label var ed_mod_age "Education module application age"
 
 *</_ed_mod_age_>
 
@@ -759,11 +775,10 @@ number of cases. Following the earlier Armenia files, people flagged in the rost
 for extended periods (`C10==4`) or absent less than 3 months but intending to stay away for
 3 months or more (`C10==3 & C11 in 3/5`) are dropped from labour-force coding.
 
-The derived indicators (`LF`, `POLF`, `LU1_unemployed`) are not used in the
+The delivered derived indicators (`LF`, `POLF`, `LU1_unemployed`) are not used in the
 coding itself. They disagree with this questionnaire reconstruction for a small number of
 cases, which is documented in the external harmonization notes.
 </_lstatus_note> */
-
 	gen byte lstatus = .
 	replace lstatus = 1 if D1 == 1 | inrange(D3, 1, 5) | D4 == 1 | D5 == 1
 	replace lstatus = 2 if inlist(J9, 1, 2, 3) & (J18 == 1 | missing(J18)) & missing(lstatus)
@@ -1029,18 +1044,26 @@ by industry, occupation, sex, urban status, and bracket.
 *</_wage_no_compen_>
 
 
-
-
 *<_unitwage_>
-	* Despite question on wage being on month, answers have clear pattern
-	* based on E16, hence use it.
-	gen byte unitwage=E16
-	recode unitwage (4=5) (5=7) (6=8) (7=10)
-	replace unitwage=. if lstatus!=1 | empstat==2
+
+/* <_unitwage_note>
+	Unitwage refers to the unit used to record wage_no_compen, *not* the unit of
+	general wage payent. For example, PHL LFS asks about wage periodicity, then
+	asks for basic daily pay. The value of that pay would be wage_no_compen,
+	while unitwage is code 1 ("Daily") for all, regardless of the periodicity.
+</_unitwage_note> */
+
+	gen byte unitwage = .
+	replace unitwage = E16 if inrange(E16, 1, 6)
+	replace unitwage = 10 if E16 == 7
+	replace unitwage = 5 if missing(unitwage) & inrange(E15, 1, 7) & !missing(wage_no_compen)
+	replace unitwage = . if lstatus != 1
+	replace unitwage = . if mi(wage_no_compen)
 	label var unitwage "Last wages' time unit primary job 7 day recall"
-	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
+	label define lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other", replace
 	label values unitwage lblunitwage
 *</_unitwage_>
+
 
 *<_whours_>
 	gen double whours = G2_1
@@ -1051,8 +1074,12 @@ by industry, occupation, sex, urban status, and bracket.
 
 
 *<_wmonths_>
-* There is a variable for tenure (E23 - how long you been working in this role -- but not how long in the past 12 months)
 	gen byte wmonths = .
+	replace wmonths = 3  if E23 == 1
+	replace wmonths = 6  if E23 == 2
+	replace wmonths = 9  if E23 == 3
+	replace wmonths = 12 if inlist(E23, 4, 5, 6, 7)
+	replace wmonths = . if lstatus != 1
 	label var wmonths "Months of work in past 12 months primary job 7 day recall"
 *</_wmonths_>
 
@@ -1130,7 +1157,7 @@ by industry, occupation, sex, urban status, and bracket.
 	replace firmsize_u = 19  if E13 == 3
 	replace firmsize_u = 49  if E13 == 4
 	replace firmsize_u = 99  if E13 == 5
-	replace firmsize_u = . if E13 == 6
+	replace firmsize_u = 999 if E13 == 6
 	replace firmsize_u = . if lstatus != 1
 	label var firmsize_u "Firm size (upper bracket) primary job 7 day recall"
 *</_firmsize_u_>
