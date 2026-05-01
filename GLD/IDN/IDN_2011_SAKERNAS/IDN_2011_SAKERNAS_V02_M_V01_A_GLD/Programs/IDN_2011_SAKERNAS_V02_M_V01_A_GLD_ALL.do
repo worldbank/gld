@@ -85,11 +85,12 @@ local out_file "`level_2_harm'_ALL.dta"
 * harmonized output in a single file
 	
 	* old weight *
-// 	use "Y:\GLD-Public\IDN\IDN_2011_SAKERNAS\IDN_2011_SAKERNAS_V01_M_V06_A_GLD\Data\Harmonized\IDN_2011_SAKERNAS_v01_M_v06_A_GLD_ALL.dta", clear
-// 	keep subnatid1 urban weight
-// 	collapse (mean)weight, by(subnatid1 urban)
-// 	rename weight old_weight
-// 	save "C:\Users\wb611670\WBG\GLD - 611670_SF\IDN\IDN_2011_SAKERNAS\IDN_2011_SAKERNAS_V02_M\Data\Stata\old_weight.dta", replace
+	use "Y:\GLD-Public\IDN\IDN_2011_SAKERNAS\IDN_2011_SAKERNAS_V01_M_V06_A_GLD\Data\Harmonized\IDN_2011_SAKERNAS_v01_M_v06_A_GLD_ALL.dta", clear
+	keep subnatid1 urban weight
+	collapse (mean)weight, by(subnatid1 urban)
+	rename weight old_weight
+	tempfile old_weight
+	save `old_weight', replace
 	
 	use "`path_in_stata'\sak201108_15_20180228_kemenkoperekonomian.dta", clear
 
@@ -386,16 +387,24 @@ provided due to it is part of the confidential information withheld by the NSO.
 *</_gaul_adm3_code_>
 
 
+/*<_weight_scaler_note_>
+
+The backcasted weights were taken from V01_M, while the more detailed industry and occupation information was taken from V02_M. This approach allows the file to retain the preferred weights while also benefiting from the improved labor-market classification variables available in the later version.
+
+*<_weight_scaler_note_>*/
+
+
 *<_weight_scaler_>
-// 	preserve
-// 	collapse (mean)weight, by(subnatid1 urban)
-// 	merge 1:1 subnatid1 urban using "C:\Users\wb611670\WBG\GLD - 611670_SF\IDN\IDN_2011_SAKERNAS\IDN_2011_SAKERNAS_V02_M\Data\Stata\old_weight.dta", nogen
-// 	gen weight_scaler = old_weight/weight
-// 	drop old_weigh weight
-// 	save "C:\Users\wb611670\WBG\GLD - 611670_SF\IDN\IDN_2011_SAKERNAS\IDN_2011_SAKERNAS_V02_M\Data\Stata\weight_scaler.dta"
-// 	restore
+	preserve
+	collapse (mean)weight, by(subnatid1 urban)
+	merge 1:1 subnatid1 urban using `old_weight', nogen
+	gen weight_scaler = old_weight/weight
+	drop old_weight weight
+	tempfile weight_scaler
+	save `weight_scaler', replace
+	restore
 	
-	merge m:1 subnatid1 urban using "`path_in_stata'\weight_scaler.dta", nogen
+	merge m:1 subnatid1 urban using `weight_scaler', nogen
 	gen adj_weight = weight * weight_scaler
 *<_weight_scaler_>
 }
