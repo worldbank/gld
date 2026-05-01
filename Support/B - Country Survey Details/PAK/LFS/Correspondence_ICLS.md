@@ -46,12 +46,15 @@ label var occup_old "Occupation - 13th ICLS definition"
 When we apply different definitions to the employment, industry and occupation variables, we find that the difference amounts to 3,357 workers — those engaged in own-use agricultural production who are employed under the 13th ICLS but excluded under the 19th. This raises the total employed from 99,768 to 103,125, and the employment-to-population ratio from 43.23% to 44.68%. The effect is concentrated entirely in agriculture: the industry share rises from 35.75% to 37.84%, and the skilled agricultural occupation share from 30.37% to 32.64%. On employment status, self-employment increases from 35.37% to 37.48%, reflecting the assumption that subsistence producers are own-account workers. Non-agricultural categories are unaffected.
 
 
-| Concept (all 15+) | Value 2024 ICLS-13 | Value 2024 ICLS-19 |
-|---|---|---|
-| Employment share | 44.68% | 43.23% |
-| Unemployment share | 3.16% | 3.16% |
-| Share of wage employed | 41.29% | 42.68% |
-| Share of employed in Ag (industry) | 37.84% | 35.75% |
-| Share of employed as farmers (occupation) | 32.64% | 30.37% |
+| Concept (all 15+) | Value 2020 ICLS-13 | Value 2024 ICLS-13 | Value 2024 ICLS-19 |
+|---|---|---|---|
+| Employment share | 29.47% | 44.68% | 43.23% |
+| Unemployment share | 1.49% | 3.16% | 3.16% |
+| Share of wage employed | 40.62% | 41.29% | 42.68% |
+| Share of employed in Ag (industry) | 41.96% | 37.84% | 35.75% |
+| Share of employed as farmers (occupation) | 36.83% | 32.64% | 30.37% |
+
+
+Note on cross-year comparability: The values presented in this table should not be interpreted as trends or impact of any kind or used for direct cross-year comparison. Differences across columns reflect a combination of factors including: (1) changes in the ICLS definition applied (ICLS-13 vs. ICLS-19), and (2) differences in survey design and geographic coverage across years. Some survey rounds were not nationally representative and covered only selected provinces or regions, which affects the composition of the sample and the resulting estimates. Any apparent changes in shares across years may reflect these methodological and design differences rather than actual changes in labor market outcomes.
 
 
