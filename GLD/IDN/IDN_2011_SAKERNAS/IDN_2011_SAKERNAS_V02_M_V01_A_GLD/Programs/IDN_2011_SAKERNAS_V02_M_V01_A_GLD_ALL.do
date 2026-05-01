@@ -389,7 +389,9 @@ provided due to it is part of the confidential information withheld by the NSO.
 
 /*<_weight_scaler_note_>
 
-The backcasted weights were taken from V01_M, while the more detailed industry and occupation information was taken from V02_M. This approach allows the file to retain the preferred weights while also benefiting from the improved labor-market classification variables available in the later version.
+The backcasted weights were taken from V01_M, while the more detailed industry and occupation information 
+was taken from V02_M. This approach allows the file to retain the preferred weights while also benefiting from 
+the improved labor-market classification variables available in the later version.
 
 *<_weight_scaler_note_>*/
 
