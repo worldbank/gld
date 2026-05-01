@@ -87,11 +87,12 @@ local out_file "`level_2_harm'_ALL.dta"
 
 		
 	* old weight *
-// 	use "Y:\GLD-Public\IDN\IDN_2012_SAKERNAS\IDN_2012_SAKERNAS_V02_M_V05_A_GLD\Data\Harmonized\IDN_2012_SAKERNAS_v02_M_v05_A_GLD_ALL.dta", clear
-// 	keep subnatid1 urban weight
-// 	collapse (mean)weight, by(subnatid1 urban)
-// 	rename weight old_weight
-// 	save "C:\Users\wb611670\WBG\GLD - 611670_SF\IDN\IDN_2012_SAKERNAS\IDN_2012_SAKERNAS_V03_M\Data\Stata\old_weight.dta", replace
+	use "Y:\GLD-Public\IDN\IDN_2012_SAKERNAS\IDN_2012_SAKERNAS_V02_M_V05_A_GLD\Data\Harmonized\IDN_2012_SAKERNAS_v02_M_v05_A_GLD_ALL.dta", clear
+	keep subnatid1 urban weight
+	collapse (mean)weight, by(subnatid1 urban)
+	rename weight old_weight
+	tempfile old_weight
+	save `old_weight', replace
 	
 	use "`path_in_stata'\sak201208_15_20180228_kemenkoperekonomian.dta", clear
 
@@ -382,16 +383,25 @@ But note that 10 district codes only appear in 2012 not in 2013: 1171 1572 2171 
 *</_gaul_adm3_code_>
 
 
+/*<_weight_scaler_note_>
+
+The backcasted weights were taken from V01_M, while the more detailed industry and occupation information 
+was taken from V02_M. This approach allows the file to retain the preferred weights while also benefiting from 
+the improved labor-market classification variables available in the later version.
+
+*<_weight_scaler_note_>*/
+
 *<_weight_scaler_>
-// 	preserve
-// 	collapse (mean)weight, by(subnatid1 urban)
-// 	merge 1:1 subnatid1 urban using "C:\Users\wb611670\WBG\GLD - 611670_SF\IDN\IDN_2012_SAKERNAS\IDN_2012_SAKERNAS_V03_M\Data\Stata\old_weight.dta", nogen
-// 	gen weight_scaler = old_weight/weight
-// 	drop old_weight weight
-// 	save "C:\Users\wb611670\WBG\GLD - 611670_SF\IDN\IDN_2012_SAKERNAS\IDN_2012_SAKERNAS_V03_M\Data\Stata\weight_scaler.dta", replace
-// 	restore
+	preserve
+	collapse (mean)weight, by(subnatid1 urban)
+	merge 1:1 subnatid1 urban using `old_weight', nogen
+	gen weight_scaler = old_weight/weight
+	drop old_weight weight
+	tempfile weight_scaler
+	save `weight_scaler', replace
+	restore
 	
-	merge m:1 subnatid1 urban using "`path_in_stata'\weight_scaler.dta", nogen
+	merge m:1 subnatid1 urban using `weight_scaler', nogen
 	gen adj_weight = weight * weight_scaler
 *<_weight_scaler_>
 }
