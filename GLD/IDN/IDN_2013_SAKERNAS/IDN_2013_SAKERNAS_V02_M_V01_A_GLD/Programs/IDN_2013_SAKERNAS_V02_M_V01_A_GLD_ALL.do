@@ -37,8 +37,7 @@
 * Date: [2022-08-20] File: [IDN_2013_Sakernas_v01_M_v03_A_GLD.do] - [Recode employment status:Agricultural & non-agricultual casual worker recoded to "paid employee"; change path to the intermediate file]
 * Date: [2023-01-12] File: [IDN_2013_Sakernas_v01_M_v04_A_GLD.do] - [Change directories; educat7 added category 4; Empstat "self-employed" assisted with non-paid workers were "self-employed"]
 * Date: [2023-04-08] File: [Updated "occup"; set employed and unemployed observations' non-labor force reason to missing; added variable "empstat"; set "wage_no_compen" to missing for unpaid workers and zero values.]
-* Date: [2025-3-12] File: [IDN_2013_Sakernas_v02_M_v01_A_GLD.do] - [add new data on 4 digit isco code, update occup_orig and occup based on the new data; revise subnatidsurvey]
-
+* Date: [2026-04-20] File: [IDN_2013_Sakernas_v02_M_v01_A_GLD.do] - [add new data on 4 digit isco code, update occup_orig and occup based on the new data; revise subnatidsurvey; revise industrycat10]
 
 </_Version Control_>
 
@@ -920,7 +919,7 @@ Moreover, most cases are that people only have kbli2009_2 while they do not have
 
 *<_industrycat10_>
 	gen byte industrycat10 = industry_orig
-	recode industrycat10 (1/3=1) (5/9=2) (10/33=3) (35/39=4) (41/43=5) (45/47=6) (49/53 58/63=7) (64/68 77/82=8) (84=9) (55/56 69/75 85/99=10)
+	recode industrycat10 (1/3=1) (5/9=2) (10/33=3) (35/39=4) (41/43=5) (45/47 55/56=6) (49/53 58/63=7) (64/82=8) (84=9) (85/99=10) (0=.)
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	replace industrycat10 = . if lstatus!=1
