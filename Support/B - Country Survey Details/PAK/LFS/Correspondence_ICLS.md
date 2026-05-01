@@ -46,11 +46,12 @@ label var occup_old "Occupation - 13th ICLS definition"
 When we apply different definitions to the employment, industry and occupation variables, we find that the difference amounts to 3,357 workers — those engaged in own-use agricultural production who are employed under the 13th ICLS but excluded under the 19th. This raises the total employed from 99,768 to 103,125, and the employment-to-population ratio from 43.23% to 44.68%. The effect is concentrated entirely in agriculture: the industry share rises from 35.75% to 37.84%, and the skilled agricultural occupation share from 30.37% to 32.64%. On employment status, self-employment increases from 35.37% to 37.48%, reflecting the assumption that subsistence producers are own-account workers. Non-agricultural categories are unaffected.
 
 
-| Before (13th ICLS) | After (19th ICLS) |
-|:------------------:|:-----------------:|
-| ![Description](utilities/lstatus13.png) | ![Description](utilities/lstatus19.png) |
-| ![Description](utilities/empstat13.png) | ![Description](utilities/empstat19.png) |
-| ![Description](utilities/industry13.png) | ![Description](utilities/industry19.png) |
-| ![Description](utilities/occup13.png) | ![Description](utilities/occup19.png) |
+| | Concept (all 15+) | Value 2024 ICLS-13 | Value 2024 ICLS-19 |
+|---|---|---|
+| Employment share | 44.68% | 43.23% |
+| Unemployment share | 3.16% | 3.16% |
+| Share of wage employed | 41.29% | 42.68% |
+| Share of employed in Ag (industry) | 37.84% | 35.75% |
+| Share of employed as farmers (occupation) | 32.64% | 30.37% |
 
 
