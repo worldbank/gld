@@ -57,7 +57,8 @@ set mem 800m
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-local server  "C:/Users/`c(username)'/WBG/GLD - Current Contributors/611670_SF"
+// local server  "C:/Users/`c(username)'/WBG/GLD - Current Contributors/611670_SF"
+local server "C:\Users\wb611670\WBG\GLD - 611670_SF"
 local country "SEN"
 local year    "2015"
 local survey  "ENES"
@@ -281,23 +282,25 @@ use "`path_in_stata'/SEN_2015_ENES_workingdata.dta", clear
 	The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: “1 – Hatay”. That is, the variable itself is to be string, not a labelled numeric vector. 
 	
 	Example of entries would be "1 - Alaska",  "2 - Arkansas", ...
+	
+	The state numbering in 2015 differs from the numbering used in subsequent years. To maintain consistency across years, we use the post-2015 state numbering convention here.
 
 </_subnatid1_note> */
 	gen str subnatid1 = ""
-	replace subnatid1 = "1 - Fatick" if ba3==1
-	replace subnatid1 = "2 - Kolda" if ba3==2
-	replace subnatid1 = "3 - Matam" if ba3==3
-	replace subnatid1 = "4 - Kaffrine" if ba3==4
-	replace subnatid1 = "5 - Kedougou" if ba3==5
-	replace subnatid1 = "6 - Sedhiou" if ba3==6
-	replace subnatid1 = "7 - Dakar" if ba3==7
-	replace subnatid1 = "8 - Ziguinchor" if ba3==8
-	replace subnatid1 = "9 - Diourbel" if ba3==9
-	replace subnatid1 = "10 - Saint-Louis" if ba3==10
-	replace subnatid1 = "11 - Tambacounda" if ba3==11
-	replace subnatid1 = "12 - Kaolack" if ba3==12
-	replace subnatid1 = "13 - Thies" if ba3==13
-	replace subnatid1 = "14 - Louga" if ba3==14
+	replace subnatid1 = "1 - Dakar"        if ba3 == 1
+	replace subnatid1 = "2 - Ziguinchor"   if ba3 == 2
+	replace subnatid1 = "3 - Diourbel"     if ba3 == 3
+	replace subnatid1 = "4 - Saint-Louis"  if ba3 == 4
+	replace subnatid1 = "5 - Tambacounda"  if ba3 == 5
+	replace subnatid1 = "6 - Kaolack"      if ba3 == 6
+	replace subnatid1 = "7 - Thies"        if ba3 == 7
+	replace subnatid1 = "8 - Louga"        if ba3 == 8
+	replace subnatid1 = "9 - Fatick"       if ba3 == 9
+	replace subnatid1 = "10 - Kolda"       if ba3 == 10
+	replace subnatid1 = "11 - Matam"       if ba3 == 11
+	replace subnatid1 = "12 - Kaffrine"    if ba3 == 12
+	replace subnatid1 = "13 - Kedougou"    if ba3 == 13
+	replace subnatid1 = "14 - Sedhiou"     if ba3 == 14
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 
@@ -579,8 +582,9 @@ use "`path_in_stata'/SEN_2015_ENES_workingdata.dta", clear
 
 *<_migrated_from_urban_>
 	gen migrated_from_urban = .
-	replace migrated_from_urban = 1 if inlist(b11a,3,4)
-	replace migrated_from_urban = 0 if inlist(b11a,1,2)
+	replace migrated_from_urban = 0 if inlist(b11a, 1, 2) & migrated_binary == 1
+	replace migrated_from_urban = 1 if inlist(b11a, 3, 4) & migrated_binary == 1
+	replace migrated_from_urban = . if b11a == 5
 	replace migrated_from_urban = . if migrated_binary != 1
 	label de lblmigrated_from_urban 0 "Rural" 1 "Urban"
 	label values migrated_from_urban lblmigrated_from_urban
@@ -589,43 +593,65 @@ use "`path_in_stata'/SEN_2015_ENES_workingdata.dta", clear
 
 
 *<_migrated_from_cat_>
-/*
-1. This village 2. Another village in the region 3. Village from another region 4. This town or urban center 5. Another town or urban center in the region 6. Town or urban center from another region 7. Outside the country
-*/
 	gen migrated_from_cat = .
-
-	replace migrated_from_cat = 1 if inlist(b11a, 1, 4)
-	replace migrated_from_cat = 2 if inlist(b11a, 2, 5)
-	replace migrated_from_cat = 3 if inlist(b11a, 3, 6)
-	replace migrated_from_cat = 5 if b11a == 7
+	* We cannot distinguish admin2 (department) for current residence, only admin1 (region).
+	* b11a codes 1 & 3: same region as current residence  --> cat 3 (from same admin1)
+	* b11a codes 2 & 4: different region                  --> cat 4 (from other admin1)
+	* b11a code  5    : from abroad                       --> cat 5 (from other country)
+	replace migrated_from_cat = 3 if inlist(b11a, 1, 3) & migrated_binary == 1
+	replace migrated_from_cat = 4 if inlist(b11a, 2, 4) & migrated_binary == 1
+	replace migrated_from_cat = 5 if b11a == 5           & migrated_binary == 1
 	replace migrated_from_cat = . if migrated_binary != 1
-	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country" 6 "Within country, admin unknown" 7 "Wholly unknow"
+	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" ///
+		3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country" ///
+		6 "Within country, admin unknown" 7 "Wholly unknown"
 	label values migrated_from_cat lblmigrated_from_cat
 	label var migrated_from_cat "Category of migration area"
 *</_migrated_from_cat_>
 
 
 *<_migrated_from_code_>
-	gen migrated_from_code = .
-	*label de lblmigrated_from_code
-	*label values migrated_from_code lblmigrated_from_code
+	gen migrated_from_code = ""
+	replace migrated_from_code = "" if migrated_binary != 1
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
 *</_migrated_from_code_>
 
 
 *<_migrated_from_country_>
-	gen migrated_from_country = .
+	gen migrated_from_country = ""
+	* b11c country codes for abroad migrants (b11a == 5)
+	replace migrated_from_country = "BEN" if b11c == 1  & migrated_binary == 1
+	replace migrated_from_country = "BFA" if b11c == 2  & migrated_binary == 1
+	replace migrated_from_country = "CIV" if b11c == 3  & migrated_binary == 1
+	replace migrated_from_country = "GNB" if b11c == 4  & migrated_binary == 1
+	replace migrated_from_country = "MLI" if b11c == 5  & migrated_binary == 1
+	replace migrated_from_country = "NER" if b11c == 6  & migrated_binary == 1
+	replace migrated_from_country = "TGO" if b11c == 7  & migrated_binary == 1
+	replace migrated_from_country = "GIN" if b11c == 8  & migrated_binary == 1
+	replace migrated_from_country = "GMB" if b11c == 9  & migrated_binary == 1
+	replace migrated_from_country = "Other ECOWAS"         if b11c == 10 & migrated_binary == 1
+	replace migrated_from_country = "MRT" if b11c == 11 & migrated_binary == 1
+	replace migrated_from_country = "Other Africa non-ECOWAS" if b11c == 12 & migrated_binary == 1
+	replace migrated_from_country = "FRA" if b11c == 13 & migrated_binary == 1
+	replace migrated_from_country = "ESP" if b11c == 14 & migrated_binary == 1
+	replace migrated_from_country = "ITA" if b11c == 15 & migrated_binary == 1
+	replace migrated_from_country = "Other Americas"       if b11c == 16 & migrated_binary == 1
+	replace migrated_from_country = "Other non-African"    if b11c == 17 & migrated_binary == 1
+	replace migrated_from_country = "" if migrated_from_cat != 5
+	replace migrated_from_country = "" if migrated_binary != 1
 	label var migrated_from_country "Code of migration country (ISO 3 Letter Code)"
 *</_migrated_from_country_>
 
-
 *<_migrated_reason_>
-/*
-1. To follow or join family 2. To continue studies 3. To look for a job there 4. Assignment 5. Forced relocation (Political/security reasons/natural disasters) 6. Other, please specify
-*/
-	gen migrated_reason = b12
-	recode migrated_reason (4 = 3) (5 = 4) (6 = 4) (7 = 5)
-	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
+	gen migrated_reason = .
+	replace migrated_reason = 1 if b12 == 1 & migrated_binary == 1
+	replace migrated_reason = 2 if b12 == 2 & migrated_binary == 1
+	replace migrated_reason = 3 if inlist(b12, 3, 4, 6) & migrated_binary == 1
+	replace migrated_reason = 4 if b12 == 5 & migrated_binary == 1
+	replace migrated_reason = 5 if b12 == 7 & migrated_binary == 1
+	replace migrated_reason = . if migrated_binary != 1
+	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" ///
+		3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
 	label values migrated_reason lblmigrated_reason
 	label var migrated_reason "Reason for migrating"
 *</_migrated_reason_>
@@ -1208,24 +1234,15 @@ restore
 *</_occup_skill_>
 
 *<_wage_no_compen_>
-	gen double wage_no_compen = d12a if lstatus == 1 & d12a!=9999
-	replace wage_no_compen = e14_a if lstatus == 1 & e14_a!=9999 & missing(wage_no_compen)
+	* In the questionnaire, but of 12K working, 3K employees only 33 give answer to actual value 
+	* d12a, by cateogry (d13) 669, not enough anywhere, set to missing
+	gen double wage_no_compen = .
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
 
 *<_unitwage_>
-
-/* <_unitwage_note>
-	Unitwage refers to the unit used to record wage_no_compen, *not* the unit of
-	general wage payent. For example, PHL LFS asks about wage periodicity, then
-	asks for basic daily pay. The value of that pay would be wage_no_compen,
-	while unitwage is code 1 ("Daily") for all, regardless of the periodicity.
-</_unitwage_note> */
-
-	gen byte unitwage = d12b if !missing(wage_no_compen)
-	replace unitwage = e14_b if !missing(wage_no_compen) & missing(unitwage)
-	recode unitwage (3 = 5) (4 = 8) (0 = .)
+	gen byte unitwage = . 	
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
 	label values unitwage lblunitwage
