@@ -886,7 +886,12 @@ The unit is month but it is a specific value.
 
 The original code list of industry has 18 categories from 00 to 17. But the
 coding in the dataset is not correct. Some of the categories are named in the
-format of two digits, like 00 to 09 whereas the others are in one-digit format.
+format of two digits, like 00 to 09 whereas the others are in one-digit format. 
+
+In particular, both 1–4 and 01–04 appear in the data, but they seem to refer to different groups of observations. 
+This inconsistency results in an unusually high share of agricultural employment compared with subsequent years. 
+Because the industry coding could not be reliably harmonized, we decided to leave industrycat10 and the related 
+industry variables as missing.
 
 <_industry_orig_note_>*/
 
@@ -906,11 +911,8 @@ format of two digits, like 00 to 09 whereas the others are in one-digit format.
 
 
 *<_industrycat10_>
-	gen industry2 = industry
-	destring industry2, replace
-	format industry2 %02.0f if inlist(substr(industry,1,1), "0")
-	gen byte industrycat10 = industry2
-	recode industrycat10 (01/04=1) (05=2) (06/09=3) (10=4) (11=5) (12=6) (13=7) (14=8) (15=9) (00 16 17=10)
+	gen byte industrycat10 = .
+	replace industrycat10 = . if lstatus != 1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
