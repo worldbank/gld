@@ -1022,7 +1022,7 @@ for more hours but they are not in the raw dataset.
 	recode ocusec (2 3 4=2) (97 98=.)
 	replace ocusec=. if lstatus!=1|age<minlaborage
 	label var ocusec "Sector of activity primary job 7 day recall"
-	la de lblocusec 1 "State-owned/Public sector" 2 "Private/Non-state", replace
+	la de lblocusec 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish", replace
 	label values ocusec lblocusec
 *</_ocusec_>
 
@@ -1294,7 +1294,7 @@ But this question is not in the dataset.
 	recode ocusec_2 (2 3 4=2) (97 98=.)
 	replace ocusec_2=. if lstatus!=1|Second_Job!=1
 	label var ocusec_2 "Sector of activity secondary job 7 day recall"
-	la de lblocusec_2 1 "State-owned/Public sector" 2 "Private/Non-state", replace
+	la de lblocusec_2 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish", replace
 	label values ocusec_2 lblocusec_2
 *</_ocusec_2_>
 

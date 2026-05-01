@@ -902,7 +902,7 @@ foreach ed_var of local ed_vars {
 	replace ocusec = . if inlist(Sector_ownership, 97, 98)
 	replace ocusec = . if lstatus != 1
 	label var ocusec "Sector of activity primary job 7 day recall"
-	label define lblocusec 1 "State-owned/Public sector" 2 "Private/Non-state", replace
+	label define lblocusec 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish", replace
 	label values ocusec lblocusec
 *</_ocusec_>
 

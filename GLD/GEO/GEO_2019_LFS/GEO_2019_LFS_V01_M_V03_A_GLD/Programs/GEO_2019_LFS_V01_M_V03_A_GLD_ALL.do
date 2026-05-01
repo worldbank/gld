@@ -999,10 +999,11 @@ for more hours but they are not in the raw dataset.
 
 *<_ocusec_>
 	gen byte ocusec=B6_Sector
-	recode ocusec (97 98=.)
+	recode ocusec (3 4=2) (97 98=.)
 	replace ocusec=. if lstatus!=1|age<minlaborage
 	label var ocusec "Sector of activity primary job 7 day recall"
-	la de lblocusec 1 "State-owned/Public sector" 2 "Private/Non-state", replace
+	capture label drop lblocusec
+	la de lblocusec 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish", replace
 	label values ocusec lblocusec
 *</_ocusec_>
 
@@ -1020,7 +1021,7 @@ for more hours but they are not in the raw dataset.
 	tostring B4_NACE_2, gen(nace2_code) format(%04.0f)
 	replace nace2_code = "" if nace2_code == "."
 
-	merge m:1 nace2_code using "`path_in_stata'\nace2_isic4_crosswalk.dta", keepusing(isic4) keep(master match) nogen
+	merge m:1 nace2_code using "`path_in_stata'/nace2_isic4_crosswalk.dta", keepusing(isic4) keep(master match) nogen
 	replace isic4 = nace2_code if mi(isic4) & !mi(nace2_code)
 	
 	rename isic4 industrycat_isic
@@ -1263,9 +1264,11 @@ average wage of them by (1) sex, (2) urb/rur area, (3) occupation, and (4) indus
 
 *<_ocusec_2_>
 	gen byte ocusec_2=D5_Second_Sector if inrange(D5_Second_Sector,1,2)
+	replace ocusec_2=2 if inlist(D5_Second_Sector,3,4)
 	replace ocusec_2=. if lstatus!=1|D1_Second_job!=1
 	label var ocusec_2 "Sector of activity secondary job 7 day recall"
-	la de lblocusec_2 1 "State-owned/Public sector" 2 "Private/Non-state", replace
+	capture label drop lblocusec_2
+	la de lblocusec_2 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish", replace
 	label values ocusec_2 lblocusec_2
 *</_ocusec_2_>
 
@@ -1281,7 +1284,7 @@ average wage of them by (1) sex, (2) urb/rur area, (3) occupation, and (4) indus
 	tostring D3_Second_Brunch_2, gen(nace2_code) format(%04.0f)
 	replace nace2_code = "" if nace2_code == "."
 
-	merge m:1 nace2_code using "`path_in_stata'\nace2_isic4_crosswalk.dta", keepusing(isic4) keep(master match) nogen
+	merge m:1 nace2_code using "`path_in_stata'/nace2_isic4_crosswalk.dta", keepusing(isic4) keep(master match) nogen
 	replace isic4 = nace2_code if mi(isic4) & !mi(nace2_code)
 	
 	rename isic4 industrycat_isic_2
