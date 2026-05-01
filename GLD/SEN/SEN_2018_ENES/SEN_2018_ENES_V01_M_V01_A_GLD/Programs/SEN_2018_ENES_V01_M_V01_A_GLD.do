@@ -37,8 +37,6 @@
 -----------------------------------------------------------------------
 <_Version Control_>
 
-* Date: [YYYY-MM-DD] - [Description of changes]
-* Date: [YYYY-MM-DD] - [Description of changes]
 
 </_Version Control_>
 
@@ -58,7 +56,8 @@ set mem 800m
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-local server  "C:/Users/`c(username)'/WBG/GLD - Current Contributors/611670_SF"
+// local server  "C:/Users/`c(username)'/WBG/GLD - Current Contributors/611670_SF"
+local server "C:\Users\wb611670\WBG\GLD - 611670_SF"
 local country "SEN"
 local year    "2018"
 local survey  "ENES"
@@ -294,23 +293,22 @@ save "`path_in_stata'/SEN_2018_ENES_workingdata.dta", replace
 
 </_subnatid1_note> */
 	gen str subnatid1 = ""
-	replace subnatid1 = "1 - Fatick" if ba3==1
-	replace subnatid1 = "2 - Kolda" if ba3==2
-	replace subnatid1 = "3 - Matam" if ba3==3
-	replace subnatid1 = "4 - Kaffrine" if ba3==4
-	replace subnatid1 = "5 - Kedougou" if ba3==5
-	replace subnatid1 = "6 - Sedhiou" if ba3==6
-	replace subnatid1 = "7 - Dakar" if ba3==7
-	replace subnatid1 = "8 - Ziguinchor" if ba3==8
-	replace subnatid1 = "9 - Diourbel" if ba3==9
-	replace subnatid1 = "10 - Saint-Louis" if ba3==10
-	replace subnatid1 = "11 - Tambacounda" if ba3==11
-	replace subnatid1 = "12 - Kaolack" if ba3==12
-	replace subnatid1 = "13 - Thies" if ba3==13
-	replace subnatid1 = "14 - Louga" if ba3==14
+	replace subnatid1 = "1 - Dakar"        if ba3 == 1
+	replace subnatid1 = "2 - Ziguinchor"   if ba3 == 2
+	replace subnatid1 = "3 - Diourbel"     if ba3 == 3
+	replace subnatid1 = "4 - Saint-Louis"  if ba3 == 4
+	replace subnatid1 = "5 - Tambacounda"  if ba3 == 5
+	replace subnatid1 = "6 - Kaolack"      if ba3 == 6
+	replace subnatid1 = "7 - Thies"        if ba3 == 7
+	replace subnatid1 = "8 - Louga"        if ba3 == 8
+	replace subnatid1 = "9 - Fatick"       if ba3 == 9
+	replace subnatid1 = "10 - Kolda"       if ba3 == 10
+	replace subnatid1 = "11 - Matam"       if ba3 == 11
+	replace subnatid1 = "12 - Kaffrine"    if ba3 == 12
+	replace subnatid1 = "13 - Kedougou"    if ba3 == 13
+	replace subnatid1 = "14 - Sedhiou"     if ba3 == 14
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
-
 
 *<_subnatid2_>
 	gen str subnatid2 = ""
@@ -394,12 +392,8 @@ save "`path_in_stata'/SEN_2018_ENES_workingdata.dta", replace
 
 *<_age_>
 	gen age = b4_scol-1 if inrange(b4_scol,0,64)
-	replace age=67 if b4_classe==69
-	replace age=72 if b4_classe==74
-	replace age=77 if b4_classe==79
-	replace age=82 if b4_classe==84
-	replace age=87 if b4_classe==89
-	replace age=93 if b4_classe==94
+	replace age = 62 if b4_scol   == 64
+	replace age = b4_classe - 2 if inrange(b4_classe, 69,99) & mi(age)
 	label var age "Individual age"
 *</_age_>
 
@@ -559,8 +553,9 @@ save "`path_in_stata'/SEN_2018_ENES_workingdata.dta", replace
 
 
 *<_migrated_binary_>
-	gen migrated_binary = b9
-	recode migrated_binary (1 = 0) (2 = 1) (7 = .)
+	gen migrated_binary = .
+	replace migrated_binary = 0 if b9 == 1
+	replace migrated_binary = 1 if b9 == 2
 	label de lblmigrated_binary 0 "No" 1 "Yes"
 	label values migrated_binary lblmigrated_binary
 	label var migrated_binary "Individual has migrated"
@@ -569,12 +564,18 @@ save "`path_in_stata'/SEN_2018_ENES_workingdata.dta", replace
 
 *<_migrated_years_>
 	gen migrated_years = .
+	replace migrated_years = b10 if migrated_binary == 1
+	replace migrated_years = .   if migrated_binary != 1
 	label var migrated_years "Years since latest migration"
 *</_migrated_years_>
 
 
 *<_migrated_from_urban_>
 	gen migrated_from_urban = .
+	replace migrated_from_urban = 0 if inlist(b11a, 1, 2) & migrated_binary == 1
+	replace migrated_from_urban = 1 if inlist(b11a, 3, 4) & migrated_binary == 1
+	replace migrated_from_urban = . if b11a == 5
+	replace migrated_from_urban = . if migrated_binary != 1
 	label de lblmigrated_from_urban 0 "Rural" 1 "Urban"
 	label values migrated_from_urban lblmigrated_from_urban
 	label var migrated_from_urban "Migrated from area"
@@ -582,39 +583,90 @@ save "`path_in_stata'/SEN_2018_ENES_workingdata.dta", replace
 
 
 *<_migrated_from_cat_>
-/*
-1. Other village in the region 2. Village from another region 3. Other city or urban centre in the area 4. City or urban centre in another region 5. Out of Country
-*/
-
 	gen migrated_from_cat = .
-
-	replace migrated_from_cat = 2 if inlist(b11a, 1, 3)
-	replace migrated_from_cat = 4 if inlist(b11a, 2, 4)
-	replace migrated_from_cat = 5 if b11a == 5
+	* We cannot distinguish admin2 (department) for current residence, only admin1 (region).
+	* b11a codes 1 & 3: same region as current residence  --> cat 3 (from same admin1)
+	* b11a codes 2 & 4: different region                  --> cat 4 (from other admin1)
+	* b11a code  5    : from abroad                       --> cat 5 (from other country)
+	replace migrated_from_cat = 3 if inlist(b11a, 1, 3) & migrated_binary == 1
+	replace migrated_from_cat = 4 if inlist(b11a, 2, 4) & migrated_binary == 1
+	replace migrated_from_cat = 5 if b11a == 5           & migrated_binary == 1
 	replace migrated_from_cat = . if migrated_binary != 1
-	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country" 6 "Within country, admin unknown" 7 "Wholly unknow"
+	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" ///
+		3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country" ///
+		6 "Within country, admin unknown" 7 "Wholly unknown"
 	label values migrated_from_cat lblmigrated_from_cat
 	label var migrated_from_cat "Category of migration area"
 *</_migrated_from_cat_>
 
 
 *<_migrated_from_code_>
-	gen migrated_from_code = .
-	*label de lblmigrated_from_code
-	*label values migrated_from_code lblmigrated_from_code
+	* For within-country migrants (migrated_from_cat 3 or 4) we derive the origin
+	* region from b11b (department code) using floor(b11b/10), then map to the
+	* subnatid1 label that matches the region numbering in ba3.
+	* Department codes are two-digit for regions 1-9 (e.g. 11-14 for Dakar = region 1)
+	* and three-digit for regions 10-14 (e.g. 141-143 for Sedhiou = region 14),
+	* but in all cases floor(b11b/10) correctly recovers the region code.
+
+	gen migrated_from_code = ""
+
+	* Derive region of origin from department code in b11b
+	tempvar orig_reg
+	gen `orig_reg' = floor(b11b / 10) if migrated_binary == 1 & inlist(migrated_from_cat, 3, 4)
+
+	* Map region number to subnatid1-style string (same convention as subnatid1)
+	replace migrated_from_code =  "1 - Dakar"       if `orig_reg' == 1
+	replace migrated_from_code =  "2 - Ziguinchor"  if `orig_reg' == 2
+	replace migrated_from_code =  "3 - Diourbel"    if `orig_reg' == 3
+	replace migrated_from_code =  "4 - Saint-Louis" if `orig_reg' == 4
+	replace migrated_from_code =  "5 - Tambacounda" if `orig_reg' == 5
+	replace migrated_from_code =  "6 - Kaolack"     if `orig_reg' == 6
+	replace migrated_from_code =  "7 - Thies"       if `orig_reg' == 7
+	replace migrated_from_code =  "8 - Louga"       if `orig_reg' == 8
+	replace migrated_from_code =  "9 - Fatick"      if `orig_reg' == 9
+	replace migrated_from_code = "10 - Kolda"       if `orig_reg' == 10
+	replace migrated_from_code = "11 - Matam"       if `orig_reg' == 11
+	replace migrated_from_code = "12 - Kaffrine"    if `orig_reg' == 12
+	replace migrated_from_code = "13 - Kedougou"    if `orig_reg' == 13
+	replace migrated_from_code = "14 - Sedhiou"     if `orig_reg' == 14
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
 *</_migrated_from_code_>
 
-
 *<_migrated_from_country_>
-	gen migrated_from_country = .
+	gen migrated_from_country = ""
+	* b11c country codes for abroad migrants (b11a == 5)
+	replace migrated_from_country = "BEN" if b11c == 1  & migrated_binary == 1
+	replace migrated_from_country = "BFA" if b11c == 2  & migrated_binary == 1
+	replace migrated_from_country = "CIV" if b11c == 3  & migrated_binary == 1
+	replace migrated_from_country = "GNB" if b11c == 4  & migrated_binary == 1
+	replace migrated_from_country = "MLI" if b11c == 5  & migrated_binary == 1
+	replace migrated_from_country = "NER" if b11c == 6  & migrated_binary == 1
+	replace migrated_from_country = "TGO" if b11c == 7  & migrated_binary == 1
+	replace migrated_from_country = "GIN" if b11c == 8  & migrated_binary == 1
+	replace migrated_from_country = "GMB" if b11c == 9  & migrated_binary == 1
+	replace migrated_from_country = "Other ECOWAS"         if b11c == 10 & migrated_binary == 1
+	replace migrated_from_country = "MRT" if b11c == 11 & migrated_binary == 1
+	replace migrated_from_country = "Other Africa non-ECOWAS" if b11c == 12 & migrated_binary == 1
+	replace migrated_from_country = "FRA" if b11c == 13 & migrated_binary == 1
+	replace migrated_from_country = "ESP" if b11c == 14 & migrated_binary == 1
+	replace migrated_from_country = "ITA" if b11c == 15 & migrated_binary == 1
+	replace migrated_from_country = "Other Americas"       if b11c == 16 & migrated_binary == 1
+	replace migrated_from_country = "Other non-African"    if b11c == 17 & migrated_binary == 1
+	replace migrated_from_country = "" if migrated_from_cat != 5
+	replace migrated_from_country = "" if migrated_binary != 1
 	label var migrated_from_country "Code of migration country (ISO 3 Letter Code)"
 *</_migrated_from_country_>
 
-
 *<_migrated_reason_>
 	gen migrated_reason = .
-	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
+	replace migrated_reason = 1 if b12 == 1 & migrated_binary == 1
+	replace migrated_reason = 2 if b12 == 2 & migrated_binary == 1
+	replace migrated_reason = 3 if inlist(b12, 3, 4, 6) & migrated_binary == 1
+	replace migrated_reason = 4 if b12 == 5 & migrated_binary == 1
+	replace migrated_reason = 5 if b12 == 7 & migrated_binary == 1
+	replace migrated_reason = . if migrated_binary != 1
+	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" ///
+		3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
 	label values migrated_reason lblmigrated_reason
 	label var migrated_reason "Reason for migrating"
 *</_migrated_reason_>
