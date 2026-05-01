@@ -54,7 +54,8 @@ set mem 800m
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-local server  "C:\Users\wb611670\WBG\GLD - 611670_SF"
+// local server  "C:/Users/`c(username)'/WBG/GLD - Current Contributors/611670_SF"
+local server "C:\Users\wb611670\WBG\GLD - 611670_SF"
 local country "SEN"
 local year    "2023"
 local survey  "ENES"
@@ -284,20 +285,20 @@ save "`path_in_stata'/SEN_2023_ENES_workingdata.dta", replace
 
 </_subnatid1_note> */
 	gen str subnatid1 = ""
-	replace subnatid1 = " 1 - Fatick" if ba3==1
-	replace subnatid1 = " 2 - Kolda" if ba3==2
-	replace subnatid1 = " 3 - Matam" if ba3==3
-	replace subnatid1 = " 4 - Kaffrine" if ba3==4
-	replace subnatid1 = " 5 - Kedougou" if ba3==5
-	replace subnatid1 = " 6 - Sedhiou" if ba3==6
-	replace subnatid1 = " 7 - Dakar" if ba3==7
-	replace subnatid1 = " 8 - Ziguinchor" if ba3==8
-	replace subnatid1 = " 9 - Diourbel" if ba3==9
-	replace subnatid1 = " 10 - Saint-Louis" if ba3==10
-	replace subnatid1 = " 11 - Tambacounda" if ba3==11
-	replace subnatid1 = " 12 - Kaolack" if ba3==12
-	replace subnatid1 = " 13 - Thies" if ba3==13
-	replace subnatid1 = " 14 - Louga" if ba3==14
+	replace subnatid1 = "1 - Dakar"        if ba3 == 1
+	replace subnatid1 = "2 - Ziguinchor"   if ba3 == 2
+	replace subnatid1 = "3 - Diourbel"     if ba3 == 3
+	replace subnatid1 = "4 - Saint-Louis"  if ba3 == 4
+	replace subnatid1 = "5 - Tambacounda"  if ba3 == 5
+	replace subnatid1 = "6 - Kaolack"      if ba3 == 6
+	replace subnatid1 = "7 - Thies"        if ba3 == 7
+	replace subnatid1 = "8 - Louga"        if ba3 == 8
+	replace subnatid1 = "9 - Fatick"       if ba3 == 9
+	replace subnatid1 = "10 - Kolda"       if ba3 == 10
+	replace subnatid1 = "11 - Matam"       if ba3 == 11
+	replace subnatid1 = "12 - Kaffrine"    if ba3 == 12
+	replace subnatid1 = "13 - Kedougou"    if ba3 == 13
+	replace subnatid1 = "14 - Sedhiou"     if ba3 == 14
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 
@@ -475,7 +476,6 @@ save "`path_in_stata'/SEN_2023_ENES_workingdata.dta", replace
 	5: Migration
 ==============================================================================================%%*/
 
-
 {
 
 *<_migrated_mod_age_>
@@ -491,7 +491,9 @@ save "`path_in_stata'/SEN_2023_ENES_workingdata.dta", replace
 
 
 *<_migrated_binary_>
-	gen migrated_binary = b9
+	gen migrated_binary = .
+	replace migrated_binary = 0 if b9 == 1
+	replace migrated_binary = 1 if b9 == 2
 	label de lblmigrated_binary 0 "No" 1 "Yes"
 	label values migrated_binary lblmigrated_binary
 	label var migrated_binary "Individual has migrated"
@@ -500,13 +502,17 @@ save "`path_in_stata'/SEN_2023_ENES_workingdata.dta", replace
 
 *<_migrated_years_>
 	gen migrated_years = .
+	replace migrated_years = b10 if migrated_binary == 1
+	replace migrated_years = .   if migrated_binary != 1
 	label var migrated_years "Years since latest migration"
 *</_migrated_years_>
 
 
-
 *<_migrated_from_urban_>
 	gen migrated_from_urban = .
+	replace migrated_from_urban = 0 if inlist(b11a, 1, 2) & migrated_binary == 1
+	replace migrated_from_urban = 1 if inlist(b11a, 3, 4) & migrated_binary == 1
+	replace migrated_from_urban = . if b11a == 5
 	replace migrated_from_urban = . if migrated_binary != 1
 	label de lblmigrated_from_urban 0 "Rural" 1 "Urban"
 	label values migrated_from_urban lblmigrated_from_urban
@@ -516,37 +522,95 @@ save "`path_in_stata'/SEN_2023_ENES_workingdata.dta", replace
 
 *<_migrated_from_cat_>
 	gen migrated_from_cat = .
+	* We cannot distinguish admin2 (department) for current residence, only admin1 (region).
+	* b11a codes 1 & 3: same region as current residence  --> cat 3 (from same admin1)
+	* b11a codes 2 & 4: different region                  --> cat 4 (from other admin1)
+	* b11a code  5    : from abroad                       --> cat 5 (from other country)
+	replace migrated_from_cat = 3 if inlist(b11a, 1, 3) & migrated_binary == 1
+	replace migrated_from_cat = 4 if inlist(b11a, 2, 4) & migrated_binary == 1
+	replace migrated_from_cat = 5 if b11a == 5           & migrated_binary == 1
 	replace migrated_from_cat = . if migrated_binary != 1
-	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country" 6 "Within country, admin unknown" 7 "Wholly unknow"
+	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" ///
+		3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country" ///
+		6 "Within country, admin unknown" 7 "Wholly unknown"
 	label values migrated_from_cat lblmigrated_from_cat
 	label var migrated_from_cat "Category of migration area"
 *</_migrated_from_cat_>
 
 
 *<_migrated_from_code_>
-	gen migrated_from_code = .
- 	replace migrated_from_code = . if migrated_binary != 1
+	* For within-country migrants (migrated_from_cat 3 or 4) we derive the origin
+	* region from b11b (department code) using floor(b11b/10), then map to the
+	* subnatid1 label that matches the region numbering in ba3.
+	* Department codes are two-digit for regions 1-9 (e.g. 11-14 for Dakar = region 1)
+	* and three-digit for regions 10-14 (e.g. 141-143 for Sedhiou = region 14),
+	* but in all cases floor(b11b/10) correctly recovers the region code.
+
+	gen migrated_from_code = ""
+
+	* Derive region of origin from department code in b11b
+	tempvar orig_reg
+	gen `orig_reg' = floor(b11b / 10) if migrated_binary == 1 & inlist(migrated_from_cat, 3, 4)
+
+	* Map region number to subnatid1-style string (same convention as subnatid1)
+	replace migrated_from_code =  "1 - Dakar"       if `orig_reg' == 1
+	replace migrated_from_code =  "2 - Ziguinchor"  if `orig_reg' == 2
+	replace migrated_from_code =  "3 - Diourbel"    if `orig_reg' == 3
+	replace migrated_from_code =  "4 - Saint-Louis" if `orig_reg' == 4
+	replace migrated_from_code =  "5 - Tambacounda" if `orig_reg' == 5
+	replace migrated_from_code =  "6 - Kaolack"     if `orig_reg' == 6
+	replace migrated_from_code =  "7 - Thies"       if `orig_reg' == 7
+	replace migrated_from_code =  "8 - Louga"       if `orig_reg' == 8
+	replace migrated_from_code =  "9 - Fatick"      if `orig_reg' == 9
+	replace migrated_from_code = "10 - Kolda"       if `orig_reg' == 10
+	replace migrated_from_code = "11 - Matam"       if `orig_reg' == 11
+	replace migrated_from_code = "12 - Kaffrine"    if `orig_reg' == 12
+	replace migrated_from_code = "13 - Kedougou"    if `orig_reg' == 13
+	replace migrated_from_code = "14 - Sedhiou"     if `orig_reg' == 14
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
 *</_migrated_from_code_>
 
-
 *<_migrated_from_country_>
-	gen migrated_from_country = .
-	replace migrated_from_country = . if migrated_binary != 1
+	gen migrated_from_country = ""
+	* b11c country codes for abroad migrants (b11a == 5)
+	replace migrated_from_country = "BEN" if b11c == 1  & migrated_binary == 1
+	replace migrated_from_country = "BFA" if b11c == 2  & migrated_binary == 1
+	replace migrated_from_country = "CIV" if b11c == 3  & migrated_binary == 1
+	replace migrated_from_country = "GNB" if b11c == 4  & migrated_binary == 1
+	replace migrated_from_country = "MLI" if b11c == 5  & migrated_binary == 1
+	replace migrated_from_country = "NER" if b11c == 6  & migrated_binary == 1
+	replace migrated_from_country = "TGO" if b11c == 7  & migrated_binary == 1
+	replace migrated_from_country = "GIN" if b11c == 8  & migrated_binary == 1
+	replace migrated_from_country = "GMB" if b11c == 9  & migrated_binary == 1
+	replace migrated_from_country = "Other ECOWAS"         if b11c == 10 & migrated_binary == 1
+	replace migrated_from_country = "MRT" if b11c == 11 & migrated_binary == 1
+	replace migrated_from_country = "Other Africa non-ECOWAS" if b11c == 12 & migrated_binary == 1
+	replace migrated_from_country = "FRA" if b11c == 13 & migrated_binary == 1
+	replace migrated_from_country = "ESP" if b11c == 14 & migrated_binary == 1
+	replace migrated_from_country = "ITA" if b11c == 15 & migrated_binary == 1
+	replace migrated_from_country = "Other Americas"       if b11c == 16 & migrated_binary == 1
+	replace migrated_from_country = "Other non-African"    if b11c == 17 & migrated_binary == 1
+	replace migrated_from_country = "" if migrated_from_cat != 5
+	replace migrated_from_country = "" if migrated_binary != 1
 	label var migrated_from_country "Code of migration country (ISO 3 Letter Code)"
 *</_migrated_from_country_>
 
-
 *<_migrated_reason_>
 	gen migrated_reason = .
+	replace migrated_reason = 1 if b12 == 1 & migrated_binary == 1
+	replace migrated_reason = 2 if b12 == 2 & migrated_binary == 1
+	replace migrated_reason = 3 if inlist(b12, 3, 4, 6) & migrated_binary == 1
+	replace migrated_reason = 4 if b12 == 5 & migrated_binary == 1
+	replace migrated_reason = 5 if b12 == 7 & migrated_binary == 1
 	replace migrated_reason = . if migrated_binary != 1
-	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
+	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" ///
+		3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
 	label values migrated_reason lblmigrated_reason
 	label var migrated_reason "Reason for migrating"
 *</_migrated_reason_>
 
-
 }
+
 
 
 /*%%=============================================================================================
@@ -1001,27 +1065,142 @@ foreach v of local ed_var {
 
 
 *<_wage_no_compen_>
-	gen double wage_no_compen = d12a
-	replace wage_no_compen = . if wage_no_compen == 9999
-	replace wage_no_compen = wage_no_compen * 1000
+	* Survey has info for revenue of self-employed (e16_a, e16_b) but those seem
+	* much more unstable to do this imputation. Just wage employees
+	
+	* =====================================================================
+	* Wage imputation from D13 buckets — Senegal LFS 2019
+	* Uses medians from D12a respondents, with fallback hierarchy:
+	*   (1) male x urban x bucket  →  (2) male x bucket  →  (3) global x bucket
+	* =====================================================================
+
+	* ---------------------------------------------------------------------
+	* Step 1: Construct monthly wage in FCFA from D12a/D12b (valid answers)
+	* D12a is in thousands of FCFA; valid range: >0 and <9999
+	* Frequency codes: 1=day, 2=week, 3=month, 4=year
+	* Conversion: day*5*4.33 | week*4.33 | month*1 | year/12
+	* ---------------------------------------------------------------------
+	gen double wage_monthly = .
+
+	replace wage_monthly = d12a * 1000 * 5 * 4.33  if d12a > 0 & d12a < 9999 & d12b == 1
+	replace wage_monthly = d12a * 1000 * 4.33       if d12a > 0 & d12a < 9999 & d12b == 2
+	replace wage_monthly = d12a * 1000               if d12a > 0 & d12a < 9999 & d12b == 3
+	replace wage_monthly = d12a * 1000 / 12          if d12a > 0 & d12a < 9999 & d12b == 4
+
+	* ---------------------------------------------------------------------
+	* Step 2: Map D12a respondents' monthly wages into D13 bucket categories
+	* ---------------------------------------------------------------------
+	gen int d13_cat = .
+
+	replace d13_cat = 1  if !mi(wage_monthly) & wage_monthly <  37000
+	replace d13_cat = 2  if !mi(wage_monthly) & wage_monthly >= 37000   & wage_monthly <  74000
+	replace d13_cat = 3  if !mi(wage_monthly) & wage_monthly >= 74000   & wage_monthly < 111000
+	replace d13_cat = 4  if !mi(wage_monthly) & wage_monthly >= 111000  & wage_monthly < 148000
+	replace d13_cat = 5  if !mi(wage_monthly) & wage_monthly >= 148000  & wage_monthly < 185000
+	replace d13_cat = 6  if !mi(wage_monthly) & wage_monthly >= 185000  & wage_monthly < 222000
+	replace d13_cat = 7  if !mi(wage_monthly) & wage_monthly >= 222000  & wage_monthly < 259000
+	replace d13_cat = 8  if !mi(wage_monthly) & wage_monthly >= 259000  & wage_monthly < 296000
+	replace d13_cat = 9  if !mi(wage_monthly) & wage_monthly >= 296000  & wage_monthly < 333000
+	replace d13_cat = 10 if !mi(wage_monthly) & wage_monthly >= 333000  & wage_monthly < 370000
+	replace d13_cat = 11 if !mi(wage_monthly) & wage_monthly >= 370000  & wage_monthly < 407000
+	replace d13_cat = 12 if !mi(wage_monthly) & wage_monthly >= 407000  & wage_monthly < 481000
+	replace d13_cat = 13 if !mi(wage_monthly) & wage_monthly >= 481000  & wage_monthly < 629000
+	replace d13_cat = 14 if !mi(wage_monthly) & wage_monthly >= 629000  & wage_monthly < 925000
+	replace d13_cat = 15 if !mi(wage_monthly) & wage_monthly >= 925000  & wage_monthly < 1517000
+	replace d13_cat = 16 if !mi(wage_monthly) & wage_monthly >= 1517000
+
+	* ---------------------------------------------------------------------
+	* Step 3: Build weighted median lookup tables from D12a respondents,
+	*         including cell counts to enforce the 30-observation threshold
+	* ---------------------------------------------------------------------
+
+	* 3a: Weighted median by male x urban x bucket
+	preserve
+		keep if !mi(d13_cat) & !mi(wage_monthly)
+		gen n_su = 1
+		collapse (p50) wage_monthly (count) n_su [aw=weight], by(male urban d13_cat)
+		rename wage_monthly med_su
+		tempfile med_su
+		save "`med_su'"
+	restore
+
+	* 3b: Weighted median by male x bucket
+	preserve
+		keep if !mi(d13_cat) & !mi(wage_monthly)
+		gen n_s = 1
+		collapse (p50) wage_monthly (count) n_s [aw=weight] , by(male d13_cat)
+		rename wage_monthly med_s
+		tempfile med_s
+		save "`med_s'"
+	restore
+
+	* 3c: Global weighted median by bucket (no minimum observation rule)
+	preserve
+		keep if !mi(d13_cat) & !mi(wage_monthly)
+		collapse (p50) wage_monthly [aw=weight], by(d13_cat)
+		rename wage_monthly med_g
+		tempfile med_g
+		save "`med_g'"
+	restore
+
+	* ---------------------------------------------------------------------
+	* Step 4: Identify D13 respondents who need imputation
+	* Condition: D13 is a valid bucket (1–16) AND D12a is not a valid answer
+	* This manually enforces the skip logic regardless of how data was collected
+	* ---------------------------------------------------------------------
+	gen byte need_imp = (d13 >= 1 & d13 <= 16) & !(d12a > 0.0001 & d12a < 9999)
+
+	* For those needing imputation, set d13_cat to their reported D13 bucket
+	* (d13_cat is still missing for them at this point)
+	replace d13_cat = d13 if need_imp == 1
+
+	* ---------------------------------------------------------------------
+	* Step 5: Merge in median values (all three levels)
+	* Using keep(master match) so unmatched observations are retained safely
+	* ---------------------------------------------------------------------
+	merge m:1 male urban d13_cat using "`med_su'", keep(master match) nogen
+	merge m:1 male       d13_cat using "`med_s'",  keep(master match) nogen
+	merge m:1            d13_cat using "`med_g'",  keep(master match) nogen
+
+	* ---------------------------------------------------------------------
+	* Step 6: Assign imputed wage following fallback hierarchy,
+	*         requiring at least 30 observations per cell before using it
+	* ---------------------------------------------------------------------
+
+	* Priority 1: male x urban x bucket — only if cell has >= 30 observations
+	replace wage_monthly = med_su if need_imp == 1 & !mi(med_su) & n_su >= 30
+
+	* Priority 2: male x bucket — only if priority 1 not used, and cell has >= 30 obs
+	replace wage_monthly = med_s  if need_imp == 1 & mi(wage_monthly) ///
+								   & !mi(med_s) & n_s >= 30
+
+	* Priority 3: global bucket median — no minimum observation rule
+	replace wage_monthly = med_g  if need_imp == 1 & mi(wage_monthly) & !mi(med_g)
+
+	* ---------------------------------------------------------------------
+	* Step 7: Clean up auxiliary variables
+	* ---------------------------------------------------------------------
+	
+	drop d13_cat med_su med_s med_g n_su
+
+	gen double wage_no_compen = d12a if empstat == 1 & d12a!=9999
+	replace wage_no_compen = wage_monthly if empstat == 1 & need_imp == 1
+	replace wage_no_compen = . if wage_no_compen == 0
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
 
 
 *<_unitwage_>
-
-/* <_unitwage_note>
-	Unitwage refers to the unit used to record wage_no_compen, *not* the unit of
-	general wage payent. For example, PHL LFS asks about wage periodicity, then
-	asks for basic daily pay. The value of that pay would be wage_no_compen,
-	while unitwage is code 1 ("Daily") for all, regardless of the periodicity.
-</_unitwage_note> */
-
-	recode d12b (3=4)(4=8), gen(unitwage)
+	gen byte unitwage = .
+	replace unitwage = 1 if empstat == 1 & inrange(d12a, 0.01, 9998) & d12b == 1
+	replace unitwage = 2 if empstat == 1 & inrange(d12a, 0.01, 9998) & d12b == 2
+	replace unitwage = 5 if empstat == 1 & inrange(d12a, 0.01, 9998) & d12b == 3
+	replace unitwage = 8 if empstat == 1 & inrange(d12a, 0.01, 9998) & d12b == 4
+	replace unitwage = 5 if empstat == 1 & !inrange(d12a, 0.01, 9998) & need_imp == 1
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
 	label values unitwage lblunitwage
-	
+	drop need_imp
 *</_unitwage_>
 
 
@@ -1688,8 +1867,7 @@ quietly{
 
 *<_% KEEP VARIABLES - ALL_>
 
-	order countrycode survname survey icls_v isced_version isco_version isic_version year vermast veralt harmonization int_year int_month hhid pid weight weight_m weight_q psu ssu strata wave panel visit_no urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_orig educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field_orig vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
-
+	keep countrycode survname survey icls_v isced_version isco_version isic_version year vermast veralt harmonization int_year int_month hhid pid weight weight_m weight_q psu ssu strata wave panel visit_no urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_orig educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field_orig vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
 
 *</_% KEEP VARIABLES - ALL_>
 
@@ -1739,9 +1917,11 @@ quietly{
 quietly: describe, varlist
 local kept_vars `r(varlist)'
 
-foreach var of local kept_vars {
-   capture assert missing(`var')
-   if !_rc drop `var'
+foreach kept_var of local kept_vars {
+	
+	capture assert missing(`kept_var')
+	if !_rc drop `kept_var'
+   
 }
 
 *</_% DELETE MISSING VARIABLES_>
