@@ -90,7 +90,8 @@ local out_file "`level_2_harm'_ALL.dta"
 	keep subnatid1 urban weight
 	collapse (mean)weight, by(subnatid1 urban)
 	rename weight old_weight
-	save "`path_in_stata'\old_weight.dta", replace
+	tempfile old_weight
+	save `old_weight', replace
 
 	use "`path_in_stata'\sak201308_15_20180228_kemenkoperekonomian.dta", clear
 
@@ -375,10 +376,19 @@ provided due to it is part of the confidential information withheld by the NSO.
 	label var gaul_adm3_code "Global Administrative Unit Layers (GAUL) Admin 3 code"
 *</_gaul_adm3_code_>
 
+
+/*<_weight_scaler_note_>
+
+The backcasted weights were taken from V01_M, while the more detailed industry and occupation information 
+was taken from V02_M. This approach allows the file to retain the preferred weights while also benefiting from 
+the improved labor-market classification variables available in the later version.
+
+*<_weight_scaler_note_>*/
+
 *<_weight_scaler_>
 	preserve
 	collapse (mean)weight, by(subnatid1 urban)
-	merge 1:1 subnatid1 urban using "`path_in_stata'\old_weight.dta"
+	merge 1:1 subnatid1 urban using `old_weight', nogen
 	gen weight_scaler = old_weight/weight
 	drop old_weight weight
 	tempfile weight_scaler
