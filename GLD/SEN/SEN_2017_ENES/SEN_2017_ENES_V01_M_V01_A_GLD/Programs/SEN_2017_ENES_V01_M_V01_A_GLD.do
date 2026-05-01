@@ -56,7 +56,8 @@ set mem 800m
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-local server  "C:/Users/`c(username)'/WBG/GLD - Current Contributors/611670_SF"
+// local server  "C:/Users/`c(username)'/WBG/GLD - Current Contributors/611670_SF"
+local server "C:\Users\wb611670\WBG\GLD - 611670_SF"
 local country "SEN"
 local year    "2017"
 local survey  "ENES"
@@ -90,8 +91,9 @@ append using "`path_in_stata'/ENES_trim4__2017 ano.dta"
 replace wav=4 if missing(wav)
 *T2 is not available for download and the documentation implies that is has not been used for development of indicators, however there is a report for Q2, we are in conversation with senegal to figure out where and how can we access the data.
 
-save "`path_in_stata'/SEN_2017_ENES_workingdata.dta", replace
-*use "`path_in_stata'/SEN_2017_ENES_workingdata.dta", clear
+* Q1 has population 0-99, while the other two have 10-99, drop 0-9 in Q1 
+
+drop if b4_classe == 9 & wav == 1
 
 
 /*%%=============================================================================================
@@ -187,7 +189,7 @@ save "`path_in_stata'/SEN_2017_ENES_workingdata.dta", replace
 	Each element should always be as long as needed for the longest element. That is, if there are
 	60 psu coded 1 through 60, codes should be 01, 02, ..., 60. If there are 160 it should be 001,
 	002, ..., 160.
-
+	
 	There are some duplicates household and person ids across quarters, thus we add quarter numbers in hhid and pid
 
 </_hhid_note> */
@@ -209,13 +211,23 @@ save "`path_in_stata'/SEN_2017_ENES_workingdata.dta", replace
 
 
 *<_weight_>
+	* Weight is quarterly, to annualise we cannot divide by four as we only have three
+	count
+	local all_count = `r(N)'
+	gen wgt_weight = .
+	foreach num of numlist 1 3 4 {
+		count if wav == `num'
+		replace wgt_weight = `r(N)'/`all_count' if wav == `num'
+     }
+
 	gen weight = .
-	replace weight = poids_1_2017/4 if wav==1
-	replace weight = poids_3_2017/4 if wav==3
-	replace weight = poids_t4_2017/4 if wav==4
+	replace weight = poids_1_2017 * wgt_weight if wav==1
+	replace weight = poids_3_2017 * wgt_weight if wav==3
+	replace weight = poids_t4_2017 * wgt_weight if wav==4
 	replace weight = . if missing(weight)
 	label var weight "Survey sampling weight"
 *</_weight_>
+
 
 *<_weight_m_>
 	gen weight_m = .
@@ -294,35 +306,35 @@ save "`path_in_stata'/SEN_2017_ENES_workingdata.dta", replace
 
 </_subnatid1_note> */
 	gen str subnatid1 = ""
-	replace subnatid1 = "1 - Fatick" if region==1 
-	replace subnatid1 = "2 - Kolda" if region==2
-	replace subnatid1 = "3 - Matam" if region==3
-	replace subnatid1 = "4 - Kaffrine" if region==4
-	replace subnatid1 = "5 - Kedougou" if region==5
-	replace subnatid1 = "6 - Sedhiou" if region==6
-	replace subnatid1 = "7 - Dakar" if region==7
-	replace subnatid1 = "8 - Ziguinchor" if region==8
-	replace subnatid1 = "9 - Diourbel" if region==9
-	replace subnatid1 = "10 - Saint-Louis" if region==10
-	replace subnatid1 = "11 - Tambacounda" if region==11
-	replace subnatid1 = "12 - Kaolack" if region==12
-	replace subnatid1 = "13 - Thies" if region==13
-	replace subnatid1 = "14 - Louga" if region==14
+	replace subnatid1 = "1 - Dakar" if region==1 
+	replace subnatid1 = "2 - Ziguinchor" if region==2
+	replace subnatid1 = "3 - Diourbel" if region==3
+	replace subnatid1 = "4 - Saint-Louis" if region==4
+	replace subnatid1 = "5 - Tambacounda" if region==5
+	replace subnatid1 = "6 - Kaolack" if region==6
+	replace subnatid1 = "7 - Thies" if region==7
+	replace subnatid1 = "8 - Louga" if region==8
+	replace subnatid1 = "9 - Fatick" if region==9
+	replace subnatid1 = "10 - Kolda" if region==10
+	replace subnatid1 = "11 - Matam" if region==11
+	replace subnatid1 = "12 - Kaffrine" if region==12
+	replace subnatid1 = "13 - Kedougou" if region==13
+	replace subnatid1 = "14 - Sedhiou" if region==14
 	
-	replace subnatid1 = "1 - Fatick" if ba3==1 & missing(subnatid1)
-	replace subnatid1 = "2 - Kolda" if ba3==2 & missing(subnatid1)
-	replace subnatid1 = "3 - Matam" if ba3==3 & missing(subnatid1)
-	replace subnatid1 = "4 - Kaffrine" if ba3==4 & missing(subnatid1)
-	replace subnatid1 = "5 - Kedougou" if ba3==5 & missing(subnatid1)
-	replace subnatid1 = "6 - Sedhiou" if ba3==6 & missing(subnatid1)
-	replace subnatid1 = "7 - Dakar" if ba3==7 & missing(subnatid1)
-	replace subnatid1 = "8 - Ziguinchor" if ba3==8 & missing(subnatid1)
-	replace subnatid1 = "9 - Diourbel" if ba3==9 & missing(subnatid1)
-	replace subnatid1 = "10 - Saint-Louis" if ba3==10 & missing(subnatid1)
-	replace subnatid1 = "11 - Tambacounda" if ba3==11 & missing(subnatid1)
-	replace subnatid1 = "12 - Kaolack" if ba3==12 & missing(subnatid1)
-	replace subnatid1 = "13 - Thies" if ba3==13 & missing(subnatid1)
-	replace subnatid1 = "14 - Louga" if ba3==14 & missing(subnatid1)
+	replace subnatid1 = "1 - Dakar" if ba3==1 & missing(subnatid1)
+	replace subnatid1 = "2 - Ziguinchor" if ba3==2 & missing(subnatid1)
+	replace subnatid1 = "3 - Diourbel" if ba3==3 & missing(subnatid1)
+	replace subnatid1 = "4 - Saint-Louis" if ba3==4 & missing(subnatid1)
+	replace subnatid1 = "5 - Tambacounda" if ba3==5 & missing(subnatid1)
+	replace subnatid1 = "6 - Kaolack" if ba3==6 & missing(subnatid1)
+	replace subnatid1 = "7 - Thies" if ba3==7 & missing(subnatid1)
+	replace subnatid1 = "8 - Louga" if ba3==8 & missing(subnatid1)
+	replace subnatid1 = "9 - Fatick" if ba3==9 & missing(subnatid1)
+	replace subnatid1 = "10 - Kolda" if ba3==10 & missing(subnatid1)
+	replace subnatid1 = "11 - Matam" if ba3==11 & missing(subnatid1)
+	replace subnatid1 = "12 - Kaffrine" if ba3==12 & missing(subnatid1)
+	replace subnatid1 = "13 - Kedougou" if ba3==13 & missing(subnatid1)
+	replace subnatid1 = "14 - Sedhiou" if ba3==14 & missing(subnatid1)
 	
 	*Q4
 	destring DR , gen(dr_int)
@@ -427,40 +439,41 @@ save "`path_in_stata'/SEN_2017_ENES_workingdata.dta", replace
 
 *<_age_>
 	gen age = .
-	replace age = 12 if b4_classe==1 & wave == "Q3"
-	replace age = 17 if b4_classe==2 & wave == "Q3"
-	replace age = 22 if b4_classe==3 & wave == "Q3"
-	replace age = 27 if b4_classe==4 & wave == "Q3"
-	replace age = 37 if b4_classe==5 & wave == "Q3"
-	replace age = 44 if b4_classe==6 & wave == "Q3"
-	replace age = 47 if b4_classe==7 & wave == "Q3"
-	replace age = 52 if b4_classe==8 & wave == "Q3"
-	replace age = 57 if b4_classe==9 & wave == "Q3"
-	replace age = 62 if b4_classe==10 & wave == "Q3"
-	replace age = 67 if b4_classe==11 & wave == "Q3"
-	replace age = 72 if b4_classe==12 & wave == "Q3"
-	replace age = 77 if b4_classe==13 & wave == "Q3"
-	replace age = 82 if b4_classe==14 & wave == "Q3"
+
+	replace age = 12 if b4_classe==1 & wave == "Q3"   // 10-14
+	replace age = 17 if b4_classe==2 & wave == "Q3"   // 15-19
+	replace age = 22 if b4_classe==3 & wave == "Q3"   // 20-24
+	replace age = 27 if b4_classe==4 & wave == "Q3"   // 25-29
+	replace age = 32 if b4_classe==5 & wave == "Q3"   // 30-34
+	replace age = 37 if b4_classe==6 & wave == "Q3"   // 35-39
+	replace age = 42 if b4_classe==7 & wave == "Q3"   // 40-44
+	replace age = 47 if b4_classe==8 & wave == "Q3"   // 45-49
+	replace age = 52 if b4_classe==9 & wave == "Q3"   // 50-54
+	replace age = 57 if b4_classe==10 & wave == "Q3"  // 55-59
+	replace age = 62 if b4_classe==11 & wave == "Q3"  // 60-64
+	replace age = 67 if b4_classe==12 & wave == "Q3"  // 65-69
+	replace age = 72 if b4_classe==13 & wave == "Q3"  // 70-74
+	replace age = 77 if b4_classe==14 & wave == "Q3"  // 75+
 	
-	replace age=5 if b4_classe==9 & missing(age)
-	replace age=12 if b4_classe==14 & missing(age)
-	replace age=17 if b4_classe==19 & missing(age)
-	replace age=22 if b4_classe==24 & missing(age)
-	replace age=27 if b4_classe==29 & missing(age)
-	replace age=32 if b4_classe==34 & missing(age)
-	replace age=37 if b4_classe==39 & missing(age)
-	replace age=42 if b4_classe==44 & missing(age)
-	replace age=47 if b4_classe==49 & missing(age)
-	replace age=52 if b4_classe==54 & missing(age)
-	replace age=57 if b4_classe==59 & missing(age)
-	replace age=62 if b4_classe==64 & missing(age)
-	replace age=67 if b4_classe==69 & missing(age)
-	replace age=72 if b4_classe==74 & missing(age)
-	replace age=77 if b4_classe==79 & missing(age)
-	replace age=82 if b4_classe==84 & missing(age)
-	replace age=87 if b4_classe==89 & missing(age)
-	replace age=93 if b4_classe==94 & missing(age)
-	replace age=95 if b4_classe==120 & missing(age)
+	replace age = 5  if b4_classe ==   9 & missing(age)
+	replace age = 12 if b4_classe ==  14 & missing(age)
+	replace age = 17 if b4_classe ==  19 & missing(age)
+	replace age = 22 if b4_classe ==  24 & missing(age)
+	replace age = 27 if b4_classe ==  29 & missing(age)
+	replace age = 32 if b4_classe ==  34 & missing(age)
+	replace age = 37 if b4_classe ==  39 & missing(age)
+	replace age = 42 if b4_classe ==  44 & missing(age)
+	replace age = 47 if b4_classe ==  49 & missing(age)
+	replace age = 52 if b4_classe ==  54 & missing(age)
+	replace age = 57 if b4_classe ==  59 & missing(age)
+	replace age = 62 if b4_classe ==  64 & missing(age)
+	replace age = 67 if b4_classe ==  69 & missing(age)
+	replace age = 72 if b4_classe ==  74 & missing(age)
+	replace age = 77 if b4_classe ==  79 & missing(age)
+	replace age = 82 if b4_classe ==  84 & missing(age)
+	replace age = 87 if b4_classe ==  89 & missing(age)
+	replace age = 93 if b4_classe ==  94 & missing(age)
+	replace age = 95 if b4_classe == 120 & missing(age)
 	label var age "Individual age"
 *</_age_>
 
@@ -619,8 +632,9 @@ save "`path_in_stata'/SEN_2017_ENES_workingdata.dta", replace
 
 
 *<_migrated_binary_>
-	gen migrated_binary = b9
-	recode migrated_binary (1 = 0) (2 = 1)
+	gen migrated_binary = .
+	replace migrated_binary = 0 if b9 == 1
+	replace migrated_binary = 1 if b9 == 2
 	label de lblmigrated_binary 0 "No" 1 "Yes"
 	label values migrated_binary lblmigrated_binary
 	label var migrated_binary "Individual has migrated"
@@ -628,14 +642,16 @@ save "`path_in_stata'/SEN_2017_ENES_workingdata.dta", replace
 
 
 *<_migrated_years_>
-	gen migrated_years = b10
-	replace migrated_years = . if migrated_binary != 1
+	gen migrated_years = .
+	replace migrated_years = b10 if migrated_binary == 1
+	replace migrated_years = .   if migrated_binary != 1
 	label var migrated_years "Years since latest migration"
 *</_migrated_years_>
 
 
 *<_migrated_from_urban_>
 	gen migrated_from_urban = .
+	replace migrated_from_urban = . if migrated_binary != 1
 	label de lblmigrated_from_urban 0 "Rural" 1 "Urban"
 	label values migrated_from_urban lblmigrated_from_urban
 	label var migrated_from_urban "Migrated from area"
@@ -644,6 +660,7 @@ save "`path_in_stata'/SEN_2017_ENES_workingdata.dta", replace
 
 *<_migrated_from_cat_>
 	gen migrated_from_cat = .
+	replace migrated_from_cat = . if migrated_binary != 1
 	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country" 6 "Within country, admin unknown" 7 "Wholly unknow"
 	label values migrated_from_cat lblmigrated_from_cat
 	label var migrated_from_cat "Category of migration area"
@@ -651,29 +668,32 @@ save "`path_in_stata'/SEN_2017_ENES_workingdata.dta", replace
 
 
 *<_migrated_from_code_>
-	gen migrated_from_code = .
-	*label de lblmigrated_from_code
-	*label values migrated_from_code lblmigrated_from_code
+	gen migrated_from_code = ""
+	replace migrated_from_code = "" if migrated_binary != 1
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
 *</_migrated_from_code_>
 
 
 *<_migrated_from_country_>
-	gen migrated_from_country = .
+	gen migrated_from_country = ""
+	replace migrated_from_country = "" if migrated_binary != 1
 	label var migrated_from_country "Code of migration country (ISO 3 Letter Code)"
 *</_migrated_from_country_>
 
-
 *<_migrated_reason_>
-/*
-1. To follow or join family 2. To continue studies 3. To look for a job there 4. Assignment 5. Forced relocation (Political/security reasons/natural disasters) 6. Other, please specify
-*/
-	gen migrated_reason = b12
-	recode migrated_reason (4 = 1) (5 = 4) (6 7 = 5)
-	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
+	gen migrated_reason = .
+	replace migrated_reason = 1 if b12 == 1 & migrated_binary == 1
+	replace migrated_reason = 2 if b12 == 2 & migrated_binary == 1
+	replace migrated_reason = 3 if inlist(b12, 3, 4, 6) & migrated_binary == 1
+	replace migrated_reason = 4 if b12 == 5 & migrated_binary == 1
+	replace migrated_reason = 5 if b12 == 7 & migrated_binary == 1
+	replace migrated_reason = . if migrated_binary != 1
+	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" ///
+		3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
 	label values migrated_reason lblmigrated_reason
 	label var migrated_reason "Reason for migrating"
 *</_migrated_reason_>
+
 
 }
 
