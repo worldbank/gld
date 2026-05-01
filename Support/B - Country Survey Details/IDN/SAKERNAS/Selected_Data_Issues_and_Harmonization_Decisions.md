@@ -2,7 +2,7 @@
 
 ## Issue 1: High share of elementary occupation in 2001–2003
 
-[Insert image link here]
+![IDN_occup1](utilities/IDN_occup1.png)
 
 The high share of elementary occupations observed in 2001–2003 seems to be mainly driven by the change in occupation coding starting in 2001. Before 2001, the occupation variable used KBJI 2-digit codes, while from 2001 onward the data used KBJI 3-digit codes. The more detailed 3-digit classification introduced additional occupation categories and changed how some workers were mapped into broad occupation groups.
 
@@ -10,7 +10,7 @@ As a result, the increase in elementary occupations during these years likely re
 
 ## Issue 2: High agriculture share in 1989
 
-[Insert image link here]
+![IDN_agri_1989](utilities/IDN_agri_1989.png)
 
 The high agriculture share in 1989 appears to be due to a coding issue in the raw industry variable. In the 1989 data, agriculture-related codes appear in two formats at the same time: two-digit codes such as 01–04 and one-digit codes such as 1–4. These appear to refer to different groups of observations, which suggests an inconsistency in the original coding.
 
