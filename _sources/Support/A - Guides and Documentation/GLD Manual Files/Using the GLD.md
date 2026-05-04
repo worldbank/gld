@@ -73,7 +73,7 @@ Source: BRA PNADC, IBGE; …; TZA LFS, NBS via World Bank Global Labor Database
 In the bibliography we propose the following citation:
 
 ```
-World Bank Jobs Group. (n.d.). Global Labor Database. World Bank. Retrieved (Date of retrieval), from https://github.com/worldbank/gld. 
+World Bank Jobs and Growth. (n.d.). Global Labor Database. World Bank. Retrieved (Date of retrieval), from https://github.com/worldbank/gld. 
 ```
 
 The reader should be advised that the Date of retrieval of the data should correspond not to the last day the website was viewed, but to the day the data was last downloaded. Suppose a user downloaded the data by the 10th of Month of Year and on the 11th of that Month, data for the CCCC_YYYY_LFS was updated from CCCC_YYYY_LFS_V01_M_V0*2*_GLD to CCCC_YYYY_LFS_V01_M_V0*3*_GLD. The user’s data still contains V02. Then, even though the website was last accessed on the 13th of Month, the effective date for the purposes of the reference should remain the 10th of Month.
