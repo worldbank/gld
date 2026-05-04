@@ -142,21 +142,3 @@ SARMD:
 ```stata
 recode q12_12 (5=4) (6=1) (7/14=5), gen(nlfreason)
 ```
-
-## Labor income
-
-The GLD keeps a usable annual labor-income variable, while SARMD leaves it missing. This is one of the more important practical differences in the 2016 comparison. The GLD uses the available annual labor-income aggregate `t_wage_total_year`. SARMD drops that information.
-
-### Code snippets
-
-GLD:
-
-```stata
-gen laborincome = t_wage_total_year
-```
-
-SARMD:
-
-```stata
-cap gen laborincome=.
-```
