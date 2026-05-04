@@ -263,27 +263,9 @@ SARMD:
 recode q_1_5 (2=0)(3=0), gen(urban)
 ```
 
-## PSU
-
-The two versions use different raw fields for PSU. GLD uses `q_1_3`, while SARMD uses `q_1_4`. This is not just a cosmetic difference because PSU is part of the sample design. Any change here should be based on the sampling documentation rather than on harmonization convenience.
-
-### Code snippets
-
-GLD:
-
-```stata
-gen psu=q_1_3
-```
-
-SARMD:
-
-```stata
-gen psu= q_1_4
-```
-
 ## Household size
 
-The two versions do not build household size in the same way. GLD uses the delivered household-size field, while SARMD rebuilds household size from the roster. Those two approaches are not always equivalent when a survey has special member categories or roster quirks. Unless there is evidence the delivered household size is wrong, the GLD approach is the safer default.
+The two versions do not build household size in the same way. GLD uses the given household-size variable, while SARMD rebuilds household size from the roster. We keep the given variable because it helps avoid information loss. If a user prefers the roster-based version, they can always recreate it with a household-level command such as `bys hhid: egen hsize = count(pid)`.
 
 ### Code snippets
 

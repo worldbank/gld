@@ -228,7 +228,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_psu_>
-	gen psu=q_1_3
+	gen psu=q_1_4
 	label var psu "Primary sampling units"
 *</_psu_>
 
