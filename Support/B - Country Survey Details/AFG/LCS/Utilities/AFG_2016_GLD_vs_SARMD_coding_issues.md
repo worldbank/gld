@@ -89,6 +89,8 @@ The GLD labor-status totals themselves look stable across the two Afghanistan ro
 | 2016 | SARMD-style `activity_status` | non-LF | 37,602 | 67,030,492 |
 | 2016 | SARMD-style `activity_status` | missing | 1,034 | 1,847,857 |
 
+The biggest contrast is in unemployment. Under the GLD, the weighted unemployed population rises from about 5.26 million in 2013 to about 6.71 million in 2016. Under the 2016 SARMD-style `activity_status` collapse, the weighted unemployed population would instead jump to about 17.16 million. That is a much larger break across rounds, and it is hard to reconcile with the questionnaire evidence reviewed above.
+
 ### Code snippets
 
 GLD:
