@@ -90,16 +90,20 @@ This table is hard to reconcile with the questionnaire flow. These people are al
 
 ### GLD 2013 and 2016 comparison
 
-The GLD labor-status totals themselves look stable across the two Afghanistan rounds, which makes the questionnaire-based GLD treatment easier to defend.
+The GLD labor-status totals themselves look stable across the two Afghanistan rounds, which makes the questionnaire-based GLD treatment easier to defend. It is also useful to compare those totals with the 2016 SARMD-style collapse of the given `activity_status` variable.
 
-| Year | GLD status | Unweighted count | Weighted population |
-|---|---|---:|---:|
-| 2013 | employed | 38,223 | 56,924,905 |
-| 2013 | unemployed | 3,118 | 5,262,155 |
-| 2013 | non-LF | 43,264 | 71,153,527 |
-| 2016 | employed | 34,548 | 57,937,069 |
-| 2016 | unemployed | 4,090 | 6,712,551 |
-| 2016 | non-LF | 45,150 | 79,230,580 |
+| Year | Source | Status | Unweighted count | Weighted population |
+|---|---|---|---:|---:|
+| 2013 | GLD | employed | 38,223 | 56,924,905 |
+| 2013 | GLD | unemployed | 3,118 | 5,262,155 |
+| 2013 | GLD | non-LF | 43,264 | 71,153,527 |
+| 2016 | GLD | employed | 34,548 | 57,937,069 |
+| 2016 | GLD | unemployed | 4,090 | 6,712,551 |
+| 2016 | GLD | non-LF | 45,150 | 79,230,580 |
+| 2016 | SARMD-style `activity_status` | employed | 34,072 | 57,841,147 |
+| 2016 | SARMD-style `activity_status` | unemployed | 11,080 | 17,160,704 |
+| 2016 | SARMD-style `activity_status` | non-LF | 37,602 | 67,030,492 |
+| 2016 | SARMD-style `activity_status` | missing | 1,034 | 1,847,857 |
 
 ### Code snippets
 
