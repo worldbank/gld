@@ -619,8 +619,7 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educy_>
-	gen byte educy=q_10_6
-	replace educy=. if age<ed_mod_age | educy==.a
+	gen byte educy=.
 	label var educy "Years of education"
 *</_educy_>
 
