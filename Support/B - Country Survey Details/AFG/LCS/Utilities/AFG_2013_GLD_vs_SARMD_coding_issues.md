@@ -54,7 +54,7 @@ replace lstatus=3 if q_11_11==2
 
 ## Sector of activity (`ocusec`)
 
-Some employed people are left without a sector classification in the SARMD version. In the questionnaire, `q_11_13==3` is explicitly “salaried worker, public sector.” The other employed categories `q_11_13==1`, `2`, `4`, `5`, and `6` are not public-sector salaried workers. The GLD therefore treats them as non-public. That is a practical assumption rather than a literal statement that every self-employed or unpaid family worker is private in all cases. In principle, someone could be self-employed while working mainly for government clients, but that is likely to be rare, and the survey does not provide a separate status code for that situation. SARMD only codes `q_11_13==3` as public and `q_11_13==2` as private, so some valid workers are left uncoded instead of being assigned to the non-public side.
+Some employed people are left without a sector classification in the SARMD version. In the questionnaire, `q_11_13==3` is explicitly “salaried worker, public sector.” The other employed categories `q_11_13==1`, `2`, `4`, `5`, and `6` are not public-sector salaried workers. The GLD therefore treats them as non-public. That is a practical assumption rather than a literal statement that every self-employed or unpaid family worker is private in all cases. In principle, someone could be self-employed while working mainly for government clients, but that is likely to be rare. Even in settings where government contracting is common, those workers are still usually private rather than public employees. The survey does not provide a separate status code for that situation. SARMD only codes `q_11_13==3` as public and `q_11_13==2` as private, so some valid workers are left uncoded instead of being assigned to the non-public side.
 
 ### Raw coding details
 
@@ -84,6 +84,33 @@ gen byte ocusec=1 if q_11_13==3
 replace ocusec=2 if q_11_13==2
 replace ocusec=. if lstatus!=1
 ```
+
+### 2016 SARMD treatment
+
+This is also not internally consistent within SARMD. In the 2016 SARMD file, the same broad non-public assumption is used directly:
+
+```stata
+recode q12_13 (1 2 4 5 6=2) (3=1), gen(ocusec)
+```
+
+| Variable | Raw code | Raw meaning | 2016 SARMD treatment |
+|---|---:|---|---|
+| `q12_13` | `1` | day labourer | private / non-public |
+| `q12_13` | `2` | salaried worker, private sector | private / non-public |
+| `q12_13` | `3` | salaried worker, public sector | public |
+| `q12_13` | `4` | self-employed | private / non-public |
+| `q12_13` | `5` | employer | private / non-public |
+| `q12_13` | `6` | unpaid family worker | private / non-public |
+
+### Weighted comparison
+
+The weighted totals also show why the narrow 2013 SARMD treatment is hard to sustain. If we count only `q_11_13==2` as private, the 2013 weighted private total is only about 3.46 million. Under the GLD treatment, the 2013 weighted private or non-public total is about 49.22 million, which is much closer to the 2016 weighted private or non-public total of 51.51 million.
+
+| Year | Definition | Public weighted population | Private / non-public weighted population |
+|---|---|---:|---:|
+| 2013 | GLD treatment | 6.02 million | 49.22 million |
+| 2013 | narrow SARMD-style treatment | 6.02 million | 3.46 million |
+| 2016 | GLD / SARMD treatment | 5.62 million | 51.51 million |
 
 ## Reason out of labor force (`nlfreason`)
 
