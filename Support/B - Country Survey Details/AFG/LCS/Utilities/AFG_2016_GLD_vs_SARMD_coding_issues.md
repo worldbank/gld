@@ -40,9 +40,12 @@ This table shows how the GLD questionnaire buckets line up with the given `activ
 | `q12_5==1` | produced durable goods for own use | employed | 302 | 187 | 249 | 0 | 0 |
 | `q12_7==1` | reported some work even for only one hour | employed | 66 | 27 | 76 | 0 | 0 |
 | `q12_8==1` | temporarily absent from work | employed | 335 | 0 | 155 | 1 | 0 |
-| `q12_10==1` after not being in the work branch | available to work | not enough on its own; can become unemployed with search or found job | 256 | 0 | 5,813 | 2,321 | 0 |
-| `q12_10==2` after not being in the work branch | not available to work | non-LF | 1,962 | 0 | 2,573 | 35,280 | 126 |
-| residual | everything else | non-LF | 9 | 3 | 5 | 0 | 908 |
+| `q12_10==1` and `q12_11==1` | available and looking for work | unemployed | 0 | 0 | 4,077 | 0 | 0 |
+| `q12_10==1` and `q12_12==8` | available and already found work | unemployed | 0 | 0 | 13 | 0 | 0 |
+| `q12_10==1` only | available but not looking | non-LF / potential LF | 256 | 0 | 1,723 | 2,321 | 0 |
+| `q12_11==1` only | not available but looking | non-LF / potential LF | 0 | 0 | 20 | 0 | 0 |
+| `q12_12==8` without availability | not available but already found work | non-LF | 0 | 0 | 83 | 0 | 0 |
+| residual | everything else | non-LF | 1,971 | 3 | 2,475 | 35,280 | 1,034 |
 
 ### Suspicious treatments in the given `activity_status` variable
 
