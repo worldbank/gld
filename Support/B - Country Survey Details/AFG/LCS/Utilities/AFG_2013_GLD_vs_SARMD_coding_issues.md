@@ -172,31 +172,6 @@ replace literacy = 1 if (q_10_5==1 & inrange(q_10_6,1,19)) | inrange(q_10_5,2,6)
 replace literacy=. if age<6
 ```
 
-## Years of education (`educy`)
-
-The SARMD version edits the raw years-of-education variable more aggressively than GLD. The survey records completed years in `q_10_6`. The GLD mostly keeps that reported value, apart from age-based restrictions. SARMD fills in years for several schooling tracks when the raw value is zero and applies stronger consistency edits. This makes SARMD more imputed, while GLD stays closer to the reported number of years.
-
-### Code snippets
-
-GLD:
-
-```stata
-gen byte educy=q_10_6
-replace educy=. if age<ed_mod_age | educy==.a
-```
-
-SARMD:
-
-```stata
-gen educy = q_10_6
-replace educy=6  if q_10_5==2 & educy==0
-replace educy=9  if q_10_5==3 & educy==0
-replace educy=12 if q_10_5==4 & educy==0
-replace educy=12 if q_10_5==5 & educy==0
-replace educy=16 if q_10_5==6 & educy==0
-replace educy=. if educy>age+1 & educy<. & age!=.
-```
-
 ## Education ladder (`educat7`)
 
 The two versions differ in how they handle the education ladder, especially Islamic schooling. The survey records schooling track in `q_10_5` and completed grade in `q_10_6`. The GLD uses both pieces together and places Islamic schooling on the education ladder by grade completed. SARMD instead leaves Islamic schooling as not classified. This means GLD keeps more usable information from the raw education record.
@@ -209,7 +184,7 @@ The two versions differ in how they handle the education ladder, especially Isla
 | `q_10_5==7` with grade `6` | Islamic school at primary threshold | primary complete | not classified |
 | `q_10_5==7` with grades `7` to `9` | Islamic school above primary threshold | secondary incomplete | not classified |
 | `q_10_5==7` with grades `10` to `12` | Islamic school upper grades | secondary complete | not classified |
-| `q_10_5==7` with grades `13` to `14` | Islamic school highest grades | post-secondary / tertiary ladder placement | not classified |
+| `q_10_5==7` with grades `13` to `14` | Islamic school highest grades | higher than secondary but not university | not classified |
 
 ### Code snippets
 
