@@ -211,22 +211,14 @@ The SARMD version does not line up well with the questionnaire for self-employed
 
 ### Raw coding details
 
-| Variable | Raw code | Raw meaning | GLD treatment | SARMD treatment |
-|---|---:|---|---|---|
-| `q_11_13` | `1` | day labourer | daily | daily |
-| `q_11_13` | `2` | salaried worker, private sector | monthly | monthly |
-| `q_11_13` | `3` | salaried worker, public sector | monthly | monthly |
-| `q_11_13` | `4` | self-employed without paid employees | monthly | annual |
-| `q_11_13` | `5` | self-employed with paid employees | monthly | annual |
-| `q_11_13` | `6` | unpaid family worker | missing | missing |
-
-### Supporting wage questions
-
-| Variable | Questionnaire meaning |
-|---|---|
-| `q_11_14` | daily wage in past week |
-| `q_11_15` | monthly salary |
-| `q_11_16` | average monthly profit |
+| Status variable | Raw code | Raw meaning | Wage question | Questionnaire meaning | GLD treatment | SARMD treatment |
+|---|---:|---|---|---|---|---|
+| `q_11_13` | `1` | day labourer | `q_11_14` | daily wage in past week | daily | daily |
+| `q_11_13` | `2` | salaried worker, private sector | `q_11_15` | monthly salary | monthly | monthly |
+| `q_11_13` | `3` | salaried worker, public sector | `q_11_15` | monthly salary | monthly | monthly |
+| `q_11_13` | `4` | self-employed without paid employees | `q_11_16` | average monthly profit | monthly | annual |
+| `q_11_13` | `5` | self-employed with paid employees | `q_11_16` | average monthly profit | monthly | annual |
+| `q_11_13` | `6` | unpaid family worker | none | no direct wage question used | missing | missing |
 
 ### Code snippets
 
