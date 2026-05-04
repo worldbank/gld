@@ -54,7 +54,7 @@ replace lstatus=3 if q_11_11==2
 
 ## Sector of activity (`ocusec`)
 
-Some employed people are left without a sector classification in the SARMD version. In the questionnaire, `q_11_13==3` is “salaried worker, public sector,” while `q_11_13==1`, `2`, `4`, `5`, and `6` all fall outside that category and should map to the non-public side. The GLD does that. SARMD only codes `q_11_13==3` as public and `q_11_13==2` as private, so some valid workers are left uncoded.
+Some employed people are left without a sector classification in the SARMD version. In the questionnaire, `q_11_13==3` is explicitly “salaried worker, public sector.” The other employed categories `q_11_13==1`, `2`, `4`, `5`, and `6` are not public-sector salaried workers. The GLD therefore treats them as non-public. That is a practical assumption rather than a literal statement that every self-employed or unpaid family worker is private in all cases. In principle, someone could be self-employed while working mainly for government clients, but that is likely to be rare, and the survey does not provide a separate status code for that situation. SARMD only codes `q_11_13==3` as public and `q_11_13==2` as private, so some valid workers are left uncoded instead of being assigned to the non-public side.
 
 ### Raw coding details
 
