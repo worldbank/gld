@@ -8,7 +8,7 @@ Files reviewed:
 
 ## Labor status
 
-Labor status is being built in two very different ways. The GLD reconstructs it from the questionnaire, while SARMD simply recodes the prebuilt `activity_status` variable. That matters because the GLD rule is transparent: it shows exactly who is treated as employed, unemployed, or outside the labor force based on the survey questions. SARMD may still be reasonable, but it depends entirely on how `activity_status` was produced upstream.
+Labor status is not just being built differently. The given `activity_status` variable also does not line up cleanly with the GLD buckets. The GLD rebuilds labor status from the questionnaire. SARMD collapses the given `activity_status` variable into employed, unemployed, and non-LF. The two approaches agree on the narrow unemployment core, but they still differ in some important places. In particular, the given `activity_status` variable treats some people with direct work signals as unemployed, and it also treats some apprentices, temporarily laid-off people, and similar cases as employed or unemployed even though the GLD puts them outside the labor force.
 
 ### Raw coding details
 
@@ -19,9 +19,64 @@ Labor status is being built in two very different ways. The GLD reconstructs it 
 | `q12_10` | `1` | available for work | required for unemployment | absorbed upstream in `activity_status` |
 | `q12_11` | `1` | searched for work | unemployed if also available | absorbed upstream in `activity_status` |
 | `q12_12` | `8` | already found work | unemployed if also available | absorbed upstream in `activity_status` |
-| `activity_status` | `2` | employed summary | not used directly | employed |
-| `activity_status` | `3` | unemployed summary | not used directly | unemployed |
-| `activity_status` | `4` | non-LF summary | not used directly | non-LF |
+| `activity_status` | `1` | employed | not used directly | employed |
+| `activity_status` | `2` | underemployed | not used directly | employed |
+| `activity_status` | `3` | unemployed | not used directly | unemployed |
+| `activity_status` | `4` | inactive | not used directly | non-LF |
+
+### Bucket breakdown
+
+This table shows how the detailed GLD-style buckets line up with the given `activity_status` variable among adults age 14 and above.
+
+| GLD bucket | Activity status = employed | Activity status = underemployed | Activity status = unemployed | Activity status = inactive | Activity status missing |
+|---|---:|---:|---:|---:|---:|
+| `q12_2` outside-household work | 7,066 | 1,671 | 112 | 0 | 0 |
+| `q12_3` farm work | 10,073 | 3,782 | 1,977 | 0 | 0 |
+| `q12_4` nonfarm own-account work | 6,999 | 1,334 | 213 | 0 | 0 |
+| `q12_5` durable goods for own use | 302 | 187 | 249 | 0 | 0 |
+| `q12_7` one-hour follow-up | 66 | 27 | 76 | 0 | 0 |
+| temporarily absent | 335 | 0 | 155 | 1 | 0 |
+| available to work | 256 | 0 | 5,813 | 2,321 | 0 |
+| not available to work | 1,962 | 0 | 2,573 | 35,280 | 126 |
+| everything else | 9 | 3 | 5 | 0 | 908 |
+
+### Suspicious treatments in the given `activity_status` variable
+
+The clearest red flag is the group of people who are tagged as unemployed in the given `activity_status` variable even though they are already in one of the GLD employment-side buckets.
+
+| Employment bucket | Tagged as unemployed in `activity_status` | With `q12_10` available = 1 | With `q12_11` search = 1 |
+|---|---:|---:|---:|
+| `q12_2` outside-household work | 112 | 0 | 0 |
+| `q12_3` farm work | 1,977 | 0 | 0 |
+| `q12_4` nonfarm own-account work | 213 | 0 | 0 |
+| `q12_5` durable goods for own use | 249 | 0 | 0 |
+| `q12_7` one-hour follow-up | 76 | 0 | 0 |
+| temporarily absent | 155 | 0 | 0 |
+
+This table is hard to reconcile with the questionnaire flow. These people are already in the work branch, yet they are still treated as unemployed in the given `activity_status` variable, and none of them have observed availability or search responses.
+
+- `2,218` people are tagged as employed in the given `activity_status` variable even though they do not fall into the GLD employment buckets. These are mostly:
+  - `1,108` apprentices
+  - `1,084` temporarily laid-off people
+  - `26` people in military service
+- `4,297` people are tagged as unemployed in the given `activity_status` variable even though GLD places them outside unemployment. The largest visible reasons in this group are:
+  - `2,567` with `q12_12==12` no jobs available
+  - `544` with `q12_12==10` waiting for busy season
+  - `83` with `q12_12==8` already found work but not available under the GLD rule
+- There is also `1` person who is temporarily absent from work but is tagged as inactive in the given `activity_status` variable
+
+### GLD 2013 and 2016 comparison
+
+The GLD labor-status totals themselves look stable across the two Afghanistan rounds, which makes the questionnaire-based GLD treatment easier to defend.
+
+| Year | GLD status | Unweighted count | Weighted population |
+|---|---|---:|---:|
+| 2013 | employed | 38,223 | 56,924,905 |
+| 2013 | unemployed | 3,118 | 5,262,155 |
+| 2013 | non-LF | 43,264 | 71,153,527 |
+| 2016 | employed | 34,548 | 57,937,069 |
+| 2016 | unemployed | 4,090 | 6,712,551 |
+| 2016 | non-LF | 45,150 | 79,230,580 |
 
 ### Code snippets
 
