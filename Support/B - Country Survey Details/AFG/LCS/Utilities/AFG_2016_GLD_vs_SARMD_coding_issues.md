@@ -8,15 +8,38 @@ Files reviewed:
 
 ## Labor status
 
-Labor status is not just being built differently. The given `activity_status` variable also does not line up cleanly with the GLD buckets. The GLD rebuilds labor status from the questionnaire. SARMD collapses the given `activity_status` variable into employed, unemployed, and non-LF. The two approaches agree on the narrow unemployment core, but they still differ in some important places. In particular, the given `activity_status` variable treats some people with direct work signals as unemployed, and it also treats some apprentices, temporarily laid-off people, and similar cases as employed or unemployed even though the GLD puts them outside the labor force.
+Labor status should not be taken directly from the given `activity_status` variable in this survey. The main reason is that it does not line up cleanly with the survey flow. The GLD rebuilds labor status directly from the labor questions. SARMD collapses the given `activity_status` variable into employed, unemployed, and non-LF. Those two approaches agree on the narrow unemployment core, but they differ in some important places. Most notably, the given `activity_status` variable treats some people as unemployed even though they reported current-week work or temporary absence from work. It also treats some apprentices, temporarily laid-off people, and similar cases as employed even though they do not fall into the GLD employment branch.
+
+The current-week work questions ask whether the person:
+- worked for a business, organization, or person outside the household
+- did farm work
+- did non-agricultural own-account work or work in a household business
+- produced durable goods for own household use
+
+The module then adds:
+- a summary check for whether any of those work activities was done
+- a follow-up asking whether the person did any such activity even for only one hour
+- a temporary-absence question asking whether the person had work but was absent from it in the last week
+
+If the person is not in the work branch, the questionnaire then asks:
+- whether the person was available for work
+- whether the person tried to find work or start a business
+- the main reason for not looking for work
+
+So the questionnaire itself separates the work branch from the nonworking branch. That is why the GLD treats current-week work and temporary absence as employment first, then applies the unemployment rule only to people who are still outside employment.
 
 ### Raw coding details
 
 | Variable | Raw code | Raw meaning | GLD treatment | SARMD treatment |
 |---|---:|---|---|---|
-| `q12_2` to `q12_7` | `1` | worked in one of the detailed work activities | employed | depends on `activity_status` |
-| `q12_8` | `1` | temporarily absent from work | employed | depends on `activity_status` |
-| `q12_10` | `1` | available for work | required for unemployment | absorbed upstream in `activity_status` |
+| `q12_2` | `1` | worked for a business, organization, or person outside the household | employed | depends on `activity_status` |
+| `q12_3` | `1` | did farm work | employed | depends on `activity_status` |
+| `q12_4` | `1` | did non-agricultural own-account work or work in a household business | employed | depends on `activity_status` |
+| `q12_5` | `1` | produced durable goods for own household use | employed | depends on `activity_status` |
+| `q12_6` | `1` | at least one of the earlier work questions was yes | employed | depends on `activity_status` |
+| `q12_7` | `1` | did any such activity even for only one hour | employed | depends on `activity_status` |
+| `q12_8` | `1` | had work but was temporarily absent from it | employed | depends on `activity_status` |
+| `q12_10` | `1` | available for work | required for GLD unemployment | absorbed upstream in `activity_status` |
 | `q12_11` | `1` | searched for work | unemployed if also available | absorbed upstream in `activity_status` |
 | `q12_12` | `8` | already found work | unemployed if also available | absorbed upstream in `activity_status` |
 | `activity_status` | `1` | employed | not used directly | employed |
@@ -26,15 +49,15 @@ Labor status is not just being built differently. The given `activity_status` va
 
 ### Bucket breakdown
 
-This table shows how the detailed GLD-style buckets line up with the given `activity_status` variable among adults age 14 and above.
+This table shows how the GLD questionnaire buckets line up with the given `activity_status` variable among adults age 14 and above.
 
 | GLD bucket | Activity status = employed | Activity status = underemployed | Activity status = unemployed | Activity status = inactive | Activity status missing |
 |---|---:|---:|---:|---:|---:|
-| `q12_2` outside-household work | 7,066 | 1,671 | 112 | 0 | 0 |
-| `q12_3` farm work | 10,073 | 3,782 | 1,977 | 0 | 0 |
-| `q12_4` nonfarm own-account work | 6,999 | 1,334 | 213 | 0 | 0 |
-| `q12_5` durable goods for own use | 302 | 187 | 249 | 0 | 0 |
-| `q12_7` one-hour follow-up | 66 | 27 | 76 | 0 | 0 |
+| worked outside the household | 7,066 | 1,671 | 112 | 0 | 0 |
+| did farm work | 10,073 | 3,782 | 1,977 | 0 | 0 |
+| did nonfarm own-account work | 6,999 | 1,334 | 213 | 0 | 0 |
+| produced durable goods for own use | 302 | 187 | 249 | 0 | 0 |
+| reported some work even for only one hour | 66 | 27 | 76 | 0 | 0 |
 | temporarily absent | 335 | 0 | 155 | 1 | 0 |
 | available to work | 256 | 0 | 5,813 | 2,321 | 0 |
 | not available to work | 1,962 | 0 | 2,573 | 35,280 | 126 |
@@ -46,11 +69,11 @@ The clearest red flag is the group of people who are tagged as unemployed in the
 
 | Employment bucket | Tagged as unemployed in `activity_status` | With `q12_10` available = 1 | With `q12_11` search = 1 |
 |---|---:|---:|---:|
-| `q12_2` outside-household work | 112 | 0 | 0 |
-| `q12_3` farm work | 1,977 | 0 | 0 |
-| `q12_4` nonfarm own-account work | 213 | 0 | 0 |
-| `q12_5` durable goods for own use | 249 | 0 | 0 |
-| `q12_7` one-hour follow-up | 76 | 0 | 0 |
+| worked outside the household | 112 | 0 | 0 |
+| did farm work | 1,977 | 0 | 0 |
+| did nonfarm own-account work | 213 | 0 | 0 |
+| produced durable goods for own use | 249 | 0 | 0 |
+| reported some work even for only one hour | 76 | 0 | 0 |
 | temporarily absent | 155 | 0 | 0 |
 
 This table is hard to reconcile with the questionnaire flow. These people are already in the work branch, yet they are still treated as unemployed in the given `activity_status` variable, and none of them have observed availability or search responses.
