@@ -13,7 +13,7 @@ Using the additional data from NSO, we were able to code the employed population
 2) people who are currently seeking jobs and would be able to start working (no to G1; 
 answered either one of G2 and yes to G9). This gives confidence that the public "strict" definitions of unemployment and non-labour force align with the GLD definition in the earlier rounds where the full question sequence is available.  
 
-For the post-2019 rounds, GLD relies on the raw derived variable `Unemployed` to retain future starters consistently. This is especially important in 2024, because the delivered labour file does not retain `G1`, so future starters cannot be identified directly from the questionnaire items. The derived variable appears to preserve the within-three-month future-starter logic used in the earlier rounds and is therefore the preferred source for unemployment coding in those years.
+For the post-2019 rounds, GLD relies on the raw derived variable `Unemployed` to retain future starters consistently. This is especially important in 2024, because the raw labour file does not retain `G1`, so future starters cannot be identified directly from the questionnaire items. The derived variable appears to preserve the within-three-month future-starter logic used in the earlier rounds and is therefore the preferred source for unemployment coding in those years.
 
 ```
         gen byte lstatus=.
@@ -35,6 +35,6 @@ In the earlier GEO LFS rounds, paid employees are asked about their wages in two
 
 On average, about 80% of paid employees in the earlier rounds can report their exact salary, while about a fifth give a bracket instead. To use the interval information, we imputed salary for bracket-only cases. First, the wage information from respondents who reported an exact salary was trimmed for outliers. Next, the mean salary was calculated by sex, urban/rural area, industry, and occupation within each wage bracket. For example, we calculated the mean salary of women in urban areas who worked in manufacturing as clerks and reported earnings between 800 and 1000 GEL. That mean was then assigned to otherwise comparable workers who reported the same bracket but not an exact wage. These estimates align broadly with the ILOSTAT salary series based on the Household Income and Expenditure Survey (see below).
 
-The 2024 wage data differ from the earlier rounds. Although the questionnaire still asks first for the exact amount and then for a bracket if needed, the delivered 2024 labour file retains only the bracketed earnings variable and not the exact amount. For this reason, the donor-based imputation used in the earlier rounds could not be reproduced in 2024. Instead, `wage_no_compen` in 2024 is approximated directly from the reported brackets.
+The 2024 wage data differ from the earlier rounds. Although the questionnaire still asks first for the exact amount and then for a bracket if needed, the raw 2024 wage information retains only the bracketed earnings variable and not the exact amount. For this reason, the donor-based imputation used in the earlier rounds could not be reproduced in 2024. Instead, `wage_no_compen` in 2024 is approximated directly from the reported brackets.
 
 ![wage_estimates](utilities/wage_estimates.png)
