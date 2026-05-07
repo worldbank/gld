@@ -56,8 +56,12 @@ set mem 800m
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-// local server  "C:/Users/`c(username)'/WBG/GLD - Current Contributors/611670_SF"
-local server "C:\Users\wb611670\WBG\GLD - 611670_SF"
+if ("`c(username)'"=="wb611670") {
+	local server "C:\Users\wb611670\WBG\GLD - 611670_SF"
+} 
+else {
+	local server  "C:/Users/`c(username)'/WBG/GLD - Current Contributors/611670_SF"
+}
 local country "SEN"
 local year    "2018"
 local survey  "ENES"
@@ -92,7 +96,7 @@ replace wav=3 if missing(wav)
 append using "`path_in_stata'/T4_2018_an_version2.dta"
 replace wav=4 if missing(wav)
 
-save "`path_in_stata'/SEN_2018_ENES_workingdata.dta", replace
+*save "`path_in_stata'/SEN_2018_ENES_workingdata.dta", replace
 
 /*%%=============================================================================================
 	2: Survey & ID

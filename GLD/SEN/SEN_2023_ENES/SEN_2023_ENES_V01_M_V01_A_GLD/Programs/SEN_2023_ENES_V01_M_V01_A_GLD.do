@@ -54,8 +54,12 @@ set mem 800m
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-// local server  "C:/Users/`c(username)'/WBG/GLD - Current Contributors/611670_SF"
-local server "C:\Users\wb611670\WBG\GLD - 611670_SF"
+if ("`c(username)'"=="wb611670") {
+	local server "C:\Users\wb611670\WBG\GLD - 611670_SF"
+} 
+else {
+	local server  "C:/Users/`c(username)'/WBG/GLD - Current Contributors/611670_SF"
+}
 local country "SEN"
 local year    "2023"
 local survey  "ENES"
@@ -242,7 +246,7 @@ save "`path_in_stata'/SEN_2023_ENES_workingdata.dta", replace
 
 
 *<_wave_>
-	gen wave = .
+	gen wave = "Q" + string(wav)
 	label var wave "Survey wave"
 *</_wave_>
 

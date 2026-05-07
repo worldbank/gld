@@ -54,8 +54,12 @@ set mem 800m
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-// local server  "C:/Users/`c(username)'/WBG/GLD - Current Contributors/611670_SF"
-local server "C:\Users\wb611670\WBG\GLD - 611670_SF"
+if ("`c(username)'"=="wb611670") {
+	local server "C:\Users\wb611670\WBG\GLD - 611670_SF"
+} 
+else {
+	local server  "C:/Users/`c(username)'/WBG/GLD - Current Contributors/611670_SF"
+}
 local country "SEN"
 local year    "2024"
 local survey  "ENES"
@@ -205,11 +209,20 @@ save "`path_in_stata'/SEN_2024_ENES_workingdata.dta", replace
 
 
 *<_weight_>
+	* Weight is quarterly, to annualise we cannot divide by four as we only have three
+	count
+	local all_count = `r(N)'
+	gen wgt_weight = .
+	foreach num of numlist 1 2 3 {
+		count if wav == `num'
+		replace wgt_weight = `r(N)'/`all_count' if wav == `num'
+     }
+
 	gen weight = .
-	replace weight = poids_t1_2024/4 if wav==1
-	replace weight = poids_t2_2024/4 if wav==2
-	replace weight = poids_t3_2024/4 if wav==3
-// 	replace weight = poids_t4_2019/4 if wav==4
+	replace weight = poids_t1_2024 * wgt_weight if wav==1
+	replace weight = poids_t2_2024 * wgt_weight if wav==2
+	replace weight = poids_t3_2024 * wgt_weight if wav==3
+	replace weight = . if missing(weight)
 	label var weight "Survey sampling weight"
 *</_weight_>
 
@@ -250,7 +263,7 @@ save "`path_in_stata'/SEN_2024_ENES_workingdata.dta", replace
 
 
 *<_wave_>
-	gen wave = .
+	gen wave = "Q" + string(wav)
 	label var wave "Survey wave"
 *</_wave_>
 
@@ -292,21 +305,29 @@ save "`path_in_stata'/SEN_2024_ENES_workingdata.dta", replace
 	Example of entries would be "1 - Alaska",  "2 - Arkansas", ...
 
 </_subnatid1_note> */
+	
+	* The ba3 variable is not available in Q3
+	tab ba3 wave,m
+	* It can be read from the id information
+	gen reg_helper = substr(idmng,1,2)
+	destring reg_helper, replace
+	tab reg_helper ba3, nol m
+
 	gen str subnatid1 = ""
-	replace subnatid1 = "1 - Dakar"        if ba3 == 1
-	replace subnatid1 = "2 - Ziguinchor"   if ba3 == 2
-	replace subnatid1 = "3 - Diourbel"     if ba3 == 3
-	replace subnatid1 = "4 - Saint-Louis"  if ba3 == 4
-	replace subnatid1 = "5 - Tambacounda"  if ba3 == 5
-	replace subnatid1 = "6 - Kaolack"      if ba3 == 6
-	replace subnatid1 = "7 - Thies"        if ba3 == 7
-	replace subnatid1 = "8 - Louga"        if ba3 == 8
-	replace subnatid1 = "9 - Fatick"       if ba3 == 9
-	replace subnatid1 = "10 - Kolda"       if ba3 == 10
-	replace subnatid1 = "11 - Matam"       if ba3 == 11
-	replace subnatid1 = "12 - Kaffrine"    if ba3 == 12
-	replace subnatid1 = "13 - Kedougou"    if ba3 == 13
-	replace subnatid1 = "14 - Sedhiou"     if ba3 == 14
+	replace subnatid1 = "1 - Dakar"        if reg_helper == 1
+	replace subnatid1 = "2 - Ziguinchor"   if reg_helper == 2
+	replace subnatid1 = "3 - Diourbel"     if reg_helper == 3
+	replace subnatid1 = "4 - Saint-Louis"  if reg_helper == 4
+	replace subnatid1 = "5 - Tambacounda"  if reg_helper == 5
+	replace subnatid1 = "6 - Kaolack"      if reg_helper == 6
+	replace subnatid1 = "7 - Thies"        if reg_helper == 7
+	replace subnatid1 = "8 - Louga"        if reg_helper == 8
+	replace subnatid1 = "9 - Fatick"       if reg_helper == 9
+	replace subnatid1 = "10 - Kolda"       if reg_helper == 10
+	replace subnatid1 = "11 - Matam"       if reg_helper == 11
+	replace subnatid1 = "12 - Kaffrine"    if reg_helper == 12
+	replace subnatid1 = "13 - Kedougou"    if reg_helper == 13
+	replace subnatid1 = "14 - Sedhiou"     if reg_helper == 14
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 
