@@ -476,7 +476,7 @@ use "`path_in_stata'/MW_Labour_Force Survey 2012_Dataset.dta",clear
 
 
 *<_migrated_binary_>
-	gen migrated_binary = BG3 if BG5_N <= age & !missing(BG5_N)
+	gen migrated_binary = BG3
 	recode migrated_binary (1 = 0) (2 3 = 1)
 	label de lblmigrated_binary 0 "No" 1 "Yes"
 	label values migrated_binary lblmigrated_binary
@@ -925,6 +925,8 @@ foreach ed_var of local ed_vars {
 
 *<_industrycat10_>
 	gen byte industrycat10 = real(substr(industrycat_isic,1,1))
+	replace industrycat10 = 10 if inrange(real(industrycat_isic),9200,9600)
+	replace industrycat10 = 10 if inlist(real(industrycat_isic),9000)
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	la de lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10 lblindustrycat10
