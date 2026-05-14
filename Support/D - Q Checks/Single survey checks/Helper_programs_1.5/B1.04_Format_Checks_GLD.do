@@ -952,8 +952,14 @@ if _rc == 0 { // if isic version info exists, otherwise cannot know which ISIC v
 		cap confirm variable `var'
 		if _rc == 0 { // if var exists, else issue captured in 1.1
 			
-			* Create variable code out of var
-			qui : gen code = `var'
+				* Create a string code that can merge to the ISIC universe regardless of survey storage type
+				cap confirm string variable `var'
+				if _rc == 0 {
+					qui : gen str20 code = `var'
+				}
+				else {
+					qui : tostring `var', gen(code) format(%04.0f) force
+				}
 			* Merge with ISIC universe, keeping only code variable from using, only match and master
 			qui : merge m:1 code using `isic_universe', keepusing(code) keep(master match)
 			* Count if there are variables that exist in survey that are not in ISIC universe
@@ -983,8 +989,14 @@ if _rc == 0 { // if isic version info exists, otherwise cannot know which ISIC v
 		cap confirm variable `var'
 		if _rc == 0 { // if var exists, else issue captured in 1.1
 			
-			* Create variable code out of var
-			qui : gen code = `var'
+				* Create a string code that can merge to the ISCO universe regardless of survey storage type
+				cap confirm string variable `var'
+				if _rc == 0 {
+					qui : gen str20 code = `var'
+				}
+				else {
+					qui : tostring `var', gen(code) format(%04.0f) force
+				}
 			* Merge with ISIC universe, keeping only code variable from using, only match and master
 			qui : merge m:1 code using `isco_universe', keepusing(code) keep(master match)
 			* Count if there are variables that exist in survey that are not in ISIC universe
