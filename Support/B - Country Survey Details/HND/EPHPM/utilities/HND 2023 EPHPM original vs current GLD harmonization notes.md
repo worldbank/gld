@@ -8,8 +8,8 @@ This note compares the current HND 2023 EPHPM GLD working do-file with the origi
 
 Comparator do-files:
 
-- Current GLD working version: `Downloads/HND/HND_2023_EPHPM/HND_2023_EPHPM_V01_M_V01_A_GLD/Programs/HND_2023_EPHPM_V01_M_V01_A_GLD_ALL.do`
-- Original GitHub version: `Documents/GitHub/gld/GLD/HND/HND_2023_EPHPM/HND_2023_EPHPM_V01_M_V01_A_GLD/Programs/HND_2023_EPHPM_V01_M_V01_A_GLD_ALL.do`
+- Current GLD PR version: `GLD/HND/HND_2023_EPHPM/HND_2023_EPHPM_V01_M_V01_A_GLD/Programs/HND_2023_EPHPM_V01_M_V01_A_GLD_ALL.do`
+- Original comparator version used during review: `Documents/GitHub/gld/GLD/HND/HND_2023_EPHPM/HND_2023_EPHPM_V01_M_V01_A_GLD/Programs/HND_2023_EPHPM_V01_M_V01_A_GLD_ALL.do`
 
 ## `educat7`
 
