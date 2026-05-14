@@ -77,17 +77,14 @@ local path_in_stata "`server'/`country'/`level_1'/`level_2_mast'/Data/Stata"
 local path_in_other "`server'/`country'/`level_1'/`level_2_mast'/Data/Original"
 local path_work     "`server'/`country'/`level_1'/`level_2_harm'/Work"
 local path_output   "`server'/`country'/`level_1'/`level_2_harm'/Data/Harmonized"
-local raw_file "Data de la Encuesta de Hogares junio 2023.dta"
-local region_map_file "hnd_ephpm_2023_region_map.csv"
-local out_file "HND_2023_EPHPM_V01_M_V01_A_GLD_ALL.dta"
 capture mkdir "`path_output'"
 
 *----------1.3: Database assembly------------------------------*
 tempfile raw_stage region_map
-use "`path_in_stata'/`raw_file'", clear
+use "`path_in_stata'/Data de la Encuesta de Hogares junio 2023.dta", clear
 save "`raw_stage'", replace
 
-import delimited using "`path_work'/`region_map_file'", clear varnames(1) stringcols(_all)
+import delimited using "`path_work'/hnd_ephpm_2023_region_map.csv", clear varnames(1) stringcols(_all)
 destring cor_pre, replace force
 replace region_est2 = strtrim(region_est2)
 replace region_est3 = strtrim(region_est3)
@@ -2039,6 +2036,6 @@ compress
 
 *<_% SAVE_>
 
-save "`path_output'/`out_file'", replace
+save "`path_output'/`level_2_harm'_ALL.dta", replace
 
 *</_% SAVE_>
