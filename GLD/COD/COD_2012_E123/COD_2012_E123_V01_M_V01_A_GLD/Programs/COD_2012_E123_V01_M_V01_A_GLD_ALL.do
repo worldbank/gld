@@ -846,17 +846,23 @@ foreach ed_var of local ed_vars {
 /* <_lstatus_note>
 
 Employed:
-- worked at least one hour in the last 7 days (`ea2 == 1`), which affects 34,985 cases.
+- worked at least one hour in the last 7 days (`ea2 == 1`), which affects 34,304 cases.
 - reported an own-account, family-helping, or other income-generating activity after a "no" at
-  `EA2`; this is captured by `ea3` values 1 to 9 and affects 1,659 additional cases.
+  `EA2`; this is captured by `ea3` values 1 to 9 and affects 2,916 additional cases.
 - was temporarily absent from a job but could return within 4 weeks (`ea4 == 1 & ea6 == 1`),
-  which affects 899 additional cases.
+  which affects 166 additional cases.
 
 Unemployed:
-- not employed under the branches above.
+- not employed under the worked, other activity, or short temporary-absence branches above.
 - searched for work in the last week or the last 4 weeks (`ea7a == 1` or `ea7b == 1`).
-- was available immediately or within 15 days (`ea7c` in 1 or 2). This branch affects 2,373
+- was available immediately or within 15 days (`ea7c` in 1 or 2). This branch affects 1,653
   cases.
+
+Final employed branch:
+- had a main-job module response despite missing absence duration (`ea4 == 1 & ap3 < .`), which
+  affects 1,035 additional cases after the unemployment branch. The questionnaire routes 223
+  respondents with `EA6 = 2` (more than 4 weeks), `EA6 = 3` (does not know), or `EA6 = 9`
+  (missing) away from the main-job module, so those cases are not treated as employed here.
 
 Non-labour force:
 - everyone else age 10 and older.

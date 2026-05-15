@@ -819,10 +819,10 @@ Employed:
 - worked at least one hour in the last 7 days (`ea2_empl == 1`), which affects 22,211 cases.
 - did an own-account, family, apprenticeship, or other income-generating activity after a "no"
   at `EA2`; this is captured in `ea3_aut` values 1 to 9 and affects 1,851 cases.
-- was temporarily absent from a job and was not routed out of the employed branch. The
-  questionnaire sends 109 respondents with `EA6 = 2` (more than 4 weeks) or `EA6 = 3`
-  (does not know) away from `AP1` and into the later nonemployment questions, so those
-  cases are not treated as employed here.
+- was temporarily absent from a job and was not routed out of the employed branch. This affects
+  847 cases. The questionnaire sends 107 respondents with `EA6 = 2` (more than 4 weeks) or
+  `EA6 = 3` (does not know) away from `AP1` and into the later nonemployment questions, so
+  those cases are not treated as employed here.
 
 Unemployed:
 - not employed under the branches above.
