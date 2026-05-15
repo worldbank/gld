@@ -8,7 +8,7 @@ Files reviewed:
 
 ## Labor status
 
-Labor status should not be taken directly from the given `activity_status` variable in this survey. The main reason is that it does not line up cleanly with the survey flow. The GLD rebuilds labor status directly from the labor questions. SARMD collapses the given `activity_status` variable into employed, unemployed, and non-LF. Those two approaches agree on the narrow unemployment core, but they differ in some important places. Most notably, the given `activity_status` variable treats some people as unemployed even though they reported current-week work or temporary absence from work. It also treats some apprentices, temporarily laid-off people, and similar cases as employed even though they do not fall into the GLD employment branch.
+The given `activity_status` variable should not replace the questionnaire-based GLD labor-status coding in this survey. The main reason is that it does not line up cleanly with the survey flow. The GLD rebuilds labor status directly from the labor questions. SARMD collapses the given `activity_status` variable into employed, unemployed, and non-LF. Those two approaches agree on the narrow unemployment core, but they differ in some important places. Most notably, the given `activity_status` variable treats some people as unemployed even though they reported current-week work or temporary absence from work. It also treats some apprentices, temporarily laid-off people, and similar cases as employed even though they do not fall into the GLD employment branch.
 
 The current-week work questions ask whether the person:
 - worked for a business, organization, or person outside the household
@@ -107,6 +107,27 @@ SARMD:
 
 ```stata
 recode activity_status (2=1) (3=2) (4=3), gen(lstatus)
+```
+
+## Sector of activity (`ocusec`)
+
+The GLD and SARMD use the same broad `ocusec` treatment in 2016: salaried public-sector workers are public, while day labourers, private salaried workers, self-employed workers, employers, and unpaid family workers are treated as non-public. The possible concern is day labourers. In the raw industry coding, two-digit code `91` is public administration and defence, while the one-digit code `9` is the broader community, social, and personal services group. Only 40 day labourers in 2016, or 0.75 percent of all day labourers, are in two-digit industry `91`. The comparable 2013 figure is 52 cases, or 0.87 percent of day labourers. This is worth noting, but it is too small to justify treating all day labourers as public or ambiguous.
+
+### Code snippets
+
+GLD:
+
+```stata
+gen byte ocusec = .
+replace ocusec = 1 if q12_13 == 3
+replace ocusec = 2 if inlist(q12_13,1,2,4,5,6)
+replace ocusec=. if lstatus!=1
+```
+
+SARMD:
+
+```stata
+recode q12_13 (1 2 4 5 6=2) (3=1), gen(ocusec)
 ```
 
 ## Reason out of labor force

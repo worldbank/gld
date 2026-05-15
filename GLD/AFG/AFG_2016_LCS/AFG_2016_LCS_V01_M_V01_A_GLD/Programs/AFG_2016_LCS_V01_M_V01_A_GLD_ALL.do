@@ -75,8 +75,6 @@ local path_in_stata "`server'/`country'/`level_1'/`level_2_mast'/Data/Stata"
 local path_in_other "`server'/`country'/`level_1'/`level_2_mast'/Data/Original"
 local path_output   "`server'/`country'/`level_1'/`level_2_harm'/Data/Harmonized"
 
-local out_file "`level_2_harm'_ALL.dta"
-
 *----------1.3: Database assembly------------------------------*
 
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
@@ -296,6 +294,15 @@ local out_file "`level_2_harm'_ALL.dta"
 {
 
 *<_urban_>
+/* <_urban_note>
+
+	Kuchi households are left missing in `urban`. The survey distinguishes 550
+	Kuchi households as a separate nomadic population group rather than assigning
+	them a fixed urban or rural household location. Their PSU and cluster groups
+	are Kuchi-only in the received raw data, so there are no non-Kuchi households
+	in the same PSU or cluster from which to impute an urban/rural value.
+
+</_urban_note> */
 	gen byte urban = q_1_5
 	recode urban 2=0 3=.
 	label var urban "Location is urban"
@@ -672,6 +679,12 @@ label var ed_mod_age "Education module application age"
 	remain in post-secondary non-university. Cases with `q11_8 == 0` are treated
 	as no completed grade rather than primary incomplete.
 
+	Question 11.7 code 7 is Islamic school. This affects 254 cases. Since the
+	Islamic-school track follows its own 0-14 grade ladder, those observations are
+	placed on the GLD ladder by completed grade rather than left as a
+	survey-specific residual category. This treats Islamic-school respondents
+	consistently with regular-school respondents at the same reported grade.
+
 	</_educat7_note> */
 	gen byte educat7 = 1 if q11_5 == 2
 	replace educat7 = 1 if q11_5 == 1 & q11_8 == 0
@@ -912,6 +925,15 @@ foreach ed_var of local ed_vars {
 
 
 *<_ocusec_>
+/* <_ocusec_note>
+
+	Day labourers are coded as private/non-public because the questionnaire only
+	identifies salaried public-sector workers separately. The raw industry code
+	shows that 40 day labourers, or 0.75 percent of all day labourers, report
+	public administration and defence. This small edge case is noted but not used
+	to treat all day labourers as public or ambiguous.
+
+</_ocusec_note> */
 	gen byte ocusec = .
 	replace ocusec = 1 if q12_13 == 3
 	replace ocusec = 2 if inlist(q12_13,1,2,4,5,6)
@@ -948,7 +970,18 @@ foreach ed_var of local ed_vars {
 
 
 *<_industrycat10_>
-	gen byte industrycat10 = q12_16_b
+/* <_industrycat10_note>
+
+	`industrycat10` is derived from the two-digit group retained in
+	`industrycat_isic`. This avoids treating the broad ISIC Rev. 2 community,
+	social, and personal services group as public administration. Only two-digit
+	code 91 is public administration and defence; codes 92 to 96 are other
+	services.
+
+</_industrycat10_note> */
+	gen byte industrycat10 = real(substr(industrycat_isic,1,2)) if industrycat_isic != ""
+	recode industrycat10 (11/13=1) (21/29=2) (31/39=3) (41/42=4) (50=5) ///
+		(61/63=6) (71/72=7) (81/83=8) (91=9) (92/96=10)
 	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	label define lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Communications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified", replace
@@ -979,11 +1012,14 @@ foreach ed_var of local ed_vars {
 	The raw occupation variable `q12_17` is a grouped ISCO-08 code stored
 	numerically. It aligns with the first three digits of ISCO-08, so `occup_isco`
 	is coded as a 4-digit string by restoring any leading zero and appending a
-	trailing `0`. If a survey only provides a 1-digit occupation variable, there is
-	no need to separately code `occup_isco` because it adds no detail beyond `occup`.
+	trailing `0`. Raw code 119 affects 1 case and is collapsed to 1100 to retain
+	the manager group without keeping the inconsistent detailed code 1190. If a
+	survey only provides a 1-digit occupation variable, there is no need to
+	separately code `occup_isco` because it adds no detail beyond `occup`.
 
 </_occup_isco_note> */
 	gen str4 occup_isco = string(q12_17, "%03.0f") + "0" if !missing(q12_17)
+	replace occup_isco = "1100" if q12_17 == 119
 	replace occup_isco = "" if lstatus != 1
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
@@ -1151,8 +1187,7 @@ foreach ed_var of local ed_vars {
 
 
 *<_industrycat_isic_2_>
-	gen industrycat_isic_2 = .
-	replace industrycat_isic_2 = . if lstatus != 1
+	gen str4 industrycat_isic_2 = ""
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
@@ -1860,6 +1895,6 @@ compress
 
 *<_% SAVE_>
 
-save "`path_output'/`out_file'", replace
+save "`path_output'/`level_2_harm'_ALL.dta", replace
 
 *</_% SAVE_>
