@@ -5,7 +5,7 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				MOZ_2022_IOF_V01_M_V01_A_GLD_ALL </_Program name_>
+<_Program name_>				MOZ_2022_IOF_V01_M_V02_A_GLD_ALL </_Program name_>
 <_Application_>					Stata 19 <_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
 <_Date created_>				2026-03-11 </_Date created_>
@@ -37,6 +37,8 @@
 -----------------------------------------------------------------------
 <_Version Control_>
 
+2026-05-18 : Expand from GLD Light to GLD
+
 </_Version Control_>
 
 -------------------------------------------------------------------------*/
@@ -56,14 +58,14 @@ set varabbrev off
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-local server  "C:/Users/`c(username)'/WBG/GLD - Current Contributors/625372_DB"
+local server  "C:/Users/`c(username)'/Downloads"
 
 dis "`server'"
 local country "MOZ"
 local year    "2022"
 local survey  "IOF"
 local vermast "V01"
-local veralt  "V01"
+local veralt  "V02"
 
 * From the definitions, set path chunks
 local level_1      "`country'_`year'_`survey'"
