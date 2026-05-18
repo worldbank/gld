@@ -43,18 +43,24 @@ label var occup_old "Occupation - 13th ICLS definition"
 
 ```
 
-When we apply different definitions to the employment, industry and occupation variables, we find that the difference amounts to 3,357 workers — those engaged in own-use agricultural production who are employed under the 13th ICLS but excluded under the 19th. This raises the total employed from 99,768 to 103,125, and the employment-to-population ratio from 43.23% to 44.68%. The effect is concentrated entirely in agriculture: the industry share rises from 35.75% to 37.84%, and the skilled agricultural occupation share from 30.37% to 32.64%. On employment status, self-employment increases from 35.37% to 37.48%, reflecting the assumption that subsistence producers are own-account workers. Non-agricultural categories are unaffected.
+When we apply different definitions to the employment, industry and occupation variables, we find that the difference amounts to 3,357 workers — those engaged in own-use agricultural production who are employed under the 13th ICLS but excluded under the 19th. This raises the total employed from 99,768 to 103,125, and the employment-to-population ratio from 43.23% to 44.68%. The difference is concentrated entirely in agriculture: the industry share rises from 35.75% to 37.84%, and the skilled agricultural occupation share from 30.37% to 32.64%. On employment status, self-employment proportions change from 35.37% to 37.48%, reflecting the assumption that subsistence producers are own-account workers. Non-agricultural categories remain with the same proportions.
 
 
 | Concept (all 15+) | Value 2020 ICLS-13 | Value 2024 ICLS-13 | Value 2024 ICLS-19 |
 |---|---|---|---|
-| Employment share | 29.47% | 44.68% | 43.23% |
-| Unemployment share | 1.49% | 3.16% | 3.16% |
-| Share of wage employed | 40.62% | 41.29% | 42.68% |
-| Share of employed in Ag (industry) | 41.96% | 37.84% | 35.75% |
-| Share of employed as farmers (occupation) | 36.83% | 32.64% | 30.37% |
+| Employment share | 49.35% | 44.68% | 43.23% |
+| Unemployment share | 2.92% | 3.16% | 3.16% |
+| Share of wage employed | 42.19% | 41.29% | 42.68% |
+| Share of employed in Ag (industry) | 37.15% | 37.84% | 35.75% |
+| Share of employed as farmers (occupation) | 33.82% | 32.64% | 30.37% |
 
 
-Note on cross-year comparability: The values presented in this table should not be interpreted as trends or impact of any kind or used for direct cross-year comparison. Differences across columns reflect a combination of factors including: (1) changes in the ICLS definition applied (ICLS-13 vs. ICLS-19), and (2) differences in survey design and geographic coverage across years. Some survey rounds were not nationally representative and covered only selected provinces or regions, which affects the composition of the sample and the resulting estimates. Any apparent changes in shares across years may reflect these methodological and design differences rather than actual changes in labor market outcomes.
+Note on cross-year comparability: The values presented in this table should not be interpreted as trends or used for direct cross-year comparison. Differences across columns reflect a combination of factors including:
+
+(1) The 2020 round was implemented under ICLS-13 definitions, while the 2024 round includes estimates under both ICLS-13 and ICLS-19. The shift in the definitions framework affects the classification of labor force status and should be taken into account when comparing values across years.
+
+(2)  Between 2020 and 2024, the questionnaire introduced a single new category — "independent worker without employee" — to subsume the various types of own-account workers previously captured separately for agricultural and non-agricultural activities. This change in how employment status is elicited is likely to have affected the way workers are classified, and is reflected in the data in a notable increase in the share of workers categorized as self-employed. Comparisons of employment status shares across years should be interpreted with this in mind.
+
+(3) The Pakistan LFS is generally representative at the province and urban/rural levels. The 2020 round was an exception, having been designed to be representative to the district level, resulting in a broader and more granular sample. Differences in geographic coverage and sample composition across rounds may affect the resulting estimates independently of any actual changes in labor market outcomes.
 
 
