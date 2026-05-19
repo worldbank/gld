@@ -56,6 +56,8 @@ replace lstatus=3 if q_11_11==2
 
 Some employed people are left without a sector classification in the SARMD version. In the questionnaire, `q_11_13==3` is explicitly “salaried worker, public sector.” The other employed categories `q_11_13==1`, `2`, `4`, `5`, and `6` are not public-sector salaried workers. The GLD therefore treats them as non-public. That is a practical assumption rather than a literal statement that every self-employed or unpaid family worker is private in all cases. In principle, someone could be self-employed while working mainly for government clients, but that is likely to be rare. Even in settings where government contracting is common, those workers are still usually private rather than public employees. The survey does not provide a separate status code for that situation. SARMD only codes `q_11_13==3` as public and `q_11_13==2` as private, so some valid workers are left uncoded instead of being assigned to the non-public side.
 
+Day labourers are the main category where this assumption may hide a small public-sector edge case. In the raw industry coding, two-digit code `91` is public administration and defence, while the one-digit code `9` is the broader community, social, and personal services group. Among day labourers, only 52 cases in 2013, or 0.87 percent of day labourers, are in two-digit industry `91`. The comparable 2016 figure is 40 cases, or 0.75 percent of day labourers. This is worth noting, but it is too small to justify treating all day labourers as public or ambiguous.
+
 ### Raw coding details
 
 | Variable | Raw code | Raw meaning | GLD treatment | SARMD treatment |

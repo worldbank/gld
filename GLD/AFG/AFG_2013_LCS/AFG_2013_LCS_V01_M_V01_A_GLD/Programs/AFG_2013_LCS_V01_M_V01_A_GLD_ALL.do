@@ -75,8 +75,6 @@ local path_in_stata "`server'/`country'/`level_1'/`level_2_mast'/Data/Stata"
 local path_in_other "`server'/`country'/`level_1'/`level_2_mast'/Data/Original"
 local path_output   "`server'/`country'/`level_1'/`level_2_harm'/Data/Harmonized"
 
-local out_file "`level_2_harm'_ALL.dta"
-
 *----------1.3: Database assembly------------------------------*
 
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
@@ -273,6 +271,15 @@ local out_file "`level_2_harm'_ALL.dta"
 {
 
 *<_urban_>
+/* <_urban_note>
+
+	Kuchi households are left missing in `urban`. The survey distinguishes 580
+	Kuchi households as a separate nomadic population group rather than assigning
+	them a fixed urban or rural household location. Their PSU and cluster groups
+	are Kuchi-only in the received raw data, so there are no non-Kuchi households
+	in the same PSU or cluster from which to impute an urban/rural value.
+
+</_urban_note> */
 	gen byte urban=q_1_5
 	recode urban 2=0 3=.
 	label var urban "Location is urban"
@@ -645,8 +652,10 @@ label var ed_mod_age "Education module application age"
 	are treated as no education / no completed grade. Question 10.5 code 7 is
 	Islamic school. This affects 265 cases. Since the Islamic-school track follows
 	its own 0-14 grade ladder, those observations are placed on the GLD ladder by
-	completed grade rather than left as a survey-specific residual category. In the
-	final harmonized file, 63 individuals above `ed_mod_age` remain missing on
+	completed grade rather than left as a survey-specific residual category. This
+	treats Islamic-school respondents consistently with regular-school respondents
+	at the same reported grade. In the final harmonized file, 63 individuals above
+	`ed_mod_age` remain missing on
 	`educat7` because the raw education record is incomplete, usually with both
 	`q_10_5` and `q_10_6` missing despite reported school attendance.
 
@@ -808,6 +817,8 @@ foreach ed_var of local ed_vars {
 	- did farm or livestock work in the last 7 days
 	- did own-account or household business work in the last 7 days
 	- produced durable goods for household use in the last 7 days
+	- was captured by the survey's summary work screen
+	- later confirmed having done any work at all, even for a short time
 	- was temporarily absent from a job but reported work to return to
 
 	Job attachment:
@@ -827,6 +838,12 @@ foreach ed_var of local ed_vars {
 	Non-labour force:
 	- everyone else age 14+
 
+	The detailed work screens q_11_2 to q_11_5 are also included directly in the
+	employment definition so that anyone counted by the survey's own work summary
+	question is covered even if the summary response is incomplete. The follow-up
+	work confirmation q_11_7 is retained to capture people who were not flagged in
+	the earlier detailed work screens but still reported having done some work.
+
 	The labour screening questions do not distinguish farm output for sale from
 	farm output for own consumption, so farm and livestock activity reported in
 	the main work screens is treated as employment under the survey's broader work
@@ -834,7 +851,7 @@ foreach ed_var of local ed_vars {
 
 </_lstatus_note> */
 	gen byte lstatus = .
-	replace lstatus = 1 if inlist(1,q_11_6,q_11_7,q_11_8)
+	replace lstatus = 1 if inlist(1,q_11_2,q_11_3,q_11_4,q_11_5,q_11_6,q_11_7,q_11_8)
 	replace lstatus = 2 if missing(lstatus) & q_11_10 == 1 & q_11_11 == 1
 	replace lstatus = 2 if missing(lstatus) & q_11_10 == 1 & q_11_12 == 8
 	replace lstatus = 3 if missing(lstatus)
@@ -917,6 +934,15 @@ foreach ed_var of local ed_vars {
 
 
 *<_ocusec_>
+/* <_ocusec_note>
+
+	Day labourers are coded as private/non-public because the questionnaire only
+	identifies salaried public-sector workers separately. The raw industry code
+	shows that 52 day labourers, or 0.87 percent of all day labourers, report
+	public administration and defence. This small edge case is noted but not used
+	to treat all day labourers as public or ambiguous.
+
+</_ocusec_note> */
 	gen byte ocusec=q_11_13
 	recode ocusec 3=1 1 2 4/6=2 .a=.
 	replace ocusec=. if lstatus!=1
@@ -949,8 +975,19 @@ foreach ed_var of local ed_vars {
 
 
 *<_industrycat10_>
-	gen byte industrycat10=q_11_19_b
-	replace industrycat10=. if lstatus!=1 | industrycat10==.a
+/* <_industrycat10_note>
+
+	`industrycat10` is derived from the two-digit group retained in
+	`industrycat_isic`. This avoids treating the broad ISIC Rev. 2 community,
+	social, and personal services group as public administration. Only two-digit
+	code 91 is public administration and defence; codes 92 to 96 are other
+	services.
+
+</_industrycat10_note> */
+	gen byte industrycat10 = real(substr(industrycat_isic,1,2)) if industrycat_isic != ""
+	recode industrycat10 (11/13=1) (21/29=2) (31/39=3) (41/42=4) (50=5) ///
+		(61/63=6) (71/72=7) (81/83=8) (91=9) (92/96=10)
+	replace industrycat10=. if lstatus!=1
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	label define lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Communications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified", replace
 	label values industrycat10 lblindustrycat10
@@ -1155,16 +1192,24 @@ foreach ed_var of local ed_vars {
 
 
 *<_industrycat_isic_2_>
-	gen industrycat_isic_2 = .
-	replace industrycat_isic_2 = . if lstatus != 1
+	gen str4 industrycat_isic_2 = string(q_11_25_a) + "00" if !missing(q_11_25_a)
+	replace industrycat_isic_2 = "" if missing(empstat_2)
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
 
 *<_industrycat10_2_>
-	gen byte industrycat10_2=floor(q_11_25/100)
-	replace industrycat10_2=10 if inrange(q_11_25,920,960)
-	replace industrycat10_2=. if missing(empstat_2) | industrycat10_2==.a
+/* <_industrycat10_2_note>
+
+	Secondary-job industry follows the same ISIC Rev. 2 grouping used for the
+	primary job. Code 91 is public administration and defence, while codes 92-96
+	are retained as other services rather than grouped with public administration.
+
+</_industrycat10_2_note> */
+	gen byte industrycat10_2 = real(substr(industrycat_isic_2,1,2)) if industrycat_isic_2 != ""
+	recode industrycat10_2 (11/13=1) (21/29=2) (31/39=3) (41/42=4) (50=5) ///
+		(61/63=6) (71/72=7) (81/83=8) (91=9) (92/96=10)
+	replace industrycat10_2=. if missing(empstat_2)
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
 *</_industrycat10_2_>
@@ -1866,6 +1911,6 @@ compress
 
 *<_% SAVE_>
 
-save "`path_output'/`out_file'", replace
+save "`path_output'/`level_2_harm'_ALL.dta", replace
 
 *</_% SAVE_>
