@@ -96,7 +96,7 @@ In order to find out the reason for the continuous gaps between GLD and BPS in 1
 Another possible explanation might be that BPS changed their definition of employment when doing estimation for the reports. But so far, this has not been verified. 
 
 ## 2024
-The PAK statistical bureau in their the labor module has an additional filter question (5.8 "did the respondent do any work in farming, rearing, fishing, none of the above?) captures respondents who respond no to questions 5.1 (Did…. do any work for pay/wage (Cash/Kind), for someone else during last week, at least for one hour on any day?) to 5.4 (even if... not worked in the last week have a paid jon/business...?) from the questionnaire but may still have done any type of agricultural work in the reference period. The captured group is included in the employed category.
+The PAK statistical bureau in their the labor module has an additional filter question (5.8 "did the respondent do any work in farming, rearing, fishing, none of the above?) captures respondents who respond no to questions 5.1 (Did…. do any work for pay/wage (Cash/Kind), for someone else during last week, at least for one hour on any day?) to 5.4 (even if... not worked in the last week have a paid jon/business...?) from the questionnaire but may still have done any type of agricultural work in the reference period. The captured group is included in the employed category. This additional restriction helps to recreate the labour status variable for the ICLS-13 labour definitions.
 
 ``
 replace lstatus=1 if S5C1==2 & S5C2==2 & S5C3==2 & S5C4==2 & inrange(S5C8,1,3)
