@@ -48,8 +48,8 @@ When we apply different definitions to the employment, industry and occupation v
 
 | Concept (all 15+) | Value 2020 ICLS-13 | Value 2024 ICLS-13 | Value 2024 ICLS-19 |
 |---|---|---|---|
-| Employment share | 49.35% | 44.68% | 43.23% |
-| Unemployment share | 2.92% | 3.16% | 3.16% |
+| Employment share | 49.35% | 42.65% | 43.23% |
+| Unemployment share | 2.92% | 4.30% | 3.16% |
 | Share of wage employed | 42.19% | 41.29% | 42.68% |
 | Share of employed in Ag (industry) | 37.15% | 37.84% | 35.75% |
 | Share of employed as farmers (occupation) | 33.82% | 32.64% | 30.37% |
