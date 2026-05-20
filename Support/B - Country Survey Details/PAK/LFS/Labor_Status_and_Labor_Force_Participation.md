@@ -71,6 +71,8 @@ Question 9.6 (1-4): unavailable for certain reasons that still belong to unemplo
 
 To maintain consistency, the unemployed is coded if a person is active (`S9C1 == 1`) and willing to work in the short term (`inlist(S9C6,1,2)`).
 
+A person aged 10 and above is classified as employed if they did any work for pay, profit, or family gain during the reference week, helped in a family business or farm, or had a job or business but were temporarily absent — provided that absence was either expected to last three months or less, or they continued to receive income during the absence. A person is classified as unemployed if they were not employed and actively searched for work during the reference period and were available to take up a job. Anyone who does not meet the criteria for either employed or unemployed is classified as outside the labor force. This definition applies to all household members aged 10 years and above.
+
 ![labor_2020_1](utilities/labor_2020_1.png)
 ![labor_2020_2](utilities/labor_2020_2.png)
 
