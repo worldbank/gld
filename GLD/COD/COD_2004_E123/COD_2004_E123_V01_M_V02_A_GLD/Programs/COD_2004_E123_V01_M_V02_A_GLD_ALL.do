@@ -4,7 +4,7 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				COD_2004_E123_V01_M_V01_A_GLD_ALL.do </_Program name_>
+<_Program name_>				COD_2004_E123_V01_M_V02_A_GLD_ALL.do </_Program name_>
 <_Application_>					STATA </_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
 <_Date created_>				2026-03-23 </_Date created_>
@@ -16,18 +16,18 @@
 <_Survey Year_>					2004 </_Survey Year_>
 <_Study ID_>					COD_2004_E123 </_Study ID_>
 <_Data collection from_>		2004 </_Data collection from_>
-<_Data collection to_>			2004 </_Data collection to_>
+<_Data collection to_>			2005 </_Data collection to_>
 <_Source of dataset_> 			Institut National de la Statistique (INS) </_Source of dataset_>
 <_Sample size (HH)_> 			13215 </_Sample size (HH)_>
 <_Sample size (IND)_> 			72685 </_Sample size (IND)_>
-<_Sampling method_> 			Person-level Phase 1 employment file. Delivered documentation in this folder was sufficient to identify provinces and residence strata, but not to recover a fuller sampling note. </_Sampling method_>
+<_Sampling method_> 			Person-level Phase 1 employment file. The documentation describes a stratified multi-stage design: two-stage sampling in Kinshasa and stratified two- and three-stage sampling outside Kinshasa, with province and residence-area information retained in the given raw data. </_Sampling method_>
 <_Geographic coverage_> 		National, with province and residence-area information in the raw data </_Geographic coverage_>
 <_Currency_> 					Congolese franc (FC) </_Currency_>
 
 -----------------------------------------------------------------------
 
 <_ICLS Version_>				ICLS-13 </_ICLS Version_>
-<_ISCED Version_>				Not identified from delivered documentation </_ISCED Version_>
+<_ISCED Version_>				Not identified from given documentation </_ISCED Version_>
 <_ISCO Version_>				isco_1988 </_ISCO Version_>
 <_OCCUP National_>				Delivered occupation codes are close to ISCO-88 3-digit groups, with a few survey-specific residual codes </_OCCUP National_>
 <_ISIC Version_>				isic_3_1 </_ISIC Version_>
@@ -53,12 +53,17 @@ set varabbrev off
 
 *----------1.2: Set directories------------------------------*
 
-local server  "/Users/angelosantos/Downloads"
+if "`c(username)'" == "wb510859" {
+	local server "C:/Users/`c(username)'/OneDrive - WBG/GLD - Current Contributors/510859_AS"
+}
+else {
+	local server "C:/Users/`c(username)'/WBG/GLD - Current Contributors/510859_AS"
+}
 local country "COD"
 local year    "2004"
 local survey  "E123"
 local vermast "V01"
-local veralt  "V01"
+local veralt  "V02"
 
 local level_1      "`country'_`year'_`survey'"
 local level_2_mast "`level_1'_`vermast'_M"
@@ -68,12 +73,10 @@ local path_in_stata "`server'/`country'/`level_1'/`level_2_mast'/Data/Stata"
 local path_in_other "`server'/`country'/`level_1'/`level_2_mast'/Data/Original"
 local path_output   "`server'/`country'/`level_1'/`level_2_harm'/Data/Harmonized"
 
-local out_file "`level_2_harm'_ALL.dta"
-
 *----------1.3: Database assembly------------------------------*
 
-* All steps necessary to merge datasets (if several) to have all elements needed to produce
-* harmonized output in a single file
+* Phase 1 is already stored in a single person-level raw file, so no additional
+* merge step is needed before harmonization.
 
 use "`path_in_stata'/Phase1_IND.dta", clear
 
@@ -109,14 +112,6 @@ use "`path_in_stata'/Phase1_IND.dta", clear
 
 
 *<_isced_version_>
-	/* <_isced_version_note>
-
-	The delivered 2004 education variables support the GLD education ladder through school
-	attendance, level, diploma, and years completed, but they do not provide a clean crosswalk to a
-	specific ISCED version for all reported categories. We therefore preserve the GLD schema and
-	leave `isced_version` empty.
-
-	</_isced_version_note> */
 	gen strL isced_version = ""
 	label var isced_version "Version of ISCED used for educat_isced"
 *</_isced_version_>
@@ -159,12 +154,30 @@ use "`path_in_stata'/Phase1_IND.dta", clear
 
 
 *<_int_year_>
-	gen int_year = 2004
+	/* <_int_year_note>
+
+		The given person file does not retain interview day, month, or year
+		variables. We therefore use the documented survey rollout to code interview
+		year. The technical notes describe the operation as taking place first in
+		Kinshasa during 2004 and then in the other regions of the country starting
+		in 2005. To reflect that rollout, we code `int_year = 2004` for Kinshasa
+		(`prov == 10`) and `int_year = 2005` for the remaining provinces.
+
+	</_int_year_note> */
+	gen int_year = .
+	replace int_year = 2004 if prov == 10
+	replace int_year = 2005 if !missing(prov) & prov != 10
 	label var int_year "Year of the interview"
 *</_int_year_>
 
 
 *<_int_month_>
+	/* <_int_month_note>
+
+		The given person file does not retain interview month. We therefore keep
+		`int_month` in the GLD schema but leave it missing.
+
+	</_int_month_note> */
 	gen int_month = .
 	label define lblint_month 1 "January" 2 "February" 3 "March" 4 "April" 5 "May" 6 "June" 7 "July" 8 "August" 9 "September" 10 "October" 11 "November" 12 "December", replace
 	label values int_month lblint_month
@@ -175,12 +188,7 @@ use "`path_in_stata'/Phase1_IND.dta", clear
 *<_hhid_>
 /* <_hhid_note>
 
-	The variable should be a string made up of the elements to define it, that is psu code, ssu, ...
-	Each element should always be as long as needed for the longest element. That is, if there are
-	60 psu coded 1 through 60, codes should be 01, 02, ..., 60. If there are 160 it should be 001,
-	002, ..., 160.
-
-	The delivered person file already contains `idmen`, which is unique at household level. We use
+	The given person file already contains `idmen`, which is unique at household level. We use
 	that stable raw identifier directly and store it as a string GLD household ID.
 
 </_hhid_note> */
@@ -193,7 +201,7 @@ use "`path_in_stata'/Phase1_IND.dta", clear
 *<_pid_>
 /* <_pid_note>
 
-	The delivered person file already contains `idind`, and that identifier is unique for all
+	The given person file already contains `idind`, and that identifier is unique for all
 	72,685 observations in `Phase1_IND.dta`. We use it directly as the GLD person ID.
 
 </_pid_note> */
@@ -284,7 +292,12 @@ use "`path_in_stata'/Phase1_IND.dta", clear
 
 
 *<_subnatid1_>
-* Made consistent with 2012 codes because that is better organized
+/* <_subnatid1_note>
+
+	Province labels are kept consistent with the 2012 E123 round so the first
+	administrative level reads the same way across the two surveys.
+
+</_subnatid1_note> */
 	gen strL subnatid1 = ""
 	replace subnatid1 = "1 - Kinshasa" if prov == 10
 	replace subnatid1 = "2 - Bandundu" if prov == 30
@@ -304,7 +317,7 @@ use "`path_in_stata'/Phase1_IND.dta", clear
 *<_subnatid2_>
 /* <_subnatid2_note>
 
-	The delivered file includes `pool`, but no crosswalk to subnational names was provided in the
+	The given file includes `pool`, but no crosswalk to subnational names was provided in the
 	survey folder. We therefore retain the code only as the second-level GLD geography string.
 
 </_subnatid2_note> */
@@ -338,11 +351,6 @@ than the province identifier stored in `subnatid1`.
 
 
 *<_subnatid1_prev_>
-/* <_subnatid1_prev_note>
-
-	subnatid1_prev is coded as missing unless the classification used for subnatid1 has changed since the previous survey.
-
-</_subnatid1_prev_note> */
 	gen subnatid1_prev = .
 	label var subnatid1_prev "Classification used for subnatid1 from previous survey"
 *</_subnatid1_prev_>
@@ -499,19 +507,32 @@ than the province identifier stored in `subnatid1`.
 {
 
 *<_migrated_mod_age_>
-	gen migrated_mod_age = .
+	gen migrated_mod_age = 0
 	label var migrated_mod_age "Migration module application age"
 *</_migrated_mod_age_>
 
 
 *<_migrated_ref_time_>
-	gen migrated_ref_time = .
+	gen migrated_ref_time = 99
 	label var migrated_ref_time "Reference time applied to migration questions (in years)"
 *</_migrated_ref_time_>
 
 
 *<_migrated_binary_>
+	/* <_migrated_binary_note>
+
+		The migration block is asked to the full roster. We code migration from the
+		current-place module `M10-M12`, not from birthplace alone. A person is
+		treated as migrated when they report not having lived continuously in the
+		current locality since always (`m10a_tps == 2`). This captures the survey's
+		latest-migration concept and avoids classifying people as migrants only
+		because they were born elsewhere but have always lived in the current place.
+
+	</_migrated_binary_note> */
 	gen migrated_binary = .
+	replace migrated_binary = 0 if m10a_tps == 1
+	replace migrated_binary = 1 if m10a_tps == 2
+	replace migrated_binary = 1 if missing(migrated_binary) & (!missing(m10b_dur) | !missing(m11a_lhb) | !missing(m12_poq))
 	label define lblmigrated_binary 0 "No" 1 "Yes", replace
 	label values migrated_binary lblmigrated_binary
 	label var migrated_binary "Individual has migrated"
@@ -520,6 +541,7 @@ than the province identifier stored in `subnatid1`.
 
 *<_migrated_years_>
 	gen migrated_years = .
+	replace migrated_years = m10b_dur if migrated_binary == 1 & !missing(m10b_dur)
 	replace migrated_years = . if migrated_binary != 1
 	label var migrated_years "Years since latest migration"
 *</_migrated_years_>
@@ -527,6 +549,8 @@ than the province identifier stored in `subnatid1`.
 
 *<_migrated_from_urban_>
 	gen migrated_from_urban = .
+	replace migrated_from_urban = 1 if migrated_binary == 1 & inlist(m11a_lhb, 1, 2, 3, 4)
+	replace migrated_from_urban = 0 if migrated_binary == 1 & m11a_lhb == 5
 	replace migrated_from_urban = . if migrated_binary != 1
 	label define lblmigrated_from_urban 0 "Rural" 1 "Urban", replace
 	label values migrated_from_urban lblmigrated_from_urban
@@ -535,7 +559,24 @@ than the province identifier stored in `subnatid1`.
 
 
 *<_migrated_from_cat_>
+	/* <_migrated_from_cat_note>
+
+		The questionnaire makes clear that `M11b` is the district of previous
+		residence (`District de résidence antérieure`, with the instruction
+		`voir code district`). We therefore use `m11b_dst` as the raw previous-
+		residence code. The given raw file does not retain a current-district
+		variable that can be compared directly with `m11b_dst`; it only retains
+		current province (`prov`) plus survey grouping variables such as `pool`
+		and `site`. There is therefore no clean way to interpret the previous
+		district code relative to the respondent's current district. We attach
+		the raw previous-district code for future users, but to stay conservative
+		we code only `abroad` versus `within country` here and leave the internal
+		same-admin1 versus other-admin1 split unresolved.
+
+	</_migrated_from_cat_note> */
 	gen migrated_from_cat = .
+	replace migrated_from_cat = 5 if migrated_binary == 1 & m11a_lhb == 6
+	replace migrated_from_cat = 6 if migrated_binary == 1 & m11a_lhb != 6
 	replace migrated_from_cat = . if migrated_binary != 1
 	label define lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country" 6 "Within country, admin unknown" 7 "Wholly unknown", replace
 	label values migrated_from_cat lblmigrated_from_cat
@@ -545,6 +586,7 @@ than the province identifier stored in `subnatid1`.
 
 *<_migrated_from_code_>
 	gen strL migrated_from_code = ""
+	replace migrated_from_code = string(m11b_dst, "%03.0f") if migrated_binary == 1 & m11a_lhb != 6 & !missing(m11b_dst)
 	replace migrated_from_code = "" if migrated_binary != 1
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
 *</_migrated_from_code_>
@@ -559,6 +601,11 @@ than the province identifier stored in `subnatid1`.
 
 *<_migrated_reason_>
 	gen migrated_reason = .
+	replace migrated_reason = 1 if migrated_binary == 1 & m12_poq == 1
+	replace migrated_reason = 2 if migrated_binary == 1 & m12_poq == 2
+	replace migrated_reason = 3 if migrated_binary == 1 & inlist(m12_poq, 4, 5)
+	replace migrated_reason = 4 if migrated_binary == 1 & m12_poq == 6
+	replace migrated_reason = 5 if migrated_binary == 1 & inlist(m12_poq, 3, 7)
 	replace migrated_reason = . if migrated_binary != 1
 	label define lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, ...)" 5 "Other reasons", replace
 	label values migrated_reason lblmigrated_reason
@@ -580,7 +627,7 @@ than the province identifier stored in `subnatid1`.
 
 /* <_ed_mod_age_note>
 
-Education items are populated for nearly the full roster in the delivered person file, so the
+Education items are populated for nearly the full roster in the given person file, so the
 GLD education module age is set to zero and no survey-based lower cutoff is imposed.
 
 </_ed_mod_age_note> */
@@ -611,8 +658,7 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educy_>
-	gen educy = m14_cla
-	replace educy = 0 if m13a_ecp == 2
+	gen educy = .
 	label var educy "Years of education"
 *</_educy_>
 
@@ -623,7 +669,7 @@ label var ed_mod_age "Education module application age"
 	The survey provides a direct years-of-study variable in `m14_cla`, and the questionnaire states
 	that it should already be converted into years of education completed successfully. We therefore
 	use `m13a_ecp`, `m13b_ens`, `m13d_dip`, and `m14_cla` together to map the GLD education ladder.
-	Because the delivered data do not support a clean distinction between short-cycle tertiary and
+	Because the given data do not support a clean distinction between short-cycle tertiary and
 	university, level 6 is not used. A conservative 108 cases remain missing after this mapping.
 
 </_educat7_note> */
@@ -680,7 +726,7 @@ label var ed_mod_age "Education module application age"
 
 *----------6.1: Education cleanup------------------------------*
 
-*<_% Correction min age_>
+*<_% Education min age cleanup_>
 
 local ed_vars "school literacy educy educat7 educat5 educat4 educat_orig educat_isced"
 
@@ -695,7 +741,7 @@ foreach ed_var of local ed_vars {
 }
 
 
-*</_% Correction min age_>
+*</_% Education min age cleanup_>
 
 
 }
@@ -773,8 +819,10 @@ Employed:
 - worked at least one hour in the last 7 days (`ea2_empl == 1`), which affects 22,211 cases.
 - did an own-account, family, apprenticeship, or other income-generating activity after a "no"
   at `EA2`; this is captured in `ea3_aut` values 1 to 9 and affects 1,851 cases.
-- was temporarily absent from a job but still reported a job attachment (`ea4_empl == 1`), which
-  affects 954 cases.
+- was temporarily absent from a job and was not routed out of the employed branch. This affects
+  847 cases. The questionnaire sends 107 respondents with `EA6 = 2` (more than 4 weeks) or
+  `EA6 = 3` (does not know) away from `AP1` and into the later nonemployment questions, so
+  those cases are not treated as employed here.
 
 Unemployed:
 - not employed under the branches above.
@@ -790,7 +838,8 @@ Non-labour force:
 </_lstatus_note> */
 	gen lstatus = .
 	replace lstatus = . if age < minlaborage & !missing(age)
-	replace lstatus = 1 if age >= minlaborage & (ea2_empl == 1 | inrange(ea3_aut, 1, 9) | ea4_empl == 1)
+	replace lstatus = 1 if age >= minlaborage & (ea2_empl == 1 | inrange(ea3_aut, 1, 9))
+	replace lstatus = 1 if age >= minlaborage & missing(lstatus) & ea4_empl == 1 & !inlist(ea6_quan, 2, 3)
 	replace lstatus = 2 if age >= minlaborage & missing(lstatus) & (ea7_rsm == 1 | ea7b_rmm == 1) & inlist(ea7c_dis, 1, 2)
 	replace lstatus = 3 if age >= minlaborage & missing(lstatus)
 	label var lstatus "Labor status"
@@ -860,7 +909,7 @@ Non-labour force:
 *<_empstat_>
 /* <_empstat_note>
 
-	The delivered main-job status ladder `ap3_cat` is unlabeled in the raw 2004 Stata file. To keep
+	The given main-job status ladder `ap3_cat` is unlabeled in the raw 2004 Stata file. To keep
 	the main-job coding aligned with the survey's own secondary-job ladder `as4_cat`, we use the
 	same status pattern here: categories `0-5` are treated as paid employee, `9` as non-paid
 	employee, `6` as employer, `7` as self-employed, and `8` as other.
@@ -880,10 +929,18 @@ Non-labour force:
 
 
 *<_ocusec_>
+	/* <_ocusec_note>
+
+		`AP4` distinguishes public administration from public or para-public
+		enterprises. We therefore keep `ap4_ent == 1` as public and code
+		`ap4_ent == 2` to `ocusec = 4`, meaning public or state-owned but cannot
+		distinguish more finely in the GLD sector ladder.
+
+	</_ocusec_note> */
 	gen ocusec = .
 	replace ocusec = . if lstatus != 1
 	replace ocusec = 1 if lstatus == 1 & ap4_ent == 1
-	replace ocusec = 3 if lstatus == 1 & ap4_ent == 2
+	replace ocusec = 4 if lstatus == 1 & ap4_ent == 2
 	replace ocusec = 2 if lstatus == 1 & inlist(ap4_ent, 3, 4, 5)
 	label var ocusec "Sector of activity primary job 7 day recall"
 	label define lblocusec 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish", replace
@@ -901,7 +958,7 @@ Non-labour force:
 *<_industrycat_isic_>
 /* <_industrycat_isic_note>
 
-	The delivered main-job industry code is close to ISIC Rev. 3.1 but not exact for every category.
+	The given main-job industry code is close to ISIC Rev. 3.1 but not exact for every category.
 	We therefore code `industrycat_isic` consistently from the first two digits and store it as
 	`XX00` rather than mixing detailed values with fallback values. After that uniform fallback, 8
 	employed cases with nonmissing raw industry do not have a defensible ISIC Rev. 3.1 match and are
@@ -913,7 +970,7 @@ Non-labour force:
 	tostring ap2_bran, gen(ap2_bran_str) format(%04.0f)
 	replace industrycat_isic = substr(ap2_bran_str, 1, 2) + "00" if lstatus == 1 & ap2_bran_str != ""
 	replace industrycat_isic = "" if inlist(industrycat_isic, "0600", "0800", "0900", "7800", "8300")
-	replace industrycat_isic = "" if lstatus != 1 | industrycat_isic == "0000"
+	replace industrycat_isic = "" if lstatus != 1 | inlist(industrycat_isic, "0000", ".00")
 	drop ap2_bran_str
 	label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
@@ -959,18 +1016,20 @@ Non-labour force:
 *<_occup_isco_>
 /* <_occup_isco_note>
 
-	The main-job occupation code is close to ISCO-88 at the 3-digit level, but the full scheme is not
-	completely defensible as exact 4-digit ISCO. For consistency, all nonmissing occupied cases are
-	therefore coded to the first two digits plus `00` rather than mixing detailed values with
-	fallback values. After that uniform fallback, 46 employed cases with nonmissing raw occupation do
-	not have a defensible ISCO-88 match and are left missing.
+		The main-job occupation code is close to ISCO-88 at the 3-digit level, but the full scheme is not
+		completely defensible as exact 4-digit ISCO. For consistency, all nonmissing occupied cases are
+		therefore coded to the first two digits plus `00` rather than mixing detailed values with
+		fallback values. After that uniform fallback, 51 employed cases with nonmissing raw occupation do
+		not have a defensible ISCO-88 match and are left missing, including grouped fallbacks such as
+		`0200` and `7500` that do not belong to ISCO-88.
 
 </_occup_isco_note> */
 	gen strL occup_raw_str = string(ap1_nom, "%03.0f")
 	gen str4 occup_isco = ""
 	replace occup_isco = substr(occup_raw_str, 1, 2) + "00" if lstatus == 1 & occup_raw_str != ""
-	replace occup_isco = "" if inlist(occup_isco, "0100", "0200", "1500", "3500", "5900", "7500", "8000", "9500")
-	replace occup_isco = "" if lstatus != 1 | occup_isco == "0000"
+	replace occup_isco = "" if inlist(occup_isco, "0100", "0200", "1500", "3500")
+	replace occup_isco = "" if inlist(occup_isco, "5900", "7500", "8000", "9500")
+	replace occup_isco = "" if lstatus != 1 | inlist(occup_isco, "0000", ".00")
 	drop occup_raw_str
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
@@ -1003,14 +1062,20 @@ Non-labour force:
 *<_wage_no_compen_>
 /* <_wage_no_compen_note>
 
-	The questionnaire records last-month income from the main job as an exact amount in `ap13a_mt`
-	and, when that is not available, as an interval in `ap13b_sa`. Because `ap12_pai` explicitly
-	allows wages, commissions, business profits, and in-kind remuneration, this monthly earnings
-	question is used for all paid remuneration modes `1-6`, leaving only unpaid workers (`7`)
-	missing. Exact reported amounts are used directly. For bracket-only respondents, the harmonized
-	monthly earnings are imputed from the weighted mean exact earnings of comparable workers in the
-	same wage bracket, sex, area, occupation, and broad industry group. The separately monetized
-	`ap16*` benefit items are not added here to avoid double-counting.
+		The questionnaire records last-month income from the main job as an exact amount in `ap13a_mt`
+		and, when that is not available, as an interval in `ap13b_sa`. Because `ap12_pai` explicitly
+		allows wages, commissions, business profits, and in-kind remuneration, this monthly earnings
+		question is used for all paid remuneration modes `1-6`, including business profits, rather than
+		for employees alone. Exact reported amounts are used directly. For bracket-only respondents, the
+		harmonized monthly earnings are imputed from the weighted mean exact earnings of comparable
+		workers in the same wage bracket, sex, area, occupation, and broad industry group. The
+		separately monetized `ap16*` benefit items are not added here to avoid double-counting.
+
+		There are 5,645 employed people with missing `wage_no_compen` in the current coding. Of these,
+		5,024 are not remunerated (`ap12_pai == 7`), 482 are in paid remuneration modes `1-6` but still
+		lack a usable earnings amount, and 282 of those paid cases have neither an exact amount nor a
+		bracket response. The residual paid-mode missings come from partial nonresponse or failed donor-
+		cell imputation, while 139 additional employed cases have missing remuneration mode itself.
 
 </_wage_no_compen_note> */
 	gen double wage_no_compen = .
@@ -1044,10 +1109,12 @@ Non-labour force:
 *<_unitwage_>
 
 /* <_unitwage_note>
-	Unitwage refers to the unit used to record wage_no_compen, *not* the unit of
-	general wage payent. For example, PHL LFS asks about wage periodicity, then
-	asks for basic daily pay. The value of that pay would be wage_no_compen,
-	while unitwage is code 1 ("Daily") for all, regardless of the periodicity.
+
+	The questionnaire asks for last month's income from the main job. We therefore
+	code `unitwage = 5` whenever `wage_no_compen` is nonmissing, because the
+	recorded amount is a monthly amount regardless of whether the underlying pay
+	mode is salary, commission, profits, or in-kind remuneration.
+
 </_unitwage_note> */
 
 	gen unitwage = .
@@ -1076,15 +1143,7 @@ Non-labour force:
 
 
 *<_wage_total_>
-/* <_wage_total_note>
-
-	Use gross wages when available and net wages only when gross wages are not available.
-	This is done to make it easy to compare earnings in formal and informal sectors.
-
-</_wage_total_note> */
 	gen wage_total = .
-	replace wage_total = . if lstatus != 1
-	replace wage_total = wage_no_compen * 12 if !missing(wage_no_compen)
 	label var wage_total "Annualized total wage primary job 7 day recall"
 *</_wage_total_>
 
@@ -1165,7 +1224,6 @@ Non-labour force:
 
 
 *----------8.3: 7 day reference secondary job------------------------------*
-* Since labels are the same as main job, values are labelled using main job labels
 
 
 {
@@ -1186,7 +1244,7 @@ Non-labour force:
 	gen ocusec_2 = .
 	replace ocusec_2 = . if mi(empstat_2)
 	replace ocusec_2 = 1 if lstatus == 1 & as1c_aut == 1 & as5_ent == 1
-	replace ocusec_2 = 3 if lstatus == 1 & as1c_aut == 1 & as5_ent == 2
+	replace ocusec_2 = 4 if lstatus == 1 & as1c_aut == 1 & as5_ent == 2
 	replace ocusec_2 = 2 if lstatus == 1 & as1c_aut == 1 & inlist(as5_ent, 3, 4, 5)
 	replace ocusec_2 = . if mi(empstat_2)
 	label var ocusec_2 "Sector of activity secondary job 7 day recall"
@@ -1216,7 +1274,7 @@ Non-labour force:
 	replace industrycat_isic_2 = substr(as3_bran_str, 1, 2) + "00" if lstatus == 1 & as1c_aut == 1 & as3_bran_str != ""
 	replace industrycat_isic_2 = "" if inlist(industrycat_isic_2, "0300", "0700")
 	replace industrycat_isic_2 = "" if mi(empstat_2)
-	replace industrycat_isic_2 = "" if industrycat_isic_2 == "0000"
+	replace industrycat_isic_2 = "" if inlist(industrycat_isic_2, "0000", ".00")
 	drop as3_bran_str
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
@@ -1269,9 +1327,10 @@ Non-labour force:
 	gen strL occup_raw_str_2 = string(as2_prof, "%03.0f")
 	gen str4 occup_isco_2 = ""
 	replace occup_isco_2 = substr(occup_raw_str_2, 1, 2) + "00" if lstatus == 1 & as1c_aut == 1 & occup_raw_str_2 != ""
-	replace occup_isco_2 = "" if inlist(occup_isco_2, "0100", "0200", "0400", "0500", "0700", "0900", "1500", "3600", "5500", "7800")
+	replace occup_isco_2 = "" if inlist(occup_isco_2, "0100", "0200", "0400", "0500", "0700")
+	replace occup_isco_2 = "" if inlist(occup_isco_2, "0900", "1500", "3600", "5500", "7800")
 	replace occup_isco_2 = "" if mi(empstat_2)
-	replace occup_isco_2 = "" if occup_isco_2 == "0000"
+	replace occup_isco_2 = "" if inlist(occup_isco_2, "0000", ".00")
 	drop occup_raw_str_2
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
@@ -1369,8 +1428,6 @@ Non-labour force:
 
 *<_wage_total_2_>
 	gen wage_total_2 = .
-	replace wage_total_2 = . if mi(empstat_2)
-	replace wage_total_2 = wage_no_compen_2 * 12 if !missing(wage_no_compen_2)
 	label var wage_total_2 "Annualized total wage secondary job 7 day recall"
 *</_wage_total_2_>
 
@@ -1407,8 +1464,6 @@ Non-labour force:
 	label var firmsize_u_2 "Firm size (upper bracket) secondary job 7 day recall"
 *</_firmsize_u_2_>
 
-}
-
 *----------8.4: 7 day reference additional jobs------------------------------*
 
 *<_t_hours_others_>
@@ -1427,7 +1482,6 @@ Non-labour force:
 
 *<_t_wage_others_>
 	gen t_wage_others = .
-	replace t_wage_others = . if lstatus != 1
 	label var t_wage_others "Annualized wage in all but primary and secondary jobs (12-mon ref period)"
 *</_t_wage_others_>
 
@@ -1437,10 +1491,6 @@ Non-labour force:
 
 *<_t_hours_total_>
 	gen t_hours_total = .
-	replace t_hours_total = . if lstatus != 1
-	tempvar t_hours_total_tmp
-	egen `t_hours_total_tmp' = rowtotal(whours whours_2)
-	replace t_hours_total = `t_hours_total_tmp' if lstatus == 1
 	label var t_hours_total "Annualized hours worked in all jobs 7 day recall"
 *</_t_hours_total_>
 
@@ -1457,10 +1507,6 @@ Non-labour force:
 
 *<_t_wage_total_>
 	gen t_wage_total = .
-	replace t_wage_total = . if lstatus != 1
-	tempvar t_wage_total_tmp
-	egen `t_wage_total_tmp' = rowtotal(wage_total wage_total_2)
-	replace t_wage_total = `t_wage_total_tmp' if lstatus == 1
 	label var t_wage_total "Annualized total earnings for all jobs 7 day recall"
 *</_t_wage_total_>
 
@@ -1552,9 +1598,9 @@ Non-labour force:
 	gen industrycat_isic_year = .
 	replace industrycat_isic_year = . if lstatus_year != 1
 
-	preserve 
+	preserve
 	count
-	restore 
+	restore
 
 	label var industrycat_isic_year "ISIC code of primary job 12 month recall"
 *</_industrycat_isic_year_>
@@ -1589,7 +1635,7 @@ Non-labour force:
 	gen strL occup_isco_year = ""
 	replace occup_isco_year = "" if lstatus_year != 1
 
-	preserve 
+	preserve
 	count
 	restore
 
@@ -1914,15 +1960,13 @@ Non-labour force:
 
 
 *<_linc_nc_>
-	gen linc_nc = t_wage_nocompen_total
-	replace linc_nc = . if lstatus != 1
+	gen linc_nc = .
 	label var linc_nc "Total annual wage income in all jobs, excl. bonuses, etc."
 *</_linc_nc_>
 
 
 *<_laborincome_>
-	gen laborincome = t_wage_total
-	replace laborincome = . if lstatus != 1
+	gen laborincome = .
 	label var laborincome "Total annual individual labor income in all jobs, incl. bonuses, etc."
 *</_laborincome_>
 
@@ -1930,7 +1974,7 @@ Non-labour force:
 *----------8.13: Labour cleanup------------------------------*
 
 {
-*<_% Correction min age_>
+*<_% Labour min age cleanup_>
 
 	local lab_vars "minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome"
 
@@ -1945,7 +1989,9 @@ Non-labour force:
 
 	}
 
-*</_% Correction min age_>
+*</_% Labour min age cleanup_>
+}
+
 }
 
 
@@ -1998,21 +2044,6 @@ quietly{
 }
 
 
-*<_% DELETE MISSING VARIABLES_>
-quietly: describe, varlist
-local kept_vars `r(varlist)'
-local preserve_missing "isced_version educat_isced"
-
-foreach kept_var of local kept_vars {
-	if !`: list kept_var in preserve_missing' {
-		capture assert missing(`kept_var')
-		if !_rc drop `kept_var'
-	}
-}
-
-*</_% DELETE MISSING VARIABLES_>
-
-
 *<_% COMPRESS_>
 
 compress
@@ -2022,6 +2053,6 @@ compress
 
 *<_% SAVE_>
 
-save "`path_output'/`out_file'", replace
+save "`path_output'/`level_2_harm'_ALL.dta", replace
 
 *</_% SAVE_>

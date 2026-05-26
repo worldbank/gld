@@ -4,7 +4,7 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				COD_2012_E123_V01_M_V01_A_GLD_ALL.do </_Program name_>
+<_Program name_>				COD_2012_E123_V01_M_V02_A_GLD_ALL.do </_Program name_>
 <_Application_>					STATA </_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
 <_Date created_>				2026-03-23 </_Date created_>
@@ -53,12 +53,17 @@ set varabbrev off
 
 *----------1.2: Set directories------------------------------*
 
-local server  "/Users/angelosantos/Downloads"
+if "`c(username)'" == "wb510859" {
+	local server "C:/Users/`c(username)'/OneDrive - WBG/GLD - Current Contributors/510859_AS"
+}
+else {
+	local server "C:/Users/`c(username)'/WBG/GLD - Current Contributors/510859_AS"
+}
 local country "COD"
 local year    "2012"
 local survey  "E123"
 local vermast "V01"
-local veralt  "V01"
+local veralt  "V02"
 
 local level_1      "`country'_`year'_`survey'"
 local level_2_mast "`level_1'_`vermast'_M"
@@ -67,8 +72,6 @@ local level_2_harm "`level_1'_`vermast'_M_`veralt'_A_GLD"
 local path_in_stata "`server'/`country'/`level_1'/`level_2_mast'/Data/Stata"
 local path_in_other "`server'/`country'/`level_1'/`level_2_mast'/Data/Original"
 local path_output   "`server'/`country'/`level_1'/`level_2_harm'/Data/Harmonized"
-
-local out_file "`level_2_harm'_ALL.dta"
 
 *----------1.3: Database assembly------------------------------*
 
@@ -353,19 +356,19 @@ rename hhid hhid_raw
 	subnatid1_prev is coded as missing unless the classification used for subnatid1 has changed since the previous survey.
 
 </_subnatid1_prev_note> */
-	gen subnatid1_prev = .
+	gen strL subnatid1_prev = ""
 	label var subnatid1_prev "Classification used for subnatid1 from previous survey"
 *</_subnatid1_prev_>
 
 
 *<_subnatid2_prev_>
-	gen subnatid2_prev = .
+	gen strL subnatid2_prev = ""
 	label var subnatid2_prev "Classification used for subnatid2 from previous survey"
 *</_subnatid2_prev_>
 
 
 *<_subnatid3_prev_>
-	gen subnatid3_prev = .
+	gen strL subnatid3_prev = ""
 	label var subnatid3_prev "Classification used for subnatid3 from previous survey"
 *</_subnatid3_prev_>
 
@@ -433,7 +436,7 @@ rename hhid hhid_raw
 
 
 *<_relationcs_>
-	gen relationcs = m4
+	decode m4, gen(relationcs)
 	label var relationcs "Relationship to the head of household - Country original"
 *</_relationcs_>
 
@@ -509,19 +512,32 @@ rename hhid hhid_raw
 {
 
 *<_migrated_mod_age_>
-	gen migrated_mod_age = .
+	gen migrated_mod_age = 5
 	label var migrated_mod_age "Migration module application age"
 *</_migrated_mod_age_>
 
 
 *<_migrated_ref_time_>
-	gen migrated_ref_time = .
+	gen migrated_ref_time = 99
 	label var migrated_ref_time "Reference time applied to migration questions (in years)"
 *</_migrated_ref_time_>
 
 
 *<_migrated_binary_>
+	/* <_migrated_binary_note>
+
+		Continuous residence in the current locality is asked directly in m16a.
+		Respondents with m16a==2 are treated as migrants. The small group with
+		m16a coded missing is left uncoded even when some migration follow-up
+		variables are completed. We observe 1,472 such respondents in fully
+		completed interviews, so this is not an age skip pattern. Because the
+		migration trigger question itself is missing, these cases are left missing
+		rather than forced into migrant or nonmigrant status.
+
+	</_migrated_binary_note> */
 	gen migrated_binary = .
+	replace migrated_binary = 0 if m16a == 1
+	replace migrated_binary = 1 if m16a == 2
 	label define lblmigrated_binary 0 "No" 1 "Yes", replace
 	label values migrated_binary lblmigrated_binary
 	label var migrated_binary "Individual has migrated"
@@ -530,14 +546,15 @@ rename hhid hhid_raw
 
 *<_migrated_years_>
 	gen migrated_years = .
-	replace migrated_years = . if migrated_binary != 1
+	replace migrated_years = m16b if migrated_binary == 1 & !inlist(m16b, 98, 99)
 	label var migrated_years "Years since latest migration"
 *</_migrated_years_>
 
 
 *<_migrated_from_urban_>
 	gen migrated_from_urban = .
-	replace migrated_from_urban = . if migrated_binary != 1
+	replace migrated_from_urban = 1 if migrated_binary == 1 & inrange(m17a, 1, 4)
+	replace migrated_from_urban = 0 if migrated_binary == 1 & m17a == 5
 	label define lblmigrated_from_urban 0 "Rural" 1 "Urban", replace
 	label values migrated_from_urban lblmigrated_from_urban
 	label var migrated_from_urban "Migrated from area"
@@ -545,8 +562,36 @@ rename hhid hhid_raw
 
 
 *<_migrated_from_cat_>
+	/* <_migrated_from_cat_note>
+
+		The previous territory code in m17b can be translated to a previous
+		province because its labels are organized in province-prefixed blocks
+		(e.g. 2001-2012, 3101-3309, 4101-4506). The current file does not retain
+		a comparable current lower-admin code, so migration categories are coded
+		conservatively at the province level only. All valid internal m17b codes
+		observed in the given data fall into one of these province blocks, so the
+		admin1 mapping is based on the raw label structure rather than on ad hoc
+		code-format assumptions.
+
+	</_migrated_from_cat_note> */
 	gen migrated_from_cat = .
-	replace migrated_from_cat = . if migrated_binary != 1
+	tempvar m17b_pref prev_province
+	gen `m17b_pref' = floor(m17b/100)
+	gen `prev_province' = .
+	replace `prev_province' = 3  if `m17b_pref' == 20
+	replace `prev_province' = 2  if inlist(`m17b_pref', 31, 32, 33)
+	replace `prev_province' = 7  if inlist(`m17b_pref', 41, 42, 43, 44, 45)
+	replace `prev_province' = 11 if inlist(`m17b_pref', 51, 52, 53, 54)
+	replace `prev_province' = 8  if `m17b_pref' == 61
+	replace `prev_province' = 9  if `m17b_pref' == 62
+	replace `prev_province' = 10 if `m17b_pref' == 63
+	replace `prev_province' = 4  if inlist(`m17b_pref', 71, 72, 73, 74)
+	replace `prev_province' = 5  if inlist(`m17b_pref', 81, 82, 83)
+	replace `prev_province' = 6  if inlist(`m17b_pref', 91, 92)
+	replace migrated_from_cat = 5 if migrated_binary == 1 & m17a == 6
+	replace migrated_from_cat = 3 if migrated_binary == 1 & m17a != 6 & m17b != 9999 & `prev_province' == province
+	replace migrated_from_cat = 4 if migrated_binary == 1 & m17a != 6 & m17b != 9999 & `prev_province' != . & `prev_province' != province
+	replace migrated_from_cat = 6 if migrated_binary == 1 & missing(migrated_from_cat)
 	label define lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country" 6 "Within country, admin unknown" 7 "Wholly unknown", replace
 	label values migrated_from_cat lblmigrated_from_cat
 	label var migrated_from_cat "Category of migration area"
@@ -554,22 +599,44 @@ rename hhid hhid_raw
 
 
 *<_migrated_from_code_>
+	/* <_migrated_from_code_note>
+
+		m17b is a raw previous-territory code, but migrated_from_cat is coded at
+		the province level. To keep migrated_from_code at the same admin level as
+		migrated_from_cat, the code stored here is the previous province in the
+		same subnatid1-style format used elsewhere in the file, not the raw m17b
+		territory code.
+
+	</_migrated_from_code_note> */
 	gen strL migrated_from_code = ""
-	replace migrated_from_code = "" if migrated_binary != 1
+	replace migrated_from_code = "1 - Kinshasa" if inlist(migrated_from_cat, 3, 4) & `prev_province' == 1
+	replace migrated_from_code = "2 - Bandundu" if inlist(migrated_from_cat, 3, 4) & `prev_province' == 2
+	replace migrated_from_code = "3 - Bas-Congo" if inlist(migrated_from_cat, 3, 4) & `prev_province' == 3
+	replace migrated_from_code = "4 - Katanga" if inlist(migrated_from_cat, 3, 4) & `prev_province' == 4
+	replace migrated_from_code = "5 - Kasai Oriental" if inlist(migrated_from_cat, 3, 4) & `prev_province' == 5
+	replace migrated_from_code = "6 - Kasai Occidental" if inlist(migrated_from_cat, 3, 4) & `prev_province' == 6
+	replace migrated_from_code = "7 - Equateur" if inlist(migrated_from_cat, 3, 4) & `prev_province' == 7
+	replace migrated_from_code = "8 - Nord-Kivu" if inlist(migrated_from_cat, 3, 4) & `prev_province' == 8
+	replace migrated_from_code = "9 - Sud-Kivu" if inlist(migrated_from_cat, 3, 4) & `prev_province' == 9
+	replace migrated_from_code = "10 - Maniema" if inlist(migrated_from_cat, 3, 4) & `prev_province' == 10
+	replace migrated_from_code = "11 - Province Orientale" if inlist(migrated_from_cat, 3, 4) & `prev_province' == 11
 	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
 *</_migrated_from_code_>
 
 
 *<_migrated_from_country_>
 	gen strL migrated_from_country = ""
-	replace migrated_from_country = "" if migrated_binary != 1
 	label var migrated_from_country "Code of migration country (ISO 3 Letter Code)"
 *</_migrated_from_country_>
 
 
 *<_migrated_reason_>
 	gen migrated_reason = .
-	replace migrated_reason = . if migrated_binary != 1
+	replace migrated_reason = 1 if migrated_binary == 1 & m18 == 1
+	replace migrated_reason = 2 if migrated_binary == 1 & m18 == 2
+	replace migrated_reason = 3 if migrated_binary == 1 & inlist(m18, 4, 5)
+	replace migrated_reason = 4 if migrated_binary == 1 & m18 == 6
+	replace migrated_reason = 5 if migrated_binary == 1 & inlist(m18, 3, 7)
 	label define lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, ...)" 5 "Other reasons", replace
 	label values migrated_reason lblmigrated_reason
 	label var migrated_reason "Reason for migrating"
@@ -622,8 +689,7 @@ label var ed_mod_age "Education module application age"
 
 
 *<_educy_>
-	gen educy = ed23
-	replace educy = 0 if ed22 == 0 & !missing(ed22)
+	gen educy = .
 	label var educy "Years of education"
 *</_educy_>
 
@@ -643,7 +709,7 @@ label var ed_mod_age "Education module application age"
 	replace educat7 = 3 if ed22 == 1 & ed23 >= 6 & !missing(ed23)
 	replace educat7 = 4 if ed22 == 2 & inrange(ed23, 0, 5)
 	replace educat7 = 5 if ed22 == 2 & ed23 >= 6 & !missing(ed23)
-	replace educat7 = 6 if ed22 == 6
+	replace educat7 = 5 if ed22 == 6
 	replace educat7 = 7 if inlist(ed22, 4, 5)
 	label var educat7 "Level of education 1"
 	label define lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete", replace
@@ -768,7 +834,7 @@ foreach ed_var of local ed_vars {
 
 
 *<_minlaborage_>
-	gen minlaborage = 10
+	gen minlaborage = 5
 	label var minlaborage "Labor module application age"
 *</_minlaborage_>
 
@@ -780,17 +846,23 @@ foreach ed_var of local ed_vars {
 /* <_lstatus_note>
 
 Employed:
-- worked at least one hour in the last 7 days (`ea2 == 1`), which affects 34,985 cases.
+- worked at least one hour in the last 7 days (`ea2 == 1`), which affects 34,304 cases.
 - reported an own-account, family-helping, or other income-generating activity after a "no" at
-  `EA2`; this is captured by `ea3` values 1 to 9 and affects 1,659 additional cases.
+  `EA2`; this is captured by `ea3` values 1 to 9 and affects 2,916 additional cases.
 - was temporarily absent from a job but could return within 4 weeks (`ea4 == 1 & ea6 == 1`),
-  which affects 899 additional cases.
+  which affects 166 additional cases.
 
 Unemployed:
-- not employed under the branches above.
+- not employed under the worked, other activity, or short temporary-absence branches above.
 - searched for work in the last week or the last 4 weeks (`ea7a == 1` or `ea7b == 1`).
-- was available immediately or within 15 days (`ea7c` in 1 or 2). This branch affects 2,373
+- was available immediately or within 15 days (`ea7c` in 1 or 2). This branch affects 1,653
   cases.
+
+Final employed branch:
+- had a main-job module response despite missing absence duration (`ea4 == 1 & ap3 < .`), which
+  affects 1,035 additional cases after the unemployment branch. The questionnaire routes 223
+  respondents with `EA6 = 2` (more than 4 weeks), `EA6 = 3` (does not know), or `EA6 = 9`
+  (missing) away from the main-job module, so those cases are not treated as employed here.
 
 Non-labour force:
 - everyone else age 10 and older.
@@ -809,15 +881,15 @@ Non-labour force:
 	label var lstatus "Labor status"
 	label define lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF", replace
 	label values lstatus lbllstatus
-	
-	* There is an lstatus built in variable there: 
+
+	* There is an lstatus built in variable there:
 	tab lstatus actif
-	
+
 	/*
 	6 people tagged as not in the labor force by actif but reported the following responses
 	indicating employment:
 
-	
+
         Activit� r�alis�e pendant les 7 |
    derniers jours pour aider la famille |      Freq.     Percent        Cum.
 ----------------------------------------+-----------------------------------
@@ -829,7 +901,7 @@ Non-labour force:
 
 	These respondents also have responses to all the employment modules, and we cannot
 	justify why the actif variable tagged them as out of labor force
-	
+
 	*/
 *</_lstatus_>
 
@@ -908,9 +980,9 @@ Non-labour force:
 *<_ocusec_>
 	gen ocusec = .
 	replace ocusec = . if lstatus != 1
-	replace ocusec = 1 if lstatus == 1 & ap4 == 1
-	replace ocusec = 3 if lstatus == 1 & ap4 == 2
+	replace ocusec = 1 if lstatus == 1 & inlist(ap4, 1, 2)
 	replace ocusec = 2 if lstatus == 1 & inlist(ap4, 3, 4, 5, 6)
+	replace ocusec = 4 if lstatus == 1 & ap4 == 2
 	label var ocusec "Sector of activity primary job 7 day recall"
 	label define lblocusec 1 "Public Sector, Central Government, Army" 2 "Private, NGO" 3 "State owned" 4 "Public or State-owned, but cannot distinguish", replace
 	label values ocusec lblocusec
@@ -960,17 +1032,19 @@ Non-labour force:
 *<_industrycat10_>
 	gen industrycat10 = .
 	replace industrycat10 = . if lstatus != 1
-	replace industrycat10 = 1 if ap2asection == 1
-	replace industrycat10 = 2 if ap2asection == 2
-	replace industrycat10 = 3 if ap2asection == 3
-	replace industrycat10 = 4 if inlist(ap2asection, 4, 5)
-	replace industrycat10 = 5 if ap2asection == 6
-	replace industrycat10 = 6 if ap2asection == 7
-	replace industrycat10 = 7 if inlist(ap2asection, 8, 10)
-	replace industrycat10 = 8 if inlist(ap2asection, 11, 12, 13, 14)
-	replace industrycat10 = 9 if ap2asection == 15
-	replace industrycat10 = 10 if inlist(ap2asection, 9, 16, 17, 18, 19, 20, 21)
+	gen isic2_main = real(substr(industrycat_isic, 1, 2)) if lstatus == 1 & industrycat_isic != ""
+	replace industrycat10 = 1 if inrange(isic2_main, 1, 3)
+	replace industrycat10 = 2 if inrange(isic2_main, 5, 9)
+	replace industrycat10 = 3 if inrange(isic2_main, 10, 33)
+	replace industrycat10 = 4 if inrange(isic2_main, 35, 39)
+	replace industrycat10 = 5 if inrange(isic2_main, 41, 43)
+	replace industrycat10 = 6 if inrange(isic2_main, 45, 47)
+	replace industrycat10 = 7 if inrange(isic2_main, 49, 63)
+	replace industrycat10 = 8 if inrange(isic2_main, 64, 82)
+	replace industrycat10 = 9 if isic2_main == 84
+	replace industrycat10 = 10 if inrange(isic2_main, 85, 99)
 	replace industrycat10 = . if lstatus != 1
+	drop isic2_main
 	label var industrycat10 "1 digit industry classification, primary job 7 day recall"
 	label define lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Communications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified", replace
 	label values industrycat10 lblindustrycat10
@@ -1118,13 +1192,12 @@ Non-labour force:
 *<_wage_total_>
 /* <_wage_total_note>
 
-	Use gross wages when available and net wages only when gross wages are not available.
-	This is done to make it easy to compare earnings in formal and informal sectors.
+	The questionnaire supports a monthly main-job earnings measure, but the broader
+	total-earnings aggregates are left missing here to avoid mixing partially
+	constructed totals with the primary monthly earnings concept.
 
 </_wage_total_note> */
 	gen wage_total = .
-	replace wage_total = . if lstatus != 1
-	replace wage_total = wage_no_compen * 12 if !missing(wage_no_compen)
 	label var wage_total "Annualized total wage primary job 7 day recall"
 *</_wage_total_>
 
@@ -1224,9 +1297,9 @@ Non-labour force:
 *<_ocusec_2_>
 	gen ocusec_2 = .
 	replace ocusec_2 = . if mi(empstat_2)
-	replace ocusec_2 = 1 if lstatus == 1 & as1c == 1 & as5 == 1
-	replace ocusec_2 = 3 if lstatus == 1 & as1c == 1 & as5 == 2
+	replace ocusec_2 = 1 if lstatus == 1 & as1c == 1 & inlist(as5, 1, 2)
 	replace ocusec_2 = 2 if lstatus == 1 & as1c == 1 & inlist(as5, 3, 4, 5, 6)
+	replace ocusec_2 = 4 if lstatus == 1 & as1c == 1 & as5 == 2
 	replace ocusec_2 = . if mi(empstat_2)
 	label var ocusec_2 "Sector of activity secondary job 7 day recall"
 	label values ocusec_2 lblocusec
@@ -1280,16 +1353,16 @@ Non-labour force:
 *<_industrycat10_2_>
 	gen industrycat10_2 = .
 	replace industrycat10_2 = . if mi(empstat_2)
-	replace industrycat10_2 = 1 if AS3asection == 1
-	replace industrycat10_2 = 2 if AS3asection == 2
-	replace industrycat10_2 = 3 if AS3asection == 3
-	replace industrycat10_2 = 4 if inlist(AS3asection, 4, 5)
-	replace industrycat10_2 = 5 if AS3asection == 6
-	replace industrycat10_2 = 6 if AS3asection == 7
-	replace industrycat10_2 = 7 if inlist(AS3asection, 8, 10)
-	replace industrycat10_2 = 8 if inlist(AS3asection, 11, 12, 13, 14)
-	replace industrycat10_2 = 9 if AS3asection == 15
-	replace industrycat10_2 = 10 if inlist(AS3asection, 9, 16, 17, 18, 19, 20, 21)
+	replace industrycat10_2 = 1 if lstatus == 1 & as1c == 1 & AS3asection == 1
+	replace industrycat10_2 = 2 if lstatus == 1 & as1c == 1 & AS3asection == 2
+	replace industrycat10_2 = 3 if lstatus == 1 & as1c == 1 & AS3asection == 3
+	replace industrycat10_2 = 4 if lstatus == 1 & as1c == 1 & inlist(AS3asection, 4, 5)
+	replace industrycat10_2 = 5 if lstatus == 1 & as1c == 1 & AS3asection == 6
+	replace industrycat10_2 = 6 if lstatus == 1 & as1c == 1 & AS3asection == 7
+	replace industrycat10_2 = 7 if lstatus == 1 & as1c == 1 & inlist(AS3asection, 8, 9, 10)
+	replace industrycat10_2 = 8 if lstatus == 1 & as1c == 1 & inlist(AS3asection, 11, 12, 13, 14)
+	replace industrycat10_2 = 9 if lstatus == 1 & as1c == 1 & AS3asection == 15
+	replace industrycat10_2 = 10 if lstatus == 1 & as1c == 1 & inlist(AS3asection, 16, 17, 18, 19, 20, 21)
 	replace industrycat10_2 = . if mi(empstat_2)
 	label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 	label values industrycat10_2 lblindustrycat10
@@ -1421,8 +1494,6 @@ Non-labour force:
 
 *<_wage_total_2_>
 	gen wage_total_2 = .
-	replace wage_total_2 = . if mi(empstat_2)
-	replace wage_total_2 = wage_no_compen_2 * 12 if !missing(wage_no_compen_2)
 	label var wage_total_2 "Annualized total wage secondary job 7 day recall"
 *</_wage_total_2_>
 
@@ -1489,30 +1560,18 @@ Non-labour force:
 
 *<_t_hours_total_>
 	gen t_hours_total = .
-	replace t_hours_total = . if lstatus != 1
-	tempvar t_hours_total_tmp
-	egen `t_hours_total_tmp' = rowtotal(whours whours_2)
-	replace t_hours_total = `t_hours_total_tmp' if lstatus == 1
 	label var t_hours_total "Annualized hours worked in all jobs 7 day recall"
 *</_t_hours_total_>
 
 
 *<_t_wage_nocompen_total_>
 	gen t_wage_nocompen_total = .
-	replace t_wage_nocompen_total = . if lstatus != 1
-	tempvar t_wage_nc_total_tmp
-	egen `t_wage_nc_total_tmp' = rowtotal(wage_no_compen wage_no_compen_2)
-	replace t_wage_nocompen_total = `t_wage_nc_total_tmp' if lstatus == 1
 	label var t_wage_nocompen_total "Annualized earnings in all jobs excl. bonuses, etc. 7 day recall"
 *</_t_wage_nocompen_total_>
 
 
 *<_t_wage_total_>
 	gen t_wage_total = .
-	replace t_wage_total = . if lstatus != 1
-	tempvar t_wage_total_tmp
-	egen `t_wage_total_tmp' = rowtotal(wage_total wage_total_2)
-	replace t_wage_total = `t_wage_total_tmp' if lstatus == 1
 	label var t_wage_total "Annualized total earnings for all jobs 7 day recall"
 *</_t_wage_total_>
 
@@ -1601,13 +1660,7 @@ Non-labour force:
 
 
 *<_industrycat_isic_year_>
-	gen industrycat_isic_year = .
-	replace industrycat_isic_year = . if lstatus_year != 1
-
-	preserve 
-	count
-	restore 
-
+	gen str4 industrycat_isic_year = ""
 	label var industrycat_isic_year "ISIC code of primary job 12 month recall"
 *</_industrycat_isic_year_>
 
@@ -1641,7 +1694,7 @@ Non-labour force:
 	gen strL occup_isco_year = ""
 	replace occup_isco_year = "" if lstatus_year != 1
 
-	preserve 
+	preserve
 	count
 	restore
 
@@ -1791,8 +1844,7 @@ Non-labour force:
 
 
 *<_industrycat_isic_2_year_>
-	gen industrycat_isic_2_year = .
-	replace industrycat_isic_2_year = . if lstatus_year != 1
+	gen str4 industrycat_isic_2_year = ""
 	label var industrycat_isic_2_year "ISIC code of secondary job 12 month recall"
 *</_industrycat_isic_2_year_>
 
@@ -1966,15 +2018,13 @@ Non-labour force:
 
 
 *<_linc_nc_>
-	gen linc_nc = t_wage_nocompen_total
-	replace linc_nc = . if lstatus != 1
+	gen linc_nc = .
 	label var linc_nc "Total annual wage income in all jobs, excl. bonuses, etc."
 *</_linc_nc_>
 
 
 *<_laborincome_>
-	gen laborincome = t_wage_total
-	replace laborincome = . if lstatus != 1
+	gen laborincome = .
 	label var laborincome "Total annual individual labor income in all jobs, incl. bonuses, etc."
 *</_laborincome_>
 
@@ -2050,22 +2100,6 @@ quietly{
 
 }
 
-
-*<_% DELETE MISSING VARIABLES_>
-quietly: describe, varlist
-local kept_vars `r(varlist)'
-local preserve_missing "isced_version educat_isced"
-
-foreach kept_var of local kept_vars {
-	if !`: list kept_var in preserve_missing' {
-		capture assert missing(`kept_var')
-		if !_rc drop `kept_var'
-	}
-}
-
-*</_% DELETE MISSING VARIABLES_>
-
-
 *<_% COMPRESS_>
 
 compress
@@ -2075,6 +2109,6 @@ compress
 
 *<_% SAVE_>
 
-save "`path_output'/`out_file'", replace
+save "`path_output'/`level_2_harm'_ALL.dta", replace
 
 *</_% SAVE_>
