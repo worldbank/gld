@@ -4,7 +4,7 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				COD_2004_E123_V01_M_V02_A_GLD_ALL.do </_Program name_>
+<_Program name_>				COD_2004_E123_V01_M_V01_A_GLD_ALL.do </_Program name_>
 <_Application_>					STATA </_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
 <_Date created_>				2026-03-23 </_Date created_>
@@ -63,7 +63,7 @@ local country "COD"
 local year    "2004"
 local survey  "E123"
 local vermast "V01"
-local veralt  "V02"
+local veralt  "V01"
 
 local level_1      "`country'_`year'_`survey'"
 local level_2_mast "`level_1'_`vermast'_M"
