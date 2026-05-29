@@ -755,7 +755,7 @@ foreach ed_var of local ed_vars {
 	la de lblnlfreason 1 "Student" 2 "Housekeeper" 3 "Retired" 4 "Disabled" 5 "Other"
 	label values nlfreason lblnlfreason
 *</_nlfreason_>
--
+
 
 *<_unempldur_l_>
 	recode q5_5 (1=0) (2=1) (3=6) (4=12) (5=24) (*=.) if lstatus==2, g(unempldur_l)
