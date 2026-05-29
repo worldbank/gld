@@ -227,7 +227,15 @@ use "`path_in_stata'\PUF QLFS_2023.dta", clear
 
 
 *<_psu_>
-	gen psu = psu_str
+/* <_psu_note>
+
+	LFS report for this survey (page 2): PSU for urban areas are EAs,
+	and for rural areas 'chiwogs'. that is the case for 2020 and 2021. 
+	clcode is the PSU for rural, and EA for urban.
+
+</_psu_note> */
+	g psu = "EA" + string(EA) if area == 1
+	replace	psu = "CHIWOG" + string(clcode) if area == 2
 	label var psu "Primary sampling units"
 *</_psu_>
 
