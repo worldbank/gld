@@ -39,6 +39,7 @@ for (year in years){
 
       dir.create(paste0(second, "/", "Data"))
       dir.create(paste0(second, "/", "Data/Harmonized"))
+      dir.create(paste0(second, "/", "Data/Additional Data"))
       dir.create(paste0(second, "/", "Doc"))
       dir.create(paste0(second, "/", "Doc/Questionnaires"))
       dir.create(paste0(second, "/", "Doc/Technical"))
@@ -59,4 +60,3 @@ for (year in years){
   }
 
 }
-
