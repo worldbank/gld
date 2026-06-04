@@ -580,7 +580,7 @@ Education module is only asked to those XX and older.
 
 
 *<_educat7_>
-	recode Q2_8 (0 19 21 22=1) (1/5=2) (6=3) (7/11=4) (12=5) (13/14=6) (15/18=7) (*=.), g(educat7)
+	recode Q2_7 (0 19 21 22=1) (1/5=2) (6=3) (7/11=4) (12=5) (13/14=6) (15/18=7) (*=.), g(educat7)
 	replace educat7 = 1 if inlist(Q2_2,0,19,21)
 	replace educat7 = 2 if inrange(Q2_2,1,6)
 	replace educat7 = 4 if inrange(Q2_2,7,12)
@@ -779,7 +779,7 @@ foreach ed_var of local ed_vars {
 
 {
 *<_empstat_>
-	recode Q4_4 (1/2=1) (3/4=4) (5/6 8=2) (7=3) (96=5) (*=.) if lstatus==1, g(empstat)
+	recode Q4_4 (1/3=1) (4/5=4) (7/8=2) (6=3) (98=5) (*=.) if lstatus==1, g(empstat)
 	replace empstat = . if lstatus != 1
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
