@@ -918,7 +918,7 @@ foreach ed_var of local ed_vars {
 
 
 *<_occup_>
-	recode q4_1a (11111/14399=1) (21111/26599=2) (31111/35220=3) (41100/44190=4) (51111/54199=5) (61111/63400=6) (71110/75499=7) (81111/83503=8) (91110/96295 96299=9) (1101 2101 3101 99999=10) if lstatus==1, g(occup)
+	recode q4_1a (11111/14399=1) (21111/26599=2) (31111/35220=3) (41100/44190=4) (51111/54199=5) (61111/63400=6) (71110/75499=7) (81111/83503=8) (91110/96295 96299=9) (1101 2101 3101 99999=10) (*=.) if lstatus==1, g(occup)
 	replace occup = . if lstatus != 1
 	label var occup "1 digit occupational classification, primary job 7 day recall"
 	la de lbloccup 1 "Managers" 2 "Professionals" 3 "Technicians" 4 "Clerks" 5 "Service and market sales workers" 6 "Skilled agricultural" 7 "Craft workers" 8 "Machine operators" 9 "Elementary occupations" 10 "Armed forces"  99 "Others"
