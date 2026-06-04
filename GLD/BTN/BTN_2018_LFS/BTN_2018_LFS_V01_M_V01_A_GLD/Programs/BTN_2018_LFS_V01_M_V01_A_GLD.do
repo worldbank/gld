@@ -721,7 +721,7 @@ foreach ed_var of local ed_vars {
 	gen byte lstatus = .
 	replace lstatus = 1 if Q5_1 == 1
 	replace lstatus = 1 if Q5_2 == 1
-	replace	lstatus = 2 if Q7_1 == 1 & Q7_3 == 1
+	replace	lstatus = 2 if Q7_1 == 1 & Q7_2 == 1
 	replace lstatus = 3 if missing(lstatus)
 	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
@@ -778,7 +778,7 @@ foreach ed_var of local ed_vars {
 
 {
 *<_empstat_>
-	recode Q6_5 (1/3=1) (4/5=4) (7/8=2) (6=3) (*=.) if lstatus==1, g(empstat)
+	recode Q6_4 (1/3=1) (4/5=4) (7/8=2) (6=3) (*=.) if lstatus==1, g(empstat)
 	replace empstat = . if lstatus != 1
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
