@@ -730,7 +730,7 @@ foreach ed_var of local ed_vars {
 	gen byte lstatus = .
 	replace lstatus = 1 if q3_1 == 1
 	replace lstatus = 1 if q3_2 == 1
-	replace	lstatus = 2 if inlist(q5_1,1,2,3) & q5_6 == 1
+	replace	lstatus = 2 if inlist(q5_1,1,2,3) & q5_5 == 1
 	replace lstatus = 3 if missing(lstatus)
 	replace lstatus = . if age < minlaborage
 	label var lstatus "Labor status"
