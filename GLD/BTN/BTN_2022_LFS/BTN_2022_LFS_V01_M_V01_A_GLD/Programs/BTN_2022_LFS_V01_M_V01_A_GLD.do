@@ -220,7 +220,15 @@ use "`path_in_stata'\LFS2022_PUF.dta", clear
 
 
 *<_psu_>
-	gen psu = .
+/* <_psu_note>
+
+	LFS report for this survey (page 2): PSU for urban areas are EAs,
+	and for rural areas 'chiwogs'. that is the case for 2020 and 2021. 
+	clcode is the PSU for rural, and EA for urban.
+
+</_psu_note> */
+	g psu = "EA" + string(EA) if area == 1
+	replace	psu = "CHIWOG" + string(clcode) if area == 2
 	label var psu "Primary sampling units"
 *</_psu_>
 
@@ -926,7 +934,7 @@ foreach ed_var of local ed_vars {
 	while unitwage is code 1 ("Daily") for all, regardless of the periodicity.
 </_unitwage_note> */
 
-	gen byte unitwage = 5 if lstatus==1 & ~inlist(q4_13,-98,.,.a)
+	gen byte unitwage = 5 if lstatus==1 & ~inlist(q4_7,-98,.,.a)
 	replace unitwage = . if mi(wage_no_compen)
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
