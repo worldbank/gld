@@ -70,7 +70,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="prev" title="GLD single survey external checks - Detailed description" href="../Single%20survey%20checks/Block_2_detailed_explanation.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="Jun 02, 2026"/>
+    <meta name="docbuild:last-update" content="Jun 04, 2026"/>
   </head>
   
   
@@ -419,12 +419,13 @@ document.write(`
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-define-user-variables">Step 1 - Define user variables</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-call-libraries-functions">Step 2 - Call libraries, functions</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-load-df">Step 3 - Load DF</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-4-make-time-series-data-frames">Step 4 - Make time series data frames</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-5-make-wage-time-series-data-frame">Step 5 - Make wage time series data frame</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-6-make-time-series-plots">Step 6 - Make time series plots</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-7-save-all-summary-plots">Step 7 - Save all summary plots</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-load-packages-and-functions">Step 2 - Load packages and functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-load-harmonized-data">Step 3 - Load harmonized data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-4-build-categorical-time-series">Step 4 - Build categorical time series</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-5-build-wage-time-series">Step 5 - Build wage time series</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-6-create-plots">Step 6 - Create plots</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-7-save-plots">Step 7 - Save plots</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#notes-and-known-assumptions">Notes and known assumptions</a></li>
 </ul>
             </nav>
         </div>
@@ -440,106 +441,148 @@ document.write(`
 <h1>Guide to the GLD survey series quality checks<a class="headerlink" href="#guide-to-the-gld-survey-series-quality-checks" title="Permalink to this heading">#</a></h1>
 <section id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading">#</a></h2>
-<p>The series checks aims to help users inspect graphically a set of surveys for a country over time to ensure they are coherent and consistent.</p>
-<p>The only file the user needs to use is the <a class="reference download internal" download="" href="../../../_downloads/0d64627a05e5215a2717189b62abdb64/process_time_series.R"><span class="xref download myst"><code class="docutils literal notranslate"><span class="pre">process_time_series.R</span></code></span></a> file, consisting of seven steps, that are detailed here in the following.</p>
+<p>The survey series checks help users inspect a set of GLD surveys for one country over time. The current workflow creates plots for categorical variables and wages so a reviewer can quickly spot breaks in a survey series.</p>
+<p>The main file is <a class="reference download internal" download="" href="../../../_downloads/0d64627a05e5215a2717189b62abdb64/process_time_series.R"><span class="xref download myst"><code class="docutils literal notranslate"><span class="pre">process_time_series.R</span></code></span></a>. It sources the helper functions in this folder and runs seven steps:</p>
+<ol class="arabic simple">
+<li><p>Define user inputs.</p></li>
+<li><p>Load packages and helper functions.</p></li>
+<li><p>Load the latest harmonized GLD files.</p></li>
+<li><p>Build categorical time-series summaries.</p></li>
+<li><p>Build wage time-series summaries.</p></li>
+<li><p>Create plots.</p></li>
+<li><p>Save plots.</p></li>
+</ol>
 </section>
 <section id="step-1-define-user-variables">
 <h2>Step 1 - Define user variables<a class="headerlink" href="#step-1-define-user-variables" title="Permalink to this heading">#</a></h2>
-<p>Step 1 is the only section requiring user input. The user ought to input the country <a class="reference external" href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3">ISO alpha-3 code</a> as well as the variables that they want to inspect, provided they are categorical (as are the variables listed below). Note that the wage information is automatically included and thus needs not to be listed.</p>
-<p>Subsequently the user defines three paths, the first (<code class="docutils literal notranslate"><span class="pre">path_in</span></code>) points to the folder that contains all the surveys for that country. That is, the path to folder that contains the top level survey folders (i.e., folders of the “CCC_YYYY_[Survey_Name]” level). The second is to the folder where the user wants to store the graphs created for their inspection. The last path points to where the functions are stored (i.e., where all the files listed in this GLD directory starting with “function” are stored on the user’s system).</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Enter country ISO Alpha 3 code</span>
-<span class="n">country</span> <span class="o">&lt;-</span> <span class="s2">&quot;[CCC]&quot;</span>
+<p>Edit the country code, variables to inspect, and paths at the top of <a class="reference download internal" download="" href="../../../_downloads/0d64627a05e5215a2717189b62abdb64/process_time_series.R"><span class="xref download myst"><code class="docutils literal notranslate"><span class="pre">process_time_series.R</span></code></span></a>.</p>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># Enter country ISO Alpha 3 code</span>
+<span class="n">country</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s">&quot;[CCC]&quot;</span>
 
-<span class="c1"># Enter variables that ought to be analysed (or leave standard variables)</span>
-<span class="n">vars_to_study</span> <span class="o">&lt;-</span> <span class="n">c</span><span class="p">(</span><span class="s2">&quot;empstat&quot;</span><span class="p">,</span> <span class="s2">&quot;educat7&quot;</span><span class="p">,</span> <span class="s2">&quot;educat4&quot;</span><span class="p">,</span> <span class="s2">&quot;industrycat10&quot;</span><span class="p">,</span> <span class="s2">&quot;industrycat4&quot;</span><span class="p">,</span> <span class="s2">&quot;occup&quot;</span><span class="p">,</span> <span class="s2">&quot;lstatus&quot;</span><span class="p">)</span>
-<span class="c1"># Note that wage will be included by default, no need to include here</span>
+<span class="c1"># Enter categorical variables to analyse.</span>
+<span class="c1"># Wage is included separately by default.</span>
+<span class="n">vars_to_study</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span>
+<span class="w">  </span><span class="s">&quot;empstat&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="s">&quot;educat7&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="s">&quot;educat4&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="s">&quot;industrycat10&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="s">&quot;industrycat4&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="s">&quot;occup&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="s">&quot;lstatus&quot;</span>
+<span class="p">)</span>
 
-<span class="c1"># Define the path to the folder holding the series</span>
-<span class="n">path_in</span> <span class="o">&lt;-</span> <span class="s2">&quot;[For example: Z:/GLD-Harmonization/123456_AZ/ZAF]&quot;</span>
+<span class="c1"># Folder that contains the country survey folders, for example CCC_YYYY_SurveyName</span>
+<span class="n">path_in</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s">&quot;C:/path/to/GLD/country/folder&quot;</span>
 
-<span class="c1"># Define the path to the folder where the graphs ought to be stored in</span>
-<span class="n">path_out</span> <span class="o">&lt;-</span> <span class="s2">&quot;[Path to output folder]&quot;</span>
+<span class="c1"># Folder where plots should be saved</span>
+<span class="n">path_out</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s">&quot;C:/path/to/output/folder&quot;</span>
 
-<span class="c1"># Define the path to the folder where this code and the other functions of the survey series checks are stored</span>
-<span class="n">dir_w_functions</span> <span class="o">&lt;-</span> <span class="s2">&quot;[Path to folder with functions]&quot;</span>
+<span class="c1"># Folder where this code and the helper functions are stored</span>
+<span class="n">dir_w_functions</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s">&quot;C:/path/to/Survey series checks&quot;</span>
 </pre></div>
 </div>
 </section>
-<section id="step-2-call-libraries-functions">
-<h2>Step 2 - Call libraries, functions<a class="headerlink" href="#step-2-call-libraries-functions" title="Permalink to this heading">#</a></h2>
-<p>Step 2 defines the packages that are needed, ensures they are installed and loads them. It then runs the GLD functions for the survey series checks.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span># List packages that we need
-pkgs &lt;- c(&quot;Hmisc&quot;, &quot;tidyverse&quot;)
+<section id="step-2-load-packages-and-functions">
+<h2>Step 2 - Load packages and functions<a class="headerlink" href="#step-2-load-packages-and-functions" title="Permalink to this heading">#</a></h2>
+<p>The script loads the packages and helper functions needed for the workflow.</p>
+<p>The core script currently lists <code class="docutils literal notranslate"><span class="pre">Hmisc</span></code> and <code class="docutils literal notranslate"><span class="pre">tidyverse</span></code>. The helper functions also use package namespaces from <code class="docutils literal notranslate"><span class="pre">haven</span></code>, <code class="docutils literal notranslate"><span class="pre">glue</span></code>, <code class="docutils literal notranslate"><span class="pre">jsonlite</span></code>, and <code class="docutils literal notranslate"><span class="pre">scales</span></code>. These are often installed as part of the same R environment, but a clean setup should make sure they are available.</p>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pkgs</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Hmisc&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;tidyverse&quot;</span><span class="p">)</span>
 
-# Check they are installed
-pkgs_2_install &lt;- pkgs[!(pkgs %in% installed.packages())]
+<span class="n">pkgs_2_install</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">pkgs</span><span class="p">[</span><span class="o">!</span><span class="p">(</span><span class="n">pkgs</span><span class="w"> </span><span class="o">%in%</span><span class="w"> </span><span class="nf">installed.packages</span><span class="p">())]</span>
 
-# Install if not on system
-for (pkg in pkgs_2_install) {
-  install.packages(pkg)
-}
+<span class="kr">for</span><span class="w"> </span><span class="p">(</span><span class="n">pkg</span><span class="w"> </span><span class="kr">in</span><span class="w"> </span><span class="n">pkgs_2_install</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nf">install.packages</span><span class="p">(</span><span class="n">pkg</span><span class="p">)</span>
+<span class="p">}</span>
 
-# Load packages
-for (pkg in pkgs) {
-  library(pkg,character.only=TRUE)  
-}
+<span class="kr">for</span><span class="w"> </span><span class="p">(</span><span class="n">pkg</span><span class="w"> </span><span class="kr">in</span><span class="w"> </span><span class="n">pkgs</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nf">library</span><span class="p">(</span><span class="n">pkg</span><span class="p">,</span><span class="w"> </span><span class="n">character.only</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span>
+<span class="p">}</span>
 
-purrr::walk(dir(dir_w_functions, pattern = &quot;^function&quot;, full.names = T), ~source(.x))
+<span class="n">purrr</span><span class="o">::</span><span class="nf">walk</span><span class="p">(</span>
+<span class="w">  </span><span class="nf">dir</span><span class="p">(</span><span class="n">dir_w_functions</span><span class="p">,</span><span class="w"> </span><span class="n">pattern</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;^function&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">full.names</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">),</span>
+<span class="w">  </span><span class="o">~</span><span class="nf">source</span><span class="p">(</span><span class="n">.x</span><span class="p">)</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </section>
-<section id="step-3-load-df">
-<h2>Step 3 - Load DF<a class="headerlink" href="#step-3-load-df" title="Permalink to this heading">#</a></h2>
-<p>Step 3 uses the function defined in <a class="reference download internal" download="" href="../../../_downloads/3ad8c1616495385bdb47b9b0478ad19b/function_load_df.R"><span class="xref download myst"><code class="docutils literal notranslate"><span class="pre">function_load_df.R</span></code></span></a>. It uses as input the path defined at the start. The function will enter the path and extract the latest harmonized dataset for each folder. That is, if the BRA_2018_PNADC folder has four harmonized versions (from V01_A to V04_A), the function will select the latest (here V04_A). It then will extract the necessary variables (e.g., age, weight, unitwage, …) plus the variables defined at the start to inspect and append all data files into a single dataset. If the option <code class="docutils literal notranslate"><span class="pre">wap_only</span></code> is set to TRUE (as shown below) the data will be restricted to the working age population.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">&lt;-</span> <span class="n">load_df</span><span class="p">(</span><span class="n">path_in</span> <span class="o">=</span> <span class="n">path_in</span><span class="p">,</span>
-              <span class="n">wap_only</span> <span class="o">=</span> <span class="n">TRUE</span><span class="p">,</span>
-              <span class="n">vars_to_study</span> <span class="o">=</span> <span class="n">vars_to_study</span><span class="p">)</span>
+<section id="step-3-load-harmonized-data">
+<h2>Step 3 - Load harmonized data<a class="headerlink" href="#step-3-load-harmonized-data" title="Permalink to this heading">#</a></h2>
+<p><a class="reference download internal" download="" href="../../../_downloads/3ad8c1616495385bdb47b9b0478ad19b/function_load_df.R"><span class="xref download myst"><code class="docutils literal notranslate"><span class="pre">function_load_df.R</span></code></span></a> loads the latest amended GLD harmonization for each survey folder.</p>
+<p>The loader expects:</p>
+<ul class="simple">
+<li><p>country survey folders named like <code class="docutils literal notranslate"><span class="pre">CCC_YYYY_SurveyName</span></code>;</p></li>
+<li><p>version folders ending in <code class="docutils literal notranslate"><span class="pre">_A_GLD</span></code>;</p></li>
+<li><p>one harmonized data file under <code class="docutils literal notranslate"><span class="pre">Data/Harmonized</span></code>.</p></li>
+</ul>
+<p>It keeps core variables plus the requested variables, then filters to the requested age range.</p>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">load_df</span><span class="p">(</span>
+<span class="w">  </span><span class="n">path_in</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">path_in</span><span class="p">,</span>
+<span class="w">  </span><span class="n">age_min</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">15</span><span class="p">,</span>
+<span class="w">  </span><span class="n">age_max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">64</span><span class="p">,</span>
+<span class="w">  </span><span class="n">vars_to_study</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vars_to_study</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </section>
-<section id="step-4-make-time-series-data-frames">
-<h2>Step 4 - Make time series data frames<a class="headerlink" href="#step-4-make-time-series-data-frames" title="Permalink to this heading">#</a></h2>
-<p>Step 4 makes a list of aggregated data for each variable in the vector <code class="docutils literal notranslate"><span class="pre">vars_to_study</span></code> provided by the user in Step 1 using the function defined in <a class="reference download internal" download="" href="../../../_downloads/b2ca2c38a30bfd4ac905aca1d8f0c88f/function_make_cat_ts.R"><span class="xref download myst"><code class="docutils literal notranslate"><span class="pre">function_make_cat_ts.R</span></code></span></a>. For each variable the shares per year and variable category (excluding NAs), so that the shares sum to 1 for each year.</p>
-<p>If the option <code class="docutils literal notranslate"><span class="pre">employed</span></code> is set to <code class="docutils literal notranslate"><span class="pre">TRUE</span></code> (as shown below), the calculations apply only to those who are employed (i.e., for those with <code class="docutils literal notranslate"><span class="pre">lstatus</span> <span class="pre">==</span> <span class="pre">1</span></code>). Note that the function automatically will not apply this reduction to the employed sub-sample if the variable passed is <code class="docutils literal notranslate"><span class="pre">lstatus</span></code> (as otherwise there would be no information value).</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">summary_df_list</span> <span class="o">&lt;-</span>
-  <span class="n">purrr</span><span class="p">::</span><span class="nb">map</span><span class="p">(</span>
-    <span class="n">vars_to_study</span><span class="p">,</span>
-    <span class="o">~</span><span class="n">make_cat_ts</span><span class="p">(</span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">,</span>
-                 <span class="n">var</span> <span class="o">=</span> <span class="o">.</span><span class="n">x</span><span class="p">,</span>
-                 <span class="n">employed</span> <span class="o">=</span> <span class="n">TRUE</span><span class="p">))</span>
+<section id="step-4-build-categorical-time-series">
+<h2>Step 4 - Build categorical time series<a class="headerlink" href="#step-4-build-categorical-time-series" title="Permalink to this heading">#</a></h2>
+<p><a class="reference download internal" download="" href="../../../_downloads/b2ca2c38a30bfd4ac905aca1d8f0c88f/function_make_cat_ts.R"><span class="xref download myst"><code class="docutils literal notranslate"><span class="pre">function_make_cat_ts.R</span></code></span></a> creates weighted shares by year and category for each requested categorical variable.</p>
+<p>When <code class="docutils literal notranslate"><span class="pre">employed</span> <span class="pre">=</span> <span class="pre">TRUE</span></code>, the function restricts to employed individuals (<code class="docutils literal notranslate"><span class="pre">lstatus</span> <span class="pre">==</span> <span class="pre">1</span></code>) except when the variable itself is <code class="docutils literal notranslate"><span class="pre">lstatus</span></code>.</p>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">summary_df_list</span><span class="w"> </span><span class="o">&lt;-</span>
+<span class="w">  </span><span class="n">purrr</span><span class="o">::</span><span class="nf">map</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vars_to_study</span><span class="p">,</span>
+<span class="w">    </span><span class="o">~</span><span class="nf">make_cat_ts</span><span class="p">(</span>
+<span class="w">      </span><span class="n">df</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df</span><span class="p">,</span>
+<span class="w">      </span><span class="n">var</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">.x</span><span class="p">,</span>
+<span class="w">      </span><span class="n">employed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span>
+<span class="w">    </span><span class="p">)</span>
+<span class="w">  </span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
-<section id="step-5-make-wage-time-series-data-frame">
-<h2>Step 5 - Make wage time series data frame<a class="headerlink" href="#step-5-make-wage-time-series-data-frame" title="Permalink to this heading">#</a></h2>
-<p>Step 5 uses the function defined in <a class="reference download internal" download="" href="../../../_downloads/e3b74f24990405ac70c722695df54d16/function_make_wage_ts.R"><span class="xref download myst"><code class="docutils literal notranslate"><span class="pre">function_make_wage_ts.R</span></code></span></a> to calculate for the wage employed (<code class="docutils literal notranslate"><span class="pre">empstat</span> <span class="pre">==</span> <span class="pre">1</span></code>) the mean and median hourly wages as well as the 10th, 25th, 75th, and 90th percentile for each year. It also stores the sample size of respondents for which there are answers for all variables used to calculate the hourly wage (<code class="docutils literal notranslate"><span class="pre">unitwage</span></code>, <code class="docutils literal notranslate"><span class="pre">whours</span></code>, and <code class="docutils literal notranslate"><span class="pre">wage_no_compen</span></code>)</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">wage_df</span> <span class="o">&lt;-</span>
-  <span class="n">make_wage_ts</span><span class="p">(</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">,</span>
-    <span class="n">country</span> <span class="o">=</span> <span class="n">country</span><span class="p">)</span>
+<section id="step-5-build-wage-time-series">
+<h2>Step 5 - Build wage time series<a class="headerlink" href="#step-5-build-wage-time-series" title="Permalink to this heading">#</a></h2>
+<p><a class="reference download internal" download="" href="../../../_downloads/e3b74f24990405ac70c722695df54d16/function_make_wage_ts.R"><span class="xref download myst"><code class="docutils literal notranslate"><span class="pre">function_make_wage_ts.R</span></code></span></a> calculates hourly wage statistics for wage-employed workers, including weighted percentiles, weighted mean, and sample size by year.</p>
+<p>The wage function converts wages to hourly values, winsorizes by year at the 1st and 99th weighted percentiles, and deflates wages using World Bank CPI data.</p>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">wage_df</span><span class="w"> </span><span class="o">&lt;-</span>
+<span class="w">  </span><span class="nf">make_wage_ts</span><span class="p">(</span>
+<span class="w">    </span><span class="n">df</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df</span><span class="p">,</span>
+<span class="w">    </span><span class="n">country</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">country</span>
+<span class="w">  </span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
-<section id="step-6-make-time-series-plots">
-<h2>Step 6 - Make time series plots<a class="headerlink" href="#step-6-make-time-series-plots" title="Permalink to this heading">#</a></h2>
-<p>Step 6 creates a list of plots. Firstly, the list of shares over the categorical variables from Step 4 is run to create a graph for each, using the function defined in <a class="reference download internal" download="" href="../../../_downloads/425a9b8db3b88ca5551695538cf833b2/function_plot_cat_ts.R"><span class="xref download myst"><code class="docutils literal notranslate"><span class="pre">function_plot_cat_ts.R</span></code></span></a>. Then, an additional plot for the wage information created in Step 5 is added using the function defined in <a class="reference download internal" download="" href="../../../_downloads/d13477397ed1aa3eed7bb51dc89ec02e/function_plot_wage_ts.R"><span class="xref download myst"><code class="docutils literal notranslate"><span class="pre">function_plot_wage_ts.R</span></code></span></a>.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">summary_plots</span> <span class="o">&lt;-</span> <span class="n">purrr</span><span class="p">::</span><span class="nb">map</span><span class="p">(</span><span class="n">summary_df_list</span><span class="p">,</span> <span class="o">~</span><span class="n">plot_cat_ts</span><span class="p">(</span><span class="o">.</span><span class="n">x</span><span class="p">))</span>
+<section id="step-6-create-plots">
+<h2>Step 6 - Create plots<a class="headerlink" href="#step-6-create-plots" title="Permalink to this heading">#</a></h2>
+<p><a class="reference download internal" download="" href="../../../_downloads/425a9b8db3b88ca5551695538cf833b2/function_plot_cat_ts.R"><span class="xref download myst"><code class="docutils literal notranslate"><span class="pre">function_plot_cat_ts.R</span></code></span></a> creates stacked bar charts for categorical variables. <a class="reference download internal" download="" href="../../../_downloads/d13477397ed1aa3eed7bb51dc89ec02e/function_plot_wage_ts.R"><span class="xref download myst"><code class="docutils literal notranslate"><span class="pre">function_plot_wage_ts.R</span></code></span></a> creates a wage distribution plot with sample size bars.</p>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">summary_plots</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">purrr</span><span class="o">::</span><span class="nf">map</span><span class="p">(</span><span class="n">summary_df_list</span><span class="p">,</span><span class="w"> </span><span class="o">~</span><span class="nf">plot_cat_ts</span><span class="p">(</span><span class="n">.x</span><span class="p">))</span>
 
-<span class="c1"># Add wage plot as the n_th plot</span>
-<span class="n">n_th</span> <span class="o">&lt;-</span> <span class="n">length</span><span class="p">(</span><span class="n">vars_to_study</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
-<span class="n">summary_plots</span><span class="p">[[</span><span class="n">n_th</span><span class="p">]]</span> <span class="o">&lt;-</span> <span class="n">plot_wage_ts</span><span class="p">(</span><span class="n">wage_df</span> <span class="o">=</span> <span class="n">wage_df</span><span class="p">)</span>
+<span class="n">n_th</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">length</span><span class="p">(</span><span class="n">vars_to_study</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span>
+<span class="n">summary_plots</span><span class="p">[[</span><span class="n">n_th</span><span class="p">]]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">plot_wage_ts</span><span class="p">(</span><span class="n">wage_df</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">wage_df</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
-<section id="step-7-save-all-summary-plots">
-<h2>Step 7 - Save all summary plots<a class="headerlink" href="#step-7-save-all-summary-plots" title="Permalink to this heading">#</a></h2>
-<p>Step 7, the last step, simply takes the list of plots from Step 6 and stores them in the folder defined by <code class="docutils literal notranslate"><span class="pre">path_out</span></code> given by the user in Step 1 using the function defined in <a class="reference download internal" download="" href="../../../_downloads/73ac189dd992fb368cc28bb7161a4b1a/function_save_ts_plots.R"><span class="xref download myst"><code class="docutils literal notranslate"><span class="pre">function_save_ts_plots.R</span></code></span></a>.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">purrr</span><span class="p">::</span><span class="n">walk</span><span class="p">(</span><span class="n">summary_plots</span><span class="p">,</span>
-            <span class="o">~</span><span class="n">save_ts_plots</span><span class="p">(</span><span class="o">.</span><span class="n">x</span><span class="p">,</span>
-                           <span class="n">out_folder</span> <span class="o">=</span> <span class="n">path_out</span><span class="p">,</span>
-                           <span class="n">country</span> <span class="o">=</span> <span class="n">country</span><span class="p">))</span>
+<section id="step-7-save-plots">
+<h2>Step 7 - Save plots<a class="headerlink" href="#step-7-save-plots" title="Permalink to this heading">#</a></h2>
+<p><a class="reference download internal" download="" href="../../../_downloads/73ac189dd992fb368cc28bb7161a4b1a/function_save_ts_plots.R"><span class="xref download myst"><code class="docutils literal notranslate"><span class="pre">function_save_ts_plots.R</span></code></span></a> saves all plots to a dated country folder under <code class="docutils literal notranslate"><span class="pre">path_out</span></code>.</p>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">purrr</span><span class="o">::</span><span class="nf">walk</span><span class="p">(</span>
+<span class="w">  </span><span class="n">summary_plots</span><span class="p">,</span>
+<span class="w">  </span><span class="o">~</span><span class="nf">save_ts_plots</span><span class="p">(</span>
+<span class="w">    </span><span class="n">.x</span><span class="p">,</span>
+<span class="w">    </span><span class="n">out_folder</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">path_out</span><span class="p">,</span>
+<span class="w">    </span><span class="n">country</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">country</span>
+<span class="w">  </span><span class="p">)</span>
+<span class="p">)</span>
 </pre></div>
 </div>
+</section>
+<section id="notes-and-known-assumptions">
+<h2>Notes and known assumptions<a class="headerlink" href="#notes-and-known-assumptions" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p>The workflow is designed for visual inspection, not for automatically deciding whether a harmonization is correct.</p></li>
+<li><p>The latest harmonized version is selected by alphanumeric folder order after filtering to folders ending <code class="docutils literal notranslate"><span class="pre">_A_GLD</span></code>.</p></li>
+<li><p>Wage deflation depends on live World Bank CPI API access.</p></li>
+</ul>
 </section>
 </section>
 
@@ -609,12 +652,13 @@ purrr::walk(dir(dir_w_functions, pattern = &quot;^function&quot;, full.names = T
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-define-user-variables">Step 1 - Define user variables</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-call-libraries-functions">Step 2 - Call libraries, functions</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-load-df">Step 3 - Load DF</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-4-make-time-series-data-frames">Step 4 - Make time series data frames</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-5-make-wage-time-series-data-frame">Step 5 - Make wage time series data frame</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-6-make-time-series-plots">Step 6 - Make time series plots</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-7-save-all-summary-plots">Step 7 - Save all summary plots</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-load-packages-and-functions">Step 2 - Load packages and functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-load-harmonized-data">Step 3 - Load harmonized data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-4-build-categorical-time-series">Step 4 - Build categorical time series</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-5-build-wage-time-series">Step 5 - Build wage time series</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-6-create-plots">Step 6 - Create plots</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-7-save-plots">Step 7 - Save plots</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#notes-and-known-assumptions">Notes and known assumptions</a></li>
 </ul>
   </nav></div>
 
@@ -641,7 +685,7 @@ By World Bank Jobs Group
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Jun 02, 2026.
+  Last updated on Jun 04, 2026.
   <br/>
 </p>
   </div>
