@@ -52,7 +52,3 @@ replace industrycat_isic = “3610” if inlist(industrycat_isic, “3611”, �
 ```
 
 to the code harmonizing `industrycat_isic`.
-
-## Sources
-
-The full list of ISIC and ISCO codes are read from the lists stored in the Checks folder ([link here](https://github.com/worldbank/gld/blob/main/Support/D%20-%20Q%20Checks/Helper%20Programs)). The R code used to create that file is [also available there](https://github.com/worldbank/gld/blob/main/Support/D%20-%20Q%20Checks/Helper%20Programs/create_isic_isco_txt.R).
