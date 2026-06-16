@@ -1,60 +1,47 @@
 # Labor status and labor force participation rate
-
-This document shows the details of coding `lstatus` for different years whose labor questions are structured in different ways. 
-
+This document shows the details of the GLD’s team coding for the variable labor status or `lstatus`. We include the approach for different years because of changes in the labor question’s structure. 
 
 ## Employed Population
-
-The way of coding **employed** population is consistent for all years. The definition of being employed from the BPS for all years is:  
-
+The structure of the **employment** variable on the survey is consistent for all years; our coding follows this consistency. The definition “employment” by the BPS is:  
 ![employment_definition](utilities/employment_definition.png)
 
-And here is an example of employment question section from the questionnaire of 2012: 
 
+Below we show an example of the employment question section from the questionnaire of 2012: 
 ![employment_questions](utilities/2012_employed.png)
 
-Following BPS's definition, we used questions from 5.1 to 5.4 to code `lstatus==1`, or the employed. We define that anyone answering either one of the following options as being employed: 
+Following the definition from the BPS, we coded the variable lstatus using the questionnaire questions 5.1 to 5.4. We coded `lstatus==1` or employed for anyone answering yes to any of the following options: 
 ```
-1.Being employed was the principal activity during most of the last 12 months or
-2.Did some work for pay, profit or family gain during last week, as least for one hour one day or
-3.Helped to work for family gain in a family business or family farm during last week or
-4.Had a job or enterprise such as a shop, business, farm or service establishment(fixed or mobile)
+1. Being employed was the principal activity during most of the last 12 months or
+2. Did some work for pay, profit or family gain during last week, as least for one hour one day or
+3. Helped to work for family gain in a family business or family farm during last week or
+4. Had a job or enterprise such as a shop, business, farm or service establishment (fixed or mobile)
 ```
 
 
-Compared to coding "employed", coding "unemployed" varies across years due to changes of the questions of the unemployment section as well as the order of them. Whether a given respondent is **seeking a job** and whether the respondent is **available for work** are two important elements of defining unemployed population and potential labor force. Sub-sections below focus on questions concerning "seeking a job" and availability and changes of these questions over years.
-
-We define being unemployed is 1) not have any work and 2) currently seeking a job. But BPS has a broader definition of unemployment which incorporates ours. As such, we follow BPS's definition when harmonizing the data. 
+Compared to employment, the definition of unemployment varies over years due to changes in the section’s questions as well as the order of appearance in the questionnaire. In GLD, we define unemployment and potential labor if a respondent is **seeking a job** and **available for work**. The sub-sections below focus changes over the years on the questions concerning "seeking a job" and availability.
+We define being unemployed if the respondent: 1) does not have any work and 2) is currently seeking employment. The BPS uses a broader definition of unemployment which we follow. 
 According to BPS, unemployment is:
-
 ![BPS_unemployment](utilities/unemployment_definition.png)
 
 
+
 ## 1992-2010
->The questionnaires of these years follow the same structure and have the same labor force module questions. Question 9.1 and 9.2 are availability questions and question 9.3 is "seeking work or not" question.   
-
+>The questionnaires of the years 1992 to 2010 follow the same structure across the year and have the same labor force module questions. Questions 9.1 and 9.2 are labor availability questions, while question 9.3 relates to seeking employment.   
 **Labor module in the questionnaire**
-
 ![labor_2007_1](utilities/2007_labor_1.png)
 ![labor_2007_2](utilities/2007_labor_2.png)
 
-Starting from question 9.1 in this module, question 9.1, 9.2 and 9.3 were used for defining `lstatus==1` *(employed)*. 
+Questions 9.1, 9.2 and 9.3 were used for defining `lstatus==2` *(unemployed)*. 
 ```
 Question 9.1 (1-6) or Question 9.2 (1-5): available for work
 Question 9.3 (1-2): currently seeking a job 
-
-*Note that accoding to the logic of the unemployment section, we define "currently seeking work" as "the last time I sought work" is no more than 1-4 weeks ago, for years without a direct question asking whether someone is seeking work or not.
+*Note: Using the available information from the questionnaire, we define respondents as "currently seeking work" if they respond affirmatively to the question "the last time I sought work" within the timeframe 1-4 weeks ago, for the years without alternative questions.
 ```
- 
-For years from 1992 to 2010, questionnaires do not ask respondents **why they are not available for work**. This is one of the main differences in the unemployment section between earlier and later years.  
- 
 
+For years from 1992 to 2010, questionnaires do not ask respondents **why they are not available for work**. This is one of the main differences in the unemployment section compared to earlier and later years.  
 ## 2012-2018
-
-Questionnaires since 2012 have some pretty distinct changes in the unemployment section. Question 9.1, 9.4, and 9.6 are "seeking work", "availability", and "reason why not available" questions respectively. Note that 2012 is the first year that begins to have a specific question about reason why not available for work.  
-
-**Labor module in the questionnaire**
-
+Since 2012, the questionnaires suffered changes in the unemployment section. Questions 9.1, 9.4, and 9.6 are used to define "seeking work", "availability", and "reason why not available" respectively. Note that 2012 is the first year that begins to have a specific question about reasons for not on employment.  
+**Labor module in the 2012 questionnaire**
 ![labor_2012_1](utilities/labor_2012_1.png)
 ![labor_2012_2](utilities/labor_2012_2.png)
 
@@ -64,45 +51,40 @@ Question 9.4 (1-6): available for work
 Question 9.6 (1-4): unavailable for certain reasons that still belong to unemployed population
 ```
 
-
 ## 2020
-
-2020 is slightly different from years before in availability question. Compared to years between 2012 and 2018, question 9.6 in 2020 asks about availability after answering the questionnaire. In previous years, availability is about whether being available in the past week not in the next week. 
-
-To maintain consistency, the unemployed is coded if a person is active (`S9C1 == 1`) and willing to work in the short term (`inlist(S9C6,1,2)`).
-
-A person aged 10 and above is classified as employed if they did any work for pay, profit, or family gain during the reference week, helped in a family business or farm, or had a job or business but were temporarily absent — provided that absence was either expected to last three months or less, or they continued to receive income during the absence. A person is classified as unemployed if they were not employed and actively searched for work during the reference period and were available to take up a job. Anyone who does not meet the criteria for either employed or unemployed is classified as outside the labor force. This definition applies to all household members aged 10 years and above.
-
+In the year 2020, the employment variable is defined differently to other years. A person aged 10 and above is classified as employed if they did any work for pay, profit, or family gain during the reference week, helped in a family business or farm, or had a job or business but were temporarily absent — provided that absence was either expected to last three months or less, or they continued to receive income during the absence. 
+A person is classified as unemployed if they are not employed and actively search for work during the reference period and are available to take up a job. Anyone who does not meet the criteria for either employed or unemployed is classified as outside the labor force. This definition applies to all household members aged 10 years and above. The availability question is different compared to the years 2012 to 2018. In 2020, question 9.6 asks about availability for employment in the next week. In previous years, the questionnaire asked if the respondent was available in the past week. 
+To maintain consistency, a respondent is considered unemployed if they were active (`S9C1 == 1`) and willing to work in the short term (`inlist(S9C6,1,2)`).
 ![labor_2020_1](utilities/labor_2020_1.png)
 ![labor_2020_2](utilities/labor_2020_2.png)
 
-
-## Labor Force Participation Rate Comparison
-
-The figure below is a comparison among GLD harmonization, BPS reports (*refined activity participation rate* shown in a following screenshot), and WDI:
-
-![lfp_comparison](utilities/LFP_figure_1.png)
-
-![refined_activity](utilities/refined_activity.png)
-
-The labor force participation rate produced for 2012-2020 using the method described above is almost identical to the estimates in the reports of the BPS, whereas years before 2012 fall below BPS estimates in a parallel way. WDI has higher numbers for all years which highly possibly results from a narrower age restraint. WDI only accounts for people aged 15 to 64 for LFP estimation while GLD and BPS account for 10 and above.
-
-We also have compared GLD estimates to ILO modelled estimates which uses 15 and above age range. In the second LFP comparison figure showing below, in addition to the 10-and-above GLD line, we added a 15-and-above GLD line. The trend of the two lines with 15+ condition is the same in general, which does not show the distinct turning point after 2012. Considering the ILO's coding logic for labor status is the same as GLD's and the differences before 2005 and after 2010 do not follow a certain pattern, we would suggest that the 2012 turnning point in the figure 1 results from change of definition on the PBS's side and our methodology aligns with ILO.       
-
-![lfp_comparison2](utilities/LFP_figure_2.png)
-
-In order to find out the reason for the continuous gaps between GLD and BPS in 1992-2012, we compared other variables such as marital status and literacy. The close results show that the sample size and weight we used should be the same as those reports used. In that sense, sample size and weight should not be the cause.
-
-![marital_comparison](utilities/marital_comparison.png)
-
-Another possible explanation might be that BPS changed their definition of employment when doing estimation for the reports. But so far, this has not been verified. 
-
 ## 2024
-The PAK statistical bureau in their the labor module has an additional filter question (5.8 "did the respondent do any work in farming, rearing, fishing, none of the above?) captures respondents who respond no to questions 5.1 (Did…. do any work for pay/wage (Cash/Kind), for someone else during last week, at least for one hour on any day?) to 5.4 (even if... not worked in the last week have a paid jon/business...?) from the questionnaire but may still have done any type of agricultural work in the reference period. The captured group is included in the employed category. This additional restriction helps to recreate the labour status variable for the ICLS-13 labour definitions.
+In the year 2024, the labor module questions were extended to capture the ICLS19 definitions (see ICLS document explanation here). A person aged 10 and above is classified as employed if they did any work for pay, profit, or family gain during the reference week, helped in a family business or farm, or had a job or business but were temporarily absent — provided that absence was either expected to last three months or less, or they continued to receive income during the absence.  Similarly the unemployment questions follows the year 2020 definitions. 
+
+
+For comparability with earlier years , the PAK statistical bureau in their the labor module has an additional filter question (5.8 "did the respondent do any work in farming, rearing, fishing, none of the above?) captures respondents who respond no to questions 5.1 (Did…. do any work for pay/wage (Cash/Kind), for someone else during last week, at least for one hour on any day?) to 5.4 (even if... not worked in the last week have a paid jon/business...?) from the questionnaire but may still have done any type of agricultural work in the reference period. The captured group is included in the employed category. This additional restriction helps to recreate the labour status variable for the ICLS-13 labour definitions.
 
 ``
 replace lstatus=1 if S5C1==2 & S5C2==2 & S5C3==2 & S5C4==2 & inrange(S5C8,1,3)
 ``
 
+
+## Labor Force Participation Rate Comparison
+
+The figure below is a comparison among GLD harmonization, BPS reports (*refined activity participation rate* shown in a following screenshot), and WDI:
+![lfp_comparison](utilities/LFP_figure_1.png)
+
+
+![refined_activity](utilities/)
+ 
+The labor force participation rate produced for 2012-2020 using the method described above is almost identical to the estimates in the reports of the BPS, whereas years before 2012 fall below BPS estimates in a parallel way. WDI has higher numbers for all years which highly possibly results from a narrower age restraint. WDI only accounts for people aged 15 to 64 for LFP estimation while GLD and BPS account for 10 and above.
+We also have compared GLD estimates to ILO modelled estimates which uses 15 and above age range. In the second LFP comparison figure showing below, in addition to the 10-and-above GLD line, we added a 15-and-above GLD line. The trend of the two lines with 15+ condition is the same in general, which does not show the distinct turning point after 2012. Considering the ILO's coding logic for labor status is the same as GLD's and the differences before 2005 and after 2010 do not follow a certain pattern, we would suggest that the 2012 turnning point in the figure 1 results from change of definition on the PBS's side and our methodology aligns with ILO.       
+![lfp_comparison2](utilities/)
+
+In order to find out the reason for the continuous gaps between GLD and BPS in 1992-2012, we compared other variables such as marital status and literacy. The close results show that the sample size and weight we used should be the same as those reports used. In that sense, sample size and weight should not be the cause.
+![marital_comparison](utilities/)
+
+Another possible explanation might be that BPS changed their definition of employment when doing estimation for the reports. But so far, this has not been verified. 
 We will update this documentation if we get more information in the future. Please feel free to contact the GLD focal point (gld@worldbank.org) if you know anything that might help. Thanks!
+
 
