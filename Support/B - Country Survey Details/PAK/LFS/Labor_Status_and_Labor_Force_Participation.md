@@ -59,8 +59,20 @@ To maintain consistency, a respondent is considered unemployed if they were acti
 ![labor_2020_2](utilities/labor_2020_2.png)
 
 ## 2024
-In the year 2024, the labor module questions were extended to capture the ICLS19 definitions (see ICLS document explanation here). A person aged 10 and above is classified as employed if they did any work for pay, profit, or family gain during the reference week, helped in a family business or farm, or had a job or business but were temporarily absent — provided that absence was either expected to last three months or less, or they continued to receive income during the absence.  Similarly the unemployment questions follows the year 2020 definitions. 
+In the year 2024, the labor module was extended to capture definitions aligned with the 19th International Conference of Labour Statisticians (ICLS-19).
 
+A person aged 10 and above is classified as employed if, during the reference week, they: did any work for pay or wage (in cash or kind) for someone else for at least one hour; ran or operated any kind of business, farming, or other income-generating activity; or helped in a family business or farm for family gain. A person who did not work during the reference week is also classified as employed if they had a paid job or business but were temporarily absent, provided that they are expected to return to the same job or business within three months (including time already spent in absence), or that they continued to receive income during the absence. Importantly, persons engaged in farming, rearing animals, or fishing exclusively or mainly for family use are excluded from employment and classified outside the labor force or assessed for unemployment — reflecting the ICLS-19 distinction between employment and own-use production work.
+
+![pakq](utilities/pakq1.png)
+![pakq](utilities/pakq2.png)
+![pakq](utilities/pakq3.png)
+
+A person is classified as unemployed if they are not employed and either actively searched for work in the last four weeks (Col 9.1) or expressed a desire to work for pay or start a business (Col 9.4), and could start working within the next two weeks (Col 9.5, code 1). Anyone who does not meet the criteria for either employed or unemployed is classified as outside the labor force.
+
+Two key differences from the 2020 definition are worth noting. First, the job search reference period was extended from one week to four weeks. Second, the availability window shifted from the next week (2020) to the next two weeks (2024), both consistent with ICLS-19 standards.
+
+![pakq](utilities/pakq4.png)
+![pakq](utilities/pakq5.png)
 
 For comparability with earlier years , the PAK statistical bureau in their the labor module has an additional filter question (5.8 "did the respondent do any work in farming, rearing, fishing, none of the above?) captures respondents who respond no to questions 5.1 (Did…. do any work for pay/wage (Cash/Kind), for someone else during last week, at least for one hour on any day?) to 5.4 (even if... not worked in the last week have a paid jon/business...?) from the questionnaire but may still have done any type of agricultural work in the reference period. The captured group is included in the employed category. This additional restriction helps to recreate the labour status variable for the ICLS-13 labour definitions.
 
@@ -72,17 +84,18 @@ replace lstatus=1 if S5C1==2 & S5C2==2 & S5C3==2 & S5C4==2 & inrange(S5C8,1,3)
 ## Labor Force Participation Rate Comparison
 
 The figure below is a comparison among GLD harmonization, BPS reports (*refined activity participation rate* shown in a following screenshot), and WDI:
-![lfp_comparison](utilities/LFP_figure_1.png)
+![lfp_comparison](utilities/Picture1.png)
 
 
-![refined_activity](utilities/)
+![refined_activity](utilities/refined_activity.png)
  
 The labor force participation rate produced for 2012-2020 using the method described above is almost identical to the estimates in the reports of the BPS, whereas years before 2012 fall below BPS estimates in a parallel way. WDI has higher numbers for all years which highly possibly results from a narrower age restraint. WDI only accounts for people aged 15 to 64 for LFP estimation while GLD and BPS account for 10 and above.
 We also have compared GLD estimates to ILO modelled estimates which uses 15 and above age range. In the second LFP comparison figure showing below, in addition to the 10-and-above GLD line, we added a 15-and-above GLD line. The trend of the two lines with 15+ condition is the same in general, which does not show the distinct turning point after 2012. Considering the ILO's coding logic for labor status is the same as GLD's and the differences before 2005 and after 2010 do not follow a certain pattern, we would suggest that the 2012 turnning point in the figure 1 results from change of definition on the PBS's side and our methodology aligns with ILO.       
-![lfp_comparison2](utilities/)
+![lfp_comparison2](utilities/Picture2.png)
 
 In order to find out the reason for the continuous gaps between GLD and BPS in 1992-2012, we compared other variables such as marital status and literacy. The close results show that the sample size and weight we used should be the same as those reports used. In that sense, sample size and weight should not be the cause.
-![marital_comparison](utilities/)
+
+![marital_comparison](utilities/demo.png)
 
 Another possible explanation might be that BPS changed their definition of employment when doing estimation for the reports. But so far, this has not been verified. 
 We will update this documentation if we get more information in the future. Please feel free to contact the GLD focal point (gld@worldbank.org) if you know anything that might help. Thanks!
