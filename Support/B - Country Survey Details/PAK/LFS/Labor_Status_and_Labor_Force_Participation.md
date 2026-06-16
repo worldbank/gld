@@ -86,14 +86,15 @@ replace lstatus=1 if S5C1==2 & S5C2==2 & S5C3==2 & S5C4==2 & inrange(S5C8,1,3)
 The figure below is a comparison among GLD harmonization, BPS reports (*refined activity participation rate* shown in a following screenshot), and WDI:
 ![lfp_comparison](utilities/Picture1.png)
 
-
+This chart plots labor force participation rates from three sources — WDI, PBS Report, and GLD — from 1992 to 2024. The WDI is consistently the highest by a wide margin, running 8–10 percentage points above the other two throughout the entire period, which likely reflects differences in age group coverage or ILO modeled estimates versus survey-based figures. PBS and GLD are highly correlated, following nearly identical trajectories, and by 2024 have converged to virtually the same estimate of around 46%. All three sources agree on a long-run upward trend.
 ![refined_activity](utilities/refined_activity.png)
- 
-The labor force participation rate produced for 2012-2020 using the method described above is almost identical to the estimates in the reports of the BPS, whereas years before 2012 fall below BPS estimates in a parallel way. WDI has higher numbers for all years which highly possibly results from a narrower age restraint. WDI only accounts for people aged 15 to 64 for LFP estimation while GLD and BPS account for 10 and above.
-We also have compared GLD estimates to ILO modelled estimates which uses 15 and above age range. In the second LFP comparison figure showing below, in addition to the 10-and-above GLD line, we added a 15-and-above GLD line. The trend of the two lines with 15+ condition is the same in general, which does not show the distinct turning point after 2012. Considering the ILO's coding logic for labor status is the same as GLD's and the differences before 2005 and after 2010 do not follow a certain pattern, we would suggest that the 2012 turnning point in the figure 1 results from change of definition on the PBS's side and our methodology aligns with ILO.       
+
+ The next chart isolates the effect of age group definition on participation rate estimates, comparing WDI (ILO modeled), GLD for ages 15+, and GLD for ages 10+. Unsurprisingly, GLD+10 consistently produces the lowest estimates, as including 10–14 year olds — who have very low participation — pulls the rate down. GLD+15 sits in the middle and converges strongly toward the WDI estimate by 2024, with the gap narrowing to just about 1 percentage point. This suggests that the remaining gap between WDI and survey-based estimates is largely driven by modeled adjustments in the ILO figures rather than age coverage. Together, the two charts confirm that the persistent gap between WDI and GLD figures is not explained by age group differences alone.
+
+
 ![lfp_comparison2](utilities/Picture2.png)
 
-In order to find out the reason for the continuous gaps between GLD and BPS in 1992-2012, we compared other variables such as marital status and literacy. The close results show that the sample size and weight we used should be the same as those reports used. In that sense, sample size and weight should not be the cause.
+In order to find out the reason for the continuous gaps between GLD and BPS in 1992-2012, we compared other variables such as marital status and literacy. The close results show that the sample size and weight we used should be the same as those reports used. In that sense, sample size and weight should not be the cause. 
 
 ![marital_comparison](utilities/demo.png)
 
