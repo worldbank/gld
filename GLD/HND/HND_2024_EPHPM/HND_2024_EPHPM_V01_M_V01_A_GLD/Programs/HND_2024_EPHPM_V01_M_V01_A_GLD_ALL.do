@@ -654,7 +654,9 @@ raw combinations.
 *</_education_age_consistency_>
 
 *<_educat_orig_>
-	gen educat_orig = .
+	gen int educat_orig = ED05
+	replace educat_orig = ED10 if missing(educat_orig) & !missing(ED10)
+	replace educat_orig = NIVEL if missing(educat_orig) & !missing(NIVEL)
 	label var educat_orig "Original survey education code"
 *</_educat_orig_>
 

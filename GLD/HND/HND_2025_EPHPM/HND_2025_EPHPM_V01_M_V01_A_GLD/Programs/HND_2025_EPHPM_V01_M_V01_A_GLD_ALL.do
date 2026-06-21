@@ -375,17 +375,17 @@ The 2023 literacy source ED01 is absent from the 2025 raw file.
 *<_educat7_>
 /* <_educat7_note>
 The 2025 report keeps the HND education ladder but adapts fallback variables to
-lowercase nivel and anosest. ED05/ED08/ED07 are used first, current attendance
-is used only when completed attainment is missing, and nivel/anosest are the
-last fallback.
+lowercase nivel and anosest. ED07 is not observed for ED05=5 in 2025, so ED08
+is used to split Media/Diversificado: years 1-2 are secondary incomplete and
+years 3-4 are secondary complete, matching the adjacent-year pattern.
 </_educat7_note> */
     gen byte educat7 = .
     replace educat7 = 1 if inlist(ED05, 1, 2, 3)
     replace educat7 = 2 if ED05 == 4 & inrange(ED08, 1, 5)
     replace educat7 = 3 if ED05 == 4 & ED08 == 6
     replace educat7 = 4 if ED05 == 4 & inrange(ED08, 7, 9)
-    replace educat7 = 4 if ED05 == 5 & (ED07 == 2 | missing(ED07))
-    replace educat7 = 5 if ED05 == 5 & ED07 == 1
+    replace educat7 = 4 if ED05 == 5 & inlist(ED08, 1, 2)
+    replace educat7 = 5 if ED05 == 5 & inlist(ED08, 3, 4)
     replace educat7 = 6 if inlist(ED05, 6, 7)
     replace educat7 = 7 if inlist(ED05, 8, 9, 10, 11)
 
@@ -435,6 +435,13 @@ last fallback.
     label values educat4 lbleducat4
     label var educat4 "Level of education 3"
 *</_educat4_>
+
+*<_educat_orig_>
+    gen int educat_orig = ED05
+    replace educat_orig = ED10 if missing(educat_orig) & !missing(ED10)
+    replace educat_orig = nivel if missing(educat_orig) & !missing(nivel)
+    label var educat_orig "Original survey education code"
+*</_educat_orig_>
 
 }
 
@@ -875,6 +882,7 @@ consistent enough across survey years for a comparable GLD yes/no indicator.
     replace t_wage_total = wage_total + wage_total_2 if wage_total < . & wage_total_2 < .
     replace t_wage_total = wage_total_2 if missing(t_wage_total) & wage_total_2 < .
     replace t_wage_total = ytrab if missing(t_wage_total) & ytrab < .
+    replace t_wage_total = . if lstatus != 1
     label var t_wage_total "Annualized total wage for all jobs 7 day recall"
 
     gen double njobs = CA519 if lstatus == 1
@@ -886,7 +894,7 @@ consistent enough across survey years for a comparable GLD yes/no indicator.
     gen double linc_nc = t_wage_nocompen_total * 12 if t_wage_nocompen_total < .
     label var linc_nc "Total annual wage income in all jobs, excl. bonuses, etc."
 
-    gen double laborincome = t_wage_total * 12 if t_wage_total < .
+    gen double laborincome = .
     label var laborincome "Total annual individual labor income in all jobs, incl. bonuses, etc."
 *</_totals_>
 
@@ -903,7 +911,6 @@ consistent enough across survey years for a comparable GLD yes/no indicator.
     gen double gaul_adm1_code = .
     gen double gaul_adm2_code = .
     gen double gaul_adm3_code = .
-    gen strL educat_orig = ""
     gen strL educat_isced = ""
     gen byte vocational = .
     gen byte vocational_type = .

@@ -512,7 +512,8 @@ label var vocational_financed "Vocational education financed"
 *<_lstatus_>
 /* <_lstatus_note>
     The adjacent-year report says to adapt the 2022 route-based labor rule to
-    the 2021 P-variable names. CONDACT is used as a diagnostic check only.
+    the 2021 P-variable names. CONDACT is used as a fallback only for adults
+    with no observed employment or unemployment route information.
 </_lstatus_note> */
     gen byte _lab_eligible = age >= minlaborage if !missing(age)
     gen byte _emp_direct_paid = _lab_eligible == 1 & P501 == 1 & P502 == 1
@@ -528,6 +529,7 @@ label var vocational_financed "Vocational education financed"
     replace lstatus = 1 if _employed_route == 1
     replace lstatus = 2 if missing(lstatus) & _unemployed_route == 1
     replace lstatus = 3 if missing(lstatus) & _lab_eligible == 1 & _route_observed == 1
+    replace lstatus = 3 if missing(lstatus) & _lab_eligible == 1 & _route_observed == 0 & CONDACT == 3 & missing(P511) & missing(P512) & missing(P513)
     replace lstatus = . if age < minlaborage & !missing(age)
     label define lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF", replace
     label values lstatus lbllstatus
