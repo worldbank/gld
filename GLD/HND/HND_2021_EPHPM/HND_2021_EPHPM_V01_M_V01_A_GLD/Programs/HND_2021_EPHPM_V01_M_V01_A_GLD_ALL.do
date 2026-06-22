@@ -213,7 +213,7 @@ use "`path_in_stata'/HOGARES_OCTUBRE_2021R.dta", clear
 *</_wave_>
 
 *<_panel_>
-    gen byte panel = .
+    gen str1 panel = ""
     label var panel "Panel identifier"
 *</_panel_>
 
@@ -368,6 +368,12 @@ label var comm_dsablty "Communicating difficulty"
 
 {
 
+*<_migration_>
+/* <_migration_note>
+    The 2023 CD migration module is not available in the 2021 raw file. No
+    alternate migration source was identified, so migration variables are
+    preserved as missing.
+</_migration_note> */
 foreach v in migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_reason {
     gen byte `v' = .
 }
@@ -380,6 +386,7 @@ label var migrated_from_cat "Migration origin category"
 label var migrated_reason "Reason for migration"
 label var migrated_from_code "Migration origin code"
 label var migrated_from_country "Migration origin country"
+*</_migration_>
 
 }
 
@@ -413,9 +420,12 @@ label var migrated_from_country "Migration origin country"
 *</_literacy_>
 
 *<_educy_>
+/* <_educy_note>
+    Leave educy missing for series consistency. Although ANOSEST is present, the
+    years-of-schooling construction was not cleared consistently across HND
+    years, so education attainment is harmonized through educat7.
+</_educy_note> */
     gen byte educy = .
-    replace educy = ANOSEST if inrange(ANOSEST, 0, 22)
-    replace educy = . if educy > age & !missing(educy, age)
     label var educy "Years of education"
 *</_educy_>
 
@@ -537,11 +547,15 @@ label var vocational_financed "Vocational education financed"
 *</_lstatus_>
 
 *<_potential_lf_>
+/* <_potential_lf_note>
+    Potential labor force uses search and direct availability evidence. The
+    desire-for-work question alone is not used because it does not establish the
+    search-availability mismatch needed for this GLD variable.
+</_potential_lf_note> */
     gen byte potential_lf = .
     replace potential_lf = 0 if lstatus == 3
     replace potential_lf = 1 if lstatus == 3 & P512 == 1 & !inlist(P511, 1, 2, 9)
     replace potential_lf = 1 if lstatus == 3 & P512 == 2 & inlist(P511, 1, 2)
-    replace potential_lf = 1 if lstatus == 3 & P510 == 1 & P512 == 2
     replace potential_lf = . if lstatus == 3 & P511 == 9
     label define lblpotential_lf 0 "No" 1 "Yes", replace
     label values potential_lf lblpotential_lf

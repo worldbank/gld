@@ -197,7 +197,7 @@ use "`path_in_stata'/EPHPM2022.dta", clear
 *</_wave_>
 
 *<_panel_>
-    gen byte panel = .
+    gen str1 panel = ""
     label var panel "Panel"
 *</_panel_>
 
@@ -489,9 +489,10 @@ use "`path_in_stata'/EPHPM2022.dta", clear
 *</_educat_isced_>
 
 *<_vocational_>
-    foreach v in vocational vocational_type vocational_length_l vocational_length_u vocational_field_orig vocational_financed {
+    foreach v in vocational vocational_type vocational_length_l vocational_length_u vocational_financed {
         gen byte `v' = .
     }
+    gen str1 vocational_field_orig = ""
     label var vocational "Vocational education"
     label var vocational_type "Type of vocational education"
     label var vocational_length_l "Vocational education duration lower bound"
@@ -519,7 +520,8 @@ use "`path_in_stata'/EPHPM2022.dta", clear
     The HND 2022 adjacent-year report says not to use CONDACT as the primary
     lstatus source. The code reconstructs employment and unemployment from the
     route variables. Because CA508A is absent in 2022, CA508=1 is used as the
-    2022 unpaid-family-work employment route.
+    2022 unpaid-family-work employment route. The residual age-eligible group
+    is coded non-LF after employment and unemployment are assigned.
 </_lstatus_note> */
     gen byte _lab_eligible = age >= minlaborage if !missing(age)
     gen byte _emp_direct_paid = _lab_eligible == 1 & CA501 == 1 & CA502 == 1
@@ -535,7 +537,7 @@ use "`path_in_stata'/EPHPM2022.dta", clear
     gen byte lstatus = .
     replace lstatus = 1 if _employed_route == 1
     replace lstatus = 2 if missing(lstatus) & _unemployed_route == 1
-    replace lstatus = 3 if missing(lstatus) & _lab_eligible == 1 & _route_observed == 1
+    replace lstatus = 3 if missing(lstatus) & _lab_eligible == 1
     replace lstatus = . if age < minlaborage & !missing(age)
 
     label define lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF", replace
@@ -544,11 +546,15 @@ use "`path_in_stata'/EPHPM2022.dta", clear
 *</_lstatus_>
 
 *<_potential_lf_>
+/* <_potential_lf_note>
+    Potential labor force uses search and direct availability evidence. The
+    desire-for-work question alone is not used because it does not establish the
+    search-availability mismatch needed for this GLD variable.
+</_potential_lf_note> */
     gen byte potential_lf = .
     replace potential_lf = 0 if lstatus == 3
     replace potential_lf = 1 if lstatus == 3 & CA512 == 1 & !inlist(CA511, 1, 2, 9)
     replace potential_lf = 1 if lstatus == 3 & CA512 == 2 & inlist(CA511, 1, 2)
-    replace potential_lf = 1 if lstatus == 3 & CA510 == 1 & CA512 == 2
     replace potential_lf = . if lstatus == 3 & CA511 == 9
     label define lblpotential_lf 0 "No" 1 "Yes", replace
     label values potential_lf lblpotential_lf
@@ -641,25 +647,28 @@ use "`path_in_stata'/EPHPM2022.dta", clear
     replace industrycat_isic = _indstr if lstatus == 1 & length(_indstr) == 4 & industrycat_isic == ""
     replace industrycat_isic = substr(_indstr, 1, 4) if lstatus == 1 & inlist(length(_indstr), 5, 6)
     * Fall back to first-two-digits + 00 for observed invalid ISIC-4 detailed codes.
-    replace industrycat_isic = substr(industrycat_isic, 1, 2) + "00" if inlist(industrycat_isic, "0380", "3110", "5611", "7291", "7661", "8222", "9121", "9899", "9998")
-    * Leave still-invalid fallback codes missing. For the checked 2022 output, 7661 -> 7600 remains outside ISIC-4.
-    replace industrycat_isic = "" if industrycat_isic == "7600"
+    replace industrycat_isic = substr(industrycat_isic, 1, 2) + "00" if inlist(industrycat_isic, "0380", "3110", "5611", "7291", "7661", "8222", "9121", "9899")
+    * Leave still-invalid fallback codes missing. For the checked 2022 output, 7661 -> 7600 and 9998 remain outside ISIC-4.
+    replace industrycat_isic = "" if inlist(industrycat_isic, "7600", "9998")
     replace industrycat_isic = "" if inlist(O02_CODIGO, 8990, 99999, 999999) | lstatus != 1
+    replace industry_orig = "" if industrycat_isic == ""
     label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
 *<_industrycat10_>
+    tempvar isic2
+    gen byte `isic2' = real(substr(industrycat_isic, 1, 2)) if industrycat_isic != ""
     gen byte industrycat10 = .
-    replace industrycat10 = 1 if lstatus == 1 & RAMAOP == 1
-    replace industrycat10 = 2 if lstatus == 1 & RAMAOP == 2
-    replace industrycat10 = 3 if lstatus == 1 & RAMAOP == 3
-    replace industrycat10 = 4 if lstatus == 1 & inlist(RAMAOP, 4, 5)
-    replace industrycat10 = 5 if lstatus == 1 & RAMAOP == 6
-    replace industrycat10 = 6 if lstatus == 1 & inlist(RAMAOP, 7, 9)
-    replace industrycat10 = 7 if lstatus == 1 & inlist(RAMAOP, 8, 10)
-    replace industrycat10 = 8 if lstatus == 1 & inlist(RAMAOP, 11, 12, 13, 14)
-    replace industrycat10 = 9 if lstatus == 1 & RAMAOP == 15
-    replace industrycat10 = 10 if lstatus == 1 & inrange(RAMAOP, 16, 21)
+    replace industrycat10 = 1 if inrange(`isic2', 1, 3)
+    replace industrycat10 = 2 if inrange(`isic2', 5, 9)
+    replace industrycat10 = 3 if inrange(`isic2', 10, 33)
+    replace industrycat10 = 4 if inrange(`isic2', 35, 39)
+    replace industrycat10 = 5 if inrange(`isic2', 41, 43)
+    replace industrycat10 = 6 if inrange(`isic2', 45, 47) | inrange(`isic2', 55, 56)
+    replace industrycat10 = 7 if inrange(`isic2', 49, 53) | inrange(`isic2', 58, 63)
+    replace industrycat10 = 8 if inrange(`isic2', 64, 82)
+    replace industrycat10 = 9 if `isic2' == 84
+    replace industrycat10 = 10 if inrange(`isic2', 85, 99)
     label define lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction" 6 "Commerce" 7 "Transport and Communications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified", replace
     label values industrycat10 lblindustrycat10
     label var industrycat10 "1 digit industry classification, primary job 7 day recall"

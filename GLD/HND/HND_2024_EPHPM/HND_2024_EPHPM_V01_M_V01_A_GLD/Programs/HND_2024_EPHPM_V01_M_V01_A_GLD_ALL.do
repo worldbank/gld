@@ -483,9 +483,13 @@ The raw data cannot identify multiple simultaneous disability domains.
 
 {
 *<_migrated_mod_age_>
-	gen migrated_mod_age = .
-	label var migrated_mod_age "Migration module application age"
-*</_migrated_mod_age_>
+/* <_migration_note>
+The 2023 CD migration module is not available in the 2024 raw file. No alternate
+migration source was identified, so migration variables are preserved as missing.
+</_migration_note> */
+		gen migrated_mod_age = .
+		label var migrated_mod_age "Migration module application age"
+	*</_migrated_mod_age_>
 
 *<_migrated_ref_time_>
 	gen migrated_ref_time = .
@@ -562,6 +566,8 @@ the raw data.
 
 *<_literacy_>
 /* <_literacy_note>
+The 2021-2023 literacy source ED01 is absent from the 2024 raw file. Literacy is
+not inferred from education attainment.
 </_literacy_note> */
 	gen byte literacy = .
 	label var literacy "Individual can read & write"
@@ -571,11 +577,11 @@ the raw data.
 
 *<_educy_>
 /* <_educy_note>
-ANOSEST is the retained years-of-study source. Values outside the observed
-education ladder and nonresponse values are left missing.
+Leave educy missing for series consistency. Although ANOSEST is present, the
+years-of-schooling construction was not cleared consistently across HND years,
+so education attainment is harmonized through educat7.
 </_educy_note> */
 	gen byte educy = .
-	replace educy = ANOSEST if inrange(ANOSEST, 0, 20)
 	label var educy "Years of education"
 *</_educy_>
 
@@ -641,16 +647,9 @@ GLD educat4 is derived from educat7 using the standard GLD collapse.
 
 *<_education_age_consistency_>
 /* <_education_age_consistency_note>
-One raw record reports completed years of schooling greater than the person's
-age. The harmonized education variables are left missing for such impossible
-raw combinations.
+No approved years-of-schooling consistency rule is applied after educy is left
+missing. Education attainment is harmonized through educat7.
 </_education_age_consistency_note> */
-	tempvar education_age_inconsistent
-	gen byte `education_age_inconsistent' = !missing(educy, age) & educy > age
-	replace educy = . if `education_age_inconsistent'
-	replace educat7 = . if `education_age_inconsistent'
-	replace educat5 = . if `education_age_inconsistent'
-	replace educat4 = . if `education_age_inconsistent'
 *</_education_age_consistency_>
 
 *<_educat_orig_>
@@ -747,7 +746,7 @@ The raw file retains CONDACT, but the adjacent-year report shows that CONDACT
 does not exactly match the reconstructed employment and unemployment buckets.
 GLD lstatus is therefore coded from the questionnaire route variables. Employment
 is coded first, unemployment is coded only among people not employed, and the
-residual age-eligible group is non-LF when the first labor screen is observed.
+residual age-eligible group is coded non-LF.
 </_lstatus_note> */
 	tempvar hnd_emp hnd_search_future hnd_available
 	gen byte `hnd_emp' = 0 if age >= minlaborage & !missing(age)
@@ -762,7 +761,7 @@ residual age-eligible group is non-LF when the first labor screen is observed.
 	gen byte lstatus = .
 	replace lstatus = 1 if `hnd_emp' == 1
 	replace lstatus = 2 if age >= minlaborage & `hnd_emp' == 0 & `hnd_search_future' == 1 & `hnd_available' == 1
-	replace lstatus = 3 if age >= minlaborage & `hnd_emp' == 0 & missing(lstatus) & !missing(CA501)
+	replace lstatus = 3 if age >= minlaborage & missing(lstatus)
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
@@ -889,7 +888,8 @@ leading zero for four-digit raw values before taking the first four characters:
 aligned between industrycat_isic and industrycat10. A comparison with RAMAOP
 found 25 employed records where the O02_CODIGO-based category differs from the
 raw broad RAMAOP category; industrycat10 follows O02_CODIGO for internal
-alignment with industrycat_isic.
+alignment with industrycat_isic. Three detailed codes were not valid at four
+digits and are collapsed to their valid two-digit ISIC groups.
 </_industrycat_isic_note> */
 	tempvar industry_code
 	gen str6 `industry_code' = ""
@@ -897,6 +897,7 @@ alignment with industrycat_isic.
 	replace `industry_code' = string(O02_CODIGO, "%05.0f") if lstatus == 1 & inrange(O02_CODIGO, 10000, 99999)
 	replace `industry_code' = string(O02_CODIGO, "%06.0f") if lstatus == 1 & inrange(O02_CODIGO, 100000, 999998)
 	gen str4 industrycat_isic = substr(`industry_code', 1, 4) if `industry_code' != ""
+	replace industrycat_isic = substr(industrycat_isic, 1, 2) + "00" if inlist(industrycat_isic, "5311", "8190")
 	replace industrycat_isic = "" if substr(`industry_code', 1, 3) == "999"
 	replace industrycat_isic = "" if lstatus != 1
 	* Check that no errors --> using our universe check function, count should be 0 (no obs wrong)
@@ -1173,6 +1174,11 @@ but no secondary-job category/status variable comparable to OC6091 or CATEGOS.
 *</_empstat_2_>
 
 *<_ocusec_2_>
+/* <_ocusec_2_note>
+Secondary job sector information is not available in the 2024 raw file. The file
+has secondary occupation, industry, and income aggregates, but no secondary-job
+public-private or sector variable comparable to OC6091.
+</_ocusec_2_note> */
 	gen byte ocusec_2 = .
 	label var ocusec_2 "Sector of activity secondary job 7 day recall"
 	label values ocusec_2 lblocusec
@@ -1731,9 +1737,11 @@ wage_no_compen; totalized wage aggregates are not populated.
 {
 *<_njobs_>
 /* <_njobs_note>
-Promotion note: no promotion was applied.
+CA519 is retained as the reported number of jobs for employed persons. Secondary
+job status and hours remain partial, but the number-of-jobs source itself is
+available.
 </_njobs_note> */
-	gen njobs = CA519
+	gen njobs = CA519 if lstatus == 1
 	label var njobs "Total number of jobs"
 *</_njobs_>
 

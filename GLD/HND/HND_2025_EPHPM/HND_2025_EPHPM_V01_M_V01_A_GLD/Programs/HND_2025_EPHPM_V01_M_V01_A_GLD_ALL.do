@@ -124,12 +124,12 @@ use "`path_in_stata'/EPHPM JDULIO 2025.dta", clear
 *</_year_>
 
 *<_vermast_>
-    gen str2 vermast = "01"
+    gen str3 vermast = "V01"
     label var vermast "Version of master data"
 *</_vermast_>
 
 *<_veralt_>
-    gen str2 veralt = "01"
+    gen str3 veralt = "V01"
     label var veralt "Version of the alt/harmonized data"
 *</_veralt_>
 
@@ -365,10 +365,12 @@ The 2023 literacy source ED01 is absent from the 2025 raw file.
 *</_literacy_>
 
 *<_educy_>
-    gen double educy = anosest
-    replace educy = . if inlist(educy, 99, 111)
-    replace educy = . if educy < 0 | educy > 40
-    replace educy = . if educy > age & age < .
+/* <_educy_note>
+    Leave educy missing for series consistency. Although anosest is present, the
+    years-of-schooling construction was not cleared consistently across HND
+    years, so education attainment is harmonized through educat7.
+</_educy_note> */
+    gen double educy = .
     label var educy "Years of education"
 *</_educy_>
 
@@ -428,8 +430,8 @@ years 3-4 are secondary complete, matching the adjacent-year pattern.
 *<_educat4_>
     gen byte educat4 = .
     replace educat4 = 1 if educat7 == 1
-    replace educat4 = 2 if inlist(educat7, 2, 3)
-    replace educat4 = 3 if inlist(educat7, 4, 5)
+    replace educat4 = 2 if inlist(educat7, 2, 3, 4)
+    replace educat4 = 3 if educat7 == 5
     replace educat4 = 4 if inlist(educat7, 6, 7)
     label define lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary", replace
     label values educat4 lbleducat4
@@ -506,9 +508,14 @@ are coded non-LF.
 *</_potential_lf_>
 
 *<_underemployment_>
+/* <_underemployment_note>
+    Underemployment uses the direct more-hours and availability questions, in
+    line with the 2021-2024 construction. The derived ACTIVIDA grouping is not
+    used because it gives a narrower time-related underemployment count in 2025.
+</_underemployment_note> */
     gen byte underemployment = .
-    replace underemployment = 1 if lstatus == 1 & ACTIVIDA == 2
-    replace underemployment = 0 if lstatus == 1 & inlist(ACTIVIDA, 1, 3)
+    replace underemployment = 0 if lstatus == 1 & !missing(CA522)
+    replace underemployment = 1 if lstatus == 1 & CA522 == 1 & CA523 == 1
     label define lblunderemployment 0 "No" 1 "Yes", replace
     label values underemployment lblunderemployment
     label var underemployment "Underemployment status"
@@ -580,29 +587,42 @@ are coded non-LF.
 *</_industry_orig_>
 
 *<_industrycat_isic_>
+/* <_industrycat_isic_note>
+Industrycat_isic uses the first four digits of the detailed industry code when
+valid. Raw code 999801 produces unsupported group 9998 and is left missing for
+64 employed records rather than recoded to 9900, which would imply
+extraterritorial activities.
+</_industrycat_isic_note> */
     gen str6 __ind_code = ""
     replace __ind_code = "0" + string(O02_CODIGO, "%04.0f") if lstatus == 1 & O02_CODIGO < 10000 & O02_CODIGO < .
     replace __ind_code = string(O02_CODIGO, "%05.0f") if lstatus == 1 & inrange(O02_CODIGO, 10000, 99999)
     replace __ind_code = string(O02_CODIGO, "%06.0f") if lstatus == 1 & inrange(O02_CODIGO, 100000, 999998)
     gen str4 industrycat_isic = substr(__ind_code, 1, 4)
     replace industrycat_isic = "" if inlist(O02_CODIGO, 99999, 999999) | lstatus != 1
-    replace industrycat_isic = "" if industrycat_isic == "8990"
+    replace industrycat_isic = "" if inlist(industrycat_isic, "8990", "9998")
+    replace industry_orig = "" if industrycat_isic == ""
     label var industrycat_isic "ISIC code of primary job 7 day recall"
 *</_industrycat_isic_>
 
 *<_industrycat10_>
+/* <_industrycat10_note>
+Industrycat10 is derived from the first two digits of industrycat_isic so the
+broad industry category remains aligned with the retained ISIC code. The broad
+RAMAOP variable is not used when it disagrees with the detailed code.
+</_industrycat10_note> */
+    tempvar isic2
+    gen byte `isic2' = real(substr(industrycat_isic, 1, 2)) if industrycat_isic != ""
     gen byte industrycat10 = .
-    replace industrycat10 = 1 if lstatus == 1 & RAMAOP == 1
-    replace industrycat10 = 2 if lstatus == 1 & RAMAOP == 2
-    replace industrycat10 = 3 if lstatus == 1 & RAMAOP == 3
-    replace industrycat10 = 4 if lstatus == 1 & inlist(RAMAOP, 4, 5)
-    replace industrycat10 = 5 if lstatus == 1 & RAMAOP == 6
-    replace industrycat10 = 6 if lstatus == 1 & inlist(RAMAOP, 7, 9)
-    replace industrycat10 = 7 if lstatus == 1 & inlist(RAMAOP, 8, 10)
-    replace industrycat10 = 8 if lstatus == 1 & inlist(RAMAOP, 11, 12, 13, 14)
-    replace industrycat10 = 9 if lstatus == 1 & RAMAOP == 15
-    replace industrycat10 = 10 if lstatus == 1 & inlist(RAMAOP, 16, 17, 18, 19, 20)
-    replace industrycat10 = 10 if lstatus == 1 & RAMAOP == 21
+    replace industrycat10 = 1 if inrange(`isic2', 1, 3)
+    replace industrycat10 = 2 if inrange(`isic2', 5, 9)
+    replace industrycat10 = 3 if inrange(`isic2', 10, 33)
+    replace industrycat10 = 4 if inrange(`isic2', 35, 39)
+    replace industrycat10 = 5 if inrange(`isic2', 41, 43)
+    replace industrycat10 = 6 if inrange(`isic2', 45, 47) | inrange(`isic2', 55, 56)
+    replace industrycat10 = 7 if inrange(`isic2', 49, 53) | inrange(`isic2', 58, 63)
+    replace industrycat10 = 8 if inrange(`isic2', 64, 82)
+    replace industrycat10 = 9 if `isic2' == 84
+    replace industrycat10 = 10 if inrange(`isic2', 85, 99)
     label define lblindustrycat10 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction" 6 "Commerce" 7 "Transport and Communications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified", replace
     label values industrycat10 lblindustrycat10
     label var industrycat10 "1 digit industry classification, primary job 7 day recall"
@@ -627,9 +647,15 @@ are coded non-LF.
 *</_occup_orig_>
 
 *<_occup_isco_>
+/* <_occup_isco_note>
+The detailed occupation codes 3450 and 5170 are not valid ISCO-08 codes after
+the first-three-digit construction. They affect 81 employed records and are
+collapsed to the valid two-digit ISCO-08 groups 3400 and 5100.
+</_occup_isco_note> */
     gen str6 __occraw = strtrim(string(O01_CODIGO, "%12.0f"))
     gen str4 occup_isco = ""
     replace occup_isco = substr(__occraw, 1, 3) + "0" if lstatus == 1 & O01_CODIGO < . & strlen(__occraw) >= 5
+    replace occup_isco = substr(occup_isco, 1, 2) + "00" if inlist(occup_isco, "3450", "5170")
     replace occup_isco = "" if O01_CODIGO == 999999 | O01_CODIGO == 989901 | lstatus != 1
     label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
@@ -647,8 +673,7 @@ are coded non-LF.
     replace occup_skill = 3 if inlist(occup, 1, 2, 3)
     replace occup_skill = 2 if inlist(occup, 4, 5, 6, 7, 8)
     replace occup_skill = 1 if occup == 9
-    replace occup_skill = 4 if occup == 10
-    label define lbloccup_skill 1 "Low skill" 2 "Medium skill" 3 "High skill" 4 "Armed forces", replace
+    label define lbloccup_skill 1 "Low skill" 2 "Medium skill" 3 "High skill", replace
     label values occup_skill lbloccup_skill
     label var occup_skill "Skill based on ISCO standard primary job 7 day recall"
 *</_occup_skill_>
@@ -683,8 +708,11 @@ lempira amount; lowercase ytraop is kept separately as total labor income.
 *</_whours_>
 
 *<_wage_total_>
-    gen double wage_total = ytraop if lstatus == 1
-    replace wage_total = . if wage_total <= 0
+/* <_wage_total_note>
+    Left missing. The retained main-job wage concept is wage_no_compen; broader
+    wage-total variables are not harmonized for this survey.
+</_wage_total_note> */
+    gen double wage_total = .
     label var wage_total "Annualized total wage primary job 7 day recall"
 *</_wage_total_>
 
@@ -750,23 +778,24 @@ consistent enough across survey years for a comparable GLD yes/no indicator.
     replace __ind2_code = string(OS02_CODIGO, "%06.0f") if lstatus == 1 & CA519 > 1 & inrange(OS02_CODIGO, 100000, 999998)
     gen str4 industrycat_isic_2 = substr(__ind2_code, 1, 4)
     replace industrycat_isic_2 = "" if inlist(OS02_CODIGO, 99999, 999999) | lstatus != 1 | CA519 <= 1
-    replace industrycat_isic_2 = "" if industrycat_isic_2 == "8990"
+    replace industrycat_isic_2 = "" if inlist(industrycat_isic_2, "8990", "9998")
     label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
 *<_industrycat10_2_>
+    tempvar isic2_2
+    gen byte `isic2_2' = real(substr(industrycat_isic_2, 1, 2)) if industrycat_isic_2 != ""
     gen byte industrycat10_2 = .
-    replace industrycat10_2 = 1 if lstatus == 1 & CA519 > 1 & RAMAOS == 1
-    replace industrycat10_2 = 2 if lstatus == 1 & CA519 > 1 & RAMAOS == 2
-    replace industrycat10_2 = 3 if lstatus == 1 & CA519 > 1 & RAMAOS == 3
-    replace industrycat10_2 = 4 if lstatus == 1 & CA519 > 1 & inlist(RAMAOS, 4, 5)
-    replace industrycat10_2 = 5 if lstatus == 1 & CA519 > 1 & RAMAOS == 6
-    replace industrycat10_2 = 6 if lstatus == 1 & CA519 > 1 & inlist(RAMAOS, 7, 9)
-    replace industrycat10_2 = 7 if lstatus == 1 & CA519 > 1 & inlist(RAMAOS, 8, 10)
-    replace industrycat10_2 = 8 if lstatus == 1 & CA519 > 1 & inlist(RAMAOS, 11, 12, 13, 14)
-    replace industrycat10_2 = 9 if lstatus == 1 & CA519 > 1 & RAMAOS == 15
-    replace industrycat10_2 = 10 if lstatus == 1 & CA519 > 1 & inlist(RAMAOS, 16, 17, 18, 19, 20)
-    replace industrycat10_2 = 10 if lstatus == 1 & CA519 > 1 & RAMAOS == 21
+    replace industrycat10_2 = 1 if inrange(`isic2_2', 1, 3)
+    replace industrycat10_2 = 2 if inrange(`isic2_2', 5, 9)
+    replace industrycat10_2 = 3 if inrange(`isic2_2', 10, 33)
+    replace industrycat10_2 = 4 if inrange(`isic2_2', 35, 39)
+    replace industrycat10_2 = 5 if inrange(`isic2_2', 41, 43)
+    replace industrycat10_2 = 6 if inrange(`isic2_2', 45, 47) | inrange(`isic2_2', 55, 56)
+    replace industrycat10_2 = 7 if inrange(`isic2_2', 49, 53) | inrange(`isic2_2', 58, 63)
+    replace industrycat10_2 = 8 if inrange(`isic2_2', 64, 82)
+    replace industrycat10_2 = 9 if `isic2_2' == 84
+    replace industrycat10_2 = 10 if inrange(`isic2_2', 85, 99)
     label values industrycat10_2 lblindustrycat10
     label var industrycat10_2 "1 digit industry classification, secondary job 7 day recall"
 *</_industrycat10_2_>
@@ -789,9 +818,14 @@ consistent enough across survey years for a comparable GLD yes/no indicator.
 *</_occup_orig_2_>
 
 *<_occup_isco_2_>
+/* <_occup_isco_2_note>
+Secondary occupation code 5170 is not valid in ISCO-08. It affects 3 records
+and is collapsed to the valid two-digit ISCO-08 group 5100.
+</_occup_isco_2_note> */
     gen str6 __occ2raw = strtrim(string(OS01_CODIGO, "%12.0f"))
     gen str4 occup_isco_2 = ""
     replace occup_isco_2 = substr(__occ2raw, 1, 3) + "0" if lstatus == 1 & CA519 > 1 & OS01_CODIGO < . & strlen(__occ2raw) >= 5
+    replace occup_isco_2 = substr(occup_isco_2, 1, 2) + "00" if occup_isco_2 == "5170"
     replace occup_isco_2 = "" if OS01_CODIGO == 999999 | OS01_CODIGO == 989901 | lstatus != 1 | CA519 <= 1
     label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
@@ -808,7 +842,6 @@ consistent enough across survey years for a comparable GLD yes/no indicator.
     replace occup_skill_2 = 3 if inlist(occup_2, 1, 2, 3)
     replace occup_skill_2 = 2 if inlist(occup_2, 4, 5, 6, 7, 8)
     replace occup_skill_2 = 1 if occup_2 == 9
-    replace occup_skill_2 = 4 if occup_2 == 10
     label values occup_skill_2 lbloccup_skill
     label var occup_skill_2 "Skill based on ISCO standard secondary job 7 day recall"
 *</_occup_skill_2_>
@@ -836,8 +869,11 @@ consistent enough across survey years for a comparable GLD yes/no indicator.
 *</_whours_2_>
 
 *<_wage_total_2_>
-    gen double wage_total_2 = ytraos if lstatus == 1 & CA519 > 1
-    replace wage_total_2 = . if wage_total_2 <= 0
+/* <_wage_total_2_note>
+    Left missing. The retained secondary-job wage concept is wage_no_compen_2;
+    broader wage-total variables are not harmonized for this survey.
+</_wage_total_2_note> */
+    gen double wage_total_2 = .
     label var wage_total_2 "Annualized total wage secondary job 7 day recall"
 *</_wage_total_2_>
 
@@ -873,16 +909,10 @@ consistent enough across survey years for a comparable GLD yes/no indicator.
     replace t_hours_total = whours_2 if missing(t_hours_total) & whours_2 < .
     label var t_hours_total "Annualized hours worked in all jobs 7 day recall"
 
-    gen double t_wage_nocompen_total = wage_no_compen
-    replace t_wage_nocompen_total = wage_no_compen + wage_no_compen_2 if wage_no_compen < . & wage_no_compen_2 < .
-    replace t_wage_nocompen_total = wage_no_compen_2 if missing(t_wage_nocompen_total) & wage_no_compen_2 < .
+    gen double t_wage_nocompen_total = .
     label var t_wage_nocompen_total "Annualized wage in all jobs excl. bonuses, etc. 7 day recall"
 
-    gen double t_wage_total = wage_total
-    replace t_wage_total = wage_total + wage_total_2 if wage_total < . & wage_total_2 < .
-    replace t_wage_total = wage_total_2 if missing(t_wage_total) & wage_total_2 < .
-    replace t_wage_total = ytrab if missing(t_wage_total) & ytrab < .
-    replace t_wage_total = . if lstatus != 1
+    gen double t_wage_total = .
     label var t_wage_total "Annualized total wage for all jobs 7 day recall"
 
     gen double njobs = CA519 if lstatus == 1
@@ -891,7 +921,7 @@ consistent enough across survey years for a comparable GLD yes/no indicator.
     gen double t_hours_annual = t_hours_total * 52 if t_hours_total < .
     label var t_hours_annual "Total hours worked in all jobs in the previous 12 months"
 
-    gen double linc_nc = t_wage_nocompen_total * 12 if t_wage_nocompen_total < .
+    gen double linc_nc = .
     label var linc_nc "Total annual wage income in all jobs, excl. bonuses, etc."
 
     gen double laborincome = .
@@ -903,7 +933,7 @@ consistent enough across survey years for a comparable GLD yes/no indicator.
     gen double weight_q = .
     gen double ssu = .
     gen double wave = .
-    gen double panel = .
+    gen str1 panel = ""
     gen double visit_no = .
     gen strL subnatid1_prev = ""
     gen strL subnatid2_prev = ""
@@ -911,7 +941,7 @@ consistent enough across survey years for a comparable GLD yes/no indicator.
     gen double gaul_adm1_code = .
     gen double gaul_adm2_code = .
     gen double gaul_adm3_code = .
-    gen strL educat_isced = ""
+    gen byte educat_isced = .
     gen byte vocational = .
     gen byte vocational_type = .
     gen double vocational_length_l = .

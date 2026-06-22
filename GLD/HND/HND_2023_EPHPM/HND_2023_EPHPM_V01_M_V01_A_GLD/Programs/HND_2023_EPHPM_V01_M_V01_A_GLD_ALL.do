@@ -312,17 +312,17 @@ See entry in GLD Guidelines (https://github.com/worldbank/gld/blob/main/Support/
 /* <_subnatid1_prev_note>
 subnatid1_prev is coded as missing unless the classification used for subnatid1 has changed since the previous survey.
 </_subnatid1_prev_note> */
-	gen subnatid1_prev = .
+	gen str1 subnatid1_prev = ""
 	label var subnatid1_prev "Classification used for subnatid1 from previous survey"
 *</_subnatid1_prev_>
 
 *<_subnatid2_prev_>
-	gen subnatid2_prev = .
+	gen str1 subnatid2_prev = ""
 	label var subnatid2_prev "Classification used for subnatid2 from previous survey"
 *</_subnatid2_prev_>
 
 *<_subnatid3_prev_>
-	gen subnatid3_prev = .
+	gen str1 subnatid3_prev = ""
 	label var subnatid3_prev "Classification used for subnatid3 from previous survey"
 *</_subnatid3_prev_>
 
@@ -488,7 +488,12 @@ The raw data cannot identify multiple simultaneous disability domains.
 *</_migrated_mod_age_>
 
 *<_migrated_ref_time_>
-	gen migrated_ref_time = .
+/* <_migrated_ref_time_note>
+The migration question measures whether the respondent has always lived in the
+current place and, for movers, the duration lived there. This is not a fixed
+reference window, so the reference period is coded as unknown.
+</_migrated_ref_time_note> */
+	gen migrated_ref_time = 99 if age >= migrated_mod_age
 	label var migrated_ref_time "Reference time applied to migration questions (in years)"
 *</_migrated_ref_time_>
 
@@ -813,7 +818,9 @@ one CONDACT employed record without employment/unemployment route evidence,
 one CONDACT employed record with missing route variables, eight CONDACT
 unemployed records failing search/future-start plus availability, and six
 records with employment-route evidence that the prior CONDACT-based code left
-as non-LF. CONDACT is therefore used only as a diagnostic comparator.
+as non-LF. CONDACT is therefore used only as a diagnostic comparator. The
+residual age-eligible group is coded non-LF after employment and unemployment
+are assigned.
 </_lstatus_note> */
 	tempvar hnd_employed
 	gen byte `hnd_employed' = .
@@ -828,7 +835,7 @@ as non-LF. CONDACT is therefore used only as a diagnostic comparator.
 	gen byte lstatus = .
 	replace lstatus = 1 if `hnd_employed' == 1
 	replace lstatus = 2 if age >= minlaborage & `hnd_employed' == 0 & (CA512 == 1 | inlist(CA513, 1, 2)) & inlist(CA511, 1, 2)
-	replace lstatus = 3 if age >= minlaborage & `hnd_employed' == 0 & missing(lstatus) & !missing(CA501)
+	replace lstatus = 3 if age >= minlaborage & missing(lstatus)
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
@@ -1242,7 +1249,7 @@ No union-membership question was found in the primary-job module.
 *</_industry_orig_2_>
 
 *<_industrycat_isic_2_>
-	gen industrycat_isic_2 = .
+	gen str4 industrycat_isic_2 = ""
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
@@ -1484,7 +1491,7 @@ wage_no_compen; totalized wage aggregates are not populated.
 *</_industry_orig_year_>
 
 *<_industrycat_isic_year_>
-	gen industrycat_isic_year = .
+	gen str4 industrycat_isic_year = ""
 
 	* Check that no errors --> using our universe check function, count should be 0 (no obs wrong)
 	* https://github.com/worldbank/gld/tree/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20universe%20check
@@ -1638,7 +1645,7 @@ wage_no_compen; totalized wage aggregates are not populated.
 *</_industry_orig_2_year_>
 
 *<_industrycat_isic_2_year_>
-	gen industrycat_isic_2_year = .
+	gen str4 industrycat_isic_2_year = ""
 	label var industrycat_isic_2_year "ISIC code of secondary job 12 month recall"
 *</_industrycat_isic_2_year_>
 
@@ -1892,15 +1899,9 @@ quietly{
 
 *<_% DELETE MISSING VARIABLES_>
 
-quietly: describe, varlist
-local kept_vars `r(varlist)'
-
-foreach kept_var of local kept_vars {
-	
-	capture assert missing(`kept_var')
-	if !_rc drop `kept_var'
-   
-}
+* Intentionally skipped. Several GLD variables are deliberately all missing
+* because no 2023 source was identified or because the approved construction
+* leaves the variable missing.
 
 *</_% DELETE MISSING VARIABLES_>
 
