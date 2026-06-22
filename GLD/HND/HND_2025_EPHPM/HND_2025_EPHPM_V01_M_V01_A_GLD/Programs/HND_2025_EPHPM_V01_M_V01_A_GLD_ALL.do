@@ -430,8 +430,8 @@ years 3-4 are secondary complete, matching the adjacent-year pattern.
 *<_educat4_>
     gen byte educat4 = .
     replace educat4 = 1 if educat7 == 1
-    replace educat4 = 2 if inlist(educat7, 2, 3, 4)
-    replace educat4 = 3 if educat7 == 5
+    replace educat4 = 2 if inlist(educat7, 2, 3)
+    replace educat4 = 3 if inlist(educat7, 4, 5)
     replace educat4 = 4 if inlist(educat7, 6, 7)
     label define lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary", replace
     label values educat4 lbleducat4
