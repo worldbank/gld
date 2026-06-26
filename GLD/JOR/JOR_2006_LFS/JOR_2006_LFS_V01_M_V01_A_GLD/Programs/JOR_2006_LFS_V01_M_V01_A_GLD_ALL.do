@@ -96,10 +96,15 @@ if "`c(username)'" == "wb582018" {
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 
 
-use "`path_in_stata'/emp20061.dta"
+/*use "`path_in_stata'/emp20061.dta"
 sort q101 q102 q103 q104 q105 q106 q107 q108 q109 q113 q115 q201
 	merge q101 q102 q103 q104 q105 q106 q107 q108 q109 q113 q115 q201 using "`path_in_stata'/emp20062.dta"
 	drop _merge
+*/
+use "`path_in_stata'/emp20061.dta", clear
+gen quarter=1
+append using "`path_in_stata'/emp20062.dta"
+replace quarter=2 if missing(quarter)
 
 
 /*%%=============================================================================================
@@ -247,7 +252,7 @@ sort q101 q102 q103 q104 q105 q106 q107 q108 q109 q113 q115 q201
 
 
 *<_wave_>
-	gen wave = .
+	gen wave = quarter
 	label var wave "Survey wave"
 *</_wave_>
 
