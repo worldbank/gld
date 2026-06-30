@@ -14,12 +14,17 @@
 #'   to be kept and later looked ate. All other variables (other than countrycode, 
 #'   year, vermast, veralt, age, weight, unitwage, whours, and wage_no_compen) 
 #'   are dropped if no vars to study are requested (default is NULL)
+#' @param years Numeric or character vector of survey years to be loaded (e.g.,
+#'   c(2010, 2015, 2018)). Only folders whose year component matches an entry in
+#'   this vector will be read. If NULL (the default), all available survey years
+#'   in path_in are loaded.
 
 load_df <- function(
     path_in, 
     age_min = 0,
     age_max = 199,
-    vars_to_study = NULL) {
+    vars_to_study = NULL,
+    years = NULL) {
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#  
   # Step 1 - Find, define paths to latest files -----------------------------
@@ -33,6 +38,16 @@ load_df <- function(
   # Need to establish which surveys are in the top country folder, only those that are CCC_YYYY_[Something]
   ptrn_csf <- "^[A-Z]{3}_[0-9]{4}_.+"
   survey_folders <- dir(path_in, pattern = ptrn_csf)
+
+  # Reduce years if given
+  if (!is.null(years)) {
+    folder_years <- as.integer(sapply(strsplit(survey_folders, "_"), `[[`, 2))
+    survey_folders <- survey_folders[folder_years %in% as.integer(years)]
+    
+    if (length(survey_folders) == 0) {
+      stop(glue::glue("No survey folders found for the requested year(s): {paste(years, collapse = ', ')}"))
+    }
+  }
   
   # Loop through each survey folder (through e.g., VNM_LFS_2000, VNM_LFS_2001, ...)
   for (survey_folder in survey_folders) {
