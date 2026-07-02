@@ -27,7 +27,7 @@
 
 -----------------------------------------------------------------------
 
-<_ICLS Version_>				ICLS-13 </_ICLS Version_>
+<_ICLS Version_>				ICLS-19 </_ICLS Version_>
 <_ISCED Version_>				isced_2011 </_ISCED Version_>
 <_ISCO Version_>				ISCO 2008</_ISCO Version_>
 <_OCCUP National_>				ISCO 2008 COLOMBIA </_OCCUP National_>
@@ -699,6 +699,7 @@ use "`path_in_stata'\data_2025_final.dta", clear
 
 
 *<_migrated_reason_>
+	*no question for 5 year recall period, using 12 month question, smaller population applied to
 	gen migrated_reason = p3386
 	recode migrated_reason (1=3) (3 11=5) (4/6=4) (9 12=5) (7 8 10 =1)
 	replace migrated_reason = . if migrated_binary != 1
@@ -1032,12 +1033,24 @@ foreach ed_var of local ed_vars {
 
 {
 *<_empstat_>
+
+/*
+1	Obrero o empleado de empresa particular
+2	Obrero o empleado del gobierno
+3	Empleado doméstico
+4	Trabajador por cuenta propia
+5	Patrón o empleador
+6	Trabajador familiar sin remuneración
+7	Jornalero o Peón
+8	Otro
+*/
 	gen byte empstat= p6430
-	recode empstat 2 3 8=1 5=3 6 7=2 9=5
+	recode empstat 2 3 7=1 5=3 6 =2 8=5
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat lblempstat
 *</_empstat_>
+
 
 
 *<_ocusec_>
@@ -1111,9 +1124,9 @@ foreach ed_var of local ed_vars {
 	replace industrycat_isic = 1010 if rama4d_r4 == 1011
 	replace industrycat_isic = 1020 if rama4d_r4 == 1012
 	replace industrycat_isic = 1030 if rama4d_r4 == 1020
-	replace industrycat_isic = 1031 if rama4d_r4 == 1031
-	replace industrycat_isic = 1032 if rama4d_r4 == 1032
-	replace industrycat_isic = 1033 if rama4d_r4 == 1033
+	replace industrycat_isic = 1030 if rama4d_r4 == 1031
+	replace industrycat_isic = 1030 if rama4d_r4 == 1032
+	replace industrycat_isic = 1030 if rama4d_r4 == 1033
 	replace industrycat_isic = 1040 if rama4d_r4 == 1030
 	replace industrycat_isic = 1050 if rama4d_r4 == 1040
 	replace industrycat_isic = 1061 if rama4d_r4 == 1051
@@ -1482,7 +1495,7 @@ foreach ed_var of local ed_vars {
 
 	* Check that no errors --> using our universe check function, count should be 0 (no obs wrong)
 	* https://github.com/worldbank/gld/tree/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20universe%20check
-	/*
+	
 	preserve 
 	drop if missing(industrycat_isic)
 	int_classif_universe, var(industrycat_isic) universe(ISIC)
@@ -1794,8 +1807,19 @@ foreach ed_var of local ed_vars {
 
 {
 *<_empstat_2_>
+
+	/*
+	1	Obrero o empleado de empresa particular
+	2	Obrero o empleado del gobierno
+	3	Empleado doméstico
+	4	Trabajador por cuenta propia
+	5	Patrón o empleador
+	6	Trabajador familiar sin remuneración
+	7	Jornalero o Peón
+	8	Otro
+	*/
 	gen byte empstat_2 = p7050
-	recode empstat_2 2 3 8=1 5=3 6 7=2 9=5
+	recode empstat_2 2 3 7=1 5=3 6=2 8=5
 	replace empstat_2 = . if p7040 != 1 
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
 	label values empstat_2 lblempstat

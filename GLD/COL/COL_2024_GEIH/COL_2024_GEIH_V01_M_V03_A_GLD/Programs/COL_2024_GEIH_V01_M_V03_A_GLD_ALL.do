@@ -59,8 +59,7 @@ set varabbrev off
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-*local server  "C:\Users\wb625372\WBG\GLD - Current Contributors\625372_DB"
-local server "C:\Users\wb625372\Downloads"
+local server  "C:\Users\wb625372\WBG\GLD - Current Contributors\625372_DB"
 local country "COL"
 local year    "2024"
 local survey  "GEIH"
@@ -692,6 +691,7 @@ use "`path_in_stata'\data_2024_final.dta", clear
 
 
 *<_migrated_reason_>
+	*no question for 5 year recall period, using 12 month question, smaller population applied to
 	gen migrated_reason = p3386
 	recode migrated_reason (1=3) (3=5) (4/6=4) (9 12=5) (7 8 10 =1)
 	replace migrated_reason = . if migrated_binary != 1
@@ -1025,12 +1025,24 @@ foreach ed_var of local ed_vars {
 
 {
 *<_empstat_>
+
+/*
+1	Obrero o empleado de empresa particular
+2	Obrero o empleado del gobierno
+3	Empleado doméstico
+4	Trabajador por cuenta propia
+5	Patrón o empleador
+6	Trabajador familiar sin remuneración
+7	Jornalero o Peón
+8	Otro
+*/
 	gen byte empstat= p6430
-	recode empstat 2 3 8=1 5=3 6 7=2 9=5
+	recode empstat 2 3 7=1 5=3 6 =2 8=5
 	label var empstat "Employment status during past week primary job 7 day recall"
 	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
 	label values empstat lblempstat
 *</_empstat_>
+
 
 
 *<_ocusec_>
@@ -1782,8 +1794,19 @@ foreach ed_var of local ed_vars {
 
 {
 *<_empstat_2_>
+
+	/*
+	1	Obrero o empleado de empresa particular
+	2	Obrero o empleado del gobierno
+	3	Empleado doméstico
+	4	Trabajador por cuenta propia
+	5	Patrón o empleador
+	6	Trabajador familiar sin remuneración
+	7	Jornalero o Peón
+	8	Otro
+	*/
 	gen byte empstat_2 = p7050
-	recode empstat_2 2 3 8=1 5=3 6 7=2 9=5
+	recode empstat_2 2 3 7=1 5=3 6=2 8=5
 	replace empstat_2 = . if p7040 != 1 
 	label var empstat_2 "Employment status during past week secondary job 7 day recall"
 	label values empstat_2 lblempstat
