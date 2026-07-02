@@ -1,0 +1,8 @@
+v 1
+d GLD Classification Code Checks: Stata helpers to compare industry and occupation codes against GLD ISIC and ISCO helper lists.
+d Creator: World Bank Jobs Group
+d Author: GLD Team
+d For any questions, please contact: gld@worldbankgroup.org
+d Distribution-Date: 2026-07-02
+f gld_isic_check.ado
+f gld_isco_check.ado
