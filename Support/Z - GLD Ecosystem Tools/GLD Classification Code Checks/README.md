@@ -4,7 +4,9 @@
 
 GLD harmonization often needs to identify which ISIC or ISCO revision a raw industry or occupation variable most likely follows before assigning `industrycat_isic` or `occup_isco`.
 
-The main difficulty is that the raw data may contain only numeric codes, while the questionnaire or codebook may not clearly state the classification revision. In those cases, a harmonizer needs a quick way to compare the observed code list against the available GLD reference lists.
+The main difficulty is that the questionnaire or codebook may not clearly state the classification revision. In those cases, a harmonizer needs a quick way to compare the observed code list against the available GLD reference lists.
+
+The industry or occupation variable must be stored as a string variable. This matters because classification codes often have meaningful leading zeroes. If the source variable is numeric, create a string copy before running the check.
 
 ## How is it addressed?
 
@@ -14,6 +16,8 @@ This folder includes two Stata commands:
 - `gld_isco_check`: compares observed occupation codes against available ISCO helper-list versions.
 
 Each command collapses the loaded data to the unique non-missing codes in the selected variable, then compares those unique codes with every available reference version. The command reports the number and share of unique observed codes that match each version. With the `show` option, it lists the observed codes that do not match each version.
+
+The basic use case is simple. If you have an industry variable and do not know the ISIC version, run `gld_isic_check` on that variable. The command shows how many unique industry codes match each ISIC version. The version with the strongest match is the version the industry code is most likely to follow. The same logic applies to occupation codes with `gld_isco_check`.
 
 ## How is this different from the ISIC ISCO universe check?
 
@@ -69,6 +73,13 @@ gld_isic_check, industry(raw_industry_variable)
 gld_isco_check, occupation(raw_occupation_variable)
 ```
 
+The selected variable must be string. If a numeric code has to be converted first, create a string copy with the correct width for the classification:
+
+```stata
+tostring raw_industry_variable, generate(raw_industry_string) format(%04.0f)
+gld_isic_check, industry(raw_industry_string)
+```
+
 To list unmatched codes for each version:
 
 ```stata
@@ -79,5 +90,7 @@ gld_isco_check, occupation(raw_occupation_variable) show
 ## How to interpret the output?
 
 The output is a screening diagnostic. A 100 percent match with a version is strong evidence that all observed codes are valid in that reference list. A lower match percentage means some observed codes are not in that version.
+
+The `show` option is useful when one version almost fully matches. It lists the observed codes that are mismatched for each reference version. If all substantive codes match one version and the only mismatches are values such as `9999`, `0000`, or other survey-specific error or missing-value codes, that is evidence that the selected version is likely correct and those unmatched values should be reviewed as possible missing codes before harmonization.
 
 This does not prove that the survey officially used the version with the highest match. The final decision should still consider the questionnaire, codebook, labels, official survey documentation, and any country-specific classification notes.
