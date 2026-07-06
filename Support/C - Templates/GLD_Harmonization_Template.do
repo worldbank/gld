@@ -485,7 +485,7 @@ local out_file "`level_2_harm'_ALL.dta"
 *<_migrated_from_cat_>
 	gen migrated_from_cat = .
 	replace migrated_from_cat = . if migrated_binary != 1
-	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country" 6 "Within country, admin unknown" 7 "Wholly unknow"
+	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country" 6 "Within country, admin unknown" 7 "Wholly unknown"
 	label values migrated_from_cat lblmigrated_from_cat
 	label var migrated_from_cat "Category of migration area"
 *</_migrated_from_cat_>
@@ -500,7 +500,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 *<_migrated_from_country_>
 	gen migrated_from_country = ""
-	replace migrated_from_country = . if migrated_binary != 1
+	replace migrated_from_country = "" if migrated_binary != 1
 	label var migrated_from_country "Code of migration country (ISO 3 Letter Code)"
 *</_migrated_from_country_>
 
@@ -532,8 +532,8 @@ Education module is only asked to those XX and older.
 
 </_ed_mod_age_note> */
 
-gen byte ed_mod_age = .
-label var ed_mod_age "Education module application age"
+	gen byte ed_mod_age = .
+	label var ed_mod_age "Education module application age"
 
 *</_ed_mod_age_>
 
@@ -808,7 +808,7 @@ foreach ed_var of local ed_vars {
 
 *<_occup_isco_>
 	gen occup_isco = ""
-	replace occup_isco = . if lstatus != 1
+	replace occup_isco = "" if lstatus != 1
 	* Check that no errors --> using our universe check function, count should be 0 (no obs wrong)
 	* https://github.com/worldbank/gld/tree/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20universe%20check
 	preserve 
@@ -854,7 +854,7 @@ foreach ed_var of local ed_vars {
 
 /* <_unitwage_note>
 	Unitwage refers to the unit used to record wage_no_compen, *not* the unit of
-	general wage payent. For example, PHL LFS asks about wage periodicity, then
+	general wage payment. For example, PHL LFS asks about wage periodicity, then
 	asks for basic daily pay. The value of that pay would be wage_no_compen,
 	while unitwage is code 1 ("Daily") for all, regardless of the periodicity.
 </_unitwage_note> */
@@ -914,7 +914,7 @@ foreach ed_var of local ed_vars {
 *<_socialsec_>
 	gen byte socialsec = .
 	label var socialsec "Employment has social security insurance primary job 7 day recall"
-	la de lblsocialsec 1 "With social security" 0 "Without social secturity"
+	la de lblsocialsec 1 "With social security" 0 "Without social security"
 	label values socialsec lblsocialsec
 *</_socialsec_>
 
@@ -1130,7 +1130,7 @@ foreach ed_var of local ed_vars {
 *<_underemployment_year_>
 	gen byte underemployment_year = .
 	replace underemployment_year = . if age < minlaborage & !missing(age)
-	replace underemployment_year = . if lstatus_year == 1
+	replace underemployment_year = . if lstatus_year != 1
 	label var underemployment_year "Underemployment status"
 	la de lblunderemployment_year 0 "No" 1 "Yes"
 	label values underemployment_year lblunderemployment_year
@@ -1201,7 +1201,7 @@ foreach ed_var of local ed_vars {
 *<_industrycat10_year_>
 	gen byte industrycat10_year = .
 	label var industrycat10_year "1 digit industry classification, primary job 12 month recall"
-	la de lblindustrycat10_year 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Comnunications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
+	la de lblindustrycat10_year 1 "Agriculture" 2 "Mining" 3 "Manufacturing" 4 "Public utilities" 5 "Construction"  6 "Commerce" 7 "Transport and Communications" 8 "Financial and Business Services" 9 "Public Administration" 10 "Other Services, Unspecified"
 	label values industrycat10_year lblindustrycat10_year
 *</_industrycat10_year_>
 
@@ -1308,7 +1308,7 @@ foreach ed_var of local ed_vars {
 *<_socialsec_year_>
 	gen byte socialsec_year = .
 	label var socialsec_year "Employment has social security insurance primary job 7 day recall"
-	la de lblsocialsec_year 1 "With social security" 0 "Without social secturity"
+	la de lblsocialsec_year 1 "With social security" 0 "Without social security"
 	label values socialsec_year lblsocialsec_year
 *</_socialsec_year_>
 
@@ -1354,12 +1354,10 @@ foreach ed_var of local ed_vars {
 *</_ocusec_2_year_>
 
 
-
 *<_industry_orig_2_year_>
 	gen industry_orig_2_year = .
 	label var industry_orig_2_year "Original survey industry code, secondary job 12 month recall"
 *</_industry_orig_2_year_>
-
 
 
 *<_industrycat_isic_2_year_>
@@ -1481,7 +1479,7 @@ foreach ed_var of local ed_vars {
 
 *<_t_hours_total_year_>
 	gen t_hours_total_year = .
-	label var t_hours_total_year "Annualized hours worked in all jobs 12 month month recall"
+	label var t_hours_total_year "Annualized hours worked in all jobs 12 month recall"
 *</_t_hours_total_year_>
 
 
@@ -1530,7 +1528,7 @@ foreach ed_var of local ed_vars {
 *<_% Correction min age_>
 
 ** Drop info for cases under the age for which questions to be asked (do not need a variable for this)
-	local lab_vars "minlaborage lstatus nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome"
+	local lab_vars "minlaborage lstatus nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome"
 
 	foreach lab_var of local lab_vars {
 		cap confirm numeric variable `lab_var'
