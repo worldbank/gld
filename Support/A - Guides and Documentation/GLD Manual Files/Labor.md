@@ -46,12 +46,30 @@ Finally, when it comes to finer distinctions of employment (where finer means le
 
 **potential_lf**
 
-The ILO defines unemployment (as stated above) as seeking *and* available for a job. The potential labour force is formed by the “available potential job seekers”, who are available but not looking for a job and the “unavailable job seekers”, that is those looking but not available. The below image (Figure 17 – [source here](https://ilostat.ilo.org/persons-outside-the-labour-force-how-inactive-are-they-really/)) shows the different definitions.
+The ILO defines unemployment (as stated above) as seeking *and* available for a job. The potential labour force is formed by the “available potential job seekers”, who are available but not looking for a job and the “unavailable job seekers”, that is those looking but not available. The below decision tree) ([source here](https://ilostat.ilo.org/persons-outside-the-labour-force-how-inactive-are-they-really/)) shows the different definitions.
 
-<br></br>
-Figure 17 - Definition of different labor force status
-![Definition of different labor force status](images/vars_potential_lf.png)
-<br></br>
+```
+Population
+│
+├── Has a job (produces goods or provides services for pay or profit)
+│   └── EMPLOYED
+│       └── Works below threshold hours,
+│           wants more hours,
+│           and is available
+│           → Time-related underemployed
+│
+└── Jobless
+    ├── Available AND looking for work
+    │   └── UNEMPLOYED
+    │
+    └── Not available and/or not looking for work
+        └── OUTSIDE THE LABOUR FORCE
+            └── Potential labour force
+                ├── Available, not looking
+                │   → Available potential jobseekers
+                └── Looking, not available
+                    → Unavailable jobseekers
+```
  
 The variable potential_lf thus codifies whether the person is not in the labour force over the past 7 days (lstatus=3, missing otherwise) but could potentially be they are i) available but not searching or ii) searching but not immediately available to work. The codes are:
 
@@ -162,12 +180,20 @@ State-owned includes para-state firms and all others in which the government has
 
 Select this option is the questionnaire does not ask for State-owned enterprises, and only for Public sector.
 
-Additionally, recall the fact that, in common English usage, a public company (often denoted as public limited company or PLC) are private companies in the private sector but whose ownership is organized via stocks tradeable in a public market, i.e., accessible to all, not run by the public sector. Figure 18 below is an example of the relevant question in the 2010 Pakistani LFS:
+Additionally, recall the fact that, in common English usage, a public company (often denoted as public limited company or PLC) are private companies in the private sector but whose ownership is organized via stocks tradeable in a public market, i.e., accessible to all, not run by the public sector. The table below is an example of the relevant question in the 2010 Pakistani LFS:
 
-<br></br>
-Figure 18 - Excerpt of PAK LFS questionnaire
-![Excerpt of PAK LFS questionnaire](images/vars_ocusec.png)
-<br></br>
+| Code | Enterprise type | Skip instruction |
+|-----:|-----------------|------------------|
+| 01 | Federal Government | Skip to Col. 5.15 |
+| 02 | Provincial Government | Skip to Col. 5.15 |
+| 03 | Local body Government | Skip to Col. 5.15 |
+| 04 | Public enterprise (Corporation by act of national or provincial assembly) | Skip to Col. 5.15 |
+| 05 | Private limited company | Skip to Col. 5.15 |
+| 06 | Public limited company | Skip to Col. 5.15 |
+| 07 | Cooperative society | Skip to Col. 5.15 |
+| 08 | Individual ownership | — |
+| 09 | Partnership | — |
+| 10 | Other (Specify) | — |
 
 Here code 4 represents a public enterprise (explicitly mentioned as a corporation created by a legislative body) and code 6 a public limited company (a private sector company whose shares can be bought by the general public). Code 6 should not be considered part of the public sector.
 
@@ -191,35 +217,46 @@ industry_orig is a string variable that specifies the original industry codes in
 
 **industrycat_isic**
 
-Code (string variable) of the industry according to the International Standard Industry Classification (ISIC) in the last 7 days for the main job of any individual with a job (lstatus=1) and is missing otherwise. Note that the preamble to the harmonization code should record what version of ISIC is being used.
+Code (string variable) of the industry according to the International Standard Industrial Classification (ISIC) in the last 7 days for the main job of any individual with a job (`lstatus = 1`), and missing otherwise. The preamble to the harmonization code should specify the ISIC revision used by the source survey.
 
-The code should always be as long as the longest depth available for the ISIC version. For example, the latest version at the time of writing (ISIC Rev 4, [available here](https://unstats.un.org/unsd/demographic-social/census/documents/isic_rev4.pdf)) codes industries by sections, divisions, groups, and classes, in decreasing order of hierarchy.
+The value should always be stored using the deepest level of detail available for the corresponding ISIC revision. For example, ISIC Rev. 4, [available here](https://unstats.un.org/unsd/demographic-social/census/documents/isic_rev4.pdf), classifies industries hierarchically into **sections**, **divisions**, **groups**, and **classes**, from the broadest to the most detailed level.
 
-Figure 19 shows the classification structure for the manufacture of machinery and equipment. The letter C codes the Manufacturing section, while the code 28 represents “Manufacture of machines and equipment n.e.c” division. This division has two groups (281 and 282), containing one and three classes respectively.
+The example below illustrates this hierarchy for selected industries within ISIC Rev. 4.
 
-<br></br>
-Figure 19 - Example of ISIC classification
-![Example of ISIC classification](images/vars_industrycat_isic_1.png)
-<br></br>
- 
-A single section will often cover several divisions. While D has only one division (35 – electricity, gas, steam and air conditioning supply) and could be potentially shortened to “3”, section C covers divisions 10 to 33.
+| Section | Division | Group | Class | Description |
+|:-------:|:--------:|:-----:|:-----:|-------------|
+| C | 28 | 251 | 2512 | Manufacture of tanks, reservoirs and containers of metal |
+| C | 28 | 281 | 2816 | Manufacture of lifting and handling equipment |
+| C | 28 | 282 | 2821 | Manufacture of agricultural and forestry machinery |
+| C | 28 | 282 | 2822 | Manufacture of metal-forming machinery and machine tools |
+| C | 28 | 282 | 2824 | Manufacture of machinery for mining, quarrying and construction |
 
-If the information in the survey is only present at section level (or can only be translated from the national industry classification to section level) this variable should be a string with the letter coding the correct section.
+A section may contain one or many divisions. For example, section **D** contains only division **35** (*Electricity, gas, steam and air conditioning supply*), whereas section **C** (*Manufacturing*) contains divisions **10** through **33**. Consequently, section letters cannot be inferred from division numbers and should be stored explicitly whenever only section-level information is available.
 
-In most cases, information will be coded as a set of digits. In this case, the codification should be a string of four digits with a zero padding before for division 1 through 9 (i.e., 01, to 09). 
+If the survey identifies the industry only at the **section** level (or can only be translated to the section level), store the corresponding section letter as a string (e.g., `C`).
 
-As an example, Figure 20, puts together a few excerpts from ISIC Rev.4. Note that, if we do not codify correctly, group 14 (Animal production) may be misunderstood for division 14 (Manufacture of wearing apparel).
+Otherwise, store the industry code as a **four-character string** following the ISIC hierarchy:
 
-If we only have information up to the group label, fill out the reminder of the digits with zeros. Hence the purple box in Figure 20 would be coded as “0140”. The red box, as we have all digits, including the zero padding at the start codes as “0142”.
+- Divisions **1** through **9** must be left-padded with a zero (e.g., `0100`, not `100`).
+- If information is available only at the **division** level, append two trailing zeros (e.g., `0100`, `2800`).
+- If information is available only at the **group** level, append one trailing zero (e.g., `0140`, `1510`).
+- If information is available at the **class** level, store the complete four-digit class code.
+- The trailing-zero convention applies regardless of whether the lower levels of the hierarchy contain one or multiple categories.
 
-The act of adding zeroes to the end is standard if the lower level hierarchy has no further distinctions and can be seen in the yellow box, where group 142 has no classes (or just one class) and thus is coded as “1420”.
+The examples below illustrate these conventions.
 
-Some groups do in fact have several classes, as can be seen for group 151. Again, if we only had information up to group level, we ought to code “1510”. If we have more detailed information, for example identifying the industry as “Tanning and dressing of leather; dressing and dyeing of fur” (green box in Figure 20 below) we would code “1511”.
+| Available information | ISIC level | Example | Stored value | Explanation |
+|-----------------------|------------|---------|--------------|-------------|
+| Section | Section | **Section C** — Manufacturing | `C` | Only the section is known, so store the section letter. |
+| Division | Division | **Division 28** — Manufacture of machinery and equipment n.e.c. | `2800` | Only the division is known, so append two trailing zeros. |
+| Division | Division | **Division 01** — Crop and animal production, hunting and related service activities | `0100` | Division 1 is left-padded with a zero and two trailing zeros are appended. |
+| Group | Group | **Group 014** — Animal production | `0140` | Only the group is known, so append one trailing zero. |
+| Class | Class | **Class 0142** — Raising of horses and other equines | `0142` | The complete class code is available and stored unchanged. |
+| Group | Group | **Group 142** — Manufacture of articles of fur | `1420` | Only the group is known. The trailing zero is retained even though the group contains a single class. |
+| Group | Group | **Group 151** — Tanning and dressing of leather; manufacture of luggage, handbags, saddlery and harness; dressing and dyeing of furs | `1510` | Only the group is known, so the final digit is set to zero. |
+| Class | Class | **Class 1511** — Tanning and dressing of leather; dressing and dyeing of fur | `1511` | The complete class code is available and stored unchanged. |
 
-<br></br>
-Figure 20 - Examples of different ISIC codes
-![Examples of different ISIC codes](images/vars_industrycat_isic_2.png)
-<br></br>
+This convention ensures that the stored value always represents the highest level of detail available while preserving the ISIC hierarchy. If all possible codes end in `0`, this indicates that the survey identifies the industry only up to the **group** level, whereas any codes ending in a non-zero digit identify a specific **class**. Section-level information is represented solely by the corresponding section letter.
 
 **industrycat10**
 
@@ -242,11 +279,24 @@ Notes:
 - In the case of different classifications (former Soviet Union republics, for example), recoding has been done to best match the ISIC codes.
 - Category 10 is also assigned for unspecified categories or items.
 - If all 10 categories cannot be identified in the questionnaire create this variable as missing and proceed to create industrycat4.
-- Over the years, the different ISIC versions have changed. The original industrycat10 categories are largely based on ISIC Revision 2. The below Figure 21 shows how to classify the different ISIC revision codes into industrycat10.
+- Over the years, the different ISIC versions have changed. The original industrycat10 categories are largely based on ISIC Revision 2. Table 5, below shows how to classify the different ISIC revision codes into industrycat10.
 
 <br></br>
-Figure 21 - Overview of coding of industrycat based on different ISIC revisions
-![Overview of coding of industrycat based on different ISIC revisions](images/vars_industrycat10.png)
+Table 5 - Overview of coding of industrycat based on different ISIC revisions
+
+| Industrycat10 | ISIC Rev. 2 | ISIC Rev. 3 / 3.1 | ISIC Rev. 4 |
+|---------------|-------------|-------------------|-------------|
+| Agriculture | **Sect. 1** — Div. **11–13**: Agriculture, hunting, forestry, and fishing | **Sect. A** — Div. **1–2**: Agriculture, hunting and forestry<br>**Sect. B** — Div. **5**: Fishing | **Sect. A** — Div. **1–3**: Agriculture; forestry and fishing |
+| Mining | **Sect. 2** — Div. **21–23, 29**: Mining and quarrying | **Sect. C** — Div. **10–14**: Mining and quarrying | **Sect. B** — Div. **5–9**: Mining and quarrying |
+| Manufacturing | **Sect. 3** — Div. **31–39**: Manufacturing | **Sect. D** — Div. **15–37**: Manufacturing | **Sect. C** — Div. **10–33**: Manufacturing |
+| Public Utilities | **Sect. 4** — Div. **41–42**: Electricity, gas, and water | **Sect. E** — Div. **40–41**: Electricity, gas and water supply | **Sect. D** — Div. **35**: Electricity, gas, steam and air conditioning supply<br>**Sect. E** — Div. **36–39**: Water supply; sewerage; waste management and remediation activities |
+| Construction | **Sect. 5** — Div. **50**: Construction | **Sect. F** — Div. **45**: Construction | **Sect. F** — Div. **41–43**: Construction |
+| Commerce | **Sect. 6** — Div. **61–63**: Wholesale and retail trade and restaurants and hotels | **Sect. G** — Div. **50–52**: Wholesale and retail trade; repair of motor vehicles, motorcycles and personal and household goods<br>**Sect. H** — Div. **55**: Hotels and restaurants | **Sect. G** — Div. **45–47**: Wholesale and retail trade; repair of motor vehicles and motorcycles<br>**Sect. I** — Div. **55–56**: Accommodation and food service activities |
+| Transport & Communication | **Sect. 7** — Div. **71–72**: Transport, storage, and communication | **Sect. I** — Div. **60–64**: Transport, storage and communications | **Sect. H** — Div. **49–53**: Transportation and storage<br>**Sect. J** — Div. **58–63**: Information and communication |
+| Financial & Business Services | **Sect. 8** — Div. **81–83**: Financing, insurance, real estate and business services | **Sect. J** — Div. **65–67**: Financial intermediation<br>**Sect. K** — Div. **70–74**: Real estate, renting and business activities | **Sect. K** — Div. **64–66**: Financial and insurance activities<br>**Sect. L** — Div. **68**: Real estate activities<br>**Sect. M** — Div. **69–75**: Professional, scientific and technical activities<br>**Sect. N** — Div. **77–82**: Administrative and support service activities |
+| Public Administration | **Sect. 9** — Div. **91**: Public administration and defence | **Sect. L** — Div. **75**: Public administration and defence; compulsory social security | **Sect. O** — Div. **84**: Public administration and defence; compulsory social security |
+| Other | **Sect. 9** — Div. **92–96**: Community, social, and personal services (without public administration)<br>**Sect. 0** — Div. **000**: Activities not adequately defined | **Sect. M** — Div. **80**: Education<br>**Sect. N** — Div. **85**: Health and social work<br>**Sect. O** — Div. **90–93**: Other community, social and personal service activities<br>**Sect. P** — Div. **95**: Activities of private households as employers and undifferentiated production activities of private households for own use<br>**Sect. Q** — Div. **99**: Extraterritorial organizations and bodies | **Sect. P** — Div. **85**: Education<br>**Sect. Q** — Div. **86–88**: Human health and social work activities<br>**Sect. R** — Div. **90–93**: Arts, entertainment and recreation<br>**Sect. S** — Div. **94–96**: Other service activities<br>**Sect. T** — Div. **97–98**: Activities of households as employers; undifferentiated goods- and services-producing activities of households for own use<br>**Sect. U** — Div. **99**: Activities of extraterritorial organizations and bodies |
+
 <br></br>
 
 **industrycat4**
@@ -272,12 +322,16 @@ Code (string variable) of the occupation according to the International Standard
 
 The code should always be as long as the longest depth available for the ISCO) version. For example, the latest version at the time of writing (ISCO-08, [available here](https://www.ilo.org/public/english/bureau/stat/isco/isco08/index.htm)) codes occupations by Major, Sub-major, Minor, and Unit groups, in decreasing order of hierarchy.
 
-ISCO code Major groups cover a single digit, running from 1 (Managers) to 9 (Elementary Occupations) with the additional category 0 (Armed Forces Occupations). Hence there is only need for zero-padding on the left side for Armed Forces Occupations. Figure 22 shows an example of the possible values that can be taken on. 
+ISCO code Major groups cover a single digit, running from 1 (Managers) to 9 (Elementary Occupations) with the additional category 0 (Armed Forces Occupations). Hence there is only need for zero-padding on the left side for Armed Forces Occupations. The table below shows an example of the possible values that can be taken on. 
 
-<br></br>
-Figure 22 - Example of values for ISCO-08
-![Example of values for ISCO-08](images/vars_occup_isco.png)
-<br></br>
+| Level | Code | Description |
+|-------|:----:|-------------|
+| Major group | 5 | Services and Sales Workers |
+| Sub-major group | 51 | Personal Services Workers |
+| Minor group | 511 | Travel Attendants, Conductors and Guides |
+| Unit group | 5111 | Travel Attendants and Travel Stewards |
+| Unit group | 5112 | Transport Conductors |
+| Unit group | 5113 | Travel Guides |
 
 If we only had information at Major Group level, a person working as a Services and Sales Worker ought to be coded as the number 5000. If the information is at Sub-major Group level, it should be codified as the number 5100 for a Personal Services Worker, while a Travel Attendant, a Conductor, or a Guide (if information at Minor Group level) should be coded as the number 5110.
 
@@ -285,12 +339,21 @@ Information at the Unit Group level can be coded as is, since it already is at t
 
 **occup_skill**
 
-Categorical code for the broad skill level of workers at the main job in the last 7 days of any individual with a job (lstatus=1) and is missing otherwise. It follows from the ISCO classification as shown in Figure 23.
+Categorical code for the broad skill level of workers at the main job in the last 7 days of any individual with a job (lstatus=1) and is missing otherwise. It follows from the ISCO classification as shown in the table below.
 
-<br></br>
-Figure 23 - ISCO broad skill level classification
-![ISCO broad skill level classification](images/vars_occup_skill.png)
-<br></br>
+| Broad skill level | ISCO-08 | ISCO-88 |
+|-------------------|---------|---------|
+| Skill levels 3 and 4 (high) | **1.** Managers | **1.** Legislators, senior officials and managers |
+| Skill levels 3 and 4 (high) | **2.** Professionals | **2.** Professionals |
+| Skill levels 3 and 4 (high) | **3.** Technicians and associate professionals | **3.** Technicians and associate professionals |
+| Skill level 2 (medium) | **4.** Clerical support workers | **4.** Clerks |
+| Skill level 2 (medium) | **5.** Service and sales workers | **5.** Service workers and shop and market sales workers |
+| Skill level 2 (medium) | **6.** Skilled agricultural, forestry and fishery workers | **6.** Skilled agricultural and fishery workers |
+| Skill level 2 (medium) | **7.** Craft and related trades workers | **7.** Craft and related trades workers |
+| Skill level 2 (medium) | **8.** Plant and machine operators and assemblers | **8.** Plant and machine operators and assemblers |
+| Skill level 1 (low) | **9.** Elementary occupations | **9.** Elementary occupations |
+| Armed forces | **0.** Armed forces occupations | **0.** Armed forces |
+| Not elsewhere classified | **X.** Not elsewhere classified | **X.** Not elsewhere classified |
 
 Thus, the codes are:
 
