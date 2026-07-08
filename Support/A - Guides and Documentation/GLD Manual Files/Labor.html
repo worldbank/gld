@@ -70,7 +70,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="prev" title="Training module" href="Training.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="Jul 07, 2026"/>
+    <meta name="docbuild:last-update" content="Jul 08, 2026"/>
   </head>
   
   
@@ -479,11 +479,29 @@ document.write(`
 <p>It is imperative to emphasize that each survey undergoes independent harmonization. Therefore, any disparities arising from the adoption of different employment definitions in previous surveys should not impede the harmonization process for the current survey under consideration.</p>
 <p>Finally, when it comes to finer distinctions of employment (where finer means less common or affecting fewer individuals), like whether people on parental leave for more than 3 months can still be counted as employed, users should follow the skip pattern of the questionnaire, unless there are strong arguments against it. The guiding principle should be the logic of the <a class="reference external" href="https://www.ilo.org/resource/other/ilo-model-lfs-questionnaire-papi-job-type-start-2024-edition">ILO Model LFS Questionnaire</a>.</p>
 <p><strong>potential_lf</strong></p>
-<p>The ILO defines unemployment (as stated above) as seeking <em>and</em> available for a job. The potential labour force is formed by the “available potential job seekers”, who are available but not looking for a job and the “unavailable job seekers”, that is those looking but not available. The below image (Figure 17 – <a class="reference external" href="https://ilostat.ilo.org/persons-outside-the-labour-force-how-inactive-are-they-really/">source here</a>) shows the different definitions.</p>
-<p><br></br>
-Figure 17 - Definition of different labor force status
-<img alt="Definition of different labor force status" src="../../../_images/vars_potential_lf.png" />
-<br></br></p>
+<p>The ILO defines unemployment (as stated above) as seeking <em>and</em> available for a job. The potential labour force is formed by the “available potential job seekers”, who are available but not looking for a job and the “unavailable job seekers”, that is those looking but not available. The below decision tree) (<a class="reference external" href="https://ilostat.ilo.org/persons-outside-the-labour-force-how-inactive-are-they-really/">source here</a>) shows the different definitions.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Population
+│
+├── Has a job (produces goods or provides services for pay or profit)
+│   └── EMPLOYED
+│       └── Works below threshold hours,
+│           wants more hours,
+│           and is available
+│           → Time-related underemployed
+│
+└── Jobless
+    ├── Available AND looking for work
+    │   └── UNEMPLOYED
+    │
+    └── Not available and/or not looking for work
+        └── OUTSIDE THE LABOUR FORCE
+            └── Potential labour force
+                ├── Available, not looking
+                │   → Available potential jobseekers
+                └── Looking, not available
+                    → Unavailable jobseekers
+</pre></div>
+</div>
 <p>The variable potential_lf thus codifies whether the person is not in the labour force over the past 7 days (lstatus=3, missing otherwise) but could potentially be they are i) available but not searching or ii) searching but not immediately available to work. The codes are:</p>
 <ul class="simple">
 <li><p>0 = No (not potentially in the labour force)</p></li>
@@ -571,11 +589,58 @@ Figure 17 - Definition of different labor force status
 <li><p>4 = Public or State-owned, but cannot distinguish</p></li>
 </ul>
 <p>Select this option is the questionnaire does not ask for State-owned enterprises, and only for Public sector.</p>
-<p>Additionally, recall the fact that, in common English usage, a public company (often denoted as public limited company or PLC) are private companies in the private sector but whose ownership is organized via stocks tradeable in a public market, i.e., accessible to all, not run by the public sector. Figure 18 below is an example of the relevant question in the 2010 Pakistani LFS:</p>
-<p><br></br>
-Figure 18 - Excerpt of PAK LFS questionnaire
-<img alt="Excerpt of PAK LFS questionnaire" src="../../../_images/vars_ocusec.png" />
-<br></br></p>
+<p>Additionally, recall the fact that, in common English usage, a public company (often denoted as public limited company or PLC) are private companies in the private sector but whose ownership is organized via stocks tradeable in a public market, i.e., accessible to all, not run by the public sector. The table below is an example of the relevant question in the 2010 Pakistani LFS:</p>
+<div class="pst-scrollable-table-container"><table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="text-right head"><p>Code</p></th>
+<th class="head"><p>Enterprise type</p></th>
+<th class="head"><p>Skip instruction</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-right"><p>01</p></td>
+<td><p>Federal Government</p></td>
+<td><p>Skip to Col. 5.15</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>02</p></td>
+<td><p>Provincial Government</p></td>
+<td><p>Skip to Col. 5.15</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>03</p></td>
+<td><p>Local body Government</p></td>
+<td><p>Skip to Col. 5.15</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>04</p></td>
+<td><p>Public enterprise (Corporation by act of national or provincial assembly)</p></td>
+<td><p>Skip to Col. 5.15</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>05</p></td>
+<td><p>Private limited company</p></td>
+<td><p>Skip to Col. 5.15</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>06</p></td>
+<td><p>Public limited company</p></td>
+<td><p>Skip to Col. 5.15</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>07</p></td>
+<td><p>Cooperative society</p></td>
+<td><p>Skip to Col. 5.15</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>08</p></td>
+<td><p>Individual ownership</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>09</p></td>
+<td><p>Partnership</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>10</p></td>
+<td><p>Other (Specify)</p></td>
+<td><p>—</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 <p>Here code 4 represents a public enterprise (explicitly mentioned as a corporation created by a legislative body) and code 6 a public limited company (a private sector company whose shares can be bought by the general public). Code 6 should not be considered part of the public sector.</p>
 <p>Coding would then be (assuming the original question is called var_sector):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">gen</span> <span class="n">ocusec</span> <span class="o">=</span> <span class="o">.</span>
@@ -590,24 +655,125 @@ Figure 18 - Excerpt of PAK LFS questionnaire
 <p><strong>industry_orig</strong></p>
 <p>industry_orig is a string variable that specifies the original industry codes in the last 7 days for the main job provided in the survey (the actual question) and should correspond to whatever is in the original file with no recoding. It will contain missing values for people below the working age. Other missing values are allowed. It classifies the main job of any individual with a job (lstatus=1) and is missing otherwise</p>
 <p><strong>industrycat_isic</strong></p>
-<p>Code (string variable) of the industry according to the International Standard Industry Classification (ISIC) in the last 7 days for the main job of any individual with a job (lstatus=1) and is missing otherwise. Note that the preamble to the harmonization code should record what version of ISIC is being used.</p>
-<p>The code should always be as long as the longest depth available for the ISIC version. For example, the latest version at the time of writing (ISIC Rev 4, <a class="reference external" href="https://unstats.un.org/unsd/demographic-social/census/documents/isic_rev4.pdf">available here</a>) codes industries by sections, divisions, groups, and classes, in decreasing order of hierarchy.</p>
-<p>Figure 19 shows the classification structure for the manufacture of machinery and equipment. The letter C codes the Manufacturing section, while the code 28 represents “Manufacture of machines and equipment n.e.c” division. This division has two groups (281 and 282), containing one and three classes respectively.</p>
-<p><br></br>
-Figure 19 - Example of ISIC classification
-<img alt="Example of ISIC classification" src="../../../_images/vars_industrycat_isic_1.png" />
-<br></br></p>
-<p>A single section will often cover several divisions. While D has only one division (35 – electricity, gas, steam and air conditioning supply) and could be potentially shortened to “3”, section C covers divisions 10 to 33.</p>
-<p>If the information in the survey is only present at section level (or can only be translated from the national industry classification to section level) this variable should be a string with the letter coding the correct section.</p>
-<p>In most cases, information will be coded as a set of digits. In this case, the codification should be a string of four digits with a zero padding before for division 1 through 9 (i.e., 01, to 09).</p>
-<p>As an example, Figure 20, puts together a few excerpts from ISIC Rev.4. Note that, if we do not codify correctly, group 14 (Animal production) may be misunderstood for division 14 (Manufacture of wearing apparel).</p>
-<p>If we only have information up to the group label, fill out the reminder of the digits with zeros. Hence the purple box in Figure 20 would be coded as “0140”. The red box, as we have all digits, including the zero padding at the start codes as “0142”.</p>
-<p>The act of adding zeroes to the end is standard if the lower level hierarchy has no further distinctions and can be seen in the yellow box, where group 142 has no classes (or just one class) and thus is coded as “1420”.</p>
-<p>Some groups do in fact have several classes, as can be seen for group 151. Again, if we only had information up to group level, we ought to code “1510”. If we have more detailed information, for example identifying the industry as “Tanning and dressing of leather; dressing and dyeing of fur” (green box in Figure 20 below) we would code “1511”.</p>
-<p><br></br>
-Figure 20 - Examples of different ISIC codes
-<img alt="Examples of different ISIC codes" src="../../../_images/vars_industrycat_isic_2.png" />
-<br></br></p>
+<p>Code (string variable) of the industry according to the International Standard Industrial Classification (ISIC) in the last 7 days for the main job of any individual with a job (<code class="docutils literal notranslate"><span class="pre">lstatus</span> <span class="pre">=</span> <span class="pre">1</span></code>), and missing otherwise. The preamble to the harmonization code should specify the ISIC revision used by the source survey.</p>
+<p>The value should always be stored using the deepest level of detail available for the corresponding ISIC revision. For example, ISIC Rev. 4, <a class="reference external" href="https://unstats.un.org/unsd/demographic-social/census/documents/isic_rev4.pdf">available here</a>, classifies industries hierarchically into <strong>sections</strong>, <strong>divisions</strong>, <strong>groups</strong>, and <strong>classes</strong>, from the broadest to the most detailed level.</p>
+<p>The example below illustrates this hierarchy for selected industries within ISIC Rev. 4.</p>
+<div class="pst-scrollable-table-container"><table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="text-center head"><p>Section</p></th>
+<th class="text-center head"><p>Division</p></th>
+<th class="text-center head"><p>Group</p></th>
+<th class="text-center head"><p>Class</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-center"><p>C</p></td>
+<td class="text-center"><p>28</p></td>
+<td class="text-center"><p>251</p></td>
+<td class="text-center"><p>2512</p></td>
+<td><p>Manufacture of tanks, reservoirs and containers of metal</p></td>
+</tr>
+<tr class="row-odd"><td class="text-center"><p>C</p></td>
+<td class="text-center"><p>28</p></td>
+<td class="text-center"><p>281</p></td>
+<td class="text-center"><p>2816</p></td>
+<td><p>Manufacture of lifting and handling equipment</p></td>
+</tr>
+<tr class="row-even"><td class="text-center"><p>C</p></td>
+<td class="text-center"><p>28</p></td>
+<td class="text-center"><p>282</p></td>
+<td class="text-center"><p>2821</p></td>
+<td><p>Manufacture of agricultural and forestry machinery</p></td>
+</tr>
+<tr class="row-odd"><td class="text-center"><p>C</p></td>
+<td class="text-center"><p>28</p></td>
+<td class="text-center"><p>282</p></td>
+<td class="text-center"><p>2822</p></td>
+<td><p>Manufacture of metal-forming machinery and machine tools</p></td>
+</tr>
+<tr class="row-even"><td class="text-center"><p>C</p></td>
+<td class="text-center"><p>28</p></td>
+<td class="text-center"><p>282</p></td>
+<td class="text-center"><p>2824</p></td>
+<td><p>Manufacture of machinery for mining, quarrying and construction</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>A section may contain one or many divisions. For example, section <strong>D</strong> contains only division <strong>35</strong> (<em>Electricity, gas, steam and air conditioning supply</em>), whereas section <strong>C</strong> (<em>Manufacturing</em>) contains divisions <strong>10</strong> through <strong>33</strong>. Consequently, section letters cannot be inferred from division numbers and should be stored explicitly whenever only section-level information is available.</p>
+<p>If the survey identifies the industry only at the <strong>section</strong> level (or can only be translated to the section level), store the corresponding section letter as a string (e.g., <code class="docutils literal notranslate"><span class="pre">C</span></code>).</p>
+<p>Otherwise, store the industry code as a <strong>four-character string</strong> following the ISIC hierarchy:</p>
+<ul class="simple">
+<li><p>Divisions <strong>1</strong> through <strong>9</strong> must be left-padded with a zero (e.g., <code class="docutils literal notranslate"><span class="pre">0100</span></code>, not <code class="docutils literal notranslate"><span class="pre">100</span></code>).</p></li>
+<li><p>If information is available only at the <strong>division</strong> level, append two trailing zeros (e.g., <code class="docutils literal notranslate"><span class="pre">0100</span></code>, <code class="docutils literal notranslate"><span class="pre">2800</span></code>).</p></li>
+<li><p>If information is available only at the <strong>group</strong> level, append one trailing zero (e.g., <code class="docutils literal notranslate"><span class="pre">0140</span></code>, <code class="docutils literal notranslate"><span class="pre">1510</span></code>).</p></li>
+<li><p>If information is available at the <strong>class</strong> level, store the complete four-digit class code.</p></li>
+<li><p>The trailing-zero convention applies regardless of whether the lower levels of the hierarchy contain one or multiple categories.</p></li>
+</ul>
+<p>The examples below illustrate these conventions.</p>
+<div class="pst-scrollable-table-container"><table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Available information</p></th>
+<th class="head"><p>ISIC level</p></th>
+<th class="head"><p>Example</p></th>
+<th class="head"><p>Stored value</p></th>
+<th class="head"><p>Explanation</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Section</p></td>
+<td><p>Section</p></td>
+<td><p><strong>Section C</strong> — Manufacturing</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">C</span></code></p></td>
+<td><p>Only the section is known, so store the section letter.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Division</p></td>
+<td><p>Division</p></td>
+<td><p><strong>Division 28</strong> — Manufacture of machinery and equipment n.e.c.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">2800</span></code></p></td>
+<td><p>Only the division is known, so append two trailing zeros.</p></td>
+</tr>
+<tr class="row-even"><td><p>Division</p></td>
+<td><p>Division</p></td>
+<td><p><strong>Division 01</strong> — Crop and animal production, hunting and related service activities</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0100</span></code></p></td>
+<td><p>Division 1 is left-padded with a zero and two trailing zeros are appended.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Group</p></td>
+<td><p>Group</p></td>
+<td><p><strong>Group 014</strong> — Animal production</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0140</span></code></p></td>
+<td><p>Only the group is known, so append one trailing zero.</p></td>
+</tr>
+<tr class="row-even"><td><p>Class</p></td>
+<td><p>Class</p></td>
+<td><p><strong>Class 0142</strong> — Raising of horses and other equines</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0142</span></code></p></td>
+<td><p>The complete class code is available and stored unchanged.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Group</p></td>
+<td><p>Group</p></td>
+<td><p><strong>Group 142</strong> — Manufacture of articles of fur</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1420</span></code></p></td>
+<td><p>Only the group is known. The trailing zero is retained even though the group contains a single class.</p></td>
+</tr>
+<tr class="row-even"><td><p>Group</p></td>
+<td><p>Group</p></td>
+<td><p><strong>Group 151</strong> — Tanning and dressing of leather; manufacture of luggage, handbags, saddlery and harness; dressing and dyeing of furs</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1510</span></code></p></td>
+<td><p>Only the group is known, so the final digit is set to zero.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Class</p></td>
+<td><p>Class</p></td>
+<td><p><strong>Class 1511</strong> — Tanning and dressing of leather; dressing and dyeing of fur</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1511</span></code></p></td>
+<td><p>The complete class code is available and stored unchanged.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>This convention ensures that the stored value always represents the highest level of detail available while preserving the ISIC hierarchy. If all possible codes end in <code class="docutils literal notranslate"><span class="pre">0</span></code>, this indicates that the survey identifies the industry only up to the <strong>group</strong> level, whereas any codes ending in a non-zero digit identify a specific <strong>class</strong>. Section-level information is represented solely by the corresponding section letter.</p>
 <p><strong>industrycat10</strong></p>
 <p>industrycat10 is a categorical variable that specifies the 1-digit industry classification in the last 7 days for the main job of any individual with a job (lstatus=1) and is missing otherwise. The variable is constructed for all persons administered this module in each questionnaire. The codes for the main job are given here based on the UN International Standard Industrial Classification. It classifies the main job of any individual with a job (lstatus=1) and is missing otherwise</p>
 <p>Ten categories after harmonization:</p>
@@ -628,12 +794,73 @@ Figure 20 - Examples of different ISIC codes
 <li><p>In the case of different classifications (former Soviet Union republics, for example), recoding has been done to best match the ISIC codes.</p></li>
 <li><p>Category 10 is also assigned for unspecified categories or items.</p></li>
 <li><p>If all 10 categories cannot be identified in the questionnaire create this variable as missing and proceed to create industrycat4.</p></li>
-<li><p>Over the years, the different ISIC versions have changed. The original industrycat10 categories are largely based on ISIC Revision 2. The below Figure 21 shows how to classify the different ISIC revision codes into industrycat10.</p></li>
+<li><p>Over the years, the different ISIC versions have changed. The original industrycat10 categories are largely based on ISIC Revision 2. Table 5, below shows how to classify the different ISIC revision codes into industrycat10.</p></li>
 </ul>
 <p><br></br>
-Figure 21 - Overview of coding of industrycat based on different ISIC revisions
-<img alt="Overview of coding of industrycat based on different ISIC revisions" src="../../../_images/vars_industrycat10.png" />
-<br></br></p>
+Table 5 - Overview of coding of industrycat based on different ISIC revisions</p>
+<div class="pst-scrollable-table-container"><table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Industrycat10</p></th>
+<th class="head"><p>ISIC Rev. 2</p></th>
+<th class="head"><p>ISIC Rev. 3 / 3.1</p></th>
+<th class="head"><p>ISIC Rev. 4</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Agriculture</p></td>
+<td><p><strong>Sect. 1</strong> — Div. <strong>11–13</strong>: Agriculture, hunting, forestry, and fishing</p></td>
+<td><p><strong>Sect. A</strong> — Div. <strong>1–2</strong>: Agriculture, hunting and forestry<br><strong>Sect. B</strong> — Div. <strong>5</strong>: Fishing</p></td>
+<td><p><strong>Sect. A</strong> — Div. <strong>1–3</strong>: Agriculture; forestry and fishing</p></td>
+</tr>
+<tr class="row-odd"><td><p>Mining</p></td>
+<td><p><strong>Sect. 2</strong> — Div. <strong>21–23, 29</strong>: Mining and quarrying</p></td>
+<td><p><strong>Sect. C</strong> — Div. <strong>10–14</strong>: Mining and quarrying</p></td>
+<td><p><strong>Sect. B</strong> — Div. <strong>5–9</strong>: Mining and quarrying</p></td>
+</tr>
+<tr class="row-even"><td><p>Manufacturing</p></td>
+<td><p><strong>Sect. 3</strong> — Div. <strong>31–39</strong>: Manufacturing</p></td>
+<td><p><strong>Sect. D</strong> — Div. <strong>15–37</strong>: Manufacturing</p></td>
+<td><p><strong>Sect. C</strong> — Div. <strong>10–33</strong>: Manufacturing</p></td>
+</tr>
+<tr class="row-odd"><td><p>Public Utilities</p></td>
+<td><p><strong>Sect. 4</strong> — Div. <strong>41–42</strong>: Electricity, gas, and water</p></td>
+<td><p><strong>Sect. E</strong> — Div. <strong>40–41</strong>: Electricity, gas and water supply</p></td>
+<td><p><strong>Sect. D</strong> — Div. <strong>35</strong>: Electricity, gas, steam and air conditioning supply<br><strong>Sect. E</strong> — Div. <strong>36–39</strong>: Water supply; sewerage; waste management and remediation activities</p></td>
+</tr>
+<tr class="row-even"><td><p>Construction</p></td>
+<td><p><strong>Sect. 5</strong> — Div. <strong>50</strong>: Construction</p></td>
+<td><p><strong>Sect. F</strong> — Div. <strong>45</strong>: Construction</p></td>
+<td><p><strong>Sect. F</strong> — Div. <strong>41–43</strong>: Construction</p></td>
+</tr>
+<tr class="row-odd"><td><p>Commerce</p></td>
+<td><p><strong>Sect. 6</strong> — Div. <strong>61–63</strong>: Wholesale and retail trade and restaurants and hotels</p></td>
+<td><p><strong>Sect. G</strong> — Div. <strong>50–52</strong>: Wholesale and retail trade; repair of motor vehicles, motorcycles and personal and household goods<br><strong>Sect. H</strong> — Div. <strong>55</strong>: Hotels and restaurants</p></td>
+<td><p><strong>Sect. G</strong> — Div. <strong>45–47</strong>: Wholesale and retail trade; repair of motor vehicles and motorcycles<br><strong>Sect. I</strong> — Div. <strong>55–56</strong>: Accommodation and food service activities</p></td>
+</tr>
+<tr class="row-even"><td><p>Transport &amp; Communication</p></td>
+<td><p><strong>Sect. 7</strong> — Div. <strong>71–72</strong>: Transport, storage, and communication</p></td>
+<td><p><strong>Sect. I</strong> — Div. <strong>60–64</strong>: Transport, storage and communications</p></td>
+<td><p><strong>Sect. H</strong> — Div. <strong>49–53</strong>: Transportation and storage<br><strong>Sect. J</strong> — Div. <strong>58–63</strong>: Information and communication</p></td>
+</tr>
+<tr class="row-odd"><td><p>Financial &amp; Business Services</p></td>
+<td><p><strong>Sect. 8</strong> — Div. <strong>81–83</strong>: Financing, insurance, real estate and business services</p></td>
+<td><p><strong>Sect. J</strong> — Div. <strong>65–67</strong>: Financial intermediation<br><strong>Sect. K</strong> — Div. <strong>70–74</strong>: Real estate, renting and business activities</p></td>
+<td><p><strong>Sect. K</strong> — Div. <strong>64–66</strong>: Financial and insurance activities<br><strong>Sect. L</strong> — Div. <strong>68</strong>: Real estate activities<br><strong>Sect. M</strong> — Div. <strong>69–75</strong>: Professional, scientific and technical activities<br><strong>Sect. N</strong> — Div. <strong>77–82</strong>: Administrative and support service activities</p></td>
+</tr>
+<tr class="row-even"><td><p>Public Administration</p></td>
+<td><p><strong>Sect. 9</strong> — Div. <strong>91</strong>: Public administration and defence</p></td>
+<td><p><strong>Sect. L</strong> — Div. <strong>75</strong>: Public administration and defence; compulsory social security</p></td>
+<td><p><strong>Sect. O</strong> — Div. <strong>84</strong>: Public administration and defence; compulsory social security</p></td>
+</tr>
+<tr class="row-odd"><td><p>Other</p></td>
+<td><p><strong>Sect. 9</strong> — Div. <strong>92–96</strong>: Community, social, and personal services (without public administration)<br><strong>Sect. 0</strong> — Div. <strong>000</strong>: Activities not adequately defined</p></td>
+<td><p><strong>Sect. M</strong> — Div. <strong>80</strong>: Education<br><strong>Sect. N</strong> — Div. <strong>85</strong>: Health and social work<br><strong>Sect. O</strong> — Div. <strong>90–93</strong>: Other community, social and personal service activities<br><strong>Sect. P</strong> — Div. <strong>95</strong>: Activities of private households as employers and undifferentiated production activities of private households for own use<br><strong>Sect. Q</strong> — Div. <strong>99</strong>: Extraterritorial organizations and bodies</p></td>
+<td><p><strong>Sect. P</strong> — Div. <strong>85</strong>: Education<br><strong>Sect. Q</strong> — Div. <strong>86–88</strong>: Human health and social work activities<br><strong>Sect. R</strong> — Div. <strong>90–93</strong>: Arts, entertainment and recreation<br><strong>Sect. S</strong> — Div. <strong>94–96</strong>: Other service activities<br><strong>Sect. T</strong> — Div. <strong>97–98</strong>: Activities of households as employers; undifferentiated goods- and services-producing activities of households for own use<br><strong>Sect. U</strong> — Div. <strong>99</strong>: Activities of extraterritorial organizations and bodies</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><br></br></p>
 <p><strong>industrycat4</strong></p>
 <p>industrycat4 is a categorical variable that specifies the 1-digit industry classification in the last 7 days for the main job for Broad Economic Activities. This variable is either created directly from the data (if industry classification does not exist for ten categories) or created from industrycat10.</p>
 <p>Four categories after harmonization:</p>
@@ -649,19 +876,101 @@ Figure 21 - Overview of coding of industrycat based on different ISIC revisions
 <p><strong>occup_isco</strong></p>
 <p>Code (string variable) of the occupation according to the International Standard Classification of Occupations (ISCO) in the last 7 days for the main job of any individual with a job (lstatus=1) and is missing otherwise. Note that the preamble to the harmonization code should record what version of ISCO is being used.</p>
 <p>The code should always be as long as the longest depth available for the ISCO) version. For example, the latest version at the time of writing (ISCO-08, <a class="reference external" href="https://www.ilo.org/public/english/bureau/stat/isco/isco08/index.htm">available here</a>) codes occupations by Major, Sub-major, Minor, and Unit groups, in decreasing order of hierarchy.</p>
-<p>ISCO code Major groups cover a single digit, running from 1 (Managers) to 9 (Elementary Occupations) with the additional category 0 (Armed Forces Occupations). Hence there is only need for zero-padding on the left side for Armed Forces Occupations. Figure 22 shows an example of the possible values that can be taken on.</p>
-<p><br></br>
-Figure 22 - Example of values for ISCO-08
-<img alt="Example of values for ISCO-08" src="../../../_images/vars_occup_isco.png" />
-<br></br></p>
+<p>ISCO code Major groups cover a single digit, running from 1 (Managers) to 9 (Elementary Occupations) with the additional category 0 (Armed Forces Occupations). Hence there is only need for zero-padding on the left side for Armed Forces Occupations. The table below shows an example of the possible values that can be taken on.</p>
+<div class="pst-scrollable-table-container"><table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Level</p></th>
+<th class="text-center head"><p>Code</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Major group</p></td>
+<td class="text-center"><p>5</p></td>
+<td><p>Services and Sales Workers</p></td>
+</tr>
+<tr class="row-odd"><td><p>Sub-major group</p></td>
+<td class="text-center"><p>51</p></td>
+<td><p>Personal Services Workers</p></td>
+</tr>
+<tr class="row-even"><td><p>Minor group</p></td>
+<td class="text-center"><p>511</p></td>
+<td><p>Travel Attendants, Conductors and Guides</p></td>
+</tr>
+<tr class="row-odd"><td><p>Unit group</p></td>
+<td class="text-center"><p>5111</p></td>
+<td><p>Travel Attendants and Travel Stewards</p></td>
+</tr>
+<tr class="row-even"><td><p>Unit group</p></td>
+<td class="text-center"><p>5112</p></td>
+<td><p>Transport Conductors</p></td>
+</tr>
+<tr class="row-odd"><td><p>Unit group</p></td>
+<td class="text-center"><p>5113</p></td>
+<td><p>Travel Guides</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 <p>If we only had information at Major Group level, a person working as a Services and Sales Worker ought to be coded as the number 5000. If the information is at Sub-major Group level, it should be codified as the number 5100 for a Personal Services Worker, while a Travel Attendant, a Conductor, or a Guide (if information at Minor Group level) should be coded as the number 5110.</p>
 <p>Information at the Unit Group level can be coded as is, since it already is at the maximum possible depth.</p>
 <p><strong>occup_skill</strong></p>
-<p>Categorical code for the broad skill level of workers at the main job in the last 7 days of any individual with a job (lstatus=1) and is missing otherwise. It follows from the ISCO classification as shown in Figure 23.</p>
-<p><br></br>
-Figure 23 - ISCO broad skill level classification
-<img alt="ISCO broad skill level classification" src="../../../_images/vars_occup_skill.png" />
-<br></br></p>
+<p>Categorical code for the broad skill level of workers at the main job in the last 7 days of any individual with a job (lstatus=1) and is missing otherwise. It follows from the ISCO classification as shown in the table below.</p>
+<div class="pst-scrollable-table-container"><table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Broad skill level</p></th>
+<th class="head"><p>ISCO-08</p></th>
+<th class="head"><p>ISCO-88</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Skill levels 3 and 4 (high)</p></td>
+<td><p><strong>1.</strong> Managers</p></td>
+<td><p><strong>1.</strong> Legislators, senior officials and managers</p></td>
+</tr>
+<tr class="row-odd"><td><p>Skill levels 3 and 4 (high)</p></td>
+<td><p><strong>2.</strong> Professionals</p></td>
+<td><p><strong>2.</strong> Professionals</p></td>
+</tr>
+<tr class="row-even"><td><p>Skill levels 3 and 4 (high)</p></td>
+<td><p><strong>3.</strong> Technicians and associate professionals</p></td>
+<td><p><strong>3.</strong> Technicians and associate professionals</p></td>
+</tr>
+<tr class="row-odd"><td><p>Skill level 2 (medium)</p></td>
+<td><p><strong>4.</strong> Clerical support workers</p></td>
+<td><p><strong>4.</strong> Clerks</p></td>
+</tr>
+<tr class="row-even"><td><p>Skill level 2 (medium)</p></td>
+<td><p><strong>5.</strong> Service and sales workers</p></td>
+<td><p><strong>5.</strong> Service workers and shop and market sales workers</p></td>
+</tr>
+<tr class="row-odd"><td><p>Skill level 2 (medium)</p></td>
+<td><p><strong>6.</strong> Skilled agricultural, forestry and fishery workers</p></td>
+<td><p><strong>6.</strong> Skilled agricultural and fishery workers</p></td>
+</tr>
+<tr class="row-even"><td><p>Skill level 2 (medium)</p></td>
+<td><p><strong>7.</strong> Craft and related trades workers</p></td>
+<td><p><strong>7.</strong> Craft and related trades workers</p></td>
+</tr>
+<tr class="row-odd"><td><p>Skill level 2 (medium)</p></td>
+<td><p><strong>8.</strong> Plant and machine operators and assemblers</p></td>
+<td><p><strong>8.</strong> Plant and machine operators and assemblers</p></td>
+</tr>
+<tr class="row-even"><td><p>Skill level 1 (low)</p></td>
+<td><p><strong>9.</strong> Elementary occupations</p></td>
+<td><p><strong>9.</strong> Elementary occupations</p></td>
+</tr>
+<tr class="row-odd"><td><p>Armed forces</p></td>
+<td><p><strong>0.</strong> Armed forces occupations</p></td>
+<td><p><strong>0.</strong> Armed forces</p></td>
+</tr>
+<tr class="row-even"><td><p>Not elsewhere classified</p></td>
+<td><p><strong>X.</strong> Not elsewhere classified</p></td>
+<td><p><strong>X.</strong> Not elsewhere classified</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 <p>Thus, the codes are:</p>
 <ul class="simple">
 <li><p>3 = High</p></li>
@@ -2184,7 +2493,7 @@ By World Bank Jobs Group
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Jul 07, 2026.
+  Last updated on Jul 08, 2026.
   <br/>
 </p>
   </div>
