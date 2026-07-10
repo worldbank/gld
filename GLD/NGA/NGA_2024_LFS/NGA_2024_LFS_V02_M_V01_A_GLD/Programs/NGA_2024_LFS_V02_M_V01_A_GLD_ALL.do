@@ -204,6 +204,27 @@ replace qtr = 4 if missing(qtr)
 
 </_hhid_note> */
 	gen hhid = interview_key
+	
+	* Step 1: Tag distinct households within each hhid (identified by LGA + EA) and sequence them
+	bysort hhid id3_lga id4b_ea: gen hh_tag = (_n == 1)
+	bysort hhid: gen hh_seq = sum(hh_tag)
+
+	* Step 2: Assign override IDs to duplicate households (2nd occurrence onward)
+	egen override_id = group(hhid id3_lga id4b_ea) if hh_seq >= 2
+
+	* Step 3: Format as 99-99-99-xx
+	tostring override_id, gen(override_str) format(%02.0f)
+	gen new_hhid = "99-99-99-" + override_str if hh_seq >= 2
+
+	* Step 4: Propagate new hhid to all members of the same household
+	bysort hhid id3_lga id4b_ea: replace new_hhid = new_hhid[1]
+
+	* Step 5: Apply changes
+	replace hhid = new_hhid if !missing(new_hhid)
+
+	* Clean up temporary variables
+	drop hh_tag hh_seq override_id override_str new_hhid
+	
 	label var hhid "Household ID"
 	
 *</_hhid_>
@@ -213,17 +234,19 @@ replace qtr = 4 if missing(qtr)
 /* <_pid_note>
 
 	There are 18 duplicated hhid-pid combinations.
-	After reviewing the duplicated cases, they appear to refer to distinct individuals
-	rather than true duplicate observations. The records are kept. The combination
-	of hhid, pid, and qtr uniquely identifies individuals.
+	We found three household identifiers are duplicated across different enumeration areas,
+	meaning distinct households were incorrectly assigned the same HHID. 
+	This caused apparent PID duplicates across EAs.
+	To resolve this, the second occurrence of each duplicated household has been
+	reassigned to an override HHID in the format 99-99-99-xx (01 through 03). 
 
 </_pid_note> */
 	gen string_roster = string(hhroster_id, "%02.0f")
 
-	gen pid = interview_key + "-" + string_roster
+	gen pid = hhid + "-" + string_roster
 	label var pid "Individual ID"
 	
-	isid pid hhid qtr
+	isid pid
 *</_pid_>
 
 
@@ -254,6 +277,14 @@ replace qtr = 4 if missing(qtr)
 	label var weight_q "Survey sampling weight to obtain national estimates for each quarter"
 *</_weight_q_>
 
+
+/* <_psu_note>
+
+	The PSU is defined as the combination of id3_lga and id4b_ea. 
+	This combination was selected because it yields 3,489 unique PSUs across the 2024 pooled data, 
+	which aligns best with the documented ~860–880 EAs per quarte.
+
+</_psu_note> */
 
 *<_psu_>
 	gen str psu = string(id3_lga) + "-" + id4b_ea
