@@ -56,7 +56,12 @@ set varabbrev off
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-local server   "C:/Users/wb611670/WBG/GLD - 611670_SF"
+if "`c(username)'" == "wb611670" {
+    local server   "C:/Users/wb611670/WBG/GLD - 611670_SF"
+}
+else {
+    local server   "C:/Users/`c(username)'/WBG/GLD - Current Contributors/611670_SF"
+}
 local country "GHA"
 local year    "2015"
 local survey  "LFS"
@@ -116,7 +121,7 @@ merge m:1 hid using "`path_in_stata'/lfssec15f.dta", nogen
 
 
 *<_icls_v_>
-	gen icls_v = "ICLS-13"
+	gen icls_v = "ICLS-19"
 	label var icls_v "ICLS version underlying questionnaire questions"
 *</_icls_v_>
 
@@ -796,26 +801,42 @@ foreach ed_var of local ed_vars {
 
 {
 *<_lstatus_>
+* ICLS-19: employment = work for pay/profit + temporary absence with job attachment
+* Job attachment criteria (meet ANY one):
+*   (a) standard reason for absence (health, vacation, maternity/paternity, strike)
+*   (b) still receiving remuneration during absence
+* NOTE: no "expected return within X months" variable available — limitation documented in CSD
+
 	gen byte lstatus = .
+
 	replace lstatus = . if age < minlaborage
+
 	
 	replace lstatus = 1 if age >= minlaborage & ( ///
 		s3aq3a == 1 | /// Non-farm self-employment / business
 		s3aq3b == 1 | /// Wage/salary employment
 		s3aq3c == 1 | /// Domestic work for pay
-		s3aq3d == 1 | /// Unpaid contributing family worker (for market-oriented business)
-		s3aq3e == 1 | /// Farm work mainly for sale/barter (market production = employment)
-		inlist(s3aq3g, 1, 2, 3) | /// Apprenticeship work
-		s3aq4 == 1 /// Has a job/business and is temporarily absent with definite return
+		s3aq3d == 1 | /// Unpaid contributing family worker (market-oriented business)
+		s3aq3e == 1 | /// Farm work mainly for sale/barter (market production)
+		               /// s3aq3e==2 (subsistence/own-use) excluded under ICLS-19
+		inlist(s3aq3g, 1, 2, 3) | /// Apprenticeship
+		/// --- Temporary absence with job attachment (2 of 3 ILO criteria available) ---
+		(s3aq4 == 1 & ( ///
+			inlist(s3aq5, 1, 2, 4, 6) | /// Standard: Health, Vacation, Maternity/paternity, Strike
+			s3aq6 == 1 /// Still receiving pay/returns in cash or kind
+		)) ///
 	)
+
 	
 	replace lstatus = 2 if age >= minlaborage & lstatus == . & ///
-		inlist(s6q1, 1, 2) & /// Available for work (past 7 days / next 4 weeks)
-		inlist(s6q2, 1, 2) /// Took active steps to seek work (past 7 days / 4 weeks)
+		inlist(s6q1, 1, 2) & /// Available for work
+		inlist(s6q2, 1, 2) /// Took active steps to seek work
+
 	
 	replace lstatus = 3 if age >= minlaborage & lstatus == .
+
 	
-	label var lstatus "Labor status"
+	label var lstatus "Labor status (ICLS-19)"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
 *</_lstatus_>
@@ -996,8 +1017,8 @@ foreach ed_var of local ed_vars {
 	gen occup_isco = string(occup_orig, "%04.0f")
 	replace occup_isco = "" if lstatus != 1
 	replace occup_isco = "" if occup_isco == "."
-	replace occup_isco = "" if occup_isco == "7517"
-	replace occup_isco = "" if occup_isco == "7518"
+	replace occup_isco = "7510" if occup_isco == "7517"
+	replace occup_isco = "7510" if occup_isco == "7518"
 	* Check that no errors --> using our universe check function, count should be 0 (no obs wrong)
 	* https://github.com/worldbank/gld/tree/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20universe%20check
 	preserve 
@@ -1049,7 +1070,7 @@ foreach ed_var of local ed_vars {
 
 
 *<_wage_no_compen_>
-	gen double wage_no_compen = s3bq21a
+	gen double wage_no_compen = s3bq17a+s3bq21a
 	replace wage_no_compen = . if lstatus != 1
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
 *</_wage_no_compen_>
@@ -1065,12 +1086,12 @@ foreach ed_var of local ed_vars {
 </_unitwage_note> */
 
 	gen byte unitwage = .
-	replace unitwage = 1 if s3bq21b == 1
-	replace unitwage = 2 if s3bq21b == 2
-	replace unitwage = 3 if s3bq21b == 3
-	replace unitwage = 5 if s3bq21b == 4
-	replace unitwage = 6 if s3bq21b == 5
-	replace unitwage = 8 if s3bq21b == 6
+	replace unitwage = 1 if s3bq17b == 1
+	replace unitwage = 2 if s3bq17b == 2
+	replace unitwage = 3 if s3bq17b == 3
+	replace unitwage = 5 if s3bq17b == 4
+	replace unitwage = 6 if s3bq17b == 5
+	replace unitwage = 8 if s3bq17b == 6
 	replace unitwage = . if mi(wage_no_compen)
 	label var unitwage "Last wages' time unit primary job 7 day recall"
 	la de lblunitwage 1 "Daily" 2 "Weekly" 3 "Every two weeks" 4 "Bimonthly"  5 "Monthly" 6 "Trimester" 7 "Biannual" 8 "Annually" 9 "Hourly" 10 "Other"
@@ -1273,8 +1294,8 @@ foreach ed_var of local ed_vars {
 	gen occup_isco_2 = string(occup_orig_2, "%04.0f")
 	replace occup_isco_2 = "" if lstatus != 1
 	replace occup_isco_2 = "" if occup_isco_2 == "."
-	replace occup_isco_2 = "" if occup_isco_2 == "7517"
-	replace occup_isco_2 = "" if occup_isco_2 == "7518"
+	replace occup_isco_2 = "7510" if occup_isco_2 == "7517"
+	replace occup_isco_2 = "7510" if occup_isco_2 == "7518"
 
 	* Validate codes against ISCO universe
 	preserve 
