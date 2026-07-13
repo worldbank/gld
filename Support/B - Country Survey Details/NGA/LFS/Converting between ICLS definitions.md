@@ -102,14 +102,9 @@ Hours are constructed from `agf4` (days worked per week) multiplied by `agf5` (h
 
 All other variables (e.g., `wage_no_compen`, `unitwage`, `contract`) remain missing for this group, as the questionnaire does not collect that information for subsistence farmers.
 
-# Size of subsistence farmers population in Nigeria
+# Impact of the Employment Definition on Agricultural Employment
 
-The size of the subsistence farmers is not as significant as in other countries (e.g., Rwanda is over 30% of working age population), covering only ~4% of the working age population.
-
-| **Year** | **% of working age** |
-|:---:|:---:|
-| 2022 Q4 | 4.6% |
-| 2023 Q1-Q3 | 3.8% |
+Using the 2025 data, recoding employment to include own-consumption agricultural workers raises agriculture’s share of total employment from 30.6% under ICLS-19 to 33.5% under the earlier definition, an increase of 2.9 percentage points. The effect is relatively modest given the expectation that subsistence agriculture might account for a sizeable share of Nigeria’s labour market, indicating that only a limited additional population is captured by this recoding.
 
 
 
