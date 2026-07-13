@@ -59,7 +59,12 @@ set varabbrev off
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-local server   "C:/Users/wb611670/WBG/GLD - 611670_SF"
+if "`c(username)'" == "wb611670" {
+    local server   "C:/Users/wb611670/WBG/GLD - 611670_SF"
+}
+else {
+    local server   "C:/Users/`c(username)'/WBG/GLD - Current Contributors/611670_SF"
+}
 local country "NGA"
 local year    "2025"
 local survey  "LFS"
