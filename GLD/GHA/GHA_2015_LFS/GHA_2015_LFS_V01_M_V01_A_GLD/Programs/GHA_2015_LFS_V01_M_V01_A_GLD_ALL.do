@@ -1070,9 +1070,67 @@ foreach ed_var of local ed_vars {
 
 
 *<_wage_no_compen_>
-	gen double wage_no_compen = s3bq17a+s3bq21a
+
+	/*
+	s3bq17a is the principal wage amount. Convert the value of in-kind
+	compensation, s3bq21a, to the time unit reported for s3bq17a before
+	adding the two components.
+	*/
+
+	tempvar salary_annual_factor inkind_annual_factor inkind_converted
+
+	/*
+	Number of each reporting period in one year.
+
+	Source codes:
+		1 = Daily
+		2 = Weekly
+		3 = Fortnightly
+		4 = Monthly
+		5 = Quarterly
+		6 = Yearly
+	*/
+
+	gen double `salary_annual_factor' = .
+	replace `salary_annual_factor' = 365 if s3bq17b == 1
+	replace `salary_annual_factor' = 52  if s3bq17b == 2
+	replace `salary_annual_factor' = 26  if s3bq17b == 3
+	replace `salary_annual_factor' = 12  if s3bq17b == 4
+	replace `salary_annual_factor' = 4   if s3bq17b == 5
+	replace `salary_annual_factor' = 1   if s3bq17b == 6
+
+	gen double `inkind_annual_factor' = .
+	replace `inkind_annual_factor' = 365 if s3bq21b == 1
+	replace `inkind_annual_factor' = 52  if s3bq21b == 2
+	replace `inkind_annual_factor' = 26  if s3bq21b == 3
+	replace `inkind_annual_factor' = 12  if s3bq21b == 4
+	replace `inkind_annual_factor' = 4   if s3bq21b == 5
+	replace `inkind_annual_factor' = 1   if s3bq21b == 6
+
+	/*
+	Convert in-kind compensation to the reporting period of the salary:
+
+	    in-kind in salary period
+	        = in-kind amount
+	        × periods per year for salary
+	        ÷ periods per year for in-kind
+	*/
+
+	gen double `inkind_converted' = s3bq21a * `salary_annual_factor' / `inkind_annual_factor'
+
+	/*
+	Retain the salary amount when no in-kind compensation is reported.
+	Add converted in-kind compensation when it is available.
+	*/
+
+	gen double wage_no_compen = s3bq17a
+	replace wage_no_compen = s3bq17a + `inkind_converted' ///
+		if !mi(s3bq17a, `inkind_converted')
+
 	replace wage_no_compen = . if lstatus != 1
+
 	label var wage_no_compen "Last wage payment primary job 7 day recall"
+
 *</_wage_no_compen_>
 
 
