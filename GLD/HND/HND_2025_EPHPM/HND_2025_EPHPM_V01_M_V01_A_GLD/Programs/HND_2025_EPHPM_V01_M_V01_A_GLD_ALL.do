@@ -49,10 +49,10 @@ set varabbrev off
 *----------1.2: Set directories------------------------------*
 
 if "`c(username)'" == "wb510859" {
-	local server "C:/Users/`c(username)'/OneDrive - WBG/GLD - Current Contributors/510859_AS"
+	local server "C:/Users/`c(username)'/OneDrive - WBG/GLD - Current Contributors/625372_DB"
 }
 else {
-	local server "C:/Users/`c(username)'/WBG/GLD - Current Contributors/510859_AS"
+	local server "C:/Users/`c(username)'/WBG/GLD - Current Contributors/625372_DB"
 }
 local country "HND"
 local year    "2025"
@@ -280,58 +280,131 @@ persons in the target raw file.
     label var marital "Marital status"
 *</_marital_>
 
+
+*<_eye_dsablty_>
+	gen eye_dsablty = .
+	label define dsablty 1 "No – no difficulty" 2 "Yes – some difficulty" 3 "Yes – a lot of difficulty" 4 "Cannot do at all"
+	label values eye_dsablty dsablty
+	label var eye_dsablty "Disability related to eyesight"
+*</_eye_dsablty_>
+
+
+*<_hear_dsablty_>
+	gen hear_dsablty = .
+	label define dsablty 1 "No – no difficulty" 2 "Yes – some difficulty" 3 "Yes – a lot of difficulty" 4 "Cannot do at all", replace
+	label values hear_dsablty dsablty
+	label var hear_dsablty "Disability related to hearing"
+*</_hear_dsablty_>
+
+
+*<_walk_dsablty_>
+	gen walk_dsablty = .
+	label define dsablty 1 "No – no difficulty" 2 "Yes – some difficulty" 3 "Yes – a lot of difficulty" 4 "Cannot do at all", replace
+	label values walk_dsablty dsablty
+	label var walk_dsablty "Disability related to walking or climbing stairs"
+*</_walk_dsablty_>
+
+
+*<_conc_dsord_>
+	gen conc_dsord = .
+	label define dsablty 1 "No – no difficulty" 2 "Yes – some difficulty" 3 "Yes – a lot of difficulty" 4 "Cannot do at all", replace
+	label values conc_dsord dsablty
+	label var conc_dsord "Disability related to concentration or remembering"
+*</_conc_dsord_>
+
+
+*<_slfcre_dsablty_>
+	gen slfcre_dsablty  = .
+	label define dsablty 1 "No – no difficulty" 2 "Yes – some difficulty" 3 "Yes – a lot of difficulty" 4 "Cannot do at all", replace
+	label values slfcre_dsablty dsablty
+	label var slfcre_dsablty "Disability related to selfcare"
+*</_slfcre_dsablty_>
+
+
+*<_comm_dsablty_>
+	gen comm_dsablty = .
+	label define dsablty 1 "No – no difficulty" 2 "Yes – some difficulty" 3 "Yes – a lot of difficulty" 4 "Cannot do at all", replace
+	label values comm_dsablty dsablty
+	label var comm_dsablty "Disability related to communicating"
+*</_comm_dsablty_>
+
 }
 
 
 /*%%=============================================================================================
-    3: Disability and migration
+	5: Migration
 ==============================================================================================%%*/
+
 
 {
 
-*<_disability_>
-/* <_disability_note>
-The 2025 raw file does not contain CH307, the 2023 disability source identified
-in the reference report. Disability variables are intentionally left missing.
-</_disability_note> */
-    gen byte eye_dsablty = .
-    gen byte hear_dsablty = .
-    gen byte walk_dsablty = .
-    gen byte conc_dsord = .
-    gen byte slfcre_dsablty = .
-    gen byte comm_dsablty = .
-    label var eye_dsablty "Disability related to eyesight"
-    label var hear_dsablty "Disability related to hearing"
-    label var walk_dsablty "Disability related to walking or climbing stairs"
-    label var conc_dsord "Disability related to concentration or remembering"
-    label var slfcre_dsablty "Disability related to selfcare"
-    label var comm_dsablty "Disability related to communicating"
-*</_disability_>
+*<_migrated_mod_age_>
+	gen migrated_mod_age = .
+	label var migrated_mod_age "Migration module application age"
+*</_migrated_mod_age_>
 
-*<_migration_>
-/* <_migration_note>
-The 2023 CD* migration variables are absent from the 2025 raw file. The report
-does not identify an alternate migration source.
-</_migration_note> */
-    gen byte migrated_mod_age = .
-    gen byte migrated_ref_time = .
-    gen byte migrated_binary = .
-    gen double migrated_years = .
-    gen byte migrated_from_urban = .
-    gen byte migrated_from_cat = .
-    gen strL migrated_from_code = ""
-    gen str3 migrated_from_country = ""
-    gen byte migrated_reason = .
-    label var migrated_mod_age "Migration module application age"
-    label var migrated_ref_time "Migration reference time"
-    label var migrated_binary "Individual has migrated"
-    label var migrated_years "Years since latest migration"
-    label var migrated_from_urban "Migrant came from an urban area"
-    label var migrated_from_cat "Category of migration area"
-    label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
-    label var migrated_from_country "Code of migration country (ISO 3 Letter Code)"
-    label var migrated_reason "Reason for migrating"
-*</_migration_>
+
+*<_migrated_ref_time_>
+	gen migrated_ref_time = .
+	label var migrated_ref_time "Reference time applied to migration questions (in years)"
+*</_migrated_ref_time_>
+
+
+*<_migrated_binary_>
+	gen migrated_binary = .
+	label de lblmigrated_binary 0 "No" 1 "Yes"
+	label values migrated_binary lblmigrated_binary
+	label var migrated_binary "Individual has migrated"
+*</_migrated_binary_>
+
+
+*<_migrated_years_>
+	gen migrated_years = .
+	replace migrated_years = . if migrated_binary != 1
+	label var migrated_years "Years since latest migration"
+*</_migrated_years_>
+
+
+*<_migrated_from_urban_>
+	gen migrated_from_urban = .
+	replace migrated_from_urban = . if migrated_binary != 1
+	label de lblmigrated_from_urban 0 "Rural" 1 "Urban"
+	label values migrated_from_urban lblmigrated_from_urban
+	label var migrated_from_urban "Migrated from area"
+*</_migrated_from_urban_>
+
+
+*<_migrated_from_cat_>
+	gen migrated_from_cat = .
+	replace migrated_from_cat = . if migrated_binary != 1
+	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country" 6 "Within country, admin unknown" 7 "Wholly unknown"
+	label values migrated_from_cat lblmigrated_from_cat
+	label var migrated_from_cat "Category of migration area"
+*</_migrated_from_cat_>
+
+
+*<_migrated_from_code_>
+	gen migrated_from_code = ""
+	replace migrated_from_code = "" if migrated_binary != 1
+	label var migrated_from_code "Code of migration area as subnatid level of migrated_from_cat"
+*</_migrated_from_code_>
+
+
+*<_migrated_from_country_>
+	gen migrated_from_country = ""
+	replace migrated_from_country = "" if migrated_binary != 1
+	label var migrated_from_country "Code of migration country (ISO 3 Letter Code)"
+*</_migrated_from_country_>
+
+
+*<_migrated_reason_>
+	gen migrated_reason = .
+	replace migrated_reason = . if migrated_binary != 1
+	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
+	label values migrated_reason lblmigrated_reason
+	label var migrated_reason "Reason for migrating"
+*</_migrated_reason_>
+
 
 }
 
@@ -376,66 +449,115 @@ The 2023 literacy source ED01 is absent from the 2025 raw file.
 
 *<_educat7_>
 /* <_educat7_note>
-The 2025 report keeps the HND education ladder but adapts fallback variables to
-lowercase nivel and anosest. ED07 is not observed for ED05=5 in 2025, so ED08
-is used to split Media/Diversificado: years 1-2 are secondary incomplete and
-years 3-4 are secondary complete, matching the adjacent-year pattern.
+    For HND 2025, ED05 identifies the highest level reached and ED10 identifies
+    the current level attended. ED05=5 corresponds to Media/Diversificado,
+    ED05=6 to Técnico superior, ED05=7 to Superior no universitaria, ED05=8 to
+    Superior universitaria, and ED05=9/11 to postgraduate education. Basic
+    education is split using ED08, with anosest used only as a fallback when
+    ED08 is missing. ED07 is not observed for ED05=5 in 2025, so ED08 is used
+    to split Media/Diversificado: years 1-2 are secondary incomplete and years
+    3-4 are secondary complete. Current attendance is used as a fallback through
+    ED10 and ED13, and final fallback classifications use nivel and anosest.
 </_educat7_note> */
+
     gen byte educat7 = .
+
+    * ----------------------------
+    * Highest level reached: ED05
+    * ----------------------------
+
     replace educat7 = 1 if inlist(ED05, 1, 2, 3)
-    replace educat7 = 2 if ED05 == 4 & inrange(ED08, 1, 5)
-    replace educat7 = 3 if ED05 == 4 & ED08 == 6
-    replace educat7 = 4 if ED05 == 4 & inrange(ED08, 7, 9)
-    replace educat7 = 4 if ED05 == 5 & inlist(ED08, 1, 2)
-    replace educat7 = 5 if ED05 == 5 & inlist(ED08, 3, 4)
+
+    replace educat7 = 2 if ED05 == 4 & ///
+        (inrange(ED08, 1, 5) | (missing(ED08) & inrange(anosest, 1, 5)))
+
+    replace educat7 = 3 if ED05 == 4 & ///
+        (ED08 == 6 | (missing(ED08) & anosest == 6))
+
+    replace educat7 = 4 if ED05 == 4 & ///
+        (inrange(ED08, 7, 9) | (missing(ED08) & inrange(anosest, 7, 9)))
+
+    * Media / Diversificado
+    replace educat7 = 4 if ED05 == 5 & inrange(ED08, 1, 2)
+    replace educat7 = 5 if ED05 == 5 & inrange(ED08, 3, 4)
+
+    * Técnico superior / Superior no universitaria
     replace educat7 = 6 if inlist(ED05, 6, 7)
+
+    * Superior universitaria / Especialidad / Maestría / Doctorado
     replace educat7 = 7 if inlist(ED05, 8, 9, 10, 11)
 
-    replace educat7 = 1 if missing(educat7) & ED10 == 3
+
+    * ----------------------------
+    * Current students: ED10 current level + ED13 current grade/year
+    * ----------------------------
+
+    replace educat7 = 1 if missing(educat7) & inlist(ED10, 2, 3)
+
     replace educat7 = 1 if missing(educat7) & ED10 == 4 & ED13 == 1
     replace educat7 = 2 if missing(educat7) & ED10 == 4 & inrange(ED13, 2, 6)
     replace educat7 = 3 if missing(educat7) & ED10 == 4 & ED13 == 7
     replace educat7 = 4 if missing(educat7) & ED10 == 4 & inrange(ED13, 8, 9)
+
     replace educat7 = 4 if missing(educat7) & ED10 == 5
     replace educat7 = 6 if missing(educat7) & inlist(ED10, 6, 7)
     replace educat7 = 7 if missing(educat7) & inlist(ED10, 8, 9, 10, 11)
 
+
+    * ----------------------------
+    * Fallback using nivel + anosest
+    * ----------------------------
+
     replace educat7 = 1 if missing(educat7) & nivel == 1
+
     replace educat7 = 2 if missing(educat7) & nivel == 2 & inrange(anosest, 1, 5)
     replace educat7 = 3 if missing(educat7) & nivel == 2 & anosest == 6
     replace educat7 = 4 if missing(educat7) & nivel == 2 & inrange(anosest, 7, 9)
+
     replace educat7 = 4 if missing(educat7) & nivel == 3 & anosest < 12
     replace educat7 = 5 if missing(educat7) & nivel == 3 & anosest >= 12 & anosest < .
+
     replace educat7 = 4 if missing(educat7) & nivel == 4 & anosest < 12
     replace educat7 = 5 if missing(educat7) & nivel == 4 & anosest >= 12 & anosest < .
+
     replace educat7 = 7 if missing(educat7) & nivel == 5
 
-    label define lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete", replace
+    * Do not overwrite valid classifications from ED05/ED10 or fallback information.
+    replace educat7 = . if missing(educat7) & ED05 == 99 & ED10 == 99 & nivel == 9
+
+    label define lbleducat7 ///
+        1 "No education" ///
+        2 "Primary incomplete" ///
+        3 "Primary complete" ///
+        4 "Secondary incomplete" ///
+        5 "Secondary complete" ///
+        6 "Higher than secondary but not university" ///
+        7 "University incomplete or complete", replace
+
     label values educat7 lbleducat7
     label var educat7 "Level of education 1"
 *</_educat7_>
 
 *<_educat5_>
-    gen byte educat5 = .
-    replace educat5 = 1 if educat7 == 1
-    replace educat5 = 2 if educat7 == 2
-    replace educat5 = 3 if inlist(educat7, 3, 4)
-    replace educat5 = 4 if educat7 == 5
-    replace educat5 = 5 if inlist(educat7, 6, 7)
-    label define lbleducat5 1 "No education" 2 "Primary incomplete" 3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary", replace
-    label values educat5 lbleducat5
-    label var educat5 "Level of education 2"
+/* <_educat5_note>
+GLD educat5 is derived from educat7 using the standard GLD collapse.
+</_educat5_note> */
+	gen byte educat5 = educat7
+	recode educat5 (4=3) (5=4) (6/7=5)
+	label var educat5 "Level of education 2"
+	la de lbleducat5 1 "No education" 2 "Primary incomplete"  3 "Primary complete but secondary incomplete" 4 "Secondary complete" 5 "Some tertiary/post-secondary"
+	label values educat5 lbleducat5
 *</_educat5_>
 
 *<_educat4_>
-    gen byte educat4 = .
-    replace educat4 = 1 if educat7 == 1
-    replace educat4 = 2 if inlist(educat7, 2, 3)
-    replace educat4 = 3 if inlist(educat7, 4, 5)
-    replace educat4 = 4 if inlist(educat7, 6, 7)
-    label define lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary", replace
-    label values educat4 lbleducat4
-    label var educat4 "Level of education 3"
+/* <_educat4_note>
+GLD educat4 is derived from educat7 using the standard GLD collapse.
+</_educat4_note> */
+	gen byte educat4 = educat7
+	recode educat4 (2 3 4 = 2) (5=3) (6 7=4)
+	label var educat4 "Level of education 3"
+	la de lbleducat4 1 "No education" 2 "Primary" 3 "Secondary" 4 "Post-secondary"
+	label values educat4 lbleducat4
 *</_educat4_>
 
 *<_educat_orig_>
@@ -473,7 +595,7 @@ are coded non-LF.
 
     replace __emp_route = 1 if __age15 == 1 & CA501 == 1 & CA502 == 1
     replace __emp_route = 1 if __age15 == 1 & __emp_route == 0 & inrange(CA503, 1, 9)
-    replace __emp_route = 1 if __age15 == 1 & __emp_route == 0 & CA504 == 1 & inrange(CA505, 1, 4)
+    replace __emp_route = 1 if __age15 == 1 & __emp_route == 0 & CA504 == 1 & inrange(CA505, 1, 5)
     replace __emp_route = 1 if __age15 == 1 & __emp_route == 0 & CA504 == 1 & CA506 == 1
     replace __emp_route = 1 if __age15 == 1 & __emp_route == 0 & CA504 == 1 & inlist(CA507, 1, 2)
     replace __emp_route = 1 if __age15 == 1 & __emp_route == 0 & CA508 == 1 & CA508A == 1
@@ -560,13 +682,12 @@ are coded non-LF.
 *<_empstat_>
     gen byte empstat = .
     replace empstat = 1 if lstatus == 1 & inlist(OC609, 1, 2, 3, 4, 5)
-    replace empstat = 1 if lstatus == 1 & inlist(OC609, 9, 10, 11)
     replace empstat = 2 if lstatus == 1 & OC609 == 8
     replace empstat = 3 if lstatus == 1 & OC609 == 6
-    replace empstat = 4 if lstatus == 1 & OC609 == 7
+    replace empstat = 4 if lstatus == 1 & inlist(OC609, 7, 9, 10, 11)
     label define lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status", replace
     label values empstat lblempstat
-    label var empstat "Employment status during past week primary job 7 day recall"
+    label var empstat "Employment status in primary job"
 *</_empstat_>
 
 *<_ocusec_>
@@ -747,7 +868,7 @@ consistent enough across survey years for a comparable GLD yes/no indicator.
 *<_empstat_2_>
     gen byte empstat_2 = .
     replace empstat_2 = 1 if lstatus == 1 & CA519 > 1 & inlist(OC6091, 1, 2, 3, 4, 5)
-    replace empstat_2 = 1 if lstatus == 1 & CA519 > 1 & inlist(OC6091, 9, 10, 11)
+    replace empstat_2 = 4 if lstatus == 1 & CA519 > 1 & inlist(OC6091, 9, 10, 11)
     replace empstat_2 = 2 if lstatus == 1 & CA519 > 1 & OC6091 == 8
     replace empstat_2 = 3 if lstatus == 1 & CA519 > 1 & OC6091 == 6
     replace empstat_2 = 4 if lstatus == 1 & CA519 > 1 & OC6091 == 7

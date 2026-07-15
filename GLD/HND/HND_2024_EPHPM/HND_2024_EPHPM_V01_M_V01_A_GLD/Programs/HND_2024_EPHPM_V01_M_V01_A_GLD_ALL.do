@@ -55,10 +55,10 @@ set varabbrev off
 
 * Define path sections
 if "`c(username)'" == "wb510859" {
-	local server "C:/Users/`c(username)'/OneDrive - WBG/GLD - Current Contributors/510859_AS"
+	local server "C:/Users/`c(username)'/OneDrive - WBG/GLD - Current Contributors/625372_DB"
 }
 else {
-	local server "C:/Users/`c(username)'/WBG/GLD - Current Contributors/510859_AS"
+	local server "C:/Users/`c(username)'/WBG/GLD - Current Contributors/625372_DB"
 }
 local country "HND"
 local year    "2024"
@@ -587,40 +587,98 @@ so education attainment is harmonized through educat7.
 
 *<_educat7_>
 /* <_educat7_note>
-Education level is coded from detailed 2024 education variables first. ED05,
-ED08, and ED07 are used for highest level and completion. ED10 and ED13 are used
-for current students with no ED05. NIVEL is used only as a fallback because the
-2024 raw labels split basic education into Basica (1-3), Basica (4-6), and
-Basica (7-9), unlike the 2023 fallback.
+    For HND 2023, ED05 identifies the highest level reached and ED10 identifies
+    the current level attended. ED05=5 corresponds to Media/Diversificado,
+    ED05=6 to Técnico superior, ED05=7 to Superior no universitaria, ED05=8 to
+    Superior universitaria, and ED05=9/11 to postgraduate education. Basic
+    education is split using ED08, with ANOSEST used only as a fallback when
+    ED08 is missing. Media/Diversificado completion is identified using ED07.
+    Current attendance is used as a fallback through ED10 and ED13, and final
+    fallback classifications use NIVEL and ANOSEST.
 </_educat7_note> */
-	gen byte educat7 = .
-	replace educat7 = 1 if inlist(ED05, 1, 2, 3)
-	replace educat7 = 2 if ED05 == 4 & inrange(ED08, 1, 5)
-	replace educat7 = 3 if ED05 == 4 & ED08 == 6
-	replace educat7 = 4 if ED05 == 4 & inrange(ED08, 7, 9)
-	replace educat7 = 5 if ED05 == 5 & ED07 == 1
-	replace educat7 = 4 if ED05 == 5 & missing(educat7)
-	replace educat7 = 6 if inlist(ED05, 6, 7)
-	replace educat7 = 7 if inlist(ED05, 8, 9, 10, 11)
-	replace educat7 = 1 if missing(educat7) & ED10 == 3
-	replace educat7 = 1 if missing(educat7) & ED10 == 4 & ED13 == 1
-	replace educat7 = 2 if missing(educat7) & ED10 == 4 & inrange(ED13, 2, 6)
-	replace educat7 = 3 if missing(educat7) & ED10 == 4 & ED13 == 7
-	replace educat7 = 4 if missing(educat7) & ED10 == 4 & inrange(ED13, 8, 9)
-	replace educat7 = 4 if missing(educat7) & ED10 == 5
-	replace educat7 = 6 if missing(educat7) & inlist(ED10, 6, 7)
-	replace educat7 = 7 if missing(educat7) & inlist(ED10, 8, 9, 10, 11)
-	replace educat7 = 1 if missing(educat7) & NIVEL == 1
-	replace educat7 = 2 if missing(educat7) & NIVEL == 2
-	replace educat7 = 2 if missing(educat7) & NIVEL == 3 & ANOSEST < 6
-	replace educat7 = 3 if missing(educat7) & NIVEL == 3 & ANOSEST >= 6 & ANOSEST < .
-	replace educat7 = 4 if missing(educat7) & NIVEL == 4
-	replace educat7 = 4 if missing(educat7) & NIVEL == 5 & ANOSEST < 12
-	replace educat7 = 5 if missing(educat7) & NIVEL == 5 & ANOSEST >= 12 & ANOSEST < .
-	replace educat7 = 7 if missing(educat7) & NIVEL == 6
-	label var educat7 "Level of education 1"
-	la de lbleducat7 1 "No education" 2 "Primary incomplete" 3 "Primary complete" 4 "Secondary incomplete" 5 "Secondary complete" 6 "Higher than secondary but not university" 7 "University incomplete or complete"
-	label values educat7 lbleducat7
+
+    gen byte educat7 = .
+
+    * ----------------------------
+    * Highest level reached: ED05
+    * ----------------------------
+
+    replace educat7 = 1 if inlist(ED05, 1, 2, 3)
+
+    replace educat7 = 2 if ED05 == 4 & ///
+        (inrange(ED08, 1, 5) | (missing(ED08) & inrange(ANOSEST, 1, 5)))
+
+    replace educat7 = 3 if ED05 == 4 & ///
+        (ED08 == 6 | (missing(ED08) & ANOSEST == 6))
+
+    replace educat7 = 4 if ED05 == 4 & ///
+        (inrange(ED08, 7, 9) | (missing(ED08) & inrange(ANOSEST, 7, 9)))
+
+    * Media / Diversificado
+    replace educat7 = 4 if ED05 == 5 & ED07 == 2
+    replace educat7 = 5 if ED05 == 5 & ED07 == 1
+
+    * Fallback for Media / Diversificado when completion status is missing
+    replace educat7 = 4 if missing(educat7) & ED05 == 5 & inrange(ED08, 1, 2)
+    replace educat7 = 5 if missing(educat7) & ED05 == 5 & ED08 >= 3 & ED08 < .
+
+    * Técnico superior / Superior no universitaria
+    replace educat7 = 6 if inlist(ED05, 6, 7)
+
+    * Superior universitaria / Especialidad / Maestría / Doctorado
+    replace educat7 = 7 if inlist(ED05, 8, 9, 10, 11)
+
+
+    * ----------------------------
+    * Current students: ED10 current level + ED13 current grade/year
+    * ----------------------------
+
+    replace educat7 = 1 if missing(educat7) & inlist(ED10, 2, 3)
+
+    replace educat7 = 1 if missing(educat7) & ED10 == 4 & ED13 == 1
+    replace educat7 = 2 if missing(educat7) & ED10 == 4 & inrange(ED13, 2, 6)
+    replace educat7 = 3 if missing(educat7) & ED10 == 4 & ED13 == 7
+    replace educat7 = 4 if missing(educat7) & ED10 == 4 & inrange(ED13, 8, 9)
+
+    * Currently in Media / Diversificado
+    replace educat7 = 4 if missing(educat7) & ED10 == 5
+
+    * Currently in Técnico superior / Superior no universitaria
+    replace educat7 = 6 if missing(educat7) & inlist(ED10, 6, 7)
+
+    * Currently in university or postgraduate education
+    replace educat7 = 7 if missing(educat7) & inlist(ED10, 8, 9, 10, 11)
+
+
+    * ----------------------------
+    * Fallback using NIVEL + ANOSEST
+    * ----------------------------
+
+    replace educat7 = 1 if missing(educat7) & NIVEL == 1
+
+    replace educat7 = 2 if missing(educat7) & NIVEL == 2 & inrange(ANOSEST, 1, 5)
+    replace educat7 = 3 if missing(educat7) & NIVEL == 2 & ANOSEST == 6
+    replace educat7 = 4 if missing(educat7) & NIVEL == 2 & inrange(ANOSEST, 7, 9)
+
+    replace educat7 = 4 if missing(educat7) & NIVEL == 3 & ANOSEST < 12
+    replace educat7 = 5 if missing(educat7) & NIVEL == 3 & ANOSEST >= 12 & ANOSEST < .
+
+    replace educat7 = 7 if missing(educat7) & NIVEL == 4
+
+    * Do not overwrite valid classifications from ED05/ED10 or fallback information.
+    replace educat7 = . if missing(educat7) & ED05 == 99 & ED10 == 99 & NIVEL == 9
+
+    label define lbleducat7 ///
+        1 "No education" ///
+        2 "Primary incomplete" ///
+        3 "Primary complete" ///
+        4 "Secondary incomplete" ///
+        5 "Secondary complete" ///
+        6 "Higher than secondary but not university" ///
+        7 "University incomplete or complete", replace
+
+    label values educat7 lbleducat7
+    label var educat7 "Level of education 1"
 *</_educat7_>
 
 *<_educat5_>
@@ -742,26 +800,31 @@ Labor status is observed from age 15 onward in the harmonized data.
 {
 *<_lstatus_>
 /* <_lstatus_note>
-The raw file retains CONDACT, but the adjacent-year report shows that CONDACT
-does not exactly match the reconstructed employment and unemployment buckets.
-GLD lstatus is therefore coded from the questionnaire route variables. Employment
-is coded first, unemployment is coded only among people not employed, and the
-residual age-eligible group is coded non-LF.
+GLD lstatus is reconstructed from retained questionnaire-route variables rather
+than copied from CONDACT. The route comparison found 16 CONDACT mismatches:
+one CONDACT employed record without employment/unemployment route evidence,
+one CONDACT employed record with missing route variables, eight CONDACT
+unemployed records failing search/future-start plus availability, and six
+records with employment-route evidence that the prior CONDACT-based code left
+as non-LF. CONDACT is therefore used only as a diagnostic comparator. The
+residual age-eligible group is coded non-LF after employment and unemployment
+are assigned.
 </_lstatus_note> */
-	tempvar hnd_emp hnd_search_future hnd_available
-	gen byte `hnd_emp' = 0 if age >= minlaborage & !missing(age)
-	replace `hnd_emp' = 1 if age >= minlaborage & `hnd_emp' == 0 & CA501 == 1 & CA502 == 1
-	replace `hnd_emp' = 1 if age >= minlaborage & `hnd_emp' == 0 & inrange(CA503, 1, 9)
-	replace `hnd_emp' = 1 if age >= minlaborage & `hnd_emp' == 0 & CA504 == 1 & inrange(CA505, 1, 4)
-	replace `hnd_emp' = 1 if age >= minlaborage & `hnd_emp' == 0 & CA504 == 1 & CA506 == 1
-	replace `hnd_emp' = 1 if age >= minlaborage & `hnd_emp' == 0 & CA504 == 1 & inlist(CA507, 1, 2)
-	replace `hnd_emp' = 1 if age >= minlaborage & `hnd_emp' == 0 & CA508 == 1 & CA508A == 1
-	gen byte `hnd_search_future' = (CA512 == 1 | inlist(CA513, 1, 2)) if age >= minlaborage & `hnd_emp' == 0
-	gen byte `hnd_available' = inlist(CA511, 1, 2) if age >= minlaborage & `hnd_emp' == 0
+	tempvar hnd_employed
+	gen byte `hnd_employed' = .
+	replace `hnd_employed' = 0 if age >= minlaborage & !missing(CA501)
+	replace `hnd_employed' = 1 if age >= minlaborage & CA501 == 1 & CA502 == 1
+	replace `hnd_employed' = 1 if age >= minlaborage & `hnd_employed' == 0 & inrange(CA503, 1, 9)
+	replace `hnd_employed' = 1 if age >= minlaborage & `hnd_employed' == 0 & CA504 == 1 & inlist(CA505, 1, 2, 3, 4, 5)
+	replace `hnd_employed' = 1 if age >= minlaborage & `hnd_employed' == 0 & CA504 == 1 & CA506 == 1
+	replace `hnd_employed' = 1 if age >= minlaborage & `hnd_employed' == 0 & CA504 == 1 & inlist(CA507, 1, 2)
+	replace `hnd_employed' = 1 if age >= minlaborage & `hnd_employed' == 0 & CA508 == 1 & CA508A == 1
+
 	gen byte lstatus = .
-	replace lstatus = 1 if `hnd_emp' == 1
-	replace lstatus = 2 if age >= minlaborage & `hnd_emp' == 0 & `hnd_search_future' == 1 & `hnd_available' == 1
+	replace lstatus = 1 if `hnd_employed' == 1
+	replace lstatus = 2 if age >= minlaborage & `hnd_employed' == 0 & (CA512 == 1 | inlist(CA513, 1, 2)) & inlist(CA511, 1, 2)
 	replace lstatus = 3 if age >= minlaborage & missing(lstatus)
+	replace lstatus = . if age < minlaborage & !missing(age)
 	label var lstatus "Labor status"
 	la de lbllstatus 1 "Employed" 2 "Unemployed" 3 "Non-LF"
 	label values lstatus lbllstatus
@@ -840,19 +903,14 @@ classified as non-LF.
 *----------8.2: 7 day reference main job------------------------------*
 {
 *<_empstat_>
-/* <_empstat_note>
-OC609 is the main-job status source. Paid employees include public, private,
-domestic, apprentice, and dependent-contractor categories. Employers, own-account
-workers, and unpaid family workers are coded separately.
-</_empstat_note> */
-	gen byte empstat = .
-	replace empstat = 1 if lstatus == 1 & inlist(OC609, 1, 2, 3, 4, 5, 9, 10, 11)
-	replace empstat = 2 if lstatus == 1 & OC609 == 8
-	replace empstat = 3 if lstatus == 1 & OC609 == 6
-	replace empstat = 4 if lstatus == 1 & OC609 == 7
-	label var empstat "Employment status during past week primary job 7 day recall"
-	la de lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status"
-	label values empstat lblempstat
+    gen byte empstat = .
+    replace empstat = 1 if lstatus == 1 & inlist(OC609, 1, 2, 3, 4, 5)
+    replace empstat = 2 if lstatus == 1 & OC609 == 8
+    replace empstat = 3 if lstatus == 1 & OC609 == 6
+    replace empstat = 4 if lstatus == 1 & inlist(OC609, 7, 9, 10, 11)
+    label define lblempstat 1 "Paid employee" 2 "Non-paid employee" 3 "Employer" 4 "Self-employed" 5 "Other, workers not classifiable by status", replace
+    label values empstat lblempstat
+    label var empstat "Employment status in primary job"
 *</_empstat_>
 
 *<_ocusec_>
@@ -1815,53 +1873,76 @@ wage_no_compen; annualized labor-income aggregates are not populated.
 *</_% Correction employed universe_>
 }
 
+
 /*%%=============================================================================================
-	9: Final steps
+    9: Final steps
 ==============================================================================================%%*/
 
-quietly{
+quietly {
 
 *<_% KEEP VARIABLES - ALL_>
 
-	keep countrycode survname survey icls_v isced_version isco_version isic_version year vermast veralt harmonization int_year int_month hhid pid weight weight_m weight_q psu ssu strata wave panel visit_no urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_orig educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field_orig vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
+    local keep_vars ///
+        countrycode survname survey icls_v isced_version isco_version isic_version year vermast veralt harmonization ///
+        int_year int_month hhid pid weight weight_m weight_q psu ssu strata wave panel visit_no urban ///
+        subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev ///
+        gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital ///
+        eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty ///
+        migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat ///
+        migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 ///
+        educat5 educat4 educat_orig educat_isced vocational vocational_type vocational_length_l vocational_length_u ///
+        vocational_field_orig vocational_financed minlaborage lstatus potential_lf underemployment nlfreason ///
+        unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 ///
+        occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total ///
+        contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 ///
+        industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 ///
+        wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 ///
+        t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total ///
+        lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year ///
+        empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year ///
+        occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year ///
+        whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year ///
+        firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year ///
+        industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year ///
+        occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year ///
+        firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year ///
+        t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
+
+    keep `keep_vars'
 
 *</_% KEEP VARIABLES - ALL_>
 
+
 *<_% ORDER VARIABLES_>
 
-	order countrycode survname survey icls_v isced_version isco_version isic_version year vermast veralt harmonization int_year int_month hhid pid weight weight_m weight_q psu ssu strata wave panel visit_no urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_orig educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field_orig vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
+    order `keep_vars'
 
 *</_% ORDER VARIABLES_>
 
+
 *<_% DROP UNUSED LABELS_>
 
-	* Store all labels in data
-	label dir
-	local all_lab `r(names)'
+    label dir
+    local all_lab `r(names)'
 
-	* Store all variables with a label, extract value label names
-	local used_lab = ""
-	ds, has(vallabel)
+    local used_lab = ""
+    ds, has(vallabel)
+    local labelled_vars `r(varlist)'
 
-	local labelled_vars `r(varlist)'
+    foreach varName of local labelled_vars {
+        local y : value label `varName'
+        local used_lab `"`used_lab' `y'"'
+    }
 
-	foreach varName of local labelled_vars {
-		local y : value label `varName'
-		local used_lab `"`used_lab' `y'"'
-	}
+    local notused     : list all_lab - used_lab
+    local notused_len : list sizeof notused
 
-	* Compare lists, `notused' is list of labels in directory but not used in final variables
-	local notused 		: list all_lab - used_lab 		// local `notused' defines value labs not in remaining vars
-	local notused_len 	: list sizeof notused 			// store size of local
-
-	* drop labels if the length of the notused vector is 1 or greater, otherwise nothing to drop
-	if `notused_len' >= 1 {
-		label drop `notused'
-	}
-	else {
-		di "There are no unused labels to drop. No value labels dropped."
-	}
-
+    if `notused_len' >= 1 {
+        label drop `notused'
+    }
+    else {
+        di "There are no unused labels to drop. No value labels dropped."
+    }
 
 *</_% DROP UNUSED LABELS_>
 
@@ -1870,9 +1951,13 @@ quietly{
 
 *<_% DELETE MISSING VARIABLES_>
 
-* Intentionally skipped. Several GLD variables are deliberately all missing
-* because no 2024 source was identified for them, including migration and
-* unsupported secondary-job fields.
+quietly: describe, varlist
+local kept_vars `r(varlist)'
+
+foreach kept_var of local kept_vars {
+    capture assert missing(`kept_var')
+    if !_rc drop `kept_var'
+}
 
 *</_% DELETE MISSING VARIABLES_>
 
