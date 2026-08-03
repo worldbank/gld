@@ -1307,7 +1307,7 @@ foreach ed_var of local ed_vars {
 
 *<_socialsec_year_>
 	gen byte socialsec_year = .
-	label var socialsec_year "Employment has social security insurance primary job 7 day recall"
+	label var socialsec_year "Employment has social security insurance primary job 12 month recall"
 	la de lblsocialsec_year 1 "With social security" 0 "Without social security"
 	label values socialsec_year lblsocialsec_year
 *</_socialsec_year_>
