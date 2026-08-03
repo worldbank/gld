@@ -586,7 +586,7 @@ Education module is only asked to those XX and older.
 
 
 *<_educat_orig_>
-	gen educat_orig = .
+	gen educat_orig = ""
 	label var educat_orig "Original survey education code"
 *</_educat_orig_>
 
@@ -760,7 +760,7 @@ foreach ed_var of local ed_vars {
 
 
 *<_industry_orig_>
-	gen industry_orig = .
+	gen industry_orig = ""
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
@@ -801,7 +801,7 @@ foreach ed_var of local ed_vars {
 
 
 *<_occup_orig_>
-	gen occup_orig = .
+	gen occup_orig = ""
 	label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
