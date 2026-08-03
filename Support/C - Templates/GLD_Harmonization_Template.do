@@ -186,7 +186,7 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_pid_>
-	gen  pid = .
+	gen  pid = ""
 	label var pid "Individual ID"
 *</_pid_>
 
@@ -210,25 +210,25 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 *<_psu_>
-	gen psu = .
+	gen psu = ""
 	label var psu "Primary sampling units"
 *</_psu_>
 
 
 *<_ssu_>
-	gen ssu = .
+	gen ssu = ""
 	label var ssu "Secondary sampling units"
 *</_ssu_>
 
 
 *<_strata_>
-	gen strata = .
+	gen strata = ""
 	label var strata "Strata"
 *</_strata_>
 
 
 *<_wave_>
-	gen wave = .
+	gen wave = ""
 	label var wave "Survey wave"
 *</_wave_>
 
@@ -304,19 +304,19 @@ local out_file "`level_2_harm'_ALL.dta"
 	subnatid1_prev is coded as missing unless the classification used for subnatid1 has changed since the previous survey.
 
 </_subnatid1_prev_note> */
-	gen subnatid1_prev = .
+	gen subnatid1_prev = ""
 	label var subnatid1_prev "Classification used for subnatid1 from previous survey"
 *</_subnatid1_prev_>
 
 
 *<_subnatid2_prev_>
-	gen subnatid2_prev = .
+	gen subnatid2_prev = ""
 	label var subnatid2_prev "Classification used for subnatid2 from previous survey"
 *</_subnatid2_prev_>
 
 
 *<_subnatid3_prev_>
-	gen subnatid3_prev = .
+	gen subnatid3_prev = ""
 	label var subnatid3_prev "Classification used for subnatid3 from previous survey"
 *</_subnatid3_prev_>
 
