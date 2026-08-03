@@ -1080,7 +1080,7 @@ foreach ed_var of local ed_vars {
 
 *<_t_wage_others_>
 	gen t_wage_others = .
-	label var t_wage_others "Annualized wage in all but primary and secondary jobs (12-mon ref period)"
+	label var t_wage_others "Annualized wage in all but primary and secondary jobs (7-day recall)"
 *</_t_wage_others_>
 
 
