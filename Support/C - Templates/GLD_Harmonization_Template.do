@@ -964,7 +964,7 @@ foreach ed_var of local ed_vars {
 
 
 *<_industry_orig_2_>
-	gen industry_orig_2 = .
+	gen industry_orig_2 = ""
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 
@@ -991,7 +991,7 @@ foreach ed_var of local ed_vars {
 
 
 *<_occup_orig_2_>
-	gen occup_orig_2 = .
+	gen occup_orig_2 = ""
 	label var occup_orig_2 "Original occupation record secondary job 7 day recall"
 *</_occup_orig_2_>
 
@@ -1177,7 +1177,7 @@ foreach ed_var of local ed_vars {
 *</_ocusec_year_>
 
 *<_industry_orig_year_>
-	gen industry_orig_year = .
+	gen industry_orig_year = ""
 	label var industry_orig_year "Original industry record main job 12 month recall"
 *</_industry_orig_year_>
 
@@ -1216,7 +1216,7 @@ foreach ed_var of local ed_vars {
 
 
 *<_occup_orig_year_>
-	gen occup_orig_year = .
+	gen occup_orig_year = ""
 	label var occup_orig_year "Original occupation record primary job 12 month recall"
 *</_occup_orig_year_>
 
@@ -1355,7 +1355,7 @@ foreach ed_var of local ed_vars {
 
 
 *<_industry_orig_2_year_>
-	gen industry_orig_2_year = .
+	gen industry_orig_2_year = ""
 	label var industry_orig_2_year "Original survey industry code, secondary job 12 month recall"
 *</_industry_orig_2_year_>
 
@@ -1382,7 +1382,7 @@ foreach ed_var of local ed_vars {
 
 
 *<_occup_orig_2_year_>
-	gen occup_orig_2_year = .
+	gen occup_orig_2_year = ""
 	label var occup_orig_2_year "Original occupation record secondary job 12 month recall"
 *</_occup_orig_2_year_>
 
