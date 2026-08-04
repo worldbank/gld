@@ -75,7 +75,7 @@ int_month is a numeric variable that specifies the month when the survey questio
 
 **hhid**
 
-hhid specifies the unique household identification number in the data file. The original format, string or numeric, of original data should be kept. If there is Household ID in the original data, hhid and hhid_orig should be the same. If hhid_orig is missing, it is constructed by "variable names in raw data" variables.
+hhid specifies the unique household identification number in the data file and is stored as a string. If the original data contain a complete household ID that is unique throughout the harmonized file, preserve it in `hhid`. Otherwise, construct `hhid` from the minimum raw components required for uniqueness, documenting their order, fixed widths, and padding. In panel data, keep `hhid` stable across waves and use (`hhid`, `wave`) as the household-wave record key.
 
 **pid**
 
