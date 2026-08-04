@@ -432,7 +432,7 @@ replace wage_total=(wage_no_compen*5*4.3)*wmonths	if unitwage==1
 replace wage_total=(wage_no_compen*4.3)*wmonths if unitwage==2 //Wage in weekly unit
 replace wage_total=(wage_no_compen*2.15)*wmonths	if unitwage==3
 //Wage in every two weeks unit 
-replace wage_total=(wage_no_compen)/2*wmonths	if unitwage==4 //Wage in every two months unit 
+replace wage_total=(wage_no_compen*2)*wmonths	if unitwage==4 //Wage paid twice monthly
 replace wage_total=( wage_no_compen)*wmonths	if unitwage==5 //Wage in monthly unit
 replace wage_total=( wage_no_compen)/3*wmonths	if unitwage==6
 //Wage in every quarterly unit 

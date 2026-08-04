@@ -70,7 +70,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="prev" title="Training module" href="Training.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="Aug 03, 2026"/>
+    <meta name="docbuild:last-update" content="Aug 04, 2026"/>
   </head>
   
   
@@ -1036,7 +1036,7 @@ Table 5 - Overview of coding of industrycat based on different ISIC revisions</p
 <span class="n">replace</span> <span class="n">wage_total</span><span class="o">=</span><span class="p">(</span><span class="n">wage_no_compen</span><span class="o">*</span><span class="mf">4.3</span><span class="p">)</span><span class="o">*</span><span class="n">wmonths</span> <span class="k">if</span> <span class="n">unitwage</span><span class="o">==</span><span class="mi">2</span> <span class="o">//</span><span class="n">Wage</span> <span class="ow">in</span> <span class="n">weekly</span> <span class="n">unit</span>
 <span class="n">replace</span> <span class="n">wage_total</span><span class="o">=</span><span class="p">(</span><span class="n">wage_no_compen</span><span class="o">*</span><span class="mf">2.15</span><span class="p">)</span><span class="o">*</span><span class="n">wmonths</span>	<span class="k">if</span> <span class="n">unitwage</span><span class="o">==</span><span class="mi">3</span>
 <span class="o">//</span><span class="n">Wage</span> <span class="ow">in</span> <span class="n">every</span> <span class="n">two</span> <span class="n">weeks</span> <span class="n">unit</span> 
-<span class="n">replace</span> <span class="n">wage_total</span><span class="o">=</span><span class="p">(</span><span class="n">wage_no_compen</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="n">wmonths</span>	<span class="k">if</span> <span class="n">unitwage</span><span class="o">==</span><span class="mi">4</span> <span class="o">//</span><span class="n">Wage</span> <span class="ow">in</span> <span class="n">every</span> <span class="n">two</span> <span class="n">months</span> <span class="n">unit</span> 
+<span class="n">replace</span> <span class="n">wage_total</span><span class="o">=</span><span class="p">(</span><span class="n">wage_no_compen</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">wmonths</span>	<span class="k">if</span> <span class="n">unitwage</span><span class="o">==</span><span class="mi">4</span> <span class="o">//</span><span class="n">Wage</span> <span class="n">paid</span> <span class="n">twice</span> <span class="n">monthly</span>
 <span class="n">replace</span> <span class="n">wage_total</span><span class="o">=</span><span class="p">(</span> <span class="n">wage_no_compen</span><span class="p">)</span><span class="o">*</span><span class="n">wmonths</span>	<span class="k">if</span> <span class="n">unitwage</span><span class="o">==</span><span class="mi">5</span> <span class="o">//</span><span class="n">Wage</span> <span class="ow">in</span> <span class="n">monthly</span> <span class="n">unit</span>
 <span class="n">replace</span> <span class="n">wage_total</span><span class="o">=</span><span class="p">(</span> <span class="n">wage_no_compen</span><span class="p">)</span><span class="o">/</span><span class="mi">3</span><span class="o">*</span><span class="n">wmonths</span>	<span class="k">if</span> <span class="n">unitwage</span><span class="o">==</span><span class="mi">6</span>
 <span class="o">//</span><span class="n">Wage</span> <span class="ow">in</span> <span class="n">every</span> <span class="n">quarterly</span> <span class="n">unit</span> 
@@ -2493,7 +2493,7 @@ By World Bank Jobs Group
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Aug 03, 2026.
+  Last updated on Aug 04, 2026.
   <br/>
 </p>
   </div>
