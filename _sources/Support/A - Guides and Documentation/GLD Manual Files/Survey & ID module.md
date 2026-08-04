@@ -81,7 +81,7 @@ If the released microdata contain neither a usable household identifier nor suff
 
 **pid**
 
-This variable allows identification of individuals. Variable will vary in length depending on how the identification code was constructed in each country. Depending on individual countries, this variable may be a concatenation of several variables in the raw data file. Keep format (string or numeric) of original data. If there is Personal ID in the original data, pid and pid_orig should be the same. If pid_orig is missing, it is constructed by "variable names in raw data" variables.
+pid identifies individuals and is stored as a string. Preserve a complete source person ID when available. Otherwise, when `hhid` exists, construct `pid` from `hhid` and a documented fixed-width household-member number. If `hhid` is wholly unavailable and the source contains only a repeating within-household number, create a survey-wide running `pid` across the finalized person-record dataset and comment the released record order and construction clearly. Such a synthetic ID is release-specific and does not support household or longitudinal linkage. In panel data, preserve stable person identity and use (`pid`, `wave`) as the person-wave record key.
 
 **weight**
 
