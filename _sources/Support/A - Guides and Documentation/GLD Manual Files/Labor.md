@@ -737,15 +737,17 @@ All persons are considered active in the labor force if they presently have a jo
 
 - 1 = Employed
 
-Employed is defined as anyone who worked during the last 12 months or reference week, regardless of whether the employment was formal or informal, paid or unpaid, for a minimum of 1 hour. Individuals who had a job, but for any reason did not work in the last 7 days are considered employed.
+Employed is defined as anyone who performed qualifying employment at any point during the last 12 months under the ICLS resolution used by the survey.
 
 - 2 = Unemployed
 
-A person is defined as unemployed if he or she is, presently not working but is actively seeking a job. The formal definition of unemployed usually includes being ‘able to accept a job.’ This last question was asked in a minority of surveys and is, thus, not incorporated in the present definition. A person presently not working but waiting for the start of a new job is considered unemployed.
+A person with no employment during the year is classified as unemployed only when annual job-search and availability information supports that classification. A future starter may be classified as unemployed when the source establishes the applicable start-date and availability conditions.
 
 - 3 = Not-in-labor force
 
-A person is defined as not-in-labor force if he or she is, presently not working and it is not actively seeking a job during the last 12 months or reference week.
+A person with no employment during the year is classified as not-in-labor force only when the annual questionnaire information supports that distinction from unemployment.
+
+Many surveys identify only whether a person worked during the year. In that case, code established workers as `lstatus_year = 1` and leave nonworkers missing because codes 2 and 3 cannot be distinguished defensibly. Do not force all nonworkers into either category. When a direct annual status variable exists, compare it with the component-built result and escalate when more than 10 records differ in any group.
 
 For further details, please see the definition of `lstatus` (7 day recall).
 
