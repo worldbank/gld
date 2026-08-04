@@ -19,7 +19,7 @@ male is a dummy variable that specifies the sex – male or female – of an ind
 
 **relationharm**
 
-relationharm is a string variable that indicates a relationship to the reference person of household (usually the head of household). Variable values coded as ‘98’ or other numeric characters should be excluded from the values of relationharm variable.
+relationharm is an integer categorical variable that indicates a relationship to the reference person of household (usually the head of household). Variable values coded as ‘98’ or other placeholder codes should be excluded from the values of relationharm variable.
 
 Relationship to head of household, six categories after harmonization:
 
