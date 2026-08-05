@@ -8,15 +8,19 @@ Codes the minimum age the migration module questions of the survey apply to (e.g
 
 **migrated_ref_time**
 
-Codes the reference period the migration questions cover in years. If the migration questions only apply after an introductory time window questions (e.g., have you moved in the past five years) and then questions are only asked for those who fall within the time window, code the length of that window (e.g., 5 in the example). If migration questions are posed regardless of time (i.e., no time window) code 99.
+Codes the reference period the migration questions cover in years. Decimal values are allowed; for example, 0.5 represents six months. If the migration questions only apply after an introductory time-window question (e.g., have you moved in the past five years), code the length of that window. If migration questions are posed regardless of time (i.e., no time window), code 99.
 
 **migrated_binary**
 
-Binary question coding whether the individual has ever migrated (within the reference time set out above).
+Binary variable coding whether the interviewed person migrated to their current place of usual residence within the reference time set out above. Migration means that the person previously lived somewhere else for the significant period defined by the survey, commonly at least six months. It does not include commuting, travel, or temporary absence that does not meet the survey's usual-residence definition.
+
+The variable is observed from the destination: it describes a person interviewed at their current residence. Do not use questions about former household members who left the interviewed household; those describe migration from the origin. Internal and international moves count, including qualifying moves within the same admin3 area. Return migrants count when they lived elsewhere for the survey-defined significant period and moved back within the reference window.
+
+Code 0 only when the source establishes that the interviewed person made no qualifying move during the reference period. Unknown, unasked, and out-of-universe cases remain missing. If the survey observes only international migration, it cannot establish code 0 for the general migration concept because internal moves are unobserved.
 
 **migrated_years**
 
-Number of full years since the last migration. Often surveys ask how long a person has lived at their current domicile since the last migration. Both questions cover the same information.
+Number of years since the interviewed person's latest migration to the current usual residence. Decimal values are allowed and should preserve source precision; for example, 0.5 means six months ago. Often surveys ask how long a person has lived at their current domicile since the last migration. Both questions cover the same information.
 
 **migrated_from_urban**
 
