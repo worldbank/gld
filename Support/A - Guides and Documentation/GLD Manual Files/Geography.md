@@ -12,19 +12,19 @@ Urban categories:
 
 **subnatid1**
 
-subnatid1 refers to a subnational identifier at the highest level within the country’s administrative structure. This is typically a province or state. The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: “1 – Hatay”. That is, the variable itself is to be string, not a labelled numeric vector.
+subnatid1 refers to the highest available source subnational geographic classification. This is often a province or state, but it may be a statistical geography such as NUTS-1 that does not formally exist in the country's administrative hierarchy. Geographic identifiability is independent of survey representativeness; use subnatidsurvey to record the lowest level at which the survey is representative. The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: “1 – Hatay”. That is, the variable itself is to be string, not a labelled numeric vector.
 
 **subnatid2**
 
-subnatid2 refers to a subnational identifier at which survey is representative at the second highest level within the country’s administrative structure. This is typically a district. The variable is string and country- specific categorical. Numeric entries are coded in string format using the following naming convention: “1 – Hatay”. That is, the variable itself is to be string, not a labelled numeric vector.
+subnatid2 refers to the second available level in the source subnational geographic hierarchy. This may be administrative or statistical and does not imply that the survey is representative at this level. The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: “1 – Hatay”. That is, the variable itself is to be string, not a labelled numeric vector.
 
 **subnatid3**
 
-subnatid3 refers to a sub-national identifier at which survey is representative at the third level within the country’s administrative structure. This is typically a sub-district. The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: “1 – Hatay”. That is, the variable itself is to be string, not a labelled numeric vector.
+subnatid3 refers to the third available level in the source subnational geographic hierarchy. This may be administrative or statistical and does not imply that the survey is representative at this level. The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: “1 – Hatay”. That is, the variable itself is to be string, not a labelled numeric vector.
 
 **subnatid4**
 
-subnatid4 refers to a sub-national identifier at which survey is representative at the lowest level within the country’s administrative structure. In some countries, this is effectively a village. The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: “1 – Hatay”. That is, the variable itself is to be string, not a labelled numeric vector.
+subnatid4 refers to the fourth available level in the source subnational geographic hierarchy. This may be administrative or statistical and does not imply that the survey is representative at this level. In some countries, this is effectively a village. The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: “1 – Hatay”. That is, the variable itself is to be string, not a labelled numeric vector.
 
 **subnatidsurvey**
 
