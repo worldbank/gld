@@ -70,7 +70,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="prev" title="Demography module" href="Demography.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="Aug 05, 2026"/>
+    <meta name="docbuild:last-update" content="Aug 26, 2026"/>
   </head>
   
   
@@ -491,29 +491,29 @@ document.write(`
 With these two questions we can harmonize the two variables in the following way:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*&lt;</span><span class="n">_migrated_from_urban_</span><span class="o">&gt;</span>
 	<span class="n">gen</span> <span class="n">migrated_from_urban</span> <span class="o">=</span> <span class="o">.</span>
-<span class="n">replace</span> <span class="n">migrated_from_urban</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">inlist</span><span class="p">(</span><span class="n">B4_q15</span><span class="p">,</span><span class="s2">&quot;2&quot;</span><span class="p">,</span><span class="s2">&quot;4&quot;</span><span class="p">,</span><span class="s2">&quot;6&quot;</span><span class="p">)</span> <span class="o">&amp;</span>
+<span class="n">replace</span> <span class="n">migrated_from_urban</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">inlist</span><span class="p">(</span><span class="n">B4_q15</span><span class="p">,</span><span class="s2">"2"</span><span class="p">,</span><span class="s2">"4"</span><span class="p">,</span><span class="s2">"6"</span><span class="p">)</span> <span class="o">&amp;</span>
 <span class="n">migrated_binary</span> <span class="o">==</span> <span class="mi">1</span>
-<span class="n">replace</span> <span class="n">migrated_from_urban</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">inlist</span><span class="p">(</span><span class="n">B4_q15</span><span class="p">,</span><span class="s2">&quot;1&quot;</span><span class="p">,</span><span class="s2">&quot;3&quot;</span><span class="p">,</span><span class="s2">&quot;5&quot;</span><span class="p">)</span> <span class="o">&amp;</span>
+<span class="n">replace</span> <span class="n">migrated_from_urban</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">inlist</span><span class="p">(</span><span class="n">B4_q15</span><span class="p">,</span><span class="s2">"1"</span><span class="p">,</span><span class="s2">"3"</span><span class="p">,</span><span class="s2">"5"</span><span class="p">)</span> <span class="o">&amp;</span>
 <span class="n">migrated_binary</span> <span class="o">==</span> <span class="mi">1</span>
-<span class="n">label</span> <span class="n">de</span> <span class="n">lblmigrated_from_urban</span> <span class="mi">0</span> <span class="s2">&quot;Rural&quot;</span> <span class="mi">1</span> <span class="s2">&quot;Urban&quot;</span>
+<span class="n">label</span> <span class="n">de</span> <span class="n">lblmigrated_from_urban</span> <span class="mi">0</span> <span class="s2">"Rural"</span> <span class="mi">1</span> <span class="s2">"Urban"</span>
 <span class="n">label</span> <span class="n">values</span> <span class="n">migrated_from_urban</span> <span class="n">lblmigrated_from_urban</span>
-<span class="n">label</span> <span class="n">var</span> <span class="n">migrated_from_urban</span> <span class="s2">&quot;Migrated from area&quot;</span>
+<span class="n">label</span> <span class="n">var</span> <span class="n">migrated_from_urban</span> <span class="s2">"Migrated from area"</span>
 <span class="o">*&lt;/</span><span class="n">_migrated_from_urban_</span><span class="o">&gt;</span>
 	
 <span class="o">*&lt;</span><span class="n">_migrated_from_cat_</span><span class="o">&gt;</span>
 	<span class="n">gen</span> <span class="n">migrated_from_cat</span> <span class="o">=</span> <span class="o">.</span>
-<span class="n">replace</span> <span class="n">migrated_from_cat</span> <span class="o">=</span> <span class="mi">2</span> <span class="k">if</span> <span class="n">inlist</span><span class="p">(</span><span class="n">B4_q15</span><span class="p">,</span><span class="s2">&quot;1&quot;</span><span class="p">,</span><span class="s2">&quot;2&quot;</span><span class="p">)</span> <span class="o">&amp;</span>
+<span class="n">replace</span> <span class="n">migrated_from_cat</span> <span class="o">=</span> <span class="mi">2</span> <span class="k">if</span> <span class="n">inlist</span><span class="p">(</span><span class="n">B4_q15</span><span class="p">,</span><span class="s2">"1"</span><span class="p">,</span><span class="s2">"2"</span><span class="p">)</span> <span class="o">&amp;</span>
 <span class="n">migrated_binary</span> <span class="o">==</span> <span class="mi">1</span>
-<span class="n">replace</span> <span class="n">migrated_from_cat</span> <span class="o">=</span> <span class="mi">3</span> <span class="k">if</span> <span class="n">inlist</span><span class="p">(</span><span class="n">B4_q15</span><span class="p">,</span><span class="s2">&quot;3&quot;</span><span class="p">,</span><span class="s2">&quot;4&quot;</span><span class="p">)</span> <span class="o">&amp;</span>
+<span class="n">replace</span> <span class="n">migrated_from_cat</span> <span class="o">=</span> <span class="mi">3</span> <span class="k">if</span> <span class="n">inlist</span><span class="p">(</span><span class="n">B4_q15</span><span class="p">,</span><span class="s2">"3"</span><span class="p">,</span><span class="s2">"4"</span><span class="p">)</span> <span class="o">&amp;</span>
 <span class="n">migrated_binary</span> <span class="o">==</span> <span class="mi">1</span>
-<span class="n">replace</span> <span class="n">migrated_from_cat</span> <span class="o">=</span> <span class="mi">4</span> <span class="k">if</span> <span class="n">inlist</span><span class="p">(</span><span class="n">B4_q15</span><span class="p">,</span> <span class="s2">&quot;5&quot;</span><span class="p">,</span> <span class="s2">&quot;6&quot;</span><span class="p">)</span> <span class="o">&amp;</span>
+<span class="n">replace</span> <span class="n">migrated_from_cat</span> <span class="o">=</span> <span class="mi">4</span> <span class="k">if</span> <span class="n">inlist</span><span class="p">(</span><span class="n">B4_q15</span><span class="p">,</span> <span class="s2">"5"</span><span class="p">,</span> <span class="s2">"6"</span><span class="p">)</span> <span class="o">&amp;</span>
 <span class="n">migrated_binary</span> <span class="o">==</span> <span class="mi">1</span>
-<span class="n">replace</span> <span class="n">migrated_from_cat</span> <span class="o">=</span> <span class="mi">5</span> <span class="k">if</span> <span class="n">inlist</span><span class="p">(</span><span class="n">B4_q15</span><span class="p">,</span> <span class="s2">&quot;7&quot;</span><span class="p">)</span> <span class="o">&amp;</span>
+<span class="n">replace</span> <span class="n">migrated_from_cat</span> <span class="o">=</span> <span class="mi">5</span> <span class="k">if</span> <span class="n">inlist</span><span class="p">(</span><span class="n">B4_q15</span><span class="p">,</span> <span class="s2">"7"</span><span class="p">)</span> <span class="o">&amp;</span>
 <span class="n">migrated_binary</span> <span class="o">==</span> <span class="mi">1</span>
-<span class="n">label</span> <span class="n">de</span> <span class="n">lblmigrated_from_cat</span> <span class="mi">1</span> <span class="s2">&quot;From same admin3 area&quot;</span> <span class="mi">2</span> <span class="s2">&quot;From</span>
-<span class="n">same</span> <span class="n">admin2</span> <span class="n">area</span><span class="s2">&quot; 3 &quot;</span><span class="n">From</span> <span class="n">same</span> <span class="n">admin1</span> <span class="n">area</span><span class="s2">&quot; 4 &quot;</span><span class="n">From</span> <span class="n">other</span> <span class="n">admin1</span> <span class="n">area</span><span class="s2">&quot; 5 &quot;</span><span class="n">From</span> <span class="n">other</span> <span class="n">country</span><span class="s2">&quot;</span>
+<span class="n">label</span> <span class="n">de</span> <span class="n">lblmigrated_from_cat</span> <span class="mi">1</span> <span class="s2">"From same admin3 area"</span> <span class="mi">2</span> <span class="s2">"From</span>
+<span class="n">same</span> <span class="n">admin2</span> <span class="n">area</span><span class="s2">" 3 "</span><span class="n">From</span> <span class="n">same</span> <span class="n">admin1</span> <span class="n">area</span><span class="s2">" 4 "</span><span class="n">From</span> <span class="n">other</span> <span class="n">admin1</span> <span class="n">area</span><span class="s2">" 5 "</span><span class="n">From</span> <span class="n">other</span> <span class="n">country</span><span class="s2">"</span>
 <span class="n">label</span> <span class="n">values</span> <span class="n">migrated_from_cat</span> <span class="n">lblmigrated_from_cat</span>
-<span class="n">label</span> <span class="n">var</span> <span class="n">migrated_from_cat</span> <span class="s2">&quot;Category of migration area&quot;</span>
+<span class="n">label</span> <span class="n">var</span> <span class="n">migrated_from_cat</span> <span class="s2">"Category of migration area"</span>
 <span class="o">*&lt;/</span><span class="n">_migrated_from_cat_</span><span class="o">&gt;</span>
 	
 <span class="o">*&lt;</span><span class="n">_migrated_from_code_</span><span class="o">&gt;</span>
@@ -522,43 +522,43 @@ With these two questions we can harmonize the two variables in the following way
 <span class="n">replace</span> <span class="n">migrated_from_code</span> <span class="o">=</span> <span class="n">subnatid1</span> <span class="k">if</span>
 <span class="n">inrange</span><span class="p">(</span><span class="n">migrated_from_cat</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
 <span class="n">replace</span> <span class="n">migrated_from_code</span> <span class="o">=</span> <span class="n">helper_var</span> <span class="k">if</span> <span class="n">migrated_from_cat</span> <span class="o">==</span> <span class="mi">4</span>
-<span class="n">label</span> <span class="n">var</span> <span class="n">migrated_from_code</span> <span class="s2">&quot;Code of migration area as subnatid</span>
-<span class="n">level</span> <span class="n">of</span> <span class="n">migrated_from_cat</span><span class="s2">&quot;</span>
+<span class="n">label</span> <span class="n">var</span> <span class="n">migrated_from_code</span> <span class="s2">"Code of migration area as subnatid</span>
+<span class="n">level</span> <span class="n">of</span> <span class="n">migrated_from_cat</span><span class="s2">"</span>
 <span class="n">drop</span> <span class="n">helper_var</span>
 <span class="o">*&lt;/</span><span class="n">_migrated_from_code_</span><span class="o">&gt;</span>
 	
 <span class="o">*&lt;</span><span class="n">_migrated_from_country_</span><span class="o">&gt;</span>
-	<span class="n">gen</span> <span class="n">migrated_from_country</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-<span class="n">replace</span> <span class="n">migrated_from_country</span> <span class="o">=</span> <span class="s2">&quot;BGD&quot;</span> <span class="k">if</span> <span class="n">migrated_from_cat</span> <span class="o">==</span> <span class="mi">5</span> <span class="o">&amp;</span>
-<span class="n">B4_q17</span> <span class="o">==</span> <span class="s2">&quot;51&quot;</span>
-<span class="n">replace</span> <span class="n">migrated_from_country</span> <span class="o">=</span> <span class="s2">&quot;NPL&quot;</span> <span class="k">if</span> <span class="n">migrated_from_cat</span> <span class="o">==</span> <span class="mi">5</span> <span class="o">&amp;</span>
-<span class="n">B4_q17</span> <span class="o">==</span> <span class="s2">&quot;52&quot;</span>
-<span class="n">replace</span> <span class="n">migrated_from_country</span> <span class="o">=</span> <span class="s2">&quot;PAK&quot;</span> <span class="k">if</span> <span class="n">migrated_from_cat</span> <span class="o">==</span> <span class="mi">5</span> <span class="o">&amp;</span>
-<span class="n">B4_q17</span> <span class="o">==</span> <span class="s2">&quot;53&quot;</span>
-<span class="n">replace</span> <span class="n">migrated_from_country</span> <span class="o">=</span> <span class="s2">&quot;LKA&quot;</span> <span class="k">if</span> <span class="n">migrated_from_cat</span> <span class="o">==</span> <span class="mi">5</span> <span class="o">&amp;</span>
-<span class="n">B4_q17</span> <span class="o">==</span> <span class="s2">&quot;54&quot;</span>
-<span class="n">replace</span> <span class="n">migrated_from_country</span> <span class="o">=</span> <span class="s2">&quot;BTN&quot;</span> <span class="k">if</span> <span class="n">migrated_from_cat</span> <span class="o">==</span> <span class="mi">5</span> <span class="o">&amp;</span>
-<span class="n">B4_q17</span> <span class="o">==</span> <span class="s2">&quot;55&quot;</span>
-<span class="n">replace</span> <span class="n">migrated_from_country</span> <span class="o">=</span> <span class="s2">&quot;Gulf countries&quot;</span> <span class="k">if</span>
-<span class="n">migrated_from_cat</span> <span class="o">==</span> <span class="mi">5</span> <span class="o">&amp;</span> <span class="n">B4_q17</span> <span class="o">==</span> <span class="s2">&quot;56&quot;</span>
-<span class="n">replace</span> <span class="n">migrated_from_country</span> <span class="o">=</span> <span class="s2">&quot;Other Asian&quot;</span> <span class="k">if</span>
-<span class="n">migrated_from_cat</span> <span class="o">==</span> <span class="mi">5</span> <span class="o">&amp;</span> <span class="n">B4_q17</span> <span class="o">==</span> <span class="s2">&quot;57&quot;</span>
-<span class="n">replace</span> <span class="n">migrated_from_country</span> <span class="o">=</span> <span class="s2">&quot;USA&quot;</span> <span class="k">if</span> <span class="n">migrated_from_cat</span> <span class="o">==</span> <span class="mi">5</span> <span class="o">&amp;</span>
-<span class="n">B4_q17</span> <span class="o">==</span> <span class="s2">&quot;58&quot;</span>
-<span class="n">replace</span> <span class="n">migrated_from_country</span> <span class="o">=</span> <span class="s2">&quot;CAN&quot;</span> <span class="k">if</span> <span class="n">migrated_from_cat</span> <span class="o">==</span> <span class="mi">5</span> <span class="o">&amp;</span>
-<span class="n">B4_q17</span> <span class="o">==</span> <span class="s2">&quot;59&quot;</span>
-<span class="n">replace</span> <span class="n">migrated_from_country</span> <span class="o">=</span> <span class="s2">&quot;Other Americas&quot;</span> <span class="k">if</span>
-<span class="n">migrated_from_cat</span> <span class="o">==</span> <span class="mi">5</span> <span class="o">&amp;</span> <span class="n">B4_q17</span> <span class="o">==</span> <span class="s2">&quot;60&quot;</span>
-<span class="n">replace</span> <span class="n">migrated_from_country</span> <span class="o">=</span> <span class="s2">&quot;UK&quot;</span> <span class="k">if</span> <span class="n">migrated_from_cat</span> <span class="o">==</span> <span class="mi">5</span> <span class="o">&amp;</span>
-<span class="n">B4_q17</span> <span class="o">==</span> <span class="s2">&quot;61&quot;</span>
-<span class="n">replace</span> <span class="n">migrated_from_country</span> <span class="o">=</span> <span class="s2">&quot;Other Europe&quot;</span> <span class="k">if</span>
-<span class="n">migrated_from_cat</span> <span class="o">==</span> <span class="mi">5</span> <span class="o">&amp;</span> <span class="n">B4_q17</span> <span class="o">==</span> <span class="s2">&quot;62&quot;</span>
-<span class="n">replace</span> <span class="n">migrated_from_country</span> <span class="o">=</span> <span class="s2">&quot;African countries&quot;</span> <span class="k">if</span>
-<span class="n">migrated_from_cat</span> <span class="o">==</span> <span class="mi">5</span> <span class="o">&amp;</span> <span class="n">B4_q17</span> <span class="o">==</span> <span class="s2">&quot;63&quot;</span>
-<span class="n">replace</span> <span class="n">migrated_from_country</span> <span class="o">=</span> <span class="s2">&quot;Other World&quot;</span> <span class="k">if</span>
-<span class="n">migrated_from_cat</span> <span class="o">==</span> <span class="mi">5</span> <span class="o">&amp;</span> <span class="n">B4_q17</span> <span class="o">==</span> <span class="s2">&quot;64&quot;</span>
-<span class="n">label</span> <span class="n">var</span> <span class="n">migrated_from_country</span> <span class="s2">&quot;Code of migration country (ISO 3</span>
-<span class="n">Letter</span> <span class="n">Code</span><span class="p">)</span><span class="s2">&quot;</span>
+	<span class="n">gen</span> <span class="n">migrated_from_country</span> <span class="o">=</span> <span class="s2">""</span>
+<span class="n">replace</span> <span class="n">migrated_from_country</span> <span class="o">=</span> <span class="s2">"BGD"</span> <span class="k">if</span> <span class="n">migrated_from_cat</span> <span class="o">==</span> <span class="mi">5</span> <span class="o">&amp;</span>
+<span class="n">B4_q17</span> <span class="o">==</span> <span class="s2">"51"</span>
+<span class="n">replace</span> <span class="n">migrated_from_country</span> <span class="o">=</span> <span class="s2">"NPL"</span> <span class="k">if</span> <span class="n">migrated_from_cat</span> <span class="o">==</span> <span class="mi">5</span> <span class="o">&amp;</span>
+<span class="n">B4_q17</span> <span class="o">==</span> <span class="s2">"52"</span>
+<span class="n">replace</span> <span class="n">migrated_from_country</span> <span class="o">=</span> <span class="s2">"PAK"</span> <span class="k">if</span> <span class="n">migrated_from_cat</span> <span class="o">==</span> <span class="mi">5</span> <span class="o">&amp;</span>
+<span class="n">B4_q17</span> <span class="o">==</span> <span class="s2">"53"</span>
+<span class="n">replace</span> <span class="n">migrated_from_country</span> <span class="o">=</span> <span class="s2">"LKA"</span> <span class="k">if</span> <span class="n">migrated_from_cat</span> <span class="o">==</span> <span class="mi">5</span> <span class="o">&amp;</span>
+<span class="n">B4_q17</span> <span class="o">==</span> <span class="s2">"54"</span>
+<span class="n">replace</span> <span class="n">migrated_from_country</span> <span class="o">=</span> <span class="s2">"BTN"</span> <span class="k">if</span> <span class="n">migrated_from_cat</span> <span class="o">==</span> <span class="mi">5</span> <span class="o">&amp;</span>
+<span class="n">B4_q17</span> <span class="o">==</span> <span class="s2">"55"</span>
+<span class="n">replace</span> <span class="n">migrated_from_country</span> <span class="o">=</span> <span class="s2">"Gulf countries"</span> <span class="k">if</span>
+<span class="n">migrated_from_cat</span> <span class="o">==</span> <span class="mi">5</span> <span class="o">&amp;</span> <span class="n">B4_q17</span> <span class="o">==</span> <span class="s2">"56"</span>
+<span class="n">replace</span> <span class="n">migrated_from_country</span> <span class="o">=</span> <span class="s2">"Other Asian"</span> <span class="k">if</span>
+<span class="n">migrated_from_cat</span> <span class="o">==</span> <span class="mi">5</span> <span class="o">&amp;</span> <span class="n">B4_q17</span> <span class="o">==</span> <span class="s2">"57"</span>
+<span class="n">replace</span> <span class="n">migrated_from_country</span> <span class="o">=</span> <span class="s2">"USA"</span> <span class="k">if</span> <span class="n">migrated_from_cat</span> <span class="o">==</span> <span class="mi">5</span> <span class="o">&amp;</span>
+<span class="n">B4_q17</span> <span class="o">==</span> <span class="s2">"58"</span>
+<span class="n">replace</span> <span class="n">migrated_from_country</span> <span class="o">=</span> <span class="s2">"CAN"</span> <span class="k">if</span> <span class="n">migrated_from_cat</span> <span class="o">==</span> <span class="mi">5</span> <span class="o">&amp;</span>
+<span class="n">B4_q17</span> <span class="o">==</span> <span class="s2">"59"</span>
+<span class="n">replace</span> <span class="n">migrated_from_country</span> <span class="o">=</span> <span class="s2">"Other Americas"</span> <span class="k">if</span>
+<span class="n">migrated_from_cat</span> <span class="o">==</span> <span class="mi">5</span> <span class="o">&amp;</span> <span class="n">B4_q17</span> <span class="o">==</span> <span class="s2">"60"</span>
+<span class="n">replace</span> <span class="n">migrated_from_country</span> <span class="o">=</span> <span class="s2">"UK"</span> <span class="k">if</span> <span class="n">migrated_from_cat</span> <span class="o">==</span> <span class="mi">5</span> <span class="o">&amp;</span>
+<span class="n">B4_q17</span> <span class="o">==</span> <span class="s2">"61"</span>
+<span class="n">replace</span> <span class="n">migrated_from_country</span> <span class="o">=</span> <span class="s2">"Other Europe"</span> <span class="k">if</span>
+<span class="n">migrated_from_cat</span> <span class="o">==</span> <span class="mi">5</span> <span class="o">&amp;</span> <span class="n">B4_q17</span> <span class="o">==</span> <span class="s2">"62"</span>
+<span class="n">replace</span> <span class="n">migrated_from_country</span> <span class="o">=</span> <span class="s2">"African countries"</span> <span class="k">if</span>
+<span class="n">migrated_from_cat</span> <span class="o">==</span> <span class="mi">5</span> <span class="o">&amp;</span> <span class="n">B4_q17</span> <span class="o">==</span> <span class="s2">"63"</span>
+<span class="n">replace</span> <span class="n">migrated_from_country</span> <span class="o">=</span> <span class="s2">"Other World"</span> <span class="k">if</span>
+<span class="n">migrated_from_cat</span> <span class="o">==</span> <span class="mi">5</span> <span class="o">&amp;</span> <span class="n">B4_q17</span> <span class="o">==</span> <span class="s2">"64"</span>
+<span class="n">label</span> <span class="n">var</span> <span class="n">migrated_from_country</span> <span class="s2">"Code of migration country (ISO 3</span>
+<span class="n">Letter</span> <span class="n">Code</span><span class="p">)</span><span class="s2">"</span>
 <span class="o">*&lt;/</span><span class="n">_migrated_from_country_</span><span class="o">&gt;</span>
 </pre></div>
 </div>
@@ -718,7 +718,7 @@ By World Bank Jobs Group
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Aug 05, 2026.
+  Last updated on Aug 26, 2026.
   <br/>
 </p>
   </div>

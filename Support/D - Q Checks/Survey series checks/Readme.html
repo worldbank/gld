@@ -70,7 +70,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="prev" title="GLD single survey external checks - Detailed description" href="../Single%20survey%20checks/Block_2_detailed_explanation.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="Aug 05, 2026"/>
+    <meta name="docbuild:last-update" content="Aug 26, 2026"/>
   </head>
   
   
@@ -457,28 +457,28 @@ document.write(`
 <h2>Step 1 - Define user variables<a class="headerlink" href="#step-1-define-user-variables" title="Permalink to this heading">#</a></h2>
 <p>Edit the country code, variables to inspect, and paths at the top of <a class="reference download internal" download="" href="../../../_downloads/0d64627a05e5215a2717189b62abdb64/process_time_series.R"><span class="xref download myst"><code class="docutils literal notranslate"><span class="pre">process_time_series.R</span></code></span></a>.</p>
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># Enter country ISO Alpha 3 code</span>
-<span class="n">country</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s">&quot;[CCC]&quot;</span>
+<span class="n">country</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s">"[CCC]"</span>
 
 <span class="c1"># Enter categorical variables to analyse.</span>
 <span class="c1"># Wage is included separately by default.</span>
 <span class="n">vars_to_study</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span>
-<span class="w">  </span><span class="s">&quot;empstat&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="s">&quot;educat7&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="s">&quot;educat4&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="s">&quot;industrycat10&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="s">&quot;industrycat4&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="s">&quot;occup&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="s">&quot;lstatus&quot;</span>
+<span class="w">  </span><span class="s">"empstat"</span><span class="p">,</span>
+<span class="w">  </span><span class="s">"educat7"</span><span class="p">,</span>
+<span class="w">  </span><span class="s">"educat4"</span><span class="p">,</span>
+<span class="w">  </span><span class="s">"industrycat10"</span><span class="p">,</span>
+<span class="w">  </span><span class="s">"industrycat4"</span><span class="p">,</span>
+<span class="w">  </span><span class="s">"occup"</span><span class="p">,</span>
+<span class="w">  </span><span class="s">"lstatus"</span>
 <span class="p">)</span>
 
 <span class="c1"># Folder that contains the country survey folders, for example CCC_YYYY_SurveyName</span>
-<span class="n">path_in</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s">&quot;C:/path/to/GLD/country/folder&quot;</span>
+<span class="n">path_in</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s">"C:/path/to/GLD/country/folder"</span>
 
 <span class="c1"># Folder where plots should be saved</span>
-<span class="n">path_out</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s">&quot;C:/path/to/output/folder&quot;</span>
+<span class="n">path_out</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s">"C:/path/to/output/folder"</span>
 
 <span class="c1"># Folder where this code and the helper functions are stored</span>
-<span class="n">dir_w_functions</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s">&quot;C:/path/to/Survey series checks&quot;</span>
+<span class="n">dir_w_functions</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s">"C:/path/to/Survey series checks"</span>
 </pre></div>
 </div>
 </section>
@@ -486,7 +486,7 @@ document.write(`
 <h2>Step 2 - Load packages and functions<a class="headerlink" href="#step-2-load-packages-and-functions" title="Permalink to this heading">#</a></h2>
 <p>The script loads the packages and helper functions needed for the workflow.</p>
 <p>The core script currently lists <code class="docutils literal notranslate"><span class="pre">Hmisc</span></code> and <code class="docutils literal notranslate"><span class="pre">tidyverse</span></code>. The helper functions also use package namespaces from <code class="docutils literal notranslate"><span class="pre">haven</span></code>, <code class="docutils literal notranslate"><span class="pre">glue</span></code>, <code class="docutils literal notranslate"><span class="pre">jsonlite</span></code>, and <code class="docutils literal notranslate"><span class="pre">scales</span></code>. These are often installed as part of the same R environment, but a clean setup should make sure they are available.</p>
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pkgs</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Hmisc&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;tidyverse&quot;</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pkgs</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">"Hmisc"</span><span class="p">,</span><span class="w"> </span><span class="s">"tidyverse"</span><span class="p">)</span>
 
 <span class="n">pkgs_2_install</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">pkgs</span><span class="p">[</span><span class="o">!</span><span class="p">(</span><span class="n">pkgs</span><span class="w"> </span><span class="o">%in%</span><span class="w"> </span><span class="nf">installed.packages</span><span class="p">())]</span>
 
@@ -499,7 +499,7 @@ document.write(`
 <span class="p">}</span>
 
 <span class="n">purrr</span><span class="o">::</span><span class="nf">walk</span><span class="p">(</span>
-<span class="w">  </span><span class="nf">dir</span><span class="p">(</span><span class="n">dir_w_functions</span><span class="p">,</span><span class="w"> </span><span class="n">pattern</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;^function&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">full.names</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">),</span>
+<span class="w">  </span><span class="nf">dir</span><span class="p">(</span><span class="n">dir_w_functions</span><span class="p">,</span><span class="w"> </span><span class="n">pattern</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"^function"</span><span class="p">,</span><span class="w"> </span><span class="n">full.names</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">),</span>
 <span class="w">  </span><span class="o">~</span><span class="nf">source</span><span class="p">(</span><span class="n">.x</span><span class="p">)</span>
 <span class="p">)</span>
 </pre></div>
@@ -685,7 +685,7 @@ By World Bank Jobs Group
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Aug 05, 2026.
+  Last updated on Aug 26, 2026.
   <br/>
 </p>
   </div>

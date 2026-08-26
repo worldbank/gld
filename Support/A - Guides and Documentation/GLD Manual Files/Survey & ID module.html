@@ -70,7 +70,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="prev" title="GLD data dictionary" href="GLD%20data%20dictionary.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="Aug 05, 2026"/>
+    <meta name="docbuild:last-update" content="Aug 26, 2026"/>
   </head>
   
   
@@ -546,7 +546,7 @@ Underlying version of the <a class="reference external" href="https://ilostat.il
 cap destring pid, replace 
 duplicates report hhid pid 
 local n=r(unique_value)
-`N&#39;!= `n&#39;
+`N'!= `n'
 </pre></div>
 </div>
 <p>Ensure that country is a three-letter country code.</p>
@@ -554,10 +554,10 @@ local n=r(unique_value)
 </pre></div>
 </div>
 <p>Harmonizers should also ensure that country codes are updated according to the <a class="reference external" href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3">ISO country codes</a>. Some common adjustments include the following:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">replace</span> <span class="n">countrycode</span><span class="o">=</span><span class="s2">&quot;XKX&quot;</span> <span class="k">if</span> <span class="n">countrycode</span><span class="o">==</span><span class="s2">&quot;KSV&quot;</span>
-<span class="n">replace</span> <span class="n">countrycode</span><span class="o">=</span><span class="s2">&quot;TLS&quot;</span> <span class="k">if</span> <span class="n">countrycode</span><span class="o">==</span><span class="s2">&quot;TMP&quot;</span> 
-<span class="n">replace</span> <span class="n">countrycode</span><span class="o">=</span><span class="s2">&quot;PSE&quot;</span> <span class="k">if</span> <span class="n">countrycode</span><span class="o">==</span><span class="s2">&quot;WBG&quot;</span>
-<span class="n">replace</span> <span class="n">countrycode</span><span class="o">=</span><span class="s2">&quot;COD&quot;</span> <span class="k">if</span> <span class="n">countrycode</span><span class="o">==</span><span class="s2">&quot;ZAR&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">replace</span> <span class="n">countrycode</span><span class="o">=</span><span class="s2">"XKX"</span> <span class="k">if</span> <span class="n">countrycode</span><span class="o">==</span><span class="s2">"KSV"</span>
+<span class="n">replace</span> <span class="n">countrycode</span><span class="o">=</span><span class="s2">"TLS"</span> <span class="k">if</span> <span class="n">countrycode</span><span class="o">==</span><span class="s2">"TMP"</span> 
+<span class="n">replace</span> <span class="n">countrycode</span><span class="o">=</span><span class="s2">"PSE"</span> <span class="k">if</span> <span class="n">countrycode</span><span class="o">==</span><span class="s2">"WBG"</span>
+<span class="n">replace</span> <span class="n">countrycode</span><span class="o">=</span><span class="s2">"COD"</span> <span class="k">if</span> <span class="n">countrycode</span><span class="o">==</span><span class="s2">"ZAR"</span>
 </pre></div>
 </div>
 <p>Furthermore, harmonizers should check that the years used are in an appropriate range.</p>
@@ -786,7 +786,7 @@ By World Bank Jobs Group
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Aug 05, 2026.
+  Last updated on Aug 26, 2026.
   <br/>
 </p>
   </div>
