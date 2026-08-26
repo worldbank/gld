@@ -682,7 +682,7 @@ label var ed_mod_age "Education module application age"
 
 *<_educy_>
 	gen byte educy = .
-	*equivalent of the education time apparently couyld have been added as year. we cannot say why these are being coded as completed or if there is an individual achievement of these individuals or that the information of age.
+	*equivalent of the education time apparently could have been added as year. we cannot say why these are being coded as completed or if there is an individual achievement of these individuals or that the information of age.
 	replace educy=0 if s4c9<=3
 	replace educy=5 if s4c9==4
 	replace educy=8 if s4c9==5
@@ -856,7 +856,7 @@ are the same here.
 
 {
 *<_lstatus_>
-gen byte lstatus = .
+	gen byte lstatus = .
 
 	* --- EMPLOYED ---
 	* 1. Worked for pay/wage at least 1 hour last week (5.1 = 1)
@@ -872,6 +872,9 @@ gen byte lstatus = .
 
 	* 4. Work is farming/livestock/fishing (5.9 = 1,2,3) AND products mainly/only for sale (5.10 = 1 or 2)
 	replace lstatus = 1 if inrange(s5c9, 1, 3) & inrange(s5c10, 1, 2) & missing(lstatus)
+
+	* 5. Went through s5c8 route, farming for sale → ICLS19 employed
+	replace lstatus = 1 if s5c1==2 & s5c2==2 & s5c3==2 & s5c4==2 & inrange(s5c8,1,3) & inrange(s5c10, 1, 2) & missing(lstatus)
 
 	* --- UNEMPLOYED ---
 	* Not employed, looked for work in last 4 weeks (9.1 = 1)
