@@ -71,18 +71,17 @@ We report below results under two ICLS definitions for the labour variables: emp
 | Concept (all 15+) | Value 2020 ICLS-13 | Value 2024 ICLS-13 | Value 2024 ICLS-19 |
 |---|---|---|---|
 | Employment share | 49.35% | 51.46% | 50% |
-| Unemployment share* | 5.58% | 6.86% | 7.05% |
+| Unemployment share (LF / Unemployed) | 5.58% | 6.86% | 7.05% |
 | Share of wage employed | 42.19% | 42.51% | 43.75% |
 | Share of employed in Ag (industry) | 37.15% | 34.44% | 32.53% |
 | Share of employed as farmers (occupation) | 33.82% | 29.52% | 27.47% |
-Note*: Unemployment share is the value of unemployment divided by the labor force.
 
 Note on cross-year comparability: The values presented in this table should not be interpreted as trends or used for direct cross-year comparison. Differences across columns reflect a combination of factors including:
 
-(1) The 2020 round was implemented under ICLS-13 definitions, while the 2024 round includes estimates under both ICLS-13 and ICLS-19. The shift in the definitions framework affects the classification of labor force status and should be taken into account when comparing values across years.
+ - The 2020 round was implemented under ICLS-13 definitions, while the 2024 round includes estimates under both ICLS-13 and ICLS-19. The shift in the definitions framework affects the classification of labor force status and should be taken into account when comparing values across years.
 
-(2)  Between 2020 and 2024, the questionnaire introduced a single new category — "independent worker without employee" — to subsume the various types of own-account workers previously captured separately for agricultural and non-agricultural activities. This change in how employment status is elicited is likely to have affected the way workers are classified, and is reflected in the data in the share of workers categorized as self-employed.
+ -  Between 2020 and 2024, the questionnaire introduced a single new category — "independent worker without employee" — to subsume the various types of own-account workers previously captured separately for agricultural and non-agricultural activities. This change in how employment status is elicited is likely to have affected the way workers are classified, and is reflected in the data in the share of workers categorized as self-employed.
 
-(3) The Pakistan LFS is generally representative at the province and urban/rural levels. The 2020 round was an exception, having been designed to be representative to the district level, resulting in a broader and more granular sample. Differences in geographic coverage and sample composition across rounds may affect the resulting estimates independently of any actual changes in labor market outcomes.
+ - The Pakistan LFS is generally representative at the province and urban/rural levels. The 2020 round was an exception, having been designed to be representative to the district level, resulting in a broader and more granular sample. Differences in geographic coverage and sample composition across rounds may affect the resulting estimates independently of any actual changes in labor market outcomes.
 
 
