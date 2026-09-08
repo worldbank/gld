@@ -7,6 +7,9 @@ The GLD aims to cover all household surveys with a labor market module worldwide
 
 Around the harmonization the GLD team aims to create an open and collaborative ecosystem of contextual information and tools that helps users more quickly understand the data and leverage it. When it comes to working with labor microdata you should not start at square one and you shouldn’t have to travel alone: the GLD team is there to assist.
 
+To explore survey coverage and variable availability across the database, visit the [GLD Survey Platform](https://datanalytics.worldbank.org/gld-platform/) — an interactive tool that lets you browse harmonized surveys by country and year, check which variables are available, and look up occupation and industry coding details.
+
+
 We hope, in turn, you will also contribute to GLD, from pointing out issues with our codes or concepts to proposing new harmonizations. We aim to establish a new standard of transparency and collaboration. Please feel free to navigate the website as you please though we recommend first-timers to start with the [introduction to the GLD](https://worldbank.github.io/gld/Support/A%20-%20Guides%20and%20Documentation/GLD%20Manual%20Files/Introduction%20to%20the%20GLD.html).
 
 ## License
