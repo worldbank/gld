@@ -105,7 +105,7 @@ label var survname "Survey acronym"
 
 
 *<_survey_>
-gen str12 survey = "LFS"
+gen survey = "LFS"
 label var survey "Survey type"
 *</_survey_>
 
@@ -117,7 +117,7 @@ label var icls_v "ICLS version underlying questionnaire questions"
 
 
 *<_isced_version_>
-	gen isced_version = ""
+gen str10 isced_version = "isced_1997"
 	label var isced_version "Version of ISCED used for educat_isced"
 *</_isced_version_>
 
@@ -173,25 +173,19 @@ label var int_year "Year of interview"
 *</_int_month_>
 
 
+*<_wave_>
+gen str wave = "Q" + string(ID_TRIMESTRE)
+label var wave "Survey wave"
+*</_wave_>
+
 *<_hhid_>
-assert !missing(ID_TRIMESTRE,Consecutivo,ID_VIVIENDA,ID_HOGAR)
-assert inlist(ID_TRIMESTRE,3,4)
-assert inrange(Consecutivo,0,999999999) & floor(Consecutivo)==Consecutivo
-assert inrange(ID_VIVIENDA,0,99) & floor(ID_VIVIENDA)==ID_VIVIENDA
-assert inrange(ID_HOGAR,0,99) & floor(ID_HOGAR)==ID_HOGAR
-gen str15 hhid = "Q" + string(ID_TRIMESTRE,"%1.0f") + string(Consecutivo,"%09.0f") + string(ID_VIVIENDA,"%02.0f") + string(ID_HOGAR,"%02.0f")
-assert strlen(hhid)==15
-label var hhid "Quarter-specific household ID"
+gen hhid = string(Consecutivo,"%04.0f") + string(ID_VIVIENDA,"%02.0f") + string(ID_HOGAR,"%02.0f")
+label var hhid "Household ID"
 *</_hhid_>
-
-
 *<_pid_>
-assert !missing(ID_LINEA)
-assert inrange(ID_LINEA,0,99) & floor(ID_LINEA)==ID_LINEA
-gen str17 pid = hhid + string(ID_LINEA,"%02.0f")
-assert strlen(pid)==17
-isid pid
-label var pid "Quarter-specific individual ID"
+gen pid = hhid + string(ID_LINEA,"%02.0f")
+label var pid "Individual ID"
+isid hhid pid wave
 *</_pid_>
 
 
@@ -218,7 +212,7 @@ label var weight_q "Quarterly survey weight"
 
 
 *<_psu_>
-gen long psu = Consecutivo
+gen long psu = .
 	label var psu "Primary sampling units"
 *</_psu_>
 
@@ -230,15 +224,9 @@ gen long psu = Consecutivo
 
 
 *<_strata_>
-gen int strata = Region*10 + Zona
+gen long strata = .
 label var strata "Strata"
 *</_strata_>
-
-
-*<_wave_>
-gen byte wave = ID_TRIMESTRE
-label var wave "Survey wave"
-*</_wave_>
 
 
 *<_panel_>
@@ -274,7 +262,7 @@ label var urban "Location is urban"
 *<_subnatid1_>
 /* <_subnatid1_note>
 
-	The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: "1 ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ Hatay". That is, the variable itself is to be string, not a labelled numeric vector. 
+	The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: "1 – Hatay". That is, the variable itself is to be string, not a labelled numeric vector.
 	
 	Example of entries would be "1 - Alaska",  "2 - Arkansas", ...
 
@@ -303,10 +291,9 @@ label var urban "Location is urban"
 
 
 *<_subnatidsurvey_>
-gen str20 subnatidsurvey = ""
-replace subnatidsurvey = "CRI urban" if urban == 1
-replace subnatidsurvey = "CRI rural" if urban == 0
-label var subnatidsurvey "Lowest survey domain"
+gen str25 subnatidsurvey = ""
+replace subnatidsurvey = subnatid1
+label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
 
@@ -360,7 +347,7 @@ label var subnatidsurvey "Lowest survey domain"
 {
 
 *<_hsize_>
-bysort hhid: gen int hsize = _N
+bysort hhid wave: gen int hsize = _N
 label var hsize "Household size"
 *</_hsize_>
 
@@ -394,18 +381,18 @@ replace relationharm = 6 if inlist(Relacion_parentesco,10,11,12)
 * Enforce exactly one head per quarter-specific household.
 gen double _relation_age_sort = age
 replace _relation_age_sort = -1 if missing(_relation_age_sort)
-gsort hhid -_relation_age_sort pid
-by hhid: gen int _head_order = sum(relationharm==1)
+gsort hhid wave -_relation_age_sort pid
+by hhid wave: gen int _head_order = sum(relationharm==1)
 replace relationharm = 5 if relationharm==1 & _head_order>1
-bysort hhid: egen byte _nhead = total(relationharm==1)
+bysort hhid wave: egen byte _nhead = total(relationharm==1)
 gen byte _spouse_candidate = relationharm==2 if _nhead==0
 replace _spouse_candidate = 0 if missing(_spouse_candidate)
-gsort hhid -_spouse_candidate -_relation_age_sort pid
-by hhid: replace relationharm = 1 if _nhead==0 & _n==1
-bysort hhid: egen byte _nhead_check = total(relationharm==1)
+gsort hhid wave -_spouse_candidate -_relation_age_sort pid
+by hhid wave: replace relationharm = 1 if _nhead==0 & _n==1
+bysort hhid wave: egen byte _nhead_check = total(relationharm==1)
 assert _nhead_check==1
 drop _relation_age_sort _head_order _nhead _spouse_candidate _nhead_check
-sort hhid pid
+sort hhid wave pid
 
 label define lblrelationharm 1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
 label values relationharm lblrelationharm
@@ -434,7 +421,7 @@ label var marital "Marital status"
 
 *<_eye_dsablty_>
 	gen eye_dsablty = .
-	label define dsablty 1 "No ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ no difficulty" 2 "Yes ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ some difficulty" 3 "Yes ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ a lot of difficulty" 4 "Cannot do at all"
+	label define dsablty 1 "No – no difficulty" 2 "Yes – some difficulty" 3 "Yes – a lot of difficulty" 4 "Cannot do at all"
 	label values eye_dsablty dsablty
 	label var eye_dsablty "Disability related to eyesight"
 *</_eye_dsablty_>
@@ -442,7 +429,7 @@ label var marital "Marital status"
 
 *<_hear_dsablty_>
 	gen hear_dsablty = .
-	label define dsablty 1 "No ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ no difficulty" 2 "Yes ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ some difficulty" 3 "Yes ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ a lot of difficulty" 4 "Cannot do at all", replace
+	label define dsablty 1 "No – no difficulty" 2 "Yes – some difficulty" 3 "Yes – a lot of difficulty" 4 "Cannot do at all", replace
 	label values hear_dsablty dsablty
 	label var hear_dsablty "Disability related to hearing"
 *</_hear_dsablty_>
@@ -450,7 +437,7 @@ label var marital "Marital status"
 
 *<_walk_dsablty_>
 	gen walk_dsablty = .
-	label define dsablty 1 "No ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ no difficulty" 2 "Yes ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ some difficulty" 3 "Yes ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ a lot of difficulty" 4 "Cannot do at all", replace
+	label define dsablty 1 "No – no difficulty" 2 "Yes – some difficulty" 3 "Yes – a lot of difficulty" 4 "Cannot do at all", replace
 	label values walk_dsablty dsablty
 	label var walk_dsablty "Disability related to walking or climbing stairs"
 *</_walk_dsablty_>
@@ -458,7 +445,7 @@ label var marital "Marital status"
 
 *<_conc_dsord_>
 	gen conc_dsord = .
-	label define dsablty 1 "No ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ no difficulty" 2 "Yes ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ some difficulty" 3 "Yes ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ a lot of difficulty" 4 "Cannot do at all", replace
+	label define dsablty 1 "No – no difficulty" 2 "Yes – some difficulty" 3 "Yes – a lot of difficulty" 4 "Cannot do at all", replace
 	label values conc_dsord dsablty
 	label var conc_dsord "Disability related to concentration or remembering"
 *</_conc_dsord_>
@@ -466,7 +453,7 @@ label var marital "Marital status"
 
 *<_slfcre_dsablty_>
 	gen slfcre_dsablty  = .
-	label define dsablty 1 "No ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ no difficulty" 2 "Yes ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ some difficulty" 3 "Yes ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ a lot of difficulty" 4 "Cannot do at all", replace
+	label define dsablty 1 "No – no difficulty" 2 "Yes – some difficulty" 3 "Yes – a lot of difficulty" 4 "Cannot do at all", replace
 	label values slfcre_dsablty dsablty
 	label var slfcre_dsablty "Disability related to selfcare"
 *</_slfcre_dsablty_>
@@ -474,7 +461,7 @@ label var marital "Marital status"
 
 *<_comm_dsablty_>
 	gen comm_dsablty = .
-	label define dsablty 1 "No ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ no difficulty" 2 "Yes ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ some difficulty" 3 "Yes ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ a lot of difficulty" 4 "Cannot do at all", replace
+	label define dsablty 1 "No – no difficulty" 2 "Yes – some difficulty" 3 "Yes – a lot of difficulty" 4 "Cannot do at all", replace
 	label values comm_dsablty dsablty
 	label var comm_dsablty "Disability related to communicating"
 *</_comm_dsablty_>
@@ -671,7 +658,7 @@ foreach ed_var of local ed_vars {
 {
 
 *<_vocational_>
-	gen vocational = .
+gen byte vocational = .
 	label de lblvocational 0 "No" 1 "Yes"
 	label var vocational "Ever received vocational training"
 *</_vocational_>
@@ -698,7 +685,7 @@ foreach ed_var of local ed_vars {
 
 
 *<_vocational_field_orig_>
-	gen str vocational_field_orig = ""
+gen str2 vocational_field_orig = ""
 	label var vocational_field_orig "Original field of training information"
 *</_vocational_field_orig_>
 
@@ -770,14 +757,23 @@ label var nlfreason "Reason not in labor force"
 
 *<_unempldur_l_>
 gen byte unempldur_l = .
-* Tiempo_busqueda_empleo exists but is fully missing in the available source data.
+replace unempldur_l = 0 if lstatus==2 & Tiempo_busqueda_empleo==1
+replace unempldur_l = 1 if lstatus==2 & Tiempo_busqueda_empleo==2
+replace unempldur_l = 3 if lstatus==2 & Tiempo_busqueda_empleo==3
+replace unempldur_l = 6 if lstatus==2 & Tiempo_busqueda_empleo==4
+replace unempldur_l = 12 if lstatus==2 & Tiempo_busqueda_empleo==5
+replace unempldur_l = 36 if lstatus==2 & Tiempo_busqueda_empleo==6
 label var unempldur_l "Unemployment duration lower bound"
 *</_unempldur_l_>
 
 
 *<_unempldur_u_>
 gen byte unempldur_u = .
-* Tiempo_busqueda_empleo exists but is fully missing in the available source data.
+replace unempldur_u = 1 if lstatus==2 & Tiempo_busqueda_empleo==1
+replace unempldur_u = 3 if lstatus==2 & Tiempo_busqueda_empleo==2
+replace unempldur_u = 6 if lstatus==2 & Tiempo_busqueda_empleo==3
+replace unempldur_u = 12 if lstatus==2 & Tiempo_busqueda_empleo==4
+replace unempldur_u = 36 if lstatus==2 & Tiempo_busqueda_empleo==5
 label var unempldur_u "Unemployment duration upper bound"
 *</_unempldur_u_>
 }
@@ -810,13 +806,13 @@ label var ocusec "Sector of activity"
 
 
 *<_industry_orig_>
-gen str4 industry_orig = string(Cod_rama_publicacion,"%04.0f") if !missing(Cod_rama_publicacion) & lstatus==1
-label var industry_orig "Original industry code"
+gen int industry_orig = Cod_rama_publicacion if lstatus == 1
+label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
 
 *<_industrycat_isic_>
-tostring Cod_rama_publicacion, gen(industrycat_isic) format(%04.0f) force
+gen str4 industrycat_isic = string(Cod_rama_publicacion,"%04.0f") if lstatus == 1
 replace industrycat_isic = "" if lstatus!=1 | inlist(industrycat_isic,"0000","0850")
 label var industrycat_isic "ISIC code"
 *</_industrycat_isic_>
@@ -850,13 +846,13 @@ label var industrycat10 "Industry, 10 categories"
 
 
 *<_occup_orig_>
-gen long occup_orig = Cod_ocupacion if lstatus==1
-label var occup_orig "Original occupation code"
+gen int occup_orig = Cod_ocupacion if lstatus == 1
+label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
 
 *<_occup_isco_>
-tostring Cod_ocupacion, gen(occup_isco) format(%04.0f) force
+gen str4 occup_isco = string(Cod_ocupacion,"%04.0f") if lstatus == 1
 replace occup_isco = "" if lstatus!=1 | inlist(Cod_ocupacion,0,3316,5170,3610,9800,3711,2639,3712,3715,3716,3714,5168)
 label var occup_isco "ISCO code"
 *</_occup_isco_>
@@ -1006,13 +1002,13 @@ label var ocusec_2 "Sector, secondary job"
 
 
 *<_industry_orig_2_>
-gen str4 industry_orig_2 = string(Cod_actividad_sec,"%04.0f") if !missing(Cod_actividad_sec) & Empleo_secundario==1
-label var industry_orig_2 "Original industry, secondary job"
+gen int industry_orig_2 = Cod_actividad_sec if empstat_2 != .
+label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 
 
 *<_industrycat_isic_2_>
-tostring Cod_actividad_sec, gen(industrycat_isic_2) format(%04.0f) force
+gen str4 industrycat_isic_2 = string(Cod_actividad_sec,"%04.0f") if empstat_2 != .
 replace industrycat_isic_2 = "" if Empleo_secundario!=1 | inlist(industrycat_isic_2,"0000","0850")
 label var industrycat_isic_2 "ISIC, secondary job"
 *</_industrycat_isic_2_>
@@ -1044,13 +1040,13 @@ label var industrycat10_2 "Industry, 10 categories"
 
 
 *<_occup_orig_2_>
-gen long occup_orig_2 = Cod_ocupacion_sec if Empleo_secundario==1
-label var occup_orig_2 "Original occupation, secondary job"
+gen int occup_orig_2 = Cod_ocupacion_sec if empstat_2 != .
+label var occup_orig_2 "Original occupation record secondary job 7 day recall"
 *</_occup_orig_2_>
 
 
 *<_occup_isco_2_>
-tostring Cod_ocupacion_sec, gen(occup_isco_2) format(%04.0f) force
+gen str4 occup_isco_2 = string(Cod_ocupacion_sec,"%04.0f") if empstat_2 != .
 replace occup_isco_2 = "" if Empleo_secundario!=1 | inlist(Cod_ocupacion_sec,0,3316,5170,3610,9800,3711,2639,3712,3715,3716,3714,5168)
 label var occup_isco_2 "ISCO, secondary job"
 *</_occup_isco_2_>
@@ -1131,7 +1127,7 @@ label var wage_total_2 "Annualized total wage, secondary job"
 
 *<_t_wage_nocompen_others_>
 gen double t_wage_nocompen_others = Ingreso_otros*12
-replace t_wage_nocompen_others = . if lstatus!=1|Ingreso_otros>=99999999
+replace t_wage_nocompen_others = . if lstatus!=1 | Ingreso_otros>=99999999
 label var t_wage_nocompen_others "Annualized other-job wage"
 *</_t_wage_nocompen_others_>
 

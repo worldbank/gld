@@ -167,32 +167,24 @@ gen int_year = ID_AMO
 
 
 *<_int_month_>
-* Note: Quarter-end month proxy because interview month is unavailable.
-gen int_month = ID_TRIMESTRE*3
+gen int_month = .
 	label var int_month "Month of the interview"
 *</_int_month_>
 
 
+*<_wave_>
+gen str wave = "Q" + string(ID_TRIMESTRE)
+label var wave "Survey wave"
+*</_wave_>
+
 *<_hhid_>
-* Wave prefix, no separators, and fixed-width zero-padded components.
-assert !missing(ID_TRIMESTRE,Consecutivo,ID_VIVIENDA,ID_HOGAR)
-assert inrange(ID_TRIMESTRE,1,4)
-assert inrange(Consecutivo,0,999999999) & floor(Consecutivo)==Consecutivo
-assert inrange(ID_VIVIENDA,0,99) & floor(ID_VIVIENDA)==ID_VIVIENDA
-assert inrange(ID_HOGAR,0,99) & floor(ID_HOGAR)==ID_HOGAR
-gen str15 hhid = "Q" + string(ID_TRIMESTRE,"%1.0f") + string(Consecutivo,"%09.0f") + string(ID_VIVIENDA,"%02.0f") + string(ID_HOGAR,"%02.0f")
-assert strlen(hhid)==15
-	label var hhid "Household ID"
+gen hhid = string(Consecutivo,"%04.0f") + string(ID_VIVIENDA,"%02.0f") + string(ID_HOGAR,"%02.0f")
+label var hhid "Household ID"
 *</_hhid_>
-
-
 *<_pid_>
-assert !missing(ID_LINEA)
-assert inrange(ID_LINEA,0,99) & floor(ID_LINEA)==ID_LINEA
-gen str17 pid = hhid + string(ID_LINEA,"%02.0f")
-assert strlen(pid)==17
-isid pid
-	label var pid "Individual ID"
+gen pid = hhid + string(ID_LINEA,"%02.0f")
+label var pid "Individual ID"
+isid hhid pid wave
 *</_pid_>
 
 
@@ -221,7 +213,7 @@ replace weight_q = . if weight_q<=0
 
 
 *<_psu_>
-gen psu = Consecutivo
+gen long psu = .
 	label var psu "Primary sampling units"
 *</_psu_>
 
@@ -234,15 +226,9 @@ gen ssu = .
 
 
 *<_strata_>
-gen strata = Region*10+Zona
+gen long strata = .
 	label var strata "Strata"
 *</_strata_>
-
-
-*<_wave_>
-gen wave = ID_TRIMESTRE
-	label var wave "Survey wave"
-*</_wave_>
 
 
 *<_panel_>
@@ -302,11 +288,9 @@ gen str1 subnatid3 = ""
 
 
 *<_subnatidsurvey_>
-* Note: Intentionally left missing because no defensible source is available.
-gen str20 subnatidsurvey = ""
-replace subnatidsurvey = "CRI urban" if urban==1
-replace subnatidsurvey = "CRI rural" if urban==0
-	label var subnatidsurvey "Administrative level at which survey is representative"
+gen str25 subnatidsurvey = ""
+replace subnatidsurvey = subnatid1
+label var subnatidsurvey "Administrative level at which survey is representative"
 *</_subnatidsurvey_>
 
 
@@ -361,7 +345,7 @@ gen gaul_adm3_code = .
 {
 
 *<_hsize_>
-bysort hhid: gen int hsize = _N
+bysort hhid wave: gen int hsize = _N
 	label var hsize "Household size"
 *</_hsize_>
 
@@ -390,16 +374,16 @@ replace relationharm = 4 if Relacion_parentesco==6
 replace relationharm = 5 if inlist(Relacion_parentesco,4,5,7,8,9,15)
 replace relationharm = 6 if inlist(Relacion_parentesco,10,11,12)
 gen byte __head = relationharm==1
-bysort hhid: egen byte __nhead=total(__head)
-gsort hhid -__head -Edad pid
-by hhid: replace relationharm=5 if __nhead>1 & __head & _n>1
-bysort hhid: egen byte __hashead=max(relationharm==1)
+bysort hhid wave: egen byte __nhead=total(__head)
+gsort hhid wave -__head -Edad pid
+by hhid wave: replace relationharm=5 if __nhead>1 & __head & _n>1
+bysort hhid wave: egen byte __hashead=max(relationharm==1)
 gen byte __spouse = relationharm==2
-gsort hhid -__spouse -Edad pid
-by hhid: replace relationharm=1 if !__hashead & __spouse & _n==1
-bysort hhid: egen byte __hashead2=max(relationharm==1)
-gsort hhid -Edad pid
-by hhid: replace relationharm=1 if !__hashead2 & _n==1
+gsort hhid wave -__spouse -Edad pid
+by hhid wave: replace relationharm=1 if !__hashead & __spouse & _n==1
+bysort hhid wave: egen byte __hashead2=max(relationharm==1)
+gsort hhid wave -Edad pid
+by hhid wave: replace relationharm=1 if !__hashead2 & _n==1
 drop __head __nhead __hashead __spouse __hashead2
 	label var relationharm "Relationship to the head of household - Harmonized"
 	la de lblrelationharm  1 "Head of household" 2 "Spouse" 3 "Children" 4 "Parents" 5 "Other relatives" 6 "Other and non-relatives"
@@ -408,8 +392,7 @@ drop __head __nhead __hashead __spouse __hashead2
 
 
 *<_relationcs_>
-* Note: Intentionally left missing because no defensible source is available.
-gen relationcs = .
+gen byte relationcs = Relacion_parentesco
 	label var relationcs "Relationship to the head of household - Country original"
 *</_relationcs_>
 
@@ -471,7 +454,7 @@ gen slfcre_dsablty = .
 * Note: Intentionally left missing because no defensible source is available.
 gen comm_dsablty = .
 	label var comm_dsablty "Disability related to communicating"
-	label define dsablty 1 "No Ã¢â‚¬â€œ no difficulty" 2 "Yes Ã¢â‚¬â€œ some difficulty" 3 "Yes Ã¢â‚¬â€œ a lot of difficulty" 4 "Cannot do at all"
+	label define dsablty 1 "No – no difficulty" 2 "Yes – some difficulty" 3 "Yes – a lot of difficulty" 4 "Cannot do at all"
 	label values comm_dsablty dsablty
 *</_comm_dsablty_>
 
@@ -551,7 +534,7 @@ gen str1 migrated_from_country = ""
 * Note: Intentionally left missing because no defensible source is available.
 gen migrated_reason = .
 	label var migrated_reason "Reason for migrating"
-	label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, Ã¢â‚¬Â¦)" 5 "Other reasons"
+label de lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
 	label values migrated_reason lblmigrated_reason
 *</_migrated_reason_>
 
@@ -676,8 +659,7 @@ foreach ed_var of local ed_vars {
 {
 
 *<_vocational_>
-* Note: Intentionally left missing because no defensible source is available.
-gen vocational = .
+gen byte vocational = .
 	label var vocational "Ever received vocational training"
 *</_vocational_>
 
@@ -706,8 +688,7 @@ gen vocational_length_u = .
 
 
 *<_vocational_field_orig_>
-* Note: Intentionally left missing because no defensible source is available.
-gen str1 vocational_field_orig = ""
+gen str2 vocational_field_orig = ""
 	label var vocational_field_orig "Original field of training information"
 *</_vocational_field_orig_>
 
@@ -748,8 +729,9 @@ replace lstatus = 3 if Fuera_fuerza_trabajo==1 & (inrange(Edad,15,97) | Edad==99
 
 
 *<_potential_lf_>
-* Note: Intentionally left missing because no defensible source is available.
-gen potential_lf = .
+gen byte potential_lf = .
+replace potential_lf = 0 if lstatus==3 & Disponibilidad_fuera_fuerza_trab==1
+replace potential_lf = 1 if lstatus==3 & inlist(Disponibilidad_fuera_fuerza_trab,2,3)
 	label var potential_lf "Potential labour force status"
 	la de lblpotential_lf 0 "No" 1 "Yes"
 	label values potential_lf lblpotential_lf
@@ -779,15 +761,24 @@ replace nlfreason = 5 if lstatus==3 & inrange(Motivo_nobusco,1,14) & missing(nlf
 
 
 *<_unempldur_l_>
-* Tiempo_busqueda_empleo exists but is fully missing in the available source data.
 gen byte unempldur_l = .
+replace unempldur_l = 0 if lstatus==2 & Tiempo_busqueda_empleo==1
+replace unempldur_l = 1 if lstatus==2 & Tiempo_busqueda_empleo==2
+replace unempldur_l = 3 if lstatus==2 & Tiempo_busqueda_empleo==3
+replace unempldur_l = 6 if lstatus==2 & Tiempo_busqueda_empleo==4
+replace unempldur_l = 12 if lstatus==2 & Tiempo_busqueda_empleo==5
+replace unempldur_l = 36 if lstatus==2 & Tiempo_busqueda_empleo==6
 	label var unempldur_l "Unemployment duration (months) lower bracket"
 *</_unempldur_l_>
 
 
 *<_unempldur_u_>
-* Note: Intentionally left missing because no defensible source is available.
-gen unempldur_u = .
+gen byte unempldur_u = .
+replace unempldur_u = 1 if lstatus==2 & Tiempo_busqueda_empleo==1
+replace unempldur_u = 3 if lstatus==2 & Tiempo_busqueda_empleo==2
+replace unempldur_u = 6 if lstatus==2 & Tiempo_busqueda_empleo==3
+replace unempldur_u = 12 if lstatus==2 & Tiempo_busqueda_empleo==4
+replace unempldur_u = 36 if lstatus==2 & Tiempo_busqueda_empleo==5
 	label var unempldur_u "Unemployment duration (months) upper bracket"
 *</_unempldur_u_>
 }
@@ -820,14 +811,14 @@ replace ocusec = 2 if Sector_institucional==2 & lstatus==1
 
 
 *<_industry_orig_>
-gen str4 industry_orig = string(Cod_rama_publicacion,"%04.0f") if !missing(Cod_rama_publicacion) & lstatus==1
+gen int industry_orig = Cod_rama_publicacion if lstatus == 1
 	label var industry_orig "Original survey industry code, main job 7 day recall"
 *</_industry_orig_>
 
 
 *<_industrycat_isic_>
 * Note: Intentionally left missing because no defensible source is available.
-gen str4 industrycat_isic = string(Cod_rama_publicacion,"%04.0f") if !missing(Cod_rama_publicacion) & lstatus==1
+gen str4 industrycat_isic = string(Cod_rama_publicacion,"%04.0f") if lstatus == 1
 replace industrycat_isic = "" if inlist(industrycat_isic,"0000","0850")
 	label var industrycat_isic "ISIC code of primary job 7 day recall
 *</_industrycat_isic_>
@@ -862,14 +853,14 @@ replace industrycat10 = 10 if inrange(real(substr(industrycat_isic,1,2)),85,99)
 
 *<_occup_orig_>
 * Preserve the original occupation code within the primary-job universe.
-gen str4 occup_orig = string(Cod_ocupacion,"%04.0f") if !missing(Cod_ocupacion) & lstatus==1
+gen int occup_orig = Cod_ocupacion if lstatus == 1
 label var occup_orig "Original occupation record primary job 7 day recall"
 *</_occup_orig_>
 
 
 *<_occup_isco_>
 * Invalid or unsupported ISCO-08 codes remain unclassified.
-gen str4 occup_isco = string(Cod_ocupacion,"%04.0f") if !missing(Cod_ocupacion) & lstatus==1
+gen str4 occup_isco = string(Cod_ocupacion,"%04.0f") if lstatus == 1
 replace occup_isco = "" if inlist(Cod_ocupacion,0,3316,5170,3610,9800,3711,2639,3712,3715,3716,3714,5168)
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
@@ -1019,14 +1010,14 @@ replace ocusec_2 = 2 if Sector_institucional_secundario==2 & Empleo_secundario==
 
 
 *<_industry_orig_2_>
-gen str4 industry_orig_2 = string(Cod_actividad_sec,"%04.0f") if !missing(Cod_actividad_sec) & Empleo_secundario==1
+gen int industry_orig_2 = Cod_actividad_sec if empstat_2 != .
 	label var industry_orig_2 "Original survey industry code, secondary job 7 day recall"
 *</_industry_orig_2_>
 
 
 *<_industrycat_isic_2_>
 * Note: Intentionally left missing because no defensible source is available.
-gen str4 industrycat_isic_2 = string(Cod_actividad_sec,"%04.0f") if !missing(Cod_actividad_sec) & Empleo_secundario==1
+gen str4 industrycat_isic_2 = string(Cod_actividad_sec,"%04.0f") if empstat_2 != .
 replace industrycat_isic_2 = "" if inlist(industrycat_isic_2,"0000","0850")
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
@@ -1061,14 +1052,14 @@ replace industrycat10_2 = 10 if inrange(real(substr(industrycat_isic_2,1,2)),85,
 
 *<_occup_orig_2_>
 * Preserve the original occupation code within the secondary-job universe.
-gen str4 occup_orig_2 = string(Cod_ocupacion_sec,"%04.0f") if !missing(Cod_ocupacion_sec) & Empleo_secundario==1
+gen int occup_orig_2 = Cod_ocupacion_sec if empstat_2 != .
 	label var occup_orig_2 "Original occupation record secondary job 7 day recall"
 *</_occup_orig_2_>
 
 
 *<_occup_isco_2_>
 * Invalid or unsupported ISCO-08 codes remain unclassified.
-gen str4 occup_isco_2 = string(Cod_ocupacion_sec,"%04.0f") if !missing(Cod_ocupacion_sec) & Empleo_secundario==1
+gen str4 occup_isco_2 = string(Cod_ocupacion_sec,"%04.0f") if empstat_2 != .
 replace occup_isco_2 = "" if inlist(Cod_ocupacion_sec,0,3316,5170,3610,9800,3711,2639,3712,3715,3716,3714,5168)
 	label var occup_isco_2 "ISCO code of secondary job 7 day recall"
 *</_occup_isco_2_>
@@ -1125,8 +1116,7 @@ gen wmonths_2 = .
 
 
 *<_wage_total_2_>
-* Note: Intentionally left missing because no defensible source is available.
-gen wage_total_2 = .
+gen double wage_total_2 = .
 	label var wage_total_2 "Annualized total wage secondary job 7 day recall"
 *</_wage_total_2_>
 
@@ -1625,7 +1615,7 @@ label var linc_nc "Total annual wage income in all jobs, excl. bonuses, etc."
 
 
 *<_laborincome_>
-	gen laborincome = t_wage_total_year
+gen double laborincome = t_wage_total
 	label var laborincome "Total annual individual labor income in all jobs, incl. bonuses, etc."
 *</_laborincome_>
 
