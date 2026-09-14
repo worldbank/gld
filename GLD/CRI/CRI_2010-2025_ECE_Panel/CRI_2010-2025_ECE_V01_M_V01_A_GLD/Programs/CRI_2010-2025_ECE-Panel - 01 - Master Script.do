@@ -17,6 +17,11 @@ set mem 800m
 * Install GLD Panel check commands
 *net install gldpaneltools, replace from("https://raw.githubusercontent.com/worldbank/gld/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/GLD%20Panels")
 
+cap which egenmore
+if _rc {
+    ssc install egenmore
+}
+
 
 *----------1.2: Set directories------------------------------*
 
