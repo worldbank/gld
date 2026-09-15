@@ -58,40 +58,64 @@ This section details which GLD information type is stored where and how it is or
 
 The raw microdata, harmonization codes, harmonized output, as well as the documentation is stored on a dedicated server. It is organized following the file and folder naming convention of the World Bank Microdata Library ([accessible here](https://github.com/worldbank/gld/blob/main/Support/A%20-%20Guides%20and%20Documentation/WB%20Microdata%20Lib%20Folder%20and%20File%20Naming%20Management.docx)).
 
-The image below exemplifies the structure with the case of Armenia. Within GLD the first level is the country, identified the [country’s three-letter code](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3) (number 1 in Figure 2, below). The surveys in a country follow the structure CCC_YYYY_[SurveyName], where YYYY is the year of survey start and SurveyName the name or acronym of the survey. In this case the Armenian Labor Force Survey from 2014 is ARM_2014_LFS (number 2 in the image).
+The structure is exemplified below using the case of Armenia (`ARM`):
 
-<br></br>
-Figure 2 - Example of GLD Server folder structure
-![GLD server structure example for Armenia](images/gld_server_ARM_structure_alt.png)
-<br></br>
+```text
+GLD/
+└── [ISO-3 Country Code] (e.g., ARM) [1]
+    └── [Country]_[Year]_[SurveyType] (e.g., ARM_2014_LFS) [2]
+        ├── [Survey]_V01_M (Master Data Folder) [3]
+        │   ├── Data/
+        │   │   ├── Original/
+        │   │   └── Stata/
+        │   ├── Doc/
+        │   │   ├── Questionnaires/
+        │   │   └── Technical/
+        │   └── Programs/
+        │
+        └── [Survey]_V01_M_V01_A_GLD (Harmonized Data Folder) [4]
+            ├── Data/Harmonized/
+            ├── Doc/
+            ├── Programs/
+            └── Work/
+```
 
-Inside the survey folder are the master data and the harmonized data folders. Both begin with the same name as the folder above in the nested logic, but the master only has the vintage of the master data (here V01_M, number 3 in the image, as this is the first (and only so far) version of the raw data we have). Master data may be updated if the NSO publishes, for example, a revision to the data.
+| ref | component tag | description |
+| --- | --- | --- |
+| 1 | Country Code | The ISO-3 alpha code representing the country (e.g., `ARM` for Armenia). |
+| 2 | Survey Identifier | Combination of the country code, survey year, and survey type acronym (e.g., `ARM_2014_LFS` for a 2014 Labor Force Survey). |
+| 3 | Master Data Folder | Container for raw and unmodified data files. The suffix `_V01_M` denotes Version 1 Master microdata. |
+| 4 | Harmonized Output Folder | Container for processed and standardized data. The suffix `_V01_M_V01_A_GLD` indicates the harmonized output version derived from the master dataset. |
 
-The harmonized folder (number 4 in the image) starts like the master data folder it harmonizes from (see green arrow in the image above) but adds the vintage of the harmonization (red arrow). It also adds the initials of the collection we are harmonizing towards (GLD).
+Within GLD, the first level is the country, identified by the [country’s three-letter code](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3) ([1] in the structure above). The surveys in a country follow the structure `CCC_YYYY_[SurveyName]`, where `YYYY` is the year of survey start and `SurveyName` the name or acronym of the survey. In this case, the Armenian Labor Force Survey from 2014 is `ARM_2014_LFS` ([2] above).
 
-Inside the master data folder there are three folders: Data, Doc, and Programs. Data itself is divided into Original and Stata. The former contains all files as downloaded if the original download is not in Stata format (i.e., not a .dta file), the latter contains the Stata survey microdata.
+Inside the survey folder are the master data and the harmonized data folders. Both begin with the same name as the folder above in the nested logic, but the master only has the vintage of the master data (here `_V01_M`, component [3] above, as this is the first (and only so far) version of the raw data we have). Master data may be updated if the NSO publishes, for example, a revision to the data.
 
-Any code changing the raw data is stored in the Programs folder. For example, code converting raw data from other formats to dta, that is, reading from Data/Original, converting it, and storing it in Data/Stata, would be stored under Programs.
+The harmonized folder (component [4] above) starts like the master data folder it harmonizes from but adds the vintage of the harmonization. It also adds the initials of the collection we are harmonizing towards (`GLD`).
 
-The last folder, Doc, contains all further documentation that is needed to work on the survey. It should be divided into two further folders: Questionnaires, containing the questionnaires and all other necessary document to understand the questionnaire and its flow; and Technical, containing all other technical information (e.g., reports, national occupation classifications, etc.).
+Inside the master data folder there are three folders: Data, Doc, and Programs. Data itself is divided into Original and Stata. The former contains all files as downloaded if the original download is not in Stata format (i.e., not a `.dta` file), the latter contains the Stata survey microdata.
 
-As a best practice, it is advised to leave in the Doc folder a small Readme file (commonly titled “Where is this data from – ReadMe.txt”) to give information about where the source material is from. This is important for future colleagues, so they can trace information establish the access policy.
+Any code changing the raw data is stored in the Programs folder. For example, code converting raw data from other formats to `.dta`, that is, reading from `Data/Original`, converting it, and storing it in `Data/Stata`, would be stored under Programs.
 
-The structure for each of the harmonization folders is roughly the same, only with added version numbering and collection name (GLD). The Data/Harmonized folder shall contain the harmonized output in ‘.dta’ form (in this case ARM_2014_LFS_V01_M_V01_A_GLD.dta). The Data/Additional Data folder is an optional contains data not in the raw data that is needed to create the harmonization. For example, if the conversion of the national industry classification to the international version is done via merging in an extra file, this file would be placed under Data/Additional Data. If no such files were used the folder need not exist.
+The last folder, Doc, contains all further documentation that is needed to work on the survey. It should be divided into two further folders: Questionnaires, containing the questionnaires and all other necessary documents to understand the questionnaire and its flow; and Technical, containing all other technical information (e.g., reports, national occupation classifications, etc.).
 
-The harmonization code (i.e., the code that takes the Data/Stata input from the master folder system and saves output in Data/Harmonized) is stored in the Programs folder (and in this case would be ARM_2014_LFS_V01_M_V01_A_GLD_ALL.do).
+As a best practice, it is advised to leave in the Doc folder a small Readme file (commonly titled “Where is this data from – ReadMe.txt”) to give information about where the source material is from. This is important for future colleagues, so they can trace information and establish the access policy.
 
-The Doc folder contains any other documentation necessary to describe and understand the survey. Note this is the same content as in ARM_2014_LFS_V01_M/Doc in the example above. Content should be in both at the same time – a small price on duplication we believe is worth for ease of finding for the user.
+The structure for each of the harmonization folders is roughly the same, only with added version numbering and collection name (`GLD`). The `Data/Harmonized` folder shall contain the harmonized output in `.dta` form (in this case `ARM_2014_LFS_V01_M_V01_A_GLD.dta`). The `Data/Additional Data` folder is optional and contains data not in the raw data that is needed to create the harmonization. For example, if the conversion of the national industry classification to the international version is done via merging in an extra file, this file would be placed under `Data/Additional Data`. If no such files were used the folder need not exist.
 
-The Work folder contains any output created during the harmonization that is not the final harmonization. For example, if you needed to create a subfile of the survey containing only households from a certain region for inspection or any other process you may need during your work, these outputs should be stored here. Data/Harmonized should only contain finalized files, here you may store any intermediate results.
+The harmonization code (i.e., the code that takes the `Data/Stata` input from the master folder system and saves output in `Data/Harmonized`) is stored in the Programs folder (and in this case would be `ARM_2014_LFS_V01_M_V01_A_GLD_ALL.do`).
 
-The GLD server is closed to members of the GLD team and access cannot be granted other than for exceptional circumstances. To allow World Bank staff member access to the server structure, the GLD team has created a copy of the GLD server, called the GLD WB Staff Server, only containing the subset of the GLD surveys that can be shared.
+The Doc folder contains any other documentation necessary to describe and understand the survey. Note this is the same content as in `ARM_2014_LFS_V01_M/Doc` in the example above. Content should be in both at the same time – a small price on duplication we believe is worth it for ease of finding for the user.
 
-The GLD WB Staff Server is a subset in two ways. Firstly, it only contains surveys whose raw microdata can be freely shared with World Bank colleagues. Secondly, it only contains the latest harmonized version. For example, while for the 2020 Indian Periodic Labour Force Survey (PLFS), GLD contains the raw data folder (IND_2020_PLFS_V01_M) and four vintages (IND_2020_PLFS_V01_M_V01_M_A_GLD to IND_2020_PLFS_V01_M_V04_A_GLD), the GLD Staff server only contains the master and IND_2020_PLFS_V01_M_V04_A_GLD. 
+The Work folder contains any output created during the harmonization that is not the final harmonization. For example, if you needed to create a subfile of the survey containing only households from a certain region for inspection or any other process you may need during your work, these outputs should be stored here. `Data/Harmonized` should only contain finalized files; here you may store any intermediate results.
 
-This reduces space on the server and ensures users are using the latest files are being used. If a user was running some code, calling from the GLD WB Staff Server the IND_2020_PLFS_V01_M_V0*3*_A_GLD files, it would not run and call an error, forcing them to update to the latest vintage.
+The GLD server is closed to members of the GLD team and access cannot be granted other than for exceptional circumstances. To allow World Bank staff members access to the server structure, the GLD team has created a copy of the GLD server, called the GLD WB Staff Server, only containing the subset of the GLD surveys that can be shared.
 
-Other than these two differences, the GLD WB Staff Server is organized like the full GLD server. Access to the GLD Staff Server can be requested and granted by the GLD Focal Point (please reach out to [gld@worldbank.org](mailto:gld@worldbank.org?subject=Requesting%20GLD%20Server%20Access)). 
+The GLD WB Staff Server is a subset in two ways. Firstly, it only contains surveys whose raw microdata can be freely shared with World Bank colleagues. Secondly, it only contains the latest harmonized version. For example, while for the 2020 Indian Periodic Labour Force Survey (PLFS), GLD contains the raw data folder (`IND_2020_PLFS_V01_M`) and four vintages (`IND_2020_PLFS_V01_M_V01_M_A_GLD` to `IND_2020_PLFS_V01_M_V04_A_GLD`), the GLD Staff server only contains the master and `IND_2020_PLFS_V01_M_V04_A_GLD`.
+
+This reduces space on the server and ensures the latest files are being used. If a user was running some code, calling from the GLD WB Staff Server the `IND_2020_PLFS_V01_M_V03_A_GLD` files, it would not run and throw an error, forcing them to update to the latest vintage.
+
+Other than these two differences, the GLD WB Staff Server is organized like the full GLD server. Access to the GLD Staff Server can be requested and granted by the GLD Focal Point (please reach out to [gld@worldbank.org](mailto:gld@worldbank.org?subject=Requesting%20GLD%20Server%20Access)).
 
 Access is available to any staff member with an active World Bank email address and access to a World Bank laptop or Virtual Desktop. Once a user has mapped the server (see [instructions here on mapping](https://github.com/worldbank/gld/blob/main/Support/A%20-%20Guides%20and%20Documentation/How%20Map%20Network%20Server.docx)) they do not need to take further steps as the GLD team updates the GLD WB staff server. What is present on the server should always represent the latest vintage of any harmonization available.
 
