@@ -632,6 +632,7 @@ foreach ed_var of local ed_vars {
 	gen vocational = .
 	label de lblvocational 0 "No" 1 "Yes"
 	label var vocational "Ever received vocational training"
+	label values vocational lblvocational
 *</_vocational_>
 
 
@@ -665,6 +666,7 @@ foreach ed_var of local ed_vars {
 	gen vocational_financed = .
 	label de lblvocational_financed 1 "Employer" 2 "Government" 3 "Mixed Employer/Government" 4 "Own funds" 5 "Other"
 	label var vocational_financed "How training was financed"
+	label values vocational_financed lblvocational_financed
 *</_vocational_financed_>
 
 }
@@ -766,8 +768,8 @@ foreach ed_var of local ed_vars {
 
 
 *<_industrycat_isic_>
-	gen industrycat_isic = .
-	replace industrycat_isic = . if lstatus != 1
+	gen industrycat_isic = ""
+	replace industrycat_isic = "" if lstatus != 1
 	* Check that no errors --> using our universe check function, count should be 0 (no obs wrong)
 	* https://github.com/worldbank/gld/tree/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20universe%20check
 	preserve 
@@ -970,7 +972,7 @@ foreach ed_var of local ed_vars {
 
 
 *<_industrycat_isic_2_>
-	gen industrycat_isic_2 = .
+	gen industrycat_isic_2 = ""
 	label var industrycat_isic_2 "ISIC code of secondary job 7 day recall"
 *</_industrycat_isic_2_>
 
@@ -1183,7 +1185,7 @@ foreach ed_var of local ed_vars {
 
 
 *<_industrycat_isic_year_>
-	gen industrycat_isic_year = .
+	gen industrycat_isic_year = ""
 
 	* Check that no errors --> using our universe check function, count should be 0 (no obs wrong)
 	* https://github.com/worldbank/gld/tree/main/Support/Z%20-%20GLD%20Ecosystem%20Tools/ISIC%20ISCO%20universe%20check
@@ -1361,7 +1363,7 @@ foreach ed_var of local ed_vars {
 
 
 *<_industrycat_isic_2_year_>
-	gen industrycat_isic_2_year = .
+	gen industrycat_isic_2_year = ""
 	label var industrycat_isic_2_year "ISIC code of secondary job 12 month recall"
 *</_industrycat_isic_2_year_>
 
