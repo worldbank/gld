@@ -158,12 +158,6 @@ marital must be an integer in the range [1,5].
 marital<0 & marital>5 & mod(marital, 1) == 1
 ```
 
-Children are “Never married” and should be coded as so even though it may be perceived as obvious. The marital status of individuals should be harmonized for all individuals. Harmonizers should check to make sure children are not systematically left with missing values for marital.
-
-```
-tab age marital, missing
-```
-
 weight cannot be missing
 
 ```
