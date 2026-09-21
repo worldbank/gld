@@ -76,6 +76,8 @@ GLD/
         └── [Survey]_V01_M_V01_A_GLD (Harmonized Data Folder) [4]
             ├── Data/Harmonized/
             ├── Doc/
+            │   ├── Questionnaires/
+            │   └── Technical/
             ├── Programs/
             └── Work/
 ```
