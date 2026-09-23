@@ -1,7 +1,7 @@
 # Book settings
 title: Global Labor Database
 author: World Bank Jobs Group
-logo: docs/images/WB_Jobs_logo_color.svg
+logo: docs/images/WBG_Vertical-RGB-high.png
 only_build_toc_files: true
 
 repository:
