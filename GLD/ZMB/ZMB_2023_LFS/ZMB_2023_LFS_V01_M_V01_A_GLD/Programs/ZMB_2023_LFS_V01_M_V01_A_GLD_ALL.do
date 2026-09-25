@@ -1,48 +1,48 @@
-
 /*%%=============================================================================================
 	0: GLD Harmonization Preamble
 ==============================================================================================%%*/
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				[ZMB_2023_LFS_V01_M_V01_A] </_Program name_>
-<_Application_>					[STATA 17] <_Application_>
-<_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
-<_Date created_>				2026-07-10 </_Date created_>
+<_Program name_>				[ZMB_2023_LFS_V01_M_V01_A_GLD_ALL.do] </_Program name_>
+<_Application_>					[STATA 17] </_Application_>
+<_Author(s)_>					[World Bank Jobs Group (gld@worldbank.org)] </_Author(s)_>
+<_Date created_>				[2026-07-10] </_Date created_>
 
 -------------------------------------------------------------------------
 
-<_Country_>							[ZAMBIA (ZMB)] </_Country_>
-<_Survey Title_>					[LABOUR FORCE SURVEY] </_Survey Title_>
-<_Survey Year_>						[2023] </_Survey Year_>
-<_Study ID_>						[N/A] </_Study ID_>
-<_Data collection from_>			[] </_Data collection from_>
-<_Data collection to_>				[] </_Data collection to_>
-<_Source of dataset_> 				[Zambia Statistics Office] </_Source of dataset_>
-<_Sample size (HH)_> 				[#] </_Sample size (HH)_>
-<_Sample size (IND)_> 				[#] </_Sample size (IND)_>
-<_Sampling method_> 				[two stage probabilistic, stratified, by enumeration areas] </_Sampling method_>
-<_Geographic coverage_> 			[National, urban/rural] </_Geographic coverage_>
-<_Currency_> 						[Zambia Kwacha] </_Currency_>
+<_Country_>						[ZAMBIA (ZMB)] </_Country_>
+<_Survey Title_>				[LABOUR FORCE SURVEY] </_Survey Title_>
+<_Survey Year_>					[2023] </_Survey Year_>
+<_Study ID_>					[ZMB-ZSA-LFS-2023-V1.0] </_Study ID_>
+<_Data collection from_>		[03/2023] </_Data collection from_>
+<_Data collection to_>			[12/2023] </_Data collection to_>
+<_Source of dataset_> 			[Zambia Statistics Agency] </_Source of dataset_>
+<_Sample size (HH)_> 			[10277] </_Sample size (HH)_>
+<_Sample size (IND)_> 			[48807] </_Sample size (IND)_>
+<_Sampling method_> 			[Split-panel, two-stage stratified sampling design; enumeration areas selected as PSUs and households selected within EAs] </_Sampling method_>
+<_Geographic coverage_> 		[National, urban/rural and provincial] </_Geographic coverage_>
+<_Currency_> 					[Zambian Kwacha] </_Currency_>
 
 -----------------------------------------------------------------------
 
-<_ICLS Version_>				[ICLS 13] </_ICLS Version_>
+<_ICLS Version_>				[ICLS 20] </_ICLS Version_>
 <_ISCED Version_>				[] </_ISCED Version_>
 <_ISCO Version_>				[ISCO 2008] </_ISCO Version_>
-<_OCCUP National_>				[N/A </_OCCUP National_>
-<_ISIC Version_>				[ISIC v4] </_ISIC Version_>
+<_OCCUP National_>				[N/A] </_OCCUP National_>
+<_ISIC Version_>				[ISIC Rev. 4] </_ISIC Version_>
 <_INDUS National_>				[N/A] </_INDUS National_>
 
 -----------------------------------------------------------------------
+
 <_Version Control_>
 
-* Date: [YYYY-MM-DD] - [Description of changes]
-* Date: [YYYY-MM-DD] - [Description of changes]
+* V01_M_V01_A - 2026-07-10 - Initial 2023 harmonization do-file created.
+* V01_M_V01_A - 2026-09-25 - Updated source processing to reconstruct anonymous household groupings using household-head name, phone number and address within cluster; removed personally identifying information from the master data; updated sample size and survey metadata; and revised related harmonization checks.
 
 </_Version Control_>
 
--------------------------------------------------------------------------*/
+----------------------------------------------------------------------- */
 
 
 /*%%=================================	 ==========================================================
@@ -59,7 +59,12 @@ set varabbrev off
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-local server   "C:/Users/wb611670/WBG/GLD - 611670_SF"
+if "`c(username)'" == "wb611670" {
+	local server   "C:/Users/wb611670/WBG/GLD - 611670_SF"
+}
+else {
+	local server   "C:/Users/`c(username)'/WBG/GLD - Current Contributors/611670_SF"
+}
 local country "ZMB"
 local year    "2023"
 local survey  "LFS"
@@ -159,59 +164,61 @@ use "`path_in_stata'/ZM_2023_LFS.dta", clear
 
 
 *<_int_year_>
-	gen int_year=.
+/* <_int_year_note>
+
+	The source interview-date variable (`ghvfdt`) indicates that all Quarter 4
+	interviews were conducted in January-February 2024. Interview year and month
+	therefore reflect the actual interview date recorded in the source data,
+	even though the file belongs to the 2023 Annual Labour Force Survey.
+
+</_int_year_note> */
+	gen int_year = floor(ghvfdt/10000)
 	label var int_year "Year of the interview"
 *</_int_year_>
 
 
 *<_int_month_>
-	gen  int_month = .
+	gen int_month = floor(mod(ghvfdt,10000)/100)
 	label de lblint_month 1 "January" 2 "February" 3 "March" 4 "April" 5 "May" 6 "June" 7 "July" 8 "August" 9 "September" 10 "October" 11 "November" 12 "December"
 	label value int_month lblint_month
 	label var int_month "Month of the interview"
 *</_int_month_>
 
-
 *<_hhid_>
 /* <_hhid_note>
 
-	The variable should be a string made up of the elements to define it, that is psu code, ssu, ...
-	Each element should always be as long as needed for the longest element. That is, if there are
-	60 psu coded 1 through 60, codes should be 01, 02, ..., 60. If there are 160 it should be 001,
-	002, ..., 160.
+	The original household identifier in the 2023 source data is not reliable
+	for uniquely identifying households.
+
+	During master-data processing, an anonymous household grouping (`hh_group`)
+	was reconstructed within cluster using household-head name, phone number,
+	and physical address. The identifying variables were used only for this
+	reconstruction and were removed before the master data were stored.
+
+	The harmonized household ID is therefore based on this anonymous household
+	grouping.
 
 </_hhid_note> */
-	gen hhid = ""
-// 	gen str hlpr_prov     = string(prov,     "%02.0f")
-// 	gen str hlpr_dist     = string(dist,     "%04.0f")
-// 	gen str hlpr_const    = string(const,    "%03.0f")
-// 	gen str hlpr_ward     = string(ward,     "%02.0f")
-// 	gen str hlpr_cluster  = string(cluster,  "%04.0f")
-// 	gen str hlpr_csa      = string(csa,      "%02.0f")
-// 	gen str hlpr_sea      = string(sea,      "%01.0f")
-// 	gen str hlpr_sbn      = string(sbn,      "%03.0f")
-// 	gen str hlpr_hun      = string(hun,      "%03.0f")
-// 	gen str hlpr_hhn     = string(hhn,       "%02.0f")
-//	
-// 	egen hhid = concat(hlpr_*)
-// 	drop hlpr_*
+
+	gen str hhid = string(hh_group, "%05.0f")
 	label var hhid "Household ID"
+
 *</_hhid_>
 
 
 *<_pid_>
+
 	rename pid pid_raw
-// 	gen str hlpr_pid = string(pid_raw, "%02.0f")
-//	
-// 	egen pid = concat(hhid hlpr_pid)
-	gen pid = ""
+
+	gen str hlpr_pid = string(pid_raw, "%02.0f")
+	gen str pid = hhid + hlpr_pid
+
 	label var pid "Individual ID"
-// 	drop hlpr_pid
-//
-// 	isid pid
-//	
-// 	drop *_dup
-// 	isid pid
+
+	isid pid
+
+	drop hlpr_pid
+
 *</_pid_>
 
 
@@ -283,7 +290,7 @@ use "`path_in_stata'/ZM_2023_LFS.dta", clear
 
 *<_urban_>
 // 	gen byte urban = region
-	gen byte urban = .
+	gen byte urban = rural
 	recode urban (2=1) (1=0)
 	label var urban "Location is urban"
 	la de lblurban 1 "Urban" 0 "Rural"
