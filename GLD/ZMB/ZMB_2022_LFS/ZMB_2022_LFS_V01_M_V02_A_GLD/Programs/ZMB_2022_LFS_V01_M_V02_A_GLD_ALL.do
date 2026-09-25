@@ -1,4 +1,3 @@
-
 /*%%=============================================================================================
 	0: GLD Harmonization Preamble
 ==============================================================================================%%*/
@@ -6,39 +5,39 @@
 /* -----------------------------------------------------------------------
 
 <_Program name_>				[ZMB_2022_LFS_V01_M_V02_A] </_Program name_>
-<_Application_>					[STATA 17] <_Application_>
+<_Application_>					[STATA 17] </_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
 <_Date created_>				2023-08-16 </_Date created_>
 
 -------------------------------------------------------------------------
 
-<_Country_>							[ZAMBIA (ZMB)] </_Country_>
+<_Country_>						[ZAMBIA (ZMB)] </_Country_>
 <_Survey Title_>					[LABOUR FORCE SURVEY] </_Survey Title_>
-<_Survey Year_>						[2022] </_Survey Year_>
+<_Survey Year_>					[2022] </_Survey Year_>
 <_Study ID_>						[N/A] </_Study ID_>
 <_Data collection from_>			[] </_Data collection from_>
 <_Data collection to_>				[] </_Data collection to_>
-<_Source of dataset_> 				[Zambia Statistics Office] </_Source of dataset_>
-<_Sample size (HH)_> 				[#] </_Sample size (HH)_>
-<_Sample size (IND)_> 				[#] </_Sample size (IND)_>
+<_Source of dataset_> 				[Zambia Statistics Agency] </_Source of dataset_>
+<_Sample size (HH)_> 				[10251] </_Sample size (HH)_>
+<_Sample size (IND)_> 				[47060] </_Sample size (IND)_>
 <_Sampling method_> 				[two stage probabilistic, stratified, by enumeration areas] </_Sampling method_>
 <_Geographic coverage_> 			[National, urban/rural] </_Geographic coverage_>
-<_Currency_> 						[Zambia Kwacha] </_Currency_>
+<_Currency_> 						[Zambian Kwacha] </_Currency_>
 
 -----------------------------------------------------------------------
 
 <_ICLS Version_>				[ICLS 13] </_ICLS Version_>
 <_ISCED Version_>				[] </_ISCED Version_>
 <_ISCO Version_>				[ISCO 2008] </_ISCO Version_>
-<_OCCUP National_>				[N/A </_OCCUP National_>
+<_OCCUP National_>				[N/A] </_OCCUP National_>
 <_ISIC Version_>				[ISIC v4] </_ISIC Version_>
 <_INDUS National_>				[N/A] </_INDUS National_>
 
 -----------------------------------------------------------------------
 <_Version Control_>
 
-* Date: [2026-07-24] - [ZMB_2022_LFS_V01_M_V02_A： Update to new template； add migration]
-* Date: [YYYY-MM-DD] - [Description of changes]
+* Date: [2026-07-24] - [ZMB_2022_LFS_V01_M_V02_A: Update to new template; add migration]
+* Date: [2026-09-25] - [ZMB_2022_LFS_V01_M_V02_A: Correct migration harmonization based on code review; update sample sizes and survey metadata]
 
 </_Version Control_>
 
@@ -552,10 +551,18 @@ use "`path_in_stata'/ZM_2022_LFS.dta", clear
 
 *<_migrated_years_>
 	gen migrated_years = .
+
 	// Calculate years since latest international migration
 	replace migrated_years = 2022 - j4_a_year if migrated_binary == 1 & j3_a == 1 & !missing(j4_a_year)
-	// Calculate years since latest domestic district migration
-	replace migrated_years = 2022 - j3_c_year if migrated_binary == 1 & j2_c == 1 & !missing(j3_c_year)
+
+	// Domestic migration only
+	replace migrated_years = 2022 - j3_c_year if migrated_binary == 1 & j2_c == 1 & j3_a != 1 & !missing(j3_c_year)
+
+	// If both international and domestic moves are reported, retain the latest move
+	replace migrated_years = min(2022 - j4_a_year, 2022 - j3_c_year) ///
+		if migrated_binary == 1 & j3_a == 1 & j2_c == 1 ///
+		& !missing(j4_a_year) & !missing(j3_c_year)
+
 	replace migrated_years = . if migrated_binary != 1
 	label var migrated_years "Years since latest migration"
 *</_migrated_years_>
@@ -570,13 +577,19 @@ use "`path_in_stata'/ZM_2022_LFS.dta", clear
 
 *<_migrated_from_cat_>
 	gen migrated_from_cat = .
+
 	// Code 5 = cross-border international migration
 	replace migrated_from_cat = 5 if migrated_binary == 1 & j3_a == 1
 
 	tempvar old_prov_code
 	gen `old_prov_code' = floor(j4_c_distict / 100) if migrated_binary == 1 & j2_c == 1 & !missing(j4_c_distict)
-	replace migrated_from_cat = 3 if `old_prov_code' == prov    // Same province (admin1), different district
-	replace migrated_from_cat = 4 if `old_prov_code' != prov    // Different province
+
+	replace migrated_from_cat = 3 if migrated_binary == 1 & j2_c == 1 ///
+		& !missing(j4_c_distict) & `old_prov_code' == prov
+
+	replace migrated_from_cat = 4 if migrated_binary == 1 & j2_c == 1 ///
+		& !missing(j4_c_distict) & `old_prov_code' != prov
+
 	drop `old_prov_code'
 
 	replace migrated_from_cat = . if migrated_binary != 1
@@ -619,43 +632,39 @@ use "`path_in_stata'/ZM_2022_LFS.dta", clear
 *<_migrated_reason_>
 	gen migrated_reason = .
 
-	// International migration reason mapping (j6_a for cross-border migrants)
-	if migrated_binary == 1 & j3_a == 1 & !missing(j6_a) {
-		replace migrated_reason = 3 if j6_a == 1      // To work
-		replace migrated_reason = 3 if j6_a == 2      // Other income reasons
-		replace migrated_reason = 4 if j6_a == 4      // Eviction
-		replace migrated_reason = 1 if j6_a == 6      // Follow family
-		replace migrated_reason = 1 if j6_a == 7      // Marriage
-		replace migrated_reason = 2 if j6_a == 8      // School/training
-		replace migrated_reason = 4 if j6_a == 11     // To escape insecurity
-		replace migrated_reason = 4 if j6_a == 14     // To be refugee
-		replace migrated_reason = 4 if j6_a == 15     // To be an Asylum seeker
-		replace migrated_reason = 5 if j6_a == 16     // Other
-		replace migrated_reason = . if j6_a == 99     // Missing/invalid code
-	}
+	// International migration reason mapping
+	replace migrated_reason = 3 if migrated_binary == 1 & j3_a == 1 & !missing(j6_a) & j6_a == 1
+	replace migrated_reason = 3 if migrated_binary == 1 & j3_a == 1 & !missing(j6_a) & j6_a == 2
+	replace migrated_reason = 4 if migrated_binary == 1 & j3_a == 1 & !missing(j6_a) & j6_a == 4
+	replace migrated_reason = 1 if migrated_binary == 1 & j3_a == 1 & !missing(j6_a) & j6_a == 6
+	replace migrated_reason = 1 if migrated_binary == 1 & j3_a == 1 & !missing(j6_a) & j6_a == 7
+	replace migrated_reason = 2 if migrated_binary == 1 & j3_a == 1 & !missing(j6_a) & j6_a == 8
+	replace migrated_reason = 4 if migrated_binary == 1 & j3_a == 1 & !missing(j6_a) & j6_a == 11
+	replace migrated_reason = 4 if migrated_binary == 1 & j3_a == 1 & !missing(j6_a) & j6_a == 14
+	replace migrated_reason = 4 if migrated_binary == 1 & j3_a == 1 & !missing(j6_a) & j6_a == 15
+	replace migrated_reason = 5 if migrated_binary == 1 & j3_a == 1 & !missing(j6_a) & j6_a == 16
+	replace migrated_reason = . if migrated_binary == 1 & j3_a == 1 & j6_a == 99
 
-	// Domestic inter-district migration reason mapping (j5_c)
-	if migrated_binary == 1 & j2_c == 1 & !missing(j5_c) {
-		replace migrated_reason = 3 if j5_c == 1      // To work
-		replace migrated_reason = 3 if j5_c == 2      // Other income reasons
-		replace migrated_reason = 4 if j5_c == 3      // Drought, flood or other weather conditions
-		replace migrated_reason = 4 if j5_c == 4      // Eviction
-		replace migrated_reason = 4 if j5_c == 5      // Land related problems
-		replace migrated_reason = 1 if j5_c == 6      // Follow family
-		replace migrated_reason = 1 if j5_c == 7      // Marriage
-		replace migrated_reason = 2 if j5_c == 8      // School/training
-		replace migrated_reason = 4 if j5_c == 9      // Illness, injury
-		replace migrated_reason = 1 if j5_c == 10     // Divorce/separation
-		replace migrated_reason = 4 if j5_c == 11     // To escape insecurity
-		replace migrated_reason = 4 if j5_c == 12     // To return home from displacement
-	}
+	// Domestic inter-district migration reason mapping
+	replace migrated_reason = 3 if migrated_binary == 1 & j2_c == 1 & !missing(j5_c) & j5_c == 1
+	replace migrated_reason = 3 if migrated_binary == 1 & j2_c == 1 & !missing(j5_c) & j5_c == 2
+	replace migrated_reason = 4 if migrated_binary == 1 & j2_c == 1 & !missing(j5_c) & j5_c == 3
+	replace migrated_reason = 4 if migrated_binary == 1 & j2_c == 1 & !missing(j5_c) & j5_c == 4
+	replace migrated_reason = 4 if migrated_binary == 1 & j2_c == 1 & !missing(j5_c) & j5_c == 5
+	replace migrated_reason = 1 if migrated_binary == 1 & j2_c == 1 & !missing(j5_c) & j5_c == 6
+	replace migrated_reason = 1 if migrated_binary == 1 & j2_c == 1 & !missing(j5_c) & j5_c == 7
+	replace migrated_reason = 2 if migrated_binary == 1 & j2_c == 1 & !missing(j5_c) & j5_c == 8
+	replace migrated_reason = 4 if migrated_binary == 1 & j2_c == 1 & !missing(j5_c) & j5_c == 9
+	replace migrated_reason = 1 if migrated_binary == 1 & j2_c == 1 & !missing(j5_c) & j5_c == 10
+	replace migrated_reason = 4 if migrated_binary == 1 & j2_c == 1 & !missing(j5_c) & j5_c == 11
+	replace migrated_reason = 4 if migrated_binary == 1 & j2_c == 1 & !missing(j5_c) & j5_c == 12
 
 	replace migrated_reason = . if migrated_binary != 1
+
 	label define lblmigrated_reason 1 "Family reasons" 2 "Educational reasons" 3 "Employment" 4 "Forced (political reasons, natural disaster, …)" 5 "Other reasons"
 	label values migrated_reason lblmigrated_reason
 	label var migrated_reason "Reason for migrating"
 *</_migrated_reason_>
-
 }
 
 
