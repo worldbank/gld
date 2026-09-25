@@ -1,4 +1,3 @@
-
 /*%%=============================================================================================
 	0: GLD Harmonization Preamble
 ==============================================================================================%%*/
@@ -6,39 +5,39 @@
 /* -----------------------------------------------------------------------
 
 <_Program name_>				[ZMB_2024_LFS_V01_M_V01_A] </_Program name_>
-<_Application_>					[STATA 17] <_Application_>
+<_Application_>					[STATA 17] </_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
 <_Date created_>				2026-07-10 </_Date created_>
 
 -------------------------------------------------------------------------
 
-<_Country_>							[ZAMBIA (ZMB)] </_Country_>2024
+<_Country_>						[ZAMBIA (ZMB)] </_Country_>
 <_Survey Title_>					[LABOUR FORCE SURVEY] </_Survey Title_>
-<_Survey Year_>						[2024] </_Survey Year_>
-<_Study ID_>						[N/A] </_Study ID_>
-<_Data collection from_>			[] </_Data collection from_>
-<_Data collection to_>				[] </_Data collection to_>
-<_Source of dataset_> 				[Zambia Statistics Office] </_Source of dataset_>
+<_Survey Year_>					[2024] </_Survey Year_>
+<_Study ID_>						[ZMB-ZSA-LFS-2024-V1.0] </_Study ID_>
+<_Data collection from_>			[03/2024] </_Data collection from_>
+<_Data collection to_>				[12/2024] </_Data collection to_>
+<_Source of dataset_> 				[Zambia Statistics Agency] </_Source of dataset_>
 <_Sample size (HH)_> 				[#] </_Sample size (HH)_>
-<_Sample size (IND)_> 				[#] </_Sample size (IND)_>
-<_Sampling method_> 				[two stage probabilistic, stratified, by enumeration areas] </_Sampling method_>
-<_Geographic coverage_> 			[National, urban/rural] </_Geographic coverage_>
-<_Currency_> 						[Zambia Kwacha] </_Currency_>
+<_Sample size (IND)_> 				[49023] </_Sample size (IND)_>
+<_Sampling method_> 				[Split-panel, two-stage stratified cluster sampling] </_Sampling method_>
+<_Geographic coverage_> 			[National, rural/urban, province] </_Geographic coverage_>
+<_Currency_> 						[Zambian Kwacha] </_Currency_>
 
 -----------------------------------------------------------------------
 
-<_ICLS Version_>				[ICLS 13] </_ICLS Version_>
+<_ICLS Version_>				[ICLS 20] </_ICLS Version_>
 <_ISCED Version_>				[] </_ISCED Version_>
 <_ISCO Version_>				[ISCO 2008] </_ISCO Version_>
-<_OCCUP National_>				[N/A </_OCCUP National_>
-<_ISIC Version_>				[ISIC v4] </_ISIC Version_>
+<_OCCUP National_>				[N/A] </_OCCUP National_>
+<_ISIC Version_>				[ISIC Rev. 4] </_ISIC Version_>
 <_INDUS National_>				[N/A] </_INDUS National_>
 
 -----------------------------------------------------------------------
 <_Version Control_>
 
-* Date: [YYYY-MM-DD] - [Description of changes]
-* Date: [YYYY-MM-DD] - [Description of changes]
+* V01_M_V01_A - 2026-07-10 - Initial 2024 harmonization do-file created.
+* V01_M_V01_A - 2026-09-25 - Revised household identifier construction using available source identifiers and qssignid; corrected migration-origin classification for missing origin districts; retained quarterly sampling weights in the final harmonized dataset; and updated survey metadata and sample information.
 
 </_Version Control_>
 
@@ -59,7 +58,13 @@ set varabbrev off
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-local server   "C:/Users/wb611670/WBG/GLD - 611670_SF"
+if "`c(username)'" == "wb611670" {
+	local server   "C:/Users/wb611670/WBG/GLD - 611670_SF"
+}
+else {
+	local server   "C:/Users/`c(username)'/WBG/GLD - Current Contributors/611670_SF"
+}
+
 local country "ZMB"
 local year    "2024"
 local survey  "LFS"
@@ -175,24 +180,28 @@ use "`path_in_stata'/ZM_2024_LFS.dta", clear
 *<_hhid_>
 /* <_hhid_note>
 
-	The variable should be a string made up of the elements to define it, that is psu code, ssu, ...
-	Each element should always be as long as needed for the longest element. That is, if there are
-	60 psu coded 1 through 60, codes should be 01, 02, ..., 60. If there are 160 it should be 001,
-	002, ..., 160.
+	The 2024 source data do not contain the full set of household identifiers
+	available in earlier survey years. The household ID is therefore constructed
+	using the available geographic and sample identifiers together with qssignid
+	(Questionnaire Assign ID), which substantially improves household
+	disambiguation.
+
+	A small number of records remain non-unique at the household-person level.
+	No additional source identifier is available to reliably distinguish these
+	remaining cases.
 
 </_hhid_note> */
-	gen str hlpr_prov     = string(prov,     "%02.0f")
-	gen str hlpr_dist     = string(dist,     "%04.0f")
-// 	gen str hlpr_const    = string(const,    "%03.0f")
-// 	gen str hlpr_ward     = string(ward,     "%02.0f")
-	gen str hlpr_cluster  = string(cluster,  "%04.0f")
-	gen str hlpr_csa      = string(csa,      "%02.0f")
-// 	gen str hlpr_sea      = string(sea,      "%01.0f")
-	gen str hlpr_sbn      = string(sbn,      "%03.0f")
-	gen str hlpr_hun      = string(hun,      "%03.0f")
-	gen str hlpr_hhn     = string(hhn,       "%02.0f")
-	
-	egen hhid = concat(hlpr_*)
+
+	gen str hlpr_quarter = string(quarter, "%01.0f")
+	gen str hlpr_prov    = string(prov, "%02.0f")
+	gen str hlpr_dist    = string(dist, "%04.0f")
+	gen str hlpr_cluster = string(cluster, "%04.0f")
+	gen str hlpr_sbn     = string(sbn, "%03.0f")
+	gen str hlpr_hun     = string(hun, "%03.0f")
+	gen str hlpr_hhn     = string(hhn, "%02.0f")
+	gen str hlpr_qsid    = string(qssignid, "%02.0f")
+
+	egen hhid = concat(hlpr_quarter hlpr_prov hlpr_dist hlpr_cluster hlpr_sbn hlpr_hun hlpr_hhn hlpr_qsid)
 	drop hlpr_*
 	label var hhid "Household ID"
 *</_hhid_>
@@ -201,15 +210,9 @@ use "`path_in_stata'/ZM_2024_LFS.dta", clear
 *<_pid_>
 	rename pid pid_raw
 	gen str hlpr_pid = string(pid_raw, "%02.0f")
-	
 	egen pid = concat(hhid hlpr_pid)
 	label var pid "Individual ID"
 	drop hlpr_pid
-//
-// 	isid pid
-//	
-// 	drop *_dup
-// 	isid pid
 *</_pid_>
 
 
@@ -529,13 +532,15 @@ use "`path_in_stata'/ZM_2024_LFS.dta", clear
 	gen migrated_from_cat = .
 	replace migrated_from_cat = 5 if j3_a == 1
 	
-	replace migrated_from_cat = 1 if j2_c == 1 & (j4_c_distict == dist)
-	replace migrated_from_cat = 3 if j2_c == 1 & (j4_c_distict != dist) & (from_prov == prov)
-	replace migrated_from_cat = 4 if j2_c == 1 & (j4_c_distict != dist) & (from_prov != prov)
+	replace migrated_from_cat = 1 if j2_c == 1 & !missing(j4_c_distict) & (j4_c_distict == dist)
+	replace migrated_from_cat = 3 if j2_c == 1 & !missing(j4_c_distict) & (j4_c_distict != dist) & (from_prov == prov)
+	replace migrated_from_cat = 4 if j2_c == 1 & !missing(j4_c_distict) & (j4_c_distict != dist) & (from_prov != prov)
 	
 	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country"
 	label values migrated_from_cat lblmigrated_from_cat
 	label var migrated_from_cat "Category of migration area"
+	
+	drop from_prov
 *</_migrated_from_cat_>
 
 
@@ -1724,13 +1729,13 @@ quietly{
 
 *<_% KEEP VARIABLES - ALL_>
 
-	keep countrycode survname survey icls_v isced_version isco_version isic_version year vermast veralt harmonization int_year int_month hhid pid weight psu ssu strata wave panel visit_no urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_orig educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field_orig vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
+	keep countrycode survname survey icls_v isced_version isco_version isic_version year vermast veralt harmonization int_year int_month hhid pid weight weight_q psu ssu strata wave panel visit_no urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_orig educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field_orig vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
 
 *</_% KEEP VARIABLES - ALL_>
 
 *<_% ORDER VARIABLES_>
 
-	order countrycode survname survey icls_v isced_version isco_version isic_version year vermast veralt harmonization int_year int_month hhid pid weight psu ssu strata wave panel visit_no urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_orig educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field_orig vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
+	order countrycode survname survey icls_v isced_version isco_version isic_version year vermast veralt harmonization int_year int_month hhid pid weight weight_q psu ssu strata wave panel visit_no urban subnatid1 subnatid2 subnatid3 subnatidsurvey subnatid1_prev subnatid2_prev subnatid3_prev gaul_adm1_code gaul_adm2_code gaul_adm3_code hsize age male relationharm relationcs marital eye_dsablty hear_dsablty walk_dsablty conc_dsord slfcre_dsablty comm_dsablty migrated_mod_age migrated_ref_time migrated_binary migrated_years migrated_from_urban migrated_from_cat migrated_from_code migrated_from_country migrated_reason ed_mod_age school literacy educy educat7 educat5 educat4 educat_orig educat_isced vocational vocational_type vocational_length_l vocational_length_u vocational_field_orig vocational_financed minlaborage lstatus potential_lf underemployment nlfreason unempldur_l unempldur_u empstat ocusec industry_orig industrycat_isic industrycat10 industrycat4 occup_orig occup_isco occup_skill occup wage_no_compen unitwage whours wmonths wage_total contract healthins socialsec union firmsize_l firmsize_u empstat_2 ocusec_2 industry_orig_2 industrycat_isic_2 industrycat10_2 industrycat4_2 occup_orig_2 occup_isco_2 occup_skill_2 occup_2 wage_no_compen_2 unitwage_2 whours_2 wmonths_2 wage_total_2 firmsize_l_2 firmsize_u_2 t_hours_others t_wage_nocompen_others t_wage_others t_hours_total t_wage_nocompen_total t_wage_total lstatus_year potential_lf_year underemployment_year nlfreason_year unempldur_l_year unempldur_u_year empstat_year ocusec_year industry_orig_year industrycat_isic_year industrycat10_year industrycat4_year occup_orig_year occup_isco_year occup_skill_year occup_year wage_no_compen_year unitwage_year whours_year wmonths_year wage_total_year contract_year healthins_year socialsec_year union_year firmsize_l_year firmsize_u_year empstat_2_year ocusec_2_year industry_orig_2_year industrycat_isic_2_year industrycat10_2_year industrycat4_2_year occup_orig_2_year occup_isco_2_year occup_skill_2_year occup_2_year wage_no_compen_2_year unitwage_2_year whours_2_year wmonths_2_year wage_total_2_year firmsize_l_2_year firmsize_u_2_year t_hours_others_year t_wage_nocompen_others_year t_wage_others_year t_hours_total_year t_wage_nocompen_total_year t_wage_total_year njobs t_hours_annual linc_nc laborincome
 
 *</_% ORDER VARIABLES_>
 
