@@ -5,7 +5,7 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				[ZMB_2017_LFS_V01_M_V01_A] </_Program name_>
+<_Program name_>				[ZMB_2017_LFS_V01_M_V02_A] </_Program name_>
 <_Application_>					[STATA 17] <_Application_>
 <_Author(s)_>					World Bank Jobs Group (gld@worldbank.org) </_Author(s)_>
 <_Date created_>				2023-08-16 </_Date created_>
@@ -19,8 +19,8 @@
 <_Data collection from_>			[] </_Data collection from_>
 <_Data collection to_>				[] </_Data collection to_>
 <_Source of dataset_> 				[Zambia Statistics Office] </_Source of dataset_>
-<_Sample size (HH)_> 				[#] </_Sample size (HH)_>
-<_Sample size (IND)_> 				[#] </_Sample size (IND)_>
+<_Sample size (HH)_> 				[9241] </_Sample size (HH)_>
+<_Sample size (IND)_> 				[45453] </_Sample size (IND)_>
 <_Sampling method_> 				[two stage probabilistic, stratified, by enumeration areas] </_Sampling method_>
 <_Geographic coverage_> 			[National, urban/rural] </_Geographic coverage_>
 <_Currency_> 						[Zambia Kwacha] </_Currency_>
@@ -38,7 +38,7 @@
 <_Version Control_>
 
 * Date: [2026-06-26] - [Update to new template; add migration]
-* Date: [YYYY-MM-DD] - [Description of changes]
+* Date: [2026-09-25] - [ZMB_2017_LFS_V01_M_V02_A: Correct migration harmonization based on code review; update sample sizes and survey metadata]
 
 </_Version Control_>
 
@@ -59,7 +59,12 @@ set varabbrev off
 *----------1.2: Set directories------------------------------*
 
 * Define path sections
-local server   "C:/Users/wb611670/WBG/GLD - 611670_SF"
+if "`c(username)'" == "wb611670" {
+	local server   "C:/Users/wb611670/WBG/GLD - 611670_SF"
+}
+else {
+	local server   "C:/Users/`c(username)'/WBG/GLD - Current Contributors/611670_SF"
+}
 local country "ZMB"
 local year    "2017"
 local survey  "LFS"
@@ -603,16 +608,22 @@ use "`path_in_stata'/2017LFS.dta", clear
 *<_migrated_from_cat_>
 	gen migrated_from_cat = .
 
-	if migrated_binary == 1 & !missing(j5) {
-		gen byte old_prov = floor(j5 / 100)
-		* 3 = same admin1(Province), different admin2(District)
-		replace migrated_from_cat = 3 if old_prov == prov
-		* 4 = different admin1 (other province)
-		replace migrated_from_cat = 4 if old_prov != prov
-		drop old_prov
-	}
+	gen byte old_prov = floor(j5 / 100) if migrated_binary == 1 & !missing(j5)
 
-	replace migrated_from_cat = 5 if migrated_binary == 1 & !missing(j1b) & j1b != 601
+	* 3 = same admin1 (Province), different admin2 (District)
+	replace migrated_from_cat = 3 if migrated_binary == 1 ///
+		& !missing(j5) & old_prov == prov
+
+	* 4 = different admin1 (other province)
+	replace migrated_from_cat = 4 if migrated_binary == 1 ///
+		& !missing(j5) & old_prov != prov
+
+	drop old_prov
+
+	* 5 = international migration
+	replace migrated_from_cat = 5 if migrated_binary == 1 ///
+		& !missing(j1b) & j1b != 601
+
 	replace migrated_from_cat = . if migrated_binary != 1
 	
 	label de lblmigrated_from_cat 1 "From same admin3 area" 2 "From same admin2 area" 3 "From same admin1 area" 4 "From other admin1 area" 5 "From other country" 6 "Within country, admin unknown" 7 "Wholly unknown"
@@ -662,27 +673,27 @@ use "`path_in_stata'/2017LFS.dta", clear
 
 *<_migrated_reason_>
 	gen migrated_reason = .
-	if migrated_binary == 1 & !missing(j7) {
-		// Employment category (3): work, job transfer, seek paid work, start business, farmland acquisition
-		replace migrated_reason = 3 if j7 == 1   // TO WORK
-		replace migrated_reason = 3 if j7 == 2   // JOB TRANSFER
-		replace migrated_reason = 3 if j7 == 3   // LOOK FOR PAID WORK
-		replace migrated_reason = 3 if j7 == 4   // TO START A BUSINESS
-		replace migrated_reason = 3 if j7 == 5   // LOOK FOR LAND FOR FARMING
-		
-		// Family category (1): family relocation, marriage, live with relatives, divorce/separation
-		replace migrated_reason = 1 if j7 == 6   // FAMILY MOVED
-		replace migrated_reason = 1 if j7 == 7   // MARRIAGE
-		replace migrated_reason = 1 if j7 == 9   // TO LIVE WITH A RELATIVE
-		replace migrated_reason = 1 if j7 == 10 // DIVORCE/SEPARATION
-		
-		// Education category (2)
-		replace migrated_reason = 2 if j7 == 8   // SCHOOL/TRAINING
-		
-		// Other category (5): adventure & unspecified other answers
-		replace migrated_reason = 5 if j7 == 11  // ADVENTURE
-		replace migrated_reason = 5 if j7 == 12  // OTHER, specify
-	}
+
+	// Employment category (3): work, job transfer, seek paid work, start business, farmland acquisition
+	replace migrated_reason = 3 if migrated_binary == 1 & !missing(j7) & j7 == 1   // TO WORK
+	replace migrated_reason = 3 if migrated_binary == 1 & !missing(j7) & j7 == 2   // JOB TRANSFER
+	replace migrated_reason = 3 if migrated_binary == 1 & !missing(j7) & j7 == 3   // LOOK FOR PAID WORK
+	replace migrated_reason = 3 if migrated_binary == 1 & !missing(j7) & j7 == 4   // TO START A BUSINESS
+	replace migrated_reason = 3 if migrated_binary == 1 & !missing(j7) & j7 == 5   // LOOK FOR LAND FOR FARMING
+	
+	// Family category (1): family relocation, marriage, live with relatives, divorce/separation
+	replace migrated_reason = 1 if migrated_binary == 1 & !missing(j7) & j7 == 6   // FAMILY MOVED
+	replace migrated_reason = 1 if migrated_binary == 1 & !missing(j7) & j7 == 7   // MARRIAGE
+	replace migrated_reason = 1 if migrated_binary == 1 & !missing(j7) & j7 == 9   // TO LIVE WITH A RELATIVE
+	replace migrated_reason = 1 if migrated_binary == 1 & !missing(j7) & j7 == 10  // DIVORCE/SEPARATION
+	
+	// Education category (2)
+	replace migrated_reason = 2 if migrated_binary == 1 & !missing(j7) & j7 == 8   // SCHOOL/TRAINING
+	
+	// Other category (5): adventure & unspecified other answers
+	replace migrated_reason = 5 if migrated_binary == 1 & !missing(j7) & j7 == 11  // ADVENTURE
+	replace migrated_reason = 5 if migrated_binary == 1 & !missing(j7) & j7 == 12  // OTHER, specify
+
 	// Assign missing value for people with no migration
 	replace migrated_reason = . if migrated_binary != 1
 	
@@ -690,7 +701,6 @@ use "`path_in_stata'/2017LFS.dta", clear
 	label values migrated_reason lblmigrated_reason
 	label var migrated_reason "Reason for migrating"
 *</_migrated_reason_>
-
 
 
 }
