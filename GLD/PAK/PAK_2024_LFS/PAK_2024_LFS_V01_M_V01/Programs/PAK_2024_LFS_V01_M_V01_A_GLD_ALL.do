@@ -601,16 +601,7 @@ rename *, lower
 	merge m:1 city_code using "`path_in_stata'/PAK_migration_code_2024.dta"
 	replace city_code=. if _merge==1
 	drop if _merge==2
-	/* Ask team: why create labmask if variable is dropped thereafter?
-	Whole chunk seems unnecessary
-	labmask city_code, values(city_name)
-	drop city_code city_name
-	rename mapped_lfscode_24 city_code
-	rename mapped_lfsname_24 city_name
-	drop lfs21_distcodes lfs21_distnames
-	replace city_code=. if migrated_binary==.
-	replace city_name="" if migrated_binary==.
-	*/
+	
 	gen migrated_from_code = mapped_lfscode_24 if migrated_binary == 1
 	replace migrated_from_code = . if mapped_lfscode_24 > 999
 	replace migrated_from_code = . if migrated_binary != 1
