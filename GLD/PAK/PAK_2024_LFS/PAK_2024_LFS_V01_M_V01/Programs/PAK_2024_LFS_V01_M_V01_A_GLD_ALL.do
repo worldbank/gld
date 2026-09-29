@@ -95,8 +95,13 @@ if "`c(username)'" == "wb582018" {
 * All steps necessary to merge datasets (if several) to have all elements needed to produce
 * harmonized output in a single file
 
-* Load and install user-written ado
-cap run "`path_in_stata'/labmask.ado"
+* Check whether labmask is installed; install if needed
+capture which labmask
+
+if _rc {
+    display "Installing labutil2 (required for labmask)..."
+    ssc install labutil2
+}
 
 use "`path_in_stata'/LFS2024-25.sav.dta"
 
