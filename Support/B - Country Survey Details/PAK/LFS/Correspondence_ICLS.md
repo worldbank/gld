@@ -6,66 +6,62 @@ In short, the ICLS 19 resolution restricts employment to *work performed for oth
 # Coding to convert the 2024 ILFS to the old definition
 
 To apply the 13th ICLS definition, workers engaged in subsistence or own-use agricultural production are identified and added to the employed population. Under the 19th ICLS, these workers are excluded from employment by design: in the 2024 PAK LFS, the skip pattern routes respondents who produce mainly or solely for family use out of the employment module entirely, meaning they never reach the questions on industry, occupation, or employment status. For these workers, those variables are therefore assigned directly based on their activity type — agriculture (industrycat10 = 1), skilled agricultural occupations (occup = 6), and self-employment (empstat = 4). The code below implements this approach for surveys where the 13th ICLS definition is required.
+
 ```
 * ------------------------------------------------------------------
 * ICLS 13th BRIDGE CODE — PAK LFS 2024
-* Reconstructs employment variables as they would appear under ICLS 13
-* The excluded group: subsistence/own-use agricultural producers
-* identified by extra_icls_13_emp == 1, which captures two paths:
-*   (a) Went through S5C9 (farming/livestock/fishing, S5C9=1-3)
-*       AND products mainly/only for family use (S5C10=3-4)
-*   (b) Went through the S5C8 route (S5C1=S5C2=S5C3=S5C4=2,
-*       S5C8=1-3) AND products mainly/only for family use (S5C10=3-4)
-* Under ICLS 19 these workers are not employed; under ICLS 13 they are.
 * ------------------------------------------------------------------
 
-* IDENTIFY THE ICLS 13 ADDITIONAL GROUP
-* These are workers who are NOT already classified as employed under ICLS 19
-* (hence the missing(lstatus) condition), but would be employed under ICLS 13
+    * ------------------------------------------------------------------
+    * 1. Identify respondents employed under ICLS-13 but not ICLS-19
+    * ------------------------------------------------------------------
 
-gen extra_icls_13_emp = 0
+gen byte extra_icls_13_emp = 0
 
-* Path (a): routed through S5C9 as farming/livestock/fishing
-*           AND products mainly or only for family use (S5C10 = 3 or 4)
-replace extra_icls_13_emp = 1 if inrange(s5c9, 1, 3) & inrange(s5c10, 3, 4) & missing(lstatus)
+* own-use farming/livestock/fishing through S5C10
+replace extra_icls_13_emp = 1 if inrange(s5c10, 3, 4) & inlist(lstatus, 2, 3)
 
-* Path (b): routed through S5C8 (did not work, did not have job, no absence)
-*           engaged in farming/rearing/fishing (S5C8 = 1-3)
-*           AND products mainly or only for family use (S5C10 = 3 or 4)
-replace extra_icls_13_emp = 1 if s5c1==2 & s5c2==2 & s5c3==2 & s5c4==2 ///
-    & inrange(s5c8, 1, 3) & inrange(s5c10, 3, 4) & missing(lstatus)
+label variable extra_icls_13_emp "Additional employed under ICLS-13 definition"
 
-* ------------------------------------------------------------------
-* BRIDGE VARIABLES
-* ------------------------------------------------------------------
+    * ------------------------------------------------------------------
+    * 2. Construct parallel ICLS-13 variables
+    * ------------------------------------------------------------------
 
-* LSTATUS: add back as employed
-gen lstatus_old = lstatus
-replace lstatus_old = 1 if extra_icls_13_emp == 1
-label var lstatus_old "Labor status - 13th ICLS definition"
+* Labour-force status
+gen byte lstatus_13 = lstatus
+replace lstatus_13  = 1 if extra_icls_13_emp == 1
+label variable lstatus_13 "Labor status - 13th ICLS definition"
+label values lstatus_13 lbllstatus
 
-* EMPSTAT: self-employed (independent worker, code 4)
-* Subsistence producers have no employer and work on own account
-gen empstat_old = empstat
-replace empstat_old = 4 if extra_icls_13_emp == 1
-replace empstat_old = . if lstatus_old != 1
-label var empstat_old "Employment status - 13th ICLS definition"
+* Employment status: self-employed
+gen byte empstat_13 = empstat
+replace empstat_13 = 4 if extra_icls_13_emp == 1
+replace empstat_13 = . if lstatus_13 != 1
+label variable empstat_13 "Employment status - 13th ICLS definition"
+label values empstat_13 lblempstat
 
-* INDUSTRYCAT10: Agriculture (category 1, ISIC 0100-0399)
-* All these workers came through farming/rearing/fishing routes
-gen industrycat10_old = industrycat10
-replace industrycat10_old = 1 if extra_icls_13_emp == 1
-replace industrycat10_old = . if lstatus_old != 1
-label var industrycat10_old "Industry category - 13th ICLS definition"
+* Sector: Private / NGO
+gen byte ocusec_13 = ocusec
+replace ocusec_13 = 2 if extra_icls_13_emp == 1
+replace ocusec_13 = . if lstatus_13 != 1
+label variable ocusec_13 "Sector of activity - 13th ICLS definition"
+label values ocusec_13 lblocusec
 
-* OCCUP: Skilled agricultural workers (category 6, ISCO 6000-6999)
-gen occup_old = occup
-replace occup_old = 6 if extra_icls_13_emp == 1
-replace occup_old = . if lstatus_old != 1
-label var occup_old "Occupation - 13th ICLS definition"
+* Industry: Agriculture
+gen byte industrycat10_13 = industrycat10
+replace industrycat10_13 = 1 if extra_icls_13_emp == 1
+replace industrycat10_13 = . if lstatus_13 != 1
+label variable industrycat10_13 "Industry category - 13th ICLS definition"
+label values industrycat10_13 lblindustrycat10
 
-
+* Occupation: Skilled agricultural
+gen byte occup_13 = occup
+replace occup_13 = 6 if extra_icls_13_emp == 1
+replace occup_13 = . if lstatus_13 != 1
+label variable occup_13 "Occupation - 13th ICLS definition"
+label values occup_13 lbloccup
 ```
+
 We report below results under two ICLS definitions for the labour variables: employment, industry, and occupation. The difference between the two classifications amounts to approximately 2.2 million workers engaged in own-use agricultural production, who are counted as employed under the 13th ICLS but not under the 19th. As a result, total employed stands at 77,595,355 under ICLS-13 and 75,396,847 under ICLS-19, corresponding to employment-to-population ratios of 51.46% and 50.00% respectively. The share of wage employment is 42.51% under ICLS-13 and 43.75% under ICLS-19. The share of employed in agriculture is 34.44% under ICLS-13 and 32.53% under ICLS-19. The skilled agricultural occupation share is 29.52% under ICLS-13 and 27.47% under ICLS-19. Self-employment accounts for 36.06% under ICLS-13 and 35.84% under ICLS-19. Non-agricultural categories are unaffected by the classification choice.
 
 | Concept (all 15+) | Value 2020 ICLS-13 | Value 2024 ICLS-13 | Value 2024 ICLS-19 |
