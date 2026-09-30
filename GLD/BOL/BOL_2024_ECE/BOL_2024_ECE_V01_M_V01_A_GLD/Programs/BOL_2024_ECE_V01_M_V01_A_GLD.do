@@ -326,15 +326,15 @@ No need to create variable panel because the raw dataset already has one with th
 
 </_subnatid1_note> */
 	gen str subnatid1 = ""
-	replace subnatid1 = " 1 - Chuquisaca" if depto==1
-	replace subnatid1 = " 2 - La Paz"      if depto==2
-	replace subnatid1 = " 3 - Cochabamba"  if depto==3
-	replace subnatid1 = " 4 - Oruro"       if depto==4
-	replace subnatid1 = " 5 - Potosi"      if depto==5
-	replace subnatid1 = " 6 - Tarija"      if depto==6
-	replace subnatid1 = " 7 - Santa Cruz"  if depto==7
-	replace subnatid1 = " 8 - Beni"        if depto==8
-	replace subnatid1 = " 9 - Pando"       if depto==9
+	replace subnatid1 = "1 - Chuquisaca" if depto==1
+	replace subnatid1 = "2 - La Paz"      if depto==2
+	replace subnatid1 = "3 - Cochabamba"  if depto==3
+	replace subnatid1 = "4 - Oruro"       if depto==4
+	replace subnatid1 = "5 - Potosi"      if depto==5
+	replace subnatid1 = "6 - Tarija"      if depto==6
+	replace subnatid1 = "7 - Santa Cruz"  if depto==7
+	replace subnatid1 = "8 - Beni"        if depto==8
+	replace subnatid1 = "9 - Pando"       if depto==9
 	label var subnatid1 "Subnational ID at First Administrative Level"
 *</_subnatid1_>
 
