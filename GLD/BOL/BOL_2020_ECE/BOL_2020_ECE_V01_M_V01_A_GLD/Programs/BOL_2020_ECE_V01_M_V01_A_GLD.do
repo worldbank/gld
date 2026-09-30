@@ -17,7 +17,7 @@
 <_Survey Year_>					[2020] </_Survey Year_>
 <_Study ID_>					[N/A] </_Study ID_>
 <_Data collection from_>		[01/2020] </_Data collection from_>
-<_Data collection to_>			[12/2020] </_Data collection to_>
+<_Data collection to_>			[03/2020] </_Data collection to_>
 <_Source of dataset_> 			[NATIONAL STATISTICS INSTITUTE OF BOLIVA - INE] </_Source of dataset_>
 <_Sample size (HH)_> 			[39901] </_Sample size (HH)_>
 <_Sample size (IND)_> 			[220,667] </_Sample size (IND)_>
