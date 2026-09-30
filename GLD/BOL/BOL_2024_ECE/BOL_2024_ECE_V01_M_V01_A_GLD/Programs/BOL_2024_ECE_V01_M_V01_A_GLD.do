@@ -426,7 +426,7 @@ No need to create variable panel because the raw dataset already has one with th
 
 *<_hsize_>
 	gen help_1 = 1
-	bys hhid: egen hsize = total(help_1)
+	bys hhid int_year int_month: egen hsize = total(help_1)
 	label var hsize "Household size"
 	drop help_1
 *</_hsize_>
@@ -1557,7 +1557,8 @@ foreach ed_var of local ed_vars {
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
-	replace occup = 8 if inrange(occup_isco, "8000","8999")
+	replace occup = 8 if inrange(occup_isco, "8000","8999")
+
 	gen byte occup = .
 	replace occup = 1 if inrange(occup_isco, "1000","1439")
 	replace occup = 2 if inrange(occup_isco, "2000","2719")
