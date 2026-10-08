@@ -426,7 +426,7 @@ No need to create variable panel because the raw dataset already has one with th
 
 *<_hsize_>
 	gen help_1 = 1
-	bys hhid int_year int_month: egen hsize = total(help_1)
+	bys hhid: egen hsize = total(help_1)
 	label var hsize "Household size"
 	drop help_1
 *</_hsize_>
