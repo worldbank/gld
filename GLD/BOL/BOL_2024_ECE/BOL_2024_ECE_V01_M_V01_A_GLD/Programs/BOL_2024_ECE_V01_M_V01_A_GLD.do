@@ -1557,7 +1557,6 @@ foreach ed_var of local ed_vars {
 	label var occup_isco "ISCO code of primary job 7 day recall"
 *</_occup_isco_>
 
-	replace occup = 8 if inrange(occup_isco, "8000","8999")
 
 	gen byte occup = .
 	replace occup = 1 if inrange(occup_isco, "1000","1439")
@@ -1567,7 +1566,7 @@ foreach ed_var of local ed_vars {
 	replace occup = 5 if inrange(occup_isco, "5000","5490")
 	replace occup = 6 if inrange(occup_isco, "6000","6390")
 	replace occup = 7 if inrange(occup_isco, "7000","7590")
-	replace occup = 8 if inrange(occup_isco, "8000","8309")
+	replace occup = 8 if inrange(occup_isco, "8000","8999")
 	replace occup = 9 if inrange(occup_isco, "9000","9709")
 	replace occup = 10 if inrange(occup_isco,"0100","0399")
 	replace occup = 99 if occup_isco=="9999"
