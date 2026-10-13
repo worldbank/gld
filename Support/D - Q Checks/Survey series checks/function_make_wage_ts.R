@@ -147,7 +147,7 @@ make_wage_ts <- function(
   
   # As of December 2022, the values are centred on 2010 (= 100) but this may change
   # Hence we loaded above all years, find which year has 100
-  base_year <- cpi$date[cpi$value %in% 100]
+  base_year <- cpi$date[cpi$value >= 99.99999 & cpi$value <= 100.00001]
   
   # Keep only relevant info so we do not add too much in Step 4, 
   # rename date to year to match, make numeric
