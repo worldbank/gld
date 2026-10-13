@@ -5,7 +5,7 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				BTN_2023_Sakernas_v01_M_v01_A_GLD.do </_Program name_>
+<_Program name_>				BTN_2023_QLFS_v01_M_v01_A_GLD.do </_Program name_>
 <_Application_>					Stata 17 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
 <_Date created_>				2026-05-12 </_Date created_>
@@ -61,7 +61,7 @@ else {
 }
 local country "BTN"
 local year    "2023"
-local survey  "LFS"
+local survey  "QLFS"
 local vermast "V01"
 local veralt  "V01"
 
@@ -101,7 +101,7 @@ use "`path_in_stata'\PUF QLFS_2023.dta", clear
 
 
 *<_survname_>
-	gen survname = "LFS"
+	gen survname = "QLFS"
 	label var survname "Survey acronym"
 *</_survname_>
 
