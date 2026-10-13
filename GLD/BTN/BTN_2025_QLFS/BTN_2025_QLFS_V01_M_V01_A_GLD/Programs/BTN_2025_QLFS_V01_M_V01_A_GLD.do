@@ -5,7 +5,7 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				BTN_2025_Sakernas_v01_M_v01_A_GLD.do </_Program name_>
+<_Program name_>				BTN_2025_QLFS_v01_M_v01_A_GLD.do </_Program name_>
 <_Application_>					Stata 17 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
 <_Date created_>				2026-05-12 </_Date created_>
@@ -13,7 +13,7 @@
 <_Country_>						Bhutan (BTN) </_Country_>
 <_Survey Title_>                Quarterly Labour Force Survey </_Survey Title_>
 <_Survey Year_>					2025 </_Survey Year_>
-<_Study ID_>					BTN_2025_LFS_v01_M </_Study ID_>
+<_Study ID_>					BTN_2025_QLFS_v01_M </_Study ID_>
 <_Data collection from (M/Y)_>	01/2025 </_Data collection from (M/Y)_>
 <_Data collection to (M/Y)_>	12/2025 </_Data collection to (M/Y)_>
 <_Source of dataset_> 			Shared with Job's Group by the World Bank Bhtan Team
@@ -61,7 +61,7 @@ else {
 }
 local country "BTN"
 local year    "2025"
-local survey  "LFS"
+local survey  "QLFS"
 local vermast "V01"
 local veralt  "V01"
 
@@ -121,7 +121,7 @@ append using `q4'
 
 
 *<_survname_>
-	gen survname = "LFS"
+	gen survname = "QLFS"
 	label var survname "Survey acronym"
 *</_survname_>
 
