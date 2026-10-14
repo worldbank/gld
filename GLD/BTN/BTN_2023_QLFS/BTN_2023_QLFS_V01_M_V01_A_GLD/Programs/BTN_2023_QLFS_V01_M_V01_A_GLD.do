@@ -5,7 +5,7 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				BTN_2023_QLFS_V01_M_V01_A_GLD.do </_Program name_>
+<_Program name_>				BTN_2023_QLFS_v01_M_v01_A_GLD.do </_Program name_>
 <_Application_>					Stata 17 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
 <_Date created_>				2026-05-12 </_Date created_>
@@ -13,7 +13,7 @@
 <_Country_>						Bhutan (BTN) </_Country_>
 <_Survey Title_>                Quarterly Labour Force Survey </_Survey Title_>
 <_Survey Year_>					2023 </_Survey Year_>
-<_Study ID_>					BTN_2023_QLFS_V01_M </_Study ID_>
+<_Study ID_>					BTN_2023_LFS_v01_M </_Study ID_>
 <_Data collection from (M/Y)_>	[09/2023] </_Data collection from (M/Y)_>
 <_Data collection to (M/Y)_>	[09/2023] </_Data collection to (M/Y)_>
 <_Source of dataset_> 			Shared with Job's Group by the World Bank Bhtan Team
@@ -85,7 +85,6 @@ local out_file "`level_2_harm'_ALL.dta"
 
 
 use "`path_in_stata'\PUF QLFS_2023.dta", clear
-
 
 
 /*%%=============================================================================================
@@ -221,22 +220,20 @@ use "`path_in_stata'\PUF QLFS_2023.dta", clear
 
 
 *<_weight_q_>
-	gen weight_q = .
+    * The available 2023 QLFS data contain only the Q3 survey round.
+    * Therefore the source quarterly expansion weight is also used as the
+    * annual weight.
+	gen weight_q = weight
 	label var weight_q "Survey sampling weight to obtain national estimates for each quarter"
 *</_weight_q_>
 
 
 *<_psu_>
-/* <_psu_note>
-
-	LFS report for this survey (page 2): PSU for urban areas are EAs,
-	and for rural areas 'chiwogs'. that is the case for 2020 and 2021. 
-	clcode is the PSU for rural, and EA for urban.
-
-</_psu_note> */
-	g psu = "EA" + string(EA) if area == 1
-	replace	psu = "CHIWOG" + string(clcode) if area == 2
-	label var psu "Primary sampling units"
+    * PSU identifiers cannot be reliably reconstructed from the available
+    * 2023 QLFS microdata. Although psu_str is available, it does not uniquely
+    * identify the 215 enumeration areas reported in the survey documentation.
+    gen psu = .
+    label var psu "Primary sampling unit"
 *</_psu_>
 
 
@@ -247,8 +244,10 @@ use "`path_in_stata'\PUF QLFS_2023.dta", clear
 
 
 *<_strata_>
-	gen strata = .
-	label var strata "Strata"
+    * First-level geographic stratification. The survey also uses a second
+    * level of stratification that cannot be identified from the available data.
+    egen strata = group(dcode24 area), label
+    label var strata "First-level survey stratum"
 *</_strata_>
 
 
@@ -291,19 +290,71 @@ use "`path_in_stata'\PUF QLFS_2023.dta", clear
 
 	The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: "1 – Hatay". That is, the variable itself is to be string, not a labelled numeric vector. 
 	
-	Example of entries would be "1 - Alaska",  "2 - Arkansas", ...
+	The four separately identified thromdes in dcode24 are assigned to their
+	parent dzongkhags: Phuentsholing to Chhukha, Samdrup Jongkhar Thromde
+	to Samdrup Jongkhar, Gelegphu to Sarpang, and Thimphu Thromde to Thimphu.
 
 </_subnatid1_note> */
-	decode dcode24, g(subnatid1)
-	replace subnatid1 = string(dcode24) + " - " + subnatid1
+
+	decode dcode24, g(_dcode24_lab)
+
+	gen int _dcode20 = dcode24
+	replace _dcode20 = 2  if dcode24 == 3
+	replace _dcode20 = 12 if dcode24 == 13
+	replace _dcode20 = 15 if dcode24 == 16
+	replace _dcode20 = 17 if dcode24 == 18
+
+	gen str80 subnatid1 = ""
+
+	replace subnatid1 = string(_dcode20) + " - " + _dcode24_lab ///
+		if !inlist(dcode24, 3, 13, 16, 18)
+
+	replace subnatid1 = "2 - Chhukha"              if dcode24 == 3
+	replace subnatid1 = "12 - Samdrup Jongkhar"   if dcode24 == 13
+	replace subnatid1 = "15 - Sarpang"             if dcode24 == 16
+	replace subnatid1 = "17 - Thimphu"             if dcode24 == 18
+
 	label var subnatid1 "Subnational ID at First Administrative Level"
+
+	drop _dcode20 _dcode24_lab
 *</_subnatid1_>
 
 
 *<_subnatid2_>
-	gen str subnatid2 = ""
+/* <_subnatid2_note>
+
+	subnatid2 preserves the distinction between the four separately identified
+	thromdes and the remainder of their parent dzongkhags. For dzongkhags
+	without a separately identified thromde, subnatid2 is identical to subnatid1.
+	The coding is nested within subnatid1.
+
+</_subnatid2_note> */
+
+	gen str100 subnatid2 = subnatid1
+
+	replace subnatid2 = "2.1 - Chhukha, excluding Phuentsholing Thromde" ///
+		if dcode24 == 2
+	replace subnatid2 = "2.2 - Phuentsholing Thromde" ///
+		if dcode24 == 3
+
+	replace subnatid2 = "12.1 - Samdrup Jongkhar, excluding Thromde" ///
+		if dcode24 == 12
+	replace subnatid2 = "12.2 - Samdrup Jongkhar Thromde" ///
+		if dcode24 == 13
+
+	replace subnatid2 = "15.1 - Sarpang, excluding Gelegphu Thromde" ///
+		if dcode24 == 15
+	replace subnatid2 = "15.2 - Gelegphu Thromde" ///
+		if dcode24 == 16
+
+	replace subnatid2 = "17.1 - Thimphu, excluding Thimphu Thromde" ///
+		if dcode24 == 17
+	replace subnatid2 = "17.2 - Thimphu Thromde" ///
+		if dcode24 == 18
+
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
+
 
 
 *<_subnatid3_>
@@ -313,16 +364,10 @@ use "`path_in_stata'\PUF QLFS_2023.dta", clear
 
 
 *<_subnatidsurvey_>
-/* <_subnatidsurvey_note>
-
-	Variable denoting lowest administrative info to which the survey is still significat.
-	See entry in GLD Guidelines (https://github.com/worldbank/gld/blob/main/Support/A%20-%20Guides%20and%20Documentation/GLD_1.0_Guidelines.docx) for more details
-
-</_subnatidsurvey_note> */
-	gen str subnatidsurvey = subnatid1
-	label var subnatidsurvey "Administrative level at which survey is representative"
+	decode dcode24, g(subnatidsurvey)
+	replace subnatidsurvey = string(dcode24) + " - " + subnatidsurvey
+	label var subnatidsurvey "Subnational ID at Survey Reporting Level"
 *</_subnatidsurvey_>
-
 
 *<_subnatid1_prev_>
 /* <_subnatid1_prev_note>
