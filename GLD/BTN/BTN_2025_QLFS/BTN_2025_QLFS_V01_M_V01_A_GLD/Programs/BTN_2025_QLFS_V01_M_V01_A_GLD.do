@@ -5,7 +5,7 @@
 
 /* -----------------------------------------------------------------------
 
-<_Program name_>				BTN_2025_QLFS_V01_M_V01_A_GLD.do </_Program name_>
+<_Program name_>				BTN_2025_QLFS_v01_M_v01_A_GLD.do </_Program name_>
 <_Application_>					Stata 17 <_Application_>
 <_Author(s)_>					Wolrd Bank Job's Group </_Author(s)_>
 <_Date created_>				2026-05-12 </_Date created_>
@@ -13,7 +13,7 @@
 <_Country_>						Bhutan (BTN) </_Country_>
 <_Survey Title_>                Quarterly Labour Force Survey </_Survey Title_>
 <_Survey Year_>					2025 </_Survey Year_>
-<_Study ID_>					BTN_2025_QLFS_V01_M </_Study ID_>
+<_Study ID_>					BTN_2025_LFS_v01_M </_Study ID_>
 <_Data collection from (M/Y)_>	01/2025 </_Data collection from (M/Y)_>
 <_Data collection to (M/Y)_>	12/2025 </_Data collection to (M/Y)_>
 <_Source of dataset_> 			Shared with Job's Group by the World Bank Bhtan Team
@@ -105,7 +105,6 @@ gen wave = "Q1"
 append using `q2'
 append using `q3'
 append using `q4'
-
 
 
 /*%%=============================================================================================
@@ -225,7 +224,21 @@ append using `q4'
 
 *<_weight_>
 	confirm var weight
+
+	* The source weight is a quarterly expansion weight. Construct the
+	* annual weight by multiplying the quarterly weight by the quarter's
+	* share of observations in the pooled annual dataset.
+	gen double _weight_q = weight
+
+	quietly count
+	local n_all = r(N)
+
+	bysort wave: gen long _n_q = _N
+	replace weight = weight * (_n_q / `n_all')
+
 	label var weight "Survey sampling weight"
+
+	drop _n_q
 *</_weight_>
 
 
@@ -236,14 +249,19 @@ append using `q4'
 
 
 *<_weight_q_>
-	gen weight_q = weight
+	gen weight_q = _weight_q
 	label var weight_q "Survey sampling weight to obtain national estimates for each quarter"
+
+	drop _weight_q
 *</_weight_q_>
 
 
 *<_psu_>
+	* PSU identifiers cannot be reliably reconstructed from the
+	* available 2025 QLFS microdata. cstr_code groups multiple
+	* underlying PSUs and is therefore not used as a PSU identifier.
 	gen psu = .
-	label var psu "Primary sampling units"
+	label var psu "Primary sampling unit"
 *</_psu_>
 
 
@@ -254,8 +272,11 @@ append using `q4'
 
 
 *<_strata_>
-	gen strata = .
-	label var strata "Strata"
+	* First-level geographic stratification approximation.
+	* The second level of stratification cannot be identified from
+	* the available microdata.
+	egen strata = group(dcode24 area), label
+	label var strata "Survey strata"
 *</_strata_>
 
 
@@ -296,19 +317,75 @@ append using `q4'
 *<_subnatid1_>
 /* <_subnatid1_note>
 
-	The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: "1 – Hatay". That is, the variable itself is to be string, not a labelled numeric vector. 
-	
-	Example of entries would be "1 - Alaska",  "2 - Arkansas", ...
+	The variable is string and country-specific categorical. Numeric entries are coded in string format using the following naming convention: "1 – Hatay". That is, the variable itself is to be string, not a labelled numeric vector.
+
+	The four separately identified thromdes in dcode24 are assigned to their
+	parent dzongkhags: Phuentsholing to Chhukha, Samdrup Jongkhar Thromde
+	to Samdrup Jongkhar, Gelegphu to Sarpang, and Thimphu Thromde to Thimphu.
+
+	dcode24 is missing for 242 observations, all from Q3. The available
+	alternative sampling variables do not allow these geographic reporting
+	domains to be reliably reconstructed, so the corresponding harmonized
+	subnational identifiers remain missing.
 
 </_subnatid1_note> */
-	decode dcode24, g(subnatid1)
-	replace subnatid1 = string(dcode24) + " - " + subnatid1
+
+	decode dcode24, g(_dcode24_lab)
+
+	gen int _dcode20 = dcode24
+	replace _dcode20 = 2  if dcode24 == 3
+	replace _dcode20 = 12 if dcode24 == 13
+	replace _dcode20 = 15 if dcode24 == 16
+	replace _dcode20 = 17 if dcode24 == 18
+
+	gen str80 subnatid1 = ""
+
+	replace subnatid1 = string(_dcode20) + " - " + _dcode24_lab ///
+		if !missing(dcode24) & !inlist(dcode24, 3, 13, 16, 18)
+
+	replace subnatid1 = "2 - Chhukha"            if dcode24 == 3
+	replace subnatid1 = "12 - Samdrup Jongkhar" if dcode24 == 13
+	replace subnatid1 = "15 - Sarpang"           if dcode24 == 16
+	replace subnatid1 = "17 - Thimphu"           if dcode24 == 18
+
 	label var subnatid1 "Subnational ID at First Administrative Level"
+
+	drop _dcode20 _dcode24_lab
 *</_subnatid1_>
 
 
 *<_subnatid2_>
-	gen str subnatid2 = ""
+/* <_subnatid2_note>
+
+	subnatid2 preserves the distinction between the four separately identified
+	thromdes and the remainder of their parent dzongkhags. For dzongkhags
+	without a separately identified thromde, subnatid2 is identical to subnatid1.
+	The coding is nested within subnatid1.
+
+</_subnatid2_note> */
+
+	gen str100 subnatid2 = subnatid1
+
+	replace subnatid2 = "2.1 - Chhukha, excluding Phuentsholing Thromde" ///
+		if dcode24 == 2
+	replace subnatid2 = "2.2 - Phuentsholing Thromde" ///
+		if dcode24 == 3
+
+	replace subnatid2 = "12.1 - Samdrup Jongkhar, excluding Thromde" ///
+		if dcode24 == 12
+	replace subnatid2 = "12.2 - Samdrup Jongkhar Thromde" ///
+		if dcode24 == 13
+
+	replace subnatid2 = "15.1 - Sarpang, excluding Gelegphu Thromde" ///
+		if dcode24 == 15
+	replace subnatid2 = "15.2 - Gelegphu Thromde" ///
+		if dcode24 == 16
+
+	replace subnatid2 = "17.1 - Thimphu, excluding Thimphu Thromde" ///
+		if dcode24 == 17
+	replace subnatid2 = "17.2 - Thimphu Thromde" ///
+		if dcode24 == 18
+
 	label var subnatid2 "Subnational ID at Second Administrative Level"
 *</_subnatid2_>
 
@@ -320,16 +397,11 @@ append using `q4'
 
 
 *<_subnatidsurvey_>
-/* <_subnatidsurvey_note>
-
-	Variable denoting lowest administrative info to which the survey is still significat.
-	See entry in GLD Guidelines (https://github.com/worldbank/gld/blob/main/Support/A%20-%20Guides%20and%20Documentation/GLD_1.0_Guidelines.docx) for more details
-
-</_subnatidsurvey_note> */
-	gen str subnatidsurvey = subnatid1
-	label var subnatidsurvey "Administrative level at which survey is representative"
+	decode dcode24, g(subnatidsurvey)
+	replace subnatidsurvey = string(dcode24) + " - " + subnatidsurvey ///
+		if !missing(dcode24)
+	label var subnatidsurvey "Subnational ID at Survey Reporting Level"
 *</_subnatidsurvey_>
-
 
 *<_subnatid1_prev_>
 /* <_subnatid1_prev_note>
