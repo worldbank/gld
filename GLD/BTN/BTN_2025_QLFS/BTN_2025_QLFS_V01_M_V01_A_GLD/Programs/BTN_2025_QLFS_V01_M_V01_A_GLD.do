@@ -106,6 +106,21 @@ append using `q2'
 append using `q3'
 append using `q4'
 
+* Recover missing district codes in 2025 Q3.
+* The 3rd and 4th digits of cstr_code identify the parent dzongkhag.
+* All 242 observations with missing dcode24 have district code 4,
+* corresponding uniquely to Gasa (dcode24 = 5).
+
+gen int _d34 = mod(floor(cstr_code / 100), 100)
+
+* Verify the correspondence using nonmissing district codes.
+tab dcode24 _d34, missing
+assert _d34 == 4 if missing(dcode24)
+replace dcode24 = 5 if missing(dcode24) & _d34 == 4
+
+assert !missing(dcode24)
+drop _d34
+
 
 /*%%=============================================================================================
 	2: Survey & ID
@@ -151,7 +166,6 @@ append using `q4'
 
 *<_isic_version_>
 	gen isic_version = "isic_4"
-// 	gen isic_version = ""
 	label var isic_version "Version of ISIC used"
 *</_isic_version_>
 
