@@ -167,7 +167,7 @@ save "`path_in_stata'/qlfs_2021.dta", replace
 
 
 *<_year_>
-	gen int year = 2024
+	gen int year = 2021
 	label var year "Year of survey"
 *</_year_>
 
