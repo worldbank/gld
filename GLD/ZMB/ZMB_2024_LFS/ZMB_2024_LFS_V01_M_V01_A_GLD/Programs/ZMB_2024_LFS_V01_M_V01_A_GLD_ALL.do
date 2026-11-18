@@ -176,45 +176,32 @@ use "`path_in_stata'/ZM_2024_LFS.dta", clear
 	label var int_month "Month of the interview"
 *</_int_month_>
 
-
 *<_hhid_>
 /* <_hhid_note>
 
-	The 2024 source data do not contain the full set of household identifiers
-	available in earlier survey years. The household ID is therefore constructed
-	using the available geographic and sample identifiers together with qssignid
-	(Questionnaire Assign ID), which substantially improves household
-	disambiguation.
-
-	A small number of records remain non-unique at the household-person level.
-	No additional source identifier is available to reliably distinguish these
-	remaining cases.
+    The 2024 source data do not contain sufficient household
+    identifiers to reliably construct a unique household ID.
+    Therefore, hhid is set to missing.
 
 </_hhid_note> */
 
-	gen str hlpr_quarter = string(quarter, "%01.0f")
-	gen str hlpr_prov    = string(prov, "%02.0f")
-	gen str hlpr_dist    = string(dist, "%04.0f")
-	gen str hlpr_cluster = string(cluster, "%04.0f")
-	gen str hlpr_sbn     = string(sbn, "%03.0f")
-	gen str hlpr_hun     = string(hun, "%03.0f")
-	gen str hlpr_hhn     = string(hhn, "%02.0f")
-	gen str hlpr_qsid    = string(qssignid, "%02.0f")
-
-	egen hhid = concat(hlpr_quarter hlpr_prov hlpr_dist hlpr_cluster hlpr_sbn hlpr_hun hlpr_hhn hlpr_qsid)
-	drop hlpr_*
-	label var hhid "Household ID"
+    gen str hhid = ""
+    label var hhid "Household ID"
 *</_hhid_>
 
 
 *<_pid_>
-	rename pid pid_raw
-	gen str hlpr_pid = string(pid_raw, "%02.0f")
-	egen pid = concat(hhid hlpr_pid)
-	label var pid "Individual ID"
-	drop hlpr_pid
-*</_pid_>
+/* <_pid_note>
 
+    A reliable individual ID cannot be constructed without
+    a valid household ID. Therefore, pid is set to missing.
+
+</_pid_note> */
+
+	drop pid
+    gen str pid = ""
+    label var pid "Individual ID"
+*</_pid_>
 
 *<_weight_>
 	gen weight = annual_final_weight
