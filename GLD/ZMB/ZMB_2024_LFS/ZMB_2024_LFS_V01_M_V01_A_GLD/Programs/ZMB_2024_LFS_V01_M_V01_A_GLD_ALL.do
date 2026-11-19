@@ -189,23 +189,25 @@ use "`path_in_stata'/ZM_2024_LFS.dta", clear
     label var hhid "Household ID"
 *</_hhid_>
 
-
 *<_pid_>
 /* <_pid_note>
 
     The source data do not contain sufficient identifiers to
     construct a reliable individual ID. A sequential identifier
-    is therefore generated using the observation number (_n).
-    This identifier is unique within the harmonized dataset but
-    does not represent the original respondent ID and should
-    not be used for linking individuals across datasets.
+    is therefore generated using the observation number (_n)
+    and stored as a string.
+
+    This identifier is unique within the harmonized dataset
+    but does not correspond to the original respondent ID
+    and should not be used to link individuals across datasets.
 
 </_pid_note> */
 
     drop pid
-    gen long pid = _n
+    gen str pid = string(_n)
     label var pid "Individual ID"
 *</_pid_>
+
 
 *<_weight_>
 	gen weight = annual_final_weight
