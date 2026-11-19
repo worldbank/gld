@@ -193,13 +193,17 @@ use "`path_in_stata'/ZM_2024_LFS.dta", clear
 *<_pid_>
 /* <_pid_note>
 
-    A reliable individual ID cannot be constructed without
-    a valid household ID. Therefore, pid is set to missing.
+    The source data do not contain sufficient identifiers to
+    construct a reliable individual ID. A sequential identifier
+    is therefore generated using the observation number (_n).
+    This identifier is unique within the harmonized dataset but
+    does not represent the original respondent ID and should
+    not be used for linking individuals across datasets.
 
 </_pid_note> */
 
-	drop pid
-    gen str pid = ""
+    drop pid
+    gen long pid = _n
     label var pid "Individual ID"
 *</_pid_>
 
