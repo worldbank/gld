@@ -191,81 +191,242 @@ use "`path_in_stata'/RW_LFS2025.dta", clear
 
 
 *<_pid_>
-	* 2025 has no source pid. Reconstruct person IDs across visits using
-	* household visit order and demographic information.
 
-	gen long _row = _n
+/* <_pid_note>
 
-	* Identify visits and roster order
-	bysort HHID weight2 (_row): gen byte _newvisit = (_n == 1)
-	bysort HHID (_row): gen byte visit_no = sum(_newvisit)
-	bysort HHID visit_no (_row): gen byte roster_no = _n
+    * Problem:
+    *   The 2025 survey has neither a person ID nor an explicit visit ID.
+    *   The existing household ID (hhid) identifies sampled dwellings,
+    *   which may contain different households across visits.
+    *
+    * Method:
+    *   Reconstruct visits using survey order and sampling weight (weight2).
+    *   Assign person IDs in visit 1, then match visit 2 using unique
+    *   demographics, followed by roster position and demographic checks.
+    *   Assign new IDs to additional members where continuity is established.
+    *   Treat households with no matched members as replacements, assigning
+    *   new household IDs within the same PSU.
+    *   Assign new person IDs to any remaining unmatched individuals.
+    *
+    * Assumptions:
+    *   All members share the same weight within a household visit.
+    *   Weights are expected to differ across visits because PSU and
+    *   household selection probabilities vary between survey rounds,
+    *   consistent with the 2-2-2 rotation introduced in 2023.
+    *   Visits occur in consecutive blocks in the original survey order.
+    *   Sex, birth dates and roster order are sufficiently stable for matching.
+    *   Birth month (A03M) is never missing.
+    *
+    * Limitations:
+    *   Visits with identical weights cannot be distinguished.
+    *   Households without matched members are classified as replacements.
+    *   Unmatched individuals receive new IDs, although some may be
+    *   returning members with inconsistent demographic information.
 
-	* First visit: roster order as person number
-	gen int person_no = roster_no if visit_no == 1
+</_pid_note> */
 
-	* Exact match on unique sex + month/year of birth
-	bysort HHID visit_no A01 A03M A03Y: gen byte _sig_n = _N
 
-	preserve
-		keep if visit_no == 1 & _sig_n == 1
-		keep HHID A01 A03M A03Y person_no
-		rename person_no _person_no
-		tempfile v1
-		save `v1'
-	restore
 
-	merge m:1 HHID A01 A03M A03Y using `v1', keep(master match) nogen
-	replace person_no = _person_no if visit_no == 2 & _sig_n == 1
-	drop _person_no
+    * 1. Reconstruct visits and roster order
+    assert !missing(HHID, weight2, A03M)
 
-	* Record person numbers already matched in visit 2
-	preserve
-		keep if visit_no == 2 & !missing(person_no)
-		keep HHID person_no
-		duplicates drop
-		rename person_no _person_no
-		gen byte _used = 1
-		tempfile used
-		save `used'
-	restore
+    gen long _row = _n
+    bysort HHID (_row): gen byte visit_no = ///
+        1 + sum(_n > 1 & weight2 != weight2[_n-1])
 
-	* Fallback: same roster position, sex, relationship and birth year (+/-1)
-	preserve
-		keep if visit_no == 1
-		keep HHID roster_no person_no A01 A02 A03Y
-		rename (person_no A01 A02 A03Y) (_person_no _A01 _A02 _A03Y)
-		tempfile v1order
-		save `v1order'
-	restore
+    assert inrange(visit_no, 1, 2)
 
-	merge m:1 HHID roster_no using `v1order', keep(master match) nogen
-	merge m:1 HHID _person_no using `used', keep(master match) nogen
+    bysort HHID visit_no (_row): gen int roster_no = _n
+    gen int person_no = roster_no if visit_no == 1
 
-	replace person_no = _person_no if visit_no == 2 & missing(person_no) ///
-		& missing(_used) & A01 == _A01 & A02 == _A02 ///
-		& abs(A03Y - _A03Y) <= 1
 
-	drop _person_no _A01 _A02 _A03Y _used
+    * 2. Exact match: unique sex, birth month and birth year
+    bysort HHID visit_no A01 A03M A03Y: ///
+        gen byte _unique = (_N == 1)
 
-	* Assign new numbers to remaining unmatched members
+    preserve
+        keep if visit_no == 1 & _unique
+        keep HHID A01 A03M A03Y person_no
+        rename person_no _person_no
+        isid HHID A01 A03M A03Y
+        tempfile v1
+        save `v1'
+    restore
+
+    merge m:1 HHID A01 A03M A03Y using `v1', ///
+        keep(master match) nogen
+
+    replace person_no = _person_no if visit_no == 2 & _unique
+    drop _person_no
+
+    gen byte match_method = 0 if visit_no == 1
+    replace match_method = 1 if visit_no == 2 & !missing(person_no)
+
+    bysort HHID visit_no person_no: ///
+        assert _N == 1 if !missing(person_no)
+
+
+    * 3. Record IDs already matched in visit 2
+    preserve
+        keep if visit_no == 2 & !missing(person_no)
+        keep HHID person_no
+        isid HHID person_no
+        rename person_no _person_no
+        gen byte _used = 1
+        tempfile used
+        save `used'
+    restore
+
+
+    * 4. Fallback: roster, sex, relationship and birth date
+    preserve
+        keep if visit_no == 1
+        keep HHID roster_no person_no A01 A02 A03M A03Y
+        rename (person_no A01 A02 A03M A03Y) ///
+               (_person_no _A01 _A02 _A03M _A03Y)
+        isid HHID roster_no
+        tempfile v1order
+        save `v1order'
+    restore
+
+    merge m:1 HHID roster_no using `v1order', ///
+        keep(master match) nogen
+
+    merge m:1 HHID _person_no using `used', ///
+        keep(master match) nogen
+
+    * Allow an error in birth month OR year, but not both
+    replace person_no = _person_no if visit_no == 2 ///
+        & missing(person_no) & missing(_used) ///
+        & A01 == _A01 & A02 == _A02 ///
+        & !missing(A03Y, _A03Y) ///
+        & (A03Y == _A03Y | ///
+           (A03M == _A03M & abs(A03Y - _A03Y) <= 1))
+
+    replace match_method = 2 if visit_no == 2 ///
+        & missing(match_method) & !missing(person_no)
+
+    drop _person_no _A01 _A02 _A03M _A03Y _used
+
+    bysort HHID visit_no person_no: ///
+        assert _N == 1 if !missing(person_no)
+
+
+    * 5. Assign new IDs to single unmatched persons
+    *    Only where household continuity is established
+
+    bysort HHID: egen int _maxroster = max(roster_no)
+    bysort HHID: egen int _nunmatched = ///
+        total(visit_no == 2 & missing(person_no))
+    bysort HHID: egen int _nmatched = ///
+        total(visit_no == 2 & inlist(match_method, 1, 2))
+
+    replace person_no = _maxroster + 1 if visit_no == 2 ///
+        & missing(person_no) & _nunmatched == 1 & _nmatched > 0
+
+    replace match_method = 3 if visit_no == 2 ///
+        & missing(match_method) & !missing(person_no)
+
+    bysort HHID visit_no person_no: ///
+        assert _N == 1 if !missing(person_no)
+
+
+	* 6. Assign new IDs when all visit-1 members are matched
+    *    Remaining visit-2 members are treated as additions.
+
+    bysort HHID: egen int _nvisit1 = total(visit_no == 1)
+    bysort HHID: egen int _nreturn = ///
+        total(visit_no == 2 & inlist(match_method, 1, 2))
+
+    bysort HHID: egen int _maxpn = max(person_no)
+    bysort HHID visit_no (_row): gen int _addno = ///
+        sum(visit_no == 2 & missing(person_no))
+
+    replace person_no = _maxpn + _addno if visit_no == 2 ///
+        & missing(person_no) ///
+        & _nvisit1 == _nreturn & _nreturn > 0
+
+    replace match_method = 4 if visit_no == 2 ///
+        & missing(match_method) & !missing(person_no)
+
+    bysort HHID visit_no person_no: ///
+        assert _N == 1 if !missing(person_no)
+
+    drop _nvisit1 _nreturn _maxpn _addno
+		
+		
+    * 7. Identify replacement households
+    *    If no members match across visits, treat visit 2 as a new HH.
+    *    Keep the PSU identifier and allocate a new household suffix.
+
+    * Identify households with no matched members in visit 2
+    bysort hhid: egen byte _hasv1 = max(visit_no == 1)
+    gen byte _replacement = visit_no == 2 ///
+        & _hasv1 == 1 & _nmatched == 0
+
+    * Preserve original household identifier for auditing
+    clonevar hhid_original = hhid
+
+    * Find highest existing household number within each PSU
+    bysort PSU_NO: egen int _maxqh = max(QH_NO)
+
+    * Allocate one new number per replacement household
+    preserve
+        keep if _replacement == 1
+        keep PSU_NO hhid _maxqh
+        duplicates drop
+
+        isid PSU_NO hhid
+
+        sort PSU_NO hhid
+        by PSU_NO: gen int _newqh = _maxqh + _n
+
+        assert inrange(_newqh, 1, 99)
+
+        tempfile newids
+        save `newids'
+    restore
+
+    * Attach new household numbers to all corresponding observations
+    merge m:1 PSU_NO hhid using `newids', ///
+        keep(master match) nogen
+
+    * Assign new household identifiers
+    replace hhid = string(PSU_NO, "%04.0f") + ///
+        string(_newqh, "%02.0f") if _replacement == 1
+
+    * Assign person numbers from the replacement household roster
+    replace person_no = roster_no if _replacement == 1
+    replace match_method = 5 if _replacement == 1
+
+    * Validate identifiers
+    isid hhid visit_no roster_no
+    bysort hhid visit_no person_no: ///
+        assert _N == 1 if !missing(person_no)
+
+    * Diagnostics
+    count if _replacement == 1
+    display "Individuals in replacement households: " r(N)
+
+    egen byte _tagnew = tag(hhid) if _replacement == 1
+    count if _tagnew == 1
+    display "Replacement households: " r(N)
+
+    * Clean up temporary variables
+    drop _hasv1 _nmatched _maxqh _newqh _tagnew
+		
+			
+    * 8. Assign new numbers to remaining unmatched members
 	bysort HHID: egen int _maxpn = max(person_no)
 	bysort HHID visit_no (_row): gen int _newpn = ///
 		sum(visit_no == 2 & missing(person_no))
 	replace person_no = _maxpn + _newpn if visit_no == 2 & missing(person_no)
 
-	* Construct final pid
-	gen long pid = HHID * 100 + person_no
-	label var pid "Individual identification"
-
-	* Checks
-	isid HHID visit_no person_no
+    gen str pid = hhid + string(person_no, "%02.0f")
 	isid pid visit_no
-	duplicates report pid
+    drop _row visit_no roster_no person_no _unique match_method _maxroster _nunmatched _replacement hhid_original _maxpn _newpn
 
-	drop _row _newvisit _sig_n _maxpn _newpn visit_no
 *</_pid_>
-
 
 *<_weight_>
 	gen weight = weight2
